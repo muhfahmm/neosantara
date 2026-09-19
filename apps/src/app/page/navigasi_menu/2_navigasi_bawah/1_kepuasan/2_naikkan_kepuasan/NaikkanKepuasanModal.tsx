@@ -297,8 +297,8 @@ export default function NaikkanKepuasanModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[85px] sm:pt-[95px] pb-[75px] px-4 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-4xl h-full max-h-[calc(100vh-165px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[80px] sm:pt-[90px] pb-[90px] sm:pb-[100px] px-4 sm:px-8 bg-transparent pointer-events-none">
+      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[850px] xl:max-w-4xl 2xl:max-w-5xl h-full max-h-[calc(100vh-180px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         {/* Header */}

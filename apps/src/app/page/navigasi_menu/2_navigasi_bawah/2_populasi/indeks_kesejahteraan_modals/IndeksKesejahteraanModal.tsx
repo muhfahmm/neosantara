@@ -213,32 +213,31 @@ export default function IndeksKesejahteraanModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl flex flex-col relative font-sans pointer-events-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[85px] sm:pt-[95px] pb-[75px] px-4 bg-transparent pointer-events-none">
+      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[865px] h-full max-h-[calc(100vh-165px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
         {/* Background */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         {/* Header */}
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-xl border ${scoreColor.border} ${scoreColor.bg}`}>
-                <MapPin className={`h-6 w-6 ${scoreColor.icon}`} />
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#C4B49C]/40 flex items-center justify-between bg-[#FAF6EE] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+          <div className="flex items-center gap-3 sm:gap-6 flex-wrap">
+            <div className="flex items-center gap-2">
+              <div className={`p-1 sm:p-1.5 rounded-lg border ${scoreColor.border} ${scoreColor.bg} shrink-0`}>
+                <MapPin className={`h-4 w-4 sm:h-5 sm:w-5 ${scoreColor.icon}`} />
               </div>
               <div>
-                <h2 className="text-2xl font-black text-[#5c3c10] tracking-tight leading-none uppercase">Indeks Kesejahteraan</h2>
-                <p className="text-xs text-[#8b7e66] font-bold mt-1">Kualitas Hidup & Pembangunan Manusia</p>
+                <h2 className="text-base sm:text-xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Indeks Kesejahteraan</h2>
               </div>
             </div>
 
             {/* 🔥 Tab Navigation (Identik dengan Kepuasan Rakyat) */}
-            <div className="flex items-center bg-[#e4dac3]/40 p-1 rounded-xl border border-[#bfae93]/50 backdrop-blur-md ml-4">
+            <div className="flex items-center bg-[#e4dac3]/40 p-0.5 sm:p-1 rounded-lg border border-[#bfae93]/50 backdrop-blur-md">
               <button
                 onClick={() => setActiveTab("statistik")}
-                className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+                className={`px-3 py-1 rounded-md text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
                   activeTab === "statistik"
-                    ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20"
+                    ? "bg-[#5c3c10] text-[#FAF6EE] shadow-sm"
                     : "text-[#8b7e66] hover:text-[#5c3c10]"
                 }`}
               >
@@ -246,9 +245,9 @@ export default function IndeksKesejahteraanModal({
               </button>
               <button
                 onClick={() => setActiveTab("naikkan")}
-                className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+                className={`px-3 py-1 rounded-md text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
                   activeTab === "naikkan"
-                    ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20"
+                    ? "bg-[#5c3c10] text-[#FAF6EE] shadow-sm"
                     : "text-[#8b7e66] hover:text-[#5c3c10]"
                 }`}
               >
@@ -259,15 +258,15 @@ export default function IndeksKesejahteraanModal({
 
           <button
             onClick={onClose}
-            className="p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+            className="p-1 sm:p-1.5 rounded-lg border border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1 shadow-xs"
           >
-            <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
+            <span className="text-[10px] font-black uppercase tracking-widest pl-1 hidden sm:inline">Tutup</span>
+            <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-5 bg-[#FAF6EE]/40 relative z-10 custom-scrollbar">
           <div className="animate-in fade-in duration-500">
             {activeTab === "statistik" ? (
               <div className="space-y-6">
