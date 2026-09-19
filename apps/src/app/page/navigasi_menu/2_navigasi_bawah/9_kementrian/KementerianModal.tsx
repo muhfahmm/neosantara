@@ -370,8 +370,8 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
   return (
     <>
       {/* ========== MODAL UTAMA ========== */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-transparent pointer-events-none">
-        <div className="bg-[#FAF6EE] border-2 sm:border-4 border-[#C4B49C] rounded-2xl w-full max-w-[95vw] lg:max-w-6xl max-h-[90vh] sm:max-h-[85vh] h-full overflow-hidden shadow-2xl flex flex-col relative font-sans pointer-events-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+        <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
 
           {/* Header */}
@@ -389,13 +389,10 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                 Kas: {money.toLocaleString("id-ID")} EM
               </div>
             </div>
-            <button
-              onClick={onClose}
-              className="p-1.5 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
-            >
-              <span className="text-[10px] font-black uppercase tracking-widest pl-1 hidden sm:inline">Tutup</span>
-              <X className="h-4 w-4 sm:h-5 sm:w-5" />
-            </button>
+            <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5 shadow-sm">
+            <span className="text-xs font-black uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-5 w-5" />
+          </button>
           </div>
 
           {/* Tabs */}

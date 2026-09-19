@@ -179,9 +179,9 @@ export default function RingkasanPopulasiModal({
             </div>
           </div>
 
-          <button onClick={onClose} className="p-1 sm:p-1.5 rounded-lg border border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1 shadow-xs">
-            <span className="text-[10px] font-black uppercase tracking-widest pl-1 hidden sm:inline">Tutup</span>
-            <X className="h-4 w-4" />
+          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-5 w-5" />
           </button>
         </div>
 
