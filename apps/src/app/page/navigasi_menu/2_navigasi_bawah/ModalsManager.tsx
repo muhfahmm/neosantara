@@ -5,49 +5,51 @@ import React, { useEffect, useState } from 'react';
 import { fetchBuildingMetadata } from '../../../../lib/buildingMetadata';
 import { processDueLoans } from './4_ekonomi/3_peminjaman_hutang/tab_menu/logic/loanRepaymentLogic';
 
+import dynamic from 'next/dynamic';
+
 // 1. Kepuasan
-import StatistikKepuasanModal from "./1_kepuasan/1_statistik/StatistikKepuasanModal";
-import NaikkanKepuasanModal from "./1_kepuasan/2_naikkan_kepuasan/NaikkanKepuasanModal";
+const StatistikKepuasanModal = dynamic(() => import("./1_kepuasan/1_statistik/StatistikKepuasanModal"), { ssr: false });
+const NaikkanKepuasanModal = dynamic(() => import("./1_kepuasan/2_naikkan_kepuasan/NaikkanKepuasanModal"), { ssr: false });
 
 // 2. Populasi
-import RingkasanPopulasiModal from "./2_populasi/RingkasanPopulasiModal";
+const RingkasanPopulasiModal = dynamic(() => import("./2_populasi/RingkasanPopulasiModal"), { ssr: false });
 
 // 3. Produksi & Konsumsi
-import KelistrikanModal from "./3_produksi_konsumsi/1_grid_nasional/KelistrikanModal";
-import IndustriPanganModal from "./3_produksi_konsumsi/2_industri_pangan/IndustriPanganModal";
+const KelistrikanModal = dynamic(() => import("./3_produksi_konsumsi/1_grid_nasional/KelistrikanModal"), { ssr: false });
+const IndustriPanganModal = dynamic(() => import("./3_produksi_konsumsi/2_industri_pangan/IndustriPanganModal"), { ssr: false });
 
 // 4. Ekonomi
-import PerdaganganModal from "./4_ekonomi/1_perdagangan/PerdaganganModal";
-import PajakModal from "./4_ekonomi/2_manajemen_pajak/PajakModal";
-import HutangModal from "./4_ekonomi/3_peminjaman_hutang/HutangModal";
-import PemasukkanPengeluaranModal from "./4_ekonomi/4_pemasukan_pengeluaran/PemasukkanPengeluaranModal";
-import PDBModal from "./4_ekonomi/5_pdb_nasional_dunia/PDBModal";
-import HargaModal from "./4_ekonomi/6_harga/HargaModal";
+const PerdaganganModal = dynamic(() => import("./4_ekonomi/1_perdagangan/PerdaganganModal"), { ssr: false });
+const PajakModal = dynamic(() => import("./4_ekonomi/2_manajemen_pajak/PajakModal"), { ssr: false });
+const HutangModal = dynamic(() => import("./4_ekonomi/3_peminjaman_hutang/HutangModal"), { ssr: false });
+const PemasukkanPengeluaranModal = dynamic(() => import("./4_ekonomi/4_pemasukan_pengeluaran/PemasukkanPengeluaranModal"), { ssr: false });
+const PDBModal = dynamic(() => import("./4_ekonomi/5_pdb_nasional_dunia/PDBModal"), { ssr: false });
+const HargaModal = dynamic(() => import("./4_ekonomi/6_harga/HargaModal"), { ssr: false });
 
 // 5. Pembangunan
-import ProduksiModal from "./5_pembangunan/1_produksi/ProduksiModal";
-import TempatUmumModal from "./5_pembangunan/2_tempat_umum/TempatUmumModal";
-import HunianPermukimanModal from "./5_pembangunan/3_hunian/HunianPermukimanModal";
+const ProduksiModal = dynamic(() => import("./5_pembangunan/1_produksi/ProduksiModal"), { ssr: false });
+const TempatUmumModal = dynamic(() => import("./5_pembangunan/2_tempat_umum/TempatUmumModal"), { ssr: false });
+const HunianPermukimanModal = dynamic(() => import("./5_pembangunan/3_hunian/HunianPermukimanModal"), { ssr: false });
 
 // 6. Pertahanan
-import SerangNegaraModal from "./6_pertahanan/1_serang_negara/SerangNegaraModal";
-import IntelijenModal from "./6_pertahanan/2_intelijen/IntelijenModal";
-import WilayahDirebutModal from "./6_pertahanan/3_wilayah_direbut/WilayahDirebutModal";
-import ArmadaModal from "./6_pertahanan/4_armada/ArmadaModal";
-import IcbmModal from "./6_pertahanan/5_icbm/IcbmModal";
+const SerangNegaraModal = dynamic(() => import("./6_pertahanan/1_serang_negara/SerangNegaraModal"), { ssr: false });
+const IntelijenModal = dynamic(() => import("./6_pertahanan/2_intelijen/IntelijenModal"), { ssr: false });
+const WilayahDirebutModal = dynamic(() => import("./6_pertahanan/3_wilayah_direbut/WilayahDirebutModal"), { ssr: false });
+const ArmadaModal = dynamic(() => import("./6_pertahanan/4_armada/ArmadaModal"), { ssr: false });
+const IcbmModal = dynamic(() => import("./6_pertahanan/5_icbm/IcbmModal"), { ssr: false });
 
 // 7. Geopolitik
-import PBBModal from "./7_geopolitik/1_PBB/PBBModal";
-import KedutaanBesarModal from "./7_geopolitik/KedutaanBesarModal";
-import OrgIntlModal from "./7_geopolitik/3_organisasi_internasional/OrgIntlModal";
-import TingkatHubunganModal from "./7_geopolitik/TingkatHubunganModal";
+const PBBModal = dynamic(() => import("./7_geopolitik/1_PBB/PBBModal"), { ssr: false });
+const KedutaanBesarModal = dynamic(() => import("./7_geopolitik/KedutaanBesarModal"), { ssr: false });
+const OrgIntlModal = dynamic(() => import("./7_geopolitik/3_organisasi_internasional/OrgIntlModal"), { ssr: false });
+const TingkatHubunganModal = dynamic(() => import("./7_geopolitik/TingkatHubunganModal"), { ssr: false });
 
 // 8. Sosial & Budaya
-import AgamaModal from "./8_sosial_budaya/agama/AgamaModal";
-import IdeologiModal from "./8_sosial_budaya/ideologi/IdeologiModal";
+const AgamaModal = dynamic(() => import("./8_sosial_budaya/agama/AgamaModal"), { ssr: false });
+const IdeologiModal = dynamic(() => import("./8_sosial_budaya/ideologi/IdeologiModal"), { ssr: false });
 
 // 9. Kementerian
-import KementerianModal from "./9_kementrian/KementerianModal";
+const KementerianModal = dynamic(() => import("./9_kementrian/KementerianModal"), { ssr: false });
 
 interface ModalCountryDetail {
   [key: string]: unknown;
@@ -111,17 +113,23 @@ function ModalsManager({
     fetchBuildingMetadata()
       .then((data) => setMetadata(data || {}))
       .catch((err) => console.error('ModalsManager: failed to load building metadata', err));
-    // Prefetch full country dataset for modals that need global lists (e.g., Kelistrikan)
-    (async () => {
-      try {
-        const res = await fetch('/api/country-data?all=true', { cache: 'no-store' });
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) setPrefetchedAllCountries(data);
-      } catch (e) {
-        console.warn('ModalsManager: failed to prefetch all countries', e);
-      }
-    })();
   }, []);
+
+  // Fetch full country dataset lazily when a menu that requires global country comparison is opened
+  useEffect(() => {
+    const menusNeedingAllCountries = ['Kelistrikan', 'Industri Pangan', 'PDB', 'Finansial Global'];
+    if (prefetchedAllCountries === null && menusNeedingAllCountries.includes(activeMenu)) {
+      (async () => {
+        try {
+          const res = await fetch('/api/country-data?all=true');
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) setPrefetchedAllCountries(data);
+        } catch (e) {
+          console.warn('ModalsManager: failed to fetch all countries', e);
+        }
+      })();
+    }
+  }, [activeMenu, prefetchedAllCountries]);
 
   // Ensure due loans are processed whenever the global date advances so repayments don't require opening the Hutang modal
   useEffect(() => {

@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   transpilePackages: ['../map-engine-rs/ts'],
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion'],
+  },
   webpack: (config) => {
     config.experiments = {
       ...config.experiments,

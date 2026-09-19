@@ -2,35 +2,38 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { 
+import {
     Play, Pause, Settings, Palmtree, Shield
 } from 'lucide-react';
 import Link from 'next/link';
-import { WORLD_GEOJSON, COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
+import { COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
 import countryPaths from './country-paths.json';
 import { SimulationTimeManager, createSimulationCalendar } from '../time_controllers';
 import { handleGameRestart } from '../time_controllers';
-import { GameMenuModal } from '../navbar/GameMenuModal';
-import { ConfirmRestartModal } from '../navbar/ConfirmRestartModal';
-import { ModalsPeringatanPeringkat } from './menu_notifikasi/notifikasi_peringatan/modalsPeringatanPeringkat';
-import ModalsKudeta, { KudetaType } from './menu_notifikasi/notifikasi_peringatan/modalsKudeta';
+import dynamic from 'next/dynamic';
+
+const GameMenuModal = dynamic(() => import('../navbar/GameMenuModal').then(m => m.GameMenuModal), { ssr: false });
+const ConfirmRestartModal = dynamic(() => import('../navbar/ConfirmRestartModal').then(m => m.ConfirmRestartModal), { ssr: false });
+const ModalsPeringatanPeringkat = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsPeringatanPeringkat').then(m => m.ModalsPeringatanPeringkat), { ssr: false });
+const ModalsKudeta = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta'), { ssr: false });
+type KudetaType = import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta').KudetaType;
 import { Navbar } from '../navbar/Navbar';
 import BottomNav from '../navigasi_menu/2_navigasi_bawah/BottomNav';
 import ModalsManager from '../navigasi_menu/2_navigasi_bawah/ModalsManager';
 import { calculateCountryNetBalance } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateDailyPopulationChange, updateDailyPopulation } from '@/app/logic/populations_logic/population_logic';
 import { logger } from '../../../lib/logger';
-import { CountryDetailModal } from '../detail_negara/detail_negara';
-import NegaraUserModal from './negara_user';
+const CountryDetailModal = dynamic(() => import('../detail_negara/detail_negara').then(m => m.CountryDetailModal), { ssr: false });
+const NegaraUserModal = dynamic(() => import('./negara_user'), { ssr: false });
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateDailyMaterialProduction } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
 import { getDaysElapsed } from '@/app/logic/production_logic';
 import { calculateKepuasan } from '@/app/logic/kepuasanCalculator';
 import { calculatePresidentRating, getMonthsDifference } from '@/app/logic/peringkatCalculator';
 import { calculateKesejahteraan, calculateKesejahteraanDecay } from '@/app/logic/kesejahteraanCalculator';
-import TopLeftIcon from './menu_notifikasi/inbox/inboxModals';
-import TopRightGiftIcon from './menu_notifikasi/reward/rewardModals';
-import TopRightNewsIcon from './menu_notifikasi/news/newsModals';
+const TopLeftIcon = dynamic(() => import('./menu_notifikasi/inbox/inboxModals'), { ssr: false });
+const TopRightGiftIcon = dynamic(() => import('./menu_notifikasi/reward/rewardModals'), { ssr: false });
+const TopRightNewsIcon = dynamic(() => import('./menu_notifikasi/news/newsModals'), { ssr: false });
 import { NotificationMessage, getKepuasanWarningMessage } from './menu_notifikasi/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { getPeringkatWarningMessage } from './menu_notifikasi/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/2_peringkat/peringkatLogic';
 import { getKesejahteraanWarningMessage } from './menu_notifikasi/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
@@ -87,7 +90,7 @@ export default function MapPage() {
     const [presidentRating, setPresidentRating] = useState<number>(50);
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
     const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
-    
+
     // Track triggers to prevent spamming notifications on every tick when index is in warning zone
     const [hasShownEarlyWarning, setHasShownEarlyWarning] = useState<{
         kepuasan: boolean;
@@ -119,7 +122,7 @@ export default function MapPage() {
     useEffect(() => {
         const kepuasanVal = countryDetail?.kepuasan ?? 50;
         const kesejahteraanVal = countryDetail?.kesejahteraan ?? 50;
-        
+
         // Formatting date inline
         const year = currentDate.getFullYear();
         const month = String(currentDate.getMonth() + 1).padStart(2, '0');
@@ -278,7 +281,7 @@ export default function MapPage() {
             // Cari produk yang paling menguntungkan (misal Uranium, Semikonduktor, Logam Tanah Jarang)
             const premiumProducts = ["uranium", "semikonduktor", "logam_tanah_jarang", "mobil", "litium"];
             const productKey = premiumProducts[Math.floor(Math.random() * premiumProducts.length)];
-            
+
             // Generate random trade quantities and competitive prices
             const quantity = Math.floor(Math.random() * 300) + 20;
             const prices: Record<string, number> = {
@@ -325,15 +328,15 @@ export default function MapPage() {
         "Sosial & Budaya",
         "Kementerian"
     ];
-    const isMapInteractionDisabled = 
-        isSaveModalOpen || 
-        isPresidentMenuOpen || 
-        isRestartConfirmOpen || 
-        countryDetailModalOpen || 
-        playerDetailModalOpen || 
-        inboxModalOpen || 
-        giftModalOpen || 
-        newsModalOpen || 
+    const isMapInteractionDisabled =
+        isSaveModalOpen ||
+        isPresidentMenuOpen ||
+        isRestartConfirmOpen ||
+        countryDetailModalOpen ||
+        playerDetailModalOpen ||
+        inboxModalOpen ||
+        giftModalOpen ||
+        newsModalOpen ||
         !nonModalMenus.includes(activeMenu);
 
     const dateTextRef = useRef<HTMLSpanElement | null>(null);
@@ -347,7 +350,7 @@ export default function MapPage() {
         const handleGlobalMouseUp = (e: MouseEvent) => {
             // Hindari memproses event hasil dispatch kita sendiri untuk mencegah loop tak terbatas
             if (e.target && (e.target as HTMLElement).id === 'map-canvas') return;
-            
+
             const canvas = document.getElementById('map-canvas');
             if (canvas) {
                 const event = new MouseEvent('mouseup', {
@@ -462,7 +465,7 @@ export default function MapPage() {
         const relPath = Object.entries(countryPaths).find(
             ([name]) => name.toLowerCase() === countryName.toLowerCase()
         )?.[1];
-        
+
         if (!relPath) return;
 
         try {
@@ -567,7 +570,7 @@ export default function MapPage() {
                     );
                     if (chosen) {
                         setSelectedCountry(chosen);
-                        
+
                         // Restore countryDetail from saved state, or use parsed countryDetail if available
                         let restoredDetail: any = {
                             capital: savedState.capital || chosen.capital,
@@ -578,12 +581,12 @@ export default function MapPage() {
                             un_vote: Number(savedState.un_vote),
                             kepuasan: Number(savedState.kepuasan) || 50
                         };
-                        
+
                         // If full countryDetail was saved (includes accumulated_* and build_date_* fields)
                         if (savedState.countryDetail && typeof savedState.countryDetail === 'object') {
                             restoredDetail = { ...restoredDetail, ...savedState.countryDetail };
                         }
-                        
+
                         setCountryDetail(restoredDetail);
                         if (restoredDetail.presidentRating !== undefined) {
                             setPresidentRating(Number(restoredDetail.presidentRating));
@@ -591,7 +594,7 @@ export default function MapPage() {
                         if (restoredDetail.kesejahteraan !== undefined) {
                             setKesejahteraan(Number(restoredDetail.kesejahteraan));
                         }
-                        
+
                         // Clean up saved state from localStorage so it doesn't re-apply
                         localStorage.removeItem('presiden_simulator_load_save');
                         return; // Done restoring save!
@@ -603,12 +606,12 @@ export default function MapPage() {
 
             const params = new URLSearchParams(window.location.search);
             const countryParam = params.get('country');
-            
+
             if (countryParam) {
                 const chosen = COUNTRIES_DATA.find(
                     c => c.country.toLowerCase() === countryParam.toLowerCase()
                 );
-                
+
                 if (chosen) {
                     setSelectedCountry(chosen);
                     loadCountryStats(chosen.country, chosen.capital);
@@ -620,14 +623,14 @@ export default function MapPage() {
     // Update accumulated production every time date changes
     useEffect(() => {
         if (!countryDetail || !currentDate) return;
-        
+
         // Format date inline (can't import formatDate here due to path issues)
         const year = currentDate.getFullYear();
         const month = String(currentDate.getMonth() + 1).padStart(2, '0');
         const day = String(currentDate.getDate()).padStart(2, '0');
         const currentDateStr = `${year}-${month}-${day}`;
         logger.log('MapPage', 'Date changed to:', currentDateStr);
-        
+
         // Auto-set build dates for buildings that don't have one
         // Set to TODAY's date so production starts at 0 from now
         const resourceKeys = [
@@ -642,15 +645,15 @@ export default function MapPage() {
             "udang", "mutiara", "ikan",
             "air_mineral", "gula", "roti", "pengolahan_daging", "mie_instan", "minyak_goreng", "susu"
         ];
-        
+
         let hasChanges = false;
         const updatedDetail = { ...countryDetail };
-        
+
         for (const resourceKey of resourceKeys) {
             const buildingCount = Number(countryDetail[resourceKey]) || 0;
             const buildDateKey = `build_date_${resourceKey}`;
             const buildDate = countryDetail[buildDateKey];
-            
+
             // If building exists but no build date, auto-set to TODAY so production = 0
             // This ensures legacy buildings without build dates start from 0
             if (buildingCount > 0 && !buildDate) {
@@ -659,7 +662,7 @@ export default function MapPage() {
                 logger.log('AutoSetBuildDate', `${resourceKey}: Auto-set to today ${currentDateStr}`);
             }
         }
-        
+
         if (hasChanges) {
             logger.log('MapPage', 'Auto-setting missing build dates for existing buildings to TODAY');
             setCountryDetail(updatedDetail);
@@ -671,13 +674,13 @@ export default function MapPage() {
     // ✅ NEW: Initialize population metrics when countryDetail first loads
     useEffect(() => {
         if (!countryDetail) return;
-        
+
         // Calculate initial population metrics untuk display
         const populationMetrics = calculateDailyPopulationChange(countryDetail, selectedCountry?.country);
         setPlayerNetPopulationChange(populationMetrics.netDailyChange);
         setPlayerDailyBirths(populationMetrics.dailyBirths);
         setPlayerDailyDeaths(populationMetrics.dailyDeaths);
-        
+
         logger.log('PopulationInit', 'Initial population metrics calculated', {
             populasi: countryDetail.jumlah_penduduk,
             netChange: populationMetrics.netDailyChange,
@@ -708,7 +711,7 @@ export default function MapPage() {
         // ✅ ALWAYS calculate population updates (doesn't depend on metadata)
         const populationMetrics = calculateDailyPopulationChange(countryDetail, selectedCountry?.country);
         const populationUpdates = updateDailyPopulation(countryDetail, populationMetrics);
-        
+
         // Store net population change for display in Navbar
         setPlayerNetPopulationChange(populationMetrics.netDailyChange);
         setPlayerDailyBirths(populationMetrics.dailyBirths);
@@ -729,35 +732,35 @@ export default function MapPage() {
         const daysPassed = lastDate ? getDaysElapsed(lastDate, currentDateStr) : 0;
         if (daysPassed > 0) {
             const electricityFuelBuildings = [
-              "pembangkit_listrik_tenaga_gas",
-              "pembangkit_listrik_tenaga_nuklir",
-              "pembangkit_listrik_tenaga_uap",
+                "pembangkit_listrik_tenaga_gas",
+                "pembangkit_listrik_tenaga_nuklir",
+                "pembangkit_listrik_tenaga_uap",
             ];
-            
+
             const dailyCons: Record<string, number> = {
-              gas_alam: 0,
-              uranium: 0,
-              batu_bara: 0,
-              minyak_bumi: 0,
+                gas_alam: 0,
+                uranium: 0,
+                batu_bara: 0,
+                minyak_bumi: 0,
             };
-            
+
             electricityFuelBuildings.forEach((buildingKey) => {
-              const count = Number(countryDetail[buildingKey]) || 0;
-              if (count === 0) return;
-              switch (buildingKey) {
-                case "pembangkit_listrik_tenaga_gas":
-                  dailyCons.gas_alam += 2 * count;
-                  break;
-                case "pembangkit_listrik_tenaga_nuklir":
-                  dailyCons.uranium += 1 * count;
-                  break;
-                case "pembangkit_listrik_tenaga_uap":
-                  dailyCons.batu_bara += 50 * count;
-                  dailyCons.minyak_bumi += 5 * count;
-                  break;
-              }
+                const count = Number(countryDetail[buildingKey]) || 0;
+                if (count === 0) return;
+                switch (buildingKey) {
+                    case "pembangkit_listrik_tenaga_gas":
+                        dailyCons.gas_alam += 2 * count;
+                        break;
+                    case "pembangkit_listrik_tenaga_nuklir":
+                        dailyCons.uranium += 1 * count;
+                        break;
+                    case "pembangkit_listrik_tenaga_uap":
+                        dailyCons.batu_bara += 50 * count;
+                        dailyCons.minyak_bumi += 5 * count;
+                        break;
+                }
             });
-            
+
             // Deduct the consumption from updates
             for (const [fuelKey, consPerDay] of Object.entries(dailyCons)) {
                 if (consPerDay > 0) {
@@ -799,7 +802,7 @@ export default function MapPage() {
 
             // --- HITUNG PENURUNAN PERINGKAT BERDASARKAN KEPUASAN (menggunakan peringkatCalculator) ---
             const monthsPassed = lastDate ? getMonthsDifference(lastDate, currentDateStr) : 0;
-            
+
             const ratingResult = calculatePresidentRating({
                 currentRating: prev.presidentRating ?? 50,
                 ratingMonthCounter: prev.rating_month_counter ?? 0,
@@ -925,20 +928,20 @@ export default function MapPage() {
             calculateProduction,
             countryDetail?.kesejahteraan
         );
-        
+
         // Hanya update jika berubah signifikan (> 1 poin) untuk mencegah infinite loop
         const currentKesejahteraan = countryDetail?.kesejahteraan ?? 50;
         if (Math.abs(currentKesejahteraan - kesejahteraanResult.overallScore) < 1) return;
 
         setCountryDetail((prev: any) => {
             if (!prev) return prev;
-            return { 
-                ...prev, 
+            return {
+                ...prev,
                 kesejahteraan: kesejahteraanResult.overallScore,
                 kesejahteraanTrend: kesejahteraanResult.trend,
             };
         });
-        
+
         setKesejahteraan(kesejahteraanResult.overallScore);
     }, [
         // Sektor Pendidikan
@@ -953,14 +956,14 @@ export default function MapPage() {
         countryDetail?.pusat_penelitian,
         countryDetail?.pusat_pengembangan,
         countryDetail?.literasi,
-        
+
         // Sektor Kesehatan
         countryDetail?.rumah_sakit_besar,
         countryDetail?.rumah_sakit_kecil,
         countryDetail?.pusat_diagnostik,
         countryDetail?.harapan_hidup,
         countryDetail?.indeks_kesehatan,
-        
+
         // Sektor Tempat Umum
         countryDetail?.jalur_sepeda,
         countryDetail?.jalan_raya,
@@ -983,13 +986,13 @@ export default function MapPage() {
         countryDetail?.mall,
         countryDetail?.hotel,
         countryDetail?.pusat_grosir_tekstil,
-        
+
         // Populasi untuk rasio kalkulasi
         countryDetail?.jumlah_penduduk,
-        
+
         // Bonus kesejahteraan
         countryDetail?.kesejahteraan_bonus,
-        
+
         metadata,
     ]);
 
@@ -1023,7 +1026,7 @@ export default function MapPage() {
     // Open save dialog with default name suggestions
     const openSaveModal = () => {
         if (!selectedCountry) return;
-        const defaultName = calendarRef.current?.calendar.formatSaveName(selectedCountry.country) 
+        const defaultName = calendarRef.current?.calendar.formatSaveName(selectedCountry.country)
             || `Simulasi ${selectedCountry.country} - ${timeManagerRef.current?.getFormattedDate() || 'Hari Ini'}`;
         setSaveNameInput(defaultName);
         setIsSaveModalOpen(true);
@@ -1035,9 +1038,9 @@ export default function MapPage() {
 
         setIsSaving(true);
         try {
-            const saveName = saveNameInput.trim() 
-                || (calendarRef.current?.calendar.formatSaveName(selectedCountry.country) 
-                || `Simulasi ${selectedCountry.country} - ${timeManagerRef.current?.getFormattedDate() || 'Hari Ini'}`);
+            const saveName = saveNameInput.trim()
+                || (calendarRef.current?.calendar.formatSaveName(selectedCountry.country)
+                    || `Simulasi ${selectedCountry.country} - ${timeManagerRef.current?.getFormattedDate() || 'Hari Ini'}`);
             const gameDate = timeManagerRef.current ? timeManagerRef.current.getCurrentDate().toISOString() : new Date().toISOString();
 
             const response = await fetch('/api/game-save', {
@@ -1087,13 +1090,16 @@ export default function MapPage() {
             hasInitRef.current = true;
 
             try {
-                const wasmModule = await import('../../../wasm/map-engine-rs/map_engine_rs');
+                const [wasmModule, { WORLD_GEOJSON }] = await Promise.all([
+                    import('../../../wasm/map-engine-rs/map_engine_rs'),
+                    import('./world-geojson')
+                ]);
                 await wasmModule.default(); // Initialize WASM module first
                 wasmModuleRef.current = wasmModule;
-                
+
                 // After init, the exported functions are available on the module
                 const { start_map_engine, set_selected_country_on_map } = wasmModule;
-                
+
                 await start_map_engine(
                     "map-canvas",
                     WORLD_GEOJSON,
@@ -1185,9 +1191,9 @@ export default function MapPage() {
     return (
         <main className="fixed inset-0 bg-[#070b14] overflow-hidden font-sans">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.02)_0%,transparent_100%)] pointer-events-none" />
-            
+
             {/* Status Bar / Navbar */}
-            <Navbar 
+            <Navbar
                 selectedCountry={selectedCountry}
                 countryDetail={countryDetail}
                 netBalanceAdjustment={playerNetBalanceAdjustment}
@@ -1205,118 +1211,118 @@ export default function MapPage() {
                     setActiveMenu("Dashboard:Populasi:Overview");
                 }}
             />            {/* Top Left Icon - Inbox */}
-            <TopLeftIcon 
-              onClick={() => {
-                setInboxModalOpen(true);
-                setGiftModalOpen(false);
-                setNewsModalOpen(false);
-                // Mark all notifications as read when opening inbox
-                setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-              }} 
-              isOpen={inboxModalOpen}
-              onClose={() => setInboxModalOpen(false)}
-              notifications={notifications}
-              onClearAll={() => setNotifications([])}
-              onActionClick={(notif) => {
-                // Intersep jika ini tawaran transaksi dagang AI
-                const tNotif = notif as any;
-                if (tNotif.tradeType === 'jual') {
-                  // AI Ingin Membeli Produk User (Jual): Tambah Kas, Kurangi Stok User
-                  const myStock = Number(countryDetail?.[tNotif.productKey] || 0);
-                  if (myStock < tNotif.quantity) {
-                    alert(`Gagal menyetujui transaksi! Stok ${tNotif.productKey} Anda hanya ${myStock} unit.`);
-                    return;
-                  }
-                  
-                  const budget = Number(countryDetail?.anggaran || 0);
-                  setCountryDetail((prev: any) => ({
-                    ...prev,
-                    anggaran: budget + tNotif.totalPrice,
-                    [tNotif.productKey]: myStock - tNotif.quantity,
-                    [`total_sold_${tNotif.productKey}`]: Number(prev?.[`total_sold_${tNotif.productKey}`] || 0) + tNotif.quantity
-                  }));
-                  
-                  alert(`Berhasil mengekspor ${tNotif.quantity} unit ${tNotif.productKey} ke ${tNotif.partnerName} senilai ${tNotif.totalPrice.toLocaleString('id-ID')} EM!`);
-                  setNotifications(prev => prev.filter(n => n.id !== notif.id));
-                  setInboxModalOpen(false);
-                  return;
-                }
+            <TopLeftIcon
+                onClick={() => {
+                    setInboxModalOpen(true);
+                    setGiftModalOpen(false);
+                    setNewsModalOpen(false);
+                    // Mark all notifications as read when opening inbox
+                    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+                }}
+                isOpen={inboxModalOpen}
+                onClose={() => setInboxModalOpen(false)}
+                notifications={notifications}
+                onClearAll={() => setNotifications([])}
+                onActionClick={(notif) => {
+                    // Intersep jika ini tawaran transaksi dagang AI
+                    const tNotif = notif as any;
+                    if (tNotif.tradeType === 'jual') {
+                        // AI Ingin Membeli Produk User (Jual): Tambah Kas, Kurangi Stok User
+                        const myStock = Number(countryDetail?.[tNotif.productKey] || 0);
+                        if (myStock < tNotif.quantity) {
+                            alert(`Gagal menyetujui transaksi! Stok ${tNotif.productKey} Anda hanya ${myStock} unit.`);
+                            return;
+                        }
 
-                if (tNotif.tradeType === 'beli') {
-                  // AI Menjual ke User (Beli): Kurangi Kas, Tambah Stok User
-                  const budget = Number(countryDetail?.anggaran || 0);
-                  if (budget < tNotif.totalPrice) {
-                    alert(`Gagal menyetujui transaksi! Anggaran negara tidak mencukupi.`);
-                    return;
-                  }
-                  
-                  const myStock = Number(countryDetail?.[tNotif.productKey] || 0);
-                  setCountryDetail((prev: any) => ({
-                    ...prev,
-                    anggaran: budget - tNotif.totalPrice,
-                    [tNotif.productKey]: myStock + tNotif.quantity,
-                    [`total_bought_${tNotif.productKey}`]: Number(prev?.[`total_bought_${tNotif.productKey}`] || 0) + tNotif.quantity
-                  }));
-                  
-                  alert(`Berhasil mengimpor ${tNotif.quantity} unit ${tNotif.productKey} dari ${tNotif.partnerName} senilai ${tNotif.totalPrice.toLocaleString('id-ID')} EM!`);
-                  setNotifications(prev => prev.filter(n => n.id !== notif.id));
-                  setInboxModalOpen(false);
-                  return;
-                }
+                        const budget = Number(countryDetail?.anggaran || 0);
+                        setCountryDetail((prev: any) => ({
+                            ...prev,
+                            anggaran: budget + tNotif.totalPrice,
+                            [tNotif.productKey]: myStock - tNotif.quantity,
+                            [`total_sold_${tNotif.productKey}`]: Number(prev?.[`total_sold_${tNotif.productKey}`] || 0) + tNotif.quantity
+                        }));
 
-                // Handle notification action click (secondary/informational actions)
-                if (notif.type === 'kepuasan') {
-                  setActiveMenu("Sosial & Budaya");
-                } else if (notif.type === 'peringkat') {
-                  setActiveMenu("Sosial & Budaya"); // Pidato kenegaraan / program bantuan
-                } else if (notif.type === 'kesejahteraan') {
-                  setKesejahteraanDeepLink(true);
-                  setActiveMenu("Dashboard:Populasi:Overview");
-                }
-                setInboxModalOpen(false);
-              }}
-              onRedirectClick={(notif) => {
-                const tNotif = notif as any;
-                if (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli') {
-                  // Tolak Tawaran: Hapus notifikasi dari feed
-                  setNotifications(prev => prev.filter(n => n.id !== notif.id));
-                  alert("Penawaran ditolak.");
-                  setInboxModalOpen(false);
-                  return;
-                }
+                        alert(`Berhasil mengekspor ${tNotif.quantity} unit ${tNotif.productKey} ke ${tNotif.partnerName} senilai ${tNotif.totalPrice.toLocaleString('id-ID')} EM!`);
+                        setNotifications(prev => prev.filter(n => n.id !== notif.id));
+                        setInboxModalOpen(false);
+                        return;
+                    }
 
-                //  Redirect langsung ke menu yang relevan dengan tab yang tepat
-                if (notif.type === 'kepuasan' || notif.type === 'peringkat') {
-                  // → Kepuasan Rakyat, tab "Naikkan Peringkat"
-                  setActiveMenu("Action:NaikkanKepuasan");
-                } else if (notif.type === 'kesejahteraan') {
-                  // → Indeks Kesejahteraan, tab "Naikkan Kesejahteraan"
-                  setKesejahteraanInitialTab("naikkan"); //  Set tab ke Naikkan dulu
-                  setKesejahteraanDeepLink(true);
-                  setActiveMenu("Dashboard:Populasi:Overview");
-                }
-                setInboxModalOpen(false);
-              }}
+                    if (tNotif.tradeType === 'beli') {
+                        // AI Menjual ke User (Beli): Kurangi Kas, Tambah Stok User
+                        const budget = Number(countryDetail?.anggaran || 0);
+                        if (budget < tNotif.totalPrice) {
+                            alert(`Gagal menyetujui transaksi! Anggaran negara tidak mencukupi.`);
+                            return;
+                        }
+
+                        const myStock = Number(countryDetail?.[tNotif.productKey] || 0);
+                        setCountryDetail((prev: any) => ({
+                            ...prev,
+                            anggaran: budget - tNotif.totalPrice,
+                            [tNotif.productKey]: myStock + tNotif.quantity,
+                            [`total_bought_${tNotif.productKey}`]: Number(prev?.[`total_bought_${tNotif.productKey}`] || 0) + tNotif.quantity
+                        }));
+
+                        alert(`Berhasil mengimpor ${tNotif.quantity} unit ${tNotif.productKey} dari ${tNotif.partnerName} senilai ${tNotif.totalPrice.toLocaleString('id-ID')} EM!`);
+                        setNotifications(prev => prev.filter(n => n.id !== notif.id));
+                        setInboxModalOpen(false);
+                        return;
+                    }
+
+                    // Handle notification action click (secondary/informational actions)
+                    if (notif.type === 'kepuasan') {
+                        setActiveMenu("Sosial & Budaya");
+                    } else if (notif.type === 'peringkat') {
+                        setActiveMenu("Sosial & Budaya"); // Pidato kenegaraan / program bantuan
+                    } else if (notif.type === 'kesejahteraan') {
+                        setKesejahteraanDeepLink(true);
+                        setActiveMenu("Dashboard:Populasi:Overview");
+                    }
+                    setInboxModalOpen(false);
+                }}
+                onRedirectClick={(notif) => {
+                    const tNotif = notif as any;
+                    if (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli') {
+                        // Tolak Tawaran: Hapus notifikasi dari feed
+                        setNotifications(prev => prev.filter(n => n.id !== notif.id));
+                        alert("Penawaran ditolak.");
+                        setInboxModalOpen(false);
+                        return;
+                    }
+
+                    //  Redirect langsung ke menu yang relevan dengan tab yang tepat
+                    if (notif.type === 'kepuasan' || notif.type === 'peringkat') {
+                        // → Kepuasan Rakyat, tab "Naikkan Peringkat"
+                        setActiveMenu("Action:NaikkanKepuasan");
+                    } else if (notif.type === 'kesejahteraan') {
+                        // → Indeks Kesejahteraan, tab "Naikkan Kesejahteraan"
+                        setKesejahteraanInitialTab("naikkan"); //  Set tab ke Naikkan dulu
+                        setKesejahteraanDeepLink(true);
+                        setActiveMenu("Dashboard:Populasi:Overview");
+                    }
+                    setInboxModalOpen(false);
+                }}
             />
 
             {/* Top Right Icons - Gift and News */}
-            <TopRightGiftIcon 
-              onClick={() => {
-                setGiftModalOpen(true);
-                setInboxModalOpen(false);
-                setNewsModalOpen(false);
-              }}
-              isOpen={giftModalOpen}
-              onClose={() => setGiftModalOpen(false)}
+            <TopRightGiftIcon
+                onClick={() => {
+                    setGiftModalOpen(true);
+                    setInboxModalOpen(false);
+                    setNewsModalOpen(false);
+                }}
+                isOpen={giftModalOpen}
+                onClose={() => setGiftModalOpen(false)}
             />
-            <TopRightNewsIcon 
-              onClick={() => {
-                setNewsModalOpen(true);
-                setInboxModalOpen(false);
-                setGiftModalOpen(false);
-              }}
-              isOpen={newsModalOpen}
-              onClose={() => setNewsModalOpen(false)}
+            <TopRightNewsIcon
+                onClick={() => {
+                    setNewsModalOpen(true);
+                    setInboxModalOpen(false);
+                    setGiftModalOpen(false);
+                }}
+                isOpen={newsModalOpen}
+                onClose={() => setNewsModalOpen(false)}
             />
 
             {/* Shifted Canvas Container */}
@@ -1376,48 +1382,48 @@ export default function MapPage() {
             />
 
             {/* Premium Floating Skeuomorphic Time Controller Widget */}
-            <div className="fixed bottom-8 right-8 z-60 flex flex-col w-[320px]">
+            <div className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-40 flex flex-col w-[210px] sm:w-[230px] scale-95 sm:scale-100 origin-bottom-right transition-all">
                 {/* Upper Parchment Card */}
-                <div className="bg-[#FAF6EE] rounded-t-2xl px-6 pt-5 pb-10 border-t-2 border-x-2 border-[#C4B49C] shadow-lg flex flex-col relative overflow-hidden">
+                <div className="bg-[#FAF6EE] rounded-t-xl px-4 pt-3.5 pb-7 border-t-2 border-x-2 border-[#C4B49C] shadow-md flex flex-col relative overflow-hidden">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.01)_0%,transparent_100%)] pointer-events-none" />
-                    
-                    <div className="flex items-center justify-between mb-3.5">
+
+                    <div className="flex items-center justify-between mb-2">
                         {/* Gold gear inside metallic slot */}
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-b from-[#e5d7ba] to-[#c7b79a] border border-[#a8987b] shadow-[0_2px_4px_rgba(0,0,0,0.1)] relative">
-                                <Settings 
-                                    className="w-4.5 h-4.5 text-[#5c3c10]" 
+                        <div className="flex items-center gap-1.5">
+                            <div className="flex items-center justify-center w-6 h-6 rounded-md bg-gradient-to-b from-[#e5d7ba] to-[#c7b79a] border border-[#a8987b] shadow-xs relative">
+                                <Settings
+                                    className="w-3.5 h-3.5 text-[#5c3c10]"
                                     style={{ animation: 'spin 8s linear infinite' }}
                                 />
-                                <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-1.5 h-3 bg-slate-400 border border-slate-500 rounded-sm" />
-                                <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-1.5 h-3 bg-slate-400 border border-slate-500 rounded-sm" />
+                                <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-2 bg-slate-400 border border-slate-500 rounded-2xs" />
+                                <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-2 bg-slate-400 border border-slate-500 rounded-2xs" />
                             </div>
                         </div>
 
                         {/* Calendar date label */}
                         <div className="flex flex-col items-end leading-none">
-                            <span className="text-[9px] font-black text-[#8b7e66] tracking-widest uppercase mb-1">SIMULATION CALENDAR</span>
-                            <span ref={dateTextRef} className="text-lg font-black text-[#2e261a] tracking-tight">
+                            <span className="text-[8px] font-black text-[#8b7e66] tracking-wider uppercase mb-0.5">SIMULATION CALENDAR</span>
+                            <span ref={dateTextRef} className="text-xs sm:text-sm font-black text-[#2e261a] tracking-tight">
                                 -
                             </span>
                         </div>
                     </div>
 
                     {/* Progress Bar slot */}
-                    <div className="w-full h-3 bg-[#e4dac3] rounded-full border border-[#bfae93] shadow-[inset_0_2px_4px_rgba(0,0,0,0.15)] overflow-hidden relative">
-                        <div 
+                    <div className="w-full h-2 bg-[#e4dac3] rounded-full border border-[#bfae93] shadow-inner overflow-hidden relative">
+                        <div
                             ref={progressBarRef}
-                            className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-75 shadow-[0_0_8px_rgba(59,130,246,0.5)]" 
+                            className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-75 shadow-xs"
                             style={{ width: '0%' }}
                         />
                     </div>
                 </div>
 
                 {/* Lower Slate Blue Card with overlapping gold buttons */}
-                <div className="bg-[#1e2f3d] rounded-b-2xl border-b-4 border-x-2 border-[#15202a] shadow-xl h-14 relative flex items-center justify-between">
-                    <div className="absolute inset-x-6 -top-7 flex items-center justify-between">
-                        {/* 1. Large Play/Pause gold button */}
-                        <button 
+                <div className="bg-[#1e2f3d] rounded-b-xl border-b-2 border-x-2 border-[#15202a] shadow-lg h-9 relative flex items-center justify-between">
+                    <div className="absolute inset-x-3 -top-4.5 flex items-center justify-between">
+                        {/* 1. Play/Pause gold button */}
+                        <button
                             onClick={() => {
                                 if (!calendarRef.current) return;
                                 const newPaused = calendarRef.current.controls.handlePlayPauseClick(isPaused);
@@ -1427,17 +1433,17 @@ export default function MapPage() {
                                 }
                             }}
                             title={calendarRef.current?.calendar.getPauseButtonTitle(isPaused) || (isPaused ? "Mulai Waktu" : "Jeda Waktu")}
-                            className="w-14 h-14 rounded-full bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border-4 border-[#1e2f3d] shadow-[0_4px_8px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer hover:brightness-110 hover:scale-105 active:scale-95 transition-all z-20 group"
+                            className="w-9 h-9 rounded-full bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border-2 border-[#1e2f3d] shadow-md flex items-center justify-center cursor-pointer hover:brightness-110 hover:scale-105 active:scale-95 transition-all z-20 group"
                         >
                             {isPaused ? (
-                                <Play className="w-5 h-5 fill-[#5c3c10] text-[#5c3c10] translate-x-0.5 transition-transform group-hover:scale-115" />
+                                <Play className="w-3.5 h-3.5 fill-[#5c3c10] text-[#5c3c10] translate-x-0.5 transition-transform group-hover:scale-110" />
                             ) : (
-                                <Pause className="w-5 h-5 fill-[#5c3c10] text-[#5c3c10] transition-transform group-hover:scale-115" />
+                                <Pause className="w-3.5 h-3.5 fill-[#5c3c10] text-[#5c3c10] transition-transform group-hover:scale-110" />
                             )}
                         </button>
 
                         {/* 2. Gold Speed Selector button */}
-                        <button 
+                        <button
                             onClick={() => {
                                 if (!calendarRef.current) return;
                                 const newSpeed = calendarRef.current.controls.handleSpeedClick();
@@ -1447,13 +1453,13 @@ export default function MapPage() {
                                 }
                             }}
                             title={calendarRef.current?.calendar.getSpeedButtonTitle() || `Ubah Kecepatan: ${speed}x`}
-                            className="w-10 h-10 rounded-full bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border-2 border-[#1e2f3d] shadow-[0_3px_6px_rgba(0,0,0,0.3)] flex items-center justify-center cursor-pointer hover:brightness-110 hover:scale-105 active:scale-95 transition-all z-20 text-[12px] font-black text-[#5c3c10] uppercase tracking-tighter"
+                            className="w-7 h-7 rounded-full bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border border-[#1e2f3d] shadow-sm flex items-center justify-center cursor-pointer hover:brightness-110 hover:scale-105 active:scale-95 transition-all z-20 text-[10px] font-black text-[#5c3c10] uppercase tracking-tighter"
                         >
                             {calendarRef.current?.display.getSpeedLabel() || `×${speed}`}
                         </button>
 
                         {/* 3. Gold Holiday button */}
-                        <button 
+                        <button
                             onClick={() => {
                                 if (calendarRef.current) {
                                     calendarRef.current.controls.handleHolidayClick();
@@ -1462,13 +1468,13 @@ export default function MapPage() {
                                 }
                             }}
                             title="Liburan Negara"
-                            className="w-10 h-10 rounded-full bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border-2 border-[#1e2f3d] shadow-[0_3px_6px_rgba(0,0,0,0.3)] flex items-center justify-center cursor-pointer hover:brightness-110 hover:scale-105 active:scale-95 transition-all z-20"
+                            className="w-7 h-7 rounded-full bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border border-[#1e2f3d] shadow-sm flex items-center justify-center cursor-pointer hover:brightness-110 hover:scale-105 active:scale-95 transition-all z-20"
                         >
-                            <Palmtree className="w-4.5 h-4.5 text-[#5c3c10]" />
+                            <Palmtree className="w-3.5 h-3.5 text-[#5c3c10]" />
                         </button>
 
                         {/* 4. Gold Military/General button */}
-                        <button 
+                        <button
                             onClick={() => {
                                 if (calendarRef.current) {
                                     calendarRef.current.controls.handleMilitaryClick();
@@ -1477,9 +1483,9 @@ export default function MapPage() {
                                 }
                             }}
                             title="Militer & Keamanan Negara"
-                            className="w-10 h-10 rounded-full bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border-2 border-[#1e2f3d] shadow-[0_3px_6px_rgba(0,0,0,0.3)] flex items-center justify-center cursor-pointer hover:brightness-110 hover:scale-105 active:scale-95 transition-all z-20"
+                            className="w-7 h-7 rounded-full bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border border-[#1e2f3d] shadow-sm flex items-center justify-center cursor-pointer hover:brightness-110 hover:scale-105 active:scale-95 transition-all z-20"
                         >
-                            <Shield className="w-4.5 h-4.5 text-[#5c3c10]" />
+                            <Shield className="w-3.5 h-3.5 text-[#5c3c10]" />
                         </button>
                     </div>
 
@@ -1521,22 +1527,22 @@ export default function MapPage() {
                     <div className="bg-[#FAF6EE] rounded-2xl p-6 border-4 border-[#C4B49C] shadow-2xl w-full max-w-md relative overflow-hidden flex flex-col font-sans">
                         {/* Parchment radial gradient background */}
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.02)_0%,transparent_100%)] pointer-events-none" />
-                        
+
                         <div className="flex items-center justify-between mb-4 border-b-2 border-[#C4B49C]/30 pb-3 z-10">
                             <span className="text-[12px] font-black text-[#8b7e66] tracking-widest uppercase">SIMPAN PERMAINAN</span>
-                            <button 
+                            <button
                                 onClick={() => setIsSaveModalOpen(false)}
                                 className="text-[#8b7e66] hover:text-[#5c3c10] font-black text-sm cursor-pointer"
                             >
                                 ✕
                             </button>
                         </div>
-                        
+
                         <div className="z-10 flex flex-col gap-4">
                             <div className="flex items-center gap-3 bg-[#e4dac3]/40 border border-[#bfae93]/50 p-3.5 rounded-xl">
                                 {selectedCountry && (
-                                    <img 
-                                        src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`} 
+                                    <img
+                                        src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`}
                                         className="w-8 h-5 rounded-sm object-cover border border-black/10 shadow-sm"
                                         alt="flag"
                                     />
@@ -1546,14 +1552,14 @@ export default function MapPage() {
                                     <span className="text-[13px] font-black text-[#2e261a] uppercase">{selectedCountry?.country}</span>
                                 </div>
                             </div>
-                            
+
                             <div className="flex flex-col gap-1.5">
                                 <label className="text-[10px] font-black text-[#8b7e66] tracking-wider uppercase">NAMA SAVE FILE</label>
-                                <input 
-                                    type="text" 
-                                    value={saveNameInput} 
-                                    onChange={(e) => setSaveNameInput(e.target.value)} 
-                                    className="w-full bg-[#FAF6EE] border-2 border-[#C4B49C] rounded-xl px-4 py-3 text-[#2e261a] font-bold placeholder-[#8b7e66]/50 focus:outline-none focus:border-[#5c3c10] transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] text-sm" 
+                                <input
+                                    type="text"
+                                    value={saveNameInput}
+                                    onChange={(e) => setSaveNameInput(e.target.value)}
+                                    className="w-full bg-[#FAF6EE] border-2 border-[#C4B49C] rounded-xl px-4 py-3 text-[#2e261a] font-bold placeholder-[#8b7e66]/50 focus:outline-none focus:border-[#5c3c10] transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] text-sm"
                                     placeholder="Masukkan nama save..."
                                     maxLength={100}
                                 />
@@ -1565,14 +1571,14 @@ export default function MapPage() {
                             </div>
 
                             <div className="flex items-center gap-3 mt-4">
-                                <button 
+                                <button
                                     onClick={() => setIsSaveModalOpen(false)}
                                     className="flex-1 py-3 px-4 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] font-black text-xs uppercase hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer text-center"
                                     disabled={isSaving}
                                 >
                                     Batal
                                 </button>
-                                <button 
+                                <button
                                     onClick={handleSaveGame}
                                     className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] text-[#5c3c10] border-2 border-[#1e2f3d]/10 shadow-[0_2px_4px_rgba(0,0,0,0.1)] hover:brightness-110 active:scale-98 font-black text-xs uppercase transition-all cursor-pointer text-center"
                                     disabled={isSaving}
@@ -1594,7 +1600,7 @@ export default function MapPage() {
             )}
 
             {/* Tropico Game Menu Modal */}
-            <GameMenuModal 
+            <GameMenuModal
                 isOpen={isPresidentMenuOpen}
                 onClose={() => setIsPresidentMenuOpen(false)}
                 onSaveGameClick={openSaveModal}
@@ -1602,7 +1608,7 @@ export default function MapPage() {
             />
 
             {/* Confirm Restart Modal */}
-            <ConfirmRestartModal 
+            <ConfirmRestartModal
                 isOpen={isRestartConfirmOpen}
                 onClose={() => setIsRestartConfirmOpen(false)}
                 onConfirm={handleRestart}

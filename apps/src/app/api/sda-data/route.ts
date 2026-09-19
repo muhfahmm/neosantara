@@ -263,11 +263,15 @@ const countryPaths: Record<string, string> = {
 
 const SDA_ROOT = path.join(process.cwd(), '..', 'json', 'database_SDA');
 
+let cachedAllSDA: Record<string, any> | null = null;
+const cachedSdaMap = new Map<string, any>();
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const countryName = searchParams.get('country');
 
   if (!countryName) {
+    if (cachedAllSDA) return NextResponse.json(cachedAllSDA);
     // Return all SDA data
     const result: Record<string, any> = {};
     for (const [name, relPath] of Object.entries(countryPaths)) {
@@ -278,6 +282,7 @@ export async function GET(request: NextRequest) {
         if (parsed) result[name] = parsed;
       }
     }
+    cachedAllSDA = result;
     return NextResponse.json(result);
   }
 
@@ -287,6 +292,10 @@ export async function GET(request: NextRequest) {
 
   if (!matchedKey) {
     return NextResponse.json({ error: 'Country not found' }, { status: 404 });
+  }
+
+  if (cachedSdaMap.has(matchedKey)) {
+    return NextResponse.json(cachedSdaMap.get(matchedKey));
   }
 
   const relPath = countryPaths[matchedKey];
@@ -303,5 +312,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to parse SDA data' }, { status: 500 });
   }
 
+  cachedSdaMap.set(matchedKey, parsed);
   return NextResponse.json(parsed);
 }

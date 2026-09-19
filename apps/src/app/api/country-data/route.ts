@@ -151,6 +151,9 @@ const getContinentFromOrder = (order: number) => {
     return 'Lainnya';
 };
 
+let cachedAllCountriesData: any[] | null = null;
+const cachedCountryMap = new Map<string, any>();
+
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const countryPath = searchParams.get('path');
@@ -158,6 +161,14 @@ export async function GET(request: Request) {
 
     if (!countryPath && !requestAll) {
         return NextResponse.json({ error: 'Path is required unless all=true is provided' }, { status: 400 });
+    }
+
+    if (requestAll && cachedAllCountriesData) {
+        return NextResponse.json(cachedAllCountriesData);
+    }
+
+    if (countryPath && cachedCountryMap.has(countryPath)) {
+        return NextResponse.json(cachedCountryMap.get(countryPath));
     }
 
     try {
@@ -347,7 +358,8 @@ export async function GET(request: Request) {
                 mergedByCountryKey[countryKey] = countryMerged;
             }
 
-            return NextResponse.json(Object.values(mergedByCountryKey));
+            cachedAllCountriesData = Object.values(mergedByCountryKey);
+            return NextResponse.json(cachedAllCountriesData);
         }
 
         const targetFilename = path.basename(countryPath!);
@@ -424,6 +436,7 @@ export async function GET(request: Request) {
             mergedData = { ...mergedData, ...parsed };
         }
 
+        cachedCountryMap.set(countryPath!, mergedData);
         return NextResponse.json(mergedData);
     } catch (e) {
         console.error('Failed to load country data file:', e);

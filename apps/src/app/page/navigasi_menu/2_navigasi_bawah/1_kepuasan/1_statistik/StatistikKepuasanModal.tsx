@@ -112,63 +112,63 @@ export default function StatistikKepuasanModal({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl flex flex-col relative font-sans pointer-events-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[85px] sm:pt-[95px] pb-[75px] px-4 bg-transparent pointer-events-none">
+      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-4xl h-full max-h-[calc(100vh-165px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
         
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         {/* Header */}
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-                <Smile className="h-6 w-6 text-[#5c3c10]" />
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#C4B49C]/40 flex items-center justify-between bg-[#FAF6EE] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+          <div className="flex items-center gap-3 sm:gap-6 flex-wrap">
+            <div className="flex items-center gap-2">
+              <div className="p-1 sm:p-1.5 bg-[#5c3c10]/10 rounded-lg border border-[#5c3c10]/20 shrink-0">
+                <Smile className="h-4 w-4 sm:h-5 sm:w-5 text-[#5c3c10]" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Kepuasan Rakyat</h2>
+                <h2 className="text-base sm:text-xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Kepuasan Rakyat</h2>
               </div>
             </div>
 
-            <div className="flex items-center bg-[#e4dac3]/40 p-1 rounded-xl border border-[#bfae93]/50 backdrop-blur-md ml-4">
-              <button className="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20 cursor-pointer">
+            <div className="flex items-center bg-[#e4dac3]/40 p-0.5 sm:p-1 rounded-lg border border-[#bfae93]/50 backdrop-blur-md">
+              <button className="px-3 py-1 rounded-md text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all bg-[#5c3c10] text-[#FAF6EE] shadow-sm cursor-pointer">
                 Statistik
               </button>
               <button
                 onClick={() => setActiveMenu?.("Action:NaikkanKepuasan")}
-                className="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all text-[#8b7e66] hover:text-[#5c3c10] cursor-pointer"
+                className="px-3 py-1 rounded-md text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all text-[#8b7e66] hover:text-[#5c3c10] cursor-pointer"
               >
                 Naikkan Peringkat
               </button>
             </div>
           </div>
 
-          <button onClick={onClose} className="p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
-            <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
+          <button onClick={onClose} className="p-1 sm:p-1.5 rounded-lg border border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1 shadow-xs">
+            <span className="text-[10px] font-black uppercase tracking-widest pl-1 hidden sm:inline">Tutup</span>
+            <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
-          <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-5 bg-[#FAF6EE]/40 relative z-10 custom-scrollbar">
+          <div className="space-y-4 sm:space-y-5 animate-in fade-in duration-300">
             
             {/* Kartu skor umum */}
-            <div className="bg-[#e4dac3]/25 border-2 border-[#C4B49C]/40 p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
-              <div className="flex items-center gap-5">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border-4 border-[#FAF6EE] shadow-lg flex items-center justify-center">
-                  <Smile className="h-10 w-10 text-[#5c3c10]" />
+            <div className="bg-[#e4dac3]/25 border border-[#C4B49C]/40 p-3.5 sm:p-4 rounded-xl flex flex-row items-center justify-between gap-3 shadow-xs">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border-2 border-[#FAF6EE] shadow-md flex items-center justify-center shrink-0">
+                  <Smile className="h-5 w-5 sm:h-7 sm:w-7 text-[#5c3c10]" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-[#5c3c10] uppercase tracking-wide leading-none mb-1.5">Persetujuan Umum Rakyat</h3>
-                  <p className="text-xs text-[#8b7e66] font-bold max-w-md">
+                  <h3 className="text-sm sm:text-base font-black text-[#5c3c10] uppercase tracking-wide leading-none mb-1">Persetujuan Umum Rakyat</h3>
+                  <p className="text-[10px] sm:text-xs text-[#8b7e66] font-semibold max-w-sm sm:max-w-md leading-tight">
                     Rata-rata persetujuan nasional rakyat terhadap kebijakan kepemimpinan kabinet saat ini.
                   </p>
                 </div>
               </div>
-              <div className="text-center md:text-right bg-[#FAF6EE] border-2 border-[#C4B49C]/30 px-6 py-4 rounded-xl shadow-inner min-w-[140px]">
-                <p className="text-4xl font-black text-[#2e261a] tracking-tight leading-none">{Math.round(generalSatisfaction)}%</p>
-                <p className="text-[10px] text-emerald-700 font-bold uppercase tracking-widest mt-1 flex items-center justify-center md:justify-end gap-1">
-                  <TrendingUp className="h-3 w-3" /> Stabil
+              <div className="text-right bg-[#FAF6EE] border border-[#C4B49C]/40 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg shadow-xs shrink-0 min-w-[90px] sm:min-w-[110px]">
+                <p className="text-xl sm:text-2xl font-black text-[#2e261a] tracking-tight leading-none">{Math.round(generalSatisfaction)}%</p>
+                <p className="text-[9px] text-emerald-700 font-bold uppercase tracking-wider mt-0.5 flex items-center justify-end gap-0.5">
+                  <TrendingUp className="h-2.5 w-2.5" /> Stabil
                 </p>
               </div>
             </div>

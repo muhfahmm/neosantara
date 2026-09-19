@@ -27,12 +27,19 @@ const parsePriceValues = (content: string) => {
   return Object.keys(values).length > 0 ? values : null;
 };
 
+const cachedPriceDataMap = new Map<string, any>();
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const countryName = searchParams.get('country');
 
   if (!countryName) {
     return NextResponse.json({ error: 'Country is required' }, { status: 400 });
+  }
+
+  const target = normalizeName(countryName);
+  if (cachedPriceDataMap.has(target)) {
+    return NextResponse.json(cachedPriceDataMap.get(target));
   }
 
   try {
@@ -66,14 +73,18 @@ export async function GET(request: Request) {
     walk(priceRoot);
 
     if (candidates.length === 0) {
-      return NextResponse.json({ country: countryName, prices: null });
+      const resData = { country: countryName, prices: null };
+      cachedPriceDataMap.set(target, resData);
+      return NextResponse.json(resData);
     }
 
     const filePath = candidates[0];
     const content = fs.readFileSync(filePath, 'utf8');
     const values = parsePriceValues(content);
 
-    return NextResponse.json({ country: countryName, prices: values });
+    const resData = { country: countryName, prices: values };
+    cachedPriceDataMap.set(target, resData);
+    return NextResponse.json(resData);
   } catch (error) {
     console.error('Failed to read price data:', error);
     return NextResponse.json({ error: 'Failed to read price data' }, { status: 500 });

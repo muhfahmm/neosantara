@@ -60,7 +60,13 @@ async function loadJsonCategoryFiles(baseDir: string): Promise<Record<string, an
   return metadata;
 }
 
+let cachedBuildingMetadata: Record<string, any> | null = null;
+
 export async function GET() {
+  if (cachedBuildingMetadata) {
+    return NextResponse.json(cachedBuildingMetadata);
+  }
+
   try {
     let base = path.join(process.cwd(), 'json', 'semua_fitur_negara');
     // In dev server process.cwd() may be apps/; try parent folder as fallback
@@ -82,7 +88,8 @@ export async function GET() {
     const metadata = await loadJsonCategoryFiles(base);
     if (Object.keys(metadata).length > 0) {
       console.log('[building-metadata] loaded from category files:', Object.keys(metadata).length, 'items');
-      return NextResponse.json(metadata);
+      cachedBuildingMetadata = metadata;
+      return NextResponse.json(cachedBuildingMetadata);
     }
     
     // Fallback: parse TS files if category JSON not available
@@ -121,7 +128,8 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json(fallbackMetadata);
+    cachedBuildingMetadata = fallbackMetadata;
+    return NextResponse.json(cachedBuildingMetadata);
   } catch (err) {
     console.error('[building-metadata] error', err);
     return NextResponse.json({ error: String(err) }, { status: 500 });

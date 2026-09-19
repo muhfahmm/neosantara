@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import PlayMenuPage from './page/page';
 
 export default function RootEntry() {
-    redirect('/page');
+    return <PlayMenuPage />;
 }

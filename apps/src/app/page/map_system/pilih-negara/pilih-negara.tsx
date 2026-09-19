@@ -36,7 +36,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import Link from 'next/link';
-import { WORLD_GEOJSON, COUNTRIES_DATA, CAPITALS_DATA } from '../map-data';
+import { COUNTRIES_DATA, CAPITALS_DATA } from '../map-data';
 import countryPaths from '../country-paths.json';
 
 // Import logika ekonomi dari folder logic agar kalkulasi sama persis
@@ -159,19 +159,15 @@ export default function PilihNegaraPage() {
   }, []);
 
   useEffect(() => {
-    const enhancedData = COUNTRIES_DATA.map((c) => ({
-      ...c,
-      flag: getFlagEmoji(c.iso),
-      name_id: c.country.charAt(0).toUpperCase() + c.country.slice(1),
-    }));
-    setCountries(enhancedData);
-
     const initMap = async () => {
       if (hasInitRef.current) return;
       hasInitRef.current = true;
 
       try {
-        const mod = await import('../../../../wasm/map-engine-rs/map_engine_rs');
+        const [mod, { WORLD_GEOJSON }] = await Promise.all([
+          import('../../../../wasm/map-engine-rs/map_engine_rs'),
+          import('../world-geojson'),
+        ]);
         await mod.default(); // Initialize WASM module
 
         const { start_map_engine, set_selected_country_on_map, get_country_at_on_map } = mod;
@@ -186,9 +182,17 @@ export default function PilihNegaraPage() {
       } catch (e) {
         console.error('Failed to start map engine bg:', e);
       } finally {
-        setTimeout(() => setIsLoading(false), 500);
+        setIsLoading(false);
       }
     };
+
+    const enhancedData = COUNTRIES_DATA.map((c) => ({
+      ...c,
+      flag: getFlagEmoji(c.iso),
+      name_id: c.country.charAt(0).toUpperCase() + c.country.slice(1),
+    }));
+    setCountries(enhancedData);
+
     initMap();
   }, []);
 
@@ -202,25 +206,12 @@ export default function PilihNegaraPage() {
     [countries, searchQuery]
   );
 
-  // Fetch SDA data dari API saat negara berubah
-  useEffect(() => {
-    if (!hasInteracted || !filteredCountries[currentIndex]) {
-      setSdaData(null);
-      return;
-    }
-    const countryName = filteredCountries[currentIndex].country;
-    fetch(`/api/sda-data?country=${encodeURIComponent(countryName)}`)
-      .then(r => r.ok ? r.json() : null)
-      .then(data => setSdaData(data))
-      .catch(() => setSdaData(null));
-  }, [hasInteracted, currentIndex, filteredCountries]);
-
   useEffect(() => {
     const selected = filteredCountries[currentIndex];
 
-    // 🔥 PERBAIKAN 1: Jika tidak ada negara yang dipilih (Search tidak ketemu), Reset Semua data menjadi kosong!
     if (!selected) {
       setCountryDetail(null);
+      setSdaData(null);
       setHasInteracted(false);
       return;
     }
@@ -233,37 +224,34 @@ export default function PilihNegaraPage() {
           ([name]) => name.toLowerCase() === selected.country.toLowerCase()
         )?.[1];
 
-        if (!relPath) {
-          console.warn(`No path found for country: ${selected.country}`);
-          return;
-        }
-
         try {
-          const res = await fetch(`/api/country-data?path=${relPath}`);
-          const mergedData = await res.json();
+          const countryName = selected.country;
+          const [resData, defaultPrices, sdaRes] = await Promise.all([
+            relPath ? fetch(`/api/country-data?path=${relPath}`).then(r => r.json()).catch(() => null) : Promise.resolve(null),
+            loadDefaultPrices(countryName),
+            fetch(`/api/sda-data?country=${encodeURIComponent(countryName)}`).then(r => r.ok ? r.json() : null).catch(() => null)
+          ]);
 
-          if (mergedData?.error) {
-            console.warn(`Country data load error for ${selected.country}:`, mergedData.error);
+          setSdaData(sdaRes);
+
+          if (resData && !resData.error) {
+            setCountryDetail({
+              ...resData,
+              ppn: resData.pajak?.ppn?.tarif,
+              corporate: resData.pajak?.korporasi?.tarif,
+              income_tax: resData.pajak?.penghasilan?.tarif,
+              cigarette_tax: resData.pajak?.bea_cukai?.tarif,
+              environment_tax: resData.pajak?.lingkungan?.tarif,
+              harga: defaultPrices || resData?.harga || {},
+              price_rice: defaultPrices?.harga_beras ?? resData?.harga?.harga_beras,
+              price_fuel: defaultPrices?.harga_minyak_goreng ?? resData?.harga?.harga_bbm,
+              un_vote: resData.un_vote,
+              reputation: resData.reputasi_diplomatik,
+              kepuasan: resData.kepuasan ?? 50,
+            });
+          } else {
             setCountryDetail(null);
-            return;
           }
-
-          const defaultPrices = await loadDefaultPrices(selected.country);
-
-          setCountryDetail({
-            ...mergedData,
-            ppn: mergedData.pajak?.ppn?.tarif,
-            corporate: mergedData.pajak?.korporasi?.tarif,
-            income_tax: mergedData.pajak?.penghasilan?.tarif,
-            cigarette_tax: mergedData.pajak?.bea_cukai?.tarif,
-            environment_tax: mergedData.pajak?.lingkungan?.tarif,
-            harga: defaultPrices || mergedData?.harga || {},
-            price_rice: defaultPrices?.harga_beras ?? mergedData?.harga?.harga_beras,
-            price_fuel: defaultPrices?.harga_minyak_goreng ?? mergedData?.harga?.harga_bbm,
-            un_vote: mergedData.un_vote,
-            reputation: mergedData.reputasi_diplomatik,
-            kepuasan: mergedData.kepuasan ?? 50,
-          });
         } catch (e) {
           console.error('Failed to load country data directly:', e);
           setCountryDetail(null);

@@ -370,41 +370,41 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
   return (
     <>
       {/* ========== MODAL UTAMA ========== */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent pointer-events-none">
-        <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl flex flex-col relative font-sans pointer-events-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-transparent pointer-events-none">
+        <div className="bg-[#FAF6EE] border-2 sm:border-4 border-[#C4B49C] rounded-2xl w-full max-w-[95vw] lg:max-w-6xl max-h-[90vh] sm:max-h-[85vh] h-full overflow-hidden shadow-2xl flex flex-col relative font-sans pointer-events-auto">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
 
           {/* Header */}
-          <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
-            <div className="flex items-center gap-8">
-              <div className="flex items-center gap-3">
-                <Landmark className="h-6 w-6 text-amber-700 animate-pulse" />
+          <div className="px-4 sm:px-8 py-3 sm:py-5 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 flex-wrap gap-2">
+            <div className="flex items-center gap-3 sm:gap-8 flex-wrap">
+              <div className="flex items-center gap-2.5">
+                <Landmark className="h-5 w-5 sm:h-6 sm:w-6 text-amber-700 animate-pulse shrink-0" />
                 <div>
-                  <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">
+                  <h2 className="text-lg sm:text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">
                     Dewan Kabinet Menteri
                   </h2>
                 </div>
               </div>
-              <div className="text-xs font-bold text-[#5c3c10] bg-[#e4dac3]/40 px-3 py-1.5 rounded-lg border border-[#C4B49C]/30">
+              <div className="text-[11px] sm:text-xs font-bold text-[#5c3c10] bg-[#e4dac3]/40 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-[#C4B49C]/30">
                 Kas: {money.toLocaleString("id-ID")} EM
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+              className="p-1.5 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
             >
-              <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-5 w-5" />
+              <span className="text-[10px] font-black uppercase tracking-widest pl-1 hidden sm:inline">Tutup</span>
+              <X className="h-4 w-4 sm:h-5 sm:w-5" />
             </button>
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-2 px-8 pt-4 border-b-2 border-[#C4B49C]/20 relative z-10">
+          <div className="flex gap-1 sm:gap-2 px-4 sm:px-8 pt-3 border-b-2 border-[#C4B49C]/20 relative z-10 overflow-x-auto no-scrollbar">
             {TABS.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-2 text-xs font-black uppercase tracking-wide rounded-t-lg border-b-2 transition-all cursor-pointer ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-black uppercase tracking-wide rounded-t-lg border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === tab.key
                     ? "border-amber-700 text-[#5c3c10] bg-[#e4dac3]/40"
                     : "border-transparent text-[#8b7e66] hover:text-[#5c3c10]"
@@ -416,8 +416,8 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
           </div>
 
           {/* Content */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
-            <p className="text-xs text-[#8b7e66] font-semibold leading-relaxed mb-6">
+          <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#FAF6EE]/40 relative z-10 custom-scrollbar">
+            <p className="text-[11px] sm:text-xs text-[#8b7e66] font-semibold leading-relaxed mb-4 sm:mb-6">
               Kelola kabinet pemerintahan tertinggi negara untuk menjaga kinerja pelayanan birokrasi
               Anda tetap berintegritas. Tekan salah satu kotak level untuk melompat langsung ke level
               tersebut — biaya akan dijumlahkan dari semua level yang dilewati. Tekan kotak yang sudah terisi
