@@ -47,6 +47,7 @@ const TingkatHubunganModal = dynamic(() => import("./7_geopolitik/TingkatHubunga
 // 8. Sosial & Budaya
 const AgamaModal = dynamic(() => import("./8_sosial_budaya/agama/AgamaModal"), { ssr: false });
 const IdeologiModal = dynamic(() => import("./8_sosial_budaya/ideologi/IdeologiModal"), { ssr: false });
+const DoktrinKeterbukaanModal = dynamic(() => import("./8_sosial_budaya/keterbukaan/DoktrinKeterbukaanModal"), { ssr: false });
 
 // 9. Kementerian
 const KementerianModal = dynamic(() => import("./9_kementrian/KementerianModal"), { ssr: false });
@@ -484,6 +485,16 @@ function ModalsManager({
           countryDetail={countryDetail}
           setCountryDetail={setCountryDetail}
           onOpenDebt={() => setActiveMenu("Menu:Hutang")}
+        />
+      );
+    case "Menu:DoktrinKeterbukaan":
+      return (
+        <DoktrinKeterbukaanModal
+          isOpen={true}
+          onClose={onClose}
+          countryDetail={countryDetail}
+          setCountryDetail={setCountryDetail}
+          selectedCountry={selectedCountry}
         />
       );
 

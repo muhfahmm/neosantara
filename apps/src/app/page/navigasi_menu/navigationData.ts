@@ -1,4 +1,4 @@
-import { Smile, Users2, Activity, Wallet, Wrench, Shield, ShieldAlert, Globe, Star, Landmark, ArrowRightLeft, FileText, CreditCard, BarChart3, TrendingUp, Hammer, Swords as MilitaryIcon, Bolt, Droplet, Radiation, Info, HandHelping, HeartHandshake, Tag, Eye, Home, Utensils, Atom } from "lucide-react";
+import { Smile, Users2, Activity, Wallet, Wrench, Shield, ShieldAlert, Globe, Star, Landmark, ArrowRightLeft, FileText, CreditCard, BarChart3, TrendingUp, Hammer, Swords as MilitaryIcon, Bolt, Droplet, Radiation, Info, HandHelping, HeartHandshake, Tag, Eye, Home, Utensils, Atom, Scale } from "lucide-react";
 
 export const menuItems = [
   { id: "Kepuasan", icon: Smile, label: "Kepuasan" },
@@ -53,6 +53,7 @@ export const subMenuItems: Record<string, any[]> = {
   "Sosial & Budaya": [
     { id: "Menu:Agama", label: "Agama & Kepercayaan", icon: Star },
     { id: "Menu:Ideologi", label: "Ideologi Negara", icon: Shield },
+    { id: "Menu:DoktrinKeterbukaan", label: "Doktrin & Keterbukaan", icon: Globe },
   ],
   "Kementerian": [
     { id: "Dashboard:Kementerian", label: "Kementerian", icon: Landmark },

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Smile, TrendingUp, Landmark, Coins, Apple, Plug, Home } from "lucide-react";
+import { X, Smile, TrendingUp, Landmark, Coins, Apple, Plug, Home, Globe } from "lucide-react";
 import {
   calculatePajakScore,
   calculateHargaScore,
@@ -9,6 +9,7 @@ import {
   calculateListrikScore,
   calculateHunianScore,
   calculateLayananPublikScore,
+  calculateKeterbukaanScore,
 } from "@/app/logic/kepuasanCalculator";
 
 interface StatistikKepuasanModalProps {
@@ -33,8 +34,6 @@ export default function StatistikKepuasanModal({
   
   if (!isOpen) return null;
 
-
-
   // Gunakan utility terpusat agar konsisten dengan nilai di navbar
   const pajakScore   = calculatePajakScore(countryDetail);
   const hargaScore   = calculateHargaScore(countryDetail);
@@ -42,9 +41,10 @@ export default function StatistikKepuasanModal({
   const listrikScore = calculateListrikScore(countryDetail, metadata);
   const hunianScore  = calculateHunianScore(countryDetail, metadata);
   const layananPublikScore = calculateLayananPublikScore(countryDetail);
+  const keterbukaanScore   = calculateKeterbukaanScore(countryDetail);
   
-  // Hitung general satisfaction sebagai rata-rata dari 6 sektor
-  const generalSatisfaction = (pajakScore + hargaScore + panganScore + listrikScore + hunianScore + layananPublikScore) / 6;
+  // Hitung general satisfaction sebagai rata-rata dari 7 sektor
+  const generalSatisfaction = (pajakScore + hargaScore + panganScore + listrikScore + hunianScore + layananPublikScore + keterbukaanScore) / 7;
 
   // Update kepuasan di countryDetail setiap kali generalSatisfaction berubah
   useEffect(() => {
@@ -108,6 +108,14 @@ export default function StatistikKepuasanModal({
       color: "text-yellow-700", 
       desc: "Rasio ketersediaan sarana sosial, kesehatan, pendidikan, keamanan, dan rekreasi.",
       menuId: "Menu:TempatUmum"
+    },
+    { 
+      name: "Doktrin & Keterbukaan", 
+      score: Math.round(keterbukaanScore), 
+      icon: Globe, 
+      color: "text-indigo-600", 
+      desc: "Kebebasan sipil, HAM, media, dan jaminan keterbukaan informasi.",
+      menuId: "Menu:DoktrinKeterbukaan"
     }
   ];
 

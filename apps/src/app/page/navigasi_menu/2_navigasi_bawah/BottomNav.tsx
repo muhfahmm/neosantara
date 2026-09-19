@@ -61,25 +61,8 @@ export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, is
       setActiveTab(null);
       setActiveMenu("Peta Taktis");
     } else {
-      // If opening Sosial & Budaya, choose a sensible default subtab
-      if (id === "Sosial & Budaya") {
-        // Prefer showing Agama if the country has a non-ateist religion recorded,
-        // otherwise default to Ideologi.
-        let defaultSub = "Menu:Ideologi";
-        try {
-          const rel = countryDetail?.religion;
-          if (rel && String(rel).toLowerCase() !== 'ateisme') {
-            defaultSub = "Menu:Agama";
-          }
-        } catch (e) {
-          // fallback stays Menu:Ideologi
-        }
-        setActiveTab(id);
-        setActiveMenu(defaultSub);
-      } else {
-        setActiveTab(id);
-        setActiveMenu(id);
-      }
+      setActiveTab(id);
+      setActiveMenu(id);
     }
   };
 

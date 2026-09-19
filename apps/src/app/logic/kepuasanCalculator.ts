@@ -12,6 +12,7 @@ import {
   calculateProduction,
   calculateConsumption,
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
+import { getDoktrinKeterbukaan } from "@/../../json/database_doktrin_keterbukaan/index";
 
 // ─── Helper ─────────────────────────────────────────────────────────────────
 
@@ -214,11 +215,36 @@ export function calculateLayananPublikScore(countryDetail: any): number {
   return Math.round(totalScore / categories.length);
 }
 
+export function calculateKeterbukaanScore(countryDetail: any): number {
+  if (!countryDetail) return 50;
+  if (countryDetail.opennessIndex !== undefined && countryDetail.opennessIndex !== null) {
+    return Math.min(100, Math.max(1, Number(countryDetail.opennessIndex)));
+  }
+
+  const countryName = countryDetail?.nama_negara || countryDetail?.country || countryDetail?.name_id || countryDetail?.name_en || "";
+  const dbData = getDoktrinKeterbukaan(countryName) || {};
+
+  const speechScore = Number(countryDetail?.speechScore ?? dbData.speechScore ?? 50);
+  const religionScore = Number(countryDetail?.religionScore ?? dbData.religionScore ?? 60);
+  const demoScore = Number(countryDetail?.demoScore ?? dbData.demoScore ?? 45);
+  const transparencyScore = Number(countryDetail?.transparencyScore ?? dbData.transparencyScore ?? 55);
+  const mediaScore = Number(countryDetail?.mediaScore ?? dbData.mediaScore ?? 50);
+  const internetScore = Number(countryDetail?.internetScore ?? dbData.internetScore ?? 60);
+  const borderScore = Number(countryDetail?.borderScore ?? dbData.borderScore ?? 40);
+  const tradeScore = Number(countryDetail?.tradeScore ?? dbData.tradeScore ?? 60);
+  const diplomacyScore = Number(countryDetail?.diplomacyScore ?? dbData.diplomacyScore ?? 55);
+
+  const avg = Math.round(
+    (speechScore + religionScore + demoScore + transparencyScore + mediaScore + internetScore + borderScore + tradeScore + diplomacyScore) / 9
+  );
+  return Math.min(100, Math.max(1, avg));
+}
+
 // ─── Main exported function ──────────────────────────────────────────────────
 
 /**
  * Hitung skor kepuasan rakyat dari countryDetail & metadata.
- * Mengembalikan nilai 0–100 sebagai rata-rata 6 sektor.
+ * Mengembalikan nilai 0–100 sebagai rata-rata 7 sektor.
  */
 export function calculateKepuasan(countryDetail: any, metadata: any): number {
   if (!countryDetail) return 50;
@@ -229,6 +255,7 @@ export function calculateKepuasan(countryDetail: any, metadata: any): number {
   const listrikScore = calculateListrikScore(countryDetail, metadata);
   const hunianScore  = calculateHunianScore(countryDetail, metadata);
   const layananPublikScore = calculateLayananPublikScore(countryDetail);
+  const keterbukaanScore   = calculateKeterbukaanScore(countryDetail);
 
-  return (pajakScore + hargaScore + panganScore + listrikScore + hunianScore + layananPublikScore) / 6;
+  return (pajakScore + hargaScore + panganScore + listrikScore + hunianScore + layananPublikScore + keterbukaanScore) / 7;
 }
