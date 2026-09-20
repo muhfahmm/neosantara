@@ -6,7 +6,8 @@ const mesir_olahan_pangan = {
   pengolahan_daging: 86,
   mie_instan: 57,
   minyak_goreng: 49,
-  susu: 98
+  susu: 98,
+  beras: 102
   
   
 };

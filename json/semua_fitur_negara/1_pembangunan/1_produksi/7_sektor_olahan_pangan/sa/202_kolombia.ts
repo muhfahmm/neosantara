@@ -6,7 +6,8 @@ const kolombia_olahan_pangan = {
   pengolahan_daging: 40,
   mie_instan: 30,
   minyak_goreng: 27,
-  susu: 53
+  susu: 53,
+  beras: 50
   
   
 };

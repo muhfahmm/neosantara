@@ -6,7 +6,8 @@ const belanda_olahan_pangan = {
   pengolahan_daging: 11,
   mie_instan: 12,
   minyak_goreng: 13,
-  susu: 23
+  susu: 23,
+  beras: 16
   
   
 };

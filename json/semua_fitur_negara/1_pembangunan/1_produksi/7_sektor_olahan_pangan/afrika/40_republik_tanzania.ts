@@ -6,7 +6,8 @@ const republik_tanzania_olahan_pangan = {
   pengolahan_daging: 53,
   mie_instan: 37,
   minyak_goreng: 33,
-  susu: 65
+  susu: 65,
+  beras: 64
   
   
 };

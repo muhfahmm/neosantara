@@ -6,7 +6,8 @@ const kroasia_olahan_pangan = {
   pengolahan_daging: 1,
   mie_instan: 5,
   minyak_goreng: 8,
-  susu: 12
+  susu: 12,
+  beras: 4
   
   
 };

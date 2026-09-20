@@ -122,17 +122,19 @@ export const FOOD_CONSUMPTION_PER_CAPITA: Record<string, number> = {
   mie_instan: 0.25,
   minyak_goreng: 0.10,
   susu: 0.15,
+  beras: 0.35,
 };
 
 // Helper to find building metadata
 export const findMeta = (key: string, metadata: any) => {
   if (!metadata) return undefined;
   if (metadata[key]) return metadata[key];
+  const cleanKey = key.replace(/^\d+_/, '').replace(/^pabrik_pengolahan_/, '').replace(/^pabrik_/, '').replace(/^kebun_/, '').replace(/^peternakan_/, '');
   for (const k of Object.keys(metadata)) {
     const entry = metadata[k];
     if (!entry) continue;
-    if (entry.dataKey === key) return entry;
-    if (k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
+    if (entry.dataKey === key || entry.dataKey === cleanKey) return entry;
+    if (k === key || k === cleanKey || k.endsWith(`_${key}`) || k.endsWith(`_${cleanKey}`)) return entry;
   }
   return undefined;
 };
@@ -164,7 +166,7 @@ export const isFoodRawMaterialDeficit = (factoryKey: string, countryDetail: any,
 
     let rawFactoryCons = 0;
     // Hitung total konsumsi pabrik untuk bahan baku ini (dari semua pabrik konsumen)
-    const foodKeys = ['gula', 'roti', 'pengolahan_daging', 'mie_instan', 'minyak_goreng', 'susu'];
+    const foodKeys = ['gula', 'roti', 'pengolahan_daging', 'mie_instan', 'minyak_goreng', 'susu', 'beras'];
     for (const fk of foodKeys) {
       const fIngredients = getFoodIngredientsRequirements(fk, metadata);
       const matchedIng = fIngredients.find(item => item.key === rawKey);

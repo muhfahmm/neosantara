@@ -6,7 +6,8 @@ const sudan_selatan_olahan_pangan = {
   pengolahan_daging: 5,
   mie_instan: 9,
   minyak_goreng: 10,
-  susu: 18
+  susu: 18,
+  beras: 9
   
   
 };

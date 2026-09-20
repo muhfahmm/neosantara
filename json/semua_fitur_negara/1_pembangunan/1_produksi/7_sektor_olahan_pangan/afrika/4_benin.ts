@@ -6,7 +6,8 @@ const benin_olahan_pangan = {
   pengolahan_daging: 7,
   mie_instan: 10,
   minyak_goreng: 11,
-  susu: 19
+  susu: 19,
+  beras: 12
   
   
 };

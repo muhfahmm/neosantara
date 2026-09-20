@@ -6,7 +6,8 @@ const china_olahan_pangan = {
   pengolahan_daging: 1167,
   mie_instan: 705,
   minyak_goreng: 568,
-  susu: 1179
+  susu: 1179,
+  beras: 1356
   
   
 };

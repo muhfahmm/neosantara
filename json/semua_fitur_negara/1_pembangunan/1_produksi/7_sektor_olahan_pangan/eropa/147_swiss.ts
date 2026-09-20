@@ -6,7 +6,8 @@ const swiss_olahan_pangan = {
   pengolahan_daging: 3,
   mie_instan: 7,
   minyak_goreng: 10,
-  susu: 16
+  susu: 16,
+  beras: 7
   
   
 };

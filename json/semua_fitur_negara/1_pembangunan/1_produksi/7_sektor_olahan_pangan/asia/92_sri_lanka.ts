@@ -6,7 +6,8 @@ const sri_lanka_olahan_pangan = {
   pengolahan_daging: 14,
   mie_instan: 14,
   minyak_goreng: 15,
-  susu: 26
+  susu: 26,
+  beras: 20
   
   
 };

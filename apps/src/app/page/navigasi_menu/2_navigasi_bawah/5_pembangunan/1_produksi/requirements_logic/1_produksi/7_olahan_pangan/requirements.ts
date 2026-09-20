@@ -62,10 +62,18 @@ export const REQUIREMENTS: BuildingRequirements[] = [
       { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 310 },
     ],
   },
+  {
+    buildingKey: 'beras',
+    requirements: [
+      { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 500 },
+      { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 320 },
+    ],
+  },
 ];
 
 export function findRequirements(buildingKey: string) {
-  return REQUIREMENTS.find((entry) => entry.buildingKey === buildingKey);
+  const cleanKey = buildingKey.replace(/^\d+_/, '').replace(/^pabrik_pengolahan_/, '').replace(/^pabrik_/, '');
+  return REQUIREMENTS.find((entry) => entry.buildingKey === buildingKey || entry.buildingKey === cleanKey);
 }
 
 export function getTotalProduction(

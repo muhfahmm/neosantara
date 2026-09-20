@@ -6,7 +6,8 @@ const pakistan_olahan_pangan = {
   pengolahan_daging: 197,
   mie_instan: 124,
   minyak_goreng: 103,
-  susu: 210
+  susu: 210,
+  beras: 231
   
   
 };

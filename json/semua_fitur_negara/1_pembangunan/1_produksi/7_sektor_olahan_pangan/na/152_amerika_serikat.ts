@@ -6,5 +6,6 @@ const amerika_serikat_olahan_pangan = {
   pengolahan_daging: 281,
   mie_instan: 174,
   minyak_goreng: 143,
-  susu: 293
+  susu: 293,
+  beras: 328
 };

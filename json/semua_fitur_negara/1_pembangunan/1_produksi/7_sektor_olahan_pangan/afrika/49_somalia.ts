@@ -6,7 +6,8 @@ const somalia_olahan_pangan = {
   pengolahan_daging: 12,
   mie_instan: 13,
   minyak_goreng: 14,
-  susu: 25
+  susu: 25,
+  beras: 18
   
   
 };

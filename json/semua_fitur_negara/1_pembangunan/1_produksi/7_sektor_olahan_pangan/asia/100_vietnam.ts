@@ -6,7 +6,8 @@ const vietnam_olahan_pangan = {
   pengolahan_daging: 81,
   mie_instan: 54,
   minyak_goreng: 47,
-  susu: 94
+  susu: 94,
+  beras: 103
   
   
 };

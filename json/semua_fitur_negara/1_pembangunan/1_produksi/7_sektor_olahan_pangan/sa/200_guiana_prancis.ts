@@ -6,7 +6,8 @@ const guiana_prancis_olahan_pangan = {
   pengolahan_daging: 13,
   mie_instan: 3,
   minyak_goreng: 6,
-  susu: 9
+  susu: 9,
+  beras: 4
   
   
 };

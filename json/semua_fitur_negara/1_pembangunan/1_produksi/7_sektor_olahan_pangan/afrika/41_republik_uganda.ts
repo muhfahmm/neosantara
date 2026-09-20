@@ -6,7 +6,8 @@ const republik_uganda_olahan_pangan = {
   pengolahan_daging: 34,
   mie_instan: 26,
   minyak_goreng: 24,
-  susu: 47
+  susu: 47,
+  beras: 43
   
   
 };

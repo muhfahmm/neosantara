@@ -91,7 +91,10 @@ export default function BaseProduksiGrid({
   ongoingConstructions = [],
   currentDate,
 }: BaseProduksiGridProps) {
-  const formatLabel = (key: string) => {
+  const formatLabel = (key: string, bMeta?: any) => {
+    if (bMeta && bMeta.label) {
+      return bMeta.label;
+    }
     const customLabels: Record<string, string> = {
       pembangkit_listrik_tenaga_nuklir: "PLT Nuklir (PLTN)",
       pembangkit_listrik_tenaga_air: "PLT Air (PLTA)",
@@ -133,7 +136,7 @@ export default function BaseProduksiGrid({
         {keys.map((key) => {
           const bMeta = findMeta(key) || {};
           const perCount = Number(countryDetail?.[key]) || 0;
-          const label = formatLabel(key);
+          const label = formatLabel(key, bMeta);
           const isHighlighted = highlightedCardKey === key;
           const isAvailable = isBuildingAvailable ? isBuildingAvailable(key, countryDetail?.country || '') : true;
           const fuelRequirements = isElectricityTab ? getKelistrikanFuelRequirements(key) : [];
@@ -250,9 +253,11 @@ export default function BaseProduksiGrid({
                         const isDeficit = isFoodRawMaterialDeficit(key, countryDetail, metadata);
                         const accumulated = getMaterialStock(countryDetail, key);
                         const displayVal = isDeficit ? 0 : accumulated;
+                        const isZeroOrDeficit = isDeficit || displayVal === 0;
+
                         return (
                           <div className="flex flex-col items-center justify-center">
-                            <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isDeficit ? 'text-rose-600' : 'text-[#2e261a]'}`}>
+                            <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isZeroOrDeficit ? 'text-rose-600' : 'text-[#2e261a]'}`}>
                               {displayVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                             </span>
                             {isDeficit && (

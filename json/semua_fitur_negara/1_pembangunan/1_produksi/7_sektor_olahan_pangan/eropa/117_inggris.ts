@@ -6,7 +6,8 @@ const inggris_olahan_pangan = {
   pengolahan_daging: 54,
   mie_instan: 38,
   minyak_goreng: 34,
-  susu: 66
+  susu: 66,
+  beras: 65
   
   
 };

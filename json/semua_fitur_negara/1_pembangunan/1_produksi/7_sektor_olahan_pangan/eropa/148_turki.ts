@@ -6,7 +6,8 @@ const turki_olahan_pangan = {
   pengolahan_daging: 69,
   mie_instan: 47,
   minyak_goreng: 41,
-  susu: 82
+  susu: 82,
+  beras: 83
   
   
 };

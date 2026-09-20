@@ -6,7 +6,8 @@ const aljazair_olahan_pangan = {
   pengolahan_daging: 35,
   mie_instan: 27,
   minyak_goreng: 25,
-  susu: 48
+  susu: 48,
+  beras: 44
   
   
 };

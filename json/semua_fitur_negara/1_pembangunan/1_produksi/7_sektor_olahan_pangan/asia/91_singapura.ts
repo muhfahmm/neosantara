@@ -6,7 +6,8 @@ const singapura_olahan_pangan = {
   pengolahan_daging: 1,
   mie_instan: 6,
   minyak_goreng: 8,
-  susu: 13
+  susu: 13,
+  beras: 4
   
   
 };

@@ -6,7 +6,8 @@ const nigeria_olahan_pangan = {
   pengolahan_daging: 182,
   mie_instan: 115,
   minyak_goreng: 96,
-  susu: 195
+  susu: 195,
+  beras: 214
   
   
 };

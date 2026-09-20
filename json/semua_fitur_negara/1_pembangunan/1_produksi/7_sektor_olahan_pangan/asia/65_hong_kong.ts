@@ -6,7 +6,8 @@ const hong_kong_olahan_pangan = {
   pengolahan_daging: 2,
   mie_instan: 7,
   minyak_goreng: 9,
-  susu: 15
+  susu: 15,
+  beras: 6
   
   
 };

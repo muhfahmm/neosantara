@@ -6,7 +6,8 @@ const australia_olahan_pangan = {
   pengolahan_daging: 18,
   mie_instan: 16,
   minyak_goreng: 16,
-  susu: 30
+  susu: 30,
+  beras: 24
   
   
 };

@@ -6,7 +6,8 @@ const burundi_olahan_pangan = {
   pengolahan_daging: 6,
   mie_instan: 9,
   minyak_goreng: 11,
-  susu: 19
+  susu: 19,
+  beras: 10
   
   
 };

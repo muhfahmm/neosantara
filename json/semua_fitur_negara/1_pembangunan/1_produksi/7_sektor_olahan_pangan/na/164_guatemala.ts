@@ -6,7 +6,8 @@ const guatemala_olahan_pangan = {
   pengolahan_daging: 11,
   mie_instan: 12,
   minyak_goreng: 13,
-  susu: 24
+  susu: 24,
+  beras: 17
   
   
 };

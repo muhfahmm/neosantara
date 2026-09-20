@@ -6,7 +6,8 @@ const yunani_olahan_pangan = {
   pengolahan_daging: 4,
   mie_instan: 8,
   minyak_goreng: 10,
-  susu: 17
+  susu: 17,
+  beras: 9
   
   
 };

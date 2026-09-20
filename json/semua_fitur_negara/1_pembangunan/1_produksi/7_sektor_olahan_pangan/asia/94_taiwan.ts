@@ -6,7 +6,8 @@ const taiwan_olahan_pangan = {
   pengolahan_daging: 15,
   mie_instan: 15,
   minyak_goreng: 15,
-  susu: 28
+  susu: 28,
+  beras: 21
   
   
 };

@@ -6,7 +6,8 @@ const rwanda_olahan_pangan = {
   pengolahan_daging: 8,
   mie_instan: 10,
   minyak_goreng: 12,
-  susu: 20
+  susu: 20,
+  beras: 12
   
   
 };

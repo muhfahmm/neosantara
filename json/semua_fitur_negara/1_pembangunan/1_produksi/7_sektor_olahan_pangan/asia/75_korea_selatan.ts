@@ -6,7 +6,8 @@ const korea_selatan_olahan_pangan = {
   pengolahan_daging: 39,
   mie_instan: 29,
   minyak_goreng: 27,
-  susu: 51
+  susu: 51,
+  beras: 48
   
   
 };

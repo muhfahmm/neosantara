@@ -95,5 +95,19 @@
     "konsumsi_bahan_baku": [
       { "key": "sapi_perah", "label": "sapi perah", "amount": 8 }
     ]
+  },
+  "beras": {
+    "key": "8_pabrik_pengolahan_beras",
+    "dataKey": "beras",
+    "label": "Pabrik Pengolahan Beras",
+    "deskripsi": "Pabrik Pengolahan Beras",
+    "produksi": 300,
+    "satuan": "TON",
+    "waktu_pembangunan": 15,
+    "biaya_pembangunan": 3200,
+    "konsumsi_listrik": 25,
+    "konsumsi_bahan_baku": [
+      { "key": "padi", "label": "padi", "amount": 10 }
+    ]
   }
 }

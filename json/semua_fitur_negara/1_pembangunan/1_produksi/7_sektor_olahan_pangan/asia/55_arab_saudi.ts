@@ -6,7 +6,8 @@ const arab_saudi_olahan_pangan = {
   pengolahan_daging: 24,
   mie_instan: 20,
   minyak_goreng: 20,
-  susu: 37
+  susu: 37,
+  beras: 31
   
   
 };

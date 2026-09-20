@@ -6,7 +6,8 @@ const guinea_bissau_olahan_pangan = {
   pengolahan_daging: 1,
   mie_instan: 4,
   minyak_goreng: 7,
-  susu: 10
+  susu: 10,
+  beras: 7
   
   
 };

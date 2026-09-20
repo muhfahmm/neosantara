@@ -6,7 +6,8 @@ const madagaskar_olahan_pangan = {
   pengolahan_daging: 20,
   mie_instan: 17,
   minyak_goreng: 18,
-  susu: 32
+  susu: 32,
+  beras: 26
   
   
 };

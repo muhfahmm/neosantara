@@ -6,7 +6,8 @@ const malaysia_olahan_pangan = {
   pengolahan_daging: 23,
   mie_instan: 19,
   minyak_goreng: 19,
-  susu: 36
+  susu: 36,
+  beras: 30
   
   
 };

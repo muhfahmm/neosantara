@@ -109,10 +109,17 @@ export default function InfoBangunan({
   const hasFuelConsumption = fuelRequirements.length > 0;
   const isFuelResource = ELECTRICITY_FUEL_RESOURCE_KEYS.includes(buildingKey);
 
-  const foodKey = (bMeta?.dataKey || buildingKey).replace(/^\d+_/, '').replace(/^pabrik_/, '').replace(/^kebun_/, '').replace(/^peternakan_/, '');
-  const activeFoodKey = FOOD_CONSUMPTION_PER_CAPITA[buildingKey] !== undefined 
-    ? buildingKey 
-    : (FOOD_CONSUMPTION_PER_CAPITA[bMeta?.dataKey] !== undefined ? bMeta.dataKey : foodKey);
+  const normalizeFoodKey = (k: string) => (k || '').replace(/^\d+_/, '').replace(/^pabrik_pengolahan_/, '').replace(/^pabrik_/, '').replace(/^kebun_/, '').replace(/^peternakan_/, '');
+  const candidateKeys = [
+    buildingKey,
+    bMeta?.dataKey,
+    metadata?.[buildingKey]?.dataKey,
+    normalizeFoodKey(buildingKey),
+    normalizeFoodKey(bMeta?.dataKey || ''),
+    normalizeFoodKey(metadata?.[buildingKey]?.dataKey || ''),
+  ].filter(Boolean);
+
+  const activeFoodKey = candidateKeys.find(k => FOOD_CONSUMPTION_PER_CAPITA[k!] !== undefined) || candidateKeys[0] || buildingKey;
   const isFoodCommodity = FOOD_CONSUMPTION_PER_CAPITA[activeFoodKey] !== undefined;
   const consumptionPerCapita = isFoodCommodity ? FOOD_CONSUMPTION_PER_CAPITA[activeFoodKey] : 0;
   const pop = Number(countryDetail?.jumlah_penduduk) || 0;
@@ -357,7 +364,7 @@ export default function InfoBangunan({
                     );
                   }
 
-                  const foodKeys = ['gula', 'roti', 'pengolahan_daging', 'mie_instan', 'minyak_goreng', 'susu'];
+                  const foodKeys = ['gula', 'roti', 'pengolahan_daging', 'mie_instan', 'minyak_goreng', 'susu', 'beras'];
                   const matchedConsumers: Array<{ consumerKey: string; amountPerUnit: number; label: string; count: number }> = [];
                   let factoryCons = 0;
 

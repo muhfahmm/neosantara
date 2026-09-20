@@ -6,7 +6,8 @@ const bangladesh_olahan_pangan = {
   pengolahan_daging: 137,
   mie_instan: 88,
   minyak_goreng: 74,
-  susu: 150
+  susu: 150,
+  beras: 168
   
   
 };

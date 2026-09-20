@@ -86,5 +86,6 @@ const olahanPanganRate = {
     biaya_pembangunan: 2800, // Reduced to 2.8M
     lowongan_kerja: 102,
     konsumsi_listrik: 102
-  }
+  },
+  beras: 3
 };

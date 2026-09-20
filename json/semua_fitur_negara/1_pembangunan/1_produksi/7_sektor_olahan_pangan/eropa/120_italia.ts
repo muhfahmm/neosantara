@@ -6,7 +6,8 @@ const italia_olahan_pangan = {
   pengolahan_daging: 45,
   mie_instan: 32,
   minyak_goreng: 30,
-  susu: 57
+  susu: 57,
+  beras: 56
   
   
 };

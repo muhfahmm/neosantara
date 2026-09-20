@@ -6,7 +6,8 @@ const uzbekistan_olahan_pangan = {
   pengolahan_daging: 28,
   mie_instan: 22,
   minyak_goreng: 21,
-  susu: 40
+  susu: 40,
+  beras: 35
   
   
 };

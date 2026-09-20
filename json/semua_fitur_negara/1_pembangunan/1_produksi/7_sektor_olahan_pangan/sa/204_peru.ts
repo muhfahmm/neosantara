@@ -6,7 +6,8 @@ const peru_olahan_pangan = {
   pengolahan_daging: 24,
   mie_instan: 20,
   minyak_goreng: 19,
-  susu: 36
+  susu: 36,
+  beras: 31
   
   
 };

@@ -6,7 +6,8 @@ const ethiopia_olahan_pangan = {
   pengolahan_daging: 89,
   mie_instan: 59,
   minyak_goreng: 51,
-  susu: 101
+  susu: 101,
+  beras: 106
   
   
 };

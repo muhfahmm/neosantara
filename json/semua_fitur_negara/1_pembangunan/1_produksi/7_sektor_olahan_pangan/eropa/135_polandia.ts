@@ -6,7 +6,8 @@ const polandia_olahan_pangan = {
   pengolahan_daging: 27,
   mie_instan: 22,
   minyak_goreng: 21,
-  susu: 39
+  susu: 39,
+  beras: 35
   
   
 };

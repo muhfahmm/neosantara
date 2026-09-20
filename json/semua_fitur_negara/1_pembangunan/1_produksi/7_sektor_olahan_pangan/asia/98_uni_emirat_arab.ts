@@ -6,7 +6,8 @@ const uni_emirat_arab_olahan_pangan = {
   pengolahan_daging: 4,
   mie_instan: 8,
   minyak_goreng: 10,
-  susu: 16
+  susu: 16,
+  beras: 8
   
   
 };

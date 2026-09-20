@@ -6,7 +6,8 @@ const afrika_selatan_olahan_pangan = {
   pengolahan_daging: 48,
   mie_instan: 35,
   minyak_goreng: 31,
-  susu: 61
+  susu: 61,
+  beras: 59
   
   
 };

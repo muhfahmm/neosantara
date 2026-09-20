@@ -6,7 +6,8 @@ const nepal_olahan_pangan = {
   pengolahan_daging: 20,
   mie_instan: 18,
   minyak_goreng: 18,
-  susu: 33
+  susu: 33,
+  beras: 27
   
   
 };

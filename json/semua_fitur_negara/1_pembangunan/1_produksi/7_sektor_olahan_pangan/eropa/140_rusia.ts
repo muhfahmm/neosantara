@@ -6,7 +6,8 @@ const rusia_olahan_pangan = {
   pengolahan_daging: 118,
   mie_instan: 76,
   minyak_goreng: 64,
-  susu: 130
+  susu: 130,
+  beras: 139
   
   
 };

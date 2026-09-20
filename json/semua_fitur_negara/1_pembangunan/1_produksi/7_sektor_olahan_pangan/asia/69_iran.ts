@@ -6,7 +6,8 @@ const iran_olahan_pangan = {
   pengolahan_daging: 68,
   mie_instan: 46,
   minyak_goreng: 41,
-  susu: 80
+  susu: 80,
+  beras: 82
   
   
 };
