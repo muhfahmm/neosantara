@@ -164,24 +164,22 @@ export default function InfoBangunan({
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div
-        className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto shadow-2xl"
+        className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.02)_0%,transparent_100%)] pointer-events-none" />
-
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 shrink-0">
-          <div className="flex items-center gap-3 text-[#5c3c10]">
-            <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-              <Info className="h-5 w-5 text-[#5c3c10]" />
+        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="flex items-center gap-3 text-[#E0E0E0]">
+            <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+              <Info className="h-5 w-5 text-[#00FFAA]" />
             </div>
-            <h3 className="text-base font-bold uppercase tracking-tight">Info Bangunan - {label}</h3>
+            <h3 className="text-base font-black uppercase tracking-wider">Info Bangunan - {label}</h3>
           </div>
           <button
             onClick={(e) => {
               e.stopPropagation();
               onClose();
             }}
-            className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+            className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
             aria-label="Tutup info"
           >
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
@@ -189,59 +187,56 @@ export default function InfoBangunan({
           </button>
         </div>
 
-        <div className="p-8 relative z-10 flex-1 overflow-y-auto space-y-4 text-xs font-semibold text-[#5c3c10]">
-          <div className="bg-white/80 border border-[#C4B49C]/40 rounded-xl p-4 space-y-2 shadow-xs">
+        <div className="p-6 relative z-10 flex-1 overflow-y-auto space-y-4 text-xs font-semibold text-[#E0E0E0] custom-scrollbar">
+          <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 space-y-2">
             {isElectricityTab ? (
               <>
                 <div className="flex justify-between items-center">
-                  <span className="text-[#8b7e66]">Produksi Listrik (Total):</span>
-                  <span className={`font-black text-sm ${isProductionZero ? 'text-rose-700' : 'text-emerald-700'}`}>
+                  <span className="text-[#6B8A8A]">Produksi Listrik (Total):</span>
+                  <span className={`font-black text-sm ${isProductionZero ? 'text-rose-400' : 'text-emerald-400'}`}>
                     {rawProduction.toLocaleString('id-ID')} MW
                     {isProductionZero && ' (bahan bakar defisit)'}
                   </span>
                 </div>
-                <div className="flex justify-between items-center pl-4 text-[#8b7e66]">
+                <div className="flex justify-between items-center pl-4 text-[#6B8A8A]">
                   <span>Per Unit:</span>
-                  <span>{(bMeta?.produksi || 0).toLocaleString('id-ID')} MW</span>
+                  <span className="text-[#E0E0E0]">{(bMeta?.produksi || 0).toLocaleString('id-ID')} MW</span>
                 </div>
                 {bMeta?.konsumsi_listrik !== undefined && bMeta.konsumsi_listrik > 0 && (
                   <>
                     <div className="flex justify-between items-center">
-                      <span className="text-[#8b7e66]">Listrik Dikonsumsi (Total):</span>
-                      <span className="text-rose-700 font-bold">{(bMeta.konsumsi_listrik * perCount).toLocaleString('id-ID')} MW</span>
+                      <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Total):</span>
+                      <span className="text-rose-400 font-bold">{(bMeta.konsumsi_listrik * perCount).toLocaleString('id-ID')} MW</span>
                     </div>
                     <div className="flex justify-between items-center pl-4">
-                      <span className="text-[#8b7e66]">Listrik Dikonsumsi (Satuan):</span>
-                      <span className="text-rose-700 font-bold">{bMeta.konsumsi_listrik.toLocaleString('id-ID')} MW</span>
+                      <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Satuan):</span>
+                      <span className="text-rose-400 font-bold">{bMeta.konsumsi_listrik.toLocaleString('id-ID')} MW</span>
                     </div>
                   </>
                 )}
               </>
             ) : (
               <>
-                {/* 🔥 FIX: sekarang pakai totalFoodProduction (untuk komoditas pangan)
-                    supaya nilainya identik dengan yang dipakai blok Neraca di bawah
-                    dan dengan IndustriPanganModal.tsx */}
                 {(() => {
                   const isRawDeficit = isFoodCommodity && isFoodRawMaterialDeficit(activeFoodKey, countryDetail, metadata);
                   return (
                     <div className="flex justify-between items-center">
-                      <span className="text-[#8b7e66]">Total Produksi ({label}) Per Hari:</span>
-                      <span className={`font-black text-sm ${isRawDeficit ? 'text-rose-700' : 'text-emerald-700'}`}>
+                      <span className="text-[#6B8A8A]">Total Produksi ({label}) Per Hari:</span>
+                      <span className={`font-black text-sm ${isRawDeficit ? 'text-rose-400' : 'text-emerald-400'}`}>
                         {totalFoodProduction.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                         {isRawDeficit && ' (bahan baku defisit)'}
                       </span>
                     </div>
                   );
                 })()}
-                <div className="flex justify-between items-center pl-4 text-[#8b7e66]">
+                <div className="flex justify-between items-center pl-4 text-[#6B8A8A]">
                   <span>Total Produksi Per Unit:</span>
-                  <span>{(bMeta?.produksi || 0).toLocaleString('id-ID')}</span>
+                  <span className="text-[#E0E0E0]">{(bMeta?.produksi || 0).toLocaleString('id-ID')}</span>
                 </div>
                 {isFoodCommodity && (
                   <div className="flex justify-between items-center">
-                    <span className="text-[#8b7e66]">Total Konsumsi ({label}) Per Hari:</span>
-                    <span className="text-rose-700 font-black text-sm">
+                    <span className="text-[#6B8A8A]">Total Konsumsi ({label}) Per Hari:</span>
+                    <span className="text-rose-400 font-black text-sm">
                       {totalFoodConsumption.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                     </span>
                   </div>
@@ -250,37 +245,34 @@ export default function InfoBangunan({
                 {bMeta?.konsumsi_listrik !== undefined && bMeta.konsumsi_listrik > 0 && (
                   <>
                     <div className="flex justify-between items-center">
-                      <span className="text-[#8b7e66]">Listrik Dikonsumsi (Total):</span>
-                      <span className="text-rose-700 font-bold">{(bMeta.konsumsi_listrik * perCount).toLocaleString('id-ID')} MW</span>
+                      <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Total):</span>
+                      <span className="text-rose-400 font-bold">{(bMeta.konsumsi_listrik * perCount).toLocaleString('id-ID')} MW</span>
                     </div>
                     <div className="flex justify-between items-center pl-4">
-                      <span className="text-[#8b7e66]">Listrik Dikonsumsi (Satuan):</span>
-                      <span className="text-rose-700 font-bold">{bMeta.konsumsi_listrik.toLocaleString('id-ID')} MW</span>
+                      <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Satuan):</span>
+                      <span className="text-rose-400 font-bold">{bMeta.konsumsi_listrik.toLocaleString('id-ID')} MW</span>
                     </div>
                   </>
                 )}
               </>
             )}
 
-            <div className="flex justify-between items-center border-t border-[#C4B49C]/20 pt-2 mt-2">
-              <span className="text-[#8b7e66]">Biaya Pembangunan:</span>
-              <span className="text-[#5c3c10] font-black">{(Number(bMeta?.biaya_pembangunan) || 0).toLocaleString('id-ID')} EM</span>
+            <div className="flex justify-between items-center border-t border-[#00FFAA]/10 pt-2 mt-2">
+              <span className="text-[#6B8A8A]">Biaya Pembangunan:</span>
+              <span className="text-[#00FFAA] font-black">{(Number(bMeta?.biaya_pembangunan) || 0).toLocaleString('id-ID')} EM</span>
             </div>
             {bMeta?.waktu_pembangunan !== undefined && (
               <div className="flex justify-between items-center">
-                <span className="text-[#8b7e66]">Waktu Pembangunan:</span>
-                <span className="text-[#5c3c10] font-bold">{bMeta.waktu_pembangunan} hari</span>
+                <span className="text-[#6B8A8A]">Waktu Pembangunan:</span>
+                <span className="text-[#E0E0E0] font-bold">{bMeta.waktu_pembangunan} hari</span>
               </div>
             )}
             <div className="flex justify-between items-center">
-              <span className="text-[#8b7e66]">Jumlah Bangunan Saat Ini:</span>
-              <span className="text-[#2e261a] font-black">{perCount} unit</span>
+              <span className="text-[#6B8A8A]">Jumlah Bangunan Saat Ini:</span>
+              <span className="text-[#00FFAA] font-black">{perCount} unit</span>
             </div>
           </div>
 
-          {/* 🔥 FIX: Neraca Pangan Nasional sekarang pakai calculateProduction /
-              calculateConsumption (fungsi yang sama dengan IndustriPanganModal.tsx)
-              + formatColoredNumber (koma desimal muncul lagi) + netto di-clamp ke 0 */}
           {isFoodCommodity && (() => {
             const rawClean = label.replace(/^Pabrik\s+(Pengolahan\s+)?/i, '').replace(/^Pabrik\s+/i, '').trim();
             const displayFoodLabel = rawClean.length > 0 ? rawClean : label;
@@ -295,31 +287,29 @@ export default function InfoBangunan({
 
             return (
               <>
-                {/* 🍽️ CARD 1: WARNA KUNING (KONSUMSI PANGAN MASYARAKAT) */}
-                <div className="rounded-xl bg-amber-50/80 border border-amber-300 p-4 space-y-2 shadow-xs mt-3">
-                  <div className="font-black uppercase tracking-wider text-amber-900 border-b border-amber-200/80 pb-2 mb-1 flex items-center gap-1.5 text-sm">
+                <div className="rounded-xl bg-[#0A1A1A] border border-amber-500/30 p-4 space-y-2 mt-3">
+                  <div className="font-black uppercase tracking-wider text-amber-400 border-b border-amber-500/20 pb-2 mb-1 flex items-center gap-1.5 text-sm">
                     🍽️ TOTAL KONSUMSI ({displayFoodLabel.toUpperCase()})
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-amber-950 font-bold">Total Produksi ({displayFoodLabel}):</span>
+                    <span className="text-[#E0E0E0] font-bold">Total Produksi ({displayFoodLabel}):</span>
                     {formatColoredNumber(totalFoodProduction, true)}
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-amber-950 font-bold">Total Konsumsi ({displayFoodLabel}):</span>
+                    <span className="text-[#E0E0E0] font-bold">Total Konsumsi ({displayFoodLabel}):</span>
                     {formatColoredNumber(totalFoodConsumption, false)}
                   </div>
-                  <div className="flex justify-between items-center pt-2 border-t border-amber-200/80 mt-1 text-xs">
-                    <span className="text-amber-950 font-black uppercase">SALDO / NETTO (PROD - KONSUMSI):</span>
+                  <div className="flex justify-between items-center pt-2 border-t border-amber-500/20 mt-1 text-xs">
+                    <span className="text-amber-400 font-black uppercase">SALDO / NETTO (PROD - KONSUMSI):</span>
                     {formatColoredNumber(foodNettoRaw, foodNettoRaw >= 0)}
                   </div>
                 </div>
 
-                {/* ⚡ CARD 2: WARNA MERAH (RINCIAN KONSUMSI BAHAN BAKU / MENTAH) */}
                 {(() => {
                   if (ingredients && ingredients.length > 0) {
                     return (
-                      <div className="rounded-xl bg-rose-50 border border-rose-300 p-4 space-y-3 shadow-xs mt-3">
-                        <div className="font-black uppercase tracking-wider text-rose-900 border-b border-rose-200 pb-2 mb-1 flex items-center gap-1.5 text-sm">
+                      <div className="rounded-xl bg-[#0A1A1A] border border-rose-500/30 p-4 space-y-3 mt-3">
+                        <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-1 flex items-center gap-1.5 text-sm">
                           ⚡ TOTAL KONSUMSI {ingredients.length === 1 ? ingredients[0].label.toUpperCase() : 'BAHAN BAKU'}
                         </div>
                         {ingredients.map((ing, idx) => {
@@ -331,29 +321,29 @@ export default function InfoBangunan({
                           const ingSaldo = (ingGrossProd - ingPopCons) - ingCons;
 
                           return (
-                            <div key={idx} className={`flex flex-col gap-1 ${idx > 0 ? 'pt-2 border-t border-rose-200' : ''}`}>
+                            <div key={idx} className={`flex flex-col gap-1 ${idx > 0 ? 'pt-2 border-t border-rose-500/20' : ''}`}>
                               {ingredients.length > 1 && (
-                                <div className="font-bold text-rose-800 text-[11px] uppercase tracking-tight">
+                                <div className="font-bold text-rose-300 text-[11px] uppercase tracking-tight">
                                   {ing.label}
                                 </div>
                               )}
                               <div className="flex justify-between items-center text-xs">
-                                <span className="text-rose-900 font-bold">Total Produksi ({ing.label}):</span>
-                                <span className="font-black text-emerald-800">+{ingGrossProd.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
+                                <span className="text-[#E0E0E0] font-bold">Total Produksi ({ing.label}):</span>
+                                <span className="font-black text-emerald-400">+{ingGrossProd.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
                               </div>
                               <div className="flex justify-between items-center text-xs">
-                                <span className="text-rose-900 font-bold">Konsumsi ({displayFoodLabel} - {perCount} unit):</span>
-                                <span className="font-black text-rose-800">-{ingCons.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
+                                <span className="text-[#E0E0E0] font-bold">Konsumsi ({displayFoodLabel} - {perCount} unit):</span>
+                                <span className="font-black text-rose-400">-{ingCons.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
                               </div>
                               {ingPopCons > 0 && (
-                                <div className="flex justify-between items-center text-xs pl-2 text-rose-950/80">
+                                <div className="flex justify-between items-center text-xs pl-2 text-[#6B8A8A]">
                                   <span className="font-semibold">Konsumsi (Masyarakat / Internal):</span>
-                                  <span className="font-bold text-rose-700">-{ingPopCons.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
+                                  <span className="font-bold text-rose-400">-{ingPopCons.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
                                 </div>
                               )}
-                              <div className="flex justify-between items-center pt-2 border-t border-rose-200 mt-1 text-xs">
-                                <span className="text-rose-900 font-black uppercase">SALDO (PROD - KONSUMSI):</span>
-                                <span className={`font-black ${ingSaldo < 0 ? 'text-rose-800' : 'text-emerald-800'}`}>
+                              <div className="flex justify-between items-center pt-2 border-t border-rose-500/20 mt-1 text-xs">
+                                <span className="text-rose-400 font-black uppercase">SALDO (PROD - KONSUMSI):</span>
+                                <span className={`font-black ${ingSaldo < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
                                   {ingSaldo >= 0 ? `+${ingSaldo.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}` : ingSaldo.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                                 </span>
                               </div>
@@ -385,7 +375,6 @@ export default function InfoBangunan({
                     }
                   }
 
-                  // Jika tidak dikonsumsi oleh industri olahan pangan manapun, jangan tampilkan Card Merah
                   if (matchedConsumers.length === 0) {
                     return null;
                   }
@@ -396,29 +385,29 @@ export default function InfoBangunan({
                   const consumerLabelStr = matchedConsumers.map(c => `${c.label} (${c.count} unit)`).join(', ');
 
                   return (
-                    <div className="rounded-xl bg-rose-50 border border-rose-300 p-4 space-y-3 shadow-xs mt-3">
-                      <div className="font-black uppercase tracking-wider text-rose-900 border-b border-rose-200 pb-2 mb-1 flex items-center gap-1.5 text-sm">
+                    <div className="rounded-xl bg-[#0A1A1A] border border-rose-500/30 p-4 space-y-3 mt-3">
+                      <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-1 flex items-center gap-1.5 text-sm">
                         ⚡ TOTAL KONSUMSI BAHAN BAKU PABRIK
                       </div>
                       <div className="flex justify-between items-center text-xs">
-                        <span className="text-rose-900 font-bold">Total Produksi ({fuelName}):</span>
-                        <span className="font-black text-emerald-800">+{totalFoodProduction.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
+                        <span className="text-[#E0E0E0] font-bold">Total Produksi ({fuelName}):</span>
+                        <span className="font-black text-emerald-400">+{totalFoodProduction.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
                       </div>
                       {factoryCons > 0 && (
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-rose-900 font-bold">Konsumsi ({consumerLabelStr}):</span>
-                          <span className="font-black text-rose-800">-{factoryCons.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
+                          <span className="text-[#E0E0E0] font-bold">Konsumsi ({consumerLabelStr}):</span>
+                          <span className="font-black text-rose-400">-{factoryCons.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
                         </div>
                       )}
                       {popCons > 0 && (
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-rose-900 font-bold">Konsumsi (Masyarakat / Internal):</span>
-                          <span className="font-black text-rose-800">-{popCons.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
+                          <span className="text-[#E0E0E0] font-bold">Konsumsi (Masyarakat / Internal):</span>
+                          <span className="font-black text-rose-400">-{popCons.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
                         </div>
                       )}
-                      <div className="flex justify-between items-center pt-2 border-t border-rose-200 mt-1 text-xs">
-                        <span className="text-rose-900 font-black uppercase">SALDO (PROD - KONSUMSI):</span>
-                        <span className={`font-black ${saldoVal < 0 ? 'text-rose-800' : 'text-emerald-800'}`}>
+                      <div className="flex justify-between items-center pt-2 border-t border-rose-500/20 mt-1 text-xs">
+                        <span className="text-rose-400 font-black uppercase">SALDO (PROD - KONSUMSI):</span>
+                        <span className={`font-black ${saldoVal < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
                           {saldoVal >= 0 ? `+${saldoVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}` : saldoVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                         </span>
                       </div>
@@ -429,13 +418,11 @@ export default function InfoBangunan({
             );
           })()}
 
-
-
           {hasFuelConsumption &&
             (() => {
               return (
-                <div className="rounded-xl bg-rose-50 border border-rose-300 p-4 space-y-3 shadow-xs mt-3">
-                  <div className="font-black uppercase tracking-wider text-rose-900 border-b border-rose-200 pb-2 mb-2 flex items-center gap-1.5 text-sm">
+                <div className="rounded-xl bg-[#0A1A1A] border border-rose-500/30 p-4 space-y-3 mt-3">
+                  <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-2 flex items-center gap-1.5 text-sm">
                     ⚡ Total Konsumsi Bahan Bakar
                   </div>
                   {fuelRequirements.map((req, idx) => {
@@ -447,21 +434,21 @@ export default function InfoBangunan({
                     const saldo = totalFuelProd - totalFuelCons;
 
                     return (
-                      <div key={idx} className={`flex flex-col gap-1 ${idx > 0 ? 'pt-2 border-t border-rose-200' : ''}`}>
-                        <div className="font-bold text-rose-800 text-[11px] uppercase tracking-tight">
+                      <div key={idx} className={`flex flex-col gap-1 ${idx > 0 ? 'pt-2 border-t border-rose-500/20' : ''}`}>
+                        <div className="font-bold text-rose-300 text-[11px] uppercase tracking-tight">
                           {req.label}
                         </div>
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-rose-900">Produksi:</span>
-                          <span className="font-black text-emerald-800">+{totalFuelProd.toLocaleString('id-ID')}</span>
+                          <span className="text-[#E0E0E0]">Produksi:</span>
+                          <span className="font-black text-emerald-400">+{totalFuelProd.toLocaleString('id-ID')}</span>
                         </div>
                         <div className="flex justify-between items-center text-xs">
-                          <span className="text-rose-900">Konsumsi:</span>
-                          <span className="font-black text-rose-800">-{totalFuelCons.toLocaleString('id-ID')}</span>
+                          <span className="text-[#E0E0E0]">Konsumsi:</span>
+                          <span className="font-black text-rose-400">-{totalFuelCons.toLocaleString('id-ID')}</span>
                         </div>
-                        <div className="flex justify-between items-center text-xs pt-1 border-t border-rose-200/50 mt-0.5">
-                          <span className="text-rose-900 font-black uppercase">Saldo:</span>
-                          <span className={`font-black ${saldo < 0 ? 'text-rose-800' : 'text-emerald-800'}`}>
+                        <div className="flex justify-between items-center text-xs pt-1 border-t border-rose-500/20 mt-0.5">
+                          <span className="text-rose-400 font-black uppercase">Saldo:</span>
+                          <span className={`font-black ${saldo < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
                             {saldo >= 0 ? `+${saldo.toLocaleString('id-ID')}` : saldo.toLocaleString('id-ID')}
                           </span>
                         </div>
@@ -479,21 +466,21 @@ export default function InfoBangunan({
               const consVal = calculateTotalFuelConsumption(countryDetail)[buildingKey] || 0;
               const saldoVal = prodVal - consVal;
               return (
-                <div className="rounded-xl bg-rose-50 border border-rose-300 p-4 space-y-2 shadow-xs mt-3">
-                  <div className="font-black uppercase tracking-wider text-rose-900 border-b border-rose-200 pb-2 mb-1 flex items-center gap-1.5 text-sm">
+                <div className="rounded-xl bg-[#0A1A1A] border border-rose-500/30 p-4 space-y-2 mt-3">
+                  <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-1 flex items-center gap-1.5 text-sm">
                     ⚡ Total Konsumsi Bahan Bakar
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-rose-900 font-bold">Total Produksi ({fuelName}):</span>
-                    <span className="font-black text-emerald-800">+{prodVal.toLocaleString('id-ID')}</span>
+                    <span className="text-[#E0E0E0] font-bold">Total Produksi ({fuelName}):</span>
+                    <span className="font-black text-emerald-400">+{prodVal.toLocaleString('id-ID')}</span>
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-rose-900 font-bold">Konsumsi ({fuelName}):</span>
-                    <span className="font-black text-rose-800">-{consVal.toLocaleString('id-ID')}</span>
+                    <span className="text-[#E0E0E0] font-bold">Konsumsi ({fuelName}):</span>
+                    <span className="font-black text-rose-400">-{consVal.toLocaleString('id-ID')}</span>
                   </div>
-                  <div className="flex justify-between items-center pt-2 border-t border-rose-200 mt-1 text-xs">
-                    <span className="text-rose-900 font-black uppercase">Saldo (Prod - Konsumsi):</span>
-                    <span className={`font-black ${saldoVal < 0 ? 'text-rose-800' : 'text-emerald-800'}`}>
+                  <div className="flex justify-between items-center pt-2 border-t border-rose-500/20 mt-1 text-xs">
+                    <span className="text-rose-400 font-black uppercase">Saldo (Prod - Konsumsi):</span>
+                    <span className={`font-black ${saldoVal < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
                       {saldoVal >= 0 ? `+${saldoVal.toLocaleString('id-ID')}` : saldoVal.toLocaleString('id-ID')}
                     </span>
                   </div>
@@ -502,13 +489,13 @@ export default function InfoBangunan({
             })()}
         </div>
 
-        <div className="p-6 bg-[#FAF6EE] border-t-2 border-[#C4B49C]/20 flex justify-end relative z-10 shrink-0">
+        <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10 shrink-0">
           <button
             onClick={(e) => {
               e.stopPropagation();
               onClose();
             }}
-            className="py-2.5 px-6 rounded-xl text-xs font-black uppercase tracking-wider transition-all text-center cursor-pointer bg-[#5c3c10] text-[#FAF6EE] border border-[#5c3c10] hover:bg-[#8b7e66] hover:border-[#8b7e66] shadow-sm"
+            className="py-2.5 px-6 rounded-xl text-xs font-black uppercase tracking-wider transition-all text-center cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-md"
           >
             Tutup Info
           </button>

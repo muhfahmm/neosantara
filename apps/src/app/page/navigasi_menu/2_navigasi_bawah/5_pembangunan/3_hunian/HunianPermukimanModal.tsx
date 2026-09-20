@@ -346,40 +346,39 @@ export default function HunianPermukimanModal({
     <>
       {/* MODAL UTAMA */}
       <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-        <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
-          
+        <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+
           {/* HEADER */}
-          <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
+          <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 flex-shrink-0">
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-                  <Home className="h-6 w-6 text-[#5c3c10]" />
+                <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                  <Home className="h-6 w-6 text-[#00FFAA]" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Hunian & Permukiman</h2>
-                  <p className="text-xs text-[#8b7e66]">Manajemen ketersediaan rumah dan tata kelola pemukiman warga</p>
+                  <h2 className="text-xl font-black text-[#E0E0E0] tracking-wider uppercase">Hunian & Permukiman</h2>
+                  <p className="text-xs text-[#6B8A8A]">Manajemen ketersediaan rumah dan tata kelola pemukiman warga</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-4 pl-8 border-l-2 border-[#C4B49C]/30">
+              <div className="flex items-center gap-4 pl-8 border-l border-[#00FFAA]/30">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-300 rounded-lg">
-                    <TrendingUp className="h-4 w-4 text-emerald-700" />
-                    <span className="text-[11px] font-black text-emerald-700 uppercase tracking-wider">Produksi</span>
-                    <span className="text-[11px] font-black text-emerald-700">{totalProductionMW.toLocaleString('id-ID')} MW</span>
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
+                    <TrendingUp className="h-4 w-4 text-emerald-400" />
+                    <span className="text-[11px] font-black text-emerald-400 uppercase tracking-wider">Produksi</span>
+                    <span className="text-[11px] font-black text-emerald-400">{totalProductionMW.toLocaleString('id-ID')} MW</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-300 rounded-lg">
-                    <TrendingDown className="h-4 w-4 text-rose-700" />
-                    <span className="text-[11px] font-black text-rose-700 uppercase tracking-wider">Konsumsi</span>
-                    <span className="text-[11px] font-black text-rose-700">{estimatedConsumption.toLocaleString('id-ID')} MW</span>
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-rose-500/30 rounded-lg">
+                    <TrendingDown className="h-4 w-4 text-rose-400" />
+                    <span className="text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
+                    <span className="text-[11px] font-black text-rose-400">{estimatedConsumption.toLocaleString('id-ID')} MW</span>
                   </div>
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+            <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
               <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-5 w-5" />
             </button>
@@ -388,20 +387,20 @@ export default function HunianPermukimanModal({
           {/* BODY */}
           <div className="flex-1 flex min-h-0 relative z-10">
             {/* SIDEBAR TABS */}
-            <div className="w-64 border-r-2 border-[#C4B49C]/30 bg-[#FAF6EE] p-4 flex flex-col gap-2 overflow-y-auto">
+            <div className="w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-4 flex flex-col gap-2 overflow-y-auto custom-scrollbar">
               {items.map((it) => (
                 <button
                   key={it.key}
                   onClick={() => setActiveTab(it.key)}
-                  className={`flex items-center justify-between w-full p-3 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                  className={`flex items-center justify-between w-full p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     activeTab === it.key
-                      ? "bg-[#5c3c10] border-[#5c3c10] text-[#FAF6EE] shadow-md"
-                      : "bg-white/80 border-[#C4B49C]/30 text-[#5c3c10] hover:bg-white hover:border-[#5c3c10]/50"
+                      ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
+                      : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
                   }`}
                 >
                   <span className="text-xs font-bold uppercase tracking-wider">{it.label}</span>
                   <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
-                    activeTab === it.key ? "bg-[#FAF6EE] text-[#5c3c10]" : "bg-[#5c3c10]/10 text-[#5c3c10]"
+                    activeTab === it.key ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
                   }`}>
                     {it.value > 0 ? "Tersedia" : "Kosong"}
                   </span>
@@ -410,19 +409,19 @@ export default function HunianPermukimanModal({
             </div>
 
             {/* KONTEN UTAMA */}
-            <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 flex flex-col justify-between">
+            <div className="flex-1 overflow-y-auto p-6 bg-[#0F2424] flex flex-col justify-between custom-scrollbar">
               <div>
                 {activeItem && (
                   <div className="max-w-3xl">
                     <div className="mb-6 flex flex-col md:flex-row gap-6">
                       <div className="flex-grow">
-                        <h3 className="text-xl font-black text-[#5c3c10] uppercase tracking-wide">{activeItem.label}</h3>
-                        <p className="text-xs text-[#8b7e66] mt-1">{activeItem.desc}</p>
-                        <p className="text-sm text-[#5c3c10] mt-4 leading-relaxed bg-[#e4dac3]/20 border border-[#C4B49C]/20 p-4 rounded-2xl">{activeItem.detailDesc}</p>
+                        <h3 className="text-xl font-black text-[#00FFAA] uppercase tracking-wider">{activeItem.label}</h3>
+                        <p className="text-xs text-[#6B8A8A] mt-1">{activeItem.desc}</p>
+                        <p className="text-xs text-[#E0E0E0] mt-4 leading-relaxed bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-2xl">{activeItem.detailDesc}</p>
                       </div>
                     </div>
 
-                    <div className="bg-white/90 border border-[#C4B49C]/30 rounded-3xl p-6 shadow-sm max-w-sm relative overflow-visible">
+                    <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-3xl p-6 shadow-sm max-w-sm relative overflow-visible">
                       {hoveredBuildingKey === activeItem.key && (() => {
                         const bMeta = findMeta(activeItem.key) || {};
                         const perCount = activeItem.value || 0;
@@ -443,9 +442,9 @@ export default function HunianPermukimanModal({
                       })()}
 
                       <div className="flex items-center justify-between gap-2 mb-1">
-                        <p className="text-[10px] font-black uppercase text-[#8b7e66] tracking-wider">Total Terdaftar</p>
+                        <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider">Total Terdaftar</p>
                         <button
-                          className="flex items-center justify-center w-5 h-5 rounded-full transition-colors cursor-help bg-[#5c3c10]/10 hover:bg-[#5c3c10]/20 text-[#5c3c10]"
+                          className="flex items-center justify-center w-5 h-5 rounded-full transition-colors cursor-help bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] text-[#6B8A8A] hover:text-[#00FFAA]"
                           onClick={(e) => {
                             e.stopPropagation();
                             setHoveredBuildingKey(hoveredBuildingKey === activeItem.key ? null : activeItem.key);
@@ -455,11 +454,11 @@ export default function HunianPermukimanModal({
                           <Info className="w-3 h-3" />
                         </button>
                       </div>
-                      <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#2e261a] mt-2 leading-tight break-words">{activeItem.value.toLocaleString('id-ID')}</p>
-                      <div className="border-t border-[#C4B49C]/20 mt-6 pt-3">
+                      <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#00FFAA] mt-2 leading-tight break-words">{activeItem.value.toLocaleString('id-ID')}</p>
+                      <div className="border-t border-[#00FFAA]/10 mt-6 pt-3">
                         <button
                           onClick={() => handleBuild(activeItem.key, activeItem.label)}
-                          className="w-full py-2 rounded-xl bg-[#5c3c10] text-[#FAF6EE] border border-[#5c3c10] text-[10px] font-black uppercase cursor-pointer hover:bg-[#8b7e66] hover:border-[#8b7e66] transition-all shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] active:scale-[0.98]"
+                          className="w-full py-2 rounded-xl bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] text-xs font-black uppercase cursor-pointer hover:bg-[#00FFAA]/80 transition-all shadow-md active:scale-[0.98]"
                         >
                           Bangun
                         </button>
@@ -470,53 +469,53 @@ export default function HunianPermukimanModal({
               </div>
 
               {/* FOOTER STATISTIK */}
-              <div className="mt-8 border-t-2 border-[#C4B49C]/20 pt-6 space-y-4">
+              <div className="mt-8 border-t border-[#00FFAA]/20 pt-6 space-y-4">
                 {/* Ringkasan total unit & populasi */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/70 p-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-[#5c3c10]">Total Keseluruhan Unit Hunian</p>
-                    <p className="text-lg sm:text-xl font-black text-[#2e261a] mt-1 break-words">{totalValue.toLocaleString('id-ID')}</p>
+                  <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Total Keseluruhan Unit Hunian</p>
+                    <p className="text-lg sm:text-xl font-black text-[#00FFAA] mt-1 break-words">{totalValue.toLocaleString('id-ID')}</p>
                   </div>
-                  <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/70 p-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-[#5c3c10]">Populasi</p>
-                    <p className="text-lg sm:text-xl font-black text-[#2e261a] mt-1 break-words">{formatNumber(population)} Jiwa</p>
+                  <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Populasi</p>
+                    <p className="text-lg sm:text-xl font-black text-[#E0E0E0] mt-1 break-words">{formatNumber(population)} Jiwa</p>
                   </div>
                 </div>
 
                 {/* 🏠 CARD KAPASITAS HUNIAN */}
-                <div className="rounded-2xl border-2 border-[#C4B49C]/50 bg-gradient-to-r from-[#e4dac3]/30 to-[#FAF6EE] p-6 shadow-sm">
+                <div className="rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-sm">
                   <div className="flex items-center gap-2 mb-4">
-                    <Home className="h-5 w-5 text-[#5c3c10]" />
-                    <h4 className="text-sm font-black uppercase tracking-widest text-[#5c3c10]">📊 Kapasitas Hunian vs Kebutuhan</h4>
+                    <Home className="h-5 w-5 text-[#00FFAA]" />
+                    <h4 className="text-sm font-black uppercase tracking-wider text-[#00FFAA]">📊 Kapasitas Hunian vs Kebutuhan</h4>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white/80 rounded-xl p-3 border border-[#C4B49C]/20 flex flex-col justify-between">
-                      <p className="text-[9px] font-bold uppercase text-[#8b7e66]">Total Kapasitas</p>
-                      <p className="text-xs sm:text-sm lg:text-base font-black text-emerald-700 leading-tight mt-1 break-words">
-                        {totalCapacity.toLocaleString('id-ID')} <span className="text-[9px] font-bold text-[#8b7e66]">orang</span>
+                    <div className="bg-[#0F2424] rounded-xl p-3 border border-[#00FFAA]/20 flex flex-col justify-between">
+                      <p className="text-[9px] font-bold uppercase text-[#6B8A8A]">Total Kapasitas</p>
+                      <p className="text-xs sm:text-sm lg:text-base font-black text-emerald-400 leading-tight mt-1 break-words">
+                        {totalCapacity.toLocaleString('id-ID')} <span className="text-[9px] font-bold text-[#6B8A8A]">orang</span>
                       </p>
                     </div>
-                    <div className="bg-white/80 rounded-xl p-3 border border-[#C4B49C]/20 flex flex-col justify-between">
-                      <p className="text-[9px] font-bold uppercase text-[#8b7e66]">Kebutuhan (Populasi)</p>
-                      <p className="text-xs sm:text-sm lg:text-base font-black text-[#2e261a] leading-tight mt-1 break-words">
-                        {population.toLocaleString('id-ID')} <span className="text-[9px] font-bold text-[#8b7e66]">orang</span>
+                    <div className="bg-[#0F2424] rounded-xl p-3 border border-[#00FFAA]/20 flex flex-col justify-between">
+                      <p className="text-[9px] font-bold uppercase text-[#6B8A8A]">Kebutuhan (Populasi)</p>
+                      <p className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-tight mt-1 break-words">
+                        {population.toLocaleString('id-ID')} <span className="text-[9px] font-bold text-[#6B8A8A]">orang</span>
                       </p>
                     </div>
-                    <div className={`bg-white/80 rounded-xl p-3 border ${isSufficient ? 'border-emerald-300' : 'border-rose-300'} flex flex-col justify-between`}>
-                      <p className="text-[9px] font-bold uppercase text-[#8b7e66]">Kekurangan / Surplus</p>
-                      <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 break-words ${isSufficient ? 'text-emerald-700' : 'text-rose-700'}`}>
+                    <div className={`bg-[#0F2424] rounded-xl p-3 border ${isSufficient ? 'border-emerald-500/30' : 'border-rose-500/30'} flex flex-col justify-between`}>
+                      <p className="text-[9px] font-bold uppercase text-[#6B8A8A]">Kekurangan / Surplus</p>
+                      <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 break-words ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
                         {isSufficient 
                           ? `+${(totalCapacity - population).toLocaleString('id-ID')}` 
                           : `-${shortage.toLocaleString('id-ID')}`}
-                        <span className={`text-[9px] font-bold block sm:inline ${isSufficient ? 'text-emerald-700' : 'text-rose-700'}`}>
+                        <span className={`text-[9px] font-bold block sm:inline ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
                           {isSufficient ? ' (surplus)' : ' (kurang)'}
                         </span>
                       </p>
                     </div>
-                    <div className="bg-white/80 rounded-xl p-3 border border-[#C4B49C]/20 flex flex-col justify-between">
-                      <p className="text-[9px] font-bold uppercase text-[#8b7e66]">Keterpenuhan</p>
-                      <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 ${percentageMet >= 100 ? 'text-emerald-700' : 'text-amber-600'}`}>
+                    <div className="bg-[#0F2424] rounded-xl p-3 border border-[#00FFAA]/20 flex flex-col justify-between">
+                      <p className="text-[9px] font-bold uppercase text-[#6B8A8A]">Keterpenuhan</p>
+                      <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 ${percentageMet >= 100 ? 'text-emerald-400' : 'text-amber-400'}`}>
                         {percentageMet.toFixed(1)}%
                       </p>
                     </div>
@@ -525,32 +524,32 @@ export default function HunianPermukimanModal({
                   {/* Breakdown per tipe */}
                   <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {capacityBreakdown.map((item) => (
-                      <div key={item.key} className="bg-white/70 rounded-xl p-3 border border-[#C4B49C]/20">
-                        <p className="text-[10px] font-black uppercase text-[#5c3c10]">{item.label}</p>
+                      <div key={item.key} className="bg-[#0F2424] rounded-xl p-3 border border-[#00FFAA]/20">
+                        <p className="text-[10px] font-black uppercase text-[#00FFAA]">{item.label}</p>
                         <div className="flex justify-between text-xs mt-1">
-                          <span className="text-[#8b7e66]">Unit</span>
-                          <span className="font-bold text-[#2e261a]">{item.count.toLocaleString('id-ID')}</span>
+                          <span className="text-[#6B8A8A]">Unit</span>
+                          <span className="font-bold text-[#E0E0E0]">{item.count.toLocaleString('id-ID')}</span>
                         </div>
                         <div className="flex justify-between text-xs">
-                          <span className="text-[#8b7e66]">Kapasitas/unit</span>
-                          <span className="font-bold text-[#2e261a]">{item.capacityPerUnit} org</span>
+                          <span className="text-[#6B8A8A]">Kapasitas/unit</span>
+                          <span className="font-bold text-[#E0E0E0]">{item.capacityPerUnit} org</span>
                         </div>
-                        <div className="flex justify-between text-xs font-black border-t border-[#C4B49C]/20 mt-1 pt-1">
-                          <span className="text-[#8b7e66]">Total kapasitas</span>
-                          <span className="text-emerald-700">{item.totalCapacity.toLocaleString('id-ID')}</span>
+                        <div className="flex justify-between text-xs font-black border-t border-[#00FFAA]/10 mt-1 pt-1">
+                          <span className="text-[#6B8A8A]">Total kapasitas</span>
+                          <span className="text-emerald-400">{item.totalCapacity.toLocaleString('id-ID')}</span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                        <div className="w-full bg-[#0A1A1A] rounded-full h-1.5 mt-1 border border-[#00FFAA]/10">
                           <div
-                            className="h-1.5 rounded-full bg-[#5c3c10]"
+                            className="h-1.5 rounded-full bg-[#00FFAA]"
                             style={{ width: `${Math.min(100, item.percentage)}%` }}
                           />
                         </div>
-                        <p className="text-[9px] text-[#8b7e66] mt-0.5">{item.percentage.toFixed(1)}% dari populasi</p>
+                        <p className="text-[9px] text-[#6B8A8A] mt-0.5">{item.percentage.toFixed(1)}% dari populasi</p>
                       </div>
                     ))}
                   </div>
 
-                  <div className={`mt-4 p-3 rounded-xl text-xs font-bold ${isSufficient ? 'bg-emerald-50 border border-emerald-300 text-emerald-800' : 'bg-rose-50 border border-rose-300 text-rose-800'}`}>
+                  <div className={`mt-4 p-3 rounded-xl text-xs font-bold ${isSufficient ? 'bg-[#0F2424] border border-emerald-500/30 text-emerald-400' : 'bg-[#0F2424] border border-rose-500/30 text-rose-400'}`}>
                     {isSufficient 
                       ? `✅ Kapasitas hunian mencukupi untuk seluruh populasi. Tersedia kelebihan ${(totalCapacity - population).toLocaleString('id-ID')} tempat.`
                       : `⚠️ Masih terdapat kekurangan ${shortage.toLocaleString('id-ID')} tempat hunian. ${Math.round(100 - percentageMet)}% populasi belum terakomodasi.`}
@@ -558,33 +557,33 @@ export default function HunianPermukimanModal({
                 </div>
 
                 {/* 🔥 INDEKS KEPUASAN PERUMAHAN */}
-                <div className="p-5 rounded-xl border-3 border-[#5c3c10]/40 bg-gradient-to-r from-amber-50 to-amber-100/70 shadow-md">
+                <div className="p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] shadow-md">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-black text-[#5c3c10] uppercase tracking-widest">
+                    <span className="text-sm font-black text-[#6B8A8A] uppercase tracking-wider">
                       Indeks Kepuasan Rakyat (Perumahan)
                     </span>
-                    <span className="text-3xl font-black text-amber-700">
+                    <span className="text-3xl font-black text-[#00FFAA]">
                       {housingSatisfaction} / 100
                     </span>
                   </div>
-                  <div className="w-full h-3 bg-gray-200 rounded-full mt-3 overflow-hidden">
+                  <div className="w-full h-3 bg-[#0F2424] border border-[#00FFAA]/20 rounded-full mt-3 overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-600 transition-all duration-200"
+                      className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
                       style={{ width: `${housingSatisfaction}%` }}
                     />
                   </div>
-                  <p className="text-[10px] text-amber-700 font-bold mt-3">
+                  <p className="text-[10px] text-[#E0E0E0] font-bold mt-3">
                     {housingSatisfaction >= 80
                       ? "✅ Kapasitas hunian mencukupi, rakyat memiliki tempat tinggal layak."
                       : housingSatisfaction >= 50
                       ? "⚠️ Ketersediaan hunian masih terbatas, perlu pembangunan lebih banyak."
                       : "🔴 Krisis perumahan, banyak warga belum memiliki tempat tinggal."}
                   </p>
-                  <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-amber-800/80">
-                    <div>Kapasitas per kapita: <span className="font-bold">
+                  <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-[#6B8A8A]">
+                    <div>Kapasitas per kapita: <span className="font-bold text-[#E0E0E0]">
                       {population > 0 ? (totalCapacity / population).toFixed(2) : 'N/A'}
                     </span></div>
-                    <div>Persentase keterpenuhan: <span className="font-bold">{percentageMet.toFixed(1)}%</span></div>
+                    <div>Persentase keterpenuhan: <span className="font-bold text-[#E0E0E0]">{percentageMet.toFixed(1)}%</span></div>
                   </div>
                 </div>
 
@@ -596,14 +595,14 @@ export default function HunianPermukimanModal({
                   const categoryElectricityConsumption = count * konsumsiUnit;
 
                   return (
-                    <div className="mt-4 p-4 rounded-xl bg-[#FAF6EE] border-2 border-[#C4B49C]/40 flex items-center justify-between shadow-sm">
+                    <div className="mt-4 p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-between shadow-sm">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-black text-[#5c3c10] uppercase tracking-wider">
+                        <span className="text-sm font-black text-[#00FFAA] uppercase tracking-wider">
                           ⚡ Total Konsumsi Listrik {activeItem.label}
                         </span>
                       </div>
-                      <div className="px-4 py-1.5 rounded-lg bg-pink-300 border-pink-400">
-                        <span className="text-sm font-black text-pink-900">
+                      <div className="px-4 py-1.5 rounded-lg bg-[#0F2424] border border-rose-500/30">
+                        <span className="text-sm font-black text-rose-400">
                           {categoryElectricityConsumption.toLocaleString('id-ID')} MW
                         </span>
                       </div>
@@ -617,7 +616,7 @@ export default function HunianPermukimanModal({
       </div>
 
       {/* TOAST */}
-      {toast && <div className="fixed bottom-6 right-6 z-[80] bg-[#5c3c10] text-[#FAF6EE] px-4 py-2 rounded-lg shadow-md">{toast}</div>}
+      {toast && <div className="fixed bottom-6 right-6 z-[80] bg-[#00FFAA] text-[#0A1A1A] font-black px-4 py-2 rounded-lg shadow-lg border border-[#00FFAA]">{toast}</div>}
       
       {/* KONFIRMASI PEMBANGUNAN */}
       {showConfirm && selectedBuilding && (() => {
@@ -658,35 +657,34 @@ export default function HunianPermukimanModal({
       {/* MODAL PERINGATAN MATERIAL */}
       {showMaterialWarningModal && insufficientMaterials.length > 0 && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-transparent pointer-events-none">
-          <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.02)_0%,transparent_100%)] pointer-events-none" />
-            <div className="px-6 py-5 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
-              <div className="flex items-center gap-2 text-rose-600">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto">
+            <div className="px-6 py-5 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10">
+              <div className="flex items-center gap-2 text-rose-400">
                 <AlertCircle className="h-5 w-5" />
-                <h3 className="text-base font-bold uppercase tracking-tight">⚠️ Stok Material Kosong</h3>
+                <h3 className="text-base font-black uppercase tracking-wider">⚠️ Stok Material Kosong</h3>
               </div>
-              <button onClick={() => setShowMaterialWarningModal(false)} className="text-[#8b7e66] hover:text-[#5c3c10]">
+              <button onClick={() => setShowMaterialWarningModal(false)} className="text-[#6B8A8A] hover:text-[#00FFAA]">
                 <X className="h-5 w-5" />
               </button>
             </div>
             <div className="p-6 relative z-10 flex-1 space-y-4">
-              <p className="text-sm text-[#5c3c10]">
-                Pembangunan <strong className="font-black text-[#2e261a]">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):
+              <p className="text-sm text-[#E0E0E0]">
+                Pembangunan <strong className="font-black text-[#00FFAA]">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):
               </p>
-              <div className="bg-rose-50/60 border border-rose-300 rounded-xl p-4 flex flex-col gap-2 text-xs font-bold text-[#5c3c10]">
+              <div className="bg-[#0A1A1A] border border-rose-500/30 rounded-xl p-4 flex flex-col gap-2 text-xs font-bold text-[#E0E0E0]">
                 {insufficientMaterials.map((mat, idx) => (
                   <div key={idx} className="flex justify-between items-center">
-                    <span className="text-[#2e261a]">{mat.label}</span>
-                    <span className="text-rose-600 font-black">0</span>
+                    <span className="text-[#E0E0E0]">{mat.label}</span>
+                    <span className="text-rose-400 font-black">0</span>
                   </div>
                 ))}
               </div>
-              <p className="text-[10px] text-[#8b7e66] italic">
+              <p className="text-[10px] text-[#6B8A8A] italic">
                 Klik nama material pada daftar di atas untuk melihat informasi produksinya.
               </p>
             </div>
-            <div className="p-4 bg-[#FAF6EE] border-t-2 border-[#C4B49C]/20 flex justify-end relative z-10">
-              <button onClick={() => setShowMaterialWarningModal(false)} className="py-2 px-6 rounded-xl text-[10px] font-black uppercase transition-all text-center cursor-pointer bg-[#5c3c10] text-[#FAF6EE] border border-[#5c3c10] hover:bg-[#8b7e66] hover:border-[#8b7e66]">Tutup & Lengkapi Stok</button>
+            <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10">
+              <button onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-md">Tutup & Lengkapi Stok</button>
             </div>
           </div>
         </div>

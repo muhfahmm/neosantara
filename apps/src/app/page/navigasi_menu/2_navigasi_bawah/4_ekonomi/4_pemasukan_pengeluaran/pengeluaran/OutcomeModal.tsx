@@ -324,6 +324,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
               </div>
             </div>
           </div>
+        </div>
       </div>
     </div>
   );

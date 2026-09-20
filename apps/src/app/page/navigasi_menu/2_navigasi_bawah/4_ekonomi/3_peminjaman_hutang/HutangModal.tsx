@@ -11,6 +11,7 @@ import Riwayat from "./tab_menu/3_riwayat";
 // 🔥 IMPOR UTILITAS TAB
 import { LoanRecord, renderFlag } from "./tab_menu/utils";
 import { processDueLoans } from "./tab_menu/logic/loanRepaymentLogic";
+import { calculateCountryGDP } from "@/app/logic/economic_logic/treasuryUpdater";
 
 // 🔥 IMPOR MODAL KONFIRMASI PINJAMAN
 import KonfirmasiPinjamanModalNegaraLain from "./tab_menu/1_negara_lain/konfirmasiPinjamanModals";
@@ -279,8 +280,8 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
   const totalHutang = countryDetail?.totalHutang || 0;
   const riwayatPinjaman: LoanRecord[] = Array.isArray(countryDetail?.pinjamanList) ? countryDetail.pinjamanList : [];
 
-  const simulatedGDP = 500_000; 
-  const debtRatio = Math.min(100, Math.round((totalHutang / simulatedGDP) * 100));
+  const realGDP = calculateCountryGDP(countryDetail) || Number(countryDetail?.pdb) || 500_000;
+  const debtRatio = realGDP > 0 ? Math.min(100, Math.round((totalHutang / realGDP) * 100)) : 0;
 
   // Logika Peminjaman
   const confirmBorrow = () => {

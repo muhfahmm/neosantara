@@ -16,9 +16,6 @@ interface ModalProps {
   selectedCountry: any;
 }
 
-// --- HELPER GLOBAL UNTUK DATA SEMUA NEGARA (DIPINDAHKAN) ---
-const LEVEL_UP_COST = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
-
 const formatNumber = (num: number) => num.toLocaleString('id-ID');
 
 const getDisplayName = (detail: any) =>
@@ -74,7 +71,7 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({
-    key: 'net',
+    key: 'pdb',
     direction: 'desc',
   });
 
@@ -156,7 +153,7 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
     }));
   };
 
-    const renderSortArrow = (key: string) => {
+  const renderSortArrow = (key: string) => {
     if (sortConfig.key !== key) return <span className="text-[#6B8A8A]/40 ml-1 text-xs font-normal">⇅</span>;
     if (sortConfig.direction === 'asc') return <ChevronUp className="h-3 w-3 ml-1 inline text-[#00FFAA]" />;
     return <ChevronDown className="h-3 w-3 ml-1 inline text-[#00FFAA]" />;
@@ -173,14 +170,14 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
       const name = country.__displayName || getDisplayName(country);
       const isPlayerCountry = String(name || '').toLowerCase().trim() === normPlayerCountry;
 
-      // Gunakan playerCountryDetail jika ada agar selalu akurat dengan state player real-time
       const targetDetail = (isPlayerCountry && playerCountryDetail) ? playerCountryDetail : country;
       const isLoaded = country.__loaded === true || isPlayerCountry;
 
       const tax = isLoaded ? computeTaxValue(targetDetail) : 0;
       const gold = isLoaded ? computeGoldValue(targetDetail) : 0;
+      const pdb = tax + gold; // Total PDB Bruto = Pajak + Produksi Emas
       const ministry = isLoaded ? computeMinistryCost(targetDetail) : 0;
-      const net = tax + gold - ministry;
+      const net = pdb - ministry;
       const continent = normalizeContinent(targetDetail.continent || country.continent || getContinentFromOrder(country.__fileOrder));
       const hasEkstraksiData = targetDetail.uranium !== undefined || targetDetail.batu_bara !== undefined || targetDetail.minyak_bumi !== undefined || targetDetail.gas_alam !== undefined;
       const buildingCount = isLoaded && hasEkstraksiData && typeof targetDetail.emas === 'number' ? targetDetail.emas : 0;
@@ -192,6 +189,7 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
         relation,
         tax,
         gold,
+        pdb,
         ministry,
         net,
         order: country.__fileOrder,
@@ -208,7 +206,7 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
     if (rows.length === 0) {
       return (
         <tr>
-          <td className="px-4 py-6 text-center text-sm font-bold text-[#6B8A8A]" colSpan={8}>
+          <td className="px-4 py-6 text-center text-sm font-bold text-[#6B8A8A]" colSpan={7}>
             Tidak ada data yang cocok dengan pencarian "{searchQuery}".
           </td>
         </tr>
@@ -240,7 +238,7 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
                 : 'bg-[#0A1A1A]'
           }
         >
-          <td className="px-4 py-3 text-xs font-bold text-[#E0E0E0] border-b border-[#00FFAA]/10">
+          <td className="px-3 py-2.5 text-xs font-bold text-[#E0E0E0] border-b border-[#00FFAA]/10 whitespace-nowrap">
             {isPlayer ? (
               <div className="flex items-center gap-1.5 text-[#00FFAA] font-black">
                 <User className="w-4 h-4 text-[#00FFAA] flex-shrink-0" />
@@ -253,45 +251,22 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
               row.name
             )}
           </td>
-          <td className={`px-4 py-3 text-xs font-bold border-b border-[#00FFAA]/10 ${isPlayer ? 'text-[#00FFAA] font-black' : 'text-[#6B8A8A]'}`}>
-            {row.isLoaded ? row.continent : renderSkeleton("w-14")}
-          </td>
-          <td className="px-4 py-3 text-center text-xs font-bold border-b border-[#00FFAA]/10">
-            {row.isLoaded ? (
-              isPlayer ? (
-                <span className="inline-block px-2.5 py-0.5 rounded-md bg-[#00FFAA] text-[#0A1A1A] font-black text-xs shadow-sm">
-                  100
-                </span>
-              ) : row.relation >= 75 ? (
-                <span className="inline-block px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-extrabold text-xs">
-                  {row.relation}
-                </span>
-              ) : row.relation >= 50 ? (
-                <span className="inline-block px-2.5 py-0.5 rounded-md bg-[#0F2424] text-[#E0E0E0] border border-[#00FFAA]/30 font-extrabold text-xs">
-                  {row.relation}
-                </span>
-              ) : (
-                <span className="inline-block px-2.5 py-0.5 rounded-md bg-rose-500/20 text-rose-400 border border-rose-500/30 font-extrabold text-xs">
-                  {row.relation}
-                </span>
-              )
-            ) : (
-              renderSkeleton("w-10")
-            )}
-          </td>
-          <td className="px-4 py-3 text-right font-bold text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10">
+          <td className="px-3 py-2.5 text-right font-bold text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10 whitespace-nowrap">
             {row.isLoaded ? formatNumber(row.tax) : renderSkeleton("w-14")}
           </td>
-          <td className="px-4 py-3 text-right font-bold text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10">
+          <td className="px-3 py-2.5 text-right font-bold text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10 whitespace-nowrap">
             {row.isLoaded ? (row.buildingCount > 0 ? row.buildingCount : '-') : renderSkeleton("w-8")}
           </td>
-          <td className="px-4 py-3 text-right font-bold text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10">
+          <td className="px-3 py-2.5 text-right font-bold text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10 whitespace-nowrap">
             {row.isLoaded ? formatNumber(row.gold) : renderSkeleton("w-14")}
           </td>
-          <td className="px-4 py-3 text-right font-bold text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10">
+          <td className="px-3 py-2.5 text-right font-black text-xs text-[#00FFAA] border-b border-[#00FFAA]/10 whitespace-nowrap">
+            {row.isLoaded ? formatNumber(row.pdb) : renderSkeleton("w-16")}
+          </td>
+          <td className="px-3 py-2.5 text-right font-bold text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10 whitespace-nowrap">
             {row.isLoaded ? formatNumber(row.ministry) : renderSkeleton("w-14")}
           </td>
-          <td className={`px-4 py-3 text-right font-black text-xs border-b border-[#00FFAA]/10 ${row.isLoaded ? (row.net >= 0 ? 'text-emerald-400' : 'text-rose-400') : ''}`}>
+          <td className={`px-3 py-2.5 text-right font-black text-xs border-b border-[#00FFAA]/10 whitespace-nowrap ${row.isLoaded ? (row.net >= 0 ? 'text-emerald-400' : 'text-rose-400') : ''}`}>
             {row.isLoaded ? `${row.net >= 0 ? '+' : ''}${formatNumber(row.net)}` : renderSkeleton("w-16")}
           </td>
         </tr>
@@ -321,18 +296,17 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
       </div>
 
       <div className="flex-1 min-h-0 border border-[#00FFAA]/30 rounded-xl bg-[#0A1A1A] overflow-hidden flex flex-col">
-        <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
-          <table className="w-full text-xs text-left">
+        <div className="flex-1 min-h-0 overflow-auto custom-scrollbar">
+          <table className="w-full text-xs text-left min-w-[850px]">
             <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/30 sticky top-0 z-10">
               <tr>
-                <th className="px-4 py-3 font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
-                <th className="px-4 py-3 font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('continent')}>Benua{renderSortArrow('continent')}</th>
-                <th className="px-4 py-3 font-black text-[#00FFAA] uppercase tracking-wider text-center cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('relation')}>Hubungan{renderSortArrow('relation')}</th>
-                <th className="px-4 py-3 font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('tax')}>Total Pajak{renderSortArrow('tax')}</th>
-                <th className="px-4 py-3 font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('buildingCount')}>Bangunan Emas{renderSortArrow('buildingCount')}</th>
-                <th className="px-4 py-3 font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('gold')}>Produksi Emas{renderSortArrow('gold')}</th>
-                <th className="px-4 py-3 font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('ministry')}>Pengeluaran{renderSortArrow('ministry')}</th>
-                <th className="px-4 py-3 font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('net')}>Netto APBN{renderSortArrow('net')}</th>
+                <th className="px-3 py-2.5 text-[10px] sm:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
+                <th className="px-3 py-2.5 text-[10px] sm:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap text-right cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('tax')}>Total Pajak{renderSortArrow('tax')}</th>
+                <th className="px-3 py-2.5 text-[10px] sm:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap text-right cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('buildingCount')}>Bangunan Emas{renderSortArrow('buildingCount')}</th>
+                <th className="px-3 py-2.5 text-[10px] sm:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap text-right cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('gold')}>Produksi Emas{renderSortArrow('gold')}</th>
+                <th className="px-3 py-2.5 text-[10px] sm:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap text-right cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('pdb')}>Total PDB{renderSortArrow('pdb')}</th>
+                <th className="px-3 py-2.5 text-[10px] sm:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap text-right cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('ministry')}>Pengeluaran{renderSortArrow('ministry')}</th>
+                <th className="px-3 py-2.5 text-[10px] sm:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap text-right cursor-pointer hover:bg-[#0F2424] transition-colors" onClick={() => handleSort('net')}>Netto APBN{renderSortArrow('net')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#00FFAA]/10">{renderAllRows()}</tbody>
@@ -369,6 +343,7 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
             <X className="h-5 w-5" />
           </button>
         </div>
+
         <div className="flex-1 min-h-0 flex flex-col p-6 bg-[#0F2424] relative z-10">
           <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-4 flex-shrink-0">
             PDB mengukur kekuatan ekonomi makro kedaulatan {countryName}. Pertumbuhan positif meningkatkan daya tawar diplomasi Anda.

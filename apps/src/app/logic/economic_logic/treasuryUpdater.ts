@@ -58,6 +58,13 @@ export const calculateTotalMinistryCostPerDay = (detail: any) => {
   }, 0);
 };
 
+export const calculateCountryGDP = (detail: any) => {
+  if (!detail || typeof detail !== 'object') return 0;
+  const totalTaxIncome = calculateTotalTaxIncome(detail);
+  const goldIncome = calculateGoldMiningDailyProduction(detail);
+  return totalTaxIncome + goldIncome;
+};
+
 export const calculateCountryNetBalance = (detail: any) => {
   if (!detail || typeof detail !== 'object') return 0;
   const totalTaxIncome = calculateTotalTaxIncome(detail);

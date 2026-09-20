@@ -511,56 +511,55 @@ export default function ProduksiModal({
     <>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-          <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
-            <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
+            <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 flex-shrink-0">
               <div className="flex items-center gap-8">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-                    <Hammer className="h-6 w-6 text-[#5c3c10]" />
+                  <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                    <Hammer className="h-6 w-6 text-[#00FFAA]" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Produksi & Pembangunan</h2>
-                    <p className="text-xs text-[#8b7e66]">Kelola industri, pertanian, dan komoditas negara</p>
+                    <h2 className="text-xl font-black text-[#E0E0E0] tracking-wider uppercase">Produksi & Pembangunan</h2>
+                    <p className="text-xs text-[#6B8A8A]">Kelola industri, pertanian, dan komoditas negara</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 ml-8 pl-8 border-l-2 border-[#C4B49C]/30">
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-300 rounded-lg">
-                    <TrendingUp className="h-4 w-4 text-emerald-700" />
-                    <span className="text-[11px] font-black text-emerald-700 uppercase tracking-wider">Produksi</span>
-                    <span className="text-[11px] font-black text-emerald-700">{totalProductionMW.toLocaleString('id-ID')} MW</span>
+                <div className="flex items-center gap-4 ml-8 pl-8 border-l border-[#00FFAA]/30">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
+                    <TrendingUp className="h-4 w-4 text-emerald-400" />
+                    <span className="text-[11px] font-black text-emerald-400 uppercase tracking-wider">Produksi</span>
+                    <span className="text-[11px] font-black text-emerald-400">{totalProductionMW.toLocaleString('id-ID')} MW</span>
                   </div>
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-300 rounded-lg">
-                    <TrendingDown className="h-4 w-4 text-rose-700" />
-                    <span className="text-[11px] font-black text-rose-700 uppercase tracking-wider">Konsumsi</span>
-                    <span className="text-[11px] font-black text-rose-700">{estimatedConsumption.toLocaleString('id-ID')} MW</span>
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-rose-500/30 rounded-lg">
+                    <TrendingDown className="h-4 w-4 text-rose-400" />
+                    <span className="text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
+                    <span className="text-[11px] font-black text-rose-400">{estimatedConsumption.toLocaleString('id-ID')} MW</span>
                   </div>
                 </div>
               </div>
-              <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+              <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
                 <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <div className="flex-1 flex min-h-0 relative z-10">
-              <div className="w-64 border-r-2 border-[#C4B49C]/30 bg-[#FAF6EE] p-4 flex flex-col gap-2 overflow-y-auto">
+              <div className="w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-4 flex flex-col gap-2 overflow-y-auto custom-scrollbar">
                 {TABS.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center justify-between w-full p-3 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                    className={`flex items-center justify-between w-full p-3 rounded-xl border text-left transition-all cursor-pointer ${
                       activeTab === tab.id
-                        ? "bg-[#5c3c10] border-[#5c3c10] text-[#FAF6EE] shadow-md"
-                        : "bg-white/80 border-[#C4B49C]/30 text-[#5c3c10] hover:bg-white hover:border-[#5c3c10]/50"
+                        ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
+                        : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
                     }`}
                   >
                     <span className="text-xs font-bold uppercase tracking-wider">{tab.label}</span>
                   </button>
                 ))}
               </div>
-              <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40">
+              <div className="flex-1 overflow-y-auto p-6 bg-[#0F2424] custom-scrollbar">
                 <ComponentToRender
                   countryDetail={countryDetail}
                   setCountryDetail={setCountryDetail}
@@ -583,7 +582,7 @@ export default function ProduksiModal({
         </div>
       )}
 
-      {toast && <div className="fixed bottom-6 right-6 z-[80] bg-[#5c3c10] text-[#FAF6EE] px-4 py-2 rounded-lg shadow-md">{toast}</div>}
+      {toast && <div className="fixed bottom-6 right-6 z-[80] bg-[#00FFAA] text-[#0A1A1A] font-black px-4 py-2 rounded-lg shadow-lg border border-[#00FFAA]">{toast}</div>}
 
       {selectedBuilding && (() => {
         const bMeta = findMeta(selectedBuilding.key);
@@ -622,29 +621,28 @@ export default function ProduksiModal({
 
       {showMaterialWarningModal && insufficientMaterials.length > 0 && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-transparent pointer-events-none">
-          <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.02)_0%,transparent_100%)] pointer-events-none" />
-            <div className="px-6 py-5 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
-              <div className="flex items-center gap-2 text-rose-600">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto">
+            <div className="px-6 py-5 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10">
+              <div className="flex items-center gap-2 text-rose-400">
                 <AlertCircle className="h-5 w-5" />
-                <h3 className="text-base font-bold uppercase tracking-tight">⚠️ Stok Material Kosong</h3>
+                <h3 className="text-base font-black uppercase tracking-wider">⚠️ Stok Material Kosong</h3>
               </div>
-              <button onClick={() => setShowMaterialWarningModal(false)} className="text-[#8b7e66] hover:text-[#5c3c10]"><X className="h-5 w-5" /></button>
+              <button onClick={() => setShowMaterialWarningModal(false)} className="text-[#6B8A8A] hover:text-[#00FFAA]"><X className="h-5 w-5" /></button>
             </div>
             <div className="p-6 relative z-10 flex-1 space-y-4">
-              <p className="text-sm text-[#5c3c10]">Pembangunan <strong className="font-black text-[#2e261a]">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):</p>
-              <div className="bg-rose-50/60 border border-rose-300 rounded-xl p-4 flex flex-col gap-2 text-xs font-bold text-[#5c3c10]">
+              <p className="text-sm text-[#E0E0E0]">Pembangunan <strong className="font-black text-[#00FFAA]">{selectedBuilding?.label}</strong> tidak dapat dilanjutkan karena material berikut ini stoknya kosong (0):</p>
+              <div className="bg-[#0A1A1A] border border-rose-500/30 rounded-xl p-4 flex flex-col gap-2 text-xs font-bold text-[#E0E0E0]">
                 {insufficientMaterials.map((mat, idx) => (
                   <div key={idx} className="flex justify-between items-center">
-                    <span className="text-[#2e261a]">{mat.label}</span>
-                    <span className="text-rose-600 font-black">0</span>
+                    <span className="text-[#E0E0E0]">{mat.label}</span>
+                    <span className="text-rose-400 font-black">0</span>
                   </div>
                 ))}
               </div>
-              <p className="text-[10px] text-[#8b7e66] italic">Klik nama material pada daftar di atas untuk menambah stok (kembali ke tab terkait).</p>
+              <p className="text-[10px] text-[#6B8A8A] italic">Klik nama material pada daftar di atas untuk menambah stok (kembali ke tab terkait).</p>
             </div>
-            <div className="p-4 bg-[#FAF6EE] border-t-2 border-[#C4B49C]/20 flex justify-end relative z-10">
-              <button onClick={() => setShowMaterialWarningModal(false)} className="py-2 px-6 rounded-xl text-[10px] font-black uppercase transition-all text-center cursor-pointer bg-[#5c3c10] text-[#FAF6EE] border border-[#5c3c10] hover:bg-[#8b7e66] hover:border-[#8b7e66]">
+            <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10">
+              <button onClick={() => setShowMaterialWarningModal(false)} className="py-2.5 px-6 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-md">
                 Tutup & Lengkapi Stok
               </button>
             </div>

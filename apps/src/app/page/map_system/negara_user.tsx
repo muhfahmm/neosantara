@@ -3,6 +3,8 @@
 import React from 'react';
 import { X, User, Globe, Building2, Users, Landmark, ShieldCheck, Info } from 'lucide-react';
 
+import { calculateCountryGDP } from '@/app/logic/economic_logic/treasuryUpdater';
+
 interface NegaraUserModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -21,7 +23,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
   const capital = selectedCountry?.capital || countryDetail?.ibukota || '—';
   const iso = (selectedCountry?.iso || '').toLowerCase();
   const population = countryDetail?.populasi;
-  const gdp = countryDetail?.pdb;
+  const gdp = calculateCountryGDP(countryDetail) || countryDetail?.pdb;
   const ideology = countryDetail?.ideologi || '—';
   const religion = countryDetail?.agama_utama || '—';
 

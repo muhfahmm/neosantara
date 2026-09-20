@@ -125,8 +125,8 @@ export default function BaseProduksiGrid({
   return (
     <div>
       <div className="flex items-center gap-3 mb-6">
-        <Icon className="h-6 w-6 text-[#5c3c10]" />
-        <h3 className="text-lg font-black text-[#5c3c10] uppercase tracking-wide">{title}</h3>
+        <Icon className="h-6 w-6 text-[#00FFAA]" />
+        <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wider">{title}</h3>
       </div>
 
       <div className="grid grid-cols-4 gap-4">
@@ -162,13 +162,13 @@ export default function BaseProduksiGrid({
               }}
               role="button"
               tabIndex={0}
-              className={`relative rounded-2xl overflow-visible flex flex-col flex-grow justify-between transition-all bg-white/90 border shadow-sm ${
-                isAvailable ? 'border-[#C4B49C]/30 hover:shadow-md cursor-pointer' : 'border-rose-300 bg-rose-50/60 opacity-90 cursor-not-allowed'
-              } ${isHighlighted ? 'border-emerald-500 border-2 shadow-[0_0_0_3px_rgba(16,185,129,0.18)]' : ''}`}
+              className={`relative rounded-2xl overflow-visible flex flex-col flex-grow justify-between transition-all bg-[#0A1A1A] border shadow-sm ${
+                isAvailable ? 'border-[#00FFAA]/20 hover:border-[#00FFAA]/50 hover:shadow-md cursor-pointer' : 'border-rose-500/30 bg-rose-500/10 opacity-70 cursor-not-allowed'
+              } ${isHighlighted ? 'border-[#00FFAA] border-2 shadow-[0_0_12px_rgba(0,255,170,0.3)]' : ''}`}
             >
               {/* Badge Tanggal */}
               {isBuilding && (
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#2e261a] text-[#FAF6EE] text-[10px] font-bold px-2 py-1 border border-[#C4B49C] rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
                   {formatBadgeDate(lastEndDate)}
                 </div>
               )}
@@ -192,10 +192,10 @@ export default function BaseProduksiGrid({
               <div className="p-4 flex flex-col flex-grow justify-between">
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <p className="text-[10px] font-black uppercase text-[#8b7e66] tracking-wider">{label}</p>
+                    <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider">{label}</p>
                     <button
-                      className={`flex items-center justify-center w-5 h-5 rounded-full transition-colors cursor-pointer ${
-                        isFuelResource ? 'bg-[#7f1d1d]/10 hover:bg-[#7f1d1d]/20 text-[#7f1d1d]' : 'bg-[#5c3c10]/10 hover:bg-[#5c3c10]/20 text-[#5c3c10]'
+                      className={`flex items-center justify-center w-5 h-5 rounded-full transition-colors cursor-pointer bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] ${
+                        isFuelResource ? 'text-rose-400 hover:text-rose-300' : 'text-[#6B8A8A] hover:text-[#00FFAA]'
                       }`}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -209,37 +209,37 @@ export default function BaseProduksiGrid({
 
                   {/* Indikator +1, +2 */}
                   <div className="flex items-end gap-1.5 mt-2 flex-wrap">
-                    <span className="text-base sm:text-lg lg:text-xl font-black text-[#2e261a] leading-tight break-words">{perCount}</span>
+                    <span className="text-base sm:text-lg lg:text-xl font-black text-[#E0E0E0] leading-tight break-words">{perCount}</span>
                     {isBuilding && (
-                      <span className="text-xs sm:text-sm font-bold text-emerald-600 leading-none">
+                      <span className="text-xs sm:text-sm font-bold text-emerald-400 leading-none">
                         +{queueCount}
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] mt-1 font-bold text-[#8b7e66]">{perCount} bangunan</p>
+                  <p className="text-[10px] mt-1 font-bold text-[#6B8A8A]">{perCount} bangunan</p>
                 </div>
 
                 {/* FOOTER LISTRIK */}
                 {isElectricityTab && (
-                  <div className="border-t border-[#C4B49C]/20 mt-auto pt-2 pb-1 text-center min-h-[64px] flex flex-col justify-center">
-                    <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isProductionZero ? 'text-rose-600' : 'text-[#2e261a]'}`}>
+                  <div className="border-t border-[#00FFAA]/10 mt-auto pt-2 pb-1 text-center min-h-[64px] flex flex-col justify-center">
+                    <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isProductionZero ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
                       {rawProduction.toLocaleString('id-ID')} MW
                     </span>
                     {isProductionZero && (
-                      <span className="text-[9px] font-bold text-rose-500">(bahan bakar defisit)</span>
+                      <span className="text-[9px] font-bold text-rose-400">(bahan bakar defisit)</span>
                     )}
                   </div>
                 )}
 
                 {/* FOOTER NON-LISTRIK */}
                 {!isElectricityTab && (
-                  <div className="border-t border-[#C4B49C]/20 mt-auto pt-2 pb-1 text-center min-h-[64px] flex flex-col justify-center gap-1">
+                  <div className="border-t border-[#00FFAA]/10 mt-auto pt-2 pb-1 text-center min-h-[64px] flex flex-col justify-center gap-1">
                     {(() => {
                       // Emas: tampilkan produksi tetap (tidak berubah-ubah seperti stok)
                       if (key === 'emas') {
                         const fixedProd = Number(bMeta?.produksi || 0) * perCount;
                         return (
-                          <span className="font-black text-xs sm:text-sm lg:text-base text-[#2e261a] leading-tight break-words">
+                          <span className="font-black text-xs sm:text-sm lg:text-base text-[#00FFAA] leading-tight break-words">
                             {fixedProd.toLocaleString('id-ID')}
                           </span>
                         );
@@ -254,11 +254,11 @@ export default function BaseProduksiGrid({
 
                         return (
                           <div className="flex flex-col items-center justify-center">
-                            <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isZeroOrDeficit ? 'text-rose-600' : 'text-[#2e261a]'}`}>
+                            <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isZeroOrDeficit ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
                               {displayVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                             </span>
                             {isDeficit && (
-                              <span className="text-[9px] font-bold text-rose-500 leading-none mt-0.5">(bahan baku defisit)</span>
+                              <span className="text-[9px] font-bold text-rose-400 leading-none mt-0.5">(bahan baku defisit)</span>
                             )}
                           </div>
                         );
@@ -266,7 +266,7 @@ export default function BaseProduksiGrid({
 
                       const stock = getMaterialStock(countryDetail, key);
                       const isFuel = ELECTRICITY_FUEL_RESOURCE_KEYS.includes(key);
-                      const colorClass = (isFuel && stock > 0) ? 'text-emerald-600' : 'text-[#2e261a]';
+                      const colorClass = (isFuel && stock > 0) ? 'text-emerald-400' : 'text-[#00FFAA]';
                       return (
                         <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${colorClass}`}>
                           {stock.toLocaleString('id-ID')}
@@ -280,7 +280,7 @@ export default function BaseProduksiGrid({
           );
         })}
         {keys.length === 0 && (
-          <div className="rounded-xl border border-[#C4B49C]/30 bg-[#FAF6EE] p-4 text-sm text-[#8b7e66]">
+          <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 text-sm text-[#6B8A8A]">
             Data untuk kategori ini tidak tersedia.
           </div>
         )}
