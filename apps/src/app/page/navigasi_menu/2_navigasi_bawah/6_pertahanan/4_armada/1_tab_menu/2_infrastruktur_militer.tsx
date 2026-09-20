@@ -432,7 +432,7 @@ export default function InfrastrukturMiliter({
   // 🟢 Render UI
   return (
     <div className="space-y-6">
-      <div className="text-xs font-semibold text-[#8b7e66] leading-relaxed">
+      <div className="text-xs font-semibold text-[#6B8A8A] leading-relaxed">
         Fasilitas pendukung logistik dan pertahanan yang menjadi tulang punggung kekuatan militer nasional.
       </div>
 
@@ -456,37 +456,41 @@ export default function InfrastrukturMiliter({
                 setSelectedForBuild({ key, label: item.label });
                 setIsConfirmBuildOpen(true);
               }}
-              className={`relative rounded-2xl overflow-visible flex flex-col transition-all bg-white/95 border-2 shadow-md hover:shadow-lg cursor-pointer p-5 min-h-[180px] ${highlightKey === key ? 'border-emerald-400 shadow-emerald-200 hover:border-emerald-500' : 'border-[#C4B49C]/30 hover:border-[#C4B49C]/50'}`}
+              className={`relative rounded-2xl overflow-visible flex flex-col transition-all bg-[#0A1A1A] border p-5 min-h-[180px] cursor-pointer ${
+                highlightKey === key 
+                  ? 'border-[#00FFAA] shadow-[0_0_12px_rgba(0,255,170,0.3)]' 
+                  : 'border-[#00FFAA]/20 hover:border-[#00FFAA]/50 hover:shadow-md'
+              }`}
             >
               {isBuilding && (
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#2e261a] text-[#FAF6EE] text-[10px] font-bold px-2 py-1 border border-[#C4B49C] rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
                   {formatBadgeDate(lastEndDate)}
                 </div>
               )}
               
               <div className="flex items-start justify-between mb-3">
-                <p className="text-[11px] font-black uppercase text-[#8b7e66] tracking-wider flex-1 pr-2">
+                <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-2">
                   {item.label}
                 </p>
                 <button
                   onClick={() => handleInfoClick(key)}
-                  className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-[#5c3c10]/10 hover:bg-[#5c3c10]/20 text-[#5c3c10] transition-colors cursor-pointer"
+                  className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-colors cursor-pointer"
                 >
-                  <Info className="w-4 h-4" />
+                  <Info className="w-3.5 h-3.5" />
                 </button>
               </div>
 
               <div className="flex flex-col justify-between flex-1">
                 <div>
                   <div className="flex items-end gap-1.5 mt-2 flex-wrap">
-                    <span className="text-base sm:text-lg lg:text-xl font-black text-[#2e261a] leading-tight break-words">{formatNumber(value)}</span>
+                    <span className="text-base sm:text-lg lg:text-xl font-black text-[#E0E0E0] leading-tight break-words">{formatNumber(value)}</span>
                     {isBuilding && (
-                      <span className="text-xs sm:text-sm font-bold text-emerald-600 leading-none">
+                      <span className="text-xs sm:text-sm font-bold text-[#00FFAA] leading-none">
                         +{queueCount}
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] mt-1 font-bold text-[#8b7e66]">{item.satuan_kapasitas || "Unit"}</p>
+                  <p className="text-[10px] mt-1 font-bold text-[#6B8A8A]">{item.satuan_kapasitas || "Unit"}</p>
                 </div>
               </div>
             </div>

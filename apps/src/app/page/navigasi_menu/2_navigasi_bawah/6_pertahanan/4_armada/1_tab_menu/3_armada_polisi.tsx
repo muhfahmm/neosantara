@@ -165,7 +165,7 @@ export default function ArmadaPolisi({ countryDetail, setCountryDetail: _setCoun
 
   return (
     <div className="space-y-6">
-      <div className="text-xs font-semibold text-[#8b7e66] leading-relaxed">
+      <div className="text-xs font-semibold text-[#6B8A8A] leading-relaxed">
         Perangkat keamanan dalam negeri yang berperan menjaga stabilitas dan ketertiban masyarakat dari tingkat nasional hingga daerah.
       </div>
 
@@ -181,11 +181,11 @@ export default function ArmadaPolisi({ countryDetail, setCountryDetail: _setCoun
                 setSelectedForBuild({ key, label: item.label });
                 setIsConfirmBuildOpen(true);
               }}
-              className="relative rounded-2xl overflow-hidden flex flex-col transition-all bg-white/95 border-2 border-[#C4B49C]/30 shadow-md hover:shadow-lg hover:border-[#C4B49C]/50 cursor-pointer p-5 min-h-[180px]"
+              className="relative rounded-2xl overflow-hidden flex flex-col transition-all bg-[#0A1A1A] border border-[#00FFAA]/20 hover:border-[#00FFAA]/50 hover:shadow-md cursor-pointer p-5 min-h-[180px]"
             >
               
               <div className="flex items-start justify-between mb-3">
-                <p className="text-[11px] font-black uppercase text-[#8b7e66] tracking-wider flex-1 pr-2">
+                <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-2">
                   {item.label}
                 </p>
                 <button
@@ -193,18 +193,22 @@ export default function ArmadaPolisi({ countryDetail, setCountryDetail: _setCoun
                     e.stopPropagation();
                     handleInfoClick(key);
                   }}
-                  className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-[#5c3c10]/10 hover:bg-[#5c3c10]/20 text-[#5c3c10] transition-colors cursor-pointer"
+                  className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-colors cursor-pointer"
                 >
-                  <Info className="w-4 h-4" />
+                  <Info className="w-3.5 h-3.5" />
                 </button>
               </div>
 
               <div className="flex flex-col justify-between flex-1">
                 <div>
-                  <div className="text-base sm:text-lg lg:text-xl font-black text-[#2e261a] mb-1 leading-tight break-words">
-                    {formatNumber(value)}
+                  <div className="flex items-end gap-1.5 mt-2 flex-wrap">
+                    <span className="text-base sm:text-lg lg:text-xl font-black text-[#E0E0E0] leading-tight break-words">
+                      {formatNumber(value)}
+                    </span>
                   </div>
-                  <p className="text-[10px] font-bold text-[#8b7e66]">{item.satuan}</p>
+                  <p className="text-[10px] mt-1 font-bold text-[#6B8A8A]">
+                    {item.satuan}
+                  </p>
                 </div>
               </div>
             </div>

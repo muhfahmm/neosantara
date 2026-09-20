@@ -334,24 +334,21 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
         return (
           <section key={group} className="space-y-4">
             {/* 🔥 Header Grup dengan Total Kekuatan di sampingnya */}
-            <div className="flex items-center justify-between w-full">
+            <div className="flex items-center justify-between border-b border-[#00FFAA]/20 pb-3 mb-4">
               <div className="flex items-center gap-3">
-                <div className={`rounded-xl bg-gradient-to-br ${groupMeta[group].accent} p-2 text-white shadow-sm`}>
-                  <Icon className="h-4 w-4" />
-                </div>
-                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-[#5c3c10]">{groupMeta[group].title}</h3>
+                <Icon className="h-6 w-6 text-[#00FFAA]" />
+                <h3 className="text-base font-black text-[#00FFAA] uppercase tracking-wider">
+                  Matra {groupMeta[group].title}
+                </h3>
               </div>
-
-              <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#8b7e66] bg-white/80 px-3 py-1 rounded-full border border-[#C4B49C]/30 shadow-sm">
-                <Swords className="w-3 h-3 text-[#5c3c10]" />
-                <span>Total Kekuatan:</span>
-                <span className="text-[#5c3c10] font-black">{formatNumber(totalGroupPower)}</span>
-              </div>
+              <span className="text-xs font-black uppercase tracking-wider text-[#6B8A8A]">
+                Total Kekuatan: <span className="text-[#00FFAA]">{formatNumber(totalGroupPower)}</span>
+              </span>
             </div>
 
             {currentDate && (
-              <div className="bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg inline-flex items-center gap-2">
-                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700">
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 px-3 py-1.5 rounded-lg inline-flex items-center gap-2 mb-4">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
                   {currentDate instanceof Date
                     ? currentDate.toLocaleDateString('id-ID', {
                         weekday: 'short',
@@ -393,16 +390,16 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                       setSelectedForBuild({ key: item.key, label: item.label });
                       setIsConfirmBuildOpen(true);
                     }}
-                    className={`relative rounded-2xl flex flex-col transition-all bg-white/95 border-2 border-[#C4B49C]/30 shadow-md hover:shadow-lg hover:border-[#C4B49C]/50 cursor-pointer p-5 min-h-[180px] ${hasPending ? 'overflow-visible' : 'overflow-hidden'}`}
+                    className={`relative rounded-2xl flex flex-col transition-all bg-[#0A1A1A] border border-[#00FFAA]/20 shadow-sm hover:border-[#00FFAA]/50 hover:shadow-md cursor-pointer p-5 min-h-[180px] ${hasPending ? 'overflow-visible' : 'overflow-hidden'}`}
                   >
                     {hasPending && lastEndDate && (
-                      <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#2e261a] text-[#FAF6EE] text-[10px] font-bold px-2 py-1 border border-[#C4B49C] rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                      <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
                         {formatBadgeDate(lastEndDate)}
                       </div>
                     )}
 
                     <div className="flex items-start justify-between mb-3">
-                      <p className="text-[10px] font-black uppercase text-[#8b7e66] tracking-wider flex-1 pr-2">
+                      <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-2">
                         {item.label}
                       </p>
                       <button
@@ -410,25 +407,25 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                           e.stopPropagation();
                           handleInfoClick(item.key);
                         }}
-                        className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-[#5c3c10]/10 hover:bg-[#5c3c10]/20 text-[#5c3c10] transition-colors cursor-pointer"
+                        className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-colors cursor-pointer"
                       >
-                        <Info className="w-4 h-4" />
+                        <Info className="w-3.5 h-3.5" />
                       </button>
                     </div>
 
                     <div className="flex flex-col justify-between flex-1">
                       <div>
                         <div className="flex items-end gap-1.5 mt-2 flex-wrap">
-                          <span className="text-base sm:text-lg lg:text-xl font-black text-[#2e261a] leading-tight break-words">
+                          <span className="text-base sm:text-lg lg:text-xl font-black text-[#E0E0E0] leading-tight break-words">
                             {displayText}
                           </span>
                           {hasPending && (
-                            <span className="text-xs sm:text-sm font-black text-emerald-600">
+                            <span className="text-xs sm:text-sm font-black text-[#00FFAA]">
                               +{formatNumber(totalPendingQuantity)}
                             </span>
                           )}
                         </div>
-                        <p className="text-[9px] mt-1 font-bold text-[#8b7e66]">
+                        <p className="text-[9px] mt-1 font-bold text-[#6B8A8A]">
                           {item.key === "barak" ? "Pasukan / Kapasitas" : "unit"}
                         </p>
                       </div>

@@ -280,96 +280,102 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 shrink-0">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+        
+        {/* HEADER */}
+        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
-              <Shield className="h-6 w-6 text-rose-700 animate-pulse" />
+              <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <Shield className="h-6 w-6 text-rose-500 animate-pulse" />
+              </div>
               <div>
-                <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Komando Strategis Nuklir</h2>
-                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8b7e66] mt-1">Pilih opsi persenjataan berat Anda</p>
+                <h2 className="text-xl font-black text-[#00FFAA] tracking-wider uppercase">Komando Strategis Nuklir</h2>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-0.5">Pilih opsi persenjataan berat Anda</p>
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+          <button onClick={onClose} className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar flex flex-col items-center">
-          <div className="w-full max-w-4xl space-y-6">
+        {/* BODY MODAL */}
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col items-center">
+          <div className="w-full space-y-6">
 
-            <div className="p-6 rounded-2xl bg-[#FAF6EE] border-2 border-[#C4B49C]/50 shadow-inner">
-              <p className="text-center text-[10px] font-black text-[#8b7e66] uppercase tracking-wider mb-3">
+            {/* STATUS PENGEMBANGAN */}
+            <div className="p-6 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/20 shadow-inner">
+              <p className="text-center text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider mb-3">
                 STATUS PENGEMBANGAN SENJATA NUKLIR
               </p>
               <div className="flex justify-center items-center gap-4">
-                <div className={`px-6 py-3 rounded-xl border-2 ${status.color} shadow-sm min-w-[200px] text-center transition-colors duration-300`}>
-                  <p className={`text-[11px] font-bold uppercase tracking-wider mb-1 ${status.color.split(' ')[0]}`}>
+                <div className={`px-6 py-3 rounded-xl border ${status.isActive ? 'border-[#00FFAA]/40 bg-[#00FFAA]/10 text-[#00FFAA]' : isNuclearProgramBuilding ? 'border-amber-500/40 bg-amber-500/10 text-amber-400' : 'border-rose-500/40 bg-rose-500/10 text-rose-400'} shadow-sm min-w-[200px] text-center transition-colors duration-300`}>
+                  <p className="text-[11px] font-black uppercase tracking-wider mb-1">
                     {status.message}
                   </p>
                   {!isNuclearProgramActive && !isNuclearProgramBuilding && (
-                    <p className="text-[10px] text-[#8b7e66]">Klik kartu "Program Nuklir" untuk membuka akses</p>
+                    <p className="text-[10px] text-[#6B8A8A]">Klik kartu "Program Nuklir" untuk membuka akses</p>
                   )}
                   {isNuclearProgramBuilding && (
-                    <p className="text-[10px] text-amber-700 font-bold">
+                    <p className="text-[10px] text-amber-400 font-bold">
                       Dalam tahap pembangunan hingga {formatTanggalIndo(buildEndDate)}
                     </p>
                   )}
                   {isNuclearProgramActive && (
-                    <p className="text-[10px] text-emerald-700 font-bold">🎯 Sistem Siap Meluncur!</p>
+                    <p className="text-[10px] text-[#00FFAA] font-bold">🎯 Sistem Siap Meluncur!</p>
                   )}
                 </div>
               </div>
+              
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/90 p-5 min-h-[160px] text-center shadow-sm flex flex-col justify-center">
-                  <p className="text-[10px] font-black text-[#8b7e66] uppercase tracking-wider mb-2">Kas Negara</p>
-                  <div className="text-base sm:text-lg lg:text-xl font-black text-emerald-700 leading-tight break-words">{currentCash.toLocaleString('id-ID')} <span className="text-[10px] text-[#8b7e66] font-bold">EM</span></div>
+                <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
+                  <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Kas Negara</p>
+                  <div className="text-lg font-black text-[#00FFAA] leading-tight break-words">{currentCash.toLocaleString('id-ID')} <span className="text-[10px] text-[#6B8A8A] font-bold">EM</span></div>
                 </div>
-                <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/90 p-5 min-h-[160px] text-center shadow-sm flex flex-col justify-center">
-                  <p className="text-[10px] font-black text-[#8b7e66] uppercase tracking-wider mb-2">Stok Uranium</p>
-                  <div className="text-base sm:text-lg lg:text-xl font-black text-lime-600 leading-tight break-words">{uraniumStock.toLocaleString('id-ID')}</div>
+
+                <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
+                  <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Stok Uranium</p>
+                  <div className="text-lg font-black text-[#00FFAA] leading-tight break-words">{uraniumStock.toLocaleString('id-ID')}</div>
                 </div>
+
                 <div className="relative overflow-visible">
                   {formattedIcbmEndDate && isIcbmBuildQueued && remainingBuildQuantity > 0 ? (
-                    <div className="absolute -top-6 left-1/2 z-20 -translate-x-1/2 rounded-sm bg-[#2e261a] text-[#FAF6EE] text-[10px] font-bold px-2 py-1 border border-[#C4B49C] shadow-md tracking-wider whitespace-nowrap">
+                    <div className="absolute -top-6 left-1/2 z-20 -translate-x-1/2 rounded-sm bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 shadow-md tracking-wider whitespace-nowrap">
                       Selesai {formattedIcbmEndDate}
                     </div>
                   ) : null}
-                  <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/90 p-5 min-h-[160px] text-center shadow-sm pt-8 flex flex-col justify-center">
-                    <p className="text-[10px] font-black text-[#8b7e66] uppercase tracking-wider mb-2">ICBM</p>
+                  <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
+                    <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider mb-2">ICBM</p>
                     
-                    {/* 🔥 PERBAIKAN: Angka utama menggunakan totalReadyIcbm (AKAN BERTAMBAH SENDIRI) */}
-                    <div className="text-base sm:text-lg lg:text-xl font-black text-[#1d5c10] leading-tight break-words">
+                    <div className="text-lg font-black text-[#00FFAA] leading-tight break-words">
                       {totalReadyIcbm}
                       {isIcbmBuildQueued && remainingBuildQuantity > 0 ? (
-                        <span className="text-xs sm:text-sm text-emerald-600 font-bold"> +{remainingBuildQuantity}</span>
+                        <span className="text-xs text-emerald-400 font-bold"> +{remainingBuildQuantity}</span>
                       ) : null}
                     </div>
 
-                    {/* 🔥 PERBAIKAN: Badge status menggunakan sisa antrian */}
                     {isIcbmLocked ? (
-                      <p className="mt-3 text-[10px] text-[#8b7e66]">🔒 Terkunci. Aktifkan Program Nuklir terlebih dahulu.</p>
+                      <p className="mt-2 text-[10px] text-[#6B8A8A]">🔒 Terkunci. Aktifkan Program Nuklir terlebih dahulu.</p>
                     ) : isIcbmBuildQueued && remainingBuildQuantity > 0 ? (
-                      <div className="mt-3 inline-flex items-center justify-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-bold text-emerald-700">
+                      <div className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-[#00FFAA]/10 px-3 py-0.5 text-[10px] font-bold text-[#00FFAA]">
                         +{remainingBuildQuantity} sedang dibangun
                       </div>
                     ) : isIcbmBuildQueued && remainingBuildQuantity === 0 ? (
-                      <div className="mt-3 inline-flex items-center justify-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-bold text-emerald-700">
+                      <div className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-[#00FFAA]/20 px-3 py-0.5 text-[10px] font-bold text-[#00FFAA]">
                         ✔️ Semua ICBM telah selesai dibangun!
                       </div>
                     ) : (
-                      <p className="mt-3 text-[10px] text-[#8b7e66]">Bangun ICBM untuk melihat jadwal penyelesaian.</p>
+                      <p className="mt-2 text-[10px] text-[#6B8A8A]">Bangun ICBM untuk melihat jadwal penyelesaian.</p>
                     )}
                     
                     <button
                       onClick={() => setIsIcbmBuildStatusOpen(true)}
                       disabled={isIcbmLocked}
-                      className={`mt-4 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-black text-[#FAF6EE] shadow-sm transition-all ${isIcbmLocked ? 'bg-[#9ca18a] cursor-not-allowed opacity-70' : 'bg-[#1d5c4b] hover:bg-[#154a3c] cursor-pointer'}`}
+                      className={`mt-3 inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-xs font-black text-[#0A1A1A] shadow-sm transition-all ${isIcbmLocked ? 'bg-[#6B8A8A]/30 text-[#6B8A8A] cursor-not-allowed' : 'bg-[#00FFAA] hover:bg-[#00FFAA]/80 cursor-pointer'}`}
                     >
-                      <Clock className="h-4 w-4" />
+                      <Clock className="h-3.5 w-3.5" />
                       Lihat Status ICBM
                     </button>
                   </div>
@@ -377,8 +383,8 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
               </div>
             </div>
 
-            {/* 🔥 GRID 3 KARTU STRATEGI */}
-            <div className="grid grid-cols-3 gap-6">
+            {/* GRID 3 KARTU STRATEGI */}
+            <div className="grid grid-cols-3 gap-4">
               {nuclearOptions.map((option) => {
                 const Icon = option.icon;
                 const isLockedCard = !option.isUnlocker && !isNuclearProgramActive;
@@ -390,37 +396,37 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                     key={option.id}
                     onClick={() => handleOptionClick(option)}
                     disabled={isLockedCard || isUnlockerCardActive || isUnlockerBuilding}
-                    className={`group flex flex-col items-center text-center p-6 bg-white/80 border-2 rounded-xl shadow-sm transition-all duration-200 h-full ${
+                    className={`group flex flex-col items-center text-center p-5 rounded-2xl border transition-all duration-200 h-full ${
                         isLockedCard
-                          ? 'border-[#C4B49C]/20 opacity-95 !cursor-not-allowed'
+                          ? 'bg-[#0A1A1A] border-[#00FFAA]/10 opacity-60 cursor-not-allowed'
                           : isUnlockerCardActive
-                          ? 'border-emerald-400/50 bg-emerald-50/50 cursor-default hover:shadow-sm hover:scale-100'
-                          : 'border-[#C4B49C]/40 hover:shadow-lg hover:border-[#5c3c10] hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
+                          ? 'bg-[#00FFAA]/10 border-[#00FFAA]/40 cursor-default'
+                          : 'bg-[#0A1A1A] border-[#00FFAA]/20 hover:border-[#00FFAA] hover:shadow-lg cursor-pointer'
                       }`}
                   >
-                    <div className={`p-4 rounded-full ${
-                        isUnlockerCardActive ? 'bg-emerald-100 border-emerald-200' : option.bg
-                      } border-2 ${option.color}/20 mb-4 ${
+                    <div className={`p-3.5 rounded-full ${
+                        isUnlockerCardActive ? 'bg-[#00FFAA]/20 border-[#00FFAA]/40' : 'bg-[#0F2424] border-[#00FFAA]/20'
+                      } border mb-3 ${
                         isLockedCard || isUnlockerCardActive ? '' : 'group-hover:scale-110 transition-transform'
                       }`}
                     >
                       {isUnlockerCardActive ? (
-                        <div className="w-12 h-12 text-emerald-700 flex items-center justify-center">
-                          <span className="text-3xl">✔️</span>
+                        <div className="w-10 h-10 text-[#00FFAA] flex items-center justify-center">
+                          <span className="text-2xl">✔️</span>
                         </div>
                       ) : (
-                        <Icon className={`w-12 h-12 ${isLockedCard ? 'text-[#8b7e66]' : option.color}`} />
+                        <Icon className={`w-10 h-10 ${isLockedCard ? 'text-[#6B8A8A]' : 'text-[#00FFAA]'}`} />
                       )}
                     </div>
                     
-                    <span className={`text-base font-black uppercase tracking-wide mb-2 ${
-                      isLockedCard ? 'text-[#5c3c10]' : isUnlockerCardActive ? 'text-emerald-700' : 'text-[#5c3c10]'
+                    <span className={`text-sm font-black uppercase tracking-wide mb-1 ${
+                      isLockedCard ? 'text-[#6B8A8A]' : isUnlockerCardActive ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'
                     }`}>
                       {isUnlockerCardActive ? "Program Aktif!" : option.title}
                     </span>
                     
                     <p className={`text-[10px] leading-relaxed ${
-                      isLockedCard ? 'text-[#8b7e66]' : isUnlockerCardActive ? 'text-emerald-600' : 'text-[#8b7e66]'
+                      isLockedCard ? 'text-[#6B8A8A]' : isUnlockerCardActive ? 'text-[#00FFAA]' : 'text-[#6B8A8A]'
                     }`}>
                       {isLockedCard 
                         ? "🔒 Terkunci. Aktifkan Program Nuklir terlebih dahulu." 
