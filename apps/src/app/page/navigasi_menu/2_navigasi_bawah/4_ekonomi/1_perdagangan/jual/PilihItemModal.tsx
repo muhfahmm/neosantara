@@ -31,17 +31,16 @@ export default function PilihItemModal({
   const isGrouped = data.length > 0 && 'category' in data[0];
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[75] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       {/* ------- MODAL UTAMA ------- */}
-      <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl flex flex-col relative font-sans">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.02)_0%,transparent_100%)] pointer-events-none" />
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
         
         {/* HEADER */}
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
-          <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight uppercase">{title}</h2>
+        <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
+          <h2 className="text-2xl font-bold text-[#00FFAA] tracking-tight uppercase">{title}</h2>
           <button 
             onClick={onClose} 
-            className="p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+            className="p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5"
           >
             <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
@@ -49,14 +48,14 @@ export default function PilihItemModal({
         </div>
 
         {/* BODY - Grid Card */}
-        <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10">
+        <div className="flex-1 overflow-y-auto p-8 bg-[#0F2424] relative z-10 no-scrollbar">
           
           {/* RENDER UNTUK DATA BERKATEGORI (PRODUK) */}
           {isGrouped ? (
             (data as CategoryGroup[]).map((group, groupIndex) => (
               <div key={groupIndex} className="mb-8 last:mb-0">
                 {/* Judul Kategori */}
-                <div className="col-span-full text-[12px] font-black text-[#5c3c10] uppercase tracking-wider mb-3 border-b border-[#C4B49C]/30 pb-2">
+                <div className="col-span-full text-[12px] font-black text-[#00FFAA] uppercase tracking-wider mb-3 border-b border-[#00FFAA]/20 pb-2">
                   {group.category}
                 </div>
                 
@@ -74,29 +73,29 @@ export default function PilihItemModal({
                             onClose();
                           }
                         }}
-                        className={`group flex items-center justify-between p-5 rounded-xl border-2 transition-all duration-200 w-full text-left
+                        className={`group flex items-center justify-between p-5 rounded-xl border transition-all duration-200 w-full text-left
                           ${item.disabled 
-                            ? 'bg-gray-100 border-gray-200 cursor-not-allowed opacity-60' 
+                            ? 'bg-[#0A1A1A]/40 border-[#6B8A8A]/20 cursor-not-allowed opacity-50' 
                             : 'cursor-pointer ' + (isSelected 
-                              ? 'bg-[#2d6e6e] border-[#2d6e6e] shadow-md transform scale-[1.02]' 
-                              : 'bg-[#FAF6EE] border-[#C4B49C] hover:border-[#5c3c10] hover:shadow-md'
+                              ? 'bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-bold' 
+                              : 'bg-[#0A1A1A] border-[#00FFAA]/20 hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 text-[#E0E0E0]'
                             )
                           }
                         `}
                       >
                         <div className="flex flex-col gap-1">
-                          <span className={`text-sm font-bold tracking-wide ${isSelected ? 'text-[#FAF6EE]' : 'text-[#5c3c10]'}`}>
+                          <span className={`text-sm font-bold tracking-wide ${isSelected ? 'text-[#0A1A1A]' : 'text-[#E0E0E0]'}`}>
                             {item.label}
                           </span>
                           {item.disabled && (
-                            <span className="text-[10px] text-red-500 font-bold uppercase">Tidak Tersedia</span>
+                            <span className="text-[10px] text-rose-400 font-bold uppercase">Tidak Tersedia</span>
                           )}
                           {isSelected && (
-                            <span className="text-[10px] text-emerald-300 font-bold uppercase">Terpilih</span>
+                            <span className="text-[10px] text-[#0A1A1A] font-extrabold uppercase">Terpilih</span>
                           )}
                         </div>
                         {!item.disabled && (
-                          <ChevronRight className={`h-5 w-5 transition-transform group-hover:translate-x-1 ${isSelected ? 'text-[#FAF6EE]' : 'text-[#C4B49C]'}`} />
+                          <ChevronRight className={`h-5 w-5 transition-transform group-hover:translate-x-1 ${isSelected ? 'text-[#0A1A1A]' : 'text-[#00FFAA]'}`} />
                         )}
                       </button>
                     );
@@ -114,12 +113,12 @@ export default function PilihItemModal({
                     key={item.value}
                     disabled={item.disabled}
                     onClick={() => { if (!item.disabled) { onSelect(item.value); onClose(); } }}
-                    className={`group flex items-center justify-between p-5 rounded-xl border-2 transition-all duration-200 w-full text-left
+                    className={`group flex items-center justify-between p-5 rounded-xl border transition-all duration-200 w-full text-left
                       ${item.disabled 
-                        ? 'bg-gray-100 border-gray-200 cursor-not-allowed opacity-60' 
+                        ? 'bg-[#0A1A1A]/40 border-[#6B8A8A]/20 cursor-not-allowed opacity-50' 
                         : 'cursor-pointer ' + (isSelected 
-                          ? 'bg-[#2d6e6e] border-[#2d6e6e] shadow-md transform scale-[1.02]' 
-                          : 'bg-[#FAF6EE] border-[#C4B49C] hover:border-[#5c3c10] hover:shadow-md'
+                          ? 'bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-bold' 
+                          : 'bg-[#0A1A1A] border-[#00FFAA]/20 hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 text-[#E0E0E0]'
                         )
                       }
                     `}
@@ -130,11 +129,11 @@ export default function PilihItemModal({
                         const iso = matched?.iso;
                         if (!iso || iso.length !== 2) {
                           return (
-                            <div className="w-8 h-5 rounded-sm bg-[#e4dac3] border border-[#5c3c10]/20 flex-shrink-0 shadow-sm" />
+                            <div className="w-8 h-5 rounded-sm bg-[#0F2424] border border-[#00FFAA]/20 flex-shrink-0" />
                           );
                         }
                         return (
-                          <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#5c3c10]/20 flex-shrink-0 shadow-sm bg-[#e4dac3] relative">
+                          <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 bg-[#0F2424] relative">
                             <img
                               src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
                               alt={item.label}
@@ -143,10 +142,10 @@ export default function PilihItemModal({
                           </div>
                         );
                       })()}
-                      <span className={`text-sm font-bold tracking-wide ${isSelected ? 'text-[#FAF6EE]' : 'text-[#5c3c10]'}`}>{item.label}</span>
+                      <span className={`text-sm font-bold tracking-wide ${isSelected ? 'text-[#0A1A1A]' : 'text-[#E0E0E0]'}`}>{item.label}</span>
                     </div>
                     {!item.disabled && (
-                      <ChevronRight className={`h-5 w-5 transition-transform group-hover:translate-x-1 ${isSelected ? 'text-[#FAF6EE]' : 'text-[#C4B49C]'}`} />
+                      <ChevronRight className={`h-5 w-5 transition-transform group-hover:translate-x-1 ${isSelected ? 'text-[#0A1A1A]' : 'text-[#00FFAA]'}`} />
                     )}
                   </button>
                 );

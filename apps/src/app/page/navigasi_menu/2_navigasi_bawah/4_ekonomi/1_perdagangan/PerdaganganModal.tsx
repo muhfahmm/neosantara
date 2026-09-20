@@ -365,59 +365,59 @@ export default function PerdaganganModal({
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-        <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+        <div className="bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
 
-          <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
+          {/* HEADER */}
+          <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-                  <ArrowRightLeft className="h-6 w-6 text-[#5c3c10]" />
+                <div className="p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                  <ArrowRightLeft className="h-6 w-6 text-[#00FFAA]" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Pasar Perdagangan Global</h2>
+                  <h2 className="text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Pasar Perdagangan Global</h2>
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+            <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
               <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-5 w-5" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
-            <p className="text-xs text-[#8b7e66] font-semibold leading-relaxed mb-6">
+          <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+            <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-6">
               Kelola aktivitas jual dan beli komoditas nasional untuk mengoptimalkan pendapatan dan kebutuhan anggaran belanja negara.
             </p>
 
             <div className="flex flex-wrap gap-3 mb-8">
               <button
                 onClick={() => setIsMitraOpen(true)}
-                className="flex-1 min-w-[150px] py-3 rounded-lg bg-[#8b7e66] hover:bg-[#756a54] active:bg-[#605747] text-[#FAF6EE] text-xs font-bold uppercase tracking-wide cursor-pointer transition-all shadow-sm"
+                className="flex-1 min-w-[150px] py-3 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-xs font-bold uppercase tracking-wide cursor-pointer transition-all"
               >
                 Mitra
               </button>
               <button
                 onClick={() => setIsJualOpen(true)}
-                className="flex-1 min-w-[150px] py-3 rounded-lg bg-[#2d6e6e] hover:bg-[#255c5c] active:bg-[#1f4f4f] text-[#FAF6EE] text-xs font-bold uppercase tracking-wide cursor-pointer transition-all shadow-sm"
+                className="flex-1 min-w-[150px] py-3 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-xs font-bold uppercase tracking-wide cursor-pointer transition-all"
               >
                 Jual
               </button>
               <button
                 onClick={() => { setActiveTradePartner(null); setActiveOfferProduct(undefined); setIsConfirmBeliOpen(true); }}
-                className="flex-1 min-w-[150px] py-3 rounded-lg bg-[#2d6e6e] hover:bg-[#255c5c] active:bg-[#1f4f4f] text-[#FAF6EE] text-xs font-bold uppercase tracking-wide cursor-pointer transition-all shadow-sm"
+                className="flex-1 min-w-[150px] py-3 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-xs font-bold uppercase tracking-wide cursor-pointer transition-all"
               >
                 Beli
               </button>
               <button
                 onClick={() => setIsJualOpen(true)}
-                className="flex-1 min-w-[150px] py-3 rounded-lg bg-[#2d6e6e] hover:bg-[#255c5c] active:bg-[#1f4f4f] text-[#FAF6EE] text-xs font-bold uppercase tracking-wide cursor-pointer transition-all shadow-sm"
+                className="flex-1 min-w-[150px] py-3 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-xs font-bold uppercase tracking-wide cursor-pointer transition-all"
               >
                 Jual Semuanya
               </button>
               <button
                 onClick={() => setIsOfferOpen(!isOfferOpen)}
-                className={`flex-1 min-w-[150px] py-3 rounded-lg text-xs font-bold uppercase tracking-wide cursor-pointer transition-all shadow-sm ${isOfferOpen ? 'bg-amber-700 text-white' : 'bg-[#2d6e6e] hover:bg-[#255c5c] text-[#FAF6EE]'}`}
+                className={`flex-1 min-w-[150px] py-3 rounded-lg text-xs font-bold uppercase tracking-wide cursor-pointer transition-all border ${isOfferOpen ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]' : 'bg-[#0F2424] border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A]'}`}
               >
                 Tawaran Pembelian
               </button>
@@ -434,35 +434,35 @@ export default function PerdaganganModal({
             )}
 
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[10px] font-black text-[#5c3c10] uppercase tracking-widest">Riwayat 180 Hari Terakhir</h3>
-              <div className="inline-flex rounded-lg overflow-hidden border-2 border-[#C4B49C]/50">
-                <button onClick={() => setHistoryFilter(effectiveFilter === "jual" ? "semua" : "jual")} className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "jual" ? "bg-rose-600 text-white" : "bg-rose-600/15 text-rose-700 hover:bg-rose-600/25"}`}>Jual</button>
-                <button onClick={() => setHistoryFilter(effectiveFilter === "beli" ? "semua" : "beli")} className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "beli" ? "bg-emerald-600 text-white" : "bg-emerald-600/15 text-emerald-700 hover:bg-emerald-600/25"}`}>Beli</button>
+              <h3 className="text-[10px] font-black text-[#00FFAA] uppercase tracking-widest">Riwayat 180 Hari Terakhir</h3>
+              <div className="inline-flex rounded-lg overflow-hidden border border-[#00FFAA]/30">
+                <button onClick={() => setHistoryFilter(effectiveFilter === "jual" ? "semua" : "jual")} className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "jual" ? "bg-rose-600 text-white" : "bg-[#0A1A1A] text-rose-400 hover:bg-rose-950/40"}`}>Jual</button>
+                <button onClick={() => setHistoryFilter(effectiveFilter === "beli" ? "semua" : "beli")} className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "beli" ? "bg-emerald-600 text-white" : "bg-[#0A1A1A] text-emerald-400 hover:bg-emerald-950/40"}`}>Beli</button>
               </div>
             </div>
 
-            <div className="border-2 border-[#C4B49C]/40 rounded-xl overflow-hidden">
+            <div className="border border-[#00FFAA]/30 rounded-xl overflow-hidden bg-[#0F2424]">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-[#2d6e6e]">
-                    <th className="px-4 py-3 text-[10px] font-black text-[#FAF6EE] uppercase tracking-wider">Tanggal</th>
-                    <th className="px-4 py-3 text-[10px] font-black text-[#FAF6EE] uppercase tracking-wider">Tipe</th>
-                    <th className="px-4 py-3 text-[10px] font-black text-[#FAF6EE] uppercase tracking-wider">Kuantitas</th>
-                    <th className="px-4 py-3 text-[10px] font-black text-[#FAF6EE] uppercase tracking-wider">Biaya</th>
-                    <th className="px-4 py-3 text-[10px] font-black text-[#FAF6EE] uppercase tracking-wider">Negara</th>
+                  <tr className="bg-[#0A1A1A] border-b border-[#00FFAA]/20">
+                    <th className="px-4 py-3 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Tanggal</th>
+                    <th className="px-4 py-3 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Tipe</th>
+                    <th className="px-4 py-3 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Kuantitas</th>
+                    <th className="px-4 py-3 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Biaya</th>
+                    <th className="px-4 py-3 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Negara</th>
                   </tr>
                 </thead>
-                <tbody className="bg-[#FAF6EE]">
+                <tbody className="bg-[#0F2424] divide-y divide-[#00FFAA]/10">
                   {filteredHistory.length === 0 ? (
-                    <tr><td colSpan={5} className="px-4 py-8 text-center text-xs text-[#8b7e66] font-semibold">Belum ada riwayat transaksi.</td></tr>
+                    <tr><td colSpan={5} className="px-4 py-8 text-center text-xs text-[#6B8A8A] font-semibold">Belum ada riwayat transaksi.</td></tr>
                   ) : (
                     filteredHistory.map((item, idx) => (
-                      <tr key={idx} className="border-t border-[#C4B49C]/20">
-                        <td className="px-4 py-3 text-xs font-semibold text-[#5c3c10]">{item.tanggal}</td>
-                        <td className="px-4 py-3 text-xs font-bold uppercase"><span className={item.tipe === "jual" ? "text-rose-700" : "text-emerald-700"}>{item.tipe}</span></td>
-                        <td className="px-4 py-3 text-xs font-semibold text-[#5c3c10]">{item.kuantitas}</td>
-                        <td className="px-4 py-3 text-xs font-bold text-[#5c3c10]">{item.tipe === "jual" ? "+" : "-"} {item.biaya.toLocaleString("id-ID")} EM</td>
-                        <td className="px-4 py-3 text-xs font-semibold text-[#5c3c10]">{item.negara}</td>
+                      <tr key={idx} className="hover:bg-[#00FFAA]/5 transition-colors">
+                        <td className="px-4 py-3 text-xs font-semibold text-[#E0E0E0]">{item.tanggal}</td>
+                        <td className="px-4 py-3 text-xs font-bold uppercase"><span className={item.tipe === "jual" ? "text-rose-400" : "text-emerald-400"}>{item.tipe}</span></td>
+                        <td className="px-4 py-3 text-xs font-semibold text-[#E0E0E0]">{item.kuantitas}</td>
+                        <td className="px-4 py-3 text-xs font-bold text-[#00FFAA]">{item.tipe === "jual" ? "+" : "-"} {item.biaya.toLocaleString("id-ID")} EM</td>
+                        <td className="px-4 py-3 text-xs font-semibold text-[#E0E0E0]">{item.negara}</td>
                       </tr>
                     ))
                   )}

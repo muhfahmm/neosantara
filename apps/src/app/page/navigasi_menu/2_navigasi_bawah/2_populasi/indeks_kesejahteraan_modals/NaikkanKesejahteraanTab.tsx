@@ -248,22 +248,22 @@ export default function NaikkanKesejahteraanTab({
   return (
     <div className="space-y-6">
       {/* Informasi Anggaran */}
-      <div className="bg-[#e4dac3]/20 border-2 border-[#C4B49C]/30 p-4 rounded-xl flex items-center justify-between">
+      <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Coins className="h-5 w-5 text-amber-700" />
+          <Coins className="h-5 w-5 text-[#00FFAA]" />
           <div>
-            <p className="text-[10px] text-[#8b7e66] font-black uppercase">Kas Negara Tersedia</p>
-            <p className="text-lg font-black text-[#2e261a]">{anggaran.toLocaleString("id-ID")} EM</p>
+            <p className="text-[10px] text-[#6B8A8A] font-black uppercase">Kas Negara Tersedia</p>
+            <p className="text-lg font-black text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} EM</p>
           </div>
         </div>
-        <p className="text-xs text-[#8b7e66] font-semibold">
+        <p className="text-xs text-[#6B8A8A] font-semibold">
           Luncurkan program bantuan sosial untuk meningkatkan kesejahteraan rakyat secara dinamis.
         </p>
       </div>
 
       {feedback && (
         <div className={`p-4 rounded-xl border flex items-start gap-3 relative ${
-          feedback.type === "success" ? "bg-emerald-50 border-emerald-300 text-emerald-800" : "bg-rose-50 border-rose-300 text-rose-800"
+          feedback.type === "success" ? "bg-[#0F2424] border-emerald-500/40 text-emerald-400" : "bg-[#0F2424] border-rose-500/40 text-rose-400"
         }`}>
           {feedback.type === "success" ? <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" /> : <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />}
           <div className="flex-1 text-xs font-bold leading-relaxed">{feedback.message}</div>
@@ -280,12 +280,12 @@ export default function NaikkanKesejahteraanTab({
           return (
             <div
               key={init.id}
-              className={`rounded-xl p-5 border-2 bg-white flex flex-col justify-between space-y-4 shadow-sm relative overflow-hidden transition-all duration-200 ${
-                isLaunched ? "border-amber-300/60" : "border-[#C4B49C]/30 hover:shadow-md"
+              className={`rounded-xl p-5 border bg-[#0A1A1A] flex flex-col justify-between space-y-4 relative overflow-hidden transition-all duration-200 ${
+                isLaunched ? "border-amber-500/60" : "border-[#00FFAA]/20 hover:border-[#00FFAA]/50"
               }`}
             >
               {isLaunched && (
-                <div className="absolute top-0 right-0 bg-amber-500/10 text-amber-700 px-3 py-1 text-[9px] font-black uppercase tracking-wider rounded-bl-lg border-l border-b border-amber-300/40 flex items-center gap-1">
+                <div className="absolute top-0 right-0 bg-amber-500/10 text-amber-400 px-3 py-1 text-[9px] font-black uppercase tracking-wider rounded-bl-lg border-l border-b border-amber-500/40 flex items-center gap-1">
                   <Clock className="h-3 w-3" />
                   Sedang Berjalan
                 </div>
@@ -293,30 +293,30 @@ export default function NaikkanKesejahteraanTab({
 
               <div className="space-y-2">
                 <div className="flex items-center gap-3">
-                  <div className={`p-2.5 rounded-lg ${init.bg}`}>
-                    <Icon className={`h-5 w-5 ${init.color}`} />
+                  <div className="p-2.5 rounded-lg bg-[#00FFAA]/10 border border-[#00FFAA]/30">
+                    <Icon className="h-5 w-5 text-[#00FFAA]" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-black text-[#2e261a] leading-none">{init.title}</h4>
-                    <p className="text-[10px] text-emerald-700 font-bold mt-1">Boost Kesejahteraan: +{init.boost}%</p>
+                    <h4 className="text-sm font-black text-[#E0E0E0] leading-none">{init.title}</h4>
+                    <p className="text-[10px] text-emerald-400 font-bold mt-1">Boost Kesejahteraan: +{init.boost}%</p>
                   </div>
                 </div>
-                <p className="text-xs text-[#5c3c10] font-medium leading-relaxed">{init.desc}</p>
+                <p className="text-xs text-[#6B8A8A] font-medium leading-relaxed">{init.desc}</p>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-[#C4B49C]/10">
-                <div className="text-[10px] text-[#8b7e66] font-bold">
-                  <p>Biaya: <span className="font-black text-[#2e261a]">{init.cost.toLocaleString("id-ID")} EM</span></p>
-                  <p>Durasi: <span className="font-black text-[#2e261a]">{init.duration} hari</span></p>
+              <div className="flex items-center justify-between pt-2 border-t border-[#00FFAA]/10">
+                <div className="text-[10px] text-[#6B8A8A] font-bold">
+                  <p>Biaya: <span className="font-black text-[#00FFAA]">{init.cost.toLocaleString("id-ID")} EM</span></p>
+                  <p>Durasi: <span className="font-black text-[#E0E0E0]">{init.duration} hari</span></p>
                 </div>
 
                 <button
                   onClick={() => handleLaunchInitiative(init)}
                   disabled={isLaunched}
-                  className={`px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-wider shadow-sm transition-all duration-150 ${
+                  className={`px-4 py-2 rounded-lg font-black text-[10px] uppercase tracking-wider transition-all duration-150 ${
                     isLaunched
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
-                      : "bg-[#5c3c10] hover:bg-[#462d0b] text-white hover:scale-105 active:scale-95 cursor-pointer"
+                      ? "bg-[#0F2424] text-[#6B8A8A] cursor-not-allowed border border-[#00FFAA]/10"
+                      : "bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 cursor-pointer"
                   }`}
                 >
                   {isLaunched ? "Aktif" : "Luncurkan"}

@@ -24,28 +24,28 @@ const getFlagEmoji = (countryName: string) => {
 
 export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, currentDate }: TawaranPembelianTableProps) {
   return (
-    <div className="mb-8 border-2 border-[#C4B49C]/40 rounded-xl overflow-hidden animate-in fade-in zoom-in duration-300">
-      <div className="bg-[#2d6e6e] px-6 py-3 flex justify-between items-center text-[#FAF6EE] text-xs font-black uppercase tracking-wider">
+    <div className="mb-8 border border-[#00FFAA]/30 rounded-xl overflow-hidden animate-in fade-in zoom-in duration-300 bg-[#0F2424]">
+      <div className="bg-[#0A1A1A] px-6 py-3 flex justify-between items-center text-[#00FFAA] text-xs font-black uppercase tracking-wider border-b border-[#00FFAA]/20">
         <span>Tawaran Khusus dari Mitra Dagang</span>
-        <button onClick={onClose} className="hover:text-red-300 transition-colors cursor-pointer">
+        <button onClick={onClose} className="hover:text-rose-400 transition-colors cursor-pointer">
           <X className="h-4 w-4" />
         </button>
       </div>
       <table className="w-full text-left">
         <thead>
-          <tr className="bg-[#e4dac3]/30 border-b border-[#C4B49C]/20">
-            <th className="px-4 py-2 text-[10px] font-black text-[#5c3c10] uppercase tracking-wider">Mitra</th>
-            <th className="px-4 py-2 text-[10px] font-black text-[#5c3c10] uppercase tracking-wider">Produk</th>
-            <th className="px-4 py-2 text-[10px] font-black text-[#5c3c10] uppercase tracking-wider">Kuantitas</th>
-            <th className="px-4 py-2 text-[10px] font-black text-[#5c3c10] uppercase tracking-wider">Harga/Unit</th>
-            <th className="px-4 py-2 text-[10px] font-black text-[#5c3c10] uppercase tracking-wider">Total Biaya</th>
-            <th className="px-4 py-2 text-[10px] font-black text-[#5c3c10] uppercase tracking-wider text-center">Aksi</th>
+          <tr className="bg-[#0A1A1A] border-b border-[#00FFAA]/20">
+            <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Mitra</th>
+            <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Produk</th>
+            <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Kuantitas</th>
+            <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Harga/Unit</th>
+            <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Total Biaya</th>
+            <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider text-center">Aksi</th>
           </tr>
         </thead>
-        <tbody className="bg-[#FAF6EE]">
+        <tbody className="bg-[#0F2424] divide-y divide-[#00FFAA]/10">
           {offers.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-4 py-8 text-center text-xs text-[#8b7e66] font-semibold">
+              <td colSpan={6} className="px-4 py-8 text-center text-xs text-[#6B8A8A] font-semibold">
                 Belum ada tawaran masuk saat ini.
               </td>
             </tr>
@@ -56,18 +56,18 @@ export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, 
               const isExpired = currentDate > offerEndDate;
 
               return (
-                <tr key={offer.id} className="border-t border-[#C4B49C]/20">
-                  <td className="px-4 py-3 text-xs font-semibold text-[#5c3c10] flex items-center gap-3">
+                <tr key={offer.id} className="hover:bg-[#00FFAA]/5 transition-colors">
+                  <td className="px-4 py-3 text-xs font-semibold text-[#E0E0E0] flex items-center gap-3">
                     {(() => {
                       const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === offer.partnerName.toLowerCase().trim());
                       const iso = matched?.iso;
                       if (!iso || iso.length !== 2) {
                         return (
-                          <div className="w-8 h-5 rounded-sm bg-[#e4dac3] border border-[#5c3c10]/20 flex-shrink-0 shadow-sm" />
+                          <div className="w-8 h-5 rounded-sm bg-[#0A1A1A] border border-[#00FFAA]/20 flex-shrink-0" />
                         );
                       }
                       return (
-                        <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#5c3c10]/20 flex-shrink-0 shadow-sm bg-[#e4dac3] relative">
+                        <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 bg-[#0A1A1A] relative">
                           <img
                             src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
                             alt={offer.partnerName}
@@ -78,20 +78,20 @@ export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, 
                     })()}
                     <span>{offer.partnerName}</span>
                   </td>
-                  <td className="px-4 py-3 text-xs font-bold text-emerald-700">{formatLabel(offer.productKey)}</td>
-                  <td className="px-4 py-3 text-xs font-semibold text-[#5c3c10]">{offer.quantity.toLocaleString()}</td>
-                  <td className="px-4 py-3 text-xs text-[#8b7e66]">{offer.pricePerUnit.toLocaleString("id-ID")} EM</td>
-                  <td className="px-4 py-3 text-xs font-bold text-[#5c3c10]">{offer.totalPrice.toLocaleString("id-ID")} EM</td>
+                  <td className="px-4 py-3 text-xs font-bold text-[#00FFAA]">{formatLabel(offer.productKey)}</td>
+                  <td className="px-4 py-3 text-xs font-semibold text-[#E0E0E0]">{offer.quantity.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-xs text-[#6B8A8A]">{offer.pricePerUnit.toLocaleString("id-ID")} EM</td>
+                  <td className="px-4 py-3 text-xs font-bold text-[#00FFAA]">{offer.totalPrice.toLocaleString("id-ID")} EM</td>
                   <td className="px-4 py-3 flex justify-center">
                     {!isExpired ? (
                       <button
                         onClick={() => onAcceptOffer(offer)}
-                        className="px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-[#FAF6EE] text-[10px] font-bold uppercase tracking-wider transition-all shadow-sm cursor-pointer"
+                        className="px-3 py-1.5 rounded bg-[#00FFAA] hover:bg-[#00FFAA]/80 text-[#0A1A1A] text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer"
                       >
                         Terima
                       </button>
                     ) : (
-                      <span className="px-3 py-1.5 rounded bg-gray-200 text-gray-400 text-[10px] font-bold uppercase cursor-not-allowed">
+                      <span className="px-3 py-1.5 rounded bg-[#0A1A1A] text-[#6B8A8A] text-[10px] font-bold uppercase cursor-not-allowed border border-[#6B8A8A]/30">
                         Kadaluwarsa
                       </span>
                     )}

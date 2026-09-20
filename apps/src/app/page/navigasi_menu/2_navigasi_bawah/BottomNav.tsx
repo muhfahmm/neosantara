@@ -91,7 +91,7 @@ export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, is
   return (
     <div className={`absolute bottom-12 left-1/2 -translate-x-1/2 w-max max-w-[95vw] transition-all duration-500 cursor-not-allowed z-[200] ${isOtherModalOpen ? 'opacity-50' : 'opacity-100'
       }`}>
-      <nav className="flex items-center gap-2 bg-[#FAF6EE] px-2.5 py-2 rounded-2xl border-2 border-[#C4B49C] shadow-2xl transition-all duration-500 ease-in-out overflow-visible">
+      <nav className="flex items-center gap-2 bg-[#0F2424]/90 backdrop-blur-md px-2.5 py-2 rounded-2xl border border-[#00FFAA]/30 transition-all duration-500 ease-in-out overflow-visible">
 
         {/* Main Navigation Section */}
         <div className="flex items-center gap-2">
@@ -108,13 +108,11 @@ export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, is
                 <button
                   onClick={() => isMap ? handleFullReset() : handleMainClick(item.id)}
                   className={`px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-2.5 justify-center ${isActive
-                    ? "bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] text-[#5c3c10] border border-[#5c3c10]/20 shadow-md scale-105"
-                    : isMap
-                      ? "text-[#8b7e66] hover:text-[#5c3c10] hover:bg-[#e4dac3]/40"
-                      : "text-[#8b7e66] hover:text-[#5c3c10] hover:bg-[#e4dac3]/40"
+                    ? "bg-[#00FFAA] text-[#0A1A1A] font-bold border border-[#00FFAA]"
+                    : "text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#00FFAA]/10"
                     }`}
                 >
-                  <Icon className={`h-5 w-5 ${isActive ? "animate-pulse" : ""}`} />
+                  <Icon className={`h-5 w-5 ${isActive ? "text-[#0A1A1A]" : ""}`} />
                   {isActive && (
                     <span className="text-[11px] font-black uppercase tracking-widest whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300">
                       {item.label}
@@ -129,7 +127,7 @@ export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, is
 
         {/* Vertical Divider */}
         {isMenuSelected && currentSubItems?.length > 0 && (
-          <div className="h-8 w-[1px] bg-[#C4B49C]/60 mx-2 animate-in fade-in duration-500" />
+          <div className="h-8 w-[1px] bg-[#00FFAA]/30 mx-2 animate-in fade-in duration-500" />
         )}
 
         {/* Sub-Menu Extension Section */}
@@ -140,15 +138,15 @@ export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, is
                 <button
                   onClick={() => setActiveMenu(sub.id)}
                   className={`flex items-center justify-center p-2 rounded-lg transition-all cursor-pointer border ${activeMenu === sub.id
-                    ? 'bg-[#e4dac3] border-[#5c3c10]/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)]'
-                    : 'bg-[#FAF6EE] hover:bg-[#e4dac3]/40 border-[#C4B49C]/40'
+                    ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]'
+                    : 'bg-[#0A1A1A]/80 hover:bg-[#00FFAA]/10 border-[#00FFAA]/20'
                     }`}
                 >
-                  <sub.icon className={`h-4 w-4 ${activeMenu === sub.id ? 'text-[#5c3c10]' : 'text-[#8b7e66] group-hover:text-[#5c3c10]'} transition-colors`} />
+                  <sub.icon className={`h-4 w-4 ${activeMenu === sub.id ? 'text-[#0A1A1A]' : 'text-[#6B8A8A] group-hover:text-[#00FFAA]'} transition-colors`} />
                 </button>
-                <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2.5 bg-[#5c3c10] text-[#FAF6EE] text-[13px] font-semibold rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap shadow-lg z-[9999] scale-95 group-hover:scale-100`}>
+                <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2.5 bg-[#0F2424] border border-[#00FFAA]/30 text-[#E0E0E0] text-[13px] font-semibold rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] scale-95 group-hover:scale-100`}>
                   {sub.label}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-x-4 border-x-transparent border-t-4 border-t-[#5c3c10]"></div>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-x-4 border-x-transparent border-t-4 border-t-[#0F2424]"></div>
                 </div>
               </div>
             ))}
@@ -161,9 +159,9 @@ export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, is
 
 function Tooltip({ label, small = false }: { label: string, small?: boolean }) {
   return (
-    <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2.5 bg-[#5c3c10] text-[#FAF6EE] text-[13px] font-semibold rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap shadow-lg z-[9999] scale-95 group-hover:scale-100 group-hover:block`}>
+    <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2.5 bg-[#0F2424] border border-[#00FFAA]/30 text-[#E0E0E0] text-[13px] font-semibold rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[9999] scale-95 group-hover:scale-100 group-hover:block`}>
       {label}
-      <div className="absolute top-full left-1/2 -translate-x-1/2 border-x-4 border-x-transparent border-t-4 border-t-[#5c3c10]"></div>
+      <div className="absolute top-full left-1/2 -translate-x-1/2 border-x-4 border-x-transparent border-t-4 border-t-[#0F2424]"></div>
     </div>
   );
 }

@@ -369,11 +369,11 @@ export default function PilihNegaraPage() {
 
   return (
     <div className="relative min-h-screen bg-[#070b14] overflow-hidden font-sans">
-      {/* Status Bar */}
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-[#e6d8b9] border-b border-[#c4b49c] px-8 py-3.5 flex items-center justify-between shadow-md h-20">
+      {/* Status Bar / Top Bar (Header) */}
+      <nav className="fixed top-0 left-0 right-0 z-40 bg-[#0A1A1A]/90 backdrop-blur-md border-b border-[#00FFAA]/20 px-8 py-3.5 flex items-center justify-between h-20">
         <div className="flex items-center gap-6 overflow-x-auto no-scrollbar">
           {/* Help Icon */}
-          <button className="flex items-center justify-center w-8 h-8 rounded-full border border-[#8b7e66]/40 text-[#8b7e66] hover:bg-[#8b7e66]/20 transition-colors shadow-sm">
+          <button className="flex items-center justify-center w-8 h-8 rounded-full border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA]/10 transition-all cursor-pointer">
             <HelpCircle className="w-4 h-4" />
           </button>
 
@@ -383,33 +383,30 @@ export default function PilihNegaraPage() {
               setIsDebugAllCountries(true);
               setIsDebugOpen(true);
             }}
-            className="flex items-center justify-center w-8 h-8 rounded-full border border-[#8b7e66]/40 text-[#8b7e66] hover:bg-[#8b7e66]/20 transition-colors shadow-sm"
+            className="flex items-center justify-center w-8 h-8 rounded-full border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA]/10 transition-all cursor-pointer"
           >
             <Bug className="w-4 h-4" />
           </button>
 
           <div className="flex items-center gap-6">
-            {/* FIX: countries[currentIndex] -> filteredCountries[currentIndex] */}
             <StatusItem
-              icon={<MapPin className="w-3.5 h-3.5" />}
+              icon={<MapPin className="w-3.5 h-3.5 text-[#00FFAA]" />}
               label="IBUKOTA"
-              // 🔥 PERBAIKAN 2: Jika index tidak valid, tampilkan '-'
               value={hasInteracted && filteredCountries[currentIndex] ? (filteredCountries[currentIndex]?.capital || '-') : '-'}
             />
             <StatusItem
-              icon={<Users className="w-3.5 h-3.5" />}
+              icon={<Users className="w-3.5 h-3.5 text-[#00FFAA]" />}
               label="POPULASI"
-              // 🔥 PERBAIKAN 3: Jika countryDetail null, tampilkan '-'
               value={hasInteracted && countryDetail ? (countryDetail?.jumlah_penduduk?.toLocaleString('id-ID') || '0') : '-'}
             />
             <StatusItem
-              icon={<Landmark className="w-3.5 h-3.5" />}
+              icon={<Landmark className="w-3.5 h-3.5 text-[#00FFAA]" />}
               label="KAS NEGARA"
               value={hasInteracted && countryDetail ? `${countryDetail?.anggaran || 0} EM` : '-'}
             />
 
             <StatusItem
-              icon={<TrendingUp className="w-3.5 h-3.5" />}
+              icon={<TrendingUp className="w-3.5 h-3.5 text-[#00FFAA]" />}
               label="NETTO APBN"
               value={
                 hasInteracted && countryDetail && Object.keys(countryDetail).length > 0
@@ -421,30 +418,30 @@ export default function PilihNegaraPage() {
               color={
                 hasInteracted && countryDetail && Object.keys(countryDetail).length > 0
                   ? netBalance >= 0
-                    ? 'text-emerald-700'
-                    : 'text-rose-700'
-                  : 'text-[#3d362a]'
+                    ? 'text-[#00FFAA]'
+                    : 'text-rose-400'
+                  : 'text-[#E0E0E0]'
               }
             />
 
-            <StatusItem icon={<Globe className="w-3.5 h-3.5" />} label="TOTAL NEGARA" value="207" />
+            <StatusItem icon={<Globe className="w-3.5 h-3.5 text-[#00FFAA]" />} label="TOTAL NEGARA" value="207" />
             <StatusItem
-              icon={<Home className="w-3.5 h-3.5" />}
+              icon={<Home className="w-3.5 h-3.5 text-[#00FFAA]" />}
               label="AGAMA MAYORITAS"
               value={hasInteracted && countryDetail ? (countryDetail?.religion || '-') : '-'}
             />
             <StatusItem
-              icon={<Scale className="w-3.5 h-3.5" />}
+              icon={<Scale className="w-3.5 h-3.5 text-[#00FFAA]" />}
               label="IDEOLOGI"
               value={hasInteracted && countryDetail ? (countryDetail?.ideology || '-') : '-'}
             />
 
             {/* UN Vote Badge */}
-            <div className="flex items-center gap-4 border-l border-[#c4b49c] pl-6">
-              <span className="text-[10px] font-black text-[#8b7e66] tracking-widest uppercase">
+            <div className="flex items-center gap-4 border-l border-[#00FFAA]/20 pl-6">
+              <span className="text-[10px] font-black text-[#6B8A8A] tracking-widest uppercase">
                 SUARA PBB
               </span>
-              <div className="bg-[#5ea3b1] text-white px-4 py-1.5 rounded-lg font-black text-[14px] shadow-md border border-[#4d8a96]">
+              <div className="bg-[#0F2424] text-[#00FFAA] px-4 py-1.5 rounded-lg font-black text-[14px] border border-[#00FFAA]/30">
                 {hasInteracted && countryDetail ? (countryDetail?.un_vote || 0) : '-'}
               </div>
             </div>
@@ -452,22 +449,20 @@ export default function PilihNegaraPage() {
         </div>
 
         <div className="flex items-center gap-4 ml-4 shrink-0">
-          <div className="bg-[#dcc9a3]/50 backdrop-blur-md border border-black/10 px-5 py-2.5 rounded-2xl shadow-lg ml-4 min-w-[200px]">
-            {/* FIX: countries[currentIndex] -> filteredCountries[currentIndex] */}
+          <div className="bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 px-5 py-2.5 rounded-2xl ml-4 min-w-[200px] flex items-center">
             {hasInteracted && filteredCountries[currentIndex] ? (
               <img
                 src={`https://flagcdn.com/w80/${filteredCountries[currentIndex]?.iso?.toLowerCase()}.png`}
-                className="w-8 h-5 rounded-sm object-cover border border-black/10 shadow-sm"
+                className="w-8 h-5 rounded-sm object-cover border border-[#00FFAA]/30"
                 alt="flag"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
                 }}
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-xl">🌐</div>
+              <div className="w-8 h-8 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-center text-xl">🌐</div>
             )}
             <div className="ml-3">
-              {/* FIX: countries[currentIndex] -> filteredCountries[currentIndex] */}
               <Link
                 href={hasInteracted && filteredCountries[currentIndex] ? `/page/map_system?country=${filteredCountries[currentIndex]?.country}` : '#'}
                 onClick={(e) => {
@@ -481,10 +476,10 @@ export default function PilihNegaraPage() {
                 }}
                 className="flex flex-col"
               >
-                <span className="text-[12px] font-black text-black tracking-tight uppercase">
+                <span className="text-[12px] font-black text-[#E0E0E0] tracking-tight uppercase group-hover:text-[#00FFAA] transition-colors">
                   {hasInteracted && filteredCountries[currentIndex] ? filteredCountries[currentIndex]?.country : 'Select Country'}
                 </span>
-                <span className="text-[10px] font-bold text-black/60 uppercase tracking-widest">
+                <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-widest">
                   {hasInteracted && filteredCountries[currentIndex] ? filteredCountries[currentIndex]?.capital : 'Region Map'}
                 </span>
               </Link>
@@ -498,9 +493,9 @@ export default function PilihNegaraPage() {
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#070b14] flex items-center justify-center"
+            className="fixed inset-0 z-50 bg-[#0A1A1A] flex items-center justify-center"
           >
-            <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
+            <div className="w-12 h-12 border-4 border-[#00FFAA]/20 border-t-[#00FFAA] rounded-full animate-spin" />
           </motion.div>
         )}
       </AnimatePresence>
@@ -522,32 +517,37 @@ export default function PilihNegaraPage() {
             e.currentTarget.dispatchEvent(event);
           }}
         />
-        <div className="absolute inset-0 bg-black/20 pointer-events-none" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-end min-h-screen pb-12 pointer-events-none">
 
         {/* Tab & Search Kembali ke Tengah */}
         <div className="mb-6 flex items-center justify-center gap-6 pointer-events-auto">
-          <div className="flex bg-black/60 backdrop-blur-md p-1 rounded-2xl border border-white/10">
+          <div className="flex bg-[#0F2424]/90 backdrop-blur-md p-1 rounded-2xl border border-[#00FFAA]/30">
             <button
               onClick={() => setActiveTab('utama')}
-              className={`px-6 py-2 rounded-xl text-[10px] font-black tracking-widest transition-all ${activeTab === 'utama' ? 'bg-white text-black shadow-lg' : 'text-slate-400 hover:text-white'
-                }`}
+              className={`px-6 py-2 rounded-xl text-[10px] font-black tracking-widest transition-all cursor-pointer ${
+                activeTab === 'utama'
+                  ? 'bg-[#00FFAA] text-[#0A1A1A]'
+                  : 'text-[#6B8A8A] hover:text-[#E0E0E0]'
+              }`}
             >
               PETA UTAMA
             </button>
             <button
               onClick={() => setActiveTab('hubungan')}
-              className={`px-6 py-2 rounded-xl text-[10px] font-black tracking-widest transition-all ${activeTab === 'hubungan' ? 'bg-white text-black shadow-lg' : 'text-slate-400 hover:text-white'
-                }`}
+              className={`px-6 py-2 rounded-xl text-[10px] font-black tracking-widest transition-all cursor-pointer ${
+                activeTab === 'hubungan'
+                  ? 'bg-[#00FFAA] text-[#0A1A1A]'
+                  : 'text-[#6B8A8A] hover:text-[#E0E0E0]'
+              }`}
             >
               HUBUNGAN
             </button>
           </div>
 
           <div className="relative w-80">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#00FFAA]" />
             <input
               type="text"
               placeholder="Cari Negara atau Ibukota..."
@@ -556,90 +556,87 @@ export default function PilihNegaraPage() {
                 setSearchQuery(e.target.value);
                 setCurrentIndex(0);
               }}
-              className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl py-2.5 pl-12 pr-6 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-white/30 transition-all"
+              className="w-full bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 rounded-2xl py-2.5 pl-12 pr-6 text-xs text-[#E0E0E0] placeholder:text-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-all"
             />
           </div>
         </div>
 
-{/* RESOURCE MENU DENGAN BORDER BERDASARKAN DATABASE_SDA */}
-<div className="absolute right-6 top-[88px] z-30 flex flex-wrap items-center justify-end gap-2 max-w-2xl pointer-events-auto p-3 bg-[#e6d8b9]/90 backdrop-blur-md border-2 border-[#C4B49C] rounded-2xl shadow-lg">
-  
-  {/* MODERN HEADER - Menggantikan tag <p> polos */}
-  <div className="flex items-center justify-between w-full mb-3 pb-3 border-b border-[#C4B49C]/30">
-    <div className="flex items-center gap-3">
-      <div className="p-1.5 bg-gradient-to-br from-[#5c3c10]/10 to-[#8b7e66]/10 rounded-lg border border-[#C4B49C]/40 shadow-sm">
-        <Layers className="w-4 h-4 text-[#5c3c10]" />
-      </div>
-      <p className="text-xs font-black text-[#2e261a] uppercase tracking-wider leading-none">
-        Sumber Daya Alam
-      </p>
-    </div>
+        {/* RESOURCE MENU DENGAN BORDER BERDASARKAN DATABASE_SDA */}
+        <div className="absolute right-6 top-[88px] z-30 flex flex-wrap items-center justify-end gap-2 max-w-2xl pointer-events-auto p-3.5 bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 rounded-2xl">
+          
+          {/* MODERN HEADER */}
+          <div className="flex items-center justify-between w-full mb-3 pb-3 border-b border-[#00FFAA]/20">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30">
+                <Layers className="w-4 h-4 text-[#00FFAA]" />
+              </div>
+              <p className="text-xs font-black text-[#E0E0E0] uppercase tracking-wider leading-none">
+                SUMBER DAYA ALAM
+              </p>
+            </div>
 
-    {/* Badge Indikator Tersedia - dinamis */}
-    {hasInteracted && getCurrentSDA ? (
-      <div className="flex items-center gap-1.5 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-400/40">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span className="text-[9px] font-bold text-emerald-700 uppercase tracking-wide">
-          {Object.values(getCurrentSDA).filter(Boolean).length}/{resourceMap.length} Tersedia
-        </span>
-      </div>
-    ) : (
-      <div className="flex items-center gap-1.5 bg-[#2e261a]/5 px-2.5 py-1 rounded-full border border-[#C4B49C]/30">
-        <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
-        <span className="text-[9px] font-bold text-[#8b7e66] uppercase tracking-wide">Pilih Negara</span>
-      </div>
-    )}
-  </div>
-  
-  {/* LOGIKA MAPPING SDA - warna border dari database_SDA (true=hijau, false=merah) */}
-  {resourceMap.map((resource) => {
-    const Icon = resource.icon;
+            {/* Badge Indikator Tersedia */}
+            {hasInteracted && getCurrentSDA ? (
+              <div className="flex items-center gap-1.5 bg-[#00FFAA]/10 px-2.5 py-1 rounded-full border border-[#00FFAA]/40">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00FFAA] animate-pulse"></span>
+                <span className="text-[9px] font-bold text-[#00FFAA] uppercase tracking-wide">
+                  {Object.values(getCurrentSDA).filter(Boolean).length}/{resourceMap.length} Tersedia
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 bg-[#0A1A1A]/50 px-2.5 py-1 rounded-full border border-[#6B8A8A]/30">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#6B8A8A]"></span>
+                <span className="text-[9px] font-bold text-[#6B8A8A] uppercase tracking-wide">Pilih Negara</span>
+              </div>
+            )}
+          </div>
+          
+          {/* LOGIKA MAPPING SDA */}
+          {resourceMap.map((resource) => {
+            const Icon = resource.icon;
+            const sdaStatus = getCurrentSDA?.[resource.key as keyof SDAData];
 
-    // Status SDA langsung dari database_SDA json
-    const sdaStatus = getCurrentSDA?.[resource.key as keyof SDAData];
+            let borderClass = 'border border-[#00FFAA]/20 opacity-70';
+            let dotColor = 'bg-[#6B8A8A]';
+            let statusLabel: string | null = null;
+            let statusColor = '';
+            let cardBg = 'bg-[#0A1A1A]/60';
 
-    // Border & dot warna berdasarkan true/false database
-    let borderClass = 'border border-white/10 opacity-60'; // default: belum ada data
-    let dotColor = 'bg-gray-500';
-    let statusLabel: string | null = null;
-    let statusColor = '';
-    let cardBg = 'bg-black/50';
+            if (sdaStatus === true) {
+              borderClass = 'border border-[#00FFAA]';
+              dotColor = 'bg-[#00FFAA]';
+              statusColor = 'text-[#00FFAA]';
+              cardBg = 'bg-[#0F2424]';
+            } else if (sdaStatus === false) {
+              borderClass = 'border border-rose-500/50';
+              dotColor = 'bg-rose-500';
+              statusColor = 'text-rose-400';
+              cardBg = 'bg-[#0A1A1A]/60';
+            }
 
-    if (sdaStatus === true) {
-      borderClass = 'border-2 border-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]';
-      dotColor = 'bg-green-400';
-      statusColor = 'text-green-400';
-      cardBg = 'bg-black/70';
-    } else if (sdaStatus === false) {
-      borderClass = 'border-2 border-red-500 shadow-[0_0_6px_rgba(239,68,68,0.35)]';
-      dotColor = 'bg-red-400';
-      statusColor = 'text-red-400';
-      cardBg = 'bg-black/40';
-    }
-
-    return (
-      <div
-        key={resource.key}
-        className={`flex items-center gap-2 px-3 py-1.5 ${cardBg} backdrop-blur-md rounded-xl text-white/80 transition-all hover:brightness-110 ${borderClass}`}
-      >
-        <div className={`w-1.5 h-1.5 rounded-full ${dotColor} shrink-0 ${sdaStatus === true ? 'animate-pulse' : ''}`} />
-        <Icon className={`w-3.5 h-3.5 ${sdaStatus === true ? 'text-cyan-400' : sdaStatus === false ? 'text-white/30' : 'text-white/40'}`} />
-        <span className={`text-[9px] font-bold uppercase tracking-wider ${sdaStatus === false ? 'text-white/40' : ''}`}>{resource.label}</span>
-        {statusLabel && (
-          <span className={`text-[8px] font-black ml-1 ${statusColor}`}>{statusLabel}</span>
-        )}
-      </div>
-    );
-  })}
-</div>
+            return (
+              <div
+                key={resource.key}
+                className={`flex items-center gap-2 px-3 py-1.5 ${cardBg} backdrop-blur-md rounded-xl text-[#E0E0E0] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A] group cursor-pointer ${borderClass}`}
+              >
+                <div className={`w-1.5 h-1.5 rounded-full ${dotColor} shrink-0 ${sdaStatus === true ? 'animate-pulse' : ''}`} />
+                <Icon className={`w-3.5 h-3.5 ${sdaStatus === true ? 'text-[#00FFAA] group-hover:text-[#0A1A1A]' : sdaStatus === false ? 'text-rose-400/60 group-hover:text-[#0A1A1A]' : 'text-[#6B8A8A] group-hover:text-[#0A1A1A]'}`} />
+                <span className="text-[9px] font-bold uppercase tracking-wider group-hover:text-[#0A1A1A]">{resource.label}</span>
+                {statusLabel && (
+                  <span className={`text-[8px] font-black ml-1 ${statusColor} group-hover:text-[#0A1A1A]`}>{statusLabel}</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
 
         {/* Slider Negara */}
         <div className="relative w-full max-w-6xl flex items-center justify-center mb-8 pointer-events-auto">
           <button
             onClick={prevCountry}
-            className="absolute left-0 z-30 p-2 rounded-full bg-black/80 text-white hover:bg-black transition-all"
+            className="absolute left-0 z-30 p-2.5 rounded-full bg-[#0F2424] text-[#00FFAA] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
 
           <div className="flex items-end gap-3 overflow-visible h-32 px-12">
@@ -666,15 +663,16 @@ export default function PilihNegaraPage() {
                   className={`
                     relative w-36 h-28 rounded-2xl p-4 flex flex-col items-center justify-center text-center cursor-pointer
                     ${item.offset === 0 && hasInteracted
-                      ? 'bg-white shadow-[0_0_30px_rgba(255,255,255,0.3)]'
-                      : 'bg-black/40 border border-white/5'
+                      ? 'bg-[#0F2424] border-2 border-[#00FFAA]'
+                      : 'bg-[#0A1A1A]/80 border border-[#00FFAA]/20 hover:border-[#00FFAA]/50'
                     }
                     backdrop-blur-xl transition-all duration-300
                   `}
                 >
                   <div
-                    className={`w-12 h-8 rounded-sm mb-3 overflow-hidden border ${item.offset === 0 && hasInteracted ? 'border-black/10' : 'border-white/10'
-                      }`}
+                    className={`w-12 h-8 rounded-sm mb-2.5 overflow-hidden border ${
+                      item.offset === 0 && hasInteracted ? 'border-[#00FFAA]/50' : 'border-[#00FFAA]/20'
+                    }`}
                   >
                     <img
                       src={`https://flagcdn.com/w80/${(item as any).iso}.png`}
@@ -687,14 +685,16 @@ export default function PilihNegaraPage() {
                   </div>
 
                   <h3
-                    className={`text-[9px] font-black leading-tight uppercase mb-0.5 ${item.offset === 0 && hasInteracted ? 'text-black' : 'text-white/60'
-                      }`}
+                    className={`text-[9px] font-black leading-tight uppercase mb-0.5 ${
+                      item.offset === 0 && hasInteracted ? 'text-[#00FFAA]' : 'text-[#E0E0E0]/70'
+                    }`}
                   >
                     {item.country}
                   </h3>
                   <p
-                    className={`text-[7px] font-bold uppercase ${item.offset === 0 && hasInteracted ? 'text-black/40' : 'text-slate-500'
-                      }`}
+                    className={`text-[7px] font-bold uppercase ${
+                      item.offset === 0 && hasInteracted ? 'text-[#E0E0E0]' : 'text-[#6B8A8A]'
+                    }`}
                   >
                     {item.capital}
                   </p>
@@ -705,9 +705,9 @@ export default function PilihNegaraPage() {
 
           <button
             onClick={nextCountry}
-            className="absolute right-0 z-30 p-2 rounded-full bg-black/80 text-white hover:bg-black transition-all"
+            className="absolute right-0 z-30 p-2.5 rounded-full bg-[#0F2424] text-[#00FFAA] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
@@ -715,10 +715,10 @@ export default function PilihNegaraPage() {
         <div className="w-full px-8 flex items-center justify-between pointer-events-auto">
           <Link
             href="/page"
-            className="flex items-center gap-2 px-5 py-2.5 bg-black/60 hover:bg-black/80 border border-white/10 rounded-xl text-white font-bold tracking-widest text-[10px] transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#0F2424]/90 hover:bg-[#00FFAA] hover:text-[#0A1A1A] border border-[#00FFAA]/30 rounded-xl text-[#00FFAA] font-bold tracking-widest text-[10px] transition-all group cursor-pointer"
           >
-            <div className="p-1 bg-white/10 rounded-lg">
-              <ArrowLeft className="w-3 h-3" />
+            <div className="p-1 bg-[#00FFAA]/10 group-hover:bg-[#0A1A1A]/20 rounded-lg">
+              <ArrowLeft className="w-3 h-3 text-[#00FFAA] group-hover:text-[#0A1A1A]" />
             </div>
             KEMBALI
           </Link>
@@ -738,14 +738,15 @@ export default function PilihNegaraPage() {
                 window.localStorage.setItem('presiden_simulator_new_game', '1');
               }
             }}
-            className={`flex items-center gap-3 px-8 py-2.5 ${hasInteracted && filteredCountries[currentIndex]
-                ? 'bg-cyan-500 hover:bg-cyan-400 hover:scale-105 shadow-[0_0_20px_rgba(6,182,212,0.4)]'
-                : 'bg-slate-700 opacity-50 cursor-not-allowed'
-              } text-white font-black tracking-widest rounded-xl text-[10px] transition-all`}
+            className={`flex items-center gap-3 px-8 py-2.5 ${
+              hasInteracted && filteredCountries[currentIndex]
+                ? 'bg-[#00FFAA] text-[#0A1A1A] hover:scale-105 border border-[#00FFAA]'
+                : 'bg-[#0F2424] text-[#6B8A8A] opacity-50 border border-[#00FFAA]/10 cursor-not-allowed'
+            } font-black tracking-widest rounded-xl text-[10px] transition-all cursor-pointer`}
             aria-disabled={!hasInteracted || !filteredCountries[currentIndex]}
           >
             MULAI SIMULASI
-            <Play className="w-3 h-3 fill-white" />
+            <Play className={`w-3 h-3 ${hasInteracted && filteredCountries[currentIndex] ? 'fill-[#0A1A1A]' : 'fill-[#6B8A8A]'}`} />
           </Link>
         </div>
       </div>
@@ -774,7 +775,7 @@ function StatusItem({
   icon,
   label,
   value,
-  color = 'text-[#3d362a]',
+  color = 'text-[#E0E0E0]',
 }: {
   icon: React.ReactNode;
   label: string;
@@ -783,11 +784,11 @@ function StatusItem({
 }) {
   return (
     <div className="flex items-center gap-4 min-w-fit">
-      <div className="p-2 bg-[#dcc9a3]/60 rounded-xl text-[#8b7e66] shadow-sm border border-black/5">
+      <div className="p-2 bg-[#0F2424] rounded-xl text-[#00FFAA] border border-[#00FFAA]/20">
         {icon}
       </div>
       <div className="flex flex-col">
-        <span className="text-[10px] font-black text-[#8b7e66]/80 tracking-widest uppercase leading-none mb-1.5">
+        <span className="text-[10px] font-black text-[#6B8A8A] tracking-widest uppercase leading-none mb-1.5">
           {label}
         </span>
         <span className={`text-[13px] font-black tracking-tighter uppercase leading-none ${color}`}>

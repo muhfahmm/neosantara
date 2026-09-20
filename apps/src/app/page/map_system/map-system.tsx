@@ -1296,48 +1296,44 @@ export default function MapPage() {
                 setPresidentRating={setPresidentRating}
             />
 
-            {/* Premium Floating Skeuomorphic Time Controller Widget */}
+            {/* Premium Floating Time Controller Widget */}
             <div className="fixed bottom-3 right-3 lg:bottom-5 lg:right-5 xl:bottom-8 xl:right-8 z-40 flex flex-col w-[220px] lg:w-[250px] xl:w-[320px] transition-all">
-                {/* Upper Parchment Card */}
-                <div className="bg-[#FAF6EE] rounded-t-xl xl:rounded-t-2xl px-3.5 lg:px-4 xl:px-6 pt-3 lg:pt-4 xl:pt-5 pb-7 lg:pb-8 xl:pb-10 border-t-2 border-x-2 border-[#C4B49C] shadow-md flex flex-col relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.01)_0%,transparent_100%)] pointer-events-none" />
-                    
+                {/* Upper Card */}
+                <div className="bg-[#0F2424]/90 backdrop-blur-md rounded-t-xl xl:rounded-t-2xl px-3.5 lg:px-4 xl:px-6 pt-3 lg:pt-4 xl:pt-5 pb-7 lg:pb-8 xl:pb-10 border-t border-x border-[#00FFAA]/30 flex flex-col relative overflow-hidden">
                     <div className="flex items-center justify-between mb-2 xl:mb-3.5">
-                        {/* Gold gear inside metallic slot */}
+                        {/* Settings gear inside container */}
                         <div className="flex items-center gap-1.5 xl:gap-2">
-                            <div className="flex items-center justify-center w-6 h-6 xl:w-8 xl:h-8 rounded-md xl:rounded-lg bg-gradient-to-b from-[#e5d7ba] to-[#c7b79a] border border-[#a8987b] shadow-xs xl:shadow-[0_2px_4px_rgba(0,0,0,0.1)] relative">
+                            <div className="flex items-center justify-center w-6 h-6 xl:w-8 xl:h-8 rounded-md xl:rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 relative">
                                 <Settings 
-                                    className="w-3.5 h-3.5 xl:w-4.5 xl:h-4.5 text-[#5c3c10]" 
+                                    className="w-3.5 h-3.5 xl:w-4.5 xl:h-4.5 text-[#00FFAA]" 
                                     style={{ animation: 'spin 8s linear infinite' }}
                                 />
-                                <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-2 xl:w-1.5 xl:h-3 bg-slate-400 border border-slate-500 rounded-2xs" />
-                                <div className="absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-2 xl:w-1.5 xl:h-3 bg-slate-400 border border-slate-500 rounded-2xs" />
                             </div>
                         </div>
 
                         {/* Calendar date label */}
                         <div className="flex flex-col items-end leading-none">
-                            <span className="text-[8px] xl:text-[9px] font-black text-[#8b7e66] tracking-wider xl:tracking-widest uppercase mb-0.5 xl:mb-1">SIMULATION CALENDAR</span>
-                            <span ref={dateTextRef} className="text-xs lg:text-sm xl:text-lg font-black text-[#2e261a] tracking-tight">
+                            <span className="text-[8px] xl:text-[9px] font-black text-[#6B8A8A] tracking-wider xl:tracking-widest uppercase mb-0.5 xl:mb-1">SIMULATION CALENDAR</span>
+                            <span ref={dateTextRef} className="text-xs lg:text-sm xl:text-lg font-black text-[#E0E0E0] tracking-tight">
                                 -
                             </span>
                         </div>
                     </div>
 
                     {/* Progress Bar slot */}
-                    <div className="w-full h-2 xl:h-3 bg-[#e4dac3] rounded-full border border-[#bfae93] shadow-inner overflow-hidden relative">
+                    <div className="w-full h-2 xl:h-3 bg-[#0A1A1A] rounded-full border border-[#00FFAA]/20 overflow-hidden relative">
                         <div 
                             ref={progressBarRef}
-                            className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-75 shadow-xs" 
+                            className="h-full bg-[#00FFAA] rounded-full transition-all duration-75" 
                             style={{ width: '0%' }}
                         />
                     </div>
                 </div>
 
-                {/* Lower Slate Blue Card with overlapping gold buttons */}
-                <div className="bg-[#1e2f3d] rounded-b-xl xl:rounded-b-2xl border-b-2 xl:border-b-4 border-x-2 border-[#15202a] shadow-xl h-10 lg:h-11 xl:h-14 relative flex items-center justify-between">
+                {/* Lower Dark Card with buttons */}
+                <div className="bg-[#0A1A1A] rounded-b-xl xl:rounded-b-2xl border-b border-x border-[#00FFAA]/30 h-10 lg:h-11 xl:h-14 relative flex items-center justify-between">
                     <div className="absolute inset-x-3 lg:inset-x-4 xl:inset-x-6 -top-4.5 lg:-top-5 xl:-top-7 flex items-center justify-between">
-                        {/* 1. Play/Pause gold button */}
+                        {/* 1. Play/Pause button */}
                         <button 
                             onClick={() => {
                                 if (!calendarRef.current) return;
@@ -1348,16 +1344,16 @@ export default function MapPage() {
                                 }
                             }}
                             title={calendarRef.current?.calendar.getPauseButtonTitle(isPaused) || (isPaused ? "Mulai Waktu" : "Jeda Waktu")}
-                            className="w-9 h-9 lg:w-10 lg:h-10 xl:w-14 xl:h-14 rounded-full bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border-2 xl:border-4 border-[#1e2f3d] shadow-md xl:shadow-[0_4px_8px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer hover:brightness-110 hover:scale-105 active:scale-95 transition-all z-20 group"
+                            className="w-9 h-9 lg:w-10 lg:h-10 xl:w-14 xl:h-14 rounded-full bg-[#00FFAA] text-[#0A1A1A] border-2 xl:border-4 border-[#0A1A1A] flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all z-20 group"
                         >
                             {isPaused ? (
-                                <Play className="w-3.5 h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 fill-[#5c3c10] text-[#5c3c10] translate-x-0.5 transition-transform group-hover:scale-110" />
+                                <Play className="w-3.5 h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 fill-[#0A1A1A] text-[#0A1A1A] translate-x-0.5 transition-transform group-hover:scale-110" />
                             ) : (
-                                <Pause className="w-3.5 h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 fill-[#5c3c10] text-[#5c3c10] transition-transform group-hover:scale-110" />
+                                <Pause className="w-3.5 h-3.5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 fill-[#0A1A1A] text-[#0A1A1A] transition-transform group-hover:scale-110" />
                             )}
                         </button>
 
-                        {/* 2. Gold Speed Selector button */}
+                        {/* 2. Speed Selector button */}
                         <button 
                             onClick={() => {
                                 if (!calendarRef.current) return;
@@ -1368,12 +1364,12 @@ export default function MapPage() {
                                 }
                             }}
                             title={calendarRef.current?.calendar.getSpeedButtonTitle() || `Ubah Kecepatan: ${speed}x`}
-                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border xl:border-2 border-[#1e2f3d] shadow-sm flex items-center justify-center cursor-pointer hover:brightness-110 hover:scale-105 active:scale-95 transition-all z-20 text-[10px] xl:text-[12px] font-black text-[#5c3c10] uppercase tracking-tighter"
+                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] flex items-center justify-center cursor-pointer transition-all z-20 text-[10px] xl:text-[12px] font-black uppercase tracking-tighter"
                         >
                             {calendarRef.current?.display.getSpeedLabel() || `×${speed}`}
                         </button>
 
-                        {/* 3. Gold Holiday button */}
+                        {/* 3. Holiday button */}
                         <button 
                             onClick={() => {
                                 if (calendarRef.current) {
@@ -1383,12 +1379,12 @@ export default function MapPage() {
                                 }
                             }}
                             title="Liburan Negara"
-                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border xl:border-2 border-[#1e2f3d] shadow-sm flex items-center justify-center cursor-pointer hover:brightness-110 hover:scale-105 active:scale-95 transition-all z-20"
+                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] flex items-center justify-center cursor-pointer transition-all z-20"
                         >
-                            <Palmtree className="w-3.5 h-3.5 xl:w-4.5 xl:h-4.5 text-[#5c3c10]" />
+                            <Palmtree className="w-3.5 h-3.5 xl:w-4.5 xl:h-4.5" />
                         </button>
 
-                        {/* 4. Gold Military/General button */}
+                        {/* 4. Military/General button */}
                         <button 
                             onClick={() => {
                                 if (calendarRef.current) {
@@ -1398,18 +1394,10 @@ export default function MapPage() {
                                 }
                             }}
                             title="Militer & Keamanan Negara"
-                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] border xl:border-2 border-[#1e2f3d] shadow-sm flex items-center justify-center cursor-pointer hover:brightness-110 hover:scale-105 active:scale-95 transition-all z-20"
+                            className="w-7 h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] flex items-center justify-center cursor-pointer transition-all z-20"
                         >
-                            <Shield className="w-3.5 h-3.5 xl:w-4.5 xl:h-4.5 text-[#5c3c10]" />
+                            <Shield className="w-3.5 h-3.5 xl:w-4.5 xl:h-4.5" />
                         </button>
-                    </div>
-
-                    {/* Skeuomorphic silver bottom tray frame */}
-                    <div className="absolute -bottom-2 -inset-x-2.5 h-4 bg-gradient-to-b from-slate-300 via-slate-100 to-slate-400 border border-slate-500 rounded-b-xl pointer-events-none shadow-md flex items-center justify-between px-1">
-                        {/* Left beveled corner accent */}
-                        <div className="w-4 h-3 bg-slate-300 border-r border-slate-500 transform -skew-x-12 rounded-bl-md" />
-                        {/* Right beveled corner accent */}
-                        <div className="w-4 h-3 bg-slate-300 border-l border-slate-500 transform skew-x-12 rounded-br-md" />
                     </div>
                 </div>
             </div>

@@ -52,58 +52,55 @@ export default function TunawismaDetailModal({
 
   // Kategori keparahan
   const getSeverity = (percentage: number) => {
-    if (percentage >= 5) return { level: 'KRITIS', color: 'text-red-700', bg: 'bg-red-50', border: 'border-red-300', icon: 'text-red-700' };
-    if (percentage >= 3) return { level: 'SERIUS', color: 'text-orange-700', bg: 'bg-orange-50', border: 'border-orange-300', icon: 'text-orange-700' };
-    if (percentage >= 1) return { level: 'PERHATIAN', color: 'text-yellow-700', bg: 'bg-yellow-50', border: 'border-yellow-300', icon: 'text-yellow-700' };
-    return { level: 'TERKONTROL', color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-300', icon: 'text-emerald-700' };
+    if (percentage >= 5) return { level: 'KRITIS', color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30', icon: 'text-rose-400' };
+    if (percentage >= 3) return { level: 'SERIUS', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30', icon: 'text-amber-400' };
+    if (percentage >= 1) return { level: 'PERHATIAN', color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', icon: 'text-yellow-400' };
+    return { level: 'TERKONTROL', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', icon: 'text-emerald-400' };
   };
 
   const severity = getSeverity(homelessPercentage);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-
-        {/* Background */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
 
         {/* Header */}
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
+        <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-xl border ${severity.border} ${severity.bg}`}>
-              <AlertCircle className={`h-6 w-6 ${severity.icon}`} />
+            <div className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424]">
+              <AlertCircle className="h-6 w-6 text-[#00FFAA]" />
             </div>
             <div>
-              <h2 className="text-2xl font-black text-[#5c3c10] tracking-tight leading-none uppercase">Tunawisma & Hunian</h2>
-              <p className="text-xs text-[#8b7e66] font-bold mt-1">Analisis Masalah Perumahan Penduduk</p>
+              <h2 className="text-2xl font-black text-[#00FFAA] tracking-tight leading-none uppercase">Tunawisma & Hunian</h2>
+              <p className="text-xs text-[#6B8A8A] font-bold mt-1">Analisis Masalah Perumahan Penduduk</p>
             </div>
           </div>
 
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10">
+        <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
           <div className="space-y-6 animate-in fade-in duration-500">
 
             {/* Main Stats Card */}
-            <div className={`rounded-2xl p-8 border-2 ${severity.border} ${severity.bg} shadow-md`}>
+            <div className="rounded-2xl p-8 border border-[#00FFAA]/30 bg-[#0F2424]">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Jumlah Tunawisma */}
                 <div>
-                  <p className="text-xs text-[#8b7e66] font-black uppercase tracking-wider mb-2">Jumlah Tunawisma</p>
+                  <p className="text-xs text-[#6B8A8A] font-black uppercase tracking-wider mb-2">Jumlah Tunawisma</p>
                   <div className="flex items-baseline gap-2">
-                    <span className={`text-4xl font-black ${severity.color}`}>{homelessCount.toLocaleString('id-ID')}</span>
-                    <span className="text-sm font-bold text-[#8b7e66]">JIWA</span>
+                    <span className="text-4xl font-black text-[#00FFAA]">{homelessCount.toLocaleString('id-ID')}</span>
+                    <span className="text-sm font-bold text-[#6B8A8A]">JIWA</span>
                   </div>
                 </div>
 
                 {/* Persentase */}
                 <div>
-                  <p className="text-xs text-[#8b7e66] font-black uppercase tracking-wider mb-2">Persentase Populasi</p>
+                  <p className="text-xs text-[#6B8A8A] font-black uppercase tracking-wider mb-2">Persentase Populasi</p>
                   <div className="flex items-baseline gap-2">
                     <span className={`text-4xl font-black ${severity.color}`}>{homelessPercentage.toFixed(2)}%</span>
                   </div>
@@ -111,37 +108,37 @@ export default function TunawismaDetailModal({
 
                 {/* Status */}
                 <div>
-                  <p className="text-xs text-[#8b7e66] font-black uppercase tracking-wider mb-2">Status Keparahan</p>
+                  <p className="text-xs text-[#6B8A8A] font-black uppercase tracking-wider mb-2">Status Keparahan</p>
                   <p className={`text-2xl font-black ${severity.color}`}>{severity.level}</p>
                 </div>
               </div>
             </div>
 
             {/* Interpretasi */}
-            <div className="bg-[#e4dac3]/20 border-2 border-[#C4B49C]/30 p-6 rounded-2xl">
-              <h3 className="text-md font-black text-[#5c3c10] uppercase tracking-wider flex items-center gap-2 mb-4">
-                <Info className="h-5 w-5" />
+            <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-2xl">
+              <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2 mb-4">
+                <Info className="h-5 w-5 text-[#00FFAA]" />
                 Analisis Situasi
               </h3>
-              <p className="text-sm text-[#5c3c10] font-medium leading-relaxed">
+              <p className="text-sm text-[#E0E0E0] font-medium leading-relaxed">
                 {homelessPercentage >= 5 && (
                   <>
-                    Negara <span className="font-bold">{countryName}</span> menghadapi <span className="text-red-700 font-bold">krisis hunian yang serius</span>. Dengan <span className="font-bold">{homelessPercentage.toFixed(2)}%</span> populasi tidak memiliki tempat tinggal yang layak, ini menunjukkan <span className="font-bold">urgensi tinggi</span> untuk pembangunan hunian massal. Kondisi ini dapat memicu masalah kesehatan, keamanan, dan sosial yang lebih luas.
+                    Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> menghadapi <span className="text-rose-400 font-bold">krisis hunian yang serius</span>. Dengan <span className="font-bold text-[#00FFAA]">{homelessPercentage.toFixed(2)}%</span> populasi tidak memiliki tempat tinggal yang layak, ini menunjukkan <span className="font-bold text-rose-400">urgensi tinggi</span> untuk pembangunan hunian massal. Kondisi ini dapat memicu masalah kesehatan, keamanan, dan sosial yang lebih luas.
                   </>
                 )}
                 {homelessPercentage >= 3 && homelessPercentage < 5 && (
                   <>
-                    Negara <span className="font-bold">{countryName}</span> menghadapi <span className="text-orange-700 font-bold">masalah tunawisma yang serius</span>. Dengan <span className="font-bold">{homelessPercentage.toFixed(2)}%</span> populasi hidup tanpa tempat tinggal yang layak, perlu <span className="font-bold">intervensi segera</span> untuk meningkatkan pembangunan hunian dan layanan sosial.
+                    Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> menghadapi <span className="text-amber-400 font-bold">masalah tunawisma yang serius</span>. Dengan <span className="font-bold text-[#00FFAA]">{homelessPercentage.toFixed(2)}%</span> populasi hidup tanpa tempat tinggal yang layak, perlu <span className="font-bold text-amber-400">intervensi segera</span> untuk meningkatkan pembangunan hunian dan layanan sosial.
                   </>
                 )}
                 {homelessPercentage >= 1 && homelessPercentage < 3 && (
                   <>
-                    Negara <span className="font-bold">{countryName}</span> memiliki <span className="text-yellow-700 font-bold">masalah tunawisma yang perlu perhatian</span>. Dengan <span className="font-bold">{homelessPercentage.toFixed(2)}%</span> populasi mengalami kesulitan hunian, diperlukan <span className="font-bold">peningkatan pembangunan perumahan</span> dan program subsidi hunian.
+                    Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki <span className="text-yellow-400 font-bold">masalah tunawisma yang perlu perhatian</span>. Dengan <span className="font-bold text-[#00FFAA]">{homelessPercentage.toFixed(2)}%</span> populasi mengalami kesulitan hunian, diperlukan <span className="font-bold text-yellow-400">peningkatan pembangunan perumahan</span> dan program subsidi hunian.
                   </>
                 )}
                 {homelessPercentage < 1 && (
                   <>
-                    Negara <span className="font-bold">{countryName}</span> memiliki <span className="text-emerald-700 font-bold">masalah tunawisma yang terkontrol</span>. Dengan hanya <span className="font-bold">{homelessPercentage.toFixed(2)}%</span> populasi tanpa hunian layak, situasi relatif stabil. Pertahankan dan tingkatkan kualitas perumahan untuk pertumbuhan berkelanjutan.
+                    Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki <span className="text-emerald-400 font-bold">masalah tunawisma yang terkontrol</span>. Dengan hanya <span className="font-bold text-[#00FFAA]">{homelessPercentage.toFixed(2)}%</span> populasi tanpa hunian layak, situasi relatif stabil. Pertahankan dan tingkatkan kualitas perumahan untuk pertumbuhan berkelanjutan.
                   </>
                 )}
               </p>
@@ -149,16 +146,16 @@ export default function TunawismaDetailModal({
 
             {/* Faktor Penyebab */}
             <div className="space-y-4">
-              <h3 className="text-md font-black text-[#5c3c10] uppercase tracking-wider">Faktor Penyebab Tunawisma</h3>
+              <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider">Faktor Penyebab Tunawisma</h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Faktor 1: Pertumbuhan Populasi */}
-                <div className="bg-blue-50 border-2 border-blue-300 p-5 rounded-xl">
+                <div className="bg-[#0F2424] border border-cyan-500/30 p-5 rounded-xl">
                   <div className="flex items-start gap-3">
-                    <Users className="h-5 w-5 text-blue-700 mt-1 flex-shrink-0" />
+                    <Users className="h-5 w-5 text-cyan-400 mt-1 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-black text-blue-700 mb-1">Pertumbuhan Populasi</p>
-                      <p className="text-xs text-blue-600 font-bold">
+                      <p className="text-sm font-black text-cyan-400 mb-1">Pertumbuhan Populasi</p>
+                      <p className="text-xs text-[#E0E0E0]/80 font-semibold">
                         Populasi meningkat pesat tetapi pembangunan hunian tidak mengikuti. Setiap tahun populasi bertambah, permintaan hunian meningkat.
                       </p>
                     </div>
@@ -166,12 +163,12 @@ export default function TunawismaDetailModal({
                 </div>
 
                 {/* Faktor 2: Kurang Hunian Layak */}
-                <div className="bg-orange-50 border-2 border-orange-300 p-5 rounded-xl">
+                <div className="bg-[#0F2424] border border-amber-500/30 p-5 rounded-xl">
                   <div className="flex items-start gap-3">
-                    <Home className="h-5 w-5 text-orange-700 mt-1 flex-shrink-0" />
+                    <Home className="h-5 w-5 text-amber-400 mt-1 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-black text-orange-700 mb-1">Kurangnya Hunian Layak</p>
-                      <p className="text-xs text-orange-600 font-bold">
+                      <p className="text-sm font-black text-amber-400 mb-1">Kurangnya Hunian Layak</p>
+                      <p className="text-xs text-[#E0E0E0]/80 font-semibold">
                         Keterbatasan dana untuk pembangunan rumah subsidi, apartemen, dan mansion. Setiap unit hunian membutuhkan investasi besar.
                       </p>
                     </div>
@@ -179,12 +176,12 @@ export default function TunawismaDetailModal({
                 </div>
 
                 {/* Faktor 3: Kemiskinan */}
-                <div className="bg-red-50 border-2 border-red-300 p-5 rounded-xl">
+                <div className="bg-[#0F2424] border border-rose-500/30 p-5 rounded-xl">
                   <div className="flex items-start gap-3">
-                    <TrendingDown className="h-5 w-5 text-red-700 mt-1 flex-shrink-0" />
+                    <TrendingDown className="h-5 w-5 text-rose-400 mt-1 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-black text-red-700 mb-1">Tingkat Kemiskinan</p>
-                      <p className="text-xs text-red-600 font-bold">
+                      <p className="text-sm font-black text-rose-400 mb-1">Tingkat Kemiskinan</p>
+                      <p className="text-xs text-[#E0E0E0]/80 font-semibold">
                         Masyarakat berpenghasilan rendah tidak mampu membeli hunian. Program subsidi dan pembiayaan belum menjangkau semua.
                       </p>
                     </div>
@@ -192,12 +189,12 @@ export default function TunawismaDetailModal({
                 </div>
 
                 {/* Faktor 4: Kesejahteraan Rendah */}
-                <div className="bg-purple-50 border-2 border-purple-300 p-5 rounded-xl">
+                <div className="bg-[#0F2424] border border-purple-500/30 p-5 rounded-xl">
                   <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-purple-700 mt-1 flex-shrink-0" />
+                    <MapPin className="h-5 w-5 text-purple-400 mt-1 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-black text-purple-700 mb-1">Kesejahteraan Rendah</p>
-                      <p className="text-xs text-purple-600 font-bold">
+                      <p className="text-sm font-black text-purple-400 mb-1">Kesejahteraan Rendah</p>
+                      <p className="text-xs text-[#E0E0E0]/80 font-semibold">
                         Investasi minim di bidang pendidikan, kesehatan, dan fasilitas publik menyulitkan masyarakat keluar dari kemiskinan.
                       </p>
                     </div>
@@ -207,61 +204,61 @@ export default function TunawismaDetailModal({
             </div>
 
             {/* Solusi & Rekomendasi */}
-            <div className="bg-[#e4dac3]/20 border-2 border-[#C4B49C]/30 p-6 rounded-2xl">
-              <h3 className="text-md font-black text-[#5c3c10] uppercase tracking-wider mb-4">Solusi & Rekomendasi</h3>
+            <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-2xl">
+              <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider mb-4">Solusi & Rekomendasi</h3>
               <div className="space-y-3">
-                <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-emerald-500/30">
                   <span className="text-lg font-black">🏠</span>
                   <div>
-                    <p className="text-sm font-black text-emerald-700">Bangun Hunian Massal</p>
-                    <p className="text-xs text-emerald-600 font-bold">Tingkatkan pembangunan rumah subsidi dan apartemen untuk menjangkau semua lapisan masyarakat</p>
+                    <p className="text-sm font-black text-emerald-400">Bangun Hunian Massal</p>
+                    <p className="text-xs text-[#E0E0E0]/80 font-semibold">Tingkatkan pembangunan rumah subsidi dan apartemen untuk menjangkau semua lapisan masyarakat</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-cyan-500/30">
                   <span className="text-lg font-black">📚</span>
                   <div>
-                    <p className="text-sm font-black text-blue-700">Tingkatkan Kesejahteraan</p>
-                    <p className="text-xs text-blue-600 font-bold">Investasi lebih dalam pendidikan, kesehatan, dan fasilitas publik agar masyarakat mampu meningkatkan penghasilan</p>
+                    <p className="text-sm font-black text-cyan-400">Tingkatkan Kesejahteraan</p>
+                    <p className="text-xs text-[#E0E0E0]/80 font-semibold">Investasi lebih dalam pendidikan, kesehatan, dan fasilitas publik agar masyarakat mampu meningkatkan penghasilan</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-amber-500/30">
                   <span className="text-lg font-black">💰</span>
                   <div>
-                    <p className="text-sm font-black text-yellow-700">Program Pembiayaan</p>
-                    <p className="text-xs text-yellow-600 font-bold">Buat skema pembiayaan yang mudah diakses untuk pembelian hunian dengan bunga ringan dan cicilan terjangkau</p>
+                    <p className="text-sm font-black text-amber-400">Program Pembiayaan</p>
+                    <p className="text-xs text-[#E0E0E0]/80 font-semibold">Buat skema pembiayaan yang mudah diakses untuk pembelian hunian dengan bunga ringan dan cicilan terjangkau</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-purple-500/30">
                   <span className="text-lg font-black">⚖️</span>
                   <div>
-                    <p className="text-sm font-black text-purple-700">Kontrol Pertumbuhan Populasi</p>
-                    <p className="text-xs text-purple-600 font-bold">Implementasikan program keluarga berencana dan edukasi keluarga untuk menyeimbangkan pertumbuhan populasi dengan pembangunan hunian</p>
+                    <p className="text-sm font-black text-purple-400">Kontrol Pertumbuhan Populasi</p>
+                    <p className="text-xs text-[#E0E0E0]/80 font-semibold">Implementasikan program keluarga berencana dan edukasi keluarga untuk menyeimbangkan pertumbuhan populasi dengan pembangunan hunian</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Impact Tunawisma */}
-            <div className="bg-[#e4dac3]/20 border-2 border-[#C4B49C]/30 p-6 rounded-2xl">
-              <h3 className="text-md font-black text-[#5c3c10] uppercase tracking-wider mb-4">Dampak Tunawisma Terhadap Negara</h3>
-              <div className="space-y-2 text-xs text-[#5c3c10] font-bold leading-relaxed">
+            <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-2xl">
+              <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider mb-4">Dampak Tunawisma Terhadap Negara</h3>
+              <div className="space-y-2 text-xs text-[#E0E0E0] font-semibold leading-relaxed">
                 <p>
-                  🔴 <span className="font-black">Kesehatan:</span> Tunawisma berisiko tinggi terhadap penyakit karena kondisi hidup tidak layak
+                  🔴 <span className="font-black text-rose-400">Kesehatan:</span> Tunawisma berisiko tinggi terhadap penyakit karena kondisi hidup tidak layak
                 </p>
                 <p>
-                  🔴 <span className="font-black">Keamanan:</span> Meningkatkan angka kejahatan, kriminalitas, dan gangguan keamanan publik
+                  🔴 <span className="font-black text-rose-400">Keamanan:</span> Meningkatkan angka kejahatan, kriminalitas, dan gangguan keamanan publik
                 </p>
                 <p>
-                  🔴 <span className="font-black">Pendidikan:</span> Anak-anak tunawisma putus sekolah, berdampak pada SDM masa depan
+                  🔴 <span className="font-black text-rose-400">Pendidikan:</span> Anak-anak tunawisma putus sekolah, berdampak pada SDM masa depan
                 </p>
                 <p>
-                  🔴 <span className="font-black">Ekonomi:</span> Menurunkan produktivitas kerja dan produktivitas ekonomi keseluruhan
+                  🔴 <span className="font-black text-rose-400">Ekonomi:</span> Menurunkan produktivitas kerja dan produktivitas ekonomi keseluruhan
                 </p>
                 <p>
-                  🔴 <span className="font-black">Sosial:</span> Meningkatkan ketidakstabilan sosial dan ketidakpuasan masyarakat terhadap pemerintah
+                  🔴 <span className="font-black text-rose-400">Sosial:</span> Meningkatkan ketidakstabilan sosial dan ketidakpuasan masyarakat terhadap pemerintah
                 </p>
               </div>
             </div>

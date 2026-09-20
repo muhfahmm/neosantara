@@ -99,118 +99,117 @@ export default function DetailKematianModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
 
         {/* Header */}
-        <div className="px-6 sm:px-8 py-4 sm:py-5 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 shrink-0">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="p-2 sm:p-2.5 bg-rose-500/10 rounded-xl border border-rose-500/20 shrink-0 flex items-center justify-center">
-              <Users className="h-6 w-6 text-rose-700" />
+        <div className="px-6 sm:px-8 py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-rose-500/10 rounded-xl border border-rose-500/30">
+              <Users className="h-6 w-6 text-rose-400" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-[#5c3c10] tracking-tight leading-none uppercase">Rincian Angka Kematian</h2>
-              <p className="text-xs text-[#8b7e66] font-medium mt-1">Faktor-faktor yang memengaruhi kematian di {countryDisplayName}</p>
+              <h2 className="text-xl sm:text-2xl font-black text-[#00FFAA] tracking-tight leading-none uppercase">Rincian Angka Kematian</h2>
+              <p className="text-xs text-[#6B8A8A] font-medium mt-1">Faktor-faktor yang memengaruhi kematian di {countryDisplayName}</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Body */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
-          <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+          <div className="space-y-6">
             
             {/* Ringkasan Utama */}
-            <div className="bg-white/60 border-2 border-[#C4B49C]/20 p-6 rounded-2xl shadow-sm">
+            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-black text-[#8b7e66] uppercase tracking-wider">Kematian Harian</p>
-                  <p className="text-4xl font-black text-rose-700 mt-1">-{formatNumber(dailyDeaths)}</p>
+                  <p className="text-sm font-black text-[#6B8A8A] uppercase tracking-wider">Kematian Harian</p>
+                  <p className="text-4xl font-black text-rose-400 mt-1">-{formatNumber(dailyDeaths)}</p>
                 </div>
-                <div className="p-4 bg-rose-50 rounded-full border border-rose-200">
-                  <Skull className="h-10 w-10 text-rose-600" />
+                <div className="p-4 bg-rose-500/10 rounded-full border border-rose-500/30">
+                  <Skull className="h-10 w-10 text-rose-400" />
                 </div>
               </div>
-              <p className="mt-4 text-xs text-[#8b7e66] font-medium">
+              <p className="mt-4 text-xs text-[#6B8A8A] font-medium">
                 Berdasarkan total populasi {formatNumber(populasi)} jiwa dan kondisi sosial-ekonomi terkini.
               </p>
             </div>
 
-            {/* Breakdown Faktor - DENGAN TOMBOL INFO DI KANAN ATAS */}
+            {/* Breakdown Faktor */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* 1. Harapan Hidup */}
-              <div className="bg-[#e4dac3]/15 border border-[#C4B49C]/30 p-4 rounded-xl space-y-2 relative">
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative">
                 <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm border border-[#C4B49C]/30 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
                   onClick={() => setIsHarapanHidupOpen(true)}
                 >
                   <Info className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-blue-500/10 rounded-lg">
-                    <Heart className="h-4 w-4 text-blue-700" />
+                  <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
+                    <Heart className="h-4 w-4 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#5c3c10] uppercase">Harapan Hidup</h4>
+                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Harapan Hidup</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#2e261a]">{harapanHidup} tahun</span>
-                  <span className="text-[10px] text-[#8b7e66]">Ã— {lifeExpectancyFactor.toFixed(3)}</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{harapanHidup} tahun</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {lifeExpectancyFactor.toFixed(3)}</span>
                 </div>
-                <p className="text-[10px] text-[#8b7e66]">Semakin tinggi harapan hidup, semakin rendah angka kematian.</p>
+                <p className="text-[10px] text-[#6B8A8A]">Semakin tinggi harapan hidup, semakin rendah angka kematian.</p>
               </div>
 
               {/* 2. Keamanan */}
-              <div className="bg-[#e4dac3]/15 border border-[#C4B49C]/30 p-4 rounded-xl space-y-2 relative">
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative">
                 <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm border border-[#C4B49C]/30 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
                   onClick={() => setIsKeamananOpen(true)}
                 >
                   <Info className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-indigo-500/10 rounded-lg">
-                    <Shield className="h-4 w-4 text-indigo-700" />
+                  <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
+                    <Shield className="h-4 w-4 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#5c3c10] uppercase">Tingkat Keamanan</h4>
+                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Tingkat Keamanan</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#2e261a]">{tingkatKeamanan}%</span>
-                  <span className="text-[10px] text-[#8b7e66]">Ã— {securityFactor.toFixed(3)}</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{tingkatKeamanan}%</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {securityFactor.toFixed(3)}</span>
                 </div>
-                <p className="text-[10px] text-[#8b7e66]">Lingkungan aman mengurangi kematian akibat kriminalitas dan kecelakaan.</p>
+                <p className="text-[10px] text-[#6B8A8A]">Lingkungan aman mengurangi kematian akibat kriminalitas dan kecelakaan.</p>
               </div>
 
               {/* 3. Tunawisma */}
-              <div className="bg-[#e4dac3]/15 border border-[#C4B49C]/30 p-4 rounded-xl space-y-2 relative">
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative">
                 <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm border border-[#C4B49C]/30 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
                   onClick={() => setIsTunawismaOpen(true)}
                 >
                   <Info className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-amber-500/10 rounded-lg">
-                    <Home className="h-4 w-4 text-amber-700" />
+                  <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
+                    <Home className="h-4 w-4 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#5c3c10] uppercase">Tunawisma</h4>
+                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Tunawisma</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#2e261a]">{formatNumber(homelessCount)} jiwa ({ (homelessRatio * 100).toFixed(2)}%)</span>
-                  <span className="text-[10px] text-[#8b7e66]">Ã— {homelessFactor.toFixed(3)}</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{formatNumber(homelessCount)} jiwa ({ (homelessRatio * 100).toFixed(2)}%)</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {homelessFactor.toFixed(3)}</span>
                 </div>
-                <p className="text-[10px] text-[#8b7e66]">Setiap 1% populasi tunawisma meningkatkan kematian sebesar 5%.</p>
+                <p className="text-[10px] text-[#6B8A8A]">Setiap 1% populasi tunawisma meningkatkan kematian sebesar 5%.</p>
               </div>
 
               {/* 4. Kesehatan */}
               <div 
-                className="bg-[#e4dac3]/15 border border-[#C4B49C]/30 p-4 rounded-xl space-y-2 relative cursor-pointer hover:shadow-md hover:border-[#5c3c10]/40 hover:bg-[#e4dac3]/25 transition-all duration-200 active:scale-[0.98]"
+                className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative cursor-pointer hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/5 transition-all duration-200"
                 onClick={() => onOpenTempatUmum?.('kesehatan')}
               >
                 <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm border border-[#C4B49C]/30 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsKesehatanOpen(true);
@@ -219,25 +218,25 @@ export default function DetailKematianModal({
                   <Info className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-green-500/10 rounded-lg">
-                    <HeartPulse className="h-4 w-4 text-green-700" />
+                  <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
+                    <HeartPulse className="h-4 w-4 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#5c3c10] uppercase">Fasilitas Kesehatan</h4>
+                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Fasilitas Kesehatan</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#2e261a]">{jumlahRumahSakit} RS (rasio {hospitalRatio.toFixed(2)})</span>
-                  <span className="text-[10px] text-[#8b7e66]">Ã— {healthFactor.toFixed(3)}</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{jumlahRumahSakit} RS (rasio {hospitalRatio.toFixed(2)})</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {healthFactor.toFixed(3)}</span>
                 </div>
-                <p className="text-[10px] text-[#8b7e66]">Ketersediaan RS yang cukup menurunkan kematian akibat penyakit yang dapat diobati.</p>
+                <p className="text-[10px] text-[#6B8A8A]">Ketersediaan RS yang cukup menurunkan kematian akibat penyakit yang dapat diobati.</p>
               </div>
 
               {/* 5. Ketahanan Pangan */}
               <div 
-                className="bg-[#e4dac3]/15 border border-[#C4B49C]/30 p-4 rounded-xl space-y-2 relative cursor-pointer hover:shadow-md hover:border-[#5c3c10]/40 hover:bg-[#e4dac3]/25 transition-all duration-200 active:scale-[0.98]"
+                className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative cursor-pointer hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/5 transition-all duration-200"
                 onClick={() => onOpenIndustriPangan?.()}
               >
                 <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm border border-[#C4B49C]/30 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsKetahananPanganOpen(true);
@@ -246,25 +245,25 @@ export default function DetailKematianModal({
                   <Info className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-orange-500/10 rounded-lg">
-                    <Utensils className="h-4 w-4 text-orange-700" />
+                  <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
+                    <Utensils className="h-4 w-4 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#5c3c10] uppercase">Ketahanan Pangan</h4>
+                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Ketahanan Pangan</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#2e261a]">{indeksKetahananPangan}%</span>
-                  <span className="text-[10px] text-[#8b7e66]">Ã— {foodSecurityFactor.toFixed(3)}</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{indeksKetahananPangan}%</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {foodSecurityFactor.toFixed(3)}</span>
                 </div>
-                <p className="text-[10px] text-[#8b7e66]">Ketersediaan pangan yang cukup mengurangi kematian akibat malnutrisi.</p>
+                <p className="text-[10px] text-[#6B8A8A]">Ketersediaan pangan yang cukup mengurangi kematian akibat malnutrisi.</p>
               </div>
 
               {/* 6. Kriminalitas */}
               <div 
-                className="bg-[#e4dac3]/15 border border-[#C4B49C]/30 p-4 rounded-xl space-y-2 relative cursor-pointer hover:shadow-md hover:border-[#5c3c10]/40 hover:bg-[#e4dac3]/25 transition-all duration-200 active:scale-[0.98]"
+                className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative cursor-pointer hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/5 transition-all duration-200"
                 onClick={() => onOpenArmada?.('polisi')}
               >
                 <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm border border-[#C4B49C]/30 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsKriminalitasOpen(true);
@@ -273,45 +272,45 @@ export default function DetailKematianModal({
                   <Info className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-rose-500/10 rounded-lg">
-                    <AlertTriangle className="h-4 w-4 text-rose-700" />
+                  <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
+                    <AlertTriangle className="h-4 w-4 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#5c3c10] uppercase">Tingkat Kriminalitas</h4>
+                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Tingkat Kriminalitas</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#2e261a]">{tingkatKriminalitas}%</span>
-                  <span className="text-[10px] text-[#8b7e66]">Ã— {crimeFactor.toFixed(3)}</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{tingkatKriminalitas}%</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {crimeFactor.toFixed(3)}</span>
                 </div>
-                <p className="text-[10px] text-[#8b7e66]">Setiap 1% kriminalitas meningkatkan kematian sebesar 2%.</p>
+                <p className="text-[10px] text-[#6B8A8A]">Setiap 1% kriminalitas meningkatkan kematian sebesar 2%.</p>
               </div>
 
               {/* 7. Polusi */}
-              <div className="bg-[#e4dac3]/15 border border-[#C4B49C]/30 p-4 rounded-xl space-y-2 relative">
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative">
                 <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm border border-[#C4B49C]/30 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
                   onClick={() => setIsPolusiOpen(true)}
                 >
                   <Info className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-gray-500/10 rounded-lg">
-                    <Factory className="h-4 w-4 text-gray-700" />
+                  <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
+                    <Factory className="h-4 w-4 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#5c3c10] uppercase">Tingkat Polusi</h4>
+                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Tingkat Polusi</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#2e261a]">{polusiIndex}</span>
-                  <span className="text-[10px] text-[#8b7e66]">Ã— {pollutionFactor.toFixed(3)}</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{polusiIndex}</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {pollutionFactor.toFixed(3)}</span>
                 </div>
-                <p className="text-[10px] text-[#8b7e66]">Setiap 10 poin polusi meningkatkan kematian sebesar 5%.</p>
+                <p className="text-[10px] text-[#6B8A8A]">Setiap 10 poin polusi meningkatkan kematian sebesar 5%.</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-[#FAF6EE] border-t-2 border-[#C4B49C]/20 flex justify-end relative z-10 shrink-0">
-          <button onClick={onClose} className="px-8 py-3 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
+        <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10 shrink-0">
+          <button onClick={onClose} className="px-8 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
             Tutup
           </button>
         </div>

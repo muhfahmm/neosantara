@@ -256,54 +256,53 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+      <div className="bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
 
         {/* HEADER */}
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
+        <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-                <Zap className="h-6 w-6 text-[#5c3c10]" />
+              <div className="p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <Zap className="h-6 w-6 text-[#00FFAA]" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Grid Kelistrikan Nasional</h2>
-                <p className="text-xs text-[#8b7e66]">Sinkronisasi data dengan modul produksi utama</p>
+                <h2 className="text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Grid Kelistrikan Nasional</h2>
+                <p className="text-xs text-[#6B8A8A]">Sinkronisasi data dengan modul produksi utama</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 ml-8 pl-8 border-l-2 border-[#C4B49C]/30">
+            <div className="flex items-center gap-4 ml-8 pl-8 border-l border-[#00FFAA]/20">
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-300 rounded-lg">
-                  <TrendingUp className="h-4 w-4 text-emerald-700" />
-                  <span className="text-[11px] font-black text-emerald-700 uppercase tracking-wider">Produksi</span>
-                  <span className="text-[11px] font-black text-emerald-700">{totalCapacityMW > 0 ? totalCapacityMW.toLocaleString('id-ID') : '0'} MW</span>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
+                  <TrendingUp className="h-4 w-4 text-[#00FFAA]" />
+                  <span className="text-[11px] font-black text-[#00FFAA] uppercase tracking-wider">Produksi</span>
+                  <span className="text-[11px] font-black text-[#00FFAA]">{totalCapacityMW > 0 ? totalCapacityMW.toLocaleString('id-ID') : '0'} MW</span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-300 rounded-lg">
-                  <TrendingDown className="h-4 w-4 text-rose-700" />
-                  <span className="text-[11px] font-black text-rose-700 uppercase tracking-wider">Konsumsi</span>
-                  <span className="text-[11px] font-black text-rose-700">{estimatedConsumptionMW > 0 ? estimatedConsumptionMW.toLocaleString('id-ID') : '0'} MW</span>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-rose-500/30 rounded-lg">
+                  <TrendingDown className="h-4 w-4 text-rose-400" />
+                  <span className="text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
+                  <span className="text-[11px] font-black text-rose-400">{estimatedConsumptionMW > 0 ? estimatedConsumptionMW.toLocaleString('id-ID') : '0'} MW</span>
                 </div>
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* BODY */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
 
           {/* TAB NAVIGASI */}
-          <div className="bg-[#e4dac3]/40 p-1 rounded-xl border border-[#C4B49C]/40 inline-flex mb-6 shadow-sm">
+          <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/30 inline-flex mb-6">
             <button
               onClick={() => setActiveTab("user")}
               className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                activeTab === "user" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20" : "text-[#8b7e66] hover:text-[#5c3c10]"
+                activeTab === "user" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
               }`}
             >
               Neraca User
@@ -311,7 +310,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
             <button
               onClick={() => setActiveTab("global")}
               className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                activeTab === "global" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20" : "text-[#8b7e66] hover:text-[#5c3c10]"
+                activeTab === "global" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
               }`}
             >
               Neraca {allCountries.length || 207} Negara
@@ -323,76 +322,76 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
             <>
               <div className="grid grid-cols-1 lg:grid-cols-[1.25fr_0.95fr] gap-4">
                 {/* KOLOM KIRI: STATISTIK GRID */}
-                <div className="bg-[#e4dac3]/25 border-2 border-[#C4B49C]/40 p-4 rounded-2xl shadow-sm">
+                <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-2xl">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="p-3 rounded-2xl bg-[#c77a00]/10 text-[#c77a00]">
+                    <div className="p-3 rounded-2xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
                       <BatteryCharging className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-base font-black text-[#5c3c10] uppercase tracking-wide">Statistik Grid</h3>
-                      <p className="text-[10px] text-[#8b7e66] uppercase tracking-wider">Ringkasan kapasitas dan beban listrik nasional</p>
+                      <h3 className="text-base font-black text-[#00FFAA] uppercase tracking-wide">Statistik Grid</h3>
+                      <p className="text-[10px] text-[#6B8A8A] uppercase tracking-wider">Ringkasan kapasitas dan beban listrik nasional</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 gap-3">
-                    <div className="bg-emerald-50 border-2 border-emerald-300 p-3 rounded-2xl">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-700">✓ Total Produksi Listrik</p>
-                      <p className="text-2xl font-black text-emerald-700 mt-3">{totalCapacityMW.toLocaleString('id-ID')} MW</p>
+                    <div className="bg-emerald-950/40 border border-emerald-500/30 p-3 rounded-2xl">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400">✓ Total Produksi Listrik</p>
+                      <p className="text-2xl font-black text-emerald-400 mt-3">{totalCapacityMW.toLocaleString('id-ID')} MW</p>
                     </div>
-                    <div className="bg-rose-50 border-2 border-rose-300 p-3 rounded-2xl">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-rose-700">✗ Konsumsi Terestimasi</p>
-                      <p className="text-2xl font-black text-rose-700 mt-3">{estimatedConsumptionMW.toLocaleString('id-ID')} MW</p>
+                    <div className="bg-rose-950/40 border border-rose-500/30 p-3 rounded-2xl">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-rose-400">✗ Konsumsi Terestimasi</p>
+                      <p className="text-2xl font-black text-rose-400 mt-3">{estimatedConsumptionMW.toLocaleString('id-ID')} MW</p>
                     </div>
-                    <div className={`p-3 rounded-2xl border-2 ${balanceMW >= 0 ? 'bg-emerald-50 border-emerald-300' : 'bg-rose-50 border-rose-300'}`}>
-                      <p className={`text-[10px] font-black uppercase tracking-widest ${balanceMW >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>Neraca Daya</p>
-                      <p className={`text-2xl font-black mt-3 ${balanceMW >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                    <div className={`p-3 rounded-2xl border ${balanceMW >= 0 ? 'bg-emerald-950/40 border-emerald-500/30' : 'bg-rose-950/40 border-rose-500/30'}`}>
+                      <p className={`text-[10px] font-black uppercase tracking-widest ${balanceMW >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>Neraca Daya</p>
+                      <p className={`text-2xl font-black mt-3 ${balanceMW >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                         {balanceMW >= 0 ? '+' : '-'}{Math.abs(balanceMW).toLocaleString('id-ID')} MW
                       </p>
                     </div>
-                    <div className="bg-[#FAF6EE] border-2 border-[#C4B49C]/30 p-3 rounded-2xl">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-[#5c3c10]">Kas Anggaran Negara</p>
-                      <p className="text-2xl font-black text-[#2e261a] mt-3">{anggaran.toLocaleString('id-ID')}</p>
+                    <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-2xl">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Kas Anggaran Negara</p>
+                      <p className="text-2xl font-black text-[#00FFAA] mt-3">{anggaran.toLocaleString('id-ID')}</p>
                     </div>
                   </div>
 
                   <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="bg-[#FAF6EE] border border-[#C4B49C]/30 p-3 rounded-2xl">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-[#5c3c10]">Jumlah Sumber Energi Aktif</p>
-                      <p className="text-lg font-black text-[#2e261a] mt-2">{totalSources}</p>
+                    <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-2xl">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Jumlah Sumber Energi Aktif</p>
+                      <p className="text-lg font-black text-[#E0E0E0] mt-2">{totalSources}</p>
                     </div>
-                    <div className="bg-[#FAF6EE] border border-[#C4B49C]/30 p-3 rounded-2xl">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-[#5c3c10]">Perkiraan Beban Warga</p>
-                      <p className="text-lg font-black text-[#2e261a] mt-2">{((countryDetail?.jumlah_penduduk ?? 0) / 1000000).toFixed(1)} Juta Jiwa</p>
+                    <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-2xl">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Perkiraan Beban Warga</p>
+                      <p className="text-lg font-black text-[#E0E0E0] mt-2">{((countryDetail?.jumlah_penduduk ?? 0) / 1000000).toFixed(1)} Juta Jiwa</p>
                     </div>
                   </div>
                 </div>
 
                 {/* KOLOM KANAN: RINGKASAN SUMBER DAYA */}
-                <div className="bg-[#FAF6EE] border-2 border-[#C4B49C]/40 p-6 rounded-2xl shadow-sm">
+                <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 rounded-2xl bg-[#5c3c10]/10 text-[#5c3c10]">
+                    <div className="p-3 rounded-2xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
                       <MapPin className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-black text-[#5c3c10] uppercase tracking-wide">Ringkasan Sumber Daya</h3>
-                      <p className="text-[10px] text-[#8b7e66] uppercase tracking-wider">Detail berdasarkan data metadata</p>
+                      <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wide">Ringkasan Sumber Daya</h3>
+                      <p className="text-[10px] text-[#6B8A8A] uppercase tracking-wider">Detail berdasarkan data metadata</p>
                     </div>
                   </div>
 
                   <div className="space-y-3">
                     {powerSources.length > 0 ? powerSources.map((source) => (
-                      <div key={source.key} className="flex items-center justify-between gap-3 p-4 bg-[#FAF6EE] border border-[#C4B49C]/20 rounded-2xl">
+                      <div key={source.key} className="flex items-center justify-between gap-3 p-4 bg-[#0F2424] border border-[#00FFAA]/20 rounded-2xl">
                         <div>
-                          <p className="text-sm font-black text-[#5c3c10] uppercase tracking-wide">{source.label}</p>
-                          <p className="text-[10px] text-[#8b7e66]">{source.desc}</p>
+                          <p className="text-sm font-black text-[#E0E0E0] uppercase tracking-wide">{source.label}</p>
+                          <p className="text-[10px] text-[#6B8A8A]">{source.desc}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-black text-[#2e261a]">{(source.value * source.unitProduction).toLocaleString('id-ID')} MW</p>
-                          <p className="text-[10px] text-[#8b7e66]">{source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}</p>
+                          <p className="text-sm font-black text-[#00FFAA]">{(source.value * source.unitProduction).toLocaleString('id-ID')} MW</p>
+                          <p className="text-[10px] text-[#6B8A8A]">{source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}</p>
                         </div>
                       </div>
                     )) : (
-                      <div className="rounded-2xl border border-[#C4B49C]/20 bg-[#FAF6EE] p-4 text-sm text-[#8b7e66]">
+                      <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0F2424] p-4 text-sm text-[#6B8A8A]">
                         Data pembangkit listrik tidak tersedia.
                       </div>
                     )}
@@ -400,34 +399,34 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 </div>
               </div>
 
-              {/* 🔥 INDEKS KEPUASAN LISTRIK */}
-              <div className="mt-6 p-5 rounded-xl border-3 border-[#5c3c10]/40 bg-gradient-to-r from-amber-50 to-amber-100/70 shadow-md">
+              {/* INDEKS KEPUASAN LISTRIK */}
+              <div className="mt-6 p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-black text-[#5c3c10] uppercase tracking-widest">
+                  <span className="text-sm font-black text-[#00FFAA] uppercase tracking-widest">
                     Indeks Kepuasan Rakyat (Listrik)
                   </span>
-                  <span className="text-3xl font-black text-amber-700">
+                  <span className="text-3xl font-black text-[#00FFAA]">
                     {electricitySatisfaction} / 100
                   </span>
                 </div>
-                <div className="w-full h-3 bg-gray-200 rounded-full mt-3 overflow-hidden">
+                <div className="w-full h-3 bg-[#0F2424] rounded-full mt-3 overflow-hidden border border-[#00FFAA]/20">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-600 transition-all duration-200"
+                    className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
                     style={{ width: `${electricitySatisfaction}%` }}
                   />
                 </div>
-                <p className="text-[10px] text-amber-700 font-bold mt-3">
+                <p className="text-[10px] text-[#00FFAA] font-bold mt-3">
                   {electricitySatisfaction >= 80
                     ? "✅ Produksi listrik mencukupi, hampir tidak ada pemadaman."
                     : electricitySatisfaction >= 50
                     ? "⚠️ Kebutuhan listrik terpenuhi namun masih rawan defisit."
                     : "🔴 Defisit listrik parah, sering terjadi pemadaman bergilir."}
                 </p>
-                <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-amber-800/80">
-                  <div>Rasio produksi/konsumsi: <span className="font-bold">
+                <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-[#6B8A8A]">
+                  <div>Rasio produksi/konsumsi: <span className="font-bold text-[#00FFAA]">
                     {estimatedConsumptionMW > 0 ? (totalCapacityMW / estimatedConsumptionMW).toFixed(2) : 'N/A'}
                   </span></div>
-                  <div>Neraca daya: <span className={`font-bold ${balanceMW >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                  <div>Neraca daya: <span className={`font-bold ${balanceMW >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                     {balanceMW >= 0 ? '+' : '-'}{Math.abs(balanceMW).toLocaleString('id-ID')} MW
                   </span></div>
                 </div>
@@ -437,71 +436,71 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
           {/* TAB NERACA GLOBAL */}
           {activeTab === "global" && (
-            <div className="bg-[#FAF6EE] border-2 border-[#C4B49C]/40 p-6 rounded-2xl shadow-sm w-full">
+            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl w-full">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 rounded-2xl bg-[#5c3c10]/10 text-[#5c3c10]">
+                <div className="p-3 rounded-2xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
                   <Zap className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-[#5c3c10] uppercase tracking-wide">Neraca {allCountries.length || 207} Negara</h3>
-                  <p className="text-[10px] text-[#8b7e66] uppercase tracking-wider">Data produksi, konsumsi, dan neraca daya listrik global</p>
+                  <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wide">Neraca {allCountries.length || 207} Negara</h3>
+                  <p className="text-[10px] text-[#6B8A8A] uppercase tracking-wider">Data produksi, konsumsi, dan neraca daya listrik global</p>
                 </div>
               </div>
 
               <div className="mb-4 relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-[#8b7e66] pointer-events-none" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-[#6B8A8A] pointer-events-none" />
                 <input
                   type="text"
                   placeholder="Cari nama negara..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border-2 border-[#C4B49C]/40 bg-[#FAF6EE] text-[#5c3c10] placeholder-[#8b7e66] focus:outline-none focus:border-[#5c3c10] focus:ring-2 focus:ring-[#5c3c10]/20 transition-all font-semibold text-sm"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-all font-semibold text-sm"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-3 text-[#8b7e66] hover:text-[#5c3c10] transition-colors"
+                    className="absolute right-3 top-3 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors"
                   >
                     ✕
                   </button>
                 )}
               </div>
 
-              <div className="overflow-x-auto border border-[#C4B49C]/30 rounded-xl bg-[#FAF6EE]/50 shadow-sm max-h-[60vh] overflow-y-auto">
+              <div className="overflow-x-auto border border-[#00FFAA]/20 rounded-xl bg-[#0F2424] max-h-[60vh] overflow-y-auto no-scrollbar">
                 <table className="w-full text-xs">
-                  <thead className="bg-[#5c3c10]/5 border-b-2 border-[#C4B49C]/30 sticky top-0">
+                  <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/20 sticky top-0">
                     <tr>
-                      <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">No</th>
+                      <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider">No</th>
                       <th
                         onClick={() => handleSort('name')}
-                        className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider cursor-pointer hover:bg-[#5c3c10]/10 transition-colors"
+                        className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors"
                       >
                         Negara <SortIndicator column="name" />
                       </th>
                       <th
                         onClick={() => handleSort('production')}
-                        className="px-4 py-3 text-right font-black text-emerald-700 uppercase tracking-wider cursor-pointer hover:bg-emerald-700/10 transition-colors"
+                        className="px-4 py-3 text-right font-black text-emerald-400 uppercase tracking-wider cursor-pointer hover:bg-emerald-950/40 transition-colors"
                       >
                         Produksi (MW) <SortIndicator column="production" />
                       </th>
                       <th
                         onClick={() => handleSort('consumption')}
-                        className="px-4 py-3 text-right font-black text-rose-700 uppercase tracking-wider cursor-pointer hover:bg-rose-700/10 transition-colors"
+                        className="px-4 py-3 text-right font-black text-rose-400 uppercase tracking-wider cursor-pointer hover:bg-rose-950/40 transition-colors"
                       >
                         Konsumsi (MW) <SortIndicator column="consumption" />
                       </th>
                       <th
                         onClick={() => handleSort('balance')}
-                        className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider cursor-pointer hover:bg-[#5c3c10]/10 transition-colors"
+                        className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors"
                       >
                         Neraca Daya <SortIndicator column="balance" />
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#C4B49C]/20">
+                  <tbody className="divide-y divide-[#00FFAA]/10 bg-[#0F2424]">
                     {allCountries.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#8b7e66]">
+                        <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
                           📡 Memuat data {globalElectricityData.length || 207} negara...
                         </td>
                       </tr>
@@ -511,32 +510,30 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         return (
                           <tr
                             key={`country-${country.index}-${rowIndex}`}
-                            className={`transition-colors ${
+                            className={`transition-colors hover:bg-[#00FFAA]/5 ${
                               isUserCountry
-                                ? 'bg-emerald-100/80 hover:bg-emerald-200/80 font-black border-l-4 border-l-emerald-600'
-                                : rowIndex % 2 === 0
-                                ? 'bg-[#FAF6EE]'
-                                : 'bg-[#e4dac3]/10 hover:bg-[#e4dac3]/20'
+                                ? 'bg-emerald-950/50 font-black border-l-4 border-l-emerald-400'
+                                : 'bg-[#0F2424]'
                             }`}
                           >
-                            <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-900 font-black' : 'text-[#8b7e66]'}`}>
+                            <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black' : 'text-[#6B8A8A]'}`}>
                               {country.index}
                             </td>
-                            <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-900 font-black flex items-center gap-2' : 'text-[#5c3c10]'}`}>
+                            <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black flex items-center gap-2' : 'text-[#E0E0E0]'}`}>
                               <span>{country.name}</span>
                               {isUserCountry && (
-                                <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[9px] font-black uppercase tracking-wider shadow-sm">
+                                <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-[#0A1A1A] text-[9px] font-black uppercase tracking-wider">
                                   Negara Anda
                                 </span>
                               )}
                             </td>
-                            <td className="px-4 py-3 font-bold text-emerald-700 text-right">
+                            <td className="px-4 py-3 font-bold text-emerald-400 text-right">
                               {isNaN(country.production) || country.production <= 0 ? '0' : country.production.toLocaleString('id-ID')}
                             </td>
-                            <td className="px-4 py-3 font-bold text-rose-700 text-right">
+                            <td className="px-4 py-3 font-bold text-rose-400 text-right">
                               {isNaN(country.consumption) || country.consumption <= 0 ? '0' : country.consumption.toLocaleString('id-ID')}
                             </td>
-                            <td className={`px-4 py-3 font-black text-right ${country.balance >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                            <td className={`px-4 py-3 font-black text-right ${country.balance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                               {isNaN(country.balance) ? '0' : (country.balance >= 0 ? '+' : '-') + Math.abs(country.balance).toLocaleString('id-ID')}
                             </td>
                           </tr>
@@ -544,7 +541,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       })
                     ) : (
                       <tr>
-                        <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#8b7e66]">
+                        <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
                           {searchQuery ? `Tidak ada negara yang cocok dengan "${searchQuery}"` : 'Tidak ada data tersedia'}
                         </td>
                       </tr>
@@ -554,10 +551,10 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               </div>
 
               {filteredData.length > 0 && (
-                <div className="mt-4 p-4 bg-[#e4dac3]/20 border border-[#C4B49C]/30 rounded-lg text-xs text-[#8b7e66]">
-                  <p className="font-bold">📊 Total: {filteredData.length} negara {searchQuery && `(difilter dari ${globalElectricityData.length})`}</p>
-                  <p className="mt-1">Produksi: <span className="font-black text-emerald-700">{filteredData.reduce((sum, c) => sum + c.production, 0).toLocaleString('id-ID')} MW</span></p>
-                  <p>Konsumsi: <span className="font-black text-rose-700">{filteredData.reduce((sum, c) => sum + c.consumption, 0).toLocaleString('id-ID')} MW</span></p>
+                <div className="mt-4 p-4 bg-[#0F2424] border border-[#00FFAA]/20 rounded-lg text-xs text-[#6B8A8A]">
+                  <p className="font-bold text-[#E0E0E0]">📊 Total: {filteredData.length} negara {searchQuery && `(difilter dari ${globalElectricityData.length})`}</p>
+                  <p className="mt-1">Produksi: <span className="font-black text-emerald-400">{filteredData.reduce((sum, c) => sum + c.production, 0).toLocaleString('id-ID')} MW</span></p>
+                  <p>Konsumsi: <span className="font-black text-rose-400">{filteredData.reduce((sum, c) => sum + c.consumption, 0).toLocaleString('id-ID')} MW</span></p>
                 </div>
               )}
             </div>

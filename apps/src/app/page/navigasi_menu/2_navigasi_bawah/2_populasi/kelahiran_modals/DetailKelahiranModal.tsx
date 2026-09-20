@@ -107,54 +107,53 @@ export default function DetailKelahiranModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
 
         {/* Header */}
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 shrink-0">
+        <div className="px-6 sm:px-8 py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
-              <Users className="h-6 w-6 text-emerald-700" />
+            <div className="p-2 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30">
+              <Users className="h-6 w-6 text-[#00FFAA]" />
             </div>
             <div>
-              <h2 className="text-2xl font-black text-[#5c3c10] tracking-tight leading-none uppercase">Rincian Pertumbuhan Penduduk</h2>
-              <p className="text-xs text-[#8b7e66] font-medium">Faktor yang memengaruhi kelahiran dan kematian di {countryDisplayName}</p>
+              <h2 className="text-xl sm:text-2xl font-black text-[#00FFAA] tracking-tight leading-none uppercase">Rincian Pertumbuhan Penduduk</h2>
+              <p className="text-xs text-[#6B8A8A] font-medium mt-1">Faktor yang memengaruhi kelahiran dan kematian di {countryDisplayName}</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
-          <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+          <div className="space-y-6">
 
             {/* Ringkasan Utama - Pertumbuhan Bersih */}
-            <div className="bg-white/60 border-2 border-[#C4B49C]/20 p-6 rounded-2xl shadow-sm">
+            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-black text-[#8b7e66] uppercase tracking-wider">Pertumbuhan Penduduk Harian</p>
-                  <p className={`text-4xl font-black mt-1 ${netDailyChange >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
-                    {netDailyChange >= 0 ? '+' : ''}{formatNumber(netDailyChange)} <span className="text-lg text-[#8b7e66] font-bold">/hr</span>
+                  <p className="text-sm font-black text-[#6B8A8A] uppercase tracking-wider">Pertumbuhan Penduduk Harian</p>
+                  <p className={`text-4xl font-black mt-1 ${netDailyChange >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    {netDailyChange >= 0 ? '+' : ''}{formatNumber(netDailyChange)} <span className="text-lg text-[#6B8A8A] font-bold">/hr</span>
                   </p>
                 </div>
-                <div className="p-4 bg-emerald-50 rounded-full border border-emerald-200">
-                  <Activity className="h-10 w-10 text-emerald-600" />
+                <div className="p-4 bg-[#00FFAA]/10 rounded-full border border-[#00FFAA]/30">
+                  <Activity className="h-10 w-10 text-[#00FFAA]" />
                 </div>
               </div>
               <div className="mt-4 grid grid-cols-2 gap-4">
-                <div className="bg-emerald-50/60 p-3 rounded-xl border border-emerald-200">
-                  <p className="text-[10px] text-[#8b7e66] font-black uppercase">Kelahiran</p>
-                  <p className="text-xl font-black text-emerald-700">+{formatNumber(dailyBirths)}</p>
+                <div className="bg-[#0F2424] p-3 rounded-xl border border-emerald-500/30">
+                  <p className="text-[10px] text-emerald-400 font-black uppercase">Kelahiran</p>
+                  <p className="text-xl font-black text-emerald-400">+{formatNumber(dailyBirths)}</p>
                 </div>
-                <div className="bg-rose-50/60 p-3 rounded-xl border border-rose-200">
-                  <p className="text-[10px] text-[#8b7e66] font-black uppercase">Kematian</p>
-                  <p className="text-xl font-black text-rose-700">-{formatNumber(dailyDeaths)}</p>
+                <div className="bg-[#0F2424] p-3 rounded-xl border border-rose-500/30">
+                  <p className="text-[10px] text-rose-400 font-black uppercase">Kematian</p>
+                  <p className="text-xl font-black text-rose-400">-{formatNumber(dailyDeaths)}</p>
                 </div>
               </div>
-              <p className="mt-4 text-xs text-[#8b7e66] font-medium">
+              <p className="mt-4 text-xs text-[#6B8A8A] font-medium">
                 {netDailyChange >= 0
                   ? `Populasi bertambah ${formatNumber(netDailyChange)} jiwa setiap hari.`
                   : `Populasi berkurang ${formatNumber(Math.abs(netDailyChange))} jiwa setiap hari.`
@@ -165,52 +164,52 @@ export default function DetailKelahiranModal({
             {/* Breakdown Faktor Kelahiran */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-              {/* 1. Populasi Dasar - (TANPA POINTER) */}
-              <div className="bg-[#e4dac3]/15 border border-[#C4B49C]/30 p-4 rounded-xl space-y-2 relative">
+              {/* 1. Populasi Dasar */}
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative">
                 <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm border border-[#C4B49C]/30 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
                   onClick={() => setOpenPopulasiDasar(true)}
                 >
                   <Info className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-blue-500/10 rounded-lg">
-                    <Users className="h-4 w-4 text-blue-700" />
+                  <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
+                    <Users className="h-4 w-4 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#5c3c10] uppercase">Populasi Dasar</h4>
+                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Populasi Dasar</h4>
                 </div>
-                <p className="text-sm font-bold text-[#2e261a]">{formatNumber(populasi)} jiwa</p>
+                <p className="text-sm font-bold text-[#E0E0E0]">{formatNumber(populasi)} jiwa</p>
               </div>
 
-              {/* 2. Kesejahteraan - (TANPA POINTER) */}
-              <div className="bg-[#e4dac3]/15 border border-[#C4B49C]/30 p-4 rounded-xl space-y-2 relative">
+              {/* 2. Kesejahteraan */}
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative">
                 <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm border border-[#C4B49C]/30 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
                   onClick={() => setOpenKesejahteraan(true)}
                 >
                   <Info className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-amber-500/10 rounded-lg">
-                    <Banknote className="h-4 w-4 text-amber-700" />
+                  <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
+                    <Banknote className="h-4 w-4 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#5c3c10] uppercase">Kesejahteraan</h4>
+                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Kesejahteraan</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#2e261a]">
+                  <span className="text-sm font-bold text-[#E0E0E0]">
                     {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50} INDX
                   </span>
-                  <span className="text-[10px] text-[#8b7e66]">Ã— {welfareFactor.toFixed(3)}</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {welfareFactor.toFixed(3)}</span>
                 </div>
               </div>
 
-              {/* 3. Fasilitas Kesehatan - (DENGAN POINTER DAN NAVIGASI KHUSUS) */}
+              {/* 3. Fasilitas Kesehatan */}
               <div 
-                className="bg-[#e4dac3]/15 border border-[#C4B49C]/30 p-4 rounded-xl space-y-2 relative cursor-pointer hover:shadow-md hover:border-[#5c3c10]/40 hover:bg-[#e4dac3]/25 transition-all duration-200 active:scale-[0.98]"
+                className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative cursor-pointer hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/5 transition-all duration-200"
                 onClick={() => onOpenTempatUmum?.('kesehatan')}
               >
                 <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm border border-[#C4B49C]/30 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
                     setOpenFasilitasKesehatan(true);
@@ -219,45 +218,45 @@ export default function DetailKelahiranModal({
                   <Info className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-green-500/10 rounded-lg">
-                    <HeartPulse className="h-4 w-4 text-green-700" />
+                  <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
+                    <HeartPulse className="h-4 w-4 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#5c3c10] uppercase">Fasilitas Kesehatan</h4>
+                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Fasilitas Kesehatan</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#2e261a]">{jumlahRumahSakit} RS (rasio {hospitalRatio.toFixed(2)})</span>
-                  <span className="text-[10px] text-[#8b7e66]">Ã— {healthFactor.toFixed(3)}</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{jumlahRumahSakit} RS (rasio {hospitalRatio.toFixed(2)})</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {healthFactor.toFixed(3)}</span>
                 </div>
-                <p className="text-[10px] text-[#8b7e66]">Fasilitas medis pendukung persalinan aman.</p>
+                <p className="text-[10px] text-[#6B8A8A]">Fasilitas medis pendukung persalinan aman.</p>
               </div>
 
-              {/* 4. Kebijakan Insentif Anak - (TANPA POINTER) */}
-              <div className="bg-[#e4dac3]/15 border border-[#C4B49C]/30 p-4 rounded-xl space-y-2 relative">
+              {/* 4. Kebijakan Insentif Anak */}
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative">
                 <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm border border-[#C4B49C]/30 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
                   onClick={() => setOpenKebijakanInsentifAnak(true)}
                 >
                   <Info className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-indigo-500/10 rounded-lg">
-                    <Home className="h-4 w-4 text-indigo-700" />
+                  <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
+                    <Home className="h-4 w-4 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#5c3c10] uppercase">Kebijakan Insentif Anak</h4>
+                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Kebijakan Insentif Anak</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#2e261a]">{programInsentifAnak ? 'Aktif' : 'Tidak Aktif'}</span>
-                  <span className="text-[10px] text-[#8b7e66]">Ã— {policyFactor.toFixed(2)}</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{programInsentifAnak ? 'Aktif' : 'Tidak Aktif'}</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {policyFactor.toFixed(2)}</span>
                 </div>
               </div>
 
-              {/* 5. Tingkat Pendidikan - (DENGAN POINTER DAN NAVIGASI KHUSUS) */}
+              {/* 5. Tingkat Pendidikan */}
               <div 
-                className="bg-[#e4dac3]/15 border border-[#C4B49C]/30 p-4 rounded-xl space-y-2 relative cursor-pointer hover:shadow-md hover:border-[#5c3c10]/40 hover:bg-[#e4dac3]/25 transition-all duration-200 active:scale-[0.98]"
+                className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative cursor-pointer hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/5 transition-all duration-200"
                 onClick={() => onOpenTempatUmum?.('pendidikan')}
               >
                 <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm border border-[#C4B49C]/30 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
                   onClick={(e) => {
                     e.stopPropagation();
                     setOpenTingkatPendidikan(true);
@@ -266,16 +265,16 @@ export default function DetailKelahiranModal({
                   <Info className="w-4 h-4" />
                 </button>
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-purple-500/10 rounded-lg">
-                    <GraduationCap className="h-4 w-4 text-purple-700" />
+                  <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
+                    <GraduationCap className="h-4 w-4 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#5c3c10] uppercase">Tingkat Pendidikan</h4>
+                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Tingkat Pendidikan</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#2e261a]">{(tingkatPendidikan * 100).toFixed(0)}% (rasio {educationRatio.toFixed(2)})</span>
-                  <span className="text-[10px] text-[#8b7e66]">Ã— {educationFactor.toFixed(3)}</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{(tingkatPendidikan * 100).toFixed(0)}% (rasio {educationRatio.toFixed(2)})</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {educationFactor.toFixed(3)}</span>
                 </div>
-                <p className="text-[10px] text-[#8b7e66]">Tingkat edukasi memengaruhi perencanaan keluarga.</p>
+                <p className="text-[10px] text-[#6B8A8A]">Tingkat edukasi memengaruhi perencanaan keluarga.</p>
               </div>
 
             </div>
@@ -283,8 +282,8 @@ export default function DetailKelahiranModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-[#FAF6EE] border-t-2 border-[#C4B49C]/20 flex justify-end relative z-10 shrink-0">
-          <button onClick={onClose} className="px-8 py-3 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
+        <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10 shrink-0">
+          <button onClick={onClose} className="px-8 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
             Tutup
           </button>
         </div>

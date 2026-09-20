@@ -193,13 +193,13 @@ export default function IndeksKesejahteraanModal({
   const countryName = selectedCountry?.country || "Indonesia";
   const status = getKesejahteraanStatus(overallScore);
 
-  // Warna berdasarkan score
+  // Warna berdasarkan score (Command Center Dark Theme)
   const getScoreColor = (score: number) => {
-    if (score >= 81) return { bg: 'bg-emerald-50', border: 'border-emerald-300', text: 'text-emerald-700', icon: 'text-emerald-700' };
-    if (score >= 61) return { bg: 'bg-green-50', border: 'border-green-300', text: 'text-green-700', icon: 'text-green-700' };
-    if (score >= 41) return { bg: 'bg-yellow-50', border: 'border-yellow-300', text: 'text-yellow-700', icon: 'text-yellow-700' };
-    if (score >= 21) return { bg: 'bg-orange-50', border: 'border-orange-300', text: 'text-orange-700', icon: 'text-orange-700' };
-    return { bg: 'bg-red-50', border: 'border-red-300', text: 'text-red-700', icon: 'text-red-700' };
+    if (score >= 81) return { bg: 'bg-[#0F2424]', border: 'border-emerald-500/40', text: 'text-emerald-400', icon: 'text-emerald-400' };
+    if (score >= 61) return { bg: 'bg-[#0F2424]', border: 'border-green-500/40', text: 'text-green-400', icon: 'text-green-400' };
+    if (score >= 41) return { bg: 'bg-[#0F2424]', border: 'border-yellow-500/40', text: 'text-yellow-400', icon: 'text-yellow-400' };
+    if (score >= 21) return { bg: 'bg-[#0F2424]', border: 'border-amber-500/40', text: 'text-amber-400', icon: 'text-amber-400' };
+    return { bg: 'bg-[#0F2424]', border: 'border-rose-500/40', text: 'text-rose-400', icon: 'text-rose-400' };
   };
 
   const scoreColor = getScoreColor(overallScore);
@@ -223,31 +223,28 @@ export default function IndeksKesejahteraanModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-
-        {/* Background */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+      <div className="bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
 
         {/* Header */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#C4B49C]/40 flex items-center justify-between bg-[#FAF6EE] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
           <div className="flex items-center gap-3 sm:gap-6 flex-wrap">
             <div className="flex items-center gap-2">
-              <div className={`p-1 sm:p-1.5 rounded-lg border ${scoreColor.border} ${scoreColor.bg} shrink-0`}>
-                <MapPin className={`h-4 w-4 sm:h-5 sm:w-5 ${scoreColor.icon}`} />
+              <div className="p-1 sm:p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] shrink-0">
+                <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
               </div>
               <div>
-                <h2 className="text-base sm:text-xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Indeks Kesejahteraan</h2>
+                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Indeks Kesejahteraan</h2>
               </div>
             </div>
 
-            {/* 🔥 Tab Navigation (Identik dengan Kepuasan Rakyat) */}
-            <div className="flex items-center bg-[#e4dac3]/40 p-0.5 sm:p-1 rounded-lg border border-[#bfae93]/50 backdrop-blur-md">
+            {/* Tab Navigation */}
+            <div className="flex items-center bg-[#0A1A1A] p-0.5 sm:p-1 rounded-lg border border-[#00FFAA]/30 backdrop-blur-md">
               <button
                 onClick={() => setActiveTab("statistik")}
                 className={`px-3 py-1 rounded-md text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
                   activeTab === "statistik"
-                    ? "bg-[#5c3c10] text-[#FAF6EE] shadow-sm"
-                    : "text-[#8b7e66] hover:text-[#5c3c10]"
+                    ? "bg-[#00FFAA] text-[#0A1A1A]"
+                    : "text-[#6B8A8A] hover:text-[#E0E0E0]"
                 }`}
               >
                 Statistik
@@ -256,8 +253,8 @@ export default function IndeksKesejahteraanModal({
                 onClick={() => setActiveTab("naikkan")}
                 className={`px-3 py-1 rounded-md text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
                   activeTab === "naikkan"
-                    ? "bg-[#5c3c10] text-[#FAF6EE] shadow-sm"
-                    : "text-[#8b7e66] hover:text-[#5c3c10]"
+                    ? "bg-[#00FFAA] text-[#0A1A1A]"
+                    : "text-[#6B8A8A] hover:text-[#E0E0E0]"
                 }`}
               >
                 Naikkan Kesejahteraan
@@ -265,64 +262,64 @@ export default function IndeksKesejahteraanModal({
             </div>
           </div>
 
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-5 bg-[#FAF6EE]/40 relative z-10 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-5 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
           <div className="animate-in fade-in duration-500">
             {activeTab === "statistik" ? (
               <div className="space-y-6">
                 {/* Main Score Card */}
-                <div className={`rounded-2xl p-8 border-2 ${scoreColor.border} ${scoreColor.bg} shadow-md`}>
+                <div className="rounded-2xl p-8 border border-[#00FFAA]/30 bg-[#0F2424]">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs text-[#8b7e66] font-black uppercase tracking-wider mb-2">Indeks Kesejahteraan Keseluruhan</p>
+                      <p className="text-xs text-[#6B8A8A] font-black uppercase tracking-wider mb-2">Indeks Kesejahteraan Keseluruhan</p>
                       <div className="flex items-baseline gap-2">
-                        <span className={`text-5xl font-black ${scoreColor.text}`}>{overallScore}</span>
-                        <span className="text-lg font-bold text-[#8b7e66]">/100</span>
+                        <span className="text-5xl font-black text-[#00FFAA]">{overallScore}</span>
+                        <span className="text-lg font-bold text-[#6B8A8A]">/100</span>
                       </div>
-                      <p className={`text-sm font-black mt-2 ${scoreColor.text}`}>{status}</p>
-                      <p className="text-[10px] text-[#8b7e66] font-medium mt-1">Rata‑rata dari 5 sektor utama</p>
+                      <p className="text-sm font-black mt-2 text-[#00FFAA]">{status}</p>
+                      <p className="text-[10px] text-[#6B8A8A] font-medium mt-1">Rata‑rata dari 5 sektor utama</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {getTrendIcon(kesejahteraan.trend)}
-                      <span className="text-xs font-bold text-[#8b7e66] uppercase">{kesejahteraan.trend}</span>
+                      <span className="text-xs font-bold text-[#00FFAA] uppercase">{kesejahteraan.trend}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Interpretasi */}
-                <div className="bg-[#e4dac3]/20 border-2 border-[#C4B49C]/30 p-6 rounded-2xl">
-                  <h3 className="text-md font-black text-[#5c3c10] uppercase tracking-wider flex items-center gap-2 mb-4">
-                    <Info className="h-5 w-5" />
+                <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-6 rounded-2xl">
+                  <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2 mb-4">
+                    <Info className="h-5 w-5 text-[#00FFAA]" />
                     Interpretasi
                   </h3>
-                  <p className="text-sm text-[#5c3c10] font-medium leading-relaxed">
+                  <p className="text-sm text-[#E0E0E0] font-medium leading-relaxed">
                     {overallScore >= 81 && (
-                      <>Negara <span className="font-bold">{countryName}</span> memiliki indeks kesejahteraan yang <span className="text-emerald-700 font-bold">luar biasa baik</span>. Investasi dalam pendidikan, kesehatan, fasilitas publik, pangan, dan hunian telah menciptakan lingkungan yang sangat kondusif.</>
+                      <>Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki indeks kesejahteraan yang <span className="text-emerald-400 font-bold">luar biasa baik</span>. Investasi dalam pendidikan, kesehatan, fasilitas publik, pangan, dan hunian telah menciptakan lingkungan yang sangat kondusif.</>
                     )}
                     {overallScore >= 61 && overallScore < 81 && (
-                      <>Negara <span className="font-bold">{countryName}</span> memiliki indeks kesejahteraan yang <span className="text-green-700 font-bold">baik</span>. Infrastruktur dasar sudah memadai, namun masih ada ruang untuk peningkatan di beberapa sektor.</>
+                      <>Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki indeks kesejahteraan yang <span className="text-emerald-400 font-bold">baik</span>. Infrastruktur dasar sudah memadai, namun masih ada ruang untuk peningkatan di beberapa sektor.</>
                     )}
                     {overallScore >= 41 && overallScore < 61 && (
-                      <>Negara <span className="font-bold">{countryName}</span> memiliki indeks kesejahteraan yang <span className="text-yellow-700 font-bold">sedang</span>. Perlu perhatian lebih pada sektor‑sektor yang masih lemah untuk mencapai kualitas hidup yang lebih baik.</>
+                      <>Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki indeks kesejahteraan yang <span className="text-yellow-400 font-bold">sedang</span>. Perlu perhatian lebih pada sektor‑sektor yang masih lemah untuk mencapai kualitas hidup yang lebih baik.</>
                     )}
                     {overallScore >= 21 && overallScore < 41 && (
-                      <>Negara <span className="font-bold">{countryName}</span> memiliki indeks kesejahteraan yang <span className="text-orange-700 font-bold">buruk</span>. Investasi signifikan diperlukan di semua sektor untuk mengangkat kualitas hidup masyarakat.</>
+                      <>Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki indeks kesejahteraan yang <span className="text-amber-400 font-bold">buruk</span>. Investasi signifikan diperlukan di semua sektor untuk mengangkat kualitas hidup masyarakat.</>
                     )}
                     {overallScore < 21 && (
-                      <>Negara <span className="font-bold">{countryName}</span> menghadapi <span className="text-red-700 font-bold">krisis kesejahteraan</span>. Urgensi tinggi untuk membangun infrastruktur dasar di bidang pendidikan, kesehatan, fasilitas publik, pangan, dan perumahan.</>
+                      <>Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> menghadapi <span className="text-rose-400 font-bold">krisis kesejahteraan</span>. Urgensi tinggi untuk membangun infrastruktur dasar di bidang pendidikan, kesehatan, fasilitas publik, pangan, dan perumahan.</>
                     )}
                   </p>
                 </div>
 
                 {/* Breakdown 5 Sektor */}
                 <div className="space-y-4">
-                  <h3 className="text-md font-black text-[#5c3c10] uppercase tracking-wider">Breakdown Sektor (Bobot & Target Kebutuhan)</h3>
+                  <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider">Breakdown Sektor (Bobot & Target Kebutuhan)</h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Pendidikan - 35% */}
@@ -346,25 +343,25 @@ export default function IndeksKesejahteraanModal({
                             <div className="flex items-center gap-3">
                               <Library className={`h-5 w-5 ${pendidikanColor.icon}`} />
                               <div>
-                                <p className="text-xs font-black text-[#8b7e66] uppercase">Pendidikan</p>
-                                <p className="text-sm font-bold text-[#5c3c10]">35% Bobot</p>
+                                <p className="text-xs font-black text-[#6B8A8A] uppercase">Pendidikan</p>
+                                <p className="text-sm font-bold text-[#E0E0E0]">35% Bobot</p>
                               </div>
                             </div>
                             <span className={`text-3xl font-black ${pendidikanColor.text}`}>{pendidikanActualScore}</span>
                           </div>
-                          <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
-                            <p>• Fasilitas Saat Ini: <span className="font-black">{currentPendidikan.toLocaleString("id-ID")}</span> unit</p>
-                            <p>• Target Ideal (100%): <span className="font-black">{targetPendidikan.toLocaleString("id-ID")}</span> unit (1 per 10.000 jiwa)</p>
+                          <div className="space-y-1 text-xs text-[#E0E0E0] font-semibold">
+                            <p>• Fasilitas Saat Ini: <span className="font-black text-[#00FFAA]">{currentPendidikan.toLocaleString("id-ID")}</span> unit</p>
+                            <p>• Target Ideal (100%): <span className="font-black text-[#00FFAA]">{targetPendidikan.toLocaleString("id-ID")}</span> unit (1 per 10.000 jiwa)</p>
                             {neededPendidikan > 0 ? (
-                              <p className="text-rose-700 bg-rose-100/70 p-1.5 rounded border border-rose-300/60 mt-1">
+                              <p className="text-rose-400 bg-rose-500/10 p-1.5 rounded border border-rose-500/30 mt-1">
                                 • Kebutuhan Tambahan: <span className="font-black">+{neededPendidikan.toLocaleString("id-ID")}</span> unit sekolah/kampus lagi untuk mencapai 100%
                               </p>
                             ) : (
-                              <p className="text-emerald-700 bg-emerald-100/70 p-1.5 rounded border border-emerald-300/60 mt-1">
+                              <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1">
                                 • Status: ✓ Fasilitas pendidikan sudah memenuhi target 100%
                               </p>
                             )}
-                            <p className="pt-1 text-[11px] text-[#8b7e66]">Mencakup: Prasekolah, SD, SMP, SMA, Universitas, Lembaga Pendidikan, Lab, Observatorium, Pusat Penelitian</p>
+                            <p className="pt-1 text-[11px] text-[#6B8A8A]">Mencakup: Prasekolah, SD, SMP, SMA, Universitas, Lembaga Pendidikan, Lab, Observatorium, Pusat Penelitian</p>
                           </div>
                         </div>
                       );
@@ -391,25 +388,25 @@ export default function IndeksKesejahteraanModal({
                             <div className="flex items-center gap-3">
                               <Hospital className={`h-5 w-5 ${kesehatanColor.icon}`} />
                               <div>
-                                <p className="text-xs font-black text-[#8b7e66] uppercase">Kesehatan</p>
-                                <p className="text-sm font-bold text-[#5c3c10]">40% Bobot (Prioritas)</p>
+                                <p className="text-xs font-black text-[#6B8A8A] uppercase">Kesehatan</p>
+                                <p className="text-sm font-bold text-[#E0E0E0]">40% Bobot (Prioritas)</p>
                               </div>
                             </div>
                             <span className={`text-3xl font-black ${kesehatanColor.text}`}>{kesehatanActualScore}</span>
                           </div>
-                          <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
-                            <p>• Fasilitas Saat Ini: <span className="font-black">{currentKesehatan.toLocaleString("id-ID")}</span> unit</p>
-                            <p>• Target Ideal (100%): <span className="font-black">{targetKesehatan.toLocaleString("id-ID")}</span> unit (1 per 25.000 jiwa)</p>
+                          <div className="space-y-1 text-xs text-[#E0E0E0] font-semibold">
+                            <p>• Fasilitas Saat Ini: <span className="font-black text-[#00FFAA]">{currentKesehatan.toLocaleString("id-ID")}</span> unit</p>
+                            <p>• Target Ideal (100%): <span className="font-black text-[#00FFAA]">{targetKesehatan.toLocaleString("id-ID")}</span> unit (1 per 25.000 jiwa)</p>
                             {neededKesehatan > 0 ? (
-                              <p className="text-rose-700 bg-rose-100/70 p-1.5 rounded border border-rose-300/60 mt-1">
+                              <p className="text-rose-400 bg-rose-500/10 p-1.5 rounded border border-rose-500/30 mt-1">
                                 • Kebutuhan Tambahan: <span className="font-black">+{neededKesehatan.toLocaleString("id-ID")}</span> unit rumah sakit/pusat diagnosa lagi untuk mencapai 100%
                               </p>
                             ) : (
-                              <p className="text-emerald-700 bg-emerald-100/70 p-1.5 rounded border border-emerald-300/60 mt-1">
+                              <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1">
                                 • Status: ✓ Fasilitas kesehatan sudah memenuhi target 100%
                               </p>
                             )}
-                            <p className="pt-1 text-[11px] text-[#8b7e66]">Harapan Hidup: <span className="font-black">{kesejahteraan?.detail?.kesehatan?.detail?.harapanHidup?.toFixed(1) ?? "0.0"}</span> tahun | Indeks Kesehatan: {kesejahteraan?.detail?.kesehatan?.detail?.indeksKesehatan ?? 0}</p>
+                            <p className="pt-1 text-[11px] text-[#6B8A8A]">Harapan Hidup: <span className="font-black text-[#00FFAA]">{kesejahteraan?.detail?.kesehatan?.detail?.harapanHidup?.toFixed(1) ?? "0.0"}</span> tahun | Indeks Kesehatan: {kesejahteraan?.detail?.kesehatan?.detail?.indeksKesehatan ?? 0}</p>
                           </div>
                         </div>
                       );
@@ -436,25 +433,25 @@ export default function IndeksKesejahteraanModal({
                             <div className="flex items-center gap-3">
                               <Landmark className={`h-5 w-5 ${tempatUmumColor.icon}`} />
                               <div>
-                                <p className="text-xs font-black text-[#8b7e66] uppercase">Tempat Umum</p>
-                                <p className="text-sm font-bold text-[#5c3c10]">25% Bobot</p>
+                                <p className="text-xs font-black text-[#6B8A8A] uppercase">Tempat Umum</p>
+                                <p className="text-sm font-bold text-[#E0E0E0]">25% Bobot</p>
                               </div>
                             </div>
                             <span className={`text-3xl font-black ${tempatUmumColor.text}`}>{infrastrukturActualScore}</span>
                           </div>
-                          <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
-                            <p>• Fasilitas Saat Ini: <span className="font-black">{currentTempatUmum.toLocaleString("id-ID")}</span> unit</p>
-                            <p>• Target Ideal (100%): <span className="font-black">{targetTempatUmum.toLocaleString("id-ID")}</span> unit (1 per 20.000 jiwa)</p>
+                          <div className="space-y-1 text-xs text-[#E0E0E0] font-semibold">
+                            <p>• Fasilitas Saat Ini: <span className="font-black text-[#00FFAA]">{currentTempatUmum.toLocaleString("id-ID")}</span> unit</p>
+                            <p>• Target Ideal (100%): <span className="font-black text-[#00FFAA]">{targetTempatUmum.toLocaleString("id-ID")}</span> unit (1 per 20.000 jiwa)</p>
                             {neededTempatUmum > 0 ? (
-                              <p className="text-rose-700 bg-rose-100/70 p-1.5 rounded border border-rose-300/60 mt-1">
+                              <p className="text-rose-400 bg-rose-500/10 p-1.5 rounded border border-rose-500/30 mt-1">
                                 • Kebutuhan Tambahan: <span className="font-black">+{neededTempatUmum.toLocaleString("id-ID")}</span> unit sarana umum/transportasi lagi untuk mencapai 100%
                               </p>
                             ) : (
-                              <p className="text-emerald-700 bg-emerald-100/70 p-1.5 rounded border border-emerald-300/60 mt-1">
+                              <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1">
                                 • Status: ✓ Fasilitas tempat umum sudah memenuhi target 100%
                               </p>
                             )}
-                            <p className="pt-1 text-[11px] text-[#8b7e66]">Transportasi: {kesejahteraan?.detail?.tempatUmum?.detail?.transportasi ?? 0} | Rekreasi: {kesejahteraan?.detail?.tempatUmum?.detail?.rekreasi ?? 0}</p>
+                            <p className="pt-1 text-[11px] text-[#6B8A8A]">Transportasi: {kesejahteraan?.detail?.tempatUmum?.detail?.transportasi ?? 0} | Rekreasi: {kesejahteraan?.detail?.tempatUmum?.detail?.rekreasi ?? 0}</p>
                           </div>
                         </div>
                       );
@@ -475,20 +472,20 @@ export default function IndeksKesejahteraanModal({
                         <div className="flex items-center gap-3">
                           <Wheat className={`h-5 w-5 ${panganColor.icon}`} />
                           <div>
-                            <p className="text-xs font-black text-[#8b7e66] uppercase">Pangan</p>
-                            <p className="text-sm font-bold text-[#5c3c10]">Kepuasan Rakyat</p>
+                            <p className="text-xs font-black text-[#6B8A8A] uppercase">Pangan</p>
+                            <p className="text-sm font-bold text-[#E0E0E0]">Kepuasan Rakyat</p>
                           </div>
                         </div>
                         <span className={`text-3xl font-black ${panganColor.text}`}>{panganActualScore}</span>
                       </div>
-                      <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
-                        <p>• Indeks Kepuasan Pangan: <span className="font-black">{panganActualScore}/100</span></p>
+                      <div className="space-y-1 text-xs text-[#E0E0E0] font-semibold">
+                        <p>• Indeks Kepuasan Pangan: <span className="font-black text-[#00FFAA]">{panganActualScore}/100</span></p>
                         {panganActualScore < 100 ? (
-                          <p className="text-rose-700 bg-rose-100/70 p-1.5 rounded border border-rose-300/60 mt-1">
+                          <p className="text-rose-400 bg-rose-500/10 p-1.5 rounded border border-rose-500/30 mt-1">
                             • Kebutuhan Tambahan: Tingkatkan produksi industri pangan / pertanian untuk mencukupi konsumsi nasional 100%
                           </p>
                         ) : (
-                          <p className="text-emerald-700 bg-emerald-100/70 p-1.5 rounded border border-emerald-300/60 mt-1">
+                          <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1">
                             • Status: ✓ Pasokan pangan nasional sudah terpenuhi 100%
                           </p>
                         )}
@@ -508,20 +505,20 @@ export default function IndeksKesejahteraanModal({
                         <div className="flex items-center gap-3">
                           <Home className={`h-5 w-5 ${hunianColor.icon}`} />
                           <div>
-                            <p className="text-xs font-black text-[#8b7e66] uppercase">Hunian & Permukiman</p>
-                            <p className="text-sm font-bold text-[#5c3c10]">Kepuasan Rakyat</p>
+                            <p className="text-xs font-black text-[#6B8A8A] uppercase">Hunian & Permukiman</p>
+                            <p className="text-sm font-bold text-[#E0E0E0]">Kepuasan Rakyat</p>
                           </div>
                         </div>
                         <span className={`text-3xl font-black ${hunianColor.text}`}>{hunianActualScore}</span>
                       </div>
-                      <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
-                        <p>• Indeks Kepuasan Hunian: <span className="font-black">{hunianActualScore}/100</span></p>
+                      <div className="space-y-1 text-xs text-[#E0E0E0] font-semibold">
+                        <p>• Indeks Kepuasan Hunian: <span className="font-black text-[#00FFAA]">{hunianActualScore}/100</span></p>
                         {hunianActualScore < 100 ? (
-                          <p className="text-rose-700 bg-rose-100/70 p-1.5 rounded border border-rose-300/60 mt-1">
+                          <p className="text-rose-400 bg-rose-500/10 p-1.5 rounded border border-rose-500/30 mt-1">
                             • Kebutuhan Tambahan: Tambah proyek rumah subsidi & apartemen untuk menampung seluruh populasi 100%
                           </p>
                         ) : (
-                          <p className="text-emerald-700 bg-emerald-100/70 p-1.5 rounded border border-emerald-300/60 mt-1">
+                          <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1">
                             • Status: ✓ Hunian rakyat telah menampung 100% populasi
                           </p>
                         )}
@@ -541,20 +538,20 @@ export default function IndeksKesejahteraanModal({
                         <div className="flex items-center gap-3">
                           <Globe className={`h-5 w-5 ${keterbukaanColor.icon}`} />
                           <div>
-                            <p className="text-xs font-black text-[#8b7e66] uppercase">Doktrin & Keterbukaan</p>
-                            <p className="text-sm font-bold text-[#5c3c10]">Kebebasan & HAM</p>
+                            <p className="text-xs font-black text-[#6B8A8A] uppercase">Doktrin & Keterbukaan</p>
+                            <p className="text-sm font-bold text-[#E0E0E0]">Kebebasan & HAM</p>
                           </div>
                         </div>
                         <span className={`text-3xl font-black ${keterbukaanColor.text}`}>{keterbukaanActualScore}</span>
                       </div>
-                      <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
-                        <p>• Indeks Keterbukaan: <span className="font-black">{keterbukaanActualScore}/100</span></p>
+                      <div className="space-y-1 text-xs text-[#E0E0E0] font-semibold">
+                        <p>• Indeks Keterbukaan: <span className="font-black text-[#00FFAA]">{keterbukaanActualScore}/100</span></p>
                         {keterbukaanActualScore < 100 ? (
-                          <p className="text-rose-700 bg-rose-100/70 p-1.5 rounded border border-rose-300/60 mt-1">
+                          <p className="text-rose-400 bg-rose-500/10 p-1.5 rounded border border-rose-500/30 mt-1">
                             • Kebutuhan Tambahan: Jamin kebebasan pers, internet bebas, transparansi APBN, & hak sipil untuk tingkatkan indeks
                           </p>
                         ) : (
-                          <p className="text-emerald-700 bg-emerald-100/70 p-1.5 rounded border border-emerald-300/60 mt-1">
+                          <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1">
                             • Status: ✓ Jaminan kebebasan sipil & media negara sudah optimal 100%
                           </p>
                         )}
@@ -564,60 +561,60 @@ export default function IndeksKesejahteraanModal({
                 </div>
 
                 {/* Rekomendasi */}
-                <div className="bg-[#e4dac3]/20 border-2 border-[#C4B49C]/30 p-6 rounded-2xl">
-                  <h3 className="text-md font-black text-[#5c3c10] uppercase tracking-wider mb-4">Rekomendasi Peningkatan</h3>
+                <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-2xl">
+                  <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider mb-4">Rekomendasi Peningkatan</h3>
                   <div className="space-y-3">
                     {pendidikanActualScore < 60 && (
-                      <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                        <Library className="h-5 w-5 text-blue-700 flex-shrink-0" />
+                      <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-cyan-500/30">
+                        <Library className="h-5 w-5 text-cyan-400 flex-shrink-0" />
                         <div>
-                          <p className="text-sm font-black text-blue-700">Tingkatkan Pendidikan</p>
-                          <p className="text-xs text-blue-600 font-bold">Bangun lebih banyak sekolah, universitas, dan pusat penelitian</p>
+                          <p className="text-sm font-black text-cyan-400">Tingkatkan Pendidikan</p>
+                          <p className="text-xs text-[#E0E0E0]/80 font-semibold">Bangun lebih banyak sekolah, universitas, dan pusat penelitian</p>
                         </div>
                       </div>
                     )}
                     {kesehatanActualScore < 60 && (
-                      <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
-                        <Hospital className="h-5 w-5 text-red-700 flex-shrink-0" />
+                      <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-rose-500/30">
+                        <Hospital className="h-5 w-5 text-rose-400 flex-shrink-0" />
                         <div>
-                          <p className="text-sm font-black text-red-700">Tingkatkan Kesehatan</p>
-                          <p className="text-xs text-red-600 font-bold">Investasi besar dalam rumah sakit, klinik, dan program kesehatan masyarakat</p>
+                          <p className="text-sm font-black text-rose-400">Tingkatkan Kesehatan</p>
+                          <p className="text-xs text-[#E0E0E0]/80 font-semibold">Investasi besar dalam rumah sakit, klinik, dan program kesehatan masyarakat</p>
                         </div>
                       </div>
                     )}
                     {infrastrukturActualScore < 60 && (
-                      <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                        <Landmark className="h-5 w-5 text-purple-700 flex-shrink-0" />
+                      <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-purple-500/30">
+                        <Landmark className="h-5 w-5 text-purple-400 flex-shrink-0" />
                         <div>
-                          <p className="text-sm font-black text-purple-700">Tingkatkan Fasilitas Publik</p>
-                          <p className="text-xs text-purple-600 font-bold">Bangun infrastruktur transportasi, rekreasi, dan komersial</p>
+                          <p className="text-sm font-black text-purple-400">Tingkatkan Fasilitas Publik</p>
+                          <p className="text-xs text-[#E0E0E0]/80 font-semibold">Bangun infrastruktur transportasi, rekreasi, dan komersial</p>
                         </div>
                       </div>
                     )}
                     {panganActualScore < 60 && (
-                      <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                        <Wheat className="h-5 w-5 text-yellow-700 flex-shrink-0" />
+                      <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-yellow-500/30">
+                        <Wheat className="h-5 w-5 text-yellow-400 flex-shrink-0" />
                         <div>
-                          <p className="text-sm font-black text-yellow-700">Tingkatkan Ketahanan Pangan</p>
-                          <p className="text-xs text-yellow-600 font-bold">Dukung sektor pertanian dan distribusi pangan yang lebih baik</p>
+                          <p className="text-sm font-black text-yellow-400">Tingkatkan Ketahanan Pangan</p>
+                          <p className="text-xs text-[#E0E0E0]/80 font-semibold">Dukung sektor pertanian dan distribusi pangan yang lebih baik</p>
                         </div>
                       </div>
                     )}
                     {hunianActualScore < 60 && (
-                      <div className="flex items-start gap-3 p-3 bg-cyan-50 rounded-lg border border-cyan-200">
-                        <Home className="h-5 w-5 text-cyan-700 flex-shrink-0" />
+                      <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-cyan-500/30">
+                        <Home className="h-5 w-5 text-cyan-400 flex-shrink-0" />
                         <div>
-                          <p className="text-sm font-black text-cyan-700">Tingkatkan Hunian Layak</p>
-                          <p className="text-xs text-cyan-600 font-bold">Program pembangunan perumahan dan perbaikan permukiman</p>
+                          <p className="text-sm font-black text-cyan-400">Tingkatkan Hunian Layak</p>
+                          <p className="text-xs text-[#E0E0E0]/80 font-semibold">Program pembangunan perumahan dan perbaikan permukiman</p>
                         </div>
                       </div>
                     )}
                     {overallScore >= 60 && (
-                      <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
-                        <CheckCircle className="h-5 w-5 text-emerald-700 flex-shrink-0" />
+                      <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-emerald-500/30">
+                        <CheckCircle className="h-5 w-5 text-emerald-400 flex-shrink-0" />
                         <div>
-                          <p className="text-sm font-black text-emerald-700">Status Kesejahteraan Baik</p>
-                          <p className="text-xs text-emerald-600 font-bold">Lanjutkan investasi seimbang di semua sektor untuk pertumbuhan berkelanjutan</p>
+                          <p className="text-sm font-black text-emerald-400">Status Kesejahteraan Baik</p>
+                          <p className="text-xs text-[#E0E0E0]/80 font-semibold">Lanjutkan investasi seimbang di semua sektor untuk pertumbuhan berkelanjutan</p>
                         </div>
                       </div>
                     )}

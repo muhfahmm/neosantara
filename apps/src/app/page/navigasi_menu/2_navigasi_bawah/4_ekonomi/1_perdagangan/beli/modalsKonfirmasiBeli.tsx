@@ -608,7 +608,7 @@ export default function ModalsKonfirmasiBeli({
   const renderCandlestickChart = () => {
     const series = ohlcSeries[seriesKey];
     if (!series || series.length < 2) {
-      return <div className="text-xs text-[#8b7e66] text-center py-4">Tidak ada data harga</div>;
+      return <div className="text-xs text-[#6B8A8A] text-center py-4">Tidak ada data harga</div>;
     }
 
     const width = 800;
@@ -647,15 +647,15 @@ export default function ModalsKonfirmasiBeli({
           {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
             const y = padding.top + chartHeight * (1 - ratio);
             return (
-              <line key={ratio} x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke="#E5E7EB" strokeDasharray="4 4" />
+              <line key={ratio} x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke="rgba(0, 255, 170, 0.1)" strokeDasharray="4 4" />
             );
           })}
-          <line x1={padding.left} y1={padding.top} x2={padding.left} y2={height - padding.bottom} stroke="#C4B49C" strokeWidth="1" />
-          <line x1={padding.left} y1={height - padding.bottom} x2={width - padding.right} y2={height - padding.bottom} stroke="#C4B49C" strokeWidth="1" />
-          <text x={padding.left - 6} y={padding.top + 4} textAnchor="end" fontSize="9" fill="#8b7e66">{yMax.toFixed(0)}</text>
-          <text x={padding.left - 6} y={height - padding.bottom + 4} textAnchor="end" fontSize="9" fill="#8b7e66">{yMin.toFixed(0)}</text>
-          <text x={padding.left} y={height - 2} textAnchor="middle" fontSize="9" fill="#8b7e66">{formatXLabel(0)}</text>
-          <text x={width - padding.right} y={height - 2} textAnchor="middle" fontSize="9" fill="#8b7e66">{formatXLabel(series.length - 1)}</text>
+          <line x1={padding.left} y1={padding.top} x2={padding.left} y2={height - padding.bottom} stroke="rgba(0, 255, 170, 0.2)" strokeWidth="1" />
+          <line x1={padding.left} y1={height - padding.bottom} x2={width - padding.right} y2={height - padding.bottom} stroke="rgba(0, 255, 170, 0.2)" strokeWidth="1" />
+          <text x={padding.left - 6} y={padding.top + 4} textAnchor="end" fontSize="9" fill="#6B8A8A">{yMax.toFixed(0)}</text>
+          <text x={padding.left - 6} y={height - padding.bottom + 4} textAnchor="end" fontSize="9" fill="#6B8A8A">{yMin.toFixed(0)}</text>
+          <text x={padding.left} y={height - 2} textAnchor="middle" fontSize="9" fill="#6B8A8A">{formatXLabel(0)}</text>
+          <text x={width - padding.right} y={height - 2} textAnchor="middle" fontSize="9" fill="#6B8A8A">{formatXLabel(series.length - 1)}</text>
 
           {series.map((d, i) => {
             const x = xScale(i);
@@ -664,7 +664,7 @@ export default function ModalsKonfirmasiBeli({
             const yOpen = yScale(d.open);
             const yClose = yScale(d.close);
             const isGreen = d.close >= d.open;
-            const color = isGreen ? "#26a69a" : "#ef5350";
+            const color = isGreen ? "#00FFAA" : "#ff4d4d";
             const bodyTop = Math.min(yOpen, yClose);
             const bodyHeight = Math.max(1, Math.abs(yClose - yOpen));
 
@@ -677,9 +677,9 @@ export default function ModalsKonfirmasiBeli({
           })}
 
           {/* Indikator harga saat ini */}
-          <line x1={padding.left} y1={yScale(currentPrice)} x2={width - padding.right} y2={yScale(currentPrice)} stroke="#c77a00" strokeDasharray="4 4" strokeWidth="1.5" />
-          <circle cx={width - padding.right} cy={yScale(currentPrice)} r="5" fill="#c77a00" stroke="#FAF6EE" strokeWidth="2" />
-          <text x={width - padding.right + 5} y={yScale(currentPrice) + 3} fontSize="9" fill="#c77a00" fontWeight="bold">
+          <line x1={padding.left} y1={yScale(currentPrice)} x2={width - padding.right} y2={yScale(currentPrice)} stroke="#00FFAA" strokeDasharray="4 4" strokeWidth="1.5" />
+          <circle cx={width - padding.right} cy={yScale(currentPrice)} r="5" fill="#00FFAA" stroke="#0A1A1A" strokeWidth="2" />
+          <text x={width - padding.right + 5} y={yScale(currentPrice) + 3} fontSize="9" fill="#00FFAA" fontWeight="bold">
             {currentPrice.toLocaleString("id-ID")} EM
           </text>
         </svg>
@@ -732,35 +732,34 @@ export default function ModalsKonfirmasiBeli({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.02)_0%,transparent_100%)] pointer-events-none" />
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
         
         {/* HEADER */}
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
+        <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-600/10 rounded-xl border border-emerald-600/20">
-              <ShoppingCart className="h-5 w-5 text-emerald-700" />
+            <div className="p-2 bg-emerald-950/40 rounded-xl border border-emerald-500/30">
+              <ShoppingCart className="h-5 w-5 text-emerald-400" />
             </div>
-            <h2 className="text-lg font-bold text-[#5c3c10] tracking-tight uppercase">Beli Komoditas</h2>
+            <h2 className="text-lg font-bold text-[#00FFAA] tracking-tight uppercase">Beli Komoditas</h2>
           </div>
           <button 
             onClick={onClose} 
-            className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+            className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
           >
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 pt-5 pb-2 relative z-10 space-y-4">
+        <div className="flex-1 overflow-y-auto px-5 pt-5 pb-2 relative z-10 space-y-4 bg-[#0F2424] no-scrollbar">
           
-          {/* --- INPUT CARD PRODUK & NEGARA (MENGGANTIKAN SELECT) --- */}
+          {/* --- INPUT CARD PRODUK & NEGARA --- */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
-              <label className="text-[#5c3c10] font-bold text-sm tracking-wide">Produk:</label>
+              <label className="text-[#E0E0E0] font-bold text-sm tracking-wide">Produk:</label>
               <button
                 onClick={() => setIsProductPickerOpen(true)}
-                className="w-full px-4 py-3 rounded-md bg-[#3b7d7d] text-white text-sm font-bold flex items-center justify-between hover:bg-[#2e6363] transition-all shadow-sm cursor-pointer"
+                className="w-full px-4 py-3 rounded-md bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] text-sm font-bold flex items-center justify-between hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
               >
                 <span>{formatLabel(effectiveSelectedProduct)}</span>
                 <span className="text-[10px] opacity-70 uppercase tracking-wider">Ubah</span>
@@ -768,10 +767,10 @@ export default function ModalsKonfirmasiBeli({
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-[#5c3c10] font-bold text-sm tracking-wide">Negara:</label>
+              <label className="text-[#E0E0E0] font-bold text-sm tracking-wide">Negara:</label>
               <button
                 onClick={() => setIsCountryPickerOpen(true)}
-                className="w-full px-4 py-3 rounded-md bg-[#3b7d7d] text-white text-sm font-bold flex items-center justify-between hover:bg-[#2e6363] transition-all shadow-sm cursor-pointer"
+                className="w-full px-4 py-3 rounded-md bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] text-sm font-bold flex items-center justify-between hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
               >
                   <span className="flex items-center gap-2">
                     {(() => {
@@ -779,11 +778,11 @@ export default function ModalsKonfirmasiBeli({
                       const iso = matched?.iso;
                       if (!iso || iso.length !== 2) {
                         return (
-                          <div className="w-8 h-5 rounded-sm bg-[#FAF6EE]/20 border border-[#FAF6EE]/30 flex-shrink-0 shadow-sm" />
+                          <div className="w-8 h-5 rounded-sm bg-[#0F2424] border border-[#00FFAA]/20 flex-shrink-0" />
                         );
                       }
                       return (
-                        <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#FAF6EE]/30 flex-shrink-0 shadow-sm bg-[#FAF6EE] relative">
+                        <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 bg-[#0F2424] relative">
                           <img
                             src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
                             alt={effectiveSelectedCountry}
@@ -799,23 +798,23 @@ export default function ModalsKonfirmasiBeli({
             </div>
           </div>
 
-          <div className="flex justify-between items-center pt-1 pb-1 border-b border-[#C4B49C]/10">
-            <span className="text-[#5c3c10] font-bold text-sm tracking-wide">Stok Tersedia (Anda):</span>
-            <span className="text-sm font-black text-[#2e261a]">
-              {stockAvailable.toLocaleString("id-ID")} <span className="text-[10px] text-[#8b7e66] font-bold">Unit</span>
+          <div className="flex justify-between items-center pt-1 pb-1 border-b border-[#00FFAA]/10">
+            <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Stok Tersedia (Anda):</span>
+            <span className="text-sm font-black text-[#00FFAA]">
+              {stockAvailable.toLocaleString("id-ID")} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span>
             </span>
           </div>
 
           <div className="flex flex-col gap-1">
             <div className="flex justify-between items-center pt-1 pb-0">
-              <span className="text-[#5c3c10] font-bold text-sm tracking-wide">Bangunan {formatLabel(effectiveSelectedProduct)} (Mitra):</span>
-              <span className="text-sm font-black text-[#2e261a]">
-                {Number(partnerData?.[effectiveSelectedProduct] || 0).toLocaleString('id-ID')} <span className="text-[10px] text-[#8b7e66] font-bold">Unit</span>
+              <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Bangunan {formatLabel(effectiveSelectedProduct)} (Mitra):</span>
+              <span className="text-sm font-black text-[#E0E0E0]">
+                {Number(partnerData?.[effectiveSelectedProduct] || 0).toLocaleString('id-ID')} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span>
               </span>
             </div>
             <div className="flex justify-between items-center pt-0 pb-1">
-              <span className="text-[#5c3c10] font-bold text-sm tracking-wide">Produksi Mitra (Total):</span>
-              <span className="text-sm font-black text-[#2e261a]">
+              <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Produksi Mitra (Total):</span>
+              <span className="text-sm font-black text-[#E0E0E0]">
                 {(() => {
                   const matchedOffer = partnerOffers?.find(
                     o => o.partnerName.toLowerCase().trim() === targetCountry.toLowerCase().trim() &&
@@ -823,41 +822,41 @@ export default function ModalsKonfirmasiBeli({
                   );
                   const displayValue = matchedOffer ? Math.max(matchedOffer.quantity, partnerProduction) : partnerProduction;
                   return displayValue.toLocaleString('id-ID');
-                })()} <span className="text-[10px] text-[#8b7e66] font-bold">Unit</span>
+                })()} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span>
               </span>
             </div>
           </div>
 
           <div className="flex items-center justify-between gap-2">
-            <label className="text-[#5c3c10] font-bold text-sm tracking-wide">Kuantitas:</label>
+            <label className="text-[#E0E0E0] font-bold text-sm tracking-wide">Kuantitas:</label>
             <div className="flex items-center gap-1.5">
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-1.5 rounded bg-[#3b7d7d] text-white hover:bg-[#2e6363] shadow-sm"><Minus className="h-3.5 w-3.5" /></button>
-              <input type="number" min={1} value={quantity} onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))} className="w-16 px-2 py-1.5 text-center rounded bg-[#3b7d7d] text-white text-sm font-bold border-none focus:ring-2 focus:ring-[#c77a00]" />
-              <button onClick={() => setQuantity(quantity + 1)} className="p-1.5 rounded bg-[#3b7d7d] text-white hover:bg-[#2e6363] shadow-sm"><Plus className="h-3.5 w-3.5" /></button>
-              <button onClick={() => setQuantity(quantity + 1000)} className="px-2.5 py-1.5 rounded bg-[#3b7d7d] text-white text-[10px] font-bold hover:bg-[#2e6363] shadow-sm uppercase tracking-wide">+1k</button>
+              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-1.5 rounded bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"><Minus className="h-3.5 w-3.5" /></button>
+              <input type="number" min={1} value={quantity} onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))} className="w-16 px-2 py-1.5 text-center rounded bg-[#0A1A1A] text-[#00FFAA] text-sm font-bold border border-[#00FFAA]/30 focus:outline-none focus:border-[#00FFAA]" />
+              <button onClick={() => setQuantity(quantity + 1)} className="p-1.5 rounded bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"><Plus className="h-3.5 w-3.5" /></button>
+              <button onClick={() => setQuantity(quantity + 1000)} className="px-2.5 py-1.5 rounded bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] text-[10px] font-bold hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer uppercase tracking-wide">+1k</button>
             </div>
           </div>
 
-          <div className="flex justify-between items-center pt-3 border-t border-[#C4B49C]/20">
-            <span className="text-[#5c3c10] font-bold text-sm tracking-wide">Harga / unit:</span>
+          <div className="flex justify-between items-center pt-3 border-t border-[#00FFAA]/20">
+            <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Harga / unit:</span>
             <div className="flex items-center gap-1.5">
-              <span className="text-lg font-black text-[#2e261a]">{currentPrice.toLocaleString("id-ID")}</span>
-              <span className="text-[10px] text-[#8b7e66] font-bold mt-0.5">EM</span>
+              <span className="text-lg font-black text-[#00FFAA]">{currentPrice.toLocaleString("id-ID")}</span>
+              <span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">EM</span>
             </div>
           </div>
 
-          <div className="flex justify-between items-center border-t border-[#C4B49C]/20 pt-2 mt-1">
-            <span className="text-[#5c3c10] font-bold text-sm tracking-wide">Total Pembelian :</span>
+          <div className="flex justify-between items-center border-t border-[#00FFAA]/20 pt-2 mt-1">
+            <span className="text-[#E0E0E0] font-bold text-sm tracking-wide">Total Pembelian :</span>
             <div className="flex items-center gap-1.5">
-              <span className="text-lg font-black text-[#2e261a]">{totalPrice.toLocaleString("id-ID")}</span>
-              <span className="text-[10px] text-[#8b7e66] font-bold mt-0.5">EM</span>
+              <span className="text-lg font-black text-[#00FFAA]">{totalPrice.toLocaleString("id-ID")}</span>
+              <span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">EM</span>
             </div>
           </div>
 
           {/* CHART CANDLESTICK HARGA BELI */}
-          <div className="pt-3 border-t border-[#C4B49C]/10 mt-2 w-full">
+          <div className="pt-3 border-t border-[#00FFAA]/20 mt-2 w-full">
             <div className="flex items-center justify-between mb-3">
-              <div className="text-[#5c3c10] font-bold text-sm tracking-wide">Grafik Harga Historis (Candlestick)</div>
+              <div className="text-[#00FFAA] font-bold text-sm tracking-wide">Grafik Harga Historis (Candlestick)</div>
               <div className="flex gap-1.5">
                 {[
                   { label: '1H', value: '1d' },
@@ -869,10 +868,10 @@ export default function ModalsKonfirmasiBeli({
                   <button
                     key={value}
                     onClick={() => setTimeRange(value as any)}
-                    className={`px-2.5 py-1 text-[11px] font-bold rounded border transition-colors ${
+                    className={`px-2.5 py-1 text-[11px] font-bold rounded border transition-colors cursor-pointer ${
                       timeRange === value
-                        ? 'bg-[#3b7d7d] text-white border-[#3b7d7d]'
-                        : 'bg-transparent text-[#8b7e66] border-[#C4B49C] hover:bg-[#f0ebe2]'
+                        ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]'
+                        : 'bg-[#0A1A1A] text-[#6B8A8A] border-[#00FFAA]/20 hover:text-[#00FFAA]'
                     }`}
                   >
                     {label}
@@ -884,9 +883,9 @@ export default function ModalsKonfirmasiBeli({
           </div>
         </div>
 
-        <div className="px-5 py-4 pb-8 border-t-2 border-[#C4B49C]/20 flex gap-3 bg-[#FAF6EE] relative z-10">
-          <button onClick={onClose} className="flex-1 py-2.5 rounded-lg bg-[#c49e6c] hover:bg-[#b08d5d] text-[#FAF6EE] text-xs font-black uppercase tracking-wide shadow-sm">Batal</button>
-          <button onClick={handleConfirm} className="flex-1 py-2.5 rounded-lg bg-[#3b7d7d] hover:bg-[#2e6363] text-[#FAF6EE] text-xs font-black uppercase tracking-wide shadow-sm">Beli</button>
+        <div className="px-5 py-4 pb-8 border-t border-[#00FFAA]/20 flex gap-3 bg-[#0A1A1A] relative z-10">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-xs font-black uppercase tracking-wide transition-all cursor-pointer">Batal</button>
+          <button onClick={handleConfirm} className="flex-1 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-[#0A1A1A] text-xs font-black uppercase tracking-wide transition-all cursor-pointer">Beli</button>
         </div>
       </div>
 
