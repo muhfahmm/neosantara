@@ -130,24 +130,23 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
-
-        {/* HEADER MODAL */}
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 flex-shrink-0">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+        
+        {/* HEADER */}
+        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-                <Globe className="h-6 w-6 text-[#5c3c10]" />
+              <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <Globe className="h-6 w-6 text-[#00FFAA] animate-pulse" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Tingkat Hubungan Diplomatik</h2>
+                <h2 className="text-xl font-black text-[#00FFAA] tracking-wider uppercase">Tingkat Hubungan Diplomatik</h2>
               </div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+            className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
           >
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
@@ -155,15 +154,13 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
         </div>
 
         {/* BODY TABEL */}
-        <div className="flex-1 min-h-0 flex flex-col p-8 bg-[#FAF6EE]/40 relative z-10">
+        <div className="flex-1 min-h-0 flex flex-col p-6 bg-[#0F2424] relative z-10">
           <div className="flex justify-between items-center gap-3 mb-4 flex-shrink-0">
-            
-            {/* PERBAIKAN: Tombol Legenda dengan warna teks coklat tua agar terbaca */}
             <button
               onClick={() => setIsLegendOpen(true)}
-              className="px-4 py-2 rounded-lg bg-[#e4dac3]/40 border border-[#C4B49C] text-[#5c3c10] text-[10px] font-black uppercase tracking-wider hover:bg-[#e4dac3]/60 transition-all cursor-pointer flex items-center gap-2"
+              className="px-4 py-2 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] text-[10px] font-black uppercase tracking-wider hover:bg-[#00FFAA]/10 transition-all cursor-pointer flex items-center gap-2"
             >
-              <Info className="h-3.5 w-3.5 text-[#5c3c10]" />
+              <Info className="h-3.5 w-3.5 text-[#00FFAA]" />
               Legenda Hubungan
             </button>
 
@@ -173,27 +170,27 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                 placeholder="Cari negara / benua..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-1.5 rounded-lg bg-white/80 border border-[#C4B49C] text-sm font-bold text-[#2e261a] outline-none focus:ring-2 focus:ring-[#5c3c10] w-52 transition-all placeholder:text-[#8b7e66]"
+                className="pl-8 pr-3 py-1.5 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 text-xs font-bold text-[#E0E0E0] outline-none focus:border-[#00FFAA] w-52 transition-all placeholder:text-[#6B8A8A]"
               />
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8b7e66]" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#6B8A8A]" />
             </div>
           </div>
 
-          <div className="flex-1 min-h-0 bg-[#FAF6EE] border-2 border-[#C4B49C] rounded-xl overflow-hidden shadow-sm flex flex-col">
+          <div className="flex-1 min-h-0 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl overflow-hidden shadow-sm flex flex-col">
             <div className="flex-1 min-h-0 overflow-y-auto">
               <table className="min-w-full table-auto border-separate border-spacing-0 text-left">
-                <thead className="sticky top-0 z-10 bg-[#e9dcc6]">
-                  <tr className="border-b-2 border-[#C4B49C]">
-                    <th className="px-4 py-3 border-b-2 border-[#C4B49C] text-center cursor-pointer hover:bg-[#ddd0b8] transition text-[10px] text-[#5c3c10] font-black uppercase tracking-wider w-16" onClick={() => handleSort('no')}>No{renderSortArrow('no')}</th>
-                    <th className="px-4 py-3 border-b-2 border-[#C4B49C] cursor-pointer hover:bg-[#ddd0b8] transition text-[10px] text-[#5c3c10] font-black uppercase tracking-wider" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
-                    <th className="px-4 py-3 border-b-2 border-[#C4B49C] cursor-pointer hover:bg-[#ddd0b8] transition text-[10px] text-[#5c3c10] font-black uppercase tracking-wider" onClick={() => handleSort('continent')}>Benua{renderSortArrow('continent')}</th>
-                    <th className="px-4 py-3 border-b-2 border-[#C4B49C] text-center cursor-pointer hover:bg-[#ddd0b8] transition text-[10px] text-[#5c3c10] font-black uppercase tracking-wider" onClick={() => handleSort('relation')}>Tingkat Hubungan{renderSortArrow('relation')}</th>
+                <thead className="sticky top-0 z-10 bg-[#0F2424]">
+                  <tr className="border-b border-[#00FFAA]/20">
+                    <th className="px-4 py-3 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider w-16" onClick={() => handleSort('no')}>No{renderSortArrow('no')}</th>
+                    <th className="px-4 py-3 border-b border-[#00FFAA]/20 cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
+                    <th className="px-4 py-3 border-b border-[#00FFAA]/20 cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider" onClick={() => handleSort('continent')}>Benua{renderSortArrow('continent')}</th>
+                    <th className="px-4 py-3 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider" onClick={() => handleSort('relation')}>Tingkat Hubungan{renderSortArrow('relation')}</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-[#00FFAA]/10">
                   {sortedRows.length === 0 ? (
                     <tr>
-                      <td className="px-4 py-6 text-center text-sm font-bold text-[#5c3c10]" colSpan={4}>
+                      <td className="px-4 py-6 text-center text-sm font-bold text-[#6B8A8A]" colSpan={4}>
                         Tidak ada data yang cocok dengan pencarian "{searchQuery}".
                       </td>
                     </tr>
@@ -201,12 +198,12 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                     sortedRows.map((row, index) => {
                       const { alias, className } = getRelationBadge(row.relation);
                       return (
-                        <tr key={`${row.name}-${index}`} className={index % 2 === 0 ? 'bg-[#f5efdf]/50' : 'bg-white/50'}>
-                          <td className="px-4 py-3 text-center text-sm font-bold text-[#8b7e66] border-b border-[#C4B49C]/10">{row.no}</td>
-                          <td className="px-4 py-3 text-sm font-bold text-[#2e261a] border-b border-[#C4B49C]/10">{row.name}</td>
-                          <td className="px-4 py-3 text-sm font-bold text-[#5c3c10] border-b border-[#C4B49C]/10">{row.continent}</td>
-                          <td className="px-4 py-3 text-center text-sm font-bold border-b border-[#C4B49C]/10">
-                            <span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${className}`}>
+                        <tr key={`${row.name}-${index}`} className="hover:bg-[#00FFAA]/5 transition-colors">
+                          <td className="px-4 py-3 text-center text-xs font-bold text-[#6B8A8A]">{row.no}</td>
+                          <td className="px-4 py-3 text-xs font-bold text-[#E0E0E0]">{row.name}</td>
+                          <td className="px-4 py-3 text-xs font-bold text-[#6B8A8A]">{row.continent}</td>
+                          <td className="px-4 py-3 text-center text-xs font-bold">
+                            <span className="inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm bg-[#0F2424] border-[#00FFAA]/30 text-[#00FFAA]">
                               {row.relation} - {alias}
                             </span>
                           </td>
@@ -223,78 +220,78 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
         {/* MODAL LEGENDA WARNA HUBUNGAN DENGAN JUMLAH NEGARA */}
         {isLegendOpen && (
           <div className="absolute inset-0 bg-black/60 z-30 flex items-center justify-center p-8 pointer-events-auto backdrop-blur-sm rounded-2xl">
-            <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl max-w-lg w-full p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)] relative">
+            <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl max-w-lg w-full p-8 shadow-2xl relative">
               <button
                 onClick={() => setIsLegendOpen(false)}
-                className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-black/5 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                className="absolute top-4 right-4 p-1.5 rounded-lg text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
               
-              <h3 className="text-lg font-black text-[#5c3c10] uppercase tracking-tight mb-4">
+              <h3 className="text-lg font-bold text-[#E0E0E0] uppercase tracking-wide mb-4">
                 Indikator Hubungan Diplomatik
               </h3>
               <div className="space-y-3 mb-6">
                 {/* 0 - 25 */}
-                <div className="flex items-center justify-between border-b border-[#C4B49C]/20 pb-2">
-                  <span className="text-sm font-bold text-[#5c3c10]">0 - 25</span>
+                <div className="flex items-center justify-between border-b border-[#00FFAA]/15 pb-2">
+                  <span className="text-sm font-bold text-[#E0E0E0]">0 - 25</span>
                   <div className="flex items-center gap-3">
-                    <span className="inline-block px-3 py-1 rounded-md bg-red-100 text-red-800 border border-red-300 font-black text-xs">
+                    <span className="inline-block px-3 py-1 rounded-md bg-red-500/15 text-red-400 border border-red-500/30 font-bold text-xs">
                       Sangat Buruk
                     </span>
-                    <span className="text-xs font-bold text-[#8b7e66] w-20 text-right">
+                    <span className="text-xs font-semibold text-[#6B8A8A] w-20 text-right">
                       ({countByCategory.sangatBuruk} negara)
                     </span>
                   </div>
                 </div>
 
                 {/* 26 - 40 */}
-                <div className="flex items-center justify-between border-b border-[#C4B49C]/20 pb-2">
-                  <span className="text-sm font-bold text-[#5c3c10]">26 - 40</span>
+                <div className="flex items-center justify-between border-b border-[#00FFAA]/15 pb-2">
+                  <span className="text-sm font-bold text-[#E0E0E0]">26 - 40</span>
                   <div className="flex items-center gap-3">
-                    <span className="inline-block px-3 py-1 rounded-md bg-rose-100 text-rose-800 border border-rose-300 font-black text-xs">
+                    <span className="inline-block px-3 py-1 rounded-md bg-rose-500/15 text-rose-400 border border-rose-500/30 font-bold text-xs">
                       Buruk
                     </span>
-                    <span className="text-xs font-bold text-[#8b7e66] w-20 text-right">
+                    <span className="text-xs font-semibold text-[#6B8A8A] w-20 text-right">
                       ({countByCategory.buruk} negara)
                     </span>
                   </div>
                 </div>
 
                 {/* 41 - 65 */}
-                <div className="flex items-center justify-between border-b border-[#C4B49C]/20 pb-2">
-                  <span className="text-sm font-bold text-[#5c3c10]">41 - 65</span>
+                <div className="flex items-center justify-between border-b border-[#00FFAA]/15 pb-2">
+                  <span className="text-sm font-bold text-[#E0E0E0]">41 - 65</span>
                   <div className="flex items-center gap-3">
-                    <span className="inline-block px-3 py-1 rounded-md bg-yellow-100 text-yellow-800 border border-yellow-300 font-black text-xs">
+                    <span className="inline-block px-3 py-1 rounded-md bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 font-bold text-xs">
                       Netral
                     </span>
-                    <span className="text-xs font-bold text-[#8b7e66] w-20 text-right">
+                    <span className="text-xs font-semibold text-[#6B8A8A] w-20 text-right">
                       ({countByCategory.netral} negara)
                     </span>
                   </div>
                 </div>
 
                 {/* 66 - 80 */}
-                <div className="flex items-center justify-between border-b border-[#C4B49C]/20 pb-2">
-                  <span className="text-sm font-bold text-[#5c3c10]">66 - 80</span>
+                <div className="flex items-center justify-between border-b border-[#00FFAA]/15 pb-2">
+                  <span className="text-sm font-bold text-[#E0E0E0]">66 - 80</span>
                   <div className="flex items-center gap-3">
-                    <span className="inline-block px-3 py-1 rounded-md bg-green-100 text-green-800 border border-green-300 font-black text-xs">
+                    <span className="inline-block px-3 py-1 rounded-md bg-green-500/15 text-green-400 border border-green-500/30 font-bold text-xs">
                       Baik
                     </span>
-                    <span className="text-xs font-bold text-[#8b7e66] w-20 text-right">
+                    <span className="text-xs font-semibold text-[#6B8A8A] w-20 text-right">
                       ({countByCategory.baik} negara)
                     </span>
                   </div>
                 </div>
 
                 {/* 81 - 100 */}
-                <div className="flex items-center justify-between border-b border-[#C4B49C]/20 pb-2">
-                  <span className="text-sm font-bold text-[#5c3c10]">81 - 100</span>
+                <div className="flex items-center justify-between border-b border-[#00FFAA]/15 pb-2">
+                  <span className="text-sm font-bold text-[#E0E0E0]">81 - 100</span>
                   <div className="flex items-center gap-3">
-                    <span className="inline-block px-3 py-1 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 font-black text-xs">
+                    <span className="inline-block px-3 py-1 rounded-md bg-[#00FFAA]/15 text-[#00FFAA] border border-[#00FFAA]/30 font-bold text-xs">
                       Sangat Baik
                     </span>
-                    <span className="text-xs font-bold text-[#8b7e66] w-20 text-right">
+                    <span className="text-xs font-semibold text-[#6B8A8A] w-20 text-right">
                       ({countByCategory.sangatBaik} negara)
                     </span>
                   </div>
@@ -303,7 +300,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
               
               <button
                 onClick={() => setIsLegendOpen(false)}
-                className="w-full py-3 rounded-xl bg-[#5c3c10] text-[#FAF6EE] text-xs font-black uppercase tracking-widest hover:bg-[#3d2911] transition-all cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] text-xs font-black uppercase tracking-widest hover:bg-[#00FFAA]/80 transition-all cursor-pointer"
               >
                 Tutup
               </button>

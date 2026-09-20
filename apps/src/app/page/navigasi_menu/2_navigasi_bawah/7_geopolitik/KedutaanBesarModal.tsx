@@ -87,7 +87,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
   const renderFlag = (iso: string, altName: string) => {
     if (!iso || iso.length !== 2) return null;
     return (
-      <div className="w-6 h-4 rounded-sm overflow-hidden border border-[#5c3c10]/20 flex-shrink-0 shadow-sm bg-[#e4dac3] relative">
+      <div className="w-6 h-4 rounded-sm overflow-hidden border border-[#00FFAA]/20 flex-shrink-0 shadow-sm bg-[#051111] relative">
         <img
           src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
           alt={altName}
@@ -135,77 +135,74 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+        
+        {/* HEADER */}
+        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-                <Globe className="h-6 w-6 text-[#5c3c10]" />
+              <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <Globe className="h-6 w-6 text-[#00FFAA] animate-pulse" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Kantor Kedutaan Besar Asing</h2>
-                <p className="text-xs text-[#8b7e66] uppercase tracking-wider">Kedutaan milik {playerName}</p>
+                <h2 className="text-xl font-black text-[#00FFAA] tracking-wider uppercase">Kantor Kedutaan Besar Asing</h2>
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+          <button onClick={onClose} className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
-        <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
-          <p className="text-xs text-[#8b7e66] font-semibold leading-relaxed mb-6">
+
+        {/* BODY */}
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar">
+          <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-4">
             Kelola daftar kedutaan asing yang dimiliki negara Anda. Setiap kedutaan yang dibangun akan muncul di sini dan dapat dihancurkan jika diperlukan.
           </p>
 
           {embassies.length === 0 ? (
-            <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/80 p-8 text-center">
-              <p className="text-sm text-[#5c3c10] font-semibold mb-3">Belum ada kedutaan asing yang terdaftar.</p>
-              <p className="text-xs text-[#8b7e66]">Bangun kedutaan melalui halaman detail negara untuk mulai menambahkan hubungan diplomatik.</p>
+            <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-8 text-center">
+              <p className="text-sm text-[#00FFAA] font-black mb-2">Belum ada kedutaan asing yang terdaftar.</p>
+              <p className="text-xs text-[#6B8A8A]">Bangun kedutaan melalui halaman detail negara untuk mulai menambahkan hubungan diplomatik.</p>
             </div>
           ) : (
-            <div className="flex flex-col gap-4 w-full">
+            <div className="flex flex-col gap-3 w-full">
               {embassies.map((item: any, idx: number) => {
                 const iso = getIsoFromName(item.mitra);
                 return (
-                  <div key={idx} className="bg-[#e4dac3]/20 border border-[#C4B49C]/30 p-4 rounded-xl flex flex-row items-center justify-between w-full gap-4">
+                  <div key={idx} className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl flex flex-row items-center justify-between w-full gap-4">
                     
                     {/* Bagian Informasi Kedutaan */}
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         {renderFlag(iso, item.mitra)}
-                        <h4 className="text-xs font-black text-[#5c3c10] uppercase leading-snug">{item.mitra}</h4>
+                        <h4 className="text-sm font-black text-[#E0E0E0] uppercase tracking-wider">{item.mitra}</h4>
                       </div>
-                      <div className="flex flex-wrap gap-2 text-[10px] leading-none">
-                        <span className="bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.status || 'Aktif'}</span>
-                        {item.type && <span className="bg-[#5c3c10]/10 text-[#5c3c10] border border-[#5c3c10]/15 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.type}</span>}
+                      <div className="flex flex-wrap gap-2 text-[10px] leading-none mt-2">
+                        <span className="bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.status || 'Aktif'}</span>
+                        {item.type && <span className="bg-[#0F2424] text-[#6B8A8A] border border-[#00FFAA]/20 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.type}</span>}
                       </div>
                       {item.continent && (
-                        <p className="text-[10px] text-[#5c3c10]/80 mt-3">Benua: {item.continent}</p>
-                      )}
-                      {item.builtAt && (
-                        <p className="text-[10px] text-[#5c3c10]/80 mt-1">Dibangun: {new Date(item.builtAt).toLocaleDateString('id-ID')}</p>
+                        <p className="text-[10px] text-[#6B8A8A] mt-2">Benua: {item.continent}</p>
                       )}
                     </div>
 
-                    {/* Bagian Tombol Aksi (Flex Layout: Hijau & Merah) */}
+                    {/* Bagian Tombol Aksi */}
                     <div className="flex flex-row items-center gap-2 flex-shrink-0">
-                      {/* Tombol Lihat Detail Negara (Border Hijau) */}
                       <button
                         onClick={() => handleOpenCountryDetail(item.mitra)}
-                        className="border-2 border-emerald-500 bg-transparent text-emerald-700 hover:bg-emerald-50 hover:border-emerald-600 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+                        className="border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
                       >
                         <Globe className="w-3.5 h-3.5" />
-                        Lihat Detail Negara
+                        Lihat Detail
                       </button>
 
-                      {/* Tombol Hancurkan Kedutaan Besar (Border Merah) */}
                       <button
                         onClick={() => handleDestroyEmbassy(item.mitra)}
-                        className="border-2 border-rose-500 bg-transparent text-rose-700 hover:bg-rose-50 hover:border-rose-600 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer"
+                        className="border border-rose-500/40 bg-[#0F2424] text-rose-400 hover:bg-rose-500 hover:text-white px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer"
                       >
-                        Hancurkan Kedutaan Besar
+                        Hancurkan Kedutaan
                       </button>
                     </div>
                   </div>
@@ -218,27 +215,27 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
         {/* Modal Konfirmasi Hancurkan Kedutaan */}
         {confirmModal.isOpen && (
           <div className="absolute inset-0 bg-black/60 z-30 flex items-center justify-center p-8 pointer-events-auto backdrop-blur-sm rounded-2xl">
-            <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl max-w-md w-full p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)] relative">
+            <div className="bg-[#0F2424] border border-rose-500/40 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
               <button
                 onClick={() => setConfirmModal({ isOpen: false, partnerName: null })}
-                className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-black/5 text-[#8b7e66] hover:text-[#5c3c10] transition-colors cursor-pointer"
+                className="absolute top-4 right-4 p-1.5 rounded-lg text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
-              <h3 className="text-lg font-black text-[#5c3c10] uppercase tracking-tight mb-3">Konfirmasi Hancurkan Kedutaan</h3>
-              <p className="text-sm text-[#8b7e66] font-medium leading-relaxed mb-6">
-                Apakah Anda yakin ingin menghancurkan Kedutaan Besar di <strong className="text-[#5c3c10]">{confirmModal.partnerName}</strong>? Tindakan ini tidak dapat dibatalkan dan akan memutuskan hubungan diplomatik.
+              <h3 className="text-lg font-bold text-rose-400 uppercase tracking-wide mb-3">Konfirmasi Hancurkan Kedutaan</h3>
+              <p className="text-sm text-[#6B8A8A] font-medium leading-relaxed mb-6">
+                Apakah Anda yakin ingin menghancurkan Kedutaan Besar di <strong className="text-[#E0E0E0]">{confirmModal.partnerName}</strong>? Tindakan ini tidak dapat dibatalkan dan akan memutuskan hubungan diplomatik.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setConfirmModal({ isOpen: false, partnerName: null })}
-                  className="flex-1 py-3 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] transition-all font-black text-xs uppercase cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA]/20 transition-all font-bold text-xs uppercase cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   onClick={handleConfirmDestroy}
-                  className="flex-1 py-3 rounded-xl border-2 border-rose-500 bg-transparent text-rose-700 hover:bg-rose-50 transition-all font-black text-xs uppercase cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl border border-rose-500/50 bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 transition-all font-bold text-xs uppercase cursor-pointer"
                 >
                   Hancurkan Kedutaan
                 </button>
@@ -250,14 +247,14 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
         {/* Modal Notifikasi Sukses */}
         {successModal.isOpen && (
           <div className="absolute inset-0 bg-black/60 z-30 flex items-center justify-center p-8 pointer-events-auto backdrop-blur-sm rounded-2xl">
-            <div className="bg-[#FAF6EE] border-4 border-emerald-500 rounded-2xl max-w-md w-full p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)] relative">
-              <h3 className="text-lg font-black text-[#5c3c10] uppercase tracking-tight mb-3">Berhasil</h3>
-              <p className="text-sm text-[#8b7e66] font-medium leading-relaxed mb-6">
+            <div className="bg-[#0F2424] border border-[#00FFAA]/40 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
+              <h3 className="text-lg font-bold text-[#00FFAA] uppercase tracking-wide mb-3">Berhasil</h3>
+              <p className="text-sm text-[#6B8A8A] font-medium leading-relaxed mb-6">
                 {successModal.message}
               </p>
               <button
                 onClick={() => setSuccessModal({ isOpen: false, message: null })}
-                className="w-full py-3 rounded-xl bg-[#5c3c10] text-[#FAF6EE] hover:bg-[#3d2911] transition-all font-black text-xs uppercase cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 transition-all font-black text-xs uppercase cursor-pointer"
               >
                 Tutup
               </button>

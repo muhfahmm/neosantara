@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 import React, { useMemo } from "react";
 import { Vote } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
@@ -63,27 +63,27 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
   }, []);
 
   return (
-    <div className="bg-white/70 border border-[#C4B49C]/30 p-6 rounded-xl shadow-sm">
-      <div className="flex items-center justify-between gap-3 pb-4 border-b border-[#C4B49C]/20 mb-4">
+    <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-xl shadow-lg">
+      <div className="flex items-center justify-between gap-3 pb-4 border-b border-[#00FFAA]/15 mb-4">
         <div className="flex items-center gap-3">
-          <Vote className="h-5 w-5 text-[#5c3c10]" />
-          <h4 className="text-sm font-black text-[#5c3c10] uppercase">Suara Negara di Majelis Umum</h4>
+          <Vote className="h-5 w-5 text-[#00FFAA]" />
+          <h4 className="text-sm font-black text-[#E0E0E0] uppercase tracking-wide">Suara Negara di Majelis Umum</h4>
         </div>
-        <div className="text-[10px] font-black uppercase tracking-widest text-[#8b7e66]">
+        <div className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">
           {countryVotes.length} negara
         </div>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-xs border-collapse">
-          <thead className="bg-[#5c3c10]/5 border-b border-[#C4B49C]/20">
+          <thead className="bg-[#051111] border-b border-[#00FFAA]/20">
             <tr>
-              <th className="px-3 py-2 text-left font-black text-[#5c3c10] uppercase">Negara</th>
-              <th className="px-3 py-2 text-left font-black text-[#5c3c10] uppercase">Bendera</th>
-              <th className="px-3 py-2 text-left font-black text-[#5c3c10] uppercase">Suara PBB</th>
+              <th className="px-3 py-2.5 text-left font-black text-[#00FFAA] uppercase tracking-wider">Negara</th>
+              <th className="px-3 py-2.5 text-left font-black text-[#00FFAA] uppercase tracking-wider">Bendera</th>
+              <th className="px-3 py-2.5 text-left font-black text-[#00FFAA] uppercase tracking-wider">Suara PBB</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#C4B49C]/20">
+          <tbody className="divide-y divide-[#00FFAA]/10">
             {countryVotes.map((item, idx) => {
               const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara";
               const isUserCountry = item.name_id.toLowerCase().trim() === selectedCountryName.toLowerCase().trim();
@@ -93,13 +93,13 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
                   key={`${item.name_id}-${idx}`} 
                   className={`transition-colors ${
                     isUserCountry
-                      ? 'bg-emerald-100/80 hover:bg-emerald-200/80 border-l-4 border-l-emerald-600'
-                      : 'hover:bg-[#e4dac3]/20'
+                      ? 'bg-[#00FFAA]/15 hover:bg-[#00FFAA]/25 border-l-4 border-l-[#00FFAA]'
+                      : 'hover:bg-[#00FFAA]/5'
                   }`}
                 >
-                  <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-emerald-900' : 'text-[#5c3c10]'}`}>{item.name_id}</td>
+                  <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>{item.name_id}</td>
                   <td className="px-3 py-2">{renderFlag(item.iso, item.name_id)}</td>
-                  <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-emerald-600' : 'text-[#8b7e66]'}`}>{item.un_vote}</td>
+                  <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#6B8A8A]'}`}>{item.un_vote}</td>
                 </tr>
               );
             })}

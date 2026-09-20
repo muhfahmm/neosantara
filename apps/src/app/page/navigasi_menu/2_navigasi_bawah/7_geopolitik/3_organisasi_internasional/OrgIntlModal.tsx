@@ -95,36 +95,49 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, onOpenC
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
         
-        {/* HEADER UTAMA */}
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
+        {/* HEADER */}
+        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-                <Globe className="h-6 w-6 text-[#5c3c10] animate-spin" style={{ animationDuration: '20s' }} />
+              <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <Globe className="h-6 w-6 text-[#00FFAA] animate-pulse" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Keanggotaan Blok Internasional</h2>
+                <h2 className="text-xl font-black text-[#00FFAA] tracking-wider uppercase">Keanggotaan Blok Internasional</h2>
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+          <button onClick={onClose} className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* BODY UTAMA */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
-          <p className="text-xs text-[#8b7e66] font-semibold leading-relaxed mb-6">
-            Negara Anda berpartisipasi aktif dalam berbagai pakta pertahanan militer multilateral serta kerja sama blok dagang bebas dunia. Pilih salah satu kategori di bawah untuk melihat daftar organisasinya.
-          </p>
-
-          <div className="bg-[#e4dac3]/40 p-1 rounded-xl border border-[#C4B49C]/40 inline-flex mb-6 shadow-sm">
-            <button onClick={() => setActiveTab("pbb")} className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${activeTab === "pbb" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20" : "text-[#8b7e66] hover:text-[#5c3c10]"}`}>Organisasi PBB</button>
-            <button onClick={() => setActiveTab("regional")} className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${activeTab === "regional" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20" : "text-[#8b7e66] hover:text-[#5c3c10]"}`}>Organisasi Regional</button>
+        {/* BODY */}
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar">
+          <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex mb-6 shadow-sm">
+            <button
+              onClick={() => setActiveTab("pbb")}
+              className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+                activeTab === "pbb"
+                  ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20"
+                  : "text-[#6B8A8A] hover:text-[#00FFAA]"
+              }`}
+            >
+              Organisasi PBB & Badan Khusus
+            </button>
+            <button
+              onClick={() => setActiveTab("regional")}
+              className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+                activeTab === "regional"
+                  ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20"
+                  : "text-[#6B8A8A] hover:text-[#00FFAA]"
+              }`}
+            >
+              Organisasi Regional & Blok Ekonomi
+            </button>
           </div>
 
           {activeTab === "pbb" && (
@@ -136,10 +149,10 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, onOpenC
                   <div
                     key={idx}
                     onClick={() => handleOrgClick(org)}
-                    className={`bg-white/70 rounded-xl p-4 text-center shadow-sm hover:bg-[#e4dac3]/30 hover:border-[#5c3c10]/40 transition-all cursor-pointer flex flex-col items-center gap-2 ${isMember ? 'border-2 border-emerald-500' : 'border border-[#C4B49C]/30'}`}
+                    className={`rounded-xl p-4 text-center shadow-md hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/10 transition-all cursor-pointer flex flex-col items-center gap-2.5 ${isMember ? 'bg-[#00FFAA]/15 border-2 border-[#00FFAA]' : 'bg-[#0A1A1A] border border-[#00FFAA]/20'}`}
                   >
-                    <Icon className="h-6 w-6 text-[#5c3c10]" />
-                    <span className="text-[10px] font-black text-[#5c3c10] uppercase tracking-tight leading-tight block">{org}</span>
+                    <Icon className="h-6 w-6 text-[#00FFAA]" />
+                    <span className="text-[10px] font-bold text-[#E0E0E0] uppercase tracking-tight leading-tight block">{org}</span>
                   </div>
                 );
               })}
@@ -155,10 +168,10 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, onOpenC
                   <div
                     key={idx}
                     onClick={() => handleOrgClick(org)}
-                    className={`bg-white/70 rounded-xl p-4 text-center shadow-sm hover:bg-[#e4dac3]/30 hover:border-[#5c3c10]/40 transition-all cursor-pointer flex flex-col items-center gap-2 ${isMember ? 'border-2 border-emerald-500' : 'border border-[#C4B49C]/30'}`}
+                    className={`rounded-xl p-4 text-center shadow-md hover:border-[#00FFAA]/60 hover:bg-[#00FFAA]/10 transition-all cursor-pointer flex flex-col items-center gap-2.5 ${isMember ? 'bg-[#00FFAA]/15 border-2 border-[#00FFAA]' : 'bg-[#0A1A1A] border border-[#00FFAA]/20'}`}
                   >
-                    <Icon className="h-6 w-6 text-[#5c3c10]" />
-                    <span className="text-[10px] font-black text-[#5c3c10] uppercase tracking-tight leading-tight block">{org}</span>
+                    <Icon className="h-6 w-6 text-[#00FFAA]" />
+                    <span className="text-[10px] font-bold text-[#E0E0E0] uppercase tracking-tight leading-tight block">{org}</span>
                   </div>
                 );
               })}
@@ -166,30 +179,28 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, onOpenC
           )}
         </div>
 
-        {/* PERBAIKAN: MODAL ANAK - Hapus bg-black/60 dan backdrop-blur-sm, ganti dengan bg-transparent */}
+        {/* MODAL ANAK */}
         {isChildModalOpen && selectedOrgName && selectedOrgIcon && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-transparent pointer-events-auto">
-            <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl flex flex-col relative font-sans shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
-              {activeTab === "pbb" ? (
-                <OrganisasiPBBModal
-                  orgName={selectedOrgName}
-                  orgIcon={selectedOrgIcon}
-                  selectedCountry={selectedCountry}
-                  onClose={() => setIsChildModalOpen(false)}
-                  onOpenCountryDetail={onOpenCountryDetail}
-                  onOpenPlayerDetail={onOpenPlayerDetail}
-                />
-              ) : (
-                <OrganisasiRegional
-                  orgName={selectedOrgName}
-                  orgIcon={selectedOrgIcon}
-                  selectedCountry={selectedCountry}
-                  onClose={() => setIsChildModalOpen(false)}
-                  onOpenCountryDetail={onOpenCountryDetail}
-                  onOpenPlayerDetail={onOpenPlayerDetail}
-                />
-              )}
-            </div>
+          <div className="absolute inset-0 z-30 bg-[#0F2424] flex flex-col rounded-2xl overflow-hidden pointer-events-auto">
+            {activeTab === "pbb" ? (
+              <OrganisasiPBBModal
+                orgName={selectedOrgName}
+                orgIcon={selectedOrgIcon}
+                selectedCountry={selectedCountry}
+                onClose={() => setIsChildModalOpen(false)}
+                onOpenCountryDetail={onOpenCountryDetail}
+                onOpenPlayerDetail={onOpenPlayerDetail}
+              />
+            ) : (
+              <OrganisasiRegional
+                orgName={selectedOrgName}
+                orgIcon={selectedOrgIcon}
+                selectedCountry={selectedCountry}
+                onClose={() => setIsChildModalOpen(false)}
+                onOpenCountryDetail={onOpenCountryDetail}
+                onOpenPlayerDetail={onOpenPlayerDetail}
+              />
+            )}
           </div>
         )}
 
