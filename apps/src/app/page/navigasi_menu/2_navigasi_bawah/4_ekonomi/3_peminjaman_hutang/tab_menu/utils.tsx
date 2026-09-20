@@ -18,12 +18,12 @@ export interface LoanRecord {
 export const renderFlag = (iso: string | undefined | null, altName: string) => {
   if (!iso || iso.length !== 2) {
     return (
-      <div className="w-8 h-5 rounded-sm bg-[#e4dac3] border border-[#5c3c10]/20 flex-shrink-0 shadow-sm" />
+      <div className="w-8 h-5 rounded-sm bg-[#0A1A1A] border border-[#00FFAA]/30 flex-shrink-0" />
     );
   }
 
   return (
-    <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#5c3c10]/20 flex-shrink-0 shadow-sm bg-[#e4dac3] relative">
+    <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 bg-[#0A1A1A] relative">
       <img
         src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
         alt={altName}

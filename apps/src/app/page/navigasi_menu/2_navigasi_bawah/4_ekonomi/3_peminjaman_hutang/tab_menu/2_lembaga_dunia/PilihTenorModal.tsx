@@ -28,22 +28,22 @@ export default function PilihTenorModal({ isOpen, onClose, selectedTerm, onSelec
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl relative font-sans pointer-events-auto flex flex-col">
-        <div className="flex items-center justify-between px-8 py-6 border-b border-[#C4B49C]/30 bg-[#FAF6EE] relative z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
+        <div className="flex items-center justify-between px-8 py-6 border-b border-[#00FFAA]/20 bg-[#0A1A1A] relative z-10">
           <div>
-            <h3 className="text-2xl font-black text-[#5c3c10] uppercase">Pilih Tenor</h3>
+            <h3 className="text-2xl font-black text-[#00FFAA] uppercase">Pilih Tenor</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5"
+            className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
           >
-            <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
+            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 no-scrollbar">
+        <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 custom-scrollbar">
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {TENOR_OPTIONS.map((option) => {
               const active = option.days === selectedTerm;
@@ -52,22 +52,22 @@ export default function PilihTenorModal({ isOpen, onClose, selectedTerm, onSelec
                   key={option.label}
                   type="button"
                   onClick={() => onSelectTerm(option.days)}
-                  className={`rounded-3xl border-2 px-4 py-6 text-left transition ${
+                  className={`rounded-2xl border px-4 py-6 text-left transition ${
                     active
-                      ? "border-[#5c3c10] bg-[#5c3c10] text-[#FAF6EE] shadow-lg cursor-pointer"
-                      : "border-[#C4B49C]/40 bg-white/80 text-[#5c3c10] hover:border-[#5c3c10] hover:bg-[#f7f1dd] cursor-pointer"
+                      ? "border-[#00FFAA] bg-[#00FFAA] text-[#0A1A1A] font-black cursor-pointer"
+                      : "border-[#00FFAA]/20 bg-[#0F2424] text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:bg-[#0F2424]/80 cursor-pointer"
                   }`}
                 >
                   <div className="text-lg font-black">{option.label}</div>
-                  <div className="text-[10px] text-[#8b7e66] mt-1">{option.days.toLocaleString("id-ID")} hari</div>
+                  <div className={`text-[10px] mt-1 ${active ? "text-[#0A1A1A]" : "text-[#6B8A8A]"}`}>{option.days.toLocaleString("id-ID")} hari</div>
                 </button>
               );
             })}
           </div>
 
-          <div className="mt-6 rounded-3xl border border-[#C4B49C]/30 bg-[#e4dac3]/20 p-4 text-sm text-[#5c3c10]">
-            <p className="font-black">Terpilih:</p>
-            <p className="mt-2">{selectedTerm.toLocaleString("id-ID")} hari</p>
+          <div className="mt-6 rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] p-4 text-sm text-[#E0E0E0]">
+            <p className="font-black text-[#00FFAA]">Terpilih:</p>
+            <p className="mt-1 font-bold">{selectedTerm.toLocaleString("id-ID")} hari</p>
           </div>
         </div>
       </div>

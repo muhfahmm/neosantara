@@ -331,80 +331,77 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        
-        {/* Background Texture */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
 
         {/* Header */}
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
+        <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-                <CreditCard className="h-6 w-6 text-[#5c3c10]" />
+              <div className="p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <CreditCard className="h-6 w-6 text-[#00FFAA]" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Pinjaman & Hutang</h2>
+                <h2 className="text-2xl font-black text-[#00FFAA] tracking-tight leading-none uppercase">Pinjaman & Hutang</h2>
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Body Content */}
-        <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
+        <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
           
           {/* Section 1: Peringatan dan Monitoring Ekonomi */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-            <div className="col-span-2 bg-gradient-to-br from-[#e4dac3]/30 to-[#C4B49C]/20 border-2 border-[#C4B49C]/40 p-5 rounded-2xl shadow-sm">
-              <h4 className="text-[10px] text-[#8b7e66] font-black uppercase tracking-wider mb-2">Rasio Hutang terhadap PDB</h4>
+            <div className="col-span-2 bg-[#0F2424] border border-[#00FFAA]/30 p-5 rounded-2xl">
+              <h4 className="text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider mb-2">Rasio Hutang terhadap PDB</h4>
               <div className="flex justify-between items-end mb-3">
-                <span className="text-3xl font-black text-[#5c3c10]">{debtRatio}%</span>
-                <span className="text-xs font-bold text-[#8b7e66]">Batas Aman: 60%</span>
+                <span className="text-3xl font-black text-[#00FFAA]">{debtRatio}%</span>
+                <span className="text-xs font-bold text-[#6B8A8A]">Batas Aman: 60%</span>
               </div>
-              <div className="h-3 bg-[#C4B49C]/30 rounded-full overflow-hidden mt-1">
+              <div className="h-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-full overflow-hidden mt-1">
                 <div 
                   className={`h-full rounded-full transition-all duration-700 ${
-                    debtRatio > 80 ? "bg-red-600" : debtRatio > 60 ? "bg-amber-600" : "bg-emerald-600"
+                    debtRatio > 80 ? "bg-rose-500" : debtRatio > 60 ? "bg-amber-500" : "bg-emerald-500"
                   }`}
                   style={{ width: `${debtRatio}%` }}
                 />
               </div>
             </div>
 
-            <div className="bg-[#e4dac3]/20 border border-[#C4B49C]/30 p-5 rounded-2xl shadow-sm flex flex-col justify-center">
-              <div className="flex justify-between text-sm font-bold text-[#5c3c10] py-1 border-b border-[#C4B49C]/20">
+            <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-5 rounded-2xl flex flex-col justify-center">
+              <div className="flex justify-between text-sm font-bold text-[#E0E0E0] py-1 border-b border-[#00FFAA]/20">
                 <span>Kas Negara</span>
-                <span className="text-emerald-700">{kasNegara.toLocaleString("id-ID")} EM</span>
+                <span className="text-emerald-400 font-black">{kasNegara.toLocaleString("id-ID")} EM</span>
               </div>
-              <div className="flex justify-between text-sm font-bold text-[#5c3c10] py-1 mt-2">
+              <div className="flex justify-between text-sm font-bold text-[#E0E0E0] py-1 mt-2">
                 <span>Total Beban Hutang</span>
-                <span className="text-red-700">{totalHutang.toLocaleString("id-ID")} EM</span>
+                <span className="text-rose-400 font-black">{totalHutang.toLocaleString("id-ID")} EM</span>
               </div>
             </div>
           </div>
 
           {/* Section 2: Tabs Peminjaman */}
-          <div className="bg-[#e4dac3]/40 p-1.5 rounded-xl border border-[#C4B49C]/40 inline-flex mb-6 shadow-sm">
+          <div className="bg-[#0A1A1A] p-1.5 rounded-xl border border-[#00FFAA]/30 inline-flex mb-6">
             <button
               onClick={() => setActiveTab("bilateral")}
               className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                activeTab === "bilateral" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20" : "text-[#8b7e66] hover:text-[#5c3c10]"
+                activeTab === "bilateral" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
               }`}
             >Negara Lain</button>
             <button
               onClick={() => setActiveTab("multilateral")}
               className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                activeTab === "multilateral" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20" : "text-[#8b7e66] hover:text-[#5c3c10]"
+                activeTab === "multilateral" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
               }`}
             >Lembaga Dunia</button>
             <button
               onClick={() => setActiveTab("history")}
               className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                activeTab === "history" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20" : "text-[#8b7e66] hover:text-[#5c3c10]"
+                activeTab === "history" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
               }`}
             >Riwayat</button>
           </div>

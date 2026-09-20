@@ -125,69 +125,68 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
 
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
+        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 flex-shrink-0">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-                <Tag className="h-6 w-6 text-[#5c3c10]" />
+              <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <Tag className="h-6 w-6 text-[#00FFAA]" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Kontrol Harga Barang Pokok</h2>
+                <h2 className="text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Kontrol Harga Barang Pokok</h2>
               </div>
             </div>
           </div>
 
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
+          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
-          <p className="text-xs text-[#8b7e66] font-semibold leading-relaxed mb-6">
+        <div className="flex-1 overflow-y-auto p-6 bg-[#0F2424] relative z-10 custom-scrollbar">
+          <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-6">
             Stabilkan harga bahan pangan pokok beras, minyak goreng, dan daging di pasar domestik agar inflasi terjaga dan daya beli rakyat kelas bawah tetap aman.
           </p>
 
-          <div className="bg-[#e4dac3]/20 border border-[#C4B49C]/30 p-4 rounded-xl mb-6">
-            <div className="flex justify-between text-xs font-bold text-[#5c3c10] mb-2">
-              <span>Tingkat Inflasi Sembako:</span>
-              <span className="text-rose-700 font-bold">+ 4.8% (Tinggi)</span>
+          <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-4 rounded-xl mb-6">
+            <div className="flex justify-between text-xs font-bold text-[#E0E0E0] mb-2">
+              <span className="text-[#6B8A8A]">Tingkat Inflasi Sembako:</span>
+              <span className="text-rose-400 font-bold">+ 4.8% (Tinggi)</span>
             </div>
-            <div className="flex justify-between text-xs font-bold text-[#5c3c10]">
-              <span>Kas Anggaran Negara:</span>
-              <span>{anggaran.toLocaleString("id-ID")}</span>
+            <div className="flex justify-between text-xs font-bold text-[#E0E0E0]">
+              <span className="text-[#6B8A8A]">Kas Anggaran Negara:</span>
+              <span>{anggaran.toLocaleString("id-ID")} EM</span>
             </div>
-            <div className="flex justify-between text-xs font-bold text-[#5c3c10] mt-1">
-              <span>Status Subsidi:</span>
-              <span className={subsidyActive ? "text-emerald-700" : "text-rose-700"}>
+            <div className="flex justify-between text-xs font-bold text-[#E0E0E0] mt-1">
+              <span className="text-[#6B8A8A]">Status Subsidi:</span>
+              <span className={subsidyActive ? "text-emerald-400" : "text-rose-400"}>
                 {subsidyActive ? "AKTIF" : "NONAKTIF"}
               </span>
             </div>
           </div>
 
           {loading ? (
-            <div className="flex items-center gap-2 text-sm text-[#5c3c10] mb-6">
-              <Loader2 className="h-4 w-4 animate-spin" />
+            <div className="flex items-center gap-2 text-sm text-[#00FFAA] mb-6">
+              <Loader2 className="h-4 w-4 animate-spin text-[#00FFAA]" />
               Memuat data harga negara...
             </div>
           ) : null}
 
-          {error ? <p className="text-sm text-rose-700 mb-4">{error}</p> : null}
+          {error ? <p className="text-sm text-rose-400 mb-4">{error}</p> : null}
 
           <div className="space-y-4 mb-6">
             {priceEntries.length === 0 ? (
-              <p className="text-sm text-[#8b7e66]">Belum ada data harga yang tersedia untuk negara ini.</p>
+              <p className="text-sm text-[#6B8A8A]">Belum ada data harga yang tersedia untuk negara ini.</p>
             ) : (
               priceEntries.map(([key, value]) => (
-                <div key={key} className="bg-white/70 border border-[#C4B49C]/30 rounded-xl p-4 shadow-sm">
+                <div key={key} className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-xl p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <p className="text-sm font-black text-[#5c3c10] uppercase">{key.replace("harga_", "").replace(/_/g, " ")}</p>
-                      <p className="text-xs text-[#8b7e66]">
-                        Nilai saat ini: <span className="font-black text-[#5c3c10]">{Number(value).toLocaleString("id-ID")}</span>
+                      <p className="text-sm font-black text-[#00FFAA] uppercase">{key.replace("harga_", "").replace(/_/g, " ")}</p>
+                      <p className="text-xs text-[#6B8A8A]">
+                        Nilai saat ini: <span className="font-bold text-[#E0E0E0]">{Number(value).toLocaleString("id-ID")}</span>
                       </p>
                     </div>
                   </div>
@@ -199,8 +198,8 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
                         onClick={() => handlePriceChange(key, option)}
                         className={`px-3 py-2 rounded-lg border text-xs font-black uppercase transition cursor-pointer ${
                           value === option
-                            ? "bg-[#5c3c10] text-[#FAF6EE] border-[#5c3c10] shadow-sm"
-                            : "bg-[#FAF6EE] text-[#5c3c10] border-[#C4B49C] hover:bg-[#e4dac3]"
+                            ? "bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] font-bold"
+                            : "bg-[#0F2424] text-[#E0E0E0] border-[#00FFAA]/30 hover:border-[#00FFAA]"
                         }`}
                       >
                         {option.toLocaleString("id-ID")}
@@ -215,41 +214,41 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
           <button
             onClick={handleSubsidize}
             disabled={subsidyActive || anggaran < 20000000}
-            className={`w-full py-3 rounded-xl text-[#5c3c10] border-2 border-[#1e2f3d]/15 shadow-sm text-xs font-black uppercase cursor-pointer ${
+            className={`w-full py-3 rounded-xl border text-xs font-black uppercase transition-all ${
               subsidyActive || anggaran < 20000000
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00]"
+                ? "bg-[#0A1A1A] text-[#6B8A8A] border-gray-800 cursor-not-allowed"
+                : "cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 border-[#00FFAA]"
             }`}
           >
             {subsidyActive ? "Subsidi Telah Diberikan" : "Sponsori Subsidi Pasar (20.000.000 EM)"}
           </button>
 
           {/* ---- INDEKS KEPUASAN RAKYAT (HARGA) ---- */}
-          <div className="mt-6 p-5 rounded-xl border-3 border-[#5c3c10]/40 bg-gradient-to-r from-amber-50 to-amber-100/70 shadow-md">
+          <div className="mt-6 p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-black text-[#5c3c10] uppercase tracking-widest">
+              <span className="text-xs font-black text-[#00FFAA] uppercase tracking-widest">
                 Indeks Kepuasan Rakyat (Harga Pokok)
               </span>
-              <span className="text-3xl font-black text-amber-700">
+              <span className="text-2xl font-black text-[#00FFAA]">
                 {satisfaction} / 100
               </span>
             </div>
-            <div className="w-full h-3 bg-gray-200 rounded-full mt-3 overflow-hidden">
+            <div className="w-full h-3 bg-[#0F2424] border border-[#00FFAA]/20 rounded-full mt-3 overflow-hidden">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-600 transition-all duration-200"
+                className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
                 style={{ width: `${satisfaction}%` }}
               />
             </div>
-            <p className="text-[10px] text-amber-700 font-bold mt-3">
+            <p className="text-[10px] text-[#E0E0E0] font-bold mt-3">
               {satisfaction >= 80
                 ? "✅ Harga pokok sangat terjangkau, rakyat puas."
                 : satisfaction >= 50
                 ? "⚠️ Harga masih cukup tinggi, perlu intervensi."
                 : "🔴 Harga terlalu mahal, rakyat kesulitan."}
             </p>
-            <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-amber-800/80">
-              <div>Rata-rata skor keterjangkauan: <span className="font-bold">{satisfaction}%</span></div>
-              <div>Status subsidi: <span className="font-bold">{subsidyActive ? "AKTIF (+5 poin)" : "Tidak"}</span></div>
+            <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-[#6B8A8A]">
+              <div>Rata-rata skor keterjangkauan: <span className="font-bold text-[#E0E0E0]">{satisfaction}%</span></div>
+              <div>Status subsidi: <span className="font-bold text-[#E0E0E0]">{subsidyActive ? "AKTIF (+5 poin)" : "Tidak"}</span></div>
             </div>
           </div>
         </div>

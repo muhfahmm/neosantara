@@ -35,11 +35,11 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
 
   return (
     <div>
-      <div className="bg-[#e4dac3]/40 p-1 rounded-xl border border-[#C4B49C]/40 inline-flex mb-4 shadow-sm">
+      <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/30 inline-flex mb-4">
         <button
           onClick={() => setHistorySubTab("active")}
           className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
-            historySubTab === "active" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md" : "text-[#8b7e66] hover:text-[#5c3c10]"
+            historySubTab === "active" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
           }`}
         >
           Hutang Aktif ({activeLoans.length})
@@ -47,27 +47,27 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
         <button
           onClick={() => setHistorySubTab("paid")}
           className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
-            historySubTab === "paid" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md" : "text-[#8b7e66] hover:text-[#5c3c10]"
+            historySubTab === "paid" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
           }`}
         >
           Sudah Lunas ({paidLoans.length})
         </button>
       </div>
 
-      <div className="overflow-x-auto border border-[#C4B49C]/30 rounded-xl bg-[#FAF6EE]/50 shadow-sm">
+      <div className="overflow-x-auto border border-[#00FFAA]/30 rounded-xl bg-[#0F2424]">
         <table className="w-full text-xs">
-          <thead className="bg-[#efe7d8] border-b-2 border-[#C4B49C]/40 sticky top-0 z-10">
+          <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/30 sticky top-0 z-10">
             <tr>
-              <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">Negara</th>
-              <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">Pokok Pinjaman</th>
-              <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">Bunga Awal</th>
-              <th className="px-4 py-3 text-left font-black text-emerald-700 uppercase tracking-wider">Sudah Dibayar</th>
-              <th className="px-4 py-3 text-left font-black text-rose-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider">Negara</th>
+              <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider">Pokok Pinjaman</th>
+              <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider">Bunga Awal</th>
+              <th className="px-4 py-3 text-left font-black text-emerald-400 uppercase tracking-wider">Sudah Dibayar</th>
+              <th className="px-4 py-3 text-left font-black text-rose-400 uppercase tracking-wider">
                 <div className="flex items-center gap-2">
                   <span>Denda</span>
                   <button
                     onClick={() => setGeneralPenaltyOpen?.(true)}
-                    className="p-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 transition-all cursor-pointer"
+                    className="p-1 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
                     title="Penjelasan Denda"
                     aria-label="Penjelasan Denda"
                   >
@@ -75,46 +75,44 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                   </button>
                 </div>
               </th>
-              <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">Total Saat Ini</th>
-              <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">Jatuh Tempo</th>
-              <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">Aksi</th>
+              <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider">Total Saat Ini</th>
+              <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider">Jatuh Tempo</th>
+              <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider">Aksi</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#C4B49C]/20">
+          <tbody className="divide-y divide-[#00FFAA]/10">
             {historySubTab === "active" ? (
               activeLoans.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-5 py-10 text-center text-sm font-bold text-[#8b7e66]">
+                  <td colSpan={8} className="px-5 py-10 text-center text-sm font-bold text-[#6B8A8A]">
                     Tidak ada hutang aktif.
                   </td>
                 </tr>
               ) : (
                 activeLoans.map((pinjam) => (
-                  <tr key={pinjam.id} className="hover:bg-[#e4dac3]/20 transition-colors">
-                    <td className="px-4 py-3 font-bold text-[#5c3c10]">
+                  <tr key={pinjam.id} className="hover:bg-[#0A1A1A]/50 transition-colors">
+                    <td className="px-4 py-3 font-bold text-[#E0E0E0]">
                       <div className="flex items-center gap-2">
                         {renderFlag(pinjam.iso, pinjam.source)}
                         <span>{pinjam.source}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-bold text-[#5c3c10]">{pinjam.amount?.toLocaleString('id-ID')} EM</td>
-                    <td className="px-4 py-3 font-bold text-red-600">{pinjam.interest}%</td>
-                    <td className="px-4 py-3 font-bold text-emerald-700">+{(pinjam.paidAmount || 0).toLocaleString('id-ID')} EM</td>
-                    <td className="px-4 py-3 font-bold text-rose-600 flex items-center gap-3">
+                    <td className="px-4 py-3 font-bold text-[#E0E0E0]">{pinjam.amount?.toLocaleString('id-ID')} EM</td>
+                    <td className="px-4 py-3 font-bold text-rose-400">{pinjam.interest}%</td>
+                    <td className="px-4 py-3 font-bold text-emerald-400">+{(pinjam.paidAmount || 0).toLocaleString('id-ID')} EM</td>
+                    <td className="px-4 py-3 font-bold text-rose-400 flex items-center gap-3">
                       <span>+{(pinjam.accumulatedPenalty || 0).toLocaleString('id-ID')} EM</span>
                       <button
                         onClick={() => setPenaltyInfoLoan?.(pinjam)}
-                        className="p-2 rounded-full bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 transition-all cursor-pointer"
+                        className="p-1 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
                         title="Detail Denda"
                         aria-label="Detail Denda"
                       >
                         <Info className="w-4 h-4" />
                       </button>
                     </td>
-                    <td className="px-4 py-3 font-bold text-[#5c3c10]">{(pinjam.totalRepayment || 0).toLocaleString('id-ID')} EM</td>
-                    
-                    {/* 🔥 BAGIAN INI DIUBAH */}
-                    <td className="px-4 py-3 font-bold text-[#5c3c10]">
+                    <td className="px-4 py-3 font-bold text-[#00FFAA]">{(pinjam.totalRepayment || 0).toLocaleString('id-ID')} EM</td>
+                    <td className="px-4 py-3 font-bold text-[#E0E0E0]">
                       {formatReturnDate(pinjam.returnDate)}
                     </td>
 
@@ -122,10 +120,10 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                       <button
                         onClick={() => setPendingPaymentLoan(pinjam)}
                         disabled={pinjam.totalRepayment <= 0 || kasNegara <= 0}
-                        className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all cursor-pointer ${
+                        className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${
                           pinjam.totalRepayment <= 0 || kasNegara <= 0
-                            ? 'bg-[#e4dac3]/50 text-[#8b7e66] cursor-not-allowed'
-                            : 'bg-[#5c3c10] text-[#FAF6EE] hover:bg-[#8b7e66]'
+                            ? 'bg-[#0A1A1A] text-[#6B8A8A] border border-gray-800 cursor-not-allowed'
+                            : 'bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 font-bold'
                         }`}
                       >
                         Bayar
@@ -136,33 +134,32 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
               )
             ) : paidLoans.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-5 py-10 text-center text-sm font-bold text-[#8b7e66]">
+                <td colSpan={8} className="px-5 py-10 text-center text-sm font-bold text-[#6B8A8A]">
                   Belum ada pinjaman yang dilunasi.
                 </td>
               </tr>
             ) : (
               paidLoans.map((pinjam) => (
-                <tr key={pinjam.id} className="bg-emerald-50/40 hover:bg-emerald-100/60 transition-colors">
-                  <td className="px-4 py-3 font-bold text-[#5c3c10]">
+                <tr key={pinjam.id} className="bg-emerald-500/5 hover:bg-emerald-500/10 transition-colors">
+                  <td className="px-4 py-3 font-bold text-[#E0E0E0]">
                     <div className="flex items-center gap-2">
                       {renderFlag(pinjam.iso, pinjam.source)}
                       <span>{pinjam.source}</span>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-800 text-[8px] font-black uppercase">Lunas</span>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[8px] font-black uppercase">Lunas</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 font-bold text-[#5c3c10]">{pinjam.amount?.toLocaleString('id-ID')} EM</td>
-                  <td className="px-4 py-3 font-bold text-[#5c3c10]">{pinjam.interest}%</td>
-                  <td className="px-4 py-3 font-bold text-emerald-700">+{(pinjam.paidAmount || 0).toLocaleString('id-ID')} EM</td>
-                  <td className="px-4 py-3 font-bold text-[#5c3c10]">+{(pinjam.accumulatedPenalty || 0).toLocaleString('id-ID')} EM</td>
-                  <td className="px-4 py-3 font-bold text-emerald-700">{(pinjam.totalRepayment || 0).toLocaleString('id-ID')} EM</td>
+                  <td className="px-4 py-3 font-bold text-[#E0E0E0]">{pinjam.amount?.toLocaleString('id-ID')} EM</td>
+                  <td className="px-4 py-3 font-bold text-[#E0E0E0]">{pinjam.interest}%</td>
+                  <td className="px-4 py-3 font-bold text-emerald-400">+{(pinjam.paidAmount || 0).toLocaleString('id-ID')} EM</td>
+                  <td className="px-4 py-3 font-bold text-[#E0E0E0]">+{(pinjam.accumulatedPenalty || 0).toLocaleString('id-ID')} EM</td>
+                  <td className="px-4 py-3 font-bold text-emerald-400">{(pinjam.totalRepayment || 0).toLocaleString('id-ID')} EM</td>
 
-                  {/* 🔥 BAGIAN INI JUGA DIUBAH UNTUK TABEL LUNAS */}
-                  <td className="px-4 py-3 font-bold text-[#5c3c10]">
+                  <td className="px-4 py-3 font-bold text-[#E0E0E0]">
                     {formatReturnDate(pinjam.returnDate)}
                   </td>
 
                   <td className="px-4 py-3">
-                    <span className="text-[8px] font-bold text-emerald-700 uppercase">Selesai</span>
+                    <span className="text-[8px] font-bold text-emerald-400 uppercase">Selesai</span>
                   </td>
                 </tr>
               ))

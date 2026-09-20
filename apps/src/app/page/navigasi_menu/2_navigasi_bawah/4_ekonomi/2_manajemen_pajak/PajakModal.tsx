@@ -189,16 +189,15 @@ export default function PajakModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
+        <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-                <FileText className="h-6 w-6 text-[#5c3c10]" />
+              <div className="p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <FileText className="h-6 w-6 text-[#00FFAA]" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">
+                <h2 className="text-2xl font-black text-[#00FFAA] tracking-tight leading-none uppercase">
                   Kebijakan Perpajakan Fiskal
                 </h2>
               </div>
@@ -207,7 +206,7 @@ export default function PajakModal({
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+              className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
             >
               <span className="text-xs font-semibold uppercase tracking-widest pl-1">
                 Tutup
@@ -216,8 +215,8 @@ export default function PajakModal({
             </button>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
-          <p className="text-xs text-[#8b7e66] font-semibold leading-relaxed mb-6">
+        <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+          <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-6">
             Sesuaikan tarif pajak nasional untuk membiayai belanja militer dan
             infrastruktur publik. Hati-hati, pajak tinggi memicu protes rakyat!
           </p>
@@ -225,11 +224,11 @@ export default function PajakModal({
           <div className="space-y-5">
             {/* 1. PPN - Pajak Pertambahan Nilai */}
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold text-[#5c3c10] uppercase">
+              <div className="flex justify-between text-xs font-bold text-[#00FFAA] uppercase">
                 <span>Pajak Pertambahan Nilai (PPN)</span>
                 <div className="flex items-center gap-2">
-                  <span>{tempRates.vat}%</span>
-                  <span className="text-emerald-700 font-black">
+                  <span className="text-[#E0E0E0]">{tempRates.vat}%</span>
+                  <span className="text-emerald-400 font-black">
                     ({calculateIncomeAtRate(tempRates.vat, 1000).toLocaleString(
                       "id-ID"
                     )}{" "}
@@ -245,20 +244,20 @@ export default function PajakModal({
                 onChange={(e) =>
                   handleTaxChange("vat", parseInt(e.target.value))
                 }
-                className="w-full accent-[#5c3c10] cursor-pointer"
+                className="w-full accent-[#00FFAA] cursor-pointer"
               />
-              <p className="text-[10px] text-[#8b7e66]">
+              <p className="text-[10px] text-[#6B8A8A]">
                 0% = 0 EM, 100% = 1.000 EM income
               </p>
             </div>
 
             {/* 2. Korporasi - Pajak Korporasi */}
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold text-[#5c3c10] uppercase">
+              <div className="flex justify-between text-xs font-bold text-[#00FFAA] uppercase">
                 <span>Pajak Korporasi</span>
                 <div className="flex items-center gap-2">
-                  <span>{tempRates.corporate_tax}%</span>
-                  <span className="text-emerald-700 font-black">
+                  <span className="text-[#E0E0E0]">{tempRates.corporate_tax}%</span>
+                  <span className="text-emerald-400 font-black">
                     ({calculateIncomeAtRate(tempRates.corporate_tax, 1000).toLocaleString(
                       "id-ID"
                     )}{" "}
@@ -274,20 +273,20 @@ export default function PajakModal({
                 onChange={(e) =>
                   handleTaxChange("corporate_tax", parseInt(e.target.value))
                 }
-                className="w-full accent-[#5c3c10] cursor-pointer"
+                className="w-full accent-[#00FFAA] cursor-pointer"
               />
-              <p className="text-[10px] text-[#8b7e66]">
+              <p className="text-[10px] text-[#6B8A8A]">
                 0% = 0 EM, 100% = 1.000 EM income
               </p>
             </div>
 
             {/* 3. Penghasilan - Pajak Penghasilan Pribadi */}
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold text-[#5c3c10] uppercase">
+              <div className="flex justify-between text-xs font-bold text-[#00FFAA] uppercase">
                 <span>Pajak Penghasilan Pribadi</span>
                 <div className="flex items-center gap-2">
-                  <span>{tempRates.income_tax}%</span>
-                  <span className="text-emerald-700 font-black">
+                  <span className="text-[#E0E0E0]">{tempRates.income_tax}%</span>
+                  <span className="text-emerald-400 font-black">
                     ({calculateIncomeAtRate(tempRates.income_tax, 1000).toLocaleString(
                       "id-ID"
                     )}{" "}
@@ -303,20 +302,20 @@ export default function PajakModal({
                 onChange={(e) =>
                   handleTaxChange("income_tax", parseInt(e.target.value))
                 }
-                className="w-full accent-[#5c3c10] cursor-pointer"
+                className="w-full accent-[#00FFAA] cursor-pointer"
               />
-              <p className="text-[10px] text-[#8b7e66]">
+              <p className="text-[10px] text-[#6B8A8A]">
                 0% = 0 EM, 100% = 1.000 EM income
               </p>
             </div>
 
             {/* 4. Cukai - Cukai */}
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold text-[#5c3c10] uppercase">
+              <div className="flex justify-between text-xs font-bold text-[#00FFAA] uppercase">
                 <span>Cukai</span>
                 <div className="flex items-center gap-2">
-                  <span>{tempRates.cigarette_tax}%</span>
-                  <span className="text-emerald-700 font-black">
+                  <span className="text-[#E0E0E0]">{tempRates.cigarette_tax}%</span>
+                  <span className="text-emerald-400 font-black">
                     ({calculateIncomeAtRate(tempRates.cigarette_tax, 1000).toLocaleString(
                       "id-ID"
                     )}{" "}
@@ -332,20 +331,20 @@ export default function PajakModal({
                 onChange={(e) =>
                   handleTaxChange("cigarette_tax", parseInt(e.target.value))
                 }
-                className="w-full accent-[#5c3c10] cursor-pointer"
+                className="w-full accent-[#00FFAA] cursor-pointer"
               />
-              <p className="text-[10px] text-[#8b7e66]">
+              <p className="text-[10px] text-[#6B8A8A]">
                 0% = 0 EM, 100% = 1.000 EM income
               </p>
             </div>
 
             {/* 5. Lingkungan - Pajak Lingkungan */}
             <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold text-[#5c3c10] uppercase">
+              <div className="flex justify-between text-xs font-bold text-[#00FFAA] uppercase">
                 <span>Pajak Lingkungan</span>
                 <div className="flex items-center gap-2">
-                  <span>{tempRates.environment_tax}%</span>
-                  <span className="text-emerald-700 font-black">
+                  <span className="text-[#E0E0E0]">{tempRates.environment_tax}%</span>
+                  <span className="text-emerald-400 font-black">
                     ({calculateIncomeAtRate(tempRates.environment_tax, 1000).toLocaleString(
                       "id-ID"
                     )}{" "}
@@ -361,55 +360,55 @@ export default function PajakModal({
                 onChange={(e) =>
                   handleTaxChange("environment_tax", parseInt(e.target.value))
                 }
-                className="w-full accent-[#5c3c10] cursor-pointer"
+                className="w-full accent-[#00FFAA] cursor-pointer"
               />
-              <p className="text-[10px] text-[#8b7e66]">
+              <p className="text-[10px] text-[#6B8A8A]">
                 0% = 0 EM, 100% = 1.000 EM income
               </p>
             </div>
           </div>
 
           {/* Total Income Summary */}
-          <div className="mt-8 p-4 rounded-xl border-3 border-[#5c3c10]/40 bg-gradient-to-r from-emerald-50 to-emerald-100/50 shadow-md">
+          <div className="mt-8 p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424]">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-black text-[#5c3c10] uppercase tracking-widest">
+              <span className="text-sm font-black text-[#00FFAA] uppercase tracking-widest">
                 Total Pendapatan Pajak
               </span>
-              <span className="text-2xl font-black text-emerald-700">
+              <span className="text-2xl font-black text-emerald-400">
                 {totalIncome.toLocaleString("id-ID")} EM
               </span>
             </div>
-            <p className="text-[10px] text-emerald-600 font-bold mt-2">
+            <p className="text-[10px] text-[#6B8A8A] font-semibold mt-2">
               Pendapatan bulanan dari semua pajak nasional
             </p>
           </div>
 
           {/* ---- INDEKS KEPUASAN RAKYAT ---- */}
-          <div className="mt-6 p-5 rounded-xl border-3 border-[#5c3c10]/40 bg-gradient-to-r from-amber-50 to-amber-100/70 shadow-md">
+          <div className="mt-6 p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424]">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-black text-[#5c3c10] uppercase tracking-widest">
+              <span className="text-sm font-black text-[#00FFAA] uppercase tracking-widest">
                 Indeks Kepuasan Rakyat (Pajak)
               </span>
-              <span className="text-3xl font-black text-amber-700">
+              <span className="text-3xl font-black text-amber-400">
                 {satisfaction} / 100
               </span>
             </div>
-            <div className="w-full h-3 bg-gray-200 rounded-full mt-3 overflow-hidden">
+            <div className="w-full h-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-full mt-3 overflow-hidden">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-600 transition-all duration-200"
+                className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-200"
                 style={{ width: `${satisfaction}%` }}
               />
             </div>
-            <p className="text-[10px] text-amber-700 font-bold mt-3">
+            <p className="text-[10px] text-amber-400 font-semibold mt-3">
               {satisfaction >= 80
                 ? "✅ Rakyat puas dengan beban pajak dan manfaat yang dirasakan."
                 : satisfaction >= 50
                 ? "⚠️ Beban pajak cukup berat, perlu perbaikan layanan publik."
                 : "🔴 Pajak terlalu tinggi atau pendapatan negara kurang dirasakan manfaatnya."}
             </p>
-            <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-amber-800/80">
-              <div>Rata-rata tarif: <span className="font-bold">{(tempRates.vat + tempRates.corporate_tax + tempRates.income_tax + tempRates.cigarette_tax + tempRates.environment_tax) / 5}%</span></div>
-              <div>Total pendapatan: <span className="font-bold">{totalIncome.toLocaleString("id-ID")} EM</span></div>
+            <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-[#E0E0E0]/80 font-semibold">
+              <div>Rata-rata tarif: <span className="font-bold text-[#00FFAA]">{(tempRates.vat + tempRates.corporate_tax + tempRates.income_tax + tempRates.cigarette_tax + tempRates.environment_tax) / 5}%</span></div>
+              <div>Total pendapatan: <span className="font-bold text-[#00FFAA]">{totalIncome.toLocaleString("id-ID")} EM</span></div>
             </div>
           </div>
         </div>

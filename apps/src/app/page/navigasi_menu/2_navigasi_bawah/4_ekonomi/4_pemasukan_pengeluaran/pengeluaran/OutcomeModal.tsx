@@ -133,45 +133,41 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
   const anggaran = countryDetail?.anggaran || 0;
 
   return (
-    // PERBAIKAN: Menghapus bg-black/65, menggunakan bg-transparent pointer-events-none
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent pointer-events-none">
-      
-      {/* PERBAIKAN: Menambahkan pointer-events-auto agar modal tetap bisa di-klik */}
-      <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl flex flex-col relative font-sans pointer-events-auto">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] overflow-hidden relative font-sans pointer-events-auto flex flex-col">
+        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 flex-shrink-0">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-                <BarChart3 className="h-6 w-6 text-[#5c3c10]" />
+              <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <BarChart3 className="h-6 w-6 text-[#00FFAA]" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Alokasi Pengeluaran Negara</h2>
+                <h2 className="text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Alokasi Pengeluaran Negara</h2>
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
             <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
+        <div className="flex-1 overflow-y-auto p-6 bg-[#0F2424] relative z-10 custom-scrollbar">
           <div className="space-y-6 max-w-4xl">
-            <p className="text-xs text-[#8b7e66] font-semibold leading-relaxed">
+            <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed">
               Atur alokasi anggaran pengeluaran negara. Setiap kategori memiliki pengaruh berbeda terhadap stabilitas ekonomi dan kesejahteraan rakyat.
             </p>
 
             {/* Budget Sliders */}
             <div className="space-y-6">
               {/* Pemeliharaan Militer */}
-              <div className="bg-[#e4dac3]/20 border border-[#C4B49C]/30 p-4 rounded-xl space-y-3">
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-[#5c3c10] uppercase">Pemeliharaan Militer</h4>
-                    <p className="text-[10px] text-[#8b7e66] mt-1">Pengaruh: Stabilitas Keamanan</p>
+                    <h4 className="text-xs font-black text-[#00FFAA] uppercase">Pemeliharaan Militer</h4>
+                    <p className="text-[10px] text-[#6B8A8A] mt-1">Pengaruh: Stabilitas Keamanan</p>
                   </div>
-                  <span className="text-sm font-black text-red-700">- {budgets.military.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-rose-400">- {budgets.military.toLocaleString("id-ID")} EM</span>
                 </div>
                 <input
                   type="range"
@@ -179,19 +175,19 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                   max="20000000"
                   value={budgets.military}
                   onChange={(e) => handleBudgetChange("military", parseInt(e.target.value))}
-                  className="w-full accent-red-700 cursor-pointer"
+                  className="w-full accent-[#00FFAA] cursor-pointer"
                 />
-                <p className="text-[10px] text-[#8b7e66]">1M - 20M EM</p>
+                <p className="text-[10px] text-[#6B8A8A]">1M - 20M EM</p>
               </div>
 
               {/* Beban Subsidi Publik */}
-              <div className="bg-[#e4dac3]/20 border border-[#C4B49C]/30 p-4 rounded-xl space-y-3">
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-[#5c3c10] uppercase">Beban Subsidi Publik</h4>
-                    <p className="text-[10px] text-[#8b7e66] mt-1">Pengaruh: Approval Rating</p>
+                    <h4 className="text-xs font-black text-[#00FFAA] uppercase">Beban Subsidi Publik</h4>
+                    <p className="text-[10px] text-[#6B8A8A] mt-1">Pengaruh: Approval Rating</p>
                   </div>
-                  <span className="text-sm font-black text-orange-700">- {budgets.subsidy.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-amber-400">- {budgets.subsidy.toLocaleString("id-ID")} EM</span>
                 </div>
                 <input
                   type="range"
@@ -199,19 +195,19 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                   max="25000000"
                   value={budgets.subsidy}
                   onChange={(e) => handleBudgetChange("subsidy", parseInt(e.target.value))}
-                  className="w-full accent-orange-700 cursor-pointer"
+                  className="w-full accent-[#00FFAA] cursor-pointer"
                 />
-                <p className="text-[10px] text-[#8b7e66]">1M - 25M EM</p>
+                <p className="text-[10px] text-[#6B8A8A]">1M - 25M EM</p>
               </div>
 
               {/* Anggaran Pendidikan */}
-              <div className="bg-[#e4dac3]/20 border border-[#C4B49C]/30 p-4 rounded-xl space-y-3">
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-[#5c3c10] uppercase">Anggaran Pendidikan</h4>
-                    <p className="text-[10px] text-[#8b7e66] mt-1">Pengaruh: Kualitas SDM & Produktivitas (Jangka Panjang)</p>
+                    <h4 className="text-xs font-black text-[#00FFAA] uppercase">Anggaran Pendidikan</h4>
+                    <p className="text-[10px] text-[#6B8A8A] mt-1">Pengaruh: Kualitas SDM & Produktivitas (Jangka Panjang)</p>
                   </div>
-                  <span className="text-sm font-black text-amber-700">- {budgets.education.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-amber-300">- {budgets.education.toLocaleString("id-ID")} EM</span>
                 </div>
                 <input
                   type="range"
@@ -219,19 +215,19 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                   max="15000000"
                   value={budgets.education}
                   onChange={(e) => handleBudgetChange("education", parseInt(e.target.value))}
-                  className="w-full accent-amber-700 cursor-pointer"
+                  className="w-full accent-[#00FFAA] cursor-pointer"
                 />
-                <p className="text-[10px] text-[#8b7e66]">0 - 15M EM</p>
+                <p className="text-[10px] text-[#6B8A8A]">0 - 15M EM</p>
               </div>
 
               {/* Anggaran Kesehatan */}
-              <div className="bg-[#e4dac3]/20 border border-[#C4B49C]/30 p-4 rounded-xl space-y-3">
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-[#5c3c10] uppercase">Anggaran Kesehatan</h4>
-                    <p className="text-[10px] text-[#8b7e66] mt-1">Pengaruh: Kepuasan Rakyat & Pencegahan Wabah</p>
+                    <h4 className="text-xs font-black text-[#00FFAA] uppercase">Anggaran Kesehatan</h4>
+                    <p className="text-[10px] text-[#6B8A8A] mt-1">Pengaruh: Kepuasan Rakyat & Pencegahan Wabah</p>
                   </div>
-                  <span className="text-sm font-black text-yellow-700">- {budgets.health.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-yellow-400">- {budgets.health.toLocaleString("id-ID")} EM</span>
                 </div>
                 <input
                   type="range"
@@ -239,19 +235,19 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                   max="12000000"
                   value={budgets.health}
                   onChange={(e) => handleBudgetChange("health", parseInt(e.target.value))}
-                  className="w-full accent-yellow-700 cursor-pointer"
+                  className="w-full accent-[#00FFAA] cursor-pointer"
                 />
-                <p className="text-[10px] text-[#8b7e66]">0 - 12M EM</p>
+                <p className="text-[10px] text-[#6B8A8A]">0 - 12M EM</p>
               </div>
 
               {/* Anggaran Infrastruktur */}
-              <div className="bg-[#e4dac3]/20 border border-[#C4B49C]/30 p-4 rounded-xl space-y-3">
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-[#5c3c10] uppercase">Anggaran Infrastruktur</h4>
-                    <p className="text-[10px] text-[#8b7e66] mt-1">Pengaruh: Produktivitas Ekonomi (Jangka Panjang)</p>
+                    <h4 className="text-xs font-black text-[#00FFAA] uppercase">Anggaran Infrastruktur</h4>
+                    <p className="text-[10px] text-[#6B8A8A] mt-1">Pengaruh: Produktivitas Ekonomi (Jangka Panjang)</p>
                   </div>
-                  <span className="text-sm font-black text-lime-700">- {budgets.infrastructure.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-emerald-400">- {budgets.infrastructure.toLocaleString("id-ID")} EM</span>
                 </div>
                 <input
                   type="range"
@@ -259,19 +255,19 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                   max="20000000"
                   value={budgets.infrastructure}
                   onChange={(e) => handleBudgetChange("infrastructure", parseInt(e.target.value))}
-                  className="w-full accent-lime-700 cursor-pointer"
+                  className="w-full accent-[#00FFAA] cursor-pointer"
                 />
-                <p className="text-[10px] text-[#8b7e66]">0 - 20M EM</p>
+                <p className="text-[10px] text-[#6B8A8A]">0 - 20M EM</p>
               </div>
 
               {/* Gaji ASN/Birokrasi */}
-              <div className="bg-[#e4dac3]/20 border border-[#C4B49C]/30 p-4 rounded-xl space-y-3">
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-[#5c3c10] uppercase">Gaji ASN/Birokrasi</h4>
-                    <p className="text-[10px] text-[#8b7e66] mt-1">Fixed Cost, Scaling dengan Jumlah Pegawai</p>
+                    <h4 className="text-xs font-black text-[#00FFAA] uppercase">Gaji ASN/Birokrasi</h4>
+                    <p className="text-[10px] text-[#6B8A8A] mt-1">Fixed Cost, Scaling dengan Jumlah Pegawai</p>
                   </div>
-                  <span className="text-sm font-black text-green-700">- {budgets.asn_salary.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-emerald-400">- {budgets.asn_salary.toLocaleString("id-ID")} EM</span>
                 </div>
                 <input
                   type="range"
@@ -279,23 +275,23 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                   max="10000000"
                   value={budgets.asn_salary}
                   onChange={(e) => handleBudgetChange("asn_salary", parseInt(e.target.value))}
-                  className="w-full accent-green-700 cursor-pointer"
+                  className="w-full accent-[#00FFAA] cursor-pointer"
                 />
-                <p className="text-[10px] text-[#8b7e66]">1M - 10M EM</p>
+                <p className="text-[10px] text-[#6B8A8A]">1M - 10M EM</p>
               </div>
 
               {/* Biaya Operasional Dewan Kabinet - Read Only */}
-              <div className="bg-blue-50 border border-blue-300 p-4 rounded-xl space-y-3">
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-4 rounded-xl space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-xs font-black text-blue-900 uppercase">Biaya Operasional Dewan Kabinet</h4>
-                    <p className="text-[10px] text-blue-700 mt-1">Total Pengeluaran Semua Ministry (Otomatis)</p>
+                    <h4 className="text-xs font-black text-[#00FFAA] uppercase">Biaya Operasional Dewan Kabinet</h4>
+                    <p className="text-[10px] text-[#6B8A8A] mt-1">Total Pengeluaran Semua Ministry (Otomatis)</p>
                   </div>
-                  <span className="text-sm font-black text-blue-700">- {ministryCostPerMonth.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-[#00FFAA]">- {ministryCostPerMonth.toLocaleString("id-ID")} EM</span>
                 </div>
-                <p className="text-[10px] text-blue-600 italic">Dihitung otomatis dari level semua kementerian, keamanan, dan layanan. Tidak bisa diatur manual.</p>
-                <div className="bg-white border border-blue-200 rounded p-2">
-                  <p className="text-[10px] text-blue-900 font-semibold">
+                <p className="text-[10px] text-[#6B8A8A] italic">Dihitung otomatis dari level semua kementerian, keamanan, dan layanan. Tidak bisa diatur manual.</p>
+                <div className="bg-[#0F2424] border border-[#00FFAA]/20 rounded p-2">
+                  <p className="text-[10px] text-[#E0E0E0] font-semibold">
                     📊 Breakdown: {ministryCostPerMonth.toLocaleString("id-ID")} = {(ministryCostPerMonth / 30).toLocaleString("id-ID", { maximumFractionDigits: 0 })} × 30
                   </p>
                 </div>
@@ -303,32 +299,31 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
 
               {/* Cicilan Utang - Only if debt exists */}
               {budgets.debt_interest > 0 && (
-                <div className="bg-[#e4dac3]/20 border border-[#C4B49C]/30 p-4 rounded-xl space-y-3">
+                <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-4 rounded-xl space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className="text-xs font-black text-[#5c3c10] uppercase">Cicilan Utang + Bunga</h4>
-                      <p className="text-[10px] text-[#8b7e66] mt-1">Cicilan Obligasi (Otomatis)</p>
+                      <h4 className="text-xs font-black text-[#00FFAA] uppercase">Cicilan Utang + Bunga</h4>
+                      <p className="text-[10px] text-[#6B8A8A] mt-1">Cicilan Obligasi (Otomatis)</p>
                     </div>
-                    <span className="text-sm font-black text-rose-900">- {budgets.debt_interest.toLocaleString("id-ID")} EM</span>
+                    <span className="text-sm font-black text-rose-400">- {budgets.debt_interest.toLocaleString("id-ID")} EM</span>
                   </div>
-                  <p className="text-[10px] text-[#8b7e66] italic">Cicilan utang otomatis, tidak bisa diatur</p>
+                  <p className="text-[10px] text-[#6B8A8A] italic">Cicilan utang otomatis, tidak bisa diatur</p>
                 </div>
               )}
             </div>
 
             {/* Total Summary */}
-            <div className="bg-gradient-to-r from-rose-50 to-rose-100/50 border-3 border-[#5c3c10]/40 p-6 rounded-xl space-y-4 mt-8">
+            <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4 mt-8">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-black text-[#5c3c10] uppercase tracking-widest">Total Pengeluaran</span>
-                <span className="text-2xl font-black text-rose-700">- {totalOutcome.toLocaleString("id-ID")}</span>
+                <span className="text-xs font-black text-[#00FFAA] uppercase tracking-widest">Total Pengeluaran</span>
+                <span className="text-2xl font-black text-rose-400">- {totalOutcome.toLocaleString("id-ID")} EM</span>
               </div>
-              <div className="flex justify-between items-center pt-3 border-t-2 border-[#C4B49C]/30">
-                <span className="text-xs font-black text-[#5c3c10] uppercase">Total Saldo Kas Negara:</span>
-                <span className="text-lg font-black text-[#5c3c10]">{anggaran.toLocaleString("id-ID")} EM</span>
+              <div className="flex justify-between items-center pt-3 border-t border-[#00FFAA]/20">
+                <span className="text-xs font-bold text-[#6B8A8A] uppercase">Total Saldo Kas Negara:</span>
+                <span className="text-lg font-black text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} EM</span>
               </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );
