@@ -198,7 +198,7 @@ export default function HunianPermukimanModal({
   };
 
   const HUNIAN_KEYS = ["rumah_subsidi", "apartemen", "mansion"];
-  const labels: Record<string, { label: string; desc: string; detailDesc: string }> = {
+  const defaultLabels: Record<string, { label: string; desc: string; detailDesc: string }> = {
     rumah_subsidi: {
       label: "Perumahan Subsidi",
       desc: "Hunian Terjangkau",
@@ -216,13 +216,21 @@ export default function HunianPermukimanModal({
     }
   };
 
-  const items = HUNIAN_KEYS.map((k) => ({
-    key: k,
-    label: labels[k]?.label || k,
-    desc: labels[k]?.desc || "",
-    detailDesc: labels[k]?.detailDesc || "",
-    value: Number(countryDetail?.[k]) || 0
-  }));
+  const items = HUNIAN_KEYS.map((k) => {
+    const bMeta = findMeta(k) || {};
+    return {
+      key: k,
+      label: bMeta.nama_bangunan || bMeta.label || defaultLabels[k]?.label || k.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
+      desc: bMeta.deskripsi_singkat || defaultLabels[k]?.desc || "",
+      detailDesc: bMeta.deskripsi || defaultLabels[k]?.detailDesc || "",
+      value: Number(countryDetail?.[k]) || 0
+    };
+  });
+
+  const getLabel = (k: string) => {
+    const bMeta = findMeta(k) || {};
+    return bMeta.nama_bangunan || bMeta.label || defaultLabels[k]?.label || k.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase());
+  };
 
   const activeItem = items.find((it) => it.key === activeTab) || items[0];
   const totalValue = items.reduce((sum, item) => sum + item.value, 0);
@@ -252,7 +260,7 @@ export default function HunianPermukimanModal({
       const total = count * capacity;
       return {
         key,
-        label: labels[key]?.label || key,
+        label: getLabel(key),
         count,
         capacityPerUnit: capacity,
         totalCapacity: total,
