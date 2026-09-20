@@ -10,6 +10,7 @@ import {
   FOOD_CONSUMPTION_PER_CAPITA,
   calculateProduction,
   calculateConsumption,
+  isFoodRawMaterialDeficit,
 } from "../../3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
 
 const ELECTRICITY_FUEL_RESOURCE_KEYS = [
@@ -246,14 +247,18 @@ export default function BaseProduksiGrid({
 
                       const isFoodCommodity = FOOD_CONSUMPTION_PER_CAPITA[key] !== undefined;
                       if (isFoodCommodity) {
-                        // Baca inventory yang sudah diakumulasi (Netto harian ditambah setiap hari)
+                        const isDeficit = isFoodRawMaterialDeficit(key, countryDetail, metadata);
                         const accumulated = getMaterialStock(countryDetail, key);
+                        const displayVal = isDeficit ? 0 : accumulated;
                         return (
-                          <>
-                            <span className="font-black text-xs sm:text-sm lg:text-base text-[#2e261a] leading-tight break-words">
-                              {accumulated.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
+                          <div className="flex flex-col items-center justify-center">
+                            <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isDeficit ? 'text-rose-600' : 'text-[#2e261a]'}`}>
+                              {displayVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                             </span>
-                          </>
+                            {isDeficit && (
+                              <span className="text-[9px] font-bold text-rose-500 leading-none mt-0.5">(bahan baku defisit)</span>
+                            )}
+                          </div>
                         );
                       }
 

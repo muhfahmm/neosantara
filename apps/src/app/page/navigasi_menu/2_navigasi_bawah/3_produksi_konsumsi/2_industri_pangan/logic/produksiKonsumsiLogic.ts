@@ -137,11 +137,63 @@ export const findMeta = (key: string, metadata: any) => {
   return undefined;
 };
 
+export const getFoodIngredientsRequirements = (factoryKey: string, metadata: any): Array<{ key: string; label: string; amount: number }> => {
+  const meta = findMeta(factoryKey, metadata);
+  if (meta && Array.isArray(meta.konsumsi_bahan_baku)) {
+    return meta.konsumsi_bahan_baku;
+  }
+  return [];
+};
+
+export const isFoodRawMaterialDeficit = (factoryKey: string, countryDetail: any, metadata: any): boolean => {
+  const reqIngredients = getFoodIngredientsRequirements(factoryKey, metadata);
+  if (!reqIngredients || reqIngredients.length === 0) return false;
+
+  const pop = safeNumber(countryDetail?.jumlah_penduduk);
+
+  for (const ing of reqIngredients) {
+    const rawKey = ing.key;
+    const rawCount = safeNumber(countryDetail?.[rawKey]);
+    const bMeta = findMeta(rawKey, metadata);
+    const baseProd = safeNumber(bMeta?.produksi);
+    const rawGrossProd = baseProd * rawCount;
+
+    const rawPopCons = FOOD_CONSUMPTION_PER_CAPITA[rawKey] !== undefined
+      ? (pop / 1000) * safeNumber(FOOD_CONSUMPTION_PER_CAPITA[rawKey])
+      : 0;
+
+    let rawFactoryCons = 0;
+    // Hitung total konsumsi pabrik untuk bahan baku ini (dari semua pabrik konsumen)
+    const foodKeys = ['gula', 'roti', 'pengolahan_daging', 'mie_instan', 'minyak_goreng', 'susu'];
+    for (const fk of foodKeys) {
+      const fIngredients = getFoodIngredientsRequirements(fk, metadata);
+      const matchedIng = fIngredients.find(item => item.key === rawKey);
+      if (matchedIng) {
+        const fCount = safeNumber(countryDetail?.[fk]);
+        rawFactoryCons += fCount * matchedIng.amount;
+      }
+    }
+
+    const finalSaldo = (rawGrossProd - rawPopCons) - rawFactoryCons;
+
+    if (rawCount <= 0 || rawGrossProd <= 0 || finalSaldo < 0) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 // Calculate production based on building count and metadata
 export const calculateProduction = (buildingKey: string, countryDetail: any, metadata: any) => {
   const count = safeNumber(countryDetail?.[buildingKey]);
   const bMeta = findMeta(buildingKey, metadata);
   const baseProd = safeNumber(bMeta?.produksi);
+
+  if (isFoodRawMaterialDeficit(buildingKey, countryDetail, metadata)) {
+    return 0;
+  }
+
   return baseProd * count;
 };
 

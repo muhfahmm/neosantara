@@ -19,7 +19,10 @@
     "satuan": "TON",
     "waktu_pembangunan": 20,
     "biaya_pembangunan": 5500,
-    "konsumsi_listrik": 30
+    "konsumsi_listrik": 30,
+    "konsumsi_bahan_baku": [
+      { "key": "tebu", "label": "tebu", "amount": 10 }
+    ]
   },
   "roti": {
     "key": "3_pabrik_roti",
@@ -30,7 +33,10 @@
     "satuan": "UNIT",
     "waktu_pembangunan": 7,
     "biaya_pembangunan": 1400,
-    "konsumsi_listrik": 30
+    "konsumsi_listrik": 30,
+    "konsumsi_bahan_baku": [
+      { "key": "gandum", "label": "gandum", "amount": 15 }
+    ]
   },
   "pengolahan_daging": {
     "key": "4_pabrik_pengolahan_daging",
@@ -41,7 +47,12 @@
     "satuan": "TON",
     "waktu_pembangunan": 30,
     "biaya_pembangunan": 6000,
-    "konsumsi_listrik": 20
+    "konsumsi_listrik": 20,
+    "konsumsi_bahan_baku": [
+      { "key": "ayam_unggas", "label": "ayam unggas", "amount": 5 },
+      { "key": "sapi_potong", "label": "sapi potong", "amount": 2 },
+      { "key": "domba_kambing", "label": "domba & kambing", "amount": 3 }
+    ]
   },
   "mie_instan": {
     "key": "5_pabrik_mie_instan",
@@ -52,7 +63,10 @@
     "satuan": "UNIT",
     "waktu_pembangunan": 15,
     "biaya_pembangunan": 3500,
-    "konsumsi_listrik": 25
+    "konsumsi_listrik": 25,
+    "konsumsi_bahan_baku": [
+      { "key": "gandum", "label": "gandum", "amount": 20 }
+    ]
   },
   "minyak_goreng": {
     "key": "6_pabrik_minyak_goreng",
@@ -63,7 +77,10 @@
     "satuan": "TON",
     "waktu_pembangunan": 20,
     "biaya_pembangunan": 4500,
-    "konsumsi_listrik": 30
+    "konsumsi_listrik": 30,
+    "konsumsi_bahan_baku": [
+      { "key": "kelapa_sawit", "label": "kelapa sawit", "amount": 12 }
+    ]
   },
   "susu": {
     "key": "7_pabrik_pengolahan_susu",
@@ -74,6 +91,9 @@
     "satuan": "LITER",
     "waktu_pembangunan": 10,
     "biaya_pembangunan": 2800,
-    "konsumsi_listrik": 30
+    "konsumsi_listrik": 30,
+    "konsumsi_bahan_baku": [
+      { "key": "sapi_perah", "label": "sapi perah", "amount": 8 }
+    ]
   }
 }
