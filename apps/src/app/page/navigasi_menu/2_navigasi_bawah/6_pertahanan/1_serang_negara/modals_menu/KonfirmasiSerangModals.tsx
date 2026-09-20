@@ -163,149 +163,130 @@ export default function SerangModals({
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/5 pointer-events-auto">
-      <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl flex flex-col relative font-sans pointer-events-auto animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40 pointer-events-auto backdrop-blur-sm">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl flex flex-col relative font-sans pointer-events-auto animate-in fade-in zoom-in-95 duration-200">
         
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
-
-        {/* 🔥 HEADER MODAL KONFIRMASI SERANG */}
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 shrink-0">
+        {/* HEADER MODAL KONFIRMASI SERANG */}
+        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
-              <Swords className="h-6 w-6 text-rose-700 animate-pulse" />
+              <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <Swords className="h-6 w-6 text-rose-500 animate-pulse" />
+              </div>
               <div>
-                <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Konfirmasi Serangan</h2>
-                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8b7e66] mt-1">
+                <h2 className="text-xl font-black text-[#00FFAA] tracking-wider uppercase">Konfirmasi Serangan</h2>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-0.5">
                   Dari: {attackerName} &rarr; Target: {targetName}
                 </p>
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
-            <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
+          <button onClick={onClose} className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* 🔥 BODY MODAL (Posisi Konten di Atas) */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar flex flex-col">
-          <div className="w-full max-w-4xl mx-auto space-y-8">
+        {/* BODY MODAL */}
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col">
+          <div className="w-full max-w-4xl mx-auto space-y-6">
 
-            {/* ⚔️ BAGIAN 1: PERBANDINGAN TOTAL KEKUATAN */}
-            <div className="flex flex-col bg-white/80 border border-[#C4B49C]/30 p-6 rounded-2xl shadow-sm gap-4">
+            {/* BAGIAN 1: PERBANDINGAN TOTAL KEKUATAN */}
+            <div className="flex flex-col bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl shadow-sm gap-4">
               
-              {/* Baris Atas: Kartu VS */}
               <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
                 
                 {/* KARTU KIRI: PENYERANG */}
-                <div className="flex-1 w-full flex flex-col items-center text-center space-y-2">
-                  <div className="p-2 rounded-full bg-emerald-100">
-                    <Shield className="w-6 h-6 text-emerald-700" />
+                <div className="flex-1 w-full flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-[#0F2424] border border-[#00FFAA]/20">
+                  <div className="p-2.5 rounded-full bg-[#00FFAA]/10 border border-[#00FFAA]/30">
+                    <Shield className="w-6 h-6 text-[#00FFAA]" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-wider text-[#8b7e66]">Pasukan Penyerang</p>
-                  <p className="text-2xl font-black text-emerald-700">{attackerName}</p>
-                  <p className="text-[11px] text-[#5c3c10]">
-                    Kekuatan: <span className="font-black">{formatNumber(attackerTotalPower)}</span>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">Pasukan Penyerang</p>
+                  <p className="text-xl font-black text-[#00FFAA]">{attackerName}</p>
+                  <p className="text-xs text-[#E0E0E0]">
+                    Kekuatan: <span className="font-black text-[#00FFAA]">{formatNumber(attackerTotalPower)}</span>
                   </p>
                 </div>
 
                 {/* ELEMEN TENGAH: VS */}
                 <div className="flex items-center justify-center py-2 md:py-0">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-[#C4B49C] bg-[#FAF6EE] text-2xl font-black text-[#5c3c10] shadow-sm">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#00FFAA]/30 bg-[#0F2424] text-xl font-black text-[#00FFAA] shadow-sm">
                     VS
                   </div>
                 </div>
 
                 {/* KARTU KANAN: TARGET */}
-                <div className="flex-1 w-full flex flex-col items-center text-center space-y-2">
-                  <div className="p-2 rounded-full bg-rose-100">
-                    <Shield className="w-6 h-6 text-rose-700" />
+                <div className="flex-1 w-full flex flex-col items-center text-center space-y-2 p-4 rounded-xl bg-[#0F2424] border border-rose-500/20">
+                  <div className="p-2.5 rounded-full bg-rose-500/10 border border-rose-500/30">
+                    <Shield className="w-6 h-6 text-rose-400" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-wider text-[#8b7e66]">Pasukan Target</p>
-                  <p className="text-2xl font-black text-rose-700">{targetName}</p>
-                  <p className="text-[11px] text-[#5c3c10]">
-                    Kekuatan: <span className="font-black">{formatNumber(targetTotalPower)}</span>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">Pasukan Target</p>
+                  <p className="text-xl font-black text-rose-400">{targetName}</p>
+                  <p className="text-xs text-[#E0E0E0]">
+                    Kekuatan: <span className="font-black text-rose-400">{formatNumber(targetTotalPower)}</span>
                   </p>
                 </div>
               </div>
 
-              {/* 🔥 BARIS BAWAH: GARIS KESEIMBANGAN PASUKAN */}
-              <div className="w-full mt-2 pt-4 border-t border-[#C4B49C]/20">
+              {/* BARIS BAWAH: GARIS KESEIMBANGAN PASUKAN */}
+              <div className="w-full mt-2 pt-4 border-t border-[#00FFAA]/10">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8b7e66]">Keseimbangan Pasukan:</span>
-                  <span className="text-[10px] font-bold text-[#5c3c10]">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6B8A8A]">Keseimbangan Pasukan:</span>
+                  <span className="text-[10px] font-bold text-[#E0E0E0]">
                     {attackerTotalPower > targetTotalPower ? '🟢 Unggul' : attackerTotalPower < targetTotalPower ? '🔴 Tertinggal' : '⚖️ Seimbang'}
                   </span>
                 </div>
                 
                 <div className="flex items-center gap-3 w-full">
-                  {/* Ikon Penyerang */}
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 border border-emerald-200">
-                    <Shield className="h-5 w-5 text-emerald-700" />
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00FFAA]/10 border border-[#00FFAA]/30">
+                    <Shield className="h-4 w-4 text-[#00FFAA]" />
                   </div>
 
-                  {/* Batang Garis Progress */}
-                  <div className="flex-1 h-6 rounded-full bg-[#e4dac3] overflow-hidden relative border border-[#C4B49C]/40 shadow-inner">
-                    {/* Bagian Hijau (Penyerang) */}
+                  <div className="flex-1 h-5 rounded-full bg-[#0F2424] overflow-hidden relative border border-[#00FFAA]/20 shadow-inner">
                     <div 
-                      className="absolute left-0 top-0 h-full bg-emerald-500 transition-all duration-700 ease-out" 
+                      className="absolute left-0 top-0 h-full bg-[#00FFAA] transition-all duration-700 ease-out" 
                       style={{ width: `${attackerPct}%` }}
                     ></div>
-                    {/* Bagian Merah (Target) */}
                     <div 
                       className="absolute right-0 top-0 h-full bg-rose-500 transition-all duration-700 ease-out" 
                       style={{ width: `${targetPct}%` }}
                     ></div>
-                    {/* Garis Indikator Keseimbangan (Kuning) di Tengah */}
                     <div className="absolute left-1/2 top-0 h-full w-0.5 bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.6)] transform -translate-x-1/2 z-10"></div>
                   </div>
 
-                  {/* Ikon Target */}
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-100 border border-rose-200">
-                    <Shield className="h-5 w-5 text-rose-700" />
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rose-500/10 border border-rose-500/30">
+                    <Shield className="h-4 w-4 text-rose-400" />
                   </div>
                 </div>
               </div>
 
             </div>
 
-            {/* 🛡️ BAGIAN 2: PERBANDINGAN PER MATRA (DARAT, LAUT, UDARA) */}
-            <div className="bg-white/80 border border-[#C4B49C]/30 p-6 rounded-2xl shadow-sm">
-              <div className="flex flex-col gap-8">
+            {/* BAGIAN 2: PERBANDINGAN PER MATRA */}
+            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl shadow-sm">
+              <div className="flex flex-col gap-4">
                 {(['darat', 'laut', 'udara'] as ArmadaGroup[]).map((group) => {
                   const Icon = groupMeta[group].icon;
-                  const colorClass = groupMeta[group].color;
-                  const bgClass = groupMeta[group].bg;
                   return (
-                    <div key={group} className="rounded-2xl border border-[#C4B49C]/20 bg-[#F9F4E9] p-4">
-                      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className={`flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#C4B49C]/40 ${bgClass} shadow-sm`}>
-                            <Icon className={`h-6 w-6 ${colorClass}`} />
-                          </div>
-                          <div>
-                            <p className="text-sm font-black uppercase tracking-[0.22em] text-[#5c3c10]">{group.toUpperCase()}</p>
-                            <p className="text-[10px] uppercase tracking-[0.2em] text-[#8b7e66]">Rincian alutsista per matra</p>
-                          </div>
-                        </div>
-                      </div>
-
+                    <div key={group} className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-4">
                       <div className="space-y-2">
                         <button
                           type="button"
                           onClick={() => setExpandedGroup(expandedGroup === group ? null : group)}
-                          className="w-full flex items-center justify-between rounded-2xl border border-[#C4B49C]/20 bg-white/90 px-4 py-3 text-left text-sm font-black text-[#5c3c10] transition hover:bg-[#f3eee0]"
+                          className="w-full flex items-center justify-between rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-3 text-left text-sm font-black text-[#00FFAA] transition hover:bg-[#00FFAA]/10"
                         >
-                          <span>{group.toUpperCase()}</span>
-                          <span className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-[#8b7e66]">
-                            {expandedGroup === group ? "Sembunyikan" : "Lihat"}
+                          <div className="flex items-center gap-3">
+                            <Icon className="h-5 w-5 text-[#00FFAA]" />
+                            <span className="uppercase tracking-wider">{group}</span>
+                          </div>
+                          <span className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#6B8A8A]">
+                            {expandedGroup === group ? "Sembunyikan" : "Lihat Rincian"}
                             {expandedGroup === group ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                           </span>
                         </button>
 
-                        {/* 🔥 PERUBAHAN: Mengganti conditional rendering dengan CSS Transition */}
                         <div
-                          className={`flex flex-col md:flex-row md:gap-6 pt-4 overflow-hidden transition-all duration-500 ease-in-out ${
+                          className={`flex flex-col md:flex-row md:gap-6 pt-2 overflow-hidden transition-all duration-300 ease-in-out ${
                             expandedGroup === group
                               ? "opacity-100 translate-y-0 max-h-[3000px] pointer-events-auto"
                               : "opacity-0 translate-y-[-10px] max-h-0 pointer-events-none"
@@ -313,25 +294,24 @@ export default function SerangModals({
                         >
                           {/* Sisi Kiri: Penyerang */}
                           <div className="flex-1 w-full space-y-2">
-                            <div className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-700 mb-2">Penyerang</div>
+                            <div className="text-[10px] font-black uppercase tracking-wider text-[#00FFAA] mb-2">Penyerang</div>
                             {attackerBreakdown[group].map((item) => (
-                              <div key={item.key} className="flex items-center justify-between rounded-xl border border-[#C4B49C]/20 bg-white px-3 py-2 text-xs font-semibold text-[#5c3c10]">
+                              <div key={item.key} className="flex items-center justify-between rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] px-3 py-2 text-xs font-semibold text-[#E0E0E0]">
                                 <span>{item.label}</span>
-                                <span className="font-black">{formatNumber(item.quantity)}</span>
+                                <span className="font-black text-[#00FFAA]">{formatNumber(item.quantity)}</span>
                               </div>
                             ))}
                           </div>
 
-                          {/* Garis Pemisah Vertikal */}
-                          <div className="hidden md:block w-[1px] self-stretch bg-[#C4B49C]/20 rounded-full" />
+                          <div className="hidden md:block w-[1px] self-stretch bg-[#00FFAA]/20 rounded-full" />
 
                           {/* Sisi Kanan: Target */}
                           <div className="flex-1 w-full space-y-2">
-                            <div className="text-[10px] font-black uppercase tracking-[0.22em] text-rose-700 mb-2">Target</div>
+                            <div className="text-[10px] font-black uppercase tracking-wider text-rose-400 mb-2">Target</div>
                             {targetBreakdown[group].map((item) => (
-                              <div key={item.key} className="flex items-center justify-between rounded-xl border border-[#C4B49C]/20 bg-white px-3 py-2 text-xs font-semibold text-[#5c3c10]">
+                              <div key={item.key} className="flex items-center justify-between rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] px-3 py-2 text-xs font-semibold text-[#E0E0E0]">
                                 <span>{item.label}</span>
-                                <span className="font-black">{formatNumber(item.quantity)}</span>
+                                <span className="font-black text-rose-400">{formatNumber(item.quantity)}</span>
                               </div>
                             ))}
                           </div>
@@ -347,16 +327,16 @@ export default function SerangModals({
           </div>
         </div>
 
-        {/* 🔥 FOOTER MODAL (Aksi Konfirmasi / Batal) */}
-        <div className="px-8 py-4 border-t-2 border-[#C4B49C]/30 bg-[#FAF6EE]/80 relative z-10 shrink-0 flex items-center justify-end gap-4">
-          <button onClick={onClose} className="px-6 py-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
+        {/* FOOTER MODAL */}
+        <div className="px-6 py-4 border-t border-[#00FFAA]/30 bg-[#0A1A1A] relative z-10 shrink-0 flex items-center justify-end gap-4">
+          <button onClick={onClose} className="px-6 py-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
             Batal
           </button>
           <button 
             onClick={onConfirm} 
-            className="px-8 py-2.5 rounded-xl bg-gradient-to-r from-rose-700 to-rose-900 text-[#FAF6EE] shadow-lg shadow-rose-900/30 font-black text-xs uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all cursor-pointer flex items-center gap-2"
+            className="px-8 py-2 rounded-xl bg-rose-600 text-white shadow-lg shadow-rose-900/30 font-black text-xs uppercase tracking-wider hover:bg-rose-500 active:scale-95 transition-all cursor-pointer flex items-center gap-2"
           >
-            <Swords className="w-4 w-4" />
+            <Swords className="w-4 h-4" />
             Konfirmasi Serangan
           </button>
         </div>

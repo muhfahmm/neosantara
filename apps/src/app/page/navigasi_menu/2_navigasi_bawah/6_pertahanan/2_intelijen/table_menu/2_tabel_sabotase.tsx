@@ -119,31 +119,31 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
 
   return (
     <div className="w-full">
-      <div className="overflow-hidden border border-[#C4B49C]/30 rounded-xl bg-[#FAF6EE]/50 shadow-sm">
-        <div className="max-h-[50vh] overflow-auto">
+      <div className="overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
+        <div className="max-h-[52vh] overflow-auto">
           <table className="w-full text-xs">
-            <thead className="bg-[#efe7d8] border-b-2 border-[#C4B49C]/40 sticky top-0 z-10">
+            <thead className="bg-[#0F2424] border-b border-[#00FFAA]/20 sticky top-0 z-10">
               <tr>
-                <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider w-12">Rank</th>
-                <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider cursor-pointer hover:bg-[#5c3c10]/10 transition-colors" onClick={() => handleSort('countryName')}>
+                <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider w-12">Rank</th>
+                <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('countryName')}>
                   Negara{getSortArrow('countryName')}
                 </th>
-                <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider cursor-pointer hover:bg-[#5c3c10]/10 transition-colors" onClick={() => handleSort('darat')}>
+                <th className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('darat')}>
                   Darat{getSortArrow('darat')}
                 </th>
-                <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider cursor-pointer hover:bg-[#5c3c10]/10 transition-colors" onClick={() => handleSort('laut')}>
+                <th className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('laut')}>
                   Laut{getSortArrow('laut')}
                 </th>
-                <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider cursor-pointer hover:bg-[#5c3c10]/10 transition-colors" onClick={() => handleSort('udara')}>
+                <th className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('udara')}>
                   Udara{getSortArrow('udara')}
                 </th>
-                <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider cursor-pointer hover:bg-[#5c3c10]/10 transition-colors" onClick={() => handleSort('totalPower')}>
+                <th className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('totalPower')}>
                   Total Kekuatan{getSortArrow('totalPower')}
                 </th>
-                <th className="px-4 py-3 text-center font-black text-[#5c3c10] uppercase tracking-wider">Aksi</th>
+                <th className="px-4 py-3 text-center font-black text-[#00FFAA] uppercase tracking-wider">Aksi</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-[#00FFAA]/10">
               {rankings.map((row, index) => {
                 const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara";
                 const isUserCountry = row.countryName.toLowerCase().trim() === selectedCountryName.toLowerCase().trim();
@@ -151,42 +151,41 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
                 return (
                   <tr 
                     key={`${row.countryName}-${index}`} 
-                    className={`border-b border-[#C4B49C]/25 transition-colors ${
+                    className={`transition-colors ${
                       isUserCountry
-                        ? 'bg-emerald-100/80 hover:bg-emerald-200/80 border-l-4 border-l-emerald-600'
-                        : 'odd:bg-[#FBF7EE] even:bg-white/60 hover:bg-[#e4dac3]/30'
+                        ? 'bg-[#00FFAA]/10 hover:bg-[#00FFAA]/20 border-l-4 border-l-[#00FFAA]'
+                        : 'hover:bg-[#00FFAA]/5'
                     }`}
                   >
-                    <td className={`px-3 py-2 font-black ${isUserCountry ? 'text-emerald-900' : 'text-[#5c3c10]'}`}>{index + 1}</td>
+                    <td className={`px-3 py-2.5 font-black ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>{index + 1}</td>
                     
-                    {/* 🔥 KOLOM NEGARA DENGAN BENDERA */}
-                    <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-emerald-900' : 'text-[#5c3c10]'}`}>
+                    <td className={`px-3 py-2.5 font-bold ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>
                       <div className="flex items-center gap-2 min-h-[20px]">
                         {row.iso && row.iso.length === 2 ? (
                           <img
                             src={`https://flagcdn.com/w20/${row.iso.toLowerCase()}.png`}
                             alt={row.countryName}
-                            className="w-5 h-4 object-cover rounded-sm border border-[#5c3c10]/10 shadow-sm flex-shrink-0"
+                            className="w-5 h-4 object-cover rounded-sm border border-[#00FFAA]/20 shadow-sm flex-shrink-0"
                             onError={(e) => (e.target as HTMLImageElement).style.display = "none"}
                           />
                         ) : (
-                          <div className="w-5 h-4 rounded-sm bg-[#e4dac3] border border-[#5c3c10]/20 flex-shrink-0" />
+                          <div className="w-5 h-4 rounded-sm bg-[#0F2424] border border-[#00FFAA]/20 flex-shrink-0" />
                         )}
                         <span>{row.countryName}</span>
                       </div>
                     </td>
 
-                    <td className="px-3 py-2 text-[#5c3c10]">{formatNumber(row.darat)}</td>
-                    <td className="px-3 py-2 text-[#5c3c10]">{formatNumber(row.laut)}</td>
-                    <td className="px-3 py-2 text-[#5c3c10]">{formatNumber(row.udara)}</td>
-                    <td className={`px-3 py-2 font-black ${isUserCountry ? 'text-emerald-600' : 'text-rose-700'}`}>{formatNumber(row.totalPower)}</td>
-                    <td className="px-3 py-2 text-center">
+                    <td className="px-3 py-2.5 text-[#E0E0E0]">{formatNumber(row.darat)}</td>
+                    <td className="px-3 py-2.5 text-[#E0E0E0]">{formatNumber(row.laut)}</td>
+                    <td className="px-3 py-2.5 text-[#E0E0E0]">{formatNumber(row.udara)}</td>
+                    <td className={`px-3 py-2.5 font-black ${isUserCountry ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{formatNumber(row.totalPower)}</td>
+                    <td className="px-3 py-2.5 text-center">
                       <button
                         onClick={() => handleOpenModal(row)}
-                        className="p-1.5 rounded-lg bg-orange-600/10 text-orange-700 hover:bg-orange-600 hover:text-white border border-orange-600/30 transition-all cursor-pointer"
+                        className="p-1.5 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500 hover:text-white border border-orange-500/30 transition-all cursor-pointer"
                         title="Lancarkan operasi sabotase"
                       >
-                        <Bomb className="w-4 w-4" />
+                        <Bomb className="w-4 h-4" />
                       </button>
                     </td>
                   </tr>
