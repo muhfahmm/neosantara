@@ -56,22 +56,24 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
 
       <div className="overflow-x-auto border border-[#C4B49C]/30 rounded-xl bg-[#FAF6EE]/50 shadow-sm">
         <table className="w-full text-xs">
-          <thead className="bg-[#5c3c10]/5 border-b-2 border-[#C4B49C]/30">
+          <thead className="bg-[#efe7d8] border-b-2 border-[#C4B49C]/40 sticky top-0 z-10">
             <tr>
               <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">Negara</th>
               <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">Pokok Pinjaman</th>
               <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">Bunga Awal</th>
               <th className="px-4 py-3 text-left font-black text-emerald-700 uppercase tracking-wider">Sudah Dibayar</th>
-              <th className="px-4 py-3 text-left font-black text-rose-600 uppercase tracking-wider flex items-center gap-2">
-                <span>Denda</span>
-                <button
-                  onClick={() => setGeneralPenaltyOpen?.(true)}
-                  className="p-2 rounded-full bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 transition-all cursor-pointer"
-                  title="Penjelasan Denda"
-                  aria-label="Penjelasan Denda"
-                >
-                  <Info className="w-4 h-4" />
-                </button>
+              <th className="px-4 py-3 text-left font-black text-rose-600 uppercase tracking-wider">
+                <div className="flex items-center gap-2">
+                  <span>Denda</span>
+                  <button
+                    onClick={() => setGeneralPenaltyOpen?.(true)}
+                    className="p-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 transition-all cursor-pointer"
+                    title="Penjelasan Denda"
+                    aria-label="Penjelasan Denda"
+                  >
+                    <Info className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </th>
               <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">Total Saat Ini</th>
               <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">Jatuh Tempo</th>

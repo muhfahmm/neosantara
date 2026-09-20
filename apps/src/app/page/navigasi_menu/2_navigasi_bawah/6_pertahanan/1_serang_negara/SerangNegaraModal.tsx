@@ -1,6 +1,6 @@
 "use client"
 import React, { useMemo, useState } from "react";
-import { X, Shield, Swords } from "lucide-react";
+import { X, Shield, Swords, ChevronUp, ChevronDown } from "lucide-react";
 import { getArmadaPowerSummary } from "../4_armada/logic/armadaLogic";
 // 🔥 Import modal serang baru yang akan kita buat
 import SerangModals from "./modals_menu/KonfirmasiSerangModals";
@@ -157,10 +157,9 @@ export default function SerangNegaraModal({
   };
 
   const getSortArrow = (key: keyof RankingRow) => {
-    if (sortConfig?.key === key) {
-      return sortConfig.direction === 'asc' ? ' ▲' : ' ▼';
-    }
-    return '';
+    if (sortConfig?.key !== key) return <span className="text-[#8b7e66]/40 ml-1 text-xs font-normal">⇅</span>;
+    if (sortConfig.direction === 'asc') return <ChevronUp className="h-3 w-3 ml-1 inline text-[#5c3c10]" />;
+    return <ChevronDown className="h-3 w-3 ml-1 inline text-[#5c3c10]" />;
   };
 
   // 🔥 Fungsi ketika tombol pedang diklik: Buka modal serang
@@ -214,28 +213,28 @@ export default function SerangNegaraModal({
                 Tabel ranking 207 negara berdasarkan total kekuatan gabungan darat, laut, dan udara. Klik header kolom untuk mengurutkan data. Klik ikon <Swords className="inline w-3 h-3" /> untuk menyerang target.
               </div>
 
-              <div className="w-full overflow-hidden rounded-2xl border-2 border-[#C4B49C]/40 bg-white/80 shadow-sm">
+              <div className="w-full overflow-hidden border border-[#C4B49C]/30 rounded-xl bg-[#FAF6EE]/50 shadow-sm">
                 <div className="max-h-[50vh] overflow-auto">
-                  <table className="min-w-full text-left text-[11px]">
-                    <thead className="sticky top-0 z-10 bg-[#5c3c10] text-[#FAF6EE] uppercase tracking-[0.18em]">
+                  <table className="w-full text-xs">
+                    <thead className="bg-[#efe7d8] border-b-2 border-[#C4B49C]/40 sticky top-0 z-10">
                       <tr>
-                        <th className="px-3 py-3 font-black">Rank</th>
-                        <th className="px-3 py-3 font-black cursor-pointer hover:bg-[#4a2f0d] transition-colors" onClick={() => handleSort('countryName')}>
+                        <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider w-12">Rank</th>
+                        <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider cursor-pointer hover:bg-[#5c3c10]/10 transition-colors" onClick={() => handleSort('countryName')}>
                           Negara{getSortArrow('countryName')}
                         </th>
-                        <th className="px-3 py-3 font-black cursor-pointer hover:bg-[#4a2f0d] transition-colors" onClick={() => handleSort('darat')}>
+                        <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider cursor-pointer hover:bg-[#5c3c10]/10 transition-colors" onClick={() => handleSort('darat')}>
                           Darat{getSortArrow('darat')}
                         </th>
-                        <th className="px-3 py-3 font-black cursor-pointer hover:bg-[#4a2f0d] transition-colors" onClick={() => handleSort('laut')}>
+                        <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider cursor-pointer hover:bg-[#5c3c10]/10 transition-colors" onClick={() => handleSort('laut')}>
                           Laut{getSortArrow('laut')}
                         </th>
-                        <th className="px-3 py-3 font-black cursor-pointer hover:bg-[#4a2f0d] transition-colors" onClick={() => handleSort('udara')}>
+                        <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider cursor-pointer hover:bg-[#5c3c10]/10 transition-colors" onClick={() => handleSort('udara')}>
                           Udara{getSortArrow('udara')}
                         </th>
-                        <th className="px-3 py-3 font-black cursor-pointer hover:bg-[#4a2f0d] transition-colors" onClick={() => handleSort('totalPower')}>
+                        <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider cursor-pointer hover:bg-[#5c3c10]/10 transition-colors" onClick={() => handleSort('totalPower')}>
                           Total Kekuatan{getSortArrow('totalPower')}
                         </th>
-                        <th className="px-3 py-3 font-black text-center">Aksi</th>
+                        <th className="px-4 py-3 text-center font-black text-[#5c3c10] uppercase tracking-wider">Aksi</th>
                       </tr>
                     </thead>
                     <tbody>

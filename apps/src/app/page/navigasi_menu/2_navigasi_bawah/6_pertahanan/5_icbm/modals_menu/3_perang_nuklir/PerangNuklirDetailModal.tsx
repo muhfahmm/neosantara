@@ -74,18 +74,18 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
 
         <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar flex flex-col items-center">
           <div className="w-full max-w-5xl">
-            <div className="overflow-hidden rounded-2xl border-2 border-[#C4B49C]/40 bg-white/80 shadow-sm">
+            <div className="overflow-hidden border border-[#C4B49C]/30 rounded-xl bg-[#FAF6EE]/50 shadow-sm">
               <div className="max-h-[60vh] overflow-auto">
-                <table className="min-w-full text-left text-[11px]">
-                  <thead className="sticky top-0 z-10 bg-[#5c3c10] text-[#FAF6EE] uppercase tracking-[0.18em]">
+                <table className="w-full text-xs">
+                  <thead className="bg-[#efe7d8] border-b-2 border-[#C4B49C]/40 sticky top-0 z-10">
                     <tr>
-                      <th className="px-3 py-3 font-black">Rank</th>
-                      <th className="px-3 py-3 font-black">Negara</th>
-                      <th className="px-3 py-3 font-black">Darat</th>
-                      <th className="px-3 py-3 font-black">Laut</th>
-                      <th className="px-3 py-3 font-black">Udara</th>
-                      <th className="px-3 py-3 font-black">Total Kekuatan</th>
-                      <th className="px-3 py-3 font-black text-center">Aksi</th>
+                      <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider w-12">Rank</th>
+                      <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">Negara</th>
+                      <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider">Darat</th>
+                      <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider">Laut</th>
+                      <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider">Udara</th>
+                      <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider">Total Kekuatan</th>
+                      <th className="px-4 py-3 text-center font-black text-[#5c3c10] uppercase tracking-wider">Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
