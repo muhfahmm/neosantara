@@ -60,6 +60,7 @@ export default function DoktrinKeterbukaanModal({
   const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
 
   useEffect(() => {
+    if (!isOpen) return;
     const dbData = getDoktrinKeterbukaan(countryName) || {};
     setSpeechScore(countryDetail?.speechScore ?? dbData.speechScore ?? 50);
     setReligionScore(countryDetail?.religionScore ?? dbData.religionScore ?? 60);
@@ -70,7 +71,7 @@ export default function DoktrinKeterbukaanModal({
     setBorderScore(countryDetail?.borderScore ?? dbData.borderScore ?? 40);
     setTradeScore(countryDetail?.tradeScore ?? dbData.tradeScore ?? 60);
     setDiplomacyScore(countryDetail?.diplomacyScore ?? dbData.diplomacyScore ?? 55);
-  }, [countryDetail, countryName]);
+  }, [isOpen, countryName]);
 
   if (!isOpen) return null;
 
@@ -130,24 +131,91 @@ export default function DoktrinKeterbukaanModal({
 
   const regime = getRegimeStatus(overallScore);
 
-  const handleApplyDoctrine = () => {
+  const updateCountryDetailWithScores = (updatedScores: {
+    speechScore?: number;
+    religionScore?: number;
+    demoScore?: number;
+    transparencyScore?: number;
+    mediaScore?: number;
+    internetScore?: number;
+    borderScore?: number;
+    tradeScore?: number;
+    diplomacyScore?: number;
+  }) => {
+    const nextSpeech = updatedScores.speechScore ?? speechScore;
+    const nextReligion = updatedScores.religionScore ?? religionScore;
+    const nextDemo = updatedScores.demoScore ?? demoScore;
+    const nextTransparency = updatedScores.transparencyScore ?? transparencyScore;
+    const nextMedia = updatedScores.mediaScore ?? mediaScore;
+    const nextInternet = updatedScores.internetScore ?? internetScore;
+    const nextBorder = updatedScores.borderScore ?? borderScore;
+    const nextTrade = updatedScores.tradeScore ?? tradeScore;
+    const nextDiplomacy = updatedScores.diplomacyScore ?? diplomacyScore;
+
+    const nextOverall = Math.round(
+      (nextSpeech + nextReligion + nextDemo + nextTransparency + nextMedia + nextInternet + nextBorder + nextTrade + nextDiplomacy) / 9
+    );
+
     if (setCountryDetail) {
       setCountryDetail((prev: any) => ({
         ...prev,
-        speechScore,
-        religionScore,
-        demoScore,
-        transparencyScore,
-        mediaScore,
-        internetScore,
-        borderScore,
-        tradeScore,
-        diplomacyScore,
-        opennessIndex: overallScore,
+        speechScore: nextSpeech,
+        religionScore: nextReligion,
+        demoScore: nextDemo,
+        transparencyScore: nextTransparency,
+        mediaScore: nextMedia,
+        internetScore: nextInternet,
+        borderScore: nextBorder,
+        tradeScore: nextTrade,
+        diplomacyScore: nextDiplomacy,
+        opennessIndex: nextOverall,
       }));
     }
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 3000);
+  };
+
+  const handleSpeechChange = (val: number) => {
+    setSpeechScore(val);
+    updateCountryDetailWithScores({ speechScore: val });
+  };
+
+  const handleReligionChange = (val: number) => {
+    setReligionScore(val);
+    updateCountryDetailWithScores({ religionScore: val });
+  };
+
+  const handleDemoChange = (val: number) => {
+    setDemoScore(val);
+    updateCountryDetailWithScores({ demoScore: val });
+  };
+
+  const handleTransparencyChange = (val: number) => {
+    setTransparencyScore(val);
+    updateCountryDetailWithScores({ transparencyScore: val });
+  };
+
+  const handleMediaChange = (val: number) => {
+    setMediaScore(val);
+    updateCountryDetailWithScores({ mediaScore: val });
+  };
+
+  const handleInternetChange = (val: number) => {
+    setInternetScore(val);
+    updateCountryDetailWithScores({ internetScore: val });
+  };
+
+  const handleBorderChange = (val: number) => {
+    setBorderScore(val);
+    updateCountryDetailWithScores({ borderScore: val });
+  };
+
+  const handleTradeChange = (val: number) => {
+    setTradeScore(val);
+    updateCountryDetailWithScores({ tradeScore: val });
+  };
+
+  const handleDiplomacyChange = (val: number) => {
+    setDiplomacyScore(val);
+    updateCountryDetailWithScores({ diplomacyScore: val });
   };
 
   return (
@@ -275,7 +343,7 @@ export default function DoktrinKeterbukaanModal({
                   min="0"
                   max="100"
                   value={speechScore}
-                  onChange={(e) => setSpeechScore(Number(e.target.value))}
+                  onChange={(e) => handleSpeechChange(Number(e.target.value))}
                   className="w-full accent-[#5c3c10] cursor-pointer"
                 />
 
@@ -313,7 +381,7 @@ export default function DoktrinKeterbukaanModal({
                   min="0"
                   max="100"
                   value={religionScore}
-                  onChange={(e) => setReligionScore(Number(e.target.value))}
+                  onChange={(e) => handleReligionChange(Number(e.target.value))}
                   className="w-full accent-[#5c3c10] cursor-pointer"
                 />
 
@@ -351,7 +419,7 @@ export default function DoktrinKeterbukaanModal({
                   min="0"
                   max="100"
                   value={demoScore}
-                  onChange={(e) => setDemoScore(Number(e.target.value))}
+                  onChange={(e) => handleDemoChange(Number(e.target.value))}
                   className="w-full accent-[#5c3c10] cursor-pointer"
                 />
 
@@ -389,7 +457,7 @@ export default function DoktrinKeterbukaanModal({
                   min="0"
                   max="100"
                   value={transparencyScore}
-                  onChange={(e) => setTransparencyScore(Number(e.target.value))}
+                  onChange={(e) => handleTransparencyChange(Number(e.target.value))}
                   className="w-full accent-[#5c3c10] cursor-pointer"
                 />
 
@@ -432,7 +500,7 @@ export default function DoktrinKeterbukaanModal({
                   min="0"
                   max="100"
                   value={mediaScore}
-                  onChange={(e) => setMediaScore(Number(e.target.value))}
+                  onChange={(e) => handleMediaChange(Number(e.target.value))}
                   className="w-full accent-[#5c3c10] cursor-pointer"
                 />
 
@@ -470,7 +538,7 @@ export default function DoktrinKeterbukaanModal({
                   min="0"
                   max="100"
                   value={internetScore}
-                  onChange={(e) => setInternetScore(Number(e.target.value))}
+                  onChange={(e) => handleInternetChange(Number(e.target.value))}
                   className="w-full accent-[#5c3c10] cursor-pointer"
                 />
 
@@ -513,7 +581,7 @@ export default function DoktrinKeterbukaanModal({
                   min="0"
                   max="100"
                   value={borderScore}
-                  onChange={(e) => setBorderScore(Number(e.target.value))}
+                  onChange={(e) => handleBorderChange(Number(e.target.value))}
                   className="w-full accent-[#5c3c10] cursor-pointer"
                 />
 
@@ -537,8 +605,8 @@ export default function DoktrinKeterbukaanModal({
                       <ShoppingBag className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-[#5c3c10]">Perdagangan & Modal Asing (Autarki vs Pasar Bebas)</h4>
-                      <p className="text-xs text-[#8b7e66]">Aturan impor-ekspor dan kemudahan Penanaman Modal Asing (PMA).</p>
+                      <h4 className="text-sm font-bold text-[#5c3c10]">Perdagangan Bebas & Investasi Asing (PMA)</h4>
+                      <p className="text-xs text-[#8b7e66]">Keterbukaan pasar domestik untuk barang impor, saham asing, dan perusahaan multinasional.</p>
                     </div>
                   </div>
                   <span className="text-sm font-bold text-[#5c3c10] bg-[#FAF6EE] px-3 py-1 rounded-lg border border-[#C4B49C]/40">
@@ -551,31 +619,31 @@ export default function DoktrinKeterbukaanModal({
                   min="0"
                   max="100"
                   value={tradeScore}
-                  onChange={(e) => setTradeScore(Number(e.target.value))}
+                  onChange={(e) => handleTradeChange(Number(e.target.value))}
                   className="w-full accent-[#5c3c10] cursor-pointer"
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs pt-1">
                   <div className="p-2 rounded bg-rose-50 border border-rose-200 text-rose-800">
-                    <span className="font-bold block">🌾 Autarki Mandiri (&lt;30%):</span>
-                    <span>Kebal Sanksi & Embargo Luar Negeri, Produksi Mandiri.</span>
+                    <span className="font-bold block">🔒 Autarki Ekonomi (&lt;30%):</span>
+                    <span>Proteksi pasar domestik total, embargo barang luar.</span>
                   </div>
                   <div className="p-2 rounded bg-emerald-50 border border-emerald-200 text-emerald-800">
-                    <span className="font-bold block">📈 Pasar Bebas (&gt;70%):</span>
-                    <span>+20% Pendapatan PDB, Daya Tarik Modal Asing Melimpah.</span>
+                    <span className="font-bold block">📈 Pasar Bebas Global (&gt;70%):</span>
+                    <span>+20% Investasi Asing (PMA), Kemudahan Ekspor/Impor.</span>
                   </div>
                 </div>
               </div>
 
-              {/* Orientasi Diplomasi */}
+              {/* Multilateralisme & Aliansi */}
               <div className="p-4 bg-white rounded-xl border border-[#C4B49C]/40 shadow-sm space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="p-2 bg-indigo-500/10 text-indigo-800 rounded-lg">
+                    <div className="p-2 bg-blue-500/10 text-blue-800 rounded-lg">
                       <HeartHandshake className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-[#5c3c10]">Orientasi Diplomasi (Isolasionis vs Multilateralis)</h4>
+                      <h4 className="text-sm font-bold text-[#5c3c10]">Kerjasama Multilateral & Aliansi Global</h4>
                       <p className="text-xs text-[#8b7e66]">Partisipasi dalam aliansi internasional, PBB, dan pakta pertahanan bersama.</p>
                     </div>
                   </div>
@@ -589,7 +657,7 @@ export default function DoktrinKeterbukaanModal({
                   min="0"
                   max="100"
                   value={diplomacyScore}
-                  onChange={(e) => setDiplomacyScore(Number(e.target.value))}
+                  onChange={(e) => handleDiplomacyChange(Number(e.target.value))}
                   className="w-full accent-[#5c3c10] cursor-pointer"
                 />
 
@@ -610,22 +678,15 @@ export default function DoktrinKeterbukaanModal({
 
         {/* FOOTER ACTIONS */}
         <div className="px-6 py-4 border-t-2 border-[#C4B49C]/30 bg-[#FAF6EE] flex items-center justify-between shrink-0 relative z-10">
-          {savedSuccess ? (
-            <div className="text-xs font-bold text-emerald-700 flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4" /> Doktrin baru berhasil diterapkan!
-            </div>
-          ) : (
-            <div className="text-xs text-[#8b7e66] font-semibold">
-              Perubahan doktrin berdampak langsung pada stabilitas, kebebasan HAM, dan pertumbuhan nasional.
-            </div>
-          )}
+          <div className="text-xs text-[#8b7e66] font-semibold flex items-center gap-1.5">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Perubahan doktrin terupdate secara otomatis & berdampak langsung pada negara.
+          </div>
 
           <button
-            onClick={handleApplyDoctrine}
+            onClick={onClose}
             className="px-5 py-2.5 rounded-xl bg-[#5c3c10] text-[#FAF6EE] font-bold text-xs uppercase tracking-wider hover:bg-[#422b0b] active:scale-95 transition-all cursor-pointer flex items-center gap-2 shadow-md"
           >
-            <Sliders className="w-4 h-4" />
-            Terapkan Doktrin
+            Selesai
           </button>
         </div>
       </div>

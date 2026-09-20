@@ -478,10 +478,10 @@ export default function InfrastrukturMiliter({
 
               <div className="flex flex-col justify-between flex-1">
                 <div>
-                  <div className="flex items-end gap-1.5 mt-2">
-                    <span className="text-3xl font-black text-[#2e261a]">{formatNumber(value)}</span>
+                  <div className="flex items-end gap-1.5 mt-2 flex-wrap">
+                    <span className="text-base sm:text-lg lg:text-xl font-black text-[#2e261a] leading-tight break-words">{formatNumber(value)}</span>
                     {isBuilding && (
-                      <span className="text-xl font-bold text-emerald-600 leading-none">
+                      <span className="text-xs sm:text-sm font-bold text-emerald-600 leading-none">
                         +{queueCount}
                       </span>
                     )}

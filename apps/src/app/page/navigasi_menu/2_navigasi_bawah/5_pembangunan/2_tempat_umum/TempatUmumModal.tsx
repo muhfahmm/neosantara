@@ -490,10 +490,10 @@ export default function TempatUmumModal({
                                     <Info className="w-3 h-3" />
                                   </button>
                                 </div>
-                                <div className="flex items-end gap-1.5 mt-2">
-                                  <p className="text-2xl font-black text-[#2e261a]">{formatNumber(perCount)}</p>
+                                <div className="flex items-end gap-1.5 mt-2 flex-wrap">
+                                  <p className="text-base sm:text-lg lg:text-xl font-black text-[#2e261a] leading-tight break-words">{formatNumber(perCount)}</p>
                                   {isBuilding && (
-                                    <span className="text-xl font-bold text-emerald-600 leading-none">+{queueCount}</span>
+                                    <span className="text-xs sm:text-sm font-bold text-emerald-600 leading-none">+{queueCount}</span>
                                   )}
                                 </div>
                               </div>
@@ -518,7 +518,7 @@ export default function TempatUmumModal({
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 border-t-2 border-[#C4B49C]/20 pt-6">
                 <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/70 p-4">
                   <p className="text-[10px] font-black uppercase tracking-widest text-[#5c3c10]">Total Fasilitas Publik</p>
-                  <p className="text-2xl font-black text-[#2e261a] mt-1">{formatNumber(totalValue)}</p>
+                  <p className="text-base sm:text-lg lg:text-xl font-black text-[#2e261a] mt-1 break-words">{formatNumber(totalValue)}</p>
                 </div>
                 <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/70 p-4">
                   <p className="text-[10px] font-black uppercase tracking-widest text-[#5c3c10]">Catatan Pembangunan</p>

@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import {
   X, Info, TrendingUp, TrendingDown, BookOpen, Heart, MapPin,
-  Wheat, Home, Library, Hospital, Landmark, CheckCircle, Sprout
+  Wheat, Home, Library, Hospital, Landmark, CheckCircle, Sprout, Globe
 } from "lucide-react";
 import {
   calculateKesejahteraan,
@@ -11,6 +11,7 @@ import {
   getKesejahteraanBreakdown,
   type KesejahteraanIndex,
 } from "@/app/logic/kesejahteraanCalculator";
+import { calculateKeterbukaanScore } from "@/app/logic/kepuasanCalculator";
 import { FOOD_CONSUMPTION_PER_CAPITA, calculateProduction } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import NaikkanKesejahteraanTab from "./NaikkanKesejahteraanTab";
@@ -178,6 +179,13 @@ export default function IndeksKesejahteraanModal({
     return Math.min(100, Math.max(1, Math.round((ratio / 2) * 100)));
   }, [countryDetail, metadata]);
 
+  /**
+   * Skor KETERBUKAAN — formula terpusat dari kepuasanCalculator
+   */
+  const keterbukaanActualScore = useMemo(() => {
+    return calculateKeterbukaanScore(countryDetail);
+  }, [countryDetail]);
+
   const overallScore = kesejahteraan?.overallScore ?? 50;
 
   if (!isOpen || !kesejahteraan) return null;
@@ -200,6 +208,7 @@ export default function IndeksKesejahteraanModal({
   const tempatUmumColor = getScoreColor(infrastrukturActualScore);
   const panganColor = getScoreColor(panganActualScore);
   const hunianColor = getScoreColor(hunianActualScore);
+  const keterbukaanColor = getScoreColor(keterbukaanActualScore);
 
   const getTrendIcon = (trend: 'naik' | 'turun' | 'stabil') => {
     switch (trend) {
@@ -313,141 +322,243 @@ export default function IndeksKesejahteraanModal({
 
                 {/* Breakdown 5 Sektor */}
                 <div className="space-y-4">
-                  <h3 className="text-md font-black text-[#5c3c10] uppercase tracking-wider">Breakdown Sektor (Bobot)</h3>
+                  <h3 className="text-md font-black text-[#5c3c10] uppercase tracking-wider">Breakdown Sektor (Bobot & Target Kebutuhan)</h3>
 
-                  {/* Pendidikan - 35% */}
-                  <div
-                    onClick={() => {
-                      onOpenTempatUmum?.('pendidikan');
-                      if (!onOpenTempatUmum) setActiveMenu?.("Menu:TempatUmum");
-                      onClose();
-                    }}
-                    className={`rounded-xl p-5 border-2 ${pendidikanColor.border} ${pendidikanColor.bg} space-y-3 cursor-pointer transition-all duration-200 hover:shadow-lg`}
-                    title="Klik untuk membuka tab Pendidikan di Tempat Umum & Layanan Publik"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Library className={`h-5 w-5 ${pendidikanColor.icon}`} />
-                        <div>
-                          <p className="text-xs font-black text-[#8b7e66] uppercase">Pendidikan</p>
-                          <p className="text-sm font-bold text-[#5c3c10]">35% Bobot</p>
-                        </div>
-                      </div>
-                      <span className={`text-3xl font-black ${pendidikanColor.text}`}>{pendidikanActualScore}</span>
-                    </div>
-                    <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
-                      <p>• Fasilitas Pendidikan: <span className="font-black">{kesejahteraan.detail.pendidikan.totalFacilities}</span> unit</p>
-                      <p>• Indeks Kepuasan Rakyat: <span className="font-black">{pendidikanActualScore}/100</span></p>
-                      <p>• Mencakup: Prasekolah, SD, SMP, SMA, Universitas, Lembaga Pendidikan, Lab, Observatorium, Pusat Penelitian</p>
-                    </div>
-                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Pendidikan - 35% */}
+                    {(() => {
+                      const pop = Number(countryDetail?.jumlah_penduduk) || 1;
+                      const targetPendidikan = Math.ceil(pop * 0.0001);
+                      const currentPendidikan = kesejahteraan?.detail?.pendidikan?.totalFacilities ?? 0;
+                      const neededPendidikan = Math.max(0, targetPendidikan - currentPendidikan);
 
-                  {/* Kesehatan - 40% */}
-                  <div
-                    onClick={() => {
-                      onOpenTempatUmum?.('kesehatan');
-                      if (!onOpenTempatUmum) setActiveMenu?.("Menu:TempatUmum");
-                      onClose();
-                    }}
-                    className={`rounded-xl p-5 border-2 ${kesehatanColor.border} ${kesehatanColor.bg} space-y-3 cursor-pointer transition-all duration-200 hover:shadow-lg`}
-                    title="Klik untuk membuka tab Kesehatan di Tempat Umum & Layanan Publik"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Hospital className={`h-5 w-5 ${kesehatanColor.icon}`} />
-                        <div>
-                          <p className="text-xs font-black text-[#8b7e66] uppercase">Kesehatan</p>
-                          <p className="text-sm font-bold text-[#5c3c10]">40% Bobot (Prioritas)</p>
+                      return (
+                        <div
+                          onClick={() => {
+                            onOpenTempatUmum?.('pendidikan');
+                            if (!onOpenTempatUmum) setActiveMenu?.("Menu:TempatUmum");
+                            onClose();
+                          }}
+                          className={`rounded-xl p-5 border-2 ${pendidikanColor.border} ${pendidikanColor.bg} space-y-3 cursor-pointer transition-all duration-200 hover:shadow-lg`}
+                          title="Klik untuk membuka tab Pendidikan di Tempat Umum & Layanan Publik"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <Library className={`h-5 w-5 ${pendidikanColor.icon}`} />
+                              <div>
+                                <p className="text-xs font-black text-[#8b7e66] uppercase">Pendidikan</p>
+                                <p className="text-sm font-bold text-[#5c3c10]">35% Bobot</p>
+                              </div>
+                            </div>
+                            <span className={`text-3xl font-black ${pendidikanColor.text}`}>{pendidikanActualScore}</span>
+                          </div>
+                          <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
+                            <p>• Fasilitas Saat Ini: <span className="font-black">{currentPendidikan.toLocaleString("id-ID")}</span> unit</p>
+                            <p>• Target Ideal (100%): <span className="font-black">{targetPendidikan.toLocaleString("id-ID")}</span> unit (1 per 10.000 jiwa)</p>
+                            {neededPendidikan > 0 ? (
+                              <p className="text-rose-700 bg-rose-100/70 p-1.5 rounded border border-rose-300/60 mt-1">
+                                • Kebutuhan Tambahan: <span className="font-black">+{neededPendidikan.toLocaleString("id-ID")}</span> unit sekolah/kampus lagi untuk mencapai 100%
+                              </p>
+                            ) : (
+                              <p className="text-emerald-700 bg-emerald-100/70 p-1.5 rounded border border-emerald-300/60 mt-1">
+                                • Status: ✓ Fasilitas pendidikan sudah memenuhi target 100%
+                              </p>
+                            )}
+                            <p className="pt-1 text-[11px] text-[#8b7e66]">Mencakup: Prasekolah, SD, SMP, SMA, Universitas, Lembaga Pendidikan, Lab, Observatorium, Pusat Penelitian</p>
+                          </div>
                         </div>
-                      </div>
-                      <span className={`text-3xl font-black ${kesehatanColor.text}`}>{kesehatanActualScore}</span>
-                    </div>
-                    <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
-                      <p>• Fasilitas Kesehatan: <span className="font-black">{kesejahteraan.detail.kesehatan.totalFacilities}</span> unit</p>
-                      <p>• Indeks Kepuasan Rakyat: <span className="font-black">{kesehatanActualScore}/100</span></p>
-                      <p>• Harapan Hidup: <span className="font-black">{kesejahteraan.detail.kesehatan.detail.harapanHidup.toFixed(1)}</span> tahun {kesejahteraan.detail.kesehatan.detail.harapanHidup >= 75 ? '✓' : '⚠'}</p>
-                      <p>• Indeks Kesehatan: <span className="font-black">{kesejahteraan.detail.kesehatan.detail.indeksKesehatan}</span></p>
-                    </div>
-                  </div>
+                      );
+                    })()}
 
-                  {/* Tempat Umum - 25% */}
-                  <div
-                    onClick={() => {
-                      onOpenTempatUmum?.('infrastruktur');
-                      if (!onOpenTempatUmum) setActiveMenu?.("Menu:TempatUmum");
-                      onClose();
-                    }}
-                    className={`rounded-xl p-5 border-2 ${tempatUmumColor.border} ${tempatUmumColor.bg} space-y-3 cursor-pointer transition-all duration-200 hover:shadow-lg`}
-                    title="Klik untuk membuka tab Infrastruktur di Tempat Umum & Layanan Publik"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Landmark className={`h-5 w-5 ${tempatUmumColor.icon}`} />
-                        <div>
-                          <p className="text-xs font-black text-[#8b7e66] uppercase">Tempat Umum</p>
-                          <p className="text-sm font-bold text-[#5c3c10]">25% Bobot</p>
-                        </div>
-                      </div>
-                      <span className={`text-3xl font-black ${tempatUmumColor.text}`}>{infrastrukturActualScore}</span>
-                    </div>
-                    <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
-                      <p>• Total Fasilitas: <span className="font-black">{kesejahteraan.detail.tempatUmum.totalFacilities}</span> unit</p>
-                      <p>• Indeks Kepuasan Rakyat: <span className="font-black">{infrastrukturActualScore}/100</span></p>
-                      <p>• Transportasi: <span className="font-black">{kesejahteraan.detail.tempatUmum.detail.transportasi}</span></p>
-                      <p>• Rekreasi: <span className="font-black">{kesejahteraan.detail.tempatUmum.detail.rekreasi}</span></p>
-                      <p>• Komersial: <span className="font-black">{kesejahteraan.detail.tempatUmum.detail.komersial}</span></p>
-                    </div>
-                  </div>
+                    {/* Kesehatan - 40% */}
+                    {(() => {
+                      const pop = Number(countryDetail?.jumlah_penduduk) || 1;
+                      const targetKesehatan = Math.ceil(pop * 0.00004);
+                      const currentKesehatan = kesejahteraan?.detail?.kesehatan?.totalFacilities ?? 0;
+                      const neededKesehatan = Math.max(0, targetKesehatan - currentKesehatan);
 
-                  {/* Pangan */}
-                  <div
-                    onClick={() => {
-                      onOpenIndustriPangan
-                        ? onOpenIndustriPangan()
-                        : setActiveMenu?.("Menu:IndustriPangan");
-                      onClose();
-                    }}
-                    className={`rounded-xl p-5 border-2 ${panganColor.border} ${panganColor.bg} space-y-3 cursor-pointer transition-all duration-200 hover:shadow-lg`}
-                    title="Klik untuk membuka Industri Pangan & Konsumsi Masyarakat"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Wheat className={`h-5 w-5 ${panganColor.icon}`} />
-                        <div>
-                          <p className="text-xs font-black text-[#8b7e66] uppercase">Pangan</p>
-                          <p className="text-sm font-bold text-[#5c3c10]">Kepuasan Rakyat</p>
+                      return (
+                        <div
+                          onClick={() => {
+                            onOpenTempatUmum?.('kesehatan');
+                            if (!onOpenTempatUmum) setActiveMenu?.("Menu:TempatUmum");
+                            onClose();
+                          }}
+                          className={`rounded-xl p-5 border-2 ${kesehatanColor.border} ${kesehatanColor.bg} space-y-3 cursor-pointer transition-all duration-200 hover:shadow-lg`}
+                          title="Klik untuk membuka tab Kesehatan di Tempat Umum & Layanan Publik"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <Hospital className={`h-5 w-5 ${kesehatanColor.icon}`} />
+                              <div>
+                                <p className="text-xs font-black text-[#8b7e66] uppercase">Kesehatan</p>
+                                <p className="text-sm font-bold text-[#5c3c10]">40% Bobot (Prioritas)</p>
+                              </div>
+                            </div>
+                            <span className={`text-3xl font-black ${kesehatanColor.text}`}>{kesehatanActualScore}</span>
+                          </div>
+                          <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
+                            <p>• Fasilitas Saat Ini: <span className="font-black">{currentKesehatan.toLocaleString("id-ID")}</span> unit</p>
+                            <p>• Target Ideal (100%): <span className="font-black">{targetKesehatan.toLocaleString("id-ID")}</span> unit (1 per 25.000 jiwa)</p>
+                            {neededKesehatan > 0 ? (
+                              <p className="text-rose-700 bg-rose-100/70 p-1.5 rounded border border-rose-300/60 mt-1">
+                                • Kebutuhan Tambahan: <span className="font-black">+{neededKesehatan.toLocaleString("id-ID")}</span> unit rumah sakit/pusat diagnosa lagi untuk mencapai 100%
+                              </p>
+                            ) : (
+                              <p className="text-emerald-700 bg-emerald-100/70 p-1.5 rounded border border-emerald-300/60 mt-1">
+                                • Status: ✓ Fasilitas kesehatan sudah memenuhi target 100%
+                              </p>
+                            )}
+                            <p className="pt-1 text-[11px] text-[#8b7e66]">Harapan Hidup: <span className="font-black">{kesejahteraan?.detail?.kesehatan?.detail?.harapanHidup?.toFixed(1) ?? "0.0"}</span> tahun | Indeks Kesehatan: {kesejahteraan?.detail?.kesehatan?.detail?.indeksKesehatan ?? 0}</p>
+                          </div>
                         </div>
-                      </div>
-                      <span className={`text-3xl font-black ${panganColor.text}`}>{panganActualScore}</span>
-                    </div>
-                    <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
-                      <p>• Indeks Kepuasan Rakyat (Pangan): <span className="font-black">{panganActualScore}/100</span></p>
-                      <p>• Status: {panganActualScore >= 70 ? '✓ Aman' : panganActualScore >= 50 ? '⚠ Cukup' : '❌ Kurang'}</p>
-                    </div>
-                  </div>
+                      );
+                    })()}
 
-                  {/* Hunian */}
-                  <div
-                    onClick={() => {
-                      setActiveMenu?.("Menu:HunianPermukiman");
-                      onClose();
-                    }}
-                    className={`rounded-xl p-5 border-2 ${hunianColor.border} ${hunianColor.bg} space-y-3 cursor-pointer transition-all duration-200 hover:shadow-lg`}
-                    title="Klik untuk membuka menu Hunian & Permukiman"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Home className={`h-5 w-5 ${hunianColor.icon}`} />
-                        <div>
-                          <p className="text-xs font-black text-[#8b7e66] uppercase">Hunian & Permukiman</p>
-                          <p className="text-sm font-bold text-[#5c3c10]">Kepuasan Rakyat</p>
+                    {/* Tempat Umum - 25% */}
+                    {(() => {
+                      const pop = Number(countryDetail?.jumlah_penduduk) || 1;
+                      const targetTempatUmum = Math.ceil(pop * 0.00005);
+                      const currentTempatUmum = kesejahteraan?.detail?.tempatUmum?.totalFacilities ?? 0;
+                      const neededTempatUmum = Math.max(0, targetTempatUmum - currentTempatUmum);
+
+                      return (
+                        <div
+                          onClick={() => {
+                            onOpenTempatUmum?.('infrastruktur');
+                            if (!onOpenTempatUmum) setActiveMenu?.("Menu:TempatUmum");
+                            onClose();
+                          }}
+                          className={`rounded-xl p-5 border-2 ${tempatUmumColor.border} ${tempatUmumColor.bg} space-y-3 cursor-pointer transition-all duration-200 hover:shadow-lg`}
+                          title="Klik untuk membuka tab Infrastruktur di Tempat Umum & Layanan Publik"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <Landmark className={`h-5 w-5 ${tempatUmumColor.icon}`} />
+                              <div>
+                                <p className="text-xs font-black text-[#8b7e66] uppercase">Tempat Umum</p>
+                                <p className="text-sm font-bold text-[#5c3c10]">25% Bobot</p>
+                              </div>
+                            </div>
+                            <span className={`text-3xl font-black ${tempatUmumColor.text}`}>{infrastrukturActualScore}</span>
+                          </div>
+                          <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
+                            <p>• Fasilitas Saat Ini: <span className="font-black">{currentTempatUmum.toLocaleString("id-ID")}</span> unit</p>
+                            <p>• Target Ideal (100%): <span className="font-black">{targetTempatUmum.toLocaleString("id-ID")}</span> unit (1 per 20.000 jiwa)</p>
+                            {neededTempatUmum > 0 ? (
+                              <p className="text-rose-700 bg-rose-100/70 p-1.5 rounded border border-rose-300/60 mt-1">
+                                • Kebutuhan Tambahan: <span className="font-black">+{neededTempatUmum.toLocaleString("id-ID")}</span> unit sarana umum/transportasi lagi untuk mencapai 100%
+                              </p>
+                            ) : (
+                              <p className="text-emerald-700 bg-emerald-100/70 p-1.5 rounded border border-emerald-300/60 mt-1">
+                                • Status: ✓ Fasilitas tempat umum sudah memenuhi target 100%
+                              </p>
+                            )}
+                            <p className="pt-1 text-[11px] text-[#8b7e66]">Transportasi: {kesejahteraan?.detail?.tempatUmum?.detail?.transportasi ?? 0} | Rekreasi: {kesejahteraan?.detail?.tempatUmum?.detail?.rekreasi ?? 0}</p>
+                          </div>
                         </div>
+                      );
+                    })()}
+
+                    {/* Pangan */}
+                    <div
+                      onClick={() => {
+                        onOpenIndustriPangan
+                          ? onOpenIndustriPangan()
+                          : setActiveMenu?.("Menu:IndustriPangan");
+                        onClose();
+                      }}
+                      className={`rounded-xl p-5 border-2 ${panganColor.border} ${panganColor.bg} space-y-3 cursor-pointer transition-all duration-200 hover:shadow-lg`}
+                      title="Klik untuk membuka Industri Pangan & Konsumsi Masyarakat"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Wheat className={`h-5 w-5 ${panganColor.icon}`} />
+                          <div>
+                            <p className="text-xs font-black text-[#8b7e66] uppercase">Pangan</p>
+                            <p className="text-sm font-bold text-[#5c3c10]">Kepuasan Rakyat</p>
+                          </div>
+                        </div>
+                        <span className={`text-3xl font-black ${panganColor.text}`}>{panganActualScore}</span>
                       </div>
-                      <span className={`text-3xl font-black ${hunianColor.text}`}>{hunianActualScore}</span>
+                      <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
+                        <p>• Indeks Kepuasan Pangan: <span className="font-black">{panganActualScore}/100</span></p>
+                        {panganActualScore < 100 ? (
+                          <p className="text-rose-700 bg-rose-100/70 p-1.5 rounded border border-rose-300/60 mt-1">
+                            • Kebutuhan Tambahan: Tingkatkan produksi industri pangan / pertanian untuk mencukupi konsumsi nasional 100%
+                          </p>
+                        ) : (
+                          <p className="text-emerald-700 bg-emerald-100/70 p-1.5 rounded border border-emerald-300/60 mt-1">
+                            • Status: ✓ Pasokan pangan nasional sudah terpenuhi 100%
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
-                      <p>• Indeks Kepuasan Rakyat (Hunian): <span className="font-black">{hunianActualScore}/100</span></p>
-                      <p>• Status: {hunianActualScore >= 70 ? '✓ Baik' : hunianActualScore >= 50 ? '⚠ Sedang' : '❌ Kurang'}</p>
+
+                    {/* Hunian */}
+                    <div
+                      onClick={() => {
+                        setActiveMenu?.("Menu:HunianPermukiman");
+                        onClose();
+                      }}
+                      className={`rounded-xl p-5 border-2 ${hunianColor.border} ${hunianColor.bg} space-y-3 cursor-pointer transition-all duration-200 hover:shadow-lg`}
+                      title="Klik untuk membuka menu Hunian & Permukiman"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Home className={`h-5 w-5 ${hunianColor.icon}`} />
+                          <div>
+                            <p className="text-xs font-black text-[#8b7e66] uppercase">Hunian & Permukiman</p>
+                            <p className="text-sm font-bold text-[#5c3c10]">Kepuasan Rakyat</p>
+                          </div>
+                        </div>
+                        <span className={`text-3xl font-black ${hunianColor.text}`}>{hunianActualScore}</span>
+                      </div>
+                      <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
+                        <p>• Indeks Kepuasan Hunian: <span className="font-black">{hunianActualScore}/100</span></p>
+                        {hunianActualScore < 100 ? (
+                          <p className="text-rose-700 bg-rose-100/70 p-1.5 rounded border border-rose-300/60 mt-1">
+                            • Kebutuhan Tambahan: Tambah proyek rumah subsidi & apartemen untuk menampung seluruh populasi 100%
+                          </p>
+                        ) : (
+                          <p className="text-emerald-700 bg-emerald-100/70 p-1.5 rounded border border-emerald-300/60 mt-1">
+                            • Status: ✓ Hunian rakyat telah menampung 100% populasi
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Doktrin & Keterbukaan */}
+                    <div
+                      onClick={() => {
+                        setActiveMenu?.("Menu:DoktrinKeterbukaan");
+                        onClose();
+                      }}
+                      className={`rounded-xl p-5 border-2 ${keterbukaanColor.border} ${keterbukaanColor.bg} space-y-3 cursor-pointer transition-all duration-200 hover:shadow-lg`}
+                      title="Klik untuk membuka menu Doktrin & Keterbukaan Negara"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Globe className={`h-5 w-5 ${keterbukaanColor.icon}`} />
+                          <div>
+                            <p className="text-xs font-black text-[#8b7e66] uppercase">Doktrin & Keterbukaan</p>
+                            <p className="text-sm font-bold text-[#5c3c10]">Kebebasan & HAM</p>
+                          </div>
+                        </div>
+                        <span className={`text-3xl font-black ${keterbukaanColor.text}`}>{keterbukaanActualScore}</span>
+                      </div>
+                      <div className="space-y-1 text-xs text-[#5c3c10] font-bold">
+                        <p>• Indeks Keterbukaan: <span className="font-black">{keterbukaanActualScore}/100</span></p>
+                        {keterbukaanActualScore < 100 ? (
+                          <p className="text-rose-700 bg-rose-100/70 p-1.5 rounded border border-rose-300/60 mt-1">
+                            • Kebutuhan Tambahan: Jamin kebebasan pers, internet bebas, transparansi APBN, & hak sipil untuk tingkatkan indeks
+                          </p>
+                        ) : (
+                          <p className="text-emerald-700 bg-emerald-100/70 p-1.5 rounded border border-emerald-300/60 mt-1">
+                            • Status: ✓ Jaminan kebebasan sipil & media negara sudah optimal 100%
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -455,7 +455,7 @@ export default function HunianPermukimanModal({
                           <Info className="w-3 h-3" />
                         </button>
                       </div>
-                      <p className="text-4xl font-black text-[#2e261a] mt-2">{activeItem.value.toLocaleString('id-ID')}</p>
+                      <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#2e261a] mt-2 leading-tight break-words">{activeItem.value.toLocaleString('id-ID')}</p>
                       <div className="border-t border-[#C4B49C]/20 mt-6 pt-3">
                         <button
                           onClick={() => handleBuild(activeItem.key, activeItem.label)}
@@ -475,11 +475,11 @@ export default function HunianPermukimanModal({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/70 p-4">
                     <p className="text-[10px] font-black uppercase tracking-widest text-[#5c3c10]">Total Keseluruhan Unit Hunian</p>
-                    <p className="text-2xl font-black text-[#2e261a] mt-1">{totalValue.toLocaleString('id-ID')}</p>
+                    <p className="text-lg sm:text-xl font-black text-[#2e261a] mt-1 break-words">{totalValue.toLocaleString('id-ID')}</p>
                   </div>
                   <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/70 p-4">
                     <p className="text-[10px] font-black uppercase tracking-widest text-[#5c3c10]">Populasi</p>
-                    <p className="text-2xl font-black text-[#2e261a] mt-1">{formatNumber(population)} Jiwa</p>
+                    <p className="text-lg sm:text-xl font-black text-[#2e261a] mt-1 break-words">{formatNumber(population)} Jiwa</p>
                   </div>
                 </div>
 
@@ -491,25 +491,32 @@ export default function HunianPermukimanModal({
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white/80 rounded-xl p-3 border border-[#C4B49C]/20">
+                    <div className="bg-white/80 rounded-xl p-3 border border-[#C4B49C]/20 flex flex-col justify-between">
                       <p className="text-[9px] font-bold uppercase text-[#8b7e66]">Total Kapasitas</p>
-                      <p className="text-xl font-black text-emerald-700">{totalCapacity.toLocaleString('id-ID')} orang</p>
-                    </div>
-                    <div className="bg-white/80 rounded-xl p-3 border border-[#C4B49C]/20">
-                      <p className="text-[9px] font-bold uppercase text-[#8b7e66]">Kebutuhan (Populasi)</p>
-                      <p className="text-xl font-black text-[#2e261a]">{population.toLocaleString('id-ID')} orang</p>
-                    </div>
-                    <div className={`bg-white/80 rounded-xl p-3 border ${isSufficient ? 'border-emerald-300' : 'border-rose-300'}`}>
-                      <p className="text-[9px] font-bold uppercase text-[#8b7e66]">Kekurangan / Surplus</p>
-                      <p className={`text-xl font-black ${isSufficient ? 'text-emerald-700' : 'text-rose-700'}`}>
-                        {isSufficient 
-                          ? `+${(totalCapacity - population).toLocaleString('id-ID')} (surplus)` 
-                          : `-${shortage.toLocaleString('id-ID')} (kurang)`}
+                      <p className="text-xs sm:text-sm lg:text-base font-black text-emerald-700 leading-tight mt-1 break-words">
+                        {totalCapacity.toLocaleString('id-ID')} <span className="text-[9px] font-bold text-[#8b7e66]">orang</span>
                       </p>
                     </div>
-                    <div className="bg-white/80 rounded-xl p-3 border border-[#C4B49C]/20">
+                    <div className="bg-white/80 rounded-xl p-3 border border-[#C4B49C]/20 flex flex-col justify-between">
+                      <p className="text-[9px] font-bold uppercase text-[#8b7e66]">Kebutuhan (Populasi)</p>
+                      <p className="text-xs sm:text-sm lg:text-base font-black text-[#2e261a] leading-tight mt-1 break-words">
+                        {population.toLocaleString('id-ID')} <span className="text-[9px] font-bold text-[#8b7e66]">orang</span>
+                      </p>
+                    </div>
+                    <div className={`bg-white/80 rounded-xl p-3 border ${isSufficient ? 'border-emerald-300' : 'border-rose-300'} flex flex-col justify-between`}>
+                      <p className="text-[9px] font-bold uppercase text-[#8b7e66]">Kekurangan / Surplus</p>
+                      <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 break-words ${isSufficient ? 'text-emerald-700' : 'text-rose-700'}`}>
+                        {isSufficient 
+                          ? `+${(totalCapacity - population).toLocaleString('id-ID')}` 
+                          : `-${shortage.toLocaleString('id-ID')}`}
+                        <span className={`text-[9px] font-bold block sm:inline ${isSufficient ? 'text-emerald-700' : 'text-rose-700'}`}>
+                          {isSufficient ? ' (surplus)' : ' (kurang)'}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="bg-white/80 rounded-xl p-3 border border-[#C4B49C]/20 flex flex-col justify-between">
                       <p className="text-[9px] font-bold uppercase text-[#8b7e66]">Keterpenuhan</p>
-                      <p className={`text-xl font-black ${percentageMet >= 100 ? 'text-emerald-700' : 'text-amber-600'}`}>
+                      <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 ${percentageMet >= 100 ? 'text-emerald-700' : 'text-amber-600'}`}>
                         {percentageMet.toFixed(1)}%
                       </p>
                     </div>

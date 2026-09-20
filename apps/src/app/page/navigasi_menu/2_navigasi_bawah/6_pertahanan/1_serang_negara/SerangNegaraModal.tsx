@@ -41,19 +41,52 @@ export default function SerangNegaraModal({
   // 🔥 State untuk menampung target yang dipilih dan membuka modal serang
   const [selectedTarget, setSelectedTarget] = useState<RankingRow | null>(null);
   const [isSerangModalOpen, setIsSerangModalOpen] = useState(false);
+  const [internalCountries, setInternalCountries] = useState<any[] | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [sortConfig, setSortConfig] = useState<{ key: keyof RankingRow; direction: 'asc' | 'desc' } | null>({
     key: 'totalPower',
     direction: 'desc'
   });
 
+  React.useEffect(() => {
+    if (!isOpen) return;
+    if (Array.isArray(prefetchedAllCountries) && prefetchedAllCountries.length > 0) return;
+
+    let isMounted = true;
+    setIsLoading(true);
+
+    fetch('/api/country-data?all=true')
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          setInternalCountries(data);
+        }
+      })
+      .catch((err) => console.warn('[SerangNegaraModal] Failed to fetch all countries:', err))
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isOpen, prefetchedAllCountries]);
+
   const rawRankings = React.useMemo(() => {
-    const source = Array.isArray(prefetchedAllCountries) ? prefetchedAllCountries : [];
+    let source: any[] = [];
+    if (Array.isArray(prefetchedAllCountries) && prefetchedAllCountries.length > 0) {
+      source = prefetchedAllCountries;
+    } else if (Array.isArray(internalCountries) && internalCountries.length > 0) {
+      source = internalCountries;
+    } else if (Array.isArray(COUNTRIES_DATA) && COUNTRIES_DATA.length > 0) {
+      source = COUNTRIES_DATA;
+    }
 
     return source
       .map((country: any) => {
         const summary = getArmadaPowerSummary(country);
-        const groupTotals = summary.totals.groups;
+        const groupTotals = summary?.totals?.groups;
         const countryName = country?.nama_negara || country?.country || country?.name_id || country?.name_en || "Negara";
         
         // 🔥 PERBAIKAN: Cari ISO dari COUNTRIES_DATA terlebih dahulu, lalu fallback ke berbagai properti
@@ -82,8 +115,8 @@ export default function SerangNegaraModal({
 
         return {
           countryName,
-          totalPower: summary.totals.totalPower,
-          totalHealth: summary.totals.totalHealth,
+          totalPower: summary?.totals?.totalPower ?? 0,
+          totalHealth: summary?.totals?.totalHealth ?? 0,
           darat: groupTotals?.darat?.power ?? 0,
           laut: groupTotals?.laut?.power ?? 0,
           udara: groupTotals?.udara?.power ?? 0,
@@ -91,7 +124,7 @@ export default function SerangNegaraModal({
           iso: iso, // 🔥 Sertakan ISO dalam data ranking
         };
       });
-  }, [prefetchedAllCountries]);
+  }, [prefetchedAllCountries, internalCountries]);
 
   const rankings = useMemo(() => {
     let sortableItems = [...rawRankings];
@@ -206,7 +239,7 @@ export default function SerangNegaraModal({
                       </tr>
                     </thead>
                     <tbody>
-                      {rankings === null ? (
+                      {isLoading && rankings.length === 0 ? (
                         <tr><td colSpan={7} className="px-4 py-8 text-center text-sm font-bold text-[#8b7e66]">Memuat ranking kekuatan negara…</td></tr>
                       ) : rankings.length === 0 ? (
                         <tr><td colSpan={7} className="px-4 py-8 text-center text-sm font-bold text-[#8b7e66]">Data ranking belum tersedia.</td></tr>

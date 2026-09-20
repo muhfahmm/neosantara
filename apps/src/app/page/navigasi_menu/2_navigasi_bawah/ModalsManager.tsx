@@ -118,8 +118,11 @@ function ModalsManager({
 
   // Fetch full country dataset lazily when a menu that requires global country comparison is opened
   useEffect(() => {
-    const menusNeedingAllCountries = ['Kelistrikan', 'Industri Pangan', 'PDB', 'Finansial Global'];
-    if (prefetchedAllCountries === null && menusNeedingAllCountries.includes(activeMenu)) {
+    const menusNeedingAllCountries = [
+      'Kelistrikan', 'Industri Pangan', 'PDB', 'Finansial Global',
+      'Menu:SerangNegara', 'Menu:Intelijen', 'Menu:ICBM', 'Menu:Perdagangan'
+    ];
+    if (prefetchedAllCountries === null && (menusNeedingAllCountries.includes(activeMenu) || activeMenu?.includes('Serang') || activeMenu?.includes('Intelijen'))) {
       (async () => {
         try {
           const res = await fetch('/api/country-data?all=true');

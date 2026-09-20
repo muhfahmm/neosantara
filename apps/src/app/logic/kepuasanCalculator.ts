@@ -218,7 +218,7 @@ export function calculateLayananPublikScore(countryDetail: any): number {
 export function calculateKeterbukaanScore(countryDetail: any): number {
   if (!countryDetail) return 50;
   if (countryDetail.opennessIndex !== undefined && countryDetail.opennessIndex !== null) {
-    return Math.min(100, Math.max(1, Number(countryDetail.opennessIndex)));
+    return Math.min(100, Math.max(0, Number(countryDetail.opennessIndex)));
   }
 
   const countryName = countryDetail?.nama_negara || countryDetail?.country || countryDetail?.name_id || countryDetail?.name_en || "";
@@ -237,7 +237,7 @@ export function calculateKeterbukaanScore(countryDetail: any): number {
   const avg = Math.round(
     (speechScore + religionScore + demoScore + transparencyScore + mediaScore + internetScore + borderScore + tradeScore + diplomacyScore) / 9
   );
-  return Math.min(100, Math.max(1, avg));
+  return Math.min(100, Math.max(0, avg));
 }
 
 // ─── Main exported function ──────────────────────────────────────────────────

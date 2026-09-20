@@ -324,13 +324,13 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                 </div>
               </div>
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/90 p-6 min-h-[170px] text-center shadow-sm flex flex-col justify-center">
+                <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/90 p-5 min-h-[160px] text-center shadow-sm flex flex-col justify-center">
                   <p className="text-[10px] font-black text-[#8b7e66] uppercase tracking-wider mb-2">Kas Negara</p>
-                  <div className="text-2xl font-black text-emerald-700">{currentCash.toLocaleString('id-ID')} EM</div>
+                  <div className="text-base sm:text-lg lg:text-xl font-black text-emerald-700 leading-tight break-words">{currentCash.toLocaleString('id-ID')} <span className="text-[10px] text-[#8b7e66] font-bold">EM</span></div>
                 </div>
-                <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/90 p-6 min-h-[170px] text-center shadow-sm flex flex-col justify-center">
+                <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/90 p-5 min-h-[160px] text-center shadow-sm flex flex-col justify-center">
                   <p className="text-[10px] font-black text-[#8b7e66] uppercase tracking-wider mb-2">Stok Uranium</p>
-                  <div className="text-2xl font-black text-lime-600">{uraniumStock.toLocaleString('id-ID')}</div>
+                  <div className="text-base sm:text-lg lg:text-xl font-black text-lime-600 leading-tight break-words">{uraniumStock.toLocaleString('id-ID')}</div>
                 </div>
                 <div className="relative overflow-visible">
                   {formattedIcbmEndDate && isIcbmBuildQueued && remainingBuildQuantity > 0 ? (
@@ -338,14 +338,14 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                       Selesai {formattedIcbmEndDate}
                     </div>
                   ) : null}
-                  <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/90 p-6 min-h-[170px] text-center shadow-sm pt-10 flex flex-col justify-center">
+                  <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/90 p-5 min-h-[160px] text-center shadow-sm pt-8 flex flex-col justify-center">
                     <p className="text-[10px] font-black text-[#8b7e66] uppercase tracking-wider mb-2">ICBM</p>
                     
                     {/* 🔥 PERBAIKAN: Angka utama menggunakan totalReadyIcbm (AKAN BERTAMBAH SENDIRI) */}
-                    <div className="text-2xl font-black text-[#1d5c10]">
+                    <div className="text-base sm:text-lg lg:text-xl font-black text-[#1d5c10] leading-tight break-words">
                       {totalReadyIcbm}
                       {isIcbmBuildQueued && remainingBuildQuantity > 0 ? (
-                        <span className="text-emerald-600"> +{remainingBuildQuantity}</span>
+                        <span className="text-xs sm:text-sm text-emerald-600 font-bold"> +{remainingBuildQuantity}</span>
                       ) : null}
                     </div>
 

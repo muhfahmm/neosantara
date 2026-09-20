@@ -207,10 +207,10 @@ export default function BaseProduksiGrid({
                   </div>
 
                   {/* Indikator +1, +2 */}
-                  <div className="flex items-end gap-1.5 mt-2">
-                    <span className="text-2xl font-black text-[#2e261a]">{perCount}</span>
+                  <div className="flex items-end gap-1.5 mt-2 flex-wrap">
+                    <span className="text-base sm:text-lg lg:text-xl font-black text-[#2e261a] leading-tight break-words">{perCount}</span>
                     {isBuilding && (
-                      <span className="text-xl font-bold text-emerald-600 leading-none">
+                      <span className="text-xs sm:text-sm font-bold text-emerald-600 leading-none">
                         +{queueCount}
                       </span>
                     )}
@@ -221,7 +221,7 @@ export default function BaseProduksiGrid({
                 {/* FOOTER LISTRIK */}
                 {isElectricityTab && (
                   <div className="border-t border-[#C4B49C]/20 mt-auto pt-2 pb-1 text-center min-h-[64px] flex flex-col justify-center">
-                    <span className={`font-black text-xl ${isProductionZero ? 'text-rose-600' : 'text-[#2e261a]'}`}>
+                    <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isProductionZero ? 'text-rose-600' : 'text-[#2e261a]'}`}>
                       {rawProduction.toLocaleString('id-ID')} MW
                     </span>
                     {isProductionZero && (
@@ -238,7 +238,7 @@ export default function BaseProduksiGrid({
                       if (key === 'emas') {
                         const fixedProd = Number(bMeta?.produksi || 0) * perCount;
                         return (
-                          <span className="font-black text-xl text-[#2e261a]">
+                          <span className="font-black text-xs sm:text-sm lg:text-base text-[#2e261a] leading-tight break-words">
                             {fixedProd.toLocaleString('id-ID')}
                           </span>
                         );
@@ -250,7 +250,7 @@ export default function BaseProduksiGrid({
                         const accumulated = getMaterialStock(countryDetail, key);
                         return (
                           <>
-                            <span className="font-black text-xl text-[#2e261a]">
+                            <span className="font-black text-xs sm:text-sm lg:text-base text-[#2e261a] leading-tight break-words">
                               {accumulated.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                             </span>
                           </>
@@ -261,7 +261,7 @@ export default function BaseProduksiGrid({
                       const isFuel = ELECTRICITY_FUEL_RESOURCE_KEYS.includes(key);
                       const colorClass = (isFuel && stock > 0) ? 'text-emerald-600' : 'text-[#2e261a]';
                       return (
-                        <span className={`font-black text-xl ${colorClass}`}>
+                        <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${colorClass}`}>
                           {stock.toLocaleString('id-ID')}
                         </span>
                       );

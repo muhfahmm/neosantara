@@ -175,52 +175,50 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl flex flex-col relative font-sans pointer-events-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
         
         {/* Background Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         {/* HEADER Modal */}
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              
-              {/* 1. Icon Globe */}
-              <div className="p-2 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20">
-                <Globe className="h-6 w-6 text-[#5c3c10]" />
-              </div>
-              
-              {/* 2. Judul & Subjudul */}
-              <div>
-                {/* Judul Utama */}
-                <h2 className="text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">
-                  DETAIL NEGARA
-                </h2>
-                
-                <div className="flex items-center gap-2 mt-1">
-                  {renderFlagHeader(iso, countryName)}
-                  <p className="text-[10px] text-[#8b7e66] font-semibold uppercase tracking-wider">
-                    {countryName}, {capital}
-                  </p>
-                </div>
-              </div>
-
+        <div className="px-6 sm:px-8 py-4 sm:py-5 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 shrink-0">
+          <div className="flex items-center gap-3 sm:gap-4">
+            
+            {/* 1. Icon Globe */}
+            <div className="p-2 sm:p-2.5 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20 shrink-0 flex items-center justify-center">
+              <Globe className="h-6 w-6 text-[#5c3c10]" />
             </div>
+            
+            {/* 2. Judul & Subjudul */}
+            <div>
+              {/* Judul Utama */}
+              <h2 className="text-xl sm:text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">
+                DETAIL NEGARA
+              </h2>
+              
+              <div className="flex items-center gap-2 mt-1">
+                {renderFlagHeader(iso, countryName)}
+                <p className="text-xs text-[#8b7e66] font-semibold uppercase tracking-wider">
+                  {countryName}, {capital}
+                </p>
+              </div>
+            </div>
+
           </div>
 
           <button
             onClick={onClose}
-            className="p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+            className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
             aria-label="Tutup detail negara"
           >
-            <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
+            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* DATA RINGKASAN - Data diambil langsung dari JSON database berdasarkan negara yang diklik */}
-        <div className="px-8 py-4 bg-[#e4dac3]/30 border-b border-[#C4B49C]/20 flex items-center gap-8 relative z-10 overflow-x-auto">
+        <div className="px-6 sm:px-8 py-3 bg-[#e4dac3]/30 border-b border-[#C4B49C]/20 flex items-center gap-6 sm:gap-8 relative z-10 overflow-x-auto shrink-0 no-scrollbar">
           <div className="flex items-center gap-6 min-w-max">
             {/* Hubungan */}
             <div className="flex items-center gap-2">
@@ -238,7 +236,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             {/* Ibukota */}
             <div className="flex items-center gap-2">
               <div className="p-1.5 bg-[#dcc9a3]/60 rounded-lg text-[#8b7e66]">
-                <Landmark className="h-4 w-4" />
+                <Landmark className="h-4 w-4 text-[#5c3c10]" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[9px] font-black text-[#8b7e66]/80 uppercase tracking-wider">Ibukota</span>
@@ -251,7 +249,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             {/* Populasi */}
             <div className="flex items-center gap-2">
               <div className="p-1.5 bg-[#dcc9a3]/60 rounded-lg text-[#8b7e66]">
-                <Users className="h-4 w-4" />
+                <Users className="h-4 w-4 text-[#5c3c10]" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[9px] font-black text-[#8b7e66]/80 uppercase tracking-wider">Populasi</span>
@@ -269,7 +267,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             {/* Anggaran Negara */}
             <div className="flex items-center gap-2">
               <div className="p-1.5 bg-[#dcc9a3]/60 rounded-lg text-[#8b7e66]">
-                <Banknote className="h-4 w-4" />
+                <Banknote className="h-4 w-4 text-[#5c3c10]" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[9px] font-black text-[#8b7e66]/80 uppercase tracking-wider">Anggaran</span>
@@ -292,7 +290,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             {/* Ideologi */}
             <div className="flex items-center gap-2">
               <div className="p-1.5 bg-[#dcc9a3]/60 rounded-lg text-[#8b7e66]">
-                <Scale className="h-4 w-4" />
+                <Scale className="h-4 w-4 text-[#5c3c10]" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[9px] font-black text-[#8b7e66]/80 uppercase tracking-wider">Ideologi</span>
@@ -310,7 +308,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             {/* Agama */}
             <div className="flex items-center gap-2">
               <div className="p-1.5 bg-[#dcc9a3]/60 rounded-lg text-[#8b7e66]">
-                <Home className="h-4 w-4" />
+                <Home className="h-4 w-4 text-[#5c3c10]" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[9px] font-black text-[#8b7e66]/80 uppercase tracking-wider">Agama</span>
@@ -328,34 +326,34 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
         </div>
 
         {/* BODY CONTENT */}
-        <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
           <div className="max-w-4xl mx-auto">
             
             {/* Menu 3 Tab Navigasi */}
-            <div className="bg-[#e4dac3]/40 p-1 rounded-xl border border-[#C4B49C]/40 inline-flex mb-6 shadow-sm flex-wrap gap-1">
+            <div className="bg-[#e4dac3]/40 p-1 rounded-xl border border-[#C4B49C]/40 inline-flex mb-6 shadow-sm flex-wrap gap-1 backdrop-blur-md">
               <button
                 onClick={() => setActiveTab("informasi")}
-                className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
+                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
                   activeTab === "informasi" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20" : "text-[#8b7e66] hover:text-[#5c3c10]"
                 }`}
               >
-                <Globe className="h-3.5 w-3.5" /> Informasi Umum
+                <Globe className="h-4 w-4" /> Informasi Umum
               </button>
               <button
                 onClick={() => setActiveTab("geopolitik")}
-                className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
+                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
                   activeTab === "geopolitik" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20" : "text-[#8b7e66] hover:text-[#5c3c10]"
                 }`}
               >
-                <Landmark className="h-3.5 w-3.5" /> Geopolitik
+                <Landmark className="h-4 w-4" /> Geopolitik
               </button>
               <button
                 onClick={() => setActiveTab("militer")}
-                className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
+                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
                   activeTab === "militer" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20" : "text-[#8b7e66] hover:text-[#5c3c10]"
                 }`}
               >
-                <Shield className="h-3.5 w-3.5" /> Operasi Militer
+                <Shield className="h-4 w-4" /> Operasi Militer
               </button>
             </div>
 

@@ -13,6 +13,8 @@
  * - Kecukupan layanan publik
  */
 
+import { calculateKeterbukaanScore } from "@/app/logic/kepuasanCalculator";
+
 // ─── Helper Functions ─────────────────────────────────────────────────────
 
 /**
@@ -351,6 +353,7 @@ export interface KesejahteraanIndex {
   tempatUmumScore: number;
   panganScore: number;  // ← NEW
   hunianScore: number;  // ← NEW
+  keterbukaanScore?: number; // ← NEW
   trend: 'naik' | 'turun' | 'stabil';
   detail: {
     pendidikan: PendidikanMetrics;
@@ -358,6 +361,7 @@ export interface KesejahteraanIndex {
     tempatUmum: TempatUmumMetrics;
     pangan?: any;  // ← NEW
     hunian?: any;  // ← NEW
+    keterbukaan?: any; // ← NEW
   };
 }
 
@@ -463,9 +467,10 @@ export function calculateKesejahteraan(
     }
   }
 
-  // Indeks Kesejahteraan Keseluruhan (rata-rata 5 sektor + bonus dari program bantuan sosial - akumulasi decay penurunan)
+  // Indeks Kesejahteraan Keseluruhan (rata-rata 6 sektor + bonus dari program bantuan sosial - akumulasi decay penurunan)
+  const keterbukaanScore = calculateKeterbukaanScore(countryDetail);
   const baseScore = Math.round(
-    (pendidikanScore + kesehatanScore + tempatUmumScore + panganScore + hunianScore) / 5
+    (pendidikanScore + kesehatanScore + tempatUmumScore + panganScore + hunianScore + keterbukaanScore) / 6
   );
   const bonus = Number(countryDetail?.kesejahteraan_bonus) || 0;
   const decayAccumulated = Number(countryDetail?.kesejahteraan_decay) || 0;
@@ -477,6 +482,7 @@ export function calculateKesejahteraan(
     tempatUmumScore,
     panganScore,
     hunianScore,
+    keterbukaanScore,
     baseScore,
     kesejahteraan_bonus: countryDetail?.kesejahteraan_bonus,
     kesejahteraan_decay: countryDetail?.kesejahteraan_decay,
@@ -520,6 +526,7 @@ export function calculateKesejahteraan(
     tempatUmumScore,
     panganScore,
     hunianScore,
+    keterbukaanScore,
     trend,
     detail: {
       pendidikan: dummyPendidikanMetrics,
@@ -527,6 +534,7 @@ export function calculateKesejahteraan(
       tempatUmum: dummyTempatUmumMetrics,
       pangan: { score: panganScore },
       hunian: { score: hunianScore },
+      keterbukaan: { score: keterbukaanScore },
     },
   };
 }
@@ -609,12 +617,21 @@ Breakdown:
  * Kepuasan 66–79  → turun 1 poin setiap 9 bulan
  * Kepuasan 80–100 → turun 1 poin setiap 12 bulan (1 tahun)
  */
-export function getKesejahteraanDecayThreshold(kepuasan: number): number {
-  if (kepuasan <= 25) return 1;
-  if (kepuasan <= 45) return 3;
-  if (kepuasan <= 65) return 6;
-  if (kepuasan <= 79) return 9;
-  return 12; // 80 - 100
+export function getKesejahteraanDecayThreshold(kepuasan: number, keterbukaanScore?: number): number {
+  let baseThreshold = 12;
+  if (kepuasan <= 25) baseThreshold = 1;
+  else if (kepuasan <= 45) baseThreshold = 3;
+  else if (kepuasan <= 65) baseThreshold = 6;
+  else if (kepuasan <= 79) baseThreshold = 9;
+  else baseThreshold = 12; // 80 - 100
+
+  // Jika Indeks Keterbukaan rendah (< 50), percepat penurunan kesejahteraan
+  if (keterbukaanScore !== undefined && keterbukaanScore < 50) {
+    const factor = Math.max(0.4, 0.4 + (keterbukaanScore / 50) * 0.5);
+    baseThreshold = Math.max(1, Math.floor(baseThreshold * factor));
+  }
+
+  return baseThreshold;
 }
 
 export interface KesejahteraanDecayInput {
@@ -623,6 +640,7 @@ export interface KesejahteraanDecayInput {
   lastKesejahteraanThreshold: number;
   monthsPassed: number;
   currentKepuasan: number;
+  keterbukaanScore?: number;
 }
 
 export interface KesejahteraanDecayOutput {
@@ -638,7 +656,7 @@ export interface KesejahteraanDecayOutput {
  *
  * Flow:
  * 1. Tambahkan monthsPassed ke counter
- * 2. Tentukan threshold dari kepuasan saat ini
+ * 2. Tentukan threshold dari kepuasan saat ini & keterbukaan
  * 3. Scale counter jika threshold berubah (smooth transition)
  * 4. Hitung penurunan (floor(counter / threshold))
  * 5. Reset counter dengan sisa (counter % threshold)
@@ -651,13 +669,14 @@ export function calculateKesejahteraanDecay(input: KesejahteraanDecayInput): Kes
     lastKesejahteraanThreshold,
     monthsPassed,
     currentKepuasan,
+    keterbukaanScore,
   } = input;
 
   // Step 1: Tambahkan bulan yang berlalu ke counter
   let counter = kesejahteraanMonthCounter + (monthsPassed > 0 ? monthsPassed : 0);
 
-  // Step 2: Tentukan threshold baru berdasarkan kepuasan
-  const newThreshold = getKesejahteraanDecayThreshold(currentKepuasan);
+  // Step 2: Tentukan threshold baru berdasarkan kepuasan & keterbukaan
+  const newThreshold = getKesejahteraanDecayThreshold(currentKepuasan, keterbukaanScore);
 
   // Step 3: Scale counter jika threshold berubah (smooth transition)
   const prevThreshold = lastKesejahteraanThreshold || newThreshold;

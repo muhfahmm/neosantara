@@ -201,7 +201,7 @@ export default function ArmadaPolisi({ countryDetail, setCountryDetail: _setCoun
 
               <div className="flex flex-col justify-between flex-1">
                 <div>
-                  <div className="text-3xl font-black text-[#2e261a] mb-1">
+                  <div className="text-base sm:text-lg lg:text-xl font-black text-[#2e261a] mb-1 leading-tight break-words">
                     {formatNumber(value)}
                   </div>
                   <p className="text-[10px] font-bold text-[#8b7e66]">{item.satuan}</p>
