@@ -1,8 +1,0 @@
-﻿// @ts-nocheck
-const nepal_manufaktur = {
-  semikonduktor: 48,
-  mobil: 16,
-  sepeda_motor: 16,
-  semen_beton: 52,
-  kayu: 48
-};

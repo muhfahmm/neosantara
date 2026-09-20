@@ -10,6 +10,7 @@
     "tauri:serve": "cross-env NODE_ENV=production PORT=3001 next build --webpack && cross-env NODE_ENV=production PORT=3001 next start",
     "tauri:serve-mobile": "cross-env NODE_ENV=production PORT=3002 next build --webpack && cross-env NODE_ENV=production PORT=3002 next start",
     "lint": "eslint",
+    "db:seed": "node scripts/seed_database.js",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
     "tauri:android:dev": "tauri android dev",

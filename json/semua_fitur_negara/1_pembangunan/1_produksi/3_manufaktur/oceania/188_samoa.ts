@@ -1,8 +1,0 @@
-﻿// @ts-nocheck
-const samoa_manufaktur = {
-  semikonduktor: 18,
-  mobil: 18,
-  sepeda_motor: 28,
-  semen_beton: 26,
-  kayu: 10
-};

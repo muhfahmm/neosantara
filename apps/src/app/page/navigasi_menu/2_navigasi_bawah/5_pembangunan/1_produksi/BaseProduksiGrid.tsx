@@ -91,10 +91,7 @@ export default function BaseProduksiGrid({
   ongoingConstructions = [],
   currentDate,
 }: BaseProduksiGridProps) {
-  const formatLabel = (key: string, bMeta?: any) => {
-    if (bMeta && bMeta.label) {
-      return bMeta.label;
-    }
+  const formatLabel = (key: string) => {
     const customLabels: Record<string, string> = {
       pembangkit_listrik_tenaga_nuklir: "PLT Nuklir (PLTN)",
       pembangkit_listrik_tenaga_air: "PLT Air (PLTA)",
@@ -136,7 +133,7 @@ export default function BaseProduksiGrid({
         {keys.map((key) => {
           const bMeta = findMeta(key) || {};
           const perCount = Number(countryDetail?.[key]) || 0;
-          const label = formatLabel(key, bMeta);
+          const label = formatLabel(key);
           const isHighlighted = highlightedCardKey === key;
           const isAvailable = isBuildingAvailable ? isBuildingAvailable(key, countryDetail?.country || '') : true;
           const fuelRequirements = isElectricityTab ? getKelistrikanFuelRequirements(key) : [];

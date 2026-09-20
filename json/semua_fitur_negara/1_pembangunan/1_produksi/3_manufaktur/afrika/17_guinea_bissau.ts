@@ -1,8 +1,0 @@
-﻿// @ts-nocheck
-const guinea_bissau_manufaktur = {
-  mobil: 18,
-  semen_beton: 8,
-  sepeda_motor: 18,
-  semikonduktor: 16,
-  kayu: 22
-};

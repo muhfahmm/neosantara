@@ -1,8 +1,0 @@
-﻿// @ts-nocheck
-const dominika_manufaktur = {
-  semikonduktor: 44,
-  mobil: 40,
-  sepeda_motor: 60,
-  semen_beton: 32,
-  kayu: 44
-};

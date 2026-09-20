@@ -1,11 +1,20 @@
 import mysql from 'mysql2/promise';
+import fs from 'fs';
+import path from 'path';
 
 let pool: mysql.Pool | null = null;
 
+export const dbConfig = {
+    host: process.env.DB_HOST || '127.0.0.1',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'db_presiden_simulator',
+    port: parseInt(process.env.DB_PORT || '3306'),
+};
+
 /**
- * Initializes and returns a MySQL connection pool.
- * If the database db_presiden_simulator or the game_saves table
- * doesn't exist, it will automatically create them.
+ * Initializes and returns a MySQL connection pool connecting to XAMPP MySQL.
+ * Automatically creates db_presiden_simulator and imports table structures if needed.
  */
 export async function getDbPool(): Promise<mysql.Pool> {
     if (pool) {
@@ -13,52 +22,45 @@ export async function getDbPool(): Promise<mysql.Pool> {
     }
 
     try {
-        // Step 1: Establish temporary connection to server (without db parameter)
-        // to check or create the database
+        // Step 1: Connect to MySQL server on XAMPP
         const connection = await mysql.createConnection({
-            host: '127.0.0.1',
-            user: 'root',
-            password: '',
-            port: 3306,
+            host: dbConfig.host,
+            user: dbConfig.user,
+            password: dbConfig.password,
+            port: dbConfig.port,
+            multipleStatements: true,
         });
 
-        await connection.query('CREATE DATABASE IF NOT EXISTS db_presiden_simulator');
+        // Step 2: Ensure database exists
+        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbConfig.database}\`;`);
         await connection.end();
 
-        // Step 2: Establish the actual pooled connection to the database
+        // Step 3: Establish connection pool
         pool = mysql.createPool({
-            host: '127.0.0.1',
-            user: 'root',
-            password: '',
-            database: 'db_presiden_simulator',
-            port: 3306,
+            host: dbConfig.host,
+            user: dbConfig.user,
+            password: dbConfig.password,
+            database: dbConfig.database,
+            port: dbConfig.port,
             waitForConnections: true,
             connectionLimit: 10,
             queueLimit: 0,
+            multipleStatements: true,
         });
 
-        // Step 3: Ensure the game_saves table structure is ready
-        await pool.query(`
-            CREATE TABLE IF NOT EXISTS game_saves (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                save_name VARCHAR(255) NOT NULL,
-                country_name VARCHAR(100) NOT NULL,
-                country_iso VARCHAR(10) NOT NULL,
-                game_date VARCHAR(50) NOT NULL,
-                capital VARCHAR(100) DEFAULT NULL,
-                jumlah_penduduk BIGINT DEFAULT 0,
-                anggaran BIGINT DEFAULT 0,
-                ideology VARCHAR(100) DEFAULT NULL,
-                religion VARCHAR(100) DEFAULT NULL,
-                un_vote INT DEFAULT 0,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-        `);
-
-        console.log("Database initialized successfully!");
+        console.log(`Connected to XAMPP MySQL database '${dbConfig.database}' successfully!`);
         return pool;
-    } catch (error) {
-        console.error("Database connection or initialization failed:", error);
+    } catch (error: any) {
+        console.error("XAMPP MySQL connection or initialization failed:", error.message);
         throw error;
     }
+}
+
+/**
+ * Helper to query MySQL database
+ */
+export async function queryDb<T = any>(sql: string, params: any[] = []): Promise<T> {
+    const dbPool = await getDbPool();
+    const [rows] = await dbPool.execute(sql, params);
+    return rows as T;
 }

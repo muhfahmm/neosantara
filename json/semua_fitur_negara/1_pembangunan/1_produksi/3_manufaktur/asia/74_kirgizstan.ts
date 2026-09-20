@@ -1,8 +1,0 @@
-﻿// @ts-nocheck
-const kirgizstan_manufaktur = {
-  semikonduktor: 18,
-  mobil: 30,
-  sepeda_motor: 18,
-  semen_beton: 12,
-  kayu: 30
-};

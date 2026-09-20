@@ -1,6 +1,0 @@
-// @ts-nocheck
-const malaysia_komersial = {
-  "mall": 15,
-  "hotel": 38,
-  "pusat_grosir_tekstil": 19
-};

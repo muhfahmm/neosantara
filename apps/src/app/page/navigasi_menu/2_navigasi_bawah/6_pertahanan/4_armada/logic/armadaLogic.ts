@@ -48,11 +48,39 @@ const resolveCountryArmada = (source: unknown): ArmadaData => {
   const nestedArmada = candidate.armada;
   const baseArmada = nestedArmada && typeof nestedArmada === "object" ? (nestedArmada as ArmadaData) : candidate;
 
+  // Extract nested or flat values from MySQL tables
+  const daratObj: Record<string, number> = {};
+  const lautObj: Record<string, number> = {};
+  const udaraObj: Record<string, number> = {};
+
+  Object.values(metadataByDataKey).forEach((meta) => {
+    const key = meta.dataKey;
+    const group = meta.groupId;
+
+    // Check nested first
+    const groupObj = baseArmada[group as keyof ArmadaData] as Record<string, number> | undefined;
+    let val = groupObj && typeof groupObj === "object" ? groupObj[key] : undefined;
+
+    // Fallback to flat property on candidate/baseArmada (from MySQL)
+    if (val === undefined && baseArmada[key] !== undefined) {
+      val = baseArmada[key] as number;
+    }
+    if (val === undefined && candidate[key] !== undefined) {
+      val = candidate[key] as number;
+    }
+
+    const numVal = normalizeNumber(val);
+
+    if (group === "darat") daratObj[key] = numVal;
+    if (group === "laut") lautObj[key] = numVal;
+    if (group === "udara") udaraObj[key] = numVal;
+  });
+
   return {
-    barak: normalizeNumber(baseArmada.barak),
-    darat: (baseArmada.darat && typeof baseArmada.darat === "object" ? baseArmada.darat : {}) as Record<string, number>,
-    laut: (baseArmada.laut && typeof baseArmada.laut === "object" ? baseArmada.laut : {}) as Record<string, number>,
-    udara: (baseArmada.udara && typeof baseArmada.udara === "object" ? baseArmada.udara : {}) as Record<string, number>,
+    barak: normalizeNumber(baseArmada.barak ?? candidate.barak),
+    darat: daratObj,
+    laut: lautObj,
+    udara: udaraObj,
   };
 };
 
@@ -61,7 +89,7 @@ const resolveQuantity = (armada: ArmadaData, dataKey: string): number => {
     return normalizeNumber(armada.barak);
   }
 
-  const group = dataKey === "barak" ? null : metadataByDataKey[dataKey]?.groupId;
+  const group = metadataByDataKey[dataKey]?.groupId;
   if (!group) {
     return 0;
   }

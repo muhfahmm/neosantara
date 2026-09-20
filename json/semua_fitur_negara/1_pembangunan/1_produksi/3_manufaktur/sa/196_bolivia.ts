@@ -1,8 +1,0 @@
-﻿// @ts-nocheck
-const bolivia_manufaktur = {
-  semikonduktor: 75,
-  mobil: 65,
-  sepeda_motor: 50,
-  semen_beton: 35,
-  kayu: 45
-};

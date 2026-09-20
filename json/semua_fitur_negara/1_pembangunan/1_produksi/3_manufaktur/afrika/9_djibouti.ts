@@ -1,8 +1,0 @@
-﻿// @ts-nocheck
-const djibouti_manufaktur = {
-  mobil: 9,
-  semen_beton: 6,
-  sepeda_motor: 11,
-  semikonduktor: 13,
-  kayu: 12
-};

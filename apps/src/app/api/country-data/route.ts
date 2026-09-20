@@ -1,445 +1,314 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
+import { queryDb } from '@/lib/db';
 import path from 'path';
 
-const removeComments = (input: string) =>
-    input.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
-
-const findLiteral = (input: string, start: number) => {
-    let depth = 0;
-    let inString: string | null = null;
-    let escaped = false;
-    const openingChar = input[start];
-    const closingChar = openingChar === '[' ? ']' : openingChar === '{' ? '}' : null;
-
-    if (!closingChar) return null;
-
-    for (let i = start; i < input.length; i++) {
-        const char = input[i];
-        if (escaped) {
-            escaped = false;
-            continue;
-        }
-        if (char === '\\') {
-            escaped = true;
-            continue;
-        }
-        if (inString) {
-            if (char === inString) {
-                inString = null;
-            }
-            continue;
-        }
-        if (char === '"' || char === "'" || char === '`') {
-            inString = char;
-            continue;
-        }
-        if (char === openingChar) {
-            depth += 1;
-            continue;
-        }
-        if (char === closingChar) {
-            depth -= 1;
-            if (depth === 0) {
-                return input.slice(start, i + 1);
-            }
-        }
-    }
-    return null;
+const extractFileOrder = (fileName: string): number => {
+  const match = fileName.match(/^(\d+)_/);
+  return match ? parseInt(match[1], 10) : 9999;
 };
 
-const parseObjectLiteral = (literal: string) => {
-    try {
-        return new Function(`"use strict"; return (${literal});`)();
-    } catch (e) {
-        try {
-            let fixedLiteral = literal;
-            fixedLiteral = fixedLiteral.replace(/:\s*([A-Za-z_$][\w$]*)\s*([,\}\]])/g, (match, identifier, after) => {
-                if (['true', 'false', 'null', 'undefined', 'NaN', 'Infinity'].includes(identifier)) {
-                    return match;
-                }
-                return `: null${after}`;
-            });
-            return new Function(`"use strict"; return (${fixedLiteral});`)();
-        } catch (e2) {
-            console.warn('Failed to parse object literal', e);
-            return null;
-        }
-    }
+const getContinentFromOrder = (order: number): string => {
+  if (order >= 1 && order <= 53) return 'Afrika';
+  if (order >= 54 && order <= 102) return 'Asia';
+  if (order >= 103 && order <= 151) return 'Eropa';
+  if (order >= 152 && order <= 178) return 'Amerika Utara';
+  if (order >= 179 && order <= 194) return 'Oceania';
+  if (order >= 195 && order <= 207) return 'Amerika Selatan';
+  return 'Lainnya';
 };
 
-const extractObjectsFromFile = (fileContent: string) => {
-    const cleaned = removeComments(fileContent);
+const normalizeKey = (val: string) => val.trim().toLowerCase().replace(/[\s_-]+/g, '');
 
-    const parsedValues: any[] = [];
-
-    const constRegex = /(?:const|let|var)\s+[A-Za-z_$][\w$]*\s*=\s*[\[{]/g;
-    let match: RegExpExecArray | null;
-    while ((match = constRegex.exec(cleaned))) {
-        const start = match.index + match[0].length - 1;
-        const literal = findLiteral(cleaned, start);
-        if (literal) {
-            const parsed = parseObjectLiteral(literal);
-            if (parsed !== null && parsed !== undefined) {
-                parsedValues.push(parsed);
-            }
-        }
-    }
-
-    const exportDefaultRegex = /export\s+default\s*[\[{]/g;
-    const exportMatch = exportDefaultRegex.exec(cleaned);
-    if (exportMatch) {
-        const start = exportMatch.index + exportMatch[0].length - 1;
-        const literal = findLiteral(cleaned, start);
-        if (literal) {
-            const parsed = parseObjectLiteral(literal);
-            if (parsed !== null && parsed !== undefined) {
-                parsedValues.push(parsed);
-            }
-        }
-    }
-
-    if (parsedValues.length === 0) return null;
-    if (parsedValues.length === 1) return parsedValues[0];
-    const objects = parsedValues.filter((item) => item && typeof item === 'object' && !Array.isArray(item));
-    if (objects.length === parsedValues.length) {
-        return Object.assign({}, ...objects);
-    }
-    return parsedValues[parsedValues.length - 1] || parsedValues[0];
-};
-
-const getLevelSource = (source: any) => {
-    const wrapperKey = Object.keys(source).find((key) => key.endsWith('_level_kabinet'));
-    if (wrapperKey && typeof source[wrapperKey] === 'object' && source[wrapperKey] !== null) {
-        return source[wrapperKey];
-    }
-
-    if (
-        typeof source.kementerian === 'object' && source.kementerian !== null &&
-        typeof source.keamanan === 'object' && source.keamanan !== null &&
-        typeof source.layanan === 'object' && source.layanan !== null
-    ) {
-        return {
-            kementerian: source.kementerian,
-            keamanan: source.keamanan,
-            layanan: source.layanan,
-        };
-    }
-
-    return null;
-};
-
-const extractFileOrder = (fileName: string) => {
-    const match = fileName.match(/^(\d+)/);
-    return match ? Number(match[1]) : NaN;
-};
-
-const getCountryKey = (filePath: string) => {
-    const fileName = path.basename(filePath).replace(/\.(ts|tsx|js|json)$/i, '');
-    const withoutPrefix = fileName.replace(/^\d+_/, '');
-    return withoutPrefix.toLowerCase().replace(/[^a-z0-9]+/g, '_');
-};
-
-const getContinentFromOrder = (order: number) => {
-    if (Number.isNaN(order)) return 'Lainnya';
-    if (order >= 1 && order <= 51) return 'Afrika';
-    if (order >= 54 && order <= 102) return 'Asia';
-    if (order >= 103 && order <= 151) return 'Eropa';
-    if (order >= 152 && order <= 178) return 'Amerika Utara';
-    if (order >= 179 && order <= 194) return 'Oseania';
-    if (order >= 195 && order <= 207) return 'Amerika Selatan';
-    return 'Lainnya';
-};
-
-let cachedAllCountriesData: any[] | null = null;
+let cachedAllCountries: any[] | null = null;
 const cachedCountryMap = new Map<string, any>();
 
+async function loadAllCountriesFromMySQL() {
+  if (cachedAllCountries && cachedAllCountries.length > 0) {
+    return cachedAllCountries;
+  }
+
+  try {
+    // 1. Core Profile & Basic Info
+    const profiles = await queryDb<any[]>('SELECT * FROM database_profiles_negara');
+    const taxes = await queryDb<any[]>('SELECT * FROM database_pajak_negara').catch(() => []);
+    const kabinet = await queryDb<any[]>('SELECT * FROM database_level_kabinet').catch(() => []);
+    const sda = await queryDb<any[]>('SELECT * FROM database_sda').catch(() => []);
+    const harga = await queryDb<any[]>('SELECT * FROM database_harga_barang').catch(() => []);
+    const doktrin = await queryDb<any[]>('SELECT * FROM database_doktrin_keterbukaan').catch(() => []);
+
+    // 2. Produksi & Pembangunan Tables
+    const listrik = await queryDb<any[]>('SELECT * FROM database_sektor_listrik_nasional').catch(() => []);
+    const mineral = await queryDb<any[]>('SELECT * FROM database_sektor_mineral_kritis').catch(() => []);
+    const manufaktur = await queryDb<any[]>('SELECT * FROM database_manufaktur').catch(() => []);
+    const peternakan = await queryDb<any[]>('SELECT * FROM database_sektor_peternakan').catch(() => []);
+    const agrikultur = await queryDb<any[]>('SELECT * FROM database_sektor_agrikultur').catch(() => []);
+    const perikanan = await queryDb<any[]>('SELECT * FROM database_sektor_perikanan').catch(() => []);
+    const olahan = await queryDb<any[]>('SELECT * FROM database_sektor_olahan_pangan').catch(() => []);
+
+    // 3. Tempat Umum & Layanan Publik Tables
+    const infrastruktur = await queryDb<any[]>('SELECT * FROM database_infrastruktur').catch(() => []);
+    const pendidikan = await queryDb<any[]>('SELECT * FROM database_pendidikan').catch(() => []);
+    const kesehatan = await queryDb<any[]>('SELECT * FROM database_kesehatan').catch(() => []);
+    const hukum = await queryDb<any[]>('SELECT * FROM database_hukum').catch(() => []);
+    const olahraga = await queryDb<any[]>('SELECT * FROM database_olahraga').catch(() => []);
+    const komersial = await queryDb<any[]>('SELECT * FROM database_komersial').catch(() => []);
+    const hiburan = await queryDb<any[]>('SELECT * FROM database_hiburan').catch(() => []);
+    const hunian = await queryDb<any[]>('SELECT * FROM database_hunian_permukiman').catch(() => []);
+
+    // 4. Pertahanan Tables
+    const militer = await queryDb<any[]>('SELECT * FROM database_armada_militer').catch(() => []);
+    const polisi = await queryDb<any[]>('SELECT * FROM database_armada_polisi').catch(() => []);
+    const pertahanan = await queryDb<any[]>('SELECT * FROM database_manajemen_pertahanan').catch(() => []);
+
+    // Helper map build function
+    const makeMap = (arr: any[]) => {
+      const m = new Map<number, any>();
+      for (const item of arr) {
+        if (item.id !== undefined) m.set(Number(item.id), item);
+      }
+      return m;
+    };
+
+    const taxMap = makeMap(taxes);
+    const kabinetMap = makeMap(kabinet);
+    const sdaMap = makeMap(sda);
+    const hargaMap = makeMap(harga);
+    const doktrinMap = makeMap(doktrin);
+
+    const listrikMap = makeMap(listrik);
+    const mineralMap = makeMap(mineral);
+    const manufakturMap = makeMap(manufaktur);
+    const peternakanMap = makeMap(peternakan);
+    const agrikulturMap = makeMap(agrikultur);
+    const perikananMap = makeMap(perikanan);
+    const olahanMap = makeMap(olahan);
+
+    const infraMap = makeMap(infrastruktur);
+    const pendMap = makeMap(pendidikan);
+    const kesMap = makeMap(kesehatan);
+    const hukumMap = makeMap(hukum);
+    const olahMap = makeMap(olahraga);
+    const komMap = makeMap(komersial);
+    const hibMap = makeMap(hiburan);
+    const hunMap = makeMap(hunian);
+
+    const militerMap = makeMap(militer);
+    const polisiMap = makeMap(polisi);
+    const pertahananMap = makeMap(pertahanan);
+
+    const mergedList: any[] = [];
+
+    for (const prof of profiles) {
+      const id = Number(prof.id);
+      const order = id;
+      const slug = prof.country_slug || '';
+      const fileName = `${id}_${slug}.ts`;
+
+      const t = taxMap.get(id) || {};
+      const k = kabinetMap.get(id) || {};
+      const s = sdaMap.get(id) || {};
+      const h = hargaMap.get(id) || {};
+      const d = doktrinMap.get(id) || {};
+
+      const lis = listrikMap.get(id) || {};
+      const min = mineralMap.get(id) || {};
+      const man = manufakturMap.get(id) || {};
+      const pet = peternakanMap.get(id) || {};
+      const agr = agrikulturMap.get(id) || {};
+      const per = perikananMap.get(id) || {};
+      const olh = olahanMap.get(id) || {};
+
+      const inf = infraMap.get(id) || {};
+      const pen = pendMap.get(id) || {};
+      const kes = kesMap.get(id) || {};
+      const huk = hukumMap.get(id) || {};
+      const olg = olahMap.get(id) || {};
+      const kom = komMap.get(id) || {};
+      const hib = hibMap.get(id) || {};
+      const hun = hunMap.get(id) || {};
+
+      const mil = militerMap.get(id) || {};
+      const pol = polisiMap.get(id) || {};
+      const pth = pertahananMap.get(id) || {};
+
+      // Cabinet Level fields
+      const levelFields: Record<string, number> = {};
+      Object.keys(k).forEach((col) => {
+        if (col.startsWith('kem_') || col.startsWith('keamanan_') || col.startsWith('layanan_')) {
+          const deptName = col.replace(/^kem_/, '').replace(/^keamanan_/, '').replace(/^layanan_/, '');
+          levelFields[`level_${deptName}`] = Number(k[col]) || 0;
+        }
+      });
+
+      // Production & Construction numerical counts
+      const numericFields: Record<string, number> = {};
+
+      const extractNums = (obj: any) => {
+        Object.keys(obj).forEach((key) => {
+          if (!['id', 'country', 'country_slug', 'name_en', 'ideology'].includes(key)) {
+            const val = Number(obj[key]);
+            if (!isNaN(val)) {
+              numericFields[key] = val;
+            }
+          }
+        });
+      };
+
+      extractNums(lis);
+      extractNums(min);
+      extractNums(man);
+      extractNums(pet);
+      extractNums(agr);
+      extractNums(per);
+      extractNums(olh);
+      extractNums(inf);
+      extractNums(pen);
+      extractNums(kes);
+      extractNums(huk);
+      extractNums(olg);
+      extractNums(kom);
+      extractNums(hib);
+      extractNums(hun);
+      extractNums(mil);
+      extractNums(pol);
+      extractNums(pth);
+
+      const countryObj: any = {
+        __fileName: fileName,
+        __fileOrder: order,
+        __continent: getContinentFromOrder(order),
+
+        name_id: prof.name_id || prof.country || slug,
+        name_en: prof.name_en || prof.name_id || slug,
+        capital: prof.capital || '',
+        lon: Number(prof.lon) || 0,
+        lat: Number(prof.lat) || 0,
+        flag: prof.flag || '🏳️',
+        jumlah_penduduk: Number(prof.jumlah_penduduk) || 0,
+        anggaran: Number(prof.anggaran) || 0,
+        pendapatan_nasional: String(prof.pendapatan_nasional || '0'),
+        religion: prof.religion || 'Lainnya',
+        ideology: prof.ideology || 'Demokrasi',
+
+        un_vote: Number(prof.un_vote) || 0,
+        reputasi_diplomatik: prof.reputasi_diplomatik || 'Netral',
+        pengaruh_global: Number(prof.pengaruh_global) || 0,
+        peringkat_diplomasi: Number(prof.peringkat_diplomasi) || 100,
+        sikap: prof.sikap || 'Netral',
+
+        pengaruh_internasional: {
+          kekuatan_lunak: Number(prof.kekuatan_lunak) || 0,
+          kekuatan_keras: Number(prof.kekuatan_keras) || 0,
+          prestise_diplomatik: Number(prof.prestise_diplomatik) || 0,
+        },
+
+        doktrin_keterbukaan: {
+          speechScore: Number(d.speech_score) || 75,
+          religionScore: Number(d.religion_score) || 80,
+          demoScore: Number(d.demo_score) || 70,
+          transparencyScore: Number(d.transparency_score) || 75,
+          mediaScore: Number(d.media_score) || 75,
+          internetScore: Number(d.internet_score) || 80,
+          borderScore: Number(d.border_score) || 60,
+          tradeScore: Number(d.trade_score) || 75,
+          diplomacyScore: Number(d.diplomacy_score) || 70,
+          opennessIndex: Number(d.openness_index) || 73,
+        },
+
+        pajak: {
+          ppn: { tarif: Number(t.tarif_ppn) || 0 },
+          korporasi: { tarif: Number(t.tarif_korporasi) || 0 },
+          penghasilan: { tarif: Number(t.tarif_penghasilan) || 0 },
+          bea_cukai: { tarif: Number(t.tarif_bea_cukai) || 0 },
+          lingkungan: { tarif: Number(t.tarif_lingkungan) || 0 },
+        },
+
+        sda: {
+          emas: Boolean(s.emas),
+          uranium: Boolean(s.uranium),
+          batu_bara: Boolean(s.batu_bara),
+          minyak_bumi: Boolean(s.minyak_bumi),
+          gas_alam: Boolean(s.gas_alam),
+          garam: Boolean(s.garam),
+          litium: Boolean(s.litium),
+          logam_tanah_jarang: Boolean(s.logam_tanah_jarang),
+          bijih_besi: Boolean(s.bijih_besi),
+        },
+
+        harga: {
+          harga_beras: Number(h.harga_beras) || 0,
+          harga_daging_sapi: Number(h.harga_daging_sapi) || 0,
+          harga_ayam: Number(h.harga_ayam) || 0,
+          harga_minyak_goreng: Number(h.harga_minyak_goreng) || 0,
+          harga_gula: Number(h.harga_gula) || 0,
+          harga_telur: Number(h.harga_telur) || 0,
+          harga_listrik: Number(h.harga_listrik) || 0,
+          harga_air: Number(h.harga_air) || 0,
+        },
+
+        ...levelFields,
+        ...numericFields,
+      };
+
+      mergedList.push(countryObj);
+
+      // Cache keys
+      const key1 = normalizeKey(prof.name_id || '');
+      const key2 = normalizeKey(prof.name_en || '');
+      const key3 = normalizeKey(slug);
+      if (key1) cachedCountryMap.set(key1, countryObj);
+      if (key2) cachedCountryMap.set(key2, countryObj);
+      if (key3) cachedCountryMap.set(key3, countryObj);
+    }
+
+    cachedAllCountries = mergedList;
+    return mergedList;
+  } catch (error) {
+    console.error('Error fetching country data from XAMPP MySQL:', error);
+    throw error;
+  }
+}
+
 export async function GET(request: Request) {
-    const { searchParams } = new URL(request.url);
-    const countryPath = searchParams.get('path');
-    const requestAll = searchParams.get('all') === 'true';
+  const { searchParams } = new URL(request.url);
+  const countryPath = searchParams.get('path');
+  const requestAll = searchParams.get('all') === 'true';
 
-    if (!countryPath && !requestAll) {
-        return NextResponse.json({ error: 'Path is required unless all=true is provided' }, { status: 400 });
+  try {
+    const allData = await loadAllCountriesFromMySQL();
+
+    if (requestAll || !countryPath) {
+      return NextResponse.json(allData);
     }
 
-    if (requestAll && cachedAllCountriesData) {
-        return NextResponse.json(cachedAllCountriesData);
+    const baseName = path.basename(countryPath).replace(/\.ts$/, '');
+    const normInput = normalizeKey(baseName);
+
+    if (cachedCountryMap.has(normInput)) {
+      return NextResponse.json(cachedCountryMap.get(normInput));
     }
 
-    if (countryPath && cachedCountryMap.has(countryPath)) {
-        return NextResponse.json(cachedCountryMap.get(countryPath));
+    const matched = allData.find((c) => {
+      const fileNameNorm = normalizeKey(c.__fileName.replace(/\.ts$/, ''));
+      const nameIdNorm = normalizeKey(c.name_id || '');
+      const nameEnNorm = normalizeKey(c.name_en || '');
+      return (
+        fileNameNorm === normInput ||
+        nameIdNorm === normInput ||
+        nameEnNorm === normInput ||
+        fileNameNorm.includes(normInput) ||
+        normInput.includes(fileNameNorm)
+      );
+    });
+
+    if (matched) {
+      cachedCountryMap.set(normInput, matched);
+      return NextResponse.json(matched);
     }
 
-    try {
-        const currentDir = process.cwd();
-        const projectRoot = currentDir.endsWith('apps') ? path.join(currentDir, '..') : currentDir;
-        const jsonRoot = path.join(projectRoot, 'json/semua_fitur_negara');
-        const levelRoot = path.join(projectRoot, 'json/database_level_kabinet');
-        const taxRoot = path.join(projectRoot, 'json/database_pajak_negara');
-
-        const embassyRoot = path.join(projectRoot, 'json', 'database_kedutaan_besar');
-        const allFiles: string[] = [];
-        const findFiles = (dir: string, filename?: string) => {
-            const files = fs.readdirSync(dir);
-            for (const file of files) {
-                const fullPath = path.join(dir, file);
-                if (fs.statSync(fullPath).isDirectory()) {
-                    findFiles(fullPath, filename);
-                } else if (!filename || file === filename) {
-                    allFiles.push(fullPath);
-                }
-            }
-        };
-
-        const loadFileData = (filePath: string) => {
-            const fileContents = fs.readFileSync(filePath, 'utf8');
-            const parsed = extractObjectsFromFile(fileContents);
-            if (!parsed || typeof parsed !== 'object') return null;
-
-            const isEmbassyFile = filePath.startsWith(embassyRoot + path.sep) || filePath === embassyRoot;
-            if (isEmbassyFile && Array.isArray(parsed)) {
-                return { embassies: parsed };
-            }
-
-            const isArmadaFile = filePath.includes('2_pertahanan' + path.sep + '3_armada_militer');
-            if (isArmadaFile) {
-                // Wrap armada data dalam struktur yang tepat
-                return { armada: parsed };
-            }
-
-            const isLevelFile = path.relative(levelRoot, filePath).startsWith('..') === false;
-            if (isLevelFile) {
-                const levelData = getLevelSource(parsed);
-                if (levelData) {
-                    const levelFields: Record<string, number> = {};
-                    ['kementerian', 'keamanan', 'layanan'].forEach((group) => {
-                        const groupData = levelData[group];
-                        if (groupData && typeof groupData === 'object') {
-                            Object.entries(groupData).forEach(([dept, level]) => {
-                                const parsedLevel = Number(level);
-                                if (!Number.isNaN(parsedLevel) && parsedLevel > 0) {
-                                    levelFields[`level_${dept}`] = parsedLevel;
-                                }
-                            });
-                        }
-                    });
-                    const result: any = { ...levelFields };
-                    if (parsed.nama_negara) {
-                        result.nama_negara = parsed.nama_negara;
-                    }
-                    return result;
-                }
-            }
-
-            return parsed;
-        };
-
-        if (requestAll) {
-            const countryPathsFilePath = path.join(projectRoot, 'apps/src/app/page/map_system/country-paths.json');
-            let countryPathsList: string[] = [];
-            try {
-                const fileContent = fs.readFileSync(countryPathsFilePath, 'utf8');
-                const countryPathsData = JSON.parse(fileContent.replace(/^\uFEFF/, ''));
-                countryPathsList = Object.values(countryPathsData);
-            } catch (err) {
-                console.error('Failed to read country-paths.json:', err);
-                return NextResponse.json({ error: 'Failed to read country-paths.json' }, { status: 500 });
-            }
-
-            // Index extraction files recursively once to avoid nested search
-            const extractionFilesByFilename: Record<string, string[]> = {};
-            const ekstraksiRoot = path.join(projectRoot, 'json/semua_fitur_negara/1_pembangunan/1_produksi/2_sektor_mineral_kritis');
-            if (fs.existsSync(ekstraksiRoot)) {
-                const indexEkstraksi = (dir: string) => {
-                    const files = fs.readdirSync(dir);
-                    for (const file of files) {
-                        const fullPath = path.join(dir, file);
-                        if (fs.statSync(fullPath).isDirectory()) {
-                            indexEkstraksi(fullPath);
-                        } else {
-                            if (!extractionFilesByFilename[file]) {
-                                extractionFilesByFilename[file] = [];
-                            }
-                            extractionFilesByFilename[file].push(fullPath);
-                        }
-                    }
-                };
-                indexEkstraksi(ekstraksiRoot);
-            }
-
-            // Index profile files recursively once
-            const profileFilesByFilename: Record<string, string[]> = {};
-            if (fs.existsSync(jsonRoot)) {
-                const indexProfiles = (dir: string) => {
-                    const files = fs.readdirSync(dir);
-                    for (const file of files) {
-                        const fullPath = path.join(dir, file);
-                        if (fs.statSync(fullPath).isDirectory()) {
-                            indexProfiles(fullPath);
-                        } else {
-                            if (!profileFilesByFilename[file]) {
-                                profileFilesByFilename[file] = [];
-                            }
-                            profileFilesByFilename[file].push(fullPath);
-                        }
-                    }
-                };
-                indexProfiles(jsonRoot);
-            }
-
-            const mergedByCountryKey: Record<string, any> = {};
-
-            for (const countryPath of countryPathsList) {
-                const targetFilename = path.basename(countryPath);
-                const countryKey = getCountryKey(countryPath);
-                const order = extractFileOrder(targetFilename);
-
-                let countryMerged: any = {
-                    __fileName: targetFilename,
-                    __fileOrder: order,
-                    __continent: getContinentFromOrder(order),
-                };
-
-                const countryFiles: string[] = [];
-
-                // 1. Profile files
-                if (profileFilesByFilename[targetFilename]) {
-                    countryFiles.push(...profileFilesByFilename[targetFilename]);
-                }
-
-                // 2. Level cabinet file
-                const levelCabinetPath = path.join(levelRoot, countryPath);
-                if (fs.existsSync(levelCabinetPath)) {
-                    countryFiles.push(levelCabinetPath);
-                }
-
-                // 3. Tax file
-                const taxPath = path.join(taxRoot, countryPath);
-                if (fs.existsSync(taxPath)) {
-                    countryFiles.push(taxPath);
-                }
-
-                const embassyPath = path.join(embassyRoot, countryPath);
-                if (fs.existsSync(embassyPath)) {
-                    countryFiles.push(embassyPath);
-                }
-
-                // 4. Armada files
-                const armadaRoot = path.join(projectRoot, 'json/semua_fitur_negara/2_pertahanan/3_armada_militer');
-                if (fs.existsSync(armadaRoot)) {
-                    const indexArmada = (dir: string) => {
-                        const files = fs.readdirSync(dir);
-                        for (const file of files) {
-                            const fullPath = path.join(dir, file);
-                            if (fs.statSync(fullPath).isDirectory()) {
-                                indexArmada(fullPath);
-                            } else if (file === targetFilename) {
-                                countryFiles.push(fullPath);
-                            }
-                        }
-                    };
-                    indexArmada(armadaRoot);
-                }
-
-                // 5. Extraction files
-                if (extractionFilesByFilename[targetFilename]) {
-                    countryFiles.push(...extractionFilesByFilename[targetFilename]);
-                }
-
-                // Merge all files for this country
-                for (const filePath of countryFiles) {
-                    const parsed = loadFileData(filePath);
-                    if (parsed) {
-                        countryMerged = { ...countryMerged, ...parsed };
-                    }
-                }
-
-                mergedByCountryKey[countryKey] = countryMerged;
-            }
-
-            cachedAllCountriesData = Object.values(mergedByCountryKey);
-            return NextResponse.json(cachedAllCountriesData);
-        }
-
-        const targetFilename = path.basename(countryPath!);
-        const findTargetFiles = (dir: string) => {
-            const files = fs.readdirSync(dir);
-            for (const file of files) {
-                const fullPath = path.join(dir, file);
-                if (fs.statSync(fullPath).isDirectory()) {
-                    findTargetFiles(fullPath);
-                } else if (file === targetFilename) {
-                    allFiles.push(fullPath);
-                }
-            }
-        };
-
-        findTargetFiles(jsonRoot);
-        findTargetFiles(taxRoot);
-        findTargetFiles(embassyRoot);
-        
-        // 🔥 Explicitly search for armada files in 2_pertahanan/3_armada_militer
-        const armadaRoot = path.join(projectRoot, 'json/semua_fitur_negara/2_pertahanan/3_armada_militer');
-        if (fs.existsSync(armadaRoot)) {
-            const findArmadaFiles = (dir: string) => {
-                if (!fs.existsSync(dir)) return;
-                const files = fs.readdirSync(dir);
-                for (const file of files) {
-                    const fullPath = path.join(dir, file);
-                    if (fs.statSync(fullPath).isDirectory()) {
-                        findArmadaFiles(fullPath);
-                    } else if (file === targetFilename) {
-                        allFiles.push(fullPath);
-                    }
-                }
-            };
-            findArmadaFiles(armadaRoot);
-        }
-        
-        // Explicitly search for extraction files in 2_sektor_mineral_kritis
-        const ekstraksiRoot = path.join(projectRoot, 'json/semua_fitur_negara/1_pembangunan/1_produksi/2_sektor_mineral_kritis');
-        if (fs.existsSync(ekstraksiRoot)) {
-            const findEkstraksiFiles = (dir: string) => {
-                if (!fs.existsSync(dir)) return;
-                const files = fs.readdirSync(dir);
-                for (const file of files) {
-                    const fullPath = path.join(dir, file);
-                    if (fs.statSync(fullPath).isDirectory()) {
-                        findEkstraksiFiles(fullPath);
-                    } else if (file === targetFilename) {
-                        allFiles.push(fullPath);
-                    }
-                }
-            };
-            findEkstraksiFiles(ekstraksiRoot);
-        }
-        
-        const levelCabinetPath = path.join(levelRoot, countryPath!);
-        if (fs.existsSync(levelCabinetPath)) {
-            allFiles.push(levelCabinetPath);
-        }
-
-        const explicitTaxPath = path.join(taxRoot, countryPath!);
-        if (fs.existsSync(explicitTaxPath)) {
-            allFiles.push(explicitTaxPath);
-        }
-
-        if (allFiles.length === 0) {
-            return NextResponse.json({ error: 'File not found' }, { status: 404 });
-        }
-
-        let mergedData: any = {};
-        for (const filePath of allFiles) {
-            const parsed = loadFileData(filePath);
-            if (!parsed) continue;
-            mergedData = { ...mergedData, ...parsed };
-        }
-
-        cachedCountryMap.set(countryPath!, mergedData);
-        return NextResponse.json(mergedData);
-    } catch (e) {
-        console.error('Failed to load country data file:', e);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-    }
+    return NextResponse.json(allData[0] || {});
+  } catch (e: any) {
+    console.error('Failed to load country data from MySQL:', e.message);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
 }

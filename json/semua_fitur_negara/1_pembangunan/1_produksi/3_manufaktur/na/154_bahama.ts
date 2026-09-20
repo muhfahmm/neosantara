@@ -1,8 +1,0 @@
-﻿// @ts-nocheck
-const bahama_manufaktur = {
-  semikonduktor: 52,
-  mobil: 48,
-  sepeda_motor: 52,
-  semen_beton: 16,
-  kayu: 44
-};
