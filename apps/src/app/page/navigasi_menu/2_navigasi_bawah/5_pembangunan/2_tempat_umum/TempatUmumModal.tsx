@@ -570,7 +570,7 @@ export default function TempatUmumModal({
                     infrastruktur: 0.00005,
                     pendidikan: 0.0001,
                     kesehatan: 0.00004,
-                    penegakan_hukum: 0.0005,
+                    penegakan_hukum: 1 / 15000,
                     olahraga_hiburan: 0.00008,
                     komersial: 0.00002,
                   };

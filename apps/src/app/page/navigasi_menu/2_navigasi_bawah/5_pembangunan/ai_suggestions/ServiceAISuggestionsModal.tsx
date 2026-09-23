@@ -1,6 +1,6 @@
 "use client"
 import React from "react";
-import { X, MessageSquare, AlertCircle, CheckCircle, Factory } from "lucide-react";
+import { X, MessageSquare, AlertCircle, CheckCircle, ArrowRight, Factory } from "lucide-react";
 import { TempatUmumSectorAnalysis, HunianSectorAnalysis } from "./serviceAISuggestionsLogic";
 
 interface ServiceAISuggestionsModalProps {
@@ -28,10 +28,10 @@ export default function ServiceAISuggestionsModal({
         <div className="flex items-center justify-between px-6 py-5 border-b border-[#00FFAA]/20 bg-[#0A1A1A] shrink-0">
           <div>
             <h3 className="text-base font-black uppercase tracking-[0.2em] text-[#00FFAA]">
-              📊 Rekomendasi & Analisis AI Sektor {tempatUmumAnalysis?.tabLabel || hunianAnalysis?.tabLabel}
+              📊 REKOMENDASI & ANALISIS AI SEKTOR {tempatUmumAnalysis?.tabLabel || hunianAnalysis?.tabLabel}
             </h3>
             <p className="text-[11px] font-bold text-[#6B8A8A] uppercase tracking-wider">
-              Evaluasi Kebutuhan Publik & Hunian Masyarakat
+              EVALUASI KEBUTUHAN PUBLIK & HUNIAN MASYARAKAT
             </p>
           </div>
           <button
@@ -50,29 +50,120 @@ export default function ServiceAISuggestionsModal({
           {/* TEMPAT UMUM ANALYSIS */}
           {tempatUmumAnalysis && (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="rounded-xl bg-[#0A1A1A] p-4 border border-[#00FFAA]/20">
-                  <div className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-tight">Indeks Kepuasan Publik</div>
-                  <div className="mt-1 font-black text-[#00FFAA] text-2xl">{tempatUmumAnalysis.satisfactionScore} / 100</div>
+              {/* CARD INDEKS KEPUASAN RAKYAT (SEPERTI GAMBAR 1) */}
+              <div className="bg-[#0A1A1A] p-5 rounded-2xl border border-[#00FFAA]/30 flex flex-col gap-4 shadow-inner">
+                <div className="flex justify-between items-start">
+                  <span className="text-xs font-black text-[#6B8A8A] uppercase tracking-wider max-w-[70%]">
+                    INDEKS KEPUASAN RAKYAT ({tempatUmumAnalysis.tabLabel.toUpperCase()})
+                  </span>
+                  <div className="text-right">
+                    <span className="text-3xl sm:text-4xl font-black text-[#00FFAA] tracking-tight">
+                      {tempatUmumAnalysis.satisfactionScore} / 100
+                    </span>
+                  </div>
                 </div>
-                <div className={`rounded-xl p-4 border ${
-                  tempatUmumAnalysis.status === 'KRISIS' ? 'bg-rose-950/40 border-rose-500/30 text-rose-400' :
-                  tempatUmumAnalysis.status === 'TERBATAS' ? 'bg-amber-950/40 border-amber-500/30 text-amber-400' :
-                  'bg-emerald-950/40 border-emerald-500/30 text-emerald-400'
-                }`}>
-                  <div className="text-[10px] font-bold uppercase tracking-tight">Status Ketersediaan</div>
-                  <div className="mt-1 font-black text-lg flex items-center gap-2">
-                    {tempatUmumAnalysis.status === 'KRISIS' && <AlertCircle className="w-5 h-5 text-rose-400" />}
-                    {tempatUmumAnalysis.status === 'MENCUKUPI' && <CheckCircle className="w-5 h-5 text-emerald-400" />}
-                    {tempatUmumAnalysis.status}
+
+                {/* PROGRESS BAR */}
+                <div className="w-full h-3 bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/20 p-0.5">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      tempatUmumAnalysis.satisfactionScore < 50
+                        ? "bg-rose-500"
+                        : tempatUmumAnalysis.satisfactionScore < 80
+                        ? "bg-amber-400"
+                        : "bg-[#00FFAA]"
+                    }`}
+                    style={{ width: `${Math.min(100, Math.max(2, tempatUmumAnalysis.satisfactionScore))}%` }}
+                  />
+                </div>
+
+                {/* STATUS MESSAGE & DOT INDICATOR */}
+                <div className="flex items-center gap-2 text-xs font-bold text-[#E0E0E0]">
+                  <span
+                    className={`w-3 h-3 rounded-full inline-block shrink-0 ${
+                      tempatUmumAnalysis.status === "KRISIS"
+                        ? "bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]"
+                        : tempatUmumAnalysis.status === "TERBATAS"
+                        ? "bg-amber-400"
+                        : "bg-[#00FFAA]"
+                    }`}
+                  />
+                  <span>
+                    {tempatUmumAnalysis.status === "KRISIS"
+                      ? `Krisis fasilitas ${tempatUmumAnalysis.tabLabel.toLowerCase()}, tingkat keterpenuhan sangat rendah.`
+                      : tempatUmumAnalysis.status === "TERBATAS"
+                      ? `Fasilitas ${tempatUmumAnalysis.tabLabel.toLowerCase()} terbatas, tingkat keterpenuhan sedang.`
+                      : `Fasilitas ${tempatUmumAnalysis.tabLabel.toLowerCase()} ideal, tingkat keterpenuhan sangat baik.`}
+                  </span>
+                </div>
+
+                {/* DIVIDER & METRICS */}
+                <div className="border-t border-[#00FFAA]/15 pt-3 flex justify-between items-center text-xs text-[#6B8A8A] font-semibold">
+                  <div>
+                    Rasio per kapita: <strong className="text-[#E0E0E0] font-black">{tempatUmumAnalysis.ratio.toFixed(6)}</strong>
+                  </div>
+                  <div>
+                    Persentase keterpenuhan: <strong className="text-[#E0E0E0] font-black">{tempatUmumAnalysis.percentageMet.toFixed(1)}%</strong>
                   </div>
                 </div>
               </div>
 
+              {/* RINCIAN ANALISIS FASILITAS (SEPERTI GAMBAR 2) */}
+              <div className="border-t border-[#00FFAA]/20 pt-4">
+                <p className="font-bold text-[#00FFAA] uppercase tracking-wider mb-3 text-xs">
+                  RINCIAN ANALISIS FASILITAS ({tempatUmumAnalysis.facilities.length} FASILITAS)
+                </p>
+                <div className="space-y-2 max-h-[35vh] overflow-y-auto pr-1 no-scrollbar">
+                  {tempatUmumAnalysis.facilities.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className={`w-full flex justify-between items-center p-3 rounded-xl border transition-all ${
+                        item.isDeficit
+                          ? "bg-rose-950/20 border-rose-500/30 hover:border-rose-500/60"
+                          : "bg-emerald-950/20 border-emerald-500/30 hover:border-emerald-500/60"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {item.isDeficit ? (
+                          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                        ) : (
+                          <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                        )}
+                        <div>
+                          <span className="font-bold text-xs uppercase text-[#E0E0E0] block">{item.label}</span>
+                          <span className="text-[10px] text-[#6B8A8A] block">
+                            Tersedia: <strong className="text-[#E0E0E0]">{item.count} Unit</strong> | Target Ideal: {item.targetCount} Unit
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <span className={`font-black text-xs ${item.isDeficit ? "text-rose-400" : "text-emerald-400"}`}>
+                          {item.isDeficit ? `Defisit -${item.deficit} Unit` : `Mencukupi (${item.count} Unit)`}
+                        </span>
+
+                        {item.isDeficit && (
+                          <button
+                            onClick={() => {
+                              onClose();
+                              onBuildClick?.(item.key, item.label, item.recommendedBuildQty);
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 border border-rose-500/40 text-[10px] font-bold uppercase transition-all cursor-pointer active:scale-95 shadow-sm"
+                          >
+                            Rekomendasi <ArrowRight className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* AI SUMMARY TEXT */}
               <div className="rounded-xl bg-[#0A1A1A] p-4 border border-[#00FFAA]/30 flex items-start gap-3">
                 <MessageSquare className="w-5 h-5 text-[#00FFAA] shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <div className="text-xs font-black uppercase text-[#00FFAA]">Rekomendasi AI:</div>
+                  <div className="text-xs font-black uppercase text-[#00FFAA]">Ringkasan AI:</div>
                   <div className="text-xs text-[#E0E0E0] leading-relaxed">{tempatUmumAnalysis.recommendation}</div>
                 </div>
               </div>
@@ -97,30 +188,65 @@ export default function ServiceAISuggestionsModal({
                 </div>
               </div>
 
-              <div className="rounded-xl bg-[#0A1A1A] p-4 border border-[#00FFAA]/30 flex items-start gap-3">
-                <MessageSquare className="w-5 h-5 text-[#00FFAA] shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <div className="text-xs font-black uppercase text-[#00FFAA]">Rekomendasi AI:</div>
-                  <div className="text-xs text-[#E0E0E0] leading-relaxed">{hunianAnalysis.recommendation}</div>
+              {/* RINCIAN ANALISIS HUNIAN */}
+              <div className="border-t border-[#00FFAA]/20 pt-4">
+                <p className="font-bold text-[#00FFAA] uppercase tracking-wider mb-3 text-xs">
+                  RINCIAN ANALISIS HUNIAN PERMUKIMAN ({hunianAnalysis.housingItems.length} KATEGORI)
+                </p>
+                <div className="space-y-2 max-h-[35vh] overflow-y-auto pr-1 no-scrollbar">
+                  {hunianAnalysis.housingItems.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className={`w-full flex justify-between items-center p-3 rounded-xl border transition-all ${
+                        item.isDeficit
+                          ? "bg-rose-950/20 border-rose-500/30 hover:border-rose-500/60"
+                          : "bg-emerald-950/20 border-emerald-500/30 hover:border-emerald-500/60"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {item.isDeficit ? (
+                          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                        ) : (
+                          <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                        )}
+                        <div>
+                          <span className="font-bold text-xs uppercase text-[#E0E0E0] block">{item.label}</span>
+                          <span className="text-[10px] text-[#6B8A8A] block">
+                            Kapasitas/Unit: {item.capacityPerUnit} Jiwa | Terpasang: <strong className="text-[#E0E0E0]">{item.count} Unit</strong> ({item.totalCapacity.toLocaleString('id-ID')} Jiwa)
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <span className={`font-black text-xs ${item.isDeficit ? "text-rose-400" : "text-emerald-400"}`}>
+                          {item.isDeficit ? `Kebutuhan +${item.deficitUnitsNeeded} Unit` : `Mencukupi`}
+                        </span>
+
+                        {item.isDeficit && (
+                          <button
+                            onClick={() => {
+                              onClose();
+                              onBuildClick?.(item.key, item.label, item.deficitUnitsNeeded);
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 border border-rose-500/40 text-[10px] font-bold uppercase transition-all cursor-pointer active:scale-95 shadow-sm"
+                          >
+                            Rekomendasi <ArrowRight className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {hunianAnalysis.deficitUnitsNeeded > 0 && (
-                <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20 flex items-center justify-between gap-4">
-                  <span className="text-xs text-[#E0E0E0]">
-                    Klik tombol untuk langsung menjadwalkan pembangunan <strong className="text-[#00FFAA]">{hunianAnalysis.deficitUnitsNeeded} unit {hunianAnalysis.tabLabel}</strong>.
-                  </span>
-                  <button
-                    onClick={() => {
-                      onClose();
-                      onBuildClick?.(hunianAnalysis.tabId, hunianAnalysis.tabLabel, hunianAnalysis.deficitUnitsNeeded);
-                    }}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 transition-all font-black text-xs uppercase tracking-wider whitespace-nowrap cursor-pointer shadow-md"
-                  >
-                    <Factory className="w-4 h-4" /> Bangun {hunianAnalysis.deficitUnitsNeeded} Unit
-                  </button>
+              {/* AI SUMMARY TEXT */}
+              <div className="rounded-xl bg-[#0A1A1A] p-4 border border-[#00FFAA]/30 flex items-start gap-3">
+                <MessageSquare className="w-5 h-5 text-[#00FFAA] shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <div className="text-xs font-black uppercase text-[#00FFAA]">Ringkasan AI:</div>
+                  <div className="text-xs text-[#E0E0E0] leading-relaxed">{hunianAnalysis.recommendation}</div>
                 </div>
-              )}
+              </div>
             </>
           )}
 
