@@ -1,6 +1,7 @@
 -- database_sektor_mineral_kritis SQL Export
 -- Total 207 Negara
 
+DROP TABLE IF EXISTS database_sektor_mineral_kritis;
 CREATE TABLE IF NOT EXISTS database_sektor_mineral_kritis (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,

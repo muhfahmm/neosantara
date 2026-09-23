@@ -1,6 +1,7 @@
 -- Database Pajak Negara SQL Export
 -- Total 207 Negara
 
+DROP TABLE IF EXISTS database_pajak_negara;
 CREATE TABLE IF NOT EXISTS database_pajak_negara (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,

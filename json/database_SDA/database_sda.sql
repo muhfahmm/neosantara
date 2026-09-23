@@ -1,6 +1,7 @@
 -- Database SDA SQL Export
 -- Total 207 Negara
 
+DROP TABLE IF EXISTS database_sda;
 CREATE TABLE IF NOT EXISTS database_sda (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,

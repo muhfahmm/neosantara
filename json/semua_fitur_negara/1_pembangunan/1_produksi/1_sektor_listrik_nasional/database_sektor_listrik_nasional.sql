@@ -1,6 +1,7 @@
 -- database_sektor_listrik_nasional SQL Export
 -- Total 207 Negara
 
+DROP TABLE IF EXISTS database_sektor_listrik_nasional;
 CREATE TABLE IF NOT EXISTS database_sektor_listrik_nasional (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,

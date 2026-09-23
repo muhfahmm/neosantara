@@ -1,6 +1,7 @@
 -- Database Kedutaan Besar SQL Export
 -- Total 3102 Records
 
+DROP TABLE IF EXISTS database_kedutaan_besar;
 CREATE TABLE IF NOT EXISTS database_kedutaan_besar (
     id INT AUTO_INCREMENT PRIMARY KEY,
     country_id INT NOT NULL,

@@ -1,6 +1,7 @@
 -- database_armada_polisi SQL Export
 -- Total 207 Negara
 
+DROP TABLE IF EXISTS database_armada_polisi;
 CREATE TABLE IF NOT EXISTS database_armada_polisi (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,

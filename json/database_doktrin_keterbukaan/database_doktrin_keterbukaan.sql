@@ -1,6 +1,7 @@
 -- Database Doktrin Keterbukaan SQL Export
 -- Total 207 Negara
 
+DROP TABLE IF EXISTS database_doktrin_keterbukaan;
 CREATE TABLE IF NOT EXISTS database_doktrin_keterbukaan (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,

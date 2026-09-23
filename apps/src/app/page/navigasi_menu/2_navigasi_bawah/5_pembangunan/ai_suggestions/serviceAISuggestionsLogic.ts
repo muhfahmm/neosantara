@@ -51,15 +51,15 @@ export const generateTempatUmumAIAnalysis = (
   let status: "KRISIS" | "TERBATAS" | "MENCUKUPI" = "MENCUKUPI";
   let recommendation = "";
 
-  if (satisfactionScore >= 80) {
+  if (satisfactionScore >= 76) {
     status = "MENCUKUPI";
-    recommendation = `Ketersediaan fasilitas ${tabLabel.toLowerCase()} saat ini sudah sangat ideal (Skor: ${satisfactionScore}/100) dan mencukupi kebutuhan seluruh rakyat.`;
-  } else if (satisfactionScore >= 50) {
+    recommendation = `✅ Ketersediaan fasilitas ${tabLabel.toLowerCase()} sangat mencukupi bagi seluruh rakyat.`;
+  } else if (satisfactionScore >= 41) {
     status = "TERBATAS";
-    recommendation = `Fasilitas ${tabLabel.toLowerCase()} masih terbatas (Skor: ${satisfactionScore}/100). Disarankan untuk memperbanyak unit bangunan guna meningkatkan tingkat kepuasan publik.`;
+    recommendation = `⚠️ Fasilitas ${tabLabel.toLowerCase()} masih terbatas, perlu pembangunan lebih lanjut.`;
   } else {
     status = "KRISIS";
-    recommendation = `Krisis fasilitas ${tabLabel.toLowerCase()}! (Skor: ${satisfactionScore}/100). Prioritaskan pembangunan fasilitas ${tabLabel.toLowerCase()} segera untuk mencegah penurunan kepuasan publik.`;
+    recommendation = `🔴 Krisis fasilitas ${tabLabel.toLowerCase()}, tingkat keterpenuhan sangat rendah.`;
   }
 
   const targetPerFacility = keys.length > 0 ? Math.max(1, Math.ceil((population * targetRatio) / keys.length)) : 10;

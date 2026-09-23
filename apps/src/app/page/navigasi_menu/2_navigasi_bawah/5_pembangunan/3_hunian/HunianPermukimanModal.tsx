@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
-import { X, Home, TrendingUp, TrendingDown, Hammer, AlertCircle, Info, Sparkles } from "lucide-react";
+import { X, Home, TrendingUp, TrendingDown, Hammer, AlertCircle, Info, Sparkles, Users } from "lucide-react";
 import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
 import { generateHunianAIAnalysis } from "../ai_suggestions/serviceAISuggestionsLogic";
 import InfoBangunanModal from "./1_modals_info_bangunan/info_bangunan_modals";
@@ -446,11 +446,28 @@ export default function HunianPermukimanModal({
                 {activeItem && (
                   <div className="max-w-3xl">
                     <div className="mb-6 bg-[#0A1A1A]/60 p-4 rounded-2xl border border-[#00FFAA]/20">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex-grow">
                           <h3 className="text-xl font-black text-[#00FFAA] uppercase tracking-wider">{activeItem.label}</h3>
                           <p className="text-xs text-[#6B8A8A] mt-1">{activeItem.desc}</p>
                         </div>
+
+                        {/* Card Rasio Kapasitas Unit Hunian */}
+                        <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 shrink-0 shadow-inner">
+                          <div className="p-2 bg-[#0F2424] rounded-lg border border-[#00FFAA]/20">
+                            <Users className="w-4 h-4 text-[#00FFAA]" />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider">Kapasitas Standar AI</p>
+                            <p className="text-xs font-black text-[#00FFAA]">
+                              1 Unit : {
+                                activeItem.key === 'rumah_subsidi' ? '4 Jiwa' :
+                                activeItem.key === 'apartemen' ? '50 Jiwa' : '8 Jiwa'
+                              }
+                            </p>
+                          </div>
+                        </div>
+
                         <button
                           onClick={handleOpenAIModal}
                           className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#00FFAA]/10 border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all text-xs font-black shadow-md cursor-pointer shrink-0 active:scale-95"
@@ -609,16 +626,22 @@ export default function HunianPermukimanModal({
                   </div>
                   <div className="w-full h-3 bg-[#0F2424] border border-[#00FFAA]/20 rounded-full mt-3 overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
+                      className={`h-full rounded-full transition-all duration-200 ${
+                        housingSatisfaction <= 40
+                          ? "bg-rose-500"
+                          : housingSatisfaction <= 75
+                          ? "bg-amber-400"
+                          : "bg-[#00FFAA]"
+                      }`}
                       style={{ width: `${housingSatisfaction}%` }}
                     />
                   </div>
                   <p className="text-[10px] text-[#E0E0E0] font-bold mt-3">
-                    {housingSatisfaction >= 80
-                      ? "✅ Kapasitas hunian mencukupi, rakyat memiliki tempat tinggal layak."
-                      : housingSatisfaction >= 50
-                      ? "⚠️ Ketersediaan hunian masih terbatas, perlu pembangunan lebih banyak."
-                      : "🔴 Krisis perumahan, banyak warga belum memiliki tempat tinggal."}
+                    {housingSatisfaction <= 40
+                      ? "🔴 Krisis fasilitas perumahan, tingkat keterpenuhan sangat rendah."
+                      : housingSatisfaction <= 75
+                      ? "⚠️ Fasilitas perumahan masih terbatas, perlu pembangunan lebih lanjut."
+                      : "✅ Ketersediaan fasilitas perumahan sangat mencukupi bagi seluruh rakyat."}
                   </p>
                   <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-[#6B8A8A]">
                     <div>Kapasitas per kapita: <span className="font-bold text-[#E0E0E0]">

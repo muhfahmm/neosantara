@@ -1,6 +1,7 @@
 -- database_sektor_agrikultur SQL Export
 -- Total 207 Negara
 
+DROP TABLE IF EXISTS database_sektor_agrikultur;
 CREATE TABLE IF NOT EXISTS database_sektor_agrikultur (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,

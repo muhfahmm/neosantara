@@ -1,6 +1,7 @@
 -- Database Harga Barang SQL Export
 -- Total 206 Negara
 
+DROP TABLE IF EXISTS database_harga_barang;
 CREATE TABLE IF NOT EXISTS database_harga_barang (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,

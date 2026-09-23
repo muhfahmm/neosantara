@@ -1,6 +1,7 @@
 -- Database Tempat Wisata SQL Export
 -- Total 693 Records
 
+DROP TABLE IF EXISTS database_tempat_wisata;
 CREATE TABLE IF NOT EXISTS database_tempat_wisata (
     id INT AUTO_INCREMENT PRIMARY KEY,
     country_id INT NOT NULL,

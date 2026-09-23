@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
-// 🔥 FIX 1: Tambahkan MapPin, DollarSign, BarChart3, Sparkles
-import { X, Landmark, AlertTriangle, TrendingUp, TrendingDown, Hammer, Info, MapPin, DollarSign, BarChart3, Sparkles } from "lucide-react";
+// 🔥 FIX 1: Tambahkan MapPin, DollarSign, BarChart3, Sparkles, Users
+import { X, Landmark, AlertTriangle, TrendingUp, TrendingDown, Hammer, Info, MapPin, DollarSign, BarChart3, Sparkles, Users } from "lucide-react";
 import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
 import { generateTempatUmumAIAnalysis } from "../ai_suggestions/serviceAISuggestionsLogic";
 
@@ -455,13 +455,33 @@ export default function TempatUmumModal({
               <div>
                 {activeGroup && (
                   <>
-                    <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0A1A1A]/60 p-4 rounded-2xl border border-[#00FFAA]/20">
-                      <div>
+                    <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#0A1A1A]/60 p-4 rounded-2xl border border-[#00FFAA]/20">
+                      <div className="flex-1">
                         <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2">
                           {activeGroup.label}
                         </h3>
                         <p className="text-xs text-[#6B8A8A] mt-1">{activeGroup.description}</p>
                       </div>
+
+                      {/* Card Rasio Kapasitas Bangunan */}
+                      <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 shrink-0 shadow-inner">
+                        <div className="p-2 bg-[#0F2424] rounded-lg border border-[#00FFAA]/20">
+                          <Users className="w-4 h-4 text-[#00FFAA]" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider">Kapasitas Standar AI</p>
+                          <p className="text-xs font-black text-[#00FFAA]">
+                            1 Bangunan : {
+                              activeGroup.id === 'infrastruktur' ? '20.000 Jiwa' :
+                              activeGroup.id === 'pendidikan' ? '10.000 Jiwa' :
+                              activeGroup.id === 'kesehatan' ? '25.000 Jiwa' :
+                              activeGroup.id === 'penegakan_hukum' ? '15.000 Jiwa' :
+                              activeGroup.id === 'olahraga_hiburan' ? '12.500 Jiwa' : '50.000 Jiwa'
+                            }
+                          </p>
+                        </div>
+                      </div>
+
                       <button
                         onClick={handleOpenAIModal}
                         className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#00FFAA]/10 border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all text-xs font-black shadow-md cursor-pointer shrink-0 active:scale-95"
@@ -592,17 +612,23 @@ export default function TempatUmumModal({
                       
                       <div className="w-full h-3 bg-[#0F2424] border border-[#00FFAA]/20 rounded-full mt-3 overflow-hidden">
                         <div
-                          className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
+                          className={`h-full rounded-full transition-all duration-200 ${
+                            satisfactionScore <= 40
+                              ? "bg-rose-500"
+                              : satisfactionScore <= 75
+                              ? "bg-amber-400"
+                              : "bg-[#00FFAA]"
+                          }`}
                           style={{ width: `${satisfactionScore}%` }}
                         />
                       </div>
 
                       <p className="text-[10px] text-[#E0E0E0] font-bold mt-3">
-                        {satisfactionScore >= 80
-                          ? `✅ Ketersediaan fasilitas ${activeCategory.label.toLowerCase()} sangat mencukupi bagi seluruh rakyat.`
-                          : satisfactionScore >= 50
+                        {satisfactionScore <= 40
+                          ? `🔴 Krisis fasilitas ${activeCategory.label.toLowerCase()}, tingkat keterpenuhan sangat rendah.`
+                          : satisfactionScore <= 75
                           ? `⚠️ Fasilitas ${activeCategory.label.toLowerCase()} masih terbatas, perlu pembangunan lebih lanjut.`
-                          : `🔴 Krisis fasilitas ${activeCategory.label.toLowerCase()}, tingkat keterpenuhan sangat rendah.`}
+                          : `✅ Ketersediaan fasilitas ${activeCategory.label.toLowerCase()} sangat mencukupi bagi seluruh rakyat.`}
                       </p>
 
                       <div className="mt-3 grid grid-cols-2 gap-2 text-[10px] text-[#6B8A8A] border-t border-[#00FFAA]/10 pt-2">

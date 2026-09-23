@@ -67,9 +67,9 @@ export default function ServiceAISuggestionsModal({
                 <div className="w-full h-3 bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/20 p-0.5">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${
-                      tempatUmumAnalysis.satisfactionScore < 50
+                      tempatUmumAnalysis.satisfactionScore <= 40
                         ? "bg-rose-500"
-                        : tempatUmumAnalysis.satisfactionScore < 80
+                        : tempatUmumAnalysis.satisfactionScore <= 75
                         ? "bg-amber-400"
                         : "bg-[#00FFAA]"
                     }`}
@@ -79,21 +79,12 @@ export default function ServiceAISuggestionsModal({
 
                 {/* STATUS MESSAGE & DOT INDICATOR */}
                 <div className="flex items-center gap-2 text-xs font-bold text-[#E0E0E0]">
-                  <span
-                    className={`w-3 h-3 rounded-full inline-block shrink-0 ${
-                      tempatUmumAnalysis.status === "KRISIS"
-                        ? "bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.8)]"
-                        : tempatUmumAnalysis.status === "TERBATAS"
-                        ? "bg-amber-400"
-                        : "bg-[#00FFAA]"
-                    }`}
-                  />
                   <span>
-                    {tempatUmumAnalysis.status === "KRISIS"
-                      ? `Krisis fasilitas ${tempatUmumAnalysis.tabLabel.toLowerCase()}, tingkat keterpenuhan sangat rendah.`
-                      : tempatUmumAnalysis.status === "TERBATAS"
-                      ? `Fasilitas ${tempatUmumAnalysis.tabLabel.toLowerCase()} terbatas, tingkat keterpenuhan sedang.`
-                      : `Fasilitas ${tempatUmumAnalysis.tabLabel.toLowerCase()} ideal, tingkat keterpenuhan sangat baik.`}
+                    {tempatUmumAnalysis.satisfactionScore <= 40
+                      ? `🔴 Krisis fasilitas ${tempatUmumAnalysis.tabLabel.toLowerCase()}, tingkat keterpenuhan sangat rendah.`
+                      : tempatUmumAnalysis.satisfactionScore <= 75
+                      ? `⚠️ Fasilitas ${tempatUmumAnalysis.tabLabel.toLowerCase()} masih terbatas, perlu pembangunan lebih lanjut.`
+                      : `✅ Ketersediaan fasilitas ${tempatUmumAnalysis.tabLabel.toLowerCase()} sangat mencukupi bagi seluruh rakyat.`}
                   </span>
                 </div>
 

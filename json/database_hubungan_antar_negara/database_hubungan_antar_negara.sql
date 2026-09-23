@@ -1,6 +1,7 @@
 -- Database Hubungan Antar Negara SQL Export
 -- Total 42849 Records
 
+DROP TABLE IF EXISTS database_hubungan_antar_negara;
 CREATE TABLE IF NOT EXISTS database_hubungan_antar_negara (
     id INT AUTO_INCREMENT PRIMARY KEY,
     country_id INT NOT NULL,

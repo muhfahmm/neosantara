@@ -1,6 +1,7 @@
 -- Database Mitra Perdagangan SQL Export
 -- Total 1610 Records
 
+DROP TABLE IF EXISTS database_mitra_perdagangan;
 CREATE TABLE IF NOT EXISTS database_mitra_perdagangan (
     id INT AUTO_INCREMENT PRIMARY KEY,
     country_id INT NOT NULL,

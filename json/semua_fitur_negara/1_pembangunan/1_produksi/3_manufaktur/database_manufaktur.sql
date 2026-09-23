@@ -1,6 +1,7 @@
 -- database_manufaktur SQL Export
 -- Total 207 Negara
 
+DROP TABLE IF EXISTS database_manufaktur;
 CREATE TABLE IF NOT EXISTS database_manufaktur (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,

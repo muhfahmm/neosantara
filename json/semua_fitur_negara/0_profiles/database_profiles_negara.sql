@@ -1,6 +1,7 @@
 -- Database Profiles Negara SQL Export
 -- Total 207 Negara
 
+DROP TABLE IF EXISTS database_profiles_negara;
 CREATE TABLE IF NOT EXISTS database_profiles_negara (
     id INT PRIMARY KEY,
     country_slug VARCHAR(100) NOT NULL,

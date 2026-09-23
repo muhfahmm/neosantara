@@ -1,6 +1,7 @@
 -- database_armada_militer SQL Export
 -- Total 207 Negara
 
+DROP TABLE IF EXISTS database_armada_militer;
 CREATE TABLE IF NOT EXISTS database_armada_militer (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,

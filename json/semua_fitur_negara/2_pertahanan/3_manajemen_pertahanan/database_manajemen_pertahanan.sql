@@ -1,6 +1,7 @@
 -- database_manajemen_pertahanan SQL Export
 -- Total 207 Negara
 
+DROP TABLE IF EXISTS database_manajemen_pertahanan;
 CREATE TABLE IF NOT EXISTS database_manajemen_pertahanan (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,

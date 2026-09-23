@@ -1,6 +1,7 @@
 -- Database Level Kabinet SQL Export
 -- Total {} Negara
 
+DROP TABLE IF EXISTS database_level_kabinet;
 CREATE TABLE IF NOT EXISTS database_level_kabinet (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,
