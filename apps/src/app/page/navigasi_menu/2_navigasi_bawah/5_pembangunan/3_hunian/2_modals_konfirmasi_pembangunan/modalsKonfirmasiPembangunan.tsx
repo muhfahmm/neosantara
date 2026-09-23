@@ -156,17 +156,6 @@ export default function KonfirmasiPembangunanModal({
                   >
                     Maks
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      localStorage.clear();
-                      sessionStorage.clear();
-                      window.location.href = window.location.href;
-                    }}
-                    className="px-4 py-2 rounded-xl bg-[#0A1A1A] hover:bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] text-xs font-bold uppercase cursor-pointer transition-all shadow-sm"
-                  >
-                    Reset
-                  </button>
                 </div>
               </label>
             </div>

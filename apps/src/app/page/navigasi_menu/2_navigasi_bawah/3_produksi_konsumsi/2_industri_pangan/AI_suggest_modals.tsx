@@ -50,8 +50,13 @@ export default function AISuggestModal({
             <h3 className="text-base font-black uppercase tracking-[0.2em] text-[#00FFAA]">📊 Analisis Sektor AI</h3>
             <p className="text-[11px] font-bold text-[#6B8A8A] uppercase tracking-wider">{sectorLabel}</p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer">
-            <X className="w-5 h-5" />
+          <button
+            onClick={onClose}
+            className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+            aria-label="Tutup analisis AI"
+          >
+            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-5 w-5" />
           </button>
         </div>
 

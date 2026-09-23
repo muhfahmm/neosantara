@@ -1,7 +1,7 @@
 // BaseProduksiGrid.tsx
 "use client";
-import React from "react";
-import { Info } from "lucide-react";
+import React, { useState } from "react";
+import { Info, MessageSquare } from "lucide-react";
 import { getKelistrikanFuelRequirements } from "./requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 import { getDaysElapsed, formatDate } from '@/app/logic/production_logic';
 import InfoBangunan from "./1_modals_info_bangunan/info_bangunan_modals";
@@ -12,6 +12,8 @@ import {
   calculateConsumption,
   isFoodRawMaterialDeficit,
 } from "../../3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
+import ProductionAISuggestionsModal from "./ai_suggestions/ProductionAISuggestionsModal";
+import { generateProductionSectorAnalysis } from "./ai_suggestions/productionAISuggestionsLogic";
 
 const ELECTRICITY_FUEL_RESOURCE_KEYS = [
   "gas_alam",
@@ -63,7 +65,7 @@ interface BaseProduksiGridProps {
   metadata: any;
   calculateProductionAmount: (key: string) => number;
   findMeta: (key: string) => any;
-  onBuildClick: (key: string, label: string) => void;
+  onBuildClick: (key: string, label: string, quantity?: number) => void;
   hoveredBuildingKey: string | null;
   setHoveredBuildingKey: (key: string | null) => void;
   isBuildingAvailable?: (buildingKey: string, countryName: string) => boolean;
@@ -122,11 +124,40 @@ export default function BaseProduksiGrid({
     }
   };
 
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+  const [aiAnalysisResult, setAiAnalysisResult] = useState<any>(null);
+
+  const SUPPORTED_AI_SECTORS = ["peternakan", "agrikultur", "perikanan", "olahan pangan"];
+  const normalizedTitle = (title || "").toLowerCase().trim();
+  const showAIButton = SUPPORTED_AI_SECTORS.includes(normalizedTitle);
+
+  const handleOpenAISuggestions = () => {
+    const analysis = generateProductionSectorAnalysis(normalizedTitle, title, keys, countryDetail, metadata);
+    setAiAnalysisResult(analysis);
+    setIsAIModalOpen(true);
+  };
+
   return (
     <div>
-      <div className="flex items-center gap-3 mb-6">
-        <Icon className="h-6 w-6 text-[#00FFAA]" />
-        <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wider">{title}</h3>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Icon className="h-6 w-6 text-[#00FFAA]" />
+          <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wider">{title}</h3>
+        </div>
+
+        {showAIButton && (
+          <button
+            type="button"
+            onClick={handleOpenAISuggestions}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#00FFAA]/10 hover:bg-[#00FFAA]/20 transition-all border border-[#00FFAA]/30 group cursor-pointer shadow-sm"
+            title={`Analisis AI untuk Sektor ${title}`}
+          >
+            <div className="relative">
+              <MessageSquare className="w-4 h-4 text-[#00FFAA] group-hover:scale-110 transition-transform" />
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">Rekomendasi AI</span>
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-4 gap-4">
@@ -285,6 +316,19 @@ export default function BaseProduksiGrid({
           </div>
         )}
       </div>
+
+      {/* MODAL REKOMENDASI AI SEKTOR PRODUKSI */}
+      <ProductionAISuggestionsModal
+        isOpen={isAIModalOpen}
+        onClose={() => setIsAIModalOpen(false)}
+        analysis={aiAnalysisResult}
+        countryDetail={countryDetail}
+        metadata={metadata}
+        onBuildClick={(key, label, quantity) => {
+          setIsAIModalOpen(false);
+          onBuildClick(key, label, quantity);
+        }}
+      />
     </div>
   );
 }

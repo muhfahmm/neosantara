@@ -67,7 +67,7 @@ export default function ProduksiModal({
       setActiveTab(targetTab);
     }
   }, [targetTab]);
-  const [selectedBuilding, setSelectedBuilding] = useState<{ key: string; label: string } | null>(null);
+  const [selectedBuilding, setSelectedBuilding] = useState<{ key: string; label: string; initialQuantity?: number } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [loadingMetadata, setLoadingMetadata] = useState(true);
@@ -450,7 +450,7 @@ export default function ProduksiModal({
 
   if (!isOpen) return null;
 
-  const handleBuild = (key: string, label: string) => {
+  const handleBuild = (key: string, label: string, quantity?: number) => {
     if (!isBuildingAvailable(key, countryDetail?.country || '', sdaStatus)) {
       setToast(`❌ ${label} tidak tersedia untuk negara ini`);
       setTimeout(() => setToast(null), 2000);
@@ -458,7 +458,7 @@ export default function ProduksiModal({
     }
     // highlight clicked card (e.g., uranium) so border turns green
     setHighlightedCardKey(key);
-    setSelectedBuilding({ key, label });
+    setSelectedBuilding({ key, label, initialQuantity: quantity });
   };
 
   const availabilityChecker = (key: string, countryName: string) => {
@@ -615,6 +615,7 @@ export default function ProduksiModal({
             onConfirm={confirmBuild}
             onMaterialClick={handleMaterialClick}
             loadingMetadata={loadingMetadata}
+            initialQuantity={selectedBuilding.initialQuantity}
           />
         );
       })()}
