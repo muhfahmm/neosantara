@@ -118,15 +118,15 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
 
   const embassyLabel = getEmbassyButtonLabel(countryName, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners);
   const embassyClass = getEmbassyButtonClass(countryName, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners);
-  const embassyIconClass = embassyLabel === 'Hancurkan Kedutaan' ? 'text-emerald-700' : undefined;
-  const embassyLabelClass = embassyLabel === 'Hancurkan Kedutaan' ? 'text-emerald-700' : undefined;
+  const embassyIconClass = embassyLabel === 'Hancurkan Kedutaan' ? 'text-[#00FFAA]' : undefined;
+  const embassyLabelClass = embassyLabel === 'Hancurkan Kedutaan' ? 'text-[#00FFAA]' : undefined;
 
   const hasTrade = getTradeButtonLabel(countryName, playerCountryName, removedTradePartners) === 'Putus Hubungan Dagang';
   const tradeIsActive = hasTrade || tradeActive;
   const tradeLabel = tradeIsActive ? 'Putus Hubungan Dagang' : 'Perjanjian Dagang';
   const tradeClass = getTradeButtonClass(countryName, playerCountryName, removedTradePartners);
-  const tradeIconClass = tradeIsActive ? 'text-emerald-700' : undefined;
-  const tradeLabelClass = tradeIsActive ? 'text-emerald-700' : undefined;
+  const tradeIconClass = tradeIsActive ? 'text-[#00FFAA]' : undefined;
+  const tradeLabelClass = tradeIsActive ? 'text-[#00FFAA]' : undefined;
 
   // Local active states: sync initial values when country/player changes
   // Sync initial active states from logic at mount / when country changes
@@ -146,8 +146,8 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     setIsDestroyKontrakOpen(false);
   }, [countryName, playerCountryName, playerEmbassies.length, removedEmbassies.length, removedTradePartners.length]);
 
-  // PERBAIKAN: Ganti style hijau solid menjadi border hijau modern
-  const modernGreenBorderClass = 'border-2 border-emerald-500 bg-transparent text-emerald-700 hover:bg-emerald-50 hover:border-emerald-600';
+  // PERBAIKAN: Style tombol aktif dalam tema dark mode sci-fi
+  const modernGreenBorderClass = 'border-2 border-[#00FFAA] bg-[#00FFAA]/20 text-[#00FFAA] hover:bg-[#00FFAA]/30';
 
   const handleEmbassyClick = () => {
     if (embassyActive) {
@@ -177,12 +177,12 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           label={embassyActive ? 'Hancurkan Kedutaan' : 'Bangun Kedutaan'} 
           onClick={handleEmbassyClick} 
           className={embassyActive ? modernGreenBorderClass : embassyClass} 
-          iconClass={embassyActive ? 'text-emerald-700' : embassyIconClass}
-          labelClass={embassyActive ? 'text-emerald-700' : embassyLabelClass}
+          iconClass={embassyActive ? 'text-[#00FFAA]' : embassyIconClass}
+          labelClass={embassyActive ? 'text-[#00FFAA]' : embassyLabelClass}
         />
         
-        <ActionButton icon={ShieldOff} label={paktaActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => paktaActive ? setIsDestroyPaktaOpen(true) : setIsPaktaModalOpen(true)} disabled={!embassyActive} className={paktaActive ? modernGreenBorderClass : undefined} iconClass={paktaActive ? 'text-emerald-700' : undefined} labelClass={paktaActive ? 'text-emerald-700' : undefined} />
-        <ActionButton icon={ShieldCheck} label={aliansiActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => aliansiActive ? setIsDestroyAliansiOpen(true) : setIsAliansiModalOpen(true)} disabled={!embassyActive} className={aliansiActive ? modernGreenBorderClass : undefined} iconClass={aliansiActive ? 'text-emerald-700' : undefined} labelClass={aliansiActive ? 'text-emerald-700' : undefined} />
+        <ActionButton icon={ShieldOff} label={paktaActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => paktaActive ? setIsDestroyPaktaOpen(true) : setIsPaktaModalOpen(true)} disabled={!embassyActive} className={paktaActive ? modernGreenBorderClass : undefined} iconClass={paktaActive ? 'text-[#00FFAA]' : undefined} labelClass={paktaActive ? 'text-[#00FFAA]' : undefined} />
+        <ActionButton icon={ShieldCheck} label={aliansiActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => aliansiActive ? setIsDestroyAliansiOpen(true) : setIsAliansiModalOpen(true)} disabled={!embassyActive} className={aliansiActive ? modernGreenBorderClass : undefined} iconClass={aliansiActive ? 'text-[#00FFAA]' : undefined} labelClass={aliansiActive ? 'text-[#00FFAA]' : undefined} />
         
         {/* PERBAIKAN: Tombol Perjanjian Dagang diubah menggunakan modernGreenBorderClass yang sama */}
         <ActionButton
@@ -197,11 +197,11 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           }}
           className={tradeIsActive ? modernGreenBorderClass : tradeClass}
           disabled={!embassyActive}
-          iconClass={tradeIsActive ? 'text-emerald-700' : tradeIconClass}
-          labelClass={tradeIsActive ? 'text-emerald-700' : tradeLabelClass}
+          iconClass={tradeIsActive ? 'text-[#00FFAA]' : tradeIconClass}
+          labelClass={tradeIsActive ? 'text-[#00FFAA]' : tradeLabelClass}
         />
         
-        <ActionButton icon={FlaskConical} label={kontrakActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => kontrakActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true)} disabled={!embassyActive} className={kontrakActive ? modernGreenBorderClass : undefined} iconClass={kontrakActive ? 'text-emerald-700' : undefined} labelClass={kontrakActive ? 'text-emerald-700' : undefined} />
+        <ActionButton icon={FlaskConical} label={kontrakActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => kontrakActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true)} disabled={!embassyActive} className={kontrakActive ? modernGreenBorderClass : undefined} iconClass={kontrakActive ? 'text-[#00FFAA]' : undefined} labelClass={kontrakActive ? 'text-[#00FFAA]' : undefined} />
         <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => setIsKirimPasukanModalOpen(true)} disabled={!embassyActive} />
         <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => setIsPanggilSekutuModalOpen(true)} disabled={!embassyActive} />
         <ActionButton icon={Ban} label="Berikan Sanksi" onClick={() => setIsBerikanSanksiModalOpen(true)} />

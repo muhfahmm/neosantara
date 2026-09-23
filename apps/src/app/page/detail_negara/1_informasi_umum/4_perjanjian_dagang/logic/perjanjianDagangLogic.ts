@@ -43,9 +43,9 @@ export const getTradeButtonClass = (
   removedTradePartners?: string[]
 ): string => {
   if (playerHasTradeWith(viewedCountryName, playerCountryName, removedTradePartners)) {
-    return 'bg-emerald-50 hover:bg-emerald-100 active:bg-emerald-200 border border-emerald-600 text-emerald-700';
+    return 'border-2 border-[#00FFAA] bg-[#00FFAA]/20 text-[#00FFAA] hover:bg-[#00FFAA]/30';
   }
-  return 'bg-white/70 border border-[#C4B49C]/30';
+  return 'bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#00FFAA]';
 };
 
 export const getTradeButtonLabel = (
