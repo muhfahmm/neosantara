@@ -316,3 +316,13 @@ export const logPopulationMetrics = (
     security: metrics.securityLevel.toFixed(1),
   });
 };
+
+/**
+ * Helper ringkas persis seperti calculateCountryNetBalance di treasuryUpdater.ts
+ * Mengembalikan perubahan netto populasi harian (kelahiran - kematian)
+ */
+export const calculateCountryNetPopulation = (detail: CountryDetail): number => {
+  if (!detail || typeof detail !== 'object') return 0;
+  const metrics = calculateDailyPopulationChange(detail);
+  return metrics.netDailyChange;
+};

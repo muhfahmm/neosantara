@@ -5,6 +5,7 @@ import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake } f
 import { COUNTRIES_DATA } from '../map_system/map-data';
 import countryPaths from '../map_system/country-paths.json';
 import { calculateCountryNetBalance } from '@/app/logic/economic_logic/treasuryUpdater';
+import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
 
 // Import 3 komponen terpisah
@@ -31,8 +32,9 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   const [fetchedDetail, setFetchedDetail] = useState<any>(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
-  // State statistik Netto APBN harian negara yang ditampilkan
+  // State statistik Netto APBN & Netto Populasi harian negara yang ditampilkan
   const [dailyNetBalance, setDailyNetBalance] = useState<number>(0);
+  const [dailyNetPopulation, setDailyNetPopulation] = useState<number>(0);
 
   // Ref untuk melacak pergantian hari khusus di modal
   const prevModalUpdateDateRef = useRef<string | null>(null);
@@ -54,6 +56,8 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
       setIsLoadingDetail(false);
       setActiveTab("informasi");
       prevModalUpdateDateRef.current = null;
+      setDailyNetBalance(calculateCountryNetBalance(countryDetail));
+      setDailyNetPopulation(calculateCountryNetPopulation(countryDetail));
       return;
     }
 
@@ -89,9 +93,11 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
         setFetchedDetail(data);
 
-        // Hitung Netto APBN Harian awal saat data pertama dimuat
+        // Hitung Netto APBN & Netto Populasi Harian awal saat data pertama dimuat
         const initialNet = calculateCountryNetBalance(data);
+        const initialPopNet = calculateCountryNetPopulation(data);
         setDailyNetBalance(initialNet);
+        setDailyNetPopulation(initialPopNet);
       } catch (e) {
         console.error(`[detail_negara] Gagal fetch data untuk ${countryName}:`, e);
       } finally {
@@ -102,7 +108,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     loadDetail();
   }, [isOpen, countryName, countryDetail]);
 
-  // PERBAIKAN: Logika Simulasi Update Kas Harian (Tetap berjalan saat modal terbuka)
+  // PERBAIKAN: Logika Simulasi Update Kas & Populasi Harian (Tetap berjalan saat modal terbuka)
   useEffect(() => {
     if (!isOpen || !fetchedDetail || !currentDate) return;
 
@@ -120,14 +126,22 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
     prevModalUpdateDateRef.current = currentDateStr;
 
+    // 1. Hitung Netto Anggaran Harian
     const netBalance = calculateCountryNetBalance(fetchedDetail);
     setDailyNetBalance(netBalance);
 
+    // 2. Hitung Perubahan Populasi Harian (Kelahiran - Kematian)
+    const netPopulationChange = calculateCountryNetPopulation(fetchedDetail);
+    setDailyNetPopulation(netPopulationChange);
+
+    // 3. Update Anggaran dan Jumlah Penduduk secara real-time
     setFetchedDetail((prev: any) => {
       if (!prev) return prev;
+      const currentPop = Number(prev.jumlah_penduduk) || 0;
       return {
         ...prev,
         anggaran: (Number(prev.anggaran) || 0) + netBalance,
+        jumlah_penduduk: Math.max(0, currentPop + netPopulationChange),
       };
     });
   }, [currentDate, fetchedDetail, isOpen]);
@@ -253,14 +267,21 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
               </div>
               <div className="flex flex-col">
                 <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Populasi</span>
-                <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
-                  {detailData?.jumlah_penduduk
-                    ? detailData.jumlah_penduduk.toLocaleString('id-ID')
-                    : isLoadingDetail
-                      ? <span className="inline-block w-20 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
-                      : '-'
-                  }
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
+                    {detailData?.jumlah_penduduk
+                      ? detailData.jumlah_penduduk.toLocaleString('id-ID')
+                      : isLoadingDetail
+                        ? <span className="inline-block w-20 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
+                        : '-'
+                    }
+                  </span>
+                  {!isLoadingDetail && detailData && (
+                    <span className={`text-[10px] font-black ${dailyNetPopulation >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      ({dailyNetPopulation >= 0 ? `+${dailyNetPopulation.toLocaleString('id-ID')}` : dailyNetPopulation.toLocaleString('id-ID')})
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
