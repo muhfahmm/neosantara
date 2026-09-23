@@ -70,9 +70,10 @@ const safeNumber = (value: any): number => {
 const formatColoredNumber = (value: any, isPositive: boolean = true) => {
   const parsed = safeNumber(value);
   if (parsed === 0) return <span className="font-black text-[#8b7e66]">0</span>;
-  const formatted = parsed.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 });
+  const absVal = Math.abs(parsed);
+  const formatted = absVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 });
   const parts = formatted.split(',');
-  const mainColor = isPositive ? 'text-emerald-700' : 'text-rose-700';
+  const mainColor = isPositive ? 'text-emerald-400' : 'text-rose-400';
   const sign = isPositive ? '+' : '-';
   if (parts.length === 1) return <span className={`font-black ${mainColor}`}>{sign}{parts[0]}</span>;
   return (<span className={`font-black ${mainColor}`}>{sign}{parts[0]}<span className="text-amber-500 font-bold">,{parts[1]}</span></span>);
@@ -329,23 +330,21 @@ export default function InfoBangunan({
                               )}
                               <div className="flex justify-between items-center text-xs">
                                 <span className="text-[#E0E0E0] font-bold">Total Produksi ({ing.label}):</span>
-                                <span className="font-black text-emerald-400">+{ingGrossProd.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
+                                {formatColoredNumber(ingGrossProd, true)}
                               </div>
                               <div className="flex justify-between items-center text-xs">
                                 <span className="text-[#E0E0E0] font-bold">Konsumsi ({displayFoodLabel} - {perCount} unit):</span>
-                                <span className="font-black text-rose-400">-{ingCons.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
+                                {formatColoredNumber(-ingCons, false)}
                               </div>
                               {ingPopCons > 0 && (
                                 <div className="flex justify-between items-center text-xs pl-2 text-[#6B8A8A]">
                                   <span className="font-semibold">Konsumsi (Masyarakat / Internal):</span>
-                                  <span className="font-bold text-rose-400">-{ingPopCons.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
+                                  {formatColoredNumber(-ingPopCons, false)}
                                 </div>
                               )}
                               <div className="flex justify-between items-center pt-2 border-t border-rose-500/20 mt-1 text-xs">
                                 <span className="text-rose-400 font-black uppercase">SALDO (PROD - KONSUMSI):</span>
-                                <span className={`font-black ${ingSaldo < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
-                                  {ingSaldo >= 0 ? `+${ingSaldo.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}` : ingSaldo.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
-                                </span>
+                                {formatColoredNumber(ingSaldo, ingSaldo >= 0)}
                               </div>
                             </div>
                           );
@@ -391,25 +390,23 @@ export default function InfoBangunan({
                       </div>
                       <div className="flex justify-between items-center text-xs">
                         <span className="text-[#E0E0E0] font-bold">Total Produksi ({fuelName}):</span>
-                        <span className="font-black text-emerald-400">+{totalFoodProduction.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
+                        {formatColoredNumber(totalFoodProduction, true)}
                       </div>
                       {factoryCons > 0 && (
                         <div className="flex justify-between items-center text-xs">
                           <span className="text-[#E0E0E0] font-bold">Konsumsi ({consumerLabelStr}):</span>
-                          <span className="font-black text-rose-400">-{factoryCons.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
+                          {formatColoredNumber(-factoryCons, false)}
                         </div>
                       )}
                       {popCons > 0 && (
                         <div className="flex justify-between items-center text-xs">
                           <span className="text-[#E0E0E0] font-bold">Konsumsi (Masyarakat / Internal):</span>
-                          <span className="font-black text-rose-400">-{popCons.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}</span>
+                          {formatColoredNumber(-popCons, false)}
                         </div>
                       )}
                       <div className="flex justify-between items-center pt-2 border-t border-rose-500/20 mt-1 text-xs">
                         <span className="text-rose-400 font-black uppercase">SALDO (PROD - KONSUMSI):</span>
-                        <span className={`font-black ${saldoVal < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
-                          {saldoVal >= 0 ? `+${saldoVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}` : saldoVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
-                        </span>
+                        {formatColoredNumber(saldoVal, saldoVal >= 0)}
                       </div>
                     </div>
                   );
