@@ -1,7 +1,9 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
-import { X, Home, TrendingUp, TrendingDown, Hammer, AlertCircle, Info } from "lucide-react";
+import { X, Home, TrendingUp, TrendingDown, Hammer, AlertCircle, Info, Sparkles } from "lucide-react";
+import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
+import { generateHunianAIAnalysis } from "../ai_suggestions/serviceAISuggestionsLogic";
 import InfoBangunanModal from "./1_modals_info_bangunan/info_bangunan_modals";
 import KonfirmasiPembangunanModal from "./2_modals_konfirmasi_pembangunan/modalsKonfirmasiPembangunan";
 import { useMaterialProduction, getMaterialStock as getMaterialStockFromBuildLogic, deductBuildingMaterials } from "../build_logic/build_logic";
@@ -89,11 +91,33 @@ export default function HunianPermukimanModal({
   const [activeTab, setActiveTab] = useState("rumah_subsidi");
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [selectedBuilding, setSelectedBuilding] = useState<{ key: string; label: string } | null>(null);
+  const [initialBuildQty, setInitialBuildQty] = useState<number>(1);
   const [showConfirm, setShowConfirm] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [showMaterialWarningModal, setShowMaterialWarningModal] = useState(false);
   const [insufficientMaterials, setInsufficientMaterials] = useState<MaterialRequirement[]>([]);
   const [hoveredBuildingKey, setHoveredBuildingKey] = useState<string | null>(null);
+
+  // 🤖 AI Suggestions State
+  const [isAIModalOpen, setIsAIModalOpen] = useState<boolean>(false);
+  const [aiAnalysisResult, setAiAnalysisResult] = useState<any>(null);
+
+  const handleOpenAIModal = () => {
+    if (activeItem) {
+      const analysis = generateHunianAIAnalysis(activeItem.key, activeItem.label, countryDetail, metadata);
+      setAiAnalysisResult(analysis);
+      setIsAIModalOpen(true);
+    }
+  };
+
+  const handleAIBuildClick = (buildingKey: string, label: string, qty?: number) => {
+    const bMeta = findMeta(buildingKey);
+    const buildLabel = label || bMeta?.label || buildingKey.replace(/_/g, " ").toUpperCase();
+    setInitialBuildQty(qty || 1);
+    setSelectedBuilding({ key: buildingKey, label: buildLabel });
+    setShowConfirm(true);
+    setIsAIModalOpen(false);
+  };
 
   const { safeDateString } = useMaterialProduction(
     countryDetail,
@@ -421,12 +445,21 @@ export default function HunianPermukimanModal({
               <div>
                 {activeItem && (
                   <div className="max-w-3xl">
-                    <div className="mb-6 flex flex-col md:flex-row gap-6">
-                      <div className="flex-grow">
-                        <h3 className="text-xl font-black text-[#00FFAA] uppercase tracking-wider">{activeItem.label}</h3>
-                        <p className="text-xs text-[#6B8A8A] mt-1">{activeItem.desc}</p>
-                        <p className="text-xs text-[#E0E0E0] mt-4 leading-relaxed bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-2xl">{activeItem.detailDesc}</p>
+                    <div className="mb-6 bg-[#0A1A1A]/60 p-4 rounded-2xl border border-[#00FFAA]/20">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="flex-grow">
+                          <h3 className="text-xl font-black text-[#00FFAA] uppercase tracking-wider">{activeItem.label}</h3>
+                          <p className="text-xs text-[#6B8A8A] mt-1">{activeItem.desc}</p>
+                        </div>
+                        <button
+                          onClick={handleOpenAIModal}
+                          className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#00FFAA]/10 border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all text-xs font-black shadow-md cursor-pointer shrink-0 active:scale-95"
+                        >
+                          <Sparkles className="w-4 h-4 text-[#00FFAA] hover:text-[#0A1A1A]" />
+                          <span>Rekomendasi AI</span>
+                        </button>
                       </div>
+                      <p className="text-xs text-[#E0E0E0] mt-4 leading-relaxed bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-2xl">{activeItem.detailDesc}</p>
                     </div>
 
                     <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-3xl p-6 shadow-sm max-w-sm relative overflow-visible">
@@ -644,7 +677,7 @@ export default function HunianPermukimanModal({
         return (
           <KonfirmasiPembangunanModal
             isOpen={true}
-            onClose={() => { setShowConfirm(false); setSelectedBuilding(null); }}
+            onClose={() => { setShowConfirm(false); setSelectedBuilding(null); setInitialBuildQty(1); }}
             buildingLabel={selectedBuilding.label}
             buildingDescription={bMeta?.deskripsi || bMeta?.desc}
             cost={cost}
@@ -658,6 +691,7 @@ export default function HunianPermukimanModal({
             onConfirm={confirmBuild}
             onMaterialClick={handleMaterialClick}
             loadingMetadata={false}
+            initialQuantity={initialBuildQty}
           />
         );
       })()}
@@ -696,6 +730,16 @@ export default function HunianPermukimanModal({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal Rekomendasi AI Hunian Permukiman */}
+      {isAIModalOpen && (
+        <ServiceAISuggestionsModal
+          isOpen={isAIModalOpen}
+          onClose={() => setIsAIModalOpen(false)}
+          hunianAnalysis={aiAnalysisResult}
+          onBuildClick={handleAIBuildClick}
+        />
       )}
     </>
   );

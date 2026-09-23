@@ -1,8 +1,10 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
-// 🔥 FIX 1: Tambahkan MapPin, DollarSign, BarChart3 (untuk mengatasi error Cannot find name)
-import { X, Landmark, AlertTriangle, TrendingUp, TrendingDown, Hammer, Info, MapPin, DollarSign, BarChart3 } from "lucide-react";
+// 🔥 FIX 1: Tambahkan MapPin, DollarSign, BarChart3, Sparkles
+import { X, Landmark, AlertTriangle, TrendingUp, TrendingDown, Hammer, Info, MapPin, DollarSign, BarChart3, Sparkles } from "lucide-react";
+import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
+import { generateTempatUmumAIAnalysis } from "../ai_suggestions/serviceAISuggestionsLogic";
 
 // --- IMPOR MODUL REQUIREMENTS MATERIAL ---
 import * as infrastrukturRequirements from "./requirements_logic/1_infrastruktur/requirements";
@@ -86,12 +88,39 @@ export default function TempatUmumModal({
   }, [isOpen, initialTab]);
 
   const [selectedBuilding, setSelectedBuilding] = useState<{ key: string; label: string } | null>(null);
+  const [initialBuildQty, setInitialBuildQty] = useState<number>(1);
   const [metadata, setMetadata] = useState<any>(null);
   const [loadingMetadata, setLoadingMetadata] = useState<boolean>(false);
   const [showMaterialWarningModal, setShowMaterialWarningModal] = useState<boolean>(false);
   const [insufficientMaterials, setInsufficientMaterials] = useState<MaterialRequirement[]>([]);
   const [hoveredBuildingKey, setHoveredBuildingKey] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+
+  // 🤖 AI Suggestions State
+  const [isAIModalOpen, setIsAIModalOpen] = useState<boolean>(false);
+  const [aiAnalysisResult, setAiAnalysisResult] = useState<any>(null);
+
+  const handleOpenAIModal = () => {
+    if (activeGroup) {
+      const analysis = generateTempatUmumAIAnalysis(
+        activeGroup.id,
+        activeGroup.label,
+        activeGroup.keys,
+        countryDetail,
+        metadata
+      );
+      setAiAnalysisResult(analysis);
+      setIsAIModalOpen(true);
+    }
+  };
+
+  const handleAIBuildClick = (buildingKey: string, label: string, qty?: number) => {
+    const bMeta = findMeta(buildingKey);
+    const buildLabel = label || bMeta?.label || buildingKey.replace(/_/g, " ").toUpperCase();
+    setInitialBuildQty(qty || 1);
+    setSelectedBuilding({ key: buildingKey, label: buildLabel });
+    setIsAIModalOpen(false);
+  };
 
   const { safeDateString } = useMaterialProduction(
     countryDetail,
@@ -426,9 +455,20 @@ export default function TempatUmumModal({
               <div>
                 {activeGroup && (
                   <>
-                    <div className="mb-6">
-                      <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wider">{activeGroup.label}</h3>
-                      <p className="text-xs text-[#6B8A8A] mt-1">{activeGroup.description}</p>
+                    <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0A1A1A]/60 p-4 rounded-2xl border border-[#00FFAA]/20">
+                      <div>
+                        <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2">
+                          {activeGroup.label}
+                        </h3>
+                        <p className="text-xs text-[#6B8A8A] mt-1">{activeGroup.description}</p>
+                      </div>
+                      <button
+                        onClick={handleOpenAIModal}
+                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#00FFAA]/10 border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all text-xs font-black shadow-md cursor-pointer shrink-0 active:scale-95"
+                      >
+                        <Sparkles className="w-4 h-4 text-[#00FFAA] hover:text-[#0A1A1A]" />
+                        <span>Rekomendasi AI</span>
+                      </button>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -598,7 +638,7 @@ export default function TempatUmumModal({
         return (
           <KonfirmasiPembangunanModal
             isOpen={true}
-            onClose={() => setSelectedBuilding(null)}
+            onClose={() => { setSelectedBuilding(null); setInitialBuildQty(1); }}
             buildingLabel={selectedBuilding.label}
             buildingDescription={bMeta?.deskripsi || bMeta?.desc}
             cost={cost}
@@ -612,6 +652,7 @@ export default function TempatUmumModal({
             onConfirm={confirmBuild}
             onMaterialClick={handleMaterialClick}
             loadingMetadata={loadingMetadata}
+            initialQuantity={initialBuildQty}
           />
         );
       })()}
@@ -641,7 +682,7 @@ export default function TempatUmumModal({
                 ))}
               </div>
               <p className="text-[10px] text-[#6B8A8A] italic">
-                Klik nama material pada daftar di atas untuk melihat informasi produksinya.
+                Klik nama material pada daftar di atas meihat informasi produksinya.
               </p>
             </div>
             <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10">
@@ -649,6 +690,16 @@ export default function TempatUmumModal({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal Rekomendasi AI Tempat Umum */}
+      {isAIModalOpen && (
+        <ServiceAISuggestionsModal
+          isOpen={isAIModalOpen}
+          onClose={() => setIsAIModalOpen(false)}
+          tempatUmumAnalysis={aiAnalysisResult}
+          onBuildClick={handleAIBuildClick}
+        />
       )}
     </>
   );

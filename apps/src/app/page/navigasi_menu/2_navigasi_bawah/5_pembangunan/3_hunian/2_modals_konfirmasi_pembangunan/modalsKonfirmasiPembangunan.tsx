@@ -28,6 +28,7 @@ interface KonfirmasiPembangunanProps {
   onMaterialClick: (resourceKey: string, label: string) => void;
   loadingMetadata: boolean;
   isDisabled?: boolean;
+  initialQuantity?: number;
 }
 
 export default function KonfirmasiPembangunanModal({
@@ -49,18 +50,21 @@ export default function KonfirmasiPembangunanModal({
   onMaterialClick,
   loadingMetadata,
   isDisabled = false,
+  initialQuantity = 1,
 }: KonfirmasiPembangunanProps) {
   const [showMaterialGrid, setShowMaterialGrid] = useState(true);
-  const [buildQuantity, setBuildQuantity] = useState<number>(1);
+  const [buildQuantity, setBuildQuantity] = useState<number>(initialQuantity);
   const [selectedMaterialKey, setSelectedMaterialKey] = useState<string | null>(null);
 
-  // Reset selection when modal opens/closes
+  // Reset selection when modal opens/closes or initialQuantity changes
   React.useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      setBuildQuantity(initialQuantity || 1);
+    } else {
       setSelectedMaterialKey(null);
       setBuildQuantity(1);
     }
-  }, [isOpen]);
+  }, [isOpen, initialQuantity]);
 
   if (!isOpen) return null;
 
