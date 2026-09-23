@@ -26,10 +26,10 @@ interface OperasiMiliterProps {
 const ActionButton = ({ icon: Icon, label, onClick }: { icon: any, label: string, onClick?: () => void }) => (
   <button
     onClick={onClick}
-    className="bg-white/70 border border-[#C4B49C]/30 rounded-xl p-5 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:border-[#5c3c10]/50 transition-all cursor-pointer group h-32"
+    className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-5 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10 transition-all cursor-pointer group h-32"
   >
-    <Icon className="h-8 w-8 text-[#5c3c10] group-hover:scale-110 group-hover:text-[#3d2911] transition-transform" />
-    <span className="text-xs font-black text-[#5c3c10] uppercase tracking-wider text-center leading-tight">
+    <Icon className="h-8 w-8 text-[#00FFAA] group-hover:scale-110 transition-transform" />
+    <span className="text-xs font-black text-[#00FFAA] uppercase tracking-wider text-center leading-tight">
       {label}
     </span>
   </button>
