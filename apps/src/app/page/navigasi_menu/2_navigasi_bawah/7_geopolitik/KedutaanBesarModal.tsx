@@ -229,7 +229,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
               <div className="flex gap-3">
                 <button
                   onClick={() => setConfirmModal({ isOpen: false, partnerName: null })}
-                  className="flex-1 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA]/20 transition-all font-bold text-xs uppercase cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] text-xs font-bold uppercase transition-all cursor-pointer"
                 >
                   Batal
                 </button>

@@ -37,16 +37,16 @@ interface InformasiUmumProps {
 
 // Komponen tombol aksi
 const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelClass, disabled }: { icon: any, label: string, onClick?: () => void, className?: string, iconClass?: string, labelClass?: string, disabled?: boolean }) => {
-  const base = `${className ?? 'bg-white/70 border border-[#C4B49C]/30'} rounded-xl p-5 flex flex-col items-center justify-center gap-3 transition-all group h-32`;
-  const interactive = disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:shadow-md hover:border-[#5c3c10]/50 cursor-pointer';
+  const base = `${className ?? 'bg-[#0A1A1A] border border-[#00FFAA]/20'} rounded-xl p-5 flex flex-col items-center justify-center gap-3 transition-all group h-32`;
+  const interactive = disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:shadow-md hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10 cursor-pointer';
   return (
     <button
       onClick={disabled ? undefined : onClick}
       aria-disabled={disabled}
       className={`${base} ${interactive}`}
     >
-      <Icon className={`h-8 w-8 ${iconClass ?? 'text-[#5c3c10]'} ${disabled ? '' : 'group-hover:scale-110'} transition-transform`} />
-      <span className={`text-xs font-black ${labelClass ?? 'text-[#5c3c10]'} uppercase tracking-wider text-center leading-tight`}>
+      <Icon className={`h-8 w-8 ${iconClass ?? 'text-[#00FFAA]'} ${disabled ? '' : 'group-hover:scale-110'} transition-transform`} />
+      <span className={`text-xs font-black ${labelClass ?? 'text-[#00FFAA]'} uppercase tracking-wider text-center leading-tight`}>
         {label}
       </span>
     </button>

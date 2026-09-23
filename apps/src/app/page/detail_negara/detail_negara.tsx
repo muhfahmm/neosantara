@@ -163,7 +163,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   const renderFlagHeader = (iso: string | undefined, altName: string) => {
     if (!iso || iso.length !== 2) return null;
     return (
-      <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#5c3c10]/20 flex-shrink-0 shadow-sm bg-[#e4dac3] relative flex items-center justify-center">
+      <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 shadow-sm bg-[#0A1A1A] relative flex items-center justify-center">
         <img
           src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
           alt={altName}
@@ -176,30 +176,30 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+      <div className="bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
         
-        {/* Background Texture */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+        {/* Background Glow Texture */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
 
         {/* HEADER Modal */}
-        <div className="px-6 sm:px-8 py-4 sm:py-5 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 shrink-0">
+        <div className="px-6 sm:px-8 py-4 sm:py-5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-3 sm:gap-4">
             
             {/* 1. Icon Globe */}
-            <div className="p-2 sm:p-2.5 bg-[#5c3c10]/10 rounded-xl border border-[#5c3c10]/20 shrink-0 flex items-center justify-center">
-              <Globe className="h-6 w-6 text-[#5c3c10]" />
+            <div className="p-2 sm:p-2.5 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30 shrink-0 flex items-center justify-center">
+              <Globe className="h-6 w-6 text-[#00FFAA]" />
             </div>
             
             {/* 2. Judul & Subjudul */}
             <div>
               {/* Judul Utama */}
-              <h2 className="text-xl sm:text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
                 DETAIL NEGARA
               </h2>
               
               <div className="flex items-center gap-2 mt-1">
                 {renderFlagHeader(iso, countryName)}
-                <p className="text-xs text-[#8b7e66] font-semibold uppercase tracking-wider">
+                <p className="text-xs text-[#00FFAA]/70 font-semibold uppercase tracking-wider">
                   {countryName}, {capital}
                 </p>
               </div>
@@ -209,7 +209,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
           <button
             onClick={onClose}
-            className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+            className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA]/70 hover:text-[#00FFAA] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
             aria-label="Tutup detail negara"
           >
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
@@ -217,17 +217,17 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
           </button>
         </div>
 
-        {/* DATA RINGKASAN - Data diambil langsung dari JSON database berdasarkan negara yang diklik */}
-        <div className="px-6 sm:px-8 py-3 bg-[#e4dac3]/30 border-b border-[#C4B49C]/20 flex items-center gap-6 sm:gap-8 relative z-10 overflow-x-auto shrink-0 no-scrollbar">
+        {/* DATA RINGKASAN */}
+        <div className="px-6 sm:px-8 py-3 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/20 flex items-center gap-6 sm:gap-8 relative z-10 overflow-x-auto shrink-0 no-scrollbar">
           <div className="flex items-center gap-6 min-w-max">
             {/* Hubungan */}
             <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-[#dcc9a3]/60 rounded-lg text-[#8b7e66]">
-                <Handshake className="h-4 w-4 text-[#5c3c10]" />
+              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
+                <Handshake className="h-4 w-4 text-[#00FFAA]" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[9px] font-black text-[#8b7e66]/80 uppercase tracking-wider">Hubungan</span>
-                <span className={`text-[11px] font-extrabold uppercase ${relationValue >= 75 ? 'text-emerald-700' : relationValue >= 50 ? 'text-[#5c3c10]' : 'text-rose-700'}`}>
+                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Hubungan</span>
+                <span className={`text-[11px] font-extrabold uppercase ${relationValue >= 75 ? 'text-emerald-400' : relationValue >= 50 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>
                   {relationValue}
                 </span>
               </div>
@@ -235,12 +235,12 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
             {/* Ibukota */}
             <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-[#dcc9a3]/60 rounded-lg text-[#8b7e66]">
-                <Landmark className="h-4 w-4 text-[#5c3c10]" />
+              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
+                <Landmark className="h-4 w-4 text-[#00FFAA]" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[9px] font-black text-[#8b7e66]/80 uppercase tracking-wider">Ibukota</span>
-                <span className="text-[11px] font-bold text-[#5c3c10] uppercase">
+                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Ibukota</span>
+                <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
                   {capital}
                 </span>
               </div>
@@ -248,16 +248,16 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
             {/* Populasi */}
             <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-[#dcc9a3]/60 rounded-lg text-[#8b7e66]">
-                <Users className="h-4 w-4 text-[#5c3c10]" />
+              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
+                <Users className="h-4 w-4 text-[#00FFAA]" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[9px] font-black text-[#8b7e66]/80 uppercase tracking-wider">Populasi</span>
-                <span className="text-[11px] font-bold text-[#5c3c10] uppercase">
+                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Populasi</span>
+                <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
                   {detailData?.jumlah_penduduk
                     ? detailData.jumlah_penduduk.toLocaleString('id-ID')
                     : isLoadingDetail
-                      ? <span className="inline-block w-20 h-3 bg-[#8b7e66]/20 animate-pulse rounded" />
+                      ? <span className="inline-block w-20 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
                       : '-'
                   }
                 </span>
@@ -266,20 +266,20 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
             {/* Anggaran Negara */}
             <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-[#dcc9a3]/60 rounded-lg text-[#8b7e66]">
-                <Banknote className="h-4 w-4 text-[#5c3c10]" />
+              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
+                <Banknote className="h-4 w-4 text-[#00FFAA]" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[9px] font-black text-[#8b7e66]/80 uppercase tracking-wider">Anggaran</span>
+                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Anggaran</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] font-bold text-[#5c3c10] uppercase">
+                  <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
                     {isLoadingDetail
-                      ? <span className="inline-block w-16 h-3 bg-[#8b7e66]/20 animate-pulse rounded" />
+                      ? <span className="inline-block w-16 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
                       : detailData?.anggaran !== undefined ? `${detailData.anggaran.toLocaleString('id-ID')} EM` : '-'
                     }
                   </span>
                   {!isLoadingDetail && detailData && (
-                    <span className={`text-[10px] font-black ${targetEffectiveNetBalance >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                    <span className={`text-[10px] font-black ${targetEffectiveNetBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                       ({targetEffectiveNetBalance >= 0 ? `+${targetEffectiveNetBalance.toLocaleString('id-ID')}` : targetEffectiveNetBalance.toLocaleString('id-ID')})
                     </span>
                   )}
@@ -289,16 +289,16 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
             {/* Ideologi */}
             <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-[#dcc9a3]/60 rounded-lg text-[#8b7e66]">
-                <Scale className="h-4 w-4 text-[#5c3c10]" />
+              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
+                <Scale className="h-4 w-4 text-[#00FFAA]" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[9px] font-black text-[#8b7e66]/80 uppercase tracking-wider">Ideologi</span>
-                <span className="text-[11px] font-bold text-[#5c3c10] uppercase">
+                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Ideologi</span>
+                <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
                   {detailData?.ideology
                     ? detailData.ideology
                     : isLoadingDetail
-                      ? <span className="inline-block w-20 h-3 bg-[#8b7e66]/20 animate-pulse rounded" />
+                      ? <span className="inline-block w-20 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
                       : '-'
                   }
                 </span>
@@ -307,16 +307,16 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
             {/* Agama */}
             <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-[#dcc9a3]/60 rounded-lg text-[#8b7e66]">
-                <Home className="h-4 w-4 text-[#5c3c10]" />
+              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
+                <Home className="h-4 w-4 text-[#00FFAA]" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[9px] font-black text-[#8b7e66]/80 uppercase tracking-wider">Agama</span>
-                <span className="text-[11px] font-bold text-[#5c3c10] uppercase">
+                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Agama</span>
+                <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
                   {detailData?.religion
                     ? detailData.religion
                     : isLoadingDetail
-                      ? <span className="inline-block w-16 h-3 bg-[#8b7e66]/20 animate-pulse rounded" />
+                      ? <span className="inline-block w-16 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
                       : '-'
                   }
                 </span>
@@ -326,15 +326,15 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
         </div>
 
         {/* BODY CONTENT */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] relative z-10 no-scrollbar">
           <div className="max-w-4xl mx-auto">
             
             {/* Menu 3 Tab Navigasi */}
-            <div className="bg-[#e4dac3]/40 p-1 rounded-xl border border-[#C4B49C]/40 inline-flex mb-6 shadow-sm flex-wrap gap-1 backdrop-blur-md">
+            <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex mb-6 shadow-sm flex-wrap gap-1 backdrop-blur-md">
               <button
                 onClick={() => setActiveTab("informasi")}
                 className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
-                  activeTab === "informasi" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20" : "text-[#8b7e66] hover:text-[#5c3c10]"
+                  activeTab === "informasi" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
                 }`}
               >
                 <Globe className="h-4 w-4" /> Informasi Umum
@@ -342,7 +342,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
               <button
                 onClick={() => setActiveTab("geopolitik")}
                 className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
-                  activeTab === "geopolitik" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20" : "text-[#8b7e66] hover:text-[#5c3c10]"
+                  activeTab === "geopolitik" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
                 }`}
               >
                 <Landmark className="h-4 w-4" /> Geopolitik
@@ -350,7 +350,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
               <button
                 onClick={() => setActiveTab("militer")}
                 className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
-                  activeTab === "militer" ? "bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20" : "text-[#8b7e66] hover:text-[#5c3c10]"
+                  activeTab === "militer" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
                 }`}
               >
                 <Shield className="h-4 w-4" /> Operasi Militer
