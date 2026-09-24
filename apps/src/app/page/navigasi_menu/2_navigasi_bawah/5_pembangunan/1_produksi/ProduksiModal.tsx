@@ -575,6 +575,12 @@ export default function ProduksiModal({
                   selectedBuilding={selectedBuilding}
                   currentDate={currentDate}
                   ongoingConstructions={ongoingConstructions}
+                  onNavigateToTab={(tabId: string, itemKey?: string) => {
+                    setActiveTab(tabId);
+                    if (itemKey) {
+                      setHighlightedCardKey(itemKey);
+                    }
+                  }}
                 />
               </div>
             </div>

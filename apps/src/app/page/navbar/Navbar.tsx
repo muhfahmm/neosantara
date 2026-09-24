@@ -117,26 +117,26 @@ export function Navbar({
     const activeMenuInfo = getActiveMenuInfo();
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-70 pointer-events-auto bg-[#0A1A1A]/90 backdrop-blur-md border-b border-[#00FFAA]/20 px-2 sm:px-6 lg:px-8 py-2 sm:py-3.5 flex items-center justify-between min-h-[56px] sm:min-h-[64px] lg:min-h-[80px] select-none">
+        <nav className="fixed top-3 left-0 right-0 z-70 pointer-events-none px-4 sm:px-8 flex items-center justify-between select-none bg-transparent border-none shadow-none">
             
             {/* 1. Left Side: Circular Menu & Selected Badge */}
-            <div className="flex items-center gap-1.5 sm:gap-3.5 shrink-0 relative z-20">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0 relative z-20 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1.5 rounded-2xl shadow-2xl">
                 {/* Circle Power Button */}
                 <div className="relative group shrink-0">
                     <button
                         onClick={onOpenGameMenu}
                         title="Game Menu"
-                        className="w-8 h-8 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-full bg-[#0F2424] border-[2px] sm:border-[3px] border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all flex items-center justify-center cursor-pointer z-30"
+                        className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 rounded-full bg-[#0A1A1A] border-[2px] border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all flex items-center justify-center cursor-pointer z-30"
                     >
-                        <Power className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+                        <Power className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </button>
                     
-                    <div className="absolute top-[40px] sm:top-[52px] left-1/2 -translate-x-1/2 bg-[#0F2424] border border-[#00FFAA]/30 px-2 py-1 text-[#00FFAA] text-[8px] sm:text-[10px] font-black tracking-wider uppercase rounded-md whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div className="absolute top-[38px] sm:top-[44px] left-1/2 -translate-x-1/2 bg-[#0F2424] border border-[#00FFAA]/30 px-2 py-1 text-[#00FFAA] text-[8px] sm:text-[10px] font-black tracking-wider uppercase rounded-md whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         Game Menu
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 sm:gap-4 bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 px-2.5 sm:px-5 py-1.5 sm:py-2.5 rounded-xl sm:rounded-2xl min-w-[120px] sm:min-w-[180px] lg:min-w-[200px]">
+                <div className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-1 rounded-xl min-w-[120px] sm:min-w-[160px]">
                     {selectedCountry ? (
                         <img 
                             src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`} 
@@ -162,7 +162,7 @@ export function Navbar({
             </div>
 
             {/* 2. Center: Live Stats Items */}
-            <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1 sm:gap-4 lg:gap-6 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden scroll-smooth z-10">
+            <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1 sm:gap-4 lg:gap-6 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden scroll-smooth z-10 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 px-4 sm:px-6 py-2 rounded-2xl shadow-2xl">
                 <div className="flex items-center gap-1 sm:gap-4 lg:gap-6 min-w-max">
                     
                     {/* 🔥 POPULASI DENGAN TOOLTIP DEMOGRAFI */}
@@ -243,11 +243,11 @@ export function Navbar({
             </div>
 
             {/* 3. Right Side: Save & Restart Buttons */}
-            <div className="flex items-center gap-1 sm:gap-2 shrink-0 relative z-20">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 relative z-20 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1.5 rounded-2xl shadow-2xl">
                 <button
                     onClick={onOpenSaveModal}
                     title="Simpan Game"
-                    className="flex items-center justify-center p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
+                    className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
                 >
                     <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
@@ -255,7 +255,7 @@ export function Navbar({
                 <button
                     onClick={onOpenRestartConfirm}
                     title="Atur Ulang Game"
-                    className="flex items-center justify-center p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
+                    className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
                 >
                     <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>

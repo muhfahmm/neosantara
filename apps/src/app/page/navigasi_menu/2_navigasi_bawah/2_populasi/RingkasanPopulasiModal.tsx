@@ -10,6 +10,7 @@ import {
   calculateDailyBirths,
   calculateDailyDeaths,
   calculateHomelessCount,
+  calculateDailyPopulationChange,
   type PopulationDailyMetrics,
   type PopulationSectoral,
 } from "@/app/logic/populations_logic/population_logic"; 
@@ -89,17 +90,16 @@ function hitungDemografi(detail: CountryDetail, countryName?: string) {
     detailWithDefaults  // â† sama persis dengan calculateDailyPopulationChange agar konsisten dengan Navbar
   );
 
-  const dailyDeaths = calculateDailyDeaths(populasi, lifeExpectancy, securityLevel, detailWithDefaults);
-
-  const totalDailyDelta = dailyBirths - dailyDeaths;
+  const metrics = calculateDailyPopulationChange(detailWithDefaults, countryName);
+  const totalDailyDelta = metrics.netDailyChange;
   const totalMonthlyGrowthPercent = ((totalDailyDelta * 30) / populasi) * 100;
 
   const homelessCount = calculateHomelessCount(populasi, sektoral.hunian, detailWithDefaults);
 
   return {
     populasi,
-    dailyBirths,
-    dailyDeaths,
+    dailyBirths: metrics.dailyBirths,
+    dailyDeaths: metrics.dailyDeaths,
     totalDailyDelta,
     totalMonthlyGrowthPercent,
     homelessCount,

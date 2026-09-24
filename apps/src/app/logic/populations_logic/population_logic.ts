@@ -185,11 +185,12 @@ export const calculateDailyDeaths = (
     const kriminalitasRes = calculateKriminalitasLogic(detail, populasi);
 
     const lifeExpectancyFactor = Math.max(0.8, 1.2 - (0.005 * (harapanHidup - 50)));
-    const securityFactor = keamananRes.securityFactor;
-    const homelessFactor = tunawismaRes.homelessFactor;
+    // Batasi denda kematian baseline agar angka kematian awal realistis
+    const securityFactor = Math.min(1.4, keamananRes.securityFactor);
+    const homelessFactor = Math.min(1.4, tunawismaRes.homelessFactor);
     const healthFactor = kesehatanRes.healthFactor;
     const foodSecurityFactor = 0.7 + (0.003 * indeksKetahananPangan);
-    const crimeFactor = kriminalitasRes.crimeFactor;
+    const crimeFactor = Math.min(1.4, kriminalitasRes.crimeFactor);
     const pollutionFactor = 1 + (polusiIndex / 200);
 
     const combinedFactor = lifeExpectancyFactor * securityFactor * homelessFactor * healthFactor * foodSecurityFactor * crimeFactor * pollutionFactor;

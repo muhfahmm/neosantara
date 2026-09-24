@@ -296,22 +296,25 @@ export default function TempatUmumModal({
       .finally(() => setLoadingMetadata(false));
   }, [isOpen]);
 
-  if (!isOpen) return null;
   const data = countryDetail || {};
 
-  const groups = SERVICE_GROUPS.map((group) => {
-    const items = group.keys
-      .map((key) => ({
-        key,
-        label: key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
-        value: data[key] !== undefined ? Number(data[key]) : null,
-      }))
-      .filter((item) => item.value !== null);
+  const groups = useMemo(() => {
+    return SERVICE_GROUPS.map((group) => {
+      const items = group.keys
+        .map((key) => ({
+          key,
+          label: key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
+          value: data[key] !== undefined ? Number(data[key]) : null,
+        }))
+        .filter((item) => item.value !== null);
 
-    return { ...group, items, activeCount: items.length };
-  }).filter((group) => group.items.length > 0);
+      return { ...group, items, activeCount: items.length };
+    }).filter((group) => group.items.length > 0);
+  }, [data]);
 
-  const activeGroup = groups.find((g) => g.id === activeTabId) || groups[0];
+  const activeGroup = useMemo(() => {
+    return groups.find((g) => g.id === activeTabId) || groups[0];
+  }, [groups, activeTabId]);
 
   const aiAnalysisResult = useMemo(() => {
     if (!activeGroup) return null;
@@ -323,6 +326,9 @@ export default function TempatUmumModal({
       metadata
     );
   }, [activeGroup, countryDetail, metadata]);
+
+  if (!isOpen) return null;
+
   const totalValue = groups.reduce((sum, group) => sum + group.items.reduce((inner, item) => inner + (item.value || 0), 0), 0);
 
   const ELECTRICITY_BUILDINGS_LIST = [

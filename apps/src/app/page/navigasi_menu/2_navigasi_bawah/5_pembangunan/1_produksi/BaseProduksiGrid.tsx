@@ -73,6 +73,7 @@ interface BaseProduksiGridProps {
   highlightedCardKey?: string | null;
   ongoingConstructions?: any[];
   currentDate?: string | Date;
+  onNavigateToTab?: (tabId: string, itemKey?: string) => void;
 }
 
 export default function BaseProduksiGrid({
@@ -92,6 +93,7 @@ export default function BaseProduksiGrid({
   isElectricityTab,
   ongoingConstructions = [],
   currentDate,
+  onNavigateToTab,
 }: BaseProduksiGridProps) {
   const formatLabel = (key: string) => {
     const customLabels: Record<string, string> = {
@@ -217,6 +219,7 @@ export default function BaseProduksiGrid({
                   isProductionZero={isProductionZero}
                   rawProduction={rawProduction}
                   onClose={() => setHoveredBuildingKey(null)}
+                  onNavigateToTab={onNavigateToTab}
                 />
               )}
 

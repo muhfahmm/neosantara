@@ -91,6 +91,7 @@ interface InfoBangunanProps {
   isProductionZero: boolean;
   rawProduction: number;
   onClose: () => void;
+  onNavigateToTab?: (tabId: string, itemKey?: string) => void;
 }
 
 export default function InfoBangunan({
@@ -105,6 +106,7 @@ export default function InfoBangunan({
   isProductionZero,
   rawProduction,
   onClose,
+  onNavigateToTab,
 }: InfoBangunanProps) {
   const fuelRequirements = isElectricityTab ? getKelistrikanFuelRequirements(buildingKey) : [];
   const hasFuelConsumption = fuelRequirements.length > 0;
@@ -286,11 +288,43 @@ export default function InfoBangunan({
               consPerBuildingUnit: ing.amount,
             }));
 
+            // Helper untuk memetakan item key ke ID tab produksi
+            const getItemTabId = (itemKey: string): string => {
+              const AGRIKULTUR_KEYS = ["padi", "padi_beras", "beras", "gandum", "jagung", "sayur", "umbi", "kedelai", "kelapa_sawit", "kopi", "teh", "kakao", "tebu", "karet"];
+              const PETERNAKAN_KEYS = ["sapi_potong", "sapi_perah", "ayam_unggas", "domba_kambing"];
+              const PERIKANAN_KEYS = ["ikan_tangkap", "ikan_budidaya", "udang"];
+              const OLAHAN_PANGAN_KEYS = ["minyak_goreng", "gula", "roti", "mie_instan", "susu", "pengolahan_daging"];
+
+              const cleanKey = itemKey.replace(/^\d+_/, '').replace(/^pabrik_pengolahan_/, '').replace(/^pabrik_/, '').replace(/^kebun_/, '').replace(/^peternakan_/, '');
+
+              if (AGRIKULTUR_KEYS.includes(cleanKey)) return "agrikultur";
+              if (PETERNAKAN_KEYS.includes(cleanKey)) return "peternakan";
+              if (PERIKANAN_KEYS.includes(cleanKey)) return "perikanan";
+              if (OLAHAN_PANGAN_KEYS.includes(cleanKey)) return "olahan pangan";
+              return "olahan pangan";
+            };
+
+            const card1TabId = getItemTabId(activeFoodKey);
+
             return (
               <>
                 <div className="rounded-xl bg-[#0A1A1A] border border-amber-500/30 p-4 space-y-2 mt-3">
-                  <div className="font-black uppercase tracking-wider text-amber-400 border-b border-amber-500/20 pb-2 mb-1 flex items-center gap-1.5 text-sm">
-                    🍽️ TOTAL KONSUMSI ({displayFoodLabel.toUpperCase()})
+                  <div className="flex items-center justify-between border-b border-amber-500/20 pb-2 mb-1">
+                    <div className="font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5 text-sm">
+                      🍽️ TOTAL KONSUMSI ({displayFoodLabel.toUpperCase()})
+                    </div>
+                    {onNavigateToTab && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onClose();
+                          onNavigateToTab(card1TabId, activeFoodKey);
+                        }}
+                        className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/40 hover:text-white transition-all cursor-pointer shadow-sm"
+                      >
+                        Buka Sektor {card1TabId.toUpperCase()} &rarr;
+                      </button>
+                    )}
                   </div>
                   <div className="flex justify-between items-center text-xs">
                     <span className="text-[#E0E0E0] font-bold">Total Produksi ({displayFoodLabel}):</span>
@@ -308,10 +342,27 @@ export default function InfoBangunan({
 
                 {(() => {
                   if (ingredients && ingredients.length > 0) {
+                    const card2IngKey = ingredients[0].key;
+                    const card2TabId = getItemTabId(card2IngKey);
+
                     return (
                       <div className="rounded-xl bg-[#0A1A1A] border border-rose-500/30 p-4 space-y-3 mt-3">
-                        <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-1 flex items-center gap-1.5 text-sm">
-                          ⚡ TOTAL KONSUMSI {ingredients.length === 1 ? ingredients[0].label.toUpperCase() : 'BAHAN BAKU'}
+                        <div className="flex items-center justify-between border-b border-rose-500/20 pb-2 mb-1">
+                          <div className="font-black uppercase tracking-wider text-rose-400 flex items-center gap-1.5 text-sm">
+                            ⚡ TOTAL KONSUMSI {ingredients.length === 1 ? ingredients[0].label.toUpperCase() : 'BAHAN BAKU'}
+                          </div>
+                          {onNavigateToTab && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onClose();
+                                onNavigateToTab(card2TabId, card2IngKey);
+                              }}
+                              className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/40 hover:text-white transition-all cursor-pointer shadow-sm"
+                            >
+                              Buka Sektor {card2TabId.toUpperCase()} &rarr;
+                            </button>
+                          )}
                         </div>
                         {ingredients.map((ing, idx) => {
                           const ingGrossProd = calculateProduction(ing.key, countryDetail, metadata);
@@ -382,11 +433,27 @@ export default function InfoBangunan({
                   const saldoVal = (totalFoodProduction - popCons) - factoryCons;
 
                   const consumerLabelStr = matchedConsumers.map(c => `${c.label} (${c.count} unit)`).join(', ');
+                  const firstConsumerKey = matchedConsumers[0].consumerKey;
+                  const card2ConsumerTabId = getItemTabId(firstConsumerKey);
 
                   return (
                     <div className="rounded-xl bg-[#0A1A1A] border border-rose-500/30 p-4 space-y-3 mt-3">
-                      <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-1 flex items-center gap-1.5 text-sm">
-                        ⚡ TOTAL KONSUMSI BAHAN BAKU PABRIK
+                      <div className="flex items-center justify-between border-b border-rose-500/20 pb-2 mb-1">
+                        <div className="font-black uppercase tracking-wider text-rose-400 flex items-center gap-1.5 text-sm">
+                          ⚡ TOTAL KONSUMSI BAHAN BAKU PABRIK
+                        </div>
+                        {onNavigateToTab && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onClose();
+                              onNavigateToTab(card2ConsumerTabId, firstConsumerKey);
+                            }}
+                            className="px-3 py-1 rounded-lg text-[11px] font-extrabold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/40 hover:text-white transition-all cursor-pointer shadow-sm"
+                          >
+                            Buka Sektor {card2ConsumerTabId.toUpperCase()} &rarr;
+                          </button>
+                        )}
                       </div>
                       <div className="flex justify-between items-center text-xs">
                         <span className="text-[#E0E0E0] font-bold">Total Produksi ({fuelName}):</span>
