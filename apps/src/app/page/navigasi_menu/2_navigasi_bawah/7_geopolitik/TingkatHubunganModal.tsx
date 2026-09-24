@@ -54,36 +54,36 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
     if (value >= 81 && value <= 100) {
       return { 
         alias: 'Sangat Baik', 
-        className: 'bg-emerald-100 text-emerald-800 border-emerald-300' 
+        className: 'bg-[#00FFAA]/15 text-[#00FFAA] border-[#00FFAA]/30' 
       };
     }
     if (value >= 66 && value <= 80) {
       return { 
         alias: 'Baik', 
-        className: 'bg-green-100 text-green-800 border-green-300' 
+        className: 'bg-green-500/15 text-green-400 border-green-500/30' 
       };
     }
     if (value >= 41 && value <= 65) {
       return { 
         alias: 'Netral', 
-        className: 'bg-yellow-100 text-yellow-800 border-yellow-300' 
+        className: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30' 
       };
     }
     if (value >= 26 && value <= 40) {
       return { 
         alias: 'Buruk', 
-        className: 'bg-rose-100 text-rose-800 border-rose-300' 
+        className: 'bg-rose-500/15 text-rose-400 border-rose-500/30' 
       };
     }
     if (value >= 0 && value <= 25) {
       return { 
         alias: 'Sangat Buruk', 
-        className: 'bg-red-100 text-red-800 border-red-300' 
+        className: 'bg-red-500/15 text-red-400 border-red-500/30' 
       };
     }
     return { 
       alias: 'Tidak Diketahui', 
-      className: 'bg-gray-100 text-gray-800 border-gray-300' 
+      className: 'bg-gray-500/15 text-gray-400 border-gray-500/30' 
     };
   };
 
@@ -203,7 +203,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                           <td className="px-4 py-3 text-xs font-bold text-[#E0E0E0]">{row.name}</td>
                           <td className="px-4 py-3 text-xs font-bold text-[#6B8A8A]">{row.continent}</td>
                           <td className="px-4 py-3 text-center text-xs font-bold">
-                            <span className="inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm bg-[#0F2424] border-[#00FFAA]/30 text-[#00FFAA]">
+                            <span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${className}`}>
                               {row.relation} - {alias}
                             </span>
                           </td>
