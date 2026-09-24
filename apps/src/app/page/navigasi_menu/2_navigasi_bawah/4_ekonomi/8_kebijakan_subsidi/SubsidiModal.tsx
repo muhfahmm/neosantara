@@ -6,7 +6,8 @@ import {
   INITIAL_SUBSIDY_ITEMS, 
   SubsidyItem, 
   calculateSubsidySummary, 
-  TotalSubsidySummary 
+  TotalSubsidySummary,
+  formatCurrencyCompact 
 } from "./logic/logikaSubsidi";
 
 import SemuaSektorTab from "./tab_menu/1_semua_sektor/SemuaSektorTab";
@@ -27,28 +28,43 @@ interface ModalProps {
 export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountryDetail }: ModalProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("Semua");
 
-  const [subsidyItems, setSubsidyItems] = useState<SubsidyItem[]>(() => {
-    if (countryDetail?.subsidy_states) {
-      return INITIAL_SUBSIDY_ITEMS.map((item) => ({
-        ...item,
-        isSubsidized: countryDetail.subsidy_states[item.id] ?? item.isSubsidized,
-      }));
-    }
-    return INITIAL_SUBSIDY_ITEMS;
-  });
-
+  const [subsidyItems, setSubsidyItems] = useState<SubsidyItem[]>(INITIAL_SUBSIDY_ITEMS);
+  const [isLoadingDb, setIsLoadingDb] = useState<boolean>(false);
   const [isSavedSuccess, setIsSavedSuccess] = useState<boolean>(false);
 
+  // Fetch status subsidi dari database_alokasi_subsidi berdasarkan country_slug
   useEffect(() => {
-    if (countryDetail?.subsidy_states) {
-      setSubsidyItems((prev) =>
-        prev.map((item) => ({
-          ...item,
-          isSubsidized: countryDetail.subsidy_states[item.id] ?? item.isSubsidized,
-        }))
-      );
-    }
-  }, [countryDetail]);
+    if (!isOpen) return;
+
+    const slug = countryDetail?.slug || countryDetail?.country_slug || 'indonesia';
+    setIsLoadingDb(true);
+
+    fetch(`/api/alokasi-subsidi?slug=${slug}`)
+      .then((res) => res.json())
+      .then((dbData) => {
+        if (dbData) {
+          setSubsidyItems(
+            INITIAL_SUBSIDY_ITEMS.map((item) => ({
+              ...item,
+              isSubsidized: dbData[item.id] !== undefined ? Boolean(Number(dbData[item.id])) : item.isSubsidized,
+            }))
+          );
+        } else if (countryDetail?.subsidy_states) {
+          setSubsidyItems(
+            INITIAL_SUBSIDY_ITEMS.map((item) => ({
+              ...item,
+              isSubsidized: countryDetail.subsidy_states[item.id] ?? item.isSubsidized,
+            }))
+          );
+        }
+      })
+      .catch((err) => {
+        console.error("Gagal memuat status subsidi dari database:", err);
+      })
+      .finally(() => {
+        setIsLoadingDb(false);
+      });
+  }, [isOpen, countryDetail?.slug, countryDetail?.country_slug]);
 
   if (!isOpen) return null;
 
@@ -58,7 +74,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
     );
   };
 
-  const handleSaveSubsidy = () => {
+  const handleSaveSubsidy = async () => {
     const subsidyStatesRecord: Record<string, boolean> = {};
     subsidyItems.forEach((item) => {
       subsidyStatesRecord[item.id] = item.isSubsidized;
@@ -70,9 +86,27 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
       setCountryDetail((prev: any) => ({
         ...prev,
         subsidy_states: subsidyStatesRecord,
-        total_subsidy_cost: summary.totalCostTrillion,
+        total_subsidy_cost: summary.totalCost,
         subsidy_approval_bonus: summary.totalApprovalBonus,
       }));
+    }
+
+    const slug = countryDetail?.slug || countryDetail?.country_slug || 'indonesia';
+
+    try {
+      await fetch('/api/alokasi-subsidi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          country_slug: slug,
+          country_id: countryDetail?.id || 0,
+          country_name: countryDetail?.name || countryDetail?.country_name || slug,
+          iso: countryDetail?.iso || 'id',
+          ...subsidyStatesRecord,
+        }),
+      });
+    } catch (err) {
+      console.error("Gagal menyimpan subsidi ke database:", err);
     }
 
     setIsSavedSuccess(true);
@@ -130,7 +164,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
         <div className="px-6 py-4 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/15 grid grid-cols-2 md:grid-cols-4 gap-3 shrink-0">
           <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-xl">
             <p className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-wider">Total Beban APBN Subsidi</p>
-            <p className="text-sm font-black text-[#00FFAA] mt-0.5">Rp {summary.totalCostTrillion.toFixed(1)} Triliun</p>
+            <p className="text-sm font-black text-[#00FFAA] mt-0.5">{formatCurrencyCompact(summary.totalCost)}</p>
           </div>
 
           <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-xl">

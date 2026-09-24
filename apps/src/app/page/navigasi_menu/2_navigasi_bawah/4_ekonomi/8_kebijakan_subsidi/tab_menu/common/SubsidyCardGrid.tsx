@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { SubsidyItem } from "../../logic/logikaSubsidi";
+import { SubsidyItem, formatCurrencyCompact } from "../../logic/logikaSubsidi";
 
 interface Props {
   items: SubsidyItem[];
@@ -52,7 +52,7 @@ export default function SubsidyCardGrid({ items, toggleSubsidy }: Props) {
           <div className="mt-4 pt-3 border-t border-[#00FFAA]/15 grid grid-cols-3 gap-2 text-center text-[10px]">
             <div className="bg-[#0F2424] p-2 rounded-lg border border-[#00FFAA]/10">
               <span className="block text-[#6B8A8A] font-bold uppercase">Biaya APBN</span>
-              <span className="font-black text-[#00FFAA] mt-0.5 block">Rp {item.apbnCostTrillion} T</span>
+              <span className="font-black text-[#00FFAA] mt-0.5 block">{formatCurrencyCompact(item.budgetCost)}</span>
             </div>
 
             <div className="bg-[#0F2424] p-2 rounded-lg border border-[#00FFAA]/10">
@@ -76,3 +76,4 @@ export default function SubsidyCardGrid({ items, toggleSubsidy }: Props) {
     </div>
   );
 }
+

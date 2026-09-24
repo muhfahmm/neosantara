@@ -6,7 +6,7 @@ export interface SubsidyItem {
   category: 'Energi' | 'Pangan' | 'Pendidikan & Kesehatan' | 'Transportasi & Perumahan' | 'UMKM & Ekonomi' | 'Perlindungan Sosial';
   description: string;
   isSubsidized: boolean;
-  apbnCostTrillion: number; // Dalam Triliun Rp per tahun
+  budgetCost: number; // Nominal penuh angka baku per tahun (contoh: 145000000000000)
   approvalImpact: number; // Persentase kepuasan rakyat (%)
   inflationReduction: number; // Penekanan inflasi (%)
   demoRiskIfDisabled: 'Rendah' | 'Sedang' | 'Tinggi' | 'Kritis';
@@ -20,9 +20,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Energi",
     description: "Menjaga harga bahan bakar tetap terjangkau untuk kendaraan armada publik, distribusi logistik, dan masyarakat.",
     isSubsidized: true,
-    apbnCostTrillion: 145.0,
+    budgetCost: 145,
     approvalImpact: 25,
-    inflationReduction: 3.5,
+    inflationReduction: 4,
     demoRiskIfDisabled: "Kritis",
   },
   {
@@ -31,9 +31,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Energi",
     description: "Bantuan tarif tenaga listrik khusus rumah tangga berpenghasilan rendah dan fasilitas pelayanan publik.",
     isSubsidized: true,
-    apbnCostTrillion: 68.5,
+    budgetCost: 69,
     approvalImpact: 18,
-    inflationReduction: 1.8,
+    inflationReduction: 2,
     demoRiskIfDisabled: "Tinggi",
   },
   {
@@ -42,9 +42,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Energi",
     description: "Menjamin ketersediaan tabung gas bersubsidi untuk kebutuhan memasak keluarga kurang mampu dan usaha mikro.",
     isSubsidized: true,
-    apbnCostTrillion: 85.2,
+    budgetCost: 85,
     approvalImpact: 20,
-    inflationReduction: 2.2,
+    inflationReduction: 2,
     demoRiskIfDisabled: "Kritis",
   },
   {
@@ -53,9 +53,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Energi",
     description: "Tarif suplai air minum bersubsidi untuk kawasan pemukiman padat dan daerah rawan krisis air.",
     isSubsidized: true,
-    apbnCostTrillion: 12.0,
+    budgetCost: 12,
     approvalImpact: 10,
-    inflationReduction: 0.5,
+    inflationReduction: 1,
     demoRiskIfDisabled: "Sedang",
   },
 
@@ -66,9 +66,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Pangan",
     description: "Alokasi pupuk dan benih bersubsidi untuk memangkas biaya produksi tani dan menjaga pasokan pangan nasional.",
     isSubsidized: true,
-    apbnCostTrillion: 32.4,
+    budgetCost: 32,
     approvalImpact: 15,
-    inflationReduction: 1.5,
+    inflationReduction: 2,
     demoRiskIfDisabled: "Tinggi",
   },
   {
@@ -77,9 +77,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Pangan",
     description: "Intervensi pasar pasokan gandum, beras, minyak masak, dan gula saat terjadi lonjakan inflasi.",
     isSubsidized: true,
-    apbnCostTrillion: 24.0,
+    budgetCost: 24,
     approvalImpact: 16,
-    inflationReduction: 2.0,
+    inflationReduction: 2,
     demoRiskIfDisabled: "Tinggi",
   },
   {
@@ -88,9 +88,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Pangan",
     description: "Distribusi paket bahan pangan pokok bulanan secara gratis untuk keluarga penerima manfaat sosial.",
     isSubsidized: true,
-    apbnCostTrillion: 18.5,
+    budgetCost: 19,
     approvalImpact: 14,
-    inflationReduction: 0.8,
+    inflationReduction: 1,
     demoRiskIfDisabled: "Sedang",
   },
 
@@ -101,9 +101,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Pendidikan & Kesehatan",
     description: "Pembebasan uang sekolah negeri dan beasiswa penuh bagi pelajar serta mahasiswa berprestasi kurang mampu.",
     isSubsidized: true,
-    apbnCostTrillion: 55.0,
+    budgetCost: 55,
     approvalImpact: 22,
-    inflationReduction: 0.4,
+    inflationReduction: 1,
     demoRiskIfDisabled: "Kritis",
   },
   {
@@ -112,9 +112,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Pendidikan & Kesehatan",
     description: "Pembayaran iuran asuransi kesehatan publik gratis bagi masyarakat tidak mampu dan pekerja sektor informal.",
     isSubsidized: true,
-    apbnCostTrillion: 48.0,
+    budgetCost: 48,
     approvalImpact: 24,
-    inflationReduction: 0.6,
+    inflationReduction: 1,
     demoRiskIfDisabled: "Kritis",
   },
   {
@@ -123,9 +123,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Pendidikan & Kesehatan",
     description: "Program imunisasi dasar anak dan vaksinasi kesehatan publik bebas biaya di seluruh klinik dan rumah sakit daerah.",
     isSubsidized: false,
-    apbnCostTrillion: 15.0,
+    budgetCost: 15,
     approvalImpact: 12,
-    inflationReduction: 0.2,
+    inflationReduction: 1,
     demoRiskIfDisabled: "Sedang",
   },
 
@@ -136,9 +136,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Transportasi & Perumahan",
     description: "Diskon tarif komuter kereta api publik dan armada bus kota untuk menekan emisi & beban pengeluaran warga.",
     isSubsidized: true,
-    apbnCostTrillion: 10.5,
+    budgetCost: 11,
     approvalImpact: 14,
-    inflationReduction: 0.7,
+    inflationReduction: 1,
     demoRiskIfDisabled: "Tinggi",
   },
   {
@@ -147,9 +147,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Transportasi & Perumahan",
     description: "Bantuan suku bunga rendah dan insentif hunian bersubsidi bagi keluarga berpenghasilan rendah.",
     isSubsidized: true,
-    apbnCostTrillion: 21.0,
+    budgetCost: 21,
     approvalImpact: 16,
-    inflationReduction: 0.3,
+    inflationReduction: 1,
     demoRiskIfDisabled: "Sedang",
   },
   {
@@ -158,9 +158,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Transportasi & Perumahan",
     description: "Potongan harga dan insentif pajak untuk adopsi kendaraan bermotor berbasis energi ramah lingkungan.",
     isSubsidized: false,
-    apbnCostTrillion: 8.0,
+    budgetCost: 8,
     approvalImpact: 6,
-    inflationReduction: 0.1,
+    inflationReduction: 1,
     demoRiskIfDisabled: "Rendah",
   },
 
@@ -171,9 +171,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "UMKM & Ekonomi",
     description: "Bantuan suku bunga ringan untuk pinjaman modal usaha kecil, pedagang mandiri, dan kewirausahaan lokal.",
     isSubsidized: true,
-    apbnCostTrillion: 36.0,
+    budgetCost: 36,
     approvalImpact: 19,
-    inflationReduction: 0.5,
+    inflationReduction: 1,
     demoRiskIfDisabled: "Tinggi",
   },
   {
@@ -182,9 +182,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "UMKM & Ekonomi",
     description: "Pembebasan kewajiban pajak penghasilan bagi usaha skala mikro yang baru berkembang.",
     isSubsidized: true,
-    apbnCostTrillion: 14.2,
+    budgetCost: 14,
     approvalImpact: 15,
-    inflationReduction: 0.4,
+    inflationReduction: 1,
     demoRiskIfDisabled: "Sedang",
   },
 
@@ -195,9 +195,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Perlindungan Sosial",
     description: "Transfer dana tunai langsung bagi masyarakat kelompok terbawah untuk menjaga daya beli.",
     isSubsidized: true,
-    apbnCostTrillion: 42.0,
+    budgetCost: 42,
     approvalImpact: 26,
-    inflationReduction: 0.0,
+    inflationReduction: 0,
     demoRiskIfDisabled: "Kritis",
   },
   {
@@ -206,9 +206,9 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Perlindungan Sosial",
     description: "Bantuan santunan dana pensiun dan jaminan sosial bulanan bagi lansia serta pejuang veteran.",
     isSubsidized: true,
-    apbnCostTrillion: 16.8,
+    budgetCost: 17,
     approvalImpact: 11,
-    inflationReduction: 0.0,
+    inflationReduction: 0,
     demoRiskIfDisabled: "Sedang",
   },
   {
@@ -217,15 +217,15 @@ export const INITIAL_SUBSIDY_ITEMS: SubsidyItem[] = [
     category: "Perlindungan Sosial",
     description: "Dana tak terduga untuk pemulihan infrastruktur publik dan jaringan pengaman sosial saat krisis/bencana.",
     isSubsidized: true,
-    apbnCostTrillion: 15.0,
+    budgetCost: 15,
     approvalImpact: 13,
-    inflationReduction: 0.0,
+    inflationReduction: 0,
     demoRiskIfDisabled: "Sedang",
   }
 ];
 
 export interface TotalSubsidySummary {
-  totalCostTrillion: number;
+  totalCost: number;
   activeCount: number;
   totalCount: number;
   totalApprovalBonus: number;
@@ -242,7 +242,7 @@ export const calculateSubsidySummary = (items: SubsidyItem[]): TotalSubsidySumma
 
   items.forEach((item) => {
     if (item.isSubsidized) {
-      totalCost += item.apbnCostTrillion;
+      totalCost += item.budgetCost;
       activeCount += 1;
       approvalBonus += item.approvalImpact;
       inflationRed += item.inflationReduction;
@@ -257,7 +257,7 @@ export const calculateSubsidySummary = (items: SubsidyItem[]): TotalSubsidySumma
   else if (demoRisks.includes('Sedang')) highestDemoRisk = 'Sedang';
 
   return {
-    totalCostTrillion: totalCost,
+    totalCost,
     activeCount,
     totalCount: items.length,
     totalApprovalBonus: approvalBonus,
@@ -265,3 +265,12 @@ export const calculateSubsidySummary = (items: SubsidyItem[]): TotalSubsidySumma
     highestDemoRisk,
   };
 };
+
+/**
+ * Format nominal ke tampilan mata uang game (EM)
+ */
+export const formatCurrencyCompact = (amount: number): string => {
+  return `${amount.toLocaleString('id-ID')} EM`;
+};
+
+
