@@ -4,6 +4,7 @@ import { X, Globe } from "lucide-react";
 // PERBAIKAN: Import data negara untuk mendapatkan ISO bendera
 import { COUNTRIES_DATA } from "../../../map_system/map-data";
 import getTradeAgreementsForCountry from '../../../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
+import { getEmbassiesForCountry } from '../../../../../../../json/database_kedutaan_besar/embassyRegistry';
 
 type TradeAgreement = {
   mitra: string;
@@ -33,10 +34,21 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
   const directEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
   const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
   const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
-  const tradeAgreements = getTradeAgreementsForCountry(countryDetail?.country || countryDetail?.nama || countryDetail?.country_name);
+  
+  const currentCountryName = countryDetail?.country || countryDetail?.nama || countryDetail?.country_name || countryDetail?.nama_negara || "Senegal";
+  const dbEmbassies = getEmbassiesForCountry(currentCountryName).map(mitra => ({
+    mitra,
+    status: 'Aktif',
+    type: 'Kedutaan Besar',
+  }));
 
-  const allPartnersFromTrade: EmbassyRecord[] = Array.isArray(tradeAgreements)
-    ? tradeAgreements
+  const tradeAgreements = getTradeAgreementsForCountry(currentCountryName);
+
+  // Perdagangan dari state lokal/custom player jika ada
+  const customTradeAgreements = Array.isArray(countryDetail?.tradeAgreements) ? countryDetail.tradeAgreements : [];
+
+  const allPartnersFromTrade: EmbassyRecord[] = Array.isArray(customTradeAgreements)
+    ? customTradeAgreements
         .filter((agreement: TradeAgreement) => {
           const normMitra = String(agreement.mitra || '').toLowerCase().trim();
           const isRemovedTrade = removedTradePartners.some((r: string) => String(r || '').toLowerCase().trim() === normMitra);
@@ -51,6 +63,10 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
     : [];
 
   const mergedEmbassies: EmbassyRecord[] = [
+    ...dbEmbassies.map((item: EmbassyRecord) => ({
+      ...item,
+      source: 'database_sql',
+    })),
     ...directEmbassies.map((item: EmbassyRecord) => ({
       ...item,
       source: 'kedutaan',

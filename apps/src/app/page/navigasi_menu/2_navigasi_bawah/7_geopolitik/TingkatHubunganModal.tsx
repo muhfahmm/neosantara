@@ -1,8 +1,10 @@
 "use client"
 import React, { useState } from "react";
-import { X, Globe, Search, Info } from "lucide-react";
+import { X, Globe, Search, Info, Building2, ShieldCheck, ShieldAlert } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
-import { getRelationValue } from "@/../../json/database_hubungan_antar_negara/relationsRegistry";
+import { getRelationValue, hasEmbassy } from "@/../../json/database_hubungan_antar_negara/relationsRegistry";
+import getTradeAgreementsForCountry from "@/../../json/database_mitra_perdagangan/tradeAgreementRegistry";
+import { getEmbassiesForCountry } from "@/../../json/database_kedutaan_besar/embassyRegistry";
 
 interface ModalProps {
   isOpen: boolean;
@@ -37,15 +39,45 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
   const playerCountryName = selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || "Indonesia";
   const normPlayer = playerCountryName.toLowerCase().trim();
 
+  // Ambil data resmi kedutaan dari database_kedutaan_besar.sql + state kedutaan aktif
+  const sqlDbEmbassies = getEmbassiesForCountry(playerCountryName);
+  const directEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
+  const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
+  const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
+  const customTradeAgreements = Array.isArray(countryDetail?.tradeAgreements) ? countryDetail.tradeAgreements : [];
+
+  const activeTradeMitras: string[] = Array.isArray(customTradeAgreements)
+    ? customTradeAgreements
+        .filter((agreement: any) => {
+          const normMitra = String(agreement.mitra || '').toLowerCase().trim();
+          const isRemovedTrade = removedTradePartners.some((r: string) => String(r || '').toLowerCase().trim() === normMitra);
+          const isRemovedEmbassy = removedEmbassies.some((r: string) => String(r || '').toLowerCase().trim() === normMitra);
+          return !isRemovedTrade && !isRemovedEmbassy;
+        })
+        .map((agreement: any) => agreement.mitra)
+    : [];
+
+  const activeDirectEmbassies: string[] = directEmbassies
+    .map((e: any) => e.mitra || e.nama_negara || e.name)
+    .filter(Boolean);
+
+  const allActiveEmbassyNames = Array.from(new Set([...sqlDbEmbassies, ...activeTradeMitras, ...activeDirectEmbassies])).filter(m => {
+    const norm = m.toLowerCase().trim();
+    return !removedEmbassies.some((r: string) => r.toLowerCase().trim() === norm);
+  });
+
   // Filter 206 negara (kecuali negara user)
   const allTargetCountries = COUNTRIES_DATA.filter(
     (c) => c.country.toLowerCase().trim() !== normPlayer
   ).map((c, idx) => {
+    const relVal = getRelationValue(playerCountryName, c.country);
+    const embassyExists = hasEmbassy(playerCountryName, c.country, allActiveEmbassyNames);
     return {
       no: idx + 1,
       name: c.country,
       continent: normalizeContinent(c.continent),
-      relation: getRelationValue(playerCountryName, c.country),
+      relation: relVal,
+      hasEmbassy: embassyExists,
     };
   });
 
@@ -181,16 +213,17 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
               <table className="min-w-full table-auto border-separate border-spacing-0 text-left">
                 <thead className="sticky top-0 z-10 bg-[#0F2424]">
                   <tr className="border-b border-[#00FFAA]/20">
-                    <th className="px-4 py-3 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider w-16" onClick={() => handleSort('no')}>No{renderSortArrow('no')}</th>
+                    <th className="px-4 py-3 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider w-14" onClick={() => handleSort('no')}>No{renderSortArrow('no')}</th>
                     <th className="px-4 py-3 border-b border-[#00FFAA]/20 cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
                     <th className="px-4 py-3 border-b border-[#00FFAA]/20 cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider" onClick={() => handleSort('continent')}>Benua{renderSortArrow('continent')}</th>
+                    <th className="px-4 py-3 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider" onClick={() => handleSort('hasEmbassy')}>Kedutaan Besar{renderSortArrow('hasEmbassy')}</th>
                     <th className="px-4 py-3 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider" onClick={() => handleSort('relation')}>Tingkat Hubungan{renderSortArrow('relation')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#00FFAA]/10">
                   {sortedRows.length === 0 ? (
                     <tr>
-                      <td className="px-4 py-6 text-center text-sm font-bold text-[#6B8A8A]" colSpan={4}>
+                      <td className="px-4 py-6 text-center text-sm font-bold text-[#6B8A8A]" colSpan={5}>
                         Tidak ada data yang cocok dengan pencarian "{searchQuery}".
                       </td>
                     </tr>
@@ -199,9 +232,31 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
                       const { alias, className } = getRelationBadge(row.relation);
                       return (
                         <tr key={`${row.name}-${index}`} className="hover:bg-[#00FFAA]/5 transition-colors">
-                          <td className="px-4 py-3 text-center text-xs font-bold text-[#6B8A8A]">{row.no}</td>
-                          <td className="px-4 py-3 text-xs font-bold text-[#E0E0E0]">{row.name}</td>
+                          <td className="px-4 py-3 text-center text-xs font-bold text-[#6B8A8A]">{index + 1}</td>
+                          <td className="px-4 py-3 text-xs font-bold text-[#E0E0E0]">
+                            <div className="flex items-center gap-2">
+                              {row.hasEmbassy ? (
+                                <Building2 className="w-4 h-4 text-[#00FFAA] shrink-0" />
+                              ) : (
+                                <Building2 className="w-4 h-4 text-gray-600 opacity-40 shrink-0" />
+                              )}
+                              <span>{row.name}</span>
+                            </div>
+                          </td>
                           <td className="px-4 py-3 text-xs font-bold text-[#6B8A8A]">{row.continent}</td>
+                          <td className="px-4 py-3 text-center text-xs font-bold">
+                            {row.hasEmbassy ? (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#00FFAA]/15 text-[#00FFAA] border border-[#00FFAA]/30 text-[11px] font-bold">
+                                <ShieldCheck className="w-3.5 h-3.5" />
+                                Ada Kedutaan
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-800/60 text-slate-400 border border-slate-700/50 text-[11px] font-medium">
+                                <ShieldAlert className="w-3.5 h-3.5 opacity-60" />
+                                Tidak Ada
+                              </span>
+                            )}
+                          </td>
                           <td className="px-4 py-3 text-center text-xs font-bold">
                             <span className={`inline-block px-3 py-0.5 rounded-md border font-black text-xs shadow-sm ${className}`}>
                               {row.relation} - {alias}

@@ -1,4 +1,6 @@
 // detail path: c:\EM\apps\src\app\page\time_controllers\timeManager.ts
+import { setSimulationDate } from "@/../../json/database_hubungan_antar_negara/relationsRegistry";
+
 export class SimulationTimeManager {
     private currentDate: Date;
     private isPaused: boolean = true;
@@ -125,6 +127,9 @@ export class SimulationTimeManager {
                 const newDate = new Date(this.currentDate);
                 newDate.setDate(newDate.getDate() + daysToAdvance);
                 this.currentDate = newDate;
+                
+                // Update simulation date in relationsRegistry
+                setSimulationDate(this.currentDate);
                 
                 this.lastTickTime = now - (delta % interval);
                 this.triggerCallback();
