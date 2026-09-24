@@ -5,7 +5,8 @@
 --              dan statistik indikator ekonomi untuk 207 negara.
 -- ========================================================
 
-CREATE TABLE IF NOT EXISTS database_sistem_ekonomi (
+DROP TABLE IF EXISTS `database_sistem_ekonomi`;
+CREATE TABLE IF NOT EXISTS `database_sistem_ekonomi` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     country_id INT NOT NULL,
     country_slug VARCHAR(100) NOT NULL,
