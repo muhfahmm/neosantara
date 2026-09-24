@@ -98,20 +98,9 @@ export default function TempatUmumModal({
 
   // 🤖 AI Suggestions State
   const [isAIModalOpen, setIsAIModalOpen] = useState<boolean>(false);
-  const [aiAnalysisResult, setAiAnalysisResult] = useState<any>(null);
 
   const handleOpenAIModal = () => {
-    if (activeGroup) {
-      const analysis = generateTempatUmumAIAnalysis(
-        activeGroup.id,
-        activeGroup.label,
-        activeGroup.keys,
-        countryDetail,
-        metadata
-      );
-      setAiAnalysisResult(analysis);
-      setIsAIModalOpen(true);
-    }
+    setIsAIModalOpen(true);
   };
 
   const handleAIBuildClick = (buildingKey: string, label: string, qty?: number) => {
@@ -323,6 +312,17 @@ export default function TempatUmumModal({
   }).filter((group) => group.items.length > 0);
 
   const activeGroup = groups.find((g) => g.id === activeTabId) || groups[0];
+
+  const aiAnalysisResult = useMemo(() => {
+    if (!activeGroup) return null;
+    return generateTempatUmumAIAnalysis(
+      activeGroup.id,
+      activeGroup.label,
+      activeGroup.keys,
+      countryDetail,
+      metadata
+    );
+  }, [activeGroup, countryDetail, metadata]);
   const totalValue = groups.reduce((sum, group) => sum + group.items.reduce((inner, item) => inner + (item.value || 0), 0), 0);
 
   const ELECTRICITY_BUILDINGS_LIST = [

@@ -15,53 +15,51 @@ export default function TopRightNewsIcon({ onClick, isOpen, onClose }: TopRightN
       <button
         onClick={onClick}
         title="Berita - Berita dan Update Negara"
-        className="fixed top-40 right-7 z-[100] w-14 h-14 rounded-full bg-gradient-to-b from-cyan-300 via-cyan-400 to-cyan-600 border-3 border-cyan-800 shadow-[0_4px_12px_rgba(0,0,0,0.3)] flex items-center justify-center cursor-pointer hover:brightness-120 hover:scale-110 active:scale-95 transition-all group"
+        className="fixed top-36 lg:top-38 xl:top-40 right-7 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
       >
-        <Newspaper className="w-7 h-7 text-cyan-900 font-bold transition-transform group-hover:scale-125" />
+        <Newspaper className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
       </button>
 
-      {/* 🔥 News Modal - Ukuran Besar seperti modal lainnya */}
+      {/* 🔥 News Modal - Ukuran dan Tema Konsisten dengan Modal Lainnya */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent pointer-events-none">
-          <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl flex flex-col relative font-sans pointer-events-auto">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+          <div className="bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
             {/* 🔥 HEADER MODAL */}
-            <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-600/10 rounded-xl border border-blue-600/20">
-                  <Newspaper className="h-6 w-6 text-blue-600" />
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 rounded-t-2xl">
+              <div className="flex items-center gap-2">
+                <div className="p-1 sm:p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] shrink-0">
+                  <Newspaper className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black text-[#5c3c10] tracking-tight leading-none uppercase">Berita & Update Negara</h2>
-                  <p className="text-xs text-[#8b7e66] font-medium">Kabar terkini seputar politik, ekonomi, dan pertahanan nasional</p>
+                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Berita & Update Negara</h2>
                 </div>
               </div>
               <button 
                 onClick={onClose}
-                className="p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
               >
-                <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
+                <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             {/* 🔥 BODY MODAL */}
-            <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar flex flex-col items-center justify-center">
-              <div className="flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto">
-                <Newspaper className="h-16 w-16 text-[#C4B49C]/50" />
-                <h4 className="text-lg font-black text-[#5c3c10] uppercase">Tidak Ada Berita</h4>
-                <p className="text-xs text-[#8b7e66] leading-relaxed">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto my-auto">
+                <Newspaper className="h-16 w-16 text-[#00FFAA]/30" />
+                <h4 className="text-lg font-bold text-[#00FFAA] uppercase">Tidak Ada Berita</h4>
+                <p className="text-xs text-[#6B8A8A] leading-relaxed">
                   Belum ada berita atau update yang masuk. Pantau terus perkembangan situasi nasional dan internasional.
                 </p>
               </div>
             </div>
 
             {/* 🔥 FOOTER MODAL */}
-            <div className="p-4 bg-[#FAF6EE] border-t-2 border-[#C4B49C]/20 flex justify-end relative z-10 shrink-0">
+            <div className="p-3 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10 shrink-0">
               <button 
                 onClick={onClose}
-                className="px-8 py-3 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 transition-all font-black text-xs uppercase tracking-wider cursor-pointer"
+                className="px-6 py-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all font-bold text-xs uppercase tracking-wider cursor-pointer"
               >
                 Tutup
               </button>

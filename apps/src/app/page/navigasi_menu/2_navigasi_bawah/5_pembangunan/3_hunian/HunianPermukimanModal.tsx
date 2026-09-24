@@ -100,14 +100,9 @@ export default function HunianPermukimanModal({
 
   // 🤖 AI Suggestions State
   const [isAIModalOpen, setIsAIModalOpen] = useState<boolean>(false);
-  const [aiAnalysisResult, setAiAnalysisResult] = useState<any>(null);
 
   const handleOpenAIModal = () => {
-    if (activeItem) {
-      const analysis = generateHunianAIAnalysis(activeItem.key, activeItem.label, countryDetail, metadata);
-      setAiAnalysisResult(analysis);
-      setIsAIModalOpen(true);
-    }
+    setIsAIModalOpen(true);
   };
 
   const handleAIBuildClick = (buildingKey: string, label: string, qty?: number) => {
@@ -257,16 +252,27 @@ export default function HunianPermukimanModal({
   };
 
   const activeItem = items.find((it) => it.key === activeTab) || items[0];
+
+  const aiAnalysisResult = useMemo(() => {
+    if (!activeItem) return null;
+    return generateHunianAIAnalysis(activeItem.key, activeItem.label, countryDetail, metadata);
+  }, [activeItem, countryDetail, metadata]);
   const totalValue = items.reduce((sum, item) => sum + item.value, 0);
   const population = safeNumber(countryDetail?.jumlah_penduduk);
 
   // --- Hitung total kapasitas ---
+  const DEFAULT_CAPACITIES: Record<string, number> = {
+    rumah_subsidi: 4,
+    apartemen: 50,
+    mansion: 8,
+  };
+
   const totalCapacity = useMemo(() => {
     let cap = 0;
     HUNIAN_KEYS.forEach((key) => {
       const count = Number(countryDetail?.[key]) || 0;
       const meta = findMeta(key);
-      const capacity = Number(meta?.kapasitas) || 0;
+      const capacity = Number(meta?.kapasitas) || DEFAULT_CAPACITIES[key] || 4;
       cap += count * capacity;
     });
     return cap;
@@ -280,7 +286,7 @@ export default function HunianPermukimanModal({
     return HUNIAN_KEYS.map((key) => {
       const count = Number(countryDetail?.[key]) || 0;
       const meta = findMeta(key);
-      const capacity = Number(meta?.kapasitas) || 0;
+      const capacity = Number(meta?.kapasitas) || DEFAULT_CAPACITIES[key] || 4;
       const total = count * capacity;
       return {
         key,
@@ -306,15 +312,18 @@ export default function HunianPermukimanModal({
 
   useEffect(() => {
     if (setCountryDetail && countryDetail) {
-      setCountryDetail({
-        ...countryDetail,
-        satisfaction: {
-          ...(countryDetail?.satisfaction || {}),
-          housing: housingSatisfaction,
-        }
-      });
+      if (countryDetail.tunawisma !== shortage || countryDetail?.satisfaction?.housing !== housingSatisfaction) {
+        setCountryDetail({
+          ...countryDetail,
+          tunawisma: shortage,
+          satisfaction: {
+            ...(countryDetail?.satisfaction || {}),
+            housing: housingSatisfaction,
+          }
+        });
+      }
     }
-  }, [housingSatisfaction]);
+  }, [shortage, housingSatisfaction]);
 
   // --- LOGIKA LISTRIK (tetap) ---
   const ELECTRICITY_BUILDINGS_LIST = [
@@ -561,13 +570,15 @@ export default function HunianPermukimanModal({
                       </p>
                     </div>
                     <div className={`bg-[#0F2424] rounded-xl p-3 border ${isSufficient ? 'border-emerald-500/30' : 'border-rose-500/30'} flex flex-col justify-between`}>
-                      <p className="text-[9px] font-bold uppercase text-[#6B8A8A]">Kekurangan / Surplus</p>
+                      <p className="text-[9px] font-bold uppercase text-[#6B8A8A]">
+                        {isSufficient ? 'Surplus Hunian' : 'Kekurangan / Tunawisma'}
+                      </p>
                       <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 break-words ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
                         {isSufficient 
                           ? `+${(totalCapacity - population).toLocaleString('id-ID')}` 
                           : `-${shortage.toLocaleString('id-ID')}`}
                         <span className={`text-[9px] font-bold block sm:inline ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
-                          {isSufficient ? ' (surplus)' : ' (kurang)'}
+                          {isSufficient ? ' (surplus)' : ' (tunawisma)'}
                         </span>
                       </p>
                     </div>
@@ -610,7 +621,7 @@ export default function HunianPermukimanModal({
                   <div className={`mt-4 p-3 rounded-xl text-xs font-bold ${isSufficient ? 'bg-[#0F2424] border border-emerald-500/30 text-emerald-400' : 'bg-[#0F2424] border border-rose-500/30 text-rose-400'}`}>
                     {isSufficient 
                       ? `✅ Kapasitas hunian mencukupi untuk seluruh populasi. Tersedia kelebihan ${(totalCapacity - population).toLocaleString('id-ID')} tempat.`
-                      : `⚠️ Masih terdapat kekurangan ${shortage.toLocaleString('id-ID')} tempat hunian. ${Math.round(100 - percentageMet)}% populasi belum terakomodasi.`}
+                      : `⚠️ Masih terdapat ${shortage.toLocaleString('id-ID')} tunawisma (kekurangan tempat hunian). ${Math.round(100 - percentageMet)}% populasi belum terakomodasi.`}
                   </div>
                 </div>
 

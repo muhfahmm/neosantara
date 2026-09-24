@@ -173,7 +173,7 @@ export function Navbar({
                             value={
                                 <span className="flex items-center gap-1 sm:gap-2 text-[#E0E0E0]">
                                     <span>{populasi.toLocaleString('id-ID')}</span>
-                                    <span className="text-[#00FFAA] text-[8px] sm:text-[11px] font-black">
+                                    <span className={`${netPopulationChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-[8px] sm:text-[11px] font-black`}>
                                         ({netPopulationLabel})
                                     </span>
                                 </span>
@@ -187,7 +187,7 @@ export function Navbar({
                                 <span className="text-rose-400 text-center">Mati: -{dailyDeaths.toLocaleString('id-ID')}</span>
                             </div>
                             <div className="mt-1.5 pt-1.5 border-t border-[#00FFAA]/20 text-[10px] text-[#6B8A8A] text-center">
-                                Pertumbuhan Bersih: <span className="font-bold text-[#00FFAA]">{netPopulationLabel}</span>
+                                Pertumbuhan Bersih: <span className={`font-bold ${netPopulationChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{netPopulationLabel}</span>
                             </div>
                         </div>
                     </div>
@@ -197,7 +197,7 @@ export function Navbar({
                         label="KAS NEGARA"
                         value={countryDetail ? (
                             <span className="flex items-center gap-1 sm:gap-2 text-[#E0E0E0]">
-                                <span>{formatCurrencyEM(anggaran)}</span>
+                                <span className={anggaran < 0 ? 'text-rose-400 font-black' : ''}>{formatCurrencyEM(anggaran)}</span>
                                 <span className={`${netBalance >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-[8px] sm:text-[11px] font-black`}>
                                     ({netBalanceLabel})
                                 </span>

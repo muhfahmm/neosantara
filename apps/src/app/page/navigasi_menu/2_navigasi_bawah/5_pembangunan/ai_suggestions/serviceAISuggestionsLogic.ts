@@ -137,9 +137,9 @@ export const generateHunianAIAnalysis = (
 
   let recommendation = "";
   if (deficitUnitsNeeded > 0) {
-    recommendation = `Kapasitas hunian nasional masih defisit bagi ${populationDeficit.toLocaleString('id-ID')} jiwa. Disarankan membangun minimal ${deficitUnitsNeeded.toLocaleString('id-ID')} unit ${tabLabel} tambahan.`;
+    recommendation = `Terdapat ${populationDeficit.toLocaleString('id-ID')} tunawisma (kekurangan kapasitas hunian nasional). Disarankan membangun minimal ${deficitUnitsNeeded.toLocaleString('id-ID')} unit ${tabLabel} tambahan.`;
   } else {
-    recommendation = `Kapasitas hunian nasional dalam kondisi aman dan memenuhi total populasi ${population.toLocaleString('id-ID')} jiwa.`;
+    recommendation = `Kapasitas hunian nasional dalam kondisi aman tanpa tunawisma, memenuhi total populasi ${population.toLocaleString('id-ID')} jiwa.`;
   }
 
   const housingKeys = [

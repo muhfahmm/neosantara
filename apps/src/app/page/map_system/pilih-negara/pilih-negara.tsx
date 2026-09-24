@@ -23,6 +23,7 @@ import {
   Home,
   Scale,
   Bug,
+  Table,
   Banknote,
   Gem,
   Plane,
@@ -384,9 +385,19 @@ export default function PilihNegaraPage() {
               setIsDebugOpen(true);
             }}
             className="flex items-center justify-center w-8 h-8 rounded-full border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA]/10 transition-all cursor-pointer"
+            title="Debug APBN"
           >
             <Bug className="w-4 h-4" />
           </button>
+
+          {/* Tabel 207 Negara Icon */}
+          <Link
+            href="/page/map_system/tabel_negara"
+            className="flex items-center justify-center w-8 h-8 rounded-full border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA]/10 transition-all cursor-pointer"
+            title="Tabel 207 Negara"
+          >
+            <Table className="w-4 h-4" />
+          </Link>
 
           <div className="flex items-center gap-6">
             <StatusItem

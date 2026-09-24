@@ -198,9 +198,9 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
       <button
         onClick={onClick}
         title="Hadiah - Bonus dan Reward"
-        className="fixed top-24 right-7 z-[100] w-14 h-14 rounded-full bg-gradient-to-b from-pink-300 via-pink-400 to-pink-600 border-3 border-pink-800 shadow-[0_4px_12px_rgba(0,0,0,0.3)] flex items-center justify-center cursor-default opacity-70"
+        className="fixed top-24 right-7 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-default opacity-70"
       >
-        <Gift className="w-7 h-7 text-pink-900 animate-pulse" />
+        <Gift className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-[#00FFAA] animate-pulse" />
       </button>
     );
   }
@@ -214,11 +214,11 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
       <button
         onClick={onClick}
         title="Hadiah - Bonus dan Reward"
-        className="fixed top-24 right-7 z-[100] w-14 h-14 rounded-full bg-gradient-to-b from-pink-300 via-pink-400 to-pink-600 border-3 border-pink-800 shadow-[0_4px_12px_rgba(0,0,0,0.3)] flex items-center justify-center cursor-pointer hover:brightness-120 hover:scale-110 active:scale-95 transition-all group"
+        className="fixed top-24 right-7 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
       >
-        <Gift className="w-7 h-7 text-pink-900 font-bold transition-transform group-hover:scale-125" />
+        <Gift className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
         {!claimedToday && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+          <span className="absolute -top-1 -right-1 bg-red-500 border border-[#0A1A1A] text-white text-[9px] font-bold rounded-full w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center animate-pulse">
             !
           </span>
         )}
@@ -226,39 +226,35 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
 
       {/* Modal Hadiah */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent pointer-events-none">
-          <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl flex flex-col relative font-sans pointer-events-auto">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+          <div className="bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
             {/* ---- HEADER ---- */}
-            <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-rose-600/10 rounded-xl border border-rose-600/20">
-                  <Gift className="h-6 w-6 text-rose-600" />
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 rounded-t-2xl">
+              <div className="flex items-center gap-2">
+                <div className="p-1 sm:p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] shrink-0">
+                  <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black text-[#5c3c10] tracking-tight leading-none uppercase">
+                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
                     Hadiah Harian
                   </h2>
-                  <p className="text-xs text-[#8b7e66] font-medium">
-                    Klaim setiap hari & dapatkan bonus mingguan!
-                  </p>
                 </div>
               </div>
               <button
                 onClick={onClose}
-                className="p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
+                className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
               >
-                <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
+                <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             {/* ---- BODY (GRID HARIAN) ---- */}
-            <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar flex flex-col items-center justify-start">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar flex flex-col items-center justify-start">
               {/* Informasi hari ini */}
               <div className="w-full max-w-4xl mb-6 text-center">
-                <p className="text-sm text-[#8b7e66]">
+                <p className="text-xs sm:text-sm text-[#6B8A8A] font-semibold">
                   Hari ke-{currentDay} dari 7
                   {claimedToday
                     ? ' ✅ Sudah diklaim hari ini'
@@ -267,7 +263,7 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
               </div>
 
               {/* Grid 7 hari */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 w-full max-w-4xl">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4 w-full max-w-4xl">
                 {DAILY_REWARDS.map((reward, index) => {
                   const day = index + 1;
                   const isPast = day < currentDay;
@@ -278,30 +274,30 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
                   let statusIcon = null;
                   let statusColor = '';
                   let borderColor = '';
-                  let bgColor = 'bg-[#FAF6EE]';
+                  let bgColor = 'bg-[#0F2424]';
                   let cursor = 'cursor-default';
                   let onClickHandler = undefined;
 
                   if (isClaimed) {
                     // Sudah diklaim
-                    statusIcon = <Check className="h-6 w-6 text-green-600" />;
-                    statusColor = 'text-green-600';
-                    borderColor = 'border-green-400';
-                    bgColor = 'bg-green-50';
+                    statusIcon = <Check className="h-5 w-5 text-emerald-400" />;
+                    statusColor = 'text-emerald-400';
+                    borderColor = 'border-emerald-500/50';
+                    bgColor = 'bg-emerald-950/30';
                   } else if (isToday && !claimedToday) {
                     // Hari ini, bisa diklaim
-                    statusIcon = <Zap className="h-6 w-6 text-amber-500 animate-pulse" />;
-                    statusColor = 'text-amber-500';
-                    borderColor = 'border-amber-400';
-                    bgColor = 'bg-amber-50';
+                    statusIcon = <Zap className="h-5 w-5 text-[#00FFAA] animate-pulse" />;
+                    statusColor = 'text-[#00FFAA]';
+                    borderColor = 'border-[#00FFAA]';
+                    bgColor = 'bg-[#00FFAA]/10';
                     cursor = 'cursor-pointer';
                     onClickHandler = handleClaim;
                   } else if (isFuture) {
                     // Belum terbuka
-                    statusIcon = <Lock className="h-6 w-6 text-gray-400" />;
-                    statusColor = 'text-gray-400';
-                    borderColor = 'border-gray-300';
-                    bgColor = 'bg-gray-100';
+                    statusIcon = <Lock className="h-5 w-5 text-[#6B8A8A]/50" />;
+                    statusColor = 'text-[#6B8A8A]/50';
+                    borderColor = 'border-[#00FFAA]/10';
+                    bgColor = 'bg-[#0A1A1A]/60';
                   }
 
                   return (
@@ -309,21 +305,21 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
                       key={day}
                       onClick={onClickHandler}
                       className={`
-                        relative flex flex-col items-center justify-center p-4 rounded-xl border-2 
+                        relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border 
                         ${borderColor} ${bgColor} ${cursor}
                         transition-all duration-200
-                        ${isToday && !claimedToday ? 'hover:scale-105 hover:shadow-lg' : ''}
+                        ${isToday && !claimedToday ? 'hover:scale-105 hover:shadow-[0_0_15px_rgba(0,255,170,0.2)]' : ''}
                       `}
                     >
                       {/* Nomor hari */}
-                      <span className="text-xs font-bold text-[#8b7e66] uppercase tracking-wider">
+                      <span className="text-[10px] sm:text-xs font-bold text-[#6B8A8A] uppercase tracking-wider">
                         Hari {day}
                       </span>
 
                       {/* Reward amount */}
-                      <span className="text-lg font-black text-[#5c3c10] mt-1">
+                      <span className="text-base sm:text-lg font-black text-[#E0E0E0] mt-1">
                         {reward}
-                        <span className="text-sm font-medium text-[#8b7e66] ml-1">koin</span>
+                        <span className="text-xs font-medium text-[#6B8A8A] ml-1">koin</span>
                       </span>
 
                       {/* Status icon */}
@@ -331,7 +327,7 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
 
                       {/* Label tambahan untuk hari ini */}
                       {isToday && !claimedToday && (
-                        <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
+                        <span className="absolute -top-2 -right-2 bg-[#00FFAA] text-[#0A1A1A] text-[9px] font-black px-2 py-0.5 rounded-full shadow">
                           Klaim!
                         </span>
                       )}
@@ -342,22 +338,22 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
 
               {/* Bonus mingguan info */}
               <div className="mt-8 text-center max-w-md">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-rose-100/50 rounded-full border border-rose-200/50 text-rose-700 text-xs">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#0F2424] rounded-full border border-[#00FFAA]/30 text-[#00FFAA] text-xs">
                   <Zap className="h-4 w-4" />
                   <span>
                     Selesaikan 7 hari berturut-turut dan dapatkan{' '}
-                    <span className="font-black">+{WEEKLY_BONUS} koin</span> bonus!
+                    <span className="font-black text-white">+{WEEKLY_BONUS} koin</span> bonus!
                   </span>
                 </div>
               </div>
             </div>
 
             {/* ---- FOOTER ---- */}
-            <div className="p-4 bg-[#FAF6EE] border-t-2 border-[#C4B49C]/20 flex justify-between items-center relative z-10 shrink-0">
+            <div className="p-3 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-between items-center relative z-10 shrink-0">
               {/* Tombol Reset (manual) */}
               <button
                 onClick={handleReset}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl border-2 border-red-300 bg-red-50/50 text-red-600 hover:bg-red-100 hover:border-red-400 transition-all font-medium text-xs uppercase tracking-wider cursor-pointer"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-red-500/40 bg-red-950/40 text-red-400 hover:bg-red-900/60 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer"
                 title="Reset progres hadiah harian ke awal"
               >
                 <RotateCcw className="h-4 w-4" />
@@ -366,7 +362,7 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
 
               <button
                 onClick={onClose}
-                className="px-8 py-3 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 transition-all font-black text-xs uppercase tracking-wider cursor-pointer"
+                className="px-6 py-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all font-bold text-xs uppercase tracking-wider cursor-pointer"
               >
                 Tutup
               </button>

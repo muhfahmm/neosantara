@@ -29,7 +29,7 @@ export default function TunawismaDetailModal({
     // Hitung jumlah tunawisma
     const homelessCount = providedHomelessCount !== undefined
       ? providedHomelessCount
-      : calculateHomelessCount(populasi, 50); // Default jika tidak ada
+      : calculateHomelessCount(populasi, 50, countryDetail); // Default jika tidak ada
 
     // Persentase tunawisma
     const homelessPercentage = (homelessCount / populasi) * 100;

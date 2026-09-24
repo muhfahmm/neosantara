@@ -179,7 +179,7 @@ export const calculateDailyDeaths = (
 
     // Hitung homelessCount secara dinamis dari detail
     const sektoral = calculateSectoralSatisfaction(detail);
-    const calculatedHomeless = calculateHomelessCount(populasi, sektoral.hunian);
+    const calculatedHomeless = calculateHomelessCount(populasi, sektoral.hunian, detail);
 
     const tunawismaRes = calculateTunawismaLogic(detail, populasi, calculatedHomeless);
     const kriminalitasRes = calculateKriminalitasLogic(detail, populasi);
@@ -206,8 +206,16 @@ export const calculateDailyDeaths = (
 // ==============================
 export const calculateHomelessCount = (
   populasi: number,
-  housingQuality: number
+  housingQuality: number = 50,
+  detail?: any
 ): number => {
+  if (detail) {
+    const totalHousingCapacity =
+      (Number(detail.rumah_subsidi) || 0) * 4 +
+      (Number(detail.apartemen) || 0) * 50 +
+      (Number(detail.mansion) || 0) * 8;
+    return Math.max(0, populasi - totalHousingCapacity);
+  }
   const baseHomelessRate = 0.007;
   const homelessMultiplier = (100 - housingQuality) / 50;
   return Math.floor(populasi * baseHomelessRate * homelessMultiplier);
@@ -252,8 +260,16 @@ export const calculateDailyPopulationChange = (
     detailWithDefaults
   );
 
-  const dailyDeaths = calculateDailyDeaths(populasi, lifeExpectancy, securityLevel, detailWithDefaults);
-  const netDailyChange = dailyBirths - dailyDeaths;
+  let dailyDeaths = calculateDailyDeaths(populasi, lifeExpectancy, securityLevel, detailWithDefaults);
+  
+  // Agar pertumbuhan populasi default selalu positif (+), kematian tidak melebihi kelahiran pada keadaan baseline
+  if (dailyDeaths >= dailyBirths) {
+    dailyDeaths = Math.floor(dailyBirths * 0.7);
+  }
+
+  // Minimal pertumbuhan positif 0.002% per hari untuk semua negara (termasuk microstates)
+  const minPositiveGrowth = Math.max(1, Math.ceil(populasi * 0.00002));
+  const netDailyChange = Math.max(minPositiveGrowth, dailyBirths - dailyDeaths);
   const sektoral = calculateSectoralSatisfaction(detailWithDefaults);
   const homelessCount = calculateHomelessCount(populasi, sektoral.hunian);
 

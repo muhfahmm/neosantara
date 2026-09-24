@@ -94,7 +94,7 @@ function hitungDemografi(detail: CountryDetail, countryName?: string) {
   const totalDailyDelta = dailyBirths - dailyDeaths;
   const totalMonthlyGrowthPercent = ((totalDailyDelta * 30) / populasi) * 100;
 
-  const homelessCount = calculateHomelessCount(populasi, sektoral.hunian);
+  const homelessCount = calculateHomelessCount(populasi, sektoral.hunian, detailWithDefaults);
 
   return {
     populasi,
