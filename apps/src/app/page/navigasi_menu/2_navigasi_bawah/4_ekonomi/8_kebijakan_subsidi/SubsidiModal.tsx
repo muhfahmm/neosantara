@@ -36,35 +36,56 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
   useEffect(() => {
     if (!isOpen) return;
 
-    const slug = countryDetail?.slug || countryDetail?.country_slug || 'indonesia';
+    // Derive slug: prioritize explicit slug fields, then fall back to name_id conversion
+    const slug =
+      countryDetail?.slug ||
+      countryDetail?.country_slug ||
+      countryDetail?.name?.toLowerCase().replace(/\s+/g, '-') ||
+      (countryDetail?.name_id ? String(countryDetail.name_id).toLowerCase().replace(/\s+/g, '-') : null) ||
+      'indonesia';
+
     setIsLoadingDb(true);
 
     fetch(`/api/alokasi-subsidi?slug=${slug}`)
       .then((res) => res.json())
       .then((dbData) => {
-        if (dbData) {
+        if (dbData && typeof dbData === 'object' && !Array.isArray(dbData)) {
           setSubsidyItems(
-            INITIAL_SUBSIDY_ITEMS.map((item) => ({
-              ...item,
-              isSubsidized: dbData[item.id] !== undefined ? Boolean(Number(dbData[item.id])) : item.isSubsidized,
-            }))
+            INITIAL_SUBSIDY_ITEMS.map((item) => {
+              const dbVal = dbData[item.id] ?? dbData[item.id.toLowerCase()];
+              let isSub = item.isSubsidized;
+              if (dbVal !== undefined && dbVal !== null) {
+                if (dbVal === 0 || dbVal === "0" || dbVal === false || dbVal === "false") {
+                  isSub = false;
+                } else if (dbVal === 1 || dbVal === "1" || dbVal === true || dbVal === "true") {
+                  isSub = true;
+                }
+              }
+              return {
+                ...item,
+                isSubsidized: isSub,
+              };
+            })
           );
         } else if (countryDetail?.subsidy_states) {
           setSubsidyItems(
             INITIAL_SUBSIDY_ITEMS.map((item) => ({
               ...item,
-              isSubsidized: countryDetail.subsidy_states[item.id] ?? item.isSubsidized,
+              isSubsidized: (countryDetail.subsidy_states as Record<string, boolean>)[item.id] ?? item.isSubsidized,
             }))
           );
+        } else {
+          setSubsidyItems(INITIAL_SUBSIDY_ITEMS);
         }
       })
       .catch((err) => {
         console.error("Gagal memuat status subsidi dari database:", err);
+        setSubsidyItems(INITIAL_SUBSIDY_ITEMS);
       })
       .finally(() => {
         setIsLoadingDb(false);
       });
-  }, [isOpen, countryDetail?.slug, countryDetail?.country_slug]);
+  }, [isOpen, countryDetail?.slug, countryDetail?.country_slug, countryDetail?.name, countryDetail?.name_id]);
 
   if (!isOpen) return null;
 

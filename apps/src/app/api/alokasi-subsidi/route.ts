@@ -7,9 +7,12 @@ export async function GET(req: NextRequest) {
     const slug = searchParams.get('slug');
 
     if (slug) {
+      const normalizedSlug = slug.toLowerCase().replace(/_/g, '-');
+      const underscoreSlug = slug.toLowerCase().replace(/-/g, '_');
+
       const rows = await queryDb<any[]>(
-        'SELECT * FROM database_alokasi_subsidi WHERE country_slug = ? LIMIT 1',
-        [slug]
+        'SELECT * FROM database_alokasi_subsidi WHERE country_slug = ? OR country_slug = ? OR country_slug = ? LIMIT 1',
+        [slug, normalizedSlug, underscoreSlug]
       );
       return NextResponse.json(rows?.[0] || null);
     }

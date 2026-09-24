@@ -178,6 +178,7 @@ async function loadAllCountriesFromMySQL() {
         __fileOrder: order,
         __continent: getContinentFromOrder(order),
 
+        country_slug: slug,
         name_id: prof.name_id || prof.country || slug,
         name_en: prof.name_en || prof.name_id || slug,
         capital: prof.capital || '',
