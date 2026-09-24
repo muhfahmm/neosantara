@@ -1,6 +1,7 @@
 import { calculateIncomeAtRate } from './2_tax_logic/taxLogic';
 import { calculateGoldMiningDailyProduction } from './goldIncome';
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department } from './departments';
+import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from '../../page/navigasi_menu/2_navigasi_bawah/4_ekonomi/8_kebijakan_subsidi/logic/logikaSubsidi';
 
 const getNestedValue = (obj: any, path: string[]) => {
   return path.reduce((current, key) => {
@@ -65,13 +66,30 @@ export const calculateCountryGDP = (detail: any) => {
   return totalTaxIncome + goldIncome;
 };
 
+export const calculateActiveSubsidyCost = (detail: any) => {
+  if (!detail || typeof detail !== 'object') return 0;
+  if (typeof detail?.total_subsidy_cost === 'number') {
+    return detail.total_subsidy_cost;
+  }
+  const subsidyStates = detail?.subsidy_states as Record<string, boolean> | undefined;
+  const items = INITIAL_SUBSIDY_ITEMS.map((item) => {
+    const isSub = subsidyStates
+      ? (subsidyStates[item.id] ?? item.isSubsidized)
+      : (detail[item.id] ?? detail[item.id.toLowerCase()] ?? item.isSubsidized);
+    const normalizedIsSub = (isSub === 0 || isSub === "0" || isSub === false || isSub === "false") ? false : Boolean(isSub);
+    return { ...item, isSubsidized: normalizedIsSub };
+  });
+  return calculateSubsidySummary(items).totalCost;
+};
+
 export const calculateCountryNetBalance = (detail: any) => {
   if (!detail || typeof detail !== 'object') return 0;
   const totalTaxIncome = calculateTotalTaxIncome(detail);
   const goldUnits = calculateGoldMiningDailyProduction(detail);
   const goldIncome = goldUnits; // use production units (from metadata), do not multiply by price
   const ministryCost = calculateTotalMinistryCostPerDay(detail);
-  return totalTaxIncome + goldIncome - ministryCost;
+  const subsidyCost = calculateActiveSubsidyCost(detail);
+  return totalTaxIncome + goldIncome - ministryCost - subsidyCost;
 };
 
 export const calculateGoldIncome = calculateGoldMiningDailyProduction;

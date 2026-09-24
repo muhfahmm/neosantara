@@ -6,6 +6,7 @@ import {
   calculateGoldIncome,
   calculateTotalMinistryCostPerDay,
 } from "@/app/logic/economic_logic/treasuryUpdater";
+import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "../8_kebijakan_subsidi/logic/logikaSubsidi";
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
 
@@ -15,6 +16,25 @@ interface ModalProps {
   countryDetail: any;
   selectedCountry: any;
 }
+
+const computeTaxValue = (detail: any) => calculateTotalTaxIncome(detail);
+const computeGoldValue = (detail: any) => calculateGoldIncome(detail);
+const computeMinistryCost = (detail: any) => calculateTotalMinistryCostPerDay(detail);
+const computeSubsidyCost = (detail: any) => {
+  if (!detail || typeof detail !== 'object') return 424;
+  if (typeof detail?.total_subsidy_cost === 'number') {
+    return detail.total_subsidy_cost;
+  }
+  const subsidyStates = detail?.subsidy_states as Record<string, boolean> | undefined;
+  const items = INITIAL_SUBSIDY_ITEMS.map((item) => {
+    const isSub = subsidyStates
+      ? (subsidyStates[item.id] ?? item.isSubsidized)
+      : (detail[item.id] ?? detail[item.id.toLowerCase()] ?? item.isSubsidized);
+    const normalizedIsSub = (isSub === 0 || isSub === "0" || isSub === false || isSub === "false") ? false : Boolean(isSub);
+    return { ...item, isSubsidized: normalizedIsSub };
+  });
+  return calculateSubsidySummary(items).totalCost;
+};
 
 const formatNumber = (num: number) => num.toLocaleString('id-ID');
 
@@ -142,10 +162,6 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
     return () => clearInterval(interval);
   }, []);
 
-  const computeTaxValue = (detail: any) => calculateTotalTaxIncome(detail);
-  const computeGoldValue = (detail: any) => calculateGoldIncome(detail);
-  const computeMinistryCost = (detail: any) => calculateTotalMinistryCostPerDay(detail);
-
   const handleSort = (key: string) => {
     setSortConfig((prev) => ({
       key,
@@ -176,8 +192,10 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
       const tax = isLoaded ? computeTaxValue(targetDetail) : 0;
       const gold = isLoaded ? computeGoldValue(targetDetail) : 0;
       const pdb = tax + gold; // Total PDB Bruto = Pajak + Produksi Emas
-      const ministry = isLoaded ? computeMinistryCost(targetDetail) : 0;
-      const net = pdb - ministry;
+      const dewanKabinetCost = isLoaded ? computeMinistryCost(targetDetail) : 0;
+      const subsidyCost = isLoaded ? computeSubsidyCost(targetDetail) : 0;
+      const totalPengeluaran = dewanKabinetCost + subsidyCost;
+      const net = pdb - totalPengeluaran;
       const continent = normalizeContinent(targetDetail.continent || country.continent || getContinentFromOrder(country.__fileOrder));
       const hasEkstraksiData = targetDetail.uranium !== undefined || targetDetail.batu_bara !== undefined || targetDetail.minyak_bumi !== undefined || targetDetail.gas_alam !== undefined;
       const buildingCount = isLoaded && hasEkstraksiData && typeof targetDetail.emas === 'number' ? targetDetail.emas : 0;
@@ -190,7 +208,7 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
         tax,
         gold,
         pdb,
-        ministry,
+        ministry: totalPengeluaran,
         net,
         order: country.__fileOrder,
         buildingCount,

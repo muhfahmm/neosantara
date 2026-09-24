@@ -9,6 +9,8 @@ import {
 } from "@/app/logic/economic_logic/treasuryUpdater";
 import { calculateGoldMiningDailyProduction, GOLD_MINING_PRODUCTION_PER_BUILDING } from "@/app/logic/economic_logic/goldIncome";
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department } from "@/app/logic/economic_logic/departments";
+import AlokasiSubsidiTab from "./alokasi_subsidi/AlokasiSubsidiTab";
+import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "../8_kebijakan_subsidi/logic/logikaSubsidi";
 
 interface ModalProps {
   isOpen: boolean;
@@ -49,17 +51,31 @@ const calculateTourismIncome = (countryDetail: any) => {
   return 0;
 };
 
+// Helper untuk menghitung total pengeluaran subsidi
+const calculateActiveSubsidyCost = (countryDetail: any) => {
+  if (typeof countryDetail?.total_subsidy_cost === "number") {
+    return countryDetail.total_subsidy_cost;
+  }
+  const subsidyStates = countryDetail?.subsidy_states as Record<string, boolean> | undefined;
+  const items = INITIAL_SUBSIDY_ITEMS.map((item) => ({
+    ...item,
+    isSubsidized: subsidyStates ? (subsidyStates[item.id] ?? item.isSubsidized) : item.isSubsidized,
+  }));
+  return calculateSubsidySummary(items).totalCost;
+};
+
 // --- KOMPONEN UTAMA ---
 export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDetail, selectedCountry, onGotoPajak, onGotoProduction }: ModalProps) {
   if (!isOpen) return null;
 
   const [activeTab, setActiveTab] = useState<"summary" | "income" | "outcome">("summary");
-  const [outcomeSubTab, setOutcomeSubTab] = useState<"kementerian" | "keamanan" | "layanan">("kementerian");
+  const [outcomeSubTab, setOutcomeSubTab] = useState<"kementerian" | "keamanan" | "layanan" | "subsidi">("kementerian");
 
   const taxRevenue = calculateTotalTaxIncome(countryDetail);
   const goldIncome = calculateGoldIncome(countryDetail);
   const ministryCostPerDay = calculateMinistryCost(countryDetail);
   const tourismIncome = calculateTourismIncome(countryDetail);
+  const totalSubsidyCost = calculateActiveSubsidyCost(countryDetail);
 
   const goldBuildingCount = Number(countryDetail?.emas) || 0;
   const goldUnits = calculateGoldMiningDailyProduction(countryDetail);
@@ -77,7 +93,8 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
   ];
 
   const outcomeItems: FinancialItem[] = [
-    { label: "Biaya Operasional Dewan Kabinet", amount: ministryCostPerDay }
+    { label: "Biaya Operasional Dewan Kabinet", amount: ministryCostPerDay },
+    { label: "Alokasi Kebijakan Subsidi", amount: totalSubsidyCost }
   ];
 
   const totalIncome = incomeItems.reduce((sum, item) => sum + item.amount, 0);
@@ -256,45 +273,59 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                   >
                     Layanan (2)
                   </button>
+                  <button
+                    onClick={() => setOutcomeSubTab("subsidi")}
+                    className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                      outcomeSubTab === "subsidi" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
+                    }`}
+                  >
+                    Alokasi Subsidi (6)
+                  </button>
                 </div>
 
-                <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4">
-                  <h4 className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider mb-4">
-                    {outcomeSubTab === "kementerian" ? "Kementerian" : outcomeSubTab === "keamanan" ? "Keamanan" : "Layanan"}
-                  </h4>
-                  <div className="space-y-3">
-                    {currentOutcomeTabDepts.map((dept, index) => {
-                      const level = countryDetail[`level_${dept.id}`] ?? 1;
-                      const dailyCost = LEVEL_UP_COST[level] ?? 100;
-                      const Icon = dept.icon;
-                      return (
-                        <div key={index} className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-[#00FFAA]/20 last:border-0">
-                          <div className="flex items-center gap-2">
-                            <Icon className="h-4 w-4 text-[#6B8A8A]" />
-                            <span className="font-semibold text-[#E0E0E0]">{dept.name}</span>
-                            <span className="text-[10px] text-[#6B8A8A]">(Level {level})</span>
-                          </div>
-                          <span>- {dailyCost.toLocaleString("id-ID")}</span>
+                {outcomeSubTab === "subsidi" ? (
+                  <AlokasiSubsidiTab countryDetail={countryDetail} />
+                ) : (
+                  <>
+                    <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4">
+                      <h4 className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider mb-4">
+                        {outcomeSubTab === "kementerian" ? "Kementerian" : outcomeSubTab === "keamanan" ? "Keamanan" : "Layanan"}
+                      </h4>
+                      <div className="space-y-3">
+                        {currentOutcomeTabDepts.map((dept, index) => {
+                          const level = countryDetail[`level_${dept.id}`] ?? 1;
+                          const dailyCost = LEVEL_UP_COST[level] ?? 100;
+                          const Icon = dept.icon;
+                          return (
+                            <div key={index} className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-[#00FFAA]/20 last:border-0">
+                              <div className="flex items-center gap-2">
+                                <Icon className="h-4 w-4 text-[#6B8A8A]" />
+                                <span className="font-semibold text-[#E0E0E0]">{dept.name}</span>
+                                <span className="text-[10px] text-[#6B8A8A]">(Level {level})</span>
+                              </div>
+                              <span>- {dailyCost.toLocaleString("id-ID")}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="pt-4 border-t border-[#00FFAA]/30 mt-4">
+                        <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
+                          <span>Subtotal {outcomeSubTab === "kementerian" ? "Kementerian" : outcomeSubTab === "keamanan" ? "Keamanan" : "Layanan"}:</span>
+                          <span className="text-rose-400">- {outcomeTabCostDaily.toLocaleString("id-ID")}</span>
                         </div>
-                      );
-                    })}
-                  </div>
-                  <div className="pt-4 border-t border-[#00FFAA]/30 mt-4">
-                    <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
-                      <span>Subtotal {outcomeSubTab === "kementerian" ? "Kementerian" : outcomeSubTab === "keamanan" ? "Keamanan" : "Layanan"}:</span>
-                      <span className="text-rose-400">- {outcomeTabCostDaily.toLocaleString("id-ID")}</span>
+                      </div>
                     </div>
-                  </div>
-                </div>
 
-                <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-2">
-                  <div className="pt-2">
-                    <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
-                      <span>Total Pengeluaran Dewan Kabinet:</span>
-                      <span className="text-rose-400">- {totalOutcome.toLocaleString("id-ID")}</span>
+                    <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-2">
+                      <div className="pt-2">
+                        <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
+                          <span>Total Pengeluaran Dewan Kabinet:</span>
+                          <span className="text-rose-400">- {totalOutcome.toLocaleString("id-ID")}</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </>
+                )}
 
                 <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-2 px-1">
                   <span className="text-[#6B8A8A]">Total Saldo Kas Negara:</span>
