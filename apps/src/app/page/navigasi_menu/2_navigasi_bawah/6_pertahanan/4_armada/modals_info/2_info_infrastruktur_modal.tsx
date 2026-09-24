@@ -24,79 +24,83 @@ export default function InfoInfrastrukturModal({
   const value = getNestedValue(countryDetail, selectedItem.key);
 
   return (
-    <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-transparent pointer-events-auto">
-      <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
+    <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto shadow-2xl">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 pb-4 flex items-center justify-between bg-[#FAF6EE] relative z-10">
-          <h3 className="font-black text-[#5c3c10] uppercase tracking-tight text-2xl">{selectedItem?.label}</h3>
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <h3 className="font-black text-[#00FFAA] uppercase tracking-wider text-xl">{selectedItem?.label}</h3>
           <button 
             onClick={onClose} 
-            className="text-[#8b7e66] hover:text-[#5c3c10] p-2 rounded-full hover:bg-[#e4dac3] transition-colors cursor-pointer"
+            className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
           >
-            <X className="w-6 h-6" />
+            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 space-y-4">
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto p-6 bg-[#0F2424] relative z-10 space-y-4 text-xs font-semibold text-[#E0E0E0] custom-scrollbar">
           {selectedItem?.deskripsi && (
-            <div className="bg-[#FAF6EE]/60 p-4 rounded-lg border border-[#C4B49C]/20">
-              <p className="text-[12px] font-bold text-[#8b7e66] mb-2">Deskripsi</p>
-              <p className="text-base font-semibold text-[#2e261a]">{selectedItem.deskripsi}</p>
+            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
+              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Deskripsi</p>
+              <p className="text-sm font-semibold text-[#E0E0E0]">{selectedItem.deskripsi}</p>
             </div>
           )}
 
-          <div className="bg-[#FAF6EE]/60 p-4 rounded-lg border border-[#C4B49C]/20">
-            <p className="text-[12px] font-bold text-[#8b7e66] mb-2">Jumlah</p>
-            <p className="text-lg font-black text-[#2e261a]">
+          <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
+            <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Jumlah</p>
+            <p className="text-xl font-black text-white">
               {formatNumber(value)} {selectedItem?.satuan_kapasitas || "Unit"}
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-amber-50/60 p-4 rounded-lg border-2 border-amber-200">
-              <p className="text-[12px] font-bold text-amber-700 mb-2">Biaya</p>
-              <p className="text-base font-black text-amber-900">
-                {formatNumber(selectedItem?.biaya_pembangunan)}
+            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
+              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Biaya Pembangunan</p>
+              <p className="text-base font-black text-[#00FFAA]">
+                {formatNumber(selectedItem?.biaya_pembangunan)} EM
               </p>
             </div>
-            <div className="bg-sky-50/60 p-4 rounded-lg border-2 border-sky-200">
-              <p className="text-[12px] font-bold text-sky-700 mb-2">Waktu</p>
-              <p className="text-base font-black text-sky-900">
-                {selectedItem?.waktu_pembangunan} h.
+            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
+              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Waktu Pembangunan</p>
+              <p className="text-base font-black text-white">
+                {selectedItem?.waktu_pembangunan} Hari
               </p>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-purple-50/60 p-4 rounded-lg border-2 border-purple-200">
-              <p className="text-[12px] font-bold text-purple-700 mb-2">Tenaga Kerja</p>
-              <p className="text-base font-black text-purple-900">
-                {formatNumber(selectedItem?.lowongan_kerja)}
+            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
+              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Tenaga Kerja</p>
+              <p className="text-base font-black text-white">
+                {formatNumber(selectedItem?.lowongan_kerja)} orang
               </p>
             </div>
-            <div className="bg-cyan-50/60 p-4 rounded-lg border-2 border-cyan-200">
-              <p className="text-[12px] font-bold text-cyan-700 mb-2">Listrik</p>
-              <p className="text-base font-black text-cyan-900">
+            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
+              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Konsumsi Listrik</p>
+              <p className="text-base font-black text-white">
                 {formatNumber(selectedItem?.konsumsi_listrik)} kW
               </p>
             </div>
           </div>
 
           {selectedItem?.kapasitas && (
-            <div className="bg-[#FAF6EE]/60 p-4 rounded-lg border border-[#C4B49C]/20">
-              <p className="text-[12px] font-bold text-[#8b7e66] mb-2">Kapasitas</p>
-              <p className="text-lg font-black text-[#2e261a]">
+            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
+              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Kapasitas</p>
+              <p className="text-xl font-black text-[#00FFAA]">
                 {formatNumber(selectedItem.kapasitas)} {selectedItem.satuan_kapasitas}
               </p>
             </div>
           )}
         </div>
 
-        <div className="px-8 py-6 bg-[#FAF6EE] border-t-2 border-[#C4B49C]/30 flex justify-end relative z-10">
+        {/* Footer */}
+        <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10 shrink-0">
           <button 
             onClick={onClose} 
-            className="py-2 px-6 rounded-xl text-[10px] font-black uppercase transition-all text-center cursor-pointer bg-[#5c3c10] text-[#FAF6EE] border border-[#5c3c10] hover:bg-[#8b7e66] hover:border-[#8b7e66]"
+            className="px-6 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-white text-[10px] font-black uppercase cursor-pointer hover:bg-[#1A3838] transition-all text-center"
           >
             Tutup
           </button>

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Info } from "lucide-react";
 import { convertBarakToSoldiers } from "../logic/1_barak_logic";
 import KonfirmasiInfrastrukturModal from "../2_modals_konfirmasi_pembangunan/2_konfirmasi_infrastruktur_modal";
+import InfoInfrastrukturModal from "../modals_info/2_info_infrastruktur_modal";
 import { deductBuildingMaterials } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import { REQUIREMENTS as INFANTERI_REQUIREMENTS } from "../requirements_logic/1_infanteri/requirements";
 import { REQUIREMENTS as HANGAR_REQUIREMENTS } from "../requirements_logic/2_hangar_tank/requirements";
@@ -192,14 +193,17 @@ export default function InfrastrukturMiliter({
     return resourceToTabAndBuilding[resourceKey] || { tab: 'kelistrikan', buildingKey: '' };
   };
 
+  const [infoKey, setInfoKey] = useState<string | null>(null);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+
   const handleInfoClick = (key: string) => {
     const item = infrastrukturData[key];
     if (!item) {
       alert("Data infrastruktur belum dimuat.");
       return;
     }
-    setSelectedForBuild({ key, label: item?.label || key });
-    setIsConfirmBuildOpen(true);
+    setInfoKey(key);
+    setIsInfoOpen(true);
   };
 
   // 🟢 Fungsi konfirmasi pembangunan (sudah termasuk cek kas & material)
@@ -473,7 +477,10 @@ export default function InfrastrukturMiliter({
                   {item.label}
                 </p>
                 <button
-                  onClick={() => handleInfoClick(key)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleInfoClick(key);
+                  }}
                   className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-colors cursor-pointer"
                 >
                   <Info className="w-3.5 h-3.5" />
@@ -499,7 +506,22 @@ export default function InfrastrukturMiliter({
       </div>
 
       {/* Render modal konfirmasi jika dipilih */}
-      {selectedForBuild && getModalProps()}
+      {selectedForBuild && isConfirmBuildOpen && getModalProps()}
+
+      {/* Render modal info jika dipilih */}
+      {isInfoOpen && infoKey && (
+        <InfoInfrastrukturModal
+          isOpen={isInfoOpen}
+          onClose={() => {
+            setIsInfoOpen(false);
+            setInfoKey(null);
+          }}
+          selectedItem={infrastrukturData[infoKey]}
+          formatNumber={formatNumber}
+          getNestedValue={getNestedValue}
+          countryDetail={countryDetail}
+        />
+      )}
     </div>
   );
 }

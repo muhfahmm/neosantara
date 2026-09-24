@@ -5,6 +5,7 @@ import { BARAK_TO_SOLDIERS_MULTIPLIER } from "../logic/1_barak_logic";
 import { getArmadaUnitBreakdown } from "../logic/armadaLogic";
 import { convertBarakToSoldiers } from "../logic/1_barak_logic";
 import KonfirmasiArmadaAktifModal from "../2_modals_konfirmasi_pembangunan/1_konfirmasi_armada_aktif_modal";
+import InfoArmadaAktifModal from "../modals_info/1_info_armada_aktif_modal";
 import { REQUIREMENTS as INFANTERI_REQUIREMENTS, findRequirements as findInfanteriRequirements } from "../requirements_logic/1_infanteri/requirements";
 import armadaMetadata from "../../../../../../../../../json/semua_fitur_negara/2_pertahanan/1_armada_militer/metadata_armada_militer.json";
 
@@ -503,6 +504,35 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                 : String(currentDate)
               : countryDetail?.game_date || new Date().toISOString()
           }
+        />
+      )}
+
+      {/* Modal Info Armada Aktif */}
+      {isInfoOpen && infoKey && (
+        <InfoArmadaAktifModal
+          isOpen={isInfoOpen}
+          onClose={() => {
+            setIsInfoOpen(false);
+            setInfoKey(null);
+          }}
+          selectedItem={allArmadaItems.find(i => i.key === infoKey)}
+          selectedCategory={allArmadaItems.find(i => i.key === infoKey)?.group}
+          groupMeta={groupMeta}
+          formatNumber={formatNumber}
+          unitBreakdown={unitBreakdown}
+          isCapacityFull={infoKey === "barak" && (() => {
+            const currentBarakCount = getData("barak");
+            const infantryCount = getData("pasukan_infanteri", "darat");
+            const maxCapacity = currentBarakCount * 10000;
+            return currentBarakCount > 0 && infantryCount >= maxCapacity;
+          })()}
+          capacityDisplay={infoKey === "barak" ? (() => {
+            const currentBarakCount = getData("barak");
+            const infantryCount = getData("pasukan_infanteri", "darat");
+            const maxCapacity = currentBarakCount * 10000;
+            return `${formatNumber(infantryCount)} / ${formatNumber(maxCapacity)}`;
+          })() : ""}
+          onNavigateToInfra={onCapacityFull}
         />
       )}
     </div>
