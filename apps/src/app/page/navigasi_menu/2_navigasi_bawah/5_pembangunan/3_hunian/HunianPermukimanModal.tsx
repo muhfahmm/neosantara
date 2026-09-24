@@ -553,7 +553,7 @@ export default function HunianPermukimanModal({
                 <div className="rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-sm">
                   <div className="flex items-center gap-2 mb-4">
                     <Home className="h-5 w-5 text-[#00FFAA]" />
-                    <h4 className="text-sm font-black uppercase tracking-wider text-[#00FFAA]">📊 Kapasitas Hunian vs Kebutuhan</h4>
+                    <h4 className="text-sm font-black uppercase tracking-wider text-[#00FFAA]">Kapasitas Hunian vs Kebutuhan</h4>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

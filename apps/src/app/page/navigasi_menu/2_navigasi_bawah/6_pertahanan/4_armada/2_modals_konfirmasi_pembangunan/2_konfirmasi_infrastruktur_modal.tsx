@@ -215,7 +215,7 @@ export default function KonfirmasiInfrastrukturModal({
           {/* 🔵 BARAK / INFANTERI: WARNA HIJAU */}
           {capacityType === "infanteri" && (
             <div className="bg-[#0A1A1A]/80 border border-[#00FFAA]/30 rounded-xl p-4 space-y-2">
-              <p className="text-xs font-bold text-[#00FFAA]">📊 Detail Kapasitas Barak:</p>
+              <p className="text-xs font-bold text-[#00FFAA]">Detail Kapasitas Barak:</p>
               <div className="text-xs text-[#E0E0E0] space-y-1">
                 <div className="flex justify-between">
                   <span className="text-[#6B8A8A]">Infanteri Saat Ini:</span>

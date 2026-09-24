@@ -28,7 +28,7 @@ export default function ServiceAISuggestionsModal({
         <div className="flex items-center justify-between px-6 py-5 border-b border-[#00FFAA]/20 bg-[#0A1A1A] shrink-0">
           <div>
             <h3 className="text-base font-black uppercase tracking-[0.2em] text-[#00FFAA]">
-              📊 REKOMENDASI & ANALISIS AI SEKTOR {tempatUmumAnalysis?.tabLabel || hunianAnalysis?.tabLabel}
+              REKOMENDASI & ANALISIS AI SEKTOR {tempatUmumAnalysis?.tabLabel || hunianAnalysis?.tabLabel}
             </h3>
             <p className="text-[11px] font-bold text-[#6B8A8A] uppercase tracking-wider">
               EVALUASI KEBUTUHAN PUBLIK & HUNIAN MASYARAKAT

@@ -27,6 +27,8 @@ export const subMenuItems: Record<string, any[]> = {
     { id: "Menu:Budget", label: "Pemasukkan & Pengeluaran", icon: BarChart3 },
     { id: "Menu:PDB", label: "PDB Nasional & Dunia", icon: TrendingUp },
     { id: "Menu:Harga", label: "Harga Barang Pokok", icon: Tag },
+    { id: "Menu:SistemEkonomi", label: "Kebijakan & Sistem Ekonomi", icon: Scale },
+    { id: "Menu:KebijakanSubsidi", label: "Alokasi & Kebijakan Subsidi", icon: HandHelping },
   ],
   "Pembangunan": [
     { id: "Menu:Produksi", label: "Produksi", icon: Hammer },

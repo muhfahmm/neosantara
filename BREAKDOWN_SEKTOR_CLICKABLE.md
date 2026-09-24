@@ -101,7 +101,7 @@ export default function RingkasanPopulasiModal({
 
 ---
 
-## 📊 User Experience
+## User Experience
 
 ### Hover State
 ```

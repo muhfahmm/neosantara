@@ -42,7 +42,7 @@ export default function ProductionAISuggestionsModal({
           {/* HEADER */}
           <div className="flex items-center justify-between px-6 py-5 border-b border-[#00FFAA]/20 bg-[#0A1A1A] shrink-0">
             <div>
-              <h3 className="text-base font-black uppercase tracking-[0.2em] text-[#00FFAA]">📊 Rekomendasi & Analisis AI Sektor {analysis.sectorLabel}</h3>
+              <h3 className="text-base font-black uppercase tracking-[0.2em] text-[#00FFAA]">Rekomendasi & Analisis AI Sektor {analysis.sectorLabel}</h3>
               <p className="text-[11px] font-bold text-[#6B8A8A] uppercase tracking-wider">Evaluasi Kebutuhan & Pasokan Komoditas</p>
             </div>
             <button

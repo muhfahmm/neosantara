@@ -147,7 +147,7 @@ export default function IndeksKesejahteraanModal({...}: IndeksKesejahteraanModal
 
 ---
 
-## 📊 TunawismaDetailModal
+## TunawismaDetailModal
 
 ### Fitur Utama
 

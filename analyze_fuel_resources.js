@@ -89,7 +89,7 @@ continents.forEach(continent => {
 
 // Generate report
 console.log('\n' + '='.repeat(80));
-console.log('📊 ANALISIS MENDALAM: NEGARA DAN BAHAN BAKAR FOSIL');
+console.log('ANALISIS MENDALAM: NEGARA DAN BAHAN BAKAR FOSIL');
 console.log('='.repeat(80));
 
 console.log(`\n📈 RINGKASAN STATISTIK:`);
@@ -176,7 +176,7 @@ results.allThreeFuels.forEach(c => {
 });
 
 console.log('\n' + '='.repeat(80));
-console.log('📊 BREAKDOWN BERDASARKAN REGION');
+console.log('BREAKDOWN BERDASARKAN REGION');
 console.log('='.repeat(80));
 
 const continentStats = {};

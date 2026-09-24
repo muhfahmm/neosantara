@@ -552,7 +552,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
               {filteredData.length > 0 && (
                 <div className="mt-4 p-4 bg-[#0F2424] border border-[#00FFAA]/20 rounded-lg text-xs text-[#6B8A8A]">
-                  <p className="font-bold text-[#E0E0E0]">📊 Total: {filteredData.length} negara {searchQuery && `(difilter dari ${globalElectricityData.length})`}</p>
+                  <p className="font-bold text-[#E0E0E0]">Total: {filteredData.length} negara {searchQuery && `(difilter dari ${globalElectricityData.length})`}</p>
                   <p className="mt-1">Produksi: <span className="font-black text-emerald-400">{filteredData.reduce((sum, c) => sum + c.production, 0).toLocaleString('id-ID')} MW</span></p>
                   <p>Konsumsi: <span className="font-black text-rose-400">{filteredData.reduce((sum, c) => sum + c.consumption, 0).toLocaleString('id-ID')} MW</span></p>
                 </div>

@@ -196,7 +196,7 @@ export default function KonfirmasiArmadaAktifModal({
     warningText = `Kapasitas Infanteri sudah penuh (${total.toLocaleString('id-ID')} pasukan). Anda harus membangun Barak baru untuk menambah Infanteri lebih banyak.`;
     capacityInfoComponent = (
       <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-4 space-y-2">
-        <p className="text-xs font-bold text-emerald-900">📊 Detail Kapasitas Barak:</p>
+        <p className="text-xs font-bold text-emerald-900">Detail Kapasitas Barak:</p>
         <div className="text-xs text-emerald-800 space-y-1">
           <div className="flex justify-between"><span>Infanteri Saat Ini:</span><span className="font-bold">{used.toLocaleString('id-ID')} pasukan</span></div>
           <div className="flex justify-between"><span>Jumlah Barak:</span><span className="font-bold">{currentBarakCount} unit</span></div>

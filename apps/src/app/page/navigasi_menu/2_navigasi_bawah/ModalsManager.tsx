@@ -25,6 +25,8 @@ const HutangModal = dynamic(() => import("./4_ekonomi/3_peminjaman_hutang/Hutang
 const PemasukkanPengeluaranModal = dynamic(() => import("./4_ekonomi/4_pemasukan_pengeluaran/PemasukkanPengeluaranModal"), { ssr: false });
 const PDBModal = dynamic(() => import("./4_ekonomi/5_pdb_nasional_dunia/PDBModal"), { ssr: false });
 const HargaModal = dynamic(() => import("./4_ekonomi/6_harga/HargaModal"), { ssr: false });
+const SistemEkonomiModal = dynamic(() => import("./4_ekonomi/7_sistem_ekonomi/SistemEkonomiModal"), { ssr: false });
+const SubsidiModal = dynamic(() => import("./4_ekonomi/8_kebijakan_subsidi/SubsidiModal"), { ssr: false });
 
 // 5. Pembangunan
 const ProduksiModal = dynamic(() => import("./5_pembangunan/1_produksi/ProduksiModal"), { ssr: false });
@@ -313,6 +315,24 @@ function ModalsManager({
     case "Menu:Harga":
       return (
         <HargaModal
+          isOpen={true}
+          onClose={onClose}
+          countryDetail={countryDetail}
+          setCountryDetail={setCountryDetail}
+        />
+      );
+    case "Menu:SistemEkonomi":
+      return (
+        <SistemEkonomiModal
+          isOpen={true}
+          onClose={onClose}
+          countryDetail={countryDetail}
+          setCountryDetail={setCountryDetail}
+        />
+      );
+    case "Menu:KebijakanSubsidi":
+      return (
+        <SubsidiModal
           isOpen={true}
           onClose={onClose}
           countryDetail={countryDetail}

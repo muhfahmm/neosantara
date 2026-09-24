@@ -292,7 +292,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                 <p className="text-[10px] text-[#6B8A8A] italic">Dihitung otomatis dari level semua kementerian, keamanan, dan layanan. Tidak bisa diatur manual.</p>
                 <div className="bg-[#0F2424] border border-[#00FFAA]/20 rounded p-2">
                   <p className="text-[10px] text-[#E0E0E0] font-semibold">
-                    📊 Breakdown: {ministryCostPerMonth.toLocaleString("id-ID")} = {(ministryCostPerMonth / 30).toLocaleString("id-ID", { maximumFractionDigits: 0 })} × 30
+                    Breakdown: {ministryCostPerMonth.toLocaleString("id-ID")} = {(ministryCostPerMonth / 30).toLocaleString("id-ID", { maximumFractionDigits: 0 })} × 30
                   </p>
                 </div>
               </div>
