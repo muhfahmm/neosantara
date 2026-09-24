@@ -333,58 +333,67 @@ export default function KonfirmasiArmadaAktifModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-4 border-[#C4B49C] rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden shadow-2xl flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.02)_0%,transparent_100%)] pointer-events-none" />
-
+    <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto shadow-2xl">
+        
         {/* Header */}
-        <div className="px-6 py-5 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 shrink-0">
-          <div className="flex items-center gap-2 text-[#5c3c10]">
-            <Hammer className="h-5 w-5" />
-            <h3 className="text-base font-bold uppercase tracking-tight">Perekrutan / Pembangunan Militer</h3>
+        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="flex items-center gap-3 text-[#E0E0E0]">
+            <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+              <Hammer className="h-5 w-5 text-[#00FFAA]" />
+            </div>
+            <h3 className="text-base font-black uppercase tracking-wider">Perekrutan / Pembangunan Militer</h3>
           </div>
-          <button onClick={onClose} className="text-[#8b7e66] hover:text-[#5c3c10] cursor-pointer">
+          <button
+            onClick={onClose}
+            className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+          >
+            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Body */}
-        <div className="p-6 relative z-10 flex-1 overflow-y-auto space-y-4">
+        <div className="p-6 relative z-10 flex-1 overflow-y-auto space-y-4 text-xs font-semibold text-[#E0E0E0] custom-scrollbar bg-[#0F2424]">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <h4 className="text-lg font-black text-[#2e261a]">{buildingLabel}</h4>
+              <h4 className="text-lg font-black text-[#00FFAA] uppercase tracking-wider">{buildingLabel}</h4>
               {capacityDisplay && (
-                <div className="text-sm font-black text-[#5c3c10] bg-[#FAF6EE] px-3 py-1 rounded-lg border border-[#C4B49C]/30">
+                <div className="text-sm font-black text-[#00FFAA] bg-[#0A1A1A] px-3 py-1 rounded-lg border border-[#00FFAA]/30 shadow-sm">
                   {capacityDisplay}
                 </div>
               )}
             </div>
-            <p className="text-xs text-[#8b7e66]">{buildingDescription || 'Tidak ada deskripsi tersedia.'}</p>
+            <p className="text-xs text-[#6B8A8A]">{buildingDescription || 'Tidak ada deskripsi tersedia.'}</p>
           </div>
 
           {/* Detail Kapasitas */}
-          {capacityInfoComponent}
+          {capacityInfoComponent && (
+            <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-xl p-4 space-y-2 text-[#E0E0E0]">
+              {capacityInfoComponent}
+            </div>
+          )}
 
           {/* ========== PERINGATAN KAPASITAS PENUH ========== */}
           {capacityFull && (
-            <div className="bg-rose-50 border border-rose-300 text-rose-900 rounded-2xl p-4 space-y-4 shadow-sm">
+            <div className="bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-xl p-4 space-y-4 shadow-sm">
               <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-rose-100 text-rose-700 font-black">!</div>
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-rose-500/20 text-rose-400 font-black border border-rose-500/40">!</div>
                 <div>
-                  <p className="text-sm font-black uppercase tracking-[0.2em]">
+                  <p className="text-sm font-black uppercase tracking-wider text-rose-400">
                     {capacityType === "infanteri" ? "Kapasitas Infanteri Penuh" :
                      capacityType === "hangar_tank" ? "Kapasitas Hangar Tank Penuh" :
                      capacityType === "gudang_senjata" ? "Kapasitas Gudang Senjata Penuh" :
                      capacityType === "pangkalan_laut" ? "Kapasitas Pangkalan Laut Penuh" :
                      "Kapasitas Pangkalan Udara Penuh"}
                   </p>
-                  <p className="text-xs leading-relaxed text-rose-800 mt-2">{warningText}</p>
+                  <p className="text-xs leading-relaxed text-[#E0E0E0] mt-1.5">{warningText}</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={handleNavigateToInfra}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-xs font-black uppercase text-white transition hover:bg-emerald-700"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#00FFAA] px-4 py-3 text-xs font-black uppercase text-[#0A1A1A] transition hover:bg-[#00FFAA]/80 cursor-pointer shadow-md"
               >
                 Buka Tab Infrastruktur dan Sorot {
                   capacityType === "infanteri" ? "Barak" :
@@ -397,14 +406,14 @@ export default function KonfirmasiArmadaAktifModal({
             </div>
           )}
 
-          {/* 🔥 BARU: PERINGATAN KAS NEGARA TIDAK CUKUP (terpisah dari kapasitas infra) */}
+          {/* PERINGATAN KAS NEGARA TIDAK CUKUP */}
           {!capacityFull && capacityType !== "infanteri" && !isAnggaranCukup && buildAmount > 0 && (
-            <div className="bg-rose-50 border border-rose-300 text-rose-900 rounded-2xl p-4 space-y-2 shadow-sm">
+            <div className="bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-xl p-4 space-y-2 shadow-sm">
               <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-rose-100 text-rose-700 font-black">!</div>
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-rose-500/20 text-rose-400 font-black border border-rose-500/40">!</div>
                 <div>
-                  <p className="text-sm font-black uppercase tracking-[0.2em]">Kas Negara Tidak Cukup</p>
-                  <p className="text-xs leading-relaxed text-rose-800 mt-2">
+                  <p className="text-sm font-black uppercase tracking-wider text-rose-400">Kas Negara Tidak Cukup</p>
+                  <p className="text-xs leading-relaxed text-[#E0E0E0] mt-1">
                     Total biaya pembangunan ({totalCost.toLocaleString('id-ID')} EM) melebihi kas negara saat ini ({anggaran.toLocaleString('id-ID')} EM). Kurangi jumlah unit atau tunggu kas negara bertambah.
                   </p>
                 </div>
@@ -412,11 +421,11 @@ export default function KonfirmasiArmadaAktifModal({
             </div>
           )}
 
-          {/* ========== INPUT JUMLAH (UNTUK SEMUA TIPE) ========== */}
-          <div className="bg-[#FAF6EE]/80 border border-[#C4B49C]/30 rounded-xl p-4 space-y-3 text-xs text-[#5c3c10]">
+          {/* ========== INPUT JUMLAH ========== */}
+          <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 space-y-3 text-xs text-[#E0E0E0]">
             <label className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <span className="font-black uppercase tracking-[0.2em]">
+                <span className="font-black uppercase tracking-wider text-[#6B8A8A]">
                   {capacityType === "infanteri" ? "Jumlah Pasukan yang Direkrut" : "Jumlah Unit yang Dibangun"}
                 </span>
                 <button
@@ -426,7 +435,7 @@ export default function KonfirmasiArmadaAktifModal({
                     setBuildAmount(effectiveMax > 0 ? effectiveMax : 0);
                   }}
                   disabled={capacityFull || effectiveMaxBuildable <= 0}
-                  className="px-3 py-1 bg-[#5c3c10]/10 hover:bg-[#5c3c10]/20 text-[#5c3c10] text-[9px] font-black uppercase rounded-lg transition-colors cursor-pointer border border-[#5c3c10]/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-3 py-1 bg-[#0F2424] hover:bg-[#00FFAA]/20 text-[#00FFAA] text-[10px] font-black uppercase rounded-lg transition-colors cursor-pointer border border-[#00FFAA]/30 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Maks
                 </button>
@@ -442,15 +451,15 @@ export default function KonfirmasiArmadaAktifModal({
                   const effectiveMax = getEffectiveMaxBuildable();
                   setBuildAmount(Math.min(safeValue, effectiveMax));
                 }}
-                className="w-full rounded-xl border border-[#C4B49C]/60 bg-white/90 px-3 py-2 text-sm text-[#2e261a] focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] px-3.5 py-2.5 text-sm text-[#E0E0E0] focus:outline-none focus:border-[#00FFAA] font-bold"
                 disabled={capacityFull || effectiveMaxBuildable <= 0}
               />
             </label>
-            <p className="text-[10px] text-[#8b7e66]">
+            <p className="text-[10px] text-[#6B8A8A]">
               Maksimal: {Math.max(0, effectiveMaxBuildable).toLocaleString('id-ID')} {capacityType === "infanteri" ? "pasukan" : "unit"}.
             </p>
             {budgetLimited && (
-              <p className="text-[10px] font-bold text-amber-700">
+              <p className="text-[10px] font-bold text-amber-400">
                 ⚠️ Dibatasi oleh kas negara — sisa slot infra masih {Math.max(0, remaining).toLocaleString('id-ID')} unit, tapi kas negara hanya cukup untuk {Math.max(0, getMaxAffordableQuantity()).toLocaleString('id-ID')} unit.
               </p>
             )}
@@ -458,20 +467,20 @@ export default function KonfirmasiArmadaAktifModal({
 
           {/* ========== ESTIMASI WAKTU & TANGGAL SELESAI ========== */}
           {estimatedDays > 0 && !capacityFull && (
-            <div className="bg-emerald-50/60 border border-emerald-200 rounded-lg p-3 space-y-2 mt-2">
-              <div className="flex items-center gap-2 text-emerald-900 font-bold">
-                <Calendar className="w-4 h-4" />
+            <div className="bg-[#0A1A1A] border border-emerald-500/30 rounded-xl p-3.5 space-y-2 mt-2">
+              <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                <Calendar className="w-4 h-4 text-emerald-400" />
                 <span>Estimasi Waktu Pembangunan</span>
               </div>
-              <div className="space-y-1 text-[11px] text-emerald-800">
+              <div className="space-y-1 text-xs text-[#E0E0E0]">
                 <div className="flex justify-between">
-                  <span>Waktu Dibutuhkan:</span>
-                  <span className="font-bold">{estimatedDays} hari</span>
+                  <span className="text-[#6B8A8A]">Waktu Dibutuhkan:</span>
+                  <span className="font-bold text-emerald-400">{estimatedDays} hari</span>
                 </div>
                 {completionDate && (
-                  <div className="flex justify-between border-t border-emerald-200 pt-1">
-                    <span>Selesai Tanggal:</span>
-                    <span className="font-bold text-emerald-700">
+                  <div className="flex justify-between border-t border-[#00FFAA]/10 pt-1 mt-1">
+                    <span className="text-[#6B8A8A]">Selesai Tanggal:</span>
+                    <span className="font-bold text-emerald-400">
                       {new Date(completionDate).toLocaleDateString('id-ID', {
                         weekday: 'short',
                         year: 'numeric',
@@ -486,25 +495,25 @@ export default function KonfirmasiArmadaAktifModal({
           )}
 
           {/* ========== BIAYA & MATERIAL ========== */}
-          <div className="bg-[#e4dac3]/20 border border-[#C4B49C]/30 rounded-xl p-4 space-y-2.5 text-xs text-[#5c3c10]">
+          <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 space-y-2.5 text-xs text-[#E0E0E0]">
             {capacityType === "infanteri" ? (
               <div className="flex justify-between font-bold">
-                <span>Biaya Pembangunan:</span>
-                <span className="text-[#2e261a]">
+                <span className="text-[#6B8A8A]">Biaya Pembangunan:</span>
+                <span className="text-[#00FFAA] font-black">
                   {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID')} EM`}
                 </span>
               </div>
             ) : (
               <>
                 <div className="flex justify-between">
-                  <span>Biaya per Unit:</span>
-                  <span className="text-[#2e261a] font-semibold">
+                  <span className="text-[#6B8A8A]">Biaya per Unit:</span>
+                  <span className="text-[#E0E0E0] font-bold">
                     {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID')} EM`}
                   </span>
                 </div>
                 <div className="flex justify-between font-bold">
-                  <span>Total Biaya ({buildAmount.toLocaleString('id-ID')} unit):</span>
-                  <span className={isAnggaranCukup ? "text-[#2e261a]" : "text-rose-600"}>
+                  <span className="text-[#6B8A8A]">Total Biaya ({buildAmount.toLocaleString('id-ID')} unit):</span>
+                  <span className={isAnggaranCukup ? "text-[#00FFAA] font-black" : "text-rose-400 font-black"}>
                     {loadingMetadata ? 'Memuat...' : `${totalCost.toLocaleString('id-ID')} EM`}
                   </span>
                 </div>
@@ -513,29 +522,29 @@ export default function KonfirmasiArmadaAktifModal({
 
             {waktuPembangunan !== undefined && capacityType !== "infanteri" && (
               <div className="flex justify-between">
-                <span>Waktu Pembangunan per Unit:</span>
-                <span className="text-[#2e261a] font-semibold">{waktuPembangunan} Hari</span>
+                <span className="text-[#6B8A8A]">Waktu Pembangunan per Unit:</span>
+                <span className="text-[#E0E0E0] font-bold">{waktuPembangunan} Hari</span>
               </div>
             )}
 
             {capacityType !== "infanteri" && (
               requirements && requirements.length > 0 ? (
-                <div className="space-y-3 text-xs">
+                <div className="space-y-3 text-xs pt-1">
                   <div className="flex items-center justify-between">
-                    <div className="font-black uppercase tracking-[0.2em] text-[#5c3c10]">Material Dibutuhkan</div>
+                    <div className="font-black uppercase tracking-wider text-[#00FFAA]">Material Dibutuhkan</div>
                     <button
                       onClick={() => setShowMaterialGrid(!showMaterialGrid)}
-                      className="flex items-center gap-1.5 px-2 py-1 bg-white/80 border border-[#C4B49C]/30 rounded-lg text-[#5c3c10] hover:bg-[#5c3c10]/10 transition-all cursor-pointer"
+                      className="flex items-center gap-1.5 px-2.5 py-1 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg text-[#6B8A8A] hover:text-[#00FFAA] transition-all cursor-pointer"
                     >
                       {showMaterialGrid ? (
                         <>
                           <EyeOff className="h-3 w-3" />
-                          <span className="text-[8px] font-bold uppercase">Sembunyikan</span>
+                          <span className="text-[9px] font-bold uppercase">Sembunyikan</span>
                         </>
                       ) : (
                         <>
                           <Eye className="h-3 w-3" />
-                          <span className="text-[8px] font-bold uppercase">Tampilkan</span>
+                          <span className="text-[9px] font-bold uppercase">Tampilkan</span>
                         </>
                       )}
                     </button>
@@ -555,17 +564,17 @@ export default function KonfirmasiArmadaAktifModal({
                           key={`${material.resourceKey}-${material.group}`}
                           type="button"
                           onClick={() => onMaterialClick(material.resourceKey, material.label)}
-                          className={`flex flex-col items-center justify-center bg-white/80 border rounded-xl p-2.5 min-h-[50px] cursor-pointer hover:border-[#5c3c10]/60 transition-all ${
-                            isStockZero ? 'border-red-400 bg-red-50/70 text-red-800' : 'border-emerald-400 bg-emerald-50/70'
+                          className={`flex flex-col items-center justify-center rounded-xl p-2.5 min-h-[50px] cursor-pointer border transition-all ${
+                            isStockZero ? 'border-rose-500/40 bg-rose-500/10 text-rose-300 hover:border-rose-500' : 'border-[#00FFAA]/30 bg-[#0F2424] hover:border-[#00FFAA]'
                           }`}
                         >
-                          <div className="font-bold text-[10px] text-center">{material.label}</div>
+                          <div className="font-bold text-[10px] text-center text-[#E0E0E0]">{material.label}</div>
                           {material.amount !== undefined && (
-                            <div className="text-[9px] uppercase tracking-[0.15em] text-[#5c3c10] mt-1">
+                            <div className="text-[9px] uppercase tracking-wider text-[#6B8A8A] mt-1">
                               x{material.amount}
                             </div>
                           )}
-                          <div className={`text-[10px] font-black mt-0.5 ${isStockZero ? 'text-red-600' : 'text-emerald-700'}`}>
+                          <div className={`text-[10px] font-black mt-0.5 ${isStockZero ? 'text-rose-400' : 'text-emerald-400'}`}>
                             {stock.toLocaleString('id-ID')}
                           </div>
                         </button>
@@ -574,21 +583,20 @@ export default function KonfirmasiArmadaAktifModal({
                   </div>
                 </div>
               ) : (
-                <div className="text-[#8b7e66]">Tidak ada material yang dibutuhkan untuk bangunan ini.</div>
+                <div className="text-[#6B8A8A]">Tidak ada material yang dibutuhkan untuk bangunan ini.</div>
               )
             )}
           </div>
 
-          <div className="flex justify-between items-center text-xs font-black text-[#5c3c10] pt-1">
-            <span>Kas Negara Saat Ini:</span>
-            <span>{anggaran.toLocaleString('id-ID')}</span>
+          <div className="flex justify-between items-center text-xs font-black pt-1">
+            <span className="text-[#6B8A8A]">Kas Negara Saat Ini:</span>
+            <span className="text-[#00FFAA]">{anggaran.toLocaleString('id-ID')} EM</span>
           </div>
 
-          {/* 🔥 BARU: preview sisa kas setelah pembangunan, biar keputusan jumlah unit terasa masuk akal */}
           {capacityType !== "infanteri" && buildAmount > 0 && (
             <div className="flex justify-between items-center text-xs font-bold pt-1">
-              <span className="text-[#8b7e66]">Sisa Kas Setelah Pembangunan:</span>
-              <span className={isAnggaranCukup ? "text-emerald-700" : "text-rose-600"}>
+              <span className="text-[#6B8A8A]">Sisa Kas Setelah Pembangunan:</span>
+              <span className={isAnggaranCukup ? "text-emerald-400 font-black" : "text-rose-400 font-black"}>
                 {(anggaran - totalCost).toLocaleString('id-ID')} EM
               </span>
             </div>
@@ -596,20 +604,20 @@ export default function KonfirmasiArmadaAktifModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-[#FAF6EE] border-t-2 border-[#C4B49C]/20 flex gap-3 relative z-10 shrink-0">
+        <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex gap-3 relative z-10 shrink-0">
           <button
             onClick={onClose}
-            className="flex-1 py-2 rounded-xl border-2 border-[#C4B49C] text-[#8b7e66] text-[10px] font-black uppercase cursor-pointer hover:bg-black/5 transition-all text-center"
+            className="flex-1 py-2.5 rounded-xl border border-[#00FFAA]/30 text-[#6B8A8A] bg-[#0F2424] hover:text-[#00FFAA] hover:border-[#00FFAA] text-xs font-black uppercase cursor-pointer transition-all text-center shadow-sm"
           >
             Batal
           </button>
           <button
             onClick={handleConfirmClick}
             disabled={capacityFull || buildAmount <= 0 || (capacityType !== "infanteri" && (hasMissingMaterials || !isAnggaranCukup || loadingMetadata || isDisabled))}
-            className={`flex-1 py-2 rounded-xl text-[10px] font-black uppercase transition-all text-center cursor-pointer ${
-              capacityFull || buildAmount <= 0 ? 'bg-[#8b7e66] text-white border border-[#8b7e66] cursor-not-allowed opacity-70' :
-              (capacityType !== "infanteri" && (hasMissingMaterials || !isAnggaranCukup || loadingMetadata || isDisabled)) ? 'bg-[#8b7e66] text-white border border-[#8b7e66] cursor-not-allowed opacity-70' :
-              'bg-[#5c3c10] text-[#FAF6EE] border border-[#5c3c10] hover:bg-[#8b7e66] hover:border-[#8b7e66]'
+            className={`flex-1 py-2.5 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer shadow-md ${
+              capacityFull || buildAmount <= 0 ? 'bg-[#0F2424] text-[#6B8A8A] border border-[#00FFAA]/20 cursor-not-allowed opacity-60' :
+              (capacityType !== "infanteri" && (hasMissingMaterials || !isAnggaranCukup || loadingMetadata || isDisabled)) ? 'bg-[#0F2424] text-[#6B8A8A] border border-[#00FFAA]/20 cursor-not-allowed opacity-60' :
+              'bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] hover:bg-[#00FFAA]/80'
             }`}
           >
             {capacityFull ? 'Kapasitas Penuh' :

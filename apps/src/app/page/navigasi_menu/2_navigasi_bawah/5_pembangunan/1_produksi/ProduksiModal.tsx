@@ -93,9 +93,9 @@ export default function ProduksiModal({
     litium: 'mineral',
     logam_tanah_jarang: 'mineral',
     bijih_besi: 'mineral',
-    semikonduktor: 'manufaktur',
-    mobil: 'manufaktur',
-    sepeda_motor: 'manufaktur',
+    pabrik_semikonduktor: 'manufaktur',
+    pabrik_mesin_mobil: 'manufaktur',
+    pabrik_mesin_motor: 'manufaktur',
     semen_beton: 'manufaktur',
     kayu: 'manufaktur',
   };

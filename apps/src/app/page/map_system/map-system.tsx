@@ -279,13 +279,13 @@ export default function MapPage() {
             const partnerName = targetPartner.mitra;
 
             // Cari produk yang paling menguntungkan (misal Uranium, Semikonduktor, Logam Tanah Jarang)
-            const premiumProducts = ["uranium", "semikonduktor", "logam_tanah_jarang", "mobil", "litium"];
+            const premiumProducts = ["uranium", "pabrik_semikonduktor", "logam_tanah_jarang", "pabrik_mesin_mobil", "litium"];
             const productKey = premiumProducts[Math.floor(Math.random() * premiumProducts.length)];
 
             // Generate random trade quantities and competitive prices
             const quantity = Math.floor(Math.random() * 300) + 20;
             const prices: Record<string, number> = {
-                uranium: 8000, semikonduktor: 4000, logam_tanah_jarang: 5000, mobil: 15000, litium: 3000
+                uranium: 8000, pabrik_semikonduktor: 4000, logam_tanah_jarang: 5000, pabrik_mesin_mobil: 15000, litium: 3000
             };
             const basePrice = prices[productKey] || 100;
             const pricePerUnit = Math.round(basePrice * (0.85 + Math.random() * 0.3) * 100) / 100;
@@ -518,9 +518,9 @@ export default function MapPage() {
                 pembangkit_listrik_tenaga_gas: mergedData.pembangkit_listrik_tenaga_gas ?? 0,
                 pembangkit_listrik_tenaga_angin: mergedData.pembangkit_listrik_tenaga_angin ?? 0,
                 // Building fields - Manufaktur
-                semikonduktor: mergedData.semikonduktor ?? 0,
-                mobil: mergedData.mobil ?? 0,
-                sepeda_motor: mergedData.sepeda_motor ?? 0,
+                pabrik_semikonduktor: mergedData.pabrik_semikonduktor ?? mergedData.semikonduktor ?? 0,
+                pabrik_mesin_mobil: mergedData.pabrik_mesin_mobil ?? mergedData.mobil ?? 0,
+                pabrik_mesin_motor: mergedData.pabrik_mesin_motor ?? mergedData.sepeda_motor ?? 0,
                 semen_beton: mergedData.semen_beton ?? 0,
                 kayu: mergedData.kayu ?? 0,
                 // Building fields - Peternakan
@@ -638,7 +638,7 @@ export default function MapPage() {
             "pembangkit_listrik_tenaga_uap", "pembangkit_listrik_tenaga_gas", "pembangkit_listrik_tenaga_angin",
             "emas", "uranium", "batu_bara", "minyak_bumi", "gas_alam", "garam", "litium",
             "logam_tanah_jarang", "bijih_besi",
-            "semikonduktor", "mobil", "sepeda_motor", "semen_beton", "kayu",
+            "pabrik_semikonduktor", "pabrik_mesin_mobil", "pabrik_mesin_motor", "semen_beton", "kayu",
             "ayam_unggas", "sapi_perah", "sapi_potong", "domba_kambing",
             "padi", "gandum", "jagung", "sayur", "umbi", "kedelai", "kelapa_sawit", "kopi", "teh", "kakao",
             "tebu", "karet",

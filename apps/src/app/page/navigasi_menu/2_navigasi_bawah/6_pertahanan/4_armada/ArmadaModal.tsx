@@ -105,42 +105,55 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
           </button>
         </div>
 
-        {/* BODY MODAL */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar">
-          <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex mb-6 shadow-sm">
+        {/* BODY MODAL WITH SIDEBAR */}
+        <div className="flex-1 flex min-h-0 relative z-10">
+          {/* SIDEBAR MENU */}
+          <div className="w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-4 flex flex-col gap-2 overflow-y-auto custom-scrollbar shrink-0">
             <button 
               onClick={() => setActiveTab("aktif")} 
-              className={`flex items-center gap-2 px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+              className={`flex items-center justify-between w-full p-3 rounded-xl border text-left transition-all cursor-pointer ${
                 activeTab === "aktif" 
-                  ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" 
-                  : "text-[#6B8A8A] hover:text-[#00FFAA]"
+                  ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md" 
+                  : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
               }`}
             >
-              <Swords className="w-4 h-4" /> Armada Aktif
+              <div className="flex items-center gap-2.5">
+                <Swords className="w-4 h-4" />
+                <span className="text-xs font-bold uppercase tracking-wider">Armada Aktif</span>
+              </div>
             </button>
+
             <button 
               onClick={() => setActiveTab("infrastruktur")} 
-              className={`flex items-center gap-2 px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+              className={`flex items-center justify-between w-full p-3 rounded-xl border text-left transition-all cursor-pointer ${
                 activeTab === "infrastruktur" 
-                  ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" 
-                  : "text-[#6B8A8A] hover:text-[#00FFAA]"
+                  ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md" 
+                  : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
               }`}
             >
-              <Building2 className="w-4 h-4" /> Infrastruktur
+              <div className="flex items-center gap-2.5">
+                <Building2 className="w-4 h-4" />
+                <span className="text-xs font-bold uppercase tracking-wider">Infrastruktur</span>
+              </div>
             </button>
+
             <button 
               onClick={() => setActiveTab("polisi")} 
-              className={`flex items-center gap-2 px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+              className={`flex items-center justify-between w-full p-3 rounded-xl border text-left transition-all cursor-pointer ${
                 activeTab === "polisi" 
-                  ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" 
-                  : "text-[#6B8A8A] hover:text-[#00FFAA]"
+                  ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md" 
+                  : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
               }`}
             >
-              <Shield className="w-4 h-4" /> Armada Polisi
+              <div className="flex items-center gap-2.5">
+                <Shield className="w-4 h-4" />
+                <span className="text-xs font-bold uppercase tracking-wider">Armada Polisi</span>
+              </div>
             </button>
           </div>
 
-          <div className="space-y-4">
+          {/* MAIN TAB CONTENT */}
+          <div className="flex-1 overflow-y-auto p-6 bg-[#0F2424] custom-scrollbar space-y-4">
             {activeTab === "aktif" && <ArmadaAktif countryDetail={countryDetail} setCountryDetail={setCountryDetail} onCapacityFull={handleNavigateToInfra} onGotoProduction={onGotoProduction} currentDate={currentDate} />}
             {activeTab === "infrastruktur" && <InfrastrukturMiliter countryDetail={countryDetail} setCountryDetail={setCountryDetail} highlightKey={highlightInfraKey} onGotoProduction={onGotoProduction} ongoingConstructions={countryDetail?.ongoingConstructions || []} currentDate={currentDate} />}
             {activeTab === "polisi" && <ArmadaPolisi countryDetail={countryDetail} setCountryDetail={setCountryDetail} />}

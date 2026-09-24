@@ -169,7 +169,7 @@ export default function ArmadaPolisi({ countryDetail, setCountryDetail: _setCoun
         Perangkat keamanan dalam negeri yang berperan menjaga stabilitas dan ketertiban masyarakat dari tingkat nasional hingga daerah.
       </div>
 
-      <div className="grid grid-cols-5 gap-6">
+      <div className="grid grid-cols-4 gap-4">
         {(Object.keys(polisiData) as (keyof typeof polisiData)[]).map((key) => {
           const item = polisiData[key];
           const value = getNestedValue(countryDetail, key);

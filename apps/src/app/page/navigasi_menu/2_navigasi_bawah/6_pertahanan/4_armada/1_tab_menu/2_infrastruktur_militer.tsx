@@ -158,7 +158,7 @@ export default function InfrastrukturMiliter({
   // 🟢 Helper untuk stok material
   const calculateMaterialStocks = (countryDetailData: any) => {
     const stocks: Record<string, number> = {};
-    const materialKeys = ['emas', 'uranium', 'batu_bara', 'minyak_bumi', 'gas_alam', 'garam', 'litium', 'logam_tanah_jarang', 'bijih_besi', 'semikonduktor', 'mobil', 'sepeda_motor', 'semen_beton', 'kayu'];
+    const materialKeys = ['emas', 'uranium', 'batu_bara', 'minyak_bumi', 'gas_alam', 'garam', 'litium', 'logam_tanah_jarang', 'bijih_besi', 'pabrik_semikonduktor', 'pabrik_mesin_mobil', 'pabrik_mesin_motor', 'semen_beton', 'kayu'];
     materialKeys.forEach(key => {
       stocks[key] = Number(countryDetailData?.[`inventory_${key}`]) || 0;
     });
@@ -183,9 +183,9 @@ export default function InfrastrukturMiliter({
       litium: { tab: 'mineral', buildingKey: 'litium' },
       logam_tanah_jarang: { tab: 'mineral', buildingKey: 'logam_tanah_jarang' },
       bijih_besi: { tab: 'mineral', buildingKey: 'bijih_besi' },
-      semikonduktor: { tab: 'manufaktur', buildingKey: 'semikonduktor' },
-      mobil: { tab: 'manufaktur', buildingKey: 'mobil' },
-      sepeda_motor: { tab: 'manufaktur', buildingKey: 'sepeda_motor' },
+      pabrik_semikonduktor: { tab: 'manufaktur', buildingKey: 'pabrik_semikonduktor' },
+      pabrik_mesin_mobil: { tab: 'manufaktur', buildingKey: 'pabrik_mesin_mobil' },
+      pabrik_mesin_motor: { tab: 'manufaktur', buildingKey: 'pabrik_mesin_motor' },
       semen_beton: { tab: 'manufaktur', buildingKey: 'semen_beton' },
       kayu: { tab: 'manufaktur', buildingKey: 'kayu' },
     };
@@ -436,7 +436,7 @@ export default function InfrastrukturMiliter({
         Fasilitas pendukung logistik dan pertahanan yang menjadi tulang punggung kekuatan militer nasional.
       </div>
 
-      <div className="grid grid-cols-5 gap-6">
+      <div className="grid grid-cols-4 gap-4">
         {Object.keys(infrastrukturData).map((key) => {
           const item = infrastrukturData[key];
           if (!item) return null;

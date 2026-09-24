@@ -6,15 +6,15 @@ CREATE TABLE IF NOT EXISTS database_manufaktur (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,
     country_slug VARCHAR(100) NOT NULL,
-    mobil INT NOT NULL DEFAULT 0,
+    pabrik_mesin_mobil INT NOT NULL DEFAULT 0,
     semen_beton INT NOT NULL DEFAULT 0,
-    sepeda_motor INT NOT NULL DEFAULT 0,
-    semikonduktor INT NOT NULL DEFAULT 0,
+    pabrik_mesin_motor INT NOT NULL DEFAULT 0,
+    pabrik_semikonduktor INT NOT NULL DEFAULT 0,
     kayu INT NOT NULL DEFAULT 0
 );
 
 INSERT INTO database_manufaktur (
-    id, country, country_slug, mobil, semen_beton, sepeda_motor, semikonduktor, kayu
+    id, country, country_slug, pabrik_mesin_mobil, semen_beton, pabrik_mesin_motor, pabrik_semikonduktor, kayu
 ) VALUES
     (1, 'Afrika Selatan', 'afrika_selatan', 560, 320, 480, 400, 560),
     (2, 'Aljazair', 'aljazair', 88, 77, 154, 121, 110),

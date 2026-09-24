@@ -14,21 +14,21 @@ export const CATEGORY = 'manufaktur';
 
 export const REQUIREMENTS: BuildingRequirements[] = [
   {
-    buildingKey: 'semikonduktor',
+    buildingKey: 'pabrik_semikonduktor',
     requirements: [
       { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 850 },
       { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 400 },
     ],
   },
   {
-    buildingKey: 'mobil',
+    buildingKey: 'pabrik_mesin_mobil',
     requirements: [
       { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 750 },
       { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 500 },
     ],
   },
   {
-    buildingKey: 'sepeda_motor',
+    buildingKey: 'pabrik_mesin_motor',
     requirements: [
       { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 500 },
       { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 300 },

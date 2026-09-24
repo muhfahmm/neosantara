@@ -1,31 +1,31 @@
 {
-  "semikonduktor": {
+  "pabrik_semikonduktor": {
     "key": "1_pabrik_elektronik",
-    "dataKey": "semikonduktor",
+    "dataKey": "pabrik_semikonduktor",
     "label": "Pabrik Semikonduktor",
-    "deskripsi": "Pabrik Semikonduktor",
+    "deskripsi": "Memproduksi chip semikonduktor & komponen kontrol canggih untuk alutsista militer (radar, drone, rudal, jet)",
     "produksi": 50,
     "satuan": "UNIT",
     "waktu_pembangunan": 360,
     "biaya_pembangunan": 9500,
     "konsumsi_listrik": 50
   },
-  "mobil": {
+  "pabrik_mesin_mobil": {
     "key": "2_pabrik_mobil",
-    "dataKey": "mobil",
-    "label": "Pabrik Mobil",
-    "deskripsi": "Pabrik Mobil",
+    "dataKey": "pabrik_mesin_mobil",
+    "label": "Pabrik Mesin Mobil",
+    "deskripsi": "Memproduksi mesin heavy-duty roda 4 untuk kendaraan tempur militer (tank, panser APC, truk logistik)",
     "produksi": 25,
     "satuan": "UNIT",
     "waktu_pembangunan": 240,
     "biaya_pembangunan": 6500,
     "konsumsi_listrik": 40
   },
-  "sepeda_motor": {
+  "pabrik_mesin_motor": {
     "key": "3_pabrik_motor",
-    "dataKey": "sepeda_motor",
-    "label": "Pabrik Motor",
-    "deskripsi": "Pabrik Motor",
+    "dataKey": "pabrik_mesin_motor",
+    "label": "Pabrik Mesin Motor",
+    "deskripsi": "Memproduksi mesin ringan roda 2 untuk kendaraan militer taktis & drone rekognisi ringan",
     "produksi": 50,
     "satuan": "UNIT",
     "waktu_pembangunan": 120,
