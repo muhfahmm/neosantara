@@ -13,11 +13,37 @@ export const normalizeResourceKey = (key: string): string => {
   return RESOURCE_KEY_ALIASES[key] || key;
 };
 
-export const getMaterialStock = (countryDetail: any, resourceKey: string): number => {
+export const getMaterialStock = (countryDetail: any, resourceKey: string, metadata?: Record<string, any>): number => {
   if (!countryDetail) return 0;
   const normalizedKey = normalizeResourceKey(resourceKey);
   const inventoryKey = `inventory_${normalizedKey}`;
-  return Number(countryDetail?.[inventoryKey]) || 0;
+  if (countryDetail[inventoryKey] !== undefined && countryDetail[inventoryKey] !== null) {
+    return Number(countryDetail[inventoryKey]) || 0;
+  }
+
+  const isFoodCommodity = FOOD_CONSUMPTION_PER_CAPITA[normalizedKey] !== undefined;
+  if (isFoodCommodity) {
+    const buildingCount = Number(countryDetail?.[normalizedKey]) || 0;
+    if (buildingCount === 0) return 0;
+    const bMeta = findBuildingMetadata(metadata || {}, normalizedKey);
+    const DEFAULT_PROD: Record<string, number> = {
+      air_mineral: 1000,
+      gula: 250,
+      roti: 150,
+      pengolahan_daging: 120,
+      mie_instan: 500,
+      minyak_goreng: 250,
+      susu: 180,
+      beras: 300,
+    };
+    const prodPerUnit = Number(bMeta?.produksi) || DEFAULT_PROD[normalizedKey] || 0;
+    const dailyProd = prodPerUnit * buildingCount;
+    const pop = Number(countryDetail?.jumlah_penduduk) || 0;
+    const dailyCons = calculateConsumption(pop, FOOD_CONSUMPTION_PER_CAPITA[normalizedKey]);
+    return Math.max(0, dailyProd - dailyCons);
+  }
+
+  return 0;
 };
 
 export const findBuildingMetadata = (metadata: Record<string, any>, key: string) => {

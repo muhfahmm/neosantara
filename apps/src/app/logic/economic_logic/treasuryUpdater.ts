@@ -40,8 +40,36 @@ export const calculateTotalTaxIncome = (detail: any) => {
   );
 };
 
-const getDepartmentLevel = (detail: any, dept: Department) => {
-  return toNumber(detail?.[`level_${dept.id}`], 1);
+export const getDepartmentLevel = (detail: any, deptOrId: Department | string): number => {
+  if (!detail || typeof detail !== 'object') return 1;
+  const deptId = typeof deptOrId === 'string' ? deptOrId : deptOrId.id;
+  const cleanId = deptId.replace(/-/g, '_');
+  const noLayanan = cleanId.replace(/^layanan_/, '');
+  const noKem = cleanId.replace(/^kem_/, '');
+  const noKeam = cleanId.replace(/^keamanan_/, '');
+
+  const candidates = [
+    `level_${deptId}`,
+    `level_${cleanId}`,
+    `level_${noLayanan}`,
+    `level_${noKem}`,
+    `level_${noKeam}`,
+    `kem_${cleanId}`,
+    `keamanan_${cleanId}`,
+    `layanan_${cleanId}`,
+    `layanan_${noLayanan}`,
+    `keamanan_${noKeam}`,
+    cleanId,
+    deptId
+  ];
+
+  for (const k of candidates) {
+    if (detail[k] !== undefined && detail[k] !== null && detail[k] !== '') {
+      const val = Number(detail[k]);
+      if (!isNaN(val) && val > 0) return val;
+    }
+  }
+  return 1;
 };
 
 const calculateMinistryDailyIncome = (level: number) => {

@@ -125,6 +125,28 @@ export const FOOD_CONSUMPTION_PER_CAPITA: Record<string, number> = {
   beras: 0.35,
 };
 
+export const RAW_MATERIAL_DEFAULT_PROD: Record<string, number> = {
+  padi: 200,
+  gandum: 150,
+  jagung: 80,
+  sayur: 65,
+  umbi: 50,
+  kedelai: 25,
+  kelapa_sawit: 150,
+  kopi: 25,
+  teh: 25,
+  kakao: 10,
+  tebu: 85,
+  karet: 35,
+  ayam_unggas: 150,
+  sapi_perah: 150,
+  sapi_potong: 120,
+  domba_kambing: 180,
+  udang: 120,
+  ikan: 350,
+  mutiara: 15,
+};
+
 // Helper to find building metadata
 export const findMeta = (key: string, metadata: any) => {
   if (!metadata) return undefined;
@@ -144,7 +166,21 @@ export const getFoodIngredientsRequirements = (factoryKey: string, metadata: any
   if (meta && Array.isArray(meta.konsumsi_bahan_baku)) {
     return meta.konsumsi_bahan_baku;
   }
-  return [];
+  // Hardcoded fallback requirement if metadata is not provided
+  const HARDCODED_INGREDIENTS: Record<string, Array<{ key: string; label: string; amount: number }>> = {
+    beras: [{ key: 'padi', label: 'padi', amount: 10 }],
+    gula: [{ key: 'tebu', label: 'tebu', amount: 10 }],
+    roti: [{ key: 'gandum', label: 'gandum', amount: 15 }],
+    mie_instan: [{ key: 'gandum', label: 'gandum', amount: 20 }],
+    minyak_goreng: [{ key: 'kelapa_sawit', label: 'kelapa sawit', amount: 12 }],
+    susu: [{ key: 'sapi_perah', label: 'sapi perah', amount: 8 }],
+    pengolahan_daging: [
+      { key: 'ayam_unggas', label: 'ayam unggas', amount: 5 },
+      { key: 'sapi_potong', label: 'sapi potong', amount: 2 },
+      { key: 'domba_kambing', label: 'domba & kambing', amount: 3 }
+    ],
+  };
+  return HARDCODED_INGREDIENTS[factoryKey] || [];
 };
 
 export const isFoodRawMaterialDeficit = (factoryKey: string, countryDetail: any, metadata: any): boolean => {
@@ -157,7 +193,7 @@ export const isFoodRawMaterialDeficit = (factoryKey: string, countryDetail: any,
     const rawKey = ing.key;
     const rawCount = safeNumber(countryDetail?.[rawKey]);
     const bMeta = findMeta(rawKey, metadata);
-    const baseProd = safeNumber(bMeta?.produksi);
+    const baseProd = safeNumber(bMeta?.produksi) || RAW_MATERIAL_DEFAULT_PROD[rawKey] || 0;
     const rawGrossProd = baseProd * rawCount;
 
     const rawPopCons = FOOD_CONSUMPTION_PER_CAPITA[rawKey] !== undefined

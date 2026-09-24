@@ -27,7 +27,7 @@ import {
   ShieldAlert,
   Ship,
 } from "lucide-react";
-import { calculateCountryNetBalance } from "@/app/logic/economic_logic/treasuryUpdater";
+import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/economic_logic/treasuryUpdater";
 
 interface ModalProps {
   isOpen: boolean;
@@ -303,8 +303,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
   if (!isOpen) return null;
 
   const getLevel = (id: string) => {
-    const stored = countryDetail?.[`level_${id}`] as number | undefined;
-    return levels[id] ?? stored ?? 1;
+    return levels[id] ?? getDepartmentLevel(countryDetail, id);
   };
 
   const getNextStepCost = (level: number) => {

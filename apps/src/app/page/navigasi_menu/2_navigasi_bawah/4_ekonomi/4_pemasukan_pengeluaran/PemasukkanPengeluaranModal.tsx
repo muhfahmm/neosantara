@@ -6,6 +6,7 @@ import {
   calculateTotalTaxIncome,
   calculateGoldIncome,
   calculateMinistryCost,
+  getDepartmentLevel,
 } from "@/app/logic/economic_logic/treasuryUpdater";
 import { calculateGoldMiningDailyProduction, GOLD_MINING_PRODUCTION_PER_BUILDING } from "@/app/logic/economic_logic/goldIncome";
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department } from "@/app/logic/economic_logic/departments";
@@ -35,7 +36,7 @@ const LEVEL_UP_COST = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
 const calculateTabCostDaily = (countryDetail: any, departments: Department[]) => {
   let totalCost = 0;
   for (const dept of departments) {
-    const level = countryDetail[`level_${dept.id}`] ?? 1;
+    const level = getDepartmentLevel(countryDetail, dept);
     totalCost += LEVEL_UP_COST[level] ?? 100;
   }
   return totalCost;
@@ -69,7 +70,8 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
   if (!isOpen) return null;
 
   const [activeTab, setActiveTab] = useState<"summary" | "income" | "outcome">("summary");
-  const [outcomeSubTab, setOutcomeSubTab] = useState<"kementerian" | "keamanan" | "layanan" | "subsidi">("kementerian");
+  const [outcomeMainTab, setOutcomeMainTab] = useState<"kabinet" | "subsidi" | "total">("kabinet");
+  const [kabinetSubTab, setKabinetSubTab] = useState<"kementerian" | "keamanan" | "layanan">("kementerian");
 
   const taxRevenue = calculateTotalTaxIncome(countryDetail);
   const goldIncome = calculateGoldIncome(countryDetail);
@@ -103,7 +105,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
   const anggaran = countryDetail?.anggaran || 0;
 
   const getOutcomeTabDepartments = () => {
-    switch (outcomeSubTab) {
+    switch (kabinetSubTab) {
       case "kementerian": return KEMENTERIAN;
       case "keamanan": return KEAMANAN;
       case "layanan": return LAYANAN;
@@ -247,53 +249,126 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
 
             {/* Outcome Tab */}
             {activeTab === "outcome" && (
-              <div className="space-y-4">
-                <div className="flex gap-2 border-b border-[#00FFAA]/20 pb-2">
+              <div className="space-y-5">
+                {/* Top Level Tabs: Kabinet (22), Alokasi Subsidi (6), Total Pengeluaran */}
+                <div className="flex gap-2 border-b border-[#00FFAA]/20 pb-3">
                   <button
-                    onClick={() => setOutcomeSubTab("kementerian")}
-                    className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                      outcomeSubTab === "kementerian" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
+                    onClick={() => setOutcomeMainTab("kabinet")}
+                    className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                      outcomeMainTab === "kabinet"
+                        ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
+                        : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
                     }`}
                   >
-                    Kementerian (15)
+                    Kabinet (22)
                   </button>
                   <button
-                    onClick={() => setOutcomeSubTab("keamanan")}
-                    className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                      outcomeSubTab === "keamanan" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-                    }`}
-                  >
-                    Keamanan (5)
-                  </button>
-                  <button
-                    onClick={() => setOutcomeSubTab("layanan")}
-                    className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                      outcomeSubTab === "layanan" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-                    }`}
-                  >
-                    Layanan (2)
-                  </button>
-                  <button
-                    onClick={() => setOutcomeSubTab("subsidi")}
-                    className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                      outcomeSubTab === "subsidi" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
+                    onClick={() => setOutcomeMainTab("subsidi")}
+                    className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                      outcomeMainTab === "subsidi"
+                        ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
+                        : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
                     }`}
                   >
                     Alokasi Subsidi (6)
                   </button>
+                  <button
+                    onClick={() => setOutcomeMainTab("total")}
+                    className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                      outcomeMainTab === "total"
+                        ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
+                        : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
+                    }`}
+                  >
+                    Total Pengeluaran
+                  </button>
                 </div>
 
-                {outcomeSubTab === "subsidi" ? (
+                {outcomeMainTab === "subsidi" ? (
                   <AlokasiSubsidiTab countryDetail={countryDetail} />
-                ) : (
-                  <>
+                ) : outcomeMainTab === "total" ? (
+                  <div className="space-y-4">
                     <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4">
                       <h4 className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider mb-4">
-                        {outcomeSubTab === "kementerian" ? "Kementerian" : outcomeSubTab === "keamanan" ? "Keamanan" : "Layanan"}
+                        Ringkasan Total Pengeluaran Negara
+                      </h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-[#00FFAA]/20">
+                          <span className="font-semibold text-[#E0E0E0]">1. Biaya Operasional Kabinet (22)</span>
+                          <span>- {ministryCostPerDay.toLocaleString("id-ID")}</span>
+                        </div>
+                        <div className="pl-4 space-y-1 text-[11px] text-[#6B8A8A]">
+                          <div className="flex justify-between">
+                            <span>• Subtotal Kementerian (15):</span>
+                            <span>- {calculateTabCostDaily(countryDetail, KEMENTERIAN).toLocaleString("id-ID")}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>• Subtotal Keamanan (5):</span>
+                            <span>- {calculateTabCostDaily(countryDetail, KEAMANAN).toLocaleString("id-ID")}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>• Subtotal Layanan (2):</span>
+                            <span>- {calculateTabCostDaily(countryDetail, LAYANAN).toLocaleString("id-ID")}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-[#00FFAA]/20 pt-3">
+                          <span className="font-semibold text-[#E0E0E0]">2. Alokasi Kebijakan Subsidi (6)</span>
+                          <span>- {totalSubsidyCost.toLocaleString("id-ID")}</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-4 border-t border-[#00FFAA]/30 mt-4">
+                        <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
+                          <span>Grand Total Pengeluaran (Kabinet + Subsidi):</span>
+                          <span className="text-rose-400">- {totalOutcome.toLocaleString("id-ID")}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Sub-tabs under Kabinet: Kementerian (15), Keamanan (5), Layanan (2) */}
+                    <div className="flex gap-2 border-b border-[#00FFAA]/10 pb-2">
+                      <button
+                        onClick={() => setKabinetSubTab("kementerian")}
+                        className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                          kabinetSubTab === "kementerian"
+                            ? "bg-[#00FFAA] text-[#0A1A1A]"
+                            : "bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
+                        }`}
+                      >
+                        Kementerian (15)
+                      </button>
+                      <button
+                        onClick={() => setKabinetSubTab("keamanan")}
+                        className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                          kabinetSubTab === "keamanan"
+                            ? "bg-[#00FFAA] text-[#0A1A1A]"
+                            : "bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
+                        }`}
+                      >
+                        Keamanan (5)
+                      </button>
+                      <button
+                        onClick={() => setKabinetSubTab("layanan")}
+                        className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                          kabinetSubTab === "layanan"
+                            ? "bg-[#00FFAA] text-[#0A1A1A]"
+                            : "bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
+                        }`}
+                      >
+                        Layanan (2)
+                      </button>
+                    </div>
+
+                    <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4">
+                      <h4 className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider mb-4">
+                        {kabinetSubTab === "kementerian" ? "Kementerian" : kabinetSubTab === "keamanan" ? "Keamanan" : "Layanan"}
                       </h4>
                       <div className="space-y-3">
                         {currentOutcomeTabDepts.map((dept, index) => {
-                          const level = countryDetail[`level_${dept.id}`] ?? 1;
+                          const level = getDepartmentLevel(countryDetail, dept);
                           const dailyCost = LEVEL_UP_COST[level] ?? 100;
                           const Icon = dept.icon;
                           return (
@@ -310,7 +385,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                       </div>
                       <div className="pt-4 border-t border-[#00FFAA]/30 mt-4">
                         <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
-                          <span>Subtotal {outcomeSubTab === "kementerian" ? "Kementerian" : outcomeSubTab === "keamanan" ? "Keamanan" : "Layanan"}:</span>
+                          <span>Subtotal {kabinetSubTab === "kementerian" ? "Kementerian" : kabinetSubTab === "keamanan" ? "Keamanan" : "Layanan"}:</span>
                           <span className="text-rose-400">- {outcomeTabCostDaily.toLocaleString("id-ID")}</span>
                         </div>
                       </div>
@@ -320,11 +395,11 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                       <div className="pt-2">
                         <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
                           <span>Total Pengeluaran Dewan Kabinet:</span>
-                          <span className="text-rose-400">- {totalOutcome.toLocaleString("id-ID")}</span>
+                          <span className="text-rose-400">- {ministryCostPerDay.toLocaleString("id-ID")}</span>
                         </div>
                       </div>
                     </div>
-                  </>
+                  </div>
                 )}
 
                 <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-2 px-1">

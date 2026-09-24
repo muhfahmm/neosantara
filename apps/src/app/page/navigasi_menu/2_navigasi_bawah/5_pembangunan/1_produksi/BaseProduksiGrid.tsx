@@ -282,13 +282,13 @@ export default function BaseProduksiGrid({
                       const isFoodCommodity = FOOD_CONSUMPTION_PER_CAPITA[key] !== undefined;
                       if (isFoodCommodity) {
                         const isDeficit = isFoodRawMaterialDeficit(key, countryDetail, metadata);
-                        const accumulated = getMaterialStock(countryDetail, key);
+                        const accumulated = getMaterialStock(countryDetail, key, metadata);
                         const displayVal = isDeficit ? 0 : accumulated;
-                        const isZeroOrDeficit = isDeficit || displayVal === 0;
+                        const isRedText = isDeficit;
 
                         return (
                           <div className="flex flex-col items-center justify-center">
-                            <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isZeroOrDeficit ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
+                            <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isRedText ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
                               {displayVal.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 3 })}
                             </span>
                             {isDeficit && (

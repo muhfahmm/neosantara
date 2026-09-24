@@ -22,10 +22,13 @@ const normalizeKey = (val: string) => val.trim().toLowerCase().replace(/[\s_-]+/
 let cachedAllCountries: any[] | null = null;
 const cachedCountryMap = new Map<string, any>();
 
-async function loadAllCountriesFromMySQL() {
-  if (cachedAllCountries && cachedAllCountries.length > 0) {
+async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
+  if (!forceRefresh && cachedAllCountries && cachedAllCountries.length > 0) {
     return cachedAllCountries;
   }
+
+  cachedAllCountries = null;
+  cachedCountryMap.clear();
 
   try {
     // 1. Core Profile & Basic Info
@@ -274,9 +277,10 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const countryPath = searchParams.get('path');
   const requestAll = searchParams.get('all') === 'true';
+  const forceRefresh = searchParams.get('force') === 'true';
 
   try {
-    const allData = await loadAllCountriesFromMySQL();
+    const allData = await loadAllCountriesFromMySQL(forceRefresh);
 
     if (requestAll || !countryPath) {
       return NextResponse.json(allData);
