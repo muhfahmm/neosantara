@@ -17,6 +17,7 @@ import PendidikanKesehatanTab from "./tab_menu/4_pendidikan_kesehatan/Pendidikan
 import TransportasiPerumahanTab from "./tab_menu/5_transportasi_perumahan/TransportasiPerumahanTab";
 import UmkmEkonomiTab from "./tab_menu/6_umkm_ekonomi/UmkmEkonomiTab";
 import PerlindunganSosialTab from "./tab_menu/7_perlindungan_sosial/PerlindunganSosialTab";
+import DetailSubsidiItemModal from "./DetailSubsidiItemModal";
 
 interface ModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
   const [subsidyItems, setSubsidyItems] = useState<SubsidyItem[]>(INITIAL_SUBSIDY_ITEMS);
   const [isLoadingDb, setIsLoadingDb] = useState<boolean>(false);
   const [isSavedSuccess, setIsSavedSuccess] = useState<boolean>(false);
+  const [selectedDetailItem, setSelectedDetailItem] = useState<SubsidyItem | null>(null);
 
   // Fetch status subsidi dari database_alokasi_subsidi berdasarkan country_slug
   useEffect(() => {
@@ -151,14 +153,13 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
         
         {/* HEADER */}
-        <div className="px-4 lg:px-6 py-3 lg:py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-          <div className="flex items-center gap-2.5 lg:gap-3">
-            <div className="p-2 lg:p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30 flex items-center justify-center">
-              <HandHelping className="h-5 w-5 lg:h-6 lg:w-6 text-[#00FFAA]" />
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+              <HandHelping className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
             </div>
             <div>
-              <h2 className="text-base lg:text-lg 2xl:text-xl font-black text-[#00FFAA] tracking-wider uppercase">Alokasi & Kebijakan Subsidi</h2>
-              <p className="text-[10px] lg:text-xs text-[#6B8A8A] font-semibold mt-0.5">Kelola Jaring Pengaman Sosial, Beban APBN, & Stabilitas Publik</p>
+              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Alokasi & Kebijakan Subsidi</h2>
             </div>
           </div>
 
@@ -173,10 +174,10 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
 
             <button 
               onClick={onClose} 
-              className="p-1.5 sm:p-2 lg:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
             >
-              <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-4 w-4 lg:h-5 lg:w-5" />
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -253,37 +254,45 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
           {/* RIGHT CONTENT AREA - SECTOR GRID FROM SEPARATE TAB COMPONENTS */}
           <div className="flex-1 overflow-y-auto p-4 lg:p-6 2xl:p-8 bg-[#0F2424] no-scrollbar">
             {selectedCategory === "Semua" && (
-              <SemuaSektorTab items={subsidyItems} toggleSubsidy={toggleSubsidy} />
+              <SemuaSektorTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
             )}
 
             {selectedCategory === "Energi" && (
-              <EnergiTab items={subsidyItems} toggleSubsidy={toggleSubsidy} />
+              <EnergiTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
             )}
 
             {selectedCategory === "Pangan" && (
-              <PanganTab items={subsidyItems} toggleSubsidy={toggleSubsidy} />
+              <PanganTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
             )}
 
             {selectedCategory === "Pendidikan & Kesehatan" && (
-              <PendidikanKesehatanTab items={subsidyItems} toggleSubsidy={toggleSubsidy} />
+              <PendidikanKesehatanTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
             )}
 
             {selectedCategory === "Transportasi & Perumahan" && (
-              <TransportasiPerumahanTab items={subsidyItems} toggleSubsidy={toggleSubsidy} />
+              <TransportasiPerumahanTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
             )}
 
             {selectedCategory === "UMKM & Ekonomi" && (
-              <UmkmEkonomiTab items={subsidyItems} toggleSubsidy={toggleSubsidy} />
+              <UmkmEkonomiTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
             )}
 
             {selectedCategory === "Perlindungan Sosial" && (
-              <PerlindunganSosialTab items={subsidyItems} toggleSubsidy={toggleSubsidy} />
+              <PerlindunganSosialTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
             )}
           </div>
 
         </div>
 
       </div>
+
+      {/* DETAIL ITEM SUBSIDI MODAL */}
+      <DetailSubsidiItemModal
+        isOpen={!!selectedDetailItem}
+        onClose={() => setSelectedDetailItem(null)}
+        item={selectedDetailItem ? subsidyItems.find(i => i.id === selectedDetailItem.id) || selectedDetailItem : null}
+        toggleSubsidy={toggleSubsidy}
+      />
     </div>
   );
 }

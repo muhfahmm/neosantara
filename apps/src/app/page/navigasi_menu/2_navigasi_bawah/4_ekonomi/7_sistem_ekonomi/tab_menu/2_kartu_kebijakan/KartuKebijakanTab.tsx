@@ -11,8 +11,8 @@ interface Props {
 
 export default function KartuKebijakanTab({ policyChoices, handlePolicyChange }: Props) {
   return (
-    <div className="space-y-3 lg:space-y-4 max-w-full">
-      <p className="text-[11px] lg:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-2">
+    <div className="space-y-2.5 lg:space-y-3.5 max-w-full">
+      <p className="text-[10px] lg:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-1">
         Pilih opsi kebijakan sektoral spesifik untuk menentukan pendekatan regulasi negara Anda secara terperinci.
       </p>
 
@@ -20,47 +20,47 @@ export default function KartuKebijakanTab({ policyChoices, handlePolicyChange }:
         const currentChoice = policyChoices[policy.id] || "A";
 
         return (
-          <div key={policy.id} className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-3.5 lg:p-4 2xl:p-5 space-y-2.5 lg:space-y-3">
+          <div key={policy.id} className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-3 lg:p-3.5 2xl:p-4 space-y-2">
             <div>
               <h4 className="text-xs lg:text-sm font-black text-[#E0E0E0] uppercase tracking-wider">{policy.name}</h4>
-              <p className="text-[10px] lg:text-xs text-[#6B8A8A] mt-0.5">{policy.description}</p>
+              <p className="text-[9px] lg:text-[11px] text-[#6B8A8A] mt-0.5">{policy.description}</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 lg:gap-3 pt-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-2.5 pt-0.5">
               {/* OPSI A (Terpusat) */}
               <button
                 onClick={() => handlePolicyChange(policy.id, "A")}
-                className={`p-3 lg:p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                className={`p-2.5 lg:p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   currentChoice === "A"
                     ? "bg-[#00FFAA]/15 border-[#00FFAA] text-[#00FFAA]"
                     : "bg-[#0F2424] border-[#00FFAA]/15 text-[#6B8A8A] hover:border-[#00FFAA]/40"
                 }`}
               >
-                <div className="flex items-center justify-between w-full mb-1.5 lg:mb-2">
-                  <span className="text-[11px] lg:text-xs font-black uppercase tracking-wider">{policy.optionA.label}</span>
-                  <span className="text-[8px] lg:text-[9px] font-black uppercase px-1.5 lg:px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                <div className="flex items-center justify-between w-full mb-1">
+                  <span className="text-[10px] lg:text-xs font-black uppercase tracking-wider">{policy.optionA.label}</span>
+                  <span className="text-[8px] lg:text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">
                     {policy.optionA.type}
                   </span>
                 </div>
-                <p className="text-[10px] lg:text-[11px] font-semibold opacity-90 leading-relaxed">{policy.optionA.effect}</p>
+                <p className="text-[9px] lg:text-[10px] font-semibold opacity-90 leading-tight">{policy.optionA.effect}</p>
               </button>
 
               {/* OPSI B (Pasar Bebas) */}
               <button
                 onClick={() => handlePolicyChange(policy.id, "B")}
-                className={`p-3 lg:p-4 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                className={`p-2.5 lg:p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                   currentChoice === "B"
                     ? "bg-[#00FFAA]/15 border-[#00FFAA] text-[#00FFAA]"
                     : "bg-[#0F2424] border-[#00FFAA]/15 text-[#6B8A8A] hover:border-[#00FFAA]/40"
                 }`}
               >
-                <div className="flex items-center justify-between w-full mb-1.5 lg:mb-2">
-                  <span className="text-[11px] lg:text-xs font-black uppercase tracking-wider">{policy.optionB.label}</span>
-                  <span className="text-[8px] lg:text-[9px] font-black uppercase px-1.5 lg:px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                <div className="flex items-center justify-between w-full mb-1">
+                  <span className="text-[10px] lg:text-xs font-black uppercase tracking-wider">{policy.optionB.label}</span>
+                  <span className="text-[8px] lg:text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                     {policy.optionB.type}
                   </span>
                 </div>
-                <p className="text-[10px] lg:text-[11px] font-semibold opacity-90 leading-relaxed">{policy.optionB.effect}</p>
+                <p className="text-[9px] lg:text-[10px] font-semibold opacity-90 leading-tight">{policy.optionB.effect}</p>
               </button>
             </div>
           </div>

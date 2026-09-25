@@ -167,22 +167,20 @@ export default function SistemDuniaTab({ countryDetail }: Props) {
       {/* KETERANGAN TABLE */}
       <div className="text-xs font-semibold text-[#6B8A8A] leading-relaxed">
         Tabel 207 negara berdasarkan sistem ekonomi yang diterapkan. Klik header kolom untuk mengurutkan data.
-      </div>
-
-      {/* CONTAINER TABEL SAMA DENGAN SERANG NEGARA */}
+      </div>      {/* CONTAINER TABEL SAMA DENGAN SERANG NEGARA */}
       <div className="w-full overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
-        <div className="max-h-[52vh] overflow-auto no-scrollbar">
-          <table className="w-full text-xs text-left border-collapse">
+        <div className="max-h-[50vh] overflow-y-auto overflow-x-hidden custom-scrollbar">
+          <table className="w-full table-fixed text-xs text-left border-collapse">
             
             {/* TH HEADER DENGAN OPTIMALISASI LEBAR KOLOM */}
             <thead className="bg-[#0F2424] border-b border-[#00FFAA]/20 sticky top-0 z-10">
               <tr>
-                <th className="px-3 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider w-14 shrink-0">
+                <th className="w-[12%] px-1.5 py-2 text-center font-black text-[#00FFAA] uppercase tracking-wider text-[9px] lg:text-[10px]">
                   Rank
                 </th>
 
                 <th 
-                  className="px-3 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors w-48 sm:w-56 shrink-0"
+                  className="w-[33%] px-2 py-2 text-left font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors text-[9px] lg:text-[10px]"
                   onClick={() => handleSort("country")}
                 >
                   <div className="flex items-center gap-1">
@@ -192,7 +190,7 @@ export default function SistemDuniaTab({ countryDetail }: Props) {
                 </th>
 
                 <th 
-                  className="px-3 py-3 text-center font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors"
+                  className="w-[37%] px-2 py-2 text-center font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors text-[9px] lg:text-[10px]"
                   onClick={() => handleSort("system")}
                 >
                   <div className="flex items-center justify-center gap-1">
@@ -202,7 +200,7 @@ export default function SistemDuniaTab({ countryDetail }: Props) {
                 </th>
 
                 <th 
-                  className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors w-36 shrink-0"
+                  className="w-[18%] px-2 py-2 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors text-[9px] lg:text-[10px]"
                   onClick={() => handleSort("category")}
                 >
                   <div className="flex items-center justify-end gap-1">
@@ -238,43 +236,43 @@ export default function SistemDuniaTab({ countryDetail }: Props) {
                           : "hover:bg-[#00FFAA]/5"
                       }`}
                     >
-                      <td className={`px-2.5 lg:px-4 py-2 lg:py-2.5 font-black text-[10px] sm:text-[11px] lg:text-xs ${row.isPlayer ? "text-[#00FFAA]" : "text-[#E0E0E0]"}`}>
+                      <td className={`px-1.5 py-2 text-center font-black text-[10px] lg:text-xs ${row.isPlayer ? "text-[#00FFAA]" : "text-[#E0E0E0]"}`}>
                         {index + 1}
                       </td>
 
-                      <td className={`px-2.5 lg:px-4 py-2 lg:py-2.5 font-bold text-[10px] sm:text-[11px] lg:text-xs ${row.isPlayer ? "text-[#00FFAA]" : "text-[#E0E0E0]"}`}>
-                        <div className="flex items-center gap-2 lg:gap-2.5">
+                      <td className={`px-2 py-2 font-bold text-[10px] lg:text-xs truncate ${row.isPlayer ? "text-[#00FFAA]" : "text-[#E0E0E0]"}`}>
+                        <div className="flex items-center gap-1.5 lg:gap-2 truncate">
                           {row.iso ? (
                             <img
                               src={`https://flagcdn.com/w20/${row.iso.toLowerCase()}.png`}
                               alt={row.country}
-                              className="w-4 h-3 lg:w-5 lg:h-4 object-cover rounded-sm border border-[#00FFAA]/20 shadow-sm flex-shrink-0"
+                              className="w-4 h-3 lg:w-4.5 lg:h-3.5 object-cover rounded-sm border border-[#00FFAA]/20 shadow-sm flex-shrink-0"
                               onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
                             />
                           ) : (
-                            <div className="w-4 h-3 lg:w-5 lg:h-4 rounded-sm bg-[#0F2424] border border-[#00FFAA]/20 flex-shrink-0" />
+                            <div className="w-4 h-3 lg:w-4.5 lg:h-3.5 rounded-sm bg-[#0F2424] border border-[#00FFAA]/20 flex-shrink-0" />
                           )}
-                          <span>{row.country}</span>
+                          <span className="truncate">{row.country}</span>
                           {row.isPlayer && (
-                            <span className="flex items-center gap-1 px-1.5 lg:px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[8px] lg:text-[9px] font-black uppercase tracking-wider ml-1">
+                            <span className="flex items-center gap-0.5 px-1 py-0.2 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[8px] font-black uppercase tracking-wider flex-shrink-0 ml-0.5">
                               <User className="w-2.5 h-2.5" /> Anda
                             </span>
                           )}
                         </div>
                       </td>
 
-                      <td className="px-2.5 lg:px-4 py-2 lg:py-2.5 text-center font-semibold text-[10px] sm:text-[11px] lg:text-xs text-[#6B8A8A]">
-                        <div className="flex items-center justify-center gap-1.5 lg:gap-2">
-                          <span>{row.system}</span>
-                          <span className="px-1.5 lg:px-2 py-0.5 rounded bg-[#0F2424] border border-[#00FFAA]/20 text-[9px] lg:text-[10px] font-mono font-bold text-[#00FFAA]">
+                      <td className="px-2 py-2 text-center font-semibold text-[10px] lg:text-xs text-[#6B8A8A] truncate">
+                        <div className="flex items-center justify-center gap-1.5 truncate">
+                          <span className="truncate">{row.system}</span>
+                          <span className="px-1.5 py-0.2 rounded bg-[#0F2424] border border-[#00FFAA]/20 text-[8px] lg:text-[9px] font-mono font-bold text-[#00FFAA] flex-shrink-0">
                             {row.spektrumVal}%
                           </span>
                         </div>
                       </td>
 
-                      <td className="px-2.5 lg:px-4 py-2 lg:py-2.5 text-right whitespace-nowrap">
+                      <td className="px-2 py-2 text-right whitespace-nowrap">
                         <span
-                          className={`inline-block px-2.5 lg:px-3 py-0.5 lg:py-1 rounded-full text-[9px] lg:text-[10px] font-black uppercase border shadow-sm ${
+                          className={`inline-block px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black uppercase border shadow-sm ${
                             row.category === "Terpusat"
                               ? "bg-rose-500/15 text-rose-400 border-rose-500/30"
                               : row.category === "Campuran"
@@ -290,7 +288,6 @@ export default function SistemDuniaTab({ countryDetail }: Props) {
                 })
               )}
             </tbody>
-
           </table>
         </div>
       </div>

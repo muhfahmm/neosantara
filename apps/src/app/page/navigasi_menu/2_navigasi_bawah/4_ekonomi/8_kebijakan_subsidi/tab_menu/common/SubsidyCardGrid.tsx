@@ -2,14 +2,16 @@
 "use client";
 
 import React from "react";
+import { Info } from "lucide-react";
 import { SubsidyItem, formatCurrencyCompact } from "../../logic/logikaSubsidi";
 
 interface Props {
   items: SubsidyItem[];
   toggleSubsidy: (id: string) => void;
+  onOpenDetail?: (item: SubsidyItem) => void;
 }
 
-export default function SubsidyCardGrid({ items, toggleSubsidy }: Props) {
+export default function SubsidyCardGrid({ items, toggleSubsidy, onOpenDetail }: Props) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 max-w-full">
       {items.map((item) => (
@@ -27,25 +29,37 @@ export default function SubsidyCardGrid({ items, toggleSubsidy }: Props) {
                 {item.category}
               </span>
 
-              {/* TOGGLE SWITCH */}
-              <button
-                onClick={() => toggleSubsidy(item.id)}
-                className={`relative inline-flex h-5 lg:h-6 w-9 lg:w-11 items-center rounded-full transition-colors cursor-pointer border ${
-                  item.isSubsidized
-                    ? "bg-emerald-500 border-emerald-400"
-                    : "bg-gray-700 border-gray-600"
-                }`}
-              >
-                <span
-                  className={`inline-block h-3.5 lg:h-4 w-3.5 lg:w-4 transform rounded-full bg-white transition-transform ${
-                    item.isSubsidized ? "translate-x-4 lg:translate-x-6" : "translate-x-1"
+              <div className="flex items-center gap-2">
+                {/* INFO BUTTON (i) */}
+                {onOpenDetail && (
+                  <button
+                    onClick={() => onOpenDetail(item)}
+                    className="p-1 rounded-full border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer flex items-center justify-center shadow-sm"
+                    title="Lihat Rincian Kebijakan"
+                  >
+                    <Info className="h-3.5 w-3.5" />
+                  </button>
+                )}
+
+                {/* TOGGLE SWITCH */}
+                <button
+                  onClick={() => toggleSubsidy(item.id)}
+                  className={`relative inline-flex h-5 lg:h-6 w-9 lg:w-11 items-center rounded-full transition-colors cursor-pointer border ${
+                    item.isSubsidized
+                      ? "bg-emerald-500 border-emerald-400"
+                      : "bg-gray-700 border-gray-600"
                   }`}
-                />
-              </button>
+                >
+                  <span
+                    className={`inline-block h-3.5 lg:h-4 w-3.5 lg:w-4 transform rounded-full bg-white transition-transform ${
+                      item.isSubsidized ? "translate-x-4 lg:translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
             </div>
 
             <h4 className="text-xs lg:text-sm font-black text-[#E0E0E0] uppercase tracking-wider">{item.name}</h4>
-            <p className="text-[10px] lg:text-xs text-[#6B8A8A] mt-1 leading-relaxed">{item.description}</p>
           </div>
 
           {/* STATS FOOTER FOR ITEM */}

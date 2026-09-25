@@ -8,9 +8,10 @@ import SubsidyCardGrid from "../common/SubsidyCardGrid";
 interface Props {
   items: SubsidyItem[];
   toggleSubsidy: (id: string) => void;
+  onOpenDetail?: (item: SubsidyItem) => void;
 }
 
-export default function PendidikanKesehatanTab({ items, toggleSubsidy }: Props) {
+export default function PendidikanKesehatanTab({ items, toggleSubsidy, onOpenDetail }: Props) {
   const filtered = items.filter((i) => i.category === "Pendidikan & Kesehatan");
-  return <SubsidyCardGrid items={filtered} toggleSubsidy={toggleSubsidy} />;
+  return <SubsidyCardGrid items={filtered} toggleSubsidy={toggleSubsidy} onOpenDetail={onOpenDetail} />;
 }

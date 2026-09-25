@@ -267,7 +267,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               </div>
               <div>
                 <h2 className="text-base lg:text-xl 2xl:text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Grid Kelistrikan Nasional</h2>
-                <p className="text-[10px] lg:text-xs text-[#6B8A8A] mt-0.5 lg:mt-1">Sinkronisasi data dengan modul produksi utama</p>
               </div>
             </div>
 
@@ -288,9 +287,9 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
+          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-4 w-4" />
           </button>
         </div>
 

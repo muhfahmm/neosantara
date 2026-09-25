@@ -319,11 +319,11 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
           <div className="px-4 lg:px-6 2xl:px-8 py-3.5 lg:py-4.5 2xl:py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
             <div className="flex items-center gap-2.5 lg:gap-3">
               <div className="p-1.5 lg:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30"><Utensils className="h-4 w-4 lg:h-5 lg:w-5 2xl:h-6 2xl:w-6 text-[#00FFAA]" /></div>
-              <div><h2 className="text-base lg:text-xl 2xl:text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Industri Pangan & Konsumsi Masyarakat</h2><p className="text-[10px] lg:text-xs text-[#6B8A8A] mt-0.5 lg:mt-1">Neraca produksi dan kebutuhan pasokan makanan nasional</p></div>
+              <div><h2 className="text-base lg:text-xl 2xl:text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Industri Pangan & Konsumsi Masyarakat</h2></div>
             </div>
-            <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
-              <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-5 w-5" />
+            <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
             </button>
           </div>
           {/* CONTENT */}

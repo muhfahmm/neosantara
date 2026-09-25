@@ -368,20 +368,18 @@ export default function PerdaganganModal({
         <div className="bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
 
           {/* HEADER */}
-          <div className="px-4 lg:px-6 2xl:px-8 py-3.5 lg:py-4.5 2xl:py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
-            <div className="flex items-center gap-4 lg:gap-6 2xl:gap-8">
-              <div className="flex items-center gap-2.5 lg:gap-3">
-                <div className="p-1.5 lg:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30 shrink-0">
-                  <ArrowRightLeft className="h-4 w-4 lg:h-5 lg:w-5 2xl:h-6 2xl:w-6 text-[#00FFAA]" />
-                </div>
-                <div>
-                  <h2 className="text-base lg:text-xl 2xl:text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Pasar Perdagangan Global</h2>
-                </div>
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+                <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+              </div>
+              <div>
+                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Pasar Perdagangan Global</h2>
               </div>
             </div>
-            <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
-              <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-5 w-5" />
+            <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
             </button>
           </div>
 
@@ -390,34 +388,34 @@ export default function PerdaganganModal({
               Kelola aktivitas jual dan beli komoditas nasional untuk mengoptimalkan pendapatan dan kebutuhan anggaran belanja negara.
             </p>
 
-            <div className="flex flex-wrap gap-2 lg:gap-2.5 2xl:gap-3 mb-4 lg:mb-6 2xl:mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 lg:gap-2.5 mb-4 lg:mb-6">
               <button
                 onClick={() => setIsMitraOpen(true)}
-                className="flex-1 min-w-[120px] lg:min-w-[135px] 2xl:min-w-[150px] py-2 lg:py-2.5 2xl:py-3 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-[10px] lg:text-xs font-bold uppercase tracking-wide cursor-pointer transition-all"
+                className="px-2 py-2 lg:py-2.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider cursor-pointer transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px]"
               >
                 Mitra
               </button>
               <button
                 onClick={() => setIsJualOpen(true)}
-                className="flex-1 min-w-[120px] lg:min-w-[135px] 2xl:min-w-[150px] py-2 lg:py-2.5 2xl:py-3 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-[10px] lg:text-xs font-bold uppercase tracking-wide cursor-pointer transition-all"
+                className="px-2 py-2 lg:py-2.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider cursor-pointer transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px]"
               >
                 Jual
               </button>
               <button
                 onClick={() => { setActiveTradePartner(null); setActiveOfferProduct(undefined); setIsConfirmBeliOpen(true); }}
-                className="flex-1 min-w-[120px] lg:min-w-[135px] 2xl:min-w-[150px] py-2 lg:py-2.5 2xl:py-3 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-[10px] lg:text-xs font-bold uppercase tracking-wide cursor-pointer transition-all"
+                className="px-2 py-2 lg:py-2.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider cursor-pointer transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px]"
               >
                 Beli
               </button>
               <button
                 onClick={() => setIsJualOpen(true)}
-                className="flex-1 min-w-[120px] lg:min-w-[135px] 2xl:min-w-[150px] py-2 lg:py-2.5 2xl:py-3 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-[10px] lg:text-xs font-bold uppercase tracking-wide cursor-pointer transition-all"
+                className="px-2 py-2 lg:py-2.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider cursor-pointer transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px]"
               >
                 Jual Semuanya
               </button>
               <button
                 onClick={() => setIsOfferOpen(!isOfferOpen)}
-                className={`flex-1 min-w-[120px] lg:min-w-[135px] 2xl:min-w-[150px] py-2 lg:py-2.5 2xl:py-3 rounded-lg text-[10px] lg:text-xs font-bold uppercase tracking-wide cursor-pointer transition-all border ${isOfferOpen ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]' : 'bg-[#0F2424] border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A]'}`}
+                className={`px-2 py-2 lg:py-2.5 rounded-lg text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider cursor-pointer transition-all border flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${isOfferOpen ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]' : 'bg-[#0F2424] border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A]'}`}
               >
                 Tawaran Pembelian
               </button>
