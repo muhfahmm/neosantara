@@ -4,6 +4,7 @@ import {
   X, Shield, Angry, Smile, Banknote, Anchor, Lock, Package, 
   ChevronDown, Clock, FileText, Plus, Users
 } from "lucide-react";
+import { createPortal } from "react-dom";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 import { calculateKeamananVoting } from "../voting_logic/keamananPBB_logic";
 
@@ -247,30 +248,30 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
     countries: CountryOption[] 
   }) => {
     if (!isOpen) return null;
-    return (
-      <div className="fixed inset-0 z-[80] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-black/60 backdrop-blur-sm pointer-events-auto">
-        <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-          <div className="px-8 py-5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30">
-                <Users className="h-6 w-6 text-[#00FFAA]" />
+    return createPortal(
+      <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
+        <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <Users className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-[#E0E0E0] uppercase tracking-wide">{title}</h3>
-                <p className="text-xs text-[#6B8A8A] font-medium mt-0.5">
+                <h3 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">{title}</h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">
                   {countryList.length} negara terdaftar
                 </p>
               </div>
             </div>
             <button 
               onClick={onClose} 
-              className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA]/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
+              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
             >
-              <span className="text-[10px] font-bold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-5 w-5" />
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-8 bg-[#0F2424] relative z-10 custom-scrollbar flex flex-col items-center">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] relative z-10 custom-scrollbar flex flex-col items-center">
             <div className="w-full">
               {countryList.length === 0 ? (
                 <div className="text-center py-12">
@@ -293,16 +294,9 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
               )}
             </div>
           </div>
-          <div className="flex items-center justify-end gap-4 px-8 py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] relative z-10 shrink-0">
-            <button 
-              onClick={onClose} 
-              className="px-6 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA]/20 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer"
-            >
-              Tutup
-            </button>
-          </div>
         </div>
-      </div>
+      </div>,
+      document.body
     );
   };
 
@@ -352,27 +346,30 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
       </div>
 
       {/* Modal Buat Resolusi (Besar) */}
-      {isResolusiModalOpen && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative pointer-events-auto shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <div className="px-6 py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30">
-                  <Shield className="h-6 w-6 text-[#00FFAA]" />
+      {isResolusiModalOpen && createPortal(
+        <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                  <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                 </div>
                 <div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-[#E0E0E0] uppercase tracking-wide">Resolusi Dewan Keamanan</h3>
-                  <p className="text-xs text-[#6B8A8A] font-medium mt-0.5">Pilih aksi, durasi, dan target resolusi Anda.</p>
+                  <h3 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Resolusi Dewan Keamanan PBB</h3>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">Pilih aksi, durasi, dan target resolusi Anda.</p>
                 </div>
               </div>
-              <button onClick={() => setIsResolusiModalOpen(false)} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA]/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
-                <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-5 w-5" />
+              <button 
+                onClick={() => setIsResolusiModalOpen(false)} 
+                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+              >
+                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+                <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="flex-1 p-8 bg-[#0F2424] relative z-10 flex flex-col items-center justify-center overflow-y-auto custom-scrollbar pr-2">
-              <div className="w-full max-w-4xl space-y-8">
+            <div className="flex-1 p-4 sm:p-6 bg-[#0F2424] relative z-10 flex flex-col items-center overflow-y-auto custom-scrollbar">
+              <div className="w-full max-w-4xl space-y-6 sm:space-y-8 py-2">
                 <div>
                   <div className="flex flex-wrap justify-center items-center gap-4">
                     {RESOLUTION_ACTIONS.map((action) => {
@@ -499,28 +496,31 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
             </div>
           </div>
         </div>
-      )}
+      , document.body)}
 
       {/* Modal Pilih Negara (Besar) */}
-      {isCountryModalOpen && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-5xl h-[84vh] overflow-hidden shadow-2xl flex flex-col relative pointer-events-auto animate-in fade-in zoom-in-95 duration-150">
-            <div className="px-8 py-5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30">
-                  <FileText className="h-6 w-6 text-[#00FFAA]" />
+      {isCountryModalOpen && createPortal(
+        <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                  <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-[#E0E0E0] uppercase tracking-wide">Pilih Negara Target</h3>
-                  <p className="text-xs text-[#6B8A8A] font-medium mt-0.5">Pilih benua, lalu pilih negara target Anda.</p>
+                  <h3 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Pilih Negara Target</h3>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">Pilih benua, lalu pilih negara target Anda.</p>
                 </div>
               </div>
-              <button onClick={() => setIsCountryModalOpen(false)} className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA]/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
-                <span className="text-[10px] font-bold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-5 w-5" />
+              <button
+                onClick={() => setIsCountryModalOpen(false)}
+                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+              >
+                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+                <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-8 bg-[#0F2424] relative z-10 custom-scrollbar flex flex-col items-center">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] relative z-10 custom-scrollbar flex flex-col items-center">
               <div className="w-full max-w-4xl">
                 <div className="flex flex-wrap justify-center gap-2.5 mb-8">
                   {Object.keys(groupedCountries).map((continent) => (
@@ -528,7 +528,9 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
                       key={continent}
                       onClick={() => setActiveContinent(continent)}
                       className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                        activeContinent === continent ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-lg shadow-[#00FFAA]/20' : 'bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#6B8A8A] hover:text-[#E0E0E0] hover:border-[#00FFAA]/40'
+                        activeContinent === continent
+                          ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-lg shadow-[#00FFAA]/20'
+                          : 'bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#6B8A8A] hover:text-[#E0E0E0] hover:border-[#00FFAA]/40'
                       }`}
                     >
                       {continent} ({groupedCountries[continent].length})
@@ -537,28 +539,28 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
                 </div>
                 {activeContinent && groupedCountries[activeContinent] && (
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                    {groupedCountries[activeContinent].filter(c => c.id !== selectedCountry?.id).map((c) => {
-                      const isSelected = selectedTarget?.id === c.id;
-                      return (
-                        <button
-                          key={c.id}
-                          onClick={() => { setSelectedTarget(prev => prev?.id === c.id ? null : c); setIsCountryModalOpen(false); }}
-                          className={`flex flex-col items-center p-3 rounded-xl border transition-all cursor-pointer ${isSelected ? 'bg-[#00FFAA]/20 border-[#00FFAA] text-[#00FFAA] shadow-md' : 'bg-[#0A1A1A] border-[#00FFAA]/20 hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 text-[#E0E0E0]'}`}
-                        >
-                          {renderFlag(c.iso, c.name)}
-                          <span className={`text-[11px] font-semibold mt-2 text-center leading-tight ${isSelected ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>{c.name}</span>
-                        </button>
-                      );
-                    })}
+                    {groupedCountries[activeContinent]
+                      .filter(c => c.id !== selectedCountry?.id)
+                      .map((c) => {
+                        const isSelected = selectedTarget?.id === c.id;
+                        return (
+                          <button
+                            key={c.id}
+                            onClick={() => { setSelectedTarget(prev => prev?.id === c.id ? null : c); setIsCountryModalOpen(false); }}
+                            className={`flex flex-col items-center p-3 rounded-xl border transition-all cursor-pointer ${isSelected ? 'bg-[#00FFAA]/20 border-[#00FFAA] text-[#00FFAA] shadow-md' : 'bg-[#0A1A1A] border-[#00FFAA]/20 hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 text-[#E0E0E0]'}`}
+                          >
+                            {renderFlag(c.iso, c.name)}
+                            <span className={`text-[11px] font-semibold mt-2 text-center leading-tight ${isSelected ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>{c.name}</span>
+                          </button>
+                        );
+                      })}
                   </div>
                 )}
               </div>
             </div>
-            <div className="flex items-center justify-end gap-4 px-8 py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] relative z-10 shrink-0">
-              <button onClick={() => setIsCountryModalOpen(false)} className="px-6 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA]/20 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer">Tutup</button>
-            </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* 🔥 Modal Daftar Negara Setuju & Menentang - SEKARANG FULL WIDTH & 2 KOLOM */}

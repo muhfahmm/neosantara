@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { X, Shield, Globe, Vote, Crown, DollarSign, Handshake, Hammer, Flag, Feather, Sword, Check } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import { PROFILES_IDEOLOGY_DATA } from "@/../../json/semua_fitur_negara/0_profiles/index";
@@ -45,6 +46,7 @@ const IDEOLOGY_ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDetail, setCountryDetail }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"ideologi" | "dunia">("ideologi");
   const [selectedIdeology, setSelectedIdeology] = useState<string | null>(null);
   
@@ -55,6 +57,10 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
 
   const [worldIdeologies, setWorldIdeologies] = useState<{ country: string; ideology: string }[]>([]);
   const [sortMode, setSortMode] = useState<"default" | "unavailable-last" | "az" | "za">("default");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -103,7 +109,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
     });
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
   const ideology = countryDetail?.ideology || "Demokratis Pancasila";
   const anggaran = Number(countryDetail?.anggaran) || 0;
 
@@ -132,7 +138,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
     setIsConfirmOpen(false);
   };
 
-  return (
+  return createPortal(
     <>
       {/* 🔥 RENDER KONFIRMASI MODAL BARU */}
       <IdeologiConfirmModal
@@ -152,18 +158,21 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
         currentMoney={anggaran}
       />
 
-      <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+      <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
         <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-          <div className="px-8 py-5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30">
-                <Shield className="h-6 w-6 text-[#00FFAA]" />
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30">
+                <Shield className="h-5 w-5 text-[#00FFAA]" />
               </div>
-              <h2 className="text-xl font-bold text-[#E0E0E0] tracking-wide leading-none uppercase">Ideologi Dasar Kedaulatan</h2>
+              <h3 className="text-sm sm:text-base font-bold text-[#E0E0E0] tracking-wide uppercase">Ideologi Dasar Kedaulatan</h3>
             </div>
-            <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA]/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
-              <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-5 w-5" />
+            <button
+              onClick={onClose}
+              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+            >
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
             </button>
           </div>
 
@@ -295,6 +304,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
           </div>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 }

@@ -1,6 +1,7 @@
 "use client"
-import React from "react";
-import { X, Coins } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { X, Coins, Shield } from "lucide-react";
 
 interface IdeologiConfirmModalProps {
   isOpen: boolean;
@@ -21,50 +22,81 @@ export default function IdeologiConfirmModal({
   bonusText,
   cost,
 }: IdeologiConfirmModalProps) {
-  if (!isOpen) return null;
+  const [mounted, setMounted] = useState(false);
 
-  return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm pointer-events-auto">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-[480px] overflow-hidden shadow-2xl relative font-sans animate-in fade-in zoom-in-95 duration-150 flex flex-col items-center p-8">
-        <button onClick={onClose} className="absolute top-4 right-4 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer">
-          <X className="w-5 h-5" />
-        </button>
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-        <div className="relative w-20 h-24 flex-shrink-0 rounded-xl flex items-center justify-center shadow-lg border border-[#00FFAA]/30 bg-[#0A1A1A] mt-2">
-          <div className="absolute top-1 left-2 w-2 h-4 bg-[#00FFAA]/20 rounded-full" />
-          <div className="absolute top-1 right-2 w-2 h-4 bg-[#00FFAA]/20 rounded-full" />
-          <div className="text-[#00FFAA] transform scale-125">
-            {icon}
+  if (!isOpen || !mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+        
+        {/* HEADER */}
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30">
+              <Shield className="h-5 w-5 text-[#00FFAA]" />
+            </div>
+            <h3 className="text-sm sm:text-base font-bold text-[#E0E0E0] tracking-wide uppercase">
+              Konfirmasi Perubahan Ideologi
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+          >
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* CONTENT */}
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] relative z-10 custom-scrollbar flex flex-col items-center justify-center">
+          <div className="max-w-md w-full flex flex-col items-center bg-[#0A1A1A] border border-[#00FFAA]/20 p-5 sm:p-6 rounded-2xl shadow-xl">
+            <div className="relative w-16 h-20 flex-shrink-0 rounded-xl flex items-center justify-center shadow-lg border border-[#00FFAA]/30 bg-[#0A1A1A]">
+              <div className="absolute top-1 left-2 w-2 h-4 bg-[#00FFAA]/20 rounded-full" />
+              <div className="absolute top-1 right-2 w-2 h-4 bg-[#00FFAA]/20 rounded-full" />
+              <div className="text-[#00FFAA] transform scale-110">
+                {icon}
+              </div>
+            </div>
+
+            <h3 className="text-xl font-black text-[#E0E0E0] mt-4 text-center">{title}</h3>
+            <p className="text-[#00D68F] text-sm font-semibold mt-1 text-center">{bonusText}</p>
+
+            <div className="flex items-center gap-2.5 mt-4 text-sm font-bold text-[#E0E0E0] bg-[#051111] px-4 py-2 rounded-xl border border-[#00FFAA]/20">
+              <Coins className="w-4 h-4 text-[#00D68F]" />
+              <span>{cost.toLocaleString('id-ID')} EM</span>
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="flex w-full gap-4 mt-6">
+              <button
+                onClick={onConfirm}
+                className="flex-1 py-2.5 rounded-xl bg-[#00D68F] hover:bg-[#00C282] text-[#0A1A1A] font-extrabold text-xs uppercase shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                Seketika
+              </button>
+              <button
+                onClick={onConfirm}
+                className="flex-1 py-2.5 rounded-xl bg-[#00D68F] hover:bg-[#00C282] text-[#0A1A1A] font-extrabold text-xs uppercase shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                Ubah
+              </button>
+            </div>
+            
+            <p className="text-[10px] text-[#6B8A8A] font-bold mt-3 tracking-widest uppercase text-center">
+              * Biaya akan dipotong dari kas negara
+            </p>
           </div>
         </div>
-
-        <h3 className="text-xl font-black text-[#E0E0E0] mt-6 text-center">{title}</h3>
-        <p className="text-[#00FFAA] text-sm font-semibold mt-1 text-center">{bonusText}</p>
-
-        <div className="flex items-center gap-3 mt-4 text-sm font-bold text-[#E0E0E0] bg-[#0A1A1A] px-4 py-2 rounded-xl border border-[#00FFAA]/20">
-          <Coins className="w-5 h-5 text-amber-400" />
-          <span>{cost.toLocaleString('id-ID')} EM</span>
-        </div>
-
-        <div className="flex w-full gap-4 mt-6">
-          <button
-            onClick={onConfirm}
-            className="flex-1 py-3 rounded-xl bg-gradient-to-b from-[#ffe07d] via-[#fcae1e] to-[#c77a00] text-[#0A1A1A] font-black text-sm uppercase shadow-md hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
-          >
-            Seketika
-          </button>
-          <button
-            onClick={onConfirm}
-            className="flex-1 py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-sm uppercase shadow-md hover:bg-[#00FFAA]/80 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
-          >
-            Ubah
-          </button>
-        </div>
-        
-        <p className="text-[10px] text-[#6B8A8A] font-bold mt-4 tracking-widest uppercase">
-          * Biaya akan dipotong dari kas negara
-        </p>
       </div>
-    </div>
+    </div>,
+    document.body
   );
-}
+}
+
+

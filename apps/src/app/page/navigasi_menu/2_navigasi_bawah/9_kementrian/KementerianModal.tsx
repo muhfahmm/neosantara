@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   X,
   Landmark,
@@ -266,16 +267,16 @@ const canAffordUpgrade = (
   const remainingCashAfterUpgrade = currentMoney - totalCost;
   const projectedNetBalance = getProjectedNetBalance(detail, dept.id, targetLevel);
 
-  // Upgrade hanya diperbolehkan jika kas saat ini cukup untuk membayar biaya upgrade
-  // dan setelah upgrade pendapatan harian masih tidak negatif.
   if (remainingCashAfterUpgrade < 0) return false;
   return projectedNetBalance >= 0;
 };
 
 export default function KementerianModal({ isOpen, onClose, countryDetail, setCountryDetail, resetTrigger }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>("kementerian");
   const [levels, setLevels] = useState<Record<string, number>>({});
   const [infoTarget, setInfoTarget] = useState<Department | null>(null);
+  const [showGeneralInfo, setShowGeneralInfo] = useState(false);
   const [confirmUpgrade, setConfirmUpgrade] = useState<{
     dept: Department;
     fromLevel: number;
@@ -291,16 +292,21 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
   const money = countryDetail?.anggaran ?? 325800;
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
     if (resetTrigger) {
       setActiveTab("kementerian");
       setLevels({});
       setInfoTarget(null);
+      setShowGeneralInfo(false);
       setConfirmUpgrade(null);
       setConfirmDowngrade(null);
     }
   }, [resetTrigger]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   const getLevel = (id: string) => {
     return levels[id] ?? getDepartmentLevel(countryDetail, id);
@@ -318,17 +324,15 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
   const handleLevelBoxClick = (dept: Department, targetLevel: number) => {
     const currentLevel = getLevel(dept.id);
 
-    if (targetLevel === currentLevel) return; // tidak ada aksi
+    if (targetLevel === currentLevel) return;
 
     if (targetLevel > currentLevel) {
-      // Upgrade
       if (targetLevel > MAX_LEVEL) return;
       const totalCost = getTotalUpgradeCost(currentLevel, targetLevel);
       const affordable = canAffordUpgrade(countryDetail, money, dept, currentLevel, targetLevel);
       if (!affordable) return;
       setConfirmUpgrade({ dept, fromLevel: currentLevel, targetLevel, cost: totalCost });
     } else if (targetLevel < currentLevel) {
-      // Downgrade
       if (targetLevel < 1) return;
       setConfirmDowngrade({ dept, fromLevel: currentLevel, targetLevel });
     }
@@ -366,181 +370,226 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
 
   const activeData = TABS.find((t) => t.key === activeTab)?.data ?? [];
 
-  return (
+  return createPortal(
     <>
       {/* ========== MODAL UTAMA ========== */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+      <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
         <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
           
           {/* Header */}
-          <div className="px-4 sm:px-8 py-3 sm:py-5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0F2424] relative z-10 flex-wrap gap-2">
-            <div className="flex items-center gap-3 sm:gap-8 flex-wrap">
-              <div className="flex items-center gap-2.5">
-                <Landmark className="h-5 w-5 sm:h-6 sm:w-6 text-[#00FFAA] shrink-0" />
-                <div>
-                  <h2 className="text-lg sm:text-2xl font-bold text-[#E0E0E0] tracking-tight leading-none uppercase">
-                    Dewan Kabinet Menteri
-                  </h2>
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+            <div className="flex items-center gap-3 sm:gap-6 flex-wrap">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30">
+                  <Landmark className="h-5 w-5 text-[#00FFAA] shrink-0" />
                 </div>
+                <h3 className="text-sm sm:text-base font-bold text-[#E0E0E0] tracking-wide uppercase">
+                  Dewan Kabinet Menteri
+                </h3>
+                <button
+                  onClick={() => setShowGeneralInfo(true)}
+                  className="p-1 text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#00FFAA]/10 rounded-lg transition-colors cursor-pointer"
+                  title="Informasi & Panduan Dewan Kabinet"
+                >
+                  <Info className="h-4 w-4" />
+                </button>
               </div>
-              <div className="text-[11px] sm:text-xs font-bold text-[#00FFAA] bg-[#0A1A1A] px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-[#00FFAA]/20">
+              <div className="text-[11px] sm:text-xs font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/20">
                 Kas: {money.toLocaleString("id-ID")} EM
               </div>
             </div>
-            <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#00FFAA]/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
-              <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-5 w-5" />
+
+            <button
+              onClick={onClose}
+              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
+            >
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
             </button>
           </div>
 
-          {/* Tabs */}
-          <div className="flex gap-1 sm:gap-2 px-4 sm:px-8 pt-3 border-b border-[#00FFAA]/20 relative z-10 overflow-x-auto no-scrollbar bg-[#0A1A1A]">
-            {TABS.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`px-3.5 sm:px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wide rounded-t-lg border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                  activeTab === tab.key
-                    ? "border-[#00FFAA] text-[#00FFAA] bg-[#0F2424]"
-                    : "border-transparent text-[#6B8A8A] hover:text-[#E0E0E0]"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Content */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#0F2424] relative z-10 custom-scrollbar">
-            <p className="text-[11px] sm:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-4 sm:mb-6">
-              Kelola kabinet pemerintahan tertinggi negara untuk menjaga kinerja pelayanan birokrasi
-              Anda tetap berintegritas. Tekan salah satu kotak level untuk melompat langsung ke level
-              tersebut — biaya akan dijumlahkan dari semua level yang dilewati. Tekan kotak yang sudah terisi
-              untuk menurunkan level (downgrade) dan mengurangi biaya operasional harian.
-            </p>
-
-            <div className="space-y-4">
-              {activeData.map((dept) => {
-                const level = getLevel(dept.id);
-                const nextStepCost = getNextStepCost(level);
-                const income = getDailyCost(level);
-                const Icon = dept.icon;
-                const maxed = level >= MAX_LEVEL;
-
+          {/* BODY LAYOUT WITH LEFT SIDEBAR & RIGHT CONTENT */}
+          <div className="flex-1 flex min-h-0 relative z-10">
+            {/* LEFT SIDEBAR TABS */}
+            <div className="w-44 sm:w-52 lg:w-56 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto custom-scrollbar shrink-0">
+              {TABS.map((tab) => {
+                const isActive = activeTab === tab.key;
                 return (
-                  <div
-                    key={dept.id}
-                    className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl overflow-hidden shadow-sm"
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key)}
+                    className={`flex items-center justify-between w-full px-3.5 py-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                      isActive
+                        ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
+                        : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
+                    }`}
                   >
-                    {/* Header hijau */}
-                    <div className="bg-[#0F2424] px-4 py-2.5 flex items-center justify-between border-b border-[#00FFAA]/20">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => setInfoTarget(dept)}
-                          className="text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer transition-colors"
-                        >
-                          <Info className="h-4 w-4" />
-                        </button>
-                        <span className="text-[#E0E0E0] text-sm font-bold">{dept.name}</span>
-                      </div>
-                      <span className="text-[#00FFAA] text-[10px] font-bold uppercase bg-[#0A1A1A] px-2 py-0.5 rounded border border-[#00FFAA]/20">
-                        Level {level}/{MAX_LEVEL}
-                      </span>
-                    </div>
-
-                    <div className="p-4 flex items-center gap-4">
-                      <div className="h-16 w-16 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 flex items-center justify-center shrink-0">
-                        <Icon className="h-8 w-8 text-[#00FFAA]" />
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 mb-2 text-[#E0E0E0] font-bold text-sm">
-                          <span className="h-3 w-3 rounded-full bg-[#00FFAA] inline-block shadow-[0_0_8px_#00FFAA]" />
-                          {income.toLocaleString("id-ID")} EM per hari
-                        </div>
-
-                        {/* 10 kotak level - dengan dukungan downgrade */}
-                        <div className="flex gap-1">
-                          {Array.from({ length: MAX_LEVEL }).map((_, i) => {
-                            const boxLevel = i + 1;
-                            const filled = boxLevel <= level;
-                            const isJumpTarget = boxLevel > level;
-                            const jumpCost = isJumpTarget ? getTotalUpgradeCost(level, boxLevel) : 0;
-                            const projectedNetBalance = isJumpTarget
-                              ? getProjectedNetBalance(countryDetail, dept.id, boxLevel)
-                              : 0;
-                            const remainingCashAfterUpgrade = isJumpTarget ? money - jumpCost : 0;
-                            const willBeDailyNegative = isJumpTarget && projectedNetBalance < 0;
-                            const canAffordJump = isJumpTarget && canAffordUpgrade(countryDetail, money, dept, level, boxLevel);
-
-                            return (
-                              <button
-                                key={i}
-                                type="button"
-                                onClick={() => handleLevelBoxClick(dept, boxLevel)}
-                                disabled={boxLevel === level || (isJumpTarget && !canAffordJump)}
-                                title={
-                                  boxLevel === level
-                                    ? `Level saat ini`
-                                    : filled
-                                    ? `Klik untuk turun ke level ${boxLevel} (downgrade)`
-                                    : canAffordJump
-                                    ? `Lompat ke level ${boxLevel}: ${jumpCost.toLocaleString("id-ID")} EM`
-                                    : willBeDailyNegative
-                                    ? `Upgrade ini akan membuat pendapatan harian menjadi negatif` 
-                                    : remainingCashAfterUpgrade < 0
-                                    ? `Kas saat ini tidak cukup untuk level ${boxLevel} (butuh ${jumpCost.toLocaleString("id-ID")} EM)`
-                                    : `Upgrade ini tidak didukung oleh kas dan pendapatan harian saat ini`
-                                }
-                                className={`h-4 flex-1 rounded-sm transition-all ${
-                                  boxLevel === level
-                                    ? "bg-[#00FFAA] cursor-default shadow-[0_0_8px_#00FFAA]"
-                                    : filled
-                                    ? "bg-[#00FFAA]/70 hover:bg-[#00FFAA] cursor-pointer"
-                                    : canAffordJump
-                                    ? "bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] hover:bg-[#00FFAA]/20 cursor-pointer"
-                                    : "bg-gray-800 border border-gray-700 cursor-not-allowed opacity-50"
-                                }`}
-                              />
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      <div
-                        title={
-                          maxed
-                            ? "Level maksimum"
-                            : `Upgrade 1 level: ${LEVEL_UP_COST[level + 1]?.toLocaleString("id-ID")} EM`
-                        }
-                        className={`h-12 w-12 shrink-0 rounded-lg border flex items-center justify-center ${
-                          maxed
-                            ? "border-[#00FFAA]/10 bg-[#0F2424] text-[#6B8A8A]"
-                            : "border-[#00FFAA]/40 bg-[#00FFAA] text-[#0A1A1A] shadow-md"
-                        }`}
-                      >
-                        <Hammer className="h-5 w-5" />
-                      </div>
-                    </div>
-
-                    {!maxed && (
-                      <div className="px-4 pb-3 -mt-1 text-[10px] font-bold text-[#6B8A8A]">
-                        Upgrade ke level {level + 1}: <span className="text-[#00FFAA]">{LEVEL_UP_COST[level + 1]?.toLocaleString("id-ID")} EM</span> &nbsp;•&nbsp;
-                        Tekan kotak level manapun untuk lompat langsung ke level tersebut
-                      </div>
-                    )}
-                  </div>
+                    <span className="text-xs font-bold uppercase tracking-wider">{tab.label}</span>
+                  </button>
                 );
               })}
+            </div>
+
+            {/* RIGHT CONTENT AREA */}
+            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#0F2424] relative z-10 custom-scrollbar">
+              <div className="space-y-4">
+                {activeData.map((dept) => {
+                  const level = getLevel(dept.id);
+                  const nextStepCost = getNextStepCost(level);
+                  const income = getDailyCost(level);
+                  const Icon = dept.icon;
+                  const maxed = level >= MAX_LEVEL;
+
+                  return (
+                    <div
+                      key={dept.id}
+                      className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl overflow-hidden shadow-sm"
+                    >
+                      {/* Header hijau */}
+                      <div className="bg-[#0F2424] px-4 py-2.5 flex items-center justify-between border-b border-[#00FFAA]/20">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setInfoTarget(dept)}
+                            className="text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer transition-colors"
+                          >
+                            <Info className="h-4 w-4" />
+                          </button>
+                          <span className="text-[#E0E0E0] text-sm font-bold">{dept.name}</span>
+                        </div>
+                        <span className="text-[#00FFAA] text-[10px] font-bold uppercase bg-[#0A1A1A] px-2 py-0.5 rounded border border-[#00FFAA]/20">
+                          Level {level}/{MAX_LEVEL}
+                        </span>
+                      </div>
+
+                      <div className="p-4 flex items-center gap-4">
+                        <div className="h-16 w-16 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 flex items-center justify-center shrink-0">
+                          <Icon className="h-8 w-8 text-[#00FFAA]" />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 mb-2 text-[#E0E0E0] font-bold text-sm">
+                            <span className="h-3 w-3 rounded-full bg-[#00FFAA] inline-block shadow-[0_0_8px_#00FFAA]" />
+                            {income.toLocaleString("id-ID")} EM per hari
+                          </div>
+
+                          {/* 10 kotak level - dengan dukungan downgrade */}
+                          <div className="flex gap-1">
+                            {Array.from({ length: MAX_LEVEL }).map((_, i) => {
+                              const boxLevel = i + 1;
+                              const filled = boxLevel <= level;
+                              const isJumpTarget = boxLevel > level;
+                              const jumpCost = isJumpTarget ? getTotalUpgradeCost(level, boxLevel) : 0;
+                              const projectedNetBalance = isJumpTarget
+                                ? getProjectedNetBalance(countryDetail, dept.id, boxLevel)
+                                : 0;
+                              const remainingCashAfterUpgrade = isJumpTarget ? money - jumpCost : 0;
+                              const willBeDailyNegative = isJumpTarget && projectedNetBalance < 0;
+                              const canAffordJump = isJumpTarget && canAffordUpgrade(countryDetail, money, dept, level, boxLevel);
+
+                              return (
+                                <button
+                                  key={i}
+                                  type="button"
+                                  onClick={() => handleLevelBoxClick(dept, boxLevel)}
+                                  disabled={boxLevel === level || (isJumpTarget && !canAffordJump)}
+                                  title={
+                                    boxLevel === level
+                                      ? `Level saat ini`
+                                      : filled
+                                      ? `Klik untuk turun ke level ${boxLevel} (downgrade)`
+                                      : canAffordJump
+                                      ? `Lompat ke level ${boxLevel}: ${jumpCost.toLocaleString("id-ID")} EM`
+                                      : willBeDailyNegative
+                                      ? `Upgrade ini akan membuat pendapatan harian menjadi negatif` 
+                                      : remainingCashAfterUpgrade < 0
+                                      ? `Kas saat ini tidak cukup untuk level ${boxLevel} (butuh ${jumpCost.toLocaleString("id-ID")} EM)`
+                                      : `Upgrade ini tidak didukung oleh kas dan pendapatan harian saat ini`
+                                  }
+                                  className={`h-4 flex-1 rounded-sm transition-all ${
+                                    boxLevel === level
+                                      ? "bg-[#00FFAA] cursor-default shadow-[0_0_8px_#00FFAA]"
+                                      : filled
+                                      ? "bg-[#00FFAA]/70 hover:bg-[#00FFAA] cursor-pointer"
+                                      : canAffordJump
+                                      ? "bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] hover:bg-[#00FFAA]/20 cursor-pointer"
+                                      : "bg-gray-800 border border-gray-700 cursor-not-allowed opacity-50"
+                                  }`}
+                                />
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        <div
+                          title={
+                            maxed
+                              ? "Level maksimum"
+                              : `Upgrade 1 level: ${LEVEL_UP_COST[level + 1]?.toLocaleString("id-ID")} EM`
+                          }
+                          className={`h-12 w-12 shrink-0 rounded-lg border flex items-center justify-center ${
+                            maxed
+                              ? "border-[#00FFAA]/10 bg-[#0F2424] text-[#6B8A8A]"
+                              : "border-[#00FFAA]/40 bg-[#00FFAA] text-[#0A1A1A] shadow-md"
+                          }`}
+                        >
+                          <Hammer className="h-5 w-5" />
+                        </div>
+                      </div>
+
+                      {!maxed && (
+                        <div className="px-4 pb-3 -mt-1 text-[10px] font-bold text-[#6B8A8A]">
+                          Upgrade ke level {level + 1}: <span className="text-[#00FFAA]">{LEVEL_UP_COST[level + 1]?.toLocaleString("id-ID")} EM</span> &nbsp;•&nbsp;
+                          Tekan kotak level manapun untuk lompat langsung ke level tersebut
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* ========== GENERAL PANDUAN POPUP ========== */}
+      {showGeneralInfo && (
+        <div
+          className="fixed inset-0 z-[210] flex items-center justify-center p-4 bg-transparent pointer-events-auto"
+          onClick={() => setShowGeneralInfo(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-md p-6 shadow-2xl relative font-sans"
+          >
+            <button
+              onClick={() => setShowGeneralInfo(false)}
+              className="absolute top-3 right-3 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30">
+                <Info className="h-5 w-5 text-[#00FFAA]" />
+              </div>
+              <h3 className="text-base font-bold text-[#E0E0E0] uppercase">Panduan Dewan Kabinet</h3>
+            </div>
+            <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-5">
+              Kelola kabinet pemerintahan tertinggi negara untuk menjaga kinerja pelayanan birokrasi Anda tetap berintegritas. Tekan salah satu kotak level untuk melompat langsung ke level tersebut — biaya akan dijumlahkan dari semua level yang dilewati. Tekan kotak yang sudah terisi untuk menurunkan level (downgrade) dan mengurangi biaya operasional harian.
+            </p>
+            <button
+              onClick={() => setShowGeneralInfo(false)}
+              className="w-full py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-extrabold text-xs uppercase hover:bg-[#00FFAA]/80 transition-all cursor-pointer shadow-md"
+            >
+              Mengerti
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ========== INFO POPUP ========== */}
       {infoTarget && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm pointer-events-auto"
+          className="fixed inset-0 z-[210] flex items-center justify-center p-4 bg-transparent pointer-events-auto"
           onClick={() => setInfoTarget(null)}
         >
           <div
@@ -575,7 +624,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
       {/* ========== CONFIRMATION UPGRADE POPUP ========== */}
       {confirmUpgrade && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm pointer-events-auto"
+          className="fixed inset-0 z-[210] flex items-center justify-center p-4 bg-transparent pointer-events-auto"
           onClick={() => setConfirmUpgrade(null)}
         >
           <div
@@ -669,7 +718,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
       {/* ========== CONFIRMATION DOWNGRADE POPUP ========== */}
       {confirmDowngrade && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm pointer-events-auto"
+          className="fixed inset-0 z-[210] flex items-center justify-center p-4 bg-transparent pointer-events-auto"
           onClick={() => setConfirmDowngrade(null)}
         >
           <div
@@ -733,6 +782,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
           </div>
         </div>
       )}
-    </>
+    </>,
+    document.body
   );
-}
+}

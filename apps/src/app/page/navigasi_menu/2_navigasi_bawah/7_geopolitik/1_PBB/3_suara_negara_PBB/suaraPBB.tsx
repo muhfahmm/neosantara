@@ -76,11 +76,11 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
 
       <div className="overflow-x-auto">
         <table className="w-full text-xs border-collapse">
-          <thead className="bg-[#051111] border-b border-[#00FFAA]/20">
+          <thead className="bg-[#051111] border-b border-[#00FFAA]/20 sticky top-0 z-10">
             <tr>
-              <th className="px-3 py-2.5 text-left font-black text-[#00FFAA] uppercase tracking-wider">Negara</th>
-              <th className="px-3 py-2.5 text-left font-black text-[#00FFAA] uppercase tracking-wider">Bendera</th>
-              <th className="px-3 py-2.5 text-left font-black text-[#00FFAA] uppercase tracking-wider">Suara PBB</th>
+              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap">Negara</th>
+              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap">Bendera</th>
+              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap">Suara PBB</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#00FFAA]/10">

@@ -165,23 +165,22 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
         
         {/* HEADER */}
-        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-                <Globe className="h-6 w-6 text-[#00FFAA] animate-pulse" />
-              </div>
-              <div>
-                <h2 className="text-xl font-black text-[#00FFAA] tracking-wider uppercase">Tingkat Hubungan Diplomatik</h2>
-              </div>
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+              <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA] animate-pulse" />
+            </div>
+            <div>
+              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Tingkat Hubungan Diplomatik</h2>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">{playerCountryName}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
+            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
           >
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-4 w-4" />
           </button>
         </div>
 
@@ -209,15 +208,15 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
           </div>
 
           <div className="flex-1 min-h-0 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl overflow-hidden shadow-sm flex flex-col">
-            <div className="flex-1 min-h-0 overflow-y-auto">
+            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
               <table className="min-w-full table-auto border-separate border-spacing-0 text-left">
-                <thead className="sticky top-0 z-10 bg-[#0F2424]">
+                <thead className="sticky top-0 z-10 bg-[#0A1A1A]">
                   <tr className="border-b border-[#00FFAA]/20">
-                    <th className="px-4 py-3 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider w-14" onClick={() => handleSort('no')}>No{renderSortArrow('no')}</th>
-                    <th className="px-4 py-3 border-b border-[#00FFAA]/20 cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
-                    <th className="px-4 py-3 border-b border-[#00FFAA]/20 cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider" onClick={() => handleSort('continent')}>Benua{renderSortArrow('continent')}</th>
-                    <th className="px-4 py-3 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider" onClick={() => handleSort('hasEmbassy')}>Kedutaan Besar{renderSortArrow('hasEmbassy')}</th>
-                    <th className="px-4 py-3 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[10px] text-[#00FFAA] font-black uppercase tracking-wider" onClick={() => handleSort('relation')}>Tingkat Hubungan{renderSortArrow('relation')}</th>
+                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[9px] sm:text-[10px] text-[#00FFAA] font-black uppercase tracking-wider whitespace-nowrap w-14" onClick={() => handleSort('no')}>No{renderSortArrow('no')}</th>
+                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 border-b border-[#00FFAA]/20 cursor-pointer hover:bg-[#00FFAA]/10 transition text-[9px] sm:text-[10px] text-[#00FFAA] font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
+                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 border-b border-[#00FFAA]/20 cursor-pointer hover:bg-[#00FFAA]/10 transition text-[9px] sm:text-[10px] text-[#00FFAA] font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('continent')}>Benua{renderSortArrow('continent')}</th>
+                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[9px] sm:text-[10px] text-[#00FFAA] font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('hasEmbassy')}>Kedutaan Besar{renderSortArrow('hasEmbassy')}</th>
+                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 border-b border-[#00FFAA]/20 text-center cursor-pointer hover:bg-[#00FFAA]/10 transition text-[9px] sm:text-[10px] text-[#00FFAA] font-black uppercase tracking-wider whitespace-nowrap" onClick={() => handleSort('relation')}>Tingkat Hubungan{renderSortArrow('relation')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#00FFAA]/10">

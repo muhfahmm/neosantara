@@ -1,5 +1,5 @@
-"use client"
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   X,
   Globe,
@@ -38,6 +38,7 @@ export default function DoktrinKeterbukaanModal({
   setCountryDetail,
   selectedCountry,
 }: DoktrinKeterbukaanModalProps) {
+  const [mounted, setMounted] = useState(false);
   const countryName = selectedCountry?.country || countryDetail?.nama_negara || countryDetail?.country || "Negara";
   const initialData = getDoktrinKeterbukaan(countryName) || {};
 
@@ -59,6 +60,10 @@ export default function DoktrinKeterbukaanModal({
   const [activeTab, setActiveTab] = useState<"civil" | "media" | "global">("civil");
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
     if (!isOpen) return;
     const dbData = getDoktrinKeterbukaan(countryName) || {};
     setSpeechScore(countryDetail?.speechScore ?? dbData.speechScore ?? 50);
@@ -72,7 +77,7 @@ export default function DoktrinKeterbukaanModal({
     setDiplomacyScore(countryDetail?.diplomacyScore ?? dbData.diplomacyScore ?? 55);
   }, [isOpen, countryName]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   // Rata-rata skor dari 9 indikator
   const overallScore = Math.round(
@@ -217,82 +222,38 @@ export default function DoktrinKeterbukaanModal({
     updateCountryDetailWithScores({ diplomacyScore: val });
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
         
         {/* HEADER */}
-        <div className="px-6 py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0F2424] relative z-10 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30 text-[#00FFAA]">
-              <Globe className="h-6 w-6" />
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30">
+              <Globe className="h-5 w-5 text-[#00FFAA]" />
             </div>
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-[#E0E0E0] tracking-tight leading-none uppercase">
-                Doktrin & Keterbukaan Negara
-              </h2>
-              <p className="text-xs text-[#6B8A8A] font-semibold mt-1">
-                Pengaturan spektrum negara tertutup (isolasionis) vs terbuka (globalis) di {countryName}
-              </p>
-            </div>
+            <h3 className="text-sm sm:text-base font-bold text-[#E0E0E0] tracking-wide uppercase">
+              Doktrin & Keterbukaan Negara
+            </h3>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#00FFAA]/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
           >
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        {/* OVERVIEW SPECTRUM BANNER */}
-        <div className="p-5 bg-[#0A1A1A] border-b border-[#00FFAA]/20 shrink-0 space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider block">
-                Status Keterbukaan Nasional
-              </span>
-              <div className="flex items-center gap-2 mt-0.5">
-                <h3 className="text-lg font-bold text-[#E0E0E0]">{regime.label}</h3>
-                <span className={`text-[11px] font-bold px-2 py-0.5 rounded border ${regime.color}`}>
-                  {regime.badge}
-                </span>
-              </div>
-            </div>
-
-            <div className="text-right">
-              <span className="text-xs font-bold text-[#6B8A8A] uppercase block">Indeks Keterbukaan</span>
-              <span className="text-2xl font-black text-[#00FFAA]">{overallScore} / 100</span>
-            </div>
-          </div>
-
-          <p className="text-xs text-[#6B8A8A] leading-relaxed">{regime.desc}</p>
-
-          {/* Progress Bar Visual */}
-          <div className="space-y-1 pt-1">
-            <div className="flex justify-between text-[10px] font-bold uppercase">
-              <span className="flex items-center gap-1 text-rose-400">
-                <Lock className="w-3 h-3" /> Tertutup Total (0%)
-              </span>
-              <span className="flex items-center gap-1 text-[#00FFAA]">
-                Terbuka Bebas (100%) <Unlock className="w-3 h-3" />
-              </span>
-            </div>
-            <div className="h-3 w-full bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/20 relative">
-              <div
-                className="h-full bg-gradient-to-r from-rose-600 via-amber-500 to-[#00FFAA] transition-all duration-300"
-                style={{ width: `${overallScore}%` }}
-              />
-            </div>
-          </div>
-
-          {/* TAB CATEGORIES */}
-          <div className="flex items-center gap-2 pt-2">
+        {/* BODY LAYOUT WITH LEFT SIDEBAR & RIGHT CONTENT */}
+        <div className="flex-1 flex min-h-0 relative z-10">
+          {/* LEFT SIDEBAR TABS */}
+          <div className="w-48 sm:w-56 lg:w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto custom-scrollbar shrink-0">
             {[
-              { id: "civil", label: "1. Kebebasan Sipil & HAM", icon: Users },
-              { id: "media", label: "2. Media & Informasi", icon: Tv },
-              { id: "global", label: "3. Perbatasan & Geopolitik", icon: Plane },
+              { id: "civil", label: "Kebebasan Sipil & HAM", icon: Users },
+              { id: "media", label: "Media & Informasi", icon: Tv },
+              { id: "global", label: "Perbatasan & Geopolitik", icon: Plane },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -300,22 +261,62 @@ export default function DoktrinKeterbukaanModal({
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
+                  className={`flex items-center gap-2.5 w-full px-3.5 py-3 rounded-2xl border text-left transition-all cursor-pointer ${
                     isActive
-                      ? "bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] shadow-sm"
-                      : "bg-[#0F2424] text-[#6B8A8A] border-[#00FFAA]/20 hover:border-[#00FFAA]/50 hover:text-[#E0E0E0]"
+                      ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
+                      : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
-                  {tab.label}
+                  <Icon className="w-4 h-4 shrink-0" />
+                  <span className="text-xs font-bold uppercase tracking-wider">{tab.label}</span>
                 </button>
               );
             })}
           </div>
-        </div>
 
-        {/* CONTENT SLIDERS */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 no-scrollbar">
+          {/* RIGHT CONTENT AREA */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] custom-scrollbar space-y-6">
+            {/* OVERVIEW SPECTRUM BANNER */}
+            <div className="p-4 sm:p-5 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-2xl space-y-3 shadow-md">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider block">
+                    Status Keterbukaan Nasional
+                  </span>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <h3 className="text-base sm:text-lg font-bold text-[#E0E0E0]">{regime.label}</h3>
+                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded border ${regime.color}`}>
+                      {regime.badge}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-right">
+                  <span className="text-xs font-bold text-[#6B8A8A] uppercase block">Indeks Keterbukaan</span>
+                  <span className="text-xl sm:text-2xl font-black text-[#00FFAA]">{overallScore} / 100</span>
+                </div>
+              </div>
+
+              <p className="text-xs text-[#6B8A8A] leading-relaxed">{regime.desc}</p>
+
+              {/* Progress Bar Visual */}
+              <div className="space-y-1 pt-1">
+                <div className="flex justify-between text-[10px] font-bold uppercase">
+                  <span className="flex items-center gap-1 text-rose-400">
+                    <Lock className="w-3 h-3" /> Tertutup Total (0%)
+                  </span>
+                  <span className="flex items-center gap-1 text-[#00FFAA]">
+                    Terbuka Bebas (100%) <Unlock className="w-3 h-3" />
+                  </span>
+                </div>
+                <div className="h-2.5 sm:h-3 w-full bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/20 relative">
+                  <div
+                    className="h-full bg-gradient-to-r from-rose-600 via-amber-500 to-[#00FFAA] transition-all duration-300"
+                    style={{ width: `${overallScore}%` }}
+                  />
+                </div>
+              </div>
+            </div>
           {/* TAB 1: KEBEBASAN SIPIL & HAM */}
           {activeTab === "civil" && (
             <div className="space-y-4">
@@ -672,6 +673,7 @@ export default function DoktrinKeterbukaanModal({
               </div>
             </div>
           )}
+          </div>
         </div>
 
         {/* FOOTER ACTIONS */}
@@ -688,7 +690,8 @@ export default function DoktrinKeterbukaanModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

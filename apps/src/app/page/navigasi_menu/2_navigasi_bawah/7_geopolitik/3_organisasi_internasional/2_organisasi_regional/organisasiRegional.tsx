@@ -65,28 +65,28 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
   return (
     <div className="w-full h-full flex flex-col bg-[#0F2424]">
       {/* HEADER */}
-      <div className="px-8 py-5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] flex-shrink-0">
-        <div className="flex items-center gap-3">
+      <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3">
           {Icon && (
-            <div className="p-2 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30">
-              <Icon className="h-6 w-6 text-[#00FFAA]" />
+            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+              <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
             </div>
           )}
           <div>
-            <h3 className="text-xl font-bold text-[#00FFAA] uppercase tracking-wide">
+            <h3 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
               {orgName}
             </h3>
-            <p className="text-xs text-[#00FFAA]/60 font-medium mt-0.5">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">
               Organisasi Regional
             </p>
           </div>
         </div>
         <button
           onClick={onClose}
-          className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA]/70 hover:text-[#00FFAA] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+          className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
         >
-          <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-          <X className="h-5 w-5" />
+          <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+          <X className="h-4 w-4" />
         </button>
       </div>
 
