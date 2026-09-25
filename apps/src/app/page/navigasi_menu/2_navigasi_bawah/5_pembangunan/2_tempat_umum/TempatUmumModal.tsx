@@ -391,42 +391,41 @@ export default function TempatUmumModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
         <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
-          <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 flex-shrink-0">
-            <div className="flex items-center gap-8">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-                  <Landmark className="h-6 w-6 text-[#00FFAA]" />
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+            <div className="flex items-center gap-4 lg:gap-8">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+                  <Landmark className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-[#E0E0E0] tracking-wider uppercase">Tempat Umum & Layanan Publik</h2>
-                  <p className="text-xs text-[#6B8A8A]">Fasilitas sosial, kesehatan, pendidikan, dan penegakan hukum</p>
+                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Tempat Umum & Layanan Publik</h2>
                 </div>
               </div>
-              <div className="flex items-center gap-4 pl-8 border-l border-[#00FFAA]/30">
+              <div className="flex items-center gap-2 sm:gap-3 pl-4 lg:pl-8 border-l border-[#00FFAA]/30">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
-                    <TrendingUp className="h-4 w-4 text-emerald-400" />
-                    <span className="text-[11px] font-black text-emerald-400 uppercase tracking-wider">Produksi</span>
-                    <span className="text-[11px] font-black text-emerald-400">{totalProductionMW.toLocaleString('id-ID')} MW</span>
+                  <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
+                    <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
+                    <span className="text-[10px] lg:text-[11px] font-black text-emerald-400 uppercase tracking-wider">Produksi</span>
+                    <span className="text-[10px] lg:text-[11px] font-black text-emerald-400">{totalProductionMW.toLocaleString('id-ID')} MW</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-rose-500/30 rounded-lg">
-                    <TrendingDown className="h-4 w-4 text-rose-400" />
-                    <span className="text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
-                    <span className="text-[11px] font-black text-rose-400">{estimatedConsumption.toLocaleString('id-ID')} MW</span>
+                  <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 bg-[#0F2424] border border-rose-500/30 rounded-lg">
+                    <TrendingDown className="h-3.5 w-3.5 text-rose-400" />
+                    <span className="text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
+                    <span className="text-[10px] lg:text-[11px] font-black text-rose-400">{estimatedConsumption.toLocaleString('id-ID')} MW</span>
                   </div>
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
-              <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-5 w-5" />
+            <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
             </button>
           </div>
 
           <div className="flex-1 flex min-h-0 relative z-10">
-            <div className="w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-4 flex flex-col gap-2 overflow-y-auto custom-scrollbar">
+            <div className="w-44 sm:w-48 lg:w-52 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto custom-scrollbar shrink-0">
               {groups.map((group) => {
                 const hasConstruction = group.keys.some((key) => 
                   ongoingConstructions.some((c: any) => c.buildingKey === key)
@@ -435,18 +434,18 @@ export default function TempatUmumModal({
                   <button
                     key={group.id}
                     onClick={() => setActiveTabId(group.id)}
-                    className={`flex items-center justify-between w-full p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    className={`flex items-center justify-between w-full px-2.5 py-2 rounded-xl border text-left transition-all cursor-pointer ${
                       activeTabId === group.id
                         ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
                         : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
                     }`}
                   >
-                    <span className="text-xs font-bold uppercase tracking-wider">{group.label}</span>
-                    <div className="flex items-center gap-1.5">
+                    <span className="text-[11px] lg:text-xs font-bold uppercase tracking-wider">{group.label}</span>
+                    <div className="flex items-center gap-1">
                        {hasConstruction && (
                          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
                        )}
-                       <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                       <span className={`text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${
                          activeTabId === group.id ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
                        }`}>
                          {group.activeCount}
@@ -457,26 +456,26 @@ export default function TempatUmumModal({
               })}
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 bg-[#0F2424] flex flex-col justify-between custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-[#0F2424] flex flex-col justify-between custom-scrollbar">
               <div>
                 {activeGroup && (
                   <>
-                    <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#0A1A1A]/60 p-4 rounded-2xl border border-[#00FFAA]/20">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2">
+                    <div className="mb-4 sm:mb-6 flex flex-wrap items-center justify-between gap-2.5 sm:gap-4 bg-[#0A1A1A]/60 p-3 sm:p-4 rounded-2xl border border-[#00FFAA]/20">
+                      <div className="flex-1 min-w-[180px]">
+                        <h3 className="text-base sm:text-lg lg:text-xl font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2">
                           {activeGroup.label}
                         </h3>
-                        <p className="text-xs text-[#6B8A8A] mt-1">{activeGroup.description}</p>
+                        <p className="text-[10px] sm:text-xs text-[#6B8A8A] mt-0.5">{activeGroup.description}</p>
                       </div>
 
                       {/* Card Rasio Kapasitas Bangunan */}
-                      <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 shrink-0 shadow-inner">
-                        <div className="p-2 bg-[#0F2424] rounded-lg border border-[#00FFAA]/20">
-                          <Users className="w-4 h-4 text-[#00FFAA]" />
+                      <div className="flex items-center gap-2 px-3 py-1.5 sm:py-2 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 shrink-0 shadow-inner">
+                        <div className="p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/20">
+                          <Users className="w-3.5 h-3.5 text-[#00FFAA]" />
                         </div>
                         <div>
-                          <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider">Kapasitas Standar AI</p>
-                          <p className="text-xs font-black text-[#00FFAA]">
+                          <p className="text-[9px] font-black uppercase text-[#6B8A8A] tracking-wider">Kapasitas Standar AI</p>
+                          <p className="text-[10px] sm:text-xs font-black text-[#00FFAA]">
                             1 Bangunan : {
                               activeGroup.id === 'infrastruktur' ? '20.000 Jiwa' :
                               activeGroup.id === 'pendidikan' ? '10.000 Jiwa' :
@@ -490,9 +489,9 @@ export default function TempatUmumModal({
 
                       <button
                         onClick={handleOpenAIModal}
-                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-[#00FFAA]/10 border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all text-xs font-black shadow-md cursor-pointer shrink-0 active:scale-95"
+                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#00FFAA]/10 border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all text-[10px] sm:text-xs font-black shadow-md cursor-pointer shrink-0 active:scale-95"
                       >
-                        <Sparkles className="w-4 h-4 text-[#00FFAA] hover:text-[#0A1A1A]" />
+                        <Sparkles className="w-3.5 h-3.5 text-[#00FFAA] hover:text-[#0A1A1A]" />
                         <span>Rekomendasi AI</span>
                       </button>
                     </div>

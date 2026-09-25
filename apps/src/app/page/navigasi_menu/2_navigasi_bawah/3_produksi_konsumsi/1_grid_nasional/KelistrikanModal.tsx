@@ -259,16 +259,15 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       <div className="bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
 
         {/* HEADER */}
-        <div className="px-4 lg:px-6 2xl:px-8 py-3.5 lg:py-4.5 2xl:py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
-          <div className="flex items-center gap-4 lg:gap-6 2xl:gap-8">
-            <div className="flex items-center gap-2.5 lg:gap-3">
-              <div className="p-1.5 lg:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30 shrink-0">
-                <Zap className="h-4 w-4 lg:h-5 lg:w-5 2xl:h-6 2xl:w-6 text-[#00FFAA]" />
-              </div>
-              <div>
-                <h2 className="text-base lg:text-xl 2xl:text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Grid Kelistrikan Nasional</h2>
-              </div>
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+              <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
             </div>
+            <div>
+              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Grid Kelistrikan Nasional</h2>
+            </div>
+          </div>
 
             <div className="hidden sm:flex items-center gap-2.5 lg:gap-4 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-[#00FFAA]/20">
               <div className="flex items-center gap-2">
@@ -286,12 +285,11 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 </div>
               </div>
             </div>
+            <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
+            </button>
           </div>
-          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
-        </div>
 
         {/* BODY */}
         <div className="flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
@@ -460,7 +458,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                     onClick={() => setSearchQuery('')}
                     className="absolute right-3 top-3 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors"
                   >
-                    ✕
+                    <X className="h-4 w-4" />
                   </button>
                 )}
               </div>

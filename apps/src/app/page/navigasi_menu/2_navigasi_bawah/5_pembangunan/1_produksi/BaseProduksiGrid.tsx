@@ -162,7 +162,7 @@ export default function BaseProduksiGrid({
         )}
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
         {keys.map((key) => {
           const bMeta = findMeta(key) || {};
           const perCount = Number(countryDetail?.[key]) || 0;
@@ -223,55 +223,55 @@ export default function BaseProduksiGrid({
                 />
               )}
 
-              <div className="p-4 flex flex-col flex-grow justify-between">
+              <div className="p-2.5 sm:p-3 flex flex-col flex-grow justify-between">
                 <div>
-                  <div className="flex items-start justify-between gap-2 mb-1">
-                    <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-1">{label}</p>
+                  <div className="flex items-start justify-between gap-1 mb-0.5">
+                    <p className="text-[9px] sm:text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-1 leading-snug">{label}</p>
                     <button
-                      className="flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full transition-colors cursor-pointer bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] text-[#6B8A8A] hover:text-[#00FFAA]"
+                      className="flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] text-[#6B8A8A] hover:text-[#00FFAA]"
                       onClick={(e) => {
                         e.stopPropagation();
                         setHoveredBuildingKey(hoveredBuildingKey === key ? null : key);
                       }}
                       title="Info bangunan"
                     >
-                      <Info className="w-3 h-3" />
+                      <Info className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                     </button>
                   </div>
 
                   {/* Indikator +1, +2 */}
-                  <div className="flex items-end gap-1.5 mt-2 flex-wrap">
-                    <span className="text-base sm:text-lg lg:text-xl font-black text-[#E0E0E0] leading-tight break-words">{perCount}</span>
+                  <div className="flex items-end gap-1 mt-1 flex-wrap">
+                    <span className="text-sm sm:text-base lg:text-lg font-black text-[#E0E0E0] leading-none">{perCount}</span>
                     {isBuilding && (
-                      <span className="text-xs sm:text-sm font-bold text-emerald-400 leading-none">
+                      <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">
                         +{queueCount}
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] mt-1 font-bold text-[#6B8A8A]">{perCount} bangunan</p>
+                  <p className="text-[9px] mt-0.5 font-bold text-[#6B8A8A]">{perCount} bangunan</p>
                 </div>
 
                 {/* FOOTER LISTRIK */}
                 {isElectricityTab && (
-                  <div className="border-t border-[#00FFAA]/10 mt-auto pt-2 pb-1 text-center min-h-[64px] flex flex-col justify-center">
-                    <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${isProductionZero ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
+                  <div className="border-t border-[#00FFAA]/10 mt-2 pt-1.5 pb-0.5 text-center min-h-[44px] flex flex-col justify-center">
+                    <span className={`font-black text-xs sm:text-sm leading-tight break-words ${isProductionZero ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
                       {rawProduction.toLocaleString('id-ID')} MW
                     </span>
                     {isProductionZero && (
-                      <span className="text-[9px] font-bold text-rose-400">(bahan bakar defisit)</span>
+                      <span className="text-[8px] sm:text-[9px] font-bold text-rose-400 leading-tight">(bahan bakar defisit)</span>
                     )}
                   </div>
                 )}
 
                 {/* FOOTER NON-LISTRIK */}
                 {!isElectricityTab && (
-                  <div className="border-t border-[#00FFAA]/10 mt-auto pt-2 pb-1 text-center min-h-[64px] flex flex-col justify-center gap-1">
+                  <div className="border-t border-[#00FFAA]/10 mt-2 pt-1.5 pb-0.5 text-center min-h-[44px] flex flex-col justify-center gap-0.5">
                     {(() => {
                       // Emas: tampilkan produksi tetap (tidak berubah-ubah seperti stok)
                       if (key === 'emas') {
                         const fixedProd = Number(bMeta?.produksi || 0) * perCount;
                         return (
-                          <span className="font-black text-xs sm:text-sm lg:text-base text-[#00FFAA] leading-tight break-words">
+                          <span className="font-black text-xs sm:text-sm text-[#00FFAA] leading-tight break-words">
                             {fixedProd.toLocaleString('id-ID')}
                           </span>
                         );
