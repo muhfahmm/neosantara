@@ -121,14 +121,14 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
         
         {/* Header */}
-        <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-                <BarChart3 className="h-6 w-6 text-[#00FFAA]" />
+        <div className="px-4 lg:px-6 2xl:px-8 py-3.5 lg:py-4.5 2xl:py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
+          <div className="flex items-center gap-4 lg:gap-6 2xl:gap-8">
+            <div className="flex items-center gap-2.5 lg:gap-3">
+              <div className="p-1.5 lg:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30 shrink-0">
+                <BarChart3 className="h-4 w-4 lg:h-5 lg:w-5 2xl:h-6 2xl:w-6 text-[#00FFAA]" />
               </div>
               <div>
-                <h2 className="text-2xl font-black text-[#00FFAA] tracking-tight leading-none uppercase">Neraca Pemasukkan & Pengeluaran</h2>
+                <h2 className="text-base lg:text-xl 2xl:text-2xl font-black text-[#00FFAA] tracking-tight leading-none uppercase">Neraca Pemasukkan & Pengeluaran</h2>
               </div>
             </div>
           </div>
@@ -139,11 +139,11 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
         </div>
 
         {/* Tab Navigation (Hanya 3 Tab) */}
-        <div className="px-8 pt-6 relative z-10 bg-[#0A1A1A]">
-          <div className="flex gap-3 border-b border-[#00FFAA]/20 pb-3">
+        <div className="px-4 lg:px-6 2xl:px-8 pt-3.5 lg:pt-4.5 2xl:pt-6 relative z-10 bg-[#0A1A1A]">
+          <div className="flex gap-2 lg:gap-2.5 2xl:gap-3 border-b border-[#00FFAA]/20 pb-2.5 lg:pb-3">
             <button
               onClick={() => setActiveTab("summary")}
-              className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
                 activeTab === "summary"
                   ? "bg-[#00FFAA] text-[#0A1A1A]"
                   : "text-[#6B8A8A] hover:text-[#E0E0E0] hover:bg-[#0F2424]"
@@ -153,7 +153,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
             </button>
             <button
               onClick={() => setActiveTab("income")}
-              className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 lg:gap-2 cursor-pointer ${
                 activeTab === "income"
                   ? "bg-[#00FFAA] text-[#0A1A1A]"
                   : "text-[#6B8A8A] hover:text-[#E0E0E0] hover:bg-[#0F2424]"

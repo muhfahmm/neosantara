@@ -335,14 +335,14 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
 
         {/* Header */}
-        <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-                <CreditCard className="h-6 w-6 text-[#00FFAA]" />
+        <div className="px-4 lg:px-6 2xl:px-8 py-3.5 lg:py-4.5 2xl:py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
+          <div className="flex items-center gap-4 lg:gap-6 2xl:gap-8">
+            <div className="flex items-center gap-2.5 lg:gap-3">
+              <div className="p-1.5 lg:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30 shrink-0">
+                <CreditCard className="h-4 w-4 lg:h-5 lg:w-5 2xl:h-6 2xl:w-6 text-[#00FFAA]" />
               </div>
               <div>
-                <h2 className="text-2xl font-black text-[#00FFAA] tracking-tight leading-none uppercase">Pinjaman & Hutang</h2>
+                <h2 className="text-base lg:text-xl 2xl:text-2xl font-black text-[#00FFAA] tracking-tight leading-none uppercase">Pinjaman & Hutang</h2>
               </div>
             </div>
           </div>
@@ -353,17 +353,17 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
         </div>
 
         {/* Body Content */}
-        <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
           
           {/* Section 1: Peringatan dan Monitoring Ekonomi */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-            <div className="col-span-2 bg-[#0F2424] border border-[#00FFAA]/30 p-5 rounded-2xl">
-              <h4 className="text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider mb-2">Rasio Hutang terhadap PDB</h4>
-              <div className="flex justify-between items-end mb-3">
-                <span className="text-3xl font-black text-[#00FFAA]">{debtRatio}%</span>
-                <span className="text-xs font-bold text-[#6B8A8A]">Batas Aman: 60%</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 2xl:gap-5 mb-4 lg:mb-6 2xl:mb-8">
+            <div className="col-span-2 bg-[#0F2424] border border-[#00FFAA]/30 p-3.5 lg:p-4 2xl:p-5 rounded-xl 2xl:rounded-2xl">
+              <h4 className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider mb-1.5 lg:mb-2">Rasio Hutang terhadap PDB</h4>
+              <div className="flex justify-between items-end mb-2 lg:mb-3">
+                <span className="text-xl lg:text-2xl 2xl:text-3xl font-black text-[#00FFAA]">{debtRatio}%</span>
+                <span className="text-[10px] lg:text-xs font-bold text-[#6B8A8A]">Batas Aman: 60%</span>
               </div>
-              <div className="h-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-full overflow-hidden mt-1">
+              <div className="h-2.5 lg:h-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-full overflow-hidden mt-1">
                 <div 
                   className={`h-full rounded-full transition-all duration-700 ${
                     debtRatio > 80 ? "bg-rose-500" : debtRatio > 60 ? "bg-amber-500" : "bg-emerald-500"
@@ -373,12 +373,12 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
               </div>
             </div>
 
-            <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-5 rounded-2xl flex flex-col justify-center">
-              <div className="flex justify-between text-sm font-bold text-[#E0E0E0] py-1 border-b border-[#00FFAA]/20">
+            <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-3.5 lg:p-4 2xl:p-5 rounded-xl 2xl:rounded-2xl flex flex-col justify-center">
+              <div className="flex justify-between text-xs lg:text-sm font-bold text-[#E0E0E0] py-1 border-b border-[#00FFAA]/20">
                 <span>Kas Negara</span>
                 <span className="text-emerald-400 font-black">{kasNegara.toLocaleString("id-ID")} EM</span>
               </div>
-              <div className="flex justify-between text-sm font-bold text-[#E0E0E0] py-1 mt-2">
+              <div className="flex justify-between text-xs lg:text-sm font-bold text-[#E0E0E0] py-1 mt-1.5 lg:mt-2">
                 <span>Total Beban Hutang</span>
                 <span className="text-rose-400 font-black">{totalHutang.toLocaleString("id-ID")} EM</span>
               </div>
@@ -386,22 +386,22 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
           </div>
 
           {/* Section 2: Tabs Peminjaman */}
-          <div className="bg-[#0A1A1A] p-1.5 rounded-xl border border-[#00FFAA]/30 inline-flex mb-6">
+          <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/30 inline-flex mb-3.5 lg:mb-5 2xl:mb-6">
             <button
               onClick={() => setActiveTab("bilateral")}
-              className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                 activeTab === "bilateral" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
               }`}
             >Negara Lain</button>
             <button
               onClick={() => setActiveTab("multilateral")}
-              className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                 activeTab === "multilateral" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
               }`}
             >Lembaga Dunia</button>
             <button
               onClick={() => setActiveTab("history")}
-              className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                 activeTab === "history" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
               }`}
             >Riwayat</button>

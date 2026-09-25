@@ -351,10 +351,10 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                           const label = metadata?.[key]?.label || key.replace(/_/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase());
                           return (
                             <div key={key} className="bg-[#0A1A1A] p-2 lg:p-2.5 2xl:p-3.5 flex flex-col justify-between gap-1.5 lg:gap-2 rounded-lg 2xl:rounded-xl border border-[#00FFAA]/20">
-                              <div className="flex items-center justify-between pb-1 border-b border-[#00FFAA]/10 gap-1.5">
-                                <div className="flex items-center gap-1 lg:gap-1.5 min-w-0 flex-1">
+                              <div className="flex items-center justify-between pb-1 border-b border-[#00FFAA]/10 gap-1 min-h-[28px] lg:min-h-[30px] 2xl:min-h-[34px]">
+                                <div className="flex items-center gap-1 lg:gap-1.5 min-w-0 flex-1 pr-0.5">
                                   <button type="button" onClick={(e) => { e.stopPropagation(); openCommodityInfo(key, label, production, consumption, netBalance); }} title={`Detail konsumsi ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer shrink-0"><Info className="w-3 h-3 lg:w-3.5 lg:h-3.5" /></button>
-                                  <span className="text-[8.5px] lg:text-[9.5px] 2xl:text-[11px] font-black text-[#E0E0E0] uppercase tracking-tight leading-none truncate">{label}</span>
+                                  <span className="text-[8px] lg:text-[9px] 2xl:text-[10.5px] font-black text-[#E0E0E0] uppercase tracking-tight leading-tight whitespace-normal break-words">{label}</span>
                                 </div>
                                 {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 transition-all cursor-pointer shrink-0"><Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 font-bold" /></button>)}
                               </div>

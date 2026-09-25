@@ -190,14 +190,14 @@ export default function PajakModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
-        <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-                <FileText className="h-6 w-6 text-[#00FFAA]" />
+        <div className="px-4 lg:px-6 2xl:px-8 py-3.5 lg:py-4.5 2xl:py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
+          <div className="flex items-center gap-4 lg:gap-6 2xl:gap-8">
+            <div className="flex items-center gap-2.5 lg:gap-3">
+              <div className="p-1.5 lg:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30 shrink-0">
+                <FileText className="h-4 w-4 lg:h-5 lg:w-5 2xl:h-6 2xl:w-6 text-[#00FFAA]" />
               </div>
               <div>
-                <h2 className="text-2xl font-black text-[#00FFAA] tracking-tight leading-none uppercase">
+                <h2 className="text-base lg:text-xl 2xl:text-2xl font-black text-[#00FFAA] tracking-tight leading-none uppercase">
                   Kebijakan Perpajakan Fiskal
                 </h2>
               </div>
@@ -215,8 +215,8 @@ export default function PajakModal({
             </button>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
-          <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-6">
+        <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+          <p className="text-[10px] lg:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-3.5 lg:mb-5 2xl:mb-6">
             Sesuaikan tarif pajak nasional untuk membiayai belanja militer dan
             infrastruktur publik. Hati-hati, pajak tinggi memicu protes rakyat!
           </p>

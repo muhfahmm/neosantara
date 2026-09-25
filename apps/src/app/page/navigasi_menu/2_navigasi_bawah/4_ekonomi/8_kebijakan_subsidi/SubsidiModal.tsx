@@ -151,56 +151,56 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
         
         {/* HEADER */}
-        <div className="px-6 py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-              <HandHelping className="h-6 w-6 text-[#00FFAA]" />
+        <div className="px-4 lg:px-6 py-3 lg:py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="flex items-center gap-2.5 lg:gap-3">
+            <div className="p-2 lg:p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30 flex items-center justify-center">
+              <HandHelping className="h-5 w-5 lg:h-6 lg:w-6 text-[#00FFAA]" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-[#00FFAA] tracking-wider uppercase">Alokasi & Kebijakan Subsidi</h2>
-              <p className="text-xs text-[#6B8A8A] font-semibold mt-0.5">Kelola Jaring Pengaman Sosial, Beban APBN, & Stabilitas Publik</p>
+              <h2 className="text-base lg:text-lg 2xl:text-xl font-black text-[#00FFAA] tracking-wider uppercase">Alokasi & Kebijakan Subsidi</h2>
+              <p className="text-[10px] lg:text-xs text-[#6B8A8A] font-semibold mt-0.5">Kelola Jaring Pengaman Sosial, Beban APBN, & Stabilitas Publik</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 lg:gap-3">
             <button
               onClick={handleSaveSubsidy}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500 hover:text-[#0A1A1A] font-black text-xs uppercase tracking-wider transition-all cursor-pointer shadow-sm shrink-0"
+              className="flex items-center gap-1.5 px-3 lg:px-4 py-1.5 lg:py-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500 hover:text-[#0A1A1A] font-black text-[10px] lg:text-xs uppercase tracking-wider transition-all cursor-pointer shadow-sm shrink-0"
             >
-              <Check className="w-4 h-4" />
+              <Check className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
               Terapkan Subsidi
             </button>
 
             <button 
               onClick={onClose} 
-              className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+              className="p-1.5 sm:p-2 lg:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
             >
               <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-5 w-5" />
+              <X className="h-4 w-4 lg:h-5 lg:w-5" />
             </button>
           </div>
         </div>
 
         {/* TOP STATS SUMMARY BANNER */}
-        <div className="px-6 py-4 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/15 grid grid-cols-2 md:grid-cols-4 gap-3 shrink-0">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-xl">
-            <p className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-wider">Total Beban APBN Subsidi</p>
-            <p className="text-sm font-black text-[#00FFAA] mt-0.5">{formatCurrencyCompact(summary.totalCost)}</p>
+        <div className="px-4 lg:px-6 py-2.5 lg:py-4 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3 shrink-0">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3 rounded-xl">
+            <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Total Beban APBN Subsidi</p>
+            <p className="text-xs lg:text-sm font-black text-[#00FFAA] mt-0.5">{formatCurrencyCompact(summary.totalCost)}</p>
           </div>
 
-          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-xl">
-            <p className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-wider">Sektor Aktif / Total</p>
-            <p className="text-sm font-black text-[#E0E0E0] mt-0.5">{summary.activeCount} dari {summary.totalCount} Sektor</p>
+          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3 rounded-xl">
+            <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Sektor Aktif / Total</p>
+            <p className="text-xs lg:text-sm font-black text-[#E0E0E0] mt-0.5">{summary.activeCount} dari {summary.totalCount} Sektor</p>
           </div>
 
-          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-xl">
-            <p className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-wider">Dukungan Kepuasan Rakyat</p>
-            <p className="text-sm font-black text-emerald-400 mt-0.5">+{summary.totalApprovalBonus}% Approval</p>
+          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3 rounded-xl">
+            <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Dukungan Kepuasan Rakyat</p>
+            <p className="text-xs lg:text-sm font-black text-emerald-400 mt-0.5">+{summary.totalApprovalBonus}% Approval</p>
           </div>
 
-          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-xl">
-            <p className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-wider">Risiko Gejolak Demo</p>
-            <p className={`text-sm font-black mt-0.5 ${
+          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3 rounded-xl">
+            <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Risiko Gejolak Demo</p>
+            <p className={`text-xs lg:text-sm font-black mt-0.5 ${
               summary.highestDemoRisk === "Kritis" ? "text-rose-500" :
               summary.highestDemoRisk === "Tinggi" ? "text-amber-400" : "text-emerald-400"
             }`}>
@@ -220,7 +220,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
         <div className="flex-1 flex min-h-0 relative z-10">
           
           {/* SIDEBAR TABS */}
-          <div className="w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-4 flex flex-col gap-2 overflow-y-auto no-scrollbar shrink-0">
+          <div className="w-48 lg:w-56 2xl:w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2.5 lg:p-4 flex flex-col gap-2 overflow-y-auto no-scrollbar shrink-0">
             {categories.map((cat) => {
               const activeCountInCat = subsidyItems.filter(
                 (i) => (cat.id === "Semua" || i.category === cat.id) && i.isSubsidized
@@ -233,14 +233,14 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`flex items-center justify-between w-full p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  className={`flex items-center justify-between w-full p-2.5 lg:p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     selectedCategory === cat.id
                       ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
                       : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
                   }`}
                 >
-                  <span className="text-xs font-bold uppercase tracking-wider">{cat.label}</span>
-                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                  <span className="text-[11px] lg:text-xs font-bold uppercase tracking-wider">{cat.label}</span>
+                  <span className={`text-[9px] lg:text-[10px] font-black px-2 py-0.5 rounded-full ${
                     selectedCategory === cat.id ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
                   }`}>
                     {activeCountInCat}/{totalCountInCat}
@@ -251,7 +251,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
           </div>
 
           {/* RIGHT CONTENT AREA - SECTOR GRID FROM SEPARATE TAB COMPONENTS */}
-          <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] no-scrollbar">
+          <div className="flex-1 overflow-y-auto p-4 lg:p-6 2xl:p-8 bg-[#0F2424] no-scrollbar">
             {selectedCategory === "Semua" && (
               <SemuaSektorTab items={subsidyItems} toggleSubsidy={toggleSubsidy} />
             )}

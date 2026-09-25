@@ -127,30 +127,30 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
 
-        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 flex-shrink-0">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-                <Tag className="h-6 w-6 text-[#00FFAA]" />
+        <div className="px-4 lg:px-6 py-3 lg:py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 flex-shrink-0">
+          <div className="flex items-center gap-4 lg:gap-8">
+            <div className="flex items-center gap-2.5 lg:gap-3">
+              <div className="p-2 lg:p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30 flex items-center justify-center">
+                <Tag className="h-5 w-5 lg:h-6 lg:w-6 text-[#00FFAA]" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Kontrol Harga Barang Pokok</h2>
+                <h2 className="text-base lg:text-lg 2xl:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Kontrol Harga Barang Pokok</h2>
               </div>
             </div>
           </div>
 
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
+          <button onClick={onClose} className="p-1.5 sm:p-2 lg:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4 lg:h-5 lg:w-5" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 bg-[#0F2424] relative z-10 custom-scrollbar">
-          <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-6">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[#0F2424] relative z-10 custom-scrollbar">
+          <p className="text-[11px] lg:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-4 lg:mb-6">
             Stabilkan harga bahan pangan pokok beras, minyak goreng, dan daging di pasar domestik agar inflasi terjaga dan daya beli rakyat kelas bawah tetap aman.
           </p>
 
-          <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-4 rounded-xl mb-6">
+          <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-3 lg:p-4 rounded-xl mb-4 lg:mb-6">
             <div className="flex justify-between text-xs font-bold text-[#E0E0E0] mb-2">
               <span className="text-[#6B8A8A]">Tingkat Inflasi Sembako:</span>
               <span className="text-rose-400 font-bold">+ 4.8% (Tinggi)</span>
@@ -176,27 +176,27 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
 
           {error ? <p className="text-sm text-rose-400 mb-4">{error}</p> : null}
 
-          <div className="space-y-4 mb-6">
+          <div className="space-y-3 lg:space-y-4 mb-4 lg:mb-6">
             {priceEntries.length === 0 ? (
               <p className="text-sm text-[#6B8A8A]">Belum ada data harga yang tersedia untuk negara ini.</p>
             ) : (
               priceEntries.map(([key, value]) => (
-                <div key={key} className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-xl p-4">
-                  <div className="flex items-center justify-between mb-3">
+                <div key={key} className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-xl p-3 lg:p-4">
+                  <div className="flex items-center justify-between mb-2.5 lg:mb-3">
                     <div>
-                      <p className="text-sm font-black text-[#00FFAA] uppercase">{key.replace("harga_", "").replace(/_/g, " ")}</p>
-                      <p className="text-xs text-[#6B8A8A]">
+                      <p className="text-xs lg:text-sm font-black text-[#00FFAA] uppercase">{key.replace("harga_", "").replace(/_/g, " ")}</p>
+                      <p className="text-[11px] lg:text-xs text-[#6B8A8A]">
                         Nilai saat ini: <span className="font-bold text-[#E0E0E0]">{Number(value).toLocaleString("id-ID")}</span>
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5 lg:gap-2">
                     {priceOptions.map((option) => (
                       <button
                         key={option}
                         onClick={() => handlePriceChange(key, option)}
-                        className={`px-3 py-2 rounded-lg border text-xs font-black uppercase transition cursor-pointer ${
+                        className={`px-2.5 lg:px-3 py-1.5 lg:py-2 rounded-lg border text-[10px] lg:text-xs font-black uppercase transition cursor-pointer ${
                           value === option
                             ? "bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] font-bold"
                             : "bg-[#0F2424] text-[#E0E0E0] border-[#00FFAA]/30 hover:border-[#00FFAA]"
@@ -214,7 +214,7 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
           <button
             onClick={handleSubsidize}
             disabled={subsidyActive || anggaran < 20000000}
-            className={`w-full py-3 rounded-xl border text-xs font-black uppercase transition-all ${
+            className={`w-full py-2.5 lg:py-3 rounded-xl border text-[11px] lg:text-xs font-black uppercase transition-all ${
               subsidyActive || anggaran < 20000000
                 ? "bg-[#0A1A1A] text-[#6B8A8A] border-gray-800 cursor-not-allowed"
                 : "cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 border-[#00FFAA]"
@@ -224,22 +224,22 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
           </button>
 
           {/* ---- INDEKS KEPUASAN RAKYAT (HARGA) ---- */}
-          <div className="mt-6 p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
+          <div className="mt-4 lg:mt-6 p-4 lg:p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-black text-[#00FFAA] uppercase tracking-widest">
+              <span className="text-[11px] lg:text-xs font-black text-[#00FFAA] uppercase tracking-widest">
                 Indeks Kepuasan Rakyat (Harga Pokok)
               </span>
-              <span className="text-2xl font-black text-[#00FFAA]">
+              <span className="text-xl lg:text-2xl font-black text-[#00FFAA]">
                 {satisfaction} / 100
               </span>
             </div>
-            <div className="w-full h-3 bg-[#0F2424] border border-[#00FFAA]/20 rounded-full mt-3 overflow-hidden">
+            <div className="w-full h-2.5 lg:h-3 bg-[#0F2424] border border-[#00FFAA]/20 rounded-full mt-2.5 lg:mt-3 overflow-hidden">
               <div
                 className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
                 style={{ width: `${satisfaction}%` }}
               />
             </div>
-            <p className="text-[10px] text-[#E0E0E0] font-bold mt-3">
+            <p className="text-[10px] text-[#E0E0E0] font-bold mt-2.5 lg:mt-3">
               {satisfaction >= 80
                 ? "✅ Harga pokok sangat terjangkau, rakyat puas."
                 : satisfaction >= 50
