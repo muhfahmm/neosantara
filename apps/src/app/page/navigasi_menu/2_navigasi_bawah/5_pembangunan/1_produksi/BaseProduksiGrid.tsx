@@ -225,12 +225,10 @@ export default function BaseProduksiGrid({
 
               <div className="p-4 flex flex-col flex-grow justify-between">
                 <div>
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider">{label}</p>
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-1">{label}</p>
                     <button
-                      className={`flex items-center justify-center w-5 h-5 rounded-full transition-colors cursor-pointer bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] ${
-                        isFuelResource ? 'text-rose-400 hover:text-rose-300' : 'text-[#6B8A8A] hover:text-[#00FFAA]'
-                      }`}
+                      className="flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full transition-colors cursor-pointer bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] text-[#6B8A8A] hover:text-[#00FFAA]"
                       onClick={(e) => {
                         e.stopPropagation();
                         setHoveredBuildingKey(hoveredBuildingKey === key ? null : key);

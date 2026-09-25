@@ -183,123 +183,123 @@ export default function RingkasanPopulasiModal({
         </div>
 
         {/* Summary Cards */}
-        <div className="px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 bg-[#0A1A1A] border-b border-[#00FFAA]/20 relative z-10 shrink-0">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 lg:gap-4">
-            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 sm:p-3 lg:p-4 rounded-xl flex items-center gap-2.5 lg:gap-3.5 transition-all">
-              <div className="p-2 lg:p-2.5 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-lg lg:rounded-xl shrink-0">
-                <Users className="h-4 w-4 sm:h-5 sm:w-5 lg:h-5 lg:w-5 text-[#00FFAA]" />
+        <div className="px-3 sm:px-5 lg:px-6 2xl:px-8 py-2 sm:py-2.5 2xl:py-3 bg-[#0A1A1A] border-b border-[#00FFAA]/20 relative z-10 shrink-0">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-2.5 2xl:gap-4">
+            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 2xl:p-4 rounded-lg 2xl:rounded-xl flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 transition-all">
+              <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0">
+                <Users className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-[#00FFAA]" />
               </div>
               <div className="min-w-0">
-                <p className="text-[9px] sm:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider whitespace-nowrap">Total Populasi</p>
-                <p className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-tight whitespace-nowrap">{populasi.toLocaleString('id-ID')} <span className="text-[8px] sm:text-[9px] text-[#6B8A8A]">JIWA</span></p>
+                <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider whitespace-nowrap">Total Populasi</p>
+                <p className="text-[11px] lg:text-xs 2xl:text-base font-black text-[#E0E0E0] leading-tight whitespace-nowrap">{populasi.toLocaleString('id-ID')} <span className="text-[7px] lg:text-[8px] 2xl:text-[9px] text-[#6B8A8A]">JIWA</span></p>
               </div>
             </div>
 
             <div
-              className="group bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 sm:p-3 lg:p-4 rounded-xl flex items-center justify-between gap-2 lg:gap-3 transition-all cursor-pointer hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 active:scale-[0.98]"
+              className="group bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 2xl:p-4 rounded-lg 2xl:rounded-xl flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 active:scale-[0.98]"
               onClick={() => setIsDetailBirthOpen(true)}
             >
-              <div className="flex items-center gap-2.5 lg:gap-3.5 min-w-0">
-                <div className="p-2 lg:p-2.5 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-lg lg:rounded-xl shrink-0 group-hover:scale-105 transition-transform">
-                  <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 lg:h-5 lg:w-5 text-[#00FFAA]" />
+              <div className="flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 min-w-0">
+                <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0 group-hover:scale-105 transition-transform">
+                  <TrendingUp className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-[#00FFAA]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[9px] sm:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider whitespace-nowrap">Laju Pertumbuhan</p>
-                  <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight whitespace-nowrap ${totalDailyDelta >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>
-                    {totalDailyDelta >= 0 ? '+' : ''}{totalDailyDelta.toLocaleString('id-ID')} <span className="text-[8px] sm:text-[9px] text-[#6B8A8A]">/hr</span>
+                  <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider whitespace-nowrap">Laju Pertumbuhan</p>
+                  <p className={`text-[11px] lg:text-xs 2xl:text-base font-black leading-tight whitespace-nowrap ${totalDailyDelta >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>
+                    {totalDailyDelta >= 0 ? '+' : ''}{totalDailyDelta.toLocaleString('id-ID')} <span className="text-[7px] lg:text-[8px] 2xl:text-[9px] text-[#6B8A8A]">/hr</span>
                   </p>
                 </div>
               </div>
-              <ChevronRight className="h-4 w-4 text-[#6B8A8A] group-hover:text-[#00FFAA] group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
+              <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-[#6B8A8A] group-hover:text-[#00FFAA] group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
             </div>
 
             <div
-              className="group bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 sm:p-3 lg:p-4 rounded-xl flex items-center justify-between gap-2 lg:gap-3 transition-all cursor-pointer hover:border-rose-400 hover:bg-rose-500/10 active:scale-[0.98]"
+              className="group bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 2xl:p-4 rounded-lg 2xl:rounded-xl flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-rose-400 hover:bg-rose-500/10 active:scale-[0.98]"
               onClick={() => setIsTunawismaOpen(true)}
             >
-              <div className="flex items-center gap-2.5 lg:gap-3.5 min-w-0">
-                <div className="p-2 lg:p-2.5 bg-[#0A1A1A] border border-rose-500/30 rounded-lg lg:rounded-xl shrink-0 group-hover:scale-105 transition-transform">
-                  <ShieldAlert className="h-4 w-4 sm:h-5 sm:w-5 lg:h-5 lg:w-5 text-rose-400" />
+              <div className="flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 min-w-0">
+                <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-[#0A1A1A] border border-rose-500/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0 group-hover:scale-105 transition-transform">
+                  <ShieldAlert className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-rose-400" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[9px] sm:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider whitespace-nowrap">Tunawisma</p>
-                  <p className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-tight whitespace-nowrap">{homelessCount.toLocaleString('id-ID')} <span className="text-[8px] sm:text-[9px] text-[#6B8A8A]">JIWA</span></p>
+                  <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider whitespace-nowrap">Tunawisma</p>
+                  <p className="text-[11px] lg:text-xs 2xl:text-base font-black text-[#E0E0E0] leading-tight whitespace-nowrap">{homelessCount.toLocaleString('id-ID')} <span className="text-[7px] lg:text-[8px] 2xl:text-[9px] text-[#6B8A8A]">JIWA</span></p>
                 </div>
               </div>
-              <ChevronRight className="h-4 w-4 text-[#6B8A8A] group-hover:text-rose-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
+              <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-[#6B8A8A] group-hover:text-rose-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
             </div>
 
             <div
-              className="group bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 sm:p-3 lg:p-4 rounded-xl flex items-center justify-between gap-2 lg:gap-3 transition-all cursor-pointer hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 active:scale-[0.98]"
+              className="group bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 2xl:p-4 rounded-lg 2xl:rounded-xl flex items-center justify-between gap-1.5 lg:gap-2 2xl:gap-3 transition-all cursor-pointer hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 active:scale-[0.98]"
               onClick={() => setIsKesejahteraanOpen(true)}
             >
-              <div className="flex items-center gap-2.5 lg:gap-3.5 min-w-0">
-                <div className="p-2 lg:p-2.5 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-lg lg:rounded-xl shrink-0 group-hover:scale-105 transition-transform">
-                  <BadgeDollarSign className="h-4 w-4 sm:h-5 sm:w-5 lg:h-5 lg:w-5 text-[#00FFAA]" />
+              <div className="flex items-center gap-2 lg:gap-2.5 2xl:gap-3.5 min-w-0">
+                <div className="p-1.5 lg:p-2 2xl:p-2.5 bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-md lg:rounded-lg 2xl:rounded-xl shrink-0 group-hover:scale-105 transition-transform">
+                  <BadgeDollarSign className="h-3.5 w-3.5 lg:h-4 lg:w-4 2xl:h-5 2xl:w-5 text-[#00FFAA]" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[9px] sm:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider whitespace-nowrap">Kesejahteraan</p>
-                  <p className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-tight whitespace-nowrap">
+                  <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider whitespace-nowrap">Kesejahteraan</p>
+                  <p className="text-[11px] lg:text-xs 2xl:text-base font-black text-[#E0E0E0] leading-tight whitespace-nowrap">
                     {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50}{" "}
-                    <span className="text-[8px] sm:text-[9px] text-[#6B8A8A]">INDX</span>
+                    <span className="text-[7px] lg:text-[8px] 2xl:text-[9px] text-[#6B8A8A]">INDX</span>
                   </p>
                 </div>
               </div>
-              <ChevronRight className="h-4 w-4 text-[#6B8A8A] group-hover:text-[#00FFAA] group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
+              <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-[#6B8A8A] group-hover:text-[#00FFAA] group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
             </div>
           </div>
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
-          <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="flex-1 overflow-y-auto p-3 lg:p-4.5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+          <div className="space-y-3.5 lg:space-y-4.5 2xl:space-y-6 animate-in fade-in duration-500">
 
             {/* Informasi Demografi */}
-            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-6 rounded-2xl space-y-4">
-              <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2">
-                <Info className="h-5 w-5 text-[#00FFAA]" />
+            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3.5 lg:p-4.5 2xl:p-6 rounded-xl 2xl:rounded-2xl space-y-2.5 lg:space-y-3 2xl:space-y-4">
+              <h3 className="text-xs lg:text-sm 2xl:text-md font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2">
+                <Info className="h-4 w-4 lg:h-4.5 lg:w-4.5 2xl:h-5 2xl:w-5 text-[#00FFAA]" />
                 Informasi Demografi
               </h3>
-              <div className="space-y-4 font-sans text-sm text-[#E0E0E0] font-medium leading-relaxed">
+              <div className="space-y-2.5 lg:space-y-3 2xl:space-y-4 font-sans text-xs lg:text-xs 2xl:text-sm text-[#E0E0E0] font-medium leading-relaxed">
                 <p>
                   Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki total populasi terdaftar sebanyak <span className="font-bold text-[#00FFAA]">{populasi.toLocaleString('id-ID')} jiwa</span>.
                   Saat ini, laju pertumbuhan harian berada pada angka <span className={`font-bold ${totalDailyDelta >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{totalDailyDelta >= 0 ? '+' : ''}{totalDailyDelta.toLocaleString('id-ID')} jiwa per hari</span>.
                 </p>
 
                 {/* TOMBOL KELAHIRAN & KEMATIAN */}
-                <div className="pt-4 border-t border-[#00FFAA]/20 grid grid-cols-2 gap-4">
+                <div className="pt-2.5 lg:pt-3 2xl:pt-4 border-t border-[#00FFAA]/20 grid grid-cols-2 gap-2.5 lg:gap-3 2xl:gap-4">
                   <div
-                    className="group cursor-pointer rounded-xl p-4 border border-[#00FFAA]/30 bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:scale-[0.98] transition-all duration-200 flex items-center justify-between"
+                    className="group cursor-pointer rounded-lg lg:rounded-xl p-2.5 lg:p-3 2xl:p-4 border border-[#00FFAA]/30 bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:scale-[0.98] transition-all duration-200 flex items-center justify-between"
                     onClick={() => setIsDetailBirthOpen(true)}
                   >
                     <div className="flex flex-col items-start">
-                      <p className="text-[10px] text-[#6B8A8A] font-black uppercase">Angka Kelahiran Harian</p>
-                      <p className="text-2xl font-black text-[#00FFAA] mt-1">+{dailyBirths.toLocaleString('id-ID')}</p>
+                      <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase">Angka Kelahiran Harian</p>
+                      <p className="text-base lg:text-xl 2xl:text-2xl font-black text-[#00FFAA] mt-0.5 lg:mt-1">+{dailyBirths.toLocaleString('id-ID')}</p>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-[#00FFAA] group-hover:translate-x-1 transition-all shrink-0 ml-2" />
+                    <ChevronRight className="h-4 w-4 lg:h-4.5 lg:w-4.5 2xl:h-5 2xl:w-5 text-[#00FFAA] group-hover:translate-x-1 transition-all shrink-0 ml-1.5" />
                   </div>
                   <div
-                    className="group cursor-pointer rounded-xl p-4 border border-rose-500/30 bg-[#0A1A1A] hover:bg-rose-500/10 active:scale-[0.98] transition-all duration-200 flex items-center justify-between"
+                    className="group cursor-pointer rounded-lg lg:rounded-xl p-2.5 lg:p-3 2xl:p-4 border border-rose-500/30 bg-[#0A1A1A] hover:bg-rose-500/10 active:scale-[0.98] transition-all duration-200 flex items-center justify-between"
                     onClick={() => setIsDetailDeathOpen(true)}
                   >
                     <div className="flex flex-col items-start">
-                      <p className="text-[10px] text-[#6B8A8A] font-black uppercase">Angka Kematian Harian</p>
-                      <p className="text-2xl font-black text-rose-400 mt-1">-{dailyDeaths.toLocaleString('id-ID')}</p>
+                      <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase">Angka Kematian Harian</p>
+                      <p className="text-base lg:text-xl 2xl:text-2xl font-black text-rose-400 mt-0.5 lg:mt-1">-{dailyDeaths.toLocaleString('id-ID')}</p>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-rose-400 group-hover:translate-x-1 transition-all shrink-0 ml-2" />
+                    <ChevronRight className="h-4 w-4 lg:h-4.5 lg:w-4.5 2xl:h-5 2xl:w-5 text-rose-400 group-hover:translate-x-1 transition-all shrink-0 ml-1.5" />
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Laporan Analisis Demografi */}
-            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-5 rounded-2xl flex items-center gap-5 relative overflow-hidden group">
-              <div className="p-3 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/30">
-                <Info className="h-6 w-6 text-[#00FFAA]" />
+            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 lg:p-4 2xl:p-5 rounded-xl 2xl:rounded-2xl flex items-center gap-3 lg:gap-4 2xl:gap-5 relative overflow-hidden group">
+              <div className="p-2 lg:p-2.5 2xl:p-3 bg-[#0A1A1A] rounded-lg 2xl:rounded-xl border border-[#00FFAA]/30 shrink-0">
+                <Info className="h-4 w-4 lg:h-5 lg:w-5 2xl:h-6 2xl:w-6 text-[#00FFAA]" />
               </div>
-              <div className="flex-1">
-                <h4 className="text-sm font-black text-[#00FFAA] uppercase tracking-wide mb-1">Laporan Analisis Demografi Nasional</h4>
-                <p className="text-xs text-[#E0E0E0] font-semibold leading-relaxed">
+              <div className="flex-1 min-w-0">
+                <h4 className="text-xs lg:text-xs 2xl:text-sm font-black text-[#00FFAA] uppercase tracking-wide mb-0.5 lg:mb-1">Laporan Analisis Demografi Nasional</h4>
+                <p className="text-[10px] lg:text-xs 2xl:text-xs text-[#E0E0E0] font-semibold leading-relaxed">
                   {totalDailyDelta >= 0 ? (
                     <span className="text-emerald-400 font-bold">Status: Pertumbuhan Populasi Positif.</span>
                   ) : (

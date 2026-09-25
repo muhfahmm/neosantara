@@ -117,44 +117,44 @@ export function Navbar({
     const activeMenuInfo = getActiveMenuInfo();
 
     return (
-        <nav className="fixed top-3 left-0 right-0 z-70 pointer-events-none px-4 sm:px-8 flex items-center justify-between select-none bg-transparent border-none shadow-none">
+        <nav className="fixed top-2.5 sm:top-3 left-0 right-0 z-70 pointer-events-none px-3 sm:px-5 xl:px-6 2xl:px-8 flex items-center justify-between select-none bg-transparent border-none shadow-none">
             
             {/* 1. Left Side: Circular Menu & Selected Badge */}
-            <div className="flex items-center gap-2 sm:gap-3 shrink-0 relative z-20 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1.5 rounded-2xl shadow-2xl">
+            <div className="flex items-center gap-2 2xl:gap-3 shrink-0 relative z-20 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
                 {/* Circle Power Button */}
                 <div className="relative group shrink-0">
                     <button
                         onClick={onOpenGameMenu}
                         title="Game Menu"
-                        className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 rounded-full bg-[#0A1A1A] border-[2px] border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all flex items-center justify-center cursor-pointer z-30"
+                        className="w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-full bg-[#0A1A1A] border-[2px] border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all flex items-center justify-center cursor-pointer z-30"
                     >
-                        <Power className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        <Power className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
                     </button>
                     
-                    <div className="absolute top-[38px] sm:top-[44px] left-1/2 -translate-x-1/2 bg-[#0F2424] border border-[#00FFAA]/30 px-2 py-1 text-[#00FFAA] text-[8px] sm:text-[10px] font-black tracking-wider uppercase rounded-md whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div className="absolute top-[38px] lg:top-[42px] 2xl:top-[44px] left-1/2 -translate-x-1/2 bg-[#0F2424] border border-[#00FFAA]/30 px-2 py-1 text-[#00FFAA] text-[8px] sm:text-[10px] font-black tracking-wider uppercase rounded-md whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         Game Menu
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-1 rounded-xl min-w-[120px] sm:min-w-[160px]">
+                <div className="flex items-center gap-2 2xl:gap-3 px-2 2xl:px-3 py-0.5 sm:py-1 rounded-xl min-w-[110px] lg:min-w-[130px] 2xl:min-w-[160px]">
                     {selectedCountry ? (
                         <img 
                             src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`} 
-                            className="w-6 h-4 sm:w-8 sm:h-5 rounded-sm object-cover border border-[#00FFAA]/30"
+                            className="w-6 h-4 lg:w-7 lg:h-4.5 2xl:w-8 2xl:h-5 rounded-sm object-cover border border-[#00FFAA]/30"
                             alt="flag"
                             onError={(e) => {
                                 (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
                             }}
                         />
                     ) : (
-                        <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-center text-base sm:text-xl">🌐
+                        <div className="w-6 h-6 lg:w-7 lg:h-7 2xl:w-8 2xl:h-8 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-center text-sm lg:text-base 2xl:text-xl">🌐
                         </div>
                     )}
                     <div className="flex flex-col leading-tight">
-                        <span className="text-[9px] sm:text-[12px] font-black text-[#E0E0E0] tracking-tight uppercase">
+                        <span className="text-[10px] lg:text-[11px] 2xl:text-[12px] font-black text-[#E0E0E0] tracking-tight uppercase">
                             {selectedCountry ? selectedCountry.country : 'Main Simulation'}
                         </span>
-                        <span className="text-[7px] sm:text-[10px] font-bold text-[#6B8A8A] uppercase tracking-widest">
+                        <span className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-bold text-[#6B8A8A] uppercase tracking-widest">
                             {selectedCountry ? selectedCountry.capital : 'Global Map'}
                         </span>
                     </div>
@@ -162,18 +162,18 @@ export function Navbar({
             </div>
 
             {/* 2. Center: Live Stats Items */}
-            <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1 sm:gap-4 lg:gap-6 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden scroll-smooth z-10 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 px-4 sm:px-6 py-2 rounded-2xl shadow-2xl">
-                <div className="flex items-center gap-1 sm:gap-4 lg:gap-6 min-w-max">
+            <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden scroll-smooth z-10 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 px-3.5 lg:px-4.5 xl:px-5.5 2xl:px-6 py-1.5 2xl:py-2 rounded-2xl shadow-2xl">
+                <div className="flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 min-w-max">
                     
                     {/* 🔥 POPULASI DENGAN TOOLTIP DEMOGRAFI */}
                     <div className="group relative flex-shrink-0">
                         <StatusItem 
-                            icon={<Users className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#00FFAA]" />} 
+                            icon={<Users className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-[#00FFAA]" />} 
                             label="POPULASI" 
                             value={
-                                <span className="flex items-center gap-1 sm:gap-2 text-[#E0E0E0]">
+                                <span className="flex items-center gap-1.5 2xl:gap-2 text-[#E0E0E0]">
                                     <span>{populasi.toLocaleString('id-ID')}</span>
-                                    <span className={`${netPopulationChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-[8px] sm:text-[11px] font-black`}>
+                                    <span className={`${netPopulationChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
                                         ({netPopulationLabel})
                                     </span>
                                 </span>
@@ -193,12 +193,12 @@ export function Navbar({
                     </div>
 
                     <StatusItem
-                        icon={<Landmark className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#00FFAA]" />}
+                        icon={<Landmark className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-[#00FFAA]" />}
                         label="KAS NEGARA"
                         value={countryDetail ? (
-                            <span className="flex items-center gap-1 sm:gap-2 text-[#E0E0E0]">
+                            <span className="flex items-center gap-1.5 2xl:gap-2 text-[#E0E0E0]">
                                 <span className={anggaran < 0 ? 'text-rose-400 font-black' : ''}>{formatCurrencyEM(anggaran)}</span>
-                                <span className={`${netBalance >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-[8px] sm:text-[11px] font-black`}>
+                                <span className={`${netBalance >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
                                     ({netBalanceLabel})
                                 </span>
                             </span>
@@ -213,7 +213,7 @@ export function Navbar({
                         title="Klik untuk melihat detail kepuasan"
                     >
                         <StatusItem 
-                            icon={<Smile className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#00FFAA]" />} 
+                            icon={<Smile className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-[#00FFAA]" />} 
                             label="KEPUASAN" 
                             value={`${countryDetail?.kepuasan !== undefined ? Math.round(countryDetail.kepuasan) : 50}%`} 
                             color={getKepuasanColor(countryDetail?.kepuasan ?? 50)} 
@@ -221,7 +221,7 @@ export function Navbar({
                     </button>
 
                     <StatusItem 
-                        icon={<Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-[#00FFAA] text-[#00FFAA]" />} 
+                        icon={<Star className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 fill-[#00FFAA] text-[#00FFAA]" />} 
                         label="PERINGKAT" 
                         value={`${presidentRating}/100`} 
                         color={getPresidentRatingColor(presidentRating)} 
@@ -233,7 +233,7 @@ export function Navbar({
                         title="Klik untuk melihat detail kesejahteraan"
                     >
                         <StatusItem
-                            icon={<Activity className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#00FFAA]" />}
+                            icon={<Activity className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-[#00FFAA]" />}
                             label="KESEJAHTERAAN"
                             value={`${kesejahteraan}/100`}
                             color={getKesejahteraanColorClass(kesejahteraan)}
@@ -243,21 +243,21 @@ export function Navbar({
             </div>
 
             {/* 3. Right Side: Save & Restart Buttons */}
-            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 relative z-20 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1.5 rounded-2xl shadow-2xl">
+            <div className="flex items-center gap-1.5 2xl:gap-2 shrink-0 relative z-20 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
                 <button
                     onClick={onOpenSaveModal}
                     title="Simpan Game"
-                    className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
+                    className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
                 >
-                    <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <Save className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
                 </button>
                 
                 <button
                     onClick={onOpenRestartConfirm}
                     title="Atur Ulang Game"
-                    className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
+                    className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
                 >
-                    <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <RotateCcw className="w-3.5 h-3.5 2xl:w-4 2xl:h-4" />
                 </button>
             </div>
         </nav>
@@ -267,15 +267,15 @@ export function Navbar({
 // StatusItem
 function StatusItem({ icon, label, value, color = "text-[#E0E0E0]" }: { icon: React.ReactNode, label: string, value: React.ReactNode, color?: string }) {
     return (
-        <div className="flex items-center gap-1.5 sm:gap-4 flex-shrink-0">
-            <div className="p-1 sm:p-2 bg-[#0F2424] rounded-lg sm:rounded-xl text-[#00FFAA] border border-[#00FFAA]/20">
+        <div className="flex items-center gap-1.5 lg:gap-2 2xl:gap-4 flex-shrink-0">
+            <div className="p-1 lg:p-1.5 2xl:p-2 bg-[#0F2424] rounded-lg 2xl:rounded-xl text-[#00FFAA] border border-[#00FFAA]/20">
                 {icon}
             </div>
             <div className="flex flex-col">
-                <span className="text-[6px] sm:text-[10px] font-black text-[#6B8A8A] tracking-widest uppercase leading-none mb-0.5 sm:mb-1.5">
+                <span className="text-[7px] lg:text-[8px] xl:text-[9px] 2xl:text-[10px] font-black text-[#6B8A8A] tracking-widest uppercase leading-none mb-0.5 2xl:mb-1.5">
                     {label}
                 </span>
-                <span className={`text-[9px] sm:text-[13px] font-black tracking-tighter uppercase leading-none whitespace-nowrap ${color}`}>
+                <span className={`text-[10px] lg:text-[11px] xl:text-[12px] 2xl:text-[13px] font-black tracking-tighter uppercase leading-none whitespace-nowrap ${color}`}>
                     {value}
                 </span>
             </div>

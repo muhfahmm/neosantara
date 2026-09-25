@@ -316,10 +316,10 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
       <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
         <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
           {/* HEADER */}
-          <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30"><Utensils className="h-6 w-6 text-[#00FFAA]" /></div>
-              <div><h2 className="text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Industri Pangan & Konsumsi Masyarakat</h2><p className="text-xs text-[#6B8A8A] mt-1">Neraca produksi dan kebutuhan pasokan makanan nasional</p></div>
+          <div className="px-4 lg:px-6 2xl:px-8 py-3.5 lg:py-4.5 2xl:py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
+            <div className="flex items-center gap-2.5 lg:gap-3">
+              <div className="p-1.5 lg:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30"><Utensils className="h-4 w-4 lg:h-5 lg:w-5 2xl:h-6 2xl:w-6 text-[#00FFAA]" /></div>
+              <div><h2 className="text-base lg:text-xl 2xl:text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Industri Pangan & Konsumsi Masyarakat</h2><p className="text-[10px] lg:text-xs text-[#6B8A8A] mt-0.5 lg:mt-1">Neraca produksi dan kebutuhan pasokan makanan nasional</p></div>
             </div>
             <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
               <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
@@ -327,8 +327,8 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
             </button>
           </div>
           {/* CONTENT */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 space-y-6 custom-scrollbar">
-            <div className="space-y-6">
+          <div className="flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+            <div className="space-y-3.5 lg:space-y-4.5 2xl:space-y-6">
                 {Object.entries(SECTOR_MAP).map(([sectorId, sectorData]) => {
                   const SectorIcon = sectorData.icon;
                   const sectorItems = sectorData.items.filter(key => FOOD_CONSUMPTION_PER_CAPITA[key] !== undefined);
@@ -336,13 +336,13 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                   let deficitCount = 0; let surplusCount = 0;
                   sectorItems.forEach(key => { const prod = calculateProduction(key, countryDetail, metadata); const cons = calculateConsumption(population, FOOD_CONSUMPTION_PER_CAPITA[key]); if (prod - cons < 0) deficitCount++; else if (prod - cons > 0) surplusCount++; });
                   return (
-                    <div key={sectorId} className="border border-[#00FFAA]/20 rounded-2xl overflow-hidden bg-[#0A1A1A]">
-                      <div className="flex items-center justify-between px-6 py-3.5 bg-[#0A1A1A] border-b border-[#00FFAA]/20 text-[#00FFAA]">
-                        <div className="flex items-center gap-3"><div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30"><SectorIcon className="w-5 h-5 text-[#00FFAA]" /></div><h4 className="text-sm font-black uppercase tracking-wider text-[#00FFAA]">{sectorData.label} ({sectorItems.length} Komoditas)</h4></div>
-                        <button onClick={() => analyzeSector(sectorId)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#00FFAA]/10 hover:bg-[#00FFAA]/20 transition-colors border border-[#00FFAA]/30 group cursor-pointer" title="Analisis AI untuk sektor ini"><div className="relative"><MessageSquare className="w-4 h-4 text-[#00FFAA] group-hover:scale-110 transition-transform" /><span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${deficitCount > 0 ? 'bg-rose-400 animate-pulse' : surplusCount > 0 ? 'bg-emerald-400' : 'bg-gray-400'}`} /></div><span className="text-[9px] font-bold uppercase tracking-wider text-[#00FFAA]">AI</span></button>
+                    <div key={sectorId} className="border border-[#00FFAA]/20 rounded-xl 2xl:rounded-2xl overflow-hidden bg-[#0A1A1A]">
+                      <div className="flex items-center justify-between px-3.5 lg:px-4.5 2xl:px-6 py-2 lg:py-2.5 2xl:py-3.5 bg-[#0A1A1A] border-b border-[#00FFAA]/20 text-[#00FFAA]">
+                        <div className="flex items-center gap-2 lg:gap-3"><div className="p-1 lg:p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30"><SectorIcon className="w-4 h-4 lg:w-4.5 lg:w-4.5 2xl:w-5 2xl:h-5 text-[#00FFAA]" /></div><h4 className="text-xs lg:text-xs 2xl:text-sm font-black uppercase tracking-wider text-[#00FFAA]">{sectorData.label} ({sectorItems.length} Komoditas)</h4></div>
+                        <button onClick={() => analyzeSector(sectorId)} className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-full bg-[#00FFAA]/10 hover:bg-[#00FFAA]/20 transition-colors border border-[#00FFAA]/30 group cursor-pointer" title="Analisis AI untuk sektor ini"><div className="relative"><MessageSquare className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-[#00FFAA] group-hover:scale-110 transition-transform" /><span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${deficitCount > 0 ? 'bg-rose-400 animate-pulse' : surplusCount > 0 ? 'bg-emerald-400' : 'bg-gray-400'}`} /></div><span className="text-[8px] lg:text-[9px] font-bold uppercase tracking-wider text-[#00FFAA]">AI</span></button>
                       </div>
                       {/* Grid Items */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-3 bg-[#0F2424]">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 lg:gap-2 p-2 lg:p-2.5 2xl:p-3 bg-[#0F2424]">
                         {sectorItems.map((key) => {
                           const consumptionPerCapita = FOOD_CONSUMPTION_PER_CAPITA[key];
                           const production = calculateProduction(key, countryDetail, metadata);
@@ -350,19 +350,19 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                           const netBalance = production - consumption;
                           const label = metadata?.[key]?.label || key.replace(/_/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase());
                           return (
-                            <div key={key} className="bg-[#0A1A1A] p-3.5 flex flex-col gap-2 rounded-xl border border-[#00FFAA]/20">
-                              <div className="flex items-center justify-between pb-1 border-b border-[#00FFAA]/10">
-                                <div className="flex items-center gap-1.5 min-w-0">
-                                  <button type="button" onClick={(e) => { e.stopPropagation(); openCommodityInfo(key, label, production, consumption, netBalance); }} title={`Detail konsumsi ${label}`} className="p-1 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer shrink-0"><Info className="w-3.5 h-3.5" /></button>
-                                  <span className="text-xs font-black text-[#E0E0E0] uppercase tracking-wider truncate">{label}</span>
+                            <div key={key} className="bg-[#0A1A1A] p-2 lg:p-2.5 2xl:p-3.5 flex flex-col justify-between gap-1.5 lg:gap-2 rounded-lg 2xl:rounded-xl border border-[#00FFAA]/20">
+                              <div className="flex items-center justify-between pb-1 border-b border-[#00FFAA]/10 gap-1.5">
+                                <div className="flex items-center gap-1 lg:gap-1.5 min-w-0 flex-1">
+                                  <button type="button" onClick={(e) => { e.stopPropagation(); openCommodityInfo(key, label, production, consumption, netBalance); }} title={`Detail konsumsi ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer shrink-0"><Info className="w-3 h-3 lg:w-3.5 lg:h-3.5" /></button>
+                                  <span className="text-[8.5px] lg:text-[9.5px] 2xl:text-[11px] font-black text-[#E0E0E0] uppercase tracking-tight leading-none truncate">{label}</span>
                                 </div>
-                                {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className="p-1 rounded-lg bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 transition-all cursor-pointer"><Plus className="w-3.5 h-3.5 font-bold" /></button>)}
+                                {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 transition-all cursor-pointer shrink-0"><Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 font-bold" /></button>)}
                               </div>
-                              <div className="space-y-1 text-xs">
-                                <div className="flex justify-between items-center bg-emerald-950/40 px-2 py-1 rounded-md border border-emerald-500/30"><span className="text-[9px] font-bold text-emerald-400 uppercase tracking-tight">Total Produksi</span>{formatColoredNumber(production, true)}</div>
-                                <div className="flex justify-between items-center bg-rose-950/40 px-2 py-1 rounded-md border border-rose-500/30"><span className="text-[9px] font-bold text-rose-400 uppercase tracking-tight">Total Konsumsi</span>{formatColoredNumber(consumption, false)}</div>
+                              <div className="space-y-1 text-[10px] lg:text-xs">
+                                <div className="flex justify-between items-center bg-emerald-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-md border border-emerald-500/30"><span className="text-[8px] lg:text-[9px] font-bold text-emerald-400 uppercase tracking-tight">Total Produksi</span>{formatColoredNumber(production, true)}</div>
+                                <div className="flex justify-between items-center bg-rose-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-md border border-rose-500/30"><span className="text-[8px] lg:text-[9px] font-bold text-rose-400 uppercase tracking-tight">Total Konsumsi</span>{formatColoredNumber(consumption, false)}</div>
                               </div>
-                              <div className="flex justify-between items-center text-[10px] pt-1.5 border-t border-[#00FFAA]/10 mt-0.5"><span className="font-bold text-[#6B8A8A] uppercase tracking-wider">Netto:</span>{formatColoredNumber(netBalance, netBalance >= 0)}</div>
+                              <div className="flex justify-between items-center text-[9px] lg:text-[10px] pt-1 border-t border-[#00FFAA]/10 mt-0.5"><span className="font-bold text-[#6B8A8A] uppercase tracking-wider">Netto:</span>{formatColoredNumber(netBalance, netBalance >= 0)}</div>
                             </div>
                           );
                         })}
@@ -372,29 +372,29 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                 })}
 
                 {/* INDEKS KEPUASAN PANGAN */}
-                <div className="p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
+                <div className="p-3.5 lg:p-4 2xl:p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-black text-[#00FFAA] uppercase tracking-widest">
+                    <span className="text-xs lg:text-xs 2xl:text-sm font-black text-[#00FFAA] uppercase tracking-widest">
                       Indeks Kepuasan Rakyat (Pangan)
                     </span>
-                    <span className="text-3xl font-black text-[#00FFAA]">
+                    <span className="text-xl lg:text-2xl 2xl:text-3xl font-black text-[#00FFAA]">
                       {foodSatisfaction} / 100
                     </span>
                   </div>
-                  <div className="w-full h-3 bg-[#0F2424] rounded-full mt-3 overflow-hidden border border-[#00FFAA]/20">
+                  <div className="w-full h-2.5 lg:h-3 bg-[#0F2424] rounded-full mt-2 lg:mt-3 overflow-hidden border border-[#00FFAA]/20">
                     <div
                       className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
                       style={{ width: `${foodSatisfaction}%` }}
                     />
                   </div>
-                  <p className="text-[10px] text-[#00FFAA] font-bold mt-3">
+                  <p className="text-[9px] lg:text-[10px] text-[#00FFAA] font-bold mt-2 lg:mt-3">
                     {foodSatisfaction >= 80
                       ? "✅ Ketersediaan pangan mencukupi, rakyat sejahtera."
                       : foodSatisfaction >= 50
                         ? "⚠️ Ketersediaan pangan pas-pasan, perlu peningkatan produksi."
                         : "🔴 Defisit pangan parah, rakyat terancam kelaparan."}
                   </p>
-                  <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-[#6B8A8A]">
+                  <div className="mt-2 grid grid-cols-2 gap-2 text-[9px] lg:text-[10px] text-[#6B8A8A]">
                     <div>Rata-rata rasio produksi/konsumsi: <span className="font-bold text-[#00FFAA]">
                       {(foodSatisfaction / 100 * 2).toFixed(2)}
                     </span></div>
@@ -402,7 +402,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 flex justify-between items-center"><div className="flex items-center gap-2 text-[#00FFAA] font-black text-xs uppercase tracking-wider">👥 Total Populasi & Kebutuhan Pangan Harian</div><div className="px-4 py-1.5 rounded-lg bg-[#00FFAA] text-[#0A1A1A]"><span className="text-xs font-black tracking-wider">{formatNumber(population)} Jiwa</span></div></div>
+                <div className="p-3 lg:p-3.5 2xl:p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 flex justify-between items-center"><div className="flex items-center gap-2 text-[#00FFAA] font-black text-[10px] lg:text-xs uppercase tracking-wider">👥 Total Populasi & Kebutuhan Pangan Harian</div><div className="px-3 lg:px-4 py-1 lg:py-1.5 rounded-lg bg-[#00FFAA] text-[#0A1A1A]"><span className="text-[10px] lg:text-xs font-black tracking-wider">{formatNumber(population)} Jiwa</span></div></div>
               </div>
           </div>
         </div>

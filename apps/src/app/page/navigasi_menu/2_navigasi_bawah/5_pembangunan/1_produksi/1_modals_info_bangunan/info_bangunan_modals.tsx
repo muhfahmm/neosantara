@@ -245,15 +245,15 @@ export default function InfoBangunan({
                   </div>
                 )}
 
-                {bMeta?.konsumsi_listrik !== undefined && bMeta.konsumsi_listrik > 0 && (
+                {bMeta?.konsumsi_listrik !== undefined && (
                   <>
                     <div className="flex justify-between items-center">
                       <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Total):</span>
-                      <span className="text-rose-400 font-bold">{(bMeta.konsumsi_listrik * perCount).toLocaleString('id-ID')} MW</span>
+                      <span className="text-rose-400 font-black text-sm">{(Number(bMeta.konsumsi_listrik) * perCount).toLocaleString('id-ID')} MW</span>
                     </div>
                     <div className="flex justify-between items-center pl-4">
                       <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Satuan):</span>
-                      <span className="text-rose-400 font-bold">{bMeta.konsumsi_listrik.toLocaleString('id-ID')} MW</span>
+                      <span className="text-rose-400 font-bold">{Number(bMeta.konsumsi_listrik).toLocaleString('id-ID')} MW</span>
                     </div>
                   </>
                 )}

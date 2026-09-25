@@ -159,57 +159,57 @@ export default function StatistikKepuasanModal({
           <div className="space-y-4 sm:space-y-5 animate-in fade-in duration-300">
             
             {/* Kartu skor umum */}
-            <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-3.5 sm:p-4 rounded-xl flex flex-row items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/40 flex items-center justify-center shrink-0">
-                  <Smile className="h-5 w-5 sm:h-7 sm:w-7 text-[#00FFAA]" />
+            <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-2.5 lg:p-3 2xl:p-4 rounded-xl flex flex-row items-center justify-between gap-2.5 lg:gap-3">
+              <div className="flex items-center gap-2.5 lg:gap-3">
+                <div className="w-9 h-9 lg:w-11 lg:h-11 2xl:w-14 2xl:h-14 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/40 flex items-center justify-center shrink-0">
+                  <Smile className="h-4 w-4 lg:h-5 lg:w-5 2xl:h-7 2xl:w-7 text-[#00FFAA]" />
                 </div>
                 <div>
-                  <h3 className="text-sm sm:text-base font-black text-[#E0E0E0] uppercase tracking-wide leading-none mb-1">Persetujuan Umum Rakyat</h3>
-                  <p className="text-[10px] sm:text-xs text-[#6B8A8A] font-semibold max-w-sm sm:max-w-md leading-tight">
+                  <h3 className="text-xs lg:text-sm 2xl:text-base font-black text-[#E0E0E0] uppercase tracking-wide leading-none mb-0.5 lg:mb-1">Persetujuan Umum Rakyat</h3>
+                  <p className="text-[9px] lg:text-[10px] 2xl:text-xs text-[#6B8A8A] font-semibold max-w-sm sm:max-w-md leading-tight">
                     Rata-rata persetujuan nasional rakyat terhadap kebijakan kepemimpinan kabinet saat ini.
                   </p>
                 </div>
               </div>
-              <div className="text-right bg-[#0A1A1A] border border-[#00FFAA]/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg shrink-0 min-w-[90px] sm:min-w-[110px]">
-                <p className="text-xl sm:text-2xl font-black text-[#00FFAA] tracking-tight leading-none">{Math.round(generalSatisfaction)}%</p>
-                <p className="text-[9px] text-[#00FFAA] font-bold uppercase tracking-wider mt-0.5 flex items-center justify-end gap-0.5">
-                  <TrendingUp className="h-2.5 w-2.5" /> Stabil
+              <div className="text-right bg-[#0A1A1A] border border-[#00FFAA]/30 px-2.5 lg:px-3.5 2xl:px-4 py-1 lg:py-1.5 2xl:py-2 rounded-lg shrink-0 min-w-[75px] lg:min-w-[95px] 2xl:min-w-[110px]">
+                <p className="text-base lg:text-xl 2xl:text-2xl font-black text-[#00FFAA] tracking-tight leading-none">{Math.round(generalSatisfaction)}%</p>
+                <p className="text-[8px] lg:text-[9px] text-[#00FFAA] font-bold uppercase tracking-wider mt-0.5 flex items-center justify-end gap-0.5">
+                  <TrendingUp className="h-2 w-2 lg:h-2.5 lg:w-2.5" /> Stabil
                 </p>
               </div>
             </div>
 
             {/* Sektor-sektor */}
             <div>
-              <div className="flex items-center gap-3 mb-5 px-1">
-                <div className="p-1.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30">
-                  <TrendingUp className="h-4 w-4 text-[#00FFAA]" />
+              <div className="flex items-center gap-2.5 lg:gap-3 mb-3 lg:mb-4 2xl:mb-5 px-1">
+                <div className="p-1 lg:p-1.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30">
+                  <TrendingUp className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-[#00FFAA]" />
                 </div>
-                <h3 className="text-lg font-black text-[#E0E0E0] uppercase tracking-wider italic">Penilaian Sektoral</h3>
-                <div className="h-[1px] flex-1 bg-gradient-to-r from-[#00FFAA]/30 to-transparent ml-4"></div>
+                <h3 className="text-sm lg:text-base 2xl:text-lg font-black text-[#E0E0E0] uppercase tracking-wider italic">Penilaian Sektoral</h3>
+                <div className="h-[1px] flex-1 bg-gradient-to-r from-[#00FFAA]/30 to-transparent ml-2 lg:ml-4"></div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 lg:gap-3 2xl:gap-4">
                 {sectors.map((sector, idx) => {
                   const Icon = sector.icon;
                   return (
                     <button
                       key={idx}
                       onClick={() => setActiveMenu?.(sector.menuId)}
-                      className="bg-[#0F2424] border border-[#00FFAA]/20 p-5 rounded-2xl flex gap-4 transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 relative overflow-hidden group cursor-pointer text-left"
+                      className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3.5 2xl:p-5 rounded-xl 2xl:rounded-2xl flex gap-2.5 lg:gap-3.5 2xl:gap-4 transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 relative overflow-hidden group cursor-pointer text-left"
                     >
-                      <div className="p-3 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#00FFAA] self-start group-hover:border-[#00FFAA]">
-                        <Icon size={20} />
+                      <div className="p-2 lg:p-2.5 2xl:p-3 rounded-lg 2xl:rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#00FFAA] self-start group-hover:border-[#00FFAA] shrink-0">
+                        <Icon className="w-4 h-4 lg:w-4.5 lg:h-4.5 2xl:w-5 2xl:h-5" />
                       </div>
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center justify-between text-xs font-black text-[#E0E0E0] uppercase group-hover:text-[#00FFAA]">
-                          <span>{sector.name}</span>
-                          <span className="text-[#00FFAA]">{sector.score}%</span>
+                      <div className="flex-1 space-y-1 lg:space-y-1.5 2xl:space-y-2 min-w-0">
+                        <div className="flex items-center justify-between text-[11px] lg:text-xs font-black text-[#E0E0E0] uppercase group-hover:text-[#00FFAA]">
+                          <span className="pr-1 whitespace-normal leading-tight">{sector.name}</span>
+                          <span className="text-[#00FFAA] shrink-0">{sector.score}%</span>
                         </div>
-                        <div className="h-2.5 w-full bg-[#0A1A1A] rounded-full overflow-hidden border border-[#00FFAA]/20">
+                        <div className="h-1.5 lg:h-2 2xl:h-2.5 w-full bg-[#0A1A1A] rounded-full overflow-hidden border border-[#00FFAA]/20">
                           <div className="h-full bg-[#00FFAA] rounded-full" style={{ width: `${sector.score}%` }} />
                         </div>
-                        <p className="text-[10px] text-[#6B8A8A] font-bold leading-normal pt-1 group-hover:text-[#E0E0E0]">
+                        <p className="text-[9px] lg:text-[10px] text-[#6B8A8A] font-bold leading-tight lg:leading-normal pt-0.5 group-hover:text-[#E0E0E0]">
                           {sector.desc}
                         </p>
                       </div>

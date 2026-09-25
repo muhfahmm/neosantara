@@ -1,10 +1,9 @@
-// ArmadaModal.tsx
-"use client"
-import React, { useState, useEffect } from "react";
-import { X, ShieldAlert, Swords, Building2, Shield } from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
+import { X, ShieldAlert, Swords, Building2, Shield, TrendingUp, TrendingDown } from "lucide-react";
 import ArmadaAktif from "./1_tab_menu/1_armada_aktif";
 import InfrastrukturMiliter from "./1_tab_menu/2_infrastruktur_militer";
 import ArmadaPolisi from "./1_tab_menu/3_armada_polisi";
+import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 
 interface ModalProps {
   isOpen: boolean;
@@ -18,12 +17,18 @@ interface ModalProps {
 
 export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountryDetail, onGotoProduction, currentDate, initialTab = 'aktif' }: ModalProps) {
   const [activeTab, setActiveTab] = useState<'aktif' | 'infrastruktur' | 'polisi'>(initialTab);
+  const [metadata, setMetadata] = useState<Record<string, any>>({});
   
   useEffect(() => {
     if (isOpen && initialTab) {
       setActiveTab(initialTab);
     }
   }, [isOpen, initialTab]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    fetchBuildingMetadata().then((m) => setMetadata(m || {}));
+  }, [isOpen]);
 
   const [highlightInfraKey, setHighlightInfraKey] = useState<string | null>(null);
 
@@ -36,7 +41,6 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
     countryDetail?.name_en ||
     "Negara";
 
-  // 🔥 Clear highlight after animation using useEffect
   useEffect(() => {
     if (highlightInfraKey) {
       const timer = setTimeout(() => setHighlightInfraKey(null), 2000);
@@ -44,43 +48,110 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
     }
   }, [highlightInfraKey]);
 
-  // 🔥 PERBAIKAN BUG: useEffect penyelesaian konstruksi/rekrutmen DIHAPUS dari sini.
-  //
-  // SEBELUMNYA di sini ada useEffect yang JUGA memproses ongoingConstructions
-  // yang sudah selesai (type "recruitment"/"construction"/"purchase"), TAPI:
-  //   1) Untuk type "construction" ia menulis ke `newDetail[key]` (TOP-LEVEL),
-  //      bukan ke `newDetail.armada[group][key]` seperti seharusnya.
-  //   2) Ia selalu menambah tepat +1, mengabaikan `c.quantity` yang sebenarnya
-  //      diminta pengguna.
-  //
-  // Akibatnya: `1_armada_aktif.tsx` (lewat fungsi getData) mengecek top-level
-  // key LEBIH DULU sebelum armada[group][key]. Begitu useEffect di file ini
-  // menulis top-level key baru (mis. `tank_tempur_utama: 1`), nilai itu
-  // "menutupi" nilai asli yang benar di `armada.darat.tank_tempur_utama`
-  // (mis. 4650) — sehingga tampilan kartu di Tab Armada Aktif mendadak
-  // turun jadi 1 padahal sebelumnya sudah terakumulasi banyak.
-  //
-  // Selain itu, useEffect ini BERJALAN BERSAMAAN (race condition) dengan
-  // useEffect serupa yang SUDAH ADA dan SUDAH BENAR di `1_armada_aktif.tsx`
-  // (yang menambah ke armada[group][key] dengan quantity yang benar). Dua
-  // useEffect yang memproses array `ongoingConstructions` yang sama secara
-  // independen inilah sumber bug-nya.
-  //
-  // Fix: cukup SATU sumber kebenaran untuk memproses penyelesaian
-  // recruitment/construction unit Armada Aktif, yaitu useEffect yang ada
-  // di `1_armada_aktif.tsx`. File ini tidak perlu (dan tidak boleh) ikut
-  // memprosesnya lagi.
-  //
-  // Catatan: jika InfrastrukturMiliter (bangunan seperti Barak, Hangar
-  // Tank, Gudang Senjata, dst) punya kebutuhan serupa untuk memproses
-  // constructionnya sendiri, itu HARUS ditangani di dalam komponen
-  // InfrastrukturMiliter itu sendiri (dengan menulis ke lokasi data yang
-  // benar dan menghormati quantity) — bukan di sini secara generik.
-
   const handleNavigateToInfra = (infraKey: string) => {
     setActiveTab("infrastruktur");
     setHighlightInfraKey(infraKey);
   };
+
+  const ELECTRICITY_BUILDINGS_LIST = [
+    'pembangkit_listrik_tenaga_nuklir',
+    'pembangkit_listrik_tenaga_air',
+    'pembangkit_listrik_tenaga_surya',
+    'pembangkit_listrik_tenaga_uap',
+    'pembangkit_listrik_tenaga_gas',
+    'pembangkit_listrik_tenaga_angin',
+  ];
+
+  const findMeta = (key: string) => {
+    if (!metadata) return undefined;
+    if (metadata[key]) return metadata[key];
+    for (const k of Object.keys(metadata)) {
+      const entry = metadata[k];
+      if (!entry) continue;
+      if (entry.dataKey === key) return entry;
+      if (k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
+    }
+    return undefined;
+  };
+
+  const totalProductionMW = ELECTRICITY_BUILDINGS_LIST.reduce((sum, bKey) => {
+    const count = Number(countryDetail?.[bKey]) || 0;
+    const bMeta = findMeta(bKey);
+    const perUnit = Number(bMeta?.produksi || 0);
+    return sum + perUnit * count;
+  }, 0);
+
+  const DEFAULT_ELECTRICITY_CONSUMPTION: Record<string, number> = {
+    gudang_senjata: 0.5,
+    hangar_tank: 0.5,
+    pangkalan_udara: 0.5,
+    pangkalan_laut: 0.5,
+    markas_besar_polri: 1,
+    akademi_kepolisian: 0.8,
+    pusat_forensik: 0.5,
+    kantor_polisi: 0.5,
+    pos_polisi: 0.1,
+    network_cctv: 0.1,
+    rumah_subsidi: 0.0009,
+    apartemen: 0.0022,
+    mansion: 0.0055,
+  };
+
+  const totalBuildingElectricityConsumption = () => {
+    if (!countryDetail) return 0;
+    let total = 0;
+
+    if (metadata && Object.keys(metadata).length > 0) {
+      Object.keys(metadata).forEach((key) => {
+        const bMeta = metadata[key];
+        const konsumsi = Number(bMeta?.konsumsi_listrik) || 0;
+        if (konsumsi <= 0) return;
+
+        const possibleKeys = [
+          key,
+          bMeta?.dataKey,
+          key.replace(/^\d+_/, ''),
+          bMeta?.dataKey ? bMeta.dataKey.replace(/^\d+_/, '') : undefined,
+        ].filter(Boolean) as string[];
+
+        let count = 0;
+        for (const pKey of possibleKeys) {
+          if (countryDetail[pKey] !== undefined && countryDetail[pKey] !== null) {
+            count = Number(countryDetail[pKey]) || 0;
+            break;
+          } else if (countryDetail?.pertahanan?.[pKey] !== undefined && countryDetail?.pertahanan?.[pKey] !== null) {
+            count = Number(countryDetail.pertahanan[pKey]) || 0;
+            break;
+          }
+        }
+
+        if (count > 0) {
+          total += count * konsumsi;
+        }
+      });
+    }
+
+    if (total <= 0) {
+      Object.entries(DEFAULT_ELECTRICITY_CONSUMPTION).forEach(([hKey, defaultRate]) => {
+        const count = Number(countryDetail[hKey]) || Number(countryDetail?.pertahanan?.[hKey]) || 0;
+        if (count > 0) {
+          total += count * defaultRate;
+        }
+      });
+    }
+
+    return total;
+  };
+
+  const buildingCons = totalBuildingElectricityConsumption();
+  const estimatedConsumption = Math.max(
+    0,
+    Math.round(
+      buildingCons > 0
+        ? buildingCons
+        : totalProductionMW * 0.7
+    )
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -96,6 +167,23 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
               <div>
                 <h2 className="text-xl font-black text-[#00FFAA] tracking-wider uppercase">Pertahanan & Keamanan</h2>
                 <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-0.5">{countryName}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 pl-8 border-l border-[#00FFAA]/30">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
+                  <TrendingUp className="h-4 w-4 text-emerald-400" />
+                  <span className="text-[11px] font-black text-emerald-400 uppercase tracking-wider">Produksi</span>
+                  <span className="text-[11px] font-black text-emerald-400">{totalProductionMW.toLocaleString('id-ID')} MW</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F2424] border border-rose-500/30 rounded-lg">
+                  <TrendingDown className="h-4 w-4 text-rose-400" />
+                  <span className="text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
+                  <span className="text-[11px] font-black text-rose-400">{estimatedConsumption.toLocaleString('id-ID')} MW</span>
+                </div>
               </div>
             </div>
           </div>

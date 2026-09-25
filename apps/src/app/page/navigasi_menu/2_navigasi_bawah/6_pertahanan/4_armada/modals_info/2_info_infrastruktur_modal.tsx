@@ -21,7 +21,8 @@ export default function InfoInfrastrukturModal({
 }: InfoInfrastrukturModalProps) {
   if (!isOpen || !selectedItem) return null;
 
-  const value = getNestedValue(countryDetail, selectedItem.key);
+  const itemKey = selectedItem?.dataKey || (typeof selectedItem?.key === "string" ? selectedItem.key.replace(/^\d+_/, "") : selectedItem?.key);
+  const value = getNestedValue(countryDetail, itemKey);
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -78,11 +79,19 @@ export default function InfoInfrastrukturModal({
                 {formatNumber(selectedItem?.lowongan_kerja)} orang
               </p>
             </div>
-            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Konsumsi Listrik</p>
-              <p className="text-base font-black text-white">
-                {formatNumber(selectedItem?.konsumsi_listrik)} kW
-              </p>
+            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Total):</span>
+                <span className="text-rose-400 font-black text-sm">
+                  {(Number(selectedItem?.konsumsi_listrik || 0.5) * value).toLocaleString("id-ID")} MW
+                </span>
+              </div>
+              <div className="flex justify-between items-center pl-4">
+                <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Satuan):</span>
+                <span className="text-rose-400 font-bold">
+                  {Number(selectedItem?.konsumsi_listrik || 0.5).toLocaleString("id-ID")} MW
+                </span>
+              </div>
             </div>
           </div>
 

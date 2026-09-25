@@ -375,7 +375,7 @@ export default function NaikkanKepuasanModal({
               </div>
             )}
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-2.5 lg:gap-3.5 2xl:gap-4">
               {initiatives.map((item) => {
                 const Icon = item.icon;
                 const ongoingEvents = (countryDetail?.ongoingConstructions || []).filter(
@@ -387,7 +387,7 @@ export default function NaikkanKepuasanModal({
                 return (
                   <div
                     key={item.id}
-                    className="relative bg-[#0F2424] border border-[#00FFAA]/20 p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-5 transition-all hover:border-[#00FFAA]/50"
+                    className="relative bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3.5 2xl:p-5 rounded-xl 2xl:rounded-2xl flex flex-col md:flex-row items-center justify-between gap-3 lg:gap-4 2xl:gap-5 transition-all hover:border-[#00FFAA]/50"
                   >
                     {/* Badge Tanggal Selesai */}
                     {isEventOngoing && (
@@ -396,43 +396,43 @@ export default function NaikkanKepuasanModal({
                       </div>
                     )}
 
-                    <div className="flex items-start gap-4">
-                      <div className="p-3.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#00FFAA] shrink-0">
-                        <Icon size={24} />
+                    <div className="flex items-start gap-2.5 lg:gap-3.5 2xl:gap-4">
+                      <div className="p-2 lg:p-2.5 2xl:p-3.5 rounded-lg 2xl:rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#00FFAA] shrink-0">
+                        <Icon className="w-4 h-4 lg:w-5 lg:h-5 2xl:w-6 2xl:h-6" />
                       </div>
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-3">
-                          <h4 className="text-md font-black text-[#E0E0E0] uppercase tracking-wide leading-none">
+                      <div className="space-y-0.5 lg:space-y-1">
+                        <div className="flex items-center gap-2 lg:gap-3">
+                          <h4 className="text-xs lg:text-sm 2xl:text-md font-black text-[#E0E0E0] uppercase tracking-wide leading-none">
                             {item.title}
                           </h4>
-                          <span className="bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider">
+                          <span className="bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 px-1.5 lg:px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black uppercase tracking-wider">
                             +{item.boost}% Kepuasan
                           </span>
                         </div>
-                        <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed max-w-xl">
+                        <p className="text-[10px] lg:text-xs text-[#6B8A8A] font-semibold leading-snug lg:leading-relaxed max-w-xl">
                           {item.desc}
                         </p>
                         {/* 🔥 Tampilkan durasi */}
-                        <div className="flex items-center gap-1.5 text-[10px] text-[#6B8A8A] font-medium mt-1">
-                          <Clock size={14} className="text-[#00FFAA]" />
+                        <div className="flex items-center gap-1.5 text-[9px] lg:text-[10px] text-[#6B8A8A] font-medium mt-0.5 lg:mt-1">
+                          <Clock className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-[#00FFAA]" />
                           <span>Durasi: {item.duration} hari</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-center md:items-end gap-2 shrink-0">
+                    <div className="flex flex-col items-center md:items-end gap-1.5 lg:gap-2 shrink-0">
                       <div className="text-right">
-                        <p className="text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider text-center md:text-right leading-none">
+                        <p className="text-[8px] lg:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider text-center md:text-right leading-none">
                           Biaya Alokasi
                         </p>
-                        <p className="text-sm font-black text-[#00FFAA] mt-1">
+                        <p className="text-xs lg:text-sm font-black text-[#00FFAA] mt-0.5 lg:mt-1">
                           {item.cost.toLocaleString("id-ID")}
                         </p>
                       </div>
                       <button
                         onClick={() => handleInitiative(item.cost, item.boost, item.title, item.duration, item.id)}
                         disabled={isEventOngoing}
-                        className={`px-6 py-2.5 rounded-xl font-black text-xs uppercase transition-all ${
+                        className={`px-3.5 py-1.5 lg:px-4 lg:py-2 2xl:px-6 2xl:py-2.5 rounded-lg 2xl:rounded-xl font-black text-[10px] lg:text-xs uppercase transition-all ${
                           isEventOngoing
                             ? "bg-[#0A1A1A] text-[#6B8A8A] border border-[#6B8A8A]/30 cursor-not-allowed opacity-60"
                             : "bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] hover:brightness-110 active:scale-95 cursor-pointer"
