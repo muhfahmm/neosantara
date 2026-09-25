@@ -338,33 +338,54 @@ export default function HunianPermukimanModal({
     return sum + perUnit * count;
   }, 0);
 
+  const DEFAULT_ELECTRICITY_CONSUMPTION: Record<string, number> = {
+    rumah_subsidi: 0.0009,
+    apartemen: 0.0022,
+    mansion: 0.0055,
+  };
+
   const totalBuildingElectricityConsumption = () => {
-    if (!metadata || !countryDetail) return 0;
+    if (!countryDetail) return 0;
     let total = 0;
-    Object.keys(metadata).forEach((key) => {
-      const bMeta = metadata[key];
-      const konsumsi = Number(bMeta?.konsumsi_listrik) || 0;
-      if (konsumsi <= 0) return;
 
-      const possibleKeys = [
-        key,
-        bMeta?.dataKey,
-        key.replace(/^\d+_/, ''),
-        bMeta?.dataKey ? bMeta.dataKey.replace(/^\d+_/, '') : undefined,
-      ].filter(Boolean) as string[];
+    // Hitung dari metadata jika tersedia
+    if (metadata && Object.keys(metadata).length > 0) {
+      Object.keys(metadata).forEach((key) => {
+        const bMeta = metadata[key];
+        const konsumsi = Number(bMeta?.konsumsi_listrik) || 0;
+        if (konsumsi <= 0) return;
 
-      let count = 0;
-      for (const pKey of possibleKeys) {
-        if (countryDetail[pKey] !== undefined && countryDetail[pKey] !== null) {
-          count = Number(countryDetail[pKey]) || 0;
-          break;
+        const possibleKeys = [
+          key,
+          bMeta?.dataKey,
+          key.replace(/^\d+_/, ''),
+          bMeta?.dataKey ? bMeta.dataKey.replace(/^\d+_/, '') : undefined,
+        ].filter(Boolean) as string[];
+
+        let count = 0;
+        for (const pKey of possibleKeys) {
+          if (countryDetail[pKey] !== undefined && countryDetail[pKey] !== null) {
+            count = Number(countryDetail[pKey]) || 0;
+            break;
+          }
         }
-      }
 
-      if (count > 0) {
-        total += count * konsumsi;
-      }
-    });
+        if (count > 0) {
+          total += count * konsumsi;
+        }
+      });
+    }
+
+    // Jika total masih 0 atau metadata belum lengkap, gunakan fallback konsumsi hunian
+    if (total <= 0) {
+      Object.entries(DEFAULT_ELECTRICITY_CONSUMPTION).forEach(([hKey, defaultRate]) => {
+        const count = Number(countryDetail[hKey]) || 0;
+        if (count > 0) {
+          total += count * defaultRate;
+        }
+      });
+    }
+
     return total;
   };
 
@@ -488,7 +509,7 @@ export default function HunianPermukimanModal({
                       {hoveredBuildingKey === activeItem.key && (() => {
                         const bMeta = findMeta(activeItem.key) || {};
                         const perCount = activeItem.value || 0;
-                        const konsumsiUnit = Number(bMeta?.konsumsi_listrik) || 0;
+                        const konsumsiUnit = Number(bMeta?.konsumsi_listrik) || DEFAULT_ELECTRICITY_CONSUMPTION[activeItem.key] || 0;
                         const biaya = Number(bMeta?.biaya_pembangunan) || 0;
                         const waktu = bMeta?.waktu_pembangunan;
 
@@ -662,8 +683,8 @@ export default function HunianPermukimanModal({
                 {activeItem && (() => {
                   const bMeta = findMeta(activeItem.key);
                   const count = Number(countryDetail?.[activeItem.key]) || 0;
-                  const konsumsiUnit = Number(bMeta?.konsumsi_listrik) || 0;
-                  const categoryElectricityConsumption = count * konsumsiUnit;
+                  const konsumsiUnit = Number(bMeta?.konsumsi_listrik) || DEFAULT_ELECTRICITY_CONSUMPTION[activeItem.key] || 0;
+                  const categoryElectricityConsumption = Math.round(count * konsumsiUnit);
 
                   return (
                     <div className="mt-4 p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-between shadow-sm">

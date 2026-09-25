@@ -605,45 +605,73 @@ export default function TempatUmumModal({
                   const percentageMet = Math.min(100, (activeCategory.index / targetRatio) * 100);
                   const satisfactionScore = Math.round(percentageMet);
 
-                  return (
-                    <div className="rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-5 shadow-md flex flex-col justify-between">
-                      <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">
-                          Indeks Kepuasan Rakyat ({activeCategory.label})
-                        </span>
-                        <span className="text-2xl font-black text-[#00FFAA]">
-                          {satisfactionScore} / 100
-                        </span>
-                      </div>
-                      
-                      <div className="w-full h-3 bg-[#0F2424] border border-[#00FFAA]/20 rounded-full mt-3 overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all duration-200 ${
-                            satisfactionScore <= 40
-                              ? "bg-rose-500"
-                              : satisfactionScore <= 75
-                              ? "bg-amber-400"
-                              : "bg-[#00FFAA]"
-                          }`}
-                          style={{ width: `${satisfactionScore}%` }}
-                        />
-                      </div>
+                      return (
+                        <div className="flex flex-col gap-4">
+                          <div className="rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-5 shadow-md flex flex-col justify-between">
+                            <div className="flex justify-between items-center">
+                              <span className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">
+                                Indeks Kepuasan Rakyat ({activeCategory.label})
+                              </span>
+                              <span className="text-2xl font-black text-[#00FFAA]">
+                                {satisfactionScore} / 100
+                              </span>
+                            </div>
+                            
+                            <div className="w-full h-3 bg-[#0F2424] border border-[#00FFAA]/20 rounded-full mt-3 overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all duration-200 ${
+                                  satisfactionScore <= 40
+                                    ? "bg-rose-500"
+                                    : satisfactionScore <= 75
+                                    ? "bg-amber-400"
+                                    : "bg-[#00FFAA]"
+                                }`}
+                                style={{ width: `${satisfactionScore}%` }}
+                              />
+                            </div>
 
-                      <p className="text-[10px] text-[#E0E0E0] font-bold mt-3">
-                        {satisfactionScore <= 40
-                          ? `🔴 Krisis fasilitas ${activeCategory.label.toLowerCase()}, tingkat keterpenuhan sangat rendah.`
-                          : satisfactionScore <= 75
-                          ? `⚠️ Fasilitas ${activeCategory.label.toLowerCase()} masih terbatas, perlu pembangunan lebih lanjut.`
-                          : `✅ Ketersediaan fasilitas ${activeCategory.label.toLowerCase()} sangat mencukupi bagi seluruh rakyat.`}
-                      </p>
+                            <p className="text-[10px] text-[#E0E0E0] font-bold mt-3">
+                              {satisfactionScore <= 40
+                                ? `🔴 Krisis fasilitas ${activeCategory.label.toLowerCase()}, tingkat keterpenuhan sangat rendah.`
+                                : satisfactionScore <= 75
+                                ? `⚠️ Fasilitas ${activeCategory.label.toLowerCase()} masih terbatas, perlu pembangunan lebih lanjut.`
+                                : `✅ Ketersediaan fasilitas ${activeCategory.label.toLowerCase()} sangat mencukupi bagi seluruh rakyat.`}
+                            </p>
 
-                      <div className="mt-3 grid grid-cols-2 gap-2 text-[10px] text-[#6B8A8A] border-t border-[#00FFAA]/10 pt-2">
-                        <div>Rasio per kapita: <span className="font-bold text-[#E0E0E0]">{activeCategory.index.toFixed(6)}</span></div>
-                        <div>Persentase keterpenuhan: <span className="font-bold text-[#E0E0E0]">{percentageMet.toFixed(1)}%</span></div>
-                      </div>
-                    </div>
-                  );
-                })()}
+                            <div className="mt-3 grid grid-cols-2 gap-2 text-[10px] text-[#6B8A8A] border-t border-[#00FFAA]/10 pt-2">
+                              <div>Rasio per kapita: <span className="font-bold text-[#E0E0E0]">{activeCategory.index.toFixed(6)}</span></div>
+                              <div>Persentase keterpenuhan: <span className="font-bold text-[#E0E0E0]">{percentageMet.toFixed(1)}%</span></div>
+                            </div>
+                          </div>
+
+                          {/* ⚡ RINGKASAN KONSUMSI LISTRIK SEKTOR TEMPAT UMUM */}
+                          {(() => {
+                            let totalCategoryConsumption = 0;
+                            activeCategory.keys.forEach((key: string) => {
+                              const count = Number(countryDetail?.[key]) || 0;
+                              const bMeta = metadata?.[key] || metadata?.[`1_${key}`] || {};
+                              const konsumsiUnit = Number(bMeta?.konsumsi_listrik) || 0;
+                              totalCategoryConsumption += count * konsumsiUnit;
+                            });
+
+                            return (
+                              <div className="p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-between shadow-sm">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-black text-[#00FFAA] uppercase tracking-wider">
+                                    ⚡ Total Konsumsi Listrik {activeCategory.label}
+                                  </span>
+                                </div>
+                                <div className="px-4 py-1.5 rounded-lg bg-[#0F2424] border border-rose-500/30">
+                                  <span className="text-sm font-black text-rose-400">
+                                    {Math.round(totalCategoryConsumption).toLocaleString('id-ID')} MW
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      );
+                    })()}
               </div>
             </div>
           </div>

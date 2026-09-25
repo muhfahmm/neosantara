@@ -320,6 +320,32 @@ export default function BaseProduksiGrid({
         )}
       </div>
 
+      {/* ⚡ RINGKASAN KONSUMSI LISTRIK SEKTOR PRODUKSI & PEMBANGUNAN */}
+      {(() => {
+        let totalCategoryElectricityConsumption = 0;
+        keys.forEach((key) => {
+          const count = Number(countryDetail?.[key]) || 0;
+          const bMeta = findMeta(key) || {};
+          const konsumsiUnit = Number(bMeta?.konsumsi_listrik) || 0;
+          totalCategoryElectricityConsumption += count * konsumsiUnit;
+        });
+
+        return (
+          <div className="mt-6 p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-black text-[#00FFAA] uppercase tracking-wider">
+                ⚡ Total Konsumsi Listrik {title}
+              </span>
+            </div>
+            <div className="px-4 py-1.5 rounded-lg bg-[#0F2424] border border-rose-500/30">
+              <span className="text-sm font-black text-rose-400">
+                {Math.round(totalCategoryElectricityConsumption).toLocaleString('id-ID')} MW
+              </span>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* MODAL REKOMENDASI AI SEKTOR PRODUKSI */}
       <ProductionAISuggestionsModal
         isOpen={isAIModalOpen}
