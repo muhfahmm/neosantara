@@ -299,15 +299,11 @@ export default function HunianPermukimanModal({
     });
   }, [countryDetail, metadata, population]);
 
-  // --- Indeks kepuasan perumahan (berdasarkan rasio kapasitas vs populasi) ---
   const housingSatisfaction = useMemo(() => {
     if (population <= 0) return 50;
-    const idealCapacity = population; // idealnya kapasitas minimal sama dengan populasi
     if (totalCapacity <= 0) return 1;
-    const ratio = Math.min(totalCapacity / idealCapacity, 2);
-    let score = (ratio / 2) * 100;
-    score = Math.min(100, Math.max(1, Math.round(score)));
-    return score;
+    const ratio = Math.min(totalCapacity / population, 1);
+    return Math.min(100, Math.max(1, Math.round(ratio * 100)));
   }, [totalCapacity, population]);
 
   useEffect(() => {
@@ -565,8 +561,8 @@ export default function HunianPermukimanModal({
                     </div>
                     <div className="bg-[#0F2424] rounded-xl p-3 border border-[#00FFAA]/20 flex flex-col justify-between">
                       <p className="text-[9px] font-bold uppercase text-[#6B8A8A]">Kebutuhan (Populasi)</p>
-                      <p className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-tight mt-1 break-words">
-                        {population.toLocaleString('id-ID')} <span className="text-[9px] font-bold text-[#6B8A8A]">orang</span>
+                      <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 break-words ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        {population.toLocaleString('id-ID')} <span className={`text-[9px] font-bold ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>orang</span>
                       </p>
                     </div>
                     <div className={`bg-[#0F2424] rounded-xl p-3 border ${isSufficient ? 'border-emerald-500/30' : 'border-rose-500/30'} flex flex-col justify-between`}>

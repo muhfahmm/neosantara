@@ -112,6 +112,9 @@ export interface HunianSectorAnalysis {
   totalCapacity: number;
   population: number;
   deficitUnitsNeeded: number;
+  populationDeficit: number;
+  populationSurplus: number;
+  isDeficit: boolean;
   recommendation: string;
   housingItems: HunianItemAnalysis[];
 }
@@ -132,14 +135,17 @@ export const generateHunianAIAnalysis = (
     (Number(countryDetail?.apartemen) || 0) * 50 +
     (Number(countryDetail?.mansion) || 0) * 8;
 
-  const populationDeficit = Math.max(0, population - totalHousingCapacity);
+  const diff = totalHousingCapacity - population;
+  const isDeficit = diff < 0;
+  const populationDeficit = isDeficit ? Math.abs(diff) : 0;
+  const populationSurplus = !isDeficit ? diff : 0;
   const deficitUnitsNeeded = populationDeficit > 0 ? Math.ceil(populationDeficit / capacityPerUnit) : 0;
 
   let recommendation = "";
-  if (deficitUnitsNeeded > 0) {
-    recommendation = `Terdapat ${populationDeficit.toLocaleString('id-ID')} tunawisma (kekurangan kapasitas hunian nasional). Disarankan membangun minimal ${deficitUnitsNeeded.toLocaleString('id-ID')} unit ${tabLabel} tambahan.`;
+  if (isDeficit) {
+    recommendation = `Terdapat Defisit Kapasitas Hunian sebesar ${populationDeficit.toLocaleString('id-ID')} jiwa (tunawisma). Disarankan membangun minimal ${deficitUnitsNeeded.toLocaleString('id-ID')} unit ${tabLabel} tambahan.`;
   } else {
-    recommendation = `Kapasitas hunian nasional dalam kondisi aman tanpa tunawisma, memenuhi total populasi ${population.toLocaleString('id-ID')} jiwa.`;
+    recommendation = `Kapasitas hunian nasional dalam kondisi aman dengan Surplus Kapasitas sebesar ${populationSurplus.toLocaleString('id-ID')} jiwa dari total populasi ${population.toLocaleString('id-ID')} jiwa.`;
   }
 
   const housingKeys = [
@@ -170,6 +176,9 @@ export const generateHunianAIAnalysis = (
     totalCapacity,
     population,
     deficitUnitsNeeded,
+    populationDeficit,
+    populationSurplus,
+    isDeficit,
     recommendation,
     housingItems,
   };

@@ -173,9 +173,15 @@ export default function ServiceAISuggestionsModal({
                   <div className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-tight">Total Kapasitas Terpasang</div>
                   <div className="mt-1 font-black text-[#00FFAA] text-lg">{hunianAnalysis.totalCapacity.toLocaleString('id-ID')} Jiwa</div>
                 </div>
-                <div className="rounded-xl bg-rose-950/40 p-4 border border-rose-500/30">
-                  <div className="text-[10px] font-bold text-rose-400 uppercase tracking-tight">Kebutuhan Unit Tambahan</div>
-                  <div className="mt-1 font-black text-rose-400 text-lg">{hunianAnalysis.deficitUnitsNeeded.toLocaleString('id-ID')} Unit</div>
+                <div className={`rounded-xl p-4 border ${hunianAnalysis.isDeficit ? 'bg-rose-950/40 border-rose-500/30' : 'bg-emerald-950/40 border-emerald-500/30'}`}>
+                  <div className={`text-[10px] font-bold uppercase tracking-tight ${hunianAnalysis.isDeficit ? 'text-rose-400' : 'text-emerald-400'}`}>
+                    {hunianAnalysis.isDeficit ? 'Defisit Kapasitas Hunian' : 'Surplus Kapasitas Hunian'}
+                  </div>
+                  <div className={`mt-1 font-black text-lg ${hunianAnalysis.isDeficit ? 'text-rose-400' : 'text-emerald-400'}`}>
+                    {hunianAnalysis.isDeficit
+                      ? `Defisit -${hunianAnalysis.populationDeficit.toLocaleString('id-ID')} Jiwa`
+                      : `Surplus +${hunianAnalysis.populationSurplus.toLocaleString('id-ID')} Jiwa`}
+                  </div>
                 </div>
               </div>
 

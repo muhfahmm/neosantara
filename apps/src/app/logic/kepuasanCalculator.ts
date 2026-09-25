@@ -171,24 +171,29 @@ export function calculateListrikScore(countryDetail: any, metadata: any): number
   return Math.min(100, Math.max(1, Math.round((ratio / 2) * 100)));
 }
 
-export function calculateHunianScore(countryDetail: any, metadata: any): number {
-  const population = countryDetail?.jumlah_penduduk ?? countryDetail?.population ?? 0;
+export function calculateHunianScore(countryDetail: any, metadata?: any): number {
+  const population = Number(countryDetail?.jumlah_penduduk ?? countryDetail?.population ?? 0);
 
   const HUNIAN_KEYS = ["rumah_subsidi", "apartemen", "mansion"];
+  const DEFAULT_CAPACITIES: Record<string, number> = {
+    rumah_subsidi: 4,
+    apartemen: 50,
+    mansion: 8,
+  };
+
   let totalHousingCapacity = 0;
-  if (metadata) {
-    HUNIAN_KEYS.forEach((key) => {
-      const count = Number(countryDetail?.[key]) || 0;
-      const meta = findMeta(key, metadata);
-      const capacity = Number(meta?.kapasitas) || 0;
-      totalHousingCapacity += count * capacity;
-    });
-  }
+  HUNIAN_KEYS.forEach((key) => {
+    const count = Number(countryDetail?.[key]) || 0;
+    const meta = metadata ? findMeta(key, metadata) : undefined;
+    const capacity = Number(meta?.kapasitas) || DEFAULT_CAPACITIES[key] || 4;
+    totalHousingCapacity += count * capacity;
+  });
 
   if (population <= 0) return 50;
   if (totalHousingCapacity <= 0) return 1;
-  const ratio = Math.min(totalHousingCapacity / population, 2);
-  return Math.min(100, Math.max(1, Math.round((ratio / 2) * 100)));
+  const ratio = Math.min(totalHousingCapacity / population, 1);
+  const score = Math.min(100, Math.max(1, Math.round(ratio * 100)));
+  return score;
 }
 
 export function calculateLayananPublikScore(countryDetail: any): number {
