@@ -366,10 +366,17 @@ export default function MapPage() {
         return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
     }, []);
 
-    // Close navigation menu modals if inbox, gift, or news modal is opened
+    // Hide BottomNav when inbox, gift, or news modal is opened — and show it again when they all close
+    const notifModalMountedRef = React.useRef(false);
     useEffect(() => {
+        if (!notifModalMountedRef.current) {
+            notifModalMountedRef.current = true;
+            return; // skip initial mount
+        }
         if (inboxModalOpen || giftModalOpen || newsModalOpen) {
-            setActiveMenu("Peta Taktis");
+            window.dispatchEvent(new Event('hide_strategy_modal'));
+        } else {
+            window.dispatchEvent(new Event('show_strategy_modal'));
         }
     }, [inboxModalOpen, giftModalOpen, newsModalOpen]);
 
@@ -1131,6 +1138,7 @@ export default function MapPage() {
                     setInboxModalOpen(true);
                     setGiftModalOpen(false);
                     setNewsModalOpen(false);
+                    setActiveMenu("");
                     // Mark all notifications as read when opening inbox
                     setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
                 }}
@@ -1226,6 +1234,7 @@ export default function MapPage() {
                     setGiftModalOpen(true);
                     setInboxModalOpen(false);
                     setNewsModalOpen(false);
+                    setActiveMenu("");
                 }}
                 isOpen={giftModalOpen}
                 onClose={() => setGiftModalOpen(false)}
@@ -1235,6 +1244,7 @@ export default function MapPage() {
                     setNewsModalOpen(true);
                     setInboxModalOpen(false);
                     setGiftModalOpen(false);
+                    setActiveMenu("");
                 }}
                 isOpen={newsModalOpen}
                 onClose={() => setNewsModalOpen(false)}
@@ -1262,12 +1272,14 @@ export default function MapPage() {
                 <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_200px_rgba(0,0,0,0.6)] vignette-gradient" />
             </div>
 
-            <BottomNav
-                activeMenu={activeMenu}
-                setActiveMenu={setActiveMenu}
-                countryDetail={countryDetail}
-                isDetailModalOpen={countryDetailModalOpen || playerDetailModalOpen}
-            />
+            {!(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen) && (
+                <BottomNav
+                    activeMenu={activeMenu}
+                    setActiveMenu={setActiveMenu}
+                    countryDetail={countryDetail}
+                    isDetailModalOpen={countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen}
+                />
+            )}
 
             <ModalsManager
                 activeMenu={activeMenu}

@@ -32,13 +32,13 @@ export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, is
     };
   }, []);
 
-
-
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
   // Sync activeTab with activeMenu for external changes
   useEffect(() => {
-    if (activeMenu === "Peta Taktis") {
+    if (activeMenu === "") {
+      setActiveTab(null);
+    } else if (activeMenu === "Peta Taktis") {
       // Do nothing, allow manual reset via Grid Icon click
     } else {
       // Check if activeMenu is a group itself (Step Back state)
@@ -74,19 +74,18 @@ export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, is
   const isMenuSelected = activeTab !== null;
   const currentSubItems = activeTab ? subMenuItems[activeTab] : [];
 
-  if (isTemporarilyHidden) return null;
-
   const isMainCategory = menuItems.some(item => item.id === activeMenu);
   const isSubMenuItem = Object.values(subMenuItems).flat().some((sub: any) => activeMenu.startsWith(sub.id));
-  
-  const isOtherModalOpen = activeMenu !== "" && 
-                           activeMenu !== "Peta Taktis" && 
-                           !isMainCategory && 
+
+  // 🔥 SINGLE unified hide check — placed BEFORE any render logic
+  // Covers: notification modals (inbox/reward/news), detail modals, sub-menu modals, and strategy hide events
+  if (isTemporarilyHidden || isDetailModalOpen || isSubMenuItem) return null;
+
+  const isOtherModalOpen = activeMenu !== "" &&
+                           activeMenu !== "Peta Taktis" &&
+                           !isMainCategory &&
                            !isSubMenuItem &&
                            !activeMenu.startsWith("Menu:KomandoPertahanan");
-
-  const shouldHideNav = isTemporarilyHidden || isDetailModalOpen || isSubMenuItem;
-  if (shouldHideNav) return null;
 
   return (
     <div className={`absolute bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-1/2 -translate-x-1/2 w-max max-w-[95vw] transition-all duration-500 cursor-not-allowed z-[200] ${isOtherModalOpen ? 'opacity-50' : 'opacity-100'
