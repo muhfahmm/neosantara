@@ -106,41 +106,43 @@ export default function IcbmBuildStatusModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
-
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+        
         {/* Header */}
-        <div className="px-8 py-6 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-500/10 rounded-xl border border-amber-500/20">
-              <Rocket className="h-6 w-6 text-amber-700" />
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+              <Rocket className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400" />
             </div>
             <div>
-              <h3 className="text-xl font-black text-[#5c3c10]">Status Pembangunan ICBM</h3>
-              <p className="text-xs text-[#8b7e66] font-bold">Pantau perkembangan produksi rudal balistik antarbenua</p>
+              <h3 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Status Pembangunan ICBM</h3>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">Pantau perkembangan produksi rudal balistik antarbenua</p>
             </div>
           </div>
 
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
+          <button 
+            onClick={onClose} 
+            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+          >
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* BODY MODAL */}
-        <div className="p-6 bg-[#FAF6EE]/40 flex-1 overflow-y-auto no-scrollbar">
-          <div className="space-y-5">
+        <div className="p-4 sm:p-6 bg-[#0F2424] flex-1 overflow-y-auto custom-scrollbar">
+          <div className="space-y-4">
 
-            {/* 🔥 TAB MENU BERTEMA COKLAT */}
-            <div className="bg-[#e4dac3]/40 p-1 rounded-xl border border-[#C4B49C]/40 inline-flex shadow-sm">
+            {/* TAB MENU */}
+            <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex shadow-sm">
               {activeTabOptions.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+                  className={`px-4 sm:px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                     activeTab === tab
-                      ? 'bg-[#5c3c10] text-[#FAF6EE] shadow-md shadow-[#5c3c10]/20'
-                      : 'text-[#8b7e66] hover:text-[#5c3c10]'
+                      ? 'bg-[#00FFAA] text-[#0A1A1A] font-black shadow-md'
+                      : 'text-[#E0E0E0] hover:text-[#00FFAA]'
                   }`}
                 >
                   {tab}
@@ -148,9 +150,9 @@ export default function IcbmBuildStatusModal({
               ))}
             </div>
 
-            {/* 🔥 WRAPPER TABEL (Header coklat di dalamnya TELAH DIHAPUS) */}
-            <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/90 shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
+            {/* WRAPPER TABEL */}
+            <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] shadow-sm overflow-hidden">
+              <div className="overflow-x-auto custom-scrollbar">
                 {activeTab === 'Dalam Pembangunan' ? (
                   <TabelDalamPembangunan entries={pendingEntries} />
                 ) : (
@@ -159,16 +161,16 @@ export default function IcbmBuildStatusModal({
               </div>
             </div>
 
-            {/* 🔥 PANEL INFORMASI BAWAH */}
-            <div className="rounded-2xl border border-[#C4B49C]/30 bg-white/90 p-5 shadow-sm">
-              <div className="flex flex-col gap-3">
-                <p className="text-xs font-black uppercase tracking-wide text-[#8b7e66] mb-2">Informasi tambahan</p>
-                <p className="text-[13px] text-[#5c3c10] leading-relaxed">
+            {/* PANEL INFORMASI BAWAH */}
+            <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 sm:p-5 shadow-sm">
+              <div className="flex flex-col gap-2.5">
+                <p className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#6B8A8A]">Informasi Tambahan</p>
+                <p className="text-xs sm:text-sm text-[#E0E0E0] leading-relaxed">
                   Tabel tab pertama menampilkan daftar ICBM yang sedang dibangun. Tab kedua menyimpan total ICBM yang sudah selesai.
                 </p>
                 <button
                   onClick={onOpenDetail}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#5c3c10] px-4 py-2 text-sm font-black text-[#FAF6EE] shadow-sm hover:bg-[#3d2911] transition-all cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#00FFAA] px-4 py-2 text-xs font-black text-[#0A1A1A] uppercase tracking-wider shadow-sm hover:bg-[#00FFAA]/80 transition-all cursor-pointer mt-1"
                 >
                   <Clock className="h-4 w-4" />
                   Lihat Detail Pembangunan

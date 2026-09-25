@@ -440,7 +440,7 @@ export default function InfrastrukturMiliter({
         Fasilitas pendukung logistik dan pertahanan yang menjadi tulang punggung kekuatan militer nasional.
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
         {Object.keys(infrastrukturData).map((key) => {
           const item = infrastrukturData[key];
           if (!item) return null;
@@ -460,20 +460,20 @@ export default function InfrastrukturMiliter({
                 setSelectedForBuild({ key, label: item.label });
                 setIsConfirmBuildOpen(true);
               }}
-              className={`relative rounded-2xl overflow-visible flex flex-col transition-all bg-[#0A1A1A] border p-5 min-h-[180px] cursor-pointer ${
+              className={`relative rounded-2xl overflow-visible flex flex-col justify-between transition-all bg-[#0A1A1A] border p-2.5 sm:p-3 min-h-[100px] sm:min-h-[110px] cursor-pointer ${
                 highlightKey === key 
                   ? 'border-[#00FFAA] shadow-[0_0_12px_rgba(0,255,170,0.3)]' 
                   : 'border-[#00FFAA]/20 hover:border-[#00FFAA]/50 hover:shadow-md'
               }`}
             >
               {isBuilding && (
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[9px] sm:text-[10px] font-bold px-2 py-0.5 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
                   {formatBadgeDate(lastEndDate)}
                 </div>
               )}
               
-              <div className="flex items-start justify-between mb-3">
-                <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-2">
+              <div className="flex items-start justify-between mb-1.5 sm:mb-2">
+                <p className="text-[9px] sm:text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-1.5 leading-snug">
                   {item.label}
                 </p>
                 <button
@@ -481,23 +481,23 @@ export default function InfrastrukturMiliter({
                     e.stopPropagation();
                     handleInfoClick(key);
                   }}
-                  className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-colors cursor-pointer"
+                  className="flex-shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-colors cursor-pointer"
                 >
-                  <Info className="w-3.5 h-3.5" />
+                  <Info className="w-3 h-3" />
                 </button>
               </div>
 
-              <div className="flex flex-col justify-between flex-1">
+              <div className="flex flex-col justify-between">
                 <div>
-                  <div className="flex items-end gap-1.5 mt-2 flex-wrap">
-                    <span className="text-base sm:text-lg lg:text-xl font-black text-[#E0E0E0] leading-tight break-words">{formatNumber(value)}</span>
+                  <div className="flex items-end gap-1 flex-wrap">
+                    <span className="text-sm sm:text-base lg:text-lg font-black text-[#E0E0E0] leading-tight break-words">{formatNumber(value)}</span>
                     {isBuilding && (
-                      <span className="text-xs sm:text-sm font-bold text-[#00FFAA] leading-none">
+                      <span className="text-[10px] sm:text-xs font-bold text-[#00FFAA] leading-none">
                         +{queueCount}
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] mt-1 font-bold text-[#6B8A8A]">{item.satuan_kapasitas || "Unit"}</p>
+                  <p className="text-[9px] sm:text-[10px] mt-0.5 font-bold text-[#6B8A8A]">{item.satuan_kapasitas || "Unit"}</p>
                 </div>
               </div>
             </div>

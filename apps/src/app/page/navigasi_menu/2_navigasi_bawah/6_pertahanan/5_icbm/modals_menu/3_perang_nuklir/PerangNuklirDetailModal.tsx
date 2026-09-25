@@ -53,87 +53,100 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
     return sortableItems;
   }, [rawRankings]);
 
-  if (!isOpen) return null;
-
-  return (
+  if (!isOpen) return null;  return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#FAF6EE] border-2 sm:border-3 border-[#C4B49C] rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.03)_0%,transparent_100%)] pointer-events-none" />
-        <div className="px-6 py-4 border-b-2 border-[#C4B49C]/30 flex items-center justify-between bg-[#FAF6EE] relative z-10 shrink-0">
-          <div className="flex items-center gap-5">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+        
+        {/* Header Modal */}
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+              <Radiation className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
+            </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-[#5c3c10] tracking-tight leading-none uppercase">Perang Nuklir</h2>
-              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8b7e66] mt-1">Ranking kekuatan militer 207 negara</p>
+              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Perang Nuklir Strategis</h2>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">Ranking kekuatan militer 207 negara</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 sm:p-2.5 rounded-xl border-2 border-[#C4B49C] bg-transparent text-[#8b7e66] hover:text-[#5c3c10] hover:bg-black/5 active:bg-black/10 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm">
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
+
+          <button 
+            onClick={onClose} 
+            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+          >
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#FAF6EE]/40 relative z-10 no-scrollbar flex flex-col items-center">
-          <div className="w-full max-w-5xl">
-            <div className="overflow-hidden border border-[#C4B49C]/30 rounded-xl bg-[#FAF6EE]/50 shadow-sm">
-              <div className="max-h-[60vh] overflow-auto">
-                <table className="w-full text-xs">
-                  <thead className="bg-[#efe7d8] border-b-2 border-[#C4B49C]/40 sticky top-0 z-10">
+        {/* Body Content */}
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] custom-scrollbar flex flex-col gap-4">
+          <div className="overflow-hidden border border-[#00FFAA]/20 rounded-2xl bg-[#0A1A1A] shadow-inner flex flex-col flex-1">
+            <div className="overflow-y-auto custom-scrollbar flex-1">
+              <table className="w-full text-xs">
+                <thead className="bg-[#0A1A1A] text-[#00FFAA] border-b border-[#00FFAA]/20 sticky top-0 z-10">
+                  <tr>
+                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Rank</th>
+                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Negara</th>
+                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Darat</th>
+                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Laut</th>
+                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Udara</th>
+                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Total Kekuatan</th>
+                    <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#00FFAA]/10 text-xs font-bold text-[#E0E0E0]">
+                  {rankings.length > 0 ? (
+                    rankings.map((row, index) => {
+                      const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara";
+                      const isUserCountry = row.countryName.toLowerCase().trim() === selectedCountryName.toLowerCase().trim();
+                      
+                      return (
+                        <tr 
+                          key={`${row.countryName}-${index}`} 
+                          className={`transition-colors ${
+                            isUserCountry
+                              ? 'bg-[#00FFAA]/10 border-l-4 border-l-[#00FFAA]'
+                              : 'hover:bg-[#0F2424]'
+                          }`}
+                        >
+                          <td className="px-3 py-2 text-[#6B8A8A]">#{index + 1}</td>
+                          <td className="px-3 py-2 font-black text-[#E0E0E0]">
+                            {row.countryName} {isUserCountry && <span className="text-[10px] text-[#00FFAA] ml-1">(Anda)</span>}
+                          </td>
+                          <td className="px-3 py-2 text-right text-[#6B8A8A]">{formatNumber(row.darat)}</td>
+                          <td className="px-3 py-2 text-right text-[#6B8A8A]">{formatNumber(row.laut)}</td>
+                          <td className="px-3 py-2 text-right text-[#6B8A8A]">{formatNumber(row.udara)}</td>
+                          <td className="px-3 py-2 text-right text-[#00FFAA] font-black">{formatNumber(row.totalPower)}</td>
+                          <td className="px-3 py-2 text-center">
+                            <button
+                              onClick={() => onAction?.(row)}
+                              disabled={isUserCountry}
+                              className={`p-1.5 rounded-lg transition-all ${
+                                isUserCountry 
+                                  ? 'bg-[#6B8A8A]/20 text-[#6B8A8A] cursor-not-allowed' 
+                                  : 'bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white border border-rose-500/30 cursor-pointer'
+                              }`}
+                              title="Deklarasikan perang nuklir"
+                            >
+                              <Radiation className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
                     <tr>
-                      <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider w-12">Rank</th>
-                      <th className="px-4 py-3 text-left font-black text-[#5c3c10] uppercase tracking-wider">Negara</th>
-                      <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider">Darat</th>
-                      <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider">Laut</th>
-                      <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider">Udara</th>
-                      <th className="px-4 py-3 text-right font-black text-[#5c3c10] uppercase tracking-wider">Total Kekuatan</th>
-                      <th className="px-4 py-3 text-center font-black text-[#5c3c10] uppercase tracking-wider">Aksi</th>
+                      <td colSpan={7} className="px-4 py-8 text-center text-[#6B8A8A]">
+                        Data negara belum tersedia.
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {rankings.length > 0 ? (
-                      rankings.map((row, index) => {
-                        const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara";
-                        const isUserCountry = row.countryName.toLowerCase().trim() === selectedCountryName.toLowerCase().trim();
-                        
-                        return (
-                          <tr 
-                            key={`${row.countryName}-${index}`} 
-                            className={`border-b border-[#C4B49C]/25 transition-colors ${
-                              isUserCountry
-                                ? 'bg-emerald-100/80 hover:bg-emerald-200/80 border-l-4 border-l-emerald-600'
-                                : 'odd:bg-[#FBF7EE] even:bg-white/60 hover:bg-[#e4dac3]/30'
-                            }`}
-                          >
-                            <td className={`px-3 py-2 font-black ${isUserCountry ? 'text-emerald-900' : 'text-[#5c3c10]'}`}>{index + 1}</td>
-                            <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-emerald-900' : 'text-[#5c3c10]'}`}>{row.countryName}</td>
-                            <td className="px-3 py-2 text-[#5c3c10]">{formatNumber(row.darat)}</td>
-                            <td className="px-3 py-2 text-[#5c3c10]">{formatNumber(row.laut)}</td>
-                            <td className="px-3 py-2 text-[#5c3c10]">{formatNumber(row.udara)}</td>
-                            <td className={`px-3 py-2 font-black ${isUserCountry ? 'text-emerald-600' : 'text-rose-700'}`}>{formatNumber(row.totalPower)}</td>
-                            <td className="px-3 py-2 text-center">
-                              <button
-                                onClick={() => onAction?.(row)}
-                                className="p-1.5 rounded-lg bg-orange-600/10 text-orange-700 hover:bg-orange-600 hover:text-white border border-orange-600/30 transition-all cursor-pointer"
-                                title="Deklarasikan perang nuklir"
-                              >
-                                <Radiation className="w-4 h-4" />
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    ) : (
-                      <tr>
-                        <td colSpan={7} className="px-4 py-8 text-center text-[#8b7e66]">
-                          Data negara belum tersedia.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

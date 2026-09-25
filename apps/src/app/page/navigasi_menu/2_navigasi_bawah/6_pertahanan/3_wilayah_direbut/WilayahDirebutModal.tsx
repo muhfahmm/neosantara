@@ -17,20 +17,24 @@ export default function WilayahDirebutModal({ isOpen, onClose, countryDetail, se
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
         
         {/* HEADER */}
-        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-                <Shield className="h-6 w-6 text-rose-500 animate-pulse" />
-              </div>
-              <div>
-                <h2 className="text-xl font-black text-[#00FFAA] tracking-wider uppercase">Wilayah yang Direbut</h2>
-              </div>
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+              <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
+            </div>
+            <div>
+              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Wilayah yang Direbut</h2>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">
+                {countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara"}
+              </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
+          <button 
+            onClick={onClose} 
+            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+          >
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-4 w-4" />
           </button>
         </div>
 
