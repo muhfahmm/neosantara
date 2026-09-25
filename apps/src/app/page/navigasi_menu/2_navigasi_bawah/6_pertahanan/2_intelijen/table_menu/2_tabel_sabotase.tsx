@@ -122,25 +122,25 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
       <div className="overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
         <div className="max-h-[52vh] overflow-auto">
           <table className="w-full text-xs">
-            <thead className="bg-[#0F2424] border-b border-[#00FFAA]/20 sticky top-0 z-10">
+            <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/20 sticky top-0 z-10 text-[9px] sm:text-[10px] lg:text-xs whitespace-nowrap">
               <tr>
-                <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider w-12">Rank</th>
-                <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('countryName')}>
+                <th className="px-2 py-1.5 text-left font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider w-10 bg-[#0A1A1A]">Rank</th>
+                <th className="px-2 py-1.5 text-left font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('countryName')}>
                   Negara{getSortArrow('countryName')}
                 </th>
-                <th className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('darat')}>
+                <th className="px-2 py-1.5 text-right font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('darat')}>
                   Darat{getSortArrow('darat')}
                 </th>
-                <th className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('laut')}>
+                <th className="px-2 py-1.5 text-right font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('laut')}>
                   Laut{getSortArrow('laut')}
                 </th>
-                <th className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('udara')}>
+                <th className="px-2 py-1.5 text-right font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('udara')}>
                   Udara{getSortArrow('udara')}
                 </th>
-                <th className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('totalPower')}>
+                <th className="px-2 py-1.5 text-right font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('totalPower')}>
                   Total Kekuatan{getSortArrow('totalPower')}
                 </th>
-                <th className="px-4 py-3 text-center font-black text-[#00FFAA] uppercase tracking-wider">Aksi</th>
+                <th className="px-2 py-1.5 text-center font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider bg-[#0A1A1A]">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#00FFAA]/10">

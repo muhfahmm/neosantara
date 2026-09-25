@@ -189,21 +189,23 @@ export default function SerangNegaraModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
         <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
           
-          <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-            <div className="flex items-center gap-8">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-                  <Shield className="h-6 w-6 text-rose-500 animate-pulse" />
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+            <div className="flex items-center gap-4 lg:gap-8">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+                  <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-[#00FFAA] tracking-wider uppercase">Serang Negara</h2>
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-0.5">{selectedCountryName}</p>
+                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Serang Negara</h2>
                 </div>
               </div>
+              <div className="hidden sm:flex items-center gap-2 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-[#00FFAA]/30">
+                <span className="text-[10px] lg:text-[11px] font-black uppercase tracking-wider text-[#6B8A8A]">{selectedCountryName}</span>
+              </div>
             </div>
-            <button onClick={onClose} className="p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5">
-              <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-5 w-5" />
+            <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
             </button>
           </div>
 
@@ -216,25 +218,25 @@ export default function SerangNegaraModal({
               <div className="w-full overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
                 <div className="max-h-[52vh] overflow-auto">
                   <table className="w-full text-xs">
-                    <thead className="bg-[#0F2424] border-b border-[#00FFAA]/20 sticky top-0 z-10">
+                    <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/20 sticky top-0 z-10 text-[9px] sm:text-[10px] lg:text-xs whitespace-nowrap">
                       <tr>
-                        <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider w-12">Rank</th>
-                        <th className="px-4 py-3 text-left font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('countryName')}>
+                        <th className="px-2 py-1.5 text-left font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider w-10 bg-[#0A1A1A]">Rank</th>
+                        <th className="px-2 py-1.5 text-left font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('countryName')}>
                           Negara{getSortArrow('countryName')}
                         </th>
-                        <th className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('darat')}>
+                        <th className="px-2 py-1.5 text-right font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('darat')}>
                           Darat{getSortArrow('darat')}
                         </th>
-                        <th className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('laut')}>
+                        <th className="px-2 py-1.5 text-right font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('laut')}>
                           Laut{getSortArrow('laut')}
                         </th>
-                        <th className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('udara')}>
+                        <th className="px-2 py-1.5 text-right font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('udara')}>
                           Udara{getSortArrow('udara')}
                         </th>
-                        <th className="px-4 py-3 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors" onClick={() => handleSort('totalPower')}>
+                        <th className="px-2 py-1.5 text-right font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors bg-[#0A1A1A]" onClick={() => handleSort('totalPower')}>
                           Total Kekuatan{getSortArrow('totalPower')}
                         </th>
-                        <th className="px-4 py-3 text-center font-black text-[#00FFAA] uppercase tracking-wider">Aksi</th>
+                        <th className="px-2 py-1.5 text-center font-black text-[#00FFAA] uppercase tracking-normal sm:tracking-wider bg-[#0A1A1A]">Aksi</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#00FFAA]/10">
@@ -294,12 +296,6 @@ export default function SerangNegaraModal({
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="px-6 py-4 border-t border-[#00FFAA]/30 bg-[#0A1A1A] relative z-10 shrink-0 flex items-center justify-end">
-            <button onClick={onClose} className="px-6 py-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
-              Batal
-            </button>
           </div>
         </div>
       </div>
