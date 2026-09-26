@@ -13,6 +13,8 @@ import {
   ChevronDown
 } from "lucide-react";
 
+import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -41,6 +43,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   const [allCountries, setAllCountries] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'production', direction: 'desc' });
+  const [isDetailKonsumsiOpen, setIsDetailKonsumsiOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen && allCountries.length === 0) {
@@ -335,8 +338,14 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest text-emerald-400">✓ Total Produksi Listrik</p>
                       <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-emerald-400 mt-1.5 lg:mt-2 2xl:mt-3">{totalCapacityMW.toLocaleString('id-ID')} MW</p>
                     </div>
-                    <div className="bg-rose-950/40 border border-rose-500/30 p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl">
-                      <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest text-rose-400">✗ Konsumsi Terestimasi</p>
+                    <div
+                      onClick={() => setIsDetailKonsumsiOpen(true)}
+                      className="bg-rose-950/40 border border-rose-500/30 hover:border-rose-400 hover:scale-[1.01] p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl transition-all cursor-pointer group shadow-md"
+                    >
+                      <div className="flex items-center justify-between">
+                        <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest text-rose-400">✗ Konsumsi Terestimasi</p>
+                        <span className="text-[9px] text-rose-300 font-bold opacity-80 group-hover:opacity-100 transition-opacity">Detail →</span>
+                      </div>
                       <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-rose-400 mt-1.5 lg:mt-2 2xl:mt-3">{estimatedConsumptionMW.toLocaleString('id-ID')} MW</p>
                     </div>
                     <div className={`p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl border ${balanceMW >= 0 ? 'bg-emerald-950/40 border-emerald-500/30' : 'bg-rose-950/40 border-rose-500/30'}`}>
@@ -558,6 +567,14 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
           )}
         </div>
       </div>
+
+      <DetailKonsumsiTerestimasiModal
+        isOpen={isDetailKonsumsiOpen}
+        onClose={() => setIsDetailKonsumsiOpen(false)}
+        countryDetail={countryDetail}
+        metadata={metadata}
+        estimatedConsumptionMW={estimatedConsumptionMW}
+      />
     </div>
   );
 }
