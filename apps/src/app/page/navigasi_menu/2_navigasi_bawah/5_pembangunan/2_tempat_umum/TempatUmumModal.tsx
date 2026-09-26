@@ -597,7 +597,7 @@ export default function TempatUmumModal({
                     if (activeCategory) {
                       activeCategory.keys.forEach((key: string) => {
                         const count = Number(countryDetail?.[key]) || 0;
-                        const bMeta = metadata?.[key] || metadata?.[`1_${key}`] || {};
+                        const bMeta = findMeta(key) || {};
                         const konsumsiUnit = Number(bMeta?.konsumsi_listrik) || 0;
                         totalCategoryConsumption += count * konsumsiUnit;
                       });
@@ -610,7 +610,7 @@ export default function TempatUmumModal({
                             ⚡ Total Konsumsi Listrik {activeCategory?.label || ''}
                           </p>
                           <p className="text-2xl sm:text-3xl font-black text-rose-400 mt-2">
-                            {Math.round(totalCategoryConsumption).toLocaleString('id-ID')} <span className="text-sm font-bold text-[#6B8A8A]">MW</span>
+                            {totalCategoryConsumption.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-sm font-bold text-[#6B8A8A]">MW</span>
                           </p>
                         </div>
                       </div>

@@ -697,7 +697,7 @@ export default function HunianPermukimanModal({
                   const bMeta = findMeta(activeItem.key);
                   const count = Number(countryDetail?.[activeItem.key]) || 0;
                   const konsumsiUnit = Number(bMeta?.konsumsi_listrik) || DEFAULT_ELECTRICITY_CONSUMPTION[activeItem.key] || 0;
-                  const categoryElectricityConsumption = Math.round(count * konsumsiUnit);
+                  const categoryElectricityConsumption = count * konsumsiUnit;
 
                   return (
                     <div className="mt-4 p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-between shadow-sm">
@@ -708,7 +708,7 @@ export default function HunianPermukimanModal({
                       </div>
                       <div className="px-4 py-1.5 rounded-lg bg-[#0F2424] border border-rose-500/30">
                         <span className="text-sm font-black text-rose-400">
-                          {categoryElectricityConsumption.toLocaleString('id-ID')} MW
+                          {categoryElectricityConsumption.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                         </span>
                       </div>
                     </div>

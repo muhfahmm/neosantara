@@ -49,11 +49,11 @@ export default function InfoBangunanModal({
           <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Satuan):</span>
-              <span className="text-rose-400 font-black text-sm">{konsumsiUnit.toLocaleString('id-ID')} MW</span>
+              <span className="text-rose-400 font-black text-sm">{konsumsiUnit.toLocaleString('id-ID', { maximumFractionDigits: 4 })} MW</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Total):</span>
-              <span className="text-rose-400 font-black text-sm">{(konsumsiUnit * perCount).toLocaleString('id-ID')} MW</span>
+              <span className="text-rose-400 font-black text-sm">{(konsumsiUnit * perCount).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</span>
             </div>
             <div className="flex justify-between items-center border-t border-[#00FFAA]/10 pt-2 mt-2">
               <span className="text-[#6B8A8A]">Biaya Pembangunan:</span>
