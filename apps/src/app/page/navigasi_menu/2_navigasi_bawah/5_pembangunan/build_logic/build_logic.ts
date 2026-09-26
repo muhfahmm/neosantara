@@ -43,6 +43,26 @@ export const getMaterialStock = (countryDetail: any, resourceKey: string, metada
     return Math.max(0, dailyProd - dailyCons);
   }
 
+  const DEFAULT_MINE_PROD: Record<string, number> = {
+    uranium: 10,
+    gas_alam: 20,
+    batu_bara: 200,
+    minyak_bumi: 20,
+    emas: 600,
+    garam: 5,
+    litium: 1,
+    logam_tanah_jarang: 5,
+    bijih_besi: 10,
+  };
+
+  if (DEFAULT_MINE_PROD[normalizedKey] !== undefined) {
+    const buildingCount = Number(countryDetail?.[normalizedKey]) || 0;
+    if (buildingCount === 0) return 0;
+    const bMeta = findBuildingMetadata(metadata || {}, normalizedKey);
+    const prodPerUnit = Number(bMeta?.produksi) || DEFAULT_MINE_PROD[normalizedKey] || 0;
+    return prodPerUnit * buildingCount;
+  }
+
   return 0;
 };
 
