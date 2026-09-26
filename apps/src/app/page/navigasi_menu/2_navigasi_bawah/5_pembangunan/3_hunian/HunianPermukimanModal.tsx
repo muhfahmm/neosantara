@@ -606,30 +606,44 @@ export default function HunianPermukimanModal({
                     </div>
                   </div>
 
-                  {/* Breakdown per tipe */}
-                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {capacityBreakdown.map((item) => (
-                      <div key={item.key} className="bg-[#0F2424] rounded-xl p-3 border border-[#00FFAA]/20">
-                        <p className="text-[10px] font-black uppercase text-[#00FFAA]">{item.label}</p>
-                        <div className="flex justify-between text-xs mt-1">
-                          <span className="text-[#6B8A8A]">Unit</span>
-                          <span className="font-bold text-[#E0E0E0]">{item.count.toLocaleString('id-ID')}</span>
+                  {/* Breakdown per tipe (Hanya kategori aktif) */}
+                  <div className="mt-4">
+                    {capacityBreakdown.filter((item) => item.key === activeTab).map((item) => (
+                      <div
+                        key={item.key}
+                        className="bg-[#00FFAA]/10 border border-[#00FFAA] shadow-[0_0_15px_rgba(0,255,170,0.15)] ring-1 ring-[#00FFAA] rounded-xl p-3.5 sm:p-4"
+                      >
+                        <div className="flex items-center justify-between gap-1 mb-2">
+                          <p className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#00FFAA]">
+                            {item.label}
+                          </p>
+                          <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-[#00FFAA] text-[#0A1A1A] shrink-0">
+                            Kategori Aktif
+                          </span>
                         </div>
-                        <div className="flex justify-between text-xs">
-                          <span className="text-[#6B8A8A]">Kapasitas/unit</span>
-                          <span className="font-bold text-[#E0E0E0]">{item.capacityPerUnit} org</span>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/20 flex flex-col justify-between">
+                            <span className="text-[10px] text-[#6B8A8A] font-bold uppercase">Jumlah Unit Terdaftar</span>
+                            <span className="font-black text-sm text-[#E0E0E0] mt-1">{item.count.toLocaleString('id-ID')} unit</span>
+                          </div>
+                          <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/20 flex flex-col justify-between">
+                            <span className="text-[10px] text-[#6B8A8A] font-bold uppercase">Kapasitas / Unit</span>
+                            <span className="font-black text-sm text-[#E0E0E0] mt-1">{item.capacityPerUnit} jiwa/unit</span>
+                          </div>
+                          <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/20 flex flex-col justify-between">
+                            <span className="text-[10px] text-[#6B8A8A] font-bold uppercase">Total Kapasitas Kategori</span>
+                            <span className="font-black text-sm text-[#00FFAA] mt-1">{item.totalCapacity.toLocaleString('id-ID')} jiwa</span>
+                          </div>
                         </div>
-                        <div className="flex justify-between text-xs font-black border-t border-[#00FFAA]/10 mt-1 pt-1">
-                          <span className="text-[#6B8A8A]">Total kapasitas</span>
-                          <span className="text-emerald-400">{item.totalCapacity.toLocaleString('id-ID')}</span>
-                        </div>
-                        <div className="w-full bg-[#0A1A1A] rounded-full h-1.5 mt-1 border border-[#00FFAA]/10">
+
+                        <div className="w-full bg-[#0A1A1A] rounded-full h-2 mt-3 border border-[#00FFAA]/10 overflow-hidden">
                           <div
-                            className="h-1.5 rounded-full bg-[#00FFAA]"
+                            className="h-full rounded-full transition-all duration-300 bg-[#00FFAA]"
                             style={{ width: `${Math.min(100, item.percentage)}%` }}
                           />
                         </div>
-                        <p className="text-[9px] text-[#6B8A8A] mt-0.5">{item.percentage.toFixed(1)}% dari populasi</p>
+                        <p className="text-[10px] text-[#6B8A8A] mt-1.5 font-semibold">Mengakomodasi {item.percentage.toFixed(1)}% dari total populasi negara.</p>
                       </div>
                     ))}
                   </div>

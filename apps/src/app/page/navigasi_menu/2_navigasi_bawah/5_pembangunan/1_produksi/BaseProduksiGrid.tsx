@@ -248,7 +248,6 @@ export default function BaseProduksiGrid({
                       </span>
                     )}
                   </div>
-                  <p className="text-[9px] mt-0.5 font-bold text-[#6B8A8A]">{perCount} bangunan</p>
                 </div>
 
                 {/* FOOTER LISTRIK */}
