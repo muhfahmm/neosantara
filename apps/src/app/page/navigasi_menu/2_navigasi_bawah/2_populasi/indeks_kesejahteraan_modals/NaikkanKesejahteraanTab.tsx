@@ -247,19 +247,6 @@ export default function NaikkanKesejahteraanTab({
 
   return (
     <div className="space-y-6">
-      {/* Informasi Anggaran */}
-      <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Coins className="h-5 w-5 text-[#00FFAA]" />
-          <div>
-            <p className="text-[10px] text-[#6B8A8A] font-black uppercase">Kas Negara Tersedia</p>
-            <p className="text-lg font-black text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} EM</p>
-          </div>
-        </div>
-        <p className="text-xs text-[#6B8A8A] font-semibold">
-          Luncurkan program bantuan sosial untuk meningkatkan kesejahteraan rakyat secara dinamis.
-        </p>
-      </div>
 
       {feedback && (
         <div className={`p-4 rounded-xl border flex items-start gap-3 relative ${

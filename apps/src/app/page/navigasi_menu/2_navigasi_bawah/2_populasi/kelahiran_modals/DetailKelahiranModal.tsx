@@ -280,12 +280,7 @@ export default function DetailKelahiranModal({
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10 shrink-0">
-          <button onClick={onClose} className="px-8 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
-            Tutup
-          </button>
-        </div>
+
       </div>
 
       {/* ðŸ”¥ Render modal detail */}
