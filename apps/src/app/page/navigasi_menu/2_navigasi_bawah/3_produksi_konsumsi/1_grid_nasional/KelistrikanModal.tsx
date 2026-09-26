@@ -10,12 +10,15 @@ import {
   Search,
   ArrowUpDown,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  Activity
 } from "lucide-react";
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
+import CountryKelistrikanModal from "./CountryKelistrikanModal";
 import { getMaterialStock } from "../../5_pembangunan/build_logic/build_logic";
 import { getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
+import { getCountryConsumptionBreakdown } from "./consumptionLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -47,6 +50,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'production', direction: 'desc' });
   const [isDetailKonsumsiOpen, setIsDetailKonsumsiOpen] = useState(false);
+  const [selectedCountryData, setSelectedCountryData] = useState<any | null>(null);
 
   useEffect(() => {
     if (isOpen && allCountries.length === 0) {
@@ -117,35 +121,13 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   const totalSources = powerSources.filter((source) => source.value > 0).length;
 
   const calculateBuildingElectricityConsumption = (country: any) => {
-    if (!metadata || !country) return 0;
-    let totalBuildingConsumption = 0;
-    Object.keys(metadata).forEach((key) => {
-      const bMeta = metadata[key];
-      const konsumsi = Number(bMeta?.konsumsi_listrik) || 0;
-      if (konsumsi <= 0) return;
-      const possibleKeys = [
-        key,
-        bMeta?.dataKey,
-        key.replace(/^\d+_/, ''),
-        bMeta?.dataKey ? bMeta.dataKey.replace(/^\d+_/, '') : undefined,
-      ].filter(Boolean) as string[];
-      let count = 0;
-      for (const pKey of possibleKeys) {
-        if (country[pKey] !== undefined && country[pKey] !== null) {
-          count = Number(country[pKey]) || 0;
-          break;
-        }
-      }
-      if (count > 0) {
-        totalBuildingConsumption += count * konsumsi;
-      }
-    });
-    return totalBuildingConsumption;
+    if (!country) return 0;
+    return getCountryConsumptionBreakdown(country, metadata).totalAllBreakdownConsumption;
   };
 
   const userBuildingConsumption = calculateBuildingElectricityConsumption(countryDetail);
   const populationDemand = 0;
-  const estimatedConsumptionMW = Math.max(0, Math.round(userBuildingConsumption + populationDemand));
+  const estimatedConsumptionMW = Math.max(0, userBuildingConsumption + populationDemand);
   const balanceMW = totalCapacityMW - estimatedConsumptionMW;
 
   // --- HITUNG INDEKS KEPUASAN LISTRIK ---
@@ -189,11 +171,11 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       const unitProduction = Number(bMeta?.produksi) || 0;
       
       let isFuelDeficit = false;
-      if (isUser && count > 0) {
+      if (count > 0) {
         const fuelReqs = getKelistrikanFuelRequirements(key);
         if (fuelReqs.length > 0) {
           for (const req of fuelReqs) {
-            const stock = getMaterialStock(countryDetail, req.resourceKey);
+            const stock = getMaterialStock(country, req.resourceKey);
             const totalNeeded = req.amount * count;
             if (stock < totalNeeded) {
               isFuelDeficit = true;
@@ -214,7 +196,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     const totalConsumptionCalc = buildingConsumption > 0
       ? buildingConsumption + populationDemand
       : (totalProduction * 0.7) + populationDemand;
-    const consumption = Math.max(0, Math.round(totalConsumptionCalc));
+    const consumption = Math.max(0, totalConsumptionCalc);
     const balance = totalProduction - consumption;
 
     return {
@@ -253,6 +235,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         consumption,
         balance,
         isUser,
+        rawData: country,
       };
     })
     .sort((a, b) => b.production - a.production);
@@ -327,7 +310,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 bg-[#0F2424] border border-rose-500/30 rounded-lg">
                   <TrendingDown className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-rose-400" />
                   <span className="text-[9px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
-                  <span className="text-[9px] lg:text-[11px] font-black text-rose-400">{estimatedConsumptionMW > 0 ? estimatedConsumptionMW.toLocaleString('id-ID') : '0'} MW</span>
+                  <span className="text-[9px] lg:text-[11px] font-black text-rose-400">{estimatedConsumptionMW > 0 ? estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : '0'} MW</span>
                 </div>
               </div>
             </div>
@@ -389,12 +372,12 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest text-rose-400">✗ Konsumsi Terestimasi</p>
                         <span className="text-[9px] text-rose-300 font-bold opacity-80 group-hover:opacity-100 transition-opacity">Detail →</span>
                       </div>
-                      <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-rose-400 mt-1.5 lg:mt-2 2xl:mt-3">{estimatedConsumptionMW.toLocaleString('id-ID')} MW</p>
+                      <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-rose-400 mt-1.5 lg:mt-2 2xl:mt-3">{estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</p>
                     </div>
                     <div className={`p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl border ${balanceMW >= 0 ? 'bg-emerald-950/40 border-emerald-500/30' : 'bg-rose-950/40 border-rose-500/30'}`}>
                       <p className={`text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest ${balanceMW >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>Neraca Daya</p>
                       <p className={`text-lg lg:text-xl 2xl:text-2xl font-black mt-1.5 lg:mt-2 2xl:mt-3 ${balanceMW >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                        {balanceMW >= 0 ? '+' : '-'}{Math.abs(balanceMW).toLocaleString('id-ID')} MW
+                        {balanceMW >= 0 ? '+' : '-'}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                       </p>
                     </div>
                   </div>
@@ -478,7 +461,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                     {estimatedConsumptionMW > 0 ? (totalCapacityMW / estimatedConsumptionMW).toFixed(2) : 'N/A'}
                   </span></div>
                   <div>Neraca daya: <span className={`font-bold ${balanceMW >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                    {balanceMW >= 0 ? '+' : '-'}{Math.abs(balanceMW).toLocaleString('id-ID')} MW
+                    {balanceMW >= 0 ? '+' : '-'}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                   </span></div>
                 </div>
               </div>
@@ -561,7 +544,8 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         return (
                           <tr
                             key={`country-${country.index}-${rowIndex}`}
-                            className={`transition-colors hover:bg-[#00FFAA]/5 ${
+                            onClick={() => setSelectedCountryData(country.rawData)}
+                            className={`transition-colors cursor-pointer hover:bg-[#00FFAA]/10 ${
                               isUserCountry
                                 ? 'bg-emerald-950/50 font-black border-l-4 border-l-emerald-400'
                                 : 'bg-[#0F2424]'
@@ -582,10 +566,10 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                               {isNaN(country.production) || country.production <= 0 ? '0' : country.production.toLocaleString('id-ID')}
                             </td>
                             <td className="px-4 py-3 font-bold text-rose-400 text-right">
-                              {isNaN(country.consumption) || country.consumption <= 0 ? '0' : country.consumption.toLocaleString('id-ID')}
+                              {isNaN(country.consumption) || country.consumption <= 0 ? '0' : country.consumption.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                             </td>
                             <td className={`px-4 py-3 font-black text-right ${country.balance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                              {isNaN(country.balance) ? '0' : (country.balance >= 0 ? '+' : '-') + Math.abs(country.balance).toLocaleString('id-ID')}
+                              {isNaN(country.balance) ? '0' : (country.balance >= 0 ? '+' : '-') + Math.abs(country.balance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                             </td>
                           </tr>
                         );
@@ -605,7 +589,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 <div className="mt-4 p-4 bg-[#0F2424] border border-[#00FFAA]/20 rounded-lg text-xs text-[#6B8A8A]">
                   <p className="font-bold text-[#E0E0E0]">Total: {filteredData.length} negara {searchQuery && `(difilter dari ${globalElectricityData.length})`}</p>
                   <p className="mt-1">Produksi: <span className="font-black text-emerald-400">{filteredData.reduce((sum, c) => sum + c.production, 0).toLocaleString('id-ID')} MW</span></p>
-                  <p>Konsumsi: <span className="font-black text-rose-400">{filteredData.reduce((sum, c) => sum + c.consumption, 0).toLocaleString('id-ID')} MW</span></p>
+                  <p>Konsumsi: <span className="font-black text-rose-400">{filteredData.reduce((sum, c) => sum + c.consumption, 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</span></p>
                 </div>
               )}
             </div>
@@ -624,6 +608,23 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
           onClose();
           onNavigateToMenu?.(category, itemKey);
         }}
+      />
+
+      <CountryKelistrikanModal
+        isOpen={Boolean(selectedCountryData)}
+        onClose={() => setSelectedCountryData(null)}
+        countryData={selectedCountryData}
+        metadata={metadata}
+        isUserCountry={Boolean(
+          selectedCountryData &&
+          userCountryName &&
+          (
+            (selectedCountryData?.name_id && selectedCountryData.name_id.toLowerCase().trim() === userCountryName) ||
+            (selectedCountryData?.name_en && selectedCountryData.name_en.toLowerCase().trim() === userCountryName) ||
+            (selectedCountryData?.country && selectedCountryData.country.toLowerCase().trim() === userCountryName) ||
+            (selectedCountryData?.nama && selectedCountryData.nama.toLowerCase().trim() === userCountryName)
+          )
+        )}
       />
     </div>
   );
