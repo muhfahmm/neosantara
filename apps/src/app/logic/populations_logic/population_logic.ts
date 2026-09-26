@@ -211,10 +211,13 @@ export const calculateHomelessCount = (
   detail?: any
 ): number => {
   if (detail) {
+    if (typeof detail.tunawisma === 'number') {
+      return detail.tunawisma;
+    }
     const totalHousingCapacity =
-      (Number(detail.rumah_subsidi) || 0) * 4 +
-      (Number(detail.apartemen) || 0) * 50 +
-      (Number(detail.mansion) || 0) * 8;
+      (Number(detail.rumah_subsidi) || 0) * 5 +
+      (Number(detail.apartemen) || 0) * 6000 +
+      (Number(detail.mansion) || 0) * 10;
     return Math.max(0, populasi - totalHousingCapacity);
   }
   const baseHomelessRate = 0.007;
@@ -272,7 +275,7 @@ export const calculateDailyPopulationChange = (
   const minPositiveGrowth = Math.max(1, Math.ceil(populasi * 0.00002));
   const netDailyChange = Math.max(minPositiveGrowth, dailyBirths - dailyDeaths);
   const sektoral = calculateSectoralSatisfaction(detailWithDefaults);
-  const homelessCount = calculateHomelessCount(populasi, sektoral.hunian);
+  const homelessCount = calculateHomelessCount(populasi, sektoral.hunian, detailWithDefaults);
 
   return {
     dailyBirths,

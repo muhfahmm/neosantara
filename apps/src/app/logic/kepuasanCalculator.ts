@@ -176,9 +176,9 @@ export function calculateHunianScore(countryDetail: any, metadata?: any): number
 
   const HUNIAN_KEYS = ["rumah_subsidi", "apartemen", "mansion"];
   const DEFAULT_CAPACITIES: Record<string, number> = {
-    rumah_subsidi: 4,
-    apartemen: 50,
-    mansion: 8,
+    rumah_subsidi: 5,
+    apartemen: 6000,
+    mansion: 10,
   };
 
   let totalHousingCapacity = 0;

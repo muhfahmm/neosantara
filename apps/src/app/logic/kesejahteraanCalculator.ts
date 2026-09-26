@@ -452,11 +452,12 @@ export function calculateKesejahteraan(
       }
       return undefined;
     };
+    const DEFAULT_CAPS: Record<string, number> = { rumah_subsidi: 5, apartemen: 6000, mansion: 10 };
     let totalCapacity = 0;
     for (const key of HUNIAN_KEYS) {
       const count = Number(countryDetail?.[key]) || 0;
       const meta = findMeta(key);
-      const kapasitas = Number(meta?.kapasitas) || 0;
+      const kapasitas = Number(meta?.kapasitas) || DEFAULT_CAPS[key] || 0;
       totalCapacity += count * kapasitas;
     }
     if (totalCapacity <= 0) {

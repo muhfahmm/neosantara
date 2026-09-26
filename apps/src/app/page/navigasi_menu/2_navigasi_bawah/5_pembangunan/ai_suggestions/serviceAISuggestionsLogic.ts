@@ -126,14 +126,20 @@ export const generateHunianAIAnalysis = (
   metadata: any
 ): HunianSectorAnalysis => {
   const population = Number(countryDetail?.jumlah_penduduk) || 0;
-  const meta = metadata?.[tabId] || metadata?.[`1_${tabId}`] || {};
-  const capacityPerUnit = Number(meta?.kapasitas) || (tabId === 'rumah_subsidi' ? 4 : tabId === 'apartemen' ? 50 : 8);
+  const getCapacity = (key: string) => {
+    const meta = metadata?.[key] || metadata?.[`1_${key}`];
+    if (meta?.kapasitas) return Number(meta.kapasitas);
+    if (key === 'apartemen') return 6000;
+    if (key === 'mansion') return 10;
+    return 5;
+  };
+  const capacityPerUnit = getCapacity(tabId);
   const currentCount = Number(countryDetail?.[tabId]) || 0;
   const totalCapacity = currentCount * capacityPerUnit;
 
-  const totalHousingCapacity = (Number(countryDetail?.rumah_subsidi) || 0) * 4 +
-    (Number(countryDetail?.apartemen) || 0) * 50 +
-    (Number(countryDetail?.mansion) || 0) * 8;
+  const totalHousingCapacity = (Number(countryDetail?.rumah_subsidi) || 0) * getCapacity('rumah_subsidi') +
+    (Number(countryDetail?.apartemen) || 0) * getCapacity('apartemen') +
+    (Number(countryDetail?.mansion) || 0) * getCapacity('mansion');
 
   const diff = totalHousingCapacity - population;
   const isDeficit = diff < 0;
@@ -149,9 +155,9 @@ export const generateHunianAIAnalysis = (
   }
 
   const housingKeys = [
-    { key: 'rumah_subsidi', label: 'Rumah Subsidi', cap: 4 },
-    { key: 'apartemen', label: 'Apartemen', cap: 50 },
-    { key: 'mansion', label: 'Mansion', cap: 8 },
+    { key: 'rumah_subsidi', label: 'Rumah Subsidi', cap: getCapacity('rumah_subsidi') },
+    { key: 'apartemen', label: 'Apartemen', cap: getCapacity('apartemen') },
+    { key: 'mansion', label: 'Mansion', cap: getCapacity('mansion') },
   ];
 
   const housingItems: HunianItemAnalysis[] = housingKeys.map((item) => {

@@ -854,6 +854,14 @@ CREATE TABLE IF NOT EXISTS `database_hubungan_antar_negara` (
   `relation` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_hubungan_antar_negara` (
+  `country_id` int(11) NOT NULL DEFAULT 0,
+  `country_slug` varchar(100) NOT NULL,
+  `target_country_id` int(11) NOT NULL DEFAULT 0,
+  `target_country` int(11) NOT NULL DEFAULT 0,
+  `relation` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_hubungan_antar_negara (
     id INT AUTO_INCREMENT PRIMARY KEY,
     country_id INT NOT NULL,
@@ -45187,6 +45195,15 @@ CREATE TABLE IF NOT EXISTS `database_kedutaan_besar` (
   `status` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_kedutaan_besar` (
+  `country_id` int(11) NOT NULL DEFAULT 0,
+  `country_slug` varchar(100) NOT NULL,
+  `mitra_no` int(11) NOT NULL DEFAULT 0,
+  `mitra_country` int(11) NOT NULL DEFAULT 0,
+  `embassy_type` int(11) NOT NULL DEFAULT 0,
+  `status` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_kedutaan_besar (
     id INT AUTO_INCREMENT PRIMARY KEY,
     country_id INT NOT NULL,
@@ -48682,6 +48699,15 @@ CREATE TABLE IF NOT EXISTS `database_mitra_perdagangan` (
   `status` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_mitra_perdagangan` (
+  `country_id` int(11) NOT NULL DEFAULT 0,
+  `country_slug` varchar(100) NOT NULL,
+  `mitra_no` int(11) NOT NULL DEFAULT 0,
+  `mitra_country` int(11) NOT NULL DEFAULT 0,
+  `trade_type` int(11) NOT NULL DEFAULT 0,
+  `status` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_mitra_perdagangan (
     id INT AUTO_INCREMENT PRIMARY KEY,
     country_id INT NOT NULL,
@@ -50352,6 +50378,18 @@ CREATE TABLE IF NOT EXISTS `database_pajak_negara` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_pajak_negara` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `tarif_ppn` int(11) NOT NULL DEFAULT 0,
+  `tarif_korporasi` int(11) NOT NULL DEFAULT 0,
+  `tarif_penghasilan` int(11) NOT NULL DEFAULT 0,
+  `tarif_bea_cukai` int(11) NOT NULL DEFAULT 0,
+  `tarif_lingkungan` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_pajak_negara (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,
@@ -51088,6 +51126,27 @@ VALUES
 -- Total 693 Records
 
 DROP TABLE IF EXISTS database_tempat_wisata;
+CREATE TABLE IF NOT EXISTS `database_tempat_wisata` (
+  `country_id` int(11) NOT NULL DEFAULT 0,
+  `country_slug` varchar(100) NOT NULL,
+  `nama_wisata` int(11) NOT NULL DEFAULT 0,
+  `penghasilan` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `database_tempat_wisata` (
+  `country_id` int(11) NOT NULL DEFAULT 0,
+  `country_slug` varchar(100) NOT NULL,
+  `nama_wisata` int(11) NOT NULL DEFAULT 0,
+  `penghasilan` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `database_tempat_wisata` (
+  `country_id` int(11) NOT NULL DEFAULT 0,
+  `country_slug` varchar(100) NOT NULL,
+  `nama_wisata` int(11) NOT NULL DEFAULT 0,
+  `penghasilan` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS `database_tempat_wisata` (
   `country_id` int(11) NOT NULL DEFAULT 0,
   `country_slug` varchar(100) NOT NULL,
@@ -52072,213 +52131,250 @@ CREATE TABLE `database_sektor_listrik_nasional` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `database_sektor_listrik_nasional` (`id`, `country`, `country_slug`, `pembangkit_listrik_tenaga_gas`, `pembangkit_listrik_tenaga_air`, `pembangkit_listrik_tenaga_nuklir`, `pembangkit_listrik_tenaga_surya`, `pembangkit_listrik_tenaga_uap`, `pembangkit_listrik_tenaga_angin`) VALUES
-(1, 'Afrika Selatan', 'afrika_selatan', 68, 232, 34, 1, 68, 1),
-(2, 'Aljazair', 'aljazair', 35, 147, 17, 1, 0, 0),
-(3, 'Angola', 'angola', 29, 121, 15, 0, 0, 1),
-(4, 'Benin', 'benin', 0, 112, 0, 1, 0, 1),
-(5, 'Botswana', 'botswana', 0, 84, 0, 0, 0, 1),
-(6, 'Burkina faso', 'burkina_faso', 0, 73, 0, 0, 0, 0),
-(7, 'Burundi', 'burundi', 0, 46, 0, 1, 0, 1),
-(8, 'Chad', 'chad', 9, 53, 0, 1, 0, 1),
-(9, 'Djibouti', 'djibouti', 0, 13, 0, 0, 0, 2),
-(10, 'Eritrea', 'eritrea', 0, 58, 6, 0, 0, 1),
-(11, 'Eswatini', 'eswatini', 0, 78, 0, 0, 0, 1),
-(12, 'Ethiopia', 'ethiopia', 0, 465, 0, 0, 0, 2),
-(13, 'Gabon', 'gabon', 11, 40, 6, 1, 0, 0),
-(14, 'Gambia', 'gambia', 0, 23, 0, 0, 0, 1),
-(15, 'Ghana', 'ghana', 0, 193, 0, 1, 0, 1),
-(16, 'Guinea', 'guinea', 0, 122, 0, 0, 0, 2),
-(17, 'Guinea bissau', 'guinea_bissau', 0, 18, 0, 0, 0, 1),
-(18, 'Kamerun', 'kamerun', 25, 154, 0, 1, 0, 1),
-(19, 'Kenya', 'kenya', 0, 200, 0, 1, 0, 1),
-(20, 'Komoro', 'komoro', 0, 29, 0, 0, 0, 0),
-(21, 'Kongo', 'kongo', 14, 41, 7, 0, 14, 2),
-(22, 'Lesotho', 'lesotho', 0, 28, 0, 0, 0, 2),
-(23, 'Liberia', 'liberia', 0, 95, 0, 1, 0, 1),
-(24, 'Libya', 'libya', 9, 51, 0, 0, 0, 0),
-(25, 'Madagaskar', 'madagaskar', 0, 151, 0, 1, 0, 0),
-(26, 'Malawi', 'malawi', 0, 106, 9, 1, 0, 1),
-(27, 'Mali', 'mali', 0, 85, 0, 0, 0, 0),
-(28, 'Maroko', 'maroko', 0, 262, 22, 1, 0, 1),
-(29, 'Mauritania', 'mauritania', 0, 94, 0, 1, 0, 0),
-(30, 'Mauritius', 'mauritius', 0, 14, 0, 1, 0, 0),
-(31, 'Mesir', 'mesir', 78, 262, 39, 0, 78, 2),
-(32, 'Mozambik', 'mozambik', 20, 63, 10, 0, 20, 1),
-(33, 'Namibia', 'namibia', 0, 60, 6, 1, 0, 1),
-(34, 'Niger', 'niger', 0, 55, 6, 1, 0, 1),
-(35, 'Nigeria', 'nigeria', 124, 417, 62, 1, 124, 1),
-(36, 'Pantai gading', 'pantai_gading', 0, 168, 0, 0, 0, 1),
-(37, 'Republik afrika tengah', 'republik_afrika_tengah', 0, 22, 3, 0, 0, 2),
-(38, 'Republik demokratik kongo', 'republik_demokratik_kongo', 46, 157, 23, 0, 46, 0),
-(39, 'Republik sudan', 'republik_sudan', 28, 120, 14, 1, 0, 1),
-(40, 'Republik tanzania', 'republik_tanzania', 0, 265, 0, 0, 0, 0),
-(41, 'Republik uganda', 'republik_uganda', 0, 209, 0, 0, 0, 1),
-(42, 'Republik zambia', 'republik_zambia', 0, 95, 8, 1, 0, 1),
-(43, 'Republik zimbabwe', 'republik_zimbabwe', 18, 52, 9, 1, 18, 0),
-(44, 'Rwanda', 'rwanda', 0, 109, 0, 1, 0, 0),
-(45, 'Sao tome dan principe', 'sao_tome_dan_principe', 0, 27, 0, 1, 0, 1),
-(46, 'Senegal', 'senegal', 0, 125, 0, 0, 0, 1),
-(47, 'Seychelles', 'seychelles', 0, 16, 0, 1, 0, 0),
-(48, 'Sierra leone', 'sierra_leone', 0, 82, 7, 1, 0, 0),
-(49, 'Somalia', 'somalia', 0, 101, 9, 0, 0, 1),
-(50, 'Sudan selatan', 'sudan_selatan', 8, 43, 0, 1, 0, 1),
-(51, 'Tanjung verde', 'tanjung_verde', 0, 24, 0, 0, 0, 2),
-(52, 'Togo', 'togo', 0, 99, 0, 1, 0, 0),
-(53, 'Tunisia', 'tunisia', 15, 59, 8, 1, 0, 0),
-(54, 'Afganistan', 'afganistan', 20, 61, 10, 1, 20, 1),
-(55, 'Arab Saudi', 'arab_saudi', 140, 887, 0, 0, 0, 2),
-(56, 'Armenia', 'armenia', 0, 31, 4, 1, 0, 1),
-(57, 'Azerbaijan', 'azerbaijan', 7, 37, 0, 1, 0, 1),
-(58, 'Bahrain', 'bahrain', 8, 47, 0, 1, 0, 0),
-(59, 'Bangladesh', 'bangladesh', 112, 603, 0, 1, 112, 1),
-(60, 'Bhutan', 'bhutan', 0, 28, 0, 0, 0, 0),
-(61, 'Brunei', 'brunei', 4, 17, 0, 0, 0, 2),
-(62, 'China', 'china', 918, 3095, 459, 0, 918, 1),
-(63, 'Filipina', 'filipina', 58, 188, 29, 1, 58, 0),
-(64, 'Georgia', 'georgia', 0, 60, 0, 1, 0, 1),
-(65, 'Hong kong', 'hong_kong', 0, 28, 0, 1, 0, 1),
-(66, 'India', 'india', 1085, 3750, 542, 0, 1085, 2),
-(67, 'Indonesia', 'indonesia', 215, 732, 108, 0, 215, 0),
-(68, 'Irak', 'irak', 24, 99, 12, 1, 0, 1),
-(69, 'Iran', 'iran', 96, 325, 48, 1, 96, 0),
-(70, 'Israel', 'israel', 62, 266, 31, 0, 0, 2),
-(71, 'Jepang', 'jepang', 229, 1240, 0, 0, 229, 0),
-(72, 'Kamboja', 'kamboja', 0, 70, 0, 0, 0, 1),
-(73, 'Kazakhstan', 'kazakhstan', 28, 89, 14, 0, 28, 2),
-(74, 'Kirgizstan', 'kirgizstan', 5, 11, 3, 1, 5, 0),
-(75, 'Korea Selatan', 'korea_selatan', 0, 2544, 0, 1, 0, 0),
-(76, 'Korea Utara', 'korea_utara', 14, 43, 7, 1, 14, 1),
-(77, 'Kuwait', 'kuwait', 20, 125, 0, 1, 0, 0),
-(78, 'Laos', 'laos', 0, 59, 0, 0, 0, 0),
-(79, 'Lebanon', 'lebanon', 0, 24, 0, 0, 0, 2),
-(80, 'Makau', 'makau', 0, 37, 0, 1, 0, 1),
-(81, 'Malaysia', 'malaysia', 56, 299, 0, 0, 56, 1),
-(82, 'Maldives', 'maldives', 0, 17, 0, 1, 0, 0),
-(83, 'Mongolia', 'mongolia', 7, 15, 4, 1, 7, 1),
-(84, 'Myanmar', 'myanmar', 25, 126, 0, 0, 25, 0),
-(85, 'Nepal', 'nepal', 0, 101, 0, 1, 0, 0),
-(86, 'Oman', 'oman', 14, 77, 0, 1, 0, 1),
-(87, 'Pakistan', 'pakistan', 182, 625, 91, 0, 182, 0),
-(88, 'Palestina', 'palestina', 0, 30, 0, 1, 0, 1),
-(89, 'Qatar', 'qatar', 16, 94, 0, 1, 0, 1),
-(90, 'Republik timor leste', 'republik_timor_leste', 3, 8, 0, 1, 0, 0),
-(91, 'Singapura', 'singapura', 0, 233, 0, 0, 0, 1),
-(92, 'Sri lanka', 'sri_lanka', 0, 106, 0, 0, 0, 2),
-(93, 'Suriah', 'suriah', 9, 53, 0, 0, 0, 1),
-(94, 'Taiwan', 'taiwan', 40, 246, 0, 0, 0, 0),
-(95, 'Tajikistan', 'tajikistan', 7, 18, 4, 0, 7, 2),
-(96, 'Thailand', 'thailand', 92, 494, 0, 0, 92, 0),
-(97, 'Turkmenistan', 'turkmenistan', 5, 28, 0, 1, 0, 0),
-(98, 'Uni emirat arab', 'uni_emirat_arab', 57, 358, 0, 1, 0, 1),
-(99, 'Uzbekistan', 'uzbekistan', 23, 75, 11, 0, 23, 1),
-(100, 'Vietnam', 'vietnam', 111, 380, 56, 0, 111, 0),
-(101, 'Yaman', 'yaman', 16, 97, 0, 0, 0, 2),
-(102, 'Yordania', 'yordania', 0, 49, 0, 1, 0, 1),
-(103, 'Albania', 'albania', 4, 5, 2, 1, 4, 1),
-(104, 'Andorra', 'andorra', 0, 19, 0, 1, 0, 0),
-(105, 'Austria', 'austria', 0, 523, 0, 1, 0, 0),
-(106, 'Belanda', 'belanda', 87, 548, 0, 0, 0, 0),
-(107, 'Belarus', 'belarus', 9, 40, 0, 0, 9, 0),
-(108, 'Belgia', 'belgia', 0, 296, 0, 0, 0, 0),
-(109, 'Bosnia dan hercegovina', 'bosnia_dan_hercegovina', 0, 65, 0, 0, 0, 1),
-(110, 'Bulgaria', 'bulgaria', 0, 67, 0, 1, 0, 1),
-(111, 'Ceko', 'ceko', 0, 173, 15, 0, 0, 1),
-(112, 'Denmark', 'denmark', 28, 170, 0, 0, 0, 1),
-(113, 'Estonia', 'estonia', 0, 22, 3, 1, 0, 1),
-(114, 'Finlandia', 'finlandia', 0, 97, 0, 0, 0, 2),
-(115, 'Gibraltar', 'gibraltar', 0, 17, 0, 0, 0, 2),
-(116, 'Hungaria', 'hungaria', 0, 87, 0, 1, 0, 0),
-(117, 'Inggris', 'inggris', 242, 840, 121, 1, 242, 0),
-(118, 'Irlandia', 'irlandia', 0, 634, 0, 0, 0, 2),
-(119, 'Islandia', 'islandia', 0, 26, 0, 0, 0, 2),
-(120, 'Italia', 'italia', 565, 3629, 0, 0, 0, 0),
-(121, 'Jerman', 'jerman', 424, 2322, 0, 0, 424, 0),
-(122, 'Kepulauan faroe', 'kepulauan_faroe', 0, 11, 0, 0, 0, 2),
-(123, 'Kosovo', 'kosovo', 0, 29, 0, 1, 0, 0),
-(124, 'Kroasia', 'kroasia', 5, 27, 0, 1, 0, 0),
-(125, 'Latvia', 'latvia', 0, 32, 0, 0, 0, 0),
-(126, 'Liechtenstein', 'liechtenstein', 0, 27, 0, 0, 0, 2),
-(127, 'Lithuania', 'lithuania', 0, 49, 0, 0, 0, 0),
-(128, 'Luksemburg', 'luksemburg', 0, 29, 0, 0, 0, 1),
-(129, 'Makedonia utara', 'makedonia_utara', 0, 42, 0, 0, 0, 2),
-(130, 'Malta', 'malta', 0, 19, 0, 1, 0, 1),
-(131, 'Moldova', 'moldova', 0, 33, 0, 0, 0, 2),
-(132, 'Monako', 'monako', 0, 12, 0, 1, 0, 1),
-(133, 'Montenegro', 'montenegro', 0, 11, 0, 0, 0, 2),
-(134, 'Norwegia', 'norwegia', 21, 109, 0, 1, 21, 0),
-(135, 'Polandia', 'polandia', 52, 173, 26, 1, 52, 1),
-(136, 'Portugal', 'portugal', 0, 140, 13, 1, 0, 0),
-(137, 'Prancis', 'prancis', 408, 1433, 204, 1, 408, 1),
-(138, 'Republik rumania', 'republik_rumania', 25, 128, 0, 1, 25, 0),
-(139, 'Republik serbia', 'republik_serbia', 0, 50, 0, 1, 0, 1),
-(140, 'Rusia', 'rusia', 313, 1088, 157, 1, 313, 0),
-(141, 'San marino', 'san_marino', 0, 26, 0, 1, 0, 1),
-(142, 'Siprus', 'siprus', 0, 31, 0, 0, 0, 1),
-(143, 'Slovenia', 'slovenia', 0, 19, 2, 1, 0, 0),
-(144, 'Slowakia', 'slowakia', 0, 196, 0, 0, 0, 0),
-(145, 'Spanyol', 'spanyol', 178, 616, 89, 1, 178, 0),
-(146, 'Swedia', 'swedia', 0, 465, 40, 0, 0, 1),
-(147, 'Swiss', 'swiss', 0, 562, 0, 0, 0, 0),
-(148, 'Turki', 'turki', 34, 109, 17, 0, 34, 2),
-(149, 'Ukraina', 'ukraina', 18, 54, 9, 0, 18, 1),
-(150, 'Vatikan', 'vatikan', 0, 26, 0, 0, 0, 1),
-(151, 'Yunani', 'yunani', 0, 136, 0, 0, 0, 1),
-(152, 'Amerika Serikat', 'amerika_serikat', 289, 961, 145, 1, 289, 0),
-(153, 'Antigua dan Barbuda', 'antigua_dan_barbuda', 0, 21, 0, 0, 0, 1),
-(154, 'Bahama', 'bahama', 0, 34, 0, 1, 0, 1),
-(155, 'Barbados', 'barbados', 0, 12, 0, 1, 0, 1),
-(156, 'Belize', 'belize', 0, 21, 0, 0, 0, 1),
+(1, 'Afrika Selatan', 'afrika_selatan', 68, 217, 34, 1, 68, 0),
+(2, 'Aljazair', 'aljazair', 35, 134, 17, 1, 0, 0),
+(3, 'Angola', 'angola', 29, 113, 15, 1, 0, 0),
+(4, 'Benin', 'benin', 0, 109, 0, 0, 0, 2),
+(5, 'Botswana', 'botswana', 0, 83, 0, 0, 0, 0),
+(6, 'Burkina faso', 'burkina_faso', 0, 65, 0, 0, 0, 1),
+(7, 'Burundi', 'burundi', 0, 42, 0, 0, 0, 1),
+(8, 'Chad', 'chad', 9, 49, 0, 0, 0, 1),
+(9, 'Djibouti', 'djibouti', 0, 12, 0, 1, 0, 1),
+(10, 'Eritrea', 'eritrea', 0, 56, 6, 0, 0, 2),
+(11, 'Eswatini', 'eswatini', 0, 77, 0, 0, 0, 2),
+(12, 'Ethiopia', 'ethiopia', 0, 441, 0, 0, 0, 0),
+(13, 'Gabon', 'gabon', 11, 40, 6, 0, 0, 1),
+(14, 'Gambia', 'gambia', 0, 22, 0, 1, 0, 0),
+(15, 'Ghana', 'ghana', 0, 187, 0, 1, 0, 0),
+(16, 'Guinea', 'guinea', 0, 119, 0, 1, 0, 1),
+(17, 'Guinea bissau', 'guinea_bissau', 0, 16, 0, 0, 0, 2),
+(18, 'Kamerun', 'kamerun', 25, 148, 0, 0, 0, 2),
+(19, 'Kenya', 'kenya', 0, 188, 0, 1, 0, 0),
+(20, 'Komoro', 'komoro', 0, 28, 0, 0, 0, 1),
+(21, 'Kongo', 'kongo', 14, 39, 7, 1, 14, 1),
+(22, 'Lesotho', 'lesotho', 0, 27, 0, 1, 0, 0),
+(23, 'Liberia', 'liberia', 0, 93, 0, 0, 0, 2),
+(24, 'Libya', 'libya', 9, 47, 0, 0, 0, 2),
+(25, 'Madagaskar', 'madagaskar', 0, 143, 0, 0, 0, 2),
+(26, 'Malawi', 'malawi', 0, 100, 9, 0, 0, 0),
+(27, 'Mali', 'mali', 0, 78, 0, 1, 0, 0),
+(28, 'Maroko', 'maroko', 0, 254, 22, 0, 0, 0),
+(29, 'Mauritania', 'mauritania', 0, 91, 0, 1, 0, 1),
+(30, 'Mauritius', 'mauritius', 0, 13, 0, 1, 0, 0),
+(31, 'Mesir', 'mesir', 78, 239, 39, 1, 78, 0),
+(32, 'Mozambik', 'mozambik', 20, 54, 10, 1, 20, 0),
+(33, 'Namibia', 'namibia', 0, 59, 6, 0, 0, 1),
+(34, 'Niger', 'niger', 0, 48, 6, 0, 0, 0),
+(35, 'Nigeria', 'nigeria', 124, 367, 62, 0, 124, 1),
+(36, 'Pantai gading', 'pantai_gading', 0, 162, 0, 1, 0, 0),
+(37, 'Republik afrika tengah', 'republik_afrika_tengah', 0, 21, 3, 1, 0, 0),
+(38, 'Republik demokratik kongo', 'republik_demokratik_kongo', 46, 132, 23, 0, 46, 2),
+(39, 'Republik sudan', 'republik_sudan', 28, 108, 14, 0, 0, 1),
+(40, 'Republik tanzania', 'republik_tanzania', 0, 247, 0, 1, 0, 0),
+(41, 'Republik uganda', 'republik_uganda', 0, 199, 0, 0, 0, 2),
+(42, 'Republik zambia', 'republik_zambia', 0, 91, 8, 0, 0, 0),
+(43, 'Republik zimbabwe', 'republik_zimbabwe', 18, 48, 9, 0, 18, 0),
+(44, 'Rwanda', 'rwanda', 0, 104, 0, 0, 0, 2),
+(45, 'Sao tome dan principe', 'sao_tome_dan_principe', 0, 28, 0, 0, 0, 0),
+(46, 'Senegal', 'senegal', 0, 119, 0, 0, 0, 0),
+(47, 'Seychelles', 'seychelles', 0, 16, 0, 0, 0, 1),
+(48, 'Sierra leone', 'sierra_leone', 0, 77, 7, 1, 0, 0),
+(49, 'Somalia', 'somalia', 0, 96, 9, 0, 0, 0),
+(50, 'Sudan selatan', 'sudan_selatan', 8, 40, 0, 1, 0, 0),
+(51, 'Tanjung verde', 'tanjung_verde', 0, 24, 0, 0, 0, 1),
+(52, 'Togo', 'togo', 0, 94, 0, 1, 0, 1),
+(53, 'Tunisia', 'tunisia', 15, 58, 8, 0, 0, 1),
+(54, 'Afganistan', 'afganistan', 20, 49, 10, 1, 20, 0),
+(55, 'Arab Saudi', 'arab_saudi', 140, 871, 0, 0, 0, 2),
+(56, 'Armenia', 'armenia', 0, 30, 4, 0, 0, 2),
+(57, 'Azerbaijan', 'azerbaijan', 7, 34, 0, 0, 0, 2),
+(58, 'Bahrain', 'bahrain', 8, 46, 0, 0, 0, 1),
+(59, 'Bangladesh', 'bangladesh', 112, 567, 0, 1, 112, 1),
+(60, 'Bhutan', 'bhutan', 0, 26, 0, 1, 0, 1),
+(61, 'Brunei', 'brunei', 4, 17, 0, 0, 0, 1),
+(62, 'China', 'china', 918, 2485, 459, 1, 918, 0),
+(63, 'Filipina', 'filipina', 58, 162, 29, 1, 58, 0),
+(64, 'Georgia', 'georgia', 0, 58, 0, 0, 0, 1),
+(65, 'Hong kong', 'hong_kong', 0, 27, 0, 0, 0, 2),
+(66, 'India', 'india', 1085, 3433, 542, 1, 1085, 1),
+(67, 'Indonesia', 'indonesia', 215, 664, 108, 0, 215, 2),
+(68, 'Irak', 'irak', 24, 89, 12, 0, 0, 2),
+(69, 'Iran', 'iran', 96, 308, 48, 0, 96, 0),
+(70, 'Israel', 'israel', 62, 259, 31, 0, 0, 1),
+(71, 'Jepang', 'jepang', 229, 1188, 0, 1, 229, 1),
+(72, 'Kamboja', 'kamboja', 0, 66, 0, 0, 0, 0),
+(73, 'Kazakhstan', 'kazakhstan', 28, 84, 14, 0, 28, 1),
+(74, 'Kirgizstan', 'kirgizstan', 5, 7, 3, 0, 5, 0),
+(75, 'Korea Selatan', 'korea_selatan', 0, 2524, 0, 0, 0, 0),
+(76, 'Korea Utara', 'korea_utara', 14, 38, 7, 0, 14, 1),
+(77, 'Kuwait', 'kuwait', 20, 123, 0, 0, 0, 2),
+(78, 'Laos', 'laos', 0, 56, 0, 0, 0, 1),
+(79, 'Lebanon', 'lebanon', 0, 22, 0, 1, 0, 1),
+(80, 'Makau', 'makau', 0, 38, 0, 0, 0, 0),
+(81, 'Malaysia', 'malaysia', 56, 286, 0, 0, 56, 1),
+(82, 'Maldives', 'maldives', 0, 16, 0, 1, 0, 1),
+(83, 'Mongolia', 'mongolia', 7, 13, 4, 0, 7, 2),
+(84, 'Myanmar', 'myanmar', 25, 111, 0, 0, 25, 1),
+(85, 'Nepal', 'nepal', 0, 95, 0, 0, 0, 1),
+(86, 'Oman', 'oman', 14, 77, 0, 0, 0, 1),
+(87, 'Pakistan', 'pakistan', 182, 568, 91, 1, 182, 1),
+(88, 'Palestina', 'palestina', 0, 26, 0, 0, 0, 2),
+(89, 'Qatar', 'qatar', 16, 92, 0, 1, 0, 0),
+(90, 'Republik timor leste', 'republik_timor_leste', 3, 8, 0, 0, 0, 0),
+(91, 'Singapura', 'singapura', 0, 230, 0, 0, 0, 2),
+(92, 'Sri lanka', 'sri_lanka', 0, 99, 0, 0, 0, 0),
+(93, 'Suriah', 'suriah', 9, 48, 0, 1, 0, 1),
+(94, 'Taiwan', 'taiwan', 40, 235, 0, 0, 0, 2),
+(95, 'Tajikistan', 'tajikistan', 7, 17, 4, 0, 7, 0),
+(96, 'Thailand', 'thailand', 92, 469, 0, 0, 92, 0),
+(97, 'Turkmenistan', 'turkmenistan', 5, 26, 0, 1, 0, 0),
+(98, 'Uni emirat arab', 'uni_emirat_arab', 57, 354, 0, 0, 0, 0),
+(99, 'Uzbekistan', 'uzbekistan', 23, 66, 11, 0, 23, 2),
+(100, 'Vietnam', 'vietnam', 111, 357, 56, 1, 111, 0),
+(101, 'Yaman', 'yaman', 16, 90, 0, 1, 0, 0),
+(102, 'Yordania', 'yordania', 0, 46, 0, 0, 0, 2),
+(103, 'Albania', 'albania', 4, 4, 2, 0, 4, 0),
+(104, 'Andorra', 'andorra', 0, 19, 0, 0, 0, 1),
+(105, 'Austria', 'austria', 0, 518, 0, 0, 0, 1),
+(106, 'Belanda', 'belanda', 87, 536, 0, 1, 0, 1),
+(107, 'Belarus', 'belarus', 9, 35, 0, 0, 9, 0),
+(108, 'Belgia', 'belgia', 0, 292, 0, 0, 0, 1),
+(109, 'Bosnia dan hercegovina', 'bosnia_dan_hercegovina', 0, 62, 0, 1, 0, 1),
+(110, 'Bulgaria', 'bulgaria', 0, 63, 0, 1, 0, 0),
+(111, 'Ceko', 'ceko', 0, 165, 15, 1, 0, 0),
+(112, 'Denmark', 'denmark', 28, 170, 0, 0, 0, 0),
+(113, 'Estonia', 'estonia', 0, 21, 3, 1, 0, 1),
+(114, 'Finlandia', 'finlandia', 0, 96, 0, 0, 0, 2),
+(115, 'Gibraltar', 'gibraltar', 0, 18, 0, 0, 0, 0),
+(116, 'Hungaria', 'hungaria', 0, 83, 0, 0, 0, 0),
+(117, 'Inggris', 'inggris', 242, 809, 121, 0, 242, 1),
+(118, 'Irlandia', 'irlandia', 0, 632, 0, 0, 0, 0),
+(119, 'Islandia', 'islandia', 0, 26, 0, 0, 0, 1),
+(120, 'Italia', 'italia', 565, 3601, 0, 0, 0, 2),
+(121, 'Jerman', 'jerman', 424, 2287, 0, 1, 424, 0),
+(122, 'Kepulauan faroe', 'kepulauan_faroe', 0, 12, 0, 0, 0, 0),
+(123, 'Kosovo', 'kosovo', 0, 28, 0, 1, 0, 0),
+(124, 'Kroasia', 'kroasia', 5, 25, 0, 1, 0, 1),
+(125, 'Latvia', 'latvia', 0, 30, 0, 0, 0, 2),
+(126, 'Liechtenstein', 'liechtenstein', 0, 27, 0, 1, 0, 0),
+(127, 'Lithuania', 'lithuania', 0, 47, 0, 0, 0, 2),
+(128, 'Luksemburg', 'luksemburg', 0, 28, 0, 1, 0, 1),
+(129, 'Makedonia utara', 'makedonia_utara', 0, 42, 0, 0, 0, 0),
+(130, 'Malta', 'malta', 0, 19, 0, 0, 0, 2),
+(131, 'Moldova', 'moldova', 0, 33, 0, 0, 0, 0),
+(132, 'Monako', 'monako', 0, 12, 0, 0, 0, 2),
+(133, 'Montenegro', 'montenegro', 0, 11, 0, 1, 0, 0),
+(134, 'Norwegia', 'norwegia', 21, 105, 0, 1, 21, 0),
+(135, 'Polandia', 'polandia', 52, 161, 26, 0, 52, 0),
+(136, 'Portugal', 'portugal', 0, 134, 13, 0, 0, 0),
+(137, 'Prancis', 'prancis', 408, 1403, 204, 0, 408, 1),
+(138, 'Republik rumania', 'republik_rumania', 25, 117, 0, 1, 25, 1),
+(139, 'Republik serbia', 'republik_serbia', 0, 46, 0, 0, 0, 0),
+(140, 'Rusia', 'rusia', 313, 1025, 157, 0, 313, 2),
+(141, 'San marino', 'san_marino', 0, 26, 0, 1, 0, 0),
+(142, 'Siprus', 'siprus', 0, 30, 0, 0, 0, 2),
+(143, 'Slovenia', 'slovenia', 0, 18, 2, 0, 0, 0),
+(144, 'Slowakia', 'slowakia', 0, 191, 0, 0, 0, 2),
+(145, 'Spanyol', 'spanyol', 178, 595, 89, 0, 178, 0),
+(146, 'Swedia', 'swedia', 0, 463, 40, 0, 0, 0),
+(147, 'Swiss', 'swiss', 0, 558, 0, 0, 0, 2),
+(148, 'Turki', 'turki', 34, 89, 17, 1, 34, 0),
+(149, 'Ukraina', 'ukraina', 18, 46, 9, 0, 18, 1),
+(150, 'Vatikan', 'vatikan', 0, 25, 0, 0, 0, 2),
+(151, 'Yunani', 'yunani', 0, 130, 0, 1, 0, 1),
+(152, 'Amerika Serikat', 'amerika_serikat', 289, 814, 145, 0, 289, 1),
+(153, 'Antigua dan Barbuda', 'antigua_dan_barbuda', 0, 20, 0, 1, 0, 1),
+(154, 'Bahama', 'bahama', 0, 34, 0, 0, 0, 2),
+(155, 'Barbados', 'barbados', 0, 13, 0, 0, 0, 0),
+(156, 'Belize', 'belize', 0, 20, 0, 1, 0, 1),
 (157, 'Bermuda', 'bermuda', 0, 15, 0, 0, 0, 0),
-(158, 'Costa rica', 'costa_rica', 0, 32, 0, 1, 0, 0),
-(159, 'Curacao', 'curacao', 0, 17, 0, 0, 0, 2),
-(160, 'Dominika', 'dominika', 0, 35, 0, 0, 0, 1),
-(161, 'El salvador', 'el_salvador', 0, 49, 0, 0, 0, 2),
-(162, 'Greenland', 'greenland', 5, 16, 3, 1, 0, 0),
-(163, 'Grenada', 'grenada', 0, 11, 0, 1, 0, 1),
-(164, 'Guatemala', 'guatemala', 11, 59, 0, 1, 0, 0),
-(165, 'Haiti', 'haiti', 0, 48, 0, 1, 0, 0),
-(166, 'Honduras', 'honduras', 0, 66, 0, 0, 0, 0),
-(167, 'Jamaika', 'jamaika', 6, 27, 0, 1, 0, 0),
-(168, 'Kanada', 'kanada', 255, 893, 128, 0, 255, 1),
-(169, 'Kuba', 'kuba', 30, 184, 0, 0, 0, 1),
-(170, 'Meksiko', 'meksiko', 158, 535, 79, 0, 158, 0),
-(171, 'Nikaragua', 'nikaragua', 0, 25, 0, 0, 0, 1),
-(172, 'Panama', 'panama', 0, 40, 0, 1, 0, 0),
-(173, 'Puerto rico', 'puerto_rico', 0, 32, 0, 1, 0, 0),
-(174, 'Republik dominika', 'republik_dominika', 0, 145, 0, 1, 0, 0),
-(175, 'Saint kitts dan nevis', 'saint_kitts_dan_nevis', 0, 26, 0, 1, 0, 1),
-(176, 'Saint lucia', 'saint_lucia', 0, 12, 0, 1, 0, 1),
+(158, 'Costa rica', 'costa_rica', 0, 30, 0, 1, 0, 0),
+(159, 'Curacao', 'curacao', 0, 18, 0, 0, 0, 0),
+(160, 'Dominika', 'dominika', 0, 34, 0, 1, 0, 1),
+(161, 'El salvador', 'el_salvador', 0, 47, 0, 1, 0, 1),
+(162, 'Greenland', 'greenland', 5, 15, 3, 1, 0, 1),
+(163, 'Grenada', 'grenada', 0, 12, 0, 0, 0, 0),
+(164, 'Guatemala', 'guatemala', 11, 54, 0, 1, 0, 1),
+(165, 'Haiti', 'haiti', 0, 44, 0, 0, 0, 1),
+(166, 'Honduras', 'honduras', 0, 62, 0, 0, 0, 1),
+(167, 'Jamaika', 'jamaika', 6, 25, 0, 1, 0, 1),
+(168, 'Kanada', 'kanada', 255, 874, 128, 0, 255, 2),
+(169, 'Kuba', 'kuba', 30, 176, 0, 0, 0, 2),
+(170, 'Meksiko', 'meksiko', 158, 478, 79, 1, 158, 1),
+(171, 'Nikaragua', 'nikaragua', 0, 20, 0, 0, 0, 2),
+(172, 'Panama', 'panama', 0, 37, 0, 0, 0, 2),
+(173, 'Puerto rico', 'puerto_rico', 0, 31, 0, 0, 0, 0),
+(174, 'Republik dominika', 'republik_dominika', 0, 138, 0, 0, 0, 0),
+(175, 'Saint kitts dan nevis', 'saint_kitts_dan_nevis', 0, 27, 0, 0, 0, 0),
+(176, 'Saint lucia', 'saint_lucia', 0, 13, 0, 0, 0, 0),
 (177, 'Saint vincent dan grenadine', 'saint_vincent_dan_grenadine', 0, 12, 0, 0, 0, 1),
-(178, 'Trinidad dan tobago', 'trinidad_dan_tobago', 4, 15, 0, 1, 0, 1),
-(179, 'Australia', 'australia', 142, 490, 71, 0, 142, 2),
-(180, 'Fiji', 'fiji', 0, 23, 0, 0, 0, 1),
-(181, 'Guam', 'guam', 0, 20, 0, 1, 0, 0),
-(182, 'Kiribati', 'kiribati', 0, 21, 0, 0, 0, 0),
-(183, 'Marshall', 'marshall', 0, 39, 0, 0, 0, 1),
-(184, 'Mikronesia', 'mikronesia', 0, 37, 0, 0, 0, 2),
-(185, 'Nauru', 'nauru', 0, 26, 0, 1, 0, 0),
-(186, 'Palau', 'palau', 0, 18, 0, 0, 0, 1),
-(187, 'Papua nugini', 'papua_nugini', 10, 57, 0, 0, 0, 0),
-(188, 'Samoa', 'samoa', 0, 19, 0, 0, 0, 1),
-(189, 'Samoa amerika', 'samoa_amerika', 0, 15, 0, 1, 0, 0),
-(190, 'Selandia baru', 'selandia_baru', 22, 110, 0, 0, 22, 2),
-(191, 'Tahiti', 'tahiti', 0, 12, 0, 1, 0, 1),
-(192, 'Tonga', 'tonga', 0, 12, 0, 0, 0, 0),
+(178, 'Trinidad dan tobago', 'trinidad_dan_tobago', 4, 14, 0, 1, 0, 1),
+(179, 'Australia', 'australia', 142, 481, 71, 0, 142, 1),
+(180, 'Fiji', 'fiji', 0, 22, 0, 1, 0, 0),
+(181, 'Guam', 'guam', 0, 19, 0, 1, 0, 1),
+(182, 'Kiribati', 'kiribati', 0, 20, 0, 0, 0, 1),
+(183, 'Marshall', 'marshall', 0, 38, 0, 0, 0, 2),
+(184, 'Mikronesia', 'mikronesia', 0, 38, 0, 0, 0, 0),
+(185, 'Nauru', 'nauru', 0, 25, 0, 1, 0, 1),
+(186, 'Palau', 'palau', 0, 17, 0, 1, 0, 1),
+(187, 'Papua nugini', 'papua_nugini', 10, 52, 0, 0, 0, 0),
+(188, 'Samoa', 'samoa', 0, 18, 0, 0, 0, 2),
+(189, 'Samoa amerika', 'samoa_amerika', 0, 15, 0, 0, 0, 1),
+(190, 'Selandia baru', 'selandia_baru', 22, 110, 0, 0, 22, 1),
+(191, 'Tahiti', 'tahiti', 0, 12, 0, 0, 0, 2),
+(192, 'Tonga', 'tonga', 0, 11, 0, 0, 0, 1),
 (193, 'Tuvalu', 'tuvalu', 0, 19, 0, 0, 0, 2),
-(194, 'Vanuatu', 'vanuatu', 0, 14, 0, 0, 0, 0),
-(195, 'Argentina', 'argentina', 55, 180, 27, 1, 55, 1),
-(196, 'Bolivia', 'bolivia', 11, 52, 0, 0, 11, 2),
-(197, 'Brazil', 'brazil', 414, 1442, 207, 0, 414, 1),
-(198, 'Chile', 'chile', 82, 439, 0, 0, 82, 1),
-(199, 'Ekuador', 'ekuador', 26, 156, 0, 0, 0, 2),
-(200, 'Guiana prancis', 'guiana_prancis', 0, 20, 0, 1, 0, 0),
-(201, 'Guyana', 'guyana', 4, 16, 0, 0, 0, 2),
-(202, 'Kolombia', 'kolombia', 60, 200, 30, 0, 60, 1),
-(203, 'Paraguay', 'paraguay', 0, 53, 0, 0, 0, 0),
-(204, 'Peru', 'peru', 25, 77, 12, 0, 25, 2),
-(205, 'Suriname', 'suriname', 4, 17, 0, 1, 0, 1),
-(206, 'Uruguay', 'uruguay', 0, 21, 0, 0, 0, 2),
-(207, 'Venezuela', 'venezuela', 0, 118, 0, 1, 0, 1);
+(194, 'Vanuatu', 'vanuatu', 0, 13, 0, 0, 0, 1),
+(195, 'Argentina', 'argentina', 55, 161, 27, 1, 55, 1),
+(196, 'Bolivia', 'bolivia', 11, 47, 0, 1, 11, 1),
+(197, 'Brazil', 'brazil', 414, 1352, 207, 1, 414, 1),
+(198, 'Chile', 'chile', 82, 429, 0, 1, 82, 0),
+(199, 'Ekuador', 'ekuador', 26, 152, 0, 0, 0, 1),
+(200, 'Guiana prancis', 'guiana_prancis', 0, 20, 0, 0, 0, 1),
+(201, 'Guyana', 'guyana', 4, 16, 0, 1, 0, 0),
+(202, 'Kolombia', 'kolombia', 60, 187, 30, 0, 60, 1),
+(203, 'Paraguay', 'paraguay', 0, 48, 0, 1, 0, 0),
+(204, 'Peru', 'peru', 25, 64, 12, 0, 25, 0),
+(205, 'Suriname', 'suriname', 4, 17, 0, 1, 0, 0),
+(206, 'Uruguay', 'uruguay', 0, 20, 0, 0, 0, 2),
+(207, 'Venezuela', 'venezuela', 0, 112, 0, 0, 0, 0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -52517,6 +52613,43 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (205, 'Suriname', 'suriname', 6, 0, 0, 31, 0, 1, 1, 0, 0),
 (206, 'Uruguay', 'uruguay', 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (207, 'Venezuela', 'venezuela', 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -52986,6 +53119,43 @@ INSERT INTO `database_sektor_peternakan` (`id`, `country`, `country_slug`, `ayam
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- ========================================================
 -- SECTION: json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/database_sektor_agrikultur.sql
 -- ========================================================
@@ -53227,6 +53397,43 @@ INSERT INTO `database_sektor_agrikultur` (`id`, `country`, `country_slug`, `padi
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- ========================================================
 -- SECTION: json/semua_fitur_negara/1_pembangunan/1_produksi/6_sektor_perikanan/database_sektor_perikanan.sql
 -- ========================================================
@@ -53450,6 +53657,43 @@ INSERT INTO `database_sektor_perikanan` (`id`, `country`, `country_slug`, `udang
 (205, 'Suriname', 'suriname', 0, 0, 7),
 (206, 'Uruguay', 'uruguay', 14, 0, 31),
 (207, 'Venezuela', 'venezuela', 71, 0, 238);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -53687,6 +53931,43 @@ INSERT INTO `database_sektor_olahan_pangan` (`id`, `country`, `country_slug`, `a
 (205, 'Suriname', 'suriname', 1, 0, 0, 1, 0, 1, 0, 1),
 (206, 'Uruguay', 'uruguay', 1, 1, 5, 0, 2, 0, 1, 5),
 (207, 'Venezuela', 'venezuela', 2, 0, 31, 24, 14, 12, 21, 34);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -54223,6 +54504,18 @@ INSERT INTO database_pendidikan (
 -- Total 207 Negara
 
 DROP TABLE IF EXISTS database_kesehatan;
+CREATE TABLE IF NOT EXISTS `database_kesehatan` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `rumah_sakit_besar` int(11) NOT NULL DEFAULT 0,
+  `rumah_sakit_kecil` int(11) NOT NULL DEFAULT 0,
+  `pusat_diagnostik` int(11) NOT NULL DEFAULT 0,
+  `harapan_hidup` int(11) NOT NULL DEFAULT 0,
+  `indeks_kesehatan` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS `database_kesehatan` (
   `id` int(11) NOT NULL,
   `country` varchar(100) NOT NULL,
@@ -55026,6 +55319,26 @@ CREATE TABLE IF NOT EXISTS `database_komersial` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_komersial` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `mall` int(11) NOT NULL DEFAULT 0,
+  `hotel` int(11) NOT NULL DEFAULT 0,
+  `pusat_grosir_tekstil` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `database_komersial` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `mall` int(11) NOT NULL DEFAULT 0,
+  `hotel` int(11) NOT NULL DEFAULT 0,
+  `pusat_grosir_tekstil` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_komersial (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,
@@ -55255,6 +55568,24 @@ INSERT INTO database_komersial (
 -- Total 207 Negara
 
 DROP TABLE IF EXISTS database_hiburan;
+CREATE TABLE IF NOT EXISTS `database_hiburan` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `bioskop` int(11) NOT NULL DEFAULT 0,
+  `teater` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `database_hiburan` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `bioskop` int(11) NOT NULL DEFAULT 0,
+  `teater` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS `database_hiburan` (
   `id` int(11) NOT NULL,
   `country` varchar(100) NOT NULL,
@@ -55514,216 +55845,251 @@ CREATE TABLE IF NOT EXISTS `database_hunian_permukiman` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
-
 INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `rumah_subsidi`, `apartemen`, `mansion`) VALUES
-(1, 'Afrika Selatan', 'afrika_selatan', 7991933, 513534, 790161),
-(2, 'Aljazair', 'aljazair', 5955756, 383448, 593188),
-(3, 'Angola', 'angola', 4973374, 315412, 485574),
-(4, 'Benin', 'benin', 1695133, 109689, 165939),
-(5, 'Botswana', 'botswana', 405683, 24829, 33993),
-(6, 'Burkina faso', 'burkina_faso', 2787171, 178328, 277459),
-(7, 'Burundi', 'burundi', 1625985, 103720, 154969),
-(8, 'Chad', 'chad', 2456618, 156009, 241968),
-(9, 'Djibouti', 'djibouti', 221854, 13497, 14916),
-(10, 'Eritrea', 'eritrea', 471689, 31187, 44667),
-(11, 'Eswatini', 'eswatini', 181159, 12162, 15891),
-(12, 'Ethiopia', 'ethiopia', 14017874, 898007, 1396436),
-(13, 'Gabon', 'gabon', 313314, 18762, 28062),
-(14, 'Gambia', 'gambia', 337450, 24830, 31158),
-(15, 'Ghana', 'ghana', 3912965, 251420, 386165),
-(16, 'Guinea', 'guinea', 2201080, 140895, 219138),
-(17, 'Guinea bissau', 'guinea_bissau', 358859, 19262, 27791),
-(18, 'Kamerun', 'kamerun', 3576976, 229233, 351838),
-(19, 'Kenya', 'kenya', 6686494, 429477, 667092),
-(20, 'Komoro', 'komoro', 155803, 12044, 11651),
-(21, 'Kongo', 'kongo', 863125, 54755, 79823),
-(22, 'Lesotho', 'lesotho', 333982, 24146, 30090),
-(23, 'Liberia', 'liberia', 774249, 49697, 70935),
-(24, 'Libya', 'libya', 928169, 59102, 92277),
-(25, 'Madagaskar', 'madagaskar', 3636825, 232555, 361643),
-(26, 'Malawi', 'malawi', 2620683, 169429, 259753),
-(27, 'Mali', 'mali', 2849359, 183412, 280631),
-(28, 'Maroko', 'maroko', 4625220, 295615, 460518),
-(29, 'Mauritania', 'mauritania', 740769, 44342, 65101),
-(30, 'Mauritius', 'mauritius', 206351, 11018, 15699),
-(31, 'Mesir', 'mesir', 13514661, 866868, 1348981),
-(32, 'Mozambik', 'mozambik', 3830404, 245487, 376630),
-(33, 'Namibia', 'namibia', 446480, 29385, 38622),
-(34, 'Niger', 'niger', 3327384, 214347, 329762),
-(35, 'Nigeria', 'nigeria', 28098491, 1798443, 2798797),
-(36, 'Pantai gading', 'pantai_gading', 3579742, 230526, 355050),
-(37, 'Republik afrika tengah', 'republik_afrika_tengah', 692205, 46085, 67187),
-(38, 'Republik demokratik kongo', 'republik_demokratik_kongo', 12850102, 818386, 1278338),
-(39, 'Republik sudan', 'republik_sudan', 6479950, 415610, 646146),
-(40, 'Republik tanzania', 'republik_tanzania', 8560612, 546551, 852134),
-(41, 'Republik uganda', 'republik_uganda', 5790308, 368369, 574002),
-(42, 'Republik zambia', 'republik_zambia', 2531008, 160229, 246598),
-(43, 'Republik zimbabwe', 'republik_zimbabwe', 2225518, 138174, 213682),
-(44, 'Rwanda', 'rwanda', 1838314, 113397, 176408),
-(45, 'Sao tome dan principe', 'sao_tome_dan_principe', 120761, 3388, 3193),
-(46, 'Senegal', 'senegal', 2409751, 155983, 238993),
-(47, 'Seychelles', 'seychelles', 48447, 4011, 1777),
-(48, 'Sierra leone', 'sierra_leone', 1099291, 70293, 108217),
-(49, 'Somalia', 'somalia', 2493923, 158354, 245871),
-(50, 'Sudan selatan', 'sudan_selatan', 1446385, 94135, 139483),
-(51, 'Tanjung verde', 'tanjung_verde', 158240, 9525, 7478),
-(52, 'Togo', 'togo', 1156227, 72546, 113199),
-(53, 'Tunisia', 'tunisia', 1543864, 98837, 150142),
-(54, 'Afganistan', 'afganistan', 5494317, 351331, 548143),
-(55, 'Arab Saudi', 'arab_saudi', 4371626, 275223, 426772),
-(56, 'Armenia', 'armenia', 461257, 26396, 38745),
-(57, 'Azerbaijan', 'azerbaijan', 1334078, 83404, 128462),
-(58, 'Bahrain', 'bahrain', 294169, 16812, 20393),
-(59, 'Bangladesh', 'bangladesh', 21297257, 1362531, 2123491),
-(60, 'Bhutan', 'bhutan', 152470, 8240, 10118),
-(61, 'Brunei', 'brunei', 179532, 5541, 6042),
-(62, 'China', 'china', 175697171, 11244493, 17561993),
-(63, 'Filipina', 'filipina', 14293429, 915102, 1426889),
-(64, 'Georgia', 'georgia', 485629, 31792, 46653),
-(65, 'Hong kong', 'hong_kong', 1001687, 62631, 93217),
-(66, 'India', 'india', 177227630, 11344540, 17719390),
-(67, 'Indonesia', 'indonesia', 36059741, 2306658, 3603961),
-(68, 'Irak', 'irak', 5807049, 374492, 577377),
-(69, 'Iran', 'iran', 10870283, 698224, 1082955),
-(70, 'Israel', 'israel', 1341564, 86567, 128790),
-(71, 'Jepang', 'jepang', 15409504, 988127, 1536594),
-(72, 'Kamboja', 'kamboja', 2235322, 145406, 220494),
-(73, 'Kazakhstan', 'kazakhstan', 2620887, 170241, 257613),
-(74, 'Kirgizstan', 'kirgizstan', 886720, 54720, 77576),
-(75, 'Korea Selatan', 'korea_selatan', 6526402, 418256, 646050),
-(76, 'Korea Utara', 'korea_utara', 3385466, 215773, 333360),
-(77, 'Kuwait', 'kuwait', 663564, 43657, 61754),
-(78, 'Laos', 'laos', 897436, 56563, 87158),
-(79, 'Lebanon', 'lebanon', 797724, 52922, 76840),
-(80, 'Makau', 'makau', 172079, 11327, 9929),
-(81, 'Malaysia', 'malaysia', 4227703, 269444, 410871),
-(82, 'Maldives', 'maldives', 114016, 6168, 6912),
-(83, 'Mongolia', 'mongolia', 533625, 31860, 44881),
-(84, 'Myanmar', 'myanmar', 6475576, 412528, 642440),
-(85, 'Nepal', 'nepal', 3715601, 238438, 365381),
-(86, 'Oman', 'oman', 742656, 47288, 66832),
-(87, 'Pakistan', 'pakistan', 30224862, 1932816, 3018878),
-(88, 'Palestina', 'palestina', 757249, 46347, 69075),
-(89, 'Qatar', 'qatar', 515087, 26906, 40387),
-(90, 'Republik timor leste', 'republik_timor_leste', 257208, 16794, 18812),
-(91, 'Singapura', 'singapura', 830421, 52288, 76925),
-(92, 'Sri lanka', 'sri_lanka', 2847315, 179650, 273143),
-(93, 'Suriah', 'suriah', 2818096, 178618, 276828),
-(94, 'Taiwan', 'taiwan', 2979647, 191826, 291491),
-(95, 'Tajikistan', 'tajikistan', 1301280, 83405, 123374),
-(96, 'Thailand', 'thailand', 8297621, 535188, 824205),
-(97, 'Turkmenistan', 'turkmenistan', 940747, 55901, 81881),
-(98, 'Uni emirat arab', 'uni_emirat_arab', 1211320, 77005, 119382),
-(99, 'Uzbekistan', 'uzbekistan', 4849832, 307671, 478250),
-(100, 'Vietnam', 'vietnam', 12845461, 821563, 1279263),
-(101, 'Yaman', 'yaman', 4290064, 274697, 422038),
-(102, 'Yordania', 'yordania', 1539463, 99324, 149831),
-(103, 'Albania', 'albania', 438354, 28727, 35924),
-(104, 'Andorra', 'andorra', 55236, 1048, 1124),
-(105, 'Austria', 'austria', 1169614, 73302, 114506),
-(106, 'Belanda', 'belanda', 2342493, 150609, 227603),
-(107, 'Belarus', 'belarus', 1163373, 72644, 113245),
-(108, 'Belgia', 'belgia', 1610711, 97978, 149547),
-(109, 'Bosnia dan hercegovina', 'bosnia_dan_hercegovina', 432377, 25751, 40147),
-(110, 'Bulgaria', 'bulgaria', 902318, 57624, 84262),
-(111, 'Ceko', 'ceko', 1455600, 87585, 136286),
-(112, 'Denmark', 'denmark', 796225, 50160, 75681),
-(113, 'Estonia', 'estonia', 298295, 16150, 18019),
-(114, 'Finlandia', 'finlandia', 731515, 46490, 70847),
-(115, 'Gibraltar', 'gibraltar', 53010, 1765, 656),
-(116, 'Hungaria', 'hungaria', 1243792, 78931, 119098),
-(117, 'Inggris', 'inggris', 8768534, 556212, 868646),
-(118, 'Irlandia', 'irlandia', 775632, 47906, 68916),
-(119, 'Islandia', 'islandia', 147901, 3893, 5059),
-(120, 'Italia', 'italia', 7444273, 475479, 737291),
-(121, 'Jerman', 'jerman', 10544028, 673864, 1044668),
-(122, 'Kepulauan faroe', 'kepulauan_faroe', 64379, 3067, 1093),
-(123, 'Kosovo', 'kosovo', 236761, 13728, 19857),
-(124, 'Kroasia', 'kroasia', 528296, 34168, 48848),
-(125, 'Latvia', 'latvia', 247140, 15755, 23366),
-(126, 'Liechtenstein', 'liechtenstein', 124134, 3537, 1036),
-(127, 'Lithuania', 'lithuania', 468972, 27166, 36720),
-(128, 'Luksemburg', 'luksemburg', 126572, 8296, 8988),
-(129, 'Makedonia utara', 'makedonia_utara', 367586, 19278, 23702),
-(130, 'Malta', 'malta', 100501, 7298, 7617),
-(131, 'Moldova', 'moldova', 430994, 27077, 41752),
-(132, 'Monako', 'monako', 48306, 5788, 1362),
-(133, 'Montenegro', 'montenegro', 109841, 8588, 8409),
-(134, 'Norwegia', 'norwegia', 713510, 45210, 70378),
-(135, 'Polandia', 'polandia', 4821643, 306084, 467443),
-(136, 'Portugal', 'portugal', 1398820, 89415, 134918),
-(137, 'Prancis', 'prancis', 8752554, 560982, 864862),
-(138, 'Republik rumania', 'republik_rumania', 2424043, 156369, 238609),
-(139, 'Republik serbia', 'republik_serbia', 914867, 59591, 89749),
-(140, 'Rusia', 'rusia', 18389076, 1173748, 1826252),
-(141, 'San marino', 'san_marino', 145387, 5751, 1309),
-(142, 'Siprus', 'siprus', 177752, 9621, 12574),
-(143, 'Slovenia', 'slovenia', 328803, 18274, 26759),
-(144, 'Slowakia', 'slowakia', 691563, 43439, 67805),
-(145, 'Spanyol', 'spanyol', 6205870, 396975, 619704),
-(146, 'Swedia', 'swedia', 1347075, 87735, 133021),
-(147, 'Swiss', 'swiss', 1259709, 76252, 112765),
-(148, 'Turki', 'turki', 11028480, 705785, 1099462),
-(149, 'Ukraina', 'ukraina', 4638914, 298772, 459578),
-(150, 'Vatikan', 'vatikan', 113267, 1511, 261),
-(151, 'Yunani', 'yunani', 1325126, 86038, 130146),
-(152, 'Amerika Serikat', 'amerika_serikat', 42756718, 2735994, 4272594),
-(153, 'Antigua dan Barbuda', 'antigua_dan_barbuda', 90064, 1742, 1420),
-(154, 'Bahama', 'bahama', 81686, 7423, 5664),
-(155, 'Barbados', 'barbados', 104453, 5339, 3863),
-(156, 'Belize', 'belize', 69117, 5981, 5643),
-(157, 'Bermuda', 'bermuda', 32730, 885, 872),
-(158, 'Costa rica', 'costa_rica', 702413, 42304, 65029),
-(159, 'Curacao', 'curacao', 57993, 4039, 2731),
-(160, 'Dominika', 'dominika', 86961, 2083, 1155),
-(161, 'El salvador', 'el_salvador', 846575, 53020, 79607),
-(162, 'Greenland', 'greenland', 125518, 5924, 1582),
-(163, 'Grenada', 'grenada', 121586, 5253, 2112),
-(164, 'Guatemala', 'guatemala', 2313338, 147804, 229114),
-(165, 'Haiti', 'haiti', 1541738, 97439, 148740),
-(166, 'Honduras', 'honduras', 1401219, 88677, 135657),
-(167, 'Jamaika', 'jamaika', 387796, 23353, 34874),
-(168, 'Kanada', 'kanada', 5203095, 333070, 518611),
-(169, 'Kuba', 'kuba', 1269352, 83506, 122740),
-(170, 'Meksiko', 'meksiko', 16416613, 1052399, 1638231),
-(171, 'Nikaragua', 'nikaragua', 869775, 55445, 86477),
-(172, 'Panama', 'panama', 622748, 37609, 51634),
-(173, 'Puerto rico', 'puerto_rico', 404640, 26495, 39970),
-(174, 'Republik dominika', 'republik_dominika', 1476274, 92672, 143050),
-(175, 'Saint kitts dan nevis', 'saint_kitts_dan_nevis', 98975, 3050, 1075),
-(176, 'Saint lucia', 'saint_lucia', 100315, 6300, 3083),
-(177, 'Saint vincent dan grenadine', 'saint_vincent_dan_grenadine', 24846, 2308, 1502),
-(178, 'Trinidad dan tobago', 'trinidad_dan_tobago', 286473, 15354, 19381),
-(179, 'Australia', 'australia', 3304474, 212227, 327668),
-(180, 'Fiji', 'fiji', 187074, 12762, 12174),
-(181, 'Guam', 'guam', 83980, 6055, 2854),
-(182, 'Kiribati', 'kiribati', 95750, 5420, 2382),
-(183, 'Marshall', 'marshall', 130972, 4111, 1142),
-(184, 'Mikronesia', 'mikronesia', 89827, 1856, 1595),
-(185, 'Nauru', 'nauru', 113886, 2733, 580),
-(186, 'Palau', 'palau', 58197, 5611, 1087),
-(187, 'Papua nugini', 'papua_nugini', 1356385, 89175, 132067),
-(188, 'Samoa', 'samoa', 82299, 4852, 3083),
-(189, 'Samoa amerika', 'samoa_amerika', 53883, 5829, 1433),
-(190, 'Selandia baru', 'selandia_baru', 739627, 48131, 67645),
-(191, 'Tahiti', 'tahiti', 46217, 2471, 3867),
-(192, 'Tonga', 'tonga', 120987, 5711, 2045),
-(193, 'Tuvalu', 'tuvalu', 32911, 453, 197),
-(194, 'Vanuatu', 'vanuatu', 90082, 6716, 4682),
-(195, 'Argentina', 'argentina', 5835120, 376565, 580718),
-(196, 'Bolivia', 'bolivia', 1514495, 92835, 142385),
-(197, 'Brazil', 'brazil', 26720205, 1709345, 2668083),
-(198, 'Chile', 'chile', 2609896, 162328, 252704),
-(199, 'Ekuador', 'ekuador', 2313993, 148614, 226901),
-(200, 'Guiana prancis', 'guiana_prancis', 87168, 5939, 4506),
-(201, 'Guyana', 'guyana', 170020, 11055, 12502),
-(202, 'Kolombia', 'kolombia', 6687914, 429957, 664104),
-(203, 'Paraguay', 'paraguay', 841194, 51967, 77236),
-(204, 'Peru', 'peru', 4201745, 270445, 417991),
-(205, 'Suriname', 'suriname', 113293, 8014, 8201),
-(206, 'Uruguay', 'uruguay', 480868, 31979, 44230),
-(207, 'Venezuela', 'venezuela', 3574999, 226842, 353827);
+(1, 'Afrika Selatan', 'afrika_selatan', 9736492, 2401, 50),
+(2, 'Aljazair', 'aljazair', 6901082, 2146, 110),
+(3, 'Angola', 'angola', 6542619, 1007, 5),
+(4, 'Benin', 'benin', 2087320, 460, 0),
+(5, 'Botswana', 'botswana', 193913, 284, 5737),
+(6, 'Burkina faso', 'burkina_faso', 2859486, 1308, 70),
+(7, 'Burundi', 'burundi', 1490812, 811, 70),
+(8, 'Chad', 'chad', 2981412, 736, 20),
+(9, 'Djibouti', 'djibouti', 123086, 83, 80),
+(10, 'Eritrea', 'eritrea', 431450, 225, 0),
+(11, 'Eswatini', 'eswatini', 195696, 38, 180),
+(12, 'Ethiopia', 'ethiopia', 17737407, 3821, 5),
+(13, 'Gabon', 'gabon', 449134, 2, 4250),
+(14, 'Gambia', 'gambia', 365732, 96, 60),
+(15, 'Ghana', 'ghana', 5051850, 925, 0),
+(16, 'Guinea', 'guinea', 3106059, 327, 5),
+(17, 'Guinea bissau', 'guinea_bissau', 186202, 206, 30),
+(18, 'Kamerun', 'kamerun', 4561866, 873, 200),
+(19, 'Kenya', 'kenya', 8308171, 1963, 5),
+(20, 'Komoro', 'komoro', 144182, 21, 180),
+(21, 'Kongo', 'kongo', 983294, 232, 150),
+(22, 'Lesotho', 'lesotho', 186768, 229, 110),
+(23, 'Liberia', 'liberia', 717269, 332, 5),
+(24, 'Libya', 'libya', 857503, 509, 5),
+(25, 'Madagaskar', 'madagaskar', 4301086, 1233, 20),
+(26, 'Malawi', 'malawi', 2562714, 1317, 120),
+(27, 'Mali', 'mali', 3287538, 989, 80),
+(28, 'Maroko', 'maroko', 5546512, 1511, 130),
+(29, 'Mauritania', 'mauritania', 579391, 373, 5),
+(30, 'Mauritius', 'mauritius', 33721, 178, 2829),
+(31, 'Mesir', 'mesir', 17368884, 3502, 0),
+(32, 'Mozambik', 'mozambik', 4284121, 1438, 5),
+(33, 'Namibia', 'namibia', 252588, 289, 170),
+(34, 'Niger', 'niger', 3529206, 1443, 80),
+(35, 'Nigeria', 'nigeria', 35467196, 7738, 200),
+(36, 'Pantai gading', 'pantai_gading', 4699926, 803, 0),
+(37, 'Republik afrika tengah', 'republik_afrika_tengah', 826041, 198, 5),
+(38, 'Republik demokratik kongo', 'republik_demokratik_kongo', 16042549, 3672, 5),
+(39, 'Republik sudan', 'republik_sudan', 7883104, 2037, 150),
+(40, 'Republik tanzania', 'republik_tanzania', 10318560, 2755, 170),
+(41, 'Republik uganda', 'republik_uganda', 7584175, 1325, 5),
+(42, 'Republik zambia', 'republik_zambia', 2927562, 836, 10),
+(43, 'Republik zimbabwe', 'republik_zimbabwe', 2533744, 732, 40),
+(44, 'Rwanda', 'rwanda', 1913876, 753, 10),
+(45, 'Sao tome dan principe', 'sao_tome_dan_principe', 36210, 5, 200),
+(46, 'Senegal', 'senegal', 2414954, 1162, 70),
+(47, 'Seychelles', 'seychelles', 11347, 16, 355),
+(48, 'Sierra leone', 'sierra_leone', 540786, 983, 60),
+(49, 'Somalia', 'somalia', 2825723, 919, 5),
+(50, 'Sudan selatan', 'sudan_selatan', 1526266, 573, 200),
+(51, 'Tanjung verde', 'tanjung_verde', 56598, 44, 630),
+(52, 'Togo', 'togo', 800454, 837, 100),
+(53, 'Tunisia', 'tunisia', 2369630, 15, 0),
+(54, 'Afganistan', 'afganistan', 6197637, 2136, 5),
+(55, 'Arab Saudi', 'arab_saudi', 2780155, 3265, 68705),
+(56, 'Armenia', 'armenia', 427626, 153, 200),
+(57, 'Azerbaijan', 'azerbaijan', 1432829, 512, 5),
+(58, 'Bahrain', 'bahrain', 109332, 171, 2750),
+(59, 'Bangladesh', 'bangladesh', 27591777, 5306, 5),
+(60, 'Bhutan', 'bhutan', 67306, 68, 50),
+(61, 'Brunei', 'brunei', 60015, 35, 529),
+(62, 'China', 'china', 123639468, 126444, 2809564),
+(63, 'Filipina', 'filipina', 18017484, 4002, 120),
+(64, 'Georgia', 'georgia', 69310, 555, 0),
+(65, 'Hong kong', 'hong_kong', 1390907, 71, 5),
+(66, 'India', 'india', 225124996, 48638, 0),
+(67, 'Indonesia', 'indonesia', 45140836, 10433, 90),
+(68, 'Irak', 'irak', 7412652, 1506, 200),
+(69, 'Iran', 'iran', 14244426, 2553, 0),
+(70, 'Israel', 'israel', 97963, 1604, 20819),
+(71, 'Jepang', 'jepang', 11631312, 10376, 245944),
+(72, 'Kamboja', 'kamboja', 2657736, 708, 160),
+(73, 'Kazakhstan', 'kazakhstan', 2800535, 1025, 41357),
+(74, 'Kirgizstan', 'kirgizstan', 158504, 887, 90),
+(75, 'Korea Selatan', 'korea_selatan', 5074835, 4210, 103743),
+(76, 'Korea Utara', 'korea_utara', 4336965, 820, 5),
+(77, 'Kuwait', 'kuwait', 640257, 276, 10193),
+(78, 'Laos', 'laos', 900651, 403, 5),
+(79, 'Lebanon', 'lebanon', 896014, 267, 0),
+(80, 'Makau', 'makau', 141747, 6, 1239),
+(81, 'Malaysia', 'malaysia', 3379050, 2545, 65592),
+(82, 'Maldives', 'maldives', 55260, 50, 792),
+(83, 'Mongolia', 'mongolia', 273794, 357, 0),
+(84, 'Myanmar', 'myanmar', 7403862, 2386, 50),
+(85, 'Nepal', 'nepal', 4807026, 853, 0),
+(86, 'Oman', 'oman', 979795, 50, 10559),
+(87, 'Pakistan', 'pakistan', 37931812, 8636, 140),
+(88, 'Palestina', 'palestina', 123536, 808, 80),
+(89, 'Qatar', 'qatar', 61849, 482, 6941),
+(90, 'Republik timor leste', 'republik_timor_leste', 190758, 74, 10),
+(91, 'Singapura', 'singapura', 686643, 439, 12101),
+(92, 'Sri lanka', 'sri_lanka', 2673858, 1399, 100),
+(93, 'Suriah', 'suriah', 3778470, 535, 0),
+(94, 'Taiwan', 'taiwan', 2219001, 1953, 46455),
+(95, 'Tajikistan', 'tajikistan', 1647252, 256, 20),
+(96, 'Thailand', 'thailand', 6880404, 5027, 131814),
+(97, 'Turkmenistan', 'turkmenistan', 1021660, 230, 0),
+(98, 'Uni emirat arab', 'uni_emirat_arab', 509194, 1147, 19164),
+(99, 'Uzbekistan', 'uzbekistan', 6188229, 1212, 5),
+(100, 'Vietnam', 'vietnam', 16496716, 3298, 0),
+(101, 'Yaman', 'yaman', 5482014, 1042, 90),
+(102, 'Yordania', 'yordania', 1806734, 477, 180),
+(103, 'Albania', 'albania', 23415, 445, 6045),
+(104, 'Andorra', 'andorra', 8731, 18, 55),
+(105, 'Austria', 'austria', 489892, 1101, 18250),
+(106, 'Belanda', 'belanda', 930703, 2189, 36173),
+(107, 'Belarus', 'belarus', 532125, 1040, 17909),
+(108, 'Belgia', 'belgia', 1671757, 561, 23979),
+(109, 'Bosnia dan hercegovina', 'bosnia_dan_hercegovina', 86658, 459, 6836),
+(110, 'Bulgaria', 'bulgaria', 192865, 940, 13937),
+(111, 'Ceko', 'ceko', 199440, 1625, 21678),
+(112, 'Denmark', 'denmark', 1139291, 48, 12315),
+(113, 'Estonia', 'estonia', 151240, 100, 3048),
+(114, 'Finlandia', 'finlandia', 929244, 152, 11572),
+(115, 'Gibraltar', 'gibraltar', 3909, 2, 305),
+(116, 'Hungaria', 'hungaria', 713411, 963, 18893),
+(117, 'Inggris', 'inggris', 5906934, 6437, 138636),
+(118, 'Irlandia', 'irlandia', 357515, 605, 10801),
+(119, 'Islandia', 'islandia', 15888, 64, 920),
+(120, 'Italia', 'italia', 4935410, 5515, 117636),
+(121, 'Jerman', 'jerman', 8036948, 6944, 167140),
+(122, 'Kepulauan faroe', 'kepulauan_faroe', 19150, 0, 630),
+(123, 'Kosovo', 'kosovo', 113488, 164, 0),
+(124, 'Kroasia', 'kroasia', 475660, 245, 7394),
+(125, 'Latvia', 'latvia', 179403, 164, 4323),
+(126, 'Liechtenstein', 'liechtenstein', 25525, 0, 405),
+(127, 'Lithuania', 'lithuania', 505086, 53, 5292),
+(128, 'Luksemburg', 'luksemburg', 134704, 2, 1884),
+(129, 'Makedonia utara', 'makedonia_utara', 205475, 135, 3341),
+(130, 'Malta', 'malta', 98821, 18, 1713),
+(131, 'Moldova', 'moldova', 417284, 202, 200),
+(132, 'Monako', 'monako', 12900, 0, 380),
+(133, 'Montenegro', 'montenegro', 64494, 62, 1058),
+(134, 'Norwegia', 'norwegia', 70444, 862, 11528),
+(135, 'Polandia', 'polandia', 4241077, 2561, 74763),
+(136, 'Portugal', 'portugal', 419889, 1412, 21217),
+(137, 'Prancis', 'prancis', 5993897, 6296, 138153),
+(138, 'Republik rumania', 'republik_rumania', 1138585, 2170, 37909),
+(139, 'Republik serbia', 'republik_serbia', 17348, 1164, 14532),
+(140, 'Rusia', 'rusia', 13213536, 12853, 292062),
+(141, 'San marino', 'san_marino', 427, 6, 55),
+(142, 'Siprus', 'siprus', 151864, 37, 2462),
+(143, 'Slovenia', 'slovenia', 8565, 345, 4515),
+(144, 'Slowakia', 'slowakia', 86037, 821, 11211),
+(145, 'Spanyol', 'spanyol', 4289392, 4531, 99378),
+(146, 'Swedia', 'swedia', 1520177, 476, 21417),
+(147, 'Swiss', 'swiss', 1246496, 438, 17980),
+(148, 'Turki', 'turki', 13798267, 3151, 5),
+(149, 'Ukraina', 'ukraina', 5951642, 1151, 180),
+(150, 'Vatikan', 'vatikan', 5275, 0, 355),
+(151, 'Yunani', 'yunani', 756702, 1071, 20784),
+(152, 'Amerika Serikat', 'amerika_serikat', 30412460, 30490, 683856),
+(153, 'Antigua dan Barbuda', 'antigua_dan_barbuda', 47442, 1, 0),
+(154, 'Bahama', 'bahama', 71041, 18, 1277),
+(155, 'Barbados', 'barbados', 23620, 25, 1034),
+(156, 'Belize', 'belize', 62212, 11, 70),
+(157, 'Bermuda', 'bermuda', 40100, 0, 20),
+(158, 'Costa rica', 'costa_rica', 585821, 368, 9973),
+(159, 'Curacao', 'curacao', 23423, 19, 905),
+(160, 'Dominika', 'dominika', 43525, 0, 5),
+(161, 'El salvador', 'el_salvador', 962058, 249, 0),
+(162, 'Greenland', 'greenland', 38525, 0, 5),
+(163, 'Grenada', 'grenada', 32525, 0, 605),
+(164, 'Guatemala', 'guatemala', 2849808, 674, 180),
+(165, 'Haiti', 'haiti', 1520494, 707, 0),
+(166, 'Honduras', 'honduras', 1500358, 549, 140),
+(167, 'Jamaika', 'jamaika', 268511, 233, 5),
+(168, 'Kanada', 'kanada', 3560565, 3820, 82725),
+(169, 'Kuba', 'kuba', 42611, 1558, 19895),
+(170, 'Meksiko', 'meksiko', 11924541, 11463, 262399),
+(171, 'Nikaragua', 'nikaragua', 309347, 891, 5),
+(172, 'Panama', 'panama', 253748, 459, 8694),
+(173, 'Puerto rico', 'puerto_rico', 212266, 348, 90),
+(174, 'Republik dominika', 'republik_dominika', 267480, 1655, 22714),
+(175, 'Saint kitts dan nevis', 'saint_kitts_dan_nevis', 432, 21, 230),
+(176, 'Saint lucia', 'saint_lucia', 22463, 14, 155),
+(177, 'Saint vincent dan grenadine', 'saint_vincent_dan_grenadine', 36275, 0, 555),
+(178, 'Trinidad dan tobago', 'trinidad_dan_tobago', 144742, 131, 3208),
+(179, 'Australia', 'australia', 2832894, 1922, 52594),
+(180, 'Fiji', 'fiji', 69012, 86, 200),
+(181, 'Guam', 'guam', 4995, 35, 5),
+(182, 'Kiribati', 'kiribati', 11320, 10, 180),
+(183, 'Marshall', 'marshall', 36884, 2, 0),
+(184, 'Mikronesia', 'mikronesia', 48525, 0, 5),
+(185, 'Nauru', 'nauru', 10525, 0, 405),
+(186, 'Palau', 'palau', 20525, 0, 405),
+(187, 'Papua nugini', 'papua_nugini', 989566, 923, 120),
+(188, 'Samoa', 'samoa', 1510, 30, 50),
+(189, 'Samoa amerika', 'samoa_amerika', 18400, 0, 480),
+(190, 'Selandia baru', 'selandia_baru', 1040376, 8, 10408),
+(191, 'Tahiti', 'tahiti', 13429, 42, 1113),
+(192, 'Tonga', 'tonga', 36326, 3, 0),
+(193, 'Tuvalu', 'tuvalu', 35100, 0, 20),
+(194, 'Vanuatu', 'vanuatu', 23252, 31, 110),
+(195, 'Argentina', 'argentina', 4448800, 3880, 93008),
+(196, 'Bolivia', 'bolivia', 1276142, 826, 10),
+(197, 'Brazil', 'brazil', 19770225, 18385, 427191),
+(198, 'Chile', 'chile', 1577275, 1990, 40359),
+(199, 'Ekuador', 'ekuador', 2784290, 695, 20),
+(200, 'Guiana prancis', 'guiana_prancis', 69857, 1, 623),
+(201, 'Guyana', 'guyana', 146959, 42, 2499),
+(202, 'Kolombia', 'kolombia', 8180182, 2021, 180),
+(203, 'Paraguay', 'paraguay', 195601, 853, 12415),
+(204, 'Peru', 'peru', 3055505, 2910, 67117),
+(205, 'Suriname', 'suriname', 14896, 88, 200),
+(206, 'Uruguay', 'uruguay', 510770, 150, 6614),
+(207, 'Venezuela', 'venezuela', 4233295, 1185, 5);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -55749,216 +56115,251 @@ CREATE TABLE IF NOT EXISTS `database_hunian_permukiman` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
-
 INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `rumah_subsidi`, `apartemen`, `mansion`) VALUES
-(1, 'Afrika Selatan', 'afrika_selatan', 7991933, 513534, 790161),
-(2, 'Aljazair', 'aljazair', 5955756, 383448, 593188),
-(3, 'Angola', 'angola', 4973374, 315412, 485574),
-(4, 'Benin', 'benin', 1695133, 109689, 165939),
-(5, 'Botswana', 'botswana', 405683, 24829, 33993),
-(6, 'Burkina faso', 'burkina_faso', 2787171, 178328, 277459),
-(7, 'Burundi', 'burundi', 1625985, 103720, 154969),
-(8, 'Chad', 'chad', 2456618, 156009, 241968),
-(9, 'Djibouti', 'djibouti', 221854, 13497, 14916),
-(10, 'Eritrea', 'eritrea', 471689, 31187, 44667),
-(11, 'Eswatini', 'eswatini', 181159, 12162, 15891),
-(12, 'Ethiopia', 'ethiopia', 14017874, 898007, 1396436),
-(13, 'Gabon', 'gabon', 313314, 18762, 28062),
-(14, 'Gambia', 'gambia', 337450, 24830, 31158),
-(15, 'Ghana', 'ghana', 3912965, 251420, 386165),
-(16, 'Guinea', 'guinea', 2201080, 140895, 219138),
-(17, 'Guinea bissau', 'guinea_bissau', 358859, 19262, 27791),
-(18, 'Kamerun', 'kamerun', 3576976, 229233, 351838),
-(19, 'Kenya', 'kenya', 6686494, 429477, 667092),
-(20, 'Komoro', 'komoro', 155803, 12044, 11651),
-(21, 'Kongo', 'kongo', 863125, 54755, 79823),
-(22, 'Lesotho', 'lesotho', 333982, 24146, 30090),
-(23, 'Liberia', 'liberia', 774249, 49697, 70935),
-(24, 'Libya', 'libya', 928169, 59102, 92277),
-(25, 'Madagaskar', 'madagaskar', 3636825, 232555, 361643),
-(26, 'Malawi', 'malawi', 2620683, 169429, 259753),
-(27, 'Mali', 'mali', 2849359, 183412, 280631),
-(28, 'Maroko', 'maroko', 4625220, 295615, 460518),
-(29, 'Mauritania', 'mauritania', 740769, 44342, 65101),
-(30, 'Mauritius', 'mauritius', 206351, 11018, 15699),
-(31, 'Mesir', 'mesir', 13514661, 866868, 1348981),
-(32, 'Mozambik', 'mozambik', 3830404, 245487, 376630),
-(33, 'Namibia', 'namibia', 446480, 29385, 38622),
-(34, 'Niger', 'niger', 3327384, 214347, 329762),
-(35, 'Nigeria', 'nigeria', 28098491, 1798443, 2798797),
-(36, 'Pantai gading', 'pantai_gading', 3579742, 230526, 355050),
-(37, 'Republik afrika tengah', 'republik_afrika_tengah', 692205, 46085, 67187),
-(38, 'Republik demokratik kongo', 'republik_demokratik_kongo', 12850102, 818386, 1278338),
-(39, 'Republik sudan', 'republik_sudan', 6479950, 415610, 646146),
-(40, 'Republik tanzania', 'republik_tanzania', 8560612, 546551, 852134),
-(41, 'Republik uganda', 'republik_uganda', 5790308, 368369, 574002),
-(42, 'Republik zambia', 'republik_zambia', 2531008, 160229, 246598),
-(43, 'Republik zimbabwe', 'republik_zimbabwe', 2225518, 138174, 213682),
-(44, 'Rwanda', 'rwanda', 1838314, 113397, 176408),
-(45, 'Sao tome dan principe', 'sao_tome_dan_principe', 120761, 3388, 3193),
-(46, 'Senegal', 'senegal', 2409751, 155983, 238993),
-(47, 'Seychelles', 'seychelles', 48447, 4011, 1777),
-(48, 'Sierra leone', 'sierra_leone', 1099291, 70293, 108217),
-(49, 'Somalia', 'somalia', 2493923, 158354, 245871),
-(50, 'Sudan selatan', 'sudan_selatan', 1446385, 94135, 139483),
-(51, 'Tanjung verde', 'tanjung_verde', 158240, 9525, 7478),
-(52, 'Togo', 'togo', 1156227, 72546, 113199),
-(53, 'Tunisia', 'tunisia', 1543864, 98837, 150142),
-(54, 'Afganistan', 'afganistan', 5494317, 351331, 548143),
-(55, 'Arab Saudi', 'arab_saudi', 4371626, 275223, 426772),
-(56, 'Armenia', 'armenia', 461257, 26396, 38745),
-(57, 'Azerbaijan', 'azerbaijan', 1334078, 83404, 128462),
-(58, 'Bahrain', 'bahrain', 294169, 16812, 20393),
-(59, 'Bangladesh', 'bangladesh', 21297257, 1362531, 2123491),
-(60, 'Bhutan', 'bhutan', 152470, 8240, 10118),
-(61, 'Brunei', 'brunei', 179532, 5541, 6042),
-(62, 'China', 'china', 175697171, 11244493, 17561993),
-(63, 'Filipina', 'filipina', 14293429, 915102, 1426889),
-(64, 'Georgia', 'georgia', 485629, 31792, 46653),
-(65, 'Hong kong', 'hong_kong', 1001687, 62631, 93217),
-(66, 'India', 'india', 177227630, 11344540, 17719390),
-(67, 'Indonesia', 'indonesia', 36059741, 2306658, 3603961),
-(68, 'Irak', 'irak', 5807049, 374492, 577377),
-(69, 'Iran', 'iran', 10870283, 698224, 1082955),
-(70, 'Israel', 'israel', 1341564, 86567, 128790),
-(71, 'Jepang', 'jepang', 15409504, 988127, 1536594),
-(72, 'Kamboja', 'kamboja', 2235322, 145406, 220494),
-(73, 'Kazakhstan', 'kazakhstan', 2620887, 170241, 257613),
-(74, 'Kirgizstan', 'kirgizstan', 886720, 54720, 77576),
-(75, 'Korea Selatan', 'korea_selatan', 6526402, 418256, 646050),
-(76, 'Korea Utara', 'korea_utara', 3385466, 215773, 333360),
-(77, 'Kuwait', 'kuwait', 663564, 43657, 61754),
-(78, 'Laos', 'laos', 897436, 56563, 87158),
-(79, 'Lebanon', 'lebanon', 797724, 52922, 76840),
-(80, 'Makau', 'makau', 172079, 11327, 9929),
-(81, 'Malaysia', 'malaysia', 4227703, 269444, 410871),
-(82, 'Maldives', 'maldives', 114016, 6168, 6912),
-(83, 'Mongolia', 'mongolia', 533625, 31860, 44881),
-(84, 'Myanmar', 'myanmar', 6475576, 412528, 642440),
-(85, 'Nepal', 'nepal', 3715601, 238438, 365381),
-(86, 'Oman', 'oman', 742656, 47288, 66832),
-(87, 'Pakistan', 'pakistan', 30224862, 1932816, 3018878),
-(88, 'Palestina', 'palestina', 757249, 46347, 69075),
-(89, 'Qatar', 'qatar', 515087, 26906, 40387),
-(90, 'Republik timor leste', 'republik_timor_leste', 257208, 16794, 18812),
-(91, 'Singapura', 'singapura', 830421, 52288, 76925),
-(92, 'Sri lanka', 'sri_lanka', 2847315, 179650, 273143),
-(93, 'Suriah', 'suriah', 2818096, 178618, 276828),
-(94, 'Taiwan', 'taiwan', 2979647, 191826, 291491),
-(95, 'Tajikistan', 'tajikistan', 1301280, 83405, 123374),
-(96, 'Thailand', 'thailand', 8297621, 535188, 824205),
-(97, 'Turkmenistan', 'turkmenistan', 940747, 55901, 81881),
-(98, 'Uni emirat arab', 'uni_emirat_arab', 1211320, 77005, 119382),
-(99, 'Uzbekistan', 'uzbekistan', 4849832, 307671, 478250),
-(100, 'Vietnam', 'vietnam', 12845461, 821563, 1279263),
-(101, 'Yaman', 'yaman', 4290064, 274697, 422038),
-(102, 'Yordania', 'yordania', 1539463, 99324, 149831),
-(103, 'Albania', 'albania', 438354, 28727, 35924),
-(104, 'Andorra', 'andorra', 55236, 1048, 1124),
-(105, 'Austria', 'austria', 1169614, 73302, 114506),
-(106, 'Belanda', 'belanda', 2342493, 150609, 227603),
-(107, 'Belarus', 'belarus', 1163373, 72644, 113245),
-(108, 'Belgia', 'belgia', 1610711, 97978, 149547),
-(109, 'Bosnia dan hercegovina', 'bosnia_dan_hercegovina', 432377, 25751, 40147),
-(110, 'Bulgaria', 'bulgaria', 902318, 57624, 84262),
-(111, 'Ceko', 'ceko', 1455600, 87585, 136286),
-(112, 'Denmark', 'denmark', 796225, 50160, 75681),
-(113, 'Estonia', 'estonia', 298295, 16150, 18019),
-(114, 'Finlandia', 'finlandia', 731515, 46490, 70847),
-(115, 'Gibraltar', 'gibraltar', 53010, 1765, 656),
-(116, 'Hungaria', 'hungaria', 1243792, 78931, 119098),
-(117, 'Inggris', 'inggris', 8768534, 556212, 868646),
-(118, 'Irlandia', 'irlandia', 775632, 47906, 68916),
-(119, 'Islandia', 'islandia', 147901, 3893, 5059),
-(120, 'Italia', 'italia', 7444273, 475479, 737291),
-(121, 'Jerman', 'jerman', 10544028, 673864, 1044668),
-(122, 'Kepulauan faroe', 'kepulauan_faroe', 64379, 3067, 1093),
-(123, 'Kosovo', 'kosovo', 236761, 13728, 19857),
-(124, 'Kroasia', 'kroasia', 528296, 34168, 48848),
-(125, 'Latvia', 'latvia', 247140, 15755, 23366),
-(126, 'Liechtenstein', 'liechtenstein', 124134, 3537, 1036),
-(127, 'Lithuania', 'lithuania', 468972, 27166, 36720),
-(128, 'Luksemburg', 'luksemburg', 126572, 8296, 8988),
-(129, 'Makedonia utara', 'makedonia_utara', 367586, 19278, 23702),
-(130, 'Malta', 'malta', 100501, 7298, 7617),
-(131, 'Moldova', 'moldova', 430994, 27077, 41752),
-(132, 'Monako', 'monako', 48306, 5788, 1362),
-(133, 'Montenegro', 'montenegro', 109841, 8588, 8409),
-(134, 'Norwegia', 'norwegia', 713510, 45210, 70378),
-(135, 'Polandia', 'polandia', 4821643, 306084, 467443),
-(136, 'Portugal', 'portugal', 1398820, 89415, 134918),
-(137, 'Prancis', 'prancis', 8752554, 560982, 864862),
-(138, 'Republik rumania', 'republik_rumania', 2424043, 156369, 238609),
-(139, 'Republik serbia', 'republik_serbia', 914867, 59591, 89749),
-(140, 'Rusia', 'rusia', 18389076, 1173748, 1826252),
-(141, 'San marino', 'san_marino', 145387, 5751, 1309),
-(142, 'Siprus', 'siprus', 177752, 9621, 12574),
-(143, 'Slovenia', 'slovenia', 328803, 18274, 26759),
-(144, 'Slowakia', 'slowakia', 691563, 43439, 67805),
-(145, 'Spanyol', 'spanyol', 6205870, 396975, 619704),
-(146, 'Swedia', 'swedia', 1347075, 87735, 133021),
-(147, 'Swiss', 'swiss', 1259709, 76252, 112765),
-(148, 'Turki', 'turki', 11028480, 705785, 1099462),
-(149, 'Ukraina', 'ukraina', 4638914, 298772, 459578),
-(150, 'Vatikan', 'vatikan', 113267, 1511, 261),
-(151, 'Yunani', 'yunani', 1325126, 86038, 130146),
-(152, 'Amerika Serikat', 'amerika_serikat', 42756718, 2735994, 4272594),
-(153, 'Antigua dan Barbuda', 'antigua_dan_barbuda', 90064, 1742, 1420),
-(154, 'Bahama', 'bahama', 81686, 7423, 5664),
-(155, 'Barbados', 'barbados', 104453, 5339, 3863),
-(156, 'Belize', 'belize', 69117, 5981, 5643),
-(157, 'Bermuda', 'bermuda', 32730, 885, 872),
-(158, 'Costa rica', 'costa_rica', 702413, 42304, 65029),
-(159, 'Curacao', 'curacao', 57993, 4039, 2731),
-(160, 'Dominika', 'dominika', 86961, 2083, 1155),
-(161, 'El salvador', 'el_salvador', 846575, 53020, 79607),
-(162, 'Greenland', 'greenland', 125518, 5924, 1582),
-(163, 'Grenada', 'grenada', 121586, 5253, 2112),
-(164, 'Guatemala', 'guatemala', 2313338, 147804, 229114),
-(165, 'Haiti', 'haiti', 1541738, 97439, 148740),
-(166, 'Honduras', 'honduras', 1401219, 88677, 135657),
-(167, 'Jamaika', 'jamaika', 387796, 23353, 34874),
-(168, 'Kanada', 'kanada', 5203095, 333070, 518611),
-(169, 'Kuba', 'kuba', 1269352, 83506, 122740),
-(170, 'Meksiko', 'meksiko', 16416613, 1052399, 1638231),
-(171, 'Nikaragua', 'nikaragua', 869775, 55445, 86477),
-(172, 'Panama', 'panama', 622748, 37609, 51634),
-(173, 'Puerto rico', 'puerto_rico', 404640, 26495, 39970),
-(174, 'Republik dominika', 'republik_dominika', 1476274, 92672, 143050),
-(175, 'Saint kitts dan nevis', 'saint_kitts_dan_nevis', 98975, 3050, 1075),
-(176, 'Saint lucia', 'saint_lucia', 100315, 6300, 3083),
-(177, 'Saint vincent dan grenadine', 'saint_vincent_dan_grenadine', 24846, 2308, 1502),
-(178, 'Trinidad dan tobago', 'trinidad_dan_tobago', 286473, 15354, 19381),
-(179, 'Australia', 'australia', 3304474, 212227, 327668),
-(180, 'Fiji', 'fiji', 187074, 12762, 12174),
-(181, 'Guam', 'guam', 83980, 6055, 2854),
-(182, 'Kiribati', 'kiribati', 95750, 5420, 2382),
-(183, 'Marshall', 'marshall', 130972, 4111, 1142),
-(184, 'Mikronesia', 'mikronesia', 89827, 1856, 1595),
-(185, 'Nauru', 'nauru', 113886, 2733, 580),
-(186, 'Palau', 'palau', 58197, 5611, 1087),
-(187, 'Papua nugini', 'papua_nugini', 1356385, 89175, 132067),
-(188, 'Samoa', 'samoa', 82299, 4852, 3083),
-(189, 'Samoa amerika', 'samoa_amerika', 53883, 5829, 1433),
-(190, 'Selandia baru', 'selandia_baru', 739627, 48131, 67645),
-(191, 'Tahiti', 'tahiti', 46217, 2471, 3867),
-(192, 'Tonga', 'tonga', 120987, 5711, 2045),
-(193, 'Tuvalu', 'tuvalu', 32911, 453, 197),
-(194, 'Vanuatu', 'vanuatu', 90082, 6716, 4682),
-(195, 'Argentina', 'argentina', 5835120, 376565, 580718),
-(196, 'Bolivia', 'bolivia', 1514495, 92835, 142385),
-(197, 'Brazil', 'brazil', 26720205, 1709345, 2668083),
-(198, 'Chile', 'chile', 2609896, 162328, 252704),
-(199, 'Ekuador', 'ekuador', 2313993, 148614, 226901),
-(200, 'Guiana prancis', 'guiana_prancis', 87168, 5939, 4506),
-(201, 'Guyana', 'guyana', 170020, 11055, 12502),
-(202, 'Kolombia', 'kolombia', 6687914, 429957, 664104),
-(203, 'Paraguay', 'paraguay', 841194, 51967, 77236),
-(204, 'Peru', 'peru', 4201745, 270445, 417991),
-(205, 'Suriname', 'suriname', 113293, 8014, 8201),
-(206, 'Uruguay', 'uruguay', 480868, 31979, 44230),
-(207, 'Venezuela', 'venezuela', 3574999, 226842, 353827);
+(1, 'Afrika Selatan', 'afrika_selatan', 9736492, 2401, 50),
+(2, 'Aljazair', 'aljazair', 6901082, 2146, 110),
+(3, 'Angola', 'angola', 6542619, 1007, 5),
+(4, 'Benin', 'benin', 2087320, 460, 0),
+(5, 'Botswana', 'botswana', 193913, 284, 5737),
+(6, 'Burkina faso', 'burkina_faso', 2859486, 1308, 70),
+(7, 'Burundi', 'burundi', 1490812, 811, 70),
+(8, 'Chad', 'chad', 2981412, 736, 20),
+(9, 'Djibouti', 'djibouti', 123086, 83, 80),
+(10, 'Eritrea', 'eritrea', 431450, 225, 0),
+(11, 'Eswatini', 'eswatini', 195696, 38, 180),
+(12, 'Ethiopia', 'ethiopia', 17737407, 3821, 5),
+(13, 'Gabon', 'gabon', 449134, 2, 4250),
+(14, 'Gambia', 'gambia', 365732, 96, 60),
+(15, 'Ghana', 'ghana', 5051850, 925, 0),
+(16, 'Guinea', 'guinea', 3106059, 327, 5),
+(17, 'Guinea bissau', 'guinea_bissau', 186202, 206, 30),
+(18, 'Kamerun', 'kamerun', 4561866, 873, 200),
+(19, 'Kenya', 'kenya', 8308171, 1963, 5),
+(20, 'Komoro', 'komoro', 144182, 21, 180),
+(21, 'Kongo', 'kongo', 983294, 232, 150),
+(22, 'Lesotho', 'lesotho', 186768, 229, 110),
+(23, 'Liberia', 'liberia', 717269, 332, 5),
+(24, 'Libya', 'libya', 857503, 509, 5),
+(25, 'Madagaskar', 'madagaskar', 4301086, 1233, 20),
+(26, 'Malawi', 'malawi', 2562714, 1317, 120),
+(27, 'Mali', 'mali', 3287538, 989, 80),
+(28, 'Maroko', 'maroko', 5546512, 1511, 130),
+(29, 'Mauritania', 'mauritania', 579391, 373, 5),
+(30, 'Mauritius', 'mauritius', 33721, 178, 2829),
+(31, 'Mesir', 'mesir', 17368884, 3502, 0),
+(32, 'Mozambik', 'mozambik', 4284121, 1438, 5),
+(33, 'Namibia', 'namibia', 252588, 289, 170),
+(34, 'Niger', 'niger', 3529206, 1443, 80),
+(35, 'Nigeria', 'nigeria', 35467196, 7738, 200),
+(36, 'Pantai gading', 'pantai_gading', 4699926, 803, 0),
+(37, 'Republik afrika tengah', 'republik_afrika_tengah', 826041, 198, 5),
+(38, 'Republik demokratik kongo', 'republik_demokratik_kongo', 16042549, 3672, 5),
+(39, 'Republik sudan', 'republik_sudan', 7883104, 2037, 150),
+(40, 'Republik tanzania', 'republik_tanzania', 10318560, 2755, 170),
+(41, 'Republik uganda', 'republik_uganda', 7584175, 1325, 5),
+(42, 'Republik zambia', 'republik_zambia', 2927562, 836, 10),
+(43, 'Republik zimbabwe', 'republik_zimbabwe', 2533744, 732, 40),
+(44, 'Rwanda', 'rwanda', 1913876, 753, 10),
+(45, 'Sao tome dan principe', 'sao_tome_dan_principe', 36210, 5, 200),
+(46, 'Senegal', 'senegal', 2414954, 1162, 70),
+(47, 'Seychelles', 'seychelles', 11347, 16, 355),
+(48, 'Sierra leone', 'sierra_leone', 540786, 983, 60),
+(49, 'Somalia', 'somalia', 2825723, 919, 5),
+(50, 'Sudan selatan', 'sudan_selatan', 1526266, 573, 200),
+(51, 'Tanjung verde', 'tanjung_verde', 56598, 44, 630),
+(52, 'Togo', 'togo', 800454, 837, 100),
+(53, 'Tunisia', 'tunisia', 2369630, 15, 0),
+(54, 'Afganistan', 'afganistan', 6197637, 2136, 5),
+(55, 'Arab Saudi', 'arab_saudi', 2780155, 3265, 68705),
+(56, 'Armenia', 'armenia', 427626, 153, 200),
+(57, 'Azerbaijan', 'azerbaijan', 1432829, 512, 5),
+(58, 'Bahrain', 'bahrain', 109332, 171, 2750),
+(59, 'Bangladesh', 'bangladesh', 27591777, 5306, 5),
+(60, 'Bhutan', 'bhutan', 67306, 68, 50),
+(61, 'Brunei', 'brunei', 60015, 35, 529),
+(62, 'China', 'china', 123639468, 126444, 2809564),
+(63, 'Filipina', 'filipina', 18017484, 4002, 120),
+(64, 'Georgia', 'georgia', 69310, 555, 0),
+(65, 'Hong kong', 'hong_kong', 1390907, 71, 5),
+(66, 'India', 'india', 225124996, 48638, 0),
+(67, 'Indonesia', 'indonesia', 45140836, 10433, 90),
+(68, 'Irak', 'irak', 7412652, 1506, 200),
+(69, 'Iran', 'iran', 14244426, 2553, 0),
+(70, 'Israel', 'israel', 97963, 1604, 20819),
+(71, 'Jepang', 'jepang', 11631312, 10376, 245944),
+(72, 'Kamboja', 'kamboja', 2657736, 708, 160),
+(73, 'Kazakhstan', 'kazakhstan', 2800535, 1025, 41357),
+(74, 'Kirgizstan', 'kirgizstan', 158504, 887, 90),
+(75, 'Korea Selatan', 'korea_selatan', 5074835, 4210, 103743),
+(76, 'Korea Utara', 'korea_utara', 4336965, 820, 5),
+(77, 'Kuwait', 'kuwait', 640257, 276, 10193),
+(78, 'Laos', 'laos', 900651, 403, 5),
+(79, 'Lebanon', 'lebanon', 896014, 267, 0),
+(80, 'Makau', 'makau', 141747, 6, 1239),
+(81, 'Malaysia', 'malaysia', 3379050, 2545, 65592),
+(82, 'Maldives', 'maldives', 55260, 50, 792),
+(83, 'Mongolia', 'mongolia', 273794, 357, 0),
+(84, 'Myanmar', 'myanmar', 7403862, 2386, 50),
+(85, 'Nepal', 'nepal', 4807026, 853, 0),
+(86, 'Oman', 'oman', 979795, 50, 10559),
+(87, 'Pakistan', 'pakistan', 37931812, 8636, 140),
+(88, 'Palestina', 'palestina', 123536, 808, 80),
+(89, 'Qatar', 'qatar', 61849, 482, 6941),
+(90, 'Republik timor leste', 'republik_timor_leste', 190758, 74, 10),
+(91, 'Singapura', 'singapura', 686643, 439, 12101),
+(92, 'Sri lanka', 'sri_lanka', 2673858, 1399, 100),
+(93, 'Suriah', 'suriah', 3778470, 535, 0),
+(94, 'Taiwan', 'taiwan', 2219001, 1953, 46455),
+(95, 'Tajikistan', 'tajikistan', 1647252, 256, 20),
+(96, 'Thailand', 'thailand', 6880404, 5027, 131814),
+(97, 'Turkmenistan', 'turkmenistan', 1021660, 230, 0),
+(98, 'Uni emirat arab', 'uni_emirat_arab', 509194, 1147, 19164),
+(99, 'Uzbekistan', 'uzbekistan', 6188229, 1212, 5),
+(100, 'Vietnam', 'vietnam', 16496716, 3298, 0),
+(101, 'Yaman', 'yaman', 5482014, 1042, 90),
+(102, 'Yordania', 'yordania', 1806734, 477, 180),
+(103, 'Albania', 'albania', 23415, 445, 6045),
+(104, 'Andorra', 'andorra', 8731, 18, 55),
+(105, 'Austria', 'austria', 489892, 1101, 18250),
+(106, 'Belanda', 'belanda', 930703, 2189, 36173),
+(107, 'Belarus', 'belarus', 532125, 1040, 17909),
+(108, 'Belgia', 'belgia', 1671757, 561, 23979),
+(109, 'Bosnia dan hercegovina', 'bosnia_dan_hercegovina', 86658, 459, 6836),
+(110, 'Bulgaria', 'bulgaria', 192865, 940, 13937),
+(111, 'Ceko', 'ceko', 199440, 1625, 21678),
+(112, 'Denmark', 'denmark', 1139291, 48, 12315),
+(113, 'Estonia', 'estonia', 151240, 100, 3048),
+(114, 'Finlandia', 'finlandia', 929244, 152, 11572),
+(115, 'Gibraltar', 'gibraltar', 3909, 2, 305),
+(116, 'Hungaria', 'hungaria', 713411, 963, 18893),
+(117, 'Inggris', 'inggris', 5906934, 6437, 138636),
+(118, 'Irlandia', 'irlandia', 357515, 605, 10801),
+(119, 'Islandia', 'islandia', 15888, 64, 920),
+(120, 'Italia', 'italia', 4935410, 5515, 117636),
+(121, 'Jerman', 'jerman', 8036948, 6944, 167140),
+(122, 'Kepulauan faroe', 'kepulauan_faroe', 19150, 0, 630),
+(123, 'Kosovo', 'kosovo', 113488, 164, 0),
+(124, 'Kroasia', 'kroasia', 475660, 245, 7394),
+(125, 'Latvia', 'latvia', 179403, 164, 4323),
+(126, 'Liechtenstein', 'liechtenstein', 25525, 0, 405),
+(127, 'Lithuania', 'lithuania', 505086, 53, 5292),
+(128, 'Luksemburg', 'luksemburg', 134704, 2, 1884),
+(129, 'Makedonia utara', 'makedonia_utara', 205475, 135, 3341),
+(130, 'Malta', 'malta', 98821, 18, 1713),
+(131, 'Moldova', 'moldova', 417284, 202, 200),
+(132, 'Monako', 'monako', 12900, 0, 380),
+(133, 'Montenegro', 'montenegro', 64494, 62, 1058),
+(134, 'Norwegia', 'norwegia', 70444, 862, 11528),
+(135, 'Polandia', 'polandia', 4241077, 2561, 74763),
+(136, 'Portugal', 'portugal', 419889, 1412, 21217),
+(137, 'Prancis', 'prancis', 5993897, 6296, 138153),
+(138, 'Republik rumania', 'republik_rumania', 1138585, 2170, 37909),
+(139, 'Republik serbia', 'republik_serbia', 17348, 1164, 14532),
+(140, 'Rusia', 'rusia', 13213536, 12853, 292062),
+(141, 'San marino', 'san_marino', 427, 6, 55),
+(142, 'Siprus', 'siprus', 151864, 37, 2462),
+(143, 'Slovenia', 'slovenia', 8565, 345, 4515),
+(144, 'Slowakia', 'slowakia', 86037, 821, 11211),
+(145, 'Spanyol', 'spanyol', 4289392, 4531, 99378),
+(146, 'Swedia', 'swedia', 1520177, 476, 21417),
+(147, 'Swiss', 'swiss', 1246496, 438, 17980),
+(148, 'Turki', 'turki', 13798267, 3151, 5),
+(149, 'Ukraina', 'ukraina', 5951642, 1151, 180),
+(150, 'Vatikan', 'vatikan', 5275, 0, 355),
+(151, 'Yunani', 'yunani', 756702, 1071, 20784),
+(152, 'Amerika Serikat', 'amerika_serikat', 30412460, 30490, 683856),
+(153, 'Antigua dan Barbuda', 'antigua_dan_barbuda', 47442, 1, 0),
+(154, 'Bahama', 'bahama', 71041, 18, 1277),
+(155, 'Barbados', 'barbados', 23620, 25, 1034),
+(156, 'Belize', 'belize', 62212, 11, 70),
+(157, 'Bermuda', 'bermuda', 40100, 0, 20),
+(158, 'Costa rica', 'costa_rica', 585821, 368, 9973),
+(159, 'Curacao', 'curacao', 23423, 19, 905),
+(160, 'Dominika', 'dominika', 43525, 0, 5),
+(161, 'El salvador', 'el_salvador', 962058, 249, 0),
+(162, 'Greenland', 'greenland', 38525, 0, 5),
+(163, 'Grenada', 'grenada', 32525, 0, 605),
+(164, 'Guatemala', 'guatemala', 2849808, 674, 180),
+(165, 'Haiti', 'haiti', 1520494, 707, 0),
+(166, 'Honduras', 'honduras', 1500358, 549, 140),
+(167, 'Jamaika', 'jamaika', 268511, 233, 5),
+(168, 'Kanada', 'kanada', 3560565, 3820, 82725),
+(169, 'Kuba', 'kuba', 42611, 1558, 19895),
+(170, 'Meksiko', 'meksiko', 11924541, 11463, 262399),
+(171, 'Nikaragua', 'nikaragua', 309347, 891, 5),
+(172, 'Panama', 'panama', 253748, 459, 8694),
+(173, 'Puerto rico', 'puerto_rico', 212266, 348, 90),
+(174, 'Republik dominika', 'republik_dominika', 267480, 1655, 22714),
+(175, 'Saint kitts dan nevis', 'saint_kitts_dan_nevis', 432, 21, 230),
+(176, 'Saint lucia', 'saint_lucia', 22463, 14, 155),
+(177, 'Saint vincent dan grenadine', 'saint_vincent_dan_grenadine', 36275, 0, 555),
+(178, 'Trinidad dan tobago', 'trinidad_dan_tobago', 144742, 131, 3208),
+(179, 'Australia', 'australia', 2832894, 1922, 52594),
+(180, 'Fiji', 'fiji', 69012, 86, 200),
+(181, 'Guam', 'guam', 4995, 35, 5),
+(182, 'Kiribati', 'kiribati', 11320, 10, 180),
+(183, 'Marshall', 'marshall', 36884, 2, 0),
+(184, 'Mikronesia', 'mikronesia', 48525, 0, 5),
+(185, 'Nauru', 'nauru', 10525, 0, 405),
+(186, 'Palau', 'palau', 20525, 0, 405),
+(187, 'Papua nugini', 'papua_nugini', 989566, 923, 120),
+(188, 'Samoa', 'samoa', 1510, 30, 50),
+(189, 'Samoa amerika', 'samoa_amerika', 18400, 0, 480),
+(190, 'Selandia baru', 'selandia_baru', 1040376, 8, 10408),
+(191, 'Tahiti', 'tahiti', 13429, 42, 1113),
+(192, 'Tonga', 'tonga', 36326, 3, 0),
+(193, 'Tuvalu', 'tuvalu', 35100, 0, 20),
+(194, 'Vanuatu', 'vanuatu', 23252, 31, 110),
+(195, 'Argentina', 'argentina', 4448800, 3880, 93008),
+(196, 'Bolivia', 'bolivia', 1276142, 826, 10),
+(197, 'Brazil', 'brazil', 19770225, 18385, 427191),
+(198, 'Chile', 'chile', 1577275, 1990, 40359),
+(199, 'Ekuador', 'ekuador', 2784290, 695, 20),
+(200, 'Guiana prancis', 'guiana_prancis', 69857, 1, 623),
+(201, 'Guyana', 'guyana', 146959, 42, 2499),
+(202, 'Kolombia', 'kolombia', 8180182, 2021, 180),
+(203, 'Paraguay', 'paraguay', 195601, 853, 12415),
+(204, 'Peru', 'peru', 3055505, 2910, 67117),
+(205, 'Suriname', 'suriname', 14896, 88, 200),
+(206, 'Uruguay', 'uruguay', 510770, 150, 6614),
+(207, 'Venezuela', 'venezuela', 4233295, 1185, 5);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -56252,6 +56653,18 @@ CREATE TABLE IF NOT EXISTS `database_manajemen_pertahanan` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_manajemen_pertahanan` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `barak` int(11) NOT NULL DEFAULT 0,
+  `gudang_senjata` int(11) NOT NULL DEFAULT 0,
+  `hangar_tank` int(11) NOT NULL DEFAULT 0,
+  `pangkalan_udara` int(11) NOT NULL DEFAULT 0,
+  `pangkalan_laut` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_manajemen_pertahanan (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,
@@ -56496,216 +56909,251 @@ CREATE TABLE IF NOT EXISTS `database_hunian_permukiman` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
-
 INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `rumah_subsidi`, `apartemen`, `mansion`) VALUES
-(1, 'Afrika Selatan', 'afrika_selatan', 7991933, 513534, 790161),
-(2, 'Aljazair', 'aljazair', 5955756, 383448, 593188),
-(3, 'Angola', 'angola', 4973374, 315412, 485574),
-(4, 'Benin', 'benin', 1695133, 109689, 165939),
-(5, 'Botswana', 'botswana', 405683, 24829, 33993),
-(6, 'Burkina faso', 'burkina_faso', 2787171, 178328, 277459),
-(7, 'Burundi', 'burundi', 1625985, 103720, 154969),
-(8, 'Chad', 'chad', 2456618, 156009, 241968),
-(9, 'Djibouti', 'djibouti', 221854, 13497, 14916),
-(10, 'Eritrea', 'eritrea', 471689, 31187, 44667),
-(11, 'Eswatini', 'eswatini', 181159, 12162, 15891),
-(12, 'Ethiopia', 'ethiopia', 14017874, 898007, 1396436),
-(13, 'Gabon', 'gabon', 313314, 18762, 28062),
-(14, 'Gambia', 'gambia', 337450, 24830, 31158),
-(15, 'Ghana', 'ghana', 3912965, 251420, 386165),
-(16, 'Guinea', 'guinea', 2201080, 140895, 219138),
-(17, 'Guinea bissau', 'guinea_bissau', 358859, 19262, 27791),
-(18, 'Kamerun', 'kamerun', 3576976, 229233, 351838),
-(19, 'Kenya', 'kenya', 6686494, 429477, 667092),
-(20, 'Komoro', 'komoro', 155803, 12044, 11651),
-(21, 'Kongo', 'kongo', 863125, 54755, 79823),
-(22, 'Lesotho', 'lesotho', 333982, 24146, 30090),
-(23, 'Liberia', 'liberia', 774249, 49697, 70935),
-(24, 'Libya', 'libya', 928169, 59102, 92277),
-(25, 'Madagaskar', 'madagaskar', 3636825, 232555, 361643),
-(26, 'Malawi', 'malawi', 2620683, 169429, 259753),
-(27, 'Mali', 'mali', 2849359, 183412, 280631),
-(28, 'Maroko', 'maroko', 4625220, 295615, 460518),
-(29, 'Mauritania', 'mauritania', 740769, 44342, 65101),
-(30, 'Mauritius', 'mauritius', 206351, 11018, 15699),
-(31, 'Mesir', 'mesir', 13514661, 866868, 1348981),
-(32, 'Mozambik', 'mozambik', 3830404, 245487, 376630),
-(33, 'Namibia', 'namibia', 446480, 29385, 38622),
-(34, 'Niger', 'niger', 3327384, 214347, 329762),
-(35, 'Nigeria', 'nigeria', 28098491, 1798443, 2798797),
-(36, 'Pantai gading', 'pantai_gading', 3579742, 230526, 355050),
-(37, 'Republik afrika tengah', 'republik_afrika_tengah', 692205, 46085, 67187),
-(38, 'Republik demokratik kongo', 'republik_demokratik_kongo', 12850102, 818386, 1278338),
-(39, 'Republik sudan', 'republik_sudan', 6479950, 415610, 646146),
-(40, 'Republik tanzania', 'republik_tanzania', 8560612, 546551, 852134),
-(41, 'Republik uganda', 'republik_uganda', 5790308, 368369, 574002),
-(42, 'Republik zambia', 'republik_zambia', 2531008, 160229, 246598),
-(43, 'Republik zimbabwe', 'republik_zimbabwe', 2225518, 138174, 213682),
-(44, 'Rwanda', 'rwanda', 1838314, 113397, 176408),
-(45, 'Sao tome dan principe', 'sao_tome_dan_principe', 120761, 3388, 3193),
-(46, 'Senegal', 'senegal', 2409751, 155983, 238993),
-(47, 'Seychelles', 'seychelles', 48447, 4011, 1777),
-(48, 'Sierra leone', 'sierra_leone', 1099291, 70293, 108217),
-(49, 'Somalia', 'somalia', 2493923, 158354, 245871),
-(50, 'Sudan selatan', 'sudan_selatan', 1446385, 94135, 139483),
-(51, 'Tanjung verde', 'tanjung_verde', 158240, 9525, 7478),
-(52, 'Togo', 'togo', 1156227, 72546, 113199),
-(53, 'Tunisia', 'tunisia', 1543864, 98837, 150142),
-(54, 'Afganistan', 'afganistan', 5494317, 351331, 548143),
-(55, 'Arab Saudi', 'arab_saudi', 4371626, 275223, 426772),
-(56, 'Armenia', 'armenia', 461257, 26396, 38745),
-(57, 'Azerbaijan', 'azerbaijan', 1334078, 83404, 128462),
-(58, 'Bahrain', 'bahrain', 294169, 16812, 20393),
-(59, 'Bangladesh', 'bangladesh', 21297257, 1362531, 2123491),
-(60, 'Bhutan', 'bhutan', 152470, 8240, 10118),
-(61, 'Brunei', 'brunei', 179532, 5541, 6042),
-(62, 'China', 'china', 175697171, 11244493, 17561993),
-(63, 'Filipina', 'filipina', 14293429, 915102, 1426889),
-(64, 'Georgia', 'georgia', 485629, 31792, 46653),
-(65, 'Hong kong', 'hong_kong', 1001687, 62631, 93217),
-(66, 'India', 'india', 177227630, 11344540, 17719390),
-(67, 'Indonesia', 'indonesia', 36059741, 2306658, 3603961),
-(68, 'Irak', 'irak', 5807049, 374492, 577377),
-(69, 'Iran', 'iran', 10870283, 698224, 1082955),
-(70, 'Israel', 'israel', 1341564, 86567, 128790),
-(71, 'Jepang', 'jepang', 15409504, 988127, 1536594),
-(72, 'Kamboja', 'kamboja', 2235322, 145406, 220494),
-(73, 'Kazakhstan', 'kazakhstan', 2620887, 170241, 257613),
-(74, 'Kirgizstan', 'kirgizstan', 886720, 54720, 77576),
-(75, 'Korea Selatan', 'korea_selatan', 6526402, 418256, 646050),
-(76, 'Korea Utara', 'korea_utara', 3385466, 215773, 333360),
-(77, 'Kuwait', 'kuwait', 663564, 43657, 61754),
-(78, 'Laos', 'laos', 897436, 56563, 87158),
-(79, 'Lebanon', 'lebanon', 797724, 52922, 76840),
-(80, 'Makau', 'makau', 172079, 11327, 9929),
-(81, 'Malaysia', 'malaysia', 4227703, 269444, 410871),
-(82, 'Maldives', 'maldives', 114016, 6168, 6912),
-(83, 'Mongolia', 'mongolia', 533625, 31860, 44881),
-(84, 'Myanmar', 'myanmar', 6475576, 412528, 642440),
-(85, 'Nepal', 'nepal', 3715601, 238438, 365381),
-(86, 'Oman', 'oman', 742656, 47288, 66832),
-(87, 'Pakistan', 'pakistan', 30224862, 1932816, 3018878),
-(88, 'Palestina', 'palestina', 757249, 46347, 69075),
-(89, 'Qatar', 'qatar', 515087, 26906, 40387),
-(90, 'Republik timor leste', 'republik_timor_leste', 257208, 16794, 18812),
-(91, 'Singapura', 'singapura', 830421, 52288, 76925),
-(92, 'Sri lanka', 'sri_lanka', 2847315, 179650, 273143),
-(93, 'Suriah', 'suriah', 2818096, 178618, 276828),
-(94, 'Taiwan', 'taiwan', 2979647, 191826, 291491),
-(95, 'Tajikistan', 'tajikistan', 1301280, 83405, 123374),
-(96, 'Thailand', 'thailand', 8297621, 535188, 824205),
-(97, 'Turkmenistan', 'turkmenistan', 940747, 55901, 81881),
-(98, 'Uni emirat arab', 'uni_emirat_arab', 1211320, 77005, 119382),
-(99, 'Uzbekistan', 'uzbekistan', 4849832, 307671, 478250),
-(100, 'Vietnam', 'vietnam', 12845461, 821563, 1279263),
-(101, 'Yaman', 'yaman', 4290064, 274697, 422038),
-(102, 'Yordania', 'yordania', 1539463, 99324, 149831),
-(103, 'Albania', 'albania', 438354, 28727, 35924),
-(104, 'Andorra', 'andorra', 55236, 1048, 1124),
-(105, 'Austria', 'austria', 1169614, 73302, 114506),
-(106, 'Belanda', 'belanda', 2342493, 150609, 227603),
-(107, 'Belarus', 'belarus', 1163373, 72644, 113245),
-(108, 'Belgia', 'belgia', 1610711, 97978, 149547),
-(109, 'Bosnia dan hercegovina', 'bosnia_dan_hercegovina', 432377, 25751, 40147),
-(110, 'Bulgaria', 'bulgaria', 902318, 57624, 84262),
-(111, 'Ceko', 'ceko', 1455600, 87585, 136286),
-(112, 'Denmark', 'denmark', 796225, 50160, 75681),
-(113, 'Estonia', 'estonia', 298295, 16150, 18019),
-(114, 'Finlandia', 'finlandia', 731515, 46490, 70847),
-(115, 'Gibraltar', 'gibraltar', 53010, 1765, 656),
-(116, 'Hungaria', 'hungaria', 1243792, 78931, 119098),
-(117, 'Inggris', 'inggris', 8768534, 556212, 868646),
-(118, 'Irlandia', 'irlandia', 775632, 47906, 68916),
-(119, 'Islandia', 'islandia', 147901, 3893, 5059),
-(120, 'Italia', 'italia', 7444273, 475479, 737291),
-(121, 'Jerman', 'jerman', 10544028, 673864, 1044668),
-(122, 'Kepulauan faroe', 'kepulauan_faroe', 64379, 3067, 1093),
-(123, 'Kosovo', 'kosovo', 236761, 13728, 19857),
-(124, 'Kroasia', 'kroasia', 528296, 34168, 48848),
-(125, 'Latvia', 'latvia', 247140, 15755, 23366),
-(126, 'Liechtenstein', 'liechtenstein', 124134, 3537, 1036),
-(127, 'Lithuania', 'lithuania', 468972, 27166, 36720),
-(128, 'Luksemburg', 'luksemburg', 126572, 8296, 8988),
-(129, 'Makedonia utara', 'makedonia_utara', 367586, 19278, 23702),
-(130, 'Malta', 'malta', 100501, 7298, 7617),
-(131, 'Moldova', 'moldova', 430994, 27077, 41752),
-(132, 'Monako', 'monako', 48306, 5788, 1362),
-(133, 'Montenegro', 'montenegro', 109841, 8588, 8409),
-(134, 'Norwegia', 'norwegia', 713510, 45210, 70378),
-(135, 'Polandia', 'polandia', 4821643, 306084, 467443),
-(136, 'Portugal', 'portugal', 1398820, 89415, 134918),
-(137, 'Prancis', 'prancis', 8752554, 560982, 864862),
-(138, 'Republik rumania', 'republik_rumania', 2424043, 156369, 238609),
-(139, 'Republik serbia', 'republik_serbia', 914867, 59591, 89749),
-(140, 'Rusia', 'rusia', 18389076, 1173748, 1826252),
-(141, 'San marino', 'san_marino', 145387, 5751, 1309),
-(142, 'Siprus', 'siprus', 177752, 9621, 12574),
-(143, 'Slovenia', 'slovenia', 328803, 18274, 26759),
-(144, 'Slowakia', 'slowakia', 691563, 43439, 67805),
-(145, 'Spanyol', 'spanyol', 6205870, 396975, 619704),
-(146, 'Swedia', 'swedia', 1347075, 87735, 133021),
-(147, 'Swiss', 'swiss', 1259709, 76252, 112765),
-(148, 'Turki', 'turki', 11028480, 705785, 1099462),
-(149, 'Ukraina', 'ukraina', 4638914, 298772, 459578),
-(150, 'Vatikan', 'vatikan', 113267, 1511, 261),
-(151, 'Yunani', 'yunani', 1325126, 86038, 130146),
-(152, 'Amerika Serikat', 'amerika_serikat', 42756718, 2735994, 4272594),
-(153, 'Antigua dan Barbuda', 'antigua_dan_barbuda', 90064, 1742, 1420),
-(154, 'Bahama', 'bahama', 81686, 7423, 5664),
-(155, 'Barbados', 'barbados', 104453, 5339, 3863),
-(156, 'Belize', 'belize', 69117, 5981, 5643),
-(157, 'Bermuda', 'bermuda', 32730, 885, 872),
-(158, 'Costa rica', 'costa_rica', 702413, 42304, 65029),
-(159, 'Curacao', 'curacao', 57993, 4039, 2731),
-(160, 'Dominika', 'dominika', 86961, 2083, 1155),
-(161, 'El salvador', 'el_salvador', 846575, 53020, 79607),
-(162, 'Greenland', 'greenland', 125518, 5924, 1582),
-(163, 'Grenada', 'grenada', 121586, 5253, 2112),
-(164, 'Guatemala', 'guatemala', 2313338, 147804, 229114),
-(165, 'Haiti', 'haiti', 1541738, 97439, 148740),
-(166, 'Honduras', 'honduras', 1401219, 88677, 135657),
-(167, 'Jamaika', 'jamaika', 387796, 23353, 34874),
-(168, 'Kanada', 'kanada', 5203095, 333070, 518611),
-(169, 'Kuba', 'kuba', 1269352, 83506, 122740),
-(170, 'Meksiko', 'meksiko', 16416613, 1052399, 1638231),
-(171, 'Nikaragua', 'nikaragua', 869775, 55445, 86477),
-(172, 'Panama', 'panama', 622748, 37609, 51634),
-(173, 'Puerto rico', 'puerto_rico', 404640, 26495, 39970),
-(174, 'Republik dominika', 'republik_dominika', 1476274, 92672, 143050),
-(175, 'Saint kitts dan nevis', 'saint_kitts_dan_nevis', 98975, 3050, 1075),
-(176, 'Saint lucia', 'saint_lucia', 100315, 6300, 3083),
-(177, 'Saint vincent dan grenadine', 'saint_vincent_dan_grenadine', 24846, 2308, 1502),
-(178, 'Trinidad dan tobago', 'trinidad_dan_tobago', 286473, 15354, 19381),
-(179, 'Australia', 'australia', 3304474, 212227, 327668),
-(180, 'Fiji', 'fiji', 187074, 12762, 12174),
-(181, 'Guam', 'guam', 83980, 6055, 2854),
-(182, 'Kiribati', 'kiribati', 95750, 5420, 2382),
-(183, 'Marshall', 'marshall', 130972, 4111, 1142),
-(184, 'Mikronesia', 'mikronesia', 89827, 1856, 1595),
-(185, 'Nauru', 'nauru', 113886, 2733, 580),
-(186, 'Palau', 'palau', 58197, 5611, 1087),
-(187, 'Papua nugini', 'papua_nugini', 1356385, 89175, 132067),
-(188, 'Samoa', 'samoa', 82299, 4852, 3083),
-(189, 'Samoa amerika', 'samoa_amerika', 53883, 5829, 1433),
-(190, 'Selandia baru', 'selandia_baru', 739627, 48131, 67645),
-(191, 'Tahiti', 'tahiti', 46217, 2471, 3867),
-(192, 'Tonga', 'tonga', 120987, 5711, 2045),
-(193, 'Tuvalu', 'tuvalu', 32911, 453, 197),
-(194, 'Vanuatu', 'vanuatu', 90082, 6716, 4682),
-(195, 'Argentina', 'argentina', 5835120, 376565, 580718),
-(196, 'Bolivia', 'bolivia', 1514495, 92835, 142385),
-(197, 'Brazil', 'brazil', 26720205, 1709345, 2668083),
-(198, 'Chile', 'chile', 2609896, 162328, 252704),
-(199, 'Ekuador', 'ekuador', 2313993, 148614, 226901),
-(200, 'Guiana prancis', 'guiana_prancis', 87168, 5939, 4506),
-(201, 'Guyana', 'guyana', 170020, 11055, 12502),
-(202, 'Kolombia', 'kolombia', 6687914, 429957, 664104),
-(203, 'Paraguay', 'paraguay', 841194, 51967, 77236),
-(204, 'Peru', 'peru', 4201745, 270445, 417991),
-(205, 'Suriname', 'suriname', 113293, 8014, 8201),
-(206, 'Uruguay', 'uruguay', 480868, 31979, 44230),
-(207, 'Venezuela', 'venezuela', 3574999, 226842, 353827);
+(1, 'Afrika Selatan', 'afrika_selatan', 9736492, 2401, 50),
+(2, 'Aljazair', 'aljazair', 6901082, 2146, 110),
+(3, 'Angola', 'angola', 6542619, 1007, 5),
+(4, 'Benin', 'benin', 2087320, 460, 0),
+(5, 'Botswana', 'botswana', 193913, 284, 5737),
+(6, 'Burkina faso', 'burkina_faso', 2859486, 1308, 70),
+(7, 'Burundi', 'burundi', 1490812, 811, 70),
+(8, 'Chad', 'chad', 2981412, 736, 20),
+(9, 'Djibouti', 'djibouti', 123086, 83, 80),
+(10, 'Eritrea', 'eritrea', 431450, 225, 0),
+(11, 'Eswatini', 'eswatini', 195696, 38, 180),
+(12, 'Ethiopia', 'ethiopia', 17737407, 3821, 5),
+(13, 'Gabon', 'gabon', 449134, 2, 4250),
+(14, 'Gambia', 'gambia', 365732, 96, 60),
+(15, 'Ghana', 'ghana', 5051850, 925, 0),
+(16, 'Guinea', 'guinea', 3106059, 327, 5),
+(17, 'Guinea bissau', 'guinea_bissau', 186202, 206, 30),
+(18, 'Kamerun', 'kamerun', 4561866, 873, 200),
+(19, 'Kenya', 'kenya', 8308171, 1963, 5),
+(20, 'Komoro', 'komoro', 144182, 21, 180),
+(21, 'Kongo', 'kongo', 983294, 232, 150),
+(22, 'Lesotho', 'lesotho', 186768, 229, 110),
+(23, 'Liberia', 'liberia', 717269, 332, 5),
+(24, 'Libya', 'libya', 857503, 509, 5),
+(25, 'Madagaskar', 'madagaskar', 4301086, 1233, 20),
+(26, 'Malawi', 'malawi', 2562714, 1317, 120),
+(27, 'Mali', 'mali', 3287538, 989, 80),
+(28, 'Maroko', 'maroko', 5546512, 1511, 130),
+(29, 'Mauritania', 'mauritania', 579391, 373, 5),
+(30, 'Mauritius', 'mauritius', 33721, 178, 2829),
+(31, 'Mesir', 'mesir', 17368884, 3502, 0),
+(32, 'Mozambik', 'mozambik', 4284121, 1438, 5),
+(33, 'Namibia', 'namibia', 252588, 289, 170),
+(34, 'Niger', 'niger', 3529206, 1443, 80),
+(35, 'Nigeria', 'nigeria', 35467196, 7738, 200),
+(36, 'Pantai gading', 'pantai_gading', 4699926, 803, 0),
+(37, 'Republik afrika tengah', 'republik_afrika_tengah', 826041, 198, 5),
+(38, 'Republik demokratik kongo', 'republik_demokratik_kongo', 16042549, 3672, 5),
+(39, 'Republik sudan', 'republik_sudan', 7883104, 2037, 150),
+(40, 'Republik tanzania', 'republik_tanzania', 10318560, 2755, 170),
+(41, 'Republik uganda', 'republik_uganda', 7584175, 1325, 5),
+(42, 'Republik zambia', 'republik_zambia', 2927562, 836, 10),
+(43, 'Republik zimbabwe', 'republik_zimbabwe', 2533744, 732, 40),
+(44, 'Rwanda', 'rwanda', 1913876, 753, 10),
+(45, 'Sao tome dan principe', 'sao_tome_dan_principe', 36210, 5, 200),
+(46, 'Senegal', 'senegal', 2414954, 1162, 70),
+(47, 'Seychelles', 'seychelles', 11347, 16, 355),
+(48, 'Sierra leone', 'sierra_leone', 540786, 983, 60),
+(49, 'Somalia', 'somalia', 2825723, 919, 5),
+(50, 'Sudan selatan', 'sudan_selatan', 1526266, 573, 200),
+(51, 'Tanjung verde', 'tanjung_verde', 56598, 44, 630),
+(52, 'Togo', 'togo', 800454, 837, 100),
+(53, 'Tunisia', 'tunisia', 2369630, 15, 0),
+(54, 'Afganistan', 'afganistan', 6197637, 2136, 5),
+(55, 'Arab Saudi', 'arab_saudi', 2780155, 3265, 68705),
+(56, 'Armenia', 'armenia', 427626, 153, 200),
+(57, 'Azerbaijan', 'azerbaijan', 1432829, 512, 5),
+(58, 'Bahrain', 'bahrain', 109332, 171, 2750),
+(59, 'Bangladesh', 'bangladesh', 27591777, 5306, 5),
+(60, 'Bhutan', 'bhutan', 67306, 68, 50),
+(61, 'Brunei', 'brunei', 60015, 35, 529),
+(62, 'China', 'china', 123639468, 126444, 2809564),
+(63, 'Filipina', 'filipina', 18017484, 4002, 120),
+(64, 'Georgia', 'georgia', 69310, 555, 0),
+(65, 'Hong kong', 'hong_kong', 1390907, 71, 5),
+(66, 'India', 'india', 225124996, 48638, 0),
+(67, 'Indonesia', 'indonesia', 45140836, 10433, 90),
+(68, 'Irak', 'irak', 7412652, 1506, 200),
+(69, 'Iran', 'iran', 14244426, 2553, 0),
+(70, 'Israel', 'israel', 97963, 1604, 20819),
+(71, 'Jepang', 'jepang', 11631312, 10376, 245944),
+(72, 'Kamboja', 'kamboja', 2657736, 708, 160),
+(73, 'Kazakhstan', 'kazakhstan', 2800535, 1025, 41357),
+(74, 'Kirgizstan', 'kirgizstan', 158504, 887, 90),
+(75, 'Korea Selatan', 'korea_selatan', 5074835, 4210, 103743),
+(76, 'Korea Utara', 'korea_utara', 4336965, 820, 5),
+(77, 'Kuwait', 'kuwait', 640257, 276, 10193),
+(78, 'Laos', 'laos', 900651, 403, 5),
+(79, 'Lebanon', 'lebanon', 896014, 267, 0),
+(80, 'Makau', 'makau', 141747, 6, 1239),
+(81, 'Malaysia', 'malaysia', 3379050, 2545, 65592),
+(82, 'Maldives', 'maldives', 55260, 50, 792),
+(83, 'Mongolia', 'mongolia', 273794, 357, 0),
+(84, 'Myanmar', 'myanmar', 7403862, 2386, 50),
+(85, 'Nepal', 'nepal', 4807026, 853, 0),
+(86, 'Oman', 'oman', 979795, 50, 10559),
+(87, 'Pakistan', 'pakistan', 37931812, 8636, 140),
+(88, 'Palestina', 'palestina', 123536, 808, 80),
+(89, 'Qatar', 'qatar', 61849, 482, 6941),
+(90, 'Republik timor leste', 'republik_timor_leste', 190758, 74, 10),
+(91, 'Singapura', 'singapura', 686643, 439, 12101),
+(92, 'Sri lanka', 'sri_lanka', 2673858, 1399, 100),
+(93, 'Suriah', 'suriah', 3778470, 535, 0),
+(94, 'Taiwan', 'taiwan', 2219001, 1953, 46455),
+(95, 'Tajikistan', 'tajikistan', 1647252, 256, 20),
+(96, 'Thailand', 'thailand', 6880404, 5027, 131814),
+(97, 'Turkmenistan', 'turkmenistan', 1021660, 230, 0),
+(98, 'Uni emirat arab', 'uni_emirat_arab', 509194, 1147, 19164),
+(99, 'Uzbekistan', 'uzbekistan', 6188229, 1212, 5),
+(100, 'Vietnam', 'vietnam', 16496716, 3298, 0),
+(101, 'Yaman', 'yaman', 5482014, 1042, 90),
+(102, 'Yordania', 'yordania', 1806734, 477, 180),
+(103, 'Albania', 'albania', 23415, 445, 6045),
+(104, 'Andorra', 'andorra', 8731, 18, 55),
+(105, 'Austria', 'austria', 489892, 1101, 18250),
+(106, 'Belanda', 'belanda', 930703, 2189, 36173),
+(107, 'Belarus', 'belarus', 532125, 1040, 17909),
+(108, 'Belgia', 'belgia', 1671757, 561, 23979),
+(109, 'Bosnia dan hercegovina', 'bosnia_dan_hercegovina', 86658, 459, 6836),
+(110, 'Bulgaria', 'bulgaria', 192865, 940, 13937),
+(111, 'Ceko', 'ceko', 199440, 1625, 21678),
+(112, 'Denmark', 'denmark', 1139291, 48, 12315),
+(113, 'Estonia', 'estonia', 151240, 100, 3048),
+(114, 'Finlandia', 'finlandia', 929244, 152, 11572),
+(115, 'Gibraltar', 'gibraltar', 3909, 2, 305),
+(116, 'Hungaria', 'hungaria', 713411, 963, 18893),
+(117, 'Inggris', 'inggris', 5906934, 6437, 138636),
+(118, 'Irlandia', 'irlandia', 357515, 605, 10801),
+(119, 'Islandia', 'islandia', 15888, 64, 920),
+(120, 'Italia', 'italia', 4935410, 5515, 117636),
+(121, 'Jerman', 'jerman', 8036948, 6944, 167140),
+(122, 'Kepulauan faroe', 'kepulauan_faroe', 19150, 0, 630),
+(123, 'Kosovo', 'kosovo', 113488, 164, 0),
+(124, 'Kroasia', 'kroasia', 475660, 245, 7394),
+(125, 'Latvia', 'latvia', 179403, 164, 4323),
+(126, 'Liechtenstein', 'liechtenstein', 25525, 0, 405),
+(127, 'Lithuania', 'lithuania', 505086, 53, 5292),
+(128, 'Luksemburg', 'luksemburg', 134704, 2, 1884),
+(129, 'Makedonia utara', 'makedonia_utara', 205475, 135, 3341),
+(130, 'Malta', 'malta', 98821, 18, 1713),
+(131, 'Moldova', 'moldova', 417284, 202, 200),
+(132, 'Monako', 'monako', 12900, 0, 380),
+(133, 'Montenegro', 'montenegro', 64494, 62, 1058),
+(134, 'Norwegia', 'norwegia', 70444, 862, 11528),
+(135, 'Polandia', 'polandia', 4241077, 2561, 74763),
+(136, 'Portugal', 'portugal', 419889, 1412, 21217),
+(137, 'Prancis', 'prancis', 5993897, 6296, 138153),
+(138, 'Republik rumania', 'republik_rumania', 1138585, 2170, 37909),
+(139, 'Republik serbia', 'republik_serbia', 17348, 1164, 14532),
+(140, 'Rusia', 'rusia', 13213536, 12853, 292062),
+(141, 'San marino', 'san_marino', 427, 6, 55),
+(142, 'Siprus', 'siprus', 151864, 37, 2462),
+(143, 'Slovenia', 'slovenia', 8565, 345, 4515),
+(144, 'Slowakia', 'slowakia', 86037, 821, 11211),
+(145, 'Spanyol', 'spanyol', 4289392, 4531, 99378),
+(146, 'Swedia', 'swedia', 1520177, 476, 21417),
+(147, 'Swiss', 'swiss', 1246496, 438, 17980),
+(148, 'Turki', 'turki', 13798267, 3151, 5),
+(149, 'Ukraina', 'ukraina', 5951642, 1151, 180),
+(150, 'Vatikan', 'vatikan', 5275, 0, 355),
+(151, 'Yunani', 'yunani', 756702, 1071, 20784),
+(152, 'Amerika Serikat', 'amerika_serikat', 30412460, 30490, 683856),
+(153, 'Antigua dan Barbuda', 'antigua_dan_barbuda', 47442, 1, 0),
+(154, 'Bahama', 'bahama', 71041, 18, 1277),
+(155, 'Barbados', 'barbados', 23620, 25, 1034),
+(156, 'Belize', 'belize', 62212, 11, 70),
+(157, 'Bermuda', 'bermuda', 40100, 0, 20),
+(158, 'Costa rica', 'costa_rica', 585821, 368, 9973),
+(159, 'Curacao', 'curacao', 23423, 19, 905),
+(160, 'Dominika', 'dominika', 43525, 0, 5),
+(161, 'El salvador', 'el_salvador', 962058, 249, 0),
+(162, 'Greenland', 'greenland', 38525, 0, 5),
+(163, 'Grenada', 'grenada', 32525, 0, 605),
+(164, 'Guatemala', 'guatemala', 2849808, 674, 180),
+(165, 'Haiti', 'haiti', 1520494, 707, 0),
+(166, 'Honduras', 'honduras', 1500358, 549, 140),
+(167, 'Jamaika', 'jamaika', 268511, 233, 5),
+(168, 'Kanada', 'kanada', 3560565, 3820, 82725),
+(169, 'Kuba', 'kuba', 42611, 1558, 19895),
+(170, 'Meksiko', 'meksiko', 11924541, 11463, 262399),
+(171, 'Nikaragua', 'nikaragua', 309347, 891, 5),
+(172, 'Panama', 'panama', 253748, 459, 8694),
+(173, 'Puerto rico', 'puerto_rico', 212266, 348, 90),
+(174, 'Republik dominika', 'republik_dominika', 267480, 1655, 22714),
+(175, 'Saint kitts dan nevis', 'saint_kitts_dan_nevis', 432, 21, 230),
+(176, 'Saint lucia', 'saint_lucia', 22463, 14, 155),
+(177, 'Saint vincent dan grenadine', 'saint_vincent_dan_grenadine', 36275, 0, 555),
+(178, 'Trinidad dan tobago', 'trinidad_dan_tobago', 144742, 131, 3208),
+(179, 'Australia', 'australia', 2832894, 1922, 52594),
+(180, 'Fiji', 'fiji', 69012, 86, 200),
+(181, 'Guam', 'guam', 4995, 35, 5),
+(182, 'Kiribati', 'kiribati', 11320, 10, 180),
+(183, 'Marshall', 'marshall', 36884, 2, 0),
+(184, 'Mikronesia', 'mikronesia', 48525, 0, 5),
+(185, 'Nauru', 'nauru', 10525, 0, 405),
+(186, 'Palau', 'palau', 20525, 0, 405),
+(187, 'Papua nugini', 'papua_nugini', 989566, 923, 120),
+(188, 'Samoa', 'samoa', 1510, 30, 50),
+(189, 'Samoa amerika', 'samoa_amerika', 18400, 0, 480),
+(190, 'Selandia baru', 'selandia_baru', 1040376, 8, 10408),
+(191, 'Tahiti', 'tahiti', 13429, 42, 1113),
+(192, 'Tonga', 'tonga', 36326, 3, 0),
+(193, 'Tuvalu', 'tuvalu', 35100, 0, 20),
+(194, 'Vanuatu', 'vanuatu', 23252, 31, 110),
+(195, 'Argentina', 'argentina', 4448800, 3880, 93008),
+(196, 'Bolivia', 'bolivia', 1276142, 826, 10),
+(197, 'Brazil', 'brazil', 19770225, 18385, 427191),
+(198, 'Chile', 'chile', 1577275, 1990, 40359),
+(199, 'Ekuador', 'ekuador', 2784290, 695, 20),
+(200, 'Guiana prancis', 'guiana_prancis', 69857, 1, 623),
+(201, 'Guyana', 'guyana', 146959, 42, 2499),
+(202, 'Kolombia', 'kolombia', 8180182, 2021, 180),
+(203, 'Paraguay', 'paraguay', 195601, 853, 12415),
+(204, 'Peru', 'peru', 3055505, 2910, 67117),
+(205, 'Suriname', 'suriname', 14896, 88, 200),
+(206, 'Uruguay', 'uruguay', 510770, 150, 6614),
+(207, 'Venezuela', 'venezuela', 4233295, 1185, 5);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

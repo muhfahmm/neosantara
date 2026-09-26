@@ -278,17 +278,17 @@ export default function HunianPermukimanModal({
 
   // --- Hitung total kapasitas ---
   const DEFAULT_CAPACITIES: Record<string, number> = {
-    rumah_subsidi: 4,
-    apartemen: 50,
-    mansion: 8,
+    rumah_subsidi: 5,
+    apartemen: 6000,
+    mansion: 10,
   };
 
   const totalCapacity = useMemo(() => {
     let cap = 0;
     HUNIAN_KEYS.forEach((key) => {
       const count = Number(countryDetail?.[key]) || 0;
-      const meta = findMeta(key);
-      const capacity = Number(meta?.kapasitas) || DEFAULT_CAPACITIES[key] || 4;
+      const bMeta = findMeta(key);
+      const capacity = Number(bMeta?.kapasitas) || DEFAULT_CAPACITIES[key] || 0;
       cap += count * capacity;
     });
     return cap;
@@ -301,8 +301,8 @@ export default function HunianPermukimanModal({
   const capacityBreakdown = useMemo(() => {
     return HUNIAN_KEYS.map((key) => {
       const count = Number(countryDetail?.[key]) || 0;
-      const meta = findMeta(key);
-      const capacity = Number(meta?.kapasitas) || DEFAULT_CAPACITIES[key] || 4;
+      const bMeta = findMeta(key);
+      const capacity = Number(bMeta?.kapasitas) || DEFAULT_CAPACITIES[key] || 0;
       const total = count * capacity;
       return {
         key,
@@ -313,7 +313,7 @@ export default function HunianPermukimanModal({
         percentage: population > 0 ? (total / population) * 100 : 0,
       };
     });
-  }, [countryDetail, metadata, population]);
+  }, [countryDetail, population, metadata]);
 
   const housingSatisfaction = useMemo(() => {
     if (population <= 0) return 50;
@@ -431,8 +431,8 @@ export default function HunianPermukimanModal({
                             <p className="text-[9px] font-black uppercase text-[#6B8A8A] tracking-wider">Kapasitas Standar AI</p>
                             <p className="text-[10px] sm:text-xs font-black text-[#00FFAA]">
                               1 Unit : {
-                                activeItem.key === 'rumah_subsidi' ? '4 Jiwa' :
-                                activeItem.key === 'apartemen' ? '50 Jiwa' : '8 Jiwa'
+                                activeItem.key === 'rumah_subsidi' ? '5 Jiwa' :
+                                activeItem.key === 'apartemen' ? '6.000 Jiwa' : '10 Jiwa'
                               }
                             </p>
                           </div>
