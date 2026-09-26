@@ -5,6 +5,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { ChevronUp, ChevronDown, User } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { getEconomicSystemDetails } from "../../logic/logikaSistemEkonomi";
+import { SISTEM_EKONOMI_LIST } from "@/../../json/database_sistem_ekonomi/index";
 
 interface Props {
   countryDetail?: any;
@@ -29,35 +30,8 @@ export default function SistemDuniaTab({ countryDetail }: Props) {
     direction: "asc",
   });
 
-  const [dbData, setDbData] = useState<any[] | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    setIsLoading(true);
-
-    fetch("/api/sistem-ekonomi?all=true")
-      .then((res) => res.json())
-      .then((data) => {
-        if (isMounted) {
-          if (Array.isArray(data) && data.length > 0) {
-            setDbData(data);
-          } else {
-            setDbData([]);
-          }
-        }
-      })
-      .catch(() => {
-        if (isMounted) setDbData([]);
-      })
-      .finally(() => {
-        if (isMounted) setIsLoading(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const [dbData] = useState<any[]>(SISTEM_EKONOMI_LIST);
+  const isLoading = false;
 
   const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || "";
 

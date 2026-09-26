@@ -122,8 +122,9 @@ function ModalsManager({
   // Fetch full country dataset lazily when a menu that requires global country comparison is opened
   useEffect(() => {
     const menusNeedingAllCountries = [
-      'Kelistrikan', 'Industri Pangan', 'PDB', 'Finansial Global',
-      'Menu:SerangNegara', 'Menu:Intelijen', 'Menu:ICBM', 'Menu:Perdagangan'
+      'Menu:Kelistrikan', 'Menu:IndustriPangan', 'Menu:PDB', 'Menu:Budget', 'Menu:Perdagangan',
+      'Menu:SistemEkonomi', 'Menu:KebijakanSubsidi', 'Menu:SerangNegara', 'Menu:Intelijen', 'Menu:ICBM',
+      'Kelistrikan', 'Industri Pangan', 'PDB', 'Finansial Global'
     ];
     if (prefetchedAllCountries === null && (menusNeedingAllCountries.includes(activeMenu) || activeMenu?.includes('Serang') || activeMenu?.includes('Intelijen'))) {
       (async () => {
@@ -392,6 +393,7 @@ function ModalsManager({
           onClose={onClose}
           countryDetail={countryDetail}
           selectedCountry={selectedCountry}
+          prefetchedAllCountries={prefetchedAllCountries || undefined}
         />
       );
     case "Menu:Harga":

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { queryDb } from '@/lib/db';
 import path from 'path';
+import { DATABASE_LEVEL_KABINET } from '@/../../json/database_level_kabinet/index';
 
 const extractFileOrder = (fileName: string): number => {
   const match = fileName.match(/^(\d+)_/);
@@ -23,6 +24,9 @@ let cachedAllCountries: any[] | null = null;
 const cachedCountryMap = new Map<string, any>();
 
 async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
+  if (process.env.NODE_ENV === 'development') {
+    forceRefresh = true;
+  }
   if (!forceRefresh && cachedAllCountries && cachedAllCountries.length > 0) {
     return cachedAllCountries;
   }
@@ -38,6 +42,8 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
     const sda = await queryDb<any[]>('SELECT * FROM database_sda').catch(() => []);
     const harga = await queryDb<any[]>('SELECT * FROM database_harga_barang').catch(() => []);
     const doktrin = await queryDb<any[]>('SELECT * FROM database_doktrin_keterbukaan').catch(() => []);
+    const alokasiSubsidi = await queryDb<any[]>('SELECT * FROM database_alokasi_subsidi').catch(() => []);
+    const sistemEkonomi = await queryDb<any[]>('SELECT * FROM database_sistem_ekonomi').catch(() => []);
 
     // 2. Produksi & Pembangunan Tables
     const listrik = await queryDb<any[]>('SELECT * FROM database_sektor_listrik_nasional').catch(() => []);
@@ -64,9 +70,13 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
 
     // Helper map build function
     const makeMap = (arr: any[]) => {
-      const m = new Map<number, any>();
+      const m = new Map<any, any>();
       for (const item of arr) {
         if (item.id !== undefined) m.set(Number(item.id), item);
+        if (item.country_slug) {
+          m.set(normalizeKey(item.country_slug), item);
+          m.set(item.country_slug.toLowerCase(), item);
+        }
       }
       return m;
     };
@@ -97,22 +107,41 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
     const militerMap = makeMap(militer);
     const pertahananMap = makeMap(pertahanan);
 
+    const subMap = new Map<string, any>();
+    for (const item of alokasiSubsidi) {
+      if (item.country_slug) {
+        subMap.set(normalizeKey(item.country_slug), item);
+      }
+    }
+
+    const sistemEkonomiMap = new Map<string, any>();
+    for (const item of sistemEkonomi) {
+      if (item.country_slug) {
+        sistemEkonomiMap.set(normalizeKey(item.country_slug), item);
+      }
+    }
+
     const mergedList: any[] = [];
 
     for (const prof of profiles) {
       const id = Number(prof.id);
       const order = id;
       const slug = prof.country_slug || '';
+      const normSlug = normalizeKey(slug);
+      const underscoreSlug = slug.toLowerCase().replace(/[\s-]+/g, '_');
       const fileName = `${id}_${slug}.ts`;
 
-      const t = taxMap.get(id) || {};
-      const k = kabinetMap.get(id) || {};
-      const s = sdaMap.get(id) || {};
-      const h = hargaMap.get(id) || {};
-      const d = doktrinMap.get(id) || {};
+      const t = taxMap.get(id) || (slug ? taxMap.get(normSlug) : {}) || {};
+      const staticK = DATABASE_LEVEL_KABINET[normSlug] || DATABASE_LEVEL_KABINET[underscoreSlug] || {};
+      const kFromDb = (slug ? kabinetMap.get(normSlug) : null) || kabinetMap.get(id) || {};
+      const k = { ...staticK, ...kFromDb };
 
-      const lis = listrikMap.get(id) || {};
-      const min = mineralMap.get(id) || {};
+      const s = sdaMap.get(id) || (slug ? sdaMap.get(normSlug) : {}) || {};
+      const h = hargaMap.get(id) || (slug ? hargaMap.get(normSlug) : {}) || {};
+      const d = doktrinMap.get(id) || (slug ? doktrinMap.get(normSlug) : {}) || {};
+
+      const lis = (slug ? listrikMap.get(normSlug) : null) || listrikMap.get(id) || {};
+      const min = (slug ? mineralMap.get(normSlug) : null) || mineralMap.get(id) || {};
       const man = manufakturMap.get(id) || {};
       const pet = peternakanMap.get(id) || {};
       const agr = agrikulturMap.get(id) || {};
@@ -135,8 +164,10 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
       const levelFields: Record<string, number> = {};
       Object.keys(k).forEach((col) => {
         if (col.startsWith('kem_') || col.startsWith('keamanan_') || col.startsWith('layanan_')) {
+          const val = Number(k[col]) || 0;
           const deptName = col.replace(/^kem_/, '').replace(/^keamanan_/, '').replace(/^layanan_/, '');
-          levelFields[`level_${deptName}`] = Number(k[col]) || 0;
+          levelFields[`level_${deptName}`] = val;
+          levelFields[col] = val;
         }
       });
 
@@ -222,6 +253,34 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
           bea_cukai: { tarif: Number(t.tarif_bea_cukai) || 0 },
           lingkungan: { tarif: Number(t.tarif_lingkungan) || 0 },
         },
+
+        subsidy_states: (() => {
+          const sub = subMap.get(normalizeKey(slug)) || {};
+          const states: Record<string, boolean> = {};
+          [
+            'sub_bbm', 'sub_listrik', 'sub_lpg', 'sub_pdam', 'sub_pupuk', 'sub_sembako',
+            'sub_bantuan_pangan', 'sub_pendidikan', 'sub_bpjs', 'sub_vaksin',
+            'sub_transport_publik', 'sub_perumahan', 'sub_ev', 'sub_kur',
+            'sub_pajak_umkm', 'sub_blt', 'sub_pensiun', 'sub_bencana'
+          ].forEach((k) => {
+            if (sub[k] !== undefined) {
+              states[k] = Boolean(sub[k]);
+            }
+          });
+          return Object.keys(states).length > 0 ? states : undefined;
+        })(),
+
+        ...(() => {
+          const sys = sistemEkonomiMap.get(normalizeKey(slug)) || {};
+          return {
+            sistem_ekonomi_val: sys.spektrum_val !== undefined ? Number(sys.spektrum_val) : 50,
+            sistem_ekonomi_name: sys.system_title || 'Ekonomi Campuran (Mixed Economy)',
+            policy_price_control: sys.policy_price_control === 'Pasar Bebas' ? 'B' : 'A',
+            policy_strategic_ownership: sys.policy_strategic_ownership === 'Pasar Bebas' ? 'B' : 'A',
+            policy_trade_policy: sys.policy_trade === 'Pasar Bebas' ? 'B' : 'A',
+            policy_labor_regulation: sys.policy_labor === 'Pasar Bebas' ? 'B' : 'A',
+          };
+        })(),
 
         sda: {
           emas: Boolean(s.emas),

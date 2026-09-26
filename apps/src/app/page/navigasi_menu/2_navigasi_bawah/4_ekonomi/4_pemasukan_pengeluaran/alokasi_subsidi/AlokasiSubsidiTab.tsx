@@ -3,10 +3,45 @@
 import React, { useState, useEffect } from "react";
 import { Zap, Utensils, GraduationCap, Bus, Store, ShieldAlert } from "lucide-react";
 import { INITIAL_SUBSIDY_ITEMS, SubsidyItem } from "../../8_kebijakan_subsidi/logic/logikaSubsidi";
+import { getSubsidiBySlug } from "@/../../json/database_alokasi_subsidi/index";
 
 interface AlokasiSubsidiTabProps {
   countryDetail: any;
 }
+
+const resolveSubsidyItemsForCountry = (countryDetail: any): SubsidyItem[] => {
+  if (countryDetail?.subsidy_states) {
+    return INITIAL_SUBSIDY_ITEMS.map((item) => ({
+      ...item,
+      isSubsidized: (countryDetail.subsidy_states as Record<string, boolean>)[item.id] ?? item.isSubsidized,
+    }));
+  }
+
+  const slug =
+    countryDetail?.slug ||
+    countryDetail?.country_slug ||
+    countryDetail?.name?.toLowerCase().replace(/\s+/g, '-') ||
+    (countryDetail?.name_id ? String(countryDetail.name_id).toLowerCase().replace(/\s+/g, '-') : null) ||
+    'indonesia';
+
+  const dbData = getSubsidiBySlug(slug);
+  if (dbData) {
+    return INITIAL_SUBSIDY_ITEMS.map((item) => {
+      const dbVal = (dbData as any)[item.id] ?? (dbData as any)[item.id.toLowerCase()];
+      let isSub = item.isSubsidized;
+      if (dbVal !== undefined && dbVal !== null) {
+        if (dbVal === 0 || dbVal === "0" || dbVal === false || dbVal === "false") {
+          isSub = false;
+        } else if (dbVal === 1 || dbVal === "1" || dbVal === true || dbVal === "true") {
+          isSub = true;
+        }
+      }
+      return { ...item, isSubsidized: isSub };
+    });
+  }
+
+  return INITIAL_SUBSIDY_ITEMS;
+};
 
 const CATEGORIES = [
   { id: "Energi", label: "ENERGI", icon: Zap },
@@ -19,55 +54,10 @@ const CATEGORIES = [
 
 export default function AlokasiSubsidiTab({ countryDetail }: AlokasiSubsidiTabProps) {
   const [activeCategory, setActiveCategory] = useState<string>("Energi");
-  const [subsidyItems, setSubsidyItems] = useState<SubsidyItem[]>(INITIAL_SUBSIDY_ITEMS);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [subsidyItems, setSubsidyItems] = useState<SubsidyItem[]>(() => resolveSubsidyItemsForCountry(countryDetail));
 
   useEffect(() => {
-    const slug =
-      countryDetail?.slug ||
-      countryDetail?.country_slug ||
-      countryDetail?.name?.toLowerCase().replace(/\s+/g, '-') ||
-      (countryDetail?.name_id ? String(countryDetail.name_id).toLowerCase().replace(/\s+/g, '-') : null) ||
-      'indonesia';
-
-    setIsLoading(true);
-
-    fetch(`/api/alokasi-subsidi?slug=${slug}`)
-      .then((res) => res.json())
-      .then((dbData) => {
-        if (dbData && typeof dbData === 'object' && !Array.isArray(dbData)) {
-          setSubsidyItems(
-            INITIAL_SUBSIDY_ITEMS.map((item) => {
-              const dbVal = dbData[item.id] ?? dbData[item.id.toLowerCase()];
-              let isSub = item.isSubsidized;
-              if (dbVal !== undefined && dbVal !== null) {
-                if (dbVal === 0 || dbVal === "0" || dbVal === false || dbVal === "false") {
-                  isSub = false;
-                } else if (dbVal === 1 || dbVal === "1" || dbVal === true || dbVal === "true") {
-                  isSub = true;
-                }
-              }
-              return { ...item, isSubsidized: isSub };
-            })
-          );
-        } else if (countryDetail?.subsidy_states) {
-          setSubsidyItems(
-            INITIAL_SUBSIDY_ITEMS.map((item) => ({
-              ...item,
-              isSubsidized: (countryDetail.subsidy_states as Record<string, boolean>)[item.id] ?? item.isSubsidized,
-            }))
-          );
-        } else {
-          setSubsidyItems(INITIAL_SUBSIDY_ITEMS);
-        }
-      })
-      .catch((err) => {
-        console.error("Gagal memuat status subsidi di AlokasiSubsidiTab:", err);
-        setSubsidyItems(INITIAL_SUBSIDY_ITEMS);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    setSubsidyItems(resolveSubsidyItemsForCountry(countryDetail));
   }, [countryDetail?.slug, countryDetail?.country_slug, countryDetail?.name, countryDetail?.name_id, countryDetail?.subsidy_states]);
 
   const filteredItems = subsidyItems.filter((i) => i.category === activeCategory);
@@ -124,11 +114,6 @@ export default function AlokasiSubsidiTab({ countryDetail }: AlokasiSubsidiTabPr
           <h4 className="text-[11px] text-[#00FFAA] font-black uppercase tracking-wider">
             ALOKASI SUBSIDI {activeCategory.toUpperCase()} ({activeCount}/{totalCategoryCount} AKTIF)
           </h4>
-          {isLoading && (
-            <span className="text-[10px] text-[#6B8A8A] font-semibold animate-pulse">
-              Memuat data...
-            </span>
-          )}
         </div>
 
         <div className="space-y-3">

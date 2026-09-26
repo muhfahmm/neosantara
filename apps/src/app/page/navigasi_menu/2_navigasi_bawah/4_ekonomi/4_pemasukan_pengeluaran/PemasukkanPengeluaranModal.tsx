@@ -12,6 +12,7 @@ import { calculateGoldMiningDailyProduction, GOLD_MINING_PRODUCTION_PER_BUILDING
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department } from "@/app/logic/economic_logic/departments";
 import AlokasiSubsidiTab from "./alokasi_subsidi/AlokasiSubsidiTab";
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "../8_kebijakan_subsidi/logic/logikaSubsidi";
+import { getSubsidiBySlug } from "@/../../json/database_alokasi_subsidi/index";
 
 interface ModalProps {
   isOpen: boolean;
@@ -58,10 +59,33 @@ const calculateActiveSubsidyCost = (countryDetail: any) => {
     return countryDetail.total_subsidy_cost;
   }
   const subsidyStates = countryDetail?.subsidy_states as Record<string, boolean> | undefined;
-  const items = INITIAL_SUBSIDY_ITEMS.map((item) => ({
-    ...item,
-    isSubsidized: subsidyStates ? (subsidyStates[item.id] ?? item.isSubsidized) : item.isSubsidized,
-  }));
+  const slug =
+    countryDetail?.slug ||
+    countryDetail?.country_slug ||
+    countryDetail?.name?.toLowerCase().replace(/\s+/g, '-') ||
+    (countryDetail?.name_id ? String(countryDetail.name_id).toLowerCase().replace(/\s+/g, '-') : null) ||
+    'indonesia';
+  const dbData = getSubsidiBySlug(slug);
+
+  const items = INITIAL_SUBSIDY_ITEMS.map((item) => {
+    let isSub = item.isSubsidized;
+    if (subsidyStates && subsidyStates[item.id] !== undefined) {
+      isSub = subsidyStates[item.id];
+    } else if (dbData) {
+      const dbVal = (dbData as any)[item.id] ?? (dbData as any)[item.id.toLowerCase()];
+      if (dbVal !== undefined && dbVal !== null) {
+        if (dbVal === 0 || dbVal === "0" || dbVal === false || dbVal === "false") {
+          isSub = false;
+        } else if (dbVal === 1 || dbVal === "1" || dbVal === true || dbVal === "true") {
+          isSub = true;
+        }
+      }
+    }
+    return {
+      ...item,
+      isSubsidized: isSub,
+    };
+  });
   return calculateSubsidySummary(items).totalCost;
 };
 

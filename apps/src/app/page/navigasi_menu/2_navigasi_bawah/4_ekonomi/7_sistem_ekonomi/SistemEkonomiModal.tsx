@@ -10,6 +10,7 @@ import {
 import SpektrumSistemTab from "./tab_menu/1_spektrum_sistem/SpektrumSistemTab";
 import KartuKebijakanTab from "./tab_menu/2_kartu_kebijakan/KartuKebijakanTab";
 import SistemDuniaTab from "./tab_menu/3_sistem_dunia/SistemDuniaTab";
+import { getSistemEkonomiBySlug } from "@/../../json/database_sistem_ekonomi/index";
 
 interface ModalProps {
   isOpen: boolean;
@@ -18,60 +19,70 @@ interface ModalProps {
   setCountryDetail?: (detail: any | ((prev: any) => any)) => void;
 }
 
+const resolveSistemEkonomiForCountry = (countryDetail: any) => {
+  const slug =
+    countryDetail?.country_slug ||
+    countryDetail?.slug ||
+    countryDetail?.country?.toLowerCase().replace(/\s+/g, '-') ||
+    countryDetail?.nama_negara?.toLowerCase().replace(/\s+/g, '-') ||
+    (countryDetail?.name_id ? String(countryDetail.name_id).toLowerCase().replace(/\s+/g, '-') : null) ||
+    'indonesia';
+
+  const dbData = getSistemEkonomiBySlug(slug);
+
+  const spektrumVal = countryDetail?.sistem_ekonomi_val ?? dbData?.spektrum_val ?? 50;
+
+  const choices: Record<string, "A" | "B"> = {
+    price_control:
+      countryDetail?.policy_price_control ||
+      (dbData?.policy_price_control === "Pasar Bebas" ? "B" : "A"),
+    strategic_ownership:
+      countryDetail?.policy_strategic_ownership ||
+      (dbData?.policy_strategic_ownership === "Pasar Bebas" ? "B" : "A"),
+    trade_policy:
+      countryDetail?.policy_trade_policy ||
+      (dbData?.policy_trade === "Pasar Bebas" ? "B" : "A"),
+    labor_regulation:
+      countryDetail?.policy_labor_regulation ||
+      (dbData?.policy_labor === "Pasar Bebas" ? "B" : "A"),
+  };
+
+  return { spektrumVal, choices };
+};
+
 export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, setCountryDetail }: ModalProps) {
   const [activeTab, setActiveTab] = useState<"sistem" | "kebijakan" | "dunia">("sistem");
 
-  // Economic System Slider Value (0 = Terpusat / Command, 100 = Pasar Bebas / Free Market)
+  // Economic System Slider Value & Policy Choices (Loaded Instantly in 0ms)
   const [sliderValue, setSliderValue] = useState<number>(
-    countryDetail?.sistem_ekonomi_val ?? 50
+    () => resolveSistemEkonomiForCountry(countryDetail).spektrumVal
   );
 
-  // Active Specific Policy Choices
-  const [policyChoices, setPolicyChoices] = useState<Record<string, "A" | "B">>({
-    price_control: countryDetail?.policy_price_control || "A",
-    strategic_ownership: countryDetail?.policy_strategic_ownership || "A",
-    trade_policy: countryDetail?.policy_trade_policy || "B",
-    labor_regulation: countryDetail?.policy_labor_regulation || "A",
-  });
+  const [policyChoices, setPolicyChoices] = useState<Record<string, "A" | "B">>(
+    () => resolveSistemEkonomiForCountry(countryDetail).choices
+  );
 
   const [isSavedSuccess, setIsSavedSuccess] = useState<boolean>(false);
 
-  const [isLoadingDb, setIsLoadingDb] = useState<boolean>(true);
-
-  // Fetch from DB when Modal Opens
+  // Sinkronisasi instan tanpa network fetch (0ms)
   useEffect(() => {
     if (!isOpen) return;
-
-    const slug = countryDetail?.country_slug || countryDetail?.country?.toLowerCase() || countryDetail?.nama_negara?.toLowerCase() || "";
-    let isMounted = true;
-    setIsLoadingDb(true);
-
-    if (slug) {
-      fetch(`/api/sistem-ekonomi?slug=${encodeURIComponent(slug)}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (isMounted && data && typeof data === 'object') {
-            if (data.spektrum_val !== undefined) setSliderValue(data.spektrum_val);
-            setPolicyChoices({
-              price_control: data.policy_price_control === "Pasar Bebas" ? "B" : "A",
-              strategic_ownership: data.policy_strategic_ownership === "Pasar Bebas" ? "B" : "A",
-              trade_policy: data.policy_trade === "Pasar Bebas" ? "B" : "A",
-              labor_regulation: data.policy_labor === "Pasar Bebas" ? "B" : "A",
-            });
-          }
-        })
-        .catch(() => {})
-        .finally(() => {
-          if (isMounted) setIsLoadingDb(false);
-        });
-    } else {
-      setIsLoadingDb(false);
-    }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isOpen, countryDetail]);
+    const res = resolveSistemEkonomiForCountry(countryDetail);
+    setSliderValue(res.spektrumVal);
+    setPolicyChoices(res.choices);
+  }, [
+    isOpen,
+    countryDetail?.country_slug,
+    countryDetail?.slug,
+    countryDetail?.country,
+    countryDetail?.nama_negara,
+    countryDetail?.name_id,
+    countryDetail?.sistem_ekonomi_val,
+    countryDetail?.policy_price_control,
+    countryDetail?.policy_strategic_ownership,
+    countryDetail?.policy_trade_policy,
+    countryDetail?.policy_labor_regulation
+  ]);
 
   if (!isOpen) return null;
 

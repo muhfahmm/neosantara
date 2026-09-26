@@ -6,30 +6,106 @@ import {
   calculateGoldIncome,
   calculateTotalMinistryCostPerDay,
 } from "@/app/logic/economic_logic/treasuryUpdater";
+import { calculateGoldMiningDailyProduction } from "@/app/logic/economic_logic/goldIncome";
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "../8_kebijakan_subsidi/logic/logikaSubsidi";
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
+import { PROFILES_DATA } from '@/../../json/semua_fitur_negara/0_profiles/index';
+import { DATABASE_PAJAK_NEGARA } from '@/../../json/database_pajak_negara/index';
+import { DATABASE_ALOKASI_SUBSIDI } from '@/../../json/database_alokasi_subsidi/index';
+import { DATABASE_LEVEL_KABINET } from '@/../../json/database_level_kabinet/index';
+const getNormalizedSlug = (detail: any) => {
+  if (!detail) return '';
+  const raw = String(detail.country_slug || detail.slug || detail.id || detail.country || detail.name_id || '').toLowerCase().trim();
+  return raw.replace(/[\s-]+/g, '_');
+};
+
+const getTaxData = (detail: any) => {
+  if (!detail) return {};
+  const slug = getNormalizedSlug(detail);
+  const stripped = slug.replace(/^republik_/, '').replace(/^republic_of_/, '');
+  return DATABASE_PAJAK_NEGARA[slug] || DATABASE_PAJAK_NEGARA[stripped] || {};
+};
+
+const getSubsidyData = (detail: any) => {
+  if (!detail) return {};
+  const slug = getNormalizedSlug(detail);
+  const stripped = slug.replace(/^republik_/, '').replace(/^republic_of_/, '');
+  const dashSlug = slug.replace(/_/g, '-');
+  const dashStripped = stripped.replace(/_/g, '-');
+  return (
+    DATABASE_ALOKASI_SUBSIDI[slug] ||
+    DATABASE_ALOKASI_SUBSIDI[dashSlug] ||
+    DATABASE_ALOKASI_SUBSIDI[stripped] ||
+    DATABASE_ALOKASI_SUBSIDI[dashStripped] ||
+    {}
+  );
+};
+
+const getKabinetData = (detail: any) => {
+  if (!detail) return {};
+  const slug = getNormalizedSlug(detail);
+  const stripped = slug.replace(/^republik_/, '').replace(/^republic_of_/, '');
+  const dashSlug = slug.replace(/_/g, '-');
+  const dashStripped = stripped.replace(/_/g, '-');
+  return (
+    DATABASE_LEVEL_KABINET[slug] ||
+    DATABASE_LEVEL_KABINET[dashSlug] ||
+    DATABASE_LEVEL_KABINET[stripped] ||
+    DATABASE_LEVEL_KABINET[dashStripped] ||
+    {}
+  );
+};
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   countryDetail: any;
   selectedCountry: any;
+  prefetchedAllCountries?: any[];
 }
 
-const computeTaxValue = (detail: any) => calculateTotalTaxIncome(detail);
-const computeGoldValue = (detail: any) => calculateGoldIncome(detail);
-const computeMinistryCost = (detail: any) => calculateTotalMinistryCostPerDay(detail);
+const computeTaxValue = (detail: any) => {
+  const taxData = getTaxData(detail);
+  const formattedDetail = {
+    ...detail,
+    pajak: detail?.pajak || {
+      ppn: { tarif: taxData.tarif_ppn ?? 10 },
+      korporasi: { tarif: taxData.tarif_korporasi ?? 22 },
+      penghasilan: { tarif: taxData.tarif_penghasilan ?? 15 },
+      bea_cukai: { tarif: taxData.tarif_bea_cukai ?? 15 },
+      lingkungan: { tarif: taxData.tarif_lingkungan ?? 5 },
+    },
+    income_tax: detail?.income_tax ?? taxData.tarif_penghasilan,
+    corporate: detail?.corporate ?? taxData.tarif_korporasi,
+    ppn: detail?.ppn ?? taxData.tarif_ppn,
+    cigarette_tax: detail?.cigarette_tax ?? taxData.tarif_bea_cukai,
+    environment_tax: detail?.environment_tax ?? taxData.tarif_lingkungan,
+  };
+  return calculateTotalTaxIncome(formattedDetail);
+};
+const computeGoldValue = (detail: any) => {
+  const emasCount = typeof detail?.emas === 'number' ? detail.emas : 0;
+  return calculateGoldMiningDailyProduction({ ...detail, emas: emasCount });
+};
+const computeMinistryCost = (detail: any) => {
+  const kabData = getKabinetData(detail);
+  const merged = { ...kabData, ...detail };
+  return calculateTotalMinistryCostPerDay(merged);
+};
 const computeSubsidyCost = (detail: any) => {
   if (!detail || typeof detail !== 'object') return 424;
   if (typeof detail?.total_subsidy_cost === 'number') {
     return detail.total_subsidy_cost;
   }
+  const subData = getSubsidyData(detail) as Record<string, any>;
   const subsidyStates = detail?.subsidy_states as Record<string, boolean> | undefined;
+
   const items = INITIAL_SUBSIDY_ITEMS.map((item) => {
+    const dbValue = subData[item.id];
     const isSub = subsidyStates
-      ? (subsidyStates[item.id] ?? item.isSubsidized)
-      : (detail[item.id] ?? detail[item.id.toLowerCase()] ?? item.isSubsidized);
+      ? (subsidyStates[item.id] ?? (dbValue !== undefined ? dbValue : item.isSubsidized))
+      : (detail[item.id] ?? detail[item.id.toLowerCase()] ?? (dbValue !== undefined ? dbValue : item.isSubsidized));
     const normalizedIsSub = (isSub === 0 || isSub === "0" || isSub === false || isSub === "false") ? false : Boolean(isSub);
     return { ...item, isSubsidized: normalizedIsSub };
   });
@@ -71,96 +147,105 @@ const normalizeContinent = (continent: any) => {
 };
 
 const getInitialCountriesData = () => {
+  const profileMap = new Map<string, any>();
+  PROFILES_DATA.forEach((p) => {
+    const k1 = p.country_slug.toLowerCase().trim();
+    const k2 = p.name_id.toLowerCase().trim();
+    const k3 = p.name_en.toLowerCase().trim();
+    profileMap.set(k1, p);
+    profileMap.set(k2, p);
+    profileMap.set(k3, p);
+    profileMap.set(k1.replace(/_/g, ' '), p);
+    profileMap.set(k1.replace(/_/g, '-'), p);
+    profileMap.set(k2.replace(/[\s-]+/g, '_'), p);
+  });
+
   return COUNTRIES_DATA.map((c, idx) => {
+    const rawName = c.country.toLowerCase().trim();
+    const stripped = rawName.replace(/^republik\s+/, '').replace(/^republic of\s+/, '').trim();
+    const p =
+      profileMap.get(rawName) ||
+      profileMap.get(rawName.replace(/[\s-]+/g, '_')) ||
+      profileMap.get(rawName.replace(/[\s_]+/g, '-')) ||
+      profileMap.get(stripped) ||
+      profileMap.get(stripped.replace(/[\s-]+/g, '_')) ||
+      profileMap.get(stripped.replace(/[\s_]+/g, '-')) ||
+      {};
+    const kabData = getKabinetData(p.country_slug ? p : c);
+
     return {
       ...c,
+      ...p,
+      ...kabData,
       __displayName: c.country,
       continent: normalizeContinent(c.continent),
       __fileOrder: idx + 1,
-      __loaded: false,
+      __loaded: true,
     };
   });
 };
 
 let cachedAllCountries: any[] = getInitialCountriesData();
-let cachedDataVersion: number | null = null;
 
 // --- KOMPONEN DATA NEGARA ---
-function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCountryName: string; playerCountryDetail?: any }) {
-  const [allCountries, setAllCountries] = useState<any[]>(() => cachedAllCountries || getInitialCountriesData());
-  const [isRefreshing, setIsRefreshing] = useState(false);
+function AllCountriesGDP({
+  playerCountryName,
+  playerCountryDetail,
+  prefetchedAllCountries,
+}: {
+  playerCountryName: string;
+  playerCountryDetail?: any;
+  prefetchedAllCountries?: any[];
+}) {
+  const [allCountries, setAllCountries] = useState<any[]>(() => {
+    if (Array.isArray(prefetchedAllCountries) && prefetchedAllCountries.length > 0) {
+      return prefetchedAllCountries.map((c, idx) => ({
+        ...c,
+        __displayName: getDisplayName(c),
+        continent: normalizeContinent(c.__continent || c.continent || getContinentFromOrder(idx + 1)),
+        __fileOrder: idx + 1,
+        __loaded: true,
+      }));
+    }
+    return cachedAllCountries || getInitialCountriesData();
+  });
+
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({
     key: 'pdb',
     direction: 'desc',
   });
 
-  const fetchAndProcessAllCountries = async () => {
-    const res = await fetch('/api/country-data?all=true', { cache: 'no-store' });
-    const data = await res.json();
-    if (!Array.isArray(data)) return null;
-
-    const countryToContinentMap = new Map<string, string>();
-    COUNTRIES_DATA.forEach((c) => {
-      countryToContinentMap.set(c.country.toLowerCase(), c.continent);
-    });
-
-    return data.map((country) => {
-      const name = getDisplayName(country);
-      const listOrder = extractFileOrder(country.__fileName || country.filename || name);
-      const continent = normalizeContinent(
-        country.__continent ||
-        country.continent ||
-        countryToContinentMap.get(name.toLowerCase()) ||
-        getContinentFromOrder(listOrder)
-      );
-      return { ...country, __displayName: name, continent, __fileOrder: listOrder, __loaded: true };
-    });
-  };
-
   useEffect(() => {
-    const prefetch = async () => {
-      try {
-        const processed = await fetchAndProcessAllCountries();
-        if (processed) {
-          cachedAllCountries = processed;
-          setAllCountries(processed);
-        }
-      } catch (e) {
-        console.warn('Background prefetch failed:', e);
-      }
-    };
-    prefetch();
-  }, []);
-
-  useEffect(() => {
-    const poll = async () => {
-      try {
-        const res = await fetch('/api/country-data-version', { cache: 'no-store' });
-        const { version } = await res.json();
-        if (cachedDataVersion !== null && version !== cachedDataVersion) {
-          cachedDataVersion = version;
-          setIsRefreshing(true);
-          try {
-            const processed = await fetchAndProcessAllCountries();
-            if (processed) {
-              cachedAllCountries = processed;
-              setAllCountries(processed);
-            }
-          } finally {
-            setIsRefreshing(false);
+    if (Array.isArray(prefetchedAllCountries) && prefetchedAllCountries.length > 0) {
+      const processed = prefetchedAllCountries.map((c, idx) => ({
+        ...c,
+        __displayName: getDisplayName(c),
+        continent: normalizeContinent(c.__continent || c.continent || getContinentFromOrder(idx + 1)),
+        __fileOrder: idx + 1,
+        __loaded: true,
+      }));
+      cachedAllCountries = processed;
+      setAllCountries(processed);
+    } else {
+      fetch('/api/country-data?all=true')
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data) && data.length > 0) {
+            const processed = data.map((c, idx) => ({
+              ...c,
+              __displayName: getDisplayName(c),
+              continent: normalizeContinent(c.__continent || c.continent || getContinentFromOrder(idx + 1)),
+              __fileOrder: idx + 1,
+              __loaded: true,
+            }));
+            cachedAllCountries = processed;
+            setAllCountries(processed);
           }
-        } else {
-          cachedDataVersion = version;
-        }
-      } catch (e) {
-        // abaikan error polling
-      }
-    };
-    poll();
-    const interval = setInterval(poll, 3000);
-    return () => clearInterval(interval);
-  }, []);
+        })
+        .catch((err) => console.warn('PDBModal: failed to fetch all country data', err));
+    }
+  }, [prefetchedAllCountries]);
 
   const handleSort = (key: string) => {
     setSortConfig((prev) => ({
@@ -189,16 +274,17 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
       const targetDetail = (isPlayerCountry && playerCountryDetail) ? playerCountryDetail : country;
       const isLoaded = country.__loaded === true || isPlayerCountry;
 
+      const emasCount = typeof targetDetail?.emas === 'number' ? targetDetail.emas : 0;
+
       const tax = isLoaded ? computeTaxValue(targetDetail) : 0;
-      const gold = isLoaded ? computeGoldValue(targetDetail) : 0;
+      const gold = isLoaded ? computeGoldValue({ ...targetDetail, emas: emasCount }) : 0;
       const pdb = tax + gold; // Total PDB Bruto = Pajak + Produksi Emas
       const dewanKabinetCost = isLoaded ? computeMinistryCost(targetDetail) : 0;
       const subsidyCost = isLoaded ? computeSubsidyCost(targetDetail) : 0;
       const totalPengeluaran = dewanKabinetCost + subsidyCost;
       const net = pdb - totalPengeluaran;
       const continent = normalizeContinent(targetDetail.continent || country.continent || getContinentFromOrder(country.__fileOrder));
-      const hasEkstraksiData = targetDetail.uranium !== undefined || targetDetail.batu_bara !== undefined || targetDetail.minyak_bumi !== undefined || targetDetail.gas_alam !== undefined;
-      const buildingCount = isLoaded && hasEkstraksiData && typeof targetDetail.emas === 'number' ? targetDetail.emas : 0;
+      const buildingCount = isLoaded ? emasCount : 0;
       const relation = isLoaded ? getRelationValue(playerCountryName, name) : 50;
 
       return {
@@ -207,11 +293,13 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
         relation,
         tax,
         gold,
+        buildingCount,
         pdb,
-        ministry: totalPengeluaran,
+        subsidyCost,
+        governmentCost: dewanKabinetCost,
+        totalPengeluaran,
         net,
         order: country.__fileOrder,
-        buildingCount,
         isLoaded,
       };
     });
@@ -256,7 +344,7 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
                 : 'bg-[#0A1A1A]'
           }
         >
-          <td className="px-1.5 sm:px-2 lg:px-2.5 py-1.5 lg:py-2 text-[10px] sm:text-[11px] lg:text-xs font-bold text-[#E0E0E0] border-b border-[#00FFAA]/10 truncate">
+          <td className="px-1.5 sm:px-2 lg:px-2 py-1.5 lg:py-2 text-[10px] sm:text-[11px] lg:text-xs font-bold text-[#E0E0E0] border-b border-[#00FFAA]/10 truncate">
             {isPlayer ? (
               <div className="flex items-center gap-1 text-[#00FFAA] font-black truncate">
                 <User className="w-3.5 h-3.5 text-[#00FFAA] flex-shrink-0" />
@@ -269,23 +357,23 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
               <span className="truncate block">{row.name}</span>
             )}
           </td>
-          <td className="px-1.5 sm:px-2 lg:px-2.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10 whitespace-nowrap">
-            {row.isLoaded ? formatNumber(row.tax) : renderSkeleton("w-14")}
+          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10 whitespace-nowrap">
+            {row.isLoaded ? formatNumber(row.tax) : renderSkeleton("w-12")}
           </td>
-          <td className="px-1.5 sm:px-2 lg:px-2.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10 whitespace-nowrap">
-            {row.isLoaded ? (row.buildingCount > 0 ? row.buildingCount : '-') : renderSkeleton("w-8")}
+          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-amber-300 border-b border-[#00FFAA]/10 whitespace-nowrap">
+            {row.isLoaded ? (row.buildingCount > 0 ? `${row.buildingCount} (${formatNumber(row.gold)} EM)` : '0') : renderSkeleton("w-16")}
           </td>
-          <td className="px-1.5 sm:px-2 lg:px-2.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10 whitespace-nowrap">
-            {row.isLoaded ? formatNumber(row.gold) : renderSkeleton("w-14")}
+          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10 whitespace-nowrap">
+            {row.isLoaded ? formatNumber(row.governmentCost) : renderSkeleton("w-12")}
           </td>
-          <td className="px-1.5 sm:px-2 lg:px-2.5 py-1.5 lg:py-2 text-right font-black text-[10px] sm:text-[11px] lg:text-xs text-[#00FFAA] border-b border-[#00FFAA]/10 whitespace-nowrap">
-            {row.isLoaded ? formatNumber(row.pdb) : renderSkeleton("w-16")}
+          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-amber-400 border-b border-[#00FFAA]/10 whitespace-nowrap">
+            {row.isLoaded ? formatNumber(row.subsidyCost) : renderSkeleton("w-12")}
           </td>
-          <td className="px-1.5 sm:px-2 lg:px-2.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-[#E0E0E0] border-b border-[#00FFAA]/10 whitespace-nowrap">
-            {row.isLoaded ? formatNumber(row.ministry) : renderSkeleton("w-14")}
+          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-rose-300 border-b border-[#00FFAA]/10 whitespace-nowrap">
+            {row.isLoaded ? formatNumber(row.totalPengeluaran) : renderSkeleton("w-12")}
           </td>
-          <td className={`px-1.5 sm:px-2 lg:px-2.5 py-1.5 lg:py-2 text-right font-black text-[10px] sm:text-[11px] lg:text-xs border-b border-[#00FFAA]/10 whitespace-nowrap ${row.isLoaded ? (row.net >= 0 ? 'text-emerald-400' : 'text-rose-400') : ''}`}>
-            {row.isLoaded ? `${row.net >= 0 ? '+' : ''}${formatNumber(row.net)}` : renderSkeleton("w-16")}
+          <td className={`px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-black text-[10px] sm:text-[11px] lg:text-xs border-b border-[#00FFAA]/10 whitespace-nowrap ${row.isLoaded ? (row.net >= 0 ? 'text-emerald-400' : 'text-rose-400') : ''}`}>
+            {row.isLoaded ? `${row.net >= 0 ? '+' : ''}${formatNumber(row.net)}` : renderSkeleton("w-14")}
           </td>
         </tr>
       );
@@ -297,9 +385,9 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
       <div className="flex justify-between items-center gap-3 flex-shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider">
-            {isRefreshing ? 'Memperbarui data...' : 'Live update aktif'}
+            Data APBN Instan (207 Negara)
           </span>
-          <span className={`inline-block w-2 h-2 rounded-full ${isRefreshing ? 'bg-yellow-400 animate-ping' : 'bg-emerald-400'}`} />
+          <span className="inline-block w-2 h-2 rounded-full bg-emerald-400" />
         </div>
         <div className="relative">
           <input
@@ -318,13 +406,13 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
           <table className="w-full table-fixed text-xs text-left">
             <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/30 sticky top-0 z-10">
               <tr>
-                <th className="w-[20%] px-1 sm:px-2 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
-                <th className="w-[13%] px-1 sm:px-2 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('tax')}>Total Pajak{renderSortArrow('tax')}</th>
-                <th className="w-[14%] px-1 sm:px-2 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('buildingCount')}>Bangunan Emas{renderSortArrow('buildingCount')}</th>
-                <th className="w-[13%] px-1 sm:px-2 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('gold')}>Produksi Emas{renderSortArrow('gold')}</th>
-                <th className="w-[13%] px-1 sm:px-2 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('pdb')}>Total PDB{renderSortArrow('pdb')}</th>
-                <th className="w-[13%] px-1 sm:px-2 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('ministry')}>Pengeluaran{renderSortArrow('ministry')}</th>
-                <th className="w-[14%] px-1 sm:px-2 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('net')}>Netto APBN{renderSortArrow('net')}</th>
+                <th className="w-[20%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
+                <th className="w-[13%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('tax')}>Total Pajak{renderSortArrow('tax')}</th>
+                <th className="w-[18%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('gold')}>Emas{renderSortArrow('gold')}</th>
+                <th className="w-[13%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('governmentCost')}>Pemerintahan{renderSortArrow('governmentCost')}</th>
+                <th className="w-[12%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('subsidyCost')}>Subsidi{renderSortArrow('subsidyCost')}</th>
+                <th className="w-[12%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('totalPengeluaran')}>Pengeluaran{renderSortArrow('totalPengeluaran')}</th>
+                <th className="w-[12%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('net')}>Netto APBN{renderSortArrow('net')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#00FFAA]/10">{renderAllRows()}</tbody>
@@ -336,7 +424,7 @@ function AllCountriesGDP({ playerCountryName, playerCountryDetail }: { playerCou
 }
 
 // --- KOMPONEN UTAMA PDB MODAL ---
-export default function PDBModal({ isOpen, onClose, countryDetail, selectedCountry }: ModalProps) {
+export default function PDBModal({ isOpen, onClose, countryDetail, selectedCountry, prefetchedAllCountries }: ModalProps) {
   if (!isOpen) return null;
   const countryName = selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || "Indonesia";
 
@@ -367,7 +455,7 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
           </p>
 
           {/* --- DATA APBN SEMUA NEGARA YANG DIPINDAHKAN --- */}
-          <AllCountriesGDP playerCountryName={countryName} playerCountryDetail={countryDetail} />
+          <AllCountriesGDP playerCountryName={countryName} playerCountryDetail={countryDetail} prefetchedAllCountries={prefetchedAllCountries} />
         </div>
       </div>
     </div>
