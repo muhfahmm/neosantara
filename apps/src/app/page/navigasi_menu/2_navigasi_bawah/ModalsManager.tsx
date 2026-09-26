@@ -109,8 +109,9 @@ function ModalsManager({
 }: ModalsManagerProps) {
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [prefetchedAllCountries, setPrefetchedAllCountries] = useState<any[] | null>(null);
-  const [armadaInitialTab, setArmadaInitialTab] = useState<'aktif' | 'infrastruktur' | 'polisi'>('aktif');
+  const [armadaInitialTab, setArmadaInitialTab] = useState<'aktif' | 'infrastruktur'>('aktif');
   const [tempatUmumInitialTab, setTempatUmumInitialTab] = useState<string>('infrastruktur');
+  const [hunianInitialTab, setHunianInitialTab] = useState<string>('rumah_subsidi');
 
   useEffect(() => {
     fetchBuildingMetadata()
@@ -238,6 +239,87 @@ function ModalsManager({
           setCountryDetail={setCountryDetail}
           metadata={metadata}
           prefetchedAllCountries={prefetchedAllCountries || undefined}
+          onNavigateToMenu={(category, itemKey) => {
+            if (category === "produksi") {
+              const findCategoryTab = () => {
+                const PRODUKSI_TABS: Record<string, string[]> = {
+                  kelistrikan: [
+                    "pembangkit_listrik_tenaga_nuklir",
+                    "pembangkit_listrik_tenaga_air",
+                    "pembangkit_listrik_tenaga_surya",
+                    "pembangkit_listrik_tenaga_uap",
+                    "pembangkit_listrik_tenaga_gas",
+                    "pembangkit_listrik_tenaga_angin",
+                  ],
+                  mineral: [
+                    "emas", "uranium", "batu_bara", "minyak_bumi", "gas_alam", "garam",
+                    "litium", "logam_tanah_jarang", "bijih_besi"
+                  ],
+                  manufaktur: [
+                    "pabrik_semikonduktor", "pabrik_mesin_mobil", "pabrik_mesin_motor", "semen_beton", "kayu"
+                  ],
+                  peternakan: [
+                    "ayam_unggas", "sapi_perah", "sapi_potong", "domba_kambing"
+                  ],
+                  agrikultur: [
+                    "padi", "gandum", "jagung", "sayur", "umbi", "kedelai", "kelapa_sawit", 
+                    "kopi", "teh", "kakao", "tebu", "karet"
+                  ],
+                  perikanan: [
+                    "udang", "mutiara", "ikan"
+                  ],
+                  "olahan pangan": [
+                    "air_mineral", "gula", "roti", "pengolahan_daging", "mie_instan", "minyak_goreng", "susu", "beras"
+                  ]
+                };
+
+                for (const [tabId, keys] of Object.entries(PRODUKSI_TABS)) {
+                  if (keys.includes(itemKey)) return tabId;
+                }
+
+                for (const mKey of Object.keys(metadata)) {
+                  const bMeta = metadata[mKey];
+                  const dataKey = bMeta?.dataKey || mKey.replace(/^\d+_/, "");
+                  if (dataKey === itemKey) {
+                    if (mKey.includes("1_kelistrikan") || mKey.includes("1_sektor_listrik")) return "kelistrikan";
+                    if (mKey.includes("2_sektor_mineral") || mKey.includes("2_mineral")) return "mineral";
+                    if (mKey.includes("3_sektor_manufaktur") || mKey.includes("3_manufaktur")) return "manufaktur";
+                    if (mKey.includes("4_sektor_peternakan") || mKey.includes("4_peternakan")) return "peternakan";
+                    if (mKey.includes("5_sektor_agrikultur") || mKey.includes("5_agrikultur")) return "agrikultur";
+                    if (mKey.includes("6_sektor_perikanan") || mKey.includes("6_perikanan")) return "perikanan";
+                    if (mKey.includes("7_sektor_olahan_pangan") || mKey.includes("7_olahan_pangan")) return "olahan pangan";
+                  }
+                }
+                return "kelistrikan";
+              };
+              const tab = findCategoryTab();
+              setActiveMenu("Menu:Produksi");
+              setProductionDeepLink?.({ tab, key: itemKey });
+            } else if (category === "tempat_umum") {
+              const findTempatUmumTab = () => {
+                const groups = [
+                  { id: "infrastruktur", keys: ["jalur_sepeda", "jalan_raya", "terminal_bus", "stasiun_kereta_api", "stasiun_kereta", "kereta_bawah_tanah", "pelabuhan", "bandara", "helipad", "jembatan_nasional", "pembangkit_listrik"] },
+                  { id: "pendidikan", keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan", "literasi"] },
+                  { id: "kesehatan", keys: ["rumah_sakit_besar", "rumah_sakit_kecil", "rumah_sakit", "pusat_diagnostik", "puskesmas", "klinik", "harapan_hidup", "indeks_kesehatan"] },
+                  { id: "penegakan_hukum", keys: ["pusat_bantuan_hukum", "pengadilan", "kejaksaan", "pos_polisi", "kantor_polisi", "armada_mobil_polisi", "akademi_polisi", "lapas", "indeks_korupsi", "indeks_keamanan"] },
+                  { id: "olahraga_hiburan", keys: ["kolam_renang", "sirkuit_balap", "stadion", "stadion_internasional", "gym", "golf", "esports", "gokart", "bioskop", "teater", "taman_kota"] },
+                  { id: "komersial", keys: ["mall", "pusat_perbelanjaan", "hotel", "pasar_tradisional", "pusat_grosir_tekstil"] },
+                ];
+                const matched = groups.find((g) => g.keys.includes(itemKey));
+                return matched ? matched.id : "infrastruktur";
+              };
+              const tabId = findTempatUmumTab();
+              setTempatUmumInitialTab(tabId);
+              setTempatUmumDeepLink?.(tabId);
+              setActiveMenu("Menu:TempatUmum");
+            } else if (category === "hunian") {
+              setHunianInitialTab(itemKey || "rumah_subsidi");
+              setActiveMenu("Menu:HunianPermukiman");
+            } else if (category === "pertahanan") {
+              setArmadaInitialTab("infrastruktur");
+              setActiveMenu("Menu:Armada");
+            }
+          }}
         />
       );
     case "Menu:IndustriPangan":
@@ -381,6 +463,7 @@ function ModalsManager({
           countryDetail={countryDetail}
           setCountryDetail={setCountryDetail}
           currentDate={currentDate}
+          initialTab={hunianInitialTab}
           onGotoProduction={(tab, key) => {
             setActiveMenu("Menu:Produksi");
             setProductionDeepLink?.({ tab, key });

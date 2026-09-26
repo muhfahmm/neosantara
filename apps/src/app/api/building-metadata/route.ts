@@ -39,7 +39,6 @@ async function loadJsonCategoryFiles(baseDir: string): Promise<Record<string, an
     '1_pembangunan/2_tempat_umum/2_hunian_permukiman/metadata_hunian.json',
     // Pertahanan (Defense)
     '2_pertahanan/1_armada_militer/metadata_armada_militer.json',
-    '2_pertahanan/2_armada_polisi/metadata_armada_polisi.json',
     '2_pertahanan/3_manajemen_pertahanan/metadata_manajemen.json',
     '2_pertahanan/1_serang_negara/metadata_serang_negara.json',
     '2_pertahanan/2_intelijen/metadata_intelijen.json',

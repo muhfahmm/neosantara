@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { X, ShieldAlert, Swords, Building2, Shield, TrendingUp, TrendingDown } from "lucide-react";
+import { X, ShieldAlert, Swords, Building2, TrendingUp, TrendingDown } from "lucide-react";
 import ArmadaAktif from "./1_tab_menu/1_armada_aktif";
 import InfrastrukturMiliter from "./1_tab_menu/2_infrastruktur_militer";
-import ArmadaPolisi from "./1_tab_menu/3_armada_polisi";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 
 interface ModalProps {
@@ -12,16 +11,16 @@ interface ModalProps {
   setCountryDetail: (detail: any) => void;
   onGotoProduction?: (tab: string, key: string) => void;
   currentDate?: string | Date;
-  initialTab?: 'aktif' | 'infrastruktur' | 'polisi';
+  initialTab?: 'aktif' | 'infrastruktur';
 }
 
 export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountryDetail, onGotoProduction, currentDate, initialTab = 'aktif' }: ModalProps) {
-  const [activeTab, setActiveTab] = useState<'aktif' | 'infrastruktur' | 'polisi'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'aktif' | 'infrastruktur'>(initialTab === 'polisi' as any ? 'aktif' : initialTab);
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   
   useEffect(() => {
     if (isOpen && initialTab) {
-      setActiveTab(initialTab);
+      setActiveTab(initialTab === 'polisi' as any ? 'aktif' : initialTab);
     }
   }, [isOpen, initialTab]);
 
@@ -86,12 +85,6 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
     hangar_tank: 0.5,
     pangkalan_udara: 0.5,
     pangkalan_laut: 0.5,
-    markas_besar_polri: 1,
-    akademi_kepolisian: 0.8,
-    pusat_forensik: 0.5,
-    kantor_polisi: 0.5,
-    pos_polisi: 0.1,
-    network_cctv: 0.1,
     rumah_subsidi: 0.0009,
     apartemen: 0.0022,
     mansion: 0.0055,
@@ -223,27 +216,12 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
                 <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate">Infrastruktur</span>
               </div>
             </button>
-
-            <button 
-              onClick={() => setActiveTab("polisi")} 
-              className={`flex items-center justify-between w-full px-2.5 py-2 sm:px-3 sm:py-2.5 rounded-xl border text-left transition-all cursor-pointer ${
-                activeTab === "polisi" 
-                  ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md" 
-                  : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate">Armada Polisi</span>
-              </div>
-            </button>
           </div>
 
           {/* MAIN TAB CONTENT */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-[#0F2424] custom-scrollbar space-y-4">
             {activeTab === "aktif" && <ArmadaAktif countryDetail={countryDetail} setCountryDetail={setCountryDetail} onCapacityFull={handleNavigateToInfra} onGotoProduction={onGotoProduction} currentDate={currentDate} />}
             {activeTab === "infrastruktur" && <InfrastrukturMiliter countryDetail={countryDetail} setCountryDetail={setCountryDetail} highlightKey={highlightInfraKey} onGotoProduction={onGotoProduction} ongoingConstructions={countryDetail?.ongoingConstructions || []} currentDate={currentDate} />}
-            {activeTab === "polisi" && <ArmadaPolisi countryDetail={countryDetail} setCountryDetail={setCountryDetail} />}
           </div>
         </div>
       </div>

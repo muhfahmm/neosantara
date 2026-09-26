@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
+import { getMaterialStock } from "../../5_pembangunan/build_logic/build_logic";
+import { getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -22,6 +24,7 @@ interface ModalProps {
   setCountryDetail: (detail: any) => void;
   metadata: any;
   prefetchedAllCountries?: any[];
+  onNavigateToMenu?: (category: string, itemKey: string) => void;
 }
 
 interface SortConfig {
@@ -38,7 +41,7 @@ const SOURCE_ORDER = [
   "pembangkit_listrik_tenaga_angin"
 ];
 
-export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCountryDetail, metadata, prefetchedAllCountries }: ModalProps) {
+export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCountryDetail, metadata, prefetchedAllCountries, onNavigateToMenu }: ModalProps) {
   const [activeTab, setActiveTab] = useState<"user" | "global">("user");
   const [allCountries, setAllCountries] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -79,24 +82,38 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     return undefined;
   };
 
-  const anggaran = countryDetail?.anggaran || 0;
 
   const powerSources = SOURCE_ORDER
     .map((key) => {
       const bMeta = findMeta(key);
       const count = Number(countryDetail?.[key]) || 0;
       const unitProduction = Number(bMeta?.produksi) || 0;
+
+      const fuelReqs = getKelistrikanFuelRequirements(key);
+      let isFuelDeficit = false;
+      if (count > 0 && fuelReqs.length > 0) {
+        for (const req of fuelReqs) {
+          const stock = getMaterialStock(countryDetail, req.resourceKey);
+          const totalNeeded = req.amount * count;
+          if (stock < totalNeeded) {
+            isFuelDeficit = true;
+            break;
+          }
+        }
+      }
+
       return {
         key,
         label: bMeta?.label || key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
         desc: bMeta?.desc || "Sumber energi listrik nasional.",
         value: count,
         unitProduction: unitProduction,
+        isFuelDeficit,
       };
     })
     .filter((source) => source.value > 0 || source.unitProduction > 0);
 
-  const totalCapacityMW = powerSources.reduce((sum, source) => sum + (source.value * source.unitProduction), 0);
+  const totalCapacityMW = powerSources.reduce((sum, source) => sum + (source.isFuelDeficit ? 0 : (source.value * source.unitProduction)), 0);
   const totalSources = powerSources.filter((source) => source.value > 0).length;
 
   const calculateBuildingElectricityConsumption = (country: any) => {
@@ -157,11 +174,37 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
   // --- Logika global (sama) ---
   const calculateCountryElectricity = (country: any) => {
+    const isUser = Boolean(
+      userCountryName && (
+        (country?.name_id && country.name_id.toLowerCase().trim() === userCountryName) ||
+        (country?.name_en && country.name_en.toLowerCase().trim() === userCountryName) ||
+        (country?.country && country.country.toLowerCase().trim() === userCountryName) ||
+        (country?.nama && country.nama.toLowerCase().trim() === userCountryName)
+      )
+    );
+
     const totalProduction = SOURCE_ORDER.reduce((sum, key) => {
       const bMeta = findMeta(key);
       const count = Number(country?.[key]) || 0;
       const unitProduction = Number(bMeta?.produksi) || 0;
-      const result = sum + (count * unitProduction);
+      
+      let isFuelDeficit = false;
+      if (isUser && count > 0) {
+        const fuelReqs = getKelistrikanFuelRequirements(key);
+        if (fuelReqs.length > 0) {
+          for (const req of fuelReqs) {
+            const stock = getMaterialStock(countryDetail, req.resourceKey);
+            const totalNeeded = req.amount * count;
+            if (stock < totalNeeded) {
+              isFuelDeficit = true;
+              break;
+            }
+          }
+        }
+      }
+
+      const effectiveProd = isFuelDeficit ? 0 : (count * unitProduction);
+      const result = sum + effectiveProd;
       return isNaN(result) ? sum : result;
     }, 0);
 
@@ -354,10 +397,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         {balanceMW >= 0 ? '+' : '-'}{Math.abs(balanceMW).toLocaleString('id-ID')} MW
                       </p>
                     </div>
-                    <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-2xl">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Kas Anggaran Negara</p>
-                      <p className="text-2xl font-black text-[#00FFAA] mt-3">{anggaran.toLocaleString('id-ID')}</p>
-                    </div>
                   </div>
 
                   <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -392,8 +431,14 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                           <p className="text-[10px] text-[#6B8A8A]">{source.desc}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-black text-[#00FFAA]">{(source.value * source.unitProduction).toLocaleString('id-ID')} MW</p>
-                          <p className="text-[10px] text-[#6B8A8A]">{source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}</p>
+                          <p className={`text-sm font-black ${source.isFuelDeficit ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
+                            {(source.value * source.unitProduction).toLocaleString('id-ID')} MW
+                          </p>
+                          {source.isFuelDeficit ? (
+                            <p className="text-[9px] font-bold text-rose-400 leading-tight">(bahan bakar defisit)</p>
+                          ) : (
+                            <p className="text-[10px] text-[#6B8A8A]">{source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}</p>
+                          )}
                         </div>
                       </div>
                     )) : (
@@ -574,6 +619,11 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         countryDetail={countryDetail}
         metadata={metadata}
         estimatedConsumptionMW={estimatedConsumptionMW}
+        onNavigateToMenu={(category, itemKey) => {
+          setIsDetailKonsumsiOpen(false);
+          onClose();
+          onNavigateToMenu?.(category, itemKey);
+        }}
       />
     </div>
   );

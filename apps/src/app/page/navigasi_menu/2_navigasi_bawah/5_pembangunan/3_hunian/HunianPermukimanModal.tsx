@@ -20,6 +20,7 @@ interface ModalProps {
   setCountryDetail: (detail: any) => void;
   onGotoProduction?: (tab: string, key: string) => void;
   currentDate?: string | Date;
+  initialTab?: string;
 }
 
 interface MaterialRequirement {
@@ -87,8 +88,15 @@ export default function HunianPermukimanModal({
   setCountryDetail,
   onGotoProduction,
   currentDate,
+  initialTab,
 }: ModalProps) {
-  const [activeTab, setActiveTab] = useState("rumah_subsidi");
+  const [activeTab, setActiveTab] = useState(initialTab || "rumah_subsidi");
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [selectedBuilding, setSelectedBuilding] = useState<{ key: string; label: string } | null>(null);
   const [initialBuildQty, setInitialBuildQty] = useState<number>(1);

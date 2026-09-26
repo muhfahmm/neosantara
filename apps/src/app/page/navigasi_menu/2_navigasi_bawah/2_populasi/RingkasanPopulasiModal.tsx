@@ -48,7 +48,7 @@ interface RingkasanPopulasiModalProps {
   countryDetail: any;
   selectedCountry: any;
   setActiveMenu?: (menu: string) => void;
-  onOpenArmadaTab?: (tab: 'aktif' | 'infrastruktur' | 'polisi') => void;
+  onOpenArmadaTab?: (tab: 'aktif' | 'infrastruktur') => void;
   onOpenTempatUmum?: (tab: string) => void;
   initialOpenKesejahteraan?: boolean;
   initialKesejahteraanTab?: "statistik" | "naikkan";
@@ -350,7 +350,11 @@ export default function RingkasanPopulasiModal({
           setActiveMenu?.("Menu:IndustriPangan");
         }}
         onOpenArmada={(tabId) => {
-          onOpenArmadaTab?.(tabId);
+          if (tabId === 'aktif' || tabId === 'infrastruktur') {
+            onOpenArmadaTab?.(tabId);
+          } else {
+            onOpenArmadaTab?.('aktif');
+          }
         }}
       />
 

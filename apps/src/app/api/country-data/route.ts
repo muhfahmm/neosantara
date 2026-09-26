@@ -60,7 +60,6 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
 
     // 4. Pertahanan Tables
     const militer = await queryDb<any[]>('SELECT * FROM database_armada_militer').catch(() => []);
-    const polisi = await queryDb<any[]>('SELECT * FROM database_armada_polisi').catch(() => []);
     const pertahanan = await queryDb<any[]>('SELECT * FROM database_manajemen_pertahanan').catch(() => []);
 
     // Helper map build function
@@ -96,7 +95,6 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
     const hunMap = makeMap(hunian);
 
     const militerMap = makeMap(militer);
-    const polisiMap = makeMap(polisi);
     const pertahananMap = makeMap(pertahanan);
 
     const mergedList: any[] = [];
@@ -131,7 +129,6 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
       const hun = hunMap.get(id) || {};
 
       const mil = militerMap.get(id) || {};
-      const pol = polisiMap.get(id) || {};
       const pth = pertahananMap.get(id) || {};
 
       // Cabinet Level fields
@@ -173,7 +170,6 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
       extractNums(hib);
       extractNums(hun);
       extractNums(mil);
-      extractNums(pol);
       extractNums(pth);
 
       const countryObj: any = {

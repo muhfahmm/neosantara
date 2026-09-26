@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { X, Zap, Activity, Building2, Home, Factory, Search, ChevronRight, ShieldAlert, AlertTriangle } from "lucide-react";
+import { X, Zap, Activity, Building2, Home, Factory, Search, Shield, ShieldAlert, AlertTriangle } from "lucide-react";
 
 interface DetailKonsumsiTerestimasiModalProps {
   isOpen: boolean;
@@ -9,6 +9,7 @@ interface DetailKonsumsiTerestimasiModalProps {
   countryDetail: any;
   metadata?: Record<string, any>;
   estimatedConsumptionMW: number;
+  onNavigateToMenu?: (category: string, itemKey: string) => void;
 }
 
 export default function DetailKonsumsiTerestimasiModal({
@@ -17,8 +18,9 @@ export default function DetailKonsumsiTerestimasiModal({
   countryDetail,
   metadata = {},
   estimatedConsumptionMW,
+  onNavigateToMenu,
 }: DetailKonsumsiTerestimasiModalProps) {
-  const [activeTab, setActiveTab] = useState<"semua" | "produksi" | "tempat_umum" | "hunian">("semua");
+  const [activeTab, setActiveTab] = useState<"semua" | "produksi" | "tempat_umum" | "hunian" | "pertahanan">("semua");
   const [searchQuery, setSearchQuery] = useState("");
 
   // Utility findMeta
@@ -111,7 +113,39 @@ export default function DetailKonsumsiTerestimasiModal({
 
   const totalTempatUmumConsumption = tempatUmumBreakdown.reduce((sum, t) => sum + t.total, 0);
 
-  // 3. Kalkulasi Sektor Produksi & Industri
+  // 3. Kalkulasi Sektor Pertahanan & Keamanan
+  const pertahananKeys = [
+    { key: "barak", label: "Barak Militer", defaultRate: 0.5, sector: "Militer & Pertahanan" },
+    { key: "gudang_senjata", label: "Gudang Senjata & Amunisi", defaultRate: 0.5, sector: "Militer & Pertahanan" },
+    { key: "hangar_tank", label: "Hangar Tank & Kendaraan Tempur", defaultRate: 0.5, sector: "Militer & Pertahanan" },
+    { key: "pangkalan_udara", label: "Pangkalan Angkatan Udara", defaultRate: 0.5, sector: "Militer & Pertahanan" },
+    { key: "pangkalan_laut", label: "Pangkalan Angkatan Laut", defaultRate: 0.5, sector: "Militer & Pertahanan" },
+    { key: "markas_komando", label: "Markas Besar Komando Militer", defaultRate: 0.5, sector: "Militer & Pertahanan" },
+    { key: "pos_perbatasan", label: "Pos Pengamanan Perbatasan", defaultRate: 0.2, sector: "Militer & Pertahanan" },
+    { key: "sistem_radar", label: "Stasiun Radar Pertahanan Udara", defaultRate: 0.8, sector: "Militer & Pertahanan" },
+  ];
+
+  const pertahananBreakdown = pertahananKeys.map((item) => {
+    let count = Number(countryDetail?.[item.key]) || 0;
+    if (count <= 0 && countryDetail?.pertahanan?.[item.key] !== undefined) {
+      count = Number(countryDetail.pertahanan[item.key]) || 0;
+    }
+    const bMeta = findMeta(item.key);
+    const rate = Number(bMeta?.konsumsi_listrik) || item.defaultRate;
+    const total = count * rate;
+    return {
+      key: item.key,
+      label: item.label,
+      sector: item.sector,
+      count,
+      rate,
+      total,
+    };
+  });
+
+  const totalPertahananConsumption = pertahananBreakdown.reduce((sum, p) => sum + p.total, 0);
+
+  // 4. Kalkulasi Sektor Produksi & Industri
   const produksiBreakdown = useMemo(() => {
     if (!metadata) return [];
     const list: Array<{ key: string; label: string; sector: string; count: number; rate: number; total: number }> = [];
@@ -122,8 +156,9 @@ export default function DetailKonsumsiTerestimasiModal({
       if (rate <= 0) return;
 
       const dataKey = bMeta?.dataKey || mKey.replace(/^\d+_/, "");
-      // Hindari duplikasi yang sudah ada di hunian/tempat umum
+      // Hindari duplikasi yang sudah ada di hunian/tempat umum/pertahanan
       if (hunianKeys.some((h) => h.key === dataKey)) return;
+      if (pertahananKeys.some((p) => p.key === dataKey)) return;
 
       const count = Number(countryDetail?.[dataKey]) || Number(countryDetail?.[mKey]) || 0;
       const label = bMeta?.nama_bangunan || bMeta?.label || dataKey.replace(/_/g, " ").toUpperCase();
@@ -152,8 +187,9 @@ export default function DetailKonsumsiTerestimasiModal({
       ...produksiBreakdown.map((i) => ({ ...i, category: "produksi" })),
       ...tempatUmumBreakdown.map((i) => ({ ...i, category: "tempat_umum" })),
       ...hunianBreakdown.map((i) => ({ ...i, category: "hunian" })),
+      ...pertahananBreakdown.map((i) => ({ ...i, category: "pertahanan" })),
     ];
-  }, [produksiBreakdown, tempatUmumBreakdown, hunianBreakdown]);
+  }, [produksiBreakdown, tempatUmumBreakdown, hunianBreakdown, pertahananBreakdown]);
 
   const filteredItems = useMemo(() => {
     return allItems.filter((item) => {
@@ -164,6 +200,8 @@ export default function DetailKonsumsiTerestimasiModal({
       return matchTab && matchQuery && (item.count > 0 || item.total > 0);
     });
   }, [allItems, activeTab, searchQuery]);
+
+  const totalAllBreakdownConsumption = totalProduksiConsumption + totalTempatUmumConsumption + totalPertahananConsumption + totalHunianConsumption;
 
   if (!isOpen) return null;
 
@@ -196,59 +234,73 @@ export default function DetailKonsumsiTerestimasiModal({
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A]/90 relative z-10 custom-scrollbar space-y-6">
 
           {/* CARD SUMMARY GRID */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             
             {/* Total Konsumsi */}
-            <div className="bg-rose-950/40 border border-rose-500/40 p-4 rounded-xl flex flex-col justify-between">
+            <div className="bg-rose-950/40 border border-rose-500/40 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-wider text-rose-400">Total Konsumsi Terestimasi</p>
-                <p className="text-xl sm:text-2xl font-black text-rose-400 mt-1 break-words">
-                  {estimatedConsumptionMW.toLocaleString("id-ID")} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
+                <p className="text-[9px] font-black uppercase tracking-wider text-rose-400">Total Konsumsi Terestimasi</p>
+                <p className="text-lg sm:text-xl font-black text-rose-400 mt-1 break-words">
+                  {totalAllBreakdownConsumption.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-rose-300/70 mt-2 font-medium">Beban energi nasional secara keseluruhan</p>
+              <p className="text-[9px] text-rose-300/70 mt-1.5 font-medium">Beban energi nasional</p>
             </div>
 
             {/* Sektor Produksi */}
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl flex flex-col justify-between">
+            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-1.5 mb-1">
+                <div className="flex items-center gap-1 mb-1">
                   <Factory className="w-3.5 h-3.5 text-[#00FFAA]" />
-                  <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">Sektor Produksi & Tambang</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">Produksi & Tambang</p>
                 </div>
-                <p className="text-lg sm:text-xl font-black text-[#00FFAA]">
+                <p className="text-base sm:text-lg font-black text-[#00FFAA]">
                   {totalProduksiConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-[#6B8A8A] mt-2 font-medium">{produksiBreakdown.filter(p => p.count > 0).length} jenis industri aktif</p>
+              <p className="text-[9px] text-[#6B8A8A] mt-1.5 font-medium">{produksiBreakdown.filter(p => p.count > 0).length} jenis industri</p>
             </div>
 
             {/* Sektor Tempat Umum */}
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl flex flex-col justify-between">
+            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-1.5 mb-1">
+                <div className="flex items-center gap-1 mb-1">
                   <Building2 className="w-3.5 h-3.5 text-[#00FFAA]" />
-                  <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">Tempat Umum & Layanan</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">Tempat Umum</p>
                 </div>
-                <p className="text-lg sm:text-xl font-black text-[#00FFAA]">
+                <p className="text-base sm:text-lg font-black text-[#00FFAA]">
                   {totalTempatUmumConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-[#6B8A8A] mt-2 font-medium">{tempatUmumBreakdown.filter(t => t.count > 0).length} fasilitas publik terdaftar</p>
+              <p className="text-[9px] text-[#6B8A8A] mt-1.5 font-medium">{tempatUmumBreakdown.filter(t => t.count > 0).length} fasilitas publik</p>
+            </div>
+
+            {/* Sektor Pertahanan & Keamanan */}
+            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3.5 rounded-xl flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-1 mb-1">
+                  <Shield className="w-3.5 h-3.5 text-[#00FFAA]" />
+                  <p className="text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">Pertahanan & Keamanan</p>
+                </div>
+                <p className="text-base sm:text-lg font-black text-[#00FFAA]">
+                  {totalPertahananConsumption.toLocaleString("id-ID", { maximumFractionDigits: 1 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
+                </p>
+              </div>
+              <p className="text-[9px] text-[#6B8A8A] mt-1.5 font-medium">{pertahananBreakdown.filter(p => p.count > 0).length} pangkalan & infrastruktur</p>
             </div>
 
             {/* Sektor Hunian */}
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl flex flex-col justify-between">
+            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3.5 rounded-xl flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-1.5 mb-1">
+                <div className="flex items-center gap-1 mb-1">
                   <Home className="w-3.5 h-3.5 text-[#00FFAA]" />
-                  <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">Hunian & Permukiman</p>
+                  <p className="text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">Hunian & Permukiman</p>
                 </div>
-                <p className="text-lg sm:text-xl font-black text-[#00FFAA]">
+                <p className="text-base sm:text-lg font-black text-[#00FFAA]">
                   {totalHunianConsumption.toLocaleString("id-ID", { maximumFractionDigits: 2 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
                 </p>
               </div>
-              <p className="text-[9px] text-[#6B8A8A] mt-2 font-medium">Beban kelistrikan rumah tangga & hunian</p>
+              <p className="text-[9px] text-[#6B8A8A] mt-1.5 font-medium">Beban rumah tangga</p>
             </div>
 
           </div>
@@ -259,7 +311,7 @@ export default function DetailKonsumsiTerestimasiModal({
             <div className="flex items-center gap-1 overflow-x-auto custom-scrollbar pb-1 sm:pb-0">
               <button
                 onClick={() => setActiveTab("semua")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === "semua"
                     ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
                     : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
@@ -269,17 +321,17 @@ export default function DetailKonsumsiTerestimasiModal({
               </button>
               <button
                 onClick={() => setActiveTab("produksi")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === "produksi"
                     ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
                     : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
                 }`}
               >
-                Produksi & Manufaktur
+                Produksi
               </button>
               <button
                 onClick={() => setActiveTab("tempat_umum")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === "tempat_umum"
                     ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
                     : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
@@ -288,8 +340,18 @@ export default function DetailKonsumsiTerestimasiModal({
                 Tempat Umum
               </button>
               <button
+                onClick={() => setActiveTab("pertahanan")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
+                  activeTab === "pertahanan"
+                    ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
+                    : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
+                }`}
+              >
+                Pertahanan & Keamanan
+              </button>
+              <button
                 onClick={() => setActiveTab("hunian")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === "hunian"
                     ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
                     : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
@@ -300,7 +362,7 @@ export default function DetailKonsumsiTerestimasiModal({
             </div>
 
             {/* SEARCH BOX */}
-            <div className="relative min-w-[200px]">
+            <div className="relative min-w-[180px]">
               <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#6B8A8A]" />
               <input
                 type="text"
@@ -318,7 +380,8 @@ export default function DetailKonsumsiTerestimasiModal({
               filteredItems.map((item) => (
                 <div
                   key={`${item.category}-${item.key}`}
-                  className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3.5 rounded-xl flex flex-col justify-between hover:border-[#00FFAA]/50 transition-all"
+                  onClick={() => onNavigateToMenu?.(item.category, item.key)}
+                  className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3.5 rounded-xl flex flex-col justify-between hover:border-[#00FFAA] hover:bg-[#0F2424]/80 transition-all cursor-pointer group shadow-sm hover:shadow-[#00FFAA]/10"
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2 mb-1.5">
