@@ -3,6 +3,8 @@ import { X, ShieldAlert, Swords, Building2, TrendingUp, TrendingDown } from "luc
 import ArmadaAktif from "./1_tab_menu/1_armada_aktif";
 import InfrastrukturMiliter from "./1_tab_menu/2_infrastruktur_militer";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
+import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
+
 
 interface ModalProps {
   isOpen: boolean;
@@ -52,99 +54,12 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
     setHighlightInfraKey(infraKey);
   };
 
-  const ELECTRICITY_BUILDINGS_LIST = [
-    'pembangkit_listrik_tenaga_nuklir',
-    'pembangkit_listrik_tenaga_air',
-    'pembangkit_listrik_tenaga_surya',
-    'pembangkit_listrik_tenaga_uap',
-    'pembangkit_listrik_tenaga_gas',
-    'pembangkit_listrik_tenaga_angin',
-  ];
+  const { totalProductionMW, totalAllBreakdownConsumption } = useMemo(() => {
+    return getCountryConsumptionBreakdown(countryDetail, metadata);
+  }, [countryDetail, metadata]);
 
-  const findMeta = (key: string) => {
-    if (!metadata) return undefined;
-    if (metadata[key]) return metadata[key];
-    for (const k of Object.keys(metadata)) {
-      const entry = metadata[k];
-      if (!entry) continue;
-      if (entry.dataKey === key) return entry;
-      if (k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
-    }
-    return undefined;
-  };
+  const estimatedConsumption = Math.round(totalAllBreakdownConsumption);
 
-  const totalProductionMW = ELECTRICITY_BUILDINGS_LIST.reduce((sum, bKey) => {
-    const count = Number(countryDetail?.[bKey]) || 0;
-    const bMeta = findMeta(bKey);
-    const perUnit = Number(bMeta?.produksi || 0);
-    return sum + perUnit * count;
-  }, 0);
-
-  const DEFAULT_ELECTRICITY_CONSUMPTION: Record<string, number> = {
-    gudang_senjata: 0.5,
-    hangar_tank: 0.5,
-    pangkalan_udara: 0.5,
-    pangkalan_laut: 0.5,
-    rumah_subsidi: 0.0009,
-    apartemen: 0.0022,
-    mansion: 0.0055,
-  };
-
-  const totalBuildingElectricityConsumption = () => {
-    if (!countryDetail) return 0;
-    let total = 0;
-
-    if (metadata && Object.keys(metadata).length > 0) {
-      Object.keys(metadata).forEach((key) => {
-        const bMeta = metadata[key];
-        const konsumsi = Number(bMeta?.konsumsi_listrik) || 0;
-        if (konsumsi <= 0) return;
-
-        const possibleKeys = [
-          key,
-          bMeta?.dataKey,
-          key.replace(/^\d+_/, ''),
-          bMeta?.dataKey ? bMeta.dataKey.replace(/^\d+_/, '') : undefined,
-        ].filter(Boolean) as string[];
-
-        let count = 0;
-        for (const pKey of possibleKeys) {
-          if (countryDetail[pKey] !== undefined && countryDetail[pKey] !== null) {
-            count = Number(countryDetail[pKey]) || 0;
-            break;
-          } else if (countryDetail?.pertahanan?.[pKey] !== undefined && countryDetail?.pertahanan?.[pKey] !== null) {
-            count = Number(countryDetail.pertahanan[pKey]) || 0;
-            break;
-          }
-        }
-
-        if (count > 0) {
-          total += count * konsumsi;
-        }
-      });
-    }
-
-    if (total <= 0) {
-      Object.entries(DEFAULT_ELECTRICITY_CONSUMPTION).forEach(([hKey, defaultRate]) => {
-        const count = Number(countryDetail[hKey]) || Number(countryDetail?.pertahanan?.[hKey]) || 0;
-        if (count > 0) {
-          total += count * defaultRate;
-        }
-      });
-    }
-
-    return total;
-  };
-
-  const buildingCons = totalBuildingElectricityConsumption();
-  const estimatedConsumption = Math.max(
-    0,
-    Math.round(
-      buildingCons > 0
-        ? buildingCons
-        : totalProductionMW * 0.7
-    )
-  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">

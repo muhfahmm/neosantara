@@ -26,6 +26,9 @@ import * as olahanPanganRequirements from "./requirements_logic/1_produksi/7_ola
 import { getKelistrikanFuelRequirements } from "./requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 import KonfirmasiPembangunanModal from "./2_modals_konfirmasi_pembangunan/modalsKonfirmasiPembangunan";
 import { useMaterialProduction, getMaterialStock as getMaterialStockFromBuildLogic, deductBuildingMaterials } from "../build_logic/build_logic";
+import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
+
+
 
 interface MaterialRequirement {
   resourceKey: string;
@@ -468,42 +471,12 @@ export default function ProduksiModal({
   const activeSection = TABS.find((tab) => tab.id === activeTab) || TABS[0];
   const ComponentToRender = activeSection.component;
 
-  const totalProductionMW = ELECTRICITY_BUILDINGS_LIST.reduce((sum, bKey) => {
-    return sum + calculateProductionAmount(bKey);
-  }, 0);
+  const { totalProductionMW, totalAllBreakdownConsumption } = useMemo(() => {
+    return getCountryConsumptionBreakdown(countryDetail, metadata);
+  }, [countryDetail, metadata]);
 
-  const totalBuildingElectricityConsumption = useMemo(() => {
-    if (!metadata || !countryDetail) return 0;
-    let total = 0;
-    Object.keys(metadata).forEach((key) => {
-      const bMeta = metadata[key];
-      const konsumsi = Number(bMeta?.konsumsi_listrik) || 0;
-      if (konsumsi <= 0) return;
+  const estimatedConsumption = Math.round(totalAllBreakdownConsumption);
 
-      const possibleKeys = [
-        key,
-        bMeta?.dataKey,
-        key.replace(/^\d+_/, ''),
-        bMeta?.dataKey ? bMeta.dataKey.replace(/^\d+_/, '') : undefined,
-      ].filter(Boolean) as string[];
-
-      let count = 0;
-      for (const pKey of possibleKeys) {
-        if (countryDetail[pKey] !== undefined && countryDetail[pKey] !== null) {
-          count = Number(countryDetail[pKey]) || 0;
-          break;
-        }
-      }
-
-      if (count > 0) {
-        total += count * konsumsi;
-      }
-    });
-    return total;
-  }, [metadata, countryDetail]);
-
-  const populationDemand = 0;
-  const estimatedConsumption = Math.max(0, Math.round(totalBuildingElectricityConsumption > 0 ? totalBuildingElectricityConsumption + populationDemand : totalProductionMW * 0.7 + populationDemand));
 
   const ongoingConstructions = countryDetail?.ongoingConstructions || [];
 

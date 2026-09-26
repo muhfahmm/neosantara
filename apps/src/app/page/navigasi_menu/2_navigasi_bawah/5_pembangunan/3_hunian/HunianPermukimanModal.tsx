@@ -7,6 +7,14 @@ import { generateHunianAIAnalysis } from "../ai_suggestions/serviceAISuggestions
 import InfoBangunanModal from "./1_modals_info_bangunan/info_bangunan_modals";
 import KonfirmasiPembangunanModal from "./2_modals_konfirmasi_pembangunan/modalsKonfirmasiPembangunan";
 import { useMaterialProduction, getMaterialStock as getMaterialStockFromBuildLogic, deductBuildingMaterials } from "../build_logic/build_logic";
+import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
+
+const DEFAULT_ELECTRICITY_CONSUMPTION: Record<string, number> = {
+  rumah_subsidi: 0.0009,
+  apartemen: 0.0022,
+  mansion: 0.0055,
+};
+
 
 // 🟢 IMPOR REQUIREMENTS
 import * as perumahanSubsidiRequirements from "./requirements_logic/1_perumahan_subsidi/requirements";
@@ -329,84 +337,13 @@ export default function HunianPermukimanModal({
     }
   }, [shortage, housingSatisfaction]);
 
-  // --- LOGIKA LISTRIK (tetap) ---
-  const ELECTRICITY_BUILDINGS_LIST = [
-    'pembangkit_listrik_tenaga_nuklir',
-    'pembangkit_listrik_tenaga_air',
-    'pembangkit_listrik_tenaga_surya',
-    'pembangkit_listrik_tenaga_uap',
-    'pembangkit_listrik_tenaga_gas',
-    'pembangkit_listrik_tenaga_angin',
-  ];
+  // --- LOGIKA LISTRIK DINAMIS (terpusat via consumptionLogic) ---
+  const { totalProductionMW, totalAllBreakdownConsumption } = useMemo(() => {
+    return getCountryConsumptionBreakdown(countryDetail, metadata);
+  }, [countryDetail, metadata]);
 
-  const totalProductionMW = ELECTRICITY_BUILDINGS_LIST.reduce((sum, bKey) => {
-    const count = Number(countryDetail?.[bKey]) || 0;
-    const bMeta = findMeta(bKey);
-    const perUnit = Number(bMeta?.produksi || 0);
-    return sum + perUnit * count;
-  }, 0);
+  const estimatedConsumption = Math.round(totalAllBreakdownConsumption);
 
-  const DEFAULT_ELECTRICITY_CONSUMPTION: Record<string, number> = {
-    rumah_subsidi: 0.0009,
-    apartemen: 0.0022,
-    mansion: 0.0055,
-  };
-
-  const totalBuildingElectricityConsumption = () => {
-    if (!countryDetail) return 0;
-    let total = 0;
-
-    // Hitung dari metadata jika tersedia
-    if (metadata && Object.keys(metadata).length > 0) {
-      Object.keys(metadata).forEach((key) => {
-        const bMeta = metadata[key];
-        const konsumsi = Number(bMeta?.konsumsi_listrik) || 0;
-        if (konsumsi <= 0) return;
-
-        const possibleKeys = [
-          key,
-          bMeta?.dataKey,
-          key.replace(/^\d+_/, ''),
-          bMeta?.dataKey ? bMeta.dataKey.replace(/^\d+_/, '') : undefined,
-        ].filter(Boolean) as string[];
-
-        let count = 0;
-        for (const pKey of possibleKeys) {
-          if (countryDetail[pKey] !== undefined && countryDetail[pKey] !== null) {
-            count = Number(countryDetail[pKey]) || 0;
-            break;
-          }
-        }
-
-        if (count > 0) {
-          total += count * konsumsi;
-        }
-      });
-    }
-
-    // Jika total masih 0 atau metadata belum lengkap, gunakan fallback konsumsi hunian
-    if (total <= 0) {
-      Object.entries(DEFAULT_ELECTRICITY_CONSUMPTION).forEach(([hKey, defaultRate]) => {
-        const count = Number(countryDetail[hKey]) || 0;
-        if (count > 0) {
-          total += count * defaultRate;
-        }
-      });
-    }
-
-    return total;
-  };
-
-  const buildingCons = totalBuildingElectricityConsumption();
-  const populationDemand = 0;
-  const estimatedConsumption = Math.max(
-    0,
-    Math.round(
-      buildingCons > 0
-        ? buildingCons + populationDemand
-        : totalProductionMW * 0.7 + populationDemand
-    )
-  );
 
   return (
     <>

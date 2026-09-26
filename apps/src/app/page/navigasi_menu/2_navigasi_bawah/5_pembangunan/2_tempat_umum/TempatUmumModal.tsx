@@ -16,9 +16,11 @@ import * as komersialRequirements from "./requirements_logic/6_komersial/require
 
 // --- IMPOR KOMPONEN MODAL ---
 import InfoBangunanModal from "./1_modals_info_bangunan/info_bangunan_modals";
-// 🔥 FIX 2: Hapus baris duplikat import konfirmasi_pembangunan_modals
 import KonfirmasiPembangunanModal from "./2_modals_konfirmasi_pembangunan/modalsKonfirmasiPembangunan";
 import { useMaterialProduction, getMaterialStock as getMaterialStockFromBuildLogic, deductBuildingMaterials } from "../build_logic/build_logic";
+import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
+
+
 
 interface ModalProps {
   isOpen: boolean;
@@ -331,35 +333,12 @@ export default function TempatUmumModal({
 
   const totalValue = groups.reduce((sum, group) => sum + group.items.reduce((inner, item) => inner + (item.value || 0), 0), 0);
 
-  const ELECTRICITY_BUILDINGS_LIST = [
-    'pembangkit_listrik_tenaga_nuklir', 'pembangkit_listrik_tenaga_air',
-    'pembangkit_listrik_tenaga_surya', 'pembangkit_listrik_tenaga_uap',
-    'pembangkit_listrik_tenaga_gas', 'pembangkit_listrik_tenaga_angin',
-  ];
+  const { totalProductionMW, totalAllBreakdownConsumption } = useMemo(() => {
+    return getCountryConsumptionBreakdown(countryDetail, metadata);
+  }, [countryDetail, metadata]);
 
-  const totalProductionMW = ELECTRICITY_BUILDINGS_LIST.reduce((sum, bKey) => {
-    const count = Number(countryDetail?.[bKey]) || 0;
-    const bMeta = findMeta(bKey);
-    const perUnit = Number(bMeta?.produksi || 0);
-    return sum + perUnit * count;
-  }, 0);
+  const estimatedConsumption = Math.round(totalAllBreakdownConsumption);
 
-  const totalBuildingElectricityConsumption = () => {
-    if (!metadata || !countryDetail) return 0;
-    let total = 0;
-    Object.keys(metadata).forEach((key) => {
-      const bMeta = metadata[key];
-      const konsumsi = Number(bMeta?.konsumsi_listrik) || 0;
-      if (konsumsi <= 0) return;
-      const count = Number(countryDetail?.[key]) || 0;
-      if (count > 0) total += count * konsumsi;
-    });
-    return total;
-  };
-
-  const buildingCons = totalBuildingElectricityConsumption();
-  const populationDemand = 0;
-  const estimatedConsumption = Math.max(0, Math.round(buildingCons > 0 ? buildingCons + populationDemand : totalProductionMW * 0.7 + populationDemand));
 
   const ongoingConstructions = countryDetail?.ongoingConstructions || [];
 

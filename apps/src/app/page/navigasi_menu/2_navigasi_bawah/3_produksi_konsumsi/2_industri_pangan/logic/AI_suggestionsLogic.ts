@@ -25,7 +25,7 @@ export const SECTOR_MAP: Record<string, { label: string; icon: ElementType; item
   olahan_pangan: {
     label: "Olahan Pangan",
     icon: Cookie,
-    items: ["air_mineral", "gula", "roti", "pengolahan_daging", "mie_instan", "minyak_goreng", "susu"]
+    items: ["air_mineral", "gula", "roti", "pengolahan_daging", "mie_instan", "minyak_goreng", "susu", "beras"]
   }
 };
 

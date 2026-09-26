@@ -212,7 +212,8 @@ export const isFoodRawMaterialDeficit = (factoryKey: string, countryDetail: any,
       }
     }
 
-    const finalSaldo = (rawGrossProd - rawPopCons) - rawFactoryCons;
+    // Pastikan kapasitas produksi pertanian/peternakan mentah mencukupi kebutuhan giling pabrik
+    const finalSaldo = rawGrossProd - rawFactoryCons;
 
     if (rawCount <= 0 || rawGrossProd <= 0 || finalSaldo < 0) {
       return true;

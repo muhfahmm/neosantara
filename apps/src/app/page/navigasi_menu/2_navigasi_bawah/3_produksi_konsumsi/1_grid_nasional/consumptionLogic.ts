@@ -172,6 +172,7 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
       const dataKey = bMeta?.dataKey || mKey.replace(/^\d+_/, "");
       if (hunianKeys.some((h) => h.key === dataKey)) return;
       if (pertahananKeys.some((p) => p.key === dataKey)) return;
+      if (tempatUmumKeys.some((t) => t.key === dataKey)) return;
 
       const count = Number(countryData?.[dataKey]) || Number(countryData?.[mKey]) || 0;
       const label = bMeta?.nama_bangunan || bMeta?.label || dataKey.replace(/_/g, " ").toUpperCase();
