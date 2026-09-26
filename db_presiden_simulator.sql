@@ -317,6 +317,24 @@ CREATE TABLE IF NOT EXISTS `database_doktrin_keterbukaan` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_doktrin_keterbukaan` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `name_en` varchar(100) NOT NULL,
+  `ideology` varchar(100) NOT NULL,
+  `speech_score` int(11) NOT NULL DEFAULT 0,
+  `religion_score` int(11) NOT NULL DEFAULT 0,
+  `demo_score` int(11) NOT NULL DEFAULT 0,
+  `transparency_score` int(11) NOT NULL DEFAULT 0,
+  `media_score` int(11) NOT NULL DEFAULT 0,
+  `internet_score` int(11) NOT NULL DEFAULT 0,
+  `border_score` int(11) NOT NULL DEFAULT 0,
+  `trade_score` int(11) NOT NULL DEFAULT 0,
+  `diplomacy_score` int(11) NOT NULL DEFAULT 0,
+  `openness_index` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_doktrin_keterbukaan (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,
@@ -571,6 +589,21 @@ CREATE TABLE IF NOT EXISTS `database_harga_barang` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_harga_barang` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `harga_beras` int(11) NOT NULL DEFAULT 0,
+  `harga_daging_sapi` int(11) NOT NULL DEFAULT 0,
+  `harga_ayam` int(11) NOT NULL DEFAULT 0,
+  `harga_minyak_goreng` int(11) NOT NULL DEFAULT 0,
+  `harga_gula` int(11) NOT NULL DEFAULT 0,
+  `harga_telur` int(11) NOT NULL DEFAULT 0,
+  `harga_listrik` int(11) NOT NULL DEFAULT 0,
+  `harga_air` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_harga_barang (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,
@@ -805,6 +838,14 @@ INSERT INTO database_harga_barang (
 -- Total 42642 Records
 
 DROP TABLE IF EXISTS database_hubungan_antar_negara;
+CREATE TABLE IF NOT EXISTS `database_hubungan_antar_negara` (
+  `country_id` int(11) NOT NULL DEFAULT 0,
+  `country_slug` varchar(100) NOT NULL,
+  `target_country_id` int(11) NOT NULL DEFAULT 0,
+  `target_country` int(11) NOT NULL DEFAULT 0,
+  `relation` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS `database_hubungan_antar_negara` (
   `country_id` int(11) NOT NULL DEFAULT 0,
   `country_slug` varchar(100) NOT NULL,
@@ -45137,6 +45178,15 @@ CREATE TABLE IF NOT EXISTS `database_kedutaan_besar` (
   `status` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_kedutaan_besar` (
+  `country_id` int(11) NOT NULL DEFAULT 0,
+  `country_slug` varchar(100) NOT NULL,
+  `mitra_no` int(11) NOT NULL DEFAULT 0,
+  `mitra_country` int(11) NOT NULL DEFAULT 0,
+  `embassy_type` int(11) NOT NULL DEFAULT 0,
+  `status` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_kedutaan_besar (
     id INT AUTO_INCREMENT PRIMARY KEY,
     country_id INT NOT NULL,
@@ -48623,6 +48673,15 @@ CREATE TABLE IF NOT EXISTS `database_mitra_perdagangan` (
   `status` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_mitra_perdagangan` (
+  `country_id` int(11) NOT NULL DEFAULT 0,
+  `country_slug` varchar(100) NOT NULL,
+  `mitra_no` int(11) NOT NULL DEFAULT 0,
+  `mitra_country` int(11) NOT NULL DEFAULT 0,
+  `trade_type` int(11) NOT NULL DEFAULT 0,
+  `status` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_mitra_perdagangan (
     id INT AUTO_INCREMENT PRIMARY KEY,
     country_id INT NOT NULL,
@@ -50281,6 +50340,18 @@ CREATE TABLE IF NOT EXISTS `database_pajak_negara` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_pajak_negara` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `tarif_ppn` int(11) NOT NULL DEFAULT 0,
+  `tarif_korporasi` int(11) NOT NULL DEFAULT 0,
+  `tarif_penghasilan` int(11) NOT NULL DEFAULT 0,
+  `tarif_bea_cukai` int(11) NOT NULL DEFAULT 0,
+  `tarif_lingkungan` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_pajak_negara (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,
@@ -50512,6 +50583,22 @@ INSERT INTO database_pajak_negara (
 -- Total 207 Negara
 
 DROP TABLE IF EXISTS database_sda;
+CREATE TABLE IF NOT EXISTS `database_sda` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `emas` varchar(10) NOT NULL DEFAULT 'FALSE',
+  `uranium` varchar(10) NOT NULL DEFAULT 'FALSE',
+  `batu_bara` varchar(10) NOT NULL DEFAULT 'FALSE',
+  `minyak_bumi` varchar(10) NOT NULL DEFAULT 'FALSE',
+  `gas_alam` varchar(10) NOT NULL DEFAULT 'FALSE',
+  `garam` varchar(10) NOT NULL DEFAULT 'FALSE',
+  `litium` varchar(10) NOT NULL DEFAULT 'FALSE',
+  `logam_tanah_jarang` varchar(10) NOT NULL DEFAULT 'FALSE',
+  `bijih_besi` varchar(10) NOT NULL DEFAULT 'FALSE',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS `database_sda` (
   `id` int(11) NOT NULL,
   `country` varchar(100) NOT NULL,
@@ -51001,6 +51088,13 @@ VALUES
 -- Total 693 Records
 
 DROP TABLE IF EXISTS database_tempat_wisata;
+CREATE TABLE IF NOT EXISTS `database_tempat_wisata` (
+  `country_id` int(11) NOT NULL DEFAULT 0,
+  `country_slug` varchar(100) NOT NULL,
+  `nama_wisata` int(11) NOT NULL DEFAULT 0,
+  `penghasilan` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS `database_tempat_wisata` (
   `country_id` int(11) NOT NULL DEFAULT 0,
   `country_slug` varchar(100) NOT NULL,
@@ -51978,7 +52072,7 @@ CREATE TABLE `database_sektor_listrik_nasional` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `database_sektor_listrik_nasional` (`id`, `country`, `country_slug`, `pembangkit_listrik_tenaga_gas`, `pembangkit_listrik_tenaga_air`, `pembangkit_listrik_tenaga_nuklir`, `pembangkit_listrik_tenaga_surya`, `pembangkit_listrik_tenaga_uap`, `pembangkit_listrik_tenaga_angin`) VALUES
-(1, 'Afrika Selatan', 'afrika_selatan', 68, 231, 34, 0, 68, 2),
+(1, 'Afrika Selatan', 'afrika_selatan', 68, 232, 34, 1, 68, 1),
 (2, 'Aljazair', 'aljazair', 35, 147, 17, 1, 0, 0),
 (3, 'Angola', 'angola', 29, 121, 15, 0, 0, 1),
 (4, 'Benin', 'benin', 0, 112, 0, 1, 0, 1),
@@ -52009,10 +52103,10 @@ INSERT INTO `database_sektor_listrik_nasional` (`id`, `country`, `country_slug`,
 (29, 'Mauritania', 'mauritania', 0, 94, 0, 1, 0, 0),
 (30, 'Mauritius', 'mauritius', 0, 14, 0, 1, 0, 0),
 (31, 'Mesir', 'mesir', 78, 262, 39, 0, 78, 2),
-(32, 'Mozambik', 'mozambik', 20, 60, 10, 1, 20, 1),
+(32, 'Mozambik', 'mozambik', 20, 63, 10, 0, 20, 1),
 (33, 'Namibia', 'namibia', 0, 60, 6, 1, 0, 1),
 (34, 'Niger', 'niger', 0, 55, 6, 1, 0, 1),
-(35, 'Nigeria', 'nigeria', 124, 416, 62, 0, 124, 2),
+(35, 'Nigeria', 'nigeria', 124, 417, 62, 1, 124, 1),
 (36, 'Pantai gading', 'pantai_gading', 0, 168, 0, 0, 0, 1),
 (37, 'Republik afrika tengah', 'republik_afrika_tengah', 0, 22, 3, 0, 0, 2),
 (38, 'Republik demokratik kongo', 'republik_demokratik_kongo', 46, 157, 23, 0, 46, 0),
@@ -52031,12 +52125,12 @@ INSERT INTO `database_sektor_listrik_nasional` (`id`, `country`, `country_slug`,
 (51, 'Tanjung verde', 'tanjung_verde', 0, 24, 0, 0, 0, 2),
 (52, 'Togo', 'togo', 0, 99, 0, 1, 0, 0),
 (53, 'Tunisia', 'tunisia', 15, 59, 8, 1, 0, 0),
-(54, 'Afganistan', 'afganistan', 20, 59, 10, 0, 20, 2),
-(55, 'Arab Saudi', 'arab_saudi', 140, 887, 0, 0, 0, 1),
+(54, 'Afganistan', 'afganistan', 20, 61, 10, 1, 20, 1),
+(55, 'Arab Saudi', 'arab_saudi', 140, 887, 0, 0, 0, 2),
 (56, 'Armenia', 'armenia', 0, 31, 4, 1, 0, 1),
 (57, 'Azerbaijan', 'azerbaijan', 7, 37, 0, 1, 0, 1),
 (58, 'Bahrain', 'bahrain', 8, 47, 0, 1, 0, 0),
-(59, 'Bangladesh', 'bangladesh', 112, 602, 0, 0, 112, 2),
+(59, 'Bangladesh', 'bangladesh', 112, 603, 0, 1, 112, 1),
 (60, 'Bhutan', 'bhutan', 0, 28, 0, 0, 0, 0),
 (61, 'Brunei', 'brunei', 4, 17, 0, 0, 0, 2),
 (62, 'China', 'china', 918, 3095, 459, 0, 918, 1),
@@ -52046,19 +52140,19 @@ INSERT INTO `database_sektor_listrik_nasional` (`id`, `country`, `country_slug`,
 (66, 'India', 'india', 1085, 3750, 542, 0, 1085, 2),
 (67, 'Indonesia', 'indonesia', 215, 732, 108, 0, 215, 0),
 (68, 'Irak', 'irak', 24, 99, 12, 1, 0, 1),
-(69, 'Iran', 'iran', 96, 324, 48, 0, 96, 1),
+(69, 'Iran', 'iran', 96, 325, 48, 1, 96, 0),
 (70, 'Israel', 'israel', 62, 266, 31, 0, 0, 2),
 (71, 'Jepang', 'jepang', 229, 1240, 0, 0, 229, 0),
 (72, 'Kamboja', 'kamboja', 0, 70, 0, 0, 0, 1),
-(73, 'Kazakhstan', 'kazakhstan', 28, 89, 14, 0, 28, 0),
+(73, 'Kazakhstan', 'kazakhstan', 28, 89, 14, 0, 28, 2),
 (74, 'Kirgizstan', 'kirgizstan', 5, 11, 3, 1, 5, 0),
 (75, 'Korea Selatan', 'korea_selatan', 0, 2544, 0, 1, 0, 0),
 (76, 'Korea Utara', 'korea_utara', 14, 43, 7, 1, 14, 1),
-(77, 'Kuwait', 'kuwait', 20, 124, 0, 0, 0, 2),
+(77, 'Kuwait', 'kuwait', 20, 125, 0, 1, 0, 0),
 (78, 'Laos', 'laos', 0, 59, 0, 0, 0, 0),
 (79, 'Lebanon', 'lebanon', 0, 24, 0, 0, 0, 2),
 (80, 'Makau', 'makau', 0, 37, 0, 1, 0, 1),
-(81, 'Malaysia', 'malaysia', 56, 297, 0, 1, 56, 1),
+(81, 'Malaysia', 'malaysia', 56, 299, 0, 0, 56, 1),
 (82, 'Maldives', 'maldives', 0, 17, 0, 1, 0, 0),
 (83, 'Mongolia', 'mongolia', 7, 15, 4, 1, 7, 1),
 (84, 'Myanmar', 'myanmar', 25, 126, 0, 0, 25, 0),
@@ -52071,16 +52165,16 @@ INSERT INTO `database_sektor_listrik_nasional` (`id`, `country`, `country_slug`,
 (91, 'Singapura', 'singapura', 0, 233, 0, 0, 0, 1),
 (92, 'Sri lanka', 'sri_lanka', 0, 106, 0, 0, 0, 2),
 (93, 'Suriah', 'suriah', 9, 53, 0, 0, 0, 1),
-(94, 'Taiwan', 'taiwan', 40, 244, 0, 1, 0, 1),
+(94, 'Taiwan', 'taiwan', 40, 246, 0, 0, 0, 0),
 (95, 'Tajikistan', 'tajikistan', 7, 18, 4, 0, 7, 2),
-(96, 'Thailand', 'thailand', 92, 492, 0, 1, 92, 0),
+(96, 'Thailand', 'thailand', 92, 494, 0, 0, 92, 0),
 (97, 'Turkmenistan', 'turkmenistan', 5, 28, 0, 1, 0, 0),
 (98, 'Uni emirat arab', 'uni_emirat_arab', 57, 358, 0, 1, 0, 1),
 (99, 'Uzbekistan', 'uzbekistan', 23, 75, 11, 0, 23, 1),
 (100, 'Vietnam', 'vietnam', 111, 380, 56, 0, 111, 0),
 (101, 'Yaman', 'yaman', 16, 97, 0, 0, 0, 2),
 (102, 'Yordania', 'yordania', 0, 49, 0, 1, 0, 1),
-(103, 'Albania', 'albania', 4, 4, 2, 0, 4, 2),
+(103, 'Albania', 'albania', 4, 5, 2, 1, 4, 1),
 (104, 'Andorra', 'andorra', 0, 19, 0, 1, 0, 0),
 (105, 'Austria', 'austria', 0, 523, 0, 1, 0, 0),
 (106, 'Belanda', 'belanda', 87, 548, 0, 0, 0, 0),
@@ -52098,7 +52192,7 @@ INSERT INTO `database_sektor_listrik_nasional` (`id`, `country`, `country_slug`,
 (118, 'Irlandia', 'irlandia', 0, 634, 0, 0, 0, 2),
 (119, 'Islandia', 'islandia', 0, 26, 0, 0, 0, 2),
 (120, 'Italia', 'italia', 565, 3629, 0, 0, 0, 0),
-(121, 'Jerman', 'jerman', 424, 2320, 0, 1, 424, 0),
+(121, 'Jerman', 'jerman', 424, 2322, 0, 0, 424, 0),
 (122, 'Kepulauan faroe', 'kepulauan_faroe', 0, 11, 0, 0, 0, 2),
 (123, 'Kosovo', 'kosovo', 0, 29, 0, 1, 0, 0),
 (124, 'Kroasia', 'kroasia', 5, 27, 0, 1, 0, 0),
@@ -52112,9 +52206,9 @@ INSERT INTO `database_sektor_listrik_nasional` (`id`, `country`, `country_slug`,
 (132, 'Monako', 'monako', 0, 12, 0, 1, 0, 1),
 (133, 'Montenegro', 'montenegro', 0, 11, 0, 0, 0, 2),
 (134, 'Norwegia', 'norwegia', 21, 109, 0, 1, 21, 0),
-(135, 'Polandia', 'polandia', 52, 172, 26, 0, 52, 2),
+(135, 'Polandia', 'polandia', 52, 173, 26, 1, 52, 1),
 (136, 'Portugal', 'portugal', 0, 140, 13, 1, 0, 0),
-(137, 'Prancis', 'prancis', 408, 1432, 204, 0, 408, 2),
+(137, 'Prancis', 'prancis', 408, 1433, 204, 1, 408, 1),
 (138, 'Republik rumania', 'republik_rumania', 25, 128, 0, 1, 25, 0),
 (139, 'Republik serbia', 'republik_serbia', 0, 50, 0, 1, 0, 1),
 (140, 'Rusia', 'rusia', 313, 1088, 157, 1, 313, 0),
@@ -52123,7 +52217,7 @@ INSERT INTO `database_sektor_listrik_nasional` (`id`, `country`, `country_slug`,
 (143, 'Slovenia', 'slovenia', 0, 19, 2, 1, 0, 0),
 (144, 'Slowakia', 'slowakia', 0, 196, 0, 0, 0, 0),
 (145, 'Spanyol', 'spanyol', 178, 616, 89, 1, 178, 0),
-(146, 'Swedia', 'swedia', 0, 465, 40, 0, 0, 0),
+(146, 'Swedia', 'swedia', 0, 465, 40, 0, 0, 1),
 (147, 'Swiss', 'swiss', 0, 562, 0, 0, 0, 0),
 (148, 'Turki', 'turki', 34, 109, 17, 0, 34, 2),
 (149, 'Ukraina', 'ukraina', 18, 54, 9, 0, 18, 1),
@@ -52146,7 +52240,7 @@ INSERT INTO `database_sektor_listrik_nasional` (`id`, `country`, `country_slug`,
 (166, 'Honduras', 'honduras', 0, 66, 0, 0, 0, 0),
 (167, 'Jamaika', 'jamaika', 6, 27, 0, 1, 0, 0),
 (168, 'Kanada', 'kanada', 255, 893, 128, 0, 255, 1),
-(169, 'Kuba', 'kuba', 30, 184, 0, 0, 0, 0),
+(169, 'Kuba', 'kuba', 30, 184, 0, 0, 0, 1),
 (170, 'Meksiko', 'meksiko', 158, 535, 79, 0, 158, 0),
 (171, 'Nikaragua', 'nikaragua', 0, 25, 0, 0, 0, 1),
 (172, 'Panama', 'panama', 0, 40, 0, 1, 0, 0),
@@ -52164,7 +52258,7 @@ INSERT INTO `database_sektor_listrik_nasional` (`id`, `country`, `country_slug`,
 (184, 'Mikronesia', 'mikronesia', 0, 37, 0, 0, 0, 2),
 (185, 'Nauru', 'nauru', 0, 26, 0, 1, 0, 0),
 (186, 'Palau', 'palau', 0, 18, 0, 0, 0, 1),
-(187, 'Papua nugini', 'papua_nugini', 10, 55, 0, 1, 0, 1),
+(187, 'Papua nugini', 'papua_nugini', 10, 57, 0, 0, 0, 0),
 (188, 'Samoa', 'samoa', 0, 19, 0, 0, 0, 1),
 (189, 'Samoa amerika', 'samoa_amerika', 0, 15, 0, 1, 0, 0),
 (190, 'Selandia baru', 'selandia_baru', 22, 110, 0, 0, 22, 2),
@@ -52179,12 +52273,17 @@ INSERT INTO `database_sektor_listrik_nasional` (`id`, `country`, `country_slug`,
 (199, 'Ekuador', 'ekuador', 26, 156, 0, 0, 0, 2),
 (200, 'Guiana prancis', 'guiana_prancis', 0, 20, 0, 1, 0, 0),
 (201, 'Guyana', 'guyana', 4, 16, 0, 0, 0, 2),
-(202, 'Kolombia', 'kolombia', 60, 197, 30, 1, 60, 1),
+(202, 'Kolombia', 'kolombia', 60, 200, 30, 0, 60, 1),
 (203, 'Paraguay', 'paraguay', 0, 53, 0, 0, 0, 0),
 (204, 'Peru', 'peru', 25, 77, 12, 0, 25, 2),
 (205, 'Suriname', 'suriname', 4, 17, 0, 1, 0, 1),
 (206, 'Uruguay', 'uruguay', 0, 21, 0, 0, 0, 2),
 (207, 'Venezuela', 'venezuela', 0, 118, 0, 1, 0, 1);
+
+
+
+
+
 
 
 
@@ -52211,7 +52310,7 @@ CREATE TABLE `database_sektor_mineral_kritis` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `bijih_besi`, `litium`, `logam_tanah_jarang`, `emas`, `batu_bara`, `minyak_bumi`, `gas_alam`, `uranium`, `garam`) VALUES
-(1, 'Afrika Selatan', 'afrika_selatan', 90, 1, 1, 18, 17, 17, 7, 4, 5),
+(1, 'Afrika Selatan', 'afrika_selatan', 90, 1, 1, 18, 18, 18, 7, 4, 5),
 (2, 'Aljazair', 'aljazair', 90, 0, 0, 18, 0, 1, 4, 2, 0),
 (3, 'Angola', 'angola', 90, 1, 1, 19, 0, 1, 3, 2, 1),
 (4, 'Benin', 'benin', 90, 0, 0, 21, 0, 0, 0, 0, 0),
@@ -52242,10 +52341,10 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (29, 'Mauritania', 'mauritania', 90, 0, 0, 16, 0, 0, 0, 0, 1),
 (30, 'Mauritius', 'mauritius', 0, 0, 0, 23, 0, 0, 0, 0, 0),
 (31, 'Mesir', 'mesir', 90, 1, 0, 19, 20, 20, 8, 4, 0),
-(32, 'Mozambik', 'mozambik', 90, 0, 0, 11, 5, 5, 2, 1, 0),
+(32, 'Mozambik', 'mozambik', 90, 0, 0, 11, 6, 6, 3, 2, 0),
 (33, 'Namibia', 'namibia', 90, 0, 1, 22, 0, 0, 0, 1, 0),
 (34, 'Niger', 'niger', 0, 0, 0, 19, 1, 0, 0, 1, 0),
-(35, 'Nigeria', 'nigeria', 90, 1, 0, 16, 31, 31, 13, 7, 0),
+(35, 'Nigeria', 'nigeria', 90, 1, 0, 16, 32, 32, 13, 7, 0),
 (36, 'Pantai gading', 'pantai_gading', 90, 0, 0, 11, 0, 0, 0, 0, 0),
 (37, 'Republik afrika tengah', 'republik_afrika_tengah', 0, 0, 0, 17, 0, 0, 0, 1, 0),
 (38, 'Republik demokratik kongo', 'republik_demokratik_kongo', 90, 1, 1, 8, 12, 12, 5, 3, 0),
@@ -52264,12 +52363,12 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (51, 'Tanjung verde', 'tanjung_verde', 0, 0, 0, 20, 0, 0, 0, 0, 0),
 (52, 'Togo', 'togo', 90, 0, 0, 8, 0, 0, 0, 0, 0),
 (53, 'Tunisia', 'tunisia', 90, 0, 0, 20, 0, 1, 2, 1, 1),
-(54, 'Afganistan', 'afganistan', 16, 1, 1, 22, 5, 5, 2, 1, 1),
-(55, 'Arab Saudi', 'arab_saudi', 100, 1, 1, 17, 0, 1, 14, 0, 0),
+(54, 'Afganistan', 'afganistan', 16, 1, 1, 22, 6, 6, 3, 2, 1),
+(55, 'Arab Saudi', 'arab_saudi', 100, 1, 1, 17, 0, 1, 15, 0, 0),
 (56, 'Armenia', 'armenia', 21, 0, 0, 16, 0, 0, 0, 1, 0),
 (57, 'Azerbaijan', 'azerbaijan', 0, 0, 0, 18, 0, 1, 1, 0, 0),
 (58, 'Bahrain', 'bahrain', 0, 0, 0, 30, 0, 1, 1, 0, 0),
-(59, 'Bangladesh', 'bangladesh', 0, 0, 0, 17, 28, 28, 12, 0, 0),
+(59, 'Bangladesh', 'bangladesh', 0, 0, 0, 17, 29, 29, 12, 0, 0),
 (60, 'Bhutan', 'bhutan', 3, 0, 0, 12, 1, 0, 0, 0, 0),
 (61, 'Brunei', 'brunei', 0, 0, 0, 18, 0, 1, 1, 0, 0),
 (62, 'China', 'china', 1500, 20, 44, 20, 230, 230, 92, 46, 120),
@@ -52279,19 +52378,19 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (66, 'India', 'india', 2358, 5, 0, 24, 272, 272, 109, 55, 0),
 (67, 'Indonesia', 'indonesia', 632, 1, 1, 18, 54, 54, 22, 11, 10),
 (68, 'Irak', 'irak', 24, 0, 0, 11, 0, 1, 3, 2, 1),
-(69, 'Iran', 'iran', 300, 1, 1, 20, 24, 24, 10, 5, 5),
+(69, 'Iran', 'iran', 300, 1, 1, 20, 25, 25, 10, 5, 5),
 (70, 'Israel', 'israel', 0, 0, 0, 20, 0, 0, 7, 4, 2),
 (71, 'Jepang', 'jepang', 50, 1, 1, 19, 58, 58, 23, 0, 0),
 (72, 'Kamboja', 'kamboja', 9, 0, 0, 17, 0, 0, 0, 0, 0),
-(73, 'Kazakhstan', 'kazakhstan', 130, 1, 1, 10, 7, 7, 3, 2, 5),
+(73, 'Kazakhstan', 'kazakhstan', 130, 1, 1, 10, 8, 8, 3, 2, 5),
 (74, 'Kirgizstan', 'kirgizstan', 1, 0, 1, 20, 2, 2, 1, 1, 0),
 (75, 'Korea Selatan', 'korea_selatan', 1700, 0, 0, 9, 1, 0, 0, 0, 0),
 (76, 'Korea Utara', 'korea_utara', 4, 0, 1, 17, 4, 4, 2, 1, 0),
-(77, 'Kuwait', 'kuwait', 0, 0, 0, 14, 0, 1, 2, 0, 0),
+(77, 'Kuwait', 'kuwait', 0, 0, 0, 14, 0, 1, 3, 0, 0),
 (78, 'Laos', 'laos', 30, 0, 0, 20, 1, 0, 0, 0, 0),
 (79, 'Lebanon', 'lebanon', 4, 0, 0, 8, 0, 0, 0, 0, 0),
 (80, 'Makau', 'makau', 0, 0, 0, 21, 0, 0, 0, 0, 0),
-(81, 'Malaysia', 'malaysia', 216, 0, 0, 13, 14, 14, 6, 0, 0),
+(81, 'Malaysia', 'malaysia', 216, 0, 0, 13, 15, 15, 6, 0, 0),
 (82, 'Maldives', 'maldives', 0, 0, 0, 21, 0, 0, 0, 0, 0),
 (83, 'Mongolia', 'mongolia', 20, 1, 1, 10, 2, 2, 1, 1, 1),
 (84, 'Myanmar', 'myanmar', 1, 0, 0, 16, 7, 7, 3, 0, 0),
@@ -52304,16 +52403,16 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (91, 'Singapura', 'singapura', 0, 0, 0, 15, 0, 0, 0, 0, 0),
 (92, 'Sri lanka', 'sri_lanka', 15, 0, 0, 17, 0, 0, 0, 0, 0),
 (93, 'Suriah', 'suriah', 5, 0, 0, 16, 0, 1, 1, 0, 0),
-(94, 'Taiwan', 'taiwan', 168, 0, 0, 15, 1, 0, 4, 0, 0),
+(94, 'Taiwan', 'taiwan', 168, 0, 0, 15, 1, 0, 5, 0, 0),
 (95, 'Tajikistan', 'tajikistan', 4, 0, 0, 20, 2, 2, 1, 1, 0),
-(96, 'Thailand', 'thailand', 369, 0, 0, 25, 23, 23, 10, 0, 5),
+(96, 'Thailand', 'thailand', 369, 0, 0, 25, 24, 24, 10, 0, 5),
 (97, 'Turkmenistan', 'turkmenistan', 8, 0, 0, 18, 0, 1, 1, 0, 0),
 (98, 'Uni emirat arab', 'uni_emirat_arab', 0, 0, 0, 16, 0, 1, 6, 0, 0),
 (99, 'Uzbekistan', 'uzbekistan', 21, 0, 0, 19, 6, 6, 3, 2, 0),
 (100, 'Vietnam', 'vietnam', 68, 0, 22, 18, 28, 28, 12, 6, 5),
 (101, 'Yaman', 'yaman', 0, 0, 0, 25, 0, 1, 2, 0, 1),
 (102, 'Yordania', 'yordania', 2, 0, 0, 23, 0, 0, 0, 0, 1),
-(103, 'Albania', 'albania', 5, 0, 0, 26, 1, 1, 1, 1, 1),
+(103, 'Albania', 'albania', 5, 0, 0, 26, 2, 2, 1, 1, 1),
 (104, 'Andorra', 'andorra', 1, 0, 0, 26, 0, 0, 0, 0, 0),
 (105, 'Austria', 'austria', 0, 0, 0, 21, 0, 0, 0, 0, 0),
 (106, 'Belanda', 'belanda', 0, 0, 0, 22, 0, 1, 9, 0, 0),
@@ -52331,7 +52430,7 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (118, 'Irlandia', 'irlandia', 343, 0, 0, 21, 0, 0, 0, 0, 0),
 (119, 'Islandia', 'islandia', 0, 0, 0, 23, 0, 0, 0, 0, 0),
 (120, 'Italia', 'italia', 3241, 0, 0, 20, 0, 1, 57, 0, 0),
-(121, 'Jerman', 'jerman', 2580, 1, 0, 24, 106, 106, 43, 0, 80),
+(121, 'Jerman', 'jerman', 2580, 1, 0, 24, 107, 107, 43, 0, 80),
 (122, 'Kepulauan faroe', 'kepulauan_faroe', 0, 0, 0, 23, 0, 0, 0, 0, 0),
 (123, 'Kosovo', 'kosovo', 3, 0, 0, 27, 1, 0, 0, 0, 0),
 (124, 'Kroasia', 'kroasia', 0, 0, 0, 18, 0, 0, 1, 0, 0),
@@ -52345,9 +52444,9 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (132, 'Monako', 'monako', 0, 0, 0, 26, 0, 0, 0, 0, 0),
 (133, 'Montenegro', 'montenegro', 1, 0, 0, 21, 1, 0, 0, 0, 0),
 (134, 'Norwegia', 'norwegia', 40, 0, 0, 21, 6, 6, 3, 0, 0),
-(135, 'Polandia', 'polandia', 53, 0, 0, 30, 13, 13, 6, 3, 10),
+(135, 'Polandia', 'polandia', 53, 0, 0, 30, 14, 14, 6, 3, 10),
 (136, 'Portugal', 'portugal', 51, 0, 0, 18, 1, 0, 0, 2, 0),
-(137, 'Prancis', 'prancis', 2096, 1, 1, 28, 102, 102, 41, 21, 2),
+(137, 'Prancis', 'prancis', 2096, 1, 1, 28, 103, 103, 41, 21, 2),
 (138, 'Republik rumania', 'republik_rumania', 1, 0, 0, 21, 7, 7, 3, 0, 0),
 (139, 'Republik serbia', 'republik_serbia', 5, 0, 0, 23, 1, 0, 0, 0, 0),
 (140, 'Rusia', 'rusia', 1323, 5, 21, 25, 79, 79, 32, 16, 40),
@@ -52356,7 +52455,7 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (143, 'Slovenia', 'slovenia', 10, 0, 0, 23, 1, 0, 0, 1, 0),
 (144, 'Slowakia', 'slowakia', 130, 0, 0, 26, 1, 0, 0, 0, 0),
 (145, 'Spanyol', 'spanyol', 812, 1, 1, 22, 45, 45, 18, 9, 3),
-(146, 'Swedia', 'swedia', 222, 1, 0, 21, 0, 0, 0, 4, 0),
+(146, 'Swedia', 'swedia', 222, 1, 0, 21, 0, 0, 0, 5, 0),
 (147, 'Swiss', 'swiss', 282, 0, 0, 23, 0, 0, 0, 0, 1),
 (148, 'Turki', 'turki', 8, 1, 0, 21, 9, 9, 4, 2, 5),
 (149, 'Ukraina', 'ukraina', 5, 1, 1, 28, 5, 5, 2, 1, 5),
@@ -52379,7 +52478,7 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (166, 'Honduras', 'honduras', 24, 0, 0, 24, 0, 0, 0, 0, 0),
 (167, 'Jamaika', 'jamaika', 1, 0, 0, 28, 0, 1, 1, 0, 0),
 (168, 'Kanada', 'kanada', 400, 3, 1, 28, 64, 64, 26, 13, 60),
-(169, 'Kuba', 'kuba', 133, 0, 0, 26, 0, 1, 3, 0, 1),
+(169, 'Kuba', 'kuba', 133, 0, 0, 26, 0, 1, 4, 0, 1),
 (170, 'Meksiko', 'meksiko', 363, 1, 1, 25, 40, 40, 16, 8, 45),
 (171, 'Nikaragua', 'nikaragua', 1, 0, 0, 23, 0, 0, 0, 0, 0),
 (172, 'Panama', 'panama', 1, 0, 0, 24, 0, 0, 0, 0, 0),
@@ -52397,7 +52496,7 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (184, 'Mikronesia', 'mikronesia', 0, 0, 0, 23, 0, 0, 0, 0, 0),
 (185, 'Nauru', 'nauru', 0, 0, 0, 27, 0, 0, 0, 0, 0),
 (186, 'Palau', 'palau', 0, 0, 0, 23, 0, 0, 0, 0, 0),
-(187, 'Papua nugini', 'papua_nugini', 30, 0, 0, 27, 0, 1, 1, 0, 0),
+(187, 'Papua nugini', 'papua_nugini', 30, 0, 0, 27, 0, 1, 2, 0, 0),
 (188, 'Samoa', 'samoa', 0, 0, 0, 27, 0, 0, 0, 0, 0),
 (189, 'Samoa amerika', 'samoa_amerika', 0, 0, 0, 25, 0, 0, 0, 0, 0),
 (190, 'Selandia baru', 'selandia_baru', 1, 0, 0, 24, 6, 6, 3, 0, 0),
@@ -52412,12 +52511,17 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (199, 'Ekuador', 'ekuador', 90, 0, 0, 28, 0, 1, 3, 0, 0),
 (200, 'Guiana prancis', 'guiana_prancis', 9, 0, 0, 28, 0, 0, 0, 0, 0),
 (201, 'Guyana', 'guyana', 6, 0, 0, 25, 0, 1, 1, 0, 0),
-(202, 'Kolombia', 'kolombia', 72, 0, 0, 26, 15, 15, 6, 3, 2),
+(202, 'Kolombia', 'kolombia', 72, 0, 0, 26, 16, 16, 7, 4, 2),
 (203, 'Paraguay', 'paraguay', 1, 0, 0, 32, 0, 0, 0, 0, 0),
 (204, 'Peru', 'peru', 63, 1, 0, 28, 7, 7, 3, 2, 0),
 (205, 'Suriname', 'suriname', 6, 0, 0, 31, 0, 1, 1, 0, 0),
 (206, 'Uruguay', 'uruguay', 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (207, 'Venezuela', 'venezuela', 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+
+
+
+
 
 
 
@@ -52877,6 +52981,11 @@ INSERT INTO `database_sektor_peternakan` (`id`, `country`, `country_slug`, `ayam
 
 
 
+
+
+
+
+
 -- ========================================================
 -- SECTION: json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/database_sektor_agrikultur.sql
 -- ========================================================
@@ -53113,6 +53222,11 @@ INSERT INTO `database_sektor_agrikultur` (`id`, `country`, `country_slug`, `padi
 
 
 
+
+
+
+
+
 -- ========================================================
 -- SECTION: json/semua_fitur_negara/1_pembangunan/1_produksi/6_sektor_perikanan/database_sektor_perikanan.sql
 -- ========================================================
@@ -53336,6 +53450,11 @@ INSERT INTO `database_sektor_perikanan` (`id`, `country`, `country_slug`, `udang
 (205, 'Suriname', 'suriname', 0, 0, 7),
 (206, 'Uruguay', 'uruguay', 14, 0, 31),
 (207, 'Venezuela', 'venezuela', 71, 0, 238);
+
+
+
+
+
 
 
 
@@ -53572,6 +53691,11 @@ INSERT INTO `database_sektor_olahan_pangan` (`id`, `country`, `country_slug`, `a
 
 
 
+
+
+
+
+
 -- ========================================================
 -- SECTION: json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/1_infrastruktur/database_infrastruktur.sql
 -- ========================================================
@@ -53580,6 +53704,21 @@ INSERT INTO `database_sektor_olahan_pangan` (`id`, `country`, `country_slug`, `a
 -- Total 207 Negara
 
 DROP TABLE IF EXISTS database_infrastruktur;
+CREATE TABLE IF NOT EXISTS `database_infrastruktur` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `jalur_sepeda` int(11) NOT NULL DEFAULT 0,
+  `jalan_raya` int(11) NOT NULL DEFAULT 0,
+  `terminal_bus` int(11) NOT NULL DEFAULT 0,
+  `stasiun_kereta_api` int(11) NOT NULL DEFAULT 0,
+  `kereta_bawah_tanah` int(11) NOT NULL DEFAULT 0,
+  `pelabuhan` int(11) NOT NULL DEFAULT 0,
+  `bandara` int(11) NOT NULL DEFAULT 0,
+  `helipad` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS `database_infrastruktur` (
   `id` int(11) NOT NULL,
   `country` varchar(100) NOT NULL,
@@ -54096,6 +54235,18 @@ CREATE TABLE IF NOT EXISTS `database_kesehatan` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_kesehatan` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `rumah_sakit_besar` int(11) NOT NULL DEFAULT 0,
+  `rumah_sakit_kecil` int(11) NOT NULL DEFAULT 0,
+  `pusat_diagnostik` int(11) NOT NULL DEFAULT 0,
+  `harapan_hidup` int(11) NOT NULL DEFAULT 0,
+  `indeks_kesehatan` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_kesehatan (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,
@@ -54327,6 +54478,21 @@ INSERT INTO database_kesehatan (
 -- Total 207 Negara
 
 DROP TABLE IF EXISTS database_hukum;
+CREATE TABLE IF NOT EXISTS `database_hukum` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `pusat_bantuan_hukum` int(11) NOT NULL DEFAULT 0,
+  `pengadilan` int(11) NOT NULL DEFAULT 0,
+  `kejaksaan` int(11) NOT NULL DEFAULT 0,
+  `pos_polisi` int(11) NOT NULL DEFAULT 0,
+  `armada_mobil_polisi` int(11) NOT NULL DEFAULT 0,
+  `akademi_polisi` int(11) NOT NULL DEFAULT 0,
+  `indeks_korupsi` int(11) NOT NULL DEFAULT 0,
+  `indeks_keamanan` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS `database_hukum` (
   `id` int(11) NOT NULL,
   `country` varchar(100) NOT NULL,
@@ -54591,6 +54757,21 @@ CREATE TABLE IF NOT EXISTS `database_olahraga` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_olahraga` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `kolam_renang` int(11) NOT NULL DEFAULT 0,
+  `sirkuit_balap` int(11) NOT NULL DEFAULT 0,
+  `stadion` int(11) NOT NULL DEFAULT 0,
+  `stadion_internasional` int(11) NOT NULL DEFAULT 0,
+  `gym` int(11) NOT NULL DEFAULT 0,
+  `golf` int(11) NOT NULL DEFAULT 0,
+  `esports` int(11) NOT NULL DEFAULT 0,
+  `gokart` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_olahraga (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,
@@ -54835,6 +55016,16 @@ CREATE TABLE IF NOT EXISTS `database_komersial` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_komersial` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `mall` int(11) NOT NULL DEFAULT 0,
+  `hotel` int(11) NOT NULL DEFAULT 0,
+  `pusat_grosir_tekstil` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_komersial (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,
@@ -55064,6 +55255,15 @@ INSERT INTO database_komersial (
 -- Total 207 Negara
 
 DROP TABLE IF EXISTS database_hiburan;
+CREATE TABLE IF NOT EXISTS `database_hiburan` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `bioskop` int(11) NOT NULL DEFAULT 0,
+  `teater` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS `database_hiburan` (
   `id` int(11) NOT NULL,
   `country` varchar(100) NOT NULL,
@@ -55317,7 +55517,7 @@ CREATE TABLE IF NOT EXISTS `database_hunian_permukiman` (
 
 
 INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `rumah_subsidi`, `apartemen`, `mansion`) VALUES
-(1, 'Afrika Selatan', 'afrika_selatan', 7970256, 510128, 789616),
+(1, 'Afrika Selatan', 'afrika_selatan', 7991933, 513534, 790161),
 (2, 'Aljazair', 'aljazair', 5955756, 383448, 593188),
 (3, 'Angola', 'angola', 4973374, 315412, 485574),
 (4, 'Benin', 'benin', 1695133, 109689, 165939),
@@ -55351,7 +55551,7 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (32, 'Mozambik', 'mozambik', 3830404, 245487, 376630),
 (33, 'Namibia', 'namibia', 446480, 29385, 38622),
 (34, 'Niger', 'niger', 3327384, 214347, 329762),
-(35, 'Nigeria', 'nigeria', 28076814, 1795037, 2798252),
+(35, 'Nigeria', 'nigeria', 28098491, 1798443, 2798797),
 (36, 'Pantai gading', 'pantai_gading', 3579742, 230526, 355050),
 (37, 'Republik afrika tengah', 'republik_afrika_tengah', 692205, 46085, 67187),
 (38, 'Republik demokratik kongo', 'republik_demokratik_kongo', 12850102, 818386, 1278338),
@@ -55371,11 +55571,11 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (52, 'Togo', 'togo', 1156227, 72546, 113199),
 (53, 'Tunisia', 'tunisia', 1543864, 98837, 150142),
 (54, 'Afganistan', 'afganistan', 5494317, 351331, 548143),
-(55, 'Arab Saudi', 'arab_saudi', 4357182, 272951, 426408),
+(55, 'Arab Saudi', 'arab_saudi', 4371626, 275223, 426772),
 (56, 'Armenia', 'armenia', 461257, 26396, 38745),
 (57, 'Azerbaijan', 'azerbaijan', 1334078, 83404, 128462),
 (58, 'Bahrain', 'bahrain', 294169, 16812, 20393),
-(59, 'Bangladesh', 'bangladesh', 21275580, 1359125, 2122946),
+(59, 'Bangladesh', 'bangladesh', 21297257, 1362531, 2123491),
 (60, 'Bhutan', 'bhutan', 152470, 8240, 10118),
 (61, 'Brunei', 'brunei', 179532, 5541, 6042),
 (62, 'China', 'china', 175697171, 11244493, 17561993),
@@ -55385,19 +55585,19 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (66, 'India', 'india', 177227630, 11344540, 17719390),
 (67, 'Indonesia', 'indonesia', 36059741, 2306658, 3603961),
 (68, 'Irak', 'irak', 5807049, 374492, 577377),
-(69, 'Iran', 'iran', 10848606, 694818, 1082410),
+(69, 'Iran', 'iran', 10870283, 698224, 1082955),
 (70, 'Israel', 'israel', 1341564, 86567, 128790),
 (71, 'Jepang', 'jepang', 15409504, 988127, 1536594),
 (72, 'Kamboja', 'kamboja', 2235322, 145406, 220494),
-(73, 'Kazakhstan', 'kazakhstan', 2599210, 166835, 257068),
+(73, 'Kazakhstan', 'kazakhstan', 2620887, 170241, 257613),
 (74, 'Kirgizstan', 'kirgizstan', 886720, 54720, 77576),
 (75, 'Korea Selatan', 'korea_selatan', 6526402, 418256, 646050),
 (76, 'Korea Utara', 'korea_utara', 3385466, 215773, 333360),
-(77, 'Kuwait', 'kuwait', 649120, 41385, 61390),
+(77, 'Kuwait', 'kuwait', 663564, 43657, 61754),
 (78, 'Laos', 'laos', 897436, 56563, 87158),
 (79, 'Lebanon', 'lebanon', 797724, 52922, 76840),
 (80, 'Makau', 'makau', 172079, 11327, 9929),
-(81, 'Malaysia', 'malaysia', 4206026, 266038, 410326),
+(81, 'Malaysia', 'malaysia', 4227703, 269444, 410871),
 (82, 'Maldives', 'maldives', 114016, 6168, 6912),
 (83, 'Mongolia', 'mongolia', 533625, 31860, 44881),
 (84, 'Myanmar', 'myanmar', 6475576, 412528, 642440),
@@ -55410,16 +55610,16 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (91, 'Singapura', 'singapura', 830421, 52288, 76925),
 (92, 'Sri lanka', 'sri_lanka', 2847315, 179650, 273143),
 (93, 'Suriah', 'suriah', 2818096, 178618, 276828),
-(94, 'Taiwan', 'taiwan', 2965203, 189554, 291127),
+(94, 'Taiwan', 'taiwan', 2979647, 191826, 291491),
 (95, 'Tajikistan', 'tajikistan', 1301280, 83405, 123374),
-(96, 'Thailand', 'thailand', 8275944, 531782, 823660),
+(96, 'Thailand', 'thailand', 8297621, 535188, 824205),
 (97, 'Turkmenistan', 'turkmenistan', 940747, 55901, 81881),
 (98, 'Uni emirat arab', 'uni_emirat_arab', 1211320, 77005, 119382),
 (99, 'Uzbekistan', 'uzbekistan', 4849832, 307671, 478250),
 (100, 'Vietnam', 'vietnam', 12845461, 821563, 1279263),
 (101, 'Yaman', 'yaman', 4290064, 274697, 422038),
 (102, 'Yordania', 'yordania', 1539463, 99324, 149831),
-(103, 'Albania', 'albania', 416677, 25321, 35379),
+(103, 'Albania', 'albania', 438354, 28727, 35924),
 (104, 'Andorra', 'andorra', 55236, 1048, 1124),
 (105, 'Austria', 'austria', 1169614, 73302, 114506),
 (106, 'Belanda', 'belanda', 2342493, 150609, 227603),
@@ -55437,7 +55637,7 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (118, 'Irlandia', 'irlandia', 775632, 47906, 68916),
 (119, 'Islandia', 'islandia', 147901, 3893, 5059),
 (120, 'Italia', 'italia', 7444273, 475479, 737291),
-(121, 'Jerman', 'jerman', 10522351, 670458, 1044123),
+(121, 'Jerman', 'jerman', 10544028, 673864, 1044668),
 (122, 'Kepulauan faroe', 'kepulauan_faroe', 64379, 3067, 1093),
 (123, 'Kosovo', 'kosovo', 236761, 13728, 19857),
 (124, 'Kroasia', 'kroasia', 528296, 34168, 48848),
@@ -55451,9 +55651,9 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (132, 'Monako', 'monako', 48306, 5788, 1362),
 (133, 'Montenegro', 'montenegro', 109841, 8588, 8409),
 (134, 'Norwegia', 'norwegia', 713510, 45210, 70378),
-(135, 'Polandia', 'polandia', 4799966, 302678, 466898),
+(135, 'Polandia', 'polandia', 4821643, 306084, 467443),
 (136, 'Portugal', 'portugal', 1398820, 89415, 134918),
-(137, 'Prancis', 'prancis', 8730877, 557576, 864317),
+(137, 'Prancis', 'prancis', 8752554, 560982, 864862),
 (138, 'Republik rumania', 'republik_rumania', 2424043, 156369, 238609),
 (139, 'Republik serbia', 'republik_serbia', 914867, 59591, 89749),
 (140, 'Rusia', 'rusia', 18389076, 1173748, 1826252),
@@ -55485,7 +55685,7 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (166, 'Honduras', 'honduras', 1401219, 88677, 135657),
 (167, 'Jamaika', 'jamaika', 387796, 23353, 34874),
 (168, 'Kanada', 'kanada', 5203095, 333070, 518611),
-(169, 'Kuba', 'kuba', 1254908, 81234, 122376),
+(169, 'Kuba', 'kuba', 1269352, 83506, 122740),
 (170, 'Meksiko', 'meksiko', 16416613, 1052399, 1638231),
 (171, 'Nikaragua', 'nikaragua', 869775, 55445, 86477),
 (172, 'Panama', 'panama', 622748, 37609, 51634),
@@ -55503,7 +55703,7 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (184, 'Mikronesia', 'mikronesia', 89827, 1856, 1595),
 (185, 'Nauru', 'nauru', 113886, 2733, 580),
 (186, 'Palau', 'palau', 58197, 5611, 1087),
-(187, 'Papua nugini', 'papua_nugini', 1341941, 86903, 131703),
+(187, 'Papua nugini', 'papua_nugini', 1356385, 89175, 132067),
 (188, 'Samoa', 'samoa', 82299, 4852, 3083),
 (189, 'Samoa amerika', 'samoa_amerika', 53883, 5829, 1433),
 (190, 'Selandia baru', 'selandia_baru', 739627, 48131, 67645),
@@ -55524,6 +55724,11 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (205, 'Suriname', 'suriname', 113293, 8014, 8201),
 (206, 'Uruguay', 'uruguay', 480868, 31979, 44230),
 (207, 'Venezuela', 'venezuela', 3574999, 226842, 353827);
+
+
+
+
+
 
 
 
@@ -55547,7 +55752,7 @@ CREATE TABLE IF NOT EXISTS `database_hunian_permukiman` (
 
 
 INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `rumah_subsidi`, `apartemen`, `mansion`) VALUES
-(1, 'Afrika Selatan', 'afrika_selatan', 7970256, 510128, 789616),
+(1, 'Afrika Selatan', 'afrika_selatan', 7991933, 513534, 790161),
 (2, 'Aljazair', 'aljazair', 5955756, 383448, 593188),
 (3, 'Angola', 'angola', 4973374, 315412, 485574),
 (4, 'Benin', 'benin', 1695133, 109689, 165939),
@@ -55581,7 +55786,7 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (32, 'Mozambik', 'mozambik', 3830404, 245487, 376630),
 (33, 'Namibia', 'namibia', 446480, 29385, 38622),
 (34, 'Niger', 'niger', 3327384, 214347, 329762),
-(35, 'Nigeria', 'nigeria', 28076814, 1795037, 2798252),
+(35, 'Nigeria', 'nigeria', 28098491, 1798443, 2798797),
 (36, 'Pantai gading', 'pantai_gading', 3579742, 230526, 355050),
 (37, 'Republik afrika tengah', 'republik_afrika_tengah', 692205, 46085, 67187),
 (38, 'Republik demokratik kongo', 'republik_demokratik_kongo', 12850102, 818386, 1278338),
@@ -55601,11 +55806,11 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (52, 'Togo', 'togo', 1156227, 72546, 113199),
 (53, 'Tunisia', 'tunisia', 1543864, 98837, 150142),
 (54, 'Afganistan', 'afganistan', 5494317, 351331, 548143),
-(55, 'Arab Saudi', 'arab_saudi', 4357182, 272951, 426408),
+(55, 'Arab Saudi', 'arab_saudi', 4371626, 275223, 426772),
 (56, 'Armenia', 'armenia', 461257, 26396, 38745),
 (57, 'Azerbaijan', 'azerbaijan', 1334078, 83404, 128462),
 (58, 'Bahrain', 'bahrain', 294169, 16812, 20393),
-(59, 'Bangladesh', 'bangladesh', 21275580, 1359125, 2122946),
+(59, 'Bangladesh', 'bangladesh', 21297257, 1362531, 2123491),
 (60, 'Bhutan', 'bhutan', 152470, 8240, 10118),
 (61, 'Brunei', 'brunei', 179532, 5541, 6042),
 (62, 'China', 'china', 175697171, 11244493, 17561993),
@@ -55615,19 +55820,19 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (66, 'India', 'india', 177227630, 11344540, 17719390),
 (67, 'Indonesia', 'indonesia', 36059741, 2306658, 3603961),
 (68, 'Irak', 'irak', 5807049, 374492, 577377),
-(69, 'Iran', 'iran', 10848606, 694818, 1082410),
+(69, 'Iran', 'iran', 10870283, 698224, 1082955),
 (70, 'Israel', 'israel', 1341564, 86567, 128790),
 (71, 'Jepang', 'jepang', 15409504, 988127, 1536594),
 (72, 'Kamboja', 'kamboja', 2235322, 145406, 220494),
-(73, 'Kazakhstan', 'kazakhstan', 2599210, 166835, 257068),
+(73, 'Kazakhstan', 'kazakhstan', 2620887, 170241, 257613),
 (74, 'Kirgizstan', 'kirgizstan', 886720, 54720, 77576),
 (75, 'Korea Selatan', 'korea_selatan', 6526402, 418256, 646050),
 (76, 'Korea Utara', 'korea_utara', 3385466, 215773, 333360),
-(77, 'Kuwait', 'kuwait', 649120, 41385, 61390),
+(77, 'Kuwait', 'kuwait', 663564, 43657, 61754),
 (78, 'Laos', 'laos', 897436, 56563, 87158),
 (79, 'Lebanon', 'lebanon', 797724, 52922, 76840),
 (80, 'Makau', 'makau', 172079, 11327, 9929),
-(81, 'Malaysia', 'malaysia', 4206026, 266038, 410326),
+(81, 'Malaysia', 'malaysia', 4227703, 269444, 410871),
 (82, 'Maldives', 'maldives', 114016, 6168, 6912),
 (83, 'Mongolia', 'mongolia', 533625, 31860, 44881),
 (84, 'Myanmar', 'myanmar', 6475576, 412528, 642440),
@@ -55640,16 +55845,16 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (91, 'Singapura', 'singapura', 830421, 52288, 76925),
 (92, 'Sri lanka', 'sri_lanka', 2847315, 179650, 273143),
 (93, 'Suriah', 'suriah', 2818096, 178618, 276828),
-(94, 'Taiwan', 'taiwan', 2965203, 189554, 291127),
+(94, 'Taiwan', 'taiwan', 2979647, 191826, 291491),
 (95, 'Tajikistan', 'tajikistan', 1301280, 83405, 123374),
-(96, 'Thailand', 'thailand', 8275944, 531782, 823660),
+(96, 'Thailand', 'thailand', 8297621, 535188, 824205),
 (97, 'Turkmenistan', 'turkmenistan', 940747, 55901, 81881),
 (98, 'Uni emirat arab', 'uni_emirat_arab', 1211320, 77005, 119382),
 (99, 'Uzbekistan', 'uzbekistan', 4849832, 307671, 478250),
 (100, 'Vietnam', 'vietnam', 12845461, 821563, 1279263),
 (101, 'Yaman', 'yaman', 4290064, 274697, 422038),
 (102, 'Yordania', 'yordania', 1539463, 99324, 149831),
-(103, 'Albania', 'albania', 416677, 25321, 35379),
+(103, 'Albania', 'albania', 438354, 28727, 35924),
 (104, 'Andorra', 'andorra', 55236, 1048, 1124),
 (105, 'Austria', 'austria', 1169614, 73302, 114506),
 (106, 'Belanda', 'belanda', 2342493, 150609, 227603),
@@ -55667,7 +55872,7 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (118, 'Irlandia', 'irlandia', 775632, 47906, 68916),
 (119, 'Islandia', 'islandia', 147901, 3893, 5059),
 (120, 'Italia', 'italia', 7444273, 475479, 737291),
-(121, 'Jerman', 'jerman', 10522351, 670458, 1044123),
+(121, 'Jerman', 'jerman', 10544028, 673864, 1044668),
 (122, 'Kepulauan faroe', 'kepulauan_faroe', 64379, 3067, 1093),
 (123, 'Kosovo', 'kosovo', 236761, 13728, 19857),
 (124, 'Kroasia', 'kroasia', 528296, 34168, 48848),
@@ -55681,9 +55886,9 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (132, 'Monako', 'monako', 48306, 5788, 1362),
 (133, 'Montenegro', 'montenegro', 109841, 8588, 8409),
 (134, 'Norwegia', 'norwegia', 713510, 45210, 70378),
-(135, 'Polandia', 'polandia', 4799966, 302678, 466898),
+(135, 'Polandia', 'polandia', 4821643, 306084, 467443),
 (136, 'Portugal', 'portugal', 1398820, 89415, 134918),
-(137, 'Prancis', 'prancis', 8730877, 557576, 864317),
+(137, 'Prancis', 'prancis', 8752554, 560982, 864862),
 (138, 'Republik rumania', 'republik_rumania', 2424043, 156369, 238609),
 (139, 'Republik serbia', 'republik_serbia', 914867, 59591, 89749),
 (140, 'Rusia', 'rusia', 18389076, 1173748, 1826252),
@@ -55715,7 +55920,7 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (166, 'Honduras', 'honduras', 1401219, 88677, 135657),
 (167, 'Jamaika', 'jamaika', 387796, 23353, 34874),
 (168, 'Kanada', 'kanada', 5203095, 333070, 518611),
-(169, 'Kuba', 'kuba', 1254908, 81234, 122376),
+(169, 'Kuba', 'kuba', 1269352, 83506, 122740),
 (170, 'Meksiko', 'meksiko', 16416613, 1052399, 1638231),
 (171, 'Nikaragua', 'nikaragua', 869775, 55445, 86477),
 (172, 'Panama', 'panama', 622748, 37609, 51634),
@@ -55733,7 +55938,7 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (184, 'Mikronesia', 'mikronesia', 89827, 1856, 1595),
 (185, 'Nauru', 'nauru', 113886, 2733, 580),
 (186, 'Palau', 'palau', 58197, 5611, 1087),
-(187, 'Papua nugini', 'papua_nugini', 1341941, 86903, 131703),
+(187, 'Papua nugini', 'papua_nugini', 1356385, 89175, 132067),
 (188, 'Samoa', 'samoa', 82299, 4852, 3083),
 (189, 'Samoa amerika', 'samoa_amerika', 53883, 5829, 1433),
 (190, 'Selandia baru', 'selandia_baru', 739627, 48131, 67645),
@@ -55754,6 +55959,11 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (205, 'Suriname', 'suriname', 113293, 8014, 8201),
 (206, 'Uruguay', 'uruguay', 480868, 31979, 44230),
 (207, 'Venezuela', 'venezuela', 3574999, 226842, 353827);
+
+
+
+
+
 
 
 
@@ -56030,6 +56240,18 @@ CREATE TABLE IF NOT EXISTS `database_manajemen_pertahanan` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS `database_manajemen_pertahanan` (
+  `id` int(11) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `country_slug` varchar(100) NOT NULL,
+  `barak` int(11) NOT NULL DEFAULT 0,
+  `gudang_senjata` int(11) NOT NULL DEFAULT 0,
+  `hangar_tank` int(11) NOT NULL DEFAULT 0,
+  `pangkalan_udara` int(11) NOT NULL DEFAULT 0,
+  `pangkalan_laut` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS database_manajemen_pertahanan (
     id INT PRIMARY KEY,
     country VARCHAR(100) NOT NULL,
@@ -56277,7 +56499,7 @@ CREATE TABLE IF NOT EXISTS `database_hunian_permukiman` (
 
 
 INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `rumah_subsidi`, `apartemen`, `mansion`) VALUES
-(1, 'Afrika Selatan', 'afrika_selatan', 7970256, 510128, 789616),
+(1, 'Afrika Selatan', 'afrika_selatan', 7991933, 513534, 790161),
 (2, 'Aljazair', 'aljazair', 5955756, 383448, 593188),
 (3, 'Angola', 'angola', 4973374, 315412, 485574),
 (4, 'Benin', 'benin', 1695133, 109689, 165939),
@@ -56311,7 +56533,7 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (32, 'Mozambik', 'mozambik', 3830404, 245487, 376630),
 (33, 'Namibia', 'namibia', 446480, 29385, 38622),
 (34, 'Niger', 'niger', 3327384, 214347, 329762),
-(35, 'Nigeria', 'nigeria', 28076814, 1795037, 2798252),
+(35, 'Nigeria', 'nigeria', 28098491, 1798443, 2798797),
 (36, 'Pantai gading', 'pantai_gading', 3579742, 230526, 355050),
 (37, 'Republik afrika tengah', 'republik_afrika_tengah', 692205, 46085, 67187),
 (38, 'Republik demokratik kongo', 'republik_demokratik_kongo', 12850102, 818386, 1278338),
@@ -56331,11 +56553,11 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (52, 'Togo', 'togo', 1156227, 72546, 113199),
 (53, 'Tunisia', 'tunisia', 1543864, 98837, 150142),
 (54, 'Afganistan', 'afganistan', 5494317, 351331, 548143),
-(55, 'Arab Saudi', 'arab_saudi', 4357182, 272951, 426408),
+(55, 'Arab Saudi', 'arab_saudi', 4371626, 275223, 426772),
 (56, 'Armenia', 'armenia', 461257, 26396, 38745),
 (57, 'Azerbaijan', 'azerbaijan', 1334078, 83404, 128462),
 (58, 'Bahrain', 'bahrain', 294169, 16812, 20393),
-(59, 'Bangladesh', 'bangladesh', 21275580, 1359125, 2122946),
+(59, 'Bangladesh', 'bangladesh', 21297257, 1362531, 2123491),
 (60, 'Bhutan', 'bhutan', 152470, 8240, 10118),
 (61, 'Brunei', 'brunei', 179532, 5541, 6042),
 (62, 'China', 'china', 175697171, 11244493, 17561993),
@@ -56345,19 +56567,19 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (66, 'India', 'india', 177227630, 11344540, 17719390),
 (67, 'Indonesia', 'indonesia', 36059741, 2306658, 3603961),
 (68, 'Irak', 'irak', 5807049, 374492, 577377),
-(69, 'Iran', 'iran', 10848606, 694818, 1082410),
+(69, 'Iran', 'iran', 10870283, 698224, 1082955),
 (70, 'Israel', 'israel', 1341564, 86567, 128790),
 (71, 'Jepang', 'jepang', 15409504, 988127, 1536594),
 (72, 'Kamboja', 'kamboja', 2235322, 145406, 220494),
-(73, 'Kazakhstan', 'kazakhstan', 2599210, 166835, 257068),
+(73, 'Kazakhstan', 'kazakhstan', 2620887, 170241, 257613),
 (74, 'Kirgizstan', 'kirgizstan', 886720, 54720, 77576),
 (75, 'Korea Selatan', 'korea_selatan', 6526402, 418256, 646050),
 (76, 'Korea Utara', 'korea_utara', 3385466, 215773, 333360),
-(77, 'Kuwait', 'kuwait', 649120, 41385, 61390),
+(77, 'Kuwait', 'kuwait', 663564, 43657, 61754),
 (78, 'Laos', 'laos', 897436, 56563, 87158),
 (79, 'Lebanon', 'lebanon', 797724, 52922, 76840),
 (80, 'Makau', 'makau', 172079, 11327, 9929),
-(81, 'Malaysia', 'malaysia', 4206026, 266038, 410326),
+(81, 'Malaysia', 'malaysia', 4227703, 269444, 410871),
 (82, 'Maldives', 'maldives', 114016, 6168, 6912),
 (83, 'Mongolia', 'mongolia', 533625, 31860, 44881),
 (84, 'Myanmar', 'myanmar', 6475576, 412528, 642440),
@@ -56370,16 +56592,16 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (91, 'Singapura', 'singapura', 830421, 52288, 76925),
 (92, 'Sri lanka', 'sri_lanka', 2847315, 179650, 273143),
 (93, 'Suriah', 'suriah', 2818096, 178618, 276828),
-(94, 'Taiwan', 'taiwan', 2965203, 189554, 291127),
+(94, 'Taiwan', 'taiwan', 2979647, 191826, 291491),
 (95, 'Tajikistan', 'tajikistan', 1301280, 83405, 123374),
-(96, 'Thailand', 'thailand', 8275944, 531782, 823660),
+(96, 'Thailand', 'thailand', 8297621, 535188, 824205),
 (97, 'Turkmenistan', 'turkmenistan', 940747, 55901, 81881),
 (98, 'Uni emirat arab', 'uni_emirat_arab', 1211320, 77005, 119382),
 (99, 'Uzbekistan', 'uzbekistan', 4849832, 307671, 478250),
 (100, 'Vietnam', 'vietnam', 12845461, 821563, 1279263),
 (101, 'Yaman', 'yaman', 4290064, 274697, 422038),
 (102, 'Yordania', 'yordania', 1539463, 99324, 149831),
-(103, 'Albania', 'albania', 416677, 25321, 35379),
+(103, 'Albania', 'albania', 438354, 28727, 35924),
 (104, 'Andorra', 'andorra', 55236, 1048, 1124),
 (105, 'Austria', 'austria', 1169614, 73302, 114506),
 (106, 'Belanda', 'belanda', 2342493, 150609, 227603),
@@ -56397,7 +56619,7 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (118, 'Irlandia', 'irlandia', 775632, 47906, 68916),
 (119, 'Islandia', 'islandia', 147901, 3893, 5059),
 (120, 'Italia', 'italia', 7444273, 475479, 737291),
-(121, 'Jerman', 'jerman', 10522351, 670458, 1044123),
+(121, 'Jerman', 'jerman', 10544028, 673864, 1044668),
 (122, 'Kepulauan faroe', 'kepulauan_faroe', 64379, 3067, 1093),
 (123, 'Kosovo', 'kosovo', 236761, 13728, 19857),
 (124, 'Kroasia', 'kroasia', 528296, 34168, 48848),
@@ -56411,9 +56633,9 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (132, 'Monako', 'monako', 48306, 5788, 1362),
 (133, 'Montenegro', 'montenegro', 109841, 8588, 8409),
 (134, 'Norwegia', 'norwegia', 713510, 45210, 70378),
-(135, 'Polandia', 'polandia', 4799966, 302678, 466898),
+(135, 'Polandia', 'polandia', 4821643, 306084, 467443),
 (136, 'Portugal', 'portugal', 1398820, 89415, 134918),
-(137, 'Prancis', 'prancis', 8730877, 557576, 864317),
+(137, 'Prancis', 'prancis', 8752554, 560982, 864862),
 (138, 'Republik rumania', 'republik_rumania', 2424043, 156369, 238609),
 (139, 'Republik serbia', 'republik_serbia', 914867, 59591, 89749),
 (140, 'Rusia', 'rusia', 18389076, 1173748, 1826252),
@@ -56445,7 +56667,7 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (166, 'Honduras', 'honduras', 1401219, 88677, 135657),
 (167, 'Jamaika', 'jamaika', 387796, 23353, 34874),
 (168, 'Kanada', 'kanada', 5203095, 333070, 518611),
-(169, 'Kuba', 'kuba', 1254908, 81234, 122376),
+(169, 'Kuba', 'kuba', 1269352, 83506, 122740),
 (170, 'Meksiko', 'meksiko', 16416613, 1052399, 1638231),
 (171, 'Nikaragua', 'nikaragua', 869775, 55445, 86477),
 (172, 'Panama', 'panama', 622748, 37609, 51634),
@@ -56463,7 +56685,7 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (184, 'Mikronesia', 'mikronesia', 89827, 1856, 1595),
 (185, 'Nauru', 'nauru', 113886, 2733, 580),
 (186, 'Palau', 'palau', 58197, 5611, 1087),
-(187, 'Papua nugini', 'papua_nugini', 1341941, 86903, 131703),
+(187, 'Papua nugini', 'papua_nugini', 1356385, 89175, 132067),
 (188, 'Samoa', 'samoa', 82299, 4852, 3083),
 (189, 'Samoa amerika', 'samoa_amerika', 53883, 5829, 1433),
 (190, 'Selandia baru', 'selandia_baru', 739627, 48131, 67645),
@@ -56484,5 +56706,10 @@ INSERT INTO `database_hunian_permukiman` (`id`, `country`, `country_slug`, `ruma
 (205, 'Suriname', 'suriname', 113293, 8014, 8201),
 (206, 'Uruguay', 'uruguay', 480868, 31979, 44230),
 (207, 'Venezuela', 'venezuela', 3574999, 226842, 353827);
+
+
+
+
+
 
 SET FOREIGN_KEY_CHECKS = 1;
