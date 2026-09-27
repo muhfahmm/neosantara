@@ -199,9 +199,14 @@ export default function CountryKelistrikanModal({
                       <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider leading-snug">
                         {source.label}
                       </p>
+                      {source.unitProduction > 0 && (
+                        <span className="text-[9px] font-bold text-[#00FFAA] bg-[#00FFAA]/10 px-1.5 py-0.5 rounded border border-[#00FFAA]/20 shrink-0">
+                          {source.unitProduction.toLocaleString('id-ID')} MW
+                        </span>
+                      )}
                     </div>
                     <p className="text-lg font-black text-[#E0E0E0] leading-none mt-1">
-                      {source.count}
+                      {source.count} <span className="text-xs font-bold text-[#6B8A8A]">Unit</span>
                     </p>
                   </div>
 
