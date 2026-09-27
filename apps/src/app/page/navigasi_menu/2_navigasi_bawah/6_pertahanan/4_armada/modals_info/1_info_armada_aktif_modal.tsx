@@ -10,10 +10,10 @@ interface InfoArmadaAktifModalProps {
   groupMeta: Record<string, any>;
   formatNumber: (value: unknown) => string;
   unitBreakdown: any[];
-  // 🔥 Tambahkan props berikut untuk logika Kapasitas Penuh & Redirect
   isCapacityFull?: boolean;
   capacityDisplay?: string;
   onNavigateToInfra?: (infraKey: string) => void;
+  capacityInfo?: { used: number; totalCapacity: number; infraName: string; isFull: boolean } | null;
 }
 
 export default function InfoArmadaAktifModal({
@@ -24,11 +24,15 @@ export default function InfoArmadaAktifModal({
   groupMeta,
   formatNumber,
   unitBreakdown,
-  isCapacityFull = false,         // 🔥 Default false
+  isCapacityFull = false,
   capacityDisplay = "",
   onNavigateToInfra,
+  capacityInfo = null,
 }: InfoArmadaAktifModalProps) {
   if (!isOpen || !selectedItem) return null;
+
+  const currentUnit = unitBreakdown.find(e => e.dataKey === selectedItem?.key);
+  const currentQuantity = currentUnit?.quantity ?? 0;
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -56,30 +60,44 @@ export default function InfoArmadaAktifModal({
             </p>
           </div>
 
-          <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-            <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Jumlah Unit</p>
-            <p className="text-xl font-black text-white">
-              {formatNumber(unitBreakdown.find(e => e.dataKey === selectedItem?.key)?.quantity ?? 0)} unit
-            </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
+              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Jumlah Unit Saat Ini</p>
+              <p className="text-xl font-black text-white">
+                {formatNumber(currentQuantity)} {selectedItem.key === "barak" ? "pasukan" : "unit"}
+              </p>
+            </div>
+
+            {capacityInfo && (
+              <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
+                <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Kapasitas {capacityInfo.infraName}</p>
+                <p className={`text-xl font-black ${capacityInfo.isFull ? "text-rose-400" : "text-[#00FFAA]"}`}>
+                  {formatNumber(capacityInfo.used)} / {formatNumber(capacityInfo.totalCapacity)}
+                </p>
+                <p className="text-[10px] text-[#6B8A8A] mt-1">
+                  (Total seluruh armada terpakai dalam {capacityInfo.infraName})
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
               <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Kekuatan</p>
               <p className="text-lg font-black text-[#00FFAA]">
-                {formatNumber(unitBreakdown.find(e => e.dataKey === selectedItem?.key)?.totalPower ?? 0)}
+                {formatNumber(currentUnit?.totalPower ?? 0)}
               </p>
             </div>
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
               <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Total HP</p>
               <p className="text-lg font-black text-rose-400">
-                {formatNumber(unitBreakdown.find(e => e.dataKey === selectedItem?.key)?.totalHealth ?? 0)}
+                {formatNumber(currentUnit?.totalHealth ?? 0)}
               </p>
             </div>
           </div>
 
           {/* PERINGATAN KAPASITAS PENUH */}
-          {isCapacityFull && selectedItem.key === "barak" && (
+          {isCapacityFull && (
             <div className="border border-rose-500/40 bg-rose-950/40 rounded-xl p-5 space-y-3 mt-4">
               <div className="flex items-center gap-3">
                 <div className="w-2.5 h-2.5 rounded-full animate-pulse bg-rose-500"></div>
@@ -87,21 +105,10 @@ export default function InfoArmadaAktifModal({
               </div>
               <div className="text-xs text-rose-200 space-y-1">
                 <p>
-                  Kapasitas Infanteri saat ini sudah penuh <span className="font-black text-white">({capacityDisplay})</span>.
-                  Anda harus membangun Barak baru untuk menambah Infanteri lebih banyak.
+                  Kapasitas penampungan militer saat ini sudah penuh <span className="font-black text-white">({capacityDisplay})</span>.
+                  Anda harus membangun infrastruktur militer baru untuk menambah armada lebih banyak.
                 </p>
               </div>
-              {onNavigateToInfra && (
-                <button
-                  onClick={() => {
-                    onNavigateToInfra("barak");
-                    onClose();
-                  }}
-                  className="mt-2 w-full py-3 rounded-lg font-black text-xs uppercase tracking-wider transition-all bg-rose-600 text-white hover:bg-rose-700 shadow-md border border-rose-500"
-                >
-                  🏗️ Buka Tab Infrastruktur
-                </button>
-              )}
             </div>
           )}
         </div>

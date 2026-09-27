@@ -11,6 +11,8 @@ import { REQUIREMENTS as GUDANG_REQUIREMENTS } from "../requirements_logic/3_gud
 import { REQUIREMENTS as LAUT_REQUIREMENTS } from "../requirements_logic/4_pangkalan_laut/requirements";
 import { REQUIREMENTS as UDARA_REQUIREMENTS } from "../requirements_logic/5_pangkalan_udara/requirements";
 
+import metadataManajemen from "../../../../../../../../../json/semua_fitur_negara/2_pertahanan/3_manajemen_pertahanan/metadata_manajemen.json";
+
 interface TabProps {
   countryDetail: any;
   setCountryDetail: (detail: any) => void;
@@ -94,21 +96,7 @@ export default function InfrastrukturMiliter({
 }: TabProps) {
   const [selectedForBuild, setSelectedForBuild] = useState<{ key: string; label: string } | null>(null);
   const [isConfirmBuildOpen, setIsConfirmBuildOpen] = useState(false);
-  const [infrastrukturData, setInfrastrukturData] = useState<Record<string, any>>({});
-
-  // 🟢 Muat metadata infrastruktur
-  useEffect(() => {
-    const loadMetadata = async () => {
-      try {
-        const response = await fetch('/metadata/armada_metadata.json');
-        const data = await response.json();
-        setInfrastrukturData(data);
-      } catch (error) {
-        console.error('Error loading infrastructure metadata:', error);
-      }
-    };
-    loadMetadata();
-  }, []);
+  const [infrastrukturData] = useState<Record<string, any>>(metadataManajemen);
 
   // 🟢 Proses konstruksi yang selesai (berdasarkan tanggal simulasi)
   useEffect(() => {

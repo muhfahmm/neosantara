@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { X } from "lucide-react";
+import { getInfraCapacityDetails } from "../logic/infraCapacityHelper";
 
 interface InfoInfrastrukturModalProps {
   isOpen: boolean;
@@ -23,6 +24,8 @@ export default function InfoInfrastrukturModal({
 
   const itemKey = selectedItem?.dataKey || (typeof selectedItem?.key === "string" ? selectedItem.key.replace(/^\d+_/, "") : selectedItem?.key);
   const value = getNestedValue(countryDetail, itemKey);
+
+  const capacityDetail = getInfraCapacityDetails(itemKey, countryDetail);
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -50,12 +53,42 @@ export default function InfoInfrastrukturModal({
             </div>
           )}
 
-          <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-            <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Jumlah</p>
-            <p className="text-xl font-black text-white">
-              {formatNumber(value)} {selectedItem?.satuan_kapasitas || "Unit"}
-            </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
+              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Jumlah Fasilitas</p>
+              <p className="text-xl font-black text-white">
+                {formatNumber(value)} unit
+              </p>
+            </div>
+
+            {capacityDetail && (
+              <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
+                <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Status Kapasitas Terpakai</p>
+                <p className={`text-xl font-black ${capacityDetail.isFull ? "text-rose-400" : "text-[#00FFAA]"}`}>
+                  {formatNumber(capacityDetail.used)} / {formatNumber(capacityDetail.totalCapacity)}
+                </p>
+                <p className="text-[10px] text-[#6B8A8A] mt-1">
+                  ({formatNumber(capacityDetail.capacityPerUnit)} {capacityDetail.unitLabel} / 1 {selectedItem?.label})
+                </p>
+              </div>
+            )}
           </div>
+
+          {capacityDetail && capacityDetail.supportedUnits && capacityDetail.supportedUnits.length > 0 && (
+            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
+              <p className="text-[12px] font-bold text-[#00FFAA] uppercase tracking-wider mb-2">
+                🛡️ Jenis Armada yang Ditampung:
+              </p>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                {capacityDetail.supportedUnits.map((unitName, index) => (
+                  <li key={index} className="flex items-center gap-2 bg-[#0F2424] px-3 py-1.5 rounded-lg border border-[#00FFAA]/10 text-white font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00FFAA]"></span>
+                    {unitName}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
@@ -76,7 +109,7 @@ export default function InfoInfrastrukturModal({
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
               <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Tenaga Kerja</p>
               <p className="text-base font-black text-white">
-                {formatNumber(selectedItem?.lowongan_kerja)} orang
+                {formatNumber(selectedItem?.lowongan_kerja || selectedItem?.kekuatan || 0)} orang
               </p>
             </div>
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20 space-y-2">
@@ -94,15 +127,6 @@ export default function InfoInfrastrukturModal({
               </div>
             </div>
           </div>
-
-          {selectedItem?.kapasitas && (
-            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Kapasitas</p>
-              <p className="text-xl font-black text-[#00FFAA]">
-                {formatNumber(selectedItem.kapasitas)} {selectedItem.satuan_kapasitas}
-              </p>
-            </div>
-          )}
         </div>
 
         {/* Footer */}

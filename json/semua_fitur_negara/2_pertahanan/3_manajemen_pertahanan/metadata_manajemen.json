@@ -1,14 +1,26 @@
 {
+  "barak": {
+    "key": "1_barak",
+    "dataKey": "barak",
+    "groupId": "darat",
+    "label": "Barak Militer",
+    "deskripsi": "Kompleks Hunian & Pelatihan Tentara",
+    "biaya_pembangunan": 26250,
+    "waktu_pembangunan": 15,
+    "kapasitas": 10000,
+    "satuan_kapasitas": "Pasukan Infanteri",
+    "konsumsi_listrik": 0.5
+  },
   "gudang_senjata": {
     "key": "2_gudang_senjata",
     "dataKey": "gudang_senjata",
     "groupId": "pertahanan",
     "label": "Gudang Senjata",
-    "deskripsi": "Penyimpanan Amunisi",
+    "deskripsi": "Penyimpanan Amunisi & Persenjataan",
     "biaya_pembangunan": 26250,
     "waktu_pembangunan": 30,
-    "kapasitas": 10000,
-    "satuan_kapasitas": "Unit Amunisi",
+    "kapasitas": 2500,
+    "satuan_kapasitas": "Unit Persenjataan",
     "konsumsi_listrik": 0.5
   },
   "hangar_tank": {
@@ -16,11 +28,11 @@
     "dataKey": "hangar_tank",
     "groupId": "pertahanan",
     "label": "Hangar Tank",
-    "deskripsi": "Garasi Tempur",
+    "deskripsi": "Garasi Tempur Lapis Baja",
     "biaya_pembangunan": 63750,
     "waktu_pembangunan": 30,
-    "kapasitas": 50,
-    "satuan_kapasitas": "Main Battle Tank",
+    "kapasitas": 3000,
+    "satuan_kapasitas": "Unit Kendaraan Tempur Lapis Baja",
     "konsumsi_listrik": 0.5
   },
   "pangkalan_udara": {
@@ -28,11 +40,11 @@
     "dataKey": "pangkalan_udara",
     "groupId": "pertahanan",
     "label": "Pangkalan Udara",
-    "deskripsi": "Fasilitas Dirgantara",
+    "deskripsi": "Fasilitas Dirgantara & Armada Udara",
     "biaya_pembangunan": 337500,
     "waktu_pembangunan": 60,
-    "kapasitas": 24,
-    "satuan_kapasitas": "Pesawat Tempur",
+    "kapasitas": 500,
+    "satuan_kapasitas": "Unit Armada Udara",
     "konsumsi_listrik": 0.5
   },
   "pangkalan_laut": {
@@ -40,11 +52,11 @@
     "dataKey": "pangkalan_laut",
     "groupId": "pertahanan",
     "label": "Pangkalan Laut",
-    "deskripsi": "Fasilitas Maritim",
+    "deskripsi": "Fasilitas Maritim & Kapal Perang",
     "biaya_pembangunan": 412500,
     "waktu_pembangunan": 120,
-    "kapasitas": 12,
-    "satuan_kapasitas": "Kapal Perang",
+    "kapasitas": 50,
+    "satuan_kapasitas": "Unit Kapal Perang",
     "konsumsi_listrik": 0.5
   }
 }

@@ -4,6 +4,7 @@ import { Swords, Ship, Plane, Info } from "lucide-react";
 import { BARAK_TO_SOLDIERS_MULTIPLIER } from "../logic/1_barak_logic";
 import { getArmadaUnitBreakdown } from "../logic/armadaLogic";
 import { convertBarakToSoldiers } from "../logic/1_barak_logic";
+import { getArmadaCapacityInfo } from "../logic/infraCapacityHelper";
 import KonfirmasiArmadaAktifModal from "../2_modals_konfirmasi_pembangunan/1_konfirmasi_armada_aktif_modal";
 import InfoArmadaAktifModal from "../modals_info/1_info_armada_aktif_modal";
 import { REQUIREMENTS as INFANTERI_REQUIREMENTS, findRequirements as findInfanteriRequirements } from "../requirements_logic/1_infanteri/requirements";
@@ -520,18 +521,15 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
           groupMeta={groupMeta}
           formatNumber={formatNumber}
           unitBreakdown={unitBreakdown}
-          isCapacityFull={infoKey === "barak" && (() => {
-            const currentBarakCount = getData("barak");
-            const infantryCount = getData("pasukan_infanteri", "darat");
-            const maxCapacity = currentBarakCount * 10000;
-            return currentBarakCount > 0 && infantryCount >= maxCapacity;
+          capacityInfo={getArmadaCapacityInfo(infoKey, countryDetail)}
+          isCapacityFull={(() => {
+            const cap = getArmadaCapacityInfo(infoKey, countryDetail);
+            return cap ? cap.isFull : false;
           })()}
-          capacityDisplay={infoKey === "barak" ? (() => {
-            const currentBarakCount = getData("barak");
-            const infantryCount = getData("pasukan_infanteri", "darat");
-            const maxCapacity = currentBarakCount * 10000;
-            return `${formatNumber(infantryCount)} / ${formatNumber(maxCapacity)}`;
-          })() : ""}
+          capacityDisplay={(() => {
+            const cap = getArmadaCapacityInfo(infoKey, countryDetail);
+            return cap ? `${formatNumber(cap.used)} / ${formatNumber(cap.totalCapacity)}` : "";
+          })()}
           onNavigateToInfra={onCapacityFull}
         />
       )}
