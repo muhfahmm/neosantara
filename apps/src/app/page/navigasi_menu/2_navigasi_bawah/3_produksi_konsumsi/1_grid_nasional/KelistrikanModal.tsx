@@ -10,6 +10,7 @@ import {
   Search,
   ChevronUp,
   ChevronDown,
+  AlertTriangle,
 } from "lucide-react";
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
@@ -49,6 +50,21 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'production', direction: 'desc' });
   const [isDetailKonsumsiOpen, setIsDetailKonsumsiOpen] = useState(false);
   const [selectedCountryData, setSelectedCountryData] = useState<any | null>(null);
+  const [fuelDeficitModalData, setFuelDeficitModalData] = useState<{
+    countryName: string;
+    deficits: Array<{
+      buildingKey: string;
+      label: string;
+      count: number;
+      fuels: Array<{
+        resourceKey: string;
+        label: string;
+        needed: number;
+        stock: number;
+        deficit: number;
+      }>;
+    }>;
+  } | null>(null);
 
   useEffect(() => {
     if (isOpen && allCountries.length === 0) {
@@ -163,6 +179,19 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       )
     );
 
+    const fuelDeficitDetails: Array<{
+      buildingKey: string;
+      label: string;
+      count: number;
+      fuels: Array<{
+        resourceKey: string;
+        label: string;
+        needed: number;
+        stock: number;
+        deficit: number;
+      }>;
+    }> = [];
+
     const totalProduction = SOURCE_ORDER.reduce((sum, key) => {
       const bMeta = findMeta(key);
       const count = Number(country?.[key]) || 0;
@@ -172,13 +201,36 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       if (count > 0) {
         const fuelReqs = getKelistrikanFuelRequirements(key);
         if (fuelReqs.length > 0) {
+          const brokenFuels: Array<{
+            resourceKey: string;
+            label: string;
+            needed: number;
+            stock: number;
+            deficit: number;
+          }> = [];
+
           for (const req of fuelReqs) {
             const stock = getMaterialStock(country, req.resourceKey);
             const totalNeeded = req.amount * count;
             if (stock < totalNeeded) {
               isFuelDeficit = true;
-              break;
+              brokenFuels.push({
+                resourceKey: req.resourceKey,
+                label: req.label || req.resourceKey.replace(/_/g, " "),
+                needed: totalNeeded,
+                stock: Math.max(0, stock),
+                deficit: totalNeeded - Math.max(0, stock),
+              });
             }
+          }
+
+          if (isFuelDeficit) {
+            fuelDeficitDetails.push({
+              buildingKey: key,
+              label: bMeta?.label || key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
+              count,
+              fuels: brokenFuels,
+            });
           }
         }
       }
@@ -201,6 +253,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       totalProduction: isNaN(totalProduction) ? 0 : totalProduction,
       consumption: isNaN(consumption) ? 0 : consumption,
       balance: isNaN(balance) ? 0 : balance,
+      fuelDeficitDetails,
     };
   };
 
@@ -208,7 +261,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
   const globalElectricityData = allCountries
     .map((country, index) => {
-      const { totalProduction, consumption, balance } = calculateCountryElectricity(country);
+      const { totalProduction, consumption, balance, fuelDeficitDetails } = calculateCountryElectricity(country);
       // Normalize balance: jika sangat kecil (floating-point error), set ke 0
       const normalizedBalance = Math.abs(balance) < 0.01 ? 0 : balance;
       let rawName = country?.name_id || country?.name_en || country?.nama || country?.country;
@@ -236,6 +289,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         balance: normalizedBalance,
         isUser,
         rawData: country,
+        fuelDeficitDetails,
       };
     })
     .sort((a, b) => b.production - a.production);
@@ -575,12 +629,30 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                               {rowIndex + 1}
                             </td>
                             <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black flex items-center gap-2' : 'text-[#E0E0E0]'}`}>
-                              <span>{country.name}</span>
-                              {isUserCountry && (
-                                <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-[#0A1A1A] text-[9px] font-black uppercase tracking-wider">
-                                  Negara Anda
-                                </span>
-                              )}
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span>{country.name}</span>
+                                {country.fuelDeficitDetails && country.fuelDeficitDetails.length > 0 && country.balance < -0.01 && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setFuelDeficitModalData({
+                                        countryName: country.name,
+                                        deficits: country.fuelDeficitDetails,
+                                      });
+                                    }}
+                                    className="p-1 rounded-md bg-rose-500/20 hover:bg-rose-500/40 border border-rose-500/50 text-rose-400 transition-colors flex items-center gap-1 cursor-pointer"
+                                    title="Klik untuk melihat rincian bahan bakar yang kurang"
+                                  >
+                                    <AlertTriangle className="h-3.5 w-3.5 text-rose-500 animate-pulse shrink-0" />
+                                    <span className="text-[9px] font-black uppercase text-rose-400">Defisit Bahan Bakar</span>
+                                  </button>
+                                )}
+                                {isUserCountry && (
+                                  <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-[#0A1A1A] text-[9px] font-black uppercase tracking-wider">
+                                    Negara Anda
+                                  </span>
+                                )}
+                              </div>
                             </td>
                             <td className="px-4 py-3 font-bold text-emerald-400 text-right">
                               {isNaN(country.production) || country.production <= 0 ? '0' : country.production.toLocaleString('id-ID')}
@@ -595,7 +667,26 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                               country.balance < -0.01 ? 'text-rose-400' :
                               'text-slate-400'
                             }`}>
-                              {isNaN(country.balance) || country.balance === 0 ? '0' : (country.balance > 0 ? '+' : '-') + Math.abs(country.balance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                              <div className="flex items-center justify-end gap-1">
+                                {country.fuelDeficitDetails && country.fuelDeficitDetails.length > 0 && country.balance < -0.01 && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setFuelDeficitModalData({
+                                        countryName: country.name,
+                                        deficits: country.fuelDeficitDetails,
+                                      });
+                                    }}
+                                    className="p-1 rounded bg-rose-500/20 hover:bg-rose-500/40 border border-rose-500/40 text-rose-400 transition-colors cursor-pointer"
+                                    title="Bahan bakar pembangkit kurang"
+                                  >
+                                    <AlertTriangle className="h-3.5 w-3.5 text-rose-400 shrink-0" />
+                                  </button>
+                                )}
+                                <span>
+                                  {isNaN(country.balance) || country.balance === 0 ? '0' : (country.balance > 0 ? '+' : '-') + Math.abs(country.balance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                                </span>
+                              </div>
                             </td>
                           </tr>
                         );
@@ -652,6 +743,78 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
           )
         )}
       />
+
+      {/* MODAL INFORMATION PEMBANGKIT DEFISIT BAHAN BAKAR */}
+      {fuelDeficitModalData && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm pointer-events-auto">
+          <div className="bg-[#0A1A1A] border border-rose-500/50 rounded-2xl p-5 sm:p-6 w-full max-w-lg shadow-2xl relative space-y-4">
+            <div className="flex items-center justify-between border-b border-rose-500/30 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 bg-rose-500/20 border border-rose-500/40 rounded-xl">
+                  <AlertTriangle className="h-5 w-5 text-rose-400" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black text-rose-400 uppercase tracking-wide">
+                    Defisit Bahan Bakar Pembangkit
+                  </h3>
+                  <p className="text-[10px] text-[#6B8A8A] uppercase tracking-wider font-bold">
+                    {fuelDeficitModalData.countryName}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setFuelDeficitModalData(null)}
+                className="p-1.5 rounded-lg bg-[#0F2424] text-[#6B8A8A] hover:text-white hover:border-rose-500 border border-[#00FFAA]/20 transition-all cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-[#E0E0E0]">
+              Pembangkit listrik berikut tidak dapat beroperasi penuh karena kekurangan stok bahan mentah/tambang:
+            </p>
+
+            <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-1 custom-scrollbar">
+              {fuelDeficitModalData.deficits.map((b, idx) => (
+                <div key={`deficit-b-${idx}`} className="bg-[#0F2424] border border-rose-500/30 rounded-xl p-3.5 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-white uppercase tracking-wide">
+                      {b.label}
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-500/40">
+                      {b.count} Unit
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5 pt-1 border-t border-[#00FFAA]/10">
+                    {b.fuels.map((f, fIdx) => (
+                      <div key={`fuel-${fIdx}`} className="bg-[#0A1A1A] p-2 rounded-lg text-xs space-y-1">
+                        <div className="flex justify-between font-bold">
+                          <span className="text-rose-400 uppercase text-[11px]">{f.label}</span>
+                          <span className="text-rose-400 text-[11px]">Kurang {f.deficit.toLocaleString('id-ID')}</span>
+                        </div>
+                        <div className="flex justify-between text-[10px] text-[#6B8A8A]">
+                          <span>Stok Saat Ini: <strong className="text-white">{f.stock.toLocaleString('id-ID')}</strong></span>
+                          <span>Dibutuhkan: <strong className="text-white">{f.needed.toLocaleString('id-ID')}</strong></span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button
+                onClick={() => setFuelDeficitModalData(null)}
+                className="px-4 py-2 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 rounded-xl text-xs font-black uppercase text-rose-300 transition-all cursor-pointer"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
