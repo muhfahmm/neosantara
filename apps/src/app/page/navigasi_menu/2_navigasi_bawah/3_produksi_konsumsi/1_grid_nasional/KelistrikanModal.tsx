@@ -747,7 +747,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       {/* MODAL INFORMATION PEMBANGKIT DEFISIT BAHAN BAKAR */}
       {fuelDeficitModalData && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm pointer-events-auto">
-          <div className="bg-[#0A1A1A] border border-rose-500/50 rounded-2xl p-5 sm:p-6 w-full max-w-lg shadow-2xl relative space-y-4">
+          <div className="bg-[#0A1A1A] border border-rose-500/50 rounded-2xl p-5 sm:p-6 w-full max-w-lg shadow-none relative space-y-4">
             <div className="flex items-center justify-between border-b border-rose-500/30 pb-3">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 bg-rose-500/20 border border-rose-500/40 rounded-xl">
