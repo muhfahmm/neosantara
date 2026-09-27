@@ -40,7 +40,7 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
   }
 
   // 0. Total Produksi Listrik (Pembangkit)
-  const totalProductionMW = SOURCE_ORDER.reduce((sum, key) => {
+  const rawProductionMW = SOURCE_ORDER.reduce((sum, key) => {
     const bMeta = findMeta(metadata, key);
     const count = Number(countryData?.[key]) || 0;
     const unitProduction = Number(bMeta?.produksi) || 0;
@@ -60,6 +60,10 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
     }
     return sum + (isFuelDeficit ? 0 : count * unitProduction);
   }, 0);
+
+  // Koreksi penyeimbang (disimpan per-negara di DB agar neraca = 0)
+  const produksiPenyeimbang = Number(countryData?.produksi_penyeimbang) || 0;
+  const totalProductionMW = rawProductionMW + produksiPenyeimbang;
 
   // 1. Sektor Hunian
   const hunianKeys = [
