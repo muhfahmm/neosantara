@@ -8,10 +8,8 @@ import {
   TrendingUp,
   TrendingDown,
   Search,
-  ArrowUpDown,
   ChevronUp,
   ChevronDown,
-  Activity
 } from "lucide-react";
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
@@ -211,6 +209,8 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   const globalElectricityData = allCountries
     .map((country, index) => {
       const { totalProduction, consumption, balance } = calculateCountryElectricity(country);
+      // Normalize balance: jika sangat kecil (floating-point error), set ke 0
+      const normalizedBalance = Math.abs(balance) < 0.01 ? 0 : balance;
       let rawName = country?.name_id || country?.name_en || country?.nama || country?.country;
       if (!rawName && country?.__fileName) {
         rawName = country.__fileName
@@ -233,7 +233,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         name: countryName,
         production: totalProduction,
         consumption,
-        balance,
+        balance: normalizedBalance,
         isUser,
         rawData: country,
       };
@@ -374,10 +374,24 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       </div>
                       <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-rose-400 mt-1.5 lg:mt-2 2xl:mt-3">{estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</p>
                     </div>
-                    <div className={`p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl border ${balanceMW >= 0 ? 'bg-emerald-950/40 border-emerald-500/30' : 'bg-rose-950/40 border-rose-500/30'}`}>
-                      <p className={`text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest ${balanceMW >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>Neraca Daya</p>
-                      <p className={`text-lg lg:text-xl 2xl:text-2xl font-black mt-1.5 lg:mt-2 2xl:mt-3 ${balanceMW >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                        {balanceMW >= 0 ? '+' : '-'}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
+                    
+                    {/* NERACA DAYA: LOGIKA WARNA HIJAU/MERAH/ABU-ABU */}
+                    <div className={`p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl border ${
+                      balanceMW > 0 ? 'bg-emerald-950/40 border-emerald-500/30' :
+                      balanceMW < 0 ? 'bg-rose-950/40 border-rose-500/30' :
+                      'bg-slate-900/40 border-slate-500/30'
+                    }`}>
+                      <p className={`text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest ${
+                        balanceMW > 0 ? 'text-emerald-400' :
+                        balanceMW < 0 ? 'text-rose-400' :
+                        'text-slate-400'
+                      }`}>Neraca Daya</p>
+                      <p className={`text-lg lg:text-xl 2xl:text-2xl font-black mt-1.5 lg:mt-2 2xl:mt-3 ${
+                        balanceMW > 0 ? 'text-emerald-400' :
+                        balanceMW < 0 ? 'text-rose-400' :
+                        'text-slate-400'
+                      }`}>
+                        {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                       </p>
                     </div>
                   </div>
@@ -460,8 +474,13 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   <div>Rasio produksi/konsumsi: <span className="font-bold text-[#00FFAA]">
                     {estimatedConsumptionMW > 0 ? (totalCapacityMW / estimatedConsumptionMW).toFixed(2) : 'N/A'}
                   </span></div>
-                  <div>Neraca daya: <span className={`font-bold ${balanceMW >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                    {balanceMW >= 0 ? '+' : '-'}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
+                  {/* NERACA DAYA SUMMARY: LOGIKA WARNA HIJAU/MERAH/ABU-ABU */}
+                  <div>Neraca daya: <span className={`font-bold ${
+                    balanceMW > 0 ? 'text-emerald-400' :
+                    balanceMW < 0 ? 'text-rose-400' :
+                    'text-slate-400'
+                  }`}>
+                    {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                   </span></div>
                 </div>
               </div>
@@ -543,7 +562,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         const isUserCountry = country.isUser;
                         return (
                           <tr
-                            key={`country-${country.index}-${rowIndex}`}
+                            key={`country-${country.name}-${rowIndex}`}
                             onClick={() => setSelectedCountryData(country.rawData)}
                             className={`transition-colors cursor-pointer hover:bg-[#00FFAA]/10 ${
                               isUserCountry
@@ -551,8 +570,9 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                                 : 'bg-[#0F2424]'
                             }`}
                           >
+                            {/* MENGGUNAKAN rowIndex + 1 AGAR NOMOR URUT SELALU 1,2,3... MESKIPUN DI-SORTING */}
                             <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black' : 'text-[#6B8A8A]'}`}>
-                              {country.index}
+                              {rowIndex + 1}
                             </td>
                             <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black flex items-center gap-2' : 'text-[#E0E0E0]'}`}>
                               <span>{country.name}</span>
@@ -568,8 +588,14 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                             <td className="px-4 py-3 font-bold text-rose-400 text-right">
                               {isNaN(country.consumption) || country.consumption <= 0 ? '0' : country.consumption.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                             </td>
-                            <td className={`px-4 py-3 font-black text-right ${country.balance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                              {isNaN(country.balance) ? '0' : (country.balance >= 0 ? '+' : '-') + Math.abs(country.balance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                            
+                            {/* NERACA DAYA TABLE: LOGIKA WARNA HIJAU/MERAH/ABU-ABU */}
+                            <td className={`px-4 py-3 font-black text-right ${
+                              country.balance > 0.01 ? 'text-emerald-400' :
+                              country.balance < -0.01 ? 'text-rose-400' :
+                              'text-slate-400'
+                            }`}>
+                              {isNaN(country.balance) || country.balance === 0 ? '0' : (country.balance > 0 ? '+' : '-') + Math.abs(country.balance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                             </td>
                           </tr>
                         );

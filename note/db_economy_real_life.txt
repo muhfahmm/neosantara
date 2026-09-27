@@ -1,0 +1,207 @@
+amerika serikat
+ china
+ jerman
+ jepang
+ inggris
+ india
+ prancis
+ italia
+ rusia
+ brazil
+ kanada
+ australia
+ meksiko
+ spanyol
+ korea selatan
+ turki
+ indonesia
+ belanda
+ arab saudi
+ swiss
+ polandia
+ taiwan
+ irlandia
+ belgia
+ swedia
+ israel
+ argentina
+ singapura
+ austria
+ uni emirat arab
+ norwegia
+ thailand
+ kolombia
+ vietnam
+ malaysia
+ filipina
+ bangladesh
+ denmark
+ republik rumania
+ afrika selatan
+ pakistan
+ hong kong
+ ceko
+ mesir
+ chile
+ peru
+ portugal
+ nigeria
+ kazakhstan
+ finlandia
+ aljazair
+ yunani
+ iran
+ selandia baru
+ hungaria
+ irak
+ ukraina
+ qatar
+ maroko
+ uzbekistan
+ kuwait
+ slowakia
+ angola
+ bulgaria
+ kenya
+ ekuador
+ republik dominika
+ puerto rico
+ guatemala
+ republik demokratik kongo
+ ethiopia
+ ghana
+ oman
+ kroasia
+ pantai gading
+ republik serbia
+ venezuela
+ luksemburg
+ costa rica
+ kuba
+ lithuania
+ belarus
+ sri lanka
+ uruguay
+ panama
+ republik tanzania
+ slovenia
+ myanmar
+ turkmenistan
+ bolivia
+ azerbaijan
+ republik uganda
+ kamerun
+ yordania
+ tunisia
+ paraguay
+ suriah
+ republik zimbabwe
+ makau
+ latvia
+ libya
+ kamboja
+ estonia
+ bahrain
+ nepal
+ siprus
+ republik sudan
+ islandia
+ georgia
+ honduras
+ republik zambia
+ senegal
+ el salvador
+ haiti
+ bosnia dan hercegovina
+ lebanon
+ papua nugini
+ guyana
+ mali
+ albania
+ burkina faso
+ armenia
+ malta
+ guinea
+ mongolia
+ benin
+ trinidad dan tobago
+ chad
+ niger
+ nikaragua
+ kirgizstan
+ gabon
+ mozambik
+ jamaika
+ botswana
+ moldova
+ makedonia utara
+ madagaskar
+ tajikistan
+ afganistan
+ laos
+ malawi
+ rwanda
+ namibia
+ korea utara
+ mauritius
+ bahama
+ kongo
+ brunei
+ palestina
+ mauritania
+ somalia
+ kosovo
+ togo
+ monako
+ montenegro
+ liechtenstein
+ bermuda
+ barbados
+ sierra leone
+ burundi
+ maldives
+ yaman
+ guam
+ fiji
+ tahiti
+ sudan selatan
+ suriname
+ eswatini
+ guiana prancis
+ liberia
+ andorra
+ djibouti
+ kepulauan faroe
+ bhutan
+ curacao
+ republik afrika tengah
+ belize
+ tanjung verde
+ greenland
+ guinea bissau
+ lesotho
+ gambia
+ saint lucia
+ san marino
+ antigua dan barbuda
+ gibraltar
+ seychelles
+ republik timor leste
+ eritrea
+ komoro
+ grenada
+ vanuatu
+ samoa
+ saint vincent dan grenadine
+ sao tome dan principe
+ saint kitts dan nevis
+ samoa amerika
+ dominika
+ tonga
+ mikronesia
+ kiribati
+ palau
+ marshall
+ nauru
+ tuvalu
+ vatikan
