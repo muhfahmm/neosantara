@@ -84,34 +84,50 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
   });
   const totalHunianConsumption = hunianBreakdown.reduce((sum, h) => sum + h.total, 0);
 
-  // 2. Sektor Tempat Umum
+  // 2. Sektor Tempat Umum — key disesuaikan dengan dataKey di metadata JSON dan kolom DB
   const tempatUmumKeys = [
+    // Infrastruktur (metadata_infrastruktur.json)
+    { key: "jalur_sepeda", label: "Jalur Sepeda", sector: "Infrastruktur" },
     { key: "jalan_raya", label: "Jalan Raya & Tol", sector: "Infrastruktur" },
+    { key: "terminal_bus", label: "Terminal Bus", sector: "Infrastruktur" },
+    { key: "stasiun_kereta_api", label: "Stasiun Kereta Api", sector: "Infrastruktur" },
+    { key: "kereta_bawah_tanah", label: "Kereta Bawah Tanah", sector: "Infrastruktur" },
     { key: "pelabuhan", label: "Pelabuhan Laut", sector: "Infrastruktur" },
     { key: "bandara", label: "Bandara Udara", sector: "Infrastruktur" },
-    { key: "stasiun_kereta", label: "Stasiun Kereta Api", sector: "Infrastruktur" },
-    { key: "terminal_bus", label: "Terminal Bus", sector: "Infrastruktur" },
-    { key: "jembatan_nasional", label: "Jembatan Nasional", sector: "Infrastruktur" },
-    { key: "pembangkit_listrik", label: "Jaringan Listrik Publik", sector: "Infrastruktur" },
+    { key: "helipad", label: "Helipad", sector: "Infrastruktur" },
+    // Pendidikan (metadata_pendidikan.json)
     { key: "prasekolah", label: "PAUD & TK", sector: "Pendidikan" },
     { key: "dasar", label: "Sekolah Dasar (SD)", sector: "Pendidikan" },
-    { key: "menengah", label: "Sekolah Menengah (SMP/SMA)", sector: "Pendidikan" },
+    { key: "menengah", label: "Sekolah Menengah (SMP)", sector: "Pendidikan" },
+    { key: "lanjutan", label: "Sekolah Lanjutan (SMA/SMK)", sector: "Pendidikan" },
     { key: "universitas", label: "Perguruan Tinggi / Universitas", sector: "Pendidikan" },
+    { key: "lembaga_pendidikan", label: "Lembaga Pendidikan & Vokasi", sector: "Pendidikan" },
     { key: "laboratorium", label: "Laboratorium Riset", sector: "Pendidikan" },
     { key: "observatorium", label: "Observatorium Antariksa", sector: "Pendidikan" },
-    { key: "rumah_sakit", label: "Rumah Sakit Umum", sector: "Kesehatan" },
-    { key: "puskesmas", label: "Puskesmas Kecamatan", sector: "Kesehatan" },
-    { key: "klinik", label: "Klinik Pratama", sector: "Kesehatan" },
-    { key: "kantor_polisi", label: "Kantor Polisi", sector: "Hukum & Keamanan" },
-    { key: "pos_polisi", label: "Pos Polisi", sector: "Hukum & Keamanan" },
-    { key: "pengadilan", label: "Gedung Pengadilan", sector: "Hukum & Keamanan" },
-    { key: "lapas", label: "Lembaga Pemasyarakatan", sector: "Hukum & Keamanan" },
-    { key: "stadion", label: "Stadion Olahraga", sector: "Olahraga & Hiburan" },
+    { key: "pusat_penelitian", label: "Pusat Penelitian", sector: "Pendidikan" },
+    { key: "pusat_pengembangan", label: "Pusat Pengembangan & Inovasi", sector: "Pendidikan" },
+    // Kesehatan (metadata_kesehatan.json)
+    { key: "rumah_sakit_besar", label: "Rumah Sakit Umum Pusat", sector: "Kesehatan" },
+    { key: "rumah_sakit_kecil", label: "Rumah Sakit Daerah", sector: "Kesehatan" },
+    { key: "pusat_diagnostik", label: "Laboratorium Medik & Diagnostik", sector: "Kesehatan" },
+    // Hukum (metadata_hukum.json)
+    { key: "kejaksaan_court", label: "Kejaksaan & Peradilan", sector: "Hukum & Keamanan" },
+    { key: "legal_aid", label: "Bantuan Hukum", sector: "Hukum & Keamanan" },
+    // Olahraga (metadata_olahraga.json)
     { key: "kolam_renang", label: "Fasilitas Akuatik", sector: "Olahraga & Hiburan" },
-    { key: "taman_kota", label: "Taman Kota", sector: "Olahraga & Hiburan" },
-    { key: "pasar_tradisional", label: "Pasar Tradisional", sector: "Komersial" },
-    { key: "pusat_perbelanjaan", label: "Pusat Perbelanjaan / Mall", sector: "Komersial" },
-    { key: "hotel", label: "Hotel & Penginapan", sector: "Komersial" },
+    { key: "sirkuit_balap", label: "Sirkuit Balap", sector: "Olahraga & Hiburan" },
+    { key: "stadium_int", label: "Stadion Internasional", sector: "Olahraga & Hiburan" },
+    { key: "gym_center", label: "Pusat Kebugaran", sector: "Olahraga & Hiburan" },
+    { key: "lapangan_golf", label: "Lapangan Golf", sector: "Olahraga & Hiburan" },
+    { key: "esports_arena", label: "Arena E-Sports", sector: "Olahraga & Hiburan" },
+    { key: "gokart_circuit", label: "Sirkuit Gokart", sector: "Olahraga & Hiburan" },
+    // Komersial (metadata_komersial.json)
+    { key: "pusat_belanja", label: "Pusat Perbelanjaan / Mall", sector: "Komersial" },
+    { key: "hotel", label: "Hotel & Resort", sector: "Komersial" },
+    { key: "pusat_grosir_tekstil", label: "Pusat Grosir", sector: "Komersial" },
+    // Hiburan (metadata_hiburan.json)
+    { key: "bioskop", label: "Bioskop", sector: "Hiburan" },
+    { key: "gedung_teater", label: "Gedung Teater", sector: "Hiburan" },
   ];
 
   const tempatUmumBreakdown = tempatUmumKeys.map((item) => {
@@ -140,12 +156,22 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
     { key: "markas_komando", label: "Markas Besar Komando Militer", defaultRate: 0.5, sector: "Militer & Pertahanan" },
     { key: "pos_perbatasan", label: "Pos Pengamanan Perbatasan", defaultRate: 0.2, sector: "Militer & Pertahanan" },
     { key: "sistem_radar", label: "Stasiun Radar Pertahanan Udara", defaultRate: 0.8, sector: "Militer & Pertahanan" },
+    // Kepolisian
+    { key: "kantor_polisi", label: "Kantor Polisi", defaultRate: 0.5, sector: "Kepolisian" },
+    { key: "pos_polisi", label: "Pos Polisi", defaultRate: 0.1, sector: "Kepolisian" },
+    { key: "markas_besar_polri", label: "Markas Besar Polri", defaultRate: 1, sector: "Kepolisian" },
+    { key: "akademi_kepolisian", label: "Akademi Kepolisian", defaultRate: 0.8, sector: "Kepolisian" },
+    { key: "pusat_forensik", label: "Pusat Forensik", defaultRate: 0.5, sector: "Kepolisian" },
+    { key: "network_cctv", label: "Network CCTV", defaultRate: 0.1, sector: "Kepolisian" },
   ];
 
   const pertahananBreakdown = pertahananKeys.map((item) => {
     let count = Number(countryData?.[item.key]) || 0;
     if (count <= 0 && countryData?.pertahanan?.[item.key] !== undefined) {
       count = Number(countryData.pertahanan[item.key]) || 0;
+    }
+    if (count <= 0 && countryData?.armada_polisi?.[item.key] !== undefined) {
+      count = Number(countryData.armada_polisi[item.key]) || 0;
     }
     const bMeta = findMeta(metadata, item.key);
     const rate = Number(bMeta?.konsumsi_listrik) || item.defaultRate;
@@ -161,7 +187,14 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
   });
   const totalPertahananConsumption = pertahananBreakdown.reduce((sum, p) => sum + p.total, 0);
 
-  // 4. Sektor Produksi & Industri
+  // 4. Sektor Produksi & Industri (dari metadata — exclude yang sudah dihitung di atas)
+  const allExcludedKeys = new Set([
+    ...hunianKeys.map(h => h.key),
+    ...pertahananKeys.map(p => p.key),
+    ...tempatUmumKeys.map(t => t.key),
+    ...SOURCE_ORDER,
+  ]);
+
   const produksiBreakdown: Array<{ key: string; label: string; sector: string; count: number; rate: number; total: number }> = [];
   if (metadata) {
     Object.keys(metadata).forEach((mKey) => {
@@ -170,9 +203,7 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
       if (rate <= 0) return;
 
       const dataKey = bMeta?.dataKey || mKey.replace(/^\d+_/, "");
-      if (hunianKeys.some((h) => h.key === dataKey)) return;
-      if (pertahananKeys.some((p) => p.key === dataKey)) return;
-      if (tempatUmumKeys.some((t) => t.key === dataKey)) return;
+      if (allExcludedKeys.has(dataKey)) return;
 
       const count = Number(countryData?.[dataKey]) || Number(countryData?.[mKey]) || 0;
       const label = bMeta?.nama_bangunan || bMeta?.label || dataKey.replace(/_/g, " ").toUpperCase();
