@@ -52461,12 +52461,6 @@ INSERT INTO `database_sektor_listrik_nasional` (`id`, `country`, `country_slug`,
 (206, 'Uruguay', 'uruguay', 0, 39, 0, 1, 0, 1),
 (207, 'Venezuela', 'venezuela', 0, 164, 0, 0, 0, 1);
 
-
-
-
-
-
-
 -- SECTION: json/semua_fitur_negara/1_pembangunan/1_produksi/2_sektor_mineral_kritis/database_sektor_mineral_kritis.sql
 
 DROP TABLE IF EXISTS `database_sektor_mineral_kritis`;
