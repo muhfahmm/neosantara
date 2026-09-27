@@ -4,7 +4,7 @@ import { Swords, Ship, Plane, Info } from "lucide-react";
 import { BARAK_TO_SOLDIERS_MULTIPLIER } from "../logic/1_barak_logic";
 import { getArmadaUnitBreakdown } from "../logic/armadaLogic";
 import { convertBarakToSoldiers } from "../logic/1_barak_logic";
-import { getArmadaCapacityInfo } from "../logic/infraCapacityHelper";
+import { getArmadaCapacityInfo, getInfraCapacityDetails } from "../logic/infraCapacityHelper";
 import KonfirmasiArmadaAktifModal from "../2_modals_konfirmasi_pembangunan/1_konfirmasi_armada_aktif_modal";
 import InfoArmadaAktifModal from "../modals_info/1_info_armada_aktif_modal";
 import { REQUIREMENTS as INFANTERI_REQUIREMENTS, findRequirements as findInfanteriRequirements } from "../requirements_logic/1_infanteri/requirements";
@@ -135,6 +135,28 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
       const val = Number(countryDetail[group][key]); if (!Number.isNaN(val)) return val;
     }
     return 0;
+  };
+
+  const getGroupCapacityDisplay = (group: "darat" | "laut" | "udara") => {
+    if (group === "laut") {
+      const cap = getInfraCapacityDetails("pangkalan_laut", countryDetail);
+      if (!cap) return "0 / 0";
+      return `${formatNumber(cap.used)} / ${formatNumber(cap.totalCapacity)}`;
+    }
+    if (group === "udara") {
+      const cap = getInfraCapacityDetails("pangkalan_udara", countryDetail);
+      if (!cap) return "0 / 0";
+      return `${formatNumber(cap.used)} / ${formatNumber(cap.totalCapacity)}`;
+    }
+    if (group === "darat") {
+      const barakCap = getInfraCapacityDetails("barak", countryDetail);
+      const hangarCap = getInfraCapacityDetails("hangar_tank", countryDetail);
+      const gudangCap = getInfraCapacityDetails("gudang_senjata", countryDetail);
+      const totalUsed = (barakCap?.used || 0) + (hangarCap?.used || 0) + (gudangCap?.used || 0);
+      const totalCap = (barakCap?.totalCapacity || 0) + (hangarCap?.totalCapacity || 0) + (gudangCap?.totalCapacity || 0);
+      return `${formatNumber(totalUsed)} / ${formatNumber(totalCap)}`;
+    }
+    return "0 / 0";
   };
 
   const calculateMaterialStocks = (countryDetailData: any) => {
@@ -348,20 +370,11 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
               </span>
             </div>
 
-            {currentDate && (
-              <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 px-3 py-1.5 rounded-lg inline-flex items-center gap-2 mb-4">
-                <span className="text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
-                  {currentDate instanceof Date
-                    ? currentDate.toLocaleDateString('id-ID', {
-                        weekday: 'short',
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric'
-                      })
-                    : currentDate}
-                </span>
-              </div>
-            )}
+            <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 px-3 py-1.5 rounded-lg inline-flex items-center gap-2 mb-4">
+              <span className="text-xs font-black uppercase tracking-wider text-[#00FFAA]">
+                {getGroupCapacityDisplay(group)}
+              </span>
+            </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
               {armadaCatalog[group].map((item) => {
