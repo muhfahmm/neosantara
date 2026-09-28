@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { X, User, Globe, Building2, Users, Landmark, ShieldCheck, Info } from 'lucide-react';
+import { X, User, Globe, Building2, Users, Landmark, ShieldCheck } from 'lucide-react';
 
-import { calculateCountryGDP } from '@/app/logic/economic_logic/treasuryUpdater';
+import { calculateCountryGDP, calculateCountryNetBalance, formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
 
 interface NegaraUserModalProps {
   isOpen: boolean;
@@ -19,19 +19,27 @@ interface NegaraUserModalProps {
 export default function NegaraUserModal({ isOpen, onClose, selectedCountry, countryDetail }: NegaraUserModalProps) {
   if (!isOpen) return null;
 
-  const countryName = selectedCountry?.country || '—';
+  const countryName = selectedCountry?.country || countryDetail?.nama_negara || '—';
   const capital = selectedCountry?.capital || countryDetail?.ibukota || '—';
-  const iso = (selectedCountry?.iso || '').toLowerCase();
-  const population = countryDetail?.populasi;
-  const gdp = calculateCountryGDP(countryDetail) || countryDetail?.pdb;
-  const ideology = countryDetail?.ideologi || '—';
-  const religion = countryDetail?.agama_utama || '—';
+  const iso = (selectedCountry?.iso || countryDetail?.iso || '').toLowerCase();
+  
+  const population = Number(
+    countryDetail?.jumlah_penduduk ?? 
+    countryDetail?.populasi ?? 
+    countryDetail?.population ?? 
+    countryDetail?.penduduk ?? 
+    0
+  );
+  
+  const anggaran = Number(countryDetail?.anggaran) || 0;
+  const netBalance = calculateCountryNetBalance(countryDetail);
+  const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID')}`;
+
+  const ideology = countryDetail?.ideology || countryDetail?.ideologi || '—';
+  const religion = countryDetail?.religion || countryDetail?.agama_utama || countryDetail?.agama || '—';
 
   const formatNumber = (n: number | undefined) => {
-    if (n == null) return '—';
-    if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toFixed(2)} M`;
-    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)} Jt`;
-    if (n >= 1_000) return `${(n / 1_000).toFixed(1)} Rb`;
+    if (n == null || n === 0) return '—';
     return n.toLocaleString('id-ID');
   };
 
@@ -85,15 +93,6 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
         <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] relative z-10 no-scrollbar">
           <div className="max-w-4xl mx-auto space-y-6">
             
-            {/* PROTOTYPE BANNER */}
-            <div className="flex items-start gap-3 px-5 py-4 rounded-xl bg-amber-500/10 border border-amber-500/30 shadow-sm">
-              <Info className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-300 font-semibold leading-relaxed">
-                <span className="font-black text-amber-400 uppercase">PROTOTIPE</span> — Halaman ini masih dalam tahap pengembangan.
-                Tampilan lengkap profil negara Anda akan segera tersedia.
-              </p>
-            </div>
-
             {/* STATS GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Ibukota */}
@@ -118,14 +117,19 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
                 </div>
               </div>
 
-              {/* PDB */}
+              {/* Kas Negara */}
               <div className="flex items-center gap-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 shadow-sm">
                 <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                   <Building2 className="w-5 h-5 text-emerald-400" />
                 </div>
                 <div>
-                  <p className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-widest">PDB</p>
-                  <p className="text-base font-black text-[#E0E0E0] mt-0.5">{formatNumber(gdp)}</p>
+                  <p className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-widest">Kas Negara</p>
+                  <p className="text-base font-black text-[#E0E0E0] mt-0.5 flex items-center gap-2">
+                    <span className={anggaran < 0 ? 'text-rose-400 font-black' : ''}>{formatCurrencyEM(anggaran)}</span>
+                    <span className={`${netBalance >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-xs font-black`}>
+                      ({netBalanceLabel})
+                    </span>
+                  </p>
                 </div>
               </div>
 
@@ -162,4 +166,4 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
       </div>
     </div>
   );
-}
+}

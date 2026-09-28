@@ -240,28 +240,36 @@ const ScanningRings = () => (
 );
 
 /* ============================================================
-   GLITCH TITLE
+   GLITCH TITLE  —  CONTINUOUSLY SHAKING
    ============================================================ */
 const GlitchTitle = () => {
-    const [glitching, setGlitching] = useState(true);
-    useEffect(() => {
-        const timer = setTimeout(() => setGlitching(false), 1700);
-        return () => clearTimeout(timer);
-    }, []);
     return (
         <motion.h1
             className="relative text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-5xl font-black tracking-tighter text-white"
-            animate={glitching ? {
-                x: [0, -3, 3, -2, 2, -1, 1, 0],
+            style={{ willChange: 'transform, text-shadow' }}
+            animate={{
+                // Getaran horizontal + vertikal terus-menerus
+                x: [0, -1.2, 1.4, -0.8, 1.6, -1, 0.6, -1.4, 1, 0],
+                y: [0, 0.6, -0.8, 0.4, -0.6, 0.8, -0.4, 0.6, -0.5, 0],
+                // Chromatic aberration (cyan + merah)
                 textShadow: [
                     '0 0 0 transparent',
-                    '3px 0 0 #22d3ee, -3px 0 0 #ef4444',
-                    '-3px 0 0 #22d3ee, 3px 0 0 #ef4444',
-                    '2px 0 0 #22d3ee, -2px 0 0 #ef4444',
+                    '1.5px 0 0 #22d3ee, -1.5px 0 0 #ef4444',
+                    '-1.5px 0 0 #22d3ee, 1.5px 0 0 #ef4444',
+                    '1px 0 0 #22d3ee, -1px 0 0 #ef4444',
+                    '-1px 0 0 #22d3ee, 1px 0 0 #ef4444',
+                    '0.5px 0 0 #22d3ee, -0.5px 0 0 #ef4444',
+                    '-1.2px 0 0 #22d3ee, 1.2px 0 0 #ef4444',
+                    '1px 0 0 #22d3ee, -1px 0 0 #ef4444',
                     '0 0 0 transparent',
                 ],
-            } : { x: 0, textShadow: '0 0 0 transparent' }}
-            transition={glitching ? { duration: 0.28, repeat: 5, repeatDelay: 0.08 } : { duration: 0.3 }}
+            }}
+            transition={{
+                duration: 0.55,
+                repeat: Infinity,
+                repeatType: 'loop',
+                ease: 'linear',
+            }}
         >
             NEO<span className="text-emerald-500">SANTARA</span>
         </motion.h1>
