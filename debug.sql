@@ -1046,7 +1046,7 @@ INSERT INTO database_pajak_negara (
     (68, 'Irak', 'irak', 10, 20, 30, 5, 0),
     (69, 'Iran', 'iran', 9, 25, 35, 5, 0),
     (70, 'Israel', 'israel', 17, 21, 50, 8, 2),
-    (71, 'Jepang', 'jepang', 10, 30, 13, 3, 1),
+    (71, 'Jepang', 'jepang', 10, 23, 10, 3, 1),
     (72, 'Kamboja', 'kamboja', 10, 20, 20, 5, 0),
     (73, 'Kazakhstan', 'kazakhstan', 12, 20, 10, 5, 0),
     (74, 'Kirgizstan', 'kirgizstan', 12, 10, 10, 5, 0),

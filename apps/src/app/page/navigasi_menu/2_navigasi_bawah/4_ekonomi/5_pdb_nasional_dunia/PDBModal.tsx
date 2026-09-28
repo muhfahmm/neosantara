@@ -10,10 +10,8 @@ import { calculateGoldMiningDailyProduction } from "@/app/logic/economic_logic/g
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "../8_kebijakan_subsidi/logic/logikaSubsidi";
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
-import { PROFILES_DATA } from '@/../../json/semua_fitur_negara/0_profiles/index';
-import { DATABASE_PAJAK_NEGARA } from '@/../../json/database_pajak_negara/index';
-import { DATABASE_ALOKASI_SUBSIDI } from '@/../../json/database_alokasi_subsidi/index';
-import { DATABASE_LEVEL_KABINET } from '@/../../json/database_level_kabinet/index';
+// Data pajak, subsidi, kabinet, dan profil negara dibaca dari MySQL via countryDetail / prefetchedAllCountries
+// (di-inject oleh country-data/route.ts — tidak perlu import static)
 
 const getNormalizedSlug = (detail: any) => {
   if (!detail) return '';
@@ -23,39 +21,47 @@ const getNormalizedSlug = (detail: any) => {
 
 const getTaxData = (detail: any) => {
   if (!detail) return {};
-  const slug = getNormalizedSlug(detail);
-  const stripped = slug.replace(/^republik_/, '').replace(/^republic_of_/, '');
-  return DATABASE_PAJAK_NEGARA[slug] || DATABASE_PAJAK_NEGARA[stripped] || {};
+  // Prioritas 1: dari MySQL via API (detail.pajak sudah di-inject di country-data/route.ts)
+  if (detail.pajak && typeof detail.pajak === 'object') {
+    return {
+      tarif_ppn: detail.pajak.ppn?.tarif ?? 0,
+      tarif_korporasi: detail.pajak.korporasi?.tarif ?? 0,
+      tarif_penghasilan: detail.pajak.penghasilan?.tarif ?? 0,
+      tarif_bea_cukai: detail.pajak.bea_cukai?.tarif ?? 0,
+      tarif_lingkungan: detail.pajak.lingkungan?.tarif ?? 0,
+    };
+  }
+  // Prioritas 2: flat fields (dari game save / countryDetail user)
+  return {
+    tarif_ppn: detail.ppn ?? detail.tarif_ppn ?? 0,
+    tarif_korporasi: detail.corporate ?? detail.tarif_korporasi ?? 0,
+    tarif_penghasilan: detail.income_tax ?? detail.tarif_penghasilan ?? 0,
+    tarif_bea_cukai: detail.cigarette_tax ?? detail.tarif_bea_cukai ?? 0,
+    tarif_lingkungan: detail.environment_tax ?? detail.tarif_lingkungan ?? 0,
+  };
 };
 
 const getSubsidyData = (detail: any) => {
   if (!detail) return {};
-  const slug = getNormalizedSlug(detail);
-  const stripped = slug.replace(/^republik_/, '').replace(/^republic_of_/, '');
-  const dashSlug = slug.replace(/_/g, '-');
-  const dashStripped = stripped.replace(/_/g, '-');
-  return (
-    DATABASE_ALOKASI_SUBSIDI[slug] ||
-    DATABASE_ALOKASI_SUBSIDI[dashSlug] ||
-    DATABASE_ALOKASI_SUBSIDI[stripped] ||
-    DATABASE_ALOKASI_SUBSIDI[dashStripped] ||
-    {}
-  );
+  // Prioritas 1: subsidy_states dari MySQL (di-inject oleh country-data/route.ts)
+  if (detail.subsidy_states && typeof detail.subsidy_states === 'object') {
+    return detail.subsidy_states;
+  }
+  // Prioritas 2: flat sub_* fields langsung di detail
+  const subsKeys = ['sub_bbm','sub_listrik','sub_lpg','sub_pdam','sub_pupuk','sub_sembako',
+    'sub_bantuan_pangan','sub_pendidikan','sub_bpjs','sub_vaksin','sub_transport_publik',
+    'sub_perumahan','sub_ev','sub_kur','sub_pajak_umkm','sub_blt','sub_pensiun','sub_bencana'];
+  const result: Record<string, any> = {};
+  for (const k of subsKeys) {
+    if (detail[k] !== undefined) result[k] = detail[k];
+  }
+  return result;
 };
 
 const getKabinetData = (detail: any) => {
   if (!detail) return {};
-  const slug = getNormalizedSlug(detail);
-  const stripped = slug.replace(/^republik_/, '').replace(/^republic_of_/, '');
-  const dashSlug = slug.replace(/_/g, '-');
-  const dashStripped = stripped.replace(/_/g, '-');
-  return (
-    DATABASE_LEVEL_KABINET[slug] ||
-    DATABASE_LEVEL_KABINET[dashSlug] ||
-    DATABASE_LEVEL_KABINET[stripped] ||
-    DATABASE_LEVEL_KABINET[dashStripped] ||
-    {}
-  );
+  // Data kabinet sudah ada langsung di detail dari MySQL (kem_*, keamanan_*, layanan_*)
+  return detail;
 };
 
 interface ModalProps {
@@ -151,42 +157,14 @@ const normalizeContinent = (continent: any) => {
 };
 
 const getInitialCountriesData = () => {
-  const profileMap = new Map<string, any>();
-  PROFILES_DATA.forEach((p) => {
-    const k1 = p.country_slug.toLowerCase().trim();
-    const k2 = p.name_id.toLowerCase().trim();
-    const k3 = p.name_en.toLowerCase().trim();
-    profileMap.set(k1, p);
-    profileMap.set(k2, p);
-    profileMap.set(k3, p);
-    profileMap.set(k1.replace(/_/g, ' '), p);
-    profileMap.set(k1.replace(/_/g, '-'), p);
-    profileMap.set(k2.replace(/[\s-]+/g, '_'), p);
-  });
-
-  return COUNTRIES_DATA.map((c, idx) => {
-    const rawName = c.country.toLowerCase().trim();
-    const stripped = rawName.replace(/^republik\s+/, '').replace(/^republic of\s+/, '').trim();
-    const p =
-      profileMap.get(rawName) ||
-      profileMap.get(rawName.replace(/[\s-]+/g, '_')) ||
-      profileMap.get(rawName.replace(/[\s_]+/g, '-')) ||
-      profileMap.get(stripped) ||
-      profileMap.get(stripped.replace(/[\s-]+/g, '_')) ||
-      profileMap.get(stripped.replace(/[\s_]+/g, '-')) ||
-      {};
-    const kabData = getKabinetData(p.country_slug ? p : c);
-
-    return {
-      ...c,
-      ...p,
-      ...kabData,
-      __displayName: c.country,
-      continent: normalizeContinent(c.continent),
-      __fileOrder: idx + 1,
-      __loaded: true,
-    };
-  });
+  // Jika tidak ada data dari MySQL, gunakan COUNTRIES_DATA sebagai fallback minimal
+  return COUNTRIES_DATA.map((c, idx) => ({
+    ...c,
+    __displayName: c.country,
+    continent: normalizeContinent(c.continent),
+    __fileOrder: idx + 1,
+    __loaded: false,
+  }));
 };
 
 let cachedAllCountries: any[] = getInitialCountriesData();

@@ -2,7 +2,7 @@ import { calculateIncomeAtRate } from './2_tax_logic/taxLogic';
 import { calculateGoldMiningDailyProduction } from './goldIncome';
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department } from './departments';
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from '../../page/navigasi_menu/2_navigasi_bawah/4_ekonomi/8_kebijakan_subsidi/logic/logikaSubsidi';
-import { DATABASE_LEVEL_KABINET } from '@/../../json/database_level_kabinet/index';
+// Data level kabinet dibaca langsung dari detail (di-inject MySQL via country-data/route.ts)
 
 const getNestedValue = (obj: any, path: string[]) => {
   return path.reduce((current, key) => {
@@ -68,20 +68,6 @@ export const getDepartmentLevel = (detail: any, deptOrId: Department | string): 
     if (detail[k] !== undefined && detail[k] !== null && detail[k] !== '') {
       const val = Number(detail[k]);
       if (!isNaN(val) && val > 0) return val;
-    }
-  }
-
-  // Fallback to static DATABASE_LEVEL_KABINET lookup if detail does not have cabinet keys
-  const slug = detail.country_slug || detail.slug || (typeof detail.country === 'string' ? detail.country.toLowerCase().replace(/[\s-]+/g, '_') : '');
-  if (slug) {
-    const fallbackObj = DATABASE_LEVEL_KABINET[slug] || DATABASE_LEVEL_KABINET[slug.replace(/_/g, '-')];
-    if (fallbackObj) {
-      for (const k of candidates) {
-        if (fallbackObj[k] !== undefined && fallbackObj[k] !== null && fallbackObj[k] !== '') {
-          const val = Number(fallbackObj[k]);
-          if (!isNaN(val) && val > 0) return val;
-        }
-      }
     }
   }
 

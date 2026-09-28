@@ -48513,7 +48513,7 @@ INSERT INTO `database_level_kabinet` (
 (114, 'Finlandia', 'finlandia', 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 6, 6, 5, 6, 6, 6, 6, 6, 6, 5), -- Maju
 (115, 'Gibraltar', 'gibraltar', 4, 5, 4, 5, 6, 5, 5, 5, 6, 5, 6, 4, 5, 5, 4, 6, 5, 4, 5, 5, 4, 5), -- Maju
 (116, 'Hungaria', 'hungaria', 5, 5, 4, 4, 6, 5, 6, 6, 5, 6, 5, 5, 5, 5, 4, 4, 5, 4, 6, 4, 5, 5), -- Maju
-(117, 'Inggris', 'inggris', 5, 6, 6, 6, 6, 6, 5, 6, 6, 5, 6, 6, 6, 6, 6, 5, 6, 6, 6, 6, 5, 5), -- Maju
+(117, 'Inggris', 'inggris', 5, 6, 6, 6, 6, 6, 5, 6, 6, 6, 6, 6, 6, 6, 6, 5, 6, 6, 6, 6, 5, 5), -- Maju
 (118, 'Irlandia', 'irlandia', 6, 6, 6, 6, 5, 6, 6, 5, 5, 5, 5, 6, 6, 6, 6, 5, 5, 6, 6, 6, 6, 6), -- Maju
 (119, 'Islandia', 'islandia', 5, 5, 6, 5, 6, 6, 5, 6, 6, 5, 6, 6, 6, 6, 5, 6, 6, 5, 6, 6, 6, 6), -- Maju
 (120, 'Italia', 'italia', 4, 5, 6, 5, 5, 5, 5, 5, 6, 5, 6, 6, 5, 5, 6, 4, 6, 5, 6, 6, 6, 5), -- Maju
@@ -48533,7 +48533,7 @@ INSERT INTO `database_level_kabinet` (
 (134, 'Norwegia', 'norwegia', 6, 6, 6, 6, 6, 5, 6, 6, 6, 6, 6, 5, 6, 6, 6, 5, 6, 6, 6, 6, 6, 6), -- Maju
 (135, 'Polandia', 'polandia', 6, 4, 6, 5, 5, 4, 5, 5, 5, 6, 4, 4, 5, 5, 6, 4, 5, 4, 5, 5, 5, 5), -- Maju
 (136, 'Portugal', 'portugal', 6, 5, 6, 6, 6, 5, 5, 5, 6, 5, 5, 6, 6, 5, 6, 4, 5, 5, 5, 6, 5, 5), -- Maju
-(137, 'Prancis', 'prancis', 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6), -- Maju
+(137, 'Prancis', 'prancis', 5, 6, 6, 6, 6, 6, 6, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6), -- Maju
 (138, 'Republik rumania', 'republik_rumania', 4, 4, 4, 4, 4, 3, 4, 3, 4, 5, 4, 4, 4, 4, 4, 3, 4, 4, 3, 5, 4, 3), -- Berkembang
 (139, 'Republik serbia', 'republik_serbia', 4, 5, 3, 3, 4, 5, 4, 3, 4, 5, 4, 5, 4, 3, 4, 5, 3, 4, 4, 4, 5, 4), -- Berkembang
 (140, 'Rusia', 'rusia', 5, 5, 4, 4, 5, 5, 4, 4, 5, 4, 4, 4, 4, 4, 5, 4, 4, 5, 4, 5, 4, 4), -- Berkembang
@@ -50287,6 +50287,9 @@ INSERT INTO database_mitra_perdagangan (
 -- Database Pajak Negara SQL Export
 -- Total 207 Negara
 
+-- Database Pajak Negara SQL Export
+-- Total 207 Negara
+
 DROP TABLE IF EXISTS database_pajak_negara;
 CREATE TABLE IF NOT EXISTS database_pajak_negara (
     id INT PRIMARY KEY,
@@ -50372,7 +50375,7 @@ INSERT INTO database_pajak_negara (
     (68, 'Irak', 'irak', 10, 20, 30, 5, 0),
     (69, 'Iran', 'iran', 9, 25, 35, 5, 0),
     (70, 'Israel', 'israel', 17, 21, 50, 8, 2),
-    (71, 'Jepang', 'jepang', 30, 35, 45, 5, 1),
+    (71, 'Jepang', 'jepang', 10, 15, 30, 3, 1),
     (72, 'Kamboja', 'kamboja', 10, 20, 20, 5, 0),
     (73, 'Kazakhstan', 'kazakhstan', 12, 20, 10, 5, 0),
     (74, 'Kirgizstan', 'kirgizstan', 12, 10, 10, 5, 0),
@@ -50418,11 +50421,11 @@ INSERT INTO database_pajak_negara (
     (114, 'Finlandia', 'finlandia', 24, 20, 52, 0, 2),
     (115, 'Gibraltar', 'gibraltar', 15, 10, 25, 0, 0),
     (116, 'Hungaria', 'hungaria', 27, 19, 15, 0, 0),
-    (117, 'Inggris', 'inggris', 20, 25, 45, 0, 0),
+    (117, 'Inggris', 'inggris', 20, 20, 19, 0, 0),
     (118, 'Irlandia', 'irlandia', 23, 15, 48, 0, 0),
     (119, 'Islandia', 'islandia', 24, 20, 46, 0, 2),
     (120, 'Italia', 'italia', 22, 24, 43, 0, 1),
-    (121, 'Jerman', 'jerman', 19, 30, 42, 0, 1),
+    (121, 'Jerman', 'jerman', 22, 35, 43, 0, 1),
     (122, 'Kepulauan Faroe', 'kepulauan_faroe', 0, 20, 38, 0, 0),
     (123, 'Kosovo', 'kosovo', 18, 10, 20, 5, 0),
     (124, 'Kroasia', 'kroasia', 25, 18, 37, 0, 0),
@@ -50438,7 +50441,7 @@ INSERT INTO database_pajak_negara (
     (134, 'Norwegia', 'norwegia', 25, 22, 50, 0, 2),
     (135, 'Polandia', 'polandia', 23, 19, 32, 0, 0),
     (136, 'Portugal', 'portugal', 23, 22, 48, 0, 1),
-    (137, 'Prancis', 'prancis', 20, 25, 45, 0, 1),
+    (137, 'Prancis', 'prancis', 20, 25, 40, 0, 1),
     (138, 'Republik Rumania', 'republik_rumania', 19, 16, 38, 0, 0),
     (139, 'Republik Serbia', 'republik_serbia', 20, 15, 17, 5, 0),
     (140, 'Rusia', 'rusia', 20, 20, 15, 5, 0),
@@ -50509,7 +50512,6 @@ INSERT INTO database_pajak_negara (
     (205, 'Suriname', 'suriname', 10, 25, 36, 5, 0),
     (206, 'Uruguay', 'uruguay', 22, 25, 36, 0, 0),
     (207, 'Venezuela', 'venezuela', 16, 34, 37, 5, 0);
-
 
 -- SECTION: json/database_SDA/database_sda.sql
 -- ========================================================
@@ -52316,16 +52318,16 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (59, 'Bangladesh', 'bangladesh', 0, 0, 0, 12, 27, 21, 10, 0, 0),
 (60, 'Bhutan', 'bhutan', 20, 0, 0, 13, 8, 0, 0, 0, 0),
 (61, 'Brunei', 'brunei', 0, 0, 0, 20, 0, 6, 4, 0, 0),
-(62, 'China', 'china', 150, 9, 9, 15, 50, 48, 22, 14, 27),
+(62, 'China', 'china', 150, 9, 9, 16, 50, 48, 22, 14, 27),
 (63, 'Filipina', 'filipina', 88, 0, 0, 12, 23, 19, 9, 5, 0),
 (64, 'Georgia', 'georgia', 25, 0, 0, 15, 8, 0, 0, 0, 0),
 (65, 'Hong kong', 'hong_kong', 0, 0, 0, 23, 0, 0, 0, 0, 0),
-(66, 'India', 'india', 150, 9, 0, 13, 50, 48, 22, 14, 0),
+(66, 'India', 'india', 150, 9, 0, 14, 50, 48, 22, 14, 0),
 (67, 'Indonesia', 'indonesia', 125, 5, 5, 12, 33, 27, 12, 8, 15),
 (68, 'Irak', 'irak', 62, 0, 0, 11, 0, 13, 6, 4, 8),
 (69, 'Iran', 'iran', 75, 3, 3, 12, 20, 16, 8, 4, 9),
 (70, 'Israel', 'israel', 0, 0, 0, 22, 0, 0, 4, 2, 4),
-(71, 'Jepang', 'jepang', 88, 4, 4, 22, 23, 19, 9, 0, 0),
+(71, 'Jepang', 'jepang', 88, 4, 4, 23, 23, 19, 9, 0, 0),
 (72, 'Kamboja', 'kamboja', 38, 0, 0, 8, 0, 0, 0, 0, 0),
 (73, 'Kazakhstan', 'kazakhstan', 38, 2, 2, 16, 10, 8, 4, 2, 4),
 (74, 'Kirgizstan', 'kirgizstan', 25, 0, 2, 9, 8, 6, 4, 2, 0),
@@ -52371,7 +52373,7 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (114, 'Finlandia', 'finlandia', 25, 2, 0, 22, 0, 0, 0, 0, 0),
 (115, 'Gibraltar', 'gibraltar', 0, 0, 0, 19, 0, 0, 0, 0, 0),
 (116, 'Hungaria', 'hungaria', 0, 0, 0, 20, 8, 0, 0, 0, 0),
-(117, 'Inggris', 'inggris', 62, 0, 0, 22, 17, 13, 6, 4, 8),
+(117, 'Inggris', 'inggris', 62, 0, 0, 23, 17, 13, 6, 4, 8),
 (118, 'Irlandia', 'irlandia', 25, 0, 0, 22, 0, 0, 0, 0, 0),
 (119, 'Islandia', 'islandia', 0, 0, 0, 22, 0, 0, 0, 0, 0),
 (120, 'Italia', 'italia', 62, 0, 0, 20, 0, 13, 6, 0, 0),

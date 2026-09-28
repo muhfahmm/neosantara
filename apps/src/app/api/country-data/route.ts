@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { queryDb } from '@/lib/db';
 import path from 'path';
-import { DATABASE_LEVEL_KABINET } from '@/../../json/database_level_kabinet/index';
+// Data level kabinet dibaca dari MySQL (database_level_kabinet table) via kabinetMap
 
 const extractFileOrder = (fileName: string): number => {
   const match = fileName.match(/^(\d+)_/);
@@ -132,9 +132,8 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
       const fileName = `${id}_${slug}.ts`;
 
       const t = taxMap.get(id) || (slug ? taxMap.get(normSlug) : {}) || {};
-      const staticK = DATABASE_LEVEL_KABINET[normSlug] || DATABASE_LEVEL_KABINET[underscoreSlug] || {};
       const kFromDb = (slug ? kabinetMap.get(normSlug) : null) || kabinetMap.get(id) || {};
-      const k = { ...staticK, ...kFromDb };
+      const k = { ...kFromDb };
 
       const s = sdaMap.get(id) || (slug ? sdaMap.get(normSlug) : {}) || {};
       const h = hargaMap.get(id) || (slug ? hargaMap.get(normSlug) : {}) || {};
