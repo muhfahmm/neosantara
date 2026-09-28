@@ -47,6 +47,43 @@ interface Department {
   effects: string[];
 }
 
+// ==================== KONFIGURASI EFEK PER KEMENTERIAN ====================
+const MINISTRY_EFFECTS: Record<string, { stat: string; perLevel: number; unit: string; label: string }> = {
+  infrastruktur: { stat: "produktivitas", perLevel: 0.03, unit: "%", label: "Produktivitas Ekonomi" },
+  pendidikan: { stat: "riset", perLevel: 0.05, unit: "%", label: "Kecepatan Riset" },
+  sains: { stat: "riset_nuklir", perLevel: 0.05, unit: "%", label: "Riset Nuklir & Industri" },
+  kesehatan: { stat: "kesejahteraan", perLevel: 0.05, unit: "%", label: "Indeks Kesejahteraan" },
+  olahraga: { stat: "kepuasan", perLevel: 0.04, unit: "%", label: "Kepuasan Rakyat" },
+  kehakiman: { stat: "kriminalitas", perLevel: -0.05, unit: "%", label: "Tingkat Kriminalitas" },
+  pertahanan: { stat: "militer_darat", perLevel: 0.05, unit: "%", label: "Kekuatan Militer Darat" },
+  "luar-negeri": { stat: "diplomasi", perLevel: 0.05, unit: "%", label: "Pengaruh Diplomasi" },
+  kebudayaan: { stat: "kepuasan", perLevel: 0.03, unit: "%", label: "Kepuasan Rakyat" },
+  pariwisata: { stat: "devisa", perLevel: 0.05, unit: "%", label: "Pendapatan Devisa" },
+  lingkungan: { stat: "pajak_lingkungan", perLevel: 0.05, unit: "%", label: "Penerimaan Pajak Lingkungan" },
+  perumahan: { stat: "backlog", perLevel: -0.05, unit: "%", label: "Backlog Perumahan" },
+  pembangunan: { stat: "infrastruktur", perLevel: 0.04, unit: "%", label: "Kecepatan Pembangunan" },
+  perdagangan: { stat: "bea_cukai", perLevel: 0.05, unit: "%", label: "Pendapatan Bea Cukai" },
+  keuangan: { stat: "pajak", perLevel: 0.05, unit: "%", label: "Penerimaan Pajak" },
+  // Keamanan
+  "dinas-keamanan": { stat: "stabilitas", perLevel: 0.04, unit: "%", label: "Stabilitas Politik" },
+  polisi: { stat: "kriminalitas", perLevel: -0.05, unit: "%", label: "Tingkat Kriminalitas" },
+  "garda-nasional": { stat: "respons_krisis", perLevel: 0.05, unit: "%", label: "Respons Krisis" },
+  "komandan-angkatan-darat": { stat: "militer_darat", perLevel: 0.05, unit: "%", label: "Kekuatan Darat" },
+  "komandan-armada": { stat: "militer_laut", perLevel: 0.05, unit: "%", label: "Kekuatan Laut" },
+  // Layanan
+  "layanan-darurat": { stat: "kepuasan", perLevel: 0.04, unit: "%", label: "Kepuasan Rakyat" },
+  "bank-sentral": { stat: "inflasi", perLevel: -0.03, unit: "%", label: "Tingkat Inflasi" },
+};
+
+// Fungsi untuk mendapatkan deskripsi efek berdasarkan level
+const getEffectDescription = (deptId: string, level: number): string => {
+  const config = MINISTRY_EFFECTS[deptId];
+  if (!config) return "Tidak ada efek spesifik";
+  const totalEffect = config.perLevel * level;
+  const sign = totalEffect >= 0 ? "+" : "";
+  return `${sign}${(totalEffect * 100).toFixed(1)}% ${config.label}`;
+};
+
 const LEVEL_UP_COST = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
 const MAX_LEVEL = 10;
 
@@ -57,7 +94,7 @@ const KEMENTERIAN: Department[] = [
     icon: Truck,
     baseIncomeCost: 100,
     description: "Mengelola pembangunan jalan, jembatan, dan proyek infrastruktur nasional.",
-    effects: ["Meningkatkan produktivitas ekonomi jangka panjang", "Mempercepat distribusi barang antar wilayah", "Menurunkan biaya logistik nasional"],
+    effects: ["Mengurangi estimasi pembangunan: -5%"],
   },
   {
     id: "pendidikan",
@@ -65,7 +102,7 @@ const KEMENTERIAN: Department[] = [
     icon: BookOpen,
     baseIncomeCost: 100,
     description: "Mengatur kurikulum, sekolah, dan kualitas sumber daya manusia.",
-    effects: ["Meningkatkan kualitas tenaga kerja", "Menambah pendapatan pajak jangka panjang", "Menurunkan angka pengangguran"],
+    effects: ["Produksi Makanan: +5%"],
   },
   {
     id: "sains",
@@ -73,7 +110,7 @@ const KEMENTERIAN: Department[] = [
     icon: Microscope,
     baseIncomeCost: 100,
     description: "Mendanai riset teknologi dan inovasi nasional.",
-    effects: ["Membuka teknologi/industri baru", "Meningkatkan efisiensi produksi", "Menambah daya saing global"],
+    effects: ["Kecepatan riset Sains: +5%"],
   },
   {
     id: "kesehatan",
@@ -81,7 +118,7 @@ const KEMENTERIAN: Department[] = [
     icon: HeartPulse,
     baseIncomeCost: 100,
     description: "Mengelola rumah sakit, vaksinasi, dan kebijakan kesehatan publik.",
-    effects: ["Menurunkan risiko wabah penyakit", "Meningkatkan tingkat kepuasan rakyat", "Meningkatkan harapan hidup populasi"],
+    effects: ["Menurunkan Jumlah Korban Pandemi dan Epidemi: 5%"],
   },
   {
     id: "olahraga",
@@ -89,7 +126,7 @@ const KEMENTERIAN: Department[] = [
     icon: Trophy,
     baseIncomeCost: 100,
     description: "Mengembangkan fasilitas olahraga dan prestasi atlet nasional.",
-    effects: ["Meningkatkan popularitas & citra negara", "Menambah pendapatan dari event olahraga", "Meningkatkan kepuasan rakyat"],
+    effects: ["Biaya pembangunan sarana olahraga: -5%"],
   },
   {
     id: "kehakiman",
@@ -97,7 +134,7 @@ const KEMENTERIAN: Department[] = [
     icon: Gavel,
     baseIncomeCost: 100,
     description: "Menjaga penegakan hukum dan sistem peradilan negara.",
-    effects: ["Menurunkan tingkat kriminalitas & korupsi", "Meningkatkan kepercayaan investor", "Menambah pendapatan dari denda hukum"],
+    effects: ["Penerimaan Pajak: +5%"],
   },
   {
     id: "pertahanan",
@@ -105,7 +142,7 @@ const KEMENTERIAN: Department[] = [
     icon: Shield,
     baseIncomeCost: 100,
     description: "Mengatur kekuatan militer dan pertahanan nasional.",
-    effects: ["Meningkatkan kekuatan militer", "Menurunkan risiko invasi/konflik", "Menambah biaya pemeliharaan militer"],
+    effects: ["Meningkatkan kekuatan militer: +10%"],
   },
   {
     id: "luar-negeri",
@@ -113,7 +150,7 @@ const KEMENTERIAN: Department[] = [
     icon: Globe2,
     baseIncomeCost: 100,
     description: "Mengatur hubungan diplomatik dengan negara lain.",
-    effects: ["Meningkatkan peluang kerja sama & hibah", "Meningkatkan reputasi internasional", "Membuka akses perdagangan baru"],
+    effects: ["Pendapatan beacukai: +5%"],
   },
   {
     id: "kebudayaan",
@@ -121,7 +158,7 @@ const KEMENTERIAN: Department[] = [
     icon: Palette,
     baseIncomeCost: 100,
     description: "Melestarikan budaya dan identitas nasional.",
-    effects: ["Meningkatkan kepuasan rakyat", "Menambah daya tarik pariwisata"],
+    effects: ["Peluang Diterima di UNESCO: +5% "],
   },
   {
     id: "pariwisata",
@@ -129,7 +166,7 @@ const KEMENTERIAN: Department[] = [
     icon: Plane,
     baseIncomeCost: 100,
     description: "Mengembangkan sektor wisata dan promosi destinasi.",
-    effects: ["Menambah pendapatan devisa negara", "Membuka lapangan kerja baru"],
+    effects: ["Menambah pendapatan tempat wisata: +5%"],
   },
   {
     id: "lingkungan",
@@ -137,7 +174,7 @@ const KEMENTERIAN: Department[] = [
     icon: Leaf,
     baseIncomeCost: 100,
     description: "Mengelola kebijakan lingkungan dan sumber daya alam.",
-    effects: ["Menurunkan risiko bencana alam", "Meningkatkan keberlanjutan sumber daya", "Mempengaruhi pajak lingkungan"],
+    effects: ["Menurunkan risiko bencana alam: +5%"],
   },
   {
     id: "perumahan",
@@ -145,7 +182,7 @@ const KEMENTERIAN: Department[] = [
     icon: Home,
     baseIncomeCost: 100,
     description: "Mengatur pembangunan perumahan rakyat dan tata kota.",
-    effects: ["Menurunkan angka backlog perumahan", "Meningkatkan kepuasan rakyat"],
+    effects: ["Kapasitas Hunian perumahan: +5%"],
   },
   {
     id: "pembangunan",
@@ -153,7 +190,7 @@ const KEMENTERIAN: Department[] = [
     icon: Building2,
     baseIncomeCost: 100,
     description: "Mengawasi proyek pembangunan nasional skala besar dan tata ruang wilayah.",
-    effects: ["Mempercepat pembangunan fasilitas umum", "Meningkatkan nilai investasi properti nasional", "Menambah lapangan kerja konstruksi"],
+    effects: ["Percepatan Konstruksi Nasional: +5%"],
   },
   {
     id: "perdagangan",
@@ -161,7 +198,7 @@ const KEMENTERIAN: Department[] = [
     icon: Handshake,
     baseIncomeCost: 100,
     description: "Mengatur kebijakan ekspor-impor dan hubungan dagang antar negara.",
-    effects: ["Meningkatkan pendapatan dari bea cukai", "Membuka akses pasar ekspor baru", "Menstabilkan harga barang domestik"],
+    effects: ["Harga beli: -5% - Harga jual: +5%"],
   },
   {
     id: "keuangan",
@@ -169,7 +206,7 @@ const KEMENTERIAN: Department[] = [
     icon: Banknote,
     baseIncomeCost: 100,
     description: "Mengelola anggaran negara, pajak, dan kebijakan fiskal nasional.",
-    effects: ["Meningkatkan efisiensi pengumpulan pajak", "Menurunkan risiko defisit anggaran", "Meningkatkan kepercayaan investor terhadap fiskal negara"],
+    effects: ["Efektivitas pajak: +5%"],
   },
 ];
 
@@ -180,7 +217,7 @@ const KEAMANAN: Department[] = [
     icon: ShieldCheck,
     baseIncomeCost: 100,
     description: "Mengoordinasikan intelijen dan keamanan dalam negeri.",
-    effects: ["Menurunkan risiko terorisme & sabotase", "Meningkatkan stabilitas politik"],
+    effects: ["Menurunkan risiko terorisme & sabotase: +5%"],
   },
   {
     id: "polisi",
@@ -188,7 +225,7 @@ const KEAMANAN: Department[] = [
     icon: Siren,
     baseIncomeCost: 100,
     description: "Menjaga ketertiban umum dan penegakan hukum sehari-hari.",
-    effects: ["Menurunkan tingkat kriminalitas", "Meningkatkan rasa aman masyarakat"],
+    effects: ["Menurunkan tingkat kriminalitas: -5%"],
   },
   {
     id: "garda-nasional",
@@ -196,7 +233,7 @@ const KEAMANAN: Department[] = [
     icon: Shield,
     baseIncomeCost: 100,
     description: "Pasukan cadangan untuk keadaan darurat dan bencana.",
-    effects: ["Mempercepat respons saat krisis internal", "Menambah kekuatan cadangan militer"],
+    effects: ["Meningkatkan kekuatan tempur: +5%"],
   },
   {
     id: "komandan-angkatan-darat",
@@ -204,7 +241,7 @@ const KEAMANAN: Department[] = [
     icon: ShieldAlert,
     baseIncomeCost: 100,
     description: "Memimpin kekuatan militer darat negara dalam pertahanan wilayah.",
-    effects: ["Meningkatkan kekuatan tempur darat", "Menurunkan risiko invasi darat", "Mempercepat respons terhadap konflik internal"],
+    effects: ["Meningkatkan kekuatan tempur darat: +5%"],
   },
   {
     id: "komandan-armada",
@@ -212,7 +249,7 @@ const KEAMANAN: Department[] = [
     icon: Ship,
     baseIncomeCost: 100,
     description: "Memimpin kekuatan angkatan laut dan menjaga perairan negara.",
-    effects: ["Meningkatkan kekuatan militer laut", "Mengamankan jalur perdagangan laut", "Menurunkan risiko pembajakan & pelanggaran wilayah maritim"],
+    effects: ["Meningkatkan kekuatan militer laut: +5%"],
   },
 ];
 
@@ -223,7 +260,7 @@ const LAYANAN: Department[] = [
     icon: Ambulance,
     baseIncomeCost: 100,
     description: "Menangani respons cepat bencana, kecelakaan, dan kondisi darurat.",
-    effects: ["Menurunkan angka korban jiwa saat bencana", "Meningkatkan kepuasan rakyat"],
+    effects: ["Menurunkan angka korban jiwa saat bencana: +5%"],
   },
   {
     id: "bank-sentral",
@@ -231,7 +268,7 @@ const LAYANAN: Department[] = [
     icon: Coins,
     baseIncomeCost: 100,
     description: "Mengendalikan kebijakan moneter, suku bunga, dan stabilitas nilai tukar.",
-    effects: ["Mengendalikan tingkat inflasi nasional", "Menstabilkan nilai tukar mata uang", "Mempengaruhi suku bunga pinjaman negara"],
+    effects: ["Mengurangi bunga hutang: -0.1%"],
   },
 ];
 
@@ -440,6 +477,9 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                   const Icon = dept.icon;
                   const maxed = level >= MAX_LEVEL;
 
+                  const currentEffect = getEffectDescription(dept.id, level);
+                  const nextEffect = !maxed ? getEffectDescription(dept.id, level + 1) : null;
+
                   return (
                     <div
                       key={dept.id}
@@ -472,7 +512,6 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                             {income.toLocaleString("id-ID")} EM per hari
                           </div>
 
-                          {/* 10 kotak level - dengan dukungan downgrade */}
                           <div className="flex gap-1">
                             {Array.from({ length: MAX_LEVEL }).map((_, i) => {
                               const boxLevel = i + 1;
@@ -534,6 +573,17 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                         >
                           <Hammer className="h-5 w-5" />
                         </div>
+                      </div>
+
+                      <div className="px-4 pb-3 -mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-bold">
+                        <span className="text-[#00FFAA]">
+                          Efek saat ini: <span className="text-[#E0E0E0]">{currentEffect}</span>
+                        </span>
+                        {!maxed && nextEffect && (
+                          <span className="text-[#6B8A8A]">
+                            Level berikutnya: <span className="text-[#00FFAA]">{nextEffect}</span>
+                          </span>
+                        )}
                       </div>
 
                       {!maxed && (
@@ -657,7 +707,6 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               </div>
             </div>
 
-            {/* Rincian biaya */}
             <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-lg p-4 mb-4">
               <div className="space-y-1.5 mb-3">
                 {Array.from(
@@ -785,4 +834,4 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
     </>,
     document.body
   );
-}
+}
