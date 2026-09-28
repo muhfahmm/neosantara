@@ -25,15 +25,15 @@ const RELIGION_OPTIONS = [
 ];
 
 const RELIGION_BONUSES: Record<string, string> = {
-  'Islam': 'Jumlah makanan dan sumber daya +10%',
-  'Katolik': 'Serangan tentara +10%',
-  'Protestan': 'Harga jual +5%, harga beli -5%',
-  'Kristen Ortodoks': 'Pertahanan tentara +10%',
-  'Hindu': 'Waktu persiapan untuk unit -10%',
-  'Buddha': 'Bonus kebahagiaan rakyat +5%',
-  'Yahudi': 'Waktu pembangunan pabrik dan tambang -10%',
-  'Shinto': 'Pertumbuhan populasi +8%',
-  'Ateisme': 'Efisiensi riset sains +10%',
+  'Islam': 'Jumlah makanan dan sumber daya: +10%',
+  'Katolik': 'Pengaruh Suara Negara di PBB: +10',
+  'Protestan': 'Harga jual: +5%, Harga beli: -5%',
+  'Kristen Ortodoks': 'Penerimaan Pajak Penghasilan Pribadi: +5%',
+  'Hindu': 'Laju Pertumbuhan Populasi: +8%',
+  'Buddha': 'Penerimaan Pajak Lingkungan: +10%',
+  'Yahudi': 'Waktu pembangunan pabrik dan tambang: -10%',
+  'Shinto': 'Pertumbuhan populasi: +8%',
+  'Ateisme': 'Kecepatan Riset Sains: +15%',
 };
 
 const RELIGION_ICONS: Record<string, React.ReactNode> = {

@@ -21,48 +21,7 @@ export const getMaterialStock = (countryDetail: any, resourceKey: string, metada
     return Number(countryDetail[inventoryKey]) || 0;
   }
 
-  const isFoodCommodity = FOOD_CONSUMPTION_PER_CAPITA[normalizedKey] !== undefined;
-  if (isFoodCommodity) {
-    const buildingCount = Number(countryDetail?.[normalizedKey]) || 0;
-    if (buildingCount === 0) return 0;
-    const bMeta = findBuildingMetadata(metadata || {}, normalizedKey);
-    const DEFAULT_PROD: Record<string, number> = {
-      air_mineral: 1000,
-      gula: 250,
-      roti: 150,
-      pengolahan_daging: 120,
-      mie_instan: 500,
-      minyak_goreng: 250,
-      susu: 180,
-      beras: 300,
-    };
-    const prodPerUnit = Number(bMeta?.produksi) || DEFAULT_PROD[normalizedKey] || 0;
-    const dailyProd = prodPerUnit * buildingCount;
-    const pop = Number(countryDetail?.jumlah_penduduk) || 0;
-    const dailyCons = calculateConsumption(pop, FOOD_CONSUMPTION_PER_CAPITA[normalizedKey]);
-    return Math.max(0, dailyProd - dailyCons);
-  }
-
-  const DEFAULT_MINE_PROD: Record<string, number> = {
-    uranium: 10,
-    gas_alam: 20,
-    batu_bara: 200,
-    minyak_bumi: 20,
-    emas: 600,
-    garam: 5,
-    litium: 1,
-    logam_tanah_jarang: 5,
-    bijih_besi: 10,
-  };
-
-  if (DEFAULT_MINE_PROD[normalizedKey] !== undefined) {
-    const buildingCount = Number(countryDetail?.[normalizedKey]) || 0;
-    if (buildingCount === 0) return 0;
-    const bMeta = findBuildingMetadata(metadata || {}, normalizedKey);
-    const prodPerUnit = Number(bMeta?.produksi) || DEFAULT_MINE_PROD[normalizedKey] || 0;
-    return prodPerUnit * buildingCount;
-  }
-
+  // Jika belum ada data akumulasi inventory (hari pertama), stok diawali dari 0
   return 0;
 };
 
