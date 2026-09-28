@@ -14,6 +14,7 @@ import { PROFILES_DATA } from '@/../../json/semua_fitur_negara/0_profiles/index'
 import { DATABASE_PAJAK_NEGARA } from '@/../../json/database_pajak_negara/index';
 import { DATABASE_ALOKASI_SUBSIDI } from '@/../../json/database_alokasi_subsidi/index';
 import { DATABASE_LEVEL_KABINET } from '@/../../json/database_level_kabinet/index';
+
 const getNormalizedSlug = (detail: any) => {
   if (!detail) return '';
   const raw = String(detail.country_slug || detail.slug || detail.id || detail.country || detail.name_id || '').toLowerCase().trim();
@@ -84,15 +85,18 @@ const computeTaxValue = (detail: any) => {
   };
   return calculateTotalTaxIncome(formattedDetail);
 };
+
 const computeGoldValue = (detail: any) => {
   const emasCount = typeof detail?.emas === 'number' ? detail.emas : 0;
   return calculateGoldMiningDailyProduction({ ...detail, emas: emasCount });
 };
+
 const computeMinistryCost = (detail: any) => {
   const kabData = getKabinetData(detail);
   const merged = { ...kabData, ...detail };
   return calculateTotalMinistryCostPerDay(merged);
 };
+
 const computeSubsidyCost = (detail: any) => {
   if (!detail || typeof detail !== 'object') return 424;
   if (typeof detail?.total_subsidy_cost === 'number') {
@@ -211,8 +215,9 @@ function AllCountriesGDP({
   });
 
   const [searchQuery, setSearchQuery] = useState('');
+  // ✅ DEFAULT SORT: Netto APBN terbanyak dulu
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({
-    key: 'pdb',
+    key: 'net',
     direction: 'desc',
   });
 
@@ -450,7 +455,7 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
             <span className="ml-1 text-[#00FFAA] font-black">(Data APBN Seluruh Negara Di Bawah Ini)</span>
           </p>
 
-          {/* --- DATA APBN SEMUA NEGARA YANG DIPINDAHKAN --- */}
+          {/* --- DATA APBN SEMUA NEGARA --- */}
           <AllCountriesGDP playerCountryName={countryName} playerCountryDetail={countryDetail} prefetchedAllCountries={prefetchedAllCountries} />
         </div>
       </div>
