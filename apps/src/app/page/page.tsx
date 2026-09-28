@@ -1,15 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Settings, Save, LogOut, Globe, Shield, Trash2, Calendar, Landmark } from 'lucide-react';
+import { Play, Settings, Save, LogOut, Globe, Shield, Trash2, Calendar, Landmark, TrendingUp, AlertTriangle, Activity, Radio } from 'lucide-react';
 import Link from 'next/link';
 
 /* ============================================================
-   VISUAL EFFECTS COMPONENTS
+   HOLOGRAPHIC WORLD MAP
    ============================================================ */
-
-/** Simplified wireframe world map + scanning line */
 const HolographicMap = () => (
     <div className="hidden lg:block absolute inset-y-0 right-0 w-[55%] z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 text-emerald-500">
@@ -31,31 +29,19 @@ const HolographicMap = () => (
                         </feMerge>
                     </filter>
                 </defs>
-
                 <g filter="url(#mapGlow)" stroke="currentColor" strokeWidth="0.8" strokeOpacity="0.55">
-                    {/* North America */}
                     <path d="M 80 80 Q 130 50 200 60 Q 250 70 275 110 Q 290 150 270 195 Q 250 230 220 250 Q 195 265 175 255 Q 155 240 145 215 Q 130 185 115 165 Q 95 140 80 115 Z" fill="url(#mapDots)" />
-                    {/* Greenland */}
                     <path d="M 280 40 Q 320 30 350 55 Q 355 85 325 100 Q 295 95 280 40 Z" fill="url(#mapDots)" />
-                    {/* South America */}
                     <path d="M 235 280 Q 270 275 290 300 Q 305 350 295 405 Q 280 455 255 475 Q 235 470 230 425 Q 225 365 230 320 Z" fill="url(#mapDots)" />
-                    {/* Europe */}
                     <path d="M 460 75 Q 500 55 545 65 Q 570 85 560 115 Q 545 145 520 155 Q 490 150 475 130 Q 465 105 460 75 Z" fill="url(#mapDots)" />
-                    {/* Africa */}
                     <path d="M 475 190 Q 520 175 565 195 Q 590 240 580 300 Q 565 360 530 405 Q 510 420 495 400 Q 480 360 470 305 Q 460 240 475 190 Z" fill="url(#mapDots)" />
-                    {/* Asia */}
                     <path d="M 575 65 Q 660 40 760 55 Q 830 70 860 115 Q 870 155 840 185 Q 800 210 750 205 Q 690 195 640 175 Q 600 155 585 125 Z" fill="url(#mapDots)" />
-                    {/* SE Asia */}
                     <path d="M 720 235 Q 755 230 780 245 Q 790 265 770 275 Q 740 270 725 255 Z" fill="url(#mapDots)" />
-                    {/* Australia */}
                     <path d="M 775 315 Q 825 300 875 320 Q 895 345 875 375 Q 850 395 810 390 Q 780 375 775 345 Z" fill="url(#mapDots)" />
-                    {/* Antarctica */}
                     <path d="M 100 455 Q 300 440 500 445 Q 700 450 900 445 L 900 480 L 100 480 Z" fill="url(#mapDots)" />
                 </g>
             </svg>
         </div>
-
-        {/* Scanning line */}
         <motion.div
             className="absolute inset-x-0 h-[1.5px]"
             style={{
@@ -68,19 +54,16 @@ const HolographicMap = () => (
     </div>
 );
 
-/** Rotating radar sweep in the corner */
+/* ============================================================
+   RADAR SWEEP
+   ============================================================ */
 const RadarSweep = () => (
     <div className="hidden md:block absolute bottom-24 right-12 lg:bottom-32 lg:right-24 w-28 h-28 lg:w-40 lg:h-40 rounded-full border border-emerald-500/30 bg-emerald-500/[0.03] backdrop-blur-sm z-0 pointer-events-none">
-        {/* Concentric rings */}
         <div className="absolute inset-[18%] rounded-full border border-emerald-500/20" />
         <div className="absolute inset-[38%] rounded-full border border-emerald-500/15" />
         <div className="absolute inset-[58%] rounded-full border border-emerald-500/10" />
-
-        {/* Crosshairs */}
         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-emerald-500/20" />
         <div className="absolute top-1/2 left-0 right-0 h-px bg-emerald-500/20" />
-
-        {/* Rotating sweep */}
         <motion.div
             className="absolute inset-0 rounded-full"
             style={{
@@ -90,20 +73,17 @@ const RadarSweep = () => (
             animate={{ rotate: 360 }}
             transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
         />
-
-        {/* Center dot */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,1)]" />
-
-        {/* Radar blips */}
         <div className="absolute top-[30%] left-[45%] w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,1)] animate-pulse" />
         <div className="absolute top-[62%] left-[72%] w-1 h-1 rounded-full bg-emerald-400/80 shadow-[0_0_6px_rgba(16,185,129,0.8)] animate-pulse" style={{ animationDelay: '0.5s' }} />
         <div className="absolute top-[72%] left-[32%] w-1 h-1 rounded-full bg-emerald-400/60 shadow-[0_0_6px_rgba(16,185,129,0.6)] animate-pulse" style={{ animationDelay: '1.2s' }} />
     </div>
 );
 
-/** Floating data-stream particles */
+/* ============================================================
+   DATA STREAM PARTICLES
+   ============================================================ */
 const DataParticles = () => {
-    // Deterministic generation to avoid hydration mismatch
     const particles = Array.from({ length: 26 }, (_, i) => ({
         left: (i * 37 + 11) % 100,
         delay: ((i * 0.73) % 12),
@@ -133,7 +113,9 @@ const DataParticles = () => {
     );
 };
 
-/** Title with glitch effect on initial mount */
+/* ============================================================
+   GLITCH TITLE
+   ============================================================ */
 const GlitchTitle = () => {
     const [glitching, setGlitching] = useState(true);
 
@@ -171,14 +153,223 @@ const GlitchTitle = () => {
 };
 
 /* ============================================================
+   TYPEWRITER SUBTITLE
+   ============================================================ */
+const TypewriterSubtitle = () => {
+    const fullText = 'SIMULASI GEOPOLITIK & TATA KELOLA GLOBAL';
+    const [displayed, setDisplayed] = useState('');
+    const [done, setDone] = useState(false);
+
+    useEffect(() => {
+        let i = 0;
+        const timer = setInterval(() => {
+            i += 1;
+            setDisplayed(fullText.slice(0, i));
+            if (i >= fullText.length) {
+                clearInterval(timer);
+                setDone(true);
+            }
+        }, 35);
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <p className="text-slate-400 text-[9px] sm:text-[11px] md:text-xs lg:text-sm tracking-[0.2em] sm:tracking-[0.25em] font-light">
+            {displayed}
+            {!done && (
+                <span className="inline-block w-[2px] h-3 bg-emerald-500 align-middle ml-0.5 animate-pulse" />
+            )}
+        </p>
+    );
+};
+
+/* ============================================================
+   IN-GAME CLOCK (top-right)
+   ============================================================ */
+const GameClock = () => {
+    const [time, setTime] = useState('');
+
+    useEffect(() => {
+        const tick = () => {
+            const now = new Date();
+            const datePart = now.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+            }).toUpperCase();
+            const timePart = now.toLocaleTimeString('en-GB', { hour12: false });
+            setTime(`${datePart} • ${timePart} UTC`);
+        };
+        tick();
+        const id = setInterval(tick, 1000);
+        return () => clearInterval(id);
+    }, []);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.6 }}
+            className="hidden sm:flex absolute top-6 right-6 md:top-8 md:right-8 z-20 items-center gap-2 px-3 py-1.5 rounded-md border border-emerald-500/20 bg-slate-950/60 backdrop-blur-md text-[9px] md:text-[10px] font-mono text-emerald-400 tracking-widest"
+        >
+            <Radio className="w-3 h-3 animate-pulse" />
+            {time}
+        </motion.div>
+    );
+};
+
+/* ============================================================
+   GLOBAL STATS PANEL (right side, mid)
+   ============================================================ */
+const GlobalStatsPanel = () => {
+    const stats = [
+        { label: 'TENSION', value: 64, icon: AlertTriangle, color: '#f59e0b' },
+        { label: 'ECONOMY', value: 78, icon: TrendingUp, color: '#10b981' },
+        { label: 'CONFLICTS', value: 3, icon: Activity, color: '#ef4444', suffix: ' ACTIVE' },
+    ];
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.1, duration: 0.7 }}
+            className="hidden xl:flex flex-col gap-2 absolute top-1/2 -translate-y-1/2 right-8 xl:right-12 z-20 w-[190px] pointer-events-none"
+        >
+            <div className="text-[9px] tracking-[0.3em] text-emerald-500/70 font-bold mb-1 flex items-center gap-2">
+                <span className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+                GLOBAL FEED
+            </div>
+            {stats.map((s, i) => (
+                <motion.div
+                    key={s.label}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1.2 + i * 0.15 }}
+                    className="border border-white/5 bg-white/[0.02] backdrop-blur-sm rounded-lg px-3 py-2"
+                >
+                    <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-1.5 text-[9px] text-slate-400 tracking-widest font-bold">
+                            <s.icon className="w-3 h-3" style={{ color: s.color }} />
+                            {s.label}
+                        </div>
+                        <span
+                            className="text-[11px] font-mono font-bold"
+                            style={{ color: s.color }}
+                        >
+                            {s.value}{s.suffix ?? '%'}
+                        </span>
+                    </div>
+                    {!s.suffix && (
+                        <div className="h-[3px] w-full bg-white/5 rounded-full overflow-hidden">
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${s.value}%` }}
+                                transition={{ delay: 1.5 + i * 0.15, duration: 0.8, ease: 'easeOut' }}
+                                className="h-full rounded-full"
+                                style={{
+                                    background: s.color,
+                                    boxShadow: `0 0 8px ${s.color}`,
+                                }}
+                            />
+                        </div>
+                    )}
+                </motion.div>
+            ))}
+        </motion.div>
+    );
+};
+
+/* ============================================================
+   NEWS TICKER (bottom)
+   ============================================================ */
+const NewsTicker = () => {
+    const headlines = [
+        { tag: 'DIPLOMASI', text: 'Presiden NEOSANTARA menjadwalkan pertemuan puncak dengan negara-negara ASEAN pekan depan' },
+        { tag: 'EKONOMI', text: 'Indeks pasar global naik 2.4% setelah pengumuman paket stimulus baru' },
+        { tag: 'MILITER', text: 'Latihan gabungan angkatan laut digelar di perairan Selat Malaka' },
+        { tag: 'TEKNOLOGI', text: 'Revolusi AI mencapai milestone baru dalam prediksi geopolitik' },
+        { tag: 'LINGKUNGAN', text: 'Komitmen karbon netral 2050 diperkuat oleh 12 negara tambahan' },
+    ];
+
+    // Duplicate for seamless loop
+    const loop = [...headlines, ...headlines];
+
+    return (
+        <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none">
+            {/* Top border */}
+            <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
+
+            <div className="bg-slate-950/80 backdrop-blur-md border-t border-emerald-500/10 flex items-center overflow-hidden h-9">
+                {/* Fixed "LIVE" badge */}
+                <div className="flex items-center gap-1.5 px-3 h-full bg-emerald-500/10 border-r border-emerald-500/20 shrink-0">
+                    <span className="relative flex h-1.5 w-1.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500" />
+                    </span>
+                    <span className="text-[9px] font-black tracking-[0.25em] text-emerald-400">LIVE</span>
+                </div>
+
+                {/* Marquee */}
+                <div className="relative flex-1 overflow-hidden h-full">
+                    <motion.div
+                        className="flex items-center h-full whitespace-nowrap"
+                        animate={{ x: ['0%', '-50%'] }}
+                        transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
+                    >
+                        {loop.map((h, i) => (
+                            <div key={i} className="flex items-center gap-2 px-6 text-[10px] tracking-wider">
+                                <span className="text-emerald-500 font-black">[{h.tag}]</span>
+                                <span className="text-slate-400">{h.text}</span>
+                                <span className="text-slate-700 ml-6">◆</span>
+                            </div>
+                        ))}
+                    </motion.div>
+                    {/* Edge fades */}
+                    <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-slate-950 to-transparent" />
+                    <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-slate-950 to-transparent" />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+/* ============================================================
+   CLASSIFICATION BANNER (top center)
+   ============================================================ */
+const ClassificationBanner = () => (
+    <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 0.6 }}
+        className="hidden md:flex absolute top-0 left-0 right-0 z-20 justify-center pointer-events-none"
+    >
+        <div className="px-6 py-1 bg-emerald-500/5 border-x border-b border-emerald-500/20 backdrop-blur-sm">
+            <span className="text-[8px] tracking-[0.5em] font-black text-emerald-500/70">
+                ◆ CLASSIFIED — LEVEL 4 CLEARANCE ◆
+            </span>
+        </div>
+    </motion.div>
+);
+
+/* ============================================================
+   HUD CORNER MARKS (4 corners, subtle)
+   ============================================================ */
+const HudCorners = () => (
+    <>
+        <div className="hidden md:block absolute top-16 left-4 w-6 h-6 border-l border-t border-emerald-500/30 pointer-events-none z-10" />
+        <div className="hidden md:block absolute top-16 right-4 w-6 h-6 border-r border-t border-emerald-500/30 pointer-events-none z-10" />
+        <div className="hidden md:block absolute bottom-12 left-4 w-6 h-6 border-l border-b border-emerald-500/30 pointer-events-none z-10" />
+        <div className="hidden md:block absolute bottom-12 right-4 w-6 h-6 border-r border-b border-emerald-500/30 pointer-events-none z-10" />
+    </>
+);
+
+/* ============================================================
    MAIN PAGE
    ============================================================ */
-
 export default function PlayMenuPage() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-    // Save-related states
     const [isContinueModalOpen, setIsContinueModalOpen] = useState(false);
     const [saveFiles, setSaveFiles] = useState<any[]>([]);
     const [isLoadingSaves, setIsLoadingSaves] = useState(false);
@@ -214,11 +405,8 @@ export default function PlayMenuPage() {
         if (!window.confirm("Apakah Anda yakin ingin menghapus save file ini secara permanen?")) {
             return;
         }
-
         try {
-            const response = await fetch(`/api/game-save?id=${id}`, {
-                method: 'DELETE'
-            });
+            const response = await fetch(`/api/game-save?id=${id}`, { method: 'DELETE' });
             if (response.ok) {
                 setSaveFiles(prev => prev.filter(save => save.id !== id));
             } else {
@@ -235,16 +423,16 @@ export default function PlayMenuPage() {
         window.location.href = `/page/map_system?country=${encodeURIComponent(save.country_name)}`;
     };
 
+    // Menu items now include sublabels
     const menuItems = [
-        { id: 'start', label: 'MULAI SIMULASI', icon: Play, color: '#10b981', path: '/page/map_system/pilih-negara' },
-        { id: 'continue', label: 'LANJUTKAN', icon: Save, color: '#3b82f6', path: '#' },
-        { id: 'settings', label: 'PENGATURAN', icon: Settings, color: '#f59e0b', path: '#' },
-        { id: 'exit', label: 'KELUAR', icon: LogOut, color: '#ef4444', path: '#' },
+        { id: 'start', label: 'MULAI SIMULASI', sub: 'INISIASI PEMERINTAHAN BARU', icon: Play, color: '#10b981', path: '/page/map_system/pilih-negara' },
+        { id: 'continue', label: 'LANJUTKAN', sub: 'MUAT DATA STRATEGIS', icon: Save, color: '#3b82f6', path: '#' },
+        { id: 'settings', label: 'PENGATURAN', sub: 'KONFIGURASI SISTEM', icon: Settings, color: '#f59e0b', path: '#' },
+        { id: 'exit', label: 'KELUAR', sub: 'AKHIRI SESI', icon: LogOut, color: '#ef4444', path: '#' },
     ];
 
     return (
         <>
-            {/* Global keyframes for particle animation */}
             <style>{`
                 @keyframes neosantara-float-up {
                     0%   { transform: translateY(0); opacity: 0; }
@@ -252,56 +440,53 @@ export default function PlayMenuPage() {
                     85%  { opacity: 0.7; }
                     100% { transform: translateY(-100vh); opacity: 0; }
                 }
+                /* Hide scrollbar for save modal list */
+                .no-scrollbar::-webkit-scrollbar { display: none; }
+                .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
             `}</style>
 
-            <div className="relative h-screen max-h-screen bg-[#070b14] flex flex-col items-start justify-center p-4 sm:p-8 md:p-10 lg:p-14 overflow-hidden font-sans">
-                {/* ============================================
-                    LAYER 1: Animated Background Orbs
-                    ============================================ */}
+            <div className="relative h-screen max-h-screen bg-[#070b14] flex flex-col items-start justify-center p-4 sm:p-8 md:p-10 lg:p-14 overflow-hidden font-sans pb-12">
+
+                {/* Subtle global grid overlay */}
+                <div
+                    className="absolute inset-0 z-0 pointer-events-none opacity-[0.04]"
+                    style={{
+                        backgroundImage:
+                            'linear-gradient(rgba(16,185,129,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.8) 1px, transparent 1px)',
+                        backgroundSize: '60px 60px',
+                    }}
+                />
+
+                {/* Background Orbs */}
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.05)_0%,transparent_70%)]" />
                     <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
-
                     <motion.div
-                        animate={{
-                            scale: [1, 1.2, 1],
-                            opacity: [0.3, 0.5, 0.3],
-                            x: [0, 50, 0],
-                            y: [0, -50, 0]
-                        }}
+                        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3], x: [0, 50, 0], y: [0, -50, 0] }}
                         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
                         className="absolute top-1/4 left-1/4 w-32 sm:w-40 lg:w-48 h-32 sm:h-40 lg:h-48 bg-emerald-500/10 rounded-full blur-[100px]"
                     />
                     <motion.div
-                        animate={{
-                            scale: [1, 1.3, 1],
-                            opacity: [0.2, 0.4, 0.2],
-                            x: [0, -70, 0],
-                            y: [0, 60, 0]
-                        }}
+                        animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2], x: [0, -70, 0], y: [0, 60, 0] }}
                         transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
                         className="absolute bottom-1/4 right-1/4 w-36 sm:w-48 lg:w-60 h-36 sm:h-48 lg:h-60 bg-blue-500/10 rounded-full blur-[120px]"
                     />
                 </div>
 
-                {/* ============================================
-                    LAYER 2: Holographic World Map
-                    ============================================ */}
+                {/* Vignette */}
+                <div className="absolute inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.6)_100%)]" />
+
+                {/* FX Layers */}
                 <HolographicMap />
-
-                {/* ============================================
-                    LAYER 3: Data Stream Particles
-                    ============================================ */}
                 <DataParticles />
-
-                {/* ============================================
-                    LAYER 4: Radar Sweep
-                    ============================================ */}
                 <RadarSweep />
+                <HudCorners />
+                <ClassificationBanner />
+                <GameClock />
+                <GlobalStatsPanel />
+                <NewsTicker />
 
-                {/* ============================================
-                    LAYER 5: Main Content
-                    ============================================ */}
+                {/* ============ Main Content ============ */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -321,122 +506,95 @@ export default function PlayMenuPage() {
                             </div>
                         </motion.div>
 
-                        {/* Glitch Title */}
                         <GlitchTitle />
-
-                        <p className="text-slate-400 text-[9px] sm:text-[11px] md:text-xs lg:text-sm tracking-[0.2em] sm:tracking-[0.25em] font-light">
-                            SIMULASI GEOPOLITIK &amp; TATA KELOLA GLOBAL
-                        </p>
+                        <TypewriterSubtitle />
                     </div>
 
                     {/* Menu Buttons */}
-                    <div className="flex flex-col gap-2 sm:gap-2.5 lg:gap-3 w-full max-w-[200px] sm:max-w-[230px] md:max-w-[260px] lg:max-w-[280px]">
-                        {menuItems.map((item, index) => (
-                            <motion.div
-                                key={item.id}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.5 + index * 0.1 }}
-                                onHoverStart={() => setHoveredIndex(index)}
-                                onHoverEnd={() => setHoveredIndex(null)}
-                                className="w-full"
-                            >
-                                {item.id === 'continue' ? (
-                                    <button
-                                        onClick={openContinueModal}
-                                        className={`
-                                            group relative w-full flex items-center gap-2.5 lg:gap-3 p-2 sm:p-2.5 lg:p-3 rounded-lg sm:rounded-xl
-                                            bg-white/5 border border-white/10 transition-all duration-300
-                                            hover:bg-white/10 hover:border-emerald-500/30 hover:scale-[1.02]
-                                            overflow-hidden cursor-pointer text-left
-                                        `}
-                                    >
-                                        <div
-                                            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                                            style={{ background: `radial-gradient(circle at center, ${item.color}15 0%, transparent 100%)` }}
-                                        />
+                    <div className="flex flex-col gap-2 sm:gap-2.5 lg:gap-3 w-full max-w-[220px] sm:max-w-[260px] md:max-w-[290px] lg:max-w-[310px]">
+                        {menuItems.map((item, index) => {
+                            const isActive = hoveredIndex === index;
 
-                                        <item.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-slate-400 group-hover:text-white transition-colors shrink-0" />
+                            const inner = (
+                                <>
+                                    <div
+                                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                                        style={{ background: `radial-gradient(circle at center, ${item.color}15 0%, transparent 100%)` }}
+                                    />
+
+                                    {/* Left edge accent bar */}
+                                    <span
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-0 group-hover:h-3/5 rounded-r-full transition-all duration-300"
+                                        style={{ background: item.color, boxShadow: `0 0 10px ${item.color}` }}
+                                    />
+
+                                    <item.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-slate-400 group-hover:text-white transition-colors shrink-0" />
+
+                                    <div className="flex flex-col items-start leading-tight min-w-0">
                                         <span className="text-slate-300 group-hover:text-white font-bold tracking-widest text-[10px] sm:text-[11px] lg:text-xs uppercase">
                                             {item.label}
                                         </span>
-
-                                        {hoveredIndex === index && (
-                                            <motion.div
-                                                layoutId="active"
-                                                className="absolute right-3 w-1.5 h-1.5 rounded-full"
-                                                style={{ backgroundColor: item.color }}
-                                            />
-                                        )}
-                                    </button>
-                                ) : item.path === '#' ? (
-                                    <button
-                                        onClick={() => {
-                                            if (item.id === 'exit') {
-                                                if (window.confirm("Apakah Anda yakin ingin keluar?")) {
-                                                    window.close();
-                                                }
-                                            } else {
-                                                alert("Fitur pengaturan segera hadir!");
-                                            }
-                                        }}
-                                        className={`
-                                            group relative w-full flex items-center gap-2.5 lg:gap-3 p-2 sm:p-2.5 lg:p-3 rounded-lg sm:rounded-xl
-                                            bg-white/5 border border-white/10 transition-all duration-300
-                                            hover:bg-white/10 hover:border-white/20 hover:scale-[1.02]
-                                            overflow-hidden cursor-pointer text-left
-                                        `}
-                                    >
-                                        <div
-                                            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                                            style={{ background: `radial-gradient(circle at center, ${item.color}15 0%, transparent 100%)` }}
-                                        />
-
-                                        <item.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-slate-400 group-hover:text-white transition-colors shrink-0" />
-                                        <span className="text-slate-300 group-hover:text-white font-bold tracking-widest text-[10px] sm:text-[11px] lg:text-xs uppercase">
-                                            {item.label}
+                                        <span className="text-slate-500 group-hover:text-slate-400 text-[8px] sm:text-[9px] tracking-[0.15em] font-medium uppercase mt-0.5 truncate">
+                                            {item.sub}
                                         </span>
+                                    </div>
 
-                                        {hoveredIndex === index && (
-                                            <motion.div
-                                                layoutId="active"
-                                                className="absolute right-3 w-1.5 h-1.5 rounded-full"
-                                                style={{ backgroundColor: item.color }}
-                                            />
-                                        )}
-                                    </button>
-                                ) : (
-                                    <Link href={item.path} className="w-full block">
-                                        <button
-                                            className={`
-                                                group relative w-full flex items-center gap-2.5 lg:gap-3 p-2 sm:p-2.5 lg:p-3 rounded-lg sm:rounded-xl
-                                                bg-white/5 border border-white/10 transition-all duration-300
-                                                hover:bg-white/10 hover:border-white/20 hover:scale-[1.02]
-                                                overflow-hidden cursor-pointer text-left
-                                            `}
-                                        >
-                                            <div
-                                                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                                                style={{ background: `radial-gradient(circle at center, ${item.color}15 0%, transparent 100%)` }}
-                                            />
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="active"
+                                            className="absolute right-3 w-1.5 h-1.5 rounded-full"
+                                            style={{ backgroundColor: item.color }}
+                                        />
+                                    )}
+                                </>
+                            );
 
-                                            <item.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-slate-400 group-hover:text-white transition-colors shrink-0" />
-                                            <span className="text-slate-300 group-hover:text-white font-bold tracking-widest text-[10px] sm:text-[11px] lg:text-xs uppercase">
-                                                {item.label}
-                                            </span>
+                            const btnClass = `
+                                group relative w-full flex items-center gap-2.5 lg:gap-3 pl-3 pr-2 py-2 sm:py-2.5 lg:py-3 rounded-lg sm:rounded-xl
+                                bg-white/5 border border-white/10 transition-all duration-300
+                                hover:bg-white/10 hover:border-white/20 hover:scale-[1.02]
+                                overflow-hidden cursor-pointer text-left
+                            `;
 
-                                            {hoveredIndex === index && (
-                                                <motion.div
-                                                    layoutId="active"
-                                                    className="absolute right-3 w-1.5 h-1.5 rounded-full"
-                                                    style={{ backgroundColor: item.color }}
-                                                />
-                                            )}
+                            return (
+                                <motion.div
+                                    key={item.id}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.5 + index * 0.1 }}
+                                    onHoverStart={() => setHoveredIndex(index)}
+                                    onHoverEnd={() => setHoveredIndex(null)}
+                                    className="w-full"
+                                >
+                                    {item.id === 'continue' ? (
+                                        <button onClick={openContinueModal} className={btnClass}>
+                                            {inner}
                                         </button>
-                                    </Link>
-                                )}
-                            </motion.div>
-                        ))}
+                                    ) : item.path === '#' ? (
+                                        <button
+                                            onClick={() => {
+                                                if (item.id === 'exit') {
+                                                    if (window.confirm("Apakah Anda yakin ingin keluar?")) {
+                                                        window.close();
+                                                    }
+                                                } else {
+                                                    alert("Fitur pengaturan segera hadir!");
+                                                }
+                                            }}
+                                            className={btnClass}
+                                        >
+                                            {inner}
+                                        </button>
+                                    ) : (
+                                        <Link href={item.path} className="w-full block">
+                                            <button className={btnClass}>
+                                                {inner}
+                                            </button>
+                                        </Link>
+                                    )}
+                                </motion.div>
+                            );
+                        })}
                     </div>
 
                     {/* Footer Info */}
@@ -461,11 +619,11 @@ export default function PlayMenuPage() {
                     </motion.div>
                 </motion.div>
 
-                {/* Corner Accents */}
+                {/* Old corner accents (kept for style consistency) */}
                 <div className="hidden sm:block absolute top-4 left-4 sm:top-8 sm:left-8 p-4 border-l border-t border-white/10 w-16 h-16 sm:w-24 sm:h-24 pointer-events-none" />
                 <div className="hidden sm:block absolute bottom-4 right-4 sm:bottom-8 sm:right-8 p-4 border-r border-b border-white/10 w-16 h-16 sm:w-24 sm:h-24 pointer-events-none" />
 
-                {/* Continue Save Glassmorphic Modal */}
+                {/* ============ Continue Modal ============ */}
                 <AnimatePresence>
                     {isContinueModalOpen && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md">
