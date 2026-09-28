@@ -12,7 +12,7 @@ import {
   calculateProduction,
   calculateConsumption,
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
-import { getDoktrinKeterbukaan } from "@/../../json/database_doktrin_keterbukaan/index";
+
 
 // ─── Helper ─────────────────────────────────────────────────────────────────
 
@@ -226,18 +226,15 @@ export function calculateKeterbukaanScore(countryDetail: any): number {
     return Math.min(100, Math.max(0, Number(countryDetail.opennessIndex)));
   }
 
-  const countryName = countryDetail?.nama_negara || countryDetail?.country || countryDetail?.name_id || countryDetail?.name_en || "";
-  const dbData = getDoktrinKeterbukaan(countryName) || {};
-
-  const speechScore = Number(countryDetail?.speechScore ?? dbData.speechScore ?? 50);
-  const religionScore = Number(countryDetail?.religionScore ?? dbData.religionScore ?? 60);
-  const demoScore = Number(countryDetail?.demoScore ?? dbData.demoScore ?? 45);
-  const transparencyScore = Number(countryDetail?.transparencyScore ?? dbData.transparencyScore ?? 55);
-  const mediaScore = Number(countryDetail?.mediaScore ?? dbData.mediaScore ?? 50);
-  const internetScore = Number(countryDetail?.internetScore ?? dbData.internetScore ?? 60);
-  const borderScore = Number(countryDetail?.borderScore ?? dbData.borderScore ?? 40);
-  const tradeScore = Number(countryDetail?.tradeScore ?? dbData.tradeScore ?? 60);
-  const diplomacyScore = Number(countryDetail?.diplomacyScore ?? dbData.diplomacyScore ?? 55);
+  const speechScore = Number(countryDetail?.speechScore ?? 50);
+  const religionScore = Number(countryDetail?.religionScore ?? 60);
+  const demoScore = Number(countryDetail?.demoScore ?? 45);
+  const transparencyScore = Number(countryDetail?.transparencyScore ?? 55);
+  const mediaScore = Number(countryDetail?.mediaScore ?? 50);
+  const internetScore = Number(countryDetail?.internetScore ?? 60);
+  const borderScore = Number(countryDetail?.borderScore ?? 40);
+  const tradeScore = Number(countryDetail?.tradeScore ?? 60);
+  const diplomacyScore = Number(countryDetail?.diplomacyScore ?? 55);
 
   const avg = Math.round(
     (speechScore + religionScore + demoScore + transparencyScore + mediaScore + internetScore + borderScore + tradeScore + diplomacyScore) / 9

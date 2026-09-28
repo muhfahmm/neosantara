@@ -1,9 +1,7 @@
-// Compatibility module for Database Doktrin Keterbukaan
-
 export interface DoktrinKeterbukaan {
+  id: number;
   country: string;
   name_en: string;
-  ideology: string;
   speechScore: number;
   religionScore: number;
   demoScore: number;
@@ -16,24 +14,18 @@ export interface DoktrinKeterbukaan {
   opennessIndex: number;
 }
 
-export const defaultDoktrin: DoktrinKeterbukaan = {
-  country: "Demokrasi",
-  name_en: "Default",
-  ideology: "Demokrasi",
-  speechScore: 75,
-  religionScore: 80,
-  demoScore: 70,
-  transparencyScore: 75,
-  mediaScore: 75,
-  internetScore: 80,
-  borderScore: 60,
-  tradeScore: 75,
-  diplomacyScore: 70,
-  opennessIndex: 73
-};
-
-export function getDoktrinKeterbukaan(countryName?: string): DoktrinKeterbukaan {
-  return defaultDoktrin;
+export async function fetchDoktrinKeterbukaanFromDb(countryName?: string): Promise<DoktrinKeterbukaan | null> {
+  try {
+    const url = countryName 
+      ? `/api/doktrin-keterbukaan?country=${encodeURIComponent(countryName)}` 
+      : `/api/doktrin-keterbukaan`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (Array.isArray(data)) return data[0] || null;
+    return data;
+  } catch (err) {
+    console.error('Failed to fetch doktrin keterbukaan from database API:', err);
+    return null;
+  }
 }
-
-export default getDoktrinKeterbukaan;

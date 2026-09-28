@@ -21,7 +21,7 @@ import {
   Wifi,
 } from "lucide-react";
 
-import { getDoktrinKeterbukaan } from "@/../../json/database_doktrin_keterbukaan/index";
+import { fetchDoktrinKeterbukaanFromDb } from "@/../../json/database_doktrin_keterbukaan/index";
 
 interface DoktrinKeterbukaanModalProps {
   isOpen: boolean;
@@ -40,22 +40,21 @@ export default function DoktrinKeterbukaanModal({
 }: DoktrinKeterbukaanModalProps) {
   const [mounted, setMounted] = useState(false);
   const countryName = selectedCountry?.country || countryDetail?.nama_negara || countryDetail?.country || "Negara";
-  const initialData = getDoktrinKeterbukaan(countryName) || {};
 
   // --- 1. KEBEBASAN SIPIL & HAM ---
-  const [speechScore, setSpeechScore] = useState<number>(countryDetail?.speechScore ?? initialData.speechScore ?? 50);
-  const [religionScore, setReligionScore] = useState<number>(countryDetail?.religionScore ?? initialData.religionScore ?? 60);
-  const [demoScore, setDemoScore] = useState<number>(countryDetail?.demoScore ?? initialData.demoScore ?? 45);
-  const [transparencyScore, setTransparencyScore] = useState<number>(countryDetail?.transparencyScore ?? initialData.transparencyScore ?? 55);
+  const [speechScore, setSpeechScore] = useState<number>(countryDetail?.speechScore ?? 50);
+  const [religionScore, setReligionScore] = useState<number>(countryDetail?.religionScore ?? 60);
+  const [demoScore, setDemoScore] = useState<number>(countryDetail?.demoScore ?? 45);
+  const [transparencyScore, setTransparencyScore] = useState<number>(countryDetail?.transparencyScore ?? 55);
 
   // --- 2. MEDIA & INFORMASI ---
-  const [mediaScore, setMediaScore] = useState<number>(countryDetail?.mediaScore ?? initialData.mediaScore ?? 50);
-  const [internetScore, setInternetScore] = useState<number>(countryDetail?.internetScore ?? initialData.internetScore ?? 60);
+  const [mediaScore, setMediaScore] = useState<number>(countryDetail?.mediaScore ?? 50);
+  const [internetScore, setInternetScore] = useState<number>(countryDetail?.internetScore ?? 60);
 
   // --- 3. PERBATASAN & GEOPOLITIK ---
-  const [borderScore, setBorderScore] = useState<number>(countryDetail?.borderScore ?? initialData.borderScore ?? 40);
-  const [tradeScore, setTradeScore] = useState<number>(countryDetail?.tradeScore ?? initialData.tradeScore ?? 60);
-  const [diplomacyScore, setDiplomacyScore] = useState<number>(countryDetail?.diplomacyScore ?? initialData.diplomacyScore ?? 55);
+  const [borderScore, setBorderScore] = useState<number>(countryDetail?.borderScore ?? 40);
+  const [tradeScore, setTradeScore] = useState<number>(countryDetail?.tradeScore ?? 60);
+  const [diplomacyScore, setDiplomacyScore] = useState<number>(countryDetail?.diplomacyScore ?? 55);
 
   const [activeTab, setActiveTab] = useState<"civil" | "media" | "global">("civil");
 
@@ -65,17 +64,19 @@ export default function DoktrinKeterbukaanModal({
 
   useEffect(() => {
     if (!isOpen) return;
-    const dbData = getDoktrinKeterbukaan(countryName) || {};
-    setSpeechScore(countryDetail?.speechScore ?? dbData.speechScore ?? 50);
-    setReligionScore(countryDetail?.religionScore ?? dbData.religionScore ?? 60);
-    setDemoScore(countryDetail?.demoScore ?? dbData.demoScore ?? 45);
-    setTransparencyScore(countryDetail?.transparencyScore ?? dbData.transparencyScore ?? 55);
-    setMediaScore(countryDetail?.mediaScore ?? dbData.mediaScore ?? 50);
-    setInternetScore(countryDetail?.internetScore ?? dbData.internetScore ?? 60);
-    setBorderScore(countryDetail?.borderScore ?? dbData.borderScore ?? 40);
-    setTradeScore(countryDetail?.tradeScore ?? dbData.tradeScore ?? 60);
-    setDiplomacyScore(countryDetail?.diplomacyScore ?? dbData.diplomacyScore ?? 55);
-  }, [isOpen, countryName]);
+    fetchDoktrinKeterbukaanFromDb(countryName).then((dbData: any) => {
+      if (!dbData) return;
+      setSpeechScore(countryDetail?.speechScore ?? dbData.speechScore ?? dbData.speech_score ?? 50);
+      setReligionScore(countryDetail?.religionScore ?? dbData.religionScore ?? dbData.religion_score ?? 60);
+      setDemoScore(countryDetail?.demoScore ?? dbData.demoScore ?? dbData.demo_score ?? 45);
+      setTransparencyScore(countryDetail?.transparencyScore ?? dbData.transparencyScore ?? dbData.transparency_score ?? 55);
+      setMediaScore(countryDetail?.mediaScore ?? dbData.mediaScore ?? dbData.media_score ?? 50);
+      setInternetScore(countryDetail?.internetScore ?? dbData.internetScore ?? dbData.internet_score ?? 60);
+      setBorderScore(countryDetail?.borderScore ?? dbData.borderScore ?? dbData.border_score ?? 40);
+      setTradeScore(countryDetail?.tradeScore ?? dbData.tradeScore ?? dbData.trade_score ?? 60);
+      setDiplomacyScore(countryDetail?.diplomacyScore ?? dbData.diplomacyScore ?? dbData.diplomacy_score ?? 55);
+    });
+  }, [isOpen, countryName, countryDetail]);
 
   if (!isOpen || !mounted) return null;
 
