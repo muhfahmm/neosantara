@@ -10,8 +10,6 @@ import { calculateGoldMiningDailyProduction } from "@/app/logic/economic_logic/g
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "../8_kebijakan_subsidi/logic/logikaSubsidi";
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
-// Data pajak, subsidi, kabinet, dan profil negara dibaca dari MySQL via countryDetail / prefetchedAllCountries
-// (di-inject oleh country-data/route.ts — tidak perlu import static)
 
 const getNormalizedSlug = (detail: any) => {
   if (!detail) return '';
@@ -21,7 +19,6 @@ const getNormalizedSlug = (detail: any) => {
 
 const getTaxData = (detail: any) => {
   if (!detail) return {};
-  // Prioritas 1: dari MySQL via API (detail.pajak sudah di-inject di country-data/route.ts)
   if (detail.pajak && typeof detail.pajak === 'object') {
     return {
       tarif_ppn: detail.pajak.ppn?.tarif ?? 0,
@@ -31,7 +28,6 @@ const getTaxData = (detail: any) => {
       tarif_lingkungan: detail.pajak.lingkungan?.tarif ?? 0,
     };
   }
-  // Prioritas 2: flat fields (dari game save / countryDetail user)
   return {
     tarif_ppn: detail.ppn ?? detail.tarif_ppn ?? 0,
     tarif_korporasi: detail.corporate ?? detail.tarif_korporasi ?? 0,
@@ -43,11 +39,9 @@ const getTaxData = (detail: any) => {
 
 const getSubsidyData = (detail: any) => {
   if (!detail) return {};
-  // Prioritas 1: subsidy_states dari MySQL (di-inject oleh country-data/route.ts)
   if (detail.subsidy_states && typeof detail.subsidy_states === 'object') {
     return detail.subsidy_states;
   }
-  // Prioritas 2: flat sub_* fields langsung di detail
   const subsKeys = ['sub_bbm','sub_listrik','sub_lpg','sub_pdam','sub_pupuk','sub_sembako',
     'sub_bantuan_pangan','sub_pendidikan','sub_bpjs','sub_vaksin','sub_transport_publik',
     'sub_perumahan','sub_ev','sub_kur','sub_pajak_umkm','sub_blt','sub_pensiun','sub_bencana'];
@@ -60,7 +54,6 @@ const getSubsidyData = (detail: any) => {
 
 const getKabinetData = (detail: any) => {
   if (!detail) return {};
-  // Data kabinet sudah ada langsung di detail dari MySQL (kem_*, keamanan_*, layanan_*)
   return detail;
 };
 
@@ -127,12 +120,6 @@ const formatNumber = (num: number) => num.toLocaleString('id-ID');
 const getDisplayName = (detail: any) =>
   detail?.name_id || detail?.nama_negara || detail?.country || detail?.country_name || detail?.__fileName || 'Unknown';
 
-const extractFileOrder = (fileName: any) => {
-  if (typeof fileName !== 'string') return NaN;
-  const match = fileName.match(/^(\d+)/);
-  return match ? Number(match[1]) : NaN;
-};
-
 const getContinentFromOrder = (order: number) => {
   if (Number.isNaN(order)) return 'Lainnya';
   if (order >= 1 && order <= 51) return 'Africa';
@@ -157,7 +144,6 @@ const normalizeContinent = (continent: any) => {
 };
 
 const getInitialCountriesData = () => {
-  // Jika tidak ada data dari MySQL, gunakan COUNTRIES_DATA sebagai fallback minimal
   return COUNTRIES_DATA.map((c, idx) => ({
     ...c,
     __displayName: c.country,
@@ -168,6 +154,49 @@ const getInitialCountriesData = () => {
 };
 
 let cachedAllCountries: any[] = getInitialCountriesData();
+
+// ================================================================
+// ✅ HELPER: KATEGORI PERINGKAT & WARNA
+// ================================================================
+type RankCategory = 'kaya' | 'berkembang' | 'miskin';
+
+const getRankCategory = (rank: number): RankCategory => {
+  if (rank <= 30) return 'kaya';       // Peringkat 1-30
+  if (rank <= 130) return 'berkembang'; // Peringkat 31-130
+  return 'miskin';                      // Peringkat 131+
+};
+
+const getRankStyles = (rank: number) => {
+  const category = getRankCategory(rank);
+  switch (category) {
+    case 'kaya':
+      return {
+        rowBg: 'bg-emerald-950/45',
+        rowBorder: 'border-l-4 border-l-emerald-500',
+        noBadge: 'bg-emerald-500/25 text-emerald-300 border border-emerald-500/50',
+        label: '🟢 Kaya',
+        textColor: 'text-emerald-300',
+      };
+    case 'berkembang':
+      return {
+        rowBg: 'bg-amber-950/35',
+        rowBorder: 'border-l-4 border-l-amber-500',
+        noBadge: 'bg-amber-500/25 text-amber-300 border border-amber-500/50',
+        label: '🟡 Berkembang',
+        textColor: 'text-amber-300',
+      };
+    case 'miskin':
+    default:
+      return {
+        rowBg: 'bg-rose-950/35',
+        rowBorder: 'border-l-4 border-l-rose-500',
+        noBadge: 'bg-rose-500/25 text-rose-300 border border-rose-500/50',
+        label: '🔴 Miskin',
+        textColor: 'text-rose-300',
+      };
+  }
+};
+// ================================================================
 
 // --- KOMPONEN DATA NEGARA ---
 function AllCountriesGDP({
@@ -193,7 +222,6 @@ function AllCountriesGDP({
   });
 
   const [searchQuery, setSearchQuery] = useState('');
-  // ✅ DEFAULT SORT: Netto APBN terbanyak dulu
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({
     key: 'net',
     direction: 'desc',
@@ -261,7 +289,7 @@ function AllCountriesGDP({
 
       const tax = isLoaded ? computeTaxValue(targetDetail) : 0;
       const gold = isLoaded ? computeGoldValue({ ...targetDetail, emas: emasCount }) : 0;
-      const pdb = tax + gold; // Total PDB Bruto = Pajak + Produksi Emas
+      const pdb = tax + gold;
       const dewanKabinetCost = isLoaded ? computeMinistryCost(targetDetail) : 0;
       const subsidyCost = isLoaded ? computeSubsidyCost(targetDetail) : 0;
       const totalPengeluaran = dewanKabinetCost + subsidyCost;
@@ -295,7 +323,7 @@ function AllCountriesGDP({
     if (rows.length === 0) {
       return (
         <tr>
-          <td className="px-4 py-6 text-center text-sm font-bold text-[#6B8A8A]" colSpan={6}>
+          <td className="px-4 py-6 text-center text-sm font-bold text-[#6B8A8A]" colSpan={7}>
             Tidak ada data yang cocok dengan pencarian "{searchQuery}".
           </td>
         </tr>
@@ -315,18 +343,28 @@ function AllCountriesGDP({
 
     return sortedRows.map((row, index) => {
       const isPlayer = String(row.name || '').toLowerCase().trim() === normPlayerCountry;
+      const rank = index + 1;
+      const rankStyle = getRankStyles(rank);
 
       return (
         <tr
           key={`${row.name}-${index}`}
-          className={
+          className={`transition-colors ${
             isPlayer
-              ? 'bg-[#00FFAA]/15 border-l-4 border-l-[#00FFAA] font-bold'
-              : index % 2 === 0
-                ? 'bg-[#0F2424]'
-                : 'bg-[#0A1A1A]'
-          }
+              ? 'bg-[#00FFAA]/20 border-l-4 border-l-[#00FFAA] font-bold'
+              : `${rankStyle.rowBg} ${rankStyle.rowBorder}`
+          }`}
         >
+          {/* ✅ KOLOM NOMOR DENGAN BADGE BERWARNA */}
+          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-center border-b border-[#00FFAA]/10 whitespace-nowrap">
+            <span
+              className={`inline-flex items-center justify-center min-w-[24px] h-[20px] px-1.5 rounded-md font-black text-[10px] sm:text-[11px] ${
+                isPlayer ? 'bg-[#00FFAA] text-[#0A1A1A]' : rankStyle.noBadge
+              }`}
+            >
+              {rank}
+            </span>
+          </td>
           <td className="px-1.5 sm:px-2 lg:px-2 py-1.5 lg:py-2 text-[10px] sm:text-[11px] lg:text-xs font-bold text-[#E0E0E0] border-b border-[#00FFAA]/10 truncate">
             {isPlayer ? (
               <div className="flex items-center gap-1 text-[#00FFAA] font-black truncate">
@@ -362,7 +400,7 @@ function AllCountriesGDP({
 
   return (
     <div className="flex-1 min-h-0 flex flex-col space-y-3">
-      <div className="flex justify-between items-center gap-3 flex-shrink-0">
+      <div className="flex justify-between items-center gap-3 flex-shrink-0 flex-wrap">
         <div className="flex items-center gap-2">
           <span className="text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider">
             Data APBN Instan (207 Negara)
@@ -381,17 +419,34 @@ function AllCountriesGDP({
         </div>
       </div>
 
+      {/* ✅ LEGENDA WARNA */}
+      <div className="flex items-center gap-3 flex-shrink-0 flex-wrap text-[9px] sm:text-[10px] font-black uppercase tracking-wider">
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-sm bg-emerald-500/30 border border-emerald-500/60" />
+          <span className="text-emerald-300">Kaya (1–30)</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-sm bg-amber-500/30 border border-amber-500/60" />
+          <span className="text-amber-300">Berkembang (31–130)</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-sm bg-rose-500/30 border border-rose-500/60" />
+          <span className="text-rose-300">Miskin (131–207)</span>
+        </div>
+      </div>
+
       <div className="flex-1 min-h-0 border border-[#00FFAA]/30 rounded-xl bg-[#0A1A1A] overflow-hidden flex flex-col">
         <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden custom-scrollbar">
           <table className="w-full table-fixed text-xs text-left">
             <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/30 sticky top-0 z-10">
               <tr>
-                <th className="w-[20%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
-                <th className="w-[14%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('tax')}>Total Pajak{renderSortArrow('tax')}</th>
-                <th className="w-[16%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('gold')}>Emas{renderSortArrow('gold')}</th>
-                <th className="w-[18%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('subsidyCost')}>Pengeluaran Subsidi{renderSortArrow('subsidyCost')}</th>
-                <th className="w-[18%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('governmentCost')}>Pengeluaran Kabinet{renderSortArrow('governmentCost')}</th>
-                <th className="w-[14%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('net')}>Netto APBN{renderSortArrow('net')}</th>
+                <th className="w-[5%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-center leading-tight">No</th>
+                <th className="w-[19%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
+                <th className="w-[13%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('tax')}>Total Pajak{renderSortArrow('tax')}</th>
+                <th className="w-[15%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('gold')}>Emas{renderSortArrow('gold')}</th>
+                <th className="w-[16%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('subsidyCost')}>Pengeluaran Subsidi{renderSortArrow('subsidyCost')}</th>
+                <th className="w-[16%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('governmentCost')}>Pengeluaran Kabinet{renderSortArrow('governmentCost')}</th>
+                <th className="w-[16%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('net')}>Netto APBN{renderSortArrow('net')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#00FFAA]/10">{renderAllRows()}</tbody>
@@ -433,7 +488,6 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
             <span className="ml-1 text-[#00FFAA] font-black">(Data APBN Seluruh Negara Di Bawah Ini)</span>
           </p>
 
-          {/* --- DATA APBN SEMUA NEGARA --- */}
           <AllCountriesGDP playerCountryName={countryName} playerCountryDetail={countryDetail} prefetchedAllCountries={prefetchedAllCountries} />
         </div>
       </div>

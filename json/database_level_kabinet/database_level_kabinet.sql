@@ -216,7 +216,7 @@ INSERT INTO `database_level_kabinet` (
 (176, 'Saint lucia', 'saint_lucia', 4, 4, 4, 4, 4, 4, 4, 4, 5, 4, 4, 5, 3, 4, 4, 4, 5, 4, 4, 4, 4, 4), -- Berkembang
 (177, 'Saint vincent dan grenadine', 'saint_vincent_dan_grenadine', 4, 3, 4, 4, 5, 4, 5, 3, 5, 4, 5, 3, 4, 5, 4, 4, 4, 5, 5, 4, 4, 4), -- Berkembang
 (178, 'Trinidad dan tobago', 'trinidad_dan_tobago', 3, 4, 4, 5, 4, 3, 4, 4, 4, 4, 3, 5, 3, 5, 4, 5, 4, 4, 4, 5, 4, 4), -- Berkembang
-(179, 'Australia', 'australia', 6, 5, 6, 6, 6, 5, 6, 6, 6, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6), -- Maju
+(179, 'Australia', 'australia', 7, 5, 7, 6, 6, 6, 6, 7, 6, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6), -- Maju
 (180, 'Fiji', 'fiji', 3, 3, 4, 3, 3, 2, 2, 3, 4, 3, 3, 3, 3, 2, 2, 4, 3, 3, 3, 2, 3, 2), -- Berkembang
 (181, 'Guam', 'guam', 4, 4, 6, 4, 5, 5, 5, 5, 4, 6, 5, 6, 4, 6, 5, 4, 4, 5, 4, 4, 6, 5), -- Maju
 (182, 'Kiribati', 'kiribati', 2, 2, 2, 3, 2, 2, 2, 1, 2, 3, 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 3, 1), -- Miskin

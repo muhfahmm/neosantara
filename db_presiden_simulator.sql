@@ -48575,7 +48575,7 @@ INSERT INTO `database_level_kabinet` (
 (176, 'Saint lucia', 'saint_lucia', 4, 4, 4, 4, 4, 4, 4, 4, 5, 4, 4, 5, 3, 4, 4, 4, 5, 4, 4, 4, 4, 4), -- Berkembang
 (177, 'Saint vincent dan grenadine', 'saint_vincent_dan_grenadine', 4, 3, 4, 4, 5, 4, 5, 3, 5, 4, 5, 3, 4, 5, 4, 4, 4, 5, 5, 4, 4, 4), -- Berkembang
 (178, 'Trinidad dan tobago', 'trinidad_dan_tobago', 3, 4, 4, 5, 4, 3, 4, 4, 4, 4, 3, 5, 3, 5, 4, 5, 4, 4, 4, 5, 4, 4), -- Berkembang
-(179, 'Australia', 'australia', 6, 5, 6, 6, 6, 5, 6, 6, 6, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6), -- Maju
+(179, 'Australia', 'australia', 7, 5, 7, 6, 6, 6, 6, 7, 6, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6), -- Maju
 (180, 'Fiji', 'fiji', 3, 3, 4, 3, 3, 2, 2, 3, 4, 3, 3, 3, 3, 2, 2, 4, 3, 3, 3, 2, 3, 2), -- Berkembang
 (181, 'Guam', 'guam', 4, 4, 6, 4, 5, 5, 5, 5, 4, 6, 5, 6, 4, 6, 5, 4, 4, 5, 4, 4, 6, 5), -- Maju
 (182, 'Kiribati', 'kiribati', 2, 2, 2, 3, 2, 2, 2, 1, 2, 3, 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 3, 1), -- Miskin
@@ -50449,7 +50449,7 @@ INSERT INTO database_pajak_negara (
     (142, 'Siprus', 'siprus', 19, 13, 32, 0, 0),
     (143, 'Slovenia', 'slovenia', 22, 19, 50, 0, 1),
     (144, 'Slowakia', 'slowakia', 20, 21, 32, 0, 0),
-    (145, 'Spanyol', 'spanyol', 21, 25, 45, 0, 1),
+    (145, 'Spanyol', 'spanyol', 25, 24, 28, 0, 1),
     (146, 'Swedia', 'swedia', 25, 21, 57, 0, 2),
     (147, 'Swiss', 'swiss', 8, 16, 42, 0, 1),
     (148, 'Turki', 'turki', 18, 22, 32, 10, 1),
@@ -50474,7 +50474,7 @@ INSERT INTO database_pajak_negara (
     (167, 'Jamaika', 'jamaika', 15, 25, 33, 5, 0),
     (168, 'Kanada', 'kanada', 5, 23, 54, 0, 1),
     (169, 'Kuba', 'kuba', 5, 50, 50, 20, 0),
-    (170, 'Meksiko', 'meksiko', 16, 30, 35, 5, 1),
+    (170, 'Meksiko', 'meksiko', 16, 25, 23, 5, 1),
     (171, 'Nikaragua', 'nikaragua', 15, 30, 30, 5, 0),
     (172, 'Panama', 'panama', 7, 25, 0, 5, 0),
     (173, 'Puerto Rico', 'puerto_rico', 0, 38, 37, 0, 0),
@@ -50483,7 +50483,7 @@ INSERT INTO database_pajak_negara (
     (176, 'Saint Lucia', 'saint_lucia', 15, 25, 33, 5, 0),
     (177, 'Saint Vincent Dan Grenadine', 'saint_vincent_dan_grenadine', 15, 25, 33, 5, 0),
     (178, 'Trinidad Dan Tobago', 'trinidad_dan_tobago', 13, 25, 35, 5, 0),
-    (179, 'Australia', 'australia', 10, 30, 47, 0, 1),
+    (179, 'Australia', 'australia', 15, 30, 47, 4, 1),
     (180, 'Fiji', 'fiji', 9, 20, 32, 5, 0),
     (181, 'Guam', 'guam', 4, 37, 37, 0, 0),
     (182, 'Kiribati', 'kiribati', 0, 25, 30, 5, 0),
@@ -52354,7 +52354,7 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (95, 'Tajikistan', 'tajikistan', 25, 0, 0, 9, 8, 6, 4, 2, 0),
 (96, 'Thailand', 'thailand', 62, 0, 0, 17, 17, 13, 6, 0, 8),
 (97, 'Turkmenistan', 'turkmenistan', 25, 0, 0, 12, 0, 6, 4, 0, 0),
-(98, 'Uni emirat arab', 'uni_emirat_arab', 0, 0, 0, 24, 0, 6, 4, 0, 0),
+(98, 'Uni emirat arab', 'uni_emirat_arab', 0, 0, 0, 23, 0, 6, 4, 0, 0),
 (99, 'Uzbekistan', 'uzbekistan', 50, 0, 0, 12, 13, 11, 5, 3, 0),
 (100, 'Vietnam', 'vietnam', 75, 0, 3, 12, 20, 16, 8, 4, 9),
 (101, 'Yaman', 'yaman', 0, 0, 0, 6, 0, 11, 5, 0, 6),
@@ -52372,10 +52372,10 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (113, 'Estonia', 'estonia', 0, 0, 0, 19, 8, 0, 0, 2, 0),
 (114, 'Finlandia', 'finlandia', 25, 2, 0, 22, 0, 0, 0, 0, 0),
 (115, 'Gibraltar', 'gibraltar', 0, 0, 0, 19, 0, 0, 0, 0, 0),
-(116, 'Hungaria', 'hungaria', 0, 0, 0, 20, 8, 0, 0, 0, 0),
+(116, 'Hungaria', 'hungaria', 0, 0, 0, 19, 8, 0, 0, 0, 0),
 (117, 'Inggris', 'inggris', 62, 0, 0, 23, 17, 13, 6, 4, 8),
 (118, 'Irlandia', 'irlandia', 25, 0, 0, 22, 0, 0, 0, 0, 0),
-(119, 'Islandia', 'islandia', 0, 0, 0, 22, 0, 0, 0, 0, 0),
+(119, 'Islandia', 'islandia', 0, 0, 0, 21, 0, 0, 0, 0, 0),
 (120, 'Italia', 'italia', 62, 0, 0, 21, 0, 13, 6, 0, 0),
 (121, 'Jerman', 'jerman', 75, 3, 0, 23, 20, 16, 8, 0, 9),
 (122, 'Kepulauan faroe', 'kepulauan_faroe', 0, 0, 0, 20, 0, 0, 0, 0, 0),
@@ -52401,7 +52401,7 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (142, 'Siprus', 'siprus', 0, 0, 0, 20, 0, 0, 0, 0, 0),
 (143, 'Slovenia', 'slovenia', 20, 0, 0, 18, 8, 0, 0, 2, 0),
 (144, 'Slowakia', 'slowakia', 25, 0, 0, 21, 8, 0, 0, 0, 0),
-(145, 'Spanyol', 'spanyol', 62, 2, 2, 18, 17, 13, 6, 4, 8),
+(145, 'Spanyol', 'spanyol', 62, 2, 2, 20, 17, 13, 6, 4, 8),
 (146, 'Swedia', 'swedia', 38, 2, 0, 22, 0, 0, 0, 2, 0),
 (147, 'Swiss', 'swiss', 25, 0, 0, 22, 0, 0, 0, 0, 4),
 (148, 'Turki', 'turki', 75, 3, 0, 15, 20, 16, 8, 4, 9),
@@ -52426,7 +52426,7 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (167, 'Jamaika', 'jamaika', 25, 0, 0, 13, 0, 6, 4, 0, 0),
 (168, 'Kanada', 'kanada', 50, 2, 2, 22, 13, 11, 5, 3, 6),
 (169, 'Kuba', 'kuba', 25, 0, 0, 11, 0, 6, 4, 0, 4),
-(170, 'Meksiko', 'meksiko', 88, 4, 4, 15, 23, 19, 9, 5, 10),
+(170, 'Meksiko', 'meksiko', 88, 4, 4, 16, 23, 19, 9, 5, 10),
 (171, 'Nikaragua', 'nikaragua', 25, 0, 0, 8, 0, 0, 0, 0, 0),
 (172, 'Panama', 'panama', 25, 0, 0, 16, 0, 0, 0, 0, 0),
 (173, 'Puerto rico', 'puerto_rico', 0, 0, 0, 20, 0, 0, 0, 0, 0),
@@ -52435,7 +52435,7 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (176, 'Saint lucia', 'saint_lucia', 0, 0, 0, 16, 0, 0, 0, 0, 0),
 (177, 'Saint vincent dan grenadine', 'saint_vincent_dan_grenadine', 0, 0, 0, 16, 0, 0, 0, 0, 0),
 (178, 'Trinidad dan tobago', 'trinidad_dan_tobago', 20, 0, 0, 16, 0, 6, 4, 0, 0),
-(179, 'Australia', 'australia', 50, 2, 2, 22, 13, 11, 5, 3, 6),
+(179, 'Australia', 'australia', 50, 2, 2, 23, 13, 11, 5, 3, 6),
 (180, 'Fiji', 'fiji', 0, 0, 0, 12, 0, 0, 0, 0, 0),
 (181, 'Guam', 'guam', 0, 0, 0, 18, 0, 0, 0, 0, 0),
 (182, 'Kiribati', 'kiribati', 0, 0, 0, 8, 0, 0, 0, 0, 0),
