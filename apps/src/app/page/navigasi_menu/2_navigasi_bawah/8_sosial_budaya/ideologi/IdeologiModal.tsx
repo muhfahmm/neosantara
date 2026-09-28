@@ -1,12 +1,13 @@
 "use client"
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { X, Shield, Globe, Vote, Crown, DollarSign, Handshake, Hammer, Flag, Feather, Sword, Check } from "lucide-react";
+import { X, Info, Shield, Globe, Vote, Crown, DollarSign, Handshake, Hammer, Flag, Feather, Sword, Check } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import { PROFILES_IDEOLOGY_DATA } from "@/../../json/semua_fitur_negara/0_profiles/index";
 
 import IdeologiConfirmModal from "./modalsGanti";
 import IdeologiGagalModal from "./modalsGagalGanti";
+import IdeologiInfoModal from "./IdeologiInfoModal";
 import { attemptChangeIdeology, IDEOLOGY_CHANGE_COST } from "./logic/logikaPergantian";
 
 interface ModalProps {
@@ -22,15 +23,15 @@ const IDEOLOGY_OPTIONS = [
 ];
 
 const IDEOLOGY_BONUSES: Record<string, string> = {
-  'Demokrasi': 'Penerimaan pajak: +10%',
-  'Monarki': 'Pertahanan militer: +10%',
-  'Kapitalisme': 'Penerimaan pajak: +50%',
-  'Sosialisme': '+10% bonus ke tingkat kelahiran',
-  'Komunisme': 'Produksi industri: +20%',
-  'Nasionalisme': 'Kecepatan produksi pangan +10%',
-  'Konservatisme': 'Penerimaan pajak: +5%',
-  'Liberalisme': 'Kebebasan dagang: +15%',
-  'Otoritarianisme': 'Produksi sumber daya: +20%',
+  'Demokrasi': 'Penerimaan Pajak: +10%',
+  'Monarki': 'Kekuatan Militer: 15%',
+  'Kapitalisme': 'Penerimaan Pajak: +50%',
+  'Sosialisme': 'Bonus ke Tingkat kelahiran: +10%',
+  'Komunisme': 'Produksi Semua Lini: +20%',
+  'Nasionalisme': 'Kecepatan Produksi Pangan: +10%',
+  'Konservatisme': 'Penerimaan Pajak: +5%',
+  'Liberalisme': 'Penerimaan Pajak: +25%',
+  'Otoritarianisme': 'Kekuatan Militer: +25%',
 };
 
 const IDEOLOGY_ICONS: Record<string, React.ReactNode> = {
@@ -50,8 +51,9 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
   const [activeTab, setActiveTab] = useState<"ideologi" | "dunia">("ideologi");
   const [selectedIdeology, setSelectedIdeology] = useState<string | null>(null);
   
-  // 🔥 STATE BARU UNTUK MODAL KONFIRMASI
+  // 🔥 STATE BARU UNTUK MODAL KONFIRMASI & INFO
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [infoTarget, setInfoTarget] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
@@ -157,6 +159,13 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
         cost={IDEOLOGY_CHANGE_COST}
         currentMoney={anggaran}
       />
+      <IdeologiInfoModal
+        isOpen={Boolean(infoTarget)}
+        onClose={() => setInfoTarget(null)}
+        title={infoTarget || ''}
+        icon={infoTarget ? IDEOLOGY_ICONS[infoTarget] : <Shield className="w-5 h-5" />}
+        bonusText={infoTarget ? IDEOLOGY_BONUSES[infoTarget] || '' : ''}
+      />
 
       <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
         <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
@@ -208,16 +217,28 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                     const isSelected = String(selectedIdeology || '').toLowerCase() === String(option).toLowerCase();
                     
                     return (
-                      <button 
+                      <div 
                         key={option} 
-                        type="button" 
                         onClick={() => handleSelectIdeology(option)}
-                        className={`group flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer text-left ${
+                        className={`group relative flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer text-left ${
                           isActive 
                             ? 'border-[#00FFAA] bg-[#00FFAA]/15 shadow-md' 
                             : 'border-[#00FFAA]/20 bg-[#0A1A1A] hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/5'
                         }`}
                       >
+                        {/* TOMBOL (i) INFORMASI */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setInfoTarget(option);
+                          }}
+                          className="absolute top-2.5 right-2.5 p-1 rounded-lg border border-[#00FFAA]/20 bg-[#051111] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 transition-all cursor-pointer z-10"
+                          title={`Informasi ${option}`}
+                        >
+                          <Info className="w-3.5 h-3.5" />
+                        </button>
+
                         <div className={`relative w-14 h-16 flex-shrink-0 rounded-md flex items-center justify-center shadow-lg border-b-[4px] bg-[#051111] border-[#00FFAA]/40`}>
                           <div className="absolute top-1 left-2 w-2 h-4 bg-[#00FFAA]/20 rounded-full" />
                           <div className="absolute top-1 right-2 w-2 h-4 bg-[#00FFAA]/20 rounded-full" />
@@ -226,7 +247,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                           </div>
                         </div>
 
-                        <div className="flex-1 flex flex-col min-w-0">
+                        <div className="flex-1 flex flex-col min-w-0 pr-6">
                           <div className="flex items-center gap-2">
                             {isActive && <Check className="w-4 h-4 text-[#00FFAA] font-bold" />}
                             <span className={`text-sm font-bold ${isActive ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>
@@ -237,7 +258,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                             {IDEOLOGY_BONUSES[option] || 'Tidak ada bonus spesifik'}
                           </p>
                         </div>
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
