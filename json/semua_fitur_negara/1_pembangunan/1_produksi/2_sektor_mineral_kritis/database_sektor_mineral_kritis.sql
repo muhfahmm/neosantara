@@ -167,7 +167,7 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (149, 'Ukraina', 'ukraina', 50, 2, 2, 13, 13, 11, 5, 3, 6),
 (150, 'Vatikan', 'vatikan', 0, 0, 0, 20, 0, 0, 0, 0, 0),
 (151, 'Yunani', 'yunani', 38, 0, 0, 18, 10, 0, 0, 0, 4),
-(152, 'Amerika Serikat', 'amerika_serikat', 125, 5, 5, 23, 33, 27, 12, 8, 15),
+(152, 'Amerika Serikat', 'amerika_serikat', 125, 5, 5, 24, 33, 27, 12, 8, 15),
 (153, 'Antigua dan Barbuda', 'antigua_dan_barbuda', 0, 0, 0, 16, 0, 0, 0, 0, 0),
 (154, 'Bahama', 'bahama', 0, 0, 0, 21, 0, 0, 0, 0, 0),
 (155, 'Barbados', 'barbados', 0, 0, 0, 20, 0, 0, 0, 0, 0),
