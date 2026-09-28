@@ -48471,7 +48471,7 @@ INSERT INTO `database_level_kabinet` (
 (72, 'Kamboja', 'kamboja', 1, 2, 2, 2, 2, 2, 2, 3, 3, 2, 2, 1, 3, 3, 1, 2, 1, 2, 1, 2, 2, 1), -- Miskin
 (73, 'Kazakhstan', 'kazakhstan', 4, 3, 4, 5, 5, 5, 4, 4, 5, 3, 4, 4, 4, 3, 4, 5, 4, 5, 3, 3, 4, 5), -- Berkembang
 (74, 'Kirgizstan', 'kirgizstan', 2, 2, 2, 2, 3, 3, 2, 2, 2, 1, 2, 1, 3, 2, 2, 2, 2, 3, 2, 3, 1, 2), -- Miskin
-(75, 'Korea Selatan', 'korea_selatan', 6, 6, 6, 6, 6, 6, 6, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6), -- Maju
+(75, 'Korea Selatan', 'korea_selatan', 6, 6, 6, 6, 6, 6, 6, 5, 6, 6, 6, 6, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6), -- Maju
 (76, 'Korea Utara', 'korea_utara', 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 2, 1, 2, 1, 1, 1), -- Miskin
 (77, 'Kuwait', 'kuwait', 6, 6, 6, 5, 5, 4, 5, 5, 6, 5, 5, 5, 4, 5, 4, 5, 6, 5, 4, 4, 5, 5), -- Maju
 (78, 'Laos', 'laos', 2, 2, 2, 3, 2, 2, 1, 1, 2, 2, 2, 2, 1, 3, 3, 1, 1, 2, 3, 2, 3, 3), -- Miskin
@@ -50379,7 +50379,7 @@ INSERT INTO database_pajak_negara (
     (72, 'Kamboja', 'kamboja', 10, 20, 20, 5, 0),
     (73, 'Kazakhstan', 'kazakhstan', 12, 20, 10, 5, 0),
     (74, 'Kirgizstan', 'kirgizstan', 12, 10, 10, 5, 0),
-    (75, 'Korea Selatan', 'korea_selatan', 10, 25, 45, 4, 1),
+    (75, 'Korea Selatan', 'korea_selatan', 11, 25, 45, 4, 1),
     (76, 'Korea Utara', 'korea_utara', 15, 50, 40, 10, 0),
     (77, 'Kuwait', 'kuwait', 0, 15, 0, 4, 0),
     (78, 'Laos', 'laos', 10, 24, 20, 5, 0),

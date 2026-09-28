@@ -90,7 +90,7 @@ INSERT INTO database_pajak_negara (
     (72, 'Kamboja', 'kamboja', 10, 20, 20, 5, 0),
     (73, 'Kazakhstan', 'kazakhstan', 12, 20, 10, 5, 0),
     (74, 'Kirgizstan', 'kirgizstan', 12, 10, 10, 5, 0),
-    (75, 'Korea Selatan', 'korea_selatan', 10, 25, 45, 4, 1),
+    (75, 'Korea Selatan', 'korea_selatan', 11, 25, 45, 4, 1),
     (76, 'Korea Utara', 'korea_utara', 15, 50, 40, 10, 0),
     (77, 'Kuwait', 'kuwait', 0, 15, 0, 4, 0),
     (78, 'Laos', 'laos', 10, 24, 20, 5, 0),
