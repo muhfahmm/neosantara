@@ -161,7 +161,7 @@ INSERT INTO database_pajak_negara (
     (143, 'Slovenia', 'slovenia', 22, 19, 50, 0, 1),
     (144, 'Slowakia', 'slowakia', 20, 21, 32, 0, 0),
     (145, 'Spanyol', 'spanyol', 25, 24, 28, 0, 1),
-    (146, 'Swedia', 'swedia', 25, 21, 57, 0, 2),
+    (146, 'Swedia', 'swedia', 25, 21, 54, 0, 2),
     (147, 'Swiss', 'swiss', 8, 16, 42, 0, 1),
     (148, 'Turki', 'turki', 18, 23, 32, 13, 1),
     (149, 'Ukraina', 'ukraina', 20, 18, 18, 5, 0),
