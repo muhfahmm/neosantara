@@ -1,0 +1,219 @@
+════════════════════════════════════════════════════════════════
+PRODUK DOMESTIK BRUTO (PDB) - 207 NEGARA
+Format: [No]. [Negara]: [PDB] - [Status Emas]
+🟢 = Memiliki Tambang Emas
+🔴 = Tidak Memiliki Tambang Emas
+════════════════════════════════════════════════════════════════
+
+─── NEGARA KAYA (1-30) ───
+1. Amerika Serikat: 1200 - 🟢 (89 bangunan emas)
+2. China: 1190 - 🟢 (84 bangunan emas)
+3. Jerman: 1180 - 🔴
+4. Jepang: 1170 - 🟢 (71 bangunan emas)
+5. Inggris: 1160 - 🟢 (77 bangunan emas)
+6. India: 1150 - 🟢 (67 bangunan emas)
+7. Prancis: 1140 - 🔴
+8. Italia: 1130 - 🔴
+9. Rusia: 1120 - 🟢 (84 bangunan emas)
+10. Brazil: 1110 - 🟢 (61 bangunan emas)
+11. Kanada: 1100 - 🟢 (83 bangunan emas)
+12. Australia: 1090 - 🟢 (78 bangunan emas)
+13. Meksiko: 1080 - 🟢 (68 bangunan emas)
+14. Spanyol: 1070 - 🟢 (76 bangunan emas)
+15. Korea Selatan: 1060 - 🟢 (80 bangunan emas)
+16. Turki: 1050 - 🟢 (61 bangunan emas)
+17. Indonesia: 1040 - 🟢 (63 bangunan emas)
+18. Belanda: 1030 - 🔴
+19. Arab Saudi: 1020 - 🟢 (117 bangunan emas)
+20. Swiss: 1010 - 🔴
+21. Polandia: 1000 - 🔴
+22. Taiwan: 990 - 🟢 (95 bangunan emas)
+23. Irlandia: 980 - 🔴
+24. Belgia: 970 - 🔴
+25. Swedia: 960 - 🟢 (72 bangunan emas)
+26. Israel: 950 - 🔴
+27. Argentina: 940 - 🟢 (55 bangunan emas)
+28. Singapura: 930 - 🔴
+29. Austria: 920 - 🔴
+30. Uni Emirat Arab: 910 - 🔴
+
+─── NEGARA BERKEMBANG (31-130) ───
+31. Norwegia: 900 - 🔴
+32. Thailand: 897 - 🟢 (43 bangunan emas)
+33. Kolombia: 894 - 🟢 (22 bangunan emas)
+34. Vietnam: 891 - 🟢 (39 bangunan emas)
+35. Malaysia: 888 - 🟢 (54 bangunan emas)
+36. Filipina: 885 - 🟢 (36 bangunan emas)
+37. Bangladesh: 882 - 🔴
+38. Denmark: 879 - 🔴
+39. Republik Rumania: 876 - 🟢 (55 bangunan emas)
+40. Afrika Selatan: 873 - 🟢 (24 bangunan emas)
+41. Pakistan: 870 - 🟢 (10 bangunan emas)
+42. Hong Kong: 867 - 🔴
+43. Ceko: 864 - 🔴
+44. Mesir: 861 - 🟢 (19 bangunan emas)
+45. Chile: 858 - 🟢 (47 bangunan emas)
+46. Peru: 855 - 🟢 (42 bangunan emas)
+47. Portugal: 852 - 🟢 (60 bangunan emas)
+48. Nigeria: 849 - 🟢 (20 bangunan emas)
+49. Kazakhstan: 846 - 🟢 (47 bangunan emas)
+50. Finlandia: 843 - 🟢 (70 bangunan emas)
+51. Aljazair: 840 - 🟢 (12 bangunan emas)
+52. Yunani: 837 - 🟢 (50 bangunan emas)
+53. Iran: 834 - 🟢 (16 bangunan emas)
+54. Selandia Baru: 831 - 🟢 (85 bangunan emas)
+55. Hungaria: 828 - 🔴
+56. Irak: 825 - 🔴
+57. Ukraina: 822 - 🟢 (44 bangunan emas)
+58. Qatar: 819 - 🔴
+59. Maroko: 816 - 🟢 (24 bangunan emas)
+60. Uzbekistan: 813 - 🟢 (36 bangunan emas)
+61. Kuwait: 810 - 🔴
+62. Slowakia: 807 - 🔴
+63. Angola: 804 - 🔴
+64. Bulgaria: 801 - 🟢 (60 bangunan emas)
+65. Kenya: 798 - 🟢 (11 bangunan emas)
+66. Ekuador: 795 - 🟢 (15 bangunan emas)
+67. Republik Dominika: 792 - 🟢 (22 bangunan emas)
+68. Puerto Rico: 789 - 🔴
+69. Guatemala: 786 - 🟢 (37 bangunan emas)
+70. Republik Demokratik Kongo: 783 - 🔴
+71. Ethiopia: 780 - 🔴
+72. Ghana: 777 - 🟢 (15 bangunan emas)
+73. Oman: 774 - 🟢 (87 bangunan emas)
+74. Kroasia: 771 - 🔴
+75. Pantai Gading: 768 - 🟢 (11 bangunan emas)
+76. Republik Serbia: 765 - 🟢 (64 bangunan emas)
+77. Venezuela: 762 - 🔴
+78. Luksemburg: 759 - 🔴
+79. Costa Rica: 756 - 🟢 (47 bangunan emas)
+80. Kuba: 753 - 🔴
+81. Lithuania: 750 - 🔴
+82. Belarus: 747 - 🔴
+83. Sri Lanka: 744 - 🔴
+84. Uruguay: 741 - 🟢 (53 bangunan emas)
+85. Panama: 738 - 🟢 (54 bangunan emas)
+86. Republik Tanzania: 735 - 🟢 (10 bangunan emas)
+87. Slovenia: 732 - 🔴
+88. Myanmar: 729 - 🟢 (19 bangunan emas)
+89. Turkmenistan: 726 - 🔴
+90. Bolivia: 723 - 🟢 (19 bangunan emas)
+91. Azerbaijan: 720 - 🟢 (40 bangunan emas)
+92. Republik Uganda: 717 - 🔴
+93. Kamerun: 714 - 🔴
+94. Yordania: 711 - 🔴
+95. Tunisia: 708 - 🔴
+96. Paraguay: 705 - 🔴
+97. Suriah: 702 - 🔴
+98. Republik Zimbabwe: 699 - 🔴
+99. Makau: 696 - 🔴
+100. Latvia: 693 - 🔴
+101. Libya: 690 - 🔴
+102. Kamboja: 687 - 🟢 (17 bangunan emas)
+103. Estonia: 684 - 🔴
+104. Bahrain: 681 - 🔴
+105. Nepal: 678 - 🔴
+106. Siprus: 675 - 🔴
+107. Republik Sudan: 672 - 🔴
+108. Islandia: 669 - 🔴
+109. Georgia: 666 - 🟢 (52 bangunan emas)
+110. Honduras: 663 - 🟢 (10 bangunan emas)
+111. Republik Zambia: 660 - 🔴
+112. Senegal: 657 - 🔴
+113. El Salvador: 654 - 🔴
+114. Haiti: 651 - 🔴
+115. Bosnia dan Herzegovina: 648 - 🔴
+116. Lebanon: 645 - 🔴
+117. Papua Nugini: 642 - 🔴
+118. Guyana: 639 - 🟢 (14 bangunan emas)
+119. Mali: 636 - 🔴
+120. Albania: 633 - 🔴
+121. Burkina Faso: 630 - 🔴
+122. Armenia: 627 - 🟢 (29 bangunan emas)
+123. Malta: 624 - 🔴
+124. Guinea: 621 - 🔴
+125. Mongolia: 618 - 🟢 (39 bangunan emas)
+126. Benin: 615 - 🔴
+127. Trinidad dan Tobago: 612 - 🔴
+128. Chad: 609 - 🔴
+129. Niger: 606 - 🔴
+130. Nikaragua: 603 - 🔴
+
+─── NEGARA MISKIN (131-207) ───
+131. Kirgizstan: 400 - 🟢 (13 bangunan emas)
+132. Gabon: 395 - 🟢 (9 bangunan emas)
+133. Mozambik: 390 - 🔴
+134. Jamaika: 385 - 🔴
+135. Botswana: 380 - 🟢 (42 bangunan emas)
+136. Moldova: 375 - 🔴
+137. Makedonia Utara: 370 - 🟢 (28 bangunan emas)
+138. Madagaskar: 365 - 🔴
+139. Tajikistan: 360 - 🟢 (4 bangunan emas)
+140. Afganistan: 355 - 🔴
+141. Laos: 350 - 🟢 (4 bangunan emas)
+142. Malawi: 345 - 🔴
+143. Rwanda: 340 - 🟢 (2 bangunan emas)
+144. Namibia: 335 - 🟢 (2 bangunan emas)
+145. Korea Utara: 330 - 🟢 (12 bangunan emas)
+146. Mauritius: 325 - 🔴
+147. Bahama: 320 - 🔴
+148. Kongo: 315 - 🔴
+149. Brunei: 310 - 🔴
+150. Palestina: 305 - 🔴
+151. Mauritania: 300 - 🔴
+152. Somalia: 295 - 🔴
+153. Kosovo: 290 - 🔴
+154. Togo: 285 - 🔴
+155. Monako: 280 - 🔴
+156. Montenegro: 275 - 🔴
+157. Liechtenstein: 270 - 🔴
+158. Bermuda: 265 - 🔴
+159. Barbados: 260 - 🔴
+160. Sierra Leone: 255 - 🔴
+161. Burundi: 250 - 🔴
+162. Maldives: 245 - 🔴
+163. Yaman: 240 - 🔴
+164. Guam: 235 - 🔴
+165. Fiji: 230 - 🟢 (11 bangunan emas)
+166. Tahiti: 225 - 🔴
+167. Sudan Selatan: 220 - 🔴
+168. Suriname: 215 - 🟢 (1 bangunan emas)
+169. Eswatini: 210 - 🟢 (6 bangunan emas)
+170. Guiana Prancis: 205 - 🟢 (33 bangunan emas)
+171. Liberia: 200 - 🔴
+172. Andorra: 195 - 🔴
+173. Djibouti: 190 - 🔴
+174. Kepulauan Faroe: 185 - 🔴
+175. Bhutan: 180 - 🔴
+176. Curacao: 175 - 🔴
+177. Republik Afrika Tengah: 170 - 🔴
+178. Belize: 165 - 🔴
+179. Tanjung Verde: 160 - 🔴
+180. Greenland: 155 - 🟢 (74 bangunan emas)
+181. Guinea Bissau: 150 - 🔴
+182. Lesotho: 145 - 🔴
+183. Gambia: 140 - 🔴
+184. Saint Lucia: 135 - 🔴
+185. San Marino: 130 - 🔴
+186. Antigua dan Barbuda: 125 - 🔴
+187. Gibraltar: 120 - 🔴
+188. Seychelles: 115 - 🔴
+189. Republik Timor Leste: 110 - 🔴
+190. Eritrea: 105 - 🔴
+191. Komoro: 100 - 🔴
+192. Grenada: 95 - 🔴
+193. Vanuatu: 90 - 🔴
+194. Samoa: 85 - 🔴
+195. Saint Vincent dan Grenadine: 80 - 🔴
+196. Sao Tome dan Principe: 75 - 🔴
+197. Saint Kitts dan Nevis: 70 - 🔴
+198. Samoa Amerika: 65 - 🔴
+199. Dominika: 60 - 🔴
+200. Tonga: 55 - 🔴
+201. Mikronesia: 50 - 🔴
+202. Kiribati: 45 - 🔴
+203. Palau: 40 - 🔴
+204. Marshall: 35 - 🔴
+205. Nauru: 30 - 🔴
+206. Tuvalu: 25 - 🔴
+207. Vatikan: 20 - 🔴
