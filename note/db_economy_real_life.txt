@@ -1,208 +1,427 @@
-amerika serikat
- china
- jerman
- jepang
- inggris
- india
- prancis
- italia
- rusia
- brazil
- kanada
- australia
- meksiko
- spanyol
- korea selatan
- turki
- indonesia
- belanda
- arab saudi
- swiss
- polandia
- taiwan
- irlandia
- belgia
- swedia
- israel
- argentina
- singapura
- austria
- uni emirat arab
+﻿1. Amerika Serikat
+2. China
+3. Jerman
+4. Jepang
+5. Inggris
+6. India
+7. Prancis
+8. Italia
+9. Rusia
+10. Brazil
+11. Kanada
+12. Australia
+13. Meksiko
+14. Spanyol
+15. Korea Selatan
+16. Turki
+17. Indonesia
+18. Belanda
+19. Arab Saudi
+20. Swiss
+21. Polandia
+22. Taiwan
+23. Irlandia
+24. Belgia
+25. Swedia
+26. Israel
+27. Argentina
+28. Singapura
+29. Austria
+30. Uni Emirat Arab
 
- norwegia
- thailand
- kolombia
- vietnam
- malaysia
- filipina
- bangladesh
- denmark
- republik rumania
- afrika selatan
- pakistan
- hong kong
- ceko
- mesir
- chile
- peru
- portugal
- nigeria
- kazakhstan
- finlandia
- aljazair
- yunani
- iran
- selandia baru
- hungaria
- irak
- ukraina
- qatar
- maroko
- uzbekistan
- kuwait
- slowakia
- angola
- bulgaria
- kenya
- ekuador
- republik dominika
- puerto rico
- guatemala
- republik demokratik kongo
- ethiopia
- ghana
- oman
- kroasia
- pantai gading
- republik serbia
- venezuela
- luksemburg
- costa rica
- kuba
- lithuania
- belarus
- sri lanka
- uruguay
- panama
- republik tanzania
- slovenia
- myanmar
- turkmenistan
- bolivia
- azerbaijan
- republik uganda
- kamerun
- yordania
- tunisia
- paraguay
- suriah
- republik zimbabwe
- makau
- latvia
- libya
- kamboja
- estonia
- bahrain
- nepal
- siprus
- republik sudan
- islandia
- georgia
- honduras
- republik zambia
- senegal
- el salvador
- haiti
- bosnia dan hercegovina
- lebanon
- papua nugini
- guyana
- mali
- albania
- burkina faso
- armenia
- malta
- guinea
- mongolia
- benin
- trinidad dan tobago
- chad
- niger
- nikaragua
- kirgizstan
- gabon
- mozambik
- jamaika
- botswana
- moldova
- makedonia utara
- madagaskar
- tajikistan
- afganistan
- laos
- malawi
- rwanda
- namibia
- korea utara
- mauritius
- bahama
- kongo
- brunei
- palestina
- mauritania
- somalia
- kosovo
- togo
- monako
- montenegro
- liechtenstein
- bermuda
- barbados
- sierra leone
- burundi
- maldives
- yaman
- guam
- fiji
- tahiti
- sudan selatan
- suriname
- eswatini
- guiana prancis
- liberia
- andorra
- djibouti
- kepulauan faroe
- bhutan
- curacao
- republik afrika tengah
- belize
- tanjung verde
- greenland
- guinea bissau
- lesotho
- gambia
- saint lucia
- san marino
- antigua dan barbuda
- gibraltar
- seychelles
- republik timor leste
- eritrea
- komoro
- grenada
- vanuatu
- samoa
- saint vincent dan grenadine
- sao tome dan principe
- saint kitts dan nevis
- samoa amerika
- dominika
- tonga
- mikronesia
- kiribati
- palau
- marshall
- nauru
- tuvalu
- vatikan
+31. Norwegia
+32. Thailand
+33. Kolombia
+34. Vietnam
+35. Malaysia
+36. Filipina
+37. Bangladesh
+38. Denmark
+39. Republik Rumania
+40. Afrika Selatan
+41. Pakistan
+42. Hong Kong
+43. Ceko
+44. Mesir
+45. Chile
+46. Peru
+47. Portugal
+48. Nigeria
+49. Kazakhstan
+50. Finlandia
+51. Aljazair
+52. Yunani
+53. Iran
+54. Selandia Baru
+55. Hungaria
+56. Irak
+57. Ukraina
+58. Qatar
+59. Maroko
+60. Uzbekistan
+61. Kuwait
+62. Slowaia
+63. Angola
+64. Bulgaria
+65. Kenya
+66. Ekuador
+67. Republik Dominika
+68. Puerto Rico
+69. Guatemala
+70. Republik Demokratik Kongo
+71. Ethiopia
+72. Ghana
+73. Oman
+74. Kroasia
+75. Pantai Gading
+76. Republik Serbia
+77. Venezuela
+78. Luksemburg
+79. Costa Rica
+80. Kuba
+81. Lithuania
+82. Belarus
+83. Sri Lanka
+84. Uruguay
+85. Panam
+86. Republik Tanzania
+87. Slovenia
+88. Myanmar
+89. Turkmeistan
+90. Bolivia
+91. Azerbaijan
+92. Republik Uganda
+93. Kamerun
+94. Yordani
+95. Tunisia
+96. Paraguay
+97. Suriah
+98. Republik Zimbabwe
+99. Makau
+100. Latvia
+101. Libya
+102. Kamboja
+103. Estonia
+104. Bahrain
+105. Nepal
+106. Siprus
+107. Republik Sudan
+108. Islandia
+109. Georgia
+110. Honduras
+111. Republik Zambia
+112. Senegal
+113. El Salvador
+114. Haiti
+115. Bosnia dan Herzegovina
+116. Lebanon
+117. Papua Nugini
+118. Guyana
+119. Mali
+120. Albania
+121. Burkina Faso
+122. Armenia
+123. Malta
+124. Guinea
+125. Mongolia
+126. Benin
+127. Trinidad dan Tobago
+128. Chad
+129. Niger
+130. Nikaragua
+
+131. Kirgizstan
+132. Gabon
+133. Mozambik
+134. Jamaika
+135. Botswana
+136. Moldova
+137. Makedonia Utara
+138. Madagaskar
+139. Tajikistan
+140. Afganistan
+141. Laos
+142. Malawi
+143. Rwanda
+144. Namibia
+145. Korea Utara
+146. Mauritius
+147. Bahama
+148. Kongo
+149. Brunei
+150. Palestina
+151. Mauritania
+152. Somalia
+153. Kosovo
+154. Togo
+155. Monako
+156. Montenegro
+157. Liechtenstein
+158. Bermuda
+159. Barbados
+160. Sierra Leone
+161. Burundi
+162. Maldives
+163. Yaman
+164. Guam
+165. Fiji
+166. Tahiti
+167. Sudan Selatan
+168. Suriname
+169. Eswatini
+170. Guiana Prancis
+171. Liberia
+172. Andorra
+173. Djibouti
+174. Kepulauan Faroe
+175. Bhutan
+176. Curacao
+177. Republik Afrika Tengah
+178. Belize
+179. Tanjung Verde
+180. Greenland
+181. Guinea Bissau
+182. Lesotho
+183. Gambia
+184. Saint Lucia
+185. San Marino
+186. Antigua dan Barbuda
+187. Gibraltar
+188. Seychelles
+189. Republik Timor Leste
+190. Eritrea
+191. Komoro
+192. Grenada
+193. Vanuatu
+194. Samoa
+195. Saint Vincent dan Grenadine
+196. Sao Tome dan Principe
+197. Saint Kitts dan Nevis
+198. Samoa Amerika
+199. Dominika
+200. Tonga
+201. Mikronesia
+202. Kiribati
+203. Palau
+204. Marshall
+205. Nauru
+206. Tuvalu
+207. Vatikan
+
+Pembagian:
+1-30 = Negara kaya
+31-130 = Negara berkembang, 100 negara
+131-207 = Negara miskin, 77 negara
+2. China
+3. Jerman
+4. Jepang
+5. Inggris
+6. India
+7. Prancis
+8. Italia
+9. Rusia
+10. Brazil
+11. Kanada
+12. Australia
+13. Meksiko
+14. Spanyol
+15. Korea Selatan
+16. Turki
+17. Indonesia
+18. Belanda
+19. Arab Saudi
+20. Swiss
+21. Polandia
+22. Taiwan
+23. Irlandia
+24. Belgia
+25. Swedia
+26. Israel
+27. Argentina
+28. Singapura
+29. Austria
+30. Uni Emirat Arab
+
+31. Norwegia
+32. Thailand
+33. Kolombia
+34. Vietnam
+35. Malaysia
+36. Filipina
+37. Bangladesh
+38. Denmark
+39. Republik Rumania
+40. Afrika Selatan
+41. Pakistan
+42. Hong Kong
+43. Ceko
+44. Mesir
+45. Chile
+46. Peru
+47. Portugal
+48. Nigeria
+49. Kazakhstan
+50. Finlandia
+51. Aljazair
+52. Yunani
+53. Iran
+54. Selandia Baru
+55. Hungaria
+56. Irak
+57. Ukraina
+58. Qatar
+59. Maroko
+60. Uzbekistan
+61. Kuwait
+62. Slowaia
+63. Angola
+64. Bulgaria
+65. Kenya
+66. Ekuador
+67. Republik Dominika
+68. Puerto Rico
+69. Guatemala
+70. Republik Demokratik Kongo
+71. Ethiopia
+72. Ghana
+73. Oman
+74. Kroasia
+75. Pantai Gading
+76. Republik Serbia
+77. Venezuela
+78. Luksemburg
+79. Costa Rica
+80. Kuba
+81. Lithuania
+82. Belarus
+83. Sri Lanka
+84. Uruguay
+85. Panam
+86. Republik Tanzania
+87. Slovenia
+88. Myanmar
+89. Turkmeistan
+90. Bolivia
+91. Azerbaijan
+92. Republik Uganda
+93. Kamerun
+94. Yordani
+95. Tunisia
+96. Paraguay
+97. Suriah
+98. Republik Zimbabwe
+99. Makau
+100. Latvia
+101. Libya
+102. Kamboja
+103. Estonia
+104. Bahrain
+105. Nepal
+106. Siprus
+107. Republik Sudan
+108. Islandia
+109. Georgia
+110. Honduras
+111. Republik Zambia
+112. Senegal
+113. El Salvador
+114. Haiti
+115. Bosnia dan Herzegovina
+116. Lebanon
+117. Papua Nugini
+118. Guyana
+119. Mali
+120. Albania
+121. Burkina Faso
+122. Armenia
+123. Malta
+124. Guinea
+125. Mongolia
+126. Benin
+127. Trinidad dan Tobago
+128. Chad
+129. Niger
+130. Nikaragua
+
+131. Kirgizstan
+132. Gabon
+133. Mozambik
+134. Jamaika
+135. Botswana
+136. Moldova
+137. Makedonia Utara
+138. Madagaskar
+139. Tajikistan
+140. Afganistan
+141. Laos
+142. Malawi
+143. Rwanda
+144. Namibia
+145. Korea Utara
+146. Mauritius
+147. Bahama
+148. Kongo
+149. Brunei
+150. Palestina
+151. Mauritania
+152. Somalia
+153. Kosovo
+154. Togo
+155. Monako
+156. Montenegro
+157. Liechtenstein
+158. Bermuda
+159. Barbados
+160. Sierra Leone
+161. Burundi
+162. Maldives
+163. Yaman
+164. Guam
+165. Fiji
+166. Tahiti
+167. Sudan Selatan
+168. Suriname
+169. Eswatini
+170. Guiana Prancis
+171. Liberia
+172. Andorra
+173. Djibouti
+174. Kepulauan Faroe
+175. Bhutan
+176. Curacao
+177. Republik Afrika Tengah
+178. Belize
+179. Tanjung Verde
+180. Greenland
+181. Guinea Bissau
+182. Lesotho
+183. Gambia
+184. Saint Lucia
+185. San Marino
+186. Antigua dan Barbuda
+187. Gibraltar
+188. Seychelles
+189. Republik Timor Leste
+190. Eritrea
+191. Komoro
+192. Grenada
+193. Vanuatu
+194. Samoa
+195. Saint Vincent dan Grenadine
+196. Sao Tome dan Principe
+197. Saint Kitts dan Nevis
+198. Samoa Amerika
+199. Dominika
+200. Tonga
+201. Mikronesia
+202. Kiribati
+203. Palau
+204. Marshall
+205. Nauru
+206. Tuvalu
+207. Vatikan
+
+Pembagian:
+1-30 = Negara kaya
+31-130 = Negara berkembang, 100 negara
+131-207 = Negara miskin, 77 negara
