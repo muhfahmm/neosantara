@@ -133,7 +133,7 @@ INSERT INTO database_pajak_negara (
     (115, 'Gibraltar', 'gibraltar', 15, 10, 25, 0, 0),
     (116, 'Hungaria', 'hungaria', 27, 19, 15, 0, 0),
     (117, 'Inggris', 'inggris', 20, 20, 19, 0, 0),
-    (118, 'Irlandia', 'irlandia', 23, 15, 48, 0, 0),
+    (118, 'Irlandia', 'irlandia', 23, 14, 48, 0, 0),
     (119, 'Islandia', 'islandia', 24, 20, 46, 0, 2),
     (120, 'Italia', 'italia', 22, 24, 40, 0, 1),
     (121, 'Jerman', 'jerman', 22, 35, 43, 0, 1),

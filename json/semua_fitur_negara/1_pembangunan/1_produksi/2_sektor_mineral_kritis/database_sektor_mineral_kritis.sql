@@ -123,7 +123,7 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (105, 'Austria', 'austria', 0, 0, 0, 22, 0, 0, 0, 0, 0),
 (106, 'Belanda', 'belanda', 0, 0, 0, 23, 0, 8, 4, 0, 0),
 (107, 'Belarus', 'belarus', 25, 0, 0, 16, 8, 6, 4, 0, 4),
-(108, 'Belgia', 'belgia', 0, 0, 0, 22, 10, 0, 0, 0, 0),
+(108, 'Belgia', 'belgia', 0, 0, 0, 23, 10, 0, 0, 0, 0),
 (109, 'Bosnia dan hercegovina', 'bosnia_dan_hercegovina', 25, 0, 0, 12, 8, 0, 0, 0, 0),
 (110, 'Bulgaria', 'bulgaria', 25, 0, 0, 16, 8, 0, 0, 0, 0),
 (111, 'Ceko', 'ceko', 38, 0, 0, 20, 10, 0, 0, 2, 0),
