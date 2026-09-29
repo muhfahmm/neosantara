@@ -70,7 +70,7 @@ INSERT INTO database_pajak_negara (
     (52, 'Togo', 'togo', 18, 30, 36, 5, 0),
     (53, 'Tunisia', 'tunisia', 18, 25, 35, 6, 1),
     (54, 'Afganistan', 'afganistan', 10, 20, 25, 5, 0),
-    (55, 'Arab Saudi', 'arab_saudi', 15, 20, 0, 5, 0),
+    (55, 'Arab Saudi', 'arab_saudi', 15, 18, 0, 5, 0),
     (56, 'Armenia', 'armenia', 20, 18, 23, 5, 0),
     (57, 'Azerbaijan', 'azerbaijan', 18, 20, 32, 5, 0),
     (58, 'Bahrain', 'bahrain', 10, 0, 0, 5, 0),
