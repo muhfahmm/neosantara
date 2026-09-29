@@ -113,7 +113,7 @@ INSERT INTO `database_sektor_mineral_kritis` (`id`, `country`, `country_slug`, `
 (95, 'Tajikistan', 'tajikistan', 25, 0, 0, 9, 8, 6, 4, 2, 0),
 (96, 'Thailand', 'thailand', 62, 0, 0, 17, 17, 13, 6, 0, 8),
 (97, 'Turkmenistan', 'turkmenistan', 25, 0, 0, 12, 0, 6, 4, 0, 0),
-(98, 'Uni emirat arab', 'uni_emirat_arab', 0, 0, 0, 23, 0, 6, 4, 0, 0),
+(98, 'Uni emirat arab', 'uni_emirat_arab', 0, 0, 0, 24, 0, 6, 4, 0, 0),
 (99, 'Uzbekistan', 'uzbekistan', 50, 0, 0, 12, 13, 11, 5, 3, 0),
 (100, 'Vietnam', 'vietnam', 75, 0, 3, 12, 20, 16, 8, 4, 9),
 (101, 'Yaman', 'yaman', 0, 0, 0, 6, 0, 11, 5, 0, 6),
