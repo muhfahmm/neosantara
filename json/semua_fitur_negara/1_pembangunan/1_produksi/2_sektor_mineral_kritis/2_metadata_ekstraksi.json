@@ -8,7 +8,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 120,
     "biaya_pembangunan": 6000,
-    "konsumsi_listrik": 50
+    "konsumsi_listrik": 0.0075
   },
   "uranium": {
     "key": "2_tambang_uranium",
@@ -19,7 +19,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 240,
     "biaya_pembangunan": 7500,
-    "konsumsi_listrik": 150
+    "konsumsi_listrik": 0.0095
   },
   "batu_bara": {
     "key": "3_tambang_batu_bara",
@@ -30,7 +30,7 @@
     "satuan": "TON",
     "waktu_pembangunan": 90,
     "biaya_pembangunan": 1500,
-    "konsumsi_listrik": 120
+    "konsumsi_listrik": 0.0028
   },
   "minyak_bumi": {
     "key": "4_sumur_minyak",
@@ -41,7 +41,7 @@
     "satuan": "BARREL",
     "waktu_pembangunan": 150,
     "biaya_pembangunan": 4500,
-    "konsumsi_listrik": 150
+    "konsumsi_listrik": 0.0060
   },
   "gas_alam": {
     "key": "5_sumur_gas",
@@ -52,7 +52,7 @@
     "satuan": "MMSCFD",
     "waktu_pembangunan": 120,
     "biaya_pembangunan": 4000,
-    "konsumsi_listrik": 130
+    "konsumsi_listrik": 0.0055
   },
   "garam": {
     "key": "6_tambang_garam",
@@ -63,7 +63,7 @@
     "satuan": "TON",
     "waktu_pembangunan": 45,
     "biaya_pembangunan": 500,
-    "konsumsi_listrik": 45
+    "konsumsi_listrik": 0.0012
   },
   "litium": {
     "key": "8_tambang_litium",
@@ -74,7 +74,7 @@
     "satuan": "TON",
     "waktu_pembangunan": 210,
     "biaya_pembangunan": 5500,
-    "konsumsi_listrik": 250
+    "konsumsi_listrik": 0.0070
   },
   "logam_tanah_jarang": {
     "key": "11_tambang_ltj",
@@ -85,7 +85,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 360,
     "biaya_pembangunan": 9000,
-    "konsumsi_listrik": 380
+    "konsumsi_listrik": 0.0120
   },
   "bijih_besi": {
     "key": "12_tambang_bijih_besi",
@@ -96,6 +96,6 @@
     "satuan": "TON",
     "waktu_pembangunan": 90,
     "biaya_pembangunan": 2500,
-    "konsumsi_listrik": 180
+    "konsumsi_listrik": 0.0038
   }
 }

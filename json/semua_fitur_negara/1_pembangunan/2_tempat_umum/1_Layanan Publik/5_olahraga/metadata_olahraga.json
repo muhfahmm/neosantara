@@ -8,7 +8,7 @@
     "deskripsi": "Pusat Akuatik Nasional",
     "waktu_pembangunan": 7,
     "biaya_pembangunan": 9000,
-    "konsumsi_listrik": 0.1,
+    "konsumsi_listrik": 0.0045,
     "efek": "Meningkatkan kas negara"
   },
   "sirkuit_balap": {
@@ -20,7 +20,7 @@
     "deskripsi": "Sirkuit Balap Internasional",
     "waktu_pembangunan": 40,
     "biaya_pembangunan": 71250,
-    "konsumsi_listrik": 0.5,
+    "konsumsi_listrik": 0.0095,
     "efek": "Meningkatkan kas negara"
   },
   "stadium_int": {
@@ -32,7 +32,7 @@
     "deskripsi": "Stadion Utama Internasional",
     "waktu_pembangunan": 60,
     "biaya_pembangunan": 97500,
-    "konsumsi_listrik": 0.5,
+    "konsumsi_listrik": 0.0120,
     "efek": "Meningkatkan kas negara"
   },
   "gym_center": {
@@ -44,7 +44,7 @@
     "deskripsi": "Pusat Kebugaran & Olahraga Terpadu",
     "waktu_pembangunan": 15,
     "biaya_pembangunan": 18750,
-    "konsumsi_listrik": 0.1,
+    "konsumsi_listrik": 0.0035,
     "efek": "Meningkatkan kas negara"
   },
   "lapangan_golf": {
@@ -56,7 +56,7 @@
     "deskripsi": "Fasilitas Golf Nasional",
     "waktu_pembangunan": 25,
     "biaya_pembangunan": 41250,
-    "konsumsi_listrik": 0.5,
+    "konsumsi_listrik": 0.0075,
     "efek": "Meningkatkan kas negara"
   },
   "esports_arena": {
@@ -68,7 +68,7 @@
     "deskripsi": "Arena E-Sports Global",
     "waktu_pembangunan": 30,
     "biaya_pembangunan": 56250,
-    "konsumsi_listrik": 0.5,
+    "konsumsi_listrik": 0.0100,
     "efek": "Meningkatkan kas negara"
   },
   "gokart_circuit": {
@@ -80,7 +80,7 @@
     "deskripsi": "Sirkuit Gokart Profesional",
     "waktu_pembangunan": 10,
     "biaya_pembangunan": 13500,
-    "konsumsi_listrik": 0.5,
+    "konsumsi_listrik": 0.0060,
     "efek": "Meningkatkan kas negara"
   }
 }

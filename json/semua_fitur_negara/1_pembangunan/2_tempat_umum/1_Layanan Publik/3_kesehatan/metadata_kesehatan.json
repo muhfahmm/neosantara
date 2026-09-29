@@ -8,7 +8,7 @@
     "deskripsi": "Rumah Sakit Umum Pusat (RSUP)",
     "waktu_pembangunan": 45,
     "biaya_pembangunan": 82500,
-    "konsumsi_listrik": 2,
+    "konsumsi_listrik": 0.0120,
     "efek": "Mengurangi jumlah kematian akibat pandemi dan epidemi sebesar 0.05%"
   },
   "rumah_sakit_kecil": {
@@ -20,7 +20,7 @@
     "deskripsi": "Rumah Sakit Daerah (RSUD)",
     "waktu_pembangunan": 30,
     "biaya_pembangunan": 33750,
-    "konsumsi_listrik": 1,
+    "konsumsi_listrik": 0.0075,
     "efek": "Mengurangi jumlah kematian akibat pandemi dan epidemi sebesar 0.03%"
   },
   "pusat_diagnostik": {
@@ -32,7 +32,7 @@
     "deskripsi": "Laboratorium Medik & Diagnostik Nasional",
     "waktu_pembangunan": 15,
     "biaya_pembangunan": 18750,
-    "konsumsi_listrik": 0.5,
+    "konsumsi_listrik": 0.0040,
     "efek": "Mengurangi jumlah kematian akibat pandemi dan epidemi sebesar 0.01%"
   }
 }

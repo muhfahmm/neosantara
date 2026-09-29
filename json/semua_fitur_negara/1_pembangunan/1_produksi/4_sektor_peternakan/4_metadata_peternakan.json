@@ -8,7 +8,7 @@
     "satuan": "EKOR",
     "waktu_pembangunan": 7,
     "biaya_pembangunan": 1000,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0025
   },
   "sapi_perah": {
     "key": "2_peternakan_sapi_perah",
@@ -19,7 +19,7 @@
     "satuan": "LITER",
     "waktu_pembangunan": 15,
     "biaya_pembangunan": 2500,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0035
   },
   "sapi_potong": {
     "key": "3_peternakan_sapi_potong",
@@ -30,7 +30,7 @@
     "satuan": "EKOR",
     "waktu_pembangunan": 20,
     "biaya_pembangunan": 3000,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0030
   },
   "domba_kambing": {
     "key": "4_peternakan_domba_kambing",
@@ -41,6 +41,6 @@
     "satuan": "EKOR",
     "waktu_pembangunan": 10,
     "biaya_pembangunan": 1500,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0025
   }
 }

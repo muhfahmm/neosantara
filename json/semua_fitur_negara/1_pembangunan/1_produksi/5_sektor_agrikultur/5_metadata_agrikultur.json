@@ -8,7 +8,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 15,
     "biaya_pembangunan": 1200,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0025
   },
   "gandum": {
     "key": "2_ladang_gandum",
@@ -20,7 +20,7 @@
     "waktu_pembangunan": 15,
     "biaya_pembangunan": 1000,
     "item": "Gandum",
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0022
   },
   "jagung": {
     "key": "3_ladang_jagung",
@@ -31,7 +31,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 12,
     "biaya_pembangunan": 850,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0020
   },
   "umbi": {
     "key": "4_ladang_umbi",
@@ -42,7 +42,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 10,
     "biaya_pembangunan": 650,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0015
   },
   "kedelai": {
     "key": "5_ladang_kedelai",
@@ -53,7 +53,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 10,
     "biaya_pembangunan": 750,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0018
   },
   "kelapa_sawit": {
     "key": "6_perkebunan_sawit",
@@ -64,7 +64,7 @@
     "satuan": "LITER",
     "waktu_pembangunan": 60,
     "biaya_pembangunan": 6000,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0035
   },
   "teh": {
     "key": "7_perkebunan_teh",
@@ -75,7 +75,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 20,
     "biaya_pembangunan": 2500,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0025
   },
   "kopi": {
     "key": "8_perkebunan_kopi",
@@ -86,7 +86,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 30,
     "biaya_pembangunan": 2800,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0025
   },
   "kakao": {
     "key": "9_perkebunan_kakao",
@@ -97,7 +97,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 35,
     "biaya_pembangunan": 3500,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0030
   },
   "tebu": {
     "key": "10_perkebunan_tebu",
@@ -108,7 +108,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 20,
     "biaya_pembangunan": 1800,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0025
   },
   "sayur": {
     "key": "11_kebun_sayur",
@@ -119,7 +119,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 5,
     "biaya_pembangunan": 500,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0012
   },
   "karet": {
     "key": "12_perkebunan_karet",
@@ -130,6 +130,6 @@
     "satuan": "KG",
     "waktu_pembangunan": 40,
     "biaya_pembangunan": 3200,
-    "konsumsi_listrik": 5
+    "konsumsi_listrik": 0.0030
   }
 }

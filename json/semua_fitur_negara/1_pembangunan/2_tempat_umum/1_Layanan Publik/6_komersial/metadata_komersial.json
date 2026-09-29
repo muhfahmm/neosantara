@@ -8,7 +8,7 @@
     "deskripsi": "Pusat Perbelanjaan & Mall Nasional",
     "waktu_pembangunan": 50,
     "biaya_pembangunan": 48750,
-    "konsumsi_listrik": 1,
+    "konsumsi_listrik": 0.0150,
     "efek": "Meningkatkan kas negara"
   },
   "hotel": {
@@ -20,7 +20,7 @@
     "deskripsi": "Kompleks Hotel & Resort Internasional",
     "waktu_pembangunan": 35,
     "biaya_pembangunan": 63750,
-    "konsumsi_listrik": 1,
+    "konsumsi_listrik": 0.0120,
     "efek": "Meningkatkan kas negara"
   },
   "pusat_grosir_tekstil": {
@@ -32,7 +32,7 @@
     "deskripsi": "Pusat Perdagangan & Logistik Tekstil",
     "waktu_pembangunan": 30,
     "biaya_pembangunan": 26250,
-    "konsumsi_listrik": 1,
+    "konsumsi_listrik": 0.0100,
     "efek": "Meningkatkan kas negara"
   }
 }

@@ -9,7 +9,7 @@
     "waktu_pembangunan": 15,
     "kapasitas": 10000,
     "satuan_kapasitas": "Pasukan Infanteri",
-    "konsumsi_listrik": 0.5
+    "konsumsi_listrik": 0.0060
   },
   "gudang_senjata": {
     "key": "2_gudang_senjata",
@@ -21,7 +21,7 @@
     "waktu_pembangunan": 30,
     "kapasitas": 2500,
     "satuan_kapasitas": "Unit Persenjataan",
-    "konsumsi_listrik": 0.5
+    "konsumsi_listrik": 0.0045
   },
   "hangar_tank": {
     "key": "3_hangar_tank",
@@ -33,7 +33,7 @@
     "waktu_pembangunan": 30,
     "kapasitas": 3000,
     "satuan_kapasitas": "Unit Kendaraan Tempur Lapis Baja",
-    "konsumsi_listrik": 0.5
+    "konsumsi_listrik": 0.0075
   },
   "pangkalan_udara": {
     "key": "6_pangkalan_udara",
@@ -45,7 +45,7 @@
     "waktu_pembangunan": 60,
     "kapasitas": 500,
     "satuan_kapasitas": "Unit Armada Udara",
-    "konsumsi_listrik": 0.5
+    "konsumsi_listrik": 0.0250
   },
   "pangkalan_laut": {
     "key": "7_pangkalan_laut",
@@ -57,6 +57,6 @@
     "waktu_pembangunan": 120,
     "kapasitas": 50,
     "satuan_kapasitas": "Unit Kapal Perang",
-    "konsumsi_listrik": 0.5
+    "konsumsi_listrik": 0.0300
   }
 }

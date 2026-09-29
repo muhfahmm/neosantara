@@ -8,7 +8,7 @@
     "deskripsi": "Pusat Peradilan & Kejaksaan Agung",
     "waktu_pembangunan": 30,
     "biaya_pembangunan": 63750,
-    "konsumsi_listrik": 0.5,
+    "konsumsi_listrik": 0.0040,
     "efek": "Mengurangi kriminalitas 0.5%"
   },
   "legal_aid": {
@@ -20,7 +20,7 @@
     "deskripsi": "Pusat Bantuan Hukum Nasional",
     "waktu_pembangunan": 15,
     "biaya_pembangunan": 18750,
-    "konsumsi_listrik": 0.5,
+    "konsumsi_listrik": 0.0025,
     "efek": "Mengurangi kriminalitas 0.3%"
   }
 }

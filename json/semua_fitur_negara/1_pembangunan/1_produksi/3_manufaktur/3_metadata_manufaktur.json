@@ -8,7 +8,7 @@
     "satuan": "UNIT",
     "waktu_pembangunan": 360,
     "biaya_pembangunan": 9500,
-    "konsumsi_listrik": 50
+    "konsumsi_listrik": 0.0250
   },
   "pabrik_mesin_mobil": {
     "key": "2_pabrik_mobil",
@@ -19,7 +19,7 @@
     "satuan": "UNIT",
     "waktu_pembangunan": 240,
     "biaya_pembangunan": 6500,
-    "konsumsi_listrik": 40
+    "konsumsi_listrik": 0.0200
   },
   "pabrik_mesin_motor": {
     "key": "3_pabrik_motor",
@@ -30,7 +30,7 @@
     "satuan": "UNIT",
     "waktu_pembangunan": 120,
     "biaya_pembangunan": 3500,
-    "konsumsi_listrik": 30
+    "konsumsi_listrik": 0.0150
   },
   "semen_beton": {
     "key": "5_pabrik_semen",
@@ -41,7 +41,7 @@
     "satuan": "TON",
     "waktu_pembangunan": 90,
     "biaya_pembangunan": 2800,
-    "konsumsi_listrik": 20
+    "konsumsi_listrik": 0.0100
   },
   "kayu": {
     "key": "6_penggergajian_kayu",
@@ -52,6 +52,6 @@
     "satuan": "M3",
     "waktu_pembangunan": 60,
     "biaya_pembangunan": 1500,
-    "konsumsi_listrik": 15
+    "konsumsi_listrik": 0.0075
   }
 }

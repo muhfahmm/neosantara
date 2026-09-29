@@ -8,7 +8,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 15,
     "biaya_pembangunan": 2500,
-    "konsumsi_listrik": 15
+    "konsumsi_listrik": 0.0065
   },
   "ikan": {
     "key": "2_budidaya_ikan_tawar",
@@ -19,7 +19,7 @@
     "satuan": "KG",
     "waktu_pembangunan": 10,
     "biaya_pembangunan": 1500,
-    "konsumsi_listrik": 10
+    "konsumsi_listrik": 0.0045
   },
   "mutiara": {
     "key": "3_budidaya_mutiara",
@@ -30,6 +30,6 @@
     "satuan": "GRAM",
     "waktu_pembangunan": 30,
     "biaya_pembangunan": 4500,
-    "konsumsi_listrik": 10
+    "konsumsi_listrik": 0.0055
   }
 }

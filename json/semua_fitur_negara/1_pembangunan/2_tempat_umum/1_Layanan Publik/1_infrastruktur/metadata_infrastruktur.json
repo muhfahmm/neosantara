@@ -8,7 +8,7 @@
     "deskripsi": "Jalur Sepeda",
     "waktu_pembangunan": 5,
     "biaya_pembangunan": 3750,
-    "konsumsi_listrik": 1,
+    "konsumsi_listrik": 0.0012,
     "efek": "Meningkatkan kepuasan 0.1%"
   },
   "jalan_raya": {
@@ -20,7 +20,7 @@
     "deskripsi": "Jalan Raya / Tol",
     "waktu_pembangunan": 20,
     "biaya_pembangunan": 37500,
-    "konsumsi_listrik": 0.1,
+    "konsumsi_listrik": 0.0015,
     "efek": "Meningkatkan kepuasan 0.3%"
   },
   "terminal_bus": {
@@ -32,7 +32,7 @@
     "deskripsi": "Terminal Bus",
     "waktu_pembangunan": 15,
     "biaya_pembangunan": 18750,
-    "konsumsi_listrik": 0.5,
+    "konsumsi_listrik": 0.0025,
     "efek": "Meningkatkan kepuasan 0.5%"
   },
   "stasiun_kereta_api": {
@@ -44,7 +44,7 @@
     "deskripsi": "Jalur Kereta Api",
     "waktu_pembangunan": 30,
     "biaya_pembangunan": 56250,
-    "konsumsi_listrik": 1,
+    "konsumsi_listrik": 0.0045,
     "efek": "Meningkatkan kepuasan 0.5%"
   },
   "kereta_bawah_tanah": {
@@ -56,7 +56,7 @@
     "deskripsi": "Kereta Bawah Tanah (Subway)",
     "waktu_pembangunan": 40,
     "biaya_pembangunan": 71250,
-    "konsumsi_listrik": 1,
+    "konsumsi_listrik": 0.0065,
     "efek": "Meningkatkan kepuasan 0.1%"
   },
   "pelabuhan": {
@@ -68,7 +68,7 @@
     "deskripsi": "Pelabuhan Laut",
     "waktu_pembangunan": 50,
     "biaya_pembangunan": 90000,
-    "konsumsi_listrik": 2,
+    "konsumsi_listrik": 0.0085,
     "efek": "Mempercepat Estimasi Waktu Pengiriman ekspor-impor 0.5%"
   },
   "bandara": {
@@ -80,7 +80,7 @@
     "deskripsi": "Bandara Internasional",
     "waktu_pembangunan": 60,
     "biaya_pembangunan": 112500,
-    "konsumsi_listrik": 3,
+    "konsumsi_listrik": 0.0120,
     "efek": "Mempercepat Estimasi Waktu Pengiriman ekspor-impor 0.3%"
   },
   "helipad": {
@@ -92,7 +92,7 @@
     "deskripsi": "Helipad",
     "waktu_pembangunan": 7,
     "biaya_pembangunan": 11250,
-    "konsumsi_listrik": 1,
+    "konsumsi_listrik": 0.0020,
     "efek": "Mempercepat Estimasi Waktu Pengiriman ekspor-impor 0.1%"
   }
 }
