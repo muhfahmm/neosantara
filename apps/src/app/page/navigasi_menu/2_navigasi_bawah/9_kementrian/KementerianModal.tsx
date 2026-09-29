@@ -29,6 +29,7 @@ import {
   Ship,
 } from "lucide-react";
 import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/economic_logic/treasuryUpdater";
+import { LEVEL_UP_COST } from "@/app/logic/economic_logic/departments";
 
 interface ModalProps {
   isOpen: boolean;
@@ -84,7 +85,6 @@ const getEffectDescription = (deptId: string, level: number): string => {
   return `${sign}${(totalEffect * 100).toFixed(1)}% ${config.label}`;
 };
 
-const LEVEL_UP_COST = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
 const MAX_LEVEL = 10;
 
 const KEMENTERIAN: Department[] = [
@@ -351,11 +351,11 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
 
   const getNextStepCost = (level: number) => {
     if (level >= MAX_LEVEL) return null;
-    return LEVEL_UP_COST[level + 1] ?? 100;
+    return LEVEL_UP_COST[level + 1] ?? 50;
   };
 
   const getDailyCost = (level: number) => {
-    return LEVEL_UP_COST[level] ?? 100;
+    return LEVEL_UP_COST[level] ?? 50;
   };
 
   const handleLevelBoxClick = (dept: Department, targetLevel: number) => {

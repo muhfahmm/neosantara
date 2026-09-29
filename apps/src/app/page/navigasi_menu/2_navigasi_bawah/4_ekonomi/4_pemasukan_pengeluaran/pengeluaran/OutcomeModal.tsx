@@ -1,6 +1,7 @@
 "use client"
 import React, { useState } from "react";
 import { X, BarChart3, ArrowDownRight } from "lucide-react";
+import { ALL_DEPARTMENTS, getDailyMinistryCost } from "@/app/logic/economic_logic/departments";
 
 interface OutcomeModalProps {
   isOpen: boolean;
@@ -16,49 +17,13 @@ interface OutcomeItem {
   description?: string;
 }
 
-// Department data dari KementerianModal - LENGKAP: 15 Kementerian + 5 Keamanan + 2 Layanan = 22 total
-const ALL_DEPARTMENTS = [
-  // KEMENTERIAN (15 total)
-  { id: "infrastruktur", baseIncomeCost: 100 },
-  { id: "pendidikan", baseIncomeCost: 100 },
-  { id: "sains", baseIncomeCost: 100 },
-  { id: "kesehatan", baseIncomeCost: 100 },
-  { id: "olahraga", baseIncomeCost: 100 },
-  { id: "kehakiman", baseIncomeCost: 100 },
-  { id: "pertahanan", baseIncomeCost: 100 },
-  { id: "luar-negeri", baseIncomeCost: 100 },
-  { id: "kebudayaan", baseIncomeCost: 100 },
-  { id: "pariwisata", baseIncomeCost: 100 },
-  { id: "lingkungan", baseIncomeCost: 100 },
-  { id: "perumahan", baseIncomeCost: 100 },
-  { id: "pembangunan", baseIncomeCost: 100 },
-  { id: "perdagangan", baseIncomeCost: 100 },
-  { id: "keuangan", baseIncomeCost: 100 },
-  
-  // KEAMANAN (5 total)
-  { id: "dinas-keamanan", baseIncomeCost: 100 },
-  { id: "polisi", baseIncomeCost: 100 },
-  { id: "garda-nasional", baseIncomeCost: 100 },
-  { id: "komandan-angkatan-darat", baseIncomeCost: 100 },
-  { id: "komandan-armada", baseIncomeCost: 100 },
-  
-  // LAYANAN (2 total)
-  { id: "layanan-darurat", baseIncomeCost: 100 },
-  { id: "bank-sentral", baseIncomeCost: 100 }
-];
-
-const LEVEL_UP_COST = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
-
-const calculateMinistryDailyIncome = (level: number, _baseIncomeCost: number) => {
-  return LEVEL_UP_COST[level] ?? 100;
-};
 
 const calculateTotalMinistryCost = (countryDetail: any) => {
   let totalCost = 0;
   
   for (const dept of ALL_DEPARTMENTS) {
     const level = countryDetail[`level_${dept.id}`] ?? 1;
-    const dailyCost = calculateMinistryDailyIncome(level, dept.baseIncomeCost);
+    const dailyCost = getDailyMinistryCost(level);
     totalCost += dailyCost;
   }
   
@@ -69,7 +34,7 @@ const getMinistryIncomeByName = (name: string, countryDetail: any) => {
   const dept = ALL_DEPARTMENTS.find(d => d.id === name);
   if (!dept) return 0;
   const level = countryDetail[`level_${name}`] ?? 1;
-  return calculateMinistryDailyIncome(level, dept.baseIncomeCost);
+  return getDailyMinistryCost(level);
 };
 
 export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountryDetail }: OutcomeModalProps) {

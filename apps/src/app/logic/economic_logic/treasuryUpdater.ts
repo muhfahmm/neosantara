@@ -1,6 +1,6 @@
 import { calculateIncomeAtRate } from './2_tax_logic/taxLogic';
 import { calculateGoldMiningDailyProduction } from './goldIncome';
-import { KEMENTERIAN, KEAMANAN, LAYANAN, Department } from './departments';
+import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from './departments';
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from '../../page/navigasi_menu/2_navigasi_bawah/4_ekonomi/8_kebijakan_subsidi/logic/logikaSubsidi';
 // Data level kabinet dibaca langsung dari detail (di-inject MySQL via country-data/route.ts)
 
@@ -74,18 +74,13 @@ export const getDepartmentLevel = (detail: any, deptOrId: Department | string): 
   return 1;
 };
 
-const calculateMinistryDailyIncome = (level: number) => {
-  const LEVEL_UP_COST = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
-  return LEVEL_UP_COST[level] ?? 100;
-};
-
 export const calculateTotalMinistryCostPerDay = (detail: any) => {
   if (!detail || typeof detail !== 'object') return 0;
 
   const departments = [...KEMENTERIAN, ...KEAMANAN, ...LAYANAN];
   return departments.reduce((total, dept) => {
     const level = getDepartmentLevel(detail, dept);
-    return total + calculateMinistryDailyIncome(level);
+    return total + getDailyMinistryCost(level);
   }, 0);
 };
 

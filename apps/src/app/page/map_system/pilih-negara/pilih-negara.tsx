@@ -75,7 +75,6 @@ interface Country {
 }
 
 // === LOGIKA KALKULASI EKONOMI UNTUK NAVBAR (SAMA PERSIS DENGAN MODAL) ===
-const LEVEL_UP_COST = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
 
 const calculateGoldMiningIncome = (detail: any) => {
   return calculateGoldMiningDailyProduction(detail);

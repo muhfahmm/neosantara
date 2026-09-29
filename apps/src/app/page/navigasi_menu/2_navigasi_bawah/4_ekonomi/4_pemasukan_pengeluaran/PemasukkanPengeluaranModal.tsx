@@ -9,7 +9,7 @@ import {
   getDepartmentLevel,
 } from "@/app/logic/economic_logic/treasuryUpdater";
 import { calculateGoldMiningDailyProduction, GOLD_MINING_PRODUCTION_PER_BUILDING } from "@/app/logic/economic_logic/goldIncome";
-import { KEMENTERIAN, KEAMANAN, LAYANAN, Department } from "@/app/logic/economic_logic/departments";
+import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from "@/app/logic/economic_logic/departments";
 import AlokasiSubsidiTab from "./alokasi_subsidi/AlokasiSubsidiTab";
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "../8_kebijakan_subsidi/logic/logikaSubsidi";
 import { getSubsidiBySlug } from "@/../../json/database_alokasi_subsidi/index";
@@ -30,15 +30,12 @@ interface FinancialItem {
   onClick?: () => void;
 }
 
-// --- PERBAIKAN: Pindahkan LEVEL_UP_COST ke sini agar bisa diakses oleh JSX ---
-const LEVEL_UP_COST = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
-
 // Helper untuk biaya harian per tab departemen
 const calculateTabCostDaily = (countryDetail: any, departments: Department[]) => {
   let totalCost = 0;
   for (const dept of departments) {
     const level = getDepartmentLevel(countryDetail, dept);
-    totalCost += LEVEL_UP_COST[level] ?? 100;
+    totalCost += getDailyMinistryCost(level);
   }
   return totalCost;
 };
@@ -391,7 +388,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                       <div className="space-y-3">
                         {currentOutcomeTabDepts.map((dept, index) => {
                           const level = getDepartmentLevel(countryDetail, dept);
-                          const dailyCost = LEVEL_UP_COST[level] ?? 100;
+                          const dailyCost = getDailyMinistryCost(level);
                           const Icon = dept.icon;
                           return (
                             <div key={index} className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-[#00FFAA]/20 last:border-0">

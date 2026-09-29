@@ -4,7 +4,7 @@
     "dataKey": "emas",
     "label": "Tambang Emas",
     "deskripsi": "Tambang Emas",
-    "produksi": 25,
+    "produksi": 50,
     "satuan": "KG",
     "waktu_pembangunan": 120,
     "biaya_pembangunan": 6000,

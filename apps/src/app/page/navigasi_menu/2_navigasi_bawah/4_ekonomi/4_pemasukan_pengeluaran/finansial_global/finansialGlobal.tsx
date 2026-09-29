@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import { calculateGoldMiningDailyProduction } from '@/app/logic/economic_logic/goldIncome';
+import { getDailyMinistryCost } from '@/app/logic/economic_logic/departments';
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 
 interface FinansialGlobalProps {
@@ -20,7 +21,6 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
 
   const formatNumber = (num: number) => num.toLocaleString('id-ID');
 
-  const LEVEL_UP_COST = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
 
   const calcTax = (rate: number) => {
     const base = 1000;
@@ -94,7 +94,7 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
     for (const key of Object.keys(detail)) {
       if (key.startsWith('level_')) {
         const lvl = Number(detail[key]) || 1;
-        computed += LEVEL_UP_COST[lvl] ?? 100;
+        computed += getDailyMinistryCost(lvl);
       }
     }
     return computed;

@@ -153,3 +153,14 @@ export const LAYANAN: Department[] = [
 ];
 
 export const ALL_DEPARTMENTS = [...KEMENTERIAN, ...KEAMANAN, ...LAYANAN];
+
+/**
+ * Biaya operasional harian setiap departemen kabinet berdasarkan levelnya.
+ * Index = level (0 = belum diaktifkan, 1-10 = tier aktif).
+ * Satu-satunya sumber kebenaran untuk seluruh kalkulasi biaya kabinet.
+ */
+export const LEVEL_UP_COST = [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500];
+
+/** Kembalikan biaya harian sebuah departemen berdasarkan level aktifnya. */
+export const getDailyMinistryCost = (level: number): number =>
+  LEVEL_UP_COST[level] ?? 50;

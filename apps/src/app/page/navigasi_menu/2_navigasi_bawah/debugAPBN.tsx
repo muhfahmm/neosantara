@@ -8,6 +8,7 @@ import {
   calculateTotalTaxIncome,
 } from '@/app/logic/economic_logic/treasuryUpdater';
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
+import { getDailyMinistryCost } from '@/app/logic/economic_logic/departments';
 
 interface DebugAPBNProps {
   isOpen: boolean;
@@ -54,8 +55,6 @@ export default function DebugAPBN({
 
   const formatNumber = (num: number) => num.toLocaleString('id-ID');
 
-  // LEVEL_UP_COST sama seperti di halaman utama
-  const LEVEL_UP_COST = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
 
   const calcTax = (rate: number) => {
     const base = 1000;
