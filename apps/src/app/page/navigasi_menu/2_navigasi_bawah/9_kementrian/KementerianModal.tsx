@@ -29,7 +29,7 @@ import {
   Ship,
 } from "lucide-react";
 import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/economic_logic/treasuryUpdater";
-import { LEVEL_UP_COST } from "@/app/logic/economic_logic/departments";
+import { LEVEL_UP_COST, MAX_CABINET_LEVEL } from "@/app/logic/economic_logic/departments";
 
 interface ModalProps {
   isOpen: boolean;
@@ -85,7 +85,7 @@ const getEffectDescription = (deptId: string, level: number): string => {
   return `${sign}${(totalEffect * 100).toFixed(1)}% ${config.label}`;
 };
 
-const MAX_LEVEL = 10;
+const MAX_LEVEL = MAX_CABINET_LEVEL; // sumber: departments.ts
 
 const KEMENTERIAN: Department[] = [
   {

@@ -156,11 +156,37 @@ export const ALL_DEPARTMENTS = [...KEMENTERIAN, ...KEAMANAN, ...LAYANAN];
 
 /**
  * Biaya operasional harian setiap departemen kabinet berdasarkan levelnya.
- * Index = level (0 = belum diaktifkan, 1-10 = tier aktif).
+ * Index = level (0 = belum diaktifkan, 1–20 = tier aktif).
+ * Setiap level naik 10 EM, dimulai dari level 1 = 10 EM.
  * Satu-satunya sumber kebenaran untuk seluruh kalkulasi biaya kabinet.
  */
-export const LEVEL_UP_COST = [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500];
+export const LEVEL_UP_COST = [
+  0,   // level 0 — tidak aktif
+  10,  // level 1
+  20,  // level 2
+  30,  // level 3
+  40,  // level 4
+  50,  // level 5
+  60,  // level 6
+  70,  // level 7
+  80,  // level 8
+  90,  // level 9
+  100, // level 10
+  110, // level 11
+  120, // level 12
+  130, // level 13
+  140, // level 14
+  150, // level 15
+  160, // level 16
+  170, // level 17
+  180, // level 18
+  190, // level 19
+  200, // level 20
+];
+
+/** Level maksimum yang bisa dicapai setiap departemen kabinet. */
+export const MAX_CABINET_LEVEL = 20;
 
 /** Kembalikan biaya harian sebuah departemen berdasarkan level aktifnya. */
 export const getDailyMinistryCost = (level: number): number =>
-  LEVEL_UP_COST[level] ?? 50;
+  LEVEL_UP_COST[level] ?? 10;
