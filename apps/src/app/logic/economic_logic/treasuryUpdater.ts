@@ -2,6 +2,7 @@ import { calculateIncomeAtRate } from './2_tax_logic/taxLogic';
 import { calculateGoldMiningDailyProduction } from './goldIncome';
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from './departments';
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
+import { getTourismTotalIncome } from "@/../../json/database_tempat_wisata/index";
 // Data level kabinet dibaca langsung dari detail (di-inject MySQL via country-data/route.ts)
 
 const getNestedValue = (obj: any, path: string[]) => {
@@ -88,7 +89,8 @@ export const calculateCountryGDP = (detail: any) => {
   if (!detail || typeof detail !== 'object') return 0;
   const totalTaxIncome = calculateTotalTaxIncome(detail);
   const goldIncome = calculateGoldMiningDailyProduction(detail);
-  return totalTaxIncome + goldIncome;
+  const tourismIncome = getTourismTotalIncome(detail);
+  return totalTaxIncome + goldIncome + tourismIncome;
 };
 
 export const calculateActiveSubsidyCost = (detail: any) => {
@@ -112,9 +114,10 @@ export const calculateCountryNetBalance = (detail: any) => {
   const totalTaxIncome = calculateTotalTaxIncome(detail);
   const goldUnits = calculateGoldMiningDailyProduction(detail);
   const goldIncome = goldUnits; // use production units (from metadata), do not multiply by price
+  const tourismIncome = getTourismTotalIncome(detail);
   const ministryCost = calculateTotalMinistryCostPerDay(detail);
   const subsidyCost = calculateActiveSubsidyCost(detail);
-  return totalTaxIncome + goldIncome - ministryCost - subsidyCost;
+  return totalTaxIncome + goldIncome + tourismIncome - ministryCost - subsidyCost;
 };
 
 export const calculateGoldIncome = calculateGoldMiningDailyProduction;

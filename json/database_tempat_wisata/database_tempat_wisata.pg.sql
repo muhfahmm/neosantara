@@ -1,37 +1,3 @@
-CREATE TABLE database_tempat_wisata (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-nama_wisata INT NOT NULL DEFAULT 0,
-penghasilan INT NOT NULL DEFAULT 0
-);
-DROP TABLE IF EXISTS database_tempat_wisata;
-CREATE TABLE database_tempat_wisata (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-nama_wisata INT NOT NULL DEFAULT 0,
-penghasilan INT NOT NULL DEFAULT 0
-);
-DROP TABLE IF EXISTS database_tempat_wisata;
-CREATE TABLE database_tempat_wisata (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-nama_wisata INT NOT NULL DEFAULT 0,
-penghasilan INT NOT NULL DEFAULT 0
-);
-DROP TABLE IF EXISTS database_tempat_wisata;
-CREATE TABLE database_tempat_wisata (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-nama_wisata INT NOT NULL DEFAULT 0,
-penghasilan INT NOT NULL DEFAULT 0
-);
-DROP TABLE IF EXISTS database_tempat_wisata;
-CREATE TABLE database_tempat_wisata (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-nama_wisata INT NOT NULL DEFAULT 0,
-penghasilan INT NOT NULL DEFAULT 0
-);
 DROP TABLE IF EXISTS database_tempat_wisata;
 CREATE TABLE database_tempat_wisata (
 id SERIAL NOT NULL PRIMARY KEY,
@@ -738,5 +704,41 @@ country_id, country_slug, nama_wisata, penghasilan
 (690, 'uruguay', 'Montevideo Rambla', 69),
 (691, 'venezuela', 'Angel Falls', 84),
 (692, 'venezuela', 'Los Roques National Park', 69),
-(693, 'venezuela', 'Margarita Island Beach', 64);
+(693, 'venezuela', 'Margarita Island Beach', 64),
+(694, 'bermuda', 'Pantai Horseshoe Bay', 74),
+(695, 'bermuda', 'Gua Kristal Bermuda', 58),
+(696, 'bermuda', 'Benteng St George Kuno', 48),
+(697, 'bermuda', 'Royal Naval Dockyard', 43),
+(698, 'curacao', 'Handelskade Willemstad', 69),
+(699, 'curacao', 'Pantai Kenepa Grandi', 58),
+(700, 'curacao', 'Taman Nasional Shete Boka', 48),
+(701, 'curacao', 'Gua Hato Kuno', 37),
+(702, 'greenland', 'Ilulissat Icefjord', 84),
+(703, 'greenland', 'Disko Bay Glacier', 69),
+(704, 'greenland', 'Nuuk National Museum', 51),
+(705, 'greenland', 'Aurora Borealis Greenland', 64),
+(706, 'guam', 'Pantai Tumon Bay', 74),
+(707, 'guam', 'Puntan Dos Amantes', 58),
+(708, 'guam', 'Ritidian Point Reserve', 45),
+(709, 'guam', 'Benteng Nuestra Senora', 37),
+(710, 'kamerun', 'Taman Nasional Waza', 58),
+(711, 'kamerun', 'Gunung Kamerun', 64),
+(712, 'kamerun', 'Air Terjun Lobe', 48),
+(713, 'kamerun', 'Pantai Kribi Beach', 43),
+(714, 'lithuania', 'Kastil Danau Trakai', 74),
+(715, 'lithuania', 'Kota Kuno Vilnius', 69),
+(716, 'lithuania', 'Bukit Salib Siauliai', 64),
+(717, 'lithuania', 'Semenanjung Curonian Spit', 58),
+(718, 'paraguay', 'Dam Itaipu Hydroelectric', 64),
+(719, 'paraguay', 'Reruntuhan Jesuit Trinidad', 58),
+(720, 'paraguay', 'Istana de los Lopez', 48),
+(721, 'paraguay', 'Taman Nasional Ybycui', 43),
+(722, 'puerto_rico', 'Benteng El Morro San Juan', 84),
+(723, 'puerto_rico', 'Hutan Hujan El Yunque', 74),
+(724, 'puerto_rico', 'Teluk Bioluminescent Mosquito', 69),
+(725, 'puerto_rico', 'Pantai Flamenco Culebra', 64),
+(726, 'tajikistan', 'Pegunungan Pamir Highway', 69),
+(727, 'tajikistan', 'Danau Iskanderkul', 58),
+(728, 'tajikistan', 'Lembah Wakhan', 48),
+(729, 'tajikistan', 'Benteng Hissar Kuno', 40);
 -- ========================================================

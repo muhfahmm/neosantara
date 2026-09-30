@@ -11,9 +11,8 @@
 -- --------------------------------------------------------
 -- Table structure for table game_saves
 -- --------------------------------------------------------
-DROP TABLE IF EXISTS game_saves;
-DROP TABLE IF EXISTS game_saves;
-CREATE TABLE game_saves (
+DROP TABLE IF EXISTS game_saves CASCADE;
+CREATE TABLE IF NOT EXISTS game_saves (
 id SERIAL NOT NULL PRIMARY KEY,
 save_name VARCHAR(255) NOT NULL,
 country_name VARCHAR(100) NOT NULL,
@@ -30,8 +29,8 @@ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 -- ========================================================
 -- SECTION: json/database_kebijakan_subsidi/database_kebijakan_subsidi.pg.sql
 -- ========================================================
-DROP TABLE IF EXISTS database_kebijakan_subsidi;
-CREATE TABLE database_kebijakan_subsidi (
+DROP TABLE IF EXISTS database_kebijakan_subsidi CASCADE;
+CREATE TABLE IF NOT EXISTS database_kebijakan_subsidi (
 id SERIAL NOT NULL PRIMARY KEY,
 item_id VARCHAR(50) NOT NULL UNIQUE,
 name VARCHAR(150) NOT NULL,
@@ -74,9 +73,8 @@ VALUES
 -- File: d:\project-sendiri\em\json\database_alokasi_subsidi\database_alokasi_subsidi.sql
 -- Description: Menyimpan status aktif (true/false) 18 kartu subsidi untuk 207 negara
 -- ========================================================
-DROP TABLE IF EXISTS database_alokasi_subsidi;
-DROP TABLE IF EXISTS database_alokasi_subsidi;
-CREATE TABLE database_alokasi_subsidi (
+DROP TABLE IF EXISTS database_alokasi_subsidi CASCADE;
+CREATE TABLE IF NOT EXISTS database_alokasi_subsidi (
 id SERIAL NOT NULL PRIMARY KEY,
 country_id INT NOT NULL,
 country_slug VARCHAR(100) NOT NULL UNIQUE,
@@ -316,9 +314,8 @@ VALUES
 -- ========================================================
 -- Database Doktrin Keterbukaan SQL Export
 -- Total 207 Negara
-DROP TABLE IF EXISTS database_doktrin_keterbukaan;
-DROP TABLE IF EXISTS database_doktrin_keterbukaan;
-CREATE TABLE database_doktrin_keterbukaan (
+DROP TABLE IF EXISTS database_doktrin_keterbukaan CASCADE;
+CREATE TABLE IF NOT EXISTS database_doktrin_keterbukaan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 name_en varchar(100) NOT NULL,
@@ -335,8 +332,8 @@ diplomacy_score INT NOT NULL DEFAULT 0,
 openness_index INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_doktrin_keterbukaan;
-CREATE TABLE database_doktrin_keterbukaan (
+DROP TABLE IF EXISTS database_doktrin_keterbukaan CASCADE;
+CREATE TABLE IF NOT EXISTS database_doktrin_keterbukaan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 name_en varchar(100) NOT NULL,
@@ -357,9 +354,8 @@ PRIMARY KEY (id)
 -- Total 207 Negara
 -- Skor 1-100 (estimasi keterbukaan negara di dunia nyata). openness_index = rata-rata 9 skor.
 -- Kolom ideology dihapus (sudah ada di database_profiles_negara).
-DROP TABLE IF EXISTS database_doktrin_keterbukaan;
-DROP TABLE IF EXISTS database_doktrin_keterbukaan;
-CREATE TABLE database_doktrin_keterbukaan (
+DROP TABLE IF EXISTS database_doktrin_keterbukaan CASCADE;
+CREATE TABLE IF NOT EXISTS database_doktrin_keterbukaan (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 name_en VARCHAR(100) NOT NULL,
@@ -591,9 +587,8 @@ diplomacy_score, openness_index
 -- ========================================================
 -- Database Harga Barang SQL Export
 -- Total 206 Negara
-DROP TABLE IF EXISTS database_harga_barang;
-DROP TABLE IF EXISTS database_harga_barang;
-CREATE TABLE database_harga_barang (
+DROP TABLE IF EXISTS database_harga_barang CASCADE;
+CREATE TABLE IF NOT EXISTS database_harga_barang (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -607,8 +602,8 @@ harga_listrik INT NOT NULL DEFAULT 0,
 harga_air INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_harga_barang;
-CREATE TABLE database_harga_barang (
+DROP TABLE IF EXISTS database_harga_barang CASCADE;
+CREATE TABLE IF NOT EXISTS database_harga_barang (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -622,8 +617,8 @@ harga_listrik INT NOT NULL DEFAULT 0,
 harga_air INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_harga_barang;
-CREATE TABLE database_harga_barang (
+DROP TABLE IF EXISTS database_harga_barang CASCADE;
+CREATE TABLE IF NOT EXISTS database_harga_barang (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -851,33 +846,32 @@ harga_minyak_goreng, harga_gula, harga_telur, harga_listrik, harga_air
 -- ========================================================
 -- Database Hubungan Antar Negara SQL Export
 -- Total 42642 Records
-DROP TABLE IF EXISTS database_hubungan_antar_negara;
-DROP TABLE IF EXISTS database_hubungan_antar_negara;
-CREATE TABLE database_hubungan_antar_negara (
+DROP TABLE IF EXISTS database_hubungan_antar_negara CASCADE;
+CREATE TABLE IF NOT EXISTS database_hubungan_antar_negara (
 country_id INT NOT NULL DEFAULT 0,
 country_slug varchar(100) NOT NULL,
 target_country_id INT NOT NULL DEFAULT 0,
 target_country INT NOT NULL DEFAULT 0,
 relation INT NOT NULL DEFAULT 0
 );
-DROP TABLE IF EXISTS database_hubungan_antar_negara;
-CREATE TABLE database_hubungan_antar_negara (
+DROP TABLE IF EXISTS database_hubungan_antar_negara CASCADE;
+CREATE TABLE IF NOT EXISTS database_hubungan_antar_negara (
 country_id INT NOT NULL DEFAULT 0,
 country_slug varchar(100) NOT NULL,
 target_country_id INT NOT NULL DEFAULT 0,
 target_country INT NOT NULL DEFAULT 0,
 relation INT NOT NULL DEFAULT 0
 );
-DROP TABLE IF EXISTS database_hubungan_antar_negara;
-CREATE TABLE database_hubungan_antar_negara (
+DROP TABLE IF EXISTS database_hubungan_antar_negara CASCADE;
+CREATE TABLE IF NOT EXISTS database_hubungan_antar_negara (
 country_id INT NOT NULL DEFAULT 0,
 country_slug varchar(100) NOT NULL,
 target_country_id INT NOT NULL DEFAULT 0,
 target_country INT NOT NULL DEFAULT 0,
 relation INT NOT NULL DEFAULT 0
 );
-DROP TABLE IF EXISTS database_hubungan_antar_negara;
-CREATE TABLE database_hubungan_antar_negara (
+DROP TABLE IF EXISTS database_hubungan_antar_negara CASCADE;
+CREATE TABLE IF NOT EXISTS database_hubungan_antar_negara (
 id SERIAL NOT NULL PRIMARY KEY,
 country_id INT NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -44774,9 +44768,8 @@ country_id, country_slug, target_country_id, target_country, relation
 -- ========================================================
 -- Database Kedutaan Besar SQL Export
 -- Total 3102 Records
-DROP TABLE IF EXISTS database_kedutaan_besar;
-DROP TABLE IF EXISTS database_kedutaan_besar;
-CREATE TABLE database_kedutaan_besar (
+DROP TABLE IF EXISTS database_kedutaan_besar CASCADE;
+CREATE TABLE IF NOT EXISTS database_kedutaan_besar (
 country_id INT NOT NULL DEFAULT 0,
 country_slug varchar(100) NOT NULL,
 mitra_no INT NOT NULL DEFAULT 0,
@@ -44784,8 +44777,8 @@ mitra_country INT NOT NULL DEFAULT 0,
 embassy_type INT NOT NULL DEFAULT 0,
 status INT NOT NULL DEFAULT 0
 );
-DROP TABLE IF EXISTS database_kedutaan_besar;
-CREATE TABLE database_kedutaan_besar (
+DROP TABLE IF EXISTS database_kedutaan_besar CASCADE;
+CREATE TABLE IF NOT EXISTS database_kedutaan_besar (
 country_id INT NOT NULL DEFAULT 0,
 country_slug varchar(100) NOT NULL,
 mitra_no INT NOT NULL DEFAULT 0,
@@ -44793,8 +44786,8 @@ mitra_country INT NOT NULL DEFAULT 0,
 embassy_type INT NOT NULL DEFAULT 0,
 status INT NOT NULL DEFAULT 0
 );
-DROP TABLE IF EXISTS database_kedutaan_besar;
-CREATE TABLE database_kedutaan_besar (
+DROP TABLE IF EXISTS database_kedutaan_besar CASCADE;
+CREATE TABLE IF NOT EXISTS database_kedutaan_besar (
 country_id INT NOT NULL DEFAULT 0,
 country_slug varchar(100) NOT NULL,
 mitra_no INT NOT NULL DEFAULT 0,
@@ -44802,8 +44795,8 @@ mitra_country INT NOT NULL DEFAULT 0,
 embassy_type INT NOT NULL DEFAULT 0,
 status INT NOT NULL DEFAULT 0
 );
-DROP TABLE IF EXISTS database_kedutaan_besar;
-CREATE TABLE database_kedutaan_besar (
+DROP TABLE IF EXISTS database_kedutaan_besar CASCADE;
+CREATE TABLE IF NOT EXISTS database_kedutaan_besar (
 id SERIAL NOT NULL PRIMARY KEY,
 country_id INT NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -47951,9 +47944,8 @@ country_id, country_slug, mitra_no, mitra_country, embassy_type, status
 --   Miskin      : level dasar 1-2 (low income / negara rapuh)
 -- Tiap kementerian punya variasi +-1 dari level dasar; kementerian militer +1 untuk kekuatan militer besar,
 -- pariwisata +1 untuk negara tujuan wisata (tetap dibatasi dalam rentang statusnya).
-DROP TABLE IF EXISTS database_level_kabinet;
-DROP TABLE IF EXISTS database_level_kabinet;
-CREATE TABLE database_level_kabinet (
+DROP TABLE IF EXISTS database_level_kabinet CASCADE;
+CREATE TABLE IF NOT EXISTS database_level_kabinet (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -48200,9 +48192,8 @@ id, country, country_slug, kem_infrastruktur, kem_pendidikan, kem_sains, kem_kes
 -- ========================================================
 -- Database Mitra Perdagangan SQL Export
 -- Total 1610 Records
-DROP TABLE IF EXISTS database_mitra_perdagangan;
-DROP TABLE IF EXISTS database_mitra_perdagangan;
-CREATE TABLE database_mitra_perdagangan (
+DROP TABLE IF EXISTS database_mitra_perdagangan CASCADE;
+CREATE TABLE IF NOT EXISTS database_mitra_perdagangan (
 country_id INT NOT NULL DEFAULT 0,
 country_slug varchar(100) NOT NULL,
 mitra_no INT NOT NULL DEFAULT 0,
@@ -48210,8 +48201,8 @@ mitra_country INT NOT NULL DEFAULT 0,
 trade_type INT NOT NULL DEFAULT 0,
 status INT NOT NULL DEFAULT 0
 );
-DROP TABLE IF EXISTS database_mitra_perdagangan;
-CREATE TABLE database_mitra_perdagangan (
+DROP TABLE IF EXISTS database_mitra_perdagangan CASCADE;
+CREATE TABLE IF NOT EXISTS database_mitra_perdagangan (
 country_id INT NOT NULL DEFAULT 0,
 country_slug varchar(100) NOT NULL,
 mitra_no INT NOT NULL DEFAULT 0,
@@ -48219,8 +48210,8 @@ mitra_country INT NOT NULL DEFAULT 0,
 trade_type INT NOT NULL DEFAULT 0,
 status INT NOT NULL DEFAULT 0
 );
-DROP TABLE IF EXISTS database_mitra_perdagangan;
-CREATE TABLE database_mitra_perdagangan (
+DROP TABLE IF EXISTS database_mitra_perdagangan CASCADE;
+CREATE TABLE IF NOT EXISTS database_mitra_perdagangan (
 country_id INT NOT NULL DEFAULT 0,
 country_slug varchar(100) NOT NULL,
 mitra_no INT NOT NULL DEFAULT 0,
@@ -48228,8 +48219,8 @@ mitra_country INT NOT NULL DEFAULT 0,
 trade_type INT NOT NULL DEFAULT 0,
 status INT NOT NULL DEFAULT 0
 );
-DROP TABLE IF EXISTS database_mitra_perdagangan;
-CREATE TABLE database_mitra_perdagangan (
+DROP TABLE IF EXISTS database_mitra_perdagangan CASCADE;
+CREATE TABLE IF NOT EXISTS database_mitra_perdagangan (
 id SERIAL NOT NULL PRIMARY KEY,
 country_id INT NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -49867,7 +49858,8 @@ country_id, country_slug, mitra_no, mitra_country, trade_type, status
 -- Database Pajak Negara SQL Export
 -- Total 207 Negara
 
-CREATE TABLE database_pajak_negara (
+DROP TABLE IF EXISTS database_pajak_negara CASCADE;
+CREATE TABLE IF NOT EXISTS database_pajak_negara (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -50093,9 +50085,8 @@ id, country, country_slug, tarif_ppn, tarif_korporasi, tarif_penghasilan, tarif_
 -- ========================================================
 -- Database SDA SQL Export
 -- Total 207 Negara
-DROP TABLE IF EXISTS database_sda;
-DROP TABLE IF EXISTS database_sda;
-CREATE TABLE database_sda (
+DROP TABLE IF EXISTS database_sda CASCADE;
+CREATE TABLE IF NOT EXISTS database_sda (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -50110,8 +50101,8 @@ logam_tanah_jarang varchar(10) NOT NULL DEFAULT 'FALSE',
 bijih_besi varchar(10) NOT NULL DEFAULT 'FALSE',
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_sda;
-CREATE TABLE database_sda (
+DROP TABLE IF EXISTS database_sda CASCADE;
+CREATE TABLE IF NOT EXISTS database_sda (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -50126,8 +50117,8 @@ logam_tanah_jarang varchar(10) NOT NULL DEFAULT 'FALSE',
 bijih_besi varchar(10) NOT NULL DEFAULT 'FALSE',
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_sda;
-CREATE TABLE database_sda (
+DROP TABLE IF EXISTS database_sda CASCADE;
+CREATE TABLE IF NOT EXISTS database_sda (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -50360,9 +50351,8 @@ id, country, country_slug, emas, uranium, batu_bara, minyak_bumi, gas_alam, gara
 -- Description: Menyimpan data nilai spektrum sistem ekonomi (0-100), kartu kebijakan terpilih,
 --              dan statistik indikator ekonomi untuk 207 negara.
 -- ========================================================
-DROP TABLE IF EXISTS database_sistem_ekonomi;
-DROP TABLE IF EXISTS database_sistem_ekonomi;
-CREATE TABLE database_sistem_ekonomi (
+DROP TABLE IF EXISTS database_sistem_ekonomi CASCADE;
+CREATE TABLE IF NOT EXISTS database_sistem_ekonomi (
 country_id INT NOT NULL DEFAULT 0,
 country_slug varchar(100) NOT NULL,
 country_name varchar(100) NOT NULL,
@@ -50375,8 +50365,8 @@ policy_strategic_ownership INT NOT NULL DEFAULT 0,
 policy_trade INT NOT NULL DEFAULT 0,
 policy_labor INT NOT NULL DEFAULT 0
 );
-DROP TABLE IF EXISTS database_sistem_ekonomi;
-CREATE TABLE database_sistem_ekonomi (
+DROP TABLE IF EXISTS database_sistem_ekonomi CASCADE;
+CREATE TABLE IF NOT EXISTS database_sistem_ekonomi (
 id SERIAL NOT NULL PRIMARY KEY,
 country_id INT NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -50590,44 +50580,9 @@ VALUES
 -- ========================================================
 -- Database Tempat Wisata SQL Export
 -- Total 693 Records
-DROP TABLE IF EXISTS database_tempat_wisata;
-DROP TABLE IF EXISTS database_tempat_wisata;
-CREATE TABLE database_tempat_wisata (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-nama_wisata INT NOT NULL DEFAULT 0,
-penghasilan INT NOT NULL DEFAULT 0
-);
-DROP TABLE IF EXISTS database_tempat_wisata;
-CREATE TABLE database_tempat_wisata (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-nama_wisata INT NOT NULL DEFAULT 0,
-penghasilan INT NOT NULL DEFAULT 0
-);
-DROP TABLE IF EXISTS database_tempat_wisata;
-CREATE TABLE database_tempat_wisata (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-nama_wisata INT NOT NULL DEFAULT 0,
-penghasilan INT NOT NULL DEFAULT 0
-);
-DROP TABLE IF EXISTS database_tempat_wisata;
-CREATE TABLE database_tempat_wisata (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-nama_wisata INT NOT NULL DEFAULT 0,
-penghasilan INT NOT NULL DEFAULT 0
-);
-DROP TABLE IF EXISTS database_tempat_wisata;
-CREATE TABLE database_tempat_wisata (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-nama_wisata INT NOT NULL DEFAULT 0,
-penghasilan INT NOT NULL DEFAULT 0
-);
-DROP TABLE IF EXISTS database_tempat_wisata;
-CREATE TABLE database_tempat_wisata (
+
+DROP TABLE IF EXISTS database_tempat_wisata CASCADE;
+CREATE TABLE IF NOT EXISTS database_tempat_wisata (
 id SERIAL NOT NULL PRIMARY KEY,
 country_id INT NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -51332,13 +51287,49 @@ country_id, country_slug, nama_wisata, penghasilan
 (690, 'uruguay', 'Montevideo Rambla', 69),
 (691, 'venezuela', 'Angel Falls', 84),
 (692, 'venezuela', 'Los Roques National Park', 69),
-(693, 'venezuela', 'Margarita Island Beach', 64);
+(693, 'venezuela', 'Margarita Island Beach', 64),
+(694, 'bermuda', 'Pantai Horseshoe Bay', 74),
+(695, 'bermuda', 'Gua Kristal Bermuda', 58),
+(696, 'bermuda', 'Benteng St George Kuno', 48),
+(697, 'bermuda', 'Royal Naval Dockyard', 43),
+(698, 'curacao', 'Handelskade Willemstad', 69),
+(699, 'curacao', 'Pantai Kenepa Grandi', 58),
+(700, 'curacao', 'Taman Nasional Shete Boka', 48),
+(701, 'curacao', 'Gua Hato Kuno', 37),
+(702, 'greenland', 'Ilulissat Icefjord', 84),
+(703, 'greenland', 'Disko Bay Glacier', 69),
+(704, 'greenland', 'Nuuk National Museum', 51),
+(705, 'greenland', 'Aurora Borealis Greenland', 64),
+(706, 'guam', 'Pantai Tumon Bay', 74),
+(707, 'guam', 'Puntan Dos Amantes', 58),
+(708, 'guam', 'Ritidian Point Reserve', 45),
+(709, 'guam', 'Benteng Nuestra Senora', 37),
+(710, 'kamerun', 'Taman Nasional Waza', 58),
+(711, 'kamerun', 'Gunung Kamerun', 64),
+(712, 'kamerun', 'Air Terjun Lobe', 48),
+(713, 'kamerun', 'Pantai Kribi Beach', 43),
+(714, 'lithuania', 'Kastil Danau Trakai', 74),
+(715, 'lithuania', 'Kota Kuno Vilnius', 69),
+(716, 'lithuania', 'Bukit Salib Siauliai', 64),
+(717, 'lithuania', 'Semenanjung Curonian Spit', 58),
+(718, 'paraguay', 'Dam Itaipu Hydroelectric', 64),
+(719, 'paraguay', 'Reruntuhan Jesuit Trinidad', 58),
+(720, 'paraguay', 'Istana de los Lopez', 48),
+(721, 'paraguay', 'Taman Nasional Ybycui', 43),
+(722, 'puerto_rico', 'Benteng El Morro San Juan', 84),
+(723, 'puerto_rico', 'Hutan Hujan El Yunque', 74),
+(724, 'puerto_rico', 'Teluk Bioluminescent Mosquito', 69),
+(725, 'puerto_rico', 'Pantai Flamenco Culebra', 64),
+(726, 'tajikistan', 'Pegunungan Pamir Highway', 69),
+(727, 'tajikistan', 'Danau Iskanderkul', 58),
+(728, 'tajikistan', 'Lembah Wakhan', 48),
+(729, 'tajikistan', 'Benteng Hissar Kuno', 40);
+
 -- ========================================================
 -- SECTION: json/semua_fitur_negara/0_profiles/database_profiles_negara.sql
 -- ========================================================
-DROP TABLE IF EXISTS database_profiles_negara;
-DROP TABLE IF EXISTS database_profiles_negara;
-CREATE TABLE database_profiles_negara (
+DROP TABLE IF EXISTS database_profiles_negara CASCADE;
+CREATE TABLE IF NOT EXISTS database_profiles_negara (
 id INT NOT NULL,
 country_slug varchar(100) NOT NULL,
 name_id varchar(100) NOT NULL,
@@ -51573,9 +51564,8 @@ INSERT INTO database_profiles_negara (id, country_slug, name_id, name_en, capita
 -- ========================================================
 -- SECTION: database_sektor_listrik_nasional
 -- ========================================================
-DROP TABLE IF EXISTS database_sektor_listrik_nasional;
-DROP TABLE IF EXISTS database_sektor_listrik_nasional;
-CREATE TABLE database_sektor_listrik_nasional (
+DROP TABLE IF EXISTS database_sektor_listrik_nasional CASCADE;
+CREATE TABLE IF NOT EXISTS database_sektor_listrik_nasional (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -51796,9 +51786,8 @@ INSERT INTO database_sektor_listrik_nasional (id, country, country_slug, pembang
 (206, 'Uruguay', 'uruguay', 0, 17, 0, 15, 0, 16),
 (207, 'Venezuela', 'venezuela', 7, 65, 0, 63, 0, 64);
 -- SECTION: json/semua_fitur_negara/1_pembangunan/1_produksi/2_sektor_mineral_kritis/database_sektor_mineral_kritis.sql
-DROP TABLE IF EXISTS database_sektor_mineral_kritis;
-DROP TABLE IF EXISTS database_sektor_mineral_kritis;
-CREATE TABLE database_sektor_mineral_kritis (
+DROP TABLE IF EXISTS database_sektor_mineral_kritis CASCADE;
+CREATE TABLE IF NOT EXISTS database_sektor_mineral_kritis (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -52022,9 +52011,8 @@ INSERT INTO database_sektor_mineral_kritis (id, country, country_slug, bijih_bes
 (206, 'Uruguay', 'uruguay', 25, 0, 0, 53, 0, 0, 0, 0, 0),
 (207, 'Venezuela', 'venezuela', 50, 0, 0, 15, 13, 11, 5, 0, 4);
 -- ========================================================
-DROP TABLE IF EXISTS database_manufaktur;
-DROP TABLE IF EXISTS database_manufaktur;
-CREATE TABLE database_manufaktur (
+DROP TABLE IF EXISTS database_manufaktur CASCADE;
+CREATE TABLE IF NOT EXISTS database_manufaktur (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -52246,9 +52234,8 @@ INSERT INTO database_manufaktur (id, country, country_slug, pabrik_mesin_mobil, 
 -- ========================================================
 -- SECTION: json/semua_fitur_negara/1_pembangunan/1_produksi/4_sektor_peternakan/database_sektor_peternakan.sql
 -- ========================================================
-DROP TABLE IF EXISTS database_sektor_peternakan;
-DROP TABLE IF EXISTS database_sektor_peternakan;
-CREATE TABLE database_sektor_peternakan (
+DROP TABLE IF EXISTS database_sektor_peternakan CASCADE;
+CREATE TABLE IF NOT EXISTS database_sektor_peternakan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -52469,9 +52456,8 @@ INSERT INTO database_sektor_peternakan (id, country, country_slug, ayam_unggas, 
 -- ========================================================
 -- SECTION: json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/database_sektor_agrikultur.sql
 -- ========================================================
-DROP TABLE IF EXISTS database_sektor_agrikultur;
-DROP TABLE IF EXISTS database_sektor_agrikultur;
-CREATE TABLE database_sektor_agrikultur (
+DROP TABLE IF EXISTS database_sektor_agrikultur CASCADE;
+CREATE TABLE IF NOT EXISTS database_sektor_agrikultur (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -52700,9 +52686,8 @@ INSERT INTO database_sektor_agrikultur (id, country, country_slug, padi, gandum,
 -- ========================================================
 -- SECTION: json/semua_fitur_negara/1_pembangunan/1_produksi/6_sektor_perikanan/database_sektor_perikanan.sql
 -- ========================================================
-DROP TABLE IF EXISTS database_sektor_perikanan;
-DROP TABLE IF EXISTS database_sektor_perikanan;
-CREATE TABLE database_sektor_perikanan (
+DROP TABLE IF EXISTS database_sektor_perikanan CASCADE;
+CREATE TABLE IF NOT EXISTS database_sektor_perikanan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -52922,9 +52907,8 @@ INSERT INTO database_sektor_perikanan (id, country, country_slug, udang, mutiara
 -- ========================================================
 -- SECTION: json/semua_fitur_negara/1_pembangunan/1_produksi/7_sektor_olahan_pangan/database_sektor_olahan_pangan.sql
 -- ========================================================
-DROP TABLE IF EXISTS database_sektor_olahan_pangan;
-DROP TABLE IF EXISTS database_sektor_olahan_pangan;
-CREATE TABLE database_sektor_olahan_pangan (
+DROP TABLE IF EXISTS database_sektor_olahan_pangan CASCADE;
+CREATE TABLE IF NOT EXISTS database_sektor_olahan_pangan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -53151,9 +53135,8 @@ INSERT INTO database_sektor_olahan_pangan (id, country, country_slug, air_minera
 -- ========================================================
 -- database_infrastruktur SQL Export
 -- Total 207 Negara
-DROP TABLE IF EXISTS database_infrastruktur;
-DROP TABLE IF EXISTS database_infrastruktur;
-CREATE TABLE database_infrastruktur (
+DROP TABLE IF EXISTS database_infrastruktur CASCADE;
+CREATE TABLE IF NOT EXISTS database_infrastruktur (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -53167,8 +53150,8 @@ bandara INT NOT NULL DEFAULT 0,
 helipad INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_infrastruktur;
-CREATE TABLE database_infrastruktur (
+DROP TABLE IF EXISTS database_infrastruktur CASCADE;
+CREATE TABLE IF NOT EXISTS database_infrastruktur (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -53182,8 +53165,8 @@ bandara INT NOT NULL DEFAULT 0,
 helipad INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_infrastruktur;
-CREATE TABLE database_infrastruktur (
+DROP TABLE IF EXISTS database_infrastruktur CASCADE;
+CREATE TABLE IF NOT EXISTS database_infrastruktur (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -53411,9 +53394,8 @@ id, country, country_slug, jalur_sepeda, jalan_raya, terminal_bus, stasiun_keret
 -- ========================================================
 -- database_pendidikan SQL Export
 -- Total 207 Negara
-DROP TABLE IF EXISTS database_pendidikan;
-DROP TABLE IF EXISTS database_pendidikan;
-CREATE TABLE database_pendidikan (
+DROP TABLE IF EXISTS database_pendidikan CASCADE;
+CREATE TABLE IF NOT EXISTS database_pendidikan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -53430,8 +53412,8 @@ pusat_pengembangan INT NOT NULL DEFAULT 0,
 literasi INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_pendidikan;
-CREATE TABLE database_pendidikan (
+DROP TABLE IF EXISTS database_pendidikan CASCADE;
+CREATE TABLE IF NOT EXISTS database_pendidikan (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -53662,9 +53644,8 @@ id, country, country_slug, prasekolah, dasar, menengah, lanjutan, universitas, l
 -- ========================================================
 -- database_kesehatan SQL Export
 -- Total 207 Negara
-DROP TABLE IF EXISTS database_kesehatan;
-DROP TABLE IF EXISTS database_kesehatan;
-CREATE TABLE database_kesehatan (
+DROP TABLE IF EXISTS database_kesehatan CASCADE;
+CREATE TABLE IF NOT EXISTS database_kesehatan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -53675,8 +53656,8 @@ harapan_hidup INT NOT NULL DEFAULT 0,
 indeks_kesehatan INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_kesehatan;
-CREATE TABLE database_kesehatan (
+DROP TABLE IF EXISTS database_kesehatan CASCADE;
+CREATE TABLE IF NOT EXISTS database_kesehatan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -53687,8 +53668,8 @@ harapan_hidup INT NOT NULL DEFAULT 0,
 indeks_kesehatan INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_kesehatan;
-CREATE TABLE database_kesehatan (
+DROP TABLE IF EXISTS database_kesehatan CASCADE;
+CREATE TABLE IF NOT EXISTS database_kesehatan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -53699,8 +53680,8 @@ harapan_hidup INT NOT NULL DEFAULT 0,
 indeks_kesehatan INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_kesehatan;
-CREATE TABLE database_kesehatan (
+DROP TABLE IF EXISTS database_kesehatan CASCADE;
+CREATE TABLE IF NOT EXISTS database_kesehatan (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -53925,9 +53906,8 @@ id, country, country_slug, rumah_sakit_besar, rumah_sakit_kecil, pusat_diagnosti
 -- ========================================================
 -- database_hukum SQL Export
 -- Total 207 Negara
-DROP TABLE IF EXISTS database_hukum;
-DROP TABLE IF EXISTS database_hukum;
-CREATE TABLE database_hukum (
+DROP TABLE IF EXISTS database_hukum CASCADE;
+CREATE TABLE IF NOT EXISTS database_hukum (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -53941,8 +53921,8 @@ indeks_korupsi INT NOT NULL DEFAULT 0,
 indeks_keamanan INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_hukum;
-CREATE TABLE database_hukum (
+DROP TABLE IF EXISTS database_hukum CASCADE;
+CREATE TABLE IF NOT EXISTS database_hukum (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -53956,8 +53936,8 @@ indeks_korupsi INT NOT NULL DEFAULT 0,
 indeks_keamanan INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_hukum;
-CREATE TABLE database_hukum (
+DROP TABLE IF EXISTS database_hukum CASCADE;
+CREATE TABLE IF NOT EXISTS database_hukum (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -54185,9 +54165,8 @@ id, country, country_slug, pusat_bantuan_hukum, pengadilan, kejaksaan, pos_polis
 -- ========================================================
 -- database_olahraga SQL Export
 -- Total 207 Negara
-DROP TABLE IF EXISTS database_olahraga;
-DROP TABLE IF EXISTS database_olahraga;
-CREATE TABLE database_olahraga (
+DROP TABLE IF EXISTS database_olahraga CASCADE;
+CREATE TABLE IF NOT EXISTS database_olahraga (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -54201,8 +54180,8 @@ esports INT NOT NULL DEFAULT 0,
 gokart INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_olahraga;
-CREATE TABLE database_olahraga (
+DROP TABLE IF EXISTS database_olahraga CASCADE;
+CREATE TABLE IF NOT EXISTS database_olahraga (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -54216,8 +54195,8 @@ esports INT NOT NULL DEFAULT 0,
 gokart INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_olahraga;
-CREATE TABLE database_olahraga (
+DROP TABLE IF EXISTS database_olahraga CASCADE;
+CREATE TABLE IF NOT EXISTS database_olahraga (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -54445,9 +54424,8 @@ id, country, country_slug, kolam_renang, sirkuit_balap, stadion, stadion_interna
 -- ========================================================
 -- database_komersial SQL Export
 -- Total 207 Negara
-DROP TABLE IF EXISTS database_komersial;
-DROP TABLE IF EXISTS database_komersial;
-CREATE TABLE database_komersial (
+DROP TABLE IF EXISTS database_komersial CASCADE;
+CREATE TABLE IF NOT EXISTS database_komersial (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -54456,8 +54434,8 @@ hotel INT NOT NULL DEFAULT 0,
 pusat_grosir_tekstil INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_komersial;
-CREATE TABLE database_komersial (
+DROP TABLE IF EXISTS database_komersial CASCADE;
+CREATE TABLE IF NOT EXISTS database_komersial (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -54466,8 +54444,8 @@ hotel INT NOT NULL DEFAULT 0,
 pusat_grosir_tekstil INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_komersial;
-CREATE TABLE database_komersial (
+DROP TABLE IF EXISTS database_komersial CASCADE;
+CREATE TABLE IF NOT EXISTS database_komersial (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -54476,8 +54454,8 @@ hotel INT NOT NULL DEFAULT 0,
 pusat_grosir_tekstil INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_komersial;
-CREATE TABLE database_komersial (
+DROP TABLE IF EXISTS database_komersial CASCADE;
+CREATE TABLE IF NOT EXISTS database_komersial (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -54486,8 +54464,8 @@ hotel INT NOT NULL DEFAULT 0,
 pusat_grosir_tekstil INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_komersial;
-CREATE TABLE database_komersial (
+DROP TABLE IF EXISTS database_komersial CASCADE;
+CREATE TABLE IF NOT EXISTS database_komersial (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -54710,9 +54688,8 @@ id, country, country_slug, mall, hotel, pusat_grosir_tekstil
 -- ========================================================
 -- database_hiburan SQL Export
 -- Total 207 Negara
-DROP TABLE IF EXISTS database_hiburan;
-DROP TABLE IF EXISTS database_hiburan;
-CREATE TABLE database_hiburan (
+DROP TABLE IF EXISTS database_hiburan CASCADE;
+CREATE TABLE IF NOT EXISTS database_hiburan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -54720,8 +54697,8 @@ bioskop INT NOT NULL DEFAULT 0,
 teater INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_hiburan;
-CREATE TABLE database_hiburan (
+DROP TABLE IF EXISTS database_hiburan CASCADE;
+CREATE TABLE IF NOT EXISTS database_hiburan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -54729,8 +54706,8 @@ bioskop INT NOT NULL DEFAULT 0,
 teater INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_hiburan;
-CREATE TABLE database_hiburan (
+DROP TABLE IF EXISTS database_hiburan CASCADE;
+CREATE TABLE IF NOT EXISTS database_hiburan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -54738,8 +54715,8 @@ bioskop INT NOT NULL DEFAULT 0,
 teater INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_hiburan;
-CREATE TABLE database_hiburan (
+DROP TABLE IF EXISTS database_hiburan CASCADE;
+CREATE TABLE IF NOT EXISTS database_hiburan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -54747,8 +54724,8 @@ bioskop INT NOT NULL DEFAULT 0,
 teater INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS database_hiburan;
-CREATE TABLE database_hiburan (
+DROP TABLE IF EXISTS database_hiburan CASCADE;
+CREATE TABLE IF NOT EXISTS database_hiburan (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -54973,9 +54950,8 @@ id, country, country_slug, bioskop, teater
 -- rumah_subsidi = CEIL(jumlah_penduduk / 8)
 -- apartemen     = CEIL(rumah_subsidi * 0.064)
 -- mansion       = CEIL(rumah_subsidi * 0.1)
-DROP TABLE IF EXISTS database_hunian_permukiman;
-DROP TABLE IF EXISTS database_hunian_permukiman;
-CREATE TABLE database_hunian_permukiman (
+DROP TABLE IF EXISTS database_hunian_permukiman CASCADE;
+CREATE TABLE IF NOT EXISTS database_hunian_permukiman (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -55195,9 +55171,8 @@ INSERT INTO database_hunian_permukiman (id, country, country_slug, rumah_subsidi
 -- ========================================================
 -- database_hunian_permukiman SQL Export
 -- Total 207 Negara
-DROP TABLE IF EXISTS database_hunian_permukiman;
-DROP TABLE IF EXISTS database_hunian_permukiman;
-CREATE TABLE database_hunian_permukiman (
+DROP TABLE IF EXISTS database_hunian_permukiman CASCADE;
+CREATE TABLE IF NOT EXISTS database_hunian_permukiman (
 id INT NOT NULL,
 country varchar(100) NOT NULL,
 country_slug varchar(100) NOT NULL,
@@ -55419,9 +55394,8 @@ INSERT INTO database_hunian_permukiman (id, country, country_slug, rumah_subsidi
 -- ========================================================
 -- database_armada_militer SQL Export
 -- Total 207 Negara
-DROP TABLE IF EXISTS database_armada_militer;
-DROP TABLE IF EXISTS database_armada_militer;
-CREATE TABLE database_armada_militer (
+DROP TABLE IF EXISTS database_armada_militer CASCADE;
+CREATE TABLE IF NOT EXISTS database_armada_militer (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -55664,9 +55638,8 @@ id, country, country_slug, apc_ifv, artileri_berat, drone_intai_uav, drone_kamik
 -- ========================================================
 -- database_manajemen_pertahanan SQL Export
 -- Total 207 Negara
-DROP TABLE IF EXISTS database_manajemen_pertahanan;
-DROP TABLE IF EXISTS database_manajemen_pertahanan;
-CREATE TABLE database_manajemen_pertahanan (
+DROP TABLE IF EXISTS database_manajemen_pertahanan CASCADE;
+CREATE TABLE IF NOT EXISTS database_manajemen_pertahanan (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
@@ -55886,9 +55859,8 @@ id, country, country_slug, barak, gudang_senjata, hangar_tank, pangkalan_udara, 
 (205, 'Suriname', 'suriname', 1, 1, 1, 1, 0),
 (206, 'Uruguay', 'uruguay', 3, 1, 1, 1, 1),
 (207, 'Venezuela', 'venezuela', 16, 1, 1, 1, 1);
-DROP TABLE IF EXISTS database_sda;
-DROP TABLE IF EXISTS database_sda;
-CREATE TABLE database_sda (
+DROP TABLE IF EXISTS database_sda CASCADE;
+CREATE TABLE IF NOT EXISTS database_sda (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
 country_slug VARCHAR(100) NOT NULL,
