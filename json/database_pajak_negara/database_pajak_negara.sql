@@ -162,7 +162,7 @@ INSERT INTO database_pajak_negara (
     (147, 'Swiss', 'swiss', 8, 24, 40, 1, 2),
     (148, 'Turki', 'turki', 20, 25, 40, 5, 1),
     (149, 'Ukraina', 'ukraina', 20, 18, 23, 5, 0),
-    (150, 'Vatikan', 'vatikan', 8, 12, 17, 8, 0),
+    (150, 'Vatikan', 'vatikan', 8, 12, 14, 8, 0),
     (151, 'Yunani', 'yunani', 24, 22, 44, 2, 1),
     (152, 'Amerika Serikat', 'amerika_serikat', 7, 26, 40, 3, 1),
     (153, 'Antigua Dan Barbuda', 'antigua_dan_barbuda', 17, 27, 25, 12, 0),
