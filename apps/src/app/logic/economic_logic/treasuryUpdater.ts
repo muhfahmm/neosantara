@@ -76,12 +76,27 @@ export const calculateTotalMinistryCostPerDay = (detail: any) => {
   }, 0);
 };
 
+export const getCommercialTotalIncome = (detail: any): number => {
+  if (!detail || typeof detail !== 'object') return 0;
+  
+  const mallCount = Number(detail.mall ?? detail.pusat_belanja ?? detail.pusat_perbelanjaan ?? 0);
+  const hotelCount = Number(detail.hotel ?? 0);
+  const grosirCount = Number(detail.pusat_grosir_tekstil ?? detail.pusat_grosir ?? 0);
+
+  const mallIncome = mallCount * 15;
+  const hotelIncome = hotelCount * 10;
+  const grosirIncome = grosirCount * 15;
+
+  return mallIncome + hotelIncome + grosirIncome;
+};
+
 export const calculateTotalPDB = (detail: any) => {
   if (!detail || typeof detail !== 'object') return 0;
   const totalTaxIncome = calculateTotalTaxIncome(detail);
   const goldIncome = calculateGoldMiningDailyProduction(detail);
   const tourismIncome = getTourismTotalIncome(detail);
-  return totalTaxIncome + goldIncome + tourismIncome;
+  const commercialIncome = getCommercialTotalIncome(detail);
+  return totalTaxIncome + goldIncome + tourismIncome + commercialIncome;
 };
 
 export const calculateActiveSubsidyCost = (detail: any) => {
@@ -106,9 +121,10 @@ export const calculateCountryNetBalance = (detail: any) => {
   const goldUnits = calculateGoldMiningDailyProduction(detail);
   const goldIncome = goldUnits; // use production units (from metadata), do not multiply by price
   const tourismIncome = getTourismTotalIncome(detail);
+  const commercialIncome = getCommercialTotalIncome(detail);
   const ministryCost = calculateTotalMinistryCostPerDay(detail);
   const subsidyCost = calculateActiveSubsidyCost(detail);
-  return totalTaxIncome + goldIncome + tourismIncome - ministryCost - subsidyCost;
+  return totalTaxIncome + goldIncome + tourismIncome + commercialIncome - ministryCost - subsidyCost;
 };
 
 export const calculateGoldIncome = calculateGoldMiningDailyProduction;

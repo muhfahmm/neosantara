@@ -19,6 +19,8 @@ interface KonfirmasiPembangunanProps {
   dampakKepuasan?: number;      // Untuk Tempat Umum & Hunian
   produksiPerHari?: number;     // Untuk Bangunan Produksi
   produksiLabel?: string;
+  pendapatanPerHari?: number;   // Untuk Bangunan Tempat Umum / Komersial
+  pendapatanLabel?: string;
   konsumsiListrik?: number;
   requirements: MaterialRequirement[];
   materialStocks: Record<string, number>;
@@ -41,6 +43,8 @@ export default function KonfirmasiPembangunanModal({
   dampakKepuasan,
   produksiPerHari,
   produksiLabel,
+  pendapatanPerHari,
+  pendapatanLabel,
   konsumsiListrik,
   requirements,
   materialStocks,
@@ -164,20 +168,6 @@ export default function KonfirmasiPembangunanModal({
               </label>
             </div>
 
-            {hasMissingMaterials && (
-              <div className="pt-2 border-t border-rose-500/20">
-                <p className="font-bold text-rose-400 mb-2">Material Kurang:</p>
-                {missingMaterials.map((mat, idx) => {
-                  const requiredAmount = (mat.amount ?? 0) * buildQuantity;
-                  return (
-                    <div key={idx} className="flex justify-between items-center">
-                      <span className="text-[#E0E0E0]">{mat.label} (x{requiredAmount.toLocaleString('id-ID')})</span>
-                      <span className="text-rose-400 font-black">0</span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
 
             {waktuPembangunan !== undefined && (
               <>
@@ -196,6 +186,13 @@ export default function KonfirmasiPembangunanModal({
               <div className="flex justify-between">
                 <span className="text-[#6B8A8A]">Produksi {produksiLabel || ''} per hari:</span>
                 <span className="text-emerald-400 font-bold">+{produksiPerHari.toLocaleString('id-ID')}</span>
+              </div>
+            )}
+
+            {pendapatanPerHari !== undefined && (
+              <div className="flex justify-between">
+                <span className="text-[#6B8A8A]">Penghasilan {pendapatanLabel || 'NEO'} per hari:</span>
+                <span className="text-emerald-400 font-bold">+{pendapatanPerHari.toLocaleString('id-ID')}</span>
               </div>
             )}
 

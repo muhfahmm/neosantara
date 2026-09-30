@@ -98,6 +98,17 @@ export default function TempatUmumModal({
   const [hoveredBuildingKey, setHoveredBuildingKey] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    setLoadingMetadata(true);
+    fetchBuildingMetadata()
+      .then((data) => {
+        setMetadata(data || {});
+      })
+      .catch((err) => console.error('TempatUmumModal metadata fetch error', err))
+      .finally(() => setLoadingMetadata(false));
+  }, [isOpen]);
+
   // 🤖 AI Suggestions State
   const [isAIModalOpen, setIsAIModalOpen] = useState<boolean>(false);
 
@@ -126,9 +137,11 @@ export default function TempatUmumModal({
     for (const k of Object.keys(metadata)) {
       const entry = metadata[k];
       if (!entry) continue;
-      if (entry.dataKey === key) return entry;
+      if (entry.dataKey === key || entry.key === key) return entry;
       if (k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
     }
+    if (key === 'mall' && metadata['pusat_belanja']) return metadata['pusat_belanja'];
+    if (key === 'pusat_belanja' && metadata['mall']) return metadata['mall'];
     return undefined;
   };
 
@@ -514,6 +527,9 @@ export default function TempatUmumModal({
                                 konsumsiUnit={Number(bMeta?.konsumsi_listrik) || 0}
                                 biaya={biaya}
                                 waktu={waktu}
+                                pendapatanUnit={Number(bMeta?.pendapatan || (bMeta?.satuan === 'NEO' ? bMeta?.produksi : 0)) || 0}
+                                produksiUnit={Number(bMeta?.produksi) || 0}
+                                satuan={bMeta?.satuan}
                                 onClose={() => setHoveredBuildingKey(null)}
                               />
                             )}
@@ -665,8 +681,9 @@ export default function TempatUmumModal({
       {toast && <div className="fixed bottom-6 right-6 z-[80] bg-[#00FFAA] text-[#0A1A1A] font-black px-4 py-2 rounded-lg shadow-lg border border-[#00FFAA]">{toast}</div>}
 
       {selectedBuilding && (() => {
-        const bMeta = metadata[selectedBuilding.key] || {};
+        const bMeta = findMeta(selectedBuilding.key) || metadata[selectedBuilding.key] || {};
         const cost = Number(bMeta.biaya_pembangunan) || 0;
+        const pendapatan = Number(bMeta?.pendapatan || (bMeta?.satuan === 'NEO' ? bMeta?.produksi : 0)) || 0;
         const buildingReq = getSelectedBuildingRequirements();
         const requirements = buildingReq?.requirements || [];
         
@@ -688,6 +705,8 @@ export default function TempatUmumModal({
             cost={cost}
             waktuPembangunan={bMeta?.waktu_pembangunan}
             dampakKepuasan={1.0}
+            pendapatanPerHari={pendapatan > 0 ? pendapatan : undefined}
+            pendapatanLabel="NEO"
             konsumsiListrik={bMeta?.konsumsi_listrik}
             requirements={requirements}
             materialStocks={materialStocks}

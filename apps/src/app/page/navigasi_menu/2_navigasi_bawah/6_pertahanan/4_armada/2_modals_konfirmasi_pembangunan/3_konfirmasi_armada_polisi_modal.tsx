@@ -104,17 +104,6 @@ export default function KonfirmasiArmadaPolisiModal({
               </label>
             </div>
 
-            {hasMissingMaterials && (
-              <div className="pt-2 border-t border-[#00FFAA]/20">
-                <p className="font-bold text-rose-400 mb-2">Material Kurang:</p>
-                {missingMaterials.map((mat, idx) => (
-                  <div key={idx} className="flex justify-between items-center">
-                    <span className="text-[#E0E0E0]">{mat.label} (x{mat.amount ?? 0})</span>
-                    <span className="text-rose-400 font-black">0</span>
-                  </div>
-                ))}
-              </div>
-            )}
 
             {waktuPembangunan !== undefined && (
               <>

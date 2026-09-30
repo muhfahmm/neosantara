@@ -8,6 +8,9 @@ interface InfoBangunanModalProps {
   konsumsiUnit: number;
   biaya: number;
   waktu?: number;
+  pendapatanUnit?: number;
+  produksiUnit?: number;
+  satuan?: string;
   onClose: () => void;
 }
 
@@ -17,8 +20,19 @@ export default function InfoBangunanModal({
   konsumsiUnit,
   biaya,
   waktu,
+  pendapatanUnit,
+  produksiUnit,
+  satuan,
   onClose,
 }: InfoBangunanModalProps) {
+  const hasRevenue = (pendapatanUnit !== undefined && pendapatanUnit > 0) || (satuan === 'NEO' && produksiUnit !== undefined && produksiUnit > 0);
+  const revenueVal = pendapatanUnit || (satuan === 'NEO' ? produksiUnit : 0) || 0;
+  const totalRevenue = revenueVal * perCount;
+
+  const hasProduction = !hasRevenue && produksiUnit !== undefined && produksiUnit > 0;
+  const prodVal = produksiUnit || 0;
+  const totalProd = prodVal * perCount;
+
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div
@@ -47,13 +61,43 @@ export default function InfoBangunanModal({
 
         <div className="p-6 relative z-10 flex-1 overflow-y-auto space-y-4 text-xs font-semibold text-[#E0E0E0] custom-scrollbar">
           <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Satuan):</span>
-              <span className="text-rose-400 font-black text-sm">{konsumsiUnit.toLocaleString('id-ID', { maximumFractionDigits: 4 })} MW</span>
-            </div>
+            {hasRevenue && (
+              <>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#6B8A8A]">Total Pendapatan ({satuan || 'NEO'}) Per Hari:</span>
+                  <span className="font-black text-sm text-emerald-400">
+                    {totalRevenue.toLocaleString('id-ID')} {satuan || 'NEO'}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center pl-4 text-[#6B8A8A]">
+                  <span>Total Pendapatan Per Unit:</span>
+                  <span className="text-[#E0E0E0] font-bold">{revenueVal.toLocaleString('id-ID')}</span>
+                </div>
+              </>
+            )}
+
+            {hasProduction && (
+              <>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#6B8A8A]">Total Produksi ({satuan || 'Unit'}) Per Hari:</span>
+                  <span className="font-black text-sm text-emerald-400">
+                    {totalProd.toLocaleString('id-ID')} {satuan || 'Unit'}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center pl-4 text-[#6B8A8A]">
+                  <span>Total Produksi Per Unit:</span>
+                  <span className="text-[#E0E0E0] font-bold">{prodVal.toLocaleString('id-ID')}</span>
+                </div>
+              </>
+            )}
+
             <div className="flex justify-between items-center">
               <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Total):</span>
               <span className="text-rose-400 font-black text-sm">{(konsumsiUnit * perCount).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</span>
+            </div>
+            <div className="flex justify-between items-center pl-4">
+              <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Satuan):</span>
+              <span className="text-rose-400 font-bold">{konsumsiUnit.toLocaleString('id-ID', { maximumFractionDigits: 4 })} MW</span>
             </div>
             <div className="flex justify-between items-center border-t border-[#00FFAA]/10 pt-2 mt-2">
               <span className="text-[#6B8A8A]">Biaya Pembangunan:</span>
