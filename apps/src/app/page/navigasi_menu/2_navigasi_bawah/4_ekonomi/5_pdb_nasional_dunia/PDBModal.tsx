@@ -5,6 +5,7 @@ import {
   calculateTotalTaxIncome,
   calculateGoldIncome,
   calculateTotalMinistryCostPerDay,
+  getCommercialTotalIncome,
 } from "@/app/logic/economic_logic/treasuryUpdater";
 import { calculateGoldMiningDailyProduction } from "@/app/logic/economic_logic/goldIncome";
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
@@ -289,9 +290,11 @@ function AllCountriesGDP({
 
       const tax = isLoaded ? computeTaxValue(targetDetail) : 0;
       const gold = isLoaded ? computeGoldValue({ ...targetDetail, emas: emasCount }) : 0;
+      const commercial = isLoaded ? getCommercialTotalIncome(targetDetail) : 0;
+      const commercialCount = isLoaded ? (Number(targetDetail?.mall ?? targetDetail?.pusat_belanja ?? 0) + Number(targetDetail?.hotel ?? 0) + Number(targetDetail?.pusat_grosir_tekstil ?? targetDetail?.pusat_grosir ?? 0)) : 0;
       const tourism = isLoaded ? (targetDetail.total_wisata_penghasilan ?? targetDetail.wisata_penghasilan ?? (Array.isArray(targetDetail.tempat_wisata) ? targetDetail.tempat_wisata.reduce((s: number, i: any) => s + (Number(i?.penghasilan) || 0), 0) : 0)) : 0;
       const tourismCount = isLoaded ? (targetDetail.total_tempat_wisata ?? (Array.isArray(targetDetail.tempat_wisata) ? targetDetail.tempat_wisata.length : 0)) : 0;
-      const pdb = tax + gold + tourism;
+      const pdb = tax + gold + commercial + tourism;
       const dewanKabinetCost = isLoaded ? computeMinistryCost(targetDetail) : 0;
       const subsidyCost = isLoaded ? computeSubsidyCost(targetDetail) : 0;
       const totalPengeluaran = dewanKabinetCost + subsidyCost;
@@ -307,6 +310,8 @@ function AllCountriesGDP({
         tax,
         gold,
         buildingCount,
+        commercial,
+        commercialCount,
         tourism,
         tourismCount,
         pdb,
@@ -327,7 +332,7 @@ function AllCountriesGDP({
     if (rows.length === 0) {
       return (
         <tr>
-          <td className="px-4 py-6 text-center text-sm font-bold text-[#6B8A8A]" colSpan={8}>
+          <td className="px-4 py-6 text-center text-sm font-bold text-[#6B8A8A]" colSpan={9}>
             Tidak ada data yang cocok dengan pencarian "{searchQuery}".
           </td>
         </tr>
@@ -388,6 +393,9 @@ function AllCountriesGDP({
           <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-amber-300 border-b border-[#00FFAA]/10 whitespace-nowrap">
             {row.isLoaded ? (row.buildingCount > 0 ? `${row.buildingCount} (${formatNumber(row.gold)} NEO)` : '0') : renderSkeleton("w-16")}
           </td>
+          <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-emerald-300 border-b border-[#00FFAA]/10 whitespace-nowrap" title={`Penghasilan Komersial (${row.commercialCount} unit): ${formatNumber(row.commercial)} NEO`}>
+            {row.isLoaded ? (row.commercialCount > 0 ? `${row.commercialCount} (${formatNumber(row.commercial)} NEO)` : '0') : renderSkeleton("w-14")}
+          </td>
           <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-sky-300 border-b border-[#00FFAA]/10 whitespace-nowrap" title={`Penghasilan Wisata (${row.tourismCount} lokasi): ${formatNumber(row.tourism)} NEO`}>
             {row.isLoaded ? (row.tourismCount > 0 ? `${row.tourismCount} (${formatNumber(row.tourism)} NEO)` : '0') : renderSkeleton("w-14")}
           </td>
@@ -397,7 +405,7 @@ function AllCountriesGDP({
           <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-bold text-[10px] sm:text-[11px] lg:text-xs text-rose-400 border-b border-[#00FFAA]/10 whitespace-nowrap" title={`Pengeluaran Kabinet: ${formatNumber(row.governmentCost)} NEO`}>
             {row.isLoaded ? formatNumber(row.governmentCost) : renderSkeleton("w-12")}
           </td>
-          <td className={`px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-black text-[10px] sm:text-[11px] lg:text-xs border-b border-[#00FFAA]/10 whitespace-nowrap ${row.isLoaded ? (row.net >= 0 ? 'text-emerald-400' : 'text-rose-400') : ''}`} title={`Total Pemasukan: ${formatNumber(row.pdb)} NEO (Pajak: ${formatNumber(row.tax)} + Emas: ${formatNumber(row.gold)} + Wisata: ${formatNumber(row.tourism)}) - Total Pengeluaran: ${formatNumber(row.totalPengeluaran)} NEO = Netto: ${formatNumber(row.net)} NEO`}>
+          <td className={`px-1 sm:px-1.5 py-1.5 lg:py-2 text-right font-black text-[10px] sm:text-[11px] lg:text-xs border-b border-[#00FFAA]/10 whitespace-nowrap ${row.isLoaded ? (row.net >= 0 ? 'text-emerald-400' : 'text-rose-400') : ''}`} title={`Total Pemasukan: ${formatNumber(row.pdb)} NEO (Pajak: ${formatNumber(row.tax)} + Emas: ${formatNumber(row.gold)} + Komersial: ${formatNumber(row.commercial)} + Wisata: ${formatNumber(row.tourism)}) - Total Pengeluaran: ${formatNumber(row.totalPengeluaran)} NEO = Netto: ${formatNumber(row.net)} NEO`}>
             {row.isLoaded ? `${row.net >= 0 ? '+' : ''}${formatNumber(row.net)}` : renderSkeleton("w-14")}
           </td>
         </tr>
@@ -447,14 +455,15 @@ function AllCountriesGDP({
           <table className="w-full table-fixed text-xs text-left">
             <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/30 sticky top-0 z-10">
               <tr>
-                <th className="w-[4%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-center leading-tight">No</th>
-                <th className="w-[16%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
-                <th className="w-[12%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('tax')}>Total Pajak{renderSortArrow('tax')}</th>
-                <th className="w-[13%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('gold')}>Emas{renderSortArrow('gold')}</th>
-                <th className="w-[14%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('tourism')}>Wisata{renderSortArrow('tourism')}</th>
-                <th className="w-[14%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('subsidyCost')}>Pengeluaran Subsidi{renderSortArrow('subsidyCost')}</th>
-                <th className="w-[14%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('governmentCost')}>Pengeluaran Kabinet{renderSortArrow('governmentCost')}</th>
-                <th className="w-[13%] px-1 sm:px-1.5 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('net')}>Netto APBN{renderSortArrow('net')}</th>
+                <th className="w-[3%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-center leading-tight">No</th>
+                <th className="w-[15%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('name')}>Nama Negara{renderSortArrow('name')}</th>
+                <th className="w-[11%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('tax')}>Total Pajak{renderSortArrow('tax')}</th>
+                <th className="w-[11%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-amber-300 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('gold')}>Emas{renderSortArrow('gold')}</th>
+                <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-emerald-300 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('commercial')}>Komersial{renderSortArrow('commercial')}</th>
+                <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-sky-300 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('tourism')}>Wisata{renderSortArrow('tourism')}</th>
+                <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('subsidyCost')}>Pengeluaran Subsidi{renderSortArrow('subsidyCost')}</th>
+                <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('governmentCost')}>Pengeluaran Kabinet{renderSortArrow('governmentCost')}</th>
+                <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('net')}>Netto APBN{renderSortArrow('net')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#00FFAA]/10">{renderAllRows()}</tbody>
