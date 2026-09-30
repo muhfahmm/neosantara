@@ -8,14 +8,14 @@ export async function GET() {
     try {
         const pool = await getDbPool();
         const [rows]: any = await pool.query('SELECT * FROM game_saves ORDER BY id DESC');
-        
+
         // Parse country_detail JSON strings back to objects
         const parsedRows = rows.map((row: any) => ({
             ...row,
             country_name: row.country_name, // Keep original for compatibility
             countryDetail: row.country_detail ? JSON.parse(row.country_detail) : null,
         }));
-        
+
         return NextResponse.json(parsedRows);
     } catch (error: any) {
         console.error('Error fetching game saves:', error);

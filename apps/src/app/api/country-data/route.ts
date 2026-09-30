@@ -322,7 +322,7 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
     cachedAllCountries = mergedList;
     return mergedList;
   } catch (error) {
-    console.error('Error fetching country data from XAMPP MySQL:', error);
+    console.error('Error fetching country data from PostgreSQL:', error);
     throw error;
   }
 }
@@ -367,7 +367,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json(allData[0] || {});
   } catch (e: any) {
-    console.error('Failed to load country data from MySQL:', e.message);
+    console.error('Failed to load country data from PostgreSQL:', e.message);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+

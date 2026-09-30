@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
       const underscoreSlug = slug.toLowerCase().replace(/-/g, '_');
 
       const rows = await queryDb<any[]>(
-        'SELECT * FROM database_alokasi_subsidi WHERE country_slug = ? OR country_slug = ? OR country_slug = ? LIMIT 1',
+        'SELECT * FROM database_alokasi_subsidi WHERE country_slug = $1 OR country_slug = $2 OR country_slug = $3 LIMIT 1',
         [slug, normalizedSlug, underscoreSlug]
       );
       return NextResponse.json(rows?.[0] || null);
@@ -43,8 +43,8 @@ export async function POST(req: NextRequest) {
     ];
 
     const columns = ['country_id', 'country_slug', 'country_name', 'iso', ...keys];
-    const placeholders = columns.map(() => '?').join(', ');
-    const updateClauses = keys.map((k) => `${k} = VALUES(${k})`).join(', ');
+    const placeholders = columns.map((_, i) => `$${i + 1}`).join(', ');
+    const updateClauses = keys.map((k) => `${k} = EXCLUDED.${k}`).join(', ');
 
     const values = [
       country_id || 0,
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     await queryDb(
       `INSERT INTO database_alokasi_subsidi (${columns.join(', ')})
        VALUES (${placeholders})
-       ON DUPLICATE KEY UPDATE ${updateClauses}`,
+       ON CONFLICT (country_slug) DO UPDATE SET ${updateClauses}`,
       values
     );
 
@@ -66,3 +66,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
+

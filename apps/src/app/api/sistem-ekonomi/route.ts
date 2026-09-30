@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
 
     if (slug) {
       const rows = await queryDb<any[]>(
-        'SELECT * FROM database_sistem_ekonomi WHERE country_slug = ? LIMIT 1',
+        'SELECT * FROM database_sistem_ekonomi WHERE country_slug = $1 LIMIT 1',
         [slug]
       );
       return NextResponse.json(rows?.[0] || null);
@@ -33,15 +33,15 @@ export async function POST(req: NextRequest) {
     await queryDb(
       `INSERT INTO database_sistem_ekonomi 
         (country_id, country_slug, country_name, iso, spektrum_val, system_title, category, policy_price_control, policy_strategic_ownership, policy_trade, policy_labor) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-       ON DUPLICATE KEY UPDATE 
-        spektrum_val = VALUES(spektrum_val),
-        system_title = VALUES(system_title),
-        category = VALUES(category),
-        policy_price_control = VALUES(policy_price_control),
-        policy_strategic_ownership = VALUES(policy_strategic_ownership),
-        policy_trade = VALUES(policy_trade),
-        policy_labor = VALUES(policy_labor)`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+       ON CONFLICT (country_slug) DO UPDATE SET
+        spektrum_val = EXCLUDED.spektrum_val,
+        system_title = EXCLUDED.system_title,
+        category = EXCLUDED.category,
+        policy_price_control = EXCLUDED.policy_price_control,
+        policy_strategic_ownership = EXCLUDED.policy_strategic_ownership,
+        policy_trade = EXCLUDED.policy_trade,
+        policy_labor = EXCLUDED.policy_labor`,
       [
         body.country_id || 0,
         country_slug,
@@ -62,3 +62,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
+
