@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS database_sektor_listrik_nasional;
 CREATE TABLE database_sektor_listrik_nasional (
 id INT NOT NULL,
 country varchar(100) NOT NULL,

@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS database_profiles_negara;
 CREATE TABLE database_profiles_negara (
 id INT NOT NULL,
 country_slug varchar(100) NOT NULL,

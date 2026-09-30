@@ -1,29 +1,3 @@
-CREATE TABLE database_kedutaan_besar (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-mitra_no INT NOT NULL DEFAULT 0,
-mitra_country INT NOT NULL DEFAULT 0,
-embassy_type INT NOT NULL DEFAULT 0,
-status INT NOT NULL DEFAULT 0
-);
-DROP TABLE IF EXISTS database_kedutaan_besar;
-CREATE TABLE database_kedutaan_besar (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-mitra_no INT NOT NULL DEFAULT 0,
-mitra_country INT NOT NULL DEFAULT 0,
-embassy_type INT NOT NULL DEFAULT 0,
-status INT NOT NULL DEFAULT 0
-);
-DROP TABLE IF EXISTS database_kedutaan_besar;
-CREATE TABLE database_kedutaan_besar (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-mitra_no INT NOT NULL DEFAULT 0,
-mitra_country INT NOT NULL DEFAULT 0,
-embassy_type INT NOT NULL DEFAULT 0,
-status INT NOT NULL DEFAULT 0
-);
 DROP TABLE IF EXISTS database_kedutaan_besar;
 CREATE TABLE database_kedutaan_besar (
 id SERIAL NOT NULL PRIMARY KEY,

@@ -1,16 +1,3 @@
-CREATE TABLE database_sistem_ekonomi (
-country_id INT NOT NULL DEFAULT 0,
-country_slug varchar(100) NOT NULL,
-country_name varchar(100) NOT NULL,
-iso INT NOT NULL DEFAULT 0,
-spektrum_val INT NOT NULL DEFAULT 0,
-system_title INT NOT NULL DEFAULT 0,
-category INT NOT NULL DEFAULT 0,
-policy_price_control INT NOT NULL DEFAULT 0,
-policy_strategic_ownership INT NOT NULL DEFAULT 0,
-policy_trade INT NOT NULL DEFAULT 0,
-policy_labor INT NOT NULL DEFAULT 0
-);
 DROP TABLE IF EXISTS database_sistem_ekonomi;
 CREATE TABLE database_sistem_ekonomi (
 id SERIAL NOT NULL PRIMARY KEY,

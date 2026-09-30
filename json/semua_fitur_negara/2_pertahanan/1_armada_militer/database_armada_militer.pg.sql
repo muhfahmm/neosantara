@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS database_armada_militer;
 CREATE TABLE database_armada_militer (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,

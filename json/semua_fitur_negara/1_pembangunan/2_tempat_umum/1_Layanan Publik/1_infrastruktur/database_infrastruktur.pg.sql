@@ -1,32 +1,3 @@
-CREATE TABLE database_infrastruktur (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-jalur_sepeda INT NOT NULL DEFAULT 0,
-jalan_raya INT NOT NULL DEFAULT 0,
-terminal_bus INT NOT NULL DEFAULT 0,
-stasiun_kereta_api INT NOT NULL DEFAULT 0,
-kereta_bawah_tanah INT NOT NULL DEFAULT 0,
-pelabuhan INT NOT NULL DEFAULT 0,
-bandara INT NOT NULL DEFAULT 0,
-helipad INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
-DROP TABLE IF EXISTS database_infrastruktur;
-CREATE TABLE database_infrastruktur (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-jalur_sepeda INT NOT NULL DEFAULT 0,
-jalan_raya INT NOT NULL DEFAULT 0,
-terminal_bus INT NOT NULL DEFAULT 0,
-stasiun_kereta_api INT NOT NULL DEFAULT 0,
-kereta_bawah_tanah INT NOT NULL DEFAULT 0,
-pelabuhan INT NOT NULL DEFAULT 0,
-bandara INT NOT NULL DEFAULT 0,
-helipad INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
 DROP TABLE IF EXISTS database_infrastruktur;
 CREATE TABLE database_infrastruktur (
 id INT PRIMARY KEY,

@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS database_level_kabinet;
 CREATE TABLE database_level_kabinet (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,

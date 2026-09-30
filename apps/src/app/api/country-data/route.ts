@@ -44,6 +44,28 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
     const doktrin = await queryDb<any[]>('SELECT * FROM database_doktrin_keterbukaan').catch(() => []);
     const alokasiSubsidi = await queryDb<any[]>('SELECT * FROM database_alokasi_subsidi').catch(() => []);
     const sistemEkonomi = await queryDb<any[]>('SELECT * FROM database_sistem_ekonomi').catch(() => []);
+    let tempatWisata = await queryDb<any[]>('SELECT * FROM database_tempat_wisata').catch(() => []);
+    if (!tempatWisata || tempatWisata.length === 0) {
+      try {
+        const fs = require('fs');
+        const sqlPath = path.join(process.cwd(), '../json/database_tempat_wisata/database_tempat_wisata.pg.sql');
+        const sqlContent = fs.readFileSync(sqlPath, 'utf8');
+        const rows: any[] = [];
+        const regex = /\(\s*(\d+)\s*,\s*'([^']+)'\s*,\s*'([^']*(?:''[^']*)*)'\s*,\s*(\d+)\s*\)/g;
+        let match;
+        while ((match = regex.exec(sqlContent)) !== null) {
+          rows.push({
+            id: Number(match[1]),
+            country_slug: match[2],
+            nama_wisata: match[3].replace(/''/g, "'"),
+            penghasilan: Number(match[4]),
+          });
+        }
+        tempatWisata = rows;
+      } catch (err) {
+        tempatWisata = [];
+      }
+    }
 
     // 2. Produksi & Pembangunan Tables
     const listrik = await queryDb<any[]>('SELECT * FROM database_sektor_listrik_nasional').catch(() => []);
@@ -118,6 +140,25 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
     for (const item of sistemEkonomi) {
       if (item.country_slug) {
         sistemEkonomiMap.set(normalizeKey(item.country_slug), item);
+      }
+    }
+
+    const tourismMap = new Map<string, { total_wisata_penghasilan: number; total_tempat_wisata: number; tempat_wisata: any[] }>();
+    for (const item of tempatWisata) {
+      if (item.country_slug) {
+        const key = normalizeKey(item.country_slug);
+        if (!tourismMap.has(key)) {
+          tourismMap.set(key, { total_wisata_penghasilan: 0, total_tempat_wisata: 0, tempat_wisata: [] });
+        }
+        const group = tourismMap.get(key)!;
+        const p = Number(item.penghasilan) || 0;
+        group.total_wisata_penghasilan += p;
+        group.total_tempat_wisata += 1;
+        group.tempat_wisata.push({
+          id: Number(item.id) || 0,
+          nama_wisata: item.nama_wisata || '',
+          penghasilan: p,
+        });
       }
     }
 
@@ -278,6 +319,47 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
             policy_strategic_ownership: sys.policy_strategic_ownership === 'Pasar Bebas' ? 'B' : 'A',
             policy_trade_policy: sys.policy_trade === 'Pasar Bebas' ? 'B' : 'A',
             policy_labor_regulation: sys.policy_labor === 'Pasar Bebas' ? 'B' : 'A',
+          };
+        })(),
+
+        ...(() => {
+          const TOURISM_ALIAS: Record<string, string> = {
+            "amerikaserikat": "americaserikat",
+            "brazil": "brasil",
+            "chile": "chili",
+            "bolivia": "dinasti",
+            "costarica": "kostrika",
+            "komoro": "komori",
+            "republikdemokratikkongo": "demokratikkongo",
+            "saintlucia": "santolucia",
+            "saintkittsdannevis": "santokittsnevis",
+            "saintvincentdangrenadine": "santovincentgrenadines",
+            "saintvincentdangrenadines": "santovincentgrenadines",
+            "selandiabaru": "negaraneuzelandi",
+            "trinidaddantobago": "trinidattobago",
+            "capeverde": "caboverde",
+            "tanjungverde": "caboverde",
+            "madagaskar": "madagascar",
+            "tahiti": "fijiprancis",
+            "polinesiaprancis": "fijiprancis",
+            "republikdominika": "dominikarepublik",
+            "kongo": "congo",
+            "sudan": "sudan",
+            "republiksudan": "sudan",
+            "republiktanzania": "tanzania",
+            "republikuganda": "uganda",
+            "republikzambia": "zambia",
+            "republikzimbabwe": "zimbabwe",
+            "samoaamerika": "samoa",
+            "guianaprancis": "besar",
+          };
+          const resolvedSlug = TOURISM_ALIAS[normSlug] || normSlug;
+          const tour = tourismMap.get(resolvedSlug) || tourismMap.get(normSlug) || { total_wisata_penghasilan: 0, total_tempat_wisata: 0, tempat_wisata: [] };
+          return {
+            total_wisata_penghasilan: tour.total_wisata_penghasilan,
+            wisata_penghasilan: tour.total_wisata_penghasilan,
+            total_tempat_wisata: tour.total_tempat_wisata,
+            tempat_wisata: tour.tempat_wisata,
           };
         })(),
 

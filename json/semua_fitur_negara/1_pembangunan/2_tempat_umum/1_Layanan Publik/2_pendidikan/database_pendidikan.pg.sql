@@ -1,20 +1,3 @@
-CREATE TABLE database_pendidikan (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-prasekolah INT NOT NULL DEFAULT 0,
-dasar INT NOT NULL DEFAULT 0,
-menengah INT NOT NULL DEFAULT 0,
-lanjutan INT NOT NULL DEFAULT 0,
-universitas INT NOT NULL DEFAULT 0,
-lembaga_pendidikan INT NOT NULL DEFAULT 0,
-laboratorium INT NOT NULL DEFAULT 0,
-observatorium INT NOT NULL DEFAULT 0,
-pusat_penelitian INT NOT NULL DEFAULT 0,
-pusat_pengembangan INT NOT NULL DEFAULT 0,
-literasi INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
 DROP TABLE IF EXISTS database_pendidikan;
 CREATE TABLE database_pendidikan (
 id INT PRIMARY KEY,

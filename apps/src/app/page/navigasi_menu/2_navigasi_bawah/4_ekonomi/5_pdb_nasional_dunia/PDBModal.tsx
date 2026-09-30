@@ -10,7 +10,6 @@ import { calculateGoldMiningDailyProduction } from "@/app/logic/economic_logic/g
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
-import { getTourismSummary } from "@/../../json/database_tempat_wisata/index";
 
 const getNormalizedSlug = (detail: any) => {
   if (!detail) return '';
@@ -290,9 +289,8 @@ function AllCountriesGDP({
 
       const tax = isLoaded ? computeTaxValue(targetDetail) : 0;
       const gold = isLoaded ? computeGoldValue({ ...targetDetail, emas: emasCount }) : 0;
-      const tourismSummary = isLoaded ? getTourismSummary(targetDetail) : { total_penghasilan: 0, total_tempat_wisata: 0, items: [] };
-      const tourism = tourismSummary.total_penghasilan;
-      const tourismCount = tourismSummary.total_tempat_wisata;
+      const tourism = isLoaded ? (targetDetail.total_wisata_penghasilan ?? targetDetail.wisata_penghasilan ?? (Array.isArray(targetDetail.tempat_wisata) ? targetDetail.tempat_wisata.reduce((s: number, i: any) => s + (Number(i?.penghasilan) || 0), 0) : 0)) : 0;
+      const tourismCount = isLoaded ? (targetDetail.total_tempat_wisata ?? (Array.isArray(targetDetail.tempat_wisata) ? targetDetail.tempat_wisata.length : 0)) : 0;
       const pdb = tax + gold + tourism;
       const dewanKabinetCost = isLoaded ? computeMinistryCost(targetDetail) : 0;
       const subsidyCost = isLoaded ? computeSubsidyCost(targetDetail) : 0;

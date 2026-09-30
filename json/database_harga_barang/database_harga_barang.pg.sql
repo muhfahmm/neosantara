@@ -1,32 +1,3 @@
-CREATE TABLE database_harga_barang (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-harga_beras INT NOT NULL DEFAULT 0,
-harga_daging_sapi INT NOT NULL DEFAULT 0,
-harga_ayam INT NOT NULL DEFAULT 0,
-harga_minyak_goreng INT NOT NULL DEFAULT 0,
-harga_gula INT NOT NULL DEFAULT 0,
-harga_telur INT NOT NULL DEFAULT 0,
-harga_listrik INT NOT NULL DEFAULT 0,
-harga_air INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
-DROP TABLE IF EXISTS database_harga_barang;
-CREATE TABLE database_harga_barang (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-harga_beras INT NOT NULL DEFAULT 0,
-harga_daging_sapi INT NOT NULL DEFAULT 0,
-harga_ayam INT NOT NULL DEFAULT 0,
-harga_minyak_goreng INT NOT NULL DEFAULT 0,
-harga_gula INT NOT NULL DEFAULT 0,
-harga_telur INT NOT NULL DEFAULT 0,
-harga_listrik INT NOT NULL DEFAULT 0,
-harga_air INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
 DROP TABLE IF EXISTS database_harga_barang;
 CREATE TABLE database_harga_barang (
 id INT PRIMARY KEY,

@@ -1,38 +1,3 @@
-CREATE TABLE database_hiburan (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-bioskop INT NOT NULL DEFAULT 0,
-teater INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
-DROP TABLE IF EXISTS database_hiburan;
-CREATE TABLE database_hiburan (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-bioskop INT NOT NULL DEFAULT 0,
-teater INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
-DROP TABLE IF EXISTS database_hiburan;
-CREATE TABLE database_hiburan (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-bioskop INT NOT NULL DEFAULT 0,
-teater INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
-DROP TABLE IF EXISTS database_hiburan;
-CREATE TABLE database_hiburan (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-bioskop INT NOT NULL DEFAULT 0,
-teater INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
 DROP TABLE IF EXISTS database_hiburan;
 CREATE TABLE database_hiburan (
 id INT PRIMARY KEY,
@@ -259,5 +224,3 @@ id, country, country_slug, bioskop, teater
 -- rumah_subsidi = CEIL(jumlah_penduduk / 8)
 -- apartemen     = CEIL(rumah_subsidi * 0.064)
 -- mansion       = CEIL(rumah_subsidi * 0.1)
-DROP TABLE IF EXISTS database_hunian_permukiman;
-DROP TABLE IF EXISTS database_hunian_permukiman;

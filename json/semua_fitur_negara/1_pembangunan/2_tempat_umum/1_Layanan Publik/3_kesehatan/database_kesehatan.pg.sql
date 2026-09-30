@@ -1,38 +1,3 @@
-CREATE TABLE database_kesehatan (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-rumah_sakit_besar INT NOT NULL DEFAULT 0,
-rumah_sakit_kecil INT NOT NULL DEFAULT 0,
-pusat_diagnostik INT NOT NULL DEFAULT 0,
-harapan_hidup INT NOT NULL DEFAULT 0,
-indeks_kesehatan INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
-DROP TABLE IF EXISTS database_kesehatan;
-CREATE TABLE database_kesehatan (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-rumah_sakit_besar INT NOT NULL DEFAULT 0,
-rumah_sakit_kecil INT NOT NULL DEFAULT 0,
-pusat_diagnostik INT NOT NULL DEFAULT 0,
-harapan_hidup INT NOT NULL DEFAULT 0,
-indeks_kesehatan INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
-DROP TABLE IF EXISTS database_kesehatan;
-CREATE TABLE database_kesehatan (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-rumah_sakit_besar INT NOT NULL DEFAULT 0,
-rumah_sakit_kecil INT NOT NULL DEFAULT 0,
-pusat_diagnostik INT NOT NULL DEFAULT 0,
-harapan_hidup INT NOT NULL DEFAULT 0,
-indeks_kesehatan INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
 DROP TABLE IF EXISTS database_kesehatan;
 CREATE TABLE database_kesehatan (
 id INT PRIMARY KEY,

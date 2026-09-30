@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS database_alokasi_subsidi;
 CREATE TABLE database_alokasi_subsidi (
 id SERIAL NOT NULL PRIMARY KEY,
 country_id INT NOT NULL,

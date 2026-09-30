@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS database_sektor_peternakan;
 CREATE TABLE database_sektor_peternakan (
 id INT NOT NULL,
 country varchar(100) NOT NULL,

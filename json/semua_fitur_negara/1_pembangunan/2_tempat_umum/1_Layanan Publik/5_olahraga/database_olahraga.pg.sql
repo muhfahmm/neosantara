@@ -1,32 +1,3 @@
-CREATE TABLE database_olahraga (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-kolam_renang INT NOT NULL DEFAULT 0,
-sirkuit_balap INT NOT NULL DEFAULT 0,
-stadion INT NOT NULL DEFAULT 0,
-stadion_internasional INT NOT NULL DEFAULT 0,
-gym INT NOT NULL DEFAULT 0,
-golf INT NOT NULL DEFAULT 0,
-esports INT NOT NULL DEFAULT 0,
-gokart INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
-DROP TABLE IF EXISTS database_olahraga;
-CREATE TABLE database_olahraga (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-kolam_renang INT NOT NULL DEFAULT 0,
-sirkuit_balap INT NOT NULL DEFAULT 0,
-stadion INT NOT NULL DEFAULT 0,
-stadion_internasional INT NOT NULL DEFAULT 0,
-gym INT NOT NULL DEFAULT 0,
-golf INT NOT NULL DEFAULT 0,
-esports INT NOT NULL DEFAULT 0,
-gokart INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
 DROP TABLE IF EXISTS database_olahraga;
 CREATE TABLE database_olahraga (
 id INT PRIMARY KEY,

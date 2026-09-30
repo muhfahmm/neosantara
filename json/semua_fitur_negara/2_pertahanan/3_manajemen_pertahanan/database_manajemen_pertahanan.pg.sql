@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS database_manajemen_pertahanan;
 CREATE TABLE database_manajemen_pertahanan (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
@@ -218,5 +219,3 @@ id, country, country_slug, barak, gudang_senjata, hangar_tank, pangkalan_udara, 
 (205, 'Suriname', 'suriname', 1, 1, 1, 1, 0),
 (206, 'Uruguay', 'uruguay', 3, 1, 1, 1, 1),
 (207, 'Venezuela', 'venezuela', 16, 1, 1, 1, 1);
-DROP TABLE IF EXISTS database_sda;
-DROP TABLE IF EXISTS database_sda;

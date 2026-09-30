@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS database_manufaktur;
 CREATE TABLE database_manufaktur (
 id INT NOT NULL,
 country varchar(100) NOT NULL,

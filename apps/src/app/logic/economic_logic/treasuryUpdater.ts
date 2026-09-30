@@ -2,8 +2,6 @@ import { calculateIncomeAtRate } from './2_tax_logic/taxLogic';
 import { calculateGoldMiningDailyProduction } from './goldIncome';
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from './departments';
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
-import { getTourismTotalIncome } from "@/../../json/database_tempat_wisata/index";
-// Data level kabinet dibaca langsung dari detail (di-inject MySQL via country-data/route.ts)
 
 const getNestedValue = (obj: any, path: string[]) => {
   return path.reduce((current, key) => {
@@ -26,66 +24,59 @@ const getTaxRate = (detail: any, key: string, fallback: number, legacyPath: stri
   return toNumber(value, fallback);
 };
 
-export const calculateTotalTaxIncome = (detail: any) => {
-  const incomeTax = getTaxRate(detail, 'income_tax', 15, ['pajak', 'penghasilan', 'tarif']);
-  const corporateTax = getTaxRate(detail, 'corporate', 22, ['pajak', 'korporasi', 'tarif']);
-  const vat = getTaxRate(detail, 'ppn', 10, ['pajak', 'ppn', 'tarif']);
-  const cigaretteTax = getTaxRate(detail, 'cigarette_tax', 15, ['pajak', 'bea_cukai', 'tarif']);
-  const environmentTax = getTaxRate(detail, 'environment_tax', 5, ['pajak', 'lingkungan', 'tarif']);
-
-  return (
-    calculateIncomeAtRate(incomeTax, 500) +
-    calculateIncomeAtRate(corporateTax, 500) +
-    calculateIncomeAtRate(vat, 500) +
-    calculateIncomeAtRate(cigaretteTax, 500) +
-    calculateIncomeAtRate(environmentTax, 500)
-  );
+export const getTourismTotalIncome = (detail: any): number => {
+  if (!detail || typeof detail !== 'object') return 0;
+  if (typeof detail.total_wisata_penghasilan === 'number') return detail.total_wisata_penghasilan;
+  if (typeof detail.wisata_penghasilan === 'number') return detail.wisata_penghasilan;
+  
+  if (Array.isArray(detail.tempat_wisata)) {
+    return detail.tempat_wisata.reduce((sum: number, item: any) => sum + (Number(item?.penghasilan) || 0), 0);
+  }
+  if (Array.isArray(detail.wisata_items)) {
+    return detail.wisata_items.reduce((sum: number, item: any) => sum + (Number(item?.penghasilan) || 0), 0);
+  }
+  return 0;
 };
 
-export const getDepartmentLevel = (detail: any, deptOrId: Department | string): number => {
+export const calculateTotalTaxIncome = (detail: any) => {
+  if (!detail || typeof detail !== 'object') return 0;
+
+  const ppnRate = getTaxRate(detail, 'tarif_ppn', 10, ['pajak', 'ppn', 'tarif']);
+  const korporasiRate = getTaxRate(detail, 'tarif_korporasi', 22, ['pajak', 'korporasi', 'tarif']);
+  const penghasilanRate = getTaxRate(detail, 'tarif_penghasilan', 15, ['pajak', 'penghasilan', 'tarif']);
+  const beaCukaiRate = getTaxRate(detail, 'tarif_bea_cukai', 5, ['pajak', 'bea_cukai', 'tarif']);
+  const lingkunganRate = getTaxRate(detail, 'tarif_lingkungan', 5, ['pajak', 'lingkungan', 'tarif']);
+
+  const ppnIncome = calculateIncomeAtRate(ppnRate, 500);
+  const korporasiIncome = calculateIncomeAtRate(korporasiRate, 500);
+  const penghasilanIncome = calculateIncomeAtRate(penghasilanRate, 500);
+  const beaCukaiIncome = calculateIncomeAtRate(beaCukaiRate, 200);
+  const lingkunganIncome = calculateIncomeAtRate(lingkunganRate, 200);
+
+  return ppnIncome + korporasiIncome + penghasilanIncome + beaCukaiIncome + lingkunganIncome;
+};
+
+export const getDepartmentLevel = (detail: any, dept: Department): number => {
   if (!detail || typeof detail !== 'object') return 1;
-  const deptId = typeof deptOrId === 'string' ? deptOrId : deptOrId.id;
-  const cleanId = deptId.replace(/-/g, '_');
-  const noLayanan = cleanId.replace(/^layanan_/, '');
-  const noKem = cleanId.replace(/^kem_/, '');
-  const noKeam = cleanId.replace(/^keamanan_/, '');
-
-  const candidates = [
-    `level_${deptId}`,
-    `level_${cleanId}`,
-    `level_${noLayanan}`,
-    `level_${noKem}`,
-    `level_${noKeam}`,
-    `kem_${cleanId}`,
-    `keamanan_${cleanId}`,
-    `layanan_${cleanId}`,
-    `layanan_${noLayanan}`,
-    `keamanan_${noKeam}`,
-    cleanId,
-    deptId
-  ];
-
-  for (const k of candidates) {
-    if (detail[k] !== undefined && detail[k] !== null && detail[k] !== '') {
-      const val = Number(detail[k]);
-      if (!isNaN(val) && val > 0) return val;
-    }
-  }
-
-  return 1;
+  const key = dept.id.replace(/-/g, '_');
+  const fieldName = KEMENTERIAN.some(k => k.id === dept.id) ? `kem_${key}` :
+                    KEAMANAN.some(k => k.id === dept.id) ? `keamanan_${key}` :
+                    `layanan_${key}`;
+  const val = detail[fieldName] ?? detail[`level_${key}`] ?? detail[key] ?? getNestedValue(detail, ['kabinet', fieldName]);
+  return toNumber(val, 1);
 };
 
 export const calculateTotalMinistryCostPerDay = (detail: any) => {
   if (!detail || typeof detail !== 'object') return 0;
 
-  const departments = [...KEMENTERIAN, ...KEAMANAN, ...LAYANAN];
-  return departments.reduce((total, dept) => {
+  const allDepts: Department[] = [...KEMENTERIAN, ...KEAMANAN, ...LAYANAN];
+  return allDepts.reduce((total, dept) => {
     const level = getDepartmentLevel(detail, dept);
     return total + getDailyMinistryCost(level);
   }, 0);
 };
 
-export const calculateCountryGDP = (detail: any) => {
+export const calculateTotalPDB = (detail: any) => {
   if (!detail || typeof detail !== 'object') return 0;
   const totalTaxIncome = calculateTotalTaxIncome(detail);
   const goldIncome = calculateGoldMiningDailyProduction(detail);

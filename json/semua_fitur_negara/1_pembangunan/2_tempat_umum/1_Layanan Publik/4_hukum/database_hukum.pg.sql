@@ -1,32 +1,3 @@
-CREATE TABLE database_hukum (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-pusat_bantuan_hukum INT NOT NULL DEFAULT 0,
-pengadilan INT NOT NULL DEFAULT 0,
-kejaksaan INT NOT NULL DEFAULT 0,
-pos_polisi INT NOT NULL DEFAULT 0,
-armada_mobil_polisi INT NOT NULL DEFAULT 0,
-akademi_polisi INT NOT NULL DEFAULT 0,
-indeks_korupsi INT NOT NULL DEFAULT 0,
-indeks_keamanan INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
-DROP TABLE IF EXISTS database_hukum;
-CREATE TABLE database_hukum (
-id INT NOT NULL,
-country varchar(100) NOT NULL,
-country_slug varchar(100) NOT NULL,
-pusat_bantuan_hukum INT NOT NULL DEFAULT 0,
-pengadilan INT NOT NULL DEFAULT 0,
-kejaksaan INT NOT NULL DEFAULT 0,
-pos_polisi INT NOT NULL DEFAULT 0,
-armada_mobil_polisi INT NOT NULL DEFAULT 0,
-akademi_polisi INT NOT NULL DEFAULT 0,
-indeks_korupsi INT NOT NULL DEFAULT 0,
-indeks_keamanan INT NOT NULL DEFAULT 0,
-PRIMARY KEY (id)
-);
 DROP TABLE IF EXISTS database_hukum;
 CREATE TABLE database_hukum (
 id INT PRIMARY KEY,
