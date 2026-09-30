@@ -217,4 +217,3 @@ id, country, country_slug, mall, hotel, pusat_grosir_tekstil
 (205, 'Suriname', 'suriname', 17, 2, 0),
 (206, 'Uruguay', 'uruguay', 56, 2, 0),
 (207, 'Venezuela', 'venezuela', 16, 0, 0);
--- ========================================================

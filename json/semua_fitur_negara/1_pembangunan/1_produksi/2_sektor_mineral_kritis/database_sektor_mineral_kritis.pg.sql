@@ -222,4 +222,3 @@ INSERT INTO database_sektor_mineral_kritis (id, country, country_slug, bijih_bes
 (205, 'Suriname', 'suriname', 0, 0, 0, 1, 0, 6, 0, 0, 0),
 (206, 'Uruguay', 'uruguay', 25, 0, 0, 10, 0, 0, 0, 0, 0),
 (207, 'Venezuela', 'venezuela', 50, 0, 0, 0, 13, 11, 5, 0, 4);
--- ========================================================
