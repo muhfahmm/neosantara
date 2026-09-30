@@ -354,7 +354,7 @@ export default function TabelNegaraPage() {
             <div>
               <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-widest">Total Kas Global</p>
               <p className="text-xl font-black text-[#E0E0E0] mt-0.5">
-                {isLoading ? '...' : `${summary.totalKas.toLocaleString('id-ID')} EM`}
+                {isLoading ? '...' : `${summary.totalKas.toLocaleString('id-ID')} NEO`}
               </p>
             </div>
           </div>
@@ -372,7 +372,7 @@ export default function TabelNegaraPage() {
               >
                 {isLoading
                   ? '...'
-                  : `${summary.totalNetto >= 0 ? '+' : ''}${summary.totalNetto.toLocaleString('id-ID')} EM`}
+                  : `${summary.totalNetto >= 0 ? '+' : ''}${summary.totalNetto.toLocaleString('id-ID')} NEO`}
               </p>
             </div>
           </div>
@@ -556,7 +556,7 @@ export default function TabelNegaraPage() {
 
                       {/* Column 5: Kas Negara */}
                       <td className="py-4 px-6 text-right font-mono font-bold text-[#00FFAA]">
-                        {country.treasury ? `${country.treasury.toLocaleString('id-ID')} EM` : '0 EM'}
+                        {country.treasury ? `${country.treasury.toLocaleString('id-ID')} NEO` : '0 NEO'}
                       </td>
 
                       {/* Column 6: Netto APBN */}
@@ -569,7 +569,7 @@ export default function TabelNegaraPage() {
                           }`}
                         >
                           {country.netBalance >= 0 ? '+' : ''}
-                          {country.netBalance.toLocaleString('id-ID')} EM
+                          {country.netBalance.toLocaleString('id-ID')} NEO
                         </span>
                       </td>
                     </tr>

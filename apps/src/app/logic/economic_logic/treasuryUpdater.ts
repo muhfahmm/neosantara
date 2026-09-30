@@ -1,7 +1,7 @@
 import { calculateIncomeAtRate } from './2_tax_logic/taxLogic';
 import { calculateGoldMiningDailyProduction } from './goldIncome';
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from './departments';
-import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from '../../page/navigasi_menu/2_navigasi_bawah/4_ekonomi/8_kebijakan_subsidi/logic/logikaSubsidi';
+import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
 // Data level kabinet dibaca langsung dari detail (di-inject MySQL via country-data/route.ts)
 
 const getNestedValue = (obj: any, path: string[]) => {
@@ -121,5 +121,5 @@ export const calculateGoldIncome = calculateGoldMiningDailyProduction;
 export const calculateMinistryCost = calculateTotalMinistryCostPerDay;
 
 export const formatCurrencyEM = (amount: number) => {
-  return `${Math.round(amount).toLocaleString('id-ID')} EM`;
+  return `${Math.round(amount).toLocaleString('id-ID')} NEO`;
 };

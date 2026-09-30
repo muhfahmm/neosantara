@@ -25,13 +25,13 @@ export const REQUIREMENTS: BuildingRequirements[] = [
   {
     buildingKey: 'tank_tempur_utama',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 15000 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 15000 },
     ],
   },
   {
     buildingKey: 'apc_ifv',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 10000 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 10000 },
     ],
   },
 ];

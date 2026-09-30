@@ -262,7 +262,7 @@ export default function InfoBangunan({
 
             <div className="flex justify-between items-center border-t border-[#00FFAA]/10 pt-2 mt-2">
               <span className="text-[#6B8A8A]">Biaya Pembangunan:</span>
-              <span className="text-[#00FFAA] font-black">{(Number(bMeta?.biaya_pembangunan) || 0).toLocaleString('id-ID')} EM</span>
+              <span className="text-[#00FFAA] font-black">{(Number(bMeta?.biaya_pembangunan) || 0).toLocaleString('id-ID')} NEO</span>
             </div>
             {bMeta?.waktu_pembangunan !== undefined && (
               <div className="flex justify-between items-center">

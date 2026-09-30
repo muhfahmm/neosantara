@@ -130,12 +130,12 @@ export default function KonfirmasiPembangunanModal({
             <div className="flex justify-between font-bold">
               <span className="text-[#6B8A8A]">Biaya Pembangunan (Total):</span>
               <span className="text-[#00FFAA] font-black">
-                {loadingMetadata ? 'Memuat...' : `${totalCost.toLocaleString('id-ID')} EM`}
+                {loadingMetadata ? 'Memuat...' : `${totalCost.toLocaleString('id-ID')} NEO`}
               </span>
             </div>
             <div className="flex justify-between text-xs text-[#6B8A8A]">
               <span>Biaya per bangunan:</span>
-              <span className="text-[#E0E0E0]">{cost.toLocaleString('id-ID')} EM</span>
+              <span className="text-[#E0E0E0]">{cost.toLocaleString('id-ID')} NEO</span>
             </div>
 
             <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-xl p-4 mt-3 text-xs text-[#E0E0E0]">
@@ -290,7 +290,7 @@ export default function KonfirmasiPembangunanModal({
 
           <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-1">
             <span className="text-[#6B8A8A]">Kas Negara Saat Ini:</span>
-            <span className="text-[#00FFAA]">{anggaran.toLocaleString('id-ID')} EM</span>
+            <span className="text-[#00FFAA]">{anggaran.toLocaleString('id-ID')} NEO</span>
           </div>
         </div>
 

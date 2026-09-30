@@ -76,7 +76,7 @@ export default function KonfirmasiArmadaAktifModal({
 
   // 🔥 Total biaya = biaya per-unit × jumlah unit yang mau dibangun.
   // Untuk infanteri, sesuai desain yang sudah ada sebelumnya, perekrutan
-  // pasukan tidak dikenakan biaya EM dari kas negara (hanya kapasitas
+  // pasukan tidak dikenakan biaya NEO dari kas negara (hanya kapasitas
   // barak yang berlaku) — jadi totalCost untuk infanteri = 0.
   const totalCost = capacityType === "infanteri" ? 0 : costPerUnit * (buildAmount || 0);
 
@@ -414,7 +414,7 @@ export default function KonfirmasiArmadaAktifModal({
                 <div>
                   <p className="text-sm font-black uppercase tracking-wider text-rose-400">Kas Negara Tidak Cukup</p>
                   <p className="text-xs leading-relaxed text-[#E0E0E0] mt-1">
-                    Total biaya pembangunan ({totalCost.toLocaleString('id-ID')} EM) melebihi kas negara saat ini ({anggaran.toLocaleString('id-ID')} EM). Kurangi jumlah unit atau tunggu kas negara bertambah.
+                    Total biaya pembangunan ({totalCost.toLocaleString('id-ID')} NEO) melebihi kas negara saat ini ({anggaran.toLocaleString('id-ID')} NEO). Kurangi jumlah unit atau tunggu kas negara bertambah.
                   </p>
                 </div>
               </div>
@@ -500,7 +500,7 @@ export default function KonfirmasiArmadaAktifModal({
               <div className="flex justify-between font-bold">
                 <span className="text-[#6B8A8A]">Biaya Pembangunan:</span>
                 <span className="text-[#00FFAA] font-black">
-                  {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID')} EM`}
+                  {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID')} NEO`}
                 </span>
               </div>
             ) : (
@@ -508,13 +508,13 @@ export default function KonfirmasiArmadaAktifModal({
                 <div className="flex justify-between">
                   <span className="text-[#6B8A8A]">Biaya per Unit:</span>
                   <span className="text-[#E0E0E0] font-bold">
-                    {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID')} EM`}
+                    {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID')} NEO`}
                   </span>
                 </div>
                 <div className="flex justify-between font-bold">
                   <span className="text-[#6B8A8A]">Total Biaya ({buildAmount.toLocaleString('id-ID')} unit):</span>
                   <span className={isAnggaranCukup ? "text-[#00FFAA] font-black" : "text-rose-400 font-black"}>
-                    {loadingMetadata ? 'Memuat...' : `${totalCost.toLocaleString('id-ID')} EM`}
+                    {loadingMetadata ? 'Memuat...' : `${totalCost.toLocaleString('id-ID')} NEO`}
                   </span>
                 </div>
               </>
@@ -590,14 +590,14 @@ export default function KonfirmasiArmadaAktifModal({
 
           <div className="flex justify-between items-center text-xs font-black pt-1">
             <span className="text-[#6B8A8A]">Kas Negara Saat Ini:</span>
-            <span className="text-[#00FFAA]">{anggaran.toLocaleString('id-ID')} EM</span>
+            <span className="text-[#00FFAA]">{anggaran.toLocaleString('id-ID')} NEO</span>
           </div>
 
           {capacityType !== "infanteri" && buildAmount > 0 && (
             <div className="flex justify-between items-center text-xs font-bold pt-1">
               <span className="text-[#6B8A8A]">Sisa Kas Setelah Pembangunan:</span>
               <span className={isAnggaranCukup ? "text-emerald-400 font-black" : "text-rose-400 font-black"}>
-                {(anggaran - totalCost).toLocaleString('id-ID')} EM
+                {(anggaran - totalCost).toLocaleString('id-ID')} NEO
               </span>
             </div>
           )}

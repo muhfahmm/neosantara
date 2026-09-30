@@ -296,7 +296,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                   <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
                     {isLoadingDetail
                       ? <span className="inline-block w-16 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
-                      : detailData?.anggaran !== undefined ? `${detailData.anggaran.toLocaleString('id-ID')} EM` : '-'
+                      : detailData?.anggaran !== undefined ? `${detailData.anggaran.toLocaleString('id-ID')} NEO` : '-'
                     }
                   </span>
                   {!isLoadingDetail && detailData && (

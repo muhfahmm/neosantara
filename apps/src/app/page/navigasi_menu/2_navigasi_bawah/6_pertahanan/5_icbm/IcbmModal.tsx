@@ -335,7 +335,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
                   <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Kas Negara</p>
-                  <div className="text-lg font-black text-[#00FFAA] leading-tight break-words">{currentCash.toLocaleString('id-ID')} <span className="text-[10px] text-[#6B8A8A] font-bold">EM</span></div>
+                  <div className="text-lg font-black text-[#00FFAA] leading-tight break-words">{currentCash.toLocaleString('id-ID')} <span className="text-[10px] text-[#6B8A8A] font-bold">NEO</span></div>
                 </div>
 
                 <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">

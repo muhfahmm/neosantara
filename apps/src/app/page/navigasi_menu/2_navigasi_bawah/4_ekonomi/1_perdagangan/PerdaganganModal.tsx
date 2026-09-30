@@ -459,7 +459,7 @@ export default function PerdaganganModal({
                         <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-semibold text-[#E0E0E0]">{item.tanggal}</td>
                         <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-bold uppercase"><span className={item.tipe === "jual" ? "text-rose-400" : "text-emerald-400"}>{item.tipe}</span></td>
                         <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-semibold text-[#E0E0E0]">{item.kuantitas}</td>
-                        <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-bold text-[#00FFAA]">{item.tipe === "jual" ? "+" : "-"} {item.biaya.toLocaleString("id-ID")} EM</td>
+                        <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-bold text-[#00FFAA]">{item.tipe === "jual" ? "+" : "-"} {item.biaya.toLocaleString("id-ID")} NEO</td>
                         <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-semibold text-[#E0E0E0]">{item.negara}</td>
                       </tr>
                     ))

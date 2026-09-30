@@ -3,7 +3,7 @@
 
 import React from "react";
 import { Info } from "lucide-react";
-import { SubsidyItem, formatCurrencyCompact } from "../../logic/logikaSubsidi";
+import { SubsidyItem, formatCurrencyCompact } from "@/../../json/database_kebijakan_subsidi/index";
 
 interface Props {
   items: SubsidyItem[];

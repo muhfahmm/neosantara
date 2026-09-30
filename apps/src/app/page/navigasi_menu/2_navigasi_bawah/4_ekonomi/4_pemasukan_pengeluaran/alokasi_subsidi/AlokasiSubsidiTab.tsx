@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Zap, Utensils, GraduationCap, Bus, Store, ShieldAlert } from "lucide-react";
-import { INITIAL_SUBSIDY_ITEMS, SubsidyItem } from "../../8_kebijakan_subsidi/logic/logikaSubsidi";
+import { INITIAL_SUBSIDY_ITEMS, SubsidyItem, clampSubsidyCost } from "@/../../json/database_kebijakan_subsidi/index";
 import { getSubsidiBySlug } from "@/../../json/database_alokasi_subsidi/index";
 
 interface AlokasiSubsidiTabProps {
@@ -13,6 +13,7 @@ const resolveSubsidyItemsForCountry = (countryDetail: any): SubsidyItem[] => {
   if (countryDetail?.subsidy_states) {
     return INITIAL_SUBSIDY_ITEMS.map((item) => ({
       ...item,
+      budgetCost: clampSubsidyCost(item.budgetCost),
       isSubsidized: (countryDetail.subsidy_states as Record<string, boolean>)[item.id] ?? item.isSubsidized,
     }));
   }
@@ -36,11 +37,14 @@ const resolveSubsidyItemsForCountry = (countryDetail: any): SubsidyItem[] => {
           isSub = true;
         }
       }
-      return { ...item, isSubsidized: isSub };
+      return { ...item, budgetCost: clampSubsidyCost(item.budgetCost), isSubsidized: isSub };
     });
   }
 
-  return INITIAL_SUBSIDY_ITEMS;
+  return INITIAL_SUBSIDY_ITEMS.map((item) => ({
+    ...item,
+    budgetCost: clampSubsidyCost(item.budgetCost),
+  }));
 };
 
 const CATEGORIES = [

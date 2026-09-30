@@ -28,7 +28,7 @@ layanan_bank_sentral INT DEFAULT 0
 INSERT INTO database_level_kabinet (
 id, country, country_slug, kem_infrastruktur, kem_pendidikan, kem_sains, kem_kesehatan, kem_olahraga, kem_kehakiman, kem_luar_negeri, kem_kebudayaan, kem_pariwisata, kem_lingkungan, kem_perumahan, kem_pembangunan, kem_perdagangan, kem_keuangan, keamanan_pertahanan, keamanan_dinas_keamanan, keamanan_polisi, keamanan_garda_nasional, keamanan_komandan_angkatan_darat, keamanan_komandan_armada, layanan_darurat, layanan_bank_sentral
 ) VALUES
--- Level kabinet: 0 = tidak aktif, 1-20 = aktif. Biaya harian per departemen = 10 EM x level (minimum level 1, jadi kabinet minimal 220 EM).
+-- Level kabinet: 0 = tidak aktif, 1-20 = aktif. Biaya harian per departemen = 10 NEO x level (minimum level 1, jadi kabinet minimal 220 NEO).
 -- Negara tanpa tambang emas (102 negara) disesuaikan agar Pajak - Subsidi - (10 x jumlah level) >= 0 bila memungkinkan.
 -- NEGARA KAYA (1-30)
 (1, 'Amerika Serikat', 'amerika_serikat', 9, 10, 10, 9, 8, 9, 9, 8, 8, 9, 9, 9, 8, 9, 8, 8, 8, 8, 8, 8, 8, 9),

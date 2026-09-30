@@ -23,7 +23,7 @@ export function generateAITradeBeliNotification(
     id: `trade-beli-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     title: `💼 Penawaran Dagang: Beli ${formatProduct} dari ${partnerName}`,
     sender: `Kementerian Perdagangan ${partnerName}`,
-    message: `Salam hormat Presiden. Mitra dagang kita, ${partnerName}, mengajukan penawaran ekspor khusus kepada kita. Mereka berniat menjual ${quantity.toLocaleString('id-ID')} unit ${formatProduct} dengan harga kompetitif sebesar ${pricePerUnit.toLocaleString('id-ID')} EM/unit (Total: ${totalPrice.toLocaleString('id-ID')} EM). Penawaran ini sangat menguntungkan bagi kebutuhan industri nasional kita. Apakah Anda bersedia menyetujui transaksi pembelian ini?`,
+    message: `Salam hormat Presiden. Mitra dagang kita, ${partnerName}, mengajukan penawaran ekspor khusus kepada kita. Mereka berniat menjual ${quantity.toLocaleString('id-ID')} unit ${formatProduct} dengan harga kompetitif sebesar ${pricePerUnit.toLocaleString('id-ID')} NEO/unit (Total: ${totalPrice.toLocaleString('id-ID')} NEO). Penawaran ini sangat menguntungkan bagi kebutuhan industri nasional kita. Apakah Anda bersedia menyetujui transaksi pembelian ini?`,
     timestamp: dateStr,
     type: 'kesejahteraan', // Gunakan tipe bawaan yang kompatibel dengan state atau filter utama
     value: 0,

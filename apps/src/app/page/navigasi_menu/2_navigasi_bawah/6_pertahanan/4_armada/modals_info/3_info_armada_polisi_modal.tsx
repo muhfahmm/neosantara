@@ -53,7 +53,7 @@ export default function InfoArmadaPolisiModal({
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
               <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Biaya Pembangunan</p>
               <p className="text-base font-black text-[#00FFAA]">
-                {formatNumber(selectedItem?.biaya_pembangunan)} EM
+                {formatNumber(selectedItem?.biaya_pembangunan)} NEO
               </p>
             </div>
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">

@@ -395,7 +395,7 @@ export default function PilihNegaraPage() {
             <StatusItem
               icon={<Landmark className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-[#00FFAA]" />}
               label="KAS NEGARA"
-              value={hasInteracted && countryDetail ? `${countryDetail?.anggaran || 0} EM` : '-'}
+              value={hasInteracted && countryDetail ? `${countryDetail?.anggaran || 0} NEO` : '-'}
             />
 
             <StatusItem

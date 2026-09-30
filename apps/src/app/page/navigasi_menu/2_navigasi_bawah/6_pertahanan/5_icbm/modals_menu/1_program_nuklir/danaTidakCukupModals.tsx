@@ -72,15 +72,15 @@ export default function DanaTidakCukupModals({
             <div className="bg-[#e4dac3]/20 border border-[#C4B49C]/30 p-6 rounded-xl space-y-3">
               <div className="flex justify-between text-xs font-bold text-[#5c3c10]">
                 <span>Kas Anggaran Saat Ini:</span>
-                <span className="text-rose-700">{currentBudget.toLocaleString("id-ID")} EM</span>
+                <span className="text-rose-700">{currentBudget.toLocaleString("id-ID")} NEO</span>
               </div>
               <div className="flex justify-between text-xs font-bold text-[#5c3c10]">
                 <span>Biaya yang Dibutuhkan:</span>
-                <span className="text-emerald-700">{requiredBudget.toLocaleString("id-ID")} EM</span>
+                <span className="text-emerald-700">{requiredBudget.toLocaleString("id-ID")} NEO</span>
               </div>
               <div className="flex justify-between text-xs font-bold text-rose-700 border-t border-[#C4B49C]/20 pt-3">
                 <span>Total Kekurangan Dana:</span>
-                <span>- {kekurangan.toLocaleString("id-ID")} EM</span>
+                <span>- {kekurangan.toLocaleString("id-ID")} NEO</span>
               </div>
             </div>
 

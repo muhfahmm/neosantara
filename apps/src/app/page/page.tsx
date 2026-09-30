@@ -625,7 +625,7 @@ const TelemetryReadout = () => {
                 <span className="text-[8px] tracking-[0.25em] text-emerald-500/70 font-bold">SYSTEM TELEMETRY</span>
             </div>
             <Row icon={Cpu} label="CPU" value={data.cpu} unit="%" />
-            <Row icon={HardDrive} label="MEM" value={data.mem} unit="%" />
+            <Row icon={HardDrive} label="M NEO" value={data.mem} unit="%" />
             <Row icon={Wifi} label="NET" value={data.net} unit="MB/s" />
         </motion.div>
     );
@@ -1224,7 +1224,7 @@ export default function PlayMenuPage() {
                                                                 </span>
                                                                 <span className="flex items-center gap-1.5">
                                                                     <Landmark className="w-3.5 h-3.5 text-amber-500" />
-                                                                    {save.anggaran ? `${save.anggaran.toLocaleString('id-ID')} EM` : '0 EM'}
+                                                                    {save.anggaran ? `${save.anggaran.toLocaleString('id-ID')} NEO` : '0 NEO'}
                                                                 </span>
                                                                 <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 uppercase tracking-wider font-extrabold shrink-0">
                                                                     {save.ideology || '-'}

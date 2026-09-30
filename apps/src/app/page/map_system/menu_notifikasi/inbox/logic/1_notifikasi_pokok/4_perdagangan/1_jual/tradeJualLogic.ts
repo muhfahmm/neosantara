@@ -23,7 +23,7 @@ export function generateAITradeJualNotification(
     id: `trade-jual-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     title: `💰 Permintaan Pasar: ${partnerName} Ingin Membeli ${formatProduct}`,
     sender: `Delegasi Ekonomi ${partnerName}`,
-    message: `Lapor Presiden! Negara mitra kita, ${partnerName}, sedang mengalami defisit komoditas ${formatProduct} dan berniat mengimpor dari kita. Mereka menawarkan kontrak pembelian sebesar ${quantity.toLocaleString('id-ID')} unit ${formatProduct} dengan harga ${pricePerUnit.toLocaleString('id-ID')} EM/unit (Total nilai ekspor: ${totalPrice.toLocaleString('id-ID')} EM). Ini kesempatan emas untuk meningkatkan devisa kas negara!`,
+    message: `Lapor Presiden! Negara mitra kita, ${partnerName}, sedang mengalami defisit komoditas ${formatProduct} dan berniat mengimpor dari kita. Mereka menawarkan kontrak pembelian sebesar ${quantity.toLocaleString('id-ID')} unit ${formatProduct} dengan harga ${pricePerUnit.toLocaleString('id-ID')} NEO/unit (Total nilai ekspor: ${totalPrice.toLocaleString('id-ID')} NEO). Ini kesempatan emas untuk meningkatkan devisa kas negara!`,
     timestamp: dateStr,
     type: 'kepuasan', 
     value: 0,

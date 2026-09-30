@@ -69,7 +69,7 @@ export default function IdeologiConfirmModal({
 
             <div className="flex items-center gap-2.5 mt-4 text-sm font-bold text-[#E0E0E0] bg-[#051111] px-4 py-2 rounded-xl border border-[#00FFAA]/20">
               <Coins className="w-4 h-4 text-[#00D68F]" />
-              <span>{cost.toLocaleString('id-ID')} EM</span>
+              <span>{cost.toLocaleString('id-ID')} NEO</span>
             </div>
 
             {/* ACTION BUTTONS */}

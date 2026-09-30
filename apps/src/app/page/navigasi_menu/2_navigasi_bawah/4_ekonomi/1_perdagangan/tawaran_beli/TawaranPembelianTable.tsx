@@ -80,8 +80,8 @@ export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, 
                   </td>
                   <td className="px-4 py-3 text-xs font-bold text-[#00FFAA]">{formatLabel(offer.productKey)}</td>
                   <td className="px-4 py-3 text-xs font-semibold text-[#E0E0E0]">{offer.quantity.toLocaleString()}</td>
-                  <td className="px-4 py-3 text-xs text-[#6B8A8A]">{offer.pricePerUnit.toLocaleString("id-ID")} EM</td>
-                  <td className="px-4 py-3 text-xs font-bold text-[#00FFAA]">{offer.totalPrice.toLocaleString("id-ID")} EM</td>
+                  <td className="px-4 py-3 text-xs text-[#6B8A8A]">{offer.pricePerUnit.toLocaleString("id-ID")} NEO</td>
+                  <td className="px-4 py-3 text-xs font-bold text-[#00FFAA]">{offer.totalPrice.toLocaleString("id-ID")} NEO</td>
                   <td className="px-4 py-3 flex justify-center">
                     {!isExpired ? (
                       <button

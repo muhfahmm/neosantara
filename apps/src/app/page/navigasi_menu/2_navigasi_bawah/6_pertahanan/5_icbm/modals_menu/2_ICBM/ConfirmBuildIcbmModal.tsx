@@ -43,7 +43,7 @@ export default function ConfirmBuildIcbmModal({
           <div className="space-y-4 text-sm text-[#5c3c10]">
             <p className="font-bold">Anda akan membangun <span className="text-[#1d5c4b]">{quantity} ICBM</span> dengan biaya:</p>
             <ul className="space-y-2 pl-4 list-disc text-[#5c3c10]">
-              <li>{totalCashCost.toLocaleString("id-ID")} EM</li>
+              <li>{totalCashCost.toLocaleString("id-ID")} NEO</li>
               <li>{totalUraniumCost} uranium</li>
               <li>Durasi: {totalBuildDays} hari</li>
               <li>Selesai pada: {completionDate}</li>

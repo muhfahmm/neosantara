@@ -171,8 +171,8 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
               <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-5">
                 <h3 className="text-xs sm:text-sm font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Kas Negara</h3>
                 <p className="text-[10px] sm:text-[11px] text-[#6B8A8A] mb-3">Saldo anggaran milik pengguna saat ini.</p>
-                <div className="text-2xl sm:text-3xl font-black text-[#00FFAA]">{currentCash.toLocaleString('id-ID')} EM</div>
-                <p className="text-[11px] text-rose-400 font-bold mt-3">Biaya: -{totalCashCost.toLocaleString('id-ID')} EM</p>
+                <div className="text-2xl sm:text-3xl font-black text-[#00FFAA]">{currentCash.toLocaleString('id-ID')} NEO</div>
+                <p className="text-[11px] text-rose-400 font-bold mt-3">Biaya: -{totalCashCost.toLocaleString('id-ID')} NEO</p>
               </div>
               <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-5">
                 <h3 className="text-xs sm:text-sm font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Stok Uranium</h3>

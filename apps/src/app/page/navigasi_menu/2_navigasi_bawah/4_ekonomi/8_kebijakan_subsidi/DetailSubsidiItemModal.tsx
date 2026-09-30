@@ -2,7 +2,7 @@
 
 import React from "react";
 import { X, HandHelping, Info, ShieldAlert, TrendingUp, TrendingDown, DollarSign, Check } from "lucide-react";
-import { SubsidyItem, formatCurrencyCompact } from "./logic/logikaSubsidi";
+import { SubsidyItem, formatCurrencyCompact } from "@/../../json/database_kebijakan_subsidi/index";
 
 interface DetailSubsidiItemModalProps {
   isOpen: boolean;

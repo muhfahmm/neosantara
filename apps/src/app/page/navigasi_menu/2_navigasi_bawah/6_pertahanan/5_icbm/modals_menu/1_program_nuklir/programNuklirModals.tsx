@@ -24,7 +24,7 @@ export default function ProgramNuklirModals({
   if (!isOpen) return null;
 
   const anggaran = countryDetail?.anggaran || 0;
-  const biayaProgram = 2500; // data logika harga 25.000.000 EM
+  const biayaProgram = 2500; // data logika harga 25.000.000 NEO
 
   const formatDateString = (date?: string | Date) => {
     if (!date) return "";
@@ -130,7 +130,7 @@ export default function ProgramNuklirModals({
             <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-5 sm:p-6 rounded-2xl space-y-3 shadow-inner">
               <div className="flex justify-between text-xs sm:text-sm font-bold text-[#E0E0E0]">
                 <span>Kas Anggaran Negara:</span>
-                <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} EM</span>
+                <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} NEO</span>
               </div>
               <div className="flex justify-between text-xs sm:text-sm font-bold text-[#E0E0E0]">
                 <span>Waktu Pembangunan:</span>
@@ -138,7 +138,7 @@ export default function ProgramNuklirModals({
               </div>
               <div className="flex justify-between text-xs sm:text-sm font-bold text-rose-400 border-t border-[#00FFAA]/20 pt-3">
                 <span>Biaya Riset & Pengembangan:</span>
-                <span>- {biayaProgram.toLocaleString("id-ID")} EM</span>
+                <span>- {biayaProgram.toLocaleString("id-ID")} NEO</span>
               </div>
             </div>
             {isProgramBuilding && (
@@ -159,7 +159,7 @@ export default function ProgramNuklirModals({
                 disabled={isProgramBuilding}
                 className={`px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-md transition-all ${isProgramBuilding ? 'bg-[#6B8A8A]/30 text-[#6B8A8A] cursor-not-allowed' : 'bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 active:scale-95 cursor-pointer'}`}
               >
-                Danai Program ({biayaProgram.toLocaleString("id-ID")} EM)
+                Danai Program ({biayaProgram.toLocaleString("id-ID")} NEO)
               </button>
             </div>
 

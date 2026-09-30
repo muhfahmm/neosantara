@@ -11,7 +11,7 @@ import {
 import { calculateGoldMiningDailyProduction, GOLD_MINING_PRODUCTION_PER_BUILDING } from "@/app/logic/economic_logic/goldIncome";
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from "@/app/logic/economic_logic/departments";
 import AlokasiSubsidiTab from "./alokasi_subsidi/AlokasiSubsidiTab";
-import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "../8_kebijakan_subsidi/logic/logikaSubsidi";
+import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
 import { getSubsidiBySlug } from "@/../../json/database_alokasi_subsidi/index";
 
 interface ModalProps {
@@ -229,7 +229,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                 </div>
                 <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-2 px-1">
                   <span className="text-[#6B8A8A]">Total Saldo Kas Negara:</span>
-                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} EM</span>
+                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} NEO</span>
                 </div>
               </div>
             )}
@@ -261,7 +261,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                 </div>
                 <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-2 px-1">
                   <span className="text-[#6B8A8A]">Total Saldo Kas Negara:</span>
-                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} EM</span>
+                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} NEO</span>
                 </div>
               </div>
             )}
@@ -423,7 +423,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
 
                 <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-2 px-1">
                   <span className="text-[#6B8A8A]">Total Saldo Kas Negara:</span>
-                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} EM</span>
+                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} NEO</span>
                 </div>
               </div>
             )}

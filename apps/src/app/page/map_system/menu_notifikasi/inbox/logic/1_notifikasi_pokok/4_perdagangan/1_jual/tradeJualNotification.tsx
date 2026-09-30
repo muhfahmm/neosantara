@@ -38,11 +38,11 @@ export default function TradeJualNotification({ notification, onAccept, onReject
           </div>
           <div>
             <div className="text-slate-400 text-[9px] uppercase">Harga Penawaran</div>
-            <div>{notification.pricePerUnit?.toLocaleString('id-ID')} EM</div>
+            <div>{notification.pricePerUnit?.toLocaleString('id-ID')} NEO</div>
           </div>
           <div>
             <div className="text-slate-400 text-[9px] uppercase">Total Pendapatan</div>
-            <div className="text-amber-700">{notification.totalPrice?.toLocaleString('id-ID')} EM</div>
+            <div className="text-amber-700">{notification.totalPrice?.toLocaleString('id-ID')} NEO</div>
           </div>
         </div>
 

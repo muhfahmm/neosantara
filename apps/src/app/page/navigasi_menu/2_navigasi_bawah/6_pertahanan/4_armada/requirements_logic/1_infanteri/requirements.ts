@@ -25,7 +25,7 @@ export const REQUIREMENTS: BuildingRequirements[] = [
   {
     buildingKey: 'pasukan_infanteri',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 5000 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 5000 },
     ],
   },
 ];

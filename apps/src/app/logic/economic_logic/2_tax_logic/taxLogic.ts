@@ -2,7 +2,7 @@
  * Tax Logic Module
  * 
  * Tax calculation logic with satisfaction impact analysis.
- * All monetary values are in EM (Economy Money) currency.
+ * All monetary values are in NEO currency.
  */
 
 // ============================================================================
@@ -88,7 +88,7 @@ export const TAX_CONFIGS: TaxConfig[] = [
  * Calculate income for a specific tax rate
  * @param taxRate - Tax rate percentage (0-100)
  * @param maxIncome - Maximum income at 100% rate
- * @returns Income amount in EM
+ * @returns Income amount in NEO
  */
 export function calculateIncomeAtRate(taxRate: number, maxIncome: number = 1000): number {
   if (taxRate <= 0) return 0;
@@ -203,7 +203,7 @@ export function getSatisfactionLevel(satisfaction: number): { color: string; lab
  * Format currency for display
  */
 export function formatCurrency(amount: number): string {
-  return amount.toLocaleString("id-ID") + " EM";
+  return amount.toLocaleString("id-ID") + " NEO";
 }
 
 /**

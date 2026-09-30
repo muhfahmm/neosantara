@@ -131,11 +131,11 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
       ...(prev || {}),
       ideology: selectedIdeology,
       anggaran: result.newAnggaran,
-      message: `Ideologi negara diubah ke ${selectedIdeology}. Biaya perubahan ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID')} EM.`
+      message: `Ideologi negara diubah ke ${selectedIdeology}. Biaya perubahan ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID')} NEO.`
     }));
     setFeedback({
       type: "success",
-      message: `Ideologi berhasil diubah menjadi ${selectedIdeology}. Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID')} EM telah dipotong.`
+      message: `Ideologi berhasil diubah menjadi ${selectedIdeology}. Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID')} NEO telah dipotong.`
     });
     setIsConfirmOpen(false);
   };
@@ -206,7 +206,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                   </div>
                   <div className="text-xs font-bold text-[#E0E0E0]">
                     <span>Anggaran:</span>
-                    <span className="ml-1.5 text-[#00FFAA]">{anggaran.toLocaleString('id-ID')} EM</span>
+                    <span className="ml-1.5 text-[#00FFAA]">{anggaran.toLocaleString('id-ID')} NEO</span>
                   </div>
                 </div>
 

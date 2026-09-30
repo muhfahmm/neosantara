@@ -58,9 +58,9 @@ export default function IdeologiGagalModal({
 
             <h3 className="text-2xl font-black text-[#E0E0E0] mb-2 text-center">Dana Tidak Cukup!</h3>
             <p className="text-sm text-[#6B8A8A] text-center mb-6 leading-relaxed">
-              Anda memerlukan <span className="font-black text-[#00FFAA]">{cost.toLocaleString('id-ID')} EM</span> untuk perubahan ini.
+              Anda memerlukan <span className="font-black text-[#00FFAA]">{cost.toLocaleString('id-ID')} NEO</span> untuk perubahan ini.
               <br />
-              Kas negara Anda saat ini: <span className="font-black text-rose-400">{currentMoney.toLocaleString('id-ID')} EM</span>
+              Kas negara Anda saat ini: <span className="font-black text-rose-400">{currentMoney.toLocaleString('id-ID')} NEO</span>
             </p>
 
             {/* BUTTONS */}
@@ -90,4 +90,4 @@ export default function IdeologiGagalModal({
     document.body
   );
 }
-
+

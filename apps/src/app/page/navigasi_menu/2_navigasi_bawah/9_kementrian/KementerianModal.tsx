@@ -432,7 +432,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                 </button>
               </div>
               <div className="text-[11px] sm:text-xs font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/20">
-                Kas: {money.toLocaleString("id-ID")} EM
+                Kas: {money.toLocaleString("id-ID")} NEO
               </div>
             </div>
 
@@ -509,7 +509,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 mb-2 text-[#E0E0E0] font-bold text-sm">
                             <span className="h-3 w-3 rounded-full bg-[#00FFAA] inline-block shadow-[0_0_8px_#00FFAA]" />
-                            {income.toLocaleString("id-ID")} EM per hari
+                            {income.toLocaleString("id-ID")} NEO per hari
                           </div>
 
                           <div className="flex gap-1">
@@ -537,11 +537,11 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                                       : filled
                                       ? `Klik untuk turun ke level ${boxLevel} (downgrade)`
                                       : canAffordJump
-                                      ? `Lompat ke level ${boxLevel}: ${jumpCost.toLocaleString("id-ID")} EM`
+                                      ? `Lompat ke level ${boxLevel}: ${jumpCost.toLocaleString("id-ID")} NEO`
                                       : willBeDailyNegative
                                       ? `Upgrade ini akan membuat pendapatan harian menjadi negatif` 
                                       : remainingCashAfterUpgrade < 0
-                                      ? `Kas saat ini tidak cukup untuk level ${boxLevel} (butuh ${jumpCost.toLocaleString("id-ID")} EM)`
+                                      ? `Kas saat ini tidak cukup untuk level ${boxLevel} (butuh ${jumpCost.toLocaleString("id-ID")} NEO)`
                                       : `Upgrade ini tidak didukung oleh kas dan pendapatan harian saat ini`
                                   }
                                   className={`h-4 flex-1 rounded-sm transition-all ${
@@ -563,7 +563,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                           title={
                             maxed
                               ? "Level maksimum"
-                              : `Upgrade 1 level: ${LEVEL_UP_COST[level + 1]?.toLocaleString("id-ID")} EM`
+                              : `Upgrade 1 level: ${LEVEL_UP_COST[level + 1]?.toLocaleString("id-ID")} NEO`
                           }
                           className={`h-12 w-12 shrink-0 rounded-lg border flex items-center justify-center ${
                             maxed
@@ -588,7 +588,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
 
                       {!maxed && (
                         <div className="px-4 pb-3 -mt-1 text-[10px] font-bold text-[#6B8A8A]">
-                          Upgrade ke level {level + 1}: <span className="text-[#00FFAA]">{LEVEL_UP_COST[level + 1]?.toLocaleString("id-ID")} EM</span> &nbsp;•&nbsp;
+                          Upgrade ke level {level + 1}: <span className="text-[#00FFAA]">{LEVEL_UP_COST[level + 1]?.toLocaleString("id-ID")} NEO</span> &nbsp;•&nbsp;
                           Tekan kotak level manapun untuk lompat langsung ke level tersebut
                         </div>
                       )}
@@ -716,7 +716,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                   <div key={stepLevel} className="flex justify-between text-[11px] font-bold text-[#6B8A8A]">
                     <span>Biaya dari level {stepLevel} ke {stepLevel + 1}:</span>
                     <span className="text-[#E0E0E0]">
-                      {LEVEL_UP_COST[stepLevel + 1].toLocaleString("id-ID")} EM
+                      {LEVEL_UP_COST[stepLevel + 1].toLocaleString("id-ID")} NEO
                     </span>
                   </div>
                 ))}
@@ -725,19 +725,19 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               <div className="flex justify-between items-center border-t border-[#00FFAA]/20 pt-3 mb-3">
                 <span className="text-xs font-bold text-[#6B8A8A] uppercase">Total Biaya:</span>
                 <span className="text-lg font-black text-[#00FFAA]">
-                  {confirmUpgrade.cost.toLocaleString("id-ID")} EM
+                  {confirmUpgrade.cost.toLocaleString("id-ID")} NEO
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-xs font-bold text-[#6B8A8A] uppercase">Kas Negara Sekarang:</span>
                 <span className="text-lg font-black text-[#E0E0E0]">
-                  {money.toLocaleString("id-ID")} EM
+                  {money.toLocaleString("id-ID")} NEO
                 </span>
               </div>
               <div className="border-t border-[#00FFAA]/20 mt-3 pt-3 flex justify-between items-center">
                 <span className="text-xs font-bold text-[#6B8A8A] uppercase">Kas Setelah Upgrade:</span>
                 <span className="text-lg font-black text-amber-400">
-                  {(money - confirmUpgrade.cost).toLocaleString("id-ID")} EM
+                  {(money - confirmUpgrade.cost).toLocaleString("id-ID")} NEO
                 </span>
               </div>
             </div>
@@ -802,11 +802,11 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               </p>
               <div className="flex justify-between items-center text-xs font-bold text-[#E0E0E0] border-t border-[#00FFAA]/20 pt-3">
                 <span>Biaya harian saat ini (level {confirmDowngrade.fromLevel}):</span>
-                <span className="text-rose-400">- {LEVEL_UP_COST[confirmDowngrade.fromLevel].toLocaleString("id-ID")} EM</span>
+                <span className="text-rose-400">- {LEVEL_UP_COST[confirmDowngrade.fromLevel].toLocaleString("id-ID")} NEO</span>
               </div>
               <div className="flex justify-between items-center text-xs font-bold text-[#E0E0E0] mt-1">
                 <span>Biaya harian baru (level {confirmDowngrade.targetLevel}):</span>
-                <span className="text-[#00FFAA]">- {LEVEL_UP_COST[confirmDowngrade.targetLevel].toLocaleString("id-ID")} EM</span>
+                <span className="text-[#00FFAA]">- {LEVEL_UP_COST[confirmDowngrade.targetLevel].toLocaleString("id-ID")} NEO</span>
               </div>
             </div>
 

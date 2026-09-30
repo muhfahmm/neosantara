@@ -208,7 +208,7 @@ export default function InfrastrukturMiliter({
 
     // 1. Cek kas negara
     if (currentAnggaran < totalCost) {
-      alert(`💰 Kas negara tidak mencukupi!\nDibutuhkan: ${formatNumber(totalCost)} EM\nTersedia: ${formatNumber(currentAnggaran)} EM`);
+      alert(`💰 Kas negara tidak mencukupi!\nDibutuhkan: ${formatNumber(totalCost)} NEO\nTersedia: ${formatNumber(currentAnggaran)} NEO`);
       return;
     }
 

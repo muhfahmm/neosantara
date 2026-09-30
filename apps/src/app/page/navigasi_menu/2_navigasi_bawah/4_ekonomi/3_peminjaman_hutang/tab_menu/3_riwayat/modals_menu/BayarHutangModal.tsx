@@ -53,7 +53,7 @@ export default function BayarHutangModal({
 
           <div className="flex flex-col items-center text-sm text-[#E0E0E0] mb-2 leading-relaxed max-w-sm font-medium">
             <span className="mb-1">
-              Anda akan membayar <span className="font-black text-[#00FFAA]">{paymentAmount.toLocaleString('id-ID')} EM</span>
+              Anda akan membayar <span className="font-black text-[#00FFAA]">{paymentAmount.toLocaleString('id-ID')} NEO</span>
             </span>
             <div className="flex items-center gap-2 font-black text-[#00FFAA]">
               <span className="text-[#6B8A8A] font-normal">untuk pinjaman dari</span>
@@ -65,7 +65,7 @@ export default function BayarHutangModal({
           <div className="mt-2 text-xs font-bold text-[#6B8A8A] flex flex-col items-center gap-1">
             <span>Kas Negara Saat Ini:</span>
             <span className={`text-base font-black ${isFundsSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {currentMoney.toLocaleString('id-ID')} EM
+              {currentMoney.toLocaleString('id-ID')} NEO
             </span>
             {!isFundsSufficient && (
               <span className="text-[10px] text-rose-400 bg-rose-500/10 border border-rose-500/30 px-3 py-1 rounded-full mt-1">

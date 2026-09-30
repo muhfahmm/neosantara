@@ -11,14 +11,14 @@ export function attemptChangeReligion(currentAnggaran: number): ChangeReligionRe
   if (anggaran < RELIGION_CHANGE_COST) {
     return {
       success: false,
-      message: `Kas negara tidak cukup. Dibutuhkan ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} EM.`,
+      message: `Kas negara tidak cukup. Dibutuhkan ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} NEO.`,
       newAnggaran: anggaran,
     };
   }
 
   return {
     success: true,
-    message: `Biaya agama berhasil dipotong ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} EM.`,
+    message: `Biaya agama berhasil dipotong ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} NEO.`,
     newAnggaran: anggaran - RELIGION_CHANGE_COST,
   };
 }

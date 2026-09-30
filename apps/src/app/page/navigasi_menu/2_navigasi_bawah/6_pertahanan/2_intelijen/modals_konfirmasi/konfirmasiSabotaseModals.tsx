@@ -59,7 +59,7 @@ export default function KonfirmasiSabotaseModals({
               </p>
               <p className="text-xs text-[#6B8A8A] font-medium leading-relaxed max-w-lg mx-auto">
                 Kirim tim operasi khusus untuk melumpuhkan fasilitas vital di negara <span className="text-[#E0E0E0] font-bold">{targetName}</span>.
-                Biaya operasional diperkirakan sebesar <span className="font-black text-[#00FFAA]">20.000.000 EM</span>.
+                Biaya operasional diperkirakan sebesar <span className="font-black text-[#00FFAA]">20.000.000 NEO</span>.
               </p>
             </div>
 

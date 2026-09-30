@@ -339,7 +339,7 @@ export default function DebugAPBN({
     // Ambil data dan filter berdasarkan search
     let rows = allCountries.map((country) => {
       const tax = computeTaxValue(country);
-      const gold = computeGoldValue(country); // EM value
+      const gold = computeGoldValue(country); // NEO value
       const ministry = computeMinistryCost(country);
       const net = tax + gold - ministry;
       const continent = normalizeContinent(country.continent || getContinentFromOrder(country.__fileOrder));

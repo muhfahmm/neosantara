@@ -155,7 +155,7 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
             </div>
             <div className="flex justify-between text-xs font-bold text-[#E0E0E0]">
               <span className="text-[#6B8A8A]">Kas Anggaran Negara:</span>
-              <span>{anggaran.toLocaleString("id-ID")} EM</span>
+              <span>{anggaran.toLocaleString("id-ID")} NEO</span>
             </div>
             <div className="flex justify-between text-xs font-bold text-[#E0E0E0] mt-1">
               <span className="text-[#6B8A8A]">Status Subsidi:</span>
@@ -218,7 +218,7 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
                 : "cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 border-[#00FFAA]"
             }`}
           >
-            {subsidyActive ? "Subsidi Telah Diberikan" : "Sponsori Subsidi Pasar (20.000.000 EM)"}
+            {subsidyActive ? "Subsidi Telah Diberikan" : "Sponsori Subsidi Pasar (20.000.000 NEO)"}
           </button>
 
           {/* ---- INDEKS KEPUASAN RAKYAT (HARGA) ---- */}

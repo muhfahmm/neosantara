@@ -47,8 +47,8 @@ export const calculateGoldMiningDailyProduction = (countryDetail: any) => {
 };
 
 /**
- * Menghitung total pendapatan emas BULANAN (dalam EM).
+ * Menghitung total pendapatan emas BULANAN (dalam NEO).
  * Formula: produksi harian × harga per unit × jumlah hari dalam sebulan
  */
 // Monthly income calculation removed — prefer explicit conversion
-// elsewhere if EM conversion is required.
+// elsewhere if NEO conversion is required.

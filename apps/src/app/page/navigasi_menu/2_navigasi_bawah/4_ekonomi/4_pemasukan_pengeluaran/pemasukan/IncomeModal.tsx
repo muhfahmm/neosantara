@@ -142,7 +142,7 @@ export default function IncomeModal({ isOpen, onClose, countryDetail }: IncomeMo
 
             <div className="flex justify-between items-center text-xs font-black text-[#00FFAA] pt-2 px-1">
               <span className="text-[#6B8A8A]">Total Saldo Kas Negara:</span>
-              <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} EM</span>
+              <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} NEO</span>
             </div>
           </div>
         </div>

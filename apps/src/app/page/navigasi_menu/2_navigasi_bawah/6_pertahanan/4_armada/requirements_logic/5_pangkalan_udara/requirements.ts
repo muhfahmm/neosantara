@@ -25,49 +25,49 @@ export const REQUIREMENTS: BuildingRequirements[] = [
   {
     buildingKey: 'jet_tempur_siluman',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 112500 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 112500 },
     ],
   },
   {
     buildingKey: 'jet_tempur_interceptor',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 63750 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 63750 },
     ],
   },
   {
     buildingKey: 'pesawat_pengebom',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 187500 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 187500 },
     ],
   },
   {
     buildingKey: 'helikopter_serang',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 41250 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 41250 },
     ],
   },
   {
     buildingKey: 'pesawat_pengintai',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 71250 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 71250 },
     ],
   },
   {
     buildingKey: 'drone_intai_uav',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 11250 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 11250 },
     ],
   },
   {
     buildingKey: 'drone_kamikaze',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 3750 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 3750 },
     ],
   },
   {
     buildingKey: 'pesawat_angkut',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 56250 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 56250 },
     ],
   },
 ];

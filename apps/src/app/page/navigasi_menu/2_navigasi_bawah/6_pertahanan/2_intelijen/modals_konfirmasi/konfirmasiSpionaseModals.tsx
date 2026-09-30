@@ -59,7 +59,7 @@ export default function KonfirmasiSpionaseModals({
               </p>
               <p className="text-xs text-[#6B8A8A] font-medium leading-relaxed max-w-lg mx-auto">
                 Kirim agen rahasia untuk mengumpulkan data intelijen vital negara <span className="text-[#E0E0E0] font-bold">{targetName}</span>.
-                Biaya operasional diperkirakan sebesar <span className="font-black text-[#00FFAA]">10.000.000 EM</span>.
+                Biaya operasional diperkirakan sebesar <span className="font-black text-[#00FFAA]">10.000.000 NEO</span>.
               </p>
             </div>
 

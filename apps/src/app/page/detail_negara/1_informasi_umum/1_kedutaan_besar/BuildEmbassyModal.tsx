@@ -25,10 +25,10 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
       <div className="w-[420px] bg-white rounded-2xl p-6 shadow-lg border border-[#E5DCCF]">
         <h3 className="text-lg font-black text-[#3d2911] mb-3">Konfirmasi Bangun Kedutaan</h3>
         <p className="text-sm text-[#5c3c10] mb-3">
-          Apakah Anda ingin membangun kedutaan di <strong>{countryName}</strong>? Biaya pembangunan di <strong>{continentLabel}</strong> adalah <strong>{cost} EM</strong>.
+          Apakah Anda ingin membangun kedutaan di <strong>{countryName}</strong>? Biaya pembangunan di <strong>{continentLabel}</strong> adalah <strong>{cost} NEO</strong>.
         </p>
         <p className="text-sm text-[#5c3c10] mb-6">
-          Kas negara saat ini: <strong>{currentBudget >= 0 ? '+' : ''}{formattedCurrentBudget} EM</strong>. Setelah pembangunan, kas akan menjadi <strong>{budgetAfterBuild >= 0 ? '+' : ''}{formattedBudgetAfterBuild} EM</strong>.
+          Kas negara saat ini: <strong>{currentBudget >= 0 ? '+' : ''}{formattedCurrentBudget} NEO</strong>. Setelah pembangunan, kas akan menjadi <strong>{budgetAfterBuild >= 0 ? '+' : ''}{formattedBudgetAfterBuild} NEO</strong>.
         </p>
 
         <div className="flex gap-3 justify-end">

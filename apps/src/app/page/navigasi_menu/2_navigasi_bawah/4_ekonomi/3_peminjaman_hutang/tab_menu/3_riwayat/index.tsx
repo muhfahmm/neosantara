@@ -97,11 +97,11 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                         <span>{pinjam.source}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-bold text-[#E0E0E0]">{pinjam.amount?.toLocaleString('id-ID')} EM</td>
+                    <td className="px-4 py-3 font-bold text-[#E0E0E0]">{pinjam.amount?.toLocaleString('id-ID')} NEO</td>
                     <td className="px-4 py-3 font-bold text-rose-400">{pinjam.interest}%</td>
-                    <td className="px-4 py-3 font-bold text-emerald-400">+{(pinjam.paidAmount || 0).toLocaleString('id-ID')} EM</td>
+                    <td className="px-4 py-3 font-bold text-emerald-400">+{(pinjam.paidAmount || 0).toLocaleString('id-ID')} NEO</td>
                     <td className="px-4 py-3 font-bold text-rose-400 flex items-center gap-3">
-                      <span>+{(pinjam.accumulatedPenalty || 0).toLocaleString('id-ID')} EM</span>
+                      <span>+{(pinjam.accumulatedPenalty || 0).toLocaleString('id-ID')} NEO</span>
                       <button
                         onClick={() => setPenaltyInfoLoan?.(pinjam)}
                         className="p-1 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
@@ -111,7 +111,7 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                         <Info className="w-4 h-4" />
                       </button>
                     </td>
-                    <td className="px-4 py-3 font-bold text-[#00FFAA]">{(pinjam.totalRepayment || 0).toLocaleString('id-ID')} EM</td>
+                    <td className="px-4 py-3 font-bold text-[#00FFAA]">{(pinjam.totalRepayment || 0).toLocaleString('id-ID')} NEO</td>
                     <td className="px-4 py-3 font-bold text-[#E0E0E0]">
                       {formatReturnDate(pinjam.returnDate)}
                     </td>
@@ -148,11 +148,11 @@ export default function Riwayat({ loanHistory, kasNegara, setPendingPaymentLoan,
                       <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[8px] font-black uppercase">Lunas</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 font-bold text-[#E0E0E0]">{pinjam.amount?.toLocaleString('id-ID')} EM</td>
+                  <td className="px-4 py-3 font-bold text-[#E0E0E0]">{pinjam.amount?.toLocaleString('id-ID')} NEO</td>
                   <td className="px-4 py-3 font-bold text-[#E0E0E0]">{pinjam.interest}%</td>
-                  <td className="px-4 py-3 font-bold text-emerald-400">+{(pinjam.paidAmount || 0).toLocaleString('id-ID')} EM</td>
-                  <td className="px-4 py-3 font-bold text-[#E0E0E0]">+{(pinjam.accumulatedPenalty || 0).toLocaleString('id-ID')} EM</td>
-                  <td className="px-4 py-3 font-bold text-emerald-400">{(pinjam.totalRepayment || 0).toLocaleString('id-ID')} EM</td>
+                  <td className="px-4 py-3 font-bold text-emerald-400">+{(pinjam.paidAmount || 0).toLocaleString('id-ID')} NEO</td>
+                  <td className="px-4 py-3 font-bold text-[#E0E0E0]">+{(pinjam.accumulatedPenalty || 0).toLocaleString('id-ID')} NEO</td>
+                  <td className="px-4 py-3 font-bold text-emerald-400">{(pinjam.totalRepayment || 0).toLocaleString('id-ID')} NEO</td>
 
                   <td className="px-4 py-3 font-bold text-[#E0E0E0]">
                     {formatReturnDate(pinjam.returnDate)}

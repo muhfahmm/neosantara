@@ -57,7 +57,7 @@ export default function InfoBangunanModal({
             </div>
             <div className="flex justify-between items-center border-t border-[#00FFAA]/10 pt-2 mt-2">
               <span className="text-[#6B8A8A]">Biaya Pembangunan:</span>
-              <span className="text-[#00FFAA] font-black text-sm">{biaya.toLocaleString('id-ID')} EM</span>
+              <span className="text-[#00FFAA] font-black text-sm">{biaya.toLocaleString('id-ID')} NEO</span>
             </div>
             {waktu !== undefined && (
               <div className="flex justify-between items-center">

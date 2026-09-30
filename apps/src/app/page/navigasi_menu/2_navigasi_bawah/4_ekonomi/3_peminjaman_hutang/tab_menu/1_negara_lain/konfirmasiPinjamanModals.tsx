@@ -73,7 +73,7 @@ export default function KonfirmasiPinjamanModal({
                   <div className="text-xs text-[#E0E0E0] space-y-3">
                     <div className="flex justify-between">
                       <span className="text-[#6B8A8A]">Jumlah Pinjaman</span>
-                      <span className="font-bold text-[#E0E0E0]">{maxLoan.toLocaleString("id-ID")} EM</span>
+                      <span className="font-bold text-[#E0E0E0]">{maxLoan.toLocaleString("id-ID")} NEO</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[#6B8A8A]">Bunga</span>
@@ -85,7 +85,7 @@ export default function KonfirmasiPinjamanModal({
                     </div>
                     <div className="flex justify-between pt-3 border-t border-[#00FFAA]/20">
                       <span className="font-bold text-[#00FFAA]">Total Pembayaran</span>
-                      <span className="font-black text-[#00FFAA]">{totalPayment.toLocaleString("id-ID")} EM</span>
+                      <span className="font-black text-[#00FFAA]">{totalPayment.toLocaleString("id-ID")} NEO</span>
                     </div>
                   </div>
                 </div>
@@ -102,11 +102,11 @@ export default function KonfirmasiPinjamanModal({
                 <div className="grid grid-cols-1 gap-4 text-xs">
                   <div className="rounded-2xl bg-[#0F2424] border border-[#00FFAA]/30 p-4">
                     <p className="text-[#6B8A8A]">Saldo Kas Negara</p>
-                    <p className="mt-1 text-xl font-black text-[#00FFAA]">{currentMoney.toLocaleString("id-ID")} EM</p>
+                    <p className="mt-1 text-xl font-black text-[#00FFAA]">{currentMoney.toLocaleString("id-ID")} NEO</p>
                   </div>
                   <div className="rounded-2xl bg-[#0F2424] border border-[#00FFAA]/30 p-4">
                     <p className="text-[#6B8A8A]">Total Outstanding</p>
-                    <p className="mt-1 text-xl font-black text-[#00FFAA]">{totalPayment.toLocaleString("id-ID")} EM</p>
+                    <p className="mt-1 text-xl font-black text-[#00FFAA]">{totalPayment.toLocaleString("id-ID")} NEO</p>
                   </div>
                   <div className="rounded-2xl p-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
                     <p className="font-bold uppercase text-[10px] tracking-wider">Pinjaman siap dikonfirmasi</p>

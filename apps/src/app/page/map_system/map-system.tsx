@@ -1165,7 +1165,7 @@ export default function MapPage() {
                             [`total_sold_${tNotif.productKey}`]: Number(prev?.[`total_sold_${tNotif.productKey}`] || 0) + tNotif.quantity
                         }));
 
-                        alert(`Berhasil mengekspor ${tNotif.quantity} unit ${tNotif.productKey} ke ${tNotif.partnerName} senilai ${tNotif.totalPrice.toLocaleString('id-ID')} EM!`);
+                        alert(`Berhasil mengekspor ${tNotif.quantity} unit ${tNotif.productKey} ke ${tNotif.partnerName} senilai ${tNotif.totalPrice.toLocaleString('id-ID')} NEO!`);
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         setInboxModalOpen(false);
                         return;
@@ -1187,7 +1187,7 @@ export default function MapPage() {
                             [`total_bought_${tNotif.productKey}`]: Number(prev?.[`total_bought_${tNotif.productKey}`] || 0) + tNotif.quantity
                         }));
 
-                        alert(`Berhasil mengimpor ${tNotif.quantity} unit ${tNotif.productKey} dari ${tNotif.partnerName} senilai ${tNotif.totalPrice.toLocaleString('id-ID')} EM!`);
+                        alert(`Berhasil mengimpor ${tNotif.quantity} unit ${tNotif.productKey} dari ${tNotif.partnerName} senilai ${tNotif.totalPrice.toLocaleString('id-ID')} NEO!`);
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         setInboxModalOpen(false);
                         return;
@@ -1482,7 +1482,7 @@ export default function MapPage() {
 
                             <div className="flex items-center justify-between text-[11px] text-[#8b7e66] font-bold border-t border-[#C4B49C]/30 pt-3 mt-1">
                                 <span>Kalender: {calendarRef.current?.display.getCalendarInfo() || (timeManagerRef.current?.getFormattedDate() || '-')}</span>
-                                <span>Kas: {countryDetail?.anggaran ? `${countryDetail.anggaran} EM` : '-'}</span>
+                                <span>Kas: {countryDetail?.anggaran ? `${countryDetail.anggaran} NEO` : '-'}</span>
                             </div>
 
                             <div className="flex items-center gap-3 mt-4">

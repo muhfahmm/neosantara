@@ -38,11 +38,11 @@ export default function TradeBeliNotification({ notification, onAccept, onReject
           </div>
           <div>
             <div className="text-slate-400 text-[9px] uppercase">Harga Satuan</div>
-            <div>{notification.pricePerUnit?.toLocaleString('id-ID')} EM</div>
+            <div>{notification.pricePerUnit?.toLocaleString('id-ID')} NEO</div>
           </div>
           <div>
             <div className="text-slate-400 text-[9px] uppercase">Total Biaya</div>
-            <div className="text-emerald-700">{notification.totalPrice?.toLocaleString('id-ID')} EM</div>
+            <div className="text-emerald-700">{notification.totalPrice?.toLocaleString('id-ID')} NEO</div>
           </div>
         </div>
 

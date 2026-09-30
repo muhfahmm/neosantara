@@ -132,7 +132,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                     <h4 className="text-xs font-black text-[#00FFAA] uppercase">Pemeliharaan Militer</h4>
                     <p className="text-[10px] text-[#6B8A8A] mt-1">Pengaruh: Stabilitas Keamanan</p>
                   </div>
-                  <span className="text-sm font-black text-rose-400">- {budgets.military.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-rose-400">- {budgets.military.toLocaleString("id-ID")} NEO</span>
                 </div>
                 <input
                   type="range"
@@ -142,7 +142,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                   onChange={(e) => handleBudgetChange("military", parseInt(e.target.value))}
                   className="w-full accent-[#00FFAA] cursor-pointer"
                 />
-                <p className="text-[10px] text-[#6B8A8A]">1M - 20M EM</p>
+                <p className="text-[10px] text-[#6B8A8A]">1M - 20M NEO</p>
               </div>
 
               {/* Beban Subsidi Publik */}
@@ -152,7 +152,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                     <h4 className="text-xs font-black text-[#00FFAA] uppercase">Beban Subsidi Publik</h4>
                     <p className="text-[10px] text-[#6B8A8A] mt-1">Pengaruh: Approval Rating</p>
                   </div>
-                  <span className="text-sm font-black text-amber-400">- {budgets.subsidy.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-amber-400">- {budgets.subsidy.toLocaleString("id-ID")} NEO</span>
                 </div>
                 <input
                   type="range"
@@ -162,7 +162,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                   onChange={(e) => handleBudgetChange("subsidy", parseInt(e.target.value))}
                   className="w-full accent-[#00FFAA] cursor-pointer"
                 />
-                <p className="text-[10px] text-[#6B8A8A]">1M - 25M EM</p>
+                <p className="text-[10px] text-[#6B8A8A]">1M - 25M NEO</p>
               </div>
 
               {/* Anggaran Pendidikan */}
@@ -172,7 +172,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                     <h4 className="text-xs font-black text-[#00FFAA] uppercase">Anggaran Pendidikan</h4>
                     <p className="text-[10px] text-[#6B8A8A] mt-1">Pengaruh: Kualitas SDM & Produktivitas (Jangka Panjang)</p>
                   </div>
-                  <span className="text-sm font-black text-amber-300">- {budgets.education.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-amber-300">- {budgets.education.toLocaleString("id-ID")} NEO</span>
                 </div>
                 <input
                   type="range"
@@ -182,7 +182,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                   onChange={(e) => handleBudgetChange("education", parseInt(e.target.value))}
                   className="w-full accent-[#00FFAA] cursor-pointer"
                 />
-                <p className="text-[10px] text-[#6B8A8A]">0 - 15M EM</p>
+                <p className="text-[10px] text-[#6B8A8A]">0 - 15M NEO</p>
               </div>
 
               {/* Anggaran Kesehatan */}
@@ -192,7 +192,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                     <h4 className="text-xs font-black text-[#00FFAA] uppercase">Anggaran Kesehatan</h4>
                     <p className="text-[10px] text-[#6B8A8A] mt-1">Pengaruh: Kepuasan Rakyat & Pencegahan Wabah</p>
                   </div>
-                  <span className="text-sm font-black text-yellow-400">- {budgets.health.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-yellow-400">- {budgets.health.toLocaleString("id-ID")} NEO</span>
                 </div>
                 <input
                   type="range"
@@ -202,7 +202,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                   onChange={(e) => handleBudgetChange("health", parseInt(e.target.value))}
                   className="w-full accent-[#00FFAA] cursor-pointer"
                 />
-                <p className="text-[10px] text-[#6B8A8A]">0 - 12M EM</p>
+                <p className="text-[10px] text-[#6B8A8A]">0 - 12M NEO</p>
               </div>
 
               {/* Anggaran Infrastruktur */}
@@ -212,7 +212,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                     <h4 className="text-xs font-black text-[#00FFAA] uppercase">Anggaran Infrastruktur</h4>
                     <p className="text-[10px] text-[#6B8A8A] mt-1">Pengaruh: Produktivitas Ekonomi (Jangka Panjang)</p>
                   </div>
-                  <span className="text-sm font-black text-emerald-400">- {budgets.infrastructure.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-emerald-400">- {budgets.infrastructure.toLocaleString("id-ID")} NEO</span>
                 </div>
                 <input
                   type="range"
@@ -222,7 +222,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                   onChange={(e) => handleBudgetChange("infrastructure", parseInt(e.target.value))}
                   className="w-full accent-[#00FFAA] cursor-pointer"
                 />
-                <p className="text-[10px] text-[#6B8A8A]">0 - 20M EM</p>
+                <p className="text-[10px] text-[#6B8A8A]">0 - 20M NEO</p>
               </div>
 
               {/* Gaji ASN/Birokrasi */}
@@ -232,7 +232,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                     <h4 className="text-xs font-black text-[#00FFAA] uppercase">Gaji ASN/Birokrasi</h4>
                     <p className="text-[10px] text-[#6B8A8A] mt-1">Fixed Cost, Scaling dengan Jumlah Pegawai</p>
                   </div>
-                  <span className="text-sm font-black text-emerald-400">- {budgets.asn_salary.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-emerald-400">- {budgets.asn_salary.toLocaleString("id-ID")} NEO</span>
                 </div>
                 <input
                   type="range"
@@ -242,7 +242,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                   onChange={(e) => handleBudgetChange("asn_salary", parseInt(e.target.value))}
                   className="w-full accent-[#00FFAA] cursor-pointer"
                 />
-                <p className="text-[10px] text-[#6B8A8A]">1M - 10M EM</p>
+                <p className="text-[10px] text-[#6B8A8A]">1M - 10M NEO</p>
               </div>
 
               {/* Biaya Operasional Dewan Kabinet - Read Only */}
@@ -252,7 +252,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                     <h4 className="text-xs font-black text-[#00FFAA] uppercase">Biaya Operasional Dewan Kabinet</h4>
                     <p className="text-[10px] text-[#6B8A8A] mt-1">Total Pengeluaran Semua Ministry (Otomatis)</p>
                   </div>
-                  <span className="text-sm font-black text-[#00FFAA]">- {ministryCostPerMonth.toLocaleString("id-ID")} EM</span>
+                  <span className="text-sm font-black text-[#00FFAA]">- {ministryCostPerMonth.toLocaleString("id-ID")} NEO</span>
                 </div>
                 <p className="text-[10px] text-[#6B8A8A] italic">Dihitung otomatis dari level semua kementerian, keamanan, dan layanan. Tidak bisa diatur manual.</p>
                 <div className="bg-[#0F2424] border border-[#00FFAA]/20 rounded p-2">
@@ -270,7 +270,7 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
                       <h4 className="text-xs font-black text-[#00FFAA] uppercase">Cicilan Utang + Bunga</h4>
                       <p className="text-[10px] text-[#6B8A8A] mt-1">Cicilan Obligasi (Otomatis)</p>
                     </div>
-                    <span className="text-sm font-black text-rose-400">- {budgets.debt_interest.toLocaleString("id-ID")} EM</span>
+                    <span className="text-sm font-black text-rose-400">- {budgets.debt_interest.toLocaleString("id-ID")} NEO</span>
                   </div>
                   <p className="text-[10px] text-[#6B8A8A] italic">Cicilan utang otomatis, tidak bisa diatur</p>
                 </div>
@@ -281,11 +281,11 @@ export default function OutcomeModal({ isOpen, onClose, countryDetail, setCountr
             <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4 mt-8">
               <div className="flex justify-between items-center">
                 <span className="text-xs font-black text-[#00FFAA] uppercase tracking-widest">Total Pengeluaran</span>
-                <span className="text-2xl font-black text-rose-400">- {totalOutcome.toLocaleString("id-ID")} EM</span>
+                <span className="text-2xl font-black text-rose-400">- {totalOutcome.toLocaleString("id-ID")} NEO</span>
               </div>
               <div className="flex justify-between items-center pt-3 border-t border-[#00FFAA]/20">
                 <span className="text-xs font-bold text-[#6B8A8A] uppercase">Total Saldo Kas Negara:</span>
-                <span className="text-lg font-black text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} EM</span>
+                <span className="text-lg font-black text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} NEO</span>
               </div>
             </div>
           </div>

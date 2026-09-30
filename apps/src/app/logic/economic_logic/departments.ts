@@ -157,7 +157,7 @@ export const ALL_DEPARTMENTS = [...KEMENTERIAN, ...KEAMANAN, ...LAYANAN];
 /**
  * Biaya operasional harian setiap departemen kabinet berdasarkan levelnya.
  * Index = level (0 = belum diaktifkan, 1–20 = tier aktif).
- * Setiap level naik 10 EM, dimulai dari level 1 = 10 EM.
+ * Setiap level naik 10 NEO, dimulai dari level 1 = 10 NEO.
  * Satu-satunya sumber kebenaran untuk seluruh kalkulasi biaya kabinet.
  */
 export const LEVEL_UP_COST = [

@@ -7,8 +7,9 @@ import {
   SubsidyItem, 
   calculateSubsidySummary, 
   TotalSubsidySummary,
-  formatCurrencyCompact 
-} from "./logic/logikaSubsidi";
+  formatCurrencyCompact,
+  clampSubsidyCost 
+} from "@/../../json/database_kebijakan_subsidi/index";
 
 import SemuaSektorTab from "./tab_menu/1_semua_sektor/SemuaSektorTab";
 import EnergiTab from "./tab_menu/2_energi/EnergiTab";
@@ -32,6 +33,7 @@ const resolveSubsidyItemsForCountry = (countryDetail: any): SubsidyItem[] => {
   if (countryDetail?.subsidy_states) {
     return INITIAL_SUBSIDY_ITEMS.map((item) => ({
       ...item,
+      budgetCost: clampSubsidyCost(item.budgetCost),
       isSubsidized: (countryDetail.subsidy_states as Record<string, boolean>)[item.id] ?? item.isSubsidized,
     }));
   }
@@ -57,12 +59,16 @@ const resolveSubsidyItemsForCountry = (countryDetail: any): SubsidyItem[] => {
       }
       return {
         ...item,
+        budgetCost: clampSubsidyCost(item.budgetCost),
         isSubsidized: isSub,
       };
     });
   }
 
-  return INITIAL_SUBSIDY_ITEMS;
+  return INITIAL_SUBSIDY_ITEMS.map((item) => ({
+    ...item,
+    budgetCost: clampSubsidyCost(item.budgetCost),
+  }));
 };
 
 export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountryDetail }: ModalProps) {

@@ -100,7 +100,7 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
     }
 
     if (requestedAmount > lembaga.maxCap) {
-      setErrors((prev: Record<number, string>) => ({ ...prev, [lembaga.id]: `Maksimal pinjaman untuk ${lembaga.name} adalah ${lembaga.maxCap.toLocaleString("id-ID")} EM.` }));
+      setErrors((prev: Record<number, string>) => ({ ...prev, [lembaga.id]: `Maksimal pinjaman untuk ${lembaga.name} adalah ${lembaga.maxCap.toLocaleString("id-ID")} NEO.` }));
       return;
     }
 
@@ -138,7 +138,7 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
                 <div>
                   <h4 className="text-base font-black text-[#00FFAA]">{lembaga.name}</h4>
                   <p className="text-[10px] text-[#6B8A8A]">
-                    Bunga: {lembaga.interest}% | Maks: {lembaga.maxCap.toLocaleString("id-ID")} EM | Tenor: 180–1825 hari
+                    Bunga: {lembaga.interest}% | Maks: {lembaga.maxCap.toLocaleString("id-ID")} NEO | Tenor: 180–1825 hari
                   </p>
                 </div>
               </div>

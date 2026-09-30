@@ -150,7 +150,7 @@ export default function MitraModalsMenu({
                         {partner.total_nilai_dagang !== undefined && (
                           <div className="text-right">
                             <p className="text-[9px] text-[#6B8A8A] uppercase">Nilai Dagang</p>
-                            <p className="text-xs font-black text-[#00FFAA]">{partner.total_nilai_dagang.toLocaleString('id-ID')} EM</p>
+                            <p className="text-xs font-black text-[#00FFAA]">{partner.total_nilai_dagang.toLocaleString('id-ID')} NEO</p>
                           </div>
                         )}
                         <div className="flex items-center gap-3">

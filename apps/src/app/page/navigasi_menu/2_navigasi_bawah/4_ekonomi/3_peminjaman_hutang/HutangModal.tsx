@@ -374,11 +374,11 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
             <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-3.5 lg:p-4 2xl:p-5 rounded-xl 2xl:rounded-2xl flex flex-col justify-center">
               <div className="flex justify-between text-xs lg:text-sm font-bold text-[#E0E0E0] py-1 border-b border-[#00FFAA]/20">
                 <span>Kas Negara</span>
-                <span className="text-emerald-400 font-black">{kasNegara.toLocaleString("id-ID")} EM</span>
+                <span className="text-emerald-400 font-black">{kasNegara.toLocaleString("id-ID")} NEO</span>
               </div>
               <div className="flex justify-between text-xs lg:text-sm font-bold text-[#E0E0E0] py-1 mt-1.5 lg:mt-2">
                 <span>Total Beban Hutang</span>
-                <span className="text-rose-400 font-black">{totalHutang.toLocaleString("id-ID")} EM</span>
+                <span className="text-rose-400 font-black">{totalHutang.toLocaleString("id-ID")} NEO</span>
               </div>
             </div>
           </div>

@@ -363,7 +363,7 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
           })}
           <line x1={padding.left} y1={yScale(currentPrice)} x2={width - padding.right} y2={yScale(currentPrice)} stroke="#00FFAA" strokeDasharray="4 4" strokeWidth="1.5" />
           <circle cx={width - padding.right} cy={yScale(currentPrice)} r="5" fill="#00FFAA" stroke="#0A1A1A" strokeWidth="2" />
-          <text x={width - padding.right + 5} y={yScale(currentPrice) + 3} fontSize="9" fill="#00FFAA" fontWeight="bold">{currentPrice.toLocaleString("id-ID")} EM</text>
+          <text x={width - padding.right + 5} y={yScale(currentPrice) + 3} fontSize="9" fill="#00FFAA" fontWeight="bold">{currentPrice.toLocaleString("id-ID")} NEO</text>
         </svg>
       </div>
     );
@@ -386,7 +386,7 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
     const newAccumulated = Math.max(0, currentAccumulated - quantity);
     setCountryDetail({ ...detail, anggaran: currentBudget + totalPendapatan, [soldKey]: currentSold + quantity, [accumulatedKey]: newAccumulated });
     onConfirm(totalPendapatan, `${quantity}x Satuan`);
-    alert(`Berhasil menjual ${quantity} ${formatLabel(selectedProduct)} ke ${effectiveSelectedCountry} dengan harga ${currentPrice.toLocaleString("id-ID")} EM/unit.`);
+    alert(`Berhasil menjual ${quantity} ${formatLabel(selectedProduct)} ke ${effectiveSelectedCountry} dengan harga ${currentPrice.toLocaleString("id-ID")} NEO/unit.`);
     onClose();
   };
 
@@ -474,11 +474,11 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
 
                 <div className="flex justify-between items-center pt-3 border-t border-[#00FFAA]/20">
                   <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Harga / unit:</span>
-                  <div className="flex items-center gap-1.5"><span className="text-lg font-black text-[#00FFAA]">{currentPrice.toLocaleString("id-ID")}</span><span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">EM</span></div>
+                  <div className="flex items-center gap-1.5"><span className="text-lg font-black text-[#00FFAA]">{currentPrice.toLocaleString("id-ID")}</span><span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span></div>
                 </div>
                 <div className="flex justify-between items-center border-t border-[#00FFAA]/20 pt-2 mt-1">
                   <span className="text-[#E0E0E0] font-bold text-sm tracking-wide">Total Pendapatan :</span>
-                  <div className="flex items-center gap-1.5"><span className="text-lg font-black text-[#00FFAA]">{totalPrice.toLocaleString("id-ID")}</span><span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">EM</span></div>
+                  <div className="flex items-center gap-1.5"><span className="text-lg font-black text-[#00FFAA]">{totalPrice.toLocaleString("id-ID")}</span><span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span></div>
                 </div>
 
                 <div className="pt-3 border-t border-[#00FFAA]/20 mt-2 w-full">

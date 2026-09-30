@@ -48,15 +48,15 @@ export default function IcbmInsufficientFundsModal({
             <div className="grid grid-cols-1 gap-2 text-[#5c3c10]">
               <div className="flex justify-between text-xs font-bold">
                 <span>Kas Negara Sekarang:</span>
-                <span>{currentBudget.toLocaleString("id-ID")} EM</span>
+                <span>{currentBudget.toLocaleString("id-ID")} NEO</span>
               </div>
               <div className="flex justify-between text-xs font-bold">
                 <span>Biaya Pembangunan ICBM:</span>
-                <span>{requiredBudget.toLocaleString("id-ID")} EM</span>
+                <span>{requiredBudget.toLocaleString("id-ID")} NEO</span>
               </div>
               <div className="flex justify-between text-xs font-bold text-rose-700 border-t border-[#C4B49C]/20 pt-3">
                 <span>Kekurangan Dana:</span>
-                <span>-{deficit.toLocaleString("id-ID")} EM</span>
+                <span>-{deficit.toLocaleString("id-ID")} NEO</span>
               </div>
             </div>
           </div>

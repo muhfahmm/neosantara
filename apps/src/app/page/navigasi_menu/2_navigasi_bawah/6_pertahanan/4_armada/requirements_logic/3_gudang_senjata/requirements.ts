@@ -25,25 +25,25 @@ export const REQUIREMENTS: BuildingRequirements[] = [
   {
     buildingKey: 'artileri_berat',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 48750 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 48750 },
     ],
   },
   {
     buildingKey: 'sistem_peluncur_roket',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 71250 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 71250 },
     ],
   },
   {
     buildingKey: 'pertahanan_udara_mobile',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 93750 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 93750 },
     ],
   },
   {
     buildingKey: 'kendaraan_taktis',
     requirements: [
-      { group: 'produksi', label: 'Biaya Produksi EM', resourceKey: 'em_cost', amount: 11250 },
+      { group: 'produksi', label: 'Biaya Produksi NEO', resourceKey: 'em_cost', amount: 11250 },
     ],
   },
 ];
