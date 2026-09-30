@@ -49866,8 +49866,7 @@ country_id, country_slug, mitra_no, mitra_country, trade_type, status
 -- Total 207 Negara
 -- Database Pajak Negara SQL Export
 -- Total 207 Negara
-DROP TABLE IF EXISTS database_pajak_negara;
-DROP TABLE IF EXISTS database_pajak_negara;
+
 CREATE TABLE database_pajak_negara (
 id INT PRIMARY KEY,
 country VARCHAR(100) NOT NULL,
@@ -49902,7 +49901,7 @@ id, country, country_slug, tarif_ppn, tarif_korporasi, tarif_penghasilan, tarif_
 (19, 'Kenya', 'kenya', 16, 30, 35, 13, 1),
 (20, 'Komoro', 'komoro', 10, 34, 30, 15, 0),
 (21, 'Kongo', 'kongo', 19, 16, 40, 17, 0),
-(22, 'Lesotho', 'lesotho', 15, 27, 30, 7, 0),
+(22, 'Lesotho', 'lesotho', 20, 27, 30, 7, 0),
 (23, 'Liberia', 'liberia', 10, 9, 25, 10, 0),
 (24, 'Libya', 'libya', 0, 22, 15, 12, 0),
 (25, 'Madagaskar', 'madagaskar', 20, 10, 20, 10, 0),
@@ -49936,7 +49935,7 @@ id, country, country_slug, tarif_ppn, tarif_korporasi, tarif_penghasilan, tarif_
 (53, 'Tunisia', 'tunisia', 19, 22, 35, 14, 1),
 (54, 'Afganistan', 'afganistan', 2, 18, 20, 10, 0),
 (55, 'Arab Saudi', 'arab_saudi', 15, 20, 0, 5, 0),
-(56, 'Armenia', 'armenia', 20, 18, 20, 7, 0),
+(56, 'Armenia', 'armenia', 25, 18, 20, 7, 0),
 (57, 'Azerbaijan', 'azerbaijan', 18, 20, 25, 10, 0),
 (58, 'Bahrain', 'bahrain', 10, 11, 15, 7, 0),
 (59, 'Bangladesh', 'bangladesh', 15, 30, 30, 14, 1),
@@ -49948,12 +49947,12 @@ id, country, country_slug, tarif_ppn, tarif_korporasi, tarif_penghasilan, tarif_
 (65, 'Hong Kong', 'hong_kong', 3, 18, 17, 3, 0),
 (66, 'India', 'india', 18, 25, 39, 10, 1),
 (67, 'Indonesia', 'indonesia', 11, 22, 35, 5, 1),
-(68, 'Irak', 'irak', 0, 17, 15, 10, 0),
+(68, 'Irak', 'irak', 5, 17, 15, 10, 0),
 (69, 'Iran', 'iran', 10, 25, 35, 20, 0),
 (70, 'Israel', 'israel', 18, 32, 50, 3, 1),
 (71, 'Jepang', 'jepang', 10, 30, 55, 2, 2),
 (72, 'Kamboja', 'kamboja', 10, 20, 20, 11, 0),
-(73, 'Kazakhstan', 'kazakhstan', 16, 20, 15, 7, 1),
+(73, 'Kazakhstan', 'kazakhstan', 21, 20, 15, 7, 1),
 (74, 'Kirgizstan', 'kirgizstan', 12, 10, 10, 7, 0),
 (75, 'Korea Selatan', 'korea_selatan', 10, 26, 50, 3, 2),
 (76, 'Korea Utara', 'korea_utara', 0, 25, 0, 10, 0),
@@ -49970,7 +49969,7 @@ id, country, country_slug, tarif_ppn, tarif_korporasi, tarif_penghasilan, tarif_
 (87, 'Pakistan', 'pakistan', 18, 29, 35, 12, 1),
 (88, 'Palestina', 'palestina', 16, 17, 20, 8, 0),
 (89, 'Qatar', 'qatar', 8, 11, 16, 7, 0),
-(90, 'Republik Timor Leste', 'republik_timor_leste', 8, 12, 16, 8, 0),
+(90, 'Republik Timor Leste', 'republik_timor_leste', 13, 12, 16, 8, 0),
 (91, 'Singapura', 'singapura', 9, 26, 24, 0, 2),
 (92, 'Sri Lanka', 'sri_lanka', 18, 32, 36, 10, 0),
 (93, 'Suriah', 'suriah', 0, 24, 22, 15, 0),
@@ -49996,7 +49995,7 @@ id, country, country_slug, tarif_ppn, tarif_korporasi, tarif_penghasilan, tarif_
 (113, 'Estonia', 'estonia', 24, 24, 22, 2, 1),
 (114, 'Finlandia', 'finlandia', 26, 20, 57, 2, 2),
 (115, 'Gibraltar', 'gibraltar', 0, 17, 25, 12, 0),
-(116, 'Hungaria', 'hungaria', 27, 11, 15, 2, 1),
+(116, 'Hungaria', 'hungaria', 32, 11, 15, 2, 1),
 (117, 'Inggris', 'inggris', 20, 25, 45, 2, 3),
 (118, 'Irlandia', 'irlandia', 23, 22, 52, 2, 2),
 (119, 'Islandia', 'islandia', 24, 22, 46, 1, 2),
@@ -50019,10 +50018,10 @@ id, country, country_slug, tarif_ppn, tarif_korporasi, tarif_penghasilan, tarif_
 (136, 'Portugal', 'portugal', 23, 19, 48, 2, 1),
 (137, 'Prancis', 'prancis', 20, 34, 45, 2, 2),
 (138, 'Republik Rumania', 'republik_rumania', 21, 16, 10, 2, 0),
-(139, 'Republik Serbia', 'republik_serbia', 20, 15, 10, 5, 0),
+(139, 'Republik Serbia', 'republik_serbia', 25, 15, 10, 5, 0),
 (140, 'Rusia', 'rusia', 22, 25, 22, 7, 1),
 (141, 'San Marino', 'san_marino', 17, 19, 50, 2, 0),
-(142, 'Siprus', 'siprus', 19, 17, 35, 2, 1),
+(142, 'Siprus', 'siprus', 24, 17, 35, 2, 1),
 (143, 'Slovenia', 'slovenia', 22, 24, 50, 2, 1),
 (144, 'Slowakia', 'slowakia', 23, 23, 25, 2, 1),
 (145, 'Spanyol', 'spanyol', 21, 25, 47, 2, 1),
@@ -50041,12 +50040,12 @@ id, country, country_slug, tarif_ppn, tarif_korporasi, tarif_penghasilan, tarif_
 (158, 'Costa Rica', 'costa_rica', 13, 30, 25, 6, 1),
 (159, 'Curacao', 'curacao', 6, 24, 46, 6, 0),
 (160, 'Dominika', 'dominika', 15, 27, 35, 12, 0),
-(161, 'El Salvador', 'el_salvador', 13, 32, 30, 6, 0),
+(161, 'El Salvador', 'el_salvador', 18, 32, 30, 6, 0),
 (162, 'Greenland', 'greenland', 0, 25, 44, 5, 0),
 (163, 'Grenada', 'grenada', 15, 30, 30, 12, 0),
 (164, 'Guatemala', 'guatemala', 12, 25, 7, 6, 0),
 (165, 'Haiti', 'haiti', 10, 25, 30, 8, 0),
-(166, 'Honduras', 'honduras', 15, 25, 25, 6, 0),
+(166, 'Honduras', 'honduras', 20, 25, 25, 6, 0),
 (167, 'Jamaika', 'jamaika', 15, 27, 30, 10, 1),
 (168, 'Kanada', 'kanada', 5, 27, 53, 2, 2),
 (169, 'Kuba', 'kuba', 10, 37, 50, 10, 0),
@@ -50084,10 +50083,12 @@ id, country, country_slug, tarif_ppn, tarif_korporasi, tarif_penghasilan, tarif_
 (201, 'Guyana', 'guyana', 14, 40, 40, 10, 0),
 (202, 'Kolombia', 'kolombia', 19, 35, 39, 6, 1),
 (203, 'Paraguay', 'paraguay', 10, 11, 15, 8, 0),
-(204, 'Peru', 'peru', 18, 30, 30, 2, 1),
+(204, 'Peru', 'peru', 23, 30, 30, 2, 1),
 (205, 'Suriname', 'suriname', 10, 36, 38, 10, 0),
 (206, 'Uruguay', 'uruguay', 22, 25, 36, 6, 1),
 (207, 'Venezuela', 'venezuela', 16, 31, 34, 12, 0);
+
+
 -- SECTION: json/database_SDA/database_sda.sql
 -- ========================================================
 -- Database SDA SQL Export

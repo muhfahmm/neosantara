@@ -37,11 +37,11 @@ const calculateTotalTaxIncome = (countryDetail: any) => {
   const environment_tax = getTaxValue(countryDetail, 5, ["environment_tax"]) ?? getTaxValue(countryDetail, 5, ["pajak", "lingkungan", "tarif"]) ?? 0;
 
   return (
-    calculateIncomeAtRate(income_tax, 1000) +
-    calculateIncomeAtRate(corporate_tax, 1000) +
-    calculateIncomeAtRate(vat, 1000) +
-    calculateIncomeAtRate(cigarette_tax, 1000) +
-    calculateIncomeAtRate(environment_tax, 1000)
+    calculateIncomeAtRate(income_tax, 500) +
+    calculateIncomeAtRate(corporate_tax, 500) +
+    calculateIncomeAtRate(vat, 500) +
+    calculateIncomeAtRate(cigarette_tax, 500) +
+    calculateIncomeAtRate(environment_tax, 500)
   );
 };
 

@@ -44,7 +44,7 @@ export const TAX_CONFIGS: TaxConfig[] = [
     baseRate: 15,
     minRate: 0,
     maxRate: 100,
-    maxIncome: 1000
+    maxIncome: 500
   },
   {
     id: "corporate_tax",
@@ -52,7 +52,7 @@ export const TAX_CONFIGS: TaxConfig[] = [
     baseRate: 22,
     minRate: 0,
     maxRate: 100,
-    maxIncome: 1000
+    maxIncome: 500
   },
   {
     id: "vat",
@@ -60,7 +60,7 @@ export const TAX_CONFIGS: TaxConfig[] = [
     baseRate: 10,
     minRate: 0,
     maxRate: 100,
-    maxIncome: 1000
+    maxIncome: 500
   },
   {
     id: "cigarette_tax",
@@ -68,7 +68,7 @@ export const TAX_CONFIGS: TaxConfig[] = [
     baseRate: 15,
     minRate: 0,
     maxRate: 100,
-    maxIncome: 1000
+    maxIncome: 500
   },
   {
     id: "environment_tax",
@@ -76,7 +76,7 @@ export const TAX_CONFIGS: TaxConfig[] = [
     baseRate: 5,
     minRate: 0,
     maxRate: 100,
-    maxIncome: 1000
+    maxIncome: 500
   }
 ];
 
@@ -90,7 +90,7 @@ export const TAX_CONFIGS: TaxConfig[] = [
  * @param maxIncome - Maximum income at 100% rate
  * @returns Income amount in NEO
  */
-export function calculateIncomeAtRate(taxRate: number, maxIncome: number = 1000): number {
+export function calculateIncomeAtRate(taxRate: number, maxIncome: number = 500): number {
   if (taxRate <= 0) return 0;
   if (taxRate >= 100) return maxIncome;
   

@@ -25,7 +25,7 @@ function getTaxValue(detail: any, path: string[], fallback = 0): number {
   return typeof current === "number" ? current : fallback;
 }
 
-function calculateIncomeAtRate(taxRate: number, maxIncome = 1000): number {
+function calculateIncomeAtRate(taxRate: number, maxIncome = 500): number {
   if (taxRate <= 0) return 0;
   if (taxRate >= 100) return maxIncome;
   return Math.round((taxRate / 100) * maxIncome);
@@ -81,12 +81,12 @@ export function calculatePajakScore(countryDetail: any): number {
 
   const avgRate = (vat + corporate_tax + income_tax + cigarette_tax + environment_tax) / 5;
   const totalIncome =
-    calculateIncomeAtRate(vat, 1000) +
-    calculateIncomeAtRate(corporate_tax, 1000) +
-    calculateIncomeAtRate(income_tax, 1000) +
-    calculateIncomeAtRate(cigarette_tax, 1000) +
-    calculateIncomeAtRate(environment_tax, 1000);
-  const maxIncome = 5 * 1000;
+    calculateIncomeAtRate(vat, 500) +
+    calculateIncomeAtRate(corporate_tax, 500) +
+    calculateIncomeAtRate(income_tax, 500) +
+    calculateIncomeAtRate(cigarette_tax, 500) +
+    calculateIncomeAtRate(environment_tax, 500);
+  const maxIncome = 5 * 500;
   return Math.min(100, Math.max(1, Math.round(100 - avgRate + (totalIncome / maxIncome) * 20)));
 }
 

@@ -33,11 +33,11 @@ export const calculateTotalTaxIncome = (detail: any) => {
   const environmentTax = getTaxRate(detail, 'environment_tax', 5, ['pajak', 'lingkungan', 'tarif']);
 
   return (
-    calculateIncomeAtRate(incomeTax, 1000) +
-    calculateIncomeAtRate(corporateTax, 1000) +
-    calculateIncomeAtRate(vat, 1000) +
-    calculateIncomeAtRate(cigaretteTax, 1000) +
-    calculateIncomeAtRate(environmentTax, 1000)
+    calculateIncomeAtRate(incomeTax, 500) +
+    calculateIncomeAtRate(corporateTax, 500) +
+    calculateIncomeAtRate(vat, 500) +
+    calculateIncomeAtRate(cigaretteTax, 500) +
+    calculateIncomeAtRate(environmentTax, 500)
   );
 };
 

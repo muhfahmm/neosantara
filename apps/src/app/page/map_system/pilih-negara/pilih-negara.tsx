@@ -45,8 +45,7 @@ import { calculateCountryNetBalance, calculateTotalTaxIncome, calculateTotalMini
 import { calculateGoldMiningDailyProduction } from '@/app/logic/economic_logic/goldIncome';
 import { KEMENTERIAN, KEAMANAN, LAYANAN } from '@/app/logic/economic_logic/departments';
 
-// Import Debug Modal
-import DebugAPBN from '../../navigasi_menu/2_navigasi_bawah/debugAPBN';
+
 
 // Type untuk SDA data per negara
 interface SDAData {
@@ -98,9 +97,7 @@ export default function PilihNegaraPage() {
   // Ref untuk menyimpan ISO negara yang diklik dari peta (fix bug klik pertama)
   const pendingIsoRef = useRef<string | null>(null);
 
-  // State untuk Modal Debug
-  const [isDebugOpen, setIsDebugOpen] = useState(false);
-  const [isDebugAllCountries, setIsDebugAllCountries] = useState(false);
+
 
   // State SDA - data boolean sumber daya alam dari database_SDA
   const [sdaData, setSdaData] = useState<SDAData | null>(null);
@@ -744,22 +741,6 @@ export default function PilihNegaraPage() {
         </div>
       </div>
 
-      {/* Debug Modal */}
-      <DebugAPBN
-        isOpen={isDebugOpen}
-        onClose={() => {
-          setIsDebugOpen(false);
-          setIsDebugAllCountries(false);
-        }}
-        countryName={isDebugAllCountries ? 'Semua Negara' : (hasInteracted && filteredCountries[currentIndex] ? filteredCountries[currentIndex]?.country || '-' : '-')}
-        countryDetail={isDebugAllCountries ? null : countryDetail}
-        taxIncome={taxIncome}
-        goldIncome={goldIncome}
-        ministryCost={ministryCostDaily}
-        netBalance={netBalance}
-        hasInteracted={hasInteracted}
-        showAllCountries={isDebugAllCountries}
-      />
     </div>
   );
 }

@@ -86,12 +86,12 @@ export default function PajakModal({
   const calculateSatisfaction = (rates: typeof tempRates) => {
     const { vat, corporate_tax, income_tax, cigarette_tax, environment_tax } = rates;
     const avgRate = (vat + corporate_tax + income_tax + cigarette_tax + environment_tax) / 5;
-    const total = calculateIncomeAtRate(vat, 1000) +
-                  calculateIncomeAtRate(corporate_tax, 1000) +
-                  calculateIncomeAtRate(income_tax, 1000) +
-                  calculateIncomeAtRate(cigarette_tax, 1000) +
-                  calculateIncomeAtRate(environment_tax, 1000);
-    const maxIncome = 5 * 1000; // 5000 NEO
+    const total = calculateIncomeAtRate(vat, 500) +
+                  calculateIncomeAtRate(corporate_tax, 500) +
+                  calculateIncomeAtRate(income_tax, 500) +
+                  calculateIncomeAtRate(cigarette_tax, 500) +
+                  calculateIncomeAtRate(environment_tax, 500);
+    const maxIncome = 5 * 500; // 2500 NEO
     // Kepuasan = 100 - rata-rata tarif + (pendapatan / maxPendapatan * 20)
     let satisfaction = 100 - avgRate + (total / maxIncome) * 20;
     // Clamp antara 1 dan 100
@@ -181,11 +181,11 @@ export default function PajakModal({
 
   // Hitung total pendapatan dari semua pajak (untuk ditampilkan)
   const totalIncome =
-    calculateIncomeAtRate(tempRates.vat, 1000) +
-    calculateIncomeAtRate(tempRates.corporate_tax, 1000) +
-    calculateIncomeAtRate(tempRates.income_tax, 1000) +
-    calculateIncomeAtRate(tempRates.cigarette_tax, 1000) +
-    calculateIncomeAtRate(tempRates.environment_tax, 1000);
+    calculateIncomeAtRate(tempRates.vat, 500) +
+    calculateIncomeAtRate(tempRates.corporate_tax, 500) +
+    calculateIncomeAtRate(tempRates.income_tax, 500) +
+    calculateIncomeAtRate(tempRates.cigarette_tax, 500) +
+    calculateIncomeAtRate(tempRates.environment_tax, 500);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -226,7 +226,7 @@ export default function PajakModal({
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">{tempRates.vat}%</span>
                   <span className="text-emerald-400 font-black">
-                    ({calculateIncomeAtRate(tempRates.vat, 1000).toLocaleString(
+                    ({calculateIncomeAtRate(tempRates.vat, 500).toLocaleString(
                       "id-ID"
                     )}{" "} NEO)
                   </span>
@@ -243,7 +243,7 @@ export default function PajakModal({
                 className="w-full accent-[#00FFAA] cursor-pointer"
               />
               <p className="text-[10px] text-[#6B8A8A]">
-                0% = 0 NEO, 100% = 1.000 NEO income
+                0% = 0 NEO, 100% = 500 NEO income
               </p>
             </div>
 
@@ -254,7 +254,7 @@ export default function PajakModal({
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">{tempRates.corporate_tax}%</span>
                   <span className="text-emerald-400 font-black">
-                    ({calculateIncomeAtRate(tempRates.corporate_tax, 1000).toLocaleString(
+                    ({calculateIncomeAtRate(tempRates.corporate_tax, 500).toLocaleString(
                       "id-ID"
                     )}{" "} NEO)
                   </span>
@@ -271,7 +271,7 @@ export default function PajakModal({
                 className="w-full accent-[#00FFAA] cursor-pointer"
               />
               <p className="text-[10px] text-[#6B8A8A]">
-                0% = 0 NEO, 100% = 1.000 NEO income
+                0% = 0 NEO, 100% = 500 NEO income
               </p>
             </div>
 
@@ -282,7 +282,7 @@ export default function PajakModal({
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">{tempRates.income_tax}%</span>
                   <span className="text-emerald-400 font-black">
-                    ({calculateIncomeAtRate(tempRates.income_tax, 1000).toLocaleString(
+                    ({calculateIncomeAtRate(tempRates.income_tax, 500).toLocaleString(
                       "id-ID"
                     )}{" "} NEO)
                   </span>
@@ -299,7 +299,7 @@ export default function PajakModal({
                 className="w-full accent-[#00FFAA] cursor-pointer"
               />
               <p className="text-[10px] text-[#6B8A8A]">
-                0% = 0 NEO, 100% = 1.000 NEO income
+                0% = 0 NEO, 100% = 500 NEO income
               </p>
             </div>
 
@@ -310,7 +310,7 @@ export default function PajakModal({
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">{tempRates.cigarette_tax}%</span>
                   <span className="text-emerald-400 font-black">
-                    ({calculateIncomeAtRate(tempRates.cigarette_tax, 1000).toLocaleString(
+                    ({calculateIncomeAtRate(tempRates.cigarette_tax, 500).toLocaleString(
                       "id-ID"
                     )}{" "} NEO)
                   </span>
@@ -327,7 +327,7 @@ export default function PajakModal({
                 className="w-full accent-[#00FFAA] cursor-pointer"
               />
               <p className="text-[10px] text-[#6B8A8A]">
-                0% = 0 NEO, 100% = 1.000 NEO income
+                0% = 0 NEO, 100% = 500 NEO income
               </p>
             </div>
 
@@ -338,7 +338,7 @@ export default function PajakModal({
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">{tempRates.environment_tax}%</span>
                   <span className="text-emerald-400 font-black">
-                    ({calculateIncomeAtRate(tempRates.environment_tax, 1000).toLocaleString(
+                    ({calculateIncomeAtRate(tempRates.environment_tax, 500).toLocaleString(
                       "id-ID"
                     )}{" "} NEO)
                   </span>
@@ -355,7 +355,7 @@ export default function PajakModal({
                 className="w-full accent-[#00FFAA] cursor-pointer"
               />
               <p className="text-[10px] text-[#6B8A8A]">
-                0% = 0 NEO, 100% = 1.000 NEO income
+                0% = 0 NEO, 100% = 500 NEO income
               </p>
             </div>
           </div>

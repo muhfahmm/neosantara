@@ -23,7 +23,7 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
 
 
   const calcTax = (rate: number) => {
-    const base = 1000;
+    const base = 500;
     return (rate / 100) * base;
   };
 
