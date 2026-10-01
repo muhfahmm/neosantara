@@ -29,181 +29,181 @@
 29. Austria: +920
 30. Uni Emirat Arab: +910
 
-31. Norwegia: +900
-32. Thailand: +895
+31. Norwegia: +905
+32. Thailand: +900
 33. Kolombia: +895
 34. Vietnam: +890
-35. Malaysia: +890
-36. Filipina: +885
-37. Bangladesh: +880
-38. Denmark: +880
-39. Republik Rumania: +875
-40. Afrika Selatan: +875
-41. Pakistan: +870
-42. Hong Kong: +865
-43. Ceko: +865
-44. Mesir: +860
-45. Chile: +860
-46. Peru: +855
-47. Portugal: +850
-48. Nigeria: +850
-49. Kazakhstan: +845
-50. Finlandia: +845
-51. Aljazair: +840
-52. Yunani: +835
-53. Iran: +835
-54. Selandia Baru: +830
-55. Hungaria: +830
-56. Irak: +825
-57. Ukraina: +820
-58. Qatar: +820
-59. Maroko: +815
-60. Uzbekistan: +815
-61. Kuwait: +810
-62. Slowakia: +805
-63. Angola: +805
-64. Bulgaria: +800
-65. Kenya: +800
-66. Ekuador: +795
-67. Republik Dominika: +790
-68. Puerto Rico: +790
-69. Guatemala: +785
-70. Republik Demokratik Kongo: +785
-71. Ethiopia: +780
-72. Ghana: +775
-73. Oman: +775
-74. Kroasia: +770
-75. Pantai Gading: +770
-76. Republik Serbia: +765
-77. Venezuela: +760
-78. Luksemburg: +760
-79. Costa Rica: +755
-80. Kuba: +755
-81. Lithuania: +750
-82. Belarus: +745
-83. Sri Lanka: +745
-84. Uruguay: +740
-85. Panama: +740
-86. Republik Tanzania: +735
-87. Slovenia: +730
-88. Myanmar: +730
-89. Turkmenistan: +725
-90. Bolivia: +725
-91. Azerbaijan: +720
-92. Republik Uganda: +715
-93. Kamerun: +715
-94. Yordania: +710
-95. Tunisia: +710
-96. Paraguay: +705
-97. Suriah: +700
-98. Republik Zimbabwe: +700
-99. Makau: +695
-100. Latvia: +695
-101. Libya: +690
-102. Kamboja: +685
-103. Estonia: +685
-104. Bahrain: +680
-105. Nepal: +680
-106. Siprus: +675
-107. Republik Sudan: +670
-108. Islandia: +670
-109. Georgia: +665
-110. Honduras: +665
-111. Republik Zambia: +660
-112. Senegal: +655
-113. El Salvador: +655
-114. Haiti: +650
-115. Bosnia dan Herzegovina: +650
-116. Lebanon: +645
-117. Papua Nugini: +640
-118. Guyana: +640
-119. Mali: +635
-120. Albania: +635
-121. Burkina Faso: +630
-122. Armenia: +625
-123. Malta: +625
-124. Guinea: +620
-125. Mongolia: +620
-126. Benin: +615
-127. Trinidad dan Tobago: +610
-128. Chad: +610
-129. Niger: +605
-130. Nikaragua: +590
+35. Malaysia: +885
+36. Filipina: +880
+37. Bangladesh: +875
+38. Denmark: +870
+39. Republik Rumania: +865
+40. Afrika Selatan: +860
+41. Pakistan: +855
+42. Hong Kong: +850
+43. Ceko: +845
+44. Mesir: +840
+45. Chile: +835
+46. Peru: +830
+47. Portugal: +825
+48. Nigeria: +820
+49. Kazakhstan: +815
+50. Finlandia: +810
+51. Aljazair: +805
+52. Yunani: +800
+53. Iran: +795
+54. Selandia Baru: +790
+55. Hungaria: +785
+56. Irak: +780
+57. Ukraina: +775
+58. Qatar: +770
+59. Maroko: +765
+60. Uzbekistan: +760
+61. Kuwait: +755
+62. Slowakia: +750
+63. Angola: +745
+64. Bulgaria: +740
+65. Kenya: +735
+66. Ekuador: +730
+67. Republik Dominika: +725
+68. Puerto Rico: +720
+69. Guatemala: +715
+70. Republik Demokratik Kongo: +710
+71. Ethiopia: +705
+72. Ghana: +700
+73. Oman: +695
+74. Kroasia: +690
+75. Pantai Gading: +685
+76. Republik Serbia: +680
+77. Venezuela: +675
+78. Luksemburg: +670
+79. Costa Rica: +665
+80. Kuba: +660
+81. Lithuania: +655
+82. Belarus: +650
+83. Sri Lanka: +645
+84. Uruguay: +640
+85. Panama: +635
+86. Republik Tanzania: +630
+87. Slovenia: +625
+88. Myanmar: +620
+89. Turkmenistan: +615
+90. Bolivia: +610
+91. Azerbaijan: +605
+92. Republik Uganda: +600
+93. Kamerun: +595
+94. Yordania: +590
+95. Tunisia: +585
+96. Paraguay: +580
+97. Suriah: +575
+98. Republik Zimbabwe: +570
+99. Makau: +565
+100. Latvia: +560
+101. Libya: +555
+102. Kamboja: +550
+103. Estonia: +545
+104. Bahrain: +540
+105. Nepal: +535
+106. Siprus: +530
+107. Republik Sudan: +525
+108. Islandia: +520
+109. Georgia: +515
+110. Honduras: +510
+111. Republik Zambia: +505
+112. Senegal: +500
+113. El Salvador: +495
+114. Haiti: +490
+115. Bosnia dan Herzegovina: +485
+116. Lebanon: +480
+117. Papua Nugini: +475
+118. Guyana: +470
+119. Mali: +465
+120. Albania: +460
+121. Burkina Faso: +455
+122. Armenia: +450
+123. Malta: +445
+124. Guinea: +440
+125. Mongolia: +435
+126. Benin: +430
+127. Trinidad dan Tobago: +425
+128. Chad: +420
+129. Niger: +415
+130. Nikaragua: +410
 
-131. Kirgizstan: +400
-132. Gabon: +395
-133. Mozambik: +390
-134. Jamaika: +385
-135. Botswana: +380
-136. Moldova: +375
-137. Makedonia Utara: +370
-138. Madagaskar: +365
-139. Tajikistan: +360
-140. Afganistan: +355
-141. Laos: +350
-142. Malawi: +345
-143. Rwanda: +340
-144. Namibia: +335
-145. Korea Utara: +330
-146. Mauritius: +325
-147. Bahama: +320
-148. Kongo: +315
-149. Brunei: +310
-150. Palestina: +305
-151. Mauritania: +300
-152. Somalia: +295
-153. Kosovo: +290
-154. Togo: +285
-155. Monako: +280
-156. Montenegro: +275
-157. Liechtenstein: +270
-158. Bermuda: +265
-159. Barbados: +260
-160. Sierra Leone: +255
-161. Burundi: +250
-162. Maldives: +245
-163. Yaman: +240
-164. Guam: +235
-165. Fiji: +230
-166. Tahiti: +225
-167. Sudan Selatan: +220
-168. Suriname: +215
-169. Eswatini: +210
-170. Guiana Prancis: +205
-171. Liberia: +200
-172. Andorra: +195
-173. Djibouti: +190
-174. Kepulauan Faroe: +185
-175. Bhutan: +180
-176. Curacao: +175
-177. Republik Afrika Tengah: +170
-178. Belize: +165
-179. Tanjung Verde: +160
-180. Greenland: +155
-181. Guinea Bissau: +150
-182. Lesotho: +145
-183. Gambia: +140
-184. Saint Lucia: +135
-185. San Marino: +130
-186. Antigua dan Barbuda: +125
-187. Gibraltar: +120
-188. Seychelles: +115
-189. Republik Timor Leste: +110
-190. Eritrea: +105
-191. Komoro: +100
-192. Grenada: +95
-193. Vanuatu: +90
-194. Samoa: +85
-195. Saint Vincent dan Grenadine: +80
-196. Sao Tome dan Principe: +75
-197. Saint Kitts dan Nevis: +70
-198. Samoa Amerika: +65
-199. Dominika: +60
-200. Tonga: +55
-201. Mikronesia: +50
-202. Kiribati: +45
-203. Palau: +40
-204. Marshall: +35
-205. Nauru: +30
-206. Tuvalu: +25
-207. Vatikan: +20
+131. Kirgizstan: +405
+132. Gabon: +400
+133. Mozambik: +395
+134. Jamaika: +390
+135. Botswana: +385
+136. Moldova: +380
+137. Makedonia Utara: +375
+138. Madagaskar: +370
+139. Tajikistan: +365
+140. Afganistan: +360
+141. Laos: +355
+142. Malawi: +350
+143. Rwanda: +345
+144. Namibia: +340
+145. Korea Utara: +335
+146. Mauritius: +330
+147. Bahama: +325
+148. Kongo: +320
+149. Brunei: +315
+150. Palestina: +310
+151. Mauritania: +305
+152. Somalia: +300
+153. Kosovo: +295
+154. Togo: +290
+155. Monako: +285
+156. Montenegro: +280
+157. Liechtenstein: +275
+158. Bermuda: +270
+159. Barbados: +265
+160. Sierra Leone: +260
+161. Burundi: +255
+162. Maldives: +250
+163. Yaman: +245
+164. Guam: +240
+165. Fiji: +235
+166. Tahiti: +230
+167. Sudan Selatan: +225
+168. Suriname: +220
+169. Eswatini: +215
+170. Guiana Prancis: +210
+171. Liberia: +205
+172. Andorra: +200
+173. Djibouti: +195
+174. Kepulauan Faroe: +190
+175. Bhutan: +185
+176. Curacao: +180
+177. Republik Afrika Tengah: +175
+178. Belize: +170
+179. Tanjung Verde: +165
+180. Greenland: +160
+181. Guinea Bissau: +155
+182. Lesotho: +150
+183. Gambia: +145
+184. Saint Lucia: +140
+185. San Marino: +135
+186. Antigua dan Barbuda: +130
+187. Gibraltar: +125
+188. Seychelles: +120
+189. Republik Timor Leste: +115
+190. Eritrea: +110
+191. Komoro: +105
+192. Grenada: +100
+193. Vanuatu: +95
+194. Samoa: +90
+195. Saint Vincent dan Grenadine: +85
+196. Sao Tome dan Principe: +80
+197. Saint Kitts dan Nevis: +75
+198. Samoa Amerika: +70
+199. Dominika: +65
+200. Tonga: +60
+201. Mikronesia: +55
+202. Kiribati: +50
+203. Palau: +45
+204. Marshall: +40
+205. Nauru: +35
+206. Tuvalu: +30
+207. Vatikan: +25
