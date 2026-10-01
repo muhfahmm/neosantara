@@ -444,7 +444,7 @@ export default function DoktrinKeterbukaanModal({
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-[#E0E0E0]">Transparansi Pemerintah & Akuntabilitas</h4>
-                      <p className="text-xs text-[#6B8A8A]">Keterbukaan informasi anggaran negara (APBN), audit publik, dan antikorupsi.</p>
+                      <p className="text-xs text-[#6B8A8A]">Keterbukaan informasi anggaran negara, audit publik, dan antikorupsi.</p>
                     </div>
                   </div>
                   <span className="text-sm font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/30">

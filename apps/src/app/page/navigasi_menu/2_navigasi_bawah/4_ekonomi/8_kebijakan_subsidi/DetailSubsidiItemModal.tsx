@@ -71,11 +71,11 @@ export default function DetailSubsidiItemModal({
           {/* Metric Stats Grid */}
           <div className="grid grid-cols-2 gap-3">
             
-            {/* Biaya APBN */}
+            {/* Biaya Anggaran */}
             <div className="bg-[#0F2424] p-3 rounded-xl border border-[#00FFAA]/20">
               <div className="flex items-center gap-1.5 text-[#6B8A8A] text-[10px] font-bold uppercase tracking-wider mb-1">
                 <DollarSign className="h-3.5 w-3.5 text-[#00FFAA]" />
-                <span>Beban APBN</span>
+                <span>Beban Anggaran</span>
               </div>
               <span className="text-lg font-black text-[#00FFAA]">
                 {formatCurrencyCompact(item.budgetCost)}

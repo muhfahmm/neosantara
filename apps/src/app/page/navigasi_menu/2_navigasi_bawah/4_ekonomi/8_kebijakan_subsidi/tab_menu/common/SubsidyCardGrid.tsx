@@ -65,7 +65,7 @@ export default function SubsidyCardGrid({ items, toggleSubsidy, onOpenDetail }: 
           {/* STATS FOOTER FOR ITEM */}
           <div className="mt-3 lg:mt-4 pt-2.5 lg:pt-3 border-t border-[#00FFAA]/15 grid grid-cols-3 gap-1.5 lg:gap-2 text-center text-[9px] lg:text-[10px]">
             <div className="bg-[#0F2424] p-1.5 lg:p-2 rounded-lg border border-[#00FFAA]/10">
-              <span className="block text-[#6B8A8A] font-bold uppercase">Biaya APBN</span>
+              <span className="block text-[#6B8A8A] font-bold uppercase">Biaya Anggaran</span>
               <span className="font-black text-[#00FFAA] mt-0.5 block">{formatCurrencyCompact(item.budgetCost)}</span>
             </div>
 

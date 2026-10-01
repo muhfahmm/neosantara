@@ -180,7 +180,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
         {/* TOP STATS SUMMARY BANNER */}
         <div className="px-4 lg:px-6 py-2.5 lg:py-4 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3 shrink-0">
           <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3 rounded-xl">
-            <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Total Beban APBN Subsidi</p>
+            <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Total Beban Anggaran Subsidi</p>
             <p className="text-xs lg:text-sm font-black text-[#00FFAA] mt-0.5">{formatCurrencyCompact(summary.totalCost)}</p>
           </div>
 

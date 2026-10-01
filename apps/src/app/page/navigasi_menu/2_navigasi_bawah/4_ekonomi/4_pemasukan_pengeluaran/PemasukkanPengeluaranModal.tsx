@@ -168,7 +168,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                   : "text-[#6B8A8A] hover:text-[#E0E0E0] hover:bg-[#0F2424]"
               }`}
             >
-              Ringkasan APBN
+              Ringkasan PDB
             </button>
             <button
               onClick={() => setActiveTab("income")}
@@ -203,7 +203,6 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
             {activeTab === "summary" && (
               <div className="space-y-6">
                 <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4">
-                  <h4 className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider mb-4">APBN Estimasi Bulanan</h4>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center text-xs font-bold text-emerald-400 py-2 border-b border-[#00FFAA]/20">
                       <span className="flex items-center gap-2">
@@ -238,7 +237,6 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
             {activeTab === "income" && (
               <div className="space-y-4">
                 <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4">
-                  <h4 className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider mb-4">APBN Estimasi Bulanan</h4>
                   <div className="space-y-3">
                     {incomeItems.map((item, index) => (
                       <div key={index} className="border-b border-[#00FFAA]/20 last:border-0 pb-2">

@@ -418,7 +418,7 @@ function AllCountriesGDP({
       <div className="flex justify-between items-center gap-3 flex-shrink-0 flex-wrap">
         <div className="flex items-center gap-2">
           <span className="text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider">
-            Data APBN Instan (207 Negara)
+            Data PDB Instan (207 Negara)
           </span>
           <span className="inline-block w-2 h-2 rounded-full bg-emerald-400" />
         </div>
@@ -463,7 +463,7 @@ function AllCountriesGDP({
                 <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-sky-300 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('tourism')}>Wisata{renderSortArrow('tourism')}</th>
                 <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('subsidyCost')}>Pengeluaran Subsidi{renderSortArrow('subsidyCost')}</th>
                 <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('governmentCost')}>Pengeluaran Kabinet{renderSortArrow('governmentCost')}</th>
-                <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('net')}>Netto APBN{renderSortArrow('net')}</th>
+                <th className="w-[12%] px-1 sm:px-1 py-2 text-[9px] sm:text-[10px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider text-right cursor-pointer hover:bg-[#0F2424] transition-colors leading-tight" onClick={() => handleSort('net')}>Netto PDB{renderSortArrow('net')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#00FFAA]/10">{renderAllRows()}</tbody>
@@ -502,7 +502,7 @@ export default function PDBModal({ isOpen, onClose, countryDetail, selectedCount
         <div className="flex-1 min-h-0 flex flex-col p-4 lg:p-6 bg-[#0F2424] relative z-10">
           <p className="text-[11px] lg:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-3 lg:mb-4 flex-shrink-0">
             PDB mengukur kekuatan ekonomi makro kedaulatan {countryName}. Pertumbuhan positif meningkatkan daya tawar diplomasi Anda.
-            <span className="ml-1 text-[#00FFAA] font-black">(Data APBN Seluruh Negara Di Bawah Ini)</span>
+            <span className="ml-1 text-[#00FFAA] font-black">(Data PDB Seluruh Negara Di Bawah Ini)</span>
           </p>
 
           <AllCountriesGDP playerCountryName={countryName} playerCountryDetail={countryDetail} prefetchedAllCountries={prefetchedAllCountries} />

@@ -32,7 +32,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   const [fetchedDetail, setFetchedDetail] = useState<any>(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
-  // State statistik Netto APBN & Netto Populasi harian negara yang ditampilkan
+  // State statistik Netto PDB & Netto Populasi harian negara yang ditampilkan
   const [dailyNetBalance, setDailyNetBalance] = useState<number>(0);
   const [dailyNetPopulation, setDailyNetPopulation] = useState<number>(0);
 
@@ -93,7 +93,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
         setFetchedDetail(data);
 
-        // Hitung Netto APBN & Netto Populasi Harian awal saat data pertama dimuat
+        // Hitung Netto PDB & Netto Populasi Harian awal saat data pertama dimuat
         const initialNet = calculateCountryNetBalance(data);
         const initialPopNet = calculateCountryNetPopulation(data);
         setDailyNetBalance(initialNet);
@@ -147,11 +147,11 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   }, [currentDate, fetchedDetail, isOpen]);
 
 
-  // Hitung Netto APBN target negara yang ditampilkan di header dan summary
+  // Hitung Netto PDB target negara yang ditampilkan di header dan summary
   const targetBaseNetBalance = fetchedDetail ? dailyNetBalance : 0;
   const targetEffectiveNetBalance = targetBaseNetBalance;
 
-  // Hitung Netto APBN negara pemain yang digunakan untuk biaya kedutaan
+  // Hitung Netto PDB negara pemain yang digunakan untuk biaya kedutaan
   const playerBaseNetBalance = countryDetail ? calculateCountryNetBalance(countryDetail) : 0;
   const playerEffectiveNetBalance = playerBaseNetBalance + playerNetBalanceAdjustment;
 
