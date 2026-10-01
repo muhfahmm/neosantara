@@ -31,15 +31,16 @@ import { getDaysElapsed } from '@/app/logic/production_logic';
 import { calculateKepuasan, calculateKeterbukaanScore } from '@/app/logic/kepuasanCalculator';
 import { calculatePresidentRating, getMonthsDifference } from '@/app/logic/peringkatCalculator';
 import { calculateKesejahteraan, calculateKesejahteraanDecay } from '@/app/logic/kesejahteraanCalculator';
-const TopLeftIcon = dynamic(() => import('./menu_notifikasi/inbox/inboxModals'), { ssr: false });
-const TopRightGiftIcon = dynamic(() => import('./menu_notifikasi/reward/rewardModals'), { ssr: false });
-const TopRightNewsIcon = dynamic(() => import('./menu_notifikasi/news/newsModals'), { ssr: false });
-import { NotificationMessage, getKepuasanWarningMessage } from './menu_notifikasi/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
-import { getPeringkatWarningMessage } from './menu_notifikasi/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/2_peringkat/peringkatLogic';
-import { getKesejahteraanWarningMessage } from './menu_notifikasi/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
+const TopLeftIcon = dynamic(() => import('../menus/inbox/inboxModals'), { ssr: false });
+const TopRightGiftIcon = dynamic(() => import('../menus/reward/rewardModals'), { ssr: false });
+const TopRightNewsIcon = dynamic(() => import('../menus/news/newsModals'), { ssr: false });
+const BottomLeftPenelitianIcon = dynamic(() => import('../menus/penelitian/penelitianModals'), { ssr: false });
+import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/2_peringkat/peringkatLogic';
+import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
 import { getTradeAgreementsForCountry } from '../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
-import { generateAITradeBeliNotification } from './menu_notifikasi/inbox/logic/1_notifikasi_pokok/4_perdagangan/2_beli/tradeBeliLogic';
-import { generateAITradeJualNotification } from './menu_notifikasi/inbox/logic/1_notifikasi_pokok/4_perdagangan/1_jual/tradeJualLogic';
+import { generateAITradeBeliNotification } from '../menus/inbox/logic/1_notifikasi_pokok/4_perdagangan/2_beli/tradeBeliLogic';
+import { generateAITradeJualNotification } from '../menus/inbox/logic/1_notifikasi_pokok/4_perdagangan/1_jual/tradeJualLogic';
 
 interface Country {
     id: number;
@@ -87,6 +88,7 @@ export default function MapPage() {
     const [inboxModalOpen, setInboxModalOpen] = useState(false);
     const [giftModalOpen, setGiftModalOpen] = useState(false);
     const [newsModalOpen, setNewsModalOpen] = useState(false);
+    const [penelitianModalOpen, setPenelitianModalOpen] = useState(false);
     const [presidentRating, setPresidentRating] = useState<number>(50);
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
     const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
@@ -373,19 +375,20 @@ export default function MapPage() {
             notifModalMountedRef.current = true;
             return; // skip initial mount
         }
-        if (inboxModalOpen || giftModalOpen || newsModalOpen) {
+        if (inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) {
             window.dispatchEvent(new Event('hide_strategy_modal'));
         } else {
             window.dispatchEvent(new Event('show_strategy_modal'));
         }
-    }, [inboxModalOpen, giftModalOpen, newsModalOpen]);
+    }, [inboxModalOpen, giftModalOpen, newsModalOpen, penelitianModalOpen]);
 
-    // Close inbox, gift, and news modals if a navigation menu modal is opened
+    // Close inbox, gift, news, and penelitian modals if a navigation menu modal is opened
     useEffect(() => {
         if (!nonModalMenus.includes(activeMenu)) {
             setInboxModalOpen(false);
             setGiftModalOpen(false);
             setNewsModalOpen(false);
+            setPenelitianModalOpen(false);
         }
     }, [activeMenu]);
 
@@ -1138,6 +1141,7 @@ export default function MapPage() {
                     setInboxModalOpen(true);
                     setGiftModalOpen(false);
                     setNewsModalOpen(false);
+                    setPenelitianModalOpen(false);
                     setActiveMenu("");
                     // Mark all notifications as read when opening inbox
                     setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
@@ -1234,6 +1238,7 @@ export default function MapPage() {
                     setGiftModalOpen(true);
                     setInboxModalOpen(false);
                     setNewsModalOpen(false);
+                    setPenelitianModalOpen(false);
                     setActiveMenu("");
                 }}
                 isOpen={giftModalOpen}
@@ -1244,10 +1249,24 @@ export default function MapPage() {
                     setNewsModalOpen(true);
                     setInboxModalOpen(false);
                     setGiftModalOpen(false);
+                    setPenelitianModalOpen(false);
                     setActiveMenu("");
                 }}
                 isOpen={newsModalOpen}
                 onClose={() => setNewsModalOpen(false)}
+            />
+            <BottomLeftPenelitianIcon
+                onClick={() => {
+                    setPenelitianModalOpen(true);
+                    setInboxModalOpen(false);
+                    setGiftModalOpen(false);
+                    setNewsModalOpen(false);
+                    setActiveMenu("");
+                }}
+                isOpen={penelitianModalOpen}
+                onClose={() => setPenelitianModalOpen(false)}
+                countryDetail={countryDetail}
+                setCountryDetail={setCountryDetail}
             />
 
             {/* Shifted Canvas Container */}
@@ -1272,12 +1291,12 @@ export default function MapPage() {
                 <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_200px_rgba(0,0,0,0.6)] vignette-gradient" />
             </div>
 
-            {!(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen) && (
+            {!(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
                 <BottomNav
                     activeMenu={activeMenu}
                     setActiveMenu={setActiveMenu}
                     countryDetail={countryDetail}
-                    isDetailModalOpen={countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen}
+                    isDetailModalOpen={countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen}
                 />
             )}
 
@@ -1316,8 +1335,8 @@ export default function MapPage() {
                         {/* Settings gear inside container */}
                         <div className="flex items-center gap-1.5 xl:gap-2">
                             <div className="flex items-center justify-center w-6 h-6 xl:w-8 xl:h-8 rounded-md xl:rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 relative">
-                                <Settings 
-                                    className="w-3.5 h-3.5 xl:w-4.5 xl:h-4.5 text-[#00FFAA]" 
+                                <Settings
+                                    className="w-3.5 h-3.5 xl:w-4.5 xl:h-4.5 text-[#00FFAA]"
                                     style={{ animation: 'spin 8s linear infinite' }}
                                 />
                             </div>
@@ -1334,9 +1353,9 @@ export default function MapPage() {
 
                     {/* Progress Bar slot */}
                     <div className="w-full h-2 xl:h-3 bg-[#0A1A1A] rounded-full border border-[#00FFAA]/20 overflow-hidden relative">
-                        <div 
+                        <div
                             ref={progressBarRef}
-                            className="h-full bg-[#00FFAA] rounded-full transition-all duration-75" 
+                            className="h-full bg-[#00FFAA] rounded-full transition-all duration-75"
                             style={{ width: '0%' }}
                         />
                     </div>
@@ -1346,7 +1365,7 @@ export default function MapPage() {
                 <div className="bg-[#0A1A1A] rounded-b-xl xl:rounded-b-2xl border-b border-x border-[#00FFAA]/30 h-10 lg:h-11 xl:h-14 relative flex items-center justify-between">
                     <div className="absolute inset-x-3 lg:inset-x-4 xl:inset-x-6 -top-4.5 lg:-top-5 xl:-top-7 flex items-center justify-between">
                         {/* 1. Play/Pause button */}
-                        <button 
+                        <button
                             onClick={() => {
                                 if (!calendarRef.current) return;
                                 const newPaused = calendarRef.current.controls.handlePlayPauseClick(isPaused);
@@ -1366,7 +1385,7 @@ export default function MapPage() {
                         </button>
 
                         {/* 2. Speed Selector button */}
-                        <button 
+                        <button
                             onClick={() => {
                                 if (!calendarRef.current) return;
                                 const newSpeed = calendarRef.current.controls.handleSpeedClick();
@@ -1382,7 +1401,7 @@ export default function MapPage() {
                         </button>
 
                         {/* 3. Holiday button */}
-                        <button 
+                        <button
                             onClick={() => {
                                 if (calendarRef.current) {
                                     calendarRef.current.controls.handleHolidayClick();
@@ -1397,7 +1416,7 @@ export default function MapPage() {
                         </button>
 
                         {/* 4. Military/General button */}
-                        <button 
+                        <button
                             onClick={() => {
                                 if (calendarRef.current) {
                                     calendarRef.current.controls.handleMilitaryClick();
