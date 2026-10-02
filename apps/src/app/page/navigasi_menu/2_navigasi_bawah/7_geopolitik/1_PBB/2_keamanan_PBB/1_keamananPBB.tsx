@@ -227,9 +227,21 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
   const [activeSecurityCouncilItems, setActiveSecurityCouncilItems] = useState<ActiveSecurityCouncilItem[]>([]);
 
   useEffect(() => {
-    if (typeof loadActiveSecurityCouncilItems === 'function') {
-      const loaded = loadActiveSecurityCouncilItems();
-      setActiveSecurityCouncilItems(loaded);
+    const syncData = () => {
+      if (typeof loadActiveSecurityCouncilItems === 'function') {
+        const loaded = loadActiveSecurityCouncilItems();
+        setActiveSecurityCouncilItems(loaded);
+      }
+    };
+    syncData();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('pbb_active_resolutions_updated', syncData);
+      const timer = setInterval(syncData, 1000);
+      return () => {
+        window.removeEventListener('pbb_active_resolutions_updated', syncData);
+        clearInterval(timer);
+      };
     }
   }, []);
 

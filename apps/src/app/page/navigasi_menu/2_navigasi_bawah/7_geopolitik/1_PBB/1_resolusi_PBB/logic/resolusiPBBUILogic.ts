@@ -26,7 +26,7 @@ export interface ActiveResolutionItem {
   notified10Days?: boolean;
 }
 
-const STORAGE_KEY = 'pbb_active_resolutions_v3';
+const STORAGE_KEY = 'pbb_active_resolutions_v4';
 export const TOTAL_UN_MEMBERS = 206;
 
 const DEFAULT_AI_PROPOSERS = [
@@ -58,6 +58,18 @@ const RESOLUTION_TEMPLATES = [
   { type: 'economic_embargo', label: 'Embargo Perdagangan Ekonomi', desc: 'Pembekuan transaksi ekspor-impor utama dengan negara target.' },
   { type: 'production_ban', label: 'Larangan Produksi & Sektor Strategis', desc: 'Menghentikan eksplorasi dan manufaktur komoditas penting.' }
 ];
+
+function getDaysDiff(d1Str: string, d2Str: string): number {
+  try {
+    const p1 = d1Str.split('-').map(Number);
+    const p2 = d2Str.split('-').map(Number);
+    const t1 = new Date(p1[0], p1[1] - 1, p1[2]).getTime();
+    const t2 = new Date(p2[0], p2[1] - 1, p2[2]).getTime();
+    return Math.max(0, Math.round((t2 - t1) / (1000 * 60 * 60 * 24)));
+  } catch (e) {
+    return 0;
+  }
+}
 
 /**
  * Hitung kalkulasi perolehan 206 suara negara AI berdasarkan hari berjalan (30 hari).
@@ -129,6 +141,12 @@ export function getInitialActiveResolutions(userCountryName: string = 'Indonesia
   const initialDaysRemaining = 30; // Mulai dari 30 hari
   const initialVotes = calculate206AIVotes(initialDaysRemaining, null);
 
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const dateStr = `${year}-${month}-${day}`;
+
   return [
     {
       id: `res-ai-1`,
@@ -146,7 +164,7 @@ export function getInitialActiveResolutions(userCountryName: string = 'Indonesia
       },
       userVote: null,
       status: 'voting',
-      createdAt: '2026-10-01',
+      createdAt: dateStr,
       notified10Days: false
     }
   ];
@@ -154,7 +172,7 @@ export function getInitialActiveResolutions(userCountryName: string = 'Indonesia
 
 /**
  * Pemrosesan daily tick kalender untuk Resolusi PBB:
- * - Menurunkan sisa hari (30 -> 0)
+ * - Menurunkan sisa hari (30 -> 0) berdasarkan selisih tanggal kalender
  * - Memperbarui partisipasi 206 negara AI secara progresif dari 0 hingga 206
  * - Memicu notifikasi popup Inbox jika sisa hari <= 10 dan user belum vote.
  */
@@ -164,7 +182,9 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
   const updated = currentItems.map(item => {
     if (item.status !== 'voting') return item;
 
-    const newDaysRemaining = Math.max(0, item.daysRemaining - 1);
+    const startDate = item.createdAt || dateStr;
+    const elapsedDays = getDaysDiff(startDate, dateStr);
+    const newDaysRemaining = Math.max(0, 30 - elapsedDays);
     const votes = calculate206AIVotes(newDaysRemaining, item.userVote);
     let notified = item.notified10Days || false;
 
@@ -203,5 +223,8 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
   });
 
   saveActiveResolutions(updated);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
+  }
   return updated;
 }

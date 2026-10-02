@@ -216,9 +216,21 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   const [activeResolutions, setActiveResolutions] = useState<ActiveResolutionItem[]>([]);
 
   useEffect(() => {
-    if (typeof loadActiveResolutions === 'function') {
-      const loaded = loadActiveResolutions();
-      setActiveResolutions(loaded);
+    const syncData = () => {
+      if (typeof loadActiveResolutions === 'function') {
+        const loaded = loadActiveResolutions();
+        setActiveResolutions(loaded);
+      }
+    };
+    syncData();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('pbb_active_resolutions_updated', syncData);
+      const timer = setInterval(syncData, 1000);
+      return () => {
+        window.removeEventListener('pbb_active_resolutions_updated', syncData);
+        clearInterval(timer);
+      };
     }
   }, []);
 

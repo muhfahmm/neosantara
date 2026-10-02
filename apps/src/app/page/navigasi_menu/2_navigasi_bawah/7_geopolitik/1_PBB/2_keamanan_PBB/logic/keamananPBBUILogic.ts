@@ -27,7 +27,7 @@ export interface ActiveSecurityCouncilItem {
   notified10Days?: boolean;
 }
 
-const STORAGE_KEY = 'pbb_active_keamanan_v3';
+const STORAGE_KEY = 'pbb_active_keamanan_v4';
 export const TOTAL_SECURITY_MEMBERS = 15;
 
 const DEFAULT_SECURITY_PROPOSERS = [
@@ -52,6 +52,18 @@ const SECURITY_TEMPLATES = [
   { type: 'naval', label: 'Blokade Perairan Laut & Navigasi', desc: 'Penutupan jalur perdagangan perairan internasional untuk kapal kargo target.' },
   { type: 'full', label: 'Isolasi Diplomatik Penuh', desc: 'Pemutusan hubungan konsuler dan penutupan seluruh perwakilan diplomasi.' }
 ];
+
+function getDaysDiff(d1Str: string, d2Str: string): number {
+  try {
+    const p1 = d1Str.split('-').map(Number);
+    const p2 = d2Str.split('-').map(Number);
+    const t1 = new Date(p1[0], p1[1] - 1, p1[2]).getTime();
+    const t2 = new Date(p2[0], p2[1] - 1, p2[2]).getTime();
+    return Math.max(0, Math.round((t2 - t1) / (1000 * 60 * 60 * 24)));
+  } catch (e) {
+    return 0;
+  }
+}
 
 /**
  * Hitung kalkulasi perolehan 15 suara Dewan Keamanan PBB (5 Tetap + 10 Tidak Tetap).
@@ -123,6 +135,12 @@ export function getInitialActiveSecurityCouncilItems(userCountryName: string = '
   const initialDaysRemaining = 30; // Mulai dari 30 hari
   const initialVotes = calculate15SecurityCouncilVotes(initialDaysRemaining, null);
 
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const dateStr = `${year}-${month}-${day}`;
+
   return [
     {
       id: `sec-ai-1`,
@@ -141,7 +159,7 @@ export function getInitialActiveSecurityCouncilItems(userCountryName: string = '
       },
       userVote: null,
       status: 'voting',
-      createdAt: '2026-10-02',
+      createdAt: dateStr,
       notified10Days: false
     }
   ];
@@ -149,7 +167,7 @@ export function getInitialActiveSecurityCouncilItems(userCountryName: string = '
 
 /**
  * Pemrosesan daily tick kalender untuk Dewan Keamanan PBB:
- * - Menurunkan sisa hari (30 -> 0)
+ * - Menurunkan sisa hari (30 -> 0) berdasarkan selisih tanggal kalender
  * - Memperbarui partisipasi 15 anggota DK PBB dari 0 hingga 15
  * - Memicu notifikasi popup Inbox jika sisa hari <= 10 dan user belum vote.
  */
@@ -159,7 +177,9 @@ export function tickPBBSecurityCouncil(dateStr: string, onTriggerNotification?: 
   const updated = currentItems.map(item => {
     if (item.status !== 'voting') return item;
 
-    const newDaysRemaining = Math.max(0, item.daysRemaining - 1);
+    const startDate = item.createdAt || dateStr;
+    const elapsedDays = getDaysDiff(startDate, dateStr);
+    const newDaysRemaining = Math.max(0, 30 - elapsedDays);
     const votes = calculate15SecurityCouncilVotes(newDaysRemaining, item.userVote);
     let notified = item.notified10Days || false;
 
@@ -203,5 +223,8 @@ export function tickPBBSecurityCouncil(dateStr: string, onTriggerNotification?: 
   });
 
   saveActiveSecurityCouncilItems(updated);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
+  }
   return updated;
 }
