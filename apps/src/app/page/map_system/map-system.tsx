@@ -57,6 +57,9 @@ import { generateListrikDefisitNotification } from '../menus/inbox/logic/8_kebut
 import { generateHunianDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/2_hunian/hunianDefisitLogic';
 import { generatePanganDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/3_pangan/panganDefisitLogic';
 import { generateTempatUmumDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/4_tempat_umum/tempatUmumDefisitLogic';
+import { generateNonAggressionOfferNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/1_pakta_non_agresi/nonAggressionLogic';
+import { generateDefenseAllianceOfferNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/2_aliansi_pertahanan/defenseAllianceLogic';
+import { generateResearchContractOfferNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/3_kontrak_penelitian/researchContractLogic';
 import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic';
@@ -346,6 +349,14 @@ export default function MapPage() {
                 'India', 'Turki', 'Meksiko', 'Singapura', 'Malaysia', 'Thailand', 'Vietnam'
             ];
 
+            const staticEmbassyPartners = getEmbassiesForCountry(userCountryName);
+            const activeEmbassies = Array.from(new Set([
+                ...staticEmbassyPartners.filter(p => !removedEmbassies.includes(p)),
+                ...playerEmbassies.map((e: any) => typeof e === 'string' ? e : e.mitra || e.nama_negara || '')
+            ])).filter(Boolean);
+
+            const embassyPartnerPool = activeEmbassies.length > 0 ? activeEmbassies : internationalPool;
+
             const newNotifsToAdd: any[] = [];
 
             // 1. Penawaran Transaksi Ekspor / Impor (25% per bulan ~ 3-5x/tahun)
@@ -387,9 +398,9 @@ export default function MapPage() {
                 }
             }
 
-            // 3. Penawaran Hubungan Dagang Bilateral (25% per bulan)
+            // 3. Penawaran Hubungan Dagang Bilateral (Membutuhkan Kedutaan Besar, 25% per bulan)
             if (Math.random() < 0.25) {
-                const randomPartner = internationalPool[Math.floor(Math.random() * internationalPool.length)];
+                const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
                 newNotifsToAdd.push(generateTradeRelationOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
@@ -418,6 +429,24 @@ export default function MapPage() {
                 } else {
                     newNotifsToAdd.push(generateICBMNotification(randomPartner, 'Jakarta', currentDateStr));
                 }
+            }
+
+            // 5B. Penawaran Pakta Non-Agresi Bilateral (Membutuhkan Kedutaan Besar, 25% per bulan ~ 3-5x/tahun)
+            if (Math.random() < 0.25) {
+                const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
+                newNotifsToAdd.push(generateNonAggressionOfferNotification(randomPartner, userCountryName, currentDateStr));
+            }
+
+            // 5C. Penawaran Aliansi Pertahanan Bilateral (Membutuhkan Kedutaan Besar, 25% per bulan ~ 3-5x/tahun)
+            if (Math.random() < 0.25) {
+                const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
+                newNotifsToAdd.push(generateDefenseAllianceOfferNotification(randomPartner, userCountryName, currentDateStr));
+            }
+
+            // 5D. Penawaran Kontrak Penelitian Joint-R&D (Membutuhkan Kedutaan Besar, 25% per bulan ~ 3-5x/tahun)
+            if (Math.random() < 0.25) {
+                const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
+                newNotifsToAdd.push(generateResearchContractOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
             // 6. Notifikasi Defisit Listrik Grid Nasional (Kelipatan -5%: -5, -10, -15, ...)
@@ -1464,8 +1493,41 @@ export default function MapPage() {
                             ...prev,
                             addedTradePartners: Array.from(new Set([...(prev?.addedTradePartners || []), partner]))
                         }));
-                        setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
+                        setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
                         alert(`Berhasil meratifikasi Perjanjian Hubungan Dagang dengan ${partner}!`);
+                        return;
+                    }
+
+                    if (tNotif.tradeType === 'penawaran_pakta_non_agresi') {
+                        const partner = tNotif.partnerCountry;
+                        setCountryDetail((prev: any) => ({
+                            ...prev,
+                            nonAggressionPacts: Array.from(new Set([...(prev?.nonAggressionPacts || []), partner]))
+                        }));
+                        setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
+                        alert(`Berhasil meratifikasi Pakta Non-Agresi Bilateral dengan ${partner}!`);
+                        return;
+                    }
+
+                    if (tNotif.tradeType === 'penawaran_aliansi_pertahanan') {
+                        const partner = tNotif.partnerCountry;
+                        setCountryDetail((prev: any) => ({
+                            ...prev,
+                            defenseAlliances: Array.from(new Set([...(prev?.defenseAlliances || []), partner]))
+                        }));
+                        setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
+                        alert(`Berhasil membentuk Aliansi Pertahanan Militer Bersama dengan ${partner}!`);
+                        return;
+                    }
+
+                    if (tNotif.tradeType === 'penawaran_kontrak_penelitian') {
+                        const partner = tNotif.partnerCountry;
+                        setCountryDetail((prev: any) => ({
+                            ...prev,
+                            researchContracts: Array.from(new Set([...(prev?.researchContracts || []), partner]))
+                        }));
+                        setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
+                        alert(`Berhasil meratifikasi Kontrak Penelitian Joint-R&D dengan ${partner}! kecepatan riset meningkat +25%.`);
                         return;
                     }
 
@@ -1508,6 +1570,11 @@ export default function MapPage() {
                 }}
                 onRedirectClick={(notif) => {
                     const tNotif = notif as any;
+                    if (tNotif.tradeType === 'penawaran_pakta_non_agresi' || tNotif.tradeType === 'penawaran_aliansi_pertahanan' || tNotif.tradeType === 'penawaran_kontrak_penelitian') {
+                        setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'rejected' } : n));
+                        return;
+                    }
+
                     const specialNotifTypes = ['jual', 'beli', 'penawaran_kedutaan_besar', 'penawaran_hubungan_dagang', 'bencana_alam', 'wabah_penyakit', 'spionase', 'sabotase', 'diserang', 'pemberontakan', 'icbm'];
                     if (specialNotifTypes.includes(tNotif.tradeType)) {
                         // Tolak / Abaikan Notifikasi: Hapus notifikasi dari feed

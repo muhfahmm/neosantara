@@ -15,6 +15,11 @@
 9. Notifikasi Pemberontakan
 10. Notifikasi ICBM
 
+# 5 (B). Notifikasi Geopolitik & Diplomasi Internasional
+11. Penawaran Pakta Non-Agresi (`5_notifikasi_geopolitik/1_pakta_non_agresi`)
+12. Penawaran Aliansi Pertahanan (`5_notifikasi_geopolitik/2_aliansi_pertahanan`)
+13. Penawaran Kontrak Penelitian Joint-R&D (`5_notifikasi_geopolitik/4_kontrak_penelitian`)
+
 # 7. Notifikasi Ekonomi
 11. Perubahan Pajak (Protes / Bahagia)
 12. Harga Barang Pokok (Marah / Senang)

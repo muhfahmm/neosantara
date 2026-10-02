@@ -31,6 +31,9 @@ import DoctrineChangeNotificationCard from './logic/10_sosial_budaya/3_keterbuka
 import ResearchChangeNotificationCard from './logic/11_notifikasi_penelitian/researchChangeNotification';
 import SistemEkonomiChangeNotificationCard from './logic/7_notifikasi_ekonomi/4_sistem_ekonomi/sistemEkonomiChangeNotification';
 import KabinetChangeNotificationCard from './logic/13_notifikasi_kabinet/kabinetChangeNotification';
+import NonAggressionNotificationCard from './logic/5_notifikasi_geopolitik/1_pakta_non_agresi/nonAggressionNotificationCard';
+import DefenseAllianceNotificationCard from './logic/5_notifikasi_geopolitik/2_aliansi_pertahanan/defenseAllianceNotificationCard';
+import ResearchContractNotificationCard from './logic/5_notifikasi_geopolitik/3_kontrak_penelitian/researchContractNotificationCard';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -433,6 +436,36 @@ export default function TopLeftIcon({
                     if (tradeType === 'perubahan_kabinet') {
                       return (
                         <KabinetChangeNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'penawaran_pakta_non_agresi') {
+                      return (
+                        <NonAggressionNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'penawaran_aliansi_pertahanan') {
+                      return (
+                        <DefenseAllianceNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'penawaran_kontrak_penelitian') {
+                      return (
+                        <ResearchContractNotificationCard
                           key={notif.id}
                           notification={notif as any}
                           onAccept={handleAction}
