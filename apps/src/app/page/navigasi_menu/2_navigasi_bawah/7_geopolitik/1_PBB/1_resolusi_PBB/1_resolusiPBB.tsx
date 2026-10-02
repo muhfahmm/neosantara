@@ -11,7 +11,7 @@ import { calculateResolusiVoting } from "../voting_logic/resolusiPBB_logic";
 // 🔥 PERBAIKAN: Hapus ekstensi .tsx di bagian import
 import CountryTargetModal from "./2_negara_target";
 import CountryListModal from "./3_jumlah_suara";
-import { ActiveResolutionItem, loadActiveResolutions, saveActiveResolutions, calculate206AIVotes, TOTAL_UN_MEMBERS } from "./logic/resolusiPBBUILogic";
+import { ActiveResolutionItem, loadActiveResolutions, saveActiveResolutions, calculate206AIVotes, TOTAL_UN_MEMBERS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 
 interface ResolusiPBBProps {
   selectedCountry: any;
@@ -216,8 +216,10 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   const [activeResolutions, setActiveResolutions] = useState<ActiveResolutionItem[]>([]);
 
   useEffect(() => {
-    const loaded = loadActiveResolutions();
-    setActiveResolutions(loaded);
+    if (typeof loadActiveResolutions === 'function') {
+      const loaded = loadActiveResolutions();
+      setActiveResolutions(loaded);
+    }
   }, []);
 
   const handleVote = (resId: string, voteType: 'yes' | 'no' | 'abstain') => {

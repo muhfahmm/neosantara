@@ -7,7 +7,7 @@ import {
 import { createPortal } from "react-dom";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 import { calculateKeamananVoting } from "../voting_logic/keamananPBB_logic";
-import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS } from "./logic/keamananPBBUILogic";
+import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
 
 interface KeamananPBBProps {
   selectedCountry: any;
@@ -227,8 +227,10 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
   const [activeSecurityCouncilItems, setActiveSecurityCouncilItems] = useState<ActiveSecurityCouncilItem[]>([]);
 
   useEffect(() => {
-    const loaded = loadActiveSecurityCouncilItems();
-    setActiveSecurityCouncilItems(loaded);
+    if (typeof loadActiveSecurityCouncilItems === 'function') {
+      const loaded = loadActiveSecurityCouncilItems();
+      setActiveSecurityCouncilItems(loaded);
+    }
   }, []);
 
   const handleSecurityVote = (itemId: string, voteType: 'yes' | 'no' | 'abstain') => {
