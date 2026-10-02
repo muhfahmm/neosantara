@@ -242,7 +242,11 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
           voteStats: newStats
         };
       });
-      saveActiveResolutions(updated);
+      if (typeof saveActiveResolutions === 'function') {
+        saveActiveResolutions(updated);
+      } else if (typeof window !== 'undefined') {
+        try { localStorage.setItem('pbb_active_resolutions_v2', JSON.stringify(updated)); } catch (e) {}
+      }
       return updated;
     });
   };
@@ -284,7 +288,11 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
 
     setActiveResolutions(prev => {
       const newList = [newRes, ...prev];
-      saveActiveResolutions(newList);
+      if (typeof saveActiveResolutions === 'function') {
+        saveActiveResolutions(newList);
+      } else if (typeof window !== 'undefined') {
+        try { localStorage.setItem('pbb_active_resolutions_v2', JSON.stringify(newList)); } catch (e) {}
+      }
       return newList;
     });
 

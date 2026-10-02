@@ -253,7 +253,11 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
           voteStats: newStats
         };
       });
-      saveActiveSecurityCouncilItems(updated);
+      if (typeof saveActiveSecurityCouncilItems === 'function') {
+        saveActiveSecurityCouncilItems(updated);
+      } else if (typeof window !== 'undefined') {
+        try { localStorage.setItem('pbb_active_keamanan_v2', JSON.stringify(updated)); } catch (e) {}
+      }
       return updated;
     });
   };
@@ -296,7 +300,11 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
 
     setActiveSecurityCouncilItems(prev => {
       const newList = [newItem, ...prev];
-      saveActiveSecurityCouncilItems(newList);
+      if (typeof saveActiveSecurityCouncilItems === 'function') {
+        saveActiveSecurityCouncilItems(newList);
+      } else if (typeof window !== 'undefined') {
+        try { localStorage.setItem('pbb_active_keamanan_v2', JSON.stringify(newList)); } catch (e) {}
+      }
       return newList;
     });
     
