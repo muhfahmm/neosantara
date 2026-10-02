@@ -44,14 +44,25 @@ export function checkAndGenerateEmbassyOffers(
   userCountryName: string,
   existingNotifications: NotificationMessage[],
   dateStr: string,
-  isMonthlyTick: boolean = true
+  isMonthlyTick: boolean = true,
+  playerEmbassies: any[] = [],
+  removedEmbassies: any[] = []
 ): EmbassyOfferNotification | null {
   if (!userCountryName || !isMonthlyTick) return null;
 
   const userSlug = normalizeSlug(userCountryName);
 
-  // Ambil daftar negara yang SUDAH memiliki kedutaan besar dengan User
-  const existingEmbassyPartners = getEmbassiesForCountry(userCountryName).map(c => normalizeSlug(c));
+  // Ambil daftar negara yang SUDAH memiliki kedutaan besar dengan User (static + dynamic)
+  const staticEmbassyPartners = getEmbassiesForCountry(userCountryName).map(c => normalizeSlug(c));
+  const dynamicEmbassyPartners = Array.isArray(playerEmbassies)
+    ? playerEmbassies.map((emb: any) => normalizeSlug(emb.mitra || emb.country || emb))
+    : [];
+  const removedSlugSet = new Set(Array.isArray(removedEmbassies) ? removedEmbassies.map(c => normalizeSlug(c)) : []);
+
+  const existingEmbassyPartners = [
+    ...staticEmbassyPartners.filter(slug => !removedSlugSet.has(slug)),
+    ...dynamicEmbassyPartners
+  ];
 
   // Candidate pool negara-negara internasional
   const candidateCountries: string[] = [

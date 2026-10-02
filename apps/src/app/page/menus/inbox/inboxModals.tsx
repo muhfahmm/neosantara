@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Inbox, X, Trash2 } from 'lucide-react';
 import { NotificationMessage } from './logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
@@ -34,30 +34,37 @@ export default function TopLeftIcon({
   const [mounted, setMounted] = useState(false);
   const [toastNotification, setToastNotification] = useState<NotificationMessage | null>(null);
   const [showToast, setShowToast] = useState(false);
+  const lastNotifiedIdRef = useRef<string | null>(null);
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Popup Toast Otomatis Muncul Saat Ada Notifikasi Baru Masuk
+  // Popup Toast Otomatis Muncul Saat Ada Notifikasi Baru Masuk (Tahan 10 Detik)
   useEffect(() => {
-    if (notifications.length > 0) {
-      const latestNotif = notifications[0];
-      if (!latestNotif.isRead) {
-        setToastNotification(latestNotif);
+    const latestUnread = notifications.find(n => !n.isRead);
+    
+    if (latestUnread) {
+      if (latestUnread.id !== lastNotifiedIdRef.current) {
+        lastNotifiedIdRef.current = latestUnread.id;
+        setToastNotification(latestUnread);
         setShowToast(true);
+
         const timer = setTimeout(() => {
           setShowToast(false);
-        }, 6000); // Popup hilang otomatis setelah 6 detik
+        }, 10000); // Popup bertahan selama 10 detik
+
         return () => clearTimeout(timer);
       }
+    } else {
+      setShowToast(false);
     }
   }, [notifications]);
 
   return (
     <>
-      <div className="fixed top-24 left-7 z-[100] flex flex-col items-start gap-2">
+      <div className="fixed top-24 left-7 z-[99999] flex flex-col items-start gap-2 pointer-events-auto">
         <button
           onClick={() => {
             setShowToast(false);
@@ -81,11 +88,11 @@ export default function TopLeftIcon({
               setShowToast(false);
               if (onClick) onClick();
             }}
-            className="w-72 bg-[#0F2424]/95 backdrop-blur border border-[#00FFAA]/50 rounded-xl p-3 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-300 cursor-pointer hover:border-[#00FFAA] transition-all group"
+            className="w-80 bg-[#0F2424] border-2 border-[#00FFAA] rounded-2xl p-3.5 shadow-[0_10px_30px_rgba(0,255,170,0.35)] animate-in fade-in slide-in-from-top-3 duration-300 cursor-pointer hover:bg-[#143030] transition-all group relative z-[99999]"
           >
-            <div className="flex items-center justify-between pb-1 border-b border-[#00FFAA]/20">
-              <span className="text-[10px] font-bold text-[#00FFAA] uppercase tracking-wider flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-[#00FFAA] animate-ping" />
+            <div className="flex items-center justify-between pb-1.5 border-b border-[#00FFAA]/30">
+              <span className="text-[11px] font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#00FFAA] animate-ping" />
                 Pesan Baru Masuk
               </span>
               <button 
@@ -93,20 +100,21 @@ export default function TopLeftIcon({
                   e.stopPropagation();
                   setShowToast(false);
                 }}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-white p-0.5 rounded"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4 text-[#00FFAA]" />
               </button>
             </div>
-            <h5 className="text-xs font-bold text-white mt-1.5 line-clamp-1 group-hover:text-[#00FFAA] transition-colors">
+            <h5 className="text-xs font-bold text-white mt-2 line-clamp-1 group-hover:text-[#00FFAA] transition-colors leading-snug">
               {toastNotification.title}
             </h5>
-            <p className="text-[10px] text-slate-300 line-clamp-2 mt-0.5 leading-relaxed">
+            <p className="text-[11px] text-slate-300 line-clamp-2 mt-1 leading-relaxed">
               {toastNotification.message}
             </p>
-            <div className="mt-1.5 flex justify-end">
-              <span className="text-[9px] text-[#00FFAA] font-semibold underline group-hover:translate-x-0.5 transition-transform">
-                Buka Inbox ({unreadCount} Pesan Baru) →
+            <div className="mt-2 flex items-center justify-between pt-1 border-t border-[#00FFAA]/10">
+              <span className="text-[9px] text-[#6B8A8A] font-semibold">{toastNotification.timestamp}</span>
+              <span className="text-[10px] text-[#00FFAA] font-black underline group-hover:translate-x-1 transition-transform">
+                Buka Inbox ({unreadCount}) →
               </span>
             </div>
           </div>
@@ -115,7 +123,7 @@ export default function TopLeftIcon({
 
       {/* 🔥 Inbox Modal - Render via Portal agar sama dengan Sidang Umum PBB */}
       {isOpen && mounted && createPortal(
-        <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+        <div className="fixed inset-0 z-[100000] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-black/60 pointer-events-none">
           <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
             {/* 🔥 HEADER MODAL */}
@@ -163,52 +171,55 @@ export default function TopLeftIcon({
                   {notifications.map((notif) => {
                     const handleAction = onActionClick ? () => onActionClick(notif) : undefined;
                     const handleRedirect = onRedirectClick ? () => onRedirectClick(notif) : undefined;
+
+                    const tradeType = (notif as any).tradeType;
+                    if (tradeType === 'jual') {
+                      return (
+                        <TradeJualNotification
+                          key={notif.id}
+                          notification={notif}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'beli') {
+                      return (
+                        <TradeBeliNotification
+                          key={notif.id}
+                          notification={notif}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'penawaran_hubungan_dagang') {
+                      return (
+                        <TradeRelationNotification
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'penawaran_kedutaan_besar') {
+                      return (
+                        <EmbassyNotification
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+
                     switch (notif.type) {
                       case 'kepuasan':
-                        if ((notif as any).tradeType === 'jual') {
-                          return (
-                            <TradeJualNotification
-                              key={notif.id}
-                              notification={notif}
-                              onAccept={handleAction}
-                              onReject={handleRedirect}
-                            />
-                          );
-                        }
-                        if ((notif as any).tradeType === 'penawaran_hubungan_dagang') {
-                          return (
-                            <TradeRelationNotification
-                              key={notif.id}
-                              notification={notif as any}
-                              onAccept={handleAction}
-                              onReject={handleRedirect}
-                            />
-                          );
-                        }
-                        if ((notif as any).tradeType === 'penawaran_kedutaan_besar') {
-                          return (
-                            <EmbassyNotification
-                              key={notif.id}
-                              notification={notif as any}
-                              onAccept={handleAction}
-                              onReject={handleRedirect}
-                            />
-                          );
-                        }
                         return <KepuasanNotification key={notif.id} notification={notif} onActionClick={handleAction} onRedirectClick={handleRedirect} />;
                       case 'peringkat':
                         return <PeringkatNotification key={notif.id} notification={notif} onActionClick={handleAction} onRedirectClick={handleRedirect} />;
                       case 'kesejahteraan':
-                        if ((notif as any).tradeType === 'beli') {
-                          return (
-                            <TradeBeliNotification
-                              key={notif.id}
-                              notification={notif}
-                              onAccept={handleAction}
-                              onReject={handleRedirect}
-                            />
-                          );
-                        }
                         return <KesejahteraanNotification key={notif.id} notification={notif} onActionClick={handleAction} onRedirectClick={handleRedirect} />;
                       default:
                         return (

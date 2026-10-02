@@ -49,15 +49,32 @@ export function checkAndGenerateTradeRelationOffers(
   userCountryName: string,
   existingNotifications: NotificationMessage[],
   dateStr: string,
-  isMonthlyTick: boolean = true
+  isMonthlyTick: boolean = true,
+  playerTradePartners: any[] = [],
+  removedTradePartners: any[] = [],
+  playerEmbassies: any[] = [],
+  removedEmbassies: any[] = []
 ): TradeRelationOfferNotification | null {
   if (!userCountryName || !isMonthlyTick) return null;
 
   const userSlug = normalizeSlug(userCountryName);
 
-  // Pre-existing trade partners & embassy partners
-  const existingTradePartners = getTradePartnersForCountry(userCountryName).map(c => normalizeSlug(c));
-  const existingEmbassyPartners = getEmbassiesForCountry(userCountryName).map(c => normalizeSlug(c));
+  // Pre-existing trade partners & embassy partners (static + dynamic)
+  const staticTrade = getTradePartnersForCountry(userCountryName).map(c => normalizeSlug(c));
+  const dynamicTrade = Array.isArray(playerTradePartners) ? playerTradePartners.map(c => normalizeSlug(c)) : [];
+  const removedTradeSet = new Set(Array.isArray(removedTradePartners) ? removedTradePartners.map(c => normalizeSlug(c)) : []);
+  const existingTradePartners = [
+    ...staticTrade.filter(slug => !removedTradeSet.has(slug)),
+    ...dynamicTrade
+  ];
+
+  const staticEmbassy = getEmbassiesForCountry(userCountryName).map(c => normalizeSlug(c));
+  const dynamicEmbassy = Array.isArray(playerEmbassies) ? playerEmbassies.map((emb: any) => normalizeSlug(emb.mitra || emb.country || emb)) : [];
+  const removedEmbassySet = new Set(Array.isArray(removedEmbassies) ? removedEmbassies.map(c => normalizeSlug(c)) : []);
+  const existingEmbassyPartners = [
+    ...staticEmbassy.filter(slug => !removedEmbassySet.has(slug)),
+    ...dynamicEmbassy
+  ];
 
   // Candidate pool negara-negara internasional
   const candidateCountries: string[] = [
@@ -107,7 +124,7 @@ export function createTradeRelationOfferNotification(
 ): TradeRelationOfferNotification {
   return {
     id: `trade-offer-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: `Penawaran Hubungan Perdagangan: ${partnerCountry}`,
+    title: `🤝 Penawaran Hubungan Dagang: ${partnerCountry}`,
     sender: `Kementerian Luar Negeri & Perdagangan ${partnerCountry}`,
     message: `Salam hangat untuk Presiden ${userCountryName || 'Nusantara'}. Negara ${partnerCountry} belum memiliki Kedutaan Besar resmi di negara Anda, namun kami melihat potensi ekonomi yang sangat besar untuk menjalin kerja sama perdagangan bilateral bilateral tanpa kedutaan besar. Kami secara resmi mengajukan penawaran pembukaan Hubungan Perdagangan. Apakah Anda berkenan menerima penawaran diplomasi ekonomi ini?`,
     timestamp: dateStr,

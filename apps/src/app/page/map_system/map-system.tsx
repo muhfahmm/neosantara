@@ -277,51 +277,6 @@ export default function MapPage() {
         const globalLastSentDay = Number(countryDetail.last_trade_notification_day ?? -1);
         if (diffDays === globalLastSentDay) return;
 
-        // Pemicu: 1-2 kali per minggu (hari ke-2 dan hari ke-5 di setiap minggu)
-        if (dayInWeek === 2 || dayInWeek === 5) {
-            const myCountry = countryDetail.country || countryDetail.nama || "";
-            const partners = getTradeAgreementsForCountry(myCountry);
-            if (partners.length === 0) return;
-
-            // Ambil partner acak
-            const targetPartner = partners[Math.floor(Math.random() * partners.length)];
-            const partnerName = targetPartner.mitra;
-
-            // Cari produk yang paling menguntungkan (misal Uranium, Semikonduktor, Logam Tanah Jarang)
-            const premiumProducts = ["uranium", "pabrik_semikonduktor", "logam_tanah_jarang", "pabrik_mesin_mobil", "litium"];
-            const productKey = premiumProducts[Math.floor(Math.random() * premiumProducts.length)];
-
-            // Generate random trade quantities and competitive prices
-            const quantity = Math.floor(Math.random() * 300) + 20;
-            const prices: Record<string, number> = {
-                uranium: 8000, pabrik_semikonduktor: 4000, logam_tanah_jarang: 5000, pabrik_mesin_mobil: 15000, litium: 3000
-            };
-            const basePrice = prices[productKey] || 100;
-            const pricePerUnit = Math.round(basePrice * (0.85 + Math.random() * 0.3) * 100) / 100;
-
-            const yearStr = currentDate.getFullYear();
-            const monthStr = String(currentDate.getMonth() + 1).padStart(2, '0');
-            const dayStr = String(currentDate.getDate()).padStart(2, '0');
-            const dateStr = `${yearStr}-${monthStr}-${dayStr}`;
-
-            // Selang-seling tipe tawaran: Jual (AI beli dari User) atau Beli (AI jual ke User)
-            const isAIBuying = Math.random() > 0.5;
-            let newNotif: any;
-
-            if (isAIBuying) {
-                // AI Ingin Membeli Produk User (Jual)
-                newNotif = generateAITradeJualNotification(partnerName, productKey, quantity, pricePerUnit, dateStr);
-            } else {
-                // AI Ingin Menjual Produk ke User (Beli)
-                newNotif = generateAITradeBeliNotification(partnerName, productKey, quantity, pricePerUnit, dateStr);
-            }
-
-            setNotifications(prev => [newNotif, ...prev]);
-            setCountryDetail((prev: any) => ({
-                ...prev,
-                last_trade_notification_day: diffDays
-            }));
-        }
     }, [currentDate, countryDetail, setCountryDetail]);
 
     // --- MONTHLY TRADE RELATION OFFER NOTIFICATIONS (OPSI 1: 25% PER MONTH) ---
@@ -348,24 +303,66 @@ export default function MapPage() {
 
         if (lastCheckedYearMonth !== currentYearMonth) {
             const userCountryName = countryDetail.country || countryDetail.nama || "Indonesia";
+            const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
+            const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
+            const addedTradePartners = Array.isArray(countryDetail?.addedTradePartners) ? countryDetail.addedTradePartners : [];
+            const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
             
+            // 1. Penawaran Hubungan Perdagangan (25% per bulan ~ 3x/tahun)
             const tradeRelationNotif = checkAndGenerateTradeRelationOffers(
                 userCountryName,
                 notifications,
                 currentDateStr,
-                true // isMonthlyTick = true
+                true, // isMonthlyTick = true
+                addedTradePartners,
+                removedTradePartners,
+                playerEmbassies,
+                removedEmbassies
             );
 
+            // 2. Penawaran Kedutaan Besar (25% per bulan ~ 3x/tahun)
             const embassyOfferNotif = checkAndGenerateEmbassyOffers(
                 userCountryName,
                 notifications,
                 currentDateStr,
-                true
+                true,
+                playerEmbassies,
+                removedEmbassies
             );
+
+            // 3. Penawaran Transaksi Ekspor & Impor (25% per bulan ~ 3-5x/tahun)
+            let tradeTransactionNotif = null;
+            if (Math.random() < 0.25) {
+                const staticPartners = getTradeAgreementsForCountry(userCountryName).map(c => c.mitra);
+                const allTradePartners = Array.from(new Set([
+                    ...staticPartners.filter(p => !removedTradePartners.includes(p)),
+                    ...addedTradePartners
+                ]));
+
+                if (allTradePartners.length > 0) {
+                    const partnerName = allTradePartners[Math.floor(Math.random() * allTradePartners.length)];
+                    const premiumProducts = ["uranium", "pabrik_semikonduktor", "logam_tanah_jarang", "pabrik_mesin_mobil", "litium"];
+                    const productKey = premiumProducts[Math.floor(Math.random() * premiumProducts.length)];
+                    const quantity = Math.floor(Math.random() * 300) + 20;
+                    const prices: Record<string, number> = {
+                        uranium: 8000, pabrik_semikonduktor: 4000, logam_tanah_jarang: 5000, pabrik_mesin_mobil: 15000, litium: 3000
+                    };
+                    const basePrice = prices[productKey] || 100;
+                    const pricePerUnit = Math.round(basePrice * (0.85 + Math.random() * 0.3) * 100) / 100;
+                    const isAIBuying = Math.random() > 0.5;
+
+                    if (isAIBuying) {
+                        tradeTransactionNotif = generateAITradeJualNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr);
+                    } else {
+                        tradeTransactionNotif = generateAITradeBeliNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr);
+                    }
+                }
+            }
 
             const newNotifsToAdd: any[] = [];
             if (tradeRelationNotif) newNotifsToAdd.push(tradeRelationNotif);
             if (embassyOfferNotif) newNotifsToAdd.push(embassyOfferNotif);
+            if (tradeTransactionNotif) newNotifsToAdd.push(tradeTransactionNotif);
 
             if (newNotifsToAdd.length > 0) {
                 setNotifications(prev => [...newNotifsToAdd, ...prev]);
