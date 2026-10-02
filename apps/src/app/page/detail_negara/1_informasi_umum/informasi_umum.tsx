@@ -37,16 +37,18 @@ interface InformasiUmumProps {
 }
 
 // Komponen tombol aksi
-const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelClass, disabled }: { icon: any, label: string, onClick?: () => void, className?: string, iconClass?: string, labelClass?: string, disabled?: boolean }) => {
+const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelClass, disabled, keepOpacity }: { icon: any, label: string, onClick?: () => void, className?: string, iconClass?: string, labelClass?: string, disabled?: boolean, keepOpacity?: boolean }) => {
   const base = `${className ?? 'bg-[#0A1A1A] border border-[#00FFAA]/20'} rounded-xl p-5 flex flex-col items-center justify-center gap-3 transition-all group h-32`;
-  const interactive = disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:shadow-md hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10 cursor-pointer';
+  const interactive = disabled 
+    ? (keepOpacity ? 'cursor-not-allowed' : 'opacity-40 cursor-not-allowed pointer-events-none') 
+    : 'hover:shadow-md hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10 cursor-pointer';
   return (
     <button
       onClick={disabled ? undefined : onClick}
       aria-disabled={disabled}
       className={`${base} ${interactive}`}
     >
-      <Icon className={`h-8 w-8 ${iconClass ?? 'text-[#00FFAA]'} ${disabled ? '' : 'group-hover:scale-110'} transition-transform`} />
+      <Icon className={`h-8 w-8 ${iconClass ?? 'text-[#00FFAA]'} ${disabled && !keepOpacity ? '' : 'group-hover:scale-110'} transition-transform`} />
       <span className={`text-xs font-black ${labelClass ?? 'text-[#00FFAA]'} uppercase tracking-wider text-center leading-tight`}>
         {label}
       </span>
@@ -200,12 +202,12 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   return (
     <div className="space-y-6">
       {/* Grid Layout 4-4 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6">
         
         {/* Tombol Kedutaan dengan Badge Tanggal Selesai */}
         <div className="relative">
           {isEmbassyBuilding && embassyEndDate && (
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2.5 py-0.5 border border-[#00FFAA]/40 rounded-md shadow-md tracking-wider whitespace-nowrap">
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
               {formatBadgeDate(embassyEndDate)}
             </div>
           )}
@@ -220,9 +222,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             } 
             onClick={handleEmbassyClick} 
             disabled={isEmbassyBuilding}
+            keepOpacity={isEmbassyBuilding}
             className={
               isEmbassyBuilding
-                ? 'border-2 border-[#00FFAA]/50 bg-[#00FFAA]/10 text-[#00FFAA] opacity-90 cursor-not-allowed'
+                ? 'border border-[#00FFAA]/40 bg-[#0A1A1A] text-[#00FFAA]'
                 : embassyActive 
                   ? modernGreenBorderClass 
                   : embassyClass
