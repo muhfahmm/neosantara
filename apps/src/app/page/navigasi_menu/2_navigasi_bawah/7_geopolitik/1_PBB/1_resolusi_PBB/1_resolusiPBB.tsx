@@ -252,7 +252,9 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
       return;
     }
     const activeAction = RESOLUTION_ACTIONS.find(a => a.id === selectedType);
-    const votes = calculate206AIVotes(30, 'yes');
+    const votes = typeof calculate206AIVotes === 'function'
+      ? calculate206AIVotes(30, 'yes')
+      : { supportersCount: 113, opponentsCount: 64, abstainCount: 30 };
 
     const newRes: ActiveResolutionItem = {
       id: `res-user-${Date.now()}`,
