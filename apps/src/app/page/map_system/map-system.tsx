@@ -41,6 +41,7 @@ import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_ke
 import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
 import { getTradeAgreementsForCountry } from '../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
 import { getEmbassiesForCountry } from '../../../../../json/database_kedutaan_besar/embassyRegistry';
+import { getRelationValue } from '../../../../../json/database_hubungan_antar_negara/relationsRegistry';
 import { playerHasEmbassyWith } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
 import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/2_beli/tradeBeliLogic';
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
@@ -60,6 +61,7 @@ import { generateTempatUmumDefisitNotification } from '../menus/inbox/logic/8_ke
 import { generateNonAggressionOfferNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/1_pakta_non_agresi/nonAggressionLogic';
 import { generateDefenseAllianceOfferNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/2_aliansi_pertahanan/defenseAllianceLogic';
 import { generateResearchContractOfferNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/3_kontrak_penelitian/researchContractLogic';
+import { generateHubunganPanasNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/4_hubungan_panas/hubunganPanasLogic';
 import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic';
@@ -448,6 +450,14 @@ export default function MapPage() {
                 const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
                 newNotifsToAdd.push(generateResearchContractOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
+
+            // 5E. Notifikasi Hubungan Panas / Memburuk (Setiap bulan jika skor hubungan <= 20, 15, 10, 5, 1)
+            internationalPool.forEach(partner => {
+                const relScore = getRelationValue(userCountryName, partner, currentDateStr);
+                if (relScore <= 20) {
+                    newNotifsToAdd.push(generateHubunganPanasNotification(partner, relScore, currentDateStr));
+                }
+            });
 
             // 6. Notifikasi Defisit Listrik Grid Nasional (Kelipatan -5%: -5, -10, -15, ...)
             const sourceKeys = [
@@ -1528,6 +1538,14 @@ export default function MapPage() {
                         }));
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
                         alert(`Berhasil meratifikasi Kontrak Penelitian Joint-R&D dengan ${partner}! kecepatan riset meningkat +25%.`);
+                        return;
+                    }
+
+                    if (tNotif.tradeType === 'hubungan_panas') {
+                        const partner = tNotif.partnerCountry;
+                        setInboxModalOpen(false);
+                        setCountryDetailModalName(partner);
+                        setCountryDetailModalOpen(true);
                         return;
                     }
 

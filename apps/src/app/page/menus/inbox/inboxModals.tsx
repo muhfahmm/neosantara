@@ -34,6 +34,7 @@ import KabinetChangeNotificationCard from './logic/13_notifikasi_kabinet/kabinet
 import NonAggressionNotificationCard from './logic/5_notifikasi_geopolitik/1_pakta_non_agresi/nonAggressionNotificationCard';
 import DefenseAllianceNotificationCard from './logic/5_notifikasi_geopolitik/2_aliansi_pertahanan/defenseAllianceNotificationCard';
 import ResearchContractNotificationCard from './logic/5_notifikasi_geopolitik/3_kontrak_penelitian/researchContractNotificationCard';
+import HubunganPanasNotificationCard from './logic/5_notifikasi_geopolitik/4_hubungan_panas/hubunganPanasNotificationCard';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -470,6 +471,16 @@ export default function TopLeftIcon({
                           notification={notif as any}
                           onAccept={handleAction}
                           onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'hubungan_panas') {
+                      return (
+                        <HubunganPanasNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onRedirect={handleRedirect}
                         />
                       );
                     }
