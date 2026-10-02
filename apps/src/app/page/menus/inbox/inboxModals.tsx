@@ -12,6 +12,7 @@ import TradeJualNotification from './logic/3_perdagangan/1_jual/tradeJualNotific
 import EmbassyNotification from './logic/4_notifikasi_kedubes/embassyNotification';
 import BencanaNotification from './logic/6_notifikasi_bencana/1_bencana_alam/bencanaNotification';
 import WabahNotification from './logic/6_notifikasi_bencana/2_wabah_penyakit/wabahNotification';
+import TradeRelationNotification from './logic/3_perdagangan/3_hubungan_dagang/tradeRelationNotification';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -35,92 +36,99 @@ export default function TopLeftIcon({
   const [mounted, setMounted] = useState(false);
   const [toastNotification, setToastNotification] = useState<NotificationMessage | null>(null);
   const [showToast, setShowToast] = useState(false);
-  const lastNotifiedIdRef = useRef<string | null>(null);
+  const dismissedToastIdRef = useRef<string | null>(null);
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Popup Toast Otomatis Muncul Saat Ada Notifikasi Baru Masuk (Tahan 10 Detik)
+  // Popup Toast Otomatis Muncul & Sinkron secara Realtime Saat Ada Notifikasi Belum Dibaca
   useEffect(() => {
     const latestUnread = notifications.find(n => !n.isRead);
 
     if (latestUnread) {
-      if (latestUnread.id !== lastNotifiedIdRef.current) {
-        lastNotifiedIdRef.current = latestUnread.id;
-        setToastNotification(latestUnread);
+      setToastNotification(latestUnread);
+      // Tampilkan toast jika notifikasi ini belum ditutup secara manual oleh user
+      if (dismissedToastIdRef.current !== latestUnread.id) {
         setShowToast(true);
-
-        const timer = setTimeout(() => {
-          setShowToast(false);
-        }, 10000); // Popup bertahan selama 10 detik
-
-        return () => clearTimeout(timer);
       }
     } else {
+      setToastNotification(null);
       setShowToast(false);
     }
   }, [notifications]);
 
   return (
     <>
-      <div className="fixed top-24 left-7 z-[99999] flex flex-col items-start gap-2 pointer-events-auto">
-        <button
-          onClick={() => {
-            setShowToast(false);
-            if (onClick) onClick();
-          }}
-          title="Inbox - Pesan dan Notifikasi"
-          className="relative w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
-        >
-          <Inbox className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
-          {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-600 border border-[#0A1A1A] text-white text-[9px] font-black w-4 h-4 lg:w-5 lg:h-5 rounded-full flex items-center justify-center shadow animate-pulse">
-              {unreadCount}
-            </span>
-          )}
-        </button>
-
-        {/* 🔥 POPUP TOAST NOTIFIKASI DI BAWAH INBOX */}
-        {showToast && toastNotification && !isOpen && (
-          <div
+      {mounted && createPortal(
+        <div className="fixed top-24 left-7 z-[200000] flex flex-col items-start gap-2 pointer-events-auto">
+          <button
             onClick={() => {
+              if (toastNotification) {
+                dismissedToastIdRef.current = toastNotification.id;
+              }
               setShowToast(false);
               if (onClick) onClick();
             }}
-            className="w-80 bg-[#0F2424] border-2 border-[#00FFAA] rounded-2xl p-3.5 shadow-[0_10px_30px_rgba(0,255,170,0.35)] animate-in fade-in slide-in-from-top-3 duration-300 cursor-pointer hover:bg-[#143030] transition-all group relative z-[99999]"
+            title="Inbox - Pesan dan Notifikasi"
+            className="relative w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
           >
-            <div className="flex items-center justify-between pb-1.5 border-b border-[#00FFAA]/30">
-              <span className="text-[11px] font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#00FFAA] animate-ping" />
-                Pesan Baru Masuk
+            <Inbox className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-600 border border-[#0A1A1A] text-white text-[9px] font-black w-4 h-4 lg:w-5 lg:h-5 rounded-full flex items-center justify-center shadow animate-pulse">
+                {unreadCount}
               </span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowToast(false);
-                }}
-                className="text-slate-400 hover:text-white p-0.5 rounded"
-              >
-                <X className="w-4 h-4 text-[#00FFAA]" />
-              </button>
+            )}
+          </button>
+
+          {/* 🔥 POPUP TOAST NOTIFIKASI DI BAWAH INBOX (MNCUL WALAUPUN MODAL SEDANG TERBUKA, RENDERED VIA PORTAL Z-200000) */}
+          {showToast && toastNotification && (
+            <div
+              onClick={() => {
+                if (toastNotification) {
+                  dismissedToastIdRef.current = toastNotification.id;
+                }
+                setShowToast(false);
+                if (onClick) onClick();
+              }}
+              className="w-80 bg-[#0F2424] border-2 border-[#00FFAA] rounded-2xl p-3.5 shadow-[0_10px_30px_rgba(0,255,170,0.35)] animate-in fade-in slide-in-from-top-3 duration-300 cursor-pointer hover:bg-[#143030] transition-all group relative z-[200000]"
+            >
+              <div className="flex items-center justify-between pb-1.5 border-b border-[#00FFAA]/30">
+                <span className="text-[11px] font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#00FFAA] animate-ping" />
+                  Pesan Baru Masuk
+                </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (toastNotification) {
+                      dismissedToastIdRef.current = toastNotification.id;
+                    }
+                    setShowToast(false);
+                  }}
+                  className="text-slate-400 hover:text-white p-0.5 rounded"
+                >
+                  <X className="w-4 h-4 text-[#00FFAA]" />
+                </button>
+              </div>
+              <h5 className="text-xs font-bold text-white mt-2 line-clamp-1 group-hover:text-[#00FFAA] transition-colors leading-snug">
+                {toastNotification.title}
+              </h5>
+              <p className="text-[11px] text-slate-300 line-clamp-2 mt-1 leading-relaxed">
+                {toastNotification.message}
+              </p>
+              <div className="mt-2 flex items-center justify-between pt-1 border-t border-[#00FFAA]/10">
+                <span className="text-[9px] text-[#6B8A8A] font-semibold">{toastNotification.timestamp}</span>
+                <span className="text-[10px] text-[#00FFAA] font-black underline group-hover:translate-x-1 transition-transform">
+                  Buka Inbox ({unreadCount}) →
+                </span>
+              </div>
             </div>
-            <h5 className="text-xs font-bold text-white mt-2 line-clamp-1 group-hover:text-[#00FFAA] transition-colors leading-snug">
-              {toastNotification.title}
-            </h5>
-            <p className="text-[11px] text-slate-300 line-clamp-2 mt-1 leading-relaxed">
-              {toastNotification.message}
-            </p>
-            <div className="mt-2 flex items-center justify-between pt-1 border-t border-[#00FFAA]/10">
-              <span className="text-[9px] text-[#6B8A8A] font-semibold">{toastNotification.timestamp}</span>
-              <span className="text-[10px] text-[#00FFAA] font-black underline group-hover:translate-x-1 transition-transform">
-                Buka Inbox ({unreadCount}) →
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>,
+        document.body
+      )}
 
       {/* 🔥 Inbox Modal - Render via Portal agar sama dengan Sidang Umum PBB */}
       {isOpen && mounted && createPortal(
@@ -197,6 +205,16 @@ export default function TopLeftIcon({
                     if (tradeType === 'penawaran_kedutaan_besar') {
                       return (
                         <EmbassyNotification
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'penawaran_hubungan_dagang') {
+                      return (
+                        <TradeRelationNotification
                           key={notif.id}
                           notification={notif as any}
                           onAccept={handleAction}

@@ -44,7 +44,8 @@ import { getEmbassiesForCountry } from '../../../../../json/database_kedutaan_be
 import { playerHasEmbassyWith } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
 import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_perdagangan/2_beli/tradeBeliLogic';
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_perdagangan/1_jual/tradeJualLogic';
-import { checkAndGenerateEmbassyOffers } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
+import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_perdagangan/3_hubungan_dagang/tradeRelationLogic';
+import { checkAndGenerateEmbassyOffers, createEmbassyOfferNotification } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
 import { generateBencanaAlamNotification } from '../menus/inbox/logic/6_notifikasi_bencana/1_bencana_alam/bencanaLogic';
 import { generateWabahPenyakitNotification } from '../menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic';
 
@@ -280,7 +281,7 @@ export default function MapPage() {
 
     }, [currentDate, countryDetail, setCountryDetail]);
 
-    // --- MONTHLY TRADE RELATION OFFER NOTIFICATIONS (OPSI 1: 25% PER MONTH) ---
+    // --- MONTHLY NOTIFICATIONS GENERATOR (25% CHANCE PER BULAN ~ 3-5 EVENT / TAHUN) ---
     useEffect(() => {
         if (!currentDate || !countryDetail) return;
 
@@ -289,15 +290,13 @@ export default function MapPage() {
         const dayStr = String(currentDate.getDate()).padStart(2, '0');
         const currentDateStr = `${yearStr}-${monthStr}-${dayStr}`;
 
-        // Track last month checked to perform roll exactly once per month
         const currentYearMonth = `${yearStr}-${monthStr}`;
-        const lastCheckedYearMonth = countryDetail.last_trade_relation_check_month;
+        const lastCheckedYearMonth = countryDetail.last_checked_notification_month;
 
-        // Inisialisasi awal pada tanggal pertama game: Jangan kirim notifikasi langsung saat game baru dibuka!
         if (!lastCheckedYearMonth) {
             setCountryDetail((prev: any) => ({
                 ...prev,
-                last_trade_relation_check_month: currentYearMonth
+                last_checked_notification_month: currentYearMonth
             }));
             return;
         }
@@ -309,69 +308,82 @@ export default function MapPage() {
             const addedTradePartners = Array.isArray(countryDetail?.addedTradePartners) ? countryDetail.addedTradePartners : [];
             const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
 
-            // 1. Penawaran Kedutaan Besar (25% per bulan ~ 3x/tahun)
-            const embassyOfferNotif = checkAndGenerateEmbassyOffers(
-                userCountryName,
-                notifications,
-                currentDateStr,
-                true,
-                playerEmbassies,
-                removedEmbassies
-            );
+            const staticPartners = getTradeAgreementsForCountry(userCountryName).map(c => c.mitra);
+            const allTradePartners = Array.from(new Set([
+                ...staticPartners.filter(p => !removedTradePartners.includes(p)),
+                ...addedTradePartners
+            ]));
 
-            // 2. Penawaran Transaksi Ekspor & Impor (25% per bulan ~ 3-5x/tahun)
-            let tradeTransactionNotif = null;
+            const internationalPool = [
+                'Jepang', 'Amerika Serikat', 'Jerman', 'Inggris', 'Prancis', 'Tiongkok', 
+                'Korea Selatan', 'Australia', 'Rusia', 'Arab Saudi', 'Kanada', 'Brasil', 
+                'India', 'Turki', 'Meksiko', 'Singapura', 'Malaysia', 'Thailand', 'Vietnam'
+            ];
+
+            const newNotifsToAdd: any[] = [];
+
+            // 1. Penawaran Transaksi Ekspor / Impor (25% per bulan ~ 3-5x/tahun)
             if (Math.random() < 0.25) {
-                const staticPartners = getTradeAgreementsForCountry(userCountryName).map(c => c.mitra);
-                const allTradePartners = Array.from(new Set([
-                    ...staticPartners.filter(p => !removedTradePartners.includes(p)),
-                    ...addedTradePartners
-                ]));
+                const partnerName = allTradePartners.length > 0
+                    ? allTradePartners[Math.floor(Math.random() * allTradePartners.length)]
+                    : internationalPool[Math.floor(Math.random() * internationalPool.length)];
+                const premiumProducts = ["uranium", "pabrik_semikonduktor", "logam_tanah_jarang", "pabrik_mesin_mobil", "litium"];
+                const productKey = premiumProducts[Math.floor(Math.random() * premiumProducts.length)];
+                const quantity = Math.floor(Math.random() * 300) + 20;
+                const prices: Record<string, number> = {
+                    uranium: 8000, pabrik_semikonduktor: 4000, logam_tanah_jarang: 5000, pabrik_mesin_mobil: 15000, litium: 3000
+                };
+                const basePrice = prices[productKey] || 100;
+                const pricePerUnit = Math.round(basePrice * (0.85 + Math.random() * 0.3) * 100) / 100;
 
-                if (allTradePartners.length > 0) {
-                    const partnerName = allTradePartners[Math.floor(Math.random() * allTradePartners.length)];
-                    const premiumProducts = ["uranium", "pabrik_semikonduktor", "logam_tanah_jarang", "pabrik_mesin_mobil", "litium"];
-                    const productKey = premiumProducts[Math.floor(Math.random() * premiumProducts.length)];
-                    const quantity = Math.floor(Math.random() * 300) + 20;
-                    const prices: Record<string, number> = {
-                        uranium: 8000, pabrik_semikonduktor: 4000, logam_tanah_jarang: 5000, pabrik_mesin_mobil: 15000, litium: 3000
-                    };
-                    const basePrice = prices[productKey] || 100;
-                    const pricePerUnit = Math.round(basePrice * (0.85 + Math.random() * 0.3) * 100) / 100;
-                    const isAIBuying = Math.random() > 0.5;
-
-                    if (isAIBuying) {
-                        tradeTransactionNotif = generateAITradeJualNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr);
-                    } else {
-                        tradeTransactionNotif = generateAITradeBeliNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr);
-                    }
+                if (Math.random() > 0.5) {
+                    newNotifsToAdd.push(generateAITradeJualNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr));
+                } else {
+                    newNotifsToAdd.push(generateAITradeBeliNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr));
                 }
             }
 
-            // 3. Roll Bencana Alam & Wabah Penyakit (25% per bulan, 60% Bencana, 40% Wabah)
-            let disasterNotif = null;
+            // 2. Penawaran Kedutaan Besar (25% per bulan)
+            if (Math.random() < 0.25) {
+                const embassyNotif = checkAndGenerateEmbassyOffers(
+                    userCountryName,
+                    notifications,
+                    currentDateStr,
+                    true,
+                    playerEmbassies,
+                    removedEmbassies
+                );
+                if (embassyNotif) {
+                    newNotifsToAdd.push(embassyNotif);
+                } else {
+                    const randomPartner = internationalPool[Math.floor(Math.random() * internationalPool.length)];
+                    newNotifsToAdd.push(createEmbassyOfferNotification(randomPartner, userCountryName, currentDateStr));
+                }
+            }
+
+            // 3. Penawaran Hubungan Dagang Bilateral (25% per bulan)
+            if (Math.random() < 0.25) {
+                const randomPartner = internationalPool[Math.floor(Math.random() * internationalPool.length)];
+                newNotifsToAdd.push(generateTradeRelationOfferNotification(randomPartner, userCountryName, currentDateStr));
+            }
+
+            // 4. Bencana Alam & Wabah Penyakit (25% per bulan, 60% Bencana Alam, 40% Wabah Penyakit)
             if (Math.random() < 0.25) {
                 const isBencana = Math.random() < 0.60;
                 if (isBencana) {
-                    disasterNotif = generateBencanaAlamNotification(userCountryName, currentDateStr);
+                    newNotifsToAdd.push(generateBencanaAlamNotification(userCountryName, currentDateStr));
                 } else {
-                    disasterNotif = generateWabahPenyakitNotification(userCountryName, currentDateStr);
+                    newNotifsToAdd.push(generateWabahPenyakitNotification(userCountryName, currentDateStr));
                 }
             }
-
-            const newNotifsToAdd: any[] = [];
-            if (embassyOfferNotif) newNotifsToAdd.push(embassyOfferNotif);
-            if (tradeTransactionNotif) newNotifsToAdd.push(tradeTransactionNotif);
-            if (disasterNotif) newNotifsToAdd.push(disasterNotif);
 
             if (newNotifsToAdd.length > 0) {
                 setNotifications(prev => [...newNotifsToAdd, ...prev]);
             }
 
-            // Update state so we don't re-roll again in the same month
             setCountryDetail((prev: any) => ({
                 ...prev,
-                last_trade_relation_check_month: currentYearMonth
+                last_checked_notification_month: currentYearMonth
             }));
         }
     }, [currentDate, countryDetail, notifications, setCountryDetail]);
@@ -1292,6 +1304,17 @@ export default function MapPage() {
                         return;
                     }
 
+                    if (tNotif.tradeType === 'penawaran_hubungan_dagang') {
+                        const partner = tNotif.partnerCountry;
+                        setCountryDetail((prev: any) => ({
+                            ...prev,
+                            addedTradePartners: Array.from(new Set([...(prev?.addedTradePartners || []), partner]))
+                        }));
+                        setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
+                        alert(`Berhasil meratifikasi Perjanjian Hubungan Dagang dengan ${partner}!`);
+                        return;
+                    }
+
                     if (tNotif.tradeType === 'bencana_alam' || tNotif.tradeType === 'wabah_penyakit') {
                         const cost = Number(tNotif.bantuanCost || 0);
                         const budget = Number(countryDetail?.anggaran || 0);
@@ -1325,7 +1348,7 @@ export default function MapPage() {
                 }}
                 onRedirectClick={(notif) => {
                     const tNotif = notif as any;
-                    if (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli' || tNotif.tradeType === 'penawaran_kedutaan_besar' || tNotif.tradeType === 'bencana_alam' || tNotif.tradeType === 'wabah_penyakit') {
+                    if (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli' || tNotif.tradeType === 'penawaran_kedutaan_besar' || tNotif.tradeType === 'penawaran_hubungan_dagang' || tNotif.tradeType === 'bencana_alam' || tNotif.tradeType === 'wabah_penyakit') {
                         // Tolak / Abaikan Notifikasi: Hapus notifikasi dari feed
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         setInboxModalOpen(false);
