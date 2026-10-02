@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/economic_logic/treasuryUpdater";
 import { LEVEL_UP_COST, MAX_CABINET_LEVEL } from "@/app/logic/economic_logic/departments";
+import { generateKabinetChangeNotification } from "@/app/page/menus/inbox/logic/13_notifikasi_kabinet/kabinetChangeLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -378,28 +379,44 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
   const handleConfirmUpgrade = () => {
     if (!confirmUpgrade) return;
 
-    const { dept, targetLevel, cost } = confirmUpgrade;
-    const canConfirm = canAffordUpgrade(countryDetail, money, dept, confirmUpgrade.fromLevel, targetLevel);
+    const { dept, fromLevel, targetLevel, cost } = confirmUpgrade;
+    const canConfirm = canAffordUpgrade(countryDetail, money, dept, fromLevel, targetLevel);
     if (!canConfirm) return;
+
+    const effectLabel = getEffectDescription(dept.id, targetLevel);
+    const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+    const notif = generateKabinetChangeNotification(dept.id, dept.name, fromLevel, targetLevel, effectLabel, dateStr);
+
+    let newPending = Array.isArray(countryDetail?.pending_notifications) ? [...countryDetail.pending_notifications] : [];
+    newPending = [notif, ...newPending];
 
     const newAnggaran = money - cost;
     setCountryDetail({
       ...countryDetail,
       anggaran: newAnggaran,
       [`level_${dept.id}`]: targetLevel,
+      pending_notifications: newPending,
     });
 
     setLevels((prev) => ({ ...prev, [dept.id]: targetLevel }));
-
     setConfirmUpgrade(null);
   };
 
   const handleConfirmDowngrade = () => {
     if (!confirmDowngrade) return;
-    const { dept, targetLevel } = confirmDowngrade;
+    const { dept, fromLevel, targetLevel } = confirmDowngrade;
+
+    const effectLabel = getEffectDescription(dept.id, targetLevel);
+    const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+    const notif = generateKabinetChangeNotification(dept.id, dept.name, fromLevel, targetLevel, effectLabel, dateStr);
+
+    let newPending = Array.isArray(countryDetail?.pending_notifications) ? [...countryDetail.pending_notifications] : [];
+    newPending = [notif, ...newPending];
+
     setCountryDetail({
       ...countryDetail,
       [`level_${dept.id}`]: targetLevel,
+      pending_notifications: newPending,
     });
     setLevels((prev) => ({ ...prev, [dept.id]: targetLevel }));
     setConfirmDowngrade(null);

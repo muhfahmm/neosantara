@@ -11,6 +11,7 @@ import SpektrumSistemTab from "./tab_menu/1_spektrum_sistem/SpektrumSistemTab";
 import KartuKebijakanTab from "./tab_menu/2_kartu_kebijakan/KartuKebijakanTab";
 import SistemDuniaTab from "./tab_menu/3_sistem_dunia/SistemDuniaTab";
 import { getSistemEkonomiBySlug } from "@/../../json/database_sistem_ekonomi/index";
+import { generateSistemEkonomiChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/4_sistem_ekonomi/sistemEkonomiChangeLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -97,6 +98,11 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
 
   const handleSaveSystem = async () => {
     const slug = countryDetail?.country_slug || countryDetail?.country?.toLowerCase() || countryDetail?.nama_negara?.toLowerCase() || "";
+    const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+    const notif = generateSistemEkonomiChangeNotification(sliderValue, systemDetails.title, policyChoices, dateStr);
+
+    let newPending = Array.isArray(countryDetail?.pending_notifications) ? [...countryDetail.pending_notifications] : [];
+    newPending = [notif, ...newPending];
 
     if (setCountryDetail) {
       setCountryDetail((prev: any) => ({
@@ -107,6 +113,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
         policy_strategic_ownership: policyChoices.strategic_ownership,
         policy_trade_policy: policyChoices.trade_policy,
         policy_labor_regulation: policyChoices.labor_regulation,
+        pending_notifications: newPending,
       }));
     }
 

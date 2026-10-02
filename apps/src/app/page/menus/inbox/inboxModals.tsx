@@ -27,6 +27,9 @@ import PanganDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/3_pan
 import IdeologyChangeNotificationCard from './logic/10_sosial_budaya/2_ideologi/ideologyChangeNotification';
 import ReligionChangeNotificationCard from './logic/10_sosial_budaya/1_agama/religionChangeNotification';
 import DoctrineChangeNotificationCard from './logic/10_sosial_budaya/3_keterbukaan/doctrineChangeNotification';
+import ResearchChangeNotificationCard from './logic/11_notifikasi_penelitian/researchChangeNotification';
+import SistemEkonomiChangeNotificationCard from './logic/7_notifikasi_ekonomi/4_sistem_ekonomi/sistemEkonomiChangeNotification';
+import KabinetChangeNotificationCard from './logic/13_notifikasi_kabinet/kabinetChangeNotification';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -389,6 +392,36 @@ export default function TopLeftIcon({
                     if (tradeType === 'perubahan_doktrin') {
                       return (
                         <DoctrineChangeNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'perubahan_fokus_riset') {
+                      return (
+                        <ResearchChangeNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'perubahan_sistem_ekonomi') {
+                      return (
+                        <SistemEkonomiChangeNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'perubahan_kabinet') {
+                      return (
+                        <KabinetChangeNotificationCard
                           key={notif.id}
                           notification={notif as any}
                           onAccept={handleAction}
