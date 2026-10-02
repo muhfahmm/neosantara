@@ -56,11 +56,13 @@ export const calculateTotalTaxIncome = (detail: any) => {
   return ppnIncome + korporasiIncome + penghasilanIncome + beaCukaiIncome + lingkunganIncome;
 };
 
-export const getDepartmentLevel = (detail: any, dept: Department): number => {
-  if (!detail || typeof detail !== 'object') return 1;
-  const key = dept.id.replace(/-/g, '_');
-  const fieldName = KEMENTERIAN.some(k => k.id === dept.id) ? `kem_${key}` :
-                    KEAMANAN.some(k => k.id === dept.id) ? `keamanan_${key}` :
+export const getDepartmentLevel = (detail: any, dept: Department | string | any): number => {
+  if (!detail || typeof detail !== 'object' || !dept) return 1;
+  const rawId = typeof dept === 'string' ? dept : dept?.id ?? String(dept);
+  if (!rawId) return 1;
+  const key = rawId.replace(/-/g, '_');
+  const fieldName = KEMENTERIAN.some(k => k.id === rawId) ? `kem_${key}` :
+                    KEAMANAN.some(k => k.id === rawId) ? `keamanan_${key}` :
                     `layanan_${key}`;
   const val = detail[fieldName] ?? detail[`level_${key}`] ?? detail[key] ?? getNestedValue(detail, ['kabinet', fieldName]);
   return toNumber(val, 1);
@@ -129,6 +131,7 @@ export const calculateCountryNetBalance = (detail: any) => {
 
 export const calculateGoldIncome = calculateGoldMiningDailyProduction;
 export const calculateMinistryCost = calculateTotalMinistryCostPerDay;
+export const calculateCountryGDP = calculateTotalPDB;
 
 export const formatCurrencyEM = (amount: number) => {
   return `${Math.round(amount).toLocaleString('id-ID')} NEO`;

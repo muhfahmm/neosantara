@@ -58,10 +58,10 @@ export async function POST(request: Request) {
         const countryDetailJson = JSON.stringify(countryDetail || {});
 
         const pool = await getDbPool();
-        const [result] = await pool.query(
+        const result = await pool.query(
             `INSERT INTO game_saves 
             (save_name, country_name, country_iso, game_date, capital, jumlah_penduduk, anggaran, ideology, religion, un_vote, country_detail) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
             [
                 saveName,
                 countryName,
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json({
             success: true,
-            insertId: (result as any).insertId,
+            insertId: (result as any).rows?.[0]?.id || (result as any).insertId,
             message: 'Game state saved successfully.',
         });
     } catch (error: any) {
@@ -107,7 +107,7 @@ export async function DELETE(request: Request) {
         }
 
         const pool = await getDbPool();
-        const [result] = await pool.query('DELETE FROM game_saves WHERE id = ?', [id]);
+        const result = await pool.query('DELETE FROM game_saves WHERE id = $1', [id]);
 
         if ((result as any).affectedRows === 0) {
             return NextResponse.json(
