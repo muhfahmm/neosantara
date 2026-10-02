@@ -75,9 +75,9 @@ function getDaysDiff(d1Str: string, d2Str: string): number {
   try {
     const p1 = d1Str.split('-').map(Number);
     const p2 = d2Str.split('-').map(Number);
-    const t1 = new Date(p1[0], p1[1] - 1, p1[2]).getTime();
-    const t2 = new Date(p2[0], p2[1] - 1, p2[2]).getTime();
-    return Math.max(0, Math.round((t2 - t1) / (1000 * 60 * 60 * 24)));
+    const t1 = Date.UTC(p1[0], p1[1] - 1, p1[2]);
+    const t2 = Date.UTC(p2[0], p2[1] - 1, p2[2]);
+    return Math.round((t2 - t1) / (1000 * 60 * 60 * 24));
   } catch (e) {
     return 0;
   }
@@ -189,8 +189,15 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
   const updated = currentItems.map(item => {
     if (item.status !== 'voting') return item;
 
-    const startDate = item.createdAt || dateStr;
-    const elapsedDays = getDaysDiff(startDate, dateStr);
+    let startDate = item.createdAt || dateStr;
+    let elapsedDays = getDaysDiff(startDate, dateStr);
+
+    // jika kalender game lebih awal dari createdAt (misal akibat restart/load save), rebase ke dateStr saat ini
+    if (elapsedDays < 0) {
+      startDate = dateStr;
+      elapsedDays = 0;
+    }
+
     const newDaysRemaining = Math.max(0, 30 - elapsedDays);
     const votes = calculate206AIVotes(newDaysRemaining, item.userVote);
     let notified = item.notified10Days || false;
@@ -218,6 +225,7 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
 
     return {
       ...item,
+      createdAt: startDate,
       daysRemaining: newDaysRemaining,
       voteStats: {
         supportersCount: votes.supportersCount,

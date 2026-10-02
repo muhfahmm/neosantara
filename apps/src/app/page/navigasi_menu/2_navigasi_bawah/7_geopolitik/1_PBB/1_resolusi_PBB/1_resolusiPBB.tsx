@@ -235,32 +235,32 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   }, []);
 
   const handleVote = (resId: string, voteType: 'yes' | 'no' | 'abstain') => {
-    setActiveResolutions(prev => {
-      const updated = prev.map(item => {
-        if (item.id !== resId) return item;
-        const prevVote = item.userVote;
-        const newStats = { ...item.voteStats };
-        if (prevVote === 'yes') newStats.supportersCount--;
-        if (prevVote === 'no') newStats.opponentsCount--;
-        if (prevVote === 'abstain') newStats.abstainCount--;
+    const currentList = typeof loadActiveResolutions === 'function' ? loadActiveResolutions() : activeResolutions;
+    const updated = currentList.map(item => {
+      if (item.id !== resId) return item;
+      const prevVote = item.userVote;
+      const newStats = { ...item.voteStats };
+      if (prevVote === 'yes') newStats.supportersCount--;
+      if (prevVote === 'no') newStats.opponentsCount--;
+      if (prevVote === 'abstain') newStats.abstainCount--;
 
-        if (voteType === 'yes') newStats.supportersCount++;
-        if (voteType === 'no') newStats.opponentsCount++;
-        if (voteType === 'abstain') newStats.abstainCount++;
+      if (voteType === 'yes') newStats.supportersCount++;
+      if (voteType === 'no') newStats.opponentsCount++;
+      if (voteType === 'abstain') newStats.abstainCount++;
 
-        return {
-          ...item,
-          userVote: voteType,
-          voteStats: newStats
-        };
-      });
-      if (typeof saveActiveResolutions === 'function') {
-        saveActiveResolutions(updated);
-      } else if (typeof window !== 'undefined') {
-        try { localStorage.setItem('pbb_active_resolutions_v2', JSON.stringify(updated)); } catch (e) {}
-      }
-      return updated;
+      return {
+        ...item,
+        userVote: voteType,
+        voteStats: newStats
+      };
     });
+
+    setActiveResolutions(updated);
+    if (typeof saveActiveResolutions === 'function') {
+      saveActiveResolutions(updated);
+    } else if (typeof window !== 'undefined') {
+      try { localStorage.setItem(STORAGE_KEY_PBB_RESOLUSI, JSON.stringify(updated)); } catch (e) {}
+    }
   };
 
   const handleSubmitResolution = () => {

@@ -29,6 +29,15 @@ export function handleGameRestart(options: RestartOptions): void {
     options.setIsPaused(true);
     options.setSpeed(1);
 
+    // Clear active PBB resolutions on restart
+    if (typeof window !== 'undefined') {
+        try {
+            localStorage.removeItem('pbb_active_resolutions_v4');
+            localStorage.removeItem('pbb_active_keamanan_v4');
+            window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
+        } catch (e) {}
+    }
+
     // 2. Reset production data (accumulated production, build dates, and price controls)
     if (options.setCountryDetail) {
         options.setCountryDetail((prev: any) => {

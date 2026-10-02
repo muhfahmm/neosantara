@@ -721,6 +721,8 @@ export default function MapPage() {
             if (newGameMarker === '1') {
                 localStorage.removeItem('hutangModalLoanSources');
                 localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
+                localStorage.removeItem('pbb_active_resolutions_v4');
+                localStorage.removeItem('pbb_active_keamanan_v4');
                 localStorage.removeItem('presiden_simulator_new_game');
             }
             if (loadSaveStr) {
