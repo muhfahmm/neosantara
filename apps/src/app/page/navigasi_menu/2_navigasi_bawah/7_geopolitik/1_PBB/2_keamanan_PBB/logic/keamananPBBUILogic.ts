@@ -27,7 +27,7 @@ export interface ActiveSecurityCouncilItem {
   notified10Days?: boolean;
 }
 
-const STORAGE_KEY = 'pbb_active_keamanan_v2';
+const STORAGE_KEY = 'pbb_active_keamanan_v3';
 export const TOTAL_SECURITY_MEMBERS = 15;
 
 const DEFAULT_SECURITY_PROPOSERS = [
@@ -55,18 +55,36 @@ const SECURITY_TEMPLATES = [
 
 /**
  * Hitung kalkulasi perolehan 15 suara Dewan Keamanan PBB (5 Tetap + 10 Tidak Tetap).
+ * Dimulai dari 0 pada hari ke-0 (Sisa 30 hari), terakumulasi seiring waktu kalender.
+ * Suara SETUJU diberikan oleh anggota DK yang memiliki hubungan diplomatik/kedubes.
  */
-export function calculate15SecurityCouncilVotes(daysRemaining: number, userVote: 'yes' | 'no' | 'abstain' | null = null) {
+export function calculate15SecurityCouncilVotes(
+  daysRemaining: number,
+  userVote: 'yes' | 'no' | 'abstain' | null = null,
+  alliedCouncilCount: number = 5
+) {
   const elapsedDays = Math.max(0, Math.min(30, 30 - daysRemaining));
   const progressRatio = elapsedDays / 30;
 
   const baseCouncilCount = 15;
   const votesCastSoFar = Math.min(baseCouncilCount, Math.round(baseCouncilCount * progressRatio));
 
-  let supportersCount = Math.round(votesCastSoFar * 0.60);
-  let opponentsCount = Math.round(votesCastSoFar * 0.25);
+  if (votesCastSoFar === 0) {
+    return {
+      supportersCount: userVote === 'yes' ? 1 : 0,
+      opponentsCount: userVote === 'no' ? 1 : 0,
+      abstainCount: userVote === 'abstain' ? 1 : 0,
+      vetoCount: 0,
+      totalVotesCast: userVote ? 1 : 0
+    };
+  }
+
+  // Porsi anggota DK yang memiliki hubungan diplomatik/kedubes (Setuju)
+  const supporterRatio = Math.max(0.20, Math.min(0.60, alliedCouncilCount / baseCouncilCount));
+  let supportersCount = Math.round(votesCastSoFar * supporterRatio);
+  let opponentsCount = Math.round(votesCastSoFar * (0.80 - supporterRatio));
   let abstainCount = votesCastSoFar - supportersCount - opponentsCount;
-  const vetoCount = opponentsCount > 3 ? 1 : 0;
+  const vetoCount = opponentsCount >= 3 ? 1 : 0;
 
   if (userVote === 'yes') supportersCount += 1;
   if (userVote === 'no') opponentsCount += 1;
@@ -102,7 +120,7 @@ export function getInitialActiveSecurityCouncilItems(userCountryName: string = '
   const target = DEFAULT_SECURITY_TARGETS[Math.floor(Math.random() * DEFAULT_SECURITY_TARGETS.length)];
   const tmpl = SECURITY_TEMPLATES[Math.floor(Math.random() * SECURITY_TEMPLATES.length)];
 
-  const initialDaysRemaining = 18;
+  const initialDaysRemaining = 30; // Mulai dari 30 hari
   const initialVotes = calculate15SecurityCouncilVotes(initialDaysRemaining, null);
 
   return [
@@ -132,7 +150,7 @@ export function getInitialActiveSecurityCouncilItems(userCountryName: string = '
 /**
  * Pemrosesan daily tick kalender untuk Dewan Keamanan PBB:
  * - Menurunkan sisa hari (30 -> 0)
- * - Memperbarui partisipasi 15 anggota DK PBB
+ * - Memperbarui partisipasi 15 anggota DK PBB dari 0 hingga 15
  * - Memicu notifikasi popup Inbox jika sisa hari <= 10 dan user belum vote.
  */
 export function tickPBBSecurityCouncil(dateStr: string, onTriggerNotification?: (notif: any) => void): ActiveSecurityCouncilItem[] {

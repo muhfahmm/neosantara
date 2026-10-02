@@ -269,7 +269,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
     const activeAction = RESOLUTION_ACTIONS.find(a => a.id === selectedType);
     const votes = typeof calculate15SecurityCouncilVotes === 'function'
       ? calculate15SecurityCouncilVotes(30, 'yes')
-      : { supportersCount: 10, opponentsCount: 4, abstainCount: 2, vetoCount: 0 };
+      : { supportersCount: 1, opponentsCount: 0, abstainCount: 0, vetoCount: 0 };
 
     const newItem: ActiveSecurityCouncilItem = {
       id: `sec-user-${Date.now()}`,

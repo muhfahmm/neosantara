@@ -26,7 +26,7 @@ export interface ActiveResolutionItem {
   notified10Days?: boolean;
 }
 
-const STORAGE_KEY = 'pbb_active_resolutions_v2';
+const STORAGE_KEY = 'pbb_active_resolutions_v3';
 export const TOTAL_UN_MEMBERS = 206;
 
 const DEFAULT_AI_PROPOSERS = [
@@ -61,17 +61,35 @@ const RESOLUTION_TEMPLATES = [
 
 /**
  * Hitung kalkulasi perolehan 206 suara negara AI berdasarkan hari berjalan (30 hari).
+ * Dimulai dari 0 pada hari ke-0 (Sisa 30 hari), dan terakumulasi seiring berjalannya kalender.
+ * Negara yang SETUJU adalah negara yang memiliki hubungan diplomatik/kedubes dengan pengusul.
  */
-export function calculate206AIVotes(daysRemaining: number, userVote: 'yes' | 'no' | 'abstain' | null = null) {
+export function calculate206AIVotes(
+  daysRemaining: number,
+  userVote: 'yes' | 'no' | 'abstain' | null = null,
+  embassyCount: number = 38
+) {
   const elapsedDays = Math.max(0, Math.min(30, 30 - daysRemaining));
   const progressRatio = elapsedDays / 30;
 
-  // Total negara AI selain user = 205 (jika user vote terpisah) atau 206 total
+  // Total AI countries = 205 (selain user)
   const baseAiCount = 205;
   const votesCastSoFar = Math.min(baseAiCount, Math.round(baseAiCount * progressRatio));
 
-  let supportersCount = Math.round(votesCastSoFar * 0.54);
-  let opponentsCount = Math.round(votesCastSoFar * 0.31);
+  if (votesCastSoFar === 0) {
+    return {
+      supportersCount: userVote === 'yes' ? 1 : 0,
+      opponentsCount: userVote === 'no' ? 1 : 0,
+      abstainCount: userVote === 'abstain' ? 1 : 0,
+      totalVotesCast: userVote ? 1 : 0
+    };
+  }
+
+  // Negara yang punya kedubes/hubungan diplomatik memberikan suara SETUJU
+  const supporterRatio = Math.max(0.20, Math.min(0.60, embassyCount / baseAiCount));
+  
+  let supportersCount = Math.round(votesCastSoFar * supporterRatio);
+  let opponentsCount = Math.round(votesCastSoFar * (0.80 - supporterRatio));
   let abstainCount = votesCastSoFar - supportersCount - opponentsCount;
 
   if (userVote === 'yes') supportersCount += 1;
@@ -108,7 +126,7 @@ export function getInitialActiveResolutions(userCountryName: string = 'Indonesia
   const target = DEFAULT_AI_TARGETS[Math.floor(Math.random() * DEFAULT_AI_TARGETS.length)];
   const tmpl = RESOLUTION_TEMPLATES[Math.floor(Math.random() * RESOLUTION_TEMPLATES.length)];
 
-  const initialDaysRemaining = 24;
+  const initialDaysRemaining = 30; // Mulai dari 30 hari
   const initialVotes = calculate206AIVotes(initialDaysRemaining, null);
 
   return [
@@ -137,7 +155,7 @@ export function getInitialActiveResolutions(userCountryName: string = 'Indonesia
 /**
  * Pemrosesan daily tick kalender untuk Resolusi PBB:
  * - Menurunkan sisa hari (30 -> 0)
- * - Memperbarui partisipasi 206 negara AI secara progresif
+ * - Memperbarui partisipasi 206 negara AI secara progresif dari 0 hingga 206
  * - Memicu notifikasi popup Inbox jika sisa hari <= 10 dan user belum vote.
  */
 export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (notif: any) => void): ActiveResolutionItem[] {
