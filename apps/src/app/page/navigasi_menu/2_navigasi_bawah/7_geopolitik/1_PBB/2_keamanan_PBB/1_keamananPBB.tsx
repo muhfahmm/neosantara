@@ -7,7 +7,7 @@ import {
 import { createPortal } from "react-dom";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 import { calculateKeamananVoting } from "../voting_logic/keamananPBB_logic";
-import { ActiveSecurityCouncilItem, getInitialActiveSecurityCouncilItems } from "./logic/keamananPBBUILogic";
+import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS } from "./logic/keamananPBBUILogic";
 
 interface KeamananPBBProps {
   selectedCountry: any;
@@ -227,41 +227,41 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
   const [activeSecurityCouncilItems, setActiveSecurityCouncilItems] = useState<ActiveSecurityCouncilItem[]>([]);
 
   useEffect(() => {
-    if (activeSecurityCouncilItems.length === 0) {
-      const initial = getInitialActiveSecurityCouncilItems(selectedCountry?.country || 'Indonesia');
-      setActiveSecurityCouncilItems(initial);
-    }
+    const loaded = loadActiveSecurityCouncilItems();
+    setActiveSecurityCouncilItems(loaded);
   }, []);
 
   const handleSecurityVote = (itemId: string, voteType: 'yes' | 'no' | 'abstain') => {
-    setActiveSecurityCouncilItems(prev => prev.map(item => {
-      if (item.id !== itemId) return item;
-      const prevVote = item.userVote;
-      const newStats = { ...item.voteStats };
-      if (prevVote === 'yes') newStats.supportersCount--;
-      if (prevVote === 'no') newStats.opponentsCount--;
-      if (prevVote === 'abstain') newStats.abstainCount--;
+    setActiveSecurityCouncilItems(prev => {
+      const updated = prev.map(item => {
+        if (item.id !== itemId) return item;
+        const prevVote = item.userVote;
+        const newStats = { ...item.voteStats };
+        if (prevVote === 'yes') newStats.supportersCount--;
+        if (prevVote === 'no') newStats.opponentsCount--;
+        if (prevVote === 'abstain') newStats.abstainCount--;
 
-      if (voteType === 'yes') newStats.supportersCount++;
-      if (voteType === 'no') newStats.opponentsCount++;
-      if (voteType === 'abstain') newStats.abstainCount++;
+        if (voteType === 'yes') newStats.supportersCount++;
+        if (voteType === 'no') newStats.opponentsCount++;
+        if (voteType === 'abstain') newStats.abstainCount++;
 
-      return {
-        ...item,
-        userVote: voteType,
-        voteStats: newStats
-      };
-    }));
+        return {
+          ...item,
+          userVote: voteType,
+          voteStats: newStats
+        };
+      });
+      saveActiveSecurityCouncilItems(updated);
+      return updated;
+    });
   };
 
   const handleSubmit = () => {
     if (!selectedTarget) {
-      alert("Silakan pilih negara target terlebih dahulu!");
       return;
     }
     const activeAction = RESOLUTION_ACTIONS.find(a => a.id === selectedType);
-    const supportersCount = voteStats.supporters.length || 9;
-    const opponentsCount = voteStats.opponents.length || 4;
+    const votes = calculate15SecurityCouncilVotes(30, 'yes');
 
     const newItem: ActiveSecurityCouncilItem = {
       id: `sec-user-${Date.now()}`,
@@ -276,22 +276,25 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
       type: selectedType,
       label: activeAction?.label || 'Resolusi Dewan Keamanan PBB',
       desc: activeAction?.desc || '',
-      duration: selectedDuration,
+      duration: '30 hari',
       daysRemaining: 30,
       voteStats: {
-        supportersCount,
-        opponentsCount,
-        abstainCount: 2,
-        vetoCount: 0
+        supportersCount: votes.supportersCount,
+        opponentsCount: votes.opponentsCount,
+        abstainCount: votes.abstainCount,
+        vetoCount: votes.vetoCount
       },
       userVote: 'yes',
       status: 'voting',
-      createdAt: new Date().toISOString().split('T')[0]
+      createdAt: new Date().toISOString().split('T')[0],
+      notified10Days: false
     };
 
-    setActiveSecurityCouncilItems(prev => [newItem, ...prev]);
-
-    alert(`Resolusi berhasil diajukan ke Dewan Keamanan!\n\nJenis: ${activeAction?.label}\nDurasi: ${selectedDuration}\nTarget: ${selectedTarget.name}\n\nResolusi sekarang aktif dalam pembahasan Dewan Keamanan PBB.`);
+    setActiveSecurityCouncilItems(prev => {
+      const newList = [newItem, ...prev];
+      saveActiveSecurityCouncilItems(newList);
+      return newList;
+    });
     
     setIsResolusiModalOpen(false);
     setSelectedTarget(null);

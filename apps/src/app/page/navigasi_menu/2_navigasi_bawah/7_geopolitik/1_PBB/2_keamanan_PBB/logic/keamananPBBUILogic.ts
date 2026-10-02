@@ -1,3 +1,5 @@
+import { generateAIKeamananPBBNotification } from '@/app/page/menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
+
 export interface ActiveSecurityCouncilItem {
   id: string;
   proposer: {
@@ -22,7 +24,11 @@ export interface ActiveSecurityCouncilItem {
   userVote: 'yes' | 'no' | 'abstain' | null;
   status: 'voting' | 'passed' | 'vetoed' | 'rejected';
   createdAt: string;
+  notified10Days?: boolean;
 }
+
+const STORAGE_KEY = 'pbb_active_keamanan_v2';
+export const TOTAL_SECURITY_MEMBERS = 15;
 
 const DEFAULT_SECURITY_PROPOSERS = [
   { name: 'Amerika Serikat', iso: 'us' },
@@ -48,12 +54,56 @@ const SECURITY_TEMPLATES = [
 ];
 
 /**
- * Membuat data awal resolusi Dewan Keamanan PBB oleh negara AI Anggota Tetap.
+ * Hitung kalkulasi perolehan 15 suara Dewan Keamanan PBB (5 Tetap + 10 Tidak Tetap).
  */
+export function calculate15SecurityCouncilVotes(daysRemaining: number, userVote: 'yes' | 'no' | 'abstain' | null = null) {
+  const elapsedDays = Math.max(0, Math.min(30, 30 - daysRemaining));
+  const progressRatio = elapsedDays / 30;
+
+  const baseCouncilCount = 15;
+  const votesCastSoFar = Math.min(baseCouncilCount, Math.round(baseCouncilCount * progressRatio));
+
+  let supportersCount = Math.round(votesCastSoFar * 0.60);
+  let opponentsCount = Math.round(votesCastSoFar * 0.25);
+  let abstainCount = votesCastSoFar - supportersCount - opponentsCount;
+  const vetoCount = opponentsCount > 3 ? 1 : 0;
+
+  if (userVote === 'yes') supportersCount += 1;
+  if (userVote === 'no') opponentsCount += 1;
+  if (userVote === 'abstain') abstainCount += 1;
+
+  return { supportersCount, opponentsCount, abstainCount, vetoCount, totalVotesCast: votesCastSoFar + (userVote ? 1 : 0) };
+}
+
+export function loadActiveSecurityCouncilItems(): ActiveSecurityCouncilItem[] {
+  if (typeof window === 'undefined') return getInitialActiveSecurityCouncilItems();
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) return JSON.parse(data);
+  } catch (e) {
+    console.error('Failed loading PBB security council resolutions:', e);
+  }
+  const init = getInitialActiveSecurityCouncilItems();
+  saveActiveSecurityCouncilItems(init);
+  return init;
+}
+
+export function saveActiveSecurityCouncilItems(items: ActiveSecurityCouncilItem[]) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  } catch (e) {
+    console.error('Failed saving PBB security council resolutions:', e);
+  }
+}
+
 export function getInitialActiveSecurityCouncilItems(userCountryName: string = 'Indonesia'): ActiveSecurityCouncilItem[] {
   const proposer = DEFAULT_SECURITY_PROPOSERS[Math.floor(Math.random() * DEFAULT_SECURITY_PROPOSERS.length)];
   const target = DEFAULT_SECURITY_TARGETS[Math.floor(Math.random() * DEFAULT_SECURITY_TARGETS.length)];
   const tmpl = SECURITY_TEMPLATES[Math.floor(Math.random() * SECURITY_TEMPLATES.length)];
+
+  const initialDaysRemaining = 18;
+  const initialVotes = calculate15SecurityCouncilVotes(initialDaysRemaining, null);
 
   return [
     {
@@ -63,17 +113,77 @@ export function getInitialActiveSecurityCouncilItems(userCountryName: string = '
       type: tmpl.type,
       label: tmpl.label,
       desc: tmpl.desc,
-      duration: '6 bulan',
-      daysRemaining: 18,
+      duration: '30 hari',
+      daysRemaining: initialDaysRemaining,
       voteStats: {
-        supportersCount: 9,
-        opponentsCount: 4,
-        abstainCount: 2,
-        vetoCount: 0
+        supportersCount: initialVotes.supportersCount,
+        opponentsCount: initialVotes.opponentsCount,
+        abstainCount: initialVotes.abstainCount,
+        vetoCount: initialVotes.vetoCount
       },
       userVote: null,
       status: 'voting',
-      createdAt: '2026-10-02'
+      createdAt: '2026-10-02',
+      notified10Days: false
     }
   ];
+}
+
+/**
+ * Pemrosesan daily tick kalender untuk Dewan Keamanan PBB:
+ * - Menurunkan sisa hari (30 -> 0)
+ * - Memperbarui partisipasi 15 anggota DK PBB
+ * - Memicu notifikasi popup Inbox jika sisa hari <= 10 dan user belum vote.
+ */
+export function tickPBBSecurityCouncil(dateStr: string, onTriggerNotification?: (notif: any) => void): ActiveSecurityCouncilItem[] {
+  const currentItems = loadActiveSecurityCouncilItems();
+
+  const updated = currentItems.map(item => {
+    if (item.status !== 'voting') return item;
+
+    const newDaysRemaining = Math.max(0, item.daysRemaining - 1);
+    const votes = calculate15SecurityCouncilVotes(newDaysRemaining, item.userVote);
+    let notified = item.notified10Days || false;
+
+    // Trigger popup inbox jika sisa hari <= 10 dan user belum vote
+    if (newDaysRemaining <= 10 && !item.userVote && !notified) {
+      notified = true;
+      if (onTriggerNotification) {
+        const notifCard = generateAIKeamananPBBNotification(
+          item.proposer.name,
+          item.target.name,
+          10,
+          dateStr
+        );
+        notifCard.title = `🚨 PANGGILAN DARURAT DEWAN KEAMANAN PBB (Sisa ${newDaysRemaining} Hari): ${item.proposer.name} ➔ ${item.target.name}`;
+        notifCard.message = `Batas waktu sidang tersisa ${newDaysRemaining} hari! Dewan Keamanan PBB memanggil Indonesia untuk memberikan suara atas draf "${item.label}" yang menargetkan ${item.target.name}.`;
+        onTriggerNotification(notifCard);
+      }
+    }
+
+    let finalStatus: 'voting' | 'passed' | 'vetoed' | 'rejected' = 'voting';
+    if (newDaysRemaining === 0) {
+      if (votes.vetoCount > 0) {
+        finalStatus = 'vetoed';
+      } else {
+        finalStatus = votes.supportersCount >= 9 ? 'passed' : 'rejected';
+      }
+    }
+
+    return {
+      ...item,
+      daysRemaining: newDaysRemaining,
+      voteStats: {
+        supportersCount: votes.supportersCount,
+        opponentsCount: votes.opponentsCount,
+        abstainCount: votes.abstainCount,
+        vetoCount: votes.vetoCount
+      },
+      status: finalStatus,
+      notified10Days: notified
+    };
+  });
+
+  saveActiveSecurityCouncilItems(updated);
+  return updated;
 }

@@ -11,7 +11,7 @@ import { calculateResolusiVoting } from "../voting_logic/resolusiPBB_logic";
 // 🔥 PERBAIKAN: Hapus ekstensi .tsx di bagian import
 import CountryTargetModal from "./2_negara_target";
 import CountryListModal from "./3_jumlah_suara";
-import { ActiveResolutionItem, getInitialActiveResolutions } from "./logic/resolusiPBBUILogic";
+import { ActiveResolutionItem, loadActiveResolutions, saveActiveResolutions, calculate206AIVotes, TOTAL_UN_MEMBERS } from "./logic/resolusiPBBUILogic";
 
 interface ResolusiPBBProps {
   selectedCountry: any;
@@ -216,42 +216,42 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   const [activeResolutions, setActiveResolutions] = useState<ActiveResolutionItem[]>([]);
 
   useEffect(() => {
-    if (activeResolutions.length === 0) {
-      const initial = getInitialActiveResolutions(selectedCountry?.country || 'Indonesia');
-      setActiveResolutions(initial);
-    }
+    const loaded = loadActiveResolutions();
+    setActiveResolutions(loaded);
   }, []);
 
   const handleVote = (resId: string, voteType: 'yes' | 'no' | 'abstain') => {
-    setActiveResolutions(prev => prev.map(item => {
-      if (item.id !== resId) return item;
-      const prevVote = item.userVote;
-      const newStats = { ...item.voteStats };
-      if (prevVote === 'yes') newStats.supportersCount--;
-      if (prevVote === 'no') newStats.opponentsCount--;
-      if (prevVote === 'abstain') newStats.abstainCount--;
+    setActiveResolutions(prev => {
+      const updated = prev.map(item => {
+        if (item.id !== resId) return item;
+        const prevVote = item.userVote;
+        const newStats = { ...item.voteStats };
+        if (prevVote === 'yes') newStats.supportersCount--;
+        if (prevVote === 'no') newStats.opponentsCount--;
+        if (prevVote === 'abstain') newStats.abstainCount--;
 
-      if (voteType === 'yes') newStats.supportersCount++;
-      if (voteType === 'no') newStats.opponentsCount++;
-      if (voteType === 'abstain') newStats.abstainCount++;
+        if (voteType === 'yes') newStats.supportersCount++;
+        if (voteType === 'no') newStats.opponentsCount++;
+        if (voteType === 'abstain') newStats.abstainCount++;
 
-      return {
-        ...item,
-        userVote: voteType,
-        voteStats: newStats
-      };
-    }));
+        return {
+          ...item,
+          userVote: voteType,
+          voteStats: newStats
+        };
+      });
+      saveActiveResolutions(updated);
+      return updated;
+    });
   };
 
   const handleSubmitResolution = () => {
     if (!selectedTarget && !isProductionBan) {
-      alert("Harap lengkapi Jenis Resolusi, Durasi, dan Negara Target!");
       return;
     }
     const activeAction = RESOLUTION_ACTIONS.find(a => a.id === selectedType);
-    const supportersCount = voteStats.supporters.length || 40;
-    const opponentsCount = voteStats.opponents.length || 20;
-    
+    const votes = calculate206AIVotes(30, 'yes');
+
     const newRes: ActiveResolutionItem = {
       id: `res-user-${Date.now()}`,
       proposer: {
@@ -265,28 +265,27 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
       type: selectedType,
       label: activeAction?.label || 'Resolusi PBB',
       desc: activeAction?.desc || '',
-      duration: selectedDuration,
+      duration: '30 hari',
       daysRemaining: 30,
       voteStats: {
-        supportersCount,
-        opponentsCount,
-        abstainCount: 12
+        supportersCount: votes.supportersCount,
+        opponentsCount: votes.opponentsCount,
+        abstainCount: votes.abstainCount
       },
       userVote: 'yes',
       status: 'voting',
-      createdAt: new Date().toISOString().split('T')[0]
+      createdAt: new Date().toISOString().split('T')[0],
+      notified10Days: false
     };
 
-    setActiveResolutions(prev => [newRes, ...prev]);
+    setActiveResolutions(prev => {
+      const newList = [newRes, ...prev];
+      saveActiveResolutions(newList);
+      return newList;
+    });
 
-    alert(
-      `Resolusi berhasil diajukan!\n\n` +
-      `Jenis: ${activeAction?.label}\n` +
-      `Durasi: ${selectedDuration}\n` +
-      `Target: ${selectedTarget?.name || 'Global'}\n\n` +
-      `Resolusi sekarang aktif dibahas dalam daftar Majelis Umum PBB.`
-    );
     setShowCreateModal(false);
+    setSelectedTarget(null);
   };
 
   // 🔥 Logika Toggle (Unselect jika klik negara yang sama)

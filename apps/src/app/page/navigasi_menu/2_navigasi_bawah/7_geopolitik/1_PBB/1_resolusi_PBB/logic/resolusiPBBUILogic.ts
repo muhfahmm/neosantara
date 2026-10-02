@@ -1,3 +1,5 @@
+import { generateAIResolusiPBBNotification } from '@/app/page/menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBLogic';
+
 export interface ActiveResolutionItem {
   id: string;
   proposer: {
@@ -21,7 +23,11 @@ export interface ActiveResolutionItem {
   userVote: 'yes' | 'no' | 'abstain' | null;
   status: 'voting' | 'passed' | 'rejected';
   createdAt: string;
+  notified10Days?: boolean;
 }
+
+const STORAGE_KEY = 'pbb_active_resolutions_v2';
+export const TOTAL_UN_MEMBERS = 206;
 
 const DEFAULT_AI_PROPOSERS = [
   { name: 'Amerika Serikat', iso: 'us' },
@@ -54,12 +60,56 @@ const RESOLUTION_TEMPLATES = [
 ];
 
 /**
- * Membuat data awal resolusi aktif Majelis Umum PBB oleh negara AI.
+ * Hitung kalkulasi perolehan 206 suara negara AI berdasarkan hari berjalan (30 hari).
  */
+export function calculate206AIVotes(daysRemaining: number, userVote: 'yes' | 'no' | 'abstain' | null = null) {
+  const elapsedDays = Math.max(0, Math.min(30, 30 - daysRemaining));
+  const progressRatio = elapsedDays / 30;
+
+  // Total negara AI selain user = 205 (jika user vote terpisah) atau 206 total
+  const baseAiCount = 205;
+  const votesCastSoFar = Math.min(baseAiCount, Math.round(baseAiCount * progressRatio));
+
+  let supportersCount = Math.round(votesCastSoFar * 0.54);
+  let opponentsCount = Math.round(votesCastSoFar * 0.31);
+  let abstainCount = votesCastSoFar - supportersCount - opponentsCount;
+
+  if (userVote === 'yes') supportersCount += 1;
+  if (userVote === 'no') opponentsCount += 1;
+  if (userVote === 'abstain') abstainCount += 1;
+
+  return { supportersCount, opponentsCount, abstainCount, totalVotesCast: votesCastSoFar + (userVote ? 1 : 0) };
+}
+
+export function loadActiveResolutions(): ActiveResolutionItem[] {
+  if (typeof window === 'undefined') return getInitialActiveResolutions();
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) return JSON.parse(data);
+  } catch (e) {
+    console.error('Failed loading PBB resolutions:', e);
+  }
+  const init = getInitialActiveResolutions();
+  saveActiveResolutions(init);
+  return init;
+}
+
+export function saveActiveResolutions(items: ActiveResolutionItem[]) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  } catch (e) {
+    console.error('Failed saving PBB resolutions:', e);
+  }
+}
+
 export function getInitialActiveResolutions(userCountryName: string = 'Indonesia'): ActiveResolutionItem[] {
   const proposer = DEFAULT_AI_PROPOSERS[Math.floor(Math.random() * DEFAULT_AI_PROPOSERS.length)];
   const target = DEFAULT_AI_TARGETS[Math.floor(Math.random() * DEFAULT_AI_TARGETS.length)];
   const tmpl = RESOLUTION_TEMPLATES[Math.floor(Math.random() * RESOLUTION_TEMPLATES.length)];
+
+  const initialDaysRemaining = 24;
+  const initialVotes = calculate206AIVotes(initialDaysRemaining, null);
 
   return [
     {
@@ -69,16 +119,71 @@ export function getInitialActiveResolutions(userCountryName: string = 'Indonesia
       type: tmpl.type,
       label: tmpl.label,
       desc: tmpl.desc,
-      duration: '3 bulan',
-      daysRemaining: 24,
+      duration: '30 hari',
+      daysRemaining: initialDaysRemaining,
       voteStats: {
-        supportersCount: 48,
-        opponentsCount: 32,
-        abstainCount: 15
+        supportersCount: initialVotes.supportersCount,
+        opponentsCount: initialVotes.opponentsCount,
+        abstainCount: initialVotes.abstainCount
       },
       userVote: null,
       status: 'voting',
-      createdAt: '2026-10-01'
+      createdAt: '2026-10-01',
+      notified10Days: false
     }
   ];
+}
+
+/**
+ * Pemrosesan daily tick kalender untuk Resolusi PBB:
+ * - Menurunkan sisa hari (30 -> 0)
+ * - Memperbarui partisipasi 206 negara AI secara progresif
+ * - Memicu notifikasi popup Inbox jika sisa hari <= 10 dan user belum vote.
+ */
+export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (notif: any) => void): ActiveResolutionItem[] {
+  const currentItems = loadActiveResolutions();
+
+  const updated = currentItems.map(item => {
+    if (item.status !== 'voting') return item;
+
+    const newDaysRemaining = Math.max(0, item.daysRemaining - 1);
+    const votes = calculate206AIVotes(newDaysRemaining, item.userVote);
+    let notified = item.notified10Days || false;
+
+    // Trigger popup inbox jika sisa hari <= 10 dan user belum vote
+    if (newDaysRemaining <= 10 && !item.userVote && !notified) {
+      notified = true;
+      if (onTriggerNotification) {
+        const notifCard = generateAIResolusiPBBNotification(
+          item.proposer.name,
+          item.target.name,
+          15,
+          dateStr
+        );
+        notifCard.title = `⚠️ PERINGATAN VOTING PBB (Sisa ${newDaysRemaining} Hari): ${item.proposer.name} ➔ ${item.target.name}`;
+        notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara Indonesia untuk usulan "${item.label}" yang menargetkan ${item.target.name}. Sejauh ini ${votes.supportersCount} negara setuju dan ${votes.opponentsCount} menolak.`;
+        onTriggerNotification(notifCard);
+      }
+    }
+
+    let finalStatus: 'voting' | 'passed' | 'rejected' = 'voting';
+    if (newDaysRemaining === 0) {
+      finalStatus = votes.supportersCount > votes.opponentsCount ? 'passed' : 'rejected';
+    }
+
+    return {
+      ...item,
+      daysRemaining: newDaysRemaining,
+      voteStats: {
+        supportersCount: votes.supportersCount,
+        opponentsCount: votes.opponentsCount,
+        abstainCount: votes.abstainCount
+      },
+      status: finalStatus,
+      notified10Days: notified
+    };
+  });
+
+  saveActiveResolutions(updated);
+  return updated;
 }
