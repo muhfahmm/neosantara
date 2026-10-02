@@ -64,8 +64,8 @@ import { generateResearchContractOfferNotification } from '../menus/inbox/logic/
 import { generateHubunganPanasNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/4_hubungan_panas/hubunganPanasLogic';
 import { evaluateAIResolusiPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBLogic';
 import { evaluateAIKeamananPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
-import { tickPBBResolutions } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
-import { tickPBBSecurityCouncil } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
+import { tickPBBResolutions } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
+import { tickPBBSecurityCouncil } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic';
@@ -932,12 +932,16 @@ export default function MapPage() {
         logger.log('MapPage', 'Date changed to:', currentDateStr);
 
         // Tick PBB resolutions and Security Council countdown & AI 206 country voting logic
-        tickPBBResolutions(currentDateStr, (newNotif) => {
-            setNotifications((prev: any[]) => [newNotif, ...prev]);
-        });
-        tickPBBSecurityCouncil(currentDateStr, (newNotif) => {
-            setNotifications((prev: any[]) => [newNotif, ...prev]);
-        });
+        if (typeof tickPBBResolutions === 'function') {
+            tickPBBResolutions(currentDateStr, (newNotif) => {
+                setNotifications((prev: any[]) => [newNotif, ...prev]);
+            });
+        }
+        if (typeof tickPBBSecurityCouncil === 'function') {
+            tickPBBSecurityCouncil(currentDateStr, (newNotif) => {
+                setNotifications((prev: any[]) => [newNotif, ...prev]);
+            });
+        }
 
         // Auto-set build dates for buildings that don't have one
         // Set to TODAY's date so production starts at 0 from now
