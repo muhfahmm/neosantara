@@ -306,7 +306,9 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
       },
       userVote: 'yes',
       status: 'voting',
-      createdAt: getSimulationDateString(),
+      createdAt: typeof getSimulationDateString === 'function' 
+        ? getSimulationDateString() 
+        : (typeof window !== 'undefined' ? localStorage.getItem('neosantara_current_game_date') || new Date().toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
       notified10Days: false
     };
 
