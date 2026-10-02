@@ -13,7 +13,7 @@
 7. Notifikasi Sabotase
 8. Notifikasi Diserang
 9. Notifikasi Pemberontakan
-10. Notifikasi ICBM
+10. Notifikasi ICBM (Deteksi Rudal Nuklir Defcon 1, Pembangunan Program Nuklir Dimulai, Program Nuklir Selesai & Aktif)
 
 # 5 (B). Notifikasi Geopolitik & Diplomasi Internasional
 11. Penawaran Pakta Non-Agresi (`5_notifikasi_geopolitik/1_pakta_non_agresi`)

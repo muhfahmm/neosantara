@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { X, Atom } from "lucide-react";
 import DanaTidakCukupModals from "./danaTidakCukupModals";
 import ProgramNuklirTimeDetail from "./ProgramNuklirTimeDetail";
+import { generateProgramNuklirDimulaiNotification } from "@/app/page/menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic";
 
 interface ProgramNuklirModalsProps {
   isOpen: boolean;
@@ -67,9 +68,14 @@ export default function ProgramNuklirModals({
       const startDateStr = existingBuilds.length > 0 ? existingBuilds[existingBuilds.length - 1].endDate : safeCurrentDate;
       const endDateStr = addDays(startDateStr, 1); // data logika durasi pembangunan nuklir
 
+      const userCountryName = prev?.country || prev?.nama || "Indonesia";
+      const startNotif = generateProgramNuklirDimulaiNotification(userCountryName, endDateStr, safeCurrentDate);
+      const existingPending = Array.isArray(prev?.pending_notifications) ? prev.pending_notifications : [];
+
       return {
         ...prev,
         anggaran: prevBudget - biayaProgram,
+        pending_notifications: [startNotif, ...existingPending],
         ongoingConstructions: [
           ...ongoing,
           {

@@ -7,6 +7,7 @@ import ProgramNuklirModals from "./modals_menu/1_program_nuklir/programNuklirMod
 import IcbmDetailModal from "./modals_menu/2_ICBM/IcbmDetailModal";
 import IcbmBuildStatusModal from "./modals_menu/2_ICBM/IcbmBuildStatusModal";
 import PerangNuklirDetailModal from "./modals_menu/3_perang_nuklir/PerangNuklirDetailModal";
+import { generateProgramNuklirSelesaiNotification } from "@/app/page/menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -146,14 +147,19 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
     if (!isNuclearProgramActive && buildCompleted && programBuildTask) {
       setCountryDetail((prev: any) => {
         const ongoing = prev?.ongoingConstructions || [];
+        const userCountryName = prev?.country || prev?.nama || "Indonesia";
+        const completeNotif = generateProgramNuklirSelesaiNotification(userCountryName, safeDateString);
+        const existingPending = Array.isArray(prev?.pending_notifications) ? prev.pending_notifications : [];
+
         return {
           ...prev,
           programNuklirActive: true,
+          pending_notifications: [completeNotif, ...existingPending],
           ongoingConstructions: ongoing.filter((c: any) => c.buildingKey !== "program_nuklir"),
         };
       });
     }
-  }, [buildCompleted, isNuclearProgramActive, programBuildTask, setCountryDetail]);
+  }, [buildCompleted, isNuclearProgramActive, programBuildTask, safeDateString, setCountryDetail]);
 
   useEffect(() => {
     try {

@@ -304,7 +304,7 @@ export default function TopLeftIcon({
                         />
                       );
                     }
-                    if (tradeType === 'icbm') {
+                    if (tradeType === 'icbm' || tradeType === 'program_nuklir_dimulai' || tradeType === 'program_nuklir_selesai') {
                       return (
                         <ICBMNotificationCard
                           key={notif.id}

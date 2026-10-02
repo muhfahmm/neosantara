@@ -53,7 +53,7 @@ import { generateSpionaseNotification } from '../menus/inbox/logic/2_notifikasi_
 import { generateSabotaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
 import { generateDiserangNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/3_diserang/diserangLogic';
 import { generatePemberontakanNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanLogic';
-import { generateICBMNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic';
+import { generateICBMNotification, generateProgramNuklirSelesaiNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic';
 import { generateListrikDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/1_kelistrikan/listrikDefisitLogic';
 import { generateHunianDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/2_hunian/hunianDefisitLogic';
 import { generatePanganDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/3_pangan/panganDefisitLogic';
@@ -1072,6 +1072,20 @@ export default function MapPage() {
                 currentOngoing = currentOngoing.filter((c: any) => !completedIds.includes(c.id));
             }
 
+            // 🔥 HITUNG SELESAINYA PEMBANGUNAN PROGRAM NUKLIR
+            const completedNuclearBuilds = currentOngoing.filter((c: any) => c.buildingKey === "program_nuklir" && c.endDate <= currentDateStr);
+            let nextProgramNuklirActive = Boolean(prev.programNuklirActive);
+            let nextPendingNotifications = Array.isArray(prev.pending_notifications) ? [...prev.pending_notifications] : [];
+
+            if (completedNuclearBuilds.length > 0 && !nextProgramNuklirActive) {
+                nextProgramNuklirActive = true;
+                const completedNuclearIds = completedNuclearBuilds.map((c: any) => c.id);
+                currentOngoing = currentOngoing.filter((c: any) => !completedNuclearIds.includes(c.id));
+                const userCountry = prev?.country || prev?.nama || "Indonesia";
+                const completeNotif = generateProgramNuklirSelesaiNotification(userCountry, currentDateStr);
+                nextPendingNotifications.unshift(completeNotif);
+            }
+
             const nextKepuasan = Math.min(100, parseFloat(((prev.kepuasan ?? 50) + currentCompletedBoost).toFixed(1)));
 
             // --- HITUNG PENURUNAN PERINGKAT BERDASARKAN KEPUASAN (menggunakan peringkatCalculator) ---
@@ -1144,6 +1158,8 @@ export default function MapPage() {
                 ...populationUpdates,  // Apply population changes
                 anggaran: (Number(prev.anggaran) || 0) + netBalance,
                 satisfaction: prev.satisfaction, // Preserve satisfaction scores
+                programNuklirActive: nextProgramNuklirActive,
+                pending_notifications: nextPendingNotifications,
                 ongoingConstructions: currentOngoing,
                 ongoingEmbassyConstructions: nextOngoingEmbassyConstructions,
                 embassies: nextEmbassies,
@@ -1546,6 +1562,12 @@ export default function MapPage() {
                         setInboxModalOpen(false);
                         setCountryDetailModalName(partner);
                         setCountryDetailModalOpen(true);
+                        return;
+                    }
+
+                    if (tNotif.tradeType === 'program_nuklir_dimulai' || tNotif.tradeType === 'program_nuklir_selesai') {
+                        setInboxModalOpen(false);
+                        setActiveMenu("Pertahanan");
                         return;
                     }
 
