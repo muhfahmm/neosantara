@@ -10,6 +10,8 @@ import KesejahteraanNotification from './logic/1_kepuasan_dan_peringkat/3_keseja
 import TradeBeliNotification from './logic/3_perdagangan/2_beli/tradeBeliNotification';
 import TradeJualNotification from './logic/3_perdagangan/1_jual/tradeJualNotification';
 import EmbassyNotification from './logic/4_notifikasi_kedubes/embassyNotification';
+import BencanaNotification from './logic/6_notifikasi_bencana/1_bencana_alam/bencanaNotification';
+import WabahNotification from './logic/6_notifikasi_bencana/2_wabah_penyakit/wabahNotification';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -195,6 +197,26 @@ export default function TopLeftIcon({
                     if (tradeType === 'penawaran_kedutaan_besar') {
                       return (
                         <EmbassyNotification
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'bencana_alam') {
+                      return (
+                        <BencanaNotification
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'wabah_penyakit') {
+                      return (
+                        <WabahNotification
                           key={notif.id}
                           notification={notif as any}
                           onAccept={handleAction}

@@ -45,6 +45,8 @@ import { playerHasEmbassyWith } from '../detail_negara/1_informasi_umum/1_keduta
 import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_perdagangan/2_beli/tradeBeliLogic';
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_perdagangan/1_jual/tradeJualLogic';
 import { checkAndGenerateEmbassyOffers } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
+import { generateBencanaAlamNotification } from '../menus/inbox/logic/6_notifikasi_bencana/1_bencana_alam/bencanaLogic';
+import { generateWabahPenyakitNotification } from '../menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic';
 
 interface Country {
     id: number;
@@ -346,9 +348,21 @@ export default function MapPage() {
                 }
             }
 
+            // 3. Roll Bencana Alam & Wabah Penyakit (25% per bulan, 60% Bencana, 40% Wabah)
+            let disasterNotif = null;
+            if (Math.random() < 0.25) {
+                const isBencana = Math.random() < 0.60;
+                if (isBencana) {
+                    disasterNotif = generateBencanaAlamNotification(userCountryName, currentDateStr);
+                } else {
+                    disasterNotif = generateWabahPenyakitNotification(userCountryName, currentDateStr);
+                }
+            }
+
             const newNotifsToAdd: any[] = [];
             if (embassyOfferNotif) newNotifsToAdd.push(embassyOfferNotif);
             if (tradeTransactionNotif) newNotifsToAdd.push(tradeTransactionNotif);
+            if (disasterNotif) newNotifsToAdd.push(disasterNotif);
 
             if (newNotifsToAdd.length > 0) {
                 setNotifications(prev => [...newNotifsToAdd, ...prev]);
@@ -1278,6 +1292,26 @@ export default function MapPage() {
                         return;
                     }
 
+                    if (tNotif.tradeType === 'bencana_alam' || tNotif.tradeType === 'wabah_penyakit') {
+                        const cost = Number(tNotif.bantuanCost || 0);
+                        const budget = Number(countryDetail?.anggaran || 0);
+                        if (budget < cost) {
+                            alert(`Gagal menyalurkan bantuan! Anggaran negara tidak mencukupi (${budget.toLocaleString('id-ID')} NEO dari ${cost.toLocaleString('id-ID')} NEO).`);
+                            return;
+                        }
+
+                        setCountryDetail((prev: any) => ({
+                            ...prev,
+                            anggaran: budget - cost,
+                            kepuasan_masyarakat: Math.min(100, Number(prev?.kepuasan_masyarakat || 50) + 2.0),
+                            indeks_kesejahteraan: Math.min(100, Number(prev?.indeks_kesejahteraan || 50) + 2.0)
+                        }));
+
+                        setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
+                        alert(`Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID')} NEO! Kepuasan & Kesejahteraan masyarakat meningkat +2.0%.`);
+                        return;
+                    }
+
                     // Handle notification action click (secondary/informational actions)
                     if (notif.type === 'kepuasan') {
                         setActiveMenu("Sosial & Budaya");
@@ -1291,8 +1325,8 @@ export default function MapPage() {
                 }}
                 onRedirectClick={(notif) => {
                     const tNotif = notif as any;
-                    if (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli' || tNotif.tradeType === 'penawaran_kedutaan_besar') {
-                        // Tolak Tawaran: Hapus notifikasi dari feed
+                    if (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli' || tNotif.tradeType === 'penawaran_kedutaan_besar' || tNotif.tradeType === 'bencana_alam' || tNotif.tradeType === 'wabah_penyakit') {
+                        // Tolak / Abaikan Notifikasi: Hapus notifikasi dari feed
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         setInboxModalOpen(false);
                         return;
