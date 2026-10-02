@@ -922,7 +922,7 @@ export default function MapPage() {
 
     // Update accumulated production every time date changes
     useEffect(() => {
-        if (!countryDetail || !currentDate) return;
+        if (!currentDate) return;
 
         // Format date inline (can't import formatDate here due to path issues)
         const year = currentDate.getFullYear();
@@ -945,6 +945,8 @@ export default function MapPage() {
                 setNotifications((prev: any[]) => [newNotif, ...prev]);
             });
         }
+
+        if (!countryDetail) return;
 
         // Auto-set build dates for buildings that don't have one
         // Set to TODAY's date so production starts at 0 from now
