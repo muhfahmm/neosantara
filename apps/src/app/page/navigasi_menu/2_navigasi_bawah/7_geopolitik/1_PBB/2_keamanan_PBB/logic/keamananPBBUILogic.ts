@@ -27,8 +27,20 @@ export interface ActiveSecurityCouncilItem {
   notified10Days?: boolean;
 }
 
-const STORAGE_KEY = 'pbb_active_keamanan_v4';
+export const STORAGE_KEY_PBB_KEAMANAN = 'pbb_active_keamanan_v4';
 export const TOTAL_SECURITY_MEMBERS = 15;
+
+export function getSimulationDateString(): string {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('neosantara_current_game_date');
+    if (saved) return saved;
+  }
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 const DEFAULT_SECURITY_PROPOSERS = [
   { name: 'Amerika Serikat', iso: 'us' },
@@ -108,7 +120,7 @@ export function calculate15SecurityCouncilVotes(
 export function loadActiveSecurityCouncilItems(): ActiveSecurityCouncilItem[] {
   if (typeof window === 'undefined') return getInitialActiveSecurityCouncilItems();
   try {
-    const data = localStorage.getItem(STORAGE_KEY);
+    const data = localStorage.getItem(STORAGE_KEY_PBB_KEAMANAN);
     if (data) return JSON.parse(data);
   } catch (e) {
     console.error('Failed loading PBB security council resolutions:', e);
@@ -121,7 +133,7 @@ export function loadActiveSecurityCouncilItems(): ActiveSecurityCouncilItem[] {
 export function saveActiveSecurityCouncilItems(items: ActiveSecurityCouncilItem[]) {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    localStorage.setItem(STORAGE_KEY_PBB_KEAMANAN, JSON.stringify(items));
   } catch (e) {
     console.error('Failed saving PBB security council resolutions:', e);
   }
@@ -134,12 +146,7 @@ export function getInitialActiveSecurityCouncilItems(userCountryName: string = '
 
   const initialDaysRemaining = 30; // Mulai dari 30 hari
   const initialVotes = calculate15SecurityCouncilVotes(initialDaysRemaining, null);
-
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  const dateStr = `${year}-${month}-${day}`;
+  const dateStr = getSimulationDateString();
 
   return [
     {

@@ -7,7 +7,7 @@ import {
 import { createPortal } from "react-dom";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 import { calculateKeamananVoting } from "../voting_logic/keamananPBB_logic";
-import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
+import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_KEAMANAN } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
 
 interface KeamananPBBProps {
   selectedCountry: any;
@@ -306,7 +306,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
       },
       userVote: 'yes',
       status: 'voting',
-      createdAt: new Date().toISOString().split('T')[0],
+      createdAt: getSimulationDateString(),
       notified10Days: false
     };
 
@@ -315,7 +315,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
       if (typeof saveActiveSecurityCouncilItems === 'function') {
         saveActiveSecurityCouncilItems(newList);
       } else if (typeof window !== 'undefined') {
-        try { localStorage.setItem('pbb_active_keamanan_v2', JSON.stringify(newList)); } catch (e) {}
+        try { localStorage.setItem(STORAGE_KEY_PBB_KEAMANAN, JSON.stringify(newList)); } catch (e) {}
       }
       return newList;
     });

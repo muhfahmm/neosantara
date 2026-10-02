@@ -11,7 +11,7 @@ import { calculateResolusiVoting } from "../voting_logic/resolusiPBB_logic";
 // 🔥 PERBAIKAN: Hapus ekstensi .tsx di bagian import
 import CountryTargetModal from "./2_negara_target";
 import CountryListModal from "./3_jumlah_suara";
-import { ActiveResolutionItem, loadActiveResolutions, saveActiveResolutions, calculate206AIVotes, TOTAL_UN_MEMBERS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
+import { ActiveResolutionItem, loadActiveResolutions, saveActiveResolutions, calculate206AIVotes, TOTAL_UN_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_RESOLUSI } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 
 interface ResolusiPBBProps {
   selectedCountry: any;
@@ -294,7 +294,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
       },
       userVote: 'yes',
       status: 'voting',
-      createdAt: new Date().toISOString().split('T')[0],
+      createdAt: getSimulationDateString(),
       notified10Days: false
     };
 
@@ -303,7 +303,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
       if (typeof saveActiveResolutions === 'function') {
         saveActiveResolutions(newList);
       } else if (typeof window !== 'undefined') {
-        try { localStorage.setItem('pbb_active_resolutions_v2', JSON.stringify(newList)); } catch (e) {}
+        try { localStorage.setItem(STORAGE_KEY_PBB_RESOLUSI, JSON.stringify(newList)); } catch (e) {}
       }
       return newList;
     });

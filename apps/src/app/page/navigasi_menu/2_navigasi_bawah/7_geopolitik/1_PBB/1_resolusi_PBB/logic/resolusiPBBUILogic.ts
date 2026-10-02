@@ -26,8 +26,20 @@ export interface ActiveResolutionItem {
   notified10Days?: boolean;
 }
 
-const STORAGE_KEY = 'pbb_active_resolutions_v4';
+export const STORAGE_KEY_PBB_RESOLUSI = 'pbb_active_resolutions_v4';
 export const TOTAL_UN_MEMBERS = 206;
+
+export function getSimulationDateString(): string {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('neosantara_current_game_date');
+    if (saved) return saved;
+  }
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 const DEFAULT_AI_PROPOSERS = [
   { name: 'Amerika Serikat', iso: 'us' },
@@ -114,7 +126,7 @@ export function calculate206AIVotes(
 export function loadActiveResolutions(): ActiveResolutionItem[] {
   if (typeof window === 'undefined') return getInitialActiveResolutions();
   try {
-    const data = localStorage.getItem(STORAGE_KEY);
+    const data = localStorage.getItem(STORAGE_KEY_PBB_RESOLUSI);
     if (data) return JSON.parse(data);
   } catch (e) {
     console.error('Failed loading PBB resolutions:', e);
@@ -127,7 +139,7 @@ export function loadActiveResolutions(): ActiveResolutionItem[] {
 export function saveActiveResolutions(items: ActiveResolutionItem[]) {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    localStorage.setItem(STORAGE_KEY_PBB_RESOLUSI, JSON.stringify(items));
   } catch (e) {
     console.error('Failed saving PBB resolutions:', e);
   }
@@ -140,12 +152,7 @@ export function getInitialActiveResolutions(userCountryName: string = 'Indonesia
 
   const initialDaysRemaining = 30; // Mulai dari 30 hari
   const initialVotes = calculate206AIVotes(initialDaysRemaining, null);
-
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  const dateStr = `${year}-${month}-${day}`;
+  const dateStr = getSimulationDateString();
 
   return [
     {

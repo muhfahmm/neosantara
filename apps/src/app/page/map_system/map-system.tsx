@@ -930,6 +930,9 @@ export default function MapPage() {
         const day = String(currentDate.getDate()).padStart(2, '0');
         const currentDateStr = `${year}-${month}-${day}`;
         logger.log('MapPage', 'Date changed to:', currentDateStr);
+        if (typeof window !== 'undefined') {
+            try { localStorage.setItem('neosantara_current_game_date', currentDateStr); } catch (e) {}
+        }
 
         // Tick PBB resolutions and Security Council countdown & AI 206 country voting logic
         if (typeof tickPBBResolutions === 'function') {
