@@ -18,6 +18,12 @@ import SabotaseNotificationCard from './logic/2_notifikasi_pertahanan/2_sabotase
 import DiserangNotificationCard from './logic/2_notifikasi_pertahanan/3_diserang/diserangNotification';
 import PemberontakanNotificationCard from './logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanNotification';
 import ICBMNotificationCard from './logic/2_notifikasi_pertahanan/5_icbm/icbmNotification';
+import PajakChangeNotificationCard from './logic/7_notifikasi_ekonomi/1_perubahan_pajak/pajakChangeNotification';
+import HargaChangeNotificationCard from './logic/7_notifikasi_ekonomi/2_harga_barang_pokok/hargaChangeNotification';
+import SubsidiChangeNotificationCard from './logic/7_notifikasi_ekonomi/3_kebijakan_subsidi/subsidiChangeNotification';
+import ListrikDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/1_kelistrikan/listrikDefisitNotificationCard';
+import HunianDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/2_hunian/hunianDefisitNotificationCard';
+import PanganDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/3_pangan/panganDefisitNotificationCard';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -290,6 +296,66 @@ export default function TopLeftIcon({
                     if (tradeType === 'icbm') {
                       return (
                         <ICBMNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'perubahan_pajak') {
+                      return (
+                        <PajakChangeNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'harga_barang_pokok') {
+                      return (
+                        <HargaChangeNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'kebijakan_subsidi') {
+                      return (
+                        <SubsidiChangeNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'defisit_listrik') {
+                      return (
+                        <ListrikDefisitNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'defisit_hunian') {
+                      return (
+                        <HunianDefisitNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'defisit_pangan') {
+                      return (
+                        <PanganDefisitNotificationCard
                           key={notif.id}
                           notification={notif as any}
                           onAccept={handleAction}

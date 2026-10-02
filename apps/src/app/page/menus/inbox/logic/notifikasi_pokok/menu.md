@@ -7,3 +7,5 @@ pajak
 hutang
 harga barang pokok
 hunian perumahan
+kerusuhan 
+protes unjuk rasa

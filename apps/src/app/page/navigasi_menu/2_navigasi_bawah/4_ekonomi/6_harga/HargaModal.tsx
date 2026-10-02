@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 import { X, Tag, Loader2 } from "lucide-react";
+import { generateHargaChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/2_harga_barang_pokok/hargaChangeLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -85,12 +86,23 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
   const satisfaction = calculateSatisfaction(prices, subsidyActive);
 
   const handlePriceChange = (key: string, value: number) => {
+    const oldPrice = prices[key] ?? value;
     const updatedPrices = { ...prices, [key]: value };
     setPrices(updatedPrices);
     const newSatisfaction = calculateSatisfaction(updatedPrices, subsidyActive);
+
+    let newPendingNotifs: any[] = Array.isArray(countryDetail?.pending_notifications) ? [...countryDetail.pending_notifications] : [];
+    if (oldPrice !== value) {
+      const formattedItemName = key.replace("harga_", "").replace(/_/g, " ").toUpperCase();
+      const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+      const notif = generateHargaChangeNotification(formattedItemName, oldPrice, value, dateStr);
+      newPendingNotifs = [notif, ...newPendingNotifs];
+    }
+
     setCountryDetail({
       ...countryDetail,
       harga: updatedPrices,
+      pending_notifications: newPendingNotifs,
       ...(key === 'harga_beras' ? { price_rice: value } : {}),
       ...(key === 'harga_minyak_goreng' ? { price_fuel: value } : {}),
       satisfaction: {

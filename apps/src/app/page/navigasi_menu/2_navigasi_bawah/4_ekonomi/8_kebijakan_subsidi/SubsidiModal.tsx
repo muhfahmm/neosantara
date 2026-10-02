@@ -21,6 +21,7 @@ import PerlindunganSosialTab from "./tab_menu/7_perlindungan_sosial/Perlindungan
 import DetailSubsidiItemModal from "./DetailSubsidiItemModal";
 
 import { getSubsidiBySlug } from "@/../../json/database_alokasi_subsidi/index";
+import { generateSubsidiChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/3_kebijakan_subsidi/subsidiChangeLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -87,9 +88,28 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
   if (!isOpen) return null;
 
   const toggleSubsidy = (id: string) => {
+    let toggledItemName = "";
+    let nextStatus = false;
+
     setSubsidyItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, isSubsidized: !item.isSubsidized } : item))
+      prev.map((item) => {
+        if (item.id === id) {
+          toggledItemName = item.name;
+          nextStatus = !item.isSubsidized;
+          return { ...item, isSubsidized: !item.isSubsidized };
+        }
+        return item;
+      })
     );
+
+    if (setCountryDetail && toggledItemName) {
+      const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+      const notif = generateSubsidiChangeNotification(toggledItemName, nextStatus, dateStr);
+      setCountryDetail((prev: any) => ({
+        ...prev,
+        pending_notifications: [notif, ...(prev?.pending_notifications || [])]
+      }));
+    }
   };
 
   const handleSaveSubsidy = async () => {

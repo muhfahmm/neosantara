@@ -53,6 +53,13 @@ import { generateSabotaseNotification } from '../menus/inbox/logic/2_notifikasi_
 import { generateDiserangNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/3_diserang/diserangLogic';
 import { generatePemberontakanNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanLogic';
 import { generateICBMNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic';
+import { generateListrikDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/1_kelistrikan/listrikDefisitLogic';
+import { generateHunianDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/2_hunian/hunianDefisitLogic';
+import { generatePanganDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/3_pangan/panganDefisitLogic';
+import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
+import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic';
+import { getMaterialStock } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
+import { FOOD_CONSUMPTION_PER_CAPITA, calculateProduction, calculateConsumption } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic';
 
 interface Country {
     id: number;
@@ -262,6 +269,18 @@ export default function MapPage() {
         }
     }, [presidentRating, countryDetail?.kepuasan, countryDetail?.kesejahteraan, hasShownRatingWarning, hasShownEarlyWarning, currentDate]);
 
+    // --- CONSUME PENDING NOTIFICATIONS (EKONOMI, PAJAK, HARGA, SUBSIDI) ---
+    useEffect(() => {
+        if (countryDetail?.pending_notifications && Array.isArray(countryDetail.pending_notifications) && countryDetail.pending_notifications.length > 0) {
+            const pending = countryDetail.pending_notifications;
+            setNotifications(prev => [...pending, ...prev]);
+            setCountryDetail((prev: any) => ({
+                ...prev,
+                pending_notifications: []
+            }));
+        }
+    }, [countryDetail?.pending_notifications]);
+
     // --- TIMED WEEKLY TRADE OFFER NOTIFICATIONS (1-2 PER WEEK) ---
     useEffect(() => {
         if (!currentDate || !countryDetail) return;
@@ -399,16 +418,113 @@ export default function MapPage() {
                 }
             }
 
+            // 6. Notifikasi Defisit Listrik Grid Nasional (Kelipatan -5%: -5, -10, -15, ...)
+            const sourceKeys = [
+                "pembangkit_listrik_tenaga_nuklir",
+                "pembangkit_listrik_tenaga_air",
+                "pembangkit_listrik_tenaga_surya",
+                "pembangkit_listrik_tenaga_uap",
+                "pembangkit_listrik_tenaga_gas",
+                "pembangkit_listrik_tenaga_angin"
+            ];
+            let totalElectricityProd = 0;
+            sourceKeys.forEach(k => {
+                const count = Number(countryDetail?.[k]) || 0;
+                const bMeta = metadata?.[k];
+                const unitProd = Number(bMeta?.produksi) || 0;
+                let isFuelDeficit = false;
+                if (count > 0) {
+                    const fuelReqs = getKelistrikanFuelRequirements(k);
+                    for (const req of fuelReqs) {
+                        const stock = getMaterialStock(countryDetail, req.resourceKey);
+                        if (stock < req.amount * count) {
+                            isFuelDeficit = true;
+                            break;
+                        }
+                    }
+                }
+                if (!isFuelDeficit) {
+                    totalElectricityProd += count * unitProd;
+                }
+            });
+            const totalElectricityCons = getCountryConsumptionBreakdown(countryDetail, metadata).totalAllBreakdownConsumption;
+            let currentListrikStep = countryDetail?.last_notified_listrik_step || 0;
+
+            if (totalElectricityCons > 0 && totalElectricityProd < totalElectricityCons) {
+                const deficitMW = totalElectricityCons - totalElectricityProd;
+                const deficitPct = (deficitMW / totalElectricityCons) * 100;
+                const deficitStep = Math.floor(deficitPct / 5) * 5;
+
+                if (deficitStep >= 5 && deficitStep !== currentListrikStep) {
+                    newNotifsToAdd.push(generateListrikDefisitNotification(
+                        totalElectricityProd,
+                        totalElectricityCons,
+                        deficitMW,
+                        deficitPct,
+                        deficitStep,
+                        currentDateStr
+                    ));
+                    currentListrikStep = deficitStep;
+                }
+            } else if (totalElectricityProd >= totalElectricityCons) {
+                currentListrikStep = 0;
+            }
+
+            // 7. Notifikasi Defisit Hunian Permukiman (Setiap Bulan)
+            const DEFAULT_HUNIAN_CAPACITIES: Record<string, number> = {
+                rumah_subsidi: 5,
+                apartemen: 6000,
+                mansion: 10,
+            };
+            const totalHousingCap = (Number(countryDetail?.rumah_subsidi) || 0) * (Number(metadata?.rumah_subsidi?.kapasitas) || DEFAULT_HUNIAN_CAPACITIES.rumah_subsidi) +
+                (Number(countryDetail?.apartemen) || 0) * (Number(metadata?.apartemen?.kapasitas) || DEFAULT_HUNIAN_CAPACITIES.apartemen) +
+                (Number(countryDetail?.mansion) || 0) * (Number(metadata?.mansion?.kapasitas) || DEFAULT_HUNIAN_CAPACITIES.mansion);
+            const totalPop = Number(countryDetail?.jumlah_penduduk) || 0;
+            const housingShortage = Math.max(0, totalPop - totalHousingCap);
+
+            if (housingShortage > 0) {
+                const percentageMet = totalPop > 0 ? (totalHousingCap / totalPop) * 100 : 0;
+                newNotifsToAdd.push(generateHunianDefisitNotification(
+                    totalHousingCap,
+                    totalPop,
+                    housingShortage,
+                    percentageMet,
+                    currentDateStr
+                ));
+            }
+
+            // 8. Notifikasi Defisit Industri Pangan (Setiap bulan jika >= 6 sektor/komoditas defisit)
+            const foodKeys = Object.keys(FOOD_CONSUMPTION_PER_CAPITA);
+            const deficitFoodCommodities: string[] = [];
+            foodKeys.forEach(foodKey => {
+                const prod = calculateProduction(foodKey, countryDetail, metadata);
+                const cons = calculateConsumption(totalPop, FOOD_CONSUMPTION_PER_CAPITA[foodKey]);
+                if (prod - cons < 0) {
+                    const label = metadata?.[foodKey]?.label || foodKey.replace(/_/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase());
+                    deficitFoodCommodities.push(label);
+                }
+            });
+
+            if (deficitFoodCommodities.length >= 6) {
+                newNotifsToAdd.push(generatePanganDefisitNotification(
+                    deficitFoodCommodities.length,
+                    foodKeys.length,
+                    deficitFoodCommodities,
+                    currentDateStr
+                ));
+            }
+
             if (newNotifsToAdd.length > 0) {
                 setNotifications(prev => [...newNotifsToAdd, ...prev]);
             }
 
             setCountryDetail((prev: any) => ({
                 ...prev,
-                last_checked_notification_month: currentYearMonth
+                last_checked_notification_month: currentYearMonth,
+                last_notified_listrik_step: currentListrikStep
             }));
         }
-    }, [currentDate, countryDetail, notifications, setCountryDetail]);
+    }, [currentDate, countryDetail, notifications, metadata, setCountryDetail]);
 
     const nonModalMenus = [
         "",

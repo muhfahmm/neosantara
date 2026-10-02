@@ -5,6 +5,7 @@ import {
   TAX_CONFIGS,
   calculateIncomeAtRate,
 } from "@/app/logic/economic_logic/2_tax_logic/taxLogic";
+import { generatePajakChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/1_perubahan_pajak/pajakChangeLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -118,16 +119,34 @@ export default function PajakModal({
   }, [isOpen, countryDetail?.id]); // Only depend on isOpen & countryDetail ID, not initialRates!
 
   const handleTaxChange = (taxId: string, nextVal: number) => {
+    const oldVal = tempRates[taxId] ?? 0;
     const updatedRates = {
       ...tempRates,
       [taxId]: nextVal,
     };
     setTempRates(updatedRates);
 
-    // Update countryDetail dengan nilai baru dan indeks kepuasan
+    // Update countryDetail dengan nilai baru, indeks kepuasan, dan notifikasi
     const newSatisfaction = calculateSatisfaction(updatedRates);
+
+    let newPendingNotifs: any[] = Array.isArray(countryDetail?.pending_notifications) ? [...countryDetail.pending_notifications] : [];
+    if (oldVal !== nextVal) {
+      const taxNames: Record<string, string> = {
+        vat: "Pajak Pertambahan Nilai (PPN)",
+        corporate_tax: "Pajak Korporasi",
+        income_tax: "Pajak Penghasilan Pribadi",
+        cigarette_tax: "Cukai",
+        environment_tax: "Pajak Lingkungan"
+      };
+      const taxLabel = taxNames[taxId] || taxId;
+      const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+      const notif = generatePajakChangeNotification(taxLabel, oldVal, nextVal, dateStr);
+      newPendingNotifs = [notif, ...newPendingNotifs];
+    }
+
     setCountryDetail({
       ...countryDetail,
+      pending_notifications: newPendingNotifs,
       income_tax:
         taxId === "income_tax"
           ? nextVal
