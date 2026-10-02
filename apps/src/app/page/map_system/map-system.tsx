@@ -62,6 +62,8 @@ import { generateNonAggressionOfferNotification } from '../menus/inbox/logic/5_n
 import { generateDefenseAllianceOfferNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/2_aliansi_pertahanan/defenseAllianceLogic';
 import { generateResearchContractOfferNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/3_kontrak_penelitian/researchContractLogic';
 import { generateHubunganPanasNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/4_hubungan_panas/hubunganPanasLogic';
+import { evaluateAIResolusiPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBLogic';
+import { evaluateAIKeamananPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
 import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic';
@@ -458,6 +460,28 @@ export default function MapPage() {
                     newNotifsToAdd.push(generateHubunganPanasNotification(partner, relScore, currentDateStr));
                 }
             });
+
+            // 5F. Usulan Resolusi Majelis Umum PBB oleh AI (25% per bulan ~ 3-5x/tahun, syarat skor 1-20)
+            const aiResNotif = evaluateAIResolusiPBBTrigger(
+                internationalPool,
+                userCountryName,
+                (c1, c2) => getRelationValue(c1, c2, currentDateStr),
+                currentDateStr
+            );
+            if (aiResNotif) {
+                newNotifsToAdd.push(aiResNotif);
+            }
+
+            // 5G. Usulan Resolusi Dewan Keamanan PBB oleh AI (25% per bulan ~ 3-5x/tahun, syarat skor 1-20)
+            const aiSecNotif = evaluateAIKeamananPBBTrigger(
+                internationalPool,
+                userCountryName,
+                (c1, c2) => getRelationValue(c1, c2, currentDateStr),
+                currentDateStr
+            );
+            if (aiSecNotif) {
+                newNotifsToAdd.push(aiSecNotif);
+            }
 
             // 6. Notifikasi Defisit Listrik Grid Nasional (Kelipatan -5%: -5, -10, -15, ...)
             const sourceKeys = [
@@ -1562,6 +1586,12 @@ export default function MapPage() {
                         setInboxModalOpen(false);
                         setCountryDetailModalName(partner);
                         setCountryDetailModalOpen(true);
+                        return;
+                    }
+
+                    if (tNotif.tradeType === 'usulan_resolusi_pbb' || tNotif.tradeType === 'usulan_keamanan_pbb') {
+                        setInboxModalOpen(false);
+                        setActiveMenu("Geopolitik");
                         return;
                     }
 

@@ -20,6 +20,8 @@
 12. Penawaran Aliansi Pertahanan (`5_notifikasi_geopolitik/2_aliansi_pertahanan`)
 13. Penawaran Kontrak Penelitian Joint-R&D (`5_notifikasi_geopolitik/4_kontrak_penelitian`)
 14. Hubungan Memburuk & Ketegangan Geopolitik (`5_notifikasi_geopolitik/4_hubungan_panas` - Peringatan bertingkat skor 20, 15, 10, 5, 1)
+15. Usulan Resolusi Majelis Umum PBB oleh AI (`5_notifikasi_geopolitik/5_pbb/1_resolusi` - Probabilitas 25% per bulan, syarat skor hubungan 1-20)
+16. Usulan Resolusi Dewan Keamanan PBB oleh AI (`5_notifikasi_geopolitik/5_pbb/2_keamanan` - Probabilitas 25% per bulan, syarat skor hubungan 1-20)
 
 # 7. Notifikasi Ekonomi
 11. Perubahan Pajak (Protes / Bahagia)

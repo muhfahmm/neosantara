@@ -35,6 +35,8 @@ import NonAggressionNotificationCard from './logic/5_notifikasi_geopolitik/1_pak
 import DefenseAllianceNotificationCard from './logic/5_notifikasi_geopolitik/2_aliansi_pertahanan/defenseAllianceNotificationCard';
 import ResearchContractNotificationCard from './logic/5_notifikasi_geopolitik/3_kontrak_penelitian/researchContractNotificationCard';
 import HubunganPanasNotificationCard from './logic/5_notifikasi_geopolitik/4_hubungan_panas/hubunganPanasNotificationCard';
+import ResolusiPBBNotificationCard from './logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBNotificationCard';
+import KeamananPBBNotificationCard from './logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBNotificationCard';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -477,6 +479,26 @@ export default function TopLeftIcon({
                     if (tradeType === 'hubungan_panas') {
                       return (
                         <HubunganPanasNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onRedirect={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'usulan_resolusi_pbb') {
+                      return (
+                        <ResolusiPBBNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onRedirect={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'usulan_keamanan_pbb') {
+                      return (
+                        <KeamananPBBNotificationCard
                           key={notif.id}
                           notification={notif as any}
                           onAccept={handleAction}
