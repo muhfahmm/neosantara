@@ -2,7 +2,7 @@
 // Logika notifikasi penawaran pembangunan Kedutaan Besar dari negara AI ke User
 
 import { getEmbassiesForCountry } from '../../../../../../../../json/database_kedutaan_besar/embassyRegistry';
-import { NotificationMessage } from '../1_notifikasi_pokok/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { NotificationMessage } from '../1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 
 export interface EmbassyOfferNotification extends NotificationMessage {
   tradeType: 'penawaran_kedutaan_besar';
@@ -77,7 +77,7 @@ export function checkAndGenerateEmbassyOffers(
     const slug = normalizeSlug(country);
     const hasEmbassy = existingEmbassyPartners.includes(slug);
     const isUser = slug === userSlug;
-    
+
     return !isUser && !hasEmbassy;
   });
 

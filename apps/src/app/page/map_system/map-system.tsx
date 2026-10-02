@@ -36,16 +36,15 @@ const TopLeftIcon = dynamic(() => import('../menus/inbox/inboxModals'), { ssr: f
 const TopRightGiftIcon = dynamic(() => import('../menus/reward/rewardModals'), { ssr: false });
 const TopRightNewsIcon = dynamic(() => import('../menus/news/newsModals'), { ssr: false });
 const BottomLeftPenelitianIcon = dynamic(() => import('../menus/penelitian/penelitianModals'), { ssr: false });
-import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
-import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/2_peringkat/peringkatLogic';
-import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
+import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/logic/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_kepuasan_dan_peringkat/2_peringkat/peringkatLogic';
+import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
 import { getTradeAgreementsForCountry } from '../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
 import { getEmbassiesForCountry } from '../../../../../json/database_kedutaan_besar/embassyRegistry';
 import { playerHasEmbassyWith } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
-import { generateAITradeBeliNotification } from '../menus/inbox/logic/1_notifikasi_pokok/4_perdagangan/2_beli/tradeBeliLogic';
-import { generateAITradeJualNotification } from '../menus/inbox/logic/1_notifikasi_pokok/4_perdagangan/1_jual/tradeJualLogic';
-import { checkAndGenerateTradeRelationOffers } from '../menus/inbox/logic/4_notifikasi_perdagangan/1_penawaran_perdagangan';
-import { checkAndGenerateEmbassyOffers } from '../menus/inbox/logic/5_notifikasi_kedubes/1_penawaran_kedutaan_besar';
+import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_perdagangan/2_beli/tradeBeliLogic';
+import { generateAITradeJualNotification } from '../menus/inbox/logic/3_perdagangan/1_jual/tradeJualLogic';
+import { checkAndGenerateEmbassyOffers } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
 
 interface Country {
     id: number;
@@ -307,20 +306,8 @@ export default function MapPage() {
             const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
             const addedTradePartners = Array.isArray(countryDetail?.addedTradePartners) ? countryDetail.addedTradePartners : [];
             const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
-            
-            // 1. Penawaran Hubungan Perdagangan (25% per bulan ~ 3x/tahun)
-            const tradeRelationNotif = checkAndGenerateTradeRelationOffers(
-                userCountryName,
-                notifications,
-                currentDateStr,
-                true, // isMonthlyTick = true
-                addedTradePartners,
-                removedTradePartners,
-                playerEmbassies,
-                removedEmbassies
-            );
 
-            // 2. Penawaran Kedutaan Besar (25% per bulan ~ 3x/tahun)
+            // 1. Penawaran Kedutaan Besar (25% per bulan ~ 3x/tahun)
             const embassyOfferNotif = checkAndGenerateEmbassyOffers(
                 userCountryName,
                 notifications,
@@ -330,7 +317,7 @@ export default function MapPage() {
                 removedEmbassies
             );
 
-            // 3. Penawaran Transaksi Ekspor & Impor (25% per bulan ~ 3-5x/tahun)
+            // 2. Penawaran Transaksi Ekspor & Impor (25% per bulan ~ 3-5x/tahun)
             let tradeTransactionNotif = null;
             if (Math.random() < 0.25) {
                 const staticPartners = getTradeAgreementsForCountry(userCountryName).map(c => c.mitra);
@@ -360,7 +347,6 @@ export default function MapPage() {
             }
 
             const newNotifsToAdd: any[] = [];
-            if (tradeRelationNotif) newNotifsToAdd.push(tradeRelationNotif);
             if (embassyOfferNotif) newNotifsToAdd.push(embassyOfferNotif);
             if (tradeTransactionNotif) newNotifsToAdd.push(tradeTransactionNotif);
 
@@ -918,7 +904,7 @@ export default function MapPage() {
             if (completedEmbassyConstructions.length > 0) {
                 const completedTargetCountries = completedEmbassyConstructions.map((c: any) => c.targetCountry);
                 nextOngoingEmbassyConstructions = existingEmbassyConstructions.filter((c: any) => !completedTargetCountries.includes(c.targetCountry));
-                
+
                 completedEmbassyConstructions.forEach((c: any) => {
                     if (!nextEmbassies.some((emb: any) => emb.mitra === c.targetCountry)) {
                         nextEmbassies.push({
@@ -1282,44 +1268,6 @@ export default function MapPage() {
                         return;
                     }
 
-                    if (tNotif.tradeType === 'penawaran_hubungan_dagang') {
-                        const partner = tNotif.partnerCountry;
-                        
-                        // Cek apakah user sudah memiliki Kedutaan Besar di negara mitra tersebut
-                        const myCountry = countryDetail?.country || countryDetail?.nama || "Indonesia";
-                        const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
-                        const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
-                        const hasEmbassy = playerHasEmbassyWith(partner, playerEmbassies) || getEmbassiesForCountry(myCountry).some(c => c.toLowerCase().trim() === partner.toLowerCase().trim() && !removedEmbassies.includes(c));
-
-                        if (!hasEmbassy) {
-                            // Belum ada kedutaan besar: Tutup inbox & Buka RequireEmbassyModal (Tanpa alert!)
-                            setInboxModalOpen(false);
-                            setRequireEmbassyPartner(partner);
-                            setRequireEmbassyModalOpen(true);
-                            return;
-                        }
-
-                        // Jika sudah ada Kedutaan Besar, hubungan dagang langsung diterima & simpan ke state addedTradePartners
-                        setCountryDetail((prev: any) => {
-                            if (!prev) return prev;
-                            const existingAddedTrade = Array.isArray(prev.addedTradePartners) ? prev.addedTradePartners : [];
-                            const existingRemovedTrade = Array.isArray(prev.removedTradePartners) ? prev.removedTradePartners : [];
-                            const normPartner = partner.toLowerCase().trim();
-
-                            return {
-                                ...prev,
-                                addedTradePartners: Array.from(new Set([...existingAddedTrade, partner])),
-                                removedTradePartners: existingRemovedTrade.filter((r: string) => r.toLowerCase().trim() !== normPartner)
-                            };
-                        });
-
-                        setNotifications(prev => prev.filter(n => n.id !== notif.id));
-                        setInboxModalOpen(false);
-                        setCountryDetailModalName(partner);
-                        setCountryDetailModalOpen(true);
-                        return;
-                    }
-
                     if (tNotif.tradeType === 'penawaran_kedutaan_besar') {
                         const partner = tNotif.partnerCountry;
                         // Buka Detail Negara mitra untuk langsung memproses pembangunan kedutaan besar
@@ -1343,7 +1291,7 @@ export default function MapPage() {
                 }}
                 onRedirectClick={(notif) => {
                     const tNotif = notif as any;
-                    if (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli' || tNotif.tradeType === 'penawaran_hubungan_dagang' || tNotif.tradeType === 'penawaran_kedutaan_besar') {
+                    if (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli' || tNotif.tradeType === 'penawaran_kedutaan_besar') {
                         // Tolak Tawaran: Hapus notifikasi dari feed
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         setInboxModalOpen(false);

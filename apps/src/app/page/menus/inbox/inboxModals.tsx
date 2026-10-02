@@ -3,14 +3,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Inbox, X, Trash2 } from 'lucide-react';
-import { NotificationMessage } from './logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
-import KepuasanNotification from './logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanNotification';
-import PeringkatNotification from './logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/2_peringkat/peringkatNotification';
-import KesejahteraanNotification from './logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanNotification';
-import TradeBeliNotification from './logic/1_notifikasi_pokok/4_perdagangan/2_beli/tradeBeliNotification';
-import TradeJualNotification from './logic/1_notifikasi_pokok/4_perdagangan/1_jual/tradeJualNotification';
-import TradeRelationNotification from './logic/4_notifikasi_perdagangan/tradeRelationNotification';
-import EmbassyNotification from './logic/5_notifikasi_kedubes/embassyNotification';
+import { NotificationMessage } from './logic/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import KepuasanNotification from './logic/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanNotification';
+import PeringkatNotification from './logic/1_kepuasan_dan_peringkat/2_peringkat/peringkatNotification';
+import KesejahteraanNotification from './logic/1_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanNotification';
+import TradeBeliNotification from './logic/3_perdagangan/2_beli/tradeBeliNotification';
+import TradeJualNotification from './logic/3_perdagangan/1_jual/tradeJualNotification';
+import EmbassyNotification from './logic/4_notifikasi_kedubes/embassyNotification';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -22,9 +21,9 @@ interface TopLeftIconProps {
   onRedirectClick?: (notification: NotificationMessage) => void;
 }
 
-export default function TopLeftIcon({ 
-  onClick, 
-  isOpen, 
+export default function TopLeftIcon({
+  onClick,
+  isOpen,
   onClose,
   notifications = [],
   onClearAll,
@@ -44,7 +43,7 @@ export default function TopLeftIcon({
   // Popup Toast Otomatis Muncul Saat Ada Notifikasi Baru Masuk (Tahan 10 Detik)
   useEffect(() => {
     const latestUnread = notifications.find(n => !n.isRead);
-    
+
     if (latestUnread) {
       if (latestUnread.id !== lastNotifiedIdRef.current) {
         lastNotifiedIdRef.current = latestUnread.id;
@@ -83,7 +82,7 @@ export default function TopLeftIcon({
 
         {/* 🔥 POPUP TOAST NOTIFIKASI DI BAWAH INBOX */}
         {showToast && toastNotification && !isOpen && (
-          <div 
+          <div
             onClick={() => {
               setShowToast(false);
               if (onClick) onClick();
@@ -95,7 +94,7 @@ export default function TopLeftIcon({
                 <span className="w-2.5 h-2.5 rounded-full bg-[#00FFAA] animate-ping" />
                 Pesan Baru Masuk
               </span>
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowToast(false);
@@ -123,8 +122,8 @@ export default function TopLeftIcon({
 
       {/* 🔥 Inbox Modal - Render via Portal agar sama dengan Sidang Umum PBB */}
       {isOpen && mounted && createPortal(
-        <div className="fixed inset-0 z-[100000] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-black/60 pointer-events-none">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+        <div className="fixed inset-0 z-[100000] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
 
             {/* 🔥 HEADER MODAL */}
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 rounded-t-2xl">
@@ -146,7 +145,7 @@ export default function TopLeftIcon({
                     <span className="hidden sm:inline">Bersihkan Semua</span>
                   </button>
                 )}
-                <button 
+                <button
                   onClick={onClose}
                   className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
                 >
@@ -193,16 +192,6 @@ export default function TopLeftIcon({
                         />
                       );
                     }
-                    if (tradeType === 'penawaran_hubungan_dagang') {
-                      return (
-                        <TradeRelationNotification
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
                     if (tradeType === 'penawaran_kedutaan_besar') {
                       return (
                         <EmbassyNotification
@@ -237,7 +226,7 @@ export default function TopLeftIcon({
 
             {/* 🔥 FOOTER MODAL */}
             <div className="p-3 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10 shrink-0">
-              <button 
+              <button
                 onClick={onClose}
                 className="px-6 py-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all font-bold text-xs uppercase tracking-wider cursor-pointer"
               >
