@@ -690,15 +690,13 @@ export default function MapPage() {
                     dateTextRef.current.textContent = formattedDate;
                 }
                 // Update React state dengan tanggal baru
-                if (timeManagerRef.current) {
-                    const newDate = timeManagerRef.current.getCurrentDate();
-                    console.log('[MapPage Callback] Date changed:', {
-                        formatted: formattedDate,
-                        newDate: newDate.toDateString(),
-                        timestamp: Date.now()
-                    });
-                    setCurrentDate(newDate);
-                }
+                const newDate = manager.getCurrentDate();
+                console.log('[MapPage Callback] Date changed:', {
+                    formatted: formattedDate,
+                    newDate: newDate.toDateString(),
+                    timestamp: Date.now()
+                });
+                setCurrentDate(newDate);
             },
             (progress) => {
                 if (progressBarRef.current) {
