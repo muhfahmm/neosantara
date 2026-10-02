@@ -17,6 +17,7 @@ const ConfirmRestartModal = dynamic(() => import('../navbar/ConfirmRestartModal'
 const ModalsPeringatanPeringkat = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsPeringatanPeringkat').then(m => m.ModalsPeringatanPeringkat), { ssr: false });
 const ModalsKudeta = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta'), { ssr: false });
 type KudetaType = import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta').KudetaType;
+const RequireEmbassyModal = dynamic(() => import('./RequireEmbassyModal').then(m => m.RequireEmbassyModal), { ssr: false });
 import { Navbar } from '../navbar/Navbar';
 import BottomNav from '../navigasi_menu/2_navigasi_bawah/BottomNav';
 import ModalsManager from '../navigasi_menu/2_navigasi_bawah/ModalsManager';
@@ -39,8 +40,11 @@ import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/l
 import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/2_peringkat/peringkatLogic';
 import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
 import { getTradeAgreementsForCountry } from '../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
+import { getEmbassiesForCountry } from '../../../../../json/database_kedutaan_besar/embassyRegistry';
+import { playerHasEmbassyWith } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
 import { generateAITradeBeliNotification } from '../menus/inbox/logic/1_notifikasi_pokok/4_perdagangan/2_beli/tradeBeliLogic';
 import { generateAITradeJualNotification } from '../menus/inbox/logic/1_notifikasi_pokok/4_perdagangan/1_jual/tradeJualLogic';
+import { checkAndGenerateTradeRelationOffers } from '../menus/inbox/logic/4_notifikasi_perdagangan/1_penawaran_perdagangan';
 
 interface Country {
     id: number;
@@ -84,6 +88,8 @@ export default function MapPage() {
     const [kesejahteraanInitialTab, setKesejahteraanInitialTab] = useState<"statistik" | "naikkan">("statistik");
     const [countryDetailModalOpen, setCountryDetailModalOpen] = useState(false);
     const [countryDetailModalName, setCountryDetailModalName] = useState<string | null>(null);
+    const [requireEmbassyModalOpen, setRequireEmbassyModalOpen] = useState(false);
+    const [requireEmbassyPartner, setRequireEmbassyPartner] = useState<string | null>(null);
     const [playerDetailModalOpen, setPlayerDetailModalOpen] = useState(false);
     const [inboxModalOpen, setInboxModalOpen] = useState(false);
     const [giftModalOpen, setGiftModalOpen] = useState(false);
@@ -316,6 +322,50 @@ export default function MapPage() {
             }));
         }
     }, [currentDate, countryDetail, setCountryDetail]);
+
+    // --- MONTHLY TRADE RELATION OFFER NOTIFICATIONS (OPSI 1: 25% PER MONTH) ---
+    useEffect(() => {
+        if (!currentDate || !countryDetail) return;
+
+        const yearStr = currentDate.getFullYear();
+        const monthStr = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const dayStr = String(currentDate.getDate()).padStart(2, '0');
+        const currentDateStr = `${yearStr}-${monthStr}-${dayStr}`;
+
+        // Track last month checked to perform roll exactly once per month
+        const currentYearMonth = `${yearStr}-${monthStr}`;
+        const lastCheckedYearMonth = countryDetail.last_trade_relation_check_month;
+
+        // Inisialisasi awal pada tanggal pertama game: Jangan kirim notifikasi langsung saat game baru dibuka!
+        if (!lastCheckedYearMonth) {
+            setCountryDetail((prev: any) => ({
+                ...prev,
+                last_trade_relation_check_month: currentYearMonth
+            }));
+            return;
+        }
+
+        if (lastCheckedYearMonth !== currentYearMonth) {
+            const userCountryName = countryDetail.country || countryDetail.nama || "Indonesia";
+            
+            const tradeRelationNotif = checkAndGenerateTradeRelationOffers(
+                userCountryName,
+                notifications,
+                currentDateStr,
+                true // isMonthlyTick = true
+            );
+
+            if (tradeRelationNotif) {
+                setNotifications(prev => [tradeRelationNotif, ...prev]);
+            }
+
+            // Update state so we don't re-roll again in the same month
+            setCountryDetail((prev: any) => ({
+                ...prev,
+                last_trade_relation_check_month: currentYearMonth
+            }));
+        }
+    }, [currentDate, countryDetail, notifications, setCountryDetail]);
 
     const nonModalMenus = [
         "",
@@ -1197,6 +1247,30 @@ export default function MapPage() {
                         return;
                     }
 
+                    if (tNotif.tradeType === 'penawaran_hubungan_dagang') {
+                        const partner = tNotif.partnerCountry;
+                        
+                        // Cek apakah user sudah memiliki Kedutaan Besar di negara mitra tersebut
+                        const myCountry = countryDetail?.country || countryDetail?.nama || "Indonesia";
+                        const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
+                        const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
+                        const hasEmbassy = playerHasEmbassyWith(partner, playerEmbassies) || getEmbassiesForCountry(myCountry).some(c => c.toLowerCase().trim() === partner.toLowerCase().trim() && !removedEmbassies.includes(c));
+
+                        if (!hasEmbassy) {
+                            // Belum ada kedutaan besar: Tutup inbox & Buka RequireEmbassyModal (Tanpa alert!)
+                            setInboxModalOpen(false);
+                            setRequireEmbassyPartner(partner);
+                            setRequireEmbassyModalOpen(true);
+                            return;
+                        }
+
+                        // Jika sudah ada Kedutaan Besar, hubungan dagang langsung diterima
+                        alert(`Selamat! Hubungan Perdagangan resmi telah dibuka antara negara Anda dan ${partner}!`);
+                        setNotifications(prev => prev.filter(n => n.id !== notif.id));
+                        setInboxModalOpen(false);
+                        return;
+                    }
+
                     // Handle notification action click (secondary/informational actions)
                     if (notif.type === 'kepuasan') {
                         setActiveMenu("Sosial & Budaya");
@@ -1210,7 +1284,7 @@ export default function MapPage() {
                 }}
                 onRedirectClick={(notif) => {
                     const tNotif = notif as any;
-                    if (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli') {
+                    if (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli' || tNotif.tradeType === 'penawaran_hubungan_dagang') {
                         // Tolak Tawaran: Hapus notifikasi dari feed
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         alert("Penawaran ditolak.");
@@ -1444,6 +1518,22 @@ export default function MapPage() {
                 onClose={() => {
                     setCountryDetailModalOpen(false);
                     setCountryDetailModalName(null);
+                }}
+            />
+
+            {/* Modal Informasi Kedutaan Besar Diperlukan */}
+            <RequireEmbassyModal
+                isOpen={requireEmbassyModalOpen}
+                partnerName={requireEmbassyPartner}
+                onClose={() => {
+                    setRequireEmbassyModalOpen(false);
+                    setRequireEmbassyPartner(null);
+                }}
+                onProceedToDetail={(partner) => {
+                    setRequireEmbassyModalOpen(false);
+                    setRequireEmbassyPartner(null);
+                    setCountryDetailModalName(partner);
+                    setCountryDetailModalOpen(true);
                 }}
             />
 

@@ -1,0 +1,2026 @@
+{
+  "afrika_selatan": [
+    "Botswana",
+    "Bangladesh",
+    "Argentina",
+    "Bhutan",
+    "Albania",
+    "Benin",
+    "Barbados",
+    "Austria",
+    "Arab Saudi",
+    "Brunei"
+  ],
+  "aljazair": [
+    "Brunei",
+    "Benin",
+    "Bahrain",
+    "Bangladesh",
+    "Bolivia",
+    "Bermuda",
+    "Afrika Selatan",
+    "Botswana"
+  ],
+  "angola": [
+    "Aljazair",
+    "Bermuda",
+    "Argentina",
+    "Bolivia",
+    "Barbados",
+    "Belize",
+    "Benin",
+    "Albania"
+  ],
+  "benin": [
+    "Belize",
+    "Amerika Serikat",
+    "Aljazair",
+    "Botswana",
+    "Belgia",
+    "Barbados",
+    "Bahrain"
+  ],
+  "botswana": [
+    "Bahama",
+    "Afganistan",
+    "Brazil",
+    "Belgia",
+    "Belanda",
+    "Azerbaijan",
+    "Benin",
+    "Brunei"
+  ],
+  "burkina_faso": [
+    "Belize",
+    "Bangladesh",
+    "Aljazair",
+    "Afganistan",
+    "Bolivia",
+    "Benin"
+  ],
+  "burundi": [
+    "Azerbaijan",
+    "Albania",
+    "Angola",
+    "Amerika Serikat",
+    "Afganistan",
+    "Australia",
+    "Andorra",
+    "Argentina"
+  ],
+  "chad": [
+    "Belanda",
+    "Belarus",
+    "Bhutan",
+    "Argentina",
+    "Bahama",
+    "Albania",
+    "Bahrain"
+  ],
+  "djibouti": [
+    "Belgia",
+    "Belanda",
+    "Australia",
+    "Bangladesh",
+    "Afrika Selatan",
+    "Austria",
+    "Benin",
+    "Bhutan"
+  ],
+  "eritrea": [
+    "Aljazair",
+    "Bahrain",
+    "Afrika Selatan",
+    "Antigua dan Barbuda",
+    "Brunei",
+    "Belize",
+    "Botswana",
+    "Belanda"
+  ],
+  "eswatini": [
+    "Aljazair",
+    "Bolivia",
+    "Armenia",
+    "Australia",
+    "Azerbaijan",
+    "Barbados",
+    "Belize",
+    "Afganistan",
+    "Bosnia dan Hercegovina",
+    "Bahrain"
+  ],
+  "ethiopia": [
+    "Bahrain",
+    "Belgia",
+    "Argentina",
+    "Bosnia dan Hercegovina",
+    "Brunei",
+    "Azerbaijan",
+    "Afganistan",
+    "Benin",
+    "Australia",
+    "Austria"
+  ],
+  "gabon": [
+    "Andorra",
+    "Barbados",
+    "Austria",
+    "Brunei",
+    "Arab Saudi",
+    "Armenia",
+    "Bangladesh",
+    "Bahrain",
+    "Albania"
+  ],
+  "gambia": [
+    "Azerbaijan",
+    "Afrika Selatan",
+    "Bahama",
+    "Antigua dan Barbuda",
+    "Bangladesh",
+    "Belize",
+    "Andorra",
+    "Albania"
+  ],
+  "ghana": [
+    "Bhutan",
+    "Antigua dan Barbuda",
+    "Bolivia",
+    "Afganistan",
+    "Argentina",
+    "Amerika Serikat",
+    "Arab Saudi",
+    "Austria",
+    "Brunei",
+    "Andorra"
+  ],
+  "guinea": [
+    "Belanda",
+    "Brunei",
+    "Brazil",
+    "Bahrain",
+    "Amerika Serikat",
+    "Australia",
+    "Bahama"
+  ],
+  "guinea_bissau": [
+    "Belanda",
+    "Angola",
+    "Bahrain",
+    "Bahama",
+    "Austria",
+    "Brunei"
+  ],
+  "kamerun": [
+    "Austria",
+    "Antigua dan Barbuda",
+    "Bahama",
+    "Argentina",
+    "Belarus",
+    "Bahrain"
+  ],
+  "kenya": [
+    "Bosnia dan Hercegovina",
+    "Brazil",
+    "Bahama",
+    "Bhutan",
+    "Argentina",
+    "Bahrain",
+    "Afrika Selatan"
+  ],
+  "komoro": [
+    "Barbados",
+    "Benin",
+    "Belgia",
+    "Bosnia dan Hercegovina",
+    "Botswana",
+    "Belanda"
+  ],
+  "kongo": [
+    "Bosnia dan Hercegovina",
+    "Australia",
+    "Amerika Serikat",
+    "Armenia",
+    "Belarus",
+    "Bhutan",
+    "Bahama",
+    "Angola",
+    "Arab Saudi",
+    "Belanda"
+  ],
+  "lesotho": [
+    "Andorra",
+    "Amerika Serikat",
+    "Barbados",
+    "Afrika Selatan",
+    "Arab Saudi",
+    "Brunei",
+    "Bolivia",
+    "Armenia"
+  ],
+  "liberia": [
+    "Brazil",
+    "Argentina",
+    "Bahrain",
+    "Azerbaijan",
+    "Aljazair",
+    "Bangladesh",
+    "Antigua dan Barbuda",
+    "Arab Saudi",
+    "Afganistan",
+    "Andorra"
+  ],
+  "libya": [
+    "Angola",
+    "Belize",
+    "Bangladesh",
+    "Bermuda",
+    "Armenia",
+    "Arab Saudi",
+    "Bolivia",
+    "Belarus",
+    "Austria",
+    "Bahama"
+  ],
+  "madagaskar": [
+    "Afganistan",
+    "Austria",
+    "Belgia",
+    "Belanda",
+    "Belarus",
+    "Antigua dan Barbuda",
+    "Bahrain"
+  ],
+  "malawi": [
+    "Barbados",
+    "Benin",
+    "Arab Saudi",
+    "Armenia",
+    "Aljazair",
+    "Botswana",
+    "Belgia",
+    "Bermuda",
+    "Bahama"
+  ],
+  "mali": [
+    "Bangladesh",
+    "Bahrain",
+    "Belanda",
+    "Antigua dan Barbuda",
+    "Bosnia dan Hercegovina",
+    "Bahama",
+    "Brunei"
+  ],
+  "maroko": [
+    "Argentina",
+    "Belgia",
+    "Benin",
+    "Angola",
+    "Austria",
+    "Arab Saudi",
+    "Afrika Selatan",
+    "Bahrain",
+    "Barbados"
+  ],
+  "mauritania": [
+    "Brazil",
+    "Belanda",
+    "Antigua dan Barbuda",
+    "Afrika Selatan",
+    "Amerika Serikat",
+    "Belgia",
+    "Benin",
+    "Afganistan",
+    "Aljazair",
+    "Belarus"
+  ],
+  "mauritius": [
+    "Antigua dan Barbuda",
+    "Amerika Serikat",
+    "Bosnia dan Hercegovina",
+    "Bhutan",
+    "Armenia",
+    "Austria",
+    "Belize"
+  ],
+  "mesir": [
+    "Antigua dan Barbuda",
+    "Bhutan",
+    "Afganistan",
+    "Austria",
+    "Belgia",
+    "Argentina",
+    "Barbados",
+    "Belarus",
+    "Australia",
+    "Bermuda"
+  ],
+  "mozambik": [
+    "Angola",
+    "Barbados",
+    "Belanda",
+    "Bahrain",
+    "Afganistan",
+    "Belarus",
+    "Arab Saudi",
+    "Austria",
+    "Antigua dan Barbuda"
+  ],
+  "namibia": [
+    "Arab Saudi",
+    "Argentina",
+    "Brunei",
+    "Barbados",
+    "Afrika Selatan",
+    "Bahrain",
+    "Benin",
+    "Bosnia dan Hercegovina"
+  ],
+  "niger": [
+    "Bhutan",
+    "Belanda",
+    "Belarus",
+    "Austria",
+    "Angola",
+    "Australia"
+  ],
+  "nigeria": [
+    "Antigua dan Barbuda",
+    "Australia",
+    "Bangladesh",
+    "Belanda",
+    "Austria",
+    "Bahama",
+    "Bosnia dan Hercegovina",
+    "Belarus"
+  ],
+  "pantai_gading": [
+    "Belgia",
+    "Bolivia",
+    "Afrika Selatan",
+    "Argentina",
+    "Angola",
+    "Brunei",
+    "Bhutan",
+    "Andorra",
+    "Benin",
+    "Bahrain"
+  ],
+  "republik_afrika_tengah": [
+    "Afrika Selatan",
+    "Angola",
+    "Arab Saudi",
+    "Bangladesh",
+    "Botswana",
+    "Albania",
+    "Bermuda",
+    "Austria"
+  ],
+  "republik_demokratik_kongo": [
+    "Bahama",
+    "Bolivia",
+    "Belanda",
+    "Bangladesh",
+    "Antigua dan Barbuda",
+    "Benin",
+    "Brunei",
+    "Armenia",
+    "Afganistan",
+    "Austria"
+  ],
+  "republik_sudan": [
+    "Arab Saudi",
+    "Antigua dan Barbuda",
+    "Belanda",
+    "Barbados",
+    "Argentina",
+    "Bahrain",
+    "Bolivia",
+    "Austria",
+    "Aljazair"
+  ],
+  "republik_tanzania": [
+    "Australia",
+    "Bangladesh",
+    "Benin",
+    "Austria",
+    "Albania",
+    "Bosnia dan Hercegovina",
+    "Afrika Selatan"
+  ],
+  "republik_uganda": [
+    "Bahrain",
+    "Belarus",
+    "Brazil",
+    "Afrika Selatan",
+    "Barbados",
+    "Australia",
+    "Brunei"
+  ],
+  "republik_zambia": [
+    "Armenia",
+    "Amerika Serikat",
+    "Andorra",
+    "Belanda",
+    "Belgia",
+    "Azerbaijan",
+    "Bahama",
+    "Australia",
+    "Belarus"
+  ],
+  "republik_zimbabwe": [
+    "Bermuda",
+    "Albania",
+    "Belarus",
+    "Benin",
+    "Belanda",
+    "Azerbaijan",
+    "Australia",
+    "Amerika Serikat",
+    "Belize",
+    "Bahrain"
+  ],
+  "rwanda": [
+    "Antigua dan Barbuda",
+    "Benin",
+    "Bangladesh",
+    "Arab Saudi",
+    "Australia",
+    "Azerbaijan",
+    "Afganistan",
+    "Albania"
+  ],
+  "sao_tome_dan_principe": [
+    "Antigua dan Barbuda",
+    "Barbados",
+    "Australia",
+    "Bhutan",
+    "Argentina",
+    "Albania",
+    "Afganistan"
+  ],
+  "senegal": [
+    "Belanda",
+    "Bermuda",
+    "Bahrain",
+    "Afganistan",
+    "Belize",
+    "Barbados",
+    "Brunei",
+    "Brazil",
+    "Andorra"
+  ],
+  "seychelles": [
+    "Bosnia dan Hercegovina",
+    "Argentina",
+    "Benin",
+    "Bhutan",
+    "Amerika Serikat",
+    "Bahrain",
+    "Azerbaijan"
+  ],
+  "sierra_leone": [
+    "Belgia",
+    "Antigua dan Barbuda",
+    "Brazil",
+    "Brunei",
+    "Andorra",
+    "Benin"
+  ],
+  "somalia": [
+    "Afrika Selatan",
+    "Bermuda",
+    "Bahrain",
+    "Belize",
+    "Benin",
+    "Barbados",
+    "Bosnia dan Hercegovina",
+    "Amerika Serikat",
+    "Botswana"
+  ],
+  "sudan_selatan": [
+    "Arab Saudi",
+    "Argentina",
+    "Benin",
+    "Bolivia",
+    "Bermuda",
+    "Andorra"
+  ],
+  "tanjung_verde": [
+    "Bolivia",
+    "Aljazair",
+    "Albania",
+    "Brunei",
+    "Australia",
+    "Armenia"
+  ],
+  "togo": [
+    "Botswana",
+    "Bahama",
+    "Australia",
+    "Armenia",
+    "Bolivia",
+    "Bermuda",
+    "Angola",
+    "Brazil",
+    "Bangladesh",
+    "Bhutan"
+  ],
+  "tunisia": [
+    "Afganistan",
+    "Azerbaijan",
+    "Argentina",
+    "Bangladesh",
+    "Benin",
+    "Bolivia",
+    "Angola",
+    "Arab Saudi",
+    "Albania"
+  ],
+  "afganistan": [
+    "Bosnia dan Hercegovina",
+    "Argentina",
+    "Arab Saudi",
+    "Barbados",
+    "Aljazair",
+    "Austria",
+    "Albania",
+    "Bolivia",
+    "Armenia"
+  ],
+  "arab_saudi": [
+    "Albania",
+    "Belgia",
+    "Afganistan",
+    "Barbados",
+    "Afrika Selatan",
+    "Bosnia dan Hercegovina",
+    "Bhutan",
+    "Benin",
+    "Belize",
+    "Botswana"
+  ],
+  "armenia": [
+    "Andorra",
+    "Bahrain",
+    "Albania",
+    "Bahama",
+    "Botswana",
+    "Azerbaijan",
+    "Belize",
+    "Aljazair",
+    "Belgia"
+  ],
+  "azerbaijan": [
+    "Benin",
+    "Bangladesh",
+    "Amerika Serikat",
+    "Barbados",
+    "Bahama",
+    "Afganistan",
+    "Andorra",
+    "Bhutan"
+  ],
+  "bahrain": [
+    "Bermuda",
+    "Azerbaijan",
+    "Benin",
+    "Bahama",
+    "Belanda",
+    "Botswana"
+  ],
+  "bangladesh": [
+    "Angola",
+    "Arab Saudi",
+    "Belanda",
+    "Afrika Selatan",
+    "Andorra",
+    "Austria"
+  ],
+  "bhutan": [
+    "Bulgaria",
+    "Australia",
+    "Belanda",
+    "Botswana",
+    "Brazil",
+    "Argentina",
+    "Bangladesh"
+  ],
+  "brunei": [
+    "Botswana",
+    "Aljazair",
+    "Belize",
+    "Angola",
+    "Belarus",
+    "Benin",
+    "Albania"
+  ],
+  "china": [
+    "Azerbaijan",
+    "Angola",
+    "Aljazair",
+    "Austria",
+    "Andorra",
+    "Belgia",
+    "Armenia",
+    "Australia",
+    "Amerika Serikat",
+    "Barbados"
+  ],
+  "filipina": [
+    "Bosnia dan Hercegovina",
+    "Amerika Serikat",
+    "Andorra",
+    "Barbados",
+    "Australia",
+    "Bahama",
+    "Belanda",
+    "Austria"
+  ],
+  "georgia": [
+    "Bangladesh",
+    "Benin",
+    "Azerbaijan",
+    "Andorra",
+    "Belarus",
+    "Afganistan",
+    "Brazil",
+    "Belize",
+    "Barbados",
+    "Brunei"
+  ],
+  "hong_kong": [
+    "Aljazair",
+    "Belize",
+    "Barbados",
+    "Botswana",
+    "Bhutan",
+    "Bolivia",
+    "Belgia"
+  ],
+  "india": [
+    "Afrika Selatan",
+    "Bahrain",
+    "Belanda",
+    "Bermuda",
+    "Belarus",
+    "Bahama",
+    "Aljazair",
+    "Andorra"
+  ],
+  "indonesia": [
+    "Belarus",
+    "Benin",
+    "Bahrain",
+    "Bosnia dan Hercegovina",
+    "Australia",
+    "Afganistan",
+    "Austria",
+    "Belanda"
+  ],
+  "irak": [
+    "Armenia",
+    "Brazil",
+    "Albania",
+    "Bangladesh",
+    "Belarus",
+    "Barbados",
+    "Bahama",
+    "Bolivia",
+    "Antigua dan Barbuda"
+  ],
+  "iran": [
+    "Andorra",
+    "Benin",
+    "Arab Saudi",
+    "Argentina",
+    "Botswana",
+    "Bermuda"
+  ],
+  "israel": [
+    "Belgia",
+    "Bahrain",
+    "Botswana",
+    "Aljazair",
+    "Austria",
+    "Afrika Selatan",
+    "Barbados",
+    "Arab Saudi"
+  ],
+  "jepang": [
+    "Azerbaijan",
+    "Belanda",
+    "Belize",
+    "Bolivia",
+    "Barbados",
+    "Armenia",
+    "Botswana",
+    "Afganistan"
+  ],
+  "kamboja": [
+    "Andorra",
+    "Argentina",
+    "Amerika Serikat",
+    "Albania",
+    "Barbados",
+    "Bosnia dan Hercegovina"
+  ],
+  "kazakhstan": [
+    "Belgia",
+    "Azerbaijan",
+    "Arab Saudi",
+    "Austria",
+    "Australia",
+    "Antigua dan Barbuda",
+    "Bahama"
+  ],
+  "kirgizstan": [
+    "Belanda",
+    "Arab Saudi",
+    "Barbados",
+    "Afganistan",
+    "Benin",
+    "Bahrain",
+    "Angola"
+  ],
+  "korea_selatan": [
+    "Afganistan",
+    "Barbados",
+    "Arab Saudi",
+    "Angola",
+    "Brunei",
+    "Belgia",
+    "Belize"
+  ],
+  "korea_utara": [
+    "Antigua dan Barbuda",
+    "Australia",
+    "Andorra",
+    "Bermuda",
+    "Bangladesh",
+    "Azerbaijan"
+  ],
+  "kuwait": [
+    "Belanda",
+    "Arab Saudi",
+    "Andorra",
+    "Afganistan",
+    "Australia",
+    "Armenia"
+  ],
+  "laos": [
+    "Amerika Serikat",
+    "Botswana",
+    "Armenia",
+    "Bhutan",
+    "Afganistan",
+    "Bolivia",
+    "Barbados",
+    "Aljazair"
+  ],
+  "lebanon": [
+    "Bangladesh",
+    "Angola",
+    "Afganistan",
+    "Benin",
+    "Andorra",
+    "Azerbaijan"
+  ],
+  "makau": [
+    "Albania",
+    "Australia",
+    "Belanda",
+    "Barbados",
+    "Bahama",
+    "Bosnia dan Hercegovina",
+    "Azerbaijan",
+    "Belize",
+    "Bhutan",
+    "Benin"
+  ],
+  "malaysia": [
+    "Bermuda",
+    "Bosnia dan Hercegovina",
+    "Bangladesh",
+    "Albania",
+    "Angola",
+    "Afrika Selatan",
+    "Benin"
+  ],
+  "maldives": [
+    "Afrika Selatan",
+    "Andorra",
+    "Aljazair",
+    "Belarus",
+    "Armenia",
+    "Bangladesh",
+    "Bhutan",
+    "Bermuda",
+    "Bahama",
+    "Amerika Serikat"
+  ],
+  "mongolia": [
+    "Bahama",
+    "Benin",
+    "Afrika Selatan",
+    "Austria",
+    "Bosnia dan Hercegovina",
+    "Belize"
+  ],
+  "myanmar": [
+    "Australia",
+    "Bahrain",
+    "Antigua dan Barbuda",
+    "Argentina",
+    "Barbados",
+    "Benin",
+    "Amerika Serikat",
+    "Bosnia dan Hercegovina"
+  ],
+  "nepal": [
+    "Angola",
+    "Antigua dan Barbuda",
+    "Albania",
+    "Arab Saudi",
+    "Belize",
+    "Bangladesh",
+    "Bahama"
+  ],
+  "oman": [
+    "Australia",
+    "Afganistan",
+    "Albania",
+    "Belanda",
+    "Azerbaijan",
+    "Bermuda"
+  ],
+  "pakistan": [
+    "Bermuda",
+    "Azerbaijan",
+    "Aljazair",
+    "Belize",
+    "Andorra",
+    "Bangladesh",
+    "Brazil",
+    "Angola",
+    "Barbados"
+  ],
+  "palestina": [
+    "Belgia",
+    "Afrika Selatan",
+    "Albania",
+    "Arab Saudi",
+    "Bahrain",
+    "Bosnia dan Hercegovina",
+    "Angola",
+    "Aljazair",
+    "Belize",
+    "Armenia"
+  ],
+  "qatar": [
+    "Belanda",
+    "Brunei",
+    "Australia",
+    "Argentina",
+    "Bhutan",
+    "Arab Saudi",
+    "Benin",
+    "Afrika Selatan",
+    "Bermuda",
+    "Amerika Serikat"
+  ],
+  "republik_timor_leste": [
+    "Belgia",
+    "Amerika Serikat",
+    "Argentina",
+    "Bolivia",
+    "Botswana",
+    "Austria",
+    "Bosnia dan Hercegovina"
+  ],
+  "singapura": [
+    "Benin",
+    "Bangladesh",
+    "Argentina",
+    "Bolivia",
+    "Armenia",
+    "Afganistan"
+  ],
+  "sri_lanka": [
+    "Argentina",
+    "Brazil",
+    "Angola",
+    "Albania",
+    "Bangladesh",
+    "Brunei",
+    "Benin",
+    "Bahrain"
+  ],
+  "suriah": [
+    "Amerika Serikat",
+    "Argentina",
+    "Brunei",
+    "Bangladesh",
+    "Afrika Selatan",
+    "Belize",
+    "Angola"
+  ],
+  "taiwan": [
+    "Benin",
+    "Aljazair",
+    "Brazil",
+    "Bolivia",
+    "Austria",
+    "Botswana"
+  ],
+  "tajikistan": [
+    "Amerika Serikat",
+    "Austria",
+    "Antigua dan Barbuda",
+    "Arab Saudi",
+    "Aljazair",
+    "Belarus"
+  ],
+  "thailand": [
+    "Bhutan",
+    "Bermuda",
+    "Angola",
+    "Brazil",
+    "Arab Saudi",
+    "Bangladesh",
+    "Belize"
+  ],
+  "turkmenistan": [
+    "Amerika Serikat",
+    "Bahama",
+    "Botswana",
+    "Belanda",
+    "Bosnia dan Hercegovina",
+    "Azerbaijan"
+  ],
+  "uni_emirat_arab": [
+    "Belarus",
+    "Aljazair",
+    "Belgia",
+    "Barbados",
+    "Arab Saudi",
+    "Andorra"
+  ],
+  "uzbekistan": [
+    "Bangladesh",
+    "Brazil",
+    "Belanda",
+    "Amerika Serikat",
+    "Afganistan",
+    "Brunei",
+    "Afrika Selatan"
+  ],
+  "vietnam": [
+    "Bosnia dan Hercegovina",
+    "Amerika Serikat",
+    "Bahama",
+    "Belarus",
+    "Bolivia",
+    "Barbados"
+  ],
+  "yaman": [
+    "Arab Saudi",
+    "Afrika Selatan",
+    "Argentina",
+    "Belgia",
+    "Bermuda",
+    "Bhutan"
+  ],
+  "yordania": [
+    "Argentina",
+    "Bahrain",
+    "Angola",
+    "Belgia",
+    "Barbados",
+    "Brazil"
+  ],
+  "albania": [
+    "Armenia",
+    "Brazil",
+    "Bahrain",
+    "Antigua dan Barbuda",
+    "Angola",
+    "Bermuda",
+    "Argentina"
+  ],
+  "andorra": [
+    "Azerbaijan",
+    "Aljazair",
+    "Afrika Selatan",
+    "Brazil",
+    "Belarus",
+    "Brunei",
+    "Bhutan"
+  ],
+  "austria": [
+    "Amerika Serikat",
+    "Brazil",
+    "Angola",
+    "Bhutan",
+    "Belgia",
+    "Afganistan"
+  ],
+  "belanda": [
+    "Afganistan",
+    "Bosnia dan Hercegovina",
+    "Belarus",
+    "Brazil",
+    "Australia",
+    "Arab Saudi",
+    "Bangladesh",
+    "Afrika Selatan"
+  ],
+  "belarus": [
+    "Belanda",
+    "Belgia",
+    "Arab Saudi",
+    "Brunei",
+    "Afganistan",
+    "Bahama"
+  ],
+  "belgia": [
+    "Barbados",
+    "Aljazair",
+    "Brazil",
+    "Andorra",
+    "Armenia",
+    "Bulgaria",
+    "Bahrain",
+    "Botswana",
+    "Belanda",
+    "Belarus"
+  ],
+  "bosnia_dan_hercegovina": [
+    "Bolivia",
+    "Angola",
+    "Bahama",
+    "Bahrain",
+    "Albania",
+    "Amerika Serikat",
+    "Barbados",
+    "Belanda",
+    "Benin",
+    "Belgia"
+  ],
+  "bulgaria": [
+    "Brazil",
+    "Austria",
+    "Andorra",
+    "Benin",
+    "Brunei",
+    "Australia"
+  ],
+  "ceko": [
+    "Belanda",
+    "Brazil",
+    "Armenia",
+    "Botswana",
+    "Australia",
+    "Bahrain",
+    "Austria",
+    "Bermuda",
+    "Amerika Serikat",
+    "Aljazair"
+  ],
+  "denmark": [
+    "Amerika Serikat",
+    "Benin",
+    "Bermuda",
+    "Azerbaijan",
+    "Belgia",
+    "Belarus",
+    "Bolivia",
+    "Afganistan"
+  ],
+  "estonia": [
+    "Aljazair",
+    "Antigua dan Barbuda",
+    "Afrika Selatan",
+    "Bermuda",
+    "Bangladesh",
+    "Benin",
+    "Argentina",
+    "Albania",
+    "Belanda"
+  ],
+  "finlandia": [
+    "Angola",
+    "Bahama",
+    "Austria",
+    "Amerika Serikat",
+    "Belarus",
+    "Albania",
+    "Bahrain",
+    "Botswana",
+    "Bolivia",
+    "Argentina"
+  ],
+  "gibraltar": [
+    "Belize",
+    "Amerika Serikat",
+    "Azerbaijan",
+    "Bosnia dan Hercegovina",
+    "Bolivia",
+    "Bangladesh",
+    "Belanda",
+    "Antigua dan Barbuda",
+    "Brazil"
+  ],
+  "hungaria": [
+    "Arab Saudi",
+    "Bermuda",
+    "Belarus",
+    "Andorra",
+    "Bhutan",
+    "Armenia",
+    "Botswana",
+    "Brunei",
+    "Austria",
+    "Benin"
+  ],
+  "inggris": [
+    "Brunei",
+    "Brazil",
+    "Australia",
+    "Azerbaijan",
+    "Austria",
+    "Bosnia dan Hercegovina"
+  ],
+  "irlandia": [
+    "Andorra",
+    "Bahrain",
+    "Brunei",
+    "Bermuda",
+    "Austria",
+    "Belize",
+    "Azerbaijan",
+    "Bahama"
+  ],
+  "islandia": [
+    "Belize",
+    "Barbados",
+    "Amerika Serikat",
+    "Andorra",
+    "Belanda",
+    "Afrika Selatan",
+    "Azerbaijan",
+    "Antigua dan Barbuda"
+  ],
+  "italia": [
+    "Brazil",
+    "Afganistan",
+    "Azerbaijan",
+    "Belgia",
+    "Bolivia",
+    "Armenia"
+  ],
+  "jerman": [
+    "Australia",
+    "Aljazair",
+    "Brunei",
+    "Bolivia",
+    "Brazil",
+    "Albania"
+  ],
+  "kepulauan_faroe": [
+    "Benin",
+    "Azerbaijan",
+    "Bolivia",
+    "Albania",
+    "Bhutan",
+    "Bahama",
+    "Argentina",
+    "Botswana"
+  ],
+  "kosovo": [
+    "Albania",
+    "Belize",
+    "Arab Saudi",
+    "Antigua dan Barbuda",
+    "Afrika Selatan",
+    "Bermuda",
+    "Bangladesh",
+    "Afganistan",
+    "Austria"
+  ],
+  "kroasia": [
+    "Brunei",
+    "Arab Saudi",
+    "Bahama",
+    "Argentina",
+    "Brazil",
+    "Bhutan",
+    "Armenia"
+  ],
+  "latvia": [
+    "Belize",
+    "Azerbaijan",
+    "Bhutan",
+    "Afrika Selatan",
+    "Brunei",
+    "Barbados",
+    "Armenia",
+    "Andorra",
+    "Antigua dan Barbuda"
+  ],
+  "liechtenstein": [
+    "Bosnia dan Hercegovina",
+    "Barbados",
+    "Afganistan",
+    "Benin",
+    "Bahrain",
+    "Albania",
+    "Belarus",
+    "Belanda"
+  ],
+  "lithuania": [
+    "Albania",
+    "Afganistan",
+    "Andorra",
+    "Amerika Serikat",
+    "Austria",
+    "Bhutan",
+    "Arab Saudi",
+    "Belanda"
+  ],
+  "luksemburg": [
+    "Australia",
+    "Benin",
+    "Afganistan",
+    "Albania",
+    "Bangladesh",
+    "Brazil",
+    "Afrika Selatan",
+    "Belize",
+    "Argentina",
+    "Amerika Serikat"
+  ],
+  "makedonia_utara": [
+    "Bolivia",
+    "Belgia",
+    "Andorra",
+    "Bermuda",
+    "Amerika Serikat",
+    "Aljazair",
+    "Bahrain"
+  ],
+  "malta": [
+    "Botswana",
+    "Argentina",
+    "Bhutan",
+    "Afganistan",
+    "Andorra",
+    "Belize",
+    "Australia"
+  ],
+  "moldova": [
+    "Bermuda",
+    "Bahama",
+    "Bhutan",
+    "Armenia",
+    "Australia",
+    "Angola"
+  ],
+  "monako": [
+    "Barbados",
+    "Antigua dan Barbuda",
+    "Bermuda",
+    "Belize",
+    "Botswana",
+    "Australia",
+    "Bahama",
+    "Bosnia dan Hercegovina"
+  ],
+  "montenegro": [
+    "Bermuda",
+    "Albania",
+    "Botswana",
+    "Bhutan",
+    "Belize",
+    "Bolivia",
+    "Brunei",
+    "Arab Saudi"
+  ],
+  "norwegia": [
+    "Brazil",
+    "Albania",
+    "Andorra",
+    "Brunei",
+    "Azerbaijan",
+    "Bosnia dan Hercegovina"
+  ],
+  "polandia": [
+    "Andorra",
+    "Benin",
+    "Belize",
+    "Antigua dan Barbuda",
+    "Bangladesh",
+    "Belarus",
+    "Bosnia dan Hercegovina"
+  ],
+  "portugal": [
+    "Argentina",
+    "Amerika Serikat",
+    "Barbados",
+    "Bolivia",
+    "Angola",
+    "Bosnia dan Hercegovina",
+    "Belgia"
+  ],
+  "prancis": [
+    "Armenia",
+    "Bosnia dan Hercegovina",
+    "Belarus",
+    "Amerika Serikat",
+    "Belize",
+    "Arab Saudi",
+    "Azerbaijan"
+  ],
+  "republik_rumania": [
+    "Angola",
+    "Argentina",
+    "Belgia",
+    "Amerika Serikat",
+    "Belarus",
+    "Brunei",
+    "Botswana"
+  ],
+  "republik_serbia": [
+    "Arab Saudi",
+    "Bahama",
+    "Belize",
+    "Antigua dan Barbuda",
+    "Brazil",
+    "Afganistan",
+    "Bahrain",
+    "Amerika Serikat",
+    "Belarus",
+    "Bosnia dan Hercegovina"
+  ],
+  "rusia": [
+    "Belgia",
+    "Belanda",
+    "Antigua dan Barbuda",
+    "Afganistan",
+    "Bahrain",
+    "Aljazair",
+    "Andorra",
+    "Brunei",
+    "Bosnia dan Hercegovina",
+    "Bahama"
+  ],
+  "san_marino": [
+    "Brunei",
+    "Azerbaijan",
+    "Bermuda",
+    "Barbados",
+    "Armenia",
+    "Arab Saudi",
+    "Bahama"
+  ],
+  "siprus": [
+    "Amerika Serikat",
+    "Belize",
+    "Bhutan",
+    "Bangladesh",
+    "Angola",
+    "Belarus"
+  ],
+  "slovenia": [
+    "Bermuda",
+    "Bolivia",
+    "Bhutan",
+    "Bangladesh",
+    "Belgia",
+    "Azerbaijan",
+    "Andorra",
+    "Antigua dan Barbuda",
+    "Bahama"
+  ],
+  "slowakia": [
+    "Afganistan",
+    "Arab Saudi",
+    "Afrika Selatan",
+    "Azerbaijan",
+    "Aljazair",
+    "Austria",
+    "Bhutan"
+  ],
+  "spanyol": [
+    "Benin",
+    "Belgia",
+    "Bolivia",
+    "Bosnia dan Hercegovina",
+    "Australia",
+    "Brazil",
+    "Belize",
+    "Argentina",
+    "Andorra",
+    "Bahama"
+  ],
+  "swedia": [
+    "Bolivia",
+    "Andorra",
+    "Antigua dan Barbuda",
+    "Amerika Serikat",
+    "Belanda",
+    "Arab Saudi",
+    "Bahrain"
+  ],
+  "swiss": [
+    "Belanda",
+    "Bangladesh",
+    "Bosnia dan Hercegovina",
+    "Azerbaijan",
+    "Benin",
+    "Bahama",
+    "Brazil",
+    "Botswana",
+    "Australia",
+    "Brunei"
+  ],
+  "turki": [
+    "Argentina",
+    "Austria",
+    "Bahama",
+    "Albania",
+    "Belgia",
+    "Afrika Selatan",
+    "Armenia",
+    "Bhutan",
+    "Benin",
+    "Angola"
+  ],
+  "ukraina": [
+    "Antigua dan Barbuda",
+    "Amerika Serikat",
+    "Afrika Selatan",
+    "Barbados",
+    "Angola",
+    "Belgia",
+    "Aljazair"
+  ],
+  "vatikan": [
+    "Bosnia dan Hercegovina",
+    "Afrika Selatan",
+    "Barbados",
+    "Benin",
+    "Botswana",
+    "Bolivia",
+    "Afganistan",
+    "Antigua dan Barbuda"
+  ],
+  "yunani": [
+    "Belgia",
+    "Belarus",
+    "Austria",
+    "Barbados",
+    "Belanda",
+    "Arab Saudi",
+    "Afganistan",
+    "Amerika Serikat",
+    "Andorra",
+    "Angola"
+  ],
+  "amerika_serikat": [
+    "Benin",
+    "Bulgaria",
+    "Belize",
+    "Bahama",
+    "Barbados",
+    "Botswana",
+    "Azerbaijan",
+    "Andorra",
+    "Bosnia dan Hercegovina",
+    "Antigua dan Barbuda"
+  ],
+  "antigua_dan_barbuda": [
+    "Bermuda",
+    "Bulgaria",
+    "Brazil",
+    "Bangladesh",
+    "Barbados",
+    "Botswana",
+    "Belize",
+    "Bhutan"
+  ],
+  "bahama": [
+    "Bulgaria",
+    "Austria",
+    "Argentina",
+    "Brunei",
+    "Australia",
+    "Bolivia"
+  ],
+  "barbados": [
+    "Armenia",
+    "Bolivia",
+    "Brazil",
+    "Belize",
+    "Benin",
+    "Austria",
+    "Argentina",
+    "Arab Saudi",
+    "Bahama",
+    "Antigua dan Barbuda"
+  ],
+  "belize": [
+    "Afganistan",
+    "Benin",
+    "Brunei",
+    "Belgia",
+    "Bangladesh",
+    "Argentina",
+    "Angola"
+  ],
+  "bermuda": [
+    "Bahama",
+    "Afrika Selatan",
+    "Aljazair",
+    "Albania",
+    "Brunei",
+    "Brazil",
+    "Argentina",
+    "Amerika Serikat",
+    "Azerbaijan",
+    "Barbados"
+  ],
+  "costa_rica": [
+    "Bangladesh",
+    "Amerika Serikat",
+    "Bermuda",
+    "Bhutan",
+    "Afrika Selatan",
+    "Armenia",
+    "Bahrain"
+  ],
+  "curacao": [
+    "Belgia",
+    "Antigua dan Barbuda",
+    "Argentina",
+    "Bangladesh",
+    "Amerika Serikat",
+    "Bolivia"
+  ],
+  "dominika": [
+    "Bosnia dan Hercegovina",
+    "Australia",
+    "Brunei",
+    "Argentina",
+    "Andorra",
+    "Bahrain",
+    "Belize"
+  ],
+  "el_salvador": [
+    "Benin",
+    "Afganistan",
+    "Belarus",
+    "Barbados",
+    "Albania",
+    "Austria",
+    "Angola",
+    "Botswana"
+  ],
+  "greenland": [
+    "Bhutan",
+    "Botswana",
+    "Belanda",
+    "Afganistan",
+    "Bermuda",
+    "Antigua dan Barbuda",
+    "Angola",
+    "Belarus",
+    "Benin",
+    "Bangladesh"
+  ],
+  "grenada": [
+    "Azerbaijan",
+    "Amerika Serikat",
+    "Arab Saudi",
+    "Bermuda",
+    "Antigua dan Barbuda",
+    "Argentina",
+    "Bhutan",
+    "Brunei",
+    "Austria"
+  ],
+  "guatemala": [
+    "Andorra",
+    "Belize",
+    "Bangladesh",
+    "Bermuda",
+    "Argentina",
+    "Arab Saudi",
+    "Austria"
+  ],
+  "haiti": [
+    "Antigua dan Barbuda",
+    "Botswana",
+    "Azerbaijan",
+    "Benin",
+    "Bosnia dan Hercegovina",
+    "Belize"
+  ],
+  "honduras": [
+    "Botswana",
+    "Brazil",
+    "Armenia",
+    "Bosnia dan Hercegovina",
+    "Belize",
+    "Benin",
+    "Antigua dan Barbuda"
+  ],
+  "jamaika": [
+    "Albania",
+    "Barbados",
+    "Bermuda",
+    "Bolivia",
+    "Afrika Selatan",
+    "Belize",
+    "Bosnia dan Hercegovina",
+    "Australia"
+  ],
+  "kanada": [
+    "Aljazair",
+    "Bolivia",
+    "Bangladesh",
+    "Bermuda",
+    "Afrika Selatan",
+    "Belgia"
+  ],
+  "kuba": [
+    "Australia",
+    "Austria",
+    "Bangladesh",
+    "Botswana",
+    "Belize",
+    "Antigua dan Barbuda",
+    "Bermuda",
+    "Brunei"
+  ],
+  "meksiko": [
+    "Belarus",
+    "Bahrain",
+    "Afrika Selatan",
+    "Brazil",
+    "Barbados",
+    "Bangladesh",
+    "Aljazair",
+    "Botswana"
+  ],
+  "nikaragua": [
+    "Afrika Selatan",
+    "Bangladesh",
+    "Bolivia",
+    "Aljazair",
+    "Belanda",
+    "Bosnia dan Hercegovina"
+  ],
+  "panama": [
+    "Afganistan",
+    "Albania",
+    "Austria",
+    "Argentina",
+    "Arab Saudi",
+    "Bangladesh",
+    "Angola",
+    "Antigua dan Barbuda"
+  ],
+  "puerto_rico": [
+    "Azerbaijan",
+    "Bahrain",
+    "Aljazair",
+    "Angola",
+    "Antigua dan Barbuda",
+    "Bhutan",
+    "Belarus",
+    "Bosnia dan Hercegovina"
+  ],
+  "republik_dominika": [
+    "Bosnia dan Hercegovina",
+    "Afganistan",
+    "Argentina",
+    "Botswana",
+    "Brunei",
+    "Bangladesh",
+    "Afrika Selatan",
+    "Benin",
+    "Andorra"
+  ],
+  "saint_kitts_dan_nevis": [
+    "Belize",
+    "Azerbaijan",
+    "Brunei",
+    "Antigua dan Barbuda",
+    "Afrika Selatan",
+    "Bangladesh",
+    "Belanda",
+    "Belgia"
+  ],
+  "saint_lucia": [
+    "Austria",
+    "Bahama",
+    "Australia",
+    "Bangladesh",
+    "Bermuda",
+    "Belize"
+  ],
+  "saint_vincent_dan_grenadine": [
+    "Antigua dan Barbuda",
+    "Bermuda",
+    "Bangladesh",
+    "Albania",
+    "Belgia",
+    "Afrika Selatan"
+  ],
+  "trinidad_dan_tobago": [
+    "Belanda",
+    "Aljazair",
+    "Bahama",
+    "Belize",
+    "Bahrain",
+    "Barbados",
+    "Argentina",
+    "Belarus"
+  ],
+  "australia": [
+    "Bahrain",
+    "Antigua dan Barbuda",
+    "Bahama",
+    "Amerika Serikat",
+    "Benin",
+    "Bosnia dan Hercegovina"
+  ],
+  "fiji": [
+    "Austria",
+    "Brazil",
+    "Albania",
+    "Bermuda",
+    "Bolivia",
+    "Barbados",
+    "Argentina"
+  ],
+  "guam": [
+    "Belarus",
+    "Austria",
+    "Argentina",
+    "Barbados",
+    "Bosnia dan Hercegovina",
+    "Andorra"
+  ],
+  "kiribati": [
+    "Amerika Serikat",
+    "Bosnia dan Hercegovina",
+    "Belgia",
+    "Armenia",
+    "Andorra",
+    "Albania",
+    "Brunei",
+    "Afrika Selatan",
+    "Bermuda"
+  ],
+  "marshall": [
+    "Botswana",
+    "Afrika Selatan",
+    "Barbados",
+    "Amerika Serikat",
+    "Bosnia dan Hercegovina",
+    "Belanda",
+    "Antigua dan Barbuda",
+    "Bermuda",
+    "Benin"
+  ],
+  "mikronesia": [
+    "Brunei",
+    "Antigua dan Barbuda",
+    "Armenia",
+    "Australia",
+    "Amerika Serikat",
+    "Belarus",
+    "Azerbaijan"
+  ],
+  "nauru": [
+    "Barbados",
+    "Antigua dan Barbuda",
+    "Azerbaijan",
+    "Afganistan",
+    "Andorra",
+    "Austria"
+  ],
+  "palau": [
+    "Botswana",
+    "Armenia",
+    "Belarus",
+    "Belgia",
+    "Aljazair",
+    "Bermuda",
+    "Benin",
+    "Barbados",
+    "Bolivia",
+    "Bhutan"
+  ],
+  "papua_nugini": [
+    "Brunei",
+    "Bolivia",
+    "Afrika Selatan",
+    "Arab Saudi",
+    "Andorra",
+    "Brazil"
+  ],
+  "samoa": [
+    "Belize",
+    "Azerbaijan",
+    "Brunei",
+    "Belarus",
+    "Amerika Serikat",
+    "Benin",
+    "Botswana",
+    "Antigua dan Barbuda"
+  ],
+  "samoa_amerika": [
+    "Armenia",
+    "Afrika Selatan",
+    "Brazil",
+    "Bosnia dan Hercegovina",
+    "Arab Saudi",
+    "Bhutan",
+    "Bermuda"
+  ],
+  "selandia_baru": [
+    "Armenia",
+    "Azerbaijan",
+    "Australia",
+    "Belarus",
+    "Amerika Serikat",
+    "Belgia",
+    "Bolivia"
+  ],
+  "tahiti": [
+    "Belarus",
+    "Angola",
+    "Brazil",
+    "Bermuda",
+    "Benin",
+    "Bolivia"
+  ],
+  "tonga": [
+    "Bahrain",
+    "Antigua dan Barbuda",
+    "Bolivia",
+    "Angola",
+    "Barbados",
+    "Benin",
+    "Andorra",
+    "Bahama",
+    "Arab Saudi",
+    "Brunei"
+  ],
+  "tuvalu": [
+    "Belarus",
+    "Amerika Serikat",
+    "Andorra",
+    "Antigua dan Barbuda",
+    "Belgia",
+    "Brunei",
+    "Australia",
+    "Bangladesh"
+  ],
+  "vanuatu": [
+    "Bangladesh",
+    "Afrika Selatan",
+    "Benin",
+    "Belgia",
+    "Belarus",
+    "Belize",
+    "Brunei",
+    "Bosnia dan Hercegovina"
+  ],
+  "argentina": [
+    "Bangladesh",
+    "Belgia",
+    "Brunei",
+    "Arab Saudi",
+    "Bulgaria",
+    "Bosnia dan Hercegovina"
+  ],
+  "bolivia": [
+    "Benin",
+    "Bahrain",
+    "Botswana",
+    "Barbados",
+    "Bulgaria",
+    "Belize"
+  ],
+  "brazil": [
+    "Afganistan",
+    "Botswana",
+    "Bahrain",
+    "Bermuda",
+    "Bangladesh",
+    "Australia"
+  ],
+  "chile": [
+    "Bolivia",
+    "Bosnia dan Hercegovina",
+    "Albania",
+    "Belize",
+    "Botswana",
+    "Bhutan",
+    "Brunei",
+    "Afrika Selatan"
+  ],
+  "ekuador": [
+    "Antigua dan Barbuda",
+    "Belize",
+    "Brazil",
+    "Andorra",
+    "Arab Saudi",
+    "Argentina",
+    "Belgia",
+    "Azerbaijan"
+  ],
+  "guiana_prancis": [
+    "Aljazair",
+    "Azerbaijan",
+    "Arab Saudi",
+    "Bangladesh",
+    "Amerika Serikat",
+    "Belgia",
+    "Bahama",
+    "Afrika Selatan",
+    "Belize"
+  ],
+  "guyana": [
+    "Bahama",
+    "Bermuda",
+    "Austria",
+    "Belanda",
+    "Bosnia dan Hercegovina",
+    "Belize",
+    "Brunei"
+  ],
+  "kolombia": [
+    "Afrika Selatan",
+    "Afganistan",
+    "Austria",
+    "Andorra",
+    "Brunei",
+    "Belarus"
+  ],
+  "paraguay": [
+    "Bermuda",
+    "Belize",
+    "Bangladesh",
+    "Armenia",
+    "Australia",
+    "Bahama",
+    "Antigua dan Barbuda",
+    "Argentina",
+    "Benin",
+    "Angola"
+  ],
+  "peru": [
+    "Arab Saudi",
+    "Bahrain",
+    "Belanda",
+    "Austria",
+    "Angola",
+    "Aljazair"
+  ],
+  "suriname": [
+    "Amerika Serikat",
+    "Botswana",
+    "Barbados",
+    "Belarus",
+    "Brazil",
+    "Azerbaijan",
+    "Bhutan",
+    "Afrika Selatan"
+  ],
+  "uruguay": [
+    "Antigua dan Barbuda",
+    "Belanda",
+    "Brazil",
+    "Afganistan",
+    "Benin",
+    "Australia",
+    "Bermuda",
+    "Bahama",
+    "Belize"
+  ],
+  "venezuela": [
+    "Belgia",
+    "Afrika Selatan",
+    "Brazil",
+    "Belarus",
+    "Azerbaijan",
+    "Angola",
+    "Belanda",
+    "Albania"
+  ]
+}

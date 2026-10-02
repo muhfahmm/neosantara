@@ -9,6 +9,7 @@ import PeringkatNotification from './logic/1_notifikasi_pokok/1_kepuasan_dan_per
 import KesejahteraanNotification from './logic/1_notifikasi_pokok/1_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanNotification';
 import TradeBeliNotification from './logic/1_notifikasi_pokok/4_perdagangan/2_beli/tradeBeliNotification';
 import TradeJualNotification from './logic/1_notifikasi_pokok/4_perdagangan/1_jual/tradeJualNotification';
+import TradeRelationNotification from './logic/4_notifikasi_perdagangan/tradeRelationNotification';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -30,26 +31,86 @@ export default function TopLeftIcon({
   onRedirectClick
 }: TopLeftIconProps) {
   const [mounted, setMounted] = useState(false);
+  const [toastNotification, setToastNotification] = useState<NotificationMessage | null>(null);
+  const [showToast, setShowToast] = useState(false);
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Popup Toast Otomatis Muncul Saat Ada Notifikasi Baru Masuk
+  useEffect(() => {
+    if (notifications.length > 0) {
+      const latestNotif = notifications[0];
+      if (!latestNotif.isRead) {
+        setToastNotification(latestNotif);
+        setShowToast(true);
+        const timer = setTimeout(() => {
+          setShowToast(false);
+        }, 6000); // Popup hilang otomatis setelah 6 detik
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [notifications]);
+
   return (
     <>
-      <button
-        onClick={onClick}
-        title="Inbox - Pesan dan Notifikasi"
-        className="fixed top-24 left-7 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
-      >
-        <Inbox className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
-        {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-600 border border-[#0A1A1A] text-white text-[9px] font-black w-4 h-4 lg:w-5 lg:h-5 rounded-full flex items-center justify-center shadow animate-pulse">
-            {unreadCount}
-          </span>
+      <div className="fixed top-24 left-7 z-[100] flex flex-col items-start gap-2">
+        <button
+          onClick={() => {
+            setShowToast(false);
+            if (onClick) onClick();
+          }}
+          title="Inbox - Pesan dan Notifikasi"
+          className="relative w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
+        >
+          <Inbox className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-600 border border-[#0A1A1A] text-white text-[9px] font-black w-4 h-4 lg:w-5 lg:h-5 rounded-full flex items-center justify-center shadow animate-pulse">
+              {unreadCount}
+            </span>
+          )}
+        </button>
+
+        {/* 🔥 POPUP TOAST NOTIFIKASI DI BAWAH INBOX */}
+        {showToast && toastNotification && !isOpen && (
+          <div 
+            onClick={() => {
+              setShowToast(false);
+              if (onClick) onClick();
+            }}
+            className="w-72 bg-[#0F2424]/95 backdrop-blur border border-[#00FFAA]/50 rounded-xl p-3 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-300 cursor-pointer hover:border-[#00FFAA] transition-all group"
+          >
+            <div className="flex items-center justify-between pb-1 border-b border-[#00FFAA]/20">
+              <span className="text-[10px] font-bold text-[#00FFAA] uppercase tracking-wider flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-[#00FFAA] animate-ping" />
+                Pesan Baru Masuk
+              </span>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowToast(false);
+                }}
+                className="text-slate-400 hover:text-white"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <h5 className="text-xs font-bold text-white mt-1.5 line-clamp-1 group-hover:text-[#00FFAA] transition-colors">
+              {toastNotification.title}
+            </h5>
+            <p className="text-[10px] text-slate-300 line-clamp-2 mt-0.5 leading-relaxed">
+              {toastNotification.message}
+            </p>
+            <div className="mt-1.5 flex justify-end">
+              <span className="text-[9px] text-[#00FFAA] font-semibold underline group-hover:translate-x-0.5 transition-transform">
+                Buka Inbox ({unreadCount} Pesan Baru) →
+              </span>
+            </div>
+          </div>
         )}
-      </button>
+      </div>
 
       {/* 🔥 Inbox Modal - Render via Portal agar sama dengan Sidang Umum PBB */}
       {isOpen && mounted && createPortal(
@@ -108,6 +169,16 @@ export default function TopLeftIcon({
                             <TradeJualNotification
                               key={notif.id}
                               notification={notif}
+                              onAccept={handleAction}
+                              onReject={handleRedirect}
+                            />
+                          );
+                        }
+                        if ((notif as any).tradeType === 'penawaran_hubungan_dagang') {
+                          return (
+                            <TradeRelationNotification
+                              key={notif.id}
+                              notification={notif as any}
                               onAccept={handleAction}
                               onReject={handleRedirect}
                             />
