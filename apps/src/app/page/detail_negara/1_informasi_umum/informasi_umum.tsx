@@ -33,6 +33,7 @@ interface InformasiUmumProps {
   setPlayerCountryDetail?: (detail: any | ((prev: any) => any)) => void;
   currentNetBalance?: number;
   adjustNetBalance?: (delta: number) => void;
+  currentDate?: Date;
 }
 
 // Komponen tombol aksi
@@ -53,7 +54,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   );
 };
 
-export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, adjustNetBalance }: InformasiUmumProps) {
+export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, adjustNetBalance, currentDate }: InformasiUmumProps) {
   const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || null;
   const [isDestroyModalOpen, setIsDestroyModalOpen] = useState(false);
   const [isBuildEmbassyModalOpen, setIsBuildEmbassyModalOpen] = useState(false);
@@ -85,6 +86,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const playerEmbassies = Array.isArray(playerCountryDetail?.embassies) ? playerCountryDetail.embassies : [];
   const removedEmbassies = Array.isArray(playerCountryDetail?.removedEmbassies) ? playerCountryDetail.removedEmbassies : [];
   const removedTradePartners = Array.isArray(playerCountryDetail?.removedTradePartners) ? playerCountryDetail.removedTradePartners : [];
+  const addedTradePartners = Array.isArray(playerCountryDetail?.addedTradePartners) ? playerCountryDetail.addedTradePartners : [];
 
   const getEmbassyCost = (continent?: string | null): number => {
     switch (String(continent || 'Lainnya').trim().toLowerCase()) {
@@ -121,10 +123,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const embassyIconClass = embassyLabel === 'Hancurkan Kedutaan' ? 'text-[#00FFAA]' : undefined;
   const embassyLabelClass = embassyLabel === 'Hancurkan Kedutaan' ? 'text-[#00FFAA]' : undefined;
 
-  const hasTrade = getTradeButtonLabel(countryName, playerCountryName, removedTradePartners) === 'Putus Hubungan Dagang';
+  const hasTrade = getTradeButtonLabel(countryName, playerCountryName, removedTradePartners, addedTradePartners) === 'Putus Hubungan Dagang';
   const tradeIsActive = hasTrade || tradeActive;
   const tradeLabel = tradeIsActive ? 'Putus Hubungan Dagang' : 'Perjanjian Dagang';
-  const tradeClass = getTradeButtonClass(countryName, playerCountryName, removedTradePartners);
+  const tradeClass = getTradeButtonClass(countryName, playerCountryName, removedTradePartners, addedTradePartners);
   const tradeIconClass = tradeIsActive ? 'text-[#00FFAA]' : undefined;
   const tradeLabelClass = tradeIsActive ? 'text-[#00FFAA]' : undefined;
 
@@ -133,7 +135,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   // (we keep local state so user actions toggle UI immediately)
   useEffect(() => {
     const embassyLabelNow = getEmbassyButtonLabel(countryName, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners);
-    const tradeLabelNow = getTradeButtonLabel(countryName, playerCountryName, removedTradePartners);
+    const tradeLabelNow = getTradeButtonLabel(countryName, playerCountryName, removedTradePartners, addedTradePartners);
     setEmbassyActive(embassyLabelNow === 'Hancurkan Kedutaan');
     // Mark trade as active if registry indicates an existing trade agreement.
     setTradeActive(tradeLabelNow === 'Putus Hubungan Dagang');
@@ -144,7 +146,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     setIsDestroyPaktaOpen(false);
     setIsDestroyAliansiOpen(false);
     setIsDestroyKontrakOpen(false);
-  }, [countryName, playerCountryName, playerEmbassies.length, removedEmbassies.length, removedTradePartners.length]);
+  }, [countryName, playerCountryName, playerEmbassies.length, removedEmbassies.length, removedTradePartners.length, addedTradePartners.length]);
 
   // PERBAIKAN: Style tombol aktif dalam tema dark mode sci-fi
   const modernGreenBorderClass = 'border-2 border-[#00FFAA] bg-[#00FFAA]/20 text-[#00FFAA] hover:bg-[#00FFAA]/30';
@@ -166,20 +168,69 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     }
   }, [embassyActive]);
 
+  // Hitung status konstruksi kedutaan besar (Lama pembangunan: 60 Hari)
+  const normTargetCountry = String(countryName || '').toLowerCase().trim();
+  const ongoingEmbassyConstructions = Array.isArray(playerCountryDetail?.ongoingEmbassyConstructions)
+    ? playerCountryDetail.ongoingEmbassyConstructions
+    : [];
+  const currentEmbassyConstruction = ongoingEmbassyConstructions.find(
+    (c: any) => String(c.targetCountry || '').toLowerCase().trim() === normTargetCountry
+  );
+  const isEmbassyBuilding = !!currentEmbassyConstruction;
+  const embassyEndDate = currentEmbassyConstruction?.endDate || null;
+
+  // Format badge tanggal selesai (DD MMM, YYYY)
+  const formatBadgeDate = (dateString: string | null) => {
+    if (!dateString) return '';
+    try {
+      const [y, m, d] = dateString.split('-').map(Number);
+      const date = new Date(y, m - 1, d);
+      if (isNaN(date.getTime())) return dateString;
+      const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
+      const parts = new Intl.DateTimeFormat('id-ID', options).formatToParts(date);
+      const day = parts.find((p) => p.type === 'day')?.value || '';
+      const month = parts.find((p) => p.type === 'month')?.value || '';
+      const year = parts.find((p) => p.type === 'year')?.value || '';
+      return `${day} ${month}, ${year}`;
+    } catch {
+      return dateString;
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Grid Layout 4-4 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-3">
         
-        {/* Tombol Kedutaan */}
-        <ActionButton 
-          icon={Building2} 
-          label={embassyActive ? 'Hancurkan Kedutaan' : 'Bangun Kedutaan'} 
-          onClick={handleEmbassyClick} 
-          className={embassyActive ? modernGreenBorderClass : embassyClass} 
-          iconClass={embassyActive ? 'text-[#00FFAA]' : embassyIconClass}
-          labelClass={embassyActive ? 'text-[#00FFAA]' : embassyLabelClass}
-        />
+        {/* Tombol Kedutaan dengan Badge Tanggal Selesai */}
+        <div className="relative">
+          {isEmbassyBuilding && embassyEndDate && (
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2.5 py-0.5 border border-[#00FFAA]/40 rounded-md shadow-md tracking-wider whitespace-nowrap">
+              {formatBadgeDate(embassyEndDate)}
+            </div>
+          )}
+          <ActionButton 
+            icon={Building2} 
+            label={
+              isEmbassyBuilding 
+                ? 'Dalam Pembangunan' 
+                : embassyActive 
+                  ? 'Hancurkan Kedutaan' 
+                  : 'Bangun Kedutaan'
+            } 
+            onClick={handleEmbassyClick} 
+            disabled={isEmbassyBuilding}
+            className={
+              isEmbassyBuilding
+                ? 'border-2 border-[#00FFAA]/50 bg-[#00FFAA]/10 text-[#00FFAA] opacity-90 cursor-not-allowed'
+                : embassyActive 
+                  ? modernGreenBorderClass 
+                  : embassyClass
+            } 
+            iconClass={embassyActive || isEmbassyBuilding ? 'text-[#00FFAA]' : embassyIconClass}
+            labelClass={embassyActive || isEmbassyBuilding ? 'text-[#00FFAA]' : embassyLabelClass}
+          />
+        </div>
         
         <ActionButton icon={ShieldOff} label={paktaActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => paktaActive ? setIsDestroyPaktaOpen(true) : setIsPaktaModalOpen(true)} disabled={!embassyActive} className={paktaActive ? modernGreenBorderClass : undefined} iconClass={paktaActive ? 'text-[#00FFAA]' : undefined} labelClass={paktaActive ? 'text-[#00FFAA]' : undefined} />
         <ActionButton icon={ShieldCheck} label={aliansiActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => aliansiActive ? setIsDestroyAliansiOpen(true) : setIsAliansiModalOpen(true)} disabled={!embassyActive} className={aliansiActive ? modernGreenBorderClass : undefined} iconClass={aliansiActive ? 'text-[#00FFAA]' : undefined} labelClass={aliansiActive ? 'text-[#00FFAA]' : undefined} />
@@ -223,12 +274,16 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
               const existingEmbassies = Array.isArray(prev.embassies) ? prev.embassies : [];
               const existingRemovedEmbassies = Array.isArray(prev.removedEmbassies) ? prev.removedEmbassies : [];
               const existingRemovedTrade = Array.isArray(prev.removedTradePartners) ? prev.removedTradePartners : [];
+              const existingConstructions = Array.isArray(prev.ongoingEmbassyConstructions) ? prev.ongoingEmbassyConstructions : [];
               const normTarget = String(countryName || '').toLowerCase().trim();
 
               return {
                 ...prev,
                 embassies: existingEmbassies.filter(
                   (embassy: any) => String(embassy.mitra || '').toLowerCase().trim() !== normTarget
+                ),
+                ongoingEmbassyConstructions: existingConstructions.filter(
+                  (c: any) => String(c.targetCountry || '').toLowerCase().trim() !== normTarget
                 ),
                 removedEmbassies: Array.from(new Set([...existingRemovedEmbassies, countryName])),
                 removedTradePartners: Array.from(new Set([...existingRemovedTrade, countryName])),
@@ -247,42 +302,44 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         cost={embassyCost}
         onClose={() => setIsBuildEmbassyModalOpen(false)}
         onConfirm={() => {
-          setEmbassyActive(true);
+          // Hitung Tanggal Selesai (60 Hari dari currentDate)
+          const baseDate = currentDate ? new Date(currentDate) : new Date();
+          const endDateObj = new Date(baseDate);
+          endDateObj.setDate(endDateObj.getDate() + 60);
+          
+          const endYear = endDateObj.getFullYear();
+          const endMonth = String(endDateObj.getMonth() + 1).padStart(2, '0');
+          const endDay = String(endDateObj.getDate()).padStart(2, '0');
+          const endDateStr = `${endYear}-${endMonth}-${endDay}`;
+
           if (setPlayerCountryDetail) {
             setPlayerCountryDetail((prev: any) => {
-              const existingEmbassies = Array.isArray(prev?.embassies) ? prev.embassies : [];
-              const existingRemovedEmbassies = Array.isArray(prev?.removedEmbassies) ? prev.removedEmbassies : [];
-              const existingRemovedTrade = Array.isArray(prev?.removedTradePartners) ? prev.removedTradePartners : [];
+              const existingConstructions = Array.isArray(prev?.ongoingEmbassyConstructions) ? prev.ongoingEmbassyConstructions : [];
               const normTarget = String(countryName || '').toLowerCase().trim();
 
               return {
                 ...prev,
-                embassies: [
-                  ...existingEmbassies.filter(
-                    (embassy: any) => String(embassy.mitra || '').toLowerCase().trim() !== normTarget
+                ongoingEmbassyConstructions: [
+                  ...existingConstructions.filter(
+                    (c: any) => String(c.targetCountry || '').toLowerCase().trim() !== normTarget
                   ),
                   {
                     id: Date.now(),
-                    mitra: countryName,
-                    type: 'Kedutaan Besar',
-                    status: 'Aktif',
-                    continent: continentLabel,
-                    builtAt: new Date().toISOString(),
-                  },
-                ],
-                removedEmbassies: existingRemovedEmbassies.filter(
-                  (r: string) => String(r || '').toLowerCase().trim() !== normTarget
-                ),
-                removedTradePartners: existingRemovedTrade.filter(
-                  (r: string) => String(r || '').toLowerCase().trim() !== normTarget
-                ),
+                    targetCountry: countryName,
+                    startDate: baseDate.toISOString(),
+                    endDate: endDateStr,
+                    durationDays: 60,
+                    continent: continentLabel
+                  }
+                ]
               };
             });
           }
+
           if (adjustNetBalance) {
             adjustNetBalance(-embassyCost);
           }
-          console.log(`Kedutaan di ${countryName} dibangun.`);
+          console.log(`Konstruksi Kedutaan di ${countryName} dimulai. Estimasi selesai: ${endDateStr}`);
         }}
       />
 

@@ -20,12 +20,16 @@ const normalizeName = (value?: string | null): string => {
 export const playerHasTradeWith = (
   viewedCountryName?: string | null,
   playerCountryName?: string | null,
-  removedTradePartners?: string[]
+  removedTradePartners?: string[],
+  addedTradePartners?: string[]
 ): boolean => {
   if (!viewedCountryName || !playerCountryName) return false;
   const normViewed = normalizeName(viewedCountryName);
   if (Array.isArray(removedTradePartners) && removedTradePartners.some(r => normalizeName(r) === normViewed)) {
     return false;
+  }
+  if (Array.isArray(addedTradePartners) && addedTradePartners.some(a => normalizeName(a) === normViewed)) {
+    return true;
   }
   try {
     const playerAgreements: TradeAgreement[] = getTradeAgreementsForCountry(playerCountryName);
@@ -40,9 +44,10 @@ export const playerHasTradeWith = (
 export const getTradeButtonClass = (
   viewedCountryName?: string | null,
   playerCountryName?: string | null,
-  removedTradePartners?: string[]
+  removedTradePartners?: string[],
+  addedTradePartners?: string[]
 ): string => {
-  if (playerHasTradeWith(viewedCountryName, playerCountryName, removedTradePartners)) {
+  if (playerHasTradeWith(viewedCountryName, playerCountryName, removedTradePartners, addedTradePartners)) {
     return 'border-2 border-[#00FFAA] bg-[#00FFAA]/20 text-[#00FFAA] hover:bg-[#00FFAA]/30';
   }
   return 'bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#00FFAA]';
@@ -51,9 +56,10 @@ export const getTradeButtonClass = (
 export const getTradeButtonLabel = (
   viewedCountryName?: string | null,
   playerCountryName?: string | null,
-  removedTradePartners?: string[]
+  removedTradePartners?: string[],
+  addedTradePartners?: string[]
 ): string => {
-  return playerHasTradeWith(viewedCountryName, playerCountryName, removedTradePartners) ? 'Putus Hubungan Dagang' : 'Perjanjian Dagang';
+  return playerHasTradeWith(viewedCountryName, playerCountryName, removedTradePartners, addedTradePartners) ? 'Putus Hubungan Dagang' : 'Perjanjian Dagang';
 };
 
 export default {

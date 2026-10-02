@@ -386,6 +386,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 setPlayerCountryDetail={setCountryDetail}
                 currentNetBalance={playerEffectiveNetBalance}
                 adjustNetBalance={adjustPlayerNetBalance}
+                currentDate={currentDate}
               />
             )}
 

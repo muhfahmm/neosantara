@@ -10,6 +10,7 @@ import KesejahteraanNotification from './logic/1_notifikasi_pokok/1_kepuasan_dan
 import TradeBeliNotification from './logic/1_notifikasi_pokok/4_perdagangan/2_beli/tradeBeliNotification';
 import TradeJualNotification from './logic/1_notifikasi_pokok/4_perdagangan/1_jual/tradeJualNotification';
 import TradeRelationNotification from './logic/4_notifikasi_perdagangan/tradeRelationNotification';
+import EmbassyNotification from './logic/5_notifikasi_kedubes/embassyNotification';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -177,6 +178,16 @@ export default function TopLeftIcon({
                         if ((notif as any).tradeType === 'penawaran_hubungan_dagang') {
                           return (
                             <TradeRelationNotification
+                              key={notif.id}
+                              notification={notif as any}
+                              onAccept={handleAction}
+                              onReject={handleRedirect}
+                            />
+                          );
+                        }
+                        if ((notif as any).tradeType === 'penawaran_kedutaan_besar') {
+                          return (
+                            <EmbassyNotification
                               key={notif.id}
                               notification={notif as any}
                               onAccept={handleAction}
