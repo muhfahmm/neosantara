@@ -9,6 +9,7 @@ import IdeologiConfirmModal from "./modalsGanti";
 import IdeologiGagalModal from "./modalsGagalGanti";
 import IdeologiInfoModal from "./IdeologiInfoModal";
 import { attemptChangeIdeology, IDEOLOGY_CHANGE_COST } from "./logic/logikaPergantian";
+import { generateIdeologyChangeNotification } from "@/app/page/menus/inbox/logic/10_sosial_budaya/2_ideologi/ideologyChangeLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -50,7 +51,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"ideologi" | "dunia">("ideologi");
   const [selectedIdeology, setSelectedIdeology] = useState<string | null>(null);
-  
+
   // 🔥 STATE BARU UNTUK MODAL KONFIRMASI & INFO
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [infoTarget, setInfoTarget] = useState<string | null>(null);
@@ -127,10 +128,18 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
       setShowErrorModal(true);
       return;
     }
+
+    const oldIdeology = countryDetail?.ideology || "Demokrasi";
+    const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+    const notif = generateIdeologyChangeNotification(oldIdeology, selectedIdeology, dateStr);
+    let newPending = Array.isArray(countryDetail?.pending_notifications) ? [...countryDetail.pending_notifications] : [];
+    newPending = [notif, ...newPending];
+
     setCountryDetail?.((prev: any) => ({
       ...(prev || {}),
       ideology: selectedIdeology,
       anggaran: result.newAnggaran,
+      pending_notifications: newPending,
       message: `Ideologi negara diubah ke ${selectedIdeology}. Biaya perubahan ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID')} NEO.`
     }));
     setFeedback({
@@ -215,16 +224,15 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                   {IDEOLOGY_OPTIONS.map((option) => {
                     const isActive = String(countryDetail?.ideology || '').toLowerCase() === String(option).toLowerCase();
                     const isSelected = String(selectedIdeology || '').toLowerCase() === String(option).toLowerCase();
-                    
+
                     return (
-                      <div 
-                        key={option} 
+                      <div
+                        key={option}
                         onClick={() => handleSelectIdeology(option)}
-                        className={`group relative flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer text-left ${
-                          isActive 
-                            ? 'border-[#00FFAA] bg-[#00FFAA]/15 shadow-md' 
+                        className={`group relative flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer text-left ${isActive
+                            ? 'border-[#00FFAA] bg-[#00FFAA]/15 shadow-md'
                             : 'border-[#00FFAA]/20 bg-[#0A1A1A] hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/5'
-                        }`}
+                          }`}
                       >
                         {/* TOMBOL (i) INFORMASI */}
                         <button

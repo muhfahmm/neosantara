@@ -24,6 +24,9 @@ import SubsidiChangeNotificationCard from './logic/7_notifikasi_ekonomi/3_kebija
 import ListrikDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/1_kelistrikan/listrikDefisitNotificationCard';
 import HunianDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/2_hunian/hunianDefisitNotificationCard';
 import PanganDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/3_pangan/panganDefisitNotificationCard';
+import IdeologyChangeNotificationCard from './logic/10_sosial_budaya/2_ideologi/ideologyChangeNotification';
+import ReligionChangeNotificationCard from './logic/10_sosial_budaya/1_agama/religionChangeNotification';
+import DoctrineChangeNotificationCard from './logic/10_sosial_budaya/3_keterbukaan/doctrineChangeNotification';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -356,6 +359,36 @@ export default function TopLeftIcon({
                     if (tradeType === 'defisit_pangan') {
                       return (
                         <PanganDefisitNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'perubahan_ideologi') {
+                      return (
+                        <IdeologyChangeNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'perubahan_agama') {
+                      return (
+                        <ReligionChangeNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'perubahan_doktrin') {
+                      return (
+                        <DoctrineChangeNotificationCard
                           key={notif.id}
                           notification={notif as any}
                           onAccept={handleAction}

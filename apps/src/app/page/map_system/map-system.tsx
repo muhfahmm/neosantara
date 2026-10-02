@@ -269,9 +269,9 @@ export default function MapPage() {
         }
     }, [presidentRating, countryDetail?.kepuasan, countryDetail?.kesejahteraan, hasShownRatingWarning, hasShownEarlyWarning, currentDate]);
 
-    // --- CONSUME PENDING NOTIFICATIONS (EKONOMI, PAJAK, HARGA, SUBSIDI) ---
+    // 🔥 Sync pending notifications from modals into inbox
     useEffect(() => {
-        if (countryDetail?.pending_notifications && Array.isArray(countryDetail.pending_notifications) && countryDetail.pending_notifications.length > 0) {
+        if (Array.isArray(countryDetail?.pending_notifications) && countryDetail.pending_notifications.length > 0) {
             const pending = countryDetail.pending_notifications;
             setNotifications(prev => [...pending, ...prev]);
             setCountryDetail((prev: any) => ({
@@ -279,7 +279,7 @@ export default function MapPage() {
                 pending_notifications: []
             }));
         }
-    }, [countryDetail?.pending_notifications]);
+    }, [countryDetail?.pending_notifications, setCountryDetail]);
 
     // --- TIMED WEEKLY TRADE OFFER NOTIFICATIONS (1-2 PER WEEK) ---
     useEffect(() => {

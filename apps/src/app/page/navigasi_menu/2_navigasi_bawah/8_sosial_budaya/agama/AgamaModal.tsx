@@ -11,6 +11,7 @@ import AgamaGagalModal from "./modalsGagalGanti";
 
 // 🔥 IMPOR LOGIKA DARI FILE LOGIKA (Pastikan file logikaPergantian.ts memiliki attemptChangeReligion dan RELIGION_CHANGE_COST)
 import { attemptChangeReligion, RELIGION_CHANGE_COST } from "./logic/logikaPergantian";
+import { generateReligionChangeNotification } from "@/app/page/menus/inbox/logic/10_sosial_budaya/1_agama/religionChangeLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -52,7 +53,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"agama" | "dunia">("agama");
   const [selectedReligion, setSelectedReligion] = useState<string | null>(null);
-  
+
   // 🔥 STATE UNTUK MODAL KONFIRMASI & GAGAL
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
@@ -123,16 +124,23 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
 
   const handleConfirmChange = () => {
     if (!selectedReligion) return;
-    // 🔥 Gunakan logika attemptChangeReligion
     const result = attemptChangeReligion(anggaran);
     if (!result.success) {
       setShowErrorModal(true);
       return;
     }
+
+    const oldReligion = countryDetail?.religion || "Islam";
+    const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+    const notif = generateReligionChangeNotification(oldReligion, selectedReligion, dateStr);
+    let newPending = Array.isArray(countryDetail?.pending_notifications) ? [...countryDetail.pending_notifications] : [];
+    newPending = [notif, ...newPending];
+
     setCountryDetail?.((prev: any) => ({
       ...(prev || {}),
       religion: selectedReligion,
       anggaran: result.newAnggaran,
+      pending_notifications: newPending,
       message: `Agama negara diubah ke ${selectedReligion}. Biaya perubahan ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} NEO.`
     }));
     setFeedback({
@@ -211,17 +219,16 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                   {RELIGION_OPTIONS.map((r) => {
                     const isActive = String(countryDetail?.religion || '').toLowerCase() === String(r).toLowerCase();
                     const isSelected = String(selectedReligion || '').toLowerCase() === String(r).toLowerCase();
-                    
+
                     return (
-                      <button 
-                        key={r} 
-                        type="button" 
+                      <button
+                        key={r}
+                        type="button"
                         onClick={() => handleSelectReligion(r)}
-                        className={`group flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer text-left ${
-                          isActive 
-                            ? 'border-[#00FFAA] bg-[#00FFAA]/15 shadow-md' 
+                        className={`group flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer text-left ${isActive
+                            ? 'border-[#00FFAA] bg-[#00FFAA]/15 shadow-md'
                             : 'border-[#00FFAA]/20 bg-[#0A1A1A] hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/5'
-                        }`}
+                          }`}
                       >
                         <div className={`relative w-14 h-16 flex-shrink-0 rounded-md flex items-center justify-center shadow-lg border-b-[4px] bg-[#051111] border-[#00FFAA]/40`}>
                           <div className="absolute top-1 left-2 w-2 h-4 bg-[#00FFAA]/20 rounded-full" />
