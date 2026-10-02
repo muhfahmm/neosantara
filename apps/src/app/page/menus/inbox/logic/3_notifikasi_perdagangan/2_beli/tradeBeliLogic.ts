@@ -1,4 +1,4 @@
-import { NotificationMessage } from '../../1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 
 export interface TradeOfferNotification extends NotificationMessage {
   tradeType: 'beli'; // AI menawarkan untuk menjual produk miliknya (User MEMBELI dari AI)

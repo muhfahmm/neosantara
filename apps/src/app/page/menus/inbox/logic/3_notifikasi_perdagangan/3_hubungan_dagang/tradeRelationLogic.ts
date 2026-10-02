@@ -1,4 +1,4 @@
-import { NotificationMessage } from '../../1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 
 export interface TradeRelationOfferNotification extends NotificationMessage {
   tradeType: 'penawaran_hubungan_dagang';

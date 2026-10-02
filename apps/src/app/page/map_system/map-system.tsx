@@ -36,18 +36,23 @@ const TopLeftIcon = dynamic(() => import('../menus/inbox/inboxModals'), { ssr: f
 const TopRightGiftIcon = dynamic(() => import('../menus/reward/rewardModals'), { ssr: false });
 const TopRightNewsIcon = dynamic(() => import('../menus/news/newsModals'), { ssr: false });
 const BottomLeftPenelitianIcon = dynamic(() => import('../menus/penelitian/penelitianModals'), { ssr: false });
-import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/logic/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
-import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_kepuasan_dan_peringkat/2_peringkat/peringkatLogic';
-import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
+import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/2_peringkat/peringkatLogic';
+import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
 import { getTradeAgreementsForCountry } from '../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
 import { getEmbassiesForCountry } from '../../../../../json/database_kedutaan_besar/embassyRegistry';
 import { playerHasEmbassyWith } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
-import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_perdagangan/2_beli/tradeBeliLogic';
-import { generateAITradeJualNotification } from '../menus/inbox/logic/3_perdagangan/1_jual/tradeJualLogic';
-import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_perdagangan/3_hubungan_dagang/tradeRelationLogic';
+import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/2_beli/tradeBeliLogic';
+import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
+import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationLogic';
 import { checkAndGenerateEmbassyOffers, createEmbassyOfferNotification } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
 import { generateBencanaAlamNotification } from '../menus/inbox/logic/6_notifikasi_bencana/1_bencana_alam/bencanaLogic';
 import { generateWabahPenyakitNotification } from '../menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic';
+import { generateSpionaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/1_spionase/spionaseLogic';
+import { generateSabotaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
+import { generateDiserangNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/3_diserang/diserangLogic';
+import { generatePemberontakanNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanLogic';
+import { generateICBMNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic';
 
 interface Country {
     id: number;
@@ -315,8 +320,8 @@ export default function MapPage() {
             ]));
 
             const internationalPool = [
-                'Jepang', 'Amerika Serikat', 'Jerman', 'Inggris', 'Prancis', 'Tiongkok', 
-                'Korea Selatan', 'Australia', 'Rusia', 'Arab Saudi', 'Kanada', 'Brasil', 
+                'Jepang', 'Amerika Serikat', 'Jerman', 'Inggris', 'Prancis', 'Tiongkok',
+                'Korea Selatan', 'Australia', 'Rusia', 'Arab Saudi', 'Kanada', 'Brasil',
                 'India', 'Turki', 'Meksiko', 'Singapura', 'Malaysia', 'Thailand', 'Vietnam'
             ];
 
@@ -374,6 +379,23 @@ export default function MapPage() {
                     newNotifsToAdd.push(generateBencanaAlamNotification(userCountryName, currentDateStr));
                 } else {
                     newNotifsToAdd.push(generateWabahPenyakitNotification(userCountryName, currentDateStr));
+                }
+            }
+
+            // 5. Notifikasi Pertahanan & Intelijen (Spionase, Sabotase, Diserang, Pemberontakan, ICBM)
+            if (Math.random() < 0.25) {
+                const defRoll = Math.random();
+                const randomPartner = internationalPool[Math.floor(Math.random() * internationalPool.length)];
+                if (defRoll < 0.35) {
+                    newNotifsToAdd.push(generateSpionaseNotification(randomPartner, currentDateStr));
+                } else if (defRoll < 0.65) {
+                    newNotifsToAdd.push(generateSabotaseNotification(randomPartner, currentDateStr));
+                } else if (defRoll < 0.85) {
+                    newNotifsToAdd.push(generateDiserangNotification(randomPartner, currentDateStr));
+                } else if (defRoll < 0.95) {
+                    newNotifsToAdd.push(generatePemberontakanNotification('Papua Barat', currentDateStr));
+                } else {
+                    newNotifsToAdd.push(generateICBMNotification(randomPartner, 'Jakarta', currentDateStr));
                 }
             }
 
@@ -1315,6 +1337,12 @@ export default function MapPage() {
                         return;
                     }
 
+                    if (tNotif.tradeType === 'spionase' || tNotif.tradeType === 'sabotase' || tNotif.tradeType === 'diserang' || tNotif.tradeType === 'pemberontakan' || tNotif.tradeType === 'icbm') {
+                        setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
+                        alert(`Berhasil menangani ${tNotif.title}! Operasi pertahanan dan intelijen nasional sukses dilaksanakan.`);
+                        return;
+                    }
+
                     if (tNotif.tradeType === 'bencana_alam' || tNotif.tradeType === 'wabah_penyakit') {
                         const cost = Number(tNotif.bantuanCost || 0);
                         const budget = Number(countryDetail?.anggaran || 0);
@@ -1348,7 +1376,8 @@ export default function MapPage() {
                 }}
                 onRedirectClick={(notif) => {
                     const tNotif = notif as any;
-                    if (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli' || tNotif.tradeType === 'penawaran_kedutaan_besar' || tNotif.tradeType === 'penawaran_hubungan_dagang' || tNotif.tradeType === 'bencana_alam' || tNotif.tradeType === 'wabah_penyakit') {
+                    const specialNotifTypes = ['jual', 'beli', 'penawaran_kedutaan_besar', 'penawaran_hubungan_dagang', 'bencana_alam', 'wabah_penyakit', 'spionase', 'sabotase', 'diserang', 'pemberontakan', 'icbm'];
+                    if (specialNotifTypes.includes(tNotif.tradeType)) {
                         // Tolak / Abaikan Notifikasi: Hapus notifikasi dari feed
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         setInboxModalOpen(false);

@@ -3,16 +3,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Inbox, X, Trash2 } from 'lucide-react';
-import { NotificationMessage } from './logic/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
-import KepuasanNotification from './logic/1_kepuasan_dan_peringkat/1_kepuasan/kepuasanNotification';
-import PeringkatNotification from './logic/1_kepuasan_dan_peringkat/2_peringkat/peringkatNotification';
-import KesejahteraanNotification from './logic/1_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanNotification';
-import TradeBeliNotification from './logic/3_perdagangan/2_beli/tradeBeliNotification';
-import TradeJualNotification from './logic/3_perdagangan/1_jual/tradeJualNotification';
+import { NotificationMessage } from './logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import KepuasanNotification from './logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanNotification';
+import PeringkatNotification from './logic/1_notifikasi_kepuasan_dan_peringkat/2_peringkat/peringkatNotification';
+import KesejahteraanNotification from './logic/1_notifikasi_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanNotification';
+import TradeBeliNotification from './logic/3_notifikasi_perdagangan/2_beli/tradeBeliNotification';
+import TradeJualNotification from './logic/3_notifikasi_perdagangan/1_jual/tradeJualNotification';
 import EmbassyNotification from './logic/4_notifikasi_kedubes/embassyNotification';
 import BencanaNotification from './logic/6_notifikasi_bencana/1_bencana_alam/bencanaNotification';
 import WabahNotification from './logic/6_notifikasi_bencana/2_wabah_penyakit/wabahNotification';
-import TradeRelationNotification from './logic/3_perdagangan/3_hubungan_dagang/tradeRelationNotification';
+import TradeRelationNotification from './logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationNotification';
+import SpionaseNotificationCard from './logic/2_notifikasi_pertahanan/1_spionase/spionaseNotification';
+import SabotaseNotificationCard from './logic/2_notifikasi_pertahanan/2_sabotase/sabotaseNotification';
+import DiserangNotificationCard from './logic/2_notifikasi_pertahanan/3_diserang/diserangNotification';
+import PemberontakanNotificationCard from './logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanNotification';
+import ICBMNotificationCard from './logic/2_notifikasi_pertahanan/5_icbm/icbmNotification';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -235,6 +240,56 @@ export default function TopLeftIcon({
                     if (tradeType === 'wabah_penyakit') {
                       return (
                         <WabahNotification
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'spionase') {
+                      return (
+                        <SpionaseNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'sabotase') {
+                      return (
+                        <SabotaseNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'diserang') {
+                      return (
+                        <DiserangNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'pemberontakan') {
+                      return (
+                        <PemberontakanNotificationCard
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'icbm') {
+                      return (
+                        <ICBMNotificationCard
                           key={notif.id}
                           notification={notif as any}
                           onAccept={handleAction}

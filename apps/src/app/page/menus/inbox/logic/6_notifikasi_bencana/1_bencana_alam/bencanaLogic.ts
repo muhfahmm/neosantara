@@ -1,7 +1,7 @@
 // bencanaLogic.ts
 // Logika dan generator event Bencana Alam (Weight 60%)
 
-import { NotificationMessage } from '../../1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 
 export interface BencanaAlamNotification extends NotificationMessage {
   tradeType: 'bencana_alam';

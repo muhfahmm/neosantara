@@ -1,7 +1,7 @@
 // wabahLogic.ts
 // Logika dan generator event Wabah Penyakit (Epidemi 30% + Pandemi 10% = Weight 40%)
 
-import { NotificationMessage } from '../../1_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 
 export interface WabahPenyakitNotification extends NotificationMessage {
   tradeType: 'wabah_penyakit';
