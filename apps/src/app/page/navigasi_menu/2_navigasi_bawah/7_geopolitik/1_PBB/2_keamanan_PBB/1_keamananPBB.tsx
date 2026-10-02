@@ -7,6 +7,7 @@ import {
 import { createPortal } from "react-dom";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 import { calculateKeamananVoting } from "../voting_logic/keamananPBB_logic";
+import { ActiveSecurityCouncilItem, getInitialActiveSecurityCouncilItems } from "./logic/keamananPBBUILogic";
 
 interface KeamananPBBProps {
   selectedCountry: any;
@@ -223,13 +224,74 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
     }
   }, [isResolusiModalOpen, isCountryModalOpen, isSupportersModalOpen, isOpponentsModalOpen]);
 
+  const [activeSecurityCouncilItems, setActiveSecurityCouncilItems] = useState<ActiveSecurityCouncilItem[]>([]);
+
+  useEffect(() => {
+    if (activeSecurityCouncilItems.length === 0) {
+      const initial = getInitialActiveSecurityCouncilItems(selectedCountry?.country || 'Indonesia');
+      setActiveSecurityCouncilItems(initial);
+    }
+  }, []);
+
+  const handleSecurityVote = (itemId: string, voteType: 'yes' | 'no' | 'abstain') => {
+    setActiveSecurityCouncilItems(prev => prev.map(item => {
+      if (item.id !== itemId) return item;
+      const prevVote = item.userVote;
+      const newStats = { ...item.voteStats };
+      if (prevVote === 'yes') newStats.supportersCount--;
+      if (prevVote === 'no') newStats.opponentsCount--;
+      if (prevVote === 'abstain') newStats.abstainCount--;
+
+      if (voteType === 'yes') newStats.supportersCount++;
+      if (voteType === 'no') newStats.opponentsCount++;
+      if (voteType === 'abstain') newStats.abstainCount++;
+
+      return {
+        ...item,
+        userVote: voteType,
+        voteStats: newStats
+      };
+    }));
+  };
+
   const handleSubmit = () => {
     if (!selectedTarget) {
       alert("Silakan pilih negara target terlebih dahulu!");
       return;
     }
     const activeAction = RESOLUTION_ACTIONS.find(a => a.id === selectedType);
-    alert(`Resolusi berhasil diajukan ke Dewan Keamanan!\n\nJenis: ${activeAction?.label}\nDurasi: ${selectedDuration}\nTarget: ${selectedTarget.name}\nPrakiraan Suara: ${voteStats.supporters.length} Setuju, ${voteStats.opponents.length} Menentang.`);
+    const supportersCount = voteStats.supporters.length || 9;
+    const opponentsCount = voteStats.opponents.length || 4;
+
+    const newItem: ActiveSecurityCouncilItem = {
+      id: `sec-user-${Date.now()}`,
+      proposer: {
+        name: selectedCountry?.country || 'Indonesia',
+        iso: selectedCountry?.iso?.toLowerCase() || 'id'
+      },
+      target: {
+        name: selectedTarget.name,
+        iso: selectedTarget.iso
+      },
+      type: selectedType,
+      label: activeAction?.label || 'Resolusi Dewan Keamanan PBB',
+      desc: activeAction?.desc || '',
+      duration: selectedDuration,
+      daysRemaining: 30,
+      voteStats: {
+        supportersCount,
+        opponentsCount,
+        abstainCount: 2,
+        vetoCount: 0
+      },
+      userVote: 'yes',
+      status: 'voting',
+      createdAt: new Date().toISOString().split('T')[0]
+    };
+
+    setActiveSecurityCouncilItems(prev => [newItem, ...prev]);
+
+    alert(`Resolusi berhasil diajukan ke Dewan Keamanan!\n\nJenis: ${activeAction?.label}\nDurasi: ${selectedDuration}\nTarget: ${selectedTarget.name}\n\nResolusi sekarang aktif dalam pembahasan Dewan Keamanan PBB.`);
     
     setIsResolusiModalOpen(false);
     setSelectedTarget(null);
@@ -325,25 +387,141 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
         </div>
       </div>
 
-      {/* UI Utama: Halaman Kosong Elegan */}
-      <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-10 rounded-xl shadow-lg flex flex-col items-center justify-center text-center space-y-4 min-h-[300px] mt-4">
+      {/* UI Utama: Card Status */}
+      <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-8 rounded-xl shadow-lg flex flex-col items-center justify-center text-center space-y-4 min-h-[260px] mt-4">
         <div className="p-3 rounded-full bg-[#00FFAA]/10 border border-[#00FFAA]/30">
           <FileText className="h-8 w-8 text-[#00FFAA]" />
         </div>
         <div>
-          <h3 className="text-lg font-black text-[#E0E0E0] uppercase tracking-wide">Belum Ada Resolusi Aktif</h3>
+          <h3 className="text-lg font-black text-[#E0E0E0] uppercase tracking-wide">
+            {activeSecurityCouncilItems.length > 0 ? "Resolusi Dewan Keamanan PBB Aktif" : "Belum Ada Resolusi Aktif"}
+          </h3>
           <p className="text-xs text-[#6B8A8A] mt-1 max-w-md">
             Mulailah dengan mengajukan rancangan resolusi baru untuk dibahas oleh negara-negara anggota Dewan Keamanan PBB.
           </p>
         </div>
         <button
           onClick={() => setIsResolusiModalOpen(true)}
-          className="mt-4 px-6 py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] shadow-lg shadow-[#00FFAA]/20 text-sm font-black uppercase tracking-wider flex items-center gap-2 hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer"
+          className="mt-2 px-6 py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] shadow-lg shadow-[#00FFAA]/20 text-sm font-black uppercase tracking-wider flex items-center gap-2 hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer"
         >
           <Plus className="h-5 w-5" />
           Buat Resolusi Baru
         </button>
       </div>
+
+      {/* 🔥 DAFTAR LOGIKA UI DEWAN KEAMANAN PBB AKTIF DIBAHAS DI BAWAH BUTTON */}
+      {activeSecurityCouncilItems.length > 0 && (
+        <div className="space-y-4 pt-2">
+          <div className="flex items-center justify-between px-1">
+            <h4 className="text-xs font-black text-[#00FFAA] uppercase tracking-widest flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[#00FFAA]" />
+              Daftar Agenda Sidang Dewan Keamanan PBB ({activeSecurityCouncilItems.length})
+            </h4>
+            <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider">
+              Dewan Keamanan PBB
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            {activeSecurityCouncilItems.map((item) => (
+              <div 
+                key={item.id}
+                className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-5 rounded-xl shadow-lg relative space-y-4 hover:border-[#00FFAA]/50 transition-all"
+              >
+                {/* Header Card Dewan Keamanan */}
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#00FFAA]/15 pb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-black text-[#00FFAA] bg-[#00FFAA]/10 px-3 py-1 rounded-lg border border-[#00FFAA]/30 uppercase">
+                      {item.label}
+                    </span>
+                    <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20">
+                      Sisa: {item.daysRemaining} Hari
+                    </span>
+                  </div>
+
+                  <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                    Sidang Khusus DK PBB
+                  </span>
+                </div>
+
+                {/* Info Pengusul & Target */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#051111] p-3.5 rounded-xl border border-[#00FFAA]/15">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-bold text-[#6B8A8A] uppercase">Pengusul:</span>
+                    <div className="flex items-center gap-2">
+                      {renderFlag(item.proposer.iso, item.proposer.name, "sm")}
+                      <span className="text-xs font-bold text-[#E0E0E0]">{item.proposer.name}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-bold text-[#6B8A8A] uppercase">Target:</span>
+                    <div className="flex items-center gap-2">
+                      {renderFlag(item.target.iso, item.target.name, "sm")}
+                      <span className="text-xs font-bold text-[#E0E0E0]">{item.target.name}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-xs font-medium text-slate-300 leading-relaxed">
+                  {item.desc}
+                </p>
+
+                {/* Perolehan Suara & Voting User */}
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-2 border-t border-[#00FFAA]/15">
+                  <div className="flex items-center gap-4 text-xs font-bold w-full md:w-auto justify-around">
+                    <div className="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+                      <Shield className="w-4 h-4" />
+                      <span>{item.voteStats.supportersCount} Setuju</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20">
+                      <span>{item.voteStats.opponentsCount} Menolak</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20">
+                      <span>{item.voteStats.vetoCount} Veto</span>
+                    </div>
+                  </div>
+
+                  {/* Tombol Aksi Vote Player */}
+                  <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+                    <span className="text-[10px] font-bold text-[#6B8A8A] uppercase mr-1">Suara Anda:</span>
+                    <button
+                      onClick={() => handleSecurityVote(item.id, 'yes')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${
+                        item.userVote === 'yes'
+                          ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
+                          : 'bg-[#051111] text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20'
+                      }`}
+                    >
+                      Setuju
+                    </button>
+                    <button
+                      onClick={() => handleSecurityVote(item.id, 'no')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${
+                        item.userVote === 'no'
+                          ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30'
+                          : 'bg-[#051111] text-rose-400 border border-rose-500/30 hover:bg-rose-500/20'
+                      }`}
+                    >
+                      Menolak
+                    </button>
+                    <button
+                      onClick={() => handleSecurityVote(item.id, 'abstain')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${
+                        item.userVote === 'abstain'
+                          ? 'bg-slate-400 text-slate-950 shadow-md'
+                          : 'bg-[#051111] text-slate-400 border border-slate-500/30 hover:bg-slate-500/20'
+                      }`}
+                    >
+                      Abstain
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Modal Buat Resolusi (Besar) */}
       {isResolusiModalOpen && createPortal(

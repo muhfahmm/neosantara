@@ -11,6 +11,7 @@ import { calculateResolusiVoting } from "../voting_logic/resolusiPBB_logic";
 // 🔥 PERBAIKAN: Hapus ekstensi .tsx di bagian import
 import CountryTargetModal from "./2_negara_target";
 import CountryListModal from "./3_jumlah_suara";
+import { ActiveResolutionItem, getInitialActiveResolutions } from "./logic/resolusiPBBUILogic";
 
 interface ResolusiPBBProps {
   selectedCountry: any;
@@ -212,69 +213,231 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
 
   const isProductionBan = selectedType === 'production_ban';
 
-  const handleSubmitResolution = () => {
-    if (isProductionBan) {
-      alert(`Resolusi berhasil diajukan!\n\nJenis: Larangan Produksi\nDurasi: ${selectedDuration}\nProduk: ${selectedProduct}`);
-      setShowCreateModal(false);
-      return;
+  const [activeResolutions, setActiveResolutions] = useState<ActiveResolutionItem[]>([]);
+
+  useEffect(() => {
+    if (activeResolutions.length === 0) {
+      const initial = getInitialActiveResolutions(selectedCountry?.country || 'Indonesia');
+      setActiveResolutions(initial);
     }
-    if (!selectedTarget) {
+  }, []);
+
+  const handleVote = (resId: string, voteType: 'yes' | 'no' | 'abstain') => {
+    setActiveResolutions(prev => prev.map(item => {
+      if (item.id !== resId) return item;
+      const prevVote = item.userVote;
+      const newStats = { ...item.voteStats };
+      if (prevVote === 'yes') newStats.supportersCount--;
+      if (prevVote === 'no') newStats.opponentsCount--;
+      if (prevVote === 'abstain') newStats.abstainCount--;
+
+      if (voteType === 'yes') newStats.supportersCount++;
+      if (voteType === 'no') newStats.opponentsCount++;
+      if (voteType === 'abstain') newStats.abstainCount++;
+
+      return {
+        ...item,
+        userVote: voteType,
+        voteStats: newStats
+      };
+    }));
+  };
+
+  const handleSubmitResolution = () => {
+    if (!selectedTarget && !isProductionBan) {
       alert("Harap lengkapi Jenis Resolusi, Durasi, dan Negara Target!");
       return;
     }
     const activeAction = RESOLUTION_ACTIONS.find(a => a.id === selectedType);
-    const supportersCount = voteStats.supporters.length;
-    const opponentsCount = voteStats.opponents.length;
-    const passed = supportersCount > opponentsCount;
+    const supportersCount = voteStats.supporters.length || 40;
+    const opponentsCount = voteStats.opponents.length || 20;
     
+    const newRes: ActiveResolutionItem = {
+      id: `res-user-${Date.now()}`,
+      proposer: {
+        name: selectedCountry?.country || 'Indonesia',
+        iso: selectedCountry?.iso?.toLowerCase() || 'id'
+      },
+      target: {
+        name: selectedTarget?.name || (isProductionBan ? 'Sektor Komoditas Global' : 'Target'),
+        iso: selectedTarget?.iso || 'id'
+      },
+      type: selectedType,
+      label: activeAction?.label || 'Resolusi PBB',
+      desc: activeAction?.desc || '',
+      duration: selectedDuration,
+      daysRemaining: 30,
+      voteStats: {
+        supportersCount,
+        opponentsCount,
+        abstainCount: 12
+      },
+      userVote: 'yes',
+      status: 'voting',
+      createdAt: new Date().toISOString().split('T')[0]
+    };
+
+    setActiveResolutions(prev => [newRes, ...prev]);
+
     alert(
       `Resolusi berhasil diajukan!\n\n` +
       `Jenis: ${activeAction?.label}\n` +
       `Durasi: ${selectedDuration}\n` +
-      `Target: ${selectedTarget.name}\n\n` +
-      `Hasil Prakiraan Voting:\n` +
-      `✅ Setuju: ${supportersCount} negara (Hubungan Dagang)\n` +
-      `❌ Menolak: ${opponentsCount} negara\n` +
-      `Hasil Akhir: ${passed ? "✅ RESOLUSI DISAHKAN" : "❌ RESOLUSI GAGAL"}`
+      `Target: ${selectedTarget?.name || 'Global'}\n\n` +
+      `Resolusi sekarang aktif dibahas dalam daftar Majelis Umum PBB.`
     );
     setShowCreateModal(false);
   };
 
   // 🔥 Logika Toggle (Unselect jika klik negara yang sama)
   const handleSelectTarget = (country: CountryOption) => {
-    // Jika negara yang diklik sama dengan yang sudah dipilih, batalkan pilihan (unselect) menjadi null
     if (selectedTarget?.id === country.id) {
       setSelectedTarget(null);
     } else {
-      // Jika berbeda, set ke negara baru
       setSelectedTarget(country);
     }
-    // Tutup modal
     setIsCountryModalOpen(false);
   };
 
   return (
     <div className="space-y-4 relative">
       
-      {/* UI Utama: Halaman Kosong Elegan */}
-      <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-10 rounded-xl shadow-lg flex flex-col items-center justify-center text-center space-y-4 min-h-[300px]">
+      {/* UI Utama: Card Status */}
+      <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-8 rounded-xl shadow-lg flex flex-col items-center justify-center text-center space-y-4 min-h-[260px]">
         <div className="p-3 rounded-full bg-[#00FFAA]/10 border border-[#00FFAA]/30">
           <FileText className="h-8 w-8 text-[#00FFAA]" />
         </div>
         <div>
-          <h3 className="text-lg font-black text-[#E0E0E0] uppercase tracking-wide">Belum Ada Resolusi Aktif</h3>
+          <h3 className="text-lg font-black text-[#E0E0E0] uppercase tracking-wide">
+            {activeResolutions.length > 0 ? "Sidang umum majelis PBB aktif" : "Belum Ada Resolusi Aktif"}
+          </h3>
           <p className="text-xs text-[#6B8A8A] mt-1 max-w-md">
             Mulailah dengan mengajukan rancangan resolusi baru untuk dibahas oleh negara-negara anggota Majelis Umum.
           </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="mt-4 px-6 py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] shadow-lg shadow-[#00FFAA]/20 text-sm font-black uppercase tracking-wider flex items-center gap-2 hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer"
+          className="mt-2 px-6 py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] shadow-lg shadow-[#00FFAA]/20 text-sm font-black uppercase tracking-wider flex items-center gap-2 hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer"
         >
           <Plus className="h-5 w-5" />
           Buat Resolusi Baru
         </button>
       </div>
+
+      {/* 🔥 DAFTAR LOGIKA UI RESOLUSI AKTIF DIBALAS/DIBAHAS DI BAWAH BUTTON */}
+      {activeResolutions.length > 0 && (
+        <div className="space-y-4 pt-2">
+          <div className="flex items-center justify-between px-1">
+            <h4 className="text-xs font-black text-[#00FFAA] uppercase tracking-widest flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[#00FFAA]" />
+              Daftar Resolusi Sedang Dibahas ({activeResolutions.length})
+            </h4>
+            <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider">
+              Majelis Umum PBB
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            {activeResolutions.map((res) => (
+              <div 
+                key={res.id}
+                className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-5 rounded-xl shadow-lg relative space-y-4 hover:border-[#00FFAA]/50 transition-all"
+              >
+                {/* Header Card Resolusi */}
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#00FFAA]/15 pb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-black text-[#00FFAA] bg-[#00FFAA]/10 px-3 py-1 rounded-lg border border-[#00FFAA]/30 uppercase">
+                      {res.label}
+                    </span>
+                    <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20">
+                      Sisa: {res.daysRemaining} Hari
+                    </span>
+                  </div>
+
+                  <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+                    Status: Dalam Pemungutan Suara
+                  </span>
+                </div>
+
+                {/* Info Pengusul & Target */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-[#051111] p-3.5 rounded-xl border border-[#00FFAA]/15">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-bold text-[#6B8A8A] uppercase">Pengusul:</span>
+                    <div className="flex items-center gap-2">
+                      {renderFlag(res.proposer.iso, res.proposer.name, "sm")}
+                      <span className="text-xs font-bold text-[#E0E0E0]">{res.proposer.name}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-bold text-[#6B8A8A] uppercase">Target:</span>
+                    <div className="flex items-center gap-2">
+                      {renderFlag(res.target.iso, res.target.name, "sm")}
+                      <span className="text-xs font-bold text-[#E0E0E0]">{res.target.name}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-xs font-medium text-slate-300 leading-relaxed">
+                  {res.desc}
+                </p>
+
+                {/* Perolehan Suara & Voting User */}
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-2 border-t border-[#00FFAA]/15">
+                  <div className="flex items-center gap-4 text-xs font-bold w-full md:w-auto justify-around">
+                    <div className="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+                      <ThumbsUp className="w-4 h-4" />
+                      <span>{res.voteStats.supportersCount} Setuju</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20">
+                      <ThumbsDown className="w-4 h-4" />
+                      <span>{res.voteStats.opponentsCount} Menolak</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-slate-400 bg-slate-500/10 px-3 py-1.5 rounded-lg border border-slate-500/20">
+                      <span>{res.voteStats.abstainCount} Abstain</span>
+                    </div>
+                  </div>
+
+                  {/* Tombol Aksi Vote Player */}
+                  <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+                    <span className="text-[10px] font-bold text-[#6B8A8A] uppercase mr-1">Suara Anda:</span>
+                    <button
+                      onClick={() => handleVote(res.id, 'yes')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${
+                        res.userVote === 'yes'
+                          ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
+                          : 'bg-[#051111] text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20'
+                      }`}
+                    >
+                      Setuju
+                    </button>
+                    <button
+                      onClick={() => handleVote(res.id, 'no')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${
+                        res.userVote === 'no'
+                          ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30'
+                          : 'bg-[#051111] text-rose-400 border border-rose-500/30 hover:bg-rose-500/20'
+                      }`}
+                    >
+                      Menolak
+                    </button>
+                    <button
+                      onClick={() => handleVote(res.id, 'abstain')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${
+                        res.userVote === 'abstain'
+                          ? 'bg-slate-400 text-slate-950 shadow-md'
+                          : 'bg-[#051111] text-slate-400 border border-slate-500/30 hover:bg-slate-500/20'
+                      }`}
+                    >
+                      Abstain
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* MODAL UTAMA AJUKAN RESOLUSI */}
       {showCreateModal && createPortal(
