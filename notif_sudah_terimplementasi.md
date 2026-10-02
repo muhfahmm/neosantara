@@ -23,16 +23,17 @@
 
 # 8. Kebutuhan Pokok Warga
 15. Defisit Listrik (Kelistrikan Grid Nasional kelipatan -5%)
-16. Defisit Hunian Permukiman (Tunawisma bulanan)
+16. Defisit Hunian Permukiman (Tunawisma & Indeks Perumahan <= 20/100)
 17. Defisit Industri Pangan (🚨 Kritis jika >= 6 sektor)
+18. Defisit Tempat Umum & Layanan Publik (Indeks Tempat Umum <= 20/100)
 
 # 10. Sosial Budaya
-18. Pergantian Ideologi Negara (Event Chain & Cooldown)
-19. Pergantian Agama Negara (Event Chain & Spiritual)
-20. Doktrin & Keterbukaan Negara (9 Indikator & Event Perubahan)
+19. Pergantian Ideologi Negara (Event Chain & Cooldown)
+20. Pergantian Agama Negara (Event Chain & Spiritual)
+21. Doktrin & Keterbukaan Negara (9 Indikator & Event Perubahan)
 
 # 11. Riset & Penelitian
-21. Pusat Penelitian & Riset (Fokus Utama Riset Ekonomi, Militer & Diplomasi)
+22. Pusat Penelitian & Riset (Fokus Utama Riset Ekonomi, Militer & Diplomasi)
 
 # 13. Dewan Kabinet Menteri
-22. Dewan Kabinet Menteri (Restrukturisasi & Peningkatan Level 20 Kementerian)
+23. Dewan Kabinet Menteri (Restrukturisasi & Peningkatan Level 20 Kementerian)

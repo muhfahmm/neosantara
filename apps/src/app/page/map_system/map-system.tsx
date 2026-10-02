@@ -56,6 +56,8 @@ import { generateICBMNotification } from '../menus/inbox/logic/2_notifikasi_pert
 import { generateListrikDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/1_kelistrikan/listrikDefisitLogic';
 import { generateHunianDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/2_hunian/hunianDefisitLogic';
 import { generatePanganDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/3_pangan/panganDefisitLogic';
+import { generateTempatUmumDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/4_tempat_umum/tempatUmumDefisitLogic';
+import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic';
 import { getMaterialStock } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
@@ -481,14 +483,18 @@ export default function MapPage() {
                 (Number(countryDetail?.mansion) || 0) * (Number(metadata?.mansion?.kapasitas) || DEFAULT_HUNIAN_CAPACITIES.mansion);
             const totalPop = Number(countryDetail?.jumlah_penduduk) || 0;
             const housingShortage = Math.max(0, totalPop - totalHousingCap);
+            const housingSatisfaction = totalPop > 0
+                ? (totalHousingCap <= 0 ? 1 : Math.min(100, Math.max(1, Math.round((Math.min(totalHousingCap / totalPop, 1)) * 100))))
+                : 50;
 
-            if (housingShortage > 0) {
+            if (housingShortage > 0 || housingSatisfaction <= 20) {
                 const percentageMet = totalPop > 0 ? (totalHousingCap / totalPop) * 100 : 0;
                 newNotifsToAdd.push(generateHunianDefisitNotification(
                     totalHousingCap,
                     totalPop,
                     housingShortage,
                     percentageMet,
+                    housingSatisfaction,
                     currentDateStr
                 ));
             }
@@ -510,6 +516,16 @@ export default function MapPage() {
                     deficitFoodCommodities.length,
                     foodKeys.length,
                     deficitFoodCommodities,
+                    currentDateStr
+                ));
+            }
+
+            // 9. Notifikasi Defisit Tempat Umum & Layanan Publik (Setiap bulan jika skor <= 20)
+            const tempatUmumScore = calculateLayananPublikScore(countryDetail);
+            if (tempatUmumScore <= 20) {
+                newNotifsToAdd.push(generateTempatUmumDefisitNotification(
+                    tempatUmumScore,
+                    totalPop,
                     currentDateStr
                 ));
             }
