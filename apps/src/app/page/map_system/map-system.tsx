@@ -114,6 +114,7 @@ export default function MapPage() {
     const [kesejahteraanInitialTab, setKesejahteraanInitialTab] = useState<"statistik" | "naikkan">("statistik");
     const [countryDetailModalOpen, setCountryDetailModalOpen] = useState(false);
     const [countryDetailModalName, setCountryDetailModalName] = useState<string | null>(null);
+    const [autoBuildEmbassyState, setAutoBuildEmbassyState] = useState(false);
     const [requireEmbassyModalOpen, setRequireEmbassyModalOpen] = useState(false);
     const [requireEmbassyPartner, setRequireEmbassyPartner] = useState<string | null>(null);
     const [playerDetailModalOpen, setPlayerDetailModalOpen] = useState(false);
@@ -1548,9 +1549,10 @@ export default function MapPage() {
 
                     if (tNotif.tradeType === 'penawaran_kedutaan_besar') {
                         const partner = tNotif.partnerCountry;
-                        // Buka Detail Negara mitra untuk langsung memproses pembangunan kedutaan besar
+                        // Buka Detail Negara mitra dan otomatis munculkan modal konfirmasi bangun kedutaan
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         setInboxModalOpen(false);
+                        setAutoBuildEmbassyState(true);
                         setCountryDetailModalName(partner);
                         setCountryDetailModalOpen(true);
                         return;
@@ -1895,9 +1897,11 @@ export default function MapPage() {
                 currentDate={currentDate}
                 playerNetBalanceAdjustment={playerNetBalanceAdjustment}
                 adjustPlayerNetBalance={(delta: number) => setPlayerNetBalanceAdjustment((prev) => prev + delta)}
+                autoBuildEmbassy={autoBuildEmbassyState}
                 onClose={() => {
                     setCountryDetailModalOpen(false);
                     setCountryDetailModalName(null);
+                    setAutoBuildEmbassyState(false);
                 }}
             />
 

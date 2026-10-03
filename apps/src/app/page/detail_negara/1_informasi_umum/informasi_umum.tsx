@@ -34,6 +34,7 @@ interface InformasiUmumProps {
   currentNetBalance?: number;
   adjustNetBalance?: (delta: number) => void;
   currentDate?: Date;
+  autoBuildEmbassy?: boolean;
 }
 
 // Komponen tombol aksi
@@ -56,10 +57,10 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   );
 };
 
-export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, adjustNetBalance, currentDate }: InformasiUmumProps) {
+export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, adjustNetBalance, currentDate, autoBuildEmbassy }: InformasiUmumProps) {
   const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || null;
   const [isDestroyModalOpen, setIsDestroyModalOpen] = useState(false);
-  const [isBuildEmbassyModalOpen, setIsBuildEmbassyModalOpen] = useState(false);
+  const [isBuildEmbassyModalOpen, setIsBuildEmbassyModalOpen] = useState<boolean>(() => !!autoBuildEmbassy);
   const [embassyActive, setEmbassyActive] = useState<boolean>(false);
   const [isDestroyTradeModalOpen, setIsDestroyTradeModalOpen] = useState(false);
   const [isBuildTradeModalOpen, setIsBuildTradeModalOpen] = useState(false);
@@ -161,7 +162,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     setIsDestroyPaktaOpen(false);
     setIsDestroyAliansiOpen(false);
     setIsDestroyKontrakOpen(false);
-  }, [countryName, playerCountryName, playerEmbassies.length, removedEmbassies.length, removedTradePartners.length, addedTradePartners.length, nonAggressionPacts.length, defenseAlliances.length, researchContracts.length]);
+    if (autoBuildEmbassy) {
+      setIsBuildEmbassyModalOpen(true);
+    }
+  }, [countryName, playerCountryName, playerEmbassies.length, removedEmbassies.length, removedTradePartners.length, addedTradePartners.length, nonAggressionPacts.length, defenseAlliances.length, researchContracts.length, autoBuildEmbassy]);
 
   // PERBAIKAN: Style tombol aktif dalam tema dark mode sci-fi
   const modernGreenBorderClass = 'border-2 border-[#00FFAA] bg-[#00FFAA]/20 text-[#00FFAA] hover:bg-[#00FFAA]/30';

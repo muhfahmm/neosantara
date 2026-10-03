@@ -22,9 +22,10 @@ interface CountryDetailModalProps {
   currentDate?: Date; // Tanggal terkini dari TimeController
   playerNetBalanceAdjustment?: number;
   adjustPlayerNetBalance?: (delta: number) => void;
+  autoBuildEmbassy?: boolean;
 }
 
-export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail, setCountryDetail, currentDate, playerNetBalanceAdjustment = 0, adjustPlayerNetBalance }: CountryDetailModalProps) {
+export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail, setCountryDetail, currentDate, playerNetBalanceAdjustment = 0, adjustPlayerNetBalance, autoBuildEmbassy }: CountryDetailModalProps) {
   // State untuk menu tab
   const [activeTab, setActiveTab] = useState<"informasi" | "geopolitik" | "militer">("informasi");
 
@@ -387,6 +388,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 currentNetBalance={playerEffectiveNetBalance}
                 adjustNetBalance={adjustPlayerNetBalance}
                 currentDate={currentDate}
+                autoBuildEmbassy={autoBuildEmbassy}
               />
             )}
 
