@@ -1,4 +1,5 @@
 import { generateAIResolusiPBBNotification } from '@/app/page/menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBLogic';
+import { STATIC_PBB_VOTES } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/3_suara_negara_PBB/staticVoteData";
 
 export interface ActiveResolutionItem {
   id: string;
@@ -25,6 +26,7 @@ export interface ActiveResolutionItem {
   createdAt: string;
   finishedAt?: string;
   lastProcessedDate?: string;
+  bribedCountries?: Record<string, 'yes' | 'no' | 'abstain'>;
   notifiedDay1?: boolean;
   notified10Days?: boolean;
   notifiedFinished?: boolean;
@@ -404,4 +406,127 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
     window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
   }
   return updated;
+}
+
+export function getResolutionCountryBreakdown(
+  resItem: ActiveResolutionItem,
+  allCountries: { id: number; name: string; iso: string; continent: string }[],
+  activeUserCountry: string = 'Indonesia'
+): {
+  supporters: { id: number; name: string; iso: string; continent: string; isProposer?: boolean; isTarget?: boolean; isUser?: boolean }[];
+  opponents: { id: number; name: string; iso: string; continent: string; isProposer?: boolean; isTarget?: boolean; isUser?: boolean }[];
+  abstain: { id: number; name: string; iso: string; continent: string; isProposer?: boolean; isTarget?: boolean; isUser?: boolean }[];
+} {
+  const safeCountries = Array.isArray(allCountries) && allCountries.length > 0
+    ? allCountries
+    : [{ id: 1, name: 'Indonesia', iso: 'id', continent: 'Asia' }];
+
+  const targetSupporterCount = Math.max(1, resItem.voteStats.supportersCount);
+  const targetOpponentCount = Math.max(1, resItem.voteStats.opponentsCount);
+
+  const proposerName = resItem.proposer.name.toLowerCase();
+  const targetName = resItem.target.name.toLowerCase();
+  const userCountryName = activeUserCountry.toLowerCase();
+
+  // User country object
+  let userObj = safeCountries.find(c => c.name.toLowerCase() === userCountryName || c.iso.toLowerCase() === 'id');
+  if (!userObj) {
+    userObj = { id: 9990, name: activeUserCountry, iso: 'id', continent: 'Asia' };
+  }
+
+  // Proposer country object
+  let proposerObj = safeCountries.find(c => c.name.toLowerCase() === proposerName || c.iso.toLowerCase() === resItem.proposer.iso.toLowerCase());
+  if (!proposerObj) {
+    proposerObj = { id: 9991, name: resItem.proposer.name, iso: resItem.proposer.iso, continent: 'Global' };
+  }
+
+  // Target country object
+  let targetObj: typeof safeCountries[0] | null = null;
+  if (!targetName.includes('global') && !targetName.includes('dunia')) {
+    targetObj = safeCountries.find(c => c.name.toLowerCase() === targetName || c.iso.toLowerCase() === resItem.target.iso.toLowerCase()) || null;
+    if (!targetObj && resItem.target.name) {
+      targetObj = { id: 9992, name: resItem.target.name, iso: resItem.target.iso, continent: 'Global' };
+    }
+  }
+
+  // Filter pool excluding proposer, target, and user country
+  const pool = safeCountries.filter(c => {
+    const cName = c.name.toLowerCase();
+    if (cName === proposerName) return false;
+    if (targetObj && cName === targetName) return false;
+    if (cName === userCountryName) return false;
+    return true;
+  });
+
+  const seededPool = pool.map(c => ({
+    country: c,
+    score: stringHash(`${resItem.id}_${c.iso}_${resItem.proposer.name}`)
+  })).sort((a, b) => a.score - b.score);
+
+  const isUserProposer = userCountryName === proposerName;
+  const isUserTarget = Boolean(targetObj && userCountryName === targetName);
+
+  // Proposer is ALWAYS #1 in supporters (Setuju)
+  const supporters: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [
+    { ...proposerObj, isProposer: true, isUser: isUserProposer }
+  ];
+
+  // If User voted 'yes' and user is not proposer/target
+  if (!isUserProposer && !isUserTarget && resItem.userVote === 'yes') {
+    supporters.push({ ...userObj, isUser: true });
+  }
+
+  // Target is ALWAYS #1 in opponents (Menolak)
+  const opponents: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [];
+  if (targetObj) {
+    opponents.push({ ...targetObj, isTarget: true, isUser: isUserTarget });
+  }
+
+  // If User voted 'no' and user is not proposer/target
+  if (!isUserProposer && !isUserTarget && resItem.userVote === 'no') {
+    opponents.push({ ...userObj, isUser: true });
+  }
+
+  const abstain: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [];
+
+  // If User voted 'abstain' and user is not proposer/target
+  if (!isUserProposer && !isUserTarget && resItem.userVote === 'abstain') {
+    abstain.push({ ...userObj, isUser: true });
+  }
+
+  const bribedMap = resItem.bribedCountries || {};
+  const unbribedPool = seededPool.filter(item => !bribedMap[item.country.iso.toLowerCase()]);
+  const bribedList = seededPool.filter(item => Boolean(bribedMap[item.country.iso.toLowerCase()]));
+
+  bribedList.forEach(item => {
+    const forcedVote = bribedMap[item.country.iso.toLowerCase()];
+    if (forcedVote === 'yes') supporters.push(item.country);
+    else if (forcedVote === 'no') opponents.push(item.country);
+    else if (forcedVote === 'abstain') abstain.push(item.country);
+  });
+
+  unbribedPool.forEach((item) => {
+    if (supporters.length < targetSupporterCount) {
+      supporters.push(item.country);
+    } else if (opponents.length < targetOpponentCount) {
+      opponents.push(item.country);
+    } else {
+      abstain.push(item.country);
+    }
+  });
+
+  return { supporters, opponents, abstain };
+}
+
+export function getCountryPBBVote(countryName: string): number {
+  if (!countryName) return 100;
+  const norm = countryName.toLowerCase().replace(/[^a-z0-9]+/g, "");
+  const found = STATIC_PBB_VOTES.find(v => v.name_id.toLowerCase().replace(/[^a-z0-9]+/g, "") === norm);
+  if (found && found.un_vote) return found.un_vote;
+  return 100;
+}
+
+export function formatBribeCost(countryName: string): string {
+  const vote = getCountryPBBVote(countryName);
+  return `${vote.toLocaleString('id-ID')}.000`;
 }

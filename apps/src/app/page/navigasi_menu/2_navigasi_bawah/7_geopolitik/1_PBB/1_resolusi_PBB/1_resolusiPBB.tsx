@@ -11,7 +11,10 @@ import { calculateResolusiVoting } from "../voting_logic/resolusiPBB_logic";
 // 🔥 PERBAIKAN: Hapus ekstensi .tsx di bagian import
 import CountryTargetModal from "./2_negara_target";
 import CountryListModal from "./3_jumlah_suara";
-import { ActiveResolutionItem, loadActiveResolutions, saveActiveResolutions, calculate206AIVotes, TOTAL_UN_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_RESOLUSI } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
+import ModalSetuju from "./4_modal_setuju";
+import ModalMenolak from "./5_modal_menolak";
+import ModalAbstain from "./6_modal_abstain";
+import { ActiveResolutionItem, loadActiveResolutions, saveActiveResolutions, calculate206AIVotes, TOTAL_UN_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_RESOLUSI, getResolutionCountryBreakdown } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 
 interface ResolusiPBBProps {
   selectedCountry: any;
@@ -64,6 +67,11 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   const [isSupportersModalOpen, setIsSupportersModalOpen] = useState(false);
   const [isOpponentsModalOpen, setIsOpponentsModalOpen] = useState(false);
 
+  const [activeModalResolution, setActiveModalResolution] = useState<ActiveResolutionItem | null>(null);
+  const [modalSetujuOpen, setModalSetujuOpen] = useState(false);
+  const [modalMenolakOpen, setModalMenolakOpen] = useState(false);
+  const [modalAbstainOpen, setModalAbstainOpen] = useState(false);
+
   const durationRef = useRef<HTMLDivElement>(null);
   const productRef = useRef<HTMLDivElement>(null);
 
@@ -109,6 +117,12 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
       return acc;
     }, {} as Record<string, CountryOption[]>);
   }, [countries]);
+
+  const activeCountryBreakdown = useMemo(() => {
+    if (!activeModalResolution) return { supporters: [], opponents: [], abstain: [] };
+    const userCountryName = selectedCountry?.country || 'Indonesia';
+    return getResolutionCountryBreakdown(activeModalResolution, countries, userCountryName);
+  }, [activeModalResolution, countries, selectedCountry]);
 
   useEffect(() => {
     const keys = Object.keys(groupedCountries);
@@ -272,6 +286,51 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
     });
 
     setActiveResolutions(updated);
+    const updatedTarget = updated.find(r => r.id === resId);
+    if (updatedTarget && activeModalResolution?.id === resId) {
+      setActiveModalResolution(updatedTarget);
+    }
+
+    if (typeof saveActiveResolutions === 'function') {
+      saveActiveResolutions(updated);
+    } else if (typeof window !== 'undefined') {
+      try { localStorage.setItem(STORAGE_KEY_PBB_RESOLUSI, JSON.stringify(updated)); } catch (e) {}
+    }
+  };
+
+  const handleBribeCountry = (resId: string, countryIso: string, fromVote: 'yes' | 'no' | 'abstain', toVote: 'yes' | 'no' | 'abstain') => {
+    const currentList = typeof loadActiveResolutions === 'function' ? loadActiveResolutions() : activeResolutions;
+    const targetRes = currentList.find(r => r.id === resId);
+    if (targetRes && targetRes.status !== 'voting') return;
+
+    const updated = currentList.map(item => {
+      if (item.id !== resId) return item;
+
+      const newStats = { ...item.voteStats };
+
+      if (fromVote === 'yes') newStats.supportersCount = Math.max(0, newStats.supportersCount - 1);
+      if (fromVote === 'no') newStats.opponentsCount = Math.max(0, newStats.opponentsCount - 1);
+      if (fromVote === 'abstain') newStats.abstainCount = Math.max(0, newStats.abstainCount - 1);
+
+      if (toVote === 'yes') newStats.supportersCount++;
+      if (toVote === 'no') newStats.opponentsCount++;
+      if (toVote === 'abstain') newStats.abstainCount++;
+
+      const customBribes = { ...(item.bribedCountries || {}), [countryIso.toLowerCase()]: toVote };
+
+      return {
+        ...item,
+        voteStats: newStats,
+        bribedCountries: customBribes
+      };
+    });
+
+    setActiveResolutions(updated);
+    const updatedTarget = updated.find(r => r.id === resId);
+    if (updatedTarget && activeModalResolution?.id === resId) {
+      setActiveModalResolution(updatedTarget);
+    }
+
     if (typeof saveActiveResolutions === 'function') {
       saveActiveResolutions(updated);
     } else if (typeof window !== 'undefined') {
@@ -466,18 +525,39 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
 
                 {/* Perolehan Suara & Voting User */}
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-2 border-t border-[#00FFAA]/15">
-                  <div className="flex items-center gap-4 text-xs font-bold w-full md:w-auto justify-around">
-                    <div className="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+                  <div className="flex items-center gap-2 sm:gap-4 text-xs font-bold w-full md:w-auto justify-around">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveModalResolution(res);
+                        setModalSetujuOpen(true);
+                      }}
+                      className="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/30 hover:bg-emerald-500/20 active:scale-95 transition-all cursor-pointer"
+                    >
                       <ThumbsUp className="w-4 h-4" />
                       <span>{res.voteStats.supportersCount} Setuju</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20">
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveModalResolution(res);
+                        setModalMenolakOpen(true);
+                      }}
+                      className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/30 hover:bg-rose-500/20 active:scale-95 transition-all cursor-pointer"
+                    >
                       <ThumbsDown className="w-4 h-4" />
                       <span>{res.voteStats.opponentsCount} Menolak</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-slate-400 bg-slate-500/10 px-3 py-1.5 rounded-lg border border-slate-500/20">
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveModalResolution(res);
+                        setModalAbstainOpen(true);
+                      }}
+                      className="flex items-center gap-1.5 text-slate-300 bg-slate-500/10 px-3 py-1.5 rounded-lg border border-slate-500/30 hover:bg-slate-500/20 active:scale-95 transition-all cursor-pointer"
+                    >
                       <span>{res.voteStats.abstainCount} Abstain</span>
-                    </div>
+                    </button>
                   </div>
 
                   {/* Tombol Aksi Vote Player */}
@@ -739,6 +819,47 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
         title="Negara yang Menentang"
         countries={voteStats.opponents}
         renderFlag={renderFlag}
+      />
+
+      {/* 🔥 MODAL DETIL PEROLEHAN SUARA: SETUJU, MENOLAK, ABSTAIN */}
+      <ModalSetuju
+        isOpen={modalSetujuOpen}
+        onClose={() => setModalSetujuOpen(false)}
+        resolutionTitle={activeModalResolution?.label}
+        countries={activeCountryBreakdown.supporters}
+        userVote={activeModalResolution?.userVote || null}
+        renderFlag={renderFlag}
+        onBribeCountry={(iso, targetVote) => {
+          if (activeModalResolution) {
+            handleBribeCountry(activeModalResolution.id, iso, 'yes', targetVote);
+          }
+        }}
+      />
+      <ModalMenolak
+        isOpen={modalMenolakOpen}
+        onClose={() => setModalMenolakOpen(false)}
+        resolutionTitle={activeModalResolution?.label}
+        countries={activeCountryBreakdown.opponents}
+        userVote={activeModalResolution?.userVote || null}
+        renderFlag={renderFlag}
+        onBribeCountry={(iso, targetVote) => {
+          if (activeModalResolution) {
+            handleBribeCountry(activeModalResolution.id, iso, 'no', targetVote);
+          }
+        }}
+      />
+      <ModalAbstain
+        isOpen={modalAbstainOpen}
+        onClose={() => setModalAbstainOpen(false)}
+        resolutionTitle={activeModalResolution?.label}
+        countries={activeCountryBreakdown.abstain}
+        userVote={activeModalResolution?.userVote || null}
+        renderFlag={renderFlag}
+        onBribeCountry={(iso, targetVote) => {
+          if (activeModalResolution) {
+            handleBribeCountry(activeModalResolution.id, iso, 'abstain', targetVote);
+          }
+        }}
       />
 
     </div>
