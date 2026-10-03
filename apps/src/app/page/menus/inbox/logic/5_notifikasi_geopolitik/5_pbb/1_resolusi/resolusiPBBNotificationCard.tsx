@@ -14,6 +14,14 @@ export default function ResolusiPBBNotificationCard({
   onRedirect
 }: ResolusiPBBNotificationCardProps) {
   const score = notification.relationScore;
+  const isWarBan = notification.resolutionType === 'war_ban' || 
+    notification.targetCountry?.toLowerCase().includes('dunia') || 
+    notification.targetCountry?.toLowerCase().includes('global') ||
+    notification.resolutionTitle?.toLowerCase().includes('larangan perang');
+
+  const cleanTitle = isWarBan
+    ? notification.title.replace(/➔.*/g, '').trim()
+    : notification.title;
 
   return (
     <div className="border-l-4 bg-cyan-950/40 border-cyan-400 p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border border-cyan-500/30">
@@ -24,7 +32,7 @@ export default function ResolusiPBBNotificationCard({
       <div className="flex-1 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
-            {notification.title}
+            {cleanTitle}
           </h4>
           <span className="text-[10px] font-extrabold text-cyan-300 bg-cyan-900/80 px-2.5 py-0.5 rounded-full border border-cyan-500/50 uppercase tracking-wider flex items-center gap-1">
             <AlertTriangle className="w-3 h-3 text-amber-400" />
@@ -33,7 +41,9 @@ export default function ResolusiPBBNotificationCard({
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          Pengusul: {notification.proposerCountry} | Target: {notification.targetCountry} | Tanggal: {notification.timestamp}
+          {isWarBan
+            ? `Pengusul: ${notification.proposerCountry} | Target: Seluruh Dunia (Global) | Tanggal: ${notification.timestamp}`
+            : `Pengusul: ${notification.proposerCountry} | Target: ${notification.targetCountry} | Tanggal: ${notification.timestamp}`}
         </p>
 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">

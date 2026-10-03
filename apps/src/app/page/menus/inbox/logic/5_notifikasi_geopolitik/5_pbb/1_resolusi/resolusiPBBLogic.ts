@@ -52,19 +52,28 @@ export function generateAIResolusiPBBNotification(
   dateStr: string
 ): AIResolusiPBBNotification {
   const chosen = RESOLUTION_TYPES[Math.floor(Math.random() * RESOLUTION_TYPES.length)];
+  const isWarBan = chosen.type === 'war_ban' || targetCountry?.toLowerCase().includes('dunia') || targetCountry?.toLowerCase().includes('global');
+
+  const title = isWarBan
+    ? `🏛️ USULAN RESOLUSI PBB: ${proposerCountry} (LARANGAN PERANG)`
+    : `🏛️ USULAN RESOLUSI PBB: ${proposerCountry} ➔ ${targetCountry}`;
+
+  const message = isWarBan
+    ? `Kabar Diplomasi PBB! Negara ${proposerCountry} secara resmi mengajukan usulan "${chosen.title}" untuk seluruh dunia. Usulan ini: ${chosen.desc}. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!`
+    : `Kabar Diplomasi PBB! Negara ${proposerCountry} secara resmi mengajukan usulan "${chosen.title}" yang menargetkan ${targetCountry} akibat ketegangan hubungan bilateral yang buruk (Skor: ${relationScore}/100). Usulan ini: ${chosen.desc}. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!`;
 
   return {
     id: `resolusi-pbb-${proposerCountry}-${targetCountry}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-    title: `🏛️ USULAN RESOLUSI PBB: ${proposerCountry} ➔ ${targetCountry}`,
+    title,
     sender: `Sekretariat Jenderal Majelis Umum PBB`,
-    message: `Kabar Diplomasi PBB! Negara ${proposerCountry} secara resmi mengajukan usulan "${chosen.title}" yang menargetkan ${targetCountry} akibat ketegangan hubungan bilateral yang buruk (Skor: ${relationScore}/100). Usulan ini: ${chosen.desc}. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!`,
+    message,
     timestamp: dateStr,
     type: 'peringkat',
     value: relationScore,
     isRead: false,
     tradeType: 'usulan_resolusi_pbb',
     proposerCountry,
-    targetCountry,
+    targetCountry: isWarBan ? 'Seluruh Dunia (Global)' : targetCountry,
     relationScore,
     resolutionType: chosen.type,
     resolutionTitle: chosen.title

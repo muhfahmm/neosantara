@@ -315,17 +315,26 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
       const isUserProposer = proposer?.name?.toLowerCase() === activeUser.toLowerCase();
       const allowNotification = isUserSubmitted || !isUserProposer;
 
+      const isWarBan = item.type === 'war_ban' || item.target.name.toLowerCase().includes('dunia') || item.target.name.toLowerCase().includes('global');
+      const durationText = item.duration || '30 Hari';
+
       if (newDaysRemaining >= 29 && !notifiedDay1) {
         notifiedDay1 = true;
         if (onTriggerNotification && allowNotification) {
           const notifCard = generateAIResolusiPBBNotification(
             proposer.name,
-            item.target.name,
+            isWarBan ? 'Seluruh Dunia (Global)' : item.target.name,
             15,
             dateStr
           );
-          notifCard.title = `🏛️ USULAN RESOLUSI PBB BARU: ${proposer.name} ➔ ${item.target.name}`;
-          notifCard.message = `Negara ${proposer.name} secara resmi mengajukan usulan "${item.label}" yang menargetkan ${item.target.name} di Majelis Umum PBB. Pemungutan suara telah dibuka selama 30 hari!`;
+          if (isWarBan) {
+            notifCard.title = `🏛️ USULAN RESOLUSI PBB BARU: ${proposer.name}`;
+            notifCard.message = `Negara ${proposer.name} secara resmi mengajukan usulan "${item.label}" selama ${durationText} untuk seluruh dunia di Majelis Umum PBB. Pemungutan suara telah dibuka selama 30 hari!`;
+          } else {
+            notifCard.title = `🏛️ USULAN RESOLUSI PBB BARU: ${proposer.name} ➔ ${item.target.name}`;
+            notifCard.message = `Negara ${proposer.name} secara resmi mengajukan usulan "${item.label}" yang menargetkan ${item.target.name} selama ${durationText} di Majelis Umum PBB. Pemungutan suara telah dibuka selama 30 hari!`;
+          }
+          notifCard.resolutionTitle = `${item.label} (${durationText})`;
           onTriggerNotification(notifCard);
         }
       }
@@ -336,12 +345,18 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
         if (onTriggerNotification && allowNotification) {
           const notifCard = generateAIResolusiPBBNotification(
             proposer.name,
-            item.target.name,
+            isWarBan ? 'Seluruh Dunia (Global)' : item.target.name,
             15,
             dateStr
           );
-          notifCard.title = `⚠️ PERINGATAN VOTING PBB (Sisa ${newDaysRemaining} Hari): ${proposer.name} ➔ ${item.target.name}`;
-          notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara ${activeUser} untuk usulan "${item.label}" yang menargetkan ${item.target.name}. Sejauh ini ${votes.supportersCount} negara setuju dan ${votes.opponentsCount} menolak.`;
+          if (isWarBan) {
+            notifCard.title = `⚠️ PERINGATAN VOTING PBB (SISA ${newDaysRemaining} HARI): ${proposer.name}`;
+            notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara ${activeUser} untuk usulan "${item.label}" selama ${durationText} di seluruh dunia. Sejauh ini ${votes.supportersCount} negara setuju dan ${votes.opponentsCount} menolak.`;
+          } else {
+            notifCard.title = `⚠️ PERINGATAN VOTING PBB (SISA ${newDaysRemaining} HARI): ${proposer.name} ➔ ${item.target.name}`;
+            notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara ${activeUser} untuk usulan "${item.label}" yang menargetkan ${item.target.name} selama ${durationText}. Sejauh ini ${votes.supportersCount} negara setuju dan ${votes.opponentsCount} menolak.`;
+          }
+          notifCard.resolutionTitle = `${item.label} (${durationText})`;
           onTriggerNotification(notifCard);
         }
       }
@@ -361,12 +376,17 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
             const statusLabel = finalStatus === 'passed' ? 'DITERIMA' : 'DITOLAK';
             const finishCard = generateAIResolusiPBBNotification(
               proposer.name,
-              item.target.name,
+              isWarBan ? 'Seluruh Dunia (Global)' : item.target.name,
               15,
               dateStr
             );
             finishCard.title = `🏛️ HASIL RESOLUSI PBB: ${item.label} (${statusLabel})`;
-            finishCard.message = `Pemungutan suara Sidang Umum Majelis PBB untuk usulan "${item.label}" (Pengusul: ${proposer.name}, Target: ${item.target.name}) telah SELESAI. Perolehan suara akhir: ${votes.supportersCount} Setuju, ${votes.opponentsCount} Menolak, ${votes.abstainCount} Abstain. Status resmi: RESOLUSI ${statusLabel}.`;
+            if (isWarBan) {
+              finishCard.message = `Pemungutan suara Sidang Umum Majelis PBB untuk usulan "${item.label}" selama ${durationText} (Pengusul: ${proposer.name}, Target: Seluruh Dunia) telah SELESAI. Perolehan suara akhir: ${votes.supportersCount} Setuju, ${votes.opponentsCount} Menolak, ${votes.abstainCount} Abstain. Status resmi: RESOLUSI ${statusLabel}.`;
+            } else {
+              finishCard.message = `Pemungutan suara Sidang Umum Majelis PBB untuk usulan "${item.label}" selama ${durationText} (Pengusul: ${proposer.name}, Target: ${item.target.name}) telah SELESAI. Perolehan suara akhir: ${votes.supportersCount} Setuju, ${votes.opponentsCount} Menolak, ${votes.abstainCount} Abstain. Status resmi: RESOLUSI ${statusLabel}.`;
+            }
+            finishCard.resolutionTitle = `${item.label} (${durationText})`;
             onTriggerNotification(finishCard);
           }
         }
