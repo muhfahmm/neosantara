@@ -2104,9 +2104,9 @@ export default function MapPage() {
                 }}
             />
 
-            {/* Custom Result Modal (Pengganti alert peramban) */}
+            {/* Custom Result Modal (Pengganti alert peramban, Z-Index tertinggi di depan Inbox Modal) */}
             {resultModal.isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+                <div className="fixed inset-0 z-[300000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
                     <div className="bg-[#0A1A1A] border-2 border-[#00FFAA]/40 rounded-2xl p-6 shadow-[0_0_50px_rgba(0,255,170,0.15)] w-full max-w-md relative overflow-hidden flex flex-col font-sans">
                         <div className="flex items-center justify-between mb-4 border-b border-[#00FFAA]/20 pb-3">
                             <span className={`text-xs font-black tracking-widest uppercase ${resultModal.type === 'error' ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
