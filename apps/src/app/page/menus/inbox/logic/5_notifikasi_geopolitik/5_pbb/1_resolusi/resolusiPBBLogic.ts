@@ -90,8 +90,7 @@ export function evaluateAIResolusiPBBTrigger(
   getRelationScore: (countryA: string, countryB: string) => number,
   dateStr: string
 ): AIResolusiPBBNotification | null {
-  // Probabilitas 25% per bulan
-  if (Math.random() >= 0.25) return null;
+  // Probabilitas kemunculan ditentukan oleh pemanggil (map-system) agar Resolusi PBB & DK PBB tidak bertabrakan.
 
   const candidatePairs: Array<{ proposer: string; target: string; score: number }> = [];
 

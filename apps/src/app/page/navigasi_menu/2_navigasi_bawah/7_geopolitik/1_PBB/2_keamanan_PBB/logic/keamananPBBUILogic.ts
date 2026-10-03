@@ -1,4 +1,6 @@
 import { generateAIKeamananPBBNotification } from '@/app/page/menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
+import { STATIC_PBB_VOTES } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/3_suara_negara_PBB/staticVoteData";
+import { getIsoForCountryName } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso";
 
 export interface ActiveSecurityCouncilItem {
   id: string;
@@ -26,6 +28,7 @@ export interface ActiveSecurityCouncilItem {
   createdAt: string;
   finishedAt?: string;
   lastProcessedDate?: string;
+  bribedCountries?: Record<string, 'yes' | 'no' | 'abstain' | 'veto'>;
   notifiedDay1?: boolean;
   notified10Days?: boolean;
   notifiedFinished?: boolean;
@@ -71,10 +74,12 @@ const DEFAULT_SECURITY_TARGETS = [
 ];
 
 const SECURITY_TEMPLATES = [
-  { type: 'military', label: 'Resolusi Invasi Militer Gabungan PBB', desc: 'Otorisasi penggunaan kekuatan militer gabungan internasional.' },
-  { type: 'economic', label: 'Blokade Ekonomi & Sanksi Perbankan', desc: 'Pembekuan modal internasional dan sanksi sistem pembayaran global.' },
-  { type: 'naval', label: 'Blokade Perairan Laut & Navigasi', desc: 'Penutupan jalur perdagangan perairan internasional untuk kapal kargo target.' },
-  { type: 'full', label: 'Isolasi Diplomatik Penuh', desc: 'Pemutusan hubungan konsuler dan penutupan seluruh perwakilan diplomasi.' }
+  { type: 'military', label: 'Invasi Militer Gabungan PBB', desc: 'Semua tentara bersatu dari semua negara menyerang negara yang dipilih.' },
+  { type: 'support', label: 'Dukungan Diplomatik Internasional', desc: 'Dukungan kepada negara yang dipilih meningkatkan hubungan diplomatiknya dengan semua negara lain sebesar 10 unit.' },
+  { type: 'economic', label: 'Blokade Ekonomi & Sanksi Industri', desc: 'Selama periode yang dipilih, produksi pabrik dan tambang berkurang sebesar 50%.' },
+  { type: 'naval', label: 'Blokade Laut & Maritim', desc: 'Selama periode yang dipilih, produksi pabrik dan tambang berkurang sebesar 25%.' },
+  { type: 'full', label: 'Blokade Penuh & Isolasi Perdagangan', desc: 'Selama periode yang dipilih, negara ini tidak dapat menandatangani kontrak apa pun atau berdagang.' },
+  { type: 'treasure', label: 'Bantuan Logistik & Sumber Daya', desc: 'Memberikan bantuan sumber daya dan logistik ke negara yang dipilih.' }
 ];
 
 function getDaysDiff(d1Str: string, d2Str: string): number {
@@ -118,12 +123,21 @@ export function calculate15SecurityCouncilVotes(
   const votesCastSoFar = Math.min(baseCouncilCount, Math.round(baseCouncilCount * progressRatio));
 
   if (votesCastSoFar === 0) {
+    const hasTarget = targetName && !targetName.toLowerCase().includes('global') && !targetName.toLowerCase().includes('dunia');
+    let supportersCount = 1; // Pengusul selalu setuju 1
+    let opponentsCount = hasTarget ? 1 : 0; // Target menolak 1 jika ada
+    let abstainCount = 0;
+
+    if (userVote === 'yes') supportersCount += 1;
+    if (userVote === 'no') opponentsCount += 1;
+    if (userVote === 'abstain') abstainCount += 1;
+
     return {
-      supportersCount: userVote === 'yes' ? 1 : 0,
-      opponentsCount: userVote === 'no' ? 1 : 0,
-      abstainCount: userVote === 'abstain' ? 1 : 0,
+      supportersCount,
+      opponentsCount,
+      abstainCount,
       vetoCount: 0,
-      totalVotesCast: userVote ? 1 : 0
+      totalVotesCast: supportersCount + opponentsCount + abstainCount
     };
   }
 
@@ -169,20 +183,28 @@ export function calculate15SecurityCouncilVotes(
   };
 }
 
+// Flag level-modul: ikut ter-reset setiap halaman di-refresh (F5), sehingga data PBB lama dibuang sekali per sesi halaman.
+let pbbKeamananSessionInitialized = false;
+
 export function loadActiveSecurityCouncilItems(): ActiveSecurityCouncilItem[] {
   if (typeof window === 'undefined') return getInitialActiveSecurityCouncilItems();
+
+  if (!pbbKeamananSessionInitialized) {
+    pbbKeamananSessionInitialized = true;
+    try { localStorage.removeItem(STORAGE_KEY_PBB_KEAMANAN); } catch (e) {}
+    return getInitialActiveSecurityCouncilItems();
+  }
+
   try {
     const data = localStorage.getItem(STORAGE_KEY_PBB_KEAMANAN);
     if (data) {
       const parsed = JSON.parse(data);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch (e) {
     console.error('Failed loading PBB security council resolutions:', e);
   }
-  const init = getInitialActiveSecurityCouncilItems();
-  saveActiveSecurityCouncilItems(init);
-  return init;
+  return getInitialActiveSecurityCouncilItems();
 }
 
 export function saveActiveSecurityCouncilItems(items: ActiveSecurityCouncilItem[]) {
@@ -210,47 +232,65 @@ export function getActiveUserCountryName(userCountryName?: string): string {
   return userCountryName || 'Indonesia';
 }
 
-export function getInitialActiveSecurityCouncilItems(userCountryName: string = 'Indonesia'): ActiveSecurityCouncilItem[] {
-  const activeUser = getActiveUserCountryName(userCountryName);
-  const availableProposers = DEFAULT_SECURITY_PROPOSERS.filter(p => 
-    p.name.toLowerCase() !== activeUser.toLowerCase() && 
-    p.iso.toLowerCase() !== activeUser.toLowerCase()
+/**
+ * Default awal game / setelah refresh: KOSONG.
+ * Sidang DK PBB baru hanya muncul dari pemicu bulanan (25%/bulan) atau dibuat oleh pemain.
+ */
+export function getInitialActiveSecurityCouncilItems(_userCountryName: string = 'Indonesia'): ActiveSecurityCouncilItem[] {
+  return [];
+}
+
+/**
+ * Membuat sidang Dewan Keamanan PBB nyata dari hasil pemicu bulanan AI.
+ * Notifikasi inbox sudah dikirim oleh pemicu bulanan, jadi notifiedDay1 = true agar tidak dobel.
+ */
+export function spawnAISecurityCouncilFromTrigger(
+  trigger: { proposerCountry: string; targetCountry: string; securityAction: string },
+  dateStr: string
+): void {
+  if (typeof window === 'undefined') return;
+
+  const tmpl = SECURITY_TEMPLATES.find(t => t.type === trigger.securityAction) || SECURITY_TEMPLATES[0];
+
+  const proposer = { name: trigger.proposerCountry, iso: getIsoForCountryName(trigger.proposerCountry) };
+  const target = { name: trigger.targetCountry, iso: getIsoForCountryName(trigger.targetCountry) };
+
+  const items = loadActiveSecurityCouncilItems();
+  const duplicate = items.some(i =>
+    i.status === 'voting' &&
+    i.type === tmpl.type &&
+    i.proposer.name === proposer.name &&
+    i.target.name === target.name
   );
-  const proposersList = availableProposers.length > 0 ? availableProposers : DEFAULT_SECURITY_PROPOSERS;
-  const proposer = proposersList[Math.floor(Math.random() * proposersList.length)];
+  if (duplicate) return;
 
-  const availableTargets = DEFAULT_SECURITY_TARGETS.filter(t => 
-    t.name.toLowerCase() !== proposer.name.toLowerCase()
-  );
-  const target = availableTargets[Math.floor(Math.random() * availableTargets.length)] || DEFAULT_SECURITY_TARGETS[0];
-  const tmpl = SECURITY_TEMPLATES[Math.floor(Math.random() * SECURITY_TEMPLATES.length)];
+  const votes = calculate15SecurityCouncilVotes(30, null, proposer.name, target.name, tmpl.type);
 
-  const initialDaysRemaining = 30; // Mulai dari 30 hari
-  const initialVotes = calculate15SecurityCouncilVotes(initialDaysRemaining, null, proposer.name, target.name, tmpl.type);
-  const dateStr = getSimulationDateString();
+  const newItem: ActiveSecurityCouncilItem = {
+    id: `sec-ai-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+    proposer,
+    target,
+    type: tmpl.type,
+    label: tmpl.label,
+    desc: tmpl.desc,
+    duration: '30 hari',
+    daysRemaining: 30,
+    voteStats: {
+      supportersCount: votes.supportersCount,
+      opponentsCount: votes.opponentsCount,
+      abstainCount: votes.abstainCount,
+      vetoCount: votes.vetoCount
+    },
+    userVote: null,
+    status: 'voting',
+    createdAt: dateStr,
+    lastProcessedDate: dateStr,
+    notifiedDay1: true,
+    notified10Days: false
+  };
 
-  return [
-    {
-      id: `sec-ai-1`,
-      proposer: proposer,
-      target: target,
-      type: tmpl.type,
-      label: tmpl.label,
-      desc: tmpl.desc,
-      duration: '30 hari',
-      daysRemaining: initialDaysRemaining,
-      voteStats: {
-        supportersCount: initialVotes.supportersCount,
-        opponentsCount: initialVotes.opponentsCount,
-        abstainCount: initialVotes.abstainCount,
-        vetoCount: initialVotes.vetoCount
-      },
-      userVote: null,
-      status: 'voting',
-      createdAt: dateStr,
-      notified10Days: false
-    }
-  ];
+  saveActiveSecurityCouncilItems([newItem, ...items]);
+  window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
 }
 
 /**
@@ -394,13 +434,141 @@ export function tickPBBSecurityCouncil(dateStr: string, onTriggerNotification?: 
       return true;
     });
 
-  if (updated.length === 0) {
-    updated = getInitialActiveSecurityCouncilItems();
-  }
-
   saveActiveSecurityCouncilItems(updated);
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
   }
   return updated;
 }
+
+export function getCountryPBBVote(countryName: string): number {
+  if (!countryName) return 100;
+  const norm = countryName.toLowerCase().replace(/[^a-z0-9]+/g, "");
+  const found = STATIC_PBB_VOTES.find(v => v.name_id.toLowerCase().replace(/[^a-z0-9]+/g, "") === norm);
+  if (found && found.un_vote) return found.un_vote;
+  return 100;
+}
+
+export function formatBribeCost(countryName: string): string {
+  const vote = getCountryPBBVote(countryName);
+  return `${vote.toLocaleString('id-ID')}.000`;
+}
+
+export function getSecurityCouncilCountryBreakdown(
+  secItem: ActiveSecurityCouncilItem,
+  allCountries: { id: number; name: string; iso: string; continent: string }[],
+  activeUserCountry: string = 'Indonesia'
+) {
+  const safeCountries = Array.isArray(allCountries) && allCountries.length > 0
+    ? allCountries
+    : [
+        { id: 1, name: 'Amerika Serikat', iso: 'us', continent: 'Amerika Utara' },
+        { id: 2, name: 'Inggris', iso: 'gb', continent: 'Eropa' },
+        { id: 3, name: 'Perancis', iso: 'fr', continent: 'Eropa' },
+        { id: 4, name: 'Rusia', iso: 'ru', continent: 'Eropa' },
+        { id: 5, name: 'China', iso: 'cn', continent: 'Asia' },
+        { id: 6, name: 'Brazil', iso: 'br', continent: 'Amerika Selatan' },
+        { id: 7, name: 'Jepang', iso: 'jp', continent: 'Asia' },
+        { id: 8, name: 'India', iso: 'in', continent: 'Asia' },
+        { id: 9, name: 'Jerman', iso: 'de', continent: 'Eropa' },
+        { id: 10, name: 'Afrika Selatan', iso: 'za', continent: 'Afrika' },
+        { id: 11, name: 'Mesir', iso: 'eg', continent: 'Afrika' },
+        { id: 12, name: 'Meksiko', iso: 'mx', continent: 'Amerika Utara' },
+        { id: 13, name: 'Indonesia', iso: 'id', continent: 'Asia' },
+        { id: 14, name: 'Polandia', iso: 'pl', continent: 'Eropa' },
+        { id: 15, name: 'Australia', iso: 'au', continent: 'Oseania' },
+      ];
+
+  const targetSupporterCount = secItem.voteStats.supportersCount;
+  const targetOpponentCount = secItem.voteStats.opponentsCount;
+  const targetVetoCount = secItem.voteStats.vetoCount;
+
+  const proposerName = secItem.proposer.name.toLowerCase();
+  const targetName = secItem.target.name.toLowerCase();
+  const userCountryName = activeUserCountry.toLowerCase();
+
+  let userObj = safeCountries.find(c => c.name.toLowerCase() === userCountryName || c.iso.toLowerCase() === 'id');
+  if (!userObj) {
+    userObj = { id: 9990, name: activeUserCountry, iso: 'id', continent: 'Asia' };
+  }
+
+  let proposerObj = safeCountries.find(c => c.name.toLowerCase() === proposerName || c.iso.toLowerCase() === secItem.proposer.iso.toLowerCase());
+  if (!proposerObj) {
+    proposerObj = { id: 9991, name: secItem.proposer.name, iso: secItem.proposer.iso, continent: 'Global' };
+  }
+
+  let targetObj: typeof safeCountries[0] | null = null;
+  if (!targetName.includes('global') && !targetName.includes('dunia')) {
+    targetObj = safeCountries.find(c => c.name.toLowerCase() === targetName || c.iso.toLowerCase() === secItem.target.iso.toLowerCase()) || null;
+    if (!targetObj && secItem.target.name) {
+      targetObj = { id: 9992, name: secItem.target.name, iso: secItem.target.iso, continent: 'Global' };
+    }
+  }
+
+  const pool = safeCountries.filter(c => {
+    const cName = c.name.toLowerCase();
+    if (cName === proposerName) return false;
+    if (targetObj && cName === targetName) return false;
+    if (cName === userCountryName) return false;
+    return true;
+  });
+
+  const seededPool = pool.map(c => ({
+    country: c,
+    score: stringHash(`${secItem.id}_${c.iso}_${secItem.proposer.name}`)
+  })).sort((a, b) => a.score - b.score);
+
+  const isUserProposer = userCountryName === proposerName;
+  const isUserTarget = Boolean(targetObj && userCountryName === targetName);
+
+  const supporters: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [
+    { ...proposerObj, isProposer: true, isUser: isUserProposer }
+  ];
+
+  if (!isUserProposer && !isUserTarget && secItem.userVote === 'yes') {
+    supporters.push({ ...userObj, isUser: true });
+  }
+
+  const opponents: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [];
+  if (targetObj) {
+    opponents.push({ ...targetObj, isTarget: true, isUser: isUserTarget });
+  }
+
+  if (!isUserProposer && !isUserTarget && secItem.userVote === 'no') {
+    opponents.push({ ...userObj, isUser: true });
+  }
+
+  const abstain: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [];
+  if (!isUserProposer && !isUserTarget && secItem.userVote === 'abstain') {
+    abstain.push({ ...userObj, isUser: true });
+  }
+
+  const veto: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [];
+
+  const bribedMap = secItem.bribedCountries || {};
+  const unbribedPool = seededPool.filter(item => !bribedMap[item.country.iso.toLowerCase()]);
+  const bribedList = seededPool.filter(item => Boolean(bribedMap[item.country.iso.toLowerCase()]));
+
+  bribedList.forEach(item => {
+    const forcedVote = bribedMap[item.country.iso.toLowerCase()];
+    if (forcedVote === 'yes') supporters.push(item.country);
+    else if (forcedVote === 'no') opponents.push(item.country);
+    else if (forcedVote === 'abstain') abstain.push(item.country);
+    else if (forcedVote === 'veto') veto.push(item.country);
+  });
+
+  unbribedPool.forEach((item) => {
+    if (veto.length < targetVetoCount) {
+      veto.push(item.country);
+    } else if (supporters.length < targetSupporterCount) {
+      supporters.push(item.country);
+    } else if (opponents.length < targetOpponentCount) {
+      opponents.push(item.country);
+    } else {
+      abstain.push(item.country);
+    }
+  });
+
+  return { supporters, opponents, abstain, veto };
+}
+

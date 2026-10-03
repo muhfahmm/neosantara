@@ -1,5 +1,6 @@
 import { generateAIResolusiPBBNotification } from '@/app/page/menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBLogic';
 import { STATIC_PBB_VOTES } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/3_suara_negara_PBB/staticVoteData";
+import { getIsoForCountryName } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso";
 
 export interface ActiveResolutionItem {
   id: string;
@@ -127,11 +128,20 @@ export function calculate206AIVotes(
   const votesCastSoFar = Math.min(baseAiCount, Math.round(baseAiCount * progressRatio));
 
   if (votesCastSoFar === 0) {
+    const hasTarget = targetName && !targetName.toLowerCase().includes('global') && !targetName.toLowerCase().includes('dunia');
+    let supportersCount = 1; // Pengusul selalu setuju 1
+    let opponentsCount = hasTarget ? 1 : 0; // Target menolak 1 jika ada
+    let abstainCount = 0;
+
+    if (userVote === 'yes') supportersCount += 1;
+    if (userVote === 'no') opponentsCount += 1;
+    if (userVote === 'abstain') abstainCount += 1;
+
     return {
-      supportersCount: userVote === 'yes' ? 1 : 0,
-      opponentsCount: userVote === 'no' ? 1 : 0,
-      abstainCount: userVote === 'abstain' ? 1 : 0,
-      totalVotesCast: userVote ? 1 : 0
+      supportersCount,
+      opponentsCount,
+      abstainCount,
+      totalVotesCast: supportersCount + opponentsCount + abstainCount
     };
   }
 
@@ -178,20 +188,28 @@ export function calculate206AIVotes(
   };
 }
 
+// Flag level-modul: ikut ter-reset setiap halaman di-refresh (F5), sehingga data PBB lama dibuang sekali per sesi halaman.
+let pbbResolusiSessionInitialized = false;
+
 export function loadActiveResolutions(): ActiveResolutionItem[] {
   if (typeof window === 'undefined') return getInitialActiveResolutions();
+
+  if (!pbbResolusiSessionInitialized) {
+    pbbResolusiSessionInitialized = true;
+    try { localStorage.removeItem(STORAGE_KEY_PBB_RESOLUSI); } catch (e) {}
+    return getInitialActiveResolutions();
+  }
+
   try {
     const data = localStorage.getItem(STORAGE_KEY_PBB_RESOLUSI);
     if (data) {
       const parsed = JSON.parse(data);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch (e) {
     console.error('Failed loading PBB resolutions:', e);
   }
-  const init = getInitialActiveResolutions();
-  saveActiveResolutions(init);
-  return init;
+  return getInitialActiveResolutions();
 }
 
 export function saveActiveResolutions(items: ActiveResolutionItem[]) {
@@ -219,46 +237,75 @@ export function getActiveUserCountryName(userCountryName?: string): string {
   return userCountryName || 'Indonesia';
 }
 
-export function getInitialActiveResolutions(userCountryName: string = 'Indonesia'): ActiveResolutionItem[] {
-  const activeUser = getActiveUserCountryName(userCountryName);
-  const availableProposers = DEFAULT_AI_PROPOSERS.filter(p => 
-    p.name.toLowerCase() !== activeUser.toLowerCase() && 
-    p.iso.toLowerCase() !== activeUser.toLowerCase()
+/**
+ * Default awal game / setelah refresh: KOSONG.
+ * Sidang baru hanya muncul dari pemicu bulanan (25%/bulan) atau dibuat oleh pemain.
+ */
+export function getInitialActiveResolutions(_userCountryName: string = 'Indonesia'): ActiveResolutionItem[] {
+  return [];
+}
+
+const RESOLUTION_TYPE_META: Record<string, { label: string; desc: string }> = {
+  war_ban: { label: 'Larangan Perang', desc: 'Dilarang melakukan peperangan antar negara di seluruh dunia selama periode yang dipilih.' },
+  arms_embargo: { label: 'Embargo Penjualan Senjata', desc: 'Perdagangan senjata dilarang selama periode yang dipilih.' },
+  economic_embargo: { label: 'Embargo Ekonomi', desc: 'Perdagangan ekonomi dilarang selama periode yang dipilih.' },
+  military_invasion: { label: 'Resolusi Invasi', desc: 'Resolusi memungkinkan negara diinvasi tanpa kecaman oleh negara lain.' },
+  production_ban: { label: 'Larangan Produksi', desc: 'Produksi produk yang dipilih dihentikan selama periode yang dipilih.' }
+};
+
+/**
+ * Membuat sidang Majelis Umum PBB nyata dari hasil pemicu bulanan AI.
+ * Notifikasi inbox sudah dikirim oleh pemicu bulanan, jadi notifiedDay1 = true agar tidak dobel.
+ */
+export function spawnAIResolutionFromTrigger(
+  trigger: { proposerCountry: string; targetCountry: string; resolutionType: string },
+  dateStr: string
+): void {
+  if (typeof window === 'undefined') return;
+
+  const meta = RESOLUTION_TYPE_META[trigger.resolutionType] || RESOLUTION_TYPE_META.arms_embargo;
+  const isNoTarget = trigger.resolutionType === 'war_ban' || trigger.resolutionType === 'production_ban';
+
+  const proposer = { name: trigger.proposerCountry, iso: getIsoForCountryName(trigger.proposerCountry) };
+  const target = isNoTarget
+    ? { name: trigger.resolutionType === 'production_ban' ? 'Sektor Komoditas Global' : 'Seluruh Dunia (Global)', iso: 'un' }
+    : { name: trigger.targetCountry, iso: getIsoForCountryName(trigger.targetCountry) };
+
+  const items = loadActiveResolutions();
+  const duplicate = items.some(i =>
+    i.status === 'voting' &&
+    i.type === trigger.resolutionType &&
+    i.proposer.name === proposer.name &&
+    i.target.name === target.name
   );
-  const proposersList = availableProposers.length > 0 ? availableProposers : DEFAULT_AI_PROPOSERS;
-  const proposer = proposersList[Math.floor(Math.random() * proposersList.length)];
+  if (duplicate) return;
 
-  const availableTargets = DEFAULT_AI_TARGETS.filter(t => 
-    t.name.toLowerCase() !== proposer.name.toLowerCase()
-  );
-  const target = availableTargets[Math.floor(Math.random() * availableTargets.length)] || DEFAULT_AI_TARGETS[0];
-  const tmpl = RESOLUTION_TEMPLATES[Math.floor(Math.random() * RESOLUTION_TEMPLATES.length)];
+  const votes = calculate206AIVotes(30, null, proposer.name, target.name, trigger.resolutionType);
 
-  const initialDaysRemaining = 30; // Mulai dari 30 hari
-  const initialVotes = calculate206AIVotes(initialDaysRemaining, null, proposer.name, target.name, tmpl.type);
-  const dateStr = getSimulationDateString();
+  const newItem: ActiveResolutionItem = {
+    id: `res-ai-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+    proposer,
+    target,
+    type: trigger.resolutionType,
+    label: meta.label,
+    desc: meta.desc,
+    duration: '30 hari',
+    daysRemaining: 30,
+    voteStats: {
+      supportersCount: votes.supportersCount,
+      opponentsCount: votes.opponentsCount,
+      abstainCount: votes.abstainCount
+    },
+    userVote: null,
+    status: 'voting',
+    createdAt: dateStr,
+    lastProcessedDate: dateStr,
+    notifiedDay1: true,
+    notified10Days: false
+  };
 
-  return [
-    {
-      id: `res-ai-1`,
-      proposer: proposer,
-      target: target,
-      type: tmpl.type,
-      label: tmpl.label,
-      desc: tmpl.desc,
-      duration: '30 hari',
-      daysRemaining: initialDaysRemaining,
-      voteStats: {
-        supportersCount: initialVotes.supportersCount,
-        opponentsCount: initialVotes.opponentsCount,
-        abstainCount: initialVotes.abstainCount
-      },
-      userVote: null,
-      status: 'voting',
-      createdAt: dateStr,
-      notified10Days: false
-    }
-  ];
+  saveActiveResolutions([newItem, ...items]);
+  window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
 }
 
 /**
@@ -421,10 +468,6 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
       }
       return true;
     });
-
-  if (updated.length === 0) {
-    updated = getInitialActiveResolutions();
-  }
 
   saveActiveResolutions(updated);
   if (typeof window !== 'undefined') {

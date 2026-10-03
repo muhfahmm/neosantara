@@ -7,7 +7,11 @@ import {
 import { createPortal } from "react-dom";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 import { calculateKeamananVoting } from "../voting_logic/keamananPBB_logic";
-import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_KEAMANAN } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
+import ModalSetuju from "./4_modal_setuju";
+import ModalMenolak from "./5_modal_menolak";
+import ModalAbstain from "./6_modal_abstain";
+import ModalVeto from "./7_modal_veto";
+import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_KEAMANAN, getSecurityCouncilCountryBreakdown } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
 
 interface KeamananPBBProps {
   selectedCountry: any;
@@ -225,6 +229,27 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
   }, [isResolusiModalOpen, isCountryModalOpen, isSupportersModalOpen, isOpponentsModalOpen]);
 
   const [activeSecurityCouncilItems, setActiveSecurityCouncilItems] = useState<ActiveSecurityCouncilItem[]>([]);
+  const [activeModalItem, setActiveModalItem] = useState<ActiveSecurityCouncilItem | null>(null);
+  const [activeModalType, setActiveModalType] = useState<'yes' | 'no' | 'abstain' | 'veto' | null>(null);
+
+  const handleBribeCountry = (countryIso: string, targetVote: 'yes' | 'no' | 'abstain' | 'veto') => {
+    if (!activeModalItem) return;
+    const updated = activeSecurityCouncilItems.map(item => {
+      if (item.id === activeModalItem.id) {
+        const bribed = { ...(item.bribedCountries || {}), [countryIso.toLowerCase()]: targetVote };
+        return { ...item, bribedCountries: bribed };
+      }
+      return item;
+    });
+    setActiveSecurityCouncilItems(updated);
+    saveActiveSecurityCouncilItems(updated);
+  };
+
+  const activeBreakdown = useMemo(() => {
+    if (!activeModalItem) return { supporters: [], opponents: [], abstain: [], veto: [] };
+    const userCountryName = selectedCountry?.country || 'Indonesia';
+    return getSecurityCouncilCountryBreakdown(activeModalItem, countries, userCountryName);
+  }, [activeModalItem, activeSecurityCouncilItems, countries, selectedCountry]);
 
   useEffect(() => {
     const syncData = () => {
@@ -527,17 +552,34 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
 
                 {/* Perolehan Suara & Voting User */}
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-2 border-t border-[#00FFAA]/15">
-                  <div className="flex items-center gap-4 text-xs font-bold w-full md:w-auto justify-around">
-                    <div className="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+                  <div className="flex items-center gap-2 sm:gap-3 text-xs font-bold w-full md:w-auto justify-around flex-wrap">
+                    <button
+                      onClick={() => { setActiveModalItem(item); setActiveModalType('yes'); }}
+                      className="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-lg border border-emerald-500/20 transition-all cursor-pointer"
+                    >
                       <Shield className="w-4 h-4" />
                       <span>{item.voteStats.supportersCount} Setuju</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20">
+                    </button>
+                    <button
+                      onClick={() => { setActiveModalItem(item); setActiveModalType('no'); }}
+                      className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 px-3 py-1.5 rounded-lg border border-rose-500/20 transition-all cursor-pointer"
+                    >
                       <span>{item.voteStats.opponentsCount} Menolak</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20">
+                    </button>
+                    <button
+                      onClick={() => { setActiveModalItem(item); setActiveModalType('veto'); }}
+                      className="flex items-center gap-1.5 text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 px-3 py-1.5 rounded-lg border border-amber-500/20 transition-all cursor-pointer"
+                    >
                       <span>{item.voteStats.vetoCount} Veto</span>
-                    </div>
+                    </button>
+                    {(item.voteStats.abstainCount || 0) > 0 && (
+                      <button
+                        onClick={() => { setActiveModalItem(item); setActiveModalType('abstain'); }}
+                        className="flex items-center gap-1.5 text-slate-300 bg-slate-500/10 hover:bg-slate-500/20 px-3 py-1.5 rounded-lg border border-slate-500/20 transition-all cursor-pointer"
+                      >
+                        <span>{item.voteStats.abstainCount} Abstain</span>
+                      </button>
+                    )}
                   </div>
 
                   {/* Tombol Aksi Vote Player */}
@@ -816,18 +858,45 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
         document.body
       )}
 
-      {/* 🔥 Modal Daftar Negara Setuju & Menentang - SEKARANG FULL WIDTH & 2 KOLOM */}
-      <CountryListModal
-        isOpen={isSupportersModalOpen}
-        onClose={() => setIsSupportersModalOpen(false)}
-        title="Negara yang Mendukung"
-        countries={voteStats.supporters}
+      {/* 🔥 Modal Breakdown Perolehan Suara DK PBB (Setuju, Menolak, Abstain, Veto) */}
+      <ModalSetuju
+        isOpen={activeModalType === 'yes'}
+        onClose={() => { setActiveModalType(null); setActiveModalItem(null); }}
+        resolutionTitle={activeModalItem ? `${activeModalItem.label} (${activeModalItem.target.name})` : undefined}
+        countries={activeBreakdown.supporters}
+        userVote={activeModalItem?.userVote}
+        renderFlag={renderFlag}
+        onBribeCountry={handleBribeCountry}
       />
-      <CountryListModal
-        isOpen={isOpponentsModalOpen}
-        onClose={() => setIsOpponentsModalOpen(false)}
-        title="Negara yang Menentang"
-        countries={voteStats.opponents}
+
+      <ModalMenolak
+        isOpen={activeModalType === 'no'}
+        onClose={() => { setActiveModalType(null); setActiveModalItem(null); }}
+        resolutionTitle={activeModalItem ? `${activeModalItem.label} (${activeModalItem.target.name})` : undefined}
+        countries={activeBreakdown.opponents}
+        userVote={activeModalItem?.userVote}
+        renderFlag={renderFlag}
+        onBribeCountry={handleBribeCountry}
+      />
+
+      <ModalAbstain
+        isOpen={activeModalType === 'abstain'}
+        onClose={() => { setActiveModalType(null); setActiveModalItem(null); }}
+        resolutionTitle={activeModalItem ? `${activeModalItem.label} (${activeModalItem.target.name})` : undefined}
+        countries={activeBreakdown.abstain}
+        userVote={activeModalItem?.userVote}
+        renderFlag={renderFlag}
+        onBribeCountry={handleBribeCountry}
+      />
+
+      <ModalVeto
+        isOpen={activeModalType === 'veto'}
+        onClose={() => { setActiveModalType(null); setActiveModalItem(null); }}
+        resolutionTitle={activeModalItem ? `${activeModalItem.label} (${activeModalItem.target.name})` : undefined}
+        countries={activeBreakdown.veto}
+        userVote={activeModalItem?.userVote}
+        renderFlag={renderFlag}
+        onBribeCountry={handleBribeCountry}
       />
 
     </div>

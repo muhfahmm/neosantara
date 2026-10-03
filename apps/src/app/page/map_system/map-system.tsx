@@ -65,8 +65,8 @@ import { generateResearchContractOfferNotification } from '../menus/inbox/logic/
 import { generateHubunganPanasNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/4_hubungan_panas/hubunganPanasLogic';
 import { evaluateAIResolusiPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBLogic';
 import { evaluateAIKeamananPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
-import { tickPBBResolutions } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
-import { tickPBBSecurityCouncil } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
+import { tickPBBResolutions, spawnAIResolutionFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
+import { tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic';
@@ -483,26 +483,41 @@ export default function MapPage() {
                 }
             });
 
-            // 5F. Usulan Resolusi Majelis Umum PBB oleh AI (25% per bulan ~ 3-5x/tahun, syarat skor 1-20)
-            const aiResNotif = evaluateAIResolusiPBBTrigger(
-                internationalPool,
-                userCountryName,
-                (c1, c2) => getRelationValue(c1, c2, currentDateStr),
-                currentDateStr
-            );
-            if (aiResNotif) {
-                newNotifsToAdd.push(aiResNotif);
+            // 5F & 5G. Usulan Resolusi PBB & Dewan Keamanan PBB oleh AI.
+            // Satu kali undian per bulan agar presisi:
+            //  - 10% keduanya muncul bersamaan
+            //  - 15% hanya Resolusi PBB
+            //  - 15% hanya Dewan Keamanan PBB
+            //  - 60% tidak ada
+            // => masing-masing tetap tepat 25% per bulan (~3-5x/tahun).
+            const pbbRoll = Math.random();
+            const triggerRes = pbbRoll < 0.25; // 0.00-0.10 (bersamaan) + 0.10-0.25 (hanya Resolusi)
+            const triggerSec = pbbRoll < 0.10 || (pbbRoll >= 0.25 && pbbRoll < 0.40); // 0.00-0.10 (bersamaan) + 0.25-0.40 (hanya DK)
+
+            if (triggerRes) {
+                const aiResNotif = evaluateAIResolusiPBBTrigger(
+                    internationalPool,
+                    userCountryName,
+                    (c1, c2) => getRelationValue(c1, c2, currentDateStr),
+                    currentDateStr
+                );
+                if (aiResNotif) {
+                    newNotifsToAdd.push(aiResNotif);
+                    spawnAIResolutionFromTrigger(aiResNotif, currentDateStr);
+                }
             }
 
-            // 5G. Usulan Resolusi Dewan Keamanan PBB oleh AI (25% per bulan ~ 3-5x/tahun, syarat skor 1-20)
-            const aiSecNotif = evaluateAIKeamananPBBTrigger(
-                internationalPool,
-                userCountryName,
-                (c1, c2) => getRelationValue(c1, c2, currentDateStr),
-                currentDateStr
-            );
-            if (aiSecNotif) {
-                newNotifsToAdd.push(aiSecNotif);
+            if (triggerSec) {
+                const aiSecNotif = evaluateAIKeamananPBBTrigger(
+                    internationalPool,
+                    userCountryName,
+                    (c1, c2) => getRelationValue(c1, c2, currentDateStr),
+                    currentDateStr
+                );
+                if (aiSecNotif) {
+                    newNotifsToAdd.push(aiSecNotif);
+                    spawnAISecurityCouncilFromTrigger(aiSecNotif, currentDateStr);
+                }
             }
 
             // 6. Notifikasi Defisit Listrik Grid Nasional (Kelipatan -5%: -5, -10, -15, ...)

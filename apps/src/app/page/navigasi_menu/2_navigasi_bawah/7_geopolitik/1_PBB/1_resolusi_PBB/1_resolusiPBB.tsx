@@ -548,16 +548,18 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                       <ThumbsDown className="w-4 h-4" />
                       <span>{res.voteStats.opponentsCount} Menolak</span>
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveModalResolution(res);
-                        setModalAbstainOpen(true);
-                      }}
-                      className="flex items-center gap-1.5 text-slate-300 bg-slate-500/10 px-3 py-1.5 rounded-lg border border-slate-500/30 hover:bg-slate-500/20 active:scale-95 transition-all cursor-pointer"
-                    >
-                      <span>{res.voteStats.abstainCount} Abstain</span>
-                    </button>
+                    {res.voteStats.abstainCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveModalResolution(res);
+                          setModalAbstainOpen(true);
+                        }}
+                        className="flex items-center gap-1.5 text-slate-300 bg-slate-500/10 px-3 py-1.5 rounded-lg border border-slate-500/30 hover:bg-slate-500/20 active:scale-95 transition-all cursor-pointer"
+                      >
+                        <span>{res.voteStats.abstainCount} Abstain</span>
+                      </button>
+                    )}
                   </div>
 
                   {/* Tombol Aksi Vote Player */}
