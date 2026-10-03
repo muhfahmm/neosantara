@@ -14,14 +14,21 @@ export default function ResolusiPBBNotificationCard({
   onRedirect
 }: ResolusiPBBNotificationCardProps) {
   const score = notification.relationScore;
-  const isWarBan = notification.resolutionType === 'war_ban' || 
+  const isNoTarget = notification.resolutionType === 'war_ban' || 
+    notification.resolutionType === 'production_ban' ||
     notification.targetCountry?.toLowerCase().includes('dunia') || 
     notification.targetCountry?.toLowerCase().includes('global') ||
-    notification.resolutionTitle?.toLowerCase().includes('larangan perang');
+    notification.targetCountry?.toLowerCase().includes('sektor') ||
+    notification.resolutionTitle?.toLowerCase().includes('larangan perang') ||
+    notification.resolutionTitle?.toLowerCase().includes('larangan produksi');
 
-  const cleanTitle = isWarBan
+  const cleanTitle = isNoTarget
     ? notification.title.replace(/➔.*/g, '').trim()
     : notification.title;
+
+  const displayTarget = notification.resolutionType === 'production_ban' || notification.resolutionTitle?.toLowerCase().includes('produksi')
+    ? 'Sektor Komoditas Global'
+    : 'Seluruh Dunia (Global)';
 
   return (
     <div className="border-l-4 bg-cyan-950/40 border-cyan-400 p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border border-cyan-500/30">
@@ -41,8 +48,8 @@ export default function ResolusiPBBNotificationCard({
         </div>
 
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-          {isWarBan
-            ? `Pengusul: ${notification.proposerCountry} | Target: Seluruh Dunia (Global) | Tanggal: ${notification.timestamp}`
+          {isNoTarget
+            ? `Pengusul: ${notification.proposerCountry} | Target: ${displayTarget} | Tanggal: ${notification.timestamp}`
             : `Pengusul: ${notification.proposerCountry} | Target: ${notification.targetCountry} | Tanggal: ${notification.timestamp}`}
         </p>
 
