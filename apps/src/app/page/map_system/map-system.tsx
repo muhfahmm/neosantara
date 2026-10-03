@@ -72,6 +72,10 @@ import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic';
 import { getMaterialStock } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
+import { generateInvasionNews, evaluateAnnualHotRelationsInvasion } from '../menus/news/logic/1_berita_invasi/beritaInvasiLogic';
+import { generateAnnexationNews, updateMapTerritoryColor } from '../menus/news/logic/2_berita_aneksasi/beritaAneksasiLogic';
+import { generateResourceLootNews } from '../menus/news/logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
+import { NewsItemData } from '../menus/news/newsModals';
 import { FOOD_CONSUMPTION_PER_CAPITA, calculateProduction, calculateConsumption } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic';
 
 interface Country {
@@ -124,6 +128,7 @@ export default function MapPage() {
     const [inboxModalOpen, setInboxModalOpen] = useState(false);
     const [giftModalOpen, setGiftModalOpen] = useState(false);
     const [newsModalOpen, setNewsModalOpen] = useState(false);
+    const [newsList, setNewsList] = useState<NewsItemData[]>([]);
     const [penelitianModalOpen, setPenelitianModalOpen] = useState(false);
     const [presidentRating, setPresidentRating] = useState<number>(50);
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
@@ -519,6 +524,44 @@ export default function MapPage() {
                 if (aiSecNotif) {
                     newNotifsToAdd.push(aiSecNotif);
                     spawnAISecurityCouncilFromTrigger(aiSecNotif, currentDateStr);
+                }
+            }
+
+            // 5H. Evaluasi Berita Perang / Invasi / Aneksasi / Rampasan SDA Geopolitik (35% per bulan ~ 4-5x/tahun)
+            if (Math.random() < 0.35) {
+                const annualInvasions = evaluateAnnualHotRelationsInvasion(currentDateStr, userCountryName);
+                if (annualInvasions.length > 0) {
+                    const generatedNewsItems: NewsItemData[] = [];
+                    annualInvasions.forEach(inv => {
+                        generatedNewsItems.push(inv);
+
+                        const outcomeRoll = Math.random();
+                        if (outcomeRoll < 0.50) {
+                            const { news: annexationNews, mapPayload } = generateAnnexationNews(
+                                inv.attackerCountry,
+                                inv.attackerIso,
+                                '#E11D48',
+                                inv.targetCountry,
+                                inv.targetIso,
+                                currentDateStr
+                            );
+                            generatedNewsItems.push(annexationNews);
+                            updateMapTerritoryColor({}, mapPayload);
+                        } else {
+                            const lootNews = generateResourceLootNews(
+                                inv.attackerCountry,
+                                inv.attackerIso,
+                                inv.targetCountry,
+                                inv.targetIso,
+                                5000000,
+                                { emas: 100, minyak_bumi: 250, beras: 500 },
+                                currentDateStr
+                            );
+                            generatedNewsItems.push(lootNews);
+                        }
+                    });
+
+                    setNewsList(prev => [...generatedNewsItems, ...prev]);
                 }
             }
 
@@ -1879,6 +1922,8 @@ export default function MapPage() {
                 }}
                 isOpen={newsModalOpen}
                 onClose={() => setNewsModalOpen(false)}
+                newsList={newsList}
+                onClearNews={() => setNewsList([])}
             />
             <BottomLeftPenelitianIcon
                 onClick={() => {

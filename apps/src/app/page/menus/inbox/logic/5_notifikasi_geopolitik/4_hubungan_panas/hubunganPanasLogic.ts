@@ -1,4 +1,6 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
+import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
 
 export interface HubunganPanasNotification extends NotificationMessage {
   tradeType: 'hubungan_panas';
@@ -23,7 +25,7 @@ export function generateHubunganPanasNotification(
 
   if (threshold === 1) {
     title = `⚔️ AMBANG PERANG: Hubungan dengan ${partnerCountry} Hancur (${relationScore}/100)!`;
-    message = `DARURAT NasionaL! Hubungan diplomatik dengan ${partnerCountry} mencapai titik terendah mutlak (${relationScore}/100). Kontak diplomatik hampir terputus total dan armada militer pihak lawan dalam kesiapsiagaan tempur tertinggi. Segera ambil tindakan diplomasi darurat!`;
+    message = `DARURAT NASIONAL! Hubungan diplomatik dengan ${partnerCountry} mencapai titik terendah mutlak (${relationScore}/100). Kontak diplomatik hampir terputus total dan armada militer pihak lawan dalam kesiapsiagaan tempur tertinggi. Segera ambil tindakan diplomasi darurat!`;
   } else if (threshold === 5) {
     title = `💣 PERBATASAN TERANCAM: Hubungan ${partnerCountry} Kritis (${relationScore}/100)!`;
     message = `Lapor Presiden! Hubungan diplomatik dengan ${partnerCountry} merosot drastis hingga angka ${relationScore}/100. Pihak oposisi dan militer lawan mulai menempatkan persenjataan di garis perbatasan.`;
@@ -49,4 +51,29 @@ export function generateHubunganPanasNotification(
     relationScore,
     threshold
   };
+}
+
+/**
+ * Memeriksa dan menghasilkan notifikasi hubungan panas (skor 1 - 20) untuk negara player
+ */
+export function evaluateHotRelationsNotifications(
+  userCountryName: string,
+  dateStr: string
+): HubunganPanasNotification[] {
+  const notifications: HubunganPanasNotification[] = [];
+  const playerCountry = userCountryName || 'Indonesia';
+
+  const targetCountries = COUNTRIES_DATA.filter(
+    (c) => c.country.toLowerCase().trim() !== playerCountry.toLowerCase().trim()
+  );
+
+  for (const c of targetCountries) {
+    const relVal = getRelationValue(playerCountry, c.country);
+    if (relVal >= 1 && relVal <= 20) {
+      const notif = generateHubunganPanasNotification(c.country, relVal, dateStr);
+      notifications.push(notif);
+    }
+  }
+
+  return notifications;
 }
