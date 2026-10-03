@@ -125,6 +125,12 @@ export default function MapPage() {
     const [presidentRating, setPresidentRating] = useState<number>(50);
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
     const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
+    const [resultModal, setResultModal] = useState<{ isOpen: boolean; title: string; message: string; type?: 'success' | 'error' | 'info' }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        type: 'success'
+    });
 
     // Track triggers to prevent spamming notifications on every tick when index is in warning zone
     const [hasShownEarlyWarning, setHasShownEarlyWarning] = useState<{
@@ -1507,7 +1513,12 @@ export default function MapPage() {
                         // AI Ingin Membeli Produk User (Jual): Tambah Kas, Kurangi Stok User
                         const myStock = Number(countryDetail?.[tNotif.productKey] || 0);
                         if (myStock < tNotif.quantity) {
-                            alert(`Gagal menyetujui transaksi! Stok ${tNotif.productKey} Anda hanya ${myStock} unit.`);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Gagal Menyelesaikan Ekspor',
+                                message: `Stok ${tNotif.productKey} Anda tidak mencukupi (${myStock} unit dari ${tNotif.quantity} unit yang dibutuhkan).`,
+                                type: 'error'
+                            });
                             return;
                         }
 
@@ -1519,7 +1530,12 @@ export default function MapPage() {
                             [`total_sold_${tNotif.productKey}`]: Number(prev?.[`total_sold_${tNotif.productKey}`] || 0) + tNotif.quantity
                         }));
 
-                        alert(`Berhasil mengekspor ${tNotif.quantity} unit ${tNotif.productKey} ke ${tNotif.partnerName} senilai ${tNotif.totalPrice.toLocaleString('id-ID')} NEO!`);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Transaksi Ekspor Berhasil',
+                            message: `Berhasil mengekspor ${tNotif.quantity} unit ${tNotif.productKey} ke ${tNotif.partnerName} senilai +${tNotif.totalPrice.toLocaleString('id-ID')} NEO!`,
+                            type: 'success'
+                        });
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         setInboxModalOpen(false);
                         return;
@@ -1529,7 +1545,12 @@ export default function MapPage() {
                         // AI Menjual ke User (Beli): Kurangi Kas, Tambah Stok User
                         const budget = Number(countryDetail?.anggaran || 0);
                         if (budget < tNotif.totalPrice) {
-                            alert(`Gagal menyetujui transaksi! Anggaran negara tidak mencukupi.`);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Gagal Menyelesaikan Impor',
+                                message: `Anggaran negara tidak mencukupi untuk melakukan impor ini. (${budget.toLocaleString('id-ID')} NEO tersedia dari ${tNotif.totalPrice.toLocaleString('id-ID')} NEO).`,
+                                type: 'error'
+                            });
                             return;
                         }
 
@@ -1541,7 +1562,12 @@ export default function MapPage() {
                             [`total_bought_${tNotif.productKey}`]: Number(prev?.[`total_bought_${tNotif.productKey}`] || 0) + tNotif.quantity
                         }));
 
-                        alert(`Berhasil mengimpor ${tNotif.quantity} unit ${tNotif.productKey} dari ${tNotif.partnerName} senilai ${tNotif.totalPrice.toLocaleString('id-ID')} NEO!`);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Transaksi Impor Berhasil',
+                            message: `Berhasil mengimpor ${tNotif.quantity} unit ${tNotif.productKey} dari ${tNotif.partnerName} senilai -${tNotif.totalPrice.toLocaleString('id-ID')} NEO!`,
+                            type: 'success'
+                        });
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         setInboxModalOpen(false);
                         return;
@@ -1565,7 +1591,12 @@ export default function MapPage() {
                             addedTradePartners: Array.from(new Set([...(prev?.addedTradePartners || []), partner]))
                         }));
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
-                        alert(`Berhasil meratifikasi Perjanjian Hubungan Dagang dengan ${partner}!`);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Perjanjian Hubungan Dagang Resmi',
+                            message: `Berhasil meratifikasi Perjanjian Hubungan Dagang bilateral dengan ${partner}! Sektor perdagangan aktif dibuka.`,
+                            type: 'success'
+                        });
                         return;
                     }
 
@@ -1576,7 +1607,12 @@ export default function MapPage() {
                             nonAggressionPacts: Array.from(new Set([...(prev?.nonAggressionPacts || []), partner]))
                         }));
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
-                        alert(`Berhasil meratifikasi Pakta Non-Agresi Bilateral dengan ${partner}!`);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Pakta Non-Agresi Ratifikasi',
+                            message: `Berhasil meratifikasi Pakta Non-Agresi Bilateral dengan ${partner}! Perdamaian wilayah tetap terjaga.`,
+                            type: 'success'
+                        });
                         return;
                     }
 
@@ -1587,7 +1623,12 @@ export default function MapPage() {
                             defenseAlliances: Array.from(new Set([...(prev?.defenseAlliances || []), partner]))
                         }));
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
-                        alert(`Berhasil membentuk Aliansi Pertahanan Militer Bersama dengan ${partner}!`);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Aliansi Pertahanan Dibentuk',
+                            message: `Berhasil membentuk Aliansi Pertahanan Militer Bersama dengan ${partner}! Bantuan pertahanan dijamin.`,
+                            type: 'success'
+                        });
                         return;
                     }
 
@@ -1598,7 +1639,12 @@ export default function MapPage() {
                             researchContracts: Array.from(new Set([...(prev?.researchContracts || []), partner]))
                         }));
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
-                        alert(`Berhasil meratifikasi Kontrak Penelitian Joint-R&D dengan ${partner}! kecepatan riset meningkat +25%.`);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Kontrak Penelitian Joint-R&D',
+                            message: `Berhasil meratifikasi Kontrak Penelitian Joint-R&D dengan ${partner}! Kecepatan riset nasional meningkat +25%.`,
+                            type: 'success'
+                        });
                         return;
                     }
 
@@ -1624,7 +1670,12 @@ export default function MapPage() {
 
                     if (tNotif.tradeType === 'spionase' || tNotif.tradeType === 'sabotase' || tNotif.tradeType === 'diserang' || tNotif.tradeType === 'pemberontakan' || tNotif.tradeType === 'icbm') {
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
-                        alert(`Berhasil menangani ${tNotif.title}! Operasi pertahanan dan intelijen nasional sukses dilaksanakan.`);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Operasi Pertahanan Berhasil',
+                            message: `Operasi penanganan "${tNotif.title}" sukses dilaksanakan oleh divisi pertahanan & intelijen nasional!`,
+                            type: 'success'
+                        });
                         return;
                     }
 
@@ -1632,7 +1683,12 @@ export default function MapPage() {
                         const cost = Number(tNotif.bantuanCost || 0);
                         const budget = Number(countryDetail?.anggaran || 0);
                         if (budget < cost) {
-                            alert(`Gagal menyalurkan bantuan! Anggaran negara tidak mencukupi (${budget.toLocaleString('id-ID')} NEO dari ${cost.toLocaleString('id-ID')} NEO).`);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Gagal Menyalurkan Bantuan',
+                                message: `Anggaran negara tidak mencukupi untuk menyalurkan bantuan (${budget.toLocaleString('id-ID')} NEO dari ${cost.toLocaleString('id-ID')} NEO).`,
+                                type: 'error'
+                            });
                             return;
                         }
 
@@ -1644,7 +1700,12 @@ export default function MapPage() {
                         }));
 
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
-                        alert(`Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID')} NEO! Kepuasan & Kesejahteraan masyarakat meningkat +2.0%.`);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Bantuan Darurat Disalurkan',
+                            message: `Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID')} NEO! Kepuasan & Kesejahteraan masyarakat meningkat +2.0%.`,
+                            type: 'success'
+                        });
                         return;
                     }
 
@@ -2042,6 +2103,41 @@ export default function MapPage() {
                     setIsKudetaOpen(false);
                 }}
             />
+
+            {/* Custom Result Modal (Pengganti alert peramban) */}
+            {resultModal.isOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+                    <div className="bg-[#0A1A1A] border-2 border-[#00FFAA]/40 rounded-2xl p-6 shadow-[0_0_50px_rgba(0,255,170,0.15)] w-full max-w-md relative overflow-hidden flex flex-col font-sans">
+                        <div className="flex items-center justify-between mb-4 border-b border-[#00FFAA]/20 pb-3">
+                            <span className={`text-xs font-black tracking-widest uppercase ${resultModal.type === 'error' ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
+                                {resultModal.type === 'error' ? '⚠️ NOTIFIKASI KkETIDAKSAMAAN' : '✓ INFORMASI TRANSAKSI & HASIL'}
+                            </span>
+                            <button
+                                onClick={() => setResultModal(prev => ({ ...prev, isOpen: false }))}
+                                className="text-[#6B8A8A] hover:text-[#00FFAA] font-black text-base cursor-pointer transition-colors"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        <h3 className={`text-lg font-black uppercase tracking-wide mb-2 ${resultModal.type === 'error' ? 'text-rose-400' : 'text-[#E0E0E0]'}`}>
+                            {resultModal.title}
+                        </h3>
+                        <p className="text-sm text-[#A0B0B0] leading-relaxed mb-6 font-medium">
+                            {resultModal.message}
+                        </p>
+                        <button
+                            onClick={() => setResultModal(prev => ({ ...prev, isOpen: false }))}
+                            className={`w-full py-3 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all ${
+                                resultModal.type === 'error'
+                                    ? 'bg-rose-500/20 border border-rose-500/50 text-rose-400 hover:bg-rose-500/30'
+                                    : 'bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-[0_0_20px_rgba(0,255,170,0.3)]'
+                            }`}
+                        >
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            )}
 
         </main>
     );
