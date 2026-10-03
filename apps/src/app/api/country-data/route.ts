@@ -249,6 +249,7 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
         __continent: getContinentFromOrder(order),
 
         country_slug: slug,
+        iso: prof.iso || slug,
         name_id: prof.name_id || prof.country || slug,
         name_en: prof.name_en || prof.name_id || slug,
         capital: prof.capital || '',

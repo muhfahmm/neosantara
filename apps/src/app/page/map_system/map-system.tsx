@@ -67,6 +67,7 @@ import { evaluateAIResolusiPBBTrigger } from '../menus/inbox/logic/5_notifikasi_
 import { evaluateAIKeamananPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
 import { tickPBBResolutions, spawnAIResolutionFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
+import { initCountryIsoFromDatabase } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic';
@@ -89,6 +90,7 @@ export default function MapPage() {
     const [metadata, setMetadata] = useState<Record<string, any>>({});
 
     useEffect(() => {
+        initCountryIsoFromDatabase().catch(err => console.error("Failed to init country ISO from DB:", err));
         fetchBuildingMetadata()
             .then(data => setMetadata(data || {}))
             .catch(err => console.error("Failed to load metadata in MapPage:", err));
