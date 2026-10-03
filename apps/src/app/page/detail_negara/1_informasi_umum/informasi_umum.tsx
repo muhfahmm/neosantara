@@ -132,6 +132,20 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const tradeIconClass = tradeIsActive ? 'text-[#00FFAA]' : undefined;
   const tradeLabelClass = tradeIsActive ? 'text-[#00FFAA]' : undefined;
 
+  // Extract active treaties from playerCountryDetail
+  const nonAggressionPacts = Array.isArray(playerCountryDetail?.nonAggressionPacts) ? playerCountryDetail.nonAggressionPacts : [];
+  const defenseAlliances = Array.isArray(playerCountryDetail?.defenseAlliances) ? playerCountryDetail.defenseAlliances : [];
+  const researchContracts = Array.isArray(playerCountryDetail?.researchContracts) ? playerCountryDetail.researchContracts : [];
+
+  const normCountryName = String(countryName || '').toLowerCase().trim();
+  const hasPaktaInDetail = nonAggressionPacts.some((p: string) => String(p).toLowerCase().trim() === normCountryName);
+  const hasAliansiInDetail = defenseAlliances.some((p: string) => String(p).toLowerCase().trim() === normCountryName);
+  const hasKontrakInDetail = researchContracts.some((p: string) => String(p).toLowerCase().trim() === normCountryName);
+
+  const paktaIsActive = hasPaktaInDetail || paktaActive;
+  const aliansiIsActive = hasAliansiInDetail || aliansiActive;
+  const kontrakIsActive = hasKontrakInDetail || kontrakActive;
+
   // Local active states: sync initial values when country/player changes
   // Sync initial active states from logic at mount / when country changes
   // (we keep local state so user actions toggle UI immediately)
@@ -141,14 +155,13 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     setEmbassyActive(embassyLabelNow === 'Hancurkan Kedutaan');
     // Mark trade as active if registry indicates an existing trade agreement.
     setTradeActive(tradeLabelNow === 'Putus Hubungan Dagang');
-    // Reset geopolitik actions per country view
-    setPaktaActive(false);
-    setAliansiActive(false);
-    setKontrakActive(false);
+    setPaktaActive(hasPaktaInDetail);
+    setAliansiActive(hasAliansiInDetail);
+    setKontrakActive(hasKontrakInDetail);
     setIsDestroyPaktaOpen(false);
     setIsDestroyAliansiOpen(false);
     setIsDestroyKontrakOpen(false);
-  }, [countryName, playerCountryName, playerEmbassies.length, removedEmbassies.length, removedTradePartners.length, addedTradePartners.length]);
+  }, [countryName, playerCountryName, playerEmbassies.length, removedEmbassies.length, removedTradePartners.length, addedTradePartners.length, nonAggressionPacts.length, defenseAlliances.length, researchContracts.length]);
 
   // PERBAIKAN: Style tombol aktif dalam tema dark mode sci-fi
   const modernGreenBorderClass = 'border-2 border-[#00FFAA] bg-[#00FFAA]/20 text-[#00FFAA] hover:bg-[#00FFAA]/30';
@@ -235,8 +248,8 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           />
         </div>
         
-        <ActionButton icon={ShieldOff} label={paktaActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => paktaActive ? setIsDestroyPaktaOpen(true) : setIsPaktaModalOpen(true)} disabled={!embassyActive} className={paktaActive ? modernGreenBorderClass : undefined} iconClass={paktaActive ? 'text-[#00FFAA]' : undefined} labelClass={paktaActive ? 'text-[#00FFAA]' : undefined} />
-        <ActionButton icon={ShieldCheck} label={aliansiActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => aliansiActive ? setIsDestroyAliansiOpen(true) : setIsAliansiModalOpen(true)} disabled={!embassyActive} className={aliansiActive ? modernGreenBorderClass : undefined} iconClass={aliansiActive ? 'text-[#00FFAA]' : undefined} labelClass={aliansiActive ? 'text-[#00FFAA]' : undefined} />
+        <ActionButton icon={ShieldOff} label={paktaIsActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => paktaIsActive ? setIsDestroyPaktaOpen(true) : setIsPaktaModalOpen(true)} disabled={!embassyActive} className={paktaIsActive ? modernGreenBorderClass : undefined} iconClass={paktaIsActive ? 'text-[#00FFAA]' : undefined} labelClass={paktaIsActive ? 'text-[#00FFAA]' : undefined} />
+        <ActionButton icon={ShieldCheck} label={aliansiIsActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => aliansiIsActive ? setIsDestroyAliansiOpen(true) : setIsAliansiModalOpen(true)} disabled={!embassyActive} className={aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={aliansiIsActive ? 'text-[#00FFAA]' : undefined} labelClass={aliansiIsActive ? 'text-[#00FFAA]' : undefined} />
         
         {/* PERBAIKAN: Tombol Perjanjian Dagang diubah menggunakan modernGreenBorderClass yang sama */}
         <ActionButton
@@ -255,7 +268,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           labelClass={tradeIsActive ? 'text-[#00FFAA]' : tradeLabelClass}
         />
         
-        <ActionButton icon={FlaskConical} label={kontrakActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => kontrakActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true)} disabled={!embassyActive} className={kontrakActive ? modernGreenBorderClass : undefined} iconClass={kontrakActive ? 'text-[#00FFAA]' : undefined} labelClass={kontrakActive ? 'text-[#00FFAA]' : undefined} />
+        <ActionButton icon={FlaskConical} label={kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => kontrakIsActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true)} disabled={!embassyActive} className={kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
         <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => setIsKirimPasukanModalOpen(true)} disabled={!embassyActive} />
         <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => setIsPanggilSekutuModalOpen(true)} disabled={!embassyActive} />
         <ActionButton icon={Ban} label="Berikan Sanksi" onClick={() => setIsBerikanSanksiModalOpen(true)} />
@@ -383,6 +396,12 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         onClose={() => setIsPaktaModalOpen(false)}
         onConfirm={() => {
           setPaktaActive(true);
+          if (setPlayerCountryDetail) {
+            setPlayerCountryDetail((prev: any) => ({
+              ...prev,
+              nonAggressionPacts: Array.from(new Set([...(prev?.nonAggressionPacts || []), countryName]))
+            }));
+          }
           console.log(`Pakta Non-Agresi dengan ${countryName} dijalin.`);
         }}
       />
@@ -393,6 +412,12 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         onClose={() => setIsDestroyPaktaOpen(false)}
         onConfirm={() => {
           setPaktaActive(false);
+          if (setPlayerCountryDetail) {
+            setPlayerCountryDetail((prev: any) => ({
+              ...prev,
+              nonAggressionPacts: (prev?.nonAggressionPacts || []).filter((c: string) => String(c).toLowerCase().trim() !== normCountryName)
+            }));
+          }
           console.log(`Pakta Non-Agresi dengan ${countryName} diputus.`);
         }}
       />
@@ -403,6 +428,12 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         onClose={() => setIsAliansiModalOpen(false)}
         onConfirm={() => {
           setAliansiActive(true);
+          if (setPlayerCountryDetail) {
+            setPlayerCountryDetail((prev: any) => ({
+              ...prev,
+              defenseAlliances: Array.from(new Set([...(prev?.defenseAlliances || []), countryName]))
+            }));
+          }
           console.log(`Aliansi Pertahanan dengan ${countryName} diajukan.`);
         }}
       />
@@ -413,6 +444,12 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         onClose={() => setIsDestroyAliansiOpen(false)}
         onConfirm={() => {
           setAliansiActive(false);
+          if (setPlayerCountryDetail) {
+            setPlayerCountryDetail((prev: any) => ({
+              ...prev,
+              defenseAlliances: (prev?.defenseAlliances || []).filter((c: string) => String(c).toLowerCase().trim() !== normCountryName)
+            }));
+          }
           console.log(`Aliansi Pertahanan dengan ${countryName} diputus.`);
         }}
       />
@@ -423,6 +460,12 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         onClose={() => setIsKontrakModalOpen(false)}
         onConfirm={() => {
           setKontrakActive(true);
+          if (setPlayerCountryDetail) {
+            setPlayerCountryDetail((prev: any) => ({
+              ...prev,
+              researchContracts: Array.from(new Set([...(prev?.researchContracts || []), countryName]))
+            }));
+          }
           console.log(`Kontrak Penelitian dengan ${countryName} dimulai.`);
         }}
       />
@@ -433,7 +476,13 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         onClose={() => setIsDestroyKontrakOpen(false)}
         onConfirm={() => {
           setKontrakActive(false);
-          console.log(`Kontrak Penelitian dengan ${countryName} dihentikan.`);
+          if (setPlayerCountryDetail) {
+            setPlayerCountryDetail((prev: any) => ({
+              ...prev,
+              researchContracts: (prev?.researchContracts || []).filter((c: string) => String(c).toLowerCase().trim() !== normCountryName)
+            }));
+          }
+          console.log(`Kontrak Penelitian dengan ${countryName} diputus.`);
         }}
       />
 
