@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import { createPortal } from "react-dom";
 
 interface BuildEmbassyModalProps {
   isOpen: boolean;
@@ -20,9 +20,9 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
   const formattedBudgetAfterBuild = budgetAfterBuild.toLocaleString('id-ID');
   const hasBudget = currentBudget >= cost;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-[420px] bg-white rounded-2xl p-6 shadow-lg border border-[#E5DCCF]">
+  return typeof window !== 'undefined' ? createPortal(
+    <div className="fixed inset-0 z-[200000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+      <div className="w-full max-w-[420px] bg-white rounded-2xl p-6 shadow-2xl border border-[#E5DCCF] relative font-sans">
         <h3 className="text-lg font-black text-[#3d2911] mb-3">Konfirmasi Bangun Kedutaan</h3>
         <p className="text-sm text-[#5c3c10] mb-3">
           Apakah Anda ingin membangun kedutaan di <strong>{countryName}</strong>? Biaya pembangunan di <strong>{continentLabel}</strong> adalah <strong>{cost} NEO</strong>.
@@ -54,6 +54,7 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
           </button>
         </div>
       </div>
-    </div>
-  );
+    </div>,
+    document.body
+  ) : null;
 }

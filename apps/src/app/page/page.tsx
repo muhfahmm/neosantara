@@ -1151,7 +1151,7 @@ export default function PlayMenuPage() {
                     ============================================ */}
                 <AnimatePresence>
                     {isContinueModalOpen && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md">
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6">
                             <motion.div
                                 initial={{ scale: 0.95, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}

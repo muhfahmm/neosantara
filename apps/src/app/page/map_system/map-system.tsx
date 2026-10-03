@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import {
     Play, Pause, Settings, Palmtree, Shield
 } from 'lucide-react';
@@ -42,7 +43,7 @@ import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikas
 import { getTradeAgreementsForCountry } from '../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
 import { getEmbassiesForCountry } from '../../../../../json/database_kedutaan_besar/embassyRegistry';
 import { getRelationValue } from '../../../../../json/database_hubungan_antar_negara/relationsRegistry';
-import { playerHasEmbassyWith } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
+import { playerHasEmbassyWith, playerHasEmbassyOrTradePartners } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
 import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/2_beli/tradeBeliLogic';
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
 import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationLogic';
@@ -131,6 +132,18 @@ export default function MapPage() {
         message: '',
         type: 'success'
     });
+
+    // Auto close resultModal after 3 seconds (3000ms) & reopen inboxModal
+    useEffect(() => {
+        if (!resultModal.isOpen) return;
+
+        const timer = setTimeout(() => {
+            setResultModal(prev => ({ ...prev, isOpen: false }));
+            setInboxModalOpen(true);
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, [resultModal.isOpen]);
 
     // Track triggers to prevent spamming notifications on every tick when index is in warning zone
     const [hasShownEarlyWarning, setHasShownEarlyWarning] = useState<{
@@ -1586,11 +1599,29 @@ export default function MapPage() {
 
                     if (tNotif.tradeType === 'penawaran_hubungan_dagang') {
                         const partner = tNotif.partnerCountry;
+                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
+                        const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
+                        const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
+                        
+                        const hasEmbassy = playerHasEmbassyOrTradePartners(partner, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners);
+                        if (!hasEmbassy) {
+                            setInboxModalOpen(false);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Ratifikasi Perjanjian Dagang Gagal',
+                                message: `Gagal meratifikasi Perjanjian Hubungan Dagang! Anda belum membangun Kedutaan Besar di ${partner}. Bangun Kedutaan Besar terlebih dahulu di menu Detail Negara ${partner}.`,
+                                type: 'error'
+                            });
+                            return;
+                        }
+
                         setCountryDetail((prev: any) => ({
                             ...prev,
                             addedTradePartners: Array.from(new Set([...(prev?.addedTradePartners || []), partner]))
                         }));
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
+                        setInboxModalOpen(false);
                         setResultModal({
                             isOpen: true,
                             title: 'Perjanjian Hubungan Dagang Resmi',
@@ -1602,11 +1633,29 @@ export default function MapPage() {
 
                     if (tNotif.tradeType === 'penawaran_pakta_non_agresi') {
                         const partner = tNotif.partnerCountry;
+                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
+                        const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
+                        const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
+
+                        const hasEmbassy = playerHasEmbassyOrTradePartners(partner, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners);
+                        if (!hasEmbassy) {
+                            setInboxModalOpen(false);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Ratifikasi Pakta Non-Agresi Gagal',
+                                message: `Gagal meratifikasi Pakta Non-Agresi! Anda belum membangun Kedutaan Besar di ${partner}. Bangun Kedutaan Besar terlebih dahulu di menu Detail Negara ${partner}.`,
+                                type: 'error'
+                            });
+                            return;
+                        }
+
                         setCountryDetail((prev: any) => ({
                             ...prev,
                             nonAggressionPacts: Array.from(new Set([...(prev?.nonAggressionPacts || []), partner]))
                         }));
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
+                        setInboxModalOpen(false);
                         setResultModal({
                             isOpen: true,
                             title: 'Pakta Non-Agresi Ratifikasi',
@@ -1618,11 +1667,29 @@ export default function MapPage() {
 
                     if (tNotif.tradeType === 'penawaran_aliansi_pertahanan') {
                         const partner = tNotif.partnerCountry;
+                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
+                        const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
+                        const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
+
+                        const hasEmbassy = playerHasEmbassyOrTradePartners(partner, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners);
+                        if (!hasEmbassy) {
+                            setInboxModalOpen(false);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Pembentukan Aliansi Pertahanan Gagal',
+                                message: `Gagal membentuk Aliansi Pertahanan! Anda belum membangun Kedutaan Besar di ${partner}. Bangun Kedutaan Besar terlebih dahulu di menu Detail Negara ${partner}.`,
+                                type: 'error'
+                            });
+                            return;
+                        }
+
                         setCountryDetail((prev: any) => ({
                             ...prev,
                             defenseAlliances: Array.from(new Set([...(prev?.defenseAlliances || []), partner]))
                         }));
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
+                        setInboxModalOpen(false);
                         setResultModal({
                             isOpen: true,
                             title: 'Aliansi Pertahanan Dibentuk',
@@ -1634,11 +1701,29 @@ export default function MapPage() {
 
                     if (tNotif.tradeType === 'penawaran_kontrak_penelitian') {
                         const partner = tNotif.partnerCountry;
+                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
+                        const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
+                        const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
+
+                        const hasEmbassy = playerHasEmbassyOrTradePartners(partner, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners);
+                        if (!hasEmbassy) {
+                            setInboxModalOpen(false);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Ratifikasi Kontrak Penelitian Gagal',
+                                message: `Gagal meratifikasi Kontrak Penelitian Joint-R&D! Anda belum membangun Kedutaan Besar di ${partner}. Bangun Kedutaan Besar terlebih dahulu di menu Detail Negara ${partner}.`,
+                                type: 'error'
+                            });
+                            return;
+                        }
+
                         setCountryDetail((prev: any) => ({
                             ...prev,
                             researchContracts: Array.from(new Set([...(prev?.researchContracts || []), partner]))
                         }));
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
+                        setInboxModalOpen(false);
                         setResultModal({
                             isOpen: true,
                             title: 'Kontrak Penelitian Joint-R&D',
@@ -1658,7 +1743,7 @@ export default function MapPage() {
 
                     if (tNotif.tradeType === 'usulan_resolusi_pbb' || tNotif.tradeType === 'usulan_keamanan_pbb') {
                         setInboxModalOpen(false);
-                        setActiveMenu("Geopolitik");
+                        setActiveMenu("Menu:PBB");
                         return;
                     }
 
@@ -1723,6 +1808,12 @@ export default function MapPage() {
                 onRedirectClick={(notif) => {
                     const tNotif = notif as any;
                     if (tNotif.tradeType === 'penawaran_pakta_non_agresi' || tNotif.tradeType === 'penawaran_aliansi_pertahanan' || tNotif.tradeType === 'penawaran_kontrak_penelitian') {
+                        if (tNotif.isHandled) {
+                            setInboxModalOpen(false);
+                            setCountryDetailModalName(tNotif.partnerCountry);
+                            setCountryDetailModalOpen(true);
+                            return;
+                        }
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'rejected' } : n));
                         return;
                     }
@@ -2104,16 +2195,19 @@ export default function MapPage() {
                 }}
             />
 
-            {/* Custom Result Modal (Pengganti alert peramban, Z-Index tertinggi di depan Inbox Modal) */}
-            {resultModal.isOpen && (
-                <div className="fixed inset-0 z-[300000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-                    <div className="bg-[#0A1A1A] border-2 border-[#00FFAA]/40 rounded-2xl p-6 shadow-[0_0_50px_rgba(0,255,170,0.15)] w-full max-w-md relative overflow-hidden flex flex-col font-sans">
+            {/* Custom Result Modal (Pengganti alert peramban, Rendered via React Portal ke document.body) */}
+            {typeof window !== 'undefined' && resultModal.isOpen && createPortal(
+                <div className="fixed inset-0 z-[500000] flex items-center justify-center p-4 animate-fadeIn pointer-events-auto">
+                    <div className="bg-[#0A1A1A] border-2 border-[#00FFAA]/40 rounded-2xl p-6 shadow-[0_0_50px_rgba(0,255,170,0.25)] w-full max-w-md relative overflow-hidden flex flex-col font-sans">
                         <div className="flex items-center justify-between mb-4 border-b border-[#00FFAA]/20 pb-3">
                             <span className={`text-xs font-black tracking-widest uppercase ${resultModal.type === 'error' ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
-                                {resultModal.type === 'error' ? '⚠️ NOTIFIKASI KkETIDAKSAMAAN' : '✓ INFORMASI TRANSAKSI & HASIL'}
+                                {resultModal.type === 'error' ? '⚠️ PERINGATAN KETIDAKSAMAAN' : '✓ INFORMASI TRANSAKSI & HASIL'}
                             </span>
                             <button
-                                onClick={() => setResultModal(prev => ({ ...prev, isOpen: false }))}
+                                onClick={() => {
+                                    setResultModal(prev => ({ ...prev, isOpen: false }));
+                                    setInboxModalOpen(true);
+                                }}
                                 className="text-[#6B8A8A] hover:text-[#00FFAA] font-black text-base cursor-pointer transition-colors"
                             >
                                 ✕
@@ -2126,7 +2220,10 @@ export default function MapPage() {
                             {resultModal.message}
                         </p>
                         <button
-                            onClick={() => setResultModal(prev => ({ ...prev, isOpen: false }))}
+                            onClick={() => {
+                                setResultModal(prev => ({ ...prev, isOpen: false }));
+                                setInboxModalOpen(true);
+                            }}
                             className={`w-full py-3 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all ${
                                 resultModal.type === 'error'
                                     ? 'bg-rose-500/20 border border-rose-500/50 text-rose-400 hover:bg-rose-500/30'
@@ -2136,7 +2233,8 @@ export default function MapPage() {
                             Tutup
                         </button>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
         </main>

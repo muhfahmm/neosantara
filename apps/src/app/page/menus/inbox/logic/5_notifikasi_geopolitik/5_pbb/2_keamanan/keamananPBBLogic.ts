@@ -5,34 +5,44 @@ export interface AIKeamananPBBNotification extends NotificationMessage {
   proposerCountry: string;
   targetCountry: string;
   relationScore: number;
-  securityAction: 'military' | 'economic' | 'naval' | 'full';
+  securityAction: 'military' | 'support' | 'economic' | 'naval' | 'full' | 'treasure';
   actionTitle: string;
 }
 
 const SECURITY_ACTIONS: Array<{
-  action: 'military' | 'economic' | 'naval' | 'full';
+  action: 'military' | 'support' | 'economic' | 'naval' | 'full' | 'treasure';
   title: string;
   desc: string;
 }> = [
   {
     action: 'military',
-    title: 'Resolusi Invasi Militer Gabungan PBB',
-    desc: 'Otorisasi penggunaan kekuatan militer gabungan internasional untuk menundukkan negara target.'
+    title: 'Invasi Militer',
+    desc: 'Semua tentara bersatu dari semua negara menyerang negara yang dipilih.'
+  },
+  {
+    action: 'support',
+    title: 'Dukung Negara',
+    desc: 'Dukungan kepada negara yang dipilih meningkatkan hubungan diplomatiknya dengan semua negara lain sebesar 10 unit.'
   },
   {
     action: 'economic',
-    title: 'Sanksi Blokade Ekonomi Total',
-    desc: 'Penghentian total aktivitas industri, pertambangan, dan akses perdagangan finansial internasional.'
+    title: 'Blokade Ekonomi',
+    desc: 'Selama periode yang dipilih, produksi pabrik dan tambang berkurang sebesar 50%.'
   },
   {
     action: 'naval',
-    title: 'Operasi Blokade Perairan & Laut Internasional',
-    desc: 'Pengiriman armada kapal perang PBB untuk menutup akses jalur laut dan pelabuhan ekspor-impor.'
+    title: 'Blokade Laut',
+    desc: 'Selama periode yang dipilih, produksi pabrik dan tambang berkurang sebesar 25%.'
   },
   {
     action: 'full',
-    title: 'Isolasi Diplomatik & Blokade Penuh PBB',
-    desc: 'Pengisolasian total hubungan internasional, pembekuan traktat bilateral, dan penutupan seluruh kedutaan.'
+    title: 'Blokade Penuh',
+    desc: 'Selama periode yang dipilih, negara ini tidak dapat menandatangani kontrak apa pun atau berdagang.'
+  },
+  {
+    action: 'treasure',
+    title: 'Bantuan Logistik',
+    desc: 'Memberikan bantuan sumber daya dan logistik ke negara yang dipilih.'
   }
 ];
 

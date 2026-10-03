@@ -42,10 +42,14 @@ export default function DefenseAllianceNotificationCard({
 
         <div className="pt-2 flex items-center justify-end gap-2.5">
           {isHandled ? (
-            <div className={`text-[11px] font-bold ${status === 'rejected' ? 'text-rose-400 bg-rose-950/80 border-rose-500/50' : 'text-emerald-400 bg-emerald-950/80 border-emerald-500/50'} px-3 py-1.5 rounded-xl border flex items-center gap-1.5`}>
+            <button
+              onClick={onReject}
+              className={`text-[11px] font-bold ${status === 'rejected' ? 'text-rose-400 bg-rose-950/80 border-rose-500/50 hover:bg-rose-900/90' : 'text-emerald-400 bg-emerald-950/80 border-emerald-500/50 hover:bg-emerald-900/90'} px-3 py-1.5 rounded-xl border flex items-center gap-1.5 cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm`}
+              title="Buka Detail Negara"
+            >
               {status === 'rejected' ? <X className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
               <span>{status === 'rejected' ? `ALIANSI PERTAHANAN DENGAN ${notification.partnerCountry} DITOLAK` : `ALIANSI PERTAHANAN RESMI TERBENTUK DENGAN ${notification.partnerCountry}`}</span>
-            </div>
+            </button>
           ) : (
             <>
               {onReject && (

@@ -5,34 +5,39 @@ export interface AIResolusiPBBNotification extends NotificationMessage {
   proposerCountry: string;
   targetCountry: string;
   relationScore: number;
-  resolutionType: 'war_ban' | 'embargo' | 'tariff' | 'humanitarian';
+  resolutionType: 'war_ban' | 'arms_embargo' | 'economic_embargo' | 'military_invasion' | 'production_ban';
   resolutionTitle: string;
 }
 
 const RESOLUTION_TYPES: Array<{
-  type: 'war_ban' | 'embargo' | 'tariff' | 'humanitarian';
+  type: 'war_ban' | 'arms_embargo' | 'economic_embargo' | 'military_invasion' | 'production_ban';
   title: string;
   desc: string;
 }> = [
   {
     type: 'war_ban',
-    title: 'Pelarangan Perang & Embargo Militer',
-    desc: 'Melarang pengiriman pasukan militer dan melarang transaksi senjata dengan negara target.'
+    title: 'Larangan Perang',
+    desc: 'Dilarang menyerang negara ini selama periode yang dipilih.'
   },
   {
-    type: 'embargo',
-    title: 'Sanksi Embargo Ekonomi & Pembekuan Aset',
-    desc: 'Membekukan transaksi keuangan internasional dan menutup akses pasar komoditas ekspor-impor.'
+    type: 'arms_embargo',
+    title: 'Embargo Penjualan Senjata',
+    desc: 'Perdagangan senjata dilarang selama periode yang dipilih.'
   },
   {
-    type: 'tariff',
-    title: 'Penerapan Tarif Khusus Penalitas PBB',
-    desc: 'Mengenakan tarif bea cukai denda sebesar +50% pada seluruh komoditas dagang negara target.'
+    type: 'economic_embargo',
+    title: 'Embargo Ekonomi',
+    desc: 'Perdagangan ekonomi dilarang selama periode yang dipilih.'
   },
   {
-    type: 'humanitarian',
-    title: 'Resolusi Kecaman Pelanggaran Hak & Pengawasan PBB',
-    desc: 'Mengeluarkan resolusi kecaman keras terhadap tindakan diplomasi agresif negara target.'
+    type: 'military_invasion',
+    title: 'Resolusi Invasi',
+    desc: 'Resolusi memungkinkan negara diinvasi tanpa kecaman oleh negara lain.'
+  },
+  {
+    type: 'production_ban',
+    title: 'Larangan Produksi',
+    desc: 'Produksi produk yang dipilih dihentikan selama periode yang dipilih.'
   }
 ];
 
