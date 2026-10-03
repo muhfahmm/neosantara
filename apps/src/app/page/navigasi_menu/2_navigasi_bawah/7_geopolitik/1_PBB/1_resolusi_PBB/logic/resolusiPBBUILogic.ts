@@ -24,8 +24,10 @@ export interface ActiveResolutionItem {
   status: 'voting' | 'passed' | 'rejected';
   createdAt: string;
   finishedAt?: string;
+  lastProcessedDate?: string;
   notifiedDay1?: boolean;
   notified10Days?: boolean;
+  notifiedFinished?: boolean;
 }
 
 export const STORAGE_KEY_PBB_RESOLUSI = 'pbb_active_resolutions_v4';
@@ -35,6 +37,14 @@ export function getSimulationDateString(): string {
   if (typeof window !== 'undefined') {
     const saved = localStorage.getItem('neosantara_current_game_date');
     if (saved) return saved;
+
+    try {
+      const saveStr = localStorage.getItem('presiden_simulator_load_save');
+      if (saveStr) {
+        const parsed = JSON.parse(saveStr);
+        if (parsed?.game_date) return parsed.game_date;
+      }
+    } catch (e) {}
   }
   const today = new Date();
   const year = today.getFullYear();
@@ -85,15 +95,27 @@ function getDaysDiff(d1Str: string, d2Str: string): number {
   }
 }
 
+function stringHash(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
 /**
  * Hitung kalkulasi perolehan 206 suara negara AI berdasarkan hari berjalan (30 hari).
  * Dimulai dari 0 pada hari ke-0 (Sisa 30 hari), dan terakumulasi seiring berjalannya kalender.
- * Negara yang SETUJU adalah negara yang memiliki hubungan diplomatik/kedubes dengan pengusul.
+ * Suara kalkulasi dinamis berdasarkan hubungan Pengusul, Target, dan Tipe Resolusi.
  */
 export function calculate206AIVotes(
   daysRemaining: number,
   userVote: 'yes' | 'no' | 'abstain' | null = null,
-  embassyCount: number = 38
+  proposerName: string = 'Amerika Serikat',
+  targetName: string = 'Korea Selatan',
+  resolutionType: string = 'arms_embargo'
 ) {
   const elapsedDays = Math.max(0, Math.min(30, 30 - daysRemaining));
   const progressRatio = elapsedDays / 30;
@@ -111,25 +133,57 @@ export function calculate206AIVotes(
     };
   }
 
-  // Negara yang punya kedubes/hubungan diplomatik memberikan suara SETUJU
-  const supporterRatio = Math.max(0.20, Math.min(0.60, embassyCount / baseAiCount));
-  
+  const seedStr = `${proposerName}_${targetName}_${resolutionType}`;
+  const seed = stringHash(seedStr);
+
+  let supporterRatio: number;
+  let opponentRatio: number;
+
+  if (resolutionType === 'war_ban' || targetName.includes('Global') || targetName.includes('Dunia')) {
+    // Larangan Perang Global: mayoritas mendukung perdamaian
+    supporterRatio = 0.60 + ((seed % 20) / 100); // 60% - 80%
+    opponentRatio = 0.05 + (((seed * 3) % 15) / 100); // 5% - 20%
+  } else {
+    // Resolusi spesifik ke negara lain:
+    // Tergantung seed unik pengusul & target
+    const rawSupporter = 0.25 + ((seed % 35) / 100); // 25% - 60%
+    const rawOpponent = 0.25 + (((seed * 7) % 35) / 100); // 25% - 60%
+
+    // Batasi supporter + opponent max 85% agar ada porsi Abstain (dilema dua teman / netral)
+    const totalRatio = rawSupporter + rawOpponent;
+    if (totalRatio > 0.85) {
+      supporterRatio = (rawSupporter / totalRatio) * 0.85;
+      opponentRatio = (rawOpponent / totalRatio) * 0.85;
+    } else {
+      supporterRatio = rawSupporter;
+      opponentRatio = rawOpponent;
+    }
+  }
+
   let supportersCount = Math.round(votesCastSoFar * supporterRatio);
-  let opponentsCount = Math.round(votesCastSoFar * (0.80 - supporterRatio));
+  let opponentsCount = Math.round(votesCastSoFar * opponentRatio);
   let abstainCount = votesCastSoFar - supportersCount - opponentsCount;
 
   if (userVote === 'yes') supportersCount += 1;
   if (userVote === 'no') opponentsCount += 1;
   if (userVote === 'abstain') abstainCount += 1;
 
-  return { supportersCount, opponentsCount, abstainCount, totalVotesCast: votesCastSoFar + (userVote ? 1 : 0) };
+  return {
+    supportersCount: Math.max(0, supportersCount),
+    opponentsCount: Math.max(0, opponentsCount),
+    abstainCount: Math.max(0, abstainCount),
+    totalVotesCast: votesCastSoFar + (userVote ? 1 : 0)
+  };
 }
 
 export function loadActiveResolutions(): ActiveResolutionItem[] {
   if (typeof window === 'undefined') return getInitialActiveResolutions();
   try {
     const data = localStorage.getItem(STORAGE_KEY_PBB_RESOLUSI);
-    if (data) return JSON.parse(data);
+    if (data) {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
   } catch (e) {
     console.error('Failed loading PBB resolutions:', e);
   }
@@ -147,13 +201,39 @@ export function saveActiveResolutions(items: ActiveResolutionItem[]) {
   }
 }
 
+export function getActiveUserCountryName(userCountryName?: string): string {
+  if (userCountryName && userCountryName.toLowerCase() !== 'indonesia') {
+    return userCountryName;
+  }
+  if (typeof window !== 'undefined') {
+    try {
+      const saveStr = localStorage.getItem('presiden_simulator_load_save');
+      if (saveStr) {
+        const parsed = JSON.parse(saveStr);
+        if (parsed.countryName) return parsed.countryName;
+      }
+    } catch (e) {}
+  }
+  return userCountryName || 'Indonesia';
+}
+
 export function getInitialActiveResolutions(userCountryName: string = 'Indonesia'): ActiveResolutionItem[] {
-  const proposer = DEFAULT_AI_PROPOSERS[Math.floor(Math.random() * DEFAULT_AI_PROPOSERS.length)];
-  const target = DEFAULT_AI_TARGETS[Math.floor(Math.random() * DEFAULT_AI_TARGETS.length)];
+  const activeUser = getActiveUserCountryName(userCountryName);
+  const availableProposers = DEFAULT_AI_PROPOSERS.filter(p => 
+    p.name.toLowerCase() !== activeUser.toLowerCase() && 
+    p.iso.toLowerCase() !== activeUser.toLowerCase()
+  );
+  const proposersList = availableProposers.length > 0 ? availableProposers : DEFAULT_AI_PROPOSERS;
+  const proposer = proposersList[Math.floor(Math.random() * proposersList.length)];
+
+  const availableTargets = DEFAULT_AI_TARGETS.filter(t => 
+    t.name.toLowerCase() !== proposer.name.toLowerCase()
+  );
+  const target = availableTargets[Math.floor(Math.random() * availableTargets.length)] || DEFAULT_AI_TARGETS[0];
   const tmpl = RESOLUTION_TEMPLATES[Math.floor(Math.random() * RESOLUTION_TEMPLATES.length)];
 
   const initialDaysRemaining = 30; // Mulai dari 30 hari
-  const initialVotes = calculate206AIVotes(initialDaysRemaining, null);
+  const initialVotes = calculate206AIVotes(initialDaysRemaining, null, proposer.name, target.name, tmpl.type);
   const dateStr = getSimulationDateString();
 
   return [
@@ -187,47 +267,63 @@ export function getInitialActiveResolutions(userCountryName: string = 'Indonesia
  */
 export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (notif: any) => void): ActiveResolutionItem[] {
   const currentItems = loadActiveResolutions();
+  const activeUser = getActiveUserCountryName();
 
-  const updated = currentItems
+  let updated: ActiveResolutionItem[] = currentItems
     .map(item => {
       let startDate = item.createdAt || dateStr;
-      let elapsedDays = getDaysDiff(startDate, dateStr);
+      const lastDate = item.lastProcessedDate || startDate;
 
-      if (elapsedDays < 0) {
-        startDate = dateStr;
-        elapsedDays = 0;
+      let dayStep = getDaysDiff(lastDate, dateStr);
+      if (dayStep < 0) {
+        dayStep = 0;
+      }
+      // Step Cap: maksimal berkurang 3 hari per tick untuk mencegah lonjakan akibat restart/refresh/date fallback
+      const step = Math.min(dayStep, 3);
+
+      // Protect: Ubah pengusul AI jika tidak sengaja sama dengan negara aktif user
+      let proposer = item.proposer;
+      const isUserSubmitted = item.id.startsWith('res-user-');
+      if (!isUserSubmitted && proposer?.name && proposer.name.toLowerCase() === activeUser.toLowerCase()) {
+        const availableProposers = DEFAULT_AI_PROPOSERS.filter(p => p.name.toLowerCase() !== activeUser.toLowerCase());
+        proposer = availableProposers[Math.floor(Math.random() * availableProposers.length)] || { name: 'Rusia', iso: 'ru' };
       }
 
       // Jika resolusi sudah selesai (passed / rejected), hitung cooldown 30 hari untuk penghapusan
       if (item.status !== 'voting') {
         const finishDate = item.finishedAt || dateStr;
-        const cooldownElapsed = Math.max(0, getDaysDiff(finishDate, dateStr));
-        const cooldownRemaining = Math.max(0, 30 - cooldownElapsed);
+        const cooldownRemaining = Math.max(0, item.daysRemaining - step);
 
         return {
           ...item,
+          proposer,
           finishedAt: finishDate,
-          daysRemaining: cooldownRemaining
+          daysRemaining: cooldownRemaining,
+          lastProcessedDate: dateStr
         };
       }
 
-      const newDaysRemaining = Math.max(0, 30 - elapsedDays);
-      const votes = calculate206AIVotes(newDaysRemaining, item.userVote);
+      const newDaysRemaining = Math.max(0, item.daysRemaining - step);
+      const votes = calculate206AIVotes(newDaysRemaining, item.userVote, proposer?.name, item.target?.name, item.type);
       let notified = item.notified10Days || false;
       let notifiedDay1 = item.notifiedDay1 || false;
 
       // Trigger notifikasi inbox saat usulan baru dibuat / hari pertama (30 hari tersisa)
+      // Proteksi: Hanya kirim jika bukan atas nama user (kecuali resolusi yang memang dibuat user sendiri)
+      const isUserProposer = proposer?.name?.toLowerCase() === activeUser.toLowerCase();
+      const allowNotification = isUserSubmitted || !isUserProposer;
+
       if (newDaysRemaining >= 29 && !notifiedDay1) {
         notifiedDay1 = true;
-        if (onTriggerNotification) {
+        if (onTriggerNotification && allowNotification) {
           const notifCard = generateAIResolusiPBBNotification(
-            item.proposer.name,
+            proposer.name,
             item.target.name,
             15,
             dateStr
           );
-          notifCard.title = `🏛️ USULAN RESOLUSI PBB BARU: ${item.proposer.name} ➔ ${item.target.name}`;
-          notifCard.message = `Negara ${item.proposer.name} secara resmi mengajukan usulan "${item.label}" yang menargetkan ${item.target.name} di Majelis Umum PBB. Pemungutan suara telah dibuka selama 30 hari!`;
+          notifCard.title = `🏛️ USULAN RESOLUSI PBB BARU: ${proposer.name} ➔ ${item.target.name}`;
+          notifCard.message = `Negara ${proposer.name} secara resmi mengajukan usulan "${item.label}" yang menargetkan ${item.target.name} di Majelis Umum PBB. Pemungutan suara telah dibuka selama 30 hari!`;
           onTriggerNotification(notifCard);
         }
       }
@@ -235,25 +331,43 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
       // Trigger popup inbox jika sisa hari <= 10 dan user belum vote
       if (newDaysRemaining <= 10 && !item.userVote && !notified) {
         notified = true;
-        if (onTriggerNotification) {
+        if (onTriggerNotification && allowNotification) {
           const notifCard = generateAIResolusiPBBNotification(
-            item.proposer.name,
+            proposer.name,
             item.target.name,
             15,
             dateStr
           );
-          notifCard.title = `⚠️ PERINGATAN VOTING PBB (Sisa ${newDaysRemaining} Hari): ${item.proposer.name} ➔ ${item.target.name}`;
-          notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara Indonesia untuk usulan "${item.label}" yang menargetkan ${item.target.name}. Sejauh ini ${votes.supportersCount} negara setuju dan ${votes.opponentsCount} menolak.`;
+          notifCard.title = `⚠️ PERINGATAN VOTING PBB (Sisa ${newDaysRemaining} Hari): ${proposer.name} ➔ ${item.target.name}`;
+          notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara ${activeUser} untuk usulan "${item.label}" yang menargetkan ${item.target.name}. Sejauh ini ${votes.supportersCount} negara setuju dan ${votes.opponentsCount} menolak.`;
           onTriggerNotification(notifCard);
         }
       }
 
       let finalStatus: 'voting' | 'passed' | 'rejected' = 'voting';
       let finishedAtDate: string | undefined = item.finishedAt;
+      let notifiedFinished = item.notifiedFinished || false;
 
       if (newDaysRemaining === 0) {
         finalStatus = votes.supportersCount > votes.opponentsCount ? 'passed' : 'rejected';
         finishedAtDate = dateStr;
+
+        if (!notifiedFinished) {
+          notifiedFinished = true;
+          // Kirimkan notifikasi selesai khusus jika ini resolusi buatan user atau mengikutsertakan negara user
+          if (onTriggerNotification && (isUserSubmitted || isUserProposer)) {
+            const statusLabel = finalStatus === 'passed' ? 'DITERIMA' : 'DITOLAK';
+            const finishCard = generateAIResolusiPBBNotification(
+              proposer.name,
+              item.target.name,
+              15,
+              dateStr
+            );
+            finishCard.title = `🏛️ HASIL RESOLUSI PBB: ${item.label} (${statusLabel})`;
+            finishCard.message = `Pemungutan suara Sidang Umum Majelis PBB untuk usulan "${item.label}" (Pengusul: ${proposer.name}, Target: ${item.target.name}) telah SELESAI. Perolehan suara akhir: ${votes.supportersCount} Setuju, ${votes.opponentsCount} Menolak, ${votes.abstainCount} Abstain. Status resmi: RESOLUSI ${statusLabel}.`;
+            onTriggerNotification(finishCard);
+          }
+        }
       }
 
       return {
@@ -268,16 +382,22 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
         },
         status: finalStatus,
         notifiedDay1: notifiedDay1,
-        notified10Days: notified
+        notified10Days: notified,
+        notifiedFinished: notifiedFinished,
+        lastProcessedDate: dateStr
       };
     })
     // Filter out item jika masa cooldown 30 hari pasca pemungutan suara telah habis (daysRemaining === 0 pada status finished)
     .filter(item => {
       if (item.status !== 'voting' && item.daysRemaining <= 0) {
-        return false; // Terhapus secara otomatis
+        return false; // Terhapus secara otomatis setelah 30 hari cooldown selesai
       }
       return true;
     });
+
+  if (updated.length === 0) {
+    updated = getInitialActiveResolutions();
+  }
 
   saveActiveResolutions(updated);
   if (typeof window !== 'undefined') {

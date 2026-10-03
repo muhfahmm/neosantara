@@ -37,6 +37,7 @@ import ResearchContractNotificationCard from './logic/5_notifikasi_geopolitik/3_
 import HubunganPanasNotificationCard from './logic/5_notifikasi_geopolitik/4_hubungan_panas/hubunganPanasNotificationCard';
 import ResolusiPBBNotificationCard from './logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBNotificationCard';
 import KeamananPBBNotificationCard from './logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBNotificationCard';
+import { getActiveUserCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -487,6 +488,12 @@ export default function TopLeftIcon({
                       );
                     }
                     if (tradeType === 'usulan_resolusi_pbb') {
+                      const activeUser = getActiveUserCountryName();
+                      const proposer = (notif as any).proposerCountry;
+                      const isUserCreated = (notif as any).id?.includes('user');
+                      if (proposer && proposer.toLowerCase() === activeUser.toLowerCase() && !isUserCreated) {
+                        return null;
+                      }
                       return (
                         <ResolusiPBBNotificationCard
                           key={notif.id}
@@ -497,6 +504,12 @@ export default function TopLeftIcon({
                       );
                     }
                     if (tradeType === 'usulan_keamanan_pbb') {
+                      const activeUser = getActiveUserCountryName();
+                      const proposer = (notif as any).proposerCountry;
+                      const isUserCreated = (notif as any).id?.includes('user');
+                      if (proposer && proposer.toLowerCase() === activeUser.toLowerCase() && !isUserCreated) {
+                        return null;
+                      }
                       return (
                         <KeamananPBBNotificationCard
                           key={notif.id}

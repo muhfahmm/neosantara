@@ -249,6 +249,9 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
 
   const handleVote = (resId: string, voteType: 'yes' | 'no' | 'abstain') => {
     const currentList = typeof loadActiveResolutions === 'function' ? loadActiveResolutions() : activeResolutions;
+    const targetRes = currentList.find(r => r.id === resId);
+    if (targetRes && targetRes.status !== 'voting') return;
+
     const updated = currentList.map(item => {
       if (item.id !== resId) return item;
       const prevVote = item.userVote;
@@ -479,33 +482,50 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
 
                   {/* Tombol Aksi Vote Player */}
                   <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-                    <span className="text-[10px] font-bold text-[#6B8A8A] uppercase mr-1">Suara Anda:</span>
+                    <span className="text-[10px] font-bold text-[#6B8A8A] uppercase mr-1">
+                      {res.status !== 'voting' ? 'Voting Ditutup:' : 'Suara Anda:'}
+                    </span>
                     <button
+                      disabled={res.status !== 'voting'}
                       onClick={() => handleVote(res.id, 'yes')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${
-                        res.userVote === 'yes'
-                          ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
-                          : 'bg-[#051111] text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20'
+                      className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
+                        res.status !== 'voting'
+                          ? res.userVote === 'yes'
+                            ? 'bg-emerald-500/50 text-slate-950 cursor-not-allowed opacity-70'
+                            : 'bg-[#051111]/50 text-emerald-400/40 border border-emerald-500/10 cursor-not-allowed opacity-40'
+                          : res.userVote === 'yes'
+                            ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30 cursor-pointer'
+                            : 'bg-[#051111] text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 cursor-pointer'
                       }`}
                     >
                       Setuju
                     </button>
                     <button
+                      disabled={res.status !== 'voting'}
                       onClick={() => handleVote(res.id, 'no')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${
-                        res.userVote === 'no'
-                          ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30'
-                          : 'bg-[#051111] text-rose-400 border border-rose-500/30 hover:bg-rose-500/20'
+                      className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
+                        res.status !== 'voting'
+                          ? res.userVote === 'no'
+                            ? 'bg-rose-500/50 text-white cursor-not-allowed opacity-70'
+                            : 'bg-[#051111]/50 text-rose-400/40 border border-rose-500/10 cursor-not-allowed opacity-40'
+                          : res.userVote === 'no'
+                            ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30 cursor-pointer'
+                            : 'bg-[#051111] text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 cursor-pointer'
                       }`}
                     >
                       Menolak
                     </button>
                     <button
+                      disabled={res.status !== 'voting'}
                       onClick={() => handleVote(res.id, 'abstain')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all cursor-pointer ${
-                        res.userVote === 'abstain'
-                          ? 'bg-slate-400 text-slate-950 shadow-md'
-                          : 'bg-[#051111] text-slate-400 border border-slate-500/30 hover:bg-slate-500/20'
+                      className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
+                        res.status !== 'voting'
+                          ? res.userVote === 'abstain'
+                            ? 'bg-slate-400/50 text-slate-950 cursor-not-allowed opacity-70'
+                            : 'bg-[#051111]/50 text-slate-400/40 border border-slate-500/10 cursor-not-allowed opacity-40'
+                          : res.userVote === 'abstain'
+                            ? 'bg-slate-400 text-slate-950 shadow-md cursor-pointer'
+                            : 'bg-[#051111] text-slate-400 border border-slate-500/30 hover:bg-slate-500/20 cursor-pointer'
                       }`}
                     >
                       Abstain
