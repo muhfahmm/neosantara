@@ -24,6 +24,8 @@ export interface ActiveSecurityCouncilItem {
   userVote: 'yes' | 'no' | 'abstain' | null;
   status: 'voting' | 'passed' | 'vetoed' | 'rejected';
   createdAt: string;
+  finishedAt?: string;
+  notifiedDay1?: boolean;
   notified10Days?: boolean;
 }
 
@@ -181,61 +183,101 @@ export function getInitialActiveSecurityCouncilItems(userCountryName: string = '
 export function tickPBBSecurityCouncil(dateStr: string, onTriggerNotification?: (notif: any) => void): ActiveSecurityCouncilItem[] {
   const currentItems = loadActiveSecurityCouncilItems();
 
-  const updated = currentItems.map(item => {
-    if (item.status !== 'voting') return item;
+  const updated = currentItems
+    .map(item => {
+      let startDate = item.createdAt || dateStr;
+      let elapsedDays = getDaysDiff(startDate, dateStr);
 
-    let startDate = item.createdAt || dateStr;
-    let elapsedDays = getDaysDiff(startDate, dateStr);
-
-    // jika kalender game lebih awal dari createdAt (misal akibat restart/load save), rebase ke dateStr saat ini
-    if (elapsedDays < 0) {
-      startDate = dateStr;
-      elapsedDays = 0;
-    }
-
-    const newDaysRemaining = Math.max(0, 30 - elapsedDays);
-    const votes = calculate15SecurityCouncilVotes(newDaysRemaining, item.userVote);
-    let notified = item.notified10Days || false;
-
-    // Trigger popup inbox jika sisa hari <= 10 dan user belum vote
-    if (newDaysRemaining <= 10 && !item.userVote && !notified) {
-      notified = true;
-      if (onTriggerNotification) {
-        const notifCard = generateAIKeamananPBBNotification(
-          item.proposer.name,
-          item.target.name,
-          10,
-          dateStr
-        );
-        notifCard.title = `🚨 PANGGILAN DARURAT DEWAN KEAMANAN PBB (Sisa ${newDaysRemaining} Hari): ${item.proposer.name} ➔ ${item.target.name}`;
-        notifCard.message = `Batas waktu sidang tersisa ${newDaysRemaining} hari! Dewan Keamanan PBB memanggil Indonesia untuk memberikan suara atas draf "${item.label}" yang menargetkan ${item.target.name}.`;
-        onTriggerNotification(notifCard);
+      if (elapsedDays < 0) {
+        startDate = dateStr;
+        elapsedDays = 0;
       }
-    }
 
-    let finalStatus: 'voting' | 'passed' | 'vetoed' | 'rejected' = 'voting';
-    if (newDaysRemaining === 0) {
-      if (votes.vetoCount > 0) {
-        finalStatus = 'vetoed';
-      } else {
-        finalStatus = votes.supportersCount >= 9 ? 'passed' : 'rejected';
+      // Jika sidang DK PBB sudah selesai (passed / vetoed / rejected), hitung cooldown 30 hari untuk penghapusan
+      if (item.status !== 'voting') {
+        const finishDate = item.finishedAt || dateStr;
+        const cooldownElapsed = Math.max(0, getDaysDiff(finishDate, dateStr));
+        const cooldownRemaining = Math.max(0, 30 - cooldownElapsed);
+
+        return {
+          ...item,
+          finishedAt: finishDate,
+          daysRemaining: cooldownRemaining
+        };
       }
-    }
 
-    return {
-      ...item,
-      createdAt: startDate,
-      daysRemaining: newDaysRemaining,
-      voteStats: {
-        supportersCount: votes.supportersCount,
-        opponentsCount: votes.opponentsCount,
-        abstainCount: votes.abstainCount,
-        vetoCount: votes.vetoCount
-      },
-      status: finalStatus,
-      notified10Days: notified
-    };
-  });
+      const newDaysRemaining = Math.max(0, 30 - elapsedDays);
+      const votes = calculate15SecurityCouncilVotes(newDaysRemaining, item.userVote);
+      let notified = item.notified10Days || false;
+      let notifiedDay1 = item.notifiedDay1 || false;
+
+      // Trigger notifikasi inbox saat usulan baru dibuat / hari pertama (30 hari tersisa)
+      if (newDaysRemaining >= 29 && !notifiedDay1) {
+        notifiedDay1 = true;
+        if (onTriggerNotification) {
+          const notifCard = generateAIKeamananPBBNotification(
+            item.proposer.name,
+            item.target.name,
+            10,
+            dateStr
+          );
+          notifCard.title = `🛡️ USULAN DEWAN KEAMANAN PBB BARU: ${item.proposer.name} ➔ ${item.target.name}`;
+          notifCard.message = `Negara ${item.proposer.name} secara resmi mengajukan draf Operasi Kritis "${item.label}" terhadap ${item.target.name} di Dewan Keamanan PBB. Pemungutan suara telah dimulai!`;
+          onTriggerNotification(notifCard);
+        }
+      }
+
+      // Trigger popup inbox jika sisa hari <= 10 dan user belum vote
+      if (newDaysRemaining <= 10 && !item.userVote && !notified) {
+        notified = true;
+        if (onTriggerNotification) {
+          const notifCard = generateAIKeamananPBBNotification(
+            item.proposer.name,
+            item.target.name,
+            10,
+            dateStr
+          );
+          notifCard.title = `🚨 PANGGILAN DARURAT DEWAN KEAMANAN PBB (Sisa ${newDaysRemaining} Hari): ${item.proposer.name} ➔ ${item.target.name}`;
+          notifCard.message = `Batas waktu sidang tersisa ${newDaysRemaining} hari! Dewan Keamanan PBB memanggil Indonesia untuk memberikan suara atas draf "${item.label}" yang menargetkan ${item.target.name}.`;
+          onTriggerNotification(notifCard);
+        }
+      }
+
+      let finalStatus: 'voting' | 'passed' | 'vetoed' | 'rejected' = 'voting';
+      let finishedAtDate: string | undefined = item.finishedAt;
+
+      if (newDaysRemaining === 0) {
+        if (votes.vetoCount > 0) {
+          finalStatus = 'vetoed';
+        } else {
+          finalStatus = votes.supportersCount >= 9 ? 'passed' : 'rejected';
+        }
+        finishedAtDate = dateStr;
+      }
+
+      return {
+        ...item,
+        createdAt: startDate,
+        finishedAt: finishedAtDate,
+        daysRemaining: finalStatus !== 'voting' ? 30 : newDaysRemaining,
+        voteStats: {
+          supportersCount: votes.supportersCount,
+          opponentsCount: votes.opponentsCount,
+          abstainCount: votes.abstainCount,
+          vetoCount: votes.vetoCount
+        },
+        status: finalStatus,
+        notifiedDay1: notifiedDay1,
+        notified10Days: notified
+      };
+    })
+    // Filter out item jika masa cooldown 30 hari pasca pemungutan suara telah habis (daysRemaining === 0 pada status finished)
+    .filter(item => {
+      if (item.status !== 'voting' && item.daysRemaining <= 0) {
+        return false; // Terhapus secara otomatis
+      }
+      return true;
+    });
 
   saveActiveSecurityCouncilItems(updated);
   if (typeof window !== 'undefined') {

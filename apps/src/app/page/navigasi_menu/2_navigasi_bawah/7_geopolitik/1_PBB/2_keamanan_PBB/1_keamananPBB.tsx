@@ -463,13 +463,25 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
                     <span className="text-xs font-black text-[#00FFAA] bg-[#00FFAA]/10 px-3 py-1 rounded-lg border border-[#00FFAA]/30 uppercase">
                       {item.label}
                     </span>
-                    <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20">
+                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md border ${
+                      item.daysRemaining === 0 
+                        ? 'text-slate-400 bg-slate-500/10 border-slate-500/20' 
+                        : 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+                    }`}>
                       Sisa: {item.daysRemaining} Hari
                     </span>
                   </div>
 
-                  <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md bg-rose-500/15 text-rose-400 border border-rose-500/30">
-                    Sidang Khusus DK PBB
+                  <span className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md border ${
+                    item.daysRemaining === 0 || item.status !== 'voting'
+                      ? item.status === 'passed'
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40'
+                        : 'bg-rose-500/15 text-rose-400 border-rose-500/40'
+                      : 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                  }`}>
+                    {item.daysRemaining === 0 || item.status !== 'voting'
+                      ? item.status === 'passed' ? 'STATUS: DITERIMA' : (item.status === 'vetoed' ? 'STATUS: DIVETO' : 'STATUS: DITOLAK')
+                      : 'STATUS: DALAM PEMUNGUTAN SUARA (DK PBB)'}
                   </span>
                 </div>
 
@@ -492,9 +504,26 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
                   </div>
                 </div>
 
-                <p className="text-xs font-medium text-slate-300 leading-relaxed">
-                  {item.desc}
-                </p>
+                {/* Badge Kategori & Deskripsi */}
+                <div className="space-y-1.5">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#00FFAA]/10 border border-[#00FFAA]/30 text-[#00FFAA] text-[10px] font-black uppercase tracking-wider">
+                    <span>Kategori: {item.label}</span>
+                  </div>
+                  <p className="text-xs font-medium text-slate-300 leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+
+                {/* Info Durasi & Sisa Hari / Cooldown Penghapusan */}
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[11px] font-bold text-[#6B8A8A] bg-[#051111] px-3.5 py-2 rounded-lg border border-[#00FFAA]/10">
+                  <span className="text-[#00FFAA]">Durasi: {item.duration || '30 Hari'}</span>
+                  <span>•</span>
+                  {item.status === 'voting' ? (
+                    <span>Progres sisa hari: <strong className="text-amber-400">{item.daysRemaining} hari tersisa</strong> (30 Hari - {30 - item.daysRemaining} Hari)</span>
+                  ) : (
+                    <span>Cooldown Penghapusan: <strong className="text-rose-400">{item.daysRemaining} Hari Tersisa</strong> (Akan terhapus otomatis)</span>
+                  )}
+                </div>
 
                 {/* Perolehan Suara & Voting User */}
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-2 border-t border-[#00FFAA]/15">

@@ -77,7 +77,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   });
 
   const RESOLUTION_ACTIONS = [
-    { id: 'war_ban', icon: Swords, label: 'Larangan Perang', desc: 'Dilarang menyerang negara ini selama periode yang dipilih.' },
+    { id: 'war_ban', icon: Swords, label: 'Larangan Perang', desc: 'Dilarang melakukan peperangan antar negara di seluruh dunia selama periode yang dipilih.' },
     { id: 'arms_embargo', icon: ShieldBan, label: 'Embargo Penjualan Senjata', desc: 'Perdagangan senjata dilarang selama periode yang dipilih.' },
     { id: 'economic_embargo', icon: Coins, label: 'Embargo Ekonomi', desc: 'Perdagangan ekonomi dilarang selama periode yang dipilih.' },
     { id: 'military_invasion', icon: Bomb, label: 'Resolusi Invasi', desc: 'Resolusi memungkinkan negara diinvasi tanpa kecaman oleh negara lain.' },
@@ -139,6 +139,18 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   }, [countries, selectedCountry]);
 
   useEffect(() => {
+    if (selectedType === 'war_ban') {
+      const safeCountries = Array.isArray(countries) ? countries : [];
+      const supportersList = allies;
+      const opponentsList = safeCountries.filter(c => !allies.some(ally => ally.id === c.id));
+      setVoteStats({
+        supporters: supportersList,
+        opponents: opponentsList,
+        hasDiplomaticRelation: true
+      });
+      return;
+    }
+
     if (!selectedTarget || !selectedCountry || countries.length === 0) {
       setVoteStats({ supporters: [], opponents: [], hasDiplomaticRelation: false });
       return;
@@ -211,6 +223,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
     }
   }, [showCreateModal, isCountryModalOpen, isSupportersModalOpen, isOpponentsModalOpen]);
 
+  const isWarBan = selectedType === 'war_ban';
   const isProductionBan = selectedType === 'production_ban';
 
   const [activeResolutions, setActiveResolutions] = useState<ActiveResolutionItem[]>([]);
@@ -264,13 +277,25 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   };
 
   const handleSubmitResolution = () => {
-    if (!selectedTarget && !isProductionBan) {
+    if (!selectedTarget && !isProductionBan && !isWarBan) {
       return;
     }
     const activeAction = RESOLUTION_ACTIONS.find(a => a.id === selectedType);
     const votes = typeof calculate206AIVotes === 'function'
       ? calculate206AIVotes(30, 'yes')
       : { supportersCount: 1, opponentsCount: 0, abstainCount: 0 };
+
+    const targetName = isWarBan
+      ? 'Seluruh Dunia (Global)'
+      : isProductionBan
+        ? 'Sektor Komoditas Global'
+        : selectedTarget?.name || 'Target';
+
+    const targetIso = isWarBan
+      ? 'un'
+      : isProductionBan
+        ? 'un'
+        : selectedTarget?.iso || 'id';
 
     const newRes: ActiveResolutionItem = {
       id: `res-user-${Date.now()}`,
@@ -279,13 +304,13 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
         iso: selectedCountry?.iso?.toLowerCase() || 'id'
       },
       target: {
-        name: selectedTarget?.name || (isProductionBan ? 'Sektor Komoditas Global' : 'Target'),
-        iso: selectedTarget?.iso || 'id'
+        name: targetName,
+        iso: targetIso
       },
       type: selectedType,
       label: activeAction?.label || 'Resolusi PBB',
       desc: activeAction?.desc || '',
-      duration: '30 hari',
+      duration: selectedDuration,
       daysRemaining: 30,
       voteStats: {
         supportersCount: votes.supportersCount,
@@ -374,13 +399,25 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                     <span className="text-xs font-black text-[#00FFAA] bg-[#00FFAA]/10 px-3 py-1 rounded-lg border border-[#00FFAA]/30 uppercase">
                       {res.label}
                     </span>
-                    <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20">
+                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md border ${
+                      res.daysRemaining === 0 
+                        ? 'text-slate-400 bg-slate-500/10 border-slate-500/20' 
+                        : 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+                    }`}>
                       Sisa: {res.daysRemaining} Hari
                     </span>
                   </div>
 
-                  <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
-                    Status: Dalam Pemungutan Suara
+                  <span className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md border ${
+                    res.daysRemaining === 0 || res.status !== 'voting'
+                      ? res.status === 'passed'
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40'
+                        : 'bg-rose-500/15 text-rose-400 border-rose-500/40'
+                      : 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30'
+                  }`}>
+                    {res.daysRemaining === 0 || res.status !== 'voting'
+                      ? res.status === 'passed' ? 'STATUS: DITERIMA' : 'STATUS: DITOLAK'
+                      : 'STATUS: DALAM PEMUNGUTAN SUARA'}
                   </span>
                 </div>
 
@@ -403,9 +440,26 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                   </div>
                 </div>
 
-                <p className="text-xs font-medium text-slate-300 leading-relaxed">
-                  {res.desc}
-                </p>
+                {/* Badge Kategori & Deskripsi */}
+                <div className="space-y-1.5">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#00FFAA]/10 border border-[#00FFAA]/30 text-[#00FFAA] text-[10px] font-black uppercase tracking-wider">
+                    <span>Kategori: {res.label}</span>
+                  </div>
+                  <p className="text-xs font-medium text-slate-300 leading-relaxed">
+                    {res.desc}
+                  </p>
+                </div>
+
+                {/* Info Durasi & Sisa Hari / Cooldown Penghapusan */}
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[11px] font-bold text-[#6B8A8A] bg-[#051111] px-3.5 py-2 rounded-lg border border-[#00FFAA]/10">
+                  <span className="text-[#00FFAA]">Durasi: {res.duration || '30 Hari'}</span>
+                  <span>•</span>
+                  {res.status === 'voting' ? (
+                    <span>Progres sisa hari: <strong className="text-amber-400">{res.daysRemaining} hari tersisa</strong> (30 Hari - {30 - res.daysRemaining} Hari)</span>
+                  ) : (
+                    <span>Cooldown Penghapusan: <strong className="text-rose-400">{res.daysRemaining} Hari Tersisa</strong> (Akan terhapus otomatis)</span>
+                  )}
+                </div>
 
                 {/* Perolehan Suara & Voting User */}
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-2 border-t border-[#00FFAA]/15">
@@ -526,8 +580,8 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+                <div className={`grid grid-cols-1 ${isWarBan ? '' : 'md:grid-cols-2'} gap-6`}>
+                  <div className={isWarBan ? 'w-full' : ''}>
                     <p className="text-[10px] font-black text-[#00FFAA] uppercase tracking-wider mb-2">Pilih durasi:</p>
                     <div className="relative" ref={durationRef}>
                       <button type="button" onClick={() => setIsDurationOpen(!isDurationOpen)} className="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-[#0A1A1A] text-[#E0E0E0] border border-[#00FFAA]/30 shadow-md hover:border-[#00FFAA]/60 transition-all cursor-pointer">
@@ -544,45 +598,47 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                     </div>
                   </div>
 
-                  <div>
-                    <p className="text-[10px] font-black text-[#00FFAA] uppercase tracking-wider mb-2">
-                      {isProductionBan ? "Pilih produk:" : "Pilih negara:"}
-                    </p>
-                    
-                    {isProductionBan ? (
-                      <div className="relative" ref={productRef}>
-                        <button type="button" onClick={() => setIsProductOpen(!isProductOpen)} className="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-[#0A1A1A] text-[#E0E0E0] border border-[#00FFAA]/30 shadow-md hover:border-[#00FFAA]/60 transition-all cursor-pointer">
-                          <span className="text-sm font-bold">{selectedProduct}</span>
-                          <ChevronDown className={`w-4 h-4 text-[#00FFAA] transition-transform ${isProductOpen ? 'rotate-180' : ''}`} />
-                        </button>
-                        {isProductOpen && (
-                          <div className="absolute top-full left-0 right-0 mt-2 bg-[#051111] border border-[#00FFAA]/30 rounded-xl shadow-xl z-30 overflow-hidden">
-                            {PRODUCT_OPTIONS.map((prod) => (
-                              <button key={prod} onClick={() => { setSelectedProduct(prod); setIsProductOpen(false); }} className="w-full px-5 py-3 text-left text-sm font-bold text-[#E0E0E0] transition-colors cursor-pointer hover:bg-[#00FFAA]/10 border-b border-[#00FFAA]/10 last:border-b-0">{prod}</button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <button 
-                        type="button"
-                        onClick={() => setIsCountryModalOpen(true)}
-                        className="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-[#0A1A1A] text-[#E0E0E0] border border-[#00FFAA]/30 shadow-md hover:border-[#00FFAA]/60 transition-all cursor-pointer"
-                      >
-                        <div className="flex items-center gap-3 truncate">
-                          {selectedTarget ? (
-                            <>
-                              {renderFlag(selectedTarget.iso, selectedTarget.name, "sm")}
-                              <span className="text-sm font-bold truncate">{selectedTarget.name}</span>
-                            </>
-                          ) : (
-                            <span className="text-sm font-bold text-[#6B8A8A]">-- Pilih Negara --</span>
+                  {!isWarBan && (
+                    <div>
+                      <p className="text-[10px] font-black text-[#00FFAA] uppercase tracking-wider mb-2">
+                        {isProductionBan ? "Pilih produk:" : "Pilih negara:"}
+                      </p>
+                      
+                      {isProductionBan ? (
+                        <div className="relative" ref={productRef}>
+                          <button type="button" onClick={() => setIsProductOpen(!isProductOpen)} className="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-[#0A1A1A] text-[#E0E0E0] border border-[#00FFAA]/30 shadow-md hover:border-[#00FFAA]/60 transition-all cursor-pointer">
+                            <span className="text-sm font-bold">{selectedProduct}</span>
+                            <ChevronDown className={`w-4 h-4 text-[#00FFAA] transition-transform ${isProductOpen ? 'rotate-180' : ''}`} />
+                          </button>
+                          {isProductOpen && (
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-[#051111] border border-[#00FFAA]/30 rounded-xl shadow-xl z-30 overflow-hidden">
+                              {PRODUCT_OPTIONS.map((prod) => (
+                                <button key={prod} onClick={() => { setSelectedProduct(prod); setIsProductOpen(false); }} className="w-full px-5 py-3 text-left text-sm font-bold text-[#E0E0E0] transition-colors cursor-pointer hover:bg-[#00FFAA]/10 border-b border-[#00FFAA]/10 last:border-b-0">{prod}</button>
+                              ))}
+                            </div>
                           )}
                         </div>
-                        <ChevronDown className="w-4 h-4 text-[#00FFAA]" />
-                      </button>
-                    )}
-                  </div>
+                      ) : (
+                        <button 
+                          type="button"
+                          onClick={() => setIsCountryModalOpen(true)}
+                          className="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-[#0A1A1A] text-[#E0E0E0] border border-[#00FFAA]/30 shadow-md hover:border-[#00FFAA]/60 transition-all cursor-pointer"
+                        >
+                          <div className="flex items-center gap-3 truncate">
+                            {selectedTarget ? (
+                              <>
+                                {renderFlag(selectedTarget.iso, selectedTarget.name, "sm")}
+                                <span className="text-sm font-bold truncate">{selectedTarget.name}</span>
+                              </>
+                            ) : (
+                              <span className="text-sm font-bold text-[#6B8A8A]">-- Pilih Negara --</span>
+                            )}
+                          </div>
+                          <ChevronDown className="w-4 h-4 text-[#00FFAA]" />
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-center gap-4">

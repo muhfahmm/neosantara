@@ -23,6 +23,8 @@ export interface ActiveResolutionItem {
   userVote: 'yes' | 'no' | 'abstain' | null;
   status: 'voting' | 'passed' | 'rejected';
   createdAt: string;
+  finishedAt?: string;
+  notifiedDay1?: boolean;
   notified10Days?: boolean;
 }
 
@@ -186,56 +188,96 @@ export function getInitialActiveResolutions(userCountryName: string = 'Indonesia
 export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (notif: any) => void): ActiveResolutionItem[] {
   const currentItems = loadActiveResolutions();
 
-  const updated = currentItems.map(item => {
-    if (item.status !== 'voting') return item;
+  const updated = currentItems
+    .map(item => {
+      let startDate = item.createdAt || dateStr;
+      let elapsedDays = getDaysDiff(startDate, dateStr);
 
-    let startDate = item.createdAt || dateStr;
-    let elapsedDays = getDaysDiff(startDate, dateStr);
-
-    // jika kalender game lebih awal dari createdAt (misal akibat restart/load save), rebase ke dateStr saat ini
-    if (elapsedDays < 0) {
-      startDate = dateStr;
-      elapsedDays = 0;
-    }
-
-    const newDaysRemaining = Math.max(0, 30 - elapsedDays);
-    const votes = calculate206AIVotes(newDaysRemaining, item.userVote);
-    let notified = item.notified10Days || false;
-
-    // Trigger popup inbox jika sisa hari <= 10 dan user belum vote
-    if (newDaysRemaining <= 10 && !item.userVote && !notified) {
-      notified = true;
-      if (onTriggerNotification) {
-        const notifCard = generateAIResolusiPBBNotification(
-          item.proposer.name,
-          item.target.name,
-          15,
-          dateStr
-        );
-        notifCard.title = `⚠️ PERINGATAN VOTING PBB (Sisa ${newDaysRemaining} Hari): ${item.proposer.name} ➔ ${item.target.name}`;
-        notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara Indonesia untuk usulan "${item.label}" yang menargetkan ${item.target.name}. Sejauh ini ${votes.supportersCount} negara setuju dan ${votes.opponentsCount} menolak.`;
-        onTriggerNotification(notifCard);
+      if (elapsedDays < 0) {
+        startDate = dateStr;
+        elapsedDays = 0;
       }
-    }
 
-    let finalStatus: 'voting' | 'passed' | 'rejected' = 'voting';
-    if (newDaysRemaining === 0) {
-      finalStatus = votes.supportersCount > votes.opponentsCount ? 'passed' : 'rejected';
-    }
+      // Jika resolusi sudah selesai (passed / rejected), hitung cooldown 30 hari untuk penghapusan
+      if (item.status !== 'voting') {
+        const finishDate = item.finishedAt || dateStr;
+        const cooldownElapsed = Math.max(0, getDaysDiff(finishDate, dateStr));
+        const cooldownRemaining = Math.max(0, 30 - cooldownElapsed);
 
-    return {
-      ...item,
-      createdAt: startDate,
-      daysRemaining: newDaysRemaining,
-      voteStats: {
-        supportersCount: votes.supportersCount,
-        opponentsCount: votes.opponentsCount,
-        abstainCount: votes.abstainCount
-      },
-      status: finalStatus,
-      notified10Days: notified
-    };
-  });
+        return {
+          ...item,
+          finishedAt: finishDate,
+          daysRemaining: cooldownRemaining
+        };
+      }
+
+      const newDaysRemaining = Math.max(0, 30 - elapsedDays);
+      const votes = calculate206AIVotes(newDaysRemaining, item.userVote);
+      let notified = item.notified10Days || false;
+      let notifiedDay1 = item.notifiedDay1 || false;
+
+      // Trigger notifikasi inbox saat usulan baru dibuat / hari pertama (30 hari tersisa)
+      if (newDaysRemaining >= 29 && !notifiedDay1) {
+        notifiedDay1 = true;
+        if (onTriggerNotification) {
+          const notifCard = generateAIResolusiPBBNotification(
+            item.proposer.name,
+            item.target.name,
+            15,
+            dateStr
+          );
+          notifCard.title = `🏛️ USULAN RESOLUSI PBB BARU: ${item.proposer.name} ➔ ${item.target.name}`;
+          notifCard.message = `Negara ${item.proposer.name} secara resmi mengajukan usulan "${item.label}" yang menargetkan ${item.target.name} di Majelis Umum PBB. Pemungutan suara telah dibuka selama 30 hari!`;
+          onTriggerNotification(notifCard);
+        }
+      }
+
+      // Trigger popup inbox jika sisa hari <= 10 dan user belum vote
+      if (newDaysRemaining <= 10 && !item.userVote && !notified) {
+        notified = true;
+        if (onTriggerNotification) {
+          const notifCard = generateAIResolusiPBBNotification(
+            item.proposer.name,
+            item.target.name,
+            15,
+            dateStr
+          );
+          notifCard.title = `⚠️ PERINGATAN VOTING PBB (Sisa ${newDaysRemaining} Hari): ${item.proposer.name} ➔ ${item.target.name}`;
+          notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara Indonesia untuk usulan "${item.label}" yang menargetkan ${item.target.name}. Sejauh ini ${votes.supportersCount} negara setuju dan ${votes.opponentsCount} menolak.`;
+          onTriggerNotification(notifCard);
+        }
+      }
+
+      let finalStatus: 'voting' | 'passed' | 'rejected' = 'voting';
+      let finishedAtDate: string | undefined = item.finishedAt;
+
+      if (newDaysRemaining === 0) {
+        finalStatus = votes.supportersCount > votes.opponentsCount ? 'passed' : 'rejected';
+        finishedAtDate = dateStr;
+      }
+
+      return {
+        ...item,
+        createdAt: startDate,
+        finishedAt: finishedAtDate,
+        daysRemaining: finalStatus !== 'voting' ? 30 : newDaysRemaining,
+        voteStats: {
+          supportersCount: votes.supportersCount,
+          opponentsCount: votes.opponentsCount,
+          abstainCount: votes.abstainCount
+        },
+        status: finalStatus,
+        notifiedDay1: notifiedDay1,
+        notified10Days: notified
+      };
+    })
+    // Filter out item jika masa cooldown 30 hari pasca pemungutan suara telah habis (daysRemaining === 0 pada status finished)
+    .filter(item => {
+      if (item.status !== 'voting' && item.daysRemaining <= 0) {
+        return false; // Terhapus secara otomatis
+      }
+      return true;
+    });
 
   saveActiveResolutions(updated);
   if (typeof window !== 'undefined') {
