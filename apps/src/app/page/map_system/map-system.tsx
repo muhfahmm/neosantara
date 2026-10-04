@@ -129,6 +129,27 @@ export default function MapPage() {
     const [giftModalOpen, setGiftModalOpen] = useState(false);
     const [newsModalOpen, setNewsModalOpen] = useState(false);
     const [newsList, setNewsList] = useState<NewsItemData[]>([]);
+
+    // Kamera AKTUAL dari engine WASM (ditangkap dari ctx.setTransform), sehingga overlay
+    // bendera selalu presisi walau ada clamping / auto-center negara / lerp di sisi Rust.
+    const cameraRef = useRef({ scale: 1.0, offsetX: 0.0, offsetY: 0.0, width: 1000, height: 600 });
+    const [capitalTransform, setCapitalTransform] = useState({ scale: 1.0, offsetX: 0, offsetY: 0, width: 1000, height: 600 });
+
+    useEffect(() => {
+        let animId: number;
+        const updateLoop = () => {
+            const cam = cameraRef.current;
+            setCapitalTransform(prev =>
+                prev.scale === cam.scale && prev.offsetX === cam.offsetX && prev.offsetY === cam.offsetY &&
+                prev.width === cam.width && prev.height === cam.height
+                    ? prev
+                    : { scale: cam.scale, offsetX: cam.offsetX, offsetY: cam.offsetY, width: cam.width, height: cam.height }
+            );
+            animId = requestAnimationFrame(updateLoop);
+        };
+        animId = requestAnimationFrame(updateLoop);
+        return () => cancelAnimationFrame(animId);
+    }, []);
     const [penelitianModalOpen, setPenelitianModalOpen] = useState(false);
     const [presidentRating, setPresidentRating] = useState<number>(50);
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
@@ -1454,6 +1475,22 @@ export default function MapPage() {
                 // After init, the exported functions are available on the module
                 const { start_map_engine, set_selected_country_on_map } = wasmModule;
 
+                const mapCanvasEl = document.getElementById('map-canvas') as HTMLCanvasElement | null;
+                const mapCtx = mapCanvasEl?.getContext('2d');
+                if (mapCanvasEl && mapCtx) {
+                    const originalSetTransform = mapCtx.setTransform.bind(mapCtx) as (...args: any[]) => void;
+                    (mapCtx as any).setTransform = (...args: any[]) => {
+                        if (typeof args[0] === 'number') {
+                            cameraRef.current.scale = args[0];
+                            cameraRef.current.offsetX = args[4];
+                            cameraRef.current.offsetY = args[5];
+                            cameraRef.current.width = mapCanvasEl.width;
+                            cameraRef.current.height = mapCanvasEl.height;
+                        }
+                        originalSetTransform(...args);
+                    };
+                }
+
                 await start_map_engine(
                     "map-canvas",
                     WORLD_GEOJSON,
@@ -1490,6 +1527,7 @@ export default function MapPage() {
 
     const dragStartRef = useRef({ x: 0, y: 0 });
     const isDraggingRef = useRef(false);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     const handleCanvasCountryClick = async (event: React.MouseEvent<HTMLCanvasElement>) => {
         if (isMapInteractionDisabled) return;
@@ -1940,7 +1978,7 @@ export default function MapPage() {
             />
 
             {/* Shifted Canvas Container */}
-            <div className={`fixed top-20 inset-x-0 bottom-0 z-0 ${isMapInteractionDisabled ? 'pointer-events-none' : ''}`}>
+            <div ref={containerRef} className={`fixed top-20 inset-x-0 bottom-0 z-0 ${isMapInteractionDisabled ? 'pointer-events-none' : ''}`}>
                 <canvas
                     id="map-canvas"
                     className="w-full h-full block cursor-grab"
@@ -1956,6 +1994,50 @@ export default function MapPage() {
                         e.currentTarget.dispatchEvent(event);
                     }}
                 />
+
+                {/* Flag + ISO Overlay (zoom out) - posisi dari kamera WASM aktual, anti-tumpang-tindih */}
+                {capitalTransform.scale <= 2.0 && (() => {
+                    const { scale, offsetX, offsetY, width, height } = capitalTransform;
+                    const PILL_W = 34;
+                    const PILL_H = 14;
+                    const opacity = scale <= 1.6 ? 1 : Math.max(0, (2.0 - scale) / 0.4);
+                    const placed: Array<[number, number, number, number]> = [];
+                    const items: React.ReactNode[] = [];
+
+                    for (const cap of CAPITALS_DATA) {
+                        const sx = ((cap.lng + 180) / 360) * width * scale + offsetX;
+                        const sy = ((90 - cap.lat) / 180) * height * scale + offsetY;
+                        if (sx < -PILL_W || sx > width + PILL_W || sy < -PILL_H || sy > height + PILL_H) continue;
+
+                        const box: [number, number, number, number] = [sx - PILL_W / 2, sy - PILL_H / 2, sx + PILL_W / 2, sy + PILL_H / 2];
+                        const overlaps = placed.some(p => !(box[2] < p[0] || box[0] > p[2] || box[3] < p[1] || box[1] > p[3]));
+                        if (overlaps) continue;
+                        placed.push(box);
+
+                        items.push(
+                            <div
+                                key={`${cap.iso}-${cap.capital}`}
+                                className="absolute left-0 top-0 pointer-events-none flex items-center gap-1 bg-[#0A1A1A]/85 border border-[#00FFAA]/40 px-1.5 py-0.5 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.5)] z-10 will-change-transform"
+                                style={{
+                                    transform: `translate3d(${sx - PILL_W / 2}px, ${sy - PILL_H / 2}px, 0)`,
+                                    width: PILL_W,
+                                    height: PILL_H,
+                                    opacity,
+                                }}
+                            >
+                                <img
+                                    src={`https://flagcdn.com/w20/${cap.iso.toLowerCase()}.png`}
+                                    alt={cap.iso}
+                                    className="w-3.5 h-2.5 object-cover rounded-[2px] border border-white/20"
+                                />
+                                <span className="text-[8px] font-black text-[#00FFAA] uppercase leading-none">
+                                    {cap.iso.toUpperCase()}
+                                </span>
+                            </div>
+                        );
+                    }
+                    return items;
+                })()}
 
                 {/* Global FX */}
                 <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_200px_rgba(0,0,0,0.6)] vignette-gradient" />
