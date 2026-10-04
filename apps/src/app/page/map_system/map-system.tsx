@@ -385,22 +385,22 @@ export default function MapPage() {
                                 'pasukan_infanteri', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat', 'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
                                 'kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet', 'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik',
                                 'jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom', 'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut',
-                                // Bangunan Produksi & Kelistrikan
+                                // Produksi & Kelistrikan
                                 'pembangkit_listrik_tenaga_gas', 'pembangkit_listrik_tenaga_nuklir', 'pembangkit_listrik_tenaga_uap', 'pembangkit_listrik_tenaga_surya', 'pembangkit_listrik_tenaga_angin', 'pembangkit_listrik_tenaga_air', 'pembangkit_listrik_tenaga_geotermal',
-                                'tambang_batu_bara', 'tambang_minyak_bumi', 'tambang_gas_alam', 'tambang_uranium', 'tambang_biji_besi', 'tambang_emas', 'tambang_tembaga', 'tambang_bauksit', 'tambang_nikel', 'tambang_litium',
-                                'pabrik_baja', 'pabrik_semen', 'pabrik_pupuk', 'pabrik_kimia', 'pabrik_elektronik', 'pabrik_otomotif', 'pabrik_tekstil', 'pabrik_farmasi',
-                                'peternakan_sapi', 'peternakan_ayam', 'peternakan_kambing',
-                                'sawah_padi', 'perkebunan_jagung', 'perkebunan_gandum', 'perkebunan_kedelai', 'perkebunan_kelapa_sawit', 'perkebunan_tebu',
-                                'perikanan_tangkap', 'budidaya_ikan', 'budidaya_udang',
-                                'pengolahan_daging', 'pengolahan_susu', 'pengolahan_ikan', 'pengolahan_beras',
-                                // Fasilitas Umum & Hunian
-                                'jalan_tol', 'pelabuhan_laut', 'bandar_udara', 'stasiun_kereta_api',
-                                'sekolah_dasar', 'sekolah_menengah', 'universitas',
-                                'puskesmas', 'rumah_sakit_umum', 'rumah_sakit_spesialis',
-                                'pos_polisi', 'kantor_polisi_sektor', 'mabes_polisi',
-                                'lapangan_olahraga', 'stadion_olahraga', 'taman_hiburan',
-                                'pasar_tradisional', 'pusat_perbelanjaan', 'kawasan_komersial',
-                                'perumahan_subsidi_rakyat', 'apartemen_modern_high_rise', 'kompleks_mansion_mewah'
+                                'emas', 'uranium', 'batu_bara', 'minyak_bumi', 'gas_alam', 'garam', 'litium', 'logam_tanah_jarang', 'bijih_besi',
+                                'pabrik_mesin_mobil', 'semen_beton', 'pabrik_mesin_motor', 'pabrik_semikonduktor', 'kayu',
+                                'ayam_unggas', 'sapi_perah', 'sapi_potong', 'domba_kambing',
+                                'padi', 'gandum', 'jagung', 'sayur', 'umbi', 'kedelai', 'kelapa_sawit', 'kopi', 'teh', 'kakao', 'tebu', 'karet',
+                                'udang', 'mutiara', 'ikan',
+                                'air_mineral', 'gula', 'roti', 'pengolahan_daging', 'mie_instan', 'minyak_goreng', 'susu', 'beras',
+                                // Fasilitas Publik & Hunian
+                                'jalur_sepeda', 'jalan_raya', 'terminal_bus', 'stasiun_kereta_api', 'kereta_bawah_tanah', 'pelabuhan', 'bandara', 'helipad',
+                                'prasekolah', 'dasar', 'menengah', 'lanjutan', 'universitas', 'lembaga_pendidikan', 'laboratorium', 'observatorium', 'pusat_penelitian', 'pusat_pengembangan', 'literasi',
+                                'rumah_sakit_besar', 'rumah_sakit_kecil', 'pusat_diagnostik', 'harapan_hidup', 'indeks_kesehatan',
+                                'pusat_bantuan_hukum', 'pengadilan', 'kejaksaan', 'pos_polisi', 'armada_mobil_polisi', 'akademi_polisi', 'indeks_korupsi', 'indeks_keamanan',
+                                'kolam_renang', 'sirkuit_balap', 'stadion', 'stadion_internasional', 'gym', 'golf', 'esports', 'gokart',
+                                'mall', 'hotel', 'pusat_grosir_tekstil', 'bioskop', 'teater',
+                                'rumah_subsidi', 'apartemen', 'mansion'
                             ];
 
                             const aggregatedFields: Record<string, number> = {};
