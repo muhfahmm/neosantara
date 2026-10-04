@@ -16,9 +16,12 @@ interface Country {
     country: string;
     capital: string;
     iso: string;
-    latitude: number;
-    longitude: number;
+    latitude?: number;
+    longitude?: number;
+    lat?: number;
+    lng?: number;
     continent: string;
+    color?: string;
 }
 
 interface NavbarProps {

@@ -72,7 +72,7 @@ import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic';
 import { getMaterialStock } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
-import { generateInvasionNews, evaluateAnnualHotRelationsInvasion } from '../menus/news/logic/1_berita_invasi/beritaInvasiLogic';
+import { generateInvasionNews, evaluateAnnualHotRelationsInvasion, getCountryColor } from '../menus/news/logic/1_berita_invasi/beritaInvasiLogic';
 import { generateAnnexationNews, updateMapTerritoryColor } from '../menus/news/logic/2_berita_aneksasi/beritaAneksasiLogic';
 import { generateResourceLootNews } from '../menus/news/logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
 import { NewsItemData } from '../menus/news/newsModals';
@@ -83,9 +83,12 @@ interface Country {
     country: string;
     capital: string;
     iso: string;
-    latitude: number;
-    longitude: number;
+    latitude?: number;
+    longitude?: number;
+    lat?: number;
+    lng?: number;
     continent: string;
+    color?: string;
 }
 
 export default function MapPage() {
@@ -129,6 +132,30 @@ export default function MapPage() {
     const [giftModalOpen, setGiftModalOpen] = useState(false);
     const [newsModalOpen, setNewsModalOpen] = useState(false);
     const [newsList, setNewsList] = useState<NewsItemData[]>([]);
+
+    // State untuk tracking perubahan warna negara akibat aneksasi
+    // Format: { "NamaNegara": "WarnaHex", ... }
+    // Contoh: { "Afganistan": "#E8C303" } berarti Afganistan sudah dianeksasi dan warnanya diubah ke kuning
+    const [countryColorOverrides, setCountryColorOverrides] = useState<Record<string, string>>({});
+
+    // Override warna aneksasi hanya berlaku selama sesi: refresh => kembali ke warna default.
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            try {
+                localStorage.removeItem('neosantara_country_color_overrides');
+            } catch (e) {
+                console.error('Failed to clear country color overrides:', e);
+            }
+            (window as any).neosantara_country_color_overrides = {};
+        }
+    }, []);
+
+    // Sinkronkan override ke window agar dibaca hook canvas
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            (window as any).neosantara_country_color_overrides = countryColorOverrides;
+        }
+    }, [countryColorOverrides]);
 
     // Kamera AKTUAL dari engine WASM (ditangkap dari ctx.setTransform), sehingga overlay
     // bendera selalu presisi walau ada clamping / auto-center negara / lerp di sisi Rust.
@@ -558,16 +585,43 @@ export default function MapPage() {
 
                         const outcomeRoll = Math.random();
                         if (outcomeRoll < 0.50) {
+                            // Dapatkan warna asli negara penyerang
+                            const attackerColor = getCountryColor(inv.attackerCountry);
+                            
                             const { news: annexationNews, mapPayload } = generateAnnexationNews(
                                 inv.attackerCountry,
                                 inv.attackerIso,
-                                '#E11D48',
+                                attackerColor, // Gunakan warna asli penyerang, bukan hardcoded
                                 inv.targetCountry,
                                 inv.targetIso,
                                 currentDateStr
                             );
                             generatedNewsItems.push(annexationNews);
-                            updateMapTerritoryColor({}, mapPayload);
+                            
+                            // Update state untuk mengubah warna negara target di peta dan mencatat status aneksasi
+                            setCountryColorOverrides(prev => {
+                                const next = {
+                                    ...prev,
+                                    [inv.targetCountry]: attackerColor,
+                                    [inv.targetCountry.toLowerCase()]: attackerColor,
+                                    [inv.targetIso.toLowerCase()]: attackerColor
+                                };
+                                if (typeof window !== 'undefined') {
+                                    (window as any).neosantara_country_color_overrides = next;
+
+                                    const prevAnnexed = (window as any).neosantara_annexed_countries || {};
+                                    const updatedAnnexed = {
+                                        ...prevAnnexed,
+                                        [inv.targetCountry]: { attackerCountry: inv.attackerCountry, attackerIso: inv.attackerIso },
+                                        [inv.targetCountry.toLowerCase()]: { attackerCountry: inv.attackerCountry, attackerIso: inv.attackerIso },
+                                        [inv.targetIso.toLowerCase()]: { attackerCountry: inv.attackerCountry, attackerIso: inv.attackerIso }
+                                    };
+                                    (window as any).neosantara_annexed_countries = updatedAnnexed;
+                                }
+                                return next;
+                            });
+                            
+                            console.log(`🚩 ANEKSASI: ${inv.attackerCountry} (${attackerColor}) menganeksasi ${inv.targetCountry}`);
                         } else {
                             const lootNews = generateResourceLootNews(
                                 inv.attackerCountry,
@@ -1376,6 +1430,8 @@ export default function MapPage() {
             if (typeof window !== 'undefined') {
                 window.localStorage.removeItem('hutangModalLoanSources');
                 window.localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
+                // Reset country color overrides saat restart game
+                window.localStorage.removeItem('neosantara_country_color_overrides');
             }
             handleGameRestart({
                 timeManager: timeManagerRef.current,
@@ -1393,6 +1449,8 @@ export default function MapPage() {
             setNotifications([]);
             setHasShownEarlyWarning({ kepuasan: false, peringkat: false, kesejahteraan: false });
             setHasShownRatingWarning(false);
+            // Reset country color overrides
+            setCountryColorOverrides({});
             // Toggle resetTrigger to signal all modals to reset
             setResetTrigger(prev => !prev);
         }
@@ -1439,6 +1497,7 @@ export default function MapPage() {
                         ...countryDetail,
                         presidentRating: presidentRating
                     }, // Save entire countryDetail with all production data and president rating
+                    countryColorOverrides, // Simpan data aneksasi wilayah
                 }),
             });
 
@@ -1465,10 +1524,34 @@ export default function MapPage() {
             hasInitRef.current = true;
 
             try {
+                // Load color overrides from localStorage first
+                let loadedColorOverrides: Record<string, string> = {};
+                if (typeof window !== 'undefined') {
+                    try {
+                        const saved = localStorage.getItem('neosantara_country_color_overrides');
+                        if (saved) {
+                            loadedColorOverrides = JSON.parse(saved);
+                            console.log('Pre-loading color overrides for WASM init:', loadedColorOverrides);
+                        }
+                    } catch (e) {
+                        console.error('Failed to pre-load country color overrides:', e);
+                    }
+                }
+
                 const [wasmModule, { WORLD_GEOJSON }] = await Promise.all([
                     import('../../../wasm/map-engine-rs/map_engine_rs'),
                     import('./world-geojson')
                 ]);
+                const rawGeojsonStr = typeof WORLD_GEOJSON === 'string' ? WORLD_GEOJSON : JSON.stringify(WORLD_GEOJSON);
+                const geojsonObj = typeof WORLD_GEOJSON === 'string' ? JSON.parse(WORLD_GEOJSON) : (WORLD_GEOJSON as any);
+
+                if (typeof window !== 'undefined') {
+                    try {
+                        (window as any).neosantara_world_geojson_features = geojsonObj.features;
+                    } catch (err) {
+                        console.error("Failed to parse WORLD_GEOJSON features for map engine:", err);
+                    }
+                }
                 await wasmModule.default(); // Initialize WASM module first
                 wasmModuleRef.current = wasmModule;
 
@@ -1477,6 +1560,47 @@ export default function MapPage() {
 
                 const mapCanvasEl = document.getElementById('map-canvas') as HTMLCanvasElement | null;
                 const mapCtx = mapCanvasEl?.getContext('2d');
+                if (mapCanvasEl && mapCtx) {
+                    // Hook fill pipeline: engine draws features in GeoJSON order, one fill() each.
+                    let fillCount = 0;
+                    let realFillStyle: any = '#000';
+                    const origFill = mapCtx.fill.bind(mapCtx) as (...a: any[]) => void;
+                    const origFillRect = mapCtx.fillRect.bind(mapCtx);
+                    (mapCtx as any).fill = (...a: any[]) => { fillCount++; origFill(...a); };
+                    (mapCtx as any).fillRect = (...a: any[]) => { fillCount = 0; origFillRect(a[0], a[1], a[2], a[3]); };
+                    Object.defineProperty(mapCtx, 'fillStyle', {
+                        configurable: true,
+                        get: () => realFillStyle,
+                        set: (v: any) => {
+                            realFillStyle = v;
+                            const w = window as any;
+                            const feats = w.neosantara_world_geojson_features;
+                            const overrides = w.neosantara_country_color_overrides;
+                            if (
+                                typeof v === 'string' && feats && overrides &&
+                                v !== '#10b981' && v !== '#1e3a8a' && v !== '#fbbf24' && v !== 'white' &&
+                                fillCount < feats.length
+                            ) {
+                                const p = feats[fillCount]?.properties;
+                                if (p) {
+                                    const iso = String(p.ISO_A2 || '').toLowerCase();
+                                    const names = [p.NAME, p.ADMIN, p.NAME_LONG, p.GEOUNIT]
+                                        .filter(Boolean).map((s: string) => s.toLowerCase());
+                                    const isAfg = iso === 'af' || names.includes('afghanistan');
+                                    for (const [key, color] of Object.entries(overrides)) {
+                                        const k = key.toLowerCase().trim();
+                                        if ((iso && iso !== '-99' && k === iso) || names.includes(k) || (isAfg && k === 'afganistan')) {
+                                            realFillStyle = color;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            Object.getOwnPropertyDescriptor(Object.getPrototypeOf(mapCtx), 'fillStyle')?.set?.call(mapCtx, realFillStyle);
+                        }
+                    });
+                }
+
                 if (mapCanvasEl && mapCtx) {
                     const originalSetTransform = mapCtx.setTransform.bind(mapCtx) as (...args: any[]) => void;
                     (mapCtx as any).setTransform = (...args: any[]) => {
@@ -1491,10 +1615,32 @@ export default function MapPage() {
                     };
                 }
 
+                // Merge COUNTRIES_DATA dengan color overrides dari aneksasi
+                const getCountriesDataWithOverrides = () => {
+                    if (Object.keys(loadedColorOverrides).length === 0) {
+                        return COUNTRIES_DATA;
+                    }
+                    
+                    return COUNTRIES_DATA.map(country => {
+                        const normalizedName = country.country.toLowerCase().trim();
+                        // Cek apakah negara ini sudah dianeksasi (ada override warna)
+                        for (const [targetCountry, newColor] of Object.entries(loadedColorOverrides)) {
+                            if (targetCountry.toLowerCase().trim() === normalizedName) {
+                                // Return country dengan warna yang sudah di-override
+                                console.log(`  Applying color override: ${country.country} -> ${newColor}`);
+                                return { ...country, color: newColor };
+                            }
+                        }
+                        return country;
+                    });
+                };
+
+                const countriesWithOverrides = getCountriesDataWithOverrides();
+
                 await start_map_engine(
                     "map-canvas",
-                    WORLD_GEOJSON,
-                    COUNTRIES_DATA,
+                    rawGeojsonStr,
+                    countriesWithOverrides,
                     CAPITALS_DATA
                 );
 
@@ -1528,6 +1674,43 @@ export default function MapPage() {
     const dragStartRef = useRef({ x: 0, y: 0 });
     const isDraggingRef = useRef(false);
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // Update WASM map engine dengan warna negara baru ketika countryColorOverrides berubah
+    useEffect(() => {
+        if (!wasmModuleRef.current || Object.keys(countryColorOverrides).length === 0) {
+            return;
+        }
+
+        try {
+            // Merge COUNTRIES_DATA dengan color overrides
+            const countriesWithOverrides = COUNTRIES_DATA.map(country => {
+                const normalizedName = country.country.toLowerCase().trim();
+                // Cek apakah negara ini sudah dianeksasi (ada override warna)
+                for (const [targetCountry, newColor] of Object.entries(countryColorOverrides)) {
+                    if (targetCountry.toLowerCase().trim() === normalizedName) {
+                        // Return country dengan warna yang sudah di-override
+                        return { ...country, color: newColor };
+                    }
+                }
+                return country;
+            });
+
+            // Update countries data di WASM engine
+            const mapEngineInstance = (wasmModuleRef.current as any).MapEngine;
+            if (mapEngineInstance) {
+                console.log('Updating WASM map colors with overrides:', countryColorOverrides);
+                // Note: Ini akan memanggil set_countries() pada instance yang aktif
+                // Jika tidak ada cara langsung, kita perlu trigger re-render
+                
+                // Dispatch custom event untuk notify map engine
+                window.dispatchEvent(new CustomEvent('map_colors_updated', {
+                    detail: { countriesData: countriesWithOverrides }
+                }));
+            }
+        } catch (error) {
+            console.error('Failed to update map colors:', error);
+        }
+    }, [countryColorOverrides]);
 
     const handleCanvasCountryClick = async (event: React.MouseEvent<HTMLCanvasElement>) => {
         if (isMapInteractionDisabled) return;

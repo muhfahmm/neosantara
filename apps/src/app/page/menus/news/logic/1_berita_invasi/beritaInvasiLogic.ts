@@ -2,6 +2,32 @@ import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
 import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 
+/**
+ * Mendapatkan warna negara dari COUNTRIES_DATA berdasarkan nama negara.
+ * Warna ini akan digunakan untuk mengubah warna wilayah yang dianeksasi.
+ */
+export function getCountryColor(countryName: string): string {
+  const normalizedName = countryName.toLowerCase().trim();
+  const country = COUNTRIES_DATA.find(
+    c => c.country.toLowerCase().trim() === normalizedName
+  );
+
+  // Warna harus sama dengan warna benua negara penyerang (palet sama dengan map engine)
+  switch (country?.continent) {
+    case 'Asia': return '#a855f7';
+    case 'Africa': return '#eab308';
+    case 'Europe': return '#3b82f6';
+    case 'North America': return '#22c55e';
+    case 'South America': return '#f97316';
+    case 'Oceania': return '#ec4899';
+    case 'Antarctica': return '#cbd5e1';
+    default: break;
+  }
+
+  console.warn(`Continent color not found for country: ${countryName}, using default`);
+  return '#475569';
+}
+
 export interface InvasionNewsData {
   id: string;
   type: 'invasi';

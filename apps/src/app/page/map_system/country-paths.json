@@ -1,4 +1,4 @@
-﻿{
+{
     "Marshall":  "oceania/183_marshall.ts",
     "Madagaskar":  "afrika/25_madagaskar.ts",
     "Saint lucia":  "na/176_saint_lucia.ts",
@@ -205,5 +205,8 @@
     "Finlandia":  "eropa/114_finlandia.ts",
     "Guinea-bissau":  "afrika/17_guinea_bissau.ts",
     "Mali":  "afrika/27_mali.ts",
-    "Mikronesia":  "oceania/184_mikronesia.ts"
+    "Mikronesia":  "oceania/184_mikronesia.ts",
+    "Guadeloupe":  "na/178_trinidad_dan_tobago.ts",
+    "Martinique":  "na/178_trinidad_dan_tobago.ts",
+    "Bonaire, Sint Eustatius dan Saba":  "na/178_trinidad_dan_tobago.ts"
 }

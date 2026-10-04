@@ -66,9 +66,12 @@ interface Country {
   country: string;
   capital: string;
   iso: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
+  lat?: number;
+  lng?: number;
   continent: string;
+  color?: string;
   flag?: string;
   name_id?: string;
 }
@@ -169,7 +172,8 @@ export default function PilihNegaraPage() {
 
         const { start_map_engine, set_selected_country_on_map, get_country_at_on_map } = mod;
 
-        start_map_engine('map-canvas-bg', WORLD_GEOJSON, COUNTRIES_DATA, CAPITALS_DATA);
+        const geojsonStr = typeof WORLD_GEOJSON === 'string' ? WORLD_GEOJSON : JSON.stringify(WORLD_GEOJSON);
+        start_map_engine('map-canvas-bg', geojsonStr, COUNTRIES_DATA, CAPITALS_DATA);
 
         setWasmModule({
           start_map_engine,

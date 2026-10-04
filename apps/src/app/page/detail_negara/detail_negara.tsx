@@ -166,8 +166,29 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   // Gunakan fetchedDetail sebagai sumber utama, countryDetail sebagai fallback
   const detailData = fetchedDetail || countryDetail;
 
-  // Fallback ganda untuk iso dan capital
-  const iso = mapData?.iso || detailData?.iso || "";
+  // Cek apakah negara ini telah dianeksasi oleh negara lain
+  const annexedInfo = typeof window !== 'undefined'
+    ? ((window as any).neosantara_annexed_countries?.[countryName] ||
+       (window as any).neosantara_annexed_countries?.[countryName.toLowerCase()] ||
+       (mapData?.iso ? (window as any).neosantara_annexed_countries?.[mapData.iso.toLowerCase()] : null))
+    : null;
+
+  const displayCountryName = annexedInfo?.attackerCountry || countryName;
+
+  // Jika dianeksasi, ambil ISO penyerang
+  let displayIso = mapData?.iso || detailData?.iso || "";
+  if (annexedInfo?.attackerCountry) {
+    const attackerData = COUNTRIES_DATA?.find(
+      (c) => c.country?.toLowerCase().trim() === annexedInfo.attackerCountry.toLowerCase().trim()
+    );
+    if (attackerData?.iso) {
+      displayIso = attackerData.iso;
+    } else if (annexedInfo.attackerIso) {
+      displayIso = annexedInfo.attackerIso;
+    }
+  }
+
+  // Fallback ganda untuk capital
   const capital = mapData?.capital || detailData?.capital || "Data tidak tersedia";
   
   // Hitung Hubungan
@@ -213,9 +234,9 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
               </h2>
               
               <div className="flex items-center gap-2 mt-1">
-                {renderFlagHeader(iso, countryName)}
+                {renderFlagHeader(displayIso, displayCountryName)}
                 <p className="text-xs text-[#00FFAA]/70 font-semibold uppercase tracking-wider">
-                  {countryName}, {capital}
+                  {displayCountryName}, {capital}
                 </p>
               </div>
             </div>

@@ -1,4 +1,17 @@
-export const COUNTRIES_DATA = [
+export interface CountryData {
+  id: number;
+  country: string;
+  capital: string;
+  iso: string;
+  latitude?: number;
+  longitude?: number;
+  lat?: number;
+  lng?: number;
+  continent: string;
+  color?: string;
+}
+
+export const COUNTRIES_DATA: CountryData[] = [
   {
     "id": 21869,
     "country": "Afganistan",
@@ -6,1729 +19,1747 @@ export const COUNTRIES_DATA = [
     "iso": "af",
     "latitude": 34.52,
     "longitude": 69.18,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#B6AC72"
   },
-  {
-    "id": 29240,
+  {"id": 29240,
     "country": "Afrika selatan",
     "capital": "Pretoria",
     "iso": "za",
     "latitude": -25.7,
     "longitude": 28.22,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#A92C6A"
   },
-  {
-    "id": 93002,
+  {"id": 93002,
     "country": "Albania",
     "capital": "Tirana",
     "iso": "al",
     "latitude": 41.32,
     "longitude": 19.82,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#3303DA"
   },
-  {
-    "id": 20793,
+  {"id": 20793,
     "country": "Aljazair",
     "capital": "Algiers",
     "iso": "dz",
     "latitude": 36.75,
     "longitude": 3.05,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#10B262"
   },
-  {
-    "id": 20257,
+  {"id": 20257,
     "country": "Amerika serikat",
     "capital": "Washington, D.C.",
     "iso": "us",
     "latitude": 38.89,
     "longitude": -77.05,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#F77F6D"
   },
-  {
-    "id": 25837,
+  {"id": 25837,
     "country": "Andorra",
     "capital": "Andorra la Vella",
     "iso": "ad",
     "latitude": 42.5,
     "longitude": 1.52,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#449F50"
   },
-  {
-    "id": 46598,
+  {"id": 46598,
     "country": "Angola",
     "capital": "Luanda",
     "iso": "ao",
     "latitude": -8.83,
     "longitude": 13.22,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#FFE0BD"
   },
-  {
-    "id": 97669,
+  {"id": 97669,
     "country": "Antigua dan barbuda",
     "capital": "Saint John's",
     "iso": "ag",
     "latitude": 17.12,
     "longitude": -61.85,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#FDF04E"
   },
-  {
-    "id": 69246,
+  {"id": 69246,
     "country": "Arab saudi",
     "capital": "Riyadh",
     "iso": "sa",
     "latitude": 24.65,
     "longitude": 46.7,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#3F4482"
   },
-  {
-    "id": 97966,
+  {"id": 97966,
     "country": "Argentina",
     "capital": "Buenos Aires",
     "iso": "ar",
     "latitude": -34.58,
     "longitude": -58.67,
-    "continent": "South America"
+    "continent": "South America",
+    "color": "#2A52AD"
   },
-  {
-    "id": 54112,
+  {"id": 54112,
     "country": "Armenia",
     "capital": "Yerevan",
     "iso": "am",
     "latitude": 40.17,
     "longitude": 44.5,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#3744C6"
   },
-  {
-    "id": 60483,
+  {"id": 60483,
     "country": "Australia",
     "capital": "Canberra",
     "iso": "au",
     "latitude": -35.27,
     "longitude": 149.13,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#FB2A54"
   },
-  {
-    "id": 42641,
+  {"id": 42641,
     "country": "Austria",
     "capital": "Vienna",
     "iso": "at",
     "latitude": 48.2,
     "longitude": 16.37,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#6CD0C2"
   },
-  {
-    "id": 8390,
+  {"id": 8390,
     "country": "Azerbaijan",
     "capital": "Baku",
     "iso": "az",
     "latitude": 40.38,
     "longitude": 49.87,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#620A71"
   },
-  {
-    "id": 78329,
+  {"id": 78329,
     "country": "Bahama",
     "capital": "Nassau",
     "iso": "bs",
     "latitude": 25.08,
     "longitude": -77.35,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#9C35F1"
   },
-  {
-    "id": 98511,
+  {"id": 98511,
     "country": "Bahrain",
     "capital": "Manama",
     "iso": "bh",
     "latitude": 26.23,
     "longitude": 50.57,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#97E98C"
   },
-  {
-    "id": 75453,
+  {"id": 75453,
     "country": "Bangladesh",
     "capital": "Dhaka",
     "iso": "bd",
     "latitude": 23.72,
     "longitude": 90.4,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#B47BC9"
   },
-  {
-    "id": 13742,
+  {"id": 13742,
     "country": "Barbados",
     "capital": "Bridgetown",
     "iso": "bb",
     "latitude": 13.1,
     "longitude": -59.62,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#8C7CCD"
   },
-  {
-    "id": 90744,
+  {"id": 90744,
     "country": "Belanda",
     "capital": "Amsterdam",
     "iso": "nl",
     "latitude": 52.35,
     "longitude": 4.92,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#926EC8"
   },
-  {
-    "id": 69739,
+  {"id": 69739,
     "country": "Belarus",
     "capital": "Minsk",
     "iso": "by",
     "latitude": 53.9,
     "longitude": 27.57,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#F9BCD9"
   },
-  {
-    "id": 43995,
+  {"id": 43995,
     "country": "Belgia",
     "capital": "Brussels",
     "iso": "be",
     "latitude": 50.83,
     "longitude": 4.33,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#D34798"
   },
-  {
-    "id": 7223,
+  {"id": 7223,
     "country": "Belize",
     "capital": "Belmopan",
     "iso": "bz",
     "latitude": 17.25,
     "longitude": -88.77,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#48F621"
   },
-  {
-    "id": 49940,
+  {"id": 49940,
     "country": "Benin",
     "capital": "Porto-Novo",
     "iso": "bj",
     "latitude": 6.48,
     "longitude": 2.62,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#9F1BF0"
   },
-  {
-    "id": 54357,
+  {"id": 54357,
     "country": "Bermuda",
     "capital": "Hamilton",
     "iso": "bm",
     "latitude": 32.28,
     "longitude": -64.78,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#892565"
   },
-  {
-    "id": 68419,
+  {"id": 68419,
     "country": "Bhutan",
     "capital": "Thimphu",
     "iso": "bt",
     "latitude": 27.47,
     "longitude": 89.63,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#6A74BD"
   },
-  {
-    "id": 67521,
+  {"id": 67521,
     "country": "Bolivia",
     "capital": "Sucre",
     "iso": "bo",
     "latitude": -19.02,
     "longitude": -65.26,
-    "continent": "South America"
+    "continent": "South America",
+    "color": "#76781B"
   },
-  {
-    "id": 78562,
+  {"id": 78562,
     "country": "Botswana",
     "capital": "Gaborone",
     "iso": "bw",
     "latitude": -24.63,
     "longitude": 25.9,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#5D50C8"
   },
-  {
-    "id": 10304,
+  {"id": 10304,
     "country": "Brazil",
     "capital": "Brasília",
     "iso": "br",
     "latitude": -15.79,
     "longitude": -47.88,
-    "continent": "South America"
+    "continent": "South America",
+    "color": "#6E5FA4"
   },
-  {
-    "id": 90761,
+  {"id": 90761,
     "country": "Brunei",
     "capital": "Bandar Seri Begawan",
     "iso": "bn",
     "latitude": 4.88,
     "longitude": 114.93,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#0BE0D8"
   },
-  {
-    "id": 13441,
+  {"id": 13441,
     "country": "Bulgaria",
     "capital": "Sofia",
     "iso": "bg",
     "latitude": 42.68,
     "longitude": 23.32,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#DB5F14"
   },
-  {
-    "id": 53772,
+  {"id": 53772,
     "country": "Burkina faso",
     "capital": "Ouagadougou",
     "iso": "bf",
     "latitude": 12.37,
     "longitude": -1.52,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#ECA2BB"
   },
-  {
-    "id": 61056,
+  {"id": 61056,
     "country": "Burundi",
     "capital": "Gitega",
     "iso": "bi",
     "latitude": -3.43,
     "longitude": 29.93,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#64968D"
   },
-  {
-    "id": 67981,
+  {"id": 67981,
     "country": "Ceko",
     "capital": "Prague",
     "iso": "cz",
     "latitude": 50.08,
     "longitude": 14.47,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#AC3EBF"
   },
-  {
-    "id": 93060,
+  {"id": 93060,
     "country": "Chad",
     "capital": "N'Djamena",
     "iso": "td",
     "latitude": 12.1,
     "longitude": 15.03,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#EDE79B"
   },
-  {
-    "id": 24800,
+  {"id": 24800,
     "country": "Chile",
     "capital": "Santiago",
     "iso": "cl",
     "latitude": -33.45,
     "longitude": -70.67,
-    "continent": "South America"
+    "continent": "South America",
+    "color": "#FD3170"
   },
-  {
-    "id": 31241,
+  {"id": 31241,
     "country": "China",
     "capital": "Beijing",
     "iso": "cn",
     "latitude": 39.92,
     "longitude": 116.38,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#BC7D7B"
   },
-  {
-    "id": 11770,
+  {"id": 11770,
     "country": "Costa rica",
     "capital": "San José",
     "iso": "cr",
     "latitude": 9.93,
     "longitude": -84.09,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#53BCDE"
   },
-  {
-    "id": 60907,
+  {"id": 60907,
     "country": "Curacao",
     "capital": "Willemstad",
     "iso": "cw",
     "latitude": 12.1,
     "longitude": -68.92,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#606CC8"
   },
-  {
-    "id": 43869,
+  {"id": 43869,
     "country": "Denmark",
     "capital": "Copenhagen",
     "iso": "dk",
     "latitude": 55.67,
     "longitude": 12.58,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#E93757"
   },
-  {
-    "id": 99264,
+  {"id": 99264,
     "country": "Djibouti",
     "capital": "Djibouti",
     "iso": "dj",
     "latitude": 11.58,
     "longitude": 43.15,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#A2B10E"
   },
-  {
-    "id": 75085,
+  {"id": 75085,
     "country": "Dominika",
     "capital": "Roseau",
     "iso": "dm",
     "latitude": 15.3,
     "longitude": -61.4,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#ED4C4E"
   },
-  {
-    "id": 50663,
+  {"id": 50663,
     "country": "Ekuador",
     "capital": "Quito",
     "iso": "ec",
     "latitude": -0.22,
     "longitude": -78.5,
-    "continent": "South America"
+    "continent": "South America",
+    "color": "#F05543"
   },
-  {
-    "id": 48364,
+  {"id": 48364,
     "country": "El salvador",
     "capital": "San Salvador",
     "iso": "sv",
     "latitude": 13.7,
     "longitude": -89.2,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#EEDF14"
   },
-  {
-    "id": 60582,
+  {"id": 60582,
     "country": "Eritrea",
     "capital": "Asmara",
     "iso": "er",
     "latitude": 15.33,
     "longitude": 38.93,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#41B597"
   },
-  {
-    "id": 67959,
+  {"id": 67959,
     "country": "Estonia",
     "capital": "Tallinn",
     "iso": "ee",
     "latitude": 59.43,
     "longitude": 24.72,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#5C6298"
   },
-  {
-    "id": 61652,
+  {"id": 61652,
     "country": "Eswatini",
     "capital": "Mbabane",
     "iso": "sz",
     "latitude": -26.32,
     "longitude": 31.13,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#96D856"
   },
-  {
-    "id": 18679,
+  {"id": 18679,
     "country": "Ethiopia",
     "capital": "Addis Ababa",
     "iso": "et",
     "latitude": 9.03,
     "longitude": 38.7,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#A2694B"
   },
-  {
-    "id": 2865,
+  {"id": 2865,
     "country": "Fiji",
     "capital": "Suva",
     "iso": "fj",
     "latitude": -18.13,
     "longitude": 178.42,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#67EF4F"
   },
-  {
-    "id": 23736,
+  {"id": 23736,
     "country": "Filipina",
     "capital": "Manila",
     "iso": "ph",
     "latitude": 14.6,
     "longitude": 120.97,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#9E973D"
   },
-  {
-    "id": 51192,
+  {"id": 51192,
     "country": "Finlandia",
     "capital": "Helsinki",
     "iso": "fi",
     "latitude": 60.17,
     "longitude": 24.93,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#5A64C8"
   },
-  {
-    "id": 55085,
+  {"id": 55085,
     "country": "Gabon",
     "capital": "Libreville",
     "iso": "ga",
     "latitude": 0.38,
     "longitude": 9.45,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#EE2144"
   },
-  {
-    "id": 60216,
+  {"id": 60216,
     "country": "Gambia",
     "capital": "Banjul",
     "iso": "gm",
     "latitude": 13.45,
     "longitude": -16.57,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#264CE6"
   },
-  {
-    "id": 56293,
+  {"id": 56293,
     "country": "Georgia",
     "capital": "Tbilisi",
     "iso": "ge",
     "latitude": 41.68,
     "longitude": 44.83,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#C0CDFF"
   },
-  {
-    "id": 57410,
+  {"id": 57410,
     "country": "Ghana",
     "capital": "Accra",
     "iso": "gh",
     "latitude": 5.55,
     "longitude": -0.22,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#159672"
   },
-  {
-    "id": 51812,
+  {"id": 51812,
     "country": "Gibraltar",
     "capital": "Gibraltar",
     "iso": "gi",
     "latitude": 36.13,
     "longitude": -5.35,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#EC1BB8"
   },
-  {
-    "id": 18499,
+  {"id": 18499,
     "country": "Greenland",
     "capital": "Nuuk",
     "iso": "gl",
     "latitude": 64.18,
     "longitude": -51.75,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#AD53F5"
   },
-  {
-    "id": 82083,
+  {"id": 82083,
     "country": "Grenada",
     "capital": "St. George's",
     "iso": "gd",
     "latitude": 32.38,
     "longitude": -64.68,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#6ACA8E"
   },
-  {
-    "id": 33529,
+  {"id": 33529,
     "country": "Guam",
     "capital": "Hagåtña",
     "iso": "gu",
     "latitude": 13.48,
     "longitude": 144.75,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#8F80C7"
   },
-  {
-    "id": 92069,
+  {"id": 92069,
     "country": "Guatemala",
     "capital": "Guatemala City",
     "iso": "gt",
     "latitude": 14.62,
     "longitude": -90.52,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#AC785D"
   },
-  {
-    "id": 15137,
+  {"id": 15137,
     "country": "Guinea",
     "capital": "Conakry",
     "iso": "gn",
     "latitude": 9.5,
     "longitude": -13.7,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#3DA0D1"
   },
-  {
-    "id": 15335,
+  {"id": 15335,
     "country": "Guyana",
     "capital": "Georgetown",
     "iso": "gy",
     "latitude": 6.8,
     "longitude": -58.15,
-    "continent": "South America"
+    "continent": "South America",
+    "color": "#FA2A88"
   },
-  {
-    "id": 18155,
+  {"id": 18155,
     "country": "Haiti",
     "capital": "Port-au-Prince",
     "iso": "ht",
     "latitude": 18.53,
     "longitude": -72.33,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#87E390"
   },
-  {
-    "id": 71498,
+  {"id": 71498,
     "country": "Honduras",
     "capital": "Tegucigalpa",
     "iso": "hn",
     "latitude": 14.1,
     "longitude": -87.22,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#1E28FE"
   },
-  {
-    "id": 93039,
+  {"id": 93039,
     "country": "Hong kong",
     "capital": "City of Victoria",
     "iso": "hk",
     "latitude": 22.267,
     "longitude": 114.188,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#DB1E8C"
   },
-  {
-    "id": 34616,
+  {"id": 34616,
     "country": "Hungaria",
     "capital": "Budapest",
     "iso": "hu",
     "latitude": 47.5,
     "longitude": 19.08,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#1E5CC8"
   },
-  {
-    "id": 23635,
+  {"id": 23635,
     "country": "India",
     "capital": "New Delhi",
     "iso": "in",
     "latitude": 28.6,
     "longitude": 77.2,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#11A983"
   },
-  {
-    "id": 78441,
+  {"id": 78441,
     "country": "Indonesia",
     "capital": "Jakarta",
     "iso": "id",
     "latitude": -6.17,
     "longitude": 106.82,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#FFA2C9"
   },
-  {
-    "id": 41684,
+  {"id": 41684,
     "country": "Inggris",
     "capital": "London",
     "iso": "gb",
     "latitude": 51.5,
     "longitude": -0.08,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#CB11DC"
   },
-  {
-    "id": 9013,
+  {"id": 9013,
     "country": "Irak",
     "capital": "Baghdad",
     "iso": "iq",
     "latitude": 33.33,
     "longitude": 44.4,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#C370DB"
   },
-  {
-    "id": 25469,
+  {"id": 25469,
     "country": "Iran",
     "capital": "Tehran",
     "iso": "ir",
     "latitude": 35.7,
     "longitude": 51.42,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#6F0A7D"
   },
-  {
-    "id": 80588,
+  {"id": 80588,
     "country": "Irlandia",
     "capital": "Dublin",
     "iso": "ie",
     "latitude": 53.32,
     "longitude": -6.23,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#53ACD1"
   },
-  {
-    "id": 93352,
+  {"id": 93352,
     "country": "Islandia",
     "capital": "Reykjavik",
     "iso": "is",
     "latitude": 64.15,
     "longitude": -21.95,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#F15C51"
   },
-  {
-    "id": 14097,
+  {"id": 14097,
     "country": "Israel",
     "capital": "Jerusalem",
     "iso": "il",
     "latitude": 31.77,
     "longitude": 35.23,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#3F8454"
   },
-  {
-    "id": 28187,
+  {"id": 28187,
     "country": "Italia",
     "capital": "Rome",
     "iso": "it",
     "latitude": 41.9,
     "longitude": 12.48,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#FFF5F8"
   },
-  {
-    "id": 67196,
+  {"id": 67196,
     "country": "Jamaika",
     "capital": "Kingston",
     "iso": "jm",
     "latitude": 17.99702,
     "longitude": -76.79358,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#03908B"
   },
-  {
-    "id": 69792,
+  {"id": 69792,
     "country": "Jepang",
     "capital": "Tokyo",
     "iso": "jp",
     "latitude": 35.68,
     "longitude": 139.75,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#F39D75"
   },
-  {
-    "id": 50254,
+  {"id": 50254,
     "country": "Jerman",
     "capital": "Berlin",
     "iso": "de",
     "latitude": 52.52,
     "longitude": 13.4,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#75BEA8"
   },
-  {
-    "id": 24209,
+  {"id": 24209,
     "country": "Kamboja",
     "capital": "Phnom Penh",
     "iso": "kh",
     "latitude": 11.55,
     "longitude": 104.92,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#C40C04"
   },
-  {
-    "id": 50852,
+  {"id": 50852,
     "country": "Kamerun",
     "capital": "Yaoundé",
     "iso": "cm",
     "latitude": 3.85,
     "longitude": 11.5,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#FFC9C2"
   },
-  {
-    "id": 26802,
+  {"id": 26802,
     "country": "Kanada",
     "capital": "Ottawa",
     "iso": "ca",
     "latitude": 45.42,
     "longitude": -75.7,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#2E628D"
   },
-  {
-    "id": 61803,
+  {"id": 61803,
     "country": "Kazakhstan",
     "capital": "Astana",
     "iso": "kz",
     "latitude": 51.16,
     "longitude": 71.45,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#E22CC0"
   },
-  {
-    "id": 33474,
+  {"id": 33474,
     "country": "Kenya",
     "capital": "Nairobi",
     "iso": "ke",
     "latitude": -1.28,
     "longitude": 36.82,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#577E90"
   },
-  {
-    "id": 40041,
+  {"id": 40041,
     "country": "Kepulauan faroe",
     "capital": "Tórshavn",
     "iso": "fo",
     "latitude": 62.01,
     "longitude": -6.77,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#2E25EB"
   },
-  {
-    "id": 74292,
+  {"id": 74292,
     "country": "Kirgizstan",
     "capital": "Bishkek",
     "iso": "kg",
     "latitude": 42.87,
     "longitude": 74.6,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#B112C1"
   },
-  {
-    "id": 78382,
+  {"id": 78382,
     "country": "Kiribati",
     "capital": "South Tarawa",
     "iso": "ki",
     "latitude": 1.33,
     "longitude": 172.98,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#23FC58"
   },
-  {
-    "id": 23412,
+  {"id": 23412,
     "country": "Kolombia",
     "capital": "Bogotá",
     "iso": "co",
     "latitude": 4.71,
     "longitude": -74.07,
-    "continent": "South America"
+    "continent": "South America",
+    "color": "#7C969B"
   },
-  {
-    "id": 51675,
+  {"id": 51675,
     "country": "Komoro",
     "capital": "Moroni",
     "iso": "km",
     "latitude": -11.7,
     "longitude": 43.23,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#7299B5"
   },
-  {
-    "id": 9450,
+  {"id": 9450,
     "country": "Kongo",
     "capital": "Brazzaville",
     "iso": "cg",
     "latitude": -4.25,
     "longitude": 15.28,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#2B966D"
   },
-  {
-    "id": 82537,
+  {"id": 82537,
     "country": "Korea selatan",
     "capital": "Seoul",
     "iso": "kr",
     "latitude": 37.55,
     "longitude": 126.98,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#E0767A"
   },
-  {
-    "id": 30813,
+  {"id": 30813,
     "country": "Korea utara",
     "capital": "Pyongyang",
     "iso": "kp",
     "latitude": 39.02,
     "longitude": 125.75,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#D21DC7"
   },
-  {
-    "id": 17768,
+  {"id": 17768,
     "country": "Kosovo",
     "capital": "Pristina",
     "iso": "xk",
     "latitude": 42.67,
     "longitude": 21.17,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#9EB4F4"
   },
-  {
-    "id": 60997,
+  {"id": 60997,
     "country": "Kroasia",
     "capital": "Zagreb",
     "iso": "hr",
     "latitude": 45.8,
     "longitude": 16,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#6D40F3"
   },
-  {
-    "id": 57401,
+  {"id": 57401,
     "country": "Kuba",
     "capital": "Havana",
     "iso": "cu",
     "latitude": 23.12,
     "longitude": -82.35,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#FFCBCE"
   },
-  {
-    "id": 7492,
+  {"id": 7492,
     "country": "Kuwait",
     "capital": "Kuwait City",
     "iso": "kw",
     "latitude": 29.37,
     "longitude": 47.97,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#E38FA0"
   },
-  {
-    "id": 3585,
+  {"id": 3585,
     "country": "Laos",
     "capital": "Vientiane",
     "iso": "la",
     "latitude": 17.97,
     "longitude": 102.6,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#5495A2"
   },
-  {
-    "id": 93280,
+  {"id": 93280,
     "country": "Latvia",
     "capital": "Riga",
     "iso": "lv",
     "latitude": 56.95,
     "longitude": 24.1,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#FFD7DA"
   },
-  {
-    "id": 4568,
+  {"id": 4568,
     "country": "Lebanon",
     "capital": "Beirut",
     "iso": "lb",
     "latitude": 33.87,
     "longitude": 35.5,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#94E5A2"
   },
-  {
-    "id": 48460,
+  {"id": 48460,
     "country": "Lesotho",
     "capital": "Maseru",
     "iso": "ls",
     "latitude": -29.32,
     "longitude": 27.48,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#34C9C5"
   },
-  {
-    "id": 75382,
+  {"id": 75382,
     "country": "Liberia",
     "capital": "Monrovia",
     "iso": "lr",
     "latitude": 6.3,
     "longitude": -10.8,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#2F738A"
   },
-  {
-    "id": 27074,
+  {"id": 27074,
     "country": "Libya",
     "capital": "Tripoli",
     "iso": "ly",
     "latitude": 32.88,
     "longitude": 13.17,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#219634"
   },
-  {
-    "id": 93129,
+  {"id": 93129,
     "country": "Liechtenstein",
     "capital": "Vaduz",
     "iso": "li",
     "latitude": 47.13,
     "longitude": 9.52,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#5ABFEF"
   },
-  {
-    "id": 61324,
+  {"id": 61324,
     "country": "Lithuania",
     "capital": "Vilnius",
     "iso": "lt",
     "latitude": 54.68,
     "longitude": 25.32,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#93EFE9"
   },
-  {
-    "id": 28687,
+  {"id": 28687,
     "country": "Luksemburg",
     "capital": "Luxembourg",
     "iso": "lu",
     "latitude": 49.6,
     "longitude": 6.12,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#7D46BC"
   },
-  {
-    "id": 51020,
+  {"id": 51020,
     "country": "Madagaskar",
     "capital": "Antananarivo",
     "iso": "mg",
     "latitude": -18.92,
     "longitude": 47.52,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#1CB3A6"
   },
-  {
-    "id": 67421,
+  {"id": 67421,
     "country": "Malawi",
     "capital": "Lilongwe",
     "iso": "mw",
     "latitude": -13.97,
     "longitude": 33.78,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#E8C303"
   },
-  {
-    "id": 44760,
+  {"id": 44760,
     "country": "Malaysia",
     "capital": "Kuala Lumpur",
     "iso": "my",
     "latitude": 3.17,
     "longitude": 101.7,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#482AFE"
   },
-  {
-    "id": 76126,
+  {"id": 76126,
     "country": "Maldives",
     "capital": "Malé",
     "iso": "mv",
     "latitude": 4.17,
     "longitude": 73.51,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#EBC234"
   },
-  {
-    "id": 91542,
+  {"id": 91542,
     "country": "Mali",
     "capital": "Bamako",
     "iso": "ml",
     "latitude": 12.65,
     "longitude": -8,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#D372D4"
   },
-  {
-    "id": 30979,
+  {"id": 30979,
     "country": "Malta",
     "capital": "Valletta",
     "iso": "mt",
     "latitude": 35.88,
     "longitude": 14.5,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#D20A90"
   },
-  {
-    "id": 86873,
+  {"id": 86873,
     "country": "Maroko",
     "capital": "Rabat",
     "iso": "ma",
     "latitude": 34.02,
     "longitude": -6.82,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#3997BB"
   },
-  {
-    "id": 65580,
+  {"id": 65580,
     "country": "Mauritania",
     "capital": "Nouakchott",
     "iso": "mr",
     "latitude": 18.07,
     "longitude": -15.97,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#D69692"
   },
-  {
-    "id": 10163,
+  {"id": 10163,
     "country": "Mauritius",
     "capital": "Port Louis",
     "iso": "mu",
     "latitude": -20.15,
     "longitude": 57.48,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#eab308"
   },
-  {
-    "id": 24386,
+  {"id": 10164,
+    "country": "Mayotte",
+    "capital": "Mamoudzou",
+    "iso": "yt",
+    "latitude": -12.78,
+    "longitude": 45.23,
+    "continent": "Africa",
+    "color": "#eab308"
+  },
+  {"id": 10165,
+    "country": "Reunion",
+    "capital": "Saint-Denis",
+    "iso": "re",
+    "latitude": -20.88,
+    "longitude": 55.45,
+    "continent": "Africa",
+    "color": "#eab308"
+  },
+  {"id": 24386,
     "country": "Meksiko",
     "capital": "Mexico City",
     "iso": "mx",
     "latitude": 19.43,
     "longitude": -99.13,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#8D72D0"
   },
-  {
-    "id": 1099,
+  {"id": 1099,
     "country": "Mesir",
     "capital": "Cairo",
     "iso": "eg",
     "latitude": 30.05,
     "longitude": 31.25,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#493D9D"
   },
-  {
-    "id": 69213,
+  {"id": 69213,
     "country": "Mikronesia",
     "capital": "Palikir",
     "iso": "fm",
     "latitude": 6.92,
     "longitude": 158.15,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#7F4E88"
   },
-  {
-    "id": 17294,
+  {"id": 17294,
     "country": "Moldova",
     "capital": "Chișinău",
     "iso": "md",
     "latitude": 47.01,
     "longitude": 28.9,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#9AEFEE"
   },
-  {
-    "id": 81845,
+  {"id": 81845,
     "country": "Monako",
     "capital": "Monaco",
     "iso": "mc",
     "latitude": 43.73,
     "longitude": 7.42,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#52F7F4"
   },
-  {
-    "id": 22019,
+  {"id": 22019,
     "country": "Mongolia",
     "capital": "Ulan Bator",
     "iso": "mn",
     "latitude": 47.92,
     "longitude": 106.91,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#F5B7BE"
   },
-  {
-    "id": 46042,
+  {"id": 46042,
     "country": "Montenegro",
     "capital": "Podgorica",
     "iso": "me",
     "latitude": 42.43,
     "longitude": 19.27,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#FD1C44"
   },
-  {
-    "id": 28847,
+  {"id": 28847,
     "country": "Mozambik",
     "capital": "Maputo",
     "iso": "mz",
     "latitude": -25.95,
     "longitude": 32.58,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#35881B"
   },
-  {
-    "id": 49059,
+  {"id": 49059,
     "country": "Myanmar",
     "capital": "Naypyidaw",
     "iso": "mm",
     "latitude": 19.76,
     "longitude": 96.07,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#A7AAE4"
   },
-  {
-    "id": 6978,
+  {"id": 6978,
     "country": "Namibia",
     "capital": "Windhoek",
     "iso": "na",
     "latitude": -22.57,
     "longitude": 17.08,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#DEB388"
   },
-  {
-    "id": 48180,
+  {"id": 48180,
     "country": "Nauru",
     "capital": "Yaren",
     "iso": "nr",
     "latitude": -0.55,
     "longitude": 166.92,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#C88EEE"
   },
-  {
-    "id": 95906,
+  {"id": 95906,
     "country": "Nepal",
     "capital": "Kathmandu",
     "iso": "np",
     "latitude": 27.72,
     "longitude": 85.32,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#45F1A4"
   },
-  {
-    "id": 81348,
+  {"id": 81348,
     "country": "Niger",
     "capital": "Niamey",
     "iso": "ne",
     "latitude": 13.52,
     "longitude": 2.12,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#5D45B8"
   },
-  {
-    "id": 50850,
+  {"id": 50850,
     "country": "Nigeria",
     "capital": "Abuja",
     "iso": "ng",
     "latitude": 9.08,
     "longitude": 7.53,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#F17411"
   },
-  {
-    "id": 58808,
+  {"id": 58808,
     "country": "Nikaragua",
     "capital": "Managua",
     "iso": "ni",
     "latitude": 12.13,
     "longitude": -86.25,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#056DB5"
   },
-  {
-    "id": 39519,
+  {"id": 39519,
     "country": "Norwegia",
     "capital": "Oslo",
     "iso": "no",
     "latitude": 59.92,
     "longitude": 10.75,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#94F8D3"
   },
-  {
-    "id": 2124,
+  {"id": 2124,
     "country": "Oman",
     "capital": "Muscat",
     "iso": "om",
     "latitude": 23.62,
     "longitude": 58.58,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#AD437F"
   },
-  {
-    "id": 20822,
+  {"id": 20822,
     "country": "Pakistan",
     "capital": "Islamabad",
     "iso": "pk",
     "latitude": 33.68,
     "longitude": 73.05,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#840B96"
   },
-  {
-    "id": 91661,
+  {"id": 91661,
     "country": "Palau",
     "capital": "Ngerulmud",
     "iso": "pw",
     "latitude": 7.5,
     "longitude": 134.62,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#CFCF94"
   },
-  {
-    "id": 38423,
+  {"id": 38423,
     "country": "Palestina",
     "capital": "Ramallah",
     "iso": "ps",
     "latitude": 31.9,
     "longitude": 35.2,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#0E987A"
   },
-  {
-    "id": 95071,
+  {"id": 95071,
     "country": "Panama",
     "capital": "Panama City",
     "iso": "pa",
     "latitude": 8.97,
     "longitude": -79.53,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#A0420C"
   },
-  {
-    "id": 66658,
+  {"id": 66658,
     "country": "Pantai gading",
     "capital": "Yamoussoukro",
     "iso": "ci",
     "latitude": 6.82,
     "longitude": -5.27,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#BD96DC"
   },
-  {
-    "id": 98051,
+  {"id": 98051,
     "country": "Papua nugini",
     "capital": "Port Moresby",
     "iso": "pg",
     "latitude": -9.45,
     "longitude": 147.18,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#D1FFCE"
   },
-  {
-    "id": 33996,
+  {"id": 33996,
     "country": "Paraguay",
     "capital": "Asunción",
     "iso": "py",
     "latitude": -25.28,
     "longitude": -57.57,
-    "continent": "South America"
+    "continent": "South America",
+    "color": "#3BAFBF"
   },
-  {
-    "id": 471,
+  {"id": 471,
     "country": "Peru",
     "capital": "Lima",
     "iso": "pe",
     "latitude": -12.05,
     "longitude": -77.05,
-    "continent": "South America"
+    "continent": "South America",
+    "color": "#32E841"
   },
-  {
-    "id": 33813,
+  {"id": 33813,
     "country": "Polandia",
     "capital": "Warsaw",
     "iso": "pl",
     "latitude": 52.25,
     "longitude": 21,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#77DDDD"
   },
-  {
-    "id": 12936,
+  {"id": 12936,
     "country": "Portugal",
     "capital": "Lisbon",
     "iso": "pt",
     "latitude": 38.72,
     "longitude": -9.13,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#AE0EEA"
   },
-  {
-    "id": 9760,
+  {"id": 9760,
     "country": "Prancis",
     "capital": "Paris",
     "iso": "fr",
     "latitude": 48.87,
     "longitude": 2.33,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#E0ABB5"
   },
-  {
-    "id": 83966,
+  {"id": 83966,
     "country": "Puerto rico",
     "capital": "San Juan",
     "iso": "pr",
     "latitude": 18.47,
     "longitude": -66.12,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#E57267"
   },
-  {
-    "id": 35225,
+  {"id": 35225,
     "country": "Qatar",
     "capital": "Doha",
     "iso": "qa",
     "latitude": 25.28,
     "longitude": 51.53,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#7D8CD6"
   },
-  {
-    "id": 99656,
+  {"id": 99656,
     "country": "Republik demokratik kongo",
     "capital": "Kinshasa",
     "iso": "cd",
     "latitude": -4.32,
     "longitude": 15.3,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#7FA74E"
   },
-  {
-    "id": 95870,
+  {"id": 95870,
     "country": "Republik dominika",
     "capital": "Santo Domingo",
     "iso": "do",
     "latitude": 18.47,
     "longitude": -69.9,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#CE16AA"
   },
-  {
-    "id": 3895,
+  {"id": 3895,
     "country": "Republik rumania",
     "capital": "Bucharest",
     "iso": "ro",
     "latitude": 44.43,
     "longitude": 26.1,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#5665EB"
   },
-  {
-    "id": 84459,
+  {"id": 84459,
     "country": "Republik serbia",
     "capital": "Belgrade",
     "iso": "rs",
     "latitude": 44.83,
     "longitude": 20.5,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#7664E2"
   },
-  {
-    "id": 27161,
+  {"id": 27161,
     "country": "Republik sudan",
     "capital": "Khartoum",
     "iso": "sd",
     "latitude": 15.6,
     "longitude": 32.53,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#03CC83"
   },
-  {
-    "id": 83510,
+  {"id": 83510,
     "country": "Republik tanzania",
     "capital": "Dodoma",
     "iso": "tz",
     "latitude": -6.16,
     "longitude": 35.75,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#50CE32"
   },
-  {
-    "id": 95671,
+  {"id": 95671,
     "country": "Republik timor leste",
     "capital": "Dili",
     "iso": "tl",
     "latitude": -8.58,
     "longitude": 125.6,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#C98B13"
   },
-  {
-    "id": 1230,
+  {"id": 1230,
     "country": "Republik uganda",
     "capital": "Kampala",
     "iso": "ug",
     "latitude": 0.32,
     "longitude": 32.55,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#6D703B"
   },
-  {
-    "id": 39400,
+  {"id": 39400,
     "country": "Republik zambia",
     "capital": "Lusaka",
     "iso": "zm",
     "latitude": -15.42,
     "longitude": 28.28,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#963265"
   },
-  {
-    "id": 10303,
+  {"id": 10303,
     "country": "Republik zimbabwe",
     "capital": "Harare",
     "iso": "zw",
     "latitude": -17.82,
     "longitude": 31.03,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#A64C62"
   },
-  {
-    "id": 54450,
+  {"id": 54450,
     "country": "Rusia",
     "capital": "Moscow",
     "iso": "ru",
     "latitude": 55.75,
     "longitude": 37.6,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#318DCB"
   },
-  {
-    "id": 82506,
+  {"id": 82506,
     "country": "Rwanda",
     "capital": "Kigali",
     "iso": "rw",
     "latitude": -1.95,
     "longitude": 30.05,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#C04911"
   },
-  {
-    "id": 85055,
+  {"id": 85055,
     "country": "Saint lucia",
     "capital": "Castries",
     "iso": "lc",
     "latitude": 14,
     "longitude": -61,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#4B077A"
   },
-  {
-    "id": 31938,
+  {"id": 31938,
     "country": "Samoa",
     "capital": "Apia",
     "iso": "ws",
     "latitude": -13.82,
     "longitude": -171.77,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#8F95C3"
   },
-  {
-    "id": 84512,
+  {"id": 84512,
     "country": "Samoa amerika",
     "capital": "Pago Pago",
     "iso": "ws",
     "latitude": -14.27,
     "longitude": -170.7,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#CA2E94"
   },
-  {
-    "id": 34985,
+  {"id": 34985,
     "country": "San marino",
     "capital": "City of San Marino",
     "iso": "sm",
     "latitude": 43.94,
     "longitude": 12.45,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#D99DD0"
   },
-  {
-    "id": 1633,
+  {"id": 1633,
     "country": "Selandia baru",
     "capital": "Wellington",
     "iso": "nz",
     "latitude": -41.3,
     "longitude": 174.78,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#B6FFA4"
   },
-  {
-    "id": 6400,
+  {"id": 6400,
     "country": "Senegal",
     "capital": "Dakar",
     "iso": "sn",
     "latitude": 14.73,
     "longitude": -17.63,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#531BA4"
   },
-  {
-    "id": 42482,
+  {"id": 42482,
     "country": "Seychelles",
     "capital": "Victoria",
     "iso": "sc",
     "latitude": -4.62,
     "longitude": 55.45,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#5E53DD"
   },
-  {
-    "id": 57941,
+  {"id": 57941,
     "country": "Sierra leone",
     "capital": "Freetown",
     "iso": "sl",
     "latitude": 8.48,
     "longitude": -13.23,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#B628C9"
   },
-  {
-    "id": 20878,
+  {"id": 20878,
     "country": "Singapura",
     "capital": "Singapore",
     "iso": "sg",
     "latitude": 1.28,
     "longitude": 103.85,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#FFDFC4"
   },
-  {
-    "id": 92726,
+  {"id": 92726,
     "country": "Siprus",
     "capital": "Nicosia",
     "iso": "cy",
     "latitude": 35.17,
     "longitude": 33.37,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#4CFF04"
   },
-  {
-    "id": 23672,
+  {"id": 23672,
     "country": "Slovenia",
     "capital": "Ljubljana",
     "iso": "si",
     "latitude": 46.05,
     "longitude": 14.52,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#7F65B2"
   },
-  {
-    "id": 14492,
+  {"id": 14492,
     "country": "Slowakia",
     "capital": "Bratislava",
     "iso": "sk",
     "latitude": 48.15,
     "longitude": 17.12,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#9A7740"
   },
-  {
-    "id": 62668,
+  {"id": 62668,
     "country": "Somalia",
     "capital": "Mogadishu",
     "iso": "so",
     "latitude": 2.07,
     "longitude": 45.33,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#391FBC"
   },
-  {
-    "id": 76786,
+  {"id": 76786,
     "country": "Spanyol",
     "capital": "Madrid",
     "iso": "es",
     "latitude": 40.4,
     "longitude": -3.68,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#C6A822"
   },
-  {
-    "id": 29770,
+  {"id": 29770,
     "country": "Sri lanka",
     "capital": "Sri Jayawardenepura Kotte",
     "iso": "lk",
     "latitude": 6.89,
     "longitude": 79.9,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#8BA5ED"
   },
-  {
-    "id": 67739,
+  {"id": 67739,
     "country": "Sudan selatan",
     "capital": "Juba",
     "iso": "sd",
     "latitude": 4.85,
     "longitude": 31.62,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#72B239"
   },
-  {
-    "id": 26614,
+  {"id": 26614,
     "country": "Suriah",
     "capital": "Damascus",
     "iso": "sy",
     "latitude": 33.5,
     "longitude": 36.3,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#CEAB45"
   },
-  {
-    "id": 57844,
+  {"id": 57844,
     "country": "Suriname",
     "capital": "Paramaribo",
     "iso": "sr",
     "latitude": 5.83,
     "longitude": -55.17,
-    "continent": "South America"
+    "continent": "South America",
+    "color": "#A16DA9"
   },
-  {
-    "id": 21296,
+  {"id": 21296,
     "country": "Swedia",
     "capital": "Stockholm",
     "iso": "se",
     "latitude": 59.33,
     "longitude": 18.05,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#310490"
   },
-  {
-    "id": 46375,
+  {"id": 46375,
     "country": "Taiwan",
     "capital": "Taipei",
     "iso": "cn-tw",
     "latitude": 25.03,
     "longitude": 121.52,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#31779B"
   },
-  {
-    "id": 13817,
+  {"id": 13817,
     "country": "Tajikistan",
     "capital": "Dushanbe",
     "iso": "tj",
     "latitude": 38.55,
     "longitude": 68.77,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#CDFE86"
   },
-  {
-    "id": 61567,
+  {"id": 61567,
     "country": "Thailand",
     "capital": "Bangkok",
     "iso": "th",
     "latitude": 13.75,
     "longitude": 100.52,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#868939"
   },
-  {
-    "id": 37701,
+  {"id": 37701,
     "country": "Togo",
     "capital": "Lomé",
     "iso": "tg",
     "latitude": 6.14,
     "longitude": 1.21,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#DA6F47"
   },
-  {
-    "id": 94834,
+  {"id": 94834,
     "country": "Tonga",
     "capital": "Nuku'alofa",
     "iso": "to",
     "latitude": -21.13,
     "longitude": -175.2,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#2A08A4"
   },
-  {
-    "id": 66180,
+  {"id": 66180,
     "country": "Trinidad dan tobago",
     "capital": "Port of Spain",
     "iso": "tt",
     "latitude": 10.65,
     "longitude": -61.52,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#F40C9A"
   },
-  {
-    "id": 76562,
+  {"id": 76562,
     "country": "Tunisia",
     "capital": "Tunis",
     "iso": "tn",
     "latitude": 36.8,
     "longitude": 10.18,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#6B07FD"
   },
-  {
-    "id": 33188,
+  {"id": 33188,
     "country": "Turki",
     "capital": "Ankara",
     "iso": "tr",
     "latitude": 39.93,
     "longitude": 32.87,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#F97A63"
   },
-  {
-    "id": 42321,
+  {"id": 42321,
     "country": "Turkmenistan",
     "capital": "Ashgabat",
     "iso": "tm",
     "latitude": 37.95,
     "longitude": 58.38,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#963F79"
   },
-  {
-    "id": 54722,
+  {"id": 54722,
     "country": "Tuvalu",
     "capital": "Funafuti",
     "iso": "tv",
     "latitude": -8.52,
     "longitude": 179.22,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#AC0E1F"
   },
-  {
-    "id": 45579,
+  {"id": 45579,
     "country": "Ukraina",
     "capital": "Kyiv",
     "iso": "ua",
     "latitude": 50.43,
     "longitude": 30.52,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#89960C"
   },
-  {
-    "id": 4281,
+  {"id": 4281,
     "country": "Uruguay",
     "capital": "Montevideo",
     "iso": "uy",
     "latitude": -34.85,
     "longitude": -56.17,
-    "continent": "South America"
+    "continent": "South America",
+    "color": "#9142AC"
   },
-  {
-    "id": 68474,
+  {"id": 68474,
     "country": "Uzbekistan",
     "capital": "Tashkent",
     "iso": "uz",
     "latitude": 41.32,
     "longitude": 69.25,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#AA1B4B"
   },
-  {
-    "id": 56450,
+  {"id": 56450,
     "country": "Vanuatu",
     "capital": "Port Vila",
     "iso": "vu",
     "latitude": -17.73,
     "longitude": 168.32,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#D0DF5C"
   },
-  {
-    "id": 20478,
+  {"id": 20478,
     "country": "Vatikan",
     "capital": "Vatican City",
     "iso": "va",
     "latitude": 41.9,
     "longitude": 12.45,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#24722A"
   },
-  {
-    "id": 69159,
+  {"id": 69159,
     "country": "Venezuela",
     "capital": "Caracas",
     "iso": "ve",
     "latitude": 10.48,
     "longitude": -66.87,
-    "continent": "South America"
+    "continent": "South America",
+    "color": "#E65A61"
   },
-  {
-    "id": 59882,
+  {"id": 59882,
     "country": "Vietnam",
     "capital": "Hanoi",
     "iso": "vn",
     "latitude": 21.03,
     "longitude": 105.85,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#5F8F9E"
   },
-  {
-    "id": 12928,
+  {"id": 12928,
     "country": "Yaman",
     "capital": "Sana'a",
     "iso": "ye",
     "latitude": 15.37,
     "longitude": 44.19,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#57BAFC"
   },
-  {
-    "id": 28730,
+  {"id": 28730,
     "country": "Yordania",
     "capital": "Amman",
     "iso": "jo",
     "latitude": 31.95,
     "longitude": 35.93,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#16CB8C"
   },
-  {
-    "id": 64769,
+  {"id": 64769,
     "country": "Yunani",
     "capital": "Athens",
     "iso": "gr",
@@ -1744,118 +1775,145 @@ export const COUNTRIES_DATA = [
     "iso": "ba",
     "latitude": 43.8563,
     "longitude": 18.4131,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#2EA039"
   },
-  {
-    "id": 70002,
+  {"id": 70002,
     "country": "Guiana prancis",
     "capital": "Cayenne",
     "iso": "gf",
     "latitude": 4.9224,
     "longitude": -52.3135,
-    "continent": "South America"
+    "continent": "South America",
+    "color": "#f97316"
   },
-  {
-    "id": 70003,
+  {"id": 70010,
+    "country": "Guadeloupe",
+    "capital": "Basse-Terre",
+    "iso": "gp",
+    "latitude": 16.0,
+    "longitude": -61.73,
+    "continent": "North America",
+    "color": "#22c55e"
+  },
+  {"id": 70011,
+    "country": "Martinique",
+    "capital": "Fort-de-France",
+    "iso": "mq",
+    "latitude": 14.6,
+    "longitude": -61.08,
+    "continent": "North America",
+    "color": "#22c55e"
+  },
+  {"id": 70012,
+    "country": "Bonaire, Sint Eustatius dan Saba",
+    "capital": "Kralendijk",
+    "iso": "bq",
+    "latitude": 12.15,
+    "longitude": -68.27,
+    "continent": "North America",
+    "color": "#22c55e"
+  },
+  {"id": 70003,
     "country": "Guinea bissau",
     "capital": "Bissau",
     "iso": "gw",
     "latitude": 11.8597,
     "longitude": -15.5977,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#1A6C06"
   },
-  {
-    "id": 70004,
+  {"id": 70004,
     "country": "Makau",
     "capital": "Macao",
     "iso": "mo",
     "latitude": 22.1987,
     "longitude": 113.5439,
-    "continent": "Asia"
+    "continent": "Asia",
+    "color": "#7A9683"
   },
-  {
-    "id": 70005,
+  {"id": 70005,
     "country": "Makedonia utara",
     "capital": "Skopje",
     "iso": "mk",
     "latitude": 41.9981,
     "longitude": 21.4254,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#E3AF40"
   },
-  {
-    "id": 70006,
+  {"id": 70006,
     "country": "Marshall",
     "capital": "Majuro",
     "iso": "mh",
     "latitude": 7.1164,
     "longitude": 171.1856,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#701FB9"
   },
-  {
-    "id": 70007,
+  {"id": 70007,
     "country": "Republik Afrika Tengah",
     "capital": "Bangui",
     "iso": "cf",
     "latitude": 4.3947,
     "longitude": 18.5582,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#FFD7F8"
   },
-  {
-    "id": 70008,
+  {"id": 70008,
     "country": "Saint Kitts dan Nevis",
     "capital": "Basseterre",
     "iso": "kn",
     "latitude": 17.3026,
     "longitude": -62.7177,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#6F87EE"
   },
-  {
-    "id": 70009,
+  {"id": 70009,
     "country": "Saint Vincent dan Grenadine",
     "capital": "Kingstown",
     "iso": "vc",
     "latitude": 13.16,
     "longitude": -61.2248,
-    "continent": "North America"
+    "continent": "North America",
+    "color": "#DE6B05"
   },
-  {
-    "id": 70010,
+  {"id": 70010,
     "country": "Sao Tome dan Principe",
     "capital": "São Tomé",
     "iso": "st",
     "latitude": 0.3365,
     "longitude": 6.7273,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#F202B8"
   },
-  {
-    "id": 70011,
+  {"id": 70011,
     "country": "Swiss",
     "capital": "Bern",
     "iso": "ch",
     "latitude": 46.9480,
     "longitude": 7.4474,
-    "continent": "Europe"
+    "continent": "Europe",
+    "color": "#D9FFB6"
   },
-  {
-    "id": 70012,
+  {"id": 70012,
     "country": "Tahiti",
     "capital": "Papeete",
     "iso": "pf",
     "latitude": -17.5516,
     "longitude": -149.5585,
-    "continent": "Oceania"
+    "continent": "Oceania",
+    "color": "#A7F934"
   },
-  {
-    "id": 70013,
+  {"id": 70013,
     "country": "Tanjung verde",
     "capital": "Praia",
     "iso": "cv",
     "latitude": 14.9243,
     "longitude": -23.5144,
-    "continent": "Africa"
+    "continent": "Africa",
+    "color": "#967EE8"
   },
-  {
-    "id": 70014,
+  {"id": 70014,
     "country": "Uni Emirat Arab",
     "capital": "Abu Dhabi",
     "iso": "ae",
@@ -1870,1347 +1928,1361 @@ export const CAPITALS_DATA = [
     "capital": "Kabul",
     "lat": 34.52,
     "lng": 69.18,
-    "iso": "af"
+    "iso": "af",
+    "color": "#93205C"
   },
-  {
-    "country": "afrika selatan",
+  {"country": "afrika selatan",
     "capital": "Pretoria",
     "lat": -25.7,
     "lng": 28.22,
-    "iso": "za"
+    "iso": "za",
+    "color": "#A92C6A"
   },
-  {
-    "country": "albania",
+  {"country": "albania",
     "capital": "Tirana",
     "lat": 41.32,
     "lng": 19.82,
-    "iso": "al"
+    "iso": "al",
+    "color": "#3303DA"
   },
-  {
-    "country": "aljazair",
+  {"country": "aljazair",
     "capital": "Algiers",
     "lat": 36.75,
     "lng": 3.05,
-    "iso": "dz"
+    "iso": "dz",
+    "color": "#10B262"
   },
-  {
-    "country": "amerika serikat",
+  {"country": "amerika serikat",
     "capital": "Washington, D.C.",
     "lat": 38.89,
     "lng": -77.05,
-    "iso": "us"
+    "iso": "us",
+    "color": "#F77F6D"
   },
-  {
-    "country": "andorra",
+  {"country": "andorra",
     "capital": "Andorra la Vella",
     "lat": 42.5,
     "lng": 1.52,
-    "iso": "ad"
+    "iso": "ad",
+    "color": "#449F50"
   },
-  {
-    "country": "angola",
+  {"country": "angola",
     "capital": "Luanda",
     "lat": -8.83,
     "lng": 13.22,
-    "iso": "ao"
+    "iso": "ao",
+    "color": "#FFE0BD"
   },
-  {
-    "country": "antigua dan barbuda",
+  {"country": "antigua dan barbuda",
     "capital": "Saint John's",
     "lat": 17.12,
     "lng": -61.85,
-    "iso": "ag"
+    "iso": "ag",
+    "color": "#FDF04E"
   },
-  {
-    "country": "arab saudi",
+  {"country": "arab saudi",
     "capital": "Riyadh",
     "lat": 24.65,
     "lng": 46.7,
-    "iso": "sa"
+    "iso": "sa",
+    "color": "#3F4482"
   },
-  {
-    "country": "argentina",
+  {"country": "argentina",
     "capital": "Buenos Aires",
     "lat": -34.58,
     "lng": -58.67,
-    "iso": "ar"
+    "iso": "ar",
+    "color": "#2A52AD"
   },
-  {
-    "country": "armenia",
+  {"country": "armenia",
     "capital": "Yerevan",
     "lat": 40.17,
     "lng": 44.5,
-    "iso": "am"
+    "iso": "am",
+    "color": "#3744C6"
   },
-  {
-    "country": "australia",
+  {"country": "australia",
     "capital": "Canberra",
     "lat": -35.27,
     "lng": 149.13,
-    "iso": "au"
+    "iso": "au",
+    "color": "#FB2A54"
   },
-  {
-    "country": "austria",
+  {"country": "austria",
     "capital": "Vienna",
     "lat": 48.2,
     "lng": 16.37,
-    "iso": "at"
+    "iso": "at",
+    "color": "#6CD0C2"
   },
-  {
-    "country": "azerbaijan",
+  {"country": "azerbaijan",
     "capital": "Baku",
     "lat": 40.38,
     "lng": 49.87,
-    "iso": "az"
+    "iso": "az",
+    "color": "#620A71"
   },
-  {
-    "country": "bahama",
+  {"country": "bahama",
     "capital": "Nassau",
     "lat": 25.08,
     "lng": -77.35,
-    "iso": "bs"
+    "iso": "bs",
+    "color": "#9C35F1"
   },
-  {
-    "country": "bahrain",
+  {"country": "bahrain",
     "capital": "Manama",
     "lat": 26.23,
     "lng": 50.57,
-    "iso": "bh"
+    "iso": "bh",
+    "color": "#97E98C"
   },
-  {
-    "country": "bangladesh",
+  {"country": "bangladesh",
     "capital": "Dhaka",
     "lat": 23.72,
     "lng": 90.4,
-    "iso": "bd"
+    "iso": "bd",
+    "color": "#B47BC9"
   },
-  {
-    "country": "barbados",
+  {"country": "barbados",
     "capital": "Bridgetown",
     "lat": 13.1,
     "lng": -59.62,
-    "iso": "bb"
+    "iso": "bb",
+    "color": "#8C7CCD"
   },
-  {
-    "country": "belanda",
+  {"country": "belanda",
     "capital": "Amsterdam",
     "lat": 52.35,
     "lng": 4.92,
-    "iso": "nl"
+    "iso": "nl",
+    "color": "#926EC8"
   },
-  {
-    "country": "belarus",
+  {"country": "belarus",
     "capital": "Minsk",
     "lat": 53.9,
     "lng": 27.57,
-    "iso": "by"
+    "iso": "by",
+    "color": "#F9BCD9"
   },
-  {
-    "country": "belgia",
+  {"country": "belgia",
     "capital": "Brussels",
     "lat": 50.83,
     "lng": 4.33,
-    "iso": "be"
+    "iso": "be",
+    "color": "#D34798"
   },
-  {
-    "country": "belize",
+  {"country": "belize",
     "capital": "Belmopan",
     "lat": 17.25,
     "lng": -88.77,
-    "iso": "bz"
+    "iso": "bz",
+    "color": "#48F621"
   },
-  {
-    "country": "benin",
+  {"country": "benin",
     "capital": "Porto-Novo",
     "lat": 6.48,
     "lng": 2.62,
-    "iso": "bj"
+    "iso": "bj",
+    "color": "#9F1BF0"
   },
-  {
-    "country": "bermuda",
+  {"country": "bermuda",
     "capital": "Hamilton",
     "lat": 32.28,
     "lng": -64.78,
-    "iso": "bm"
+    "iso": "bm",
+    "color": "#892565"
   },
-  {
-    "country": "bhutan",
+  {"country": "bhutan",
     "capital": "Thimphu",
     "lat": 27.47,
     "lng": 89.63,
-    "iso": "bt"
+    "iso": "bt",
+    "color": "#6A74BD"
   },
-  {
-    "country": "bolivia",
+  {"country": "bolivia",
     "capital": "Sucre",
     "lat": -19.02,
     "lng": -65.26,
-    "iso": "bo"
+    "iso": "bo",
+    "color": "#76781B"
   },
-  {
-    "country": "botswana",
+  {"country": "botswana",
     "capital": "Gaborone",
     "lat": -24.63,
     "lng": 25.9,
-    "iso": "bw"
+    "iso": "bw",
+    "color": "#5D50C8"
   },
-  {
-    "country": "brazil",
+  {"country": "brazil",
     "capital": "Brasília",
     "lat": -15.79,
     "lng": -47.88,
-    "iso": "br"
+    "iso": "br",
+    "color": "#6E5FA4"
   },
-  {
-    "country": "brunei",
+  {"country": "brunei",
     "capital": "Bandar Seri Begawan",
     "lat": 4.88,
     "lng": 114.93,
-    "iso": "bn"
+    "iso": "bn",
+    "color": "#0BE0D8"
   },
-  {
-    "country": "bulgaria",
+  {"country": "bulgaria",
     "capital": "Sofia",
     "lat": 42.68,
     "lng": 23.32,
-    "iso": "bg"
+    "iso": "bg",
+    "color": "#DB5F14"
   },
-  {
-    "country": "burkina faso",
+  {"country": "burkina faso",
     "capital": "Ouagadougou",
     "lat": 12.37,
     "lng": -1.52,
-    "iso": "bf"
+    "iso": "bf",
+    "color": "#ECA2BB"
   },
-  {
-    "country": "burundi",
+  {"country": "burundi",
     "capital": "Gitega",
     "lat": -3.43,
     "lng": 29.93,
-    "iso": "bi"
+    "iso": "bi",
+    "color": "#64968D"
   },
-  {
-    "country": "ceko",
+  {"country": "ceko",
     "capital": "Prague",
     "lat": 50.08,
     "lng": 14.47,
-    "iso": "cz"
+    "iso": "cz",
+    "color": "#AC3EBF"
   },
-  {
-    "country": "chad",
+  {"country": "chad",
     "capital": "N'Djamena",
     "lat": 12.1,
     "lng": 15.03,
-    "iso": "td"
+    "iso": "td",
+    "color": "#EDE79B"
   },
-  {
-    "country": "chile",
+  {"country": "chile",
     "capital": "Santiago",
     "lat": -33.45,
     "lng": -70.67,
-    "iso": "cl"
+    "iso": "cl",
+    "color": "#FD3170"
   },
-  {
-    "country": "china",
+  {"country": "china",
     "capital": "Beijing",
     "lat": 39.92,
     "lng": 116.38,
-    "iso": "cn"
+    "iso": "cn",
+    "color": "#BC7D7B"
   },
-  {
-    "country": "costa rica",
+  {"country": "costa rica",
     "capital": "San José",
     "lat": 9.93,
     "lng": -84.09,
-    "iso": "cr"
+    "iso": "cr",
+    "color": "#53BCDE"
   },
-  {
-    "country": "curacao",
+  {"country": "curacao",
     "capital": "Willemstad",
     "lat": 12.1,
     "lng": -68.92,
-    "iso": "cw"
+    "iso": "cw",
+    "color": "#606CC8"
   },
-  {
-    "country": "denmark",
+  {"country": "denmark",
     "capital": "Copenhagen",
     "lat": 55.67,
     "lng": 12.58,
-    "iso": "dk"
+    "iso": "dk",
+    "color": "#E93757"
   },
-  {
-    "country": "djibouti",
+  {"country": "djibouti",
     "capital": "Djibouti",
     "lat": 11.58,
     "lng": 43.15,
-    "iso": "dj"
+    "iso": "dj",
+    "color": "#A2B10E"
   },
-  {
-    "country": "dominika",
+  {"country": "dominika",
     "capital": "Roseau",
     "lat": 15.3,
     "lng": -61.4,
-    "iso": "dm"
+    "iso": "dm",
+    "color": "#ED4C4E"
   },
-  {
-    "country": "ekuador",
+  {"country": "ekuador",
     "capital": "Quito",
     "lat": -0.22,
     "lng": -78.5,
-    "iso": "ec"
+    "iso": "ec",
+    "color": "#F05543"
   },
-  {
-    "country": "el salvador",
+  {"country": "el salvador",
     "capital": "San Salvador",
     "lat": 13.7,
     "lng": -89.2,
-    "iso": "sv"
+    "iso": "sv",
+    "color": "#EEDF14"
   },
-  {
-    "country": "eritrea",
+  {"country": "eritrea",
     "capital": "Asmara",
     "lat": 15.33,
     "lng": 38.93,
-    "iso": "er"
+    "iso": "er",
+    "color": "#41B597"
   },
-  {
-    "country": "estonia",
+  {"country": "estonia",
     "capital": "Tallinn",
     "lat": 59.43,
     "lng": 24.72,
-    "iso": "ee"
+    "iso": "ee",
+    "color": "#5C6298"
   },
-  {
-    "country": "eswatini",
+  {"country": "eswatini",
     "capital": "Mbabane",
     "lat": -26.32,
     "lng": 31.13,
-    "iso": "sz"
+    "iso": "sz",
+    "color": "#96D856"
   },
-  {
-    "country": "ethiopia",
+  {"country": "ethiopia",
     "capital": "Addis Ababa",
     "lat": 9.03,
     "lng": 38.7,
-    "iso": "et"
+    "iso": "et",
+    "color": "#A2694B"
   },
-  {
-    "country": "fiji",
+  {"country": "fiji",
     "capital": "Suva",
     "lat": -18.13,
     "lng": 178.42,
-    "iso": "fj"
+    "iso": "fj",
+    "color": "#67EF4F"
   },
-  {
-    "country": "filipina",
+  {"country": "filipina",
     "capital": "Manila",
     "lat": 14.6,
     "lng": 120.97,
-    "iso": "ph"
+    "iso": "ph",
+    "color": "#9E973D"
   },
-  {
-    "country": "finlandia",
+  {"country": "finlandia",
     "capital": "Helsinki",
     "lat": 60.17,
     "lng": 24.93,
-    "iso": "fi"
+    "iso": "fi",
+    "color": "#5A64C8"
   },
-  {
-    "country": "gabon",
+  {"country": "gabon",
     "capital": "Libreville",
     "lat": 0.38,
     "lng": 9.45,
-    "iso": "ga"
+    "iso": "ga",
+    "color": "#EE2144"
   },
-  {
-    "country": "gambia",
+  {"country": "gambia",
     "capital": "Banjul",
     "lat": 13.45,
     "lng": -16.57,
-    "iso": "gm"
+    "iso": "gm",
+    "color": "#264CE6"
   },
-  {
-    "country": "georgia",
+  {"country": "georgia",
     "capital": "Tbilisi",
     "lat": 41.68,
     "lng": 44.83,
-    "iso": "ge"
+    "iso": "ge",
+    "color": "#C0CDFF"
   },
-  {
-    "country": "ghana",
+  {"country": "ghana",
     "capital": "Accra",
     "lat": 5.55,
     "lng": -0.22,
-    "iso": "gh"
+    "iso": "gh",
+    "color": "#159672"
   },
-  {
-    "country": "gibraltar",
+  {"country": "gibraltar",
     "capital": "Gibraltar",
     "lat": 36.13,
     "lng": -5.35,
-    "iso": "gi"
+    "iso": "gi",
+    "color": "#EC1BB8"
   },
-  {
-    "country": "greenland",
+  {"country": "greenland",
     "capital": "Nuuk",
     "lat": 64.18,
     "lng": -51.75,
-    "iso": "gl"
+    "iso": "gl",
+    "color": "#AD53F5"
   },
-  {
-    "country": "grenada",
+  {"country": "grenada",
     "capital": "St. George's",
     "lat": 32.38,
     "lng": -64.68,
-    "iso": "gd"
+    "iso": "gd",
+    "color": "#6ACA8E"
   },
-  {
-    "country": "guam",
+  {"country": "guam",
     "capital": "Hagåtña",
     "lat": 13.48,
     "lng": 144.75,
-    "iso": "gu"
+    "iso": "gu",
+    "color": "#8F80C7"
   },
-  {
-    "country": "guatemala",
+  {"country": "guatemala",
     "capital": "Guatemala City",
     "lat": 14.62,
     "lng": -90.52,
-    "iso": "gt"
+    "iso": "gt",
+    "color": "#AC785D"
   },
-  {
-    "country": "guinea",
+  {"country": "guinea",
     "capital": "Conakry",
     "lat": 9.5,
     "lng": -13.7,
-    "iso": "gn"
+    "iso": "gn",
+    "color": "#3DA0D1"
   },
-  {
-    "country": "guyana",
+  {"country": "guyana",
     "capital": "Georgetown",
     "lat": 6.8,
     "lng": -58.15,
-    "iso": "gy"
+    "iso": "gy",
+    "color": "#FA2A88"
   },
-  {
-    "country": "haiti",
+  {"country": "haiti",
     "capital": "Port-au-Prince",
     "lat": 18.53,
     "lng": -72.33,
-    "iso": "ht"
+    "iso": "ht",
+    "color": "#87E390"
   },
-  {
-    "country": "honduras",
+  {"country": "honduras",
     "capital": "Tegucigalpa",
     "lat": 14.1,
     "lng": -87.22,
-    "iso": "hn"
+    "iso": "hn",
+    "color": "#1E28FE"
   },
-  {
-    "country": "hong kong",
+  {"country": "hong kong",
     "capital": "City of Victoria",
     "lat": 22.267,
     "lng": 114.188,
-    "iso": "hk"
+    "iso": "hk",
+    "color": "#DB1E8C"
   },
-  {
-    "country": "hungaria",
+  {"country": "hungaria",
     "capital": "Budapest",
     "lat": 47.5,
     "lng": 19.08,
-    "iso": "hu"
+    "iso": "hu",
+    "color": "#1E5CC8"
   },
-  {
-    "country": "india",
+  {"country": "india",
     "capital": "New Delhi",
     "lat": 28.6,
     "lng": 77.2,
-    "iso": "in"
+    "iso": "in",
+    "color": "#11A983"
   },
-  {
-    "country": "indonesia",
+  {"country": "indonesia",
     "capital": "Jakarta",
     "lat": -6.17,
     "lng": 106.82,
-    "iso": "id"
+    "iso": "id",
+    "color": "#FFA2C9"
   },
-  {
-    "country": "inggris",
+  {"country": "inggris",
     "capital": "London",
     "lat": 51.5,
     "lng": -0.08,
-    "iso": "gb"
+    "iso": "gb",
+    "color": "#CB11DC"
   },
-  {
-    "country": "irak",
+  {"country": "irak",
     "capital": "Baghdad",
     "lat": 33.33,
     "lng": 44.4,
-    "iso": "iq"
+    "iso": "iq",
+    "color": "#C370DB"
   },
-  {
-    "country": "iran",
+  {"country": "iran",
     "capital": "Tehran",
     "lat": 35.7,
     "lng": 51.42,
-    "iso": "ir"
+    "iso": "ir",
+    "color": "#6F0A7D"
   },
-  {
-    "country": "irlandia",
+  {"country": "irlandia",
     "capital": "Dublin",
     "lat": 53.32,
     "lng": -6.23,
-    "iso": "ie"
+    "iso": "ie",
+    "color": "#53ACD1"
   },
-  {
-    "country": "islandia",
+  {"country": "islandia",
     "capital": "Reykjavik",
     "lat": 64.15,
     "lng": -21.95,
-    "iso": "is"
+    "iso": "is",
+    "color": "#F15C51"
   },
-  {
-    "country": "israel",
+  {"country": "israel",
     "capital": "Tel Aviv",
     "lat": 32.08,
     "lng": 34.78,
-    "iso": "il"
+    "iso": "il",
+    "color": "#3F8454"
   },
-  {
-    "country": "italia",
+  {"country": "italia",
     "capital": "Rome",
     "lat": 41.9,
     "lng": 12.48,
-    "iso": "it"
+    "iso": "it",
+    "color": "#FFF5F8"
   },
-  {
-    "country": "jamaika",
+  {"country": "jamaika",
     "capital": "Kingston",
     "lat": 17.99702,
     "lng": -76.79358,
-    "iso": "jm"
+    "iso": "jm",
+    "color": "#03908B"
   },
-  {
-    "country": "jepang",
+  {"country": "jepang",
     "capital": "Tokyo",
     "lat": 35.68,
     "lng": 139.75,
-    "iso": "jp"
+    "iso": "jp",
+    "color": "#F39D75"
   },
-  {
-    "country": "jerman",
+  {"country": "jerman",
     "capital": "Berlin",
     "lat": 52.52,
     "lng": 13.4,
-    "iso": "de"
+    "iso": "de",
+    "color": "#75BEA8"
   },
-  {
-    "country": "kamboja",
+  {"country": "kamboja",
     "capital": "Phnom Penh",
     "lat": 11.55,
     "lng": 104.92,
-    "iso": "kh"
+    "iso": "kh",
+    "color": "#C40C04"
   },
-  {
-    "country": "kamerun",
+  {"country": "kamerun",
     "capital": "Yaoundé",
     "lat": 3.85,
     "lng": 11.5,
-    "iso": "cm"
+    "iso": "cm",
+    "color": "#FFC9C2"
   },
-  {
-    "country": "kanada",
+  {"country": "kanada",
     "capital": "Ottawa",
     "lat": 45.42,
     "lng": -75.7,
-    "iso": "ca"
+    "iso": "ca",
+    "color": "#2E628D"
   },
-  {
-    "country": "kazakhstan",
+  {"country": "kazakhstan",
     "capital": "Astana",
     "lat": 51.16,
     "lng": 71.45,
-    "iso": "kz"
+    "iso": "kz",
+    "color": "#E22CC0"
   },
-  {
-    "country": "kenya",
+  {"country": "kenya",
     "capital": "Nairobi",
     "lat": -1.28,
     "lng": 36.82,
-    "iso": "ke"
+    "iso": "ke",
+    "color": "#577E90"
   },
-  {
-    "country": "kepulauan faroe",
+  {"country": "kepulauan faroe",
     "capital": "Tórshavn",
     "lat": 62.01,
     "lng": -6.77,
-    "iso": "fo"
+    "iso": "fo",
+    "color": "#2E25EB"
   },
-  {
-    "country": "kirgizstan",
+  {"country": "kirgizstan",
     "capital": "Bishkek",
     "lat": 42.87,
     "lng": 74.6,
-    "iso": "kg"
+    "iso": "kg",
+    "color": "#B112C1"
   },
-  {
-    "country": "kiribati",
+  {"country": "kiribati",
     "capital": "South Tarawa",
     "lat": 1.33,
     "lng": 172.98,
-    "iso": "ki"
+    "iso": "ki",
+    "color": "#23FC58"
   },
-  {
-    "country": "kolombia",
+  {"country": "kolombia",
     "capital": "Bogotá",
     "lat": 4.71,
     "lng": -74.07,
-    "iso": "co"
+    "iso": "co",
+    "color": "#7C969B"
   },
-  {
-    "country": "komoro",
+  {"country": "komoro",
     "capital": "Moroni",
     "lat": -11.7,
     "lng": 43.23,
-    "iso": "km"
+    "iso": "km",
+    "color": "#7299B5"
   },
-  {
-    "country": "kongo",
+  {"country": "kongo",
     "capital": "Brazzaville",
     "lat": -4.25,
     "lng": 15.28,
-    "iso": "cg"
+    "iso": "cg",
+    "color": "#2B966D"
   },
-  {
-    "country": "korea selatan",
+  {"country": "korea selatan",
     "capital": "Seoul",
     "lat": 37.55,
     "lng": 126.98,
-    "iso": "kr"
+    "iso": "kr",
+    "color": "#E0767A"
   },
-  {
-    "country": "korea utara",
+  {"country": "korea utara",
     "capital": "Pyongyang",
     "lat": 39.02,
     "lng": 125.75,
-    "iso": "kp"
+    "iso": "kp",
+    "color": "#D21DC7"
   },
-  {
-    "country": "kosovo",
+  {"country": "kosovo",
     "capital": "Pristina",
     "lat": 42.67,
     "lng": 21.17,
-    "iso": "xk"
+    "iso": "xk",
+    "color": "#9EB4F4"
   },
-  {
-    "country": "kroasia",
+  {"country": "kroasia",
     "capital": "Zagreb",
     "lat": 45.8,
     "lng": 16,
-    "iso": "hr"
+    "iso": "hr",
+    "color": "#6D40F3"
   },
-  {
-    "country": "kuba",
+  {"country": "kuba",
     "capital": "Havana",
     "lat": 23.12,
     "lng": -82.35,
-    "iso": "cu"
+    "iso": "cu",
+    "color": "#FFCBCE"
   },
-  {
-    "country": "kuwait",
+  {"country": "kuwait",
     "capital": "Kuwait City",
     "lat": 29.37,
     "lng": 47.97,
-    "iso": "kw"
+    "iso": "kw",
+    "color": "#E38FA0"
   },
-  {
-    "country": "laos",
+  {"country": "laos",
     "capital": "Vientiane",
     "lat": 17.97,
     "lng": 102.6,
-    "iso": "la"
+    "iso": "la",
+    "color": "#5495A2"
   },
-  {
-    "country": "latvia",
+  {"country": "latvia",
     "capital": "Riga",
     "lat": 56.95,
     "lng": 24.1,
-    "iso": "lv"
+    "iso": "lv",
+    "color": "#FFD7DA"
   },
-  {
-    "country": "lebanon",
+  {"country": "lebanon",
     "capital": "Beirut",
     "lat": 33.87,
     "lng": 35.5,
-    "iso": "lb"
+    "iso": "lb",
+    "color": "#94E5A2"
   },
-  {
-    "country": "lesotho",
+  {"country": "lesotho",
     "capital": "Maseru",
     "lat": -29.32,
     "lng": 27.48,
-    "iso": "ls"
+    "iso": "ls",
+    "color": "#34C9C5"
   },
-  {
-    "country": "liberia",
+  {"country": "liberia",
     "capital": "Monrovia",
     "lat": 6.3,
     "lng": -10.8,
-    "iso": "lr"
+    "iso": "lr",
+    "color": "#2F738A"
   },
-  {
-    "country": "libya",
+  {"country": "libya",
     "capital": "Tripoli",
     "lat": 32.88,
     "lng": 13.17,
-    "iso": "ly"
+    "iso": "ly",
+    "color": "#219634"
   },
-  {
-    "country": "liechtenstein",
+  {"country": "liechtenstein",
     "capital": "Vaduz",
     "lat": 47.13,
     "lng": 9.52,
-    "iso": "li"
+    "iso": "li",
+    "color": "#5ABFEF"
   },
-  {
-    "country": "lithuania",
+  {"country": "lithuania",
     "capital": "Vilnius",
     "lat": 54.68,
     "lng": 25.32,
-    "iso": "lt"
+    "iso": "lt",
+    "color": "#93EFE9"
   },
-  {
-    "country": "luksemburg",
+  {"country": "luksemburg",
     "capital": "Luxembourg",
     "lat": 49.6,
     "lng": 6.12,
-    "iso": "lu"
+    "iso": "lu",
+    "color": "#7D46BC"
   },
-  {
-    "country": "madagaskar",
+  {"country": "madagaskar",
     "capital": "Antananarivo",
     "lat": -18.92,
     "lng": 47.52,
-    "iso": "mg"
+    "iso": "mg",
+    "color": "#1CB3A6"
   },
-  {
-    "country": "malawi",
+  {"country": "malawi",
     "capital": "Lilongwe",
     "lat": -13.97,
     "lng": 33.78,
-    "iso": "mw"
+    "iso": "mw",
+    "color": "#E8C303"
   },
-  {
-    "country": "malaysia",
+  {"country": "malaysia",
     "capital": "Kuala Lumpur",
     "lat": 3.17,
     "lng": 101.7,
-    "iso": "my"
+    "iso": "my",
+    "color": "#482AFE"
   },
-  {
-    "country": "maldives",
+  {"country": "maldives",
     "capital": "Malé",
     "lat": 4.17,
     "lng": 73.51,
-    "iso": "mv"
+    "iso": "mv",
+    "color": "#EBC234"
   },
-  {
-    "country": "mali",
+  {"country": "mali",
     "capital": "Bamako",
     "lat": 12.65,
     "lng": -8,
-    "iso": "ml"
+    "iso": "ml",
+    "color": "#D372D4"
   },
-  {
-    "country": "malta",
+  {"country": "malta",
     "capital": "Valletta",
     "lat": 35.88,
     "lng": 14.5,
-    "iso": "mt"
+    "iso": "mt",
+    "color": "#D20A90"
   },
-  {
-    "country": "maroko",
+  {"country": "maroko",
     "capital": "Rabat",
     "lat": 34.02,
     "lng": -6.82,
-    "iso": "ma"
+    "iso": "ma",
+    "color": "#3997BB"
   },
-  {
-    "country": "mauritania",
+  {"country": "mauritania",
     "capital": "Nouakchott",
     "lat": 18.07,
     "lng": -15.97,
-    "iso": "mr"
+    "iso": "mr",
+    "color": "#D69692"
   },
-  {
-    "country": "mauritius",
+  {"country": "mauritius",
     "capital": "Port Louis",
     "lat": -20.15,
     "lng": 57.48,
-    "iso": "mu"
+    "iso": "mu",
+    "color": "#eab308"
   },
-  {
-    "country": "meksiko",
+  {"country": "mayotte",
+    "capital": "Mamoudzou",
+    "lat": -12.78,
+    "lng": 45.23,
+    "iso": "yt",
+    "color": "#eab308"
+  },
+  {"country": "reunion",
+    "capital": "Saint-Denis",
+    "lat": -20.88,
+    "lng": 55.45,
+    "iso": "re",
+    "color": "#eab308"
+  },
+  {"country": "meksiko",
     "capital": "Mexico City",
     "lat": 19.43,
     "lng": -99.13,
-    "iso": "mx"
+    "iso": "mx",
+    "color": "#8D72D0"
   },
-  {
-    "country": "mesir",
+  {"country": "mesir",
     "capital": "Cairo",
     "lat": 30.05,
     "lng": 31.25,
-    "iso": "eg"
+    "iso": "eg",
+    "color": "#493D9D"
   },
-  {
-    "country": "mikronesia",
+  {"country": "mikronesia",
     "capital": "Palikir",
     "lat": 6.92,
     "lng": 158.15,
-    "iso": "fm"
+    "iso": "fm",
+    "color": "#7F4E88"
   },
-  {
-    "country": "moldova",
+  {"country": "moldova",
     "capital": "Chișinău",
     "lat": 47.01,
     "lng": 28.9,
-    "iso": "md"
+    "iso": "md",
+    "color": "#9AEFEE"
   },
-  {
-    "country": "monako",
+  {"country": "monako",
     "capital": "Monaco",
     "lat": 43.73,
     "lng": 7.42,
-    "iso": "mc"
+    "iso": "mc",
+    "color": "#52F7F4"
   },
-  {
-    "country": "mongolia",
+  {"country": "mongolia",
     "capital": "Ulan Bator",
     "lat": 47.92,
     "lng": 106.91,
-    "iso": "mn"
+    "iso": "mn",
+    "color": "#F5B7BE"
   },
-  {
-    "country": "montenegro",
+  {"country": "montenegro",
     "capital": "Podgorica",
     "lat": 42.43,
     "lng": 19.27,
-    "iso": "me"
+    "iso": "me",
+    "color": "#FD1C44"
   },
-  {
-    "country": "mozambik",
+  {"country": "mozambik",
     "capital": "Maputo",
     "lat": -25.95,
     "lng": 32.58,
-    "iso": "mz"
+    "iso": "mz",
+    "color": "#35881B"
   },
-  {
-    "country": "myanmar",
+  {"country": "myanmar",
     "capital": "Naypyidaw",
     "lat": 19.76,
     "lng": 96.07,
-    "iso": "mm"
+    "iso": "mm",
+    "color": "#A7AAE4"
   },
-  {
-    "country": "namibia",
+  {"country": "namibia",
     "capital": "Windhoek",
     "lat": -22.57,
     "lng": 17.08,
-    "iso": "na"
+    "iso": "na",
+    "color": "#DEB388"
   },
-  {
-    "country": "nauru",
+  {"country": "nauru",
     "capital": "Yaren",
     "lat": -0.55,
     "lng": 166.92,
-    "iso": "nr"
+    "iso": "nr",
+    "color": "#C88EEE"
   },
-  {
-    "country": "nepal",
+  {"country": "nepal",
     "capital": "Kathmandu",
     "lat": 27.72,
     "lng": 85.32,
-    "iso": "np"
+    "iso": "np",
+    "color": "#45F1A4"
   },
-  {
-    "country": "niger",
+  {"country": "niger",
     "capital": "Niamey",
     "lat": 13.52,
     "lng": 2.12,
-    "iso": "ne"
+    "iso": "ne",
+    "color": "#5D45B8"
   },
-  {
-    "country": "nigeria",
+  {"country": "nigeria",
     "capital": "Abuja",
     "lat": 9.08,
     "lng": 7.53,
-    "iso": "ng"
+    "iso": "ng",
+    "color": "#F17411"
   },
-  {
-    "country": "nikaragua",
+  {"country": "nikaragua",
     "capital": "Managua",
     "lat": 12.13,
     "lng": -86.25,
-    "iso": "ni"
+    "iso": "ni",
+    "color": "#056DB5"
   },
-  {
-    "country": "norwegia",
+  {"country": "norwegia",
     "capital": "Oslo",
     "lat": 59.92,
     "lng": 10.75,
-    "iso": "no"
+    "iso": "no",
+    "color": "#94F8D3"
   },
-  {
-    "country": "oman",
+  {"country": "oman",
     "capital": "Muscat",
     "lat": 23.62,
     "lng": 58.58,
-    "iso": "om"
+    "iso": "om",
+    "color": "#AD437F"
   },
-  {
-    "country": "pakistan",
+  {"country": "pakistan",
     "capital": "Islamabad",
     "lat": 33.68,
     "lng": 73.05,
-    "iso": "pk"
+    "iso": "pk",
+    "color": "#840B96"
   },
-  {
-    "country": "palau",
+  {"country": "palau",
     "capital": "Ngerulmud",
     "lat": 7.5,
     "lng": 134.62,
-    "iso": "pw"
+    "iso": "pw",
+    "color": "#CFCF94"
   },
-  {
-    "country": "palestina",
+  {"country": "palestina",
     "capital": "Yerusalem",
     "lat": 31.77,
     "lng": 35.21,
-    "iso": "ps"
+    "iso": "ps",
+    "color": "#0E987A"
   },
-  {
-    "country": "panama",
+  {"country": "panama",
     "capital": "Panama City",
     "lat": 8.97,
     "lng": -79.53,
-    "iso": "pa"
+    "iso": "pa",
+    "color": "#A0420C"
   },
-  {
-    "country": "pantai gading",
+  {"country": "pantai gading",
     "capital": "Yamoussoukro",
     "lat": 6.82,
     "lng": -5.27,
-    "iso": "ci"
+    "iso": "ci",
+    "color": "#BD96DC"
   },
-  {
-    "country": "papua nugini",
+  {"country": "papua nugini",
     "capital": "Port Moresby",
     "lat": -9.45,
     "lng": 147.18,
-    "iso": "pg"
+    "iso": "pg",
+    "color": "#D1FFCE"
   },
-  {
-    "country": "paraguay",
+  {"country": "paraguay",
     "capital": "Asunción",
     "lat": -25.28,
     "lng": -57.57,
-    "iso": "py"
+    "iso": "py",
+    "color": "#3BAFBF"
   },
-  {
-    "country": "peru",
+  {"country": "peru",
     "capital": "Lima",
     "lat": -12.05,
     "lng": -77.05,
-    "iso": "pe"
+    "iso": "pe",
+    "color": "#32E841"
   },
-  {
-    "country": "polandia",
+  {"country": "polandia",
     "capital": "Warsaw",
     "lat": 52.25,
     "lng": 21,
-    "iso": "pl"
+    "iso": "pl",
+    "color": "#77DDDD"
   },
-  {
-    "country": "portugal",
+  {"country": "portugal",
     "capital": "Lisbon",
     "lat": 38.72,
     "lng": -9.13,
-    "iso": "pt"
+    "iso": "pt",
+    "color": "#AE0EEA"
   },
-  {
-    "country": "prancis",
+  {"country": "prancis",
     "capital": "Paris",
     "lat": 48.87,
     "lng": 2.33,
-    "iso": "fr"
+    "iso": "fr",
+    "color": "#E0ABB5"
   },
-  {
-    "country": "puerto rico",
+  {"country": "puerto rico",
     "capital": "San Juan",
     "lat": 18.47,
     "lng": -66.12,
-    "iso": "pr"
+    "iso": "pr",
+    "color": "#E57267"
   },
-  {
-    "country": "qatar",
+  {"country": "qatar",
     "capital": "Doha",
     "lat": 25.28,
     "lng": 51.53,
-    "iso": "qa"
+    "iso": "qa",
+    "color": "#7D8CD6"
   },
-  {
-    "country": "republik demokratik kongo",
+  {"country": "republik demokratik kongo",
     "capital": "Kinshasa",
     "lat": -4.32,
     "lng": 15.3,
-    "iso": "cd"
+    "iso": "cd",
+    "color": "#7FA74E"
   },
-  {
-    "country": "republik dominika",
+  {"country": "republik dominika",
     "capital": "Santo Domingo",
     "lat": 18.47,
     "lng": -69.9,
-    "iso": "do"
+    "iso": "do",
+    "color": "#CE16AA"
   },
-  {
-    "country": "republik rumania",
+  {"country": "republik rumania",
     "capital": "Bucharest",
     "lat": 44.43,
     "lng": 26.1,
-    "iso": "ro"
+    "iso": "ro",
+    "color": "#5665EB"
   },
-  {
-    "country": "republik serbia",
+  {"country": "republik serbia",
     "capital": "Belgrade",
     "lat": 44.83,
     "lng": 20.5,
-    "iso": "rs"
+    "iso": "rs",
+    "color": "#7664E2"
   },
-  {
-    "country": "republik sudan",
+  {"country": "republik sudan",
     "capital": "Khartoum",
     "lat": 15.6,
     "lng": 32.53,
-    "iso": "sd"
+    "iso": "sd",
+    "color": "#03CC83"
   },
-  {
-    "country": "republik tanzania",
+  {"country": "republik tanzania",
     "capital": "Dodoma",
     "lat": -6.16,
     "lng": 35.75,
-    "iso": "tz"
+    "iso": "tz",
+    "color": "#50CE32"
   },
-  {
-    "country": "republik timor leste",
+  {"country": "republik timor leste",
     "capital": "Dili",
     "lat": -8.58,
     "lng": 125.6,
-    "iso": "tl"
+    "iso": "tl",
+    "color": "#C98B13"
   },
-  {
-    "country": "republik uganda",
+  {"country": "republik uganda",
     "capital": "Kampala",
     "lat": 0.32,
     "lng": 32.55,
-    "iso": "ug"
+    "iso": "ug",
+    "color": "#6D703B"
   },
-  {
-    "country": "republik zambia",
+  {"country": "republik zambia",
     "capital": "Lusaka",
     "lat": -15.42,
     "lng": 28.28,
-    "iso": "zm"
+    "iso": "zm",
+    "color": "#963265"
   },
-  {
-    "country": "republik zimbabwe",
+  {"country": "republik zimbabwe",
     "capital": "Harare",
     "lat": -17.82,
     "lng": 31.03,
-    "iso": "zw"
+    "iso": "zw",
+    "color": "#A64C62"
   },
-  {
-    "country": "rusia",
+  {"country": "rusia",
     "capital": "Moscow",
     "lat": 55.75,
     "lng": 37.6,
-    "iso": "ru"
+    "iso": "ru",
+    "color": "#318DCB"
   },
-  {
-    "country": "rwanda",
+  {"country": "rwanda",
     "capital": "Kigali",
     "lat": -1.95,
     "lng": 30.05,
-    "iso": "rw"
+    "iso": "rw",
+    "color": "#C04911"
   },
-  {
-    "country": "saint lucia",
+  {"country": "saint lucia",
     "capital": "Castries",
     "lat": 14,
     "lng": -61,
-    "iso": "lc"
+    "iso": "lc",
+    "color": "#4B077A"
   },
-  {
-    "country": "samoa",
+  {"country": "samoa",
     "capital": "Apia",
     "lat": -13.82,
     "lng": -171.77,
-    "iso": "ws"
+    "iso": "ws",
+    "color": "#8F95C3"
   },
-  {
-    "country": "samoa amerika",
+  {"country": "samoa amerika",
     "capital": "Pago Pago",
     "lat": -14.27,
     "lng": -170.7,
-    "iso": "ws"
+    "iso": "ws",
+    "color": "#CA2E94"
   },
-  {
-    "country": "san marino",
+  {"country": "san marino",
     "capital": "City of San Marino",
     "lat": 43.94,
     "lng": 12.45,
-    "iso": "sm"
+    "iso": "sm",
+    "color": "#D99DD0"
   },
-  {
-    "country": "selandia baru",
+  {"country": "selandia baru",
     "capital": "Wellington",
     "lat": -41.3,
     "lng": 174.78,
-    "iso": "nz"
+    "iso": "nz",
+    "color": "#B6FFA4"
   },
-  {
-    "country": "senegal",
+  {"country": "senegal",
     "capital": "Dakar",
     "lat": 14.73,
     "lng": -17.63,
-    "iso": "sn"
+    "iso": "sn",
+    "color": "#531BA4"
   },
-  {
-    "country": "seychelles",
+  {"country": "seychelles",
     "capital": "Victoria",
     "lat": -4.62,
     "lng": 55.45,
-    "iso": "sc"
+    "iso": "sc",
+    "color": "#5E53DD"
   },
-  {
-    "country": "sierra leone",
+  {"country": "sierra leone",
     "capital": "Freetown",
     "lat": 8.48,
     "lng": -13.23,
-    "iso": "sl"
+    "iso": "sl",
+    "color": "#B628C9"
   },
-  {
-    "country": "singapura",
+  {"country": "singapura",
     "capital": "Singapore",
     "lat": 1.28,
     "lng": 103.85,
-    "iso": "sg"
+    "iso": "sg",
+    "color": "#FFDFC4"
   },
-  {
-    "country": "siprus",
+  {"country": "siprus",
     "capital": "Nicosia",
     "lat": 35.17,
     "lng": 33.37,
-    "iso": "cy"
+    "iso": "cy",
+    "color": "#4CFF04"
   },
-  {
-    "country": "slovenia",
+  {"country": "slovenia",
     "capital": "Ljubljana",
     "lat": 46.05,
     "lng": 14.52,
-    "iso": "si"
+    "iso": "si",
+    "color": "#7F65B2"
   },
-  {
-    "country": "slowakia",
+  {"country": "slowakia",
     "capital": "Bratislava",
     "lat": 48.15,
     "lng": 17.12,
-    "iso": "sk"
+    "iso": "sk",
+    "color": "#9A7740"
   },
-  {
-    "country": "somalia",
+  {"country": "somalia",
     "capital": "Mogadishu",
     "lat": 2.07,
     "lng": 45.33,
-    "iso": "so"
+    "iso": "so",
+    "color": "#391FBC"
   },
-  {
-    "country": "spanyol",
+  {"country": "spanyol",
     "capital": "Madrid",
     "lat": 40.4,
     "lng": -3.68,
-    "iso": "es"
+    "iso": "es",
+    "color": "#C6A822"
   },
-  {
-    "country": "sri lanka",
+  {"country": "sri lanka",
     "capital": "Sri Jayawardenepura Kotte",
     "lat": 6.89,
     "lng": 79.9,
-    "iso": "lk"
+    "iso": "lk",
+    "color": "#8BA5ED"
   },
-  {
-    "country": "sudan selatan",
+  {"country": "sudan selatan",
     "capital": "Juba",
     "lat": 4.85,
     "lng": 31.62,
-    "iso": "sd"
+    "iso": "sd",
+    "color": "#72B239"
   },
-  {
-    "country": "suriah",
+  {"country": "suriah",
     "capital": "Damascus",
     "lat": 33.5,
     "lng": 36.3,
-    "iso": "sy"
+    "iso": "sy",
+    "color": "#CEAB45"
   },
-  {
-    "country": "suriname",
+  {"country": "suriname",
     "capital": "Paramaribo",
     "lat": 5.83,
     "lng": -55.17,
-    "iso": "sr"
+    "iso": "sr",
+    "color": "#A16DA9"
   },
-  {
-    "country": "swedia",
+  {"country": "swedia",
     "capital": "Stockholm",
     "lat": 59.33,
     "lng": 18.05,
-    "iso": "se"
+    "iso": "se",
+    "color": "#310490"
   },
-  {
-    "country": "taiwan",
+  {"country": "taiwan",
     "capital": "Taipei",
     "lat": 25.03,
     "lng": 121.52,
-    "iso": "cn-tw"
+    "iso": "cn-tw",
+    "color": "#31779B"
   },
-  {
-    "country": "tajikistan",
+  {"country": "tajikistan",
     "capital": "Dushanbe",
     "lat": 38.55,
     "lng": 68.77,
-    "iso": "tj"
+    "iso": "tj",
+    "color": "#CDFE86"
   },
-  {
-    "country": "thailand",
+  {"country": "thailand",
     "capital": "Bangkok",
     "lat": 13.75,
     "lng": 100.52,
-    "iso": "th"
+    "iso": "th",
+    "color": "#868939"
   },
-  {
-    "country": "togo",
+  {"country": "togo",
     "capital": "Lomé",
     "lat": 6.14,
     "lng": 1.21,
-    "iso": "tg"
+    "iso": "tg",
+    "color": "#DA6F47"
   },
-  {
-    "country": "tonga",
+  {"country": "tonga",
     "capital": "Nuku'alofa",
     "lat": -21.13,
     "lng": -175.2,
-    "iso": "to"
+    "iso": "to",
+    "color": "#2A08A4"
   },
-  {
-    "country": "trinidad dan tobago",
+  {"country": "trinidad dan tobago",
     "capital": "Port of Spain",
     "lat": 10.65,
     "lng": -61.52,
-    "iso": "tt"
+    "iso": "tt",
+    "color": "#F40C9A"
   },
-  {
-    "country": "tunisia",
+  {"country": "tunisia",
     "capital": "Tunis",
     "lat": 36.8,
     "lng": 10.18,
-    "iso": "tn"
+    "iso": "tn",
+    "color": "#6B07FD"
   },
-  {
-    "country": "turki",
+  {"country": "turki",
     "capital": "Ankara",
     "lat": 39.93,
     "lng": 32.87,
-    "iso": "tr"
+    "iso": "tr",
+    "color": "#F97A63"
   },
-  {
-    "country": "turkmenistan",
+  {"country": "turkmenistan",
     "capital": "Ashgabat",
     "lat": 37.95,
     "lng": 58.38,
-    "iso": "tm"
+    "iso": "tm",
+    "color": "#963F79"
   },
-  {
-    "country": "tuvalu",
+  {"country": "tuvalu",
     "capital": "Funafuti",
     "lat": -8.52,
     "lng": 179.22,
-    "iso": "tv"
+    "iso": "tv",
+    "color": "#AC0E1F"
   },
-  {
-    "country": "ukraina",
+  {"country": "ukraina",
     "capital": "Kyiv",
     "lat": 50.43,
     "lng": 30.52,
-    "iso": "ua"
+    "iso": "ua",
+    "color": "#89960C"
   },
-  {
-    "country": "uruguay",
+  {"country": "uruguay",
     "capital": "Montevideo",
     "lat": -34.85,
     "lng": -56.17,
-    "iso": "uy"
+    "iso": "uy",
+    "color": "#9142AC"
   },
-  {
-    "country": "uzbekistan",
+  {"country": "uzbekistan",
     "capital": "Tashkent",
     "lat": 41.32,
     "lng": 69.25,
-    "iso": "uz"
+    "iso": "uz",
+    "color": "#AA1B4B"
   },
-  {
-    "country": "vanuatu",
+  {"country": "vanuatu",
     "capital": "Port Vila",
     "lat": -17.73,
     "lng": 168.32,
-    "iso": "vu"
+    "iso": "vu",
+    "color": "#D0DF5C"
   },
-  {
-    "country": "vatikan",
+  {"country": "vatikan",
     "capital": "Vatican City",
     "lat": 41.9,
     "lng": 12.45,
-    "iso": "va"
+    "iso": "va",
+    "color": "#24722A"
   },
-  {
-    "country": "venezuela",
+  {"country": "venezuela",
     "capital": "Caracas",
     "lat": 10.48,
     "lng": -66.87,
-    "iso": "ve"
+    "iso": "ve",
+    "color": "#E65A61"
   },
-  {
-    "country": "vietnam",
+  {"country": "vietnam",
     "capital": "Hanoi",
     "lat": 21.03,
     "lng": 105.85,
-    "iso": "vn"
+    "iso": "vn",
+    "color": "#5F8F9E"
   },
-  {
-    "country": "yaman",
+  {"country": "yaman",
     "capital": "Sana'a",
     "lat": 15.37,
     "lng": 44.19,
-    "iso": "ye"
+    "iso": "ye",
+    "color": "#57BAFC"
   },
-  {
-    "country": "yordania",
+  {"country": "yordania",
     "capital": "Amman",
     "lat": 31.95,
     "lng": 35.93,
-    "iso": "jo"
+    "iso": "jo",
+    "color": "#16CB8C"
   },
-  {
-    "country": "yunani",
+  {"country": "yunani",
     "capital": "Athens",
     "lat": 37.98,
     "lng": 23.73,
@@ -3222,97 +3294,119 @@ export const CAPITALS_DATA = [
     "capital": "Sarajevo",
     "lat": 43.8563,
     "lng": 18.4131,
-    "iso": "ba"
+    "iso": "ba",
+    "color": "#2EA039"
   },
-  {
-    "country": "guiana prancis",
+  {"country": "guiana prancis",
     "capital": "Cayenne",
     "lat": 4.9224,
     "lng": -52.3135,
-    "iso": "gf"
+    "iso": "gf",
+    "color": "#f97316"
   },
-  {
-    "country": "guinea bissau",
+  {"country": "guadeloupe",
+    "capital": "Basse-Terre",
+    "lat": 16.0,
+    "lng": -61.73,
+    "iso": "gp",
+    "color": "#22c55e"
+  },
+  {"country": "martinique",
+    "capital": "Fort-de-France",
+    "lat": 14.6,
+    "lng": -61.08,
+    "iso": "mq",
+    "color": "#22c55e"
+  },
+  {"country": "bonaire, sint eustatius dan saba",
+    "capital": "Kralendijk",
+    "lat": 12.15,
+    "lng": -68.27,
+    "iso": "bq",
+    "color": "#22c55e"
+  },
+  {"country": "guinea bissau",
     "capital": "Bissau",
     "lat": 11.8597,
     "lng": -15.5977,
-    "iso": "gw"
+    "iso": "gw",
+    "color": "#1A6C06"
   },
-  {
-    "country": "makau",
+  {"country": "makau",
     "capital": "Macao",
     "lat": 22.1987,
     "lng": 113.5439,
-    "iso": "mo"
+    "iso": "mo",
+    "color": "#7A9683"
   },
-  {
-    "country": "makedonia utara",
+  {"country": "makedonia utara",
     "capital": "Skopje",
     "lat": 41.9981,
     "lng": 21.4254,
-    "iso": "mk"
+    "iso": "mk",
+    "color": "#E3AF40"
   },
-  {
-    "country": "marshall",
+  {"country": "marshall",
     "capital": "Majuro",
     "lat": 7.1164,
     "lng": 171.1856,
-    "iso": "mh"
+    "iso": "mh",
+    "color": "#701FB9"
   },
-  {
-    "country": "republik afrika tengah",
+  {"country": "republik afrika tengah",
     "capital": "Bangui",
     "lat": 4.3947,
     "lng": 18.5582,
-    "iso": "cf"
+    "iso": "cf",
+    "color": "#FFD7F8"
   },
-  {
-    "country": "saint kitts dan nevis",
+  {"country": "saint kitts dan nevis",
     "capital": "Basseterre",
     "lat": 17.3026,
     "lng": -62.7177,
-    "iso": "kn"
+    "iso": "kn",
+    "color": "#6F87EE"
   },
-  {
-    "country": "saint vincent dan grenadine",
+  {"country": "saint vincent dan grenadine",
     "capital": "Kingstown",
     "lat": 13.16,
     "lng": -61.2248,
-    "iso": "vc"
+    "iso": "vc",
+    "color": "#DE6B05"
   },
-  {
-    "country": "sao tome dan principe",
+  {"country": "sao tome dan principe",
     "capital": "São Tomé",
     "lat": 0.3365,
     "lng": 6.7273,
-    "iso": "st"
+    "iso": "st",
+    "color": "#F202B8"
   },
-  {
-    "country": "swiss",
+  {"country": "swiss",
     "capital": "Bern",
     "lat": 46.9480,
     "lng": 7.4474,
-    "iso": "ch"
+    "iso": "ch",
+    "color": "#D9FFB6"
   },
-  {
-    "country": "tahiti",
+  {"country": "tahiti",
     "capital": "Papeete",
     "lat": -17.5516,
     "lng": -149.5585,
-    "iso": "pf"
+    "iso": "pf",
+    "color": "#A7F934"
   },
-  {
-    "country": "tanjung verde",
+  {"country": "tanjung verde",
     "capital": "Praia",
     "lat": 14.9243,
     "lng": -23.5144,
-    "iso": "cv"
+    "iso": "cv",
+    "color": "#967EE8"
   },
-  {
-    "country": "uni emirat arab",
+  {"country": "uni emirat arab",
     "capital": "Abu Dhabi",
     "lat": 24.4539,
     "lng": 54.3773,
-    "iso": "ae"
+    "iso": "ae",
+    "color": "#93205C"
   }
 ];

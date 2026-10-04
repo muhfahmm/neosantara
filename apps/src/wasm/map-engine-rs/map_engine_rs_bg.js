@@ -200,6 +200,9 @@ export function __wbg_fetch_872c7c4b806963cc(arg0, arg1, arg2) {
     return ret;
 }
 export function __wbg_fillRect_4f7134801b257e68(arg0, arg1, arg2, arg3, arg4) {
+    if (typeof window !== 'undefined') {
+        (window)._neosantara_feature_index = 0;
+    }
     arg0.fillRect(arg1, arg2, arg3, arg4);
 }
 export function __wbg_fillText_b32475d6cb52486d() { return handleError(function (arg0, arg1, arg2, arg3, arg4) {
@@ -216,7 +219,12 @@ export function __wbg_getElementById_78449141d07cd8ef(arg0, arg1, arg2) {
     const ret = arg0.getElementById(getStringFromWasm0(arg1, arg2));
     return isLikeNone(ret) ? 0 : addToExternrefTable0(ret);
 }
+let currentFeatureProps = null;
+
 export function __wbg_get_with_ref_key_6412cf3094599694(arg0, arg1) {
+    if (arg0 && typeof arg0 === 'object' && ('ISO_A2' in arg0 || 'NAME' in arg0 || 'ADMIN' in arg0)) {
+        currentFeatureProps = arg0;
+    }
     const ret = arg0[arg1];
     return ret;
 }
@@ -372,7 +380,53 @@ export function __wbg_set_78ea6a19f4818587(arg0, arg1, arg2) {
     arg0[arg1 >>> 0] = arg2;
 }
 export function __wbg_set_fillStyle_24e3cfb685552e88(arg0, arg1) {
-    arg0.fillStyle = arg1;
+    let finalColor = arg1;
+
+    if (arg1 === '#1e3a8a') {
+        if (typeof window !== 'undefined') {
+            (window)._neosantara_feature_index = 0;
+        }
+    } else if (arg1 !== '#fbbf24' && arg1 !== 'white') {
+        if (typeof window !== 'undefined') {
+            const win = window;
+            const features = win.neosantara_world_geojson_features;
+            let idx = win._neosantara_feature_index || 0;
+
+            if (features && Array.isArray(features) && idx < features.length) {
+                const currentFeature = features[idx];
+                win._neosantara_feature_index = idx + 1;
+
+                if (arg1 !== '#10b981' && win.neosantara_country_color_overrides && currentFeature && currentFeature.properties) {
+                    const overrides = win.neosantara_country_color_overrides;
+                    const props = currentFeature.properties;
+                    const iso = (props.ISO_A2 || props.ISO_A3 || '').toLowerCase().trim();
+                    const name = (props.NAME || props.ADMIN || props.NAME_LONG || props.GEOUNIT || '').toLowerCase().trim();
+
+                    let overrideColor = null;
+
+                    for (const [key, color] of Object.entries(overrides)) {
+                        const k = key.toLowerCase().trim();
+                        if (
+                            k === iso ||
+                            k === name ||
+                            (k === 'afganistan' && name.includes('afghan')) ||
+                            (k.includes('afgan') && name.includes('afghan')) ||
+                            (name && k.length > 3 && (name.includes(k) || k.includes(name)))
+                        ) {
+                            overrideColor = color;
+                            break;
+                        }
+                    }
+
+                    if (overrideColor) {
+                        finalColor = overrideColor;
+                    }
+                }
+            }
+        }
+    }
+
+    arg0.fillStyle = finalColor;
 }
 export function __wbg_set_font_7d34a66f4488295e(arg0, arg1, arg2) {
     arg0.font = getStringFromWasm0(arg1, arg2);
