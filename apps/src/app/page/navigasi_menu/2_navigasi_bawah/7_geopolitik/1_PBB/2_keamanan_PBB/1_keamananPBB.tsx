@@ -443,11 +443,62 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1 bg-[#051111] border border-[#00FFAA]/20 rounded-xl p-4 shadow-sm">
                 <div className="flex justify-between items-center border-b border-[#00FFAA]/15 pb-2 mb-3"><span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">Anggota Tetap</span><span className="text-[8px] font-black text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded border border-rose-500/30">Hak Veto</span></div>
-                <div className="grid grid-cols-2 gap-3">{permanentMembers.map((m) => (<div key={m.iso} className="bg-[#0A1A1A] border border-amber-500/30 p-3 rounded-lg flex flex-col items-center text-center relative shadow-sm"><div className="absolute -top-2 -right-2 bg-amber-500 text-[#0A1A1A] text-[8px] font-black px-1.5 py-0.5 rounded-lg uppercase tracking-wider shadow-sm">Veto</div>{renderFlag(m.iso, m.name)}<span className="text-[10px] font-black text-[#E0E0E0] mt-1 leading-tight">{m.name}</span></div>))}</div>
+                <div className="grid grid-cols-2 gap-3">
+                  {permanentMembers.map((m) => {
+                    const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+                    const raw = m.name.trim();
+                    const norm = raw.toLowerCase();
+                    const clean = norm.replace(/[^a-z0-9]/g, '');
+                    const isAnnexed = Boolean(annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean]) || annexedStore[m.iso]);
+
+                    if (isAnnexed) {
+                      return (
+                        <div key={m.iso} className="bg-[#0F2424]/40 border border-dashed border-rose-500/40 p-3 rounded-lg flex flex-col items-center justify-center text-center relative shadow-sm opacity-60">
+                          <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest">[SLOT KOSONG]</span>
+                          <span className="text-[10px] font-bold text-[#6B8A8A] mt-1 line-through">{m.name}</span>
+                          <span className="text-[8px] font-bold text-rose-500/80 uppercase mt-0.5">(Dianeksasi)</span>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div key={m.iso} className="bg-[#0A1A1A] border border-amber-500/30 p-3 rounded-lg flex flex-col items-center text-center relative shadow-sm">
+                        <div className="absolute -top-2 -right-2 bg-amber-500 text-[#0A1A1A] text-[8px] font-black px-1.5 py-0.5 rounded-lg uppercase tracking-wider shadow-sm">Veto</div>
+                        {renderFlag(m.iso, m.name)}
+                        <span className="text-[10px] font-black text-[#E0E0E0] mt-1 leading-tight">{m.name}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
               <div className="flex-1 bg-[#051111] border border-[#00FFAA]/20 rounded-xl p-4 shadow-sm">
                 <div className="border-b border-[#00FFAA]/15 pb-2 mb-3"><span className="text-[10px] font-black text-cyan-400 uppercase tracking-wider">Anggota Tidak Tetap</span></div>
-                <div className="grid grid-cols-2 gap-3">{nonPermanentMembers.map((m) => (<div key={m.iso} className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 rounded-lg flex flex-col items-center text-center shadow-sm hover:border-[#00FFAA]/40 transition-colors">{renderFlag(m.iso, m.name)}<span className="text-[10px] font-bold text-[#E0E0E0] mt-1 leading-tight">{m.name}</span></div>))}</div>
+                <div className="grid grid-cols-2 gap-3">
+                  {nonPermanentMembers.map((m) => {
+                    const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+                    const raw = m.name.trim();
+                    const norm = raw.toLowerCase();
+                    const clean = norm.replace(/[^a-z0-9]/g, '');
+                    const isAnnexed = Boolean(annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean]) || annexedStore[m.iso]);
+
+                    if (isAnnexed) {
+                      return (
+                        <div key={m.iso} className="bg-[#0F2424]/40 border border-dashed border-cyan-500/40 p-3 rounded-lg flex flex-col items-center justify-center text-center relative shadow-sm opacity-60">
+                          <span className="text-[9px] font-black text-cyan-400 uppercase tracking-widest">[SLOT KOSONG]</span>
+                          <span className="text-[10px] font-bold text-[#6B8A8A] mt-1 line-through">{m.name}</span>
+                          <span className="text-[8px] font-bold text-cyan-500/80 uppercase mt-0.5">(Dianeksasi)</span>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div key={m.iso} className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 rounded-lg flex flex-col items-center text-center shadow-sm hover:border-[#00FFAA]/40 transition-colors">
+                        {renderFlag(m.iso, m.name)}
+                        <span className="text-[10px] font-bold text-[#E0E0E0] mt-1 leading-tight">{m.name}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>

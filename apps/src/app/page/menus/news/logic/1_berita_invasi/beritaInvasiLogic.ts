@@ -12,8 +12,8 @@ export function getCountryColor(countryName: string): string {
     c => c.country.toLowerCase().trim() === normalizedName
   );
 
-  // Warna harus sama dengan warna benua negara penyerang (palet sama dengan map engine)
-  switch (country?.continent) {
+  const continent = country?.continent;
+  switch (continent) {
     case 'Asia': return '#a855f7';
     case 'Africa': return '#eab308';
     case 'Europe': return '#3b82f6';
@@ -23,6 +23,10 @@ export function getCountryColor(countryName: string): string {
     case 'Antarctica': return '#cbd5e1';
     default: break;
   }
+
+  // Fallback map if country name is formatted differently
+  if (['rusia', 'russia'].includes(normalizedName)) return '#3b82f6'; // Europe
+  if (['china', 'tiongkok'].includes(normalizedName)) return '#a855f7'; // Asia
 
   console.warn(`Continent color not found for country: ${countryName}, using default`);
   return '#475569';

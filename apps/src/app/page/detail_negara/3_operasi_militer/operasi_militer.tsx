@@ -20,6 +20,7 @@ import HinaModal from './7_hina/hinaModals';
 interface OperasiMiliterProps {
   countryName: string;
   playerCountryDetail?: any;
+  onCloseDetailModal?: () => void;
 }
 
 // Komponen tombol aksi (Persis sama dengan menu lainnya)
@@ -35,7 +36,7 @@ const ActionButton = ({ icon: Icon, label, onClick }: { icon: any, label: string
   </button>
 );
 
-export default function OperasiMiliter({ countryName }: OperasiMiliterProps) {
+export default function OperasiMiliter({ countryName, onCloseDetailModal }: OperasiMiliterProps) {
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isSpionaseOpen, setIsSpionaseOpen] = useState(false);
   const [isSabotaseOpen, setIsSabotaseOpen] = useState(false);
@@ -72,6 +73,8 @@ export default function OperasiMiliter({ countryName }: OperasiMiliterProps) {
         countryName={countryName} 
         onClose={() => setIsMintaSerangOpen(false)} 
         onConfirm={(selectedTargetCountry, amount) => { 
+          setIsMintaSerangOpen(false);
+          if (onCloseDetailModal) onCloseDetailModal();
           if (typeof window !== 'undefined') {
             window.dispatchEvent(
               new CustomEvent('trigger_requested_invasion', {

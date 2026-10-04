@@ -21,25 +21,37 @@ export default function MintaSerangNegaraModal({
 	const [paymentAmount, setPaymentAmount] = useState<number>(0);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 
-	// Dapatkan daftar negara terurut dan filter out target/penyerang yang sama
+	// Dapatkan daftar negara terurut dan filter out target/penyerang yang sama serta negara yang dianeksasi
 	const countryList = useMemo(() => {
 		const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
 
 		return [...COUNTRIES_DATA]
 			.filter((c) => {
-				const cNorm = c.country.toLowerCase().trim();
+				const cNorm = (c.country || "").toLowerCase().trim();
 				const targetNorm = (countryName || "").toLowerCase().trim();
-				// Jangan masukkan negara yang sedang dibuka (target) atau yang sudah dianeksasi
-				return cNorm !== targetNorm && !annexedStore[cNorm];
+				if (cNorm === targetNorm) return false;
+
+				const raw = String(c.country || '').trim();
+				const clean = cNorm.replace(/[^a-z0-9]/g, '');
+				const iso = String(c.iso || '').toLowerCase().trim();
+
+				if (annexedStore[raw] || annexedStore[cNorm] || (clean && annexedStore[clean])) return false;
+				if (iso && (annexedStore[iso] || annexedStore[`iso_${iso}`])) return false;
+
+				return true;
 			})
 			.sort((a, b) => a.country.localeCompare(b.country, "id"));
 	}, [countryName]);
 
-	// Inisialisasi pilihan default saat modal dibuka
+	// Inisialisasi pilihan default saat modal dibuka & reset jika negara terpilih sudah dianeksasi
 	useEffect(() => {
-		if (isOpen && countryList.length > 0) {
-			if (!selectedCountry || !countryList.some((c) => c.country === selectedCountry)) {
-				setSelectedCountry(countryList[0].country);
+		if (isOpen) {
+			if (countryList.length > 0) {
+				if (!selectedCountry || !countryList.some((c) => c.country === selectedCountry)) {
+					setSelectedCountry(countryList[0].country);
+				}
+			} else {
+				setSelectedCountry("");
 			}
 			setPaymentAmount(0);
 			setIsDropdownOpen(false);
@@ -59,7 +71,7 @@ export default function MintaSerangNegaraModal({
 
 	if (!isOpen) return null;
 
-	const selectedData = countryList.find((c) => c.country === selectedCountry) || countryList[0];
+	const selectedData = countryList.find((c) => c.country === selectedCountry) || countryList[0] || null;
 
 	// Kalkulasi peluang kesuksesan sederhana berdasarkan jumlah pembayaran
 	const successRate = Math.min(100, Math.floor((paymentAmount / 100000) * 100));

@@ -21,18 +21,29 @@ export default function SabotaseModal({ isOpen, countryName, onClose, onConfirm 
 
 		return [...COUNTRIES_DATA]
 			.filter((c) => {
-				const cNorm = c.country.toLowerCase().trim();
-				return !annexedStore[cNorm];
+				const cNorm = (c.country || "").toLowerCase().trim();
+				const raw = String(c.country || '').trim();
+				const clean = cNorm.replace(/[^a-z0-9]/g, '');
+				const iso = String(c.iso || '').toLowerCase().trim();
+
+				if (annexedStore[raw] || annexedStore[cNorm] || (clean && annexedStore[clean])) return false;
+				if (iso && (annexedStore[iso] || annexedStore[`iso_${iso}`])) return false;
+
+				return true;
 			})
 			.sort((a, b) => a.country.localeCompare(b.country, "id"));
 	}, []);
 
 	useEffect(() => {
-		if (isOpen && countryList.length > 0) {
-			const initial = countryName && countryList.some(c => c.country === countryName) 
-				? countryName 
-				: countryList[0].country;
-			setSelectedCountry(initial);
+		if (isOpen) {
+			if (countryList.length > 0) {
+				const initial = countryName && countryList.some(c => c.country === countryName) 
+					? countryName 
+					: countryList[0].country;
+				setSelectedCountry(initial);
+			} else {
+				setSelectedCountry("");
+			}
 			setIsDropdownOpen(false);
 			setSearchQuery("");
 		}

@@ -138,15 +138,17 @@ export default function MapPage() {
     // Contoh: { "Afganistan": "#E8C303" } berarti Afganistan sudah dianeksasi dan warnanya diubah ke kuning
     const [countryColorOverrides, setCountryColorOverrides] = useState<Record<string, string>>({});
 
-    // Override warna aneksasi hanya berlaku selama sesi: refresh => kembali ke warna default.
+    // Override warna aneksasi & status aneksasi hanya berlaku selama sesi: refresh => kembali ke warna/status default.
     useEffect(() => {
         if (typeof window !== 'undefined') {
             try {
                 localStorage.removeItem('neosantara_country_color_overrides');
+                localStorage.removeItem('neosantara_annexed_countries');
             } catch (e) {
-                console.error('Failed to clear country color overrides:', e);
+                console.error('Failed to clear country color overrides / annexed state:', e);
             }
             (window as any).neosantara_country_color_overrides = {};
+            (window as any).neosantara_annexed_countries = {};
         }
     }, []);
 
@@ -200,6 +202,10 @@ export default function MapPage() {
                     };
                     if (typeof window !== 'undefined') {
                         (window as any).neosantara_country_color_overrides = next;
+                        try {
+                            localStorage.setItem('neosantara_country_color_overrides', JSON.stringify(next));
+                        } catch (e) {}
+
                         const prevAnnexed = (window as any).neosantara_annexed_countries || {};
                         const updatedAnnexed = {
                             ...prevAnnexed,
@@ -208,6 +214,9 @@ export default function MapPage() {
                             [targetIso.toLowerCase()]: { attackerCountry, attackerIso }
                         };
                         (window as any).neosantara_annexed_countries = updatedAnnexed;
+                        try {
+                            localStorage.setItem('neosantara_annexed_countries', JSON.stringify(updatedAnnexed));
+                        } catch (e) {}
                     }
                     return next;
                 });
@@ -697,6 +706,9 @@ export default function MapPage() {
                                 };
                                 if (typeof window !== 'undefined') {
                                     (window as any).neosantara_country_color_overrides = next;
+                                    try {
+                                        localStorage.setItem('neosantara_country_color_overrides', JSON.stringify(next));
+                                    } catch (e) {}
 
                                     const prevAnnexed = (window as any).neosantara_annexed_countries || {};
                                     const updatedAnnexed = {
@@ -706,6 +718,9 @@ export default function MapPage() {
                                         [inv.targetIso.toLowerCase()]: { attackerCountry: inv.attackerCountry, attackerIso: inv.attackerIso }
                                     };
                                     (window as any).neosantara_annexed_countries = updatedAnnexed;
+                                    try {
+                                        localStorage.setItem('neosantara_annexed_countries', JSON.stringify(updatedAnnexed));
+                                    } catch (e) {}
                                 }
                                 return next;
                             });
@@ -965,6 +980,10 @@ export default function MapPage() {
                 localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
                 localStorage.removeItem('pbb_active_resolutions_v4');
                 localStorage.removeItem('pbb_active_keamanan_v4');
+                localStorage.removeItem('neosantara_country_color_overrides');
+                localStorage.removeItem('neosantara_annexed_countries');
+                (window as any).neosantara_annexed_countries = {};
+                (window as any).neosantara_country_color_overrides = {};
                 localStorage.removeItem('presiden_simulator_new_game');
             }
             if (loadSaveStr) {
@@ -1519,8 +1538,11 @@ export default function MapPage() {
             if (typeof window !== 'undefined') {
                 window.localStorage.removeItem('hutangModalLoanSources');
                 window.localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
-                // Reset country color overrides saat restart game
+                // Reset country color overrides dan data aneksasi saat restart game
                 window.localStorage.removeItem('neosantara_country_color_overrides');
+                window.localStorage.removeItem('neosantara_annexed_countries');
+                (window as any).neosantara_country_color_overrides = {};
+                (window as any).neosantara_annexed_countries = {};
             }
             handleGameRestart({
                 timeManager: timeManagerRef.current,
@@ -1613,17 +1635,21 @@ export default function MapPage() {
             hasInitRef.current = true;
 
             try {
-                // Load color overrides from localStorage first
+                // Load color overrides & annexed countries from localStorage first
                 let loadedColorOverrides: Record<string, string> = {};
                 if (typeof window !== 'undefined') {
                     try {
                         const saved = localStorage.getItem('neosantara_country_color_overrides');
                         if (saved) {
                             loadedColorOverrides = JSON.parse(saved);
-                            console.log('Pre-loading color overrides for WASM init:', loadedColorOverrides);
+                            (window as any).neosantara_country_color_overrides = loadedColorOverrides;
+                        }
+                        const savedAnnexed = localStorage.getItem('neosantara_annexed_countries');
+                        if (savedAnnexed) {
+                            (window as any).neosantara_annexed_countries = JSON.parse(savedAnnexed);
                         }
                     } catch (e) {
-                        console.error('Failed to pre-load country color overrides:', e);
+                        console.error('Failed to pre-load country color overrides/annexed:', e);
                     }
                 }
 
@@ -1672,13 +1698,25 @@ export default function MapPage() {
                             ) {
                                 const p = feats[fillCount]?.properties;
                                 if (p) {
-                                    const iso = String(p.ISO_A2 || '').toLowerCase();
-                                    const names = [p.NAME, p.ADMIN, p.NAME_LONG, p.GEOUNIT]
+                                    const iso = String(p.ISO_A2 || p.ISO_A2_EH || '').toLowerCase();
+                                    const iso3 = String(p.ISO_A3 || p.ISO_A3_EH || '').toLowerCase();
+                                    const names = [p.NAME, p.ADMIN, p.NAME_LONG, p.GEOUNIT, p.NAME_ID, p.NAME_EN, p.NAME_IND]
                                         .filter(Boolean).map((s: string) => s.toLowerCase());
+
                                     const isAfg = iso === 'af' || names.includes('afghanistan');
+                                    const isJpn = iso === 'jp' || names.includes('japan') || names.includes('jepang');
+                                    const isNzl = iso === 'nz' || names.includes('new zealand') || names.includes('selandia baru');
+
                                     for (const [key, color] of Object.entries(overrides)) {
                                         const k = key.toLowerCase().trim();
-                                        if ((iso && iso !== '-99' && k === iso) || names.includes(k) || (isAfg && k === 'afganistan')) {
+                                        if (
+                                            (iso && iso !== '-99' && k === iso) ||
+                                            (iso3 && iso3 !== '-99' && k === iso3) ||
+                                            names.includes(k) ||
+                                            (isAfg && (k === 'afganistan' || k === 'afghanistan')) ||
+                                            (isJpn && (k === 'jepang' || k === 'japan')) ||
+                                            (isNzl && (k === 'selandia baru' || k === 'new zealand'))
+                                        ) {
                                             realFillStyle = color;
                                             break;
                                         }

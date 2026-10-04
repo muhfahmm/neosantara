@@ -29,12 +29,17 @@ export function handleGameRestart(options: RestartOptions): void {
     options.setIsPaused(true);
     options.setSpeed(1);
 
-    // Clear active PBB resolutions on restart
+    // Clear active PBB resolutions & annexed countries state on restart
     if (typeof window !== 'undefined') {
         try {
             localStorage.removeItem('pbb_active_resolutions_v4');
             localStorage.removeItem('pbb_active_keamanan_v4');
+            localStorage.removeItem('neosantara_annexed_countries');
+            localStorage.removeItem('neosantara_country_color_overrides');
+            (window as any).neosantara_annexed_countries = {};
+            (window as any).neosantara_country_color_overrides = {};
             window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
+            window.dispatchEvent(new CustomEvent('map_territory_color_updated'));
         } catch (e) {}
     }
 
