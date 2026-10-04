@@ -1995,50 +1995,6 @@ export default function MapPage() {
                     }}
                 />
 
-                {/* Flag + ISO Overlay (zoom out) - posisi dari kamera WASM aktual, anti-tumpang-tindih */}
-                {capitalTransform.scale <= 2.0 && (() => {
-                    const { scale, offsetX, offsetY, width, height } = capitalTransform;
-                    const PILL_W = 34;
-                    const PILL_H = 14;
-                    const opacity = scale <= 1.6 ? 1 : Math.max(0, (2.0 - scale) / 0.4);
-                    const placed: Array<[number, number, number, number]> = [];
-                    const items: React.ReactNode[] = [];
-
-                    for (const cap of CAPITALS_DATA) {
-                        const sx = ((cap.lng + 180) / 360) * width * scale + offsetX;
-                        const sy = ((90 - cap.lat) / 180) * height * scale + offsetY;
-                        if (sx < -PILL_W || sx > width + PILL_W || sy < -PILL_H || sy > height + PILL_H) continue;
-
-                        const box: [number, number, number, number] = [sx - PILL_W / 2, sy - PILL_H / 2, sx + PILL_W / 2, sy + PILL_H / 2];
-                        const overlaps = placed.some(p => !(box[2] < p[0] || box[0] > p[2] || box[3] < p[1] || box[1] > p[3]));
-                        if (overlaps) continue;
-                        placed.push(box);
-
-                        items.push(
-                            <div
-                                key={`${cap.iso}-${cap.capital}`}
-                                className="absolute left-0 top-0 pointer-events-none flex items-center gap-1 bg-[#0A1A1A]/85 border border-[#00FFAA]/40 px-1.5 py-0.5 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.5)] z-10 will-change-transform"
-                                style={{
-                                    transform: `translate3d(${sx - PILL_W / 2}px, ${sy - PILL_H / 2}px, 0)`,
-                                    width: PILL_W,
-                                    height: PILL_H,
-                                    opacity,
-                                }}
-                            >
-                                <img
-                                    src={`https://flagcdn.com/w20/${cap.iso.toLowerCase()}.png`}
-                                    alt={cap.iso}
-                                    className="w-3.5 h-2.5 object-cover rounded-[2px] border border-white/20"
-                                />
-                                <span className="text-[8px] font-black text-[#00FFAA] uppercase leading-none">
-                                    {cap.iso.toUpperCase()}
-                                </span>
-                            </div>
-                        );
-                    }
-                    return items;
-                })()}
-
                 {/* Global FX */}
                 <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_200px_rgba(0,0,0,0.6)] vignette-gradient" />
             </div>
