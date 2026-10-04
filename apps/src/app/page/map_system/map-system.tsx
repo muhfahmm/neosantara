@@ -252,8 +252,255 @@ export default function MapPage() {
         };
 
         window.addEventListener('trigger_requested_invasion', handleRequestedInvasion);
-        return () => window.removeEventListener('trigger_requested_invasion', handleRequestedInvasion);
-    }, [currentDate]);
+
+        const handlePlayerAttack = (e: Event) => {
+            const detail = (e as CustomEvent)?.detail;
+            if (!detail) return;
+
+            const { actionType, targetCountry } = detail;
+            const attackerCountry = countryDetail?.country || 'China';
+            const attackerIso = (countryDetail?.iso || 'cn').toLowerCase();
+            const targetIso = getIsoForCountryName(targetCountry) || 'un';
+
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+
+            const newNewsItems: NewsItemData[] = [];
+
+            if (actionType === 'aneksasi') {
+                // 1. Berita Invasi
+                const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
+                newNewsItems.push(invNews);
+
+                // 2. Berita Aneksasi — Gunakan warna PEMAIN di peta (#10b981 hijau),
+                // BUKAN getCountryColor() yang mengembalikan warna benua (misal Asia=#a855f7 ungu)
+                // yang bisa sama persis dengan warna asli negara target.
+                const attackerColor = '#10b981';
+                const { news: annexationNews } = generateAnnexationNews(
+                    attackerCountry,
+                    attackerIso,
+                    attackerColor,
+                    targetCountry,
+                    targetIso,
+                    dateStr
+                );
+                newNewsItems.push(annexationNews);
+
+                // Update warna wilayah & status aneksasi di state & localStorage
+                setCountryColorOverrides(prev => {
+                    const targetNorm = targetCountry.toLowerCase().trim();
+                    const next = {
+                        ...prev,
+                        [targetCountry]: attackerColor,
+                        [targetNorm]: attackerColor,
+                        [targetIso.toLowerCase()]: attackerColor,
+                        [`iso_${targetIso.toLowerCase()}`]: attackerColor
+                    };
+
+                    if (targetNorm === 'mongolia') {
+                        next['mongolia'] = attackerColor;
+                        next['mn'] = attackerColor;
+                        next['iso_mn'] = attackerColor;
+                    }
+
+                    if (typeof window !== 'undefined') {
+                        (window as any).neosantara_country_color_overrides = next;
+                        try {
+                            localStorage.setItem('neosantara_country_color_overrides', JSON.stringify(next));
+                        } catch (e) {}
+
+                        const prevAnnexed = (window as any).neosantara_annexed_countries || {};
+                        const updatedAnnexed = {
+                            ...prevAnnexed,
+                            [targetCountry]: { attackerCountry, attackerIso },
+                            [targetNorm]: { attackerCountry, attackerIso },
+                            [targetIso.toLowerCase()]: { attackerCountry, attackerIso }
+                        };
+                        (window as any).neosantara_annexed_countries = updatedAnnexed;
+                        try {
+                            localStorage.setItem('neosantara_annexed_countries', JSON.stringify(updatedAnnexed));
+                        } catch (e) {}
+
+                        // Dispatch event update warna peta agar canvas dirender ulang langsung
+                        window.dispatchEvent(
+                            new CustomEvent('map_territory_color_updated', {
+                                detail: {
+                                    targetCountry,
+                                    newColor: attackerColor,
+                                    attackerCountry
+                                }
+                            })
+                        );
+                    }
+                    return next;
+                });
+
+                // 3. Gabungkan statistik (populasi, kas negara, kepuasan, kesejahteraan, seluruh bangunan & militer) dari negara target ke user
+                const targetRelPath = Object.entries(countryPaths as Record<string, string>).find(
+                    ([name]) => name.toLowerCase().trim() === targetCountry.toLowerCase().trim()
+                )?.[1];
+
+                const mergeTargetDataToUser = async () => {
+                    let targetData: any = null;
+                    if (targetRelPath) {
+                        try {
+                            const res = await fetch(`/api/country-data?path=${encodeURIComponent(targetRelPath)}`);
+                            const data = await res.json();
+                            if (!data?.error) targetData = data;
+                        } catch (e) {
+                            console.error("Gagal mengambil data target country untuk aneksasi:", e);
+                        }
+                    }
+
+                    if (targetData && setCountryDetail) {
+                        setCountryDetail((prev: any) => {
+                            if (!prev) return prev;
+                            const prevPop = Number(prev.jumlah_penduduk || prev.populasi || 0);
+                            const targetPop = Number(targetData.jumlah_penduduk || targetData.populasi || 0);
+
+                            const prevAnggaran = Number(prev.anggaran || 0);
+                            const targetAnggaran = Number(targetData.anggaran || 0);
+
+                            const prevKepuasan = Number(prev.kepuasan || prev.kepuasan_masyarakat || 75);
+                            const targetKepuasan = Number(targetData.kepuasan || targetData.kepuasan_masyarakat || 70);
+
+                            const prevKesejahteraan = Number(prev.kesejahteraan || prev.kesejahteraan_masyarakat || 75);
+                            const targetKesejahteraan = Number(targetData.kesejahteraan || targetData.kesejahteraan_masyarakat || 70);
+
+                            // Hitung rerata tertimbang kepuasan & kesejahteraan berdasarkan proporsi populasi
+                            const totalPop = prevPop + targetPop;
+                            const newKepuasan = totalPop > 0
+                                ? Math.round(((prevKepuasan * prevPop) + (targetKepuasan * targetPop)) / totalPop)
+                                : prevKepuasan;
+                            const newKesejahteraan = totalPop > 0
+                                ? Math.round(((prevKesejahteraan * prevPop) + (targetKesejahteraan * targetPop)) / totalPop)
+                                : prevKesejahteraan;
+
+                            // Daftar seluruh bangunan & militer yang digabungkan
+                            const keysToAggregate = [
+                                // Infrastruktur & Unit Militer
+                                'barak', 'gudang_senjata', 'hangar_tank', 'pangkalan_udara', 'pangkalan_laut',
+                                'pasukan_infanteri', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat', 'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
+                                'kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet', 'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik',
+                                'jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom', 'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut',
+                                // Bangunan Produksi & Kelistrikan
+                                'pembangkit_listrik_tenaga_gas', 'pembangkit_listrik_tenaga_nuklir', 'pembangkit_listrik_tenaga_uap', 'pembangkit_listrik_tenaga_surya', 'pembangkit_listrik_tenaga_angin', 'pembangkit_listrik_tenaga_air', 'pembangkit_listrik_tenaga_geotermal',
+                                'tambang_batu_bara', 'tambang_minyak_bumi', 'tambang_gas_alam', 'tambang_uranium', 'tambang_biji_besi', 'tambang_emas', 'tambang_tembaga', 'tambang_bauksit', 'tambang_nikel', 'tambang_litium',
+                                'pabrik_baja', 'pabrik_semen', 'pabrik_pupuk', 'pabrik_kimia', 'pabrik_elektronik', 'pabrik_otomotif', 'pabrik_tekstil', 'pabrik_farmasi',
+                                'peternakan_sapi', 'peternakan_ayam', 'peternakan_kambing',
+                                'sawah_padi', 'perkebunan_jagung', 'perkebunan_gandum', 'perkebunan_kedelai', 'perkebunan_kelapa_sawit', 'perkebunan_tebu',
+                                'perikanan_tangkap', 'budidaya_ikan', 'budidaya_udang',
+                                'pengolahan_daging', 'pengolahan_susu', 'pengolahan_ikan', 'pengolahan_beras',
+                                // Fasilitas Umum & Hunian
+                                'jalan_tol', 'pelabuhan_laut', 'bandar_udara', 'stasiun_kereta_api',
+                                'sekolah_dasar', 'sekolah_menengah', 'universitas',
+                                'puskesmas', 'rumah_sakit_umum', 'rumah_sakit_spesialis',
+                                'pos_polisi', 'kantor_polisi_sektor', 'mabes_polisi',
+                                'lapangan_olahraga', 'stadion_olahraga', 'taman_hiburan',
+                                'pasar_tradisional', 'pusat_perbelanjaan', 'kawasan_komersial',
+                                'perumahan_subsidi_rakyat', 'apartemen_modern_high_rise', 'kompleks_mansion_mewah'
+                            ];
+
+                            const aggregatedFields: Record<string, number> = {};
+                            keysToAggregate.forEach(key => {
+                                const prevVal = Number(prev[key] ?? prev?.armada?.[key] ?? prev?.pertahanan?.[key] ?? 0);
+                                const targetVal = Number(targetData[key] ?? targetData?.armada?.[key] ?? targetData?.pertahanan?.[key] ?? 0);
+                                if (targetVal > 0 || prevVal > 0) {
+                                    aggregatedFields[key] = prevVal + targetVal;
+                                }
+                            });
+
+                            return {
+                                ...prev,
+                                ...aggregatedFields,
+                                jumlah_penduduk: totalPop,
+                                populasi: totalPop,
+                                anggaran: prevAnggaran + targetAnggaran,
+                                kepuasan: newKepuasan,
+                                kepuasan_masyarakat: newKepuasan,
+                                kesejahteraan: newKesejahteraan,
+                                kesejahteraan_masyarakat: newKesejahteraan
+                            };
+                        });
+
+                        // Tambahkan Net Balance (pertumbuhan harian / +) dari target country ke adjustment net balance user
+                        const targetNetBal = calculateCountryNetBalance(targetData);
+                        if (targetNetBal > 0) {
+                            setPlayerNetBalanceAdjustment(prev => prev + targetNetBal);
+                        }
+                    }
+                };
+                mergeTargetDataToUser();
+
+                // Notifikasi Inbox User
+                const notifMsg: NotificationMessage = {
+                    id: `notif-player-annex-${Date.now()}`,
+                    title: `🚩 ANEKSASI WILAYAH BERHASIL`,
+                    sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
+                    message: `Pasukan militer Anda telah sukses merebut dan memperluas wilayah kedaulatan ${attackerCountry} dengan mencaplok seluruh teritorial ${targetCountry}! Peta dunia telah diperbarui.`,
+                    timestamp: dateStr,
+                    type: 'peringkat',
+                    value: 100,
+                    isRead: false
+                };
+                setNotifications(prev => [notifMsg, ...prev]);
+
+            } else if (actionType === 'jarah') {
+                const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
+                const lootNews = generateResourceLootNews(
+                    attackerCountry,
+                    attackerIso,
+                    targetCountry,
+                    targetIso,
+                    25000000,
+                    { emas: 500, minyak_bumi: 1000, beras: 2000 },
+                    dateStr
+                );
+                newNewsItems.push(invNews, lootNews);
+
+                const notifMsg: NotificationMessage = {
+                    id: `notif-player-loot-${Date.now()}`,
+                    title: `💰 OPERASI PENJARAHAN BERHASIL`,
+                    sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
+                    message: `Operasi penjarahan atas ${targetCountry} berhasil dilancarkan! Sumber daya alam dan rampasan perang senilai 25.000.000 NEO telah diamankan.`,
+                    timestamp: dateStr,
+                    type: 'peringkat',
+                    value: 80,
+                    isRead: false
+                };
+                setNotifications(prev => [notifMsg, ...prev]);
+
+            } else {
+                // Action: mundur
+                const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
+                newNewsItems.push(invNews);
+
+                const notifMsg: NotificationMessage = {
+                    id: `notif-player-[#00FFAA]-${Date.now()}`,
+                    title: `🏳️ PASUKAN DITARIK MUNDUR`,
+                    sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
+                    message: `Operasi agresi terhadap ${targetCountry} dibatalkan. Pasukan ditarik mundur ke markas utama tanpa aneksasi wilayah.`,
+                    timestamp: dateStr,
+                    type: 'peringkat',
+                    value: 50,
+                    isRead: false
+                };
+                setNotifications(prev => [notifMsg, ...prev]);
+            }
+
+            // Tambahkan ke Berita & Update Geopolitik
+            setNewsList(prev => [...newNewsItems, ...prev]);
+        };
+
+        window.addEventListener('trigger_player_attack', handlePlayerAttack);
+
+        return () => {
+            window.removeEventListener('trigger_requested_invasion', handleRequestedInvasion);
+            window.removeEventListener('trigger_player_attack', handlePlayerAttack);
+        };
+    }, [currentDate, countryDetail]);
 
     // Kamera AKTUAL dari engine WASM (ditangkap dari ctx.setTransform), sehingga overlay
     // bendera selalu presisi walau ada clamping / auto-center negara / lerp di sisi Rust.
@@ -1635,23 +1882,9 @@ export default function MapPage() {
             hasInitRef.current = true;
 
             try {
-                // Load color overrides & annexed countries from localStorage first
-                let loadedColorOverrides: Record<string, string> = {};
-                if (typeof window !== 'undefined') {
-                    try {
-                        const saved = localStorage.getItem('neosantara_country_color_overrides');
-                        if (saved) {
-                            loadedColorOverrides = JSON.parse(saved);
-                            (window as any).neosantara_country_color_overrides = loadedColorOverrides;
-                        }
-                        const savedAnnexed = localStorage.getItem('neosantara_annexed_countries');
-                        if (savedAnnexed) {
-                            (window as any).neosantara_annexed_countries = JSON.parse(savedAnnexed);
-                        }
-                    } catch (e) {
-                        console.error('Failed to pre-load country color overrides/annexed:', e);
-                    }
-                }
+                // Ensure overrides state is clean or reads from current memory window
+                let loadedColorOverrides: Record<string, string> = (typeof window !== 'undefined' ? (window as any).neosantara_country_color_overrides : {}) || {};
+
 
                 const [wasmModule, { WORLD_GEOJSON }] = await Promise.all([
                     import('../../../wasm/map-engine-rs/map_engine_rs'),
@@ -1709,10 +1942,12 @@ export default function MapPage() {
 
                                     for (const [key, color] of Object.entries(overrides)) {
                                         const k = key.toLowerCase().trim();
+                                        const kClean = k.replace(/[^a-z0-9]/g, '');
                                         if (
                                             (iso && iso !== '-99' && k === iso) ||
                                             (iso3 && iso3 !== '-99' && k === iso3) ||
-                                            names.includes(k) ||
+                                            names.some(n => n === k || (n.length > 3 && (n.includes(k) || k.includes(n)))) ||
+                                            (kClean && names.some(n => n.replace(/[^a-z0-9]/g, '') === kClean)) ||
                                             (isAfg && (k === 'afganistan' || k === 'afghanistan')) ||
                                             (isJpn && (k === 'jepang' || k === 'japan')) ||
                                             (isNzl && (k === 'selandia baru' || k === 'new zealand'))
@@ -1744,18 +1979,22 @@ export default function MapPage() {
 
                 // Merge COUNTRIES_DATA dengan color overrides dari aneksasi
                 const getCountriesDataWithOverrides = () => {
-                    if (Object.keys(loadedColorOverrides).length === 0) {
+                    const currentOverrides = (typeof window !== 'undefined' ? (window as any).neosantara_country_color_overrides : {}) || loadedColorOverrides;
+                    if (!currentOverrides || Object.keys(currentOverrides).length === 0) {
                         return COUNTRIES_DATA;
                     }
-                    
+
                     return COUNTRIES_DATA.map(country => {
                         const normalizedName = country.country.toLowerCase().trim();
                         // Cek apakah negara ini sudah dianeksasi (ada override warna)
-                        for (const [targetCountry, newColor] of Object.entries(loadedColorOverrides)) {
-                            if (targetCountry.toLowerCase().trim() === normalizedName) {
-                                // Return country dengan warna yang sudah di-override
-                                console.log(`  Applying color override: ${country.country} -> ${newColor}`);
-                                return { ...country, color: newColor };
+                        for (const [targetCountry, newColor] of Object.entries(currentOverrides)) {
+                            const targetNorm = targetCountry.toLowerCase().trim();
+                            if (
+                                targetNorm === normalizedName ||
+                                (targetNorm === 'mongolia' && normalizedName === 'mongolia') ||
+                                (targetNorm === 'afganistan' && (normalizedName === 'afghanistan' || normalizedName === 'afganistan'))
+                            ) {
+                                return { ...country, color: newColor as string };
                             }
                         }
                         return country;

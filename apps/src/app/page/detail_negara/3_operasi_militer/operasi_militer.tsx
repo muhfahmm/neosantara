@@ -36,7 +36,7 @@ const ActionButton = ({ icon: Icon, label, onClick }: { icon: any, label: string
   </button>
 );
 
-export default function OperasiMiliter({ countryName, onCloseDetailModal }: OperasiMiliterProps) {
+export default function OperasiMiliter({ countryName, playerCountryDetail, onCloseDetailModal }: OperasiMiliterProps) {
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isSpionaseOpen, setIsSpionaseOpen] = useState(false);
   const [isSabotaseOpen, setIsSabotaseOpen] = useState(false);
@@ -63,7 +63,26 @@ export default function OperasiMiliter({ countryName, onCloseDetailModal }: Oper
         <ActionButton icon={MessageSquare} label="Hina" onClick={() => setIsHinaOpen(true)} />
       </div>
 
-      <SerangNegaraModal isOpen={isSerangOpen} countryName={countryName} onClose={() => setIsSerangOpen(false)} onConfirm={() => { console.log(`Serang -> ${countryName}`); }} />
+      <SerangNegaraModal
+        isOpen={isSerangOpen}
+        countryName={countryName}
+        playerCountryDetail={playerCountryDetail}
+        onClose={() => setIsSerangOpen(false)}
+        onConfirm={(actionType, targetCountry) => {
+          setIsSerangOpen(false);
+          if (onCloseDetailModal) onCloseDetailModal();
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(
+              new CustomEvent('trigger_player_attack', {
+                detail: {
+                  actionType,
+                  targetCountry
+                }
+              })
+            );
+          }
+        }}
+      />
       <SpionaseModal isOpen={isSpionaseOpen} countryName={countryName} onClose={() => setIsSpionaseOpen(false)} onConfirm={(target) => { console.log(`Spionase -> ${target}`); }} />
       <SabotaseModal isOpen={isSabotaseOpen} countryName={countryName} onClose={() => setIsSabotaseOpen(false)} onConfirm={(target) => { console.log(`Sabotase -> ${target}`); }} />
       <PerangNuklirModal isOpen={isNuklirOpen} countryName={countryName} onClose={() => setIsNuklirOpen(false)} onConfirm={() => { console.log(`Nuklir -> ${countryName}`); }} />

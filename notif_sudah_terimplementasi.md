@@ -11,7 +11,7 @@
 # 5. Notifikasi Pertahanan dan Intelijen
 6. Notifikasi Spionase
 7. Notifikasi Sabotase
-8. Notifikasi Diserang
+8. Notifikasi Diserang & Deklarasi Agresi Militer User (Modals Pertempuran, Hasil Victory/Defeat, pilihan Mundur, Jarah, dan Aneksasi Perluasan Wilayah)
 9. Notifikasi Pemberontakan
 10. Notifikasi ICBM (Deteksi Rudal Nuklir Defcon 1, Pembangunan Program Nuklir Dimulai, Program Nuklir Selesai & Aktif)
 
