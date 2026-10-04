@@ -51,9 +51,14 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
     const data = getOrgMembers(orgName);
     const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
     const activeMembers = data.filter((m: MemberData) => {
-      const raw = String(m.country || '');
-      const norm = raw.toLowerCase().trim();
-      return !annexedStore[raw] && !annexedStore[norm];
+      const raw = String(m.country || '').trim();
+      const norm = raw.toLowerCase();
+      const clean = norm.replace(/[^a-z0-9]/g, '');
+      const iso = String(m.iso || getIsoFromName(raw) || '').toLowerCase().trim();
+
+      if (annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean])) return false;
+      if (iso && (annexedStore[iso] || annexedStore[`iso_${iso}`])) return false;
+      return true;
     });
     setMembers(activeMembers);
     setLoading(false);

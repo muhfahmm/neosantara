@@ -60,21 +60,35 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
 
   const rawRankings = useMemo(() => {
     const source = Array.isArray(prefetchedAllCountries) ? prefetchedAllCountries : [];
-    return source.map((country: any) => {
-      const summary = getArmadaPowerSummary(country);
-      const groupTotals = summary.totals.groups;
-      const countryName = country?.nama_negara || country?.country || country?.name_id || country?.name_en || "Negara";
-      const iso = extractISO(country, countryName); // 🔥 Ambil ISO dengan nama negara sebagai parameter
+    const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
 
-      return {
-        countryName,
-        totalPower: summary.totals.totalPower,
-        darat: groupTotals?.darat?.power ?? 0,
-        laut: groupTotals?.laut?.power ?? 0,
-        udara: groupTotals?.udara?.power ?? 0,
-        iso, // 🔥 Simpan ISO
-      };
-    });
+    return source
+      .filter((country: any) => {
+        const countryName = country?.nama_negara || country?.country || country?.name_id || country?.name_en || "";
+        const raw = String(countryName).trim();
+        const norm = raw.toLowerCase();
+        const clean = norm.replace(/[^a-z0-9]/g, '');
+        const iso = extractISO(country, countryName);
+
+        if (annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean])) return false;
+        if (iso && (annexedStore[iso] || annexedStore[`iso_${iso}`])) return false;
+        return true;
+      })
+      .map((country: any) => {
+        const summary = getArmadaPowerSummary(country);
+        const groupTotals = summary.totals.groups;
+        const countryName = country?.nama_negara || country?.country || country?.name_id || country?.name_en || "Negara";
+        const iso = extractISO(country, countryName); // 🔥 Ambil ISO dengan nama negara sebagai parameter
+
+        return {
+          countryName,
+          totalPower: summary.totals.totalPower,
+          darat: groupTotals?.darat?.power ?? 0,
+          laut: groupTotals?.laut?.power ?? 0,
+          udara: groupTotals?.udara?.power ?? 0,
+          iso, // 🔥 Simpan ISO
+        };
+      });
   }, [prefetchedAllCountries]);
 
   const rankings = useMemo(() => {

@@ -107,12 +107,25 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
 
   useEffect(() => {
     if (COUNTRIES_DATA && Array.isArray(COUNTRIES_DATA)) {
-      const formatted = COUNTRIES_DATA.filter((c) => c.country && c.iso).map((c) => ({
-        id: c.id,
-        name: formatCountryName(c.country),
-        iso: c.iso.toLowerCase(),
-        continent: c.continent || 'Lainnya'
-      }));
+      const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+      const formatted = COUNTRIES_DATA
+        .filter((c) => {
+          if (!c.country || !c.iso) return false;
+          const raw = String(c.country || '').trim();
+          const norm = raw.toLowerCase();
+          const clean = norm.replace(/[^a-z0-9]/g, '');
+          const iso = String(c.iso || '').toLowerCase().trim();
+
+          if (annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean])) return false;
+          if (iso && (annexedStore[iso] || annexedStore[`iso_${iso}`])) return false;
+          return true;
+        })
+        .map((c) => ({
+          id: c.id,
+          name: formatCountryName(c.country),
+          iso: c.iso.toLowerCase(),
+          continent: c.continent || 'Lainnya'
+        }));
       setCountries(formatted);
     } else {
       setCountries([{ id: 0, name: "Indonesia (Fallback)", iso: "id", continent: "Asia" }]);

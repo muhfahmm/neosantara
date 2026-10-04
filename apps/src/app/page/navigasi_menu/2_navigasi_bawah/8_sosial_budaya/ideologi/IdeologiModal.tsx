@@ -72,18 +72,31 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
       profileLookup.set(p.name_id.toLowerCase().trim(), p.ideology);
     }
 
-    const data = COUNTRIES_DATA.map((c) => {
-      const countryNameLower = c.country.toLowerCase().trim();
-      if (
-        countryDetail?.country &&
-        c.country.toLowerCase().trim() === countryDetail.country.toLowerCase().trim() &&
-        countryDetail?.ideology
-      ) {
-        return { country: c.country, ideology: countryDetail.ideology };
-      }
-      const profileIdeology = profileLookup.get(countryNameLower);
-      return { country: c.country, ideology: profileIdeology || 'Belum tersedia' };
-    });
+    const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+
+    const data = COUNTRIES_DATA
+      .filter((c) => {
+        const raw = String(c.country || '').trim();
+        const norm = raw.toLowerCase();
+        const clean = norm.replace(/[^a-z0-9]/g, '');
+        const iso = String(c.iso || '').toLowerCase().trim();
+
+        if (annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean])) return false;
+        if (iso && (annexedStore[iso] || annexedStore[`iso_${iso}`])) return false;
+        return true;
+      })
+      .map((c) => {
+        const countryNameLower = c.country.toLowerCase().trim();
+        if (
+          countryDetail?.country &&
+          c.country.toLowerCase().trim() === countryDetail.country.toLowerCase().trim() &&
+          countryDetail?.ideology
+        ) {
+          return { country: c.country, ideology: countryDetail.ideology };
+        }
+        const profileIdeology = profileLookup.get(countryNameLower);
+        return { country: c.country, ideology: profileIdeology || 'Belum tersedia' };
+      });
     setWorldIdeologies(data);
   }, [isOpen, countryDetail]);
 
