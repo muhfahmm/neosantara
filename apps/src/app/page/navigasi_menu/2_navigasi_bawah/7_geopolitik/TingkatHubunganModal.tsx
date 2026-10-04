@@ -66,10 +66,21 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
     return !removedEmbassies.some((r: string) => r.toLowerCase().trim() === norm);
   });
 
-  // Filter 206 negara (kecuali negara user)
-  const allTargetCountries = COUNTRIES_DATA.filter(
-    (c) => c.country.toLowerCase().trim() !== normPlayer
-  ).map((c, idx) => {
+  const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+
+  // Filter 206 negara (kecuali negara user dan negara yang telah dianeksasi)
+  const allTargetCountries = COUNTRIES_DATA.filter((c) => {
+    const raw = String(c.country || '');
+    const norm = raw.toLowerCase().trim();
+    const isoNorm = String(c.iso || '').toLowerCase().trim();
+    if (norm === normPlayer) return false;
+    const isAnnexed = Boolean(
+      annexedStore[raw] ||
+      annexedStore[norm] ||
+      (isoNorm && annexedStore[isoNorm])
+    );
+    return !isAnnexed;
+  }).map((c, idx) => {
     const relVal = getRelationValue(playerCountryName, c.country);
     const embassyExists = hasEmbassy(playerCountryName, c.country, allActiveEmbassyNames);
     return {

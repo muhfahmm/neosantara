@@ -65,18 +65,29 @@ export const calculateResolusiVoting = async (
   const embassySet = new Set(embassyNames.map(normalizeName));
   const hasDiplomaticRelation = embassySet.has(normalizedTargetCountry);
 
+  const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+  const isAnnexed = (cName: string, isoCode?: string) => {
+    const norm = normalizeName(cName);
+    const isoNorm = isoCode ? String(isoCode).toLowerCase().trim() : '';
+    return Boolean(
+      annexedStore[cName] ||
+      annexedStore[norm] ||
+      (isoNorm && annexedStore[isoNorm])
+    );
+  };
+
   const excludedNames = new Set([normalizedUserCountry, normalizedTargetCountry]);
 
   const supporters = countries.reduce((count, country: { id: number; name: string; iso: string; continent: string }) => {
     const name = normalizeName(country.name);
-    if (excludedNames.has(name)) return count;
+    if (excludedNames.has(name) || isAnnexed(country.name, country.iso)) return count;
     if (embassySet.has(name)) return count + 1;
     return count;
   }, 0);
 
   const nonDiplomaticCount = countries.reduce((count, country: { id: number; name: string; iso: string; continent: string }) => {
     const name = normalizeName(country.name);
-    if (excludedNames.has(name)) return count;
+    if (excludedNames.has(name) || isAnnexed(country.name, country.iso)) return count;
     if (!embassySet.has(name)) return count + 1;
     return count;
   }, 0);

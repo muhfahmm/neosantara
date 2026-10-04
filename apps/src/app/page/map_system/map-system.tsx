@@ -67,7 +67,7 @@ import { evaluateAIResolusiPBBTrigger } from '../menus/inbox/logic/5_notifikasi_
 import { evaluateAIKeamananPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
 import { tickPBBResolutions, spawnAIResolutionFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
-import { initCountryIsoFromDatabase } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
+import { initCountryIsoFromDatabase, getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic';
@@ -156,6 +156,95 @@ export default function MapPage() {
             (window as any).neosantara_country_color_overrides = countryColorOverrides;
         }
     }, [countryColorOverrides]);
+
+    // Listener custom event ketika pemain berhasil meminta negara sekutu menyerang negara target
+    useEffect(() => {
+        const handleRequestedInvasion = (e: Event) => {
+            const detail = (e as CustomEvent)?.detail;
+            if (!detail) return;
+
+            const { attackerCountry, targetCountry, amount } = detail;
+            const attackerIso = getIsoForCountryName(attackerCountry) || 'un';
+            const targetIso = getIsoForCountryName(targetCountry) || 'un';
+
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+
+            // 1. Berita Invasi Deklarasi Perang
+            const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
+            const newNewsItems: NewsItemData[] = [invNews];
+
+            // 2. Berita Lanjutan: Aneksasi (60%) atau Rampasan SDA (40%)
+            const outcomeRoll = Math.random();
+            if (outcomeRoll < 0.60) {
+                const attackerColor = getCountryColor(attackerCountry);
+                const { news: annexationNews } = generateAnnexationNews(
+                    attackerCountry,
+                    attackerIso,
+                    attackerColor,
+                    targetCountry,
+                    targetIso,
+                    dateStr
+                );
+                newNewsItems.push(annexationNews);
+
+                // Update warna wilayah & status aneksasi
+                setCountryColorOverrides(prev => {
+                    const next = {
+                        ...prev,
+                        [targetCountry]: attackerColor,
+                        [targetCountry.toLowerCase()]: attackerColor,
+                        [targetIso.toLowerCase()]: attackerColor
+                    };
+                    if (typeof window !== 'undefined') {
+                        (window as any).neosantara_country_color_overrides = next;
+                        const prevAnnexed = (window as any).neosantara_annexed_countries || {};
+                        const updatedAnnexed = {
+                            ...prevAnnexed,
+                            [targetCountry]: { attackerCountry, attackerIso },
+                            [targetCountry.toLowerCase()]: { attackerCountry, attackerIso },
+                            [targetIso.toLowerCase()]: { attackerCountry, attackerIso }
+                        };
+                        (window as any).neosantara_annexed_countries = updatedAnnexed;
+                    }
+                    return next;
+                });
+            } else {
+                const lootNews = generateResourceLootNews(
+                    attackerCountry,
+                    attackerIso,
+                    targetCountry,
+                    targetIso,
+                    10000000,
+                    { emas: 250, minyak_bumi: 500, beras: 1000 },
+                    dateStr
+                );
+                newNewsItems.push(lootNews);
+            }
+
+            // Tambahkan ke daftar Berita & Update Geopolitik
+            setNewsList(prev => [...newNewsItems, ...prev]);
+
+            // Tambahkan Notifikasi Pertahanan / Geopolitik ke Inbox Player
+            const notifMsg: NotificationMessage = {
+                id: `notif-req-inv-${Date.now()}`,
+                title: `⚔️ OPERASI SERANGAN SEKUTU DILUNCURKAN`,
+                sender: `Kementerian Pertahanan & Sekutu (${attackerCountry})`,
+                message: `Permintaan serangan telah diproses! Angkatan Bersenjata ${attackerCountry} resmi melancarkan serangan terhadap ${targetCountry} setelah menerima bayaran $${Number(amount || 0).toLocaleString('id-ID')}. Berita resmi geopolitik telah diterbitkan!`,
+                timestamp: dateStr,
+                type: 'peringkat',
+                value: 100,
+                isRead: false
+            };
+
+            setNotifications(prev => [notifMsg, ...prev]);
+        };
+
+        window.addEventListener('trigger_requested_invasion', handleRequestedInvasion);
+        return () => window.removeEventListener('trigger_requested_invasion', handleRequestedInvasion);
+    }, [currentDate]);
 
     // Kamera AKTUAL dari engine WASM (ditangkap dari ctx.setTransform), sehingga overlay
     // bendera selalu presisi walau ada clamping / auto-center negara / lerp di sisi Rust.
@@ -2519,7 +2608,6 @@ export default function MapPage() {
                 </div>,
                 document.body
             )}
-
         </main>
     );
 }

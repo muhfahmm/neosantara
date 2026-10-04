@@ -43,26 +43,13 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   // PERBAIKAN: Ref untuk mencegah fetch ulang data saat modal dibuka/tutup (Data tetap progresif)
   const fetchedRef = useRef<string | null>(null);
 
-  // PERBAIKAN: Fetch data hanya SEKALI saat pertama kali negara dibuka
+  // PERBAIKAN: Fetch data & Agregasi Kekaisaran saat pertama kali negara dibuka
   useEffect(() => {
     if (!isOpen || !countryName) return;
 
     // Jika sudah pernah fetch negara ini sebelumnya, jangan fetch lagi (mencegah reset data)
     if (fetchedRef.current === countryName) return;
 
-    const alreadyLoadedCountryDetail = countryDetail?.country?.toLowerCase().trim() === countryName.toLowerCase().trim();
-    if (alreadyLoadedCountryDetail) {
-      fetchedRef.current = countryName;
-      setFetchedDetail(countryDetail);
-      setIsLoadingDetail(false);
-      setActiveTab("informasi");
-      prevModalUpdateDateRef.current = null;
-      setDailyNetBalance(calculateCountryNetBalance(countryDetail));
-      setDailyNetPopulation(calculateCountryNetPopulation(countryDetail));
-      return;
-    }
-
-    // Tandai negara ini sudah di-fetch
     fetchedRef.current = countryName;
 
     setFetchedDetail(null);
@@ -71,39 +58,123 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     prevModalUpdateDateRef.current = null;
 
     const loadDetail = async () => {
-      // Cari path file berdasarkan countryName (case-insensitive)
-      const relPath = Object.entries(countryPaths as Record<string, string>).find(
-        ([name]) => name.toLowerCase() === countryName.toLowerCase()
-      )?.[1];
+      // 1. Tentukan Pemimpin Kekaisaran (Leader) & Seluruh Anggota Kekaisaran (Empire Members)
+      const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+      
+      const targetAnnexed = annexedStore[countryName] || annexedStore[countryName.toLowerCase()];
+      const leaderCountry = targetAnnexed?.attackerCountry || countryName;
 
-      if (!relPath) {
-        console.warn(`[detail_negara] Tidak ditemukan path untuk: ${countryName}`);
+      const empireMembersSet = new Set<string>();
+      empireMembersSet.add(leaderCountry.toLowerCase().trim());
+
+      Object.entries(annexedStore).forEach(([key, val]: [string, any]) => {
+        if (val?.attackerCountry && val.attackerCountry.toLowerCase().trim() === leaderCountry.toLowerCase().trim()) {
+          empireMembersSet.add(key.toLowerCase().trim());
+        }
+      });
+
+      const empireMemberNames = Array.from(empireMembersSet);
+
+      // 2. Fetch data untuk seluruh negara dalam kekaisaran ini secara paralel
+      const memberDataList = await Promise.all(
+        empireMemberNames.map(async (memberName) => {
+          if (countryDetail?.country?.toLowerCase().trim() === memberName) {
+            return countryDetail;
+          }
+
+          const relPath = Object.entries(countryPaths as Record<string, string>).find(
+            ([name]) => name.toLowerCase().trim() === memberName
+          )?.[1];
+
+          if (!relPath) return null;
+
+          try {
+            const res = await fetch(`/api/country-data?path=${encodeURIComponent(relPath)}`);
+            const data = await res.json();
+            return data?.error ? null : data;
+          } catch (e) {
+            return null;
+          }
+        })
+      );
+
+      const validMembers = memberDataList.filter(Boolean);
+
+      // Ambil data utama dari negara yang sedang dibuka (misal: Pakistan)
+      const primaryData = validMembers.find(m => 
+        (m.country || m.nama_negara || m.name)?.toLowerCase().trim() === countryName.toLowerCase().trim()
+      ) || validMembers[0];
+
+      if (!primaryData) {
         setIsLoadingDetail(false);
         return;
       }
 
-      try {
-        const res = await fetch(`/api/country-data?path=${relPath}`);
-        const data = await res.json();
+      // Hitung akumulasi populasi, anggaran, militer, infra militer & bangunan umum dari seluruh anggota kekaisaran
+      let totalPop = 0;
+      let totalPopNet = 0;
+      let totalAnggaran = 0;
+      let totalNetBalance = 0;
 
-        if (data?.error) {
-          console.warn(`[detail_negara] Error dari API untuk ${countryName}:`, data.error);
-          setIsLoadingDetail(false);
-          return;
-        }
+      // Daftar kunci bangunan & unit militer untuk dijumlahkan
+      const keysToAggregate = [
+        // Infrastruktur Militer
+        'barak', 'gudang_senjata', 'hangar_tank', 'pangkalan_udara', 'pangkalan_laut',
+        // Unit Militer Darat
+        'pasukan_infanteri', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat', 'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
+        // Unit Militer Laut
+        'kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet', 'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik',
+        // Unit Militer Udara
+        'jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom', 'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut',
+        // Bangunan Umum (Kelistrikan, Industri, Hunian, dll)
+        'pembangkit_listrik_tenaga_gas', 'pembangkit_listrik_tenaga_nuklir', 'pembangkit_listrik_tenaga_uap', 'pembangkit_listrik_tenaga_surya', 'pembangkit_listrik_tenaga_angin', 'pembangkit_listrik_tenaga_air', 'pembangkit_listrik_tenaga_geotermal',
+        'tambang_batu_bara', 'tambang_minyak_bumi', 'tambang_gas_alam', 'tambang_uranium', 'tambang_biji_besi', 'tambang_emas', 'tambang_tembaga', 'tambang_bauksit', 'tambang_nikel', 'tambang_litium',
+        'pabrik_baja', 'pabrik_semen', 'pabrik_pupuk', 'pabrik_kimia', 'pabrik_elektronik', 'pabrik_otomotif', 'pabrik_tekstil', 'pabrik_farmasi',
+        'peternakan_sapi', 'peternakan_ayam', 'peternakan_kambing', 'peternakan-[#3b82f6]',
+        'sawah_padi', 'perkebunan_jagung', 'perkebunan_gandum', 'perkebunan_kedelai', 'perkebunan_kelapa_sawit', 'perkebunan_tebu',
+        'perikanan_tangkap', 'budidaya_ikan', 'budidaya_udang',
+        'pengolahan_daging', 'pengolahan_susu', 'pengolahan_ikan', 'pengolahan_beras',
+        'jalan_tol', 'pelabuhan_laut', 'bandar_udara', 'stasiun_kereta_api',
+        'sekolah_dasar', 'sekolah_menengah', 'universitas',
+        'puskesmas', 'rumah_sakit_umum', 'rumah_sakit_spesialis',
+        'pos_polisi', 'kantor_polisi_sektor', 'mabes_polisi',
+        'lapangan_olahraga', 'stadion_olahraga', 'taman_hiburan',
+        'pasar_tradisional', 'pusat_perbelanjaan', 'kawasan_komersial',
+        'perumahan_subsidi_rakyat', 'apartemen_modern_high_rise', 'kompleks_mansion_mewah'
+      ];
 
-        setFetchedDetail(data);
+      const aggregatedBuildings: Record<string, number> = {};
 
-        // Hitung Netto PDB & Netto Populasi Harian awal saat data pertama dimuat
-        const initialNet = calculateCountryNetBalance(data);
-        const initialPopNet = calculateCountryNetPopulation(data);
-        setDailyNetBalance(initialNet);
-        setDailyNetPopulation(initialPopNet);
-      } catch (e) {
-        console.error(`[detail_negara] Gagal fetch data untuk ${countryName}:`, e);
-      } finally {
-        setIsLoadingDetail(false);
-      }
+      validMembers.forEach(m => {
+        const pop = Number(m.jumlah_penduduk || m.populasi || 0);
+        const popNet = calculateCountryNetPopulation(m);
+        const angg = Number(m.anggaran || 0);
+        const netBal = calculateCountryNetBalance(m);
+
+        totalPop += pop;
+        totalPopNet += popNet;
+        totalAnggaran += angg;
+        totalNetBalance += netBal;
+
+        keysToAggregate.forEach(key => {
+          const val = Number(m[key] ?? m?.armada?.[key] ?? m?.pertahanan?.[key] ?? 0);
+          if (val > 0) {
+            aggregatedBuildings[key] = (aggregatedBuildings[key] || 0) + val;
+          }
+        });
+      });
+
+      const combinedDetail = {
+        ...primaryData,
+        ...aggregatedBuildings,
+        jumlah_penduduk: validMembers.length > 1 ? totalPop : primaryData.jumlah_penduduk,
+        anggaran: validMembers.length > 1 ? totalAnggaran : primaryData.anggaran,
+      };
+
+      setFetchedDetail(combinedDetail);
+      setDailyNetBalance(validMembers.length > 1 ? totalNetBalance : calculateCountryNetBalance(primaryData));
+      setDailyNetPopulation(validMembers.length > 1 ? totalPopNet : calculateCountryNetPopulation(primaryData));
+      setIsLoadingDetail(false);
     };
 
     loadDetail();
@@ -175,8 +246,10 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
   const displayCountryName = annexedInfo?.attackerCountry || countryName;
 
-  // Jika dianeksasi, ambil ISO penyerang
+  // Jika dianeksasi, ambil ISO & Ibukota penyerang
   let displayIso = mapData?.iso || detailData?.iso || "";
+  let displayCapital = mapData?.capital || detailData?.capital || "Data tidak tersedia";
+
   if (annexedInfo?.attackerCountry) {
     const attackerData = COUNTRIES_DATA?.find(
       (c) => c.country?.toLowerCase().trim() === annexedInfo.attackerCountry.toLowerCase().trim()
@@ -186,14 +259,15 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     } else if (annexedInfo.attackerIso) {
       displayIso = annexedInfo.attackerIso;
     }
+    if (attackerData?.capital) {
+      displayCapital = attackerData.capital;
+    }
   }
 
-  // Fallback ganda untuk capital
-  const capital = mapData?.capital || detailData?.capital || "Data tidak tersedia";
-  
-  // Hitung Hubungan
+  // Hitung Hubungan berdasarkan penyerang jika dianeksasi
   const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name || "Indonesia";
-  const relationValue = getRelationValue(playerCountryName, countryName);
+  const relationCountryName = annexedInfo?.attackerCountry || countryName;
+  const relationValue = getRelationValue(playerCountryName, relationCountryName);
 
   // Fungsi Helper untuk bendera di Header
   const renderFlagHeader = (iso: string | undefined, altName: string) => {
@@ -236,7 +310,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
               <div className="flex items-center gap-2 mt-1">
                 {renderFlagHeader(displayIso, displayCountryName)}
                 <p className="text-xs text-[#00FFAA]/70 font-semibold uppercase tracking-wider">
-                  {displayCountryName}, {capital}
+                  {displayCountryName}, {displayCapital}
                 </p>
               </div>
             </div>
@@ -277,7 +351,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
               <div className="flex flex-col">
                 <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Ibukota</span>
                 <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
-                  {capital}
+                  {displayCapital}
                 </span>
               </div>
             </div>

@@ -1,6 +1,6 @@
 "use client"
 import React, { useMemo, useState } from "react";
-import { X, Shield, Swords, ChevronUp, ChevronDown } from "lucide-react";
+import { X, Shield, Swords, ChevronUp, ChevronDown, Search } from "lucide-react";
 import { getArmadaPowerSummary } from "../4_armada/logic/armadaLogic";
 // 🔥 Import modal serang baru yang akan kita buat
 import SerangModals from "./modals_menu/KonfirmasiSerangModals";
@@ -43,6 +43,7 @@ export default function SerangNegaraModal({
   const [isSerangModalOpen, setIsSerangModalOpen] = useState(false);
   const [internalCountries, setInternalCountries] = useState<any[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [sortConfig, setSortConfig] = useState<{ key: keyof RankingRow; direction: 'asc' | 'desc' } | null>({
     key: 'totalPower',
@@ -83,16 +84,62 @@ export default function SerangNegaraModal({
       source = COUNTRIES_DATA;
     }
 
-    return source
+    const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+
+    // 1. Petakan data negara dasar
+    const countryMap = new Map<string, any>();
+    source.forEach((c: any) => {
+      const cName = c?.nama_negara || c?.country || c?.name_id || c?.name_en || "Negara";
+      countryMap.set(cName.toLowerCase().trim(), JSON.parse(JSON.stringify(c)));
+    });
+
+    // 2. Gabungkan unit militer & infrastruktur dari negara yang dianeksasi ke penyerangnya
+    const annexedTargets = new Set<string>();
+
+    Object.entries(annexedStore).forEach(([targetKey, data]: [string, any]) => {
+      if (!data || !data.attackerCountry) return;
+      
+      const targetNorm = targetKey.toLowerCase().trim();
+      const attackerNorm = data.attackerCountry.toLowerCase().trim();
+
+      const targetObj = countryMap.get(targetNorm);
+      const attackerObj = countryMap.get(attackerNorm);
+
+      if (targetObj && attackerObj && targetNorm !== attackerNorm) {
+        annexedTargets.add(targetNorm);
+
+        // Jumlahkan unit armada & infrastruktur
+        const keysToSum = [
+          'barak', 'gudang_senjata', 'hangar_tank', 'pangkalan_udara', 'pangkalan_laut',
+          'pasukan_infanteri', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat', 'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
+          'kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet', 'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik',
+          'jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom', 'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut'
+        ];
+
+        keysToSum.forEach(key => {
+          const tVal = Number(targetObj[key] ?? targetObj?.armada?.[key] ?? 0);
+          if (tVal > 0) {
+            const currentAttackerVal = Number(attackerObj[key] ?? attackerObj?.armada?.[key] ?? 0);
+            attackerObj[key] = currentAttackerVal + tVal;
+            if (attackerObj.armada && typeof attackerObj.armada === 'object') {
+              attackerObj.armada[key] = (Number(attackerObj.armada[key] ?? 0)) + tVal;
+            }
+          }
+        });
+      }
+    });
+
+    return Array.from(countryMap.values())
+      .filter((country: any) => {
+        const cName = (country?.nama_negara || country?.country || country?.name_id || country?.name_en || "Negara").toLowerCase().trim();
+        return !annexedTargets.has(cName);
+      })
       .map((country: any) => {
         const summary = getArmadaPowerSummary(country);
         const groupTotals = summary?.totals?.groups;
         const countryName = country?.nama_negara || country?.country || country?.name_id || country?.name_en || "Negara";
         
-        // 🔥 PERBAIKAN: Cari ISO dari COUNTRIES_DATA terlebih dahulu, lalu fallback ke berbagai properti
         let iso = "";
-        
-        // 1. Coba cari dari COUNTRIES_DATA menggunakan nama negara
         if (COUNTRIES_DATA && Array.isArray(COUNTRIES_DATA)) {
           const mapData = COUNTRIES_DATA.find((c: any) => 
             c.country && c.country.toLowerCase().trim() === countryName.toLowerCase().trim()
@@ -102,7 +149,6 @@ export default function SerangNegaraModal({
           }
         }
         
-        // 2. Jika belum ketemu, coba dari property negara itu sendiri
         if (!iso) {
           iso = country?.iso || 
                 country?.iso2 || 
@@ -121,13 +167,19 @@ export default function SerangNegaraModal({
           laut: groupTotals?.laut?.power ?? 0,
           udara: groupTotals?.udara?.power ?? 0,
           payload: country,
-          iso: iso, // 🔥 Sertakan ISO dalam data ranking
+          iso: iso,
         };
       });
   }, [prefetchedAllCountries, internalCountries]);
 
   const rankings = useMemo(() => {
     let sortableItems = [...rawRankings];
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      sortableItems = sortableItems.filter(item => 
+        item.countryName.toLowerCase().includes(q)
+      );
+    }
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
         if (typeof a[sortConfig.key] === 'string') {
@@ -146,7 +198,7 @@ export default function SerangNegaraModal({
       });
     }
     return sortableItems;
-  }, [rawRankings, sortConfig]);
+  }, [rawRankings, sortConfig, searchQuery]);
 
   const handleSort = (key: keyof RankingRow) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -203,10 +255,25 @@ export default function SerangNegaraModal({
                 <span className="text-[10px] lg:text-[11px] font-black uppercase tracking-wider text-[#6B8A8A]">{selectedCountryName}</span>
               </div>
             </div>
-            <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-4 w-4" />
-            </button>
+
+            <div className="flex items-center gap-3">
+              {/* Input Search Bar */}
+              <div className="relative w-48 sm:w-60">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#00FFAA]/60" />
+                <input
+                  type="text"
+                  placeholder="Cari negara..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-[#051111] border border-[#00FFAA]/30 rounded-lg pl-8 pr-3 py-1 text-xs text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-colors"
+                />
+              </div>
+
+              <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
+                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+                <X className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
           <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col items-center">

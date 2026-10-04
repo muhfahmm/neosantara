@@ -63,11 +63,28 @@ export default function OperasiMiliter({ countryName }: OperasiMiliterProps) {
       </div>
 
       <SerangNegaraModal isOpen={isSerangOpen} countryName={countryName} onClose={() => setIsSerangOpen(false)} onConfirm={() => { console.log(`Serang -> ${countryName}`); }} />
-      <SpionaseModal isOpen={isSpionaseOpen} countryName={countryName} onClose={() => setIsSpionaseOpen(false)} onConfirm={() => { console.log(`Spionase -> ${countryName}`); }} />
-      <SabotaseModal isOpen={isSabotaseOpen} countryName={countryName} onClose={() => setIsSabotaseOpen(false)} onConfirm={() => { console.log(`Sabotase -> ${countryName}`); }} />
+      <SpionaseModal isOpen={isSpionaseOpen} countryName={countryName} onClose={() => setIsSpionaseOpen(false)} onConfirm={(target) => { console.log(`Spionase -> ${target}`); }} />
+      <SabotaseModal isOpen={isSabotaseOpen} countryName={countryName} onClose={() => setIsSabotaseOpen(false)} onConfirm={(target) => { console.log(`Sabotase -> ${target}`); }} />
       <PerangNuklirModal isOpen={isNuklirOpen} countryName={countryName} onClose={() => setIsNuklirOpen(false)} onConfirm={() => { console.log(`Nuklir -> ${countryName}`); }} />
       <KudetaModal isOpen={isKudetaOpen} countryName={countryName} onClose={() => setIsKudetaOpen(false)} onConfirm={() => { console.log(`Kudeta -> ${countryName}`); }} />
-      <MintaSerangNegaraModal isOpen={isMintaSerangOpen} countryName={countryName} onClose={() => setIsMintaSerangOpen(false)} onConfirm={() => { console.log(`Minta Serang -> ${countryName}`); }} />
+      <MintaSerangNegaraModal 
+        isOpen={isMintaSerangOpen} 
+        countryName={countryName} 
+        onClose={() => setIsMintaSerangOpen(false)} 
+        onConfirm={(selectedTargetCountry, amount) => { 
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(
+              new CustomEvent('trigger_requested_invasion', {
+                detail: {
+                  attackerCountry: countryName,       // Negara yang diminta menyerang (Rusia)
+                  targetCountry: selectedTargetCountry, // Negara target sasaran yang dipilih di dropdown (Afganistan)
+                  amount
+                }
+              })
+            );
+          }
+        }} 
+      />
       <HinaModal isOpen={isHinaOpen} countryName={countryName} onClose={() => setIsHinaOpen(false)} onConfirm={() => { console.log(`Hina -> ${countryName}`); }} />
     </div>
   );

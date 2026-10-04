@@ -49,7 +49,13 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
   useEffect(() => {
     setLoading(true);
     const data = getOrgMembers(orgName);
-    setMembers(data);
+    const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+    const activeMembers = data.filter((m: MemberData) => {
+      const raw = String(m.country || '');
+      const norm = raw.toLowerCase().trim();
+      return !annexedStore[raw] && !annexedStore[norm];
+    });
+    setMembers(activeMembers);
     setLoading(false);
   }, [orgName]);
 

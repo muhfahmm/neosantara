@@ -77,9 +77,20 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
     })),
   ];
 
+  const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+
   const embassies = mergedEmbassies.filter((item, index, array) => {
-    const normalized = String(item.mitra || item.nama_negara || '').toLowerCase().trim();
+    const rawMitra = String(item.mitra || item.nama_negara || '');
+    const normalized = rawMitra.toLowerCase().trim();
     if (!normalized) return false;
+
+    // Otomatis hilangkan kedubes jika negara mitra telah dianeksasi oleh negara lain
+    const isAnnexed = Boolean(
+      annexedStore[rawMitra] ||
+      annexedStore[normalized]
+    );
+    if (isAnnexed) return false;
+
     const isRemoved = removedEmbassies.some((r: string) => String(r || '').toLowerCase().trim() === normalized);
     if (isRemoved) return false;
     return array.findIndex((other) => String(other.mitra || other.nama_negara || '').toLowerCase().trim() === normalized) === index;

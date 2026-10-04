@@ -1,6 +1,6 @@
 "use client";
 import React, { useMemo, useState } from "react";
-import { Bomb, Flame, ChevronUp, ChevronDown } from "lucide-react";
+import { Bomb, Flame, ChevronUp, ChevronDown, Search } from "lucide-react";
 import { getArmadaPowerSummary } from "../../4_armada/logic/armadaLogic";
 import KonfirmasiSabotaseModals from "../modals_konfirmasi/konfirmasiSabotaseModals";
 // 🔥 Import COUNTRIES_DATA untuk meng-enrich ISO
@@ -56,6 +56,7 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
 
   const [selectedTarget, setSelectedTarget] = useState<RankingRow | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const rawRankings = useMemo(() => {
     const source = Array.isArray(prefetchedAllCountries) ? prefetchedAllCountries : [];
@@ -78,6 +79,12 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
 
   const rankings = useMemo(() => {
     let sortableItems = [...rawRankings];
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      sortableItems = sortableItems.filter(item =>
+        item.countryName.toLowerCase().includes(q)
+      );
+    }
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
         if (typeof a[sortConfig.key] === 'string') {
@@ -96,7 +103,7 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
       });
     }
     return sortableItems;
-  }, [rawRankings, sortConfig]);
+  }, [rawRankings, sortConfig, searchQuery]);
 
   const handleSort = (key: keyof RankingRow) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -118,7 +125,21 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-3">
+      {/* Search Input Bar */}
+      <div className="flex items-center justify-end">
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#00FFAA]/60" />
+          <input
+            type="text"
+            placeholder="Cari negara target..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-[#051111] border border-[#00FFAA]/30 rounded-lg pl-8 pr-3 py-1.5 text-xs text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-colors"
+          />
+        </div>
+      </div>
+
       <div className="overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
         <div className="max-h-[52vh] overflow-auto">
           <table className="w-full text-xs">
