@@ -160,6 +160,12 @@ export default function DetailKelahiranModal({
               </p>
             </div>
 
+            <div className="border-l-2 border-[#00FFAA]/40 pl-4 py-1">
+              <p className="text-xs text-[#9BB2B2] leading-relaxed">
+                Kelahiran dasar dipengaruhi populasi, kepuasan umum, fasilitas kesehatan, pendidikan, dan kebijakan insentif anak. Netto harian kemudian dimoderasi coverage pangan, hunian, kepadatan populasi, dan kesehatan. Wabah aktif dapat mengurangi kelahiran. Batas pertumbuhan model adalah maksimal 3% per tahun; kontraksi hingga 5% per tahun hanya berlaku pada krisis.
+              </p>
+            </div>
+
             {/* Breakdown Faktor Kelahiran */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 

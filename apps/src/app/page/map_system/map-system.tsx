@@ -76,7 +76,7 @@ import { generateInvasionNews, evaluateAnnualHotRelationsInvasion, getCountryCol
 import { generateAnnexationNews, updateMapTerritoryColor } from '../menus/news/logic/2_berita_aneksasi/beritaAneksasiLogic';
 import { generateResourceLootNews } from '../menus/news/logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
 import { NewsItemData } from '../menus/news/newsModals';
-import { FOOD_CONSUMPTION_PER_CAPITA, calculateProduction, calculateConsumption } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic';
+import { calculateFoodCoverageByGroup } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic';
 
 interface Country {
     id: number;
@@ -396,8 +396,8 @@ export default function MapPage() {
                                 // Fasilitas Publik & Hunian
                                 'jalur_sepeda', 'jalan_raya', 'terminal_bus', 'stasiun_kereta_api', 'kereta_bawah_tanah', 'pelabuhan', 'bandara', 'helipad',
                                 'prasekolah', 'dasar', 'menengah', 'lanjutan', 'universitas', 'lembaga_pendidikan', 'laboratorium', 'observatorium', 'pusat_penelitian', 'pusat_pengembangan', 'literasi',
-                                'rumah_sakit_besar', 'rumah_sakit_kecil', 'pusat_diagnostik', 'harapan_hidup', 'indeks_kesehatan',
-                                'pusat_bantuan_hukum', 'pengadilan', 'kejaksaan', 'pos_polisi', 'armada_mobil_polisi', 'akademi_polisi', 'indeks_korupsi', 'indeks_keamanan',
+                                'rumah_sakit_besar', 'rumah_sakit_kecil', 'pusat_diagnostik',
+                                'pusat_bantuan_hukum', 'pengadilan', 'kejaksaan', 'pos_polisi', 'armada_mobil_polisi', 'akademi_polisi',
                                 'kolam_renang', 'sirkuit_balap', 'stadion', 'stadion_internasional', 'gym', 'golf', 'esports', 'gokart',
                                 'mall', 'hotel', 'pusat_grosir_tekstil', 'bioskop', 'teater',
                                 'rumah_subsidi', 'apartemen', 'mansion'
@@ -411,10 +411,19 @@ export default function MapPage() {
                                     aggregatedFields[key] = prevVal + targetVal;
                                 }
                             });
+                            const weightedAverageFields: Record<string, number> = {};
+                            ['harapan_hidup', 'indeks_kesehatan', 'indeks_korupsi', 'indeks_keamanan'].forEach(key => {
+                                const prevValue = Number(prev[key]);
+                                const targetValue = Number(targetData[key]);
+                                if (Number.isFinite(prevValue) && Number.isFinite(targetValue) && totalPop > 0) {
+                                    weightedAverageFields[key] = Math.round(((prevValue * prevPop) + (targetValue * targetPop)) / totalPop);
+                                }
+                            });
 
                             return {
                                 ...prev,
                                 ...aggregatedFields,
+                                ...weightedAverageFields,
                                 jumlah_penduduk: totalPop,
                                 populasi: totalPop,
                                 anggaran: prevAnggaran + targetAnggaran,
@@ -834,9 +843,54 @@ export default function MapPage() {
             if (Math.random() < 0.25) {
                 const isBencana = Math.random() < 0.60;
                 if (isBencana) {
-                    newNotifsToAdd.push(generateBencanaAlamNotification(userCountryName, currentDateStr));
+                    const disaster = generateBencanaAlamNotification(userCountryName, currentDateStr);
+                    newNotifsToAdd.push(disaster);
+                    setCountryDetail((prev: any) => {
+                        if (!prev) return prev;
+                        return {
+                            ...prev,
+                            jumlah_penduduk: Math.max(0, (Number(prev.jumlah_penduduk) || 0) - disaster.korban),
+                            active_disaster_effects: [
+                                ...(Array.isArray(prev.active_disaster_effects) ? prev.active_disaster_effects : []),
+                                {
+                                    id: disaster.id,
+                                    eventName: disaster.eventName,
+                                    category: disaster.category,
+                                    korban: disaster.korban,
+                                    startDate: currentDateStr,
+                                    durationDays: 30,
+                                    healthMultiplier: 0.9
+                                }
+                            ]
+                        };
+                    });
                 } else {
-                    newNotifsToAdd.push(generateWabahPenyakitNotification(userCountryName, currentDateStr));
+                    const outbreak = generateWabahPenyakitNotification(userCountryName, currentDateStr);
+                    const durationDays = outbreak.category.includes('Pandemi')
+                        ? 60
+                        : outbreak.category.includes('Mutasi')
+                            ? 21
+                            : outbreak.category.includes('Hewan') || outbreak.category.includes('Tumbuhan')
+                                ? 14
+                                : 7;
+                    newNotifsToAdd.push(outbreak);
+                    setCountryDetail((prev: any) => {
+                        if (!prev) return prev;
+                        return {
+                            ...prev,
+                            active_outbreaks: [
+                                ...(Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : []),
+                                {
+                                    id: outbreak.id,
+                                    eventName: outbreak.eventName,
+                                    category: outbreak.category,
+                                    korban: outbreak.korban,
+                                    startDate: currentDateStr,
+                                    durationDays
+                                }
+                            ]
+                        };
+                    });
                 }
             }
 
@@ -1070,23 +1124,21 @@ export default function MapPage() {
                 ));
             }
 
-            // 8. Notifikasi Defisit Industri Pangan (Setiap bulan jika >= 6 sektor/komoditas defisit)
-            const foodKeys = Object.keys(FOOD_CONSUMPTION_PER_CAPITA);
-            const deficitFoodCommodities: string[] = [];
-            foodKeys.forEach(foodKey => {
-                const prod = calculateProduction(foodKey, countryDetail, metadata);
-                const cons = calculateConsumption(totalPop, FOOD_CONSUMPTION_PER_CAPITA[foodKey]);
-                if (prod - cons < 0) {
-                    const label = metadata?.[foodKey]?.label || foodKey.replace(/_/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase());
-                    deficitFoodCommodities.push(label);
-                }
-            });
+            // 8. Notifikasi defisit kategori pangan inti (diperiksa setiap bulan)
+            const foodCoverageGroups = calculateFoodCoverageByGroup(countryDetail, metadata);
+            const deficitFoodCategories = foodCoverageGroups
+                .filter(group => group.coverage < 0.95)
+                .map(group => group.label);
+            const weightedFoodCoverage = foodCoverageGroups.reduce(
+                (sum, group) => sum + group.coverage * group.weight,
+                0
+            );
 
-            if (deficitFoodCommodities.length >= 6) {
+            if (deficitFoodCategories.length >= 2 || weightedFoodCoverage < 0.85 || foodCoverageGroups.some(group => group.coverage < 0.7)) {
                 newNotifsToAdd.push(generatePanganDefisitNotification(
-                    deficitFoodCommodities.length,
-                    foodKeys.length,
-                    deficitFoodCommodities,
+                    deficitFoodCategories.length,
+                    foodCoverageGroups.length,
+                    deficitFoodCategories,
                     currentDateStr
                 ));
             }
@@ -1503,7 +1555,12 @@ export default function MapPage() {
         if (!countryDetail) return;
 
         // Calculate initial population metrics untuk display
-        const populationMetrics = calculateDailyPopulationChange(countryDetail, selectedCountry?.country);
+        const populationMetrics = calculateDailyPopulationChange(
+            countryDetail,
+            selectedCountry?.country,
+            metadata,
+            currentDate
+        );
         setPlayerNetPopulationChange(populationMetrics.netDailyChange);
         setPlayerDailyBirths(populationMetrics.dailyBirths);
         setPlayerDailyDeaths(populationMetrics.dailyDeaths);
@@ -1512,7 +1569,7 @@ export default function MapPage() {
             populasi: countryDetail.jumlah_penduduk,
             netChange: populationMetrics.netDailyChange,
         });
-    }, [countryDetail?.jumlah_penduduk, selectedCountry?.country]); // Track jumlah_penduduk & country changes
+    }, [countryDetail?.jumlah_penduduk, countryDetail?.active_outbreaks, countryDetail?.active_disaster_effects, selectedCountry?.country, metadata, currentDate]);
 
     useEffect(() => {
         if (!countryDetail || !currentDate) return;
@@ -1535,9 +1592,12 @@ export default function MapPage() {
         // Calculate economy updates
         const netBalance = calculateCountryNetBalance(countryDetail);
 
-        // ✅ ALWAYS calculate population updates (doesn't depend on metadata)
-        const populationMetrics = calculateDailyPopulationChange(countryDetail, selectedCountry?.country);
-        const populationUpdates = updateDailyPopulation(countryDetail, populationMetrics);
+        const populationMetrics = calculateDailyPopulationChange(
+            countryDetail,
+            selectedCountry?.country,
+            metadata,
+            currentDateStr
+        );
 
         // Store net population change for display in Navbar
         setPlayerNetPopulationChange(populationMetrics.netDailyChange);
@@ -1601,6 +1661,46 @@ export default function MapPage() {
         setCountryDetail((prev: any) => {
             if (!prev) return prev;
 
+            const currentPopulationMetrics = calculateDailyPopulationChange(
+                prev,
+                selectedCountry?.country,
+                metadata,
+                currentDateStr
+            );
+            const populationUpdates = updateDailyPopulation(
+                prev,
+                currentPopulationMetrics,
+                selectedCountry?.country,
+                metadata,
+                currentDateStr
+            );
+            const previousCrisisTiers = prev.population_crisis_tiers;
+            const currentCrisisTiers = {
+                pangan: currentPopulationMetrics.foodTier,
+                hunian: currentPopulationMetrics.housingTier,
+                overpopulasi: currentPopulationMetrics.overpopulationTier,
+                kesehatan: currentPopulationMetrics.healthTier,
+            };
+            const crisisLabels: Record<string, string> = {
+                pangan: 'Krisis pangan / Food crisis',
+                hunian: 'Krisis hunian / Housing crisis',
+                overpopulasi: 'Overpopulasi / Overpopulation',
+                kesehatan: 'Krisis kesehatan / Health crisis',
+            };
+            const newCrisisNotifications = previousCrisisTiers && Object.entries(currentCrisisTiers)
+                .filter(([key, tier]) => tier >= 2 && tier > Number(previousCrisisTiers[key] ?? tier))
+                .map(([key, tier]) => ({
+                    id: `population-crisis-${key}-${currentDateStr}-${tier}`,
+                    title: `${currentPopulationMetrics.populationStatus.label} / ${currentPopulationMetrics.populationStatus.labelEn}`,
+                    sender: 'Kementerian Kependudukan / Ministry of Population',
+                    message: `${crisisLabels[key]} memburuk ke Tier ${tier}. Pertumbuhan bersih: ${currentPopulationMetrics.netDailyChange.toLocaleString('id-ID')} jiwa/hari. / Worsened to Tier ${tier}. Net growth: ${currentPopulationMetrics.netDailyChange.toLocaleString('en-US')} people/day.`,
+                    timestamp: currentDateStr,
+                    type: 'kesejahteraan' as const,
+                    value: tier,
+                    isRead: false,
+                    tradeType: 'population_crisis',
+                    factor: key,
+                }));
             let currentCompletedBoost = 0;
             let currentCompletedKesejahteraanBoost = 0;
             let currentOngoing = prev.ongoingConstructions || [];
@@ -1708,11 +1808,20 @@ export default function MapPage() {
             return {
                 ...prev,
                 ...updates,
-                ...populationUpdates,  // Apply population changes
+                ...populationUpdates,
                 anggaran: (Number(prev.anggaran) || 0) + netBalance,
                 satisfaction: prev.satisfaction, // Preserve satisfaction scores
                 programNuklirActive: nextProgramNuklirActive,
-                pending_notifications: nextPendingNotifications,
+                population_crisis_tiers: currentCrisisTiers,
+                pending_notifications: [...nextPendingNotifications, ...newCrisisNotifications],
+                active_outbreaks: (Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : []).filter((event: any) => {
+                    const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
+                    return Number.isFinite(elapsed) && elapsed >= 0 && elapsed < (Number(event.durationDays) || 0) * 86_400_000;
+                }),
+                active_disaster_effects: (Array.isArray(prev.active_disaster_effects) ? prev.active_disaster_effects : []).filter((event: any) => {
+                    const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
+                    return Number.isFinite(elapsed) && elapsed >= 0 && elapsed < (Number(event.durationDays) || 30) * 86_400_000;
+                }),
                 ongoingConstructions: currentOngoing,
                 ongoingEmbassyConstructions: nextOngoingEmbassyConstructions,
                 embassies: nextEmbassies,

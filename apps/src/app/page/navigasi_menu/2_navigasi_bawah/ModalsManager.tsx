@@ -212,6 +212,7 @@ function ModalsManager({
             onClose();
           }}
           countryDetail={countryDetail}
+          metadata={metadata}
           setCountryDetail={setCountryDetail}
           currentDate={currentDate}
           selectedCountry={selectedCountry}

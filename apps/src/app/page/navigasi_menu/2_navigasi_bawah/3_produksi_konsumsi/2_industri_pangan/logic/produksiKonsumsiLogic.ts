@@ -125,6 +125,50 @@ export const FOOD_CONSUMPTION_PER_CAPITA: Record<string, number> = {
   beras: 0.35,
 };
 
+export interface FoodCoverageGroup {
+  id: string;
+  label: string;
+  weight: number;
+  commodityFamilies: string[][];
+}
+
+export const FOOD_COVERAGE_GROUPS: FoodCoverageGroup[] = [
+  {
+    id: 'pangan_pokok',
+    label: 'Pangan pokok',
+    weight: 0.4,
+    commodityFamilies: [['padi', 'beras'], ['gandum', 'roti', 'mie_instan'], ['jagung'], ['umbi']],
+  },
+  {
+    id: 'protein_hewani',
+    label: 'Protein hewani',
+    weight: 0.25,
+    commodityFamilies: [
+      ['ayam_unggas', 'sapi_potong', 'domba_kambing', 'pengolahan_daging'],
+      ['sapi_perah', 'susu'],
+      ['udang', 'ikan'],
+    ],
+  },
+  {
+    id: 'protein_nabati',
+    label: 'Protein nabati',
+    weight: 0.15,
+    commodityFamilies: [['kedelai']],
+  },
+  {
+    id: 'sayur',
+    label: 'Sayur',
+    weight: 0.1,
+    commodityFamilies: [['sayur']],
+  },
+  {
+    id: 'olahan_dan_kebutuhan_dasar',
+    label: 'Olahan & kebutuhan dasar',
+    weight: 0.1,
+    commodityFamilies: [['air_mineral'], ['kelapa_sawit', 'minyak_goreng'], ['tebu', 'gula']],
+  },
+];
+
 export const RAW_MATERIAL_DEFAULT_PROD: Record<string, number> = {
   padi: 200,
   gandum: 150,
@@ -241,6 +285,41 @@ export const calculateConsumption = (population: number, consumptionPerCapita: n
   const safePopulation = safeNumber(population);
   const safePerCapita = safeNumber(consumptionPerCapita);
   return (safePopulation / 1000) * safePerCapita;
+};
+
+export const calculateFoodCoverageByGroup = (country: any, metadata: any): Array<FoodCoverageGroup & { coverage: number }> => {
+  const population = resolveCountryPopulation(country);
+  if (population <= 0) {
+    return FOOD_COVERAGE_GROUPS.map((group) => ({ ...group, coverage: 1 }));
+  }
+
+  return FOOD_COVERAGE_GROUPS.map((group) => {
+    const familyCoverage = group.commodityFamilies.map((family) => {
+      const availableRatios = family
+        .filter((key) => FOOD_CONSUMPTION_PER_CAPITA[key] !== undefined)
+        .map((key) => {
+          const consumption = calculateConsumption(population, FOOD_CONSUMPTION_PER_CAPITA[key]);
+          if (consumption <= 0) return null;
+          const production = calculateProduction(key, country, metadata);
+          return Math.min(1.25, Math.max(0, production / consumption));
+        })
+        .filter((ratio): ratio is number => ratio !== null);
+
+      return availableRatios.length > 0 ? Math.max(...availableRatios) : null;
+    }).filter((ratio): ratio is number => ratio !== null);
+
+    const coverage = familyCoverage.length > 0
+      ? familyCoverage.reduce((sum, ratio) => sum + ratio, 0) / familyCoverage.length
+      : 0;
+    return { ...group, coverage };
+  });
+};
+
+export const calculateWeightedFoodCoverage = (country: any, metadata: any): number => {
+  const groups = calculateFoodCoverageByGroup(country, metadata);
+  const totalWeight = groups.reduce((sum, group) => sum + group.weight, 0);
+  if (totalWeight <= 0) return 1;
+  return groups.reduce((sum, group) => sum + group.coverage * group.weight, 0) / totalWeight;
 };
 
 // Calculate total production, consumption and balance for a country (Flat list)

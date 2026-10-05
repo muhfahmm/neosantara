@@ -113,6 +113,12 @@ export default function TunawismaDetailModal({
               </div>
             </div>
 
+            <div className="border-l-2 border-amber-400/50 pl-4 py-1">
+              <p className="text-xs text-[#9BB2B2] leading-relaxed">
+                Kapasitas hunian dihitung dari rumah subsidi × 5, apartemen × 6.000, dan mansion × 10 jiwa. Perkiraan tunawisma adalah populasi dikurangi kapasitas tersebut. Kekurangan kapasitas menurunkan tier hunian dan dapat memperburuk faktor kematian, tetapi tidak mengurangi populasi satu-untuk-satu setiap hari.
+              </p>
+            </div>
+
             {/* Interpretasi */}
             <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-2xl">
               <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2 mb-4">

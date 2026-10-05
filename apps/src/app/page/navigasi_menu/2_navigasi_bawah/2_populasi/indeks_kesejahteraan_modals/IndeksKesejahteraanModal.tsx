@@ -318,6 +318,12 @@ export default function IndeksKesejahteraanModal({
                   </p>
                 </div>
 
+                <div className="border-l-2 border-[#00FFAA]/40 pl-4 py-1">
+                  <p className="text-xs text-[#9BB2B2] leading-relaxed">
+                    Indeks ini merangkum pendidikan, kesehatan, fasilitas umum, pangan, hunian, dan keterbukaan, lalu menambahkan bonus serta mengurangi decay. Indeks kesejahteraan bukan pengali langsung populasi; beberapa sektor yang sama dapat memengaruhi kepuasan, coverage, atau faktor kesehatan secara tidak langsung.
+                  </p>
+                </div>
+
                 {/* Breakdown 5 Sektor */}
                 <div className="space-y-4">
                   <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider">Breakdown Sektor (Bobot & Target Kebutuhan)</h3>

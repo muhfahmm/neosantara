@@ -87,11 +87,20 @@ export default function TabelNegaraPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/country-data?all=true', { cache: 'no-store' });
+      const [res, metadataResponse] = await Promise.all([
+        fetch('/api/country-data?all=true', { cache: 'no-store' }),
+        fetch('/api/building-metadata', { cache: 'no-store' }).catch(() => null),
+      ]);
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      const data = await res.json();
+      const [data, metadata] = await Promise.all([
+        res.json(),
+        metadataResponse?.ok ? metadataResponse.json() : Promise.resolve({}),
+      ]);
+      const gameDate = typeof window !== 'undefined'
+        ? localStorage.getItem('neosantara_current_game_date') || new Date().toISOString().slice(0, 10)
+        : new Date().toISOString().slice(0, 10);
 
       let rawList: any[] = [];
       if (Array.isArray(data)) {
@@ -140,15 +149,11 @@ export default function TabelNegaraPage() {
         const netBalance = calculateCountryNetBalance(countryItem);
 
         // Calculate population change
-        const popMetrics = calculateDailyPopulationChange(countryItem);
-        let netPopChange = popMetrics.netDailyChange;
-
-        // Fallback calculation untuk menjamin nilai positif (+) pada tampilan tabel
-        if (netPopChange <= 0 && population > 0) {
-          netPopChange = Math.max(1, Math.ceil(population * 0.000025));
-        }
+        const popMetrics = calculateDailyPopulationChange(countryItem, countryName, metadata, gameDate);
+        const netPopChange = popMetrics.netDailyChange;
 
         return {
+          ...countryItem,
           id,
           countryName,
           capitalName,
@@ -158,7 +163,6 @@ export default function TabelNegaraPage() {
           treasury,
           netBalance,
           netPopChange,
-          ...countryItem,
         };
       });
 
@@ -169,8 +173,7 @@ export default function TabelNegaraPage() {
 
       // Fallback load from local map data
       const fallback: CountryDetailData[] = COUNTRIES_DATA.map((base, idx) => {
-        const pop = 10_000_000;
-        const netPop = Math.floor(pop * 0.0001);
+        const pop = Number((base as any).jumlah_penduduk ?? (base as any).population ?? 0);
         return {
           id: idx + 1,
           countryName: base.country,
@@ -178,9 +181,9 @@ export default function TabelNegaraPage() {
           isoCode: base.iso.toLowerCase(),
           continentName: base.continent || 'Lainnya',
           population: pop,
-          treasury: 100,
+          treasury: 0,
           netBalance: 0,
-          netPopChange: netPop,
+          netPopChange: 0,
         };
       });
       setCountries(fallback);
@@ -364,7 +367,7 @@ export default function TabelNegaraPage() {
               <TrendingUp className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-widest">Total Netto Global</p>
+              <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-widest">Netto APBN Global / Hari</p>
               <p
                 className={`text-xl font-black mt-0.5 ${
                   summary.totalNetto >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'
@@ -475,7 +478,7 @@ export default function TabelNegaraPage() {
                     className="py-4 px-6 cursor-pointer hover:text-[#00FFAA] transition-colors text-right"
                   >
                     <div className="flex items-center justify-end">
-                      <span>NETTO APBN</span>
+                      <span>NETTO APBN / HARI</span>
                       {renderSortIcon('netBalance')}
                     </div>
                   </th>
@@ -569,7 +572,7 @@ export default function TabelNegaraPage() {
                           }`}
                         >
                           {country.netBalance >= 0 ? '+' : ''}
-                          {country.netBalance.toLocaleString('id-ID')} NEO
+                          {country.netBalance.toLocaleString('id-ID')} NEO/hari
                         </span>
                       </td>
                     </tr>

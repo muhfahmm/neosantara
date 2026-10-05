@@ -11,6 +11,7 @@ import {
   ChevronUp,
   ChevronDown,
   AlertTriangle,
+  CheckCircle2,
 } from "lucide-react";
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
@@ -30,7 +31,7 @@ interface ModalProps {
 }
 
 interface SortConfig {
-  key: 'name' | 'production' | 'consumption' | 'balance';
+  key: 'name' | 'fuelStatus' | 'fuelResources' | 'production' | 'consumption' | 'balance';
   direction: 'asc' | 'desc';
 }
 
@@ -41,6 +42,13 @@ const SOURCE_ORDER = [
   "pembangkit_listrik_tenaga_uap",
   "pembangkit_listrik_tenaga_gas",
   "pembangkit_listrik_tenaga_angin"
+];
+
+const ELECTRICITY_FUEL_RESOURCES = [
+  { key: 'uranium', label: 'Uranium', generatorKey: 'pembangkit_listrik_tenaga_nuklir', generatorLabel: 'PLTN' },
+  { key: 'gas_alam', label: 'Gas alam', generatorKey: 'pembangkit_listrik_tenaga_gas', generatorLabel: 'PLTG' },
+  { key: 'batu_bara', label: 'Batu bara', generatorKey: 'pembangkit_listrik_tenaga_uap', generatorLabel: 'PLTU' },
+  { key: 'minyak_bumi', label: 'Minyak bumi', generatorKey: 'pembangkit_listrik_tenaga_uap', generatorLabel: 'PLTU' },
 ];
 
 export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCountryDetail, metadata, prefetchedAllCountries, onNavigateToMenu }: ModalProps) {
@@ -298,10 +306,32 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     let aVal: any, bVal: any;
     switch (sortConfig.key) {
       case 'name': aVal = a.name.toLowerCase(); bVal = b.name.toLowerCase(); break;
+      case 'fuelStatus':
+        aVal = (a.fuelDeficitDetails?.length || 0) > 0 ? 1 : 0;
+        bVal = (b.fuelDeficitDetails?.length || 0) > 0 ? 1 : 0;
+        break;
+      case 'fuelResources':
+        aVal = ELECTRICITY_FUEL_RESOURCES.filter((resource) => Number(a.rawData?.[resource.key]) > 0).length;
+        bVal = ELECTRICITY_FUEL_RESOURCES.filter((resource) => Number(b.rawData?.[resource.key]) > 0).length;
+        break;
       case 'production': aVal = a.production; bVal = b.production; break;
       case 'consumption': aVal = a.consumption; bVal = b.consumption; break;
       case 'balance': aVal = a.balance; bVal = b.balance; break;
       default: return 0;
+    }
+    if (aVal === bVal && sortConfig.key === 'fuelResources') {
+      const aLabels = ELECTRICITY_FUEL_RESOURCES
+        .filter((resource) => Number(a.rawData?.[resource.key]) > 0)
+        .map((resource) => resource.label)
+        .sort()
+        .join(', ');
+      const bLabels = ELECTRICITY_FUEL_RESOURCES
+        .filter((resource) => Number(b.rawData?.[resource.key]) > 0)
+        .map((resource) => resource.label)
+        .sort()
+        .join(', ');
+      const labelOrder = aLabels.localeCompare(bLabels);
+      return sortConfig.direction === 'asc' ? labelOrder : -labelOrder;
     }
     if (sortConfig.direction === 'asc') return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
     else return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
@@ -585,6 +615,19 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         Negara <SortIndicator column="name" />
                       </th>
                       <th
+                        onClick={() => handleSort('fuelStatus')}
+                        className="px-2.5 sm:px-3 py-2 text-center font-black text-rose-400 uppercase tracking-wider cursor-pointer hover:bg-rose-950/40 transition-colors"
+                      >
+                        Status Bahan Bakar <SortIndicator column="fuelStatus" />
+                      </th>
+                      <th
+                        onClick={() => handleSort('fuelResources')}
+                        className="px-2.5 sm:px-3 py-2 text-center font-black text-amber-300 uppercase tracking-wider cursor-pointer hover:bg-amber-950/30 transition-colors"
+                        title="Material yang tercatat pada data mineral negara, bukan stok inventori siap pakai"
+                      >
+                        Mineral Tercatat <SortIndicator column="fuelResources" />
+                      </th>
+                      <th
                         onClick={() => handleSort('production')}
                         className="px-2.5 sm:px-3 py-2 text-right font-black text-emerald-400 uppercase tracking-wider cursor-pointer hover:bg-emerald-950/40 transition-colors"
                       >
@@ -607,13 +650,23 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   <tbody className="divide-y divide-[#00FFAA]/10 bg-[#0F2424]">
                     {allCountries.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
+                        <td colSpan={7} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
                           📡 Memuat data {globalElectricityData.length || 207} negara...
                         </td>
                       </tr>
                     ) : filteredData.length > 0 ? (
                       filteredData.map((country, rowIndex) => {
                         const isUserCountry = country.isUser;
+                        const deficientFuelLabels = Array.from(new Set(
+                          (country.fuelDeficitDetails || []).flatMap((building) => building.fuels.map((fuel) => fuel.label))
+                        )).join(', ');
+                        const fuelResourceRows = ELECTRICITY_FUEL_RESOURCES
+                          .map((resource) => ({
+                            ...resource,
+                            isRecorded: Number(country.rawData?.[resource.key]) > 0,
+                            generatorCount: Number(country.rawData?.[resource.generatorKey]) || 0,
+                          }))
+                          .filter((resource) => resource.isRecorded || resource.generatorCount > 0);
                         return (
                           <tr
                             key={`country-${country.name}-${rowIndex}`}
@@ -631,7 +684,16 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                             <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black flex items-center gap-2' : 'text-[#E0E0E0]'}`}>
                               <div className="flex items-center gap-1.5 flex-wrap">
                                 <span>{country.name}</span>
-                                {country.fuelDeficitDetails && country.fuelDeficitDetails.length > 0 && country.balance < -0.01 && (
+                                {isUserCountry && (
+                                  <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-[#0A1A1A] text-[9px] font-black uppercase tracking-wider">
+                                    Negara Anda
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-3 py-3 text-center">
+                              {country.fuelDeficitDetails && country.fuelDeficitDetails.length > 0 ? (
+                                <div className="flex flex-col items-center gap-1">
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -640,19 +702,44 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                                         deficits: country.fuelDeficitDetails,
                                       });
                                     }}
-                                    className="p-1 rounded-md bg-rose-500/20 hover:bg-rose-500/40 border border-rose-500/50 text-rose-400 transition-colors flex items-center gap-1 cursor-pointer"
-                                    title="Klik untuk melihat rincian bahan bakar yang kurang"
+                                    className="px-2 py-1 rounded-md bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-rose-300 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                                    title="Klik untuk melihat stok, kebutuhan, dan kekurangan per pembangkit"
                                   >
-                                    <AlertTriangle className="h-3.5 w-3.5 text-rose-500 animate-pulse shrink-0" />
-                                    <span className="text-[9px] font-black uppercase text-rose-400">Defisit Bahan Bakar</span>
+                                    <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                                    <span className="text-[9px] font-black uppercase">Defisit</span>
                                   </button>
-                                )}
-                                {isUserCountry && (
-                                  <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-[#0A1A1A] text-[9px] font-black uppercase tracking-wider">
-                                    Negara Anda
+                                  <span className="max-w-[180px] whitespace-normal break-words text-[9px] leading-tight text-rose-300">
+                                    {deficientFuelLabels}
                                   </span>
-                                )}
-                              </div>
+                                </div>
+                              ) : (
+                                <span className="inline-flex items-center justify-center gap-1 text-[9px] font-black uppercase text-emerald-300">
+                                  <CheckCircle2 className="h-3.5 w-3.5" />
+                                  Tidak Defisit
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-3 py-3">
+                              {fuelResourceRows.length > 0 ? (
+                                <div className="flex max-w-[300px] flex-wrap justify-center gap-1" title="Badge kuning: material tercatat. Badge biru: jumlah pembangkit yang menggunakannya. Ini bukan stok inventori siap pakai.">
+                                  {fuelResourceRows.map((resource) => (
+                                    <span key={resource.key} className="inline-flex items-center gap-1">
+                                      <span className={`rounded border px-1.5 py-0.5 text-[9px] font-bold ${
+                                        resource.isRecorded
+                                          ? 'border-amber-400/30 bg-amber-400/10 text-amber-200'
+                                          : 'border-slate-500/30 bg-slate-500/10 text-slate-400'
+                                      }`}>
+                                        {resource.label}{resource.isRecorded ? '' : ' tidak tercatat'}
+                                      </span>
+                                      <span className="rounded border border-cyan-400/30 bg-cyan-400/10 px-1.5 py-0.5 text-[9px] font-bold text-cyan-200">
+                                        {resource.generatorLabel} {resource.generatorCount}
+                                      </span>
+                                    </span>
+                                  ))}
+                                </div>
+                              ) : (
+                                <span className="block text-center text-[#6B8A8A]">-</span>
+                              )}
                             </td>
                             <td className="px-4 py-3 font-bold text-emerald-400 text-right">
                               {isNaN(country.production) || country.production <= 0 ? '0' : country.production.toLocaleString('id-ID')}
@@ -668,21 +755,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                               'text-slate-400'
                             }`}>
                               <div className="flex items-center justify-end gap-1">
-                                {country.fuelDeficitDetails && country.fuelDeficitDetails.length > 0 && country.balance < -0.01 && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setFuelDeficitModalData({
-                                        countryName: country.name,
-                                        deficits: country.fuelDeficitDetails,
-                                      });
-                                    }}
-                                    className="p-1 rounded bg-rose-500/20 hover:bg-rose-500/40 border border-rose-500/40 text-rose-400 transition-colors cursor-pointer"
-                                    title="Bahan bakar pembangkit kurang"
-                                  >
-                                    <AlertTriangle className="h-3.5 w-3.5 text-rose-400 shrink-0" />
-                                  </button>
-                                )}
                                 <span>
                                   {isNaN(country.balance) || country.balance === 0 ? '0' : (country.balance > 0 ? '+' : '-') + Math.abs(country.balance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                                 </span>
@@ -693,7 +765,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       })
                     ) : (
                       <tr>
-                        <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
+                        <td colSpan={7} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
                           {searchQuery ? `Tidak ada negara yang cocok dengan "${searchQuery}"` : 'Tidak ada data tersedia'}
                         </td>
                       </tr>

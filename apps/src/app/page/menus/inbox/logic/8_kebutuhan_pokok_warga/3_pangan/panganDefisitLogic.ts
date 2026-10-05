@@ -18,9 +18,9 @@ export function generatePanganDefisitNotification(
 
   return {
     id: `pangan-defisit-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-    title: `🌾 KRISIS PANGAN NASIONAL: ${deficitCount} Komoditas Mengalami Defisit!`,
+    title: `⚠️ DEFISIT PANGAN: ${deficitCount} dari ${totalSectors} Kategori Perlu Perhatian`,
     sender: `Kementerian Pertanian & Badan Pangan Nasional`,
-    message: `Sebanyak ${deficitCount} komoditas pangan nasional (termasuk ${sampleNames}${extraText}) saat ini dalam kondisi defisit produksi dibanding tingkat konsumsi warga. Defisit di 6 sektor atau lebih menandakan ancaman krisis pangan serius. Segera tingkatkan produksi agrikultur, peternakan, perikanan, atau olahan pangan nasional!`,
+    message: `Coverage kebutuhan pangan untuk ${deficitCount} dari ${totalSectors} kategori inti berada di bawah target (termasuk ${sampleNames}${extraText}). Kategori yang digunakan adalah pangan pokok, protein hewani, protein nabati, sayur, serta olahan dan kebutuhan dasar. Tingkatkan produksi, impor, atau distribusi pada kategori yang tertinggal.`,
     timestamp: dateStr,
     type: 'kepuasan',
     value: deficitCount,

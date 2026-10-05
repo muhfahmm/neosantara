@@ -137,6 +137,12 @@ export default function DetailKematianModal({
               </p>
             </div>
 
+            <div className="border-l-2 border-rose-400/50 pl-4 py-1">
+              <p className="text-xs text-[#9BB2B2] leading-relaxed">
+                Estimasi kematian dasar dipengaruhi harapan hidup, keamanan, tunawisma, fasilitas kesehatan, ketahanan pangan, kriminalitas, dan polusi. Pada netto populasi harian, model juga memperhitungkan wabah dan kematian kelaparan saat kondisi krisis; kekurangan kapasitas atau produksi bukan jumlah kematian langsung.
+              </p>
+            </div>
+
             {/* Breakdown Faktor */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* 1. Harapan Hidup */}

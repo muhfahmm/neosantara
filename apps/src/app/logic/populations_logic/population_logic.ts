@@ -10,6 +10,7 @@ import { calculateKeamananLogic } from "@/app/page/navigasi_menu/2_navigasi_bawa
 import { calculateKesehatanLogic } from "@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/kematian_modals/logic/kesehatanLogic";
 import { calculateTunawismaLogic } from "@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/kematian_modals/logic/tunawismaLogic";
 import { calculateKriminalitasLogic } from "@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/kematian_modals/logic/kriminalitasLogic";
+import { calculateWeightedFoodCoverage } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
 
 // ==============================
 // Interface Tipe Data
@@ -35,6 +36,34 @@ export interface PopulationDailyMetrics {
   kepuasanUmum: number;
   lifeExpectancy: number;
   securityLevel: number;
+  foodRatio: number;
+  foodTier: number;
+  housingFulfillment: number;
+  housingTier: number;
+  overpopulationTier: number;
+  healthIndex: number;
+  healthTier: number;
+  famineDeaths: number;
+  outbreakDeaths: number;
+  outbreakBirthLoss: number;
+  populationStatus: PopulationStatus;
+}
+
+export interface PopulationStatus {
+  tier: number;
+  label: string;
+  labelEn: string;
+  color: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+}
+
+interface PopulationMultiplier {
+  kelahiran: number;
+  kematian: number;
+  tier: number;
+  label: string;
+  labelEn: string;
+  color: string;
 }
 
 export interface PopulationSectoral {
@@ -44,6 +73,164 @@ export interface PopulationSectoral {
   listrik: number;
   hunian: number;
 }
+
+const finiteNumber = (value: unknown, fallback = 0): number => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+};
+
+const getElapsedDays = (startDate: string, currentDate: string): number => {
+  const start = Date.parse(`${startDate.slice(0, 10)}T00:00:00Z`);
+  const current = Date.parse(`${currentDate.slice(0, 10)}T00:00:00Z`);
+  if (!Number.isFinite(start) || !Number.isFinite(current)) return Number.POSITIVE_INFINITY;
+  return Math.floor((current - start) / 86_400_000);
+};
+
+export const hitungRasioPangan = (country: CountryDetail, metadata: Record<string, any> = {}): number => {
+  if (Object.keys(metadata).length > 0) {
+    return calculateWeightedFoodCoverage(country, metadata);
+  }
+  return Math.max(0, finiteNumber(country.food_supply_ratio ?? country.food_ratio, 1));
+};
+
+export const hitungKeterpenuhanHunian = (country: CountryDetail, metadata: Record<string, any> = {}): number => {
+  const population = Math.max(0, finiteNumber(country.jumlah_penduduk));
+  if (population === 0) return 1;
+  const capacities: Record<string, number> = {
+    rumah_subsidi: 5,
+    apartemen: 6000,
+    mansion: 10,
+  };
+  const calculatedCapacity = Object.entries(capacities).reduce((total, [key, defaultCapacity]) => {
+    const unitCapacity = finiteNumber(metadata[key]?.kapasitas, defaultCapacity);
+    return total + Math.max(0, finiteNumber(country[key])) * unitCapacity;
+  }, 0);
+  const declaredCapacity = finiteNumber(country.total_kapasitas_hunian);
+  const capacity = Math.max(0, declaredCapacity > 0 ? declaredCapacity : calculatedCapacity);
+  return capacity / population;
+};
+
+export const getPanganMultiplier = (ratio: number): PopulationMultiplier => {
+  if (ratio > 1.1) return { kelahiran: 1.1, kematian: 0.9, tier: 0, label: 'Surplus', labelEn: 'Surplus', color: 'emerald' };
+  if (ratio >= 1) return { kelahiran: 1, kematian: 1, tier: 1, label: 'Aman', labelEn: 'Stable', color: 'green' };
+  if (ratio >= 0.95) return { kelahiran: 0.85, kematian: 1.1, tier: 2, label: 'Waspada', labelEn: 'Watch', color: 'yellow' };
+  if (ratio >= 0.85) return { kelahiran: 0.65, kematian: 1.3, tier: 3, label: 'Defisit ringan', labelEn: 'Mild deficit', color: 'amber' };
+  if (ratio >= 0.7) return { kelahiran: 0.4, kematian: 1.6, tier: 4, label: 'Defisit sedang', labelEn: 'Moderate deficit', color: 'orange' };
+  if (ratio >= 0.5) return { kelahiran: 0.15, kematian: 2.2, tier: 5, label: 'Defisit berat', labelEn: 'Severe deficit', color: 'red' };
+  return { kelahiran: 0, kematian: 3.5, tier: 6, label: 'Kelaparan', labelEn: 'Famine', color: 'rose' };
+};
+
+export const getHunianMultiplier = (fulfillment: number): PopulationMultiplier => {
+  if (fulfillment > 1) return { kelahiran: 1.1, kematian: 0.95, tier: 0, label: 'Berlebih', labelEn: 'Ample', color: 'emerald' };
+  if (fulfillment >= 0.9) return { kelahiran: 1, kematian: 1, tier: 1, label: 'Aman', labelEn: 'Adequate', color: 'green' };
+  if (fulfillment >= 0.7) return { kelahiran: 0.85, kematian: 1.05, tier: 2, label: 'Cukup', labelEn: 'Sufficient', color: 'yellow' };
+  if (fulfillment >= 0.5) return { kelahiran: 0.65, kematian: 1.15, tier: 3, label: 'Padat', labelEn: 'Crowded', color: 'amber' };
+  if (fulfillment >= 0.3) return { kelahiran: 0.4, kematian: 1.3, tier: 4, label: 'Sesak', labelEn: 'Overcrowded', color: 'orange' };
+  if (fulfillment >= 0.1) return { kelahiran: 0.2, kematian: 1.5, tier: 5, label: 'Krisis hunian', labelEn: 'Housing crisis', color: 'red' };
+  return { kelahiran: 0.05, kematian: 1.8, tier: 6, label: 'Tunawisma massal', labelEn: 'Mass homelessness', color: 'rose' };
+};
+
+export const getOverpopMultiplier = (population: number): PopulationMultiplier => {
+  if (population < 500_000_000) return { kelahiran: 1.1, kematian: 1, tier: 0, label: 'Normal', labelEn: 'Normal', color: 'emerald' };
+  if (population < 1_000_000_000) return { kelahiran: 1, kematian: 1, tier: 1, label: 'Berkembang', labelEn: 'Developing', color: 'green' };
+  if (population < 2_000_000_000) return { kelahiran: 0.75, kematian: 1.15, tier: 2, label: 'Padat', labelEn: 'Dense', color: 'yellow' };
+  if (population < 3_000_000_000) return { kelahiran: 0.5, kematian: 1.35, tier: 3, label: 'Overpopulasi', labelEn: 'Overpopulated', color: 'orange' };
+  if (population < 5_000_000_000) return { kelahiran: 0.25, kematian: 1.6, tier: 4, label: 'Super overpopulasi', labelEn: 'Severely overpopulated', color: 'red' };
+  return { kelahiran: 0.05, kematian: 2, tier: 5, label: 'Kehancuran', labelEn: 'Collapse', color: 'rose' };
+};
+
+export const getKesehatanMultiplier = (health: number): PopulationMultiplier => {
+  if (health > 80) return { kelahiran: 1.05, kematian: 0.9, tier: 0, label: 'Sehat', labelEn: 'Healthy', color: 'emerald' };
+  if (health >= 60) return { kelahiran: 1, kematian: 1, tier: 1, label: 'Baik', labelEn: 'Good', color: 'green' };
+  if (health >= 40) return { kelahiran: 0.9, kematian: 1.1, tier: 2, label: 'Sedang', labelEn: 'Fair', color: 'yellow' };
+  if (health >= 20) return { kelahiran: 0.75, kematian: 1.3, tier: 3, label: 'Buruk', labelEn: 'Poor', color: 'orange' };
+  if (health >= 10) return { kelahiran: 0.5, kematian: 1.6, tier: 4, label: 'Krisis', labelEn: 'Critical', color: 'red' };
+  return { kelahiran: 0.2, kematian: 2, tier: 5, label: 'Wabah', labelEn: 'Emergency', color: 'rose' };
+};
+
+export const getPopulationGrowthMultiplier = (
+  foodTier: number,
+  housingTier: number,
+  overpopulationTier: number,
+  healthTier: number
+): number => {
+  const foodFactors = [1.1, 1, 0.95, 0.9, 0.75, 0.5, 0.25];
+  const housingFactors = [1.05, 1, 0.95, 0.9, 0.8, 0.65, 0.45];
+  const overpopulationFactors = [1.1, 1, 0.9, 0.75, 0.55, 0.35];
+  const healthFactors = [1.05, 1, 0.95, 0.85, 0.7, 0.5];
+  return (foodFactors[foodTier] ?? foodFactors[foodFactors.length - 1]) *
+    (housingFactors[housingTier] ?? housingFactors[housingFactors.length - 1]) *
+    (overpopulationFactors[overpopulationTier] ?? overpopulationFactors[overpopulationFactors.length - 1]) *
+    (healthFactors[healthTier] ?? healthFactors[healthFactors.length - 1]);
+};
+
+export const hitungKematianKelaparan = (population: number, foodRatio: number): number =>
+  foodRatio < 0.7 ? Math.floor(Math.max(0, population) * (0.7 - foodRatio) * 0.0001) : 0;
+
+export const hitungDampakWabah = (
+  outbreaks: Array<Record<string, any>> = [],
+  currentDate = new Date().toISOString().slice(0, 10)
+): { kematianTambahan: number; kelahiranBerkurang: number } => {
+  let kematianTambahan = 0;
+  let kelahiranBerkurang = 0;
+  for (const outbreak of outbreaks) {
+    const startDate = String(outbreak.startDate || outbreak.timestamp || '').slice(0, 10);
+    const durationDays = Math.max(0, finiteNumber(outbreak.durationDays));
+    const elapsed = getElapsedDays(startDate, currentDate);
+    if (!startDate || elapsed < 0 || elapsed >= durationDays) continue;
+    const victims = Math.max(0, finiteNumber(outbreak.korban));
+    const category = String(outbreak.category || '');
+    if (category.includes('Hewan') || category.includes('Tumbuhan')) {
+      kelahiranBerkurang += victims * 0.01;
+    } else if (category.includes('Mutasi')) {
+      kematianTambahan += victims * 0.1;
+      kelahiranBerkurang += victims * 0.05;
+    } else if (category.includes('Pandemi')) {
+      kematianTambahan += victims * 0.15;
+      kelahiranBerkurang += victims * 0.1;
+    } else {
+      kematianTambahan += victims * 0.05;
+      kelahiranBerkurang += victims * 0.02;
+    }
+  }
+  return { kematianTambahan: Math.floor(kematianTambahan), kelahiranBerkurang: Math.floor(kelahiranBerkurang) };
+};
+
+export const hitungDampakBencana = (
+  disasters: Array<Record<string, any>> = [],
+  currentDate = new Date().toISOString().slice(0, 10)
+): { healthMultiplier: number } => {
+  const active = disasters.some((disaster) => {
+    const startDate = String(disaster.startDate || '').slice(0, 10);
+    const elapsed = getElapsedDays(startDate, currentDate);
+    return startDate && elapsed >= 0 && elapsed < Math.max(0, finiteNumber(disaster.durationDays, 30));
+  });
+  return { healthMultiplier: active ? 0.9 : 1 };
+};
+
+export const getPopulationStatus = (
+  foodTier: number,
+  housingTier: number,
+  overpopulationTier: number,
+  healthTier: number
+): PopulationStatus => {
+  const tier = Math.max(foodTier, housingTier, overpopulationTier, healthTier);
+  const severeFactorCount = [
+    foodTier >= 4,
+    housingTier >= 5,
+    overpopulationTier >= 3,
+    healthTier >= 4,
+  ].filter(Boolean).length;
+  if (foodTier >= 6 && severeFactorCount >= 2) {
+    return { tier, label: 'KRISIS KEMANUSIAAN', labelEn: 'HUMANITARIAN CRISIS', color: 'rose', priority: 'critical' };
+  }
+  if (severeFactorCount >= 3) return { tier, label: 'KRISIS NASIONAL', labelEn: 'NATIONAL CRISIS', color: 'red', priority: 'high' };
+  if (foodTier >= 6) return { tier, label: 'KRISIS PANGAN', labelEn: 'FOOD CRISIS', color: 'red', priority: 'high' };
+  if (severeFactorCount >= 2) return { tier, label: 'TEKANAN DEMOGRAFI', labelEn: 'DEMOGRAPHIC PRESSURE', color: 'orange', priority: 'medium' };
+  if (tier >= 3) return { tier, label: 'PERLU PERHATIAN', labelEn: 'NEEDS ATTENTION', color: 'yellow', priority: 'low' };
+  if (tier >= 2) return { tier, label: 'PERLU PERHATIAN', labelEn: 'NEEDS ATTENTION', color: 'yellow', priority: 'low' };
+  return { tier, label: 'STABIL', labelEn: 'STABLE', color: 'emerald', priority: 'low' };
+};
 
 // ==============================
 // ==============================
@@ -230,7 +417,9 @@ export const calculateHomelessCount = (
 // ==============================
 export const calculateDailyPopulationChange = (
   detail: CountryDetail,
-  countryName?: string
+  countryName?: string,
+  metadata: Record<string, any> = {},
+  currentDate?: Date | string
 ): PopulationDailyMetrics => {
   if (!detail || typeof detail !== 'object') {
     return {
@@ -241,10 +430,24 @@ export const calculateDailyPopulationChange = (
       kepuasanUmum: 50,
       lifeExpectancy: 73.2,
       securityLevel: 84.5,
+      foodRatio: 1,
+      foodTier: 1,
+      housingFulfillment: 1,
+      housingTier: 1,
+      overpopulationTier: 0,
+      healthIndex: 50,
+      healthTier: 1,
+      famineDeaths: 0,
+      outbreakDeaths: 0,
+      outbreakBirthLoss: 0,
+      populationStatus: getPopulationStatus(1, 1, 0, 1),
     };
   }
 
-  const populasi = detail.jumlah_penduduk || 10_000_000;
+  const populasi = Math.max(0, finiteNumber(detail.jumlah_penduduk, 10_000_000));
+  const date = currentDate instanceof Date
+    ? currentDate.toISOString().slice(0, 10)
+    : String(currentDate || detail.currentDate || new Date().toISOString()).slice(0, 10);
 
   const detailWithDefaults = { ...detail };
 
@@ -264,28 +467,84 @@ export const calculateDailyPopulationChange = (
     detailWithDefaults
   );
 
-  let dailyDeaths = calculateDailyDeaths(populasi, lifeExpectancy, securityLevel, detailWithDefaults);
-  
-  // Agar pertumbuhan populasi default selalu positif (+), kematian tidak melebihi kelahiran pada keadaan baseline
-  if (dailyDeaths >= dailyBirths) {
-    dailyDeaths = Math.floor(dailyBirths * 0.7);
-  }
-
-  // Minimal pertumbuhan positif 0.002% per hari untuk semua negara (termasuk microstates)
-  const minPositiveGrowth = Math.max(1, Math.ceil(populasi * 0.00002));
-  const netDailyChange = Math.max(minPositiveGrowth, dailyBirths - dailyDeaths);
+  const rawDailyDeaths = calculateDailyDeaths(populasi, lifeExpectancy, securityLevel, detailWithDefaults);
+  const foodRatio = hitungRasioPangan(detail, metadata);
+  const housingFulfillment = hitungKeterpenuhanHunian(detail, metadata);
+  const overpopulation = getOverpopMultiplier(populasi);
+  const food = getPanganMultiplier(foodRatio);
+  const housing = getHunianMultiplier(housingFulfillment);
+  const disasterEffects = hitungDampakBencana(detail.active_disaster_effects || [], date);
+  const healthIndex = Math.min(100, Math.max(0, finiteNumber(detail.indeks_kesehatan, 50) * disasterEffects.healthMultiplier));
+  const health = getKesehatanMultiplier(healthIndex);
+  const outbreakEffects = hitungDampakWabah(detail.active_outbreaks || [], date);
+  const severeFactorCount = [
+    food.tier >= 4,
+    housing.tier >= 5,
+    overpopulation.tier >= 3,
+    health.tier >= 4,
+  ].filter(Boolean).length;
+  const isPopulationCrisis = severeFactorCount >= 2 || food.tier >= 6;
+  const growthMultiplier = getPopulationGrowthMultiplier(food.tier, housing.tier, overpopulation.tier, health.tier);
+  const baselineDeaths = Math.min(rawDailyDeaths, Math.floor(dailyBirths * 0.7));
+  const adjustedBirths = Math.max(0, Math.floor(dailyBirths * growthMultiplier - outbreakEffects.kelahiranBerkurang));
+  const famineDeaths = isPopulationCrisis ? hitungKematianKelaparan(populasi, foodRatio) : 0;
+  const calculatedDeaths = Math.max(0, Math.floor(
+    baselineDeaths * growthMultiplier + famineDeaths + outbreakEffects.kematianTambahan
+  ));
+  const unboundedNetChange = adjustedBirths - calculatedDeaths;
+  const maxDailyGrowth = Math.floor(populasi * 0.03 / 365);
+  const maxDailyDecline = isPopulationCrisis ? Math.ceil(populasi * 0.05 / 365) : 0;
+  const netDailyChange = Math.max(-maxDailyDecline, Math.min(maxDailyGrowth, unboundedNetChange));
+  const adjustedDeaths = Math.max(0, adjustedBirths - netDailyChange);
+  const populationStatus = getPopulationStatus(food.tier, housing.tier, overpopulation.tier, health.tier);
   const sektoral = calculateSectoralSatisfaction(detailWithDefaults);
   const homelessCount = calculateHomelessCount(populasi, sektoral.hunian, detailWithDefaults);
 
   return {
-    dailyBirths,
-    dailyDeaths,
+    dailyBirths: adjustedBirths,
+    dailyDeaths: adjustedDeaths,
     netDailyChange,
     homelessCount,
     kepuasanUmum,
     lifeExpectancy,
     securityLevel,
+    foodRatio,
+    foodTier: food.tier,
+    housingFulfillment,
+    housingTier: housing.tier,
+    overpopulationTier: overpopulation.tier,
+    healthIndex,
+    healthTier: health.tier,
+    famineDeaths,
+    outbreakDeaths: outbreakEffects.kematianTambahan,
+    outbreakBirthLoss: outbreakEffects.kelahiranBerkurang,
+    populationStatus,
   };
+};
+
+export const getPopulationProjection = (
+  detail: CountryDetail,
+  days = 30,
+  metadata: Record<string, any> = {},
+  currentDate?: Date | string
+): number[] => {
+  const projection: number[] = [];
+  let simulatedCountry = { ...detail };
+  let simulatedDate = currentDate instanceof Date
+    ? currentDate.toISOString().slice(0, 10)
+    : String(currentDate || new Date().toISOString()).slice(0, 10);
+
+  for (let day = 0; day < Math.max(0, Math.floor(days)); day += 1) {
+    const metrics = calculateDailyPopulationChange(simulatedCountry, undefined, metadata, simulatedDate);
+    const population = Math.max(0, Math.floor(finiteNumber(simulatedCountry.jumlah_penduduk) + metrics.netDailyChange));
+    simulatedCountry = { ...simulatedCountry, jumlah_penduduk: population };
+    projection.push(population);
+
+    const dateValue = new Date(`${simulatedDate}T00:00:00Z`);
+    dateValue.setUTCDate(dateValue.getUTCDate() + 1);
+    simulatedDate = dateValue.toISOString().slice(0, 10);
+  }
+  return projection;
 };
 
 // ==============================
@@ -294,18 +553,28 @@ export const calculateDailyPopulationChange = (
 export const updateDailyPopulation = (
   detail: CountryDetail,
   metrics?: PopulationDailyMetrics,
-  countryName?: string
+  countryName?: string,
+  metadata: Record<string, any> = {},
+  currentDate?: Date | string
 ): Partial<CountryDetail> => {
   if (!detail) return {};
-  const dailyMetrics = metrics || calculateDailyPopulationChange(detail, countryName);
-  const currentPopulasi = Number(detail.jumlah_penduduk) || 10_000_000;
-  const newPopulasi = Math.max(0, currentPopulasi + dailyMetrics.netDailyChange);
+  const dailyMetrics = metrics || calculateDailyPopulationChange(detail, countryName, metadata, currentDate);
+  const currentPopulasi = Math.max(0, finiteNumber(detail.jumlah_penduduk, 10_000_000));
+  const newPopulasi = Math.max(0, Math.floor(currentPopulasi + dailyMetrics.netDailyChange));
   const accumulatedBirths = (Number(detail.accumulated_births) || 0) + dailyMetrics.dailyBirths;
   const accumulatedDeaths = (Number(detail.accumulated_deaths) || 0) + dailyMetrics.dailyDeaths;
   return {
     jumlah_penduduk: newPopulasi,
     accumulated_births: accumulatedBirths,
     accumulated_deaths: accumulatedDeaths,
+    laju_pertumbuhan: dailyMetrics.netDailyChange,
+    food_supply_ratio: dailyMetrics.foodRatio,
+    food_deficit_tier: dailyMetrics.foodTier,
+    housing_fulfillment: dailyMetrics.housingFulfillment,
+    housing_deficit_tier: dailyMetrics.housingTier,
+    overpop_tier: dailyMetrics.overpopulationTier,
+    health_tier: dailyMetrics.healthTier,
+    population_status: dailyMetrics.populationStatus.label,
   };
 };
 
@@ -341,8 +610,12 @@ export const logPopulationMetrics = (
  * Helper ringkas persis seperti calculateCountryNetBalance di treasuryUpdater.ts
  * Mengembalikan perubahan netto populasi harian (kelahiran - kematian)
  */
-export const calculateCountryNetPopulation = (detail: CountryDetail): number => {
+export const calculateCountryNetPopulation = (
+  detail: CountryDetail,
+  metadata: Record<string, any> = {},
+  currentDate?: Date | string
+): number => {
   if (!detail || typeof detail !== 'object') return 0;
-  const metrics = calculateDailyPopulationChange(detail);
+  const metrics = calculateDailyPopulationChange(detail, undefined, metadata, currentDate);
   return metrics.netDailyChange;
 };

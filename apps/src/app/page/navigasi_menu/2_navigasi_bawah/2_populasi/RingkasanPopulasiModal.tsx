@@ -11,6 +11,11 @@ import {
   calculateDailyDeaths,
   calculateHomelessCount,
   calculateDailyPopulationChange,
+  getPopulationProjection,
+  getPanganMultiplier,
+  getHunianMultiplier,
+  getOverpopMultiplier,
+  getKesehatanMultiplier,
   type PopulationDailyMetrics,
   type PopulationSectoral,
 } from "@/app/logic/populations_logic/population_logic"; 
@@ -54,6 +59,7 @@ interface RingkasanPopulasiModalProps {
   initialKesejahteraanTab?: "statistik" | "naikkan";
   setCountryDetail?: (detail: any) => void;
   currentDate?: Date | string;
+  metadata?: Record<string, any>;
 }
 
 // ==============================
@@ -66,7 +72,12 @@ function hitungKepuasanSektoral(detail: CountryDetail): PopulationSectoral {
 // ==============================
 // Fungsi Penghitung Metrik Demografi Dinamis (diperbarui)
 // ==============================
-function hitungDemografi(detail: CountryDetail, countryName?: string) {
+function hitungDemografi(
+  detail: CountryDetail,
+  countryName?: string,
+  metadata: Record<string, any> = {},
+  currentDate?: Date | string
+) {
   const populasi = detail.jumlah_penduduk || 10_000_000;
 
   // ðŸ”¥ Ambil livingCostIndex dan kesejahteraanIndex dari data statis jika tidak ada di detail
@@ -90,23 +101,20 @@ function hitungDemografi(detail: CountryDetail, countryName?: string) {
     detailWithDefaults  // â† sama persis dengan calculateDailyPopulationChange agar konsisten dengan Navbar
   );
 
-  const metrics = calculateDailyPopulationChange(detailWithDefaults, countryName);
+  const metrics = calculateDailyPopulationChange(detailWithDefaults, countryName, metadata, currentDate);
   const totalDailyDelta = metrics.netDailyChange;
   const totalMonthlyGrowthPercent = ((totalDailyDelta * 30) / populasi) * 100;
+  const projectedPopulation30Days = getPopulationProjection(detailWithDefaults, 30, metadata, currentDate).at(-1) ?? populasi;
 
   const homelessCount = calculateHomelessCount(populasi, sektoral.hunian, detailWithDefaults);
 
   return {
+    ...metrics,
     populasi,
-    dailyBirths: metrics.dailyBirths,
-    dailyDeaths: metrics.dailyDeaths,
     totalDailyDelta,
     totalMonthlyGrowthPercent,
-    homelessCount,
-    securityLevel,
-    lifeExpectancy,
-    kepuasanUmum,
     sektoral,
+    projectedPopulation30Days,
   };
 }
 
@@ -125,6 +133,7 @@ export default function RingkasanPopulasiModal({
   initialKesejahteraanTab,
   setCountryDetail,
   currentDate,
+  metadata = {},
 }: RingkasanPopulasiModalProps) {
 
   const [isDetailBirthOpen, setIsDetailBirthOpen] = useState(false);
@@ -144,8 +153,8 @@ export default function RingkasanPopulasiModal({
   const metrics = useMemo(() => {
     if (!countryDetail) return null;
     // ðŸ”¥ Kirim countryName ke fungsi hitungDemografi
-    return hitungDemografi(countryDetail, selectedCountry?.country);
-  }, [countryDetail, selectedCountry]);
+    return hitungDemografi(countryDetail, selectedCountry?.country, metadata, currentDate);
+  }, [countryDetail, selectedCountry, metadata, currentDate]);
 
   if (!isOpen || !metrics) return null;
 
@@ -157,7 +166,63 @@ export default function RingkasanPopulasiModal({
     totalMonthlyGrowthPercent,
     homelessCount,
     kepuasanUmum,
+    foodRatio,
+    housingFulfillment,
+    overpopulationTier,
+    healthIndex,
+    populationStatus,
+    projectedPopulation30Days,
   } = metrics;
+
+  const factorCards = [
+    {
+      label: 'Pangan / Food',
+      value: `${(foodRatio * 100).toFixed(1)}%`,
+      status: getPanganMultiplier(foodRatio),
+      progress: Math.min(100, foodRatio * 100),
+    },
+    {
+      label: 'Hunian / Housing',
+      value: `${(housingFulfillment * 100).toFixed(1)}%`,
+      status: getHunianMultiplier(housingFulfillment),
+      progress: Math.min(100, housingFulfillment * 100),
+    },
+    {
+      label: 'Overpopulasi / Overpopulation',
+      value: getOverpopMultiplier(populasi).label,
+      status: getOverpopMultiplier(populasi),
+      progress: (overpopulationTier / 5) * 100,
+    },
+    {
+      label: 'Kesehatan / Health',
+      value: `${Math.round(healthIndex)}/100`,
+      status: getKesehatanMultiplier(healthIndex),
+      progress: healthIndex,
+    },
+  ];
+  const factorColors: Record<string, { text: string; bar: string }> = {
+    emerald: { text: 'text-emerald-300', bar: 'bg-emerald-400' },
+    green: { text: 'text-green-300', bar: 'bg-green-400' },
+    yellow: { text: 'text-yellow-300', bar: 'bg-yellow-400' },
+    amber: { text: 'text-amber-300', bar: 'bg-amber-400' },
+    orange: { text: 'text-orange-300', bar: 'bg-orange-400' },
+    red: { text: 'text-red-300', bar: 'bg-red-400' },
+    rose: { text: 'text-rose-300', bar: 'bg-rose-400' },
+  };
+  const activePopulationEvents = [
+    ...(Array.isArray(countryDetail?.active_outbreaks) ? countryDetail.active_outbreaks : []).map((event: any) => ({
+      id: event.id,
+      label: `Wabah / Outbreak: ${event.eventName || event.category}`,
+      korban: Number(event.korban) || 0,
+      days: Number(event.durationDays) || 0,
+    })),
+    ...(Array.isArray(countryDetail?.active_disaster_effects) ? countryDetail.active_disaster_effects : []).map((event: any) => ({
+      id: event.id,
+      label: `Bencana / Disaster: ${event.eventName || event.category}`,
+      korban: Number(event.korban) || 0,
+      days: Number(event.durationDays) || 0,
+    })),
+  ];
 
   const countryName = selectedCountry?.country || "Indonesia";
 
@@ -254,6 +319,65 @@ export default function RingkasanPopulasiModal({
         <div className="flex-1 overflow-y-auto p-3 lg:p-4.5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
           <div className="space-y-3.5 lg:space-y-4.5 2xl:space-y-6 animate-in fade-in duration-500">
 
+            <section className="bg-[#0F2424] border border-[#00FFAA]/20 p-3.5 lg:p-4.5 2xl:p-6 rounded-xl space-y-3" aria-label="Status demografi / Demographic status">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-xs lg:text-sm font-black text-[#00FFAA] uppercase">Status Demografi / Demographic Status</h3>
+                  <p className={`text-[10px] lg:text-xs font-bold mt-1 ${factorColors[populationStatus.color]?.text || 'text-[#E0E0E0]'}`}>
+                    {populationStatus.label} / {populationStatus.labelEn}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[9px] lg:text-[10px] text-[#6B8A8A] font-bold uppercase">Proyeksi 30 hari / 30-day projection</p>
+                  <p className="text-xs lg:text-sm text-[#E0E0E0] font-black">{projectedPopulation30Days.toLocaleString('id-ID')} jiwa</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 lg:gap-3">
+                {factorCards.map((factor) => {
+                  const colors = factorColors[factor.status.color] || factorColors.green;
+                  return (
+                    <div key={factor.label} className="bg-[#0A1A1A] border border-[#00FFAA]/15 rounded-lg p-2.5 lg:p-3">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <span className="text-[9px] lg:text-[10px] text-[#8BA5A5] font-black uppercase">{factor.label}</span>
+                        <span className={`text-[10px] lg:text-xs font-black ${colors.text}`}>{factor.value}</span>
+                      </div>
+                      <p className="text-[9px] text-[#6B8A8A] mt-1">{factor.status.label} / {factor.status.labelEn}</p>
+                      <div
+                        className="h-1.5 mt-2 rounded-full bg-[#173131] overflow-hidden"
+                        role="progressbar"
+                        aria-label={factor.label}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={Math.round(factor.progress)}
+                      >
+                        <div className={`h-full rounded-full ${colors.bar}`} style={{ width: `${Math.max(0, Math.min(100, factor.progress))}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-[9px] text-[#6B8A8A]">
+                Kelahiran +{dailyBirths.toLocaleString('id-ID')} / kematian −{dailyDeaths.toLocaleString('id-ID')} jiwa per hari
+                {' / '}Births +{dailyBirths.toLocaleString('en-US')} / deaths −{dailyDeaths.toLocaleString('en-US')} people per day
+              </p>
+              <div className="border-t border-[#00FFAA]/15 pt-2">
+                <p className="text-[9px] text-[#8BA5A5] font-black uppercase">Wabah & bencana aktif / Active outbreaks & disasters</p>
+                {activePopulationEvents.length === 0 ? (
+                  <p className="text-[9px] text-[#6B8A8A] mt-1">Tidak ada event aktif / No active events</p>
+                ) : (
+                  <ul className="mt-1 space-y-1">
+                    {activePopulationEvents.map((event) => (
+                      <li key={event.id} className="flex flex-wrap justify-between gap-x-3 text-[9px] text-[#B6CACA]">
+                        <span>{event.label}</span>
+                        <span>{event.korban.toLocaleString('id-ID')} korban · {event.days} hari / days</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </section>
+
             {/* Informasi Demografi */}
             <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3.5 lg:p-4.5 2xl:p-6 rounded-xl 2xl:rounded-2xl space-y-2.5 lg:space-y-3 2xl:space-y-4">
               <h3 className="text-xs lg:text-sm 2xl:text-md font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2">
@@ -264,6 +388,9 @@ export default function RingkasanPopulasiModal({
                 <p>
                   Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki total populasi terdaftar sebanyak <span className="font-bold text-[#00FFAA]">{populasi.toLocaleString('id-ID')} jiwa</span>.
                   Saat ini, laju pertumbuhan harian berada pada angka <span className={`font-bold ${totalDailyDelta >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{totalDailyDelta >= 0 ? '+' : ''}{totalDailyDelta.toLocaleString('id-ID')} jiwa per hari</span>.
+                </p>
+                <p className="border-l-2 border-[#00FFAA]/40 pl-3 text-[10px] lg:text-xs text-[#9BB2B2]">
+                  Laju harian adalah kelahiran dikurangi kematian. Pertumbuhan dimoderasi oleh coverage pangan per kategori, kapasitas hunian terhadap populasi, kepadatan, dan kesehatan. Wabah dapat mengurangi kelahiran atau menambah kematian; bencana mengurangi korban saat kejadian dan menurunkan kesehatan sementara. Defisit satu komoditas tidak langsung dikonversi menjadi jiwa. Pertumbuhan dibatasi maksimal 3% per tahun; penurunan hingga 5% hanya saat krisis.
                 </p>
 
                 {/* TOMBOL KELAHIRAN & KEMATIAN */}
