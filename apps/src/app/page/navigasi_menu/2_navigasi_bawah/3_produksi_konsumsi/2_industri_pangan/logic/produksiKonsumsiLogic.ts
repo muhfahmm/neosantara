@@ -125,6 +125,9 @@ export const FOOD_CONSUMPTION_PER_CAPITA: Record<string, number> = {
   beras: 0.35,
 };
 
+const FOOD_SECTOR_COMMODITY_KEYS = Object.keys(FOOD_CONSUMPTION_PER_CAPITA)
+  .filter((key) => key !== 'garam');
+
 export interface FoodCoverageGroup {
   id: string;
   label: string;
@@ -301,7 +304,7 @@ export const calculateFoodCoverageByGroup = (country: any, metadata: any): Array
           const consumption = calculateConsumption(population, FOOD_CONSUMPTION_PER_CAPITA[key]);
           if (consumption <= 0) return null;
           const production = calculateProduction(key, country, metadata);
-          return Math.min(1.25, Math.max(0, production / consumption));
+          return Math.min(1, Math.max(0, production / consumption));
         })
         .filter((ratio): ratio is number => ratio !== null);
 
@@ -313,6 +316,44 @@ export const calculateFoodCoverageByGroup = (country: any, metadata: any): Array
       : 0;
     return { ...group, coverage };
   });
+};
+
+export const calculateFoodSurplusRatio = (country: any, metadata: any): number => {
+  const population = resolveCountryPopulation(country);
+  if (population <= 0) return 1;
+
+  const familyCoverages = FOOD_COVERAGE_GROUPS.flatMap((group) =>
+    group.commodityFamilies
+      .map((family) => {
+        const ratios = family
+          .filter((key) => FOOD_CONSUMPTION_PER_CAPITA[key] !== undefined)
+          .map((key) => {
+            const consumption = calculateConsumption(population, FOOD_CONSUMPTION_PER_CAPITA[key]);
+            if (consumption <= 0) return null;
+            return calculateProduction(key, country, metadata) / consumption;
+          })
+          .filter((ratio): ratio is number => ratio !== null);
+
+        return ratios.length > 0 ? Math.max(...ratios) : null;
+      })
+      .filter((ratio): ratio is number => ratio !== null)
+  );
+
+  if (familyCoverages.length === 0) return 1;
+  return Math.min(1.25, Math.max(0, Math.min(...familyCoverages)));
+};
+
+export const calculateFoodDeficitCount = (country: any, metadata: any): number => {
+  const population = resolveCountryPopulation(country);
+  if (population <= 0) return 0;
+
+  return FOOD_SECTOR_COMMODITY_KEYS.reduce((deficitCount, key) => {
+    const consumptionPerCapita = FOOD_CONSUMPTION_PER_CAPITA[key];
+    if (consumptionPerCapita === undefined) return deficitCount;
+    const consumption = calculateConsumption(population, consumptionPerCapita);
+    const production = calculateProduction(key, country, metadata);
+    return production < consumption ? deficitCount + 1 : deficitCount;
+  }, 0);
 };
 
 export const calculateWeightedFoodCoverage = (country: any, metadata: any): number => {

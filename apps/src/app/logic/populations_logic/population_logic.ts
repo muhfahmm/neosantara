@@ -10,7 +10,11 @@ import { calculateKeamananLogic } from "@/app/page/navigasi_menu/2_navigasi_bawa
 import { calculateKesehatanLogic } from "@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/kematian_modals/logic/kesehatanLogic";
 import { calculateTunawismaLogic } from "@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/kematian_modals/logic/tunawismaLogic";
 import { calculateKriminalitasLogic } from "@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/kematian_modals/logic/kriminalitasLogic";
-import { calculateWeightedFoodCoverage } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
+import {
+  calculateFoodDeficitCount,
+  calculateFoodSurplusRatio,
+  calculateWeightedFoodCoverage,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
 
 // ==============================
 // Interface Tipe Data
@@ -44,6 +48,7 @@ export interface PopulationDailyMetrics {
   healthIndex: number;
   healthTier: number;
   famineDeaths: number;
+  foodDeficitDeaths: number;
   outbreakDeaths: number;
   outbreakBirthLoss: number;
   populationStatus: PopulationStatus;
@@ -118,6 +123,37 @@ export const getPanganMultiplier = (ratio: number): PopulationMultiplier => {
   if (ratio >= 0.7) return { kelahiran: 0.4, kematian: 1.6, tier: 4, label: 'Defisit sedang', labelEn: 'Moderate deficit', color: 'orange' };
   if (ratio >= 0.5) return { kelahiran: 0.15, kematian: 2.2, tier: 5, label: 'Defisit berat', labelEn: 'Severe deficit', color: 'red' };
   return { kelahiran: 0, kematian: 3.5, tier: 6, label: 'Kelaparan', labelEn: 'Famine', color: 'rose' };
+};
+
+type FoodDeficitCountryTier = 'kaya' | 'berkembang' | 'miskin';
+
+const FOOD_DEFICIT_COUNTRY_TIERS: Record<FoodDeficitCountryTier, Set<string>> = {
+  kaya: new Set(`amerika_serikat china jerman jepang inggris india prancis italia rusia brazil kanada australia meksiko spanyol korea_selatan turki indonesia belanda arab_saudi swiss polandia taiwan irlandia belgia swedia israel argentina singapura austria uni_emirat_arab`.split(' ')),
+  berkembang: new Set(`norwegia thailand kolombia vietnam malaysia filipina bangladesh denmark republik_rumania afrika_selatan pakistan hong_kong ceko mesir chile peru portugal nigeria kazakhstan finlandia aljazair yunani iran selandia_baru hungaria irak ukraina qatar maroko uzbekistan kuwait slowakia angola bulgaria kenya ekuador republik_dominika puerto_rico guatemala republik_demokratik_kongo ethiopia ghana oman kroasia pantai_gading republik_serbia venezuela luksemburg costa_rica kuba lithuania belarus sri_lanka uruguay panama republik_tanzania slovenia myanmar turkmenistan bolivia azerbaijan republik_uganda kamerun yordania tunisia paraguay suriah republik_zimbabwe makau latvia libya kamboja estonia bahrain nepal siprus republik_sudan islandia georgia honduras republik_zambia senegal el_salvador haiti bosnia_dan_hercegovina lebanon papua_nugini guyana mali albania burkina_faso armenia malta guinea mongolia benin trinidad_dan_tobago chad niger nikaragua`.split(' ')),
+  miskin: new Set(`kirgizstan gabon mozambik jamaika botswana moldova makedonia_utara madagaskar tajikistan afganistan laos malawi rwanda namibia korea_utara mauritius bahama kongo brunei palestina mauritania somalia kosovo togo monako montenegro liechtenstein bermuda barbados sierra_leone burundi maldives yaman guam fiji tahiti sudan_selatan suriname eswatini guiana_prancis liberia andorra djibouti kepulauan_faroe bhutan curacao republik_afrika_tengah belize tanjung_verde greenland guinea_bissau lesotho gambia saint_lucia san_marino antigua_dan_barbuda gibraltar seychelles republik_timor_leste eritrea komoro grenada vanuatu samoa saint_vincent_dan_grenadine sao_tome_dan_principe saint_kitts_dan_nevis samoa_amerika dominika tonga mikronesia kiribati palau marshall nauru tuvalu vatikan`.split(' ')),
+};
+
+export const getFoodDeficitDeclineRate = (
+  country: CountryDetail,
+  population: number,
+  deficitCount: number
+): number => {
+  if (population >= 500_000_000 && deficitCount >= 5) return 0.05;
+
+  const slug = String(country.country_slug ?? '').toLowerCase();
+  const tier: FoodDeficitCountryTier = FOOD_DEFICIT_COUNTRY_TIERS.kaya.has(slug)
+    ? 'kaya'
+    : FOOD_DEFICIT_COUNTRY_TIERS.miskin.has(slug)
+      ? 'miskin'
+      : 'berkembang';
+  const [start, maximum] = tier === 'kaya'
+    ? [5, 10]
+    : tier === 'berkembang'
+      ? [10, 15]
+      : [15, 20];
+
+  if (deficitCount < start) return 0;
+  return Math.min(1, (deficitCount - start + 1) / (maximum - start + 1)) * 0.05;
 };
 
 export const getHunianMultiplier = (fulfillment: number): PopulationMultiplier => {
@@ -438,6 +474,7 @@ export const calculateDailyPopulationChange = (
       healthIndex: 50,
       healthTier: 1,
       famineDeaths: 0,
+      foodDeficitDeaths: 0,
       outbreakDeaths: 0,
       outbreakBirthLoss: 0,
       populationStatus: getPopulationStatus(1, 1, 0, 1),
@@ -469,6 +506,17 @@ export const calculateDailyPopulationChange = (
 
   const rawDailyDeaths = calculateDailyDeaths(populasi, lifeExpectancy, securityLevel, detailWithDefaults);
   const foodRatio = hitungRasioPangan(detail, metadata);
+  const foodDeficitCount = Object.keys(metadata).length > 0
+    ? calculateFoodDeficitCount(detail, metadata)
+    : 0;
+  const foodDeficitDeclineRate = getFoodDeficitDeclineRate(detail, populasi, foodDeficitCount);
+  const foodDeficitDeaths = Math.floor(populasi * foodDeficitDeclineRate / 365);
+  const foodSurplusRatio = Object.keys(metadata).length > 0
+    ? calculateFoodSurplusRatio(detail, metadata)
+    : Math.max(1, finiteNumber(detail.food_supply_ratio ?? detail.food_ratio, 1));
+  const foodSurplusStrength = Math.min(1, Math.max(0, (foodSurplusRatio - 1) / 0.25));
+  const foodBirthBonus = 1 + foodSurplusStrength * 0.05;
+  const foodDeathReduction = 1 - foodSurplusStrength * 0.05;
   const housingFulfillment = hitungKeterpenuhanHunian(detail, metadata);
   const overpopulation = getOverpopMultiplier(populasi);
   const food = getPanganMultiplier(foodRatio);
@@ -483,16 +531,27 @@ export const calculateDailyPopulationChange = (
     overpopulation.tier >= 3,
     health.tier >= 4,
   ].filter(Boolean).length;
-  const isPopulationCrisis = severeFactorCount >= 2 || food.tier >= 6;
+  const isPopulationCrisis = severeFactorCount >= 2 || food.tier >= 6 || foodDeficitDeclineRate > 0;
   const growthMultiplier = getPopulationGrowthMultiplier(food.tier, housing.tier, overpopulation.tier, health.tier);
   const baselineDeaths = Math.min(rawDailyDeaths, Math.floor(dailyBirths * 0.7));
-  const adjustedBirths = Math.max(0, Math.floor(dailyBirths * growthMultiplier - outbreakEffects.kelahiranBerkurang));
+  const adjustedBirths = Math.max(0, Math.floor(
+    dailyBirths * growthMultiplier * foodBirthBonus - outbreakEffects.kelahiranBerkurang
+  ));
   const famineDeaths = isPopulationCrisis ? hitungKematianKelaparan(populasi, foodRatio) : 0;
   const calculatedDeaths = Math.max(0, Math.floor(
-    baselineDeaths * growthMultiplier + famineDeaths + outbreakEffects.kematianTambahan
+    baselineDeaths * growthMultiplier * foodDeathReduction +
+    famineDeaths +
+    foodDeficitDeaths +
+    outbreakEffects.kematianTambahan
   ));
-  const unboundedNetChange = adjustedBirths - calculatedDeaths;
-  const maxDailyGrowth = Math.floor(populasi * 0.03 / 365);
+  let unboundedNetChange = adjustedBirths - calculatedDeaths;
+  if (foodDeficitDeclineRate > 0) {
+    unboundedNetChange = Math.min(unboundedNetChange, -foodDeficitDeaths);
+  }
+  const hasFoodOrHousingDeficit = foodRatio < 1 || housingFulfillment < 1;
+  const growthCoverage = Math.min(1, Math.max(0, Math.min(foodRatio, housingFulfillment)));
+  const maxAnnualGrowthRate = hasFoodOrHousingDeficit ? 0.005 : 0.03;
+  const maxDailyGrowth = Math.floor(populasi * maxAnnualGrowthRate * growthCoverage / 365);
   const maxDailyDecline = isPopulationCrisis ? Math.ceil(populasi * 0.05 / 365) : 0;
   const netDailyChange = Math.max(-maxDailyDecline, Math.min(maxDailyGrowth, unboundedNetChange));
   const adjustedDeaths = Math.max(0, adjustedBirths - netDailyChange);
@@ -516,6 +575,7 @@ export const calculateDailyPopulationChange = (
     healthIndex,
     healthTier: health.tier,
     famineDeaths,
+    foodDeficitDeaths,
     outbreakDeaths: outbreakEffects.kematianTambahan,
     outbreakBirthLoss: outbreakEffects.kelahiranBerkurang,
     populationStatus,
