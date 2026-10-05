@@ -29,7 +29,6 @@ export default function ModalVeto({
   onClose,
   resolutionTitle,
   countries,
-  userVote,
   renderFlag,
   onBribeCountry
 }: Props) {
@@ -45,7 +44,7 @@ export default function ModalVeto({
     c.continent.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const targetBribeVote = userVote || 'yes';
+  const targetBribeVote = 'yes';
 
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">

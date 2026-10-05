@@ -11,7 +11,7 @@ import ModalSetuju from "./4_modal_setuju";
 import ModalMenolak from "./5_modal_menolak";
 import ModalAbstain from "./6_modal_abstain";
 import ModalVeto from "./7_modal_veto";
-import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_KEAMANAN, getSecurityCouncilCountryBreakdown, tickPBBSecurityCouncil } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
+import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_KEAMANAN, getSecurityCouncilCountryBreakdown, isPermanentSecurityCouncilMember, tickPBBSecurityCouncil } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
 import { tickPBBResolutions } from "../../1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { PBB_RESOLUTION_DURATION_OPTIONS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { clearAnnexedCountryVotes, isCountryAnnexed } from "../../pbbVotingEligibility";
@@ -263,15 +263,36 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
 
   const handleBribeCountry = (countryIso: string, targetVote: 'yes' | 'no' | 'abstain' | 'veto') => {
     if (!activeModalItem) return;
-    const updated = activeSecurityCouncilItems.map(item => {
-      if (item.id === activeModalItem.id) {
-        const bribed = { ...(item.bribedCountries || {}), [countryIso.toLowerCase()]: targetVote };
-        return { ...item, bribedCountries: bribed };
-      }
-      return item;
+    if (targetVote === 'veto' && !isPermanentSecurityCouncilMember(countryIso)) {
+      console.warn(`Country ${countryIso} is not a permanent Security Council member and cannot veto.`);
+      return;
+    }
+    const countryKey = countryIso.toLowerCase();
+    const currentItems = loadActiveSecurityCouncilItems();
+    let updatedModalItem: ActiveSecurityCouncilItem | null = null;
+    const updated = currentItems.map(item => {
+      if (item.id !== activeModalItem.id) return item;
+      const bribed = { ...(item.bribedCountries || {}), [countryKey]: targetVote };
+      const currentVetoedBy = Array.isArray(item.vetoedBy)
+        ? item.vetoedBy
+        : activeBreakdown.veto.map(country => country.iso.toLowerCase());
+      const vetoedBy = targetVote === 'veto'
+        ? [...new Set([...currentVetoedBy, countryKey])]
+        : currentVetoedBy.filter(iso => iso.toLowerCase() !== countryKey);
+      updatedModalItem = {
+        ...item,
+        bribedCountries: bribed,
+        vetoedBy,
+        voteStats: {
+          ...item.voteStats,
+          vetoCount: vetoedBy.length
+        }
+      };
+      return updatedModalItem;
     });
     setActiveSecurityCouncilItems(updated);
     saveActiveSecurityCouncilItems(updated);
+    if (updatedModalItem) setActiveModalItem(updatedModalItem);
   };
 
   const activeBreakdown = useMemo(() => {
@@ -337,7 +358,14 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
     }
     const activeAction = RESOLUTION_ACTIONS.find(a => a.id === selectedType);
     const votes = typeof calculate15SecurityCouncilVotes === 'function'
-      ? calculate15SecurityCouncilVotes(30, isSelectedCountryAnnexed ? null : 'yes')
+      ? calculate15SecurityCouncilVotes(
+          30,
+          isSelectedCountryAnnexed ? null : 'yes',
+          selectedCountry?.country || 'Indonesia',
+          selectedTarget.name,
+          selectedType,
+          selectedCountry?.country || 'Indonesia'
+        )
       : { supportersCount: 1, opponentsCount: 0, abstainCount: 0, vetoCount: 0 };
 
     const newItem: ActiveSecurityCouncilItem = {
