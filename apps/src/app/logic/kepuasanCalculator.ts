@@ -8,10 +8,9 @@
  */
 
 import {
-  FOOD_CONSUMPTION_PER_CAPITA,
-  calculateProduction,
-  calculateConsumption,
+  calculateWeightedFoodCoverage,
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
+import { getCountryConsumptionBreakdown } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
 
 
 // ─── Helper ─────────────────────────────────────────────────────────────────
@@ -41,33 +40,6 @@ function findMeta(key: string, metadata: any): any {
     if (k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
   }
   return undefined;
-}
-
-function calculateBuildingElectricityConsumption(country: any, metadata: any): number {
-  if (!metadata || !country) return 0;
-  let totalBuildingConsumption = 0;
-  Object.keys(metadata).forEach((key) => {
-    const bMeta = metadata[key];
-    const konsumsi = Number(bMeta?.konsumsi_listrik) || 0;
-    if (konsumsi <= 0) return;
-    const possibleKeys = [
-      key,
-      bMeta?.dataKey,
-      key.replace(/^\d+_/, ""),
-      bMeta?.dataKey ? bMeta.dataKey.replace(/^\d+_/, "") : undefined,
-    ].filter(Boolean) as string[];
-    let count = 0;
-    for (const pKey of possibleKeys) {
-      if (country[pKey] !== undefined && country[pKey] !== null) {
-        count = Number(country[pKey]) || 0;
-        break;
-      }
-    }
-    if (count > 0) {
-      totalBuildingConsumption += count * konsumsi;
-    }
-  });
-  return totalBuildingConsumption;
 }
 
 // ─── Scorer Functions ────────────────────────────────────────────────────────
@@ -111,64 +83,16 @@ export function calculateHargaScore(countryDetail: any): number {
 }
 
 export function calculatePanganScore(countryDetail: any, metadata: any): number {
-  const population =
-    countryDetail?.jumlah_penduduk ??
-    countryDetail?.population ??
-    countryDetail?.pop ??
-    countryDetail?.penduduk ??
-    countryDetail?.total_population ??
-    0;
-
-  if (population <= 0 || !metadata) return 50;
-
-  const allKeys = Object.keys(FOOD_CONSUMPTION_PER_CAPITA);
-  let totalRatio = 0;
-  let count = 0;
-  for (const key of allKeys) {
-    const prod = calculateProduction(key, countryDetail, metadata);
-    const cons = calculateConsumption(population, FOOD_CONSUMPTION_PER_CAPITA[key]);
-    if (cons > 0) {
-      const ratio = prod / cons;
-      totalRatio += Math.min(ratio, 2);
-      count++;
-    }
-  }
-  if (count === 0) return 50;
-  const avgRatio = totalRatio / count;
-  return Math.min(100, Math.max(1, Math.round((avgRatio / 2) * 100)));
+  if (!countryDetail || !metadata || Object.keys(metadata).length === 0) return 50;
+  return Math.round(Math.min(1, Math.max(0, calculateWeightedFoodCoverage(countryDetail, metadata))) * 100);
 }
 
 export function calculateListrikScore(countryDetail: any, metadata: any): number {
-  const population = countryDetail?.jumlah_penduduk ?? countryDetail?.population ?? 0;
-
-  const SOURCE_ORDER = [
-    "pembangkit_listrik_tenaga_nuklir",
-    "pembangkit_listrik_tenaga_air",
-    "pembangkit_listrik_tenaga_surya",
-    "pembangkit_listrik_tenaga_uap",
-    "pembangkit_listrik_tenaga_gas",
-    "pembangkit_listrik_tenaga_angin",
-  ];
-
-  const powerSources = SOURCE_ORDER.map((key) => {
-    const bMeta = findMeta(key, metadata);
-    const count = Number(countryDetail?.[key]) || 0;
-    const unitProduction = Number(bMeta?.produksi) || 0;
-    return { value: count, unitProduction };
-  });
-
-  const totalCapacityMW = powerSources.reduce(
-    (sum, source) => sum + source.value * source.unitProduction,
-    0
-  );
-
-  const userBuildingConsumption = calculateBuildingElectricityConsumption(countryDetail, metadata);
-  const populationDemand = 0;
-  const estimatedConsumptionMW = Math.max(0, Math.round(userBuildingConsumption + populationDemand));
-
-  if (estimatedConsumptionMW <= 0) return 50;
-  const ratio = Math.min(totalCapacityMW / estimatedConsumptionMW, 2);
-  return Math.min(100, Math.max(1, Math.round((ratio / 2) * 100)));
+  if (!countryDetail || !metadata || Object.keys(metadata).length === 0) return 50;
+  const { totalProductionMW, totalAllBreakdownConsumption } = getCountryConsumptionBreakdown(countryDetail, metadata);
+  if (totalAllBreakdownConsumption <= 0) return 100;
+  const coverage = Math.min(1, Math.max(0, totalProductionMW / totalAllBreakdownConsumption));
+  return Math.round(coverage * 100);
 }
 
 export function calculateHunianScore(countryDetail: any, metadata?: any): number {
@@ -190,10 +114,38 @@ export function calculateHunianScore(countryDetail: any, metadata?: any): number
   });
 
   if (population <= 0) return 50;
-  if (totalHousingCapacity <= 0) return 1;
-  const ratio = Math.min(totalHousingCapacity / population, 1);
-  const score = Math.min(100, Math.max(1, Math.round(ratio * 100)));
-  return score;
+  const coverage = Math.min(1, Math.max(0, totalHousingCapacity / population));
+  return Math.round(coverage * 100);
+}
+
+export interface ServiceDeficitMetrics {
+  electricityCoverage: number;
+  foodCoverage: number;
+  housingCoverage: number;
+  pressure: number;
+}
+
+export function calculateServiceDeficitMetrics(countryDetail: any, metadata: any): ServiceDeficitMetrics {
+  if (!countryDetail || !metadata || Object.keys(metadata).length === 0) {
+    return { electricityCoverage: 1, foodCoverage: 1, housingCoverage: 1, pressure: 0 };
+  }
+
+  const electricity = getCountryConsumptionBreakdown(countryDetail, metadata);
+  const electricityCoverage = electricity.totalAllBreakdownConsumption > 0
+    ? Math.min(1, Math.max(0, electricity.totalProductionMW / electricity.totalAllBreakdownConsumption))
+    : 1;
+  const foodCoverage = Math.min(1, Math.max(0, calculateWeightedFoodCoverage(countryDetail, metadata)));
+  const housingCoverage = Number(countryDetail?.jumlah_penduduk ?? countryDetail?.population ?? 0) > 0
+    ? Math.min(1, Math.max(0, calculateHunianScore(countryDetail, metadata) / 100))
+    : 1;
+  const combinedCoverage = Math.cbrt(electricityCoverage * foodCoverage * housingCoverage);
+
+  return {
+    electricityCoverage,
+    foodCoverage,
+    housingCoverage,
+    pressure: Math.min(1, Math.max(0, 1 - combinedCoverage)),
+  };
 }
 
 export function calculateLayananPublikScore(countryDetail: any): number {

@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import {
   X, Info, TrendingUp, TrendingDown, BookOpen, Heart, MapPin,
-  Wheat, Home, Library, Hospital, Landmark, CheckCircle, Sprout, Globe
+  Wheat, Home, Library, Hospital, Landmark, CheckCircle, Sprout, Globe, Zap
 } from "lucide-react";
 import {
   calculateKesejahteraan,
@@ -11,8 +11,7 @@ import {
   getKesejahteraanBreakdown,
   type KesejahteraanIndex,
 } from "@/app/logic/kesejahteraanCalculator";
-import { calculateKeterbukaanScore } from "@/app/logic/kepuasanCalculator";
-import { FOOD_CONSUMPTION_PER_CAPITA, calculateProduction } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
+import { calculateKeterbukaanScore, calculateListrikScore, calculatePanganScore, calculateHunianScore } from "@/app/logic/kepuasanCalculator";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import NaikkanKesejahteraanTab from "./NaikkanKesejahteraanTab";
 
@@ -65,12 +64,7 @@ export default function IndeksKesejahteraanModal({
   // 🔥 Hitung kesejahteraan dari countryDetail (untuk detail & trend)
   const kesejahteraan = useMemo(() => {
     if (!countryDetail) return null;
-    return calculateKesejahteraan(
-      countryDetail,
-      metadata,
-      FOOD_CONSUMPTION_PER_CAPITA,
-      calculateProduction
-    );
+    return calculateKesejahteraan(countryDetail, metadata);
   }, [countryDetail, metadata]);
 
   // ─── Skor aktual dari setiap menu (formula identik dengan modal asal) ────────
@@ -115,31 +109,15 @@ export default function IndeksKesejahteraanModal({
   }, [countryDetail]);
 
   /**
-   * Skor PANGAN — identik 100% dengan IndustriPanganModal
-   * Menggunakan calculateProduction (butuh metadata) + FOOD_CONSUMPTION_PER_CAPITA
+   * Skor pangan menggunakan perhitungan cakupan kelompok yang sama dengan kepuasan
    * Prioritaskan satisfaction.food jika metadata belum tersedia
    */
   const panganActualScore = useMemo(() => {
     if (!countryDetail) return 1;
     const stored = countryDetail?.satisfaction?.food;
     // Jika metadata belum siap, pakai nilai tersimpan atau 0
-    if (!metadata) return stored !== undefined && stored !== null ? Math.round(Number(stored)) : 0;
-    const pop = Number(countryDetail.jumlah_penduduk) || 0;
-    if (pop <= 0) return 1;
-    const allKeys = Object.keys(FOOD_CONSUMPTION_PER_CAPITA);
-    let totalRatio = 0;
-    let count = 0;
-    for (const key of allKeys) {
-      const prod = calculateProduction(key, countryDetail, metadata);
-      const cons = (pop / 1000) * FOOD_CONSUMPTION_PER_CAPITA[key];
-      if (cons > 0) {
-        totalRatio += Math.min(prod / cons, 2);
-        count++;
-      }
-    }
-    if (count === 0) return Math.round(Number(countryDetail.indeks_ketahanan_pangan) || 1);
-    const avgRatio = totalRatio / count;
-    return Math.min(100, Math.max(1, Math.round((avgRatio / 2) * 100)));
+    if (!metadata || Object.keys(metadata).length === 0) return stored !== undefined && stored !== null ? Math.round(Number(stored)) : 0;
+    return calculatePanganScore(countryDetail, metadata);
   }, [countryDetail, metadata]);
 
   /**
@@ -151,33 +129,15 @@ export default function IndeksKesejahteraanModal({
     if (!countryDetail) return 1;
     const stored = countryDetail?.satisfaction?.housing;
     // Jika metadata belum siap, pakai nilai tersimpan or 0
-    if (!metadata) return stored !== undefined && stored !== null ? Math.round(Number(stored)) : 0;
-    const pop = Number(countryDetail.jumlah_penduduk) || 0;
-    if (pop <= 0) return 1;
-    const HUNIAN_KEYS = ["rumah_subsidi", "apartemen", "mansion"];
-    // Helper findMeta identik dengan HunianPermukimanModal
-    const findMeta = (key: string) => {
-      if (!metadata) return undefined;
-      if (metadata[key]) return metadata[key];
-      for (const k of Object.keys(metadata)) {
-        const entry = metadata[k];
-        if (!entry) continue;
-        if (entry.dataKey === key) return entry;
-        if (k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
-      }
-      return undefined;
-    };
-    const DEFAULT_CAPS: Record<string, number> = { rumah_subsidi: 5, apartemen: 6000, mansion: 10 };
-    let totalCapacity = 0;
-    for (const key of HUNIAN_KEYS) {
-      const count = Number(countryDetail[key]) || 0;
-      const meta = findMeta(key);
-      const kapasitas = Number(meta?.kapasitas) || DEFAULT_CAPS[key] || 0;
-      totalCapacity += count * kapasitas;
-    }
-    if (totalCapacity <= 0) return 1;
-    const ratio = Math.min(totalCapacity / pop, 2);
-    return Math.min(100, Math.max(1, Math.round((ratio / 2) * 100)));
+    if (!metadata || Object.keys(metadata).length === 0) return stored !== undefined && stored !== null ? Math.round(Number(stored)) : 0;
+    return calculateHunianScore(countryDetail, metadata);
+  }, [countryDetail, metadata]);
+
+  const listrikActualScore = useMemo(() => {
+    if (!countryDetail) return 0;
+    const stored = countryDetail?.satisfaction?.electricity;
+    if (!metadata || Object.keys(metadata).length === 0) return stored !== undefined && stored !== null ? Math.round(Number(stored)) : 50;
+    return calculateListrikScore(countryDetail, metadata);
   }, [countryDetail, metadata]);
 
   /**
@@ -209,6 +169,7 @@ export default function IndeksKesejahteraanModal({
   const tempatUmumColor = getScoreColor(infrastrukturActualScore);
   const panganColor = getScoreColor(panganActualScore);
   const hunianColor = getScoreColor(hunianActualScore);
+  const listrikColor = getScoreColor(listrikActualScore);
   const keterbukaanColor = getScoreColor(keterbukaanActualScore);
 
   const getTrendIcon = (trend: 'naik' | 'turun' | 'stabil') => {
@@ -284,7 +245,7 @@ export default function IndeksKesejahteraanModal({
                         <span className="text-lg font-bold text-[#6B8A8A]">/100</span>
                       </div>
                       <p className="text-sm font-black mt-2 text-[#00FFAA]">{status}</p>
-                      <p className="text-[10px] text-[#6B8A8A] font-medium mt-1">Rata‑rata dari 5 sektor utama</p>
+                      <p className="text-[10px] text-[#6B8A8A] font-medium mt-1">Rata-rata 7 komponen layanan dan keterbukaan</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {getTrendIcon(kesejahteraan.trend)}
@@ -320,15 +281,38 @@ export default function IndeksKesejahteraanModal({
 
                 <div className="border-l-2 border-[#00FFAA]/40 pl-4 py-1">
                   <p className="text-xs text-[#9BB2B2] leading-relaxed">
-                    Indeks ini merangkum pendidikan, kesehatan, fasilitas umum, pangan, hunian, dan keterbukaan, lalu menambahkan bonus serta mengurangi decay. Indeks kesejahteraan bukan pengali langsung populasi; beberapa sektor yang sama dapat memengaruhi kepuasan, coverage, atau faktor kesehatan secara tidak langsung.
+                    Indeks ini merangkum pendidikan, kesehatan, fasilitas umum, pangan, listrik, hunian, dan keterbukaan, lalu menambahkan bonus serta mengurangi decay. Indeks kesejahteraan bukan pengali langsung populasi; beberapa sektor yang sama dapat memengaruhi kepuasan, coverage, atau faktor kesehatan secara tidak langsung.
                   </p>
                 </div>
 
-                {/* Breakdown 5 Sektor */}
+                {/* Breakdown Komponen */}
                 <div className="space-y-4">
-                  <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider">Breakdown Sektor (Bobot & Target Kebutuhan)</h3>
+                  <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider">Breakdown Sektor & Layanan Dasar</h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div
+                      onClick={() => {
+                        setActiveMenu?.("Menu:Kelistrikan");
+                        onClose();
+                      }}
+                      className={`rounded-xl p-5 border-2 ${listrikColor.border} ${listrikColor.bg} space-y-3 cursor-pointer transition-all duration-200 hover:shadow-lg`}
+                      title="Klik untuk membuka menu Kelistrikan"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Zap className={`h-5 w-5 ${listrikColor.icon}`} />
+                          <div>
+                            <p className="text-xs font-black text-[#6B8A8A] uppercase">Kelistrikan</p>
+                            <p className="text-sm font-bold text-[#E0E0E0]">Cakupan pasokan</p>
+                          </div>
+                        </div>
+                        <span className={`text-3xl font-black ${listrikColor.text}`}>{listrikActualScore}</span>
+                      </div>
+                      <p className="text-xs text-[#E0E0E0] font-semibold">
+                        Indeks kecukupan listrik: <span className="font-black text-[#00FFAA]">{listrikActualScore}/100</span>
+                      </p>
+                    </div>
+
                     {/* Pendidikan - 35% */}
                     {(() => {
                       const pop = Number(countryDetail?.jumlah_penduduk) || 1;

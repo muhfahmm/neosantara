@@ -29,7 +29,11 @@ export function getMonthsDifference(d1Str: string, d2Str: string): number {
  * Menentukan threshold bulan sebelum rating berkurang 1 poin
  * Semakin buruk kepuasan, semakin cepat rating turun
  */
-export function getThresholdFromSatisfaction(kepuasan: number, keterbukaanScore?: number): number {
+export function getThresholdFromSatisfaction(
+  kepuasan: number,
+  keterbukaanScore?: number,
+  serviceDeficitPressure = 0
+): number {
   let baseThreshold = 12;
   if (kepuasan <= 25) {
     baseThreshold = 1;  // KRITIS: rating turun 1 poin setiap 1 bulan
@@ -50,6 +54,8 @@ export function getThresholdFromSatisfaction(kepuasan: number, keterbukaanScore?
     baseThreshold = Math.max(1, Math.floor(baseThreshold * factor));
   }
 
+  const serviceFactor = 1 - Math.min(1, Math.max(0, serviceDeficitPressure)) * 0.5;
+  baseThreshold = Math.max(1, Math.floor(baseThreshold * serviceFactor));
   return baseThreshold;
 }
 
@@ -121,6 +127,7 @@ export interface PresidentRatingInput {
   monthsPassed: number;
   currentKepuasan: number;
   keterbukaanScore?: number;
+  serviceDeficitPressure?: number;
   currentCompletedBoost?: number; // Bonus dari event yang selesai
   lastDate?: string;
   currentDate: string;
@@ -151,6 +158,7 @@ export function calculatePresidentRating(input: PresidentRatingInput): President
     monthsPassed,
     currentKepuasan,
     keterbukaanScore,
+    serviceDeficitPressure = 0,
     currentCompletedBoost = 0,
     lastDate,
     currentDate,
@@ -163,7 +171,7 @@ export function calculatePresidentRating(input: PresidentRatingInput): President
   }
 
   // Step 2: Tentukan threshold berdasarkan kepuasan & keterbukaan saat ini
-  const newThreshold = getThresholdFromSatisfaction(currentKepuasan, keterbukaanScore);
+  const newThreshold = getThresholdFromSatisfaction(currentKepuasan, keterbukaanScore, serviceDeficitPressure);
 
   // Step 3: Scale counter jika tier kepuasan berubah
   const prevThreshold = lastRatingThreshold || newThreshold;

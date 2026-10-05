@@ -13,25 +13,9 @@
  * - Kecukupan layanan publik
  */
 
-import { calculateKeterbukaanScore } from "@/app/logic/kepuasanCalculator";
+import { calculateKeterbukaanScore, calculateServiceDeficitMetrics } from "@/app/logic/kepuasanCalculator";
 
 // ─── Helper Functions ─────────────────────────────────────────────────────
-
-/**
- * Mencari metadata bangunan berdasarkan key
- * Digunakan untuk mendapatkan informasi kapasitas, produksi, dll
- */
-function findMeta(key: string, metadata: any): any {
-  if (!metadata) return undefined;
-  if (metadata[key]) return metadata[key];
-  for (const k of Object.keys(metadata)) {
-    const entry = metadata[k];
-    if (!entry) continue;
-    if (entry.dataKey === key) return entry;
-    if (k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
-  }
-  return undefined;
-}
 
 /**
  * Hitung persentase pemenuhan target untuk kategori fasilitas
@@ -353,6 +337,7 @@ export interface KesejahteraanIndex {
   tempatUmumScore: number;
   panganScore: number;  // ← NEW
   hunianScore: number;  // ← NEW
+  listrikScore: number;
   keterbukaanScore?: number; // ← NEW
   trend: 'naik' | 'turun' | 'stabil';
   detail: {
@@ -386,8 +371,6 @@ export interface KesejahteraanIndex {
 export function calculateKesejahteraan(
   countryDetail: any,
   metadata: any,
-  FOOD_CONSUMPTION_PER_CAPITA: any,
-  calculateProduction: any,
   previousScore?: number
 ): KesejahteraanIndex {
   // Sektor 1: Pendidikan
@@ -409,69 +392,38 @@ export function calculateKesejahteraan(
   const infraIndex = infraTotal / pop;
   const tempatUmumScore = Math.min(100, Math.round((infraIndex / 0.00005) * 100));
 
+  const serviceMetrics = metadata && Object.keys(metadata).length > 0
+    ? calculateServiceDeficitMetrics(countryDetail, metadata)
+    : undefined;
+
   // Sektor 4: Pangan
   let panganScore = 1;
   const storedFood = countryDetail?.satisfaction?.food;
-  if (!metadata) {
+  if (!serviceMetrics) {
     panganScore = storedFood !== undefined && storedFood !== null ? Math.round(Number(storedFood)) : 0;
   } else {
-    const allKeys = Object.keys(FOOD_CONSUMPTION_PER_CAPITA || {});
-    let totalRatio = 0;
-    let count = 0;
-    for (const key of allKeys) {
-      const prod = calculateProduction ? calculateProduction(key, countryDetail, metadata) : 0;
-      const cons = (pop / 1000) * FOOD_CONSUMPTION_PER_CAPITA[key];
-      if (cons > 0) {
-        totalRatio += Math.min(prod / cons, 2);
-        count++;
-      }
-    }
-    if (count === 0) {
-      panganScore = Math.round(Number(countryDetail?.indeks_ketahanan_pangan) || 1);
-    } else {
-      const avgRatio = totalRatio / count;
-      panganScore = Math.min(100, Math.max(1, Math.round((avgRatio / 2) * 100)));
-    }
+    panganScore = Math.round(serviceMetrics.foodCoverage * 100);
   }
 
   // Sektor 5: Hunian
   let hunianScore = 1;
   const storedHousing = countryDetail?.satisfaction?.housing;
-  if (!metadata) {
+  if (!serviceMetrics) {
     hunianScore = storedHousing !== undefined && storedHousing !== null ? Math.round(Number(storedHousing)) : 0;
   } else {
-    const HUNIAN_KEYS = ["rumah_subsidi", "apartemen", "mansion"];
-    const findMeta = (key: string) => {
-      if (!metadata) return undefined;
-      if (metadata[key]) return metadata[key];
-      for (const k of Object.keys(metadata)) {
-        const entry = metadata[k];
-        if (!entry) continue;
-        if (entry.dataKey === key) return entry;
-        if (k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
-      }
-      return undefined;
-    };
-    const DEFAULT_CAPS: Record<string, number> = { rumah_subsidi: 5, apartemen: 6000, mansion: 10 };
-    let totalCapacity = 0;
-    for (const key of HUNIAN_KEYS) {
-      const count = Number(countryDetail?.[key]) || 0;
-      const meta = findMeta(key);
-      const kapasitas = Number(meta?.kapasitas) || DEFAULT_CAPS[key] || 0;
-      totalCapacity += count * kapasitas;
-    }
-    if (totalCapacity <= 0) {
-      hunianScore = 1;
-    } else {
-      const ratio = Math.min(totalCapacity / pop, 2);
-      hunianScore = Math.min(100, Math.max(1, Math.round((ratio / 2) * 100)));
-    }
+    hunianScore = Math.round(serviceMetrics.housingCoverage * 100);
   }
+  const storedElectricity = countryDetail?.satisfaction?.electricity;
+  const listrikScore = serviceMetrics
+    ? Math.round(serviceMetrics.electricityCoverage * 100)
+    : storedElectricity !== undefined && storedElectricity !== null
+      ? Math.round(Number(storedElectricity))
+      : 50;
 
-  // Indeks Kesejahteraan Keseluruhan (rata-rata 6 sektor + bonus dari program bantuan sosial - akumulasi decay penurunan)
+  // Indeks kesejahteraan mencakup listrik bersama pangan dan hunian.
   const keterbukaanScore = calculateKeterbukaanScore(countryDetail);
   const baseScore = Math.round(
-    (pendidikanScore + kesehatanScore + tempatUmumScore + panganScore + hunianScore + keterbukaanScore) / 6
+    (pendidikanScore + kesehatanScore + tempatUmumScore + panganScore + hunianScore + listrikScore + keterbukaanScore) / 7
   );
   const bonus = Number(countryDetail?.kesejahteraan_bonus) || 0;
   const decayAccumulated = Number(countryDetail?.kesejahteraan_decay) || 0;
@@ -483,6 +435,7 @@ export function calculateKesejahteraan(
     tempatUmumScore,
     panganScore,
     hunianScore,
+    listrikScore,
     keterbukaanScore,
     baseScore,
     kesejahteraan_bonus: countryDetail?.kesejahteraan_bonus,
@@ -527,6 +480,7 @@ export function calculateKesejahteraan(
     tempatUmumScore,
     panganScore,
     hunianScore,
+    listrikScore,
     keterbukaanScore,
     trend,
     detail: {
@@ -618,7 +572,11 @@ Breakdown:
  * Kepuasan 66–79  → turun 1 poin setiap 9 bulan
  * Kepuasan 80–100 → turun 1 poin setiap 12 bulan (1 tahun)
  */
-export function getKesejahteraanDecayThreshold(kepuasan: number, keterbukaanScore?: number): number {
+export function getKesejahteraanDecayThreshold(
+  kepuasan: number,
+  keterbukaanScore?: number,
+  serviceDeficitPressure = 0
+): number {
   let baseThreshold = 12;
   if (kepuasan <= 25) baseThreshold = 1;
   else if (kepuasan <= 45) baseThreshold = 3;
@@ -632,6 +590,8 @@ export function getKesejahteraanDecayThreshold(kepuasan: number, keterbukaanScor
     baseThreshold = Math.max(1, Math.floor(baseThreshold * factor));
   }
 
+  const serviceFactor = 1 - Math.min(1, Math.max(0, serviceDeficitPressure)) * 0.5;
+  baseThreshold = Math.max(1, Math.floor(baseThreshold * serviceFactor));
   return baseThreshold;
 }
 
@@ -642,6 +602,7 @@ export interface KesejahteraanDecayInput {
   monthsPassed: number;
   currentKepuasan: number;
   keterbukaanScore?: number;
+  serviceDeficitPressure?: number;
 }
 
 export interface KesejahteraanDecayOutput {
@@ -671,13 +632,18 @@ export function calculateKesejahteraanDecay(input: KesejahteraanDecayInput): Kes
     monthsPassed,
     currentKepuasan,
     keterbukaanScore,
+    serviceDeficitPressure = 0,
   } = input;
 
   // Step 1: Tambahkan bulan yang berlalu ke counter
   let counter = kesejahteraanMonthCounter + (monthsPassed > 0 ? monthsPassed : 0);
 
   // Step 2: Tentukan threshold baru berdasarkan kepuasan & keterbukaan
-  const newThreshold = getKesejahteraanDecayThreshold(currentKepuasan, keterbukaanScore);
+  const newThreshold = getKesejahteraanDecayThreshold(
+    currentKepuasan,
+    keterbukaanScore,
+    serviceDeficitPressure
+  );
 
   // Step 3: Scale counter jika threshold berubah (smooth transition)
   const prevThreshold = lastKesejahteraanThreshold || newThreshold;
@@ -702,4 +668,3 @@ export function calculateKesejahteraanDecay(input: KesejahteraanDecayInput): Kes
     decayThisTick: decay,
   };
 }
-
