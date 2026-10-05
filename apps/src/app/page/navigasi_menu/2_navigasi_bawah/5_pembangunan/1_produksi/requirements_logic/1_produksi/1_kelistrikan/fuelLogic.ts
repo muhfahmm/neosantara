@@ -20,3 +20,32 @@ const KELISTRIKAN_FUEL_REQUIREMENTS: Record<string, FuelRule[]> = {
 export function getKelistrikanFuelRequirements(buildingKey: string): FuelRule[] {
   return KELISTRIKAN_FUEL_REQUIREMENTS[buildingKey] || [];
 }
+
+export interface ElectricityFuelBalance {
+  production: number;
+  consumption: number;
+  balance: number;
+}
+
+export function getElectricityFuelBalance(
+  countryDetail: Record<string, any> | null | undefined,
+  resourceKey: string,
+  metadata: Record<string, any> = {}
+): ElectricityFuelBalance {
+  if (!countryDetail) return { production: 0, consumption: 0, balance: 0 };
+
+  const resourceMetadata = metadata[resourceKey] || Object.values(metadata).find(
+    (entry: any) => entry?.dataKey === resourceKey
+  );
+  const miningCount = Math.max(0, Number(countryDetail[resourceKey]) || 0);
+  const production = miningCount * (Number(resourceMetadata?.produksi) || 0);
+  const consumption = Object.entries(KELISTRIKAN_FUEL_REQUIREMENTS).reduce((total, [buildingKey, requirements]) => {
+    const buildingCount = Math.max(0, Number(countryDetail[buildingKey]) || 0);
+    const resourceUse = requirements
+      .filter((requirement) => requirement.resourceKey === resourceKey)
+      .reduce((sum, requirement) => sum + requirement.amount, 0);
+    return total + buildingCount * resourceUse;
+  }, 0);
+
+  return { production, consumption, balance: production - consumption };
+}

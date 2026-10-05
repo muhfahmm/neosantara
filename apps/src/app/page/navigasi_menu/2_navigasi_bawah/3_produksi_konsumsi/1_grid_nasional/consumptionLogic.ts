@@ -1,5 +1,4 @@
-import { getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
-import { getMaterialStock } from "../../5_pembangunan/build_logic/build_logic";
+import { getElectricityFuelBalance, getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 
 export function findMeta(metadata: Record<string, any> | undefined, key: string) {
   if (!metadata) return undefined;
@@ -49,9 +48,8 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
       const fuelReqs = getKelistrikanFuelRequirements(key);
       if (fuelReqs.length > 0) {
         for (const req of fuelReqs) {
-          const stock = getMaterialStock(countryData, req.resourceKey);
-          const totalNeeded = req.amount * count;
-          if (stock < totalNeeded) {
+          const fuelBalance = getElectricityFuelBalance(countryData, req.resourceKey, metadata);
+          if (fuelBalance.balance < 0) {
             isFuelDeficit = true;
             break;
           }

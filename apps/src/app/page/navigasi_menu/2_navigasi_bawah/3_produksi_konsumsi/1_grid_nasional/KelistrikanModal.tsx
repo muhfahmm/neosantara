@@ -16,8 +16,7 @@ import {
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
 import CountryKelistrikanModal from "./CountryKelistrikanModal";
-import { getMaterialStock } from "../../5_pembangunan/build_logic/build_logic";
-import { getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
+import { getElectricityFuelBalance, getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 import { getCountryConsumptionBreakdown } from "./consumptionLogic";
 
 interface ModalProps {
@@ -119,9 +118,8 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       let isFuelDeficit = false;
       if (count > 0 && fuelReqs.length > 0) {
         for (const req of fuelReqs) {
-          const stock = getMaterialStock(countryDetail, req.resourceKey);
-          const totalNeeded = req.amount * count;
-          if (stock < totalNeeded) {
+          const fuelBalance = getElectricityFuelBalance(countryDetail, req.resourceKey, metadata);
+          if (fuelBalance.balance < 0) {
             isFuelDeficit = true;
             break;
           }
@@ -218,16 +216,15 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
           }> = [];
 
           for (const req of fuelReqs) {
-            const stock = getMaterialStock(country, req.resourceKey);
-            const totalNeeded = req.amount * count;
-            if (stock < totalNeeded) {
+            const fuelBalance = getElectricityFuelBalance(country, req.resourceKey, metadata);
+            if (fuelBalance.balance < 0) {
               isFuelDeficit = true;
               brokenFuels.push({
                 resourceKey: req.resourceKey,
                 label: req.label || req.resourceKey.replace(/_/g, " "),
-                needed: totalNeeded,
-                stock: Math.max(0, stock),
-                deficit: totalNeeded - Math.max(0, stock),
+                needed: fuelBalance.consumption,
+                stock: fuelBalance.production,
+                deficit: Math.abs(fuelBalance.balance),
               });
             }
           }
@@ -311,8 +308,8 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         bVal = (b.fuelDeficitDetails?.length || 0) > 0 ? 1 : 0;
         break;
       case 'fuelResources':
-        aVal = ELECTRICITY_FUEL_RESOURCES.filter((resource) => Number(a.rawData?.[resource.key]) > 0).length;
-        bVal = ELECTRICITY_FUEL_RESOURCES.filter((resource) => Number(b.rawData?.[resource.key]) > 0).length;
+        aVal = ELECTRICITY_FUEL_RESOURCES.filter((resource) => a.rawData?.sda?.[resource.key] === true).length;
+        bVal = ELECTRICITY_FUEL_RESOURCES.filter((resource) => b.rawData?.sda?.[resource.key] === true).length;
         break;
       case 'production': aVal = a.production; bVal = b.production; break;
       case 'consumption': aVal = a.consumption; bVal = b.consumption; break;
@@ -321,12 +318,12 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     }
     if (aVal === bVal && sortConfig.key === 'fuelResources') {
       const aLabels = ELECTRICITY_FUEL_RESOURCES
-        .filter((resource) => Number(a.rawData?.[resource.key]) > 0)
+        .filter((resource) => a.rawData?.sda?.[resource.key] === true)
         .map((resource) => resource.label)
         .sort()
         .join(', ');
       const bLabels = ELECTRICITY_FUEL_RESOURCES
-        .filter((resource) => Number(b.rawData?.[resource.key]) > 0)
+        .filter((resource) => b.rawData?.sda?.[resource.key] === true)
         .map((resource) => resource.label)
         .sort()
         .join(', ');
@@ -657,16 +654,26 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                     ) : filteredData.length > 0 ? (
                       filteredData.map((country, rowIndex) => {
                         const isUserCountry = country.isUser;
-                        const deficientFuelLabels = Array.from(new Set(
-                          (country.fuelDeficitDetails || []).flatMap((building) => building.fuels.map((fuel) => fuel.label))
-                        )).join(', ');
+                        const fuelDeficitTotals = new Map<string, { label: string; deficit: number }>();
+                        (country.fuelDeficitDetails || []).forEach((building) => {
+                          building.fuels.forEach((fuel) => {
+                            const current = fuelDeficitTotals.get(fuel.resourceKey);
+                            fuelDeficitTotals.set(fuel.resourceKey, {
+                              label: fuel.label,
+                              deficit: (current?.deficit || 0) + Math.max(0, Number(fuel.deficit) || 0),
+                            });
+                          });
+                        });
+                        const fuelDeficitSummary = Array.from(fuelDeficitTotals.values())
+                          .map((fuel) => `${fuel.label}: ${fuel.deficit.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`)
+                          .join(', ');
                         const fuelResourceRows = ELECTRICITY_FUEL_RESOURCES
                           .map((resource) => ({
                             ...resource,
-                            isRecorded: Number(country.rawData?.[resource.key]) > 0,
+                            isRecorded: country.rawData?.sda?.[resource.key] === true,
                             generatorCount: Number(country.rawData?.[resource.generatorKey]) || 0,
                           }))
-                          .filter((resource) => resource.isRecorded || resource.generatorCount > 0);
+                          .filter((resource) => resource.isRecorded);
                         return (
                           <tr
                             key={`country-${country.name}-${rowIndex}`}
@@ -709,7 +716,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                                     <span className="text-[9px] font-black uppercase">Defisit</span>
                                   </button>
                                   <span className="max-w-[180px] whitespace-normal break-words text-[9px] leading-tight text-rose-300">
-                                    {deficientFuelLabels}
+                                    {fuelDeficitSummary}
                                   </span>
                                 </div>
                               ) : (
@@ -866,8 +873,8 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                           <span className="text-rose-400 text-[11px]">Kurang {f.deficit.toLocaleString('id-ID')}</span>
                         </div>
                         <div className="flex justify-between text-[10px] text-[#6B8A8A]">
-                          <span>Stok Saat Ini: <strong className="text-white">{f.stock.toLocaleString('id-ID')}</strong></span>
-                          <span>Dibutuhkan: <strong className="text-white">{f.needed.toLocaleString('id-ID')}</strong></span>
+                          <span>Produksi tambang: <strong className="text-white">{f.stock.toLocaleString('id-ID')}</strong></span>
+                          <span>Konsumsi pembangkit: <strong className="text-white">{f.needed.toLocaleString('id-ID')}</strong></span>
                         </div>
                       </div>
                     ))}

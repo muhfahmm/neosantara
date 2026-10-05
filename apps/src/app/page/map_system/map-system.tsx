@@ -1687,7 +1687,8 @@ export default function MapPage() {
                 overpopulasi: 'Overpopulasi / Overpopulation',
                 kesehatan: 'Krisis kesehatan / Health crisis',
             };
-            const newCrisisNotifications = previousCrisisTiers && Object.entries(currentCrisisTiers)
+            const newCrisisNotifications = previousCrisisTiers
+                ? Object.entries(currentCrisisTiers)
                 .filter(([key, tier]) => tier >= 2 && tier > Number(previousCrisisTiers[key] ?? tier))
                 .map(([key, tier]) => ({
                     id: `population-crisis-${key}-${currentDateStr}-${tier}`,
@@ -1700,7 +1701,8 @@ export default function MapPage() {
                     isRead: false,
                     tradeType: 'population_crisis',
                     factor: key,
-                }));
+                }))
+                : [];
             let currentCompletedBoost = 0;
             let currentCompletedKesejahteraanBoost = 0;
             let currentOngoing = prev.ongoingConstructions || [];
