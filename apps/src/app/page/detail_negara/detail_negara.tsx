@@ -25,6 +25,32 @@ interface CountryDetailModalProps {
   autoBuildEmbassy?: boolean;
 }
 
+const normalizeCountryKey = (value: unknown) => String(value || '').toLowerCase().trim();
+
+interface AnnexationInfo {
+  attackerCountry?: string;
+  attackerIso?: string;
+}
+
+type AnnexedCountryStore = Record<string, AnnexationInfo>;
+
+function getAnnexedCountryStore(): AnnexedCountryStore {
+  if (typeof window === 'undefined') return {};
+  return (window as Window & { neosantara_annexed_countries?: AnnexedCountryStore })
+    .neosantara_annexed_countries || {};
+}
+
+function getAnnexedInfo(countryNames: unknown[], countryIso?: unknown) {
+  const annexedStore = getAnnexedCountryStore();
+  const lookupKeys = new Set(
+    [...countryNames, countryIso]
+      .map(normalizeCountryKey)
+      .filter(Boolean)
+  );
+
+  return Object.entries(annexedStore).find(([key]) => lookupKeys.has(normalizeCountryKey(key)))?.[1];
+}
+
 export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail, setCountryDetail, currentDate, playerNetBalanceAdjustment = 0, adjustPlayerNetBalance, autoBuildEmbassy }: CountryDetailModalProps) {
   // State untuk menu tab
   const [activeTab, setActiveTab] = useState<"informasi" | "geopolitik" | "militer">("informasi");
@@ -59,17 +85,19 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
     const loadDetail = async () => {
       // 1. Tentukan Pemimpin Kekaisaran (Leader) & Seluruh Anggota Kekaisaran (Empire Members)
-      const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
-      
-      const targetAnnexed = annexedStore[countryName] || annexedStore[countryName.toLowerCase()];
+      const annexedStore = getAnnexedCountryStore();
+      const targetAnnexed = getAnnexedInfo([countryName]);
       const leaderCountry = targetAnnexed?.attackerCountry || countryName;
 
       const empireMembersSet = new Set<string>();
-      empireMembersSet.add(leaderCountry.toLowerCase().trim());
+      empireMembersSet.add(normalizeCountryKey(leaderCountry));
 
-      Object.entries(annexedStore).forEach(([key, val]: [string, any]) => {
-        if (val?.attackerCountry && val.attackerCountry.toLowerCase().trim() === leaderCountry.toLowerCase().trim()) {
-          empireMembersSet.add(key.toLowerCase().trim());
+      Object.entries(annexedStore).forEach(([key, val]) => {
+        if (val?.attackerCountry && normalizeCountryKey(val.attackerCountry) === normalizeCountryKey(leaderCountry)) {
+          const canonicalCountry = Object.keys(countryPaths as Record<string, string>).find(
+            name => normalizeCountryKey(name) === normalizeCountryKey(key)
+          );
+          if (canonicalCountry) empireMembersSet.add(normalizeCountryKey(canonicalCountry));
         }
       });
 
@@ -102,10 +130,16 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
       // Ambil data utama dari negara yang sedang dibuka (misal: Pakistan)
       const primaryData = validMembers.find(m => 
-        (m.country || m.nama_negara || m.name)?.toLowerCase().trim() === countryName.toLowerCase().trim()
-      ) || validMembers[0];
+        normalizeCountryKey(m.country || m.nama_negara || m.name_id || m.name || m.country_slug) ===
+          normalizeCountryKey(
+            Object.keys(countryPaths as Record<string, string>).find(
+              name => normalizeCountryKey(name) === normalizeCountryKey(countryName)
+            ) || countryName
+          )
+      );
 
       if (!primaryData) {
+        // Some map territories share another country's data file and have no standalone detail record.
         setIsLoadingDetail(false);
         return;
       }
@@ -234,15 +268,17 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     (c) => c.country?.toLowerCase().trim() === countryName.toLowerCase().trim()
   );
 
-  // Gunakan fetchedDetail sebagai sumber utama, countryDetail sebagai fallback
-  const detailData = fetchedDetail || countryDetail;
+  // Jangan tampilkan identitas negara pemain saat data negara yang dipilih masih dimuat.
+  const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name;
+  const detailData = fetchedDetail || (
+    normalizeCountryKey(playerCountryName) === normalizeCountryKey(countryName) ? countryDetail : null
+  );
 
   // Cek apakah negara ini telah dianeksasi oleh negara lain
-  const annexedInfo = typeof window !== 'undefined'
-    ? ((window as any).neosantara_annexed_countries?.[countryName] ||
-       (window as any).neosantara_annexed_countries?.[countryName.toLowerCase()] ||
-       (mapData?.iso ? (window as any).neosantara_annexed_countries?.[mapData.iso.toLowerCase()] : null))
-    : null;
+  const annexedInfo = getAnnexedInfo(
+    [countryName, mapData?.country, detailData?.name_id, detailData?.country, detailData?.country_slug],
+    mapData?.iso || detailData?.iso
+  );
 
   const displayCountryName = annexedInfo?.attackerCountry || countryName;
 
@@ -250,9 +286,10 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   let displayIso = mapData?.iso || detailData?.iso || "";
   let displayCapital = mapData?.capital || detailData?.capital || "Data tidak tersedia";
 
-  if (annexedInfo?.attackerCountry) {
+  const attackerCountryName = annexedInfo?.attackerCountry;
+  if (attackerCountryName) {
     const attackerData = COUNTRIES_DATA?.find(
-      (c) => c.country?.toLowerCase().trim() === annexedInfo.attackerCountry.toLowerCase().trim()
+      (c) => c.country?.toLowerCase().trim() === attackerCountryName.toLowerCase().trim()
     );
     if (attackerData?.iso) {
       displayIso = attackerData.iso;
@@ -265,9 +302,9 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   }
 
   // Hitung Hubungan berdasarkan penyerang jika dianeksasi
-  const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name || "Indonesia";
+  const relationPlayerCountryName = playerCountryName || "Indonesia";
   const relationCountryName = annexedInfo?.attackerCountry || countryName;
-  const relationValue = getRelationValue(playerCountryName, relationCountryName);
+  const relationValue = getRelationValue(relationPlayerCountryName, relationCountryName);
 
   // Fungsi Helper untuk bendera di Header
   const renderFlagHeader = (iso: string | undefined, altName: string) => {
