@@ -1,18 +1,102 @@
-import { loadActiveSecurityCouncilItems } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
-import { isPassedResolutionActive, normalizePbbCountryName } from './resolusiPBBUILogic';
+import {
+  loadActiveSecurityCouncilItems,
+  saveActiveSecurityCouncilItems
+} from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
+import {
+  loadActiveResolutions,
+  saveActiveResolutions,
+  isPassedResolutionActive,
+  normalizePbbCountryName
+} from './resolusiPBBUILogic';
+
+function normalizeInvasionCountryName(countryName: string): string {
+  const normalized = normalizePbbCountryName(countryName);
+  return normalized === 'afghanistan' ? 'afganistan' : normalized;
+}
+
+function getApprovedInvasionMandates() {
+  const assemblyMandates = loadActiveResolutions()
+    .filter(item => item.type === 'military_invasion')
+    .map(item => ({
+      proposerName: item.proposer.name,
+      targetName: item.target.name,
+      status: item.status,
+      daysRemaining: item.daysRemaining,
+      violationId: undefined
+    }));
+  const securityCouncilMandates = loadActiveSecurityCouncilItems()
+    .filter(item => item.type === 'military')
+    .map(item => ({
+      proposerName: item.proposer.name,
+      targetName: item.target.name,
+      status: item.status,
+      daysRemaining: item.daysRemaining,
+      violationId: item.violationId
+    }));
+
+  return [...assemblyMandates, ...securityCouncilMandates];
+}
+
+function clearUnwarrantedSanctions(attacker: string, target: string): void {
+  const isMatchingViolation = (violationId?: string): boolean => {
+    if (!violationId) return false;
+    const [ , recordedAttacker, recordedTarget, reason ] = violationId.split('|');
+    return Boolean(recordedAttacker && recordedTarget) &&
+      reason === 'missing_military_resolution' &&
+      normalizeInvasionCountryName(recordedAttacker) === attacker &&
+      normalizeInvasionCountryName(recordedTarget) === target;
+  };
+
+  const resolutions = loadActiveResolutions();
+  const filteredResolutions = resolutions.filter(item => !isMatchingViolation(item.violationId));
+  if (filteredResolutions.length !== resolutions.length) {
+    saveActiveResolutions(filteredResolutions);
+  }
+
+  const securityItems = loadActiveSecurityCouncilItems();
+  const filteredSecurityItems = securityItems.filter(item => !isMatchingViolation(item.violationId));
+  if (filteredSecurityItems.length !== securityItems.length) {
+    saveActiveSecurityCouncilItems(filteredSecurityItems);
+  }
+
+  try {
+    const storageKey = 'pbb_reported_war_ban_violations_v1';
+    const serialized = localStorage.getItem(storageKey);
+    if (serialized) {
+      const reportedIds: unknown = JSON.parse(serialized);
+      if (Array.isArray(reportedIds)) {
+        const filteredIds = reportedIds.filter((id): boolean => {
+          if (typeof id !== 'string') return true;
+          const [, recordedAttacker, recordedTarget, reason] = id.split('|');
+          return reason !== 'missing_military_resolution' ||
+            normalizeInvasionCountryName(recordedAttacker || '') !== attacker ||
+            normalizeInvasionCountryName(recordedTarget || '') !== target;
+        });
+        if (filteredIds.length !== reportedIds.length) {
+          localStorage.setItem(storageKey, JSON.stringify(filteredIds));
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to clear invalid invasion-sanction report records:', error);
+  }
+
+  if (filteredResolutions.length !== resolutions.length || filteredSecurityItems.length !== securityItems.length) {
+    window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
+  }
+}
 
 export function hasActiveApprovedInvasionResolutionForDifferentTarget(
   attackerCountry: string,
   targetCountry: string
 ): boolean {
-  const attacker = normalizePbbCountryName(attackerCountry);
-  const target = normalizePbbCountryName(targetCountry);
+  const attacker = normalizeInvasionCountryName(attackerCountry);
+  const target = normalizeInvasionCountryName(targetCountry);
   if (!attacker || !target) return false;
 
-  return loadActiveSecurityCouncilItems().some(item =>
-    item.type === 'military' &&
-    normalizePbbCountryName(item.proposer.name) === attacker &&
-    normalizePbbCountryName(item.target.name) !== target &&
+  return getApprovedInvasionMandates().some(item =>
+    normalizeInvasionCountryName(item.proposerName) === attacker &&
+    normalizeInvasionCountryName(item.targetName) !== target &&
     isPassedResolutionActive(item)
   );
 }
@@ -21,14 +105,19 @@ export function hasActiveApprovedInvasionResolution(
   attackerCountry: string,
   targetCountry: string
 ): boolean {
-  const attacker = normalizePbbCountryName(attackerCountry);
-  const target = normalizePbbCountryName(targetCountry);
+  const attacker = normalizeInvasionCountryName(attackerCountry);
+  const target = normalizeInvasionCountryName(targetCountry);
   if (!attacker || !target) return false;
 
-  return loadActiveSecurityCouncilItems().some(item =>
-    item.type === 'military' &&
-    normalizePbbCountryName(item.proposer.name) === attacker &&
-    normalizePbbCountryName(item.target.name) === target &&
+  const hasMandate = getApprovedInvasionMandates().some(item =>
+    normalizeInvasionCountryName(item.proposerName) === attacker &&
+    normalizeInvasionCountryName(item.targetName) === target &&
     isPassedResolutionActive(item)
   );
+
+  if (hasMandate) {
+    clearUnwarrantedSanctions(attacker, target);
+  }
+
+  return hasMandate;
 }

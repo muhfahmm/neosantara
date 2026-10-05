@@ -3,6 +3,7 @@
 import { useEffect, useMemo } from "react";
 import { formatDate, getDaysElapsed } from "@/app/logic/production_logic";
 import { getEconomicEmbargoProductionMultiplier } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
+import { getActiveProductionBanForResource } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/5_laranganProduksiLogic";
 import {
   FOOD_CONSUMPTION_PER_CAPITA,
   calculateConsumption,
@@ -55,9 +56,11 @@ export function calculateDailyMaterialProduction(
 
   for (const resourceKey of allKeys) {
     const buildingCount = Number(countryDetail?.[resourceKey]) || 0;
-    if (buildingCount === 0) continue;
+    const productionBan = getActiveProductionBanForResource(resourceKey);
+    const isFoodCommodity = FOOD_CONSUMPTION_PER_CAPITA[resourceKey] !== undefined;
+    if (buildingCount === 0 && !(productionBan && isFoodCommodity)) continue;
     const bMeta = findBuildingMetadata(metadata, resourceKey);
-    if (!bMeta || !bMeta.produksi) continue;
+    if (!productionBan && (!bMeta || !bMeta.produksi)) continue;
 
     const buildDateKey = `build_date_${resourceKey}`;
     const buildDate = countryDetail?.[buildDateKey] || currentDateStr;
@@ -65,27 +68,35 @@ export function calculateDailyMaterialProduction(
     const lastUpdateDate = countryDetail?.[lastUpdateKey] || buildDate;
     const inventoryKey = `inventory_${resourceKey}`;
 
-    if (lastUpdateDate === currentDateStr) continue;
-
-    const daysPassed = getDaysElapsed(lastUpdateDate, currentDateStr);
+    const productionBanStart = productionBan?.finishedAt || lastUpdateDate;
+    const effectiveLastUpdate = productionBan && productionBanStart > lastUpdateDate
+      ? productionBanStart
+      : lastUpdateDate;
+    const daysPassed = getDaysElapsed(effectiveLastUpdate, currentDateStr);
     if (daysPassed <= 0) continue;
 
-    const isFoodCommodity = FOOD_CONSUMPTION_PER_CAPITA[resourceKey] !== undefined;
+    if (productionBan) {
+      const currentStock = Number(countryDetail?.[inventoryKey]) || 0;
+      const dailyConsumption = isFoodCommodity
+        ? calculateConsumption(pop, FOOD_CONSUMPTION_PER_CAPITA[resourceKey])
+        : 0;
+      updates[inventoryKey] = Math.max(0, currentStock - dailyConsumption * daysPassed);
+      updates[lastUpdateKey] = currentDateStr;
+      hasUpdates = true;
+      continue;
+    }
 
     let dailyAmount: number;
     if (isFoodCommodity) {
-      // Untuk komoditas pangan: tambahkan Netto (Produksi - Konsumsi) per hari
-      const dailyProd = Number(bMeta.produksi) * buildingCount;
+      // Apply sanctions to gross production before subtracting population consumption.
+      const dailyProd = Number(bMeta.produksi) * buildingCount * getProductionMultiplier(resourceKey);
       const dailyCons = calculateConsumption(pop, FOOD_CONSUMPTION_PER_CAPITA[resourceKey]);
-      const dailyNetto = dailyProd - dailyCons;
-      // Jika netto negatif (defisit), tidak tambahkan apa-apa (min 0)
-      dailyAmount = Math.max(0, dailyNetto);
+      dailyAmount = Math.max(0, dailyProd - dailyCons);
     } else {
-      // Untuk non-pangan: tambahkan produksi penuh
-      dailyAmount = Number(bMeta.produksi) * buildingCount;
+      dailyAmount = Number(bMeta.produksi) * buildingCount * getProductionMultiplier(resourceKey);
     }
 
-    const productionAdded = dailyAmount * getProductionMultiplier(resourceKey) * daysPassed;
+    const productionAdded = dailyAmount * daysPassed;
     const currentStock = Number(countryDetail?.[inventoryKey]) || 0;
     updates[inventoryKey] = currentStock + productionAdded;
     updates[lastUpdateKey] = currentDateStr;

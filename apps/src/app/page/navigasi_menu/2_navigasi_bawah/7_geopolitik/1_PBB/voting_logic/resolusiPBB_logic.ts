@@ -1,4 +1,5 @@
 import countryPathMap from "../../../../../map_system/country-paths.json";
+import { isCountryAnnexed } from "../pbbVotingEligibility";
 
 export type ResolusiVotingStats = {
   supporters: number;
@@ -80,21 +81,21 @@ export const calculateResolusiVoting = async (
 
   const supporters = countries.reduce((count, country: { id: number; name: string; iso: string; continent: string }) => {
     const name = normalizeName(country.name);
-    if (excludedNames.has(name) || isAnnexed(country.name, country.iso)) return count;
+    if (excludedNames.has(name) || isAnnexed(country.name, country.iso) || isCountryAnnexed(country.name, country.iso)) return count;
     if (embassySet.has(name)) return count + 1;
     return count;
   }, 0);
 
   const nonDiplomaticCount = countries.reduce((count, country: { id: number; name: string; iso: string; continent: string }) => {
     const name = normalizeName(country.name);
-    if (excludedNames.has(name) || isAnnexed(country.name, country.iso)) return count;
+    if (excludedNames.has(name) || isAnnexed(country.name, country.iso) || isCountryAnnexed(country.name, country.iso)) return count;
     if (!embassySet.has(name)) return count + 1;
     return count;
   }, 0);
 
   return {
     supporters,
-    opponents: nonDiplomaticCount + 1,
+    opponents: nonDiplomaticCount + (isCountryAnnexed(targetCountryName) ? 0 : 1),
     hasDiplomaticRelation,
   };
 };

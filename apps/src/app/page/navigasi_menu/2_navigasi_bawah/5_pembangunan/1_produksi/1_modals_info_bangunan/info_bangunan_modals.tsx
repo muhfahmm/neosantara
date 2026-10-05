@@ -90,6 +90,7 @@ interface InfoBangunanProps {
   isElectricityTab: boolean;
   isProductionZero: boolean;
   rawProduction: number;
+  productionMultiplier: number;
   onClose: () => void;
   onNavigateToTab?: (tabId: string, itemKey?: string) => void;
 }
@@ -105,6 +106,7 @@ export default function InfoBangunan({
   isElectricityTab,
   isProductionZero,
   rawProduction,
+  productionMultiplier,
   onClose,
   onNavigateToTab,
 }: InfoBangunanProps) {
@@ -154,8 +156,8 @@ export default function InfoBangunan({
   const rawMaterialCons = getRawMaterialConsumption(activeFoodKey, countryDetail);
 
   const totalFoodProduction = isFoodCommodity && metadata
-    ? calculateProduction(activeFoodKey, countryDetail, metadata)
-    : (bMeta?.produksi || 0) * perCount;
+    ? calculateProduction(activeFoodKey, countryDetail, metadata) * productionMultiplier
+    : (bMeta?.produksi || 0) * perCount * productionMultiplier;
 
   const totalFoodConsumption = isFoodCommodity
     ? calculateConsumption(pop, consumptionPerCapita)
@@ -192,6 +194,11 @@ export default function InfoBangunan({
 
         <div className="p-6 relative z-10 flex-1 overflow-y-auto space-y-4 text-xs font-semibold text-[#E0E0E0] custom-scrollbar">
           <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 space-y-2">
+            {productionMultiplier < 1 && (
+              <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[10px] font-bold text-amber-300">
+                Produksi dikurangi {Math.round((1 - productionMultiplier) * 100)}% oleh resolusi PBB yang aktif.
+              </div>
+            )}
             {isElectricityTab ? (
               <>
                 <div className="flex justify-between items-center">

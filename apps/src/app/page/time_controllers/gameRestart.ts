@@ -1,4 +1,6 @@
 import { SimulationTimeManager } from './timeManager';
+import { clearActiveResolutionsForSession } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
+import { clearSessionOnlySecurityItems } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 
 export interface RestartOptions {
     timeManager: SimulationTimeManager | null;
@@ -31,6 +33,8 @@ export function handleGameRestart(options: RestartOptions): void {
 
     // Clear active PBB resolutions & annexed countries state on restart
     if (typeof window !== 'undefined') {
+        clearActiveResolutionsForSession();
+        clearSessionOnlySecurityItems();
         try {
             localStorage.removeItem('pbb_active_resolutions_v4');
             localStorage.removeItem('pbb_active_keamanan_v4');

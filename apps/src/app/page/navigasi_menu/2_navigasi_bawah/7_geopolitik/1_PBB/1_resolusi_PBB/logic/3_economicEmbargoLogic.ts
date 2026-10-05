@@ -1,6 +1,7 @@
 import {
   calculateCountryGDP,
-  calculateCountryNetBalance
+  calculateCountryNetBalance,
+  calculateGoldIncome
 } from '@/app/logic/economic_logic/treasuryUpdater';
 import {
   loadActiveResolutions
@@ -9,11 +10,17 @@ import {
   loadActiveSecurityCouncilItems
 } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { isPassedResolutionActive, normalizePbbCountryName } from './resolusiPBBUILogic';
+import {
+  getSecurityCouncilEconomicBlockadeMultiplier,
+  isEconomicBlockadeProductionResource,
+  isGoldResource
+} from '../../2_keamanan_PBB/logic/3_blokadeEkonomi';
+import { getSecurityCouncilNavalBlockadeMultiplier } from '../../2_keamanan_PBB/logic/4_blokadeLaut';
+import { isCountryUnderFullBlockade } from '../../2_keamanan_PBB/logic/5_blokadePenuh';
 
 const ECONOMIC_EMBARGO_REDUCTION = 0.6;
 
 const MINING_RESOURCE_KEYS = new Set([
-  'emas',
   'uranium',
   'batu_bara',
   'minyak_bumi',
@@ -53,8 +60,9 @@ export function isCountryUnderEconomicEmbargo(countryName: string): boolean {
   );
   if (assemblyEmbargo) return true;
 
-  return loadActiveSecurityCouncilItems().some(item =>
-    (item.type === 'economic' || item.type === 'full') &&
+  return isCountryUnderFullBlockade(countryName) ||
+    loadActiveSecurityCouncilItems().some(item =>
+    item.type === 'economic' &&
     normalizePbbCountryName(item.target.name) === target &&
     isPassedResolutionActive(item)
   );
@@ -71,30 +79,54 @@ function getCountryName(countryDetail: Record<string, unknown>, providedName?: s
 }
 
 export function isEconomicEmbargoProductionResource(resourceKey: string): boolean {
-  return resourceKey.startsWith('pabrik_') ||
-    resourceKey.startsWith('tambang_') ||
-    MINING_RESOURCE_KEYS.has(resourceKey) ||
-    MANUFACTURING_RESOURCE_KEYS.has(resourceKey);
+  const normalizedKey = resourceKey.trim().toLowerCase();
+  return !isGoldResource(normalizedKey) && (
+    isEconomicBlockadeProductionResource(normalizedKey) ||
+    MINING_RESOURCE_KEYS.has(normalizedKey) ||
+    MANUFACTURING_RESOURCE_KEYS.has(normalizedKey)
+  );
 }
 
 export function getEconomicEmbargoProductionMultiplier(
   countryName: string,
   resourceKey: string
 ): number {
-  return isEconomicEmbargoProductionResource(resourceKey) &&
-    isCountryUnderEconomicEmbargo(countryName)
-    ? 1 - ECONOMIC_EMBARGO_REDUCTION
+  if (isGoldResource(resourceKey)) return 1;
+
+  const target = normalizePbbCountryName(countryName);
+  const activeAssemblyEmbargoCount = target ? loadActiveResolutions().filter(item =>
+    item.type === 'economic_embargo' &&
+    normalizePbbCountryName(item.target.name) === target &&
+    isPassedResolutionActive(item)
+  ).length : 0;
+  const embargoMultiplier = isEconomicEmbargoProductionResource(resourceKey)
+    ? (1 - ECONOMIC_EMBARGO_REDUCTION) ** activeAssemblyEmbargoCount
     : 1;
+
+  const councilMultiplier = Math.min(
+    getSecurityCouncilEconomicBlockadeMultiplier(countryName, resourceKey),
+    getSecurityCouncilNavalBlockadeMultiplier(countryName, resourceKey)
+  );
+  return embargoMultiplier * councilMultiplier;
 }
 
 export function getEconomicEmbargoIncomeMultiplier(countryName: string): number {
-  return isCountryUnderEconomicEmbargo(countryName)
-    ? 1 - ECONOMIC_EMBARGO_REDUCTION
-    : 1;
+  const target = normalizePbbCountryName(countryName);
+  const activeAssemblyEmbargoCount = target ? loadActiveResolutions().filter(item =>
+    item.type === 'economic_embargo' &&
+    normalizePbbCountryName(item.target.name) === target &&
+    isPassedResolutionActive(item)
+  ).length : 0;
+  return (1 - ECONOMIC_EMBARGO_REDUCTION) ** activeAssemblyEmbargoCount;
 }
 
-export function applyEconomicEmbargoToIncome(income: number, countryName: string): number {
-  return income * getEconomicEmbargoIncomeMultiplier(countryName);
+export function applyEconomicEmbargoToIncome(
+  income: number,
+  countryName: string,
+  protectedGoldIncome = 0
+): number {
+  const goldIncome = Math.min(Math.max(0, protectedGoldIncome), Math.max(0, income));
+  return goldIncome + (income - goldIncome) * getEconomicEmbargoIncomeMultiplier(countryName);
 }
 
 export function calculateNetBalanceWithEconomicEmbargo(
@@ -104,7 +136,8 @@ export function calculateNetBalanceWithEconomicEmbargo(
   if (!countryDetail || typeof countryDetail !== 'object') return 0;
   const targetCountry = getCountryName(countryDetail, countryName);
   const income = calculateCountryGDP(countryDetail);
+  const goldIncome = calculateGoldIncome(countryDetail);
   const baseNetBalance = calculateCountryNetBalance(countryDetail);
   const expenses = income - baseNetBalance;
-  return applyEconomicEmbargoToIncome(income, targetCountry) - expenses;
+  return applyEconomicEmbargoToIncome(income, targetCountry, goldIncome) - expenses;
 }

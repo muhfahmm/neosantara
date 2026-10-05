@@ -1,6 +1,11 @@
 import { generateAIResolusiPBBNotification } from '@/app/page/menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBLogic';
 import { STATIC_PBB_VOTES } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/3_suara_negara_PBB/staticVoteData";
 import { getIsoForCountryName } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso";
+import {
+  getAnnexedCountryCount,
+  getEligibleReplacementProposer,
+  isCountryAnnexed,
+} from "../../pbbVotingEligibility";
 
 export const PBB_RESOLUTION_DURATION_OPTIONS = ['1 bulan', '3 bulan', '6 bulan', '9 bulan', '1 tahun'] as const;
 
@@ -50,6 +55,7 @@ export interface ActiveResolutionItem {
   type: string;
   label: string;
   desc: string;
+  productKey?: string;
   duration: string;
   daysRemaining: number;
   voteStats: {
@@ -71,6 +77,20 @@ export interface ActiveResolutionItem {
 
 export const STORAGE_KEY_PBB_RESOLUSI = 'pbb_active_resolutions_v4';
 export const TOTAL_UN_MEMBERS = 206;
+
+let sessionResolutions: ActiveResolutionItem[] = [];
+let initializedSessionResolutions = false;
+
+function initializeSessionResolutions(): void {
+  if (typeof window === 'undefined' || initializedSessionResolutions) return;
+
+  try {
+    localStorage.removeItem(STORAGE_KEY_PBB_RESOLUSI);
+    initializedSessionResolutions = true;
+  } catch (error) {
+    console.error('Failed to clear persisted PBB General Assembly resolutions:', error);
+  }
+}
 
 export function getSimulationDateString(): string {
   if (typeof window !== 'undefined') {
@@ -118,7 +138,7 @@ const DEFAULT_AI_TARGETS = [
 const RESOLUTION_TEMPLATES = [
   { type: 'war_ban', label: 'Larangan Perang & Embargo Militer', desc: 'Penghentian kontak militer dan pelarangan transaksi alutsista.' },
   { type: 'arms_embargo', label: 'Embargo Penjualan Senjata Global', desc: 'Melarang seluruh anggota PBB memasok peralatan tempur ke negara target.' },
-  { type: 'economic_embargo', label: 'Embargo Perdagangan Ekonomi', desc: 'Produksi pabrik dan tambang serta pendapatan negara turun 60% selama periode yang dipilih.' },
+  { type: 'economic_embargo', label: 'Embargo Perdagangan Ekonomi', desc: 'Produksi sektor industri dan tambang selain emas serta pendapatan non-emas turun 60% selama periode yang dipilih.' },
   { type: 'production_ban', label: 'Larangan Produksi & Sektor Strategis', desc: 'Menghentikan eksplorasi dan manufaktur komoditas penting.' }
 ];
 
@@ -154,19 +174,29 @@ export function calculate206AIVotes(
   userVote: 'yes' | 'no' | 'abstain' | null = null,
   proposerName: string = 'Amerika Serikat',
   targetName: string = 'Korea Selatan',
-  resolutionType: string = 'arms_embargo'
+  resolutionType: string = 'arms_embargo',
+  activeUserCountryName: string = getActiveUserCountryName()
 ) {
   const elapsedDays = Math.max(0, Math.min(30, 30 - daysRemaining));
   const progressRatio = elapsedDays / 30;
 
   // Total AI countries = 205 (selain user)
-  const baseAiCount = 205;
+  const baseAiCount = Math.max(
+    0,
+    205 - getAnnexedCountryCount(
+      STATIC_PBB_VOTES.map(country => ({
+        name: country.name_id,
+        iso: getIsoForCountryName(country.name_id),
+      })),
+      activeUserCountryName
+    )
+  );
   const votesCastSoFar = Math.min(baseAiCount, Math.round(baseAiCount * progressRatio));
 
   if (votesCastSoFar === 0) {
     const hasTarget = targetName && !targetName.toLowerCase().includes('global') && !targetName.toLowerCase().includes('dunia');
-    let supportersCount = 1; // Pengusul selalu setuju 1
-    let opponentsCount = hasTarget ? 1 : 0; // Target menolak 1 jika ada
+    let supportersCount = isCountryAnnexed(proposerName, getIsoForCountryName(proposerName)) ? 0 : 1;
+    let opponentsCount = hasTarget && !isCountryAnnexed(targetName, getIsoForCountryName(targetName)) ? 1 : 0;
     let abstainCount = 0;
 
     if (userVote === 'yes') supportersCount += 1;
@@ -226,25 +256,25 @@ export function calculate206AIVotes(
 
 export function loadActiveResolutions(): ActiveResolutionItem[] {
   if (typeof window === 'undefined') return getInitialActiveResolutions();
-
-  try {
-    const data = localStorage.getItem(STORAGE_KEY_PBB_RESOLUSI);
-    if (data) {
-      const parsed = JSON.parse(data);
-      if (Array.isArray(parsed)) return parsed;
-    }
-  } catch (e) {
-    console.error('Failed loading PBB resolutions:', e);
-  }
-  return getInitialActiveResolutions();
+  initializeSessionResolutions();
+  return [...sessionResolutions];
 }
 
 export function saveActiveResolutions(items: ActiveResolutionItem[]) {
   if (typeof window === 'undefined') return;
+  initializeSessionResolutions();
+  sessionResolutions = [...items];
+}
+
+export function clearActiveResolutionsForSession(): void {
+  sessionResolutions = [];
+  initializedSessionResolutions = true;
+  if (typeof window === 'undefined') return;
+
   try {
-    localStorage.setItem(STORAGE_KEY_PBB_RESOLUSI, JSON.stringify(items));
-  } catch (e) {
-    console.error('Failed saving PBB resolutions:', e);
+    localStorage.removeItem(STORAGE_KEY_PBB_RESOLUSI);
+  } catch (error) {
+    console.error('Failed to clear PBB General Assembly resolutions:', error);
   }
 }
 
@@ -275,7 +305,7 @@ export function getInitialActiveResolutions(_userCountryName: string = 'Indonesi
 const RESOLUTION_TYPE_META: Record<string, { label: string; desc: string }> = {
   war_ban: { label: 'Larangan Perang', desc: 'Dilarang melakukan peperangan antar negara di seluruh dunia selama periode yang dipilih.' },
   arms_embargo: { label: 'Embargo Penjualan Senjata', desc: 'Perdagangan senjata dilarang selama periode yang dipilih.' },
-  economic_embargo: { label: 'Embargo Ekonomi', desc: 'Produksi pabrik dan tambang serta pendapatan negara turun 60% selama periode yang dipilih.' },
+  economic_embargo: { label: 'Embargo Ekonomi', desc: 'Produksi sektor industri dan tambang selain emas serta pendapatan non-emas turun 60% selama periode yang dipilih.' },
   military_invasion: { label: 'Resolusi Invasi', desc: 'Resolusi memungkinkan negara diinvasi tanpa kecaman oleh negara lain.' },
   production_ban: { label: 'Larangan Produksi', desc: 'Produksi produk yang dipilih dihentikan selama periode yang dipilih.' }
 };
@@ -285,13 +315,20 @@ const RESOLUTION_TYPE_META: Record<string, { label: string; desc: string }> = {
  * Notifikasi inbox sudah dikirim oleh pemicu bulanan, jadi notifiedDay1 = true agar tidak dobel.
  */
 export function spawnAIResolutionFromTrigger(
-  trigger: { proposerCountry: string; targetCountry: string; resolutionType: string; duration?: string },
+  trigger: { proposerCountry: string; targetCountry: string; resolutionType: string; duration?: string; productKey?: string },
   dateStr: string
 ): void {
   if (typeof window === 'undefined') return;
+  if (isCountryAnnexed(trigger.proposerCountry, getIsoForCountryName(trigger.proposerCountry))) return;
 
   const meta = RESOLUTION_TYPE_META[trigger.resolutionType] || RESOLUTION_TYPE_META.arms_embargo;
   const isNoTarget = trigger.resolutionType === 'war_ban' || trigger.resolutionType === 'production_ban';
+  const resolutionLabel = trigger.resolutionType === 'production_ban' && trigger.productKey
+    ? `${meta.label}: ${trigger.productKey.replace(/_/g, ' ')}`
+    : meta.label;
+  const resolutionDescription = trigger.resolutionType === 'production_ban' && trigger.productKey
+    ? `Produksi ${trigger.productKey.replace(/_/g, ' ')} dihentikan selama periode yang dipilih.`
+    : meta.desc;
 
   const proposer = { name: trigger.proposerCountry, iso: getIsoForCountryName(trigger.proposerCountry) };
   const target = isNoTarget
@@ -299,13 +336,6 @@ export function spawnAIResolutionFromTrigger(
     : { name: trigger.targetCountry, iso: getIsoForCountryName(trigger.targetCountry) };
 
   const items = loadActiveResolutions();
-  const duplicate = items.some(i =>
-    i.status === 'voting' &&
-    i.type === trigger.resolutionType &&
-    i.proposer.name === proposer.name &&
-    i.target.name === target.name
-  );
-  if (duplicate) return;
 
   const votes = calculate206AIVotes(30, null, proposer.name, target.name, trigger.resolutionType);
 
@@ -314,8 +344,9 @@ export function spawnAIResolutionFromTrigger(
     proposer,
     target,
     type: trigger.resolutionType,
-    label: meta.label,
-    desc: meta.desc,
+    label: resolutionLabel,
+    desc: resolutionDescription,
+    productKey: trigger.productKey,
     duration: trigger.duration || chooseAIResolutionDuration(),
     daysRemaining: 30,
     voteStats: {
@@ -341,11 +372,35 @@ export function spawnAIResolutionFromTrigger(
  * - Memperbarui partisipasi 206 negara AI secara progresif dari 0 hingga 206
  * - Memicu notifikasi popup Inbox jika sisa hari <= 10 dan user belum vote.
  */
-export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (notif: any) => void): ActiveResolutionItem[] {
+export function tickPBBResolutions(
+  dateStr: string,
+  onTriggerNotification?: (notif: any) => void,
+  userCountryName?: string
+): ActiveResolutionItem[] {
   const currentItems = loadActiveResolutions();
-  const activeUser = getActiveUserCountryName();
+  const activeUser = getActiveUserCountryName(userCountryName);
+  const activeUserAnnexed = isCountryAnnexed(activeUser, getIsoForCountryName(activeUser));
+  const eligibleItems = currentItems.flatMap(item => {
+    if (item.status !== 'voting' || !isCountryAnnexed(item.proposer.name, item.proposer.iso)) {
+      return [item];
+    }
 
-  let updated: ActiveResolutionItem[] = currentItems
+    if (!item.violationId) return [];
+
+    const replacement = getEligibleReplacementProposer([
+      item.proposer.name,
+      item.target.name,
+      activeUser,
+    ]);
+    if (!replacement) return [];
+
+    return [{
+      ...item,
+      proposer: { name: replacement.name, iso: replacement.iso || getIsoForCountryName(replacement.name) },
+    }];
+  });
+
+  let updated: ActiveResolutionItem[] = eligibleItems
     .map(item => {
       let startDate = item.createdAt || dateStr;
       const lastDate = item.lastProcessedDate || startDate;
@@ -380,7 +435,15 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
       }
 
       const newDaysRemaining = Math.max(0, item.daysRemaining - step);
-      const votes = calculate206AIVotes(newDaysRemaining, item.userVote, proposer?.name, item.target?.name, item.type);
+      const eligibleUserVote = activeUserAnnexed ? null : item.userVote;
+      const votes = calculate206AIVotes(
+        newDaysRemaining,
+        eligibleUserVote,
+        proposer?.name,
+        item.target?.name,
+        item.type,
+        activeUser
+      );
       let notified = item.notified10Days || false;
       let notifiedDay1 = item.notifiedDay1 || false;
 
@@ -419,7 +482,7 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
       }
 
       // Trigger popup inbox jika sisa hari <= 10 dan user belum vote
-      if (newDaysRemaining <= 10 && !item.userVote && !notified) {
+      if (newDaysRemaining <= 10 && !eligibleUserVote && !notified) {
         notified = true;
         if (onTriggerNotification && allowNotification) {
           const notifCard = generateAIResolusiPBBNotification(
@@ -475,6 +538,7 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
         ...item,
         createdAt: startDate,
         finishedAt: finishedAtDate,
+        userVote: eligibleUserVote,
         daysRemaining: finalStatus === 'passed'
           ? getResolutionDurationDays(item.duration)
           : finalStatus === 'rejected'
@@ -520,8 +584,8 @@ export function getResolutionCountryBreakdown(
     ? allCountries
     : [{ id: 1, name: 'Indonesia', iso: 'id', continent: 'Asia' }];
 
-  const targetSupporterCount = Math.max(1, resItem.voteStats.supportersCount);
-  const targetOpponentCount = Math.max(1, resItem.voteStats.opponentsCount);
+  const targetSupporterCount = Math.max(0, resItem.voteStats.supportersCount);
+  const targetOpponentCount = Math.max(0, resItem.voteStats.opponentsCount);
 
   const proposerName = resItem.proposer.name.toLowerCase();
   const targetName = resItem.target.name.toLowerCase();
@@ -564,38 +628,44 @@ export function getResolutionCountryBreakdown(
 
   const isUserProposer = userCountryName === proposerName;
   const isUserTarget = Boolean(targetObj && userCountryName === targetName);
+  const isProposerAnnexed = isCountryAnnexed(resItem.proposer.name, resItem.proposer.iso);
+  const isTargetAnnexed = Boolean(targetObj && isCountryAnnexed(resItem.target.name, resItem.target.iso));
+  const isUserAnnexed = isCountryAnnexed(activeUserCountry, userObj.iso);
 
-  // Proposer is ALWAYS #1 in supporters (Setuju)
-  const supporters: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [
-    { ...proposerObj, isProposer: true, isUser: isUserProposer }
-  ];
+  const supporters: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [];
+  if (!isProposerAnnexed) {
+    supporters.push({ ...proposerObj, isProposer: true, isUser: isUserProposer });
+  }
 
-  // If User voted 'yes' and user is not proposer/target
-  if (!isUserProposer && !isUserTarget && resItem.userVote === 'yes') {
+  if (!isUserProposer && !isUserTarget && !isUserAnnexed && resItem.userVote === 'yes') {
     supporters.push({ ...userObj, isUser: true });
   }
 
   // Target is ALWAYS #1 in opponents (Menolak)
   const opponents: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [];
-  if (targetObj) {
+  if (targetObj && !isTargetAnnexed) {
     opponents.push({ ...targetObj, isTarget: true, isUser: isUserTarget });
   }
 
   // If User voted 'no' and user is not proposer/target
-  if (!isUserProposer && !isUserTarget && resItem.userVote === 'no') {
+  if (!isUserProposer && !isUserTarget && !isUserAnnexed && resItem.userVote === 'no') {
     opponents.push({ ...userObj, isUser: true });
   }
 
   const abstain: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [];
 
   // If User voted 'abstain' and user is not proposer/target
-  if (!isUserProposer && !isUserTarget && resItem.userVote === 'abstain') {
+  if (!isUserProposer && !isUserTarget && !isUserAnnexed && resItem.userVote === 'abstain') {
     abstain.push({ ...userObj, isUser: true });
   }
 
   const bribedMap = resItem.bribedCountries || {};
-  const unbribedPool = seededPool.filter(item => !bribedMap[item.country.iso.toLowerCase()]);
-  const bribedList = seededPool.filter(item => Boolean(bribedMap[item.country.iso.toLowerCase()]));
+  const unbribedPool = seededPool.filter(item =>
+    !bribedMap[item.country.iso.toLowerCase()] && !isCountryAnnexed(item.country.name, item.country.iso)
+  );
+  const bribedList = seededPool.filter(item =>
+    Boolean(bribedMap[item.country.iso.toLowerCase()]) && !isCountryAnnexed(item.country.name, item.country.iso)
+  );
 
   bribedList.forEach(item => {
     const forcedVote = bribedMap[item.country.iso.toLowerCase()];

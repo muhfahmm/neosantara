@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchBuildingMetadata } from '../../../../lib/buildingMetadata';
 import { processDueLoans } from './4_ekonomi/3_peminjaman_hutang/tab_menu/logic/loanRepaymentLogic';
+import { isCountryUnderEconomicEmbargo } from './7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 
 import dynamic from 'next/dynamic';
 
@@ -172,6 +173,46 @@ function ModalsManager({
 
   // Fungsi penutup modal yang seragam
   const onClose = () => setActiveMenu("Peta Taktis");
+
+  const restrictedEconomicMenus = ["Menu:Perdagangan", "Menu:Hutang"];
+  if (
+    restrictedEconomicMenus.includes(activeMenu) &&
+    isCountryUnderEconomicEmbargo(selectedCountry.country || "")
+  ) {
+    return (
+      <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 px-4 py-8">
+        <div
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="economic-embargo-access-title"
+          className="w-full max-w-lg overflow-hidden rounded-2xl border border-rose-500/40 bg-[#0F2424] font-sans shadow-2xl"
+        >
+          <div className="border-b border-rose-500/20 bg-[#0A1A1A] px-6 py-4">
+            <h2 id="economic-embargo-access-title" className="text-base font-black uppercase tracking-wide text-rose-400">
+              Akses dibatasi oleh embargo ekonomi
+            </h2>
+          </div>
+          <div className="space-y-4 px-6 py-5 text-sm leading-relaxed text-slate-300">
+            <p>
+              Negara {selectedCountry.country} tidak dapat mengakses Pasar Perdagangan Global atau Pinjaman & Hutang selama embargo ekonomi aktif.
+            </p>
+            <p className="text-xs text-[#6B8A8A]">
+              Pembatasan berakhir ketika resolusi embargo tidak lagi aktif. Embargo dan sanksi yang berlaku saat ini akan hilang setelah halaman dimuat ulang.
+            </p>
+          </div>
+          <div className="flex justify-end border-t border-[#00FFAA]/15 bg-[#0A1A1A] px-6 py-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-xl bg-[#00FFAA] px-5 py-2.5 text-xs font-black uppercase tracking-wider text-[#0A1A1A] transition-colors hover:bg-[#00FFAA]/80 cursor-pointer"
+            >
+              Mengerti
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Render modal yang sesuai berdasarkan activeMenu
   switch (activeMenu) {

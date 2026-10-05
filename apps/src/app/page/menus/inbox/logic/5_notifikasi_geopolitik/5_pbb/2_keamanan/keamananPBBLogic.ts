@@ -1,5 +1,7 @@
 import { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { chooseAIResolutionDuration } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
+import { isCountryAnnexed } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbVotingEligibility';
+import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 
 export interface AIKeamananPBBNotification extends NotificationMessage {
   tradeType: 'usulan_keamanan_pbb';
@@ -97,6 +99,7 @@ export function evaluateAIKeamananPBBTrigger(
   // Cari pasangan negara (AI vs User atau AI vs AI) yang skor hubungannya antara 1 s/d 20
   for (const proposer of allCountries) {
     if (!proposer || proposer === userCountryName) continue;
+    if (isCountryAnnexed(proposer, getIsoForCountryName(proposer))) continue;
 
     const potentialTargets = [...allCountries, userCountryName].filter(c => c && c !== proposer);
     for (const target of potentialTargets) {

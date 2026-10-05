@@ -1,7 +1,7 @@
 // ProduksiModal.tsx
 "use client";
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { X, Hammer, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
+import { X, Hammer, TrendingUp, TrendingDown, AlertCircle, Info } from "lucide-react";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
 import { isBuildingAvailable } from '../../../../../logic';
 import { calculateProductionIncrement, formatDate, getDaysElapsed } from '../../../../../logic/production_logic';
@@ -27,7 +27,9 @@ import { getKelistrikanFuelRequirements } from "./requirements_logic/1_produksi/
 import KonfirmasiPembangunanModal from "./2_modals_konfirmasi_pembangunan/modalsKonfirmasiPembangunan";
 import { useMaterialProduction, getMaterialStock as getMaterialStockFromBuildLogic, deductBuildingMaterials } from "../build_logic/build_logic";
 import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
-import { getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
+import { getEconomicEmbargoIncomeMultiplier, getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
+import { loadActiveResolutions, isPassedResolutionActive, normalizePbbCountryName } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
+import { loadActiveSecurityCouncilItems } from "../../7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
 
 
 
@@ -81,8 +83,28 @@ export default function ProduksiModal({
   const lastCalculatedDateRef = useRef<string>("");
   const [highlightedCardKey, setHighlightedCardKey] = useState<string | null>(null);
   const [showMaterialWarningModal, setShowMaterialWarningModal] = useState(false);
+  const [showSanctionInfo, setShowSanctionInfo] = useState(false);
   const [insufficientMaterials, setInsufficientMaterials] = useState<MaterialRequirement[]>([]);
   const [sdaStatus, setSdaStatus] = useState<Record<string, boolean> | null>(null);
+  const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.country_name || "";
+  const normalizedPlayerCountry = normalizePbbCountryName(playerCountryName);
+  const activeAssemblyEmbargoes = loadActiveResolutions().filter(item =>
+    item.type === "economic_embargo" &&
+    normalizePbbCountryName(item.target.name) === normalizedPlayerCountry &&
+    isPassedResolutionActive(item)
+  );
+  const activeSecurityBlockades = loadActiveSecurityCouncilItems().filter(item =>
+    ["economic", "naval", "full"].includes(item.type) &&
+    normalizePbbCountryName(item.target.name) === normalizedPlayerCountry &&
+    isPassedResolutionActive(item)
+  );
+  const hasActiveSanctions = activeAssemblyEmbargoes.length > 0 || activeSecurityBlockades.length > 0;
+  const effectiveProductionReduction = Math.round(
+    (1 - getEconomicEmbargoProductionMultiplier(playerCountryName, "uranium")) * 100
+  );
+  const effectiveIncomeReduction = Math.round(
+    (1 - getEconomicEmbargoIncomeMultiplier(playerCountryName)) * 100
+  );
 
   const RESOURCE_KEY_ALIASES: Record<string, string> = {};
   const normalizeResourceKey = (key: string) => RESOURCE_KEY_ALIASES[key] || key;
@@ -561,6 +583,93 @@ export default function ProduksiModal({
                   }}
                 />
               </div>
+            </div>
+
+            {hasActiveSanctions && (
+              <div className="flex shrink-0 justify-center border-t border-[#00FFAA]/15 bg-[#0A1A1A] py-2">
+                <button
+                  type="button"
+                  onClick={() => setShowSanctionInfo(true)}
+                  aria-label="Informasi dampak sanksi dan embargo"
+                  title="Lihat dampak sanksi dan embargo aktif"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 hover:shadow-md hover:shadow-[#00FFAA]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FFAA] cursor-pointer"
+                >
+                  <Info className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showSanctionInfo && hasActiveSanctions && (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/60 px-4 py-8">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="production-sanction-info-title"
+            className="w-full max-w-xl overflow-hidden rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] font-sans shadow-2xl"
+          >
+            <div className="flex items-center justify-between border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-5 py-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-2">
+                  <Info className="h-5 w-5 text-[#00FFAA]" />
+                </div>
+                <h3 id="production-sanction-info-title" className="text-sm font-black uppercase tracking-wide text-[#00FFAA]">
+                  Dampak Sanksi & Embargo
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowSanctionInfo(false)}
+                aria-label="Tutup informasi"
+                className="rounded-lg border border-[#00FFAA]/20 p-2 text-[#6B8A8A] transition-colors hover:border-[#00FFAA]/50 hover:text-[#00FFAA] cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="space-y-4 px-5 py-5 text-sm leading-relaxed text-slate-300">
+              <p>
+                Negara <strong className="text-white">{playerCountryName}</strong> sedang terkena resolusi PBB berikut:
+              </p>
+              {(activeAssemblyEmbargoes.length > 0 || activeSecurityBlockades.some(item => item.type === "economic" || item.type === "naval")) && (
+                <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-amber-200">
+                  Dampak setiap resolusi produksi aktif diakumulasikan. Total pengurangan produksi sektor terdampak saat ini:{" "}
+                  <strong>{effectiveProductionReduction}%</strong>
+                  {activeAssemblyEmbargoes.length > 0 && (
+                    <>; pendapatan non-emas berkurang <strong>{effectiveIncomeReduction}%</strong>.</>
+                  )}
+                </p>
+              )}
+              <ul className="list-disc space-y-2 pl-5 marker:text-[#00FFAA]">
+                {activeAssemblyEmbargoes.length > 0 && (
+                  <li>
+                    <strong className="text-white">Embargo ekonomi — Sidang Umum PBB:</strong>{" "}
+                    {activeAssemblyEmbargoes.length} resolusi aktif; masing-masing mengurangi produksi 60% di Mineral & Energi (selain emas), Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan serta pendapatan non-emas. Emas tidak terkena pemotongan.
+                  </li>
+                )}
+                {activeSecurityBlockades.some(item => item.type === "economic") && (
+                  <li>
+                    <strong className="text-white">Blokade ekonomi — Dewan Keamanan PBB:</strong>{" "}
+                    {activeSecurityBlockades.filter(item => item.type === "economic").length} resolusi aktif; masing-masing mengurangi produksi 50% di Mineral & Energi (selain emas), Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan. Emas tidak terkena pemotongan.
+                  </li>
+                )}
+                {activeSecurityBlockades.some(item => item.type === "naval") && (
+                  <li>
+                    <strong className="text-white">Blokade laut — Dewan Keamanan PBB:</strong>{" "}
+                    {activeSecurityBlockades.filter(item => item.type === "naval").length} resolusi aktif; masing-masing mengurangi produksi 25% di Mineral & Energi (selain emas), Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan. Emas tidak terkena pemotongan.
+                  </li>
+                )}
+                {activeSecurityBlockades.some(item => item.type === "full") && (
+                  <li>
+                    <strong className="text-white">Blokade penuh — Dewan Keamanan PBB:</strong>{" "}
+                    akses Pasar Perdagangan Global, Pinjaman & Hutang, perdagangan, dan penandatanganan kontrak dibatasi selama resolusi aktif.
+                  </li>
+                )}
+              </ul>
+              <p className="text-xs text-[#6B8A8A]">
+                Dampak berakhir otomatis saat resolusi berakhir atau masa berlakunya habis.
+              </p>
             </div>
           </div>
         </div>

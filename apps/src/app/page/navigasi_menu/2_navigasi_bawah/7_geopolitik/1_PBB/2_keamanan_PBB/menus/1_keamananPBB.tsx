@@ -5,14 +5,16 @@ import {
   ChevronDown, Clock, FileText, Plus, Users
 } from "lucide-react";
 import { createPortal } from "react-dom";
-import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
-import { calculateKeamananVoting } from "../voting_logic/keamananPBB_logic";
+import { COUNTRIES_DATA } from "../../../../../../map_system/map-data";
+import { calculateKeamananVoting } from "../../voting_logic/keamananPBB_logic";
 import ModalSetuju from "./4_modal_setuju";
 import ModalMenolak from "./5_modal_menolak";
 import ModalAbstain from "./6_modal_abstain";
 import ModalVeto from "./7_modal_veto";
-import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_KEAMANAN, getSecurityCouncilCountryBreakdown } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
+import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_KEAMANAN, getSecurityCouncilCountryBreakdown, tickPBBSecurityCouncil } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
+import { tickPBBResolutions } from "../../1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { PBB_RESOLUTION_DURATION_OPTIONS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
+import { clearAnnexedCountryVotes, isCountryAnnexed } from "../../pbbVotingEligibility";
 
 interface KeamananPBBProps {
   selectedCountry: any;
@@ -28,8 +30,8 @@ interface CountryOption {
 const RESOLUTION_ACTIONS = [
   { id: 'military', icon: Angry, label: 'Invasi Militer', desc: 'Semua tentara bersatu dari semua negara menyerang negara yang dipilih.' },
   { id: 'support', icon: Smile, label: 'Dukung Negara', desc: 'Dukungan kepada negara yang dipilih meningkatkan hubungan diplomatiknya dengan semua negara lain sebesar 10 unit.' },
-  { id: 'economic', icon: Banknote, label: 'Blokade Ekonomi', desc: 'Selama periode yang dipilih, produksi pabrik dan tambang berkurang sebesar 50%.' },
-  { id: 'naval', icon: Anchor, label: 'Blokade Laut', desc: 'Selama periode yang dipilih, produksi pabrik dan tambang berkurang sebesar 25%.' },
+  { id: 'economic', icon: Banknote, label: 'Blokade Ekonomi', desc: 'Selama resolusi aktif, produksi manufaktur, peternakan, agrikultur, perikanan, olahan pangan, serta tambang selain emas berkurang 50%.' },
+  { id: 'naval', icon: Anchor, label: 'Blokade Laut', desc: 'Selama resolusi aktif, produksi manufaktur, peternakan, agrikultur, perikanan, olahan pangan, serta tambang selain emas berkurang 25%.' },
   { id: 'full', icon: Lock, label: 'Blokade Penuh', desc: 'Selama periode yang dipilih, negara ini tidak dapat menandatangani kontrak apa pun atau berdagang.' },
   { id: 'treasure', icon: Package, label: 'Bantuan Logistik', desc: 'Memberikan bantuan sumber daya dan logistik ke negara yang dipilih.' },
 ];
@@ -76,6 +78,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
 
   const [countries, setCountries] = useState<CountryOption[]>([]);
   const [allies, setAllies] = useState<CountryOption[]>([]);
+  const [annexationRevision, setAnnexationRevision] = useState(0);
 
   // 🔥 Ubah voteStats menjadi array negara
   const [voteStats, setVoteStats] = useState<{ supporters: CountryOption[], opponents: CountryOption[], hasDiplomaticRelation: boolean }>({
@@ -106,17 +109,9 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
 
   useEffect(() => {
     if (COUNTRIES_DATA && Array.isArray(COUNTRIES_DATA)) {
-      const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
       const formatted = COUNTRIES_DATA
         .filter((c) => {
           if (!c.country || !c.iso) return false;
-          const raw = String(c.country || '').trim();
-          const norm = raw.toLowerCase();
-          const clean = norm.replace(/[^a-z0-9]/g, '');
-          const iso = String(c.iso || '').toLowerCase().trim();
-
-          if (annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean])) return false;
-          if (iso && (annexedStore[iso] || annexedStore[`iso_${iso}`])) return false;
           return true;
         })
         .map((c) => ({
@@ -129,7 +124,29 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
     } else {
       setCountries([{ id: 0, name: "Indonesia (Fallback)", iso: "id", continent: "Asia" }]);
     }
-  }, []);
+  }, [annexationRevision]);
+
+  const votingCountries = useMemo(
+    () => countries.filter(country => !isCountryAnnexed(country.name, country.iso)),
+    [countries, annexationRevision]
+  );
+
+  const isSelectedCountryAnnexed = isCountryAnnexed(
+    selectedCountry?.country || "",
+    selectedCountry?.iso
+  );
+
+  useEffect(() => {
+    const refreshAnnexedVotes = () => {
+      setAnnexationRevision(revision => revision + 1);
+      clearAnnexedCountryVotes(selectedCountry?.country || "", selectedCountry?.iso);
+      const currentDate = getSimulationDateString();
+      tickPBBResolutions(currentDate, undefined, selectedCountry?.country);
+      tickPBBSecurityCouncil(currentDate, undefined, selectedCountry?.country);
+    };
+    window.addEventListener("map_territory_color_updated", refreshAnnexedVotes);
+    return () => window.removeEventListener("map_territory_color_updated", refreshAnnexedVotes);
+  }, [selectedCountry]);
 
   const groupedCountries = useMemo<Record<string, CountryOption[]>>(() => {
     return countries.reduce((acc, country) => {
@@ -148,7 +165,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
   }, [groupedCountries, activeContinent]);
 
   useEffect(() => {
-    const safeCountries = Array.isArray(countries) ? countries : [];
+    const safeCountries = Array.isArray(votingCountries) ? votingCountries : [];
     if (safeCountries.length === 0) return;
     const userCountryId = selectedCountry?.id || 0;
     const seed = (userCountryId * 31 + 7) % safeCountries.length;
@@ -166,11 +183,11 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
       attempts++;
     }
     setAllies(alliesList);
-  }, [countries, selectedCountry]);
+  }, [votingCountries, selectedCountry]);
 
   // 🔥 Logika voting dengan konversi angka ke array negara
   useEffect(() => {
-    if (!selectedTarget || !selectedCountry || countries.length === 0) {
+    if (!selectedTarget || !selectedCountry || votingCountries.length === 0) {
       setVoteStats({ supporters: [], opponents: [], hasDiplomaticRelation: false });
       return;
     }
@@ -179,7 +196,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
       const result = await calculateKeamananVoting(
         selectedCountry.country,
         selectedTarget.name,
-        countries
+        votingCountries
       ) ?? { supporters: 0, opponents: 0, hasDiplomaticRelation: false };
 
       let supportersList: CountryOption[] = [];
@@ -190,12 +207,12 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
         const isTargetAlly = allies.some(ally => ally.id === selectedTarget.id);
         if (isTargetAlly) {
           // Target adalah teman: negara lain (bukan teman) mendukung, teman menolak
-          supportersList = countries.filter(c => !allies.some(ally => ally.id === c.id) && c.id !== selectedTarget.id);
+          supportersList = votingCountries.filter(c => !allies.some(ally => ally.id === c.id) && c.id !== selectedTarget.id);
           opponentsList = allies.filter(c => c.id !== selectedTarget.id);
         } else {
           // Target bukan teman: teman mendukung, negara lain menolak
           supportersList = allies;
-          opponentsList = countries.filter(c => !allies.some(ally => ally.id === c.id) && c.id !== selectedTarget.id);
+          opponentsList = votingCountries.filter(c => !allies.some(ally => ally.id === c.id) && c.id !== selectedTarget.id);
         }
       } else {
         // Jika sudah berupa array (fallback)
@@ -209,7 +226,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
         hasDiplomaticRelation: result.hasDiplomaticRelation || false
       });
     })();
-  }, [selectedTarget, selectedCountry, countries, allies]);
+  }, [selectedTarget, selectedCountry, votingCountries, allies]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -283,7 +300,10 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
   }, []);
 
   const handleSecurityVote = (itemId: string, voteType: 'yes' | 'no' | 'abstain') => {
+    if (isSelectedCountryAnnexed) return;
     const currentList = typeof loadActiveSecurityCouncilItems === 'function' ? loadActiveSecurityCouncilItems() : activeSecurityCouncilItems;
+    const targetItem = currentList.find(item => item.id === itemId);
+    if (!targetItem || targetItem.status !== 'voting') return;
     const updated = currentList.map(item => {
       if (item.id !== itemId) return item;
       const prevVote = item.userVote;
@@ -317,7 +337,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
     }
     const activeAction = RESOLUTION_ACTIONS.find(a => a.id === selectedType);
     const votes = typeof calculate15SecurityCouncilVotes === 'function'
-      ? calculate15SecurityCouncilVotes(30, 'yes')
+      ? calculate15SecurityCouncilVotes(30, isSelectedCountryAnnexed ? null : 'yes')
       : { supportersCount: 1, opponentsCount: 0, abstainCount: 0, vetoCount: 0 };
 
     const newItem: ActiveSecurityCouncilItem = {
@@ -341,7 +361,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
         abstainCount: votes.abstainCount,
         vetoCount: votes.vetoCount
       },
-      userVote: 'yes',
+      userVote: isSelectedCountryAnnexed ? null : 'yes',
       status: 'voting',
       createdAt: typeof getSimulationDateString === 'function' 
         ? getSimulationDateString() 
@@ -650,10 +670,12 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
                   {/* Tombol Aksi Vote Player */}
                   <div className="flex items-center gap-2 w-full md:w-auto justify-end">
                     <span className="text-[10px] font-bold text-[#6B8A8A] uppercase mr-1">
-                      {item.status !== 'voting' ? 'Voting Ditutup:' : 'Suara Anda:'}
+                      {isSelectedCountryAnnexed
+                        ? 'Negara dianeksasi — tidak memiliki hak suara'
+                        : item.status !== 'voting' ? 'Voting Ditutup:' : 'Suara Anda:'}
                     </span>
                     <button
-                      disabled={item.status !== 'voting'}
+                      disabled={item.status !== 'voting' || isSelectedCountryAnnexed}
                       onClick={() => handleSecurityVote(item.id, 'yes')}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
                         item.status !== 'voting'
@@ -668,7 +690,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
                       Setuju
                     </button>
                     <button
-                      disabled={item.status !== 'voting'}
+                      disabled={item.status !== 'voting' || isSelectedCountryAnnexed}
                       onClick={() => handleSecurityVote(item.id, 'no')}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
                         item.status !== 'voting'
@@ -683,7 +705,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
                       Menolak
                     </button>
                     <button
-                      disabled={item.status !== 'voting'}
+                      disabled={item.status !== 'voting' || isSelectedCountryAnnexed}
                       onClick={() => handleSecurityVote(item.id, 'abstain')}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
                         item.status !== 'voting'

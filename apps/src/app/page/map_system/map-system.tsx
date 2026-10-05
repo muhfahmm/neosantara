@@ -64,8 +64,8 @@ import { generateResearchContractOfferNotification } from '../menus/inbox/logic/
 import { generateHubunganPanasNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/4_hubungan_panas/hubunganPanasLogic';
 import { evaluateAIResolusiPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBLogic';
 import { evaluateAIKeamananPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
-import { tickPBBResolutions, spawnAIResolutionFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
-import { tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
+import { clearActiveResolutionsForSession, tickPBBResolutions, spawnAIResolutionFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
+import { clearSessionOnlySecurityItems, tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { initCountryIsoFromDatabase, getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
@@ -1405,6 +1405,8 @@ export default function MapPage() {
             const loadSaveStr = localStorage.getItem('presiden_simulator_load_save');
             const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
             if (newGameMarker === '1') {
+                clearActiveResolutionsForSession();
+                clearSessionOnlySecurityItems();
                 localStorage.removeItem('hutangModalLoanSources');
                 localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
                 localStorage.removeItem('pbb_active_resolutions_v4');
@@ -1631,12 +1633,12 @@ export default function MapPage() {
         if (typeof tickPBBResolutions === 'function') {
             tickPBBResolutions(currentDateStr, (newNotif) => {
                 setNotifications((prev: any[]) => [newNotif, ...prev]);
-            });
+            }, selectedCountry?.country);
         }
         if (typeof tickPBBSecurityCouncil === 'function') {
             tickPBBSecurityCouncil(currentDateStr, (newNotif) => {
                 setNotifications((prev: any[]) => [newNotif, ...prev]);
-            });
+            }, selectedCountry?.country);
         }
 
         if (!countryDetail) return;
@@ -1677,7 +1679,7 @@ export default function MapPage() {
             logger.log('MapPage', 'Auto-setting missing build dates for existing buildings to TODAY');
             setCountryDetail(updatedDetail);
         }
-    }, [currentDate, countryDetail]);
+    }, [currentDate, countryDetail, selectedCountry?.country]);
 
     const prevBudgetUpdateDateRef = useRef<string | null>(null);
 

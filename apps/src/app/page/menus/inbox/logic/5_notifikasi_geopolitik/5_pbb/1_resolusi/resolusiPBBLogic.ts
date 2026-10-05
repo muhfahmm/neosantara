@@ -1,5 +1,8 @@
 import { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { chooseAIResolutionDuration } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
+import { PRODUCTION_BAN_PRODUCTS, formatProductionProductName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog';
+import { isCountryAnnexed } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbVotingEligibility';
+import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 
 export interface AIResolusiPBBNotification extends NotificationMessage {
   tradeType: 'usulan_resolusi_pbb';
@@ -9,6 +12,7 @@ export interface AIResolusiPBBNotification extends NotificationMessage {
   resolutionType: 'war_ban' | 'arms_embargo' | 'economic_embargo' | 'military_invasion' | 'production_ban';
   resolutionTitle: string;
   duration: string;
+  productKey?: string;
 }
 
 const RESOLUTION_TYPES: Array<{
@@ -60,10 +64,16 @@ export function generateAIResolusiPBBNotification(
     ? `🏛️ USULAN RESOLUSI PBB: ${proposerCountry} (LARANGAN PERANG)`
     : `🏛️ USULAN RESOLUSI PBB: ${proposerCountry} ➔ ${targetCountry}`;
   const duration = chooseAIResolutionDuration(chosen.type, relationScore);
+  const selectedProductionProduct = chosen.type === 'production_ban'
+    ? PRODUCTION_BAN_PRODUCTS[Math.floor(Math.random() * PRODUCTION_BAN_PRODUCTS.length)]
+    : undefined;
+  const description = selectedProductionProduct
+    ? `Produksi ${formatProductionProductName(selectedProductionProduct.key)} dihentikan selama periode yang dipilih.`
+    : chosen.desc;
 
   const message = isWarBan
-    ? `Kabar Diplomasi PBB! Negara ${proposerCountry} secara resmi mengajukan usulan "${chosen.title}" untuk seluruh dunia selama ${duration}. Usulan ini: ${chosen.desc}. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!`
-    : `Kabar Diplomasi PBB! Negara ${proposerCountry} secara resmi mengajukan usulan "${chosen.title}" yang menargetkan ${targetCountry} selama ${duration} akibat ketegangan hubungan bilateral yang buruk (Skor: ${relationScore}/100). Usulan ini: ${chosen.desc}. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!`;
+    ? `Kabar Diplomasi PBB! Negara ${proposerCountry} secara resmi mengajukan usulan "${chosen.title}" untuk seluruh dunia selama ${duration}. Usulan ini: ${description}. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!`
+    : `Kabar Diplomasi PBB! Negara ${proposerCountry} secara resmi mengajukan usulan "${chosen.title}" yang menargetkan ${targetCountry} selama ${duration} akibat ketegangan hubungan bilateral yang buruk (Skor: ${relationScore}/100). Usulan ini: ${description}. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!`;
 
   return {
     id: `resolusi-pbb-${proposerCountry}-${targetCountry}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
@@ -80,7 +90,8 @@ export function generateAIResolusiPBBNotification(
     relationScore,
     resolutionType: chosen.type,
     resolutionTitle: chosen.title,
-    duration
+    duration,
+    productKey: selectedProductionProduct?.key
   };
 }
 
@@ -101,6 +112,7 @@ export function evaluateAIResolusiPBBTrigger(
   // Cari pasangan negara (AI vs User atau AI vs AI) yang skor hubungannya antara 1 s/d 20
   for (const proposer of allCountries) {
     if (!proposer || proposer === userCountryName) continue;
+    if (isCountryAnnexed(proposer, getIsoForCountryName(proposer))) continue;
 
     const potentialTargets = [...allCountries, userCountryName].filter(c => c && c !== proposer);
     for (const target of potentialTargets) {

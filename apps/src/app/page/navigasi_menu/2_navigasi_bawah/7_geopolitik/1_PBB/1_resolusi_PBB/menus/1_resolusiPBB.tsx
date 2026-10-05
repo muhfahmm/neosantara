@@ -5,8 +5,8 @@ import {
   X, FileText, Plus, CheckCircle, ChevronDown, Users, ThumbsUp, ThumbsDown, 
   Clock, Swords, ShieldBan, Coins, Bomb, Package 
 } from "lucide-react";
-import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
-import { calculateResolusiVoting } from "../voting_logic/resolusiPBB_logic";
+import { COUNTRIES_DATA } from "../../../../../../map_system/map-data";
+import { calculateResolusiVoting } from "../../voting_logic/resolusiPBB_logic";
 
 // 🔥 PERBAIKAN: Hapus ekstensi .tsx di bagian import
 import CountryTargetModal from "./2_negara_target";
@@ -14,8 +14,12 @@ import CountryListModal from "./3_jumlah_suara";
 import ModalSetuju from "./4_modal_setuju";
 import ModalMenolak from "./5_modal_menolak";
 import ModalAbstain from "./6_modal_abstain";
-import { ActiveResolutionItem, loadActiveResolutions, saveActiveResolutions, calculate206AIVotes, TOTAL_UN_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_RESOLUSI, getResolutionCountryBreakdown } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
+import PilihProdukLarangan from "../1_pilihProdukLarangan";
+import { ActiveResolutionItem, loadActiveResolutions, saveActiveResolutions, calculate206AIVotes, TOTAL_UN_MEMBERS, getSimulationDateString, getResolutionCountryBreakdown, tickPBBResolutions } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
+import { tickPBBSecurityCouncil } from "../../2_keamanan_PBB/logic/keamananPBBUILogic";
 import { PBB_RESOLUTION_DURATION_OPTIONS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
+import { formatProductionProductName, getProductionBanProduct } from "../logic/productionBanCatalog";
+import { clearAnnexedCountryVotes, isCountryAnnexed } from "../../pbbVotingEligibility";
 
 interface ResolusiPBBProps {
   selectedCountry: any;
@@ -57,13 +61,13 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   const [selectedType, setSelectedType] = useState<string>("war_ban");
   const [selectedDuration, setSelectedDuration] = useState<string>("1 bulan");
   const [selectedTarget, setSelectedTarget] = useState<CountryOption | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<string>("Kayu");
+  const [selectedProductKey, setSelectedProductKey] = useState<string | null>(null);
+  const [isProductionProductModalOpen, setIsProductionProductModalOpen] = useState(false);
 
   const [isCountryModalOpen, setIsCountryModalOpen] = useState(false);
   const [activeContinent, setActiveContinent] = useState<string>("");
 
   const [isDurationOpen, setIsDurationOpen] = useState(false);
-  const [isProductOpen, setIsProductOpen] = useState(false);
   
   const [isSupportersModalOpen, setIsSupportersModalOpen] = useState(false);
   const [isOpponentsModalOpen, setIsOpponentsModalOpen] = useState(false);
@@ -74,10 +78,10 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   const [modalAbstainOpen, setModalAbstainOpen] = useState(false);
 
   const durationRef = useRef<HTMLDivElement>(null);
-  const productRef = useRef<HTMLDivElement>(null);
 
   const [countries, setCountries] = useState<CountryOption[]>([]);
   const [allies, setAllies] = useState<CountryOption[]>([]);
+  const [annexationRevision, setAnnexationRevision] = useState(0);
   
   const [voteStats, setVoteStats] = useState<{ supporters: CountryOption[], opponents: CountryOption[], hasDiplomaticRelation: boolean }>({
     supporters: [],
@@ -88,26 +92,16 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   const RESOLUTION_ACTIONS = [
     { id: 'war_ban', icon: Swords, label: 'Larangan Perang', desc: 'Dilarang melakukan peperangan antar negara di seluruh dunia selama periode yang dipilih.' },
     { id: 'arms_embargo', icon: ShieldBan, label: 'Embargo Penjualan Senjata', desc: 'Perdagangan senjata dilarang selama periode yang dipilih.' },
-    { id: 'economic_embargo', icon: Coins, label: 'Embargo Ekonomi', desc: 'Produksi pabrik dan tambang serta pendapatan negara turun 60% selama periode yang dipilih.' },
+    { id: 'economic_embargo', icon: Coins, label: 'Embargo Ekonomi', desc: 'Produksi sektor industri dan tambang selain emas serta pendapatan non-emas turun 60% selama periode yang dipilih.' },
     { id: 'military_invasion', icon: Bomb, label: 'Resolusi Invasi', desc: 'Resolusi memungkinkan negara diinvasi tanpa kecaman oleh negara lain.' },
     { id: 'production_ban', icon: Package, label: 'Larangan Produksi', desc: 'Produksi produk yang dipilih dihentikan selama periode yang dipilih.' },
   ];
 
-  const PRODUCT_OPTIONS = ['Kayu', 'Semen', 'Baja', 'Mobil', 'Senjata'];
-
   useEffect(() => {
     if (COUNTRIES_DATA && Array.isArray(COUNTRIES_DATA)) {
-      const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
       const formatted = COUNTRIES_DATA
         .filter((c) => {
           if (!c.country || !c.iso) return false;
-          const raw = String(c.country || '').trim();
-          const norm = raw.toLowerCase();
-          const clean = norm.replace(/[^a-z0-9]/g, '');
-          const iso = String(c.iso || '').toLowerCase().trim();
-
-          if (annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean])) return false;
-          if (iso && (annexedStore[iso] || annexedStore[`iso_${iso}`])) return false;
           return true;
         })
         .map((c) => ({
@@ -120,7 +114,29 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
     } else {
       setCountries([{ id: 0, name: "Indonesia (Fallback)", iso: "id", continent: "Asia" }]);
     }
-  }, []);
+  }, [annexationRevision]);
+
+  const votingCountries = useMemo(
+    () => countries.filter(country => !isCountryAnnexed(country.name, country.iso)),
+    [countries, annexationRevision]
+  );
+
+  const isSelectedCountryAnnexed = isCountryAnnexed(
+    selectedCountry?.country || "",
+    selectedCountry?.iso
+  );
+
+  useEffect(() => {
+    const refreshAnnexedVotes = () => {
+      setAnnexationRevision(revision => revision + 1);
+      clearAnnexedCountryVotes(selectedCountry?.country || "", selectedCountry?.iso);
+      const currentDate = getSimulationDateString();
+      tickPBBResolutions(currentDate, undefined, selectedCountry?.country);
+      tickPBBSecurityCouncil(currentDate, undefined, selectedCountry?.country);
+    };
+    window.addEventListener("map_territory_color_updated", refreshAnnexedVotes);
+    return () => window.removeEventListener("map_territory_color_updated", refreshAnnexedVotes);
+  }, [selectedCountry]);
 
   const groupedCountries = useMemo<Record<string, CountryOption[]>>(() => {
     return countries.reduce((acc, country) => {
@@ -145,7 +161,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   }, [groupedCountries, activeContinent]);
 
   useEffect(() => {
-    const safeCountries = Array.isArray(countries) ? countries : [];
+    const safeCountries = Array.isArray(votingCountries) ? votingCountries : [];
     if (safeCountries.length === 0) return;
     const userCountryId = selectedCountry?.id || 0;
     const seed = (userCountryId * 31 + 7) % safeCountries.length;
@@ -163,11 +179,11 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
       attempts++;
     }
     setAllies(alliesList);
-  }, [countries, selectedCountry]);
+  }, [votingCountries, selectedCountry]);
 
   useEffect(() => {
     if (selectedType === 'war_ban') {
-      const safeCountries = Array.isArray(countries) ? countries : [];
+      const safeCountries = Array.isArray(votingCountries) ? votingCountries : [];
       const supportersList = allies;
       const opponentsList = safeCountries.filter(c => !allies.some(ally => ally.id === c.id));
       setVoteStats({
@@ -178,7 +194,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
       return;
     }
 
-    if (!selectedTarget || !selectedCountry || countries.length === 0) {
+    if (!selectedTarget || !selectedCountry || votingCountries.length === 0) {
       setVoteStats({ supporters: [], opponents: [], hasDiplomaticRelation: false });
       return;
     }
@@ -187,7 +203,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
       const result = await calculateResolusiVoting(
         selectedCountry.country,
         selectedTarget.name,
-        countries
+        votingCountries
       ) ?? { supporters: [], opponents: [], hasDiplomaticRelation: false };
 
       let supportersList: CountryOption[] = [];
@@ -199,11 +215,11 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
       if (typeof rawSupporters === 'number') {
         const isTargetAlly = allies.some(ally => ally.id === selectedTarget.id);
         if (isTargetAlly) {
-          supportersList = countries.filter(c => !allies.some(ally => ally.id === c.id) && c.id !== selectedTarget.id);
+          supportersList = votingCountries.filter(c => !allies.some(ally => ally.id === c.id) && c.id !== selectedTarget.id);
           opponentsList = allies.filter(c => c.id !== selectedTarget.id);
         } else {
           supportersList = allies;
-          opponentsList = countries.filter(c => !allies.some(ally => ally.id === c.id) && c.id !== selectedTarget.id);
+          opponentsList = votingCountries.filter(c => !allies.some(ally => ally.id === c.id) && c.id !== selectedTarget.id);
         }
       } else if (Array.isArray(rawSupporters)) {
         supportersList = rawSupporters;
@@ -219,12 +235,11 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
         hasDiplomaticRelation: result?.hasDiplomaticRelation || false
       });
     })();
-  }, [selectedTarget, selectedCountry, countries, allies]);
+  }, [selectedTarget, selectedCountry, votingCountries, allies]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (durationRef.current && !durationRef.current.contains(event.target as Node)) setIsDurationOpen(false);
-      if (productRef.current && !productRef.current.contains(event.target as Node)) setIsProductOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -275,6 +290,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   }, []);
 
   const handleVote = (resId: string, voteType: 'yes' | 'no' | 'abstain') => {
+    if (isSelectedCountryAnnexed) return;
     const currentList = typeof loadActiveResolutions === 'function' ? loadActiveResolutions() : activeResolutions;
     const targetRes = currentList.find(r => r.id === resId);
     if (targetRes && targetRes.status !== 'voting') return;
@@ -304,11 +320,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
       setActiveModalResolution(updatedTarget);
     }
 
-    if (typeof saveActiveResolutions === 'function') {
-      saveActiveResolutions(updated);
-    } else if (typeof window !== 'undefined') {
-      try { localStorage.setItem(STORAGE_KEY_PBB_RESOLUSI, JSON.stringify(updated)); } catch (e) {}
-    }
+    saveActiveResolutions(updated);
   };
 
   const handleBribeCountry = (resId: string, countryIso: string, fromVote: 'yes' | 'no' | 'abstain', toVote: 'yes' | 'no' | 'abstain') => {
@@ -344,26 +356,33 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
       setActiveModalResolution(updatedTarget);
     }
 
-    if (typeof saveActiveResolutions === 'function') {
-      saveActiveResolutions(updated);
-    } else if (typeof window !== 'undefined') {
-      try { localStorage.setItem(STORAGE_KEY_PBB_RESOLUSI, JSON.stringify(updated)); } catch (e) {}
-    }
+    saveActiveResolutions(updated);
   };
 
   const handleSubmitResolution = () => {
     if (!selectedTarget && !isProductionBan && !isWarBan) {
       return;
     }
+    if (isProductionBan && !selectedProductKey) return;
+    const selectedProductName = selectedProductKey
+      ? formatProductionProductName(selectedProductKey)
+      : null;
     const activeAction = RESOLUTION_ACTIONS.find(a => a.id === selectedType);
     const votes = typeof calculate206AIVotes === 'function'
-      ? calculate206AIVotes(30, 'yes')
+      ? calculate206AIVotes(
+          30,
+          isSelectedCountryAnnexed ? null : 'yes',
+          selectedCountry?.country || 'Indonesia',
+          selectedTarget?.name || 'Seluruh Dunia (Global)',
+          selectedType,
+          selectedCountry?.country || 'Indonesia'
+        )
       : { supportersCount: 1, opponentsCount: 0, abstainCount: 0 };
 
     const targetName = isWarBan
       ? 'Seluruh Dunia (Global)'
       : isProductionBan
-        ? 'Sektor Komoditas Global'
+        ? `Larangan Produksi Global: ${selectedProductName || 'Produk'}`
         : selectedTarget?.name || 'Target';
 
     const targetIso = isWarBan
@@ -383,16 +402,21 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
         iso: targetIso
       },
       type: selectedType,
-      label: activeAction?.label || 'Resolusi PBB',
-      desc: activeAction?.desc || '',
+      label: isProductionBan && selectedProductName
+        ? `${activeAction?.label || 'Larangan Produksi'}: ${selectedProductName}`
+        : activeAction?.label || 'Resolusi PBB',
+      desc: isProductionBan && selectedProductName
+        ? `Produksi ${selectedProductName} dihentikan selama periode yang dipilih.`
+        : activeAction?.desc || '',
       duration: selectedDuration,
+      productKey: selectedProductKey || undefined,
       daysRemaining: 30,
       voteStats: {
         supportersCount: votes.supportersCount,
         opponentsCount: votes.opponentsCount,
         abstainCount: votes.abstainCount
       },
-      userVote: 'yes',
+      userVote: isSelectedCountryAnnexed ? null : 'yes',
       status: 'voting',
       createdAt: typeof getSimulationDateString === 'function' 
         ? getSimulationDateString() 
@@ -402,16 +426,13 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
 
     setActiveResolutions(prev => {
       const newList = [newRes, ...prev];
-      if (typeof saveActiveResolutions === 'function') {
-        saveActiveResolutions(newList);
-      } else if (typeof window !== 'undefined') {
-        try { localStorage.setItem(STORAGE_KEY_PBB_RESOLUSI, JSON.stringify(newList)); } catch (e) {}
-      }
+      saveActiveResolutions(newList);
       return newList;
     });
 
     setShowCreateModal(false);
     setSelectedTarget(null);
+    setSelectedProductKey(null);
   };
 
   // 🔥 Logika Toggle (Unselect jika klik negara yang sama)
@@ -580,10 +601,12 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                   {/* Tombol Aksi Vote Player */}
                   <div className="flex items-center gap-2 w-full md:w-auto justify-end">
                     <span className="text-[10px] font-bold text-[#6B8A8A] uppercase mr-1">
-                      {res.status !== 'voting' ? 'Voting Ditutup:' : 'Suara Anda:'}
+                      {isSelectedCountryAnnexed
+                        ? 'Negara dianeksasi — tidak memiliki hak suara'
+                        : res.status !== 'voting' ? 'Voting Ditutup:' : 'Suara Anda:'}
                     </span>
                     <button
-                      disabled={res.status !== 'voting'}
+                      disabled={res.status !== 'voting' || isSelectedCountryAnnexed}
                       onClick={() => handleVote(res.id, 'yes')}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
                         res.status !== 'voting'
@@ -598,7 +621,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                       Setuju
                     </button>
                     <button
-                      disabled={res.status !== 'voting'}
+                      disabled={res.status !== 'voting' || isSelectedCountryAnnexed}
                       onClick={() => handleVote(res.id, 'no')}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
                         res.status !== 'voting'
@@ -613,7 +636,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                       Menolak
                     </button>
                     <button
-                      disabled={res.status !== 'voting'}
+                      disabled={res.status !== 'voting' || isSelectedCountryAnnexed}
                       onClick={() => handleVote(res.id, 'abstain')}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
                         res.status !== 'voting'
@@ -722,18 +745,20 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                       </p>
                       
                       {isProductionBan ? (
-                        <div className="relative" ref={productRef}>
-                          <button type="button" onClick={() => setIsProductOpen(!isProductOpen)} className="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-[#0A1A1A] text-[#E0E0E0] border border-[#00FFAA]/30 shadow-md hover:border-[#00FFAA]/60 transition-all cursor-pointer">
-                            <span className="text-sm font-bold">{selectedProduct}</span>
-                            <ChevronDown className={`w-4 h-4 text-[#00FFAA] transition-transform ${isProductOpen ? 'rotate-180' : ''}`} />
+                        <div>
+                          <button
+                            type="button"
+                            onClick={() => setIsProductionProductModalOpen(true)}
+                            className="w-full min-h-[52px] flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-[#0A1A1A] text-[#E0E0E0] border border-[#00FFAA]/30 shadow-md hover:border-[#00FFAA]/60 transition-all cursor-pointer"
+                          >
+                            <span className={`text-sm font-bold ${selectedProductKey ? 'text-[#00FFAA]' : 'text-[#6B8A8A]'}`}>
+                              {selectedProductKey
+                                ? `${getProductionBanProduct(selectedProductKey)?.category}: ${formatProductionProductName(selectedProductKey)}`
+                                : 'Pilih kategori dan produk'}
+                            </span>
+                            <Package className="w-4 h-4 text-[#00FFAA]" />
                           </button>
-                          {isProductOpen && (
-                            <div className="absolute top-full left-0 right-0 mt-2 bg-[#051111] border border-[#00FFAA]/30 rounded-xl shadow-xl z-30 overflow-hidden">
-                              {PRODUCT_OPTIONS.map((prod) => (
-                                <button key={prod} onClick={() => { setSelectedProduct(prod); setIsProductOpen(false); }} className="w-full px-5 py-3 text-left text-sm font-bold text-[#E0E0E0] transition-colors cursor-pointer hover:bg-[#00FFAA]/10 border-b border-[#00FFAA]/10 last:border-b-0">{prod}</button>
-                              ))}
-                            </div>
-                          )}
+                          <p className="text-[10px] text-[#6B8A8A] mt-2">Pemilihan produk membuka daftar sektor dan produk produksi.</p>
                         </div>
                       ) : (
                         <button 
@@ -802,12 +827,28 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
 
             <div className="flex items-center justify-end gap-4 px-8 py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] relative z-10 shrink-0">
               <button onClick={() => { setShowCreateModal(false); }} className="px-6 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA]/20 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer">Batal</button>
-              <button onClick={handleSubmitResolution} className="px-6 py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer">Tambahkan</button>
+              <button
+                onClick={handleSubmitResolution}
+                disabled={isProductionBan && !selectedProductKey}
+                className="px-6 py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Tambahkan
+              </button>
             </div>
 
           </div>
         </div>
       , document.body)}
+
+      <PilihProdukLarangan
+        isOpen={isProductionProductModalOpen}
+        selectedProductKey={selectedProductKey}
+        onClose={() => setIsProductionProductModalOpen(false)}
+        onSelect={(productKey) => {
+          setSelectedProductKey(productKey);
+          setIsProductionProductModalOpen(false);
+        }}
+      />
 
       {/* 🔥 MODAL PILIH NEGARA TARGET */}
       <CountryTargetModal

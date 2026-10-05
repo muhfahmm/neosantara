@@ -1,6 +1,6 @@
 // BaseProduksiGrid.tsx
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Info, MessageSquare } from "lucide-react";
 import { getKelistrikanFuelRequirements } from "./requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 import { getDaysElapsed, formatDate } from '@/app/logic/production_logic';
@@ -15,6 +15,8 @@ import {
 import ProductionAISuggestionsModal from "./ai_suggestions/ProductionAISuggestionsModal";
 import { generateProductionSectorAnalysis } from "./ai_suggestions/productionAISuggestionsLogic";
 import { getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
+import { getActiveProductionBanForResource } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/5_laranganProduksiLogic";
+import { formatProductionProductName } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
 
 const ELECTRICITY_FUEL_RESOURCE_KEYS = [
   "gas_alam",
@@ -129,6 +131,13 @@ export default function BaseProduksiGrid({
 
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [aiAnalysisResult, setAiAnalysisResult] = useState<any>(null);
+  const [, setResolutionRevision] = useState(0);
+
+  useEffect(() => {
+    const refreshResolutionState = () => setResolutionRevision(revision => revision + 1);
+    window.addEventListener("pbb_active_resolutions_updated", refreshResolutionState);
+    return () => window.removeEventListener("pbb_active_resolutions_updated", refreshResolutionState);
+  }, []);
 
   const SUPPORTED_AI_SECTORS = ["peternakan", "agrikultur", "perikanan", "olahan pangan"];
   const normalizedTitle = (title || "").toLowerCase().trim();
@@ -169,13 +178,17 @@ export default function BaseProduksiGrid({
           const perCount = Number(countryDetail?.[key]) || 0;
           const label = formatLabel(key);
           const isHighlighted = highlightedCardKey === key;
-          const isAvailable = isBuildingAvailable ? isBuildingAvailable(key, countryDetail?.country || '') : true;
+          const isAvailableInCountry = isBuildingAvailable ? isBuildingAvailable(key, countryDetail?.country || '') : true;
+          const productionBan = getActiveProductionBanForResource(key);
+          const isProductionBanned = Boolean(productionBan);
+          const isAvailable = isAvailableInCountry && !isProductionBanned;
           const fuelRequirements = isElectricityTab ? getKelistrikanFuelRequirements(key) : [];
           const isFuelResource = ELECTRICITY_FUEL_RESOURCE_KEYS.includes(key);
+          const productionMultiplier = getEconomicEmbargoProductionMultiplier(countryDetail?.country || '', key);
 
           const effectiveProduction = calculateProductionAmount(key);
           const isProductionZero = effectiveProduction === 0 && perCount > 0;
-          const rawProduction = perCount * Number(bMeta?.produksi || 0);
+          const rawProduction = perCount * Number(bMeta?.produksi || 0) * productionMultiplier;
 
           // Hitung jumlah antrean
           const buildingConstructions = ongoingConstructions.filter(
@@ -196,10 +209,17 @@ export default function BaseProduksiGrid({
               }}
               role="button"
               tabIndex={0}
-              className={`relative rounded-2xl overflow-visible flex flex-col flex-grow justify-between transition-all bg-[#0A1A1A] border shadow-sm ${
+              aria-disabled={!isAvailable}
+              title={productionBan ? `Diblokir resolusi PBB: ${formatProductionProductName(key)}` : undefined}
+              className={`group relative rounded-2xl overflow-visible flex flex-col flex-grow justify-between transition-all bg-[#0A1A1A] border shadow-sm ${
                 isAvailable ? 'border-[#00FFAA]/20 hover:border-[#00FFAA]/50 hover:shadow-md cursor-pointer' : 'border-rose-500/30 bg-rose-500/10 opacity-70 cursor-not-allowed'
               } ${isHighlighted ? 'border-[#00FFAA] border-2 shadow-[0_0_12px_rgba(0,255,170,0.3)]' : ''}`}
             >
+              {productionBan && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-[#0A1A1A]/85 p-3 text-center text-[10px] font-black uppercase tracking-wide text-rose-300 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none">
+                  Diblokir resolusi PBB: {formatProductionProductName(key)}
+                </div>
+              )}
               {/* Badge Tanggal */}
               {isBuilding && (
                 <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
@@ -219,6 +239,7 @@ export default function BaseProduksiGrid({
                   isElectricityTab={isElectricityTab}
                   isProductionZero={isProductionZero}
                   rawProduction={rawProduction}
+                  productionMultiplier={productionMultiplier}
                   onClose={() => setHoveredBuildingKey(null)}
                   onNavigateToTab={onNavigateToTab}
                 />
@@ -229,12 +250,14 @@ export default function BaseProduksiGrid({
                   <div className="flex items-start justify-between gap-1 mb-0.5">
                     <p className="text-[9px] sm:text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-1 leading-snug">{label}</p>
                     <button
+                      disabled={isProductionBanned}
                       className="flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] text-[#6B8A8A] hover:text-[#00FFAA]"
                       onClick={(e) => {
+                        if (isProductionBanned) return;
                         e.stopPropagation();
                         setHoveredBuildingKey(hoveredBuildingKey === key ? null : key);
                       }}
-                      title="Info bangunan"
+                      title={isProductionBanned ? "Diblokir oleh resolusi PBB yang sedang berlaku" : "Info bangunan"}
                     >
                       <Info className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                     </button>
@@ -269,8 +292,7 @@ export default function BaseProduksiGrid({
                     {(() => {
                       // Emas: tampilkan produksi tetap (tidak berubah-ubah seperti stok)
                       if (key === 'emas') {
-                        const fixedProd = Number(bMeta?.produksi || 0) * perCount *
-                          getEconomicEmbargoProductionMultiplier(countryDetail?.country || '', key);
+                        const fixedProd = Number(bMeta?.produksi || 0) * perCount * productionMultiplier;
                         return (
                           <span className="font-black text-xs sm:text-sm text-[#00FFAA] leading-tight break-words">
                             {fixedProd.toLocaleString('id-ID')}

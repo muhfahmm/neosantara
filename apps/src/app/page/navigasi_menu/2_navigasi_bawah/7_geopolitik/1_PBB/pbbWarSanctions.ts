@@ -13,6 +13,7 @@ import {
 import { getIsoForCountryName } from './pbbCountryIso';
 import { chooseAIResolutionDuration, normalizePbbCountryName } from './1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { isCountryUnderEconomicEmbargo } from './1_resolusi_PBB/logic/3_economicEmbargoLogic';
+import { getEligibleReplacementProposer, isCountryAnnexed } from './pbbVotingEligibility';
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 
 const REPORTED_VIOLATIONS_KEY = 'pbb_reported_war_ban_violations_v1';
@@ -57,13 +58,21 @@ export function submitInvasionViolationSanctions(
     .join('|');
   if (reportedIds.includes(violationId) || reportedIds.includes(legacyViolationId)) return [];
 
-  const proposer = {
-    name: targetCountry,
-    iso: getIsoForCountryName(targetCountry)
-  };
   const attacker = {
     name: attackerCountry,
     iso: getIsoForCountryName(attackerCountry)
+  };
+  const target = {
+    name: targetCountry,
+    iso: getIsoForCountryName(targetCountry)
+  };
+  const eligibleProposer = isCountryAnnexed(target.name, target.iso)
+    ? getEligibleReplacementProposer([attacker.name, target.name])
+    : target;
+  if (!eligibleProposer) return [];
+  const proposer = {
+    name: eligibleProposer.name,
+    iso: eligibleProposer.iso || getIsoForCountryName(eligibleProposer.name)
   };
   const duration = chooseAIResolutionDuration('economic_embargo', 1);
   const suffix = encodeURIComponent(violationId);
@@ -85,8 +94,8 @@ export function submitInvasionViolationSanctions(
       desc: reason === 'war_ban'
         ? `Embargo perdagangan ekonomi terhadap ${attackerCountry} sebagai sanksi atas pelanggaran larangan perang PBB.`
         : reason === 'wrong_military_target'
-          ? `Embargo perdagangan ekonomi terhadap ${attackerCountry} karena menggunakan mandat invasi Dewan Keamanan PBB untuk menyerang negara yang bukan target resolusi.`
-          : `Embargo perdagangan ekonomi terhadap ${attackerCountry} karena menyerang ${targetCountry} tanpa mengajukan Resolusi Invasi Militer Dewan Keamanan PBB.`,
+          ? `Embargo perdagangan ekonomi terhadap ${attackerCountry} karena menggunakan mandat invasi PBB untuk menyerang negara yang bukan target resolusi.`
+          : `Embargo perdagangan ekonomi terhadap ${attackerCountry} karena menyerang ${targetCountry} tanpa mandat Resolusi Invasi PBB yang disetujui untuk target tersebut.`,
       duration,
       daysRemaining: 30,
       voteStats: {
@@ -115,8 +124,8 @@ export function submitInvasionViolationSanctions(
       desc: reason === 'war_ban'
         ? `Sanksi ekonomi Dewan Keamanan terhadap ${attackerCountry} sebagai respons atas pelanggaran larangan perang PBB.`
         : reason === 'wrong_military_target'
-          ? `Sanksi ekonomi terhadap ${attackerCountry} karena mandat invasi Dewan Keamanan PBB berlaku untuk target lain, bukan ${targetCountry}.`
-          : `Sanksi ekonomi terhadap ${attackerCountry} karena menyerang ${targetCountry} tanpa mengajukan Resolusi Invasi Militer Dewan Keamanan PBB.`,
+          ? `Sanksi ekonomi terhadap ${attackerCountry} karena mandat invasi PBB berlaku untuk target lain, bukan ${targetCountry}.`
+          : `Sanksi ekonomi terhadap ${attackerCountry} karena menyerang ${targetCountry} tanpa mandat Resolusi Invasi PBB yang disetujui untuk target tersebut.`,
       duration,
       daysRemaining: 30,
       voteStats: {
@@ -153,8 +162,8 @@ export function submitInvasionViolationSanctions(
       message: reason === 'war_ban'
         ? `${attackerCountry} menyerang ${targetCountry} saat larangan perang global berlaku. Sanksi ekonomi telah diajukan bersamaan ke Dewan Keamanan dan Sidang Umum PBB; sanksi hanya berlaku jika resolusi masing-masing disetujui.`
         : reason === 'wrong_military_target'
-          ? `${attackerCountry} menyerang ${targetCountry}, padahal mandat Resolusi Invasi Militer Dewan Keamanan PBB yang dimilikinya tidak mencakup negara tersebut. Usulan sanksi ekonomi telah diajukan ke Dewan Keamanan dan Sidang Umum PBB; embargo hanya berlaku jika resolusi terkait disetujui.`
-          : `${attackerCountry} menyerang ${targetCountry} tanpa mengajukan Resolusi Invasi Militer Dewan Keamanan PBB. Usulan sanksi ekonomi telah diajukan ke Dewan Keamanan dan Sidang Umum PBB; embargo hanya berlaku jika resolusi terkait disetujui.`,
+          ? `${attackerCountry} menyerang ${targetCountry}, padahal mandat Resolusi Invasi PBB yang dimilikinya tidak mencakup negara tersebut. Usulan sanksi ekonomi telah diajukan ke Dewan Keamanan dan Sidang Umum PBB; embargo hanya berlaku jika resolusi terkait disetujui.`
+          : `${attackerCountry} menyerang ${targetCountry} tanpa mandat Resolusi Invasi PBB yang disetujui untuk target tersebut. Usulan sanksi ekonomi telah diajukan ke Dewan Keamanan dan Sidang Umum PBB; embargo hanya berlaku jika resolusi terkait disetujui.`,
       timestamp: dateStr,
       type: 'peringkat',
       value: 100,

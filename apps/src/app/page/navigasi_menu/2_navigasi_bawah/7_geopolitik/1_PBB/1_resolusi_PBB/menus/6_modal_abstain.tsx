@@ -1,8 +1,8 @@
 "use client"
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { X, ThumbsUp, Search } from "lucide-react";
-import { formatBribeCost } from "./logic/resolusiPBBUILogic";
+import { X, MinusCircle, Search } from "lucide-react";
+import { formatBribeCost } from "../logic/resolusiPBBUILogic";
 
 interface CountryOption {
   id: number;
@@ -24,7 +24,7 @@ interface Props {
   onBribeCountry?: (countryIso: string, targetVote: 'yes' | 'no' | 'abstain') => void;
 }
 
-export default function ModalSetuju({
+export default function ModalAbstain({
   isOpen,
   onClose,
   resolutionTitle,
@@ -45,23 +45,23 @@ export default function ModalSetuju({
     c.continent.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Jika pilihan user sudah sama dengan modal ini (Setuju), tidak perlu ada tombol suap
-  const isUserSameAsModal = userVote === 'yes';
-  const targetBribeVote = userVote || 'no';
+  // Jika pilihan user sudah sama dengan modal ini (Abstain), tidak perlu ada tombol suap
+  const isUserSameAsModal = userVote === 'abstain';
+  const targetBribeVote = userVote || 'yes';
 
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
-      <div className="bg-[#0F2424] border border-emerald-500/40 rounded-2xl overflow-hidden w-full max-w-4xl lg:max-w-[980px] xl:max-w-[1080px] 2xl:max-w-6xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl shadow-emerald-950/50">
+      <div className="bg-[#0F2424] border border-slate-500/40 rounded-2xl overflow-hidden w-full max-w-4xl lg:max-w-[980px] xl:max-w-[1080px] 2xl:max-w-6xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl shadow-slate-950/50">
         
-        {/* Header Modal Setuju */}
-        <div className="px-4 sm:px-6 py-3 border-b border-emerald-500/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        {/* Header Modal Abstain */}
+        <div className="px-4 sm:px-6 py-3 border-b border-slate-500/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/30">
-              <ThumbsUp className="h-5 w-5 text-emerald-400" />
+            <div className="p-2 bg-slate-500/10 rounded-xl border border-slate-500/30">
+              <MinusCircle className="h-5 w-5 text-slate-300" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-black text-emerald-400 tracking-tight leading-none uppercase flex items-center gap-2">
-                Daftar Negara Setuju (Menyetujui Resolusi)
+              <h3 className="text-base sm:text-lg font-black text-slate-300 tracking-tight leading-none uppercase flex items-center gap-2">
+                Daftar Negara Abstain (Netral / Tidak Memilih)
               </h3>
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">
                 {resolutionTitle ? `Usulan: ${resolutionTitle} • ` : ''}Total {countries.length} Negara
@@ -70,7 +70,7 @@ export default function ModalSetuju({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-emerald-500/30 bg-[#0F2424] text-[#6B8A8A] hover:text-emerald-400 hover:border-emerald-500 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+            className="p-1.5 lg:p-2 rounded-xl border border-slate-500/30 bg-[#0F2424] text-[#6B8A8A] hover:text-slate-300 hover:border-slate-500 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
           >
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
@@ -78,7 +78,7 @@ export default function ModalSetuju({
         </div>
 
         {/* Input Pencarian */}
-        <div className="px-4 sm:px-6 py-2.5 bg-[#0A1A1A]/80 border-b border-emerald-500/20 flex items-center gap-2 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 bg-[#0A1A1A]/80 border-b border-slate-500/20 flex items-center gap-2 shrink-0">
           <Search className="w-4 h-4 text-[#6B8A8A]" />
           <input
             type="text"
@@ -106,7 +106,7 @@ export default function ModalSetuju({
 
                   return (
                     <div
-                      key={c.id}
+                      key={`${c.iso}-${c.name}`}
                       className={`flex items-center justify-between gap-2 p-3 rounded-xl bg-[#0A1A1A] transition-all w-full ${
                         isUser
                           ? "border-2 border-cyan-400 shadow-lg shadow-cyan-500/20 bg-cyan-950/30"
@@ -114,7 +114,7 @@ export default function ModalSetuju({
                           ? "border-2 border-emerald-500 shadow-lg shadow-emerald-500/20 bg-emerald-950/20"
                           : isTarget
                           ? "border-2 border-rose-500 shadow-lg shadow-rose-500/20 bg-rose-950/20"
-                          : "border border-emerald-500/20 hover:border-emerald-500/50"
+                          : "border border-slate-500/20 hover:border-slate-500/50"
                       }`}
                     >
                       <div className="flex items-center gap-3 overflow-hidden min-w-0">
@@ -123,7 +123,7 @@ export default function ModalSetuju({
                           <span className="text-xs font-bold text-[#E0E0E0] truncate">
                             {c.name}
                           </span>
-                          <span className="text-[9px] font-semibold text-emerald-400/80 uppercase tracking-wider truncate">
+                          <span className="text-[9px] font-semibold text-slate-400/80 uppercase tracking-wider truncate">
                             {isUser ? (
                               <span className="text-[9px] font-black uppercase text-cyan-400">
                                 👤 SUARA ANDA ({c.name})
