@@ -22,7 +22,6 @@ const RequireEmbassyModal = dynamic(() => import('./RequireEmbassyModal').then(m
 import { Navbar } from '../navbar/Navbar';
 import BottomNav from '../navigasi_menu/2_navigasi_bawah/BottomNav';
 import ModalsManager from '../navigasi_menu/2_navigasi_bawah/ModalsManager';
-import { calculateCountryNetBalance } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateDailyPopulationChange, updateDailyPopulation } from '@/app/logic/populations_logic/population_logic';
 import { logger } from '../../../lib/logger';
 const CountryDetailModal = dynamic(() => import('../detail_negara/detail_negara').then(m => m.CountryDetailModal), { ssr: false });
@@ -74,6 +73,13 @@ import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawa
 import { getMaterialStock } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
 import { generateInvasionNews, evaluateAnnualHotRelationsInvasion, getCountryColor } from '../menus/news/logic/1_berita_invasi/beritaInvasiLogic';
 import { generateAnnexationNews, updateMapTerritoryColor } from '../menus/news/logic/2_berita_aneksasi/beritaAneksasiLogic';
+import { hasActiveGlobalWarBan, submitWarBanViolationSanctions } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/1_warBanLogic';
+import {
+    hasActiveApprovedInvasionResolution,
+    hasActiveApprovedInvasionResolutionForDifferentTarget
+} from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/4_resolusiInvasiLogic';
+import { calculateNetBalanceWithEconomicEmbargo, getEconomicEmbargoProductionMultiplier } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
+import { isTradeEmbargoActive, submitInvasionViolationSanctions } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 import { generateResourceLootNews } from '../menus/news/logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
 import { NewsItemData } from '../menus/news/newsModals';
 import { calculateFoodCoverageByGroup } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic';
@@ -174,6 +180,35 @@ export default function MapPage() {
             const day = String(currentDate.getDate()).padStart(2, '0');
             const dateStr = `${year}-${month}-${day}`;
 
+            const warBanActive = hasActiveGlobalWarBan();
+            const hasInvasionMandate = hasActiveApprovedInvasionResolution(attackerCountry, targetCountry);
+            if (warBanActive) {
+                if (Math.random() >= 0.2) {
+                    setNotifications(prev => [{
+                        id: `notif-war-ban-block-${Date.now()}`,
+                        title: '🕊️ SERANGAN DIBATALKAN OLEH RESOLUSI PBB',
+                        sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
+                        message: `Rencana serangan ${attackerCountry} terhadap ${targetCountry} diblokir karena larangan perang global masih berlaku.`,
+                        timestamp: dateStr,
+                        type: 'peringkat',
+                        value: 100,
+                        isRead: false
+                    }, ...prev]);
+                    return;
+                }
+            }
+            if (warBanActive || !hasInvasionMandate) {
+                const reason = warBanActive
+                    ? 'war_ban'
+                    : hasActiveApprovedInvasionResolutionForDifferentTarget(attackerCountry, targetCountry)
+                        ? 'wrong_military_target'
+                        : 'missing_military_resolution';
+                const sanctionsNotifications = warBanActive
+                    ? submitWarBanViolationSanctions(attackerCountry, targetCountry, dateStr)
+                    : submitInvasionViolationSanctions(attackerCountry, targetCountry, dateStr, reason);
+                setNotifications(prev => [...sanctionsNotifications, ...prev]);
+            }
+
             // 1. Berita Invasi Deklarasi Perang
             const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
             const newNewsItems: NewsItemData[] = [invNews];
@@ -270,6 +305,36 @@ export default function MapPage() {
             const newNewsItems: NewsItemData[] = [];
 
             if (actionType === 'aneksasi') {
+                const hasInvasionMandate = hasActiveApprovedInvasionResolution(attackerCountry, targetCountry);
+                if (hasActiveGlobalWarBan()) {
+                    setNotifications(prev => [{
+                        id: `notif-war-ban-player-block-${Date.now()}`,
+                        title: '🕊️ SERANGAN DIBLOKIR OLEH RESOLUSI PBB',
+                        sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
+                        message: `Aksi militer terhadap ${targetCountry} dibatalkan karena larangan perang global masih berlaku.`,
+                        timestamp: dateStr,
+                        type: 'peringkat',
+                        value: 100,
+                        isRead: false
+                    }, ...prev]);
+                    return;
+                }
+
+                if (!hasInvasionMandate) {
+                    const reason = hasActiveApprovedInvasionResolutionForDifferentTarget(attackerCountry, targetCountry)
+                        ? 'wrong_military_target'
+                        : 'missing_military_resolution';
+                    const sanctionsNotifications = submitInvasionViolationSanctions(
+                        attackerCountry,
+                        targetCountry,
+                        dateStr,
+                        reason
+                    );
+                    if (sanctionsNotifications.length > 0) {
+                        setNotifications(prev => [...sanctionsNotifications, ...prev]);
+                    }
+                }
+
                 // 1. Berita Invasi
                 const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
                 newNewsItems.push(invNews);
@@ -435,7 +500,7 @@ export default function MapPage() {
                         });
 
                         // Tambahkan Net Balance (pertumbuhan harian / +) dari target country ke adjustment net balance user
-                        const targetNetBal = calculateCountryNetBalance(targetData);
+                        const targetNetBal = calculateNetBalanceWithEconomicEmbargo(targetData, targetCountry);
                         if (targetNetBal > 0) {
                             setPlayerNetBalanceAdjustment(prev => prev + targetNetBal);
                         }
@@ -457,6 +522,36 @@ export default function MapPage() {
                 setNotifications(prev => [notifMsg, ...prev]);
 
             } else if (actionType === 'jarah') {
+                const hasInvasionMandate = hasActiveApprovedInvasionResolution(attackerCountry, targetCountry);
+                if (hasActiveGlobalWarBan()) {
+                    setNotifications(prev => [{
+                        id: `notif-war-ban-player-block-${Date.now()}`,
+                        title: '🕊️ SERANGAN DIBLOKIR OLEH RESOLUSI PBB',
+                        sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
+                        message: `Aksi militer terhadap ${targetCountry} dibatalkan karena larangan perang global masih berlaku.`,
+                        timestamp: dateStr,
+                        type: 'peringkat',
+                        value: 100,
+                        isRead: false
+                    }, ...prev]);
+                    return;
+                }
+
+                if (!hasInvasionMandate) {
+                    const reason = hasActiveApprovedInvasionResolutionForDifferentTarget(attackerCountry, targetCountry)
+                        ? 'wrong_military_target'
+                        : 'missing_military_resolution';
+                    const sanctionsNotifications = submitInvasionViolationSanctions(
+                        attackerCountry,
+                        targetCountry,
+                        dateStr,
+                        reason
+                    );
+                    if (sanctionsNotifications.length > 0) {
+                        setNotifications(prev => [...sanctionsNotifications, ...prev]);
+                    }
+                }
+
                 const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
                 const lootNews = generateResourceLootNews(
                     attackerCountry,
@@ -976,10 +1071,45 @@ export default function MapPage() {
 
             // 5H. Evaluasi Berita Perang / Invasi / Aneksasi / Rampasan SDA Geopolitik (35% per bulan ~ 4-5x/tahun)
             if (Math.random() < 0.35) {
-                const annualInvasions = evaluateAnnualHotRelationsInvasion(currentDateStr, userCountryName);
+                const proposedInvasions = evaluateAnnualHotRelationsInvasion(currentDateStr, userCountryName);
+                const warBanActive = hasActiveGlobalWarBan();
+                const annualInvasions = warBanActive
+                    ? proposedInvasions.filter(() => Math.random() < 0.2)
+                    : proposedInvasions;
+
+                if (warBanActive && annualInvasions.length < proposedInvasions.length) {
+                    newNotifsToAdd.push({
+                        id: `notif-war-ban-ai-block-${currentDateStr}`,
+                        title: '🕊️ LARANGAN PERANG PBB MENGHENTIKAN SERANGAN',
+                        sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
+                        message: `${proposedInvasions.length - annualInvasions.length} rencana serangan negara AI dibatalkan. Larangan perang aktif; hanya 20% serangan AI yang biasanya terjadi dapat lolos.`,
+                        timestamp: currentDateStr,
+                        type: 'peringkat',
+                        value: 100,
+                        isRead: false
+                    });
+                }
+
                 if (annualInvasions.length > 0) {
                     const generatedNewsItems: NewsItemData[] = [];
                     annualInvasions.forEach(inv => {
+                        const hasInvasionMandate = hasActiveApprovedInvasionResolution(inv.attackerCountry, inv.targetCountry);
+                        if (warBanActive || !hasInvasionMandate) {
+                            const reason = warBanActive
+                                ? 'war_ban'
+                                : hasActiveApprovedInvasionResolutionForDifferentTarget(inv.attackerCountry, inv.targetCountry)
+                                    ? 'wrong_military_target'
+                                    : 'missing_military_resolution';
+                            const sanctionsNotifications = warBanActive
+                                ? submitWarBanViolationSanctions(inv.attackerCountry, inv.targetCountry, currentDateStr)
+                                : submitInvasionViolationSanctions(
+                                    inv.attackerCountry,
+                                    inv.targetCountry,
+                                    currentDateStr,
+                                    reason
+                                );
+                            newNotifsToAdd.push(...sanctionsNotifications);
+                        }
                         generatedNewsItems.push(inv);
 
                         const outcomeRoll = Math.random();
@@ -1279,6 +1409,7 @@ export default function MapPage() {
                 localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
                 localStorage.removeItem('pbb_active_resolutions_v4');
                 localStorage.removeItem('pbb_active_keamanan_v4');
+                localStorage.removeItem('pbb_reported_war_ban_violations_v1');
                 localStorage.removeItem('neosantara_country_color_overrides');
                 localStorage.removeItem('neosantara_annexed_countries');
                 (window as any).neosantara_annexed_countries = {};
@@ -1590,7 +1721,8 @@ export default function MapPage() {
         prevBudgetUpdateDateRef.current = currentDateStr;
 
         // Calculate economy updates
-        const netBalance = calculateCountryNetBalance(countryDetail);
+        const playerCountryName = selectedCountry?.country || countryDetail.country || countryDetail.nama_negara || '';
+        const netBalance = calculateNetBalanceWithEconomicEmbargo(countryDetail, playerCountryName);
 
         const populationMetrics = calculateDailyPopulationChange(
             countryDetail,
@@ -1610,7 +1742,8 @@ export default function MapPage() {
             const result = calculateDailyMaterialProduction(
                 countryDetail,
                 metadata,
-                currentDateStr
+                currentDateStr,
+                resourceKey => getEconomicEmbargoProductionMultiplier(playerCountryName, resourceKey)
             );
             updates = result.hasUpdates ? result.updates : {};
         }
@@ -2280,6 +2413,20 @@ export default function MapPage() {
                 onActionClick={(notif) => {
                     // Intersep jika ini tawaran transaksi dagang AI
                     const tNotif = notif as any;
+                    if (
+                        (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli') &&
+                        isTradeEmbargoActive(countryDetail?.country || countryDetail?.nama_negara || '', tNotif.partnerName || '')
+                    ) {
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Transaksi Diblokir oleh Embargo PBB',
+                            message: `Perdagangan dengan ${tNotif.partnerName || 'negara terkait'} tidak dapat dilakukan selama embargo ekonomi PBB masih berlaku.`,
+                            type: 'error'
+                        });
+                        setNotifications(prev => prev.filter(n => n.id !== notif.id));
+                        return;
+                    }
+
                     if (tNotif.tradeType === 'jual') {
                         // AI Ingin Membeli Produk User (Jual): Tambah Kas, Kurangi Stok User
                         const myStock = Number(countryDetail?.[tNotif.productKey] || 0);
@@ -2358,6 +2505,16 @@ export default function MapPage() {
                     if (tNotif.tradeType === 'penawaran_hubungan_dagang') {
                         const partner = tNotif.partnerCountry;
                         const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        if (isTradeEmbargoActive(playerCountryName, partner)) {
+                            setInboxModalOpen(false);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Ratifikasi Diblokir oleh Embargo PBB',
+                                message: `Perjanjian dagang dengan ${partner} tidak dapat diratifikasi selama embargo ekonomi PBB masih berlaku.`,
+                                type: 'error'
+                            });
+                            return;
+                        }
                         const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
                         const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
                         const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];

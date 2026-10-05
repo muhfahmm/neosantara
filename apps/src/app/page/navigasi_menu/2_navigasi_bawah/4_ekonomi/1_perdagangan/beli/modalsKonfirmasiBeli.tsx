@@ -8,6 +8,7 @@ import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateProductionIncrement, formatDate, normalizePartnerBuildDates } from '@/app/logic/production_logic';
 import countryPaths from '@/app/page/map_system/country-paths.json';
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
+import { isTradeEmbargoActive } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 
 const getFlagEmoji = (countryName: string) => {
   const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === countryName.toLowerCase().trim());
@@ -690,6 +691,11 @@ export default function ModalsKonfirmasiBeli({
   const handleConfirm = () => {
     const detail = countryDetail ?? {};
     const currentBudget = typeof detail.anggaran === "number" ? detail.anggaran : 0;
+    const ownCountryName = String(detail.country || detail.nama || '');
+    if (isTradeEmbargoActive(ownCountryName, targetCountry)) {
+      alert(`Perdagangan dengan ${targetCountry} diblokir oleh embargo ekonomi PBB yang sedang berlaku.`);
+      return;
+    }
 
     // Cek apakah ini transaksi dari tawaran AI yang valid
     const matchedOffer = partnerOffers?.find(

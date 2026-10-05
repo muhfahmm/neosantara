@@ -8,6 +8,7 @@ import { getTradeAgreementsForCountry } from '../../../../../../../../json/datab
 import TawaranPembelianTable from "./tawaran_beli/TawaranPembelianTable";
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateProductionIncrement, formatDate } from '@/app/logic/production_logic';
+import { isCountryUnderEconomicEmbargo, isTradeEmbargoActive } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 
 interface AgreementData {
   no: number;
@@ -163,6 +164,13 @@ export default function PerdaganganModal({
   }, [historyFilter, resetTrigger]);
 
   const [offersResetVersion, setOffersResetVersion] = useState(0);
+  const [pbbRevision, setPbbRevision] = useState(0);
+
+  useEffect(() => {
+    const refreshEmbargoState = () => setPbbRevision(revision => revision + 1);
+    window.addEventListener('pbb_active_resolutions_updated', refreshEmbargoState);
+    return () => window.removeEventListener('pbb_active_resolutions_updated', refreshEmbargoState);
+  }, []);
 
   const handleResetHistory = () => {
     setHistory([]);
@@ -195,6 +203,11 @@ export default function PerdaganganModal({
     setPartnersState(allPartners);
   }, [allPartners]);
 
+  const eligiblePartners = useMemo(
+    () => partnersState.filter(partner => !isTradeEmbargoActive(countryName, partner.nama_negara)),
+    [partnersState, countryName, pbbRevision]
+  );
+
   const handleRemovePartner = (partnerId: number) => {
     setPartnersState((prev) => prev.filter(p => p.id !== partnerId));
   };
@@ -212,17 +225,17 @@ export default function PerdaganganModal({
       if (currentDate) {
         return rawOffers.filter((o: any) => {
           const validUntilDate = new Date(o.validUntil);
-          return validUntilDate > currentDate;
+          return validUntilDate > currentDate && !isTradeEmbargoActive(countryName, o.partnerName);
         });
       }
-      return rawOffers;
+      return rawOffers.filter((o: any) => !isTradeEmbargoActive(countryName, o.partnerName));
     } catch (e) {
       return [];
     }
-  }, [countryDetail?.ai_trade_offers, currentDate]);
+  }, [countryDetail?.ai_trade_offers, currentDate, countryName, pbbRevision]);
 
   useEffect(() => {
-    if (!isOpen || partnersState.length === 0 || !currentDate || !countryDetail) {
+    if (!isOpen || eligiblePartners.length === 0 || !currentDate || !countryDetail) {
       return;
     }
 
@@ -255,7 +268,7 @@ export default function PerdaganganModal({
       // Waktunya generate tawaran untuk minggu ini!
       // Jumlah negara acak: 2 sampai 3
       const offerSize = 2 + Math.floor(Math.random() * 2);
-      const shuffledPartners = [...partnersState].sort(() => 0.5 - Math.random()).slice(0, offerSize);
+      const shuffledPartners = [...eligiblePartners].sort(() => 0.5 - Math.random()).slice(0, offerSize);
       
       const newOffers: PartnerOffer[] = [];
 
@@ -340,11 +353,11 @@ export default function PerdaganganModal({
         last_generated_week: currentWeekIndex
       }));
     }
-  }, [isOpen, partnersState, currentDate, prefetchedAllCountries, countryDetail, activeOffers, metadata, setCountryDetail]);
+  }, [isOpen, eligiblePartners, currentDate, prefetchedAllCountries, countryDetail, activeOffers, metadata, setCountryDetail]);
 
   // --- Fungsi Terima Tawaran ---
   const handleAcceptOffer = (offer: PartnerOffer) => {
-    const targetPartner = partnersState.find(p => p.nama_negara === offer.partnerName);
+    const targetPartner = eligiblePartners.find(p => p.nama_negara === offer.partnerName);
     if (targetPartner) {
       setActiveTradePartner(targetPartner);
       setActiveOfferProduct(offer.productKey);
@@ -387,6 +400,11 @@ export default function PerdaganganModal({
             <p className="text-[10px] lg:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-3.5 lg:mb-5 2xl:mb-6">
               Kelola aktivitas jual dan beli komoditas nasional untuk mengoptimalkan pendapatan dan kebutuhan anggaran belanja negara.
             </p>
+            {isCountryUnderEconomicEmbargo(countryName) && (
+              <p className="mb-4 rounded-lg border border-rose-500/40 bg-rose-950/40 px-4 py-3 text-xs font-bold text-rose-300">
+                Embargo ekonomi PBB sedang berlaku terhadap negara Anda. Aktivitas perdagangan internasional diblokir selama resolusi aktif.
+              </p>
+            )}
 
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 lg:gap-2.5 mb-4 lg:mb-6">
               <button
@@ -477,7 +495,7 @@ export default function PerdaganganModal({
         countryDetail={countryDetail}
         setCountryDetail={setCountryDetail}
         onConfirm={(biaya, kuantitas) => addHistoryEntry("beli", biaya, kuantitas)}
-        partners={allPartners}
+        partners={eligiblePartners}
         currentDate={currentDate}
         initialPartnerName={activeTradePartner?.nama_negara}
         initialProductKey={activeOfferProduct}
@@ -492,7 +510,7 @@ export default function PerdaganganModal({
         setCountryDetail={setCountryDetail} 
         onConfirm={(biaya, kuantitas) => addHistoryEntry("jual", biaya, kuantitas)} 
         currentDate={currentDate}
-        partners={allPartners}
+        partners={eligiblePartners}
         initialPartnerName={activeTradePartner?.nama_negara}
         prefetchedAllCountries={prefetchedAllCountries}
       />
@@ -500,7 +518,7 @@ export default function PerdaganganModal({
       <MitraModalsMenu 
         isOpen={isMitraOpen} 
         onClose={() => setIsMitraOpen(false)} 
-        partners={partnersState}
+        partners={eligiblePartners}
         onOpenBeli={openBeliModals}
         onOpenJual={openJualModals}
         onRemovePartner={handleRemovePartner}

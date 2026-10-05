@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import { formatDate, getDaysElapsed } from "@/app/logic/production_logic";
+import { getEconomicEmbargoProductionMultiplier } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
 import {
   FOOD_CONSUMPTION_PER_CAPITA,
   calculateConsumption,
@@ -40,7 +41,8 @@ export const findBuildingMetadata = (metadata: Record<string, any>, key: string)
 export function calculateDailyMaterialProduction(
   countryDetail: any,
   metadata: Record<string, any>,
-  currentDateStr: string
+  currentDateStr: string,
+  getProductionMultiplier: (resourceKey: string) => number = () => 1
 ) {
   if (!currentDateStr || !metadata || Object.keys(metadata).length === 0 || !countryDetail) {
     return { hasUpdates: false, updates: {} as Record<string, any> };
@@ -83,7 +85,7 @@ export function calculateDailyMaterialProduction(
       dailyAmount = Number(bMeta.produksi) * buildingCount;
     }
 
-    const productionAdded = dailyAmount * daysPassed;
+    const productionAdded = dailyAmount * getProductionMultiplier(resourceKey) * daysPassed;
     const currentStock = Number(countryDetail?.[inventoryKey]) || 0;
     updates[inventoryKey] = currentStock + productionAdded;
     updates[lastUpdateKey] = currentDateStr;
@@ -98,7 +100,12 @@ export function useMaterialProduction(
   countryDetail: any,
   setCountryDetail: (detail: any) => void,
   metadata: Record<string, any>,
-  currentDate?: string | Date
+  currentDate?: string | Date,
+  getProductionMultiplier: (resourceKey: string) => number = resourceKey =>
+    getEconomicEmbargoProductionMultiplier(
+      countryDetail?.country || countryDetail?.nama_negara || countryDetail?.country_name || '',
+      resourceKey
+    )
 ) {
   const safeDateString = useMemo(() => {
     if (!currentDate) return formatDate(new Date());
@@ -115,13 +122,14 @@ export function useMaterialProduction(
     const { hasUpdates, updates } = calculateDailyMaterialProduction(
       countryDetail,
       metadata,
-      safeDateString
+      safeDateString,
+      getProductionMultiplier
     );
 
     if (hasUpdates) {
       setCountryDetail((prev: any) => ({ ...prev, ...updates }));
     }
-  }, [safeDateString, metadata, countryDetail, setCountryDetail]);
+  }, [safeDateString, metadata, countryDetail, setCountryDetail, getProductionMultiplier]);
 
   return { safeDateString };
 }

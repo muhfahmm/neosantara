@@ -1,4 +1,5 @@
 import { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { chooseAIResolutionDuration } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 
 export interface AIResolusiPBBNotification extends NotificationMessage {
   tradeType: 'usulan_resolusi_pbb';
@@ -7,6 +8,7 @@ export interface AIResolusiPBBNotification extends NotificationMessage {
   relationScore: number;
   resolutionType: 'war_ban' | 'arms_embargo' | 'economic_embargo' | 'military_invasion' | 'production_ban';
   resolutionTitle: string;
+  duration: string;
 }
 
 const RESOLUTION_TYPES: Array<{
@@ -27,7 +29,7 @@ const RESOLUTION_TYPES: Array<{
   {
     type: 'economic_embargo',
     title: 'Embargo Ekonomi',
-    desc: 'Perdagangan ekonomi dilarang selama periode yang dipilih.'
+    desc: 'Produksi pabrik dan tambang serta pendapatan negara turun 60% selama periode yang dipilih.'
   },
   {
     type: 'military_invasion',
@@ -57,10 +59,11 @@ export function generateAIResolusiPBBNotification(
   const title = isWarBan
     ? `🏛️ USULAN RESOLUSI PBB: ${proposerCountry} (LARANGAN PERANG)`
     : `🏛️ USULAN RESOLUSI PBB: ${proposerCountry} ➔ ${targetCountry}`;
+  const duration = chooseAIResolutionDuration(chosen.type, relationScore);
 
   const message = isWarBan
-    ? `Kabar Diplomasi PBB! Negara ${proposerCountry} secara resmi mengajukan usulan "${chosen.title}" untuk seluruh dunia. Usulan ini: ${chosen.desc}. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!`
-    : `Kabar Diplomasi PBB! Negara ${proposerCountry} secara resmi mengajukan usulan "${chosen.title}" yang menargetkan ${targetCountry} akibat ketegangan hubungan bilateral yang buruk (Skor: ${relationScore}/100). Usulan ini: ${chosen.desc}. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!`;
+    ? `Kabar Diplomasi PBB! Negara ${proposerCountry} secara resmi mengajukan usulan "${chosen.title}" untuk seluruh dunia selama ${duration}. Usulan ini: ${chosen.desc}. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!`
+    : `Kabar Diplomasi PBB! Negara ${proposerCountry} secara resmi mengajukan usulan "${chosen.title}" yang menargetkan ${targetCountry} selama ${duration} akibat ketegangan hubungan bilateral yang buruk (Skor: ${relationScore}/100). Usulan ini: ${chosen.desc}. Pemungutan suara Majelis Umum PBB akan segera dilaksanakan!`;
 
   return {
     id: `resolusi-pbb-${proposerCountry}-${targetCountry}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
@@ -76,7 +79,8 @@ export function generateAIResolusiPBBNotification(
     targetCountry: isWarBan ? 'Seluruh Dunia (Global)' : targetCountry,
     relationScore,
     resolutionType: chosen.type,
-    resolutionTitle: chosen.title
+    resolutionTitle: chosen.title,
+    duration
   };
 }
 

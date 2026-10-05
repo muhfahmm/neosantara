@@ -2,6 +2,41 @@ import { generateAIResolusiPBBNotification } from '@/app/page/menus/inbox/logic/
 import { STATIC_PBB_VOTES } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/3_suara_negara_PBB/staticVoteData";
 import { getIsoForCountryName } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso";
 
+export const PBB_RESOLUTION_DURATION_OPTIONS = ['1 bulan', '3 bulan', '6 bulan', '9 bulan', '1 tahun'] as const;
+
+export function getResolutionDurationDays(duration: string | undefined): number {
+  if (!duration) return 30;
+
+  const match = duration.match(/(\d+)\s*(bulan|tahun)/i);
+  if (!match) return 30;
+
+  const amount = Number(match[1]);
+  if (!Number.isFinite(amount) || amount <= 0) return 30;
+  return amount * (match[2].toLowerCase() === 'tahun' ? 360 : 30);
+}
+
+export function chooseAIResolutionDuration(resolutionType?: string, relationScore?: number): string {
+  const options = resolutionType === 'economic_embargo' || resolutionType === 'economic' || resolutionType === 'full' ||
+    (relationScore !== undefined && relationScore <= 5)
+    ? ['6 bulan', '9 bulan', '1 tahun']
+    : resolutionType === 'war_ban'
+      ? ['3 bulan', '6 bulan', '9 bulan']
+      : PBB_RESOLUTION_DURATION_OPTIONS;
+
+  return options[Math.floor(Math.random() * options.length)];
+}
+
+export function isPassedResolutionActive(item: {
+  status: string;
+  daysRemaining: number;
+}): boolean {
+  return item.status === 'passed' && item.daysRemaining > 0;
+}
+
+export function normalizePbbCountryName(countryName: string): string {
+  return countryName.toLowerCase().trim().replace(/\s+/g, ' ');
+}
+
 export interface ActiveResolutionItem {
   id: string;
   proposer: {
@@ -27,6 +62,7 @@ export interface ActiveResolutionItem {
   createdAt: string;
   finishedAt?: string;
   lastProcessedDate?: string;
+  violationId?: string;
   bribedCountries?: Record<string, 'yes' | 'no' | 'abstain'>;
   notifiedDay1?: boolean;
   notified10Days?: boolean;
@@ -82,7 +118,7 @@ const DEFAULT_AI_TARGETS = [
 const RESOLUTION_TEMPLATES = [
   { type: 'war_ban', label: 'Larangan Perang & Embargo Militer', desc: 'Penghentian kontak militer dan pelarangan transaksi alutsista.' },
   { type: 'arms_embargo', label: 'Embargo Penjualan Senjata Global', desc: 'Melarang seluruh anggota PBB memasok peralatan tempur ke negara target.' },
-  { type: 'economic_embargo', label: 'Embargo Perdagangan Ekonomi', desc: 'Pembekuan transaksi ekspor-impor utama dengan negara target.' },
+  { type: 'economic_embargo', label: 'Embargo Perdagangan Ekonomi', desc: 'Produksi pabrik dan tambang serta pendapatan negara turun 60% selama periode yang dipilih.' },
   { type: 'production_ban', label: 'Larangan Produksi & Sektor Strategis', desc: 'Menghentikan eksplorasi dan manufaktur komoditas penting.' }
 ];
 
@@ -188,17 +224,8 @@ export function calculate206AIVotes(
   };
 }
 
-// Flag level-modul: ikut ter-reset setiap halaman di-refresh (F5), sehingga data PBB lama dibuang sekali per sesi halaman.
-let pbbResolusiSessionInitialized = false;
-
 export function loadActiveResolutions(): ActiveResolutionItem[] {
   if (typeof window === 'undefined') return getInitialActiveResolutions();
-
-  if (!pbbResolusiSessionInitialized) {
-    pbbResolusiSessionInitialized = true;
-    try { localStorage.removeItem(STORAGE_KEY_PBB_RESOLUSI); } catch (e) {}
-    return getInitialActiveResolutions();
-  }
 
   try {
     const data = localStorage.getItem(STORAGE_KEY_PBB_RESOLUSI);
@@ -248,7 +275,7 @@ export function getInitialActiveResolutions(_userCountryName: string = 'Indonesi
 const RESOLUTION_TYPE_META: Record<string, { label: string; desc: string }> = {
   war_ban: { label: 'Larangan Perang', desc: 'Dilarang melakukan peperangan antar negara di seluruh dunia selama periode yang dipilih.' },
   arms_embargo: { label: 'Embargo Penjualan Senjata', desc: 'Perdagangan senjata dilarang selama periode yang dipilih.' },
-  economic_embargo: { label: 'Embargo Ekonomi', desc: 'Perdagangan ekonomi dilarang selama periode yang dipilih.' },
+  economic_embargo: { label: 'Embargo Ekonomi', desc: 'Produksi pabrik dan tambang serta pendapatan negara turun 60% selama periode yang dipilih.' },
   military_invasion: { label: 'Resolusi Invasi', desc: 'Resolusi memungkinkan negara diinvasi tanpa kecaman oleh negara lain.' },
   production_ban: { label: 'Larangan Produksi', desc: 'Produksi produk yang dipilih dihentikan selama periode yang dipilih.' }
 };
@@ -258,7 +285,7 @@ const RESOLUTION_TYPE_META: Record<string, { label: string; desc: string }> = {
  * Notifikasi inbox sudah dikirim oleh pemicu bulanan, jadi notifiedDay1 = true agar tidak dobel.
  */
 export function spawnAIResolutionFromTrigger(
-  trigger: { proposerCountry: string; targetCountry: string; resolutionType: string },
+  trigger: { proposerCountry: string; targetCountry: string; resolutionType: string; duration?: string },
   dateStr: string
 ): void {
   if (typeof window === 'undefined') return;
@@ -289,7 +316,7 @@ export function spawnAIResolutionFromTrigger(
     type: trigger.resolutionType,
     label: meta.label,
     desc: meta.desc,
-    duration: '30 hari',
+    duration: trigger.duration || chooseAIResolutionDuration(),
     daysRemaining: 30,
     voteStats: {
       supportersCount: votes.supportersCount,
@@ -338,7 +365,7 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
         proposer = availableProposers[Math.floor(Math.random() * availableProposers.length)] || { name: 'Rusia', iso: 'ru' };
       }
 
-      // Jika resolusi sudah selesai (passed / rejected), hitung cooldown 30 hari untuk penghapusan
+      // Passed resolutions remain active for their selected term; rejected items use a 30-day cleanup window.
       if (item.status !== 'voting') {
         const finishDate = item.finishedAt || dateStr;
         const cooldownRemaining = Math.max(0, item.daysRemaining - step);
@@ -448,7 +475,11 @@ export function tickPBBResolutions(dateStr: string, onTriggerNotification?: (not
         ...item,
         createdAt: startDate,
         finishedAt: finishedAtDate,
-        daysRemaining: finalStatus !== 'voting' ? 30 : newDaysRemaining,
+        daysRemaining: finalStatus === 'passed'
+          ? getResolutionDurationDays(item.duration)
+          : finalStatus === 'rejected'
+            ? 30
+            : newDaysRemaining,
         voteStats: {
           supportersCount: votes.supportersCount,
           opponentsCount: votes.opponentsCount,

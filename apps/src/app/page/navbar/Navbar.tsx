@@ -6,7 +6,8 @@ import {
     Power, Users, Landmark, Save, RotateCcw, Smile, LayoutGrid, Star,
     Activity // ✅ TAMBAHAN: Import Activity agar error hilang
 } from 'lucide-react';
-import { calculateCountryNetBalance, formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
+import { formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
+import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 // 🔥 Import fungsi warna dari logic populasi
 import { getNetPopulationChangeColor } from '@/app/logic/populations_logic/population_logic';
 import { menuItems, subMenuItems } from '../navigasi_menu/navigationData';
@@ -59,7 +60,8 @@ export function Navbar({
     kesejahteraan = 50,
 }: NavbarProps) {
     const anggaran = Number(countryDetail?.anggaran) || 0;
-    const netBalance = calculateCountryNetBalance(countryDetail) + netBalanceAdjustment;
+    const countryName = selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || '';
+    const netBalance = calculateNetBalanceWithEconomicEmbargo(countryDetail, countryName) + netBalanceAdjustment;
     const netBalanceColor = netBalance >= 0 ? 'text-emerald-700' : 'text-rose-700';
     const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID')}`;
     

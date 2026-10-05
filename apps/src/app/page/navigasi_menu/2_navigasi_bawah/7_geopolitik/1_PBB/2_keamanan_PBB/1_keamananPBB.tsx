@@ -12,6 +12,7 @@ import ModalMenolak from "./5_modal_menolak";
 import ModalAbstain from "./6_modal_abstain";
 import ModalVeto from "./7_modal_veto";
 import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_KEAMANAN, getSecurityCouncilCountryBreakdown } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
+import { PBB_RESOLUTION_DURATION_OPTIONS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 
 interface KeamananPBBProps {
   selectedCountry: any;
@@ -32,8 +33,6 @@ const RESOLUTION_ACTIONS = [
   { id: 'full', icon: Lock, label: 'Blokade Penuh', desc: 'Selama periode yang dipilih, negara ini tidak dapat menandatangani kontrak apa pun atau berdagang.' },
   { id: 'treasure', icon: Package, label: 'Bantuan Logistik', desc: 'Memberikan bantuan sumber daya dan logistik ke negara yang dipilih.' },
 ];
-
-const DURATION_OPTIONS = ['1 bulan', '3 bulan', '6 bulan', '9 bulan', '1 tahun'];
 
 const formatCountryName = (name: string) => {
   return name
@@ -334,7 +333,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
       type: selectedType,
       label: activeAction?.label || 'Resolusi Dewan Keamanan PBB',
       desc: activeAction?.desc || '',
-      duration: '30 hari',
+      duration: selectedDuration,
       daysRemaining: 30,
       voteStats: {
         supportersCount: votes.supportersCount,
@@ -609,6 +608,8 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
                   <span>•</span>
                   {item.status === 'voting' ? (
                     <span>Progres sisa hari: <strong className="text-amber-400">{item.daysRemaining} hari tersisa</strong> (30 Hari - {30 - item.daysRemaining} Hari)</span>
+                  ) : item.status === 'passed' ? (
+                    <span>Masa berlaku tersisa: <strong className="text-emerald-400">{item.daysRemaining} hari</strong></span>
                   ) : (
                     <span>Cooldown Penghapusan: <strong className="text-rose-400">{item.daysRemaining} Hari Tersisa</strong> (Akan terhapus otomatis)</span>
                   )}
@@ -774,7 +775,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
                       </button>
                       {isDurationOpen && (
                         <div className="absolute top-full left-0 right-0 mt-2 bg-[#051111] border border-[#00FFAA]/30 rounded-xl shadow-xl z-30 overflow-hidden">
-                          {DURATION_OPTIONS.map((dur) => (
+                          {PBB_RESOLUTION_DURATION_OPTIONS.map((dur) => (
                             <button key={dur} onClick={() => { setSelectedDuration(dur); setIsDurationOpen(false); }} className={`w-full px-5 py-3 text-left text-sm font-bold transition-colors cursor-pointer hover:bg-[#00FFAA]/10 ${selectedDuration === dur ? 'bg-[#00FFAA]/20 text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>{dur}</button>
                           ))}
                         </div>

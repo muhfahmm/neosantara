@@ -3,7 +3,8 @@
 import React from 'react';
 import { X, User, Globe, Building2, Users, Landmark, ShieldCheck } from 'lucide-react';
 
-import { calculateCountryGDP, calculateCountryNetBalance, formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
+import { calculateCountryGDP, formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
+import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 
 interface NegaraUserModalProps {
   isOpen: boolean;
@@ -22,17 +23,17 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
   const countryName = selectedCountry?.country || countryDetail?.nama_negara || '—';
   const capital = selectedCountry?.capital || countryDetail?.ibukota || '—';
   const iso = (selectedCountry?.iso || countryDetail?.iso || '').toLowerCase();
-  
+
   const population = Number(
-    countryDetail?.jumlah_penduduk ?? 
-    countryDetail?.populasi ?? 
-    countryDetail?.population ?? 
-    countryDetail?.penduduk ?? 
+    countryDetail?.jumlah_penduduk ??
+    countryDetail?.populasi ??
+    countryDetail?.population ??
+    countryDetail?.penduduk ??
     0
   );
-  
+
   const anggaran = Number(countryDetail?.anggaran) || 0;
-  const netBalance = calculateCountryNetBalance(countryDetail);
+  const netBalance = calculateNetBalanceWithEconomicEmbargo(countryDetail, selectedCountry?.country);
   const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID')}`;
 
   const ideology = countryDetail?.ideology || countryDetail?.ideologi || '—';
@@ -46,7 +47,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        
+
         {/* Background Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
@@ -92,7 +93,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
         {/* BODY CONTENT */}
         <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] relative z-10 no-scrollbar">
           <div className="max-w-4xl mx-auto space-y-6">
-            
+
             {/* STATS GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Ibukota */}
@@ -166,4 +167,4 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
       </div>
     </div>
   );
-}
+}

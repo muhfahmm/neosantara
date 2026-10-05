@@ -1,6 +1,10 @@
 import { generateAIKeamananPBBNotification } from '@/app/page/menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
 import { STATIC_PBB_VOTES } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/3_suara_negara_PBB/staticVoteData";
 import { getIsoForCountryName } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso";
+import {
+  chooseAIResolutionDuration,
+  getResolutionDurationDays
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 
 export interface ActiveSecurityCouncilItem {
   id: string;
@@ -28,6 +32,7 @@ export interface ActiveSecurityCouncilItem {
   createdAt: string;
   finishedAt?: string;
   lastProcessedDate?: string;
+  violationId?: string;
   bribedCountries?: Record<string, 'yes' | 'no' | 'abstain' | 'veto'>;
   notifiedDay1?: boolean;
   notified10Days?: boolean;
@@ -183,17 +188,8 @@ export function calculate15SecurityCouncilVotes(
   };
 }
 
-// Flag level-modul: ikut ter-reset setiap halaman di-refresh (F5), sehingga data PBB lama dibuang sekali per sesi halaman.
-let pbbKeamananSessionInitialized = false;
-
 export function loadActiveSecurityCouncilItems(): ActiveSecurityCouncilItem[] {
   if (typeof window === 'undefined') return getInitialActiveSecurityCouncilItems();
-
-  if (!pbbKeamananSessionInitialized) {
-    pbbKeamananSessionInitialized = true;
-    try { localStorage.removeItem(STORAGE_KEY_PBB_KEAMANAN); } catch (e) {}
-    return getInitialActiveSecurityCouncilItems();
-  }
 
   try {
     const data = localStorage.getItem(STORAGE_KEY_PBB_KEAMANAN);
@@ -245,7 +241,7 @@ export function getInitialActiveSecurityCouncilItems(_userCountryName: string = 
  * Notifikasi inbox sudah dikirim oleh pemicu bulanan, jadi notifiedDay1 = true agar tidak dobel.
  */
 export function spawnAISecurityCouncilFromTrigger(
-  trigger: { proposerCountry: string; targetCountry: string; securityAction: string },
+  trigger: { proposerCountry: string; targetCountry: string; securityAction: string; duration?: string },
   dateStr: string
 ): void {
   if (typeof window === 'undefined') return;
@@ -273,7 +269,7 @@ export function spawnAISecurityCouncilFromTrigger(
     type: tmpl.type,
     label: tmpl.label,
     desc: tmpl.desc,
-    duration: '30 hari',
+    duration: trigger.duration || chooseAIResolutionDuration(),
     daysRemaining: 30,
     voteStats: {
       supportersCount: votes.supportersCount,
@@ -323,7 +319,7 @@ export function tickPBBSecurityCouncil(dateStr: string, onTriggerNotification?: 
         proposer = availableProposers[Math.floor(Math.random() * availableProposers.length)] || { name: 'Amerika Serikat', iso: 'us' };
       }
 
-      // Jika sidang DK PBB sudah selesai (passed / vetoed / rejected), hitung cooldown 30 hari untuk penghapusan
+      // Passed resolutions remain active for their selected term; failed items use a 30-day cleanup window.
       if (item.status !== 'voting') {
         const finishDate = item.finishedAt || dateStr;
         const cooldownRemaining = Math.max(0, item.daysRemaining - step);
@@ -412,7 +408,11 @@ export function tickPBBSecurityCouncil(dateStr: string, onTriggerNotification?: 
         ...item,
         createdAt: startDate,
         finishedAt: finishedAtDate,
-        daysRemaining: finalStatus !== 'voting' ? 30 : newDaysRemaining,
+        daysRemaining: finalStatus === 'passed'
+          ? getResolutionDurationDays(item.duration)
+          : finalStatus === 'vetoed' || finalStatus === 'rejected'
+            ? 30
+            : newDaysRemaining,
         voteStats: {
           supportersCount: votes.supportersCount,
           opponentsCount: votes.opponentsCount,
@@ -571,4 +571,3 @@ export function getSecurityCouncilCountryBreakdown(
 
   return { supporters, opponents, abstain, veto };
 }
-

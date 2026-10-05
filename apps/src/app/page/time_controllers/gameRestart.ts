@@ -34,6 +34,7 @@ export function handleGameRestart(options: RestartOptions): void {
         try {
             localStorage.removeItem('pbb_active_resolutions_v4');
             localStorage.removeItem('pbb_active_keamanan_v4');
+            localStorage.removeItem('pbb_reported_war_ban_violations_v1');
             localStorage.removeItem('neosantara_annexed_countries');
             localStorage.removeItem('neosantara_country_color_overrides');
             (window as any).neosantara_annexed_countries = {};

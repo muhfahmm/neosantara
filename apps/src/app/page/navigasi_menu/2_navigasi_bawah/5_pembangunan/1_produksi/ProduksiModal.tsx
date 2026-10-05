@@ -27,6 +27,7 @@ import { getKelistrikanFuelRequirements } from "./requirements_logic/1_produksi/
 import KonfirmasiPembangunanModal from "./2_modals_konfirmasi_pembangunan/modalsKonfirmasiPembangunan";
 import { useMaterialProduction, getMaterialStock as getMaterialStockFromBuildLogic, deductBuildingMaterials } from "../build_logic/build_logic";
 import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
+import { getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
 
 
 
@@ -223,7 +224,8 @@ export default function ProduksiModal({
     countryDetail,
     setCountryDetail,
     metadata,
-    currentDate
+    currentDate,
+    resourceKey => getEconomicEmbargoProductionMultiplier(countryDetail?.country || '', resourceKey)
   );
 
   // 🟢 PERBAIKAN: Daftar bangunan listrik harus didefinisikan SEBELUM calculateProductionAmount
@@ -243,17 +245,21 @@ export default function ProduksiModal({
         return getEffectiveElectricityProduction(resourceKey);
       }
 
+      const productionMultiplier = getEconomicEmbargoProductionMultiplier(
+        countryDetail?.country || '',
+        resourceKey
+      );
       const buildingCount = Number(countryDetail?.[resourceKey]) || 0;
       if (buildingCount === 0 || !metadata || Object.keys(metadata).length === 0) return 0;
       const bMeta = findMeta(resourceKey);
       if (!bMeta || !bMeta.produksi) return 0;
-      if (resourceKey === 'emas') return bMeta.produksi * buildingCount;
+      if (resourceKey === 'emas') return bMeta.produksi * buildingCount * productionMultiplier;
       if (!safeDateString) return 0;
 
       const buildDateKey = `build_date_${resourceKey}`;
       const buildDate = countryDetail?.[buildDateKey];
       const finalBuildDate = buildDate || safeDateString;
-      return calculateProductionIncrement(bMeta.produksi, buildingCount, finalBuildDate, safeDateString);
+      return calculateProductionIncrement(bMeta.produksi, buildingCount, finalBuildDate, safeDateString) * productionMultiplier;
     };
   }, [countryDetail, safeDateString, metadata, getEffectiveElectricityProduction]);
 

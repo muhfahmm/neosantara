@@ -15,6 +15,7 @@ import ModalSetuju from "./4_modal_setuju";
 import ModalMenolak from "./5_modal_menolak";
 import ModalAbstain from "./6_modal_abstain";
 import { ActiveResolutionItem, loadActiveResolutions, saveActiveResolutions, calculate206AIVotes, TOTAL_UN_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_RESOLUSI, getResolutionCountryBreakdown } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
+import { PBB_RESOLUTION_DURATION_OPTIONS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 
 interface ResolusiPBBProps {
   selectedCountry: any;
@@ -87,12 +88,11 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   const RESOLUTION_ACTIONS = [
     { id: 'war_ban', icon: Swords, label: 'Larangan Perang', desc: 'Dilarang melakukan peperangan antar negara di seluruh dunia selama periode yang dipilih.' },
     { id: 'arms_embargo', icon: ShieldBan, label: 'Embargo Penjualan Senjata', desc: 'Perdagangan senjata dilarang selama periode yang dipilih.' },
-    { id: 'economic_embargo', icon: Coins, label: 'Embargo Ekonomi', desc: 'Perdagangan ekonomi dilarang selama periode yang dipilih.' },
+    { id: 'economic_embargo', icon: Coins, label: 'Embargo Ekonomi', desc: 'Produksi pabrik dan tambang serta pendapatan negara turun 60% selama periode yang dipilih.' },
     { id: 'military_invasion', icon: Bomb, label: 'Resolusi Invasi', desc: 'Resolusi memungkinkan negara diinvasi tanpa kecaman oleh negara lain.' },
     { id: 'production_ban', icon: Package, label: 'Larangan Produksi', desc: 'Produksi produk yang dipilih dihentikan selama periode yang dipilih.' },
   ];
 
-  const DURATION_OPTIONS = ['1 bulan', '3 bulan', '6 bulan', '9 bulan', '1 tahun'];
   const PRODUCT_OPTIONS = ['Kayu', 'Semen', 'Baja', 'Mobil', 'Senjata'];
 
   useEffect(() => {
@@ -531,6 +531,8 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                   <span>•</span>
                   {res.status === 'voting' ? (
                     <span>Progres sisa hari: <strong className="text-amber-400">{res.daysRemaining} hari tersisa</strong> (30 Hari - {30 - res.daysRemaining} Hari)</span>
+                  ) : res.status === 'passed' ? (
+                    <span>Masa berlaku tersisa: <strong className="text-emerald-400">{res.daysRemaining} hari</strong></span>
                   ) : (
                     <span>Cooldown Penghapusan: <strong className="text-rose-400">{res.daysRemaining} Hari Tersisa</strong> (Akan terhapus otomatis)</span>
                   )}
@@ -705,7 +707,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                       </button>
                       {isDurationOpen && (
                         <div className="absolute top-full left-0 right-0 mt-2 bg-[#051111] border border-[#00FFAA]/30 rounded-xl shadow-xl z-30 overflow-hidden">
-                          {DURATION_OPTIONS.map((dur) => (
+                          {PBB_RESOLUTION_DURATION_OPTIONS.map((dur) => (
                             <button key={dur} onClick={() => { setSelectedDuration(dur); setIsDurationOpen(false); }} className={`w-full px-5 py-3 text-left text-sm font-bold transition-colors cursor-pointer hover:bg-[#00FFAA]/10 ${selectedDuration === dur ? 'bg-[#00FFAA]/20 text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>{dur}</button>
                           ))}
                         </div>

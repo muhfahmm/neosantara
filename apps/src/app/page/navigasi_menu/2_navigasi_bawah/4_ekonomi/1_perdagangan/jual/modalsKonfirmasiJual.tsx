@@ -7,6 +7,7 @@ import { TradePartner } from "../mitra/mitraModalsMenu";
 import countryPaths from '@/app/page/map_system/country-paths.json';
 import PilihItemModal from "./PilihItemModal";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
+import { isTradeEmbargoActive } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 
 const getFlagEmoji = (countryName: string) => {
   const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === countryName.toLowerCase().trim());
@@ -374,6 +375,12 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
   const handleConfirm = () => {
     const detail = countryDetail ?? {};
     const currentBudget = typeof detail.anggaran === "number" ? detail.anggaran : 0;
+    const ownCountryName = String(detail.country || detail.nama || '');
+    if (isTradeEmbargoActive(ownCountryName, effectiveSelectedCountry)) {
+      alert(`Perdagangan dengan ${effectiveSelectedCountry} diblokir oleh embargo ekonomi PBB yang sedang berlaku.`);
+      return;
+    }
+
     if (quantity > stockAvailable) {
       alert(`Stok Anda tidak mencukupi! Stok tersedia hanya ${stockAvailable.toLocaleString("id-ID")} unit.`);
       return;

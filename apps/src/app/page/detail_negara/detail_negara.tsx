@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake } from 'lucide-react';
 import { COUNTRIES_DATA } from '../map_system/map-data';
 import countryPaths from '../map_system/country-paths.json';
-import { calculateCountryNetBalance } from '@/app/logic/economic_logic/treasuryUpdater';
+import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
 
@@ -183,7 +183,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
         const pop = Number(m.jumlah_penduduk || m.populasi || 0);
         const popNet = calculateCountryNetPopulation(m);
         const angg = Number(m.anggaran || 0);
-        const netBal = calculateCountryNetBalance(m);
+        const netBal = calculateNetBalanceWithEconomicEmbargo(m, countryName);
 
         totalPop += pop;
         totalPopNet += popNet;
@@ -206,7 +206,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
       };
 
       setFetchedDetail(combinedDetail);
-      setDailyNetBalance(validMembers.length > 1 ? totalNetBalance : calculateCountryNetBalance(primaryData));
+      setDailyNetBalance(validMembers.length > 1 ? totalNetBalance : calculateNetBalanceWithEconomicEmbargo(primaryData, countryName));
       setDailyNetPopulation(validMembers.length > 1 ? totalPopNet : calculateCountryNetPopulation(primaryData));
       setIsLoadingDetail(false);
     };
@@ -233,7 +233,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     prevModalUpdateDateRef.current = currentDateStr;
 
     // 1. Hitung Netto Anggaran Harian
-    const netBalance = calculateCountryNetBalance(fetchedDetail);
+    const netBalance = calculateNetBalanceWithEconomicEmbargo(fetchedDetail, countryName || undefined);
     setDailyNetBalance(netBalance);
 
     // 2. Hitung Perubahan Populasi Harian (Kelahiran - Kematian)
@@ -258,7 +258,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   const targetEffectiveNetBalance = targetBaseNetBalance;
 
   // Hitung Netto PDB negara pemain yang digunakan untuk biaya kedutaan
-  const playerBaseNetBalance = countryDetail ? calculateCountryNetBalance(countryDetail) : 0;
+  const playerBaseNetBalance = countryDetail ? calculateNetBalanceWithEconomicEmbargo(countryDetail) : 0;
   const playerEffectiveNetBalance = playerBaseNetBalance + playerNetBalanceAdjustment;
 
   if (!isOpen || !countryName) return null;

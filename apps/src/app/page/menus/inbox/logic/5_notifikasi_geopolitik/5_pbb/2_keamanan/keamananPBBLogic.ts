@@ -1,4 +1,5 @@
 import { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { chooseAIResolutionDuration } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 
 export interface AIKeamananPBBNotification extends NotificationMessage {
   tradeType: 'usulan_keamanan_pbb';
@@ -7,6 +8,7 @@ export interface AIKeamananPBBNotification extends NotificationMessage {
   relationScore: number;
   securityAction: 'military' | 'support' | 'economic' | 'naval' | 'full' | 'treasure';
   actionTitle: string;
+  duration: string;
 }
 
 const SECURITY_ACTIONS: Array<{
@@ -57,12 +59,13 @@ export function generateAIKeamananPBBNotification(
   dateStr: string
 ): AIKeamananPBBNotification {
   const chosen = SECURITY_ACTIONS[Math.floor(Math.random() * SECURITY_ACTIONS.length)];
+  const duration = chooseAIResolutionDuration(chosen.action, relationScore);
 
   return {
     id: `keamanan-pbb-${proposerCountry}-${targetCountry}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
     title: `🛡️ DEWAN KEAMANAN PBB: ${proposerCountry} ➔ ${targetCountry}`,
     sender: `Dewan Keamanan Tertinggi PBB`,
-    message: `DARURAT DEWAN KEAMANAN PBB! Negara ${proposerCountry} secara resmi mengajukan draf Operasi Kritis "${chosen.title}" terhadap ${targetCountry} akibat hubungan diplomatik yang sangat buruk (Skor: ${relationScore}/100). Tindakan ini: ${chosen.desc}. Pemungutan suara Dewan Keamanan akan segera diselenggarakan!`,
+    message: `DARURAT DEWAN KEAMANAN PBB! Negara ${proposerCountry} secara resmi mengajukan draf Operasi Kritis "${chosen.title}" terhadap ${targetCountry} selama ${duration} akibat hubungan diplomatik yang sangat buruk (Skor: ${relationScore}/100). Tindakan ini: ${chosen.desc}. Pemungutan suara Dewan Keamanan akan segera diselenggarakan!`,
     timestamp: dateStr,
     type: 'peringkat',
     value: relationScore,
@@ -72,7 +75,8 @@ export function generateAIKeamananPBBNotification(
     targetCountry,
     relationScore,
     securityAction: chosen.action,
-    actionTitle: chosen.title
+    actionTitle: chosen.title,
+    duration
   };
 }
 

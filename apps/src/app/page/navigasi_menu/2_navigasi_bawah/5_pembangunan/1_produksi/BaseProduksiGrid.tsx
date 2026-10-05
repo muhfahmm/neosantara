@@ -14,6 +14,7 @@ import {
 } from "../../3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
 import ProductionAISuggestionsModal from "./ai_suggestions/ProductionAISuggestionsModal";
 import { generateProductionSectorAnalysis } from "./ai_suggestions/productionAISuggestionsLogic";
+import { getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
 
 const ELECTRICITY_FUEL_RESOURCE_KEYS = [
   "gas_alam",
@@ -268,7 +269,8 @@ export default function BaseProduksiGrid({
                     {(() => {
                       // Emas: tampilkan produksi tetap (tidak berubah-ubah seperti stok)
                       if (key === 'emas') {
-                        const fixedProd = Number(bMeta?.produksi || 0) * perCount;
+                        const fixedProd = Number(bMeta?.produksi || 0) * perCount *
+                          getEconomicEmbargoProductionMultiplier(countryDetail?.country || '', key);
                         return (
                           <span className="font-black text-xs sm:text-sm text-[#00FFAA] leading-tight break-words">
                             {fixedProd.toLocaleString('id-ID')}
