@@ -6,6 +6,11 @@ import {
   getEligibleReplacementProposer,
   isCountryAnnexed,
 } from "../../pbbVotingEligibility";
+import {
+  getCouncilVoteMultiplier,
+  getCurrentElectionYear,
+  getStoredCouncilMembers,
+} from "../../2_keamanan_PBB/logika_anggota_tidak_tetap/securityCouncilElection";
 
 export const PBB_RESOLUTION_DURATION_OPTIONS = ['1 bulan', '3 bulan', '6 bulan', '9 bulan', '1 tahun'] as const;
 
@@ -192,6 +197,18 @@ export function calculate206AIVotes(
     )
   );
   const votesCastSoFar = Math.min(baseAiCount, Math.round(baseAiCount * progressRatio));
+  const activeUserIso = getIsoForCountryName(activeUserCountryName).toLowerCase();
+  const currentElectionYear = getCurrentElectionYear();
+  const activeLimitedMembers = getStoredCouncilMembers().filter(member =>
+    currentElectionYear >= member.termStartYear &&
+    currentElectionYear <= member.termEndYear
+  );
+  const limitedMemberVotesCast = activeLimitedMembers.filter(member =>
+    member.iso !== activeUserIso &&
+    !isCountryAnnexed(member.name, member.iso)
+  ).length * progressRatio;
+  const extraCouncilInfluenceVotes = limitedMemberVotesCast * 0.5;
+  const userVoteWeight = activeLimitedMembers.some(member => member.iso === activeUserIso) ? 1.5 : 1;
 
   if (votesCastSoFar === 0) {
     const hasTarget = targetName && !targetName.toLowerCase().includes('global') && !targetName.toLowerCase().includes('dunia');
@@ -199,9 +216,9 @@ export function calculate206AIVotes(
     let opponentsCount = hasTarget && !isCountryAnnexed(targetName, getIsoForCountryName(targetName)) ? 1 : 0;
     let abstainCount = 0;
 
-    if (userVote === 'yes') supportersCount += 1;
-    if (userVote === 'no') opponentsCount += 1;
-    if (userVote === 'abstain') abstainCount += 1;
+    if (userVote === 'yes') supportersCount += userVoteWeight;
+    if (userVote === 'no') opponentsCount += userVoteWeight;
+    if (userVote === 'abstain') abstainCount += userVoteWeight;
 
     return {
       supportersCount,
@@ -238,19 +255,21 @@ export function calculate206AIVotes(
     }
   }
 
-  let supportersCount = Math.round(votesCastSoFar * supporterRatio);
-  let opponentsCount = Math.round(votesCastSoFar * opponentRatio);
-  let abstainCount = votesCastSoFar - supportersCount - opponentsCount;
+  let supportersCount = Math.round(votesCastSoFar * supporterRatio) + (extraCouncilInfluenceVotes * supporterRatio);
+  let opponentsCount = Math.round(votesCastSoFar * opponentRatio) + (extraCouncilInfluenceVotes * opponentRatio);
+  let abstainCount =
+    votesCastSoFar - Math.round(votesCastSoFar * supporterRatio) - Math.round(votesCastSoFar * opponentRatio) +
+    (extraCouncilInfluenceVotes * (1 - supporterRatio - opponentRatio));
 
-  if (userVote === 'yes') supportersCount += 1;
-  if (userVote === 'no') opponentsCount += 1;
-  if (userVote === 'abstain') abstainCount += 1;
+  if (userVote === 'yes') supportersCount += userVoteWeight;
+  if (userVote === 'no') opponentsCount += userVoteWeight;
+  if (userVote === 'abstain') abstainCount += userVoteWeight;
 
   return {
     supportersCount: Math.max(0, supportersCount),
     opponentsCount: Math.max(0, opponentsCount),
     abstainCount: Math.max(0, abstainCount),
-    totalVotesCast: votesCastSoFar + (userVote ? 1 : 0)
+    totalVotesCast: votesCastSoFar + extraCouncilInfluenceVotes + (userVote ? userVoteWeight : 0)
   };
 }
 
@@ -692,8 +711,8 @@ export function getCountryPBBVote(countryName: string): number {
   if (!countryName) return 100;
   const norm = countryName.toLowerCase().replace(/[^a-z0-9]+/g, "");
   const found = STATIC_PBB_VOTES.find(v => v.name_id.toLowerCase().replace(/[^a-z0-9]+/g, "") === norm);
-  if (found && found.un_vote) return found.un_vote;
-  return 100;
+  const baseVote = found?.un_vote || 100;
+  return Math.round(baseVote * getCouncilVoteMultiplier(getIsoForCountryName(countryName)));
 }
 
 export function formatBribeCost(countryName: string): string {

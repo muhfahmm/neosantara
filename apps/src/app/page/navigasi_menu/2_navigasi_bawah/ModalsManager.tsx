@@ -584,6 +584,9 @@ function ModalsManager({
           isOpen={true}
           onClose={onClose}
           selectedCountry={selectedCountry}
+          countryDetail={countryDetail}
+          setCountryDetail={update => setCountryDetail(previous => update(previous) || previous)}
+          currentDate={currentDate}
         />
       );
     case "Menu:KedutaanBesar":

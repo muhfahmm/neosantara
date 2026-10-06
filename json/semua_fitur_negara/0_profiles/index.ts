@@ -20,6 +20,9 @@ export interface CountryProfile {
   kekuatan_lunak: number;
   kekuatan_keras: number;
   prestise_diplomatik: number;
+  kontribusi_pbb?: number;
+  misi_perdamaian?: number;
+  bantuan_kemanusiaan?: number;
 }
 
 export async function fetchCountryProfileFromDb(slug?: string): Promise<CountryProfile | null> {
@@ -69,4 +72,3 @@ export async function updateCountryProfileSocialData(
 export const PROFILES_POPULATION_DATA: any[] = [];
 export const PROFILES_RELIGION_DATA: any[] = [];
 export const PROFILES_IDEOLOGY_DATA: any[] = [];
-

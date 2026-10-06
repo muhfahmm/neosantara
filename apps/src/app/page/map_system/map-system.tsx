@@ -67,6 +67,13 @@ import { evaluateAIKeamananPBBTrigger } from '../menus/inbox/logic/5_notifikasi_
 import { clearActiveResolutionsForSession, tickPBBResolutions, spawnAIResolutionFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { clearActiveSecurityCouncilItems, tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { initCountryIsoFromDatabase, getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
+import { fetchAllCountryProfilesFromDb } from '@/../../json/semua_fitur_negara/0_profiles';
+import {
+    createInitialElectionState,
+    getEligibleUNMemberCountries,
+    normalizeElectionState,
+    tickSecurityCouncilElectionSchedule,
+} from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logika_anggota_tidak_tetap/securityCouncilElection';
 import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic';
@@ -689,6 +696,7 @@ export default function MapPage() {
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
     const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
     const processedReferendumsRef = useRef(new Set<string>());
+    const electionScheduleTickRef = useRef<string | null>(null);
     useEffect(() => {
         const handleProvinceAction = async (event: Event) => {
             const detail = (event as CustomEvent<ProvinceActionEventDetail>).detail;
@@ -1845,6 +1853,132 @@ export default function MapPage() {
         logger.log('MapPage', 'Date changed to:', currentDateStr);
         if (typeof window !== 'undefined') {
             try { localStorage.setItem('neosantara_current_game_date', currentDateStr); } catch (e) {}
+        }
+
+        if (countryDetail && !countryDetail.pbbSecurityCouncilElection) {
+            const initialElectionState = createInitialElectionState(currentDate.getFullYear());
+            try {
+                localStorage.setItem(
+                    "neosantara_pbb_security_council_election",
+                    JSON.stringify(initialElectionState)
+                );
+                setCountryDetail((previous: Record<string, unknown> | null) => previous
+                    ? { ...previous, pbbSecurityCouncilElection: initialElectionState }
+                    : previous
+                );
+            } catch (storageError) {
+                console.error("Gagal menginisialisasi jadwal pemilihan Dewan Keamanan:", storageError);
+            }
+        }
+
+        if (
+            countryDetail?.pbbSecurityCouncilElection &&
+            currentDate.getMonth() === 5 &&
+            currentDate.getDate() <= 30
+        ) {
+            const electionYear = currentDate.getFullYear();
+            const electionState = normalizeElectionState(
+                countryDetail.pbbSecurityCouncilElection,
+                electionYear
+            );
+            if (electionState.year === electionYear) {
+            const dueStage = currentDate.getDate() >= 30
+                ? 4
+                : currentDate.getDate() >= 25
+                    ? 3
+                    : currentDate.getDate() >= 15
+                        ? 2
+                        : 1;
+            const tickKey = `${currentDateStr}-${electionState.scheduleStage}`;
+            if (electionState.scheduleStage < dueStage && electionScheduleTickRef.current !== tickKey) {
+                electionScheduleTickRef.current = tickKey;
+                fetchAllCountryProfilesFromDb()
+                    .then(profiles => {
+                        const electionCountries = getEligibleUNMemberCountries(profiles);
+                        const profiledVoters = electionCountries.filter(country => country.profile).length;
+                        if (electionCountries.length !== 193 || profiledVoters !== 193) {
+                            const warningId = `pbb-security-election-data-${electionYear}`;
+                            console.error(
+                                `Pemilihan DK PBB ${electionYear} tidak dapat dijadwalkan: ${profiledVoters}/193 profil anggota tersedia.`
+                            );
+                            setNotifications(previous => previous.some(notification => notification.id === warningId)
+                                ? previous
+                                : [{
+                                    id: warningId,
+                                    title: "⚠️ DATA PEMILIHAN DK PBB BELUM LENGKAP",
+                                    sender: "Sekretariat Majelis Umum Perserikatan Bangsa-Bangsa",
+                                    message: `Agenda pemilihan tahunan memerlukan data profil untuk seluruh 193 negara anggota. Saat ini tersedia ${profiledVoters} profil yang cocok; jadwal pemungutan suara belum dapat diproses.`,
+                                    timestamp: currentDateStr,
+                                    type: "peringkat",
+                                    value: 0,
+                                    isRead: false,
+                                }, ...previous]);
+                            return;
+                        }
+
+                        const result = tickSecurityCouncilElectionSchedule(
+                            currentDateStr,
+                            electionState,
+                            profiles
+                        );
+                        if (!result) return;
+                        if (result.error) {
+                            console.error(`Agenda pemilihan DK PBB ${electionYear}: ${result.error}`);
+                            const warningId = `pbb-security-election-schedule-${electionYear}-${electionState.scheduleStage + 1}`;
+                            setNotifications(previous => previous.some(notification => notification.id === warningId)
+                                ? previous
+                                : [{
+                                    id: warningId,
+                                    title: "⚠️ AGENDA PEMILIHAN DK PBB TERTUNDA",
+                                    sender: "Sekretariat Majelis Umum Perserikatan Bangsa-Bangsa",
+                                    message: result.error || "Tahapan pemilihan belum dapat diproses.",
+                                    timestamp: currentDateStr,
+                                    type: "peringkat",
+                                    value: 0,
+                                    isRead: false,
+                                }, ...previous]);
+                            return;
+                        }
+
+                        try {
+                            localStorage.setItem(
+                                "neosantara_pbb_security_council_election",
+                                JSON.stringify(result.state)
+                            );
+                        } catch (storageError) {
+                            console.error("Gagal menyimpan jadwal pemilihan Dewan Keamanan:", storageError);
+                            return;
+                        }
+                        setCountryDetail((previous: Record<string, unknown> | null) => previous
+                            ? { ...previous, pbbSecurityCouncilElection: result.state }
+                            : previous
+                        );
+                        setNotifications(previous => {
+                            const knownIds = new Set(previous.map(notification => notification.id));
+                            const newNotifications = result.notifications.filter(notification => !knownIds.has(notification.id));
+                            return [...newNotifications, ...previous];
+                        });
+                        window.dispatchEvent(new CustomEvent("pbb_security_council_election_updated"));
+                        window.dispatchEvent(new CustomEvent("pbb_security_council_election_roster_updated"));
+                    })
+                    .catch(error => {
+                        console.error("Gagal memproses jadwal pemilihan Dewan Keamanan PBB:", error);
+                        const warningId = `pbb-security-election-load-${electionYear}`;
+                        setNotifications(previous => previous.some(notification => notification.id === warningId)
+                            ? previous
+                            : [{
+                                id: warningId,
+                                title: "⚠️ JADWAL PEMILIHAN DK PBB GAGAL DIMUAT",
+                                sender: "Sekretariat Majelis Umum Perserikatan Bangsa-Bangsa",
+                                message: "Data negara gagal dimuat sehingga agenda pemilihan bulan Juni belum dapat diproses.",
+                                timestamp: currentDateStr,
+                                type: "peringkat",
+                                value: 0,
+                                isRead: false,
+                            }, ...previous]);
+                    });
+            }
+            }
         }
 
         // Tick PBB resolutions and Security Council countdown & AI 206 country voting logic

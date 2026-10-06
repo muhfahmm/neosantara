@@ -11,13 +11,20 @@ import ModalSetuju from "./4_modal_setuju";
 import ModalMenolak from "./5_modal_menolak";
 import ModalAbstain from "./6_modal_abstain";
 import ModalVeto from "./7_modal_veto";
-import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS, getSimulationDateString, getSecurityCouncilCountryBreakdown, isPermanentSecurityCouncilMember, tickPBBSecurityCouncil } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
+import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS, getSimulationDateString, getSecurityCouncilCountryBreakdown, isPermanentSecurityCouncilMember, canUseSecurityCouncilVeto, tickPBBSecurityCouncil } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
 import { tickPBBResolutions } from "../../1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { PBB_RESOLUTION_DURATION_OPTIONS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { clearAnnexedCountryVotes, isCountryAnnexed } from "../../pbbVotingEligibility";
+import {
+  getStoredCouncilMembers,
+  markLimitedVetoUsed,
+  type SecurityCouncilMember,
+} from "../logika_anggota_tidak_tetap/securityCouncilElection";
 
 interface KeamananPBBProps {
   selectedCountry: any;
+  countryDetail: Record<string, unknown> | null;
+  setCountryDetail?: (update: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
 }
 
 interface CountryOption {
@@ -34,6 +41,14 @@ const RESOLUTION_ACTIONS = [
   { id: 'naval', icon: Anchor, label: 'Blokade Laut', desc: 'Selama resolusi aktif, produksi manufaktur, peternakan, agrikultur, perikanan, olahan pangan, serta tambang selain emas berkurang 25%.' },
   { id: 'full', icon: Lock, label: 'Blokade Penuh', desc: 'Selama periode yang dipilih, negara ini tidak dapat menandatangani kontrak apa pun atau berdagang.' },
   { id: 'treasure', icon: Package, label: 'Bantuan Logistik', desc: 'Memberikan bantuan sumber daya dan logistik ke negara yang dipilih.' },
+];
+
+const PERMANENT_MEMBERS = [
+  { iso: 'us', name: 'Amerika Serikat' },
+  { iso: 'gb', name: 'Inggris' },
+  { iso: 'fr', name: 'Perancis' },
+  { iso: 'ru', name: 'Rusia' },
+  { iso: 'cn', name: 'China' },
 ];
 
 const formatCountryName = (name: string) => {
@@ -58,7 +73,7 @@ const renderFlag = (iso: string | undefined, altName: string, size: "sm" | "md" 
   );
 };
 
-export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
+export default function KeamananPBB({ selectedCountry, countryDetail, setCountryDetail }: KeamananPBBProps) {
   const [isResolusiModalOpen, setIsResolusiModalOpen] = useState(false);
   const [isMembershipOpen, setIsMembershipOpen] = useState(false);
 
@@ -79,6 +94,17 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
   const [countries, setCountries] = useState<CountryOption[]>([]);
   const [allies, setAllies] = useState<CountryOption[]>([]);
   const [annexationRevision, setAnnexationRevision] = useState(0);
+  const [nonPermanentMembers, setNonPermanentMembers] = useState<SecurityCouncilMember[]>(() => getStoredCouncilMembers());
+
+  useEffect(() => {
+    const syncCouncilRoster = () => setNonPermanentMembers(getStoredCouncilMembers());
+    window.addEventListener("pbb_security_council_roster_updated", syncCouncilRoster);
+    window.addEventListener("pbb_security_council_election_roster_updated", syncCouncilRoster);
+    return () => {
+      window.removeEventListener("pbb_security_council_roster_updated", syncCouncilRoster);
+      window.removeEventListener("pbb_security_council_election_roster_updated", syncCouncilRoster);
+    };
+  }, []);
 
   // 🔥 Ubah voteStats menjadi array negara
   const [voteStats, setVoteStats] = useState<{ supporters: CountryOption[], opponents: CountryOption[], hasDiplomaticRelation: boolean }>({
@@ -86,26 +112,6 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
     opponents: [],
     hasDiplomaticRelation: false
   });
-
-  const permanentMembers = [
-    { iso: 'us', name: 'Amerika Serikat' },
-    { iso: 'gb', name: 'Inggris' },
-    { iso: 'fr', name: 'Perancis' },
-    { iso: 'ru', name: 'Rusia' },
-    { iso: 'cn', name: 'China' },
-  ];
-  const nonPermanentMembers = [
-    { iso: 'br', name: 'Brazil' },
-    { iso: 'jp', name: 'Jepang' },
-    { iso: 'in', name: 'India' },
-    { iso: 'de', name: 'Jerman' },
-    { iso: 'za', name: 'Afrika Selatan' },
-    { iso: 'eg', name: 'Mesir' },
-    { iso: 'mx', name: 'Meksiko' },
-    { iso: 'id', name: 'Indonesia' },
-    { iso: 'pl', name: 'Polandia' },
-    { iso: 'au', name: 'Australia' },
-  ];
 
   useEffect(() => {
     if (COUNTRIES_DATA && Array.isArray(COUNTRIES_DATA)) {
@@ -325,6 +331,23 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
     const currentList = typeof loadActiveSecurityCouncilItems === 'function' ? loadActiveSecurityCouncilItems() : activeSecurityCouncilItems;
     const targetItem = currentList.find(item => item.id === itemId);
     if (!targetItem || targetItem.status !== 'voting') return;
+    const userIso = selectedCountry?.iso?.toLowerCase() || '';
+    if (
+      voteType === 'no' &&
+      targetItem.userVote !== 'no' &&
+      userIso &&
+      !isPermanentSecurityCouncilMember(userIso) &&
+      canUseSecurityCouncilVeto(userIso, itemId)
+    ) {
+      const updatedElection = markLimitedVetoUsed(userIso, itemId);
+      if (updatedElection) {
+        setCountryDetail?.(previous => previous
+          ? { ...previous, pbbSecurityCouncilElection: updatedElection }
+          : previous
+        );
+        setNonPermanentMembers(updatedElection.members);
+      }
+    }
     const updated = currentList.map(item => {
       if (item.id !== itemId) return item;
       const prevVote = item.userVote;
@@ -347,6 +370,46 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
     setActiveSecurityCouncilItems(updated);
     saveActiveSecurityCouncilItems(updated);
   };
+
+  useEffect(() => {
+    if (!setCountryDetail || !selectedCountry?.country || isSelectedCountryAnnexed) return;
+    const playerIso = selectedCountry.iso?.toLowerCase() || "";
+    const temporaryMember = nonPermanentMembers.find(member => member.iso === playerIso);
+    const isPermanentMember = PERMANENT_MEMBERS.some(member => member.iso === playerIso);
+    if (!isPermanentMember && !temporaryMember) return;
+
+    const missedItems = activeSecurityCouncilItems.filter(item => {
+      if (item.status === "voting" || item.userVote) return false;
+      const resolutionYear = Number(item.createdAt.slice(0, 4));
+      if (!Number.isFinite(resolutionYear)) return false;
+      if (isPermanentMember) return true;
+      return Boolean(
+        temporaryMember &&
+        resolutionYear >= temporaryMember.termStartYear &&
+        resolutionYear <= temporaryMember.termEndYear
+      );
+    });
+    if (missedItems.length === 0) return;
+
+    setCountryDetail(previous => {
+      if (!previous) return previous;
+      const previousIds = Array.isArray(previous.pbbSecurityCouncilMissedVotes)
+        ? previous.pbbSecurityCouncilMissedVotes.filter((id): id is string => typeof id === "string")
+        : [];
+      const newIds = missedItems
+        .map(item => item.id)
+        .filter(id => !previousIds.includes(id));
+      if (newIds.length === 0) return previous;
+      return {
+        ...previous,
+        pbbSecurityCouncilMissedVotes: [...previousIds, ...newIds],
+        reputasi_diplomatik_poin: Math.max(
+          0,
+          Number(previous.reputasi_diplomatik_poin ?? 100) - newIds.length
+        ),
+      };
+    });
+  }, [activeSecurityCouncilItems, isSelectedCountryAnnexed, nonPermanentMembers, selectedCountry, setCountryDetail]);
 
   const handleSubmit = () => {
     if (!selectedTarget) {
@@ -470,7 +533,6 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
 
   return (
     <div className="space-y-6 w-full">
-      
       {/* Keanggotaan Dewan Keamanan */}
       <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl shadow-lg overflow-hidden">
         <button onClick={() => setIsMembershipOpen(!isMembershipOpen)} className="w-full flex items-center justify-between px-6 py-4 bg-[#051111] border-b border-[#00FFAA]/20 cursor-pointer hover:bg-[#00FFAA]/5 transition-colors">
@@ -483,7 +545,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
               <div className="flex-1 bg-[#051111] border border-[#00FFAA]/20 rounded-xl p-4 shadow-sm">
                 <div className="flex justify-between items-center border-b border-[#00FFAA]/15 pb-2 mb-3"><span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">Anggota Tetap</span><span className="text-[8px] font-black text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded border border-rose-500/30">Hak Veto</span></div>
                 <div className="grid grid-cols-2 gap-3">
-                  {permanentMembers.map((m) => {
+                  {PERMANENT_MEMBERS.map((m) => {
                     const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
                     const raw = m.name.trim();
                     const norm = raw.toLowerCase();
@@ -534,6 +596,10 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
                       <div key={m.iso} className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 rounded-lg flex flex-col items-center text-center shadow-sm hover:border-[#00FFAA]/40 transition-colors">
                         {renderFlag(m.iso, m.name)}
                         <span className="text-[10px] font-bold text-[#E0E0E0] mt-1 leading-tight">{m.name}</span>
+                        <span className="mt-1 text-[8px] text-[#789090]">{m.region} · sampai {m.termEndYear}</span>
+                        <span className={`mt-1 text-[8px] font-bold ${m.vetoUsed ? 'text-rose-300' : 'text-amber-300'}`}>
+                          {m.vetoUsed ? "Veto terbatas telah digunakan" : "1 veto terbatas tersedia"}
+                        </span>
                       </div>
                     );
                   })}
