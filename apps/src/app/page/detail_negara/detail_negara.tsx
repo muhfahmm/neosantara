@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef } from "react";
-import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake } from 'lucide-react';
+import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Flame } from 'lucide-react';
 import { COUNTRIES_DATA } from '../map_system/map-data';
 import countryPaths from '../map_system/country-paths.json';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
+import { getProvinceReligionOverride } from './1_informasi_umum/provinsi_logic/2_tugaskan_misionaris';
+import { getProvinceIdeologyOverride } from './1_informasi_umum/provinsi_logic/5_tanamkan_ideologi';
 
 // Import 3 komponen terpisah
 import InformasiUmum from "./1_informasi_umum/informasi_umum";
@@ -212,6 +214,8 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
       const combinedDetail = {
         ...primaryData,
         ...aggregatedBuildings,
+        religion: getProvinceReligionOverride(countryName) || primaryData.religion,
+        ideology: getProvinceIdeologyOverride(countryName) || primaryData.ideology,
         jumlah_penduduk: validMembers.length > 1 ? totalPop : primaryData.jumlah_penduduk,
         anggaran: validMembers.length > 1 ? totalAnggaran : primaryData.anggaran,
       };
@@ -293,6 +297,30 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     normalizeCountryKey(annexedInfo.attackerCountry) === normalizeCountryKey(playerCountryName)
   );
   const occupyingCountry = annexedInfo?.attackerCountry || '';
+  const playerReligion = countryDetail?.religion || countryDetail?.agama_utama || countryDetail?.agama;
+  const playerIdeology = countryDetail?.ideology || countryDetail?.ideologi;
+  const targetIdeology = detailData?.ideology || detailData?.ideologi;
+  const provinceTensionValue = (() => {
+    const tensions = countryDetail?.provinceTensions;
+    if (!tensions || typeof tensions !== 'object') return 25;
+    const provinceEntry = Object.entries(tensions).find(
+      ([name]) => normalizeCountryKey(name) === normalizeCountryKey(countryName)
+    );
+    const savedTension = Number(provinceEntry?.[1]);
+    return Number.isFinite(savedTension) ? Math.min(100, Math.max(0, savedTension)) : 25;
+  })();
+  const updateTargetReligion = (religion: string) => {
+    setFetchedDetail((previous: Record<string, unknown> | null) => previous
+      ? { ...previous, religion }
+      : previous
+    );
+  };
+  const updateTargetIdeology = (ideology: string) => {
+    setFetchedDetail((previous: Record<string, unknown> | null) => previous
+      ? { ...previous, ideology }
+      : previous
+    );
+  };
 
   useEffect(() => {
     if (isPlayerOccupiedProvince && activeTab === 'geopolitik') {
@@ -325,6 +353,15 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   const relationPlayerCountryName = playerCountryName || "Indonesia";
   const relationCountryName = annexedInfo?.attackerCountry || countryName;
   const relationValue = getRelationValue(relationPlayerCountryName, relationCountryName);
+  const provinceTensionStatus = provinceTensionValue <= 25
+    ? 'Sangat Stabil'
+    : provinceTensionValue <= 40
+      ? 'Stabil'
+      : provinceTensionValue <= 65
+        ? 'Netral'
+        : provinceTensionValue <= 80
+          ? 'Panas'
+          : 'Sangat Panas';
 
   // Fungsi Helper untuk bendera di Header
   const renderFlagHeader = (iso: string | undefined, altName: string) => {
@@ -391,12 +428,26 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             {/* Hubungan */}
             <div className="flex items-center gap-2">
               <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
-                <Handshake className="h-4 w-4 text-[#00FFAA]" />
+                {isPlayerOccupiedProvince
+                  ? <Flame className="h-4 w-4 text-orange-400" />
+                  : <Handshake className="h-4 w-4 text-[#00FFAA]" />}
               </div>
               <div className="flex flex-col">
-                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Hubungan</span>
-                <span className={`text-[11px] font-extrabold uppercase ${relationValue >= 75 ? 'text-emerald-400' : relationValue >= 50 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>
-                  {relationValue}
+                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">
+                  {isPlayerOccupiedProvince ? 'Ketegangan' : 'Hubungan'}
+                </span>
+                <span className={`text-[11px] font-extrabold uppercase ${
+                  isPlayerOccupiedProvince
+                    ? 'text-emerald-400'
+                    : relationValue >= 75
+                      ? 'text-emerald-400'
+                      : relationValue >= 50
+                        ? 'text-[#00FFAA]'
+                        : 'text-rose-400'
+                }`}>
+                  {isPlayerOccupiedProvince
+                    ? `${provinceTensionValue} · ${provinceTensionStatus}`
+                    : relationValue}
                 </span>
               </div>
             </div>
@@ -546,6 +597,15 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 autoBuildEmbassy={autoBuildEmbassy}
                 isOccupiedProvince={isPlayerOccupiedProvince}
                 occupyingCountry={occupyingCountry}
+                playerReligion={playerReligion}
+                targetReligion={detailData?.religion || detailData?.agama_utama || detailData?.agama}
+                updateTargetReligion={updateTargetReligion}
+                playerIdeology={playerIdeology}
+                targetIdeology={targetIdeology}
+                updateTargetIdeology={updateTargetIdeology}
+                provinceBudget={Number(detailData?.anggaran)}
+                provinceNetBalance={targetBaseNetBalance}
+                provinceTension={provinceTensionValue}
               />
             )}
 

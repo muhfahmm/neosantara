@@ -5,6 +5,7 @@ import JualModalsMenu from "./jual/modalsKonfirmasiJual";
 import MitraModalsMenu, { TradePartner } from "./mitra/mitraModalsMenu";
 import ModalsKonfirmasiBeli from "./beli/modalsKonfirmasiBeli";
 import { getTradeAgreementsForCountry } from '../../../../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
+import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import TawaranPembelianTable from "./tawaran_beli/TawaranPembelianTable";
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateProductionIncrement, formatDate } from '@/app/logic/production_logic';
@@ -186,8 +187,13 @@ export default function PerdaganganModal({
   }, [resetTrigger]);
 
   const allPartners = useMemo((): TradePartner[] => {
+    const normalizeName = (name: string) => name.toLowerCase().trim();
+    const removedPartners = new Set(
+      (Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [])
+        .map((name: string) => normalizeName(name))
+    );
     const agreements = getTradeAgreementsForCountry(countryName);
-    return agreements.map((item: AgreementData) => ({
+    const registeredPartners: TradePartner[] = agreements.map((item: AgreementData) => ({
       id: item.no,
       nama_negara: item.mitra,
       region: countryDetail?.region || "Internasional",
@@ -195,7 +201,30 @@ export default function PerdaganganModal({
       jenis_perjanjian: item.type,
       total_nilai_dagang: undefined,
     }));
-  }, [countryDetail?.region, countryName]);
+    const customPartners: TradePartner[] = (Array.isArray(countryDetail?.addedTradePartners)
+      ? countryDetail.addedTradePartners
+      : []
+    ).map((name: string, index: number) => {
+      const country = COUNTRIES_DATA.find(
+        item => normalizeName(item.country) === normalizeName(name)
+      );
+      return {
+        id: 1_000_000 + index,
+        nama_negara: name,
+        region: country?.continent || "Internasional",
+        status_hubungan: "Aktif",
+        jenis_perjanjian: "Bilateral",
+        total_nilai_dagang: undefined,
+      };
+    });
+    const seenPartners = new Set<string>();
+    return [...registeredPartners, ...customPartners].filter(partner => {
+      const key = normalizeName(partner.nama_negara);
+      if (!key || removedPartners.has(key) || seenPartners.has(key)) return false;
+      seenPartners.add(key);
+      return true;
+    });
+  }, [countryDetail?.addedTradePartners, countryDetail?.region, countryDetail?.removedTradePartners, countryName]);
 
   const [partnersState, setPartnersState] = useState<TradePartner[]>([]);
 
@@ -209,7 +238,27 @@ export default function PerdaganganModal({
   );
 
   const handleRemovePartner = (partnerId: number) => {
-    setPartnersState((prev) => prev.filter(p => p.id !== partnerId));
+    const partnerToRemove = partnersState.find(partner => partner.id === partnerId);
+    if (!partnerToRemove) return;
+    const normalizeName = (name: string) => name.toLowerCase().trim();
+    setPartnersState(previous => previous.filter(partner => partner.id !== partnerId));
+    setCountryDetail(previous => {
+      if (!previous) return previous;
+      const addedPartners = Array.isArray(previous.addedTradePartners) ? previous.addedTradePartners : [];
+      const removedPartners = Array.isArray(previous.removedTradePartners) ? previous.removedTradePartners : [];
+      return {
+        ...previous,
+        addedTradePartners: addedPartners.filter(
+          name => normalizeName(String(name)) !== normalizeName(partnerToRemove.nama_negara)
+        ),
+        removedTradePartners: Array.from(new Set([
+          ...removedPartners.filter(
+            name => normalizeName(String(name)) !== normalizeName(partnerToRemove.nama_negara)
+          ),
+          partnerToRemove.nama_negara
+        ]))
+      };
+    });
   };
 
   // --- PERSISTENT WEEKLY TRADE OFFERS IN COUNTRY DETAIL ---
@@ -524,8 +573,9 @@ export default function PerdaganganModal({
         onRemovePartner={handleRemovePartner}
         currentUserCountry={countryName}
         onAddPartner={(name, region) => {
-          setPartnersState(prev => [
-            ...prev,
+          const normalizeName = (value: string) => value.toLowerCase().trim();
+          setPartnersState(previous => [
+            ...previous.filter(partner => normalizeName(partner.nama_negara) !== normalizeName(name)),
             {
               id: Date.now(),
               nama_negara: name,
@@ -535,6 +585,21 @@ export default function PerdaganganModal({
               jenis_perjanjian: "Bilateral"
             }
           ]);
+          setCountryDetail(previous => {
+            if (!previous) return previous;
+            const addedPartners = Array.isArray(previous.addedTradePartners) ? previous.addedTradePartners : [];
+            const removedPartners = Array.isArray(previous.removedTradePartners) ? previous.removedTradePartners : [];
+            return {
+              ...previous,
+              addedTradePartners: Array.from(new Set([
+                ...addedPartners.filter((partner: string) => normalizeName(partner) !== normalizeName(name)),
+                name
+              ])),
+              removedTradePartners: removedPartners.filter(
+                (partner: string) => normalizeName(partner) !== normalizeName(name)
+              )
+            };
+          });
         }}
       />
     </>

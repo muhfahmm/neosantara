@@ -10,13 +10,55 @@ import instillIdeology from './5_tanamkan_ideologi';
 interface ProvinsiInformasiUmumProps {
   countryName: string;
   occupyingCountry: string;
+  playerReligion?: string;
+  targetReligion?: string;
+  updateTargetReligion?: (religion: string) => void;
+  playerIdeology?: string;
+  targetIdeology?: string;
+  updateTargetIdeology?: (ideology: string) => void;
+  provinceBudget?: number;
+  provinceNetBalance?: number;
+  provinceTension?: number;
+  playerCountryDetail?: Record<string, unknown> | null;
+  taxedProvinces?: string[];
+  updatePlayerCountryDetail?: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
+  adjustPlayerNetBalance?: (delta: number) => void;
 }
 
-export default function ProvinsiInformasiUmum({ countryName, occupyingCountry }: ProvinsiInformasiUmumProps) {
+export default function ProvinsiInformasiUmum({
+  countryName,
+  occupyingCountry,
+  playerReligion,
+  targetReligion,
+  updateTargetReligion,
+  playerIdeology,
+  targetIdeology,
+  updateTargetIdeology,
+  provinceBudget,
+  provinceNetBalance,
+  provinceTension,
+  playerCountryDetail,
+  taxedProvinces,
+  updatePlayerCountryDetail,
+  adjustPlayerNetBalance
+}: ProvinsiInformasiUmumProps) {
   return (
     <ProvinsiActionGrid
       targetCountry={countryName}
       occupyingCountry={occupyingCountry}
+      playerReligion={playerReligion}
+      targetReligion={targetReligion}
+      updateTargetReligion={updateTargetReligion}
+      playerIdeology={playerIdeology}
+      targetIdeology={targetIdeology}
+      updateTargetIdeology={updateTargetIdeology}
+      provinceBudget={provinceBudget}
+      provinceNetBalance={provinceNetBalance}
+      provinceTension={provinceTension}
+      playerCountryDetail={playerCountryDetail}
+      taxedProvinces={taxedProvinces}
+      updatePlayerCountryDetail={updatePlayerCountryDetail}
+      adjustPlayerNetBalance={adjustPlayerNetBalance}
       actions={[liberateProvince, assignMissionaries, requireTaxes, sendAid, instillIdeology]}
     />
   );

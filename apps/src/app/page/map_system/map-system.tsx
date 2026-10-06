@@ -95,6 +95,11 @@ import {
     PROVINCE_ACTION_EVENT,
     type ProvinceActionEventDetail
 } from '../detail_negara/1_informasi_umum/provinsi_logic/provinceActionTypes';
+import {
+    ANNEXED_AGGREGATE_KEYS,
+    releaseAnnexedProvince,
+    type AnnexedContribution
+} from '../detail_negara/1_informasi_umum/provinsi_logic/1_beri_kemerdekaan';
 
 interface Country {
     id: number;
@@ -172,6 +177,7 @@ export default function MapPage() {
     // Format: { "NamaNegara": "WarnaHex", ... }
     // Contoh: { "Afganistan": "#E8C303" } berarti Afganistan sudah dianeksasi dan warnanya diubah ke kuning
     const [countryColorOverrides, setCountryColorOverrides] = useState<Record<string, string>>({});
+    const annexedContributionRef = useRef<Record<string, AnnexedContribution>>({});
 
     const recordAnnexedTerritory = (
         targetCountry: string,
@@ -454,6 +460,11 @@ export default function MapPage() {
                     }
 
                     if (targetData && setCountryDetail) {
+                        const targetNetBal = calculateNetBalanceWithEconomicEmbargo(targetData, targetCountry);
+                        annexedContributionRef.current[targetCountry.toLowerCase().trim()] = {
+                            targetData,
+                            netBalance: targetNetBal
+                        };
                         setCountryDetail((prev: any) => {
                             if (!prev) return prev;
                             const prevPop = Number(prev.jumlah_penduduk || prev.populasi || 0);
@@ -477,33 +488,8 @@ export default function MapPage() {
                                 ? Math.round(((prevKesejahteraan * prevPop) + (targetKesejahteraan * targetPop)) / totalPop)
                                 : prevKesejahteraan;
 
-                            // Daftar seluruh bangunan & militer yang digabungkan
-                            const keysToAggregate = [
-                                // Infrastruktur & Unit Militer
-                                'barak', 'gudang_senjata', 'hangar_tank', 'pangkalan_udara', 'pangkalan_laut',
-                                'pasukan_infanteri', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat', 'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
-                                'kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet', 'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik',
-                                'jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom', 'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut',
-                                // Produksi & Kelistrikan
-                                'pembangkit_listrik_tenaga_gas', 'pembangkit_listrik_tenaga_nuklir', 'pembangkit_listrik_tenaga_uap', 'pembangkit_listrik_tenaga_surya', 'pembangkit_listrik_tenaga_angin', 'pembangkit_listrik_tenaga_air', 'pembangkit_listrik_tenaga_geotermal',
-                                'emas', 'uranium', 'batu_bara', 'minyak_bumi', 'gas_alam', 'garam', 'litium', 'logam_tanah_jarang', 'bijih_besi',
-                                'pabrik_mesin_mobil', 'semen_beton', 'pabrik_mesin_motor', 'pabrik_semikonduktor', 'kayu',
-                                'ayam_unggas', 'sapi_perah', 'sapi_potong', 'domba_kambing',
-                                'padi', 'gandum', 'jagung', 'sayur', 'umbi', 'kedelai', 'kelapa_sawit', 'kopi', 'teh', 'kakao', 'tebu', 'karet',
-                                'udang', 'mutiara', 'ikan',
-                                'air_mineral', 'gula', 'roti', 'pengolahan_daging', 'mie_instan', 'minyak_goreng', 'susu', 'beras',
-                                // Fasilitas Publik & Hunian
-                                'jalur_sepeda', 'jalan_raya', 'terminal_bus', 'stasiun_kereta_api', 'kereta_bawah_tanah', 'pelabuhan', 'bandara', 'helipad',
-                                'prasekolah', 'dasar', 'menengah', 'lanjutan', 'universitas', 'lembaga_pendidikan', 'laboratorium', 'observatorium', 'pusat_penelitian', 'pusat_pengembangan', 'literasi',
-                                'rumah_sakit_besar', 'rumah_sakit_kecil', 'pusat_diagnostik',
-                                'pusat_bantuan_hukum', 'pengadilan', 'kejaksaan', 'pos_polisi', 'armada_mobil_polisi', 'akademi_polisi',
-                                'kolam_renang', 'sirkuit_balap', 'stadion', 'stadion_internasional', 'gym', 'golf', 'esports', 'gokart',
-                                'mall', 'hotel', 'pusat_grosir_tekstil', 'bioskop', 'teater',
-                                'rumah_subsidi', 'apartemen', 'mansion'
-                            ];
-
                             const aggregatedFields: Record<string, number> = {};
-                            keysToAggregate.forEach(key => {
+                            ANNEXED_AGGREGATE_KEYS.forEach(key => {
                                 const prevVal = Number(prev[key] ?? prev?.armada?.[key] ?? prev?.pertahanan?.[key] ?? 0);
                                 const targetVal = Number(targetData[key] ?? targetData?.armada?.[key] ?? targetData?.pertahanan?.[key] ?? 0);
                                 if (targetVal > 0 || prevVal > 0) {
@@ -518,11 +504,23 @@ export default function MapPage() {
                                     weightedAverageFields[key] = Math.round(((prevValue * prevPop) + (targetValue * targetPop)) / totalPop);
                                 }
                             });
+                            const normalizePartnerName = (name: unknown) => String(name || '').toLowerCase().trim();
+                            const addedTradePartners = Array.isArray(prev.addedTradePartners) ? prev.addedTradePartners : [];
+                            const removedTradePartners = Array.isArray(prev.removedTradePartners) ? prev.removedTradePartners : [];
 
                             return {
                                 ...prev,
                                 ...aggregatedFields,
                                 ...weightedAverageFields,
+                                addedTradePartners: addedTradePartners.filter(
+                                    (partner: string) => normalizePartnerName(partner) !== normalizePartnerName(targetCountry)
+                                ),
+                                removedTradePartners: Array.from(new Set([
+                                    ...removedTradePartners.filter(
+                                        (partner: string) => normalizePartnerName(partner) !== normalizePartnerName(targetCountry)
+                                    ),
+                                    targetCountry
+                                ])),
                                 jumlah_penduduk: totalPop,
                                 populasi: totalPop,
                                 anggaran: prevAnggaran + targetAnggaran,
@@ -534,7 +532,6 @@ export default function MapPage() {
                         });
 
                         // Tambahkan Net Balance (pertumbuhan harian / +) dari target country ke adjustment net balance user
-                        const targetNetBal = calculateNetBalanceWithEconomicEmbargo(targetData, targetCountry);
                         if (targetNetBal > 0) {
                             setPlayerNetBalanceAdjustment(prev => prev + targetNetBal);
                         }
@@ -647,16 +644,56 @@ export default function MapPage() {
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
     const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
     useEffect(() => {
-        const handleProvinceAction = (event: Event) => {
+        const handleProvinceAction = async (event: Event) => {
             const detail = (event as CustomEvent<ProvinceActionEventDetail>).detail;
             if (!detail?.actionLabel || !detail.targetCountry || !detail.occupyingCountry) return;
 
             const timestamp = currentDate.toISOString().slice(0, 10);
+            if (detail.actionId === 'beri_kemerdekaan') {
+                try {
+                    const message = await releaseAnnexedProvince({
+                        detail,
+                        contributionCache: annexedContributionRef.current,
+                        updateCountryDetail: setCountryDetail,
+                        adjustPlayerNetBalance: delta => setPlayerNetBalanceAdjustment(previous => previous + delta),
+                        updateCountryColorOverrides: setCountryColorOverrides
+                    });
+                    setNotifications(previous => [{
+                        id: `province-independence-${Date.now()}`,
+                        title: '🏳️ KEMERDEKAAN PROVINSI DIPULIHKAN',
+                        sender: `Pemerintah ${detail.occupyingCountry}`,
+                        message,
+                        timestamp,
+                        type: 'peringkat',
+                        value: 100,
+                        isRead: false
+                    }, ...previous]);
+                    return;
+                } catch (error) {
+                    console.error(`Failed to restore ${detail.targetCountry} independence:`, error);
+                    setNotifications(previous => [{
+                        id: `province-independence-failed-${Date.now()}`,
+                        title: '❌ PEMULIHAN KEMERDEKAAN GAGAL',
+                        sender: `Pemerintah ${detail.occupyingCountry}`,
+                        message: `Kemerdekaan ${detail.targetCountry} belum diproses: ${error instanceof Error ? error.message : 'Terjadi kesalahan saat memulihkan data wilayah.'}`,
+                        timestamp,
+                        type: 'peringkat',
+                        value: 100,
+                        isRead: false
+                    }, ...previous]);
+                    return;
+                }
+                return;
+            }
+
             setNotifications(previous => [{
                 id: `province-action-${detail.actionId}-${Date.now()}`,
-                title: `🏛️ ${detail.actionLabel.toUpperCase()} DICATAT`,
+                title: detail.actionSucceeded === false
+                    ? `❌ ${detail.actionLabel.toUpperCase()} GAGAL`
+                    : `🏛️ ${detail.actionLabel.toUpperCase()} ${detail.actionMessage ? 'SELESAI' : 'DICATAT'}`,
                 sender: `Pemerintah ${detail.occupyingCountry}`,
-                message: `Aksi "${detail.actionLabel}" untuk Provinsi ${detail.targetCountry} telah dikonfirmasi dan dicatat.`,
+                message: detail.actionMessage ||
+                    `Aksi "${detail.actionLabel}" untuk Provinsi ${detail.targetCountry} telah dikonfirmasi dan dicatat.`,
                 timestamp,
                 type: 'peringkat',
                 value: 100,
@@ -903,11 +940,16 @@ export default function MapPage() {
             const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
             const addedTradePartners = Array.isArray(countryDetail?.addedTradePartners) ? countryDetail.addedTradePartners : [];
             const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
+            const normalizePartnerName = (name: string) => name.toLowerCase().trim();
 
             const staticPartners = getTradeAgreementsForCountry(userCountryName).map(c => c.mitra);
             const allTradePartners = Array.from(new Set([
-                ...staticPartners.filter(p => !removedTradePartners.includes(p)),
-                ...addedTradePartners
+                ...staticPartners.filter(p => !removedTradePartners.some(
+                    (removed: string) => normalizePartnerName(removed) === normalizePartnerName(p)
+                )),
+                ...addedTradePartners.filter((partner: string) => !removedTradePartners.some(
+                    (removed: string) => normalizePartnerName(removed) === normalizePartnerName(partner)
+                ))
             ]));
 
             const internationalPool = [
@@ -2030,15 +2072,9 @@ export default function MapPage() {
     useEffect(() => {
         if (!countryDetail || !metadata || Object.keys(metadata).length === 0) return;
 
-        // Ambil logic constants & helper
-        const FOOD_CONSUMPTION_PER_CAPITA = require('@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic').FOOD_CONSUMPTION_PER_CAPITA;
-        const calculateProduction = require('@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic').calculateProduction;
-
         const kesejahteraanResult = calculateKesejahteraan(
             countryDetail,
             metadata,
-            FOOD_CONSUMPTION_PER_CAPITA,
-            calculateProduction,
             countryDetail?.kesejahteraan
         );
 
@@ -2202,6 +2238,7 @@ export default function MapPage() {
                             const w = window as any;
                             const feats = w.neosantara_world_geojson_features;
                             const overrides = w.neosantara_country_color_overrides;
+                            const annexedCountries = w.neosantara_annexed_countries || {};
                             if (
                                 typeof v === 'string' && feats && overrides &&
                                 v !== '#10b981' && v !== '#1e3a8a' && v !== '#fbbf24' && v !== 'white' &&
@@ -2221,6 +2258,11 @@ export default function MapPage() {
                                     for (const [key, color] of Object.entries(overrides)) {
                                         const k = key.toLowerCase().trim();
                                         const kClean = k.replace(/[^a-z0-9]/g, '');
+                                        const stillAnnexed = Object.entries(annexedCountries).some(([annexedKey, info]) =>
+                                            annexedKey.toLowerCase().trim() === k &&
+                                            typeof info === 'object' && info !== null && 'attackerCountry' in info
+                                        );
+                                        if (!stillAnnexed) continue;
                                         if (
                                             (iso && iso !== '-99' && k === iso) ||
                                             (iso3 && iso3 !== '-99' && k === iso3) ||
@@ -2321,7 +2363,7 @@ export default function MapPage() {
 
     // Update WASM map engine dengan warna negara baru ketika countryColorOverrides berubah
     useEffect(() => {
-        if (!wasmModuleRef.current || Object.keys(countryColorOverrides).length === 0) {
+        if (!wasmModuleRef.current) {
             return;
         }
 

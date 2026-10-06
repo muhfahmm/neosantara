@@ -38,6 +38,15 @@ interface InformasiUmumProps {
   autoBuildEmbassy?: boolean;
   isOccupiedProvince?: boolean;
   occupyingCountry?: string;
+  playerReligion?: string;
+  targetReligion?: string;
+  updateTargetReligion?: (religion: string) => void;
+  playerIdeology?: string;
+  targetIdeology?: string;
+  updateTargetIdeology?: (ideology: string) => void;
+  provinceBudget?: number;
+  provinceNetBalance?: number;
+  provinceTension?: number;
 }
 
 // Komponen tombol aksi
@@ -60,7 +69,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   );
 };
 
-export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, occupyingCountry }: InformasiUmumProps) {
+export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, occupyingCountry, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension }: InformasiUmumProps) {
   const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || null;
   const [isDestroyModalOpen, setIsDestroyModalOpen] = useState(false);
   const [isBuildEmbassyModalOpen, setIsBuildEmbassyModalOpen] = useState<boolean>(() => !!autoBuildEmbassy);
@@ -223,7 +232,23 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     <div className="space-y-6">
       {/* Grid Layout 4-4 */}
       {isOccupiedProvince ? (
-        <ProvinsiInformasiUmum countryName={countryName} occupyingCountry={occupyingCountry || playerCountryName || ''} />
+        <ProvinsiInformasiUmum
+          countryName={countryName}
+          occupyingCountry={occupyingCountry || playerCountryName || ''}
+          playerReligion={playerReligion}
+          targetReligion={targetReligion}
+          updateTargetReligion={updateTargetReligion}
+          playerIdeology={playerIdeology}
+          targetIdeology={targetIdeology}
+          updateTargetIdeology={updateTargetIdeology}
+          provinceBudget={provinceBudget}
+          provinceNetBalance={provinceNetBalance}
+          provinceTension={provinceTension}
+          playerCountryDetail={playerCountryDetail || null}
+          taxedProvinces={Array.isArray(playerCountryDetail?.taxedProvinces) ? playerCountryDetail.taxedProvinces : []}
+          updatePlayerCountryDetail={setPlayerCountryDetail}
+          adjustPlayerNetBalance={adjustNetBalance}
+        />
       ) : <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 pt-6">
         
         {/* Tombol Kedutaan dengan Badge Tanggal Selesai */}
@@ -377,10 +402,20 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           if (setPlayerCountryDetail) {
             setPlayerCountryDetail((prev: any) => {
               if (!prev) return prev;
+              const normalizePartner = (name: unknown) => String(name || '').toLowerCase().trim();
               const existingRemovedTrade = Array.isArray(prev.removedTradePartners) ? prev.removedTradePartners : [];
+              const existingAddedTrade = Array.isArray(prev.addedTradePartners) ? prev.addedTradePartners : [];
               return {
                 ...prev,
-                removedTradePartners: Array.from(new Set([...existingRemovedTrade, countryName])),
+                addedTradePartners: existingAddedTrade.filter(
+                  (partner: string) => normalizePartner(partner) !== normalizePartner(countryName)
+                ),
+                removedTradePartners: Array.from(new Set([
+                  ...existingRemovedTrade.filter(
+                    (partner: string) => normalizePartner(partner) !== normalizePartner(countryName)
+                  ),
+                  countryName
+                ])),
               };
             });
           }
@@ -395,6 +430,26 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         onClose={() => setIsBuildTradeModalOpen(false)}
         onConfirm={() => {
           setTradeActive(true);
+          if (setPlayerCountryDetail) {
+            setPlayerCountryDetail((prev: any) => {
+              if (!prev) return prev;
+              const normalizePartner = (name: unknown) => String(name || '').toLowerCase().trim();
+              const existingAddedTrade = Array.isArray(prev.addedTradePartners) ? prev.addedTradePartners : [];
+              const existingRemovedTrade = Array.isArray(prev.removedTradePartners) ? prev.removedTradePartners : [];
+              return {
+                ...prev,
+                addedTradePartners: Array.from(new Set([
+                  ...existingAddedTrade.filter(
+                    (partner: string) => normalizePartner(partner) !== normalizePartner(countryName)
+                  ),
+                  countryName
+                ])),
+                removedTradePartners: existingRemovedTrade.filter(
+                  (partner: string) => normalizePartner(partner) !== normalizePartner(countryName)
+                )
+              };
+            });
+          }
           console.log(`Perjanjian dagang dengan ${countryName} dijalin.`);
         }}
       />
