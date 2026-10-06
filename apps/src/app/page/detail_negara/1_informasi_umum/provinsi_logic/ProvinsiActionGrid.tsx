@@ -6,7 +6,7 @@ import { PROVINCE_ACTION_EVENT } from './provinceActionTypes';
 import MissionaryResultModal from './2_tugaskan_misionaris/MissionaryResultModal';
 import IdeologyResultModal from './5_tanamkan_ideologi/IdeologyResultModal';
 import ProvinceAidModal from './4_kirim_bantuan/ProvinceAidModal';
-import { applyProvinceTensionChange } from './6_ketegangan';
+import { applyProvinceTensionChange } from './ketegangan_provinsi';
 
 interface MissionaryResult {
   targetCountry: string;

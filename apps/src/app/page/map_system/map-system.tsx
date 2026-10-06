@@ -105,7 +105,7 @@ import {
     hasProvinceReferendumEnded,
     resolveProvinceReferendum,
     type ProvinceReferendum
-} from '../detail_negara/1_informasi_umum/provinsi_logic/6_ketegangan/3_referendum';
+} from '../detail_negara/1_informasi_umum/provinsi_logic/ketegangan_provinsi/3_referendum';
 
 interface Country {
     id: number;

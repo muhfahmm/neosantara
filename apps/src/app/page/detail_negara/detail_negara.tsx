@@ -9,8 +9,8 @@ import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/pop
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
 import { getProvinceReligionOverride } from './1_informasi_umum/provinsi_logic/2_tugaskan_misionaris';
 import { getProvinceIdeologyOverride } from './1_informasi_umum/provinsi_logic/5_tanamkan_ideologi';
-import { getProvinceRebellionChance } from './1_informasi_umum/provinsi_logic/6_ketegangan/1_pemberontakan';
-import { getProvinceDemonstrationChance } from './1_informasi_umum/provinsi_logic/6_ketegangan/2_demonstrasi';
+import { getProvinceRebellionChance } from './1_informasi_umum/provinsi_logic/ketegangan_provinsi/1_pemberontakan';
+import { getProvinceDemonstrationChance } from './1_informasi_umum/provinsi_logic/ketegangan_provinsi/2_demonstrasi';
 
 // Import 3 komponen terpisah
 import InformasiUmum from "./1_informasi_umum/informasi_umum";
