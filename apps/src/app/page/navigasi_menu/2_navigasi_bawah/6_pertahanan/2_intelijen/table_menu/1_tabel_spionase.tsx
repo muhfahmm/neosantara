@@ -134,6 +134,8 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, onActi
   };
 
   const handleOpenModal = (row: RankingRow) => {
+    const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "";
+    if (row.countryName.toLowerCase().trim() === selectedCountryName.toLowerCase().trim()) return;
     setSelectedTarget(row);
     setIsModalOpen(true);
   };
@@ -216,9 +218,16 @@ export default function Spionase({ prefetchedAllCountries, countryDetail, onActi
                     <td className={`px-3 py-2.5 font-black ${isUserCountry ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{formatNumber(row.totalPower)}</td>
                     <td className="px-3 py-2.5 text-center">
                       <button
+                        type="button"
+                        disabled={isUserCountry}
                         onClick={() => handleOpenModal(row)}
-                        className="p-1.5 rounded-lg bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] border border-[#00FFAA]/30 transition-all cursor-pointer"
-                        title="Luncurkan misi spionase"
+                        className={`p-1.5 rounded-lg border transition-all ${
+                          isUserCountry
+                            ? 'bg-rose-500/10 text-rose-500 border-rose-500/40 cursor-not-allowed'
+                            : 'bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] border-[#00FFAA]/30 cursor-pointer'
+                        }`}
+                        title={isUserCountry ? "Ini negara yang sedang Anda gunakan" : "Luncurkan misi spionase"}
+                        aria-label={isUserCountry ? `${row.countryName}, negara yang sedang Anda gunakan` : `Luncurkan misi spionase ke ${row.countryName}`}
                       >
                         <Binoculars className="w-4 h-4" />
                       </button>

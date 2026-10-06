@@ -374,10 +374,17 @@ export default function SerangNegaraModal({
                               <td className="px-3 py-2.5 text-[#E0E0E0]">{formatNumber(row.udara)}</td>
                               <td className={`px-3 py-2.5 font-black ${isUser ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{formatNumber(row.totalPower)}</td>
                               <td className="px-3 py-2.5 text-center">
-                                <button 
+                                <button
+                                  type="button"
+                                  disabled={isUser}
                                   onClick={() => handleOpenAttackModal(row)}
-                                  className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white border border-rose-500/30 transition-all cursor-pointer"
-                                  title="Serang negara ini"
+                                  className={`p-1.5 rounded-lg border transition-all ${
+                                    isUser
+                                      ? 'bg-rose-500/10 text-rose-500 border-rose-500/40 cursor-not-allowed'
+                                      : 'bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white border-rose-500/30 cursor-pointer'
+                                  }`}
+                                  title={isUser ? "Ini negara yang sedang Anda gunakan" : "Serang negara ini"}
+                                  aria-label={isUser ? `${row.countryName}, negara yang sedang Anda gunakan` : `Serang ${row.countryName}`}
                                 >
                                   <Swords className="w-4 h-4" />
                                 </button>

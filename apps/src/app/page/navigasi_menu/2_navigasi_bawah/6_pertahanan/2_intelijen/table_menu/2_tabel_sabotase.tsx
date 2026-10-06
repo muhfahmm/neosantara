@@ -134,6 +134,8 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
   };
 
   const handleOpenModal = (row: RankingRow) => {
+    const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "";
+    if (row.countryName.toLowerCase().trim() === selectedCountryName.toLowerCase().trim()) return;
     setSelectedTarget(row);
     setIsModalOpen(true);
   };
@@ -216,9 +218,16 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
                     <td className={`px-3 py-2.5 font-black ${isUserCountry ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{formatNumber(row.totalPower)}</td>
                     <td className="px-3 py-2.5 text-center">
                       <button
+                        type="button"
+                        disabled={isUserCountry}
                         onClick={() => handleOpenModal(row)}
-                        className="p-1.5 rounded-lg bg-orange-500/10 text-orange-400 hover:bg-orange-500 hover:text-white border border-orange-500/30 transition-all cursor-pointer"
-                        title="Lancarkan operasi sabotase"
+                        className={`p-1.5 rounded-lg border transition-all ${
+                          isUserCountry
+                            ? 'bg-rose-500/10 text-rose-500 border-rose-500/40 cursor-not-allowed'
+                            : 'bg-orange-500/10 text-orange-400 hover:bg-orange-500 hover:text-white border-orange-500/30 cursor-pointer'
+                        }`}
+                        title={isUserCountry ? "Ini negara yang sedang Anda gunakan" : "Lancarkan operasi sabotase"}
+                        aria-label={isUserCountry ? `${row.countryName}, negara yang sedang Anda gunakan` : `Lancarkan operasi sabotase di ${row.countryName}`}
                       >
                         <Bomb className="w-4 h-4" />
                       </button>

@@ -542,7 +542,7 @@ function ModalsManager({
           isOpen={true}
           onClose={onClose}
           countryDetail={countryDetail}
-          setCountryDetail={setCountryDetail}
+          playerCountryName={selectedCountry.country || ""}
         />
       );
     case "Menu:Armada":
