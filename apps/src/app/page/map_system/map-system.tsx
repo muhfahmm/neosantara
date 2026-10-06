@@ -87,6 +87,10 @@ import {
 import { generateResourceLootNews } from '../menus/news/logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
 import { NewsItemData } from '../menus/news/newsModals';
 import { calculateFoodCoverageByGroup } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic';
+import {
+    clearExpelledOrganizationCountries,
+    expelCountryFromOrganizations
+} from '@/../../json/database_organisasi_internasional';
 
 interface Country {
     id: number;
@@ -346,6 +350,19 @@ export default function MapPage() {
                     const reason = hasActiveApprovedInvasionResolutionForDifferentTarget(attackerCountry, targetCountry)
                         ? 'wrong_military_target'
                         : 'missing_military_resolution';
+                    const expelledOrganizations = expelCountryFromOrganizations(attackerCountry);
+                    if (expelledOrganizations.length > 0) {
+                        setNotifications(prev => [{
+                            id: `notif-organization-expulsion-${Date.now()}`,
+                            title: '🚫 KEANGGOTAAN ORGANISASI DICABUT',
+                            sender: 'Sekretariat Organisasi Internasional',
+                            message: `${attackerCountry} dikeluarkan dari ${expelledOrganizations.length} organisasi internasional karena menyerang ${targetCountry} tanpa resolusi invasi yang disetujui.`,
+                            timestamp: dateStr,
+                            type: 'peringkat',
+                            value: 100,
+                            isRead: false
+                        }, ...prev]);
+                    }
                     const sanctionsNotifications = submitInvasionViolationSanctions(
                         attackerCountry,
                         targetCountry,
@@ -1419,6 +1436,7 @@ export default function MapPage() {
 
         // Check if there is a save to load to restore the date
         if (typeof window !== 'undefined') {
+            clearExpelledOrganizationCountries();
             const loadSaveStr = localStorage.getItem('presiden_simulator_load_save');
             const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
             if (newGameMarker === '1') {

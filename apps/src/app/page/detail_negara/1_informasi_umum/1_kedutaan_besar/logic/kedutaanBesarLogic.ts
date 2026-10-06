@@ -1,5 +1,6 @@
 // Logic helper for Kedutaan Besar actions
 import getTradeAgreementsForCountry from '../../../../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
+import { getEmbassiesForCountry } from '../../../../../../../../json/database_kedutaan_besar/embassyRegistry';
 
 export type TradeAgreement = {
   no: number;
@@ -52,10 +53,23 @@ export const countryHasTradePartners = (
   }
 };
 
-export const playerHasEmbassyWith = (viewedCountryName?: string | null, playerEmbassies?: any[]): boolean => {
-  if (!viewedCountryName || !Array.isArray(playerEmbassies) || playerEmbassies.length === 0) return false;
+export const playerHasEmbassyWith = (
+  viewedCountryName?: string | null,
+  playerEmbassies?: any[],
+  playerCountryName?: string | null
+): boolean => {
+  if (!viewedCountryName) return false;
   const normViewed = normalizeName(viewedCountryName);
-  return playerEmbassies.some((embassy) => normalizeName(embassy?.mitra) === normViewed);
+  const hasCustomEmbassy = Array.isArray(playerEmbassies) &&
+    playerEmbassies.some((embassy) => normalizeName(embassy?.mitra) === normViewed);
+  if (hasCustomEmbassy) return true;
+  if (!playerCountryName) return false;
+
+  const normPlayer = normalizeName(playerCountryName);
+  return (
+    getEmbassiesForCountry(playerCountryName).some(country => normalizeName(country) === normViewed) ||
+    getEmbassiesForCountry(viewedCountryName).some(country => normalizeName(country) === normPlayer)
+  );
 };
 
 export const playerHasEmbassyOrTradePartners = (
@@ -72,7 +86,7 @@ export const playerHasEmbassyOrTradePartners = (
   }
 
   return (
-    playerHasEmbassyWith(viewedCountryName, playerEmbassies) ||
+    playerHasEmbassyWith(viewedCountryName, playerEmbassies, playerCountryName) ||
     countryHasTradePartners(viewedCountryName, playerCountryName, removedTradePartners)
   );
 };
@@ -107,4 +121,3 @@ export default {
   getEmbassyButtonLabel,
   getEmbassyButtonClass,
 };
-

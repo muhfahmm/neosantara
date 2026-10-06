@@ -1,9 +1,12 @@
 "use client"
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { X, Globe, Shield, HeartPulse, BookOpen, ArrowRightLeft, Users, Sprout, Plane, Ship, Wifi, Cloud, Landmark, Flag, Star, Handshake, BarChart, Crown, TrendingUp } from "lucide-react";
 import OrganisasiPBBModal from "./1_organisasi_PBB/organisasiPBBmodal";
 import OrganisasiRegional from "./2_organisasi_regional/organisasiRegional";
-import { getOrgMembers } from "@/../../json/database_organisasi_internasional";
+import {
+  getOrgMembers,
+  ORGANIZATION_MEMBERSHIP_UPDATED_EVENT
+} from "@/../../json/database_organisasi_internasional";
 
 interface ModalProps {
   isOpen: boolean;
@@ -49,8 +52,13 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, onOpenC
   const [isChildModalOpen, setIsChildModalOpen] = useState(false);
   const [selectedOrgName, setSelectedOrgName] = useState<string | null>(null);
   const [selectedOrgIcon, setSelectedOrgIcon] = useState<React.ElementType | null>(null);
+  const [membershipVersion, setMembershipVersion] = useState(0);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    const refreshMembership = () => setMembershipVersion(version => version + 1);
+    window.addEventListener(ORGANIZATION_MEMBERSHIP_UPDATED_EVENT, refreshMembership);
+    return () => window.removeEventListener(ORGANIZATION_MEMBERSHIP_UPDATED_EVENT, refreshMembership);
+  }, []);
 
   const playerCountryName = selectedCountry?.country || "Indonesia";
 
@@ -84,7 +92,9 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, onOpenC
       );
     });
     return map;
-  }, [playerCountryName]);
+  }, [playerCountryName, membershipVersion]);
+
+  if (!isOpen) return null;
 
   const handleOrgClick = (orgName: string) => {
     const IconComponent = orgIconMap[orgName] || Globe;

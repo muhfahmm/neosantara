@@ -1,7 +1,9 @@
-// Compatibility module for database_organisasi_internasional
+export {
+  clearExpelledOrganizationCountries,
+  expelCountryFromOrganizations,
+  getOrgMembers,
+  OrganizationMembers,
+  ORGANIZATION_MEMBERSHIP_UPDATED_EVENT
+} from './organizationMembers';
 
-export function getOrgMembers(orgName?: string): any[] {
-  return [];
-}
-
-export default getOrgMembers;
+export { getOrgMembers as default } from './organizationMembers';
