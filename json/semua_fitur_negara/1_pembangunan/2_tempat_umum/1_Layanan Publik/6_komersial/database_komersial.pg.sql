@@ -217,8 +217,8 @@ id, country, country_slug, mall, hotel, pusat_grosir_tekstil
 (205, 'Suriname', 'suriname', 20, 4, 1),
 (206, 'Uruguay', 'uruguay', 86, 4, 10),
 (207, 'Venezuela', 'venezuela', 51, 0, 10),
-(208, 'Mayotte', 'mayotte', 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 15, 2, 2),
+(209, 'Reunion', 'reunion', 35, 4, 6),
+(210, 'Guadeloupe', 'guadeloupe', 32, 6, 5),
+(211, 'Martinique', 'martinique', 30, 5, 5),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 18, 7, 2);

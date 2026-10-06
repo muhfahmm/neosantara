@@ -234,9 +234,9 @@ VALUES
 (205, 'suriname', 'Suriname', 'sr', true, true, true, false, true, true, true, true, true, true, true, true, false, true, false, true, true, true),
 (206, 'uruguay', 'Uruguay', 'uy', true, true, true, true, true, true, false, true, true, false, true, true, false, true, true, true, true, false),
 (207, 'venezuela', 'Venezuela', 've', true, true, false, true, true, true, true, true, true, false, true, true, true, true, true, true, true, true),
-(208, 'mayotte', 'Mayotte', 'yt', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-(209, 'reunion', 'Reunion', 're', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-(210, 'guadeloupe', 'Guadeloupe', 'gp', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-(211, 'martinique', 'Martinique', 'mq', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-(212, 'bonaire_sint_eustatius_dan_saba', 'Bonaire, Sint Eustatius dan Saba', 'bq', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE);
+(208, 'mayotte', 'Mayotte', 'yt', TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE),
+(209, 'reunion', 'Reunion', 're', TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE),
+(210, 'guadeloupe', 'Guadeloupe', 'gp', TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE),
+(211, 'martinique', 'Martinique', 'mq', TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE),
+(212, 'bonaire_sint_eustatius_dan_saba', 'Bonaire, Sint Eustatius dan Saba', 'bq', FALSE, TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE);
 -- ========================================================
