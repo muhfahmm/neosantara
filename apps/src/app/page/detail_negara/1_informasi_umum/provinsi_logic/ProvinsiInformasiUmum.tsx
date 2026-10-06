@@ -12,10 +12,10 @@ interface ProvinsiInformasiUmumProps {
   occupyingCountry: string;
   playerReligion?: string;
   targetReligion?: string;
-  updateTargetReligion?: (religion: string) => void;
+  updateTargetReligion?: (religion: string) => void | Promise<void>;
   playerIdeology?: string;
   targetIdeology?: string;
-  updateTargetIdeology?: (ideology: string) => void;
+  updateTargetIdeology?: (ideology: string) => void | Promise<void>;
   provinceBudget?: number;
   provinceNetBalance?: number;
   provinceTension?: number;

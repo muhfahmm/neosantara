@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, Info, Shield, Globe, Vote, Crown, DollarSign, Handshake, Hammer, Flag, Feather, Sword, Check } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
-import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
+import { fetchAllCountryProfilesFromDb, updateCountryProfileSocialData, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
 
 import IdeologiConfirmModal from "./modalsGanti";
 import IdeologiGagalModal from "./modalsGagalGanti";
@@ -51,6 +51,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"ideologi" | "dunia">("ideologi");
   const [selectedIdeology, setSelectedIdeology] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   // 🔥 STATE BARU UNTUK MODAL KONFIRMASI & INFO
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -146,32 +147,49 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
     setIsConfirmOpen(true); // 🔥 Buka modal konfirmasi baru
   };
 
-  const handleConfirmChange = () => {
-    if (!selectedIdeology) return;
+  const handleConfirmChange = async () => {
+    if (!selectedIdeology || isSaving) return;
     const result = attemptChangeIdeology(anggaran);
     if (!result.success) {
       setShowErrorModal(true);
       return;
     }
 
-    const oldIdeology = countryDetail?.ideology || "Demokrasi";
-    const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
-    const notif = generateIdeologyChangeNotification(oldIdeology, selectedIdeology, dateStr);
-    let newPending = Array.isArray(countryDetail?.pending_notifications) ? [...countryDetail.pending_notifications] : [];
-    newPending = [notif, ...newPending];
+    setIsSaving(true);
+    try {
+      const countrySlug = String(countryDetail?.country_slug || '');
+      if (!countrySlug) throw new Error('Slug negara pemain tidak tersedia; perubahan ideologi tidak dapat disimpan.');
+      await updateCountryProfileSocialData(countrySlug, { ideology: selectedIdeology });
 
-    setCountryDetail?.((prev: any) => ({
-      ...(prev || {}),
-      ideology: selectedIdeology,
-      anggaran: result.newAnggaran,
-      pending_notifications: newPending,
-      message: `Ideologi negara diubah ke ${selectedIdeology}. Biaya perubahan ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID')} NEO.`
-    }));
-    setFeedback({
-      type: "success",
-      message: `Ideologi berhasil diubah menjadi ${selectedIdeology}. Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID')} NEO telah dipotong.`
-    });
-    setIsConfirmOpen(false);
+      const oldIdeology = countryDetail?.ideology || "Demokrasi";
+      const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+      const notif = generateIdeologyChangeNotification(oldIdeology, selectedIdeology, dateStr);
+      const newPending = [notif, ...(Array.isArray(countryDetail?.pending_notifications) ? countryDetail.pending_notifications : [])];
+
+      setCountryDetail?.((prev: any) => ({
+        ...(prev || {}),
+        ideology: selectedIdeology,
+        anggaran: result.newAnggaran,
+        pending_notifications: newPending,
+        message: `Ideologi negara diubah ke ${selectedIdeology}. Biaya perubahan ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID')} NEO.`
+      }));
+      setCountryProfiles(profiles => profiles.map(profile =>
+        profile.country_slug === countrySlug ? { ...profile, ideology: selectedIdeology } : profile
+      ));
+      setFeedback({
+        type: "success",
+        message: `Ideologi berhasil diubah menjadi ${selectedIdeology}. Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID')} NEO telah dipotong.`
+      });
+      setIsConfirmOpen(false);
+    } catch (error) {
+      setFeedback({
+        type: "error",
+        message: error instanceof Error ? error.message : 'Gagal menyimpan perubahan ideologi.'
+      });
+      setIsConfirmOpen(false);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return createPortal(
@@ -296,8 +314,12 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                   })}
                 </div>
 
-                {feedback && feedback.type === 'success' && (
-                  <div className="mt-6 p-4 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA]">{feedback.message}</div>
+                {feedback && (
+                  <div role={feedback.type === 'error' ? 'alert' : 'status'} className={`mt-6 p-4 rounded-xl border ${
+                    feedback.type === 'success'
+                      ? 'border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA]'
+                      : 'border-rose-500/30 bg-rose-500/10 text-rose-300'
+                  }`}>{feedback.message}</div>
                 )}
               </div>
             )}

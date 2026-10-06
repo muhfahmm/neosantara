@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, Star, Globe, MoonStar, Church, Sun, CircleDot, Atom, Check } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
-import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
+import { fetchAllCountryProfilesFromDb, updateCountryProfileSocialData, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
 
 // 🔥 IMPOR MODAL KONFIRMASI DAN GAGAL
 import AgamaConfirmModal from "./modalsGanti";
@@ -53,6 +53,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<"agama" | "dunia">("agama");
   const [selectedReligion, setSelectedReligion] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   // 🔥 STATE UNTUK MODAL KONFIRMASI & GAGAL
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -147,32 +148,49 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
     setIsConfirmOpen(true);
   };
 
-  const handleConfirmChange = () => {
-    if (!selectedReligion) return;
+  const handleConfirmChange = async () => {
+    if (!selectedReligion || isSaving) return;
     const result = attemptChangeReligion(anggaran);
     if (!result.success) {
       setShowErrorModal(true);
       return;
     }
 
-    const oldReligion = countryDetail?.religion || "Islam";
-    const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
-    const notif = generateReligionChangeNotification(oldReligion, selectedReligion, dateStr);
-    let newPending = Array.isArray(countryDetail?.pending_notifications) ? [...countryDetail.pending_notifications] : [];
-    newPending = [notif, ...newPending];
+    setIsSaving(true);
+    try {
+      const countrySlug = String(countryDetail?.country_slug || '');
+      if (!countrySlug) throw new Error('Slug negara pemain tidak tersedia; perubahan agama tidak dapat disimpan.');
+      await updateCountryProfileSocialData(countrySlug, { religion: selectedReligion });
 
-    setCountryDetail?.((prev: any) => ({
-      ...(prev || {}),
-      religion: selectedReligion,
-      anggaran: result.newAnggaran,
-      pending_notifications: newPending,
-      message: `Agama negara diubah ke ${selectedReligion}. Biaya perubahan ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} NEO.`
-    }));
-    setFeedback({
-      type: "success",
-      message: `Agama berhasil diubah menjadi ${selectedReligion}. Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} NEO telah dipotong.`
-    });
-    setIsConfirmOpen(false);
+      const oldReligion = countryDetail?.religion || "Islam";
+      const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+      const notif = generateReligionChangeNotification(oldReligion, selectedReligion, dateStr);
+      const newPending = [notif, ...(Array.isArray(countryDetail?.pending_notifications) ? countryDetail.pending_notifications : [])];
+
+      setCountryDetail?.((prev: any) => ({
+        ...(prev || {}),
+        religion: selectedReligion,
+        anggaran: result.newAnggaran,
+        pending_notifications: newPending,
+        message: `Agama negara diubah ke ${selectedReligion}. Biaya perubahan ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} NEO.`
+      }));
+      setCountryProfiles(profiles => profiles.map(profile =>
+        profile.country_slug === countrySlug ? { ...profile, religion: selectedReligion } : profile
+      ));
+      setFeedback({
+        type: "success",
+        message: `Agama berhasil diubah menjadi ${selectedReligion}. Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} NEO telah dipotong.`
+      });
+      setIsConfirmOpen(false);
+    } catch (error) {
+      setFeedback({
+        type: "error",
+        message: error instanceof Error ? error.message : 'Gagal menyimpan perubahan agama.'
+      });
+      setIsConfirmOpen(false);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return createPortal(
@@ -279,8 +297,12 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                   })}
                 </div>
 
-                {feedback && feedback.type === 'success' && (
-                  <div className="mt-6 p-4 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA]">{feedback.message}</div>
+                {feedback && (
+                  <div role={feedback.type === 'error' ? 'alert' : 'status'} className={`mt-6 p-4 rounded-xl border ${
+                    feedback.type === 'success'
+                      ? 'border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA]'
+                      : 'border-rose-500/30 bg-rose-500/10 text-rose-300'
+                  }`}>{feedback.message}</div>
                 )}
               </div>
             )}

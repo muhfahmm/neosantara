@@ -455,3 +455,55 @@ export async function GET(request: Request) {
   }
 }
 
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const countrySlug = typeof body?.country_slug === 'string' ? body.country_slug.trim() : '';
+    if (!countrySlug) {
+      return NextResponse.json({ error: 'country_slug wajib diisi.' }, { status: 400 });
+    }
+
+    const updates: Array<{ column: 'religion' | 'ideology'; value: string }> = [];
+    for (const column of ['religion', 'ideology'] as const) {
+      if (body[column] === undefined) continue;
+      if (typeof body[column] !== 'string' || !body[column].trim() || body[column].trim().length > 100) {
+        return NextResponse.json(
+          { error: `${column} harus berupa teks 1-100 karakter.` },
+          { status: 400 }
+        );
+      }
+      updates.push({ column, value: body[column].trim() });
+    }
+
+    if (updates.length === 0) {
+      return NextResponse.json(
+        { error: 'Tidak ada kolom agama atau ideologi yang diperbarui.' },
+        { status: 400 }
+      );
+    }
+
+    const values = updates.map(update => update.value);
+    values.push(countrySlug);
+    const setClause = updates
+      .map((update, index) => `${update.column} = $${index + 1}`)
+      .join(', ');
+    const rows = await queryDb<any[]>(
+      `UPDATE database_profiles_negara SET ${setClause} WHERE country_slug = $${values.length} RETURNING country_slug, religion, ideology`,
+      values
+    );
+
+    if (!rows.length) {
+      return NextResponse.json({ error: 'Negara tidak ditemukan.' }, { status: 404 });
+    }
+
+    cachedAllCountries = null;
+    cachedCountryMap.clear();
+    return NextResponse.json({ success: true, profile: rows[0] });
+  } catch (error: any) {
+    console.error('Failed to update country religion or ideology:', error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Gagal memperbarui profil negara.' },
+      { status: 500 }
+    );
+  }
+}

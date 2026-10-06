@@ -50,9 +50,23 @@ export async function fetchAllCountryProfilesFromDb(): Promise<CountryProfile[]>
   }
 }
 
+export async function updateCountryProfileSocialData(
+  countrySlug: string,
+  updates: { religion?: string; ideology?: string }
+): Promise<void> {
+  const response = await fetch('/api/country-data', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ country_slug: countrySlug, ...updates }),
+  });
+  const data = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(data?.error || 'Gagal memperbarui data sosial negara.');
+  }
+}
+
 // Backward compatibility exports for legacy static data consumers
 export const PROFILES_POPULATION_DATA: any[] = [];
 export const PROFILES_RELIGION_DATA: any[] = [];
 export const PROFILES_IDEOLOGY_DATA: any[] = [];
-
 

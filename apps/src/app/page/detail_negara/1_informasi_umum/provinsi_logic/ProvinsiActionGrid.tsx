@@ -22,10 +22,10 @@ interface ProvinsiActionGridProps {
   occupyingCountry: string;
   playerReligion?: string;
   targetReligion?: string;
-  updateTargetReligion?: (religion: string) => void;
+  updateTargetReligion?: (religion: string) => void | Promise<void>;
   playerIdeology?: string;
   targetIdeology?: string;
-  updateTargetIdeology?: (ideology: string) => void;
+  updateTargetIdeology?: (ideology: string) => void | Promise<void>;
   provinceBudget?: number;
   provinceNetBalance?: number;
   provinceTension?: number;
@@ -84,13 +84,13 @@ export default function ProvinsiActionGrid({
     });
   };
 
-  const confirmAction = (aidCategory?: string, aidItemLabel?: string) => {
+  const confirmAction = async (aidCategory?: string, aidItemLabel?: string) => {
     if (!selectedAction) return;
     let actionSucceeded = true;
     let actionMessage: string | undefined;
     let successChance: number | undefined;
     try {
-      const result = selectedAction.onConfirm?.({
+      const result = await selectedAction.onConfirm?.({
         targetCountry,
         occupyingCountry,
         playerReligion,

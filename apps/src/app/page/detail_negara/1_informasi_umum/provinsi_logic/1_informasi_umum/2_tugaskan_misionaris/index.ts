@@ -17,13 +17,13 @@ export function getProvinceReligionOverride(countryName: string): string | undef
   )?.[1];
 }
 
-function assignMissionaries({
+async function assignMissionaries({
   targetCountry,
   playerReligion,
   updateTargetReligion,
   provinceTension,
   adjustProvinceTension
-}: ProvinceActionContext): ProvinceActionResult {
+}: ProvinceActionContext): Promise<ProvinceActionResult> {
   const religion = String(playerReligion || '').trim();
   if (!religion || religion === '-' || religion.toLowerCase() === 'belum tersedia') {
     throw new Error('Agama negara pemain belum tersedia.');
@@ -48,7 +48,7 @@ function assignMissionaries({
     };
   }
 
-  updateTargetReligion(religion);
+  await updateTargetReligion(religion);
   if (typeof window !== 'undefined') {
     const gameWindow = window as Window & {
       neosantara_province_religion_overrides?: ProvinceReligionOverrides;

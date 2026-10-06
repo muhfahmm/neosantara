@@ -11,6 +11,7 @@ import { getProvinceReligionOverride } from './1_informasi_umum/provinsi_logic/1
 import { getProvinceIdeologyOverride } from './1_informasi_umum/provinsi_logic/1_informasi_umum/5_tanamkan_ideologi';
 import { getProvinceRebellionChance } from './1_informasi_umum/provinsi_logic/ketegangan_provinsi/1_pemberontakan';
 import { getProvinceDemonstrationChance } from './1_informasi_umum/provinsi_logic/ketegangan_provinsi/2_demonstrasi';
+import { updateCountryProfileSocialData } from '@/../../json/semua_fitur_negara/0_profiles';
 
 // Import 3 komponen terpisah
 import InformasiUmum from "./1_informasi_umum/informasi_umum";
@@ -322,13 +323,19 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
       ? entry[1] as { status?: string; votingEndsAt?: string }
       : null;
   })();
-  const updateTargetReligion = (religion: string) => {
+  const updateTargetReligion = async (religion: string) => {
+    const countrySlug = String(detailData?.country_slug || '');
+    if (!countrySlug) throw new Error(`Slug profil ${countryName} tidak ditemukan; agama tidak dapat disimpan.`);
+    await updateCountryProfileSocialData(countrySlug, { religion });
     setFetchedDetail((previous: Record<string, unknown> | null) => previous
       ? { ...previous, religion }
       : previous
     );
   };
-  const updateTargetIdeology = (ideology: string) => {
+  const updateTargetIdeology = async (ideology: string) => {
+    const countrySlug = String(detailData?.country_slug || '');
+    if (!countrySlug) throw new Error(`Slug profil ${countryName} tidak ditemukan; ideologi tidak dapat disimpan.`);
+    await updateCountryProfileSocialData(countrySlug, { ideology });
     setFetchedDetail((previous: Record<string, unknown> | null) => previous
       ? { ...previous, ideology }
       : previous

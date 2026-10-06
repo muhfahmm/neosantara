@@ -17,13 +17,13 @@ export function getProvinceIdeologyOverride(countryName: string): string | undef
   )?.[1];
 }
 
-function instillProvinceIdeology({
+async function instillProvinceIdeology({
   targetCountry,
   playerIdeology,
   updateTargetIdeology,
   provinceTension,
   adjustProvinceTension
-}: ProvinceActionContext): ProvinceActionResult {
+}: ProvinceActionContext): Promise<ProvinceActionResult> {
   const ideology = String(playerIdeology || '').trim();
   if (!ideology || ideology === '-' || ideology.toLowerCase() === 'belum tersedia') {
     throw new Error('Ideologi negara pemain belum tersedia.');
@@ -48,7 +48,7 @@ function instillProvinceIdeology({
     };
   }
 
-  updateTargetIdeology(ideology);
+  await updateTargetIdeology(ideology);
   if (typeof window !== 'undefined') {
     const gameWindow = window as Window & {
       neosantara_province_ideology_overrides?: ProvinceIdeologyOverrides;

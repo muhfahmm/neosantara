@@ -5,7 +5,7 @@ export interface ProvinceAction {
   label: string;
   description: string;
   icon: LucideIcon;
-  onConfirm?: (context: ProvinceActionContext) => string | ProvinceActionResult;
+  onConfirm?: (context: ProvinceActionContext) => string | ProvinceActionResult | Promise<string | ProvinceActionResult>;
 }
 
 export interface ProvinceActionResult {
@@ -18,9 +18,9 @@ export interface ProvinceActionContext {
   targetCountry: string;
   occupyingCountry: string;
   playerReligion?: string;
-  updateTargetReligion?: (religion: string) => void;
+  updateTargetReligion?: (religion: string) => void | Promise<void>;
   playerIdeology?: string;
-  updateTargetIdeology?: (ideology: string) => void;
+  updateTargetIdeology?: (ideology: string) => void | Promise<void>;
   targetIdeology?: string;
   provinceBudget?: number;
   provinceNetBalance?: number;
