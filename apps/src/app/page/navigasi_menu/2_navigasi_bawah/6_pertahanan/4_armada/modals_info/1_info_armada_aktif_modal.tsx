@@ -1,6 +1,8 @@
 "use client";
 import React from "react";
 import { X } from "lucide-react";
+import { getMonarchyMilitaryStrengthMultiplier } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/monarki";
+import { getAuthoritarianMilitaryStrengthMultiplier } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/otoritarianisme";
 
 interface InfoArmadaAktifModalProps {
   isOpen: boolean;
@@ -14,6 +16,7 @@ interface InfoArmadaAktifModalProps {
   capacityDisplay?: string;
   onNavigateToInfra?: (infraKey: string) => void;
   capacityInfo?: { used: number; totalCapacity: number; infraName: string; isFull: boolean } | null;
+  countryIdeology?: unknown;
 }
 
 export default function InfoArmadaAktifModal({
@@ -28,11 +31,15 @@ export default function InfoArmadaAktifModal({
   capacityDisplay = "",
   onNavigateToInfra,
   capacityInfo = null,
+  countryIdeology,
 }: InfoArmadaAktifModalProps) {
   if (!isOpen || !selectedItem) return null;
 
   const currentUnit = unitBreakdown.find(e => e.dataKey === selectedItem?.key);
   const currentQuantity = currentUnit?.quantity ?? 0;
+  const hasMilitaryBonus =
+    getMonarchyMilitaryStrengthMultiplier(countryIdeology) *
+    getAuthoritarianMilitaryStrengthMultiplier(countryIdeology) > 1;
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -84,13 +91,23 @@ export default function InfoArmadaAktifModal({
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
               <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Kekuatan</p>
-              <p className="text-lg font-black text-[#00FFAA]">
+              <p className="flex items-center gap-2 text-lg font-black text-[#00FFAA]">
+                {hasMilitaryBonus && (
+                  <span className="text-sm text-rose-400 line-through">
+                    {formatNumber(currentUnit?.baseTotalPower ?? 0)}
+                  </span>
+                )}
                 {formatNumber(currentUnit?.totalPower ?? 0)}
               </p>
             </div>
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
               <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Total HP</p>
-              <p className="text-lg font-black text-rose-400">
+              <p className="flex items-center gap-2 text-lg font-black text-rose-400">
+                {hasMilitaryBonus && (
+                  <span className="text-sm text-rose-300/60 line-through">
+                    {formatNumber(currentUnit?.baseTotalHealth ?? 0)}
+                  </span>
+                )}
                 {formatNumber(currentUnit?.totalHealth ?? 0)}
               </p>
             </div>

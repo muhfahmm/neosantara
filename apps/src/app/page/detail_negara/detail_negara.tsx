@@ -5,6 +5,7 @@ import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Fl
 import { COUNTRIES_DATA } from '../map_system/map-data';
 import countryPaths from '../map_system/country-paths.json';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
+import { applyNpcCountrySimulationState } from '@/app/logic/npcCountrySimulation';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
 import { getProvinceReligionOverride } from './1_informasi_umum/provinsi_logic/1_informasi_umum/2_tugaskan_misionaris';
@@ -134,7 +135,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
           try {
             const res = await fetch(`/api/country-data?path=${encodeURIComponent(relPath)}`);
-            const data = await res.json();
+            const data = applyNpcCountrySimulationState(await res.json());
             return data?.error ? null : data;
           } catch (e) {
             return null;

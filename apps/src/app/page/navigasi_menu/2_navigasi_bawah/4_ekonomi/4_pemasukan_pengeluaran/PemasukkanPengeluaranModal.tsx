@@ -15,6 +15,12 @@ import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/dat
 import { getSubsidiBySlug } from "@/../../json/database_alokasi_subsidi/index";
 import { ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/kristen";
 import { BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/buddha";
+import {
+  DEMOCRACY_TAX_REVENUE_BONUS,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/demokrasi";
+import { CAPITALISM_TAX_REVENUE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/kapitalisme";
+import { LIBERALISM_TAX_REVENUE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/liberalisme";
+import { CONSERVATISM_TAX_REVENUE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/konservatisme";
 
 interface ModalProps {
   isOpen: boolean;
@@ -105,16 +111,27 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
 
   const goldBuildingCount = Number(countryDetail?.emas) || 0;
   const goldUnits = calculateGoldMiningDailyProduction(countryDetail);
+  const ideology = String(countryDetail?.ideology || "").trim().toLowerCase();
+  const ideologyTaxBadge = ideology === "demokrasi"
+    ? `Bonus Demokrasi: penerimaan seluruh pajak +${DEMOCRACY_TAX_REVENUE_BONUS * 100}%`
+    : ideology === "kapitalisme"
+      ? `Bonus Kapitalisme: penerimaan seluruh pajak +${CAPITALISM_TAX_REVENUE_BONUS * 100}%`
+      : ideology === "liberalisme"
+        ? `Bonus Liberalisme: penerimaan seluruh pajak +${LIBERALISM_TAX_REVENUE_BONUS * 100}%`
+        : ideology === "konservatisme"
+          ? `Bonus Konservatisme: penerimaan seluruh pajak +${CONSERVATISM_TAX_REVENUE_BONUS * 100}%`
+        : undefined;
+  const religionTaxBadge = String(countryDetail?.religion || "").trim().toLowerCase() === "kristen ortodoks"
+    ? `Bonus Kristen Ortodoks: Penerimaan pajak pribadi +${ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS * 100}%`
+    : String(countryDetail?.religion || "").trim().toLowerCase() === "buddha"
+      ? `Bonus Buddha: Penerimaan pajak lingkungan +${BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS * 100}%`
+      : undefined;
 
   const incomeItems: FinancialItem[] = [
     {
       label: "Revenue Pajak",
       amount: taxRevenue,
-      badge: String(countryDetail?.religion || "").trim().toLowerCase() === "kristen ortodoks"
-        ? `Bonus Kristen Ortodoks: Penerimaan pajak pribadi +${ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS * 100}%`
-        : String(countryDetail?.religion || "").trim().toLowerCase() === "buddha"
-          ? `Bonus Buddha: Penerimaan pajak lingkungan +${BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS * 100}%`
-          : undefined,
+      badge: [ideologyTaxBadge, religionTaxBadge].filter(Boolean).join(" | ") || undefined,
       onClick: () => onGotoPajak?.()
     },
     {

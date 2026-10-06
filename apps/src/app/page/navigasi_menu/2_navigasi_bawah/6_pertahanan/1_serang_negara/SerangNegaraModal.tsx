@@ -6,6 +6,7 @@ import { getArmadaPowerSummary } from "../4_armada/logic/armadaLogic";
 import SerangModals from "./modals_menu/KonfirmasiSerangModals";
 // 🔥 Import COUNTRIES_DATA untuk meng-enrich ISO
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
+import { applyNpcCountrySimulationState } from "@/app/logic/npcCountrySimulation";
 import KonfirmasiPeluncuranSerangan from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/konfirmasi_peluncuran_serangan";
 import HasilPertempuran from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/hasil_pertempuran";
 
@@ -65,7 +66,7 @@ export default function SerangNegaraModal({
       .then((res) => res.json())
       .then((data) => {
         if (isMounted && Array.isArray(data) && data.length > 0) {
-          setInternalCountries(data);
+          setInternalCountries(data.map((country: any) => applyNpcCountrySimulationState(country)));
         }
       })
       .catch((err) => console.warn('[SerangNegaraModal] Failed to fetch all countries:', err))
@@ -81,9 +82,9 @@ export default function SerangNegaraModal({
   const rawRankings = React.useMemo(() => {
     let source: any[] = [];
     if (Array.isArray(prefetchedAllCountries) && prefetchedAllCountries.length > 0) {
-      source = prefetchedAllCountries;
+      source = prefetchedAllCountries.map(country => applyNpcCountrySimulationState(country));
     } else if (Array.isArray(internalCountries) && internalCountries.length > 0) {
-      source = internalCountries;
+      source = internalCountries.map(country => applyNpcCountrySimulationState(country));
     } else if (Array.isArray(COUNTRIES_DATA) && COUNTRIES_DATA.length > 0) {
       source = COUNTRIES_DATA;
     }

@@ -14,6 +14,10 @@ import {
   PROTESTANT_BUY_PRICE_DISCOUNT
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/kristen";
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
+import {
+  applyNpcCountrySimulationState,
+  NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
+} from "@/app/logic/npcCountrySimulation";
 
 const getFlagEmoji = (countryName: string) => {
   const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === countryName.toLowerCase().trim());
@@ -236,6 +240,16 @@ export default function ModalsKonfirmasiBeli({
   
   const [partnerDataRaw, setPartnerDataRaw] = useState<Record<string, any> | null>(null);
   const partnerStartDateRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const refreshPartnerState = () => {
+      setPartnerDataRaw(current =>
+        current ? applyNpcCountrySimulationState(current) : current
+      );
+    };
+    window.addEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshPartnerState);
+    return () => window.removeEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshPartnerState);
+  }, []);
   const lastCountryRef = useRef<string>("");
   const isInitialized = useRef(false);
 
@@ -304,7 +318,7 @@ export default function ModalsKonfirmasiBeli({
           setPartnerDataRaw(null);
           return;
         }
-        const json = await res.json();
+        const json = applyNpcCountrySimulationState(await res.json());
         setPartnerDataRaw(json || null);
         if (!partnerStartDateRef.current) {
           partnerStartDateRef.current = currentDate ? formatDate(currentDate) : formatDate(new Date());

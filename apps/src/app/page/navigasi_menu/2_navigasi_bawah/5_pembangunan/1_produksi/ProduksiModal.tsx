@@ -32,6 +32,13 @@ import { loadActiveResolutions, isPassedResolutionActive, normalizePbbCountryNam
 import { loadActiveSecurityCouncilItems } from "../../7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
 import { getProductionBonusMultiplier } from "./bonus_logic";
 import { applyJewishConstructionTimeDiscount } from "./bonus_logic/agama_bonus_logic/yahudi";
+import {
+  DEMOCRACY_TAX_REVENUE_BONUS,
+} from "./bonus_logic/ideologi_bonus_logic/demokrasi";
+import { CAPITALISM_TAX_REVENUE_BONUS } from "./bonus_logic/ideologi_bonus_logic/kapitalisme";
+import { LIBERALISM_TAX_REVENUE_BONUS } from "./bonus_logic/ideologi_bonus_logic/liberalisme";
+import { CONSERVATISM_TAX_REVENUE_BONUS } from "./bonus_logic/ideologi_bonus_logic/konservatisme";
+import { COMMUNISM_PRODUCTION_BONUS } from "./bonus_logic/ideologi_bonus_logic/komunisme";
 
 
 const RELIGION_BONUS_INFO: Record<string, string> = {
@@ -44,6 +51,18 @@ const RELIGION_BONUS_INFO: Record<string, string> = {
   yahudi: "Diskon waktu pembangunan pabrik dan tambang 10%; emas tidak termasuk.",
   shinto: "Bonus produksi kelistrikan +10%.",
   ateisme: "Bonus kecepatan riset sains +15%.",
+};
+
+const IDEOLOGY_BONUS_INFO: Record<string, string> = {
+  demokrasi: `Bonus penerimaan seluruh pajak +${DEMOCRACY_TAX_REVENUE_BONUS * 100}%.`,
+  monarki: "Bonus kekuatan militer +15%.",
+  kapitalisme: `Bonus penerimaan seluruh pajak +${CAPITALISM_TAX_REVENUE_BONUS * 100}%.`,
+  sosialisme: "Bonus tingkat kelahiran +10%.",
+  komunisme: `Produksi Semua Lini: +${COMMUNISM_PRODUCTION_BONUS * 100}%`,
+  nasionalisme: "Bonus kecepatan produksi pangan +10%.",
+  konservatisme: `Bonus penerimaan pajak +${CONSERVATISM_TAX_REVENUE_BONUS * 100}%.`,
+  liberalisme: `Bonus penerimaan pajak +${LIBERALISM_TAX_REVENUE_BONUS * 100}%.`,
+  otoritarianisme: "Bonus kekuatan militer +25%.",
 };
 
 
@@ -121,6 +140,8 @@ export default function ProduksiModal({
   );
   const currentReligion = String(countryDetail?.religion || "").trim();
   const currentReligionBonus = RELIGION_BONUS_INFO[currentReligion.toLowerCase()];
+  const currentIdeology = String(countryDetail?.ideology || "").trim();
+  const currentIdeologyBonus = IDEOLOGY_BONUS_INFO[currentIdeology.toLowerCase()];
 
   const RESOURCE_KEY_ALIASES: Record<string, string> = {};
   const normalizeResourceKey = (key: string) => RESOURCE_KEY_ALIASES[key] || key;
@@ -638,7 +659,7 @@ export default function ProduksiModal({
                   <Info className="h-5 w-5 text-[#00FFAA]" />
                 </div>
                 <h3 id="production-sanction-info-title" className="text-sm font-black uppercase tracking-wide text-[#00FFAA]">
-                  Info Bonus Agama & Sanksi
+                  Info Bonus Agama, Ideologi & Sanksi
                 </h3>
               </div>
               <button
@@ -651,15 +672,30 @@ export default function ProduksiModal({
               </button>
             </div>
             <div className="space-y-4 px-5 py-5 text-sm leading-relaxed text-slate-300">
-              {currentReligionBonus ? (
+              {currentReligionBonus || currentIdeologyBonus ? (
                 <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-200">
-                  <strong className="text-white">Agama saat ini: {currentReligion}.</strong>{" "}
-                  {currentReligionBonus}
+                  {currentReligionBonus && (
+                    <p>
+                      <strong className="text-white">Agama saat ini: {currentReligion}.</strong>{" "}
+                      {currentReligionBonus}
+                    </p>
+                  )}
+                  {currentIdeologyBonus && (
+                    <p className={currentReligionBonus ? "mt-2" : ""}>
+                      <strong className="text-white">Ideologi saat ini: {countryDetail?.ideology}.</strong>{" "}
+                      {currentIdeologyBonus}
+                    </p>
+                  )}
                 </div>
               ) : (
-                <p className="rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] p-3">
-                  Agama saat ini: <strong className="text-white">{currentReligion || "Belum tersedia"}</strong>. Tidak ada bonus agama khusus yang tercatat.
-                </p>
+                <div className="rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] p-3">
+                  <p>
+                    Agama saat ini: <strong className="text-white">{currentReligion || "Belum tersedia"}</strong>. Tidak ada bonus agama khusus yang tercatat.
+                  </p>
+                  <p className="mt-2">
+                    Ideologi saat ini: <strong className="text-white">{countryDetail?.ideology || "Belum tersedia"}</strong>. Tidak ada bonus ideologi khusus yang tercatat.
+                  </p>
+                </div>
               )}
               {hasActiveSanctions ? (
                 <p>

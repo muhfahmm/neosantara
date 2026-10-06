@@ -5,6 +5,10 @@ import React, { useEffect, useState } from 'react';
 import { fetchBuildingMetadata } from '../../../../lib/buildingMetadata';
 import { processDueLoans } from './4_ekonomi/3_peminjaman_hutang/tab_menu/logic/loanRepaymentLogic';
 import { isCountryUnderEconomicEmbargo } from './7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
+import {
+  applyNpcCountrySimulationState,
+  NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
+} from '@/app/logic/npcCountrySimulation';
 
 import dynamic from 'next/dynamic';
 
@@ -120,6 +124,16 @@ function ModalsManager({
       .catch((err) => console.error('ModalsManager: failed to load building metadata', err));
   }, []);
 
+  useEffect(() => {
+    const refreshNpcCountries = () => {
+      setPrefetchedAllCountries(current =>
+        current?.map(country => applyNpcCountrySimulationState(country)) ?? current
+      );
+    };
+    window.addEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcCountries);
+    return () => window.removeEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcCountries);
+  }, []);
+
   // Fetch full country dataset lazily when a menu that requires global country comparison is opened
   useEffect(() => {
     const menusNeedingAllCountries = [
@@ -132,7 +146,9 @@ function ModalsManager({
         try {
           const res = await fetch('/api/country-data?all=true');
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) setPrefetchedAllCountries(data);
+          if (Array.isArray(data) && data.length > 0) {
+            setPrefetchedAllCountries(data.map(country => applyNpcCountrySimulationState(country)));
+          }
         } catch (e) {
           console.warn('ModalsManager: failed to fetch all countries', e);
         }

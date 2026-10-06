@@ -11,6 +11,7 @@ import {
   calculateWeightedFoodCoverage,
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
 import { getCountryConsumptionBreakdown } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
+import { calculateTotalTaxIncome } from "@/app/logic/economic_logic/treasuryUpdater";
 
 
 // ─── Helper ─────────────────────────────────────────────────────────────────
@@ -22,12 +23,6 @@ function getTaxValue(detail: any, path: string[], fallback = 0): number {
     current = current[key];
   }
   return typeof current === "number" ? current : fallback;
-}
-
-function calculateIncomeAtRate(taxRate: number, maxIncome = 500): number {
-  if (taxRate <= 0) return 0;
-  if (taxRate >= 100) return maxIncome;
-  return Math.round((taxRate / 100) * maxIncome);
 }
 
 function findMeta(key: string, metadata: any): any {
@@ -52,12 +47,7 @@ export function calculatePajakScore(countryDetail: any): number {
   const environment_tax = Number(getTaxValue(countryDetail, ["environment_tax"]) || getTaxValue(countryDetail, ["pajak", "lingkungan", "tarif"]) || 0);
 
   const avgRate = (vat + corporate_tax + income_tax + cigarette_tax + environment_tax) / 5;
-  const totalIncome =
-    calculateIncomeAtRate(vat, 500) +
-    calculateIncomeAtRate(corporate_tax, 500) +
-    calculateIncomeAtRate(income_tax, 500) +
-    calculateIncomeAtRate(cigarette_tax, 500) +
-    calculateIncomeAtRate(environment_tax, 500);
+  const totalIncome = calculateTotalTaxIncome(countryDetail);
   const maxIncome = 5 * 500;
   return Math.min(100, Math.max(1, Math.round(100 - avgRate + (totalIncome / maxIncome) * 20)));
 }

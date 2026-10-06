@@ -14,6 +14,22 @@ import {
   applyBuddhaEnvironmentalTaxRevenueBonus,
   BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS,
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/buddha";
+import {
+  DEMOCRACY_TAX_REVENUE_BONUS,
+  applyDemocracyTaxRevenueBonus,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/demokrasi";
+import {
+  CAPITALISM_TAX_REVENUE_BONUS,
+  applyCapitalismTaxRevenueBonus,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/kapitalisme";
+import {
+  LIBERALISM_TAX_REVENUE_BONUS,
+  applyLiberalismTaxRevenueBonus,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/liberalisme";
+import {
+  CONSERVATISM_TAX_REVENUE_BONUS,
+  applyConservatismTaxRevenueBonus,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/konservatisme";
 
 interface ModalProps {
   isOpen: boolean;
@@ -34,6 +50,18 @@ const getTaxValue = (detail: any, path: string[], fallback: number = 0): number 
   }
   return typeof current === "number" ? current : fallback;
 };
+
+const applyIdeologyTaxBonus = (revenue: number, ideology: unknown) =>
+  applyLiberalismTaxRevenueBonus(
+    applyCapitalismTaxRevenueBonus(
+      applyConservatismTaxRevenueBonus(
+        applyDemocracyTaxRevenueBonus(revenue, ideology),
+        ideology
+      ),
+      ideology
+    ),
+    ideology
+  );
 
 export default function PajakModal({
   isOpen,
@@ -95,17 +123,24 @@ export default function PajakModal({
   const calculateSatisfaction = (rates: typeof tempRates) => {
     const { vat, corporate_tax, income_tax, cigarette_tax, environment_tax } = rates;
     const avgRate = (vat + corporate_tax + income_tax + cigarette_tax + environment_tax) / 5;
-    const total = calculateIncomeAtRate(vat, 500) +
-                  calculateIncomeAtRate(corporate_tax, 500) +
-                  applyOrthodoxPersonalIncomeTaxRevenueBonus(
-                    calculateIncomeAtRate(income_tax, 500),
-                    countryDetail?.religion
-                  ) +
-                  calculateIncomeAtRate(cigarette_tax, 500) +
-                  applyBuddhaEnvironmentalTaxRevenueBonus(
-                    calculateIncomeAtRate(environment_tax, 500),
-                    countryDetail?.religion
-                  );
+    const total =
+      applyIdeologyTaxBonus(calculateIncomeAtRate(vat, 500), countryDetail?.ideology) +
+      applyIdeologyTaxBonus(calculateIncomeAtRate(corporate_tax, 500), countryDetail?.ideology) +
+      applyIdeologyTaxBonus(
+        applyOrthodoxPersonalIncomeTaxRevenueBonus(
+          calculateIncomeAtRate(income_tax, 500),
+          countryDetail?.religion
+        ),
+        countryDetail?.ideology
+      ) +
+      applyIdeologyTaxBonus(calculateIncomeAtRate(cigarette_tax, 500), countryDetail?.ideology) +
+      applyIdeologyTaxBonus(
+        applyBuddhaEnvironmentalTaxRevenueBonus(
+          calculateIncomeAtRate(environment_tax, 500),
+          countryDetail?.religion
+        ),
+        countryDetail?.ideology
+      );
     const maxIncome = 5 * 500; // 2500 NEO
     // Kepuasan = 100 - rata-rata tarif + (pendapatan / maxPendapatan * 20)
     let satisfaction = 100 - avgRate + (total / maxIncome) * 20;
@@ -114,15 +149,38 @@ export default function PajakModal({
   };
 
   const satisfaction = calculateSatisfaction(tempRates);
-  const personalIncomeTaxRevenue = applyOrthodoxPersonalIncomeTaxRevenueBonus(
-    calculateIncomeAtRate(tempRates.income_tax, 500),
-    countryDetail?.religion
+  const ideology = String(countryDetail?.ideology || "").trim().toLowerCase();
+  const hasDemocracyTaxBonus = ideology === "demokrasi";
+  const hasCapitalismTaxBonus = ideology === "kapitalisme";
+  const hasLiberalismTaxBonus = ideology === "liberalisme";
+  const hasConservatismTaxBonus = ideology === "konservatisme";
+  const vatRevenue = applyIdeologyTaxBonus(
+    calculateIncomeAtRate(tempRates.vat, 500),
+    countryDetail?.ideology
+  );
+  const corporateTaxRevenue = applyIdeologyTaxBonus(
+    calculateIncomeAtRate(tempRates.corporate_tax, 500),
+    countryDetail?.ideology
+  );
+  const personalIncomeTaxRevenue = applyIdeologyTaxBonus(
+    applyOrthodoxPersonalIncomeTaxRevenueBonus(
+      calculateIncomeAtRate(tempRates.income_tax, 500),
+      countryDetail?.religion
+    ),
+    countryDetail?.ideology
   );
   const hasOrthodoxTaxBonus =
     String(countryDetail?.religion || "").trim().toLowerCase() === "kristen ortodoks";
-  const environmentalTaxRevenue = applyBuddhaEnvironmentalTaxRevenueBonus(
-    calculateIncomeAtRate(tempRates.environment_tax, 500),
-    countryDetail?.religion
+  const cigaretteTaxRevenue = applyIdeologyTaxBonus(
+    calculateIncomeAtRate(tempRates.cigarette_tax, 500),
+    countryDetail?.ideology
+  );
+  const environmentalTaxRevenue = applyIdeologyTaxBonus(
+    applyBuddhaEnvironmentalTaxRevenueBonus(
+      calculateIncomeAtRate(tempRates.environment_tax, 500),
+      countryDetail?.religion
+    ),
+    countryDetail?.ideology
   );
   const hasBuddhaTaxBonus =
     String(countryDetail?.religion || "").trim().toLowerCase() === "buddha";
@@ -226,10 +284,10 @@ export default function PajakModal({
 
   // Hitung total pendapatan dari semua pajak (untuk ditampilkan)
   const totalIncome =
-    calculateIncomeAtRate(tempRates.vat, 500) +
-    calculateIncomeAtRate(tempRates.corporate_tax, 500) +
+    vatRevenue +
+    corporateTaxRevenue +
     personalIncomeTaxRevenue +
-    calculateIncomeAtRate(tempRates.cigarette_tax, 500) +
+    cigaretteTaxRevenue +
     environmentalTaxRevenue;
 
   return (
@@ -271,7 +329,7 @@ export default function PajakModal({
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">{tempRates.vat}%</span>
                   <span className="text-emerald-400 font-black">
-                    ({calculateIncomeAtRate(tempRates.vat, 500).toLocaleString(
+                    ({vatRevenue.toLocaleString(
                       "id-ID"
                     )}{" "} NEO)
                   </span>
@@ -299,7 +357,7 @@ export default function PajakModal({
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">{tempRates.corporate_tax}%</span>
                   <span className="text-emerald-400 font-black">
-                    ({calculateIncomeAtRate(tempRates.corporate_tax, 500).toLocaleString(
+                    ({corporateTaxRevenue.toLocaleString(
                       "id-ID"
                     )}{" "} NEO)
                   </span>
@@ -360,7 +418,7 @@ export default function PajakModal({
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">{tempRates.cigarette_tax}%</span>
                   <span className="text-emerald-400 font-black">
-                    ({calculateIncomeAtRate(tempRates.cigarette_tax, 500).toLocaleString(
+                    ({cigaretteTaxRevenue.toLocaleString(
                       "id-ID"
                     )}{" "} NEO)
                   </span>
@@ -428,6 +486,26 @@ export default function PajakModal({
             <p className="text-[10px] text-[#6B8A8A] font-semibold mt-2">
               Pendapatan bulanan dari semua pajak nasional
             </p>
+            {hasDemocracyTaxBonus && (
+              <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                Bonus Demokrasi: seluruh penerimaan pajak +{DEMOCRACY_TAX_REVENUE_BONUS * 100}%
+              </span>
+            )}
+            {hasCapitalismTaxBonus && (
+              <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                Bonus Kapitalisme: seluruh penerimaan pajak +{CAPITALISM_TAX_REVENUE_BONUS * 100}%
+              </span>
+            )}
+            {hasLiberalismTaxBonus && (
+              <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                Bonus Liberalisme: seluruh penerimaan pajak +{LIBERALISM_TAX_REVENUE_BONUS * 100}%
+              </span>
+            )}
+            {hasConservatismTaxBonus && (
+              <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                Bonus Konservatisme: seluruh penerimaan pajak +{CONSERVATISM_TAX_REVENUE_BONUS * 100}%
+              </span>
+            )}
           </div>
 
           {/* ---- INDEKS KEPUASAN RAKYAT ---- */}

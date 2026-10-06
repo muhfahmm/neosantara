@@ -28,6 +28,7 @@ import TunawismaDetailModal from "./tunawisma_modals/TunawismaDetailModal";
 import {
   HINDU_POPULATION_GROWTH_BONUS,
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/hindu";
+import { SOCIALISM_BIRTH_RATE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/sosialisme";
 
 // ==============================
 // Tipe data yang diharapkan dari countryDetail
@@ -367,6 +368,11 @@ export default function RingkasanPopulasiModal({
               {String(countryDetail?.religion || "").trim().toLowerCase() === "hindu" && (
                 <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
                   Bonus Hindu: Pertumbuhan populasi +{HINDU_POPULATION_GROWTH_BONUS * 100}%
+                </span>
+              )}
+              {String(countryDetail?.ideology || "").trim().toLowerCase() === "sosialisme" && (
+                <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                  Bonus Sosialisme: Tingkat kelahiran +{SOCIALISM_BIRTH_RATE_BONUS * 100}%
                 </span>
               )}
               <div className="border-t border-[#00FFAA]/15 pt-2">

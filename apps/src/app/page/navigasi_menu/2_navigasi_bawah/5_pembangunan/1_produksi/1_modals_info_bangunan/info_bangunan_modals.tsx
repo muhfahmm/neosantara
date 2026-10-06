@@ -2,6 +2,7 @@
 "use client";
 import React from "react";
 import { Info, X } from "lucide-react";
+import { getCommunismProductionMultiplier, COMMUNISM_PRODUCTION_BONUS } from "../bonus_logic/ideologi_bonus_logic/komunisme";
 import { getKelistrikanFuelRequirements } from "../requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 import {
   FOOD_CONSUMPTION_PER_CAPITA,
@@ -120,6 +121,11 @@ export default function InfoBangunan({
     isElectricityTab &&
     String(countryDetail?.religion || "").trim().toLowerCase() === "shinto" &&
     religionProductionMultiplier > 1;
+  const hasIslamProductionBonus =
+    String(countryDetail?.religion || "").trim().toLowerCase() === "islam" &&
+    religionProductionMultiplier > 1;
+  const hasCommunismProductionBonus =
+    getCommunismProductionMultiplier(buildingKey, countryDetail?.ideology) > 1;
   const baseElectricityProduction = hasShintoElectricityBonus
     ? rawProduction / religionProductionMultiplier
     : rawProduction;
@@ -210,11 +216,16 @@ export default function InfoBangunan({
                 Produksi dikurangi {Math.round((1 - productionMultiplier) * 100)}% oleh resolusi PBB yang aktif.
               </div>
             )}
-            {religionProductionMultiplier > 1 && (
+            {(hasShintoElectricityBonus || hasIslamProductionBonus) && (
               <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[10px] font-bold text-emerald-300">
-                {String(countryDetail?.religion || "").trim().toLowerCase() === "shinto"
+                {hasShintoElectricityBonus
                   ? `Produksi kelistrikan ditingkatkan ${SHINTO_ELECTRICITY_PRODUCTION_BONUS * 100}% oleh bonus agama Shinto.`
-                  : "Produksi ditingkatkan 10% oleh bonus agama Islam."}
+                  : "Produksi lini terkait ditingkatkan 10% oleh bonus agama Islam."}
+              </div>
+            )}
+            {hasCommunismProductionBonus && (
+              <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[10px] font-bold text-emerald-300">
+                Produksi lini terkait ditingkatkan {COMMUNISM_PRODUCTION_BONUS * 100}% oleh bonus ideologi Komunisme.
               </div>
             )}
             {isElectricityTab ? (

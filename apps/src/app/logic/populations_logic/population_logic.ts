@@ -5,6 +5,7 @@
 
 import { logger } from '../../../lib/logger';
 import { applyHinduPopulationGrowthBonus } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/hindu";
+import { applySocialismBirthRateBonus } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/sosialisme";
 
 // Import dari logic yang baru dibuat
 import { calculateKeamananLogic } from "@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/kematian_modals/logic/keamananLogic";
@@ -555,7 +556,8 @@ export const calculateDailyPopulationChange = (
   const maxDailyGrowth = Math.floor(populasi * maxAnnualGrowthRate * growthCoverage / 365);
   const maxDailyDecline = isPopulationCrisis ? Math.ceil(populasi * 0.05 / 365) : 0;
   const boundedNetDailyChange = Math.max(-maxDailyDecline, Math.min(maxDailyGrowth, unboundedNetChange));
-  const netDailyChange = applyHinduPopulationGrowthBonus(boundedNetDailyChange, detail.religion);
+  const religionAdjustedNetChange = applyHinduPopulationGrowthBonus(boundedNetDailyChange, detail.religion);
+  const netDailyChange = applySocialismBirthRateBonus(religionAdjustedNetChange, detail.ideology);
   const adjustedDeaths = Math.max(0, adjustedBirths - netDailyChange);
   const populationStatus = getPopulationStatus(food.tier, housing.tier, overpopulation.tier, health.tier);
   const sektoral = calculateSectoralSatisfaction(detailWithDefaults);

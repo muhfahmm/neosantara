@@ -8,6 +8,7 @@ import {
   FOOD_CONSUMPTION_PER_CAPITA,
   calculateConsumption,
 } from "../../3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
+import { getProductionBonusMultiplier } from "../1_produksi/bonus_logic";
 
 export const RESOURCE_KEY_ALIASES: Record<string, string> = {};
 
@@ -43,7 +44,7 @@ export function calculateDailyMaterialProduction(
   countryDetail: any,
   metadata: Record<string, any>,
   currentDateStr: string,
-  getProductionMultiplier: (resourceKey: string) => number = () => 1
+  getExternalProductionMultiplier: (resourceKey: string) => number = () => 1
 ) {
   if (!currentDateStr || !metadata || Object.keys(metadata).length === 0 || !countryDetail) {
     return { hasUpdates: false, updates: {} as Record<string, any> };
@@ -87,13 +88,16 @@ export function calculateDailyMaterialProduction(
     }
 
     let dailyAmount: number;
+    const productionMultiplier =
+      getProductionBonusMultiplier(countryDetail, resourceKey) *
+      getExternalProductionMultiplier(resourceKey);
     if (isFoodCommodity) {
       // Apply sanctions to gross production before subtracting population consumption.
-      const dailyProd = Number(bMeta.produksi) * buildingCount * getProductionMultiplier(resourceKey);
+      const dailyProd = Number(bMeta.produksi) * buildingCount * productionMultiplier;
       const dailyCons = calculateConsumption(pop, FOOD_CONSUMPTION_PER_CAPITA[resourceKey]);
       dailyAmount = Math.max(0, dailyProd - dailyCons);
     } else {
-      dailyAmount = Number(bMeta.produksi) * buildingCount * getProductionMultiplier(resourceKey);
+      dailyAmount = Number(bMeta.produksi) * buildingCount * productionMultiplier;
     }
 
     const productionAdded = dailyAmount * daysPassed;

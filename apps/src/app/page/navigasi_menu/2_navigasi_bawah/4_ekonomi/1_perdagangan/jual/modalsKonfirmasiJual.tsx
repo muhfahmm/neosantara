@@ -13,6 +13,10 @@ import {
   PROTESTANT_SELL_PRICE_BONUS
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/kristen";
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
+import {
+  applyNpcCountrySimulationState,
+  NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
+} from "@/app/logic/npcCountrySimulation";
 
 const getFlagEmoji = (countryName: string) => {
   const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === countryName.toLowerCase().trim());
@@ -153,6 +157,16 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
   const [partnerData, setPartnerData] = useState<Record<string, any> | null>(null);
   const partnerStartDateRef = useRef<string | null>(null);
 
+  useEffect(() => {
+    const refreshPartnerState = () => {
+      setPartnerData(current =>
+        current ? applyNpcCountrySimulationState(current) : current
+      );
+    };
+    window.addEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshPartnerState);
+    return () => window.removeEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshPartnerState);
+  }, []);
+
   const [isProductPickerOpen, setIsProductPickerOpen] = useState(false);
   const [isCountryPickerOpen, setIsCountryPickerOpen] = useState(false);
 
@@ -185,7 +199,7 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
       try {
         const res = await fetch(`/api/country-data?path=${encodeURIComponent(pathEntry)}`);
         if (!res.ok) { setPartnerData(null); return; }
-        const json = await res.json();
+        const json = applyNpcCountrySimulationState(await res.json());
         setPartnerData(json || null);
         if (!partnerStartDateRef.current) partnerStartDateRef.current = currentDate ? formatDate(currentDate) : formatDate(new Date());
       } catch (e) { console.error('Failed to fetch partner country data', e); setPartnerData(null); }

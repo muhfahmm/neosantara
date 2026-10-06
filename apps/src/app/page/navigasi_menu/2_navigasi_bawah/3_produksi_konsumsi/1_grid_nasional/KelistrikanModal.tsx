@@ -19,6 +19,7 @@ import CountryKelistrikanModal from "./CountryKelistrikanModal";
 import { getElectricityFuelBalance, getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 import { getCountryConsumptionBreakdown } from "./consumptionLogic";
 import { getProductionBonusMultiplier } from "../../5_pembangunan/1_produksi/bonus_logic";
+import { applyNpcCountrySimulationState } from "@/app/logic/npcCountrySimulation";
 
 interface ModalProps {
   isOpen: boolean;
@@ -75,24 +76,24 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   } | null>(null);
 
   useEffect(() => {
-    if (isOpen && allCountries.length === 0) {
-      if (prefetchedAllCountries && prefetchedAllCountries.length > 0) {
-        setAllCountries(prefetchedAllCountries);
-        return;
-      }
-      (async () => {
-        try {
-          const res = await fetch('/api/country-data?all=true', { cache: 'no-store' });
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            setAllCountries(data);
-          }
-        } catch (error) {
-          console.error('Error fetching all countries data:', error);
-        }
-      })();
+    if (!isOpen) return;
+    if (prefetchedAllCountries && prefetchedAllCountries.length > 0) {
+      setAllCountries(prefetchedAllCountries.map(country => applyNpcCountrySimulationState(country)));
+      return;
     }
-  }, [isOpen, prefetchedAllCountries]);
+    if (allCountries.length > 0) return;
+    (async () => {
+      try {
+        const res = await fetch('/api/country-data?all=true', { cache: 'no-store' });
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setAllCountries(data.map(country => applyNpcCountrySimulationState(country)));
+        }
+      } catch (error) {
+        console.error('Error fetching all countries data:', error);
+      }
+    })();
+  }, [isOpen, prefetchedAllCountries, allCountries.length]);
 
   if (!isOpen) return null;
 

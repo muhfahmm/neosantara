@@ -1,4 +1,6 @@
 import armadaMetadata from "../../../../../../../../../json/semua_fitur_negara/2_pertahanan/1_armada_militer/metadata_armada_militer.json";
+import { getMonarchyMilitaryStrengthMultiplier } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/monarki";
+import { getAuthoritarianMilitaryStrengthMultiplier } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/otoritarianisme";
 
 type ArmadaMetadataRecord = {
   dataKey: string;
@@ -24,6 +26,8 @@ type ArmadaUnitBreakdown = {
   healthPerUnit: number;
   totalPower: number;
   totalHealth: number;
+  baseTotalPower: number;
+  baseTotalHealth: number;
 };
 
 const normalizeNumber = (value: unknown): number => {
@@ -100,6 +104,13 @@ const resolveQuantity = (armada: ArmadaData, dataKey: string): number => {
 
 export function getArmadaUnitBreakdown(source: unknown): ArmadaUnitBreakdown[] {
   const armada = resolveCountryArmada(source);
+  const sourceData = source && typeof source === "object"
+    ? source as Record<string, unknown>
+    : {};
+  const ideology = sourceData.ideology ?? sourceData.ideologi;
+  const militaryMultiplier =
+    getMonarchyMilitaryStrengthMultiplier(ideology) *
+    getAuthoritarianMilitaryStrengthMultiplier(ideology);
 
   return Object.values(metadataByDataKey).map((metadata) => {
     const quantity = resolveQuantity(armada, metadata.dataKey);
@@ -113,8 +124,10 @@ export function getArmadaUnitBreakdown(source: unknown): ArmadaUnitBreakdown[] {
       quantity,
       powerPerUnit,
       healthPerUnit,
-      totalPower: quantity * powerPerUnit,
-      totalHealth: quantity * healthPerUnit,
+      totalPower: quantity * powerPerUnit * militaryMultiplier,
+      totalHealth: quantity * healthPerUnit * militaryMultiplier,
+      baseTotalPower: quantity * powerPerUnit,
+      baseTotalHealth: quantity * healthPerUnit,
     };
   });
 }

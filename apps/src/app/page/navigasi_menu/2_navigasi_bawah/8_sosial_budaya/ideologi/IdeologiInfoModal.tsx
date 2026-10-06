@@ -40,7 +40,7 @@ const IDEOLOGY_DESCRIPTIONS: Record<string, { desc: string; characteristics: str
   'Komunisme': {
     desc: 'Ideologi dengan tujuan pembentukan masyarakat tanpa kelas berdasarkan kepemilikan bersama atas alat produksi.',
     characteristics: ['Ekonomi terencana penuh oleh negara', 'Pemerintahan partai tunggal', 'Distribusi barang komunal'],
-    pros: '+20% Produksi Industri nasional dan kontrol penuh atas sektor strategis.',
+    pros: 'Produksi Semua Lini: +10%.',
     cons: 'Menurunkan fleksibilitas pasar swasta dan inovasi independen.'
   },
   'Nasionalisme': {
@@ -58,7 +58,7 @@ const IDEOLOGY_DESCRIPTIONS: Record<string, { desc: string; characteristics: str
   'Liberalisme': {
     desc: 'Ideologi yang berfokus pada kebebasan individu, hak sipil, persahabatan internasional, dan pasar bebas.',
     characteristics: ['Kebebasan individu & pasar', 'Dukungan globalisasi', 'Regulasi ekonomi minim'],
-    pros: '+15% Kebebasan dagang dan peningkatan daya saing ekspor/impor.',
+    pros: '+25% penerimaan pajak nasional.',
     cons: 'Sensitif terhadap gejolak ekonomi dan krisis finansial global.'
   },
   'Otoritarianisme': {

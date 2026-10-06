@@ -115,7 +115,7 @@ const getSafeDateString = (currentDate?: string | Date, gameDate?: string): stri
 };
 
 export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCountryDetail, onCapacityFull, highlightKey, onGotoProduction, currentDate }: TabProps) {
-  const unitBreakdown = getArmadaUnitBreakdown(countryDetail?.armada || countryDetail || {});
+  const unitBreakdown = getArmadaUnitBreakdown(countryDetail || {});
 
   const getData = (key: string, group?: string): number => {
     if (!countryDetail) return 0;
@@ -354,6 +354,18 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
         const totalGroupPower = unitBreakdown
           .filter((item) => groupItemKeys.includes(item.dataKey))
           .reduce((sum, item) => sum + (item.totalPower || 0), 0);
+        const baseGroupPower = unitBreakdown
+          .filter((item) => groupItemKeys.includes(item.dataKey))
+          .reduce((sum, item) => sum + (item.baseTotalPower || 0), 0);
+        const totalGroupHealth = unitBreakdown
+          .filter((item) => groupItemKeys.includes(item.dataKey))
+          .reduce((sum, item) => sum + (item.totalHealth || 0), 0);
+        const baseGroupHealth = unitBreakdown
+          .filter((item) => groupItemKeys.includes(item.dataKey))
+          .reduce((sum, item) => sum + (item.baseTotalHealth || 0), 0);
+        const hasMilitaryBonus = unitBreakdown.some(
+          item => groupItemKeys.includes(item.dataKey) && item.totalPower > item.baseTotalPower
+        );
 
         return (
           <section key={group} className="space-y-4">
@@ -365,9 +377,22 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                   Matra {groupMeta[group].title}
                 </h3>
               </div>
-              <span className="text-xs font-black uppercase tracking-wider text-[#6B8A8A]">
-                Total Kekuatan: <span className="text-[#00FFAA]">{formatNumber(totalGroupPower)}</span>
-              </span>
+              <div className="text-right text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">
+                <p>
+                  Kekuatan:{" "}
+                  {hasMilitaryBonus && (
+                    <span className="mr-1 text-rose-400 line-through">{formatNumber(baseGroupPower)}</span>
+                  )}
+                  <span className="text-[#00FFAA]">{formatNumber(totalGroupPower)}</span>
+                </p>
+                <p>
+                  Total HP:{" "}
+                  {hasMilitaryBonus && (
+                    <span className="mr-1 text-rose-400 line-through">{formatNumber(baseGroupHealth)}</span>
+                  )}
+                  <span className="text-rose-400">{formatNumber(totalGroupHealth)}</span>
+                </p>
+              </div>
             </div>
 
             <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 px-3 py-1.5 rounded-lg inline-flex items-center gap-2 mb-4">
@@ -534,6 +559,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
           groupMeta={groupMeta}
           formatNumber={formatNumber}
           unitBreakdown={unitBreakdown}
+          countryIdeology={countryDetail?.ideology ?? countryDetail?.ideologi}
           capacityInfo={getArmadaCapacityInfo(infoKey, countryDetail)}
           isCapacityFull={(() => {
             const cap = getArmadaCapacityInfo(infoKey, countryDetail);

@@ -14,6 +14,7 @@ import {
 } from "./logic/produksiKonsumsiLogic";
 import { PROFILES_POPULATION_DATA } from "@/../../json/semua_fitur_negara/0_profiles/index";
 import { getProductionBonusMultiplier } from "../../5_pembangunan/1_produksi/bonus_logic";
+import { applyNpcCountrySimulationState } from "@/app/logic/npcCountrySimulation";
 
 // 🔥 IMPOR MODAL DAN LOGIKA
 import AISuggestModal from "./AI_suggest_modals";
@@ -103,18 +104,20 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
   useEffect(() => {
     if (isOpen && allCountries.length === 0) {
       if (prefetchedAllCountries && prefetchedAllCountries.length > 0) {
-        setAllCountries(prefetchedAllCountries);
+        setAllCountries(prefetchedAllCountries.map(country => applyNpcCountrySimulationState(country)));
         return;
       }
       (async () => {
         try {
           const res = await fetch('/api/country-data?all=true', { cache: 'no-store' });
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) setAllCountries(data);
+          if (Array.isArray(data) && data.length > 0) {
+            setAllCountries(data.map(country => applyNpcCountrySimulationState(country)));
+          }
         } catch (error) { console.error('Error fetching all countries data:', error); }
       })();
     }
-  }, [isOpen]);
+  }, [isOpen, prefetchedAllCountries, allCountries.length]);
 
   if (!isOpen) return null;
 

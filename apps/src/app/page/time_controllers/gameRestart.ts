@@ -3,6 +3,7 @@ import { clearActiveResolutionsForSession } from '@/app/page/navigasi_menu/2_nav
 import { clearActiveSecurityCouncilItems } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { clearReportedInvasionViolations } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 import { clearExpelledOrganizationCountries } from '@/../../json/database_organisasi_internasional';
+import { clearActiveNpcCountrySimulationState } from '@/app/logic/npcCountrySimulation';
 
 export interface RestartOptions {
     timeManager: SimulationTimeManager | null;
@@ -39,6 +40,7 @@ export function handleGameRestart(options: RestartOptions): void {
         clearActiveSecurityCouncilItems();
         clearReportedInvasionViolations();
         clearExpelledOrganizationCountries();
+        clearActiveNpcCountrySimulationState();
         try {
             localStorage.removeItem('pbb_active_resolutions_v4');
             localStorage.removeItem('pbb_active_keamanan_v4');

@@ -4,6 +4,10 @@ import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
 import { applyOrthodoxPersonalIncomeTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/kristen';
 import { applyBuddhaEnvironmentalTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/buddha';
+import { applyDemocracyTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/demokrasi';
+import { applyCapitalismTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/kapitalisme';
+import { applyLiberalismTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/liberalisme';
+import { applyConservatismTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/konservatisme';
 
 const getNestedValue = (obj: any, path: string[]) => {
   return path.reduce((current, key) => {
@@ -25,6 +29,18 @@ const getTaxRate = (detail: any, key: string, fallback: number, legacyPath: stri
   const value = getNestedValue(detail, [key]) ?? getNestedValue(detail, legacyPath);
   return toNumber(value, fallback);
 };
+
+const applyIdeologyTaxBonus = (revenue: number, ideology: unknown) =>
+  applyLiberalismTaxRevenueBonus(
+    applyCapitalismTaxRevenueBonus(
+      applyConservatismTaxRevenueBonus(
+        applyDemocracyTaxRevenueBonus(revenue, ideology),
+        ideology
+      ),
+      ideology
+    ),
+    ideology
+  );
 
 export const getTourismTotalIncome = (detail: any): number => {
   if (!detail || typeof detail !== 'object') return 0;
@@ -49,17 +65,17 @@ export const calculateTotalTaxIncome = (detail: any) => {
   const beaCukaiRate = getTaxRate(detail, 'tarif_bea_cukai', 5, ['pajak', 'bea_cukai', 'tarif']);
   const lingkunganRate = getTaxRate(detail, 'tarif_lingkungan', 5, ['pajak', 'lingkungan', 'tarif']);
 
-  const ppnIncome = calculateIncomeAtRate(ppnRate, 500);
-  const korporasiIncome = calculateIncomeAtRate(korporasiRate, 500);
+  const ppnIncome = applyIdeologyTaxBonus(calculateIncomeAtRate(ppnRate, 500), detail.ideology);
+  const korporasiIncome = applyIdeologyTaxBonus(calculateIncomeAtRate(korporasiRate, 500), detail.ideology);
   const personalIncomeTaxRevenue = calculateIncomeAtRate(penghasilanRate, 500);
-  const penghasilanIncome = applyOrthodoxPersonalIncomeTaxRevenueBonus(
-    personalIncomeTaxRevenue,
-    detail.religion
+  const penghasilanIncome = applyIdeologyTaxBonus(
+    applyOrthodoxPersonalIncomeTaxRevenueBonus(personalIncomeTaxRevenue, detail.religion),
+    detail.ideology
   );
-  const beaCukaiIncome = calculateIncomeAtRate(beaCukaiRate, 200);
-  const lingkunganIncome = applyBuddhaEnvironmentalTaxRevenueBonus(
-    calculateIncomeAtRate(lingkunganRate, 500),
-    detail.religion
+  const beaCukaiIncome = applyIdeologyTaxBonus(calculateIncomeAtRate(beaCukaiRate, 500), detail.ideology);
+  const lingkunganIncome = applyIdeologyTaxBonus(
+    applyBuddhaEnvironmentalTaxRevenueBonus(calculateIncomeAtRate(lingkunganRate, 500), detail.religion),
+    detail.ideology
   );
 
   return ppnIncome + korporasiIncome + penghasilanIncome + beaCukaiIncome + lingkunganIncome;

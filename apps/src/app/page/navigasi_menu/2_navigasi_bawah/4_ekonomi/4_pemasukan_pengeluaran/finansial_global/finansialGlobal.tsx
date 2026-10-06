@@ -5,6 +5,10 @@ import { Search } from 'lucide-react';
 import { calculateGoldMiningDailyProduction } from '@/app/logic/economic_logic/goldIncome';
 import { getDailyMinistryCost } from '@/app/logic/economic_logic/departments';
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
+import {
+  applyNpcCountrySimulationState,
+  NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
+} from '@/app/logic/npcCountrySimulation';
 
 interface FinansialGlobalProps {
   countryDetail: any;
@@ -18,6 +22,16 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
     key: 'net',
     direction: 'desc',
   });
+
+  useEffect(() => {
+    const refreshNpcCountries = () => {
+      setAllCountries(current =>
+        current?.map(country => applyNpcCountrySimulationState(country)) ?? current
+      );
+    };
+    window.addEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcCountries);
+    return () => window.removeEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcCountries);
+  }, []);
 
   const formatNumber = (num: number) => num.toLocaleString('id-ID');
 
@@ -131,7 +145,8 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
           });
 
           setAllCountries(
-            data.map((country) => {
+            data.map((rawCountry) => {
+              const country = applyNpcCountrySimulationState(rawCountry);
               const name = getDisplayName(country);
               const listOrder = extractFileOrder(country.__fileName || country.filename || name);
               const continent = normalizeContinent(

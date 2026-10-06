@@ -68,6 +68,7 @@ import { clearActiveResolutionsForSession, tickPBBResolutions, spawnAIResolution
 import { clearActiveSecurityCouncilItems, tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { initCountryIsoFromDatabase, getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { fetchAllCountryProfilesFromDb } from '@/../../json/semua_fitur_negara/0_profiles';
+import { applyNpcCountrySimulationState, useNpcCountrySimulation } from '@/app/logic/npcCountrySimulation';
 import {
     createInitialElectionState,
     getEligibleUNMemberCountries,
@@ -162,6 +163,7 @@ export default function MapPage() {
     const [isPaused, setIsPaused] = useState(true);
     const [speed, setSpeed] = useState(1);
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
+    useNpcCountrySimulation(currentDate, countryDetail?.country_slug, metadata);
 
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [saveNameInput, setSaveNameInput] = useState('');
@@ -505,7 +507,7 @@ export default function MapPage() {
                         try {
                             const res = await fetch(`/api/country-data?path=${encodeURIComponent(targetRelPath)}`);
                             const data = await res.json();
-                            if (!data?.error) targetData = data;
+                            if (!data?.error) targetData = applyNpcCountrySimulationState(data);
                         } catch (e) {
                             console.error("Gagal mengambil data target country untuk aneksasi:", e);
                         }
@@ -1703,7 +1705,7 @@ export default function MapPage() {
 
         try {
             const res = await fetch(`/api/country-data?path=${relPath}`);
-            const mergedData = await res.json();
+            const mergedData = applyNpcCountrySimulationState(await res.json());
 
             if (mergedData?.error) {
                 console.warn(`Country data load error for ${countryName}:`, mergedData.error);

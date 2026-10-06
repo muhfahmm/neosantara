@@ -10,6 +10,7 @@ import {
 import { calculateGoldMiningDailyProduction } from "@/app/logic/economic_logic/goldIncome";
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
+import { applyNpcCountrySimulationState } from '@/app/logic/npcCountrySimulation';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
 
 const getNormalizedSlug = (detail: any) => {
@@ -211,13 +212,16 @@ function AllCountriesGDP({
 }) {
   const [allCountries, setAllCountries] = useState<any[]>(() => {
     if (Array.isArray(prefetchedAllCountries) && prefetchedAllCountries.length > 0) {
-      return prefetchedAllCountries.map((c, idx) => ({
+      return prefetchedAllCountries.map((rawCountry, idx) => {
+        const c = applyNpcCountrySimulationState(rawCountry);
+        return {
         ...c,
         __displayName: getDisplayName(c),
         continent: normalizeContinent(c.__continent || c.continent || getContinentFromOrder(idx + 1)),
         __fileOrder: idx + 1,
         __loaded: true,
-      }));
+        };
+      });
     }
     return cachedAllCountries || getInitialCountriesData();
   });
@@ -230,13 +234,16 @@ function AllCountriesGDP({
 
   useEffect(() => {
     if (Array.isArray(prefetchedAllCountries) && prefetchedAllCountries.length > 0) {
-      const processed = prefetchedAllCountries.map((c, idx) => ({
+      const processed = prefetchedAllCountries.map((rawCountry, idx) => {
+        const c = applyNpcCountrySimulationState(rawCountry);
+        return {
         ...c,
         __displayName: getDisplayName(c),
         continent: normalizeContinent(c.__continent || c.continent || getContinentFromOrder(idx + 1)),
         __fileOrder: idx + 1,
         __loaded: true,
-      }));
+        };
+      });
       cachedAllCountries = processed;
       setAllCountries(processed);
     } else {
@@ -244,13 +251,16 @@ function AllCountriesGDP({
         .then((res) => res.json())
         .then((data) => {
           if (Array.isArray(data) && data.length > 0) {
-            const processed = data.map((c, idx) => ({
+            const processed = data.map((rawCountry: any, idx: number) => {
+              const c = applyNpcCountrySimulationState(rawCountry);
+              return {
               ...c,
               __displayName: getDisplayName(c),
               continent: normalizeContinent(c.__continent || c.continent || getContinentFromOrder(idx + 1)),
               __fileOrder: idx + 1,
               __loaded: true,
-            }));
+              };
+            });
             cachedAllCountries = processed;
             setAllCountries(processed);
           }
