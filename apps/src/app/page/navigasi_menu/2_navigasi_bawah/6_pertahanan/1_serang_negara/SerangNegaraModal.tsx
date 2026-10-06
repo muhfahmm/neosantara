@@ -6,6 +6,8 @@ import { getArmadaPowerSummary } from "../4_armada/logic/armadaLogic";
 import SerangModals from "./modals_menu/KonfirmasiSerangModals";
 // 🔥 Import COUNTRIES_DATA untuk meng-enrich ISO
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
+import KonfirmasiPeluncuranSerangan from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/konfirmasi_peluncuran_serangan";
+import HasilPertempuran from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/hasil_pertempuran";
 
 interface ModalProps {
   isOpen: boolean;
@@ -41,6 +43,8 @@ export default function SerangNegaraModal({
   // 🔥 State untuk menampung target yang dipilih dan membuka modal serang
   const [selectedTarget, setSelectedTarget] = useState<RankingRow | null>(null);
   const [isSerangModalOpen, setIsSerangModalOpen] = useState(false);
+  const [isLaunchConfirmationOpen, setIsLaunchConfirmationOpen] = useState(false);
+  const [battleOutcome, setBattleOutcome] = useState<boolean | null>(null);
   const [internalCountries, setInternalCountries] = useState<any[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -220,14 +224,38 @@ export default function SerangNegaraModal({
     setIsSerangModalOpen(true);
   };
 
-  // 🔥 Fungsi ketika konfirmasi serangan di modal serang ditekan
   const handleConfirmAttack = () => {
-    // Di sini Anda bisa menambahkan logika pengurangan pasukan, logika perang, dll.
-    console.log(`Meluncurkan serangan ke: ${selectedTarget?.countryName}`);
-    
-    // Tutup kedua modal setelah konfirmasi
     setIsSerangModalOpen(false);
-    onClose(); 
+    setIsLaunchConfirmationOpen(true);
+  };
+
+  const handleLaunchAttack = () => {
+    if (!selectedTarget) return;
+
+    const attackerPower = getArmadaPowerSummary(countryDetail).totals.totalPower;
+    const targetPower = selectedTarget.totalPower;
+    const randomBonus = Math.floor(Math.random() * 200) - 100;
+    setBattleOutcome(attackerPower + randomBonus >= targetPower * 0.4);
+    setIsLaunchConfirmationOpen(false);
+  };
+
+  const closeAttackFlow = () => {
+    setIsSerangModalOpen(false);
+    setIsLaunchConfirmationOpen(false);
+    setBattleOutcome(null);
+    onClose();
+  };
+
+  const handleSelectBattleAction = (actionType: 'aneksasi' | 'jarah' | 'mundur') => {
+    if (!selectedTarget || typeof window === 'undefined') return;
+
+    window.dispatchEvent(new CustomEvent('trigger_player_attack', {
+      detail: {
+        actionType,
+        targetCountry: selectedTarget.countryName
+      }
+    }));
+    closeAttackFlow();
   };
 
   const selectedCountryName = useMemo(() => {
@@ -375,6 +403,30 @@ export default function SerangNegaraModal({
           targetCountry={selectedTarget}
           countryDetail={countryDetail}
           onConfirm={handleConfirmAttack}
+        />
+      )}
+      {selectedTarget && isLaunchConfirmationOpen && (
+        <KonfirmasiPeluncuranSerangan
+          playerName={selectedCountryName}
+          playerIso={String(countryDetail?.iso || 'cn').toLowerCase()}
+          playerPower={getArmadaPowerSummary(countryDetail).totals.totalPower}
+          targetName={selectedTarget.countryName}
+          targetIso={String(selectedTarget.iso || 'un').toLowerCase()}
+          targetPower={selectedTarget.totalPower}
+          onBack={() => {
+            setIsLaunchConfirmationOpen(false);
+            setIsSerangModalOpen(true);
+          }}
+          onConfirm={handleLaunchAttack}
+        />
+      )}
+      {selectedTarget && battleOutcome !== null && (
+        <HasilPertempuran
+          isVictory={battleOutcome}
+          playerName={selectedCountryName}
+          countryName={selectedTarget.countryName}
+          onClose={closeAttackFlow}
+          onSelectAction={handleSelectBattleAction}
         />
       )}
     </>

@@ -65,7 +65,7 @@ import { generateHubunganPanasNotification } from '../menus/inbox/logic/5_notifi
 import { evaluateAIResolusiPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBLogic';
 import { evaluateAIKeamananPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
 import { clearActiveResolutionsForSession, tickPBBResolutions, spawnAIResolutionFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
-import { clearSessionOnlySecurityItems, tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
+import { clearActiveSecurityCouncilItems, tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { initCountryIsoFromDatabase, getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
@@ -79,7 +79,11 @@ import {
     hasActiveApprovedInvasionResolutionForDifferentTarget
 } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/4_resolusiInvasiLogic';
 import { calculateNetBalanceWithEconomicEmbargo, getEconomicEmbargoProductionMultiplier } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
-import { isTradeEmbargoActive, submitInvasionViolationSanctions } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
+import {
+    clearReportedInvasionViolations,
+    isTradeEmbargoActive,
+    submitInvasionViolationSanctions
+} from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 import { generateResourceLootNews } from '../menus/news/logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
 import { NewsItemData } from '../menus/news/newsModals';
 import { calculateFoodCoverageByGroup } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic';
@@ -321,8 +325,8 @@ export default function MapPage() {
 
             const newNewsItems: NewsItemData[] = [];
 
-            if (actionType === 'aneksasi') {
-                const hasInvasionMandate = hasActiveApprovedInvasionResolution(attackerCountry, targetCountry);
+            const isInvasionAction = actionType === 'aneksasi' || actionType === 'jarah';
+            if (isInvasionAction) {
                 if (hasActiveGlobalWarBan()) {
                     setNotifications(prev => [{
                         id: `notif-war-ban-player-block-${Date.now()}`,
@@ -337,6 +341,7 @@ export default function MapPage() {
                     return;
                 }
 
+                const hasInvasionMandate = hasActiveApprovedInvasionResolution(attackerCountry, targetCountry);
                 if (!hasInvasionMandate) {
                     const reason = hasActiveApprovedInvasionResolutionForDifferentTarget(attackerCountry, targetCountry)
                         ? 'wrong_military_target'
@@ -362,7 +367,9 @@ export default function MapPage() {
                         isRead: false
                     }, ...prev]);
                 }
+            }
 
+            if (actionType === 'aneksasi') {
                 // 1. Berita Invasi
                 const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
                 newNewsItems.push(invNews);
@@ -550,47 +557,6 @@ export default function MapPage() {
                 setNotifications(prev => [notifMsg, ...prev]);
 
             } else if (actionType === 'jarah') {
-                const hasInvasionMandate = hasActiveApprovedInvasionResolution(attackerCountry, targetCountry);
-                if (hasActiveGlobalWarBan()) {
-                    setNotifications(prev => [{
-                        id: `notif-war-ban-player-block-${Date.now()}`,
-                        title: '🕊️ SERANGAN DIBLOKIR OLEH RESOLUSI PBB',
-                        sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
-                        message: `Aksi militer terhadap ${targetCountry} dibatalkan karena larangan perang global masih berlaku.`,
-                        timestamp: dateStr,
-                        type: 'peringkat',
-                        value: 100,
-                        isRead: false
-                    }, ...prev]);
-                    return;
-                }
-
-                if (!hasInvasionMandate) {
-                    const reason = hasActiveApprovedInvasionResolutionForDifferentTarget(attackerCountry, targetCountry)
-                        ? 'wrong_military_target'
-                        : 'missing_military_resolution';
-                    const sanctionsNotifications = submitInvasionViolationSanctions(
-                        attackerCountry,
-                        targetCountry,
-                        dateStr,
-                        reason
-                    );
-                    if (sanctionsNotifications.length > 0) {
-                        setNotifications(prev => [...sanctionsNotifications, ...prev]);
-                    }
-                    const relationPenalty = applyInvasionRelationPenalty(attackerCountry, 5, 10);
-                    setNotifications(prev => [{
-                        id: `notif-unapproved-invasion-relations-${Date.now()}`,
-                        title: '📉 HUBUNGAN DIPLOMATIK MEMBURUK',
-                        sender: 'Kementerian Luar Negeri',
-                        message: `Hubungan diplomatik ${attackerCountry} dengan negara-negara lain turun ${relationPenalty} poin karena menyerang ${targetCountry} tanpa mandat Resolusi Invasi PBB yang sesuai.`,
-                        timestamp: dateStr,
-                        type: 'peringkat',
-                        value: relationPenalty,
-                        isRead: false
-                    }, ...prev]);
-                }
-
                 const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
                 const lootNews = generateResourceLootNews(
                     attackerCountry,
@@ -615,7 +581,7 @@ export default function MapPage() {
                 };
                 setNotifications(prev => [notifMsg, ...prev]);
 
-            } else {
+            } else if (actionType === 'mundur') {
                 // Action: mundur
                 const relationPenalty = applyInvasionRelationPenalty(attackerCountry, 1, 5);
                 setNotifications(prev => [{
@@ -1457,7 +1423,8 @@ export default function MapPage() {
             const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
             if (newGameMarker === '1') {
                 clearActiveResolutionsForSession();
-                clearSessionOnlySecurityItems();
+                clearActiveSecurityCouncilItems();
+                clearReportedInvasionViolations();
                 localStorage.removeItem('hutangModalLoanSources');
                 localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
                 localStorage.removeItem('pbb_active_resolutions_v4');

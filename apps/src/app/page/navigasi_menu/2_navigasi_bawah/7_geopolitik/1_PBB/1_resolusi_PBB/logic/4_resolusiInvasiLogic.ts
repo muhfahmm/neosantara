@@ -2,6 +2,7 @@ import {
   loadActiveSecurityCouncilItems,
   saveActiveSecurityCouncilItems
 } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
+import { forgetReportedInvasionViolation } from '../../pbbWarSanctions';
 import {
   loadActiveResolutions,
   saveActiveResolutions,
@@ -59,27 +60,7 @@ function clearUnwarrantedSanctions(attacker: string, target: string): void {
     saveActiveSecurityCouncilItems(filteredSecurityItems);
   }
 
-  try {
-    const storageKey = 'pbb_reported_war_ban_violations_v1';
-    const serialized = localStorage.getItem(storageKey);
-    if (serialized) {
-      const reportedIds: unknown = JSON.parse(serialized);
-      if (Array.isArray(reportedIds)) {
-        const filteredIds = reportedIds.filter((id): boolean => {
-          if (typeof id !== 'string') return true;
-          const [, recordedAttacker, recordedTarget, reason] = id.split('|');
-          return reason !== 'missing_military_resolution' ||
-            normalizeInvasionCountryName(recordedAttacker || '') !== attacker ||
-            normalizeInvasionCountryName(recordedTarget || '') !== target;
-        });
-        if (filteredIds.length !== reportedIds.length) {
-          localStorage.setItem(storageKey, JSON.stringify(filteredIds));
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Failed to clear invalid invasion-sanction report records:', error);
-  }
+  forgetReportedInvasionViolation(attacker, target, 'missing_military_resolution');
 
   if (filteredResolutions.length !== resolutions.length || filteredSecurityItems.length !== securityItems.length) {
     window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));

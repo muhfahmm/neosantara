@@ -20,6 +20,7 @@ import HinaModal from './7_hina/hinaModals';
 interface OperasiMiliterProps {
   countryName: string;
   playerCountryDetail?: any;
+  targetCountryDetail?: any;
   onCloseDetailModal?: () => void;
 }
 
@@ -36,7 +37,7 @@ const ActionButton = ({ icon: Icon, label, onClick }: { icon: any, label: string
   </button>
 );
 
-export default function OperasiMiliter({ countryName, playerCountryDetail, onCloseDetailModal }: OperasiMiliterProps) {
+export default function OperasiMiliter({ countryName, playerCountryDetail, targetCountryDetail, onCloseDetailModal }: OperasiMiliterProps) {
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isSpionaseOpen, setIsSpionaseOpen] = useState(false);
   const [isSabotaseOpen, setIsSabotaseOpen] = useState(false);
@@ -67,6 +68,7 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, onClo
         isOpen={isSerangOpen}
         countryName={countryName}
         playerCountryDetail={playerCountryDetail}
+        targetCountryDetail={targetCountryDetail}
         onClose={() => setIsSerangOpen(false)}
         onConfirm={(actionType, targetCountry) => {
           setIsSerangOpen(false);

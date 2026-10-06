@@ -11,7 +11,7 @@ import ModalSetuju from "./4_modal_setuju";
 import ModalMenolak from "./5_modal_menolak";
 import ModalAbstain from "./6_modal_abstain";
 import ModalVeto from "./7_modal_veto";
-import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS, getSimulationDateString, STORAGE_KEY_PBB_KEAMANAN, getSecurityCouncilCountryBreakdown, isPermanentSecurityCouncilMember, tickPBBSecurityCouncil } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
+import { ActiveSecurityCouncilItem, loadActiveSecurityCouncilItems, saveActiveSecurityCouncilItems, calculate15SecurityCouncilVotes, TOTAL_SECURITY_MEMBERS, getSimulationDateString, getSecurityCouncilCountryBreakdown, isPermanentSecurityCouncilMember, tickPBBSecurityCouncil } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
 import { tickPBBResolutions } from "../../1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { PBB_RESOLUTION_DURATION_OPTIONS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { clearAnnexedCountryVotes, isCountryAnnexed } from "../../pbbVotingEligibility";
@@ -345,11 +345,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
     });
 
     setActiveSecurityCouncilItems(updated);
-    if (typeof saveActiveSecurityCouncilItems === 'function') {
-      saveActiveSecurityCouncilItems(updated);
-    } else if (typeof window !== 'undefined') {
-      try { localStorage.setItem(STORAGE_KEY_PBB_KEAMANAN, JSON.stringify(updated)); } catch (e) {}
-    }
+    saveActiveSecurityCouncilItems(updated);
   };
 
   const handleSubmit = () => {
@@ -399,11 +395,7 @@ export default function KeamananPBB({ selectedCountry }: KeamananPBBProps) {
 
     setActiveSecurityCouncilItems(prev => {
       const newList = [newItem, ...prev];
-      if (typeof saveActiveSecurityCouncilItems === 'function') {
-        saveActiveSecurityCouncilItems(newList);
-      } else if (typeof window !== 'undefined') {
-        try { localStorage.setItem(STORAGE_KEY_PBB_KEAMANAN, JSON.stringify(newList)); } catch (e) {}
-      }
+      saveActiveSecurityCouncilItems(newList);
       return newList;
     });
     

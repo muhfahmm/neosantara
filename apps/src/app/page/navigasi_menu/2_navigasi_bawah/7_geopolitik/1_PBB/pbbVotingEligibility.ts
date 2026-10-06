@@ -71,7 +71,6 @@ export function clearAnnexedCountryVotes(countryName: string, countryIso?: strin
   if (typeof window === "undefined" || !isCountryAnnexed(countryName, countryIso)) return;
 
   const resolutionKey = "pbb_active_resolutions_v4";
-  const securityKey = "pbb_active_keamanan_v4";
   let changed = false;
 
   const clearVotes = <T extends {
@@ -89,7 +88,7 @@ export function clearAnnexedCountryVotes(countryName: string, countryIso?: strin
     return { ...item, userVote: null, voteStats };
   });
 
-  for (const storageKey of [resolutionKey, securityKey]) {
+  for (const storageKey of [resolutionKey]) {
     try {
       const serialized = window.localStorage.getItem(storageKey);
       if (!serialized) continue;

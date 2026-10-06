@@ -536,7 +536,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             )}
 
             {activeTab === "militer" && (
-              <OperasiMiliter countryName={countryName} playerCountryDetail={countryDetail} onCloseDetailModal={onClose} />
+              <OperasiMiliter countryName={countryName} playerCountryDetail={countryDetail} targetCountryDetail={detailData} onCloseDetailModal={onClose} />
             )}
 
           </div>

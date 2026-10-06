@@ -76,30 +76,14 @@ export const TOTAL_SECURITY_MEMBERS = 15;
 let sessionOnlySecurityItems: ActiveSecurityCouncilItem[] = [];
 let initializedSessionOnlySecurityItems = false;
 
-function isSessionOnlySecurityItem(item: ActiveSecurityCouncilItem): boolean {
-  return item.type === 'economic' || item.type === 'full' || item.type === 'naval';
-}
-
 function initializeSessionOnlySecurityItems(): void {
   if (typeof window === 'undefined' || initializedSessionOnlySecurityItems) return;
   initializedSessionOnlySecurityItems = true;
 
   try {
-    const serialized = localStorage.getItem(STORAGE_KEY_PBB_KEAMANAN);
-    if (!serialized) return;
-
-    const parsed: unknown = JSON.parse(serialized);
-    if (!Array.isArray(parsed)) return;
-
-    const persistedSanctions = parsed.filter(isSessionOnlySecurityItem);
-    if (persistedSanctions.length > 0) {
-      localStorage.setItem(
-        STORAGE_KEY_PBB_KEAMANAN,
-        JSON.stringify(parsed.filter((item: ActiveSecurityCouncilItem) => !isSessionOnlySecurityItem(item)))
-      );
-    }
+    localStorage.removeItem(STORAGE_KEY_PBB_KEAMANAN);
   } catch (error) {
-    console.error('Failed to clear persisted PBB sanctions resolutions:', error);
+    console.error('Failed to clear persisted PBB Security Council agenda:', error);
   }
 }
 
@@ -348,55 +332,26 @@ export function calculate15SecurityCouncilVotes(
 }
 
 export function loadActiveSecurityCouncilItems(): ActiveSecurityCouncilItem[] {
-  if (typeof window === 'undefined') return getInitialActiveSecurityCouncilItems();
+  if (typeof window === 'undefined') return [];
   initializeSessionOnlySecurityItems();
-
-  try {
-    const data = localStorage.getItem(STORAGE_KEY_PBB_KEAMANAN);
-    if (data) {
-      const parsed = JSON.parse(data);
-      if (Array.isArray(parsed)) {
-        return [...sessionOnlySecurityItems, ...parsed.filter((item: ActiveSecurityCouncilItem) => !isSessionOnlySecurityItem(item))];
-      }
-    }
-  } catch (e) {
-    console.error('Failed loading PBB security council resolutions:', e);
-  }
-  return [...sessionOnlySecurityItems, ...getInitialActiveSecurityCouncilItems()];
+  return [...sessionOnlySecurityItems];
 }
 
 export function saveActiveSecurityCouncilItems(items: ActiveSecurityCouncilItem[]) {
   if (typeof window === 'undefined') return;
   initializeSessionOnlySecurityItems();
-  sessionOnlySecurityItems = items.filter(isSessionOnlySecurityItem);
-
-  try {
-    localStorage.setItem(
-      STORAGE_KEY_PBB_KEAMANAN,
-      JSON.stringify(items.filter(item => !isSessionOnlySecurityItem(item)))
-    );
-  } catch (e) {
-    console.error('Failed saving PBB security council resolutions:', e);
-  }
+  sessionOnlySecurityItems = [...items];
 }
 
-export function clearSessionOnlySecurityItems(): void {
+export function clearActiveSecurityCouncilItems(): void {
   sessionOnlySecurityItems = [];
   initializedSessionOnlySecurityItems = true;
   if (typeof window === 'undefined') return;
 
   try {
-    const serialized = localStorage.getItem(STORAGE_KEY_PBB_KEAMANAN);
-    if (!serialized) return;
-    const parsed: unknown = JSON.parse(serialized);
-    if (!Array.isArray(parsed)) return;
-
-    localStorage.setItem(
-      STORAGE_KEY_PBB_KEAMANAN,
-      JSON.stringify(parsed.filter((item: ActiveSecurityCouncilItem) => !isSessionOnlySecurityItem(item)))
-    );
+    localStorage.removeItem(STORAGE_KEY_PBB_KEAMANAN);
   } catch (error) {
-    console.error('Failed to clear PBB sanctions from this session:', error);
+    console.error('Failed to clear PBB Security Council agenda:', error);
   }
 }
 

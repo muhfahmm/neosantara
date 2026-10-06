@@ -14,27 +14,66 @@ import { getIsoForCountryName } from './pbbCountryIso';
 import { chooseAIResolutionDuration, normalizePbbCountryName } from './1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { isCountryUnderEconomicEmbargo } from './1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { getEligibleReplacementProposer, isCountryAnnexed } from './pbbVotingEligibility';
+import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 
 const REPORTED_VIOLATIONS_KEY = 'pbb_reported_war_ban_violations_v1';
+const reportedViolationIds = new Set<string>();
+let initializedViolationTracking = false;
+
+function initializeViolationTracking(): void {
+  if (typeof window === 'undefined' || initializedViolationTracking) return;
+  initializedViolationTracking = true;
+
+  try {
+    localStorage.removeItem(REPORTED_VIOLATIONS_KEY);
+  } catch (error) {
+    console.error('Failed to clear persisted PBB violation records:', error);
+  }
+}
+
+initializeViolationTracking();
+
+export function clearReportedInvasionViolations(): void {
+  reportedViolationIds.clear();
+  initializeViolationTracking();
+  if (typeof window === 'undefined') return;
+
+  try {
+    localStorage.removeItem(REPORTED_VIOLATIONS_KEY);
+  } catch (error) {
+    console.error('Failed to clear PBB violation records:', error);
+  }
+}
+
+export function forgetReportedInvasionViolation(
+  attackerCountry: string,
+  targetCountry: string,
+  reason: 'war_ban' | 'missing_military_resolution' | 'wrong_military_target'
+): void {
+  const normalizeInvasionCountry = (countryName: string) => {
+    const normalized = normalizePbbCountryName(countryName);
+    return normalized === 'afghanistan' ? 'afganistan' : normalized;
+  };
+  const attacker = normalizeInvasionCountry(attackerCountry);
+  const target = normalizeInvasionCountry(targetCountry);
+
+  for (const violationId of reportedViolationIds) {
+    const [, recordedAttacker, recordedTarget, recordedReason] = violationId.split('|');
+    if (
+      normalizeInvasionCountry(recordedAttacker || '') === attacker &&
+      normalizeInvasionCountry(recordedTarget || '') === target &&
+      recordedReason === reason
+    ) {
+      reportedViolationIds.delete(violationId);
+    }
+  }
+}
 
 export { isCountryUnderEconomicEmbargo } from './1_resolusi_PBB/logic/3_economicEmbargoLogic';
 
 export function isTradeEmbargoActive(countryA: string, countryB: string): boolean {
   return isCountryUnderEconomicEmbargo(countryA) || isCountryUnderEconomicEmbargo(countryB);
-}
-
-function getReportedViolationIds(): string[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(REPORTED_VIOLATIONS_KEY);
-    if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string') : [];
-  } catch (error) {
-    console.error('Failed loading reported PBB war-ban violations:', error);
-    return [];
-  }
 }
 
 function makeViolationId(dateStr: string, attackerCountry: string, targetCountry: string, reason: string): string {
@@ -50,13 +89,10 @@ export function submitInvasionViolationSanctions(
   reason: 'war_ban' | 'missing_military_resolution' | 'wrong_military_target'
 ): NotificationMessage[] {
   if (typeof window === 'undefined') return [];
+  initializeViolationTracking();
 
   const violationId = makeViolationId(dateStr, attackerCountry, targetCountry, reason);
-  const reportedIds = getReportedViolationIds();
-  const legacyViolationId = [dateStr, attackerCountry, targetCountry]
-    .map(normalizePbbCountryName)
-    .join('|');
-  if (reportedIds.includes(violationId) || reportedIds.includes(legacyViolationId)) return [];
+  if (reportedViolationIds.has(violationId)) return [];
 
   const attacker = {
     name: attackerCountry,
@@ -66,13 +102,24 @@ export function submitInvasionViolationSanctions(
     name: targetCountry,
     iso: getIsoForCountryName(targetCountry)
   };
-  const eligibleProposer = isCountryAnnexed(target.name, target.iso)
+  const eligibleReplacement = isCountryAnnexed(target.name, target.iso)
     ? getEligibleReplacementProposer([attacker.name, target.name])
     : target;
+  const eligibleProposer = eligibleReplacement || (
+    isCountryAnnexed(target.name, target.iso)
+      ? COUNTRIES_DATA.find(country =>
+          normalizePbbCountryName(country.country) !== normalizePbbCountryName(attacker.name) &&
+          normalizePbbCountryName(country.country) !== normalizePbbCountryName(target.name) &&
+          !isCountryAnnexed(country.country, country.iso)
+        )
+      : undefined
+  );
   if (!eligibleProposer) return [];
   const proposer = {
-    name: eligibleProposer.name,
-    iso: eligibleProposer.iso || getIsoForCountryName(eligibleProposer.name)
+    name: 'name' in eligibleProposer ? eligibleProposer.name : eligibleProposer.country,
+    iso: eligibleProposer.iso || getIsoForCountryName(
+      'name' in eligibleProposer ? eligibleProposer.name : eligibleProposer.country
+    )
   };
   const duration = chooseAIResolutionDuration('economic_embargo', 1);
   const suffix = encodeURIComponent(violationId);
@@ -144,11 +191,7 @@ export function submitInvasionViolationSanctions(
     saveActiveSecurityCouncilItems([item, ...securityItems]);
   }
 
-  try {
-    localStorage.setItem(REPORTED_VIOLATIONS_KEY, JSON.stringify([...reportedIds, violationId]));
-  } catch (error) {
-    console.error('Failed saving reported PBB war-ban violations:', error);
-  }
+  reportedViolationIds.add(violationId);
 
   window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
 
