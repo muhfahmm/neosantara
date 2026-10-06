@@ -31,6 +31,7 @@ import { getEconomicEmbargoIncomeMultiplier, getEconomicEmbargoProductionMultipl
 import { loadActiveResolutions, isPassedResolutionActive, normalizePbbCountryName } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { loadActiveSecurityCouncilItems } from "../../7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
 import { getProductionBonusMultiplier } from "./bonus_logic";
+import { applyJewishConstructionTimeDiscount } from "./bonus_logic/agama_bonus_logic/yahudi";
 
 
 
@@ -420,7 +421,12 @@ export default function ProduksiModal({
       buildQuantity
     );
 
-    const waktu = Number(bMeta.waktu_pembangunan) || 0;
+    const baseConstructionTime = Number(bMeta.waktu_pembangunan) || 0;
+    const waktu = applyJewishConstructionTimeDiscount(
+      baseConstructionTime,
+      key,
+      countryDetail?.religion
+    );
 
     if (waktu <= 0) {
       updatedDetail[key] = (Number(countryDetail?.[key]) || 0) + buildQuantity;
@@ -720,6 +726,11 @@ export default function ProduksiModal({
             buildingDescription={bMeta?.deskripsi || bMeta?.desc}
             cost={cost}
             waktuPembangunan={bMeta?.waktu_pembangunan}
+            waktuPembangunanDiskon={applyJewishConstructionTimeDiscount(
+              Number(bMeta?.waktu_pembangunan) || 0,
+              selectedBuilding.key,
+              countryDetail?.religion
+            )}
             produksiPerHari={bMeta?.produksi}
             produksiLabel={bMeta?.label || selectedBuilding.label}
             konsumsiListrik={bMeta?.konsumsi_listrik}

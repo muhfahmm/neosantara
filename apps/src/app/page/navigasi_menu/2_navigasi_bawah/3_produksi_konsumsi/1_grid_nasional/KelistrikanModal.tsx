@@ -18,6 +18,7 @@ import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
 import CountryKelistrikanModal from "./CountryKelistrikanModal";
 import { getElectricityFuelBalance, getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 import { getCountryConsumptionBreakdown } from "./consumptionLogic";
+import { getProductionBonusMultiplier } from "../../5_pembangunan/1_produksi/bonus_logic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -131,7 +132,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         label: bMeta?.label || key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
         desc: bMeta?.desc || "Sumber energi listrik nasional.",
         value: count,
-        unitProduction: unitProduction,
+        unitProduction: unitProduction * getProductionBonusMultiplier(countryDetail, key),
         isFuelDeficit,
       };
     })
@@ -240,7 +241,9 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         }
       }
 
-      const effectiveProd = isFuelDeficit ? 0 : (count * unitProduction);
+      const effectiveProd = isFuelDeficit
+        ? 0
+        : count * unitProduction * getProductionBonusMultiplier(country, key);
       const result = sum + effectiveProd;
       return isNaN(result) ? sum : result;
     }, 0);

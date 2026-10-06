@@ -16,6 +16,7 @@ interface KonfirmasiPembangunanProps {
   buildingDescription?: string;
   cost: number;
   waktuPembangunan?: number;
+  waktuPembangunanDiskon?: number;
   dampakKepuasan?: number;      // Untuk Tempat Umum & Hunian
   produksiPerHari?: number;     // Untuk Bangunan Produksi
   produksiLabel?: string;
@@ -38,6 +39,7 @@ export default function KonfirmasiPembangunanModal({
   buildingDescription,
   cost,
   waktuPembangunan,
+  waktuPembangunanDiskon,
   dampakKepuasan,
   produksiPerHari,
   produksiLabel,
@@ -71,7 +73,13 @@ export default function KonfirmasiPembangunanModal({
   const hasMissingMaterials = missingMaterials.length > 0;
   const totalCost = cost * buildQuantity;
   const isAnggaranCukup = anggaran >= totalCost;
-  const totalTime = (waktuPembangunan || 1) * buildQuantity;
+  const constructionTime = waktuPembangunanDiskon ?? waktuPembangunan;
+  const totalTime = (constructionTime || 1) * buildQuantity;
+  const originalTotalTime = (waktuPembangunan || 1) * buildQuantity;
+  const hasConstructionTimeDiscount =
+    constructionTime !== undefined &&
+    waktuPembangunan !== undefined &&
+    constructionTime < waktuPembangunan;
 
   // 🔥 Fungsi kalkulasi jumlah bangunan maksimal
   const calculateMaxBuildings = (): number => {
@@ -171,12 +179,33 @@ export default function KonfirmasiPembangunanModal({
               <>
                 <div className="flex justify-between">
                   <span className="text-[#6B8A8A]">Estimasi Waktu Pembangunan per bangunan:</span>
-                  <span className="text-[#E0E0E0] font-semibold">{waktuPembangunan} Hari</span>
+                  <span className="flex items-center gap-2 font-semibold">
+                    {hasConstructionTimeDiscount && (
+                      <span className="text-rose-400 line-through">{waktuPembangunan} Hari</span>
+                    )}
+                    <span className={hasConstructionTimeDiscount ? "text-emerald-400" : "text-[#E0E0E0]"}>
+                      {constructionTime} Hari
+                    </span>
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#6B8A8A]">Estimasi Waktu Pembangunan Total:</span>
-                  <span className="text-[#E0E0E0] font-semibold">{totalTime} Hari</span>
+                  <span className="flex items-center gap-2 font-semibold">
+                    {hasConstructionTimeDiscount && (
+                      <span className="text-rose-400 line-through">{originalTotalTime} Hari</span>
+                    )}
+                    <span className={hasConstructionTimeDiscount ? "text-emerald-400" : "text-[#E0E0E0]"}>
+                      {totalTime} Hari
+                    </span>
+                  </span>
                 </div>
+                {hasConstructionTimeDiscount && (
+                  <div className="flex justify-end">
+                    <span className="inline-flex rounded-full border border-rose-500/40 bg-rose-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-rose-400">
+                      Bonus Yahudi: waktu pembangunan -10%
+                    </span>
+                  </div>
+                )}
               </>
             )}
 

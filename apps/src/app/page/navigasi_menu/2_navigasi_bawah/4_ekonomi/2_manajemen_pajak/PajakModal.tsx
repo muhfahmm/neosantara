@@ -6,6 +6,14 @@ import {
   calculateIncomeAtRate,
 } from "@/app/logic/economic_logic/2_tax_logic/taxLogic";
 import { generatePajakChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/1_perubahan_pajak/pajakChangeLogic";
+import {
+  applyOrthodoxPersonalIncomeTaxRevenueBonus,
+  ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/kristen";
+import {
+  applyBuddhaEnvironmentalTaxRevenueBonus,
+  BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/buddha";
 
 interface ModalProps {
   isOpen: boolean;
@@ -89,9 +97,15 @@ export default function PajakModal({
     const avgRate = (vat + corporate_tax + income_tax + cigarette_tax + environment_tax) / 5;
     const total = calculateIncomeAtRate(vat, 500) +
                   calculateIncomeAtRate(corporate_tax, 500) +
-                  calculateIncomeAtRate(income_tax, 500) +
+                  applyOrthodoxPersonalIncomeTaxRevenueBonus(
+                    calculateIncomeAtRate(income_tax, 500),
+                    countryDetail?.religion
+                  ) +
                   calculateIncomeAtRate(cigarette_tax, 500) +
-                  calculateIncomeAtRate(environment_tax, 500);
+                  applyBuddhaEnvironmentalTaxRevenueBonus(
+                    calculateIncomeAtRate(environment_tax, 500),
+                    countryDetail?.religion
+                  );
     const maxIncome = 5 * 500; // 2500 NEO
     // Kepuasan = 100 - rata-rata tarif + (pendapatan / maxPendapatan * 20)
     let satisfaction = 100 - avgRate + (total / maxIncome) * 20;
@@ -100,6 +114,18 @@ export default function PajakModal({
   };
 
   const satisfaction = calculateSatisfaction(tempRates);
+  const personalIncomeTaxRevenue = applyOrthodoxPersonalIncomeTaxRevenueBonus(
+    calculateIncomeAtRate(tempRates.income_tax, 500),
+    countryDetail?.religion
+  );
+  const hasOrthodoxTaxBonus =
+    String(countryDetail?.religion || "").trim().toLowerCase() === "kristen ortodoks";
+  const environmentalTaxRevenue = applyBuddhaEnvironmentalTaxRevenueBonus(
+    calculateIncomeAtRate(tempRates.environment_tax, 500),
+    countryDetail?.religion
+  );
+  const hasBuddhaTaxBonus =
+    String(countryDetail?.religion || "").trim().toLowerCase() === "buddha";
 
   // --- Initialize satisfaction.tax hanya saat modal pertama kali buka & countryDetail berubah ---
   useEffect(() => {
@@ -202,9 +228,9 @@ export default function PajakModal({
   const totalIncome =
     calculateIncomeAtRate(tempRates.vat, 500) +
     calculateIncomeAtRate(tempRates.corporate_tax, 500) +
-    calculateIncomeAtRate(tempRates.income_tax, 500) +
+    personalIncomeTaxRevenue +
     calculateIncomeAtRate(tempRates.cigarette_tax, 500) +
-    calculateIncomeAtRate(tempRates.environment_tax, 500);
+    environmentalTaxRevenue;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -301,7 +327,7 @@ export default function PajakModal({
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">{tempRates.income_tax}%</span>
                   <span className="text-emerald-400 font-black">
-                    ({calculateIncomeAtRate(tempRates.income_tax, 500).toLocaleString(
+                    ({personalIncomeTaxRevenue.toLocaleString(
                       "id-ID"
                     )}{" "} NEO)
                   </span>
@@ -320,6 +346,11 @@ export default function PajakModal({
               <p className="text-[10px] text-[#6B8A8A]">
                 0% = 0 NEO, 100% = 500 NEO income
               </p>
+              {hasOrthodoxTaxBonus && (
+                <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                  Bonus Kristen Ortodoks: Penerimaan +{ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS * 100}%
+                </span>
+              )}
             </div>
 
             {/* 4. Cukai - Cukai */}
@@ -357,7 +388,7 @@ export default function PajakModal({
                 <div className="flex items-center gap-2">
                   <span className="text-[#E0E0E0]">{tempRates.environment_tax}%</span>
                   <span className="text-emerald-400 font-black">
-                    ({calculateIncomeAtRate(tempRates.environment_tax, 500).toLocaleString(
+                    ({environmentalTaxRevenue.toLocaleString(
                       "id-ID"
                     )}{" "} NEO)
                   </span>
@@ -376,6 +407,11 @@ export default function PajakModal({
               <p className="text-[10px] text-[#6B8A8A]">
                 0% = 0 NEO, 100% = 500 NEO income
               </p>
+              {hasBuddhaTaxBonus && (
+                <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                  Bonus Buddha: Penerimaan pajak lingkungan +{BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS * 100}%
+                </span>
+              )}
             </div>
           </div>
 

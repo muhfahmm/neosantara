@@ -8,6 +8,10 @@ import {
   Wifi, Crosshair, HeartPulse, Wheat, Banknote, Search, TrendingUp,
   ChevronUp,
 } from 'lucide-react';
+import {
+  applyAtheismResearchSpeedBonus,
+  ATHEISM_RESEARCH_SPEED_BONUS,
+} from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/ateisme';
 
 export type CategoryKey = 'sains' | 'ekonomi' | 'militer' | 'sosial' | 'lingkungan' | 'diplomasi' | 'budaya';
 
@@ -372,6 +376,10 @@ export default function PenelitianPageModal({
   const activeResearchId: string | null = countryDetail?.active_research || null;
   const activeResearchProgress: number = countryDetail?.active_research_progress || 0;
   const money = Number(countryDetail?.anggaran || 0);
+  const religion = countryDetail?.religion ?? countryDetail?.agama_utama ?? countryDetail?.agama;
+  const hasAtheismResearchBonus = String(religion || '').trim().toLowerCase() === 'ateisme';
+  const getEffectiveResearchDuration = (durationDays: number) =>
+    applyAtheismResearchSpeedBonus(durationDays, religion);
 
   const isUnlocked = (id: string) => completedResearch.includes(id);
   const isActive = (id: string) => activeResearchId === id;
@@ -412,7 +420,7 @@ export default function PenelitianPageModal({
     if (activeResearchId) return;
 
     const safeDate = getSafeDateString();
-    const endDateStr = addDays(safeDate, research.duration);
+    const endDateStr = addDays(safeDate, getEffectiveResearchDuration(research.duration));
 
     setCountryDetail({
       ...countryDetail,
@@ -432,7 +440,7 @@ export default function PenelitianPageModal({
     if (activeResearchId) return;
 
     const safeDate = getSafeDateString();
-    const duration = getCardUpgradeDuration(research, targetLevel);
+    const duration = getEffectiveResearchDuration(getCardUpgradeDuration(research, targetLevel));
     const endDateStr = addDays(safeDate, duration);
 
     setCountryDetail({
@@ -708,7 +716,9 @@ export default function PenelitianPageModal({
                           >
                             {/* TANGGAL SELESAI RISET/PEMBANGUNAN */}
                             {isResearching && (() => {
-                              const durationDays = activeUpgradeData ? getCardUpgradeDuration(research, activeUpgradeData.targetLevel) : research.duration;
+                              const durationDays = getEffectiveResearchDuration(
+                                activeUpgradeData ? getCardUpgradeDuration(research, activeUpgradeData.targetLevel) : research.duration
+                              );
                               const remainingDays = Math.max(1, Math.ceil(durationDays * (100 - activeResearchProgress) / 100));
                               const endDateStr = countryDetail?.active_research_end_date || addDays(getSafeDateString(), remainingDays);
 
@@ -771,7 +781,18 @@ export default function PenelitianPageModal({
                                 {/* Left: Duration */}
                                 <div className="flex items-center gap-0.5 text-[9px] font-bold text-[#6B8A8A] shrink-0">
                                   <Clock className="w-2.5 h-2.5 text-sky-400" />
-                                  <span>{unlocked && !isMaxed ? getCardUpgradeDuration(research, nextLevel) : research.duration}h</span>
+                                  <span className="flex items-center gap-1">
+                                    {hasAtheismResearchBonus && (
+                                      <span className="text-rose-400 line-through">
+                                        {unlocked && !isMaxed ? getCardUpgradeDuration(research, nextLevel) : research.duration}
+                                      </span>
+                                    )}
+                                    <span className={hasAtheismResearchBonus ? 'text-emerald-400' : ''}>
+                                      {getEffectiveResearchDuration(
+                                        unlocked && !isMaxed ? getCardUpgradeDuration(research, nextLevel) : research.duration
+                                      )}h
+                                    </span>
+                                  </span>
                                 </div>
 
                                 {/* Center: Progress Bar */}
@@ -923,8 +944,13 @@ export default function PenelitianPageModal({
               </div>
               <div className="flex justify-between items-center mb-3">
                 <span className="text-xs font-bold text-[#6B8A8A] uppercase">Durasi</span>
-                <span className="text-sm font-black text-sky-300">
-                  {confirmTarget.duration} hari
+                <span className="text-sm font-black text-sky-300 flex items-center gap-2">
+                  {hasAtheismResearchBonus && (
+                    <span className="text-rose-400 line-through">{confirmTarget.duration} hari</span>
+                  )}
+                  <span className={hasAtheismResearchBonus ? 'text-emerald-400' : ''}>
+                    {getEffectiveResearchDuration(confirmTarget.duration)} hari
+                  </span>
                 </span>
               </div>
               <div className="flex justify-between items-center border-t border-[#00FFAA]/20 pt-3">
@@ -1022,8 +1048,17 @@ export default function PenelitianPageModal({
               </div>
               <div className="flex justify-between items-center mb-3">
                 <span className="text-xs font-bold text-[#6B8A8A] uppercase">Durasi</span>
-                <span className="text-sm font-black text-sky-300">
-                  {getCardUpgradeDuration(confirmUpgrade.research, confirmUpgrade.targetLevel)} hari
+                <span className="text-sm font-black text-sky-300 flex items-center gap-2">
+                  {hasAtheismResearchBonus && (
+                    <span className="text-rose-400 line-through">
+                      {getCardUpgradeDuration(confirmUpgrade.research, confirmUpgrade.targetLevel)} hari
+                    </span>
+                  )}
+                  <span className={hasAtheismResearchBonus ? 'text-emerald-400' : ''}>
+                    {getEffectiveResearchDuration(
+                      getCardUpgradeDuration(confirmUpgrade.research, confirmUpgrade.targetLevel)
+                    )} hari
+                  </span>
                 </span>
               </div>
               <div className="flex justify-between items-center border-t border-[#00FFAA]/20 pt-3">

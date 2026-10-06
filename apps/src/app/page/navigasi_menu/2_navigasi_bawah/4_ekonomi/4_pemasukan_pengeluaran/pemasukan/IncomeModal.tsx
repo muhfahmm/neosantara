@@ -1,7 +1,7 @@
 "use client"
 import React from "react";
 import { X, BarChart3, ArrowUpRight } from "lucide-react";
-import { calculateIncomeAtRate } from "@/app/logic/economic_logic/2_tax_logic/taxLogic";
+import { calculateTotalTaxIncome } from "@/app/logic/economic_logic/treasuryUpdater";
 import { calculateGoldMiningDailyProduction } from "@/app/logic/economic_logic/goldIncome";
 
 interface IncomeModalProps {
@@ -17,33 +17,6 @@ interface IncomeItem {
   subtitle?: string;
   displayAmount?: string;
 }
-
-// Helper function to calculate total tax income (daily)
-// Default values HARUS SAMA dengan PajakModal.tsx untuk konsistensi data
-const getTaxValue = (detail: any, fallback: number, path: string[]) => {
-  let current: any = detail;
-  for (const key of path) {
-    if (current == null || typeof current !== "object") return undefined;
-    current = current[key];
-  }
-  return typeof current === "number" ? current : undefined;
-};
-
-const calculateTotalTaxIncome = (countryDetail: any) => {
-  const income_tax = getTaxValue(countryDetail, 15, ["income_tax"]) ?? getTaxValue(countryDetail, 15, ["pajak", "penghasilan", "tarif"]) ?? 0;
-  const corporate_tax = getTaxValue(countryDetail, 22, ["corporate"]) ?? getTaxValue(countryDetail, 22, ["pajak", "korporasi", "tarif"]) ?? 0;
-  const vat = getTaxValue(countryDetail, 10, ["ppn"]) ?? getTaxValue(countryDetail, 10, ["pajak", "ppn", "tarif"]) ?? 0;
-  const cigarette_tax = getTaxValue(countryDetail, 15, ["cigarette_tax"]) ?? getTaxValue(countryDetail, 15, ["pajak", "bea_cukai", "tarif"]) ?? 0;
-  const environment_tax = getTaxValue(countryDetail, 5, ["environment_tax"]) ?? getTaxValue(countryDetail, 5, ["pajak", "lingkungan", "tarif"]) ?? 0;
-
-  return (
-    calculateIncomeAtRate(income_tax, 500) +
-    calculateIncomeAtRate(corporate_tax, 500) +
-    calculateIncomeAtRate(vat, 500) +
-    calculateIncomeAtRate(cigarette_tax, 500) +
-    calculateIncomeAtRate(environment_tax, 500)
-  );
-};
 
 // Helper function to calculate tourism income (fallback tanpa getTourismAttractions)
 const calculateTourismIncome = (countryDetail: any) => {

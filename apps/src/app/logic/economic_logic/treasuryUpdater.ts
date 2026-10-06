@@ -2,6 +2,8 @@ import { calculateIncomeAtRate } from './2_tax_logic/taxLogic';
 import { calculateGoldMiningDailyProduction } from './goldIncome';
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from './departments';
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
+import { applyOrthodoxPersonalIncomeTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/kristen';
+import { applyBuddhaEnvironmentalTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/buddha';
 
 const getNestedValue = (obj: any, path: string[]) => {
   return path.reduce((current, key) => {
@@ -49,9 +51,16 @@ export const calculateTotalTaxIncome = (detail: any) => {
 
   const ppnIncome = calculateIncomeAtRate(ppnRate, 500);
   const korporasiIncome = calculateIncomeAtRate(korporasiRate, 500);
-  const penghasilanIncome = calculateIncomeAtRate(penghasilanRate, 500);
+  const personalIncomeTaxRevenue = calculateIncomeAtRate(penghasilanRate, 500);
+  const penghasilanIncome = applyOrthodoxPersonalIncomeTaxRevenueBonus(
+    personalIncomeTaxRevenue,
+    detail.religion
+  );
   const beaCukaiIncome = calculateIncomeAtRate(beaCukaiRate, 200);
-  const lingkunganIncome = calculateIncomeAtRate(lingkunganRate, 200);
+  const lingkunganIncome = applyBuddhaEnvironmentalTaxRevenueBonus(
+    calculateIncomeAtRate(lingkunganRate, 500),
+    detail.religion
+  );
 
   return ppnIncome + korporasiIncome + penghasilanIncome + beaCukaiIncome + lingkunganIncome;
 };

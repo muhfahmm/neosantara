@@ -33,7 +33,7 @@ const RELIGION_BONUSES: Record<string, string> = {
   'Hindu': 'Laju Pertumbuhan Populasi: +8%',
   'Buddha': 'Penerimaan Pajak Lingkungan: +10%',
   'Yahudi': 'Waktu pembangunan pabrik dan tambang: -10%',
-  'Shinto': 'Pertumbuhan populasi: +8%',
+  'Shinto': 'Produksi Kelistrikan: +10%',
   'Ateisme': 'Kecepatan Riset Sains: +15%',
 };
 

@@ -13,6 +13,8 @@ import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from
 import AlokasiSubsidiTab from "./alokasi_subsidi/AlokasiSubsidiTab";
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
 import { getSubsidiBySlug } from "@/../../json/database_alokasi_subsidi/index";
+import { ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/kristen";
+import { BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/buddha";
 
 interface ModalProps {
   isOpen: boolean;
@@ -27,6 +29,7 @@ interface FinancialItem {
   label: string;
   amount: number;
   displayAmount?: string;
+  badge?: string;
   onClick?: () => void;
 }
 
@@ -104,7 +107,16 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
   const goldUnits = calculateGoldMiningDailyProduction(countryDetail);
 
   const incomeItems: FinancialItem[] = [
-    { label: "Revenue Pajak", amount: taxRevenue, onClick: () => onGotoPajak?.() },
+    {
+      label: "Revenue Pajak",
+      amount: taxRevenue,
+      badge: String(countryDetail?.religion || "").trim().toLowerCase() === "kristen ortodoks"
+        ? `Bonus Kristen Ortodoks: Penerimaan pajak pribadi +${ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS * 100}%`
+        : String(countryDetail?.religion || "").trim().toLowerCase() === "buddha"
+          ? `Bonus Buddha: Penerimaan pajak lingkungan +${BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS * 100}%`
+          : undefined,
+      onClick: () => onGotoPajak?.()
+    },
     {
       label: goldBuildingCount > 0
         ? `Produksi Tambang Emas (${goldIncome.toLocaleString('id-ID')})`
@@ -244,7 +256,14 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                           onClick={item.onClick}
                           className={`flex justify-between items-center text-xs font-bold text-emerald-400 py-2 transition-colors rounded px-1 ${item.onClick ? 'cursor-pointer hover:bg-[#00FFAA]/10' : ''}`}
                         >
-                          <span className="font-semibold text-[#E0E0E0]">{item.label}</span>
+                          <span className="flex items-center gap-2 font-semibold text-[#E0E0E0]">
+                            {item.label}
+                            {item.badge && (
+                              <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-wide text-emerald-400">
+                                {item.badge}
+                              </span>
+                            )}
+                          </span>
                           <span>{item.displayAmount ?? `+ ${item.amount.toLocaleString("id-ID")}`}</span>
                         </div>
                       </div>

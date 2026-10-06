@@ -25,6 +25,9 @@ import DetailKematianModal from "./kematian_modals/DetailKematianModal";
 import TempatUmumModal from "../5_pembangunan/2_tempat_umum/TempatUmumModal";
 import IndeksKesejahteraanModal from "./indeks_kesejahteraan_modals/IndeksKesejahteraanModal";
 import TunawismaDetailModal from "./tunawisma_modals/TunawismaDetailModal";
+import {
+  HINDU_POPULATION_GROWTH_BONUS,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/hindu";
 
 // ==============================
 // Tipe data yang diharapkan dari countryDetail
@@ -361,6 +364,11 @@ export default function RingkasanPopulasiModal({
                 Kelahiran +{dailyBirths.toLocaleString('id-ID')} / kematian −{dailyDeaths.toLocaleString('id-ID')} jiwa per hari
                 {' / '}Births +{dailyBirths.toLocaleString('en-US')} / deaths −{dailyDeaths.toLocaleString('en-US')} people per day
               </p>
+              {String(countryDetail?.religion || "").trim().toLowerCase() === "hindu" && (
+                <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                  Bonus Hindu: Pertumbuhan populasi +{HINDU_POPULATION_GROWTH_BONUS * 100}%
+                </span>
+              )}
               <div className="border-t border-[#00FFAA]/15 pt-2">
                 <p className="text-[9px] text-[#8BA5A5] font-black uppercase">Wabah & bencana aktif / Active outbreaks & disasters</p>
                 {activePopulationEvents.length === 0 ? (

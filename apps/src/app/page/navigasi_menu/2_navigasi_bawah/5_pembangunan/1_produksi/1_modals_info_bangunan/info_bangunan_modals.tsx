@@ -10,6 +10,7 @@ import {
   isFoodRawMaterialDeficit,
   getFoodIngredientsRequirements,
 } from "../../../3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
+import { SHINTO_ELECTRICITY_PRODUCTION_BONUS } from "../bonus_logic/agama_bonus_logic/shinto";
 
 const ELECTRICITY_FUEL_RESOURCE_KEYS = [
   "gas_alam",
@@ -115,6 +116,13 @@ export default function InfoBangunan({
   const fuelRequirements = isElectricityTab ? getKelistrikanFuelRequirements(buildingKey) : [];
   const hasFuelConsumption = fuelRequirements.length > 0;
   const isFuelResource = ELECTRICITY_FUEL_RESOURCE_KEYS.includes(buildingKey);
+  const hasShintoElectricityBonus =
+    isElectricityTab &&
+    String(countryDetail?.religion || "").trim().toLowerCase() === "shinto" &&
+    religionProductionMultiplier > 1;
+  const baseElectricityProduction = hasShintoElectricityBonus
+    ? rawProduction / religionProductionMultiplier
+    : rawProduction;
 
   const normalizeFoodKey = (k: string) => (k || '').replace(/^\d+_/, '').replace(/^pabrik_pengolahan_/, '').replace(/^pabrik_/, '').replace(/^kebun_/, '').replace(/^peternakan_/, '');
   const candidateKeys = [
@@ -204,15 +212,24 @@ export default function InfoBangunan({
             )}
             {religionProductionMultiplier > 1 && (
               <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[10px] font-bold text-emerald-300">
-                Produksi ditingkatkan 10% oleh bonus agama Islam.
+                {String(countryDetail?.religion || "").trim().toLowerCase() === "shinto"
+                  ? `Produksi kelistrikan ditingkatkan ${SHINTO_ELECTRICITY_PRODUCTION_BONUS * 100}% oleh bonus agama Shinto.`
+                  : "Produksi ditingkatkan 10% oleh bonus agama Islam."}
               </div>
             )}
             {isElectricityTab ? (
               <>
                 <div className="flex justify-between items-center">
                   <span className="text-[#6B8A8A]">Produksi Listrik (Total):</span>
-                  <span className={`font-black text-sm ${isProductionZero ? 'text-rose-400' : 'text-emerald-400'}`}>
-                    {rawProduction.toLocaleString('id-ID')} MW
+                  <span className="flex items-center gap-2 font-black text-sm">
+                    {hasShintoElectricityBonus && (
+                      <span className="text-rose-400 line-through">
+                        {baseElectricityProduction.toLocaleString('id-ID')} MW
+                      </span>
+                    )}
+                    <span className={isProductionZero ? "text-rose-400" : "text-emerald-400"}>
+                      {rawProduction.toLocaleString('id-ID')} MW
+                    </span>
                     {isProductionZero && ' (bahan bakar defisit)'}
                   </span>
                 </div>
