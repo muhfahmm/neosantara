@@ -91,6 +91,10 @@ import {
     clearExpelledOrganizationCountries,
     expelCountryFromOrganizations
 } from '@/../../json/database_organisasi_internasional';
+import {
+    PROVINCE_ACTION_EVENT,
+    type ProvinceActionEventDetail
+} from '../detail_negara/1_informasi_umum/provinsi_logic/provinceActionTypes';
 
 interface Country {
     id: number;
@@ -168,6 +172,58 @@ export default function MapPage() {
     // Format: { "NamaNegara": "WarnaHex", ... }
     // Contoh: { "Afganistan": "#E8C303" } berarti Afganistan sudah dianeksasi dan warnanya diubah ke kuning
     const [countryColorOverrides, setCountryColorOverrides] = useState<Record<string, string>>({});
+
+    const recordAnnexedTerritory = (
+        targetCountry: string,
+        targetIso: string,
+        attackerCountry: string,
+        attackerIso: string,
+        attackerColor: string
+    ) => {
+        const targetNorm = targetCountry.toLowerCase().trim();
+        const targetIsoNorm = targetIso.toLowerCase();
+        const overrideUpdates: Record<string, string> = {
+            [targetCountry]: attackerColor,
+            [targetNorm]: attackerColor,
+            [targetIsoNorm]: attackerColor,
+            [`iso_${targetIsoNorm}`]: attackerColor
+        };
+        if (targetNorm === 'mongolia') {
+            overrideUpdates.mongolia = attackerColor;
+            overrideUpdates.mn = attackerColor;
+            overrideUpdates.iso_mn = attackerColor;
+        }
+
+        setCountryColorOverrides(previous => ({ ...previous, ...overrideUpdates }));
+
+        if (typeof window === 'undefined') return;
+
+        const nextOverrides = {
+            ...((window as any).neosantara_country_color_overrides || {}),
+            ...overrideUpdates
+        };
+        const previousAnnexed = (window as any).neosantara_annexed_countries || {};
+        const annexationInfo = { attackerCountry, attackerIso };
+        const nextAnnexed = {
+            ...previousAnnexed,
+            [targetCountry]: annexationInfo,
+            [targetNorm]: annexationInfo,
+            [targetIsoNorm]: annexationInfo,
+            [`iso_${targetIsoNorm}`]: annexationInfo
+        };
+
+        (window as any).neosantara_country_color_overrides = nextOverrides;
+        (window as any).neosantara_annexed_countries = nextAnnexed;
+        try {
+            localStorage.setItem('neosantara_country_color_overrides', JSON.stringify(nextOverrides));
+            localStorage.setItem('neosantara_annexed_countries', JSON.stringify(nextAnnexed));
+        } catch (error) {
+            console.error('Failed to persist annexed territory state:', error);
+        }
+        window.dispatchEvent(new CustomEvent('map_territory_color_updated', {
+            detail: { targetCountry, newColor: attackerColor, attackerCountry }
+        }));
+    };
 
     // Override warna aneksasi & status aneksasi hanya berlaku selama sesi: refresh => kembali ke warna/status default.
     useEffect(() => {
@@ -252,34 +308,7 @@ export default function MapPage() {
                 );
                 newNewsItems.push(annexationNews);
 
-                // Update warna wilayah & status aneksasi
-                setCountryColorOverrides(prev => {
-                    const next = {
-                        ...prev,
-                        [targetCountry]: attackerColor,
-                        [targetCountry.toLowerCase()]: attackerColor,
-                        [targetIso.toLowerCase()]: attackerColor
-                    };
-                    if (typeof window !== 'undefined') {
-                        (window as any).neosantara_country_color_overrides = next;
-                        try {
-                            localStorage.setItem('neosantara_country_color_overrides', JSON.stringify(next));
-                        } catch (e) {}
-
-                        const prevAnnexed = (window as any).neosantara_annexed_countries || {};
-                        const updatedAnnexed = {
-                            ...prevAnnexed,
-                            [targetCountry]: { attackerCountry, attackerIso },
-                            [targetCountry.toLowerCase()]: { attackerCountry, attackerIso },
-                            [targetIso.toLowerCase()]: { attackerCountry, attackerIso }
-                        };
-                        (window as any).neosantara_annexed_countries = updatedAnnexed;
-                        try {
-                            localStorage.setItem('neosantara_annexed_countries', JSON.stringify(updatedAnnexed));
-                        } catch (e) {}
-                    }
-                    return next;
-                });
+                recordAnnexedTerritory(targetCountry, targetIso, attackerCountry, attackerIso, attackerColor);
             } else {
                 const lootNews = generateResourceLootNews(
                     attackerCountry,
@@ -405,54 +434,7 @@ export default function MapPage() {
                 );
                 newNewsItems.push(annexationNews);
 
-                // Update warna wilayah & status aneksasi di state & localStorage
-                setCountryColorOverrides(prev => {
-                    const targetNorm = targetCountry.toLowerCase().trim();
-                    const next = {
-                        ...prev,
-                        [targetCountry]: attackerColor,
-                        [targetNorm]: attackerColor,
-                        [targetIso.toLowerCase()]: attackerColor,
-                        [`iso_${targetIso.toLowerCase()}`]: attackerColor
-                    };
-
-                    if (targetNorm === 'mongolia') {
-                        next['mongolia'] = attackerColor;
-                        next['mn'] = attackerColor;
-                        next['iso_mn'] = attackerColor;
-                    }
-
-                    if (typeof window !== 'undefined') {
-                        (window as any).neosantara_country_color_overrides = next;
-                        try {
-                            localStorage.setItem('neosantara_country_color_overrides', JSON.stringify(next));
-                        } catch (e) {}
-
-                        const prevAnnexed = (window as any).neosantara_annexed_countries || {};
-                        const updatedAnnexed = {
-                            ...prevAnnexed,
-                            [targetCountry]: { attackerCountry, attackerIso },
-                            [targetNorm]: { attackerCountry, attackerIso },
-                            [targetIso.toLowerCase()]: { attackerCountry, attackerIso }
-                        };
-                        (window as any).neosantara_annexed_countries = updatedAnnexed;
-                        try {
-                            localStorage.setItem('neosantara_annexed_countries', JSON.stringify(updatedAnnexed));
-                        } catch (e) {}
-
-                        // Dispatch event update warna peta agar canvas dirender ulang langsung
-                        window.dispatchEvent(
-                            new CustomEvent('map_territory_color_updated', {
-                                detail: {
-                                    targetCountry,
-                                    newColor: attackerColor,
-                                    attackerCountry
-                                }
-                            })
-                        );
-                    }
-                    return next;
-                });
+                recordAnnexedTerritory(targetCountry, targetIso, attackerCountry, attackerIso, attackerColor);
 
                 // 3. Gabungkan statistik (populasi, kas negara, kepuasan, kesejahteraan, seluruh bangunan & militer) dari negara target ke user
                 const targetRelPath = Object.entries(countryPaths as Record<string, string>).find(
@@ -664,6 +646,27 @@ export default function MapPage() {
     const [presidentRating, setPresidentRating] = useState<number>(50);
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
     const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
+    useEffect(() => {
+        const handleProvinceAction = (event: Event) => {
+            const detail = (event as CustomEvent<ProvinceActionEventDetail>).detail;
+            if (!detail?.actionLabel || !detail.targetCountry || !detail.occupyingCountry) return;
+
+            const timestamp = currentDate.toISOString().slice(0, 10);
+            setNotifications(previous => [{
+                id: `province-action-${detail.actionId}-${Date.now()}`,
+                title: `🏛️ ${detail.actionLabel.toUpperCase()} DICATAT`,
+                sender: `Pemerintah ${detail.occupyingCountry}`,
+                message: `Aksi "${detail.actionLabel}" untuk Provinsi ${detail.targetCountry} telah dikonfirmasi dan dicatat.`,
+                timestamp,
+                type: 'peringkat',
+                value: 100,
+                isRead: false
+            }, ...previous]);
+        };
+
+        window.addEventListener(PROVINCE_ACTION_EVENT, handleProvinceAction);
+        return () => window.removeEventListener(PROVINCE_ACTION_EVENT, handleProvinceAction);
+    }, [currentDate]);
     const [resultModal, setResultModal] = useState<{ isOpen: boolean; title: string; message: string; type?: 'success' | 'error' | 'info' }>({
         isOpen: false,
         title: '',
@@ -1151,7 +1154,7 @@ export default function MapPage() {
                             // Dapatkan warna asli negara penyerang
                             const attackerColor = getCountryColor(inv.attackerCountry);
                             
-                            const { news: annexationNews, mapPayload } = generateAnnexationNews(
+                            const { news: annexationNews } = generateAnnexationNews(
                                 inv.attackerCountry,
                                 inv.attackerIso,
                                 attackerColor, // Gunakan warna asli penyerang, bukan hardcoded
@@ -1161,34 +1164,13 @@ export default function MapPage() {
                             );
                             generatedNewsItems.push(annexationNews);
                             
-                            // Update state untuk mengubah warna negara target di peta dan mencatat status aneksasi
-                            setCountryColorOverrides(prev => {
-                                const next = {
-                                    ...prev,
-                                    [inv.targetCountry]: attackerColor,
-                                    [inv.targetCountry.toLowerCase()]: attackerColor,
-                                    [inv.targetIso.toLowerCase()]: attackerColor
-                                };
-                                if (typeof window !== 'undefined') {
-                                    (window as any).neosantara_country_color_overrides = next;
-                                    try {
-                                        localStorage.setItem('neosantara_country_color_overrides', JSON.stringify(next));
-                                    } catch (e) {}
-
-                                    const prevAnnexed = (window as any).neosantara_annexed_countries || {};
-                                    const updatedAnnexed = {
-                                        ...prevAnnexed,
-                                        [inv.targetCountry]: { attackerCountry: inv.attackerCountry, attackerIso: inv.attackerIso },
-                                        [inv.targetCountry.toLowerCase()]: { attackerCountry: inv.attackerCountry, attackerIso: inv.attackerIso },
-                                        [inv.targetIso.toLowerCase()]: { attackerCountry: inv.attackerCountry, attackerIso: inv.attackerIso }
-                                    };
-                                    (window as any).neosantara_annexed_countries = updatedAnnexed;
-                                    try {
-                                        localStorage.setItem('neosantara_annexed_countries', JSON.stringify(updatedAnnexed));
-                                    } catch (e) {}
-                                }
-                                return next;
-                            });
+                            recordAnnexedTerritory(
+                                inv.targetCountry,
+                                inv.targetIso,
+                                inv.attackerCountry,
+                                inv.attackerIso,
+                                attackerColor
+                            );
                             
                             console.log(`🚩 ANEKSASI: ${inv.attackerCountry} (${attackerColor}) menganeksasi ${inv.targetCountry}`);
                         } else {

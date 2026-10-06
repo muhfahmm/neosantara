@@ -26,6 +26,7 @@ import KontrakPenelitianModal from './5_kontrak_penelitian/kontrakPenelitianModa
 import KirimPasukanModal from './6_kirim_pasukan/kirimPasukanModals';
 import PanggilSekutuModal from './7_panggil_sekutu/panggilSekutuModals';
 import BerikanSanksiModal from './8_berikan_sanksi/berikanSanksiModals';
+import ProvinsiInformasiUmum from './provinsi_logic/ProvinsiInformasiUmum';
 
 interface InformasiUmumProps {
   countryName: string;
@@ -35,6 +36,8 @@ interface InformasiUmumProps {
   adjustNetBalance?: (delta: number) => void;
   currentDate?: Date;
   autoBuildEmbassy?: boolean;
+  isOccupiedProvince?: boolean;
+  occupyingCountry?: string;
 }
 
 // Komponen tombol aksi
@@ -57,7 +60,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   );
 };
 
-export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, adjustNetBalance, currentDate, autoBuildEmbassy }: InformasiUmumProps) {
+export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, occupyingCountry }: InformasiUmumProps) {
   const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || null;
   const [isDestroyModalOpen, setIsDestroyModalOpen] = useState(false);
   const [isBuildEmbassyModalOpen, setIsBuildEmbassyModalOpen] = useState<boolean>(() => !!autoBuildEmbassy);
@@ -219,7 +222,9 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   return (
     <div className="space-y-6">
       {/* Grid Layout 4-4 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 pt-6">
+      {isOccupiedProvince ? (
+        <ProvinsiInformasiUmum countryName={countryName} occupyingCountry={occupyingCountry || playerCountryName || ''} />
+      ) : <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 pt-6">
         
         {/* Tombol Kedutaan dengan Badge Tanggal Selesai */}
         <div className="relative min-w-0">
@@ -276,7 +281,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => setIsKirimPasukanModalOpen(true)} disabled={!embassyActive} />
         <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => setIsPanggilSekutuModalOpen(true)} disabled={!embassyActive} />
         <ActionButton icon={Ban} label="Berikan Sanksi" onClick={() => setIsBerikanSanksiModalOpen(true)} />
-      </div>
+      </div>}
 
       <DestroyEmbassyModal
         isOpen={isDestroyModalOpen}

@@ -16,12 +16,15 @@ import PerangNuklirModal from './4_perang_nuklir/perangNuklirModals';
 import KudetaModal from './5_lakukan_kudeta/kudetaModals';
 import MintaSerangNegaraModal from './6_minta_serang_negara/mintaSerangNegaraModals';
 import HinaModal from './7_hina/hinaModals';
+import ProvinsiOperasiMiliter from '../1_informasi_umum/provinsi_logic/ProvinsiOperasiMiliter';
 
 interface OperasiMiliterProps {
   countryName: string;
   playerCountryDetail?: any;
   targetCountryDetail?: any;
   onCloseDetailModal?: () => void;
+  isOccupiedProvince?: boolean;
+  occupyingCountry?: string;
 }
 
 // Komponen tombol aksi (Persis sama dengan menu lainnya)
@@ -37,7 +40,7 @@ const ActionButton = ({ icon: Icon, label, onClick }: { icon: any, label: string
   </button>
 );
 
-export default function OperasiMiliter({ countryName, playerCountryDetail, targetCountryDetail, onCloseDetailModal }: OperasiMiliterProps) {
+export default function OperasiMiliter({ countryName, playerCountryDetail, targetCountryDetail, onCloseDetailModal, isOccupiedProvince, occupyingCountry }: OperasiMiliterProps) {
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isSpionaseOpen, setIsSpionaseOpen] = useState(false);
   const [isSabotaseOpen, setIsSabotaseOpen] = useState(false);
@@ -49,6 +52,10 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
   const handleAction = (action: string) => {
     console.log(`Aksi militer: ${action} untuk ${countryName}`);
   };
+
+  if (isOccupiedProvince) {
+    return <ProvinsiOperasiMiliter countryName={countryName} occupyingCountry={occupyingCountry || ''} />;
+  }
 
   return (
     <div className="space-y-6">

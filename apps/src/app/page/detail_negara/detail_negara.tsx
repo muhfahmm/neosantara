@@ -54,7 +54,7 @@ function getAnnexedInfo(countryNames: unknown[], countryIso?: unknown) {
 export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail, setCountryDetail, currentDate, playerNetBalanceAdjustment = 0, adjustPlayerNetBalance, autoBuildEmbassy }: CountryDetailModalProps) {
   // State untuk menu tab
   const [activeTab, setActiveTab] = useState<"informasi" | "geopolitik" | "militer">("informasi");
-  const [, setRelationRevision] = useState(0);
+  const [, setAnnexationRevision] = useState(0);
 
   // State untuk data negara yang diklik
   const [fetchedDetail, setFetchedDetail] = useState<any>(null);
@@ -71,9 +71,13 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   const fetchedRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const refreshRelations = () => setRelationRevision(revision => revision + 1);
-    window.addEventListener('country_relations_updated', refreshRelations);
-    return () => window.removeEventListener('country_relations_updated', refreshRelations);
+    const refreshAnnexation = () => setAnnexationRevision(revision => revision + 1);
+    window.addEventListener('map_territory_color_updated', refreshAnnexation);
+    window.addEventListener('country_relations_updated', refreshAnnexation);
+    return () => {
+      window.removeEventListener('map_territory_color_updated', refreshAnnexation);
+      window.removeEventListener('country_relations_updated', refreshAnnexation);
+    };
   }, []);
 
   // PERBAIKAN: Fetch data & Agregasi Kekaisaran saat pertama kali negara dibuka
@@ -268,11 +272,9 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   const playerBaseNetBalance = countryDetail ? calculateNetBalanceWithEconomicEmbargo(countryDetail) : 0;
   const playerEffectiveNetBalance = playerBaseNetBalance + playerNetBalanceAdjustment;
 
-  if (!isOpen || !countryName) return null;
-
   // Ambil data dasar (iso, capital) dari COUNTRIES_DATA (sumber peta)
   const mapData = COUNTRIES_DATA?.find(
-    (c) => c.country?.toLowerCase().trim() === countryName.toLowerCase().trim()
+    (c) => c.country?.toLowerCase().trim() === countryName?.toLowerCase().trim()
   );
 
   // Jangan tampilkan identitas negara pemain saat data negara yang dipilih masih dimuat.
@@ -286,6 +288,19 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     [countryName, mapData?.country, detailData?.name_id, detailData?.country, detailData?.country_slug],
     mapData?.iso || detailData?.iso
   );
+  const isPlayerOccupiedProvince = Boolean(
+    annexedInfo?.attackerCountry &&
+    normalizeCountryKey(annexedInfo.attackerCountry) === normalizeCountryKey(playerCountryName)
+  );
+  const occupyingCountry = annexedInfo?.attackerCountry || '';
+
+  useEffect(() => {
+    if (isPlayerOccupiedProvince && activeTab === 'geopolitik') {
+      setActiveTab('informasi');
+    }
+  }, [isPlayerOccupiedProvince, activeTab]);
+
+  if (!isOpen || !countryName) return null;
 
   const displayCountryName = annexedInfo ? `Provinsi ${countryName}` : countryName;
 
@@ -499,14 +514,16 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
               >
                 <Globe className="h-4 w-4" /> Informasi Umum
               </button>
-              <button
-                onClick={() => setActiveTab("geopolitik")}
-                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
-                  activeTab === "geopolitik" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
-                }`}
-              >
-                <Landmark className="h-4 w-4" /> Geopolitik
-              </button>
+              {!isPlayerOccupiedProvince && (
+                <button
+                  onClick={() => setActiveTab("geopolitik")}
+                  className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
+                    activeTab === "geopolitik" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
+                  }`}
+                >
+                  <Landmark className="h-4 w-4" /> Geopolitik
+                </button>
+              )}
               <button
                 onClick={() => setActiveTab("militer")}
                 className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
@@ -527,6 +544,8 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 adjustNetBalance={adjustPlayerNetBalance}
                 currentDate={currentDate}
                 autoBuildEmbassy={autoBuildEmbassy}
+                isOccupiedProvince={isPlayerOccupiedProvince}
+                occupyingCountry={occupyingCountry}
               />
             )}
 
@@ -535,7 +554,14 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             )}
 
             {activeTab === "militer" && (
-              <OperasiMiliter countryName={countryName} playerCountryDetail={countryDetail} targetCountryDetail={detailData} onCloseDetailModal={onClose} />
+              <OperasiMiliter
+                countryName={countryName}
+                playerCountryDetail={countryDetail}
+                targetCountryDetail={detailData}
+                onCloseDetailModal={onClose}
+                isOccupiedProvince={isPlayerOccupiedProvince}
+                occupyingCountry={occupyingCountry}
+              />
             )}
 
           </div>
