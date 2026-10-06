@@ -154,6 +154,8 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
         <table className="w-full text-xs border-collapse">
           <thead className="bg-[#051111] border-b border-[#00FFAA]/20 sticky top-0 z-10">
             <tr>
+              {/* ✅ KOLOM NOMOR BARU */}
+              <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-center text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap w-12">No</th>
               <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap">Negara</th>
               <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap">Bendera</th>
               <th className="sticky top-0 z-10 bg-[#051111] px-3 py-2 text-left text-[9px] sm:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider whitespace-nowrap">Suara PBB</th>
@@ -162,7 +164,7 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
           <tbody className="divide-y divide-[#00FFAA]/10">
             {filteredVotes.length === 0 ? (
               <tr>
-                <td colSpan={3} className="px-3 py-6 text-center text-xs text-[#6B8A8A]">
+                <td colSpan={4} className="px-3 py-6 text-center text-xs text-[#6B8A8A]">
                   Tidak ada negara yang ditemukan.
                 </td>
               </tr>
@@ -180,6 +182,20 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
                         : 'hover:bg-[#00FFAA]/5'
                     }`}
                   >
+                    {/* ✅ NOMOR URUT DENGAN BADGE */}
+                    <td className="px-3 py-2 text-center">
+                      <span
+                        className={`inline-flex items-center justify-center min-w-[24px] h-[20px] px-1.5 rounded-md font-black text-[10px] sm:text-[11px] ${
+                          isUserCountry
+                            ? 'bg-[#00FFAA] text-[#0A1A1A]'
+                            : idx < 3
+                            ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50'
+                            : 'bg-[#0F2424] text-[#6B8A8A] border border-[#00FFAA]/20'
+                        }`}
+                      >
+                        {idx + 1}
+                      </span>
+                    </td>
                     <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>{item.name_id}</td>
                     <td className="px-3 py-2">{renderFlag(item.iso, item.name_id)}</td>
                     <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#6B8A8A]'}`}>{item.un_vote}</td>
