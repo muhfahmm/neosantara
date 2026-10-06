@@ -585,24 +585,22 @@ export default function ProduksiModal({
               </div>
             </div>
 
-            {hasActiveSanctions && (
-              <div className="flex shrink-0 justify-center border-t border-[#00FFAA]/15 bg-[#0A1A1A] py-2">
-                <button
-                  type="button"
-                  onClick={() => setShowSanctionInfo(true)}
-                  aria-label="Informasi dampak sanksi dan embargo"
-                  title="Lihat dampak sanksi dan embargo aktif"
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 hover:shadow-md hover:shadow-[#00FFAA]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FFAA] cursor-pointer"
-                >
-                  <Info className="h-4 w-4" />
-                </button>
-              </div>
-            )}
+            <div className="flex shrink-0 justify-center border-t border-[#00FFAA]/15 bg-[#0A1A1A] py-2">
+              <button
+                type="button"
+                onClick={() => setShowSanctionInfo(true)}
+                aria-label="Informasi dampak sanksi dan embargo"
+                title="Lihat informasi dampak sanksi dan embargo"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 hover:shadow-md hover:shadow-[#00FFAA]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FFAA] cursor-pointer"
+              >
+                <Info className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {showSanctionInfo && hasActiveSanctions && (
+      {showSanctionInfo && (
         <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/60 px-4 py-8">
           <div
             role="dialog"
@@ -629,10 +627,16 @@ export default function ProduksiModal({
               </button>
             </div>
             <div className="space-y-4 px-5 py-5 text-sm leading-relaxed text-slate-300">
-              <p>
-                Negara <strong className="text-white">{playerCountryName}</strong> sedang terkena resolusi PBB berikut:
-              </p>
-              {(activeAssemblyEmbargoes.length > 0 || activeSecurityBlockades.some(item => item.type === "economic" || item.type === "naval")) && (
+              {hasActiveSanctions ? (
+                <p>
+                  Negara <strong className="text-white">{playerCountryName}</strong> sedang terkena resolusi PBB berikut:
+                </p>
+              ) : (
+                <p>
+                  Negara <strong className="text-white">{playerCountryName}</strong> tidak sedang terkena sanksi atau embargo PBB.
+                </p>
+              )}
+              {hasActiveSanctions && (activeAssemblyEmbargoes.length > 0 || activeSecurityBlockades.some(item => item.type === "economic" || item.type === "naval")) && (
                 <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-amber-200">
                   Dampak setiap resolusi produksi aktif diakumulasikan. Total pengurangan produksi sektor terdampak saat ini:{" "}
                   <strong>{effectiveProductionReduction}%</strong>
@@ -641,35 +645,39 @@ export default function ProduksiModal({
                   )}
                 </p>
               )}
-              <ul className="list-disc space-y-2 pl-5 marker:text-[#00FFAA]">
-                {activeAssemblyEmbargoes.length > 0 && (
-                  <li>
-                    <strong className="text-white">Embargo ekonomi — Sidang Umum PBB:</strong>{" "}
-                    {activeAssemblyEmbargoes.length} resolusi aktif; masing-masing mengurangi produksi 60% di Mineral & Energi (selain emas), Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan serta pendapatan non-emas. Emas tidak terkena pemotongan.
-                  </li>
-                )}
-                {activeSecurityBlockades.some(item => item.type === "economic") && (
-                  <li>
-                    <strong className="text-white">Blokade ekonomi — Dewan Keamanan PBB:</strong>{" "}
-                    {activeSecurityBlockades.filter(item => item.type === "economic").length} resolusi aktif; masing-masing mengurangi produksi 50% di Mineral & Energi (selain emas), Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan. Emas tidak terkena pemotongan.
-                  </li>
-                )}
-                {activeSecurityBlockades.some(item => item.type === "naval") && (
-                  <li>
-                    <strong className="text-white">Blokade laut — Dewan Keamanan PBB:</strong>{" "}
-                    {activeSecurityBlockades.filter(item => item.type === "naval").length} resolusi aktif; masing-masing mengurangi produksi 25% di Mineral & Energi (selain emas), Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan. Emas tidak terkena pemotongan.
-                  </li>
-                )}
-                {activeSecurityBlockades.some(item => item.type === "full") && (
-                  <li>
-                    <strong className="text-white">Blokade penuh — Dewan Keamanan PBB:</strong>{" "}
-                    akses Pasar Perdagangan Global, Pinjaman & Hutang, perdagangan, dan penandatanganan kontrak dibatasi selama resolusi aktif.
-                  </li>
-                )}
-              </ul>
-              <p className="text-xs text-[#6B8A8A]">
-                Dampak berakhir otomatis saat resolusi berakhir atau masa berlakunya habis.
-              </p>
+              {hasActiveSanctions && (
+                <>
+                  <ul className="list-disc space-y-2 pl-5 marker:text-[#00FFAA]">
+                    {activeAssemblyEmbargoes.length > 0 && (
+                      <li>
+                        <strong className="text-white">Embargo ekonomi — Sidang Umum PBB:</strong>{" "}
+                        {activeAssemblyEmbargoes.length} resolusi aktif; masing-masing mengurangi produksi 60% di Mineral & Energi (selain emas), Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan serta pendapatan non-emas. Emas tidak terkena pemotongan.
+                      </li>
+                    )}
+                    {activeSecurityBlockades.some(item => item.type === "economic") && (
+                      <li>
+                        <strong className="text-white">Blokade ekonomi — Dewan Keamanan PBB:</strong>{" "}
+                        {activeSecurityBlockades.filter(item => item.type === "economic").length} resolusi aktif; masing-masing mengurangi produksi 50% di Mineral & Energi (selain emas), Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan. Emas tidak terkena pemotongan.
+                      </li>
+                    )}
+                    {activeSecurityBlockades.some(item => item.type === "naval") && (
+                      <li>
+                        <strong className="text-white">Blokade laut — Dewan Keamanan PBB:</strong>{" "}
+                        {activeSecurityBlockades.filter(item => item.type === "naval").length} resolusi aktif; masing-masing mengurangi produksi 25% di Mineral & Energi (selain emas), Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan. Emas tidak terkena pemotongan.
+                      </li>
+                    )}
+                    {activeSecurityBlockades.some(item => item.type === "full") && (
+                      <li>
+                        <strong className="text-white">Blokade penuh — Dewan Keamanan PBB:</strong>{" "}
+                        akses Pasar Perdagangan Global, Pinjaman & Hutang, perdagangan, dan penandatanganan kontrak dibatasi selama resolusi aktif.
+                      </li>
+                    )}
+                  </ul>
+                  <p className="text-xs text-[#6B8A8A]">
+                    Dampak berakhir otomatis saat resolusi berakhir atau masa berlakunya habis.
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </div>
