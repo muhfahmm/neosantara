@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Info, Globe, Shield, HeartPulse, BookOpen, ArrowRightLeft, Users, Sprout, Plane, Ship, Wifi, Cloud, Landmark, Flag, Star, Handshake, BarChart, Crown, TrendingUp } from "lucide-react";
 import OrganisasiPBBModal from "./1_organisasi_PBB/organisasiPBBmodal";
 import OrganisasiRegional from "./2_organisasi_regional/organisasiRegional";
@@ -74,7 +74,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, onOpenC
   const [selectedOrgName, setSelectedOrgName] = useState<string | null>(null);
   const [selectedOrgIcon, setSelectedOrgIcon] = useState<React.ElementType | null>(null);
   const [infoOrgName, setInfoOrgName] = useState<string | null>(null);
-  const [membershipVersion, setMembershipVersion] = useState(0);
+  const [, setMembershipVersion] = useState(0);
 
   useEffect(() => {
     const refreshMembership = () => setMembershipVersion(version => version + 1);
@@ -84,17 +84,13 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, onOpenC
 
   const playerCountryName = selectedCountry?.country || "Indonesia";
 
-  const membershipMap = useMemo(() => {
-    const map: Record<string, boolean> = {};
-    const allOrgs = [...UN_ORGANIZATIONS, ...REGIONAL_ORGANIZATIONS];
-    allOrgs.forEach((org) => {
-      const members = getOrgMembers(org);
-      map[org] = members.some(
-        (member: { country?: string }) => member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim()
-      );
-    });
-    return map;
-  }, [playerCountryName, membershipVersion]);
+  const membershipMap: Record<string, boolean> = {};
+  [...UN_ORGANIZATIONS, ...REGIONAL_ORGANIZATIONS].forEach((org) => {
+    const members = getOrgMembers(org);
+    membershipMap[org] = members.some(
+      (member: { country?: string }) => member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim()
+    );
+  });
 
   if (!isOpen) return null;
 
@@ -133,7 +129,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, onOpenC
             </div>
           </div>
           <button 
-            onClick={handleClose} 
+            onClick={handleClose}
             className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
           >
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
