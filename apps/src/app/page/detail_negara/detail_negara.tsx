@@ -287,11 +287,12 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     mapData?.iso || detailData?.iso
   );
 
-  const displayCountryName = annexedInfo?.attackerCountry || countryName;
+  const displayCountryName = annexedInfo ? `Provinsi ${countryName}` : countryName;
 
-  // Jika dianeksasi, ambil ISO & Ibukota penyerang
-  let displayIso = mapData?.iso || detailData?.iso || "";
-  let displayCapital = mapData?.capital || detailData?.capital || "Data tidak tersedia";
+  // Wilayah tetap menggunakan nama dan ibukota aslinya, tetapi memakai bendera penguasa.
+  const originalIso = mapData?.iso || detailData?.iso || "";
+  let displayIso = originalIso;
+  const displayCapital = mapData?.capital || detailData?.capital || "Data tidak tersedia";
 
   const attackerCountryName = annexedInfo?.attackerCountry;
   if (attackerCountryName) {
@@ -302,9 +303,6 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
       displayIso = attackerData.iso;
     } else if (annexedInfo.attackerIso) {
       displayIso = annexedInfo.attackerIso;
-    }
-    if (attackerData?.capital) {
-      displayCapital = attackerData.capital;
     }
   }
 
@@ -353,6 +351,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
               
               <div className="flex items-center gap-2 mt-1">
                 {renderFlagHeader(displayIso, displayCountryName)}
+                {annexedInfo && renderFlagHeader(originalIso, countryName)}
                 <p className="text-xs text-[#00FFAA]/70 font-semibold uppercase tracking-wider">
                   {displayCountryName}, {displayCapital}
                 </p>

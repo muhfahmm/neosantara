@@ -1959,13 +1959,26 @@ export default function MapPage() {
 
             let nextOngoingEmbassyConstructions = existingEmbassyConstructions;
             let nextEmbassies = Array.isArray(prev?.embassies) ? [...prev.embassies] : [];
+            let nextRemovedEmbassies = Array.isArray(prev?.removedEmbassies) ? [...prev.removedEmbassies] : [];
 
             if (completedEmbassyConstructions.length > 0) {
                 const completedTargetCountries = completedEmbassyConstructions.map((c: any) => c.targetCountry);
+                const normalizeCountryName = (name: unknown) => String(name || '')
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-z0-9]/g, '');
+                const completedTargetNames = new Set(completedTargetCountries.map(normalizeCountryName));
                 nextOngoingEmbassyConstructions = existingEmbassyConstructions.filter((c: any) => !completedTargetCountries.includes(c.targetCountry));
+                nextRemovedEmbassies = nextRemovedEmbassies.filter(
+                    (name: string) => !completedTargetNames.has(normalizeCountryName(name))
+                );
 
                 completedEmbassyConstructions.forEach((c: any) => {
-                    if (!nextEmbassies.some((emb: any) => emb.mitra === c.targetCountry)) {
+                    if (!nextEmbassies.some((emb: any) => {
+                        const embassyCountry = typeof emb === 'string' ? emb : emb.mitra || emb.nama_negara;
+                        return normalizeCountryName(embassyCountry) === normalizeCountryName(c.targetCountry);
+                    })) {
                         nextEmbassies.push({
                             id: Date.now() + Math.random(),
                             mitra: c.targetCountry,
@@ -1998,6 +2011,7 @@ export default function MapPage() {
                 ongoingConstructions: currentOngoing,
                 ongoingEmbassyConstructions: nextOngoingEmbassyConstructions,
                 embassies: nextEmbassies,
+                removedEmbassies: nextRemovedEmbassies,
                 kepuasan: nextKepuasan,
                 presidentRating: ratingResult.presidentRating,
                 rating_month_counter: ratingResult.rating_month_counter,

@@ -14,9 +14,9 @@ import {
 import { getEmbassyButtonLabel, getEmbassyButtonClass, playerHasEmbassyOrTradePartners } from './1_kedutaan_besar/logic/kedutaanBesarLogic';
 import DestroyEmbassyModal from './1_kedutaan_besar/logic/DestroyEmbassyModal';
 import BuildEmbassyModal from './1_kedutaan_besar/BuildEmbassyModal';
-import DestroyPaktaModal from '../2_pakta_non_agresi/DestroyPaktaModal';
-import DestroyAliansiModal from '../3_aliansi_pertahanan/DestroyAliansiModal';
-import DestroyKontrakModal from '../5_kontrak_penelitian/DestroyKontrakModal';
+import DestroyPaktaModal from './2_pakta_non_agresi/DestroyPaktaModal';
+import DestroyAliansiModal from './3_aliansi_pertahanan/DestroyAliansiModal';
+import DestroyKontrakModal from './5_kontrak_penelitian/DestroyKontrakModal';
 import { getTradeButtonLabel, getTradeButtonClass } from './4_perjanjian_dagang/logic/perjanjianDagangLogic';
 import DestroyTradeModal from './4_perjanjian_dagang/logic/DestroyTradeModal';
 import BuildTradeModal from './4_perjanjian_dagang/BuildTradeModal';
@@ -39,7 +39,7 @@ interface InformasiUmumProps {
 
 // Komponen tombol aksi
 const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelClass, disabled, keepOpacity }: { icon: any, label: string, onClick?: () => void, className?: string, iconClass?: string, labelClass?: string, disabled?: boolean, keepOpacity?: boolean }) => {
-  const base = `${className ?? 'bg-[#0A1A1A] border border-[#00FFAA]/20'} rounded-xl p-5 flex flex-col items-center justify-center gap-3 transition-all group h-32`;
+  const base = `${className ?? 'bg-[#0A1A1A] border border-[#00FFAA]/20'} w-full min-w-0 rounded-xl p-5 flex flex-col items-center justify-center gap-3 transition-all group h-32`;
   const interactive = disabled 
     ? (keepOpacity ? 'cursor-not-allowed' : 'opacity-40 cursor-not-allowed pointer-events-none') 
     : 'hover:shadow-md hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10 cursor-pointer';
@@ -219,10 +219,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   return (
     <div className="space-y-6">
       {/* Grid Layout 4-4 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 pt-6">
         
         {/* Tombol Kedutaan dengan Badge Tanggal Selesai */}
-        <div className="relative">
+        <div className="relative min-w-0">
           {isEmbassyBuilding && embassyEndDate && (
             <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
               {formatBadgeDate(embassyEndDate)}
