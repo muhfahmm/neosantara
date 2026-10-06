@@ -324,9 +324,6 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
       : null;
   })();
   const updateTargetReligion = async (religion: string) => {
-    const countrySlug = String(detailData?.country_slug || '');
-    if (!countrySlug) throw new Error(`Slug profil ${countryName} tidak ditemukan; agama tidak dapat disimpan.`);
-    await updateCountryProfileSocialData(countrySlug, { religion });
     setFetchedDetail((previous: Record<string, unknown> | null) => previous
       ? { ...previous, religion }
       : previous

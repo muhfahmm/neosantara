@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, Star, Globe, MoonStar, Church, Sun, CircleDot, Atom, Check } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
-import { fetchAllCountryProfilesFromDb, updateCountryProfileSocialData, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
+import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
 
 // 🔥 IMPOR MODAL KONFIRMASI DAN GAGAL
 import AgamaConfirmModal from "./modalsGanti";
@@ -157,45 +157,24 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
     }
 
     setIsSaving(true);
-    try {
-      const countrySlug = String(countryDetail?.country_slug || '');
-      if (!countrySlug) throw new Error('Slug negara pemain tidak tersedia; perubahan agama tidak dapat disimpan.');
-      await updateCountryProfileSocialData(countrySlug, { religion: selectedReligion });
-      try {
-        localStorage.setItem(`neosantara_country_religion_${countrySlug.trim().toLowerCase()}`, selectedReligion);
-      } catch (storageError) {
-        console.error('Agama berhasil disimpan ke database, tetapi cache localStorage gagal diperbarui:', storageError);
-      }
+    const oldReligion = countryDetail?.religion || "Islam";
+    const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+    const notif = generateReligionChangeNotification(oldReligion, selectedReligion, dateStr);
+    const newPending = [notif, ...(Array.isArray(countryDetail?.pending_notifications) ? countryDetail.pending_notifications : [])];
 
-      const oldReligion = countryDetail?.religion || "Islam";
-      const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
-      const notif = generateReligionChangeNotification(oldReligion, selectedReligion, dateStr);
-      const newPending = [notif, ...(Array.isArray(countryDetail?.pending_notifications) ? countryDetail.pending_notifications : [])];
-
-      setCountryDetail?.((prev: any) => ({
-        ...(prev || {}),
-        religion: selectedReligion,
-        anggaran: result.newAnggaran,
-        pending_notifications: newPending,
-        message: `Agama negara diubah ke ${selectedReligion}. Biaya perubahan ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} NEO.`
-      }));
-      setCountryProfiles(profiles => profiles.map(profile =>
-        profile.country_slug === countrySlug ? { ...profile, religion: selectedReligion } : profile
-      ));
-      setFeedback({
-        type: "success",
-        message: `Agama berhasil diubah menjadi ${selectedReligion}. Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} NEO telah dipotong.`
-      });
-      setIsConfirmOpen(false);
-    } catch (error) {
-      setFeedback({
-        type: "error",
-        message: error instanceof Error ? error.message : 'Gagal menyimpan perubahan agama.'
-      });
-      setIsConfirmOpen(false);
-    } finally {
-      setIsSaving(false);
-    }
+    setCountryDetail?.((prev: any) => ({
+      ...(prev || {}),
+      religion: selectedReligion,
+      anggaran: result.newAnggaran,
+      pending_notifications: newPending,
+      message: `Agama negara diubah ke ${selectedReligion}. Biaya perubahan ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} NEO.`
+    }));
+    setFeedback({
+      type: "success",
+      message: `Agama berhasil diubah menjadi ${selectedReligion}. Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} NEO telah dipotong.`
+    });
+    setIsConfirmOpen(false);
+    setIsSaving(false);
   };
 
   return createPortal(

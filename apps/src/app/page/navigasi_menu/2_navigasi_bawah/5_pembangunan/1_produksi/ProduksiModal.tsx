@@ -34,6 +34,18 @@ import { getProductionBonusMultiplier } from "./bonus_logic";
 import { applyJewishConstructionTimeDiscount } from "./bonus_logic/agama_bonus_logic/yahudi";
 
 
+const RELIGION_BONUS_INFO: Record<string, string> = {
+  islam: "Bonus +10% produksi SDA non-emas di Mineral & Energi serta sektor Peternakan, Agrikultur, Perikanan, dan Olahan Pangan.",
+  katolik: "Bonus pengaruh suara negara di PBB +10.",
+  protestan: "Bonus harga jual komoditas +5% dan diskon harga beli komoditas 5%.",
+  "kristen ortodoks": "Bonus penerimaan Pajak Penghasilan Pribadi +5%.",
+  hindu: "Bonus pertumbuhan populasi +8%.",
+  buddha: "Bonus penerimaan Pajak Lingkungan +10%.",
+  yahudi: "Diskon waktu pembangunan pabrik dan tambang 10%; emas tidak termasuk.",
+  shinto: "Bonus produksi kelistrikan +10%.",
+  ateisme: "Bonus kecepatan riset sains +15%.",
+};
+
 
 interface MaterialRequirement {
   resourceKey: string;
@@ -107,6 +119,8 @@ export default function ProduksiModal({
   const effectiveIncomeReduction = Math.round(
     (1 - getEconomicEmbargoIncomeMultiplier(playerCountryName)) * 100
   );
+  const currentReligion = String(countryDetail?.religion || "").trim();
+  const currentReligionBonus = RELIGION_BONUS_INFO[currentReligion.toLowerCase()];
 
   const RESOURCE_KEY_ALIASES: Record<string, string> = {};
   const normalizeResourceKey = (key: string) => RESOURCE_KEY_ALIASES[key] || key;
@@ -599,8 +613,8 @@ export default function ProduksiModal({
               <button
                 type="button"
                 onClick={() => setShowSanctionInfo(true)}
-                aria-label="Informasi dampak sanksi dan embargo"
-                title="Lihat informasi dampak sanksi dan embargo"
+                aria-label="Informasi bonus agama, sanksi, dan embargo"
+                title="Lihat informasi bonus agama, sanksi, dan embargo"
                 className="flex h-8 w-8 items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 hover:shadow-md hover:shadow-[#00FFAA]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FFAA] cursor-pointer"
               >
                 <Info className="h-4 w-4" />
@@ -624,7 +638,7 @@ export default function ProduksiModal({
                   <Info className="h-5 w-5 text-[#00FFAA]" />
                 </div>
                 <h3 id="production-sanction-info-title" className="text-sm font-black uppercase tracking-wide text-[#00FFAA]">
-                  Bonus & Sanksi Produksi
+                  Info Bonus Agama & Sanksi
                 </h3>
               </div>
               <button
@@ -637,14 +651,14 @@ export default function ProduksiModal({
               </button>
             </div>
             <div className="space-y-4 px-5 py-5 text-sm leading-relaxed text-slate-300">
-              {getProductionBonusMultiplier(countryDetail, "uranium") > 1 ? (
+              {currentReligionBonus ? (
                 <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-200">
-                  <strong className="text-white">Bonus agama Islam: +10% produksi.</strong>{" "}
-                  Bonus berlaku untuk SDA non-emas di Mineral & Energi serta sektor Peternakan, Agrikultur, Perikanan, dan Olahan Pangan. Manufaktur dan listrik tidak mendapat bonus.
+                  <strong className="text-white">Agama saat ini: {currentReligion}.</strong>{" "}
+                  {currentReligionBonus}
                 </div>
               ) : (
                 <p className="rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] p-3">
-                  Belum ada bonus agama untuk produksi yang aktif.
+                  Agama saat ini: <strong className="text-white">{currentReligion || "Belum tersedia"}</strong>. Tidak ada bonus agama khusus yang tercatat.
                 </p>
               )}
               {hasActiveSanctions ? (
