@@ -19,6 +19,8 @@ interface ProvinsiInformasiUmumProps {
   provinceBudget?: number;
   provinceNetBalance?: number;
   provinceTension?: number;
+  currentDate?: Date;
+  provinceData?: Record<string, unknown> | null;
   playerCountryDetail?: Record<string, unknown> | null;
   taxedProvinces?: string[];
   updatePlayerCountryDetail?: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
@@ -37,6 +39,8 @@ export default function ProvinsiInformasiUmum({
   provinceBudget,
   provinceNetBalance,
   provinceTension,
+  currentDate,
+  provinceData,
   playerCountryDetail,
   taxedProvinces,
   updatePlayerCountryDetail,
@@ -55,6 +59,8 @@ export default function ProvinsiInformasiUmum({
       provinceBudget={provinceBudget}
       provinceNetBalance={provinceNetBalance}
       provinceTension={provinceTension}
+      currentDate={currentDate}
+      provinceData={provinceData}
       playerCountryDetail={playerCountryDetail}
       taxedProvinces={taxedProvinces}
       updatePlayerCountryDetail={updatePlayerCountryDetail}

@@ -3,14 +3,16 @@ import type { ProvinceAction, ProvinceActionContext, ProvinceActionResult } from
 
 function sendProvinceAid({
   targetCountry,
+  aidCategory,
+  aidItemLabel,
   provinceTension,
   adjustProvinceTension
 }: ProvinceActionContext): ProvinceActionResult {
+  if (!aidCategory || !aidItemLabel) {
+    throw new Error('Pilih jenis bantuan sebelum mengirim bantuan.');
+  }
   if (!Number.isFinite(provinceTension) || !adjustProvinceTension) {
     throw new Error('Data ketegangan provinsi tidak tersedia; bantuan tidak dapat diproses.');
-  }
-  if (Number(provinceTension) <= 0) {
-    throw new Error(`${targetCountry} sudah berada pada ketegangan minimum.`);
   }
 
   const tensionReduction = 1 + Math.floor(Math.random() * 25);
@@ -18,14 +20,16 @@ function sendProvinceAid({
   adjustProvinceTension(-actualReduction);
   return {
     succeeded: true,
-    message: `Bantuan berhasil dikirim ke ${targetCountry}. Ketegangan turun ${actualReduction} poin.`
+    message: actualReduction > 0
+      ? `Bantuan ${aidCategory} berupa ${aidItemLabel} berhasil dikirim ke ${targetCountry}. Ketegangan turun ${actualReduction} poin.`
+      : `Bantuan ${aidCategory} berupa ${aidItemLabel} berhasil dikirim ke ${targetCountry}. Ketegangan tetap 0 karena sudah mencapai minimum.`
   };
 }
 
 const action: ProvinceAction = {
   id: 'kirim_bantuan',
   label: 'Kirim Bantuan',
-  description: 'Mengurangi ketegangan provinsi secara acak sebanyak 1–25 poin.',
+  description: 'Pilih bantuan dari sektor produksi provinsi. Bantuan mengurangi ketegangan hingga 25 poin dan tetap dapat dikirim saat ketegangan 0.',
   icon: HandHeart,
   onConfirm: sendProvinceAid
 };

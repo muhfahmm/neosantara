@@ -7,6 +7,11 @@ export interface NotificationMessage {
   type: 'kepuasan' | 'peringkat' | 'kesejahteraan';
   value: number;
   isRead: boolean;
+  provinceIncident?: {
+    kind: 'demonstration' | 'referendum';
+    targetCountry: string;
+    handled?: boolean;
+  };
 }
 
 /**

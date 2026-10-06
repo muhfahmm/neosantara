@@ -30,6 +30,9 @@ export interface ProvinceActionContext {
   adjustPlayerNetBalance?: (delta: number) => void;
   provinceTension?: number;
   adjustProvinceTension?: (delta: number) => void;
+  provinceData?: Record<string, unknown> | null;
+  aidCategory?: string;
+  aidItemLabel?: string;
 }
 
 export interface ProvinceActionEventDetail {
@@ -40,6 +43,12 @@ export interface ProvinceActionEventDetail {
   actionSucceeded?: boolean;
   actionMessage?: string;
   successChance?: number;
+  triggeredByReferendum?: boolean;
+  referendumVoteShare?: number;
+  provinceIncident?: {
+    kind: 'demonstration' | 'referendum';
+    targetCountry: string;
+  };
 }
 
 export const PROVINCE_ACTION_EVENT = 'province_action_confirmed';

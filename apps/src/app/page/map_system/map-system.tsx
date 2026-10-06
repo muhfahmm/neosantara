@@ -100,6 +100,12 @@ import {
     releaseAnnexedProvince,
     type AnnexedContribution
 } from '../detail_negara/1_informasi_umum/provinsi_logic/1_beri_kemerdekaan';
+import {
+    createProvinceReferendum,
+    hasProvinceReferendumEnded,
+    resolveProvinceReferendum,
+    type ProvinceReferendum
+} from '../detail_negara/1_informasi_umum/provinsi_logic/6_ketegangan/3_referendum';
 
 interface Country {
     id: number;
@@ -643,6 +649,7 @@ export default function MapPage() {
     const [presidentRating, setPresidentRating] = useState<number>(50);
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
     const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
+    const processedReferendumsRef = useRef(new Set<string>());
     useEffect(() => {
         const handleProvinceAction = async (event: Event) => {
             const detail = (event as CustomEvent<ProvinceActionEventDetail>).detail;
@@ -660,9 +667,13 @@ export default function MapPage() {
                     });
                     setNotifications(previous => [{
                         id: `province-independence-${Date.now()}`,
-                        title: '🏳️ KEMERDEKAAN PROVINSI DIPULIHKAN',
+                        title: detail.triggeredByReferendum
+                            ? '🗳️ REFERENDUM KEMERDEKAAN DISETUJUI'
+                            : '🏳️ KEMERDEKAAN PROVINSI DIPULIHKAN',
                         sender: `Pemerintah ${detail.occupyingCountry}`,
-                        message,
+                        message: detail.triggeredByReferendum
+                            ? `${detail.actionMessage || 'Mayoritas warga memilih merdeka.'} ${message}`
+                            : message,
                         timestamp,
                         type: 'peringkat',
                         value: 100,
@@ -671,6 +682,28 @@ export default function MapPage() {
                     return;
                 } catch (error) {
                     console.error(`Failed to restore ${detail.targetCountry} independence:`, error);
+                    if (detail.triggeredByReferendum) {
+                        setCountryDetail((previous: Record<string, unknown> | null) => {
+                            if (!previous) return previous;
+                            const referendums = previous.provinceReferendums && typeof previous.provinceReferendums === 'object'
+                                ? previous.provinceReferendums as Record<string, ProvinceReferendum>
+                                : {};
+                            const referendumEntry = Object.keys(referendums).find(
+                                name => name.toLowerCase().trim() === detail.targetCountry.toLowerCase().trim()
+                            );
+                            if (!referendumEntry) return previous;
+                            return {
+                                ...previous,
+                                provinceReferendums: {
+                                    ...referendums,
+                                    [referendumEntry]: {
+                                        ...referendums[referendumEntry],
+                                        status: 'failed'
+                                    }
+                                }
+                            };
+                        });
+                    }
                     setNotifications(previous => [{
                         id: `province-independence-failed-${Date.now()}`,
                         title: '❌ PEMULIHAN KEMERDEKAAN GAGAL',
@@ -688,22 +721,108 @@ export default function MapPage() {
 
             setNotifications(previous => [{
                 id: `province-action-${detail.actionId}-${Date.now()}`,
-                title: detail.actionSucceeded === false
-                    ? `❌ ${detail.actionLabel.toUpperCase()} GAGAL`
-                    : `🏛️ ${detail.actionLabel.toUpperCase()} ${detail.actionMessage ? 'SELESAI' : 'DICATAT'}`,
+                title: detail.actionId === 'referendum_dimulai'
+                    ? '🗳️ REFERENDUM KEMERDEKAAN DIMULAI'
+                    : detail.actionId === 'referendum_ditolak'
+                        ? '📊 REFERENDUM MENOLAK KEMERDEKAAN'
+                        : detail.actionSucceeded === false
+                            ? `❌ ${detail.actionLabel.toUpperCase()} GAGAL`
+                            : `🏛️ ${detail.actionLabel.toUpperCase()} ${detail.actionMessage ? 'SELESAI' : 'DICATAT'}`,
                 sender: `Pemerintah ${detail.occupyingCountry}`,
                 message: detail.actionMessage ||
                     `Aksi "${detail.actionLabel}" untuk Provinsi ${detail.targetCountry} telah dikonfirmasi dan dicatat.`,
                 timestamp,
                 type: 'peringkat',
                 value: 100,
-                isRead: false
+                isRead: false,
+                provinceIncident: detail.provinceIncident
             }, ...previous]);
         };
 
         window.addEventListener(PROVINCE_ACTION_EVENT, handleProvinceAction);
         return () => window.removeEventListener(PROVINCE_ACTION_EVENT, handleProvinceAction);
     }, [currentDate]);
+
+    useEffect(() => {
+        if (!countryDetail || !Number.isFinite(currentDate.getTime())) return;
+        const referendums = countryDetail.provinceReferendums;
+        if (!referendums || typeof referendums !== 'object') return;
+
+        Object.entries(referendums as Record<string, ProvinceReferendum>).forEach(([targetCountry, referendum]) => {
+            if (!hasProvinceReferendumEnded(referendum, currentDate)) return;
+            const referendumKey = `${targetCountry.toLowerCase().trim()}-${referendum.openedAt}`;
+            if (processedReferendumsRef.current.has(referendumKey)) return;
+            processedReferendumsRef.current.add(referendumKey);
+
+            const result = resolveProvinceReferendum(referendum.crackdownIncidents);
+            setCountryDetail((previous: Record<string, unknown> | null) => {
+                if (!previous) return previous;
+                const currentReferendums = previous.provinceReferendums && typeof previous.provinceReferendums === 'object'
+                    ? previous.provinceReferendums as Record<string, ProvinceReferendum>
+                    : {};
+                const currentEntry = Object.keys(currentReferendums).find(
+                    name => name.toLowerCase().trim() === targetCountry.toLowerCase().trim()
+                );
+                if (!currentEntry || !hasProvinceReferendumEnded(currentReferendums[currentEntry], currentDate)) {
+                    return previous;
+                }
+
+                if (result.approved) {
+                    return {
+                        ...previous,
+                        provinceReferendums: {
+                            ...currentReferendums,
+                            [currentEntry]: {
+                                ...currentReferendums[currentEntry],
+                                status: 'processing',
+                                independenceVoteShare: result.independenceVoteShare
+                            }
+                        }
+                    };
+                }
+
+                const nextReferendums = { ...currentReferendums };
+                delete nextReferendums[currentEntry];
+                const tensions = previous.provinceTensions && typeof previous.provinceTensions === 'object'
+                    ? previous.provinceTensions as Record<string, unknown>
+                    : {};
+                const tensionEntry = Object.keys(tensions).find(
+                    name => name.toLowerCase().trim() === targetCountry.toLowerCase().trim()
+                ) || targetCountry;
+                return {
+                    ...previous,
+                    provinceReferendums: nextReferendums,
+                    provinceTensions: { ...tensions, [tensionEntry]: 70 }
+                };
+            });
+
+            if (result.approved) {
+                window.dispatchEvent(new CustomEvent(PROVINCE_ACTION_EVENT, {
+                    detail: {
+                        actionId: 'beri_kemerdekaan',
+                        actionLabel: 'Referendum Kemerdekaan',
+                        targetCountry,
+                        occupyingCountry: countryDetail.country || countryDetail.nama || 'Negara Pemain',
+                        actionSucceeded: true,
+                        actionMessage: `Referendum selesai: ${result.independenceVoteShare}% warga ${targetCountry} memilih kemerdekaan.`,
+                        triggeredByReferendum: true,
+                        referendumVoteShare: result.independenceVoteShare
+                    } satisfies ProvinceActionEventDetail
+                }));
+            } else {
+                window.dispatchEvent(new CustomEvent(PROVINCE_ACTION_EVENT, {
+                    detail: {
+                        actionId: 'referendum_ditolak',
+                        actionLabel: 'Hasil Referendum',
+                        targetCountry,
+                        occupyingCountry: countryDetail.country || countryDetail.nama || 'Negara Pemain',
+                        actionSucceeded: true,
+                        actionMessage: `Referendum selesai: ${result.independenceVoteShare}% warga ${targetCountry} memilih kemerdekaan, sehingga usulan tidak disetujui. Wilayah tetap menjadi provinsi dan ketegangan turun menjadi 70.`
+                    } satisfies ProvinceActionEventDetail
+                }));
+            }
+        });
+    }, [countryDetail, currentDate]);
     const [resultModal, setResultModal] = useState<{ isOpen: boolean; title: string; message: string; type?: 'success' | 'error' | 'info' }>({
         isOpen: false,
         title: '',
@@ -2486,6 +2605,137 @@ export default function MapPage() {
                 onClose={() => setInboxModalOpen(false)}
                 notifications={notifications}
                 onClearAll={() => setNotifications([])}
+                onCrackdownClick={(notif) => {
+                    const incident = notif.provinceIncident;
+                    if (!incident || incident.handled) return;
+
+                    const targetCountry = incident.targetCountry;
+                    const normalizedTarget = targetCountry.toLowerCase().trim();
+                    const referendums = countryDetail?.provinceReferendums;
+                    const referendumEntry = referendums && typeof referendums === 'object'
+                        ? Object.keys(referendums).find(name => name.toLowerCase().trim() === normalizedTarget)
+                        : undefined;
+                    const currentReferendum = referendumEntry
+                        ? (referendums as Record<string, ProvinceReferendum>)[referendumEntry]
+                        : undefined;
+                    if (incident.kind === 'referendum' && currentReferendum?.status !== 'pending') {
+                        setNotifications(previous => previous.map(item => item.id === notif.id
+                            ? { ...item, provinceIncident: { ...incident, handled: true } }
+                            : item
+                        ));
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Referendum Tidak Lagi Berlangsung',
+                            message: `Referendum ${targetCountry} sudah selesai atau tidak lagi aktif. Tidak ada tindakan yang dilakukan.`,
+                            type: 'info'
+                        });
+                        return;
+                    }
+
+                    const provinceData = annexedContributionRef.current[normalizedTarget]?.targetData;
+                    const provincePopulation = Number(provinceData?.jumlah_penduduk || provinceData?.populasi || 0);
+                    const maximumCasualties = provincePopulation > 0
+                        ? Math.max(1, Math.min(200, Math.floor(provincePopulation * 0.0005)))
+                        : 200;
+                    const casualties = Math.min(10 + Math.floor(Math.random() * 191), maximumCasualties);
+                    const contribution = annexedContributionRef.current[normalizedTarget];
+                    if (contribution && provincePopulation > 0) {
+                        const remainingProvincePopulation = Math.max(0, provincePopulation - casualties);
+                        annexedContributionRef.current[normalizedTarget] = {
+                            ...contribution,
+                            targetData: {
+                                ...contribution.targetData,
+                                jumlah_penduduk: remainingProvincePopulation,
+                                populasi: remainingProvincePopulation
+                            }
+                        };
+                    }
+                    const tensionIncrease = 10 + Math.floor(Math.random() * 16);
+                    const existingTensions = countryDetail?.provinceTensions;
+                    const tensionEntry = existingTensions && typeof existingTensions === 'object'
+                        ? Object.keys(existingTensions).find(name => name.toLowerCase().trim() === normalizedTarget)
+                        : undefined;
+                    const currentTension = Number(tensionEntry ? (existingTensions as Record<string, unknown>)[tensionEntry] : 25);
+                    const nextTension = Math.min(100, (Number.isFinite(currentTension) ? currentTension : 25) + tensionIncrease);
+                    const startedReferendum = nextTension >= 100 && currentReferendum?.status !== 'pending';
+                    const newReferendum = startedReferendum ? createProvinceReferendum(currentDate) : null;
+
+                    setCountryDetail((previous: Record<string, unknown> | null) => {
+                        if (!previous) return previous;
+                        const tensions = previous.provinceTensions && typeof previous.provinceTensions === 'object'
+                            ? previous.provinceTensions as Record<string, unknown>
+                            : {};
+                        const savedTensionEntry = Object.keys(tensions).find(name => name.toLowerCase().trim() === normalizedTarget) || targetCountry;
+                        const savedTension = Number(tensions[savedTensionEntry]);
+                        const updatedTension = Math.min(100, (Number.isFinite(savedTension) ? savedTension : 25) + tensionIncrease);
+                        const savedReferendums = previous.provinceReferendums && typeof previous.provinceReferendums === 'object'
+                            ? previous.provinceReferendums as Record<string, ProvinceReferendum>
+                            : {};
+                        const savedReferendumEntry = Object.keys(savedReferendums).find(name => name.toLowerCase().trim() === normalizedTarget);
+                        const nextReferendums = { ...savedReferendums };
+                        if (savedReferendumEntry && savedReferendums[savedReferendumEntry].status === 'pending') {
+                            nextReferendums[savedReferendumEntry] = {
+                                ...savedReferendums[savedReferendumEntry],
+                                crackdownIncidents: (savedReferendums[savedReferendumEntry].crackdownIncidents || 0) + 1
+                            };
+                        } else if (newReferendum) {
+                            nextReferendums[targetCountry] = { ...newReferendum, crackdownIncidents: 1 };
+                        }
+                        const rawPopulation = previous.jumlah_penduduk ?? previous.populasi;
+                        const previousPopulation = Number(rawPopulation);
+                        const hasPopulationTotal = Number.isFinite(previousPopulation) && previousPopulation > 0;
+                        const remainingPopulation = hasPopulationTotal ? Math.max(0, previousPopulation - casualties) : previousPopulation;
+                        const previousCasualties = previous.provinceCasualties && typeof previous.provinceCasualties === 'object'
+                            ? previous.provinceCasualties as Record<string, number>
+                            : {};
+                        const casualtyEntry = Object.keys(previousCasualties).find(name => name.toLowerCase().trim() === normalizedTarget) || targetCountry;
+
+                        return {
+                            ...previous,
+                            ...(hasPopulationTotal ? {
+                                jumlah_penduduk: remainingPopulation,
+                                populasi: remainingPopulation
+                            } : {}),
+                            provinceTensions: { ...tensions, [savedTensionEntry]: updatedTension },
+                            provinceReferendums: nextReferendums,
+                            provinceCasualties: {
+                                ...previousCasualties,
+                                [casualtyEntry]: (previousCasualties[casualtyEntry] || 0) + casualties
+                            }
+                        };
+                    });
+                    setNotifications(previous => previous.map(item => item.id === notif.id
+                        ? {
+                            ...item,
+                            message: `${item.message} Pasukan membubarkan massa dengan kekerasan: ${casualties.toLocaleString('id-ID')} korban jiwa tercatat dan ketegangan naik ${tensionIncrease} poin menjadi ${nextTension}/100.`,
+                            provinceIncident: { ...incident, handled: true }
+                        }
+                        : item
+                    ));
+                    setResultModal({
+                        isOpen: true,
+                        title: 'Massa Dibubarkan dengan Kekerasan',
+                        message: `Operasi di ${targetCountry} menyebabkan ${casualties.toLocaleString('id-ID')} korban jiwa. Ketegangan naik ${tensionIncrease} poin menjadi ${nextTension}/100.${currentReferendum?.status === 'pending'
+                            ? ' Penindakan ini memperkuat dukungan kemerdekaan dalam referendum yang sedang berlangsung.'
+                            : startedReferendum
+                                ? ` Ketegangan mencapai 100; referendum kemerdekaan dimulai dan berlangsung hingga ${newReferendum?.votingEndsAt}.`
+                                : ''}`,
+                        type: 'error'
+                    });
+                    if (startedReferendum && newReferendum) {
+                        window.dispatchEvent(new CustomEvent(PROVINCE_ACTION_EVENT, {
+                            detail: {
+                                actionId: 'referendum_dimulai',
+                                actionLabel: 'Referendum Kemerdekaan',
+                                targetCountry,
+                                occupyingCountry: countryDetail?.country || countryDetail?.nama || 'Negara Pemain',
+                                actionSucceeded: true,
+                                actionMessage: `Setelah pembubaran massa yang menelan korban jiwa, ketegangan ${targetCountry} mencapai 100. Referendum kemerdekaan dimulai hingga ${newReferendum.votingEndsAt}.`,
+                                provinceIncident: { kind: 'referendum', targetCountry }
+                            } satisfies ProvinceActionEventDetail
+                        }));
+                    }
+                }}
                 onActionClick={(notif) => {
                     // Intersep jika ini tawaran transaksi dagang AI
                     const tNotif = notif as any;

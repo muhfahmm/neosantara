@@ -148,6 +148,20 @@ export async function releaseAnnexedProvince({
       ...previous,
       ...restoredFields,
       ...weightedFields,
+      provinceTensions: Object.fromEntries(
+        Object.entries(
+          previous.provinceTensions && typeof previous.provinceTensions === 'object'
+            ? previous.provinceTensions as Record<string, unknown>
+            : {}
+        ).filter(([name]) => !aliases.has(normalizeName(name)))
+      ),
+      provinceReferendums: Object.fromEntries(
+        Object.entries(
+          previous.provinceReferendums && typeof previous.provinceReferendums === 'object'
+            ? previous.provinceReferendums as Record<string, unknown>
+            : {}
+        ).filter(([name]) => !aliases.has(normalizeName(name)))
+      ),
       embassies: (Array.isArray(previous.embassies) ? previous.embassies : []).filter((embassy: unknown) => {
         const embassyName = typeof embassy === 'string'
           ? embassy

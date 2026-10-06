@@ -46,6 +46,7 @@ interface TopLeftIconProps {
   notifications?: NotificationMessage[];
   onClearAll?: () => void;
   onActionClick?: (notification: NotificationMessage) => void;
+  onCrackdownClick?: (notification: NotificationMessage) => void;
   onRedirectClick?: (notification: NotificationMessage) => void;
 }
 
@@ -56,6 +57,7 @@ export default function TopLeftIcon({
   notifications = [],
   onClearAll,
   onActionClick,
+  onCrackdownClick,
   onRedirectClick
 }: TopLeftIconProps) {
   const [mounted, setMounted] = useState(false);
@@ -204,6 +206,7 @@ export default function TopLeftIcon({
                 <div className="space-y-4 max-w-4xl mx-auto w-full">
                   {notifications.map((notif) => {
                     const handleAction = onActionClick ? () => onActionClick(notif) : undefined;
+                    const handleCrackdown = onCrackdownClick ? () => onCrackdownClick(notif) : undefined;
                     const handleRedirect = onRedirectClick ? () => onRedirectClick(notif) : undefined;
 
                     const tradeType = (notif as any).tradeType;
@@ -524,7 +527,7 @@ export default function TopLeftIcon({
                       case 'kepuasan':
                         return <KepuasanNotification key={notif.id} notification={notif} onActionClick={handleAction} onRedirectClick={handleRedirect} />;
                       case 'peringkat':
-                        return <PeringkatNotification key={notif.id} notification={notif} onActionClick={handleAction} onRedirectClick={handleRedirect} />;
+                        return <PeringkatNotification key={notif.id} notification={notif} onActionClick={handleAction} onCrackdownClick={handleCrackdown} onRedirectClick={handleRedirect} />;
                       case 'kesejahteraan':
                         return <KesejahteraanNotification key={notif.id} notification={notif} onActionClick={handleAction} onRedirectClick={handleRedirect} />;
                       default:

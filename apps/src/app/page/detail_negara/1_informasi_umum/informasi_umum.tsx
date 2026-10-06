@@ -47,6 +47,7 @@ interface InformasiUmumProps {
   provinceBudget?: number;
   provinceNetBalance?: number;
   provinceTension?: number;
+  provinceData?: Record<string, unknown> | null;
 }
 
 // Komponen tombol aksi
@@ -69,7 +70,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   );
 };
 
-export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, occupyingCountry, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension }: InformasiUmumProps) {
+export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, occupyingCountry, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension, provinceData }: InformasiUmumProps) {
   const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || null;
   const [isDestroyModalOpen, setIsDestroyModalOpen] = useState(false);
   const [isBuildEmbassyModalOpen, setIsBuildEmbassyModalOpen] = useState<boolean>(() => !!autoBuildEmbassy);
@@ -244,6 +245,8 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           provinceBudget={provinceBudget}
           provinceNetBalance={provinceNetBalance}
           provinceTension={provinceTension}
+          currentDate={currentDate}
+          provinceData={provinceData}
           playerCountryDetail={playerCountryDetail || null}
           taxedProvinces={Array.isArray(playerCountryDetail?.taxedProvinces) ? playerCountryDetail.taxedProvinces : []}
           updatePlayerCountryDetail={setPlayerCountryDetail}

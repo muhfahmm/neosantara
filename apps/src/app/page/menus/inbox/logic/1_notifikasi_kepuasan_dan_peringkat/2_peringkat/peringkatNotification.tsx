@@ -1,14 +1,15 @@
 import React from 'react';
-import { Award, AlertTriangle, ExternalLink } from 'lucide-react';
+import { Award, AlertTriangle, ExternalLink, ShieldAlert } from 'lucide-react';
 import { NotificationMessage } from '../1_kepuasan/kepuasanLogic';
 
 interface PeringkatNotificationProps {
   notification: NotificationMessage;
   onActionClick?: () => void;
   onRedirectClick?: () => void;
+  onCrackdownClick?: () => void;
 }
 
-export default function PeringkatNotification({ notification, onActionClick, onRedirectClick }: PeringkatNotificationProps) {
+export default function PeringkatNotification({ notification, onActionClick, onRedirectClick, onCrackdownClick }: PeringkatNotificationProps) {
   return (
     <div className="bg-red-50/70 border-l-4 border-red-500 p-4 rounded-r-xl shadow-sm flex gap-4 items-start select-none">
       <div className="w-10 h-10 rounded-full bg-red-100 border border-red-300 flex items-center justify-center text-red-600 shrink-0">
@@ -28,6 +29,16 @@ export default function PeringkatNotification({ notification, onActionClick, onR
           {notification.message}
         </p>
         <div className="pt-2 flex justify-end gap-2">
+          {notification.provinceIncident && onCrackdownClick && (
+            <button
+              onClick={onCrackdownClick}
+              disabled={notification.provinceIncident.handled}
+              className="px-3 py-1 text-[10px] font-black uppercase tracking-wider bg-rose-100 hover:bg-rose-200 border border-rose-300 text-rose-900 rounded transition-all cursor-pointer shadow-sm flex items-center gap-1 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <ShieldAlert className="w-3 h-3" />
+              {notification.provinceIncident.handled ? 'Massa Telah Dibubarkan' : 'Bubarkan Massa'}
+            </button>
+          )}
           {onActionClick && (
             <button
               onClick={onActionClick}

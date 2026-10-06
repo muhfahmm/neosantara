@@ -25,6 +25,8 @@ interface OperasiMiliterProps {
   onCloseDetailModal?: () => void;
   isOccupiedProvince?: boolean;
   occupyingCountry?: string;
+  provinceTension?: number;
+  updatePlayerCountryDetail?: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
 }
 
 // Komponen tombol aksi (Persis sama dengan menu lainnya)
@@ -40,7 +42,7 @@ const ActionButton = ({ icon: Icon, label, onClick }: { icon: any, label: string
   </button>
 );
 
-export default function OperasiMiliter({ countryName, playerCountryDetail, targetCountryDetail, onCloseDetailModal, isOccupiedProvince, occupyingCountry }: OperasiMiliterProps) {
+export default function OperasiMiliter({ countryName, playerCountryDetail, targetCountryDetail, onCloseDetailModal, isOccupiedProvince, occupyingCountry, provinceTension, updatePlayerCountryDetail }: OperasiMiliterProps) {
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isSpionaseOpen, setIsSpionaseOpen] = useState(false);
   const [isSabotaseOpen, setIsSabotaseOpen] = useState(false);
@@ -54,7 +56,15 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
   };
 
   if (isOccupiedProvince) {
-    return <ProvinsiOperasiMiliter countryName={countryName} occupyingCountry={occupyingCountry || ''} />;
+    return (
+      <ProvinsiOperasiMiliter
+        countryName={countryName}
+        occupyingCountry={occupyingCountry || ''}
+        provinceTension={provinceTension ?? 25}
+        playerCountryDetail={playerCountryDetail || null}
+        updatePlayerCountryDetail={updatePlayerCountryDetail || (() => undefined)}
+      />
+    );
   }
 
   return (

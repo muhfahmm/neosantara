@@ -9,6 +9,8 @@ import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/pop
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
 import { getProvinceReligionOverride } from './1_informasi_umum/provinsi_logic/2_tugaskan_misionaris';
 import { getProvinceIdeologyOverride } from './1_informasi_umum/provinsi_logic/5_tanamkan_ideologi';
+import { getProvinceRebellionChance } from './1_informasi_umum/provinsi_logic/6_ketegangan/1_pemberontakan';
+import { getProvinceDemonstrationChance } from './1_informasi_umum/provinsi_logic/6_ketegangan/2_demonstrasi';
 
 // Import 3 komponen terpisah
 import InformasiUmum from "./1_informasi_umum/informasi_umum";
@@ -309,6 +311,16 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     const savedTension = Number(provinceEntry?.[1]);
     return Number.isFinite(savedTension) ? Math.min(100, Math.max(0, savedTension)) : 25;
   })();
+  const provinceReferendum = (() => {
+    const referendums = countryDetail?.provinceReferendums;
+    if (!referendums || typeof referendums !== 'object') return null;
+    const entry = Object.entries(referendums).find(
+      ([name]) => normalizeCountryKey(name) === normalizeCountryKey(countryName)
+    );
+    return entry?.[1] && typeof entry[1] === 'object'
+      ? entry[1] as { status?: string; votingEndsAt?: string }
+      : null;
+  })();
   const updateTargetReligion = (religion: string) => {
     setFetchedDetail((previous: Record<string, unknown> | null) => previous
       ? { ...previous, religion }
@@ -449,6 +461,21 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                     ? `${provinceTensionValue} · ${provinceTensionStatus}`
                     : relationValue}
                 </span>
+                {isPlayerOccupiedProvince && (
+                  <span className="text-[8px] font-semibold normal-case text-[#B7D5CD]/75">
+                    Demo {getProvinceDemonstrationChance(provinceTensionValue)}% · Pemberontakan {getProvinceRebellionChance(provinceTensionValue)}%
+                  </span>
+                )}
+                {isPlayerOccupiedProvince && provinceReferendum?.status === 'pending' && (
+                  <span className="text-[8px] font-bold normal-case text-amber-300">
+                    Referendum berlangsung hingga {provinceReferendum.votingEndsAt}
+                  </span>
+                )}
+                {isPlayerOccupiedProvince && provinceReferendum?.status === 'failed' && (
+                  <span className="text-[8px] font-bold normal-case text-rose-300">
+                    Hasil referendum gagal diproses
+                  </span>
+                )}
               </div>
             </div>
 
@@ -606,6 +633,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 provinceBudget={Number(detailData?.anggaran)}
                 provinceNetBalance={targetBaseNetBalance}
                 provinceTension={provinceTensionValue}
+                provinceData={detailData}
               />
             )}
 
@@ -621,6 +649,8 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 onCloseDetailModal={onClose}
                 isOccupiedProvince={isPlayerOccupiedProvince}
                 occupyingCountry={occupyingCountry}
+                provinceTension={provinceTensionValue}
+                updatePlayerCountryDetail={setCountryDetail}
               />
             )}
 

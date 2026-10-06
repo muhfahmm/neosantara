@@ -21,12 +21,12 @@ export default function IdeologyResultModal({
   const resultColor = succeeded ? 'text-[#00FFAA]' : 'text-red-400';
 
   return (
-    <div className="fixed inset-0 z-[200002] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[200002] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="ideology-result-title"
-        className="w-full max-w-[440px] rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] p-6 text-center shadow-2xl"
+        className="bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col items-center justify-center relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-10 text-center"
       >
         <ResultIcon className={`mx-auto mb-3 h-12 w-12 ${resultColor}`} aria-hidden="true" />
         <h3 id="ideology-result-title" className={`mb-2 text-lg font-black uppercase ${resultColor}`}>

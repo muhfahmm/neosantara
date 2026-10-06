@@ -5,6 +5,8 @@ import type { ProvinceAction, ProvinceActionEventDetail } from './provinceAction
 import { PROVINCE_ACTION_EVENT } from './provinceActionTypes';
 import MissionaryResultModal from './2_tugaskan_misionaris/MissionaryResultModal';
 import IdeologyResultModal from './5_tanamkan_ideologi/IdeologyResultModal';
+import ProvinceAidModal from './4_kirim_bantuan/ProvinceAidModal';
+import { applyProvinceTensionChange } from './6_ketegangan';
 
 interface MissionaryResult {
   targetCountry: string;
@@ -27,6 +29,8 @@ interface ProvinsiActionGridProps {
   provinceBudget?: number;
   provinceNetBalance?: number;
   provinceTension?: number;
+  currentDate?: Date;
+  provinceData?: Record<string, unknown> | null;
   playerCountryDetail?: Record<string, unknown> | null;
   taxedProvinces?: string[];
   updatePlayerCountryDetail?: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
@@ -49,7 +53,9 @@ export default function ProvinsiActionGrid({
   taxedProvinces,
   updatePlayerCountryDetail,
   adjustPlayerNetBalance,
-  provinceTension = 25
+  provinceTension = 25,
+  currentDate,
+  provinceData
 }: ProvinsiActionGridProps) {
   const [selectedAction, setSelectedAction] = useState<ProvinceAction | null>(null);
   const [missionaryResult, setMissionaryResult] = useState<MissionaryResult | null>(null);
@@ -66,31 +72,19 @@ export default function ProvinsiActionGrid({
     targetIdeology?.trim() &&
     playerIdeology.trim().toLocaleLowerCase() === targetIdeology.trim().toLocaleLowerCase()
   );
-  const aidAtMinimum = Number(provinceTension) <= 0;
   const adjustProvinceTension = (delta: number) => {
     if (!updatePlayerCountryDetail) return;
-    updatePlayerCountryDetail(previous => {
-      if (!previous) return previous;
-      const currentTensions = previous.provinceTensions && typeof previous.provinceTensions === 'object'
-        ? previous.provinceTensions as Record<string, unknown>
-        : {};
-      const normalizedTarget = targetCountry.toLowerCase().trim();
-      const entry = Object.entries(currentTensions).find(
-        ([name]) => name.toLowerCase().trim() === normalizedTarget
-      );
-      const currentTension = Number(entry?.[1] ?? provinceTension);
-      const nextTension = Math.min(100, Math.max(0, currentTension + delta));
-      return {
-        ...previous,
-        provinceTensions: {
-          ...currentTensions,
-          [targetCountry]: nextTension
-        }
-      };
+    applyProvinceTensionChange({
+      targetCountry,
+      occupyingCountry,
+      currentTension: provinceTension,
+      delta,
+      currentDate: currentDate ?? new Date(),
+      updatePlayerCountryDetail
     });
   };
 
-  const confirmAction = () => {
+  const confirmAction = (aidCategory?: string, aidItemLabel?: string) => {
     if (!selectedAction) return;
     let actionSucceeded = true;
     let actionMessage: string | undefined;
@@ -111,7 +105,10 @@ export default function ProvinsiActionGrid({
         updatePlayerCountryDetail,
         adjustPlayerNetBalance,
         provinceTension,
-        adjustProvinceTension
+        adjustProvinceTension,
+        provinceData,
+        aidCategory,
+        aidItemLabel
       });
       if (typeof result === 'string' || result === undefined) {
         actionMessage = result;
@@ -153,16 +150,13 @@ export default function ProvinsiActionGrid({
           const missionaryActive = id === 'tugaskan_misionaris' && missionaryCompleted;
           const ideologyActive = id === 'tanamkan_ideologi' && ideologyCompleted;
           const taxActive = id === 'wajibkan_pajak' && taxAlreadyEnforced;
-          const aidDisabled = id === 'kirim_bantuan' && aidAtMinimum;
-          const isActive = missionaryActive || ideologyActive || taxActive || aidDisabled;
+          const isActive = missionaryActive || ideologyActive || taxActive;
           const displayLabel = missionaryActive
             ? 'Agama Sudah Sama'
             : ideologyActive
               ? 'Ideologi Sudah Sama'
               : taxActive
                 ? 'Pajak Diberlakukan'
-                : aidDisabled
-                  ? 'Ketegangan Minimum'
                 : label;
           return (
           <button
@@ -184,8 +178,6 @@ export default function ProvinsiActionGrid({
                 ? 'Ideologi provinsi sudah sama dengan ideologi negara Anda'
                 : taxActive
                   ? 'Pajak sudah diberlakukan di provinsi ini'
-                  : aidDisabled
-                    ? 'Ketegangan provinsi sudah mencapai 0'
                   : undefined}
           >
             <Icon className="h-8 w-8 text-[#00FFAA] group-hover:scale-110 transition-transform" />
@@ -195,13 +187,23 @@ export default function ProvinsiActionGrid({
         })}
       </div>
 
-      {selectedAction && (
-        <div className="fixed inset-0 z-[200000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      {selectedAction?.id === 'kirim_bantuan' && (
+        <ProvinceAidModal
+          targetCountry={targetCountry}
+          provinceData={provinceData}
+          provinceTension={provinceTension}
+          onClose={() => setSelectedAction(null)}
+          onConfirm={(category, itemLabel) => confirmAction(category, itemLabel)}
+        />
+      )}
+
+      {selectedAction && selectedAction.id !== 'kirim_bantuan' && (
+        <div className="fixed inset-0 z-[200000] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="province-action-title"
-            className="w-full max-w-[460px] bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-6 shadow-2xl"
+            className="bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col justify-center relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-10"
           >
             <h3 id="province-action-title" className="text-lg font-black text-[#00FFAA] mb-3">
               Konfirmasi {selectedAction.label}
@@ -219,7 +221,7 @@ export default function ProvinsiActionGrid({
               </button>
               <button
                 type="button"
-                onClick={confirmAction}
+                onClick={() => confirmAction()}
                 className="flex-1 rounded-lg bg-[#00FFAA] px-4 py-2.5 text-xs font-black uppercase text-[#0A1A1A] hover:bg-[#00D991]"
               >
                 Konfirmasi
