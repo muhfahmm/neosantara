@@ -298,6 +298,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     annexedInfo?.attackerCountry &&
     normalizeCountryKey(annexedInfo.attackerCountry) === normalizeCountryKey(playerCountryName)
   );
+  const isAnnexedTerritory = Boolean(annexedInfo?.attackerCountry);
   const occupyingCountry = annexedInfo?.attackerCountry || '';
   const playerReligion = countryDetail?.religion || countryDetail?.agama_utama || countryDetail?.agama;
   const playerIdeology = countryDetail?.ideology || countryDetail?.ideologi;
@@ -623,6 +624,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 currentDate={currentDate}
                 autoBuildEmbassy={autoBuildEmbassy}
                 isOccupiedProvince={isPlayerOccupiedProvince}
+                isAnnexedTerritory={isAnnexedTerritory}
                 occupyingCountry={occupyingCountry}
                 playerReligion={playerReligion}
                 targetReligion={detailData?.religion || detailData?.agama_utama || detailData?.agama}

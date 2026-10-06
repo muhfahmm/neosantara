@@ -37,6 +37,7 @@ interface InformasiUmumProps {
   currentDate?: Date;
   autoBuildEmbassy?: boolean;
   isOccupiedProvince?: boolean;
+  isAnnexedTerritory?: boolean;
   occupyingCountry?: string;
   playerReligion?: string;
   targetReligion?: string;
@@ -70,7 +71,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   );
 };
 
-export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, occupyingCountry, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension, provinceData }: InformasiUmumProps) {
+export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, isAnnexedTerritory, occupyingCountry, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension, provinceData }: InformasiUmumProps) {
   const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || null;
   const [isDestroyModalOpen, setIsDestroyModalOpen] = useState(false);
   const [isBuildEmbassyModalOpen, setIsBuildEmbassyModalOpen] = useState<boolean>(() => !!autoBuildEmbassy);
@@ -135,6 +136,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const embassyResultBudget = playerBudget - embassyCost;
 
   const embassyLabel = getEmbassyButtonLabel(countryName, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners);
+  const hasUsableEmbassy = embassyActive && !isAnnexedTerritory;
   const embassyClass = getEmbassyButtonClass(countryName, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners);
   const embassyIconClass = embassyLabel === 'Hancurkan Kedutaan' ? 'text-[#00FFAA]' : undefined;
   const embassyLabelClass = embassyLabel === 'Hancurkan Kedutaan' ? 'text-[#00FFAA]' : undefined;
@@ -164,6 +166,12 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   // Sync initial active states from logic at mount / when country changes
   // (we keep local state so user actions toggle UI immediately)
   useEffect(() => {
+    if (isAnnexedTerritory) {
+      setEmbassyActive(false);
+      setIsBuildEmbassyModalOpen(false);
+      setIsDestroyModalOpen(false);
+      return;
+    }
     const embassyLabelNow = getEmbassyButtonLabel(countryName, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners);
     const tradeLabelNow = getTradeButtonLabel(countryName, playerCountryName, removedTradePartners, addedTradePartners);
     setEmbassyActive(embassyLabelNow === 'Hancurkan Kedutaan');
@@ -175,15 +183,16 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     setIsDestroyPaktaOpen(false);
     setIsDestroyAliansiOpen(false);
     setIsDestroyKontrakOpen(false);
-    if (autoBuildEmbassy) {
+    if (autoBuildEmbassy && !isAnnexedTerritory) {
       setIsBuildEmbassyModalOpen(true);
     }
-  }, [countryName, playerCountryName, playerEmbassies.length, removedEmbassies.length, removedTradePartners.length, addedTradePartners.length, nonAggressionPacts.length, defenseAlliances.length, researchContracts.length, autoBuildEmbassy]);
+  }, [countryName, playerCountryName, playerEmbassies.length, removedEmbassies.length, removedTradePartners.length, addedTradePartners.length, nonAggressionPacts.length, defenseAlliances.length, researchContracts.length, autoBuildEmbassy, isAnnexedTerritory]);
 
   // PERBAIKAN: Style tombol aktif dalam tema dark mode sci-fi
   const modernGreenBorderClass = 'border-2 border-[#00FFAA] bg-[#00FFAA]/20 text-[#00FFAA] hover:bg-[#00FFAA]/30';
 
   const handleEmbassyClick = () => {
+    if (isAnnexedTerritory) return;
     if (embassyActive) {
       setIsDestroyModalOpen(true);
     } else {
@@ -255,7 +264,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
       ) : <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 pt-6">
         
         {/* Tombol Kedutaan dengan Badge Tanggal Selesai */}
-        <div className="relative min-w-0">
+        {!isAnnexedTerritory && <div className="relative min-w-0">
           {isEmbassyBuilding && embassyEndDate && (
             <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
               {formatBadgeDate(embassyEndDate)}
@@ -283,10 +292,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             iconClass={embassyActive || isEmbassyBuilding ? 'text-[#00FFAA]' : embassyIconClass}
             labelClass={embassyActive || isEmbassyBuilding ? 'text-[#00FFAA]' : embassyLabelClass}
           />
-        </div>
+        </div>}
         
-        <ActionButton icon={ShieldOff} label={paktaIsActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => paktaIsActive ? setIsDestroyPaktaOpen(true) : setIsPaktaModalOpen(true)} disabled={!embassyActive} className={paktaIsActive ? modernGreenBorderClass : undefined} iconClass={paktaIsActive ? 'text-[#00FFAA]' : undefined} labelClass={paktaIsActive ? 'text-[#00FFAA]' : undefined} />
-        <ActionButton icon={ShieldCheck} label={aliansiIsActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => aliansiIsActive ? setIsDestroyAliansiOpen(true) : setIsAliansiModalOpen(true)} disabled={!embassyActive} className={aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={aliansiIsActive ? 'text-[#00FFAA]' : undefined} labelClass={aliansiIsActive ? 'text-[#00FFAA]' : undefined} />
+        <ActionButton icon={ShieldOff} label={paktaIsActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => paktaIsActive ? setIsDestroyPaktaOpen(true) : setIsPaktaModalOpen(true)} disabled={!hasUsableEmbassy} className={paktaIsActive ? modernGreenBorderClass : undefined} iconClass={paktaIsActive ? 'text-[#00FFAA]' : undefined} labelClass={paktaIsActive ? 'text-[#00FFAA]' : undefined} />
+        <ActionButton icon={ShieldCheck} label={aliansiIsActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => aliansiIsActive ? setIsDestroyAliansiOpen(true) : setIsAliansiModalOpen(true)} disabled={!hasUsableEmbassy} className={aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={aliansiIsActive ? 'text-[#00FFAA]' : undefined} labelClass={aliansiIsActive ? 'text-[#00FFAA]' : undefined} />
         
         {/* PERBAIKAN: Tombol Perjanjian Dagang diubah menggunakan modernGreenBorderClass yang sama */}
         <ActionButton
@@ -300,19 +309,19 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             }
           }}
           className={tradeIsActive ? modernGreenBorderClass : tradeClass}
-          disabled={!embassyActive}
+          disabled={!hasUsableEmbassy}
           iconClass={tradeIsActive ? 'text-[#00FFAA]' : tradeIconClass}
           labelClass={tradeIsActive ? 'text-[#00FFAA]' : tradeLabelClass}
         />
         
-        <ActionButton icon={FlaskConical} label={kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => kontrakIsActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true)} disabled={!embassyActive} className={kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
-        <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => setIsKirimPasukanModalOpen(true)} disabled={!embassyActive} />
-        <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => setIsPanggilSekutuModalOpen(true)} disabled={!embassyActive} />
+        <ActionButton icon={FlaskConical} label={kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => kontrakIsActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true)} disabled={!hasUsableEmbassy} className={kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
+        <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => setIsKirimPasukanModalOpen(true)} disabled={!hasUsableEmbassy} />
+        <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => setIsPanggilSekutuModalOpen(true)} disabled={!hasUsableEmbassy} />
         <ActionButton icon={Ban} label="Berikan Sanksi" onClick={() => setIsBerikanSanksiModalOpen(true)} />
       </div>}
 
       <DestroyEmbassyModal
-        isOpen={isDestroyModalOpen}
+        isOpen={isDestroyModalOpen && !isAnnexedTerritory}
         countryName={countryName}
         onClose={() => setIsDestroyModalOpen(false)}
         onConfirm={() => {
@@ -348,7 +357,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
       />
 
       <BuildEmbassyModal
-        isOpen={isBuildEmbassyModalOpen}
+        isOpen={isBuildEmbassyModalOpen && !isAnnexedTerritory}
         countryName={countryName}
         continent={continentLabel}
         currentBudget={currentNetBalance}

@@ -1,6 +1,7 @@
 // Logic helper for Kedutaan Besar actions
 import getTradeAgreementsForCountry from '../../../../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
 import { getEmbassiesForCountry } from '../../../../../../../../json/database_kedutaan_besar/embassyRegistry';
+import { COUNTRIES_DATA } from '../../../../map_system/map-data';
 
 export type TradeAgreement = {
   no: number;
@@ -16,6 +17,20 @@ const normalizeName = (value?: string | null): string => {
     .replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '');
+};
+
+const isAnnexedCountry = (countryName?: string | null): boolean => {
+  if (!countryName || typeof window === 'undefined') return false;
+  const annexedCountries = (window as Window & {
+    neosantara_annexed_countries?: Record<string, unknown>;
+  }).neosantara_annexed_countries || {};
+  const country = COUNTRIES_DATA.find(item => normalizeName(item.country) === normalizeName(countryName));
+  const aliases = new Set([
+    normalizeName(countryName),
+    normalizeName(country?.iso),
+    normalizeName(country?.iso ? `iso_${country.iso}` : undefined)
+  ].filter(Boolean));
+  return Object.keys(annexedCountries).some(key => aliases.has(normalizeName(key)));
 };
 
 /**
@@ -59,6 +74,7 @@ export const playerHasEmbassyWith = (
   playerCountryName?: string | null
 ): boolean => {
   if (!viewedCountryName) return false;
+  if (isAnnexedCountry(viewedCountryName)) return false;
   const normViewed = normalizeName(viewedCountryName);
   const hasCustomEmbassy = Array.isArray(playerEmbassies) &&
     playerEmbassies.some((embassy) => normalizeName(embassy?.mitra) === normViewed);
@@ -80,6 +96,7 @@ export const playerHasEmbassyOrTradePartners = (
   removedTradePartners?: string[]
 ): boolean => {
   if (!viewedCountryName) return false;
+  if (isAnnexedCountry(viewedCountryName)) return false;
   const normViewed = normalizeName(viewedCountryName);
   if (Array.isArray(removedEmbassies) && removedEmbassies.some(r => normalizeName(r) === normViewed)) {
     return false;

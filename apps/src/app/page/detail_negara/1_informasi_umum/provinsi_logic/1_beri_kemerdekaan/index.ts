@@ -2,6 +2,7 @@ import { Flag } from 'lucide-react';
 import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import countryPaths from '../../../../map_system/country-paths.json';
+import { COUNTRIES_DATA } from '../../../../map_system/map-data';
 import type { ProvinceAction, ProvinceActionEventDetail } from '../provinceActionTypes';
 
 export const ANNEXED_AGGREGATE_KEYS = [
@@ -48,7 +49,17 @@ export async function releaseAnnexedProvince({
   const currentPlayerCountry = detail.occupyingCountry;
   const targetNorm = normalizeName(targetCountry);
   const countryIso = getIsoForCountryName(targetCountry).toLowerCase();
-  const aliases = new Set([targetNorm, countryIso, `iso_${countryIso}`].filter(Boolean));
+  const mapCountry = COUNTRIES_DATA.find(
+    country => normalizeName(country.country) === targetNorm
+  );
+  const canonicalIso = (mapCountry?.iso || countryIso).toLowerCase();
+  const aliases = new Set([
+    targetNorm,
+    countryIso,
+    `iso_${countryIso}`,
+    canonicalIso,
+    `iso_${canonicalIso}`
+  ].filter(Boolean));
   const gameWindow = window as Window & {
     neosantara_annexed_countries?: Record<string, { attackerCountry?: string; attackerIso?: string }>;
     neosantara_country_color_overrides?: Record<string, string>;
