@@ -54,6 +54,8 @@ export interface ActiveSecurityCouncilItem {
     vetoCount: number;
   };
   userVote: 'yes' | 'no' | 'abstain' | null;
+  userVeto?: boolean;
+  userVetoIso?: string;
   status: 'voting' | 'passed' | 'vetoed' | 'rejected';
   createdAt: string;
   finishedAt?: string;
@@ -214,7 +216,9 @@ export function getSecurityCouncilVetoerIsos(
   activeUserCountryName = "",
   userVote: 'yes' | 'no' | 'abstain' | null = null,
   bribedCountries: Record<string, 'yes' | 'no' | 'abstain' | 'veto'> = {},
-  resolutionId?: string
+  resolutionId?: string,
+  userVeto = false,
+  userVetoIso?: string
 ): string[] {
   const vetoers = new Set(
     getSimulatedSecurityCouncilVetoerIsos(
@@ -239,9 +243,10 @@ export function getSecurityCouncilVetoerIsos(
     }
   });
 
-  const userIso = getIsoForCountryName(activeUserCountryName).toLowerCase();
+  const userIso = (userVetoIso || getIsoForCountryName(activeUserCountryName)).toLowerCase();
   if (
     userVote === 'no' &&
+    userVeto &&
     canUseSecurityCouncilVeto(userIso, resolutionId) &&
     !isCountryAnnexed(activeUserCountryName, userIso)
   ) {
@@ -263,7 +268,9 @@ export function calculate15SecurityCouncilVotes(
   targetName: string = 'Korea Utara',
   resolutionType: string = 'military',
   activeUserCountryName: string = getActiveUserCountryName(),
-  resolutionId?: string
+  resolutionId?: string,
+  userVeto = false,
+  userVetoIso?: string
 ) {
   const elapsedDays = Math.max(0, Math.min(30, 30 - daysRemaining));
   const progressRatio = elapsedDays / 30;
@@ -281,7 +288,7 @@ export function calculate15SecurityCouncilVotes(
     let abstainCount = 0;
 
     if (userVote === 'yes') supportersCount += 1;
-    if (userVote === 'no') opponentsCount += 1;
+    if (userVote === 'no' && !userVeto) opponentsCount += 1;
     if (userVote === 'abstain') abstainCount += 1;
 
     return {
@@ -289,8 +296,9 @@ export function calculate15SecurityCouncilVotes(
       opponentsCount,
       abstainCount,
       vetoCount: userVote === 'no' &&
-        canUseSecurityCouncilVeto(getIsoForCountryName(activeUserCountryName), resolutionId) &&
-        !isCountryAnnexed(activeUserCountryName, getIsoForCountryName(activeUserCountryName))
+        userVeto &&
+        canUseSecurityCouncilVeto(userVetoIso || getIsoForCountryName(activeUserCountryName), resolutionId) &&
+        !isCountryAnnexed(activeUserCountryName, userVetoIso || getIsoForCountryName(activeUserCountryName))
           ? 1
           : 0,
       totalVotesCast: supportersCount + opponentsCount + abstainCount
@@ -331,11 +339,13 @@ export function calculate15SecurityCouncilVotes(
     activeUserCountryName,
     userVote,
     {},
-    resolutionId
+    resolutionId,
+    userVeto,
+    userVetoIso
   ).length;
 
   if (userVote === 'yes') supportersCount += 1;
-  if (userVote === 'no') opponentsCount += 1;
+  if (userVote === 'no' && !userVeto) opponentsCount += 1;
   if (userVote === 'abstain') abstainCount += 1;
 
   return {
@@ -512,14 +522,19 @@ export function tickPBBSecurityCouncil(
 
       const newDaysRemaining = Math.max(0, item.daysRemaining - step);
       const eligibleUserVote = activeUserAnnexed ? null : item.userVote;
+      const finalUserVote = newDaysRemaining === 0 && !activeUserAnnexed
+        ? eligibleUserVote || 'abstain'
+        : eligibleUserVote;
       const votes = calculate15SecurityCouncilVotes(
         newDaysRemaining,
-        eligibleUserVote,
+        finalUserVote,
         proposer?.name,
         item.target?.name,
         item.type,
         activeUser,
-        item.id
+        item.id,
+        item.userVeto,
+        item.userVetoIso
       );
       const eligibleCouncilCount = Math.max(
         0,
@@ -532,9 +547,11 @@ export function tickPBBSecurityCouncil(
         item.type,
         Math.round(eligibleCouncilCount * elapsedRatio),
         activeUser,
-        eligibleUserVote,
+        finalUserVote,
         item.bribedCountries,
-        item.id
+        item.id,
+        item.userVeto,
+        item.userVetoIso
       ).length;
       let notified = item.notified10Days || false;
       let notifiedDay1 = item.notifiedDay1 || false;
@@ -609,16 +626,18 @@ export function tickPBBSecurityCouncil(
         ...item,
         createdAt: startDate,
         finishedAt: finishedAtDate,
-        userVote: eligibleUserVote,
+        userVote: finalUserVote,
         vetoedBy: getSecurityCouncilVetoerIsos(
           proposer?.name || "",
           item.target?.name || "",
           item.type,
           Math.round(eligibleCouncilCount * elapsedRatio),
           activeUser,
-          eligibleUserVote,
+          finalUserVote,
           item.bribedCountries,
-          item.id
+          item.id,
+          item.userVeto,
+          item.userVetoIso
         ),
         daysRemaining: finalStatus === 'passed'
           ? getResolutionDurationDays(item.duration)
@@ -697,6 +716,15 @@ export function getSecurityCouncilCountryBreakdown(
   const activeCouncilMembers = getCouncilRoster().filter(member =>
     !isCountryAnnexed(member.name, member.iso)
   );
+  const councilCountries = activeCouncilMembers.map((member, index) =>
+    safeCountries.find(country => country.iso.toLowerCase() === member.iso.toLowerCase()) || {
+      id: 9994 + index,
+      name: member.name,
+      iso: member.iso,
+      continent: 'Dewan Keamanan PBB'
+    }
+  );
+  const councilIsoSet = new Set(activeCouncilMembers.map(member => member.iso.toLowerCase()));
   const elapsedRatio = Math.max(0, Math.min(1, (30 - secItem.daysRemaining) / 30));
   const votesCastSoFar = Math.round(activeCouncilMembers.length * elapsedRatio);
   const fallbackVetoedIsos = secItem.status === 'voting' || secItem.voteStats.vetoCount > 0
@@ -708,7 +736,9 @@ export function getSecurityCouncilCountryBreakdown(
         activeUserCountry,
         secItem.userVote,
         secItem.bribedCountries,
-        secItem.id
+        secItem.id,
+        secItem.userVeto,
+        secItem.userVetoIso
       )
     : [];
   const vetoedIsos = new Set(
@@ -720,25 +750,25 @@ export function getSecurityCouncilCountryBreakdown(
   const targetName = secItem.target.name.toLowerCase();
   const userCountryName = activeUserCountry.toLowerCase();
 
-  let userObj = safeCountries.find(c => c.name.toLowerCase() === userCountryName || c.iso.toLowerCase() === 'id');
+  let userObj = councilCountries.find(c => c.name.toLowerCase() === userCountryName);
   if (!userObj) {
     userObj = { id: 9990, name: activeUserCountry, iso: 'id', continent: 'Asia' };
   }
 
-  let proposerObj = safeCountries.find(c => c.name.toLowerCase() === proposerName || c.iso.toLowerCase() === secItem.proposer.iso.toLowerCase());
+  let proposerObj = councilCountries.find(c => c.name.toLowerCase() === proposerName || c.iso.toLowerCase() === secItem.proposer.iso.toLowerCase());
   if (!proposerObj) {
     proposerObj = { id: 9991, name: secItem.proposer.name, iso: secItem.proposer.iso, continent: 'Global' };
   }
 
   let targetObj: typeof safeCountries[0] | null = null;
   if (!targetName.includes('global') && !targetName.includes('dunia')) {
-    targetObj = safeCountries.find(c => c.name.toLowerCase() === targetName || c.iso.toLowerCase() === secItem.target.iso.toLowerCase()) || null;
+    targetObj = councilCountries.find(c => c.name.toLowerCase() === targetName || c.iso.toLowerCase() === secItem.target.iso.toLowerCase()) || null;
     if (!targetObj && secItem.target.name) {
       targetObj = { id: 9992, name: secItem.target.name, iso: secItem.target.iso, continent: 'Global' };
     }
   }
 
-  const pool = safeCountries.filter(c => {
+  const pool = councilCountries.filter(c => {
     const cName = c.name.toLowerCase();
     if (cName === proposerName) return false;
     if (targetObj && cName === targetName) return false;
@@ -760,21 +790,23 @@ export function getSecurityCouncilCountryBreakdown(
 
   const supporters: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [];
   if (!isProposerAnnexed) {
-    supporters.push({ ...proposerObj, isProposer: true, isUser: isUserProposer });
+    if (councilIsoSet.has(proposerObj.iso.toLowerCase())) {
+      supporters.push({ ...proposerObj, isProposer: true, isUser: isUserProposer });
+    }
   }
 
-  if (!isUserProposer && !isUserTarget && !isUserAnnexed && secItem.userVote === 'yes') {
+  if (councilIsoSet.has(userObj.iso.toLowerCase()) && !isUserProposer && !isUserTarget && !isUserAnnexed && secItem.userVote === 'yes') {
     supporters.push({ ...userObj, isUser: true });
   }
 
   const opponents: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [];
   const veto: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [];
-  if (targetObj && !isTargetAnnexed) {
+  if (targetObj && councilIsoSet.has(targetObj.iso.toLowerCase()) && !isTargetAnnexed) {
     opponents.push({ ...targetObj, isTarget: true, isUser: isUserTarget });
   }
 
-  if (!isUserProposer && !isUserTarget && !isUserAnnexed && secItem.userVote === 'no') {
-    if (canUseSecurityCouncilVeto(userObj.iso)) {
+  if (councilIsoSet.has(userObj.iso.toLowerCase()) && !isUserProposer && !isUserTarget && !isUserAnnexed && secItem.userVote === 'no') {
+    if (secItem.userVeto && canUseSecurityCouncilVeto(secItem.userVetoIso || userObj.iso, secItem.id)) {
       veto.push({ ...userObj, isUser: true });
     } else {
       opponents.push({ ...userObj, isUser: true });
@@ -782,7 +814,7 @@ export function getSecurityCouncilCountryBreakdown(
   }
 
   const abstain: (typeof safeCountries[0] & { isProposer?: boolean; isTarget?: boolean; isUser?: boolean })[] = [];
-  if (!isUserProposer && !isUserTarget && !isUserAnnexed && secItem.userVote === 'abstain') {
+  if (councilIsoSet.has(userObj.iso.toLowerCase()) && !isUserProposer && !isUserTarget && !isUserAnnexed && secItem.userVote === 'abstain') {
     abstain.push({ ...userObj, isUser: true });
   }
 
@@ -801,20 +833,28 @@ export function getSecurityCouncilCountryBreakdown(
     if (forcedVote === 'yes') supporters.push(item.country);
     else if (forcedVote === 'no') opponents.push(item.country);
     else if (forcedVote === 'abstain') abstain.push(item.country);
-    else if (forcedVote === 'veto' && isPermanentSecurityCouncilMember(item.country.iso)) veto.push(item.country);
-    else if (forcedVote === 'veto') opponents.push(item.country);
+    else if (forcedVote === 'veto' && isPermanentSecurityCouncilMember(item.country.iso)) {
+      opponents.push(item.country);
+      veto.push(item.country);
+    } else if (forcedVote === 'veto') {
+      opponents.push(item.country);
+      veto.push(item.country);
+    }
   });
 
   vetoedIsos.forEach(iso => {
     if (veto.some(member => member.iso.toLowerCase() === iso)) return;
     const member = getCouncilRoster().find(country => country.iso === iso);
     if (!member || isCountryAnnexed(member.name, member.iso)) return;
-    const country = safeCountries.find(candidate => candidate.iso.toLowerCase() === iso) || {
+    const country = councilCountries.find(candidate => candidate.iso.toLowerCase() === iso) || {
       id: 9993 + veto.length,
       name: member.name,
       iso: member.iso,
       continent: 'Dewan Keamanan PBB'
     };
+    if (!opponents.some(country => country.iso.toLowerCase() === iso)) {
+      opponents.push(country);
+    }
     veto.push({
       ...country,
       isProposer: member.name.toLowerCase() === proposerName,
@@ -828,10 +868,15 @@ export function getSecurityCouncilCountryBreakdown(
       supporters.push(item.country);
     } else if (opponents.length < targetOpponentCount) {
       opponents.push(item.country);
-    } else {
+    } else if (abstain.length < secItem.voteStats.abstainCount) {
       abstain.push(item.country);
     }
   });
+
+  supporters.length = Math.min(supporters.length, Math.max(0, secItem.voteStats.supportersCount));
+  opponents.length = Math.min(opponents.length, Math.max(0, targetOpponentCount));
+  abstain.length = Math.min(abstain.length, Math.max(0, secItem.voteStats.abstainCount));
+  veto.length = Math.min(veto.length, Math.max(0, secItem.voteStats.vetoCount));
 
   return { supporters, opponents, abstain, veto };
 }

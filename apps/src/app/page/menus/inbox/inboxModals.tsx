@@ -86,10 +86,21 @@ export default function TopLeftIcon({
     }
   }, [notifications]);
 
+  useEffect(() => {
+    if (!showToast || !toastNotification) return;
+
+    const timer = window.setTimeout(() => {
+      dismissedToastIdRef.current = toastNotification.id;
+      setShowToast(false);
+    }, 3000);
+
+    return () => window.clearTimeout(timer);
+  }, [showToast, toastNotification?.id]);
+
   return (
     <>
       {mounted && createPortal(
-        <div className="fixed top-24 left-7 z-[200000] flex flex-col items-start gap-2 pointer-events-auto">
+        <div className="fixed top-24 left-7 z-[200010] flex flex-col items-start gap-2 pointer-events-auto">
           <button
             onClick={() => {
               if (toastNotification) {
@@ -109,50 +120,45 @@ export default function TopLeftIcon({
             )}
           </button>
 
-          {/* 🔥 POPUP TOAST NOTIFIKASI DI BAWAH INBOX (MNCUL WALAUPUN MODAL SEDANG TERBUKA, RENDERED VIA PORTAL Z-200000) */}
-          {showToast && toastNotification && (
-            <div
-              onClick={() => {
-                if (toastNotification) {
+        </div>,
+        document.body
+      )}
+      {mounted && showToast && toastNotification && createPortal(
+        <div className="fixed top-[9.5rem] left-7 z-[100200] pointer-events-auto">
+          <div
+            onClick={() => {
+              dismissedToastIdRef.current = toastNotification.id;
+              setShowToast(false);
+              onClick?.();
+            }}
+            className="w-64 rounded-xl border-2 border-[#00FFAA] bg-[#0F2424] p-2.5 shadow-[0_8px_22px_rgba(0,255,170,0.3)] animate-in fade-in slide-in-from-top-3 duration-300 cursor-pointer hover:bg-[#143030] transition-all group"
+          >
+            <div className="flex items-center justify-between border-b border-[#00FFAA]/30 pb-1">
+              <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
+                <span className="h-2 w-2 rounded-full bg-[#00FFAA] animate-ping" />
+                Pesan Baru Masuk
+              </span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
                   dismissedToastIdRef.current = toastNotification.id;
-                }
-                setShowToast(false);
-                if (onClick) onClick();
-              }}
-              className="w-80 bg-[#0F2424] border-2 border-[#00FFAA] rounded-2xl p-3.5 shadow-[0_10px_30px_rgba(0,255,170,0.35)] animate-in fade-in slide-in-from-top-3 duration-300 cursor-pointer hover:bg-[#143030] transition-all group relative z-[200000]"
-            >
-              <div className="flex items-center justify-between pb-1.5 border-b border-[#00FFAA]/30">
-                <span className="text-[11px] font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#00FFAA] animate-ping" />
-                  Pesan Baru Masuk
-                </span>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (toastNotification) {
-                      dismissedToastIdRef.current = toastNotification.id;
-                    }
-                    setShowToast(false);
-                  }}
-                  className="text-slate-400 hover:text-white p-0.5 rounded"
-                >
-                  <X className="w-4 h-4 text-[#00FFAA]" />
-                </button>
-              </div>
-              <h5 className="text-xs font-bold text-white mt-2 line-clamp-1 group-hover:text-[#00FFAA] transition-colors leading-snug">
-                {toastNotification.title}
-              </h5>
-              <p className="text-[11px] text-slate-300 line-clamp-2 mt-1 leading-relaxed">
-                {toastNotification.message}
-              </p>
-              <div className="mt-2 flex items-center justify-between pt-1 border-t border-[#00FFAA]/10">
-                <span className="text-[9px] text-[#6B8A8A] font-semibold">{toastNotification.timestamp}</span>
-                <span className="text-[10px] text-[#00FFAA] font-black underline group-hover:translate-x-1 transition-transform">
-                  Buka Inbox ({unreadCount}) →
-                </span>
-              </div>
+                  setShowToast(false);
+                }}
+                className="rounded p-0.5 text-slate-400 hover:text-white"
+              >
+                <X className="h-3.5 w-3.5 text-[#00FFAA]" />
+              </button>
             </div>
-          )}
+            <h5 className="mt-1.5 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-[#00FFAA]">
+              {toastNotification.title}
+            </h5>
+            <div className="mt-1.5 flex items-center justify-between border-t border-[#00FFAA]/10 pt-1">
+              <span className="text-[8px] font-semibold text-[#6B8A8A]">{toastNotification.timestamp}</span>
+              <span className="text-[9px] font-black text-[#00FFAA] underline transition-transform group-hover:translate-x-1">
+                Buka Inbox ({unreadCount}) →
+              </span>
+            </div>
+          </div>
         </div>,
         document.body
       )}

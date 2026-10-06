@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { 
-  X, Shield, Angry, Smile, Banknote, Anchor, Lock, Package, 
+  X, Shield, ShieldAlert, Angry, Smile, Banknote, Anchor, Lock, Package,
   ChevronDown, Clock, FileText, Plus, Users
 } from "lucide-react";
 import { createPortal } from "react-dom";
@@ -97,7 +97,20 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
   const [nonPermanentMembers, setNonPermanentMembers] = useState<SecurityCouncilMember[]>(() => getStoredCouncilMembers());
 
   useEffect(() => {
-    const syncCouncilRoster = () => setNonPermanentMembers(getStoredCouncilMembers());
+    const syncCouncilRoster = () => {
+      const nextMembers = getStoredCouncilMembers();
+      setNonPermanentMembers(previous => {
+        const unchanged = previous.length === nextMembers.length &&
+          previous.every((member, index) =>
+            member.iso === nextMembers[index].iso &&
+            member.vetoUsed === nextMembers[index].vetoUsed &&
+            member.vetoUsedOn === nextMembers[index].vetoUsedOn &&
+            member.termStartYear === nextMembers[index].termStartYear &&
+            member.termEndYear === nextMembers[index].termEndYear
+          );
+        return unchanged ? previous : nextMembers;
+      });
+    };
     window.addEventListener("pbb_security_council_roster_updated", syncCouncilRoster);
     window.addEventListener("pbb_security_council_election_roster_updated", syncCouncilRoster);
     return () => {
@@ -326,49 +339,54 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
     }
   }, []);
 
-  const handleSecurityVote = (itemId: string, voteType: 'yes' | 'no' | 'abstain') => {
+  const handleSecurityVote = (itemId: string, voteType: 'yes' | 'no' | 'abstain', useVeto = false) => {
     if (isSelectedCountryAnnexed) return;
     const currentList = typeof loadActiveSecurityCouncilItems === 'function' ? loadActiveSecurityCouncilItems() : activeSecurityCouncilItems;
     const targetItem = currentList.find(item => item.id === itemId);
-    if (!targetItem || targetItem.status !== 'voting') return;
+    if (!targetItem || targetItem.status !== 'voting' || targetItem.userVeto) return;
     const userIso = selectedCountry?.iso?.toLowerCase() || '';
-    if (
-      voteType === 'no' &&
-      targetItem.userVote !== 'no' &&
-      userIso &&
-      !isPermanentSecurityCouncilMember(userIso) &&
-      canUseSecurityCouncilVeto(userIso, itemId)
-    ) {
+    if (useVeto && (!userIso || !canUseSecurityCouncilVeto(userIso, itemId))) return;
+    if (useVeto && !isPermanentSecurityCouncilMember(userIso)) {
       const updatedElection = markLimitedVetoUsed(userIso, itemId);
-      if (updatedElection) {
-        setCountryDetail?.(previous => previous
-          ? { ...previous, pbbSecurityCouncilElection: updatedElection }
-          : previous
-        );
-        setNonPermanentMembers(updatedElection.members);
-      }
+      if (!updatedElection) return;
+      setCountryDetail?.(previous => previous
+        ? { ...previous, pbbSecurityCouncilElection: updatedElection }
+        : previous
+      );
+      setNonPermanentMembers(updatedElection.members);
     }
     const updated = currentList.map(item => {
       if (item.id !== itemId) return item;
       const prevVote = item.userVote;
       const newStats = { ...item.voteStats };
       if (prevVote === 'yes') newStats.supportersCount--;
-      if (prevVote === 'no') newStats.opponentsCount--;
+      if (prevVote === 'no' && !item.userVeto) newStats.opponentsCount--;
       if (prevVote === 'abstain') newStats.abstainCount--;
 
       if (voteType === 'yes') newStats.supportersCount++;
-      if (voteType === 'no') newStats.opponentsCount++;
+      if (voteType === 'no' && !useVeto) newStats.opponentsCount++;
       if (voteType === 'abstain') newStats.abstainCount++;
+      if (useVeto) newStats.vetoCount++;
 
       return {
         ...item,
         userVote: voteType,
+        userVeto: useVeto,
+        userVetoIso: useVeto ? userIso : undefined,
+        vetoedBy: useVeto
+          ? [...new Set([...(item.vetoedBy || []), userIso])]
+          : item.vetoedBy,
         voteStats: newStats
       };
     });
 
     setActiveSecurityCouncilItems(updated);
     saveActiveSecurityCouncilItems(updated);
+  };
+
+  const handleSecurityVeto = (itemId: string) => {
+    if (!selectedCountry?.iso || isSelectedCountryAnnexed) return;
+    handleSecurityVote(itemId, 'no', true);
   };
 
   useEffect(() => {
@@ -761,7 +779,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                         : item.status !== 'voting' ? 'Voting Ditutup:' : 'Suara Anda:'}
                     </span>
                     <button
-                      disabled={item.status !== 'voting' || isSelectedCountryAnnexed}
+                      disabled={item.status !== 'voting' || isSelectedCountryAnnexed || Boolean(item.userVeto)}
                       onClick={() => handleSecurityVote(item.id, 'yes')}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
                         item.status !== 'voting'
@@ -776,22 +794,40 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                       Setuju
                     </button>
                     <button
-                      disabled={item.status !== 'voting' || isSelectedCountryAnnexed}
+                      disabled={item.status !== 'voting' || isSelectedCountryAnnexed || Boolean(item.userVeto)}
                       onClick={() => handleSecurityVote(item.id, 'no')}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
                         item.status !== 'voting'
                           ? item.userVote === 'no'
                             ? 'bg-rose-500/50 text-white cursor-not-allowed opacity-70'
                             : 'bg-[#051111]/50 text-rose-400/40 border border-rose-500/10 cursor-not-allowed opacity-40'
-                          : item.userVote === 'no'
+                          : item.userVote === 'no' && !item.userVeto
                             ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30 cursor-pointer'
                             : 'bg-[#051111] text-rose-400 border border-rose-500/30 hover:bg-rose-500/20 cursor-pointer'
                       }`}
                     >
                       Menolak
                     </button>
+                    {selectedCountry?.iso && canUseSecurityCouncilVeto(selectedCountry.iso, item.id) && (
+                      <button
+                        disabled={item.status !== 'voting' || isSelectedCountryAnnexed || Boolean(item.userVeto)}
+                        onClick={() => handleSecurityVeto(item.id)}
+                        title={isPermanentSecurityCouncilMember(selectedCountry.iso)
+                          ? 'Gunakan hak veto tetap'
+                          : 'Gunakan satu hak veto terbatas masa jabatan'}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
+                          item.userVeto
+                            ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-500/30 cursor-not-allowed'
+                            : item.status !== 'voting' || isSelectedCountryAnnexed
+                              ? 'bg-[#051111]/50 text-amber-400/40 border border-amber-500/10 cursor-not-allowed opacity-40'
+                              : 'bg-[#051111] text-amber-400 border border-amber-500/40 hover:bg-amber-500/20 cursor-pointer'
+                        }`}
+                      >
+                        <span className="inline-flex items-center gap-1"><ShieldAlert className="h-3.5 w-3.5" /> Veto</span>
+                      </button>
+                    )}
                     <button
-                      disabled={item.status !== 'voting' || isSelectedCountryAnnexed}
+                      disabled={item.status !== 'voting' || isSelectedCountryAnnexed || Boolean(item.userVeto)}
                       onClick={() => handleSecurityVote(item.id, 'abstain')}
                       className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase transition-all ${
                         item.status !== 'voting'

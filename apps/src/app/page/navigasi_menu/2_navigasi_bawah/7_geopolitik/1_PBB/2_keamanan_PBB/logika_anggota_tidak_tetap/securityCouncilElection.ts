@@ -309,7 +309,13 @@ export function isLimitedVetoAvailable(countryIso: string, resolutionId?: string
   const member = getStoredCouncilMembers().find(
     candidate => candidate.iso.toLowerCase() === countryIso.toLowerCase()
   );
-  return Boolean(member && (!member.vetoUsed || member.vetoUsedOn === resolutionId));
+  const currentYear = getCurrentElectionYear();
+  return Boolean(
+    member &&
+    currentYear >= member.termStartYear &&
+    currentYear <= member.termEndYear &&
+    (!member.vetoUsed || member.vetoUsedOn === resolutionId)
+  );
 }
 
 export function markLimitedVetoUsed(countryIso: string, resolutionId: string): SecurityCouncilElectionState | null {

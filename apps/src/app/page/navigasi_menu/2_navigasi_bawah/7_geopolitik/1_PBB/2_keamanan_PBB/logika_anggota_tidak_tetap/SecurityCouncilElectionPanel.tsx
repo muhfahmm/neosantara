@@ -103,7 +103,6 @@ export default function SecurityCouncilElectionPanel({
     try {
       localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, JSON.stringify(election));
       onMembersChange?.(election.members);
-      window.dispatchEvent(new CustomEvent("pbb_security_council_election_roster_updated"));
       setCountryDetail?.(previous => previous
         ? { ...previous, pbbSecurityCouncilElection: election }
         : previous

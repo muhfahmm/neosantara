@@ -81,7 +81,7 @@ export interface ActiveResolutionItem {
 }
 
 export const STORAGE_KEY_PBB_RESOLUSI = 'pbb_active_resolutions_v4';
-export const TOTAL_UN_MEMBERS = 206;
+export const TOTAL_UN_MEMBERS = STATIC_PBB_VOTES.length;
 
 let sessionResolutions: ActiveResolutionItem[] = [];
 let initializedSessionResolutions = false;
@@ -170,7 +170,7 @@ function stringHash(str: string): number {
 }
 
 /**
- * Hitung kalkulasi perolehan 206 suara negara AI berdasarkan hari berjalan (30 hari).
+ * Hitung kalkulasi perolehan suara negara AI berdasarkan hari berjalan (30 hari).
  * Dimulai dari 0 pada hari ke-0 (Sisa 30 hari), dan terakumulasi seiring berjalannya kalender.
  * Suara kalkulasi dinamis berdasarkan hubungan Pengusul, Target, dan Tipe Resolusi.
  */
@@ -185,10 +185,10 @@ export function calculate206AIVotes(
   const elapsedDays = Math.max(0, Math.min(30, 30 - daysRemaining));
   const progressRatio = elapsedDays / 30;
 
-  // Total AI countries = 205 (selain user)
+  // Semua negara pada daftar pemilih berpartisipasi, kecuali negara pemain dan negara yang dianeksasi.
   const baseAiCount = Math.max(
     0,
-    205 - getAnnexedCountryCount(
+    TOTAL_UN_MEMBERS - 1 - getAnnexedCountryCount(
       STATIC_PBB_VOTES.map(country => ({
         name: country.name_id,
         iso: getIsoForCountryName(country.name_id),
@@ -388,7 +388,7 @@ export function spawnAIResolutionFromTrigger(
 /**
  * Pemrosesan daily tick kalender untuk Resolusi PBB:
  * - Menurunkan sisa hari (30 -> 0) berdasarkan selisih tanggal kalender
- * - Memperbarui partisipasi 206 negara AI secara progresif dari 0 hingga 206
+ * - Memperbarui partisipasi negara AI secara progresif sesuai daftar pemilih
  * - Memicu notifikasi popup Inbox jika sisa hari <= 10 dan user belum vote.
  */
 export function tickPBBResolutions(
@@ -455,9 +455,12 @@ export function tickPBBResolutions(
 
       const newDaysRemaining = Math.max(0, item.daysRemaining - step);
       const eligibleUserVote = activeUserAnnexed ? null : item.userVote;
+      const finalUserVote = newDaysRemaining === 0 && !activeUserAnnexed
+        ? eligibleUserVote || 'abstain'
+        : eligibleUserVote;
       const votes = calculate206AIVotes(
         newDaysRemaining,
-        eligibleUserVote,
+        finalUserVote,
         proposer?.name,
         item.target?.name,
         item.type,
@@ -557,7 +560,7 @@ export function tickPBBResolutions(
         ...item,
         createdAt: startDate,
         finishedAt: finishedAtDate,
-        userVote: eligibleUserVote,
+        userVote: finalUserVote,
         daysRemaining: finalStatus === 'passed'
           ? getResolutionDurationDays(item.duration)
           : finalStatus === 'rejected'

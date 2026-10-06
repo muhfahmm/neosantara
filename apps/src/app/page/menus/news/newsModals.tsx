@@ -49,6 +49,17 @@ export default function TopRightNewsIcon({
     }
   }, [newsList]);
 
+  useEffect(() => {
+    if (!showToast || !toastNews) return;
+
+    const timer = window.setTimeout(() => {
+      dismissedToastIdRef.current = toastNews.id;
+      setShowToast(false);
+    }, 3000);
+
+    return () => window.clearTimeout(timer);
+  }, [showToast, toastNews?.id]);
+
   const filteredNews = newsList.filter((item) => {
     if (filterType === 'semua') return true;
     return item.type === filterType;
@@ -122,7 +133,7 @@ export default function TopRightNewsIcon({
 
       {/* 🔥 POPUP TOAST NOTIFIKASI BERITA DI SEBELAH KIRI (DI BAWAH INBOX, RENDERED VIA PORTAL Z-200000) */}
       {mounted && showToast && toastNews && createPortal(
-        <div className="fixed top-36 lg:top-40 xl:top-44 left-7 z-[200000] flex flex-col items-start gap-2 pointer-events-auto">
+        <div className="fixed top-[19rem] left-7 z-[100100] pointer-events-auto">
           <div
             onClick={() => {
               if (toastNews) {
@@ -131,11 +142,11 @@ export default function TopRightNewsIcon({
               setShowToast(false);
               if (onClick) onClick();
             }}
-            className="w-80 bg-[#0F2424] border-2 border-[#00FFAA] rounded-2xl p-3.5 shadow-[0_10px_30px_rgba(0,255,170,0.35)] animate-in fade-in slide-in-from-top-3 duration-300 cursor-pointer hover:bg-[#143030] transition-all group relative z-[200000]"
+            className="w-64 max-h-[calc(100vh-20rem)] overflow-y-auto bg-[#0F2424] border-2 border-[#00FFAA] rounded-xl p-2.5 shadow-[0_8px_22px_rgba(0,255,170,0.3)] animate-in fade-in slide-in-from-top-3 duration-300 cursor-pointer hover:bg-[#143030] transition-all group"
           >
             <div className="flex items-center justify-between pb-1.5 border-b border-[#00FFAA]/30">
-              <span className="text-[11px] font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#00FFAA] animate-ping" />
+              <span className="text-[10px] font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#00FFAA] animate-ping" />
                 Berita Geopolitik Baru!
               </span>
               <button
@@ -148,16 +159,13 @@ export default function TopRightNewsIcon({
                 }}
                 className="text-slate-400 hover:text-white p-0.5 rounded"
               >
-                <X className="w-4 h-4 text-[#00FFAA]" />
+                <X className="w-3.5 h-3.5 text-[#00FFAA]" />
               </button>
             </div>
-            <h5 className="text-xs font-bold text-white mt-2 line-clamp-1 group-hover:text-[#00FFAA] transition-colors leading-snug">
+            <h5 className="text-[11px] font-bold text-white mt-1.5 whitespace-normal break-words group-hover:text-[#00FFAA] transition-colors leading-snug">
               {toastNews.headline}
             </h5>
-            <p className="text-[11px] text-[#A0B0B0] mt-1 line-clamp-2 leading-relaxed font-medium">
-              {toastNews.content}
-            </p>
-            <div className="flex items-center justify-between mt-2.5 pt-1.5 border-t border-[#00FFAA]/10 text-[10px] text-[#6B8A8A]">
+            <div className="flex items-center justify-between mt-1.5 pt-1 border-t border-[#00FFAA]/10 text-[9px] text-[#6B8A8A]">
               <span>{toastNews.timestamp}</span>
               <span className="font-extrabold text-[#00FFAA] group-hover:underline">Buka Berita →</span>
             </div>
