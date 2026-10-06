@@ -1,4 +1,5 @@
 import { PROFILES_POPULATION_DATA } from "@/../../json/semua_fitur_negara/0_profiles/index";
+import { getProductionBonusMultiplier } from "../../../5_pembangunan/1_produksi/bonus_logic";
 
 const parsePopulationText = (value: any): number => {
   if (value === null || value === undefined || value === '') return 0;
@@ -280,7 +281,7 @@ export const calculateProduction = (buildingKey: string, countryDetail: any, met
     return 0;
   }
 
-  return baseProd * count;
+  return baseProd * count * getProductionBonusMultiplier(countryDetail, buildingKey);
 };
 
 // Calculate consumption based on population and consumption per capita

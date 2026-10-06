@@ -1,3 +1,5 @@
+import { getProductionBonusMultiplier } from "../../../bonus_logic";
+
 export interface FuelRule {
   resourceKey: string;
   label: string;
@@ -38,7 +40,9 @@ export function getElectricityFuelBalance(
     (entry: any) => entry?.dataKey === resourceKey
   );
   const miningCount = Math.max(0, Number(countryDetail[resourceKey]) || 0);
-  const production = miningCount * (Number(resourceMetadata?.produksi) || 0);
+  const production = miningCount
+    * (Number(resourceMetadata?.produksi) || 0)
+    * getProductionBonusMultiplier(countryDetail, resourceKey);
   const consumption = Object.entries(KELISTRIKAN_FUEL_REQUIREMENTS).reduce((total, [buildingKey, requirements]) => {
     const buildingCount = Math.max(0, Number(countryDetail[buildingKey]) || 0);
     const resourceUse = requirements

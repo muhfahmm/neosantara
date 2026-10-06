@@ -1,8 +1,10 @@
 "use client"
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Vote, Search } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 import { STATIC_PBB_VOTES } from "./staticVoteData";
+import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles";
+import { applyCatholicVoteBonus } from "../../../5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/katolik";
 
 interface CountryVoteRow {
   name_id: string;
@@ -40,14 +42,30 @@ const renderFlag = (iso?: string, fallbackName?: string) => {
 
 export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [countryProfiles, setCountryProfiles] = useState<CountryProfile[]>([]);
+
+  useEffect(() => {
+    let isCurrent = true;
+    fetchAllCountryProfilesFromDb().then(profiles => {
+      if (isCurrent) setCountryProfiles(profiles);
+    });
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
 
   const countryVotes = useMemo<CountryVoteRow[]>(() => {
     const byName = new Map<string, string>();
+    const religionByName = new Map<string, string>();
     for (const country of COUNTRIES_DATA) {
       const normalized = normalizeName(country.country);
       if (normalized) {
         byName.set(normalized, country.iso?.toLowerCase() || "");
       }
+    }
+    for (const profile of countryProfiles) {
+      const normalized = normalizeName(profile.name_id);
+      if (normalized) religionByName.set(normalized, profile.religion);
     }
 
     const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
@@ -57,10 +75,11 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
     STATIC_PBB_VOTES.forEach((entry) => {
       const norm = normalizeName(entry.name_id);
       const iso = byName.get(norm);
+      const religion = religionByName.get(norm);
       baseVotes.set(entry.name_id, {
         name_id: entry.name_id,
         iso,
-        un_vote: entry.un_vote,
+        un_vote: applyCatholicVoteBonus(entry.un_vote, religion),
       });
     });
 
@@ -114,7 +133,7 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
     return Array.from(baseVotes.values())
       .filter((entry) => !annexedTargets.has(entry.name_id))
       .sort((a, b) => (b.un_vote ?? 0) - (a.un_vote ?? 0));
-  }, []);
+  }, [countryProfiles]);
 
   const filteredVotes = useMemo(() => {
     if (!searchQuery.trim()) return countryVotes;

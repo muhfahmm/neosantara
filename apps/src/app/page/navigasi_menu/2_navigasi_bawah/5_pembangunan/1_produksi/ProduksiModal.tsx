@@ -30,6 +30,7 @@ import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid
 import { getEconomicEmbargoIncomeMultiplier, getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
 import { loadActiveResolutions, isPassedResolutionActive, normalizePbbCountryName } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { loadActiveSecurityCouncilItems } from "../../7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
+import { getProductionBonusMultiplier } from "./bonus_logic";
 
 
 
@@ -195,7 +196,7 @@ export default function ProduksiModal({
     const count = Number(countryDetail?.[fuelKey]) || 0;
     const meta = findMeta(fuelKey);
     const prodPerUnit = Number(meta?.produksi) || 0;
-    const totalProd = count * prodPerUnit;
+    const totalProd = count * prodPerUnit * getProductionBonusMultiplier(countryDetail, fuelKey);
     return { totalProd, totalCons, balance: totalProd - totalCons };
   };
 
@@ -204,17 +205,18 @@ export default function ProduksiModal({
     const bMeta = findMeta(buildingKey);
     const perUnit = Number(bMeta?.produksi) || 0;
     if (count === 0 || perUnit === 0) return 0;
+    const productionMultiplier = getProductionBonusMultiplier(countryDetail, buildingKey);
 
     const fuelRequirements = getKelistrikanFuelRequirements(buildingKey);
     if (!fuelRequirements || fuelRequirements.length === 0) {
-      return perUnit * count;
+      return perUnit * count * productionMultiplier;
     }
 
     for (const req of fuelRequirements) {
       const balance = getFuelBalance(req.resourceKey).balance;
       if (balance < 0) return 0;
     }
-    return perUnit * count;
+    return perUnit * count * productionMultiplier;
   };
 
   const handleMaterialClick = (resourceKey: string, label: string) => {
@@ -247,7 +249,9 @@ export default function ProduksiModal({
     setCountryDetail,
     metadata,
     currentDate,
-    resourceKey => getEconomicEmbargoProductionMultiplier(countryDetail?.country || '', resourceKey)
+    resourceKey =>
+      getEconomicEmbargoProductionMultiplier(countryDetail?.country || '', resourceKey) *
+      getProductionBonusMultiplier(countryDetail, resourceKey)
   );
 
   // 🟢 PERBAIKAN: Daftar bangunan listrik harus didefinisikan SEBELUM calculateProductionAmount
@@ -270,7 +274,7 @@ export default function ProduksiModal({
       const productionMultiplier = getEconomicEmbargoProductionMultiplier(
         countryDetail?.country || '',
         resourceKey
-      );
+      ) * getProductionBonusMultiplier(countryDetail, resourceKey);
       const buildingCount = Number(countryDetail?.[resourceKey]) || 0;
       if (buildingCount === 0 || !metadata || Object.keys(metadata).length === 0) return 0;
       const bMeta = findMeta(resourceKey);
@@ -614,7 +618,7 @@ export default function ProduksiModal({
                   <Info className="h-5 w-5 text-[#00FFAA]" />
                 </div>
                 <h3 id="production-sanction-info-title" className="text-sm font-black uppercase tracking-wide text-[#00FFAA]">
-                  Dampak Sanksi & Embargo
+                  Bonus & Sanksi Produksi
                 </h3>
               </div>
               <button
@@ -627,6 +631,16 @@ export default function ProduksiModal({
               </button>
             </div>
             <div className="space-y-4 px-5 py-5 text-sm leading-relaxed text-slate-300">
+              {getProductionBonusMultiplier(countryDetail, "uranium") > 1 ? (
+                <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-200">
+                  <strong className="text-white">Bonus agama Islam: +10% produksi.</strong>{" "}
+                  Bonus berlaku untuk SDA non-emas di Mineral & Energi serta sektor Peternakan, Agrikultur, Perikanan, dan Olahan Pangan. Manufaktur dan listrik tidak mendapat bonus.
+                </div>
+              ) : (
+                <p className="rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] p-3">
+                  Belum ada bonus agama untuk produksi yang aktif.
+                </p>
+              )}
               {hasActiveSanctions ? (
                 <p>
                   Negara <strong className="text-white">{playerCountryName}</strong> sedang terkena resolusi PBB berikut:

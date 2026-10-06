@@ -13,6 +13,7 @@ import {
   calculateCountryFoodDetails
 } from "./logic/produksiKonsumsiLogic";
 import { PROFILES_POPULATION_DATA } from "@/../../json/semua_fitur_negara/0_profiles/index";
+import { getProductionBonusMultiplier } from "../../5_pembangunan/1_produksi/bonus_logic";
 
 // 🔥 IMPOR MODAL DAN LOGIKA
 import AISuggestModal from "./AI_suggest_modals";
@@ -362,6 +363,11 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                                 </div>
                                 {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 transition-all cursor-pointer shrink-0"><Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 font-bold" /></button>)}
                               </div>
+                              {getProductionBonusMultiplier(countryDetail, key) > 1 && (
+                                <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-1 text-[8px] lg:text-[9px] font-bold leading-tight text-emerald-300">
+                                  Produksi ditingkatkan 10% oleh bonus agama Islam.
+                                </div>
+                              )}
                               <div className="space-y-1 text-[10px] lg:text-xs">
                                 <div className="flex justify-between items-center bg-emerald-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-md border border-emerald-500/30"><span className="text-[8px] lg:text-[9px] font-bold text-emerald-400 uppercase tracking-tight">Total Produksi</span>{formatColoredNumber(production, true)}</div>
                                 <div className="flex justify-between items-center bg-rose-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-md border border-rose-500/30"><span className="text-[8px] lg:text-[9px] font-bold text-rose-400 uppercase tracking-tight">Total Konsumsi</span>{formatColoredNumber(consumption, false)}</div>

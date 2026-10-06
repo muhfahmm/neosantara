@@ -17,6 +17,7 @@ import { generateProductionSectorAnalysis } from "./ai_suggestions/productionAIS
 import { getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
 import { getActiveProductionBanForResource } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/5_laranganProduksiLogic";
 import { formatProductionProductName } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
+import { getProductionBonusMultiplier } from "./bonus_logic";
 
 const ELECTRICITY_FUEL_RESOURCE_KEYS = [
   "gas_alam",
@@ -184,7 +185,9 @@ export default function BaseProduksiGrid({
           const isAvailable = isAvailableInCountry && !isProductionBanned;
           const fuelRequirements = isElectricityTab ? getKelistrikanFuelRequirements(key) : [];
           const isFuelResource = ELECTRICITY_FUEL_RESOURCE_KEYS.includes(key);
-          const productionMultiplier = getEconomicEmbargoProductionMultiplier(countryDetail?.country || '', key);
+          const sanctionMultiplier = getEconomicEmbargoProductionMultiplier(countryDetail?.country || '', key);
+          const religionMultiplier = getProductionBonusMultiplier(countryDetail, key);
+          const productionMultiplier = sanctionMultiplier * religionMultiplier;
 
           const effectiveProduction = calculateProductionAmount(key);
           const isProductionZero = effectiveProduction === 0 && perCount > 0;
@@ -239,7 +242,8 @@ export default function BaseProduksiGrid({
                   isElectricityTab={isElectricityTab}
                   isProductionZero={isProductionZero}
                   rawProduction={rawProduction}
-                  productionMultiplier={productionMultiplier}
+                  productionMultiplier={sanctionMultiplier}
+                  religionProductionMultiplier={religionMultiplier}
                   onClose={() => setHoveredBuildingKey(null)}
                   onNavigateToTab={onNavigateToTab}
                 />

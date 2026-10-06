@@ -1,4 +1,5 @@
 import { getElectricityFuelBalance, getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
+import { getProductionBonusMultiplier } from "../../5_pembangunan/1_produksi/bonus_logic";
 
 export function findMeta(metadata: Record<string, any> | undefined, key: string) {
   if (!metadata) return undefined;
@@ -56,7 +57,7 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
         }
       }
     }
-    return sum + (isFuelDeficit ? 0 : count * unitProduction);
+    return sum + (isFuelDeficit ? 0 : count * unitProduction * getProductionBonusMultiplier(countryData, key));
   }, 0);
 
   // Koreksi penyeimbang (disimpan per-negara di DB agar neraca = 0)
