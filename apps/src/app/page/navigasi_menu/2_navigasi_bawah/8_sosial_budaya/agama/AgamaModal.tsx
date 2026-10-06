@@ -161,6 +161,11 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
       const countrySlug = String(countryDetail?.country_slug || '');
       if (!countrySlug) throw new Error('Slug negara pemain tidak tersedia; perubahan agama tidak dapat disimpan.');
       await updateCountryProfileSocialData(countrySlug, { religion: selectedReligion });
+      try {
+        localStorage.setItem(`neosantara_country_religion_${countrySlug.trim().toLowerCase()}`, selectedReligion);
+      } catch (storageError) {
+        console.error('Agama berhasil disimpan ke database, tetapi cache localStorage gagal diperbarui:', storageError);
+      }
 
       const oldReligion = countryDetail?.religion || "Islam";
       const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];

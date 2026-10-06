@@ -1681,6 +1681,18 @@ export default function MapPage() {
         }
     };
 
+    const religionCacheKey = (countrySlug: string) =>
+        `neosantara_country_religion_${countrySlug.trim().toLowerCase()}`;
+
+    const cacheDatabaseReligion = (countrySlug: string, religion: string) => {
+        if (typeof window === 'undefined' || !countrySlug || !religion) return;
+        try {
+            localStorage.setItem(religionCacheKey(countrySlug), religion);
+        } catch (error) {
+            console.error('Gagal menyimpan cache agama negara:', error);
+        }
+    };
+
     // Reusable function to load stats for a country
     const loadCountryStats = async (countryName: string, capitalName: string) => {
         const relPath = Object.entries(countryPaths).find(
@@ -1696,6 +1708,10 @@ export default function MapPage() {
             if (mergedData?.error) {
                 console.warn(`Country data load error for ${countryName}:`, mergedData.error);
                 return;
+            }
+
+            if (mergedData.country_slug && mergedData.religion) {
+                cacheDatabaseReligion(mergedData.country_slug, mergedData.religion);
             }
 
             const defaultPrices = await loadDefaultPrices(countryName);
@@ -1784,29 +1800,64 @@ export default function MapPage() {
         if (typeof window !== 'undefined') {
             const loadSaveStr = localStorage.getItem('presiden_simulator_load_save');
             if (loadSaveStr) {
-                try {
-                    const savedState = JSON.parse(loadSaveStr);
-                    const chosen = COUNTRIES_DATA.find(
-                        c => c.country.toLowerCase() === savedState.country_name.toLowerCase()
-                    );
-                    if (chosen) {
-                        setSelectedCountry(chosen);
+                void (async () => {
+                    try {
+                        const savedState = JSON.parse(loadSaveStr);
+                        const savedCountryName = String(savedState.country_name || '');
+                        const chosen = COUNTRIES_DATA.find(
+                            c => c.country.toLowerCase() === savedCountryName.toLowerCase()
+                        );
+                        if (!chosen) return;
 
-                        // Restore countryDetail from saved state, or use parsed countryDetail if available
-                        let restoredDetail: any = {
+                        setSelectedCountry(chosen);
+                        const savedDetail = savedState.countryDetail && typeof savedState.countryDetail === 'object'
+                            ? savedState.countryDetail
+                            : {};
+                        let databaseReligion = '';
+                        let databaseSlug = '';
+                        const relPath = Object.entries(countryPaths as Record<string, string>).find(
+                            ([name]) => name.toLowerCase() === chosen.country.toLowerCase()
+                        )?.[1];
+
+                        if (!relPath) {
+                            console.error(`Jalur profil ${chosen.country} tidak ditemukan; agama dari database tidak dapat dimuat.`);
+                        } else {
+                            try {
+                                const response = await fetch(`/api/country-data?path=${encodeURIComponent(relPath)}`);
+                                if (!response.ok) {
+                                    throw new Error(`HTTP ${response.status}`);
+                                }
+                                const profile = await response.json();
+                                if (profile?.error) throw new Error(profile.error);
+                                databaseReligion = typeof profile?.religion === 'string' ? profile.religion : '';
+                                databaseSlug = typeof profile?.country_slug === 'string' ? profile.country_slug : '';
+                                if (databaseSlug && databaseReligion) {
+                                    cacheDatabaseReligion(databaseSlug, databaseReligion);
+                                }
+                            } catch (error) {
+                                console.error(`Gagal memuat agama ${chosen.country} dari database:`, error);
+                            }
+                        }
+
+                        let cachedReligion = '';
+                        const cacheSlug = databaseSlug || String(savedDetail.country_slug || savedCountryName);
+                        try {
+                            cachedReligion = localStorage.getItem(religionCacheKey(cacheSlug)) || '';
+                        } catch (error) {
+                            console.error('Gagal membaca cache agama negara:', error);
+                        }
+
+                        const restoredDetail: any = {
                             capital: savedState.capital || chosen.capital,
                             jumlah_penduduk: Number(savedState.jumlah_penduduk),
                             anggaran: Number(savedState.anggaran),
                             ideology: savedState.ideology || '-',
-                            religion: savedState.religion || '-',
                             un_vote: Number(savedState.un_vote),
-                            kepuasan: Number(savedState.kepuasan) || 50
+                            kepuasan: Number(savedState.kepuasan) || 50,
+                            ...savedDetail,
+                            ...(databaseSlug ? { country_slug: databaseSlug } : {}),
+                            religion: databaseReligion || cachedReligion || savedDetail.religion || savedState.religion || '-',
                         };
-
-                        // If full countryDetail was saved (includes accumulated_* and build_date_* fields)
-                        if (savedState.countryDetail && typeof savedState.countryDetail === 'object') {
-                            restoredDetail = { ...restoredDetail, ...savedState.countryDetail };
-                        }
 
                         setCountryDetail(restoredDetail);
                         if (restoredDetail.presidentRating !== undefined) {
@@ -1816,13 +1867,12 @@ export default function MapPage() {
                             setKesejahteraan(Number(restoredDetail.kesejahteraan));
                         }
 
-                        // Clean up saved state from localStorage so it doesn't re-apply
                         localStorage.removeItem('presiden_simulator_load_save');
-                        return; // Done restoring save!
+                    } catch (error) {
+                        console.error('Gagal memulihkan data save:', error);
                     }
-                } catch (e) {
-                    console.error("Failed to parse loaded save state:", e);
-                }
+                })();
+                return;
             }
 
             const params = new URLSearchParams(window.location.search);
