@@ -216,5 +216,10 @@ INSERT INTO database_sektor_peternakan (id, country, country_slug, ayam_unggas, 
 (204, 'Peru', 'peru', 35, 28, 19, 10),
 (205, 'Suriname', 'suriname', 1, 1, 1, 1),
 (206, 'Uruguay', 'uruguay', 4, 4, 2, 1),
-(207, 'Venezuela', 'venezuela', 29, 23, 19, 8);
+(207, 'Venezuela', 'venezuela', 29, 23, 19, 8),
+(208, 'Mayotte', 'mayotte', 0, 0, 0, 0),
+(209, 'Reunion', 'reunion', 0, 0, 0, 0),
+(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0),
+(211, 'Martinique', 'martinique', 0, 0, 0, 0),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0);
 -- ========================================================

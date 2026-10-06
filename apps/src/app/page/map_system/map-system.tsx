@@ -99,7 +99,7 @@ import {
     ANNEXED_AGGREGATE_KEYS,
     releaseAnnexedProvince,
     type AnnexedContribution
-} from '../detail_negara/1_informasi_umum/provinsi_logic/1_beri_kemerdekaan';
+} from '../detail_negara/1_informasi_umum/provinsi_logic/1_informasi_umum/1_beri_kemerdekaan';
 import {
     createProvinceReferendum,
     hasProvinceReferendumEnded,

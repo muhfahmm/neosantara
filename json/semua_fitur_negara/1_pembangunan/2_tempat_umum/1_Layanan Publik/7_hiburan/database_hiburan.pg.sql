@@ -215,7 +215,12 @@ id, country, country_slug, bioskop, teater
 (204, 'Peru', 'peru', 458, 191),
 (205, 'Suriname', 'suriname', 9, 4),
 (206, 'Uruguay', 'uruguay', 58, 24),
-(207, 'Venezuela', 'venezuela', 275, 115);
+(207, 'Venezuela', 'venezuela', 275, 115),
+(208, 'Mayotte', 'mayotte', 0, 0),
+(209, 'Reunion', 'reunion', 0, 0),
+(210, 'Guadeloupe', 'guadeloupe', 0, 0),
+(211, 'Martinique', 'martinique', 0, 0),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0);
 -- ========================================================
 -- ========================================================
 -- database_hunian_permukiman SQL Export

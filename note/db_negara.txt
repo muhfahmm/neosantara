@@ -24,184 +24,189 @@
 24. [ ] bermuda
 25. [ ] bhutan
 26. [ ] bolivia
-27. [ ] bosnia dan hercegovina
-28. [ ] botswana
-29. [ ] brazil
-30. [ ] brunei
-31. [ ] bulgaria
-32. [ ] burkina faso
-33. [ ] burundi
-34. [ ] ceko
-35. [ ] chad
-36. [ ] chile
-37. [ ] china
-38. [ ] costa rica
-39. [ ] curacao
-40. [ ] denmark
-41. [ ] djibouti
-42. [ ] dominika
-43. [ ] ekuador
-44. [ ] el salvador
-45. [ ] eritrea
-46. [ ] estonia
-47. [ ] eswatini
-48. [ ] ethiopia
-49. [ ] fiji
-50. [ ] filipina
-51. [ ] finlandia
-52. [ ] gabon
-53. [ ] gambia
-54. [ ] georgia
-55. [ ] ghana
-56. [ ] gibraltar
-57. [ ] greenland
-58. [ ] grenada
-59. [ ] guam
-60. [ ] guatemala
-61. [ ] guiana prancis
-62. [ ] guinea
-63. [ ] guinea bissau
-64. [ ] guyana
-65. [ ] haiti
-66. [ ] honduras
-67. [ ] hong kong
-68. [ ] hungaria
-69. [ ] india
-70. [ ] indonesia
-71. [ ] inggris
-72. [ ] irak
-73. [ ] iran
-74. [ ] irlandia
-75. [ ] islandia
-76. [ ] israel
-77. [ ] italia
-78. [ ] jamaika
-79. [ ] jepang
-80. [ ] jerman
-81. [ ] kamboja
-82. [ ] kamerun
-83. [ ] kanada
-84. [ ] kazakhstan
-85. [ ] kenya
-86. [ ] kepulauan faroe
-87. [ ] kirgizstan
-88. [ ] kiribati
-89. [ ] kolombia
-90. [ ] komoro
-91. [ ] kongo
-92. [ ] korea selatan
-93. [ ] korea utara
-94. [ ] kosovo
-95. [ ] kroasia
-96. [ ] kuba
-97. [ ] kuwait
-98. [ ] laos
-99. [ ] latvia
-100. [ ] lebanon
-101. [ ] lesotho
-102. [ ] liberia
-103. [ ] libya
-104. [ ] liechtenstein
-105. [ ] lithuania
-106. [ ] luksemburg
-107. [ ] madagaskar
-108. [ ] makau
-109. [ ] makedonia utara
-110. [ ] malawi
-111. [ ] malaysia
-112. [ ] maldives
-113. [ ] mali
-114. [ ] malta
-115. [ ] maroko
-116. [ ] marshall
-117. [ ] mauritania
-118. [ ] mauritius
-119. [ ] meksiko
-120. [ ] mesir
-121. [ ] mikronesia
-122. [ ] moldova
-123. [ ] monako
-124. [ ] mongolia
-125. [ ] montenegro
-126. [ ] mozambik
-127. [ ] myanmar
-128. [ ] namibia
-129. [ ] nauru
-130. [ ] nepal
-131. [ ] niger
-132. [ ] nigeria
-133. [ ] nikaragua
-134. [ ] norwegia
-135. [ ] oman
-136. [ ] pakistan
-137. [ ] palau
-138. [ ] palestina
-139. [ ] panama
-140. [ ] pantai gading
-141. [ ] papua nugini
-142. [ ] paraguay
-143. [ ] peru
-144. [ ] polandia
-145. [ ] portugal
-146. [ ] prancis
-147. [ ] puerto rico
-148. [ ] qatar
-149. [ ] republik afrika tengah
-150. [ ] republik demokratik kongo
-151. [ ] republik dominika
-152. [ ] republik rumania
-153. [ ] republik serbia
-154. [ ] republik sudan
-155. [ ] republik tanzania
-156. [ ] republik timor leste
-157. [ ] republik uganda
-158. [ ] republik zambia
-159. [ ] republik zimbabwe
-160. [ ] rusia
-161. [ ] rwanda
-162. [ ] saint kitts dan nevis
-163. [ ] saint lucia
-164. [ ] saint vincent dan grenadine
-165. [ ] samoa
-166. [ ] samoa amerika
-167. [ ] san marino
-168. [ ] sao tome dan principe
-169. [ ] selandia baru
-170. [ ] senegal
-171. [ ] seychelles
-172. [ ] sierra leone
-173. [ ] singapura
-174. [ ] siprus
-175. [ ] slovenia
-176. [ ] slowakia
-177. [ ] somalia
-178. [ ] spanyol
-179. [ ] sri lanka
-180. [ ] sudan selatan
-181. [ ] suriah
-182. [ ] suriname
-183. [ ] swedia
-184. [ ] swiss
-185. [ ] tahiti
-186. [ ] taiwan
-187. [ ] tajikistan
-188. [ ] tanjung verde
-189. [ ] thailand
-190. [ ] togo
-191. [ ] tonga
-192. [ ] trinidad dan tobago
-193. [ ] tunisia
-194. [ ] turki
-195. [ ] turkmenistan
-196. [ ] tuvalu
-197. [ ] ukraina
-198. [ ] uni emirat arab
-199. [ ] uruguay
-200. [ ] uzbekistan
-201. [ ] vanuatu
-202. [ ] vatikan
-203. [ ] venezuela
-204. [ ] vietnam
-205. [ ] yaman
-206. [ ] yordania
-207. [ ] yunani
+27. [ ] bonaire, sint eustatius dan saba
+28. [ ] bosnia dan hercegovina
+29. [ ] botswana
+30. [ ] brazil
+31. [ ] brunei
+32. [ ] bulgaria
+33. [ ] burkina faso
+34. [ ] burundi
+35. [ ] ceko
+36. [ ] chad
+37. [ ] chile
+38. [ ] china
+39. [ ] costa rica
+40. [ ] curacao
+41. [ ] denmark
+42. [ ] djibouti
+43. [ ] dominika
+44. [ ] ekuador
+45. [ ] el salvador
+46. [ ] eritrea
+47. [ ] estonia
+48. [ ] eswatini
+49. [ ] ethiopia
+50. [ ] fiji
+51. [ ] filipina
+52. [ ] finlandia
+53. [ ] gabon
+54. [ ] gambia
+55. [ ] georgia
+56. [ ] ghana
+57. [ ] gibraltar
+58. [ ] greenland
+59. [ ] grenada
+60. [ ] guadeloupe
+61. [ ] guam
+62. [ ] guatemala
+63. [ ] guiana prancis
+64. [ ] guinea
+65. [ ] guinea bissau
+66. [ ] guyana
+67. [ ] haiti
+68. [ ] honduras
+69. [ ] hong kong
+70. [ ] hungaria
+71. [ ] india
+72. [ ] indonesia
+73. [ ] inggris
+74. [ ] irak
+75. [ ] iran
+76. [ ] irlandia
+77. [ ] islandia
+78. [ ] israel
+79. [ ] italia
+80. [ ] jamaika
+81. [ ] jepang
+82. [ ] jerman
+83. [ ] kamboja
+84. [ ] kamerun
+85. [ ] kanada
+86. [ ] kazakhstan
+87. [ ] kenya
+88. [ ] kepulauan faroe
+89. [ ] kirgizstan
+90. [ ] kiribati
+91. [ ] kolombia
+92. [ ] komoro
+93. [ ] kongo
+94. [ ] korea selatan
+95. [ ] korea utara
+96. [ ] kosovo
+97. [ ] kroasia
+98. [ ] kuba
+99. [ ] kuwait
+100. [ ] laos
+101. [ ] latvia
+102. [ ] lebanon
+103. [ ] lesotho
+104. [ ] liberia
+105. [ ] libya
+106. [ ] liechtenstein
+107. [ ] lithuania
+108. [ ] luksemburg
+109. [ ] madagaskar
+110. [ ] makau
+111. [ ] makedonia utara
+112. [ ] malawi
+113. [ ] malaysia
+114. [ ] maldives
+115. [ ] mali
+116. [ ] malta
+117. [ ] maroko
+118. [ ] marshall
+119. [ ] martinique
+120. [ ] mauritania
+121. [ ] mauritius
+122. [ ] mayotte
+123. [ ] meksiko
+124. [ ] mesir
+125. [ ] mikronesia
+126. [ ] moldova
+127. [ ] monako
+128. [ ] mongolia
+129. [ ] montenegro
+130. [ ] mozambik
+131. [ ] myanmar
+132. [ ] namibia
+133. [ ] nauru
+134. [ ] nepal
+135. [ ] niger
+136. [ ] nigeria
+137. [ ] nikaragua
+138. [ ] norwegia
+139. [ ] oman
+140. [ ] pakistan
+141. [ ] palau
+142. [ ] palestina
+143. [ ] panama
+144. [ ] pantai gading
+145. [ ] papua nugini
+146. [ ] paraguay
+147. [ ] peru
+148. [ ] polandia
+149. [ ] portugal
+150. [ ] prancis
+151. [ ] puerto rico
+152. [ ] qatar
+153. [ ] republik afrika tengah
+154. [ ] republik demokratik kongo
+155. [ ] republik dominika
+156. [ ] republik rumania
+157. [ ] republik serbia
+158. [ ] republik sudan
+159. [ ] republik tanzania
+160. [ ] republik timor leste
+161. [ ] republik uganda
+162. [ ] republik zambia
+163. [ ] republik zimbabwe
+164. [ ] reunion
+165. [ ] rusia
+166. [ ] rwanda
+167. [ ] saint kitts dan nevis
+168. [ ] saint lucia
+169. [ ] saint vincent dan grenadine
+170. [ ] samoa
+171. [ ] samoa amerika
+172. [ ] san marino
+173. [ ] sao tome dan principe
+174. [ ] selandia baru
+175. [ ] senegal
+176. [ ] seychelles
+177. [ ] sierra leone
+178. [ ] singapura
+179. [ ] siprus
+180. [ ] slovenia
+181. [ ] slowakia
+182. [ ] somalia
+183. [ ] spanyol
+184. [ ] sri lanka
+185. [ ] sudan selatan
+186. [ ] suriah
+187. [ ] suriname
+188. [ ] swedia
+189. [ ] swiss
+190. [ ] tahiti
+191. [ ] taiwan
+192. [ ] tajikistan
+193. [ ] tanjung verde
+194. [ ] thailand
+195. [ ] togo
+196. [ ] tonga
+197. [ ] trinidad dan tobago
+198. [ ] tunisia
+199. [ ] turki
+200. [ ] turkmenistan
+201. [ ] tuvalu
+202. [ ] ukraina
+203. [ ] uni emirat arab
+204. [ ] uruguay
+205. [ ] uzbekistan
+206. [ ] vanuatu
+207. [ ] vatikan
+208. [ ] venezuela
+209. [ ] vietnam
+210. [ ] yaman
+211. [ ] yordania
+212. [ ] yunani

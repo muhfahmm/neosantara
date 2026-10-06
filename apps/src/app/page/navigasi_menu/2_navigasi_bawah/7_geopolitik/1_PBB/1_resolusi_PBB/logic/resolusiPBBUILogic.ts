@@ -586,6 +586,7 @@ export function getResolutionCountryBreakdown(
 
   const targetSupporterCount = Math.max(0, resItem.voteStats.supportersCount);
   const targetOpponentCount = Math.max(0, resItem.voteStats.opponentsCount);
+  const targetAbstainCount = Math.max(0, resItem.voteStats.abstainCount);
 
   const proposerName = resItem.proposer.name.toLowerCase();
   const targetName = resItem.target.name.toLowerCase();
@@ -679,7 +680,7 @@ export function getResolutionCountryBreakdown(
       supporters.push(item.country);
     } else if (opponents.length < targetOpponentCount) {
       opponents.push(item.country);
-    } else {
+    } else if (abstain.length < targetAbstainCount) {
       abstain.push(item.country);
     }
   });

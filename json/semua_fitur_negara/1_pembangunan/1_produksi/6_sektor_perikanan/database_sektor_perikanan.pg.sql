@@ -215,5 +215,10 @@ INSERT INTO database_sektor_perikanan (id, country, country_slug, udang, mutiara
 (204, 'Peru', 'peru', 110, 23, 280),
 (205, 'Suriname', 'suriname', 3, 0, 5),
 (206, 'Uruguay', 'uruguay', 14, 3, 31),
-(207, 'Venezuela', 'venezuela', 91, 19, 238);
+(207, 'Venezuela', 'venezuela', 91, 19, 238),
+(208, 'Mayotte', 'mayotte', 0, 0, 0),
+(209, 'Reunion', 'reunion', 0, 0, 0),
+(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0),
+(211, 'Martinique', 'martinique', 0, 0, 0),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0);
 -- ========================================================

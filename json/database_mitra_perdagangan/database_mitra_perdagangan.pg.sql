@@ -1630,4 +1630,37 @@ country_id, country_slug, mitra_no, mitra_country, trade_type, status
 (1608, 'venezuela', 6, 'Angola', 'Perdagangan', 'Aktif'),
 (1609, 'venezuela', 7, 'Belanda', 'Perdagangan', 'Aktif'),
 (1610, 'venezuela', 8, 'Albania', 'Perdagangan', 'Aktif');
+INSERT INTO database_mitra_perdagangan (
+country_id, country_slug, mitra_no, mitra_country, trade_type, status
+) VALUES
+(1611, 'mayotte', 1, 'Komoro', 'Perdagangan', 'Aktif'),
+(1612, 'mayotte', 2, 'Madagaskar', 'Perdagangan', 'Aktif'),
+(1613, 'mayotte', 3, 'Republik tanzania', 'Perdagangan', 'Aktif'),
+(1614, 'mayotte', 4, 'Mauritius', 'Perdagangan', 'Aktif'),
+(1615, 'mayotte', 5, 'Seychelles', 'Perdagangan', 'Aktif'),
+(1616, 'mayotte', 6, 'Prancis', 'Perdagangan', 'Aktif'),
+(1617, 'reunion', 1, 'Madagaskar', 'Perdagangan', 'Aktif'),
+(1618, 'reunion', 2, 'Mauritius', 'Perdagangan', 'Aktif'),
+(1619, 'reunion', 3, 'Afrika Selatan', 'Perdagangan', 'Aktif'),
+(1620, 'reunion', 4, 'Seychelles', 'Perdagangan', 'Aktif'),
+(1621, 'reunion', 5, 'Komoro', 'Perdagangan', 'Aktif'),
+(1622, 'reunion', 6, 'Prancis', 'Perdagangan', 'Aktif'),
+(1623, 'guadeloupe', 1, 'Prancis', 'Perdagangan', 'Aktif'),
+(1624, 'guadeloupe', 2, 'Amerika Serikat', 'Perdagangan', 'Aktif'),
+(1625, 'guadeloupe', 3, 'Kanada', 'Perdagangan', 'Aktif'),
+(1626, 'guadeloupe', 4, 'Haiti', 'Perdagangan', 'Aktif'),
+(1627, 'guadeloupe', 5, 'Kuba', 'Perdagangan', 'Aktif'),
+(1628, 'guadeloupe', 6, 'Republik dominika', 'Perdagangan', 'Aktif'),
+(1629, 'martinique', 1, 'Prancis', 'Perdagangan', 'Aktif'),
+(1630, 'martinique', 2, 'Barbados', 'Perdagangan', 'Aktif'),
+(1631, 'martinique', 3, 'Trinidad dan tobago', 'Perdagangan', 'Aktif'),
+(1632, 'martinique', 4, 'Venezuela', 'Perdagangan', 'Aktif'),
+(1633, 'martinique', 5, 'Brazil', 'Perdagangan', 'Aktif'),
+(1634, 'martinique', 6, 'Amerika Serikat', 'Perdagangan', 'Aktif'),
+(1635, 'bonaire_sint_eustatius_dan_saba', 1, 'Belanda', 'Perdagangan', 'Aktif'),
+(1636, 'bonaire_sint_eustatius_dan_saba', 2, 'Venezuela', 'Perdagangan', 'Aktif'),
+(1637, 'bonaire_sint_eustatius_dan_saba', 3, 'Kolombia', 'Perdagangan', 'Aktif'),
+(1638, 'bonaire_sint_eustatius_dan_saba', 4, 'Curacao', 'Perdagangan', 'Aktif'),
+(1639, 'bonaire_sint_eustatius_dan_saba', 5, 'Republik dominika', 'Perdagangan', 'Aktif'),
+(1640, 'bonaire_sint_eustatius_dan_saba', 6, 'Amerika Serikat', 'Perdagangan', 'Aktif');
 -- ========================================================

@@ -218,4 +218,9 @@ id, country, country_slug, tarif_ppn, tarif_korporasi, tarif_penghasilan, tarif_
 (204, 'Peru', 'peru', 23, 30, 30, 0, 0),
 (205, 'Suriname', 'suriname', 10, 36, 37, 10, 0),
 (206, 'Uruguay', 'uruguay', 22, 25, 36, 4, 1),
-(207, 'Venezuela', 'venezuela', 16, 31, 33, 10, 0);
+(207, 'Venezuela', 'venezuela', 16, 31, 33, 10, 0),
+(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0),
+(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0),
+(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0),
+(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0);

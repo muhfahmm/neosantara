@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, Star, Globe, MoonStar, Church, Sun, CircleDot, Atom, Check } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
-import { PROFILES_RELIGION_DATA } from "@/../../json/semua_fitur_negara/0_profiles/index";
+import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
 
 // 🔥 IMPOR MODAL KONFIRMASI DAN GAGAL
 import AgamaConfirmModal from "./modalsGanti";
@@ -60,6 +60,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   const [worldReligions, setWorldReligions] = useState<{ country: string; religion: string }[]>([]);
+  const [countryProfiles, setCountryProfiles] = useState<CountryProfile[]>([]);
   const [sortMode, setSortMode] = useState<"default" | "unavailable-last" | "az" | "za">("default");
 
   useEffect(() => {
@@ -68,8 +69,19 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
 
   useEffect(() => {
     if (!isOpen) return;
+    let isCurrent = true;
+    fetchAllCountryProfilesFromDb().then((profiles) => {
+      if (isCurrent) setCountryProfiles(profiles);
+    });
+    return () => {
+      isCurrent = false;
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
     const profileLookup = new Map<string, string>();
-    for (const p of PROFILES_RELIGION_DATA) {
+    for (const p of countryProfiles) {
       profileLookup.set(p.name_id.toLowerCase().trim(), p.religion);
     }
 
@@ -99,7 +111,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
         return { country: c.country, religion: profileReligion || 'Belum tersedia' };
       });
     setWorldReligions(data);
-  }, [isOpen, countryDetail]);
+  }, [isOpen, countryDetail, countryProfiles]);
 
   const sortedWorldReligions = useMemo(() => {
     if (sortMode === "default") return worldReligions;

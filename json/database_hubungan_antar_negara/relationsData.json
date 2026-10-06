@@ -205,7 +205,12 @@
     "peru": 84,
     "suriname": 79,
     "uruguay": 36,
-    "venezuela": 78
+    "venezuela": 78,
+    "mayotte": 53,
+    "reunion": 28,
+    "guadeloupe": 26,
+    "martinique": 47,
+    "bonaire, sint eustatius dan saba": 27
   },
   "aljazair": {
     "afrika selatan": 85,
@@ -413,7 +418,12 @@
     "peru": 83,
     "suriname": 48,
     "uruguay": 38,
-    "venezuela": 82
+    "venezuela": 82,
+    "mayotte": 18,
+    "reunion": 55,
+    "guadeloupe": 58,
+    "martinique": 78,
+    "bonaire, sint eustatius dan saba": 20
   },
   "angola": {
     "afrika selatan": 83,
@@ -621,7 +631,12 @@
     "peru": 78,
     "suriname": 81,
     "uruguay": 49,
-    "venezuela": 82
+    "venezuela": 82,
+    "mayotte": 32,
+    "reunion": 63,
+    "guadeloupe": 31,
+    "martinique": 26,
+    "bonaire, sint eustatius dan saba": 20
   },
   "benin": {
     "afrika selatan": 78,
@@ -829,7 +844,12 @@
     "peru": 37,
     "suriname": 49,
     "uruguay": 83,
-    "venezuela": 82
+    "venezuela": 82,
+    "mayotte": 76,
+    "reunion": 66,
+    "guadeloupe": 80,
+    "martinique": 59,
+    "bonaire, sint eustatius dan saba": 17
   },
   "botswana": {
     "afrika selatan": 84,
@@ -1037,7 +1057,12 @@
     "peru": 40,
     "suriname": 84,
     "uruguay": 43,
-    "venezuela": 41
+    "venezuela": 41,
+    "mayotte": 33,
+    "reunion": 54,
+    "guadeloupe": 45,
+    "martinique": 93,
+    "bonaire, sint eustatius dan saba": 36
   },
   "burkina_faso": {
     "afrika selatan": 84,
@@ -1245,7 +1270,12 @@
     "peru": 42,
     "suriname": 44,
     "uruguay": 46,
-    "venezuela": 49
+    "venezuela": 49,
+    "mayotte": 54,
+    "reunion": 64,
+    "guadeloupe": 32,
+    "martinique": 20,
+    "bonaire, sint eustatius dan saba": 39
   },
   "burundi": {
     "afrika selatan": 82,
@@ -1453,7 +1483,12 @@
     "peru": 48,
     "suriname": 47,
     "uruguay": 39,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 58,
+    "reunion": 24,
+    "guadeloupe": 52,
+    "martinique": 22,
+    "bonaire, sint eustatius dan saba": 64
   },
   "chad": {
     "afrika selatan": 46,
@@ -1661,7 +1696,12 @@
     "peru": 45,
     "suriname": 41,
     "uruguay": 46,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 16,
+    "reunion": 87,
+    "guadeloupe": 63,
+    "martinique": 84,
+    "bonaire, sint eustatius dan saba": 87
   },
   "djibouti": {
     "afrika selatan": 81,
@@ -1869,7 +1909,12 @@
     "peru": 44,
     "suriname": 44,
     "uruguay": 36,
-    "venezuela": 42
+    "venezuela": 42,
+    "mayotte": 31,
+    "reunion": 66,
+    "guadeloupe": 60,
+    "martinique": 32,
+    "bonaire, sint eustatius dan saba": 19
   },
   "eritrea": {
     "afrika selatan": 81,
@@ -2077,7 +2122,12 @@
     "peru": 47,
     "suriname": 38,
     "uruguay": 44,
-    "venezuela": 39
+    "venezuela": 39,
+    "mayotte": 79,
+    "reunion": 50,
+    "guadeloupe": 42,
+    "martinique": 75,
+    "bonaire, sint eustatius dan saba": 93
   },
   "eswatini": {
     "afrika selatan": 46,
@@ -2285,7 +2335,12 @@
     "peru": 46,
     "suriname": 48,
     "uruguay": 41,
-    "venezuela": 43
+    "venezuela": 43,
+    "mayotte": 82,
+    "reunion": 87,
+    "guadeloupe": 31,
+    "martinique": 91,
+    "bonaire, sint eustatius dan saba": 39
   },
   "ethiopia": {
     "afrika selatan": 48,
@@ -2493,7 +2548,12 @@
     "peru": 48,
     "suriname": 37,
     "uruguay": 48,
-    "venezuela": 43
+    "venezuela": 43,
+    "mayotte": 82,
+    "reunion": 76,
+    "guadeloupe": 72,
+    "martinique": 82,
+    "bonaire, sint eustatius dan saba": 59
   },
   "gabon": {
     "afrika selatan": 43,
@@ -2701,7 +2761,12 @@
     "peru": 36,
     "suriname": 40,
     "uruguay": 46,
-    "venezuela": 48
+    "venezuela": 48,
+    "mayotte": 27,
+    "reunion": 18,
+    "guadeloupe": 20,
+    "martinique": 75,
+    "bonaire, sint eustatius dan saba": 38
   },
   "gambia": {
     "afrika selatan": 79,
@@ -2909,7 +2974,12 @@
     "peru": 36,
     "suriname": 36,
     "uruguay": 47,
-    "venezuela": 37
+    "venezuela": 37,
+    "mayotte": 61,
+    "reunion": 58,
+    "guadeloupe": 17,
+    "martinique": 41,
+    "bonaire, sint eustatius dan saba": 29
   },
   "ghana": {
     "afrika selatan": 86,
@@ -3117,7 +3187,12 @@
     "peru": 38,
     "suriname": 41,
     "uruguay": 37,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 88,
+    "reunion": 83,
+    "guadeloupe": 88,
+    "martinique": 49,
+    "bonaire, sint eustatius dan saba": 71
   },
   "guinea": {
     "afrika selatan": 43,
@@ -3325,7 +3400,12 @@
     "peru": 48,
     "suriname": 36,
     "uruguay": 45,
-    "venezuela": 41
+    "venezuela": 41,
+    "mayotte": 69,
+    "reunion": 61,
+    "guadeloupe": 73,
+    "martinique": 93,
+    "bonaire, sint eustatius dan saba": 38
   },
   "guinea_bissau": {
     "afrika selatan": 40,
@@ -3533,7 +3613,12 @@
     "peru": 46,
     "suriname": 42,
     "uruguay": 44,
-    "venezuela": 42
+    "venezuela": 42,
+    "mayotte": 71,
+    "reunion": 89,
+    "guadeloupe": 52,
+    "martinique": 25,
+    "bonaire, sint eustatius dan saba": 77
   },
   "kamerun": {
     "afrika selatan": 84,
@@ -3741,7 +3826,12 @@
     "peru": 44,
     "suriname": 36,
     "uruguay": 49,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 38,
+    "reunion": 42,
+    "guadeloupe": 73,
+    "martinique": 16,
+    "bonaire, sint eustatius dan saba": 52
   },
   "kenya": {
     "afrika selatan": 85,
@@ -3949,7 +4039,12 @@
     "peru": 36,
     "suriname": 37,
     "uruguay": 48,
-    "venezuela": 44
+    "venezuela": 44,
+    "mayotte": 68,
+    "reunion": 25,
+    "guadeloupe": 24,
+    "martinique": 58,
+    "bonaire, sint eustatius dan saba": 53
   },
   "komoro": {
     "afrika selatan": 36,
@@ -4157,7 +4252,12 @@
     "peru": 49,
     "suriname": 48,
     "uruguay": 47,
-    "venezuela": 37
+    "venezuela": 37,
+    "mayotte": 15,
+    "reunion": 74,
+    "guadeloupe": 62,
+    "martinique": 53,
+    "bonaire, sint eustatius dan saba": 62
   },
   "kongo": {
     "afrika selatan": 78,
@@ -4365,7 +4465,12 @@
     "peru": 38,
     "suriname": 39,
     "uruguay": 49,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 93,
+    "reunion": 64,
+    "guadeloupe": 19,
+    "martinique": 65,
+    "bonaire, sint eustatius dan saba": 71
   },
   "lesotho": {
     "afrika selatan": 79,
@@ -4573,7 +4678,12 @@
     "peru": 42,
     "suriname": 49,
     "uruguay": 36,
-    "venezuela": 42
+    "venezuela": 42,
+    "mayotte": 55,
+    "reunion": 64,
+    "guadeloupe": 89,
+    "martinique": 91,
+    "bonaire, sint eustatius dan saba": 36
   },
   "liberia": {
     "afrika selatan": 36,
@@ -4781,7 +4891,12 @@
     "peru": 40,
     "suriname": 38,
     "uruguay": 47,
-    "venezuela": 37
+    "venezuela": 37,
+    "mayotte": 40,
+    "reunion": 16,
+    "guadeloupe": 35,
+    "martinique": 40,
+    "bonaire, sint eustatius dan saba": 81
   },
   "libya": {
     "afrika selatan": 78,
@@ -4989,7 +5104,12 @@
     "peru": 42,
     "suriname": 38,
     "uruguay": 39,
-    "venezuela": 39
+    "venezuela": 39,
+    "mayotte": 47,
+    "reunion": 80,
+    "guadeloupe": 62,
+    "martinique": 39,
+    "bonaire, sint eustatius dan saba": 82
   },
   "madagaskar": {
     "afrika selatan": 45,
@@ -5197,7 +5317,12 @@
     "peru": 46,
     "suriname": 44,
     "uruguay": 49,
-    "venezuela": 45
+    "venezuela": 45,
+    "mayotte": 62,
+    "reunion": 39,
+    "guadeloupe": 65,
+    "martinique": 61,
+    "bonaire, sint eustatius dan saba": 36
   },
   "malawi": {
     "afrika selatan": 37,
@@ -5405,7 +5530,12 @@
     "peru": 47,
     "suriname": 41,
     "uruguay": 46,
-    "venezuela": 37
+    "venezuela": 37,
+    "mayotte": 22,
+    "reunion": 38,
+    "guadeloupe": 90,
+    "martinique": 32,
+    "bonaire, sint eustatius dan saba": 37
   },
   "mali": {
     "afrika selatan": 38,
@@ -5613,7 +5743,12 @@
     "peru": 47,
     "suriname": 43,
     "uruguay": 41,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 49,
+    "reunion": 32,
+    "guadeloupe": 56,
+    "martinique": 63,
+    "bonaire, sint eustatius dan saba": 44
   },
   "maroko": {
     "afrika selatan": 87,
@@ -5821,7 +5956,12 @@
     "peru": 41,
     "suriname": 38,
     "uruguay": 41,
-    "venezuela": 42
+    "venezuela": 42,
+    "mayotte": 75,
+    "reunion": 49,
+    "guadeloupe": 19,
+    "martinique": 82,
+    "bonaire, sint eustatius dan saba": 47
   },
   "mauritania": {
     "afrika selatan": 80,
@@ -6029,7 +6169,12 @@
     "peru": 42,
     "suriname": 46,
     "uruguay": 42,
-    "venezuela": 47
+    "venezuela": 47,
+    "mayotte": 67,
+    "reunion": 77,
+    "guadeloupe": 93,
+    "martinique": 90,
+    "bonaire, sint eustatius dan saba": 38
   },
   "mauritius": {
     "afrika selatan": 43,
@@ -6237,7 +6382,12 @@
     "peru": 41,
     "suriname": 47,
     "uruguay": 40,
-    "venezuela": 41
+    "venezuela": 41,
+    "mayotte": 60,
+    "reunion": 51,
+    "guadeloupe": 68,
+    "martinique": 42,
+    "bonaire, sint eustatius dan saba": 65
   },
   "mesir": {
     "afrika selatan": 50,
@@ -6445,7 +6595,12 @@
     "peru": 40,
     "suriname": 36,
     "uruguay": 40,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 73,
+    "reunion": 42,
+    "guadeloupe": 75,
+    "martinique": 21,
+    "bonaire, sint eustatius dan saba": 48
   },
   "mozambik": {
     "afrika selatan": 50,
@@ -6653,7 +6808,12 @@
     "peru": 46,
     "suriname": 38,
     "uruguay": 44,
-    "venezuela": 41
+    "venezuela": 41,
+    "mayotte": 19,
+    "reunion": 19,
+    "guadeloupe": 89,
+    "martinique": 37,
+    "bonaire, sint eustatius dan saba": 54
   },
   "namibia": {
     "afrika selatan": 84,
@@ -6861,7 +7021,12 @@
     "peru": 36,
     "suriname": 48,
     "uruguay": 48,
-    "venezuela": 39
+    "venezuela": 39,
+    "mayotte": 28,
+    "reunion": 45,
+    "guadeloupe": 58,
+    "martinique": 73,
+    "bonaire, sint eustatius dan saba": 18
   },
   "niger": {
     "afrika selatan": 79,
@@ -7069,7 +7234,12 @@
     "peru": 40,
     "suriname": 42,
     "uruguay": 45,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 37,
+    "reunion": 81,
+    "guadeloupe": 79,
+    "martinique": 63,
+    "bonaire, sint eustatius dan saba": 59
   },
   "nigeria": {
     "afrika selatan": 83,
@@ -7277,7 +7447,12 @@
     "peru": 48,
     "suriname": 39,
     "uruguay": 42,
-    "venezuela": 44
+    "venezuela": 44,
+    "mayotte": 34,
+    "reunion": 45,
+    "guadeloupe": 77,
+    "martinique": 40,
+    "bonaire, sint eustatius dan saba": 21
   },
   "pantai_gading": {
     "afrika selatan": 87,
@@ -7485,7 +7660,12 @@
     "peru": 46,
     "suriname": 39,
     "uruguay": 40,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 88,
+    "reunion": 71,
+    "guadeloupe": 59,
+    "martinique": 67,
+    "bonaire, sint eustatius dan saba": 38
   },
   "republik_afrika_tengah": {
     "afrika selatan": 82,
@@ -7693,7 +7873,12 @@
     "peru": 45,
     "suriname": 37,
     "uruguay": 48,
-    "venezuela": 45
+    "venezuela": 45,
+    "mayotte": 32,
+    "reunion": 84,
+    "guadeloupe": 43,
+    "martinique": 16,
+    "bonaire, sint eustatius dan saba": 81
   },
   "republik_demokratik_kongo": {
     "afrika selatan": 46,
@@ -7901,7 +8086,12 @@
     "peru": 41,
     "suriname": 46,
     "uruguay": 38,
-    "venezuela": 48
+    "venezuela": 48,
+    "mayotte": 50,
+    "reunion": 80,
+    "guadeloupe": 80,
+    "martinique": 18,
+    "bonaire, sint eustatius dan saba": 34
   },
   "republik_sudan": {
     "afrika selatan": 49,
@@ -8109,7 +8299,12 @@
     "peru": 44,
     "suriname": 46,
     "uruguay": 38,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 24,
+    "reunion": 21,
+    "guadeloupe": 68,
+    "martinique": 19,
+    "bonaire, sint eustatius dan saba": 15
   },
   "republik_tanzania": {
     "afrika selatan": 86,
@@ -8317,7 +8512,12 @@
     "peru": 45,
     "suriname": 44,
     "uruguay": 45,
-    "venezuela": 48
+    "venezuela": 48,
+    "mayotte": 92,
+    "reunion": 83,
+    "guadeloupe": 71,
+    "martinique": 18,
+    "bonaire, sint eustatius dan saba": 80
   },
   "republik_uganda": {
     "afrika selatan": 85,
@@ -8525,7 +8725,12 @@
     "peru": 46,
     "suriname": 38,
     "uruguay": 45,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 19,
+    "reunion": 92,
+    "guadeloupe": 71,
+    "martinique": 91,
+    "bonaire, sint eustatius dan saba": 79
   },
   "republik_zambia": {
     "afrika selatan": 86,
@@ -8733,7 +8938,12 @@
     "peru": 36,
     "suriname": 40,
     "uruguay": 41,
-    "venezuela": 42
+    "venezuela": 42,
+    "mayotte": 49,
+    "reunion": 68,
+    "guadeloupe": 23,
+    "martinique": 40,
+    "bonaire, sint eustatius dan saba": 51
   },
   "republik_zimbabwe": {
     "afrika selatan": 84,
@@ -8941,7 +9151,12 @@
     "peru": 46,
     "suriname": 42,
     "uruguay": 38,
-    "venezuela": 42
+    "venezuela": 42,
+    "mayotte": 38,
+    "reunion": 48,
+    "guadeloupe": 82,
+    "martinique": 38,
+    "bonaire, sint eustatius dan saba": 80
   },
   "rwanda": {
     "afrika selatan": 48,
@@ -9149,7 +9364,12 @@
     "peru": 44,
     "suriname": 44,
     "uruguay": 42,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 29,
+    "reunion": 69,
+    "guadeloupe": 69,
+    "martinique": 93,
+    "bonaire, sint eustatius dan saba": 17
   },
   "sao_tome_dan_principe": {
     "afrika selatan": 38,
@@ -9357,7 +9577,12 @@
     "peru": 36,
     "suriname": 41,
     "uruguay": 44,
-    "venezuela": 45
+    "venezuela": 45,
+    "mayotte": 43,
+    "reunion": 19,
+    "guadeloupe": 80,
+    "martinique": 50,
+    "bonaire, sint eustatius dan saba": 45
   },
   "senegal": {
     "afrika selatan": 47,
@@ -9565,7 +9790,12 @@
     "peru": 40,
     "suriname": 40,
     "uruguay": 47,
-    "venezuela": 48
+    "venezuela": 48,
+    "mayotte": 88,
+    "reunion": 60,
+    "guadeloupe": 48,
+    "martinique": 44,
+    "bonaire, sint eustatius dan saba": 48
   },
   "seychelles": {
     "afrika selatan": 36,
@@ -9773,7 +10003,12 @@
     "peru": 42,
     "suriname": 38,
     "uruguay": 39,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 47,
+    "reunion": 61,
+    "guadeloupe": 71,
+    "martinique": 90,
+    "bonaire, sint eustatius dan saba": 49
   },
   "sierra_leone": {
     "afrika selatan": 79,
@@ -9981,7 +10216,12 @@
     "peru": 48,
     "suriname": 49,
     "uruguay": 46,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 74,
+    "reunion": 44,
+    "guadeloupe": 85,
+    "martinique": 85,
+    "bonaire, sint eustatius dan saba": 39
   },
   "somalia": {
     "afrika selatan": 78,
@@ -10189,7 +10429,12 @@
     "peru": 42,
     "suriname": 38,
     "uruguay": 38,
-    "venezuela": 42
+    "venezuela": 42,
+    "mayotte": 91,
+    "reunion": 37,
+    "guadeloupe": 17,
+    "martinique": 47,
+    "bonaire, sint eustatius dan saba": 88
   },
   "sudan_selatan": {
     "afrika selatan": 42,
@@ -10397,7 +10642,12 @@
     "peru": 40,
     "suriname": 44,
     "uruguay": 43,
-    "venezuela": 45
+    "venezuela": 45,
+    "mayotte": 40,
+    "reunion": 63,
+    "guadeloupe": 93,
+    "martinique": 18,
+    "bonaire, sint eustatius dan saba": 44
   },
   "tanjung_verde": {
     "afrika selatan": 44,
@@ -10605,7 +10855,12 @@
     "peru": 46,
     "suriname": 43,
     "uruguay": 49,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 16,
+    "reunion": 36,
+    "guadeloupe": 69,
+    "martinique": 64,
+    "bonaire, sint eustatius dan saba": 15
   },
   "togo": {
     "afrika selatan": 44,
@@ -10813,7 +11068,12 @@
     "peru": 47,
     "suriname": 36,
     "uruguay": 36,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 61,
+    "reunion": 48,
+    "guadeloupe": 47,
+    "martinique": 17,
+    "bonaire, sint eustatius dan saba": 49
   },
   "tunisia": {
     "afrika selatan": 45,
@@ -11021,7 +11281,12 @@
     "peru": 37,
     "suriname": 49,
     "uruguay": 47,
-    "venezuela": 49
+    "venezuela": 49,
+    "mayotte": 34,
+    "reunion": 69,
+    "guadeloupe": 68,
+    "martinique": 95,
+    "bonaire, sint eustatius dan saba": 70
   },
   "afganistan": {
     "afrika selatan": 48,
@@ -11229,7 +11494,12 @@
     "peru": 44,
     "suriname": 80,
     "uruguay": 83,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 64,
+    "reunion": 86,
+    "guadeloupe": 95,
+    "martinique": 35,
+    "bonaire, sint eustatius dan saba": 29
   },
   "arab_saudi": {
     "afrika selatan": 83,
@@ -11437,7 +11707,12 @@
     "peru": 80,
     "suriname": 79,
     "uruguay": 45,
-    "venezuela": 83
+    "venezuela": 83,
+    "mayotte": 77,
+    "reunion": 82,
+    "guadeloupe": 58,
+    "martinique": 23,
+    "bonaire, sint eustatius dan saba": 49
   },
   "armenia": {
     "afrika selatan": 48,
@@ -11645,7 +11920,12 @@
     "peru": 82,
     "suriname": 84,
     "uruguay": 46,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 52,
+    "reunion": 16,
+    "guadeloupe": 87,
+    "martinique": 33,
+    "bonaire, sint eustatius dan saba": 37
   },
   "azerbaijan": {
     "afrika selatan": 46,
@@ -11853,7 +12133,12 @@
     "peru": 37,
     "suriname": 78,
     "uruguay": 38,
-    "venezuela": 81
+    "venezuela": 81,
+    "mayotte": 53,
+    "reunion": 61,
+    "guadeloupe": 59,
+    "martinique": 38,
+    "bonaire, sint eustatius dan saba": 33
   },
   "bahrain": {
     "afrika selatan": 84,
@@ -12061,7 +12346,12 @@
     "peru": 82,
     "suriname": 48,
     "uruguay": 36,
-    "venezuela": 42
+    "venezuela": 42,
+    "mayotte": 57,
+    "reunion": 73,
+    "guadeloupe": 80,
+    "martinique": 18,
+    "bonaire, sint eustatius dan saba": 43
   },
   "bangladesh": {
     "afrika selatan": 78,
@@ -12269,7 +12559,12 @@
     "peru": 44,
     "suriname": 83,
     "uruguay": 40,
-    "venezuela": 43
+    "venezuela": 43,
+    "mayotte": 67,
+    "reunion": 39,
+    "guadeloupe": 50,
+    "martinique": 52,
+    "bonaire, sint eustatius dan saba": 82
   },
   "bhutan": {
     "afrika selatan": 80,
@@ -12477,7 +12772,12 @@
     "peru": 43,
     "suriname": 80,
     "uruguay": 44,
-    "venezuela": 80
+    "venezuela": 80,
+    "mayotte": 75,
+    "reunion": 26,
+    "guadeloupe": 65,
+    "martinique": 17,
+    "bonaire, sint eustatius dan saba": 76
   },
   "brunei": {
     "afrika selatan": 83,
@@ -12685,7 +12985,12 @@
     "peru": 48,
     "suriname": 84,
     "uruguay": 48,
-    "venezuela": 78
+    "venezuela": 78,
+    "mayotte": 23,
+    "reunion": 74,
+    "guadeloupe": 20,
+    "martinique": 93,
+    "bonaire, sint eustatius dan saba": 47
   },
   "china": {
     "afrika selatan": 82,
@@ -12893,7 +13198,12 @@
     "peru": 43,
     "suriname": 40,
     "uruguay": 46,
-    "venezuela": 53
+    "venezuela": 53,
+    "mayotte": 71,
+    "reunion": 74,
+    "guadeloupe": 61,
+    "martinique": 25,
+    "bonaire, sint eustatius dan saba": 95
   },
   "filipina": {
     "afrika selatan": 78,
@@ -13101,7 +13411,12 @@
     "peru": 43,
     "suriname": 46,
     "uruguay": 37,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 79,
+    "reunion": 32,
+    "guadeloupe": 34,
+    "martinique": 87,
+    "bonaire, sint eustatius dan saba": 23
   },
   "georgia": {
     "afrika selatan": 47,
@@ -13309,7 +13624,12 @@
     "peru": 44,
     "suriname": 46,
     "uruguay": 41,
-    "venezuela": 41
+    "venezuela": 41,
+    "mayotte": 44,
+    "reunion": 80,
+    "guadeloupe": 44,
+    "martinique": 31,
+    "bonaire, sint eustatius dan saba": 44
   },
   "hong_kong": {
     "afrika selatan": 78,
@@ -13517,7 +13837,12 @@
     "peru": 36,
     "suriname": 47,
     "uruguay": 46,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 79,
+    "reunion": 50,
+    "guadeloupe": 71,
+    "martinique": 71,
+    "bonaire, sint eustatius dan saba": 37
   },
   "india": {
     "afrika selatan": 82,
@@ -13725,7 +14050,12 @@
     "peru": 39,
     "suriname": 47,
     "uruguay": 44,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 18,
+    "reunion": 80,
+    "guadeloupe": 34,
+    "martinique": 90,
+    "bonaire, sint eustatius dan saba": 84
   },
   "indonesia": {
     "afrika selatan": 48,
@@ -13933,7 +14263,12 @@
     "peru": 45,
     "suriname": 40,
     "uruguay": 46,
-    "venezuela": 45
+    "venezuela": 45,
+    "mayotte": 57,
+    "reunion": 85,
+    "guadeloupe": 25,
+    "martinique": 30,
+    "bonaire, sint eustatius dan saba": 77
   },
   "irak": {
     "afrika selatan": 45,
@@ -14141,7 +14476,12 @@
     "peru": 42,
     "suriname": 49,
     "uruguay": 45,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 47,
+    "reunion": 32,
+    "guadeloupe": 70,
+    "martinique": 31,
+    "bonaire, sint eustatius dan saba": 76
   },
   "iran": {
     "afrika selatan": 83,
@@ -14349,7 +14689,12 @@
     "peru": 40,
     "suriname": 43,
     "uruguay": 39,
-    "venezuela": 53
+    "venezuela": 53,
+    "mayotte": 15,
+    "reunion": 83,
+    "guadeloupe": 75,
+    "martinique": 70,
+    "bonaire, sint eustatius dan saba": 79
   },
   "israel": {
     "afrika selatan": 81,
@@ -14557,7 +14902,12 @@
     "peru": 42,
     "suriname": 40,
     "uruguay": 36,
-    "venezuela": 28
+    "venezuela": 28,
+    "mayotte": 33,
+    "reunion": 30,
+    "guadeloupe": 76,
+    "martinique": 69,
+    "bonaire, sint eustatius dan saba": 21
   },
   "jepang": {
     "afrika selatan": 78,
@@ -14765,7 +15115,12 @@
     "peru": 42,
     "suriname": 46,
     "uruguay": 48,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 56,
+    "reunion": 69,
+    "guadeloupe": 61,
+    "martinique": 88,
+    "bonaire, sint eustatius dan saba": 82
   },
   "kamboja": {
     "afrika selatan": 36,
@@ -14973,7 +15328,12 @@
     "peru": 46,
     "suriname": 44,
     "uruguay": 41,
-    "venezuela": 43
+    "venezuela": 43,
+    "mayotte": 68,
+    "reunion": 47,
+    "guadeloupe": 21,
+    "martinique": 94,
+    "bonaire, sint eustatius dan saba": 24
   },
   "kazakhstan": {
     "afrika selatan": 43,
@@ -15181,7 +15541,12 @@
     "peru": 48,
     "suriname": 39,
     "uruguay": 48,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 45,
+    "reunion": 78,
+    "guadeloupe": 62,
+    "martinique": 46,
+    "bonaire, sint eustatius dan saba": 58
   },
   "kirgizstan": {
     "afrika selatan": 45,
@@ -15389,7 +15754,12 @@
     "peru": 36,
     "suriname": 38,
     "uruguay": 44,
-    "venezuela": 49
+    "venezuela": 49,
+    "mayotte": 31,
+    "reunion": 51,
+    "guadeloupe": 29,
+    "martinique": 41,
+    "bonaire, sint eustatius dan saba": 91
   },
   "korea_selatan": {
     "afrika selatan": 38,
@@ -15597,7 +15967,12 @@
     "peru": 42,
     "suriname": 37,
     "uruguay": 48,
-    "venezuela": 31
+    "venezuela": 31,
+    "mayotte": 63,
+    "reunion": 72,
+    "guadeloupe": 43,
+    "martinique": 77,
+    "bonaire, sint eustatius dan saba": 91
   },
   "korea_utara": {
     "afrika selatan": 46,
@@ -15805,7 +16180,12 @@
     "peru": 36,
     "suriname": 42,
     "uruguay": 38,
-    "venezuela": 50
+    "venezuela": 50,
+    "mayotte": 50,
+    "reunion": 40,
+    "guadeloupe": 73,
+    "martinique": 41,
+    "bonaire, sint eustatius dan saba": 94
   },
   "kuwait": {
     "afrika selatan": 81,
@@ -16013,7 +16393,12 @@
     "peru": 40,
     "suriname": 42,
     "uruguay": 37,
-    "venezuela": 47
+    "venezuela": 47,
+    "mayotte": 72,
+    "reunion": 41,
+    "guadeloupe": 87,
+    "martinique": 80,
+    "bonaire, sint eustatius dan saba": 76
   },
   "laos": {
     "afrika selatan": 42,
@@ -16221,7 +16606,12 @@
     "peru": 43,
     "suriname": 44,
     "uruguay": 48,
-    "venezuela": 44
+    "venezuela": 44,
+    "mayotte": 69,
+    "reunion": 59,
+    "guadeloupe": 87,
+    "martinique": 63,
+    "bonaire, sint eustatius dan saba": 70
   },
   "lebanon": {
     "afrika selatan": 84,
@@ -16429,7 +16819,12 @@
     "peru": 42,
     "suriname": 40,
     "uruguay": 42,
-    "venezuela": 43
+    "venezuela": 43,
+    "mayotte": 60,
+    "reunion": 55,
+    "guadeloupe": 77,
+    "martinique": 83,
+    "bonaire, sint eustatius dan saba": 69
   },
   "makau": {
     "afrika selatan": 40,
@@ -16637,7 +17032,12 @@
     "peru": 49,
     "suriname": 45,
     "uruguay": 48,
-    "venezuela": 48
+    "venezuela": 48,
+    "mayotte": 57,
+    "reunion": 15,
+    "guadeloupe": 71,
+    "martinique": 26,
+    "bonaire, sint eustatius dan saba": 21
   },
   "malaysia": {
     "afrika selatan": 80,
@@ -16845,7 +17245,12 @@
     "peru": 42,
     "suriname": 37,
     "uruguay": 45,
-    "venezuela": 37
+    "venezuela": 37,
+    "mayotte": 64,
+    "reunion": 15,
+    "guadeloupe": 31,
+    "martinique": 54,
+    "bonaire, sint eustatius dan saba": 77
   },
   "maldives": {
     "afrika selatan": 81,
@@ -17053,7 +17458,12 @@
     "peru": 40,
     "suriname": 43,
     "uruguay": 49,
-    "venezuela": 41
+    "venezuela": 41,
+    "mayotte": 82,
+    "reunion": 58,
+    "guadeloupe": 61,
+    "martinique": 23,
+    "bonaire, sint eustatius dan saba": 54
   },
   "mongolia": {
     "afrika selatan": 79,
@@ -17261,7 +17671,12 @@
     "peru": 44,
     "suriname": 47,
     "uruguay": 39,
-    "venezuela": 41
+    "venezuela": 41,
+    "mayotte": 21,
+    "reunion": 87,
+    "guadeloupe": 37,
+    "martinique": 30,
+    "bonaire, sint eustatius dan saba": 50
   },
   "myanmar": {
     "afrika selatan": 36,
@@ -17469,7 +17884,12 @@
     "peru": 39,
     "suriname": 41,
     "uruguay": 48,
-    "venezuela": 52
+    "venezuela": 52,
+    "mayotte": 91,
+    "reunion": 79,
+    "guadeloupe": 25,
+    "martinique": 89,
+    "bonaire, sint eustatius dan saba": 63
   },
   "nepal": {
     "afrika selatan": 38,
@@ -17677,7 +18097,12 @@
     "peru": 40,
     "suriname": 44,
     "uruguay": 40,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 51,
+    "reunion": 69,
+    "guadeloupe": 44,
+    "martinique": 47,
+    "bonaire, sint eustatius dan saba": 21
   },
   "oman": {
     "afrika selatan": 47,
@@ -17885,7 +18310,12 @@
     "peru": 38,
     "suriname": 39,
     "uruguay": 48,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 41,
+    "reunion": 62,
+    "guadeloupe": 25,
+    "martinique": 54,
+    "bonaire, sint eustatius dan saba": 15
   },
   "pakistan": {
     "afrika selatan": 37,
@@ -18093,7 +18523,12 @@
     "peru": 42,
     "suriname": 48,
     "uruguay": 41,
-    "venezuela": 44
+    "venezuela": 44,
+    "mayotte": 59,
+    "reunion": 58,
+    "guadeloupe": 50,
+    "martinique": 68,
+    "bonaire, sint eustatius dan saba": 38
   },
   "palestina": {
     "afrika selatan": 82,
@@ -18301,7 +18736,12 @@
     "peru": 47,
     "suriname": 45,
     "uruguay": 39,
-    "venezuela": 49
+    "venezuela": 49,
+    "mayotte": 18,
+    "reunion": 48,
+    "guadeloupe": 64,
+    "martinique": 16,
+    "bonaire, sint eustatius dan saba": 23
   },
   "qatar": {
     "afrika selatan": 78,
@@ -18509,7 +18949,12 @@
     "peru": 45,
     "suriname": 36,
     "uruguay": 46,
-    "venezuela": 37
+    "venezuela": 37,
+    "mayotte": 80,
+    "reunion": 89,
+    "guadeloupe": 90,
+    "martinique": 80,
+    "bonaire, sint eustatius dan saba": 76
   },
   "republik_timor_leste": {
     "afrika selatan": 45,
@@ -18717,7 +19162,12 @@
     "peru": 43,
     "suriname": 44,
     "uruguay": 48,
-    "venezuela": 41
+    "venezuela": 41,
+    "mayotte": 43,
+    "reunion": 74,
+    "guadeloupe": 93,
+    "martinique": 76,
+    "bonaire, sint eustatius dan saba": 59
   },
   "singapura": {
     "afrika selatan": 38,
@@ -18925,7 +19375,12 @@
     "peru": 38,
     "suriname": 49,
     "uruguay": 43,
-    "venezuela": 31
+    "venezuela": 31,
+    "mayotte": 22,
+    "reunion": 32,
+    "guadeloupe": 51,
+    "martinique": 56,
+    "bonaire, sint eustatius dan saba": 87
   },
   "sri_lanka": {
     "afrika selatan": 82,
@@ -19133,7 +19588,12 @@
     "peru": 42,
     "suriname": 37,
     "uruguay": 39,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 80,
+    "reunion": 94,
+    "guadeloupe": 65,
+    "martinique": 22,
+    "bonaire, sint eustatius dan saba": 57
   },
   "suriah": {
     "afrika selatan": 82,
@@ -19341,7 +19801,12 @@
     "peru": 45,
     "suriname": 47,
     "uruguay": 45,
-    "venezuela": 53
+    "venezuela": 53,
+    "mayotte": 33,
+    "reunion": 89,
+    "guadeloupe": 20,
+    "martinique": 64,
+    "bonaire, sint eustatius dan saba": 37
   },
   "taiwan": {
     "afrika selatan": 84,
@@ -19549,7 +20014,12 @@
     "peru": 42,
     "suriname": 37,
     "uruguay": 48,
-    "venezuela": 29
+    "venezuela": 29,
+    "mayotte": 28,
+    "reunion": 57,
+    "guadeloupe": 61,
+    "martinique": 15,
+    "bonaire, sint eustatius dan saba": 51
   },
   "tajikistan": {
     "afrika selatan": 38,
@@ -19757,7 +20227,12 @@
     "peru": 39,
     "suriname": 47,
     "uruguay": 44,
-    "venezuela": 41
+    "venezuela": 41,
+    "mayotte": 61,
+    "reunion": 36,
+    "guadeloupe": 91,
+    "martinique": 71,
+    "bonaire, sint eustatius dan saba": 57
   },
   "thailand": {
     "afrika selatan": 46,
@@ -19965,7 +20440,12 @@
     "peru": 48,
     "suriname": 40,
     "uruguay": 40,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 48,
+    "reunion": 66,
+    "guadeloupe": 31,
+    "martinique": 56,
+    "bonaire, sint eustatius dan saba": 39
   },
   "turkmenistan": {
     "afrika selatan": 79,
@@ -20173,7 +20653,12 @@
     "peru": 36,
     "suriname": 45,
     "uruguay": 39,
-    "venezuela": 42
+    "venezuela": 42,
+    "mayotte": 17,
+    "reunion": 40,
+    "guadeloupe": 47,
+    "martinique": 89,
+    "bonaire, sint eustatius dan saba": 45
   },
   "uni_emirat_arab": {
     "afrika selatan": 78,
@@ -20381,7 +20866,12 @@
     "peru": 46,
     "suriname": 45,
     "uruguay": 38,
-    "venezuela": 47
+    "venezuela": 47,
+    "mayotte": 74,
+    "reunion": 80,
+    "guadeloupe": 39,
+    "martinique": 57,
+    "bonaire, sint eustatius dan saba": 68
   },
   "uzbekistan": {
     "afrika selatan": 82,
@@ -20589,7 +21079,12 @@
     "peru": 48,
     "suriname": 42,
     "uruguay": 48,
-    "venezuela": 41
+    "venezuela": 41,
+    "mayotte": 79,
+    "reunion": 45,
+    "guadeloupe": 28,
+    "martinique": 59,
+    "bonaire, sint eustatius dan saba": 77
   },
   "vietnam": {
     "afrika selatan": 81,
@@ -20797,7 +21292,12 @@
     "peru": 37,
     "suriname": 40,
     "uruguay": 41,
-    "venezuela": 45
+    "venezuela": 45,
+    "mayotte": 27,
+    "reunion": 85,
+    "guadeloupe": 91,
+    "martinique": 16,
+    "bonaire, sint eustatius dan saba": 71
   },
   "yaman": {
     "afrika selatan": 83,
@@ -21005,7 +21505,12 @@
     "peru": 42,
     "suriname": 45,
     "uruguay": 42,
-    "venezuela": 39
+    "venezuela": 39,
+    "mayotte": 25,
+    "reunion": 51,
+    "guadeloupe": 41,
+    "martinique": 37,
+    "bonaire, sint eustatius dan saba": 33
   },
   "yordania": {
     "afrika selatan": 79,
@@ -21213,7 +21718,12 @@
     "peru": 40,
     "suriname": 48,
     "uruguay": 42,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 84,
+    "reunion": 77,
+    "guadeloupe": 89,
+    "martinique": 89,
+    "bonaire, sint eustatius dan saba": 84
   },
   "albania": {
     "afrika selatan": 81,
@@ -21421,7 +21931,12 @@
     "peru": 42,
     "suriname": 83,
     "uruguay": 44,
-    "venezuela": 81
+    "venezuela": 81,
+    "mayotte": 20,
+    "reunion": 17,
+    "guadeloupe": 34,
+    "martinique": 59,
+    "bonaire, sint eustatius dan saba": 29
   },
   "andorra": {
     "afrika selatan": 82,
@@ -21629,7 +22144,12 @@
     "peru": 44,
     "suriname": 41,
     "uruguay": 42,
-    "venezuela": 34
+    "venezuela": 34,
+    "mayotte": 50,
+    "reunion": 73,
+    "guadeloupe": 40,
+    "martinique": 48,
+    "bonaire, sint eustatius dan saba": 85
   },
   "austria": {
     "afrika selatan": 84,
@@ -21837,7 +22357,12 @@
     "peru": 80,
     "suriname": 48,
     "uruguay": 40,
-    "venezuela": 29
+    "venezuela": 29,
+    "mayotte": 35,
+    "reunion": 76,
+    "guadeloupe": 72,
+    "martinique": 79,
+    "bonaire, sint eustatius dan saba": 55
   },
   "belanda": {
     "afrika selatan": 81,
@@ -22045,7 +22570,12 @@
     "peru": 79,
     "suriname": 40,
     "uruguay": 78,
-    "venezuela": 75
+    "venezuela": 75,
+    "mayotte": 58,
+    "reunion": 79,
+    "guadeloupe": 42,
+    "martinique": 47,
+    "bonaire, sint eustatius dan saba": 44
   },
   "belarus": {
     "afrika selatan": 81,
@@ -22253,7 +22783,12 @@
     "peru": 43,
     "suriname": 79,
     "uruguay": 82,
-    "venezuela": 87
+    "venezuela": 87,
+    "mayotte": 44,
+    "reunion": 56,
+    "guadeloupe": 70,
+    "martinique": 21,
+    "bonaire, sint eustatius dan saba": 25
   },
   "belgia": {
     "afrika selatan": 49,
@@ -22461,7 +22996,12 @@
     "peru": 44,
     "suriname": 84,
     "uruguay": 40,
-    "venezuela": 78
+    "venezuela": 78,
+    "mayotte": 34,
+    "reunion": 65,
+    "guadeloupe": 42,
+    "martinique": 90,
+    "bonaire, sint eustatius dan saba": 56
   },
   "bosnia_dan_hercegovina": {
     "afrika selatan": 37,
@@ -22669,7 +23209,12 @@
     "peru": 39,
     "suriname": 78,
     "uruguay": 40,
-    "venezuela": 81
+    "venezuela": 81,
+    "mayotte": 68,
+    "reunion": 92,
+    "guadeloupe": 62,
+    "martinique": 93,
+    "bonaire, sint eustatius dan saba": 15
   },
   "bulgaria": {
     "afrika selatan": 40,
@@ -22877,7 +23422,12 @@
     "peru": 38,
     "suriname": 43,
     "uruguay": 42,
-    "venezuela": 32
+    "venezuela": 32,
+    "mayotte": 33,
+    "reunion": 47,
+    "guadeloupe": 67,
+    "martinique": 65,
+    "bonaire, sint eustatius dan saba": 77
   },
   "ceko": {
     "afrika selatan": 78,
@@ -23085,7 +23635,12 @@
     "peru": 42,
     "suriname": 40,
     "uruguay": 36,
-    "venezuela": 29
+    "venezuela": 29,
+    "mayotte": 29,
+    "reunion": 47,
+    "guadeloupe": 93,
+    "martinique": 65,
+    "bonaire, sint eustatius dan saba": 40
   },
   "denmark": {
     "afrika selatan": 41,
@@ -23293,7 +23848,12 @@
     "peru": 47,
     "suriname": 41,
     "uruguay": 48,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 19,
+    "reunion": 27,
+    "guadeloupe": 53,
+    "martinique": 79,
+    "bonaire, sint eustatius dan saba": 24
   },
   "estonia": {
     "afrika selatan": 84,
@@ -23501,7 +24061,12 @@
     "peru": 39,
     "suriname": 41,
     "uruguay": 36,
-    "venezuela": 37
+    "venezuela": 37,
+    "mayotte": 59,
+    "reunion": 21,
+    "guadeloupe": 71,
+    "martinique": 34,
+    "bonaire, sint eustatius dan saba": 50
   },
   "finlandia": {
     "afrika selatan": 48,
@@ -23709,7 +24274,12 @@
     "peru": 46,
     "suriname": 48,
     "uruguay": 44,
-    "venezuela": 29
+    "venezuela": 29,
+    "mayotte": 26,
+    "reunion": 36,
+    "guadeloupe": 53,
+    "martinique": 74,
+    "bonaire, sint eustatius dan saba": 56
   },
   "gibraltar": {
     "afrika selatan": 44,
@@ -23917,7 +24487,12 @@
     "peru": 38,
     "suriname": 36,
     "uruguay": 43,
-    "venezuela": 42
+    "venezuela": 42,
+    "mayotte": 63,
+    "reunion": 74,
+    "guadeloupe": 50,
+    "martinique": 31,
+    "bonaire, sint eustatius dan saba": 19
   },
   "hungaria": {
     "afrika selatan": 41,
@@ -24125,7 +24700,12 @@
     "peru": 38,
     "suriname": 37,
     "uruguay": 46,
-    "venezuela": 31
+    "venezuela": 31,
+    "mayotte": 63,
+    "reunion": 92,
+    "guadeloupe": 82,
+    "martinique": 29,
+    "bonaire, sint eustatius dan saba": 31
   },
   "inggris": {
     "afrika selatan": 42,
@@ -24333,7 +24913,12 @@
     "peru": 48,
     "suriname": 44,
     "uruguay": 42,
-    "venezuela": 29
+    "venezuela": 29,
+    "mayotte": 48,
+    "reunion": 92,
+    "guadeloupe": 84,
+    "martinique": 35,
+    "bonaire, sint eustatius dan saba": 95
   },
   "irlandia": {
     "afrika selatan": 48,
@@ -24541,7 +25126,12 @@
     "peru": 45,
     "suriname": 46,
     "uruguay": 46,
-    "venezuela": 33
+    "venezuela": 33,
+    "mayotte": 86,
+    "reunion": 24,
+    "guadeloupe": 62,
+    "martinique": 63,
+    "bonaire, sint eustatius dan saba": 45
   },
   "islandia": {
     "afrika selatan": 82,
@@ -24749,7 +25339,12 @@
     "peru": 42,
     "suriname": 38,
     "uruguay": 41,
-    "venezuela": 29
+    "venezuela": 29,
+    "mayotte": 82,
+    "reunion": 94,
+    "guadeloupe": 26,
+    "martinique": 64,
+    "bonaire, sint eustatius dan saba": 30
   },
   "italia": {
     "afrika selatan": 42,
@@ -24957,7 +25552,12 @@
     "peru": 40,
     "suriname": 47,
     "uruguay": 48,
-    "venezuela": 29
+    "venezuela": 29,
+    "mayotte": 45,
+    "reunion": 69,
+    "guadeloupe": 37,
+    "martinique": 35,
+    "bonaire, sint eustatius dan saba": 50
   },
   "jerman": {
     "afrika selatan": 38,
@@ -25165,7 +25765,12 @@
     "peru": 38,
     "suriname": 39,
     "uruguay": 48,
-    "venezuela": 32
+    "venezuela": 32,
+    "mayotte": 55,
+    "reunion": 49,
+    "guadeloupe": 90,
+    "martinique": 83,
+    "bonaire, sint eustatius dan saba": 34
   },
   "kepulauan_faroe": {
     "afrika selatan": 41,
@@ -25373,7 +25978,12 @@
     "peru": 43,
     "suriname": 40,
     "uruguay": 41,
-    "venezuela": 43
+    "venezuela": 43,
+    "mayotte": 57,
+    "reunion": 72,
+    "guadeloupe": 58,
+    "martinique": 45,
+    "bonaire, sint eustatius dan saba": 58
   },
   "kosovo": {
     "afrika selatan": 82,
@@ -25581,7 +26191,12 @@
     "peru": 41,
     "suriname": 49,
     "uruguay": 42,
-    "venezuela": 45
+    "venezuela": 45,
+    "mayotte": 79,
+    "reunion": 92,
+    "guadeloupe": 51,
+    "martinique": 81,
+    "bonaire, sint eustatius dan saba": 60
   },
   "kroasia": {
     "afrika selatan": 38,
@@ -25789,7 +26404,12 @@
     "peru": 44,
     "suriname": 38,
     "uruguay": 41,
-    "venezuela": 29
+    "venezuela": 29,
+    "mayotte": 36,
+    "reunion": 72,
+    "guadeloupe": 84,
+    "martinique": 87,
+    "bonaire, sint eustatius dan saba": 91
   },
   "latvia": {
     "afrika selatan": 78,
@@ -25997,7 +26617,12 @@
     "peru": 42,
     "suriname": 38,
     "uruguay": 45,
-    "venezuela": 29
+    "venezuela": 29,
+    "mayotte": 71,
+    "reunion": 65,
+    "guadeloupe": 73,
+    "martinique": 18,
+    "bonaire, sint eustatius dan saba": 17
   },
   "liechtenstein": {
     "afrika selatan": 83,
@@ -26205,7 +26830,12 @@
     "peru": 37,
     "suriname": 40,
     "uruguay": 42,
-    "venezuela": 35
+    "venezuela": 35,
+    "mayotte": 84,
+    "reunion": 94,
+    "guadeloupe": 94,
+    "martinique": 49,
+    "bonaire, sint eustatius dan saba": 35
   },
   "lithuania": {
     "afrika selatan": 36,
@@ -26413,7 +27043,12 @@
     "peru": 47,
     "suriname": 40,
     "uruguay": 37,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 89,
+    "reunion": 70,
+    "guadeloupe": 18,
+    "martinique": 25,
+    "bonaire, sint eustatius dan saba": 18
   },
   "luksemburg": {
     "afrika selatan": 80,
@@ -26621,7 +27256,12 @@
     "peru": 48,
     "suriname": 42,
     "uruguay": 48,
-    "venezuela": 31
+    "venezuela": 31,
+    "mayotte": 57,
+    "reunion": 56,
+    "guadeloupe": 66,
+    "martinique": 32,
+    "bonaire, sint eustatius dan saba": 38
   },
   "makedonia_utara": {
     "afrika selatan": 41,
@@ -26829,7 +27469,12 @@
     "peru": 43,
     "suriname": 39,
     "uruguay": 47,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 72,
+    "reunion": 47,
+    "guadeloupe": 61,
+    "martinique": 28,
+    "bonaire, sint eustatius dan saba": 89
   },
   "malta": {
     "afrika selatan": 83,
@@ -27037,7 +27682,12 @@
     "peru": 49,
     "suriname": 43,
     "uruguay": 44,
-    "venezuela": 33
+    "venezuela": 33,
+    "mayotte": 83,
+    "reunion": 93,
+    "guadeloupe": 36,
+    "martinique": 44,
+    "bonaire, sint eustatius dan saba": 28
   },
   "moldova": {
     "afrika selatan": 36,
@@ -27245,7 +27895,12 @@
     "peru": 37,
     "suriname": 45,
     "uruguay": 38,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 92,
+    "reunion": 59,
+    "guadeloupe": 54,
+    "martinique": 85,
+    "bonaire, sint eustatius dan saba": 41
   },
   "monako": {
     "afrika selatan": 40,
@@ -27453,7 +28108,12 @@
     "peru": 36,
     "suriname": 45,
     "uruguay": 38,
-    "venezuela": 34
+    "venezuela": 34,
+    "mayotte": 23,
+    "reunion": 39,
+    "guadeloupe": 89,
+    "martinique": 30,
+    "bonaire, sint eustatius dan saba": 47
   },
   "montenegro": {
     "afrika selatan": 40,
@@ -27661,7 +28321,12 @@
     "peru": 37,
     "suriname": 40,
     "uruguay": 36,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 38,
+    "reunion": 25,
+    "guadeloupe": 51,
+    "martinique": 29,
+    "bonaire, sint eustatius dan saba": 18
   },
   "norwegia": {
     "afrika selatan": 83,
@@ -27869,7 +28534,12 @@
     "peru": 46,
     "suriname": 44,
     "uruguay": 38,
-    "venezuela": 28
+    "venezuela": 28,
+    "mayotte": 49,
+    "reunion": 86,
+    "guadeloupe": 64,
+    "martinique": 21,
+    "bonaire, sint eustatius dan saba": 48
   },
   "polandia": {
     "afrika selatan": 79,
@@ -28077,7 +28747,12 @@
     "peru": 48,
     "suriname": 40,
     "uruguay": 41,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 35,
+    "reunion": 51,
+    "guadeloupe": 36,
+    "martinique": 18,
+    "bonaire, sint eustatius dan saba": 76
   },
   "portugal": {
     "afrika selatan": 48,
@@ -28285,7 +28960,12 @@
     "peru": 44,
     "suriname": 45,
     "uruguay": 41,
-    "venezuela": 30
+    "venezuela": 30,
+    "mayotte": 93,
+    "reunion": 36,
+    "guadeloupe": 45,
+    "martinique": 62,
+    "bonaire, sint eustatius dan saba": 78
   },
   "prancis": {
     "afrika selatan": 36,
@@ -28493,7 +29173,12 @@
     "peru": 43,
     "suriname": 39,
     "uruguay": 37,
-    "venezuela": 37
+    "venezuela": 37,
+    "mayotte": 66,
+    "reunion": 73,
+    "guadeloupe": 82,
+    "martinique": 30,
+    "bonaire, sint eustatius dan saba": 54
   },
   "republik_rumania": {
     "afrika selatan": 84,
@@ -28701,7 +29386,12 @@
     "peru": 42,
     "suriname": 42,
     "uruguay": 48,
-    "venezuela": 37
+    "venezuela": 37,
+    "mayotte": 26,
+    "reunion": 35,
+    "guadeloupe": 83,
+    "martinique": 92,
+    "bonaire, sint eustatius dan saba": 18
   },
   "republik_serbia": {
     "afrika selatan": 42,
@@ -28909,7 +29599,12 @@
     "peru": 38,
     "suriname": 43,
     "uruguay": 44,
-    "venezuela": 44
+    "venezuela": 44,
+    "mayotte": 16,
+    "reunion": 31,
+    "guadeloupe": 44,
+    "martinique": 61,
+    "bonaire, sint eustatius dan saba": 88
   },
   "rusia": {
     "afrika selatan": 48,
@@ -29117,7 +29812,12 @@
     "peru": 43,
     "suriname": 38,
     "uruguay": 43,
-    "venezuela": 48
+    "venezuela": 48,
+    "mayotte": 68,
+    "reunion": 18,
+    "guadeloupe": 67,
+    "martinique": 62,
+    "bonaire, sint eustatius dan saba": 54
   },
   "san_marino": {
     "afrika selatan": 36,
@@ -29325,7 +30025,12 @@
     "peru": 42,
     "suriname": 38,
     "uruguay": 36,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 34,
+    "reunion": 90,
+    "guadeloupe": 89,
+    "martinique": 40,
+    "bonaire, sint eustatius dan saba": 84
   },
   "siprus": {
     "afrika selatan": 81,
@@ -29533,7 +30238,12 @@
     "peru": 48,
     "suriname": 46,
     "uruguay": 37,
-    "venezuela": 37
+    "venezuela": 37,
+    "mayotte": 55,
+    "reunion": 88,
+    "guadeloupe": 37,
+    "martinique": 19,
+    "bonaire, sint eustatius dan saba": 78
   },
   "slovenia": {
     "afrika selatan": 41,
@@ -29741,7 +30451,12 @@
     "peru": 40,
     "suriname": 38,
     "uruguay": 48,
-    "venezuela": 30
+    "venezuela": 30,
+    "mayotte": 24,
+    "reunion": 62,
+    "guadeloupe": 29,
+    "martinique": 56,
+    "bonaire, sint eustatius dan saba": 66
   },
   "slowakia": {
     "afrika selatan": 80,
@@ -29949,7 +30664,12 @@
     "peru": 41,
     "suriname": 48,
     "uruguay": 43,
-    "venezuela": 35
+    "venezuela": 35,
+    "mayotte": 50,
+    "reunion": 48,
+    "guadeloupe": 61,
+    "martinique": 25,
+    "bonaire, sint eustatius dan saba": 56
   },
   "spanyol": {
     "afrika selatan": 36,
@@ -30157,7 +30877,12 @@
     "peru": 43,
     "suriname": 38,
     "uruguay": 44,
-    "venezuela": 34
+    "venezuela": 34,
+    "mayotte": 65,
+    "reunion": 28,
+    "guadeloupe": 88,
+    "martinique": 25,
+    "bonaire, sint eustatius dan saba": 46
   },
   "swedia": {
     "afrika selatan": 78,
@@ -30365,7 +31090,12 @@
     "peru": 40,
     "suriname": 38,
     "uruguay": 36,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 85,
+    "reunion": 55,
+    "guadeloupe": 19,
+    "martinique": 20,
+    "bonaire, sint eustatius dan saba": 16
   },
   "swiss": {
     "afrika selatan": 46,
@@ -30573,7 +31303,12 @@
     "peru": 40,
     "suriname": 46,
     "uruguay": 38,
-    "venezuela": 33
+    "venezuela": 33,
+    "mayotte": 78,
+    "reunion": 89,
+    "guadeloupe": 58,
+    "martinique": 19,
+    "bonaire, sint eustatius dan saba": 43
   },
   "turki": {
     "afrika selatan": 83,
@@ -30781,7 +31516,12 @@
     "peru": 42,
     "suriname": 45,
     "uruguay": 42,
-    "venezuela": 39
+    "venezuela": 39,
+    "mayotte": 74,
+    "reunion": 66,
+    "guadeloupe": 29,
+    "martinique": 51,
+    "bonaire, sint eustatius dan saba": 64
   },
   "ukraina": {
     "afrika selatan": 81,
@@ -30989,7 +31729,12 @@
     "peru": 48,
     "suriname": 39,
     "uruguay": 42,
-    "venezuela": 43
+    "venezuela": 43,
+    "mayotte": 72,
+    "reunion": 29,
+    "guadeloupe": 30,
+    "martinique": 62,
+    "bonaire, sint eustatius dan saba": 87
   },
   "vatikan": {
     "afrika selatan": 78,
@@ -31197,7 +31942,12 @@
     "peru": 43,
     "suriname": 45,
     "uruguay": 46,
-    "venezuela": 45
+    "venezuela": 45,
+    "mayotte": 21,
+    "reunion": 36,
+    "guadeloupe": 48,
+    "martinique": 34,
+    "bonaire, sint eustatius dan saba": 91
   },
   "yunani": {
     "afrika selatan": 48,
@@ -31405,7 +32155,12 @@
     "peru": 42,
     "suriname": 36,
     "uruguay": 37,
-    "venezuela": 30
+    "venezuela": 30,
+    "mayotte": 34,
+    "reunion": 82,
+    "guadeloupe": 90,
+    "martinique": 54,
+    "bonaire, sint eustatius dan saba": 38
   },
   "amerika_serikat": {
     "afrika selatan": 48,
@@ -31613,7 +32368,12 @@
     "peru": 81,
     "suriname": 79,
     "uruguay": 36,
-    "venezuela": 27
+    "venezuela": 27,
+    "mayotte": 29,
+    "reunion": 30,
+    "guadeloupe": 73,
+    "martinique": 36,
+    "bonaire, sint eustatius dan saba": 90
   },
   "antigua_dan_barbuda": {
     "afrika selatan": 82,
@@ -31821,7 +32581,12 @@
     "peru": 80,
     "suriname": 83,
     "uruguay": 80,
-    "venezuela": 42
+    "venezuela": 42,
+    "mayotte": 94,
+    "reunion": 53,
+    "guadeloupe": 87,
+    "martinique": 78,
+    "bonaire, sint eustatius dan saba": 61
   },
   "bahama": {
     "afrika selatan": 47,
@@ -32029,7 +32794,12 @@
     "peru": 44,
     "suriname": 43,
     "uruguay": 80,
-    "venezuela": 83
+    "venezuela": 83,
+    "mayotte": 52,
+    "reunion": 43,
+    "guadeloupe": 62,
+    "martinique": 67,
+    "bonaire, sint eustatius dan saba": 30
   },
   "barbados": {
     "afrika selatan": 79,
@@ -32237,7 +33007,12 @@
     "peru": 78,
     "suriname": 83,
     "uruguay": 39,
-    "venezuela": 81
+    "venezuela": 81,
+    "mayotte": 33,
+    "reunion": 62,
+    "guadeloupe": 43,
+    "martinique": 38,
+    "bonaire, sint eustatius dan saba": 76
   },
   "belize": {
     "afrika selatan": 82,
@@ -32445,7 +33220,12 @@
     "peru": 79,
     "suriname": 45,
     "uruguay": 80,
-    "venezuela": 44
+    "venezuela": 44,
+    "mayotte": 53,
+    "reunion": 17,
+    "guadeloupe": 64,
+    "martinique": 87,
+    "bonaire, sint eustatius dan saba": 42
   },
   "bermuda": {
     "afrika selatan": 82,
@@ -32653,7 +33433,12 @@
     "peru": 46,
     "suriname": 82,
     "uruguay": 80,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 94,
+    "reunion": 16,
+    "guadeloupe": 35,
+    "martinique": 21,
+    "bonaire, sint eustatius dan saba": 87
   },
   "costa_rica": {
     "afrika selatan": 79,
@@ -32861,7 +33646,12 @@
     "peru": 52,
     "suriname": 41,
     "uruguay": 46,
-    "venezuela": 49
+    "venezuela": 49,
+    "mayotte": 77,
+    "reunion": 86,
+    "guadeloupe": 70,
+    "martinique": 19,
+    "bonaire, sint eustatius dan saba": 87
   },
   "curacao": {
     "afrika selatan": 47,
@@ -33069,7 +33859,12 @@
     "peru": 48,
     "suriname": 48,
     "uruguay": 37,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 30,
+    "reunion": 43,
+    "guadeloupe": 60,
+    "martinique": 91,
+    "bonaire, sint eustatius dan saba": 68
   },
   "dominika": {
     "afrika selatan": 41,
@@ -33277,7 +34072,12 @@
     "peru": 42,
     "suriname": 45,
     "uruguay": 48,
-    "venezuela": 48
+    "venezuela": 48,
+    "mayotte": 54,
+    "reunion": 72,
+    "guadeloupe": 94,
+    "martinique": 26,
+    "bonaire, sint eustatius dan saba": 62
   },
   "el_salvador": {
     "afrika selatan": 43,
@@ -33485,7 +34285,12 @@
     "peru": 46,
     "suriname": 46,
     "uruguay": 51,
-    "venezuela": 49
+    "venezuela": 49,
+    "mayotte": 93,
+    "reunion": 39,
+    "guadeloupe": 74,
+    "martinique": 44,
+    "bonaire, sint eustatius dan saba": 52
   },
   "greenland": {
     "afrika selatan": 83,
@@ -33693,7 +34498,12 @@
     "peru": 39,
     "suriname": 44,
     "uruguay": 37,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 73,
+    "reunion": 69,
+    "guadeloupe": 28,
+    "martinique": 78,
+    "bonaire, sint eustatius dan saba": 32
   },
   "grenada": {
     "afrika selatan": 84,
@@ -33901,7 +34711,12 @@
     "peru": 36,
     "suriname": 41,
     "uruguay": 42,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 59,
+    "reunion": 54,
+    "guadeloupe": 40,
+    "martinique": 29,
+    "bonaire, sint eustatius dan saba": 21
   },
   "guatemala": {
     "afrika selatan": 37,
@@ -34109,7 +34924,12 @@
     "peru": 53,
     "suriname": 42,
     "uruguay": 53,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 71,
+    "reunion": 63,
+    "guadeloupe": 74,
+    "martinique": 52,
+    "bonaire, sint eustatius dan saba": 63
   },
   "haiti": {
     "afrika selatan": 41,
@@ -34317,7 +35137,12 @@
     "peru": 45,
     "suriname": 46,
     "uruguay": 38,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 43,
+    "reunion": 71,
+    "guadeloupe": 41,
+    "martinique": 28,
+    "bonaire, sint eustatius dan saba": 19
   },
   "honduras": {
     "afrika selatan": 79,
@@ -34525,7 +35350,12 @@
     "peru": 54,
     "suriname": 49,
     "uruguay": 54,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 47,
+    "reunion": 50,
+    "guadeloupe": 25,
+    "martinique": 50,
+    "bonaire, sint eustatius dan saba": 86
   },
   "jamaika": {
     "afrika selatan": 83,
@@ -34733,7 +35563,12 @@
     "peru": 51,
     "suriname": 46,
     "uruguay": 50,
-    "venezuela": 43
+    "venezuela": 43,
+    "mayotte": 63,
+    "reunion": 43,
+    "guadeloupe": 26,
+    "martinique": 50,
+    "bonaire, sint eustatius dan saba": 40
   },
   "kanada": {
     "afrika selatan": 84,
@@ -34941,7 +35776,12 @@
     "peru": 47,
     "suriname": 39,
     "uruguay": 43,
-    "venezuela": 28
+    "venezuela": 28,
+    "mayotte": 36,
+    "reunion": 30,
+    "guadeloupe": 76,
+    "martinique": 85,
+    "bonaire, sint eustatius dan saba": 95
   },
   "kuba": {
     "afrika selatan": 39,
@@ -35149,7 +35989,12 @@
     "peru": 48,
     "suriname": 39,
     "uruguay": 44,
-    "venezuela": 54
+    "venezuela": 54,
+    "mayotte": 23,
+    "reunion": 91,
+    "guadeloupe": 72,
+    "martinique": 86,
+    "bonaire, sint eustatius dan saba": 52
   },
   "meksiko": {
     "afrika selatan": 82,
@@ -35357,7 +36202,12 @@
     "peru": 51,
     "suriname": 44,
     "uruguay": 50,
-    "venezuela": 47
+    "venezuela": 47,
+    "mayotte": 19,
+    "reunion": 32,
+    "guadeloupe": 66,
+    "martinique": 32,
+    "bonaire, sint eustatius dan saba": 57
   },
   "nikaragua": {
     "afrika selatan": 83,
@@ -35565,7 +36415,12 @@
     "peru": 37,
     "suriname": 36,
     "uruguay": 47,
-    "venezuela": 52
+    "venezuela": 52,
+    "mayotte": 35,
+    "reunion": 87,
+    "guadeloupe": 47,
+    "martinique": 70,
+    "bonaire, sint eustatius dan saba": 29
   },
   "panama": {
     "afrika selatan": 49,
@@ -35773,7 +36628,12 @@
     "peru": 48,
     "suriname": 44,
     "uruguay": 46,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 62,
+    "reunion": 33,
+    "guadeloupe": 83,
+    "martinique": 49,
+    "bonaire, sint eustatius dan saba": 90
   },
   "puerto_rico": {
     "afrika selatan": 82,
@@ -35981,7 +36841,12 @@
     "peru": 41,
     "suriname": 42,
     "uruguay": 44,
-    "venezuela": 42
+    "venezuela": 42,
+    "mayotte": 42,
+    "reunion": 94,
+    "guadeloupe": 33,
+    "martinique": 76,
+    "bonaire, sint eustatius dan saba": 40
   },
   "republik_dominika": {
     "afrika selatan": 82,
@@ -36189,7 +37054,12 @@
     "peru": 54,
     "suriname": 38,
     "uruguay": 52,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 77,
+    "reunion": 38,
+    "guadeloupe": 90,
+    "martinique": 94,
+    "bonaire, sint eustatius dan saba": 47
   },
   "saint_kitts_dan_nevis": {
     "afrika selatan": 83,
@@ -36397,7 +37267,12 @@
     "peru": 49,
     "suriname": 42,
     "uruguay": 45,
-    "venezuela": 48
+    "venezuela": 48,
+    "mayotte": 26,
+    "reunion": 65,
+    "guadeloupe": 42,
+    "martinique": 85,
+    "bonaire, sint eustatius dan saba": 82
   },
   "saint_lucia": {
     "afrika selatan": 79,
@@ -36605,7 +37480,12 @@
     "peru": 36,
     "suriname": 36,
     "uruguay": 45,
-    "venezuela": 39
+    "venezuela": 39,
+    "mayotte": 91,
+    "reunion": 53,
+    "guadeloupe": 17,
+    "martinique": 33,
+    "bonaire, sint eustatius dan saba": 25
   },
   "saint_vincent_dan_grenadine": {
     "afrika selatan": 81,
@@ -36813,7 +37693,12 @@
     "peru": 36,
     "suriname": 41,
     "uruguay": 49,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 51,
+    "reunion": 76,
+    "guadeloupe": 71,
+    "martinique": 58,
+    "bonaire, sint eustatius dan saba": 53
   },
   "trinidad_dan_tobago": {
     "afrika selatan": 44,
@@ -37021,7 +37906,12 @@
     "peru": 55,
     "suriname": 46,
     "uruguay": 52,
-    "venezuela": 46
+    "venezuela": 46,
+    "mayotte": 57,
+    "reunion": 64,
+    "guadeloupe": 67,
+    "martinique": 90,
+    "bonaire, sint eustatius dan saba": 44
   },
   "australia": {
     "afrika selatan": 84,
@@ -37229,7 +38119,12 @@
     "peru": 47,
     "suriname": 80,
     "uruguay": 82,
-    "venezuela": 32
+    "venezuela": 32,
+    "mayotte": 57,
+    "reunion": 77,
+    "guadeloupe": 82,
+    "martinique": 62,
+    "bonaire, sint eustatius dan saba": 31
   },
   "fiji": {
     "afrika selatan": 46,
@@ -37437,7 +38332,12 @@
     "peru": 37,
     "suriname": 40,
     "uruguay": 40,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 43,
+    "reunion": 47,
+    "guadeloupe": 87,
+    "martinique": 85,
+    "bonaire, sint eustatius dan saba": 81
   },
   "guam": {
     "afrika selatan": 81,
@@ -37645,7 +38545,12 @@
     "peru": 38,
     "suriname": 44,
     "uruguay": 36,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 59,
+    "reunion": 94,
+    "guadeloupe": 37,
+    "martinique": 70,
+    "bonaire, sint eustatius dan saba": 70
   },
   "kiribati": {
     "afrika selatan": 80,
@@ -37853,7 +38758,12 @@
     "peru": 38,
     "suriname": 37,
     "uruguay": 38,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 85,
+    "reunion": 20,
+    "guadeloupe": 35,
+    "martinique": 29,
+    "bonaire, sint eustatius dan saba": 63
   },
   "marshall": {
     "afrika selatan": 78,
@@ -38061,7 +38971,12 @@
     "peru": 36,
     "suriname": 41,
     "uruguay": 36,
-    "venezuela": 44
+    "venezuela": 44,
+    "mayotte": 58,
+    "reunion": 33,
+    "guadeloupe": 73,
+    "martinique": 47,
+    "bonaire, sint eustatius dan saba": 58
   },
   "mikronesia": {
     "afrika selatan": 81,
@@ -38269,7 +39184,12 @@
     "peru": 38,
     "suriname": 49,
     "uruguay": 37,
-    "venezuela": 36
+    "venezuela": 36,
+    "mayotte": 87,
+    "reunion": 52,
+    "guadeloupe": 34,
+    "martinique": 86,
+    "bonaire, sint eustatius dan saba": 73
   },
   "nauru": {
     "afrika selatan": 49,
@@ -38477,7 +39397,12 @@
     "peru": 46,
     "suriname": 48,
     "uruguay": 45,
-    "venezuela": 43
+    "venezuela": 43,
+    "mayotte": 19,
+    "reunion": 22,
+    "guadeloupe": 72,
+    "martinique": 28,
+    "bonaire, sint eustatius dan saba": 19
   },
   "palau": {
     "afrika selatan": 47,
@@ -38685,7 +39610,12 @@
     "peru": 39,
     "suriname": 48,
     "uruguay": 41,
-    "venezuela": 43
+    "venezuela": 43,
+    "mayotte": 33,
+    "reunion": 32,
+    "guadeloupe": 59,
+    "martinique": 87,
+    "bonaire, sint eustatius dan saba": 64
   },
   "papua_nugini": {
     "afrika selatan": 78,
@@ -38893,7 +39823,12 @@
     "peru": 47,
     "suriname": 47,
     "uruguay": 38,
-    "venezuela": 48
+    "venezuela": 48,
+    "mayotte": 22,
+    "reunion": 52,
+    "guadeloupe": 65,
+    "martinique": 25,
+    "bonaire, sint eustatius dan saba": 87
   },
   "samoa": {
     "afrika selatan": 48,
@@ -39101,7 +40036,12 @@
     "peru": 43,
     "suriname": 39,
     "uruguay": 37,
-    "venezuela": 47
+    "venezuela": 47,
+    "mayotte": 16,
+    "reunion": 60,
+    "guadeloupe": 47,
+    "martinique": 30,
+    "bonaire, sint eustatius dan saba": 28
   },
   "samoa_amerika": {
     "afrika selatan": 84,
@@ -39309,7 +40249,12 @@
     "peru": 36,
     "suriname": 43,
     "uruguay": 48,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 16,
+    "reunion": 22,
+    "guadeloupe": 92,
+    "martinique": 71,
+    "bonaire, sint eustatius dan saba": 63
   },
   "selandia_baru": {
     "afrika selatan": 47,
@@ -39517,7 +40462,12 @@
     "peru": 49,
     "suriname": 37,
     "uruguay": 42,
-    "venezuela": 28
+    "venezuela": 28,
+    "mayotte": 15,
+    "reunion": 50,
+    "guadeloupe": 19,
+    "martinique": 62,
+    "bonaire, sint eustatius dan saba": 53
   },
   "tahiti": {
     "afrika selatan": 43,
@@ -39725,7 +40675,12 @@
     "peru": 48,
     "suriname": 45,
     "uruguay": 40,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 80,
+    "reunion": 21,
+    "guadeloupe": 47,
+    "martinique": 28,
+    "bonaire, sint eustatius dan saba": 37
   },
   "tonga": {
     "afrika selatan": 46,
@@ -39933,7 +40888,12 @@
     "peru": 40,
     "suriname": 46,
     "uruguay": 40,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 76,
+    "reunion": 27,
+    "guadeloupe": 35,
+    "martinique": 72,
+    "bonaire, sint eustatius dan saba": 52
   },
   "tuvalu": {
     "afrika selatan": 82,
@@ -40141,7 +41101,12 @@
     "peru": 45,
     "suriname": 48,
     "uruguay": 45,
-    "venezuela": 45
+    "venezuela": 45,
+    "mayotte": 71,
+    "reunion": 65,
+    "guadeloupe": 54,
+    "martinique": 65,
+    "bonaire, sint eustatius dan saba": 25
   },
   "vanuatu": {
     "afrika selatan": 82,
@@ -40349,7 +41314,12 @@
     "peru": 36,
     "suriname": 38,
     "uruguay": 39,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 25,
+    "reunion": 26,
+    "guadeloupe": 94,
+    "martinique": 72,
+    "bonaire, sint eustatius dan saba": 55
   },
   "argentina": {
     "afrika selatan": 83,
@@ -40557,7 +41527,12 @@
     "peru": 52,
     "suriname": 40,
     "uruguay": 46,
-    "venezuela": 48
+    "venezuela": 48,
+    "mayotte": 65,
+    "reunion": 26,
+    "guadeloupe": 39,
+    "martinique": 64,
+    "bonaire, sint eustatius dan saba": 53
   },
   "bolivia": {
     "afrika selatan": 83,
@@ -40765,7 +41740,12 @@
     "peru": 83,
     "suriname": 39,
     "uruguay": 49,
-    "venezuela": 37
+    "venezuela": 37,
+    "mayotte": 85,
+    "reunion": 77,
+    "guadeloupe": 71,
+    "martinique": 53,
+    "bonaire, sint eustatius dan saba": 76
   },
   "brazil": {
     "afrika selatan": 78,
@@ -40973,7 +41953,12 @@
     "peru": 48,
     "suriname": 83,
     "uruguay": 87,
-    "venezuela": 81
+    "venezuela": 81,
+    "mayotte": 28,
+    "reunion": 93,
+    "guadeloupe": 44,
+    "martinique": 23,
+    "bonaire, sint eustatius dan saba": 49
   },
   "chile": {
     "afrika selatan": 83,
@@ -41181,7 +42166,12 @@
     "peru": 47,
     "suriname": 47,
     "uruguay": 54,
-    "venezuela": 37
+    "venezuela": 37,
+    "mayotte": 17,
+    "reunion": 28,
+    "guadeloupe": 27,
+    "martinique": 46,
+    "bonaire, sint eustatius dan saba": 42
   },
   "ekuador": {
     "afrika selatan": 48,
@@ -41389,7 +42379,12 @@
     "peru": 52,
     "suriname": 42,
     "uruguay": 55,
-    "venezuela": 48
+    "venezuela": 48,
+    "mayotte": 87,
+    "reunion": 56,
+    "guadeloupe": 81,
+    "martinique": 75,
+    "bonaire, sint eustatius dan saba": 73
   },
   "guiana_prancis": {
     "afrika selatan": 79,
@@ -41597,7 +42592,12 @@
     "peru": 40,
     "suriname": 36,
     "uruguay": 47,
-    "venezuela": 39
+    "venezuela": 39,
+    "mayotte": 35,
+    "reunion": 38,
+    "guadeloupe": 15,
+    "martinique": 46,
+    "bonaire, sint eustatius dan saba": 48
   },
   "guyana": {
     "afrika selatan": 79,
@@ -41805,7 +42805,12 @@
     "peru": 39,
     "suriname": 46,
     "uruguay": 38,
-    "venezuela": 42
+    "venezuela": 42,
+    "mayotte": 90,
+    "reunion": 85,
+    "guadeloupe": 86,
+    "martinique": 15,
+    "bonaire, sint eustatius dan saba": 87
   },
   "kolombia": {
     "afrika selatan": 81,
@@ -42013,7 +43018,12 @@
     "peru": 46,
     "suriname": 42,
     "uruguay": 55,
-    "venezuela": 48
+    "venezuela": 48,
+    "mayotte": 88,
+    "reunion": 82,
+    "guadeloupe": 79,
+    "martinique": 93,
+    "bonaire, sint eustatius dan saba": 27
   },
   "paraguay": {
     "afrika selatan": 36,
@@ -42221,7 +43231,12 @@
     "peru": 51,
     "suriname": 38,
     "uruguay": 51,
-    "venezuela": 48
+    "venezuela": 48,
+    "mayotte": 19,
+    "reunion": 32,
+    "guadeloupe": 50,
+    "martinique": 18,
+    "bonaire, sint eustatius dan saba": 41
   },
   "peru": {
     "afrika selatan": 84,
@@ -42429,7 +43444,12 @@
     "paraguay": 51,
     "suriname": 42,
     "uruguay": 55,
-    "venezuela": 40
+    "venezuela": 40,
+    "mayotte": 77,
+    "reunion": 57,
+    "guadeloupe": 79,
+    "martinique": 36,
+    "bonaire, sint eustatius dan saba": 89
   },
   "suriname": {
     "afrika selatan": 79,
@@ -42637,7 +43657,12 @@
     "paraguay": 38,
     "peru": 42,
     "uruguay": 45,
-    "venezuela": 37
+    "venezuela": 37,
+    "mayotte": 66,
+    "reunion": 95,
+    "guadeloupe": 49,
+    "martinique": 63,
+    "bonaire, sint eustatius dan saba": 88
   },
   "uruguay": {
     "afrika selatan": 36,
@@ -42845,7 +43870,12 @@
     "paraguay": 51,
     "peru": 55,
     "suriname": 45,
-    "venezuela": 38
+    "venezuela": 38,
+    "mayotte": 91,
+    "reunion": 25,
+    "guadeloupe": 89,
+    "martinique": 78,
+    "bonaire, sint eustatius dan saba": 55
   },
   "venezuela": {
     "afrika selatan": 78,
@@ -43053,6 +44083,1076 @@
     "paraguay": 48,
     "peru": 40,
     "suriname": 37,
-    "uruguay": 38
+    "uruguay": 38,
+    "mayotte": 23,
+    "reunion": 56,
+    "guadeloupe": 41,
+    "martinique": 22,
+    "bonaire, sint eustatius dan saba": 33
+  },
+  "mayotte": {
+    "afrika selatan": 53,
+    "aljazair": 18,
+    "angola": 32,
+    "benin": 76,
+    "botswana": 33,
+    "burkina faso": 54,
+    "burundi": 58,
+    "chad": 16,
+    "djibouti": 31,
+    "eritrea": 79,
+    "eswatini": 82,
+    "ethiopia": 82,
+    "gabon": 27,
+    "gambia": 61,
+    "ghana": 88,
+    "guinea": 69,
+    "guinea bissau": 71,
+    "kamerun": 38,
+    "kenya": 68,
+    "komoro": 15,
+    "kongo": 93,
+    "lesotho": 55,
+    "liberia": 40,
+    "libya": 47,
+    "madagaskar": 62,
+    "malawi": 22,
+    "mali": 49,
+    "maroko": 75,
+    "mauritania": 67,
+    "mauritius": 60,
+    "mesir": 73,
+    "mozambik": 19,
+    "namibia": 28,
+    "niger": 37,
+    "nigeria": 34,
+    "pantai gading": 88,
+    "republik afrika tengah": 32,
+    "republik demokratik kongo": 50,
+    "republik sudan": 24,
+    "republik tanzania": 92,
+    "republik uganda": 19,
+    "republik zambia": 49,
+    "republik zimbabwe": 38,
+    "rwanda": 29,
+    "sao tome dan principe": 43,
+    "senegal": 88,
+    "seychelles": 47,
+    "sierra leone": 74,
+    "somalia": 91,
+    "sudan selatan": 40,
+    "tanjung verde": 16,
+    "togo": 61,
+    "tunisia": 34,
+    "afganistan": 64,
+    "arab saudi": 77,
+    "armenia": 52,
+    "azerbaijan": 53,
+    "bahrain": 57,
+    "bangladesh": 67,
+    "bhutan": 75,
+    "brunei": 23,
+    "china": 71,
+    "filipina": 79,
+    "georgia": 44,
+    "hong kong": 79,
+    "india": 18,
+    "indonesia": 57,
+    "irak": 47,
+    "iran": 15,
+    "israel": 33,
+    "jepang": 56,
+    "kamboja": 68,
+    "kazakhstan": 45,
+    "kirgizstan": 31,
+    "korea selatan": 63,
+    "korea utara": 50,
+    "kuwait": 72,
+    "laos": 69,
+    "lebanon": 60,
+    "makau": 57,
+    "malaysia": 64,
+    "maldives": 82,
+    "mongolia": 21,
+    "myanmar": 91,
+    "nepal": 51,
+    "oman": 41,
+    "pakistan": 59,
+    "palestina": 18,
+    "qatar": 80,
+    "republik timor leste": 43,
+    "singapura": 22,
+    "sri lanka": 80,
+    "suriah": 33,
+    "taiwan": 28,
+    "tajikistan": 61,
+    "thailand": 48,
+    "turkmenistan": 17,
+    "uni emirat arab": 74,
+    "uzbekistan": 79,
+    "vietnam": 27,
+    "yaman": 25,
+    "yordania": 84,
+    "albania": 20,
+    "andorra": 50,
+    "austria": 35,
+    "belanda": 58,
+    "belarus": 44,
+    "belgia": 34,
+    "bosnia dan hercegovina": 68,
+    "bulgaria": 33,
+    "ceko": 29,
+    "denmark": 19,
+    "estonia": 59,
+    "finlandia": 26,
+    "gibraltar": 63,
+    "hungaria": 63,
+    "inggris": 48,
+    "irlandia": 86,
+    "islandia": 82,
+    "italia": 45,
+    "jerman": 55,
+    "kepulauan faroe": 57,
+    "kosovo": 79,
+    "kroasia": 36,
+    "latvia": 71,
+    "liechtenstein": 84,
+    "lithuania": 89,
+    "luksemburg": 57,
+    "makedonia utara": 72,
+    "malta": 83,
+    "moldova": 92,
+    "monako": 23,
+    "montenegro": 38,
+    "norwegia": 49,
+    "polandia": 35,
+    "portugal": 93,
+    "prancis": 66,
+    "republik rumania": 26,
+    "republik serbia": 16,
+    "rusia": 68,
+    "san marino": 34,
+    "siprus": 55,
+    "slovenia": 24,
+    "slowakia": 50,
+    "spanyol": 65,
+    "swedia": 85,
+    "swiss": 78,
+    "turki": 74,
+    "ukraina": 72,
+    "vatikan": 21,
+    "yunani": 34,
+    "amerika serikat": 29,
+    "antigua dan barbuda": 94,
+    "bahama": 52,
+    "barbados": 33,
+    "belize": 53,
+    "bermuda": 94,
+    "costa rica": 77,
+    "curacao": 30,
+    "dominika": 54,
+    "el salvador": 93,
+    "greenland": 73,
+    "grenada": 59,
+    "guatemala": 71,
+    "haiti": 43,
+    "honduras": 47,
+    "jamaika": 63,
+    "kanada": 36,
+    "kuba": 23,
+    "meksiko": 19,
+    "nikaragua": 35,
+    "panama": 62,
+    "puerto rico": 42,
+    "republik dominika": 77,
+    "saint kitts dan nevis": 26,
+    "saint lucia": 91,
+    "saint vincent dan grenadine": 51,
+    "trinidad dan tobago": 57,
+    "australia": 57,
+    "fiji": 43,
+    "guam": 59,
+    "kiribati": 85,
+    "marshall": 58,
+    "mikronesia": 87,
+    "nauru": 19,
+    "palau": 33,
+    "papua nugini": 22,
+    "samoa": 16,
+    "samoa amerika": 16,
+    "selandia baru": 15,
+    "tahiti": 80,
+    "tonga": 76,
+    "tuvalu": 71,
+    "vanuatu": 25,
+    "argentina": 65,
+    "bolivia": 85,
+    "brazil": 28,
+    "chile": 17,
+    "ekuador": 87,
+    "guiana prancis": 35,
+    "guyana": 90,
+    "kolombia": 88,
+    "paraguay": 19,
+    "peru": 77,
+    "suriname": 66,
+    "uruguay": 91,
+    "venezuela": 23,
+    "reunion": 56,
+    "guadeloupe": 49,
+    "martinique": 54,
+    "bonaire, sint eustatius dan saba": 32
+  },
+  "reunion": {
+    "afrika selatan": 28,
+    "aljazair": 55,
+    "angola": 63,
+    "benin": 66,
+    "botswana": 54,
+    "burkina faso": 64,
+    "burundi": 24,
+    "chad": 87,
+    "djibouti": 66,
+    "eritrea": 50,
+    "eswatini": 87,
+    "ethiopia": 76,
+    "gabon": 18,
+    "gambia": 58,
+    "ghana": 83,
+    "guinea": 61,
+    "guinea bissau": 89,
+    "kamerun": 42,
+    "kenya": 25,
+    "komoro": 74,
+    "kongo": 64,
+    "lesotho": 64,
+    "liberia": 16,
+    "libya": 80,
+    "madagaskar": 39,
+    "malawi": 38,
+    "mali": 32,
+    "maroko": 49,
+    "mauritania": 77,
+    "mauritius": 51,
+    "mesir": 42,
+    "mozambik": 19,
+    "namibia": 45,
+    "niger": 81,
+    "nigeria": 45,
+    "pantai gading": 71,
+    "republik afrika tengah": 84,
+    "republik demokratik kongo": 80,
+    "republik sudan": 21,
+    "republik tanzania": 83,
+    "republik uganda": 92,
+    "republik zambia": 68,
+    "republik zimbabwe": 48,
+    "rwanda": 69,
+    "sao tome dan principe": 19,
+    "senegal": 60,
+    "seychelles": 61,
+    "sierra leone": 44,
+    "somalia": 37,
+    "sudan selatan": 63,
+    "tanjung verde": 36,
+    "togo": 48,
+    "tunisia": 69,
+    "afganistan": 86,
+    "arab saudi": 82,
+    "armenia": 16,
+    "azerbaijan": 61,
+    "bahrain": 73,
+    "bangladesh": 39,
+    "bhutan": 26,
+    "brunei": 74,
+    "china": 74,
+    "filipina": 32,
+    "georgia": 80,
+    "hong kong": 50,
+    "india": 80,
+    "indonesia": 85,
+    "irak": 32,
+    "iran": 83,
+    "israel": 30,
+    "jepang": 69,
+    "kamboja": 47,
+    "kazakhstan": 78,
+    "kirgizstan": 51,
+    "korea selatan": 72,
+    "korea utara": 40,
+    "kuwait": 41,
+    "laos": 59,
+    "lebanon": 55,
+    "makau": 15,
+    "malaysia": 15,
+    "maldives": 58,
+    "mongolia": 87,
+    "myanmar": 79,
+    "nepal": 69,
+    "oman": 62,
+    "pakistan": 58,
+    "palestina": 48,
+    "qatar": 89,
+    "republik timor leste": 74,
+    "singapura": 32,
+    "sri lanka": 94,
+    "suriah": 89,
+    "taiwan": 57,
+    "tajikistan": 36,
+    "thailand": 66,
+    "turkmenistan": 40,
+    "uni emirat arab": 80,
+    "uzbekistan": 45,
+    "vietnam": 85,
+    "yaman": 51,
+    "yordania": 77,
+    "albania": 17,
+    "andorra": 73,
+    "austria": 76,
+    "belanda": 79,
+    "belarus": 56,
+    "belgia": 65,
+    "bosnia dan hercegovina": 92,
+    "bulgaria": 47,
+    "ceko": 47,
+    "denmark": 27,
+    "estonia": 21,
+    "finlandia": 36,
+    "gibraltar": 74,
+    "hungaria": 92,
+    "inggris": 92,
+    "irlandia": 24,
+    "islandia": 94,
+    "italia": 69,
+    "jerman": 49,
+    "kepulauan faroe": 72,
+    "kosovo": 92,
+    "kroasia": 72,
+    "latvia": 65,
+    "liechtenstein": 94,
+    "lithuania": 70,
+    "luksemburg": 56,
+    "makedonia utara": 47,
+    "malta": 93,
+    "moldova": 59,
+    "monako": 39,
+    "montenegro": 25,
+    "norwegia": 86,
+    "polandia": 51,
+    "portugal": 36,
+    "prancis": 73,
+    "republik rumania": 35,
+    "republik serbia": 31,
+    "rusia": 18,
+    "san marino": 90,
+    "siprus": 88,
+    "slovenia": 62,
+    "slowakia": 48,
+    "spanyol": 28,
+    "swedia": 55,
+    "swiss": 89,
+    "turki": 66,
+    "ukraina": 29,
+    "vatikan": 36,
+    "yunani": 82,
+    "amerika serikat": 30,
+    "antigua dan barbuda": 53,
+    "bahama": 43,
+    "barbados": 62,
+    "belize": 17,
+    "bermuda": 16,
+    "costa rica": 86,
+    "curacao": 43,
+    "dominika": 72,
+    "el salvador": 39,
+    "greenland": 69,
+    "grenada": 54,
+    "guatemala": 63,
+    "haiti": 71,
+    "honduras": 50,
+    "jamaika": 43,
+    "kanada": 30,
+    "kuba": 91,
+    "meksiko": 32,
+    "nikaragua": 87,
+    "panama": 33,
+    "puerto rico": 94,
+    "republik dominika": 38,
+    "saint kitts dan nevis": 65,
+    "saint lucia": 53,
+    "saint vincent dan grenadine": 76,
+    "trinidad dan tobago": 64,
+    "australia": 77,
+    "fiji": 47,
+    "guam": 94,
+    "kiribati": 20,
+    "marshall": 33,
+    "mikronesia": 52,
+    "nauru": 22,
+    "palau": 32,
+    "papua nugini": 52,
+    "samoa": 60,
+    "samoa amerika": 22,
+    "selandia baru": 50,
+    "tahiti": 21,
+    "tonga": 27,
+    "tuvalu": 65,
+    "vanuatu": 26,
+    "argentina": 26,
+    "bolivia": 77,
+    "brazil": 93,
+    "chile": 28,
+    "ekuador": 56,
+    "guiana prancis": 38,
+    "guyana": 85,
+    "kolombia": 82,
+    "paraguay": 32,
+    "peru": 57,
+    "suriname": 95,
+    "uruguay": 25,
+    "venezuela": 56,
+    "mayotte": 56,
+    "guadeloupe": 39,
+    "martinique": 59,
+    "bonaire, sint eustatius dan saba": 26
+  },
+  "guadeloupe": {
+    "afrika selatan": 26,
+    "aljazair": 58,
+    "angola": 31,
+    "benin": 80,
+    "botswana": 45,
+    "burkina faso": 32,
+    "burundi": 52,
+    "chad": 63,
+    "djibouti": 60,
+    "eritrea": 42,
+    "eswatini": 31,
+    "ethiopia": 72,
+    "gabon": 20,
+    "gambia": 17,
+    "ghana": 88,
+    "guinea": 73,
+    "guinea bissau": 52,
+    "kamerun": 73,
+    "kenya": 24,
+    "komoro": 62,
+    "kongo": 19,
+    "lesotho": 89,
+    "liberia": 35,
+    "libya": 62,
+    "madagaskar": 65,
+    "malawi": 90,
+    "mali": 56,
+    "maroko": 19,
+    "mauritania": 93,
+    "mauritius": 68,
+    "mesir": 75,
+    "mozambik": 89,
+    "namibia": 58,
+    "niger": 79,
+    "nigeria": 77,
+    "pantai gading": 59,
+    "republik afrika tengah": 43,
+    "republik demokratik kongo": 80,
+    "republik sudan": 68,
+    "republik tanzania": 71,
+    "republik uganda": 71,
+    "republik zambia": 23,
+    "republik zimbabwe": 82,
+    "rwanda": 69,
+    "sao tome dan principe": 80,
+    "senegal": 48,
+    "seychelles": 71,
+    "sierra leone": 85,
+    "somalia": 17,
+    "sudan selatan": 93,
+    "tanjung verde": 69,
+    "togo": 47,
+    "tunisia": 68,
+    "afganistan": 95,
+    "arab saudi": 58,
+    "armenia": 87,
+    "azerbaijan": 59,
+    "bahrain": 80,
+    "bangladesh": 50,
+    "bhutan": 65,
+    "brunei": 20,
+    "china": 61,
+    "filipina": 34,
+    "georgia": 44,
+    "hong kong": 71,
+    "india": 34,
+    "indonesia": 25,
+    "irak": 70,
+    "iran": 75,
+    "israel": 76,
+    "jepang": 61,
+    "kamboja": 21,
+    "kazakhstan": 62,
+    "kirgizstan": 29,
+    "korea selatan": 43,
+    "korea utara": 73,
+    "kuwait": 87,
+    "laos": 87,
+    "lebanon": 77,
+    "makau": 71,
+    "malaysia": 31,
+    "maldives": 61,
+    "mongolia": 37,
+    "myanmar": 25,
+    "nepal": 44,
+    "oman": 25,
+    "pakistan": 50,
+    "palestina": 64,
+    "qatar": 90,
+    "republik timor leste": 93,
+    "singapura": 51,
+    "sri lanka": 65,
+    "suriah": 20,
+    "taiwan": 61,
+    "tajikistan": 91,
+    "thailand": 31,
+    "turkmenistan": 47,
+    "uni emirat arab": 39,
+    "uzbekistan": 28,
+    "vietnam": 91,
+    "yaman": 41,
+    "yordania": 89,
+    "albania": 34,
+    "andorra": 40,
+    "austria": 72,
+    "belanda": 42,
+    "belarus": 70,
+    "belgia": 42,
+    "bosnia dan hercegovina": 62,
+    "bulgaria": 67,
+    "ceko": 93,
+    "denmark": 53,
+    "estonia": 71,
+    "finlandia": 53,
+    "gibraltar": 50,
+    "hungaria": 82,
+    "inggris": 84,
+    "irlandia": 62,
+    "islandia": 26,
+    "italia": 37,
+    "jerman": 90,
+    "kepulauan faroe": 58,
+    "kosovo": 51,
+    "kroasia": 84,
+    "latvia": 73,
+    "liechtenstein": 94,
+    "lithuania": 18,
+    "luksemburg": 66,
+    "makedonia utara": 61,
+    "malta": 36,
+    "moldova": 54,
+    "monako": 89,
+    "montenegro": 51,
+    "norwegia": 64,
+    "polandia": 36,
+    "portugal": 45,
+    "prancis": 82,
+    "republik rumania": 83,
+    "republik serbia": 44,
+    "rusia": 67,
+    "san marino": 89,
+    "siprus": 37,
+    "slovenia": 29,
+    "slowakia": 61,
+    "spanyol": 88,
+    "swedia": 19,
+    "swiss": 58,
+    "turki": 29,
+    "ukraina": 30,
+    "vatikan": 48,
+    "yunani": 90,
+    "amerika serikat": 73,
+    "antigua dan barbuda": 87,
+    "bahama": 62,
+    "barbados": 43,
+    "belize": 64,
+    "bermuda": 35,
+    "costa rica": 70,
+    "curacao": 60,
+    "dominika": 94,
+    "el salvador": 74,
+    "greenland": 28,
+    "grenada": 40,
+    "guatemala": 74,
+    "haiti": 41,
+    "honduras": 25,
+    "jamaika": 26,
+    "kanada": 76,
+    "kuba": 72,
+    "meksiko": 66,
+    "nikaragua": 47,
+    "panama": 83,
+    "puerto rico": 33,
+    "republik dominika": 90,
+    "saint kitts dan nevis": 42,
+    "saint lucia": 17,
+    "saint vincent dan grenadine": 71,
+    "trinidad dan tobago": 67,
+    "australia": 82,
+    "fiji": 87,
+    "guam": 37,
+    "kiribati": 35,
+    "marshall": 73,
+    "mikronesia": 34,
+    "nauru": 72,
+    "palau": 59,
+    "papua nugini": 65,
+    "samoa": 47,
+    "samoa amerika": 92,
+    "selandia baru": 19,
+    "tahiti": 47,
+    "tonga": 35,
+    "tuvalu": 54,
+    "vanuatu": 94,
+    "argentina": 39,
+    "bolivia": 71,
+    "brazil": 44,
+    "chile": 27,
+    "ekuador": 81,
+    "guiana prancis": 15,
+    "guyana": 86,
+    "kolombia": 79,
+    "paraguay": 50,
+    "peru": 79,
+    "suriname": 49,
+    "uruguay": 89,
+    "venezuela": 41,
+    "mayotte": 49,
+    "reunion": 39,
+    "martinique": 78,
+    "bonaire, sint eustatius dan saba": 27
+  },
+  "martinique": {
+    "afrika selatan": 47,
+    "aljazair": 78,
+    "angola": 26,
+    "benin": 59,
+    "botswana": 93,
+    "burkina faso": 20,
+    "burundi": 22,
+    "chad": 84,
+    "djibouti": 32,
+    "eritrea": 75,
+    "eswatini": 91,
+    "ethiopia": 82,
+    "gabon": 75,
+    "gambia": 41,
+    "ghana": 49,
+    "guinea": 93,
+    "guinea bissau": 25,
+    "kamerun": 16,
+    "kenya": 58,
+    "komoro": 53,
+    "kongo": 65,
+    "lesotho": 91,
+    "liberia": 40,
+    "libya": 39,
+    "madagaskar": 61,
+    "malawi": 32,
+    "mali": 63,
+    "maroko": 82,
+    "mauritania": 90,
+    "mauritius": 42,
+    "mesir": 21,
+    "mozambik": 37,
+    "namibia": 73,
+    "niger": 63,
+    "nigeria": 40,
+    "pantai gading": 67,
+    "republik afrika tengah": 16,
+    "republik demokratik kongo": 18,
+    "republik sudan": 19,
+    "republik tanzania": 18,
+    "republik uganda": 91,
+    "republik zambia": 40,
+    "republik zimbabwe": 38,
+    "rwanda": 93,
+    "sao tome dan principe": 50,
+    "senegal": 44,
+    "seychelles": 90,
+    "sierra leone": 85,
+    "somalia": 47,
+    "sudan selatan": 18,
+    "tanjung verde": 64,
+    "togo": 17,
+    "tunisia": 95,
+    "afganistan": 35,
+    "arab saudi": 23,
+    "armenia": 33,
+    "azerbaijan": 38,
+    "bahrain": 18,
+    "bangladesh": 52,
+    "bhutan": 17,
+    "brunei": 93,
+    "china": 25,
+    "filipina": 87,
+    "georgia": 31,
+    "hong kong": 71,
+    "india": 90,
+    "indonesia": 30,
+    "irak": 31,
+    "iran": 70,
+    "israel": 69,
+    "jepang": 88,
+    "kamboja": 94,
+    "kazakhstan": 46,
+    "kirgizstan": 41,
+    "korea selatan": 77,
+    "korea utara": 41,
+    "kuwait": 80,
+    "laos": 63,
+    "lebanon": 83,
+    "makau": 26,
+    "malaysia": 54,
+    "maldives": 23,
+    "mongolia": 30,
+    "myanmar": 89,
+    "nepal": 47,
+    "oman": 54,
+    "pakistan": 68,
+    "palestina": 16,
+    "qatar": 80,
+    "republik timor leste": 76,
+    "singapura": 56,
+    "sri lanka": 22,
+    "suriah": 64,
+    "taiwan": 15,
+    "tajikistan": 71,
+    "thailand": 56,
+    "turkmenistan": 89,
+    "uni emirat arab": 57,
+    "uzbekistan": 59,
+    "vietnam": 16,
+    "yaman": 37,
+    "yordania": 89,
+    "albania": 59,
+    "andorra": 48,
+    "austria": 79,
+    "belanda": 47,
+    "belarus": 21,
+    "belgia": 90,
+    "bosnia dan hercegovina": 93,
+    "bulgaria": 65,
+    "ceko": 65,
+    "denmark": 79,
+    "estonia": 34,
+    "finlandia": 74,
+    "gibraltar": 31,
+    "hungaria": 29,
+    "inggris": 35,
+    "irlandia": 63,
+    "islandia": 64,
+    "italia": 35,
+    "jerman": 83,
+    "kepulauan faroe": 45,
+    "kosovo": 81,
+    "kroasia": 87,
+    "latvia": 18,
+    "liechtenstein": 49,
+    "lithuania": 25,
+    "luksemburg": 32,
+    "makedonia utara": 28,
+    "malta": 44,
+    "moldova": 85,
+    "monako": 30,
+    "montenegro": 29,
+    "norwegia": 21,
+    "polandia": 18,
+    "portugal": 62,
+    "prancis": 30,
+    "republik rumania": 92,
+    "republik serbia": 61,
+    "rusia": 62,
+    "san marino": 40,
+    "siprus": 19,
+    "slovenia": 56,
+    "slowakia": 25,
+    "spanyol": 25,
+    "swedia": 20,
+    "swiss": 19,
+    "turki": 51,
+    "ukraina": 62,
+    "vatikan": 34,
+    "yunani": 54,
+    "amerika serikat": 36,
+    "antigua dan barbuda": 78,
+    "bahama": 67,
+    "barbados": 38,
+    "belize": 87,
+    "bermuda": 21,
+    "costa rica": 19,
+    "curacao": 91,
+    "dominika": 26,
+    "el salvador": 44,
+    "greenland": 78,
+    "grenada": 29,
+    "guatemala": 52,
+    "haiti": 28,
+    "honduras": 50,
+    "jamaika": 50,
+    "kanada": 85,
+    "kuba": 86,
+    "meksiko": 32,
+    "nikaragua": 70,
+    "panama": 49,
+    "puerto rico": 76,
+    "republik dominika": 94,
+    "saint kitts dan nevis": 85,
+    "saint lucia": 33,
+    "saint vincent dan grenadine": 58,
+    "trinidad dan tobago": 90,
+    "australia": 62,
+    "fiji": 85,
+    "guam": 70,
+    "kiribati": 29,
+    "marshall": 47,
+    "mikronesia": 86,
+    "nauru": 28,
+    "palau": 87,
+    "papua nugini": 25,
+    "samoa": 30,
+    "samoa amerika": 71,
+    "selandia baru": 62,
+    "tahiti": 28,
+    "tonga": 72,
+    "tuvalu": 65,
+    "vanuatu": 72,
+    "argentina": 64,
+    "bolivia": 53,
+    "brazil": 23,
+    "chile": 46,
+    "ekuador": 75,
+    "guiana prancis": 46,
+    "guyana": 15,
+    "kolombia": 93,
+    "paraguay": 18,
+    "peru": 36,
+    "suriname": 63,
+    "uruguay": 78,
+    "venezuela": 22,
+    "mayotte": 54,
+    "reunion": 59,
+    "guadeloupe": 78,
+    "bonaire, sint eustatius dan saba": 62
+  },
+  "bonaire_sint_eustatius_dan_saba": {
+    "afrika selatan": 27,
+    "aljazair": 20,
+    "angola": 20,
+    "benin": 17,
+    "botswana": 36,
+    "burkina faso": 39,
+    "burundi": 64,
+    "chad": 87,
+    "djibouti": 19,
+    "eritrea": 93,
+    "eswatini": 39,
+    "ethiopia": 59,
+    "gabon": 38,
+    "gambia": 29,
+    "ghana": 71,
+    "guinea": 38,
+    "guinea bissau": 77,
+    "kamerun": 52,
+    "kenya": 53,
+    "komoro": 62,
+    "kongo": 71,
+    "lesotho": 36,
+    "liberia": 81,
+    "libya": 82,
+    "madagaskar": 36,
+    "malawi": 37,
+    "mali": 44,
+    "maroko": 47,
+    "mauritania": 38,
+    "mauritius": 65,
+    "mesir": 48,
+    "mozambik": 54,
+    "namibia": 18,
+    "niger": 59,
+    "nigeria": 21,
+    "pantai gading": 38,
+    "republik afrika tengah": 81,
+    "republik demokratik kongo": 34,
+    "republik sudan": 15,
+    "republik tanzania": 80,
+    "republik uganda": 79,
+    "republik zambia": 51,
+    "republik zimbabwe": 80,
+    "rwanda": 17,
+    "sao tome dan principe": 45,
+    "senegal": 48,
+    "seychelles": 49,
+    "sierra leone": 39,
+    "somalia": 88,
+    "sudan selatan": 44,
+    "tanjung verde": 15,
+    "togo": 49,
+    "tunisia": 70,
+    "afganistan": 29,
+    "arab saudi": 49,
+    "armenia": 37,
+    "azerbaijan": 33,
+    "bahrain": 43,
+    "bangladesh": 82,
+    "bhutan": 76,
+    "brunei": 47,
+    "china": 95,
+    "filipina": 23,
+    "georgia": 44,
+    "hong kong": 37,
+    "india": 84,
+    "indonesia": 77,
+    "irak": 76,
+    "iran": 79,
+    "israel": 21,
+    "jepang": 82,
+    "kamboja": 24,
+    "kazakhstan": 58,
+    "kirgizstan": 91,
+    "korea selatan": 91,
+    "korea utara": 94,
+    "kuwait": 76,
+    "laos": 70,
+    "lebanon": 69,
+    "makau": 21,
+    "malaysia": 77,
+    "maldives": 54,
+    "mongolia": 50,
+    "myanmar": 63,
+    "nepal": 21,
+    "oman": 15,
+    "pakistan": 38,
+    "palestina": 23,
+    "qatar": 76,
+    "republik timor leste": 59,
+    "singapura": 87,
+    "sri lanka": 57,
+    "suriah": 37,
+    "taiwan": 51,
+    "tajikistan": 57,
+    "thailand": 39,
+    "turkmenistan": 45,
+    "uni emirat arab": 68,
+    "uzbekistan": 77,
+    "vietnam": 71,
+    "yaman": 33,
+    "yordania": 84,
+    "albania": 29,
+    "andorra": 85,
+    "austria": 55,
+    "belanda": 44,
+    "belarus": 25,
+    "belgia": 56,
+    "bosnia dan hercegovina": 15,
+    "bulgaria": 77,
+    "ceko": 40,
+    "denmark": 24,
+    "estonia": 50,
+    "finlandia": 56,
+    "gibraltar": 19,
+    "hungaria": 31,
+    "inggris": 95,
+    "irlandia": 45,
+    "islandia": 30,
+    "italia": 50,
+    "jerman": 34,
+    "kepulauan faroe": 58,
+    "kosovo": 60,
+    "kroasia": 91,
+    "latvia": 17,
+    "liechtenstein": 35,
+    "lithuania": 18,
+    "luksemburg": 38,
+    "makedonia utara": 89,
+    "malta": 28,
+    "moldova": 41,
+    "monako": 47,
+    "montenegro": 18,
+    "norwegia": 48,
+    "polandia": 76,
+    "portugal": 78,
+    "prancis": 54,
+    "republik rumania": 18,
+    "republik serbia": 88,
+    "rusia": 54,
+    "san marino": 84,
+    "siprus": 78,
+    "slovenia": 66,
+    "slowakia": 56,
+    "spanyol": 46,
+    "swedia": 16,
+    "swiss": 43,
+    "turki": 64,
+    "ukraina": 87,
+    "vatikan": 91,
+    "yunani": 38,
+    "amerika serikat": 90,
+    "antigua dan barbuda": 61,
+    "bahama": 30,
+    "barbados": 76,
+    "belize": 42,
+    "bermuda": 87,
+    "costa rica": 87,
+    "curacao": 68,
+    "dominika": 62,
+    "el salvador": 52,
+    "greenland": 32,
+    "grenada": 21,
+    "guatemala": 63,
+    "haiti": 19,
+    "honduras": 86,
+    "jamaika": 40,
+    "kanada": 95,
+    "kuba": 52,
+    "meksiko": 57,
+    "nikaragua": 29,
+    "panama": 90,
+    "puerto rico": 40,
+    "republik dominika": 47,
+    "saint kitts dan nevis": 82,
+    "saint lucia": 25,
+    "saint vincent dan grenadine": 53,
+    "trinidad dan tobago": 44,
+    "australia": 31,
+    "fiji": 81,
+    "guam": 70,
+    "kiribati": 63,
+    "marshall": 58,
+    "mikronesia": 73,
+    "nauru": 19,
+    "palau": 64,
+    "papua nugini": 87,
+    "samoa": 28,
+    "samoa amerika": 63,
+    "selandia baru": 53,
+    "tahiti": 37,
+    "tonga": 52,
+    "tuvalu": 25,
+    "vanuatu": 55,
+    "argentina": 53,
+    "bolivia": 76,
+    "brazil": 49,
+    "chile": 42,
+    "ekuador": 73,
+    "guiana prancis": 48,
+    "guyana": 87,
+    "kolombia": 27,
+    "paraguay": 41,
+    "peru": 89,
+    "suriname": 88,
+    "uruguay": 55,
+    "venezuela": 33,
+    "mayotte": 32,
+    "reunion": 26,
+    "guadeloupe": 27,
+    "martinique": 62
   }
 }

@@ -1,9 +1,9 @@
 import { Flag } from 'lucide-react';
 import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
-import countryPaths from '../../../../map_system/country-paths.json';
-import { COUNTRIES_DATA } from '../../../../map_system/map-data';
-import type { ProvinceAction, ProvinceActionEventDetail } from '../provinceActionTypes';
+import countryPaths from '../../../../../map_system/country-paths.json';
+import { COUNTRIES_DATA } from '../../../../../map_system/map-data';
+import type { ProvinceAction, ProvinceActionEventDetail } from '../../provinceActionTypes';
 
 export const ANNEXED_AGGREGATE_KEYS = [
   'barak', 'gudang_senjata', 'hangar_tank', 'pangkalan_udara', 'pangkalan_laut',

@@ -224,5 +224,10 @@ INSERT INTO database_sektor_agrikultur (id, country, country_slug, padi, gandum,
 (204, 'Peru', 'peru', 59, 55, 69, 159, 138, 207, 23, 69, 83, 139, 61, 20),
 (205, 'Suriname', 'suriname', 2, 1, 2, 2, 4, 4, 1, 0, 1, 8, 2, 1),
 (206, 'Uruguay', 'uruguay', 7, 6, 9, 17, 15, 20, 3, 9, 8, 14, 1, 0),
-(207, 'Venezuela', 'venezuela', 50, 46, 64, 132, 115, 171, 19, 37, 70, 119, 45, 2);
+(207, 'Venezuela', 'venezuela', 50, 46, 64, 132, 115, 171, 19, 37, 70, 119, 45, 2),
+(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 -- ========================================================

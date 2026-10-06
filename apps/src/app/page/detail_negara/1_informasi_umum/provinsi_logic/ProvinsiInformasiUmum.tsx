@@ -1,11 +1,11 @@
 'use client';
 
 import ProvinsiActionGrid from './ProvinsiActionGrid';
-import liberateProvince from './1_beri_kemerdekaan';
-import assignMissionaries from './2_tugaskan_misionaris';
-import requireTaxes from './3_wajibkan_pajak';
-import sendAid from './4_kirim_bantuan';
-import instillIdeology from './5_tanamkan_ideologi';
+import liberateProvince from './1_informasi_umum/1_beri_kemerdekaan';
+import assignMissionaries from './1_informasi_umum/2_tugaskan_misionaris';
+import requireTaxes from './1_informasi_umum/3_wajibkan_pajak';
+import sendAid from './1_informasi_umum/4_kirim_bantuan';
+import instillIdeology from './1_informasi_umum/5_tanamkan_ideologi';
 
 interface ProvinsiInformasiUmumProps {
   countryName: string;

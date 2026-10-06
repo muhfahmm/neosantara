@@ -527,9 +527,9 @@ export default function TopLeftIcon({
                       case 'kepuasan':
                         return <KepuasanNotification key={notif.id} notification={notif} onActionClick={handleAction} onRedirectClick={handleRedirect} />;
                       case 'peringkat':
-                        return <PeringkatNotification key={notif.id} notification={notif} onActionClick={handleAction} onCrackdownClick={handleCrackdown} onRedirectClick={handleRedirect} />;
+                        return <PeringkatNotification key={notif.id} notification={notif} onCrackdownClick={handleCrackdown} />;
                       case 'kesejahteraan':
-                        return <KesejahteraanNotification key={notif.id} notification={notif} onActionClick={handleAction} onRedirectClick={handleRedirect} />;
+                        return <KesejahteraanNotification key={notif.id} notification={notif} />;
                       default:
                         return (
                           <div key={notif.id} className="bg-[#0F2424] border border-[#00FFAA]/30 p-4 rounded-xl shadow-sm">

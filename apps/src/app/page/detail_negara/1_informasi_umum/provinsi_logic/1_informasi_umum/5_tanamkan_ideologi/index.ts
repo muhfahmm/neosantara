@@ -1,5 +1,5 @@
 import { BookOpen } from 'lucide-react';
-import type { ProvinceAction, ProvinceActionContext, ProvinceActionResult } from '../provinceActionTypes';
+import type { ProvinceAction, ProvinceActionContext, ProvinceActionResult } from '../../provinceActionTypes';
 
 type ProvinceIdeologyOverrides = Record<string, string>;
 

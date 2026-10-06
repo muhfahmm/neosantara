@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import type { ProvinceAction, ProvinceActionEventDetail } from './provinceActionTypes';
 import { PROVINCE_ACTION_EVENT } from './provinceActionTypes';
-import MissionaryResultModal from './2_tugaskan_misionaris/MissionaryResultModal';
-import IdeologyResultModal from './5_tanamkan_ideologi/IdeologyResultModal';
-import ProvinceAidModal from './4_kirim_bantuan/ProvinceAidModal';
+import MissionaryResultModal from './1_informasi_umum/2_tugaskan_misionaris/MissionaryResultModal';
+import IdeologyResultModal from './1_informasi_umum/5_tanamkan_ideologi/IdeologyResultModal';
+import ProvinceAidModal from './1_informasi_umum/4_kirim_bantuan/ProvinceAidModal';
 import { applyProvinceTensionChange } from './ketegangan_provinsi';
 
 interface MissionaryResult {

@@ -224,5 +224,10 @@ id, country, country_slug, prasekolah, dasar, menengah, lanjutan, universitas, l
 (204, 'Peru', 'peru', 244, 314, 279, 209, 105, 87, 53, 18, 53, 53, 35),
 (205, 'Suriname', 'suriname', 5, 6, 5, 4, 2, 2, 1, 1, 1, 1, 1),
 (206, 'Uruguay', 'uruguay', 31, 40, 36, 27, 14, 11, 7, 3, 7, 7, 5),
-(207, 'Venezuela', 'venezuela', 146, 188, 167, 125, 63, 52, 32, 11, 32, 32, 21);
+(207, 'Venezuela', 'venezuela', 146, 188, 167, 125, 63, 52, 32, 11, 32, 32, 21),
+(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 -- ========================================================

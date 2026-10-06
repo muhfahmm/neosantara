@@ -1,5 +1,5 @@
 import { HandHeart } from 'lucide-react';
-import type { ProvinceAction, ProvinceActionContext, ProvinceActionResult } from '../provinceActionTypes';
+import type { ProvinceAction, ProvinceActionContext, ProvinceActionResult } from '../../provinceActionTypes';
 
 function sendProvinceAid({
   targetCountry,

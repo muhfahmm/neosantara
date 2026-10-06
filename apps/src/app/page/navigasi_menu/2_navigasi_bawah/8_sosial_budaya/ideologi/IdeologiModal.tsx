@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, Info, Shield, Globe, Vote, Crown, DollarSign, Handshake, Hammer, Flag, Feather, Sword, Check } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
-import { PROFILES_IDEOLOGY_DATA } from "@/../../json/semua_fitur_negara/0_profiles/index";
+import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
 
 import IdeologiConfirmModal from "./modalsGanti";
 import IdeologiGagalModal from "./modalsGagalGanti";
@@ -59,6 +59,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   const [worldIdeologies, setWorldIdeologies] = useState<{ country: string; ideology: string }[]>([]);
+  const [countryProfiles, setCountryProfiles] = useState<CountryProfile[]>([]);
   const [sortMode, setSortMode] = useState<"default" | "unavailable-last" | "az" | "za">("default");
 
   useEffect(() => {
@@ -67,8 +68,19 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
 
   useEffect(() => {
     if (!isOpen) return;
+    let isCurrent = true;
+    fetchAllCountryProfilesFromDb().then((profiles) => {
+      if (isCurrent) setCountryProfiles(profiles);
+    });
+    return () => {
+      isCurrent = false;
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
     const profileLookup = new Map<string, string>();
-    for (const p of PROFILES_IDEOLOGY_DATA) {
+    for (const p of countryProfiles) {
       profileLookup.set(p.name_id.toLowerCase().trim(), p.ideology);
     }
 
@@ -98,7 +110,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
         return { country: c.country, ideology: profileIdeology || 'Belum tersedia' };
       });
     setWorldIdeologies(data);
-  }, [isOpen, countryDetail]);
+  }, [isOpen, countryDetail, countryProfiles]);
 
   const sortedWorldIdeologies = useMemo(() => {
     if (sortMode === "default") return worldIdeologies;

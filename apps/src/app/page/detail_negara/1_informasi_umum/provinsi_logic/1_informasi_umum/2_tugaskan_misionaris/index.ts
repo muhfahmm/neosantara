@@ -1,5 +1,5 @@
 import { Church } from 'lucide-react';
-import type { ProvinceAction, ProvinceActionContext, ProvinceActionResult } from '../provinceActionTypes';
+import type { ProvinceAction, ProvinceActionContext, ProvinceActionResult } from '../../provinceActionTypes';
 
 type ProvinceReligionOverrides = Record<string, string>;
 

@@ -220,5 +220,10 @@ INSERT INTO database_sektor_olahan_pangan (id, country, country_slug, air_minera
 (204, 'Peru', 'peru', 2, 0, 37, 29, 16, 14, 29, 41),
 (205, 'Suriname', 'suriname', 1, 0, 0, 1, 1, 1, 1, 0),
 (206, 'Uruguay', 'uruguay', 1, 0, 5, 3, 2, 2, 1, 5),
-(207, 'Venezuela', 'venezuela', 2, 1, 31, 23, 15, 11, 21, 34);
+(207, 'Venezuela', 'venezuela', 2, 1, 31, 23, 15, 11, 21, 34),
+(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 0, 0, 0),
+(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 0, 0, 0),
+(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0),
+(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 0, 0, 0),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 0, 0, 0);
 -- ========================================================

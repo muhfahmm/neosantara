@@ -221,5 +221,10 @@ id, country, country_slug, pusat_bantuan_hukum, pengadilan, kejaksaan, pos_polis
 (204, 'Peru', 'peru', 128, 170, 128, 318, 38068, 43, 62, 71),
 (205, 'Suriname', 'suriname', 3, 4, 3, 6, 623, 1, 53, 65),
 (206, 'Uruguay', 'uruguay', 17, 22, 17, 41, 4732, 6, 75, 81),
-(207, 'Venezuela', 'venezuela', 77, 102, 77, 191, 22825, 26, 40, 55);
+(207, 'Venezuela', 'venezuela', 77, 102, 77, 191, 22825, 26, 40, 55),
+(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 0, 0, 0),
+(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 0, 0, 0),
+(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0),
+(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 0, 0, 0),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 0, 0, 0);
 -- ========================================================

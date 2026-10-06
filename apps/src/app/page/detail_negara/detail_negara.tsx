@@ -7,8 +7,8 @@ import countryPaths from '../map_system/country-paths.json';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
-import { getProvinceReligionOverride } from './1_informasi_umum/provinsi_logic/2_tugaskan_misionaris';
-import { getProvinceIdeologyOverride } from './1_informasi_umum/provinsi_logic/5_tanamkan_ideologi';
+import { getProvinceReligionOverride } from './1_informasi_umum/provinsi_logic/1_informasi_umum/2_tugaskan_misionaris';
+import { getProvinceIdeologyOverride } from './1_informasi_umum/provinsi_logic/1_informasi_umum/5_tanamkan_ideologi';
 import { getProvinceRebellionChance } from './1_informasi_umum/provinsi_logic/ketegangan_provinsi/1_pemberontakan';
 import { getProvinceDemonstrationChance } from './1_informasi_umum/provinsi_logic/ketegangan_provinsi/2_demonstrasi';
 
