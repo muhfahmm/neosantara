@@ -41,7 +41,7 @@ import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_ke
 import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
 import { getTradeAgreementsForCountry } from '../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
 import { getEmbassiesForCountry } from '../../../../../json/database_kedutaan_besar/embassyRegistry';
-import { getRelationValue } from '../../../../../json/database_hubungan_antar_negara/relationsRegistry';
+import { getRelationValue, setRelationModifier } from '../../../../../json/database_hubungan_antar_negara/relationsRegistry';
 import { playerHasEmbassyWith, playerHasEmbassyOrTradePartners } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
 import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/2_beli/tradeBeliLogic';
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
@@ -95,6 +95,23 @@ interface Country {
     lng?: number;
     continent: string;
     color?: string;
+}
+
+function applyInvasionRelationPenalty(attackerCountry: string, minimum: number, maximum: number): number {
+    const penalty = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
+    const normalizedAttacker = attackerCountry.trim().toLowerCase();
+
+    COUNTRIES_DATA.forEach(country => {
+        if (country.country.trim().toLowerCase() !== normalizedAttacker) {
+            setRelationModifier(attackerCountry, country.country, -penalty);
+        }
+    });
+
+    if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('country_relations_updated'));
+    }
+
+    return penalty;
 }
 
 export default function MapPage() {
@@ -333,6 +350,17 @@ export default function MapPage() {
                     if (sanctionsNotifications.length > 0) {
                         setNotifications(prev => [...sanctionsNotifications, ...prev]);
                     }
+                    const relationPenalty = applyInvasionRelationPenalty(attackerCountry, 5, 10);
+                    setNotifications(prev => [{
+                        id: `notif-unapproved-invasion-relations-${Date.now()}`,
+                        title: '📉 HUBUNGAN DIPLOMATIK MEMBURUK',
+                        sender: 'Kementerian Luar Negeri',
+                        message: `Hubungan diplomatik ${attackerCountry} dengan negara-negara lain turun ${relationPenalty} poin karena menyerang ${targetCountry} tanpa mandat Resolusi Invasi PBB yang sesuai.`,
+                        timestamp: dateStr,
+                        type: 'peringkat',
+                        value: relationPenalty,
+                        isRead: false
+                    }, ...prev]);
                 }
 
                 // 1. Berita Invasi
@@ -550,6 +578,17 @@ export default function MapPage() {
                     if (sanctionsNotifications.length > 0) {
                         setNotifications(prev => [...sanctionsNotifications, ...prev]);
                     }
+                    const relationPenalty = applyInvasionRelationPenalty(attackerCountry, 5, 10);
+                    setNotifications(prev => [{
+                        id: `notif-unapproved-invasion-relations-${Date.now()}`,
+                        title: '📉 HUBUNGAN DIPLOMATIK MEMBURUK',
+                        sender: 'Kementerian Luar Negeri',
+                        message: `Hubungan diplomatik ${attackerCountry} dengan negara-negara lain turun ${relationPenalty} poin karena menyerang ${targetCountry} tanpa mandat Resolusi Invasi PBB yang sesuai.`,
+                        timestamp: dateStr,
+                        type: 'peringkat',
+                        value: relationPenalty,
+                        isRead: false
+                    }, ...prev]);
                 }
 
                 const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
@@ -578,6 +617,18 @@ export default function MapPage() {
 
             } else {
                 // Action: mundur
+                const relationPenalty = applyInvasionRelationPenalty(attackerCountry, 1, 5);
+                setNotifications(prev => [{
+                    id: `notif-retreat-relations-${Date.now()}`,
+                    title: '📉 HUBUNGAN DIPLOMATIK MENURUN',
+                    sender: 'Kementerian Luar Negeri',
+                    message: `Hubungan diplomatik ${attackerCountry} dengan negara-negara lain turun ${relationPenalty} poin setelah pasukan mundur dari operasi terhadap ${targetCountry}.`,
+                    timestamp: dateStr,
+                    type: 'peringkat',
+                    value: relationPenalty,
+                    isRead: false
+                }, ...prev]);
+
                 const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
                 newNewsItems.push(invNews);
 

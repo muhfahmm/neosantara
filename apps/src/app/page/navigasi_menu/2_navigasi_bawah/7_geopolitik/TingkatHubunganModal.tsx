@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { X, Globe, Search, Info, Building2, ShieldCheck, ShieldAlert } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { getRelationValue, hasEmbassy } from "@/../../json/database_hubungan_antar_negara/relationsRegistry";
@@ -33,6 +33,13 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
   });
   
   const [isLegendOpen, setIsLegendOpen] = useState(false);
+  const [, setRelationRevision] = useState(0);
+
+  useEffect(() => {
+    const refreshRelations = () => setRelationRevision(revision => revision + 1);
+    window.addEventListener('country_relations_updated', refreshRelations);
+    return () => window.removeEventListener('country_relations_updated', refreshRelations);
+  }, []);
 
   if (!isOpen) return null;
 

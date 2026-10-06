@@ -54,6 +54,7 @@ function getAnnexedInfo(countryNames: unknown[], countryIso?: unknown) {
 export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail, setCountryDetail, currentDate, playerNetBalanceAdjustment = 0, adjustPlayerNetBalance, autoBuildEmbassy }: CountryDetailModalProps) {
   // State untuk menu tab
   const [activeTab, setActiveTab] = useState<"informasi" | "geopolitik" | "militer">("informasi");
+  const [, setRelationRevision] = useState(0);
 
   // State untuk data negara yang diklik
   const [fetchedDetail, setFetchedDetail] = useState<any>(null);
@@ -68,6 +69,12 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   
   // PERBAIKAN: Ref untuk mencegah fetch ulang data saat modal dibuka/tutup (Data tetap progresif)
   const fetchedRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const refreshRelations = () => setRelationRevision(revision => revision + 1);
+    window.addEventListener('country_relations_updated', refreshRelations);
+    return () => window.removeEventListener('country_relations_updated', refreshRelations);
+  }, []);
 
   // PERBAIKAN: Fetch data & Agregasi Kekaisaran saat pertama kali negara dibuka
   useEffect(() => {
