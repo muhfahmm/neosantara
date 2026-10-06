@@ -61,7 +61,10 @@ export function Navbar({
 }: NavbarProps) {
     const anggaran = Number(countryDetail?.anggaran) || 0;
     const countryName = selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || '';
-    const netBalance = calculateNetBalanceWithEconomicEmbargo(countryDetail, countryName) + netBalanceAdjustment;
+    const netBalance =
+        calculateNetBalanceWithEconomicEmbargo(countryDetail, countryName) +
+        netBalanceAdjustment -
+        (Number(countryDetail?.minister_recruitment_expense_pending) || 0);
     const netBalanceColor = netBalance >= 0 ? 'text-emerald-700' : 'text-rose-700';
     const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID')}`;
     

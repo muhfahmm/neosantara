@@ -31,6 +31,7 @@ import {
 import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/economic_logic/treasuryUpdater";
 import { LEVEL_UP_COST, MAX_CABINET_LEVEL } from "@/app/logic/economic_logic/departments";
 import { generateKabinetChangeNotification } from "@/app/page/menus/inbox/logic/13_notifikasi_kabinet/kabinetChangeLogic";
+import PilihMenteriModal, { type MinisterCandidateDepartment } from "./PilihMenteriModal";
 
 interface ModalProps {
   isOpen: boolean;
@@ -78,10 +79,13 @@ const MINISTRY_EFFECTS: Record<string, { stat: string; perLevel: number; unit: s
 };
 
 // Fungsi untuk mendapatkan deskripsi efek berdasarkan level
-const getEffectDescription = (deptId: string, level: number): string => {
+const getEffectDescription = (deptId: string, level: number, ministerTier = 0): string => {
   const config = MINISTRY_EFFECTS[deptId];
   if (!config) return "Tidak ada efek spesifik";
-  const totalEffect = config.perLevel * level;
+  const ministerBonus = ministerTier > 0
+    ? [0, 5, 10, 15, 20, 50][ministerTier] / 100
+    : 0;
+  const totalEffect = config.perLevel * level + Math.sign(config.perLevel) * ministerBonus;
   const sign = totalEffect >= 0 ? "+" : "";
   return `${sign}${(totalEffect * 100).toFixed(1)}% ${config.label}`;
 };
@@ -326,8 +330,12 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
     fromLevel: number;
     targetLevel: number;
   } | null>(null);
+  const [ministerDepartment, setMinisterDepartment] = useState<MinisterCandidateDepartment | null>(null);
 
   const money = countryDetail?.anggaran ?? 325800;
+  const netIncome = calculateCountryNetBalance(countryDetail);
+  const availableNetIncome = netIncome -
+    (Number(countryDetail?.minister_recruitment_expense_pending) || 0);
 
   useEffect(() => {
     setMounted(true);
@@ -341,6 +349,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
       setShowGeneralInfo(false);
       setConfirmUpgrade(null);
       setConfirmDowngrade(null);
+      setMinisterDepartment(null);
     }
   }, [resetTrigger]);
 
@@ -357,6 +366,32 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
 
   const getDailyCost = (level: number) => {
     return LEVEL_UP_COST[level] ?? 50;
+  };
+
+  const openMinisterCandidates = (dept: Department) => {
+    const effect = MINISTRY_EFFECTS[dept.id];
+    if (!effect) return;
+    setMinisterDepartment({
+      id: dept.id,
+      name: dept.name,
+      effectLabel: effect.label,
+      effectDirection: effect.perLevel >= 0 ? 1 : -1,
+      icon: dept.icon,
+    });
+  };
+
+  const hireMinister = (department: MinisterCandidateDepartment, tier: number, cost: number) => {
+    if (
+      availableNetIncome < cost ||
+      Number(countryDetail?.[`menteri_${department.id}`]) > 0
+    ) return;
+    setCountryDetail({
+      ...countryDetail,
+      [`menteri_${department.id}`]: tier,
+      minister_recruitment_expense_pending:
+        (Number(countryDetail?.minister_recruitment_expense_pending) || 0) + cost,
+    });
+    setMinisterDepartment(null);
   };
 
   const handleLevelBoxClick = (dept: Department, targetLevel: number) => {
@@ -494,8 +529,9 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                   const Icon = dept.icon;
                   const maxed = level >= MAX_LEVEL;
 
-                  const currentEffect = getEffectDescription(dept.id, level);
-                  const nextEffect = !maxed ? getEffectDescription(dept.id, level + 1) : null;
+                  const hiredMinisterTier = Number(countryDetail?.[`menteri_${dept.id}`]) || 0;
+                  const currentEffect = getEffectDescription(dept.id, level, hiredMinisterTier);
+                  const nextEffect = !maxed ? getEffectDescription(dept.id, level + 1, hiredMinisterTier) : null;
 
                   return (
                     <div
@@ -576,20 +612,23 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                           </div>
                         </div>
 
-                        <div
+                        <button
+                          type="button"
+                          onClick={() => openMinisterCandidates(dept)}
                           title={
                             maxed
-                              ? "Level maksimum"
-                              : `Upgrade 1 level: ${LEVEL_UP_COST[level + 1]?.toLocaleString("id-ID")} NEO`
+                              ? "Pilih kandidat menteri"
+                              : `Pilih kandidat menteri • Upgrade 1 level: ${LEVEL_UP_COST[level + 1]?.toLocaleString("id-ID")} NEO`
                           }
-                          className={`h-12 w-12 shrink-0 rounded-lg border flex items-center justify-center ${
+                          aria-label={`Pilih kandidat menteri untuk ${dept.name}`}
+                          className={`h-12 w-12 shrink-0 rounded-lg border flex items-center justify-center cursor-pointer hover:scale-105 transition-transform ${
                             maxed
                               ? "border-[#00FFAA]/10 bg-[#0F2424] text-[#6B8A8A]"
                               : "border-[#00FFAA]/40 bg-[#00FFAA] text-[#0A1A1A] shadow-md"
                           }`}
                         >
                           <Hammer className="h-5 w-5" />
-                        </div>
+                        </button>
                       </div>
 
                       <div className="px-4 pb-3 -mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-bold">
@@ -617,6 +656,16 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
           </div>
         </div>
       </div>
+
+      {ministerDepartment && (
+        <PilihMenteriModal
+          department={ministerDepartment}
+          availableNetIncome={availableNetIncome}
+          hiredTier={Number(countryDetail?.[`menteri_${ministerDepartment.id}`]) || 0}
+          onClose={() => setMinisterDepartment(null)}
+          onHire={(tier, cost) => hireMinister(ministerDepartment, tier, cost)}
+        />
+      )}
 
       {/* ========== GENERAL PANDUAN POPUP ========== */}
       {showGeneralInfo && (

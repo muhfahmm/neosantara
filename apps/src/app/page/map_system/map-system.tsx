@@ -2311,7 +2311,9 @@ export default function MapPage() {
                 ...prev,
                 ...updates,
                 ...populationUpdates,
-                anggaran: (Number(prev.anggaran) || 0) + netBalance,
+                anggaran: (Number(prev.anggaran) || 0) + netBalance -
+                    (Number(prev.minister_recruitment_expense_pending) || 0),
+                minister_recruitment_expense_pending: 0,
                 satisfaction: prev.satisfaction, // Preserve satisfaction scores
                 programNuklirActive: nextProgramNuklirActive,
                 population_crisis_tiers: currentCrisisTiers,
