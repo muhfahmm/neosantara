@@ -37,6 +37,7 @@ interface ModalProps {
 
 export interface TradeHistoryItem {
   tanggal: string;
+  tanggalISO?: string;
   tipe: "jual" | "beli";
   kuantitas: string;
   biaya: number;
@@ -76,6 +77,24 @@ const ALL_IMPORT_KEYS = [
 ];
 
 const formatLabel = (key: string) => key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase());
+const TRADE_HISTORY_RETENTION_DAYS = 90;
+
+const parseTradeHistoryDate = (item: TradeHistoryItem): Date | null => {
+  const dateParts = item.tanggalISO
+    ? item.tanggalISO.split("-").map(Number)
+    : item.tanggal.split(".").reverse().map(Number);
+  if (dateParts.length !== 3 || dateParts.some(part => !Number.isInteger(part))) return null;
+
+  const [year, month, day] = dateParts;
+  const date = new Date(year, month - 1, day);
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+  return date;
+};
+
+const formatTradeHistoryDate = (date: Date): string => {
+  const [year, month, day] = formatDate(date).split("-");
+  return `${day}.${month}.${year}`;
+};
 
 export default function PerdaganganModal({ 
   isOpen, 
@@ -87,9 +106,46 @@ export default function PerdaganganModal({
   prefetchedAllCountries 
 }: ModalProps) {
   const [historyFilter, setHistoryFilter] = useState<"semua" | "jual" | "beli">("semua");
-  const [history, setHistory] = useState<TradeHistoryItem[]>([]);
+  const storedHistory = countryDetail?.tradeHistory;
+  const history = useMemo(() => {
+    if (!Array.isArray(storedHistory)) return [];
+    const today = currentDate || new Date();
+    const currentDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+
+    return storedHistory.filter((entry): entry is TradeHistoryItem => {
+      if (
+        !entry ||
+        typeof entry !== "object" ||
+        !("tanggal" in entry) ||
+        typeof entry.tanggal !== "string" ||
+        !("tipe" in entry) ||
+        (entry.tipe !== "jual" && entry.tipe !== "beli") ||
+        !("kuantitas" in entry) ||
+        typeof entry.kuantitas !== "string" ||
+        !("biaya" in entry) ||
+        typeof entry.biaya !== "number" ||
+        !("negara" in entry) ||
+        typeof entry.negara !== "string"
+      ) {
+        return false;
+      }
+
+      const transactionDay = parseTradeHistoryDate(entry);
+      if (!transactionDay) return true;
+      const ageInDays = Math.floor((currentDay - transactionDay.getTime()) / (1000 * 60 * 60 * 24));
+      return ageInDays < TRADE_HISTORY_RETENTION_DAYS;
+    });
+  }, [storedHistory, currentDate]);
   const [historyResetVersion, setHistoryResetVersion] = useState(0);
   const [metadata, setMetadata] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    if (!Array.isArray(storedHistory) || history.length === storedHistory.length) return;
+    setCountryDetail(previous => ({
+      ...previous,
+      tradeHistory: history
+    }));
+  }, [history, setCountryDetail, storedHistory]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -134,22 +190,24 @@ export default function PerdaganganModal({
     setIsJualOpen(true);
   };
 
-  const getTodayString = () => {
-    const d = new Date();
-    return `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${d.getFullYear()}`;
-  };
-
   const addHistoryEntry = (tipe: "jual" | "beli", biaya: number, kuantitas: string = "1x") => {
-    setHistory((prev) => [
-      {
-        tanggal: getTodayString(),
-        tipe,
-        kuantitas,
-        biaya,
-        negara: countryDetail?.country || countryDetail?.nama || "-"
-      },
-      ...prev
-    ]);
+    const transactionDate = currentDate || new Date();
+    const tanggalISO = formatDate(transactionDate);
+    setCountryDetail(previous => ({
+      ...previous,
+      tradeHistory: [
+        {
+          tanggal: formatTradeHistoryDate(transactionDate),
+          tanggalISO,
+          tipe,
+          kuantitas,
+          biaya,
+          negara: previous.country || previous.nama || "-"
+        },
+        ...(Array.isArray(previous.tradeHistory) ? previous.tradeHistory : [])
+          .filter((entry): entry is TradeHistoryItem => Boolean(entry) && typeof entry === "object")
+      ]
+    }));
   };
 
   const countryName = countryDetail?.country || countryDetail?.nama || "";
@@ -174,7 +232,10 @@ export default function PerdaganganModal({
   }, []);
 
   const handleResetHistory = () => {
-    setHistory([]);
+    setCountryDetail(previous => ({
+      ...previous,
+      tradeHistory: []
+    }));
     setHistoryFilter("semua");
     setPartnerOffers([]);
     setHistoryResetVersion((prev) => prev + 1);
@@ -499,7 +560,7 @@ export default function PerdaganganModal({
             )}
 
             <div className="flex items-center justify-between mb-2.5 lg:mb-3">
-              <h3 className="text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-widest">Riwayat 180 Hari Terakhir</h3>
+              <h3 className="text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-widest">Riwayat 90 Hari Terakhir</h3>
               <div className="inline-flex rounded-lg overflow-hidden border border-[#00FFAA]/30">
                 <button onClick={() => setHistoryFilter(effectiveFilter === "jual" ? "semua" : "jual")} className={`px-3 lg:px-4 py-1 lg:py-1.5 text-[9px] lg:text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "jual" ? "bg-rose-600 text-white" : "bg-[#0A1A1A] text-rose-400 hover:bg-rose-950/40"}`}>Jual</button>
                 <button onClick={() => setHistoryFilter(effectiveFilter === "beli" ? "semua" : "beli")} className={`px-3 lg:px-4 py-1 lg:py-1.5 text-[9px] lg:text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "beli" ? "bg-emerald-600 text-white" : "bg-[#0A1A1A] text-emerald-400 hover:bg-emerald-950/40"}`}>Beli</button>

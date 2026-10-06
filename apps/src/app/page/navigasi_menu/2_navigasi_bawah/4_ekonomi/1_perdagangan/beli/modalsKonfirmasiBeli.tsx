@@ -9,6 +9,11 @@ import { calculateProductionIncrement, formatDate, normalizePartnerBuildDates } 
 import countryPaths from '@/app/page/map_system/country-paths.json';
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { isTradeEmbargoActive } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
+import {
+  applyProtestantTradePrice,
+  PROTESTANT_BUY_PRICE_DISCOUNT
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/kristen";
+import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 
 const getFlagEmoji = (countryName: string) => {
   const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === countryName.toLowerCase().trim());
@@ -16,6 +21,8 @@ const getFlagEmoji = (countryName: string) => {
   const codePoints = matched.iso.toUpperCase().split('').map(c => 127397 + c.charCodeAt(0));
   return String.fromCodePoint(...codePoints) + " ";
 };
+
+const formatTradePrice = (price: number) => String(Math.round(price));
 
 import { 
   hasUraniumBuilding, 
@@ -455,35 +462,8 @@ export default function ModalsKonfirmasiBeli({
 
   const stockAvailable = useMemo(() => {
     if (!effectiveSelectedProduct) return 0;
-    const buildingCount = Number(countryDetail?.[effectiveSelectedProduct]) || 0;
-    if (buildingCount === 0) return 0;
-
-    const bMeta = findMeta(effectiveSelectedProduct);
-    if (!bMeta || !bMeta.produksi || !currentDate) return 0;
-
-    const buildDateKey = `build_date_${effectiveSelectedProduct}`;
-    const buildDateRaw = countryDetail?.[buildDateKey];
-    const currentDateStr = formatDate(currentDate);
-    let finalBuildDate: string;
-    if (typeof buildDateRaw === 'string' && buildDateRaw) {
-      finalBuildDate = buildDateRaw;
-    } else {
-      const yesterday = new Date(currentDate);
-      yesterday.setDate(yesterday.getDate() - 1);
-      finalBuildDate = formatDate(yesterday);
-    }
-
-    const baseProduction = calculateProductionIncrement(
-      bMeta.produksi,
-      buildingCount,
-      finalBuildDate,
-      currentDateStr
-    );
-
-    const soldCount = Number(countryDetail?.[`total_sold_${effectiveSelectedProduct}`]) || 0;
-    const boughtCount = Number(countryDetail?.[`total_bought_${effectiveSelectedProduct}`]) || 0;
-    return Math.max(0, baseProduction + boughtCount - soldCount);
-  }, [effectiveSelectedProduct, currentDate, countryDetail, findMeta]);
+    return getMaterialStock(countryDetail, effectiveSelectedProduct);
+  }, [effectiveSelectedProduct, countryDetail]);
 
   const partnerProduction = useMemo(() => {
     if (!effectiveSelectedProduct || !partnerData) return 0;
@@ -603,7 +583,14 @@ export default function ModalsKonfirmasiBeli({
   const currentPrice = marketPrices[effectiveSelectedProduct] || 0;
   // FAKTOR BELI (MISAL 2x HARGA PASAR)
   const BUY_FACTOR = 2;
-  const totalPrice = currentPrice * BUY_FACTOR * quantity;
+  const originalPricePerUnit = Math.round(currentPrice * BUY_FACTOR);
+  const pricePerUnit = Math.round(applyProtestantTradePrice(
+    originalPricePerUnit,
+    countryDetail?.religion,
+    "buy"
+  ));
+  const hasProtestantDiscount = pricePerUnit < originalPricePerUnit;
+  const totalPrice = pricePerUnit * quantity;
 
   // --- RENDER CANDLESTICK CHART ---
   const renderCandlestickChart = () => {
@@ -681,7 +668,7 @@ export default function ModalsKonfirmasiBeli({
           <line x1={padding.left} y1={yScale(currentPrice)} x2={width - padding.right} y2={yScale(currentPrice)} stroke="#00FFAA" strokeDasharray="4 4" strokeWidth="1.5" />
           <circle cx={width - padding.right} cy={yScale(currentPrice)} r="5" fill="#00FFAA" stroke="#0A1A1A" strokeWidth="2" />
           <text x={width - padding.right + 5} y={yScale(currentPrice) + 3} fontSize="9" fill="#00FFAA" fontWeight="bold">
-            {currentPrice.toLocaleString("id-ID")} NEO
+            {formatTradePrice(currentPrice)} NEO
           </text>
         </svg>
       </div>
@@ -710,7 +697,7 @@ export default function ModalsKonfirmasiBeli({
     }
 
     if (currentBudget < totalPrice) {
-      alert(`Kas Negara tidak mencukupi! Butuh ${totalPrice.toLocaleString("id-ID")} NEO.`);
+      alert(`Kas Negara tidak mencukupi! Butuh ${formatTradePrice(totalPrice)} NEO.`);
       return;
     }
 
@@ -720,7 +707,9 @@ export default function ModalsKonfirmasiBeli({
     const partnerSoldKey = `partner_sold_${targetCountry}_${effectiveSelectedProduct}`;
     const currentPartnerSold = Number(detail[partnerSoldKey]) || 0;
 
-    // Simpan juga accumulatedKey untuk kecocokan kode lama
+    const inventoryKey = `inventory_${effectiveSelectedProduct}`;
+    const currentInventory = getMaterialStock(detail, effectiveSelectedProduct);
+    const newInventory = currentInventory + quantity;
     const accumulatedKey = `accumulated_${effectiveSelectedProduct}`;
 
     setCountryDetail({ 
@@ -728,7 +717,8 @@ export default function ModalsKonfirmasiBeli({
       anggaran: currentBudget - totalPrice,
       [boughtKey]: currentBought + quantity,
       [partnerSoldKey]: currentPartnerSold + quantity,
-      [accumulatedKey]: stockAvailable + quantity
+      [inventoryKey]: newInventory,
+      [accumulatedKey]: newInventory
     });
 
     onConfirm(totalPrice, `${quantity}x Satuan`);
@@ -846,15 +836,27 @@ export default function ModalsKonfirmasiBeli({
           <div className="flex justify-between items-center pt-3 border-t border-[#00FFAA]/20">
             <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Harga / unit:</span>
             <div className="flex items-center gap-1.5">
-              <span className="text-lg font-black text-[#00FFAA]">{currentPrice.toLocaleString("id-ID")}</span>
+              {hasProtestantDiscount && (
+                <span className="text-sm font-bold text-rose-400 line-through">
+                  {formatTradePrice(originalPricePerUnit)}
+                </span>
+              )}
+              <span className="text-lg font-black text-[#00FFAA]">{formatTradePrice(pricePerUnit)}</span>
               <span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span>
             </div>
           </div>
+          {hasProtestantDiscount && (
+            <div className="flex justify-end">
+              <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                Bonus Protestan: Diskon beli {PROTESTANT_BUY_PRICE_DISCOUNT * 100}%
+              </span>
+            </div>
+          )}
 
           <div className="flex justify-between items-center border-t border-[#00FFAA]/20 pt-2 mt-1">
             <span className="text-[#E0E0E0] font-bold text-sm tracking-wide">Total Pembelian :</span>
             <div className="flex items-center gap-1.5">
-              <span className="text-lg font-black text-[#00FFAA]">{totalPrice.toLocaleString("id-ID")}</span>
+              <span className="text-lg font-black text-[#00FFAA]">{formatTradePrice(totalPrice)}</span>
               <span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span>
             </div>
           </div>

@@ -8,6 +8,11 @@ import countryPaths from '@/app/page/map_system/country-paths.json';
 import PilihItemModal from "./PilihItemModal";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { isTradeEmbargoActive } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
+import {
+  applyProtestantTradePrice,
+  PROTESTANT_SELL_PRICE_BONUS
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/kristen";
+import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 
 const getFlagEmoji = (countryName: string) => {
   const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === countryName.toLowerCase().trim());
@@ -15,6 +20,8 @@ const getFlagEmoji = (countryName: string) => {
   const codePoints = matched.iso.toUpperCase().split('').map(c => 127397 + c.charCodeAt(0));
   return String.fromCodePoint(...codePoints) + " ";
 };
+
+const formatTradePrice = (price: number) => String(Math.round(price));
 
 import { 
   hasUraniumBuilding, hasBatubaraBuilding, hasMinyakBumiBuilding, hasGasAlamBuilding,
@@ -202,21 +209,8 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
 
   const stockAvailable = useMemo(() => {
     if (!selectedProduct) return 0;
-    const buildingCount = Number(countryDetail?.[selectedProduct]) || 0;
-    if (buildingCount === 0) return 0;
-    const bMeta = findMeta(selectedProduct);
-    if (!bMeta || !bMeta.produksi || !currentDate) return 0;
-    const buildDateKey = `build_date_${selectedProduct}`;
-    const buildDateRaw = countryDetail?.[buildDateKey];
-    const currentDateStr = formatDate(currentDate);
-    let finalBuildDate: string;
-    if (typeof buildDateRaw === 'string' && buildDateRaw) finalBuildDate = buildDateRaw;
-    else { const yesterday = new Date(currentDate); yesterday.setDate(yesterday.getDate() - 1); finalBuildDate = formatDate(yesterday); }
-    const baseProduction = calculateProductionIncrement(bMeta.produksi, buildingCount, finalBuildDate, currentDateStr);
-    const soldCount = Number(countryDetail?.[`total_sold_${selectedProduct}`]) || 0;
-    const boughtCount = Number(countryDetail?.[`total_bought_${selectedProduct}`]) || 0;
-    return Math.max(0, baseProduction + boughtCount - soldCount);
-  }, [selectedProduct, currentDate, countryDetail, findMeta]);
+    return getMaterialStock(countryDetail, selectedProduct);
+  }, [selectedProduct, countryDetail]);
 
   const partnerProduction = useMemo(() => {
     if (!selectedProduct || !partnerData) return 0;
@@ -294,8 +288,10 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
 
   const effectiveSelectedCountry = selectedCountry || partners[0]?.nama_negara || "";
   const seriesKey = `${selectedProduct}-${timeRange}`;
-  const currentPrice = useMemo(() => marketPrices[selectedProduct] || 0, [marketPrices, selectedProduct]);
-  const totalPrice = currentPrice * quantity;
+  const currentPrice = useMemo(() => Math.round(marketPrices[selectedProduct] || 0), [marketPrices, selectedProduct]);
+  const pricePerUnit = Math.round(applyProtestantTradePrice(currentPrice, countryDetail?.religion, "sell"));
+  const hasProtestantBonus = pricePerUnit > currentPrice;
+  const totalPrice = pricePerUnit * quantity;
 
   useEffect(() => {
     if (!currentDate) return;
@@ -364,7 +360,7 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
           })}
           <line x1={padding.left} y1={yScale(currentPrice)} x2={width - padding.right} y2={yScale(currentPrice)} stroke="#00FFAA" strokeDasharray="4 4" strokeWidth="1.5" />
           <circle cx={width - padding.right} cy={yScale(currentPrice)} r="5" fill="#00FFAA" stroke="#0A1A1A" strokeWidth="2" />
-          <text x={width - padding.right + 5} y={yScale(currentPrice) + 3} fontSize="9" fill="#00FFAA" fontWeight="bold">{currentPrice.toLocaleString("id-ID")} NEO</text>
+          <text x={width - padding.right + 5} y={yScale(currentPrice) + 3} fontSize="9" fill="#00FFAA" fontWeight="bold">{formatTradePrice(currentPrice)} NEO</text>
         </svg>
       </div>
     );
@@ -385,15 +381,22 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
       alert(`Stok Anda tidak mencukupi! Stok tersedia hanya ${stockAvailable.toLocaleString("id-ID")} unit.`);
       return;
     }
-    const totalPendapatan = currentPrice * quantity;
+    const totalPendapatan = pricePerUnit * quantity;
     const soldKey = `total_sold_${selectedProduct}`;
     const currentSold = Number(detail[soldKey]) || 0;
+    const inventoryKey = `inventory_${selectedProduct}`;
+    const currentInventory = getMaterialStock(detail, selectedProduct);
+    const newInventory = Math.max(0, currentInventory - quantity);
     const accumulatedKey = `accumulated_${selectedProduct}`;
-    const currentAccumulated = Number(detail[accumulatedKey] || stockAvailable);
-    const newAccumulated = Math.max(0, currentAccumulated - quantity);
-    setCountryDetail({ ...detail, anggaran: currentBudget + totalPendapatan, [soldKey]: currentSold + quantity, [accumulatedKey]: newAccumulated });
+    setCountryDetail({
+      ...detail,
+      anggaran: currentBudget + totalPendapatan,
+      [soldKey]: currentSold + quantity,
+      [inventoryKey]: newInventory,
+      [accumulatedKey]: newInventory,
+    });
     onConfirm(totalPendapatan, `${quantity}x Satuan`);
-    alert(`Berhasil menjual ${quantity} ${formatLabel(selectedProduct)} ke ${effectiveSelectedCountry} dengan harga ${currentPrice.toLocaleString("id-ID")} NEO/unit.`);
+    alert(`Berhasil menjual ${quantity} ${formatLabel(selectedProduct)} ke ${effectiveSelectedCountry} dengan harga ${formatTradePrice(pricePerUnit)} NEO/unit.`);
     onClose();
   };
 
@@ -481,11 +484,26 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
 
                 <div className="flex justify-between items-center pt-3 border-t border-[#00FFAA]/20">
                   <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Harga / unit:</span>
-                  <div className="flex items-center gap-1.5"><span className="text-lg font-black text-[#00FFAA]">{currentPrice.toLocaleString("id-ID")}</span><span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span></div>
+                  <div className="flex items-center gap-1.5">
+                    {hasProtestantBonus && (
+                      <span className="text-sm font-bold text-emerald-400 line-through">
+                        {formatTradePrice(currentPrice)}
+                      </span>
+                    )}
+                    <span className="text-lg font-black text-[#00FFAA]">{formatTradePrice(pricePerUnit)}</span>
+                    <span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span>
+                  </div>
                 </div>
+                {hasProtestantBonus && (
+                  <div className="flex justify-end">
+                    <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                      Bonus Protestan: Harga jual +{PROTESTANT_SELL_PRICE_BONUS * 100}%
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center border-t border-[#00FFAA]/20 pt-2 mt-1">
                   <span className="text-[#E0E0E0] font-bold text-sm tracking-wide">Total Pendapatan :</span>
-                  <div className="flex items-center gap-1.5"><span className="text-lg font-black text-[#00FFAA]">{totalPrice.toLocaleString("id-ID")}</span><span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span></div>
+                  <div className="flex items-center gap-1.5"><span className="text-lg font-black text-[#00FFAA]">{formatTradePrice(totalPrice)}</span><span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span></div>
                 </div>
 
                 <div className="pt-3 border-t border-[#00FFAA]/20 mt-2 w-full">
