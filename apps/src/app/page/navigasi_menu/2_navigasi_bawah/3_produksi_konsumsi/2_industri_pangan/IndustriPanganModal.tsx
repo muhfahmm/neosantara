@@ -17,7 +17,7 @@ import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 import { getIslamProductionMultiplier } from "../../../../bonus_logic/agama_bonus_logic/islam";
 import { getShintoElectricityProductionMultiplier } from "../../../../bonus_logic/agama_bonus_logic/shinto";
 import { getCommunismProductionMultiplier, COMMUNISM_PRODUCTION_BONUS } from "../../../../bonus_logic/ideologi_bonus_logic/komunisme";
-import { isMemberOfFAO, FAO_BONUS_RESOURCES } from "../../../../bonus_logic/organisasi_bonus_logic/fao";
+import { isMemberOfFAO, FAO_BONUS_RESOURCES } from "../../../../bonus_logic/organisasi_bonus_logic/organisasi_pbb/fao";
 import { applyNpcCountrySimulationState } from "@/app/logic/npcCountrySimulation";
 import { calculatePanganScore } from "@/app/logic/kepuasanCalculator";
 
@@ -356,7 +356,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                               const countryName = countryDetail?.country || countryDetail?.nama || "";
                               const normalizedKey = (key || "").trim().toLowerCase().replace(/^\d+_/, "");
                               const religion = String(countryDetail?.religion ?? countryDetail?.agama_utama ?? countryDetail?.agama ?? "").trim().toLowerCase();
-                              
+
                               const hasIslamBonus = religion === "islam" && getIslamProductionMultiplier(key) > 1;
                               const hasShintoBonus = religion === "shinto" && getShintoElectricityProductionMultiplier(key) > 1;
                               const hasCommunismBonus = getCommunismProductionMultiplier(key, countryDetail?.ideology) > 1;

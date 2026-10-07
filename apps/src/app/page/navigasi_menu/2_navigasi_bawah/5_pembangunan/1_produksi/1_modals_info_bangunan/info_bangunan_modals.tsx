@@ -3,8 +3,8 @@
 import React from "react";
 import { Info, X } from "lucide-react";
 import { getCommunismProductionMultiplier, COMMUNISM_PRODUCTION_BONUS } from "../../../../../bonus_logic/ideologi_bonus_logic/komunisme";
-import { isMemberOfFAO, FAO_BONUS_RESOURCES } from "../../../../../bonus_logic/organisasi_bonus_logic/fao";
-import { isMemberOfILO, ILO_MANUFAKTUR_RESOURCES } from "../../../../../bonus_logic/organisasi_bonus_logic/ilo";
+import { isMemberOfFAO, FAO_BONUS_RESOURCES } from "../../../../../bonus_logic/organisasi_bonus_logic/organisasi_pbb/fao";
+import { isMemberOfILO, ILO_MANUFAKTUR_RESOURCES } from "../../../../../bonus_logic/organisasi_bonus_logic/organisasi_pbb/ilo";
 import { getKelistrikanFuelRequirements } from "../requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 
 import {

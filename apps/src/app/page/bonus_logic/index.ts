@@ -3,8 +3,8 @@ import { getShintoElectricityProductionMultiplier } from "./agama_bonus_logic/sh
 import { getCommunismProductionMultiplier } from "./ideologi_bonus_logic/komunisme";
 import { getNationalismProductionMultiplier } from "./ideologi_bonus_logic/nasionalisme";
 
-import { getFAOProductionMultiplier, isMemberOfFAO } from "./organisasi_bonus_logic/fao";
-import { getILOProductionMultiplier, isMemberOfILO } from "./organisasi_bonus_logic/ilo";
+import { getFAOProductionMultiplier, isMemberOfFAO } from "./organisasi_bonus_logic/organisasi_pbb/fao";
+import { getILOProductionMultiplier, isMemberOfILO } from "./organisasi_bonus_logic/organisasi_pbb/ilo";
 
 export function getProductionBonusMultiplier(
   countryDetail: Record<string, unknown> | null | undefined,
@@ -33,14 +33,14 @@ export function getProductionBonusMultiplier(
   return religiousMultiplier * ideologyMultiplier * nationalismMultiplier * faoMultiplier * iloMultiplier;
 }
 
-export { isMemberOfInterpol, getInterpolCrimeRiskModifier } from "./organisasi_bonus_logic/interpol";
-export { isMemberOfWHO, getWHOPandemicRiskModifier } from "./organisasi_bonus_logic/who";
-export { isMemberOfUNESCO, getUNESCOResearchModifier } from "./organisasi_bonus_logic/unesco";
-export { isMemberOfWTO, getWTOSellPriceMultiplier, getWTOBuyPriceMultiplier } from "./organisasi_bonus_logic/wto";
-export { isMemberOfFAO, getFAOProductionMultiplier } from "./organisasi_bonus_logic/fao";
-export { isMemberOfILO, getILOProductionMultiplier } from "./organisasi_bonus_logic/ilo";
-export { isMemberOfITU, getITUResearchModifier } from "./organisasi_bonus_logic/itu";
-export { isMemberOfWMO, getWMODisasterRiskModifier } from "./organisasi_bonus_logic/wmo";
+export { isMemberOfInterpol, getInterpolCrimeRiskModifier } from "./organisasi_bonus_logic/organisasi_pbb/interpol";
+export { isMemberOfWHO, getWHOPandemicRiskModifier } from "./organisasi_bonus_logic/organisasi_pbb/who";
+export { isMemberOfUNESCO, getUNESCOResearchModifier } from "./organisasi_bonus_logic/organisasi_pbb/unesco";
+export { isMemberOfWTO, getWTOSellPriceMultiplier, getWTOBuyPriceMultiplier } from "./organisasi_bonus_logic/organisasi_pbb/wto";
+export { isMemberOfFAO, getFAOProductionMultiplier } from "./organisasi_bonus_logic/organisasi_pbb/fao";
+export { isMemberOfILO, getILOProductionMultiplier } from "./organisasi_bonus_logic/organisasi_pbb/ilo";
+export { isMemberOfITU, getITUResearchModifier } from "./organisasi_bonus_logic/organisasi_pbb/itu";
+export { isMemberOfWMO, getWMODisasterRiskModifier } from "./organisasi_bonus_logic/organisasi_pbb/wmo";
 
 
 
