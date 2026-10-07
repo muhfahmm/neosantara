@@ -35,6 +35,7 @@ const ORGANIZATION_INFO: Record<string, { description: string; focus: string; be
   "Organisasi Buruh Internasional (ILO)": {
     description: "Badan PBB yang memajukan hak-hak pekerja dan standar ketenagakerjaan yang layak.",
     focus: "Standar kerja, perlindungan pekerja, dan dialog antara pemerintah, pengusaha, serta pekerja.",
+    benefit: "Hasil Perikanan +10%",
   },
   "Organisasi Pangan dan Pertanian (FAO)": {
     description: "Badan PBB yang memimpin upaya internasional untuk mengatasi kelaparan dan meningkatkan ketahanan pangan.",

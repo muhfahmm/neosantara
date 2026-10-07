@@ -20,7 +20,9 @@ import {
 } from "@/app/logic/kepuasanCalculator";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import { getEducationResearchModifier } from "@/app/page/downgrade_logic";
+import { isMemberOfInterpol, getInterpolCrimeRiskModifier, isMemberOfWHO, getWHOPandemicRiskModifier } from "@/app/page/bonus_logic";
 import NaikkanKesejahteraanTab from "./NaikkanKesejahteraanTab";
+
 
 interface IndeksKesejahteraanModalProps {
   isOpen: boolean;
@@ -382,7 +384,11 @@ export default function IndeksKesejahteraanModal({
                       const targetKesehatan = Math.ceil(pop * 0.00004);
                       const currentKesehatan = kesejahteraan?.detail?.kesehatan?.totalFacilities ?? 0;
                       const neededKesehatan = Math.max(0, targetKesehatan - currentKesehatan);
-                      const risikoWabahPercent = Math.max(0, Math.min(100, Math.round(100 - kesehatanActualScore)));
+                      const baseRisikoWabah = Math.max(0, Math.min(100, Math.round(100 - kesehatanActualScore)));
+                      const countryName = selectedCountry?.country || countryDetail?.country || "";
+                      const whoModifier = getWHOPandemicRiskModifier(countryName);
+                      const isWHOMember = isMemberOfWHO(countryName);
+                      const risikoWabahPercent = Math.max(0, Math.min(100, baseRisikoWabah + whoModifier));
 
                       return (
                         <div
@@ -419,7 +425,14 @@ export default function IndeksKesejahteraanModal({
                           </div>
                           <div className="space-y-1 text-xs text-[#E0E0E0] font-semibold">
                             <p>• Skor Kepuasan Kesehatan: <span className="font-black text-[#00FFAA]">{kesehatanActualScore}/100</span></p>
-                            <p>• Risiko Wabah Penyakit (Epidemi & Pandemi): <span className="font-black text-rose-400">{risikoWabahPercent}%</span></p>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p>• Risiko Wabah Penyakit (Epidemi & Pandemi): <span className="font-black text-rose-400">{risikoWabahPercent}%</span></p>
+                              {isWHOMember && (
+                                <span className="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/50 rounded-md shadow-sm">
+                                  WHO -5%
+                                </span>
+                              )}
+                            </div>
                             <p>• Fasilitas Saat Ini: <span className="font-black text-[#00FFAA]">{currentKesehatan.toLocaleString("id-ID")}</span> unit</p>
                             <p>• Target Ideal (100%): <span className="font-black text-[#00FFAA]">{targetKesehatan.toLocaleString("id-ID")}</span> unit (1 per 25.000 jiwa)</p>
                             {neededKesehatan > 0 ? (
@@ -486,7 +499,11 @@ export default function IndeksKesejahteraanModal({
                     {(() => {
                       const detail = kesejahteraan.detail.penegakanHukum;
                       const healthAndLawScore = (kesehatanActualScore + kesejahteraan.penegakanHukumScore) / 2;
-                      const securityRiskPercent = Math.max(0, Math.min(100, Math.round(100 - healthAndLawScore)));
+                      const baseSecurityRisk = Math.max(0, Math.min(100, Math.round(100 - healthAndLawScore)));
+                      const countryName = selectedCountry?.country || countryDetail?.country || "";
+                      const interpolModifier = getInterpolCrimeRiskModifier(countryName);
+                      const isInterpolMember = isMemberOfInterpol(countryName);
+                      const securityRiskPercent = Math.max(0, Math.min(100, baseSecurityRisk + interpolModifier));
 
                       return (
                         <div
@@ -523,7 +540,14 @@ export default function IndeksKesejahteraanModal({
                           </div>
                           <div className="space-y-1 text-xs text-[#E0E0E0] font-semibold">
                             <p>• Skor Kepuasan Penegakan Hukum: <span className="font-black text-[#00FFAA]">{kesejahteraan.penegakanHukumScore}/100</span></p>
-                            <p>• Risiko Keamanan (Peluang Kejahatan): <span className="font-black text-rose-400">{securityRiskPercent}%</span></p>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p>• Risiko Keamanan (Peluang Kejahatan): <span className="font-black text-rose-400">{securityRiskPercent}%</span></p>
+                              {isInterpolMember && (
+                                <span className="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/50 rounded-md shadow-sm">
+                                  Interpol -5%
+                                </span>
+                              )}
+                            </div>
                             <p>• Fasilitas Saat Ini: <span className="font-black text-[#00FFAA]">{detail.totalFacilities.toLocaleString("id-ID")}</span> unit</p>
                             <p className="pt-1 text-[11px] text-[#6B8A8A]">Bantuan Hukum: {detail.detail.pusatBantuanHukum} | Pengadilan: {detail.detail.pengadilan} | Kejaksaan: {detail.detail.kejaksaan} | Pos Polisi: {detail.detail.posPolisi} | Akademi Polisi: {detail.detail.akademiPolisi}</p>
                           </div>
@@ -805,7 +829,11 @@ export default function IndeksKesejahteraanModal({
 
             {/* Content */}
             {(() => {
-              const risikoWabahPercent = Math.max(0, Math.min(100, Math.round(100 - kesehatanActualScore)));
+              const baseRisikoWabah = Math.max(0, Math.min(100, Math.round(100 - kesehatanActualScore)));
+              const countryName = selectedCountry?.country || countryDetail?.country || "";
+              const whoModifier = getWHOPandemicRiskModifier(countryName);
+              const isWHOMember = isMemberOfWHO(countryName);
+              const risikoWabahPercent = Math.max(0, Math.min(100, baseRisikoWabah + whoModifier));
               const isPenalty = kesehatanActualScore <= 65;
               return (
                 <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-1">
@@ -822,7 +850,14 @@ export default function IndeksKesejahteraanModal({
                         : 'bg-[#0E2A20] border-emerald-500/50 text-emerald-300'
                     }`}>
                       <span>Risiko Wabah Penyakit (Epidemi):</span>
-                      <span className="font-black text-base">{risikoWabahPercent}%</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-black text-base">{risikoWabahPercent}%</span>
+                        {isWHOMember && (
+                          <span className="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/20 border border-emerald-500/60 rounded-md">
+                            WHO -5%
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -932,7 +967,11 @@ export default function IndeksKesejahteraanModal({
             {(() => {
               const lawScore = kesejahteraan.penegakanHukumScore;
               const healthAndLawScore = (kesehatanActualScore + lawScore) / 2;
-              const securityRiskPercent = Math.max(0, Math.min(100, Math.round(100 - healthAndLawScore)));
+              const baseSecurityRisk = Math.max(0, Math.min(100, Math.round(100 - healthAndLawScore)));
+              const countryName = selectedCountry?.country || countryDetail?.country || "";
+              const interpolModifier = getInterpolCrimeRiskModifier(countryName);
+              const isInterpolMember = isMemberOfInterpol(countryName);
+              const securityRiskPercent = Math.max(0, Math.min(100, baseSecurityRisk + interpolModifier));
               const isPenalty = lawScore <= 65;
               return (
                 <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-1">
@@ -949,7 +988,14 @@ export default function IndeksKesejahteraanModal({
                         : 'bg-[#0E2A20] border-emerald-500/50 text-emerald-300'
                     }`}>
                       <span>Risiko Keamanan (Kriminalitas):</span>
-                      <span className="font-black text-base">{securityRiskPercent}%</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-black text-base">{securityRiskPercent}%</span>
+                        {isInterpolMember && (
+                          <span className="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/20 border border-emerald-500/60 rounded-md">
+                            Interpol -5%
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 

@@ -39,6 +39,8 @@ import { CAPITALISM_TAX_REVENUE_BONUS } from "../../../../bonus_logic/ideologi_b
 import { LIBERALISM_TAX_REVENUE_BONUS } from "../../../../bonus_logic/ideologi_bonus_logic/liberalisme";
 import { CONSERVATISM_TAX_REVENUE_BONUS } from "../../../../bonus_logic/ideologi_bonus_logic/konservatisme";
 import { COMMUNISM_PRODUCTION_BONUS } from "../../../../bonus_logic/ideologi_bonus_logic/komunisme";
+import { isMemberOfFAO } from "../../../../bonus_logic";
+
 
 
 const RELIGION_BONUS_INFO: Record<string, string> = {
@@ -671,8 +673,8 @@ export default function ProduksiModal({
               </button>
             </div>
             <div className="space-y-4 px-5 py-5 text-sm leading-relaxed text-slate-300">
-              {currentReligionBonus || currentIdeologyBonus ? (
-                <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-200">
+              {currentReligionBonus || currentIdeologyBonus || isMemberOfFAO(playerCountryName) ? (
+                <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-200 space-y-2">
                   {currentReligionBonus && (
                     <p>
                       <strong className="text-white">Agama saat ini: {currentReligion}.</strong>{" "}
@@ -680,19 +682,28 @@ export default function ProduksiModal({
                     </p>
                   )}
                   {currentIdeologyBonus && (
-                    <p className={currentReligionBonus ? "mt-2" : ""}>
+                    <p>
                       <strong className="text-white">Ideologi saat ini: {countryDetail?.ideology}.</strong>{" "}
                       {currentIdeologyBonus}
                     </p>
                   )}
+                  {isMemberOfFAO(playerCountryName) && (
+                    <p>
+                      <strong className="text-white">Keanggotaan Organisasi Internasional (FAO):</strong>{" "}
+                      Bonus +10% hasil produksi nasional di sektor <strong className="text-emerald-300">Peternakan, Agrikultur, Perikanan, dan Olahan Pangan</strong>.
+                    </p>
+                  )}
                 </div>
               ) : (
-                <div className="rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] p-3">
+                <div className="rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] p-3 space-y-2">
                   <p>
                     Agama saat ini: <strong className="text-white">{currentReligion || "Belum tersedia"}</strong>. Tidak ada bonus agama khusus yang tercatat.
                   </p>
-                  <p className="mt-2">
+                  <p>
                     Ideologi saat ini: <strong className="text-white">{countryDetail?.ideology || "Belum tersedia"}</strong>. Tidak ada bonus ideologi khusus yang tercatat.
+                  </p>
+                  <p>
+                    Keanggotaan FAO: <strong className="text-[#6B8A8A]">Tidak Aktif (Bukan Anggota Organisasi Pangan dan Pertanian FAO)</strong>.
                   </p>
                 </div>
               )}

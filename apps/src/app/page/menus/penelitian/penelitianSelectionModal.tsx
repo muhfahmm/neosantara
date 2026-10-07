@@ -9,6 +9,7 @@ import {
   getEducationResearchModifier,
   calculateCombinedResearchDurationModifier,
 } from '@/app/page/downgrade_logic';
+import { isMemberOfUNESCO, isMemberOfITU } from '@/app/page/bonus_logic';
 
 export type SelectionCategoryKey = 'ekonomi' | 'militer' | 'diplomasi';
 
@@ -29,6 +30,9 @@ export default function PenelitianSelectionModal({
 }: PenelitianSelectionModalProps) {
   const [mounted, setMounted] = useState(false);
   const hasAtheismResearchBonus = String(religion || '').trim().toLowerCase() === 'ateisme';
+  const countryName = countryDetail?.country || '';
+  const isUNESCOMember = isMemberOfUNESCO(countryName);
+  const isITUMember = isMemberOfITU(countryName);
 
   const educationPoints = calculateEducationPoints(countryDetail);
   const educationModifier = getEducationResearchModifier(educationPoints);
@@ -77,6 +81,16 @@ export default function PenelitianSelectionModal({
               <Banknote className="w-6 h-6" />
             </div>
 
+            {isUNESCOMember && (
+              <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/50 mb-1.5 shadow-sm">
+                UNESCO: Kecepatan Riset Sains +5%
+              </span>
+            )}
+            {isITUMember && (
+              <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/50 mb-1.5 shadow-sm">
+                ITU: Kecepatan Riset +5%
+              </span>
+            )}
             <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-[#00FFAA]/15 text-[#00FFAA] border border-[#00FFAA]/30 mb-2">
               Produksi & Pajak
             </span>
@@ -112,6 +126,16 @@ export default function PenelitianSelectionModal({
               <Shield className="w-6 h-6" />
             </div>
 
+            {isUNESCOMember && (
+              <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/50 mb-1.5 shadow-sm">
+                UNESCO: Kecepatan Riset Sains +5%
+              </span>
+            )}
+            {isITUMember && (
+              <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/50 mb-1.5 shadow-sm">
+                ITU: Kecepatan Riset +5%
+              </span>
+            )}
             <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-[#00FFAA]/15 text-[#00FFAA] border border-[#00FFAA]/30 mb-2">
               Alutsista & Siber
             </span>
@@ -147,6 +171,16 @@ export default function PenelitianSelectionModal({
               <Globe2 className="w-6 h-6" />
             </div>
 
+            {isUNESCOMember && (
+              <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/50 mb-1.5 shadow-sm">
+                UNESCO: Kecepatan Riset Sains +5%
+              </span>
+            )}
+            {isITUMember && (
+              <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/50 mb-1.5 shadow-sm">
+                ITU: Kecepatan Riset +5%
+              </span>
+            )}
             <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-[#00FFAA]/15 text-[#00FFAA] border border-[#00FFAA]/30 mb-2">
               Geopolitik & Spionase
             </span>

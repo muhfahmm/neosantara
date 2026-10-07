@@ -13,6 +13,7 @@ import {
   applyProtestantTradePrice,
   PROTESTANT_BUY_PRICE_DISCOUNT
 } from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
+import { isMemberOfWTO, getWTOBuyPriceMultiplier } from "@/app/page/bonus_logic";
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import {
   applyNpcCountrySimulationState,
@@ -598,12 +599,20 @@ export default function ModalsKonfirmasiBeli({
   // FAKTOR BELI (MISAL 2x HARGA PASAR)
   const BUY_FACTOR = 2;
   const originalPricePerUnit = Math.round(currentPrice * BUY_FACTOR);
-  const pricePerUnit = Math.round(applyProtestantTradePrice(
-    originalPricePerUnit,
-    countryDetail?.religion,
-    "buy"
-  ));
-  const hasProtestantDiscount = pricePerUnit < originalPricePerUnit;
+  
+  const userCountryName = String(countryDetail?.country || countryDetail?.nama || "");
+  const isWTOActive = isMemberOfWTO(userCountryName);
+  const wtoBuyMultiplier = getWTOBuyPriceMultiplier(userCountryName); // 0.90 if active, 1.0 if not
+  
+  const protestantPrice = applyProtestantTradePrice(originalPricePerUnit, countryDetail?.religion, "buy");
+  const hasProtestantDiscount = protestantPrice < originalPricePerUnit;
+  const protestantMultiplier = hasProtestantDiscount ? (1 - PROTESTANT_BUY_PRICE_DISCOUNT) : 1.0;
+  
+  // Combine discount factors (additive deduction: -10% + -5% = -15%)
+  const totalDiscountFraction = (1 - wtoBuyMultiplier) + (1 - protestantMultiplier);
+  const combinedBuyMultiplier = Math.max(0.1, 1 - totalDiscountFraction);
+  const pricePerUnit = Math.round(originalPricePerUnit * combinedBuyMultiplier);
+  const hasTradeDiscount = totalDiscountFraction > 0;
   const totalPrice = pricePerUnit * quantity;
 
   // --- RENDER CANDLESTICK CHART ---
@@ -850,7 +859,7 @@ export default function ModalsKonfirmasiBeli({
           <div className="flex justify-between items-center pt-3 border-t border-[#00FFAA]/20">
             <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Harga / unit:</span>
             <div className="flex items-center gap-1.5">
-              {hasProtestantDiscount && (
+              {hasTradeDiscount && (
                 <span className="text-sm font-bold text-rose-400 line-through">
                   {formatTradePrice(originalPricePerUnit)}
                 </span>
@@ -859,11 +868,18 @@ export default function ModalsKonfirmasiBeli({
               <span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span>
             </div>
           </div>
-          {hasProtestantDiscount && (
-            <div className="flex justify-end">
-              <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                Bonus Protestan: Diskon beli {PROTESTANT_BUY_PRICE_DISCOUNT * 100}%
-              </span>
+          {hasTradeDiscount && (
+            <div className="flex justify-end gap-1.5 flex-wrap">
+              {hasProtestantDiscount && (
+                <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                  Bonus Protestan: Diskon beli {PROTESTANT_BUY_PRICE_DISCOUNT * 100}%
+                </span>
+              )}
+              {isWTOActive && (
+                <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                  Bonus WTO: Diskon beli 10%
+                </span>
+              )}
             </div>
           )}
 

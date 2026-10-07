@@ -3,7 +3,10 @@
 import React from "react";
 import { Info, X } from "lucide-react";
 import { getCommunismProductionMultiplier, COMMUNISM_PRODUCTION_BONUS } from "../../../../../bonus_logic/ideologi_bonus_logic/komunisme";
+import { isMemberOfFAO, FAO_BONUS_RESOURCES } from "../../../../../bonus_logic/organisasi_bonus_logic/fao";
+import { isMemberOfILO, ILO_MANUFAKTUR_RESOURCES } from "../../../../../bonus_logic/organisasi_bonus_logic/ilo";
 import { getKelistrikanFuelRequirements } from "../requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
+
 import {
   FOOD_CONSUMPTION_PER_CAPITA,
   calculateProduction,
@@ -216,18 +219,27 @@ export default function InfoBangunan({
                 Produksi dikurangi {Math.round((1 - productionMultiplier) * 100)}% oleh resolusi PBB yang aktif.
               </div>
             )}
-            {(hasShintoElectricityBonus || hasIslamProductionBonus) && (
-              <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[10px] font-bold text-emerald-300">
-                {hasShintoElectricityBonus
-                  ? `Produksi kelistrikan ditingkatkan ${SHINTO_ELECTRICITY_PRODUCTION_BONUS * 100}% oleh bonus agama Shinto.`
-                  : "Produksi lini terkait ditingkatkan 10% oleh bonus agama Islam."}
-              </div>
-            )}
-            {hasCommunismProductionBonus && (
-              <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[10px] font-bold text-emerald-300">
-                Produksi lini terkait ditingkatkan {COMMUNISM_PRODUCTION_BONUS * 100}% oleh bonus ideologi Komunisme.
-              </div>
-            )}
+            {(() => {
+              const countryName = countryDetail?.country || countryDetail?.nama || "";
+              const normalizedKey = (buildingKey || "").trim().toLowerCase().replace(/^\d+_/, "");
+              const hasFAOBonus = isMemberOfFAO(countryName) && FAO_BONUS_RESOURCES.has(normalizedKey);
+              const hasILOBonus = isMemberOfILO(countryName) && ILO_MANUFAKTUR_RESOURCES.has(normalizedKey);
+
+              const bonusParts: string[] = [];
+              if (hasCommunismProductionBonus) bonusParts.push(`${COMMUNISM_PRODUCTION_BONUS * 100}% oleh bonus ideologi Komunisme`);
+              if (hasShintoElectricityBonus) bonusParts.push(`${SHINTO_ELECTRICITY_PRODUCTION_BONUS * 100}% oleh bonus agama Shinto`);
+              if (hasIslamProductionBonus) bonusParts.push(`10% oleh bonus agama Islam`);
+              if (hasFAOBonus) bonusParts.push(`10% oleh bonus keanggotaan FAO`);
+              if (hasILOBonus) bonusParts.push(`10% oleh bonus keanggotaan ILO`);
+
+              if (bonusParts.length === 0) return null;
+
+              return (
+                <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[10px] font-bold text-emerald-300">
+                  Produksi lini terkait ditingkatkan {bonusParts.join(" dan ")}.
+                </div>
+              );
+            })()}
             {isElectricityTab ? (
               <>
                 <div className="flex justify-between items-center">

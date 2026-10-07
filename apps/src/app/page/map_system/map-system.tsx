@@ -78,6 +78,7 @@ import { evaluateAIKeamananPBBTrigger } from '../menus/inbox/logic/5_notifikasi_
 import { clearActiveResolutionsForSession, tickPBBResolutions, spawnAIResolutionFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { clearActiveSecurityCouncilItems, tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { initCountryIsoFromDatabase, getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
+import { isMemberOfWMO } from '../bonus_logic';
 import { fetchAllCountryProfilesFromDb } from '@/../../json/semua_fitur_negara/0_profiles';
 import { applyNpcCountrySimulationState, useNpcCountrySimulation } from '@/app/logic/npcCountrySimulation';
 import {
@@ -1192,8 +1193,10 @@ export default function MapPage() {
                 newNotifsToAdd.push(generateTradeRelationOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
-            // 4. Bencana Alam & Wabah Penyakit (25% per bulan, 60% Bencana Alam, 40% Wabah Penyakit)
-            if (Math.random() < 0.25) {
+            // 4. Bencana Alam & Wabah Penyakit (25% per bulan standard; 20% untuk anggota WMO karena -5% risiko bencana)
+            const wmoDisasterBonus = isMemberOfWMO(userCountryName);
+            const disasterBaseChance = wmoDisasterBonus ? 0.20 : 0.25;
+            if (Math.random() < disasterBaseChance) {
                 const isBencana = Math.random() < 0.60;
                 if (isBencana) {
                     const disaster = generateBencanaAlamNotification(userCountryName, currentDateStr);

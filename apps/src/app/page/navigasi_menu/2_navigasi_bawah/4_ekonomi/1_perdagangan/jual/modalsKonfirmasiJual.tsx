@@ -12,6 +12,7 @@ import {
   applyProtestantTradePrice,
   PROTESTANT_SELL_PRICE_BONUS
 } from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
+import { isMemberOfWTO, getWTOSellPriceMultiplier } from "@/app/page/bonus_logic";
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import {
   applyNpcCountrySimulationState,
@@ -303,8 +304,18 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
   const effectiveSelectedCountry = selectedCountry || partners[0]?.nama_negara || "";
   const seriesKey = `${selectedProduct}-${timeRange}`;
   const currentPrice = useMemo(() => Math.round(marketPrices[selectedProduct] || 0), [marketPrices, selectedProduct]);
-  const pricePerUnit = Math.round(applyProtestantTradePrice(currentPrice, countryDetail?.religion, "sell"));
-  const hasProtestantBonus = pricePerUnit > currentPrice;
+  
+  const userCountryName = countryDetail?.country || countryDetail?.nama || "";
+  const isWTOActive = isMemberOfWTO(userCountryName);
+  const wtoSellMultiplier = getWTOSellPriceMultiplier(userCountryName); // 1.15 if active, 1.0 if not
+  
+  const protestantPrice = applyProtestantTradePrice(currentPrice, countryDetail?.religion, "sell");
+  const hasProtestantBonus = protestantPrice > currentPrice;
+  const protestantMultiplier = hasProtestantBonus ? (1 + PROTESTANT_SELL_PRICE_BONUS) : 1.0;
+  
+  const combinedSellMultiplier = (wtoSellMultiplier - 1) + (protestantMultiplier - 1);
+  const pricePerUnit = Math.round(currentPrice * (1 + combinedSellMultiplier));
+  const hasTradeBonus = combinedSellMultiplier > 0;
   const totalPrice = pricePerUnit * quantity;
 
   useEffect(() => {
@@ -499,7 +510,7 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
               <div className="flex justify-between items-center pt-3 border-t border-[#00FFAA]/20">
                 <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Harga / unit:</span>
                 <div className="flex items-center gap-1.5">
-                  {hasProtestantBonus && (
+                  {hasTradeBonus && (
                     <span className="text-sm font-bold text-emerald-400 line-through">
                       {formatTradePrice(currentPrice)}
                     </span>
@@ -508,11 +519,18 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
                   <span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span>
                 </div>
               </div>
-              {hasProtestantBonus && (
-                <div className="flex justify-end">
-                  <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                    Bonus Protestan: Harga jual +{PROTESTANT_SELL_PRICE_BONUS * 100}%
-                  </span>
+              {hasTradeBonus && (
+                <div className="flex justify-end gap-1.5 flex-wrap">
+                  {hasProtestantBonus && (
+                    <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                      Bonus Protestan: Harga jual +{PROTESTANT_SELL_PRICE_BONUS * 100}%
+                    </span>
+                  )}
+                  {isWTOActive && (
+                    <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                      Bonus WTO: Harga jual +15%
+                    </span>
+                  )}
                 </div>
               )}
               <div className="flex justify-between items-center border-t border-[#00FFAA]/20 pt-2 mt-1">

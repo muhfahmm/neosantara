@@ -18,6 +18,7 @@ import {
   calculateCombinedResearchDurationModifier,
   applyCombinedResearchDuration,
 } from '@/app/page/downgrade_logic';
+import { isMemberOfUNESCO, isMemberOfITU } from '@/app/page/bonus_logic';
 
 export type CategoryKey = 'sains' | 'ekonomi' | 'militer' | 'sosial' | 'lingkungan' | 'diplomasi' | 'budaya';
 
@@ -667,6 +668,22 @@ export default function PenelitianPageModal({
               <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0E2A20] border border-emerald-500/50 text-emerald-300 text-xs font-bold">
                 <span className="font-bold">Bonus Ateisme:</span>
                 <span className="font-black">-15% Waktu Penelitian</span>
+              </div>
+            )}
+
+            {/* Box 3: UNESCO Bonus (jika anggota) */}
+            {isMemberOfUNESCO(countryDetail?.country || '') && (
+              <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0E2A20] border border-emerald-500/50 text-emerald-300 text-xs font-bold">
+                <span className="font-bold">Keanggotaan UNESCO:</span>
+                <span className="font-black">+5% Kecepatan Riset Sains</span>
+              </div>
+            )}
+
+            {/* Box 4: ITU Bonus (jika anggota) */}
+            {isMemberOfITU(countryDetail?.country || '') && (
+              <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0E2A20] border border-emerald-500/50 text-emerald-300 text-xs font-bold">
+                <span className="font-bold">Keanggotaan ITU:</span>
+                <span className="font-black">+5% Kecepatan Riset</span>
               </div>
             )}
           </div>

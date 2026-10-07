@@ -1,6 +1,6 @@
 "use client"
 import React, { useMemo, useState, useEffect } from "react";
-import { X, ArrowRightLeft } from "lucide-react";
+import { X, ArrowRightLeft, Info } from "lucide-react";
 import JualModalsMenu from "./jual/modalsKonfirmasiJual";
 import MitraModalsMenu, { TradePartner } from "./mitra/mitraModalsMenu";
 import ModalsKonfirmasiBeli from "./beli/modalsKonfirmasiBeli";
@@ -10,6 +10,8 @@ import TawaranPembelianTable from "./tawaran_beli/TawaranPembelianTable";
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateProductionIncrement, formatDate } from '@/app/logic/production_logic';
 import { isCountryUnderEconomicEmbargo, isTradeEmbargoActive } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
+import { isMemberOfWTO } from '@/app/page/bonus_logic';
+
 
 interface AgreementData {
   no: number;
@@ -483,12 +485,15 @@ export default function PerdaganganModal({
     return item.tipe === effectiveFilter;
   });
 
+  const [showWTOTradeInfoModal, setShowWTOTradeInfoModal] = useState(false);
+  const isWTOActive = isMemberOfWTO(String(countryName));
+
   if (!isOpen) return null;
 
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-        <div className="bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
+        <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
@@ -499,6 +504,14 @@ export default function PerdaganganModal({
               <div>
                 <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Pasar Perdagangan Global</h2>
               </div>
+              <button
+                type="button"
+                onClick={() => setShowWTOTradeInfoModal(true)}
+                title="Lihat Informasi Efek Harga WTO & Agama"
+                className="p-1.5 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/50 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer shadow-md flex items-center justify-center shrink-0 ml-1"
+              >
+                <Info className="w-4 h-4" />
+              </button>
             </div>
             <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
@@ -663,6 +676,104 @@ export default function PerdaganganModal({
           });
         }}
       />
+
+      {/* MODAL INFORMASI EFEK HARGA PERDAGANGAN (WTO & AGAMA) */}
+      {showWTOTradeInfoModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+            {/* Header */}
+            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-[#0F2424] border border-[#00FFAA]/30 text-[#00FFAA]">
+                  <ArrowRightLeft className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-xl font-bold text-[#00FFAA] uppercase tracking-tight leading-none">
+                    Informasi Efek Harga Perdagangan Global
+                  </h3>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">
+                    Organisasi Internasional (WTO) & Kebijakan Agama / Ideologi
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowWTOTradeInfoModal(false)}
+                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+              >
+                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] custom-scrollbar space-y-6">
+              {/* Card Status Keanggotaan WTO */}
+              <div className={`p-5 rounded-2xl border ${
+                isWTOActive
+                  ? 'bg-[#0E2A20] border-emerald-500/50 text-emerald-300'
+                  : 'bg-[#0A1A1A] border-[#00FFAA]/20 text-[#C3D5D5]'
+              }`}>
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-sm font-black uppercase tracking-wider text-[#00FFAA]">
+                    Keanggotaan Organisasi Perdagangan Dunia (WTO)
+                  </h4>
+                  <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${
+                    isWTOActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-rose-500/10 text-rose-300 border border-rose-500/30'
+                  }`}>
+                    {isWTOActive ? 'Aktif (Anggota WTO)' : 'Tidak Aktif'}
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm leading-relaxed text-[#C3D5D5]">
+                  {isWTOActive ? (
+                    <span>
+                      ✅ Sebagai anggota resmi WTO, negara Anda mendapatkan keuntungan insentif harga perdagangan global:
+                      <br /><strong className="text-emerald-400">• Harga Jual Komoditas: +15%</strong> (Pendapatan ekspor lebih tinggi)
+                      <br /><strong className="text-emerald-400">• Harga Beli Komoditas: -10%</strong> (Penghematan belanja impor)
+                    </span>
+                  ) : (
+                    <span>
+                      ⚠️ Negara Anda saat ini <strong className="text-rose-400">bukan anggota WTO</strong>. Harga jual dan beli di Pasar Perdagangan Global berlaku tarif standar normal (tanpa diskon impor atau bonus ekspor).
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              {/* Rincian Aturan Efek Harga */}
+              <div className="p-5 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30 space-y-4">
+                <h4 className="text-sm font-black uppercase tracking-wider text-[#00FFAA]">
+                  Panduan Pengaruh Organisasi & Kebijakan Terhadap Harga
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                  <div className="p-4 rounded-xl bg-[#0F2424] border border-[#00FFAA]/20 space-y-2">
+                    <p className="font-extrabold text-[#00FFAA] uppercase">1. Pengaruh WTO (Pasar Bebas)</p>
+                    <p className="text-[#C3D5D5] leading-relaxed">
+                      • <strong className="text-[#00FFAA]">Harga Jual (+15%):</strong> Menaikkan hasil keuntungan penjualan komoditas ekspor nasional ke pasar internasional.
+                      <br />• <strong className="text-[#00FFAA]">Harga Beli (-10%):</strong> Memotong beban biaya impor komoditas dari mitra dagang dunia.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[#0F2424] border border-[#00FFAA]/20 space-y-2">
+                    <p className="font-extrabold text-[#00FFAA] uppercase">2. Pengaruh Kebijakan Nasional / Agama</p>
+                    <p className="text-[#C3D5D5] leading-relaxed">
+                      • <strong className="text-[#00FFAA]">Bonus Produksi & Perdagangan:</strong> Agama dan ideologi tertentu memberikan bonus pengganda produksi yang mempengaruhi total ketersediaan stok perdagangan nasional.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] flex justify-end shrink-0">
+              <button
+                onClick={() => setShowWTOTradeInfoModal(false)}
+                className="px-6 py-2 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs uppercase tracking-wider hover:bg-[#00C282] transition-colors"
+              >
+                Mengerti
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

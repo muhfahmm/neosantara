@@ -24,6 +24,7 @@ const ORGANIZATION_BENEFITS: Record<string, string> = {
   "Organisasi Kesehatan Dunia (WHO)": "Risiko Epidemi & Pandemi Turun -5%",
   "UNESCO": "Kecepatan Riset Sains +5%",
   "Organisasi Perdagangan Dunia (WTO)": "Harga Jual +15%, Harga Beli -10%",
+  "Organisasi Buruh Internasional (ILO)": "Hasil Perikanan +10%",
   "Organisasi Pangan dan Pertanian (FAO)": "Produksi Pangan +10%",
   "Organisasi Telekomunikasi Internasional (ITU)": "Kecepatan Riset +5%",
   "Organisasi Meteorologi Dunia (WMO)": "Risiko Bencana Alam -5%",
