@@ -81,7 +81,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, onOpenC
 
   const membershipMap: Record<string, boolean> = {};
   [...UN_ORGANIZATIONS, ...REGIONAL_ORGANIZATIONS].forEach((org) => {
-    const members = getOrgMembers(org);
+    const members = getOrgMembers(org, playerCountryName);
     membershipMap[org] = members.some(
       (member: { country?: string }) => member.country?.toLowerCase().trim() === playerCountryName.toLowerCase().trim()
     );

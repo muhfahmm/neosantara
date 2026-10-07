@@ -186,7 +186,33 @@ export function getOrgMembers(orgName: string, playerCountryName?: string): { co
         if (rawJoined) {
           const joinedArray: string[] = JSON.parse(rawJoined);
           const normOrg = orgName.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
-          if (Array.isArray(joinedArray) && joinedArray.includes(normOrg)) {
+          
+          // Alias map for short keys saved in joinedOrgs
+          const keyAliases: Record<string, string[]> = {
+            "interpol": ["interpol"],
+            "organisasikesehatanduniawho": ["who", "organisasikesehatanduniawho"],
+            "unesco": ["unesco"],
+            "organisasiperdaganganduniawto": ["wto", "organisasiperdaganganduniawto"],
+            "organisasiburuhinternasionalilo": ["ilo", "organisasiburuhinternasionalilo"],
+            "organisasipangandanpertanianfao": ["fao", "organisasipangandanpertanianfao"],
+            "organisasimaritiminternasionalimo": ["imo", "organisasimaritiminternasionalimo"],
+            "organisasitelekomunikasiinternasionalitu": ["itu", "organisasitelekomunikasiinternasionalitu"],
+            "organisasimeteorologiduniawmo": ["wmo", "organisasimeteorologiduniawmo"],
+            "perhimpunanbangsabangsaasiatenggaraasean": ["asean", "perhimpunanbangsabangsaasiatenggaraasean"],
+            "unieropaeu": ["eu", "unieropaeu"],
+            "ligaarab": ["arab_league", "ligaarab"],
+            "uniafrikaau": ["au", "uniafrikaau"],
+            "organisasikerjasamaislamoki": ["oic", "oki", "organisasikerjasamaislamoki"],
+            "bricsbrasilrusiaindiachinaafrikaselatan": ["brics", "bricsbrasilrusiaindiachinaafrikaselatan"],
+            "paktapertahananatlantikutaranato": ["nato", "paktapertahananatlantikutaranato"],
+            "organisasinegaranegarapengeksporminyakbumiopec": ["opec", "organisasinegaranegarapengeksporminyakbumiopec"],
+            "kelompokduapuluhg20": ["g20", "kelompokduapuluhg20"]
+          };
+
+          const validKeys = keyAliases[normOrg] || [normOrg];
+          const isJoined = joinedArray.some(j => validKeys.includes(j.toLowerCase().trim().replace(/[^a-z0-9]/g, '')));
+
+          if (isJoined) {
             result.push({
               country: formattedPlayer,
               status: 'Anggota',

@@ -4,7 +4,7 @@ import { X, Loader2, User, ChevronRight, Send, Clock, Check } from "lucide-react
 import { getOrgMembers } from "@/../../json/database_organisasi_internasional";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import PermohonanKeanggotaanModal from "../PermohonanKeanggotaanModal";
-import { getApplicationForOrg } from "../orgMembershipLogic";
+import { getApplicationForOrg, isUserJoinedOrg } from "../orgMembershipLogic";
 import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
 
 interface OrganisasiPBBModalProps {
@@ -141,7 +141,7 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
                   {benefitText}
                 </span>
               </div>
-              {app?.status === "accepted" ? (
+              {(app?.status === "accepted" || isUserJoinedOrg(playerCountryName, orgName)) ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-black text-[11px] uppercase tracking-wider shrink-0 shadow-sm">
                   <Check className="h-3.5 w-3.5 text-emerald-400" />
                   <span>Anggota Aktif</span>

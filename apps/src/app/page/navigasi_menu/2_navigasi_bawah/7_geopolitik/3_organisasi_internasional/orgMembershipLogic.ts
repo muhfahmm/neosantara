@@ -1,5 +1,5 @@
 import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
-import { ORGANIZATION_MEMBERSHIP_UPDATED_EVENT } from "@/../../json/database_organisasi_internasional/organizationMembers";
+import { clearExpelledOrganizationCountries, ORGANIZATION_MEMBERSHIP_UPDATED_EVENT } from "@/../../json/database_organisasi_internasional/organizationMembers";
 
 export interface OrgApplication {
   orgName: string;
@@ -13,6 +13,31 @@ export interface OrgApplication {
 const APPLICATIONS_KEY = "neosantara_org_applications_v1";
 const JOINED_ORGS_KEY = "neosantara_user_joined_orgs_v1";
 export const ORG_APPLICATION_UPDATED_EVENT = "neosantara_org_application_updated";
+
+export function clearAllOrganizationMembershipData(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(APPLICATIONS_KEY);
+    localStorage.removeItem("neosantara_expelled_organization_countries");
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith(JOINED_ORGS_KEY) || key.startsWith("neosantara_user_joined_orgs") || key.includes("expelled_organization")) {
+        localStorage.removeItem(key);
+      }
+    });
+    clearExpelledOrganizationCountries();
+    window.dispatchEvent(new CustomEvent(ORG_APPLICATION_UPDATED_EVENT));
+    window.dispatchEvent(new CustomEvent(ORGANIZATION_MEMBERSHIP_UPDATED_EVENT));
+  } catch (e) {
+    console.error("Failed to clear organization membership data:", e);
+  }
+}
+
+if (typeof window !== "undefined") {
+  // Menghapus data anggota PBB & Regional di LocalStorage saat user merefresh halaman atau menutup tab
+  window.addEventListener("beforeunload", () => {
+    clearAllOrganizationMembershipData();
+  });
+}
 
 function normalizeKey(str: string): string {
   return str.toLowerCase().trim().replace(/[^a-z0-9]/g, "");

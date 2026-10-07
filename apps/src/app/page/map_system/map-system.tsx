@@ -112,6 +112,7 @@ import {
     clearExpelledOrganizationCountries,
     expelCountryFromOrganizations
 } from '@/../../json/database_organisasi_internasional';
+import { clearAllOrganizationMembershipData } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic';
 import {
     PROVINCE_ACTION_EVENT,
     type ProvinceActionEventDetail
@@ -1656,6 +1657,7 @@ export default function MapPage() {
         // Check if there is a save to load to restore the date
         if (typeof window !== 'undefined') {
             clearExpelledOrganizationCountries();
+            clearAllOrganizationMembershipData();
             const loadSaveStr = localStorage.getItem('presiden_simulator_load_save');
             const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
             if (newGameMarker === '1') {
