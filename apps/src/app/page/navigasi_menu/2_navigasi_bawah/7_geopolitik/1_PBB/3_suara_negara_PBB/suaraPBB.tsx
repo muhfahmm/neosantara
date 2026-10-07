@@ -5,6 +5,7 @@ import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 import { STATIC_PBB_VOTES } from "./staticVoteData";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles";
 import { applyCatholicVoteBonus } from "../../../../../bonus_logic/agama_bonus_logic/katolik";
+import { isMemberOfLigaArab } from "@/app/page/bonus_logic";
 
 interface CountryVoteRow {
   name_id: string;
@@ -76,10 +77,12 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
       const norm = normalizeName(entry.name_id);
       const iso = byName.get(norm);
       const religion = religionByName.get(norm);
+      const catholicBonus = applyCatholicVoteBonus(entry.un_vote, religion);
+      const arabLeagueBonus = isMemberOfLigaArab(entry.name_id) ? 5 : 0;
       baseVotes.set(entry.name_id, {
         name_id: entry.name_id,
         iso,
-        un_vote: applyCatholicVoteBonus(entry.un_vote, religion),
+        un_vote: catholicBonus + arabLeagueBonus,
       });
     });
 

@@ -8,6 +8,7 @@ import { applyDemocracyTaxRevenueBonus } from '@/app/page/bonus_logic/ideologi_b
 import { applyCapitalismTaxRevenueBonus } from '@/app/page/bonus_logic/ideologi_bonus_logic/kapitalisme';
 import { applyLiberalismTaxRevenueBonus } from '@/app/page/bonus_logic/ideologi_bonus_logic/liberalisme';
 import { applyConservatismTaxRevenueBonus } from '@/app/page/bonus_logic/ideologi_bonus_logic/konservatisme';
+import { getEUTaxRevenueMultiplier, getBRICSTaxRevenueMultiplier, getG20TaxRevenueMultiplier } from '@/app/page/bonus_logic';
 
 const getNestedValue = (obj: any, path: string[]) => {
   return path.reduce((current, key) => {
@@ -41,6 +42,14 @@ const applyIdeologyTaxBonus = (revenue: number, ideology: unknown) =>
     ),
     ideology
   );
+
+const applyOrgTaxBonus = (revenue: number, countryName: string) => {
+  if (!countryName) return revenue;
+  const euMult = getEUTaxRevenueMultiplier(countryName);
+  const bricsMult = getBRICSTaxRevenueMultiplier(countryName);
+  const g20Mult = getG20TaxRevenueMultiplier(countryName);
+  return revenue * euMult * bricsMult * g20Mult;
+};
 
 export const getTourismTotalIncome = (detail: any): number => {
   if (!detail || typeof detail !== 'object') return 0;
@@ -78,7 +87,9 @@ export const calculateTotalTaxIncome = (detail: any) => {
     detail.ideology
   );
 
-  return ppnIncome + korporasiIncome + penghasilanIncome + beaCukaiIncome + lingkunganIncome;
+  const countryName = String(detail?.country || detail?.nama || "").trim();
+  const rawTotal = ppnIncome + korporasiIncome + penghasilanIncome + beaCukaiIncome + lingkunganIncome;
+  return applyOrgTaxBonus(rawTotal, countryName);
 };
 
 export const getDepartmentLevel = (detail: any, dept: Department | string | any): number => {

@@ -13,7 +13,7 @@ import {
   applyProtestantTradePrice,
   PROTESTANT_BUY_PRICE_DISCOUNT
 } from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
-import { isMemberOfWTO, getWTOBuyPriceMultiplier } from "@/app/page/bonus_logic";
+import { isMemberOfWTO, getWTOBuyPriceMultiplier, getOPECBuyPriceMultiplier } from "@/app/page/bonus_logic";
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import {
   applyNpcCountrySimulationState,
@@ -603,13 +603,16 @@ export default function ModalsKonfirmasiBeli({
   const userCountryName = String(countryDetail?.country || countryDetail?.nama || "");
   const isWTOActive = isMemberOfWTO(userCountryName);
   const wtoBuyMultiplier = getWTOBuyPriceMultiplier(userCountryName); // 0.90 if active, 1.0 if not
+
+  const opecBuyMultiplier = getOPECBuyPriceMultiplier(userCountryName, effectiveSelectedProduct);
+  const isOPECActive = opecBuyMultiplier < 1;
   
   const protestantPrice = applyProtestantTradePrice(originalPricePerUnit, countryDetail?.religion, "buy");
   const hasProtestantDiscount = protestantPrice < originalPricePerUnit;
   const protestantMultiplier = hasProtestantDiscount ? (1 - PROTESTANT_BUY_PRICE_DISCOUNT) : 1.0;
   
-  // Combine discount factors (additive deduction: -10% + -5% = -15%)
-  const totalDiscountFraction = (1 - wtoBuyMultiplier) + (1 - protestantMultiplier);
+  // Combine discount factors (additive deduction: -10% + -5% + -20% = -35%)
+  const totalDiscountFraction = (1 - wtoBuyMultiplier) + (1 - protestantMultiplier) + (1 - opecBuyMultiplier);
   const combinedBuyMultiplier = Math.max(0.1, 1 - totalDiscountFraction);
   const pricePerUnit = Math.round(originalPricePerUnit * combinedBuyMultiplier);
   const hasTradeDiscount = totalDiscountFraction > 0;
@@ -878,6 +881,11 @@ export default function ModalsKonfirmasiBeli({
               {isWTOActive && (
                 <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
                   Bonus WTO: Diskon beli 10%
+                </span>
+              )}
+              {isOPECActive && (
+                <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                  Bonus OPEC: Diskon beli minyak 20%
                 </span>
               )}
             </div>

@@ -21,6 +21,7 @@ import {
 import { CAPITALISM_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/ideologi_bonus_logic/kapitalisme";
 import { LIBERALISM_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/ideologi_bonus_logic/liberalisme";
 import { CONSERVATISM_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/ideologi_bonus_logic/konservatisme";
+import { isMemberOfEU, isMemberOfBRICS, isMemberOfG20 } from "@/app/page/bonus_logic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -127,11 +128,16 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
       ? `Bonus Buddha: Penerimaan pajak lingkungan +${BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS * 100}%`
       : undefined;
 
+  const countryName = String(countryDetail?.country || countryDetail?.nama || "").trim();
+  const euTaxBadge = isMemberOfEU(countryName) ? "Bonus EU: Penerimaan Pajak +10%" : undefined;
+  const bricsTaxBadge = isMemberOfBRICS(countryName) ? "Bonus BRICS: Penerimaan Pajak +10%" : undefined;
+  const g20TaxBadge = isMemberOfG20(countryName) ? "Bonus G20: Penerimaan Pajak +20%" : undefined;
+
   const incomeItems: FinancialItem[] = [
     {
       label: "Revenue Pajak",
       amount: taxRevenue,
-      badge: [ideologyTaxBadge, religionTaxBadge].filter(Boolean).join(" | ") || undefined,
+      badge: [ideologyTaxBadge, religionTaxBadge, euTaxBadge, bricsTaxBadge, g20TaxBadge].filter(Boolean).join(" | ") || undefined,
       onClick: () => onGotoPajak?.()
     },
     {

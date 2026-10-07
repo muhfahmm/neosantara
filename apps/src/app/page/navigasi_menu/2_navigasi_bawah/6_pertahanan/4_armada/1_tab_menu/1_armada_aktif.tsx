@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Swords, Ship, Plane, Info } from "lucide-react";
 import { BARAK_TO_SOLDIERS_MULTIPLIER } from "../logic/1_barak_logic";
 import { getArmadaUnitBreakdown } from "../logic/armadaLogic";
+import { isMemberOfNATO } from "@/app/page/bonus_logic";
 import { convertBarakToSoldiers } from "../logic/1_barak_logic";
 import { getArmadaCapacityInfo, getInfraCapacityDetails } from "../logic/infraCapacityHelper";
 import KonfirmasiArmadaAktifModal from "../2_modals_konfirmasi_pembangunan/1_konfirmasi_armada_aktif_modal";
@@ -340,8 +341,16 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
     setSelectedForBuild(null);
   };
 
+  const userCountryName = String(countryDetail?.country || countryDetail?.nama || "").trim();
+  const isNATOActive = isMemberOfNATO(userCountryName);
+
   return (
     <div className="space-y-6">
+      {isNATOActive && (
+        <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-xs font-bold text-emerald-300">
+          Kekuatan Militer & Total HP seluruh matra (Darat, Laut, Udara) ditingkatkan +15% oleh bonus keanggotaan NATO.
+        </div>
+      )}
       <div className="text-xs font-semibold text-[#8b7e66] leading-relaxed">
         Inventaris alutsista negara dipisahkan berdasarkan kelompok operasional untuk memudahkan evaluasi kekuatan darat, laut, dan udara.
       </div>

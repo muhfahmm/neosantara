@@ -12,7 +12,7 @@ import {
   applyProtestantTradePrice,
   PROTESTANT_SELL_PRICE_BONUS
 } from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
-import { isMemberOfWTO, getWTOSellPriceMultiplier } from "@/app/page/bonus_logic";
+import { isMemberOfWTO, getWTOSellPriceMultiplier, getOPECSellPriceMultiplier } from "@/app/page/bonus_logic";
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import {
   applyNpcCountrySimulationState,
@@ -309,11 +309,14 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
   const isWTOActive = isMemberOfWTO(userCountryName);
   const wtoSellMultiplier = getWTOSellPriceMultiplier(userCountryName); // 1.15 if active, 1.0 if not
   
+  const opecSellMultiplier = getOPECSellPriceMultiplier(userCountryName, selectedProduct);
+  const isOPECActive = opecSellMultiplier > 1;
+
   const protestantPrice = applyProtestantTradePrice(currentPrice, countryDetail?.religion, "sell");
   const hasProtestantBonus = protestantPrice > currentPrice;
   const protestantMultiplier = hasProtestantBonus ? (1 + PROTESTANT_SELL_PRICE_BONUS) : 1.0;
   
-  const combinedSellMultiplier = (wtoSellMultiplier - 1) + (protestantMultiplier - 1);
+  const combinedSellMultiplier = (wtoSellMultiplier - 1) + (protestantMultiplier - 1) + (opecSellMultiplier - 1);
   const pricePerUnit = Math.round(currentPrice * (1 + combinedSellMultiplier));
   const hasTradeBonus = combinedSellMultiplier > 0;
   const totalPrice = pricePerUnit * quantity;
@@ -529,6 +532,11 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
                   {isWTOActive && (
                     <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
                       Bonus WTO: Harga jual +15%
+                    </span>
+                  )}
+                  {isOPECActive && (
+                    <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                      Bonus OPEC: Harga jual minyak +20%
                     </span>
                   )}
                 </div>
