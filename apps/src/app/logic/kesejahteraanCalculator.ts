@@ -17,7 +17,9 @@ import {
   calculateKesehatanScore as calculateSharedKesehatanScore,
   calculateKeterbukaanScore,
   calculatePanganScore,
+  calculatePenegakanHukumScore,
   calculateServiceDeficitMetrics,
+  PENEGAKAN_HUKUM_KEYS,
 } from "@/app/logic/kepuasanCalculator";
 
 // ─── Helper Functions ─────────────────────────────────────────────────────
@@ -300,6 +302,43 @@ export function calculateTempatUmumScore(countryDetail: any): TempatUmumMetrics 
   };
 }
 
+export interface PenegakanHukumMetrics {
+  totalFacilities: number;
+  score: number;
+  detail: {
+    pusatBantuanHukum: number;
+    pengadilan: number;
+    kejaksaan: number;
+    posPolisi: number;
+    akademiPolisi: number;
+  };
+}
+
+/**
+ * Gunakan skor kepuasan penegakan hukum yang sama dengan menu Kepuasan Rakyat.
+ */
+export function calculatePenegakanHukumMetrics(
+  countryDetail: Record<string, unknown> | null | undefined
+): PenegakanHukumMetrics {
+  const detail = {
+    pusatBantuanHukum: Number(countryDetail?.pusat_bantuan_hukum) || 0,
+    pengadilan: Number(countryDetail?.pengadilan) || 0,
+    kejaksaan: Number(countryDetail?.kejaksaan) || 0,
+    posPolisi: Number(countryDetail?.pos_polisi) || 0,
+    akademiPolisi: Number(countryDetail?.akademi_polisi) || 0,
+  };
+  const totalFacilities = PENEGAKAN_HUKUM_KEYS.reduce(
+    (total, key) => total + (Number(countryDetail?.[key]) || 0),
+    0,
+  );
+
+  return {
+    totalFacilities,
+    score: calculatePenegakanHukumScore(countryDetail),
+    detail,
+  };
+}
+
 // ─── Main: Calculate Overall Welfare Index ────────────────────────────────
 
 export interface KesejahteraanIndex {
@@ -307,6 +346,7 @@ export interface KesejahteraanIndex {
   pendidikanScore: number;
   kesehatanScore: number;
   tempatUmumScore: number;
+  penegakanHukumScore: number;
   panganScore: number;  // ← NEW
   hunianScore: number;  // ← NEW
   listrikScore: number;
@@ -316,6 +356,7 @@ export interface KesejahteraanIndex {
     pendidikan: PendidikanMetrics;
     kesehatan: KesehatanMetrics;
     tempatUmum: TempatUmumMetrics;
+    penegakanHukum: PenegakanHukumMetrics;
     pangan?: any;  // ← NEW
     hunian?: any;  // ← NEW
     keterbukaan?: any; // ← NEW
@@ -323,12 +364,9 @@ export interface KesejahteraanIndex {
 }
 
 /**
- * Hitung Indeks Kesejahteraan Keseluruhan
- * 
- * Kesejahteraan = Rata-rata tertimbang dari 3 sektor:
- * - Pendidikan: 35% (sumber daya manusia penting)
- * - Kesehatan: 40% (kesehatan masyarakat prioritas)
- * - Tempat Umum: 25% (kualitas hidup)
+ * Hitung Indeks Kesejahteraan Keseluruhan.
+ * Skor dasar merupakan rata-rata dari delapan komponen layanan dan keterbukaan,
+ * termasuk kepuasan penegakan hukum.
  * 
  * Nilai: 1-100
  * - 1-20: Sangat Buruk (krisis kesejahteraan)
@@ -363,11 +401,14 @@ export function calculateKesejahteraan(
   const infraIndex = infraTotal / pop;
   const tempatUmumScore = Math.min(100, Math.round((infraIndex / 0.00005) * 100));
 
+  // Sektor 4: Penegakan hukum, memakai skor yang sama dengan Kepuasan Rakyat.
+  const penegakanHukum = calculatePenegakanHukumMetrics(countryDetail);
+
   const serviceMetrics = metadata && Object.keys(metadata).length > 0
     ? calculateServiceDeficitMetrics(countryDetail, metadata)
     : undefined;
 
-  // Sektor 4: Pangan
+  // Sektor 5: Pangan
   let panganScore = 1;
   const storedFood = countryDetail?.satisfaction?.food;
   if (!serviceMetrics) {
@@ -376,7 +417,7 @@ export function calculateKesejahteraan(
     panganScore = calculatePanganScore(countryDetail, metadata);
   }
 
-  // Sektor 5: Hunian
+  // Sektor 6: Hunian
   let hunianScore = 1;
   const storedHousing = countryDetail?.satisfaction?.housing;
   if (!serviceMetrics) {
@@ -394,7 +435,7 @@ export function calculateKesejahteraan(
   // Indeks kesejahteraan mencakup listrik bersama pangan dan hunian.
   const keterbukaanScore = calculateKeterbukaanScore(countryDetail);
   const baseScore = Math.round(
-    (pendidikanScore + kesehatanScore + tempatUmumScore + panganScore + hunianScore + listrikScore + keterbukaanScore) / 7
+    (pendidikanScore + kesehatanScore + tempatUmumScore + penegakanHukum.score + panganScore + hunianScore + listrikScore + keterbukaanScore) / 8
   );
   const bonus = Number(countryDetail?.kesejahteraan_bonus) || 0;
   const decayAccumulated = Number(countryDetail?.kesejahteraan_decay) || 0;
@@ -404,6 +445,7 @@ export function calculateKesejahteraan(
     pendidikanScore,
     kesehatanScore,
     tempatUmumScore,
+    penegakanHukumScore: penegakanHukum.score,
     panganScore,
     hunianScore,
     listrikScore,
@@ -448,6 +490,7 @@ export function calculateKesejahteraan(
     pendidikanScore,
     kesehatanScore,
     tempatUmumScore,
+    penegakanHukumScore: penegakanHukum.score,
     panganScore,
     hunianScore,
     listrikScore,
@@ -457,6 +500,7 @@ export function calculateKesejahteraan(
       pendidikan: dummyPendidikanMetrics,
       kesehatan: dummyKesehatanMetrics,
       tempatUmum: dummyTempatUmumMetrics,
+      penegakanHukum,
       pangan: { score: panganScore },
       hunian: { score: hunianScore },
       keterbukaan: { score: keterbukaanScore },
@@ -527,6 +571,9 @@ Breakdown:
   
   • Tempat Umum: ${kesejahteraan.tempatUmumScore}/100
     - ${kesejahteraan.detail.tempatUmum.totalFacilities} fasilitas umum
+
+  • Penegakan Hukum: ${kesejahteraan.penegakanHukumScore}/100
+    - ${kesejahteraan.detail.penegakanHukum.totalFacilities} fasilitas penegakan hukum
   `.trim();
 }
 

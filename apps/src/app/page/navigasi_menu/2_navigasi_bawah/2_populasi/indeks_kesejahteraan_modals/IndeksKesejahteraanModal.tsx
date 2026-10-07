@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import {
   X, Info, TrendingUp, TrendingDown, BookOpen, Heart, MapPin,
-  Wheat, Home, Library, Hospital, Landmark, CheckCircle, Sprout, Globe, Zap
+  Wheat, Home, Library, Hospital, Landmark, CheckCircle, Sprout, Globe, Zap, ShieldCheck
 } from "lucide-react";
 import {
   calculateKesejahteraan,
@@ -167,6 +167,7 @@ export default function IndeksKesejahteraanModal({
   const pendidikanColor = getScoreColor(pendidikanActualScore);
   const kesehatanColor = getScoreColor(kesehatanActualScore);
   const tempatUmumColor = getScoreColor(infrastrukturActualScore);
+  const penegakanHukumColor = getScoreColor(kesejahteraan.penegakanHukumScore);
   const panganColor = getScoreColor(panganActualScore);
   const hunianColor = getScoreColor(hunianActualScore);
   const listrikColor = getScoreColor(listrikActualScore);
@@ -245,7 +246,7 @@ export default function IndeksKesejahteraanModal({
                         <span className="text-lg font-bold text-[#6B8A8A]">/100</span>
                       </div>
                       <p className="text-sm font-black mt-2 text-[#00FFAA]">{status}</p>
-                      <p className="text-[10px] text-[#6B8A8A] font-medium mt-1">Rata-rata 7 komponen layanan dan keterbukaan</p>
+                      <p className="text-[10px] text-[#6B8A8A] font-medium mt-1">Rata-rata 8 komponen layanan dan keterbukaan</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {getTrendIcon(kesejahteraan.trend)}
@@ -281,7 +282,7 @@ export default function IndeksKesejahteraanModal({
 
                 <div className="border-l-2 border-[#00FFAA]/40 pl-4 py-1">
                   <p className="text-xs text-[#9BB2B2] leading-relaxed">
-                    Indeks ini merangkum pendidikan, kesehatan, fasilitas umum, pangan, listrik, hunian, dan keterbukaan, lalu menambahkan bonus serta mengurangi decay. Indeks kesejahteraan bukan pengali langsung populasi; beberapa sektor yang sama dapat memengaruhi kepuasan, coverage, atau faktor kesehatan secara tidak langsung.
+                    Indeks ini merangkum pendidikan, kesehatan, fasilitas umum, kepolisian, pangan, listrik, hunian, dan keterbukaan, lalu menambahkan bonus serta mengurangi decay. Indeks kesejahteraan bukan pengali langsung populasi; beberapa sektor yang sama dapat memengaruhi kepuasan, coverage, atau faktor kesehatan secara tidak langsung.
                   </p>
                 </div>
 
@@ -364,6 +365,7 @@ export default function IndeksKesejahteraanModal({
                       const targetKesehatan = Math.ceil(pop * 0.00004);
                       const currentKesehatan = kesejahteraan?.detail?.kesehatan?.totalFacilities ?? 0;
                       const neededKesehatan = Math.max(0, targetKesehatan - currentKesehatan);
+                      const risikoWabahPercent = Math.max(0, Math.min(100, Math.round(100 - kesehatanActualScore)));
 
                       return (
                         <div
@@ -386,6 +388,8 @@ export default function IndeksKesejahteraanModal({
                             <span className={`text-3xl font-black ${kesehatanColor.text}`}>{kesehatanActualScore}</span>
                           </div>
                           <div className="space-y-1 text-xs text-[#E0E0E0] font-semibold">
+                            <p>• Skor Kepuasan Kesehatan: <span className="font-black text-[#00FFAA]">{kesehatanActualScore}/100</span></p>
+                            <p>• Risiko Wabah Penyakit (Epidemi & Pandemi): <span className="font-black text-rose-400">{risikoWabahPercent}%</span></p>
                             <p>• Fasilitas Saat Ini: <span className="font-black text-[#00FFAA]">{currentKesehatan.toLocaleString("id-ID")}</span> unit</p>
                             <p>• Target Ideal (100%): <span className="font-black text-[#00FFAA]">{targetKesehatan.toLocaleString("id-ID")}</span> unit (1 per 25.000 jiwa)</p>
                             {neededKesehatan > 0 ? (
@@ -443,6 +447,42 @@ export default function IndeksKesejahteraanModal({
                               </p>
                             )}
                             <p className="pt-1 text-[11px] text-[#6B8A8A]">Transportasi: {kesejahteraan?.detail?.tempatUmum?.detail?.transportasi ?? 0} | Rekreasi: {kesejahteraan?.detail?.tempatUmum?.detail?.rekreasi ?? 0}</p>
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Penegakan Hukum & Kepolisian */}
+                    {(() => {
+                      const detail = kesejahteraan.detail.penegakanHukum;
+                      const healthAndLawScore = (kesehatanActualScore + kesejahteraan.penegakanHukumScore) / 2;
+                      const securityRiskPercent = Math.max(0, Math.min(100, Math.round(100 - healthAndLawScore)));
+
+                      return (
+                        <div
+                          onClick={() => {
+                            onOpenTempatUmum?.("penegakan_hukum");
+                            if (!onOpenTempatUmum) setActiveMenu?.("Menu:TempatUmum");
+                            onClose();
+                          }}
+                          className={`rounded-xl p-5 border-2 ${penegakanHukumColor.border} ${penegakanHukumColor.bg} space-y-3 cursor-pointer transition-all duration-200 hover:shadow-lg`}
+                          title="Klik untuk membuka tab Penegakan Hukum di Tempat Umum & Layanan Publik"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <ShieldCheck className={`h-5 w-5 ${penegakanHukumColor.icon}`} />
+                              <div>
+                                <p className="text-xs font-black text-[#6B8A8A] uppercase">Penegakan Hukum & Kepolisian</p>
+                                <p className="text-sm font-bold text-[#E0E0E0]">Kepuasan Rakyat</p>
+                              </div>
+                            </div>
+                            <span className={`text-3xl font-black ${penegakanHukumColor.text}`}>{kesejahteraan.penegakanHukumScore}</span>
+                          </div>
+                          <div className="space-y-1 text-xs text-[#E0E0E0] font-semibold">
+                            <p>• Skor Kepuasan Penegakan Hukum: <span className="font-black text-[#00FFAA]">{kesejahteraan.penegakanHukumScore}/100</span></p>
+                            <p>• Risiko Keamanan (Peluang Kejahatan): <span className="font-black text-rose-400">{securityRiskPercent}%</span></p>
+                            <p>• Fasilitas Saat Ini: <span className="font-black text-[#00FFAA]">{detail.totalFacilities.toLocaleString("id-ID")}</span> unit</p>
+                            <p className="pt-1 text-[11px] text-[#6B8A8A]">Bantuan Hukum: {detail.detail.pusatBantuanHukum} | Pengadilan: {detail.detail.pengadilan} | Kejaksaan: {detail.detail.kejaksaan} | Pos Polisi: {detail.detail.posPolisi} | Akademi Polisi: {detail.detail.akademiPolisi}</p>
                           </div>
                         </div>
                       );
@@ -551,66 +591,7 @@ export default function IndeksKesejahteraanModal({
                   </div>
                 </div>
 
-                {/* Rekomendasi */}
-                <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-2xl">
-                  <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider mb-4">Rekomendasi Peningkatan</h3>
-                  <div className="space-y-3">
-                    {pendidikanActualScore < 60 && (
-                      <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-cyan-500/30">
-                        <Library className="h-5 w-5 text-cyan-400 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm font-black text-cyan-400">Tingkatkan Pendidikan</p>
-                          <p className="text-xs text-[#E0E0E0]/80 font-semibold">Bangun lebih banyak sekolah, universitas, dan pusat penelitian</p>
-                        </div>
-                      </div>
-                    )}
-                    {kesehatanActualScore < 60 && (
-                      <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-rose-500/30">
-                        <Hospital className="h-5 w-5 text-rose-400 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm font-black text-rose-400">Tingkatkan Kesehatan</p>
-                          <p className="text-xs text-[#E0E0E0]/80 font-semibold">Investasi besar dalam rumah sakit, klinik, dan program kesehatan masyarakat</p>
-                        </div>
-                      </div>
-                    )}
-                    {infrastrukturActualScore < 60 && (
-                      <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-purple-500/30">
-                        <Landmark className="h-5 w-5 text-purple-400 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm font-black text-purple-400">Tingkatkan Fasilitas Publik</p>
-                          <p className="text-xs text-[#E0E0E0]/80 font-semibold">Bangun infrastruktur transportasi, rekreasi, dan komersial</p>
-                        </div>
-                      </div>
-                    )}
-                    {panganActualScore < 60 && (
-                      <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-yellow-500/30">
-                        <Wheat className="h-5 w-5 text-yellow-400 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm font-black text-yellow-400">Tingkatkan Ketahanan Pangan</p>
-                          <p className="text-xs text-[#E0E0E0]/80 font-semibold">Dukung sektor pertanian dan distribusi pangan yang lebih baik</p>
-                        </div>
-                      </div>
-                    )}
-                    {hunianActualScore < 60 && (
-                      <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-cyan-500/30">
-                        <Home className="h-5 w-5 text-cyan-400 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm font-black text-cyan-400">Tingkatkan Hunian Layak</p>
-                          <p className="text-xs text-[#E0E0E0]/80 font-semibold">Program pembangunan perumahan dan perbaikan permukiman</p>
-                        </div>
-                      </div>
-                    )}
-                    {overallScore >= 60 && (
-                      <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-emerald-500/30">
-                        <CheckCircle className="h-5 w-5 text-emerald-400 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm font-black text-emerald-400">Status Kesejahteraan Baik</p>
-                          <p className="text-xs text-[#E0E0E0]/80 font-semibold">Lanjutkan investasi seimbang di semua sektor untuk pertumbuhan berkelanjutan</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
+
               </div>
             ) : (
               <NaikkanKesejahteraanTab
