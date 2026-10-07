@@ -364,6 +364,23 @@ export const calculateWeightedFoodCoverage = (country: any, metadata: any): numb
   return groups.reduce((sum, group) => sum + group.coverage * group.weight, 0) / totalWeight;
 };
 
+export const calculateFoodSatisfactionScore = (country: any, metadata: any): number => {
+  if (!country || !metadata || Object.keys(metadata).length === 0) return 50;
+
+  const population = resolveCountryPopulation(country);
+  if (population <= 0) return 50;
+
+  const scores = Object.entries(FOOD_CONSUMPTION_PER_CAPITA).map(([key, consumptionPerCapita]) => {
+    const production = calculateProduction(key, country, metadata);
+    const consumption = calculateConsumption(population, consumptionPerCapita);
+    return consumption > 0 ? Math.min(production / consumption, 2) : 0;
+  });
+
+  if (scores.length === 0) return 50;
+  const averageRatio = scores.reduce((sum, ratio) => sum + ratio, 0) / scores.length;
+  return Math.min(100, Math.max(1, Math.round((averageRatio / 2) * 100)));
+};
+
 // Calculate total production, consumption and balance for a country (Flat list)
 export const calculateCountryFoodAggregate = (country: any, metadata: any) => {
   let totalProduction = 0;

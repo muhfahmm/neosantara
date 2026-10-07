@@ -116,6 +116,12 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
     // Hukum (metadata_hukum.json)
     { key: "kejaksaan_court", label: "Kejaksaan & Peradilan", sector: "Hukum & Keamanan" },
     { key: "legal_aid", label: "Bantuan Hukum", sector: "Hukum & Keamanan" },
+    { key: "pusat_bantuan_hukum", label: "Pusat Bantuan Hukum", sector: "Hukum & Keamanan" },
+    { key: "pengadilan", label: "Gedung Pengadilan", sector: "Hukum & Keamanan" },
+    { key: "kejaksaan", label: "Kantor Kejaksaan", sector: "Hukum & Keamanan" },
+    { key: "pos_polisi", label: "Pos Polisi", sector: "Hukum & Keamanan" },
+    { key: "armada_mobil_polisi", label: "Armada Mobil Polisi", sector: "Hukum & Keamanan" },
+    { key: "akademi_polisi", label: "Akademi Polisi", sector: "Hukum & Keamanan" },
     // Olahraga (metadata_olahraga.json)
     { key: "kolam_renang", label: "Fasilitas Akuatik", sector: "Olahraga & Hiburan" },
     { key: "sirkuit_balap", label: "Sirkuit Balap", sector: "Olahraga & Hiburan" },
@@ -195,6 +201,12 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
     ...hunianKeys.map(h => h.key),
     ...pertahananKeys.map(p => p.key),
     ...tempatUmumKeys.map(t => t.key),
+    "pusat_bantuan_hukum",
+    "pengadilan",
+    "kejaksaan",
+    "pos_polisi",
+    "armada_mobil_polisi",
+    "akademi_polisi",
     ...SOURCE_ORDER,
   ]);
 

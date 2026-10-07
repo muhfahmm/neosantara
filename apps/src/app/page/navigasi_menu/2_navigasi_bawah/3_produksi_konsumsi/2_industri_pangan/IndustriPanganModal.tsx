@@ -15,6 +15,7 @@ import {
 import { PROFILES_POPULATION_DATA } from "@/../../json/semua_fitur_negara/0_profiles/index";
 import { getProductionBonusMultiplier } from "../../5_pembangunan/1_produksi/bonus_logic";
 import { applyNpcCountrySimulationState } from "@/app/logic/npcCountrySimulation";
+import { calculatePanganScore } from "@/app/logic/kepuasanCalculator";
 
 // 🔥 IMPOR MODAL DAN LOGIKA
 import AISuggestModal from "./AI_suggest_modals";
@@ -125,27 +126,8 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
 
   // --- HITUNG INDEKS KEPUASAN PANGAN ---
   const foodSatisfaction = useMemo(() => {
-    if (!countryDetail || !metadata) return 50; // default
-    const allKeys = Object.keys(FOOD_CONSUMPTION_PER_CAPITA);
-    let totalRatio = 0;
-    let count = 0;
-    for (const key of allKeys) {
-      const prod = calculateProduction(key, countryDetail, metadata);
-      const cons = calculateConsumption(population, FOOD_CONSUMPTION_PER_CAPITA[key]);
-      if (cons > 0) {
-        const ratio = prod / cons;
-        // Batasi rasio maksimal 2 agar tidak terlalu ekstrem
-        totalRatio += Math.min(ratio, 2);
-        count++;
-      }
-    }
-    if (count === 0) return 50;
-    const avgRatio = totalRatio / count;
-    // petakan avgRatio dari 0..2 ke 1..100
-    let score = (avgRatio / 2) * 100;
-    score = Math.min(100, Math.max(1, Math.round(score)));
-    return score;
-  }, [countryDetail, metadata, population]);
+    return calculatePanganScore(countryDetail, metadata);
+  }, [countryDetail, metadata]);
 
   // Simpan indeks ke countryDetail agar bisa diakses dashboard
   useEffect(() => {

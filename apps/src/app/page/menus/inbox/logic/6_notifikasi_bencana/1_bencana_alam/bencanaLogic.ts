@@ -215,13 +215,18 @@ export const BENCANA_ALAM_POOL: BencanaEventItem[] = [
     korbanRange: [400, 3000],
     kerugianRange: [400000, 2000000],
     descriptionTemplate: (country) => `Kebocoran limbah bahan berbahaya dan beracun dari industri mencemari area permukiman warga ${country}.`,
-  }
+  },
+
 ];
 
-export function generateBencanaAlamNotification(
+function generateIncidentNotification(
   userCountryName: string,
-  dateStr: string
+  dateStr: string,
 ): BencanaAlamNotification {
+  if (BENCANA_ALAM_POOL.length === 0) {
+    throw new Error('Tidak ada kejadian yang tersedia untuk dibuat menjadi notifikasi.');
+  }
+
   const totalWeight = BENCANA_ALAM_POOL.reduce((acc, item) => acc + item.weight, 0);
   let roll = Math.random() * totalWeight;
 
@@ -240,7 +245,7 @@ export function generateBencanaAlamNotification(
   const [minR, maxR] = selectedEvent.kerugianRange;
   const totalKerugian = Math.floor(Math.random() * (maxR - minR + 1)) + minR;
 
-  // Rule: 1 Korban = 1 NEO
+  // For natural disasters, emergency aid is calculated at 1 NEO per affected person.
   const bantuanCost = korban;
 
   const country = userCountryName || 'Indonesia';
@@ -260,6 +265,13 @@ export function generateBencanaAlamNotification(
     eventName: selectedEvent.name,
     korban,
     totalKerugian,
-    bantuanCost
+    bantuanCost,
   };
+}
+
+export function generateBencanaAlamNotification(
+  userCountryName: string,
+  dateStr: string,
+): BencanaAlamNotification {
+  return generateIncidentNotification(userCountryName, dateStr);
 }

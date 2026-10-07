@@ -32,7 +32,8 @@ export function getMonthsDifference(d1Str: string, d2Str: string): number {
 export function getThresholdFromSatisfaction(
   kepuasan: number,
   keterbukaanScore?: number,
-  serviceDeficitPressure = 0
+  serviceDeficitPressure = 0,
+  lowSectorCount = 0,
 ): number {
   let baseThreshold = 12;
   if (kepuasan <= 25) {
@@ -56,6 +57,7 @@ export function getThresholdFromSatisfaction(
 
   const serviceFactor = 1 - Math.min(1, Math.max(0, serviceDeficitPressure)) * 0.5;
   baseThreshold = Math.max(1, Math.floor(baseThreshold * serviceFactor));
+  if (lowSectorCount > 0) baseThreshold = Math.min(baseThreshold, 6);
   return baseThreshold;
 }
 
@@ -128,6 +130,8 @@ export interface PresidentRatingInput {
   currentKepuasan: number;
   keterbukaanScore?: number;
   serviceDeficitPressure?: number;
+  lowSectorCount?: number;
+  additionalDecay?: number;
   currentCompletedBoost?: number; // Bonus dari event yang selesai
   lastDate?: string;
   currentDate: string;
@@ -159,6 +163,8 @@ export function calculatePresidentRating(input: PresidentRatingInput): President
     currentKepuasan,
     keterbukaanScore,
     serviceDeficitPressure = 0,
+    lowSectorCount = 0,
+    additionalDecay = 0,
     currentCompletedBoost = 0,
     lastDate,
     currentDate,
@@ -171,7 +177,12 @@ export function calculatePresidentRating(input: PresidentRatingInput): President
   }
 
   // Step 2: Tentukan threshold berdasarkan kepuasan & keterbukaan saat ini
-  const newThreshold = getThresholdFromSatisfaction(currentKepuasan, keterbukaanScore, serviceDeficitPressure);
+  const newThreshold = getThresholdFromSatisfaction(
+    currentKepuasan,
+    keterbukaanScore,
+    serviceDeficitPressure,
+    lowSectorCount,
+  );
 
   // Step 3: Scale counter jika tier kepuasan berubah
   const prevThreshold = lastRatingThreshold || newThreshold;
@@ -189,14 +200,15 @@ export function calculatePresidentRating(input: PresidentRatingInput): President
 
   // Step 5: Apply boost dari event dan hitung rating baru
   const ratingAfterBoost = Math.min(100, currentRating + currentCompletedBoost);
-  const nextRating = Math.max(0, ratingAfterBoost - ratingDecrease);
+  const totalDecrease = ratingDecrease + Math.max(0, additionalDecay);
+  const nextRating = Math.max(0, ratingAfterBoost - totalDecrease);
 
   return {
     presidentRating: nextRating,
     rating_month_counter: finalCounter,
     last_rating_threshold: newThreshold,
     nextRating,
-    ratingDecreaseThisTick: ratingDecrease,
+    ratingDecreaseThisTick: totalDecrease,
   };
 }
 

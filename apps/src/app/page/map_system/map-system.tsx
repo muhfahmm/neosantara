@@ -29,7 +29,17 @@ const NegaraUserModal = dynamic(() => import('./negara_user'), { ssr: false });
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateDailyMaterialProduction } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
 import { getDaysElapsed } from '@/app/logic/production_logic';
-import { calculateKepuasan, calculateKeterbukaanScore } from '@/app/logic/kepuasanCalculator';
+import {
+    calculateKepuasan,
+    calculateKeterbukaanScore,
+    calculateKesehatanScore,
+    calculatePenegakanHukumScore,
+    countLowSatisfactionSectors,
+    createSatisfactionSectorBaseline,
+    LOW_SECTOR_DECAY_INTERVAL_MONTHS,
+    LOW_SECTOR_DECAY_MAX_POINTS_PER_INTERVAL,
+    LOW_SECTOR_DECAY_POINTS_PER_SECTOR,
+} from '@/app/logic/kepuasanCalculator';
 import { calculatePresidentRating, getMonthsDifference } from '@/app/logic/peringkatCalculator';
 import { calculateKesejahteraan, calculateKesejahteraanDecay } from '@/app/logic/kesejahteraanCalculator';
 const TopLeftIcon = dynamic(() => import('../menus/inbox/inboxModals'), { ssr: false });
@@ -48,6 +58,7 @@ import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifika
 import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationLogic';
 import { checkAndGenerateEmbassyOffers, createEmbassyOfferNotification } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
 import { generateBencanaAlamNotification } from '../menus/inbox/logic/6_notifikasi_bencana/1_bencana_alam/bencanaLogic';
+import { generateKeamananNotification } from '../menus/inbox/logic/14_notifikasi_keamanan/keamananLogic';
 import { generateWabahPenyakitNotification } from '../menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic';
 import { generateSpionaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/1_spionase/spionaseLogic';
 import { generateSabotaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
@@ -1236,6 +1247,18 @@ export default function MapPage() {
                 }
             }
 
+            // Risiko keamanan mengikuti rata-rata kekurangan fasilitas kesehatan dan hukum.
+            const healthAndLawScore = (
+                calculateKesehatanScore(countryDetail) +
+                calculatePenegakanHukumScore(countryDetail)
+            ) / 2;
+            const securityRiskPercent = 100 - healthAndLawScore;
+            if (securityRiskPercent > 0 && Math.random() * 100 < securityRiskPercent) {
+                newNotifsToAdd.push(
+                    generateKeamananNotification(userCountryName, currentDateStr, securityRiskPercent),
+                );
+            }
+
             // 5. Notifikasi Pertahanan & Intelijen (Spionase, Sabotase, Diserang, Pemberontakan, ICBM)
             if (Math.random() < 0.25) {
                 const defRoll = Math.random();
@@ -2149,7 +2172,8 @@ export default function MapPage() {
                 countryDetail,
                 metadata,
                 currentDateStr,
-                resourceKey => getEconomicEmbargoProductionMultiplier(playerCountryName, resourceKey)
+                resourceKey => getEconomicEmbargoProductionMultiplier(playerCountryName, resourceKey),
+                lastDate
             );
             updates = result.hasUpdates ? result.updates : {};
         }
@@ -2280,11 +2304,42 @@ export default function MapPage() {
                 nextPendingNotifications.unshift(completeNotif);
             }
 
-            const nextKepuasan = Math.min(100, parseFloat(((prev.kepuasan ?? 50) + currentCompletedBoost).toFixed(1)));
+            const monthsPassed = lastDate ? getMonthsDifference(lastDate, currentDateStr) : 0;
+            const lowSectorCount = countLowSatisfactionSectors(prev, metadata);
+            const previousSectorDeficitMonths = Math.max(0, Number(prev.sector_deficit_month_counter) || 0);
+            const sectorDeficitMonths = lowSectorCount > 0
+                ? previousSectorDeficitMonths + monthsPassed
+                : 0;
+            const sectorDeficitPeriods = lowSectorCount > 0
+                ? Math.floor(sectorDeficitMonths / LOW_SECTOR_DECAY_INTERVAL_MONTHS)
+                : 0;
+            const sectorDeficitMonthCounter = lowSectorCount > 0
+                ? sectorDeficitMonths % LOW_SECTOR_DECAY_INTERVAL_MONTHS
+                : 0;
+            const sectorDeficitPenaltyPerPeriod = Math.min(
+                LOW_SECTOR_DECAY_MAX_POINTS_PER_INTERVAL,
+                lowSectorCount * LOW_SECTOR_DECAY_POINTS_PER_SECTOR,
+            );
+            const sectorDeficitPenaltyThisTick = sectorDeficitPeriods * sectorDeficitPenaltyPerPeriod;
+            const accumulatedSectorPenalty = lowSectorCount > 0
+                ? Math.max(0, Number(prev.sector_deficit_kepuasan_penalty) || 0) +
+                    sectorDeficitPenaltyThisTick
+                : 0;
+            const nextKepuasan = Math.max(
+                0,
+                Math.min(
+                    100,
+                    parseFloat(
+                        (
+                            (prev.kepuasan ?? 50) +
+                            currentCompletedBoost -
+                            sectorDeficitPenaltyThisTick
+                        ).toFixed(1),
+                    ),
+                ),
+            );
 
             // --- HITUNG PENURUNAN PERINGKAT BERDASARKAN KEPUASAN (menggunakan peringkatCalculator) ---
-            const monthsPassed = lastDate ? getMonthsDifference(lastDate, currentDateStr) : 0;
-
             const keterbukaanScore = calculateKeterbukaanScore(prev);
             const ratingResult = calculatePresidentRating({
                 currentRating: prev.presidentRating ?? 50,
@@ -2293,6 +2348,8 @@ export default function MapPage() {
                 monthsPassed,
                 currentKepuasan: nextKepuasan,
                 keterbukaanScore,
+                lowSectorCount,
+                additionalDecay: sectorDeficitPenaltyThisTick,
                 currentCompletedBoost: currentCompletedBoost,
                 lastDate,
                 currentDate: currentDateStr,
@@ -2312,6 +2369,8 @@ export default function MapPage() {
                 monthsPassed,
                 currentKepuasan: nextKepuasan,
                 keterbukaanScore,
+                lowSectorCount,
+                additionalDecay: sectorDeficitPenaltyThisTick,
             });
 
             const nextKesejahteraan = decayResult.nextKesejahteraan;
@@ -2383,6 +2442,8 @@ export default function MapPage() {
                 embassies: nextEmbassies,
                 removedEmbassies: nextRemovedEmbassies,
                 kepuasan: nextKepuasan,
+                sector_deficit_month_counter: sectorDeficitMonthCounter,
+                sector_deficit_kepuasan_penalty: accumulatedSectorPenalty,
                 presidentRating: ratingResult.presidentRating,
                 rating_month_counter: ratingResult.rating_month_counter,
                 last_rating_threshold: ratingResult.last_rating_threshold,
@@ -2400,6 +2461,17 @@ export default function MapPage() {
     // sehingga nilai di navbar selalu up-to-date tanpa harus buka modal
     useEffect(() => {
         if (!countryDetail || !metadata || Object.keys(metadata).length === 0) return;
+
+        if (!countryDetail.satisfaction_sector_baseline) {
+            setCountryDetail((prev: any) => {
+                if (!prev || prev.satisfaction_sector_baseline) return prev;
+                return {
+                    ...prev,
+                    satisfaction_sector_baseline: createSatisfactionSectorBaseline(prev, metadata),
+                };
+            });
+            return;
+        }
 
         const newKepuasan = calculateKepuasan(countryDetail, metadata);
 
@@ -2740,6 +2812,7 @@ export default function MapPage() {
             <Navbar
                 selectedCountry={selectedCountry}
                 countryDetail={countryDetail}
+                metadata={metadata}
                 netBalanceAdjustment={playerNetBalanceAdjustment}
                 netPopulationChange={playerNetPopulationChange}
                 dailyBirths={playerDailyBirths}
@@ -3169,14 +3242,16 @@ export default function MapPage() {
                         return;
                     }
 
-                    if (tNotif.tradeType === 'bencana_alam' || tNotif.tradeType === 'wabah_penyakit') {
-                        const cost = Number(tNotif.bantuanCost || 0);
+                    if (tNotif.tradeType === 'keamanan' || tNotif.tradeType === 'bencana_alam' || tNotif.tradeType === 'wabah_penyakit') {
+                        const isPoliceIncident = tNotif.tradeType === 'keamanan' ||
+                            (tNotif.tradeType === 'bencana_alam' && tNotif.eventType === 'police');
+                        const cost = Number((isPoliceIncident ? tNotif.responseCost : undefined) ?? tNotif.bantuanCost ?? 0);
                         const budget = Number(countryDetail?.anggaran || 0);
                         if (budget < cost) {
                             setResultModal({
                                 isOpen: true,
-                                title: 'Gagal Menyalurkan Bantuan',
-                                message: `Anggaran negara tidak mencukupi untuk menyalurkan bantuan (${budget.toLocaleString('id-ID')} NEO dari ${cost.toLocaleString('id-ID')} NEO).`,
+                                title: isPoliceIncident ? 'Operasi Kepolisian Gagal' : 'Gagal Menyalurkan Bantuan',
+                                message: `Anggaran negara tidak mencukupi untuk ${isPoliceIncident ? 'mendanai operasi kepolisian' : 'menyalurkan bantuan'} (${budget.toLocaleString('id-ID')} NEO dari ${cost.toLocaleString('id-ID')} NEO).`,
                                 type: 'error'
                             });
                             return;
@@ -3185,15 +3260,20 @@ export default function MapPage() {
                         setCountryDetail((prev: any) => ({
                             ...prev,
                             anggaran: budget - cost,
-                            kepuasan_masyarakat: Math.min(100, Number(prev?.kepuasan_masyarakat || 50) + 2.0),
-                            indeks_kesejahteraan: Math.min(100, Number(prev?.indeks_kesejahteraan || 50) + 2.0)
+                            tingkat_keamanan: isPoliceIncident
+                                ? Math.min(100, Number(prev?.tingkat_keamanan || 0) + 2)
+                                : prev?.tingkat_keamanan,
+                            kepuasan_masyarakat: Math.min(100, Number(prev?.kepuasan_masyarakat || 50) + (isPoliceIncident ? 1 : 2)),
+                            indeks_kesejahteraan: Math.min(100, Number(prev?.indeks_kesejahteraan || 50) + (isPoliceIncident ? 1 : 2))
                         }));
 
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
                         setResultModal({
                             isOpen: true,
-                            title: 'Bantuan Darurat Disalurkan',
-                            message: `Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID')} NEO! Kepuasan & Kesejahteraan masyarakat meningkat +2.0%.`,
+                            title: isPoliceIncident ? 'Operasi Kepolisian Berhasil' : 'Bantuan Darurat Disalurkan',
+                            message: isPoliceIncident
+                                ? `Operasi kepolisian berhasil didanai sebesar ${cost.toLocaleString('id-ID')} NEO. Tingkat keamanan, kepuasan, dan kesejahteraan meningkat.`
+                                : `Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID')} NEO! Kepuasan & Kesejahteraan masyarakat meningkat +2.0%.`,
                             type: 'success'
                         });
                         return;
@@ -3223,7 +3303,7 @@ export default function MapPage() {
                         return;
                     }
 
-                    const specialNotifTypes = ['jual', 'beli', 'penawaran_kedutaan_besar', 'penawaran_hubungan_dagang', 'bencana_alam', 'wabah_penyakit', 'spionase', 'sabotase', 'diserang', 'pemberontakan', 'icbm'];
+                    const specialNotifTypes = ['jual', 'beli', 'penawaran_kedutaan_besar', 'penawaran_hubungan_dagang', 'bencana_alam', 'wabah_penyakit', 'keamanan', 'spionase', 'sabotase', 'diserang', 'pemberontakan', 'icbm'];
                     if (specialNotifTypes.includes(tNotif.tradeType)) {
                         // Tolak / Abaikan Notifikasi: Hapus notifikasi dari feed
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
@@ -3533,7 +3613,7 @@ export default function MapPage() {
                             </div>
 
                             <div className="flex items-center justify-between text-[11px] text-[#8b7e66] font-bold border-t border-[#C4B49C]/30 pt-3 mt-1">
-                                <span>Kalender: {calendarRef.current?.display.getCalendarInfo() || (timeManagerRef.current?.getFormattedDate() || '-')}</span>
+                                <span>Kalender: {calendarRef.current?.display.getDateLabel() || (timeManagerRef.current?.getFormattedDate() || '-')}</span>
                                 <span>Kas: {countryDetail?.anggaran ? `${countryDetail.anggaran} NEO` : '-'}</span>
                             </div>
 

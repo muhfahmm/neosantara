@@ -10,6 +10,7 @@ import { formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 // 🔥 Import fungsi warna dari logic populasi
 import { getNetPopulationChangeColor } from '@/app/logic/populations_logic/population_logic';
+import { calculateKepuasan } from '@/app/logic/kepuasanCalculator';
 import { menuItems, subMenuItems } from '../navigasi_menu/navigationData';
 
 interface Country {
@@ -28,6 +29,7 @@ interface Country {
 interface NavbarProps {
     selectedCountry: Country | null;
     countryDetail: any;
+    metadata?: any;
     netBalanceAdjustment?: number;
     netPopulationChange?: number;
     // 🔥 Data demografi harian
@@ -46,6 +48,7 @@ interface NavbarProps {
 export function Navbar({
     selectedCountry,
     countryDetail,
+    metadata,
     netBalanceAdjustment = 0,
     netPopulationChange = 0,
     dailyBirths = 0,
@@ -72,6 +75,7 @@ export function Navbar({
     const populasi = Number(countryDetail?.jumlah_penduduk) || 0;
     const netPopulationChangeColor = getNetPopulationChangeColor(netPopulationChange);
     const netPopulationLabel = `${netPopulationChange >= 0 ? '+ ' : '- '}${Math.abs(netPopulationChange).toLocaleString('id-ID')}`;
+    const kepuasanScore = calculateKepuasan(countryDetail, metadata);
 
     // Function to get active menu information
     const getActiveMenuInfo = () => {
@@ -223,8 +227,8 @@ export function Navbar({
                         <StatusItem 
                             icon={<Smile className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-[#00FFAA]" />} 
                             label="KEPUASAN" 
-                            value={`${countryDetail?.kepuasan !== undefined ? Math.round(countryDetail.kepuasan) : 50}%`} 
-                            color={getKepuasanColor(countryDetail?.kepuasan ?? 50)} 
+                            value={`${Math.round(kepuasanScore)}%`}
+                            color={getKepuasanColor(kepuasanScore)}
                         />
                     </button>
 

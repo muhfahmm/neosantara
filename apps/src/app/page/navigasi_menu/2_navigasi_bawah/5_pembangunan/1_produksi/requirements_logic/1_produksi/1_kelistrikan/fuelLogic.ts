@@ -32,11 +32,12 @@ export interface ElectricityFuelBalance {
 export function getElectricityFuelBalance(
   countryDetail: Record<string, any> | null | undefined,
   resourceKey: string,
-  metadata: Record<string, any> = {}
+  metadata: Record<string, any> | null = {}
 ): ElectricityFuelBalance {
   if (!countryDetail) return { production: 0, consumption: 0, balance: 0 };
 
-  const resourceMetadata = metadata[resourceKey] || Object.values(metadata).find(
+  const safeMetadata = metadata ?? {};
+  const resourceMetadata = safeMetadata[resourceKey] || Object.values(safeMetadata).find(
     (entry: any) => entry?.dataKey === resourceKey
   );
   const miningCount = Math.max(0, Number(countryDetail[resourceKey]) || 0);

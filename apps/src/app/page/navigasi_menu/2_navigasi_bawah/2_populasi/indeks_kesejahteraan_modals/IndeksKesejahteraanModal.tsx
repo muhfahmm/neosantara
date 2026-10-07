@@ -11,7 +11,13 @@ import {
   getKesejahteraanBreakdown,
   type KesejahteraanIndex,
 } from "@/app/logic/kesejahteraanCalculator";
-import { calculateKeterbukaanScore, calculateListrikScore, calculatePanganScore, calculateHunianScore } from "@/app/logic/kepuasanCalculator";
+import {
+  calculateKesehatanScore,
+  calculateKeterbukaanScore,
+  calculateListrikScore,
+  calculatePanganScore,
+  calculateHunianScore,
+} from "@/app/logic/kepuasanCalculator";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import NaikkanKesejahteraanTab from "./NaikkanKesejahteraanTab";
 
@@ -83,20 +89,14 @@ export default function IndeksKesejahteraanModal({
   }, [countryDetail]);
 
   /**
-   * Skor KESEHATAN — formula identik dengan TempatUmumModal
-   * target ratio kesehatan = 0.00004 per kapita
+   * Gunakan skor kesehatan bersama agar sama dengan kartu Kepuasan Rakyat.
    */
   const kesehatanActualScore = useMemo(() => {
-    if (!countryDetail) return 0;
-    const pop = Number(countryDetail.jumlah_penduduk) || 1;
-    const keys = ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik", "harapan_hidup", "indeks_kesehatan"];
-    const total = keys.reduce((s, k) => s + (Number(countryDetail[k]) || 0), 0);
-    const index = total / pop;
-    return Math.min(100, Math.round((index / 0.00004) * 100));
+    return calculateKesehatanScore(countryDetail);
   }, [countryDetail]);
 
   /**
-   * Skor INFRASTRUKTUR (Tempat Umum) — formula identik dengan TempatUmumModal
+   * Skor infrastruktur dan transportasi — bagian dari kategori Tempat Umum.
    * target ratio infrastruktur = 0.00005 per kapita
    */
   const infrastrukturActualScore = useMemo(() => {
@@ -403,7 +403,7 @@ export default function IndeksKesejahteraanModal({
                       );
                     })()}
 
-                    {/* Tempat Umum - 25% */}
+                    {/* Infrastruktur dan transportasi - 25% */}
                     {(() => {
                       const pop = Number(countryDetail?.jumlah_penduduk) || 1;
                       const targetTempatUmum = Math.ceil(pop * 0.00005);
@@ -424,7 +424,7 @@ export default function IndeksKesejahteraanModal({
                             <div className="flex items-center gap-3">
                               <Landmark className={`h-5 w-5 ${tempatUmumColor.icon}`} />
                               <div>
-                                <p className="text-xs font-black text-[#6B8A8A] uppercase">Tempat Umum</p>
+                                <p className="text-xs font-black text-[#6B8A8A] uppercase">Infrastruktur & Transportasi</p>
                                 <p className="text-sm font-bold text-[#E0E0E0]">25% Bobot</p>
                               </div>
                             </div>

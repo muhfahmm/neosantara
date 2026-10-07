@@ -117,6 +117,7 @@ function getMutableCountryState(country: CountryRecord): Record<string, unknown>
 function simulateCountryDay(
   country: CountryRecord,
   date: string,
+  previousDate: string,
   metadata: Record<string, any>
 ): CountryRecord {
   const countryName = String(
@@ -126,7 +127,8 @@ function simulateCountryDay(
     country,
     metadata,
     date,
-    resourceKey => getEconomicEmbargoProductionMultiplier(countryName, resourceKey)
+    resourceKey => getEconomicEmbargoProductionMultiplier(countryName, resourceKey),
+    previousDate
   );
   const withProduction = materialResult.hasUpdates
     ? { ...country, ...materialResult.updates }
@@ -210,11 +212,12 @@ function persistNpcSimulation(
 
   let simulationDate = state.lastSimulatedDate;
   while (simulationDate < currentDate) {
+    const previousDate = simulationDate;
     simulationDate = nextDate(simulationDate);
     for (const [slug, country] of simulatedCountries) {
       simulatedCountries.set(
         slug,
-        simulateCountryDay(country, simulationDate, metadata)
+        simulateCountryDay(country, simulationDate, previousDate, metadata)
       );
     }
   }

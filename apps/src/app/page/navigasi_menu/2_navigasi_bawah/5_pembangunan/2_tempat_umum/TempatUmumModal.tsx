@@ -19,6 +19,12 @@ import InfoBangunanModal from "./1_modals_info_bangunan/info_bangunan_modals";
 import KonfirmasiPembangunanModal from "./2_modals_konfirmasi_pembangunan/modalsKonfirmasiPembangunan";
 import { useMaterialProduction, getMaterialStock as getMaterialStockFromBuildLogic, deductBuildingMaterials } from "../build_logic/build_logic";
 import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
+import {
+  calculateKesehatanScore,
+  calculatePenegakanHukumScore,
+  PENEGAKAN_HUKUM_KEYS,
+  PENEGAKAN_HUKUM_TARGET_RATIO,
+} from "@/app/logic/kepuasanCalculator";
 
 
 
@@ -46,8 +52,8 @@ interface BuildingRequirements {
 const SERVICE_GROUPS = [
   { id: "infrastruktur", label: "Infrastruktur", description: "Jaringan transportasi dan fasilitas publik dasar.", keys: ["jalur_sepeda", "jalan_raya", "terminal_bus", "stasiun_kereta_api", "kereta_bawah_tanah", "pelabuhan", "bandara", "helipad"] },
   { id: "pendidikan", label: "Pendidikan", description: "Fasilitas pembelajaran dari prasekolah hingga pusat penelitian.", keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan", "literasi"] },
-  { id: "kesehatan", label: "Kesehatan", description: "Sarana medis dan indeks kesehatan masyarakat.", keys: ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik", "harapan_hidup", "indeks_kesehatan"] },
-  { id: "penegakan_hukum", label: "Penegakan Hukum", description: "Fasilitas keadilan, keamanan, dan indeks keamanan.", keys: ["pusat_bantuan_hukum", "pengadilan", "kejaksaan", "pos_polisi", "armada_mobil_polisi", "akademi_polisi", "indeks_korupsi", "indeks_keamanan"] },
+  { id: "kesehatan", label: "Kesehatan", description: "Sarana medis dan indeks kesehatan masyarakat.", keys: ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik"] },
+  { id: "penegakan_hukum", label: "Penegakan Hukum", description: "Fasilitas keadilan dan keamanan.", keys: ["pusat_bantuan_hukum", "pengadilan", "kejaksaan", "pos_polisi", "armada_mobil_polisi", "akademi_polisi"] },
   { id: "olahraga_hiburan", label: "Olahraga & Hiburan", description: "Fasilitas rekreasi dan olahraga publik.", keys: ["kolam_renang", "sirkuit_balap", "stadion", "stadion_internasional", "gym", "golf", "esports", "gokart", "bioskop", "teater"] },
   { id: "komersial", label: "Komersial", description: "Tempat usaha dan perhotelan.", keys: ["mall", "hotel", "pusat_grosir_tekstil"] },
 ];
@@ -358,8 +364,8 @@ export default function TempatUmumModal({
   const categoriesList = [
     { id: "infrastruktur", label: "Infrastruktur", keys: ["jalur_sepeda", "jalan_raya", "terminal_bus", "stasiun_kereta_api", "kereta_bawah_tanah", "pelabuhan", "bandara", "helipad"] },
     { id: "pendidikan", label: "Pendidikan", keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan", "literasi"] },
-    { id: "kesehatan", label: "Kesehatan", keys: ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik", "harapan_hidup", "indeks_kesehatan"] },
-    { id: "penegakan_hukum", label: "Penegakan Hukum", keys: ["pusat_bantuan_hukum", "pengadilan", "kejaksaan", "pos_polisi", "armada_mobil_polisi", "akademi_polisi", "indeks_korupsi", "indeks_keamanan"] },
+    { id: "kesehatan", label: "Kesehatan", keys: ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik"] },
+    { id: "penegakan_hukum", label: "Penegakan Hukum", keys: PENEGAKAN_HUKUM_KEYS },
     { id: "olahraga_hiburan", label: "Olahraga & Hiburan", keys: ["kolam_renang", "sirkuit_balap", "stadion", "stadion_internasional", "gym", "golf", "esports", "gokart", "bioskop", "teater"] },
     { id: "komersial", label: "Komersial", keys: ["mall", "hotel", "pusat_grosir_tekstil"] },
   ];
@@ -472,7 +478,7 @@ export default function TempatUmumModal({
                               activeGroup.id === 'infrastruktur' ? '20.000 Jiwa' :
                               activeGroup.id === 'pendidikan' ? '10.000 Jiwa' :
                               activeGroup.id === 'kesehatan' ? '25.000 Jiwa' :
-                              activeGroup.id === 'penegakan_hukum' ? '15.000 Jiwa' :
+                              activeGroup.id === 'penegakan_hukum' ? '7.000 Jiwa' :
                               activeGroup.id === 'olahraga_hiburan' ? '12.500 Jiwa' : '50.000 Jiwa'
                             }
                           </p>
@@ -621,21 +627,27 @@ export default function TempatUmumModal({
                       infrastruktur: 0.00005,
                       pendidikan: 0.0001,
                       kesehatan: 0.00004,
-                      penegakan_hukum: 1 / 15000,
+                      penegakan_hukum: PENEGAKAN_HUKUM_TARGET_RATIO,
                       olahraga_hiburan: 0.00008,
                       komersial: 0.00002,
                     };
 
                     const targetRatio = targets[activeCategory.id] || 0.0001;
                     const percentageMet = Math.min(100, (activeCategory.index / targetRatio) * 100);
-                    const satisfactionScore = Math.round(percentageMet);
+                    const satisfactionScore = activeCategory.id === "kesehatan"
+                      ? calculateKesehatanScore(data)
+                      : activeCategory.id === "penegakan_hukum"
+                        ? calculatePenegakanHukumScore(data)
+                        : Math.round(percentageMet);
 
                     return (
                       <div className="rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-4 shadow-md flex flex-col justify-between">
                         <div>
                           <div className="flex justify-between items-center gap-2">
                             <span className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">
-                              Indeks Kepuasan ({activeCategory.label})
+                              {activeCategory.id === "kesehatan" || activeCategory.id === "penegakan_hukum"
+                                ? `Kepuasan Rakyat (${activeCategory.label})`
+                                : `Indeks Kepuasan (${activeCategory.label})`}
                             </span>
                             <span className="text-xl font-black text-[#00FFAA]">
                               {satisfactionScore} / 100
@@ -666,7 +678,7 @@ export default function TempatUmumModal({
 
                         <div className="mt-2 grid grid-cols-2 gap-2 text-[9px] text-[#6B8A8A] border-t border-[#00FFAA]/10 pt-1.5">
                           <div>Rasio: <span className="font-bold text-[#E0E0E0]">{activeCategory.index.toFixed(6)}</span></div>
-                          <div>Keterpenuhan: <span className="font-bold text-[#E0E0E0]">{percentageMet.toFixed(1)}%</span></div>
+                          <div>Keterpenuhan fasilitas: <span className="font-bold text-[#E0E0E0]">{percentageMet.toFixed(1)}%</span></div>
                         </div>
                       </div>
                     );

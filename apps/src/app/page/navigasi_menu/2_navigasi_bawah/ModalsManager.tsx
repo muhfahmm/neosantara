@@ -239,6 +239,11 @@ function ModalsManager({
           isOpen={true}
           onClose={onClose}
           setActiveMenu={setActiveMenu}
+          onOpenTempatUmum={(tabId) => {
+            setTempatUmumInitialTab(tabId);
+            setTempatUmumDeepLink?.(tabId);
+            setActiveMenu("Menu:TempatUmum");
+          }}
           countryDetail={countryDetail}
           setCountryDetail={setCountryDetail}
           selectedCountry={selectedCountry}

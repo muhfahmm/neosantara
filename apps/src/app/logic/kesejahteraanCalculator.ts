@@ -13,7 +13,12 @@
  * - Kecukupan layanan publik
  */
 
-import { calculateKeterbukaanScore, calculateServiceDeficitMetrics } from "@/app/logic/kepuasanCalculator";
+import {
+  calculateKesehatanScore as calculateSharedKesehatanScore,
+  calculateKeterbukaanScore,
+  calculatePanganScore,
+  calculateServiceDeficitMetrics,
+} from "@/app/logic/kepuasanCalculator";
 
 // ─── Helper Functions ─────────────────────────────────────────────────────
 
@@ -68,7 +73,7 @@ export function calculatePendidikanScore(countryDetail: any): PendidikanMetrics 
   if (population <= 0) {
     return {
       totalFacilities: 0,
-      score: 50,
+      score: calculateSharedKesehatanScore(countryDetail),
       detail: {
         prasekolah: 0,
         dasar: 0,
@@ -145,21 +150,11 @@ export interface KesehatanMetrics {
     harapanHidup: number;
     indeksKesehatan: number;
   };
-  lifeExpectancyBonus: number;
 }
 
 /**
- * Hitung skor sektor Kesehatan
- * 
- * Kategori:
- * - Rumah Sakit Besar: Full service hospitals
- * - Rumah Sakit Kecil: Clinics & local health centers
- * - Pusat Diagnostik: Advanced diagnostic centers
- * - Harapan Hidup: Life expectancy index (bonus/penalty)
- * - Indeks Kesehatan: General health index (bonus/penalty)
- * 
- * Target: 1 fasilitas per 25,000 jiwa (standard WHO)
- * Bonus: Harapan hidup > 75 tahun (+20 poin)
+ * Skor mengikuti kalkulator Kepuasan Rakyat; indeks non-fasilitas hanya
+ * ditampilkan sebagai informasi, bukan dihitung sebagai jumlah bangunan.
  */
 export function calculateKesehatanScore(countryDetail: any): KesehatanMetrics {
   const population = Number(countryDetail?.jumlah_penduduk) || 0;
@@ -167,7 +162,7 @@ export function calculateKesehatanScore(countryDetail: any): KesehatanMetrics {
   if (population <= 0) {
     return {
       totalFacilities: 0,
-      score: 50,
+      score: calculateSharedKesehatanScore(countryDetail),
       detail: {
         rumahSakitBesar: 0,
         rumahSakitKecil: 0,
@@ -175,58 +170,36 @@ export function calculateKesehatanScore(countryDetail: any): KesehatanMetrics {
         harapanHidup: 0,
         indeksKesehatan: 0,
       },
-      lifeExpectancyBonus: 0,
     };
   }
 
   // Hitung fasilitas kesehatan
   const healthCategories = [
-    { keys: ["rumah_sakit_besar", "rumah_sakit_kecil"], target: 0.00004, weight: 0.6 },     // 1 per 25k
-    { keys: ["pusat_diagnostik"], target: 0.000002, weight: 0.4 },                          // 1 per 500k (spesialisasi)
+    { keys: ["rumah_sakit_besar", "rumah_sakit_kecil"] },
+    { keys: ["pusat_diagnostik"] },
   ];
 
   let totalFacilities = 0;
-  let weightedScore = 0;
-  let totalWeight = 0;
   const details: any = {};
 
   healthCategories.forEach((cat) => {
     const categoryTotal = cat.keys.reduce((sum, key) => sum + (Number(countryDetail[key]) || 0), 0);
     totalFacilities += categoryTotal;
 
-    const percentageMet = calculateFacilityFulfillmentPercentage(categoryTotal, population, cat.target);
-    weightedScore += percentageMet * cat.weight;
-    totalWeight += cat.weight;
-
     cat.keys.forEach((key) => {
       details[key] = Number(countryDetail[key]) || 0;
     });
   });
 
-  // Health indices bonus/penalty
   const harapanHidup = Number(countryDetail?.harapan_hidup) || 73.2;
   const indeksKesehatan = Number(countryDetail?.indeks_kesehatan) || 50;
-
-  // Life expectancy bonus: setiap 1 tahun di atas 75 = +1 poin
-  let lifeExpectancyBonus = 0;
-  if (harapanHidup >= 75) {
-    lifeExpectancyBonus = Math.min(20, (harapanHidup - 75) * 4); // Max +20
-  } else if (harapanHidup < 70) {
-    lifeExpectancyBonus = (harapanHidup - 70) * 2; // Penalty untuk < 70
-  }
-
-  // Health index contribution (0-20 points)
-  const healthIndexScore = Math.min(20, (indeksKesehatan / 100) * 20);
-
-  let baseScore = totalWeight > 0 ? weightedScore / totalWeight : 50;
-  const finalScore = baseScore + lifeExpectancyBonus + healthIndexScore;
 
   details.harapanHidup = harapanHidup;
   details.indeksKesehatan = indeksKesehatan;
 
   return {
     totalFacilities,
-    score: Math.min(100, Math.max(1, Math.round(finalScore))),
+    score: calculateSharedKesehatanScore(countryDetail),
     detail: {
       rumahSakitBesar: details.rumah_sakit_besar || 0,
       rumahSakitKecil: details.rumah_sakit_kecil || 0,
@@ -234,7 +207,6 @@ export function calculateKesehatanScore(countryDetail: any): KesehatanMetrics {
       harapanHidup: Number(harapanHidup),
       indeksKesehatan: Number(indeksKesehatan),
     },
-    lifeExpectancyBonus,
   };
 }
 
@@ -381,10 +353,9 @@ export function calculateKesejahteraan(
   const pendidikanScore = Math.min(100, Math.round((pendIndex / 0.0001) * 100));
 
   // Sektor 2: Kesehatan
-  const kesKeys = ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik", "harapan_hidup", "indeks_kesehatan"];
+  const kesKeys = ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik"];
   const kesTotal = kesKeys.reduce((s, k) => s + (Number(countryDetail?.[k]) || 0), 0);
-  const kesIndex = kesTotal / pop;
-  const kesehatanScore = Math.min(100, Math.round((kesIndex / 0.00004) * 100));
+  const kesehatanScore = calculateSharedKesehatanScore(countryDetail);
 
   // Sektor 3: Tempat Umum (Infrastruktur)
   const infraKeys = ["jalur_sepeda", "jalan_raya", "terminal_bus", "stasiun_kereta_api", "kereta_bawah_tanah", "pelabuhan", "bandara", "helipad"];
@@ -402,7 +373,7 @@ export function calculateKesejahteraan(
   if (!serviceMetrics) {
     panganScore = storedFood !== undefined && storedFood !== null ? Math.round(Number(storedFood)) : 0;
   } else {
-    panganScore = Math.round(serviceMetrics.foodCoverage * 100);
+    panganScore = calculatePanganScore(countryDetail, metadata);
   }
 
   // Sektor 5: Hunian
@@ -465,7 +436,6 @@ export function calculateKesejahteraan(
     totalFacilities: kesTotal,
     score: kesehatanScore,
     detail: { rumahSakitBesar: 0, rumahSakitKecil: 0, pusatDiagnostik: 0, harapanHidup: 0, indeksKesehatan: 0 },
-    lifeExpectancyBonus: 0
   };
   const dummyTempatUmumMetrics: TempatUmumMetrics = {
     totalFacilities: infraTotal,
@@ -552,7 +522,7 @@ Breakdown:
   • Pendidikan: ${kesejahteraan.pendidikanScore}/100
     - ${kesejahteraan.detail.pendidikan.totalFacilities} fasilitas pendidikan
   
-  • Kesehatan: ${kesejahteraan.kesehatanScore}/100 (Bonus harapan hidup: ${kesejahteraan.detail.kesehatan.lifeExpectancyBonus.toFixed(1)} poin)
+  • Kesehatan: ${kesejahteraan.kesehatanScore}/100
     - ${kesejahteraan.detail.kesehatan.totalFacilities} fasilitas kesehatan
   
   • Tempat Umum: ${kesejahteraan.tempatUmumScore}/100
@@ -575,7 +545,8 @@ Breakdown:
 export function getKesejahteraanDecayThreshold(
   kepuasan: number,
   keterbukaanScore?: number,
-  serviceDeficitPressure = 0
+  serviceDeficitPressure = 0,
+  lowSectorCount = 0,
 ): number {
   let baseThreshold = 12;
   if (kepuasan <= 25) baseThreshold = 1;
@@ -592,6 +563,7 @@ export function getKesejahteraanDecayThreshold(
 
   const serviceFactor = 1 - Math.min(1, Math.max(0, serviceDeficitPressure)) * 0.5;
   baseThreshold = Math.max(1, Math.floor(baseThreshold * serviceFactor));
+  if (lowSectorCount > 0) baseThreshold = Math.min(baseThreshold, 6);
   return baseThreshold;
 }
 
@@ -603,6 +575,8 @@ export interface KesejahteraanDecayInput {
   currentKepuasan: number;
   keterbukaanScore?: number;
   serviceDeficitPressure?: number;
+  lowSectorCount?: number;
+  additionalDecay?: number;
 }
 
 export interface KesejahteraanDecayOutput {
@@ -633,6 +607,8 @@ export function calculateKesejahteraanDecay(input: KesejahteraanDecayInput): Kes
     currentKepuasan,
     keterbukaanScore,
     serviceDeficitPressure = 0,
+    lowSectorCount = 0,
+    additionalDecay = 0,
   } = input;
 
   // Step 1: Tambahkan bulan yang berlalu ke counter
@@ -642,7 +618,8 @@ export function calculateKesejahteraanDecay(input: KesejahteraanDecayInput): Kes
   const newThreshold = getKesejahteraanDecayThreshold(
     currentKepuasan,
     keterbukaanScore,
-    serviceDeficitPressure
+    serviceDeficitPressure,
+    lowSectorCount,
   );
 
   // Step 3: Scale counter jika threshold berubah (smooth transition)
@@ -659,12 +636,13 @@ export function calculateKesejahteraanDecay(input: KesejahteraanDecayInput): Kes
     finalCounter = counter % newThreshold;
   }
 
-  const nextKesejahteraan = Math.max(1, Math.min(100, currentKesejahteraan - decay));
+  const totalDecay = decay + Math.max(0, additionalDecay);
+  const nextKesejahteraan = Math.max(1, Math.min(100, currentKesejahteraan - totalDecay));
 
   return {
     nextKesejahteraan,
     kesejahteraan_month_counter: finalCounter,
     last_kesejahteraan_threshold: newThreshold,
-    decayThisTick: decay,
+    decayThisTick: totalDecay,
   };
 }

@@ -12,6 +12,7 @@ import TradeJualNotification from './logic/3_notifikasi_perdagangan/1_jual/trade
 import EmbassyNotification from './logic/4_notifikasi_kedubes/embassyNotification';
 import BencanaNotification from './logic/6_notifikasi_bencana/1_bencana_alam/bencanaNotification';
 import WabahNotification from './logic/6_notifikasi_bencana/2_wabah_penyakit/wabahNotification';
+import KeamananNotificationCard from './logic/14_notifikasi_keamanan/keamananNotification';
 import TradeRelationNotification from './logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationNotification';
 import SpionaseNotificationCard from './logic/2_notifikasi_pertahanan/1_spionase/spionaseNotification';
 import SabotaseNotificationCard from './logic/2_notifikasi_pertahanan/2_sabotase/sabotaseNotification';
@@ -256,9 +257,19 @@ export default function TopLeftIcon({
                         />
                       );
                     }
-                    if (tradeType === 'bencana_alam') {
+                    if (tradeType === 'bencana_alam' && (notif as any).eventType !== 'police') {
                       return (
                         <BencanaNotification
+                          key={notif.id}
+                          notification={notif as any}
+                          onAccept={handleAction}
+                          onReject={handleRedirect}
+                        />
+                      );
+                    }
+                    if (tradeType === 'keamanan' || (tradeType === 'bencana_alam' && (notif as any).eventType === 'police')) {
+                      return (
+                        <KeamananNotificationCard
                           key={notif.id}
                           notification={notif as any}
                           onAccept={handleAction}

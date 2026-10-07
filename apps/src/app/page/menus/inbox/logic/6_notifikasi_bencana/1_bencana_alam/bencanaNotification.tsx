@@ -2,7 +2,7 @@
 // Component UI Notifikasi Bencana Alam di Inbox
 
 import React from 'react';
-import { AlertTriangle, Flame, ShieldAlert, Check, X } from 'lucide-react';
+import { Flame, Check, X } from 'lucide-react';
 import { BencanaAlamNotification } from './bencanaLogic';
 
 interface BencanaNotificationProps {
@@ -13,6 +13,7 @@ interface BencanaNotificationProps {
 
 export default function BencanaNotification({ notification, onAccept, onReject }: BencanaNotificationProps) {
   const isHandled = notification.isHandled;
+  const responseCost = notification.bantuanCost;
 
   return (
     <div className={`border-l-4 ${isHandled ? 'bg-emerald-950/30 border-emerald-500' : 'bg-rose-950/40 border-rose-500'} p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border border-rose-500/20`}>
@@ -54,7 +55,7 @@ export default function BencanaNotification({ notification, onAccept, onReject }
           </div>
           <div className="pl-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Alokasi Bantuan (1 NEO/Jiwa)</div>
-            <div className="text-[#00FFAA] font-extrabold mt-0.5">{notification.bantuanCost?.toLocaleString('id-ID')} NEO</div>
+            <div className="text-[#00FFAA] font-extrabold mt-0.5">{responseCost?.toLocaleString('id-ID')} NEO</div>
           </div>
         </div>
 
@@ -63,7 +64,7 @@ export default function BencanaNotification({ notification, onAccept, onReject }
           {isHandled ? (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
-              <span>BANTUAN SEBESAR {notification.bantuanCost?.toLocaleString('id-ID')} NEO TELAH DISALURKAN</span>
+              <span>BANTUAN DARURAT SEBESAR {responseCost?.toLocaleString('id-ID')} NEO TELAH DISALURKAN</span>
             </div>
           ) : (
             <>
@@ -82,7 +83,7 @@ export default function BencanaNotification({ notification, onAccept, onReject }
                   className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-[#00FFAA] hover:bg-emerald-400 text-[#0A1A1A] rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <Check className="w-3.5 h-3.5" />
-                  Bantu Korban ({notification.bantuanCost?.toLocaleString('id-ID')} NEO)
+                  Bantu Korban ({responseCost?.toLocaleString('id-ID')} NEO)
                 </button>
               )}
             </>

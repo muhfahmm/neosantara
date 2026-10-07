@@ -44,7 +44,8 @@ export function calculateDailyMaterialProduction(
   countryDetail: any,
   metadata: Record<string, any>,
   currentDateStr: string,
-  getExternalProductionMultiplier: (resourceKey: string) => number = () => 1
+  getExternalProductionMultiplier: (resourceKey: string) => number = () => 1,
+  fallbackLastUpdateDate: string = currentDateStr
 ) {
   if (!currentDateStr || !metadata || Object.keys(metadata).length === 0 || !countryDetail) {
     return { hasUpdates: false, updates: {} as Record<string, any> };
@@ -64,7 +65,7 @@ export function calculateDailyMaterialProduction(
     if (!productionBan && (!bMeta || !bMeta.produksi)) continue;
 
     const buildDateKey = `build_date_${resourceKey}`;
-    const buildDate = countryDetail?.[buildDateKey] || currentDateStr;
+    const buildDate = countryDetail?.[buildDateKey] || fallbackLastUpdateDate;
     const lastUpdateKey = `last_update_date_${resourceKey}`;
     const lastUpdateDate = countryDetail?.[lastUpdateKey] || buildDate;
     const inventoryKey = `inventory_${resourceKey}`;
@@ -74,7 +75,13 @@ export function calculateDailyMaterialProduction(
       ? productionBanStart
       : lastUpdateDate;
     const daysPassed = getDaysElapsed(effectiveLastUpdate, currentDateStr);
-    if (daysPassed <= 0) continue;
+    if (daysPassed <= 0) {
+      if (!countryDetail?.[lastUpdateKey]) {
+        updates[lastUpdateKey] = effectiveLastUpdate;
+        hasUpdates = true;
+      }
+      continue;
+    }
 
     if (productionBan) {
       const currentStock = Number(countryDetail?.[inventoryKey]) || 0;

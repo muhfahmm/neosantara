@@ -1,4 +1,76 @@
 {
+  "pusat_bantuan_hukum": {
+    "key": "14_pusat_bantuan_hukum",
+    "dataKey": "pusat_bantuan_hukum",
+    "label": "Pusat Bantuan Hukum",
+    "produksi": 1,
+    "satuan": "Unit",
+    "deskripsi": "Pusat layanan bantuan hukum bagi masyarakat.",
+    "waktu_pembangunan": 15,
+    "biaya_pembangunan": 18750,
+    "konsumsi_listrik": 0.0025,
+    "efek": "Memperluas akses masyarakat terhadap bantuan hukum."
+  },
+  "pengadilan": {
+    "key": "15_pengadilan",
+    "dataKey": "pengadilan",
+    "label": "Gedung Pengadilan",
+    "produksi": 1,
+    "satuan": "Unit",
+    "deskripsi": "Gedung pengadilan untuk pelayanan dan proses peradilan.",
+    "waktu_pembangunan": 30,
+    "biaya_pembangunan": 63750,
+    "konsumsi_listrik": 0.004,
+    "efek": "Mendukung pelayanan peradilan."
+  },
+  "kejaksaan": {
+    "key": "16_kejaksaan",
+    "dataKey": "kejaksaan",
+    "label": "Kantor Kejaksaan",
+    "produksi": 1,
+    "satuan": "Unit",
+    "deskripsi": "Kantor kejaksaan untuk pelayanan penuntutan.",
+    "waktu_pembangunan": 25,
+    "biaya_pembangunan": 45000,
+    "konsumsi_listrik": 0.003,
+    "efek": "Mendukung layanan penegakan hukum."
+  },
+  "pos_polisi": {
+    "key": "17_pos_polisi",
+    "dataKey": "pos_polisi",
+    "label": "Pos Polisi",
+    "produksi": 1,
+    "satuan": "Unit",
+    "deskripsi": "Pos pelayanan dan penjagaan kepolisian.",
+    "waktu_pembangunan": 10,
+    "biaya_pembangunan": 11250,
+    "konsumsi_listrik": 0.001,
+    "efek": "Meningkatkan jangkauan pelayanan kepolisian."
+  },
+  "armada_mobil_polisi": {
+    "key": "18_armada_mobil_polisi",
+    "dataKey": "armada_mobil_polisi",
+    "label": "Armada Mobil Polisi",
+    "produksi": 1,
+    "satuan": "Unit",
+    "deskripsi": "Kendaraan operasional kepolisian.",
+    "waktu_pembangunan": 15,
+    "biaya_pembangunan": 30000,
+    "konsumsi_listrik": 0.00005,
+    "efek": "Mendukung mobilitas operasional kepolisian."
+  },
+  "akademi_polisi": {
+    "key": "19_akademi_polisi",
+    "dataKey": "akademi_polisi",
+    "label": "Akademi Polisi",
+    "produksi": 1,
+    "satuan": "Unit",
+    "deskripsi": "Fasilitas pendidikan dan pelatihan kepolisian.",
+    "waktu_pembangunan": 45,
+    "biaya_pembangunan": 90000,
+    "konsumsi_listrik": 0.006,
+    "efek": "Meningkatkan kapasitas pendidikan kepolisian."
+  },
   "kejaksaan_court": {
     "key": "14_kejaksaan_court",
     "dataKey": "kejaksaan_court",
