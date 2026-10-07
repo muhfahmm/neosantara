@@ -13,7 +13,7 @@ import {
   calculateCountryFoodDetails
 } from "./logic/produksiKonsumsiLogic";
 import { PROFILES_POPULATION_DATA } from "@/../../json/semua_fitur_negara/0_profiles/index";
-import { getProductionBonusMultiplier } from "../../5_pembangunan/1_produksi/bonus_logic";
+import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 import { applyNpcCountrySimulationState } from "@/app/logic/npcCountrySimulation";
 import { calculatePanganScore } from "@/app/logic/kepuasanCalculator";
 
@@ -319,86 +319,86 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
           {/* CONTENT */}
           <div className="flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
             <div className="space-y-3.5 lg:space-y-4.5 2xl:space-y-6">
-                {Object.entries(SECTOR_MAP).map(([sectorId, sectorData]) => {
-                  const SectorIcon = sectorData.icon;
-                  const sectorItems = sectorData.items.filter(key => FOOD_CONSUMPTION_PER_CAPITA[key] !== undefined);
-                  if (sectorItems.length === 0) return null;
-                  let deficitCount = 0; let surplusCount = 0;
-                  sectorItems.forEach(key => { const prod = calculateProduction(key, countryDetail, metadata); const cons = calculateConsumption(population, FOOD_CONSUMPTION_PER_CAPITA[key]); if (prod - cons < 0) deficitCount++; else if (prod - cons > 0) surplusCount++; });
-                  return (
-                    <div key={sectorId} className="border border-[#00FFAA]/20 rounded-xl 2xl:rounded-2xl overflow-hidden bg-[#0A1A1A]">
-                      <div className="flex items-center justify-between px-3.5 lg:px-4.5 2xl:px-6 py-2 lg:py-2.5 2xl:py-3.5 bg-[#0A1A1A] border-b border-[#00FFAA]/20 text-[#00FFAA]">
-                        <div className="flex items-center gap-2 lg:gap-3"><div className="p-1 lg:p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30"><SectorIcon className="w-4 h-4 lg:w-4.5 lg:w-4.5 2xl:w-5 2xl:h-5 text-[#00FFAA]" /></div><h4 className="text-xs lg:text-xs 2xl:text-sm font-black uppercase tracking-wider text-[#00FFAA]">{sectorData.label} ({sectorItems.length} Komoditas)</h4></div>
-                        <button onClick={() => analyzeSector(sectorId)} className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-full bg-[#00FFAA]/10 hover:bg-[#00FFAA]/20 transition-colors border border-[#00FFAA]/30 group cursor-pointer" title="Analisis AI untuk sektor ini"><div className="relative"><MessageSquare className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-[#00FFAA] group-hover:scale-110 transition-transform" /><span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${deficitCount > 0 ? 'bg-rose-400 animate-pulse' : surplusCount > 0 ? 'bg-emerald-400' : 'bg-gray-400'}`} /></div><span className="text-[8px] lg:text-[9px] font-bold uppercase tracking-wider text-[#00FFAA]">AI</span></button>
-                      </div>
-                      {/* Grid Items */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 lg:gap-2 p-2 lg:p-2.5 2xl:p-3 bg-[#0F2424]">
-                        {sectorItems.map((key) => {
-                          const consumptionPerCapita = FOOD_CONSUMPTION_PER_CAPITA[key];
-                          const production = calculateProduction(key, countryDetail, metadata);
-                          const consumption = calculateConsumption(population, consumptionPerCapita);
-                          const netBalance = production - consumption;
-                          const label = metadata?.[key]?.label || key.replace(/_/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase());
-                          return (
-                            <div key={key} className="bg-[#0A1A1A] p-2 lg:p-2.5 2xl:p-3.5 flex flex-col justify-between gap-1.5 lg:gap-2 rounded-lg 2xl:rounded-xl border border-[#00FFAA]/20">
-                              <div className="flex items-center justify-between pb-1 border-b border-[#00FFAA]/10 gap-1 min-h-[28px] lg:min-h-[30px] 2xl:min-h-[34px]">
-                                <div className="flex items-center gap-1 lg:gap-1.5 min-w-0 flex-1 pr-0.5">
-                                  <button type="button" onClick={(e) => { e.stopPropagation(); openCommodityInfo(key, label, production, consumption, netBalance); }} title={`Detail konsumsi ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer shrink-0"><Info className="w-3 h-3 lg:w-3.5 lg:h-3.5" /></button>
-                                  <span className="text-[8px] lg:text-[9px] 2xl:text-[10.5px] font-black text-[#E0E0E0] uppercase tracking-tight leading-tight whitespace-normal break-words">{label}</span>
-                                </div>
-                                {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 transition-all cursor-pointer shrink-0"><Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 font-bold" /></button>)}
-                              </div>
-                              {getProductionBonusMultiplier(countryDetail, key) > 1 && (
-                                <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-1 text-[8px] lg:text-[9px] font-bold leading-tight text-emerald-300">
-                                  Produksi ditingkatkan 10% oleh bonus agama Islam.
-                                </div>
-                              )}
-                              <div className="space-y-1 text-[10px] lg:text-xs">
-                                <div className="flex justify-between items-center bg-emerald-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-md border border-emerald-500/30"><span className="text-[8px] lg:text-[9px] font-bold text-emerald-400 uppercase tracking-tight">Total Produksi</span>{formatColoredNumber(production, true)}</div>
-                                <div className="flex justify-between items-center bg-rose-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-md border border-rose-500/30"><span className="text-[8px] lg:text-[9px] font-bold text-rose-400 uppercase tracking-tight">Total Konsumsi</span>{formatColoredNumber(consumption, false)}</div>
-                              </div>
-                              <div className="flex justify-between items-center text-[9px] lg:text-[10px] pt-1 border-t border-[#00FFAA]/10 mt-0.5"><span className="font-bold text-[#6B8A8A] uppercase tracking-wider">Netto:</span>{formatColoredNumber(netBalance, netBalance >= 0)}</div>
-                            </div>
-                          );
-                        })}
-                      </div>
+              {Object.entries(SECTOR_MAP).map(([sectorId, sectorData]) => {
+                const SectorIcon = sectorData.icon;
+                const sectorItems = sectorData.items.filter(key => FOOD_CONSUMPTION_PER_CAPITA[key] !== undefined);
+                if (sectorItems.length === 0) return null;
+                let deficitCount = 0; let surplusCount = 0;
+                sectorItems.forEach(key => { const prod = calculateProduction(key, countryDetail, metadata); const cons = calculateConsumption(population, FOOD_CONSUMPTION_PER_CAPITA[key]); if (prod - cons < 0) deficitCount++; else if (prod - cons > 0) surplusCount++; });
+                return (
+                  <div key={sectorId} className="border border-[#00FFAA]/20 rounded-xl 2xl:rounded-2xl overflow-hidden bg-[#0A1A1A]">
+                    <div className="flex items-center justify-between px-3.5 lg:px-4.5 2xl:px-6 py-2 lg:py-2.5 2xl:py-3.5 bg-[#0A1A1A] border-b border-[#00FFAA]/20 text-[#00FFAA]">
+                      <div className="flex items-center gap-2 lg:gap-3"><div className="p-1 lg:p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/30"><SectorIcon className="w-4 h-4 lg:w-4.5 lg:w-4.5 2xl:w-5 2xl:h-5 text-[#00FFAA]" /></div><h4 className="text-xs lg:text-xs 2xl:text-sm font-black uppercase tracking-wider text-[#00FFAA]">{sectorData.label} ({sectorItems.length} Komoditas)</h4></div>
+                      <button onClick={() => analyzeSector(sectorId)} className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-full bg-[#00FFAA]/10 hover:bg-[#00FFAA]/20 transition-colors border border-[#00FFAA]/30 group cursor-pointer" title="Analisis AI untuk sektor ini"><div className="relative"><MessageSquare className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-[#00FFAA] group-hover:scale-110 transition-transform" /><span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${deficitCount > 0 ? 'bg-rose-400 animate-pulse' : surplusCount > 0 ? 'bg-emerald-400' : 'bg-gray-400'}`} /></div><span className="text-[8px] lg:text-[9px] font-bold uppercase tracking-wider text-[#00FFAA]">AI</span></button>
                     </div>
-                  );
-                })}
+                    {/* Grid Items */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 lg:gap-2 p-2 lg:p-2.5 2xl:p-3 bg-[#0F2424]">
+                      {sectorItems.map((key) => {
+                        const consumptionPerCapita = FOOD_CONSUMPTION_PER_CAPITA[key];
+                        const production = calculateProduction(key, countryDetail, metadata);
+                        const consumption = calculateConsumption(population, consumptionPerCapita);
+                        const netBalance = production - consumption;
+                        const label = metadata?.[key]?.label || key.replace(/_/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase());
+                        return (
+                          <div key={key} className="bg-[#0A1A1A] p-2 lg:p-2.5 2xl:p-3.5 flex flex-col justify-between gap-1.5 lg:gap-2 rounded-lg 2xl:rounded-xl border border-[#00FFAA]/20">
+                            <div className="flex items-center justify-between pb-1 border-b border-[#00FFAA]/10 gap-1 min-h-[28px] lg:min-h-[30px] 2xl:min-h-[34px]">
+                              <div className="flex items-center gap-1 lg:gap-1.5 min-w-0 flex-1 pr-0.5">
+                                <button type="button" onClick={(e) => { e.stopPropagation(); openCommodityInfo(key, label, production, consumption, netBalance); }} title={`Detail konsumsi ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer shrink-0"><Info className="w-3 h-3 lg:w-3.5 lg:h-3.5" /></button>
+                                <span className="text-[8px] lg:text-[9px] 2xl:text-[10.5px] font-black text-[#E0E0E0] uppercase tracking-tight leading-tight whitespace-normal break-words">{label}</span>
+                              </div>
+                              {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 transition-all cursor-pointer shrink-0"><Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 font-bold" /></button>)}
+                            </div>
+                            {getProductionBonusMultiplier(countryDetail, key) > 1 && (
+                              <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-1 text-[8px] lg:text-[9px] font-bold leading-tight text-emerald-300">
+                                Produksi ditingkatkan 10% oleh bonus agama Islam.
+                              </div>
+                            )}
+                            <div className="space-y-1 text-[10px] lg:text-xs">
+                              <div className="flex justify-between items-center bg-emerald-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-md border border-emerald-500/30"><span className="text-[8px] lg:text-[9px] font-bold text-emerald-400 uppercase tracking-tight">Total Produksi</span>{formatColoredNumber(production, true)}</div>
+                              <div className="flex justify-between items-center bg-rose-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-md border border-rose-500/30"><span className="text-[8px] lg:text-[9px] font-bold text-rose-400 uppercase tracking-tight">Total Konsumsi</span>{formatColoredNumber(consumption, false)}</div>
+                            </div>
+                            <div className="flex justify-between items-center text-[9px] lg:text-[10px] pt-1 border-t border-[#00FFAA]/10 mt-0.5"><span className="font-bold text-[#6B8A8A] uppercase tracking-wider">Netto:</span>{formatColoredNumber(netBalance, netBalance >= 0)}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
 
-                {/* INDEKS KEPUASAN PANGAN */}
-                <div className="p-3.5 lg:p-4 2xl:p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs lg:text-xs 2xl:text-sm font-black text-[#00FFAA] uppercase tracking-widest">
-                      Indeks Kepuasan Rakyat (Pangan)
-                    </span>
-                    <span className="text-xl lg:text-2xl 2xl:text-3xl font-black text-[#00FFAA]">
-                      {foodSatisfaction} / 100
-                    </span>
-                  </div>
-                  <div className="w-full h-2.5 lg:h-3 bg-[#0F2424] rounded-full mt-2 lg:mt-3 overflow-hidden border border-[#00FFAA]/20">
-                    <div
-                      className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
-                      style={{ width: `${foodSatisfaction}%` }}
-                    />
-                  </div>
-                  <p className="text-[9px] lg:text-[10px] text-[#00FFAA] font-bold mt-2 lg:mt-3">
-                    {foodSatisfaction >= 80
-                      ? "✅ Ketersediaan pangan mencukupi, rakyat sejahtera."
-                      : foodSatisfaction >= 50
-                        ? "⚠️ Ketersediaan pangan pas-pasan, perlu peningkatan produksi."
-                        : "🔴 Defisit pangan parah, rakyat terancam kelaparan."}
-                  </p>
-                  <div className="mt-2 grid grid-cols-2 gap-2 text-[9px] lg:text-[10px] text-[#6B8A8A]">
-                    <div>Rata-rata rasio produksi/konsumsi: <span className="font-bold text-[#00FFAA]">
-                      {(foodSatisfaction / 100 * 2).toFixed(2)}
-                    </span></div>
-                    <div>Populasi: <span className="font-bold text-[#00FFAA]">{formatNumber(population)} jiwa</span></div>
-                  </div>
+              {/* INDEKS KEPUASAN PANGAN */}
+              <div className="p-3.5 lg:p-4 2xl:p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs lg:text-xs 2xl:text-sm font-black text-[#00FFAA] uppercase tracking-widest">
+                    Indeks Kepuasan Rakyat (Pangan)
+                  </span>
+                  <span className="text-xl lg:text-2xl 2xl:text-3xl font-black text-[#00FFAA]">
+                    {foodSatisfaction} / 100
+                  </span>
                 </div>
-
-                <div className="p-3 lg:p-3.5 2xl:p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 flex justify-between items-center"><div className="flex items-center gap-2 text-[#00FFAA] font-black text-[10px] lg:text-xs uppercase tracking-wider">👥 Total Populasi & Kebutuhan Pangan Harian</div><div className="px-3 lg:px-4 py-1 lg:py-1.5 rounded-lg bg-[#00FFAA] text-[#0A1A1A]"><span className="text-[10px] lg:text-xs font-black tracking-wider">{formatNumber(population)} Jiwa</span></div></div>
+                <div className="w-full h-2.5 lg:h-3 bg-[#0F2424] rounded-full mt-2 lg:mt-3 overflow-hidden border border-[#00FFAA]/20">
+                  <div
+                    className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
+                    style={{ width: `${foodSatisfaction}%` }}
+                  />
+                </div>
+                <p className="text-[9px] lg:text-[10px] text-[#00FFAA] font-bold mt-2 lg:mt-3">
+                  {foodSatisfaction >= 80
+                    ? "✅ Ketersediaan pangan mencukupi, rakyat sejahtera."
+                    : foodSatisfaction >= 50
+                      ? "⚠️ Ketersediaan pangan pas-pasan, perlu peningkatan produksi."
+                      : "🔴 Defisit pangan parah, rakyat terancam kelaparan."}
+                </p>
+                <div className="mt-2 grid grid-cols-2 gap-2 text-[9px] lg:text-[10px] text-[#6B8A8A]">
+                  <div>Rata-rata rasio produksi/konsumsi: <span className="font-bold text-[#00FFAA]">
+                    {(foodSatisfaction / 100 * 2).toFixed(2)}
+                  </span></div>
+                  <div>Populasi: <span className="font-bold text-[#00FFAA]">{formatNumber(population)} jiwa</span></div>
+                </div>
               </div>
+
+              <div className="p-3 lg:p-3.5 2xl:p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 flex justify-between items-center"><div className="flex items-center gap-2 text-[#00FFAA] font-black text-[10px] lg:text-xs uppercase tracking-wider">👥 Total Populasi & Kebutuhan Pangan Harian</div><div className="px-3 lg:px-4 py-1 lg:py-1.5 rounded-lg bg-[#00FFAA] text-[#0A1A1A]"><span className="text-[10px] lg:text-xs font-black tracking-wider">{formatNumber(population)} Jiwa</span></div></div>
+            </div>
           </div>
         </div>
       </div>

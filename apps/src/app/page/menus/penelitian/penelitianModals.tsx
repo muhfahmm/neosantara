@@ -63,6 +63,7 @@ export default function BottomLeftPenelitianIcon({
           onClose={handleCloseAll}
           onSelectCategory={handleSelectCategory}
           religion={countryDetail?.religion || countryDetail?.agama_utama || countryDetail?.agama}
+          countryDetail={countryDetail}
         />
       )}
 

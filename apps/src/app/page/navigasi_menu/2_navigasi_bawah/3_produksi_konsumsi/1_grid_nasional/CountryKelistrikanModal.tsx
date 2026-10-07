@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import { X, Zap, TrendingUp, TrendingDown, Building2, Home, Factory, Search, Shield, Activity } from "lucide-react";
 import { getElectricityFuelBalance, getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 import { getCountryConsumptionBreakdown } from "./consumptionLogic";
-import { getProductionBonusMultiplier } from "../../5_pembangunan/1_produksi/bonus_logic";
+import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 
 interface CountryKelistrikanModalProps {
   isOpen: boolean;
@@ -138,7 +138,7 @@ export default function CountryKelistrikanModal({
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="bg-[#0F2424]/95 backdrop-blur-md border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        
+
         {/* HEADER */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
@@ -168,8 +168,8 @@ export default function CountryKelistrikanModal({
             </div>
           </div>
 
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
           >
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
@@ -179,7 +179,7 @@ export default function CountryKelistrikanModal({
 
         {/* BODY */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-[#0F2424] custom-scrollbar space-y-6">
-          
+
           {/* SEKTOR PEMBANGKIT LISTRIK */}
           <div>
             <div className="flex items-center gap-2 mb-3">
@@ -233,7 +233,7 @@ export default function CountryKelistrikanModal({
 
             {/* CARD SUMMARY GRID: ROW 1 (3 KARTU UTAMA) */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-              
+
               {/* Total Produksi Listrik */}
               <div className="bg-emerald-950/40 border border-emerald-500/40 p-3.5 rounded-xl flex flex-col justify-between">
                 <div>
@@ -346,51 +346,46 @@ export default function CountryKelistrikanModal({
               <div className="flex items-center gap-1 overflow-x-auto custom-scrollbar pb-1 sm:pb-0">
                 <button
                   onClick={() => setActiveTab("semua")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-                    activeTab === "semua"
+                  className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${activeTab === "semua"
                       ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
                       : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
-                  }`}
+                    }`}
                 >
                   Semua Sektor
                 </button>
                 <button
                   onClick={() => setActiveTab("produksi")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-                    activeTab === "produksi"
+                  className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${activeTab === "produksi"
                       ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
                       : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
-                  }`}
+                    }`}
                 >
                   Produksi
                 </button>
                 <button
                   onClick={() => setActiveTab("tempat_umum")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-                    activeTab === "tempat_umum"
+                  className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${activeTab === "tempat_umum"
                       ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
                       : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
-                  }`}
+                    }`}
                 >
                   Tempat Umum
                 </button>
                 <button
                   onClick={() => setActiveTab("pertahanan")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-                    activeTab === "pertahanan"
+                  className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${activeTab === "pertahanan"
                       ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
                       : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
-                  }`}
+                    }`}
                 >
                   Pertahanan & Keamanan
                 </button>
                 <button
                   onClick={() => setActiveTab("hunian")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
-                    activeTab === "hunian"
+                  className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${activeTab === "hunian"
                       ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
                       : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#0F2424]/80"
-                  }`}
+                    }`}
                 >
                   Hunian
                 </button>

@@ -9,27 +9,27 @@ import { generatePajakChangeNotification } from "@/app/page/menus/inbox/logic/7_
 import {
   applyOrthodoxPersonalIncomeTaxRevenueBonus,
   ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS,
-} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/kristen";
+} from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
 import {
   applyBuddhaEnvironmentalTaxRevenueBonus,
   BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS,
-} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/buddha";
+} from "@/app/page/bonus_logic/agama_bonus_logic/buddha";
 import {
   DEMOCRACY_TAX_REVENUE_BONUS,
   applyDemocracyTaxRevenueBonus,
-} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/demokrasi";
+} from "@/app/page/bonus_logic/ideologi_bonus_logic/demokrasi";
 import {
   CAPITALISM_TAX_REVENUE_BONUS,
   applyCapitalismTaxRevenueBonus,
-} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/kapitalisme";
+} from "@/app/page/bonus_logic/ideologi_bonus_logic/kapitalisme";
 import {
   LIBERALISM_TAX_REVENUE_BONUS,
   applyLiberalismTaxRevenueBonus,
-} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/liberalisme";
+} from "@/app/page/bonus_logic/ideologi_bonus_logic/liberalisme";
 import {
   CONSERVATISM_TAX_REVENUE_BONUS,
   applyConservatismTaxRevenueBonus,
-} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/konservatisme";
+} from "@/app/page/bonus_logic/ideologi_bonus_logic/konservatisme";
 
 interface ModalProps {
   isOpen: boolean;
@@ -75,28 +75,28 @@ export default function PajakModal({
   const initialRates = {
     income_tax: Number(
       getTaxValue(countryDetail, ["income_tax"]) ??
-        getTaxValue(countryDetail, ["pajak", "penghasilan", "tarif"]) ??
-        0
+      getTaxValue(countryDetail, ["pajak", "penghasilan", "tarif"]) ??
+      0
     ),
     corporate_tax: Number(
       getTaxValue(countryDetail, ["corporate"]) ??
-        getTaxValue(countryDetail, ["pajak", "korporasi", "tarif"]) ??
-        0
+      getTaxValue(countryDetail, ["pajak", "korporasi", "tarif"]) ??
+      0
     ),
     vat: Number(
       getTaxValue(countryDetail, ["ppn"]) ??
-        getTaxValue(countryDetail, ["pajak", "ppn", "tarif"]) ??
-        0
+      getTaxValue(countryDetail, ["pajak", "ppn", "tarif"]) ??
+      0
     ),
     cigarette_tax: Number(
       getTaxValue(countryDetail, ["cigarette_tax"]) ??
-        getTaxValue(countryDetail, ["pajak", "bea_cukai", "tarif"]) ??
-        0
+      getTaxValue(countryDetail, ["pajak", "bea_cukai", "tarif"]) ??
+      0
     ),
     environment_tax: Number(
       getTaxValue(countryDetail, ["environment_tax"]) ??
-        getTaxValue(countryDetail, ["pajak", "lingkungan", "tarif"]) ??
-        0
+      getTaxValue(countryDetail, ["pajak", "lingkungan", "tarif"]) ??
+      0
     ),
   };
 
@@ -188,10 +188,10 @@ export default function PajakModal({
   // --- Initialize satisfaction.tax hanya saat modal pertama kali buka & countryDetail berubah ---
   useEffect(() => {
     if (!isOpen || !countryDetail) return;
-    
+
     // IMPORTANT: Hanya update satisfaction jika belum ada atau modal baru pertama kali buka
     if (countryDetail.satisfaction?.tax !== undefined) return; // Jangan update lagi jika sudah ada
-    
+
     const initialSatisfaction = calculateSatisfaction(initialRates);
     setCountryDetail({
       ...countryDetail,
@@ -528,8 +528,8 @@ export default function PajakModal({
               {satisfaction >= 80
                 ? "✅ Rakyat puas dengan beban pajak dan manfaat yang dirasakan."
                 : satisfaction >= 50
-                ? "⚠️ Beban pajak cukup berat, perlu perbaikan layanan publik."
-                : "🔴 Pajak terlalu tinggi atau pendapatan negara kurang dirasakan manfaatnya."}
+                  ? "⚠️ Beban pajak cukup berat, perlu perbaikan layanan publik."
+                  : "🔴 Pajak terlalu tinggi atau pendapatan negara kurang dirasakan manfaatnya."}
             </p>
             <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-[#E0E0E0]/80 font-semibold">
               <div>Rata-rata tarif: <span className="font-bold text-[#00FFAA]">{(tempRates.vat + tempRates.corporate_tax + tempRates.income_tax + tempRates.cigarette_tax + tempRates.environment_tax) / 5}%</span></div>

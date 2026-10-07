@@ -19,6 +19,17 @@ interface MemberData {
   iso?: string;
 }
 
+const ORGANIZATION_BENEFITS: Record<string, string> = {
+  "Interpol": "Tingkat Kejahatan Turun -5%",
+  "Organisasi Kesehatan Dunia (WHO)": "Risiko Epidemi & Pandemi Turun -5%",
+  "UNESCO": "Kecepatan Riset Sains +5%",
+  "Organisasi Perdagangan Dunia (WTO)": "Harga Jual +15%, Harga Beli -10%",
+  "Organisasi Pangan dan Pertanian (FAO)": "Produksi Pangan +10%",
+  "Organisasi Telekomunikasi Internasional (ITU)": "Kecepatan Riset +5%",
+  "Organisasi Meteorologi Dunia (WMO)": "Risiko Bencana Alam -5%",
+  "Organisasi Maritim Internasional (IMO)": "Hasil Perikanan +10%",
+};
+
 export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCountry, onClose, onOpenCountryDetail, onOpenPlayerDetail }: OrganisasiRegionalProps) {
   const [members, setMembers] = useState<MemberData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -103,6 +114,13 @@ export default function OrganisasiRegional({ orgName, orgIcon: Icon, selectedCou
 
       {/* BODY - Daftar Negara Anggota */}
       <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] custom-scrollbar">
+        {ORGANIZATION_BENEFITS[orgName] && (
+          <div className="mb-4 p-3.5 rounded-xl bg-[#0E2A20] border border-emerald-500/40 flex items-center justify-between text-xs font-bold text-emerald-300 shadow-md">
+            <span>Efek Keanggotaan Organisasi:</span>
+            <span className="font-black text-emerald-400 text-sm">{ORGANIZATION_BENEFITS[orgName]}</span>
+          </div>
+        )}
+
         <div className="w-full bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-6 shadow-md">
           <div className="flex justify-between items-center mb-4 border-b border-[#00FFAA]/20 pb-2">
             <h4 className="text-xs font-black text-[#00FFAA] uppercase tracking-wider">

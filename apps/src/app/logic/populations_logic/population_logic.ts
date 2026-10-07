@@ -4,8 +4,8 @@
  */
 
 import { logger } from '../../../lib/logger';
-import { applyHinduPopulationGrowthBonus } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/hindu";
-import { applySocialismBirthRateBonus } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/sosialisme";
+import { applyHinduPopulationGrowthBonus } from "@/app/page/bonus_logic/agama_bonus_logic/hindu";
+import { applySocialismBirthRateBonus } from "@/app/page/bonus_logic/ideologi_bonus_logic/sosialisme";
 
 // Import dari logic yang baru dibuat
 import { calculateKeamananLogic } from "@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/kematian_modals/logic/keamananLogic";
@@ -362,7 +362,7 @@ export const calculateDailyBirths = (
   }
 
   const policyFactor = programInsentifAnak ? 1.2 : 1.0;
-  
+
   // Pernikahan card and its factor logic removed (always default 1.0)
   const marriageFactor = 1.0;
 

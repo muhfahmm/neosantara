@@ -13,14 +13,14 @@ import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from
 import AlokasiSubsidiTab from "./alokasi_subsidi/AlokasiSubsidiTab";
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
 import { getSubsidiBySlug } from "@/../../json/database_alokasi_subsidi/index";
-import { ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/kristen";
-import { BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/buddha";
+import { ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
+import { BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/agama_bonus_logic/buddha";
 import {
   DEMOCRACY_TAX_REVENUE_BONUS,
-} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/demokrasi";
-import { CAPITALISM_TAX_REVENUE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/kapitalisme";
-import { LIBERALISM_TAX_REVENUE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/liberalisme";
-import { CONSERVATISM_TAX_REVENUE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/konservatisme";
+} from "@/app/page/bonus_logic/ideologi_bonus_logic/demokrasi";
+import { CAPITALISM_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/ideologi_bonus_logic/kapitalisme";
+import { LIBERALISM_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/ideologi_bonus_logic/liberalisme";
+import { CONSERVATISM_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/ideologi_bonus_logic/konservatisme";
 
 interface ModalProps {
   isOpen: boolean;
@@ -120,7 +120,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
         ? `Bonus Liberalisme: penerimaan seluruh pajak +${LIBERALISM_TAX_REVENUE_BONUS * 100}%`
         : ideology === "konservatisme"
           ? `Bonus Konservatisme: penerimaan seluruh pajak +${CONSERVATISM_TAX_REVENUE_BONUS * 100}%`
-        : undefined;
+          : undefined;
   const religionTaxBadge = String(countryDetail?.religion || "").trim().toLowerCase() === "kristen ortodoks"
     ? `Bonus Kristen Ortodoks: Penerimaan pajak pribadi +${ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS * 100}%`
     : String(countryDetail?.religion || "").trim().toLowerCase() === "buddha"
@@ -169,7 +169,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
-        
+
         {/* Header */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
           <div className="flex items-center gap-2 sm:gap-3">
@@ -191,32 +191,29 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
           <div className="flex gap-2 lg:gap-2.5 2xl:gap-3 border-b border-[#00FFAA]/20 pb-2.5 lg:pb-3">
             <button
               onClick={() => setActiveTab("summary")}
-              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                activeTab === "summary"
+              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${activeTab === "summary"
                   ? "bg-[#00FFAA] text-[#0A1A1A]"
                   : "text-[#6B8A8A] hover:text-[#E0E0E0] hover:bg-[#0F2424]"
-              }`}
+                }`}
             >
               Ringkasan PDB
             </button>
             <button
               onClick={() => setActiveTab("income")}
-              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 lg:gap-2 cursor-pointer ${
-                activeTab === "income"
+              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 lg:gap-2 cursor-pointer ${activeTab === "income"
                   ? "bg-[#00FFAA] text-[#0A1A1A]"
                   : "text-[#6B8A8A] hover:text-[#E0E0E0] hover:bg-[#0F2424]"
-              }`}
+                }`}
             >
               <ArrowUpRight className="h-3.5 w-3.5" />
               Pemasukkan
             </button>
             <button
               onClick={() => setActiveTab("outcome")}
-              className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
-                activeTab === "outcome"
+              className={`px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${activeTab === "outcome"
                   ? "bg-[#00FFAA] text-[#0A1A1A]"
                   : "text-[#6B8A8A] hover:text-[#E0E0E0] hover:bg-[#0F2424]"
-              }`}
+                }`}
             >
               <ArrowDownRight className="h-3.5 w-3.5" />
               Pengeluaran
@@ -227,7 +224,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
           <div className="space-y-6 max-w-3xl mx-auto">
-            
+
             {/* Summary Tab */}
             {activeTab === "summary" && (
               <div className="space-y-6">
@@ -307,31 +304,28 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                 <div className="flex gap-2 border-b border-[#00FFAA]/20 pb-3">
                   <button
                     onClick={() => setOutcomeMainTab("kabinet")}
-                    className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                      outcomeMainTab === "kabinet"
+                    className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${outcomeMainTab === "kabinet"
                         ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
                         : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
-                    }`}
+                      }`}
                   >
                     Kabinet (22)
                   </button>
                   <button
                     onClick={() => setOutcomeMainTab("subsidi")}
-                    className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                      outcomeMainTab === "subsidi"
+                    className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${outcomeMainTab === "subsidi"
                         ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
                         : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
-                    }`}
+                      }`}
                   >
                     Alokasi Subsidi (6)
                   </button>
                   <button
                     onClick={() => setOutcomeMainTab("total")}
-                    className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                      outcomeMainTab === "total"
+                    className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${outcomeMainTab === "total"
                         ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md"
                         : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
-                    }`}
+                      }`}
                   >
                     Total Pengeluaran
                   </button>
@@ -385,31 +379,28 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                     <div className="flex gap-2 border-b border-[#00FFAA]/10 pb-2">
                       <button
                         onClick={() => setKabinetSubTab("kementerian")}
-                        className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                          kabinetSubTab === "kementerian"
+                        className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${kabinetSubTab === "kementerian"
                             ? "bg-[#00FFAA] text-[#0A1A1A]"
                             : "bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
-                        }`}
+                          }`}
                       >
                         Kementerian (15)
                       </button>
                       <button
                         onClick={() => setKabinetSubTab("keamanan")}
-                        className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                          kabinetSubTab === "keamanan"
+                        className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${kabinetSubTab === "keamanan"
                             ? "bg-[#00FFAA] text-[#0A1A1A]"
                             : "bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
-                        }`}
+                          }`}
                       >
                         Keamanan (5)
                       </button>
                       <button
                         onClick={() => setKabinetSubTab("layanan")}
-                        className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                          kabinetSubTab === "layanan"
+                        className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${kabinetSubTab === "layanan"
                             ? "bg-[#00FFAA] text-[#0A1A1A]"
                             : "bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] border border-[#00FFAA]/20"
-                        }`}
+                          }`}
                       >
                         Layanan (2)
                       </button>

@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 import { X } from "lucide-react";
-import { getMonarchyMilitaryStrengthMultiplier } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/monarki";
-import { getAuthoritarianMilitaryStrengthMultiplier } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/otoritarianisme";
+import { getMonarchyMilitaryStrengthMultiplier } from "@/app/page/bonus_logic/ideologi_bonus_logic/monarki";
+import { getAuthoritarianMilitaryStrengthMultiplier } from "@/app/page/bonus_logic/ideologi_bonus_logic/otoritarianisme";
 
 interface InfoArmadaAktifModalProps {
   isOpen: boolean;
@@ -49,8 +49,8 @@ export default function InfoArmadaAktifModal({
         {/* Header */}
         <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <h3 className="font-black text-[#00FFAA] uppercase tracking-wider text-xl">{selectedItem?.label}</h3>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
           >
             <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
@@ -132,8 +132,8 @@ export default function InfoArmadaAktifModal({
 
         {/* Footer */}
         <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10 shrink-0">
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="px-6 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-white text-[10px] font-black uppercase cursor-pointer hover:bg-[#1A3838] transition-all text-center"
           >
             Tutup

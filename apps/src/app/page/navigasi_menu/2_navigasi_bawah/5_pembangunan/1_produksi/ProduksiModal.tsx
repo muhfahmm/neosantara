@@ -30,15 +30,15 @@ import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid
 import { getEconomicEmbargoIncomeMultiplier, getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
 import { loadActiveResolutions, isPassedResolutionActive, normalizePbbCountryName } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { loadActiveSecurityCouncilItems } from "../../7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
-import { getProductionBonusMultiplier } from "./bonus_logic";
-import { applyJewishConstructionTimeDiscount } from "./bonus_logic/agama_bonus_logic/yahudi";
+import { getProductionBonusMultiplier } from "../../../../bonus_logic";
+import { applyJewishConstructionTimeDiscount } from "../../../../bonus_logic/agama_bonus_logic/yahudi";
 import {
   DEMOCRACY_TAX_REVENUE_BONUS,
-} from "./bonus_logic/ideologi_bonus_logic/demokrasi";
-import { CAPITALISM_TAX_REVENUE_BONUS } from "./bonus_logic/ideologi_bonus_logic/kapitalisme";
-import { LIBERALISM_TAX_REVENUE_BONUS } from "./bonus_logic/ideologi_bonus_logic/liberalisme";
-import { CONSERVATISM_TAX_REVENUE_BONUS } from "./bonus_logic/ideologi_bonus_logic/konservatisme";
-import { COMMUNISM_PRODUCTION_BONUS } from "./bonus_logic/ideologi_bonus_logic/komunisme";
+} from "../../../../bonus_logic/ideologi_bonus_logic/demokrasi";
+import { CAPITALISM_TAX_REVENUE_BONUS } from "../../../../bonus_logic/ideologi_bonus_logic/kapitalisme";
+import { LIBERALISM_TAX_REVENUE_BONUS } from "../../../../bonus_logic/ideologi_bonus_logic/liberalisme";
+import { CONSERVATISM_TAX_REVENUE_BONUS } from "../../../../bonus_logic/ideologi_bonus_logic/konservatisme";
+import { COMMUNISM_PRODUCTION_BONUS } from "../../../../bonus_logic/ideologi_bonus_logic/komunisme";
 
 
 const RELIGION_BONUS_INFO: Record<string, string> = {
@@ -99,7 +99,7 @@ export default function ProduksiModal({
   onProductionDeepLinkHandled,
 }: ModalProps) {
   const [activeTab, setActiveTab] = useState<string>(targetTab || "kelistrikan");
-  
+
   // Update tab when targetTab prop changes
   useEffect(() => {
     if (targetTab && targetTab !== activeTab) {
@@ -478,7 +478,7 @@ export default function ProduksiModal({
     }
 
     let startDateStr = safeDateString;
-    
+
     const ongoing = updatedDetail.ongoingConstructions || [];
     const existingForThisKey = ongoing.filter((c: any) => c.buildingKey === key);
 
@@ -490,7 +490,7 @@ export default function ProduksiModal({
     // Jika buildQuantity > 1, kita perlu membuat multiple construction entries
     const newConstructions = [];
     let currentStartDate = startDateStr;
-    
+
     for (let i = 0; i < buildQuantity; i++) {
       const endDateStr = addDays(currentStartDate, waktu);
       newConstructions.push({
@@ -594,11 +594,10 @@ export default function ProduksiModal({
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center justify-between w-full px-2.5 py-2 rounded-xl border text-left transition-all cursor-pointer ${
-                      activeTab === tab.id
+                    className={`flex items-center justify-between w-full px-2.5 py-2 rounded-xl border text-left transition-all cursor-pointer ${activeTab === tab.id
                         ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
                         : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
-                    }`}
+                      }`}
                   >
                     <span className="text-[11px] lg:text-xs font-bold uppercase tracking-wider">{tab.label}</span>
                   </button>

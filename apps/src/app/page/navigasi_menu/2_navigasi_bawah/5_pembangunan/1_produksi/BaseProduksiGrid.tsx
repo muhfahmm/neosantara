@@ -17,7 +17,7 @@ import { generateProductionSectorAnalysis } from "./ai_suggestions/productionAIS
 import { getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
 import { getActiveProductionBanForResource } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/5_laranganProduksiLogic";
 import { formatProductionProductName } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
-import { getProductionBonusMultiplier } from "./bonus_logic";
+import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 
 const ELECTRICITY_FUEL_RESOURCE_KEYS = [
   "gas_alam",
@@ -199,7 +199,7 @@ export default function BaseProduksiGrid({
           );
           const queueCount = buildingConstructions.length;
           const isBuilding = queueCount > 0;
-          
+
           // Tampilkan tanggal selesai dari unit PALING AKHIR
           const lastEndDate = isBuilding ? buildingConstructions[buildingConstructions.length - 1].endDate : null;
 
@@ -214,9 +214,8 @@ export default function BaseProduksiGrid({
               tabIndex={0}
               aria-disabled={!isAvailable}
               title={productionBan ? `Diblokir resolusi PBB: ${formatProductionProductName(key)}` : undefined}
-              className={`group relative rounded-2xl overflow-visible flex flex-col flex-grow justify-between transition-all bg-[#0A1A1A] border shadow-sm ${
-                isAvailable ? 'border-[#00FFAA]/20 hover:border-[#00FFAA]/50 hover:shadow-md cursor-pointer' : 'border-rose-500/30 bg-rose-500/10 opacity-70 cursor-not-allowed'
-              } ${isHighlighted ? 'border-[#00FFAA] border-2 shadow-[0_0_12px_rgba(0,255,170,0.3)]' : ''}`}
+              className={`group relative rounded-2xl overflow-visible flex flex-col flex-grow justify-between transition-all bg-[#0A1A1A] border shadow-sm ${isAvailable ? 'border-[#00FFAA]/20 hover:border-[#00FFAA]/50 hover:shadow-md cursor-pointer' : 'border-rose-500/30 bg-rose-500/10 opacity-70 cursor-not-allowed'
+                } ${isHighlighted ? 'border-[#00FFAA] border-2 shadow-[0_0_12px_rgba(0,255,170,0.3)]' : ''}`}
             >
               {productionBan && (
                 <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-[#0A1A1A]/85 p-3 text-center text-[10px] font-black uppercase tracking-wide text-rose-300 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none">

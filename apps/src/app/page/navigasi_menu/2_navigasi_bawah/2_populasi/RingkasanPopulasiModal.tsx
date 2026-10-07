@@ -18,7 +18,7 @@ import {
   getKesehatanMultiplier,
   type PopulationDailyMetrics,
   type PopulationSectoral,
-} from "@/app/logic/populations_logic/population_logic"; 
+} from "@/app/logic/populations_logic/population_logic";
 
 import DetailKelahiranModal from "./kelahiran_modals/DetailKelahiranModal";
 import DetailKematianModal from "./kematian_modals/DetailKematianModal";
@@ -27,8 +27,8 @@ import IndeksKesejahteraanModal from "./indeks_kesejahteraan_modals/IndeksKeseja
 import TunawismaDetailModal from "./tunawisma_modals/TunawismaDetailModal";
 import {
   HINDU_POPULATION_GROWTH_BONUS,
-} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/hindu";
-import { SOCIALISM_BIRTH_RATE_BONUS } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/sosialisme";
+} from "@/app/page/bonus_logic/agama_bonus_logic/hindu";
+import { SOCIALISM_BIRTH_RATE_BONUS } from "@/app/page/bonus_logic/ideologi_bonus_logic/sosialisme";
 
 // ==============================
 // Tipe data yang diharapkan dari countryDetail

@@ -1,5 +1,5 @@
 import { PROFILES_POPULATION_DATA } from "@/../../json/semua_fitur_negara/0_profiles/index";
-import { getProductionBonusMultiplier } from "../../../5_pembangunan/1_produksi/bonus_logic";
+import { getProductionBonusMultiplier } from "../../../../../bonus_logic";
 
 const parsePopulationText = (value: any): number => {
   if (value === null || value === undefined || value === '') return 0;
@@ -385,7 +385,7 @@ export const calculateFoodSatisfactionScore = (country: any, metadata: any): num
 export const calculateCountryFoodAggregate = (country: any, metadata: any) => {
   let totalProduction = 0;
   let totalConsumption = 0;
-  
+
   const population = resolveCountryPopulation(country);
 
   Object.entries(FOOD_CONSUMPTION_PER_CAPITA).forEach(([key, consumptionPerCapita]) => {

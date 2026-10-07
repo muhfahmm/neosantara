@@ -12,7 +12,7 @@ import { isTradeEmbargoActive } from '@/app/page/navigasi_menu/2_navigasi_bawah/
 import {
   applyProtestantTradePrice,
   PROTESTANT_BUY_PRICE_DISCOUNT
-} from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/kristen";
+} from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import {
   applyNpcCountrySimulationState,
@@ -28,9 +28,9 @@ const getFlagEmoji = (countryName: string) => {
 
 const formatTradePrice = (price: number) => String(Math.round(price));
 
-import { 
-  hasUraniumBuilding, 
-  hasBatubaraBuilding, 
+import {
+  hasUraniumBuilding,
+  hasBatubaraBuilding,
   hasMinyakBumiBuilding,
   hasGasAlamBuilding,
   hasGaramBuilding,
@@ -202,7 +202,7 @@ const generateCandleData = (
 
     const shadowTop = Math.random() * volatility * open * 0.6;
     const shadowBottom = Math.random() * volatility * open * 0.6;
-    
+
     const high = Math.max(open, close) + shadowTop;
     const low = Math.min(open, close) - shadowBottom;
 
@@ -220,12 +220,12 @@ const generateCandleData = (
   return data.reverse();
 };
 
-export default function ModalsKonfirmasiBeli({ 
-  isOpen, 
-  onClose, 
-  onConfirm, 
-  countryDetail, 
-  setCountryDetail, 
+export default function ModalsKonfirmasiBeli({
+  isOpen,
+  onClose,
+  onConfirm,
+  countryDetail,
+  setCountryDetail,
   partners,
   currentDate,
   initialPartnerName,
@@ -237,7 +237,7 @@ export default function ModalsKonfirmasiBeli({
   const [selectedProduct, setSelectedProduct] = useState<string>("");
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
-  
+
   const [partnerDataRaw, setPartnerDataRaw] = useState<Record<string, any> | null>(null);
   const partnerStartDateRef = useRef<string | null>(null);
 
@@ -259,7 +259,7 @@ export default function ModalsKonfirmasiBeli({
 
   // --- STATE UNTUK MARKET PRICES, CHART, TIME RANGE ---
   const [marketPrices, setMarketPrices] = useState<Record<string, number>>(DEFAULT_PRICES);
-  const [ohlcSeries, setOhlcSeries] = useState<Record<string, {time: Date; open: number; high: number; low: number; close: number}[]>>({});
+  const [ohlcSeries, setOhlcSeries] = useState<Record<string, { time: Date; open: number; high: number; low: number; close: number }[]>>({});
   const prevDateRef = useRef<string | null>(null);
   const [timeRange, setTimeRange] = useState<'1d' | '1w' | '1m' | '6m' | '1y'>('1d');
 
@@ -530,7 +530,7 @@ export default function ModalsKonfirmasiBeli({
     if (initialPartnerName && targetProduct && partnerOffers.length > 0) {
       const matchedOffer = partnerOffers.find(
         o => o.partnerName.toLowerCase().trim() === initialPartnerName.toLowerCase().trim() &&
-             o.productKey === targetProduct
+          o.productKey === targetProduct
       );
       if (matchedOffer) {
         initialQty = matchedOffer.quantity;
@@ -541,7 +541,7 @@ export default function ModalsKonfirmasiBeli({
         }));
       }
     }
-    
+
     if (targetProduct !== selectedProduct) {
       setSelectedProduct(targetProduct);
       setQuantity(initialQty);
@@ -701,8 +701,8 @@ export default function ModalsKonfirmasiBeli({
     // Cek apakah ini transaksi dari tawaran AI yang valid
     const matchedOffer = partnerOffers?.find(
       o => o.partnerName.toLowerCase().trim() === targetCountry.toLowerCase().trim() &&
-           o.productKey === effectiveSelectedProduct &&
-           o.quantity === quantity
+        o.productKey === effectiveSelectedProduct &&
+        o.quantity === quantity
     );
 
     if (!matchedOffer && quantity > partnerProduction) {
@@ -726,8 +726,8 @@ export default function ModalsKonfirmasiBeli({
     const newInventory = currentInventory + quantity;
     const accumulatedKey = `accumulated_${effectiveSelectedProduct}`;
 
-    setCountryDetail({ 
-      ...detail, 
+    setCountryDetail({
+      ...detail,
       anggaran: currentBudget - totalPrice,
       [boughtKey]: currentBought + quantity,
       [partnerSoldKey]: currentPartnerSold + quantity,
@@ -743,7 +743,7 @@ export default function ModalsKonfirmasiBeli({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
-        
+
         {/* HEADER */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
           <div className="flex items-center gap-2 sm:gap-3">
@@ -752,8 +752,8 @@ export default function ModalsKonfirmasiBeli({
             </div>
             <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Beli Komoditas</h2>
           </div>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
           >
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
@@ -762,7 +762,7 @@ export default function ModalsKonfirmasiBeli({
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 pt-5 pb-2 relative z-10 space-y-4 bg-[#0F2424] no-scrollbar">
-          
+
           {/* --- INPUT CARD PRODUK & NEGARA --- */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
@@ -782,28 +782,28 @@ export default function ModalsKonfirmasiBeli({
                 onClick={() => setIsCountryPickerOpen(true)}
                 className="w-full px-4 py-3 rounded-md bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] text-sm font-bold flex items-center justify-between hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
               >
-                  <span className="flex items-center gap-2">
-                    {(() => {
-                      const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === effectiveSelectedCountry.toLowerCase().trim());
-                      const iso = matched?.iso;
-                      if (!iso || iso.length !== 2) {
-                        return (
-                          <div className="w-8 h-5 rounded-sm bg-[#0F2424] border border-[#00FFAA]/20 flex-shrink-0" />
-                        );
-                      }
+                <span className="flex items-center gap-2">
+                  {(() => {
+                    const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === effectiveSelectedCountry.toLowerCase().trim());
+                    const iso = matched?.iso;
+                    if (!iso || iso.length !== 2) {
                       return (
-                        <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 bg-[#0F2424] relative">
-                          <img
-                            src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
-                            alt={effectiveSelectedCountry}
-                            className="w-full h-full object-cover absolute inset-0"
-                          />
-                        </div>
+                        <div className="w-8 h-5 rounded-sm bg-[#0F2424] border border-[#00FFAA]/20 flex-shrink-0" />
                       );
-                    })()}
-                    <span>{effectiveSelectedCountry}</span>
-                  </span>
-                 <span className="text-[10px] opacity-70 uppercase tracking-wider">Ubah</span>
+                    }
+                    return (
+                      <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 bg-[#0F2424] relative">
+                        <img
+                          src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
+                          alt={effectiveSelectedCountry}
+                          className="w-full h-full object-cover absolute inset-0"
+                        />
+                      </div>
+                    );
+                  })()}
+                  <span>{effectiveSelectedCountry}</span>
+                </span>
+                <span className="text-[10px] opacity-70 uppercase tracking-wider">Ubah</span>
               </button>
             </div>
           </div>
@@ -828,7 +828,7 @@ export default function ModalsKonfirmasiBeli({
                 {(() => {
                   const matchedOffer = partnerOffers?.find(
                     o => o.partnerName.toLowerCase().trim() === targetCountry.toLowerCase().trim() &&
-                         o.productKey === effectiveSelectedProduct
+                      o.productKey === effectiveSelectedProduct
                   );
                   const displayValue = matchedOffer ? Math.max(matchedOffer.quantity, partnerProduction) : partnerProduction;
                   return displayValue.toLocaleString('id-ID');
@@ -890,11 +890,10 @@ export default function ModalsKonfirmasiBeli({
                   <button
                     key={value}
                     onClick={() => setTimeRange(value as any)}
-                    className={`px-2.5 py-1 text-[11px] font-bold rounded border transition-colors cursor-pointer ${
-                      timeRange === value
+                    className={`px-2.5 py-1 text-[11px] font-bold rounded border transition-colors cursor-pointer ${timeRange === value
                         ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]'
                         : 'bg-[#0A1A1A] text-[#6B8A8A] border-[#00FFAA]/20 hover:text-[#00FFAA]'
-                    }`}
+                      }`}
                   >
                     {label}
                   </button>

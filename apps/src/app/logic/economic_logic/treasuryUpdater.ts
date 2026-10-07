@@ -2,12 +2,12 @@ import { calculateIncomeAtRate } from './2_tax_logic/taxLogic';
 import { calculateGoldMiningDailyProduction } from './goldIncome';
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from './departments';
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
-import { applyOrthodoxPersonalIncomeTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/kristen';
-import { applyBuddhaEnvironmentalTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/buddha';
-import { applyDemocracyTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/demokrasi';
-import { applyCapitalismTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/kapitalisme';
-import { applyLiberalismTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/liberalisme';
-import { applyConservatismTaxRevenueBonus } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/ideologi_bonus_logic/konservatisme';
+import { applyOrthodoxPersonalIncomeTaxRevenueBonus } from '@/app/page/bonus_logic/agama_bonus_logic/kristen';
+import { applyBuddhaEnvironmentalTaxRevenueBonus } from '@/app/page/bonus_logic/agama_bonus_logic/buddha';
+import { applyDemocracyTaxRevenueBonus } from '@/app/page/bonus_logic/ideologi_bonus_logic/demokrasi';
+import { applyCapitalismTaxRevenueBonus } from '@/app/page/bonus_logic/ideologi_bonus_logic/kapitalisme';
+import { applyLiberalismTaxRevenueBonus } from '@/app/page/bonus_logic/ideologi_bonus_logic/liberalisme';
+import { applyConservatismTaxRevenueBonus } from '@/app/page/bonus_logic/ideologi_bonus_logic/konservatisme';
 
 const getNestedValue = (obj: any, path: string[]) => {
   return path.reduce((current, key) => {
@@ -46,7 +46,7 @@ export const getTourismTotalIncome = (detail: any): number => {
   if (!detail || typeof detail !== 'object') return 0;
   if (typeof detail.total_wisata_penghasilan === 'number') return detail.total_wisata_penghasilan;
   if (typeof detail.wisata_penghasilan === 'number') return detail.wisata_penghasilan;
-  
+
   if (Array.isArray(detail.tempat_wisata)) {
     return detail.tempat_wisata.reduce((sum: number, item: any) => sum + (Number(item?.penghasilan) || 0), 0);
   }
@@ -87,8 +87,8 @@ export const getDepartmentLevel = (detail: any, dept: Department | string | any)
   if (!rawId) return 1;
   const key = rawId.replace(/-/g, '_');
   const fieldName = KEMENTERIAN.some(k => k.id === rawId) ? `kem_${key}` :
-                    KEAMANAN.some(k => k.id === rawId) ? `keamanan_${key}` :
-                    `layanan_${key}`;
+    KEAMANAN.some(k => k.id === rawId) ? `keamanan_${key}` :
+      `layanan_${key}`;
   const val = detail[fieldName] ?? detail[`level_${key}`] ?? detail[key] ?? getNestedValue(detail, ['kabinet', fieldName]);
   return toNumber(val, 1);
 };
@@ -105,7 +105,7 @@ export const calculateTotalMinistryCostPerDay = (detail: any) => {
 
 export const getCommercialTotalIncome = (detail: any): number => {
   if (!detail || typeof detail !== 'object') return 0;
-  
+
   const mallCount = Number(detail.mall ?? detail.pusat_belanja ?? detail.pusat_perbelanjaan ?? 0);
   const hotelCount = Number(detail.hotel ?? 0);
   const grosirCount = Number(detail.pusat_grosir_tekstil ?? detail.pusat_grosir ?? 0);

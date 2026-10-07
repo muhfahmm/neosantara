@@ -18,7 +18,7 @@ import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
 import CountryKelistrikanModal from "./CountryKelistrikanModal";
 import { getElectricityFuelBalance, getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 import { getCountryConsumptionBreakdown } from "./consumptionLogic";
-import { getProductionBonusMultiplier } from "../../5_pembangunan/1_produksi/bonus_logic";
+import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 import { applyNpcCountrySimulationState } from "@/app/logic/npcCountrySimulation";
 
 interface ModalProps {
@@ -204,7 +204,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       const bMeta = findMeta(key);
       const count = Number(country?.[key]) || 0;
       const unitProduction = Number(bMeta?.produksi) || 0;
-      
+
       let isFuelDeficit = false;
       if (count > 0) {
         const fuelReqs = getKelistrikanFuelRequirements(key);
@@ -341,8 +341,8 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   const filteredData = searchQuery.trim() === ''
     ? sortedData
     : sortedData.filter(country =>
-        country.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      country.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
   const handleSort = (column: SortConfig['key']) => {
     if (sortConfig.key === column) {
@@ -383,27 +383,27 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
             </div>
           </div>
 
-            <div className="hidden sm:flex items-center gap-2.5 lg:gap-4 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-[#00FFAA]/20">
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
-                  <TrendingUp className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-[#00FFAA]" />
-                  <span className="text-[9px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider">Produksi</span>
-                  <span className="text-[9px] lg:text-[11px] font-black text-[#00FFAA]">{totalCapacityMW > 0 ? totalCapacityMW.toLocaleString('id-ID') : '0'} MW</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 bg-[#0F2424] border border-rose-500/30 rounded-lg">
-                  <TrendingDown className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-rose-400" />
-                  <span className="text-[9px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
-                  <span className="text-[9px] lg:text-[11px] font-black text-rose-400">{estimatedConsumptionMW > 0 ? estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : '0'} MW</span>
-                </div>
+          <div className="hidden sm:flex items-center gap-2.5 lg:gap-4 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-[#00FFAA]/20">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
+                <TrendingUp className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-[#00FFAA]" />
+                <span className="text-[9px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider">Produksi</span>
+                <span className="text-[9px] lg:text-[11px] font-black text-[#00FFAA]">{totalCapacityMW > 0 ? totalCapacityMW.toLocaleString('id-ID') : '0'} MW</span>
               </div>
             </div>
-            <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-4 w-4" />
-            </button>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 bg-[#0F2424] border border-rose-500/30 rounded-lg">
+                <TrendingDown className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-rose-400" />
+                <span className="text-[9px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
+                <span className="text-[9px] lg:text-[11px] font-black text-rose-400">{estimatedConsumptionMW > 0 ? estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : '0'} MW</span>
+              </div>
+            </div>
           </div>
+          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-4 w-4" />
+          </button>
+        </div>
 
         {/* BODY */}
         <div className="flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
@@ -412,17 +412,15 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
           <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/30 inline-flex mb-3.5 lg:mb-5 2xl:mb-6">
             <button
               onClick={() => setActiveTab("user")}
-              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                activeTab === "user" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-              }`}
+              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${activeTab === "user" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
+                }`}
             >
               Neraca User
             </button>
             <button
               onClick={() => setActiveTab("global")}
-              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                activeTab === "global" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-              }`}
+              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${activeTab === "global" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
+                }`}
             >
               Neraca {allCountries.length || 207} Negara
             </button>
@@ -459,23 +457,20 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       </div>
                       <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-rose-400 mt-1.5 lg:mt-2 2xl:mt-3">{estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</p>
                     </div>
-                    
+
                     {/* NERACA DAYA: LOGIKA WARNA HIJAU/MERAH/ABU-ABU */}
-                    <div className={`p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl border ${
-                      balanceMW > 0 ? 'bg-emerald-950/40 border-emerald-500/30' :
-                      balanceMW < 0 ? 'bg-rose-950/40 border-rose-500/30' :
-                      'bg-slate-900/40 border-slate-500/30'
-                    }`}>
-                      <p className={`text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest ${
-                        balanceMW > 0 ? 'text-emerald-400' :
-                        balanceMW < 0 ? 'text-rose-400' :
-                        'text-slate-400'
-                      }`}>Neraca Daya</p>
-                      <p className={`text-lg lg:text-xl 2xl:text-2xl font-black mt-1.5 lg:mt-2 2xl:mt-3 ${
-                        balanceMW > 0 ? 'text-emerald-400' :
-                        balanceMW < 0 ? 'text-rose-400' :
-                        'text-slate-400'
+                    <div className={`p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl border ${balanceMW > 0 ? 'bg-emerald-950/40 border-emerald-500/30' :
+                        balanceMW < 0 ? 'bg-rose-950/40 border-rose-500/30' :
+                          'bg-slate-900/40 border-slate-500/30'
                       }`}>
+                      <p className={`text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest ${balanceMW > 0 ? 'text-emerald-400' :
+                          balanceMW < 0 ? 'text-rose-400' :
+                            'text-slate-400'
+                        }`}>Neraca Daya</p>
+                      <p className={`text-lg lg:text-xl 2xl:text-2xl font-black mt-1.5 lg:mt-2 2xl:mt-3 ${balanceMW > 0 ? 'text-emerald-400' :
+                          balanceMW < 0 ? 'text-rose-400' :
+                            'text-slate-400'
+                        }`}>
                         {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                       </p>
                     </div>
@@ -552,19 +547,18 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   {electricitySatisfaction >= 80
                     ? "✅ Produksi listrik mencukupi, hampir tidak ada pemadaman."
                     : electricitySatisfaction >= 50
-                    ? "⚠️ Kebutuhan listrik terpenuhi namun masih rawan defisit."
-                    : "🔴 Defisit listrik parah, sering terjadi pemadaman bergilir."}
+                      ? "⚠️ Kebutuhan listrik terpenuhi namun masih rawan defisit."
+                      : "🔴 Defisit listrik parah, sering terjadi pemadaman bergilir."}
                 </p>
                 <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-[#6B8A8A]">
                   <div>Rasio produksi/konsumsi: <span className="font-bold text-[#00FFAA]">
                     {estimatedConsumptionMW > 0 ? (totalCapacityMW / estimatedConsumptionMW).toFixed(2) : 'N/A'}
                   </span></div>
                   {/* NERACA DAYA SUMMARY: LOGIKA WARNA HIJAU/MERAH/ABU-ABU */}
-                  <div>Neraca daya: <span className={`font-bold ${
-                    balanceMW > 0 ? 'text-emerald-400' :
-                    balanceMW < 0 ? 'text-rose-400' :
-                    'text-slate-400'
-                  }`}>
+                  <div>Neraca daya: <span className={`font-bold ${balanceMW > 0 ? 'text-emerald-400' :
+                      balanceMW < 0 ? 'text-rose-400' :
+                        'text-slate-400'
+                    }`}>
                     {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                   </span></div>
                 </div>
@@ -682,11 +676,10 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                           <tr
                             key={`country-${country.name}-${rowIndex}`}
                             onClick={() => setSelectedCountryData(country.rawData)}
-                            className={`transition-colors cursor-pointer hover:bg-[#00FFAA]/10 ${
-                              isUserCountry
+                            className={`transition-colors cursor-pointer hover:bg-[#00FFAA]/10 ${isUserCountry
                                 ? 'bg-emerald-950/50 font-black border-l-4 border-l-emerald-400'
                                 : 'bg-[#0F2424]'
-                            }`}
+                              }`}
                           >
                             {/* MENGGUNAKAN rowIndex + 1 AGAR NOMOR URUT SELALU 1,2,3... MESKIPUN DI-SORTING */}
                             <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black' : 'text-[#6B8A8A]'}`}>
@@ -735,11 +728,10 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                                 <div className="flex max-w-[300px] flex-wrap justify-center gap-1" title="Badge kuning: material tercatat. Badge biru: jumlah pembangkit yang menggunakannya. Ini bukan stok inventori siap pakai.">
                                   {fuelResourceRows.map((resource) => (
                                     <span key={resource.key} className="inline-flex items-center gap-1">
-                                      <span className={`rounded border px-1.5 py-0.5 text-[9px] font-bold ${
-                                        resource.isRecorded
+                                      <span className={`rounded border px-1.5 py-0.5 text-[9px] font-bold ${resource.isRecorded
                                           ? 'border-amber-400/30 bg-amber-400/10 text-amber-200'
                                           : 'border-slate-500/30 bg-slate-500/10 text-slate-400'
-                                      }`}>
+                                        }`}>
                                         {resource.label}{resource.isRecorded ? '' : ' tidak tercatat'}
                                       </span>
                                       <span className="rounded border border-cyan-400/30 bg-cyan-400/10 px-1.5 py-0.5 text-[9px] font-bold text-cyan-200">
@@ -758,13 +750,12 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                             <td className="px-4 py-3 font-bold text-rose-400 text-right">
                               {isNaN(country.consumption) || country.consumption <= 0 ? '0' : country.consumption.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                             </td>
-                            
+
                             {/* NERACA DAYA TABLE: LOGIKA WARNA HIJAU/MERAH/ABU-ABU */}
-                            <td className={`px-4 py-3 font-black text-right ${
-                              country.balance > 0.01 ? 'text-emerald-400' :
-                              country.balance < -0.01 ? 'text-rose-400' :
-                              'text-slate-400'
-                            }`}>
+                            <td className={`px-4 py-3 font-black text-right ${country.balance > 0.01 ? 'text-emerald-400' :
+                                country.balance < -0.01 ? 'text-rose-400' :
+                                  'text-slate-400'
+                              }`}>
                               <div className="flex items-center justify-end gap-1">
                                 <span>
                                   {isNaN(country.balance) || country.balance === 0 ? '0' : (country.balance > 0 ? '+' : '-') + Math.abs(country.balance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}

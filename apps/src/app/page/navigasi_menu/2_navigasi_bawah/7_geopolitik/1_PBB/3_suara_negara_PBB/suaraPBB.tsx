@@ -4,7 +4,7 @@ import { Vote, Search } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 import { STATIC_PBB_VOTES } from "./staticVoteData";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles";
-import { applyCatholicVoteBonus } from "../../../5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/katolik";
+import { applyCatholicVoteBonus } from "../../../../../bonus_logic/agama_bonus_logic/katolik";
 
 interface CountryVoteRow {
   name_id: string;
@@ -89,7 +89,7 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
 
     Object.entries(annexedStore).forEach(([targetKey, data]: [string, any]) => {
       if (!data || !data.attackerCountry) return;
-      
+
       // Temukan nama asli penyerang dan target
       const targetNorm = normalizeName(targetKey);
       const attackerName = data.attackerCountry;
@@ -138,7 +138,7 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
   const filteredVotes = useMemo(() => {
     if (!searchQuery.trim()) return countryVotes;
     const q = searchQuery.toLowerCase().trim();
-    return countryVotes.filter(item => 
+    return countryVotes.filter(item =>
       item.name_id.toLowerCase().includes(q)
     );
   }, [countryVotes, searchQuery]);
@@ -191,26 +191,24 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
               filteredVotes.map((item, idx) => {
                 const selectedCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Negara";
                 const isUserCountry = item.name_id.toLowerCase().trim() === selectedCountryName.toLowerCase().trim();
-                
+
                 return (
-                  <tr 
-                    key={`${item.name_id}-${idx}`} 
-                    className={`transition-colors ${
-                      isUserCountry
+                  <tr
+                    key={`${item.name_id}-${idx}`}
+                    className={`transition-colors ${isUserCountry
                         ? 'bg-[#00FFAA]/15 hover:bg-[#00FFAA]/25 border-l-4 border-l-[#00FFAA]'
                         : 'hover:bg-[#00FFAA]/5'
-                    }`}
+                      }`}
                   >
                     {/* ✅ NOMOR URUT DENGAN BADGE */}
                     <td className="px-3 py-2 text-center">
                       <span
-                        className={`inline-flex items-center justify-center min-w-[24px] h-[20px] px-1.5 rounded-md font-black text-[10px] sm:text-[11px] ${
-                          isUserCountry
+                        className={`inline-flex items-center justify-center min-w-[24px] h-[20px] px-1.5 rounded-md font-black text-[10px] sm:text-[11px] ${isUserCountry
                             ? 'bg-[#00FFAA] text-[#0A1A1A]'
                             : idx < 3
-                            ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50'
-                            : 'bg-[#0F2424] text-[#6B8A8A] border border-[#00FFAA]/20'
-                        }`}
+                              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50'
+                              : 'bg-[#0F2424] text-[#6B8A8A] border border-[#00FFAA]/20'
+                          }`}
                       >
                         {idx + 1}
                       </span>

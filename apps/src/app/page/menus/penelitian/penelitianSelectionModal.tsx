@@ -3,7 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { FlaskConical, X, Banknote, Shield, Globe2 } from 'lucide-react';
-import { ATHEISM_RESEARCH_SPEED_BONUS } from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/ateisme';
+import { ATHEISM_RESEARCH_SPEED_BONUS } from '@/app/page/bonus_logic/agama_bonus_logic/ateisme';
+import {
+  calculateEducationPoints,
+  getEducationResearchModifier,
+  calculateCombinedResearchDurationModifier,
+} from '@/app/page/downgrade_logic';
 
 export type SelectionCategoryKey = 'ekonomi' | 'militer' | 'diplomasi';
 
@@ -12,6 +17,7 @@ interface PenelitianSelectionModalProps {
   onClose: () => void;
   onSelectCategory: (category: SelectionCategoryKey) => void;
   religion?: unknown;
+  countryDetail?: any;
 }
 
 export default function PenelitianSelectionModal({
@@ -19,9 +25,14 @@ export default function PenelitianSelectionModal({
   onClose,
   onSelectCategory,
   religion,
+  countryDetail,
 }: PenelitianSelectionModalProps) {
   const [mounted, setMounted] = useState(false);
   const hasAtheismResearchBonus = String(religion || '').trim().toLowerCase() === 'ateisme';
+
+  const educationPoints = calculateEducationPoints(countryDetail);
+  const educationModifier = getEducationResearchModifier(educationPoints);
+  const combinedModifier = calculateCombinedResearchDurationModifier(educationPoints, religion);
 
   useEffect(() => {
     setMounted(true);
@@ -69,11 +80,19 @@ export default function PenelitianSelectionModal({
             <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-[#00FFAA]/15 text-[#00FFAA] border border-[#00FFAA]/30 mb-2">
               Produksi & Pajak
             </span>
+            <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border mb-1.5 ${
+              educationModifier.isPenalty
+                ? 'bg-rose-500/10 text-rose-300 border-rose-500/30'
+                : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+            }`}>
+              EFEK PENDIDIKAN ({educationPoints} POIN): {educationModifier.label.toUpperCase()}
+            </span>
             {hasAtheismResearchBonus && (
-              <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-rose-500/10 text-rose-300 border border-rose-500/30 mb-2">
-                Bonus Ateisme: Kecepatan riset +{ATHEISM_RESEARCH_SPEED_BONUS * 100}%
+              <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-rose-500/10 text-rose-300 border border-rose-500/30 mb-1.5">
+                Bonus Ateisme: Durasi riset -15%
               </span>
             )}
+
 
             <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors mb-2 leading-tight">
               1. Riset Ekonomi & Industri
@@ -96,11 +115,19 @@ export default function PenelitianSelectionModal({
             <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-[#00FFAA]/15 text-[#00FFAA] border border-[#00FFAA]/30 mb-2">
               Alutsista & Siber
             </span>
+            <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border mb-1.5 ${
+              educationModifier.isPenalty
+                ? 'bg-rose-500/10 text-rose-300 border-rose-500/30'
+                : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+            }`}>
+              EFEK PENDIDIKAN ({educationPoints} POIN): {educationModifier.label.toUpperCase()}
+            </span>
             {hasAtheismResearchBonus && (
-              <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-rose-500/10 text-rose-300 border border-rose-500/30 mb-2">
-                Bonus Ateisme: Kecepatan riset +{ATHEISM_RESEARCH_SPEED_BONUS * 100}%
+              <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-rose-500/10 text-rose-300 border border-rose-500/30 mb-1.5">
+                Bonus Ateisme: Durasi riset -15%
               </span>
             )}
+
 
             <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors mb-2 leading-tight">
               2. Riset Militer & Pertahanan
@@ -123,11 +150,19 @@ export default function PenelitianSelectionModal({
             <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-[#00FFAA]/15 text-[#00FFAA] border border-[#00FFAA]/30 mb-2">
               Geopolitik & Spionase
             </span>
+            <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border mb-1.5 ${
+              educationModifier.isPenalty
+                ? 'bg-rose-500/10 text-rose-300 border-rose-500/30'
+                : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+            }`}>
+              EFEK PENDIDIKAN ({educationPoints} POIN): {educationModifier.label.toUpperCase()}
+            </span>
             {hasAtheismResearchBonus && (
-              <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-rose-500/10 text-rose-300 border border-rose-500/30 mb-2">
-                Bonus Ateisme: Kecepatan riset +{ATHEISM_RESEARCH_SPEED_BONUS * 100}%
+              <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-rose-500/10 text-rose-300 border border-rose-500/30 mb-1.5">
+                Bonus Ateisme: Durasi riset -15%
               </span>
             )}
+
 
             <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors mb-2 leading-tight">
               3. Riset Diplomasi & Intelijen

@@ -2,7 +2,7 @@
 "use client";
 import React from "react";
 import { Info, X } from "lucide-react";
-import { getCommunismProductionMultiplier, COMMUNISM_PRODUCTION_BONUS } from "../bonus_logic/ideologi_bonus_logic/komunisme";
+import { getCommunismProductionMultiplier, COMMUNISM_PRODUCTION_BONUS } from "../../../../../bonus_logic/ideologi_bonus_logic/komunisme";
 import { getKelistrikanFuelRequirements } from "../requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 import {
   FOOD_CONSUMPTION_PER_CAPITA,
@@ -11,7 +11,7 @@ import {
   isFoodRawMaterialDeficit,
   getFoodIngredientsRequirements,
 } from "../../../3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
-import { SHINTO_ELECTRICITY_PRODUCTION_BONUS } from "../bonus_logic/agama_bonus_logic/shinto";
+import { SHINTO_ELECTRICITY_PRODUCTION_BONUS } from "../../../../../bonus_logic/agama_bonus_logic/shinto";
 
 const ELECTRICITY_FUEL_RESOURCE_KEYS = [
   "gas_alam",

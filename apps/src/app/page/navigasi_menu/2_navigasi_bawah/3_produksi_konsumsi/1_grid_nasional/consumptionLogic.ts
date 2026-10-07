@@ -1,5 +1,5 @@
 import { getElectricityFuelBalance, getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
-import { getProductionBonusMultiplier } from "../../5_pembangunan/1_produksi/bonus_logic";
+import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 
 export function findMeta(metadata: Record<string, any> | undefined, key: string) {
   if (!metadata) return undefined;

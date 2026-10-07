@@ -8,7 +8,7 @@ import {
   FOOD_CONSUMPTION_PER_CAPITA,
   calculateConsumption,
 } from "../../3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
-import { getProductionBonusMultiplier } from "../1_produksi/bonus_logic";
+import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 
 export const RESOURCE_KEY_ALIASES: Record<string, string> = {};
 
@@ -140,7 +140,7 @@ export function useMaterialProduction(
 
   useEffect(() => {
     if (!safeDateString || !metadata || Object.keys(metadata).length === 0 || !countryDetail) return;
-    
+
     const { hasUpdates, updates } = calculateDailyMaterialProduction(
       countryDetail,
       metadata,

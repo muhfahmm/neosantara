@@ -20,7 +20,7 @@ interface ModalProps {
 const UN_ORGANIZATIONS = [
   "Interpol", "Organisasi Kesehatan Dunia (WHO)", "UNESCO",
   "Organisasi Perdagangan Dunia (WTO)", "Organisasi Buruh Internasional (ILO)",
-  "Organisasi Pangan dan Pertanian (FAO)", "Organisasi Penerbangan Sipil Internasional (ICAO)",
+  "Organisasi Pangan dan Pertanian (FAO)",
   "Organisasi Maritim Internasional (IMO)", "Organisasi Telekomunikasi Internasional (ITU)",
   "Organisasi Meteorologi Dunia (WMO)",
 ];
@@ -30,11 +30,7 @@ const REGIONAL_ORGANIZATIONS = [
   "Liga Arab", "Uni Afrika (AU)", "Organisasi Kerja Sama Islam (OKI)",
   "BRICS (Brasil, Rusia, India, China, Afrika Selatan)",
   "Pakta Pertahanan Atlantik Utara (NATO)", "Organisasi Negara-Negara Pengekspor Minyak Bumi (OPEC)",
-  "Kelompok Duapuluh (G20)", "Kerja Sama Ekonomi Asia-Pasifik (APEC)",
-  "Organisasi Kerja Sama Shanghai (SCO)", "Organisasi Negara-Negara Amerika (OAS)",
-  "Dewan Kerja Sama Teluk (GCC)", "Pasar Umum Selatan (MERCOSUR)",
-  "Persemakmuran Bangsa-Bangsa (Commonwealth)", "Kelompok Tujuh (G7)",
-  "Dialog Keamanan Kuadrilateral (QUAD)", "Organisasi Kerja Sama dan Pembangunan Ekonomi (OECD)",
+  "Kelompok Duapuluh (G20)",
 ];
 
 const orgIconMap: Record<string, React.ElementType> = {
@@ -44,7 +40,6 @@ const orgIconMap: Record<string, React.ElementType> = {
   "Organisasi Perdagangan Dunia (WTO)": ArrowRightLeft,
   "Organisasi Buruh Internasional (ILO)": Users,
   "Organisasi Pangan dan Pertanian (FAO)": Sprout,
-  "Organisasi Penerbangan Sipil Internasional (ICAO)": Plane,
   "Organisasi Maritim Internasional (IMO)": Ship,
   "Organisasi Telekomunikasi Internasional (ITU)": Wifi,
   "Organisasi Meteorologi Dunia (WMO)": Cloud,

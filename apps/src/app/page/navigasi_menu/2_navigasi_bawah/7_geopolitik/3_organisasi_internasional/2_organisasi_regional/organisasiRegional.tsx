@@ -19,11 +19,30 @@ interface MemberData {
   iso?: string;
 }
 
+const ORGANIZATION_BENEFITS: Record<string, string> = {
+  "asean": "Kecepatan Pembangunan +10%",
+  "perhimpunan bangsa-bangsa asia tenggara (asean)": "Kecepatan Pembangunan +10%",
+  "uni eropa": "Penerimaan Pajak +10%",
+  "uni eropa (eu)": "Penerimaan Pajak +10%",
+  "liga arab": "Pengaruh Diplomasi +5 suara PBB",
+  "uni afrika": "Kecepatan Pembangunan +10%",
+  "organisasi kerja sama islam (oki)": "Produksi Pangan +10%",
+  "oki": "Produksi Pangan +10%",
+  "brics": "Pendapatan Negara +10%",
+  "pakta pertahanan atletik utara (nato)": "Kekuatan Militer +15%",
+  "nato": "Kekuatan Militer +15%",
+  "opec": "Harga Minyak +20%",
+  "organisasi negara-negara pengeskpor minyak bumi (opec)": "Harga Minyak +20%",
+  "g20": "Pendapatan Negara +20%",
+  "group of twenty (g20)": "Pendapatan Negara +20%",
+};
+
 export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCountry, onClose, onOpenCountryDetail, onOpenPlayerDetail }: OrganisasiPBBModalProps) {
   const [members, setMembers] = useState<MemberData[]>([]);
   const [loading, setLoading] = useState(true);
 
   const playerCountryName = selectedCountry?.country || "";
+  const benefitText = ORGANIZATION_BENEFITS[orgName?.toLowerCase()?.trim()] || "";
 
   const getIsoFromName = (name: string) => {
     const found = COUNTRIES_DATA?.find(
@@ -102,7 +121,23 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
       </div>
 
       {/* BODY - Daftar Negara Anggota */}
-      <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] custom-scrollbar">
+      <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] custom-scrollbar space-y-4">
+        {benefitText && (
+          <div className="w-full bg-[#00FFAA]/10 border border-[#00FFAA]/30 rounded-xl p-4 flex items-center justify-between shadow-md">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#00FFAA]/70 block">
+                Efek / Keuntungan Keanggotaan
+              </span>
+              <span className="text-sm sm:text-base font-extrabold text-[#00FFAA] tracking-wide">
+                {benefitText}
+              </span>
+            </div>
+            <div className="px-3 py-1 rounded-lg bg-[#00FFAA]/20 border border-[#00FFAA]/40 text-[#00FFAA] text-xs font-bold uppercase tracking-wider">
+              Aktif
+            </div>
+          </div>
+        )}
+
         <div className="w-full bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-6 shadow-md">
           <div className="flex justify-between items-center mb-4 border-b border-[#00FFAA]/20 pb-2">
             <h4 className="text-xs font-black text-[#00FFAA] uppercase tracking-wider">

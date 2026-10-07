@@ -11,7 +11,13 @@ import {
 import {
   applyAtheismResearchSpeedBonus,
   ATHEISM_RESEARCH_SPEED_BONUS,
-} from '@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/bonus_logic/agama_bonus_logic/ateisme';
+} from '@/app/page/bonus_logic/agama_bonus_logic/ateisme';
+import {
+  calculateEducationPoints,
+  getEducationResearchModifier,
+  calculateCombinedResearchDurationModifier,
+  applyCombinedResearchDuration,
+} from '@/app/page/downgrade_logic';
 
 export type CategoryKey = 'sains' | 'ekonomi' | 'militer' | 'sosial' | 'lingkungan' | 'diplomasi' | 'budaya';
 
@@ -378,8 +384,14 @@ export default function PenelitianPageModal({
   const money = Number(countryDetail?.anggaran || 0);
   const religion = countryDetail?.religion ?? countryDetail?.agama_utama ?? countryDetail?.agama;
   const hasAtheismResearchBonus = String(religion || '').trim().toLowerCase() === 'ateisme';
-  const getEffectiveResearchDuration = (durationDays: number) =>
-    applyAtheismResearchSpeedBonus(durationDays, religion);
+  
+  const educationPoints = calculateEducationPoints(countryDetail);
+  const educationModifier = getEducationResearchModifier(educationPoints);
+  const combinedModifier = calculateCombinedResearchDurationModifier(educationPoints, religion);
+
+  const getEffectiveResearchDuration = (durationDays: number) => {
+    return applyCombinedResearchDuration(durationDays, educationPoints, religion);
+  };
 
   const isUnlocked = (id: string) => completedResearch.includes(id);
   const isActive = (id: string) => activeResearchId === id;
@@ -488,7 +500,7 @@ export default function PenelitianPageModal({
     const bonus = getCardBonus(level);
     const amplified = effect.value * (1 + bonus / 100);
     const isReduction = effect.label.trim().startsWith('-') ||
-      ['emisi','polusi','kriminalitas','pengangguran','penyakit','kebocoran','sabotase','inflasi','subsidi'].some((s) => effect.stat.includes(s));
+      ['emisi', 'polusi', 'kriminalitas', 'pengangguran', 'penyakit', 'kebocoran', 'sabotase', 'inflasi', 'subsidi'].some((s) => effect.stat.includes(s));
 
     if (isReduction) {
       return `-${Math.abs(amplified).toFixed(1)}% ${effect.label.replace(/^[+-]?\d+(\.\d+)?%\s*/, '')}`;
@@ -575,11 +587,10 @@ export default function PenelitianPageModal({
               <button
                 key={cat.key}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl border text-left transition-all cursor-pointer ${
-                  isActiveTab
+                className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl border text-left transition-all cursor-pointer ${isActiveTab
                     ? 'bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md'
                     : 'bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]'
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
                   <Icon className="w-4 h-4 shrink-0" />
@@ -588,9 +599,8 @@ export default function PenelitianPageModal({
                   </span>
                 </div>
                 <span
-                  className={`text-[9px] font-black px-1.5 py-0.5 rounded ml-1 shrink-0 ${
-                    isActiveTab ? 'bg-[#0A1A1A]/20 text-[#0A1A1A]' : 'bg-[#0A1A1A] text-[#00FFAA]'
-                  }`}
+                  className={`text-[9px] font-black px-1.5 py-0.5 rounded ml-1 shrink-0 ${isActiveTab ? 'bg-[#0A1A1A]/20 text-[#0A1A1A]' : 'bg-[#0A1A1A] text-[#00FFAA]'
+                    }`}
                 >
                   {stats.done}/{stats.total}
                 </span>
@@ -626,6 +636,40 @@ export default function PenelitianPageModal({
               </p>
             </div>
           )}
+
+          {/* STATUS PENDIDIKAN & PENELITIAN */}
+          <div className="mt-2 p-3 rounded-2xl bg-[#0F2424] border border-[#00FFAA]/30 space-y-2.5">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-[#00FFAA]" />
+                <span className="text-xs font-black text-[#00FFAA] uppercase tracking-wider">
+                  POIN PENDIDIKAN
+                </span>
+              </div>
+              <span className="text-base sm:text-lg font-black text-amber-400">
+                {educationPoints} / 100
+              </span>
+            </div>
+
+            {/* Box 1: Pengaruh Poin Pendidikan */}
+            <div className={`flex items-center justify-between px-3 py-2 rounded-xl border text-xs font-bold ${
+              educationModifier.isPenalty
+                ? 'bg-[#2A141A] border-rose-500/50 text-rose-300'
+                : 'bg-[#0E2A20] border-emerald-500/50 text-emerald-300'
+            }`}>
+              <span className="font-bold">Pengaruh Waktu Riset:</span>
+              <span className="font-black">{educationModifier.label}</span>
+            </div>
+
+            {/* Box 2: Bonus Ateisme (jika aktif) */}
+            {combinedModifier.hasAtheismBonus && (
+              <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0E2A20] border border-emerald-500/50 text-emerald-300 text-xs font-bold">
+                <span className="font-bold">Bonus Ateisme:</span>
+                <span className="font-black">-15% Waktu Penelitian</span>
+              </div>
+            )}
+          </div>
 
           {/* INFO SISTEM */}
           <div className="mt-2 p-2.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/20">
@@ -700,19 +744,17 @@ export default function PenelitianPageModal({
                           )}
 
                           <div
-                            className={`relative rounded-xl overflow-visible border transition-all z-10 ${
-                              isResearching ? 'mt-6' : ''
-                            } ${
-                              isMaxed
+                            className={`relative rounded-xl overflow-visible border transition-all z-10 ${isResearching ? 'mt-6' : ''
+                              } ${isMaxed
                                 ? 'bg-gradient-to-r from-[#0F2424] via-[#0A1A1A] to-[#122E2E] border-amber-500/60 shadow-[0_0_15px_rgba(245,158,11,0.15)]'
                                 : unlocked
-                                ? 'bg-[#0F2424] border-[#00FFAA]/50 shadow-[0_2px_10px_rgba(0,255,170,0.1)]'
-                                : active
-                                ? 'bg-[#0F2424] border-[#00FFAA] shadow-[0_0_20px_rgba(0,255,170,0.2)]'
-                                : locked
-                                ? 'bg-[#0A1A1A]/80 border-gray-800 opacity-60'
-                                : 'bg-[#0A1A1A] border-[#00FFAA]/25 hover:border-[#00FFAA]/60'
-                            }`}
+                                  ? 'bg-[#0F2424] border-[#00FFAA]/50 shadow-[0_2px_10px_rgba(0,255,170,0.1)]'
+                                  : active
+                                    ? 'bg-[#0F2424] border-[#00FFAA] shadow-[0_0_20px_rgba(0,255,170,0.2)]'
+                                    : locked
+                                      ? 'bg-[#0A1A1A]/80 border-gray-800 opacity-60'
+                                      : 'bg-[#0A1A1A] border-[#00FFAA]/25 hover:border-[#00FFAA]/60'
+                              }`}
                           >
                             {/* TANGGAL SELESAI RISET/PEMBANGUNAN */}
                             {isResearching && (() => {
@@ -738,13 +780,12 @@ export default function PenelitianPageModal({
                             <div className="p-3 pb-2 flex items-center justify-between gap-2 border-b border-[#00FFAA]/10 bg-[#0F2424] rounded-t-xl">
                               <div className="flex items-center gap-2 min-w-0">
                                 <div
-                                  className={`p-1.5 rounded-lg border shrink-0 ${
-                                    isMaxed
+                                  className={`p-1.5 rounded-lg border shrink-0 ${isMaxed
                                       ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
                                       : unlocked
-                                      ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
-                                      : 'bg-[#00FFAA]/10 border-[#00FFAA]/30 text-[#00FFAA]'
-                                  }`}
+                                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
+                                        : 'bg-[#00FFAA]/10 border-[#00FFAA]/30 text-[#00FFAA]'
+                                    }`}
                                 >
                                   <Icon className="w-3.5 h-3.5" />
                                 </div>
@@ -798,23 +839,21 @@ export default function PenelitianPageModal({
                                 {/* Center: Progress Bar */}
                                 <div className="flex-1 h-1.5 bg-[#0A1A1A] rounded-full overflow-hidden border border-[#00FFAA]/20">
                                   <div
-                                    className={`h-full transition-all duration-300 ${
-                                      isMaxed
+                                    className={`h-full transition-all duration-300 ${isMaxed
                                         ? 'bg-amber-400'
                                         : active
-                                        ? 'bg-[#00FFAA] animate-pulse'
-                                        : unlocked
-                                        ? 'bg-emerald-400'
-                                        : 'bg-gray-700'
-                                    }`}
+                                          ? 'bg-[#00FFAA] animate-pulse'
+                                          : unlocked
+                                            ? 'bg-emerald-400'
+                                            : 'bg-gray-700'
+                                      }`}
                                     style={{
-                                      width: `${
-                                        isMaxed
+                                      width: `${isMaxed
                                           ? 100
                                           : active
-                                          ? activeResearchProgress
-                                          : (level / MAX_CARD_LEVEL) * 100
-                                      }%`,
+                                            ? activeResearchProgress
+                                            : (level / MAX_CARD_LEVEL) * 100
+                                        }%`,
                                     }}
                                   />
                                 </div>
@@ -842,11 +881,10 @@ export default function PenelitianPageModal({
                                     <button
                                       onClick={() => canUnlock && setConfirmTarget(research)}
                                       disabled={!canUnlock}
-                                      className={`w-full py-1 rounded border flex items-center justify-center gap-1 text-[9px] font-black uppercase transition-all cursor-pointer ${
-                                        canUnlock
+                                      className={`w-full py-1 rounded border flex items-center justify-center gap-1 text-[9px] font-black uppercase transition-all cursor-pointer ${canUnlock
                                           ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] hover:bg-[#00FFAA]/80 active:scale-95 shadow-md'
                                           : 'bg-gray-800/50 border-gray-700 text-gray-500 cursor-not-allowed'
-                                      }`}
+                                        }`}
                                     >
                                       <Rocket className="w-2.5 h-2.5" />
                                       {canUnlock ? `Riset (${research.cost.toLocaleString('id-ID')})` : 'Kas Tidak Cukup'}
@@ -876,11 +914,10 @@ export default function PenelitianPageModal({
                                     <button
                                       onClick={() => canUpgrade && setConfirmUpgrade({ research, targetLevel: nextLevel })}
                                       disabled={!canUpgrade}
-                                      className={`w-full py-1 rounded border flex items-center justify-center gap-1 text-[9px] font-black uppercase transition-all cursor-pointer ${
-                                        canUpgrade
+                                      className={`w-full py-1 rounded border flex items-center justify-center gap-1 text-[9px] font-black uppercase transition-all cursor-pointer ${canUpgrade
                                           ? 'bg-gradient-to-r from-[#00FFAA] to-emerald-400 text-[#0A1A1A] border-[#00FFAA] hover:opacity-90 active:scale-95 shadow-md'
                                           : 'bg-gray-800/50 border-gray-700 text-gray-500 cursor-not-allowed'
-                                      }`}
+                                        }`}
                                     >
                                       <ChevronUp className="w-2.5 h-2.5" />
                                       {canUpgrade ? `Upgrade Lv.${nextLevel}` : 'Kas Tidak Cukup'}

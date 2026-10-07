@@ -1,4 +1,4 @@
-import { getProductionBonusMultiplier } from "../../../bonus_logic";
+import { getProductionBonusMultiplier } from "../../../../../../../bonus_logic";
 
 export interface FuelRule {
   resourceKey: string;
