@@ -137,7 +137,7 @@ export function expelCountryFromOrganizations(countryName: string): string[] {
   return organizations;
 }
 
-export function getOrgMembers(orgName: string): { country: string; status: string }[] {
+export function getOrgMembers(orgName: string, playerCountryName?: string): { country: string; status: string }[] {
   if (!orgName) return [];
   
   let list = orgNameToKeyMap[orgName];
@@ -150,19 +150,54 @@ export function getOrgMembers(orgName: string): { country: string; status: strin
     }
   }
 
-  if (!list || !Array.isArray(list)) return [];
-
+  const result: { country: string; status: string }[] = [];
   const expelledCountries = getExpelledCountryNames();
-  return list.map((item) => {
-    const rawCountry = typeof item === 'string' ? item : (item as any).country || '';
-    const formattedCountry = rawCountry
+
+  if (list && Array.isArray(list)) {
+    list.forEach((item) => {
+      const rawCountry = typeof item === 'string' ? item : (item as any).country || '';
+      const formattedCountry = rawCountry
+        .split(' ')
+        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      
+      if (!expelledCountries.has(normalizeCountryName(formattedCountry))) {
+        result.push({
+          country: formattedCountry,
+          status: 'Anggota',
+        });
+      }
+    });
+  }
+
+  // Inject user country if they have accepted membership and aren't in the default static list
+  if (playerCountryName) {
+    const formattedPlayer = playerCountryName
       .split(' ')
       .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
-    
-    return {
-      country: formattedCountry,
-      status: 'Anggota',
-    };
-  }).filter(member => !expelledCountries.has(normalizeCountryName(member.country)));
+
+    const normPlayer = normalizeCountryName(playerCountryName);
+    const alreadyExists = result.some(m => normalizeCountryName(m.country) === normPlayer);
+
+    if (!alreadyExists && typeof window !== 'undefined') {
+      try {
+        const rawJoined = localStorage.getItem(`neosantara_user_joined_orgs_v1_${normPlayer.replace(/[^a-z0-9]/g, '')}`);
+        if (rawJoined) {
+          const joinedArray: string[] = JSON.parse(rawJoined);
+          const normOrg = orgName.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+          if (Array.isArray(joinedArray) && joinedArray.includes(normOrg)) {
+            result.push({
+              country: formattedPlayer,
+              status: 'Anggota',
+            });
+          }
+        }
+      } catch (e) {
+        console.error('Failed to parse joined orgs in getOrgMembers:', e);
+      }
+    }
+  }
+
+  return result;
 }

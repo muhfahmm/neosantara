@@ -1,8 +1,11 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { X, Loader2, User, ChevronRight } from "lucide-react";
+import { X, Loader2, User, ChevronRight, Send, Clock, Check } from "lucide-react";
 import { getOrgMembers } from "@/../../json/database_organisasi_internasional";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
+import PermohonanKeanggotaanModal from "../PermohonanKeanggotaanModal";
+import { getApplicationForOrg } from "../orgMembershipLogic";
+import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
 
 interface OrganisasiPBBModalProps {
   orgName: string;
@@ -40,6 +43,7 @@ const ORGANIZATION_BENEFITS: Record<string, string> = {
 export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCountry, onClose, onOpenCountryDetail, onOpenPlayerDetail }: OrganisasiPBBModalProps) {
   const [members, setMembers] = useState<MemberData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isPermohonanOpen, setIsPermohonanOpen] = useState(false);
 
   const playerCountryName = selectedCountry?.country || "";
   const benefitText = ORGANIZATION_BENEFITS[orgName?.toLowerCase()?.trim()] || "";
@@ -67,7 +71,7 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
 
   useEffect(() => {
     setLoading(true);
-    const data = getOrgMembers(orgName);
+    const data = getOrgMembers(orgName, playerCountryName);
     const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
     const activeMembers = data.filter((m: MemberData) => {
       const raw = String(m.country || '').trim();
@@ -122,21 +126,46 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
 
       {/* BODY - Daftar Negara Anggota */}
       <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] custom-scrollbar space-y-4">
-        {benefitText && (
-          <div className="w-full bg-[#00FFAA]/10 border border-[#00FFAA]/30 rounded-xl p-4 flex items-center justify-between shadow-md">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#00FFAA]/70 block">
-                Efek / Keuntungan Keanggotaan
-              </span>
-              <span className="text-sm sm:text-base font-extrabold text-[#00FFAA] tracking-wide">
-                {benefitText}
-              </span>
+        {benefitText && (() => {
+          const app = getApplicationForOrg(playerCountryName, orgName);
+          const currentDateStr = typeof window !== "undefined" ? localStorage.getItem("neosantara_current_game_date") || formatDate(new Date()) : formatDate(new Date());
+          const remainingDays = app ? Math.max(0, 30 - getDaysElapsed(app.submissionDate, currentDateStr)) : 30;
+
+          return (
+            <div className="w-full bg-[#00FFAA]/10 border border-[#00FFAA]/30 rounded-xl p-4 flex items-center justify-between shadow-md flex-wrap gap-3">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#00FFAA]/70 block">
+                  Efek / Keuntungan Keanggotaan
+                </span>
+                <span className="text-sm sm:text-base font-extrabold text-[#00FFAA] tracking-wide">
+                  {benefitText}
+                </span>
+              </div>
+              {app?.status === "accepted" ? (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-black text-[11px] uppercase tracking-wider shrink-0 shadow-sm">
+                  <Check className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>Anggota Aktif</span>
+                </span>
+              ) : app?.status === "pending" ? (
+                <button
+                  onClick={() => setIsPermohonanOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500/30 font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shadow-sm shrink-0"
+                >
+                  <Clock className="h-3.5 w-3.5 animate-pulse text-amber-400" />
+                  <span>Peninjauan ({remainingDays} Hari)</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsPermohonanOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shadow-sm shrink-0"
+                >
+                  <Send className="h-3.5 w-3.5" />
+                  <span>Kirim Permohonan</span>
+                </button>
+              )}
             </div>
-            <div className="px-3 py-1 rounded-lg bg-[#00FFAA]/20 border border-[#00FFAA]/40 text-[#00FFAA] text-xs font-bold uppercase tracking-wider">
-              Aktif
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
         <div className="w-full bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-6 shadow-md">
           <div className="flex justify-between items-center mb-4 border-b border-[#00FFAA]/20 pb-2">
@@ -199,6 +228,13 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
           )}
         </div>
       </div>
+      <PermohonanKeanggotaanModal
+        isOpen={isPermohonanOpen}
+        onClose={() => setIsPermohonanOpen(false)}
+        orgName={orgName}
+        countryName={playerCountryName}
+        orgIcon={Icon}
+      />
     </div>
   );
 }

@@ -79,6 +79,7 @@ import { clearActiveResolutionsForSession, tickPBBResolutions, spawnAIResolution
 import { clearActiveSecurityCouncilItems, tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { initCountryIsoFromDatabase, getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { isMemberOfWMO } from '../bonus_logic';
+import { checkAndProcessOrgApplications } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic';
 import { fetchAllCountryProfilesFromDb } from '@/../../json/semua_fitur_negara/0_profiles';
 import { applyNpcCountrySimulationState, useNpcCountrySimulation } from '@/app/logic/npcCountrySimulation';
 import {
@@ -1827,6 +1828,7 @@ export default function MapPage() {
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const loadSaveStr = localStorage.getItem('presiden_simulator_load_save');
+            const isNewGame = localStorage.getItem('presiden_simulator_new_game') === '1';
             if (loadSaveStr) {
                 void (async () => {
                     try {
@@ -1914,6 +1916,9 @@ export default function MapPage() {
                 if (chosen) {
                     setSelectedCountry(chosen);
                     loadCountryStats(chosen.country, chosen.capital);
+                    if (isNewGame || !loadSaveStr) {
+                        expelCountryFromOrganizations(chosen.country);
+                    }
                 }
             }
         }
@@ -1931,6 +1936,10 @@ export default function MapPage() {
         logger.log('MapPage', 'Date changed to:', currentDateStr);
         if (typeof window !== 'undefined') {
             try { localStorage.setItem('neosantara_current_game_date', currentDateStr); } catch (e) {}
+            const userCountryName = String(countryDetail?.country || countryDetail?.nama || '');
+            if (userCountryName) {
+                checkAndProcessOrgApplications(userCountryName, currentDateStr);
+            }
         }
 
         if (countryDetail && !countryDetail.pbbSecurityCouncilElection) {

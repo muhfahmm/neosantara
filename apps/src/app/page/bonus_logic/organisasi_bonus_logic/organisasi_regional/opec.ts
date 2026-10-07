@@ -1,4 +1,5 @@
 import { getOrgMembers } from "@/../../json/database_organisasi_internasional";
+import { isUserJoinedOrg } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic";
 
 export const OPEC_OIL_RESOURCES = new Set([
   "minyak",
@@ -10,6 +11,7 @@ export const OPEC_OIL_RESOURCES = new Set([
  */
 export function isMemberOfOPEC(countryName: string): boolean {
   if (!countryName) return false;
+  if (isUserJoinedOrg(countryName, "Organisasi Negara-Negara Pengekspor Minyak Bumi (OPEC)") || isUserJoinedOrg(countryName, "OPEC")) return true;
   const members = getOrgMembers("Organisasi Negara-Negara Pengekspor Minyak Bumi (OPEC)");
   const normName = countryName.toLowerCase().trim();
   return members.some((m) => m.country?.toLowerCase().trim() === normName);
