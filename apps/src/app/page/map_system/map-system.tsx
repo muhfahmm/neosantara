@@ -1627,11 +1627,6 @@ export default function MapPage() {
                         setCurrentDate(newDate);
                     }
                 }
-            },
-            (progress) => {
-                if (progressBarRef.current) {
-                    progressBarRef.current.style.transform = `scaleX(${progress / 100})`;
-                }
             }
         );
 
@@ -3466,14 +3461,6 @@ export default function MapPage() {
                         </div>
                     </div>
 
-                    {/* Progress Bar slot */}
-                    <div className="w-full h-2 xl:h-3 bg-[#0A1A1A] rounded-full border border-[#00FFAA]/20 overflow-hidden relative">
-                        <div
-                            ref={progressBarRef}
-                            className="h-full w-full bg-[#00FFAA] rounded-full origin-left will-change-transform"
-                            style={{ transform: 'scaleX(0)' }}
-                        />
-                    </div>
                 </div>
 
                 {/* Lower Dark Card with buttons */}
