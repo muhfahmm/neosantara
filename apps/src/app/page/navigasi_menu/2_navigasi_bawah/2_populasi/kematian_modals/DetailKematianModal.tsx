@@ -257,7 +257,7 @@ export default function DetailKematianModal({
                   <h4 className="text-xs font-black text-[#00FFAA] uppercase">Ketahanan Pangan</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#E0E0E0]">{indeksKetahananPangan}%</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{calculatePanganScore(countryDetail, undefined)} POIN</span>
                   <span className="text-[10px] text-[#6B8A8A]">× {foodSecurityFactor.toFixed(3)}</span>
                 </div>
                 <p className="text-[10px] text-[#6B8A8A]">Ketersediaan pangan yang cukup mengurangi kematian akibat malnutrisi.</p>
@@ -281,13 +281,13 @@ export default function DetailKematianModal({
                   <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
                     <AlertTriangle className="h-4 w-4 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Tingkat Kriminalitas</h4>
+                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Penegakan Hukum & Kriminalitas</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#E0E0E0]">{tingkatKriminalitas}%</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{calculatePenegakanHukumScore(countryDetail)} POIN</span>
                   <span className="text-[10px] text-[#6B8A8A]">× {crimeFactor.toFixed(3)}</span>
                 </div>
-                <p className="text-[10px] text-[#6B8A8A]">Setiap 1% kriminalitas meningkatkan kematian sebesar 2%.</p>
+                <p className="text-[10px] text-[#6B8A8A]">Skor kepuasan penegakan hukum dari Indeks Kesejahteraan.</p>
               </div>
 
               {/* 7. Polusi */}
