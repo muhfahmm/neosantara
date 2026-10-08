@@ -12,9 +12,6 @@ interface Props {
 export default function KartuKebijakanTab({ policyChoices, handlePolicyChange }: Props) {
   return (
     <div className="space-y-2.5 lg:space-y-3.5 max-w-full">
-      <p className="text-[10px] lg:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-1">
-        Pilih opsi kebijakan sektoral spesifik untuk menentukan pendekatan regulasi negara Anda secara terperinci.
-      </p>
 
       {ECONOMIC_POLICIES.map((policy) => {
         const currentChoice = policyChoices[policy.id] || "A";
@@ -23,7 +20,6 @@ export default function KartuKebijakanTab({ policyChoices, handlePolicyChange }:
           <div key={policy.id} className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-3 lg:p-3.5 2xl:p-4 space-y-2">
             <div>
               <h4 className="text-xs lg:text-sm font-black text-[#E0E0E0] uppercase tracking-wider">{policy.name}</h4>
-              <p className="text-[9px] lg:text-[11px] text-[#6B8A8A] mt-0.5">{policy.description}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-2.5 pt-0.5">
