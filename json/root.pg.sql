@@ -239,11 +239,11 @@ INSERT INTO database_profiles_negara (id, country_slug, name_id, name_en, capita
 (205, 'suriname', 'Suriname', 'Suriname', 'Paramaribo', '-56.000000', '4.000000', '🇸🇷', 634431, 34, 97, 'Protestan', 'Demokrasi', 8, 'Netral', 0, 100, 'Netral', 1, 4, 57),
 (206, 'uruguay', 'Uruguay', 'Uruguay', 'Montevideo', '-56.000000', '-33.000000', '🇺🇾', 3499451, 700, 2000, 'Ateisme', 'Demokrasi', 104, 'Netral', 0, 100, 'Netral', 8, 29, 57),
 (207, 'venezuela', 'Venezuela', 'Venezuela', 'Caracas', '-66.000000', '8.000000', '🇻🇪', 28405543, 924, 2639, 'Katolik', 'Sosialisme', 200, 'Netral', 0, 100, 'Netral', 40, 34, 57),
-(208, 'mayotte', 'Mayotte', 'Mayotte', 'Mamoudzou', '45.230000', '-12.780000', '🇾🇹', 0, 0, 0, 'Belum tersedia', 'Belum tersedia', 1, 'Netral', 0, 0, 'Netral', 0, 0, 0),
-(209, 'reunion', 'Reunion', 'Reunion', 'Saint-Denis', '55.450000', '-20.880000', '🇷🇪', 0, 0, 0, 'Belum tersedia', 'Belum tersedia', 2, 'Netral', 0, 0, 'Netral', 0, 0, 0),
-(210, 'guadeloupe', 'Guadeloupe', 'Guadeloupe', 'Basse-Terre', '-61.730000', '16.000000', '🇬🇵', 0, 0, 0, 'Belum tersedia', 'Belum tersedia', 3, 'Netral', 0, 0, 'Netral', 0, 0, 0),
-(211, 'martinique', 'Martinique', 'Martinique', 'Fort-de-France', '-61.080000', '14.600000', '🇲🇶', 0, 0, 0, 'Belum tersedia', 'Belum tersedia', 4, 'Netral', 0, 0, 'Netral', 0, 0, 0),
-(212, 'bonaire_sint_eustatius_dan_saba', 'Bonaire, Sint Eustatius dan Saba', 'Bonaire, Sint Eustatius and Saba', 'Kralendijk', '-68.270000', '12.150000', '🇧🇶', 0, 0, 0, 'Belum tersedia', 'Belum tersedia', 5, 'Netral', 0, 0, 'Netral', 0, 0, 0);
+(208, 'mayotte', 'Mayotte', 'Mayotte', 'Mamoudzou', '45.230000', '-12.780000', '🇾🇹', 320901, 48, 137, 'Islam', 'Demokrasi', 1, 'Netral', 0, 100, 'Netral', 3, 2, 57),
+(209, 'reunion', 'Reunion', 'Reunion', 'Saint-Denis', '55.450000', '-20.880000', '🇷🇪', 873109, 395, 1128, 'Katolik', 'Demokrasi', 2, 'Netral', 0, 100, 'Netral', 12, 10, 57),
+(210, 'guadeloupe', 'Guadeloupe', 'Guadeloupe', 'Basse-Terre', '-61.730000', '16.000000', '🇬🇵', 375845, 178, 509, 'Katolik', 'Demokrasi', 3, 'Netral', 0, 100, 'Netral', 8, 6, 57),
+(211, 'martinique', 'Martinique', 'Martinique', 'Fort-de-France', '-61.080000', '14.600000', '🇲🇶', 347686, 172, 491, 'Katolik', 'Demokrasi', 4, 'Netral', 0, 100, 'Netral', 7, 5, 57),
+(212, 'bonaire_sint_eustatius_dan_saba', 'Bonaire, Sint Eustatius dan Saba', 'Bonaire, Sint Eustatius and Saba', 'Kralendijk', '-68.270000', '12.150000', '🇧🇶', 29418, 19, 54, 'Katolik', 'Demokrasi', 5, 'Netral', 0, 100, 'Netral', 2, 1, 57);
 -- ========================================================
 -- SECTION: json/database_sistem_ekonomi\database_sistem_ekonomi.pg.sql
 DROP TABLE IF EXISTS database_sistem_ekonomi;
@@ -1451,11 +1451,11 @@ diplomacy_score, openness_index
 (205, 'Suriname', 'Suriname', 75, 75, 62, 40, 72, 62, 60, 55, 55, 62),
 (206, 'Uruguay', 'Uruguay', 90, 88, 82, 73, 82, 88, 70, 68, 72, 79),
 (207, 'Venezuela', 'Venezuela', 25, 55, 18, 13, 15, 40, 40, 25, 45, 31),
-(208, 'Mayotte', 'Mayotte', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(209, 'Reunion', 'Reunion', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'Guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(211, 'Martinique', 'Martinique', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'Bonaire, Sint Eustatius and Saba', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'Mayotte', 70, 85, 60, 65, 70, 75, 60, 75, 75, 70),
+(209, 'Reunion', 'Reunion', 80, 80, 75, 70, 78, 82, 60, 80, 80, 76),
+(210, 'Guadeloupe', 'Guadeloupe', 80, 80, 75, 65, 75, 80, 60, 78, 80, 75),
+(211, 'Martinique', 'Martinique', 80, 80, 75, 65, 75, 80, 60, 78, 80, 75),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'Bonaire, Sint Eustatius and Saba', 85, 85, 80, 75, 80, 85, 65, 85, 85, 81);
 -- ========================================================
 -- SECTION: json/database_level_kabinet\database_level_kabinet.pg.sql
 DROP TABLE IF EXISTS database_level_kabinet;
@@ -1701,11 +1701,11 @@ id, country, country_slug, kem_infrastruktur, kem_pendidikan, kem_sains, kem_kes
 (205, 'Nauru', 'nauru', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 (206, 'Tuvalu', 'tuvalu', 3, 2, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 2, 3, 2, 2, 2, 2, 3),
 (207, 'Vatikan', 'vatikan', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+(209, 'Reunion', 'reunion', 2, 2, 1, 2, 1, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 1, 1, 1, 2, 2),
+(210, 'Guadeloupe', 'guadeloupe', 2, 2, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 2, 2, 1, 2, 1, 1, 1, 1, 2),
+(211, 'Martinique', 'martinique', 2, 2, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 2, 2, 1, 2, 1, 1, 1, 1, 2),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 -- ========================================================
 -- SECTION: json/database_SDA\database_sda.pg.sql
 DROP TABLE IF EXISTS database_sda;
@@ -1933,10 +1933,10 @@ id, country, country_slug, emas, uranium, batu_bara, minyak_bumi, gas_alam, gara
 (205, 'Suriname', 'suriname', TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE),
 (206, 'Uruguay', 'uruguay', TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE),
 (207, 'Venezuela', 'venezuela', FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE),
-(208, 'Mayotte', 'mayotte', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-(209, 'Reunion', 'reunion', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-(210, 'Guadeloupe', 'guadeloupe', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-(211, 'Martinique', 'martinique', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+(208, 'Mayotte', 'mayotte', FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE),
+(209, 'Reunion', 'reunion', FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE),
+(210, 'Guadeloupe', 'guadeloupe', FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE),
+(211, 'Martinique', 'martinique', FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE),
 (212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE);
 ;
 -- SET FOREIGN_KEY_CHECKS = 1;
@@ -2178,11 +2178,11 @@ gardu_pltu_minyak_bumi
 (205, 'Suriname', 'suriname', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0),
 (206, 'Uruguay', 'uruguay', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0),
 (207, 'Venezuela', 'venezuela', 2, 4, 0, 14, 6, 5, 0, 2, 6, 6),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
+(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
+(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
+(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
 -- SECTION: json/semua_fitur_negara\1_pembangunan\1_produksi\2_sektor_mineral_kritis\database_sektor_mineral_kritis.pg.sql
 DROP TABLE IF EXISTS database_sektor_mineral_kritis;
 CREATE TABLE database_sektor_mineral_kritis (

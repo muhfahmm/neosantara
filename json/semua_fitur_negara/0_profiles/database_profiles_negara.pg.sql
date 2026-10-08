@@ -231,9 +231,9 @@ INSERT INTO database_profiles_negara (id, country_slug, name_id, name_en, capita
 (205, 'suriname', 'Suriname', 'Suriname', 'Paramaribo', '-56.000000', '4.000000', '🇸🇷', 634431, 34, 97, 'Protestan', 'Demokrasi', 8, 'Netral', 0, 100, 'Netral', 1, 4, 57),
 (206, 'uruguay', 'Uruguay', 'Uruguay', 'Montevideo', '-56.000000', '-33.000000', '🇺🇾', 3499451, 700, 2000, 'Ateisme', 'Demokrasi', 104, 'Netral', 0, 100, 'Netral', 8, 29, 57),
 (207, 'venezuela', 'Venezuela', 'Venezuela', 'Caracas', '-66.000000', '8.000000', '🇻🇪', 28405543, 924, 2639, 'Katolik', 'Sosialisme', 200, 'Netral', 0, 100, 'Netral', 40, 34, 57),
-(208, 'mayotte', 'Mayotte', 'Mayotte', 'Mamoudzou', '45.230000', '-12.780000', '🇾🇹', 0, 0, 0, 'Belum tersedia', 'Belum tersedia', 1, 'Netral', 0, 0, 'Netral', 0, 0, 0),
-(209, 'reunion', 'Reunion', 'Reunion', 'Saint-Denis', '55.450000', '-20.880000', '🇷🇪', 0, 0, 0, 'Belum tersedia', 'Belum tersedia', 2, 'Netral', 0, 0, 'Netral', 0, 0, 0),
-(210, 'guadeloupe', 'Guadeloupe', 'Guadeloupe', 'Basse-Terre', '-61.730000', '16.000000', '🇬🇵', 0, 0, 0, 'Belum tersedia', 'Belum tersedia', 3, 'Netral', 0, 0, 'Netral', 0, 0, 0),
-(211, 'martinique', 'Martinique', 'Martinique', 'Fort-de-France', '-61.080000', '14.600000', '🇲🇶', 0, 0, 0, 'Belum tersedia', 'Belum tersedia', 4, 'Netral', 0, 0, 'Netral', 0, 0, 0),
-(212, 'bonaire_sint_eustatius_dan_saba', 'Bonaire, Sint Eustatius dan Saba', 'Bonaire, Sint Eustatius and Saba', 'Kralendijk', '-68.270000', '12.150000', '🇧🇶', 0, 0, 0, 'Belum tersedia', 'Belum tersedia', 5, 'Netral', 0, 0, 'Netral', 0, 0, 0);
+(208, 'mayotte', 'Mayotte', 'Mayotte', 'Mamoudzou', '45.230000', '-12.780000', '🇾🇹', 320901, 48, 137, 'Islam', 'Demokrasi', 1, 'Netral', 0, 100, 'Netral', 3, 2, 57),
+(209, 'reunion', 'Reunion', 'Reunion', 'Saint-Denis', '55.450000', '-20.880000', '🇷🇪', 873109, 395, 1128, 'Katolik', 'Demokrasi', 2, 'Netral', 0, 100, 'Netral', 12, 10, 57),
+(210, 'guadeloupe', 'Guadeloupe', 'Guadeloupe', 'Basse-Terre', '-61.730000', '16.000000', '🇬🇵', 375845, 178, 509, 'Katolik', 'Demokrasi', 3, 'Netral', 0, 100, 'Netral', 8, 6, 57),
+(211, 'martinique', 'Martinique', 'Martinique', 'Fort-de-France', '-61.080000', '14.600000', '🇲🇶', 347686, 172, 491, 'Katolik', 'Demokrasi', 4, 'Netral', 0, 100, 'Netral', 7, 5, 57),
+(212, 'bonaire_sint_eustatius_dan_saba', 'Bonaire, Sint Eustatius dan Saba', 'Bonaire, Sint Eustatius and Saba', 'Kralendijk', '-68.270000', '12.150000', '🇧🇶', 29418, 19, 54, 'Katolik', 'Demokrasi', 5, 'Netral', 0, 100, 'Netral', 2, 1, 57);
 -- ========================================================

@@ -226,9 +226,9 @@ diplomacy_score, openness_index
 (205, 'Suriname', 'Suriname', 75, 75, 62, 40, 72, 62, 60, 55, 55, 62),
 (206, 'Uruguay', 'Uruguay', 90, 88, 82, 73, 82, 88, 70, 68, 72, 79),
 (207, 'Venezuela', 'Venezuela', 25, 55, 18, 13, 15, 40, 40, 25, 45, 31),
-(208, 'Mayotte', 'Mayotte', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(209, 'Reunion', 'Reunion', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'Guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(211, 'Martinique', 'Martinique', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'Bonaire, Sint Eustatius and Saba', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'Mayotte', 70, 85, 60, 65, 70, 75, 60, 75, 75, 70),
+(209, 'Reunion', 'Reunion', 80, 80, 75, 70, 78, 82, 60, 80, 80, 76),
+(210, 'Guadeloupe', 'Guadeloupe', 80, 80, 75, 65, 75, 80, 60, 78, 80, 75),
+(211, 'Martinique', 'Martinique', 80, 80, 75, 65, 75, 80, 60, 78, 80, 75),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'Bonaire, Sint Eustatius and Saba', 85, 85, 80, 75, 80, 85, 65, 85, 85, 81);
 -- ========================================================

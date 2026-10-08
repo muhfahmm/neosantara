@@ -223,9 +223,9 @@ id, country, country_slug, emas, uranium, batu_bara, minyak_bumi, gas_alam, gara
 (205, 'Suriname', 'suriname', TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE),
 (206, 'Uruguay', 'uruguay', TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE),
 (207, 'Venezuela', 'venezuela', FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRUE),
-(208, 'Mayotte', 'mayotte', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-(209, 'Reunion', 'reunion', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-(210, 'Guadeloupe', 'guadeloupe', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
-(211, 'Martinique', 'martinique', FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE),
+(208, 'Mayotte', 'mayotte', FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE),
+(209, 'Reunion', 'reunion', FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE),
+(210, 'Guadeloupe', 'guadeloupe', FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE),
+(211, 'Martinique', 'martinique', FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE),
 (212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE);
 -- SET FOREIGN_KEY_CHECKS = 1;
