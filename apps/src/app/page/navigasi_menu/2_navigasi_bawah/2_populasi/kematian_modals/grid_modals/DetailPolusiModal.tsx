@@ -1,7 +1,6 @@
-"use client";
-
 import React from "react";
 import { X, Factory } from "lucide-react";
+import { calculateKesehatanScore } from "@/app/logic/kepuasanCalculator";
 
 interface DetailPolusiModalProps {
   isOpen: boolean;
@@ -18,7 +17,7 @@ export default function DetailPolusiModal({
 }: DetailPolusiModalProps) {
   if (!isOpen) return null;
 
-  const polusiIndex = countryDetail?.polusi_index ?? 40;
+  const polusiIndex = countryDetail?.polusi_index ?? Math.max(5, Math.min(100, Math.round(100 - (calculateKesehatanScore(countryDetail) * 0.8))));
   const countryName = selectedCountry?.country || "Indonesia";
   const factor = 1 + (polusiIndex / 200);
 

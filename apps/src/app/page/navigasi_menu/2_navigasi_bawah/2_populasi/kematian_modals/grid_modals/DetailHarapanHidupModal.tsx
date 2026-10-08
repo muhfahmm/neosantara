@@ -2,6 +2,7 @@
 
 import React from "react";
 import { X, Heart } from "lucide-react";
+import { calculateGeneralSatisfaction, calculateLifeExpectancy } from "@/app/logic/populations_logic/population_logic";
 
 interface DetailHarapanHidupModalProps {
   isOpen: boolean;
@@ -18,7 +19,9 @@ export default function DetailHarapanHidupModal({
 }: DetailHarapanHidupModalProps) {
   if (!isOpen) return null;
 
-  const harapanHidup = countryDetail?.harapan_hidup ?? 70;
+  const detailWithDefaults = { ...countryDetail };
+  const kepuasanUmum = calculateGeneralSatisfaction(detailWithDefaults);
+  const harapanHidup = Math.round(calculateLifeExpectancy(detailWithDefaults, kepuasanUmum));
   const countryName = selectedCountry?.country || "Indonesia";
   const factor = Math.max(0.8, 1.2 - (0.005 * (harapanHidup - 50)));
 

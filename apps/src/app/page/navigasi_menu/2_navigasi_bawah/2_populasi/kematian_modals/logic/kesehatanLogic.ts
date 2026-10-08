@@ -27,18 +27,16 @@ export function calculateKesehatanLogic(
 
   const totalBangunanMedis = baseRumahSakit + rsBesar + rsKecil + pusatDiagnostik;
 
-  // Ideal bangunan kesehatan (misal 1 per 100.000 jiwa sesuai standar awal)
-  const idealKesehatan = Math.ceil(populasi / 100000) || 1;
+  // Ideal bangunan kesehatan (1 per 25.000 jiwa sesuai target layanan publik)
+  const idealKesehatan = Math.ceil(populasi / 25000) || 1;
 
   // Rasio bangunan kesehatan (maksimal 1)
   const kesehatanRatio = Math.min(1, totalBangunanMedis / idealKesehatan);
 
-  // Semakin banyak bangunan, rasionya (kesehatanRatio) semakin besar.
-  // Nilai faktor pengali kematian (healthFactor) harus semakin kecil.
-  // Rumus dasar: healthFactor = 1.0 - (0.3 * kesehatanRatio)
-  // Ketika kesehatanRatio mendekati 1 (banyak bangunan), healthFactor mengecil ke 0.7.
-  // Ketika kesehatanRatio mendekati 0 (sedikit bangunan), healthFactor membesar mendekati 1.0.
-  const healthFactor = 1.0 - (0.3 * kesehatanRatio);
+  // Faktor pengali kematian akibat kesehatan (healthFactor):
+  // Ketika kesehatanRatio mendekati 1 (banyak bangunan), healthFactor mengecil ke 0.70 (kematian sangat rendah).
+  // Ketika kesehatanRatio mendekati 0 (sedikit bangunan), healthFactor membesar ke 1.30 (kematian tinggi).
+  const healthFactor = Math.max(0.70, 1.30 - (0.6 * kesehatanRatio));
 
   return {
     populasi,

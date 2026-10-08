@@ -11,6 +11,7 @@ import {
   calculateSecurityLevel,
 } from "@/app/logic/populations_logic/population_logic";
 
+import { calculateKesehatanScore, calculatePendidikanScore } from "@/app/logic/kesejahteraanCalculator";
 import { calculateKesehatanLogic } from "../kematian_modals/logic/kesehatanLogic";
 
 interface DetailKelahiranModalProps {
@@ -49,9 +50,15 @@ export default function DetailKelahiranModal({
   // Ambil data user
   const programInsentifAnak = countryDetail?.program_insentif_anak ?? false;
 
+  // Kesehatan & Pendidikan (dari Indeks Kesejahteraan)
+  const kesehatanMetrics = calculateKesehatanScore(countryDetail);
+  const kesehatanScore = typeof kesehatanMetrics === "object" ? kesehatanMetrics.score : kesehatanMetrics;
+
+  const pendidikanMetrics = calculatePendidikanScore(countryDetail);
+  const pendidikanScore = typeof pendidikanMetrics === "object" ? pendidikanMetrics.score : pendidikanMetrics;
+
   // Kesehatan - mengambil data dinamis seperti di menu kematian
   const kesehatanRes = calculateKesehatanLogic(countryDetail, populasi);
-  const jumlahRumahSakit = kesehatanRes.jumlahRumahSakit;
   const hospitalRatio = kesehatanRes.kesehatanRatio;
   const healthFactor = 0.7 + 0.3 * hospitalRatio;
 
@@ -178,7 +185,7 @@ export default function DetailKelahiranModal({
                   <h4 className="text-xs font-black text-[#00FFAA] uppercase">Fasilitas Kesehatan</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#E0E0E0]">{jumlahRumahSakit} RS (rasio {hospitalRatio.toFixed(2)})</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{kesehatanScore} POIN <span className="text-xs font-normal text-[#6B8A8A]">(rasio {hospitalRatio.toFixed(2)})</span></span>
                   <span className="text-[10px] text-[#6B8A8A]">× {healthFactor.toFixed(3)}</span>
                 </div>
               </div>
@@ -195,7 +202,7 @@ export default function DetailKelahiranModal({
                   <h4 className="text-xs font-black text-[#00FFAA] uppercase">Tingkat Pendidikan</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#E0E0E0]">{(tingkatPendidikan * 100).toFixed(0)}% (rasio {educationRatio.toFixed(2)})</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{pendidikanScore} POIN <span className="text-xs font-normal text-[#6B8A8A]">(rasio {educationRatio.toFixed(2)})</span></span>
                   <span className="text-[10px] text-[#6B8A8A]">× {educationFactor.toFixed(3)}</span>
                 </div>
               </div>

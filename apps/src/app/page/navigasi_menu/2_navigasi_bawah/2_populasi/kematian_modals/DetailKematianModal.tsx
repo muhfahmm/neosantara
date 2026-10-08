@@ -9,6 +9,7 @@ import {
   calculateSecurityLevel,
   calculateDailyDeaths,
 } from "@/app/logic/populations_logic/population_logic";
+import { calculatePanganScore, calculateKesehatanScore, calculatePenegakanHukumScore } from "@/app/logic/kepuasanCalculator";
 
 // ðŸ”¥ Import 7 modal detail (pastikan path sesuai struktur Anda)
 import DetailHarapanHidupModal from './grid_modals/DetailHarapanHidupModal';
@@ -66,12 +67,12 @@ export default function DetailKematianModal({
   const lifeExpectancy = calculateLifeExpectancy(detailWithDefaults, kepuasanUmum);
   const securityLevel = calculateSecurityLevel(detailWithDefaults, kepuasanUmum);
 
-  // --- Data visual UI & Logic Baru ---
-  const harapanHidup = countryDetail?.harapan_hidup ?? 70;
-  const indeksKetahananPangan = countryDetail?.indeks_ketahanan_pangan ?? 60;
-  const polusiIndex = countryDetail?.polusi_index ?? 40;
+  // --- Data visual UI & Logic Baru (Dinamis dari state negara) ---
+  const harapanHidup = Math.round(calculateLifeExpectancy(detailWithDefaults, kepuasanUmum));
+  const indeksKetahananPangan = countryDetail?.indeks_ketahanan_pangan ?? calculatePanganScore(countryDetail, undefined);
+  const polusiIndex = countryDetail?.polusi_index ?? Math.max(5, Math.min(100, Math.round(100 - (calculateKesehatanScore(countryDetail) * 0.8))));
 
-  // Hitung dengan logic baru
+  // Hitung dengan logic terpusat
   const keamananRes = calculateKeamananLogic(countryDetail, populasi);
   const kesehatanRes = calculateKesehatanLogic(countryDetail, populasi);
   const tunawismaRes = calculateTunawismaLogic(countryDetail, populasi, propsHomelessCount);
@@ -88,7 +89,7 @@ export default function DetailKematianModal({
   const homelessFactor = tunawismaRes.homelessFactor;
   const hospitalRatio = kesehatanRes.kesehatanRatio;
   const healthFactor = kesehatanRes.healthFactor;
-  const foodSecurityFactor = 0.7 + (0.003 * indeksKetahananPangan);
+  const foodSecurityFactor = Math.max(0.5, 1.2 - (0.005 * indeksKetahananPangan));
   const crimeFactor = kriminalitasRes.crimeFactor;
   const pollutionFactor = 1 + (polusiIndex / 200);
 

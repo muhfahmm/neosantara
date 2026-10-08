@@ -1,7 +1,6 @@
-"use client";
-
 import React from "react";
 import { X, Utensils } from "lucide-react";
+import { calculatePanganScore } from "@/app/logic/kepuasanCalculator";
 
 interface DetailKetahananPanganModalProps {
   isOpen: boolean;
@@ -18,9 +17,9 @@ export default function DetailKetahananPanganModal({
 }: DetailKetahananPanganModalProps) {
   if (!isOpen) return null;
 
-  const indeks = countryDetail?.indeks_ketahanan_pangan ?? 60;
+  const indeks = countryDetail?.indeks_ketahanan_pangan ?? calculatePanganScore(countryDetail, undefined);
   const countryName = selectedCountry?.country || "Indonesia";
-  const factor = 0.7 + (0.003 * indeks);
+  const factor = Math.max(0.5, 1.2 - (0.005 * indeks));
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
