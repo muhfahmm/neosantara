@@ -114,7 +114,6 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
 
   const handleSubsidize = () => {
     if (anggaran < 20000000) {
-      alert("Kas negara tidak mencukupi untuk membiayai subsidi!");
       return;
     }
     setSubsidyActive(true);
@@ -130,7 +129,6 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
         price: newSatisfaction,
       }
     });
-    alert("Beras & Minyak Goreng disubsidi penuh (+5.0% Kepuasan Rakyat)!");
   };
 
   const priceEntries = Object.entries(prices).filter(([key]) => key.startsWith("harga_"));
