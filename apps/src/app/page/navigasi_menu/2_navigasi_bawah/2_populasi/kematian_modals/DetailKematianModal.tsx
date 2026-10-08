@@ -69,7 +69,7 @@ export default function DetailKematianModal({
 
   // --- Data visual UI & Logic Baru (Dinamis dari state negara) ---
   const harapanHidup = Math.round(calculateLifeExpectancy(detailWithDefaults, kepuasanUmum));
-  const indeksKetahananPangan = countryDetail?.indeks_ketahanan_pangan ?? calculatePanganScore(countryDetail, undefined);
+  const indeksKetahananPangan = calculatePanganScore(countryDetail, undefined);
   const polusiIndex = countryDetail?.polusi_index ?? Math.max(5, Math.min(100, Math.round(100 - (calculateKesehatanScore(countryDetail) * 0.8))));
 
   // Hitung dengan logic terpusat

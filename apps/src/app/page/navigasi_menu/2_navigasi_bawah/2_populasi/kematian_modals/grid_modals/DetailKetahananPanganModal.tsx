@@ -17,7 +17,7 @@ export default function DetailKetahananPanganModal({
 }: DetailKetahananPanganModalProps) {
   if (!isOpen) return null;
 
-  const indeks = countryDetail?.indeks_ketahanan_pangan ?? calculatePanganScore(countryDetail, undefined);
+  const indeks = calculatePanganScore(countryDetail, undefined);
   const countryName = selectedCountry?.country || "Indonesia";
   const factor = Math.max(0.5, 1.2 - (0.005 * indeks));
 
