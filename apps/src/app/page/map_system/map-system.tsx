@@ -1627,7 +1627,7 @@ export default function MapPage() {
             },
             (progress) => {
                 if (progressBarRef.current) {
-                    progressBarRef.current.style.width = `${progress}%`;
+                    progressBarRef.current.style.transform = `scaleX(${progress / 100})`;
                 }
             }
         );
@@ -3467,8 +3467,8 @@ export default function MapPage() {
                     <div className="w-full h-2 xl:h-3 bg-[#0A1A1A] rounded-full border border-[#00FFAA]/20 overflow-hidden relative">
                         <div
                             ref={progressBarRef}
-                            className="h-full bg-[#00FFAA] rounded-full transition-all duration-75"
-                            style={{ width: '0%' }}
+                            className="h-full w-full bg-[#00FFAA] rounded-full origin-left will-change-transform"
+                            style={{ transform: 'scaleX(0)' }}
                         />
                     </div>
                 </div>

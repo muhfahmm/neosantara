@@ -92,7 +92,7 @@ export class SimulationTimeManager {
         return this.isPaused;
     }
 
-    // Run the clock and refresh its progress display at 30 FPS.
+    // Run the clock and refresh its progress display synchronized with 60FPS browser animation.
     private startLoop(): void {
         if (this.loopTimeoutId !== null) return;
 
@@ -109,15 +109,11 @@ export class SimulationTimeManager {
             const delta = now - this.lastTickTime;
 
             if (delta >= interval) {
-                // Determine how many days to advance (handles cases where tab was backgrounded)
                 const daysToAdvance = Math.floor(delta / interval);
-                // ✅ FIX: Create NEW Date instance instead of mutating in-place
-                // This ensures React detects the reference change
                 const newDate = new Date(this.currentDate);
                 newDate.setDate(newDate.getDate() + daysToAdvance);
                 this.currentDate = newDate;
                 
-                // Update simulation date in relationsRegistry
                 setSimulationDate(this.currentDate);
                 
                 this.lastTickTime = now - (delta % interval);
@@ -127,23 +123,19 @@ export class SimulationTimeManager {
             // Calculate exact sub-tick progress for the progress bar (0 to 100).
             const currentDelta = now - this.lastTickTime;
             const progress = Math.min((currentDelta / interval) * 100, 100);
-            if (
-                this.onProgressChangeCallback &&
-                (now - this.lastProgressCallbackTime >= 33 || progress >= 100)
-            ) {
+            if (this.onProgressChangeCallback) {
                 this.onProgressChangeCallback(progress);
-                this.lastProgressCallbackTime = now;
             }
 
-            this.loopTimeoutId = setTimeout(() => loop(performance.now()), 33);
+            this.loopTimeoutId = requestAnimationFrame(loop) as any;
         };
 
-        this.loopTimeoutId = setTimeout(() => loop(performance.now()), 0);
+        this.loopTimeoutId = requestAnimationFrame(loop) as any;
     }
 
     private stopLoop(): void {
         if (this.loopTimeoutId !== null) {
-            clearTimeout(this.loopTimeoutId);
+            cancelAnimationFrame(this.loopTimeoutId as any);
             this.loopTimeoutId = null;
         }
     }
