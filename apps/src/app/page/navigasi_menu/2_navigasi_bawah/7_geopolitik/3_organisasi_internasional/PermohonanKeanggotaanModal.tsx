@@ -67,7 +67,7 @@ export default function PermohonanKeanggotaanModal({
   const remainingDays = Math.max(0, 30 - daysElapsed);
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="relative w-full max-w-lg rounded-2xl border border-[#00FFAA]/40 bg-[#051111] shadow-[0_0_50px_rgba(0,255,170,0.15)] flex flex-col overflow-hidden">
         {/* HEADER */}
         <div className="flex items-center justify-between border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-6 py-4">

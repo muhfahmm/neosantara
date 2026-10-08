@@ -361,35 +361,6 @@ export default function RingkasanPopulasiModal({
                   );
                 })}
               </div>
-              <p className="text-[9px] text-[#6B8A8A]">
-                Kelahiran +{dailyBirths.toLocaleString('id-ID')} / kematian −{dailyDeaths.toLocaleString('id-ID')} jiwa per hari
-                {' / '}Births +{dailyBirths.toLocaleString('en-US')} / deaths −{dailyDeaths.toLocaleString('en-US')} people per day
-              </p>
-              {String(countryDetail?.religion || "").trim().toLowerCase() === "hindu" && (
-                <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                  Bonus Hindu: Pertumbuhan populasi +{HINDU_POPULATION_GROWTH_BONUS * 100}%
-                </span>
-              )}
-              {String(countryDetail?.ideology || "").trim().toLowerCase() === "sosialisme" && (
-                <span className="inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                  Bonus Sosialisme: Tingkat kelahiran +{SOCIALISM_BIRTH_RATE_BONUS * 100}%
-                </span>
-              )}
-              <div className="border-t border-[#00FFAA]/15 pt-2">
-                <p className="text-[9px] text-[#8BA5A5] font-black uppercase">Wabah & bencana aktif / Active outbreaks & disasters</p>
-                {activePopulationEvents.length === 0 ? (
-                  <p className="text-[9px] text-[#6B8A8A] mt-1">Tidak ada event aktif / No active events</p>
-                ) : (
-                  <ul className="mt-1 space-y-1">
-                    {activePopulationEvents.map((event) => (
-                      <li key={event.id} className="flex flex-wrap justify-between gap-x-3 text-[9px] text-[#B6CACA]">
-                        <span>{event.label}</span>
-                        <span>{event.korban.toLocaleString('id-ID')} korban · {event.days} hari / days</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
             </section>
 
             {/* Informasi Demografi */}
@@ -399,16 +370,8 @@ export default function RingkasanPopulasiModal({
                 Informasi Demografi
               </h3>
               <div className="space-y-2.5 lg:space-y-3 2xl:space-y-4 font-sans text-xs lg:text-xs 2xl:text-sm text-[#E0E0E0] font-medium leading-relaxed">
-                <p>
-                  Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki total populasi terdaftar sebanyak <span className="font-bold text-[#00FFAA]">{populasi.toLocaleString('id-ID')} jiwa</span>.
-                  Saat ini, laju pertumbuhan harian berada pada angka <span className={`font-bold ${totalDailyDelta >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{totalDailyDelta >= 0 ? '+' : ''}{totalDailyDelta.toLocaleString('id-ID')} jiwa per hari</span>.
-                </p>
-                <p className="border-l-2 border-[#00FFAA]/40 pl-3 text-[10px] lg:text-xs text-[#9BB2B2]">
-                  Laju harian adalah kelahiran dikurangi kematian. Pertumbuhan dimoderasi oleh coverage pangan per kategori, kapasitas hunian terhadap populasi, kepadatan, dan kesehatan. Wabah dapat mengurangi kelahiran atau menambah kematian; bencana mengurangi korban saat kejadian dan menurunkan kesehatan sementara. Defisit satu komoditas tidak langsung dikonversi menjadi jiwa. Pertumbuhan dibatasi maksimal 3% per tahun; penurunan hingga 5% hanya saat krisis.
-                </p>
-
-                {/* TOMBOL KELAHIRAN & KEMATIAN */}
-                <div className="pt-2.5 lg:pt-3 2xl:pt-4 border-t border-[#00FFAA]/20 grid grid-cols-2 gap-2.5 lg:gap-3 2xl:gap-4">
+                {/* TOMBOL KELAHIRAN, KEMATIAN, & PERTUMBUHAN (3 CARD SEJAJAR) */}
+                <div className="pt-2.5 lg:pt-3 2xl:pt-4 border-t border-[#00FFAA]/20 grid grid-cols-1 sm:grid-cols-3 gap-2.5 lg:gap-3 2xl:gap-4">
                   <div
                     className="group cursor-pointer rounded-lg lg:rounded-xl p-2.5 lg:p-3 2xl:p-4 border border-[#00FFAA]/30 bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:scale-[0.98] transition-all duration-200 flex items-center justify-between"
                     onClick={() => setIsDetailBirthOpen(true)}
@@ -429,30 +392,17 @@ export default function RingkasanPopulasiModal({
                     </div>
                     <ChevronRight className="h-4 w-4 lg:h-4.5 lg:w-4.5 2xl:h-5 2xl:w-5 text-rose-400 group-hover:translate-x-1 transition-all shrink-0 ml-1.5" />
                   </div>
+                  <div
+                    className={`rounded-lg lg:rounded-xl p-2.5 lg:p-3 2xl:p-4 border ${totalMonthlyGrowthPercent >= 0 ? 'border-[#00FFAA]/30' : 'border-rose-500/30'} bg-[#0A1A1A] flex items-center justify-between`}
+                  >
+                    <div className="flex flex-col items-start">
+                      <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase">Pertumbuhan Populasi</p>
+                      <p className={`text-base lg:text-xl 2xl:text-2xl font-black mt-0.5 lg:mt-1 ${totalMonthlyGrowthPercent >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>
+                        {totalMonthlyGrowthPercent >= 0 ? '+' : ''}{totalMonthlyGrowthPercent.toFixed(2)}%<span className="text-[9px] text-[#6B8A8A] font-medium ml-1">/ bulan</span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Laporan Analisis Demografi */}
-            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 lg:p-4 2xl:p-5 rounded-xl 2xl:rounded-2xl flex items-center gap-3 lg:gap-4 2xl:gap-5 relative overflow-hidden group">
-              <div className="p-2 lg:p-2.5 2xl:p-3 bg-[#0A1A1A] rounded-lg 2xl:rounded-xl border border-[#00FFAA]/30 shrink-0">
-                <Info className="h-4 w-4 lg:h-5 lg:w-5 2xl:h-6 2xl:w-6 text-[#00FFAA]" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="text-xs lg:text-xs 2xl:text-sm font-black text-[#00FFAA] uppercase tracking-wide mb-0.5 lg:mb-1">Laporan Analisis Demografi Nasional</h4>
-                <p className="text-[10px] lg:text-xs 2xl:text-xs text-[#E0E0E0] font-semibold leading-relaxed">
-                  {totalDailyDelta >= 0 ? (
-                    <span className="text-emerald-400 font-bold">Status: Pertumbuhan Populasi Positif.</span>
-                  ) : (
-                    <span className="text-rose-400 font-bold">Status: Pertumbuhan Populasi Negatif!</span>
-                  )}{" "}
-                  Demografi nasional saat ini menunjukkan tren {totalMonthlyGrowthPercent >= 0 ? 'ekspansi' : 'kontraksi'} sebesar <span className="text-[#00FFAA] font-bold">{totalMonthlyGrowthPercent.toFixed(2)}% per bulan</span>.
-                  {kepuasanUmum >= 70
-                    ? " Layanan publik berjalan stabil dan kepuasan tinggi mendorong pertumbuhan."
-                    : kepuasanUmum < 40
-                      ? " Rendahnya kepuasan rakyat mengancam stabilitas demografi."
-                      : " Kepuasan rakyat cukup moderat, perlu peningkatan di beberapa sektor."}
-                </p>
               </div>
             </div>
 

@@ -64,10 +64,27 @@ const orgNameToKeyMap: Record<string, string[]> = {
 };
 
 const EXPELLED_COUNTRIES_KEY = 'neosantara_expelled_organization_countries';
+const EXPELLED_ORGANIZATION_MEMBERSHIPS_KEY = 'neosantara_expelled_organization_memberships_v1';
 export const ORGANIZATION_MEMBERSHIP_UPDATED_EVENT = 'international_organization_membership_updated';
+
+const UN_ORGANIZATION_NAMES = [
+  "Interpol",
+  "Organisasi Kesehatan Dunia (WHO)",
+  "UNESCO",
+  "Organisasi Perdagangan Dunia (WTO)",
+  "Organisasi Buruh Internasional (ILO)",
+  "Organisasi Pangan dan Pertanian (FAO)",
+  "Organisasi Maritim Internasional (IMO)",
+  "Organisasi Telekomunikasi Internasional (ITU)",
+  "Organisasi Meteorologi Dunia (WMO)",
+];
 
 function normalizeCountryName(countryName: string): string {
   return countryName.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function normalizeOrganizationName(organizationName: string): string {
+  return organizationName.toLowerCase().trim().replace(/[^a-z0-9]/g, '');
 }
 
 function getExpelledCountryNames(): Set<string> {
@@ -95,11 +112,42 @@ function getExpelledCountryNames(): Set<string> {
   }
 }
 
+function getExpelledOrganizationMemberships(): Record<string, string[]> {
+  if (typeof window === 'undefined') return {};
+
+  let storedMemberships: string | null;
+  try {
+    storedMemberships = window.localStorage.getItem(EXPELLED_ORGANIZATION_MEMBERSHIPS_KEY);
+  } catch (error) {
+    console.error('Failed to read expelled organization memberships:', error);
+    throw new Error('Tidak dapat membaca data pengeluaran keanggotaan organisasi.', { cause: error });
+  }
+
+  if (!storedMemberships) return {};
+
+  try {
+    const parsed: unknown = JSON.parse(storedMemberships);
+    if (
+      parsed === null ||
+      typeof parsed !== 'object' ||
+      Array.isArray(parsed) ||
+      !Object.values(parsed).every(value => Array.isArray(value) && value.every(item => typeof item === 'string'))
+    ) {
+      throw new Error('Data pengeluaran keanggotaan organisasi tidak valid.');
+    }
+    return parsed as Record<string, string[]>;
+  } catch (error) {
+    console.error('Failed to parse expelled organization memberships:', error);
+    throw new Error('Data pengeluaran keanggotaan organisasi rusak.', { cause: error });
+  }
+}
+
 export function clearExpelledOrganizationCountries(): void {
   if (typeof window === 'undefined') return;
 
   try {
     window.localStorage.removeItem(EXPELLED_COUNTRIES_KEY);
+    window.localStorage.removeItem(EXPELLED_ORGANIZATION_MEMBERSHIPS_KEY);
   } catch (error) {
     console.error('Failed to clear expelled organization countries:', error);
     throw new Error('Tidak dapat mengatur ulang keanggotaan organisasi internasional.', { cause: error });
@@ -137,6 +185,41 @@ export function expelCountryFromOrganizations(countryName: string): string[] {
   return organizations;
 }
 
+export function expelCountryFromUNOrganizations(countryName: string): string[] {
+  const normalizedCountry = normalizeCountryName(countryName);
+  if (!normalizedCountry) return [];
+  if (typeof window === 'undefined') {
+    throw new Error('Pengeluaran keanggotaan organisasi hanya dapat dilakukan di browser.');
+  }
+
+  const organizations = UN_ORGANIZATION_NAMES.filter(orgName =>
+    getOrgMembers(orgName, countryName).some(member =>
+      normalizeCountryName(member.country) === normalizedCountry
+    )
+  );
+  if (organizations.length === 0) return [];
+
+  const expelledMemberships = getExpelledOrganizationMemberships();
+  const countryMemberships = new Set(expelledMemberships[normalizedCountry] || []);
+  organizations.forEach(orgName => countryMemberships.add(normalizeOrganizationName(orgName)));
+  expelledMemberships[normalizedCountry] = [...countryMemberships];
+
+  try {
+    window.localStorage.setItem(
+      EXPELLED_ORGANIZATION_MEMBERSHIPS_KEY,
+      JSON.stringify(expelledMemberships)
+    );
+  } catch (error) {
+    console.error(`Failed to expel ${countryName} from UN organizations:`, error);
+    throw new Error(`Tidak dapat mengeluarkan ${countryName} dari organisasi PBB.`, { cause: error });
+  }
+
+  window.dispatchEvent(new CustomEvent(ORGANIZATION_MEMBERSHIP_UPDATED_EVENT, {
+    detail: { country: countryName, organizations }
+  }));
+  return organizations;
+}
+
 export function getOrgMembers(orgName: string, playerCountryName?: string): { country: string; status: string }[] {
   if (!orgName) return [];
   
@@ -152,6 +235,11 @@ export function getOrgMembers(orgName: string, playerCountryName?: string): { co
 
   const result: { country: string; status: string }[] = [];
   const expelledCountries = getExpelledCountryNames();
+  const expelledMemberships = getExpelledOrganizationMemberships();
+  const organizationExpelledCountry = (countryName: string) =>
+    expelledCountries.has(normalizeCountryName(countryName)) ||
+    (expelledMemberships[normalizeCountryName(countryName)] || [])
+      .includes(normalizeOrganizationName(orgName));
 
   if (list && Array.isArray(list)) {
     list.forEach((item) => {
@@ -161,7 +249,7 @@ export function getOrgMembers(orgName: string, playerCountryName?: string): { co
         .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
       
-      if (!expelledCountries.has(normalizeCountryName(formattedCountry))) {
+      if (!organizationExpelledCountry(formattedCountry)) {
         result.push({
           country: formattedCountry,
           status: 'Anggota',
@@ -180,7 +268,11 @@ export function getOrgMembers(orgName: string, playerCountryName?: string): { co
     const normPlayer = normalizeCountryName(playerCountryName);
     const alreadyExists = result.some(m => normalizeCountryName(m.country) === normPlayer);
 
-    if (!alreadyExists && typeof window !== 'undefined') {
+    if (
+      !alreadyExists &&
+      !organizationExpelledCountry(playerCountryName) &&
+      typeof window !== 'undefined'
+    ) {
       try {
         const rawJoined = localStorage.getItem(`neosantara_user_joined_orgs_v1_${normPlayer.replace(/[^a-z0-9]/g, '')}`);
         if (rawJoined) {

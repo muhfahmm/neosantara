@@ -41,7 +41,6 @@ export default function StatistikKepuasanModal({
       score: sectorScores.pajak,
       icon: Landmark, 
       color: "text-emerald-600", 
-      desc: "Daya beli masyarakat dan beban pajak.",
       menuId: "Menu:Pajak"
     },
     { 
@@ -49,7 +48,6 @@ export default function StatistikKepuasanModal({
       score: sectorScores.harga,
       icon: Coins, 
       color: "text-amber-600", 
-      desc: "Stabilitas harga bahan kebutuhan sehari-hari.",
       menuId: "Menu:Harga"
     },
     { 
@@ -57,7 +55,6 @@ export default function StatistikKepuasanModal({
       score: sectorScores.pangan,
       icon: Apple, 
       color: "text-green-600", 
-      desc: "Ketersediaan dan ketahanan pangan nasional.",
       menuId: "Menu:IndustriPangan"
     },
     { 
@@ -65,7 +62,6 @@ export default function StatistikKepuasanModal({
       score: sectorScores.listrik,
       icon: Plug, 
       color: "text-blue-600", 
-      desc: "Keseimbangan pasokan dan permintaan energi listrik.",
       menuId: "Menu:Kelistrikan"
     },
     { 
@@ -73,7 +69,6 @@ export default function StatistikKepuasanModal({
       score: sectorScores.hunian,
       icon: Home, 
       color: "text-rose-600", 
-      desc: "Ketersediaan rumah layak huni dan akses perumahan.",
       menuId: "Menu:HunianPermukiman"
     },
     { 
@@ -81,7 +76,6 @@ export default function StatistikKepuasanModal({
       score: sectorScores.layananPublik,
       icon: Landmark, 
       color: "text-yellow-700", 
-      desc: "Rasio ketersediaan sarana sosial, kesehatan, pendidikan, keamanan, dan rekreasi.",
       menuId: "Menu:TempatUmum"
     },
     { 
@@ -89,7 +83,6 @@ export default function StatistikKepuasanModal({
       score: sectorScores.keterbukaan,
       icon: Globe, 
       color: "text-indigo-600", 
-      desc: "Kebebasan sipil, HAM, media, dan jaminan keterbukaan informasi.",
       menuId: "Menu:DoktrinKeterbukaan"
     }
   ];
@@ -173,12 +166,12 @@ export default function StatistikKepuasanModal({
                         onClick={() => {
                           setActiveMenu?.(sector.menuId);
                         }}
-                        className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3.5 2xl:p-5 rounded-xl 2xl:rounded-2xl flex gap-2.5 lg:gap-3.5 2xl:gap-4 transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 relative overflow-hidden group cursor-pointer text-left"
+                        className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3.5 2xl:p-5 rounded-xl 2xl:rounded-2xl flex gap-2.5 lg:gap-3.5 2xl:gap-4 transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 relative overflow-hidden group cursor-pointer text-left items-center"
                       >
-                        <div className="p-2 lg:p-2.5 2xl:p-3 rounded-lg 2xl:rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#00FFAA] self-start group-hover:border-[#00FFAA] shrink-0">
+                        <div className="p-2 lg:p-2.5 2xl:p-3 rounded-lg 2xl:rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#00FFAA] group-hover:border-[#00FFAA] shrink-0">
                           <Icon className="w-4 h-4 lg:w-4.5 lg:h-4.5 2xl:w-5 2xl:h-5" />
                         </div>
-                        <div className="flex-1 space-y-1 lg:space-y-1.5 2xl:space-y-2 min-w-0">
+                        <div className="flex-1 space-y-1 lg:space-y-1.5 min-w-0">
                           <div className="flex items-center justify-between text-[11px] lg:text-xs font-black text-[#E0E0E0] uppercase group-hover:text-[#00FFAA]">
                             <span className="pr-1 whitespace-normal leading-tight">{sector.name}</span>
                             <span className="text-[#00FFAA] shrink-0">{sector.score}%</span>
@@ -186,9 +179,6 @@ export default function StatistikKepuasanModal({
                           <div className="h-1.5 lg:h-2 2xl:h-2.5 w-full bg-[#0A1A1A] rounded-full overflow-hidden border border-[#00FFAA]/20">
                             <div className="h-full bg-[#00FFAA] rounded-full" style={{ width: `${sector.score}%` }} />
                           </div>
-                          <p className="text-[9px] lg:text-[10px] text-[#6B8A8A] font-bold leading-tight lg:leading-normal pt-0.5 group-hover:text-[#E0E0E0]">
-                            {sector.desc}
-                          </p>
                         </div>
                       </button>
                     );

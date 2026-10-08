@@ -75,7 +75,6 @@ export default function NaikkanKepuasanModal({
     {
       id: "konser",
       title: "Konser",
-      desc: "Sponsori konser musik untuk meningkatkan kebahagiaan warga.",
       cost: 25000,
       boost: 5,
       duration: 1, // 1 hari
@@ -86,7 +85,6 @@ export default function NaikkanKepuasanModal({
     {
       id: "festival",
       title: "Festival",
-      desc: "Sponsori festival budaya untuk meningkatkan kegembiraan rakyat.",
       cost: 50000,
       boost: 10,
       duration: 3, // 3 hari
@@ -97,7 +95,6 @@ export default function NaikkanKepuasanModal({
     {
       id: "karnaval",
       title: "Karnaval",
-      desc: "Sponsori karnaval besar untuk meningkatkan semangat komunitas.",
       cost: 150000,
       boost: 15,
       duration: 3, // 3 hari
@@ -108,7 +105,6 @@ export default function NaikkanKepuasanModal({
     {
       id: "piala_davis",
       title: "Piala Davis",
-      desc: "Sponsori turnamen tenis Piala Davis untuk meningkatkan kebanggaan nasional.",
       cost: 400000,
       boost: 30,
       duration: 7, // 7 hari (asumsi, bisa disesuaikan)
@@ -119,7 +115,6 @@ export default function NaikkanKepuasanModal({
     {
       id: "piala_dunia_rugbi",
       title: "Piala Dunia Rugbi",
-      desc: "Sponsori Piala Dunia Rugbi untuk meningkatkan semangat olahraga.",
       cost: 500000,
       boost: 50,
       duration: 14, // 14 hari (asumsi)
@@ -130,7 +125,6 @@ export default function NaikkanKepuasanModal({
     {
       id: "olimpiade",
       title: "Olimpiade",
-      desc: "Sponsori Olimpiade untuk meningkatkan prestise internasional.",
       cost: 1500000,
       boost: 75,
       duration: 40, // 40 hari
@@ -141,7 +135,6 @@ export default function NaikkanKepuasanModal({
     {
       id: "piala_dunia_fifa",
       title: "Piala Dunia FIFA",
-      desc: "Sponsori Piala Dunia FIFA untuk meningkatkan kebanggaan nasional.",
       cost: 2500000,
       boost: 100,
       duration: 30, // 30 hari
@@ -152,7 +145,6 @@ export default function NaikkanKepuasanModal({
     {
       id: "balap_f1",
       title: "Balap F1",
-      desc: "Sponsori balapan Formula 1 untuk meningkatkan gengsi dan pariwisata nasional.",
       cost: 800000,
       boost: 40,
       duration: 3, // 3 hari
@@ -409,9 +401,6 @@ export default function NaikkanKepuasanModal({
                             +{item.boost}% Kepuasan
                           </span>
                         </div>
-                        <p className="text-[10px] lg:text-xs text-[#6B8A8A] font-semibold leading-snug lg:leading-relaxed max-w-xl">
-                          {item.desc}
-                        </p>
                         {/* 🔥 Tampilkan durasi */}
                         <div className="flex items-center gap-1.5 text-[9px] lg:text-[10px] text-[#6B8A8A] font-medium mt-0.5 lg:mt-1">
                           <Clock className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-[#00FFAA]" />

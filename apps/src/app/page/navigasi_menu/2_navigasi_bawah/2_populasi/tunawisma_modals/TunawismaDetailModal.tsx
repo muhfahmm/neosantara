@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react";
-import { X, Info, AlertCircle, Home, Users, TrendingDown, MapPin } from "lucide-react";
+import { X, Info, AlertCircle, Home, Users, TrendingDown, MapPin, Building2, BookOpen, Coins, Scale } from "lucide-react";
 import { calculateHomelessCount } from "@/app/logic/populations_logic/population_logic";
 import { calculatePendidikanScore, calculateKesehatanScore, calculateTempatUmumScore } from "@/app/logic/kesejahteraanCalculator";
 
@@ -113,161 +113,86 @@ export default function TunawismaDetailModal({
               </div>
             </div>
 
-            <div className="border-l-2 border-amber-400/50 pl-4 py-1">
-              <p className="text-xs text-[#9BB2B2] leading-relaxed">
-                Kapasitas hunian dihitung dari rumah subsidi × 5, apartemen × 6.000, dan mansion × 10 jiwa. Perkiraan tunawisma adalah populasi dikurangi kapasitas tersebut. Kekurangan kapasitas menurunkan tier hunian dan dapat memperburuk faktor kematian, tetapi tidak mengurangi populasi satu-untuk-satu setiap hari.
-              </p>
-            </div>
+            {/* Faktor Penyebab Tunawisma */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-black text-[#00FFAA] uppercase tracking-wider">Faktor Penyebab Tunawisma</h3>
 
-            {/* Interpretasi */}
-            <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-2xl">
-              <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2 mb-4">
-                <Info className="h-5 w-5 text-[#00FFAA]" />
-                Analisis Situasi
-              </h3>
-              <p className="text-sm text-[#E0E0E0] font-medium leading-relaxed">
-                {homelessPercentage >= 5 && (
-                  <>
-                    Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> menghadapi <span className="text-rose-400 font-bold">krisis hunian yang serius</span>. Dengan <span className="font-bold text-[#00FFAA]">{homelessPercentage.toFixed(2)}%</span> populasi tidak memiliki tempat tinggal yang layak, ini menunjukkan <span className="font-bold text-rose-400">urgensi tinggi</span> untuk pembangunan hunian massal. Kondisi ini dapat memicu masalah kesehatan, keamanan, dan sosial yang lebih luas.
-                  </>
-                )}
-                {homelessPercentage >= 3 && homelessPercentage < 5 && (
-                  <>
-                    Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> menghadapi <span className="text-amber-400 font-bold">masalah tunawisma yang serius</span>. Dengan <span className="font-bold text-[#00FFAA]">{homelessPercentage.toFixed(2)}%</span> populasi hidup tanpa tempat tinggal yang layak, perlu <span className="font-bold text-amber-400">intervensi segera</span> untuk meningkatkan pembangunan hunian dan layanan sosial.
-                  </>
-                )}
-                {homelessPercentage >= 1 && homelessPercentage < 3 && (
-                  <>
-                    Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki <span className="text-yellow-400 font-bold">masalah tunawisma yang perlu perhatian</span>. Dengan <span className="font-bold text-[#00FFAA]">{homelessPercentage.toFixed(2)}%</span> populasi mengalami kesulitan hunian, diperlukan <span className="font-bold text-yellow-400">peningkatan pembangunan perumahan</span> dan program subsidi hunian.
-                  </>
-                )}
-                {homelessPercentage < 1 && (
-                  <>
-                    Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki <span className="text-emerald-400 font-bold">masalah tunawisma yang terkontrol</span>. Dengan hanya <span className="font-bold text-[#00FFAA]">{homelessPercentage.toFixed(2)}%</span> populasi tanpa hunian layak, situasi relatif stabil. Pertahankan dan tingkatkan kualitas perumahan untuk pertumbuhan berkelanjutan.
-                  </>
-                )}
-              </p>
-            </div>
-
-            {/* Faktor Penyebab */}
-            <div className="space-y-4">
-              <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider">Faktor Penyebab Tunawisma</h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Faktor 1: Pertumbuhan Populasi */}
-                <div className="bg-[#0F2424] border border-cyan-500/30 p-5 rounded-xl">
-                  <div className="flex items-start gap-3">
-                    <Users className="h-5 w-5 text-cyan-400 mt-1 flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-black text-cyan-400 mb-1">Pertumbuhan Populasi</p>
-                      <p className="text-xs text-[#E0E0E0]/80 font-semibold">
-                        Populasi meningkat pesat tetapi pembangunan hunian tidak mengikuti. Setiap tahun populasi bertambah, permintaan hunian meningkat.
-                      </p>
-                    </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                {/* Faktor 1 */}
+                <div className="bg-[#0F2424] border border-cyan-500/30 p-3.5 rounded-xl flex items-center gap-3">
+                  <Users className="h-5 w-5 text-cyan-400 shrink-0" />
+                  <div>
+                    <p className="text-xs font-black text-cyan-400">Pertumbuhan Populasi</p>
+                    <p className="text-[10px] text-[#6B8A8A] font-bold">Laju populasi mendahului pasokan hunian</p>
                   </div>
                 </div>
 
-                {/* Faktor 2: Kurang Hunian Layak */}
-                <div className="bg-[#0F2424] border border-amber-500/30 p-5 rounded-xl">
-                  <div className="flex items-start gap-3">
-                    <Home className="h-5 w-5 text-amber-400 mt-1 flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-black text-amber-400 mb-1">Kurangnya Hunian Layak</p>
-                      <p className="text-xs text-[#E0E0E0]/80 font-semibold">
-                        Keterbatasan dana untuk pembangunan rumah subsidi, apartemen, dan mansion. Setiap unit hunian membutuhkan investasi besar.
-                      </p>
-                    </div>
+                {/* Faktor 2 */}
+                <div className="bg-[#0F2424] border border-amber-500/30 p-3.5 rounded-xl flex items-center gap-3">
+                  <Home className="h-5 w-5 text-amber-400 shrink-0" />
+                  <div>
+                    <p className="text-xs font-black text-amber-400">Keterbatasan Hunian</p>
+                    <p className="text-[10px] text-[#6B8A8A] font-bold">Kurangnya unit rumah subsidi & apartemen</p>
                   </div>
                 </div>
 
-                {/* Faktor 3: Kemiskinan */}
-                <div className="bg-[#0F2424] border border-rose-500/30 p-5 rounded-xl">
-                  <div className="flex items-start gap-3">
-                    <TrendingDown className="h-5 w-5 text-rose-400 mt-1 flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-black text-rose-400 mb-1">Tingkat Kemiskinan</p>
-                      <p className="text-xs text-[#E0E0E0]/80 font-semibold">
-                        Masyarakat berpenghasilan rendah tidak mampu membeli hunian. Program subsidi dan pembiayaan belum menjangkau semua.
-                      </p>
-                    </div>
+                {/* Faktor 3 */}
+                <div className="bg-[#0F2424] border border-rose-500/30 p-3.5 rounded-xl flex items-center gap-3">
+                  <TrendingDown className="h-5 w-5 text-rose-400 shrink-0" />
+                  <div>
+                    <p className="text-xs font-black text-rose-400">Tingkat Kemiskinan</p>
+                    <p className="text-[10px] text-[#6B8A8A] font-bold">Daya beli perumahan warga rendah</p>
                   </div>
                 </div>
 
-                {/* Faktor 4: Kesejahteraan Rendah */}
-                <div className="bg-[#0F2424] border border-purple-500/30 p-5 rounded-xl">
-                  <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-purple-400 mt-1 flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-black text-purple-400 mb-1">Kesejahteraan Rendah</p>
-                      <p className="text-xs text-[#E0E0E0]/80 font-semibold">
-                        Investasi minim di bidang pendidikan, kesehatan, dan fasilitas publik menyulitkan masyarakat keluar dari kemiskinan.
-                      </p>
-                    </div>
+                {/* Faktor 4 */}
+                <div className="bg-[#0F2424] border border-purple-500/30 p-3.5 rounded-xl flex items-center gap-3">
+                  <MapPin className="h-5 w-5 text-purple-400 shrink-0" />
+                  <div>
+                    <p className="text-xs font-black text-purple-400">Kesejahteraan Rendah</p>
+                    <p className="text-[10px] text-[#6B8A8A] font-bold">Investasi fasilitas publik & bantuan minim</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Solusi & Rekomendasi */}
-            <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-2xl">
-              <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider mb-4">Solusi & Rekomendasi</h3>
-              <div className="space-y-3">
-                <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-emerald-500/30">
-                  <span className="text-lg font-black">🏠</span>
+            <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-5 rounded-2xl">
+              <h3 className="text-sm font-black text-[#00FFAA] uppercase tracking-wider mb-3">Solusi & Rekomendasi</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                <div className="flex items-center gap-2.5 p-2.5 bg-[#0A1A1A] rounded-lg border border-emerald-500/30">
+                  <Building2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <div>
-                    <p className="text-sm font-black text-emerald-400">Bangun Hunian Massal</p>
-                    <p className="text-xs text-[#E0E0E0]/80 font-semibold">Tingkatkan pembangunan rumah subsidi dan apartemen untuk menjangkau semua lapisan masyarakat</p>
+                    <p className="text-xs font-black text-emerald-400">Bangun Hunian Massal</p>
+                    <p className="text-[10px] text-[#6B8A8A] font-medium">Perbanyak rumah subsidi dan apartemen rakyat</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-cyan-500/30">
-                  <span className="text-lg font-black">📚</span>
+                <div className="flex items-center gap-2.5 p-2.5 bg-[#0A1A1A] rounded-lg border border-cyan-500/30">
+                  <BookOpen className="h-4 w-4 text-cyan-400 shrink-0" />
                   <div>
-                    <p className="text-sm font-black text-cyan-400">Tingkatkan Kesejahteraan</p>
-                    <p className="text-xs text-[#E0E0E0]/80 font-semibold">Investasi lebih dalam pendidikan, kesehatan, dan fasilitas publik agar masyarakat mampu meningkatkan penghasilan</p>
+                    <p className="text-xs font-black text-cyan-400">Tingkatkan Kesejahteraan</p>
+                    <p className="text-[10px] text-[#6B8A8A] font-medium">Perluas program lapangan kerja & layanan sosial</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-amber-500/30">
-                  <span className="text-lg font-black">💰</span>
+                <div className="flex items-center gap-2.5 p-2.5 bg-[#0A1A1A] rounded-lg border border-amber-500/30">
+                  <Coins className="h-4 w-4 text-amber-400 shrink-0" />
                   <div>
-                    <p className="text-sm font-black text-amber-400">Program Pembiayaan</p>
-                    <p className="text-xs text-[#E0E0E0]/80 font-semibold">Buat skema pembiayaan yang mudah diakses untuk pembelian hunian dengan bunga ringan dan cicilan terjangkau</p>
+                    <p className="text-xs font-black text-amber-400">Program Pembiayaan Ringan</p>
+                    <p className="text-[10px] text-[#6B8A8A] font-medium">Subsidi bunga KPR & skema kepemilikan terjangkau</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-[#0A1A1A] rounded-lg border border-purple-500/30">
-                  <span className="text-lg font-black">⚖️</span>
+                <div className="flex items-center gap-2.5 p-2.5 bg-[#0A1A1A] rounded-lg border border-purple-500/30">
+                  <Scale className="h-4 w-4 text-purple-400 shrink-0" />
                   <div>
-                    <p className="text-sm font-black text-purple-400">Kontrol Pertumbuhan Populasi</p>
-                    <p className="text-xs text-[#E0E0E0]/80 font-semibold">Implementasikan program keluarga berencana dan edukasi keluarga untuk menyeimbangkan pertumbuhan populasi dengan pembangunan hunian</p>
+                    <p className="text-xs font-black text-purple-400">Pemerataan Pembangunan</p>
+                    <p className="text-[10px] text-[#6B8A8A] font-medium">Distribusi kawasan permukiman produktif</p>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Impact Tunawisma */}
-            <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-2xl">
-              <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider mb-4">Dampak Tunawisma Terhadap Negara</h3>
-              <div className="space-y-2 text-xs text-[#E0E0E0] font-semibold leading-relaxed">
-                <p>
-                  🔴 <span className="font-black text-rose-400">Kesehatan:</span> Tunawisma berisiko tinggi terhadap penyakit karena kondisi hidup tidak layak
-                </p>
-                <p>
-                  🔴 <span className="font-black text-rose-400">Keamanan:</span> Meningkatkan angka kejahatan, kriminalitas, dan gangguan keamanan publik
-                </p>
-                <p>
-                  🔴 <span className="font-black text-rose-400">Pendidikan:</span> Anak-anak tunawisma putus sekolah, berdampak pada SDM masa depan
-                </p>
-                <p>
-                  🔴 <span className="font-black text-rose-400">Ekonomi:</span> Menurunkan produktivitas kerja dan produktivitas ekonomi keseluruhan
-                </p>
-                <p>
-                  🔴 <span className="font-black text-rose-400">Sosial:</span> Meningkatkan ketidakstabilan sosial dan ketidakpuasan masyarakat terhadap pemerintah
-                </p>
-              </div>
-            </div>
-
           </div>
         </div>
       </div>

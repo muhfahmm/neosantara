@@ -72,11 +72,7 @@ export default function DetailTunawismaModal({
                 <div className="bg-[#0F2424] p-3 rounded-xl border border-rose-500/30">
                   <p className="text-[10px] text-rose-400 font-black uppercase">Faktor Pengali Kematian</p>
                   <p className="text-xl font-black text-rose-400">× {result.homelessFactor.toFixed(3)}</p>
-                </div>
-              </div>
-              <p className="mt-4 text-xs text-[#6B8A8A] font-medium">
-                Pembangunan kawasan komersial dan akomodasi (mall, hotel, pusat grosir) membantu menurunkan jumlah tunawisma secara tidak langsung melalui penciptaan lapangan kerja dan opsi hunian sementara. Semakin banyak bangunan pendukung, persentase tunawisma riil berkurang, sehingga menekan angka kematian akibat ketiadaan tempat tinggal layak.
-              </p>
+                </div>              </div>
             </div>
           </div>
         </div>

@@ -110,7 +110,8 @@ import { NewsItemData } from '../menus/news/newsModals';
 import { calculateFoodCoverageByGroup } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic';
 import {
     clearExpelledOrganizationCountries,
-    expelCountryFromOrganizations
+    expelCountryFromOrganizations,
+    expelCountryFromUNOrganizations
 } from '@/../../json/database_organisasi_internasional';
 import { clearAllOrganizationMembershipData } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic';
 import {
@@ -453,13 +454,13 @@ export default function MapPage() {
                     const reason = hasActiveApprovedInvasionResolutionForDifferentTarget(attackerCountry, targetCountry)
                         ? 'wrong_military_target'
                         : 'missing_military_resolution';
-                    const expelledOrganizations = expelCountryFromOrganizations(attackerCountry);
+                    const expelledOrganizations = expelCountryFromUNOrganizations(attackerCountry);
                     if (expelledOrganizations.length > 0) {
                         setNotifications(prev => [{
                             id: `notif-organization-expulsion-${Date.now()}`,
-                            title: '🚫 KEANGGOTAAN ORGANISASI DICABUT',
-                            sender: 'Sekretariat Organisasi Internasional',
-                            message: `${attackerCountry} dikeluarkan dari ${expelledOrganizations.length} organisasi internasional karena menyerang ${targetCountry} tanpa resolusi invasi yang disetujui.`,
+                            title: '🚫 KEANGGOTAAN ORGANISASI PBB DICABUT',
+                            sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
+                            message: `${attackerCountry} dikeluarkan dari ${expelledOrganizations.join(', ')} karena menyerang ${targetCountry} tanpa resolusi invasi yang disetujui.`,
                             timestamp: dateStr,
                             type: 'peringkat',
                             value: 100,
