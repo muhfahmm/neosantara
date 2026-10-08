@@ -27,6 +27,7 @@ interface MitraModalsMenuProps {
   onRemovePartner?: (partnerId: number) => void;
   onAddPartner?: (countryName: string, region: string) => void;
   currentUserCountry?: string;
+  countryDetail?: any;
 }
 
 export default function MitraModalsMenu({ 
@@ -37,7 +38,8 @@ export default function MitraModalsMenu({
   onOpenJual,
   onRemovePartner,
   onAddPartner,
-  currentUserCountry = "Amerika serikat"
+  currentUserCountry = "Amerika serikat",
+  countryDetail,
 }: MitraModalsMenuProps) {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState<TradePartner | null>(null);
@@ -202,6 +204,7 @@ export default function MitraModalsMenu({
         onClose={() => setIsTambahOpen(false)}
         currentUserCountry={currentUserCountry}
         partners={partners}
+        countryDetail={countryDetail}
         onAddPartner={(name, region) => {
           if (onAddPartner) onAddPartner(name, region);
           setIsTambahOpen(false);

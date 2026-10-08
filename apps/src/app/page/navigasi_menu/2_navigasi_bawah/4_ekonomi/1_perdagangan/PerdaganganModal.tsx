@@ -646,6 +646,7 @@ export default function PerdaganganModal({
         onOpenJual={openJualModals}
         onRemovePartner={handleRemovePartner}
         currentUserCountry={countryName}
+        countryDetail={countryDetail}
         onAddPartner={(name, region) => {
           const normalizeName = (value: string) => value.toLowerCase().trim();
           setPartnersState(previous => [
