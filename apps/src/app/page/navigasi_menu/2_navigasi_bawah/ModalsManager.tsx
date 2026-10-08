@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchBuildingMetadata } from '../../../../lib/buildingMetadata';
 import { processDueLoans } from './4_ekonomi/3_peminjaman_hutang/tab_menu/logic/loanRepaymentLogic';
+import { processActiveResearch } from '@/app/page/menus/penelitian/penelitianPageMenu';
 import { isCountryUnderEconomicEmbargo } from './7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import {
   applyNpcCountrySimulationStates,
@@ -235,6 +236,19 @@ function ModalsManager({
     } catch (e) {
       // don't block UI on failure
       console.warn('ModalsManager: failed to process due loans on date change', e);
+    }
+  }, [currentDate, countryDetail, setCountryDetail]);
+
+  // Ensure active research progress and level completion are processed whenever global date advances
+  useEffect(() => {
+    if (!currentDate || !countryDetail) return;
+    try {
+      const { updatedDetail, hasChanged } = processActiveResearch(countryDetail, currentDate);
+      if (hasChanged && setCountryDetail) {
+        setCountryDetail(updatedDetail);
+      }
+    } catch (e) {
+      console.warn('ModalsManager: failed to process active research on date change', e);
     }
   }, [currentDate, countryDetail, setCountryDetail]);
 
