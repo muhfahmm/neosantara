@@ -405,22 +405,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                     style={{ width: `${foodSatisfaction}%` }}
                   />
                 </div>
-                <p className="text-[9px] lg:text-[10px] text-[#00FFAA] font-bold mt-2 lg:mt-3">
-                  {foodSatisfaction >= 80
-                    ? "✅ Ketersediaan pangan mencukupi, rakyat sejahtera."
-                    : foodSatisfaction >= 50
-                      ? "⚠️ Ketersediaan pangan pas-pasan, perlu peningkatan produksi."
-                      : "🔴 Defisit pangan parah, rakyat terancam kelaparan."}
-                </p>
-                <div className="mt-2 grid grid-cols-2 gap-2 text-[9px] lg:text-[10px] text-[#6B8A8A]">
-                  <div>Rata-rata rasio produksi/konsumsi: <span className="font-bold text-[#00FFAA]">
-                    {(foodSatisfaction / 100 * 2).toFixed(2)}
-                  </span></div>
-                  <div>Populasi: <span className="font-bold text-[#00FFAA]">{formatNumber(population)} jiwa</span></div>
-                </div>
               </div>
-
-              <div className="p-3 lg:p-3.5 2xl:p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 flex justify-between items-center"><div className="flex items-center gap-2 text-[#00FFAA] font-black text-[10px] lg:text-xs uppercase tracking-wider">👥 Total Populasi & Kebutuhan Pangan Harian</div><div className="px-3 lg:px-4 py-1 lg:py-1.5 rounded-lg bg-[#00FFAA] text-[#0A1A1A]"><span className="text-[10px] lg:text-xs font-black tracking-wider">{formatNumber(population)} Jiwa</span></div></div>
             </div>
           </div>
         </div>

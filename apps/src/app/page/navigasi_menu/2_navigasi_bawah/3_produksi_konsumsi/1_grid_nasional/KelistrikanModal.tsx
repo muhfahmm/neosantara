@@ -10,13 +10,11 @@ import {
   Search,
   ChevronUp,
   ChevronDown,
-  AlertTriangle,
-  CheckCircle2,
 } from "lucide-react";
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
 import CountryKelistrikanModal from "./CountryKelistrikanModal";
-import { getElectricityFuelBalance, getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
+import { getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 import { getCountryConsumptionBreakdown } from "./consumptionLogic";
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 import { applyNpcCountrySimulationState } from "@/app/logic/npcCountrySimulation";
@@ -32,7 +30,7 @@ interface ModalProps {
 }
 
 interface SortConfig {
-  key: 'name' | 'fuelStatus' | 'fuelResources' | 'production' | 'consumption' | 'balance';
+  key: 'name' | 'production' | 'consumption' | 'balance';
   direction: 'asc' | 'desc';
 }
 
@@ -45,13 +43,6 @@ const SOURCE_ORDER = [
   "pembangkit_listrik_tenaga_angin"
 ];
 
-const ELECTRICITY_FUEL_RESOURCES = [
-  { key: 'uranium', label: 'Uranium', generatorKey: 'pembangkit_listrik_tenaga_nuklir', generatorLabel: 'PLTN' },
-  { key: 'gas_alam', label: 'Gas alam', generatorKey: 'pembangkit_listrik_tenaga_gas', generatorLabel: 'PLTG' },
-  { key: 'batu_bara', label: 'Batu bara', generatorKey: 'pembangkit_listrik_tenaga_uap', generatorLabel: 'PLTU' },
-  { key: 'minyak_bumi', label: 'Minyak bumi', generatorKey: 'pembangkit_listrik_tenaga_uap', generatorLabel: 'PLTU' },
-];
-
 export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCountryDetail, metadata, prefetchedAllCountries, onNavigateToMenu }: ModalProps) {
   const [activeTab, setActiveTab] = useState<"user" | "global">("user");
   const [allCountries, setAllCountries] = useState<any[]>([]);
@@ -59,21 +50,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'production', direction: 'desc' });
   const [isDetailKonsumsiOpen, setIsDetailKonsumsiOpen] = useState(false);
   const [selectedCountryData, setSelectedCountryData] = useState<any | null>(null);
-  const [fuelDeficitModalData, setFuelDeficitModalData] = useState<{
-    countryName: string;
-    deficits: Array<{
-      buildingKey: string;
-      label: string;
-      count: number;
-      fuels: Array<{
-        resourceKey: string;
-        label: string;
-        needed: number;
-        stock: number;
-        deficit: number;
-      }>;
-    }>;
-  } | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -116,30 +92,17 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       const count = Number(countryDetail?.[key]) || 0;
       const unitProduction = Number(bMeta?.produksi) || 0;
 
-      const fuelReqs = getKelistrikanFuelRequirements(key);
-      let isFuelDeficit = false;
-      if (count > 0 && fuelReqs.length > 0) {
-        for (const req of fuelReqs) {
-          const fuelBalance = getElectricityFuelBalance(countryDetail, req.resourceKey, metadata);
-          if (fuelBalance.balance < 0) {
-            isFuelDeficit = true;
-            break;
-          }
-        }
-      }
-
       return {
         key,
         label: bMeta?.label || key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
         desc: bMeta?.desc || "Sumber energi listrik nasional.",
         value: count,
         unitProduction: unitProduction * getProductionBonusMultiplier(countryDetail, key),
-        isFuelDeficit,
       };
     })
     .filter((source) => source.value > 0 || source.unitProduction > 0);
 
-  const totalCapacityMW = powerSources.reduce((sum, source) => sum + (source.isFuelDeficit ? 0 : (source.value * source.unitProduction)), 0);
+  const totalCapacityMW = powerSources.reduce((sum, source) => sum + (source.value * source.unitProduction), 0);
   const totalSources = powerSources.filter((source) => source.value > 0).length;
 
   const calculateBuildingElectricityConsumption = (country: any) => {
@@ -176,73 +139,12 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
   // --- Logika global (sama) ---
   const calculateCountryElectricity = (country: any) => {
-    const isUser = Boolean(
-      userCountryName && (
-        (country?.name_id && country.name_id.toLowerCase().trim() === userCountryName) ||
-        (country?.name_en && country.name_en.toLowerCase().trim() === userCountryName) ||
-        (country?.country && country.country.toLowerCase().trim() === userCountryName) ||
-        (country?.nama && country.nama.toLowerCase().trim() === userCountryName)
-      )
-    );
-
-    const fuelDeficitDetails: Array<{
-      buildingKey: string;
-      label: string;
-      count: number;
-      fuels: Array<{
-        resourceKey: string;
-        label: string;
-        needed: number;
-        stock: number;
-        deficit: number;
-      }>;
-    }> = [];
-
     const totalProduction = SOURCE_ORDER.reduce((sum, key) => {
       const bMeta = findMeta(key);
       const count = Number(country?.[key]) || 0;
       const unitProduction = Number(bMeta?.produksi) || 0;
 
-      let isFuelDeficit = false;
-      if (count > 0) {
-        const fuelReqs = getKelistrikanFuelRequirements(key);
-        if (fuelReqs.length > 0) {
-          const brokenFuels: Array<{
-            resourceKey: string;
-            label: string;
-            needed: number;
-            stock: number;
-            deficit: number;
-          }> = [];
-
-          for (const req of fuelReqs) {
-            const fuelBalance = getElectricityFuelBalance(country, req.resourceKey, metadata);
-            if (fuelBalance.balance < 0) {
-              isFuelDeficit = true;
-              brokenFuels.push({
-                resourceKey: req.resourceKey,
-                label: req.label || req.resourceKey.replace(/_/g, " "),
-                needed: fuelBalance.consumption,
-                stock: fuelBalance.production,
-                deficit: Math.abs(fuelBalance.balance),
-              });
-            }
-          }
-
-          if (isFuelDeficit) {
-            fuelDeficitDetails.push({
-              buildingKey: key,
-              label: bMeta?.label || key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase()),
-              count,
-              fuels: brokenFuels,
-            });
-          }
-        }
-      }
-
-      const effectiveProd = isFuelDeficit
-        ? 0
-        : count * unitProduction * getProductionBonusMultiplier(country, key);
+      const effectiveProd = count * unitProduction * getProductionBonusMultiplier(country, key);
       const result = sum + effectiveProd;
       return isNaN(result) ? sum : result;
     }, 0);
@@ -260,7 +162,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       totalProduction: isNaN(totalProduction) ? 0 : totalProduction,
       consumption: isNaN(consumption) ? 0 : consumption,
       balance: isNaN(balance) ? 0 : balance,
-      fuelDeficitDetails,
     };
   };
 
@@ -268,7 +169,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
   const globalElectricityData = allCountries
     .map((country, index) => {
-      const { totalProduction, consumption, balance, fuelDeficitDetails } = calculateCountryElectricity(country);
+      const { totalProduction, consumption, balance } = calculateCountryElectricity(country);
       // Normalize balance: jika sangat kecil (floating-point error), set ke 0
       const normalizedBalance = Math.abs(balance) < 0.01 ? 0 : balance;
       let rawName = country?.name_id || country?.name_en || country?.nama || country?.country;
@@ -296,7 +197,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         balance: normalizedBalance,
         isUser,
         rawData: country,
-        fuelDeficitDetails,
       };
     })
     .sort((a, b) => b.production - a.production);
@@ -305,32 +205,10 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     let aVal: any, bVal: any;
     switch (sortConfig.key) {
       case 'name': aVal = a.name.toLowerCase(); bVal = b.name.toLowerCase(); break;
-      case 'fuelStatus':
-        aVal = (a.fuelDeficitDetails?.length || 0) > 0 ? 1 : 0;
-        bVal = (b.fuelDeficitDetails?.length || 0) > 0 ? 1 : 0;
-        break;
-      case 'fuelResources':
-        aVal = ELECTRICITY_FUEL_RESOURCES.filter((resource) => a.rawData?.sda?.[resource.key] === true).length;
-        bVal = ELECTRICITY_FUEL_RESOURCES.filter((resource) => b.rawData?.sda?.[resource.key] === true).length;
-        break;
       case 'production': aVal = a.production; bVal = b.production; break;
       case 'consumption': aVal = a.consumption; bVal = b.consumption; break;
       case 'balance': aVal = a.balance; bVal = b.balance; break;
       default: return 0;
-    }
-    if (aVal === bVal && sortConfig.key === 'fuelResources') {
-      const aLabels = ELECTRICITY_FUEL_RESOURCES
-        .filter((resource) => a.rawData?.sda?.[resource.key] === true)
-        .map((resource) => resource.label)
-        .sort()
-        .join(', ');
-      const bLabels = ELECTRICITY_FUEL_RESOURCES
-        .filter((resource) => b.rawData?.sda?.[resource.key] === true)
-        .map((resource) => resource.label)
-        .sort()
-        .join(', ');
-      const labelOrder = aLabels.localeCompare(bLabels);
-      return sortConfig.direction === 'asc' ? labelOrder : -labelOrder;
     }
     if (sortConfig.direction === 'asc') return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
     else return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
@@ -506,14 +384,10 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                           <p className="text-[10px] text-[#6B8A8A]">{source.desc}</p>
                         </div>
                         <div className="text-right">
-                          <p className={`text-sm font-black ${source.isFuelDeficit ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
+                          <p className="text-sm font-black text-[#00FFAA]">
                             {(source.value * source.unitProduction).toLocaleString('id-ID')} MW
                           </p>
-                          {source.isFuelDeficit ? (
-                            <p className="text-[9px] font-bold text-rose-400 leading-tight">(bahan bakar defisit)</p>
-                          ) : (
-                            <p className="text-[10px] text-[#6B8A8A]">{source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}</p>
-                          )}
+                          <p className="text-[10px] text-[#6B8A8A]">{source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}</p>
                         </div>
                       </div>
                     )) : (
@@ -573,7 +447,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                 </div>
                 <div>
                   <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wide">Neraca {allCountries.length || 207} Negara</h3>
-                  <p className="text-[10px] text-[#6B8A8A] uppercase tracking-wider">Data produksi, konsumsi, dan neraca daya listrik global</p>
                 </div>
               </div>
 
@@ -598,43 +471,30 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
 
               <div className="overflow-x-auto border border-[#00FFAA]/20 rounded-xl bg-[#0F2424] max-h-[60vh] overflow-y-auto no-scrollbar">
                 <table className="w-full text-xs">
-                  <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/20 sticky top-0 text-[10px] sm:text-xs">
-                    <tr>
-                      <th className="px-2.5 sm:px-3 py-2 text-left font-black text-[#00FFAA] uppercase tracking-wider">No</th>
+                  <thead className="sticky top-0 text-[10px] sm:text-xs">
+                    <tr className="bg-[#0A1A1A] border-b border-[#00FFAA]/20">
+                      <th className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-left font-black text-[#00FFAA] uppercase tracking-wider">No</th>
                       <th
                         onClick={() => handleSort('name')}
-                        className="px-2.5 sm:px-3 py-2 text-left font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors"
+                        className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-left font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors"
                       >
                         Negara <SortIndicator column="name" />
                       </th>
                       <th
-                        onClick={() => handleSort('fuelStatus')}
-                        className="px-2.5 sm:px-3 py-2 text-center font-black text-rose-400 uppercase tracking-wider cursor-pointer hover:bg-rose-950/40 transition-colors"
-                      >
-                        Status Bahan Bakar <SortIndicator column="fuelStatus" />
-                      </th>
-                      <th
-                        onClick={() => handleSort('fuelResources')}
-                        className="px-2.5 sm:px-3 py-2 text-center font-black text-amber-300 uppercase tracking-wider cursor-pointer hover:bg-amber-950/30 transition-colors"
-                        title="Material yang tercatat pada data mineral negara, bukan stok inventori siap pakai"
-                      >
-                        Mineral Tercatat <SortIndicator column="fuelResources" />
-                      </th>
-                      <th
                         onClick={() => handleSort('production')}
-                        className="px-2.5 sm:px-3 py-2 text-right font-black text-emerald-400 uppercase tracking-wider cursor-pointer hover:bg-emerald-950/40 transition-colors"
+                        className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-right font-black text-emerald-400 uppercase tracking-wider cursor-pointer hover:bg-emerald-950/40 transition-colors"
                       >
                         Produksi (MW) <SortIndicator column="production" />
                       </th>
                       <th
                         onClick={() => handleSort('consumption')}
-                        className="px-2.5 sm:px-3 py-2 text-right font-black text-rose-400 uppercase tracking-wider cursor-pointer hover:bg-rose-950/40 transition-colors"
+                        className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-right font-black text-rose-400 uppercase tracking-wider cursor-pointer hover:bg-rose-950/40 transition-colors"
                       >
                         Konsumsi (MW) <SortIndicator column="consumption" />
                       </th>
                       <th
                         onClick={() => handleSort('balance')}
-                        className="px-2.5 sm:px-3 py-2 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#00FFAA]/10 transition-colors"
+                        className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors"
                       >
                         Neraca Daya <SortIndicator column="balance" />
                       </th>
@@ -643,33 +503,13 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   <tbody className="divide-y divide-[#00FFAA]/10 bg-[#0F2424]">
                     {allCountries.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
+                        <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
                           📡 Memuat data {globalElectricityData.length || 207} negara...
                         </td>
                       </tr>
                     ) : filteredData.length > 0 ? (
                       filteredData.map((country, rowIndex) => {
                         const isUserCountry = country.isUser;
-                        const fuelDeficitTotals = new Map<string, { label: string; deficit: number }>();
-                        (country.fuelDeficitDetails || []).forEach((building) => {
-                          building.fuels.forEach((fuel) => {
-                            const current = fuelDeficitTotals.get(fuel.resourceKey);
-                            fuelDeficitTotals.set(fuel.resourceKey, {
-                              label: fuel.label,
-                              deficit: (current?.deficit || 0) + Math.max(0, Number(fuel.deficit) || 0),
-                            });
-                          });
-                        });
-                        const fuelDeficitSummary = Array.from(fuelDeficitTotals.values())
-                          .map((fuel) => `${fuel.label}: ${fuel.deficit.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`)
-                          .join(', ');
-                        const fuelResourceRows = ELECTRICITY_FUEL_RESOURCES
-                          .map((resource) => ({
-                            ...resource,
-                            isRecorded: country.rawData?.sda?.[resource.key] === true,
-                            generatorCount: Number(country.rawData?.[resource.generatorKey]) || 0,
-                          }))
-                          .filter((resource) => resource.isRecorded);
                         return (
                           <tr
                             key={`country-${country.name}-${rowIndex}`}
@@ -692,55 +532,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                                   </span>
                                 )}
                               </div>
-                            </td>
-                            <td className="px-3 py-3 text-center">
-                              {country.fuelDeficitDetails && country.fuelDeficitDetails.length > 0 ? (
-                                <div className="flex flex-col items-center gap-1">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setFuelDeficitModalData({
-                                        countryName: country.name,
-                                        deficits: country.fuelDeficitDetails,
-                                      });
-                                    }}
-                                    className="px-2 py-1 rounded-md bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-rose-300 transition-colors flex items-center justify-center gap-1 cursor-pointer"
-                                    title="Klik untuk melihat stok, kebutuhan, dan kekurangan per pembangkit"
-                                  >
-                                    <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-                                    <span className="text-[9px] font-black uppercase">Defisit</span>
-                                  </button>
-                                  <span className="max-w-[180px] whitespace-normal break-words text-[9px] leading-tight text-rose-300">
-                                    {fuelDeficitSummary}
-                                  </span>
-                                </div>
-                              ) : (
-                                <span className="inline-flex items-center justify-center gap-1 text-[9px] font-black uppercase text-emerald-300">
-                                  <CheckCircle2 className="h-3.5 w-3.5" />
-                                  Tidak Defisit
-                                </span>
-                              )}
-                            </td>
-                            <td className="px-3 py-3">
-                              {fuelResourceRows.length > 0 ? (
-                                <div className="flex max-w-[300px] flex-wrap justify-center gap-1" title="Badge kuning: material tercatat. Badge biru: jumlah pembangkit yang menggunakannya. Ini bukan stok inventori siap pakai.">
-                                  {fuelResourceRows.map((resource) => (
-                                    <span key={resource.key} className="inline-flex items-center gap-1">
-                                      <span className={`rounded border px-1.5 py-0.5 text-[9px] font-bold ${resource.isRecorded
-                                          ? 'border-amber-400/30 bg-amber-400/10 text-amber-200'
-                                          : 'border-slate-500/30 bg-slate-500/10 text-slate-400'
-                                        }`}>
-                                        {resource.label}{resource.isRecorded ? '' : ' tidak tercatat'}
-                                      </span>
-                                      <span className="rounded border border-cyan-400/30 bg-cyan-400/10 px-1.5 py-0.5 text-[9px] font-bold text-cyan-200">
-                                        {resource.generatorLabel} {resource.generatorCount}
-                                      </span>
-                                    </span>
-                                  ))}
-                                </div>
-                              ) : (
-                                <span className="block text-center text-[#6B8A8A]">-</span>
-                              )}
                             </td>
                             <td className="px-4 py-3 font-bold text-emerald-400 text-right">
                               {isNaN(country.production) || country.production <= 0 ? '0' : country.production.toLocaleString('id-ID')}
@@ -765,7 +556,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       })
                     ) : (
                       <tr>
-                        <td colSpan={7} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
+                        <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
                           {searchQuery ? `Tidak ada negara yang cocok dengan "${searchQuery}"` : 'Tidak ada data tersedia'}
                         </td>
                       </tr>
@@ -815,78 +606,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
           )
         )}
       />
-
-      {/* MODAL INFORMATION PEMBANGKIT DEFISIT BAHAN BAKAR */}
-      {fuelDeficitModalData && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm pointer-events-auto">
-          <div className="bg-[#0A1A1A] border border-rose-500/50 rounded-2xl p-5 sm:p-6 w-full max-w-lg shadow-none relative space-y-4">
-            <div className="flex items-center justify-between border-b border-rose-500/30 pb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-rose-500/20 border border-rose-500/40 rounded-xl">
-                  <AlertTriangle className="h-5 w-5 text-rose-400" />
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-black text-rose-400 uppercase tracking-wide">
-                    Defisit Bahan Bakar Pembangkit
-                  </h3>
-                  <p className="text-[10px] text-[#6B8A8A] uppercase tracking-wider font-bold">
-                    {fuelDeficitModalData.countryName}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setFuelDeficitModalData(null)}
-                className="p-1.5 rounded-lg bg-[#0F2424] text-[#6B8A8A] hover:text-white hover:border-rose-500 border border-[#00FFAA]/20 transition-all cursor-pointer"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            <p className="text-xs text-[#E0E0E0]">
-              Pembangkit listrik berikut tidak dapat beroperasi penuh karena kekurangan stok bahan mentah/tambang:
-            </p>
-
-            <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-1 custom-scrollbar">
-              {fuelDeficitModalData.deficits.map((b, idx) => (
-                <div key={`deficit-b-${idx}`} className="bg-[#0F2424] border border-rose-500/30 rounded-xl p-3.5 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-black text-white uppercase tracking-wide">
-                      {b.label}
-                    </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-500/40">
-                      {b.count} Unit
-                    </span>
-                  </div>
-
-                  <div className="space-y-1.5 pt-1 border-t border-[#00FFAA]/10">
-                    {b.fuels.map((f, fIdx) => (
-                      <div key={`fuel-${fIdx}`} className="bg-[#0A1A1A] p-2 rounded-lg text-xs space-y-1">
-                        <div className="flex justify-between font-bold">
-                          <span className="text-rose-400 uppercase text-[11px]">{f.label}</span>
-                          <span className="text-rose-400 text-[11px]">Kurang {f.deficit.toLocaleString('id-ID')}</span>
-                        </div>
-                        <div className="flex justify-between text-[10px] text-[#6B8A8A]">
-                          <span>Produksi tambang: <strong className="text-white">{f.stock.toLocaleString('id-ID')}</strong></span>
-                          <span>Konsumsi pembangkit: <strong className="text-white">{f.needed.toLocaleString('id-ID')}</strong></span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="pt-2 flex justify-end">
-              <button
-                onClick={() => setFuelDeficitModalData(null)}
-                className="px-4 py-2 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 rounded-xl text-xs font-black uppercase text-rose-300 transition-all cursor-pointer"
-              >
-                Tutup
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
