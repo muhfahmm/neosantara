@@ -60,7 +60,9 @@ import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_ke
 import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
 import { getTradeAgreementsForCountry } from '../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
 import { getEmbassiesForCountry } from '../../../../../json/database_kedutaan_besar/embassyRegistry';
-import { getRelationValue, setRelationModifier } from '../../../../../json/database_hubungan_antar_negara/relationsRegistry';
+import { getRelationValue, setNonAggressionPactHistory, setRelationModifier, setRelationSanctionModifiers, setSimulationDate } from '../../../../../json/database_hubungan_antar_negara/relationsRegistry';
+import type { NonAggressionPactPeriod } from '../../../../../json/database_hubungan_antar_negara/relationsRegistry';
+import { setEconomicSanctionCounts } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { playerHasEmbassyWith, playerHasEmbassyOrTradePartners } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
 import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/2_beli/tradeBeliLogic';
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
@@ -189,7 +191,97 @@ export default function MapPage() {
     const [isPaused, setIsPaused] = useState(true);
     const [speed, setSpeed] = useState(1);
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
+    const pactHistorySignatureRef = useRef('');
+    const autoRemovedEmbassyRef = useRef<{ playerCountry: string; countries: Set<string> } | null>(null);
+    const simulationDateString = [
+        currentDate.getFullYear(),
+        String(currentDate.getMonth() + 1).padStart(2, '0'),
+        String(currentDate.getDate()).padStart(2, '0'),
+    ].join('-');
     useNpcCountrySimulation(currentDate, countryDetail?.country_slug, metadata);
+
+    useEffect(() => {
+        setSimulationDate(currentDate);
+        const playerCountry = String(countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || '').trim();
+        const activePartners: string[] = Array.isArray(countryDetail?.nonAggressionPacts)
+            ? countryDetail.nonAggressionPacts.filter((partner: unknown): partner is string => typeof partner === 'string')
+            : [];
+        const savedHistory: unknown[] = Array.isArray(countryDetail?.nonAggressionPactHistory)
+            ? countryDetail.nonAggressionPactHistory
+            : [];
+        const history = savedHistory.filter((period: unknown): period is NonAggressionPactPeriod => {
+            if (!period || typeof period !== 'object') return false;
+            const candidate = period as Partial<NonAggressionPactPeriod>;
+            return typeof candidate.country === 'string' &&
+                typeof candidate.partner === 'string' &&
+                typeof candidate.startDate === 'string';
+        });
+
+        activePartners.forEach(partner => {
+            const hasActiveHistory = history.some(period =>
+                period.country.toLowerCase().trim() === playerCountry.toLowerCase() &&
+                period.partner.toLowerCase().trim() === partner.toLowerCase().trim() &&
+                !period.endDate
+            );
+            if (!hasActiveHistory && playerCountry) {
+                // Legacy saves have no signing date; treat those pacts as active since the game began.
+                history.push({ country: playerCountry, partner, startDate: '2026-01-01' });
+            }
+        });
+
+        setNonAggressionPactHistory(history);
+        const historySignature = JSON.stringify(history);
+        if (historySignature !== pactHistorySignatureRef.current) {
+            pactHistorySignatureRef.current = historySignature;
+            window.dispatchEvent(new CustomEvent('country_relations_updated'));
+        }
+    }, [countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, countryDetail?.nonAggressionPacts, countryDetail?.nonAggressionPactHistory, currentDate, simulationDateString]);
+
+    useEffect(() => {
+        if (!countryDetail) {
+            setEconomicSanctionCounts({});
+            return;
+        }
+        const sanctions = countryDetail.economicSanctions;
+        setEconomicSanctionCounts(
+            sanctions && typeof sanctions === 'object' && !Array.isArray(sanctions) ? sanctions : {}
+        );
+    }, [countryDetail?.economicSanctions]);
+
+    useEffect(() => {
+        const playerCountry = String(countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || '').trim();
+        const sanctions = countryDetail?.relationSanctionModifiers;
+        setRelationSanctionModifiers(
+            playerCountry,
+            sanctions && typeof sanctions === 'object' && !Array.isArray(sanctions) ? sanctions : {}
+        );
+    }, [countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, countryDetail?.relationSanctionModifiers]);
+
+    useEffect(() => {
+        if (!countryDetail) {
+            autoRemovedEmbassyRef.current = null;
+            return;
+        }
+        const playerCountry = String(countryDetail.country || countryDetail.nama_negara || countryDetail.name || '').trim();
+        const autoRemoved: string[] = Array.isArray(countryDetail.autoRemovedEmbassies)
+            ? countryDetail.autoRemovedEmbassies.map((entry: unknown) => {
+                if (entry && typeof entry === 'object' && 'id' in entry) {
+                    return String((entry as { id: unknown }).id);
+                }
+                return String(entry || '').toLowerCase().trim();
+            })
+            : [];
+        const previous = autoRemovedEmbassyRef.current;
+        if (!previous || previous.playerCountry !== playerCountry) {
+            autoRemovedEmbassyRef.current = { playerCountry, countries: new Set(autoRemoved) };
+            return;
+        }
+        const newlyRemoved = autoRemoved.filter(name => name && !previous.countries.has(name));
+        if (newlyRemoved.length > 0) {
+            setPlayerNetBalanceAdjustment(value => value + newlyRemoved.length * 10);
+            newlyRemoved.forEach(name => previous.countries.add(name));
+        }
+    }, [countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, countryDetail?.autoRemovedEmbassies]);
 
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [saveNameInput, setSaveNameInput] = useState('');
@@ -2396,6 +2488,10 @@ export default function MapPage() {
             let nextOngoingEmbassyConstructions = existingEmbassyConstructions;
             let nextEmbassies = Array.isArray(prev?.embassies) ? [...prev.embassies] : [];
             let nextRemovedEmbassies = Array.isArray(prev?.removedEmbassies) ? [...prev.removedEmbassies] : [];
+            const playerCountryName = String(prev?.country || prev?.nama_negara || prev?.name || '').trim();
+            const previousAutoRemovedEmbassies = Array.isArray(prev?.autoRemovedEmbassies)
+                ? [...prev.autoRemovedEmbassies]
+                : [];
 
             if (completedEmbassyConstructions.length > 0) {
                 const completedTargetCountries = completedEmbassyConstructions.map((c: any) => c.targetCountry);
@@ -2427,6 +2523,41 @@ export default function MapPage() {
                 });
             }
 
+            const normalizeCountryName = (name: unknown) => String(name || '')
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]/g, '');
+            const embassiesBelowRelationThreshold = nextEmbassies.filter((embassy: any) => {
+                const embassyCountry = typeof embassy === 'string' ? embassy : embassy?.mitra || embassy?.nama_negara;
+                return embassyCountry &&
+                    getRelationValue(playerCountryName, embassyCountry, currentDateStr) <= 40;
+            });
+            if (embassiesBelowRelationThreshold.length > 0) {
+                const autoRemovedNames = embassiesBelowRelationThreshold.map((embassy: any) =>
+                    typeof embassy === 'string' ? embassy : embassy.mitra || embassy.nama_negara
+                );
+                const autoRemovedEvents = embassiesBelowRelationThreshold.map((embassy: any, index: number) => ({
+                    id: `${normalizeCountryName(autoRemovedNames[index])}:${String(embassy?.builtAt || 'legacy')}:${currentDateStr}:${String(embassy?.id || '')}`,
+                    country: autoRemovedNames[index],
+                    date: currentDateStr,
+                }));
+                const normalizedRemovedNames = new Set(autoRemovedNames.map(normalizeCountryName));
+                nextEmbassies = nextEmbassies.filter((embassy: any) => {
+                    const embassyCountry = typeof embassy === 'string' ? embassy : embassy?.mitra || embassy?.nama_negara;
+                    return !normalizedRemovedNames.has(normalizeCountryName(embassyCountry));
+                });
+                nextRemovedEmbassies = Array.from(new Set([...nextRemovedEmbassies, ...autoRemovedNames]));
+                const existingAutoRemovedIds = new Set(previousAutoRemovedEmbassies.map((entry: any) =>
+                    entry && typeof entry === 'object' && 'id' in entry
+                        ? String(entry.id)
+                        : String(entry || '').toLowerCase().trim()
+                ));
+                previousAutoRemovedEmbassies.push(
+                    ...autoRemovedEvents.filter((event: { id: string }) => !existingAutoRemovedIds.has(event.id))
+                );
+            }
+
             return {
                 ...prev,
                 ...updates,
@@ -2450,6 +2581,7 @@ export default function MapPage() {
                 ongoingEmbassyConstructions: nextOngoingEmbassyConstructions,
                 embassies: nextEmbassies,
                 removedEmbassies: nextRemovedEmbassies,
+                autoRemovedEmbassies: previousAutoRemovedEmbassies,
                 kepuasan: nextKepuasan,
                 sector_deficit_month_counter: sectorDeficitMonthCounter,
                 sector_deficit_kepuasan_penalty: accumulatedSectorPenalty,
@@ -3168,10 +3300,27 @@ export default function MapPage() {
                             return;
                         }
 
-                        setCountryDetail((prev: any) => ({
-                            ...prev,
-                            nonAggressionPacts: Array.from(new Set([...(prev?.nonAggressionPacts || []), partner]))
-                        }));
+                        setCountryDetail((prev: Record<string, unknown> | null) => {
+                            const history = Array.isArray(prev?.nonAggressionPactHistory)
+                                ? prev.nonAggressionPactHistory as NonAggressionPactPeriod[]
+                                : [];
+                            const country = String(prev?.country || prev?.nama_negara || prev?.name || playerCountryName);
+                            const pacts = Array.isArray(prev?.nonAggressionPacts)
+                                ? prev.nonAggressionPacts.filter((activePartner): activePartner is string => typeof activePartner === 'string')
+                                : [];
+                            const hasActiveHistory = history.some(period =>
+                                String(period.country || '').toLowerCase().trim() === String(country).toLowerCase().trim() &&
+                                String(period.partner || '').toLowerCase().trim() === partner.toLowerCase().trim() &&
+                                !period.endDate
+                            );
+                            return {
+                                ...(prev || {}),
+                                nonAggressionPacts: Array.from(new Set([...pacts, partner])),
+                                nonAggressionPactHistory: hasActiveHistory
+                                    ? history
+                                    : [...history, { country, partner, startDate: simulationDateString }],
+                            };
+                        });
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'accepted' } : n));
                         setInboxModalOpen(false);
                         setResultModal({
@@ -3245,7 +3394,7 @@ export default function MapPage() {
                         setResultModal({
                             isOpen: true,
                             title: 'Kontrak Penelitian Joint-R&D',
-                            message: `Berhasil meratifikasi Kontrak Penelitian Joint-R&D dengan ${partner}! Kecepatan riset nasional meningkat +25%.`,
+                            message: `Berhasil meratifikasi Kontrak Penelitian Joint-R&D dengan ${partner}! Durasi seluruh penelitian nasional berkurang 0,1% per negara mitra.`,
                             type: 'success'
                         });
                         return;

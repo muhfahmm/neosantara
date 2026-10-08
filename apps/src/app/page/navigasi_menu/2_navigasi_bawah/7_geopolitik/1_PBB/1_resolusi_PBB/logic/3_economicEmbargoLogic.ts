@@ -19,6 +19,9 @@ import { getSecurityCouncilNavalBlockadeMultiplier } from '../../2_keamanan_PBB/
 import { isCountryUnderFullBlockade } from '../../2_keamanan_PBB/logic/5_blokadePenuh';
 
 const ECONOMIC_EMBARGO_REDUCTION = 0.6;
+export const ECONOMIC_SANCTION_REDUCTION_PER_ACTION = 0.05;
+export const ECONOMIC_SANCTIONS_UPDATED_EVENT = 'country_economic_sanctions_updated';
+const economicSanctionCounts = new Map<string, number>();
 
 const MINING_RESOURCE_KEYS = new Set([
   'uranium',
@@ -48,6 +51,56 @@ const MANUFACTURING_RESOURCE_KEYS = new Set([
   'minyak_goreng',
   'susu'
 ]);
+
+function normalizeSanctionCountry(countryName: string): string {
+  return normalizePbbCountryName(countryName);
+}
+
+export function setEconomicSanctionCounts(counts: Record<string, unknown>): void {
+  economicSanctionCounts.clear();
+  Object.entries(counts).forEach(([countryName, count]) => {
+    const key = normalizeSanctionCountry(countryName);
+    const parsedCount = Math.floor(Number(count));
+    if (key && Number.isFinite(parsedCount) && parsedCount > 0) {
+      economicSanctionCounts.set(key, parsedCount);
+    }
+  });
+}
+
+export function addEconomicSanction(countryName: string): number {
+  const key = normalizeSanctionCountry(countryName);
+  if (!key) throw new Error('Nama negara tidak valid untuk sanksi ekonomi.');
+  const nextCount = (economicSanctionCounts.get(key) || 0) + 1;
+  economicSanctionCounts.set(key, nextCount);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(ECONOMIC_SANCTIONS_UPDATED_EVENT));
+  }
+  return nextCount;
+}
+
+export function removeEconomicSanctions(countryName: string): number {
+  const key = normalizeSanctionCountry(countryName);
+  if (!key) throw new Error('Nama negara tidak valid untuk pencabutan sanksi ekonomi.');
+  const previousCount = economicSanctionCounts.get(key) || 0;
+  economicSanctionCounts.delete(key);
+  if (previousCount > 0 && typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(ECONOMIC_SANCTIONS_UPDATED_EVENT));
+  }
+  return previousCount;
+}
+
+export function getEconomicSanctionCount(countryName: string): number {
+  const key = normalizeSanctionCountry(countryName);
+  return key ? economicSanctionCounts.get(key) || 0 : 0;
+}
+
+export function applyEconomicSanctionsToNetBalance(netBalance: number, countryName: string): number {
+  const count = getEconomicSanctionCount(countryName);
+  const multiplier = netBalance >= 0
+    ? 1 - ECONOMIC_SANCTION_REDUCTION_PER_ACTION
+    : 1 + ECONOMIC_SANCTION_REDUCTION_PER_ACTION;
+  return netBalance * multiplier ** count;
+}
 
 export function isCountryUnderEconomicEmbargo(countryName: string): boolean {
   const target = normalizePbbCountryName(countryName);
@@ -139,5 +192,6 @@ export function calculateNetBalanceWithEconomicEmbargo(
   const goldIncome = calculateGoldIncome(countryDetail);
   const baseNetBalance = calculateCountryNetBalance(countryDetail);
   const expenses = income - baseNetBalance;
-  return applyEconomicEmbargoToIncome(income, targetCountry, goldIncome) - expenses;
+  const netBalance = applyEconomicEmbargoToIncome(income, targetCountry, goldIncome) - expenses;
+  return applyEconomicSanctionsToNetBalance(netBalance, targetCountry);
 }

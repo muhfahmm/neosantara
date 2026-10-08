@@ -4,7 +4,10 @@ import { useState, useEffect, useRef } from "react";
 import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Flame } from 'lucide-react';
 import { COUNTRIES_DATA } from '../map_system/map-data';
 import countryPaths from '../map_system/country-paths.json';
-import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
+import {
+  calculateNetBalanceWithEconomicEmbargo,
+  ECONOMIC_SANCTIONS_UPDATED_EVENT,
+} from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { applyNpcCountrySimulationState } from '@/app/logic/npcCountrySimulation';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
@@ -270,6 +273,15 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
       };
     });
   }, [currentDate, fetchedDetail, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !fetchedDetail) return;
+    const refreshNetBalance = () => {
+      setDailyNetBalance(calculateNetBalanceWithEconomicEmbargo(fetchedDetail, countryName || undefined));
+    };
+    window.addEventListener(ECONOMIC_SANCTIONS_UPDATED_EVENT, refreshNetBalance);
+    return () => window.removeEventListener(ECONOMIC_SANCTIONS_UPDATED_EVENT, refreshNetBalance);
+  }, [countryName, fetchedDetail, isOpen]);
 
 
   // Hitung Netto PDB target negara yang ditampilkan di header dan summary
@@ -625,6 +637,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 playerCountryDetail={countryDetail}
                 setPlayerCountryDetail={setCountryDetail}
                 currentNetBalance={playerEffectiveNetBalance}
+                targetNetBalance={targetEffectiveNetBalance}
                 adjustNetBalance={adjustPlayerNetBalance}
                 currentDate={currentDate}
                 autoBuildEmbassy={autoBuildEmbassy}

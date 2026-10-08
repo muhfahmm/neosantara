@@ -385,13 +385,14 @@ export default function PenelitianPageModal({
   const money = Number(countryDetail?.anggaran || 0);
   const religion = countryDetail?.religion ?? countryDetail?.agama_utama ?? countryDetail?.agama;
   const hasAtheismResearchBonus = String(religion || '').trim().toLowerCase() === 'ateisme';
+  const researchContracts = Array.isArray(countryDetail?.researchContracts) ? countryDetail.researchContracts : [];
   
   const educationPoints = calculateEducationPoints(countryDetail);
   const educationModifier = getEducationResearchModifier(educationPoints);
-  const combinedModifier = calculateCombinedResearchDurationModifier(educationPoints, religion);
+  const combinedModifier = calculateCombinedResearchDurationModifier(educationPoints, religion, researchContracts);
 
   const getEffectiveResearchDuration = (durationDays: number) => {
-    return applyCombinedResearchDuration(durationDays, educationPoints, religion);
+    return applyCombinedResearchDuration(durationDays, educationPoints, religion, researchContracts);
   };
 
   const isUnlocked = (id: string) => completedResearch.includes(id);

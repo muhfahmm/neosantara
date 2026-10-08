@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
   Building2, 
   ShieldOff, 
@@ -14,6 +14,7 @@ import {
 import { getEmbassyButtonLabel, getEmbassyButtonClass, playerHasEmbassyOrTradePartners } from './1_kedutaan_besar/logic/kedutaanBesarLogic';
 import DestroyEmbassyModal from './1_kedutaan_besar/logic/DestroyEmbassyModal';
 import BuildEmbassyModal from './1_kedutaan_besar/BuildEmbassyModal';
+import EmbassyRelationRequirementModal from './1_kedutaan_besar/EmbassyRelationRequirementModal';
 import DestroyPaktaModal from './2_pakta_non_agresi/DestroyPaktaModal';
 import DestroyAliansiModal from './3_aliansi_pertahanan/DestroyAliansiModal';
 import DestroyKontrakModal from './5_kontrak_penelitian/DestroyKontrakModal';
@@ -27,12 +28,20 @@ import KirimPasukanModal from './6_kirim_pasukan/kirimPasukanModals';
 import PanggilSekutuModal from './7_panggil_sekutu/panggilSekutuModals';
 import BerikanSanksiModal from './8_berikan_sanksi/berikanSanksiModals';
 import ProvinsiInformasiUmum from './provinsi_logic/ProvinsiInformasiUmum';
+import type { NonAggressionPactPeriod } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
+import { addRelationSanctionModifier, getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
+import {
+  addEconomicSanction,
+  removeEconomicSanctions,
+  ECONOMIC_SANCTION_REDUCTION_PER_ACTION,
+} from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 
 interface InformasiUmumProps {
   countryName: string;
   playerCountryDetail?: any; // data negara pemain (dipassing dari MapPage)
   setPlayerCountryDetail?: (detail: any | ((prev: any) => any)) => void;
   currentNetBalance?: number;
+  targetNetBalance?: number;
   adjustNetBalance?: (delta: number) => void;
   currentDate?: Date;
   autoBuildEmbassy?: boolean;
@@ -71,10 +80,12 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   );
 };
 
-export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, isAnnexedTerritory, occupyingCountry, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension, provinceData }: InformasiUmumProps) {
+export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, targetNetBalance, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, isAnnexedTerritory, occupyingCountry, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension, provinceData }: InformasiUmumProps) {
   const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || null;
   const [isDestroyModalOpen, setIsDestroyModalOpen] = useState(false);
-  const [isBuildEmbassyModalOpen, setIsBuildEmbassyModalOpen] = useState<boolean>(() => !!autoBuildEmbassy);
+  const [isBuildEmbassyModalOpen, setIsBuildEmbassyModalOpen] = useState(false);
+  const [isEmbassyRelationRequirementModalOpen, setIsEmbassyRelationRequirementModalOpen] = useState(false);
+  const autoBuildRequestRef = useRef<string | null>(null);
   const [embassyActive, setEmbassyActive] = useState<boolean>(false);
   const [isDestroyTradeModalOpen, setIsDestroyTradeModalOpen] = useState(false);
   const [isBuildTradeModalOpen, setIsBuildTradeModalOpen] = useState(false);
@@ -97,7 +108,26 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     console.log(`Aksi dipilih: ${action} untuk negara ${countryName}`);
   };
 
+  const getCurrentDateString = () => {
+    const date = currentDate || new Date();
+    return [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, '0'),
+      String(date.getDate()).padStart(2, '0'),
+    ].join('-');
+  };
+
   const currentNetBalance = Number(currentNetBalanceProp ?? 0);
+  const targetNetBalanceValue = Number(targetNetBalance ?? 0);
+  const savedEconomicSanctions = playerCountryDetail?.economicSanctions;
+  const targetSanctionEntry = savedEconomicSanctions &&
+    typeof savedEconomicSanctions === 'object' &&
+    !Array.isArray(savedEconomicSanctions)
+    ? Object.entries(savedEconomicSanctions).find(
+      ([name]) => name.trim().toLowerCase() === countryName.trim().toLowerCase()
+    )
+    : undefined;
+  const isSanctionActive = Number(targetSanctionEntry?.[1]) > 0;
   const playerBudget = Number(playerCountryDetail?.anggaran) || currentNetBalance;
   const continentLabel = String(playerCountryDetail?.continent || playerCountryDetail?.region || playerCountryDetail?.benua || 'Lainnya');
   const playerEmbassies = Array.isArray(playerCountryDetail?.embassies) ? playerCountryDetail.embassies : [];
@@ -105,34 +135,13 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const removedTradePartners = Array.isArray(playerCountryDetail?.removedTradePartners) ? playerCountryDetail.removedTradePartners : [];
   const addedTradePartners = Array.isArray(playerCountryDetail?.addedTradePartners) ? playerCountryDetail.addedTradePartners : [];
 
-  const getEmbassyCost = (continent?: string | null): number => {
-    switch (String(continent || 'Lainnya').trim().toLowerCase()) {
-      case 'asia':
-        return 5;
-      case 'afrika':
-      case 'africa':
-        return 4;
-      case 'amerika utara':
-      case 'north america':
-        return 6;
-      case 'amerika selatan':
-      case 'south america':
-        return 5;
-      case 'eropa':
-      case 'europe':
-        return 7;
-      case 'oceania':
-      case 'australia':
-        return 3;
-      case 'antartika':
-      case 'antarctica':
-        return 2;
-      default:
-        return 5;
-    }
-  };
-
-  const embassyCost = getEmbassyCost(continentLabel);
+  const embassyCost = 10;
+  const minimumEmbassyRelation = 65;
+  const embassyRelation = getRelationValue(
+    playerCountryName || 'Indonesia',
+    countryName,
+    currentDate || undefined
+  );
   const embassyResultBudget = playerBudget - embassyCost;
 
   const embassyLabel = getEmbassyButtonLabel(countryName, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners);
@@ -184,9 +193,19 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     setIsDestroyAliansiOpen(false);
     setIsDestroyKontrakOpen(false);
     if (autoBuildEmbassy && !isAnnexedTerritory) {
-      setIsBuildEmbassyModalOpen(true);
+      const requestKey = `${playerCountryName || ''}:${countryName}`;
+      if (autoBuildRequestRef.current !== requestKey) {
+        autoBuildRequestRef.current = requestKey;
+        if (embassyRelation >= minimumEmbassyRelation) {
+          setIsBuildEmbassyModalOpen(true);
+        } else {
+          setIsEmbassyRelationRequirementModalOpen(true);
+        }
+      }
+    } else if (!autoBuildEmbassy) {
+      autoBuildRequestRef.current = null;
     }
-  }, [countryName, playerCountryName, playerEmbassies.length, removedEmbassies.length, removedTradePartners.length, addedTradePartners.length, nonAggressionPacts.length, defenseAlliances.length, researchContracts.length, autoBuildEmbassy, isAnnexedTerritory]);
+  }, [countryName, playerCountryName, playerEmbassies.length, removedEmbassies.length, removedTradePartners.length, addedTradePartners.length, nonAggressionPacts.length, defenseAlliances.length, researchContracts.length, autoBuildEmbassy, isAnnexedTerritory, embassyRelation]);
 
   // PERBAIKAN: Style tombol aktif dalam tema dark mode sci-fi
   const modernGreenBorderClass = 'border-2 border-[#00FFAA] bg-[#00FFAA]/20 text-[#00FFAA] hover:bg-[#00FFAA]/30';
@@ -195,6 +214,8 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     if (isAnnexedTerritory) return;
     if (embassyActive) {
       setIsDestroyModalOpen(true);
+    } else if (embassyRelation < minimumEmbassyRelation) {
+      setIsEmbassyRelationRequirementModalOpen(true);
     } else {
       setIsBuildEmbassyModalOpen(true);
     }
@@ -261,6 +282,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           updatePlayerCountryDetail={setPlayerCountryDetail}
           adjustPlayerNetBalance={adjustNetBalance}
         />
+
       ) : <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 pt-6">
         
         {/* Tombol Kedutaan dengan Badge Tanggal Selesai */}
@@ -317,7 +339,37 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         <ActionButton icon={FlaskConical} label={kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => kontrakIsActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true)} disabled={!hasUsableEmbassy} className={kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
         <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => setIsKirimPasukanModalOpen(true)} disabled={!hasUsableEmbassy} />
         <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => setIsPanggilSekutuModalOpen(true)} disabled={!hasUsableEmbassy} />
-        <ActionButton icon={Ban} label="Berikan Sanksi" onClick={() => setIsBerikanSanksiModalOpen(true)} />
+        <ActionButton
+          icon={Ban}
+          label={isSanctionActive ? 'Cabut Sanksi' : 'Berikan Sanksi'}
+          onClick={() => {
+            if (isSanctionActive) {
+              const previousCount = removeEconomicSanctions(countryName);
+              if (setPlayerCountryDetail) {
+                setPlayerCountryDetail((previous: Record<string, unknown> | null) => {
+                  if (!previous) return previous;
+                  const sanctions = previous.economicSanctions &&
+                    typeof previous.economicSanctions === 'object' &&
+                    !Array.isArray(previous.economicSanctions)
+                    ? previous.economicSanctions as Record<string, number>
+                    : {};
+                  const remainingSanctions = Object.fromEntries(
+                    Object.entries(sanctions).filter(
+                      ([name]) => name.trim().toLowerCase() !== countryName.trim().toLowerCase()
+                    )
+                  );
+                  return { ...previous, economicSanctions: remainingSanctions };
+                });
+              }
+              console.log(`Sanksi ekonomi terhadap ${countryName} dicabut. ${previousCount} sanksi dihapus; netto kas kembali tanpa pengurangan sanksi.`);
+              return;
+            }
+            setIsBerikanSanksiModalOpen(true);
+          }}
+          className={isSanctionActive ? modernGreenBorderClass : undefined}
+          iconClass={isSanctionActive ? 'text-[#00FFAA]' : undefined}
+          labelClass={isSanctionActive ? 'text-[#00FFAA]' : undefined}
+        />
       </div>}
 
       <DestroyEmbassyModal
@@ -364,6 +416,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         cost={embassyCost}
         onClose={() => setIsBuildEmbassyModalOpen(false)}
         onConfirm={() => {
+          if (embassyRelation < minimumEmbassyRelation) {
+            setIsEmbassyRelationRequirementModalOpen(true);
+            return;
+          }
           // Hitung Tanggal Selesai (60 Hari dari currentDate)
           const baseDate = currentDate ? new Date(currentDate) : new Date();
           const endDateObj = new Date(baseDate);
@@ -403,6 +459,14 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           }
           console.log(`Konstruksi Kedutaan di ${countryName} dimulai. Estimasi selesai: ${endDateStr}`);
         }}
+      />
+
+      <EmbassyRelationRequirementModal
+        isOpen={isEmbassyRelationRequirementModalOpen}
+        countryName={countryName}
+        currentRelation={embassyRelation}
+        minimumRelation={minimumEmbassyRelation}
+        onClose={() => setIsEmbassyRelationRequirementModalOpen(false)}
       />
 
       <DestroyTradeModal
@@ -473,10 +537,27 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         onConfirm={() => {
           setPaktaActive(true);
           if (setPlayerCountryDetail) {
-            setPlayerCountryDetail((prev: any) => ({
-              ...prev,
-              nonAggressionPacts: Array.from(new Set([...(prev?.nonAggressionPacts || []), countryName]))
-            }));
+            setPlayerCountryDetail((prev: Record<string, unknown> | null) => {
+              const existingHistory = Array.isArray(prev?.nonAggressionPactHistory)
+                ? prev.nonAggressionPactHistory as NonAggressionPactPeriod[]
+                : [];
+              const playerName = String(prev?.country || prev?.nama_negara || prev?.name || playerCountryName || 'Indonesia');
+              const existingPacts = Array.isArray(prev?.nonAggressionPacts)
+                ? prev.nonAggressionPacts.filter((pact): pact is string => typeof pact === 'string')
+                : [];
+              const hasActiveHistory = existingHistory.some(period =>
+                String(period.country || '').toLowerCase().trim() === String(playerName).toLowerCase().trim() &&
+                String(period.partner || '').toLowerCase().trim() === normCountryName &&
+                !period.endDate
+              );
+              return {
+                ...(prev || {}),
+                nonAggressionPacts: Array.from(new Set([...existingPacts, countryName])),
+                nonAggressionPactHistory: hasActiveHistory
+                  ? existingHistory
+                  : [...existingHistory, { country: playerName, partner: countryName, startDate: getCurrentDateString() }],
+              };
+            });
           }
           console.log(`Pakta Non-Agresi dengan ${countryName} dijalin.`);
         }}
@@ -489,10 +570,23 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         onConfirm={() => {
           setPaktaActive(false);
           if (setPlayerCountryDetail) {
-            setPlayerCountryDetail((prev: any) => ({
-              ...prev,
-              nonAggressionPacts: (prev?.nonAggressionPacts || []).filter((c: string) => String(c).toLowerCase().trim() !== normCountryName)
-            }));
+            setPlayerCountryDetail((prev: Record<string, unknown> | null) => {
+              const existingPacts = Array.isArray(prev?.nonAggressionPacts)
+                ? prev.nonAggressionPacts.filter((pact): pact is string => typeof pact === 'string')
+                : [];
+              const history = Array.isArray(prev?.nonAggressionPactHistory)
+                ? prev.nonAggressionPactHistory as NonAggressionPactPeriod[]
+                : [];
+              return {
+                ...(prev || {}),
+                nonAggressionPacts: existingPacts.filter(pact => pact.toLowerCase().trim() !== normCountryName),
+                nonAggressionPactHistory: history.map(period =>
+                  period.partner.toLowerCase().trim() === normCountryName && !period.endDate
+                    ? { ...period, endDate: getCurrentDateString() }
+                    : period
+                ),
+              };
+            });
           }
           console.log(`Pakta Non-Agresi dengan ${countryName} diputus.`);
         }}
@@ -583,9 +677,36 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
       <BerikanSanksiModal
         isOpen={isBerikanSanksiModalOpen}
         countryName={countryName}
+        currentNetBalance={targetNetBalanceValue}
+        reductionPercent={ECONOMIC_SANCTION_REDUCTION_PER_ACTION * 100}
         onClose={() => setIsBerikanSanksiModalOpen(false)}
         onConfirm={() => {
-          console.log(`Sanksi terhadap ${countryName} diterapkan.`);
+          const relationPenalty = Math.floor(Math.random() * 16) + 15;
+          const sanctionCount = addEconomicSanction(countryName);
+          const player = playerCountryName || 'Indonesia';
+          const relationSanctionTotal = addRelationSanctionModifier(player, countryName, -relationPenalty);
+          window.dispatchEvent(new CustomEvent('country_relations_updated'));
+          if (setPlayerCountryDetail) {
+            setPlayerCountryDetail((previous: Record<string, unknown> | null) => {
+              if (!previous) return previous;
+              const savedSanctions = previous.economicSanctions &&
+                typeof previous.economicSanctions === 'object' &&
+                !Array.isArray(previous.economicSanctions)
+                ? previous.economicSanctions as Record<string, number>
+                : {};
+              const savedRelationSanctions = previous.relationSanctionModifiers &&
+                typeof previous.relationSanctionModifiers === 'object' &&
+                !Array.isArray(previous.relationSanctionModifiers)
+                ? previous.relationSanctionModifiers as Record<string, number>
+                : {};
+              return {
+                ...previous,
+                economicSanctions: { ...savedSanctions, [countryName]: sanctionCount },
+                relationSanctionModifiers: { ...savedRelationSanctions, [countryName]: relationSanctionTotal },
+              };
+            });
+          }
+          console.log(`Sanksi terhadap ${countryName} diterapkan: hubungan -${relationPenalty}, netto kas -${ECONOMIC_SANCTION_REDUCTION_PER_ACTION * 100}% (sanksi ke-${sanctionCount}).`);
         }}
       />
 

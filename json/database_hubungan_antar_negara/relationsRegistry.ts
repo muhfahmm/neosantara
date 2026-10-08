@@ -6,9 +6,18 @@ export interface CountryRelation {
   relation: number;
 }
 
+export interface NonAggressionPactPeriod {
+  country: string;
+  partner: string;
+  startDate: string;
+  endDate?: string;
+}
+
 // Memory store for custom relation modifiers or custom scores per pair
 // Pair key format: "country_a:country_b" (alphabetical)
 const relationModifiersMap = new Map<string, number>();
+const relationSanctionModifiersMap = new Map<string, number>();
+let nonAggressionPactHistory: NonAggressionPactPeriod[] = [];
 
 // Track baseline game start date (defaulting to 1 Jan 2026 if not set)
 let baselineStartYear: number = 2026;
@@ -16,6 +25,7 @@ let currentSimulationDate: Date = new Date(2026, 0, 1);
 
 // Annual decay rate towards neutral score (50). Default: 1 point shift per year.
 const YEARLY_DECAY_RATE = 1;
+const NON_AGGRESSION_PACT_DECAY_INTERVAL_YEARS = 3;
 
 
 /**
@@ -25,6 +35,67 @@ function getPairKey(countryA: string, countryB: string): string {
   const s1 = countryA.trim().toLowerCase();
   const s2 = countryB.trim().toLowerCase();
   return s1 < s2 ? `${s1}:${s2}` : `${s2}:${s1}`;
+}
+
+function parseSimulationDate(value: Date | string): Date {
+  if (value instanceof Date) return new Date(value);
+  const dateOnlyMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (dateOnlyMatch) {
+    return new Date(
+      Number(dateOnlyMatch[1]),
+      Number(dateOnlyMatch[2]) - 1,
+      Number(dateOnlyMatch[3])
+    );
+  }
+  return new Date(value);
+}
+
+function isDateWithinPactPeriod(date: Date, period: NonAggressionPactPeriod): boolean {
+  const startDate = parseSimulationDate(period.startDate);
+  const endDate = period.endDate ? parseSimulationDate(period.endDate) : null;
+  return date >= startDate && (!endDate || date <= endDate);
+}
+
+function countNaturalDecayPoints(
+  sourceCountry: string,
+  targetCountry: string,
+  evalDate: Date
+): number {
+  const source = sourceCountry.trim().toLowerCase();
+  const target = targetCountry.trim().toLowerCase();
+  const pactPeriods = nonAggressionPactHistory.filter(period => {
+    const country = period.country.trim().toLowerCase();
+    const partner = period.partner.trim().toLowerCase();
+    return ((country === source && partner === target) || (country === target && partner === source)) &&
+      !isNaN(parseSimulationDate(period.startDate).getTime());
+  });
+  let decayPoints = 0;
+
+  for (let year = baselineStartYear + 1; year <= evalDate.getFullYear(); year += 1) {
+    const annualMilestone = new Date(year, 0, 1);
+    if (annualMilestone <= evalDate &&
+      !pactPeriods.some(period => isDateWithinPactPeriod(annualMilestone, period))) {
+      decayPoints += YEARLY_DECAY_RATE;
+    }
+  }
+
+  pactPeriods.forEach(period => {
+    const startDate = parseSimulationDate(period.startDate);
+    const periodEndDate = period.endDate ? parseSimulationDate(period.endDate) : evalDate;
+    const finalDate = periodEndDate < evalDate ? periodEndDate : evalDate;
+
+    for (let yearsElapsed = NON_AGGRESSION_PACT_DECAY_INTERVAL_YEARS;
+      yearsElapsed <= finalDate.getFullYear() - startDate.getFullYear() + 1;
+      yearsElapsed += NON_AGGRESSION_PACT_DECAY_INTERVAL_YEARS) {
+      const anniversary = new Date(startDate);
+      anniversary.setFullYear(startDate.getFullYear() + yearsElapsed);
+      if (anniversary <= finalDate) {
+        decayPoints += YEARLY_DECAY_RATE;
+      }
+    }
+  });
+
+  return decayPoints;
 }
 
 import relationsDataJson from './relationsData.json';
@@ -90,10 +161,20 @@ export function hasEmbassy(sourceCountry?: string, targetCountry?: string, activ
  * Updates yearly relation decay whenever date passes 1 January of a new year.
  */
 export function setSimulationDate(date: Date | string): void {
-  const parsedDate = typeof date === 'string' ? new Date(date) : date;
+  const parsedDate = parseSimulationDate(date);
   if (!isNaN(parsedDate.getTime())) {
     currentSimulationDate = parsedDate;
   }
+}
+
+export function setNonAggressionPactHistory(history: NonAggressionPactPeriod[]): void {
+  nonAggressionPactHistory = history.filter(period =>
+    typeof period?.country === 'string' &&
+    typeof period?.partner === 'string' &&
+    typeof period?.startDate === 'string' &&
+    !isNaN(parseSimulationDate(period.startDate).getTime()) &&
+    (!period.endDate || !isNaN(parseSimulationDate(period.endDate).getTime()))
+  );
 }
 
 /**
@@ -114,10 +195,37 @@ export function setRelationModifier(sourceCountry: string, targetCountry: string
   relationModifiersMap.set(key, currentMod + delta);
 }
 
+export function setRelationSanctionModifiers(sourceCountry: string, modifiers: Record<string, unknown>): void {
+  const normalizedSource = sourceCountry.trim().toLowerCase();
+  if (!normalizedSource) {
+    relationSanctionModifiersMap.clear();
+    return;
+  }
+  for (const key of relationSanctionModifiersMap.keys()) {
+    if (key.startsWith(`${normalizedSource}:`) || key.endsWith(`:${normalizedSource}`)) {
+      relationSanctionModifiersMap.delete(key);
+    }
+  }
+  Object.entries(modifiers).forEach(([targetCountry, value]) => {
+    const target = targetCountry.trim().toLowerCase();
+    const delta = Number(value);
+    if (target && Number.isFinite(delta) && delta !== 0) {
+      relationSanctionModifiersMap.set(getPairKey(sourceCountry, targetCountry), delta);
+    }
+  });
+}
+
+export function addRelationSanctionModifier(sourceCountry: string, targetCountry: string, delta: number): number {
+  const key = getPairKey(sourceCountry, targetCountry);
+  const total = (relationSanctionModifiersMap.get(key) || 0) + delta;
+  relationSanctionModifiersMap.set(key, total);
+  return total;
+}
+
 /**
  * Gets effective relation value between two countries factoring:
  * 1. Base initial relation
- * 2. Yearly natural decay triggered on/after every 1st of January
+ * 2. Natural decay once per year, or once every three years while a pact is active
  * 3. Manual diplomatic modifiers
  */
 export function getRelationValue(
@@ -134,7 +242,7 @@ export function getRelationValue(
 
   const baseScore = getBaseRelationValue(s1, s2);
   const key = getPairKey(s1, s2);
-  const manualModifier = relationModifiersMap.get(key) || 0;
+  const manualModifier = (relationModifiersMap.get(key) || 0) + (relationSanctionModifiersMap.get(key) || 0);
 
   // Determine evaluation date
   let evalDate = currentSimulationDate;
@@ -143,24 +251,16 @@ export function getRelationValue(
   } else if (customDateOrYear instanceof Date) {
     evalDate = customDateOrYear;
   } else if (typeof customDateOrYear === 'string') {
-    evalDate = new Date(customDateOrYear);
+    evalDate = parseSimulationDate(customDateOrYear);
   }
 
-  const evalYear = evalDate.getFullYear();
-  const evalMonth = evalDate.getMonth(); // 0 = Jan
-  const evalDay = evalDate.getDate();
-
-  // Calculate completed 1st January milestones reached since start year
-  let yearlyMilestonesPassed = Math.max(0, evalYear - baselineStartYear);
+  const naturalDecay = countNaturalDecayPoints(s1, s2, evalDate);
+  let yearlyMilestonesPassed = naturalDecay;
 
   // If current date is in the baseline start year before 1 Jan (not applicable) or 
   // checking if 1st Jan of the current year has already arrived:
   // If we haven't reached 1st Jan of current year yet, minus 1 milestone
-  if (evalYear > baselineStartYear && evalMonth === 0 && evalDay < 1) {
-    yearlyMilestonesPassed -= 1;
-  }
-
-  // Yearly decay logic: relation score naturally converges towards 50 (neutral) on every 1 Jan
+  // Natural decay converges the baseline relation score towards neutral.
   let decayedScore = baseScore;
   if (yearlyMilestonesPassed > 0) {
     const totalDecay = yearlyMilestonesPassed * YEARLY_DECAY_RATE;
@@ -178,6 +278,3 @@ export function getRelationValue(
 }
 
 export default getRelationValue;
-
-
-

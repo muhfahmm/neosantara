@@ -15,7 +15,7 @@ export default function KontrakPenelitianModal({ isOpen, countryName, onClose, o
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
 			<div className="w-[420px] bg-white rounded-2xl p-6 shadow-lg border border-[#E5DCCF]">
 				<h3 className="text-lg font-black text-[#3d2911] mb-3">Konfirmasi Kontrak Penelitian</h3>
-				<p className="text-sm text-[#5c3c10] mb-6">Mulai kontrak penelitian dengan <strong>{countryName}</strong>? Kontrak ini akan memfasilitasi kolaborasi ilmiah antara kedua negara.</p>
+				<p className="text-sm text-[#5c3c10] mb-6">Mulai kontrak penelitian dengan <strong>{countryName}</strong>? Kolaborasi ini mengurangi durasi semua penelitian nasional sebesar <strong>0,1%</strong> per negara mitra.</p>
 
 				<div className="flex gap-3 justify-end">
 					<button
@@ -36,4 +36,3 @@ export default function KontrakPenelitianModal({ isOpen, countryName, onClose, o
 		</div>
 	);
 }
-

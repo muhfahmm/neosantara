@@ -27,8 +27,30 @@ export interface CombinedResearchModifierInfo {
   multiplier: number;            // e.g. 1.0, 1.10, 0.75
   educationPercentageChange: number;
   atheismPercentageChange: number;
+  researchContractPercentageChange: number;
+  researchContractCount: number;
   hasAtheismBonus: boolean;
   label: string;
+}
+
+export const RESEARCH_CONTRACT_DURATION_REDUCTION_PER_COUNTRY = 0.1;
+
+export function getResearchContractDurationReduction(researchContracts: unknown): {
+  count: number;
+  percentage: number;
+} {
+  if (!Array.isArray(researchContracts)) return { count: 0, percentage: 0 };
+
+  const uniquePartners = new Set(
+    researchContracts
+      .filter((partner): partner is string => typeof partner === 'string' && partner.trim().length > 0)
+      .map(partner => partner.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase())
+  );
+  const count = uniquePartners.size;
+  return {
+    count,
+    percentage: Number((count * RESEARCH_CONTRACT_DURATION_REDUCTION_PER_COUNTRY).toFixed(1)),
+  };
 }
 
 /**
@@ -107,14 +129,19 @@ export function getEducationResearchModifier(educationPoints: number): Education
  */
 export function calculateCombinedResearchDurationModifier(
   educationPoints: number,
-  religion: unknown
+  religion: unknown,
+  researchContracts: unknown = []
 ): CombinedResearchModifierInfo {
   const eduMod = getEducationResearchModifier(educationPoints);
   const normalizedReligion = String(religion || "").trim().toLowerCase();
   const hasAtheismBonus = normalizedReligion === "ateisme";
   const atheismPercentageChange = hasAtheismBonus ? -15 : 0;
+  const contractBonus = getResearchContractDurationReduction(researchContracts);
+  const researchContractPercentageChange = -contractBonus.percentage;
 
-  const totalPercentageChange = eduMod.percentageChange + atheismPercentageChange;
+  const totalPercentageChange = Number((
+    eduMod.percentageChange + atheismPercentageChange + researchContractPercentageChange
+  ).toFixed(1));
   const multiplier = Math.max(0.1, 1 + totalPercentageChange / 100);
 
   const formattedTotal = totalPercentageChange > 0
@@ -128,6 +155,8 @@ export function calculateCombinedResearchDurationModifier(
     multiplier,
     educationPercentageChange: eduMod.percentageChange,
     atheismPercentageChange,
+    researchContractPercentageChange,
+    researchContractCount: contractBonus.count,
     hasAtheismBonus,
     label: formattedTotal,
   };
@@ -139,10 +168,11 @@ export function calculateCombinedResearchDurationModifier(
 export function applyCombinedResearchDuration(
   baseDurationDays: number,
   educationPoints: number,
-  religion: unknown
+  religion: unknown,
+  researchContracts: unknown = []
 ): number {
   if (baseDurationDays <= 0) return baseDurationDays;
-  const combined = calculateCombinedResearchDurationModifier(educationPoints, religion);
+  const combined = calculateCombinedResearchDurationModifier(educationPoints, religion, researchContracts);
   return Math.max(1, Math.ceil(baseDurationDays * combined.multiplier));
 }
 

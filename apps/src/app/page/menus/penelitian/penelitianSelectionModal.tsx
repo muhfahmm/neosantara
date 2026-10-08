@@ -7,7 +7,7 @@ import { ATHEISM_RESEARCH_SPEED_BONUS } from '@/app/page/bonus_logic/agama_bonus
 import {
   calculateEducationPoints,
   getEducationResearchModifier,
-  calculateCombinedResearchDurationModifier,
+  getResearchContractDurationReduction,
 } from '@/app/page/downgrade_logic';
 import { isMemberOfUNESCO, isMemberOfITU } from '@/app/page/bonus_logic';
 
@@ -36,7 +36,14 @@ export default function PenelitianSelectionModal({
 
   const educationPoints = calculateEducationPoints(countryDetail);
   const educationModifier = getEducationResearchModifier(educationPoints);
-  const combinedModifier = calculateCombinedResearchDurationModifier(educationPoints, religion);
+  const researchContracts = Array.isArray(countryDetail?.researchContracts) ? countryDetail.researchContracts : [];
+  const contractBonus = getResearchContractDurationReduction(researchContracts);
+  const contractBonusLabel = `KONTRAK PENELITIAN (${contractBonus.count} NEGARA): -${contractBonus.percentage.toFixed(1)}% DURASI`;
+  const renderResearchContractBonus = () => (
+    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/30 mb-1.5">
+      {contractBonusLabel}
+    </span>
+  );
 
   useEffect(() => {
     setMounted(true);
@@ -106,6 +113,7 @@ export default function PenelitianSelectionModal({
                 Bonus Ateisme: Durasi riset -15%
               </span>
             )}
+            {renderResearchContractBonus()}
 
 
             <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors mb-2 leading-tight">
@@ -151,6 +159,7 @@ export default function PenelitianSelectionModal({
                 Bonus Ateisme: Durasi riset -15%
               </span>
             )}
+            {renderResearchContractBonus()}
 
 
             <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors mb-2 leading-tight">
@@ -196,6 +205,7 @@ export default function PenelitianSelectionModal({
                 Bonus Ateisme: Durasi riset -15%
               </span>
             )}
+            {renderResearchContractBonus()}
 
 
             <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors mb-2 leading-tight">
