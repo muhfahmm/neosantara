@@ -52,8 +52,9 @@ export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, 
           ) : (
             offers.map((offer) => {
               // Logika pengecekan apakah tawaran sudah melewati 30 hari
-              const offerEndDate = new Date(offer.validUntil);
-              const isExpired = currentDate > offerEndDate;
+              const isExpired = offer.validUntil
+                ? currentDate > new Date(offer.validUntil)
+                : false;
 
               return (
                 <tr key={offer.id} className="hover:bg-[#00FFAA]/5 transition-colors">

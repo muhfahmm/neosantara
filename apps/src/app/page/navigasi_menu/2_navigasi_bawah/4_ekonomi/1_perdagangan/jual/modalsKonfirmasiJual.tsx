@@ -5,7 +5,7 @@ import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateProductionIncrement, formatDate } from '@/app/logic/production_logic';
 import { TradePartner } from "../mitra/mitraModalsMenu";
 import countryPaths from '@/app/page/map_system/country-paths.json';
-import PilihItemModal from "./PilihItemModal";
+import PilihItemModal from "../PilihItemModal";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { isTradeEmbargoActive } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 import {
@@ -482,11 +482,6 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
                     <span className="text-[10px] opacity-70 uppercase tracking-wider">Ubah</span>
                   </button>
                 </div>
-              </div>
-
-              <div className="flex justify-between items-center pt-1 pb-1 border-b border-[#00FFAA]/10">
-                <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Stok Tersedia (Anda):</span>
-                <span className="text-sm font-black text-[#00FFAA]">{stockAvailable.toLocaleString("id-ID")} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span></span>
               </div>
 
               <div className="flex flex-col gap-1">

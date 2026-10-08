@@ -9,6 +9,7 @@ import {
   applyNpcCountrySimulationState,
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npcCountrySimulation';
+import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 
 import dynamic from 'next/dynamic';
 
@@ -89,6 +90,8 @@ interface ModalsManagerProps {
   onOpenPlayerDetail?: () => void;
   presidentRating?: number;
   setPresidentRating?: (rating: number) => void;
+  notifications?: NotificationMessage[];
+  onRemoveNotification?: (notificationId: string) => void;
 }
 
 function ModalsManager({
@@ -111,6 +114,8 @@ function ModalsManager({
   onOpenPlayerDetail,
   presidentRating = 50,
   setPresidentRating,
+  notifications = [],
+  onRemoveNotification,
 }: ModalsManagerProps) {
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [prefetchedAllCountries, setPrefetchedAllCountries] = useState<any[] | null>(null);
@@ -413,6 +418,8 @@ function ModalsManager({
           currentDate={currentDate}
           resetTrigger={resetTrigger}
           prefetchedAllCountries={prefetchedAllCountries || undefined}
+          inboxNotifications={notifications}
+          onRemoveInboxNotification={onRemoveNotification}
         />
       );
     case "Menu:Pajak":

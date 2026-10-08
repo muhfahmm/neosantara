@@ -3439,6 +3439,10 @@ export default function MapPage() {
                 }}
                 presidentRating={presidentRating}
                 setPresidentRating={setPresidentRating}
+                notifications={notifications}
+                onRemoveNotification={(notificationId) => {
+                    setNotifications(previous => previous.filter(notification => notification.id !== notificationId));
+                }}
             />
 
             {/* Premium Floating Time Controller Widget */}

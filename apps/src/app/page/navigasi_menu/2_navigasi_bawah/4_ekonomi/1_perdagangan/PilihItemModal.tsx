@@ -2,7 +2,7 @@
 import React from "react";
 import { X, ChevronRight } from "lucide-react";
 
-import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
+import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 
 // Definisikan tipe data agar modal bisa menerima format Flat ataupun Grouped
 type Item = { label: string; value: string; disabled?: boolean };
@@ -36,19 +36,19 @@ export default function PilihItemModal({
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
         
         {/* HEADER */}
-        <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
-          <h2 className="text-2xl font-bold text-[#00FFAA] tracking-tight uppercase">{title}</h2>
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+          <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">{title}</h2>
           <button 
             onClick={onClose} 
-            className="p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5"
+            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
           >
-            <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* BODY - Grid Card */}
-        <div className="flex-1 overflow-y-auto p-8 bg-[#0F2424] relative z-10 no-scrollbar">
+        <div className="flex-1 overflow-y-auto px-5 pt-5 pb-2 bg-[#0F2424] relative z-10 no-scrollbar">
           
           {/* RENDER UNTUK DATA BERKATEGORI (PRODUK) */}
           {isGrouped ? (
@@ -73,7 +73,7 @@ export default function PilihItemModal({
                             onClose();
                           }
                         }}
-                        className={`group flex items-center justify-between p-5 rounded-xl border transition-all duration-200 w-full text-left
+                        className={`group flex items-center justify-between px-4 py-3 rounded-md border transition-all duration-200 w-full text-left
                           ${item.disabled 
                             ? 'bg-[#0A1A1A]/40 border-[#6B8A8A]/20 cursor-not-allowed opacity-50' 
                             : 'cursor-pointer ' + (isSelected 
@@ -95,7 +95,7 @@ export default function PilihItemModal({
                           )}
                         </div>
                         {!item.disabled && (
-                          <ChevronRight className={`h-5 w-5 transition-transform group-hover:translate-x-1 ${isSelected ? 'text-[#0A1A1A]' : 'text-[#00FFAA]'}`} />
+                          <ChevronRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${isSelected ? 'text-[#0A1A1A]' : 'text-[#00FFAA]'}`} />
                         )}
                       </button>
                     );
@@ -113,7 +113,7 @@ export default function PilihItemModal({
                     key={item.value}
                     disabled={item.disabled}
                     onClick={() => { if (!item.disabled) { onSelect(item.value); onClose(); } }}
-                    className={`group flex items-center justify-between p-5 rounded-xl border transition-all duration-200 w-full text-left
+                    className={`group flex items-center justify-between px-4 py-3 rounded-md border transition-all duration-200 w-full text-left
                       ${item.disabled 
                         ? 'bg-[#0A1A1A]/40 border-[#6B8A8A]/20 cursor-not-allowed opacity-50' 
                         : 'cursor-pointer ' + (isSelected 
@@ -145,7 +145,7 @@ export default function PilihItemModal({
                       <span className={`text-sm font-bold tracking-wide ${isSelected ? 'text-[#0A1A1A]' : 'text-[#E0E0E0]'}`}>{item.label}</span>
                     </div>
                     {!item.disabled && (
-                      <ChevronRight className={`h-5 w-5 transition-transform group-hover:translate-x-1 ${isSelected ? 'text-[#0A1A1A]' : 'text-[#00FFAA]'}`} />
+                      <ChevronRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${isSelected ? 'text-[#0A1A1A]' : 'text-[#00FFAA]'}`} />
                     )}
                   </button>
                 );

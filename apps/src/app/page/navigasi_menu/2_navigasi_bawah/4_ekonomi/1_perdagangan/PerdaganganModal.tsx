@@ -11,6 +11,7 @@ import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateProductionIncrement, formatDate } from '@/app/logic/production_logic';
 import { isCountryUnderEconomicEmbargo, isTradeEmbargoActive } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 import { isMemberOfWTO } from '@/app/page/bonus_logic';
+import { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 
 
 interface AgreementData {
@@ -35,6 +36,8 @@ interface ModalProps {
   currentDate?: Date;
   resetTrigger?: boolean;
   prefetchedAllCountries?: any[];
+  inboxNotifications?: NotificationMessage[];
+  onRemoveInboxNotification?: (notificationId: string) => void;
 }
 
 export interface TradeHistoryItem {
@@ -54,7 +57,8 @@ export interface PartnerOffer {
   quantity: number;
   pricePerUnit: number;
   totalPrice: number;
-  validUntil: Date;
+  validUntil?: Date;
+  sourceNotificationId?: string;
 }
 
 const DEFAULT_PRICES: Record<string, number> = {
@@ -105,7 +109,9 @@ export default function PerdaganganModal({
   setCountryDetail, 
   currentDate, 
   resetTrigger,
-  prefetchedAllCountries 
+  prefetchedAllCountries,
+  inboxNotifications = [],
+  onRemoveInboxNotification
 }: ModalProps) {
   const [historyFilter, setHistoryFilter] = useState<"semua" | "jual" | "beli">("semua");
   const storedHistory = countryDetail?.tradeHistory;
@@ -172,6 +178,7 @@ export default function PerdaganganModal({
   const [isJualOpen, setIsJualOpen] = useState(false);
   const [isMitraOpen, setIsMitraOpen] = useState(false);
   const [activeTradePartner, setActiveTradePartner] = useState<TradePartner | null>(null);
+  const [activeInboxOfferId, setActiveInboxOfferId] = useState<string | null>(null);
 
   // --- State untuk fitur Tawaran AI ---
   const [isOfferOpen, setIsOfferOpen] = useState(false);
@@ -325,7 +332,7 @@ export default function PerdaganganModal({
   };
 
   // --- PERSISTENT WEEKLY TRADE OFFERS IN COUNTRY DETAIL ---
-  const activeOffers = useMemo((): PartnerOffer[] => {
+  const storedActiveOffers = useMemo((): PartnerOffer[] => {
     if (!countryDetail || !countryDetail.ai_trade_offers) return [];
     try {
       const rawOffers = typeof countryDetail.ai_trade_offers === 'string' 
@@ -346,6 +353,47 @@ export default function PerdaganganModal({
     }
   }, [countryDetail?.ai_trade_offers, currentDate, countryName, pbbRevision]);
 
+  const inboxPurchaseOffers = useMemo((): PartnerOffer[] => {
+    return inboxNotifications.flatMap(notification => {
+      const tradeNotification = notification as NotificationMessage & {
+        tradeType?: string;
+        partnerName?: string;
+        productKey?: string;
+        quantity?: number;
+        pricePerUnit?: number;
+        totalPrice?: number;
+        isHandled?: boolean;
+      };
+      if (
+        tradeNotification.tradeType !== 'beli' ||
+        tradeNotification.isHandled ||
+        !tradeNotification.partnerName ||
+        !tradeNotification.productKey ||
+        !Number.isFinite(tradeNotification.quantity) ||
+        !Number.isFinite(tradeNotification.pricePerUnit) ||
+        !Number.isFinite(tradeNotification.totalPrice) ||
+        isTradeEmbargoActive(countryName, tradeNotification.partnerName)
+      ) {
+        return [];
+      }
+
+      return [{
+        id: tradeNotification.id,
+        partnerName: tradeNotification.partnerName,
+        productKey: tradeNotification.productKey,
+        quantity: tradeNotification.quantity as number,
+        pricePerUnit: tradeNotification.pricePerUnit as number,
+        totalPrice: tradeNotification.totalPrice as number,
+        sourceNotificationId: tradeNotification.id
+      }];
+    });
+  }, [inboxNotifications, countryName, pbbRevision]);
+
+  const activeOffers = useMemo(
+    () => [...storedActiveOffers, ...inboxPurchaseOffers],
+    [storedActiveOffers, inboxPurchaseOffers]
+  );
+
   useEffect(() => {
     if (!isOpen || eligiblePartners.length === 0 || !currentDate || !countryDetail) {
       return;
@@ -364,7 +412,7 @@ export default function PerdaganganModal({
     
     // Jangan munculkan apa pun di bawah 7 hari pertama
     if (diffDays < 7) {
-      if (activeOffers.length > 0) {
+      if (storedActiveOffers.length > 0) {
         setCountryDetail(prev => ({ ...prev, ai_trade_offers: [] }));
       }
       return;
@@ -457,7 +505,7 @@ export default function PerdaganganModal({
       });
 
       // Gabungkan tawaran baru dengan tawaran lama yang belum kadaluwarsa
-      const mergedOffers = [...activeOffers, ...newOffers];
+      const mergedOffers = [...storedActiveOffers, ...newOffers];
 
       setCountryDetail(prev => ({
         ...prev,
@@ -465,14 +513,24 @@ export default function PerdaganganModal({
         last_generated_week: currentWeekIndex
       }));
     }
-  }, [isOpen, eligiblePartners, currentDate, prefetchedAllCountries, countryDetail, activeOffers, metadata, setCountryDetail]);
+  }, [isOpen, eligiblePartners, currentDate, prefetchedAllCountries, countryDetail, storedActiveOffers, metadata, setCountryDetail]);
 
   // --- Fungsi Terima Tawaran ---
   const handleAcceptOffer = (offer: PartnerOffer) => {
-    const targetPartner = eligiblePartners.find(p => p.nama_negara === offer.partnerName);
+    const targetPartner = eligiblePartners.find(
+      partner => partner.nama_negara.toLowerCase().trim() === offer.partnerName.toLowerCase().trim()
+    ) ?? (offer.sourceNotificationId ? {
+      id: Number.MAX_SAFE_INTEGER,
+      nama_negara: offer.partnerName,
+      region: COUNTRIES_DATA.find(
+        country => country.country.toLowerCase().trim() === offer.partnerName.toLowerCase().trim()
+      )?.continent || "Internasional",
+      status_hubungan: "Aktif"
+    } : undefined);
     if (targetPartner) {
       setActiveTradePartner(targetPartner);
       setActiveOfferProduct(offer.productKey);
+      setActiveInboxOfferId(offer.sourceNotificationId ?? null);
       setIsOfferOpen(false); // Tutup tabel tawaran
       setIsConfirmBeliOpen(true); // Buka modal beli
     } else {
@@ -614,10 +672,13 @@ export default function PerdaganganModal({
 
       <ModalsKonfirmasiBeli
         isOpen={isConfirmBeliOpen}
-        onClose={() => { setIsConfirmBeliOpen(false); setActiveTradePartner(null); setActiveOfferProduct(undefined); }}
+        onClose={() => { setIsConfirmBeliOpen(false); setActiveTradePartner(null); setActiveOfferProduct(undefined); setActiveInboxOfferId(null); }}
         countryDetail={countryDetail}
         setCountryDetail={setCountryDetail}
-        onConfirm={(biaya, kuantitas) => addHistoryEntry("beli", biaya, kuantitas)}
+        onConfirm={(biaya, kuantitas) => {
+          addHistoryEntry("beli", biaya, kuantitas);
+          if (activeInboxOfferId) onRemoveInboxNotification?.(activeInboxOfferId);
+        }}
         partners={eligiblePartners}
         currentDate={currentDate}
         initialPartnerName={activeTradePartner?.nama_negara}

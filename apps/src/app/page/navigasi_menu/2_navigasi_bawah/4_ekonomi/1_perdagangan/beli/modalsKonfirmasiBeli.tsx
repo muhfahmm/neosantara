@@ -72,7 +72,7 @@ import {
 } from "./index";
 
 // --- IMPORT MODAL PICKER BARU ---
-import PilihItemModal from "./PilihItemModal";
+import PilihItemModal from "../PilihItemModal";
 
 interface CountryDetail {
   [key: string]: unknown;
@@ -818,13 +818,6 @@ export default function ModalsKonfirmasiBeli({
                 <span className="text-[10px] opacity-70 uppercase tracking-wider">Ubah</span>
               </button>
             </div>
-          </div>
-
-          <div className="flex justify-between items-center pt-1 pb-1 border-b border-[#00FFAA]/10">
-            <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Stok Tersedia (Anda):</span>
-            <span className="text-sm font-black text-[#00FFAA]">
-              {stockAvailable.toLocaleString("id-ID")} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span>
-            </span>
           </div>
 
           <div className="flex flex-col gap-1">
