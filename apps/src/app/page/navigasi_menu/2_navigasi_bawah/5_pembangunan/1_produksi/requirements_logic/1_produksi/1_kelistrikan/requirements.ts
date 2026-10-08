@@ -61,6 +61,35 @@ export const REQUIREMENTS: BuildingRequirements[] = [
       { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 250 },
     ],
   },
+  {
+    buildingKey: 'pembangkit_listrik_tenaga_panas_bumi',
+    requirements: [
+      { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 750 },
+      { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 350 },
+    ],
+  },
+  {
+    buildingKey: 'pembangkit_listrik_tenaga_hidrogen',
+    requirements: [
+      { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 900 },
+      { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 400 },
+    ],
+  },
+  {
+    buildingKey: 'pembangkit_listrik_tenaga_gelombang_laut',
+    requirements: [
+      { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 500 },
+      { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 250 },
+    ],
+  },
+  {
+    buildingKey: 'pembangkit_listrik_tenaga_fusi_nuklir',
+    requirements: [
+      { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 2000 },
+      { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 800 },
+      { group: 'pembangunan', label: 'ltj', resourceKey: 'logam_tanah_jarang', amount: 500 },
+    ],
+  },
 ];
 
 export function findRequirements(buildingKey: string) {

@@ -356,7 +356,10 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
         const Icon = groupMeta[group].icon;
 
         // 🔥 PERBAIKAN LOGIKA DISINI: Hitung total kekuatan grup dari array unitBreakdown
-        const groupItemKeys = armadaCatalog[group].map((item) => item.key);
+        const groupItemKeys = [
+          ...armadaCatalog[group].map((item) => item.key),
+          ...(group === "darat" ? ["pasukan_infanteri"] : []),
+        ];
         const totalGroupPower = unitBreakdown
           .filter((item) => groupItemKeys.includes(item.dataKey))
           .reduce((sum, item) => sum + (item.totalPower || 0), 0);

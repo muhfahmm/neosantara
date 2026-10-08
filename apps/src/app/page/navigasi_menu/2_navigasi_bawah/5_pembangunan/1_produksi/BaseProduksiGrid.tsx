@@ -107,6 +107,10 @@ export default function BaseProduksiGrid({
       pembangkit_listrik_tenaga_uap: "PLT Uap (PLTU)",
       pembangkit_listrik_tenaga_gas: "PLT Gas (PLTG)",
       pembangkit_listrik_tenaga_angin: "PLT Angin (PLTB)",
+      pembangkit_listrik_tenaga_panas_bumi: "PLT Panas Bumi (PLTP)",
+      pembangkit_listrik_tenaga_hidrogen: "PLT Hidrogen (PLTH)",
+      pembangkit_listrik_tenaga_gelombang_laut: "PLT Gelombang Laut (PLTGL)",
+      pembangkit_listrik_tenaga_fusi_nuklir: "PLT Fusi Nuklir (PLTFN)",
     };
     if (customLabels[key]) return customLabels[key];
     return key.replace(/_/g, " ").replace(/\b\w/g, (ch) => ch.toUpperCase());

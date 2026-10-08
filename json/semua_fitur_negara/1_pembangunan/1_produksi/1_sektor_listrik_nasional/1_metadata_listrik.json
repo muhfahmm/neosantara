@@ -65,5 +65,49 @@
     "waktu_pembangunan": 60,
     "biaya_pembangunan": 1500,
     "konsumsi_listrik": 0
+  },
+  "pembangkit_listrik_tenaga_panas_bumi": {
+    "key": "7_pembangkit_listrik_tenaga_panas_bumi",
+    "dataKey": "pembangkit_listrik_tenaga_panas_bumi",
+    "label": "PLTP",
+    "deskripsi": "PLTP (Panas Bumi)",
+    "produksi": 110,
+    "satuan": "MW",
+    "waktu_pembangunan": 120,
+    "biaya_pembangunan": 3500,
+    "konsumsi_listrik": 0
+  },
+  "pembangkit_listrik_tenaga_hidrogen": {
+    "key": "8_pembangkit_listrik_tenaga_hidrogen",
+    "dataKey": "pembangkit_listrik_tenaga_hidrogen",
+    "label": "PLTH",
+    "deskripsi": "PLTH (Hidrogen)",
+    "produksi": 500,
+    "satuan": "MW",
+    "waktu_pembangunan": 150,
+    "biaya_pembangunan": 6000,
+    "konsumsi_listrik": 0
+  },
+  "pembangkit_listrik_tenaga_gelombang_laut": {
+    "key": "9_pembangkit_listrik_tenaga_gelombang_laut",
+    "dataKey": "pembangkit_listrik_tenaga_gelombang_laut",
+    "label": "PLTGL",
+    "deskripsi": "PLTGL (Gelombang Laut)",
+    "produksi": 140,
+    "satuan": "MW",
+    "waktu_pembangunan": 90,
+    "biaya_pembangunan": 2500,
+    "konsumsi_listrik": 0
+  },
+  "pembangkit_listrik_tenaga_fusi_nuklir": {
+    "key": "10_pembangkit_listrik_tenaga_fusi_nuklir",
+    "dataKey": "pembangkit_listrik_tenaga_fusi_nuklir",
+    "label": "PLTFN",
+    "deskripsi": "PLTFN (Fusi Nuklir)",
+    "produksi": 2500,
+    "satuan": "MW",
+    "waktu_pembangunan": 450,
+    "biaya_pembangunan": 25000,
+    "konsumsi_listrik": 0
   }
 }

@@ -14,6 +14,8 @@
  * Penggabungan: Total persentase dijumlahkan langsung (+ dengan + atau - dengan - atau + dengan -).
  */
 
+import { isMemberOfUNESCO, isMemberOfITU } from '@/app/page/bonus_logic';
+
 export interface EducationResearchModifierInfo {
   educationPoints: number;
   percentageChange: number; // e.g. +25, +20, +15, -5, -10
@@ -58,7 +60,7 @@ export function getResearchContractDurationReduction(researchContracts: unknown)
  */
 export function calculateEducationPoints(countryDetail: any): number {
   if (!countryDetail) return 50; // default 50 poin
-  
+
   if (typeof countryDetail.poin_pendidikan === 'number' && !isNaN(countryDetail.poin_pendidikan)) {
     return Math.min(100, Math.max(0, countryDetail.poin_pendidikan));
   }
@@ -80,23 +82,7 @@ export function calculateEducationPoints(countryDetail: any): number {
 export function getEducationResearchModifier(educationPoints: number): EducationResearchModifierInfo {
   const points = Math.max(0, Math.min(100, Number(educationPoints) || 0));
 
-  if (points <= 25) {
-    return {
-      educationPoints: points,
-      percentageChange: 25,
-      multiplier: 1.25,
-      label: '+25% Waktu Penelitian',
-      isPenalty: true,
-    };
-  } else if (points <= 40) {
-    return {
-      educationPoints: points,
-      percentageChange: 20,
-      multiplier: 1.20,
-      label: '+20% Waktu Penelitian',
-      isPenalty: true,
-    };
-  } else if (points <= 65) {
+  if (points < 40) {
     return {
       educationPoints: points,
       percentageChange: 15,
@@ -104,21 +90,21 @@ export function getEducationResearchModifier(educationPoints: number): Education
       label: '+15% Waktu Penelitian',
       isPenalty: true,
     };
-  } else if (points <= 80) {
+  } else if (points > 75) {
     return {
       educationPoints: points,
-      percentageChange: -5,
-      multiplier: 0.95,
-      label: '-5% Waktu Penelitian',
+      percentageChange: -15,
+      multiplier: 0.85,
+      label: '-15% Waktu Penelitian',
       isPenalty: false,
     };
   } else {
-    // 81 - 100
+    // 40 - 75: Netral (0%)
     return {
       educationPoints: points,
-      percentageChange: -10,
-      multiplier: 0.90,
-      label: '-10% Waktu Penelitian',
+      percentageChange: 0,
+      multiplier: 1.0,
+      label: '0% Waktu Penelitian (Netral)',
       isPenalty: false,
     };
   }
@@ -130,7 +116,9 @@ export function getEducationResearchModifier(educationPoints: number): Education
 export function calculateCombinedResearchDurationModifier(
   educationPoints: number,
   religion: unknown,
-  researchContracts: unknown = []
+  researchContracts: unknown = [],
+  countryName?: string,
+  category?: string
 ): CombinedResearchModifierInfo {
   const eduMod = getEducationResearchModifier(educationPoints);
   const normalizedReligion = String(religion || "").trim().toLowerCase();
@@ -139,8 +127,18 @@ export function calculateCombinedResearchDurationModifier(
   const contractBonus = getResearchContractDurationReduction(researchContracts);
   const researchContractPercentageChange = -contractBonus.percentage;
 
+  let unescoChange = 0;
+  if (countryName && isMemberOfUNESCO(countryName) && (!category || category === 'sains')) {
+    unescoChange = -5;
+  }
+
+  let ituChange = 0;
+  if (countryName && isMemberOfITU(countryName)) {
+    ituChange = -5;
+  }
+
   const totalPercentageChange = Number((
-    eduMod.percentageChange + atheismPercentageChange + researchContractPercentageChange
+    eduMod.percentageChange + atheismPercentageChange + researchContractPercentageChange + unescoChange + ituChange
   ).toFixed(1));
   const multiplier = Math.max(0.1, 1 + totalPercentageChange / 100);
 
@@ -169,11 +167,13 @@ export function applyCombinedResearchDuration(
   baseDurationDays: number,
   educationPoints: number,
   religion: unknown,
-  researchContracts: unknown = []
+  researchContracts: unknown = [],
+  countryName?: string,
+  category?: string
 ): number {
   if (baseDurationDays <= 0) return baseDurationDays;
-  const combined = calculateCombinedResearchDurationModifier(educationPoints, religion, researchContracts);
-  return Math.max(1, Math.ceil(baseDurationDays * combined.multiplier));
+  const combined = calculateCombinedResearchDurationModifier(educationPoints, religion, researchContracts, countryName, category);
+  return Math.max(1, Math.round(baseDurationDays * combined.multiplier));
 }
 
 /**
@@ -185,5 +185,5 @@ export function applyEducationResearchDuration(
 ): number {
   if (baseDurationDays <= 0) return baseDurationDays;
   const modifier = getEducationResearchModifier(educationPoints);
-  return Math.max(1, Math.ceil(baseDurationDays * modifier.multiplier));
+  return Math.max(1, Math.round(baseDurationDays * modifier.multiplier));
 }

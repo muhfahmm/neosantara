@@ -2,6 +2,7 @@ import armadaMetadata from "../../../../../../../../../json/semua_fitur_negara/2
 import { getMonarchyMilitaryStrengthMultiplier } from "@/app/page/bonus_logic/ideologi_bonus_logic/monarki";
 import { getAuthoritarianMilitaryStrengthMultiplier } from "@/app/page/bonus_logic/ideologi_bonus_logic/otoritarianisme";
 import { getNATOMilitaryMultiplier } from "@/app/page/bonus_logic";
+import { getMilitaryResearchStrengthMultiplier } from "@/app/page/bonus_logic/militaryResearchBonus";
 
 type ArmadaMetadataRecord = {
   dataKey: string;
@@ -127,7 +128,8 @@ export function getArmadaUnitBreakdown(source: unknown): ArmadaUnitBreakdown[] {
       quantity,
       powerPerUnit,
       healthPerUnit,
-      totalPower: quantity * powerPerUnit * militaryMultiplier,
+      totalPower: quantity * powerPerUnit * militaryMultiplier *
+        getMilitaryResearchStrengthMultiplier(sourceData, metadata.dataKey),
       totalHealth: quantity * healthPerUnit * militaryMultiplier,
       baseTotalPower: quantity * powerPerUnit,
       baseTotalHealth: quantity * healthPerUnit,
