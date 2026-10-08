@@ -105,26 +105,12 @@ export default function InfoInfrastrukturModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
               <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Tenaga Kerja</p>
               <p className="text-base font-black text-white">
                 {formatNumber(selectedItem?.lowongan_kerja || selectedItem?.kekuatan || 0)} orang
               </p>
-            </div>
-            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20 space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Total):</span>
-                <span className="text-rose-400 font-black text-sm">
-                  {(Number(selectedItem?.konsumsi_listrik || 0.5) * value).toLocaleString("id-ID")} MW
-                </span>
-              </div>
-              <div className="flex justify-between items-center pl-4">
-                <span className="text-[#6B8A8A]">Listrik Dikonsumsi (Satuan):</span>
-                <span className="text-rose-400 font-bold">
-                  {Number(selectedItem?.konsumsi_listrik || 0.5).toLocaleString("id-ID")} MW
-                </span>
-              </div>
             </div>
           </div>
         </div>

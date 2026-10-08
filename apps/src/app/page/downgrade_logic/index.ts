@@ -45,7 +45,7 @@ export function calculateEducationPoints(countryDetail: any): number {
   const keys = [
     "prasekolah", "dasar", "menengah", "lanjutan", "universitas",
     "lembaga_pendidikan", "laboratorium", "observatorium",
-    "pusat_penelitian", "pusat_pengembangan", "literasi"
+    "pusat_penelitian", "pusat_pengembangan"
   ];
   const totalFacilities = keys.reduce((s, k) => s + (Number(countryDetail[k]) || 0), 0);
   const ratio = totalFacilities / pop;

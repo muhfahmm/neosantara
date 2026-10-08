@@ -562,26 +562,12 @@ export default function ProduksiModal({
           <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
-              <div className="flex items-center gap-4 lg:gap-8">
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                    <Hammer className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
-                  </div>
-                  <div>
-                    <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Produksi & Pembangunan</h2>
-                  </div>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+                  <Hammer className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                 </div>
-                <div className="flex items-center gap-2 sm:gap-3 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-[#00FFAA]/30">
-                  <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
-                    <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
-                    <span className="text-[10px] lg:text-[11px] font-black text-emerald-400 uppercase tracking-wider">Produksi</span>
-                    <span className="text-[10px] lg:text-[11px] font-black text-emerald-400">{totalProductionMW.toLocaleString('id-ID')} MW</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 bg-[#0F2424] border border-rose-500/30 rounded-lg">
-                    <TrendingDown className="h-3.5 w-3.5 text-rose-400" />
-                    <span className="text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
-                    <span className="text-[10px] lg:text-[11px] font-black text-rose-400">{estimatedConsumption.toLocaleString('id-ID')} MW</span>
-                  </div>
+                <div>
+                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Produksi & Pembangunan</h2>
                 </div>
               </div>
               <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">

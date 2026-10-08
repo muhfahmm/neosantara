@@ -353,31 +353,12 @@ export default function HunianPermukimanModal({
 
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
-            <div className="flex items-center gap-4 lg:gap-8">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                  <Home className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
-                </div>
-                <div>
-                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Hunian & Permukiman</h2>
-                </div>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+                <Home className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
               </div>
-              
-              <div className="flex items-center gap-2 sm:gap-3 pl-4 lg:pl-8 border-l border-[#00FFAA]/30">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
-                    <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
-                    <span className="text-[10px] lg:text-[11px] font-black text-emerald-400 uppercase tracking-wider">Produksi</span>
-                    <span className="text-[10px] lg:text-[11px] font-black text-emerald-400">{totalProductionMW.toLocaleString('id-ID')} MW</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 bg-[#0F2424] border border-rose-500/30 rounded-lg">
-                    <TrendingDown className="h-3.5 w-3.5 text-rose-400" />
-                    <span className="text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
-                    <span className="text-[10px] lg:text-[11px] font-black text-rose-400">{estimatedConsumption.toLocaleString('id-ID')} MW</span>
-                  </div>
-                </div>
+              <div>
+                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Hunian & Permukiman</h2>
               </div>
             </div>
             <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
@@ -637,28 +618,7 @@ export default function HunianPermukimanModal({
                   </div>
                 </div>
 
-                {/* RINGKASAN KONSUMSI LISTRIK SEKTOR */}
-                {activeItem && (() => {
-                  const bMeta = findMeta(activeItem.key);
-                  const count = Number(countryDetail?.[activeItem.key]) || 0;
-                  const konsumsiUnit = Number(bMeta?.konsumsi_listrik) || DEFAULT_ELECTRICITY_CONSUMPTION[activeItem.key] || 0;
-                  const categoryElectricityConsumption = count * konsumsiUnit;
 
-                  return (
-                    <div className="mt-4 p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 flex items-center justify-between shadow-sm">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-black text-[#00FFAA] uppercase tracking-wider">
-                          ⚡ Total Konsumsi Listrik {activeItem.label}
-                        </span>
-                      </div>
-                      <div className="px-4 py-1.5 rounded-lg bg-[#0F2424] border border-rose-500/30">
-                        <span className="text-sm font-black text-rose-400">
-                          {categoryElectricityConsumption.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })()}
               </div>
             </div>
           </div>

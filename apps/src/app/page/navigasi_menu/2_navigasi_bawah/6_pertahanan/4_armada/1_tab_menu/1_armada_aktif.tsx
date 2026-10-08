@@ -351,9 +351,6 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
           Kekuatan Militer & Total HP seluruh matra (Darat, Laut, Udara) ditingkatkan +15% oleh bonus keanggotaan NATO.
         </div>
       )}
-      <div className="text-xs font-semibold text-[#8b7e66] leading-relaxed">
-        Inventaris alutsista negara dipisahkan berdasarkan kelompok operasional untuk memudahkan evaluasi kekuatan darat, laut, dan udara.
-      </div>
 
       {groupKeys.map((group) => {
         const Icon = groupMeta[group].icon;

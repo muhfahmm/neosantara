@@ -368,7 +368,7 @@ function ModalsManager({
               const findTempatUmumTab = () => {
                 const groups = [
                   { id: "infrastruktur", keys: ["jalur_sepeda", "jalan_raya", "terminal_bus", "stasiun_kereta_api", "stasiun_kereta", "kereta_bawah_tanah", "pelabuhan", "bandara", "helipad", "jembatan_nasional", "pembangkit_listrik"] },
-                  { id: "pendidikan", keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan", "literasi"] },
+                  { id: "pendidikan", keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan"] },
                   { id: "kesehatan", keys: ["rumah_sakit_besar", "rumah_sakit_kecil", "rumah_sakit", "pusat_diagnostik", "puskesmas", "klinik", "harapan_hidup", "indeks_kesehatan"] },
                   { id: "penegakan_hukum", keys: ["pusat_bantuan_hukum", "pengadilan", "kejaksaan", "pos_polisi", "kantor_polisi", "armada_mobil_polisi", "akademi_polisi", "lapas", "indeks_korupsi", "indeks_keamanan"] },
                   { id: "olahraga_hiburan", keys: ["kolam_renang", "sirkuit_balap", "stadion", "stadion_internasional", "gym", "golf", "esports", "gokart", "bioskop", "teater", "taman_kota"] },

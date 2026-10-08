@@ -67,28 +67,13 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
         
         {/* HEADER */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-          <div className="flex items-center">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-                <ShieldAlert className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
-              </div>
-              <div>
-                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Pertahanan & Keamanan</h2>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">{countryName}</p>
-              </div>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+              <ShieldAlert className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
             </div>
-
-            <div className="flex items-center gap-2 sm:gap-3 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-[#00FFAA]/30">
-              <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
-                <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
-                <span className="text-[10px] lg:text-[11px] font-black text-emerald-400 uppercase tracking-wider">Produksi</span>
-                <span className="text-[10px] lg:text-[11px] font-black text-emerald-400">{totalProductionMW.toLocaleString('id-ID')} MW</span>
-              </div>
-              <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 bg-[#0F2424] border border-rose-500/30 rounded-lg">
-                <TrendingDown className="h-3.5 w-3.5 text-rose-400" />
-                <span className="text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
-                <span className="text-[10px] lg:text-[11px] font-black text-rose-400">{estimatedConsumption.toLocaleString('id-ID')} MW</span>
-              </div>
+            <div>
+              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Pertahanan & Keamanan</h2>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">{countryName}</p>
             </div>
           </div>
           <button 

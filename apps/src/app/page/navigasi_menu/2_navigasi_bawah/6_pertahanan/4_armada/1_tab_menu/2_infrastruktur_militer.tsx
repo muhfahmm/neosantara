@@ -424,10 +424,6 @@ export default function InfrastrukturMiliter({
   // 🟢 Render UI
   return (
     <div className="space-y-6">
-      <div className="text-xs font-semibold text-[#6B8A8A] leading-relaxed">
-        Fasilitas pendukung logistik dan pertahanan yang menjadi tulang punggung kekuatan militer nasional.
-      </div>
-
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
         {Object.keys(infrastrukturData).map((key) => {
           const item = infrastrukturData[key];

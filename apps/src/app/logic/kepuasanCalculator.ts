@@ -214,7 +214,7 @@ function calculateRawLayananPublikScore(countryDetail: any): number {
 
   const categories = [
     { keys: ["jalur_sepeda", "jalan_raya", "terminal_bus", "stasiun_kereta_api", "kereta_bawah_tanah", "pelabuhan", "bandara", "helipad"], target: 0.00005 },
-    { keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan", "literasi"], target: 0.0001 },
+    { keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan"], target: 0.0001 },
     { keys: ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik"], target: 0.00004 },
     { keys: PENEGAKAN_HUKUM_KEYS, target: PENEGAKAN_HUKUM_TARGET_RATIO },
     { keys: ["kolam_renang", "sirkuit_balap", "stadion", "stadion_internasional", "gym", "golf", "esports", "gokart", "bioskop", "teater"], target: 0.00008 },

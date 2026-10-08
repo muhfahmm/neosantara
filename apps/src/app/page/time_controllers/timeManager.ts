@@ -105,7 +105,7 @@ export class SimulationTimeManager {
                 return;
             }
 
-            const interval = this.speedIntervals[this.speed] || 2000;
+            const interval = this.speedIntervals[this.speed] || 2500;
             const delta = now - this.lastTickTime;
 
             if (delta >= interval) {
@@ -120,8 +120,8 @@ export class SimulationTimeManager {
                 this.triggerCallback();
             }
 
-            // Calculate exact sub-tick progress for the progress bar (0 to 100).
-            const currentDelta = now - this.lastTickTime;
+            // Calculate exact sub-tick progress for the progress bar (0% to 100%) per day tick
+            const currentDelta = Math.max(0, now - this.lastTickTime);
             const progress = Math.min((currentDelta / interval) * 100, 100);
             if (this.onProgressChangeCallback) {
                 this.onProgressChangeCallback(progress);

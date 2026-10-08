@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { X, Shield, Atom, Rocket, Bomb, Clock } from "lucide-react";
+import { X, Shield, Atom, Rocket, Bomb, Clock, Target, Lock, Check } from "lucide-react";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import { calculateProductionIncrement, formatDate, getDaysElapsed } from "@/app/logic/production_logic";
 import ProgramNuklirModals from "./modals_menu/1_program_nuklir/programNuklirModals";
@@ -134,7 +134,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
   const isNuclearProgramBuilding = Boolean(programBuildTask) && !buildCompleted;
   const isIcbmLocked = !isNuclearProgramActive;
   const icbmCardStatusText = isIcbmLocked
-    ? "🔒 Terkunci. Aktifkan Program Nuklir terlebih dahulu."
+    ? "Terkunci. Aktifkan Program Nuklir terlebih dahulu."
     : "Bangun ICBM untuk melihat jadwal penyelesaian.";
   const buildEndDate = programBuildTask?.endDate || null;
 
@@ -333,7 +333,9 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                     </p>
                   )}
                   {isNuclearProgramActive && (
-                    <p className="text-[10px] text-[#00FFAA] font-bold">🎯 Sistem Siap Meluncur!</p>
+                    <p className="text-[10px] text-[#00FFAA] font-bold flex items-center justify-center gap-1">
+                      <Target className="w-3.5 h-3.5 text-[#00FFAA]" /> Sistem Siap Meluncur!
+                    </p>
                   )}
                 </div>
               </div>
@@ -351,8 +353,8 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
 
                 <div className="relative overflow-visible">
                   {formattedIcbmEndDate && isIcbmBuildQueued && remainingBuildQuantity > 0 ? (
-                    <div className="absolute -top-6 left-1/2 z-20 -translate-x-1/2 rounded-sm bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 shadow-md tracking-wider whitespace-nowrap">
-                      Selesai {formattedIcbmEndDate}
+                    <div className="absolute -top-6 left-1/2 z-20 -translate-x-1/2 rounded-sm bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 shadow-md tracking-wider whitespace-nowrap flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> Selesai {formattedIcbmEndDate}
                     </div>
                   ) : null}
                   <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-4 text-center shadow-sm flex flex-col justify-center min-h-[140px]">
@@ -366,14 +368,16 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                     </div>
 
                     {isIcbmLocked ? (
-                      <p className="mt-2 text-[10px] text-[#6B8A8A]">🔒 Terkunci. Aktifkan Program Nuklir terlebih dahulu.</p>
+                      <p className="mt-2 text-[10px] text-[#6B8A8A] flex items-center justify-center gap-1">
+                        <Lock className="w-3 h-3 text-[#6B8A8A]" /> Terkunci. Aktifkan Program Nuklir terlebih dahulu.
+                      </p>
                     ) : isIcbmBuildQueued && remainingBuildQuantity > 0 ? (
                       <div className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-[#00FFAA]/10 px-3 py-0.5 text-[10px] font-bold text-[#00FFAA]">
                         +{remainingBuildQuantity} sedang dibangun
                       </div>
                     ) : isIcbmBuildQueued && remainingBuildQuantity === 0 ? (
                       <div className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-[#00FFAA]/20 px-3 py-0.5 text-[10px] font-bold text-[#00FFAA]">
-                        ✔️ Semua ICBM telah selesai dibangun!
+                        <Check className="w-3.5 h-3.5 text-[#00FFAA]" /> Semua ICBM telah selesai dibangun!
                       </div>
                     ) : (
                       <p className="mt-2 text-[10px] text-[#6B8A8A]">Bangun ICBM untuk melihat jadwal penyelesaian.</p>
@@ -421,7 +425,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                     >
                       {isUnlockerCardActive ? (
                         <div className="w-10 h-10 text-[#00FFAA] flex items-center justify-center">
-                          <span className="text-2xl">✔️</span>
+                          <Check className="w-7 h-7 text-[#00FFAA]" />
                         </div>
                       ) : (
                         <Icon className={`w-10 h-10 ${isLockedCard ? 'text-[#6B8A8A]' : 'text-[#00FFAA]'}`} />
@@ -437,9 +441,11 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                     <p className={`text-[10px] leading-relaxed ${
                       isLockedCard ? 'text-[#6B8A8A]' : isUnlockerCardActive ? 'text-[#00FFAA]' : 'text-[#6B8A8A]'
                     }`}>
-                      {isLockedCard 
-                        ? "🔒 Terkunci. Aktifkan Program Nuklir terlebih dahulu." 
-                        : isUnlockerCardActive 
+                      {isLockedCard ? (
+                        <span className="flex items-center justify-center gap-1">
+                          <Lock className="w-3 h-3 inline shrink-0" /> Terkunci. Aktifkan Program Nuklir terlebih dahulu.
+                        </span>
+                      ) : isUnlockerCardActive 
                         ? "Program nuklir telah diaktifkan. Kini Anda dapat mengakses ICBM dan Perang Nuklir."
                         : isUnlockerBuilding
                         ? "Program nuklir sedang dibangun. Tunggu hingga selesai untuk membuka ICBM dan Perang Nuklir."

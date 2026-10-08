@@ -368,7 +368,7 @@ export const calculateDailyBirths = (
 
   let eduRatio = 0.5;
   if (detail) {
-    const eduKeys = ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan", "literasi"];
+    const eduKeys = ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan"];
     const totalEducation = eduKeys.reduce((sum, key) => sum + (Number(detail[key]) || 0), 0);
     const idealEducation = Math.ceil(populasi / 50000) || 1;
     eduRatio = Math.min(1, totalEducation / idealEducation);

@@ -9,7 +9,6 @@ import {
 
 import SpektrumSistemTab from "./tab_menu/1_spektrum_sistem/SpektrumSistemTab";
 import KartuKebijakanTab from "./tab_menu/2_kartu_kebijakan/KartuKebijakanTab";
-import SistemDuniaTab from "./tab_menu/3_sistem_dunia/SistemDuniaTab";
 import { getSistemEkonomiBySlug } from "@/../../json/database_sistem_ekonomi/index";
 import { generateSistemEkonomiChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/4_sistem_ekonomi/sistemEkonomiChangeLogic";
 
@@ -52,7 +51,7 @@ const resolveSistemEkonomiForCountry = (countryDetail: any) => {
 };
 
 export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, setCountryDetail }: ModalProps) {
-  const [activeTab, setActiveTab] = useState<"sistem" | "kebijakan" | "dunia">("sistem");
+  const [activeTab, setActiveTab] = useState<"sistem" | "kebijakan">("sistem");
 
   // Economic System Slider Value & Policy Choices (Loaded Instantly in 0ms)
   const [sliderValue, setSliderValue] = useState<number>(
@@ -148,7 +147,6 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
   const tabs = [
     { id: "sistem", label: "Spektrum Sistem", desc: "Kontrol Skala Terpusat vs Pasar" },
     { id: "kebijakan", label: "Kartu Kebijakan", desc: "Regulasi Sektoral Spesifik" },
-    { id: "dunia", label: "Sistem Ekonomi Dunia", desc: "Perbandingan Global" },
   ];
 
   return (
@@ -167,15 +165,13 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
           </div>
 
           <div className="flex items-center gap-2 lg:gap-3">
-            {activeTab !== "dunia" && (
-              <button
-                onClick={handleSaveSystem}
-                className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 lg:py-1.5 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500 hover:text-[#0A1A1A] font-black text-[9px] lg:text-xs uppercase tracking-wider transition-all cursor-pointer shadow-sm"
-              >
-                <Check className="w-3.5 h-3.5" />
-                Terapkan Kebijakan
-              </button>
-            )}
+            <button
+              onClick={handleSaveSystem}
+              className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 lg:py-1.5 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500 hover:text-[#0A1A1A] font-black text-[9px] lg:text-xs uppercase tracking-wider transition-all cursor-pointer shadow-sm"
+            >
+              <Check className="w-3.5 h-3.5" />
+              Terapkan Kebijakan
+            </button>
 
             <button 
               onClick={onClose} 
@@ -233,10 +229,6 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
                 handlePolicyChange={handlePolicyChange}
               />
             )}
-
-            {activeTab === "dunia" && (
-              <SistemDuniaTab countryDetail={countryDetail} />
-            )}
           </div>
 
         </div>
@@ -245,3 +237,4 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
     </div>
   );
 }
+

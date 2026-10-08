@@ -89,7 +89,7 @@ export default function IndeksKesejahteraanModal({
   const pendidikanActualScore = useMemo(() => {
     if (!countryDetail) return 0;
     const pop = Number(countryDetail.jumlah_penduduk) || 1;
-    const keys = ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan", "literasi"];
+    const keys = ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan"];
     const total = keys.reduce((s, k) => s + (Number(countryDetail[k]) || 0), 0);
     const index = total / pop;
     return Math.min(100, Math.round((index / 0.0001) * 100));

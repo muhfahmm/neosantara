@@ -452,19 +452,7 @@ export default function KonfirmasiInfrastrukturModal({
               </div>
             )}
 
-            {/* Kondisional Listrik */}
-            {konsumsiListrik !== undefined && konsumsiListrik !== null && (
-              <>
-                <div className="flex justify-between">
-                  <span className="text-[#6B8A8A]">Konsumsi Listrik per bangunan:</span>
-                  <span className="text-white font-semibold">{konsumsiListrik} MW</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-[#6B8A8A]">Konsumsi Listrik Total ({buildQuantity} unit):</span>
-                  <span className="text-white font-semibold">{(konsumsiListrik * buildQuantity).toFixed(4).replace(/\.?0+$/, '')} MW</span>
-                </div>
-              </>
-            )}
+
 
             {requirements && requirements.length > 0 ? (
               <div className="space-y-3 text-xs">

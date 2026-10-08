@@ -63,7 +63,7 @@ export default function DetailKelahiranModal({
   const healthFactor = 0.7 + 0.3 * hospitalRatio;
 
   // Pendidikan - mengambil data dinamis (total sekolah dibangun / ideal)
-  const eduKeys = ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan", "literasi"];
+  const eduKeys = ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan"];
   const totalEducation = eduKeys.reduce((sum, key) => sum + (Number(countryDetail?.[key]) || 0), 0);
   const idealEducation = Math.ceil(populasi / 50000) || 1;
   const educationRatio = Math.min(1, totalEducation / idealEducation);

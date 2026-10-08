@@ -64,17 +64,11 @@ export default function InfoArmadaPolisiModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
               <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Tenaga Kerja</p>
               <p className="text-base font-black text-white">
                 {formatNumber(selectedItem?.lowongan_kerja)} orang
-              </p>
-            </div>
-            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Konsumsi Listrik</p>
-              <p className="text-base font-black text-white">
-                {formatNumber(selectedItem?.konsumsi_listrik)} kW
               </p>
             </div>
           </div>

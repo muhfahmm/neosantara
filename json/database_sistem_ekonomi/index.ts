@@ -12,6 +12,8 @@ export interface SistemEkonomi {
   policy_labor: string;
 }
 
+export const SISTEM_EKONOMI_LIST: SistemEkonomi[] = [];
+
 export async function fetchSistemEkonomiFromDb(slug?: string): Promise<SistemEkonomi | null> {
   try {
     const url = slug
@@ -21,7 +23,7 @@ export async function fetchSistemEkonomiFromDb(slug?: string): Promise<SistemEko
     if (!res.ok) return null;
     const data = await res.json();
     if (Array.isArray(data)) return data[0] || null;
-    return data;
+    return data || null;
   } catch (err) {
     console.error('Failed to fetch sistem ekonomi from database API:', err);
     return null;
@@ -44,6 +46,7 @@ export async function fetchAllSistemEkonomiFromDb(): Promise<SistemEkonomi[]> {
 export function getSistemEkonomiBySlug(slug?: string): SistemEkonomi | null {
   return null;
 }
-export const SISTEM_EKONOMI_LIST: SistemEkonomi[] = [];
+
+
 
 

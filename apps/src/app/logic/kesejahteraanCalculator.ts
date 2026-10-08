@@ -54,7 +54,6 @@ export interface PendidikanMetrics {
     observatorium: number;
     pusatPenelitian: number;
     pusatPengembangan: number;
-    literasi: number;
   };
 }
 
@@ -65,7 +64,6 @@ export interface PendidikanMetrics {
  * - Pendidikan Dasar: Prasekolah, SD, SMP, SMA, SMK
  * - Pendidikan Lanjutan: Universitas, Lembaga Pendidikan
  * - Penelitian: Laboratorium, Observatorium, Pusat Penelitian, Pusat Pengembangan
- * - Literasi: Program literasi
  * 
  * Target: 1 fasilitas per 10,000 jiwa (lebih ketat untuk pendidikan berkualitas)
  */
@@ -87,7 +85,6 @@ export function calculatePendidikanScore(countryDetail: any): PendidikanMetrics 
         observatorium: 0,
         pusatPenelitian: 0,
         pusatPengembangan: 0,
-        literasi: 0,
       },
     };
   }
@@ -97,7 +94,6 @@ export function calculatePendidikanScore(countryDetail: any): PendidikanMetrics 
     { keys: ["prasekolah", "dasar", "menengah", "lanjutan"], target: 0.00005, weight: 0.5 }, // 1 per 20k (dasar)
     { keys: ["universitas", "lembaga_pendidikan"], target: 0.00001, weight: 0.3 },           // 1 per 100k (lanjutan)
     { keys: ["laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan"], target: 0.000005, weight: 0.15 }, // 1 per 200k (penelitian)
-    { keys: ["literasi"], target: 0.00001, weight: 0.05 },                                  // 1 per 100k
   ];
 
   let totalFacilities = 0;
@@ -135,7 +131,6 @@ export function calculatePendidikanScore(countryDetail: any): PendidikanMetrics 
       observatorium: details.observatorium || 0,
       pusatPenelitian: details.pusat_penelitian || 0,
       pusatPengembangan: details.pusat_pengembangan || 0,
-      literasi: details.literasi || 0,
     },
   };
 }
@@ -385,7 +380,7 @@ export function calculateKesejahteraan(
 ): KesejahteraanIndex {
   // Sektor 1: Pendidikan
   const pop = Number(countryDetail?.jumlah_penduduk) || 1;
-  const pendKeys = ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan", "literasi"];
+  const pendKeys = ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan"];
   const pendTotal = pendKeys.reduce((s, k) => s + (Number(countryDetail?.[k]) || 0), 0);
   const pendIndex = pendTotal / pop;
   const pendidikanScore = Math.min(100, Math.round((pendIndex / 0.0001) * 100));
@@ -472,7 +467,7 @@ export function calculateKesejahteraan(
   const dummyPendidikanMetrics: PendidikanMetrics = {
     totalFacilities: pendTotal,
     score: pendidikanScore,
-    detail: { prasekolah: 0, dasar: 0, menengah: 0, lanjutan: 0, universitas: 0, lembagaPendidikan: 0, laboratorium: 0, observatorium: 0, pusatPenelitian: 0, pusatPengembangan: 0, literasi: 0 }
+    detail: { prasekolah: 0, dasar: 0, menengah: 0, lanjutan: 0, universitas: 0, lembagaPendidikan: 0, laboratorium: 0, observatorium: 0, pusatPenelitian: 0, pusatPengembangan: 0 }
   };
   const dummyKesehatanMetrics: KesehatanMetrics = {
     totalFacilities: kesTotal,

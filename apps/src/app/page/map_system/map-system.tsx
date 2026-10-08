@@ -1627,6 +1627,11 @@ export default function MapPage() {
                         setCurrentDate(newDate);
                     }
                 }
+            },
+            (progress) => {
+                if (progressBarRef.current) {
+                    progressBarRef.current.style.width = `${progress}%`;
+                }
             }
         );
 
@@ -3459,6 +3464,14 @@ export default function MapPage() {
                                 -
                             </span>
                         </div>
+                    </div>
+
+                    {/* Progress Bar Hijau */}
+                    <div className="w-full bg-[#0A1A1A] h-1.5 rounded-full overflow-hidden border border-[#00FFAA]/20">
+                        <div
+                            ref={progressBarRef}
+                            className="bg-[#00FFAA] h-full w-0 transition-none rounded-full shadow-[0_0_8px_#00FFAA]"
+                        />
                     </div>
 
                 </div>

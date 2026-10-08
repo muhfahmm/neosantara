@@ -51,7 +51,7 @@ interface BuildingRequirements {
 
 const SERVICE_GROUPS = [
   { id: "infrastruktur", label: "Infrastruktur", description: "Jaringan transportasi dan fasilitas publik dasar.", keys: ["jalur_sepeda", "jalan_raya", "terminal_bus", "stasiun_kereta_api", "kereta_bawah_tanah", "pelabuhan", "bandara", "helipad"] },
-  { id: "pendidikan", label: "Pendidikan", description: "Fasilitas pembelajaran dari prasekolah hingga pusat penelitian.", keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan", "literasi"] },
+  { id: "pendidikan", label: "Pendidikan", description: "Fasilitas pembelajaran dari prasekolah hingga pusat penelitian.", keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan"] },
   { id: "kesehatan", label: "Kesehatan", description: "Sarana medis dan indeks kesehatan masyarakat.", keys: ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik"] },
   { id: "penegakan_hukum", label: "Penegakan Hukum", description: "Fasilitas keadilan dan keamanan.", keys: ["pusat_bantuan_hukum", "pengadilan", "kejaksaan", "pos_polisi", "armada_mobil_polisi", "akademi_polisi"] },
   { id: "olahraga_hiburan", label: "Olahraga & Hiburan", description: "Fasilitas rekreasi dan olahraga publik.", keys: ["kolam_renang", "sirkuit_balap", "stadion", "stadion_internasional", "gym", "golf", "esports", "gokart", "bioskop", "teater"] },
@@ -363,7 +363,7 @@ export default function TempatUmumModal({
 
   const categoriesList = [
     { id: "infrastruktur", label: "Infrastruktur", keys: ["jalur_sepeda", "jalan_raya", "terminal_bus", "stasiun_kereta_api", "kereta_bawah_tanah", "pelabuhan", "bandara", "helipad"] },
-    { id: "pendidikan", label: "Pendidikan", keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan", "literasi"] },
+    { id: "pendidikan", label: "Pendidikan", keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan"] },
     { id: "kesehatan", label: "Kesehatan", keys: ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik"] },
     { id: "penegakan_hukum", label: "Penegakan Hukum", keys: PENEGAKAN_HUKUM_KEYS },
     { id: "olahraga_hiburan", label: "Olahraga & Hiburan", keys: ["kolam_renang", "sirkuit_balap", "stadion", "stadion_internasional", "gym", "golf", "esports", "gokart", "bioskop", "teater"] },
@@ -388,32 +388,13 @@ export default function TempatUmumModal({
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
         <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
-            <div className="flex items-center gap-4 lg:gap-8">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                  <Landmark className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
-                </div>
-                <div>
-                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Tempat Umum & Layanan Publik</h2>
-                </div>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+                <Landmark className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
               </div>
-              <div className="flex items-center gap-2 sm:gap-3 pl-4 lg:pl-8 border-l border-[#00FFAA]/30">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
-                    <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
-                    <span className="text-[10px] lg:text-[11px] font-black text-emerald-400 uppercase tracking-wider">Produksi</span>
-                    <span className="text-[10px] lg:text-[11px] font-black text-emerald-400">{totalProductionMW.toLocaleString('id-ID')} MW</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 bg-[#0F2424] border border-rose-500/30 rounded-lg">
-                    <TrendingDown className="h-3.5 w-3.5 text-rose-400" />
-                    <span className="text-[10px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
-                    <span className="text-[10px] lg:text-[11px] font-black text-rose-400">{estimatedConsumption.toLocaleString('id-ID')} MW</span>
-                  </div>
-                </div>
+              <div>
+                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Tempat Umum & Layanan Publik</h2>
               </div>
             </div>
             <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
@@ -580,8 +561,8 @@ export default function TempatUmumModal({
               </div>
 
               <div className="mt-8 border-t border-[#00FFAA]/20 pt-6 space-y-4">
-                {/* Grid 3 Kartu Ringkasan */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+                {/* Grid 2 Kartu Ringkasan (Full Width) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch w-full">
                   
                   {/* 1. Total Fasilitas Publik */}
                   <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 flex flex-col justify-between">
@@ -591,32 +572,7 @@ export default function TempatUmumModal({
                     </div>
                   </div>
 
-                  {/* 2. Total Konsumsi Listrik */}
-                  {(() => {
-                    const activeCategory = calculatedCategories.find((cat) => cat.id === activeTabId);
-                    let totalCategoryConsumption = 0;
-                    if (activeCategory) {
-                      activeCategory.keys.forEach((key: string) => {
-                        const count = Number(countryDetail?.[key]) || 0;
-                        const bMeta = findMeta(key) || {};
-                        const konsumsiUnit = Number(bMeta?.konsumsi_listrik) || 0;
-                        totalCategoryConsumption += count * konsumsiUnit;
-                      });
-                    }
 
-                    return (
-                      <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 flex flex-col justify-between">
-                        <div>
-                          <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">
-                            ⚡ Total Konsumsi Listrik {activeCategory?.label || ''}
-                          </p>
-                          <p className="text-2xl sm:text-3xl font-black text-rose-400 mt-2">
-                            {totalCategoryConsumption.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-sm font-bold text-[#6B8A8A]">MW</span>
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })()}
 
                   {/* 3. Indeks Kepuasan Rakyat */}
                   {(() => {
