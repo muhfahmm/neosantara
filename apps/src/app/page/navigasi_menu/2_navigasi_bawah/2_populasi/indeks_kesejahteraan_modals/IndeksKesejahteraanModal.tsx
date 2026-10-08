@@ -3,7 +3,8 @@
 import { useState, useMemo, useEffect } from "react";
 import {
   X, Info, TrendingUp, TrendingDown, BookOpen, Heart, MapPin,
-  Wheat, Home, Library, Hospital, Landmark, CheckCircle, Sprout, Globe, Zap, ShieldCheck
+  Wheat, Home, Library, Hospital, Landmark, CheckCircle, Sprout, Globe, Zap, ShieldCheck,
+  Minus, AlertTriangle, Lightbulb, CheckCircle2, Star
 } from "lucide-react";
 import {
   calculateKesejahteraan,
@@ -186,7 +187,7 @@ export default function IndeksKesejahteraanModal({
       case 'turun':
         return <TrendingDown className="h-5 w-5 text-rose-600" />;
       default:
-        return <div className="h-5 w-5 text-gray-600 flex items-center justify-center">➡️</div>;
+        return <Minus className="h-5 w-5 text-gray-600" />;
     }
   };
 
@@ -252,44 +253,12 @@ export default function IndeksKesejahteraanModal({
                         <span className="text-lg font-bold text-[#6B8A8A]">/100</span>
                       </div>
                       <p className="text-sm font-black mt-2 text-[#00FFAA]">{status}</p>
-                      <p className="text-[10px] text-[#6B8A8A] font-medium mt-1">Rata-rata 8 komponen layanan dan keterbukaan</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {getTrendIcon(kesejahteraan.trend)}
                       <span className="text-xs font-bold text-[#00FFAA] uppercase">{kesejahteraan.trend}</span>
                     </div>
                   </div>
-                </div>
-
-                {/* Interpretasi */}
-                <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-6 rounded-2xl">
-                  <h3 className="text-md font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2 mb-4">
-                    <Info className="h-5 w-5 text-[#00FFAA]" />
-                    Interpretasi
-                  </h3>
-                  <p className="text-sm text-[#E0E0E0] font-medium leading-relaxed">
-                    {overallScore >= 81 && (
-                      <>Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki indeks kesejahteraan yang <span className="text-emerald-400 font-bold">luar biasa baik</span>. Investasi dalam pendidikan, kesehatan, fasilitas publik, pangan, dan hunian telah menciptakan lingkungan yang sangat kondusif.</>
-                    )}
-                    {overallScore >= 61 && overallScore < 81 && (
-                      <>Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki indeks kesejahteraan yang <span className="text-emerald-400 font-bold">baik</span>. Infrastruktur dasar sudah memadai, namun masih ada ruang untuk peningkatan di beberapa sektor.</>
-                    )}
-                    {overallScore >= 41 && overallScore < 61 && (
-                      <>Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki indeks kesejahteraan yang <span className="text-yellow-400 font-bold">sedang</span>. Perlu perhatian lebih pada sektor‑sektor yang masih lemah untuk mencapai kualitas hidup yang lebih baik.</>
-                    )}
-                    {overallScore >= 21 && overallScore < 41 && (
-                      <>Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> memiliki indeks kesejahteraan yang <span className="text-amber-400 font-bold">buruk</span>. Investasi signifikan diperlukan di semua sektor untuk mengangkat kualitas hidup masyarakat.</>
-                    )}
-                    {overallScore < 21 && (
-                      <>Negara <span className="font-bold text-[#00FFAA]">{countryName}</span> menghadapi <span className="text-rose-400 font-bold">krisis kesejahteraan</span>. Urgensi tinggi untuk membangun infrastruktur dasar di bidang pendidikan, kesehatan, fasilitas publik, pangan, dan perumahan.</>
-                    )}
-                  </p>
-                </div>
-
-                <div className="border-l-2 border-[#00FFAA]/40 pl-4 py-1">
-                  <p className="text-xs text-[#9BB2B2] leading-relaxed">
-                    Indeks ini merangkum pendidikan, kesehatan, fasilitas umum, kepolisian, pangan, listrik, hunian, dan keterbukaan, lalu menambahkan bonus serta mengurangi decay. Indeks kesejahteraan bukan pengali langsung populasi; beberapa sektor yang sama dapat memengaruhi kepuasan, coverage, atau faktor kesehatan secara tidak langsung.
-                  </p>
                 </div>
 
                 {/* Breakdown Komponen */}
@@ -368,11 +337,11 @@ export default function IndeksKesejahteraanModal({
                                 • Kebutuhan Tambahan: <span className="font-black">+{neededPendidikan.toLocaleString("id-ID")}</span> unit sekolah/kampus lagi untuk mencapai 100%
                               </p>
                             ) : (
-                              <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1">
-                                • Status: ✓ Fasilitas pendidikan sudah memenuhi target 100%
+                              <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1 flex items-center gap-1.5">
+                                <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                                <span>Status: Fasilitas pendidikan sudah memenuhi target 100%</span>
                               </p>
                             )}
-                            <p className="pt-1 text-[11px] text-[#6B8A8A]">Mencakup: Prasekolah, SD, SMP, SMA, Universitas, Lembaga Pendidikan, Lab, Observatorium, Pusat Penelitian</p>
                           </div>
                         </div>
                       );
@@ -380,10 +349,6 @@ export default function IndeksKesejahteraanModal({
 
                     {/* Kesehatan - 40% */}
                     {(() => {
-                      const pop = Number(countryDetail?.jumlah_penduduk) || 1;
-                      const targetKesehatan = Math.ceil(pop * 0.00004);
-                      const currentKesehatan = kesejahteraan?.detail?.kesehatan?.totalFacilities ?? 0;
-                      const neededKesehatan = Math.max(0, targetKesehatan - currentKesehatan);
                       const baseRisikoWabah = Math.max(0, Math.min(100, Math.round(100 - kesehatanActualScore)));
                       const countryName = selectedCountry?.country || countryDetail?.country || "";
                       const whoModifier = getWHOPandemicRiskModifier(countryName);
@@ -433,18 +398,6 @@ export default function IndeksKesejahteraanModal({
                                 </span>
                               )}
                             </div>
-                            <p>• Fasilitas Saat Ini: <span className="font-black text-[#00FFAA]">{currentKesehatan.toLocaleString("id-ID")}</span> unit</p>
-                            <p>• Target Ideal (100%): <span className="font-black text-[#00FFAA]">{targetKesehatan.toLocaleString("id-ID")}</span> unit (1 per 25.000 jiwa)</p>
-                            {neededKesehatan > 0 ? (
-                              <p className="text-rose-400 bg-rose-500/10 p-1.5 rounded border border-rose-500/30 mt-1">
-                                • Kebutuhan Tambahan: <span className="font-black">+{neededKesehatan.toLocaleString("id-ID")}</span> unit rumah sakit/pusat diagnosa lagi untuk mencapai 100%
-                              </p>
-                            ) : (
-                              <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1">
-                                • Status: ✓ Fasilitas kesehatan sudah memenuhi target 100%
-                              </p>
-                            )}
-                            <p className="pt-1 text-[11px] text-[#6B8A8A]">Harapan Hidup: <span className="font-black text-[#00FFAA]">{kesejahteraan?.detail?.kesehatan?.detail?.harapanHidup?.toFixed(1) ?? "0.0"}</span> tahun | Indeks Kesehatan: {kesejahteraan?.detail?.kesehatan?.detail?.indeksKesehatan ?? 0}</p>
                           </div>
                         </div>
                       );
@@ -452,11 +405,6 @@ export default function IndeksKesejahteraanModal({
 
                     {/* Infrastruktur dan transportasi - 25% */}
                     {(() => {
-                      const pop = Number(countryDetail?.jumlah_penduduk) || 1;
-                      const targetTempatUmum = Math.ceil(pop * 0.00005);
-                      const currentTempatUmum = kesejahteraan?.detail?.tempatUmum?.totalFacilities ?? 0;
-                      const neededTempatUmum = Math.max(0, targetTempatUmum - currentTempatUmum);
-
                       return (
                         <div
                           onClick={() => {
@@ -477,28 +425,14 @@ export default function IndeksKesejahteraanModal({
                             </div>
                             <span className={`text-3xl font-black ${tempatUmumColor.text}`}>{infrastrukturActualScore}</span>
                           </div>
-                          <div className="space-y-1 text-xs text-[#E0E0E0] font-semibold">
-                            <p>• Fasilitas Saat Ini: <span className="font-black text-[#00FFAA]">{currentTempatUmum.toLocaleString("id-ID")}</span> unit</p>
-                            <p>• Target Ideal (100%): <span className="font-black text-[#00FFAA]">{targetTempatUmum.toLocaleString("id-ID")}</span> unit (1 per 20.000 jiwa)</p>
-                            {neededTempatUmum > 0 ? (
-                              <p className="text-rose-400 bg-rose-500/10 p-1.5 rounded border border-rose-500/30 mt-1">
-                                • Kebutuhan Tambahan: <span className="font-black">+{neededTempatUmum.toLocaleString("id-ID")}</span> unit sarana umum/transportasi lagi untuk mencapai 100%
-                              </p>
-                            ) : (
-                              <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1">
-                                • Status: ✓ Fasilitas tempat umum sudah memenuhi target 100%
-                              </p>
-                            )}
-                            <p className="pt-1 text-[11px] text-[#6B8A8A]">Transportasi: {kesejahteraan?.detail?.tempatUmum?.detail?.transportasi ?? 0} | Rekreasi: {kesejahteraan?.detail?.tempatUmum?.detail?.rekreasi ?? 0}</p>
-                          </div>
                         </div>
                       );
                     })()}
 
                     {/* Penegakan Hukum & Kepolisian */}
                     {(() => {
-                      const detail = kesejahteraan.detail.penegakanHukum;
-                      const healthAndLawScore = (kesehatanActualScore + kesejahteraan.penegakanHukumScore) / 2;
+                      const lawScore = kesejahteraan.penegakanHukumScore;
+                      const healthAndLawScore = (kesehatanActualScore + lawScore) / 2;
                       const baseSecurityRisk = Math.max(0, Math.min(100, Math.round(100 - healthAndLawScore)));
                       const countryName = selectedCountry?.country || countryDetail?.country || "";
                       const interpolModifier = getInterpolCrimeRiskModifier(countryName);
@@ -548,8 +482,6 @@ export default function IndeksKesejahteraanModal({
                                 </span>
                               )}
                             </div>
-                            <p>• Fasilitas Saat Ini: <span className="font-black text-[#00FFAA]">{detail.totalFacilities.toLocaleString("id-ID")}</span> unit</p>
-                            <p className="pt-1 text-[11px] text-[#6B8A8A]">Bantuan Hukum: {detail.detail.pusatBantuanHukum} | Pengadilan: {detail.detail.pengadilan} | Kejaksaan: {detail.detail.kejaksaan} | Pos Polisi: {detail.detail.posPolisi} | Akademi Polisi: {detail.detail.akademiPolisi}</p>
                           </div>
                         </div>
                       );
@@ -583,8 +515,9 @@ export default function IndeksKesejahteraanModal({
                             • Kebutuhan Tambahan: Tingkatkan produksi industri pangan / pertanian untuk mencukupi konsumsi nasional 100%
                           </p>
                         ) : (
-                          <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1">
-                            • Status: ✓ Pasokan pangan nasional sudah terpenuhi 100%
+                          <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1 flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                            <span>Status: Pasokan pangan nasional sudah terpenuhi 100%</span>
                           </p>
                         )}
                       </div>
@@ -616,8 +549,9 @@ export default function IndeksKesejahteraanModal({
                             • Kebutuhan Tambahan: Tambah proyek rumah subsidi & apartemen untuk menampung seluruh populasi 100%
                           </p>
                         ) : (
-                          <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1">
-                            • Status: ✓ Hunian rakyat telah menampung 100% populasi
+                          <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1 flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                            <span>Status: Hunian rakyat telah menampung 100% populasi</span>
                           </p>
                         )}
                       </div>
@@ -649,8 +583,9 @@ export default function IndeksKesejahteraanModal({
                             • Kebutuhan Tambahan: Jamin kebebasan pers, internet bebas, transparansi APBN, & hak sipil untuk tingkatkan indeks
                           </p>
                         ) : (
-                          <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1">
-                            • Status: ✓ Jaminan kebebasan sipil & media negara sudah optimal 100%
+                          <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1 flex items-center gap-1.5">
+                            <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                            <span>Status: Jaminan kebebasan sipil & media negara sudah optimal 100%</span>
                           </p>
                         )}
                       </div>
@@ -677,7 +612,7 @@ export default function IndeksKesejahteraanModal({
         <div className="fixed inset-0 z-[250] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-8 overflow-y-auto custom-scrollbar"
+            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans shadow-2xl p-5 overflow-y-auto custom-scrollbar pointer-events-auto"
           >
             <button
               onClick={() => setShowPendidikanInfoModal(false)}
@@ -689,15 +624,15 @@ export default function IndeksKesejahteraanModal({
             </button>
 
             {/* Header */}
-            <div className="flex items-center gap-3 mb-6 pr-16 border-b border-[#00FFAA]/20 pb-4">
-              <div className="p-3 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/40 text-[#00FFAA] shrink-0 shadow-inner">
-                <Library className="w-8 h-8" />
+            <div className="flex items-center gap-3 mb-4 pr-16 border-b border-[#00FFAA]/20 pb-3">
+              <div className="p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/40 text-[#00FFAA] shrink-0 shadow-inner">
+                <Library className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-black text-[#00FFAA] uppercase tracking-wide leading-tight">
+                <h3 className="text-base sm:text-lg font-black text-[#00FFAA] uppercase tracking-wide leading-tight">
                   Pengaruh Poin Pendidikan Terhadap Penelitian
                 </h3>
-                <p className="text-xs sm:text-sm text-[#6B8A8A] font-semibold mt-1">
+                <p className="text-xs text-[#6B8A8A] font-semibold mt-0.5">
                   Detail Efek Kecepatan Riset & Panduan Strategis Pemain
                 </p>
               </div>
@@ -707,30 +642,30 @@ export default function IndeksKesejahteraanModal({
             {(() => {
               const eduModifier = getEducationResearchModifier(pendidikanActualScore);
               return (
-                <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-1">
+                <div className="space-y-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
                   {/* Skor & Status Aktif Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center justify-between p-4 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30">
-                      <span className="text-xs sm:text-sm font-bold text-[#E0E0E0]">Poin Pendidikan Saat Ini:</span>
-                      <span className="text-2xl sm:text-3xl font-black text-amber-400">{pendidikanActualScore} / 100</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30">
+                      <span className="text-xs font-bold text-[#E0E0E0]">Poin Pendidikan Saat Ini:</span>
+                      <span className="text-xl font-black text-amber-400">{pendidikanActualScore} / 100</span>
                     </div>
 
-                    <div className={`p-4 rounded-2xl border text-xs sm:text-sm font-bold flex items-center justify-between ${
+                    <div className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-between ${
                       eduModifier.isPenalty
                         ? 'bg-[#2A141A] border-rose-500/50 text-rose-300'
                         : 'bg-[#0E2A20] border-emerald-500/50 text-emerald-300'
                     }`}>
                       <span>Pengaruh Waktu Riset:</span>
-                      <span className="font-black text-base">{eduModifier.label}</span>
+                      <span className="font-black text-sm sm:text-base">{eduModifier.label}</span>
                     </div>
                   </div>
 
                   {/* Skala Efek */}
-                  <div className="space-y-2">
-                    <p className="text-xs sm:text-sm font-black text-[#00FFAA] uppercase tracking-wider">
+                  <div className="space-y-1.5">
+                    <p className="text-[11px] font-black text-[#00FFAA] uppercase tracking-wider">
                       Tabel Skala Poin Pendidikan & Efek Waktu Penelitian:
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {[
                         { range: '0 - 25 Poin', effect: '+25% Waktu Penelitian', penalty: true, isCurrent: pendidikanActualScore <= 25 },
                         { range: '26 - 40 Poin', effect: '+20% Waktu Penelitian', penalty: true, isCurrent: pendidikanActualScore >= 26 && pendidikanActualScore <= 40 },
@@ -740,39 +675,60 @@ export default function IndeksKesejahteraanModal({
                       ].map((tier, idx) => (
                         <div
                           key={idx}
-                          className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
+                          className={`flex items-center justify-between p-2.5 rounded-lg border text-xs transition-all ${
                             tier.isCurrent
                               ? tier.penalty
-                                ? 'bg-rose-500/25 border-rose-500 text-rose-200 font-black shadow-[0_0_12px_rgba(244,63,94,0.4)]'
-                                : 'bg-emerald-500/25 border-emerald-500 text-emerald-200 font-black shadow-[0_0_12px_rgba(16,185,129,0.4)]'
+                                ? 'bg-rose-500/25 border-rose-500 text-rose-200 font-black shadow-[0_0_10px_rgba(244,63,94,0.3)]'
+                                : 'bg-emerald-500/25 border-emerald-500 text-emerald-200 font-black shadow-[0_0_10px_rgba(16,185,129,0.3)]'
                               : 'bg-[#0A1A1A] border-[#00FFAA]/10 text-[#6B8A8A]'
                           }`}
                         >
-                          <span className="font-mono font-bold text-xs">{tier.range}</span>
-                          <span className="text-xs font-bold">{tier.effect} {tier.isCurrent ? '★ (Aktif)' : ''}</span>
+                          <span className="font-mono font-bold text-[11px] shrink-0 mr-2">{tier.range}</span>
+                          <span className="text-[11px] font-bold flex items-center gap-1 text-right">
+                            {tier.effect}
+                            {tier.isCurrent && <Star className="w-3 h-3 fill-current shrink-0" />}
+                          </span>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   {/* Box Petunjuk & Panduan Tindakan */}
-                  <div className="p-5 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30 space-y-3">
-                    <p className="text-sm font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2">
-                      <Info className="w-5 h-5 text-[#00FFAA] shrink-0" />
+                  <div className="p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 space-y-2">
+                    <p className="text-xs font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-1.5">
+                      <Info className="w-4 h-4 text-[#00FFAA] shrink-0" />
                       Petunjuk & Panduan Tindakan Pemain:
                     </p>
                     {eduModifier.isPenalty ? (
-                      <p className="text-xs sm:text-sm text-[#E0E0E0] font-medium leading-relaxed">
-                        ⚠️ <span className="font-bold text-rose-400">Pendidikan Masih Rendah!</span> Poin pendidikan negara Anda saat ini (<span className="font-bold text-amber-400">{pendidikanActualScore}/100</span>) menyebabkan waktu penelitian bertambah <span className="font-bold text-rose-400">+{eduModifier.percentageChange}% lebih lambat</span>.
-                        <br /><br />
-                        💡 <span className="font-bold text-[#00FFAA]">Saran Tindakan:</span> Segera bangun fasilitas pendidikan seperti <span className="text-[#00FFAA] font-bold">Sekolah, Universitas, Lembaga Pendidikan, Lab, Observatorium, dan Pusat Penelitian</span> di menu <i>Tempat Umum & Layanan Publik</i> hingga poin pendidikan berada di atas <span className="font-bold text-emerald-400">65 poin</span> agar waktu penelitian teknologi Anda menjadi lebih cepat!
-                      </p>
+                      <div className="text-xs text-[#E0E0E0] font-medium leading-relaxed space-y-2">
+                        <div className="flex items-start gap-2">
+                          <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                          <span>
+                            <span className="font-bold text-rose-400">Pendidikan Masih Rendah!</span> Poin pendidikan saat ini (<span className="font-bold text-amber-400">{pendidikanActualScore}/100</span>) membuat waktu penelitian <span className="font-bold text-rose-400">+{eduModifier.percentageChange}% lebih lambat</span>.
+                          </span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Lightbulb className="w-4 h-4 text-[#00FFAA] shrink-0 mt-0.5" />
+                          <span>
+                            <span className="font-bold text-[#00FFAA]">Saran Tindakan:</span> Segera bangun fasilitas pendidikan di <i>Tempat Umum</i> hingga skor &gt;<span className="font-bold text-emerald-400">65 poin</span>!
+                          </span>
+                        </div>
+                      </div>
                     ) : (
-                      <p className="text-xs sm:text-sm text-[#E0E0E0] font-medium leading-relaxed">
-                        ✅ <span className="font-bold text-emerald-400">Pendidikan Sudah Baik!</span> Poin pendidikan negara Anda saat ini (<span className="font-bold text-amber-400">{pendidikanActualScore}/100</span>) memberikan bonus efisiensi waktu penelitian sebesar <span className="font-bold text-emerald-400">{eduModifier.percentageChange}% (lebih cepat)</span>.
-                        <br /><br />
-                        💡 <span className="font-bold text-[#00FFAA]">Saran Tindakan:</span> Pertahankan dan tingkatkan terus fasilitas pendidikan hingga mencapai <span className="font-bold text-emerald-400">81 - 100 poin</span> untuk memperoleh pengurangan waktu riset maksimal sebesar -10%!
-                      </p>
+                      <div className="text-xs text-[#E0E0E0] font-medium leading-relaxed space-y-2">
+                        <div className="flex items-start gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                          <span>
+                            <span className="font-bold text-emerald-400">Pendidikan Sudah Baik!</span> Poin pendidikan saat ini (<span className="font-bold text-amber-400">{pendidikanActualScore}/100</span>) memberikan efisiensi riset <span className="font-bold text-emerald-400">{eduModifier.percentageChange}% (lebih cepat)</span>.
+                          </span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Lightbulb className="w-4 h-4 text-[#00FFAA] shrink-0 mt-0.5" />
+                          <span>
+                            <span className="font-bold text-[#00FFAA]">Saran Tindakan:</span> Pertahankan dan tingkatkan ke <span className="font-bold text-emerald-400">81 - 100 poin</span> untuk efisiensi riset maksimal -10%.
+                          </span>
+                        </div>
+                      </div>
                     )}
                   </div>
 
@@ -784,7 +740,7 @@ export default function IndeksKesejahteraanModal({
                       if (!onOpenTempatUmum) setActiveMenu?.("Menu:TempatUmum");
                       onClose();
                     }}
-                    className="w-full py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs sm:text-sm uppercase tracking-wider hover:bg-[#00FFAA]/80 transition-all cursor-pointer shadow-lg flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs uppercase tracking-wider hover:bg-[#00FFAA]/80 transition-all cursor-pointer shadow-lg flex items-center justify-center gap-2"
                   >
                     <Library className="w-5 h-5" />
                     Bangun Fasilitas Pendidikan Sekarang
@@ -801,7 +757,7 @@ export default function IndeksKesejahteraanModal({
         <div className="fixed inset-0 z-[250] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-8 overflow-y-auto custom-scrollbar"
+            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans shadow-2xl p-5 overflow-y-auto custom-scrollbar pointer-events-auto"
           >
             <button
               onClick={() => setShowKesehatanInfoModal(false)}
@@ -813,15 +769,15 @@ export default function IndeksKesejahteraanModal({
             </button>
 
             {/* Header */}
-            <div className="flex items-center gap-3 mb-6 pr-16 border-b border-[#00FFAA]/20 pb-4">
-              <div className="p-3 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/40 text-[#00FFAA] shrink-0 shadow-inner">
-                <Hospital className="w-8 h-8" />
+            <div className="flex items-center gap-3 mb-4 pr-16 border-b border-[#00FFAA]/20 pb-3">
+              <div className="p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/40 text-[#00FFAA] shrink-0 shadow-inner">
+                <Hospital className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-black text-[#00FFAA] uppercase tracking-wide leading-tight">
+                <h3 className="text-base sm:text-lg font-black text-[#00FFAA] uppercase tracking-wide leading-tight">
                   Pengaruh Pelayanan Kesehatan Terhadap Negara
                 </h3>
-                <p className="text-xs sm:text-sm text-[#6B8A8A] font-semibold mt-1">
+                <p className="text-xs text-[#6B8A8A] font-semibold mt-0.5">
                   Detail Risiko Wabah Penyakit & Panduan Layanan Medis
                 </p>
               </div>
@@ -836,15 +792,15 @@ export default function IndeksKesejahteraanModal({
               const risikoWabahPercent = Math.max(0, Math.min(100, baseRisikoWabah + whoModifier));
               const isPenalty = kesehatanActualScore <= 65;
               return (
-                <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-1">
+                <div className="space-y-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
                   {/* Skor & Risiko Wabah Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center justify-between p-4 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30">
-                      <span className="text-xs sm:text-sm font-bold text-[#E0E0E0]">Skor Kepuasan Kesehatan:</span>
-                      <span className="text-2xl sm:text-3xl font-black text-amber-400">{kesehatanActualScore} / 100</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30">
+                      <span className="text-xs font-bold text-[#E0E0E0]">Skor Kesehatan Saat Ini:</span>
+                      <span className="text-xl font-black text-amber-400">{kesehatanActualScore} / 100</span>
                     </div>
 
-                    <div className={`p-4 rounded-2xl border text-xs sm:text-sm font-bold flex items-center justify-between ${
+                    <div className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-between ${
                       isPenalty
                         ? 'bg-[#2A141A] border-rose-500/50 text-rose-300'
                         : 'bg-[#0E2A20] border-emerald-500/50 text-emerald-300'
@@ -862,11 +818,11 @@ export default function IndeksKesejahteraanModal({
                   </div>
 
                   {/* Skala Tingkat Kesehatan */}
-                  <div className="space-y-2">
-                    <p className="text-xs sm:text-sm font-black text-[#00FFAA] uppercase tracking-wider">
+                  <div className="space-y-1.5">
+                    <p className="text-[11px] font-black text-[#00FFAA] uppercase tracking-wider">
                       Tabel Skala Kesehatan & Risiko Pandemi:
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {[
                         { range: '0 - 25 Poin', effect: 'Kritis! Risiko Wabah 75-100%', penalty: true, isCurrent: kesehatanActualScore <= 25 },
                         { range: '26 - 40 Poin', effect: 'Tinggi! Risiko Wabah 60-74%', penalty: true, isCurrent: kesehatanActualScore >= 26 && kesehatanActualScore <= 40 },
@@ -876,39 +832,60 @@ export default function IndeksKesejahteraanModal({
                       ].map((tier, idx) => (
                         <div
                           key={idx}
-                          className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
+                          className={`flex items-center justify-between p-2.5 rounded-lg border text-xs transition-all ${
                             tier.isCurrent
                               ? tier.penalty
-                                ? 'bg-rose-500/25 border-rose-500 text-rose-200 font-black shadow-[0_0_12px_rgba(244,63,94,0.4)]'
-                                : 'bg-emerald-500/25 border-emerald-500 text-emerald-200 font-black shadow-[0_0_12px_rgba(16,185,129,0.4)]'
+                                ? 'bg-rose-500/25 border-rose-500 text-rose-200 font-black shadow-[0_0_10px_rgba(244,63,94,0.3)]'
+                                : 'bg-emerald-500/25 border-emerald-500 text-emerald-200 font-black shadow-[0_0_10px_rgba(16,185,129,0.3)]'
                               : 'bg-[#0A1A1A] border-[#00FFAA]/10 text-[#6B8A8A]'
                           }`}
                         >
-                          <span className="font-mono font-bold text-xs">{tier.range}</span>
-                          <span className="text-xs font-bold">{tier.effect} {tier.isCurrent ? '★ (Aktif)' : ''}</span>
+                          <span className="font-mono font-bold text-[11px] shrink-0 mr-2">{tier.range}</span>
+                          <span className="text-[11px] font-bold flex items-center gap-1 text-right">
+                            {tier.effect}
+                            {tier.isCurrent && <Star className="w-3 h-3 fill-current shrink-0" />}
+                          </span>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   {/* Box Petunjuk & Panduan Tindakan */}
-                  <div className="p-5 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30 space-y-3">
-                    <p className="text-sm font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2">
-                      <Info className="w-5 h-5 text-[#00FFAA] shrink-0" />
+                  <div className="p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 space-y-2">
+                    <p className="text-xs font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-1.5">
+                      <Info className="w-4 h-4 text-[#00FFAA] shrink-0" />
                       Petunjuk & Panduan Tindakan Pemain:
                     </p>
                     {isPenalty ? (
-                      <p className="text-xs sm:text-sm text-[#E0E0E0] font-medium leading-relaxed">
-                        ⚠️ <span className="font-bold text-rose-400">Kesehatan Masyarakat Rentan!</span> Skor kesehatan negara Anda saat ini (<span className="font-bold text-amber-400">{kesehatanActualScore}/100</span>) berada di zona berisiko dengan tingkat potensi wabah sebesar <span className="font-bold text-rose-400">{risikoWabahPercent}%</span>.
-                        <br /><br />
-                        💡 <span className="font-bold text-[#00FFAA]">Saran Tindakan:</span> Segera bangun fasilitas kesehatan seperti <span className="text-[#00FFAA] font-bold">Puskesmas, Rumah Sakit, Klinik Diagnosa, Laboratorium Medis, dan Apotek</span> di menu <i>Tempat Umum & Layanan Publik</i> hingga skor mencapai di atas <span className="font-bold text-emerald-400">65 poin</span> untuk menekan ancaman wabah penyakit!
-                      </p>
+                      <div className="text-xs text-[#E0E0E0] font-medium leading-relaxed space-y-2">
+                        <div className="flex items-start gap-2">
+                          <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                          <span>
+                            <span className="font-bold text-rose-400">Kesehatan Masyarakat Rentan!</span> Skor kesehatan saat ini (<span className="font-bold text-amber-400">{kesehatanActualScore}/100</span>) memicu potensi wabah sebesar <span className="font-bold text-rose-400">{risikoWabahPercent}%</span>.
+                          </span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Lightbulb className="w-4 h-4 text-[#00FFAA] shrink-0 mt-0.5" />
+                          <span>
+                            <span className="font-bold text-[#00FFAA]">Saran Tindakan:</span> Segera bangun fasilitas kesehatan di <i>Tempat Umum</i> hingga skor &gt;<span className="font-bold text-emerald-400">65 poin</span>!
+                          </span>
+                        </div>
+                      </div>
                     ) : (
-                      <p className="text-xs sm:text-sm text-[#E0E0E0] font-medium leading-relaxed">
-                        ✅ <span className="font-bold text-emerald-400">Pelayanan Kesehatan Baik!</span> Skor kesehatan negara Anda (<span className="font-bold text-amber-400">{kesehatanActualScore}/100</span>) mampu menjaga tingkat potensi wabah tetap rendah (<span className="font-bold text-emerald-400">{risikoWabahPercent}%</span>).
-                        <br /><br />
-                        💡 <span className="font-bold text-[#00FFAA]">Saran Tindakan:</span> Pertahankan dan tingkatkan terus ke <span className="font-bold text-emerald-400">81 - 100 poin</span> untuk menjamin imunitas masyarakat dan harapan hidup populasi maksimal.
-                      </p>
+                      <div className="text-xs text-[#E0E0E0] font-medium leading-relaxed space-y-2">
+                        <div className="flex items-start gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                          <span>
+                            <span className="font-bold text-emerald-400">Pelayanan Kesehatan Baik!</span> Skor kesehatan saat ini (<span className="font-bold text-amber-400">{kesehatanActualScore}/100</span>) menekan potensi wabah ke angka rendah (<span className="font-bold text-emerald-400">{risikoWabahPercent}%</span>).
+                          </span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Lightbulb className="w-4 h-4 text-[#00FFAA] shrink-0 mt-0.5" />
+                          <span>
+                            <span className="font-bold text-[#00FFAA]">Saran Tindakan:</span> Pertahankan dan tingkatkan ke <span className="font-bold text-emerald-400">81 - 100 poin</span> untuk kesehatan nasional maksimal.
+                          </span>
+                        </div>
+                      </div>
                     )}
                   </div>
 
@@ -920,9 +897,9 @@ export default function IndeksKesejahteraanModal({
                       if (!onOpenTempatUmum) setActiveMenu?.("Menu:TempatUmum");
                       onClose();
                     }}
-                    className="w-full py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs sm:text-sm uppercase tracking-wider hover:bg-[#00FFAA]/80 transition-all cursor-pointer shadow-lg flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs uppercase tracking-wider hover:bg-[#00FFAA]/80 transition-all cursor-pointer shadow-lg flex items-center justify-center gap-2"
                   >
-                    <Hospital className="w-5 h-5" />
+                    <Hospital className="w-4 h-4" />
                     Bangun Fasilitas Kesehatan Sekarang
                   </button>
                 </div>
@@ -937,27 +914,27 @@ export default function IndeksKesejahteraanModal({
         <div className="fixed inset-0 z-[250] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl p-6 sm:p-8 overflow-y-auto custom-scrollbar"
+            className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans shadow-2xl p-5 overflow-y-auto custom-scrollbar pointer-events-auto"
           >
             <button
               onClick={() => setShowPenegakanHukumInfoModal(false)}
-              className="absolute top-4 right-4 p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+              className="absolute top-4 right-4 p-1.5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
               title="Tutup Modal"
             >
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <span className="text-[10px] font-semibold uppercase tracking-widest pl-1">Tutup</span>
               <X className="h-4 w-4" />
             </button>
 
             {/* Header */}
-            <div className="flex items-center gap-3 mb-6 pr-16 border-b border-[#00FFAA]/20 pb-4">
-              <div className="p-3 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/40 text-[#00FFAA] shrink-0 shadow-inner">
-                <ShieldCheck className="w-8 h-8" />
+            <div className="flex items-center gap-3 mb-4 pr-16 border-b border-[#00FFAA]/20 pb-3">
+              <div className="p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/40 text-[#00FFAA] shrink-0 shadow-inner">
+                <ShieldCheck className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-black text-[#00FFAA] uppercase tracking-wide leading-tight">
+                <h3 className="text-base sm:text-lg font-black text-[#00FFAA] uppercase tracking-wide leading-tight">
                   Pengaruh Penegakan Hukum & Kepolisian
                 </h3>
-                <p className="text-xs sm:text-sm text-[#6B8A8A] font-semibold mt-1">
+                <p className="text-xs text-[#6B8A8A] font-semibold mt-0.5">
                   Detail Risiko Keamanan Kriminalitas & Panduan Hukum Nasional
                 </p>
               </div>
@@ -974,24 +951,24 @@ export default function IndeksKesejahteraanModal({
               const securityRiskPercent = Math.max(0, Math.min(100, baseSecurityRisk + interpolModifier));
               const isPenalty = lawScore <= 65;
               return (
-                <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-1">
+                <div className="space-y-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
                   {/* Skor & Risiko Keamanan Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center justify-between p-4 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30">
-                      <span className="text-xs sm:text-sm font-bold text-[#E0E0E0]">Skor Penegakan Hukum:</span>
-                      <span className="text-2xl sm:text-3xl font-black text-amber-400">{lawScore} / 100</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30">
+                      <span className="text-xs font-bold text-[#E0E0E0]">Skor Penegakan Hukum:</span>
+                      <span className="text-xl font-black text-amber-400">{lawScore} / 100</span>
                     </div>
 
-                    <div className={`p-4 rounded-2xl border text-xs sm:text-sm font-bold flex items-center justify-between ${
+                    <div className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-between ${
                       isPenalty
                         ? 'bg-[#2A141A] border-rose-500/50 text-rose-300'
                         : 'bg-[#0E2A20] border-emerald-500/50 text-emerald-300'
                     }`}>
                       <span>Risiko Keamanan (Kriminalitas):</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-black text-base">{securityRiskPercent}%</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-black text-sm sm:text-base">{securityRiskPercent}%</span>
                         {isInterpolMember && (
-                          <span className="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/20 border border-emerald-500/60 rounded-md">
+                          <span className="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/20 border border-emerald-500/60 rounded">
                             Interpol -5%
                           </span>
                         )}
@@ -1000,11 +977,11 @@ export default function IndeksKesejahteraanModal({
                   </div>
 
                   {/* Skala Keamanan */}
-                  <div className="space-y-2">
-                    <p className="text-xs sm:text-sm font-black text-[#00FFAA] uppercase tracking-wider">
+                  <div className="space-y-1.5">
+                    <p className="text-[11px] font-black text-[#00FFAA] uppercase tracking-wider">
                       Tabel Skala Penegakan Hukum & Risiko Kejahatan:
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {[
                         { range: '0 - 25 Poin', effect: 'Krisis! Kriminalitas Sangat Tinggi', penalty: true, isCurrent: lawScore <= 25 },
                         { range: '26 - 40 Poin', effect: 'Rawan! Kejahatan Meningkat', penalty: true, isCurrent: lawScore >= 26 && lawScore <= 40 },
@@ -1014,39 +991,60 @@ export default function IndeksKesejahteraanModal({
                       ].map((tier, idx) => (
                         <div
                           key={idx}
-                          className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
+                          className={`flex items-center justify-between p-2.5 rounded-lg border text-xs transition-all ${
                             tier.isCurrent
                               ? tier.penalty
-                                ? 'bg-rose-500/25 border-rose-500 text-rose-200 font-black shadow-[0_0_12px_rgba(244,63,94,0.4)]'
-                                : 'bg-emerald-500/25 border-emerald-500 text-emerald-200 font-black shadow-[0_0_12px_rgba(16,185,129,0.4)]'
+                                ? 'bg-rose-500/25 border-rose-500 text-rose-200 font-black shadow-[0_0_10px_rgba(244,63,94,0.3)]'
+                                : 'bg-emerald-500/25 border-emerald-500 text-emerald-200 font-black shadow-[0_0_10px_rgba(16,185,129,0.3)]'
                               : 'bg-[#0A1A1A] border-[#00FFAA]/10 text-[#6B8A8A]'
                           }`}
                         >
-                          <span className="font-mono font-bold text-xs">{tier.range}</span>
-                          <span className="text-xs font-bold">{tier.effect} {tier.isCurrent ? '★ (Aktif)' : ''}</span>
+                          <span className="font-mono font-bold text-[11px] shrink-0 mr-2">{tier.range}</span>
+                          <span className="text-[11px] font-bold flex items-center gap-1 text-right">
+                            {tier.effect}
+                            {tier.isCurrent && <Star className="w-3 h-3 fill-current shrink-0" />}
+                          </span>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   {/* Box Petunjuk & Panduan Tindakan */}
-                  <div className="p-5 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30 space-y-3">
-                    <p className="text-sm font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2">
-                      <Info className="w-5 h-5 text-[#00FFAA] shrink-0" />
+                  <div className="p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/30 space-y-2">
+                    <p className="text-xs font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-1.5">
+                      <Info className="w-4 h-4 text-[#00FFAA] shrink-0" />
                       Petunjuk & Panduan Tindakan Pemain:
                     </p>
                     {isPenalty ? (
-                      <p className="text-xs sm:text-sm text-[#E0E0E0] font-medium leading-relaxed">
-                        ⚠️ <span className="font-bold text-rose-400">Penegakan Hukum Lemah!</span> Skor penegakan hukum & kepolisian saat ini (<span className="font-bold text-amber-400">{lawScore}/100</span>) memicu risiko kriminalitas sebesar <span className="font-bold text-rose-400">{securityRiskPercent}%</span>.
-                        <br /><br />
-                        💡 <span className="font-bold text-[#00FFAA]">Saran Tindakan:</span> Segera bangun sarana penegakan hukum seperti <span className="text-[#00FFAA] font-bold">Pos Polisi, Polsek, Polres, Pengadilan, Kejaksaan, dan Akademi Polisi</span> di menu <i>Tempat Umum & Layanan Publik</i> hingga skor mencapai di atas <span className="font-bold text-emerald-400">65 poin</span> untuk menciptakan ketertiban nasional!
-                      </p>
+                      <div className="text-xs text-[#E0E0E0] font-medium leading-relaxed space-y-2">
+                        <div className="flex items-start gap-2">
+                          <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                          <span>
+                            <span className="font-bold text-rose-400">Penegakan Hukum Lemah!</span> Skor penegakan hukum saat ini (<span className="font-bold text-amber-400">{lawScore}/100</span>) memicu risiko kriminalitas sebesar <span className="font-bold text-rose-400">{securityRiskPercent}%</span>.
+                          </span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Lightbulb className="w-4 h-4 text-[#00FFAA] shrink-0 mt-0.5" />
+                          <span>
+                            <span className="font-bold text-[#00FFAA]">Saran Tindakan:</span> Segera bangun sarana penegakan hukum seperti <span className="text-[#00FFAA] font-bold">Pos Polisi, Polsek, Polres, Pengadilan, Kejaksaan, dan Akademi Polisi</span> di <i>Tempat Umum</i> hingga skor &gt;<span className="font-bold text-emerald-400">65 poin</span>!
+                          </span>
+                        </div>
+                      </div>
                     ) : (
-                      <p className="text-xs sm:text-sm text-[#E0E0E0] font-medium leading-relaxed">
-                        ✅ <span className="font-bold text-emerald-400">Penegakan Hukum Baik!</span> Skor kepuasan hukum saat ini (<span className="font-bold text-amber-400">{lawScore}/100</span>) mampu menjaga tingkat ketertiban dan menekan risiko kriminalitas ke angka rendah (<span className="font-bold text-emerald-400">{securityRiskPercent}%</span>).
-                        <br /><br />
-                        💡 <span className="font-bold text-[#00FFAA]">Saran Tindakan:</span> Pertahankan dan tingkatkan ke <span className="font-bold text-emerald-400">81 - 100 poin</span> untuk mencapai stabilitas hukum dan keamanan publik yang sempurna.
-                      </p>
+                      <div className="text-xs text-[#E0E0E0] font-medium leading-relaxed space-y-2">
+                        <div className="flex items-start gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                          <span>
+                            <span className="font-bold text-emerald-400">Penegakan Hukum Baik!</span> Skor kepuasan hukum saat ini (<span className="font-bold text-amber-400">{lawScore}/100</span>) menekan risiko kriminalitas ke angka rendah (<span className="font-bold text-emerald-400">{securityRiskPercent}%</span>).
+                          </span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <Lightbulb className="w-4 h-4 text-[#00FFAA] shrink-0 mt-0.5" />
+                          <span>
+                            <span className="font-bold text-[#00FFAA]">Saran Tindakan:</span> Pertahankan dan tingkatkan ke <span className="font-bold text-emerald-400">81 - 100 poin</span> untuk ketertiban publik maksimal.
+                          </span>
+                        </div>
+                      </div>
                     )}
                   </div>
 
@@ -1058,9 +1056,9 @@ export default function IndeksKesejahteraanModal({
                       if (!onOpenTempatUmum) setActiveMenu?.("Menu:TempatUmum");
                       onClose();
                     }}
-                    className="w-full py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs sm:text-sm uppercase tracking-wider hover:bg-[#00FFAA]/80 transition-all cursor-pointer shadow-lg flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs uppercase tracking-wider hover:bg-[#00FFAA]/80 transition-all cursor-pointer shadow-lg flex items-center justify-center gap-2"
                   >
-                    <ShieldCheck className="w-5 h-5" />
+                    <ShieldCheck className="w-4 h-4" />
                     Bangun Sarana Penegakan Hukum Sekarang
                   </button>
                 </div>

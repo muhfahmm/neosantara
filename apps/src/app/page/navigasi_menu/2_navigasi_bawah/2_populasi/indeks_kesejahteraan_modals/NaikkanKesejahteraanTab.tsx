@@ -55,74 +55,56 @@ export default function NaikkanKesejahteraanTab({
   };
 
   // ==========================================
-  // DATA INISIATIF KESEJAHTERAAN
+  // DATA INISIATIF KESEJAHTERAAN (Universal)
   // ==========================================
   const initiatives = [
     {
-      id: "bantuan_tunai",
-      title: "Bantuan Tunai Langsung (BLT)",
-      desc: "Distribusikan bantuan uang tunai langsung kepada keluarga miskin.",
+      id: "cash_transfer",
+      title: "Bantuan Tunai Langsung",
       cost: 40000,
       boost: 4,
       duration: 7,
       icon: Coins,
-      color: "text-emerald-600",
-      bg: "bg-emerald-800/10",
     },
     {
-      id: "subsidi_pangan",
-      title: "Subsidi Bahan Pangan Pokok",
-      desc: "Menurunkan harga beras, minyak, dan telur di pasar lokal.",
+      id: "food_subsidy",
+      title: "Subsidi Pangan Pokok",
       cost: 75000,
       boost: 8,
       duration: 30,
       icon: Sparkles,
-      color: "text-emerald-600",
-      bg: "bg-emerald-800/10",
     },
     {
-      id: "beasiswa_sosial",
-      title: "Beasiswa Siswa Kurang Mampu",
-      desc: "Bebaskan biaya sekolah dan perlengkapan untuk anak sekolah.",
+      id: "student_aid",
+      title: "Bantuan Pendidikan Siswa",
       cost: 120000,
       boost: 12,
       duration: 7,
       icon: Sparkles,
-      color: "text-emerald-600",
-      bg: "bg-emerald-800/10",
     },
     {
-      id: "jaminan_kesehatan",
-      title: "Kartu Jaminan Kesehatan Rakyat",
-      desc: "Subsidi penuh untuk perawatan medis dasar bagi masyarakat berpenghasilan rendah.",
+      id: "health_coverage",
+      title: "Jaminan Kesehatan Universal",
       cost: 250000,
       boost: 18,
       duration: 30,
       icon: Heart,
-      color: "text-emerald-600",
-      bg: "bg-emerald-800/10",
     },
     {
-      id: "renovasi_pemukiman",
-      title: "Bedah Rumah & Sanitasi Layak",
-      desc: "Renovasi hunian kumuh menjadi rumah tinggal layak huni dengan air bersih gratis.",
+      id: "housing_upgrade",
+      title: "Perbaikan Perumahan Rakyat",
       cost: 600000,
       boost: 25,
       duration: 14,
       icon: Sparkles,
-      color: "text-emerald-600",
-      bg: "bg-emerald-800/10",
     },
     {
-      id: "pasar_murah_nasional",
-      title: "Pasar Murah & Sembako Nasional",
-      desc: "Gelar operasi pasar sembako murah serentak untuk meningkatkan daya beli.",
+      id: "national_market",
+      title: "Pasar Murah Nasional",
       cost: 1000000,
       boost: 35,
       duration: 20,
       icon: Sparkles,
-      color: "text-emerald-600",
-      bg: "bg-emerald-800/10",
     },
   ];
 
@@ -166,7 +148,7 @@ export default function NaikkanKesejahteraanTab({
       progress: 0,
       targetDays: init.duration,
       buildingKey: init.id,
-      category: "Kesejahteraan", // Tandai kategori agar tau ini boost kesejahteraan
+      category: "Kesejahteraan",
     };
 
     const newConstructions = [...(countryDetail.ongoingConstructions || []), newConstruction];
@@ -184,7 +166,7 @@ export default function NaikkanKesejahteraanTab({
     });
   };
 
-  // Run event completion check on date changes (khusus inisiatif kesejahteraan)
+  // Run event completion check on date changes
   useEffect(() => {
     if (!countryDetail || !currentDate) return;
 
@@ -215,14 +197,10 @@ export default function NaikkanKesejahteraanTab({
     });
 
     if (completedEvents.length > 0) {
-      console.log('[NaikkanKesejahteraanTab] Completed events found:', completedEvents);
       completedEvents.forEach((c) => {
         const boost = Number(c.boost) || 0;
-        // Bantuan sosial kesejahteraan langsung meningkatkan indeks_kesejahteraan / kepuasan dasar secara permanen
         newDetail.kesejahteraan_index = Math.min(100, (newDetail.kesejahteraan_index ?? 50) + boost);
-        // Simpan ke bonus agar terhitung permanen di auto-refresh
         newDetail.kesejahteraan_bonus = (newDetail.kesejahteraan_bonus ?? 0) + boost;
-        // Sinkronisasi dengan field kesejahteraan
         newDetail.kesejahteraan = Math.min(100, (newDetail.kesejahteraan ?? 50) + boost);
       });
 
@@ -233,10 +211,6 @@ export default function NaikkanKesejahteraanTab({
     }
 
     if (updated) {
-      console.log('[NaikkanKesejahteraanTab] Updating countryDetail with completed events! New details:', {
-        kesejahteraan_bonus: newDetail.kesejahteraan_bonus,
-        kesejahteraan: newDetail.kesejahteraan
-      });
       setCountryDetail(newDetail);
     }
   }, [currentDate, countryDetail]);
@@ -254,11 +228,13 @@ export default function NaikkanKesejahteraanTab({
         }`}>
           {feedback.type === "success" ? <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" /> : <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />}
           <div className="flex-1 text-xs font-bold leading-relaxed">{feedback.message}</div>
-          <button onClick={() => setFeedback(null)} className="text-inherit hover:opacity-75 absolute right-3 top-3">✕</button>
+          <button onClick={() => setFeedback(null)} className="text-inherit hover:opacity-75 absolute right-3 top-3">
+            <X className="h-3.5 w-3.5" />
+          </button>
         </div>
       )}
 
-      {/* Daftar Program Bansos */}
+      {/* Daftar Program Bantuan */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {initiatives.map((init) => {
           const isLaunched = ongoingEvents.some((c: any) => c.buildingKey === init.id);
@@ -274,25 +250,22 @@ export default function NaikkanKesejahteraanTab({
               {isLaunched && (
                 <div className="absolute top-0 right-0 bg-amber-500/10 text-amber-400 px-3 py-1 text-[9px] font-black uppercase tracking-wider rounded-bl-lg border-l border-b border-amber-500/40 flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  Sedang Berjalan
+                  Berjalan
                 </div>
               )}
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-lg bg-[#00FFAA]/10 border border-[#00FFAA]/30">
-                    <Icon className="h-5 w-5 text-[#00FFAA]" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-black text-[#E0E0E0] leading-none">{init.title}</h4>
-                    <p className="text-[10px] text-emerald-400 font-bold mt-1">Boost Kesejahteraan: +{init.boost}%</p>
-                  </div>
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-lg bg-[#00FFAA]/10 border border-[#00FFAA]/30">
+                  <Icon className="h-5 w-5 text-[#00FFAA]" />
                 </div>
-                <p className="text-xs text-[#6B8A8A] font-medium leading-relaxed">{init.desc}</p>
+                <div>
+                  <h4 className="text-sm font-black text-[#E0E0E0] leading-none">{init.title}</h4>
+                  <p className="text-[10px] text-emerald-400 font-bold mt-1">Boost Kesejahteraan: +{init.boost}%</p>
+                </div>
               </div>
 
               <div className="flex items-center justify-between pt-2 border-t border-[#00FFAA]/10">
-                <div className="text-[10px] text-[#6B8A8A] font-bold">
+                <div className="text-[11px] text-[#6B8A8A] font-bold space-y-0.5">
                   <p>Biaya: <span className="font-black text-[#00FFAA]">{init.cost.toLocaleString("id-ID")} NEO</span></p>
                   <p>Durasi: <span className="font-black text-[#E0E0E0]">{init.duration} hari</span></p>
                 </div>
