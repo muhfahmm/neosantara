@@ -483,9 +483,6 @@ export default function PajakModal({
                 {totalIncome.toLocaleString("id-ID")} NEO
               </span>
             </div>
-            <p className="text-[10px] text-[#6B8A8A] font-semibold mt-2">
-              Pendapatan bulanan dari semua pajak nasional
-            </p>
             {hasDemocracyTaxBonus && (
               <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
                 Bonus Demokrasi: seluruh penerimaan pajak +{DEMOCRACY_TAX_REVENUE_BONUS * 100}%
@@ -523,17 +520,6 @@ export default function PajakModal({
                 className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-200"
                 style={{ width: `${satisfaction}%` }}
               />
-            </div>
-            <p className="text-[10px] text-amber-400 font-semibold mt-3">
-              {satisfaction >= 80
-                ? "✅ Rakyat puas dengan beban pajak dan manfaat yang dirasakan."
-                : satisfaction >= 50
-                  ? "⚠️ Beban pajak cukup berat, perlu perbaikan layanan publik."
-                  : "🔴 Pajak terlalu tinggi atau pendapatan negara kurang dirasakan manfaatnya."}
-            </p>
-            <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-[#E0E0E0]/80 font-semibold">
-              <div>Rata-rata tarif: <span className="font-bold text-[#00FFAA]">{(tempRates.vat + tempRates.corporate_tax + tempRates.income_tax + tempRates.cigarette_tax + tempRates.environment_tax) / 5}%</span></div>
-              <div>Total pendapatan: <span className="font-bold text-[#00FFAA]">{totalIncome.toLocaleString("id-ID")} NEO</span></div>
             </div>
           </div>
         </div>

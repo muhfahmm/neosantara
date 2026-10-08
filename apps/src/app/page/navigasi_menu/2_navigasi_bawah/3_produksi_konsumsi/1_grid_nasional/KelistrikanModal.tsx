@@ -415,25 +415,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                     style={{ width: `${electricitySatisfaction}%` }}
                   />
                 </div>
-                <p className="text-[10px] text-[#00FFAA] font-bold mt-3">
-                  {electricitySatisfaction >= 80
-                    ? "✅ Produksi listrik mencukupi, hampir tidak ada pemadaman."
-                    : electricitySatisfaction >= 50
-                      ? "⚠️ Kebutuhan listrik terpenuhi namun masih rawan defisit."
-                      : "🔴 Defisit listrik parah, sering terjadi pemadaman bergilir."}
-                </p>
-                <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-[#6B8A8A]">
-                  <div>Rasio produksi/konsumsi: <span className="font-bold text-[#00FFAA]">
-                    {estimatedConsumptionMW > 0 ? (totalCapacityMW / estimatedConsumptionMW).toFixed(2) : 'N/A'}
-                  </span></div>
-                  {/* NERACA DAYA SUMMARY: LOGIKA WARNA HIJAU/MERAH/ABU-ABU */}
-                  <div>Neraca daya: <span className={`font-bold ${balanceMW > 0 ? 'text-emerald-400' :
-                      balanceMW < 0 ? 'text-rose-400' :
-                        'text-slate-400'
-                    }`}>
-                    {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
-                  </span></div>
-                </div>
               </div>
             </>
           )}

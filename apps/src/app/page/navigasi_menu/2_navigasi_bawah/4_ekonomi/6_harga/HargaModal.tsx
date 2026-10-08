@@ -217,17 +217,6 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
                 style={{ width: `${satisfaction}%` }}
               />
             </div>
-            <p className="text-[10px] text-[#E0E0E0] font-bold mt-2.5 lg:mt-3">
-              {satisfaction >= 80
-                ? "✅ Harga pokok sangat terjangkau, rakyat puas."
-                : satisfaction >= 50
-                ? "⚠️ Harga masih cukup tinggi, perlu intervensi."
-                : "🔴 Harga terlalu mahal, rakyat kesulitan."}
-            </p>
-            <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-[#6B8A8A]">
-              <div>Rata-rata skor keterjangkauan: <span className="font-bold text-[#E0E0E0]">{satisfaction}%</span></div>
-              <div>Status subsidi: <span className="font-bold text-[#E0E0E0]">{subsidyActive ? "AKTIF (+5 poin)" : "Tidak"}</span></div>
-            </div>
           </div>
         </div>
       </div>
