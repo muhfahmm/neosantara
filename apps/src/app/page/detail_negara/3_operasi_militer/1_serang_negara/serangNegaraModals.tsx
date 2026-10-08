@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { ShieldAlert, X } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
-import HasilPertempuran from "./hasil_pertempuran";
 import KonfirmasiPeluncuranSerangan from "./konfirmasi_peluncuran_serangan";
 import KonfirmasiSerangModals from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/KonfirmasiSerangModals";
 
@@ -13,6 +12,7 @@ interface SerangNegaraModalProps {
 	targetCountryDetail?: any;
 	onClose: () => void;
 	onConfirm: (actionType: 'aneksasi' | 'jarah' | 'mundur', targetCountry: string) => void;
+	onCloseDetailModal?: () => void;
 }
 
 export default function SerangNegaraModal({
@@ -22,14 +22,10 @@ export default function SerangNegaraModal({
 	targetCountryDetail,
 	onClose,
 	onConfirm,
+	onCloseDetailModal,
 }: SerangNegaraModalProps) {
 	const [isLaunchConfirmationOpen, setIsLaunchConfirmationOpen] = useState(false);
 	const [isPactBlocked, setIsPactBlocked] = useState(false);
-	const [battleOutcome, setBattleOutcome] = useState<{
-		isVictory: boolean;
-		playerScore: number;
-		targetScore: number;
-	} | null>(null);
 
 	if (!isOpen || !countryName) return null;
 
@@ -68,7 +64,7 @@ export default function SerangNegaraModal({
 		(c) => c.country.toLowerCase().trim() === countryName.toLowerCase().trim()
 	);
 
-	const playerName = playerCountryDetail?.country || 'China';
+	const playerName = playerCountryDetail?.country || 'Afganistan';
 	const normalizeCountryName = (name: unknown) => String(name || '')
 		.toLowerCase()
 		.normalize('NFD')
@@ -79,7 +75,7 @@ export default function SerangNegaraModal({
 			(partner: unknown) => normalizeCountryName(partner) === normalizeCountryName(countryName)
 		);
 
-	// Perhitungan kekuatan militer kasar
+	// Perhitungan kekuatan militer
 	const playerPersonnel = Number(playerCountryDetail?.personel_aktif || 1200000);
 	const targetBudget = Number((targetData as any)?.anggaran || 15000);
 	const targetPersonnel = Math.floor(targetBudget * 10);
@@ -94,52 +90,37 @@ export default function SerangNegaraModal({
 			return;
 		}
 
-		// Evaluasi Kemenangan / Kekalahan berdasarkan kekuatan
-		const randomBonus = Math.floor(Math.random() * 200) - 100;
-		const playerTotal = playerPower + randomBonus;
-		const targetTotal = targetPower;
+		setIsLaunchConfirmationOpen(false);
+		onClose();
+		if (onCloseDetailModal) {
+			onCloseDetailModal();
+		}
 
-		const isVictory = playerTotal >= targetTotal * 0.4; // Pemain militer kuat biasanya menang
-
-		setBattleOutcome({
-			isVictory,
-			playerScore: Math.max(10, playerTotal),
-			targetScore: Math.max(10, targetTotal),
-		});
+		// Trigger animasi perang top-level setelah modal tertutup sepenuhnya
+		if (typeof window !== 'undefined') {
+			window.dispatchEvent(
+				new CustomEvent('start_war_animation', {
+					detail: {
+						attacker: playerName,
+						target: countryName,
+						playerPower,
+						targetPower,
+						playerCountryDetail,
+						targetCountryDetail: targetCountryDetail || targetData || { country: countryName },
+					},
+				})
+			);
+		}
 	};
 
 	const handleCloseReset = () => {
 		setIsLaunchConfirmationOpen(false);
-		setBattleOutcome(null);
 		onClose();
 	};
 
 	const handleBackToConfirmation = () => {
 		setIsLaunchConfirmationOpen(false);
 	};
-
-	const handleSelectAction = (action: 'aneksasi' | 'jarah' | 'mundur') => {
-		if (hasActiveNonAggressionPact) {
-			setBattleOutcome(null);
-			setIsPactBlocked(true);
-			return;
-		}
-		setIsLaunchConfirmationOpen(false);
-		setBattleOutcome(null);
-		onConfirm(action, countryName);
-	};
-
-	if (battleOutcome) {
-		return (
-			<HasilPertempuran
-				isVictory={battleOutcome.isVictory}
-				playerName={playerName}
-				countryName={countryName}
-				onClose={handleCloseReset}
-				onSelectAction={handleSelectAction}
-			/>
-		);
-	}
 
 	if (isLaunchConfirmationOpen) {
 		return (

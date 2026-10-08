@@ -235,9 +235,21 @@ export default function SerangNegaraModal({
 
     const attackerPower = getArmadaPowerSummary(countryDetail).totals.totalPower;
     const targetPower = selectedTarget.totalPower;
-    const randomBonus = Math.floor(Math.random() * 200) - 100;
-    setBattleOutcome(attackerPower + randomBonus >= targetPower * 0.4);
-    setIsLaunchConfirmationOpen(false);
+
+    closeAttackFlow();
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('start_war_animation', {
+          detail: {
+            attacker: selectedCountryName,
+            target: selectedTarget.countryName,
+            playerPower: attackerPower,
+            targetPower,
+          },
+        })
+      );
+    }
   };
 
   const closeAttackFlow = () => {

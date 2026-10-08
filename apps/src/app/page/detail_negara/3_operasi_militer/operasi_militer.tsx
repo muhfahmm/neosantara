@@ -87,6 +87,7 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
         playerCountryDetail={playerCountryDetail}
         targetCountryDetail={targetCountryDetail}
         onClose={() => setIsSerangOpen(false)}
+        onCloseDetailModal={onCloseDetailModal}
         onConfirm={(actionType, targetCountry) => {
           setIsSerangOpen(false);
           if (onCloseDetailModal) onCloseDetailModal();

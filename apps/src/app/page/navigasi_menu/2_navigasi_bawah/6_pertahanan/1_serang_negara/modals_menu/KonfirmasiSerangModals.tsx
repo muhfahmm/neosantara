@@ -134,7 +134,29 @@ export default function SerangModals({
     udara: targetSummary.totals.groups.udara?.power ?? 0,
   };
 
-  const [expandedGroup, setExpandedGroup] = useState<ArmadaGroup | null>("darat");
+  const [deploymentPct, setDeploymentPct] = useState<Record<string, number>>({});
+
+  // Reset state dan bersihkan data pengerahan lama setiap kali modal dibuka
+  React.useEffect(() => {
+    if (isOpen) {
+      setDeploymentPct({});
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.removeItem("deployed_units_config");
+        } catch (e) {}
+      }
+    }
+  }, [isOpen]);
+
+  const handlePctChange = (key: string, val: number) => {
+    const next = { ...deploymentPct, [key]: val };
+    setDeploymentPct(next);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("deployed_units_config", JSON.stringify(next));
+      } catch (e) {}
+    }
+  };
 
   const attackerBreakdown = {
     darat: getGroupBreakdown(countryDetail, "darat"),
@@ -264,61 +286,67 @@ export default function SerangModals({
 
             </div>
 
-            {/* BAGIAN 2: PERBANDINGAN PER MATRA */}
+            {/* BAGIAN 2: RINCIAN PASUKAN PER MATRA */}
             <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl shadow-sm">
               <div className="flex flex-col gap-4">
                 {(['darat', 'laut', 'udara'] as ArmadaGroup[]).map((group) => {
                   const Icon = groupMeta[group].icon;
                   return (
                     <div key={group} className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424] p-4">
-                      <div className="space-y-2">
-                        <button
-                          type="button"
-                          onClick={() => setExpandedGroup(expandedGroup === group ? null : group)}
-                          className="w-full flex items-center justify-between rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-3 text-left text-sm font-black text-[#00FFAA] transition hover:bg-[#00FFAA]/10"
-                        >
+                      <div className="space-y-3">
+                        <div className="w-full flex items-center justify-between rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-3 text-sm font-black text-[#00FFAA]">
                           <div className="flex items-center gap-3">
                             <Icon className="h-5 w-5 text-[#00FFAA]" />
                             <span className="uppercase tracking-wider">{group}</span>
                           </div>
-                          <span className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#6B8A8A]">
-                            {expandedGroup === group ? "Sembunyikan" : "Lihat Rincian"}
-                            {expandedGroup === group ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                          </span>
-                        </button>
-
-                        <div
-                          className={`flex flex-col md:flex-row md:gap-6 pt-2 overflow-hidden transition-all duration-300 ease-in-out ${
-                            expandedGroup === group
-                              ? "opacity-100 translate-y-0 max-h-[3000px] pointer-events-auto"
-                              : "opacity-0 translate-y-[-10px] max-h-0 pointer-events-none"
-                          }`}
-                        >
-                          {/* Sisi Kiri: Penyerang */}
-                          <div className="flex-1 w-full space-y-2">
-                            <div className="text-[10px] font-black uppercase tracking-wider text-[#00FFAA] mb-2">Penyerang</div>
-                            {attackerBreakdown[group].map((item) => (
-                              <div key={item.key} className="flex items-center justify-between rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] px-3 py-2 text-xs font-semibold text-[#E0E0E0]">
-                                <span>{item.label}</span>
-                                <span className="font-black text-[#00FFAA]">{formatNumber(item.quantity)}</span>
-                              </div>
-                            ))}
-                          </div>
-
-                          <div className="hidden md:block w-[1px] self-stretch bg-[#00FFAA]/20 rounded-full" />
-
-                          {/* Sisi Kanan: Target */}
-                          <div className="flex-1 w-full space-y-2">
-                            <div className="text-[10px] font-black uppercase tracking-wider text-rose-400 mb-2">Target</div>
-                            {targetBreakdown[group].map((item) => (
-                              <div key={item.key} className="flex items-center justify-between rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] px-3 py-2 text-xs font-semibold text-[#E0E0E0]">
-                                <span>{item.label}</span>
-                                <span className="font-black text-rose-400">{formatNumber(item.quantity)}</span>
-                              </div>
-                            ))}
-                          </div>
                         </div>
 
+                        {/* Pasukan Militer User */}
+                        <div className="w-full space-y-2 pt-1">
+                          <div className="text-[10px] font-black uppercase tracking-wider text-[#00FFAA] mb-2 flex items-center justify-between">
+                            <span>Jenis Alutsista / Pasukan</span>
+                            <span>Jumlah Unit</span>
+                          </div>
+                          {attackerBreakdown[group].map((item) => {
+                            const pct = deploymentPct[item.key] ?? 0;
+                            const deployedQty = Math.round((item.quantity * pct) / 100);
+
+                            return (
+                              <div
+                                key={item.key}
+                                className="flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] p-3 gap-2"
+                              >
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between text-xs font-semibold text-[#E0E0E0]">
+                                    <span>{item.label}</span>
+                                    <span className="font-black text-[#00FFAA] font-mono">
+                                      {formatNumber(deployedQty)}{" "}
+                                      <span className="text-[10px] text-[#6B8A8A] font-normal">
+                                        / {formatNumber(item.quantity)}
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center gap-3 sm:w-60 shrink-0">
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="100"
+                                    value={pct}
+                                    onChange={(e) =>
+                                      handlePctChange(item.key, Number(e.target.value))
+                                    }
+                                    className="w-full accent-[#00FFAA] bg-[#0F2424] h-1.5 rounded-lg cursor-pointer"
+                                  />
+                                  <span className="text-xs font-mono font-black text-[#00FFAA] w-10 text-right">
+                                    {pct}%
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   );

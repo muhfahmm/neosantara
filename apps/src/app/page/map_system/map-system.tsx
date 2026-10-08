@@ -26,6 +26,8 @@ import { calculateDailyPopulationChange, updateDailyPopulation } from '@/app/log
 import { logger } from '../../../lib/logger';
 const CountryDetailModal = dynamic(() => import('../detail_negara/detail_negara').then(m => m.CountryDetailModal), { ssr: false });
 const NegaraUserModal = dynamic(() => import('./negara_user'), { ssr: false });
+const WarMap = dynamic(() => import('../detail_negara/3_operasi_militer/1_serang_negara/path-war'), { ssr: false });
+import { buildCapitalPoint } from '../detail_negara/3_operasi_militer/1_serang_negara/path-war';
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateDailyMaterialProduction } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
 import { getDaysElapsed } from '@/app/logic/production_logic';
@@ -191,6 +193,12 @@ export default function MapPage() {
     const [isPaused, setIsPaused] = useState(true);
     const [speed, setSpeed] = useState(1);
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            (window as any).neosantara_is_paused = isPaused;
+        }
+    }, [isPaused]);
     const pactHistorySignatureRef = useRef('');
     const autoRemovedEmbassyRef = useRef<{ playerCountry: string; countries: Set<string> } | null>(null);
     const simulationDateString = [
@@ -780,6 +788,19 @@ export default function MapPage() {
     }, [currentDate, countryDetail]);
 
     const [penelitianModalOpen, setPenelitianModalOpen] = useState(false);
+    const [activeWarAnimation, setActiveWarAnimation] = useState<any>(null);
+
+    useEffect(() => {
+        const handleStartWarAnimation = (event: Event) => {
+            const detail = (event as CustomEvent).detail;
+            if (!detail?.attacker || !detail?.target) return;
+            setActiveWarAnimation(detail);
+        };
+        window.addEventListener('start_war_animation', handleStartWarAnimation);
+        return () => {
+            window.removeEventListener('start_war_animation', handleStartWarAnimation);
+        };
+    }, []);
     const [presidentRating, setPresidentRating] = useState<number>(50);
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
     const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
@@ -3552,6 +3573,39 @@ export default function MapPage() {
                 countryDetail={countryDetail}
                 setCountryDetail={setCountryDetail}
             />
+
+            {activeWarAnimation && (
+                <WarMap
+                    isOpen={!!activeWarAnimation}
+                    attacker={{
+                        ...(activeWarAnimation.playerCountryDetail || {}),
+                        ...(buildCapitalPoint(activeWarAnimation.attacker) || { country: activeWarAnimation.attacker, capital: activeWarAnimation.attacker, lat: 0, lng: 0 }),
+                    }}
+                    target={{
+                        ...(activeWarAnimation.targetCountryDetail || {}),
+                        ...(buildCapitalPoint(activeWarAnimation.target) || { country: activeWarAnimation.target, capital: activeWarAnimation.target, lat: 0, lng: 0 }),
+                    }}
+                    attackerPower={activeWarAnimation.playerPower || 1000}
+                    targetPower={activeWarAnimation.targetPower || 1000}
+                    onClose={() => setActiveWarAnimation(null)}
+                    onResolve={({ action }) => {
+                        let mappedAction: 'aneksasi' | 'jarah' | 'mundur' = 'mundur';
+                        if (action === 'annex') mappedAction = 'aneksasi';
+                        else if (action === 'loot') mappedAction = 'jarah';
+                        else mappedAction = 'mundur';
+
+                        window.dispatchEvent(
+                            new CustomEvent('trigger_player_attack', {
+                                detail: {
+                                    actionType: mappedAction,
+                                    targetCountry: activeWarAnimation.target,
+                                },
+                            })
+                        );
+                        setActiveWarAnimation(null);
+                    }}
+                />
+            )}
 
             {/* Shifted Canvas Container */}
             <div ref={containerRef} className={`fixed top-20 inset-x-0 bottom-0 z-0 ${isMapInteractionDisabled ? 'pointer-events-none' : ''}`}>
