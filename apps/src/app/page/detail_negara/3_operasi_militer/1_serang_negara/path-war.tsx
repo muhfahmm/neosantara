@@ -345,8 +345,10 @@ export function buildWarPath(input: BuildWarPathInput): WarPath {
   };
 }
 
+import { simulateBattleTs } from './war_algoritm/battleEngine';
+
 /* ============================================================
- * HASIL PERTEMPURAN
+ * HASIL PERTEMPURAN (DeepSeek AI Engine)
  * ============================================================ */
 
 export interface WarResultInput {
@@ -361,24 +363,44 @@ export interface WarResultOutput {
   result: WarResult;
   attackerScore: number;
   targetScore: number;
+  totalRounds?: number;
+  message?: string;
+  log?: string[];
 }
 
 export function computeWarResult(input: WarResultInput): WarResultOutput {
-  const {
-    attackerPower,
-    targetPower,
-    roll = Math.random(),
-    attackerBonus = 1,
-    defenderBonus = 1,
-  } = input;
+  const { attackerPower, targetPower } = input;
 
-  const atk = attackerPower * attackerBonus * (0.85 + roll * 0.3);
-  const def = targetPower * defenderBonus * (0.85 + (1 - roll) * 0.3);
+  let deployedPowerRatio = 1.0;
+  if (typeof window !== 'undefined') {
+    try {
+      const saved = localStorage.getItem('deployed_units_config');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const vals = Object.values(parsed).filter((v): v is number => typeof v === 'number');
+        if (vals.length > 0) {
+          const sum = vals.reduce((acc, curr) => acc + curr, 0);
+          const avgPct = sum / vals.length;
+          deployedPowerRatio = Math.max(0.01, avgPct / 100);
+        }
+      }
+    } catch (e) {}
+  }
+
+  const actualAttackerPower = Math.round(attackerPower * deployedPowerRatio);
+
+  const battle = simulateBattleTs({
+    attackerPower: actualAttackerPower,
+    targetPower,
+  });
 
   return {
-    result: atk >= def ? 'win' : 'lose',
-    attackerScore: Math.round(atk),
-    targetScore: Math.round(def),
+    result: battle.isVictory ? 'win' : 'lose',
+    attackerScore: battle.attackerFinalPower,
+    targetScore: battle.targetFinalPower,
+    totalRounds: battle.totalRounds,
+    message: battle.message,
+    log: battle.log,
   };
 }
 

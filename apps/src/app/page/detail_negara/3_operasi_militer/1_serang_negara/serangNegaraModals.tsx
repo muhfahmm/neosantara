@@ -5,6 +5,8 @@ import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import KonfirmasiPeluncuranSerangan from "./konfirmasi_peluncuran_serangan";
 import KonfirmasiSerangModals from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/KonfirmasiSerangModals";
 
+import { getArmadaPowerSummary } from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic";
+
 interface SerangNegaraModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
@@ -75,13 +77,13 @@ export default function SerangNegaraModal({
 			(partner: unknown) => normalizeCountryName(partner) === normalizeCountryName(countryName)
 		);
 
-	// Perhitungan kekuatan militer
-	const playerPersonnel = Number(playerCountryDetail?.personel_aktif || 1200000);
-	const targetBudget = Number((targetData as any)?.anggaran || 15000);
-	const targetPersonnel = Math.floor(targetBudget * 10);
+	// Hitung kekuatan militer riil berbasis Armada Power Summary
+	const targetSource = targetCountryDetail || targetData || { country: countryName };
+	const attackerSummary = getArmadaPowerSummary(playerCountryDetail);
+	const targetSummary = getArmadaPowerSummary(targetSource);
 
-	const playerPower = Math.floor(playerPersonnel / 1000);
-	const targetPower = Math.floor(targetPersonnel / 1000);
+	const playerPower = attackerSummary?.totals?.totalPower ?? 1000000;
+	const targetPower = targetSummary?.totals?.totalPower ?? 1000000;
 
 	const handleLaunchAttack = () => {
 		if (hasActiveNonAggressionPact) {
@@ -106,7 +108,7 @@ export default function SerangNegaraModal({
 						playerPower,
 						targetPower,
 						playerCountryDetail,
-						targetCountryDetail: targetCountryDetail || targetData || { country: countryName },
+						targetCountryDetail: targetSource,
 					},
 				})
 			);

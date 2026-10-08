@@ -28,6 +28,7 @@ const CountryDetailModal = dynamic(() => import('../detail_negara/detail_negara'
 const NegaraUserModal = dynamic(() => import('./negara_user'), { ssr: false });
 const WarMap = dynamic(() => import('../detail_negara/3_operasi_militer/1_serang_negara/path-war'), { ssr: false });
 import { buildCapitalPoint } from '../detail_negara/3_operasi_militer/1_serang_negara/path-war';
+import { applyWarLossesToUserArmada } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateDailyMaterialProduction } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
 import { getDaysElapsed } from '@/app/logic/production_logic';
@@ -791,7 +792,25 @@ export default function MapPage() {
                 setNotifications(prev => [notifMsg, ...prev]);
 
             } else if (actionType === 'mundur') {
-                // Action: mundur
+                // Action: mundur (Kurangi 75% dari unit armada yang dikerahkan saat terpukul mundur)
+                if (countryDetail) {
+                    const { updatedDetail, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.75);
+                    setCountryDetail(updatedDetail);
+
+                    if (lossSummaryText && lossSummaryText !== 'Tidak ada kerugian unit') {
+                        setNotifications(prev => [{
+                            id: `notif-war-losses-${Date.now()}`,
+                            title: '💥 KERUGIAN PASUKAN PERTEMPURAN (75%)',
+                            sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
+                            message: `Pasukan terpukul mundur dari ${targetCountry}! Kerugian tempur sebesar 75% dari unit yang dikerahkan: ${lossSummaryText}. Data armada di Pertahanan & Keamanan telah diperbarui.`,
+                            timestamp: dateStr,
+                            type: 'peringkat',
+                            value: 75,
+                            isRead: false
+                        }, ...prev]);
+                    }
+                }
+
                 const relationPenalty = applyInvasionRelationPenalty(attackerCountry, 1, 5);
                 setNotifications(prev => [{
                     id: `notif-retreat-relations-${Date.now()}`,
