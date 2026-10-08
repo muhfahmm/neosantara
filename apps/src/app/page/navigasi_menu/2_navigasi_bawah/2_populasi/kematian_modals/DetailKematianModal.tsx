@@ -257,7 +257,7 @@ export default function DetailKematianModal({
                   <h4 className="text-xs font-black text-[#00FFAA] uppercase">Ketahanan Pangan</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#E0E0E0]">{calculatePanganScore(countryDetail, undefined)} POIN</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{indeksKetahananPangan} POIN</span>
                   <span className="text-[10px] text-[#6B8A8A]">× {foodSecurityFactor.toFixed(3)}</span>
                 </div>
                 <p className="text-[10px] text-[#6B8A8A]">Ketersediaan pangan yang cukup mengurangi kematian akibat malnutrisi.</p>
