@@ -156,11 +156,9 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
   const electricitySatisfaction = (() => {
     const production = totalCapacityMW;
     const consumption = estimatedConsumptionMW;
-    if (consumption <= 0) return 50; // default jika tidak ada data
-    const ratio = Math.min(production / consumption, 2); // batasi maks 2
-    let score = (ratio / 2) * 100; // petakan 0..2 ke 0..100
-    score = Math.min(100, Math.max(1, Math.round(score)));
-    return score;
+    if (consumption <= 0) return 100;
+    const coverage = Math.min(1, Math.max(0, production / consumption));
+    return Math.round(coverage * 100);
   })();
 
   // Simpan indeks ke countryDetail
