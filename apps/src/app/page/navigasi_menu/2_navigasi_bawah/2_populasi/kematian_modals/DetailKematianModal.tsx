@@ -82,6 +82,7 @@ export default function DetailKematianModal({
   const jumlahRumahSakit = kesehatanRes.jumlahRumahSakit;
   const tingkatKriminalitas = kriminalitasRes.tingkatKriminalitas;
 
+  const harapanHidup = Math.round(calculateLifeExpectancy(detailWithDefaults, kepuasanUmum));
   const lifeExpectancyFactor = Math.max(0.8, 1.2 - (0.005 * (harapanHidup - 50)));
   const securityFactor = keamananRes.securityFactor;
   const homelessRatio = homelessCount / populasi;
