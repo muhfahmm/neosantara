@@ -2179,9 +2179,9 @@ gardu_pltu_minyak_bumi
 (206, 'Uruguay', 'uruguay', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0),
 (207, 'Venezuela', 'venezuela', 2, 4, 0, 14, 6, 5, 0, 2, 6, 6),
 (208, 'Mayotte', 'mayotte', 0, 0, 0, 1, 0, 1, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 1, 0, 2, 1, 2, 0, 1, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 2, 1, 2, 0, 1, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 2, 1, 2, 0, 1, 0, 0),
+(209, 'Reunion', 'reunion', 0, 1, 0, 2, 0, 2, 0, 0, 0, 0),
+(210, 'Guadeloupe', 'guadeloupe', 0, 1, 0, 2, 0, 1, 0, 0, 0, 0),
+(211, 'Martinique', 'martinique', 0, 1, 0, 2, 0, 1, 0, 0, 0, 0),
 (212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 1, 0, 1, 0, 0, 0, 0);
 -- SECTION: json/semua_fitur_negara\1_pembangunan\1_produksi\2_sektor_mineral_kritis\database_sektor_mineral_kritis.pg.sql
 DROP TABLE IF EXISTS database_sektor_mineral_kritis;
