@@ -1,4 +1,5 @@
 import { generateAIKeamananPBBNotification } from '@/app/page/menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
+import { getCurrentGameDateString } from '@/app/logic/gameSessionState';
 import { STATIC_PBB_VOTES } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/3_suara_negara_PBB/staticVoteData";
 import { getIsoForCountryName } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso";
 import {
@@ -86,23 +87,7 @@ function initializeSessionOnlySecurityItems(): void {
 }
 
 export function getSimulationDateString(): string {
-  if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem('neosantara_current_game_date');
-    if (saved) return saved;
-
-    try {
-      const saveStr = localStorage.getItem('presiden_simulator_load_save');
-      if (saveStr) {
-        const parsed = JSON.parse(saveStr);
-        if (parsed?.game_date) return parsed.game_date;
-      }
-    } catch (e) {}
-  }
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return getCurrentGameDateString();
 }
 
 const DEFAULT_SECURITY_PROPOSERS = [
@@ -387,7 +372,7 @@ export function getActiveUserCountryName(userCountryName?: string): string {
   }
   if (typeof window !== 'undefined') {
     try {
-      const saveStr = localStorage.getItem('presiden_simulator_load_save');
+      const saveStr = sessionStorage.getItem('presiden_simulator_load_save');
       if (saveStr) {
         const parsed = JSON.parse(saveStr);
         if (parsed.countryName) return parsed.countryName;

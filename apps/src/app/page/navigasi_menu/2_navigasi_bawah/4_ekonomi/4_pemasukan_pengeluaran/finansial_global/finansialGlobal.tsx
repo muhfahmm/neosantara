@@ -7,6 +7,7 @@ import { getDailyMinistryCost } from '@/app/logic/economic_logic/departments';
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import {
   applyNpcCountrySimulationState,
+  applyNpcCountrySimulationStates,
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npcCountrySimulation';
 
@@ -26,7 +27,7 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
   useEffect(() => {
     const refreshNpcCountries = () => {
       setAllCountries(current =>
-        current?.map(country => applyNpcCountrySimulationState(country)) ?? current
+        current ? applyNpcCountrySimulationStates(current) : current
       );
     };
     window.addEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcCountries);

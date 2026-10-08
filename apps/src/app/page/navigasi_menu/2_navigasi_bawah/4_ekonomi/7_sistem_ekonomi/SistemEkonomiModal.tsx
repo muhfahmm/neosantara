@@ -9,8 +9,8 @@ import {
 
 import SpektrumSistemTab from "./tab_menu/1_spektrum_sistem/SpektrumSistemTab";
 import KartuKebijakanTab from "./tab_menu/2_kartu_kebijakan/KartuKebijakanTab";
-import { getSistemEkonomiBySlug } from "@/../../json/database_sistem_ekonomi/index";
 import { generateSistemEkonomiChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/4_sistem_ekonomi/sistemEkonomiChangeLogic";
+import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 
 interface ModalProps {
   isOpen: boolean;
@@ -20,31 +20,13 @@ interface ModalProps {
 }
 
 const resolveSistemEkonomiForCountry = (countryDetail: any) => {
-  const slug =
-    countryDetail?.country_slug ||
-    countryDetail?.slug ||
-    countryDetail?.country?.toLowerCase().replace(/\s+/g, '-') ||
-    countryDetail?.nama_negara?.toLowerCase().replace(/\s+/g, '-') ||
-    (countryDetail?.name_id ? String(countryDetail.name_id).toLowerCase().replace(/\s+/g, '-') : null) ||
-    'indonesia';
-
-  const dbData = getSistemEkonomiBySlug(slug);
-
-  const spektrumVal = countryDetail?.sistem_ekonomi_val ?? dbData?.spektrum_val ?? 50;
+  const spektrumVal = countryDetail?.sistem_ekonomi_val ?? 50;
 
   const choices: Record<string, "A" | "B"> = {
-    price_control:
-      countryDetail?.policy_price_control ||
-      (dbData?.policy_price_control === "Pasar Bebas" ? "B" : "A"),
-    strategic_ownership:
-      countryDetail?.policy_strategic_ownership ||
-      (dbData?.policy_strategic_ownership === "Pasar Bebas" ? "B" : "A"),
-    trade_policy:
-      countryDetail?.policy_trade_policy ||
-      (dbData?.policy_trade === "Pasar Bebas" ? "B" : "A"),
-    labor_regulation:
-      countryDetail?.policy_labor_regulation ||
-      (dbData?.policy_labor === "Pasar Bebas" ? "B" : "A"),
+    price_control: countryDetail?.policy_price_control || "A",
+    strategic_ownership: countryDetail?.policy_strategic_ownership || "A",
+    trade_policy: countryDetail?.policy_trade_policy || "A",
+    labor_regulation: countryDetail?.policy_labor_regulation || "A",
   };
 
   return { spektrumVal, choices };
@@ -95,9 +77,8 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
     }));
   };
 
-  const handleSaveSystem = async () => {
-    const slug = countryDetail?.country_slug || countryDetail?.country?.toLowerCase() || countryDetail?.nama_negara?.toLowerCase() || "";
-    const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+  const handleSaveSystem = () => {
+    const dateStr = getCurrentGameDateString();
     const notif = generateSistemEkonomiChangeNotification(sliderValue, systemDetails.title, policyChoices, dateStr);
 
     let newPending = Array.isArray(countryDetail?.pending_notifications) ? [...countryDetail.pending_notifications] : [];
@@ -114,30 +95,6 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
         policy_labor_regulation: policyChoices.labor_regulation,
         pending_notifications: newPending,
       }));
-    }
-
-    if (slug) {
-      try {
-        await fetch('/api/sistem-ekonomi', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            country_id: countryDetail?.id || countryDetail?.country_id || 0,
-            country_slug: slug,
-            country_name: countryDetail?.country || countryDetail?.nama_negara || slug,
-            iso: countryDetail?.iso || 'id',
-            spektrum_val: sliderValue,
-            system_title: systemDetails.title,
-            category: systemDetails.category,
-            policy_price_control: policyChoices.price_control === 'B' ? 'Pasar Bebas' : 'Terpusat',
-            policy_strategic_ownership: policyChoices.strategic_ownership === 'B' ? 'Pasar Bebas' : 'Terpusat',
-            policy_trade: policyChoices.trade_policy === 'B' ? 'Pasar Bebas' : 'Terpusat',
-            policy_labor: policyChoices.labor_regulation === 'B' ? 'Pasar Bebas' : 'Terpusat',
-          }),
-        });
-      } catch (err) {
-        console.warn('[SistemEkonomiModal] Save to DB failed:', err);
-      }
     }
 
     setIsSavedSuccess(true);
@@ -237,4 +194,3 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
     </div>
   );
 }
-

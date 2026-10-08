@@ -20,8 +20,8 @@ import UmkmEkonomiTab from "./tab_menu/6_umkm_ekonomi/UmkmEkonomiTab";
 import PerlindunganSosialTab from "./tab_menu/7_perlindungan_sosial/PerlindunganSosialTab";
 import DetailSubsidiItemModal from "./DetailSubsidiItemModal";
 
-import { getSubsidiBySlug } from "@/../../json/database_alokasi_subsidi/index";
 import { generateSubsidiChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/3_kebijakan_subsidi/subsidiChangeLogic";
+import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 
 interface ModalProps {
   isOpen: boolean;
@@ -37,33 +37,6 @@ const resolveSubsidyItemsForCountry = (countryDetail: any): SubsidyItem[] => {
       budgetCost: clampSubsidyCost(item.budgetCost),
       isSubsidized: (countryDetail.subsidy_states as Record<string, boolean>)[item.id] ?? item.isSubsidized,
     }));
-  }
-
-  const slug =
-    countryDetail?.slug ||
-    countryDetail?.country_slug ||
-    countryDetail?.name?.toLowerCase().replace(/\s+/g, '-') ||
-    (countryDetail?.name_id ? String(countryDetail.name_id).toLowerCase().replace(/\s+/g, '-') : null) ||
-    'indonesia';
-
-  const dbData = getSubsidiBySlug(slug);
-  if (dbData) {
-    return INITIAL_SUBSIDY_ITEMS.map((item) => {
-      const dbVal = (dbData as any)[item.id] ?? (dbData as any)[item.id.toLowerCase()];
-      let isSub = item.isSubsidized;
-      if (dbVal !== undefined && dbVal !== null) {
-        if (dbVal === 0 || dbVal === "0" || dbVal === false || dbVal === "false") {
-          isSub = false;
-        } else if (dbVal === 1 || dbVal === "1" || dbVal === true || dbVal === "true") {
-          isSub = true;
-        }
-      }
-      return {
-        ...item,
-        budgetCost: clampSubsidyCost(item.budgetCost),
-        isSubsidized: isSub,
-      };
-    });
   }
 
   return INITIAL_SUBSIDY_ITEMS.map((item) => ({
@@ -103,7 +76,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
     );
 
     if (setCountryDetail && toggledItemName) {
-      const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
+      const dateStr = getCurrentGameDateString();
       const notif = generateSubsidiChangeNotification(toggledItemName, nextStatus, dateStr);
       setCountryDetail((prev: any) => ({
         ...prev,
@@ -127,24 +100,6 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
         total_subsidy_cost: summary.totalCost,
         subsidy_approval_bonus: summary.totalApprovalBonus,
       }));
-    }
-
-    const slug = countryDetail?.slug || countryDetail?.country_slug || 'indonesia';
-
-    try {
-      await fetch('/api/alokasi-subsidi', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          country_slug: slug,
-          country_id: countryDetail?.id || 0,
-          country_name: countryDetail?.name || countryDetail?.country_name || slug,
-          iso: countryDetail?.iso || 'id',
-          ...subsidyStatesRecord,
-        }),
-      });
-    } catch (err) {
-      console.error("Gagal menyimpan subsidi ke database:", err);
     }
 
     setIsSavedSuccess(true);

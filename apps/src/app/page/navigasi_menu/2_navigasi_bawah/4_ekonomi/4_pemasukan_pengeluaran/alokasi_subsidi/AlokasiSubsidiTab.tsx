@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { Zap, Utensils, GraduationCap, Bus, Store, ShieldAlert } from "lucide-react";
 import { INITIAL_SUBSIDY_ITEMS, SubsidyItem, clampSubsidyCost } from "@/../../json/database_kebijakan_subsidi/index";
-import { getSubsidiBySlug } from "@/../../json/database_alokasi_subsidi/index";
 
 interface AlokasiSubsidiTabProps {
   countryDetail: any;
@@ -16,29 +15,6 @@ const resolveSubsidyItemsForCountry = (countryDetail: any): SubsidyItem[] => {
       budgetCost: clampSubsidyCost(item.budgetCost),
       isSubsidized: (countryDetail.subsidy_states as Record<string, boolean>)[item.id] ?? item.isSubsidized,
     }));
-  }
-
-  const slug =
-    countryDetail?.slug ||
-    countryDetail?.country_slug ||
-    countryDetail?.name?.toLowerCase().replace(/\s+/g, '-') ||
-    (countryDetail?.name_id ? String(countryDetail.name_id).toLowerCase().replace(/\s+/g, '-') : null) ||
-    'indonesia';
-
-  const dbData = getSubsidiBySlug(slug);
-  if (dbData) {
-    return INITIAL_SUBSIDY_ITEMS.map((item) => {
-      const dbVal = (dbData as any)[item.id] ?? (dbData as any)[item.id.toLowerCase()];
-      let isSub = item.isSubsidized;
-      if (dbVal !== undefined && dbVal !== null) {
-        if (dbVal === 0 || dbVal === "0" || dbVal === false || dbVal === "false") {
-          isSub = false;
-        } else if (dbVal === 1 || dbVal === "1" || dbVal === true || dbVal === "true") {
-          isSub = true;
-        }
-      }
-      return { ...item, budgetCost: clampSubsidyCost(item.budgetCost), isSubsidized: isSub };
-    });
   }
 
   return INITIAL_SUBSIDY_ITEMS.map((item) => ({

@@ -11,18 +11,29 @@ import {
   updateDailyPopulation,
 } from "@/app/logic/populations_logic/population_logic";
 
-const NPC_SIMULATION_STORAGE_PREFIX = "neosantara_npc_simulation_v1:";
-const NPC_SIMULATION_ACTIVE_CAMPAIGN_KEY = "neosantara_npc_simulation_active_campaign";
 export const NPC_COUNTRY_SIMULATION_UPDATED_EVENT = "neosantara:npc-country-simulation-updated";
 
 type CountryRecord = Record<string, any> & { jumlah_penduduk: number };
 
-interface NpcSimulationState {
+export interface NpcSimulationState {
   version: 1;
   playerCountrySlug: string;
   lastSimulatedDate: string;
   countries: Record<string, Record<string, unknown>>;
 }
+
+interface PendingSimulationJob {
+  playerCountrySlug: string;
+  currentDate: string;
+  countries: CountryRecord[];
+  metadata: Record<string, any>;
+}
+
+let activeNpcSimulationState: NpcSimulationState | null = null;
+let simulationQueue: Promise<void> = Promise.resolve();
+let pendingSimulationJob: PendingSimulationJob | null = null;
+let pendingSimulationTimer: number | null = null;
+let simulationGeneration = 0;
 
 function normalizeSlug(value: unknown): string {
   return String(value || "").trim().toLowerCase();
@@ -53,44 +64,49 @@ function nextDate(date: string): string {
   return value.toISOString().slice(0, 10);
 }
 
-function getStorageKey(playerCountrySlug: string): string {
-  return `${NPC_SIMULATION_STORAGE_PREFIX}${encodeURIComponent(playerCountrySlug)}`;
-}
-
 export function clearActiveNpcCountrySimulationState(): void {
-  if (typeof window === "undefined") return;
-
-  try {
-    const activeCampaignKey = window.localStorage.getItem(NPC_SIMULATION_ACTIVE_CAMPAIGN_KEY);
-    if (activeCampaignKey) window.localStorage.removeItem(activeCampaignKey);
-    window.localStorage.removeItem(NPC_SIMULATION_ACTIVE_CAMPAIGN_KEY);
-  } catch (error) {
-    console.error("Gagal menghapus state simulasi NPC dari LocalStorage:", error);
+  simulationGeneration += 1;
+  activeNpcSimulationState = null;
+  pendingSimulationJob = null;
+  if (pendingSimulationTimer !== null && typeof window !== "undefined") {
+    window.clearTimeout(pendingSimulationTimer);
   }
+  pendingSimulationTimer = null;
 }
 
-function readSimulationState(key: string): NpcSimulationState | null {
-  try {
-    const serialized = window.localStorage.getItem(key);
-    if (!serialized) return null;
+export function getNpcCountrySimulationSnapshot(): NpcSimulationState | null {
+  if (!activeNpcSimulationState) return null;
+  return JSON.parse(JSON.stringify(activeNpcSimulationState)) as NpcSimulationState;
+}
 
-    const state = JSON.parse(serialized) as Partial<NpcSimulationState>;
-    if (
-      state.version !== 1 ||
-      typeof state.playerCountrySlug !== "string" ||
-      typeof state.lastSimulatedDate !== "string" ||
-      !isValidDateString(state.lastSimulatedDate) ||
-      !state.countries ||
-      typeof state.countries !== "object"
-    ) {
-      throw new Error("Format state simulasi NPC di LocalStorage tidak valid.");
-    }
-
-    return state as NpcSimulationState;
-  } catch (error) {
-    console.error("Gagal membaca state simulasi NPC dari LocalStorage:", error);
-    return null;
+export function restoreNpcCountrySimulationState(value: unknown): void {
+  simulationGeneration += 1;
+  pendingSimulationJob = null;
+  if (pendingSimulationTimer !== null && typeof window !== "undefined") {
+    window.clearTimeout(pendingSimulationTimer);
   }
+  pendingSimulationTimer = null;
+  if (value === null || value === undefined) {
+    activeNpcSimulationState = null;
+    return;
+  }
+
+  if (!value || typeof value !== "object") {
+    throw new Error("Format state simulasi NPC di save tidak valid.");
+  }
+  const state = value as Partial<NpcSimulationState>;
+  if (
+    state.version !== 1 ||
+    typeof state.playerCountrySlug !== "string" ||
+    typeof state.lastSimulatedDate !== "string" ||
+    !isValidDateString(state.lastSimulatedDate) ||
+    !state.countries ||
+    typeof state.countries !== "object" ||
+    Array.isArray(state.countries)
+  ) {
+    throw new Error("Format state simulasi NPC di save tidak valid.");
+  }
+  activeNpcSimulationState = state as NpcSimulationState;
 }
 
 function getMutableCountryState(country: CountryRecord): Record<string, unknown> {
@@ -159,14 +175,20 @@ function simulateCountryDay(
   };
 }
 
-function persistNpcSimulation(
+function yieldToBrowser(): Promise<void> {
+  return new Promise(resolve => window.setTimeout(resolve, 0));
+}
+
+async function persistNpcSimulation(
   playerCountrySlug: string,
   currentDate: string,
   sourceCountries: CountryRecord[],
   metadata: Record<string, any>
-): void {
-  const storageKey = getStorageKey(playerCountrySlug);
-  const previousState = readSimulationState(storageKey);
+): Promise<void> {
+  const generation = simulationGeneration;
+  const previousState = activeNpcSimulationState?.playerCountrySlug === playerCountrySlug
+    ? activeNpcSimulationState
+    : null;
   const state: NpcSimulationState = previousState ?? {
     version: 1,
     playerCountrySlug,
@@ -174,10 +196,8 @@ function persistNpcSimulation(
     countries: {},
   };
 
-  window.localStorage.setItem(NPC_SIMULATION_ACTIVE_CAMPAIGN_KEY, storageKey);
-
   if (!previousState) {
-    window.localStorage.setItem(storageKey, JSON.stringify(state));
+    activeNpcSimulationState = state;
     return;
   }
   if (currentDate <= state.lastSimulatedDate) return;
@@ -214,11 +234,18 @@ function persistNpcSimulation(
   while (simulationDate < currentDate) {
     const previousDate = simulationDate;
     simulationDate = nextDate(simulationDate);
+    let sliceStartedAt = performance.now();
     for (const [slug, country] of simulatedCountries) {
+      if (generation !== simulationGeneration) return;
       simulatedCountries.set(
         slug,
         simulateCountryDay(country, simulationDate, previousDate, metadata)
       );
+
+      if (performance.now() - sliceStartedAt >= 8) {
+        await yieldToBrowser();
+        sliceStartedAt = performance.now();
+      }
     }
   }
 
@@ -226,34 +253,38 @@ function persistNpcSimulation(
     state.countries[slug] = getMutableCountryState(country);
   }
   state.lastSimulatedDate = currentDate;
-  window.localStorage.setItem(storageKey, JSON.stringify(state));
+  if (generation !== simulationGeneration) return;
+  activeNpcSimulationState = state;
   window.dispatchEvent(new CustomEvent(NPC_COUNTRY_SIMULATION_UPDATED_EVENT));
 }
 
+function applyCountrySimulationState<T extends Record<string, any>>(
+  country: T,
+  state: NpcSimulationState | null
+): T {
+  if (!state) return country;
+
+  const slug = normalizeSlug(country.country_slug);
+  if (!slug || slug === state.playerCountrySlug) return country;
+  const countryState = state.countries[slug];
+  if (!countryState) return country;
+
+  return {
+    ...country,
+    ...countryState,
+    religion: country.religion,
+    ideology: country.ideology,
+  };
+}
+
+export function applyNpcCountrySimulationStates<T extends Record<string, any>>(
+  countries: readonly T[]
+): T[] {
+  return countries.map(country => applyCountrySimulationState(country, activeNpcSimulationState));
+}
+
 export function applyNpcCountrySimulationState<T extends Record<string, any>>(country: T): T {
-  if (typeof window === "undefined") return country;
-
-  try {
-    const activeCampaignKey = window.localStorage.getItem(NPC_SIMULATION_ACTIVE_CAMPAIGN_KEY);
-    if (!activeCampaignKey) return country;
-    const state = readSimulationState(activeCampaignKey);
-    if (!state) return country;
-
-    const slug = normalizeSlug(country.country_slug);
-    if (!slug || slug === state.playerCountrySlug) return country;
-    const countryState = state.countries[slug];
-    if (!countryState) return country;
-
-    return {
-      ...country,
-      ...countryState,
-      religion: country.religion,
-      ideology: country.ideology,
-    };
-  } catch (error) {
-    console.error("Gagal menerapkan state simulasi NPC:", error);
-    return country;
-  }
+  return applyNpcCountrySimulationStates([country])[0] ?? country;
 }
 
 export function useNpcCountrySimulation(
@@ -275,15 +306,6 @@ export function useNpcCountrySimulation(
 
     setCountries([]);
     setLoadedForPlayerSlug("");
-    try {
-      window.localStorage.setItem(
-        NPC_SIMULATION_ACTIVE_CAMPAIGN_KEY,
-        getStorageKey(normalizedPlayerSlug)
-      );
-    } catch (error) {
-      console.error("Gagal memilih campaign simulasi NPC di LocalStorage:", error);
-    }
-
     let isCurrent = true;
     fetch("/api/country-data?all=true", { cache: "no-store" })
       .then(async response => {
@@ -320,19 +342,42 @@ export function useNpcCountrySimulation(
       return;
     }
 
-    const timeoutId = setTimeout(() => {
-      try {
-        persistNpcSimulation(
-          normalizedPlayerSlug,
-          currentDateString,
-          countries,
-          metadata
-        );
-      } catch (error) {
-        console.error("Gagal menyimpan state simulasi NPC ke LocalStorage:", error);
-      }
+    pendingSimulationJob = {
+      playerCountrySlug: normalizedPlayerSlug,
+      currentDate: currentDateString,
+      countries,
+      metadata,
+    };
+    if (pendingSimulationTimer !== null) window.clearTimeout(pendingSimulationTimer);
+    pendingSimulationTimer = window.setTimeout(() => {
+      pendingSimulationTimer = null;
+      void flushNpcCountrySimulation().catch(error => {
+        console.error("Gagal menjalankan simulasi NPC:", error);
+      });
     }, 50);
-
-    return () => clearTimeout(timeoutId);
   }, [normalizedPlayerSlug, loadedForPlayerSlug, currentDateString, countries, metadata]);
+}
+
+export async function flushNpcCountrySimulation(): Promise<void> {
+  if (pendingSimulationTimer !== null && typeof window !== "undefined") {
+    window.clearTimeout(pendingSimulationTimer);
+    pendingSimulationTimer = null;
+  }
+  const job = pendingSimulationJob;
+  pendingSimulationJob = null;
+  let jobPromise = simulationQueue;
+  if (job) {
+    jobPromise = simulationQueue
+      .catch(error => {
+        console.error("Simulasi NPC sebelumnya gagal:", error);
+      })
+      .then(() => persistNpcSimulation(
+        job.playerCountrySlug,
+        job.currentDate,
+        job.countries,
+        job.metadata
+      ));
+    simulationQueue = jobPromise;
+  }
+  await jobPromise;
 }

@@ -418,9 +418,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
       },
       userVote: isSelectedCountryAnnexed ? null : 'yes',
       status: 'voting',
-      createdAt: typeof getSimulationDateString === 'function' 
-        ? getSimulationDateString() 
-        : (typeof window !== 'undefined' ? localStorage.getItem('neosantara_current_game_date') || new Date().toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
+      createdAt: getSimulationDateString(),
       notified10Days: false
     };
 

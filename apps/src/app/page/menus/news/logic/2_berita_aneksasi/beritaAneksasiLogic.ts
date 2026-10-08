@@ -78,12 +78,6 @@ export function updateMapTerritoryColor(
       [payload.targetCountry.toLowerCase()]: payload.newColor
     };
     (window as any).neosantara_country_color_overrides = updated;
-    try {
-      localStorage.setItem('neosantara_country_color_overrides', JSON.stringify(updated));
-    } catch (e) {
-      console.error('Failed to sync country color overrides to localStorage:', e);
-    }
-
     const existingAnnexed = (window as any).neosantara_annexed_countries || {};
     const updatedAnnexed = {
       ...existingAnnexed,

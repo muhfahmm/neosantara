@@ -9,6 +9,7 @@ import {
   OrgApplication,
 } from "./orgMembershipLogic";
 import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
+import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 
 interface PermohonanKeanggotaanModalProps {
   isOpen: boolean;
@@ -33,10 +34,7 @@ export default function PermohonanKeanggotaanModal({
   const [currentApp, setCurrentApp] = useState<OrgApplication | undefined>(undefined);
 
   const getCurrentDateStr = () => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("neosantara_current_game_date") || formatDate(new Date());
-    }
-    return formatDate(new Date());
+    return getCurrentGameDateString() || formatDate(new Date());
   };
 
   const currentDateStr = getCurrentDateStr();

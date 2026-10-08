@@ -6,7 +6,7 @@ import { fetchBuildingMetadata } from '../../../../lib/buildingMetadata';
 import { processDueLoans } from './4_ekonomi/3_peminjaman_hutang/tab_menu/logic/loanRepaymentLogic';
 import { isCountryUnderEconomicEmbargo } from './7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import {
-  applyNpcCountrySimulationState,
+  applyNpcCountrySimulationStates,
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npcCountrySimulation';
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
@@ -132,7 +132,7 @@ function ModalsManager({
   useEffect(() => {
     const refreshNpcCountries = () => {
       setPrefetchedAllCountries(current =>
-        current?.map(country => applyNpcCountrySimulationState(country)) ?? current
+        current ? applyNpcCountrySimulationStates(current) : current
       );
     };
     window.addEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcCountries);
@@ -152,7 +152,7 @@ function ModalsManager({
           const res = await fetch('/api/country-data?all=true');
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
-            setPrefetchedAllCountries(data.map(country => applyNpcCountrySimulationState(country)));
+            setPrefetchedAllCountries(applyNpcCountrySimulationStates(data));
           }
         } catch (e) {
           console.warn('ModalsManager: failed to fetch all countries', e);

@@ -6,6 +6,7 @@ import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import PermohonanKeanggotaanModal from "../PermohonanKeanggotaanModal";
 import { getApplicationForOrg, isUserJoinedOrg } from "../orgMembershipLogic";
 import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
+import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 
 interface OrganisasiPBBModalProps {
   orgName: string;
@@ -128,7 +129,7 @@ export default function OrganisasiPBBModal({ orgName, orgIcon: Icon, selectedCou
       <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] custom-scrollbar space-y-4">
         {benefitText && (() => {
           const app = getApplicationForOrg(playerCountryName, orgName);
-          const currentDateStr = typeof window !== "undefined" ? localStorage.getItem("neosantara_current_game_date") || formatDate(new Date()) : formatDate(new Date());
+          const currentDateStr = getCurrentGameDateString() || formatDate(new Date());
           const remainingDays = app ? Math.max(0, 30 - getDaysElapsed(app.submissionDate, currentDateStr)) : 30;
 
           return (

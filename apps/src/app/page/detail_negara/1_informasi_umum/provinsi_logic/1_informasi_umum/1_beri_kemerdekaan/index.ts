@@ -103,13 +103,6 @@ export async function releaseAnnexedProvince({
     Object.entries(currentOverrides).filter(([key]) => !aliases.has(normalizeName(key)))
   ) as Record<string, string>;
 
-  try {
-    localStorage.setItem('neosantara_annexed_countries', JSON.stringify(nextAnnexedCountries));
-    localStorage.setItem('neosantara_country_color_overrides', JSON.stringify(nextOverrides));
-  } catch (error) {
-    throw new Error(`Gagal menyimpan status kemerdekaan wilayah: ${error instanceof Error ? error.message : 'penyimpanan browser gagal.'}`);
-  }
-
   updateCountryDetail(previous => {
     if (!previous) return previous;
 

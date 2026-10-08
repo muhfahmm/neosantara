@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { COUNTRIES_DATA } from '../map-data';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { calculateDailyPopulationChange } from '@/app/logic/populations_logic/population_logic';
+import { getCurrentGameDateString } from '@/app/logic/gameSessionState';
 import { applyNpcCountrySimulationState } from '@/app/logic/npcCountrySimulation';
 
 interface CountryDetailData {
@@ -99,9 +100,7 @@ export default function TabelNegaraPage() {
         res.json(),
         metadataResponse?.ok ? metadataResponse.json() : Promise.resolve({}),
       ]);
-      const gameDate = typeof window !== 'undefined'
-        ? localStorage.getItem('neosantara_current_game_date') || new Date().toISOString().slice(0, 10)
-        : new Date().toISOString().slice(0, 10);
+      const gameDate = getCurrentGameDateString();
 
       let rawList: any[] = [];
       if (Array.isArray(data)) {

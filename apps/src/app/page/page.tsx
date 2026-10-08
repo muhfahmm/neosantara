@@ -939,7 +939,7 @@ export default function PlayMenuPage() {
     };
 
     const handleLoadSave = (save: any) => {
-        localStorage.setItem('presiden_simulator_load_save', JSON.stringify(save));
+        sessionStorage.setItem('presiden_simulator_load_save', JSON.stringify(save));
         window.location.href = `/page/map_system?country=${encodeURIComponent(save.country_name)}`;
     };
 

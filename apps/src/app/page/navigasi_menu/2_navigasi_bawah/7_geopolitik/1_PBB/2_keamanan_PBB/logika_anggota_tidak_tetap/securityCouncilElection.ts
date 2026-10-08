@@ -1,4 +1,5 @@
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
+import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 import { getRelationValue } from "@/../../json/database_hubungan_antar_negara/relationsRegistry";
 import type { CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles";
 import type { NotificationMessage } from "@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic";
@@ -274,21 +275,8 @@ export function getStoredCouncilMembers(): SecurityCouncilMember[] {
 }
 
 export function getCurrentElectionYear(): number {
-  if (typeof window !== "undefined") {
-    const currentDate = localStorage.getItem("neosantara_current_game_date");
-    const currentYear = Number(currentDate?.slice(0, 4));
-    if (Number.isFinite(currentYear) && currentYear > 0) return currentYear;
-    try {
-      const save = localStorage.getItem("presiden_simulator_load_save");
-      if (save) {
-        const savedYear = Number(JSON.parse(save)?.game_date?.slice(0, 4));
-        if (Number.isFinite(savedYear) && savedYear > 0) return savedYear;
-      }
-    } catch (error) {
-      console.error("Gagal membaca tahun simulasi untuk status Dewan Keamanan:", error);
-    }
-  }
-  return new Date().getFullYear();
+  const year = Number(getCurrentGameDateString().slice(0, 4));
+  return Number.isFinite(year) && year > 0 ? year : new Date().getFullYear();
 }
 
 export function getCouncilVoteMultiplier(countryIso: string, year = getCurrentElectionYear()): number {

@@ -30,6 +30,15 @@ import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateDailyMaterialProduction } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
 import { getDaysElapsed } from '@/app/logic/production_logic';
 import {
+    flushNpcCountrySimulation,
+    getNpcCountrySimulationSnapshot,
+    restoreNpcCountrySimulationState,
+    applyNpcCountrySimulationState,
+    useNpcCountrySimulation,
+    clearActiveNpcCountrySimulationState,
+} from '@/app/logic/npcCountrySimulation';
+import { setCurrentGameDateString } from '@/app/logic/gameSessionState';
+import {
     calculateKepuasan,
     calculateKeterbukaanScore,
     calculateKesehatanScore,
@@ -81,7 +90,6 @@ import { initCountryIsoFromDatabase, getIsoForCountryName } from '@/app/page/nav
 import { isMemberOfWMO } from '../bonus_logic';
 import { checkAndProcessOrgApplications } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic';
 import { fetchAllCountryProfilesFromDb } from '@/../../json/semua_fitur_negara/0_profiles';
-import { applyNpcCountrySimulationState, useNpcCountrySimulation } from '@/app/logic/npcCountrySimulation';
 import {
     createInitialElectionState,
     getEligibleUNMemberCountries,
@@ -292,26 +300,14 @@ export default function MapPage() {
 
         (window as any).neosantara_country_color_overrides = nextOverrides;
         (window as any).neosantara_annexed_countries = nextAnnexed;
-        try {
-            localStorage.setItem('neosantara_country_color_overrides', JSON.stringify(nextOverrides));
-            localStorage.setItem('neosantara_annexed_countries', JSON.stringify(nextAnnexed));
-        } catch (error) {
-            console.error('Failed to persist annexed territory state:', error);
-        }
         window.dispatchEvent(new CustomEvent('map_territory_color_updated', {
             detail: { targetCountry, newColor: attackerColor, attackerCountry }
         }));
     };
 
-    // Override warna aneksasi & status aneksasi hanya berlaku selama sesi: refresh => kembali ke warna/status default.
+    // Territory changes are runtime-only and are restored from an explicitly loaded save.
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            try {
-                localStorage.removeItem('neosantara_country_color_overrides');
-                localStorage.removeItem('neosantara_annexed_countries');
-            } catch (e) {
-                console.error('Failed to clear country color overrides / annexed state:', e);
-            }
             (window as any).neosantara_country_color_overrides = {};
             (window as any).neosantara_annexed_countries = {};
         }
@@ -1646,7 +1642,7 @@ export default function MapPage() {
         if (typeof window !== 'undefined') {
             clearExpelledOrganizationCountries();
             clearAllOrganizationMembershipData();
-            const loadSaveStr = localStorage.getItem('presiden_simulator_load_save');
+            const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
             const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
             if (newGameMarker === '1') {
                 clearActiveResolutionsForSession();
@@ -1657,8 +1653,7 @@ export default function MapPage() {
                 localStorage.removeItem('pbb_active_resolutions_v4');
                 localStorage.removeItem('pbb_active_keamanan_v4');
                 localStorage.removeItem('pbb_reported_war_ban_violations_v1');
-                localStorage.removeItem('neosantara_country_color_overrides');
-                localStorage.removeItem('neosantara_annexed_countries');
+                clearActiveNpcCountrySimulationState();
                 (window as any).neosantara_annexed_countries = {};
                 (window as any).neosantara_country_color_overrides = {};
                 localStorage.removeItem('presiden_simulator_new_game');
@@ -1817,7 +1812,7 @@ export default function MapPage() {
     // Client-side query param extraction & profile fetching
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            const loadSaveStr = localStorage.getItem('presiden_simulator_load_save');
+            const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
             const isNewGame = localStorage.getItem('presiden_simulator_new_game') === '1';
             if (loadSaveStr) {
                 void (async () => {
@@ -1833,6 +1828,19 @@ export default function MapPage() {
                         const savedDetail = savedState.countryDetail && typeof savedState.countryDetail === 'object'
                             ? savedState.countryDetail
                             : {};
+                        const { __neosantara_game_session: savedSessionState, ...savedCountryDetail } = savedDetail;
+                        const sessionState = savedSessionState && typeof savedSessionState === 'object'
+                            ? savedSessionState
+                            : {};
+                        restoreNpcCountrySimulationState(sessionState.npcSimulation ?? null);
+                        const restoredOverrides = sessionState.countryColorOverrides
+                            || savedState.countryColorOverrides
+                            || {};
+                        const restoredAnnexed = sessionState.annexedCountries || {};
+                        setCountryColorOverrides(restoredOverrides);
+                        (window as any).neosantara_country_color_overrides = restoredOverrides;
+                        (window as any).neosantara_annexed_countries = restoredAnnexed;
+                        window.dispatchEvent(new CustomEvent('map_territory_color_updated'));
                         let databaseReligion = '';
                         let databaseSlug = '';
                         const relPath = Object.entries(countryPaths as Record<string, string>).find(
@@ -1874,7 +1882,7 @@ export default function MapPage() {
                             ideology: savedState.ideology || '-',
                             un_vote: Number(savedState.un_vote),
                             kepuasan: Number(savedState.kepuasan) || 50,
-                            ...savedDetail,
+                            ...savedCountryDetail,
                             ...(databaseSlug ? { country_slug: databaseSlug } : {}),
                             religion: databaseReligion || cachedReligion || savedDetail.religion || savedState.religion || '-',
                         };
@@ -1887,7 +1895,7 @@ export default function MapPage() {
                             setKesejahteraan(Number(restoredDetail.kesejahteraan));
                         }
 
-                        localStorage.removeItem('presiden_simulator_load_save');
+                        sessionStorage.removeItem('presiden_simulator_load_save');
                     } catch (error) {
                         console.error('Gagal memulihkan data save:', error);
                     }
@@ -1923,9 +1931,8 @@ export default function MapPage() {
         const month = String(currentDate.getMonth() + 1).padStart(2, '0');
         const day = String(currentDate.getDate()).padStart(2, '0');
         const currentDateStr = `${year}-${month}-${day}`;
-        logger.log('MapPage', 'Date changed to:', currentDateStr);
         if (typeof window !== 'undefined') {
-            try { localStorage.setItem('neosantara_current_game_date', currentDateStr); } catch (e) {}
+            setCurrentGameDateString(currentDateStr);
             const userCountryName = String(countryDetail?.country || countryDetail?.nama || '');
             if (userCountryName) {
                 checkAndProcessOrgApplications(userCountryName, currentDateStr);
@@ -2111,10 +2118,15 @@ export default function MapPage() {
     }, [currentDate, countryDetail, selectedCountry?.country]);
 
     const prevBudgetUpdateDateRef = useRef<string | null>(null);
+    const skipPopulationMetricsRefreshRef = useRef(false);
 
     // ✅ NEW: Initialize population metrics when countryDetail first loads
     useEffect(() => {
         if (!countryDetail) return;
+        if (skipPopulationMetricsRefreshRef.current) {
+            skipPopulationMetricsRefreshRef.current = false;
+            return;
+        }
 
         // Calculate initial population metrics untuk display
         const populationMetrics = calculateDailyPopulationChange(
@@ -2131,7 +2143,7 @@ export default function MapPage() {
             populasi: countryDetail.jumlah_penduduk,
             netChange: populationMetrics.netDailyChange,
         });
-    }, [countryDetail?.jumlah_penduduk, countryDetail?.active_outbreaks, countryDetail?.active_disaster_effects, selectedCountry?.country, metadata, currentDate]);
+    }, [countryDetail?.jumlah_penduduk, countryDetail?.active_outbreaks, countryDetail?.active_disaster_effects, selectedCountry?.country, metadata]);
 
     useEffect(() => {
         if (!countryDetail || !currentDate) return;
@@ -2223,28 +2235,23 @@ export default function MapPage() {
             }
         }
 
+        skipPopulationMetricsRefreshRef.current = true;
         setCountryDetail((prev: any) => {
             if (!prev) return prev;
 
-            const currentPopulationMetrics = calculateDailyPopulationChange(
-                prev,
-                selectedCountry?.country,
-                metadata,
-                currentDateStr
-            );
             const populationUpdates = updateDailyPopulation(
                 prev,
-                currentPopulationMetrics,
+                populationMetrics,
                 selectedCountry?.country,
                 metadata,
                 currentDateStr
             );
             const previousCrisisTiers = prev.population_crisis_tiers;
             const currentCrisisTiers = {
-                pangan: currentPopulationMetrics.foodTier,
-                hunian: currentPopulationMetrics.housingTier,
-                overpopulasi: currentPopulationMetrics.overpopulationTier,
-                kesehatan: currentPopulationMetrics.healthTier,
+                pangan: populationMetrics.foodTier,
+                hunian: populationMetrics.housingTier,
+                overpopulasi: populationMetrics.overpopulationTier,
+                kesehatan: populationMetrics.healthTier,
             };
             const crisisLabels: Record<string, string> = {
                 pangan: 'Krisis pangan / Food crisis',
@@ -2257,9 +2264,9 @@ export default function MapPage() {
                 .filter(([key, tier]) => tier >= 2 && tier > Number(previousCrisisTiers[key] ?? tier))
                 .map(([key, tier]) => ({
                     id: `population-crisis-${key}-${currentDateStr}-${tier}`,
-                    title: `${currentPopulationMetrics.populationStatus.label} / ${currentPopulationMetrics.populationStatus.labelEn}`,
+                    title: `${populationMetrics.populationStatus.label} / ${populationMetrics.populationStatus.labelEn}`,
                     sender: 'Kementerian Kependudukan / Ministry of Population',
-                    message: `${crisisLabels[key]} memburuk ke Tier ${tier}. Pertumbuhan bersih: ${currentPopulationMetrics.netDailyChange.toLocaleString('id-ID')} jiwa/hari. / Worsened to Tier ${tier}. Net growth: ${currentPopulationMetrics.netDailyChange.toLocaleString('en-US')} people/day.`,
+                    message: `${crisisLabels[key]} memburuk ke Tier ${tier}. Pertumbuhan bersih: ${populationMetrics.netDailyChange.toLocaleString('id-ID')} jiwa/hari. / Worsened to Tier ${tier}. Net growth: ${populationMetrics.netDailyChange.toLocaleString('en-US')} people/day.`,
                     timestamp: currentDateStr,
                     type: 'kesejahteraan' as const,
                     value: tier,
@@ -2520,8 +2527,7 @@ export default function MapPage() {
                 window.localStorage.removeItem('hutangModalLoanSources');
                 window.localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
                 // Reset country color overrides dan data aneksasi saat restart game
-                window.localStorage.removeItem('neosantara_country_color_overrides');
-                window.localStorage.removeItem('neosantara_annexed_countries');
+                clearActiveNpcCountrySimulationState();
                 (window as any).neosantara_country_color_overrides = {};
                 (window as any).neosantara_annexed_countries = {};
             }
@@ -2561,13 +2567,23 @@ export default function MapPage() {
     const handleSaveGame = async () => {
         if (!selectedCountry) return;
 
+        const timeManager = timeManagerRef.current;
+        const wasPaused = timeManager?.getIsPaused() ?? true;
+        timeManager?.setPaused(true);
+        setIsPaused(true);
         setIsSaving(true);
         try {
             const saveName = saveNameInput.trim()
                 || (calendarRef.current?.calendar.formatSaveName(selectedCountry.country)
                     || `Simulasi ${selectedCountry.country} - ${timeManagerRef.current?.getFormattedDate() || 'Hari Ini'}`);
-            const gameDate = timeManagerRef.current ? timeManagerRef.current.getCurrentDate().toISOString() : new Date().toISOString();
+            const gameDate = timeManager?.getCurrentDate().toISOString() || new Date().toISOString();
 
+            await flushNpcCountrySimulation();
+            const sessionState = {
+                npcSimulation: getNpcCountrySimulationSnapshot(),
+                countryColorOverrides: (window as any).neosantara_country_color_overrides || countryColorOverrides,
+                annexedCountries: (window as any).neosantara_annexed_countries || {},
+            };
             const response = await fetch('/api/game-save', {
                 method: 'POST',
                 headers: {
@@ -2587,9 +2603,9 @@ export default function MapPage() {
                     kepuasan: countryDetail?.kepuasan ?? 50,
                     countryDetail: {
                         ...countryDetail,
-                        presidentRating: presidentRating
+                        presidentRating: presidentRating,
+                        __neosantara_game_session: sessionState,
                     }, // Save entire countryDetail with all production data and president rating
-                    countryColorOverrides, // Simpan data aneksasi wilayah
                 }),
             });
 
@@ -2605,6 +2621,8 @@ export default function MapPage() {
             console.error('Error saving game:', error);
             alert(`Terjadi kesalahan: ${error.message || 'Gagal menyimpan permainan.'}`);
         } finally {
+            timeManager?.setPaused(wasPaused);
+            setIsPaused(wasPaused);
             setIsSaving(false);
         }
     };
