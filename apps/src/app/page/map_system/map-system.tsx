@@ -1618,11 +1618,14 @@ export default function MapPage() {
                 }
                 // Update React state HANYA saat tanggal (hari) benar-benar berganti
                 // untuk mencegah re-render React berlebihan & frame drop pada canvas map
-                const newDate = manager.getCurrentDate();
-                const dateKey = `${newDate.getFullYear()}-${newDate.getMonth()}-${newDate.getDate()}`;
-                if (dateKey !== lastDateKey) {
-                    lastDateKey = dateKey;
-                    setCurrentDate(newDate);
+                const activeManager = timeManagerRef.current;
+                if (activeManager) {
+                    const newDate = activeManager.getCurrentDate();
+                    const dateKey = `${newDate.getFullYear()}-${newDate.getMonth()}-${newDate.getDate()}`;
+                    if (dateKey !== lastDateKey) {
+                        lastDateKey = dateKey;
+                        setCurrentDate(newDate);
+                    }
                 }
             },
             (progress) => {
