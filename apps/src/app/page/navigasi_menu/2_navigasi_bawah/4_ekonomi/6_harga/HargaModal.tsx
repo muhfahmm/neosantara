@@ -199,17 +199,7 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
             )}
           </div>
 
-          <button
-            onClick={handleSubsidize}
-            disabled={subsidyActive || anggaran < 20000000}
-            className={`w-full py-2.5 lg:py-3 rounded-xl border text-[11px] lg:text-xs font-black uppercase transition-all ${
-              subsidyActive || anggaran < 20000000
-                ? "bg-[#0A1A1A] text-[#6B8A8A] border-gray-800 cursor-not-allowed"
-                : "cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 border-[#00FFAA]"
-            }`}
-          >
-            {subsidyActive ? "Subsidi Telah Diberikan" : "Sponsori Subsidi Pasar (20.000.000 NEO)"}
-          </button>
+
 
           {/* ---- INDEKS KEPUASAN RAKYAT (HARGA) ---- */}
           <div className="mt-4 lg:mt-6 p-4 lg:p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
