@@ -219,9 +219,9 @@ id, country, country_slug, rumah_sakit_besar, rumah_sakit_kecil, pusat_diagnosti
 (205, 'Suriname', 'suriname', 2, 6, 3, 69, 65),
 (206, 'Uruguay', 'uruguay', 13, 39, 20, 76, 81),
 (207, 'Venezuela', 'venezuela', 62, 184, 92, 65, 55),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 2, 6, 3, 2, 2),
+(209, 'Reunion', 'reunion', 6, 18, 9, 7, 8),
+(210, 'Guadeloupe', 'guadeloupe', 4, 12, 6, 5, 5),
+(211, 'Martinique', 'martinique', 4, 12, 6, 5, 5),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 1, 3, 2, 1, 1);
 -- ========================================================

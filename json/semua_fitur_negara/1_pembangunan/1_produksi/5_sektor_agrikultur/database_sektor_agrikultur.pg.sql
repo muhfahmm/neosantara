@@ -225,9 +225,9 @@ INSERT INTO database_sektor_agrikultur (id, country, country_slug, padi, gandum,
 (205, 'Suriname', 'suriname', 2, 1, 2, 2, 4, 4, 1, 0, 1, 8, 2, 1),
 (206, 'Uruguay', 'uruguay', 7, 6, 9, 17, 15, 20, 3, 9, 8, 14, 1, 0),
 (207, 'Venezuela', 'venezuela', 50, 46, 64, 132, 115, 171, 19, 37, 70, 119, 45, 2),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 1, 1, 1, 2, 2, 2, 1, 1, 1, 2, 1, 0),
+(209, 'Reunion', 'reunion', 3, 2, 2, 5, 4, 5, 1, 2, 3, 5, 2, 1),
+(210, 'Guadeloupe', 'guadeloupe', 2, 1, 1, 3, 3, 3, 1, 1, 2, 3, 1, 0),
+(211, 'Martinique', 'martinique', 2, 1, 1, 3, 3, 3, 1, 1, 2, 3, 1, 0),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0);
 -- ========================================================

@@ -222,9 +222,9 @@ id, country, country_slug, jalur_sepeda, jalan_raya, terminal_bus, stasiun_keret
 (205, 'Suriname', 'suriname', 2, 3, 2, 1, 1, 1, 1, 1),
 (206, 'Uruguay', 'uruguay', 12, 23, 9, 6, 1, 3, 3, 4),
 (207, 'Venezuela', 'venezuela', 58, 108, 44, 29, 4, 15, 11, 18),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 2, 4, 2, 1, 1, 1, 1, 1),
+(209, 'Reunion', 'reunion', 6, 12, 5, 3, 1, 2, 2, 2),
+(210, 'Guadeloupe', 'guadeloupe', 4, 8, 3, 2, 1, 2, 1, 2),
+(211, 'Martinique', 'martinique', 4, 8, 3, 2, 1, 2, 1, 2),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 1, 2, 1, 1, 1, 1, 1, 1);
 -- ========================================================

@@ -218,9 +218,9 @@ INSERT INTO database_manufaktur (id, country, country_slug, pabrik_mesin_mobil, 
 (205, 'Suriname', 'suriname', 12, 28, 28, 12, 18),
 (206, 'Uruguay', 'uruguay', 10, 28, 30, 16, 18),
 (207, 'Venezuela', 'venezuela', 88, 72, 112, 32, 72),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 1, 2, 2, 1, 1),
+(209, 'Reunion', 'reunion', 3, 6, 5, 2, 3),
+(210, 'Guadeloupe', 'guadeloupe', 2, 4, 3, 1, 2),
+(211, 'Martinique', 'martinique', 2, 4, 3, 1, 2),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 1, 1, 1, 1, 1);
 -- ========================================================

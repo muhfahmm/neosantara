@@ -225,9 +225,9 @@ id, country, country_slug, prasekolah, dasar, menengah, lanjutan, universitas, l
 (205, 'Suriname', 'suriname', 5, 6, 5, 4, 2, 2, 1, 1, 1, 1, 1),
 (206, 'Uruguay', 'uruguay', 31, 40, 36, 27, 14, 11, 7, 3, 7, 7, 5),
 (207, 'Venezuela', 'venezuela', 146, 188, 167, 125, 63, 52, 32, 11, 32, 32, 21),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 4, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1),
+(209, 'Reunion', 'reunion', 12, 15, 12, 9, 5, 4, 3, 2, 3, 3, 2),
+(210, 'Guadeloupe', 'guadeloupe', 8, 10, 8, 6, 4, 3, 2, 1, 2, 2, 1),
+(211, 'Martinique', 'martinique', 8, 10, 8, 6, 4, 3, 2, 1, 2, 2, 1),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 2, 3, 2, 2, 1, 1, 1, 1, 1, 1, 1);
 -- ========================================================

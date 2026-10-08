@@ -448,34 +448,34 @@ VALUES
 (70010, 'guadeloupe', 'Guadeloupe', 'gp', 63, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
 (70011, 'martinique', 'Martinique', 'mq', 63, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
 (70012, 'bonaire_sint_eustatius_dan_saba', 'Bonaire, Sint Eustatius dan Saba', 'bq', 65, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
-(9450, 'kongo', 'Kongo', 'cg', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(66658, 'pantai_gading', 'Pantai gading', 'ci', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(70013, 'tanjung_verde', 'Tanjung verde', 'cv', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(93039, 'hong_kong', 'Hong kong', 'hk', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(76126, 'maldives', 'Maldives', 'mv', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(38423, 'palestina', 'Palestina', 'ps', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(70001, 'bosnia_dan_hercegovina', 'Bosnia dan hercegovina', 'ba', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(51812, 'gibraltar', 'Gibraltar', 'gi', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(93352, 'islandia', 'Islandia', 'is', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(40041, 'kepulauan_faroe', 'Kepulauan faroe', 'fo', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(17768, 'kosovo', 'Kosovo', 'xk', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(61324, 'lithuania', 'Lithuania', 'lt', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(3895, 'republik_rumania', 'Republik rumania', 'ro', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(92726, 'siprus', 'Siprus', 'cy', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(14492, 'slowakia', 'Slowakia', 'sk', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(54357, 'bermuda', 'Bermuda', 'bm', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(11770, 'costa_rica', 'Costa rica', 'cr', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(60907, 'curacao', 'Curacao', 'cw', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(18499, 'greenland', 'Greenland', 'gl', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(83966, 'puerto_rico', 'Puerto rico', 'pr', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(33529, 'guam', 'Guam', 'gu', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(70006, 'marshall', 'Marshall', 'mh', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(84512, 'samoa_amerika', 'Samoa amerika', 'ws', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(70012, 'tahiti', 'Tahiti', 'pf', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(70002, 'guiana_prancis', 'Guiana prancis', 'gf', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(93060, 'chad', 'Chad', 'td', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(67981, 'ceko', 'Ceko', 'cz', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
-(9760, 'prancis', 'Prancis', 'fr', 50, 'Belum tersedia', 'Belum tersedia', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas');
+(9450, 'kongo', 'Kongo', 'cg', 42, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
+(66658, 'pantai_gading', 'Pantai gading', 'ci', 52, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(70013, 'tanjung_verde', 'Tanjung verde', 'cv', 60, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(93039, 'hong_kong', 'Hong kong', 'hk', 88, 'Kapitalisme Pasar Bebas (Free Market Capitalism)', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(76126, 'maldives', 'Maldives', 'mv', 58, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(38423, 'palestina', 'Palestina', 'ps', 45, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas'),
+(70001, 'bosnia_dan_hercegovina', 'Bosnia dan hercegovina', 'ba', 55, 'Ekonomi Transisi / Campuran (Transition Economy)', 'Campuran', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(51812, 'gibraltar', 'Gibraltar', 'gi', 78, 'Kapitalisme Pasar Bebas (Free Market Capitalism)', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(93352, 'islandia', 'Islandia', 'is', 72, 'Sosialis Demokrasi / Pasar Bebas (Nordic Model)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(40041, 'kepulauan_faroe', 'Kepulauan faroe', 'fo', 68, 'Sosialis Demokrasi / Pasar Bebas (Nordic Model)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(17768, 'kosovo', 'Kosovo', 'xk', 54, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(61324, 'lithuania', 'Lithuania', 'lt', 74, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(3895, 'republik_rumania', 'Republik rumania', 'ro', 65, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(92726, 'siprus', 'Siprus', 'cy', 70, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(14492, 'slowakia', 'Slowakia', 'sk', 66, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(54357, 'bermuda', 'Bermuda', 'bm', 82, 'Kapitalisme Pasar Bebas (Free Market Capitalism)', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(11770, 'costa_rica', 'Costa rica', 'cr', 64, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(60907, 'curacao', 'Curacao', 'cw', 66, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(18499, 'greenland', 'Greenland', 'gl', 65, 'Sosialis Demokrasi / Pasar Bebas (Nordic Model)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(83966, 'puerto_rico', 'Puerto rico', 'pr', 68, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(33529, 'guam', 'Guam', 'gu', 67, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(70006, 'marshall', 'Marshall', 'mh', 52, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(84512, 'samoa_amerika', 'Samoa amerika', 'ws', 56, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(70012, 'tahiti', 'Tahiti', 'pf', 64, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(70002, 'guiana_prancis', 'Guiana prancis', 'gf', 63, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(93060, 'chad', 'Chad', 'td', 35, 'Ekonomi Komando (Command Economy)', 'Terpusat', 'Terpusat', 'Terpusat', 'Terpusat', 'Terpusat'),
+(67981, 'ceko', 'Ceko', 'cz', 72, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(9760, 'prancis', 'Prancis', 'fr', 65, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas');
 -- ========================================================
 -- SECTION: json/database_pajak_negara\database_pajak_negara.pg.sql
 DROP TABLE IF EXISTS database_pajak_negara CASCADE;
@@ -2178,11 +2178,11 @@ gardu_pltu_minyak_bumi
 (205, 'Suriname', 'suriname', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0),
 (206, 'Uruguay', 'uruguay', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0),
 (207, 'Venezuela', 'venezuela', 2, 4, 0, 14, 6, 5, 0, 2, 6, 6),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 0, 0, 0, 1, 0, 1, 0, 0, 0, 0),
+(209, 'Reunion', 'reunion', 0, 1, 0, 2, 1, 2, 0, 1, 0, 0),
+(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 2, 1, 2, 0, 1, 0, 0),
+(211, 'Martinique', 'martinique', 0, 0, 0, 2, 1, 2, 0, 1, 0, 0),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 1, 0, 1, 0, 0, 0, 0);
 -- SECTION: json/semua_fitur_negara\1_pembangunan\1_produksi\2_sektor_mineral_kritis\database_sektor_mineral_kritis.pg.sql
 DROP TABLE IF EXISTS database_sektor_mineral_kritis;
 CREATE TABLE database_sektor_mineral_kritis (
@@ -2411,10 +2411,10 @@ id, country, country_slug, bijih_besi, litium, logam_tanah_jarang, emas, batu_ba
 (205, 'Suriname', 'suriname', 0, 0, 0, 8, 0, 11, 0, 0, 0),
 (206, 'Uruguay', 'uruguay', 25, 0, 0, 11, 0, 0, 0, 0, 0),
 (207, 'Venezuela', 'venezuela', 50, 0, 0, 0, 303, 34, 8, 0, 0),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 0, 0, 0, 1),
+(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 0, 0, 0, 1),
+(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0, 1),
+(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 0, 0, 0, 1),
 (212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 0, 0, 0, 1);
 -- SECTION: json/semua_fitur_negara\1_pembangunan\1_produksi\3_manufaktur\database_manufaktur.pg.sql
 DROP TABLE IF EXISTS database_manufaktur;
@@ -4473,11 +4473,11 @@ id, country, country_slug, pusat_bantuan_hukum, pengadilan, kejaksaan, pos_polis
 (205, 'Suriname', 'suriname', 3, 4, 3, 6, 1),
 (206, 'Uruguay', 'uruguay', 17, 22, 17, 41, 6),
 (207, 'Venezuela', 'venezuela', 77, 102, 77, 191, 26),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 2, 2, 2, 4, 1),
+(209, 'Reunion', 'reunion', 5, 7, 5, 12, 2),
+(210, 'Guadeloupe', 'guadeloupe', 3, 4, 3, 7, 1),
+(211, 'Martinique', 'martinique', 3, 4, 3, 7, 1),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 1, 1, 1, 2, 1);
 -- ========================================================
 -- SECTION: json/semua_fitur_negara\1_pembangunan\2_tempat_umum\1_Layanan Publik\5_olahraga\database_olahraga.pg.sql
 DROP TABLE IF EXISTS database_olahraga;

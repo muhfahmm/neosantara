@@ -216,9 +216,9 @@ INSERT INTO database_hunian_permukiman (id, country, country_slug, rumah_subsidi
 (205, 'Suriname', 'suriname', 21702, 80, 1719),
 (206, 'Uruguay', 'uruguay', 84487, 459, 15140),
 (207, 'Venezuela', 'venezuela', 3398824, 1279, 232253),
-(208, 'Mayotte', 'mayotte', 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 72000, 180, 5200),
+(209, 'Reunion', 'reunion', 215000, 540, 15800),
+(210, 'Guadeloupe', 'guadeloupe', 98000, 245, 7200),
+(211, 'Martinique', 'martinique', 91000, 228, 6700),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 7300, 25, 610);
 -- ========================================================

@@ -222,9 +222,9 @@ id, country, country_slug, kolam_renang, sirkuit_balap, stadion, stadion_interna
 (205, 'Suriname', 'suriname', 4, 1, 2, 1, 8, 2, 2, 2),
 (206, 'Uruguay', 'uruguay', 24, 3, 12, 3, 48, 8, 10, 12),
 (207, 'Venezuela', 'venezuela', 115, 12, 58, 12, 230, 35, 46, 58),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 4, 1, 2, 1, 8, 2, 2, 2),
+(209, 'Reunion', 'reunion', 12, 2, 6, 2, 24, 4, 5, 6),
+(210, 'Guadeloupe', 'guadeloupe', 8, 1, 4, 1, 16, 3, 3, 4),
+(211, 'Martinique', 'martinique', 8, 1, 4, 1, 16, 3, 3, 4),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 2, 1, 1, 1, 4, 1, 1, 1);
 -- ========================================================

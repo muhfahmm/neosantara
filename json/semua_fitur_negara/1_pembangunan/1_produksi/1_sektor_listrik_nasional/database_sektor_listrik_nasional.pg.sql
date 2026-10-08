@@ -235,8 +235,8 @@ gardu_pltu_minyak_bumi
 (205, 'Suriname', 'suriname', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0),
 (206, 'Uruguay', 'uruguay', 0, 0, 0, 1, 0, 0, 0, 0, 0, 0),
 (207, 'Venezuela', 'venezuela', 2, 4, 0, 14, 6, 5, 0, 2, 6, 6),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 0, 0, 0, 1, 0, 1, 0, 0, 0, 0),
+(209, 'Reunion', 'reunion', 0, 1, 0, 2, 1, 2, 0, 1, 0, 0),
+(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 2, 1, 2, 0, 1, 0, 0),
+(211, 'Martinique', 'martinique', 0, 0, 0, 2, 1, 2, 0, 1, 0, 0),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 1, 0, 1, 0, 0, 0, 0);

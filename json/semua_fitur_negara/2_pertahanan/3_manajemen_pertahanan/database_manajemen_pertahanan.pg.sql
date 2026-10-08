@@ -219,8 +219,8 @@ id, country, country_slug, barak, gudang_senjata, hangar_tank, pangkalan_udara, 
 (205, 'Suriname', 'suriname', 1, 1, 1, 1, 0),
 (206, 'Uruguay', 'uruguay', 3, 1, 1, 1, 1),
 (207, 'Venezuela', 'venezuela', 16, 1, 1, 1, 1),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 1, 1, 1, 1, 0),
+(209, 'Reunion', 'reunion', 3, 1, 1, 1, 1),
+(210, 'Guadeloupe', 'guadeloupe', 2, 1, 1, 1, 1),
+(211, 'Martinique', 'martinique', 2, 1, 1, 1, 1),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 1, 1, 1, 1, 0);
