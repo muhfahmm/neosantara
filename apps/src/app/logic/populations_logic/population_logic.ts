@@ -397,7 +397,6 @@ export const calculateDailyDeaths = (
   if (detail) {
     const harapanHidup = detail?.harapan_hidup ?? 70;
     const indeksKetahananPangan = detail?.indeks_ketahanan_pangan ?? 60;
-    const polusiIndex = detail?.polusi_index ?? 40;
 
     const keamananRes = calculateKeamananLogic(detail, populasi);
     const kesehatanRes = calculateKesehatanLogic(detail, populasi);
@@ -416,9 +415,8 @@ export const calculateDailyDeaths = (
     const healthFactor = kesehatanRes.healthFactor;
     const foodSecurityFactor = 0.7 + (0.003 * indeksKetahananPangan);
     const crimeFactor = Math.min(1.4, kriminalitasRes.crimeFactor);
-    const pollutionFactor = 1 + (polusiIndex / 200);
 
-    const combinedFactor = lifeExpectancyFactor * securityFactor * homelessFactor * healthFactor * foodSecurityFactor * crimeFactor * pollutionFactor;
+    const combinedFactor = lifeExpectancyFactor * securityFactor * homelessFactor * healthFactor * foodSecurityFactor * crimeFactor;
     return Math.floor(populasi * baseDeathRate * combinedFactor);
   }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Users, Heart, Shield, Home, HeartPulse, Utensils, AlertTriangle, Factory, ArrowUpRight, Skull, Info } from "lucide-react";
+import { X, Users, Heart, Shield, Home, HeartPulse, Utensils, AlertTriangle, ArrowUpRight, Skull, Info } from "lucide-react";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 
 import {
@@ -19,7 +19,6 @@ import DetailTunawismaModal from './grid_modals/DetailTunawismaModal';
 import DetailKesehatanModal from './grid_modals/DetailKesehatanModal';
 import DetailKetahananPanganModal from './grid_modals/DetailKetahananPanganModal';
 import DetailKriminalitasModal from './grid_modals/DetailKriminalitasModal';
-import DetailPolusiModal from './grid_modals/DetailPolusiModal';
 
 // Import dari logic yang baru dibuat
 import { calculateKeamananLogic } from "./logic/keamananLogic";
@@ -55,7 +54,6 @@ export default function DetailKematianModal({
   const [isKesehatanOpen, setIsKesehatanOpen] = useState(false);
   const [isKetahananPanganOpen, setIsKetahananPanganOpen] = useState(false);
   const [isKriminalitasOpen, setIsKriminalitasOpen] = useState(false);
-  const [isPolusiOpen, setIsPolusiOpen] = useState(false);
 
   // Fetch building metadata agar rumus Pangan identik 100% dengan IndeksKesejahteraanModal
   const [metadata, setMetadata] = useState<any>(null);
@@ -79,7 +77,6 @@ export default function DetailKematianModal({
   const indeksKetahananPangan = (!metadata || Object.keys(metadata).length === 0)
     ? (storedFood !== undefined && storedFood !== null ? Math.round(Number(storedFood)) : calculatePanganScore(countryDetail, undefined))
     : calculatePanganScore(countryDetail, metadata);
-  const polusiIndex = countryDetail?.polusi_index ?? Math.max(5, Math.min(100, Math.round(100 - (calculateKesehatanScore(countryDetail) * 0.8))));
 
   // Hitung dengan logic terpusat
   const keamananRes = calculateKeamananLogic(countryDetail, populasi);
@@ -101,7 +98,6 @@ export default function DetailKematianModal({
   const healthFactor = kesehatanRes.healthFactor;
   const foodSecurityFactor = Math.max(0.5, 1.2 - (0.005 * indeksKetahananPangan));
   const crimeFactor = kriminalitasRes.crimeFactor;
-  const pollutionFactor = 1 + (polusiIndex / 200);
 
   const dailyDeaths = calculateDailyDeaths(populasi, lifeExpectancy, securityLevel, detailWithDefaults);
 
@@ -143,15 +139,6 @@ export default function DetailKematianModal({
                   <Skull className="h-10 w-10 text-rose-400" />
                 </div>
               </div>
-              <p className="mt-4 text-xs text-[#6B8A8A] font-medium">
-                Berdasarkan total populasi {formatNumber(populasi)} jiwa dan kondisi sosial-ekonomi terkini.
-              </p>
-            </div>
-
-            <div className="border-l-2 border-rose-400/50 pl-4 py-1">
-              <p className="text-xs text-[#9BB2B2] leading-relaxed">
-                Estimasi kematian dasar dipengaruhi harapan hidup, keamanan, tunawisma, fasilitas kesehatan, ketahanan pangan, kriminalitas, dan polusi. Pada netto populasi harian, model juga memperhitungkan wabah dan kematian kelaparan saat kondisi krisis; kekurangan kapasitas atau produksi bukan jumlah kematian langsung.
-              </p>
             </div>
 
             {/* Breakdown Faktor */}
@@ -300,36 +287,10 @@ export default function DetailKematianModal({
                 <p className="text-[10px] text-[#6B8A8A]">Skor kepuasan penegakan hukum dari Indeks Kesejahteraan.</p>
               </div>
 
-              {/* 7. Polusi */}
-              <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl space-y-2 relative">
-                <button
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
-                  onClick={() => setIsPolusiOpen(true)}
-                >
-                  <Info className="w-4 h-4" />
-                </button>
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg">
-                    <Factory className="h-4 w-4 text-[#00FFAA]" />
-                  </div>
-                  <h4 className="text-xs font-black text-[#00FFAA] uppercase">Tingkat Polusi</h4>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#E0E0E0]">{polusiIndex}</span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {pollutionFactor.toFixed(3)}</span>
-                </div>
-                <p className="text-[10px] text-[#6B8A8A]">Setiap 10 poin polusi meningkatkan kematian sebesar 5%.</p>
-              </div>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="p-4 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-end relative z-10 shrink-0">
-          <button onClick={onClose} className="px-8 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
-            Tutup
-          </button>
-        </div>
       </div>
 
       {/* ðŸ”¥ RENDER 7 MODAL DETAIL DI SINI (Agar tombol Info berfungsi) */}
@@ -369,13 +330,6 @@ export default function DetailKematianModal({
         countryDetail={countryDetail}
         selectedCountry={selectedCountry}
       />
-      <DetailPolusiModal
-        isOpen={isPolusiOpen}
-        onClose={() => setIsPolusiOpen(false)}
-        countryDetail={countryDetail}
-        selectedCountry={selectedCountry}
-      />
     </div>
   );
 }
-

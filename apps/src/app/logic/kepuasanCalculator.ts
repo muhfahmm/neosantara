@@ -308,7 +308,7 @@ export function calculatePanganScore(countryDetail: any, metadata: any): number 
 }
 
 export function calculateListrikScore(countryDetail: any, metadata: any): number {
-  return getSatisfactionSectorScores(countryDetail, metadata).listrik;
+  return calculateRawListrikScore(countryDetail, metadata);
 }
 
 export function calculateHunianScore(countryDetail: any, metadata?: any): number {
