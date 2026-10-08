@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { X, Utensils } from "lucide-react";
 import { calculatePanganScore } from "@/app/logic/kepuasanCalculator";
+import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 
 interface DetailKetahananPanganModalProps {
   isOpen: boolean;
@@ -15,10 +16,18 @@ export default function DetailKetahananPanganModal({
   countryDetail,
   selectedCountry,
 }: DetailKetahananPanganModalProps) {
+  const [metadata, setMetadata] = useState<any>(null);
+  useEffect(() => {
+    if (!isOpen) return;
+    fetchBuildingMetadata().then((data) => setMetadata(data || {}));
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const storedFood = countryDetail?.satisfaction?.food;
-  const indeks = storedFood !== undefined && storedFood !== null ? Math.round(Number(storedFood)) : calculatePanganScore(countryDetail, undefined);
+  const indeks = (!metadata || Object.keys(metadata).length === 0)
+    ? (storedFood !== undefined && storedFood !== null ? Math.round(Number(storedFood)) : calculatePanganScore(countryDetail, undefined))
+    : calculatePanganScore(countryDetail, metadata);
   const countryName = selectedCountry?.country || "Indonesia";
   const factor = Math.max(0.5, 1.2 - (0.005 * indeks));
 

@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Users, Heart, Shield, Home, HeartPulse, Utensils, AlertTriangle, Factory, ArrowUpRight, Skull, Info } from "lucide-react";
+import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 
 import {
   calculateGeneralSatisfaction,
@@ -11,7 +12,7 @@ import {
 } from "@/app/logic/populations_logic/population_logic";
 import { calculatePanganScore, calculateKesehatanScore, calculatePenegakanHukumScore } from "@/app/logic/kepuasanCalculator";
 
-// ðŸ”¥ Import 7 modal detail (pastikan path sesuai struktur Anda)
+// 🔥 Import 7 modal detail (pastikan path sesuai struktur Anda)
 import DetailHarapanHidupModal from './grid_modals/DetailHarapanHidupModal';
 import DetailKeamananModal from './grid_modals/DetailKeamananModal';
 import DetailTunawismaModal from './grid_modals/DetailTunawismaModal';
@@ -47,7 +48,7 @@ export default function DetailKematianModal({
   onOpenIndustriPangan,
   onOpenArmada,
 }: DetailKematianModalProps) {
-  // ðŸ”¥ State untuk 7 modal detail (agar tombol Info bisa membuka modal)
+  // 🔥 State untuk 7 modal detail (agar tombol Info bisa membuka modal)
   const [isHarapanHidupOpen, setIsHarapanHidupOpen] = useState(false);
   const [isKeamananOpen, setIsKeamananOpen] = useState(false);
   const [isTunawismaOpen, setIsTunawismaOpen] = useState(false);
@@ -55,6 +56,13 @@ export default function DetailKematianModal({
   const [isKetahananPanganOpen, setIsKetahananPanganOpen] = useState(false);
   const [isKriminalitasOpen, setIsKriminalitasOpen] = useState(false);
   const [isPolusiOpen, setIsPolusiOpen] = useState(false);
+
+  // Fetch building metadata agar rumus Pangan identik 100% dengan IndeksKesejahteraanModal
+  const [metadata, setMetadata] = useState<any>(null);
+  useEffect(() => {
+    if (!isOpen) return;
+    fetchBuildingMetadata().then((data) => setMetadata(data || {}));
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -68,7 +76,9 @@ export default function DetailKematianModal({
   const securityLevel = calculateSecurityLevel(detailWithDefaults, kepuasanUmum);
 
   const storedFood = countryDetail?.satisfaction?.food;
-  const indeksKetahananPangan = storedFood !== undefined && storedFood !== null ? Math.round(Number(storedFood)) : calculatePanganScore(countryDetail, undefined);
+  const indeksKetahananPangan = (!metadata || Object.keys(metadata).length === 0)
+    ? (storedFood !== undefined && storedFood !== null ? Math.round(Number(storedFood)) : calculatePanganScore(countryDetail, undefined))
+    : calculatePanganScore(countryDetail, metadata);
   const polusiIndex = countryDetail?.polusi_index ?? Math.max(5, Math.min(100, Math.round(100 - (calculateKesehatanScore(countryDetail) * 0.8))));
 
   // Hitung dengan logic terpusat
