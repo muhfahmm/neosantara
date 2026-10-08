@@ -226,8 +226,7 @@ export default function SerangNegaraModal({
   };
 
   const handleConfirmAttack = () => {
-    setIsSerangModalOpen(false);
-    setIsLaunchConfirmationOpen(true);
+    handleLaunchAttack();
   };
 
   const handleLaunchAttack = () => {

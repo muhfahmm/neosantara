@@ -176,7 +176,19 @@ function simulateCountryDay(
 }
 
 function yieldToBrowser(): Promise<void> {
-  return new Promise(resolve => window.setTimeout(resolve, 0));
+  return new Promise(resolve => {
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (
+        callback: (deadline: { timeRemaining: () => number; didTimeout: boolean }) => void,
+        options?: { timeout: number }
+      ) => number;
+    };
+    if (idleWindow.requestIdleCallback) {
+      idleWindow.requestIdleCallback(() => resolve(), { timeout: 500 });
+      return;
+    }
+    window.setTimeout(resolve, 32);
+  });
 }
 
 async function persistNpcSimulation(
@@ -242,7 +254,7 @@ async function persistNpcSimulation(
         simulateCountryDay(country, simulationDate, previousDate, metadata)
       );
 
-      if (performance.now() - sliceStartedAt >= 8) {
+      if (performance.now() - sliceStartedAt >= 2) {
         await yieldToBrowser();
         sliceStartedAt = performance.now();
       }

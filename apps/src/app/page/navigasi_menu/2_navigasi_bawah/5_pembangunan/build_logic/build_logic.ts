@@ -28,15 +28,34 @@ export const getMaterialStock = (countryDetail: any, resourceKey: string, metada
   return 0;
 };
 
+const buildingMetadataLookupCache = new WeakMap<Record<string, any>, Map<string, any>>();
+const productionResourceKeysCache = new WeakMap<Record<string, any>, string[]>();
+
 export const findBuildingMetadata = (metadata: Record<string, any>, key: string) => {
   if (!metadata) return undefined;
-  if (metadata[key]) return metadata[key];
+  let lookupCache = buildingMetadataLookupCache.get(metadata);
+  if (!lookupCache) {
+    lookupCache = new Map();
+    buildingMetadataLookupCache.set(metadata, lookupCache);
+  }
+  if (lookupCache.has(key)) return lookupCache.get(key);
+  if (metadata[key]) {
+    lookupCache.set(key, metadata[key]);
+    return metadata[key];
+  }
   for (const k of Object.keys(metadata)) {
     const entry = metadata[k];
     if (!entry) continue;
-    if (entry.dataKey === key) return entry;
-    if (k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
+    if (entry.dataKey === key) {
+      lookupCache.set(key, entry);
+      return entry;
+    }
+    if (k.endsWith(`_${key}`) || k === `1_${key}`) {
+      lookupCache.set(key, entry);
+      return entry;
+    }
   }
+  lookupCache.set(key, undefined);
   return undefined;
 };
 
@@ -53,10 +72,17 @@ export function calculateDailyMaterialProduction(
 
   let hasUpdates = false;
   const updates: Record<string, any> = {};
-  const allKeys = Object.keys(metadata);
+  let resourceKeys = productionResourceKeysCache.get(metadata);
+  if (!resourceKeys) {
+    resourceKeys = Object.keys(metadata).filter(resourceKey => {
+      const bMeta = findBuildingMetadata(metadata, resourceKey);
+      return Boolean(bMeta?.produksi) || FOOD_CONSUMPTION_PER_CAPITA[resourceKey] !== undefined;
+    });
+    productionResourceKeysCache.set(metadata, resourceKeys);
+  }
   const pop = Number(countryDetail?.jumlah_penduduk) || 0;
 
-  for (const resourceKey of allKeys) {
+  for (const resourceKey of resourceKeys) {
     const buildingCount = Number(countryDetail?.[resourceKey]) || 0;
     const productionBan = getActiveProductionBanForResource(resourceKey);
     const isFoodCommodity = FOOD_CONSUMPTION_PER_CAPITA[resourceKey] !== undefined;

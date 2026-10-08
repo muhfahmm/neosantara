@@ -153,7 +153,7 @@ export default function SerangNegaraModal({
 					setIsPactBlocked(true);
 					return;
 				}
-				setIsLaunchConfirmationOpen(true);
+				handleLaunchAttack();
 			}}
 		/>
 	);

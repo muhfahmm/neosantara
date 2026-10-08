@@ -1,5 +1,6 @@
 "use client"
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import { X, Swords, Shield, Ship, Plane, ChevronDown, ChevronUp } from "lucide-react";
 import { getArmadaPowerSummary } from "../../4_armada/logic/armadaLogic";
 import { convertBarakToSoldiers } from "../../4_armada/logic/1_barak_logic";
@@ -177,6 +178,35 @@ export default function SerangModals({
   const attackerPct = totalCombinedPower > 0 ? (attackerTotalPower / totalCombinedPower) * 100 : 50;
   const targetPct = totalCombinedPower > 0 ? (targetTotalPower / totalCombinedPower) * 100 : 50;
 
+  const handleSetAllGroupPct = (group: ArmadaGroup, val: number) => {
+    const items = attackerBreakdown[group];
+    const next = { ...deploymentPct };
+    items.forEach((item) => {
+      next[item.key] = val;
+    });
+    setDeploymentPct(next);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("deployed_units_config", JSON.stringify(next));
+      } catch (e) {}
+    }
+  };
+
+  const handleSetAllGlobalPct = (val: number) => {
+    const next: Record<string, number> = {};
+    [...attackerBreakdown.darat, ...attackerBreakdown.laut, ...attackerBreakdown.udara].forEach((item) => {
+      next[item.key] = val;
+    });
+    setDeploymentPct(next);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("deployed_units_config", JSON.stringify(next));
+      } catch (e) {}
+    }
+  };
+
+  const hasDeployedUnits = Object.values(deploymentPct).some((val) => typeof val === "number" && val > 0);
+
   // Konfigurasi ikon untuk setiap matra
   const groupMeta: Record<ArmadaGroup, { icon: typeof Swords; color: string; bg: string }> = {
     darat: { icon: Swords, color: "text-rose-700", bg: "bg-rose-100" },
@@ -184,12 +214,11 @@ export default function SerangModals({
     udara: { icon: Plane, color: "text-indigo-700", bg: "bg-indigo-100" },
   };
 
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto shadow-2xl">
-        
-        {/* HEADER MODAL KONFIRMASI SERANG */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+  const content = (
+    <div className="fixed inset-0 z-[9999999] flex flex-col bg-[#0F2424] font-sans select-none overflow-hidden animate-in fade-in duration-200">
+      <div className="w-full h-full flex flex-col bg-[#0F2424] relative">
+        {/* HEADER HALAMAN KONFIRMASI SERANG */}
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
           <div className="flex items-center gap-4 lg:gap-8">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
@@ -212,8 +241,8 @@ export default function SerangModals({
         </div>
 
         {/* BODY MODAL */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col">
-          <div className="w-full max-w-4xl mx-auto space-y-6">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col">
+          <div className="w-full space-y-6">
 
             {/* BAGIAN 1: PERBANDINGAN TOTAL KEKUATAN */}
             <div className="flex flex-col bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl shadow-sm gap-4">
@@ -252,42 +281,31 @@ export default function SerangModals({
                 </div>
               </div>
 
-              {/* BARIS BAWAH: GARIS KESEIMBANGAN PASUKAN */}
-              <div className="w-full mt-2 pt-4 border-t border-[#00FFAA]/10">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6B8A8A]">Keseimbangan Pasukan:</span>
-                  <span className="text-[10px] font-bold text-[#E0E0E0]">
-                    {attackerTotalPower > targetTotalPower ? '🟢 Unggul' : attackerTotalPower < targetTotalPower ? '🔴 Tertinggal' : '⚖️ Seimbang'}
-                  </span>
-                </div>
-                
-                <div className="flex items-center gap-3 w-full">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00FFAA]/10 border border-[#00FFAA]/30">
-                    <Shield className="h-4 w-4 text-[#00FFAA]" />
-                  </div>
-
-                  <div className="flex-1 h-5 rounded-full bg-[#0F2424] overflow-hidden relative border border-[#00FFAA]/20 shadow-inner">
-                    <div 
-                      className="absolute left-0 top-0 h-full bg-[#00FFAA] transition-all duration-700 ease-out" 
-                      style={{ width: `${attackerPct}%` }}
-                    ></div>
-                    <div 
-                      className="absolute right-0 top-0 h-full bg-rose-500 transition-all duration-700 ease-out" 
-                      style={{ width: `${targetPct}%` }}
-                    ></div>
-                    <div className="absolute left-1/2 top-0 h-full w-0.5 bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.6)] transform -translate-x-1/2 z-10"></div>
-                  </div>
-
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rose-500/10 border border-rose-500/30">
-                    <Shield className="h-4 w-4 text-rose-400" />
-                  </div>
-                </div>
-              </div>
-
             </div>
 
             {/* BAGIAN 2: RINCIAN PASUKAN PER MATRA */}
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl shadow-sm">
+            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl shadow-sm space-y-4">
+              {/* BUTTON OTOMATISASI GLOBAL */}
+              <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-[#0F2424] border border-[#00FFAA]/20">
+                <span className="text-xs font-black text-[#00FFAA] uppercase tracking-wider">
+                  ⚡ OTOMATISASI PENGERAHAN PASUKAN:
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleSetAllGlobalPct(100)}
+                    className="px-3 py-1.5 rounded-lg bg-[#00FFAA] text-[#050B0B] hover:bg-[#00FFBB] font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer shadow-md active:scale-95"
+                  >
+                    Kerahkan Semua (100%)
+                  </button>
+                  <button
+                    onClick={() => handleSetAllGlobalPct(0)}
+                    className="px-3 py-1.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 text-[#6B8A8A] hover:text-[#00FFAA] font-black text-[11px] uppercase tracking-wider transition-all cursor-pointer active:scale-95"
+                  >
+                    Reset Semua (0%)
+                  </button>
+                </div>
+              </div>
+
               <div className="flex flex-col gap-4">
                 {(['darat', 'laut', 'udara'] as ArmadaGroup[]).map((group) => {
                   const Icon = groupMeta[group].icon;
@@ -298,6 +316,20 @@ export default function SerangModals({
                           <div className="flex items-center gap-3">
                             <Icon className="h-5 w-5 text-[#00FFAA]" />
                             <span className="uppercase tracking-wider">{group}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleSetAllGroupPct(group, 100)}
+                              className="px-2.5 py-1 rounded-md bg-[#00FFAA]/15 border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#050B0B] font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
+                            >
+                              Kerahkan Matra (100%)
+                            </button>
+                            <button
+                              onClick={() => handleSetAllGroupPct(group, 0)}
+                              className="px-2.5 py-1 rounded-md bg-[#0F2424] border border-[#00FFAA]/20 text-[#6B8A8A] hover:text-[#00FFAA] font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
+                            >
+                              Reset (0%)
+                            </button>
                           </div>
                         </div>
 
@@ -364,7 +396,12 @@ export default function SerangModals({
           </button>
           <button 
             onClick={onConfirm} 
-            className="px-8 py-2 rounded-xl bg-rose-600 text-white shadow-lg shadow-rose-900/30 font-black text-xs uppercase tracking-wider hover:bg-rose-500 active:scale-95 transition-all cursor-pointer flex items-center gap-2"
+            disabled={!hasDeployedUnits}
+            className={`px-8 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
+              hasDeployedUnits
+                ? "bg-rose-600 text-white shadow-lg shadow-rose-900/30 hover:bg-rose-500 active:scale-95 cursor-pointer"
+                : "bg-gray-800 text-gray-500 border border-gray-700/60 cursor-not-allowed opacity-60"
+            }`}
           >
             <Swords className="w-4 h-4" />
             Konfirmasi Serangan
@@ -374,4 +411,10 @@ export default function SerangModals({
       </div>
     </div>
   );
+
+  if (typeof window !== "undefined") {
+    return createPortal(content, document.body);
+  }
+
+  return content;
 }

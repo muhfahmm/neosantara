@@ -1,7 +1,7 @@
 // detail path: c:\EM\apps\src\app\page\map_system\map-system.tsx
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { memo, startTransition, useCallback, useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import {
     Play, Pause, Settings, Palmtree, Shield
@@ -157,6 +157,51 @@ interface Country {
 
 const EMPTY_COUNTRY_OVERRIDES: Record<string, string> = {};
 const EMPTY_ANNEXED_COUNTRIES: Record<string, unknown> = {};
+
+const MapCanvasView = memo(function MapCanvasView({
+    containerRef,
+    interactionDisabled,
+    onClick,
+    onPointerDown,
+    onPointerMove,
+    onPointerUp,
+    onPointerLeave,
+    onWheel,
+}: {
+    containerRef: React.RefObject<HTMLDivElement | null>;
+    interactionDisabled: boolean;
+    onClick: (event: React.MouseEvent<HTMLCanvasElement>) => void;
+    onPointerDown: (event: React.PointerEvent<HTMLCanvasElement>) => void;
+    onPointerMove: (event: React.PointerEvent<HTMLCanvasElement>) => void;
+    onPointerUp: () => void;
+    onPointerLeave: () => void;
+    onWheel: () => void;
+}) {
+    return (
+        <div ref={containerRef} className={`fixed top-20 inset-x-0 bottom-0 z-0 ${interactionDisabled ? 'pointer-events-none' : ''}`}>
+            <canvas
+                id="map-canvas"
+                className="w-full h-full block cursor-grab"
+                onClick={onClick}
+                onPointerDown={onPointerDown}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                onPointerCancel={onPointerUp}
+                onPointerLeave={onPointerLeave}
+                onWheel={onWheel}
+                onMouseLeave={event => {
+                    const mouseUp = new MouseEvent('mouseup', {
+                        bubbles: true,
+                        cancelable: true,
+                        view: window,
+                    });
+                    event.currentTarget.dispatchEvent(mouseUp);
+                }}
+            />
+            <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_200px_rgba(0,0,0,0.6)] vignette-gradient" />
+        </div>
+    );
+});
 
 function applyInvasionRelationPenalty(attackerCountry: string, minimum: number, maximum: number): number {
     const penalty = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
@@ -1672,6 +1717,35 @@ export default function MapPage() {
     const calendarRef = useRef<any>(null);
     const wasmModuleRef = useRef<any>(null);
     const hasInitRef = useRef(false);
+    const dragStartRef = useRef({ x: 0, y: 0 });
+    const isDraggingRef = useRef(false);
+    const isMapPointerDownRef = useRef(false);
+    const lastMapInteractionAtRef = useRef(0);
+    const pendingDateRef = useRef<Date | null>(null);
+    const dateCommitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const schedulePendingDateCommit = useCallback(() => {
+        if (!pendingDateRef.current || isMapPointerDownRef.current) return;
+        if (dateCommitTimerRef.current !== null) clearTimeout(dateCommitTimerRef.current);
+        const elapsedSinceInteraction = Date.now() - lastMapInteractionAtRef.current;
+        const delay = Math.max(0, 180 - elapsedSinceInteraction);
+        dateCommitTimerRef.current = setTimeout(() => {
+            dateCommitTimerRef.current = null;
+            if (isMapPointerDownRef.current || !pendingDateRef.current) return;
+            const pendingDate = pendingDateRef.current;
+            pendingDateRef.current = null;
+            startTransition(() => setCurrentDate(pendingDate));
+        }, delay);
+    }, []);
+
+    const markMapInteraction = useCallback(() => {
+        lastMapInteractionAtRef.current = Date.now();
+        if (dateCommitTimerRef.current !== null) {
+            clearTimeout(dateCommitTimerRef.current);
+            dateCommitTimerRef.current = null;
+        }
+    }, []);
 
     useEffect(() => {
         const handleGlobalMouseUp = (e: MouseEvent) => {
@@ -1733,13 +1807,14 @@ export default function MapPage() {
                     const dateKey = `${newDate.getFullYear()}-${newDate.getMonth()}-${newDate.getDate()}`;
                     if (dateKey !== lastDateKey) {
                         lastDateKey = dateKey;
-                        setCurrentDate(newDate);
+                        pendingDateRef.current = newDate;
+                        schedulePendingDateCommit();
                     }
                 }
             },
             (progress) => {
                 if (progressBarRef.current) {
-                    progressBarRef.current.style.width = `${progress}%`;
+                    progressBarRef.current.style.transform = `scaleX(${progress / 100})`;
                 }
             }
         );
@@ -1787,8 +1862,12 @@ export default function MapPage() {
 
         return () => {
             manager.destroy();
+            if (dateCommitTimerRef.current !== null) {
+                clearTimeout(dateCommitTimerRef.current);
+                dateCommitTimerRef.current = null;
+            }
         };
-    }, []);
+    }, [markMapInteraction]);
 
     // Get Flag emoji helper
     const getFlagEmoji = (iso: string) => {
@@ -2261,6 +2340,12 @@ export default function MapPage() {
     useEffect(() => {
         if (!countryDetail || !currentDate) return;
 
+        let cancelled = false;
+        let idleCallbackId: number | null = null;
+        let fallbackTimerId: number | null = null;
+        const runDailyTick = () => {
+            if (cancelled) return;
+
         const year = currentDate.getFullYear();
         const month = String(currentDate.getMonth() + 1).padStart(2, '0');
         const day = String(currentDate.getDate()).padStart(2, '0');
@@ -2349,7 +2434,7 @@ export default function MapPage() {
         }
 
         skipPopulationMetricsRefreshRef.current = true;
-        setCountryDetail((prev: any) => {
+        startTransition(() => setCountryDetail((prev: any) => {
             if (!prev) return prev;
 
             const populationUpdates = updateDailyPopulation(
@@ -2615,7 +2700,24 @@ export default function MapPage() {
                 kesejahteraan_month_counter: decayResult.kesejahteraan_month_counter,
                 last_kesejahteraan_threshold: decayResult.last_kesejahteraan_threshold,
             };
-        });
+        }));
+        };
+
+        const idleWindow = window as Window & {
+            requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+            cancelIdleCallback?: (callbackId: number) => void;
+        };
+        if (idleWindow.requestIdleCallback) {
+            idleCallbackId = idleWindow.requestIdleCallback(runDailyTick, { timeout: 300 });
+        } else {
+            fallbackTimerId = window.setTimeout(runDailyTick, 50);
+        }
+
+        return () => {
+            cancelled = true;
+            if (idleCallbackId !== null) idleWindow.cancelIdleCallback?.(idleCallbackId);
+            if (fallbackTimerId !== null) window.clearTimeout(fallbackTimerId);
+        };
     }, [currentDate, countryDetail, metadata, selectedCountry?.country]);
 
     // ─── Auto-refresh kepuasan di navbar ────────────────────────────────
@@ -2942,12 +3044,14 @@ export default function MapPage() {
         initMap();
     }, []);
 
-    const dragStartRef = useRef({ x: 0, y: 0 });
-    const isDraggingRef = useRef(false);
-    const containerRef = useRef<HTMLDivElement>(null);
+    const mapClickContextRef = useRef({ interactionDisabled: false, playerCountryName: '' });
+    mapClickContextRef.current = {
+        interactionDisabled: isMapInteractionDisabled,
+        playerCountryName: selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || '',
+    };
 
-    const handleCanvasCountryClick = async (event: React.MouseEvent<HTMLCanvasElement>) => {
-        if (isMapInteractionDisabled) return;
+    const handleCanvasCountryClick = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
+        if (mapClickContextRef.current.interactionDisabled) return;
 
         // Only open modal if it was a click (not a drag)
         if (isDraggingRef.current) {
@@ -2967,7 +3071,7 @@ export default function MapPage() {
 
             if (!countryName) return;
 
-            const playerCountryName = selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || "";
+            const playerCountryName = mapClickContextRef.current.playerCountryName;
             const isPlayer = playerCountryName && countryName.toLowerCase().trim() === playerCountryName.toLowerCase().trim();
 
             if (isPlayer) {
@@ -2979,23 +3083,44 @@ export default function MapPage() {
         } catch (error) {
             console.error('Failed to read clicked country from map:', error);
         }
-    };
+    }, []);
 
-    const handleCanvasMouseDown = (event: React.MouseEvent<HTMLCanvasElement>) => {
-        if (isMapInteractionDisabled) return;
+    const handleCanvasPointerDown = useCallback((event: React.PointerEvent<HTMLCanvasElement>) => {
+        if (mapClickContextRef.current.interactionDisabled) return;
+        isMapPointerDownRef.current = true;
+        markMapInteraction();
         dragStartRef.current = { x: event.clientX, y: event.clientY };
         isDraggingRef.current = false;
-    };
+    }, [markMapInteraction]);
 
-    const handleCanvasMouseMove = (event: React.MouseEvent<HTMLCanvasElement>) => {
-        if (isMapInteractionDisabled) return;
+    const handleCanvasPointerMove = useCallback((event: React.PointerEvent<HTMLCanvasElement>) => {
+        if (mapClickContextRef.current.interactionDisabled) return;
+        if (!isMapPointerDownRef.current || event.buttons === 0 || isDraggingRef.current) return;
         const dx = Math.abs(event.clientX - dragStartRef.current.x);
         const dy = Math.abs(event.clientY - dragStartRef.current.y);
-        // If mouse moved more than 5 pixels, consider it a drag
+        // Ignore click handling once the pointer has moved far enough to pan.
         if (dx > 5 || dy > 5) {
             isDraggingRef.current = true;
         }
-    };
+    }, []);
+
+    const handleCanvasPointerUp = useCallback(() => {
+        isMapPointerDownRef.current = false;
+        lastMapInteractionAtRef.current = Date.now();
+        schedulePendingDateCommit();
+    }, [schedulePendingDateCommit]);
+
+    const handleCanvasPointerLeave = useCallback(() => {
+        if (!isMapPointerDownRef.current) return;
+        isMapPointerDownRef.current = false;
+        lastMapInteractionAtRef.current = Date.now();
+        schedulePendingDateCommit();
+    }, [schedulePendingDateCommit]);
+
+    const handleCanvasWheel = useCallback(() => {
+        markMapInteraction();
+        schedulePendingDateCommit();
+    }, [markMapInteraction, schedulePendingDateCommit]);
 
     return (
         <main className="fixed inset-0 bg-[#070b14] overflow-hidden font-sans">
@@ -3608,26 +3733,16 @@ export default function MapPage() {
             )}
 
             {/* Shifted Canvas Container */}
-            <div ref={containerRef} className={`fixed top-20 inset-x-0 bottom-0 z-0 ${isMapInteractionDisabled ? 'pointer-events-none' : ''}`}>
-                <canvas
-                    id="map-canvas"
-                    className="w-full h-full block cursor-grab"
-                    onClick={handleCanvasCountryClick}
-                    onMouseDown={handleCanvasMouseDown}
-                    onMouseMove={handleCanvasMouseMove}
-                    onMouseLeave={(e) => {
-                        const event = new MouseEvent('mouseup', {
-                            bubbles: true,
-                            cancelable: true,
-                            view: window,
-                        });
-                        e.currentTarget.dispatchEvent(event);
-                    }}
-                />
-
-                {/* Global FX */}
-                <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_200px_rgba(0,0,0,0.6)] vignette-gradient" />
-            </div>
+            <MapCanvasView
+                containerRef={containerRef}
+                interactionDisabled={isMapInteractionDisabled}
+                onClick={handleCanvasCountryClick}
+                onPointerDown={handleCanvasPointerDown}
+                onPointerMove={handleCanvasPointerMove}
+                onPointerUp={handleCanvasPointerUp}
+                onPointerLeave={handleCanvasPointerLeave}
+                onWheel={handleCanvasWheel}
+            />
 
             {!(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
                 <BottomNav
@@ -3697,7 +3812,7 @@ export default function MapPage() {
                     <div className="w-full bg-[#0A1A1A] h-1.5 rounded-full overflow-hidden border border-[#00FFAA]/20">
                         <div
                             ref={progressBarRef}
-                            className="bg-[#00FFAA] h-full w-0 transition-none rounded-full shadow-[0_0_8px_#00FFAA]"
+                            className="bg-[#00FFAA] h-full w-full origin-left scale-x-0 transition-none rounded-full shadow-[0_0_8px_#00FFAA] will-change-transform"
                         />
                     </div>
 

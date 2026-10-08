@@ -163,10 +163,6 @@ export default function PerbandinganPasukan({
   const attackerTotalPower = attackerSummary?.totals?.totalPower ?? attackerPower;
   const targetTotalPower = targetSummary?.totals?.totalPower ?? targetPower;
 
-  const totalCombinedPower = Math.max(1, attackerTotalPower + targetTotalPower);
-  const attackerPct = (attackerTotalPower / totalCombinedPower) * 100;
-  const targetPct = (targetTotalPower / totalCombinedPower) * 100;
-
   // Baca konfigurasi persentase pengerahan dari Konfirmasi Serangan
   const getDeployedQuantity = (itemKey: string, rawQty: number) => {
     if (typeof window === "undefined") return 0;
@@ -187,6 +183,17 @@ export default function PerbandinganPasukan({
     laut: getGroupBreakdown(attackerDetail, 'laut', attackerTotalPower).map(i => ({ ...i, quantity: getDeployedQuantity(i.key, i.quantity) })),
     udara: getGroupBreakdown(attackerDetail, 'udara', attackerTotalPower).map(i => ({ ...i, quantity: getDeployedQuantity(i.key, i.quantity) })),
   };
+
+  // Hitung total kekuatan pasukan penyerang yang BENAR-BENAR DIKERAHKAN
+  const totalDeployedAttackerUnits = [...attackerBreakdown.darat, ...attackerBreakdown.laut, ...attackerBreakdown.udara].reduce((acc, curr) => acc + curr.quantity, 0);
+  const totalRawAttackerUnits = [...getGroupBreakdown(attackerDetail, 'darat', attackerTotalPower), ...getGroupBreakdown(attackerDetail, 'laut', attackerTotalPower), ...getGroupBreakdown(attackerDetail, 'udara', attackerTotalPower)].reduce((acc, curr) => acc + curr.quantity, 0);
+
+  const deploymentRatio = totalRawAttackerUnits > 0 ? totalDeployedAttackerUnits / totalRawAttackerUnits : 0;
+  const actualAttackerPower = Math.round(attackerTotalPower * deploymentRatio);
+
+  const totalCombinedPower = Math.max(1, actualAttackerPower + targetTotalPower);
+  const attackerPct = totalCombinedPower > 0 ? (actualAttackerPower / totalCombinedPower) * 100 : 50;
+  const targetPct = 100 - attackerPct;
 
   const targetBreakdown = {
     darat: getGroupBreakdown(targetDetail, 'darat', targetTotalPower),
@@ -256,7 +263,7 @@ export default function PerbandinganPasukan({
                   <p className="text-xs text-[#E0E0E0]">
                     Kekuatan:{' '}
                     <span className="font-black text-[#00FFAA] font-mono">
-                      {formatNumber(attackerTotalPower)}
+                      {formatNumber(actualAttackerPower)}
                     </span>
                   </p>
                 </div>
@@ -291,13 +298,22 @@ export default function PerbandinganPasukan({
               {/* GARIS KESEIMBANGAN PASUKAN */}
               <div className="w-full mt-2 pt-4 border-t border-[#00FFAA]/10">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6B8A8A]">
-                    Keseimbangan Pasukan:
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6B8A8A]">
+                      Keseimbangan Pasukan:
+                    </span>
+                    <span className="text-xs font-mono font-black text-[#00FFAA]">
+                      {attackerPct.toFixed(1)}%
+                    </span>
+                    <span className="text-xs font-bold text-[#6B8A8A]">/</span>
+                    <span className="text-xs font-mono font-black text-rose-400">
+                      {targetPct.toFixed(1)}%
+                    </span>
+                  </div>
                   <span className="text-[10px] font-bold text-[#E0E0E0]">
-                    {attackerTotalPower > targetTotalPower
+                    {actualAttackerPower > targetTotalPower
                       ? '🟢 Unggul'
-                      : attackerTotalPower < targetTotalPower
+                      : actualAttackerPower < targetTotalPower
                       ? '🔴 Tertinggal'
                       : '⚖️ Seimbang'}
                   </span>
