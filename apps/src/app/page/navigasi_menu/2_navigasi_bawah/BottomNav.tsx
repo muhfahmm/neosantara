@@ -9,6 +9,21 @@ import {
 } from "lucide-react";
 import { menuItems, subMenuItems } from "../navigationData";
 
+const modalPreloadPromises = new Map<string, Promise<unknown>>();
+
+function prefetchMenuModal(menuId: string) {
+  if (modalPreloadPromises.has(menuId)) return;
+
+  const preloadPromise = import("./ModalsManager").then(({ preloadModalForMenu }) =>
+    preloadModalForMenu(menuId)
+  );
+  modalPreloadPromises.set(menuId, preloadPromise);
+  void preloadPromise.catch(error => {
+    modalPreloadPromises.delete(menuId);
+    console.error(`BottomNav: failed to preload menu "${menuId}"`, error);
+  });
+}
+
 interface BottomNavProps {
   activeMenu: string;
   setActiveMenu: (menu: string) => void;
@@ -135,6 +150,9 @@ export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, is
             {currentSubItems.map((sub: any) => (
               <div key={sub.id} className="relative group flex-shrink-0">
                 <button
+                  onPointerEnter={() => prefetchMenuModal(sub.id)}
+                  onFocus={() => prefetchMenuModal(sub.id)}
+                  onPointerDown={() => prefetchMenuModal(sub.id)}
                   onClick={() => setActiveMenu(sub.id)}
                   className={`flex items-center justify-center p-1 lg:p-1.5 2xl:p-2 rounded-lg transition-all cursor-pointer border ${activeMenu === sub.id
                     ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]'

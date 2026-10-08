@@ -13,52 +13,101 @@ import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifik
 
 import dynamic from 'next/dynamic';
 
+const ModalLoadingFallback = () => (
+  <div
+    className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 px-4 py-8"
+    role="status"
+    aria-label="Memuat menu"
+  >
+    <div className="flex items-center gap-3 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] px-5 py-4 text-sm font-semibold text-[#E0E0E0] shadow-2xl">
+      <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#00FFAA]/30 border-t-[#00FFAA]" />
+      Menyiapkan menu...
+    </div>
+  </div>
+);
+
 // 1. Kepuasan
-const StatistikKepuasanModal = dynamic(() => import("./1_kepuasan/1_statistik/StatistikKepuasanModal"), { ssr: false });
-const NaikkanKepuasanModal = dynamic(() => import("./1_kepuasan/2_naikkan_kepuasan/NaikkanKepuasanModal"), { ssr: false });
+const StatistikKepuasanModal = dynamic(() => import("./1_kepuasan/1_statistik/StatistikKepuasanModal"), { ssr: false, loading: ModalLoadingFallback });
+const NaikkanKepuasanModal = dynamic(() => import("./1_kepuasan/2_naikkan_kepuasan/NaikkanKepuasanModal"), { ssr: false, loading: ModalLoadingFallback });
 
 // 2. Populasi
-const RingkasanPopulasiModal = dynamic(() => import("./2_populasi/RingkasanPopulasiModal"), { ssr: false });
+const RingkasanPopulasiModal = dynamic(() => import("./2_populasi/RingkasanPopulasiModal"), { ssr: false, loading: ModalLoadingFallback });
 
 // 3. Produksi & Konsumsi
-const KelistrikanModal = dynamic(() => import("./3_produksi_konsumsi/1_grid_nasional/KelistrikanModal"), { ssr: false });
-const IndustriPanganModal = dynamic(() => import("./3_produksi_konsumsi/2_industri_pangan/IndustriPanganModal"), { ssr: false });
+const KelistrikanModal = dynamic(() => import("./3_produksi_konsumsi/1_grid_nasional/KelistrikanModal"), { ssr: false, loading: ModalLoadingFallback });
+const IndustriPanganModal = dynamic(() => import("./3_produksi_konsumsi/2_industri_pangan/IndustriPanganModal"), { ssr: false, loading: ModalLoadingFallback });
 
 // 4. Ekonomi
-const PerdaganganModal = dynamic(() => import("./4_ekonomi/1_perdagangan/PerdaganganModal"), { ssr: false });
-const PajakModal = dynamic(() => import("./4_ekonomi/2_manajemen_pajak/PajakModal"), { ssr: false });
-const HutangModal = dynamic(() => import("./4_ekonomi/3_peminjaman_hutang/HutangModal"), { ssr: false });
-const PemasukkanPengeluaranModal = dynamic(() => import("./4_ekonomi/4_pemasukan_pengeluaran/PemasukkanPengeluaranModal"), { ssr: false });
-const PDBModal = dynamic(() => import("./4_ekonomi/5_pdb_nasional_dunia/PDBModal"), { ssr: false });
-const HargaModal = dynamic(() => import("./4_ekonomi/6_harga/HargaModal"), { ssr: false });
-const SistemEkonomiModal = dynamic(() => import("./4_ekonomi/7_sistem_ekonomi/SistemEkonomiModal"), { ssr: false });
-const SubsidiModal = dynamic(() => import("./4_ekonomi/8_kebijakan_subsidi/SubsidiModal"), { ssr: false });
+const PerdaganganModal = dynamic(() => import("./4_ekonomi/1_perdagangan/PerdaganganModal"), { ssr: false, loading: ModalLoadingFallback });
+const PajakModal = dynamic(() => import("./4_ekonomi/2_manajemen_pajak/PajakModal"), { ssr: false, loading: ModalLoadingFallback });
+const HutangModal = dynamic(() => import("./4_ekonomi/3_peminjaman_hutang/HutangModal"), { ssr: false, loading: ModalLoadingFallback });
+const PemasukkanPengeluaranModal = dynamic(() => import("./4_ekonomi/4_pemasukan_pengeluaran/PemasukkanPengeluaranModal"), { ssr: false, loading: ModalLoadingFallback });
+const PDBModal = dynamic(() => import("./4_ekonomi/5_pdb_nasional_dunia/PDBModal"), { ssr: false, loading: ModalLoadingFallback });
+const HargaModal = dynamic(() => import("./4_ekonomi/6_harga/HargaModal"), { ssr: false, loading: ModalLoadingFallback });
+const SistemEkonomiModal = dynamic(() => import("./4_ekonomi/7_sistem_ekonomi/SistemEkonomiModal"), { ssr: false, loading: ModalLoadingFallback });
+const SubsidiModal = dynamic(() => import("./4_ekonomi/8_kebijakan_subsidi/SubsidiModal"), { ssr: false, loading: ModalLoadingFallback });
 
 // 5. Pembangunan
-const ProduksiModal = dynamic(() => import("./5_pembangunan/1_produksi/ProduksiModal"), { ssr: false });
-const TempatUmumModal = dynamic(() => import("./5_pembangunan/2_tempat_umum/TempatUmumModal"), { ssr: false });
-const HunianPermukimanModal = dynamic(() => import("./5_pembangunan/3_hunian/HunianPermukimanModal"), { ssr: false });
+const ProduksiModal = dynamic(() => import("./5_pembangunan/1_produksi/ProduksiModal"), { ssr: false, loading: ModalLoadingFallback });
+const TempatUmumModal = dynamic(() => import("./5_pembangunan/2_tempat_umum/TempatUmumModal"), { ssr: false, loading: ModalLoadingFallback });
+const HunianPermukimanModal = dynamic(() => import("./5_pembangunan/3_hunian/HunianPermukimanModal"), { ssr: false, loading: ModalLoadingFallback });
 
 // 6. Pertahanan
-const SerangNegaraModal = dynamic(() => import("./6_pertahanan/1_serang_negara/SerangNegaraModal"), { ssr: false });
-const IntelijenModal = dynamic(() => import("./6_pertahanan/2_intelijen/IntelijenModal"), { ssr: false });
-const WilayahDirebutModal = dynamic(() => import("./6_pertahanan/3_wilayah_direbut/WilayahDirebutModal"), { ssr: false });
-const ArmadaModal = dynamic(() => import("./6_pertahanan/4_armada/ArmadaModal"), { ssr: false });
-const IcbmModal = dynamic(() => import("./6_pertahanan/5_icbm/IcbmModal"), { ssr: false });
+const SerangNegaraModal = dynamic(() => import("./6_pertahanan/1_serang_negara/SerangNegaraModal"), { ssr: false, loading: ModalLoadingFallback });
+const IntelijenModal = dynamic(() => import("./6_pertahanan/2_intelijen/IntelijenModal"), { ssr: false, loading: ModalLoadingFallback });
+const WilayahDirebutModal = dynamic(() => import("./6_pertahanan/3_wilayah_direbut/WilayahDirebutModal"), { ssr: false, loading: ModalLoadingFallback });
+const ArmadaModal = dynamic(() => import("./6_pertahanan/4_armada/ArmadaModal"), { ssr: false, loading: ModalLoadingFallback });
+const IcbmModal = dynamic(() => import("./6_pertahanan/5_icbm/IcbmModal"), { ssr: false, loading: ModalLoadingFallback });
 
 // 7. Geopolitik
-const PBBModal = dynamic(() => import("./7_geopolitik/1_PBB/PBBModal"), { ssr: false });
-const KedutaanBesarModal = dynamic(() => import("./7_geopolitik/KedutaanBesarModal"), { ssr: false });
-const OrgIntlModal = dynamic(() => import("./7_geopolitik/3_organisasi_internasional/OrgIntlModal"), { ssr: false });
-const TingkatHubunganModal = dynamic(() => import("./7_geopolitik/TingkatHubunganModal"), { ssr: false });
+const PBBModal = dynamic(() => import("./7_geopolitik/1_PBB/PBBModal"), { ssr: false, loading: ModalLoadingFallback });
+const KedutaanBesarModal = dynamic(() => import("./7_geopolitik/KedutaanBesarModal"), { ssr: false, loading: ModalLoadingFallback });
+const OrgIntlModal = dynamic(() => import("./7_geopolitik/3_organisasi_internasional/OrgIntlModal"), { ssr: false, loading: ModalLoadingFallback });
+const TingkatHubunganModal = dynamic(() => import("./7_geopolitik/TingkatHubunganModal"), { ssr: false, loading: ModalLoadingFallback });
 
 // 8. Sosial & Budaya
-const AgamaModal = dynamic(() => import("./8_sosial_budaya/agama/AgamaModal"), { ssr: false });
-const IdeologiModal = dynamic(() => import("./8_sosial_budaya/ideologi/IdeologiModal"), { ssr: false });
-const DoktrinKeterbukaanModal = dynamic(() => import("./8_sosial_budaya/keterbukaan/DoktrinKeterbukaanModal"), { ssr: false });
+const AgamaModal = dynamic(() => import("./8_sosial_budaya/agama/AgamaModal"), { ssr: false, loading: ModalLoadingFallback });
+const IdeologiModal = dynamic(() => import("./8_sosial_budaya/ideologi/IdeologiModal"), { ssr: false, loading: ModalLoadingFallback });
+const DoktrinKeterbukaanModal = dynamic(() => import("./8_sosial_budaya/keterbukaan/DoktrinKeterbukaanModal"), { ssr: false, loading: ModalLoadingFallback });
 
 // 9. Kementerian
-const KementerianModal = dynamic(() => import("./9_kementrian/KementerianModal"), { ssr: false });
+const KementerianModal = dynamic(() => import("./9_kementrian/KementerianModal"), { ssr: false, loading: ModalLoadingFallback });
+
+const modalPreloaders: Record<string, () => Promise<unknown>> = {
+  "Dashboard:Kepuasan": () => import("./1_kepuasan/1_statistik/StatistikKepuasanModal"),
+  "Action:NaikkanKepuasan": () => import("./1_kepuasan/2_naikkan_kepuasan/NaikkanKepuasanModal"),
+  "Dashboard:Populasi:Overview": () => import("./2_populasi/RingkasanPopulasiModal"),
+  "Menu:Kelistrikan": () => import("./3_produksi_konsumsi/1_grid_nasional/KelistrikanModal"),
+  "Menu:IndustriPangan": () => import("./3_produksi_konsumsi/2_industri_pangan/IndustriPanganModal"),
+  "Menu:Perdagangan": () => import("./4_ekonomi/1_perdagangan/PerdaganganModal"),
+  "Menu:Pajak": () => import("./4_ekonomi/2_manajemen_pajak/PajakModal"),
+  "Menu:Hutang": () => import("./4_ekonomi/3_peminjaman_hutang/HutangModal"),
+  "Menu:Budget": () => import("./4_ekonomi/4_pemasukan_pengeluaran/PemasukkanPengeluaranModal"),
+  "Menu:PDB": () => import("./4_ekonomi/5_pdb_nasional_dunia/PDBModal"),
+  "Menu:Harga": () => import("./4_ekonomi/6_harga/HargaModal"),
+  "Menu:SistemEkonomi": () => import("./4_ekonomi/7_sistem_ekonomi/SistemEkonomiModal"),
+  "Menu:KebijakanSubsidi": () => import("./4_ekonomi/8_kebijakan_subsidi/SubsidiModal"),
+  "Menu:Produksi": () => import("./5_pembangunan/1_produksi/ProduksiModal"),
+  "Menu:TempatUmum": () => import("./5_pembangunan/2_tempat_umum/TempatUmumModal"),
+  "Menu:HunianPermukiman": () => import("./5_pembangunan/3_hunian/HunianPermukimanModal"),
+  "Menu:SerangNegara": () => import("./6_pertahanan/1_serang_negara/SerangNegaraModal"),
+  "Menu:Intelijen": () => import("./6_pertahanan/2_intelijen/IntelijenModal"),
+  "Menu:WilayahDirebut": () => import("./6_pertahanan/3_wilayah_direbut/WilayahDirebutModal"),
+  "Menu:Armada": () => import("./6_pertahanan/4_armada/ArmadaModal"),
+  "Menu:ICBM": () => import("./6_pertahanan/5_icbm/IcbmModal"),
+  "Menu:PBB": () => import("./7_geopolitik/1_PBB/PBBModal"),
+  "Menu:KedutaanBesar": () => import("./7_geopolitik/KedutaanBesarModal"),
+  "Menu:OrganisasiInternasional:organisasi_pbb": () => import("./7_geopolitik/3_organisasi_internasional/OrgIntlModal"),
+  "Menu:TingkatHubungan": () => import("./7_geopolitik/TingkatHubunganModal"),
+  "Menu:Agama": () => import("./8_sosial_budaya/agama/AgamaModal"),
+  "Menu:Ideologi": () => import("./8_sosial_budaya/ideologi/IdeologiModal"),
+  "Menu:DoktrinKeterbukaan": () => import("./8_sosial_budaya/keterbukaan/DoktrinKeterbukaanModal"),
+  "Dashboard:Kementerian": () => import("./9_kementrian/KementerianModal"),
+};
+
+export function preloadModalForMenu(menuId: string) {
+  return modalPreloaders[menuId]?.();
+}
 
 interface ModalCountryDetail {
   [key: string]: unknown;

@@ -10,16 +10,18 @@ export async function GET(request: Request) {
   }
 
   try {
-    const rows = await queryDb<any[]>('SELECT * FROM database_harga_barang');
-    const normInput = countryName.trim().toLowerCase();
-
-    const matchedRow = rows.find(
-      (r) =>
-        r.country.toLowerCase() === normInput ||
-        r.country_slug.toLowerCase() === normInput ||
-        r.country_slug.replace(/_/g, ' ').toLowerCase() === normInput
+    const rows = await queryDb<any[]>(
+      `SELECT country, country_slug, harga_beras, harga_daging_sapi, harga_ayam,
+              harga_minyak_goreng, harga_gula, harga_telur, harga_listrik, harga_air
+       FROM database_harga_barang
+       WHERE LOWER(country) = LOWER($1)
+          OR LOWER(country_slug) = LOWER($1)
+          OR REPLACE(LOWER(country_slug), '_', ' ') = LOWER($1)
+       LIMIT 1`,
+      [countryName.trim()]
     );
 
+    const matchedRow = rows[0];
     if (!matchedRow) {
       return NextResponse.json({ country: countryName, prices: null });
     }

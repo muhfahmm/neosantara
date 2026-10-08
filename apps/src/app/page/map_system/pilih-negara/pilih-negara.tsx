@@ -164,10 +164,18 @@ export default function PilihNegaraPage() {
       hasInitRef.current = true;
 
       try {
-        const [mod, { WORLD_GEOJSON }] = await Promise.all([
+        const [mod, geojsonResponse] = await Promise.all([
           import('../../../../wasm/map-engine-rs/map_engine_rs'),
-          import('../world-geojson'),
+          fetch('/world.geojson', { cache: 'force-cache' }),
         ]);
+        if (!geojsonResponse.ok) {
+          throw new Error(`Failed to load world map data: HTTP ${geojsonResponse.status}`);
+        }
+        const geojsonStr = await geojsonResponse.text();
+        const geojson = JSON.parse(geojsonStr);
+        if (!Array.isArray(geojson.features)) {
+          throw new Error('Invalid world map GeoJSON payload.');
+        }
         try {
           await mod.default(); // Initialize WASM module
         } catch (wasmErr) {
@@ -176,7 +184,6 @@ export default function PilihNegaraPage() {
 
         const { start_map_engine, set_selected_country_on_map, get_country_at_on_map } = mod;
 
-        const geojsonStr = typeof WORLD_GEOJSON === 'string' ? WORLD_GEOJSON : JSON.stringify(WORLD_GEOJSON);
         start_map_engine('map-canvas-bg', geojsonStr, COUNTRIES_DATA, CAPITALS_DATA);
 
         setWasmModule({

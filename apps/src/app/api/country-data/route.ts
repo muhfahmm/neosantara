@@ -36,15 +36,63 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
 
   try {
     // 1. Core Profile & Basic Info
-    const profiles = await queryDb<any[]>('SELECT * FROM database_profiles_negara');
-    const taxes = await queryDb<any[]>('SELECT * FROM database_pajak_negara').catch(() => []);
-    const kabinet = await queryDb<any[]>('SELECT * FROM database_level_kabinet').catch(() => []);
-    const sda = await queryDb<any[]>('SELECT * FROM database_sda').catch(() => []);
-    const harga = await queryDb<any[]>('SELECT * FROM database_harga_barang').catch(() => []);
-    const doktrin = await queryDb<any[]>('SELECT * FROM database_doktrin_keterbukaan').catch(() => []);
-    const alokasiSubsidi = await queryDb<any[]>('SELECT * FROM database_alokasi_subsidi').catch(() => []);
-    const sistemEkonomi = await queryDb<any[]>('SELECT * FROM database_sistem_ekonomi').catch(() => []);
-    let tempatWisata = await queryDb<any[]>('SELECT * FROM database_tempat_wisata').catch(() => []);
+    const queryOptional = (sql: string) => queryDb<any[]>(sql).catch(() => []);
+    const [
+      profiles,
+      taxes,
+      kabinet,
+      sda,
+      harga,
+      doktrin,
+      alokasiSubsidi,
+      sistemEkonomi,
+      databaseTempatWisata,
+      listrik,
+      mineral,
+      manufaktur,
+      peternakan,
+      agrikultur,
+      perikanan,
+      olahan,
+      infrastruktur,
+      pendidikan,
+      kesehatan,
+      hukum,
+      olahraga,
+      komersial,
+      hiburan,
+      hunian,
+      militer,
+      pertahanan,
+    ] = await Promise.all([
+      queryDb<any[]>('SELECT * FROM database_profiles_negara'),
+      queryOptional('SELECT * FROM database_pajak_negara'),
+      queryOptional('SELECT * FROM database_level_kabinet'),
+      queryOptional('SELECT * FROM database_sda'),
+      queryOptional('SELECT * FROM database_harga_barang'),
+      queryOptional('SELECT * FROM database_doktrin_keterbukaan'),
+      queryOptional('SELECT * FROM database_alokasi_subsidi'),
+      queryOptional('SELECT * FROM database_sistem_ekonomi'),
+      queryOptional('SELECT * FROM database_tempat_wisata'),
+      queryOptional('SELECT * FROM database_sektor_listrik_nasional'),
+      queryOptional('SELECT * FROM database_sektor_mineral_kritis'),
+      queryOptional('SELECT * FROM database_manufaktur'),
+      queryOptional('SELECT * FROM database_sektor_peternakan'),
+      queryOptional('SELECT * FROM database_sektor_agrikultur'),
+      queryOptional('SELECT * FROM database_sektor_perikanan'),
+      queryOptional('SELECT * FROM database_sektor_olahan_pangan'),
+      queryOptional('SELECT * FROM database_infrastruktur'),
+      queryOptional('SELECT * FROM database_pendidikan'),
+      queryOptional('SELECT * FROM database_kesehatan'),
+      queryOptional('SELECT * FROM database_hukum'),
+      queryOptional('SELECT * FROM database_olahraga'),
+      queryOptional('SELECT * FROM database_komersial'),
+      queryOptional('SELECT * FROM database_hiburan'),
+      queryOptional('SELECT * FROM database_hunian_permukiman'),
+      queryOptional('SELECT * FROM database_armada_militer'),
+      queryOptional('SELECT * FROM database_manajemen_pertahanan'),
+    ]);
+    let tempatWisata = databaseTempatWisata;
     if (!tempatWisata || tempatWisata.length === 0) {
       try {
         const fs = require('fs');
@@ -66,29 +114,6 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
         tempatWisata = [];
       }
     }
-
-    // 2. Produksi & Pembangunan Tables
-    const listrik = await queryDb<any[]>('SELECT * FROM database_sektor_listrik_nasional').catch(() => []);
-    const mineral = await queryDb<any[]>('SELECT * FROM database_sektor_mineral_kritis').catch(() => []);
-    const manufaktur = await queryDb<any[]>('SELECT * FROM database_manufaktur').catch(() => []);
-    const peternakan = await queryDb<any[]>('SELECT * FROM database_sektor_peternakan').catch(() => []);
-    const agrikultur = await queryDb<any[]>('SELECT * FROM database_sektor_agrikultur').catch(() => []);
-    const perikanan = await queryDb<any[]>('SELECT * FROM database_sektor_perikanan').catch(() => []);
-    const olahan = await queryDb<any[]>('SELECT * FROM database_sektor_olahan_pangan').catch(() => []);
-
-    // 3. Tempat Umum & Layanan Publik Tables
-    const infrastruktur = await queryDb<any[]>('SELECT * FROM database_infrastruktur').catch(() => []);
-    const pendidikan = await queryDb<any[]>('SELECT * FROM database_pendidikan').catch(() => []);
-    const kesehatan = await queryDb<any[]>('SELECT * FROM database_kesehatan').catch(() => []);
-    const hukum = await queryDb<any[]>('SELECT * FROM database_hukum').catch(() => []);
-    const olahraga = await queryDb<any[]>('SELECT * FROM database_olahraga').catch(() => []);
-    const komersial = await queryDb<any[]>('SELECT * FROM database_komersial').catch(() => []);
-    const hiburan = await queryDb<any[]>('SELECT * FROM database_hiburan').catch(() => []);
-    const hunian = await queryDb<any[]>('SELECT * FROM database_hunian_permukiman').catch(() => []);
-
-    // 4. Pertahanan Tables
-    const militer = await queryDb<any[]>('SELECT * FROM database_armada_militer').catch(() => []);
-    const pertahanan = await queryDb<any[]>('SELECT * FROM database_manajemen_pertahanan').catch(() => []);
 
     // Helper map build function
     const makeMap = (arr: any[]) => {

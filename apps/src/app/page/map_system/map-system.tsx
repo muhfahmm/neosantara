@@ -20,8 +20,8 @@ const ModalsKudeta = dynamic(() => import('./menu_notifikasi/notifikasi_peringat
 type KudetaType = import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta').KudetaType;
 const RequireEmbassyModal = dynamic(() => import('./RequireEmbassyModal').then(m => m.RequireEmbassyModal), { ssr: false });
 import { Navbar } from '../navbar/Navbar';
-import BottomNav from '../navigasi_menu/2_navigasi_bawah/BottomNav';
-import ModalsManager from '../navigasi_menu/2_navigasi_bawah/ModalsManager';
+const BottomNav = dynamic(() => import('../navigasi_menu/2_navigasi_bawah/BottomNav'), { ssr: false });
+const ModalsManager = dynamic(() => import('../navigasi_menu/2_navigasi_bawah/ModalsManager'), { ssr: false });
 import { calculateDailyPopulationChange, updateDailyPopulation } from '@/app/logic/populations_logic/population_logic';
 import { logger } from '../../../lib/logger';
 const CountryDetailModal = dynamic(() => import('../detail_negara/detail_negara').then(m => m.CountryDetailModal), { ssr: false });
@@ -2634,12 +2634,18 @@ export default function MapPage() {
             hasInitRef.current = true;
 
             try {
-                const [wasmModule, { WORLD_GEOJSON }] = await Promise.all([
+                const [wasmModule, geojsonResponse] = await Promise.all([
                     import('../../../wasm/map-engine-rs/map_engine_rs'),
-                    import('./world-geojson')
+                    fetch('/world.geojson', { cache: 'force-cache' })
                 ]);
-                const rawGeojsonStr = typeof WORLD_GEOJSON === 'string' ? WORLD_GEOJSON : JSON.stringify(WORLD_GEOJSON);
-                const geojsonObj = typeof WORLD_GEOJSON === 'string' ? JSON.parse(WORLD_GEOJSON) : WORLD_GEOJSON;
+                if (!geojsonResponse.ok) {
+                    throw new Error(`Gagal memuat data peta: HTTP ${geojsonResponse.status}`);
+                }
+                const rawGeojsonStr = await geojsonResponse.text();
+                const geojsonObj = JSON.parse(rawGeojsonStr);
+                if (!Array.isArray(geojsonObj.features)) {
+                    throw new Error('Format GeoJSON peta tidak valid.');
+                }
                 const drawableFeatures = geojsonObj.features.filter((feature: { geometry?: unknown }) => feature.geometry);
 
                 if (typeof window !== 'undefined') {

@@ -6,9 +6,8 @@ export async function GET(request: NextRequest) {
   const countryName = searchParams.get('country');
 
   try {
-    const rows = await queryDb<any[]>('SELECT * FROM database_sda');
-
     if (!countryName) {
+      const rows = await queryDb<any[]>('SELECT * FROM database_sda');
       const result: Record<string, any> = {};
       for (const row of rows) {
         result[row.country] = {
@@ -26,14 +25,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(result);
     }
 
-    const normInput = countryName.trim().toLowerCase();
-    const matchedRow = rows.find(
-      (r) =>
-        r.country.toLowerCase() === normInput ||
-        r.country_slug.toLowerCase() === normInput ||
-        r.country_slug.replace(/_/g, ' ').toLowerCase() === normInput
+    const rows = await queryDb<any[]>(
+      `SELECT country, country_slug, emas, uranium, batu_bara, minyak_bumi,
+              gas_alam, garam, litium, logam_tanah_jarang, bijih_besi
+       FROM database_sda
+       WHERE LOWER(country) = LOWER($1)
+          OR LOWER(country_slug) = LOWER($1)
+          OR REPLACE(LOWER(country_slug), '_', ' ') = LOWER($1)
+       LIMIT 1`,
+      [countryName.trim()]
     );
 
+    const matchedRow = rows[0];
     if (!matchedRow) {
       return NextResponse.json({ error: 'Country not found' }, { status: 404 });
     }
