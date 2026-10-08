@@ -320,15 +320,19 @@ export function useNpcCountrySimulation(
       return;
     }
 
-    try {
-      persistNpcSimulation(
-        normalizedPlayerSlug,
-        currentDateString,
-        countries,
-        metadata
-      );
-    } catch (error) {
-      console.error("Gagal menyimpan state simulasi NPC ke LocalStorage:", error);
-    }
+    const timeoutId = setTimeout(() => {
+      try {
+        persistNpcSimulation(
+          normalizedPlayerSlug,
+          currentDateString,
+          countries,
+          metadata
+        );
+      } catch (error) {
+        console.error("Gagal menyimpan state simulasi NPC ke LocalStorage:", error);
+      }
+    }, 50);
+
+    return () => clearTimeout(timeoutId);
   }, [normalizedPlayerSlug, loadedForPlayerSlug, currentDateString, countries, metadata]);
 }
