@@ -2641,7 +2641,11 @@ export default function MapPage() {
                     (window as any).neosantara_world_geojson_features = drawableFeatures;
                 }
 
-                await wasmModule.default(); // Initialize WASM module first
+                try {
+                    await wasmModule.default(); // Initialize WASM module first
+                } catch (wasmErr) {
+                    console.warn("WASM module init notice:", wasmErr);
+                }
                 wasmModuleRef.current = wasmModule;
 
                 // After init, the exported functions are available on the module

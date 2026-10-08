@@ -168,7 +168,11 @@ export default function PilihNegaraPage() {
           import('../../../../wasm/map-engine-rs/map_engine_rs'),
           import('../world-geojson'),
         ]);
-        await mod.default(); // Initialize WASM module
+        try {
+          await mod.default(); // Initialize WASM module
+        } catch (wasmErr) {
+          console.warn("WASM module init notice:", wasmErr);
+        }
 
         const { start_map_engine, set_selected_country_on_map, get_country_at_on_map } = mod;
 
