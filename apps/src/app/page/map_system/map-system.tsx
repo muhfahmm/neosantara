@@ -143,6 +143,9 @@ interface Country {
     color?: string;
 }
 
+const EMPTY_COUNTRY_OVERRIDES: Record<string, string> = {};
+const EMPTY_ANNEXED_COUNTRIES: Record<string, unknown> = {};
+
 function applyInvasionRelationPenalty(attackerCountry: string, minimum: number, maximum: number): number {
     const penalty = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
     const normalizedAttacker = attackerCountry.trim().toLowerCase();
@@ -688,26 +691,6 @@ export default function MapPage() {
         };
     }, [currentDate, countryDetail]);
 
-    // Kamera AKTUAL dari engine WASM (ditangkap dari ctx.setTransform), sehingga overlay
-    // bendera selalu presisi walau ada clamping / auto-center negara / lerp di sisi Rust.
-    const cameraRef = useRef({ scale: 1.0, offsetX: 0.0, offsetY: 0.0, width: 1000, height: 600 });
-    const [capitalTransform, setCapitalTransform] = useState({ scale: 1.0, offsetX: 0, offsetY: 0, width: 1000, height: 600 });
-
-    useEffect(() => {
-        let animId: number;
-        const updateLoop = () => {
-            const cam = cameraRef.current;
-            setCapitalTransform(prev =>
-                prev.scale === cam.scale && prev.offsetX === cam.offsetX && prev.offsetY === cam.offsetY &&
-                prev.width === cam.width && prev.height === cam.height
-                    ? prev
-                    : { scale: cam.scale, offsetX: cam.offsetX, offsetY: cam.offsetY, width: cam.width, height: cam.height }
-            );
-            animId = requestAnimationFrame(updateLoop);
-        };
-        animId = requestAnimationFrame(updateLoop);
-        return () => cancelAnimationFrame(animId);
-    }, []);
     const [penelitianModalOpen, setPenelitianModalOpen] = useState(false);
     const [presidentRating, setPresidentRating] = useState<number>(50);
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
@@ -1627,19 +1610,20 @@ export default function MapPage() {
 
     // Initialize high-performance simulation clock on mount
     useEffect(() => {
+        let lastDateKey = '';
         const manager = new SimulationTimeManager(
             (formattedDate) => {
                 if (dateTextRef.current) {
                     dateTextRef.current.textContent = formattedDate;
                 }
-                // Update React state dengan tanggal baru
+                // Update React state HANYA saat tanggal (hari) benar-benar berganti
+                // untuk mencegah re-render React berlebihan & frame drop pada canvas map
                 const newDate = manager.getCurrentDate();
-                console.log('[MapPage Callback] Date changed:', {
-                    formatted: formattedDate,
-                    newDate: newDate.toDateString(),
-                    timestamp: Date.now()
-                });
-                setCurrentDate(newDate);
+                const dateKey = `${newDate.getFullYear()}-${newDate.getMonth()}-${newDate.getDate()}`;
+                if (dateKey !== lastDateKey) {
+                    lastDateKey = dateKey;
+                    setCurrentDate(newDate);
+                }
             },
             (progress) => {
                 if (progressBarRef.current) {
@@ -2656,6 +2640,11 @@ export default function MapPage() {
                 if (mapCanvasEl && mapCtx) {
                     let fillCount = 0;
                     let realFillStyle: string | CanvasGradient | CanvasPattern = '#000';
+                    let cachedFeatures: any[] | null = null;
+                    let cachedOverrides: Record<string, string> | null = null;
+                    let cachedAnnexedCountries: Record<string, any> | null = null;
+                    let annexedFeatureColors: Array<string | undefined> = [];
+                    const normalizeCountryKey = (key: string) => key.toLowerCase().replace(/[^a-z0-9]/g, '');
                     const originalFill = mapCtx.fill.bind(mapCtx);
                     const originalFillRect = mapCtx.fillRect.bind(mapCtx);
                     mapCtx.fill = ((...args: Parameters<typeof mapCtx.fill>) => {
@@ -2672,20 +2661,31 @@ export default function MapPage() {
                         set: (value: string | CanvasGradient | CanvasPattern) => {
                             realFillStyle = value;
                             const features = (window as any).neosantara_world_geojson_features;
-                            const overrides = (window as any).neosantara_country_color_overrides || {};
-                            const annexedCountries = (window as any).neosantara_annexed_countries || {};
+                            const overrides = (window as any).neosantara_country_color_overrides || EMPTY_COUNTRY_OVERRIDES;
+                            const annexedCountries = (window as any).neosantara_annexed_countries || EMPTY_ANNEXED_COUNTRIES;
+
                             if (
-                                typeof value === 'string' &&
-                                value !== '#10b981' &&
-                                value !== '#1e3a8a' &&
-                                value !== '#fbbf24' &&
-                                value !== 'white' &&
                                 features &&
-                                fillCount < features.length
+                                (features !== cachedFeatures ||
+                                    overrides !== cachedOverrides ||
+                                    annexedCountries !== cachedAnnexedCountries)
                             ) {
-                                const properties = features[fillCount]?.properties;
-                                if (properties) {
-                                    const normalize = (key: string) => key.toLowerCase().replace(/[^a-z0-9]/g, '');
+                                const annexedKeys = new Set(
+                                    Object.entries(annexedCountries)
+                                        .filter(([, info]) =>
+                                            typeof info === 'object' &&
+                                            info !== null &&
+                                            'attackerCountry' in info
+                                        )
+                                        .map(([key]) => normalizeCountryKey(key))
+                                );
+                                const validOverrides = Object.entries(overrides)
+                                    .filter(([key]) => annexedKeys.has(normalizeCountryKey(key)))
+                                    .map(([key, color]) => [normalizeCountryKey(key), color] as const);
+
+                                annexedFeatureColors = features.map((feature: { properties?: Record<string, unknown> }) => {
+                                    const properties = feature?.properties;
+                                    if (!properties) return undefined;
                                     const featureKeys = new Set([
                                         properties.ISO_A2,
                                         properties.ISO_A2_EH,
@@ -2701,37 +2701,31 @@ export default function MapPage() {
                                         properties.NAME_EN,
                                         properties.NAME_IND
                                     ].filter((key): key is string => typeof key === 'string' && key.length > 0)
-                                        .map(normalize));
+                                        .map(normalizeCountryKey));
+                                    return validOverrides.find(([key]) => featureKeys.has(key))?.[1];
+                                });
+                                cachedFeatures = features;
+                                cachedOverrides = overrides;
+                                cachedAnnexedCountries = annexedCountries;
+                            }
 
-                                    for (const [key, color] of Object.entries(overrides)) {
-                                        const normalizedKey = normalize(key);
-                                        const hasAnnexation = Object.entries(annexedCountries).some(([annexedKey, info]) =>
-                                            normalize(annexedKey) === normalizedKey &&
-                                            typeof info === 'object' && info !== null && 'attackerCountry' in info
-                                        );
-                                        if (hasAnnexation && featureKeys.has(normalizedKey)) {
-                                            realFillStyle = color as string;
-                                            break;
-                                        }
-                                    }
-                                }
+                            if (
+                                typeof value === 'string' &&
+                                value !== '#10b981' &&
+                                value !== '#1e3a8a' &&
+                                value !== '#fbbf24' &&
+                                value !== 'white' &&
+                                features &&
+                                fillCount < features.length
+                            ) {
+                                const annexedColor = annexedFeatureColors[fillCount];
+                                if (annexedColor) realFillStyle = annexedColor;
                             }
                             Object.getOwnPropertyDescriptor(Object.getPrototypeOf(mapCtx), 'fillStyle')
                                 ?.set?.call(mapCtx, realFillStyle);
                         }
                     });
 
-                    const originalSetTransform = mapCtx.setTransform.bind(mapCtx) as (...args: any[]) => void;
-                    (mapCtx as any).setTransform = (...args: any[]) => {
-                        if (typeof args[0] === 'number') {
-                            cameraRef.current.scale = args[0];
-                            cameraRef.current.offsetX = args[4];
-                            cameraRef.current.offsetY = args[5];
-                            cameraRef.current.width = mapCanvasEl.width;
-                            cameraRef.current.height = mapCanvasEl.height;
-                        }
-                        originalSetTransform(...args);
-                    };
                 }
 
                 await start_map_engine(

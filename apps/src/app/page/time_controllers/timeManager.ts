@@ -6,11 +6,10 @@ export class SimulationTimeManager {
     private isPaused: boolean = true;
     private speed: number = 1;
     private lastTickTime: number = 0;
-    private animationFrameId: number | null = null;
+    private loopTimeoutId: ReturnType<typeof setTimeout> | null = null;
     private onDateChangeCallback: (formattedDate: string) => void;
     private onProgressChangeCallback?: (progress: number) => void;
-    private pendingDateChange: boolean = false;  // ← Track pending callback
-
+    private lastProgressCallbackTime: number = 0;
     // Mapping speed multipliers to millisecond intervals per day tick
     private speedIntervals: Record<number, number> = {
         1: 2500, // 1x speed: 1 day every 2.5 seconds
@@ -41,18 +40,7 @@ export class SimulationTimeManager {
 
     private triggerCallback(): void {
         const formatted = this.getFormattedDate();
-        console.log('[TimeManager] triggerCallback - Date:', {
-            date: this.currentDate.toDateString(),
-            formatted: formatted,
-            timestamp: Date.now()
-        });
-        
-        // ✅ FIX: Schedule callback OUTSIDE requestAnimationFrame
-        // Use setTimeout with 0ms to break out of RAF batch
-        // This ensures React detects the state change immediately
-        setTimeout(() => {
-            this.onDateChangeCallback(formatted);
-        }, 0);
+        this.onDateChangeCallback(formatted);
     }
 
     // Reset date to real-life date
@@ -77,6 +65,7 @@ export class SimulationTimeManager {
         this.isPaused = paused;
         if (!this.isPaused) {
             this.lastTickTime = performance.now();
+            this.lastProgressCallbackTime = 0;
             this.startLoop();
         } else {
             this.stopLoop();
@@ -103,13 +92,13 @@ export class SimulationTimeManager {
         return this.isPaused;
     }
 
-    // The high-performance tick loop powered by requestAnimationFrame
+    // Run the clock and refresh its progress display at 30 FPS.
     private startLoop(): void {
-        if (this.animationFrameId !== null) return;
+        if (this.loopTimeoutId !== null) return;
 
         const loop = (now: number) => {
             if (this.isPaused) {
-                this.animationFrameId = null;
+                this.loopTimeoutId = null;
                 if (this.onProgressChangeCallback) {
                     this.onProgressChangeCallback(0);
                 }
@@ -135,23 +124,27 @@ export class SimulationTimeManager {
                 this.triggerCallback();
             }
 
-            // Calculate exact sub-tick progress for smooth progress bar rendering (0 to 100)
+            // Calculate exact sub-tick progress for the progress bar (0 to 100).
             const currentDelta = now - this.lastTickTime;
             const progress = Math.min((currentDelta / interval) * 100, 100);
-            if (this.onProgressChangeCallback) {
+            if (
+                this.onProgressChangeCallback &&
+                (now - this.lastProgressCallbackTime >= 33 || progress >= 100)
+            ) {
                 this.onProgressChangeCallback(progress);
+                this.lastProgressCallbackTime = now;
             }
 
-            this.animationFrameId = requestAnimationFrame(loop);
+            this.loopTimeoutId = setTimeout(() => loop(performance.now()), 33);
         };
 
-        this.animationFrameId = requestAnimationFrame(loop);
+        this.loopTimeoutId = setTimeout(() => loop(performance.now()), 0);
     }
 
     private stopLoop(): void {
-        if (this.animationFrameId !== null) {
-            cancelAnimationFrame(this.animationFrameId);
-            this.animationFrameId = null;
+        if (this.loopTimeoutId !== null) {
+            clearTimeout(this.loopTimeoutId);
+            this.loopTimeoutId = null;
         }
     }
 
