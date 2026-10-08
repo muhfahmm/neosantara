@@ -230,7 +230,7 @@ export default function DetailKematianModal({
                   <h4 className="text-xs font-black text-[#00FFAA] uppercase">Fasilitas Kesehatan</h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-[#E0E0E0]">{jumlahRumahSakit} RS (rasio {hospitalRatio.toFixed(2)})</span>
+                  <span className="text-sm font-bold text-[#E0E0E0]">{calculateKesehatanScore(countryDetail)} POIN <span className="text-xs font-normal text-[#6B8A8A]">(rasio {hospitalRatio.toFixed(2)})</span></span>
                   <span className="text-[10px] text-[#6B8A8A]">× {healthFactor.toFixed(3)}</span>
                 </div>
                 <p className="text-[10px] text-[#6B8A8A]">Ketersediaan RS yang cukup menurunkan kematian akibat penyakit yang dapat diobati.</p>
