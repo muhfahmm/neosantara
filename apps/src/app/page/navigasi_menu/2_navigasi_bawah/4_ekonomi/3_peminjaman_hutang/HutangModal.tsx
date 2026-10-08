@@ -353,56 +353,51 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
         {/* Body Content */}
         <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
           
-          {/* Section 1: Peringatan dan Monitoring Ekonomi */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 2xl:gap-5 mb-4 lg:mb-6 2xl:mb-8">
-            <div className="col-span-2 bg-[#0F2424] border border-[#00FFAA]/30 p-3.5 lg:p-4 2xl:p-5 rounded-xl 2xl:rounded-2xl">
-              <h4 className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider mb-1.5 lg:mb-2">Rasio Hutang terhadap PDB</h4>
-              <div className="flex justify-between items-end mb-2 lg:mb-3">
-                <span className="text-xl lg:text-2xl 2xl:text-3xl font-black text-[#00FFAA]">{debtRatio}%</span>
-                <span className="text-[10px] lg:text-xs font-bold text-[#6B8A8A]">Batas Aman: 60%</span>
-              </div>
-              <div className="h-2.5 lg:h-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-full overflow-hidden mt-1">
-                <div 
-                  className={`h-full rounded-full transition-all duration-700 ${
-                    debtRatio > 80 ? "bg-rose-500" : debtRatio > 60 ? "bg-amber-500" : "bg-emerald-500"
-                  }`}
-                  style={{ width: `${debtRatio}%` }}
-                />
-              </div>
+          {/* Tabs and debt summary share one row on desktop. */}
+          <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] gap-3 lg:gap-4 mb-3.5 lg:mb-5 2xl:mb-6 items-stretch">
+            <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/30 inline-flex self-center w-fit max-w-full">
+              <button
+                onClick={() => setActiveTab("bilateral")}
+                className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+                  activeTab === "bilateral" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
+                }`}
+              >Negara Lain</button>
+              <button
+                onClick={() => setActiveTab("multilateral")}
+                className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+                  activeTab === "multilateral" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
+                }`}
+              >Lembaga Dunia</button>
+              <button
+                onClick={() => setActiveTab("history")}
+                className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+                  activeTab === "history" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
+                }`}
+              >Riwayat</button>
             </div>
 
-            <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-3.5 lg:p-4 2xl:p-5 rounded-xl 2xl:rounded-2xl flex flex-col justify-center">
-              <div className="flex justify-between text-xs lg:text-sm font-bold text-[#E0E0E0] py-1 border-b border-[#00FFAA]/20">
-                <span>Kas Negara</span>
-                <span className="text-emerald-400 font-black">{kasNegara.toLocaleString("id-ID")} NEO</span>
+            <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-3">
+              <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-3.5 lg:p-4 rounded-xl flex flex-col justify-center min-w-0">
+                <h4 className="text-[8px] lg:text-[9px] text-[#6B8A8A] font-black uppercase tracking-wider mb-1.5">Rasio Hutang terhadap PDB</h4>
+                <div className="flex justify-between items-end gap-2 mb-2">
+                  <span className="text-xl lg:text-2xl font-black text-[#00FFAA]">{debtRatio}%</span>
+                  <span className="text-[10px] lg:text-xs font-bold text-[#6B8A8A] text-right">Batas Aman: 60%</span>
+                </div>
+                <div className="h-2.5 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-700 ${
+                      debtRatio > 80 ? "bg-rose-500" : debtRatio > 60 ? "bg-amber-500" : "bg-emerald-500"
+                    }`}
+                    style={{ width: `${debtRatio}%` }}
+                  />
+                </div>
               </div>
-              <div className="flex justify-between text-xs lg:text-sm font-bold text-[#E0E0E0] py-1 mt-1.5 lg:mt-2">
-                <span>Total Beban Hutang</span>
-                <span className="text-rose-400 font-black">{totalHutang.toLocaleString("id-ID")} NEO</span>
+
+              <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-3.5 lg:p-4 rounded-xl flex flex-col justify-center min-w-0">
+                <span className="text-xs lg:text-sm font-bold text-[#E0E0E0]">Total Beban Hutang</span>
+                <span className="text-base lg:text-lg font-black text-rose-400 mt-1 break-words">{totalHutang.toLocaleString("id-ID")} NEO</span>
               </div>
             </div>
-          </div>
-
-          {/* Section 2: Tabs Peminjaman */}
-          <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/30 inline-flex mb-3.5 lg:mb-5 2xl:mb-6">
-            <button
-              onClick={() => setActiveTab("bilateral")}
-              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                activeTab === "bilateral" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-              }`}
-            >Negara Lain</button>
-            <button
-              onClick={() => setActiveTab("multilateral")}
-              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                activeTab === "multilateral" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-              }`}
-            >Lembaga Dunia</button>
-            <button
-              onClick={() => setActiveTab("history")}
-              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
-                activeTab === "history" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-              }`}
-            >Riwayat</button>
           </div>
 
           {/* Section 3: Content based on Tab */}

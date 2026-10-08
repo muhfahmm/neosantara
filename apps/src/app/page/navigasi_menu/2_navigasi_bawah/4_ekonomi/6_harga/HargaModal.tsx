@@ -156,26 +156,6 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[#0F2424] relative z-10 custom-scrollbar">
-          <p className="text-[11px] lg:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-4 lg:mb-6">
-            Stabilkan harga bahan pangan pokok beras, minyak goreng, dan daging di pasar domestik agar inflasi terjaga dan daya beli rakyat kelas bawah tetap aman.
-          </p>
-
-          <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 p-3 lg:p-4 rounded-xl mb-4 lg:mb-6">
-            <div className="flex justify-between text-xs font-bold text-[#E0E0E0] mb-2">
-              <span className="text-[#6B8A8A]">Tingkat Inflasi Sembako:</span>
-              <span className="text-rose-400 font-bold">+ 4.8% (Tinggi)</span>
-            </div>
-            <div className="flex justify-between text-xs font-bold text-[#E0E0E0]">
-              <span className="text-[#6B8A8A]">Kas Anggaran Negara:</span>
-              <span>{anggaran.toLocaleString("id-ID")} NEO</span>
-            </div>
-            <div className="flex justify-between text-xs font-bold text-[#E0E0E0] mt-1">
-              <span className="text-[#6B8A8A]">Status Subsidi:</span>
-              <span className={subsidyActive ? "text-emerald-400" : "text-rose-400"}>
-                {subsidyActive ? "AKTIF" : "NONAKTIF"}
-              </span>
-            </div>
-          </div>
 
           {loading ? (
             <div className="flex items-center gap-2 text-sm text-[#00FFAA] mb-6">

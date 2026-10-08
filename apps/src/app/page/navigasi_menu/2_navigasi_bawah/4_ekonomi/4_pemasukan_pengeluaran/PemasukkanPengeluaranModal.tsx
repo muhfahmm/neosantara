@@ -7,6 +7,8 @@ import {
   calculateGoldIncome,
   calculateMinistryCost,
   getDepartmentLevel,
+  getTourismTotalIncome,
+  getCommercialTotalIncome,
 } from "@/app/logic/economic_logic/treasuryUpdater";
 import { calculateGoldMiningDailyProduction, GOLD_MINING_PRODUCTION_PER_BUILDING } from "@/app/logic/economic_logic/goldIncome";
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from "@/app/logic/economic_logic/departments";
@@ -106,12 +108,19 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
 
   const taxRevenue = calculateTotalTaxIncome(countryDetail);
   const goldIncome = calculateGoldIncome(countryDetail);
+  const tourismIncome = getTourismTotalIncome(countryDetail);
+  const commercialIncome = getCommercialTotalIncome(countryDetail);
   const ministryCostPerDay = calculateMinistryCost(countryDetail);
-  const tourismIncome = calculateTourismIncome(countryDetail);
   const totalSubsidyCost = calculateActiveSubsidyCost(countryDetail);
 
   const goldBuildingCount = Number(countryDetail?.emas) || 0;
   const goldUnits = calculateGoldMiningDailyProduction(countryDetail);
+  const mallCount = Number(countryDetail?.mall ?? countryDetail?.pusat_belanja ?? countryDetail?.pusat_perbelanjaan ?? 0);
+  const hotelCount = Number(countryDetail?.hotel ?? 0);
+  const grosirCount = Number(countryDetail?.pusat_grosir_tekstil ?? countryDetail?.pusat_grosir ?? 0);
+  const commercialCount = mallCount + hotelCount + grosirCount;
+  const tourismCount = Number(countryDetail?.total_tempat_wisata ?? (Array.isArray(countryDetail?.tempat_wisata) ? countryDetail.tempat_wisata.length : 0));
+
   const ideology = String(countryDetail?.ideology || "").trim().toLowerCase();
   const ideologyTaxBadge = ideology === "demokrasi"
     ? `Bonus Demokrasi: penerimaan seluruh pajak +${DEMOCRACY_TAX_REVENUE_BONUS * 100}%`
@@ -135,10 +144,20 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
 
   const incomeItems: FinancialItem[] = [
     {
-      label: "Revenue Pajak",
+      label: "Revenue Pajak Nasional",
       amount: taxRevenue,
       badge: [ideologyTaxBadge, religionTaxBadge, euTaxBadge, bricsTaxBadge, g20TaxBadge].filter(Boolean).join(" | ") || undefined,
       onClick: () => onGotoPajak?.()
+    },
+    {
+      label: `Sektor Komersial (${commercialCount} Gedung)`,
+      amount: commercialIncome,
+      badge: commercialCount > 0 ? `Mall: ${mallCount}, Hotel: ${hotelCount}, Grosir: ${grosirCount}` : undefined,
+    },
+    {
+      label: `Sektor Wisata & Pariwisata (${tourismCount} Destinasi)`,
+      amount: tourismIncome,
+      badge: tourismCount > 0 ? `${tourismCount} Destinasi Wisata Terdaftar` : undefined,
     },
     {
       label: goldBuildingCount > 0
@@ -235,23 +254,61 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
             {activeTab === "summary" && (
               <div className="space-y-6">
                 <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-6 rounded-xl space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center text-xs font-bold text-emerald-400 py-2 border-b border-[#00FFAA]/20">
-                      <span className="flex items-center gap-2">
-                        <ArrowUpRight className="h-3.5 w-3.5" /> Pemasukkan
-                      </span>
-                      <span>+ {totalIncome.toLocaleString("id-ID")}</span>
+                  <h4 className="text-[10px] text-[#00FFAA] font-black uppercase tracking-wider mb-2">
+                    Rincian Aliran Saldo & PDB Negara
+                  </h4>
+                  <div className="space-y-4">
+                    {/* Section Pemasukkan */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-xs font-black text-emerald-400 pb-1 border-b border-[#00FFAA]/20">
+                        <span className="flex items-center gap-2">
+                          <ArrowUpRight className="h-4 w-4" /> Rincian Pemasukkan (Pendapatan Negara)
+                        </span>
+                        <span>+ {totalIncome.toLocaleString("id-ID")}</span>
+                      </div>
+                      <div className="pl-4 space-y-1.5 text-xs">
+                        <div className="flex justify-between items-center text-[#E0E0E0]">
+                          <span className="font-semibold">• Revenue Pajak Nasional:</span>
+                          <span className="font-bold text-emerald-400">+ {taxRevenue.toLocaleString("id-ID")}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[#E0E0E0]">
+                          <span className="font-semibold">• Sektor Komersial ({commercialCount} Gedung):</span>
+                          <span className="font-bold text-emerald-400">+ {commercialIncome.toLocaleString("id-ID")}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[#E0E0E0]">
+                          <span className="font-semibold">• Sektor Wisata & Pariwisata ({tourismCount} Destinasi):</span>
+                          <span className="font-bold text-emerald-400">+ {tourismIncome.toLocaleString("id-ID")}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[#E0E0E0]">
+                          <span className="font-semibold">• Produksi Tambang Emas ({goldBuildingCount} Unit):</span>
+                          <span className="font-bold text-emerald-400">+ {goldIncome.toLocaleString("id-ID")}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-[#00FFAA]/20">
-                      <span className="flex items-center gap-2">
-                        <ArrowDownRight className="h-3.5 w-3.5" /> Pengeluaran
-                      </span>
-                      <span>- {totalOutcome.toLocaleString("id-ID")}</span>
+
+                    {/* Section Pengeluaran */}
+                    <div className="space-y-2 pt-2">
+                      <div className="flex justify-between items-center text-xs font-black text-rose-400 pb-1 border-b border-[#00FFAA]/20">
+                        <span className="flex items-center gap-2">
+                          <ArrowDownRight className="h-4 w-4" /> Rincian Pengeluaran (Beban Negara)
+                        </span>
+                        <span>- {totalOutcome.toLocaleString("id-ID")}</span>
+                      </div>
+                      <div className="pl-4 space-y-1.5 text-xs">
+                        <div className="flex justify-between items-center text-[#E0E0E0]">
+                          <span className="font-semibold">• Biaya Operasional Dewan Kabinet (22 Departemen):</span>
+                          <span className="font-bold text-rose-400">- {ministryCostPerDay.toLocaleString("id-ID")}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[#E0E0E0]">
+                          <span className="font-semibold">• Alokasi Kebijakan Subsidi (6 Pos Kebutuhan):</span>
+                          <span className="font-bold text-rose-400">- {totalSubsidyCost.toLocaleString("id-ID")}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className="mt-4 pt-4 border-t border-[#00FFAA]/30">
                     <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
-                      <span>Netto Saldo (Pemasukkan - Pengeluaran):</span>
+                      <span>Netto Saldo Harian (Pemasukkan - Pengeluaran):</span>
                       <span className={`${netBalance >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                         {netBalance >= 0 ? "+ " : "- "}{Math.abs(netBalance).toLocaleString("id-ID")}
                       </span>
