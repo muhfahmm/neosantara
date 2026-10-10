@@ -2,7 +2,7 @@
 // Component UI Notifikasi Wabah Penyakit (Epidemi & Pandemi) di Inbox
 
 import React from 'react';
-import { Activity, ShieldAlert, Check, X, Stethoscope } from 'lucide-react';
+import { Activity, Check, X, Stethoscope } from 'lucide-react';
 import { WabahPenyakitNotification } from './wabahLogic';
 
 interface WabahNotificationProps {
@@ -42,12 +42,27 @@ export default function WabahNotification({ notification, onAccept, onReject }: 
         <p className="text-xs font-medium text-slate-200 leading-relaxed pt-0.5">
           {notification.message}
         </p>
+        {notification.skenario &&
+          notification.persentaseTerinfeksi !== undefined &&
+          notification.persentaseKematian !== undefined && (
+          <p className="text-[10px] font-bold text-slate-400">
+            Skenario {notification.skenario} · {(notification.persentaseTerinfeksi * 100).toLocaleString('id-ID', { maximumFractionDigits: 2 })}% terinfeksi · IFR {(notification.persentaseKematian * 100).toLocaleString('id-ID', { maximumFractionDigits: 2 })}%
+          </p>
+        )}
 
-        {/* Details Grid: Pasien/Korban & Kerugian */}
-        <div className="bg-[#0A1A1A] border border-teal-500/30 rounded-xl p-3 grid grid-cols-3 gap-2 text-center text-xs font-bold text-white shadow-inner">
+        {/* Details Grid: Kasus, perkiraan kematian, dan biaya */}
+        <div className="bg-[#0A1A1A] border border-teal-500/30 rounded-xl p-3 grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs font-bold text-white shadow-inner">
           <div className="border-r border-teal-500/20 pr-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Kasus Terinfeksi</div>
             <div className="text-purple-400 font-extrabold mt-0.5">{notification.korban?.toLocaleString('id-ID')} Orang</div>
+          </div>
+          <div className="border-r border-teal-500/20 px-1">
+            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Perkiraan Kematian</div>
+            <div className="text-rose-400 font-extrabold mt-0.5">{notification.perkiraanKematian?.toLocaleString('id-ID')} Orang</div>
+          </div>
+          <div className="border-r border-teal-500/20 px-1">
+            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Durasi</div>
+            <div className="text-cyan-300 font-extrabold mt-0.5">{notification.durationDays} Hari</div>
           </div>
           <div className="border-r border-teal-500/20 px-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Kerugian Sektor Medis</div>

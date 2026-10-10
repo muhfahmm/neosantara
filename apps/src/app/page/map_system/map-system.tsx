@@ -1380,14 +1380,14 @@ export default function MapPage() {
                         };
                     });
                 } else {
-                    const outbreak = generateWabahPenyakitNotification(userCountryName, currentDateStr);
-                    const durationDays = outbreak.category.includes('Pandemi')
-                        ? 60
-                        : outbreak.category.includes('Mutasi')
-                            ? 21
-                            : outbreak.category.includes('Hewan') || outbreak.category.includes('Tumbuhan')
-                                ? 14
-                                : 7;
+                    const currentPopulation = Number(countryDetail?.jumlah_penduduk);
+                    const outbreak = generateWabahPenyakitNotification(
+                        userCountryName,
+                        currentDateStr,
+                        Number.isFinite(currentPopulation) && currentPopulation > 0
+                            ? currentPopulation
+                            : undefined
+                    );
                     newNotifsToAdd.push(outbreak);
                     setCountryDetail((prev: any) => {
                         if (!prev) return prev;
@@ -1400,8 +1400,9 @@ export default function MapPage() {
                                     eventName: outbreak.eventName,
                                     category: outbreak.category,
                                     korban: outbreak.korban,
+                                    perkiraanKematian: outbreak.perkiraanKematian,
+                                    durationDays: outbreak.durationDays,
                                     startDate: currentDateStr,
-                                    durationDays
                                 }
                             ]
                         };
@@ -3719,7 +3720,9 @@ export default function MapPage() {
                 onClose={() => setPenelitianModalOpen(false)}
                 countryDetail={countryDetail}
                 setCountryDetail={setCountryDetail}
+                currentDate={currentDate}
             />
+
 
             {activeWarAnimation && (
                 <WarMap

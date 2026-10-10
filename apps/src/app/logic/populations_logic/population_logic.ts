@@ -218,16 +218,26 @@ export const hitungDampakWabah = (
     if (!startDate || elapsed < 0 || elapsed >= durationDays) continue;
     const victims = Math.max(0, finiteNumber(outbreak.korban));
     const category = String(outbreak.category || '');
+    if (!category.includes('Hewan') && !category.includes('Tumbuhan')) {
+      const legacyDailyFatalityRate = category.includes('Pandemi')
+        ? 0.15
+        : category.includes('Mutasi')
+          ? 0.1
+          : 0.05;
+      const totalDeaths = Number.isFinite(Number(outbreak.perkiraanKematian))
+        ? Math.max(0, finiteNumber(outbreak.perkiraanKematian))
+        : victims * legacyDailyFatalityRate * durationDays;
+      const deathsThroughToday = Math.floor(totalDeaths * (elapsed + 1) / durationDays);
+      const deathsBeforeToday = Math.floor(totalDeaths * elapsed / durationDays);
+      kematianTambahan += deathsThroughToday - deathsBeforeToday;
+    }
     if (category.includes('Hewan') || category.includes('Tumbuhan')) {
       kelahiranBerkurang += victims * 0.01;
     } else if (category.includes('Mutasi')) {
-      kematianTambahan += victims * 0.1;
       kelahiranBerkurang += victims * 0.05;
     } else if (category.includes('Pandemi')) {
-      kematianTambahan += victims * 0.15;
       kelahiranBerkurang += victims * 0.1;
     } else {
-      kematianTambahan += victims * 0.05;
       kelahiranBerkurang += victims * 0.02;
     }
   }

@@ -13,6 +13,7 @@ interface BottomLeftPenelitianIconProps {
   onClose?: () => void;
   countryDetail?: any;
   setCountryDetail?: (detail: any) => void;
+  currentDate?: Date;
 }
 
 export default function BottomLeftPenelitianIcon({
@@ -21,6 +22,7 @@ export default function BottomLeftPenelitianIcon({
   onClose,
   countryDetail,
   setCountryDetail,
+  currentDate,
 }: BottomLeftPenelitianIconProps) {
   const [selectedFocus, setSelectedFocus] = useState<SelectionCategoryKey | null>(null);
 
@@ -64,6 +66,7 @@ export default function BottomLeftPenelitianIcon({
           initialCategory={selectedFocus}
           countryDetail={countryDetail}
           setCountryDetail={setCountryDetail}
+          currentDate={currentDate}
         />
       )}
     </>

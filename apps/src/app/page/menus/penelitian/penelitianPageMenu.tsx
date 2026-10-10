@@ -19,7 +19,12 @@ import {
   applyCombinedResearchDuration,
 } from '@/app/page/downgrade_logic';
 import { isMemberOfUNESCO, isMemberOfITU } from '@/app/page/bonus_logic';
-import { RESEARCH_CARD_LEVEL_BONUS } from '@/app/page/bonus_logic/researchCardLevelBonus';
+import {
+  getResearchCardBonus,
+  getResearchCardLevel,
+  normalizeResearchLevels,
+  RESEARCH_CARD_LEVEL_BONUS,
+} from '@/app/page/bonus_logic/researchCardLevelBonus';
 import {
   getMilitaryResearchBaseBonus,
   getMilitaryResearchLevelBonus,
@@ -85,35 +90,29 @@ export function processActiveResearch(
     return { updatedDetail: countryDetail, hasChanged: false };
   }
 
-  let currentDateObj: Date;
-  if (currentDateInput) {
-    currentDateObj = currentDateInput instanceof Date ? currentDateInput : new Date(currentDateInput);
-  } else if (countryDetail.game_date) {
-    currentDateObj = new Date(countryDetail.game_date);
-  } else {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('simulation_date') : null;
-    currentDateObj = stored ? new Date(stored) : new Date();
-  }
+  const parseDateString = (dateStr: string | Date | null | undefined): Date => {
+    if (!dateStr) return new Date();
+    if (dateStr instanceof Date) return new Date(dateStr.getFullYear(), dateStr.getMonth(), dateStr.getDate());
+    const str = String(dateStr).trim();
+    if (str.includes('-')) {
+      const parts = str.split('T')[0].split('-').map(Number);
+      if (parts.length >= 3 && !isNaN(parts[0]) && !isNaN(parts[1]) && !isNaN(parts[2])) {
+        return new Date(parts[0], parts[1] - 1, parts[2]);
+      }
+    }
+    const d = new Date(str);
+    return isNaN(d.getTime()) ? new Date() : new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  };
 
-  if (isNaN(currentDateObj.getTime())) {
-    currentDateObj = new Date();
-  }
-
-  const getZeroTimeDate = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  const today = getZeroTimeDate(currentDateObj);
-
-  let endDateStr = countryDetail.active_research_end_date;
-  let startDateStr = countryDetail.active_research_start_date;
+  const today = parseDateString(currentDateInput || countryDetail.game_date);
+  const endDateStr = countryDetail.active_research_end_date;
 
   if (!endDateStr) {
     return { updatedDetail: countryDetail, hasChanged: false };
   }
 
-  let endDateObj = new Date(endDateStr);
-  if (isNaN(endDateObj.getTime())) {
-    return { updatedDetail: countryDetail, hasChanged: false };
-  }
-  endDateObj = getZeroTimeDate(endDateObj);
+  const endDateObj = parseDateString(endDateStr);
+
 
   let updatedDetail = { ...countryDetail };
   let hasChanged = false;
@@ -121,7 +120,7 @@ export function processActiveResearch(
   let completedResearch: string[] = Array.isArray(updatedDetail.completed_research)
     ? [...updatedDetail.completed_research]
     : [];
-  let researchLevels: Record<string, number> = { ...(updatedDetail.research_levels || {}) };
+  let researchLevels = { ...normalizeResearchLevels(updatedDetail.research_levels) };
   let currentMoney = Number(updatedDetail.anggaran || 0);
 
   const religion = updatedDetail.religion ?? updatedDetail.agama_utama ?? updatedDetail.agama;
@@ -133,26 +132,30 @@ export function processActiveResearch(
   };
 
   if (today.getTime() >= endDateObj.getTime()) {
-    hasChanged = true;
-
     if (!completedResearch.includes(researchId)) {
       completedResearch.push(researchId);
     }
     researchLevels[researchId] = targetLevel;
 
-    updatedDetail.completed_research = completedResearch;
-    updatedDetail.research_levels = researchLevels;
-    updatedDetail.active_research = null;
-    updatedDetail.active_research_start_date = null;
-    updatedDetail.active_research_end_date = null;
-    updatedDetail.active_research_progress = 0;
+    return {
+      updatedDetail: {
+        ...updatedDetail,
+        completed_research: completedResearch,
+        research_levels: researchLevels,
+        active_research: null,
+        active_research_start_date: null,
+        active_research_end_date: null,
+        active_research_progress: 0,
+      },
+      hasChanged: true,
+    };
   }
 
   if (updatedDetail.active_research && updatedDetail.active_research_end_date) {
-    const curEndObj = getZeroTimeDate(new Date(updatedDetail.active_research_end_date));
+    const curEndObj = parseDateString(updatedDetail.active_research_end_date);
     let curStartObj: Date;
     if (updatedDetail.active_research_start_date) {
-      curStartObj = getZeroTimeDate(new Date(updatedDetail.active_research_start_date));
+      curStartObj = parseDateString(updatedDetail.active_research_start_date);
     } else {
       const isUpgrade = String(updatedDetail.active_research).startsWith('upgrade:');
       const targetLvl = isUpgrade ? Number(String(updatedDetail.active_research).split(':')[2]) || 1 : 1;
@@ -169,20 +172,16 @@ export function processActiveResearch(
       updatedDetail.active_research_progress = calculatedProgress;
       hasChanged = true;
     }
-  } else {
-    if (updatedDetail.active_research_progress !== 0) {
-      updatedDetail.active_research_progress = 0;
-      hasChanged = true;
-    }
+  } else if (updatedDetail.active_research_progress) {
+    updatedDetail.active_research_progress = 0;
+    hasChanged = true;
   }
 
   return { updatedDetail, hasChanged };
 }
 
 const getCardBonus = (level: number): number => {
-  if (level < 1) return 0;
-  if (level > MAX_CARD_LEVEL) return RESEARCH_CARD_LEVEL_BONUS[MAX_CARD_LEVEL];
-  return RESEARCH_CARD_LEVEL_BONUS[level];
+  return getResearchCardBonus(level);
 };
 
 const getResearchTier = (research: Research, data: Research[]): number => {
@@ -318,6 +317,7 @@ interface PenelitianPageModalProps {
   onBackToSelection?: () => void;
   countryDetail?: any;
   setCountryDetail?: (detail: any) => void;
+  currentDate?: Date;
 }
 
 export default function PenelitianPageModal({
@@ -327,6 +327,7 @@ export default function PenelitianPageModal({
   onBackToSelection,
   countryDetail,
   setCountryDetail,
+  currentDate,
 }: PenelitianPageModalProps) {
   const allowedCategories = FOCUS_CATEGORIES_MAP[initialCategory] || ['ekonomi'];
   const defaultCategory = CATEGORIES.find((cat) => allowedCategories.includes(cat.key))?.key || allowedCategories[0];
@@ -346,18 +347,21 @@ export default function PenelitianPageModal({
     setActiveCategory(firstAvail);
   }, [initialCategory]);
 
+  const activeResId = countryDetail?.active_research || '';
+  const activeResEndDate = countryDetail?.active_research_end_date || '';
+  const gameDateStr = countryDetail?.game_date || (currentDate ? `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}` : '');
+
   useEffect(() => {
-    if (!isOpen || !countryDetail || !setCountryDetail) return;
-    const { updatedDetail, hasChanged } = processActiveResearch(countryDetail);
+    if (!isOpen || !activeResId || !setCountryDetail) return;
+    const { updatedDetail, hasChanged } = processActiveResearch(countryDetail, currentDate);
     if (hasChanged) {
       setCountryDetail(updatedDetail);
     }
-  }, [isOpen, countryDetail, setCountryDetail]);
+  }, [isOpen, activeResId, activeResEndDate, gameDateStr, currentDate, setCountryDetail]);
 
   if (!isOpen || !mounted) return null;
 
   const completedResearch: string[] = countryDetail?.completed_research || [];
-  const researchLevels: Record<string, number> = countryDetail?.research_levels || {};
   const activeResearchId: string | null = countryDetail?.active_research || null;
   const activeResearchProgress: number = countryDetail?.active_research_progress || 0;
   const money = Number(countryDetail?.anggaran || 0);
@@ -375,7 +379,8 @@ export default function PenelitianPageModal({
 
   const isUnlocked = (id: string) => completedResearch.includes(id);
   const isActive = (id: string) => activeResearchId === id;
-  const getLevel = (id: string) => researchLevels[id] || (isUnlocked(id) ? 1 : 0);
+  const getLevel = (id: string) =>
+    isUnlocked(id) ? getResearchCardLevel(countryDetail?.research_levels, id) : 0;
 
   const isLocked = (research: Research) => {
     if (research.prerequisites.length === 0) return false;
@@ -385,6 +390,12 @@ export default function PenelitianPageModal({
   const canAfford = (cost: number) => money >= cost;
 
   const getSafeDateString = (): string => {
+    if (currentDate) {
+      const y = currentDate.getFullYear();
+      const m = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const d = String(currentDate.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
     if (countryDetail?.game_date) return countryDetail.game_date;
     const stored = typeof window !== 'undefined' ? localStorage.getItem('simulation_date') : null;
     if (stored) return stored;
@@ -498,17 +509,28 @@ export default function PenelitianPageModal({
     baseValue = effect.value,
     levelValue?: number
   ): string => {
-    if (level <= 0 && baseValue === effect.value) return effect.label;
+    const isFlat = !effect.label.includes('%');
+    if (level <= 0) return effect.label;
+
     const bonus = getCardBonus(level);
-    const amplified = levelValue ?? (level > 0 ? (bonus > 0 ? bonus : baseValue) : baseValue);
-    const formattedPercent = Number(amplified.toFixed(1)).toString();
+    const amplified = levelValue ?? (bonus > 0 ? bonus : baseValue);
+
+    // Extraksi unit/nama efek dari label asli
+    const cleanLabel = effect.label.replace(/^[+-]?\d+(\.\d+)?%?\s*/, '');
+
+    if (isFlat) {
+      const isReduction = effect.label.trim().startsWith('-');
+      return `${isReduction ? '-' : '+'}${amplified} ${cleanLabel}`;
+    }
+
     const isReduction = effect.label.trim().startsWith('-') ||
       ['emisi', 'polusi', 'kriminalitas', 'pengangguran', 'penyakit', 'kebocoran', 'inflasi', 'subsidi'].some((s) => effect.stat.includes(s));
 
+    const formattedPercent = Number(amplified.toFixed(1)).toString();
     if (isReduction) {
-      return `-${Math.abs(Number(formattedPercent)).toFixed(1)}% ${effect.label.replace(/^[+-]?\d+(\.\d+)?%\s*/, '')}`;
+      return `-${Math.abs(Number(formattedPercent))}% ${cleanLabel}`;
     }
-    return `+${formattedPercent}% ${effect.label.replace(/^[+-]?\d+(\.\d+)?%\s*/, '')}`;
+    return `+${formattedPercent}% ${cleanLabel}`;
   };
 
   return createPortal(
@@ -958,17 +980,31 @@ export default function PenelitianPageModal({
                                       Antrian Penuh
                                     </div>
                                   ) : (
-                                    <button
-                                      onClick={() => canUpgrade && setConfirmUpgrade({ research, targetLevel: nextLevel })}
-                                      disabled={!canUpgrade}
-                                      className={`w-full py-1 rounded border flex items-center justify-center gap-1 text-[9px] font-black uppercase transition-all cursor-pointer ${canUpgrade
-                                          ? 'bg-gradient-to-r from-[#00FFAA] to-emerald-400 text-[#0A1A1A] border-[#00FFAA] hover:opacity-90 active:scale-95 shadow-md'
-                                          : 'bg-gray-800/50 border-gray-700 text-gray-500 cursor-not-allowed'
-                                        }`}
-                                    >
-                                      <ChevronUp className="w-2.5 h-2.5" />
-                                      {canUpgrade ? `Upgrade Lv.${nextLevel}` : 'Kas Tidak Cukup'}
-                                    </button>
+                                    <div className="flex flex-col gap-1">
+                                      <button
+                                        onClick={() => canUpgrade && setConfirmUpgrade({ research, targetLevel: nextLevel })}
+                                        disabled={!canUpgrade}
+                                        className={`w-full py-1 rounded border flex items-center justify-center gap-1 text-[9px] font-black uppercase transition-all cursor-pointer ${canUpgrade
+                                            ? 'bg-gradient-to-r from-[#00FFAA] to-emerald-400 text-[#0A1A1A] border-[#00FFAA] hover:opacity-90 active:scale-95 shadow-md'
+                                            : 'bg-gray-800/50 border-gray-700 text-gray-500 cursor-not-allowed'
+                                          }`}
+                                      >
+                                        <ChevronUp className="w-2.5 h-2.5" />
+                                        {canUpgrade ? `Upgrade Lv.${nextLevel}` : 'Kas Tidak Cukup'}
+                                      </button>
+                                      <div className="text-[8px] font-bold text-[#00FFAA] text-center tracking-tight">
+                                        Efek Berikutnya: {applyLevelBonus(
+                                          research.effects[0],
+                                          nextLevel,
+                                          research.category === 'militer'
+                                            ? getMilitaryResearchBaseBonus(research.id) ?? research.effects[0].value
+                                            : research.effects[0].value,
+                                          research.category === 'militer'
+                                            ? getMilitaryResearchLevelBonus(research.id, nextLevel)
+                                            : undefined
+                                        )}
+                                      </div>
+                                    </div>
                                   )
                                 )}
                               </div>

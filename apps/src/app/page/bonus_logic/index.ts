@@ -7,8 +7,11 @@ import { getFAOProductionMultiplier, isMemberOfFAO } from "./organisasi_bonus_lo
 import { getILOProductionMultiplier, isMemberOfILO } from "./organisasi_bonus_logic/organisasi_pbb/ilo";
 import { getOKIFoodProductionMultiplier, isMemberOfOKI } from "./organisasi_bonus_logic/organisasi_regional/oki";
 import { PRODUCTION_BAN_CATEGORIES } from "../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
-
-const RESEARCH_CARD_LEVEL_BONUS = [0, 2, 4, 7, 10, 15];
+import {
+  getResearchCardBonus,
+  getResearchCardLevel,
+  normalizeResearchLevels,
+} from "./researchCardLevelBonus";
 const RESEARCH_CARDS_BY_PRODUCTION_SECTOR: Record<string, string[]> = {
   manufaktur: ["otomasi_industri"],
   mineral: ["manufaktur_terintegrasi"],
@@ -37,15 +40,11 @@ function getResearchProductionMultiplier(
   const completedResearch = Array.isArray(countryDetail.completed_research)
     ? countryDetail.completed_research
     : [];
-  const researchLevels = countryDetail.research_levels && typeof countryDetail.research_levels === "object"
-    ? countryDetail.research_levels as Record<string, unknown>
-    : {};
+  const researchLevels = normalizeResearchLevels(countryDetail.research_levels);
 
   const sectorBonusPercent = RESEARCH_CARDS_BY_PRODUCTION_SECTOR[sector].reduce((total, researchId) => {
     if (!completedResearch.includes(researchId)) return total;
-    const storedLevel = Number(researchLevels[researchId]) || 1;
-    const level = Math.min(RESEARCH_CARD_LEVEL_BONUS.length - 1, Math.max(1, Math.floor(storedLevel)));
-    return total + RESEARCH_CARD_LEVEL_BONUS[level];
+    return total + getResearchCardBonus(getResearchCardLevel(researchLevels, researchId));
   }, 0);
 
   return 1 + sectorBonusPercent / 100;
@@ -188,6 +187,13 @@ export { getKekuatanLautBonusPercent, getKekuatanLautMultiplier } from "./peneli
 export { getHPDaratBonusPercent, getHPDaratMultiplier } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/14_Armor Reaktif Tank";
 export { getHPUdaraBonusPercent, getHPUdaraMultiplier } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/15_Struktur Jet Diperkuat";
 export { getHPLautBonusPercent, getHPLautMultiplier } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/16_Hull Kapal Diperkuat";
+
+// 3_riset_diplomasi_intelijen
+export {
+  getWaktuPembangunanKedutaanBonusPercent,
+  getEffectiveEmbassyBuildTime
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/1_Manfaat Kedutaan";
+
 
 
 import { getASEANBuildSpeedModifier } from "./organisasi_bonus_logic/organisasi_regional/asean";

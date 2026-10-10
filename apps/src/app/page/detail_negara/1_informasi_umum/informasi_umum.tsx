@@ -36,6 +36,8 @@ import {
   ECONOMIC_SANCTION_REDUCTION_PER_ACTION,
 } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 
+import { getEffectiveEmbassyBuildTime } from "@/app/page/bonus_logic";
+
 interface InformasiUmumProps {
   countryName: string;
   playerCountryDetail?: any; // data negara pemain (dipassing dari MapPage)
@@ -43,6 +45,7 @@ interface InformasiUmumProps {
   currentNetBalance?: number;
   targetNetBalance?: number;
   adjustNetBalance?: (delta: number) => void;
+
   currentDate?: Date;
   autoBuildEmbassy?: boolean;
   isOccupiedProvince?: boolean;
@@ -414,16 +417,18 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         continent={continentLabel}
         currentBudget={currentNetBalance}
         cost={embassyCost}
+        countryDetail={playerCountryDetail}
         onClose={() => setIsBuildEmbassyModalOpen(false)}
         onConfirm={() => {
           if (embassyRelation < minimumEmbassyRelation) {
             setIsEmbassyRelationRequirementModalOpen(true);
             return;
           }
-          // Hitung Tanggal Selesai (60 Hari dari currentDate)
+          const effectiveDays = getEffectiveEmbassyBuildTime(60, playerCountryDetail);
+          // Hitung Tanggal Selesai
           const baseDate = currentDate ? new Date(currentDate) : new Date();
           const endDateObj = new Date(baseDate);
-          endDateObj.setDate(endDateObj.getDate() + 60);
+          endDateObj.setDate(endDateObj.getDate() + effectiveDays);
           
           const endYear = endDateObj.getFullYear();
           const endMonth = String(endDateObj.getMonth() + 1).padStart(2, '0');
@@ -446,7 +451,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
                     targetCountry: countryName,
                     startDate: baseDate.toISOString(),
                     endDate: endDateStr,
-                    durationDays: 60,
+                    durationDays: effectiveDays,
                     continent: continentLabel
                   }
                 ]

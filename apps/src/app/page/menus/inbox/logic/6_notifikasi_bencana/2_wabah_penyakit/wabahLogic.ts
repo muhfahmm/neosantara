@@ -8,6 +8,11 @@ export interface WabahPenyakitNotification extends NotificationMessage {
   category: string; // Wabah Penyakit Menular, Penyakit Hewan & Tumbuhan, Penyakit Baru & Mutasi, Pandemi Global
   eventName: string;
   korban: number; // Jumlah pasien terinfeksi / korban terdampak
+  perkiraanKematian: number;
+  durationDays: number;
+  skenario?: string;
+  persentaseTerinfeksi?: number;
+  persentaseKematian?: number;
   totalKerugian: number; // Dalam NEO (Kerugian ekonomi / medis)
   bantuanCost: number; // 1 NEO / Korban = korban
   isHandled?: boolean;
@@ -21,6 +26,18 @@ interface WabahEventItem {
   kerugianRange: [number, number];
   descriptionTemplate: (country: string, korban: number, kerugian: number) => string;
 }
+
+const SKENARIO_PANDEMI = [
+  { nama: 'Ringan', persentaseTerinfeksi: 0.1 },
+  { nama: 'Menengah', persentaseTerinfeksi: 0.25 },
+  { nama: 'Berat', persentaseTerinfeksi: 0.4 },
+  { nama: 'Sangat berat', persentaseTerinfeksi: 0.5 },
+] as const;
+
+const POPULASI_ACUAN = 50_000_000;
+
+const randomInRange = (min: number, max: number): number =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
 
 export const WABAH_PENYAKIT_POOL: WabahEventItem[] = [
   // Wabah Penyakit Menular (20%) - Epidemi
@@ -258,7 +275,8 @@ export const WABAH_PENYAKIT_POOL: WabahEventItem[] = [
 
 export function generateWabahPenyakitNotification(
   userCountryName: string,
-  dateStr: string
+  dateStr: string,
+  jumlahPenduduk?: number
 ): WabahPenyakitNotification {
   const totalWeight = WABAH_PENYAKIT_POOL.reduce((acc, item) => acc + item.weight, 0);
   let roll = Math.random() * totalWeight;
@@ -273,18 +291,57 @@ export function generateWabahPenyakitNotification(
   }
 
   const [minK, maxK] = selectedEvent.korbanRange;
-  const korban = Math.floor(Math.random() * (maxK - minK + 1)) + minK;
+  const korbanDasar = Math.floor(Math.random() * (maxK - minK + 1)) + minK;
+  const populasiValid = typeof jumlahPenduduk === 'number' && Number.isFinite(jumlahPenduduk)
+    ? Math.max(0, Math.floor(jumlahPenduduk))
+    : null;
+  const faktorPopulasi = populasiValid === null ? 1 : populasiValid / 50_000_000;
+  const isPandemi = selectedEvent.category.includes('Pandemi');
+  const isNonHumanOutbreak = selectedEvent.category.includes('Hewan') ||
+    selectedEvent.category.includes('Tumbuhan');
+  let skenario: string | undefined;
+  let persentaseTerinfeksi: number | undefined;
+
+  if (populasiValid && populasiValid > 0 && !isNonHumanOutbreak) {
+    if (isPandemi) {
+      const scenario = SKENARIO_PANDEMI[Math.floor(Math.random() * SKENARIO_PANDEMI.length)];
+      skenario = scenario.nama;
+      persentaseTerinfeksi = scenario.persentaseTerinfeksi;
+    } else {
+      skenario = 'Epidemi regional';
+      persentaseTerinfeksi = 0.1 + Math.random() * 0.2;
+    }
+  }
+
+  const korban = populasiValid === null || !persentaseTerinfeksi
+    ? populasiValid === null
+      ? korbanDasar
+      : Math.min(populasiValid, populasiValid > 0 ? Math.max(1, Math.floor(korbanDasar * faktorPopulasi)) : 0)
+    : Math.min(populasiValid, Math.max(1, Math.round(populasiValid * persentaseTerinfeksi)));
 
   const [minR, maxR] = selectedEvent.kerugianRange;
-  const totalKerugian = Math.floor(Math.random() * (maxR - minR + 1)) + minR;
+  const kerugianDasar = Math.floor(Math.random() * (maxR - minR + 1)) + minR;
+  const totalKerugian = populasiValid === null
+    ? kerugianDasar
+    : Math.floor(kerugianDasar * faktorPopulasi);
 
   // Rule: 1 Korban = 1 NEO
   const bantuanCost = korban;
+  const durationDays = isNonHumanOutbreak
+    ? 14
+    : randomInRange(isPandemi ? 60 : 30, isPandemi ? 120 : 60);
+  const populationScale = populasiValid === null ? 1 : populasiValid / POPULASI_ACUAN;
+  const [minimumDeaths, maximumDeaths] = isPandemi ? [20_000, 100_000] : [5_000, 10_000];
+  const estimatedDeaths = isNonHumanOutbreak
+    ? 0
+    : Math.round(randomInRange(minimumDeaths, maximumDeaths) * populationScale);
+  const perkiraanKematian = Math.min(korban, populasiValid === null
+    ? estimatedDeaths
+    : Math.min(populasiValid, estimatedDeaths));
+  const persentaseKematian = korban > 0 ? perkiraanKematian / korban : 0;
 
   const country = userCountryName || 'Indonesia';
   const message = selectedEvent.descriptionTemplate(country, korban, totalKerugian);
-
-  const isPandemi = selectedEvent.category.includes('Pandemi');
 
   return {
     id: `wabah-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
@@ -299,6 +356,11 @@ export function generateWabahPenyakitNotification(
     category: selectedEvent.category,
     eventName: selectedEvent.name,
     korban,
+    perkiraanKematian,
+    durationDays,
+    ...(skenario ? { skenario } : {}),
+    ...(persentaseTerinfeksi === undefined ? {} : { persentaseTerinfeksi }),
+    ...(!isNonHumanOutbreak ? { persentaseKematian } : {}),
     totalKerugian,
     bantuanCost
   };
