@@ -4,12 +4,29 @@ import { DiserangNotification } from './diserangLogic';
 
 interface DiserangNotificationProps {
   notification: DiserangNotification;
+  userCountryName?: string;
   onAccept?: () => void;
   onReject?: () => void;
 }
 
-export default function DiserangNotificationCard({ notification, onAccept, onReject }: DiserangNotificationProps) {
+export default function DiserangNotificationCard({ notification, userCountryName = "Indonesia", onAccept, onReject }: DiserangNotificationProps) {
   const isHandled = notification.isHandled;
+
+  const handleLaunchWarAnimation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('start_war_animation', {
+          detail: {
+            attacker: notification.enemyCountry,
+            target: userCountryName,
+            playerPower: 1200,
+            targetPower: 1000,
+          },
+        })
+      );
+    }
+  };
 
   return (
     <div className={`border-l-4 ${isHandled ? 'bg-emerald-950/30 border-emerald-500' : 'bg-orange-950/40 border-orange-500'} p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border border-orange-500/20`}>
@@ -40,7 +57,15 @@ export default function DiserangNotificationCard({ notification, onAccept, onRej
           <span className="text-amber-400 font-black">Biaya Mobilisasi: {notification.costEM} EM</span>
         </div>
 
-        <div className="pt-2 flex items-center justify-end gap-2.5">
+        <div className="pt-2 flex flex-wrap items-center justify-end gap-2.5">
+          <button
+            type="button"
+            onClick={handleLaunchWarAnimation}
+            className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
+          >
+            <Swords className="w-3.5 h-3.5 text-amber-400" />
+            Lihat Animasi Serangan
+          </button>
           {isHandled ? (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />

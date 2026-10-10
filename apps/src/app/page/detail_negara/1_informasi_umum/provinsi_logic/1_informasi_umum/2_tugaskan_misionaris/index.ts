@@ -1,4 +1,5 @@
 import { Church } from 'lucide-react';
+import { getMissionarySuccessChancePercent } from '@/app/page/bonus_logic';
 import type { ProvinceAction, ProvinceActionContext, ProvinceActionResult } from '../../provinceActionTypes';
 
 type ProvinceReligionOverrides = Record<string, string>;
@@ -21,6 +22,7 @@ async function assignMissionaries({
   targetCountry,
   playerReligion,
   updateTargetReligion,
+  playerCountryDetail,
   provinceTension,
   adjustProvinceTension
 }: ProvinceActionContext): Promise<ProvinceActionResult> {
@@ -32,7 +34,7 @@ async function assignMissionaries({
     throw new Error('Data agama provinsi tidak dapat diperbarui.');
   }
 
-  const successChance = 90;
+  const successChance = getMissionarySuccessChancePercent(playerCountryDetail);
   if (Math.random() * 100 >= successChance) {
     if (!Number.isFinite(provinceTension) || !adjustProvinceTension) {
       throw new Error('Data ketegangan provinsi tidak tersedia.');
@@ -69,7 +71,7 @@ async function assignMissionaries({
 const action: ProvinceAction = {
   id: 'tugaskan_misionaris',
   label: 'Tugaskan Misionaris',
-  description: 'Mengubah agama mayoritas wilayah ini agar sama dengan agama negara Anda.',
+  description: 'Mengubah agama mayoritas wilayah ini agar sama dengan agama negara Anda. Penelitian Misi Keagamaan Internasional meningkatkan peluang keberhasilan.',
   icon: Church,
   onConfirm: assignMissionaries
 };

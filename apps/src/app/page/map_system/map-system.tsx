@@ -76,9 +76,13 @@ import { generateKeamananNotification } from '../menus/inbox/logic/14_notifikasi
 import { generateWabahPenyakitNotification } from '../menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic';
 import { generateSpionaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/1_spionase/spionaseLogic';
 import { generateSabotaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
-import { generateDiserangNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/3_diserang/diserangLogic';
+import {
+  generateDiserangNotification,
+  getAttackChancePercentFromRelation,
+} from '../menus/inbox/logic/2_notifikasi_pertahanan/3_diserang/diserangLogic';
 import { generatePemberontakanNotification, calculateSeparatismeRiskPercent } from '../menus/inbox/logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanLogic';
 import { getDefenseAllianceOfferChancePercent } from '../bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/3_Aliansi Pertahanan';
+import { applyDoktrinPertahananDiriBonus } from '../bonus_logic';
 import { generateICBMNotification, generateProgramNuklirSelesaiNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic';
 import { generateListrikDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/1_kelistrikan/listrikDefisitLogic';
 import { generateHunianDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/2_hunian/hunianDefisitLogic';
@@ -861,9 +865,17 @@ export default function MapPage() {
             if (!detail?.attacker || !detail?.target) return;
             setActiveWarAnimation(detail);
         };
+        const handlePauseGameTime = () => {
+            setIsPaused(true);
+            if (timeManagerRef.current) {
+                timeManagerRef.current.setPaused(true);
+            }
+        };
         window.addEventListener('start_war_animation', handleStartWarAnimation);
+        window.addEventListener('pause_game_time', handlePauseGameTime);
         return () => {
             window.removeEventListener('start_war_animation', handleStartWarAnimation);
+            window.removeEventListener('pause_game_time', handlePauseGameTime);
         };
     }, []);
     const [presidentRating, setPresidentRating] = useState<number>(50);
@@ -1428,20 +1440,67 @@ export default function MapPage() {
             // 5. Notifikasi Pertahanan & Intelijen (Spionase, Sabotase, Diserang, Pemberontakan, ICBM)
             const separatismeRisk = calculateSeparatismeRiskPercent(countryDetail);
             const isSeparatismeTriggered = separatismeRisk > 0 && (Math.random() * 100 < separatismeRisk);
+            const defensePartners = internationalPool.filter(
+                partner => partner.trim().toLowerCase() !== userCountryName.trim().toLowerCase()
+            );
 
-            if (isSeparatismeTriggered || Math.random() < 0.25) {
+            if (isSeparatismeTriggered || (defensePartners.length > 0 && Math.random() < 0.25)) {
                 const defRoll = Math.random();
-                const randomPartner = internationalPool[Math.floor(Math.random() * internationalPool.length)];
+                const randomPartner = defensePartners[Math.floor(Math.random() * defensePartners.length)];
                 if (isSeparatismeTriggered) {
                     newNotifsToAdd.push(generatePemberontakanNotification('Papua Barat', currentDateStr, separatismeRisk));
                 } else if (defRoll < 0.35) {
                     newNotifsToAdd.push(generateSpionaseNotification(randomPartner, currentDateStr));
                 } else if (defRoll < 0.65) {
                     newNotifsToAdd.push(generateSabotaseNotification(randomPartner, currentDateStr));
-                } else if (defRoll < 0.85) {
-                    newNotifsToAdd.push(generateDiserangNotification(randomPartner, currentDateStr));
                 } else {
                     newNotifsToAdd.push(generateICBMNotification(randomPartner, 'Jakarta', currentDateStr));
+                }
+            }
+
+            // Check all international countries for attack pool
+            const potentialAttackers = internationalPool.filter(
+                p => p.trim().toLowerCase() !== userCountryName.trim().toLowerCase()
+            );
+            if (potentialAttackers.length > 0) {
+                // Find countries with lowest relations or pick random
+                const attackerScores = potentialAttackers.map(attacker => ({
+                    attacker,
+                    score: getRelationValue(userCountryName, attacker, currentDateStr)
+                })).sort((a, b) => a.score - b.score);
+
+                // Pick from top 3 worst relation countries or random if relations are fine
+                const criticalAttackers = attackerScores.filter(item => item.score < 25);
+                const chosenAttackerObj = criticalAttackers.length > 0
+                    ? criticalAttackers[Math.floor(Math.random() * criticalAttackers.length)]
+                    : attackerScores[Math.floor(Math.random() * attackerScores.length)];
+
+                const attackerCountry = chosenAttackerObj.attacker;
+                const relationScore = chosenAttackerObj.score;
+                
+                // Base chance follows relation (relation <= 10 yields up to 80% chance)
+                let baseChance = getAttackChancePercentFromRelation(relationScore);
+                if (relationScore <= 10) {
+                    baseChance = Math.max(baseChance, 80);
+                } else if (relationScore <= 20) {
+                    baseChance = Math.max(baseChance, 50);
+                }
+
+                const attackChancePercent = applyDoktrinPertahananDiriBonus(baseChance, countryDetail);
+
+                if (Math.random() * 100 < attackChancePercent) {
+                    newNotifsToAdd.push(generateDiserangNotification(attackerCountry, currentDateStr));
+                    // Trigger visual attack animation on map
+                    if (typeof window !== 'undefined') {
+                        window.dispatchEvent(new CustomEvent('start_war_animation', {
+                            detail: {
+                                attacker: attackerCountry,
+                                target: userCountryName,
+                                playerPower: countryDetail?.kekuatanMiliter ?? 50,
+                                targetPower: 70
+                            }
+                        }));
+                    }
                 }
             }
 
@@ -3595,9 +3654,19 @@ export default function MapPage() {
 
                     if (tNotif.tradeType === 'spionase' || tNotif.tradeType === 'sabotase' || tNotif.tradeType === 'diserang' || tNotif.tradeType === 'pemberontakan' || tNotif.tradeType === 'icbm') {
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
+                        if (tNotif.tradeType === 'diserang' && typeof window !== 'undefined') {
+                            window.dispatchEvent(new CustomEvent('start_war_animation', {
+                                detail: {
+                                    attacker: tNotif.partnerCountry ?? 'Jepang',
+                                    target: countryDetail?.country || countryDetail?.nama || 'Indonesia',
+                                    playerPower: countryDetail?.kekuatanMiliter ?? 50,
+                                    targetPower: 70
+                                }
+                            }));
+                        }
                         setResultModal({
                             isOpen: true,
-                            title: 'Operasi Pertahanan Berhasil',
+                            title: tNotif.tradeType === 'diserang' ? 'Merespon Serangan Militer' : 'Operasi Pertahanan Berhasil',
                             message: `Operasi penanganan "${tNotif.title}" sukses dilaksanakan oleh divisi pertahanan & intelijen nasional!`,
                             type: 'success'
                         });
@@ -3732,15 +3801,15 @@ export default function MapPage() {
                 <WarMap
                     isOpen={!!activeWarAnimation}
                     attacker={{
-                        ...(activeWarAnimation.playerCountryDetail || {}),
                         ...(buildCapitalPoint(activeWarAnimation.attacker) || { country: activeWarAnimation.attacker, capital: activeWarAnimation.attacker, lat: 0, lng: 0 }),
+                        ...(activeWarAnimation.attacker.trim().toLowerCase() === (countryDetail?.country || countryDetail?.nama_negara || '').trim().toLowerCase() ? countryDetail : {}),
                     }}
                     target={{
-                        ...(activeWarAnimation.targetCountryDetail || {}),
                         ...(buildCapitalPoint(activeWarAnimation.target) || { country: activeWarAnimation.target, capital: activeWarAnimation.target, lat: 0, lng: 0 }),
+                        ...(activeWarAnimation.target.trim().toLowerCase() === (countryDetail?.country || countryDetail?.nama_negara || '').trim().toLowerCase() ? countryDetail : {}),
                     }}
-                    attackerPower={activeWarAnimation.playerPower || 1000}
-                    targetPower={activeWarAnimation.targetPower || 1000}
+                    attackerPower={activeWarAnimation.attackerPower || activeWarAnimation.playerPower || 75}
+                    targetPower={activeWarAnimation.targetPower || (countryDetail?.kekuatanMiliter ?? 50)}
                     onClose={() => setActiveWarAnimation(null)}
                     onResolve={({ action }) => {
                         let mappedAction: 'aneksasi' | 'jarah' | 'mundur' = 'mundur';

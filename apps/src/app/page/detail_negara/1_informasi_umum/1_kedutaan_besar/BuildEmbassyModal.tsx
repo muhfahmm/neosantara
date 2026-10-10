@@ -24,6 +24,7 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
   const hasBudget = currentBudget >= cost;
 
   const discountPct = getWaktuPembangunanKedutaanBonusPercent(countryDetail);
+  const embassyCostDiscountPct = cost > 0 ? Math.max(0, (1 - cost / 10) * 100) : 0;
   const effectiveBuildTimeDays = discountPct > 0 
     ? Math.max(1, Math.floor(buildTimeDays * (1 - discountPct / 100))) 
     : buildTimeDays;
@@ -33,7 +34,11 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
       <div className="w-full max-w-[420px] bg-white rounded-2xl p-6 shadow-2xl border border-[#E5DCCF] relative font-sans">
         <h3 className="text-lg font-black text-[#3d2911] mb-3">Konfirmasi Bangun Kedutaan</h3>
         <p className="text-sm text-[#5c3c10] mb-3">
-          Apakah Anda ingin membangun kedutaan di <strong>{countryName}</strong>? Biaya pembangunan di <strong>{continentLabel}</strong> adalah <strong>{cost} NEO</strong> dengan waktu pembangunan {
+          Apakah Anda ingin membangun kedutaan di <strong>{countryName}</strong>? Biaya pembangunan di <strong>{continentLabel}</strong> adalah {
+            embassyCostDiscountPct > 0 ? (
+              <span><span className="line-through text-red-500 mr-1">10 NEO</span><strong className="text-emerald-600">{cost.toLocaleString('id-ID')} NEO</strong></span>
+            ) : <strong>{cost} NEO</strong>
+          } dengan waktu pembangunan {
             discountPct > 0 ? (
               <span>
                 <span className="line-through text-red-500 mr-1">{buildTimeDays} hari</span>

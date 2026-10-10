@@ -9,11 +9,11 @@ import {
   getDepartmentLevel,
   getTourismTotalIncome,
   getCommercialTotalIncome,
+  calculateActiveSubsidyCost,
 } from "@/app/logic/economic_logic/treasuryUpdater";
 import { calculateGoldMiningDailyProduction, GOLD_MINING_PRODUCTION_PER_BUILDING } from "@/app/logic/economic_logic/goldIncome";
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from "@/app/logic/economic_logic/departments";
 import AlokasiSubsidiTab from "./alokasi_subsidi/AlokasiSubsidiTab";
-import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
 import { ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
 import { BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/agama_bonus_logic/buddha";
 import {
@@ -59,21 +59,6 @@ const calculateTourismIncome = (countryDetail: any) => {
   if (tourismBuildings > 0) return tourismBuildings * 25000;
   if (typeof countryDetail?.tourism_income === "number") return countryDetail.tourism_income;
   return 0;
-};
-
-// Helper untuk menghitung total pengeluaran subsidi
-const calculateActiveSubsidyCost = (countryDetail: any) => {
-  if (typeof countryDetail?.total_subsidy_cost === "number") {
-    return countryDetail.total_subsidy_cost;
-  }
-  const subsidyStates = countryDetail?.subsidy_states as Record<string, boolean> | undefined;
-  const items = INITIAL_SUBSIDY_ITEMS.map((item) => {
-    return {
-      ...item,
-      isSubsidized: subsidyStates?.[item.id] ?? item.isSubsidized,
-    };
-  });
-  return calculateSubsidySummary(items).totalCost;
 };
 
 // --- KOMPONEN UTAMA ---

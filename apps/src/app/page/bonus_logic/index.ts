@@ -273,6 +273,50 @@ export {
   applyStrategicTradePrice,
 } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/10_Diplomasi Perdagangan Strategis";
 
+export {
+  EFISIENSI_BIAYA_KEDUTAAN_RESEARCH_ID,
+  getEfisiensiBiayaKedutaanBonusPercent,
+  getEffectiveEmbassyCost,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/11_Efisiensi Biaya Kedutaan";
+
+export {
+  PENYEBARAN_IDEOLOGI_RESEARCH_ID,
+  BASE_IDEOLOGY_SUCCESS_CHANCE_PERCENT,
+  getPenyebaranIdeologiBonusPercent,
+  getIdeologySuccessChancePercent,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/12_Penyebaran Ideologi";
+
+export {
+  DOKTRIN_PERTAHANAN_DIRI_RESEARCH_ID,
+  getDoktrinPertahananDiriBonusPercent,
+  applyDoktrinPertahananDiriBonus,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/13_Doktrin Pertahanan Diri";
+
+export {
+  PROMOSI_WISATA_DIPLOMATIK_RESEARCH_ID,
+  getPromosiWisataDiplomatikBonusPercent,
+  applyPromosiWisataDiplomatikBonus,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/14_Promosi Wisata Diplomatik";
+
+export {
+  ALOKASI_SUBSIDI_TERPADU_RESEARCH_ID,
+  getAlokasiSubsidiTerpaduBonusPercent,
+  applyAlokasiSubsidiTerpaduBonus,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/15_Alokasi Subsidi Terpadu";
+
+export {
+  PENCEGAHAN_SEPARATISME_RESEARCH_ID,
+  getPencegahanSeparatismeBonusPercent,
+  applyPencegahanSeparatismeBonus,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/16_Pencegahan Separatisme";
+
+export {
+  MISI_KEAGAMAAN_INTERNASIONAL_RESEARCH_ID,
+  BASE_MISSIONARY_SUCCESS_CHANCE_PERCENT,
+  getMisiKeagamaanInternasionalBonusPercent,
+  getMissionarySuccessChancePercent,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/17_Misi Keagamaan Internasional";
+
 export function getBuildSpeedModifier(countryName: string): number {
   return getASEANBuildSpeedModifier(countryName) + getUniAfrikaBuildSpeedModifier(countryName);
 }

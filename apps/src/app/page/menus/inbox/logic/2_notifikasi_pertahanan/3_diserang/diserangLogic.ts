@@ -42,6 +42,34 @@ const ATTACK_POOL = [
   }
 ];
 
+const RELATION_ATTACK_CHANCE_POINTS = [
+  { relation: 10, chance: 50 },
+  { relation: 15, chance: 45 },
+  { relation: 20, chance: 40 },
+  { relation: 25, chance: 30 },
+  { relation: 100, chance: 0 },
+];
+
+export function getAttackChancePercentFromRelation(relationScore: number): number {
+  if (!Number.isFinite(relationScore)) return 0;
+
+  const score = Math.min(100, Math.max(0, relationScore));
+  if (score <= RELATION_ATTACK_CHANCE_POINTS[0].relation) {
+    return RELATION_ATTACK_CHANCE_POINTS[0].chance;
+  }
+
+  for (let index = 1; index < RELATION_ATTACK_CHANCE_POINTS.length; index += 1) {
+    const upperPoint = RELATION_ATTACK_CHANCE_POINTS[index];
+    if (score > upperPoint.relation) continue;
+
+    const lowerPoint = RELATION_ATTACK_CHANCE_POINTS[index - 1];
+    const progress = (score - lowerPoint.relation) / (upperPoint.relation - lowerPoint.relation);
+    return lowerPoint.chance + progress * (upperPoint.chance - lowerPoint.chance);
+  }
+
+  return 0;
+}
+
 export function generateDiserangNotification(
   enemyCountry: string,
   dateStr: string

@@ -1,4 +1,5 @@
 import { BookOpen } from 'lucide-react';
+import { getIdeologySuccessChancePercent } from '@/app/page/bonus_logic';
 import type { ProvinceAction, ProvinceActionContext, ProvinceActionResult } from '../../provinceActionTypes';
 
 type ProvinceIdeologyOverrides = Record<string, string>;
@@ -21,6 +22,7 @@ async function instillProvinceIdeology({
   targetCountry,
   playerIdeology,
   updateTargetIdeology,
+  playerCountryDetail,
   provinceTension,
   adjustProvinceTension
 }: ProvinceActionContext): Promise<ProvinceActionResult> {
@@ -32,7 +34,7 @@ async function instillProvinceIdeology({
     throw new Error('Data ideologi provinsi tidak dapat diperbarui.');
   }
 
-  const successChance = 90;
+  const successChance = getIdeologySuccessChancePercent(playerCountryDetail);
   if (Math.random() * 100 >= successChance) {
     if (!Number.isFinite(provinceTension) || !adjustProvinceTension) {
       throw new Error('Data ketegangan provinsi tidak tersedia.');
@@ -69,7 +71,7 @@ async function instillProvinceIdeology({
 const action: ProvinceAction = {
   id: 'tanamkan_ideologi',
   label: 'Tanamkan Ideologi',
-  description: 'Menanamkan ideologi negara Anda ke provinsi ini dengan peluang keberhasilan 90%.',
+  description: 'Menanamkan ideologi negara Anda ke provinsi ini. Penelitian Penyebaran Ideologi meningkatkan peluang keberhasilan.',
   icon: BookOpen,
   onConfirm: instillProvinceIdeology
 };

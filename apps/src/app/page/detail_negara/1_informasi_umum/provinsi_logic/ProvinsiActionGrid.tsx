@@ -126,7 +126,7 @@ export default function ProvinsiActionGrid({
         targetCountry,
         actionLabel: selectedAction.id === 'tanamkan_ideologi' ? 'Ideologi' : 'Misionaris',
         succeeded: actionSucceeded,
-        successChance: successChance ?? 90,
+        successChance: successChance ?? 75,
         message: actionMessage || `${selectedAction.label} ${actionSucceeded ? 'berhasil' : 'gagal'}.`
       });
     }

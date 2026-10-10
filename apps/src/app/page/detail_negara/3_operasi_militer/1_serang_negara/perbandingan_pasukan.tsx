@@ -157,15 +157,21 @@ export default function PerbandinganPasukan({
 }: PerbandinganPasukanProps) {
   const [expandedGroup, setExpandedGroup] = useState<ArmadaGroup | null>('darat');
 
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('pause_game_time'));
+    }
+  }, []);
+
   const attackerSummary = attackerDetail ? getArmadaPowerSummary(attackerDetail) : null;
   const targetSummary = targetDetail ? getArmadaPowerSummary(targetDetail) : null;
 
-  const attackerTotalPower = attackerSummary?.totals?.totalPower ?? attackerPower;
-  const targetTotalPower = targetSummary?.totals?.totalPower ?? targetPower;
+  const attackerTotalPower = (attackerSummary?.totals?.totalPower && attackerSummary.totals.totalPower > 0) ? attackerSummary.totals.totalPower : (attackerPower > 0 ? attackerPower : 60);
+  const targetTotalPower = (targetSummary?.totals?.totalPower && targetSummary.totals.totalPower > 0) ? targetSummary.totals.totalPower : (targetPower > 0 ? targetPower : 50);
 
   // Baca konfigurasi persentase pengerahan dari Konfirmasi Serangan
   const getDeployedQuantity = (itemKey: string, rawQty: number) => {
-    if (typeof window === "undefined") return 0;
+    if (typeof window === "undefined") return rawQty;
     try {
       const saved = localStorage.getItem("deployed_units_config");
       if (saved) {
@@ -175,7 +181,7 @@ export default function PerbandinganPasukan({
         }
       }
     } catch (e) {}
-    return 0;
+    return rawQty;
   };
 
   const attackerBreakdown = {
@@ -219,7 +225,7 @@ export default function PerbandinganPasukan({
               </div>
               <div>
                 <h3 className="text-base sm:text-lg font-black text-[#00FFAA] tracking-wider uppercase leading-none">
-                  KONFIRMASI SERANGAN
+                  ANALISIS PERTAHANAN & PERTEMPURAN
                 </h3>
                 <p className="text-[10px] text-[#6B8A8A] font-bold uppercase tracking-widest mt-1">
                   Analisis Operasi Tempur Intelijen Militer

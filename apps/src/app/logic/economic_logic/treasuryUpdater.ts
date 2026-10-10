@@ -12,7 +12,9 @@ import {
   applyKerjaSamaRegionalToMultiplier,
   getEUTaxRevenueMultiplier,
   getBRICSTaxRevenueMultiplier,
-  getG20TaxRevenueMultiplier
+  getG20TaxRevenueMultiplier,
+  applyPromosiWisataDiplomatikBonus,
+  applyAlokasiSubsidiTerpaduBonus,
 } from '@/app/page/bonus_logic';
 
 const getNestedValue = (obj: any, path: string[]) => {
@@ -58,16 +60,16 @@ const applyOrgTaxBonus = (revenue: number, countryName: string, countryDetail: R
 
 export const getTourismTotalIncome = (detail: any): number => {
   if (!detail || typeof detail !== 'object') return 0;
-  if (typeof detail.total_wisata_penghasilan === 'number') return detail.total_wisata_penghasilan;
-  if (typeof detail.wisata_penghasilan === 'number') return detail.wisata_penghasilan;
-
-  if (Array.isArray(detail.tempat_wisata)) {
-    return detail.tempat_wisata.reduce((sum: number, item: any) => sum + (Number(item?.penghasilan) || 0), 0);
-  }
-  if (Array.isArray(detail.wisata_items)) {
-    return detail.wisata_items.reduce((sum: number, item: any) => sum + (Number(item?.penghasilan) || 0), 0);
-  }
-  return 0;
+  const income = typeof detail.total_wisata_penghasilan === 'number'
+    ? detail.total_wisata_penghasilan
+    : typeof detail.wisata_penghasilan === 'number'
+      ? detail.wisata_penghasilan
+      : Array.isArray(detail.tempat_wisata)
+        ? detail.tempat_wisata.reduce((sum: number, item: any) => sum + (Number(item?.penghasilan) || 0), 0)
+        : Array.isArray(detail.wisata_items)
+          ? detail.wisata_items.reduce((sum: number, item: any) => sum + (Number(item?.penghasilan) || 0), 0)
+          : 0;
+  return applyPromosiWisataDiplomatikBonus(income, detail);
 };
 
 export const calculateTotalTaxIncome = (detail: any) => {
@@ -145,7 +147,7 @@ export const calculateTotalPDB = (detail: any) => {
 export const calculateActiveSubsidyCost = (detail: any) => {
   if (!detail || typeof detail !== 'object') return 0;
   if (typeof detail?.total_subsidy_cost === 'number') {
-    return detail.total_subsidy_cost;
+    return applyAlokasiSubsidiTerpaduBonus(detail.total_subsidy_cost, detail);
   }
   const subsidyStates = detail?.subsidy_states as Record<string, boolean> | undefined;
   const items = INITIAL_SUBSIDY_ITEMS.map((item) => {
@@ -155,7 +157,7 @@ export const calculateActiveSubsidyCost = (detail: any) => {
     const normalizedIsSub = (isSub === 0 || isSub === "0" || isSub === false || isSub === "false") ? false : Boolean(isSub);
     return { ...item, isSubsidized: normalizedIsSub };
   });
-  return calculateSubsidySummary(items).totalCost;
+  return applyAlokasiSubsidiTerpaduBonus(calculateSubsidySummary(items).totalCost, detail);
 };
 
 export const calculateCountryNetBalance = (detail: any) => {

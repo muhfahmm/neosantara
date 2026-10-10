@@ -36,7 +36,10 @@ import {
   ECONOMIC_SANCTION_REDUCTION_PER_ACTION,
 } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 
-import { getEffectiveEmbassyBuildTime } from "@/app/page/bonus_logic";
+import {
+  getEffectiveEmbassyBuildTime,
+  getEffectiveEmbassyCost,
+} from "@/app/page/bonus_logic";
 
 interface InformasiUmumProps {
   countryName: string;
@@ -138,7 +141,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const removedTradePartners = Array.isArray(playerCountryDetail?.removedTradePartners) ? playerCountryDetail.removedTradePartners : [];
   const addedTradePartners = Array.isArray(playerCountryDetail?.addedTradePartners) ? playerCountryDetail.addedTradePartners : [];
 
-  const embassyCost = 10;
+  const embassyCost = getEffectiveEmbassyCost(10, playerCountryDetail);
   const minimumEmbassyRelation = 65;
   const embassyRelation = getRelationValue(
     playerCountryName || 'Indonesia',

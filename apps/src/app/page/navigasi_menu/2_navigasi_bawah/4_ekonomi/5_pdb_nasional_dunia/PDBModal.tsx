@@ -6,9 +6,10 @@ import {
   calculateGoldIncome,
   calculateTotalMinistryCostPerDay,
   getCommercialTotalIncome,
+  getTourismTotalIncome,
+  calculateActiveSubsidyCost,
 } from "@/app/logic/economic_logic/treasuryUpdater";
 import { calculateGoldMiningDailyProduction } from "@/app/logic/economic_logic/goldIncome";
-import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import { applyNpcCountrySimulationState } from '@/app/logic/npcCountrySimulation';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
@@ -37,21 +38,6 @@ const getTaxData = (detail: any) => {
     tarif_bea_cukai: detail.cigarette_tax ?? detail.tarif_bea_cukai ?? 0,
     tarif_lingkungan: detail.environment_tax ?? detail.tarif_lingkungan ?? 0,
   };
-};
-
-const getSubsidyData = (detail: any) => {
-  if (!detail) return {};
-  if (detail.subsidy_states && typeof detail.subsidy_states === 'object') {
-    return detail.subsidy_states;
-  }
-  const subsKeys = ['sub_bbm','sub_listrik','sub_lpg','sub_pdam','sub_pupuk','sub_sembako',
-    'sub_bantuan_pangan','sub_pendidikan','sub_bpjs','sub_vaksin','sub_transport_publik',
-    'sub_perumahan','sub_ev','sub_kur','sub_pajak_umkm','sub_blt','sub_pensiun','sub_bencana'];
-  const result: Record<string, any> = {};
-  for (const k of subsKeys) {
-    if (detail[k] !== undefined) result[k] = detail[k];
-  }
-  return result;
 };
 
 const getKabinetData = (detail: any) => {
@@ -96,25 +82,6 @@ const computeMinistryCost = (detail: any) => {
   const kabData = getKabinetData(detail);
   const merged = { ...kabData, ...detail };
   return calculateTotalMinistryCostPerDay(merged);
-};
-
-const computeSubsidyCost = (detail: any) => {
-  if (!detail || typeof detail !== 'object') return 424;
-  if (typeof detail?.total_subsidy_cost === 'number') {
-    return detail.total_subsidy_cost;
-  }
-  const subData = getSubsidyData(detail) as Record<string, any>;
-  const subsidyStates = detail?.subsidy_states as Record<string, boolean> | undefined;
-
-  const items = INITIAL_SUBSIDY_ITEMS.map((item) => {
-    const dbValue = subData[item.id];
-    const isSub = subsidyStates
-      ? (subsidyStates[item.id] ?? (dbValue !== undefined ? dbValue : item.isSubsidized))
-      : (detail[item.id] ?? detail[item.id.toLowerCase()] ?? (dbValue !== undefined ? dbValue : item.isSubsidized));
-    const normalizedIsSub = (isSub === 0 || isSub === "0" || isSub === false || isSub === "false") ? false : Boolean(isSub);
-    return { ...item, isSubsidized: normalizedIsSub };
-  });
-  return calculateSubsidySummary(items).totalCost;
 };
 
 const formatNumber = (num: number) => num.toLocaleString('id-ID');
@@ -302,11 +269,11 @@ function AllCountriesGDP({
       const gold = isLoaded ? computeGoldValue({ ...targetDetail, emas: emasCount }) : 0;
       const commercial = isLoaded ? getCommercialTotalIncome(targetDetail) : 0;
       const commercialCount = isLoaded ? (Number(targetDetail?.mall ?? targetDetail?.pusat_belanja ?? 0) + Number(targetDetail?.hotel ?? 0) + Number(targetDetail?.pusat_grosir_tekstil ?? targetDetail?.pusat_grosir ?? 0)) : 0;
-      const tourism = isLoaded ? (targetDetail.total_wisata_penghasilan ?? targetDetail.wisata_penghasilan ?? (Array.isArray(targetDetail.tempat_wisata) ? targetDetail.tempat_wisata.reduce((s: number, i: any) => s + (Number(i?.penghasilan) || 0), 0) : 0)) : 0;
+      const tourism = isLoaded ? getTourismTotalIncome(targetDetail) : 0;
       const tourismCount = isLoaded ? (targetDetail.total_tempat_wisata ?? (Array.isArray(targetDetail.tempat_wisata) ? targetDetail.tempat_wisata.length : 0)) : 0;
       const pdb = tax + gold + commercial + tourism;
       const dewanKabinetCost = isLoaded ? computeMinistryCost(targetDetail) : 0;
-      const subsidyCost = isLoaded ? computeSubsidyCost(targetDetail) : 0;
+      const subsidyCost = isLoaded ? calculateActiveSubsidyCost(targetDetail) : 0;
       const totalPengeluaran = dewanKabinetCost + subsidyCost;
       const net = pdb - totalPengeluaran;
       const continent = normalizeContinent(targetDetail.continent || country.continent || getContinentFromOrder(country.__fileOrder));
