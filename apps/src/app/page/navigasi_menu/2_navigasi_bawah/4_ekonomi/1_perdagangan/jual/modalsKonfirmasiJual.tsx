@@ -12,7 +12,13 @@ import {
   applyProtestantTradePrice,
   PROTESTANT_SELL_PRICE_BONUS
 } from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
-import { isMemberOfWTO, getWTOSellPriceMultiplier, getOPECSellPriceMultiplier } from "@/app/page/bonus_logic";
+import {
+  applyKerjaSamaRegionalToMultiplier,
+  isMemberOfWTO,
+  getWTOSellPriceMultiplier,
+  getOPECSellPriceMultiplier,
+  getStrategicTradeBonusPercent,
+} from "@/app/page/bonus_logic";
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import {
   applyNpcCountrySimulationState,
@@ -307,16 +313,25 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
   
   const userCountryName = countryDetail?.country || countryDetail?.nama || "";
   const isWTOActive = isMemberOfWTO(userCountryName);
-  const wtoSellMultiplier = getWTOSellPriceMultiplier(userCountryName); // 1.15 if active, 1.0 if not
+  const wtoSellMultiplier = applyKerjaSamaRegionalToMultiplier(
+    getWTOSellPriceMultiplier(userCountryName),
+    countryDetail
+  );
   
-  const opecSellMultiplier = getOPECSellPriceMultiplier(userCountryName, selectedProduct);
+  const opecSellMultiplier = applyKerjaSamaRegionalToMultiplier(
+    getOPECSellPriceMultiplier(userCountryName, selectedProduct),
+    countryDetail
+  );
   const isOPECActive = opecSellMultiplier > 1;
 
   const protestantPrice = applyProtestantTradePrice(currentPrice, countryDetail?.religion, "sell");
   const hasProtestantBonus = protestantPrice > currentPrice;
   const protestantMultiplier = hasProtestantBonus ? (1 + PROTESTANT_SELL_PRICE_BONUS) : 1.0;
+
+  const strategicTradeBonusPercent = getStrategicTradeBonusPercent(countryDetail);
+  const strategicSellBonus = strategicTradeBonusPercent > 0 ? (strategicTradeBonusPercent / 100) : 0;
   
-  const combinedSellMultiplier = (wtoSellMultiplier - 1) + (protestantMultiplier - 1) + (opecSellMultiplier - 1);
+  const combinedSellMultiplier = (wtoSellMultiplier - 1) + (protestantMultiplier - 1) + (opecSellMultiplier - 1) + strategicSellBonus;
   const pricePerUnit = Math.round(currentPrice * (1 + combinedSellMultiplier));
   const hasTradeBonus = combinedSellMultiplier > 0;
   const totalPrice = pricePerUnit * quantity;

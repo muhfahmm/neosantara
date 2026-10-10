@@ -268,21 +268,21 @@ const RESEARCH_DATA: Research[] = [
 { id: 'perjanjian_dagang',  name: 'Pakta Perdagangan Bipartit',   category: 'diplomasi', tier: 1, cost: 1600, duration: 10, prerequisites: [], icon: Globe2,   description: 'Tim negosiator handal untuk mempercepat perjanjian dagang. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',     effects: [{ stat: 'peluang_dagang', value:  2, label: '+2% Peluang Perjanjian Dagang' }] },
 
 // ---- TIER 2 ----
-{ id: 'pandemi_kontrol',     name: 'Kontrol Pandemi Global',       category: 'diplomasi', tier: 2, cost: 3500, duration: 22, prerequisites: ['manfaat_kedutaan'],   icon: HeartPulse, description: 'Kerja sama internasional untuk menekan pandemi & epidemi. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.', effects: [{ stat: 'kematian_pandemi', value: -2, label: '-2% Kematian Pandemi/Epidemi' }] },
+{ id: 'pandemi_kontrol',     name: 'Kontrol Pandemi Global',       category: 'diplomasi', tier: 2, cost: 3500, duration: 22, prerequisites: ['manfaat_kedutaan'],   icon: HeartPulse, description: 'Kerja sama internasional mengurangi estimasi korban jiwa epidemi dan pandemi sebesar 2% hingga 15% sesuai level riset.', effects: [{ stat: 'kematian_pandemi', value: -2, label: '-2% Kematian Pandemi/Epidemi' }] },
 { id: 'efek_acara',          name: 'Diplomasi Acara Nasional',     category: 'diplomasi', tier: 2, cost: 3800, duration: 24, prerequisites: ['suara_pbb'],          icon: Sparkles,   description: 'Penyelenggaraan acara internasional yang berdampak luas. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',  effects: [{ stat: 'efek_acara',       value:  2, label: '+2% Efek Acara' }] },
 { id: 'penyebaran_ideologi', name: 'Penyebaran Ideologi',          category: 'diplomasi', tier: 2, cost: 3600, duration: 23, prerequisites: ['kontra_separatisme'], icon: Palette,    description: 'Promosi ideologi nasional ke negara lain. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',                 effects: [{ stat: 'ideologi',         value:  2, label: '+2% Keberhasilan Ideologi' }] },
 { id: 'misionaris',          name: 'Misi Keagamaan Internasional', category: 'diplomasi', tier: 2, cost: 3700, duration: 23, prerequisites: ['biaya_kedutaan'],     icon: HeartPulse, description: 'Pengiriman misionaris resmi ke negara sahabat. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',            effects: [{ stat: 'misionaris',       value:  2, label: '+2% Keberhasilan Misionaris' }] },
 { id: 'pakta_non_agresi',    name: 'Pakta Non-Agresi',             category: 'diplomasi', tier: 2, cost: 3400, duration: 20, prerequisites: ['perjanjian_dagang'],  icon: Shield,     description: 'Doktrin diplomasi untuk mempercepat pakta non-agresi. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',     effects: [{ stat: 'peluang_nap',      value:  2, label: '+2% Peluang Pakta Non-Agresi' }] },
 
 // ---- TIER 3 ----
-{ id: 'aliansi_pertahanan',   name: 'Aliansi Pertahanan',          category: 'diplomasi', tier: 3, cost: 6500, duration: 35, prerequisites: ['pakta_non_agresi'],     icon: Shield,     description: 'Jaringan kerja sama untuk membangun aliansi pertahanan. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',  effects: [{ stat: 'peluang_aliansi',  value:  2, label: '+2% Peluang Aliansi Pertahanan' }] },
+{ id: 'aliansi_pertahanan',   name: 'Aliansi Pertahanan',          category: 'diplomasi', tier: 3, cost: 6500, duration: 35, prerequisites: ['pakta_non_agresi'],     icon: Shield,     description: 'Meningkatkan peluang menerima tawaran aliansi pertahanan dari 25% hingga 40% per bulan, sesuai level riset.', effects: [{ stat: 'peluang_aliansi',  value:  2, label: '+2% Peluang Aliansi Pertahanan' }] },
 { id: 'mitigasi_bencana',     name: 'Mitigasi Bencana Alam',       category: 'diplomasi', tier: 3, cost: 6800, duration: 36, prerequisites: ['pandemi_kontrol'],      icon: Leaf,       description: 'Sistem peringatan & bantuan bencana lintas negara. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',       effects: [{ stat: 'kematian_bencana', value: -2, label: '-2% Kematian Bencana Alam' }] },
 { id: 'pertahanan_diri',      name: 'Doktrin Pertahanan Diri',     category: 'diplomasi', tier: 3, cost: 6200, duration: 33, prerequisites: ['efek_acara'],           icon: Shield,     description: 'Postur pertahanan yang menurunkan peluang diserang. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',      effects: [{ stat: 'peluang_diserang', value: -2, label: '-2% Peluang Diserang Negara Lain' }] },
 { id: 'perlindungan_perang',  name: 'Perlindungan Sipil Perang',   category: 'diplomasi', tier: 3, cost: 6400, duration: 34, prerequisites: ['penyebaran_ideologi'],  icon: HeartPulse, description: 'Protokol perlindungan sipil saat konflik bersenjata. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',     effects: [{ stat: 'kematian_perang',  value: -2, label: '-2% Kematian Populasi Perang' }] },
 { id: 'bonus_organisasi_pbb', name: 'Kontribusi Organisasi PBB',   category: 'diplomasi', tier: 3, cost: 6000, duration: 32, prerequisites: ['misionaris'],           icon: Globe2,     description: 'Kontribusi aktif di PBB untuk bonus diplomasi. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',           effects: [{ stat: 'bonus_pbb',        value:  2, label: '+2% Bonus Organisasi PBB' }] },
 
 // ---- TIER 4 ----
-{ id: 'bonus_organisasi_regional', name: 'Kerja Sama Organisasi Regional', category: 'diplomasi', tier: 4, cost: 11000, duration: 48, prerequisites: ['aliansi_pertahanan'],    icon: Globe2,  description: 'Peran aktif di organisasi regional (ASEAN, EU, dll). Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',  effects: [{ stat: 'bonus_regional',        value:  2, label: '+2% Bonus Organisasi Regional' }] },
+{ id: 'bonus_organisasi_regional', name: 'Kerja Sama Organisasi Internasional', category: 'diplomasi', tier: 4, cost: 11000, duration: 48, prerequisites: ['aliansi_pertahanan'],    icon: Globe2,  description: 'Memperkuat manfaat organisasi PBB dan regional yang diikuti sebesar 2% hingga 15% sesuai level riset.', effects: [{ stat: 'bonus_organisasi_regional', value: 2, label: '+2% Manfaat Organisasi Internasional' }] },
 { id: 'kursi_tetap_dewan_pbb',     name: 'Kursi Tetap Dewan Keamanan PBB', category: 'diplomasi', tier: 4, cost: 25000, duration: 60, prerequisites: ['bonus_organisasi_pbb'], icon: Sparkles, description: 'Klaim permanen kursi Dewan Keamanan PBB. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',              effects: [{ stat: 'kursi_dewan_keamanan',  value:  1, label: 'Ambil Kursi Tetap Dewan Keamanan PBB' }] },
 { id: 'bonus_tempat_wisata',       name: 'Promosi Wisata Diplomatik',      category: 'diplomasi', tier: 4, cost: 9500,  duration: 44, prerequisites: ['mitigasi_bencana'],     icon: Palette,  description: 'Diplomasi wisata ke negara sahabat. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',                   effects: [{ stat: 'bonus_wisata',          value:  2, label: '+2% Bonus Tempat Wisata' }] },
 { id: 'sanksi_ekonomi',            name: 'Perangkat Sanksi Ekonomi',       category: 'diplomasi', tier: 4, cost: 10800, duration: 47, prerequisites: ['bonus_organisasi_regional'], icon: Banknote, description: 'Pembekuan aset musuh. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',                           effects: [{ stat: 'sanksi',                value:  2, label: '+2% Efek Sanksi Musuh' }] },
@@ -371,10 +371,25 @@ export default function PenelitianPageModal({
   
   const educationPoints = calculateEducationPoints(countryDetail);
   const educationModifier = getEducationResearchModifier(educationPoints);
-  const combinedModifier = calculateCombinedResearchDurationModifier(educationPoints, religion, researchContracts);
+  const combinedModifier = calculateCombinedResearchDurationModifier(
+    educationPoints,
+    religion,
+    researchContracts,
+    countryDetail?.country,
+    undefined,
+    countryDetail
+  );
 
   const getEffectiveResearchDuration = (durationDays: number, category?: string) => {
-    return applyCombinedResearchDuration(durationDays, educationPoints, religion, researchContracts, countryDetail?.country, category);
+    return applyCombinedResearchDuration(
+      durationDays,
+      educationPoints,
+      religion,
+      researchContracts,
+      countryDetail?.country,
+      category,
+      countryDetail
+    );
   };
 
   const isUnlocked = (id: string) => completedResearch.includes(id);

@@ -2,6 +2,7 @@ import armadaMetadata from "../../../../../../../../../json/semua_fitur_negara/2
 import { getMonarchyMilitaryStrengthMultiplier } from "@/app/page/bonus_logic/ideologi_bonus_logic/monarki";
 import { getAuthoritarianMilitaryStrengthMultiplier } from "@/app/page/bonus_logic/ideologi_bonus_logic/otoritarianisme";
 import { getNATOMilitaryMultiplier } from "@/app/page/bonus_logic";
+import { applyKerjaSamaRegionalToMultiplier } from "@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/4_Kerja Sama Organisasi Regional";
 import { getMilitaryResearchStrengthMultiplier } from "@/app/page/bonus_logic/militaryResearchBonus";
 
 type ArmadaMetadataRecord = {
@@ -123,7 +124,7 @@ export function getArmadaUnitBreakdown(source: unknown): ArmadaUnitBreakdown[] {
   const militaryMultiplier =
     getMonarchyMilitaryStrengthMultiplier(ideology) *
     getAuthoritarianMilitaryStrengthMultiplier(ideology) *
-    getNATOMilitaryMultiplier(countryName);
+    applyKerjaSamaRegionalToMultiplier(getNATOMilitaryMultiplier(countryName), sourceData);
 
   const daratPowerMult = getKekuatanDaratMultiplier(sourceData);
   const udaraPowerMult = getKekuatanUdaraMultiplier(sourceData);

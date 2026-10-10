@@ -30,7 +30,7 @@ import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid
 import { getEconomicEmbargoIncomeMultiplier, getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
 import { loadActiveResolutions, isPassedResolutionActive, normalizePbbCountryName } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { loadActiveSecurityCouncilItems } from "../../7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
-import { getProductionBonusMultiplier } from "../../../../bonus_logic";
+import { getEffectiveBuildTime, getProductionBonusMultiplier } from "../../../../bonus_logic";
 import { applyJewishConstructionTimeDiscount } from "../../../../bonus_logic/agama_bonus_logic/yahudi";
 import {
   getManufakturMaterialBonusPercent,
@@ -489,6 +489,11 @@ export default function ProduksiModal({
       const discountMult = 1 - (totalResearchDiscountPercent / 100);
       waktu = Math.max(1, Math.ceil(waktu * discountMult));
     }
+    waktu = getEffectiveBuildTime(
+      waktu,
+      String(countryDetail?.country || countryDetail?.nama || ""),
+      countryDetail
+    );
 
     if (waktu <= 0) {
       updatedDetail[key] = (Number(countryDetail?.[key]) || 0) + buildQuantity;
@@ -798,7 +803,11 @@ export default function ProduksiModal({
             cost={cost}
             waktuPembangunan={bMeta?.waktu_pembangunan}
             waktuPembangunanDiskon={applyJewishConstructionTimeDiscount(
-              Number(bMeta?.waktu_pembangunan) || 0,
+              getEffectiveBuildTime(
+                Number(bMeta?.waktu_pembangunan) || 0,
+                String(countryDetail?.country || countryDetail?.nama || ""),
+                countryDetail
+              ),
               selectedBuilding.key,
               countryDetail?.religion
             )}

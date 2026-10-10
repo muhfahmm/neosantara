@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { X, Smile, Coins, Sparkles, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import DanaTidakCukupModal from "./DanaTidakCukupModal";
+import { getDiplomasiAcaraBonusPercent, applyDiplomasiAcaraSatisfactionBonus } from "@/app/page/bonus_logic";
 
 interface NaikkanKepuasanModalProps {
   isOpen: boolean;
@@ -376,6 +377,10 @@ export default function NaikkanKepuasanModal({
                 const isEventOngoing = ongoingEvents.length > 0;
                 const lastEndDate = isEventOngoing ? ongoingEvents[ongoingEvents.length - 1].endDate : null;
 
+                const baseBoost = item.boost;
+                const boostedBoost = applyDiplomasiAcaraSatisfactionBonus(baseBoost, countryDetail);
+                const hasAcaraResearchBonus = boostedBoost > baseBoost;
+
                 return (
                   <div
                     key={item.id}
@@ -397,9 +402,16 @@ export default function NaikkanKepuasanModal({
                           <h4 className="text-xs lg:text-sm 2xl:text-md font-black text-[#E0E0E0] uppercase tracking-wide leading-none">
                             {item.title}
                           </h4>
-                          <span className="bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 px-1.5 lg:px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black uppercase tracking-wider">
-                            +{item.boost}% Kepuasan
-                          </span>
+                          {hasAcaraResearchBonus ? (
+                            <span className="bg-[#00FFAA]/10 border border-[#00FFAA]/30 px-1.5 lg:px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5">
+                              <span className="text-rose-400 line-through">+{baseBoost}%</span>
+                              <span className="text-emerald-400">+{boostedBoost}% Kepuasan</span>
+                            </span>
+                          ) : (
+                            <span className="bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 px-1.5 lg:px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black uppercase tracking-wider">
+                              +{baseBoost}% Kepuasan
+                            </span>
+                          )}
                         </div>
                         {/* 🔥 Tampilkan durasi */}
                         <div className="flex items-center gap-1.5 text-[9px] lg:text-[10px] text-[#6B8A8A] font-medium mt-0.5 lg:mt-1">
@@ -419,7 +431,7 @@ export default function NaikkanKepuasanModal({
                         </p>
                       </div>
                       <button
-                        onClick={() => handleInitiative(item.cost, item.boost, item.title, item.duration, item.id)}
+                        onClick={() => handleInitiative(item.cost, boostedBoost, item.title, item.duration, item.id)}
                         disabled={isEventOngoing}
                         className={`px-3.5 py-1.5 lg:px-4 lg:py-2 2xl:px-6 2xl:py-2.5 rounded-lg 2xl:rounded-xl font-black text-[10px] lg:text-xs uppercase transition-all ${
                           isEventOngoing

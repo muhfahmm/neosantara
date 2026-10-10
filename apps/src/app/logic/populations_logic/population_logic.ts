@@ -6,6 +6,7 @@
 import { logger } from '../../../lib/logger';
 import { applyHinduPopulationGrowthBonus } from "@/app/page/bonus_logic/agama_bonus_logic/hindu";
 import { applySocialismBirthRateBonus } from "@/app/page/bonus_logic/ideologi_bonus_logic/sosialisme";
+import { applyKontrolPandemiFatalityReduction } from "@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/2_Kontrol Pandemi Global";
 
 // Import dari logic yang baru dibuat
 import { calculateKeamananLogic } from "@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/kematian_modals/logic/keamananLogic";
@@ -207,7 +208,8 @@ export const hitungKematianKelaparan = (population: number, foodRatio: number): 
 
 export const hitungDampakWabah = (
   outbreaks: Array<Record<string, any>> = [],
-  currentDate = new Date().toISOString().slice(0, 10)
+  currentDate = new Date().toISOString().slice(0, 10),
+  countryDetail?: Record<string, unknown> | null
 ): { kematianTambahan: number; kelahiranBerkurang: number } => {
   let kematianTambahan = 0;
   let kelahiranBerkurang = 0;
@@ -224,9 +226,10 @@ export const hitungDampakWabah = (
         : category.includes('Mutasi')
           ? 0.1
           : 0.05;
-      const totalDeaths = Number.isFinite(Number(outbreak.perkiraanKematian))
+      const estimatedDeaths = Number.isFinite(Number(outbreak.perkiraanKematian))
         ? Math.max(0, finiteNumber(outbreak.perkiraanKematian))
         : victims * legacyDailyFatalityRate * durationDays;
+      const totalDeaths = applyKontrolPandemiFatalityReduction(estimatedDeaths, countryDetail);
       const deathsThroughToday = Math.floor(totalDeaths * (elapsed + 1) / durationDays);
       const deathsBeforeToday = Math.floor(totalDeaths * elapsed / durationDays);
       kematianTambahan += deathsThroughToday - deathsBeforeToday;
@@ -534,7 +537,7 @@ export const calculateDailyPopulationChange = (
   const disasterEffects = hitungDampakBencana(detail.active_disaster_effects || [], date);
   const healthIndex = Math.min(100, Math.max(0, finiteNumber(detail.indeks_kesehatan, 50) * disasterEffects.healthMultiplier));
   const health = getKesehatanMultiplier(healthIndex);
-  const outbreakEffects = hitungDampakWabah(detail.active_outbreaks || [], date);
+  const outbreakEffects = hitungDampakWabah(detail.active_outbreaks || [], date, detail);
   const severeFactorCount = [
     food.tier >= 4,
     housing.tier >= 5,

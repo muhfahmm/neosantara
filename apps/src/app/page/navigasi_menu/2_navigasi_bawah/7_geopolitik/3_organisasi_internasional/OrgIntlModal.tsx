@@ -13,6 +13,7 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   selectedCountry: { country?: string | null } | null;
+  countryDetail?: Record<string, unknown> | null;
   onOpenCountryDetail?: (countryName: string) => void;
   onOpenPlayerDetail?: () => void;
 }
@@ -63,7 +64,7 @@ const orgIconMap: Record<string, React.ElementType> = {
   "Organisasi Kerja Sama dan Pembangunan Ekonomi (OECD)": TrendingUp,
 };
 
-export default function OrgIntlModal({ isOpen, onClose, selectedCountry, onOpenCountryDetail, onOpenPlayerDetail }: ModalProps) {
+export default function OrgIntlModal({ isOpen, onClose, selectedCountry, countryDetail, onOpenCountryDetail, onOpenPlayerDetail }: ModalProps) {
   const [activeTab, setActiveTab] = useState<"pbb" | "regional">("pbb");
   const [isChildModalOpen, setIsChildModalOpen] = useState(false);
   const [selectedOrgName, setSelectedOrgName] = useState<string | null>(null);
@@ -110,6 +111,8 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, onOpenC
           onClose={() => setInfoOrgName(null)}
           orgName={infoOrgName || ""}
           orgIcon={infoOrgName ? orgIconMap[infoOrgName] || Globe : Globe}
+          isMember={Boolean(infoOrgName && membershipMap[infoOrgName])}
+          countryDetail={countryDetail}
         />
         
         {/* HEADER */}

@@ -78,6 +78,7 @@ import { generateSpionaseNotification } from '../menus/inbox/logic/2_notifikasi_
 import { generateSabotaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
 import { generateDiserangNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/3_diserang/diserangLogic';
 import { generatePemberontakanNotification, calculateSeparatismeRiskPercent } from '../menus/inbox/logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanLogic';
+import { getDefenseAllianceOfferChancePercent } from '../bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/3_Aliansi Pertahanan';
 import { generateICBMNotification, generateProgramNuklirSelesaiNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic';
 import { generateListrikDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/1_kelistrikan/listrikDefisitLogic';
 import { generateHunianDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/2_hunian/hunianDefisitLogic';
@@ -92,7 +93,7 @@ import { evaluateAIKeamananPBBTrigger } from '../menus/inbox/logic/5_notifikasi_
 import { clearActiveResolutionsForSession, tickPBBResolutions, spawnAIResolutionFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { clearActiveSecurityCouncilItems, tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { initCountryIsoFromDatabase, getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
-import { isMemberOfWMO } from '../bonus_logic';
+import { getWHOPandemicRiskModifier, getWMODisasterRiskModifier } from '../bonus_logic';
 import { checkAndProcessOrgApplications } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic';
 import { fetchAllCountryProfilesFromDb } from '@/../../json/semua_fitur_negara/0_profiles';
 import {
@@ -1353,10 +1354,12 @@ export default function MapPage() {
             }
 
             // 4. Bencana Alam & Wabah Penyakit (25% per bulan standard; 20% untuk anggota WMO karena -5% risiko bencana)
-            const wmoDisasterBonus = isMemberOfWMO(userCountryName);
-            const disasterBaseChance = wmoDisasterBonus ? 0.20 : 0.25;
+            const wmoDisasterModifier = getWMODisasterRiskModifier(userCountryName, countryDetail);
+            const disasterBaseChance = Math.max(0, 0.25 + wmoDisasterModifier / 100);
             if (Math.random() < disasterBaseChance) {
-                const isBencana = Math.random() < 0.60;
+                const whoPandemicModifier = getWHOPandemicRiskModifier(userCountryName, countryDetail);
+                const disasterSelectionChance = Math.max(0, Math.min(1, 0.60 - whoPandemicModifier / 100));
+                const isBencana = Math.random() < disasterSelectionChance;
                 if (isBencana) {
                     const disaster = generateBencanaAlamNotification(userCountryName, currentDateStr);
                     newNotifsToAdd.push(disaster);
@@ -1448,8 +1451,9 @@ export default function MapPage() {
                 newNotifsToAdd.push(generateNonAggressionOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
-            // 5C. Penawaran Aliansi Pertahanan Bilateral (Membutuhkan Kedutaan Besar, 25% per bulan ~ 3-5x/tahun)
-            if (Math.random() < 0.25) {
+            // 5C. Peluang dasar 25% per bulan, ditambah bonus riset Aliansi Pertahanan.
+            const defenseAllianceOfferChance = getDefenseAllianceOfferChancePercent(countryDetail);
+            if (Math.random() * 100 < defenseAllianceOfferChance) {
                 const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
                 newNotifsToAdd.push(generateDefenseAllianceOfferNotification(randomPartner, userCountryName, currentDateStr));
             }

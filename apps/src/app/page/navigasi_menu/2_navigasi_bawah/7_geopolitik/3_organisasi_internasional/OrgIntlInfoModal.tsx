@@ -3,12 +3,15 @@
 import React, { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Info, X } from "lucide-react";
+import { getKerjaSamaOrganisasiRegionalBonusPercent } from "@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/4_Kerja Sama Organisasi Regional";
 
 interface OrgIntlInfoModalProps {
   isOpen: boolean;
   onClose: () => void;
   orgName: string;
   orgIcon: React.ElementType;
+  isMember: boolean;
+  countryDetail?: Record<string, unknown> | null;
 }
 
 const ORGANIZATION_INFO: Record<string, { description: string; focus: string; benefit?: string }> = {
@@ -35,7 +38,7 @@ const ORGANIZATION_INFO: Record<string, { description: string; focus: string; be
   "Organisasi Buruh Internasional (ILO)": {
     description: "Badan PBB yang memajukan hak-hak pekerja dan standar ketenagakerjaan yang layak.",
     focus: "Standar kerja, perlindungan pekerja, dan dialog antara pemerintah, pengusaha, serta pekerja.",
-    benefit: "Hasil Perikanan +10%",
+    benefit: "Produksi Manufaktur +10%",
   },
   "Organisasi Pangan dan Pertanian (FAO)": {
     description: "Badan PBB yang memimpin upaya internasional untuk mengatasi kelaparan dan meningkatkan ketahanan pangan.",
@@ -109,6 +112,8 @@ export default function OrgIntlInfoModal({
   onClose,
   orgName,
   orgIcon: OrgIcon,
+  isMember,
+  countryDetail,
 }: OrgIntlInfoModalProps) {
   useEffect(() => {
     if (!isOpen) return;
@@ -125,6 +130,21 @@ export default function OrgIntlInfoModal({
     description: "Forum kerja sama internasional bagi negara-negara anggota.",
     focus: "Dialog dan koordinasi kebijakan antaranggota.",
   };
+  const researchBonusPercent = isMember
+    ? getKerjaSamaOrganisasiRegionalBonusPercent(countryDetail)
+    : 0;
+  const scaleBenefitValue = (value: string) => {
+    const scaledValue = Number((Number(value) * (1 + researchBonusPercent / 100)).toFixed(2));
+    const sign = value.startsWith("+") && scaledValue > 0 ? "+" : "";
+    return `${sign}${scaledValue}`;
+  };
+  const adjustedBenefit = info.benefit?.replace(
+    /([+-]?\d+(?:\.\d+)?)%/g,
+    (_match, value: string) => `${scaleBenefitValue(value)}%`
+  ).replace(
+    /([+-]?\d+(?:\.\d+)?)(?= Suara PBB)/,
+    (_match, value: string) => scaleBenefitValue(value)
+  );
 
   return createPortal(
     <div
@@ -173,8 +193,18 @@ export default function OrgIntlInfoModal({
           </section>
           {info.benefit && (
             <section className="rounded-xl border border-emerald-500/40 bg-[#0E2A20] p-4 flex items-center justify-between">
-              <h3 className="text-xs font-black uppercase tracking-widest text-emerald-300">Efek Keanggotaan / Bonus:</h3>
-              <span className="text-sm font-black text-emerald-400">{info.benefit}</span>
+              <div>
+                <h3 className="text-xs font-black uppercase tracking-widest text-emerald-300">Efek Keanggotaan / Bonus:</h3>
+                {isMember && researchBonusPercent > 0 && (
+                  <p className="mt-1 text-[11px] font-semibold text-emerald-200/80">
+                    Riset Kerja Sama Organisasi Internasional: +{researchBonusPercent}% terhadap manfaat
+                  </p>
+                )}
+                {!isMember && (
+                  <p className="mt-1 text-[11px] font-semibold text-[#6B8A8A]">Manfaat aktif setelah negara menjadi anggota.</p>
+                )}
+              </div>
+              <span className="text-right text-sm font-black text-emerald-400">{adjustedBenefit}</span>
             </section>
           )}
         </div>

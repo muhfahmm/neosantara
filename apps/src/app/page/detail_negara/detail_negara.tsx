@@ -658,7 +658,11 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             )}
 
             {activeTab === "geopolitik" && (
-              <Geopolitik countryName={countryName} playerCountryDetail={countryDetail} />
+              <Geopolitik
+                countryName={countryName}
+                playerCountryDetail={countryDetail}
+                setPlayerCountryDetail={setCountryDetail}
+              />
             )}
 
             {activeTab === "militer" && (

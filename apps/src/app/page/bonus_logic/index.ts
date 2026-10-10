@@ -5,13 +5,22 @@ import { getNationalismProductionMultiplier } from "./ideologi_bonus_logic/nasio
 
 import { getFAOProductionMultiplier, isMemberOfFAO } from "./organisasi_bonus_logic/organisasi_pbb/fao";
 import { getILOProductionMultiplier, isMemberOfILO } from "./organisasi_bonus_logic/organisasi_pbb/ilo";
+import { getIMOProductionMultiplier } from "./organisasi_bonus_logic/organisasi_pbb/imo";
 import { getOKIFoodProductionMultiplier, isMemberOfOKI } from "./organisasi_bonus_logic/organisasi_regional/oki";
+import { getASEANBuildSpeedModifier } from "./organisasi_bonus_logic/organisasi_regional/asean";
+import { getUniAfrikaBuildSpeedModifier } from "./organisasi_bonus_logic/organisasi_regional/uni_afrika";
 import { PRODUCTION_BAN_CATEGORIES } from "../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
 import {
   getResearchCardBonus,
   getResearchCardLevel,
   normalizeResearchLevels,
 } from "./researchCardLevelBonus";
+import {
+  KERJA_SAMA_ORGANISASI_REGIONAL_RESEARCH_ID,
+  getKerjaSamaOrganisasiRegionalBonusPercent,
+  applyKerjaSamaRegionalToFlatBonus,
+  applyKerjaSamaRegionalToMultiplier,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/4_Kerja Sama Organisasi Regional";
 const RESEARCH_CARDS_BY_PRODUCTION_SECTOR: Record<string, string[]> = {
   manufaktur: ["otomasi_industri"],
   mineral: ["manufaktur_terintegrasi"],
@@ -71,12 +80,25 @@ export function getProductionBonusMultiplier(
     resourceKey,
     countryDetail?.ideology
   );
-  const faoMultiplier = getFAOProductionMultiplier(countryName, resourceKey);
-  const iloMultiplier = getILOProductionMultiplier(countryName, resourceKey);
-  const okiMultiplier = getOKIFoodProductionMultiplier(countryName, resourceKey);
+  const faoMultiplier = applyKerjaSamaRegionalToMultiplier(
+    getFAOProductionMultiplier(countryName, resourceKey),
+    countryDetail
+  );
+  const iloMultiplier = applyKerjaSamaRegionalToMultiplier(
+    getILOProductionMultiplier(countryName, resourceKey),
+    countryDetail
+  );
+  const imoMultiplier = applyKerjaSamaRegionalToMultiplier(
+    getIMOProductionMultiplier(countryName, resourceKey),
+    countryDetail
+  );
+  const okiMultiplier = applyKerjaSamaRegionalToMultiplier(
+    getOKIFoodProductionMultiplier(countryName, resourceKey),
+    countryDetail
+  );
   const researchMultiplier = getResearchProductionMultiplier(countryDetail, resourceKey);
 
-  return religiousMultiplier * ideologyMultiplier * nationalismMultiplier * faoMultiplier * iloMultiplier * okiMultiplier * researchMultiplier;
+  return religiousMultiplier * ideologyMultiplier * nationalismMultiplier * faoMultiplier * iloMultiplier * imoMultiplier * okiMultiplier * researchMultiplier;
 }
 
 // Organisasi PBB
@@ -194,17 +216,74 @@ export {
   getEffectiveEmbassyBuildTime
 } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/1_Manfaat Kedutaan";
 
+export {
+  KONTROL_PANDEMI_RESEARCH_ID,
+  getKontrolPandemiBonusPercent,
+  applyKontrolPandemiFatalityReduction,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/2_Kontrol Pandemi Global";
 
+export {
+  ALIANSI_PERTAHANAN_RESEARCH_ID,
+  BASE_DEFENSE_ALLIANCE_OFFER_CHANCE_PERCENT,
+  getDefenseAllianceOfferChancePercent,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/3_Aliansi Pertahanan";
 
-import { getASEANBuildSpeedModifier } from "./organisasi_bonus_logic/organisasi_regional/asean";
-import { getUniAfrikaBuildSpeedModifier } from "./organisasi_bonus_logic/organisasi_regional/uni_afrika";
+export {
+  KERJA_SAMA_ORGANISASI_REGIONAL_RESEARCH_ID,
+  getKerjaSamaOrganisasiRegionalBonusPercent,
+  applyKerjaSamaRegionalToMultiplier,
+  applyKerjaSamaRegionalToFlatBonus,
+};
+
+export {
+  HARMONISASI_FISKAL_GLOBAL_RESEARCH_ID,
+  getHarmonisasiFiskalGlobalBonusPercent,
+  applyHarmonisasiFiskalGlobalTaxRevenueBonus,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/5_Harmonisasi Fiskal Global";
+
+export {
+  SUARA_PBB_RESEARCH_ID,
+  getSuaraPBBResearchBonus,
+  applySuaraPBBResearchBonus,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/6_Suara di PBB";
+
+export {
+  DIPLOMASI_ACARA_NASIONAL_RESEARCH_ID,
+  getDiplomasiAcaraBonusPercent,
+  applyDiplomasiAcaraSatisfactionBonus,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/7_Diplomasi Acara Nasional";
+
+export {
+  MITIGASI_BENCANA_RESEARCH_ID,
+  getMitigasiBencanaBonusPercent,
+  applyMitigasiBencanaFatalityReduction,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/8_Mitigasi Bencana Alam";
+
+export {
+  KURSI_TETAP_DEWAN_PBB_RESEARCH_ID,
+  KURSI_TETAP_DEWAN_PBB_LEGACY_ID,
+  hasPermanentSecurityCouncilSeatResearch,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/9_Kursi Tetap Dewan Keamanan PBB";
+
+export {
+  DIPLOMASI_PERDAGANGAN_STRATEGIS_RESEARCH_ID,
+  getStrategicTradeBonusPercent,
+  applyStrategicTradeSellPriceMultiplier,
+  applyStrategicTradeBuyPriceMultiplier,
+  applyStrategicTradePrice,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/10_Diplomasi Perdagangan Strategis";
 
 export function getBuildSpeedModifier(countryName: string): number {
   return getASEANBuildSpeedModifier(countryName) + getUniAfrikaBuildSpeedModifier(countryName);
 }
 
-export function getEffectiveBuildTime(baseDays: number, countryName: string): number {
-  const speedBonus = getBuildSpeedModifier(countryName);
+export function getEffectiveBuildTime(
+  baseDays: number,
+  countryName: string,
+  countryDetail?: Record<string, unknown> | null
+): number {
+  const baseSpeedBonus = getBuildSpeedModifier(countryName);
+  const speedBonus = applyKerjaSamaRegionalToFlatBonus(baseSpeedBonus, countryDetail);
   if (speedBonus <= 0 || !baseDays) return baseDays;
   const mult = 1 + (speedBonus / 100);
   return Math.max(1, Math.ceil(baseDays / mult));

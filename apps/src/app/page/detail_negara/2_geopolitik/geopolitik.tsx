@@ -19,6 +19,7 @@ import BerikanWilayahModal from './6_berikan_wilayah/berikanWilayahModals';
 interface GeopolitikProps {
   countryName: string;
   playerCountryDetail?: any;
+  setPlayerCountryDetail?: (detail: any | ((prev: any) => any)) => void;
 }
 
 // Komponen tombol aksi agar kode lebih rapi (Persis sama dengan InformasiUmum)
@@ -39,7 +40,7 @@ const ActionButton = ({ icon: Icon, label, onClick, disabled }: { icon: any, lab
   );
 };
 
-export default function Geopolitik({ countryName, playerCountryDetail }: GeopolitikProps) {
+export default function Geopolitik({ countryName, playerCountryDetail, setPlayerCountryDetail }: GeopolitikProps) {
   const [isBeriTentaraOpen, setIsBeriTentaraOpen] = useState(false);
   const [isBeriHadiahOpen, setIsBeriHadiahOpen] = useState(false);
   const [isTingkatkanOpen, setIsTingkatkanOpen] = useState(false);
@@ -72,7 +73,16 @@ export default function Geopolitik({ countryName, playerCountryDetail }: Geopoli
 
       <BeriTentaraModal isOpen={isBeriTentaraOpen} countryName={countryName} onClose={() => setIsBeriTentaraOpen(false)} onConfirm={() => { console.log(`Beri Tentara -> ${countryName}`); }} />
       <BeriHadiahModal isOpen={isBeriHadiahOpen} countryName={countryName} onClose={() => setIsBeriHadiahOpen(false)} onConfirm={() => { console.log(`Beri Hadiah -> ${countryName}`); }} />
-      <TingkatkanHubunganModal isOpen={isTingkatkanOpen} countryName={countryName} onClose={() => setIsTingkatkanOpen(false)} onConfirm={() => { console.log(`Tingkatkan Hubungan -> ${countryName}`); }} />
+      <TingkatkanHubunganModal
+        isOpen={isTingkatkanOpen}
+        countryName={countryName}
+        playerCountryDetail={playerCountryDetail}
+        setPlayerCountryDetail={setPlayerCountryDetail}
+        onClose={() => setIsTingkatkanOpen(false)}
+        onConfirm={(amount, gained) => {
+          console.log(`Tingkatkan Hubungan -> ${countryName} sebesar ${amount} NEO (+${gained} tingkat)`);
+        }}
+      />
       <DukungKemerdekaanModal isOpen={isDukungKemerdekaanOpen} countryName={countryName} onClose={() => setIsDukungKemerdekaanOpen(false)} onConfirm={() => { console.log(`Dukung Kemerdekaan -> ${countryName}`); }} />
       <MintaBantuanModal isOpen={isMintaBantuanOpen} countryName={countryName} onClose={() => setIsMintaBantuanOpen(false)} onConfirm={() => { console.log(`Minta Bantuan -> ${countryName}`); }} />
       <BerikanWilayahModal isOpen={isBerikanWilayahOpen} countryName={countryName} onClose={() => setIsBerikanWilayahOpen(false)} onConfirm={() => { console.log(`Berikan Wilayah -> ${countryName}`); }} />

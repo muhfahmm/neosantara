@@ -8,7 +8,12 @@ import { applyDemocracyTaxRevenueBonus } from '@/app/page/bonus_logic/ideologi_b
 import { applyCapitalismTaxRevenueBonus } from '@/app/page/bonus_logic/ideologi_bonus_logic/kapitalisme';
 import { applyLiberalismTaxRevenueBonus } from '@/app/page/bonus_logic/ideologi_bonus_logic/liberalisme';
 import { applyConservatismTaxRevenueBonus } from '@/app/page/bonus_logic/ideologi_bonus_logic/konservatisme';
-import { getEUTaxRevenueMultiplier, getBRICSTaxRevenueMultiplier, getG20TaxRevenueMultiplier } from '@/app/page/bonus_logic';
+import {
+  applyKerjaSamaRegionalToMultiplier,
+  getEUTaxRevenueMultiplier,
+  getBRICSTaxRevenueMultiplier,
+  getG20TaxRevenueMultiplier
+} from '@/app/page/bonus_logic';
 
 const getNestedValue = (obj: any, path: string[]) => {
   return path.reduce((current, key) => {
@@ -43,11 +48,11 @@ const applyIdeologyTaxBonus = (revenue: number, ideology: unknown) =>
     ideology
   );
 
-const applyOrgTaxBonus = (revenue: number, countryName: string) => {
+const applyOrgTaxBonus = (revenue: number, countryName: string, countryDetail: Record<string, unknown>) => {
   if (!countryName) return revenue;
-  const euMult = getEUTaxRevenueMultiplier(countryName);
-  const bricsMult = getBRICSTaxRevenueMultiplier(countryName);
-  const g20Mult = getG20TaxRevenueMultiplier(countryName);
+  const euMult = applyKerjaSamaRegionalToMultiplier(getEUTaxRevenueMultiplier(countryName), countryDetail);
+  const bricsMult = applyKerjaSamaRegionalToMultiplier(getBRICSTaxRevenueMultiplier(countryName), countryDetail);
+  const g20Mult = applyKerjaSamaRegionalToMultiplier(getG20TaxRevenueMultiplier(countryName), countryDetail);
   return revenue * euMult * bricsMult * g20Mult;
 };
 
@@ -89,7 +94,7 @@ export const calculateTotalTaxIncome = (detail: any) => {
 
   const countryName = String(detail?.country || detail?.nama || "").trim();
   const rawTotal = ppnIncome + korporasiIncome + penghasilanIncome + beaCukaiIncome + lingkunganIncome;
-  return applyOrgTaxBonus(rawTotal, countryName);
+  return applyOrgTaxBonus(rawTotal, countryName, detail);
 };
 
 export const getDepartmentLevel = (detail: any, dept: Department | string | any): number => {

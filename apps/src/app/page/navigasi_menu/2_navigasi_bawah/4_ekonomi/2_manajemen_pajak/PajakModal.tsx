@@ -30,6 +30,10 @@ import {
   CONSERVATISM_TAX_REVENUE_BONUS,
   applyConservatismTaxRevenueBonus,
 } from "@/app/page/bonus_logic/ideologi_bonus_logic/konservatisme";
+import {
+  getHarmonisasiFiskalGlobalBonusPercent,
+  applyHarmonisasiFiskalGlobalTaxRevenueBonus,
+} from "@/app/page/bonus_logic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -282,13 +286,20 @@ export default function PajakModal({
     });
   };
 
+  const harmonisasiTaxBonusPercent = getHarmonisasiFiskalGlobalBonusPercent(countryDetail);
+
   // Hitung total pendapatan dari semua pajak (untuk ditampilkan)
-  const totalIncome =
+  const baseTotalIncome =
     vatRevenue +
     corporateTaxRevenue +
     personalIncomeTaxRevenue +
     cigaretteTaxRevenue +
     environmentalTaxRevenue;
+
+  const totalIncome = applyHarmonisasiFiskalGlobalTaxRevenueBonus(
+    baseTotalIncome,
+    countryDetail
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -501,6 +512,11 @@ export default function PajakModal({
             {hasConservatismTaxBonus && (
               <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
                 Bonus Konservatisme: seluruh penerimaan pajak +{CONSERVATISM_TAX_REVENUE_BONUS * 100}%
+              </span>
+            )}
+            {harmonisasiTaxBonusPercent > 0 && (
+              <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                Bonus Harmonisasi Fiskal Global: Seluruh penerimaan pajak +{harmonisasiTaxBonusPercent}%
               </span>
             )}
           </div>

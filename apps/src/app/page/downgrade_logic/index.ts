@@ -15,6 +15,7 @@
  */
 
 import { isMemberOfUNESCO, isMemberOfITU } from '@/app/page/bonus_logic';
+import { applyKerjaSamaRegionalToFlatBonus } from '@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/4_Kerja Sama Organisasi Regional';
 
 export interface EducationResearchModifierInfo {
   educationPoints: number;
@@ -118,7 +119,8 @@ export function calculateCombinedResearchDurationModifier(
   religion: unknown,
   researchContracts: unknown = [],
   countryName?: string,
-  category?: string
+  category?: string,
+  countryDetail?: Record<string, unknown> | null
 ): CombinedResearchModifierInfo {
   const eduMod = getEducationResearchModifier(educationPoints);
   const normalizedReligion = String(religion || "").trim().toLowerCase();
@@ -129,12 +131,12 @@ export function calculateCombinedResearchDurationModifier(
 
   let unescoChange = 0;
   if (countryName && isMemberOfUNESCO(countryName) && (!category || category === 'sains')) {
-    unescoChange = -5;
+    unescoChange = applyKerjaSamaRegionalToFlatBonus(-5, countryDetail);
   }
 
   let ituChange = 0;
   if (countryName && isMemberOfITU(countryName)) {
-    ituChange = -5;
+    ituChange = applyKerjaSamaRegionalToFlatBonus(-5, countryDetail);
   }
 
   const totalPercentageChange = Number((
@@ -169,10 +171,18 @@ export function applyCombinedResearchDuration(
   religion: unknown,
   researchContracts: unknown = [],
   countryName?: string,
-  category?: string
+  category?: string,
+  countryDetail?: Record<string, unknown> | null
 ): number {
   if (baseDurationDays <= 0) return baseDurationDays;
-  const combined = calculateCombinedResearchDurationModifier(educationPoints, religion, researchContracts, countryName, category);
+  const combined = calculateCombinedResearchDurationModifier(
+    educationPoints,
+    religion,
+    researchContracts,
+    countryName,
+    category,
+    countryDetail
+  );
   return Math.max(1, Math.round(baseDurationDays * combined.multiplier));
 }
 

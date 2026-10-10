@@ -20,6 +20,7 @@ import {
   markLimitedVetoUsed,
   type SecurityCouncilMember,
 } from "../logika_anggota_tidak_tetap/securityCouncilElection";
+import { hasPermanentSecurityCouncilSeatResearch } from "@/app/page/bonus_logic";
 
 interface KeamananPBBProps {
   selectedCountry: any;
@@ -557,71 +558,123 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
         </button>
         <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isMembershipOpen ? 'max-h-[1500px] opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="p-6 bg-[#0A1A1A] border-t border-[#00FFAA]/15">
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="flex-1 bg-[#051111] border border-[#00FFAA]/20 rounded-xl p-4 shadow-sm">
-                <div className="flex justify-between items-center border-b border-[#00FFAA]/15 pb-2 mb-3"><span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">Anggota Tetap</span><span className="text-[8px] font-black text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded border border-rose-500/30">Hak Veto</span></div>
-                <div className="grid grid-cols-2 gap-3">
-                  {PERMANENT_MEMBERS.map((m) => {
-                    const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
-                    const raw = m.name.trim();
-                    const norm = raw.toLowerCase();
-                    const clean = norm.replace(/[^a-z0-9]/g, '');
-                    const isAnnexed = Boolean(annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean]) || annexedStore[m.iso]);
+            {(() => {
+              const userCountryName = selectedCountry?.country || (countryDetail as any)?.country || (countryDetail as any)?.nama_negara || "Indonesia";
+              const userIso = (selectedCountry?.iso || (countryDetail as any)?.iso || "id").toLowerCase();
+              const userHasPermanentSeat = hasPermanentSecurityCouncilSeatResearch(countryDetail);
 
-                    if (isAnnexed) {
-                      return (
-                        <div key={m.iso} className="bg-[#0F2424]/40 border border-dashed border-rose-500/40 p-3 rounded-lg flex flex-col items-center justify-center text-center relative shadow-sm opacity-60">
-                          <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest">[SLOT KOSONG]</span>
-                          <span className="text-[10px] font-bold text-[#6B8A8A] mt-1 line-through">{m.name}</span>
-                          <span className="text-[8px] font-bold text-rose-500/80 uppercase mt-0.5">(Dianeksasi)</span>
-                        </div>
-                      );
-                    }
+              let dynamicPermanentMembers = [...PERMANENT_MEMBERS];
+              if (userHasPermanentSeat) {
+                const isAlreadyPermanent = PERMANENT_MEMBERS.some(
+                  (m) => m.name.toLowerCase().trim() === userCountryName.toLowerCase().trim() || m.iso.toLowerCase() === userIso
+                );
+                if (!isAlreadyPermanent) {
+                  dynamicPermanentMembers.push({
+                    iso: userIso,
+                    name: userCountryName,
+                  });
+                }
+              }
 
-                    return (
-                      <div key={m.iso} className="bg-[#0A1A1A] border border-amber-500/30 p-3 rounded-lg flex flex-col items-center text-center relative shadow-sm">
-                        <div className="absolute -top-2 -right-2 bg-amber-500 text-[#0A1A1A] text-[8px] font-black px-1.5 py-0.5 rounded-lg uppercase tracking-wider shadow-sm">Veto</div>
-                        {renderFlag(m.iso, m.name)}
-                        <span className="text-[10px] font-black text-[#E0E0E0] mt-1 leading-tight">{m.name}</span>
-                      </div>
-                    );
-                  })}
+              let dynamicNonPermanentMembers = nonPermanentMembers;
+              if (userHasPermanentSeat) {
+                dynamicNonPermanentMembers = nonPermanentMembers.filter(
+                  (m) => m.name.toLowerCase().trim() !== userCountryName.toLowerCase().trim() && m.iso.toLowerCase() !== userIso
+                );
+              }
+
+              return (
+                <div className="flex flex-col md:flex-row gap-6">
+                  {/* Anggota Tetap */}
+                  <div className="flex-1 bg-[#051111] border border-[#00FFAA]/20 rounded-xl p-4 shadow-sm">
+                    <div className="flex justify-between items-center border-b border-[#00FFAA]/15 pb-2 mb-3">
+                      <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider">Anggota Tetap</span>
+                      <span className="text-[8px] font-black text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded border border-rose-500/30">Hak Veto</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {dynamicPermanentMembers.map((m) => {
+                        const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+                        const raw = m.name.trim();
+                        const norm = raw.toLowerCase();
+                        const clean = norm.replace(/[^a-z0-9]/g, '');
+                        const isAnnexed = Boolean(annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean]) || annexedStore[m.iso]);
+                        const isUserCountry = norm === userCountryName.toLowerCase().trim() || m.iso.toLowerCase() === userIso;
+
+                        if (isAnnexed) {
+                          return (
+                            <div key={m.iso} className="bg-[#0F2424]/40 border border-dashed border-rose-500/40 p-3 rounded-lg flex flex-col items-center justify-center text-center relative shadow-sm opacity-60">
+                              <span className="text-[9px] font-black text-rose-400 uppercase tracking-widest">[SLOT KOSONG]</span>
+                              <span className="text-[10px] font-bold text-[#6B8A8A] mt-1 line-through">{m.name}</span>
+                              <span className="text-[8px] font-bold text-rose-500/80 uppercase mt-0.5">(Dianeksasi)</span>
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <div
+                            key={m.iso}
+                            className={`p-3 rounded-lg flex flex-col items-center text-center relative shadow-sm transition-all ${
+                              isUserCountry
+                                ? 'bg-[#00FFAA]/15 border-2 border-[#00FFAA] shadow-[0_0_15px_rgba(0,255,170,0.3)]'
+                                : 'bg-[#0A1A1A] border border-amber-500/30'
+                            }`}
+                          >
+                            <div className="absolute -top-2 -right-2 bg-amber-500 text-[#0A1A1A] text-[8px] font-black px-1.5 py-0.5 rounded-lg uppercase tracking-wider shadow-sm">Veto</div>
+                            {renderFlag(m.iso, m.name)}
+                            <span className={`text-[10px] font-black mt-1 leading-tight ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>{m.name}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Anggota Tidak Tetap */}
+                  <div className="flex-1 bg-[#051111] border border-[#00FFAA]/20 rounded-xl p-4 shadow-sm">
+                    <div className="border-b border-[#00FFAA]/15 pb-2 mb-3">
+                      <span className="text-[10px] font-black text-cyan-400 uppercase tracking-wider">Anggota Tidak Tetap</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {dynamicNonPermanentMembers.map((m) => {
+                        const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+                        const raw = m.name.trim();
+                        const norm = raw.toLowerCase();
+                        const clean = norm.replace(/[^a-z0-9]/g, '');
+                        const isAnnexed = Boolean(annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean]) || annexedStore[m.iso]);
+                        const isUserCountry = norm === userCountryName.toLowerCase().trim() || m.iso.toLowerCase() === userIso;
+
+                        if (isAnnexed) {
+                          return (
+                            <div key={m.iso} className="bg-[#0F2424]/40 border border-dashed border-cyan-500/40 p-3 rounded-lg flex flex-col items-center justify-center text-center relative shadow-sm opacity-60">
+                              <span className="text-[9px] font-black text-cyan-400 uppercase tracking-widest">[SLOT KOSONG]</span>
+                              <span className="text-[10px] font-bold text-[#6B8A8A] mt-1 line-through">{m.name}</span>
+                              <span className="text-[8px] font-bold text-cyan-500/80 uppercase mt-0.5">(Dianeksasi)</span>
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <div
+                            key={m.iso}
+                            className={`p-3 rounded-lg flex flex-col items-center text-center shadow-sm transition-colors ${
+                              isUserCountry
+                                ? 'bg-[#00FFAA]/15 border-2 border-[#00FFAA] shadow-[0_0_15px_rgba(0,255,170,0.3)]'
+                                : 'bg-[#0A1A1A] border border-[#00FFAA]/20 hover:border-[#00FFAA]/40'
+                            }`}
+                          >
+                            {renderFlag(m.iso, m.name)}
+                            <span className={`text-[10px] font-bold mt-1 leading-tight ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>{m.name}</span>
+                            <span className="mt-1 text-[8px] text-[#789090]">{m.region} · sampai {m.termEndYear}</span>
+                            <span className={`mt-1 text-[8px] font-bold ${m.vetoUsed ? 'text-rose-300' : 'text-amber-300'}`}>
+                              {m.vetoUsed ? "Veto terbatas telah digunakan" : "1 veto terbatas tersedia"}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex-1 bg-[#051111] border border-[#00FFAA]/20 rounded-xl p-4 shadow-sm">
-                <div className="border-b border-[#00FFAA]/15 pb-2 mb-3"><span className="text-[10px] font-black text-cyan-400 uppercase tracking-wider">Anggota Tidak Tetap</span></div>
-                <div className="grid grid-cols-2 gap-3">
-                  {nonPermanentMembers.map((m) => {
-                    const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
-                    const raw = m.name.trim();
-                    const norm = raw.toLowerCase();
-                    const clean = norm.replace(/[^a-z0-9]/g, '');
-                    const isAnnexed = Boolean(annexedStore[raw] || annexedStore[norm] || (clean && annexedStore[clean]) || annexedStore[m.iso]);
-
-                    if (isAnnexed) {
-                      return (
-                        <div key={m.iso} className="bg-[#0F2424]/40 border border-dashed border-cyan-500/40 p-3 rounded-lg flex flex-col items-center justify-center text-center relative shadow-sm opacity-60">
-                          <span className="text-[9px] font-black text-cyan-400 uppercase tracking-widest">[SLOT KOSONG]</span>
-                          <span className="text-[10px] font-bold text-[#6B8A8A] mt-1 line-through">{m.name}</span>
-                          <span className="text-[8px] font-bold text-cyan-500/80 uppercase mt-0.5">(Dianeksasi)</span>
-                        </div>
-                      );
-                    }
-
-                    return (
-                      <div key={m.iso} className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 rounded-lg flex flex-col items-center text-center shadow-sm hover:border-[#00FFAA]/40 transition-colors">
-                        {renderFlag(m.iso, m.name)}
-                        <span className="text-[10px] font-bold text-[#E0E0E0] mt-1 leading-tight">{m.name}</span>
-                        <span className="mt-1 text-[8px] text-[#789090]">{m.region} · sampai {m.termEndYear}</span>
-                        <span className={`mt-1 text-[8px] font-bold ${m.vetoUsed ? 'text-rose-300' : 'text-amber-300'}`}>
-                          {m.vetoUsed ? "Veto terbatas telah digunakan" : "1 veto terbatas tersedia"}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+              );
+            })()}
           </div>
         </div>
       </div>

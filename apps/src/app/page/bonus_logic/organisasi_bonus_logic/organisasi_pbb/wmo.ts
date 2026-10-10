@@ -1,5 +1,6 @@
 import { getOrgMembers } from "@/../../json/database_organisasi_internasional";
 import { isUserJoinedOrg } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic";
+import { applyKerjaSamaRegionalToFlatBonus } from "../../penelitian_bonus_logic/3_riset_diplomasi_intelijen/4_Kerja Sama Organisasi Regional";
 
 /**
  * Memeriksa apakah suatu negara tergabung dalam Organisasi Meteorologi Dunia (WMO)
@@ -17,6 +18,11 @@ export function isMemberOfWMO(countryName: string): boolean {
  * Jika negara adalah anggota WMO: -5%
  * Jika bukan anggota WMO: 0%
  */
-export function getWMODisasterRiskModifier(countryName: string): number {
-  return isMemberOfWMO(countryName) ? -5 : 0;
+export function getWMODisasterRiskModifier(
+  countryName: string,
+  countryDetail?: Record<string, unknown> | null
+): number {
+  return isMemberOfWMO(countryName)
+    ? applyKerjaSamaRegionalToFlatBonus(-5, countryDetail)
+    : 0;
 }

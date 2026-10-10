@@ -119,7 +119,7 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
               setCountryDetail={setCountryDetail}
             />
           )}
-          {activeTab === "suara" && <SuaraPBB countryDetail={selectedCountry} />}
+          {activeTab === "suara" && <SuaraPBB countryDetail={countryDetail} />}
           
         </div>
       </div>

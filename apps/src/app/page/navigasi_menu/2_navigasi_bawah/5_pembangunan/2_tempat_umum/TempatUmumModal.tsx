@@ -19,6 +19,7 @@ import InfoBangunanModal from "./1_modals_info_bangunan/info_bangunan_modals";
 import KonfirmasiPembangunanModal from "./2_modals_konfirmasi_pembangunan/modalsKonfirmasiPembangunan";
 import { useMaterialProduction, getMaterialStock as getMaterialStockFromBuildLogic, deductBuildingMaterials } from "../build_logic/build_logic";
 import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
+import { getEffectiveBuildTime } from "@/app/page/bonus_logic";
 import {
   calculateKesehatanScore,
   calculatePenegakanHukumScore,
@@ -220,7 +221,11 @@ export default function TempatUmumModal({
       buildQuantity
     );
 
-    const waktu = Number(bMeta.waktu_pembangunan) || 0;
+    const waktu = getEffectiveBuildTime(
+      Number(bMeta.waktu_pembangunan) || 0,
+      String(countryDetail?.country || countryDetail?.nama || ""),
+      countryDetail
+    );
 
     if (waktu <= 0) {
       updatedDetail[key] = (Number(countryDetail?.[key]) || 0) + buildQuantity;
@@ -671,7 +676,11 @@ export default function TempatUmumModal({
             buildingLabel={selectedBuilding.label}
             buildingDescription={bMeta?.deskripsi || bMeta?.desc}
             cost={cost}
-            waktuPembangunan={bMeta?.waktu_pembangunan}
+            waktuPembangunan={getEffectiveBuildTime(
+              Number(bMeta?.waktu_pembangunan) || 0,
+              String(countryDetail?.country || countryDetail?.nama || ""),
+              countryDetail
+            )}
             dampakKepuasan={1.0}
             pendapatanPerHari={pendapatan > 0 ? pendapatan : undefined}
             pendapatanLabel="NEO"

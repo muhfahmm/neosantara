@@ -5,7 +5,11 @@ import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 import { STATIC_PBB_VOTES } from "./staticVoteData";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles";
 import { applyCatholicVoteBonus } from "../../../../../bonus_logic/agama_bonus_logic/katolik";
-import { isMemberOfLigaArab } from "@/app/page/bonus_logic";
+import {
+  applyKerjaSamaRegionalToFlatBonus,
+  getLigaArabUNVoteBonus,
+  getSuaraPBBResearchBonus,
+} from "@/app/page/bonus_logic";
 
 interface CountryVoteRow {
   name_id: string;
@@ -70,6 +74,8 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
     }
 
     const annexedStore = (typeof window !== 'undefined' ? (window as any).neosantara_annexed_countries : {}) || {};
+    const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || "";
+    const normalizedPlayerName = normalizeName(playerCountryName);
 
     // Map awal dari STATIC_PBB_VOTES
     const baseVotes = new Map<string, CountryVoteRow>();
@@ -78,11 +84,17 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
       const iso = byName.get(norm);
       const religion = religionByName.get(norm);
       const catholicBonus = applyCatholicVoteBonus(entry.un_vote, religion);
-      const arabLeagueBonus = isMemberOfLigaArab(entry.name_id) ? 5 : 0;
+      const baseArabLeagueBonus = getLigaArabUNVoteBonus(entry.name_id);
+      const arabLeagueBonus = normalizeName(entry.name_id) === normalizedPlayerName
+        ? applyKerjaSamaRegionalToFlatBonus(baseArabLeagueBonus, countryDetail)
+        : baseArabLeagueBonus;
+      const researchVoteBonus = normalizeName(entry.name_id) === normalizedPlayerName
+        ? getSuaraPBBResearchBonus(countryDetail)
+        : 0;
       baseVotes.set(entry.name_id, {
         name_id: entry.name_id,
         iso,
-        un_vote: catholicBonus + arabLeagueBonus,
+        un_vote: catholicBonus + arabLeagueBonus + researchVoteBonus,
       });
     });
 
@@ -136,7 +148,7 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
     return Array.from(baseVotes.values())
       .filter((entry) => !annexedTargets.has(entry.name_id))
       .sort((a, b) => (b.un_vote ?? 0) - (a.un_vote ?? 0));
-  }, [countryProfiles]);
+  }, [countryProfiles, countryDetail]);
 
   const filteredVotes = useMemo(() => {
     if (!searchQuery.trim()) return countryVotes;
@@ -218,7 +230,14 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
                     </td>
                     <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'}`}>{item.name_id}</td>
                     <td className="px-3 py-2">{renderFlag(item.iso, item.name_id)}</td>
-                    <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#6B8A8A]'}`}>{item.un_vote}</td>
+                    <td className={`px-3 py-2 font-bold ${isUserCountry ? 'text-[#00FFAA]' : 'text-[#6B8A8A]'}`}>
+                      <span>{item.un_vote}</span>
+                      {isUserCountry && getSuaraPBBResearchBonus(countryDetail) > 0 && (
+                        <span className="ml-2 inline-flex items-center rounded-md bg-[#00FFAA]/20 border border-[#00FFAA]/40 px-2 py-0.5 text-[9px] font-black text-[#00FFAA] uppercase">
+                          +{getSuaraPBBResearchBonus(countryDetail)} Riset Suara PBB
+                        </span>
+                      )}
+                    </td>
                   </tr>
                 );
               })

@@ -696,6 +696,7 @@ function ModalsManager({
           isOpen={true}
           onClose={onClose}
           selectedCountry={selectedCountry}
+          countryDetail={countryDetail}
           onOpenCountryDetail={onOpenCountryDetail}
           onOpenPlayerDetail={onOpenPlayerDetail}
         />

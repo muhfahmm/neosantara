@@ -351,7 +351,7 @@ export default function IndeksKesejahteraanModal({
                     {(() => {
                       const baseRisikoWabah = Math.max(0, Math.min(100, Math.round(100 - kesehatanActualScore)));
                       const countryName = selectedCountry?.country || countryDetail?.country || "";
-                      const whoModifier = getWHOPandemicRiskModifier(countryName);
+                      const whoModifier = getWHOPandemicRiskModifier(countryName, countryDetail);
                       const isWHOMember = isMemberOfWHO(countryName);
                       const risikoWabahPercent = Math.max(0, Math.min(100, baseRisikoWabah + whoModifier));
 
@@ -435,7 +435,7 @@ export default function IndeksKesejahteraanModal({
                       const healthAndLawScore = (kesehatanActualScore + lawScore) / 2;
                       const baseSecurityRisk = Math.max(0, Math.min(100, Math.round(100 - healthAndLawScore)));
                       const countryName = selectedCountry?.country || countryDetail?.country || "";
-                      const interpolModifier = getInterpolCrimeRiskModifier(countryName);
+                      const interpolModifier = getInterpolCrimeRiskModifier(countryName, countryDetail);
                       const isInterpolMember = isMemberOfInterpol(countryName);
                       const securityRiskPercent = Math.max(0, Math.min(100, baseSecurityRisk + interpolModifier));
 
@@ -787,7 +787,7 @@ export default function IndeksKesejahteraanModal({
             {(() => {
               const baseRisikoWabah = Math.max(0, Math.min(100, Math.round(100 - kesehatanActualScore)));
               const countryName = selectedCountry?.country || countryDetail?.country || "";
-              const whoModifier = getWHOPandemicRiskModifier(countryName);
+              const whoModifier = getWHOPandemicRiskModifier(countryName, countryDetail);
               const isWHOMember = isMemberOfWHO(countryName);
               const risikoWabahPercent = Math.max(0, Math.min(100, baseRisikoWabah + whoModifier));
               const isPenalty = kesehatanActualScore <= 65;
@@ -946,7 +946,7 @@ export default function IndeksKesejahteraanModal({
               const healthAndLawScore = (kesehatanActualScore + lawScore) / 2;
               const baseSecurityRisk = Math.max(0, Math.min(100, Math.round(100 - healthAndLawScore)));
               const countryName = selectedCountry?.country || countryDetail?.country || "";
-              const interpolModifier = getInterpolCrimeRiskModifier(countryName);
+              const interpolModifier = getInterpolCrimeRiskModifier(countryName, countryDetail);
               const isInterpolMember = isMemberOfInterpol(countryName);
               const securityRiskPercent = Math.max(0, Math.min(100, baseSecurityRisk + interpolModifier));
               const isPenalty = lawScore <= 65;
