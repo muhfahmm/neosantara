@@ -198,39 +198,33 @@ const RESEARCH_DATA: Research[] = [
 // ⚠️ CATATAN:
 //   - Kategori 'lingkungan' DIHAPUS.
 //   - Kategori 'diplomasi' SUDAH UPDATE dengan data baru user.
+//   - Ekonomi sekarang 3 kolom × 4 tier = 12 kartu:
+//       • Kolom 1: Manufaktur → Mineral & Energi
+//       • Kolom 2: Peternakan → Agrikultur
+//       • Kolom 3: Perikanan → Olahan Pangan
 //   - Semua value = 2 (kecuali flag khusus).
 // =====================================================================
 
 // ╔══════════════════════════════════════════════════════════════════╗
-// ║  1. EKONOMI & INDUSTRI (20 kartu — 4 tier)                      ║
+// ║  1. EKONOMI & INDUSTRI (12 kartu — 3 kolom × 4 tier)            ║
 // ╚══════════════════════════════════════════════════════════════════╝
-// ---- TIER 1 ----
-{ id: 'otomasi_industri',    name: 'Otomasi Fabrikasi Elektronik & Kendaraan', category: 'ekonomi', tier: 1, cost: 2000, duration: 15, prerequisites: [], icon: Cpu,    description: 'Otomasi lini Pabrik Semikonduktor, Pabrik Mesin Mobil, dan Pabrik Mesin Motor.', effects: [{ stat: 'manufaktur',  value: 2, label: '+2% Produksi Manufaktur' }] },
-{ id: 'peternakan_modern',   name: 'Peternakan Presisi',                        category: 'ekonomi', tier: 1, cost: 1800, duration: 14, prerequisites: [], icon: Beaker, description: 'Peningkatan budidaya Ayam Unggas, Sapi Perah, dan Sapi Potong.',                 effects: [{ stat: 'peternakan',  value: 2, label: '+2% Produksi Peternakan' }] },
-{ id: 'pertanian_presisi',   name: 'Budidaya Pangan Pokok',                    category: 'ekonomi', tier: 1, cost: 1500, duration: 12, prerequisites: [], icon: Wheat,  description: 'Teknik budidaya Padi, Gandum, Jagung, Sayur, Umbi, dan Kedelai.',               effects: [{ stat: 'agrikultur',  value: 2, label: '+2% Produksi Agrikultur' }] },
-{ id: 'perikanan_modern',    name: 'Budidaya Perikanan Terpadu',               category: 'ekonomi', tier: 1, cost: 1400, duration: 11, prerequisites: [], icon: Leaf,   description: 'Peningkatan produksi Ikan, Udang, dan Mutiara melalui budidaya serta armada tangkap.', effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
-{ id: 'pengolahan_pangan',   name: 'Pengolahan Pangan Dasar',                  category: 'ekonomi', tier: 1, cost: 1900, duration: 14, prerequisites: [], icon: Wheat,  description: 'Teknologi produksi Air Mineral, Gula, Roti, Susu, dan Beras.',                   effects: [{ stat: 'olahan_pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
+// ── KOLOM 1: MANUFAKTUR → MINERAL & ENERGI ──
+{ id: 'otomasi_industri',        name: 'Otomasi Fabrikasi Elektronik & Kendaraan', category: 'ekonomi', tier: 1, cost: 2000,  duration: 15, prerequisites: [],                           icon: Cpu,    description: 'Otomasi lini Pabrik Semikonduktor, Pabrik Mesin Mobil, dan Pabrik Mesin Motor.', effects: [{ stat: 'manufaktur',                             value:  2, label: '+2% Produksi Manufaktur' }] },
+{ id: 'manufaktur_material',     name: 'Rekayasa Material Manufaktur',              category: 'ekonomi', tier: 2, cost: 3500,  duration: 22, prerequisites: ['otomasi_industri'],        icon: Cpu,    description: 'Proses material dan komponen untuk mempercepat pembangunan pabrik manufaktur.',  effects: [{ stat: 'waktu_pembangunan_manufaktur',           value: -2, label: '-2% Waktu Pembangunan Manufaktur' }] },
+{ id: 'manufaktur_terintegrasi', name: 'Eksplorasi Mineral & Energi',                category: 'ekonomi', tier: 3, cost: 6500,  duration: 34, prerequisites: ['manufaktur_material'],     icon: Beaker, description: 'Teknologi eksplorasi untuk meningkatkan produksi Emas, Uranium, Batu Bara, Minyak Bumi, Gas Alam, Garam, Litium, Logam Tanah Jarang, dan Bijih Besi.', effects: [{ stat: 'mineral_energi',                            value:  2, label: '+2% Produksi Mineral & Energi' }] },
+{ id: 'manufaktur_lanjut',       name: 'Infrastruktur Mineral & Energi Terpadu',    category: 'ekonomi', tier: 4, cost: 11000, duration: 48, prerequisites: ['manufaktur_terintegrasi'], icon: Beaker, description: 'Metode konstruksi cepat untuk mempercepat pembangunan tambang dan kilang mineral & energi.', effects: [{ stat: 'waktu_pembangunan_mineral_energi',          value: -2, label: '-2% Waktu Pembangunan Mineral & Energi' }] },
 
-// ---- TIER 2 ----
-{ id: 'manufaktur_material', name: 'Rekayasa Material Manufaktur',             category: 'ekonomi', tier: 2, cost: 3500, duration: 22, prerequisites: ['otomasi_industri'],   icon: Cpu,    description: 'Proses material dan komponen untuk Pabrik Semikonduktor, Pabrik Mesin Mobil, Pabrik Mesin Motor, Semen Beton, dan Kayu.', effects: [{ stat: 'manufaktur', value: 2, label: '+2% Produksi Manufaktur' }] },
-{ id: 'peternakan_genetika', name: 'Genetika & Pakan Ternak',                  category: 'ekonomi', tier: 2, cost: 3300, duration: 21, prerequisites: ['peternakan_modern'],  icon: Beaker, description: 'Peningkatan hasil Ayam Unggas, Sapi Perah, Sapi Potong, dan Domba Kambing.',     effects: [{ stat: 'peternakan', value: 2, label: '+2% Produksi Peternakan' }] },
-{ id: 'perkebunan_komoditas',name: 'Teknologi Perkebunan Komoditas',           category: 'ekonomi', tier: 2, cost: 3200, duration: 20, prerequisites: ['pertanian_presisi'],  icon: Wheat,  description: 'Optimalisasi Kelapa Sawit, Kopi, Teh, Kakao, Tebu, dan Karet.',                  effects: [{ stat: 'agrikultur', value: 2, label: '+2% Produksi Agrikultur' }] },
-{ id: 'perikanan_pascapanen',name: 'Teknologi Perikanan & Pascapanen',          category: 'ekonomi', tier: 2, cost: 3100, duration: 19, prerequisites: ['perikanan_modern'],   icon: Leaf,   description: 'Peningkatan hasil Ikan, Udang, dan Mutiara serta penanganan hasil tangkap.',     effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
-{ id: 'pengawetan_pangan',   name: 'Pengawetan & Pengolahan Pangan',           category: 'ekonomi', tier: 2, cost: 3400, duration: 21, prerequisites: ['pengolahan_pangan'],  icon: Wheat,  description: 'Teknologi untuk Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan_pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
+// ── KOLOM 2: PETERNAKAN → AGRIKULTUR ──
+{ id: 'peternakan_modern',       name: 'Peternakan Presisi',                        category: 'ekonomi', tier: 1, cost: 1800,  duration: 14, prerequisites: [],                           icon: Beaker, description: 'Peningkatan budidaya Ayam Unggas, Sapi Perah, dan Sapi Potong.',                  effects: [{ stat: 'peternakan',                            value:  2, label: '+2% Produksi Peternakan' }] },
+{ id: 'peternakan_genetika',     name: 'Genetika & Pakan Ternak',                   category: 'ekonomi', tier: 2, cost: 3300,  duration: 21, prerequisites: ['peternakan_modern'],        icon: Beaker, description: 'Rekayasa pakan dan percepatan pembangunan fasilitas peternakan modern.',          effects: [{ stat: 'waktu_pembangunan_peternakan',          value: -2, label: '-2% Waktu Pembangunan Peternakan' }] },
+{ id: 'perkebunan_komoditas',    name: 'Agrikultur Cerdas Multi-Komoditas',         category: 'ekonomi', tier: 3, cost: 6000,  duration: 31, prerequisites: ['peternakan_genetika'],      icon: Wheat,  description: 'Pengelolaan Padi, Gandum, Jagung, Sayur, Umbi, Kedelai, Kelapa Sawit, Kopi, Teh, Kakao, Tebu, dan Karet.', effects: [{ stat: 'agrikultur',                             value:  2, label: '+2% Produksi Agrikultur' }] },
+{ id: 'agrikultur_cerdas',       name: 'Agrikultur Tangguh Multi-Komoditas',        category: 'ekonomi', tier: 4, cost: 10000, duration: 44, prerequisites: ['perkebunan_komoditas'],     icon: Wheat,  description: 'Teknologi budidaya tangguh untuk mempercepat pembangunan lahan agrikultur.',       effects: [{ stat: 'waktu_pembangunan_agrikultur',          value: -2, label: '-2% Waktu Pembangunan Agrikultur' }] },
 
-// ---- TIER 3 ----
-{ id: 'manufaktur_terintegrasi', name: 'Integrasi Rantai Manufaktur',          category: 'ekonomi', tier: 3, cost: 6500, duration: 34, prerequisites: ['manufaktur_material'], icon: Cpu,    description: 'Integrasi produksi Pabrik Semikonduktor, Pabrik Mesin Mobil, Pabrik Mesin Motor, Semen Beton, dan Kayu.', effects: [{ stat: 'manufaktur', value: 2, label: '+2% Produksi Manufaktur' }] },
-{ id: 'peternakan_otomatis',     name: 'Peternakan Terotomasi',                category: 'ekonomi', tier: 3, cost: 6200, duration: 32, prerequisites: ['peternakan_genetika'], icon: Beaker, description: 'Otomasi fasilitas Ayam Unggas, Sapi Perah, Sapi Potong, dan Domba Kambing.',     effects: [{ stat: 'peternakan', value: 2, label: '+2% Produksi Peternakan' }] },
-{ id: 'agrikultur_cerdas',       name: 'Agrikultur Cerdas Multi-Komoditas',    category: 'ekonomi', tier: 3, cost: 6000, duration: 31, prerequisites: ['perkebunan_komoditas'], icon: Wheat, description: 'Pengelolaan Padi, Gandum, Jagung, Sayur, Umbi, Kedelai, Kelapa Sawit, Kopi, Teh, Kakao, Tebu, dan Karet.', effects: [{ stat: 'agrikultur', value: 2, label: '+2% Produksi Agrikultur' }] },
-{ id: 'perikanan_cerdas',        name: 'Perikanan Budidaya Cerdas',            category: 'ekonomi', tier: 3, cost: 5900, duration: 30, prerequisites: ['perikanan_pascapanen'], icon: Leaf,  description: 'Pemantauan dan peningkatan hasil Ikan, Udang, serta Mutiara.',                   effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
-{ id: 'pangan_efisien',          name: 'Efisiensi Industri Pangan',            category: 'ekonomi', tier: 3, cost: 6300, duration: 33, prerequisites: ['pengawetan_pangan'],    icon: Wheat, description: 'Efisiensi produksi Air Mineral, Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan_pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
-
-// ---- TIER 4 ----
-{ id: 'manufaktur_lanjut',        name: 'Manufaktur Material & Mesin Terpadu', category: 'ekonomi', tier: 4, cost: 11000, duration: 48, prerequisites: ['manufaktur_terintegrasi'], icon: Cpu,    description: 'Peningkatan teknologi untuk Pabrik Semikonduktor, Pabrik Mesin Mobil, Pabrik Mesin Motor, Semen Beton, dan Kayu.', effects: [{ stat: 'manufaktur', value: 2, label: '+2% Produksi Manufaktur' }] },
-{ id: 'peternakan_berkelanjutan', name: 'Peternakan Produktif Berkelanjutan',  category: 'ekonomi', tier: 4, cost: 10500, duration: 46, prerequisites: ['peternakan_otomatis'],     icon: Beaker, description: 'Sistem produksi berkelanjutan untuk Ayam Unggas, Sapi Perah, Sapi Potong, dan Domba Kambing.', effects: [{ stat: 'peternakan', value: 2, label: '+2% Produksi Peternakan' }] },
-{ id: 'agrikultur_tangguh',       name: 'Agrikultur Tangguh Multi-Komoditas',  category: 'ekonomi', tier: 4, cost: 10000, duration: 44, prerequisites: ['agrikultur_cerdas'],       icon: Wheat,  description: 'Teknologi budidaya tangguh untuk Padi, Gandum, Jagung, Sayur, Umbi, Kedelai, Kelapa Sawit, Kopi, Teh, Kakao, Tebu, dan Karet.', effects: [{ stat: 'agrikultur', value: 2, label: '+2% Produksi Agrikultur' }] },
-{ id: 'perikanan_berkelanjutan',  name: 'Perikanan Produktif Berkelanjutan',   category: 'ekonomi', tier: 4, cost: 9800,  duration: 43, prerequisites: ['perikanan_cerdas'],        icon: Leaf,   description: 'Pengelolaan berkelanjutan untuk hasil Ikan, Udang, dan Mutiara.',                effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
-{ id: 'industri_pangan_terpadu',  name: 'Industri Pangan Terintegrasi',        category: 'ekonomi', tier: 4, cost: 10800, duration: 47, prerequisites: ['pangan_efisien'],          icon: Wheat,  description: 'Integrasi produksi Air Mineral, Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan_pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
+// ── KOLOM 3: PERIKANAN → OLAHAN PANGAN ──
+{ id: 'perikanan_modern',        name: 'Budidaya Perikanan Terpadu',                category: 'ekonomi', tier: 1, cost: 1400,  duration: 11, prerequisites: [],                           icon: Leaf,   description: 'Peningkatan produksi Ikan, Udang, dan Mutiara melalui budidaya serta armada tangkap.', effects: [{ stat: 'perikanan',                             value:  2, label: '+2% Produksi Perikanan' }] },
+{ id: 'perikanan_pascapanen',    name: 'Teknologi Perikanan & Pascapanen',          category: 'ekonomi', tier: 2, cost: 3100,  duration: 19, prerequisites: ['perikanan_modern'],         icon: Leaf,   description: 'Penanganan hasil tangkap untuk mempercepat pembangunan fasilitas perikanan.',       effects: [{ stat: 'waktu_pembangunan_perikanan',           value: -2, label: '-2% Waktu Pembangunan Perikanan' }] },
+{ id: 'pengolahan_pangan',       name: 'Pengolahan Pangan Dasar',                   category: 'ekonomi', tier: 3, cost: 6300,  duration: 33, prerequisites: ['perikanan_pascapanen'],     icon: Wheat,  description: 'Teknologi produksi Air Mineral, Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan_pangan',                          value:  2, label: '+2% Produksi Olahan Pangan' }] },
+{ id: 'industri_pangan_terpadu', name: 'Industri Pangan Terintegrasi',               category: 'ekonomi', tier: 4, cost: 10800, duration: 47, prerequisites: ['pengolahan_pangan'],        icon: Wheat,  description: 'Integrasi produksi untuk mempercepat pembangunan pabrik olahan pangan.',           effects: [{ stat: 'waktu_pembangunan_olahan_pangan',       value: -2, label: '-2% Waktu Pembangunan Olahan Pangan' }] },
 
 // ╔══════════════════════════════════════════════════════════════════╗
 // ║  2. MILITER & PERTAHANAN (25 kartu — 5 tier)                    ║
@@ -272,7 +266,6 @@ const RESEARCH_DATA: Research[] = [
 
 // ╔══════════════════════════════════════════════════════════════════╗
 // ║  3. DIPLOMASI & INTELIJEN (25 kartu — 5 tier)                   ║
-// ║  ✅ SUDAH UPDATE dengan data baru user                          ║
 // ╚══════════════════════════════════════════════════════════════════╝
 // ---- TIER 1 ----
 { id: 'manfaat_kedutaan',   name: 'Manfaat Kedutaan',             category: 'diplomasi', tier: 1, cost: 1800, duration: 12, prerequisites: [], icon: Globe2,   description: 'Metode konstruksi cepat untuk kedutaan besar di seluruh dunia. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.', effects: [{ stat: 'waktu_kedutaan', value: -2, label: '-2% Waktu Pembangunan Kedutaan' }] },
@@ -311,8 +304,8 @@ const RESEARCH_DATA: Research[] = [
 ];
 
 const CATEGORIES: { key: CategoryKey; label: string; icon: React.ElementType }[] = [
-  { key: 'ekonomi',   label: 'Ekonomi & Industri',   icon: Banknote },
-  { key: 'militer',   label: 'Militer & Pertahanan', icon: Shield },
+  { key: 'ekonomi',   label: 'Ekonomi & Industri',    icon: Banknote },
+  { key: 'militer',   label: 'Militer & Pertahanan',  icon: Shield },
   { key: 'diplomasi', label: 'Diplomasi & Intelijen', icon: Globe2 },
 ];
 
@@ -513,7 +506,7 @@ export default function PenelitianPageModal({
   ): string => {
     if (level <= 0 && baseValue === effect.value) return effect.label;
     const bonus = getCardBonus(level);
-    const amplified = levelValue ?? (level > 0 ? baseValue * (1 + bonus / 100) : baseValue);
+    const amplified = levelValue ?? (level > 0 ? (bonus > 0 ? bonus : baseValue) : baseValue);
     const formattedPercent = Number(amplified.toFixed(1)).toString();
     const isReduction = effect.label.trim().startsWith('-') ||
       ['emisi', 'polusi', 'kriminalitas', 'pengangguran', 'penyakit', 'kebocoran', 'inflasi', 'subsidi'].some((s) => effect.stat.includes(s));

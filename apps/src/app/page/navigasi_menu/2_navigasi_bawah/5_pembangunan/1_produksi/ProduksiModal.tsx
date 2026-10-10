@@ -33,6 +33,14 @@ import { loadActiveSecurityCouncilItems } from "../../7_geopolitik/1_PBB/2_keama
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 import { applyJewishConstructionTimeDiscount } from "../../../../bonus_logic/agama_bonus_logic/yahudi";
 import {
+  getManufakturMaterialBonusPercent,
+  getInfrastrukturMineralEnergiBonusPercent,
+  getGenetikaPakanTernakBonusPercent,
+  getAgrikulturTangguhBonusPercent,
+  getTeknologiPerikananPascapanenBonusPercent,
+  getIndustriPanganTerintegrasiBonusPercent,
+} from "../../../../bonus_logic";
+import {
   DEMOCRACY_TAX_REVENUE_BONUS,
 } from "../../../../bonus_logic/ideologi_bonus_logic/demokrasi";
 import { CAPITALISM_TAX_REVENUE_BONUS } from "../../../../bonus_logic/ideologi_bonus_logic/kapitalisme";
@@ -463,11 +471,24 @@ export default function ProduksiModal({
     );
 
     const baseConstructionTime = Number(bMeta.waktu_pembangunan) || 0;
-    const waktu = applyJewishConstructionTimeDiscount(
+    let waktu = applyJewishConstructionTimeDiscount(
       baseConstructionTime,
       key,
       countryDetail?.religion
     );
+
+    const manufakturDiscount = getManufakturMaterialBonusPercent(countryDetail, key);
+    const mineralDiscount = getInfrastrukturMineralEnergiBonusPercent(countryDetail, key);
+    const peternakanDiscount = getGenetikaPakanTernakBonusPercent(countryDetail, key);
+    const agrikulturDiscount = getAgrikulturTangguhBonusPercent(countryDetail, key);
+    const perikananDiscount = getTeknologiPerikananPascapanenBonusPercent(countryDetail, key);
+    const olahanPanganDiscount = getIndustriPanganTerintegrasiBonusPercent(countryDetail, key);
+    const totalResearchDiscountPercent = manufakturDiscount + mineralDiscount + peternakanDiscount + agrikulturDiscount + perikananDiscount + olahanPanganDiscount;
+
+    if (totalResearchDiscountPercent > 0 && waktu > 0) {
+      const discountMult = 1 - (totalResearchDiscountPercent / 100);
+      waktu = Math.max(1, Math.ceil(waktu * discountMult));
+    }
 
     if (waktu <= 0) {
       updatedDetail[key] = (Number(countryDetail?.[key]) || 0) + buildQuantity;

@@ -8,13 +8,14 @@ import { getILOProductionMultiplier, isMemberOfILO } from "./organisasi_bonus_lo
 import { getOKIFoodProductionMultiplier, isMemberOfOKI } from "./organisasi_bonus_logic/organisasi_regional/oki";
 import { PRODUCTION_BAN_CATEGORIES } from "../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
 
-const RESEARCH_CARD_LEVEL_BONUS = [0, 2, 5, 8, 12, 15];
+const RESEARCH_CARD_LEVEL_BONUS = [0, 2, 4, 7, 10, 15];
 const RESEARCH_CARDS_BY_PRODUCTION_SECTOR: Record<string, string[]> = {
-  manufaktur: ["otomasi_industri", "manufaktur_material", "manufaktur_terintegrasi", "manufaktur_lanjut"],
-  peternakan: ["peternakan_modern", "peternakan_genetika", "peternakan_otomatis", "peternakan_berkelanjutan"],
-  agrikultur: ["pertanian_presisi", "perkebunan_komoditas", "agrikultur_cerdas", "agrikultur_tangguh"],
-  perikanan: ["perikanan_modern", "perikanan_pascapanen", "perikanan_cerdas", "perikanan_berkelanjutan"],
-  "olahan pangan": ["pengolahan_pangan", "pengawetan_pangan", "pangan_efisien", "industri_pangan_terpadu"],
+  manufaktur: ["otomasi_industri"],
+  mineral: ["manufaktur_terintegrasi"],
+  peternakan: ["peternakan_modern"],
+  agrikultur: ["perkebunan_komoditas"],
+  perikanan: ["perikanan_modern"],
+  "olahan pangan": ["pengolahan_pangan"],
 };
 
 const RESEARCH_SECTOR_BY_PRODUCT = new Map<string, string>();
@@ -44,8 +45,7 @@ function getResearchProductionMultiplier(
     if (!completedResearch.includes(researchId)) return total;
     const storedLevel = Number(researchLevels[researchId]) || 1;
     const level = Math.min(RESEARCH_CARD_LEVEL_BONUS.length - 1, Math.max(1, Math.floor(storedLevel)));
-    const levelBonus = RESEARCH_CARD_LEVEL_BONUS[level];
-    return total + 2 * (1 + levelBonus / 100);
+    return total + RESEARCH_CARD_LEVEL_BONUS[level];
   }, 0);
 
   return 1 + sectorBonusPercent / 100;
@@ -100,6 +100,74 @@ export { isMemberOfBRICS, getBRICSTaxRevenueMultiplier } from "./organisasi_bonu
 export { isMemberOfNATO, getNATOMilitaryMultiplier } from "./organisasi_bonus_logic/organisasi_regional/nato";
 export { isMemberOfOPEC, getOPECSellPriceMultiplier, getOPECBuyPriceMultiplier } from "./organisasi_bonus_logic/organisasi_regional/opec";
 export { isMemberOfG20, getG20TaxRevenueMultiplier } from "./organisasi_bonus_logic/organisasi_regional/g20";
+
+// Penelitian Bonus Logic
+export {
+  getOtomasiIndustriBonusPercent,
+  getOtomasiIndustriProductionMultiplier,
+  OTOMASI_INDUSTRI_RESOURCES,
+} from "./penelitian_bonus_logic/1_Otomasi Fabrikasi Elektronik & Kendaraan";
+
+export {
+  getManufakturMaterialBonusPercent,
+  MANUFAKTUR_MATERIAL_RESOURCES,
+} from "./penelitian_bonus_logic/2_Rekayasa Material Manufaktur";
+
+export {
+  getEksplorasiMineralEnergiBonusPercent,
+  getEksplorasiMineralEnergiProductionMultiplier,
+  MINERAL_ENERGI_RESOURCES,
+} from "./penelitian_bonus_logic/3_Eksplorasi Mineral & Energi";
+
+export {
+  getInfrastrukturMineralEnergiBonusPercent,
+  INFRASTRUKTUR_MINERAL_ENERGI_RESOURCES,
+} from "./penelitian_bonus_logic/4_Infrastruktur Mineral & Energi Terpadu";
+
+export {
+  getPeternakanPresisiBonusPercent,
+  getPeternakanPresisiProductionMultiplier,
+  PETERNAKAN_RESOURCES,
+} from "./penelitian_bonus_logic/5_Peternakan Presisi";
+
+export {
+  getGenetikaPakanTernakBonusPercent,
+  PETERNAKAN_GENETIKA_RESOURCES,
+} from "./penelitian_bonus_logic/6_Genetika & Pakan Ternak";
+
+export {
+  getAgrikulturCerdasBonusPercent,
+  getAgrikulturCerdasProductionMultiplier,
+  AGRIKULTUR_RESOURCES,
+} from "./penelitian_bonus_logic/7_Agrikultur Cerdas Multi-Komoditas";
+
+export {
+  getAgrikulturTangguhBonusPercent,
+  AGRIKULTUR_TANGGUH_RESOURCES,
+} from "./penelitian_bonus_logic/8_Agrikultur Tangguh Multi-Komoditas";
+
+export {
+  getBudidayaPerikananTerpaduBonusPercent,
+  getBudidayaPerikananTerpaduProductionMultiplier,
+  PERIKANAN_RESOURCES,
+} from "./penelitian_bonus_logic/9_Budidaya Perikanan Terpadu";
+
+export {
+  getTeknologiPerikananPascapanenBonusPercent,
+  PERIKANAN_PASCAPANEN_RESOURCES,
+} from "./penelitian_bonus_logic/10_Teknologi Perikanan & Pascapanen";
+
+export {
+  getPengolahanPanganDasarBonusPercent,
+  getPengolahanPanganDasarProductionMultiplier,
+  OLAHAN_PANGAN_RESOURCES,
+} from "./penelitian_bonus_logic/11_Pengolahan Pangan Dasar";
+
+export {
+  getIndustriPanganTerintegrasiBonusPercent,
+  OLAHAN_PANGAN_TERPADU_RESOURCES,
+} from "./penelitian_bonus_logic/12_Industri Pangan Terintegrasi";
+
 
 import { getASEANBuildSpeedModifier } from "./organisasi_bonus_logic/organisasi_regional/asean";
 import { getUniAfrikaBuildSpeedModifier } from "./organisasi_bonus_logic/organisasi_regional/uni_afrika";

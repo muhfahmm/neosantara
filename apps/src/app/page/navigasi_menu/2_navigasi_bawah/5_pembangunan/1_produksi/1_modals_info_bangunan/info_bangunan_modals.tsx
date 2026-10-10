@@ -5,6 +5,12 @@ import { Info, X } from "lucide-react";
 import { getCommunismProductionMultiplier, COMMUNISM_PRODUCTION_BONUS } from "../../../../../bonus_logic/ideologi_bonus_logic/komunisme";
 import { isMemberOfFAO, FAO_BONUS_RESOURCES } from "../../../../../bonus_logic/organisasi_bonus_logic/organisasi_pbb/fao";
 import { isMemberOfILO, ILO_MANUFAKTUR_RESOURCES } from "../../../../../bonus_logic/organisasi_bonus_logic/organisasi_pbb/ilo";
+import { getOtomasiIndustriBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_Otomasi Fabrikasi Elektronik & Kendaraan";
+import { getEksplorasiMineralEnergiBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/3_Eksplorasi Mineral & Energi";
+import { getPeternakanPresisiBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/5_Peternakan Presisi";
+import { getAgrikulturCerdasBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/7_Agrikultur Cerdas Multi-Komoditas";
+import { getBudidayaPerikananTerpaduBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/9_Budidaya Perikanan Terpadu";
+import { getPengolahanPanganDasarBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/11_Pengolahan Pangan Dasar";
 import { getKelistrikanFuelRequirements } from "../requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 
 import {
@@ -224,6 +230,12 @@ export default function InfoBangunan({
               const normalizedKey = (buildingKey || "").trim().toLowerCase().replace(/^\d+_/, "");
               const hasFAOBonus = isMemberOfFAO(countryName) && FAO_BONUS_RESOURCES.has(normalizedKey);
               const hasILOBonus = isMemberOfILO(countryName) && ILO_MANUFAKTUR_RESOURCES.has(normalizedKey);
+              const otomasiIndustriBonusPercent = getOtomasiIndustriBonusPercent(countryDetail, buildingKey);
+              const eksplorasiMineralEnergiBonusPercent = getEksplorasiMineralEnergiBonusPercent(countryDetail, buildingKey);
+              const peternakanPresisiBonusPercent = getPeternakanPresisiBonusPercent(countryDetail, buildingKey);
+              const agrikulturCerdasBonusPercent = getAgrikulturCerdasBonusPercent(countryDetail, buildingKey);
+              const perikananTerpaduBonusPercent = getBudidayaPerikananTerpaduBonusPercent(countryDetail, buildingKey);
+              const pengolahanPanganBonusPercent = getPengolahanPanganDasarBonusPercent(countryDetail, buildingKey);
 
               const bonusParts: string[] = [];
               if (hasCommunismProductionBonus) bonusParts.push(`${COMMUNISM_PRODUCTION_BONUS * 100}% oleh bonus ideologi Komunisme`);
@@ -231,6 +243,12 @@ export default function InfoBangunan({
               if (hasIslamProductionBonus) bonusParts.push(`10% oleh bonus agama Islam`);
               if (hasFAOBonus) bonusParts.push(`10% oleh bonus keanggotaan FAO`);
               if (hasILOBonus) bonusParts.push(`10% oleh bonus keanggotaan ILO`);
+              if (otomasiIndustriBonusPercent > 0) bonusParts.push(`${otomasiIndustriBonusPercent}% oleh bonus penelitian Otomasi Fabrikasi Elektronik & Kendaraan`);
+              if (eksplorasiMineralEnergiBonusPercent > 0) bonusParts.push(`${eksplorasiMineralEnergiBonusPercent}% oleh bonus penelitian Eksplorasi Mineral & Energi`);
+              if (peternakanPresisiBonusPercent > 0) bonusParts.push(`${peternakanPresisiBonusPercent}% oleh bonus penelitian Peternakan Presisi`);
+              if (agrikulturCerdasBonusPercent > 0) bonusParts.push(`${agrikulturCerdasBonusPercent}% oleh bonus penelitian Agrikultur Cerdas Multi-Komoditas`);
+              if (perikananTerpaduBonusPercent > 0) bonusParts.push(`${perikananTerpaduBonusPercent}% oleh bonus penelitian Budidaya Perikanan Terpadu`);
+              if (pengolahanPanganBonusPercent > 0) bonusParts.push(`${pengolahanPanganBonusPercent}% oleh bonus penelitian Pengolahan Pangan Dasar`);
 
               if (bonusParts.length === 0) return null;
 
