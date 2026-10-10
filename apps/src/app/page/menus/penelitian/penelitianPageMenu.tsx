@@ -24,8 +24,9 @@ import {
   getMilitaryResearchBaseBonus,
   getMilitaryResearchLevelBonus,
 } from '@/app/page/bonus_logic/militaryResearchBonus';
+import { generateResearchStartNotification } from '../inbox/logic/11_notifikasi_penelitian/researchChangeLogic';
 
-export type CategoryKey = 'ekonomi' | 'militer' | 'sosial' | 'lingkungan' | 'diplomasi' | 'budaya';
+export type CategoryKey = 'ekonomi' | 'militer' | 'lingkungan' | 'diplomasi';
 
 interface ResearchEffect {
   stat: string;
@@ -194,222 +195,125 @@ const getResearchTier = (research: Research, data: Research[]): number => {
 
 const RESEARCH_DATA: Research[] = [
 // =====================================================================
-// Bonus riset militer bervariasi per kartu dan meningkat bertahap.
+// ⚠️ CATATAN:
+//   - Kategori 'lingkungan' DIHAPUS.
+//   - Kategori 'diplomasi' SUDAH UPDATE dengan data baru user.
+//   - Semua value = 2 (kecuali flag khusus).
 // =====================================================================
 
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║  1. EKONOMI & INDUSTRI (20 kartu — 4 tier)                      ║
+// ╚══════════════════════════════════════════════════════════════════╝
+// ---- TIER 1 ----
+{ id: 'otomasi_industri',    name: 'Otomasi Fabrikasi Elektronik & Kendaraan', category: 'ekonomi', tier: 1, cost: 2000, duration: 15, prerequisites: [], icon: Cpu,    description: 'Otomasi lini Pabrik Semikonduktor, Pabrik Mesin Mobil, dan Pabrik Mesin Motor.', effects: [{ stat: 'manufaktur',  value: 2, label: '+2% Produksi Manufaktur' }] },
+{ id: 'peternakan_modern',   name: 'Peternakan Presisi',                        category: 'ekonomi', tier: 1, cost: 1800, duration: 14, prerequisites: [], icon: Beaker, description: 'Peningkatan budidaya Ayam Unggas, Sapi Perah, dan Sapi Potong.',                 effects: [{ stat: 'peternakan',  value: 2, label: '+2% Produksi Peternakan' }] },
+{ id: 'pertanian_presisi',   name: 'Budidaya Pangan Pokok',                    category: 'ekonomi', tier: 1, cost: 1500, duration: 12, prerequisites: [], icon: Wheat,  description: 'Teknik budidaya Padi, Gandum, Jagung, Sayur, Umbi, dan Kedelai.',               effects: [{ stat: 'agrikultur',  value: 2, label: '+2% Produksi Agrikultur' }] },
+{ id: 'perikanan_modern',    name: 'Budidaya Perikanan Terpadu',               category: 'ekonomi', tier: 1, cost: 1400, duration: 11, prerequisites: [], icon: Leaf,   description: 'Peningkatan produksi Ikan, Udang, dan Mutiara melalui budidaya serta armada tangkap.', effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
+{ id: 'pengolahan_pangan',   name: 'Pengolahan Pangan Dasar',                  category: 'ekonomi', tier: 1, cost: 1900, duration: 14, prerequisites: [], icon: Wheat,  description: 'Teknologi produksi Air Mineral, Gula, Roti, Susu, dan Beras.',                   effects: [{ stat: 'olahan_pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
 
+// ---- TIER 2 ----
+{ id: 'manufaktur_material', name: 'Rekayasa Material Manufaktur',             category: 'ekonomi', tier: 2, cost: 3500, duration: 22, prerequisites: ['otomasi_industri'],   icon: Cpu,    description: 'Proses material dan komponen untuk Pabrik Semikonduktor, Pabrik Mesin Mobil, Pabrik Mesin Motor, Semen Beton, dan Kayu.', effects: [{ stat: 'manufaktur', value: 2, label: '+2% Produksi Manufaktur' }] },
+{ id: 'peternakan_genetika', name: 'Genetika & Pakan Ternak',                  category: 'ekonomi', tier: 2, cost: 3300, duration: 21, prerequisites: ['peternakan_modern'],  icon: Beaker, description: 'Peningkatan hasil Ayam Unggas, Sapi Perah, Sapi Potong, dan Domba Kambing.',     effects: [{ stat: 'peternakan', value: 2, label: '+2% Produksi Peternakan' }] },
+{ id: 'perkebunan_komoditas',name: 'Teknologi Perkebunan Komoditas',           category: 'ekonomi', tier: 2, cost: 3200, duration: 20, prerequisites: ['pertanian_presisi'],  icon: Wheat,  description: 'Optimalisasi Kelapa Sawit, Kopi, Teh, Kakao, Tebu, dan Karet.',                  effects: [{ stat: 'agrikultur', value: 2, label: '+2% Produksi Agrikultur' }] },
+{ id: 'perikanan_pascapanen',name: 'Teknologi Perikanan & Pascapanen',          category: 'ekonomi', tier: 2, cost: 3100, duration: 19, prerequisites: ['perikanan_modern'],   icon: Leaf,   description: 'Peningkatan hasil Ikan, Udang, dan Mutiara serta penanganan hasil tangkap.',     effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
+{ id: 'pengawetan_pangan',   name: 'Pengawetan & Pengolahan Pangan',           category: 'ekonomi', tier: 2, cost: 3400, duration: 21, prerequisites: ['pengolahan_pangan'],  icon: Wheat,  description: 'Teknologi untuk Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan_pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
 
-// ================= EKONOMI & INDUSTRI =================
-// Empat tier, masing-masing lima kartu yang terhubung ke produk di lima menu produksi.
-// TIER 1
-{ id: 'otomasi_industri', name: 'Otomasi Fabrikasi Elektronik & Kendaraan', category: 'ekonomi', tier: 1, cost: 2000, duration: 15, prerequisites: [], icon: Cpu, description: 'Otomasi lini Pabrik Semikonduktor, Pabrik Mesin Mobil, dan Pabrik Mesin Motor.', effects: [{ stat: 'manufaktur', value: 2, label: '+2% Produksi Manufaktur' }] },
-{ id: 'peternakan_modern', name: 'Peternakan Presisi', category: 'ekonomi', tier: 1, cost: 1800, duration: 14, prerequisites: [], icon: Beaker, description: 'Peningkatan budidaya Ayam Unggas, Sapi Perah, dan Sapi Potong.', effects: [{ stat: 'peternakan', value: 2, label: '+2% Produksi Peternakan' }] },
-{ id: 'pertanian_presisi', name: 'Budidaya Pangan Pokok', category: 'ekonomi', tier: 1, cost: 1500, duration: 12, prerequisites: [], icon: Wheat, description: 'Teknik budidaya Padi, Gandum, Jagung, Sayur, Umbi, dan Kedelai.', effects: [{ stat: 'agrikultur', value: 2, label: '+2% Produksi Agrikultur' }] },
-{ id: 'perikanan_modern', name: 'Budidaya Perikanan Terpadu', category: 'ekonomi', tier: 1, cost: 1400, duration: 11, prerequisites: [], icon: Leaf, description: 'Peningkatan produksi Ikan, Udang, dan Mutiara melalui budidaya serta armada tangkap.', effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
-{ id: 'pengolahan_pangan', name: 'Pengolahan Pangan Dasar', category: 'ekonomi', tier: 1, cost: 1900, duration: 14, prerequisites: [], icon: Wheat, description: 'Teknologi produksi Air Mineral, Gula, Roti, Susu, dan Beras.', effects: [{ stat: 'olahan pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
+// ---- TIER 3 ----
+{ id: 'manufaktur_terintegrasi', name: 'Integrasi Rantai Manufaktur',          category: 'ekonomi', tier: 3, cost: 6500, duration: 34, prerequisites: ['manufaktur_material'], icon: Cpu,    description: 'Integrasi produksi Pabrik Semikonduktor, Pabrik Mesin Mobil, Pabrik Mesin Motor, Semen Beton, dan Kayu.', effects: [{ stat: 'manufaktur', value: 2, label: '+2% Produksi Manufaktur' }] },
+{ id: 'peternakan_otomatis',     name: 'Peternakan Terotomasi',                category: 'ekonomi', tier: 3, cost: 6200, duration: 32, prerequisites: ['peternakan_genetika'], icon: Beaker, description: 'Otomasi fasilitas Ayam Unggas, Sapi Perah, Sapi Potong, dan Domba Kambing.',     effects: [{ stat: 'peternakan', value: 2, label: '+2% Produksi Peternakan' }] },
+{ id: 'agrikultur_cerdas',       name: 'Agrikultur Cerdas Multi-Komoditas',    category: 'ekonomi', tier: 3, cost: 6000, duration: 31, prerequisites: ['perkebunan_komoditas'], icon: Wheat, description: 'Pengelolaan Padi, Gandum, Jagung, Sayur, Umbi, Kedelai, Kelapa Sawit, Kopi, Teh, Kakao, Tebu, dan Karet.', effects: [{ stat: 'agrikultur', value: 2, label: '+2% Produksi Agrikultur' }] },
+{ id: 'perikanan_cerdas',        name: 'Perikanan Budidaya Cerdas',            category: 'ekonomi', tier: 3, cost: 5900, duration: 30, prerequisites: ['perikanan_pascapanen'], icon: Leaf,  description: 'Pemantauan dan peningkatan hasil Ikan, Udang, serta Mutiara.',                   effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
+{ id: 'pangan_efisien',          name: 'Efisiensi Industri Pangan',            category: 'ekonomi', tier: 3, cost: 6300, duration: 33, prerequisites: ['pengawetan_pangan'],    icon: Wheat, description: 'Efisiensi produksi Air Mineral, Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan_pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
 
-// TIER 2
-{ id: 'manufaktur_material', name: 'Rekayasa Material Manufaktur', category: 'ekonomi', tier: 2, cost: 3500, duration: 22, prerequisites: ['otomasi_industri'], icon: Cpu, description: 'Proses material dan komponen untuk Pabrik Semikonduktor, Pabrik Mesin Mobil, Pabrik Mesin Motor, Semen Beton, dan Kayu.', effects: [{ stat: 'manufaktur', value: 2, label: '+2% Produksi Manufaktur' }] },
-{ id: 'peternakan_genetika', name: 'Genetika & Pakan Ternak', category: 'ekonomi', tier: 2, cost: 3300, duration: 21, prerequisites: ['peternakan_modern'], icon: Beaker, description: 'Peningkatan hasil Ayam Unggas, Sapi Perah, Sapi Potong, dan Domba Kambing.', effects: [{ stat: 'peternakan', value: 2, label: '+2% Produksi Peternakan' }] },
-{ id: 'perkebunan_komoditas', name: 'Teknologi Perkebunan Komoditas', category: 'ekonomi', tier: 2, cost: 3200, duration: 20, prerequisites: ['pertanian_presisi'], icon: Wheat, description: 'Optimalisasi Kelapa Sawit, Kopi, Teh, Kakao, Tebu, dan Karet.', effects: [{ stat: 'agrikultur', value: 2, label: '+2% Produksi Agrikultur' }] },
-{ id: 'perikanan_pascapanen', name: 'Teknologi Perikanan & Pascapanen', category: 'ekonomi', tier: 2, cost: 3100, duration: 19, prerequisites: ['perikanan_modern'], icon: Leaf, description: 'Peningkatan hasil Ikan, Udang, dan Mutiara serta penanganan hasil tangkap.', effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
-{ id: 'pengawetan_pangan', name: 'Pengawetan & Pengolahan Pangan', category: 'ekonomi', tier: 2, cost: 3400, duration: 21, prerequisites: ['pengolahan_pangan'], icon: Wheat, description: 'Teknologi untuk Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
+// ---- TIER 4 ----
+{ id: 'manufaktur_lanjut',        name: 'Manufaktur Material & Mesin Terpadu', category: 'ekonomi', tier: 4, cost: 11000, duration: 48, prerequisites: ['manufaktur_terintegrasi'], icon: Cpu,    description: 'Peningkatan teknologi untuk Pabrik Semikonduktor, Pabrik Mesin Mobil, Pabrik Mesin Motor, Semen Beton, dan Kayu.', effects: [{ stat: 'manufaktur', value: 2, label: '+2% Produksi Manufaktur' }] },
+{ id: 'peternakan_berkelanjutan', name: 'Peternakan Produktif Berkelanjutan',  category: 'ekonomi', tier: 4, cost: 10500, duration: 46, prerequisites: ['peternakan_otomatis'],     icon: Beaker, description: 'Sistem produksi berkelanjutan untuk Ayam Unggas, Sapi Perah, Sapi Potong, dan Domba Kambing.', effects: [{ stat: 'peternakan', value: 2, label: '+2% Produksi Peternakan' }] },
+{ id: 'agrikultur_tangguh',       name: 'Agrikultur Tangguh Multi-Komoditas',  category: 'ekonomi', tier: 4, cost: 10000, duration: 44, prerequisites: ['agrikultur_cerdas'],       icon: Wheat,  description: 'Teknologi budidaya tangguh untuk Padi, Gandum, Jagung, Sayur, Umbi, Kedelai, Kelapa Sawit, Kopi, Teh, Kakao, Tebu, dan Karet.', effects: [{ stat: 'agrikultur', value: 2, label: '+2% Produksi Agrikultur' }] },
+{ id: 'perikanan_berkelanjutan',  name: 'Perikanan Produktif Berkelanjutan',   category: 'ekonomi', tier: 4, cost: 9800,  duration: 43, prerequisites: ['perikanan_cerdas'],        icon: Leaf,   description: 'Pengelolaan berkelanjutan untuk hasil Ikan, Udang, dan Mutiara.',                effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
+{ id: 'industri_pangan_terpadu',  name: 'Industri Pangan Terintegrasi',        category: 'ekonomi', tier: 4, cost: 10800, duration: 47, prerequisites: ['pangan_efisien'],          icon: Wheat,  description: 'Integrasi produksi Air Mineral, Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan_pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
 
-// TIER 3
-{ id: 'manufaktur_terintegrasi', name: 'Integrasi Rantai Manufaktur', category: 'ekonomi', tier: 3, cost: 6500, duration: 34, prerequisites: ['manufaktur_material'], icon: Cpu, description: 'Integrasi produksi Pabrik Semikonduktor, Pabrik Mesin Mobil, Pabrik Mesin Motor, Semen Beton, dan Kayu.', effects: [{ stat: 'manufaktur', value: 2, label: '+2% Produksi Manufaktur' }] },
-{ id: 'peternakan_otomatis', name: 'Peternakan Terotomasi', category: 'ekonomi', tier: 3, cost: 6200, duration: 32, prerequisites: ['peternakan_genetika'], icon: Beaker, description: 'Otomasi fasilitas Ayam Unggas, Sapi Perah, Sapi Potong, dan Domba Kambing.', effects: [{ stat: 'peternakan', value: 2, label: '+2% Produksi Peternakan' }] },
-{ id: 'agrikultur_cerdas', name: 'Agrikultur Cerdas Multi-Komoditas', category: 'ekonomi', tier: 3, cost: 6000, duration: 31, prerequisites: ['perkebunan_komoditas'], icon: Wheat, description: 'Pengelolaan Padi, Gandum, Jagung, Sayur, Umbi, Kedelai, Kelapa Sawit, Kopi, Teh, Kakao, Tebu, dan Karet.', effects: [{ stat: 'agrikultur', value: 2, label: '+2% Produksi Agrikultur' }] },
-{ id: 'perikanan_cerdas', name: 'Perikanan Budidaya Cerdas', category: 'ekonomi', tier: 3, cost: 5900, duration: 30, prerequisites: ['perikanan_pascapanen'], icon: Leaf, description: 'Pemantauan dan peningkatan hasil Ikan, Udang, serta Mutiara.', effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
-{ id: 'pangan_efisien', name: 'Efisiensi Industri Pangan', category: 'ekonomi', tier: 3, cost: 6300, duration: 33, prerequisites: ['pengawetan_pangan'], icon: Wheat, description: 'Efisiensi produksi Air Mineral, Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║  2. MILITER & PERTAHANAN (25 kartu — 5 tier)                    ║
+// ╚══════════════════════════════════════════════════════════════════╝
+// ---- TIER 1 ----
+{ id: 'tank_generasi_baru',  name: 'Tank Tempur Komposit',          category: 'militer', tier: 1, cost: 2500, duration: 18, prerequisites: [], icon: Shield,    description: 'Armor komposit ringan meningkatkan efektivitas Tank Tempur Utama.',                effects: [{ stat: 'darat',      value: 2, label: '+2% Kekuatan Tank Tempur Utama' }] },
+{ id: 'drone_otonom',        name: 'Drone Pengintai Taktis',        category: 'militer', tier: 1, cost: 2200, duration: 16, prerequisites: [], icon: Wifi,      description: 'Sistem otonom meningkatkan efektivitas Drone Intai UAV.',                          effects: [{ stat: 'intel',      value: 2, label: '+2% Kekuatan Drone Intai UAV' }] },
+{ id: 'senjata_infanteri',   name: 'Senapan Serbu Presisi',         category: 'militer', tier: 1, cost: 2000, duration: 15, prerequisites: [], icon: Crosshair, description: 'Senjata otomatis presisi meningkatkan kekuatan pasukan infanteri.',                effects: [{ stat: 'infanteri',  value: 2, label: '+2% Kekuatan Pasukan Infanteri' }] },
+{ id: 'radar_pesisir',       name: 'Radar Pesisir Pantai',          category: 'militer', tier: 1, cost: 2300, duration: 17, prerequisites: [], icon: Wifi,      description: 'Deteksi jarak jauh meningkatkan efektivitas kapal destroyer.',                     effects: [{ stat: 'radar',      value: 2, label: '+2% Kekuatan Kapal Destroyer' }] },
+{ id: 'benteng_perbatasan',  name: 'Pos Pertahanan Perbatasan',     category: 'militer', tier: 1, cost: 2100, duration: 15, prerequisites: [], icon: Shield,    description: 'Doktrin pertahanan perbatasan meningkatkan efektivitas APC/IFV.',                  effects: [{ stat: 'bunker',     value: 2, label: '+2% Kekuatan APC / IFV' }] },
 
-// TIER 4
-{ id: 'manufaktur_lanjut', name: 'Manufaktur Material & Mesin Terpadu', category: 'ekonomi', tier: 4, cost: 11000, duration: 48, prerequisites: ['manufaktur_terintegrasi'], icon: Cpu, description: 'Peningkatan teknologi untuk Pabrik Semikonduktor, Pabrik Mesin Mobil, Pabrik Mesin Motor, Semen Beton, dan Kayu.', effects: [{ stat: 'manufaktur', value: 2, label: '+2% Produksi Manufaktur' }] },
-{ id: 'peternakan_berkelanjutan', name: 'Peternakan Produktif Berkelanjutan', category: 'ekonomi', tier: 4, cost: 10500, duration: 46, prerequisites: ['peternakan_otomatis'], icon: Beaker, description: 'Sistem produksi berkelanjutan untuk Ayam Unggas, Sapi Perah, Sapi Potong, dan Domba Kambing.', effects: [{ stat: 'peternakan', value: 2, label: '+2% Produksi Peternakan' }] },
-{ id: 'agrikultur_tangguh', name: 'Agrikultur Tangguh Multi-Komoditas', category: 'ekonomi', tier: 4, cost: 10000, duration: 44, prerequisites: ['agrikultur_cerdas'], icon: Wheat, description: 'Teknologi budidaya tangguh untuk Padi, Gandum, Jagung, Sayur, Umbi, Kedelai, Kelapa Sawit, Kopi, Teh, Kakao, Tebu, dan Karet.', effects: [{ stat: 'agrikultur', value: 2, label: '+2% Produksi Agrikultur' }] },
-{ id: 'perikanan_berkelanjutan', name: 'Perikanan Produktif Berkelanjutan', category: 'ekonomi', tier: 4, cost: 9800, duration: 43, prerequisites: ['perikanan_cerdas'], icon: Leaf, description: 'Pengelolaan berkelanjutan untuk hasil Ikan, Udang, dan Mutiara.', effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
-{ id: 'industri_pangan_terpadu', name: 'Industri Pangan Terintegrasi', category: 'ekonomi', tier: 4, cost: 10800, duration: 47, prerequisites: ['pangan_efisien'], icon: Wheat, description: 'Integrasi produksi Air Mineral, Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
+// ---- TIER 2 ----
+{ id: 'kapal_stealth',       name: 'Kapal Korvet Siluman',           category: 'militer', tier: 2, cost: 4000, duration: 25, prerequisites: ['tank_generasi_baru'], icon: Shield,    description: 'Teknologi siluman meningkatkan efektivitas kapal korvet.',                    effects: [{ stat: 'laut',      value: 2, label: '+2% Kekuatan Kapal Korvet' }] },
+{ id: 'perang_siber',        name: 'Komando Siber Ofensif',          category: 'militer', tier: 2, cost: 3800, duration: 24, prerequisites: ['drone_otonom'],       icon: Cpu,       description: 'Jaringan komando siber meningkatkan efektivitas operasi sabotase terhadap lawan.', effects: [{ stat: 'sabotase',  value: 2, label: '+2% Efektivitas Sabotase' }] },
+{ id: 'artileri_presisi',    name: 'Artileri Roket Otonom',          category: 'militer', tier: 2, cost: 4200, duration: 26, prerequisites: ['senjata_infanteri'],  icon: Crosshair, description: 'Sistem bidik otonom meningkatkan efektivitas artileri berat.',                effects: [{ stat: 'artileri',  value: 2, label: '+2% Kekuatan Artileri Berat' }] },
+{ id: 'kapal_selam_diesel',  name: 'Kapal Selam Modern',             category: 'militer', tier: 2, cost: 4500, duration: 28, prerequisites: ['radar_pesisir'],      icon: Shield,    description: 'Teknologi patroli laut meningkatkan efektivitas kapal selam reguler.',        effects: [{ stat: 'patroli',   value: 2, label: '+2% Kekuatan Kapal Selam Reguler' }] },
+{ id: 'helikopter_serang',   name: 'Helikopter Tempur',              category: 'militer', tier: 2, cost: 4100, duration: 25, prerequisites: ['benteng_perbatasan'], icon: Rocket,    description: 'Dukungan udara jarak dekat meningkatkan kekuatan helikopter serang.',         effects: [{ stat: 'helikopter',value: 2, label: '+2% Kekuatan Helikopter Serang' }] },
 
-// ================= MILITER & PERTAHANAN =================
-// TIER 1
-{ id: 'tank_generasi_baru', name: 'Tank Tempur Komposit', category: 'militer', tier: 1, cost: 2500, duration: 18, prerequisites: [], icon: Shield, description: 'Armor komposit ringan meningkatkan efektivitas Tank Tempur Utama.', effects: [{ stat: 'darat', value: 2, label: '+2% Kekuatan Tank Tempur Utama' }] },
-{ id: 'drone_otonom', name: 'Drone Pengintai Taktis', category: 'militer', tier: 1, cost: 2200, duration: 16, prerequisites: [], icon: Wifi, description: 'Sistem otonom meningkatkan efektivitas Drone Intai UAV.', effects: [{ stat: 'intel', value: 2, label: '+2% Kekuatan Drone Intai UAV' }] },
-{ id: 'senjata_infanteri', name: 'Senapan Serbu Presisi', category: 'militer', tier: 1, cost: 2000, duration: 15, prerequisites: [], icon: Crosshair, description: 'Senjata otomatis presisi meningkatkan kekuatan pasukan infanteri.', effects: [{ stat: 'infanteri', value: 2, label: '+2% Kekuatan Pasukan Infanteri' }] },
-{ id: 'radar_pesisir', name: 'Radar Pesisir Pantai', category: 'militer', tier: 1, cost: 2300, duration: 17, prerequisites: [], icon: Wifi, description: 'Deteksi jarak jauh meningkatkan efektivitas kapal destroyer.', effects: [{ stat: 'radar', value: 2, label: '+2% Kekuatan Kapal Destroyer' }] },
-{ id: 'benteng_perbatasan', name: 'Pos Pertahanan Perbatasan', category: 'militer', tier: 1, cost: 2100, duration: 15, prerequisites: [], icon: Shield, description: 'Doktrin pertahanan perbatasan meningkatkan efektivitas APC/IFV.', effects: [{ stat: 'bunker', value: 2, label: '+2% Kekuatan APC / IFV' }] },
+// ---- TIER 3 ----
+{ id: 'jet_siluman',         name: 'Jet Tempur Generasi 5',          category: 'militer', tier: 3, cost: 7000, duration: 35, prerequisites: ['kapal_stealth'],     icon: Rocket,    description: 'Teknologi siluman meningkatkan kekuatan jet tempur siluman.',                effects: [{ stat: 'udara',     value: 2, label: '+2% Kekuatan Jet Tempur Siluman' }] },
+{ id: 'satelit_mata_mata',   name: 'Satelit Pengintai Optik',        category: 'militer', tier: 3, cost: 6800, duration: 34, prerequisites: ['perang_siber'],      icon: Wifi,      description: 'Data satelit meningkatkan efektivitas pesawat pengintai.',                   effects: [{ stat: 'spionase',  value: 2, label: '+2% Kekuatan Pesawat Pengintai' }] },
+{ id: 'rudal_jelajah',       name: 'Rudal Jelajah Presisi',          category: 'militer', tier: 3, cost: 7200, duration: 36, prerequisites: ['artileri_presisi'],  icon: Crosshair, description: 'Sistem rudal presisi meningkatkan kekuatan sistem peluncur roket.',          effects: [{ stat: 'rudal',     value: 2, label: '+2% Kekuatan Sistem Peluncur Roket' }] },
+{ id: 'sistem_sam',          name: 'Sistem Anti-Udara (SAM)',        category: 'militer', tier: 3, cost: 7100, duration: 35, prerequisites: ['kapal_selam_diesel'], icon: Shield,   description: 'Sistem pertahanan udara meningkatkan kekuatan pertahanan udara mobile.',    effects: [{ stat: 'sam',       value: 2, label: '+2% Kekuatan Pertahanan Udara Mobile' }] },
+{ id: 'pasukan_khusus',      name: 'Reorganisasi Pasukan Khusus',    category: 'militer', tier: 3, cost: 6500, duration: 32, prerequisites: ['helikopter_serang'],  icon: Crosshair, description: 'Doktrin komando meningkatkan kekuatan kendaraan taktis.',                   effects: [{ stat: 'elit',      value: 2, label: '+2% Kekuatan Kendaraan Taktis' }] },
 
-// TIER 2
-{ id: 'kapal_stealth', name: 'Kapal Korvet Siluman', category: 'militer', tier: 2, cost: 4000, duration: 25, prerequisites: ['tank_generasi_baru'], icon: Shield, description: 'Teknologi siluman meningkatkan efektivitas kapal korvet.', effects: [{ stat: 'laut', value: 2, label: '+2% Kekuatan Kapal Korvet' }] },
-{ id: 'perang_siber', name: 'Komando Siber Ofensif', category: 'militer', tier: 2, cost: 3800, duration: 24, prerequisites: ['drone_otonom'], icon: Cpu, description: 'Jaringan komando siber meningkatkan efektivitas operasi sabotase terhadap lawan.', effects: [{ stat: 'sabotase', value: 2, label: '+2% Efektivitas Sabotase' }] },
-{ id: 'artileri_presisi', name: 'Artileri Roket Otonom', category: 'militer', tier: 2, cost: 4200, duration: 26, prerequisites: ['senjata_infanteri'], icon: Crosshair, description: 'Sistem bidik otonom meningkatkan efektivitas artileri berat.', effects: [{ stat: 'artileri', value: 2, label: '+2% Kekuatan Artileri Berat' }] },
-{ id: 'kapal_selam_diesel', name: 'Kapal Selam Modern', category: 'militer', tier: 2, cost: 4500, duration: 28, prerequisites: ['radar_pesisir'], icon: Shield, description: 'Teknologi patroli laut meningkatkan efektivitas kapal selam reguler.', effects: [{ stat: 'patroli', value: 2, label: '+2% Kekuatan Kapal Selam Reguler' }] },
-{ id: 'helikopter_serang', name: 'Helikopter Tempur', category: 'militer', tier: 2, cost: 4100, duration: 25, prerequisites: ['benteng_perbatasan'], icon: Rocket, description: 'Dukungan udara jarak dekat meningkatkan kekuatan helikopter serang.', effects: [{ stat: 'helikopter', value: 2, label: '+2% Kekuatan Helikopter Serang' }] },
+// ---- TIER 4 ----
+{ id: 'rudal_hipersonik',       name: 'Rudal Hipersonik Mach 7',            category: 'militer', tier: 4, cost: 11000, duration: 45, prerequisites: ['jet_siluman'],           icon: Crosshair, description: 'Rudal hipersonik meningkatkan kekuatan pesawat pengebom.',             effects: [{ stat: 'serangan',    value: 2, label: '+2% Kekuatan Pesawat Pengebom' }] },
+{ id: 'program_nuklir',         name: 'Reaktor Pengayaan Nuklir',           category: 'militer', tier: 4, cost: 12000, duration: 50, prerequisites: ['satelit_mata_mata'],      icon: Atom,      description: 'Teknologi nuklir meningkatkan kekuatan kapal induk nuklir.',           effects: [{ stat: 'nuklir',      value: 2, label: '+2% Kekuatan Kapal Induk Nuklir' }] },
+{ id: 'kapal_induk',            name: 'Kapal Induk Bertenaga Nuklir',       category: 'militer', tier: 4, cost: 13000, duration: 55, prerequisites: ['rudal_jelajah'],          icon: Shield,    description: 'Teknologi proyeksi armada meningkatkan kekuatan kapal induk.',         effects: [{ stat: 'proyeksi',    value: 2, label: '+2% Kekuatan Kapal Induk' }] },
+{ id: 'laser_defensif',         name: 'Senjata Laser Anti-Drone',           category: 'militer', tier: 4, cost: 10500, duration: 44, prerequisites: ['sistem_sam'],             icon: Zap,       description: 'Intersepsi laser meningkatkan kekuatan drone kamikaze.',               effects: [{ stat: 'laser',       value: 2, label: '+2% Kekuatan Drone Kamikaze' }] },
+{ id: 'baju_baja_eksoskeleton', name: 'Avionik & Proteksi Jet Interceptor', category: 'militer', tier: 4, cost: 10000, duration: 42, prerequisites: ['pasukan_khusus'],         icon: Cpu,       description: 'Avionik dan lapisan proteksi meningkatkan kekuatan jet tempur interceptor.', effects: [{ stat: 'interceptor', value: 2, label: '+2% Kekuatan Jet Tempur Interceptor' }] },
 
-// TIER 3
-{ id: 'jet_siluman', name: 'Jet Tempur Generasi 5', category: 'militer', tier: 3, cost: 7000, duration: 35, prerequisites: ['kapal_stealth'], icon: Rocket, description: 'Teknologi siluman meningkatkan kekuatan jet tempur siluman.', effects: [{ stat: 'udara', value: 2, label: '+2% Kekuatan Jet Tempur Siluman' }] },
-{ id: 'satelit_mata_mata', name: 'Satelit Pengintai Optik', category: 'militer', tier: 3, cost: 6800, duration: 34, prerequisites: ['perang_siber'], icon: Wifi, description: 'Data satelit meningkatkan efektivitas pesawat pengintai.', effects: [{ stat: 'spionase', value: 2, label: '+2% Kekuatan Pesawat Pengintai' }] },
-{ id: 'rudal_jelajah', name: 'Rudal Jelajah Presisi', category: 'militer', tier: 3, cost: 7200, duration: 36, prerequisites: ['artileri_presisi'], icon: Crosshair, description: 'Sistem rudal presisi meningkatkan kekuatan sistem peluncur roket.', effects: [{ stat: 'rudal', value: 2, label: '+2% Kekuatan Sistem Peluncur Roket' }] },
-{ id: 'sistem_sam', name: 'Sistem Anti-Udara (SAM)', category: 'militer', tier: 3, cost: 7100, duration: 35, prerequisites: ['kapal_selam_diesel'], icon: Shield, description: 'Sistem pertahanan udara meningkatkan kekuatan pertahanan udara mobile.', effects: [{ stat: 'sam', value: 2, label: '+2% Kekuatan Pertahanan Udara Mobile' }] },
-{ id: 'pasukan_khusus', name: 'Reorganisasi Pasukan Khusus', category: 'militer', tier: 3, cost: 6500, duration: 32, prerequisites: ['helikopter_serang'], icon: Crosshair, description: 'Doktrin komando meningkatkan kekuatan kendaraan taktis.', effects: [{ stat: 'elit', value: 2, label: '+2% Kekuatan Kendaraan Taktis' }] },
+// ---- TIER 5 ----
+{ id: 'pertahanan_nuklir',   name: 'Kubah Pertahanan Anti-Rudal',      category: 'militer', tier: 5, cost: 20000, duration: 75, prerequisites: ['rudal_hipersonik'],       icon: Shield,  description: 'Perisai anti-rudal meningkatkan kekuatan kapal selam nuklir.',            effects: [{ stat: 'kubah',    value: 2, label: '+2% Kekuatan Kapal Selam Nuklir' }] },
+{ id: 'icbm',                name: 'ICBM Balistik Antar Benua',         category: 'militer', tier: 5, cost: 25000, duration: 90, prerequisites: ['program_nuklir'],         icon: Rocket,  description: 'Pengembangan ICBM meningkatkan kemampuan serangan nuklir strategis.',     effects: [{ stat: 'icbm',     value: 2, label: '+2% Kemampuan Serangan Nuklir Strategis' }] },
+{ id: 'senjata_orbit',       name: 'Sistem Perang Ranjau Laut',         category: 'militer', tier: 5, cost: 22000, duration: 80, prerequisites: ['kapal_induk'],            icon: Rocket,  description: 'Sistem kendali ranjau meningkatkan kekuatan kapal ranjau.',                effects: [{ stat: 'ranjau',   value: 2, label: '+2% Kekuatan Kapal Ranjau' }] },
+{ id: 'komando_otonom_ai',   name: 'Komando Logistik Armada Berbasis AI', category: 'militer', tier: 5, cost: 21000, duration: 78, prerequisites: ['laser_defensif'],    icon: Cpu,     description: 'Optimasi komando AI meningkatkan kekuatan kapal logistik.',              effects: [{ stat: 'ai_war',   value: 2, label: '+2% Kekuatan Kapal Logistik' }] },
+{ id: 'pasukan_kloning',     name: 'Sistem Angkut Udara Strategis',     category: 'militer', tier: 5, cost: 19000, duration: 72, prerequisites: ['baju_baja_eksoskeleton'], icon: HeartPulse, description: 'Peningkatan mobilisasi udara memperkuat pesawat angkut.',          effects: [{ stat: 'bio_inf',  value: 2, label: '+2% Kekuatan Pesawat Angkut' }] },
 
-// TIER 4
-{ id: 'rudal_hipersonik', name: 'Rudal Hipersonik Mach 7', category: 'militer', tier: 4, cost: 11000, duration: 45, prerequisites: ['jet_siluman'], icon: Crosshair, description: 'Rudal hipersonik meningkatkan kekuatan pesawat pengebom.', effects: [{ stat: 'serangan', value: 2, label: '+2% Kekuatan Pesawat Pengebom' }] },
-{ id: 'program_nuklir', name: 'Reaktor Pengayaan Nuklir', category: 'militer', tier: 4, cost: 12000, duration: 50, prerequisites: ['satelit_mata_mata'], icon: Atom, description: 'Teknologi nuklir meningkatkan kekuatan kapal induk nuklir.', effects: [{ stat: 'nuklir', value: 2, label: '+2% Kekuatan Kapal Induk Nuklir' }] },
-{ id: 'kapal_induk', name: 'Kapal Induk Bertenaga Nuklir', category: 'militer', tier: 4, cost: 13000, duration: 55, prerequisites: ['rudal_jelajah'], icon: Shield, description: 'Teknologi proyeksi armada meningkatkan kekuatan kapal induk.', effects: [{ stat: 'proyeksi', value: 2, label: '+2% Kekuatan Kapal Induk' }] },
-{ id: 'laser_defensif', name: 'Senjata Laser Anti-Drone', category: 'militer', tier: 4, cost: 10500, duration: 44, prerequisites: ['sistem_sam'], icon: Zap, description: 'Intersepsi laser meningkatkan kekuatan drone kamikaze.', effects: [{ stat: 'laser', value: 2, label: '+2% Kekuatan Drone Kamikaze' }] },
-{ id: 'baju_baja_eksoskeleton', name: 'Avionik & Proteksi Jet Interceptor', category: 'militer', tier: 4, cost: 10000, duration: 42, prerequisites: ['pasukan_khusus'], icon: Cpu, description: 'Avionik dan lapisan proteksi meningkatkan kekuatan jet tempur interceptor.', effects: [{ stat: 'interceptor', value: 2, label: '+2% Kekuatan Jet Tempur Interceptor' }] },
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║  3. DIPLOMASI & INTELIJEN (25 kartu — 5 tier)                   ║
+// ║  ✅ SUDAH UPDATE dengan data baru user                          ║
+// ╚══════════════════════════════════════════════════════════════════╝
+// ---- TIER 1 ----
+{ id: 'manfaat_kedutaan',   name: 'Manfaat Kedutaan',             category: 'diplomasi', tier: 1, cost: 1800, duration: 12, prerequisites: [], icon: Globe2,   description: 'Metode konstruksi cepat untuk kedutaan besar di seluruh dunia. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.', effects: [{ stat: 'waktu_kedutaan', value: -2, label: '-2% Waktu Pembangunan Kedutaan' }] },
+{ id: 'suara_pbb',          name: 'Suara di PBB',                 category: 'diplomasi', tier: 1, cost: 2000, duration: 14, prerequisites: [], icon: Sparkles, description: 'Meningkatkan jumlah suara negara di forum PBB. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',                 effects: [{ stat: 'suara_pbb',      value:  2, label: '+2 Suara PBB' }] },
+{ id: 'biaya_kedutaan',     name: 'Efisiensi Biaya Kedutaan',     category: 'diplomasi', tier: 1, cost: 1900, duration: 13, prerequisites: [], icon: Banknote, description: 'Penghematan biaya operasional kedutaan besar. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',                  effects: [{ stat: 'biaya_kedutaan', value: -2, label: '-2% Biaya Kedutaan Besar' }] },
+{ id: 'kontra_separatisme', name: 'Pencegahan Separatisme',       category: 'diplomasi', tier: 1, cost: 1700, duration: 11, prerequisites: [], icon: Shield,   description: 'Badan khusus untuk menekan gerakan separatisme. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',                effects: [{ stat: 'separatisme',    value: -2, label: '-2% Separatisme' }] },
+{ id: 'perjanjian_dagang',  name: 'Pakta Perdagangan Bipartit',   category: 'diplomasi', tier: 1, cost: 1600, duration: 10, prerequisites: [], icon: Globe2,   description: 'Tim negosiator handal untuk mempercepat perjanjian dagang. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',     effects: [{ stat: 'peluang_dagang', value:  2, label: '+2% Peluang Perjanjian Dagang' }] },
 
-// TIER 5
-{ id: 'pertahanan_nuklir', name: 'Kubah Pertahanan Anti-Rudal', category: 'militer', tier: 5, cost: 20000, duration: 75, prerequisites: ['rudal_hipersonik'], icon: Shield, description: 'Perisai anti-rudal meningkatkan kekuatan kapal selam nuklir.', effects: [{ stat: 'kubah', value: 2, label: '+2% Kekuatan Kapal Selam Nuklir' }] },
-{ id: 'icbm', name: 'ICBM Balistik Antar Benua', category: 'militer', tier: 5, cost: 25000, duration: 90, prerequisites: ['program_nuklir'], icon: Rocket, description: 'Pengembangan ICBM meningkatkan kemampuan serangan nuklir strategis.', effects: [{ stat: 'icbm', value: 2, label: '+2% Kemampuan Serangan Nuklir Strategis' }] },
-{ id: 'senjata_orbit', name: 'Sistem Perang Ranjau Laut', category: 'militer', tier: 5, cost: 22000, duration: 80, prerequisites: ['kapal_induk'], icon: Rocket, description: 'Sistem kendali ranjau meningkatkan kekuatan kapal ranjau.', effects: [{ stat: 'ranjau', value: 2, label: '+2% Kekuatan Kapal Ranjau' }] },
-{ id: 'komando_otonom_ai', name: 'Komando Logistik Armada Berbasis AI', category: 'militer', tier: 5, cost: 21000, duration: 78, prerequisites: ['laser_defensif'], icon: Cpu, description: 'Optimasi komando AI meningkatkan kekuatan kapal logistik.', effects: [{ stat: 'ai_war', value: 2, label: '+2% Kekuatan Kapal Logistik' }] },
-{ id: 'pasukan_kloning', name: 'Sistem Angkut Udara Strategis', category: 'militer', tier: 5, cost: 19000, duration: 72, prerequisites: ['baju_baja_eksoskeleton'], icon: HeartPulse, description: 'Peningkatan mobilisasi udara memperkuat pesawat angkut.', effects: [{ stat: 'bio_inf', value: 2, label: '+2% Kekuatan Pesawat Angkut' }] },
+// ---- TIER 2 ----
+{ id: 'pandemi_kontrol',     name: 'Kontrol Pandemi Global',       category: 'diplomasi', tier: 2, cost: 3500, duration: 22, prerequisites: ['manfaat_kedutaan'],   icon: HeartPulse, description: 'Kerja sama internasional untuk menekan pandemi & epidemi. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.', effects: [{ stat: 'kematian_pandemi', value: -2, label: '-2% Kematian Pandemi/Epidemi' }] },
+{ id: 'efek_acara',          name: 'Diplomasi Acara Nasional',     category: 'diplomasi', tier: 2, cost: 3800, duration: 24, prerequisites: ['suara_pbb'],          icon: Sparkles,   description: 'Penyelenggaraan acara internasional yang berdampak luas. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',  effects: [{ stat: 'efek_acara',       value:  2, label: '+2% Efek Acara' }] },
+{ id: 'penyebaran_ideologi', name: 'Penyebaran Ideologi',          category: 'diplomasi', tier: 2, cost: 3600, duration: 23, prerequisites: ['kontra_separatisme'], icon: Palette,    description: 'Promosi ideologi nasional ke negara lain. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',                 effects: [{ stat: 'ideologi',         value:  2, label: '+2% Keberhasilan Ideologi' }] },
+{ id: 'misionaris',          name: 'Misi Keagamaan Internasional', category: 'diplomasi', tier: 2, cost: 3700, duration: 23, prerequisites: ['biaya_kedutaan'],     icon: HeartPulse, description: 'Pengiriman misionaris resmi ke negara sahabat. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',            effects: [{ stat: 'misionaris',       value:  2, label: '+2% Keberhasilan Misionaris' }] },
+{ id: 'pakta_non_agresi',    name: 'Pakta Non-Agresi',             category: 'diplomasi', tier: 2, cost: 3400, duration: 20, prerequisites: ['perjanjian_dagang'],  icon: Shield,     description: 'Doktrin diplomasi untuk mempercepat pakta non-agresi. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',     effects: [{ stat: 'peluang_nap',      value:  2, label: '+2% Peluang Pakta Non-Agresi' }] },
 
-// ================= SOSIAL & KESEJAHTERAAN =================
-// TIER 1
-{ id: 'obat_generik', name: 'Obat Generik Nasional', category: 'sosial', tier: 1, cost: 1500, duration: 12, prerequisites: [], icon: HeartPulse, description: 'Produksi obat murah dalam negeri.', effects: [{ stat: 'subsidi', value: 2, label: '-2% Biaya Obat' }] },
-{ id: 'pendidikan_digital', name: 'Pendidikan Digital Merata', category: 'sosial', tier: 1, cost: 1800, duration: 14, prerequisites: [], icon: BookOpen, description: 'E-learning nasional sekolah.', effects: [{ stat: 'sekolah', value: 2, label: '+2% Efektivitas Belajar' }] },
-{ id: 'air_bersih', name: 'Sanitasi & Air Bersih Desa', category: 'sosial', tier: 1, cost: 1400, duration: 11, prerequisites: [], icon: Leaf, description: 'Pipatisasi air minum warga.', effects: [{ stat: 'sanitasi', value: 2, label: '+2% Kesehatan Warga' }] },
-{ id: 'perumahan_rakyat', name: 'Program Perumahan Subsidi', category: 'sosial', tier: 1, cost: 1600, duration: 13, prerequisites: [], icon: Sparkles, description: 'Hunian murah layak huni.', effects: [{ stat: 'hunian', value: 2, label: '+2% Kualitas Hunian' }] },
-{ id: 'posyandu_digital', name: 'Posyandu & Gizi Balita', category: 'sosial', tier: 1, cost: 1300, duration: 10, prerequisites: [], icon: HeartPulse, description: 'Pencegahan stunting nasional.', effects: [{ stat: 'gizi', value: 2, label: '-2% Angka Stunting' }] },
+// ---- TIER 3 ----
+{ id: 'aliansi_pertahanan',   name: 'Aliansi Pertahanan',          category: 'diplomasi', tier: 3, cost: 6500, duration: 35, prerequisites: ['pakta_non_agresi'],     icon: Shield,     description: 'Jaringan kerja sama untuk membangun aliansi pertahanan. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',  effects: [{ stat: 'peluang_aliansi',  value:  2, label: '+2% Peluang Aliansi Pertahanan' }] },
+{ id: 'mitigasi_bencana',     name: 'Mitigasi Bencana Alam',       category: 'diplomasi', tier: 3, cost: 6800, duration: 36, prerequisites: ['pandemi_kontrol'],      icon: Leaf,       description: 'Sistem peringatan & bantuan bencana lintas negara. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',       effects: [{ stat: 'kematian_bencana', value: -2, label: '-2% Kematian Bencana Alam' }] },
+{ id: 'pertahanan_diri',      name: 'Doktrin Pertahanan Diri',     category: 'diplomasi', tier: 3, cost: 6200, duration: 33, prerequisites: ['efek_acara'],           icon: Shield,     description: 'Postur pertahanan yang menurunkan peluang diserang. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',      effects: [{ stat: 'peluang_diserang', value: -2, label: '-2% Peluang Diserang Negara Lain' }] },
+{ id: 'perlindungan_perang',  name: 'Perlindungan Sipil Perang',   category: 'diplomasi', tier: 3, cost: 6400, duration: 34, prerequisites: ['penyebaran_ideologi'],  icon: HeartPulse, description: 'Protokol perlindungan sipil saat konflik bersenjata. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',     effects: [{ stat: 'kematian_perang',  value: -2, label: '-2% Kematian Populasi Perang' }] },
+{ id: 'bonus_organisasi_pbb', name: 'Kontribusi Organisasi PBB',   category: 'diplomasi', tier: 3, cost: 6000, duration: 32, prerequisites: ['misionaris'],           icon: Globe2,     description: 'Kontribusi aktif di PBB untuk bonus diplomasi. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',           effects: [{ stat: 'bonus_pbb',        value:  2, label: '+2% Bonus Organisasi PBB' }] },
 
-// TIER 2
-{ id: 'vaksin_universal', name: 'Vaksinasi Universal', category: 'sosial', tier: 2, cost: 2500, duration: 16, prerequisites: ['obat_generik'], icon: HeartPulse, description: 'Pencegahan wabah nasional.', effects: [{ stat: 'wabah', value: 2, label: '-2% Risiko Wabah' }] },
-{ id: 'beasiswa_nasional', name: 'Beasiswa Sarjana Daerah', category: 'sosial', tier: 2, cost: 2200, duration: 15, prerequisites: ['pendidikan_digital'], icon: BookOpen, description: 'Kuliah gratis untuk putra daerah.', effects: [{ stat: 'sarjana', value: 2, label: '+2% Pemuda Terdidik' }] },
-{ id: 'puskesmas_keliling', name: 'Puskesmas Mobil Terpadu', category: 'sosial', tier: 2, cost: 2400, duration: 16, prerequisites: ['air_bersih'], icon: HeartPulse, description: 'Layanan medis terpencil.', effects: [{ stat: 'akses', value: 2, label: '+2% Akses Medis' }] },
-{ id: 'subsidi_energi', name: 'Subsidi Tepat Sasaran', category: 'sosial', tier: 2, cost: 2300, duration: 15, prerequisites: ['perumahan_rakyat'], icon: Banknote, description: 'Bantuan langsung tunai.', effects: [{ stat: 'kemiskinan', value: 2, label: '-2% Kemiskinan Ekstrem' }] },
-{ id: 'pelatihan_kerja', name: 'Balai Latihan Kerja AI', category: 'sosial', tier: 2, cost: 2100, duration: 14, prerequisites: ['posyandu_digital'], icon: Cpu, description: 'Sertifikasi keahlian pemuda.', effects: [{ stat: 'kerja', value: 2, label: '-2% Pengangguran' }] },
+// ---- TIER 4 ----
+{ id: 'bonus_organisasi_regional', name: 'Kerja Sama Organisasi Regional', category: 'diplomasi', tier: 4, cost: 11000, duration: 48, prerequisites: ['aliansi_pertahanan'],    icon: Globe2,  description: 'Peran aktif di organisasi regional (ASEAN, EU, dll). Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',  effects: [{ stat: 'bonus_regional',        value:  2, label: '+2% Bonus Organisasi Regional' }] },
+{ id: 'kursi_tetap_dewan_pbb',     name: 'Kursi Tetap Dewan Keamanan PBB', category: 'diplomasi', tier: 4, cost: 25000, duration: 60, prerequisites: ['bonus_organisasi_pbb'], icon: Sparkles, description: 'Klaim permanen kursi Dewan Keamanan PBB. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',              effects: [{ stat: 'kursi_dewan_keamanan',  value:  1, label: 'Ambil Kursi Tetap Dewan Keamanan PBB' }] },
+{ id: 'bonus_tempat_wisata',       name: 'Promosi Wisata Diplomatik',      category: 'diplomasi', tier: 4, cost: 9500,  duration: 44, prerequisites: ['mitigasi_bencana'],     icon: Palette,  description: 'Diplomasi wisata ke negara sahabat. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',                   effects: [{ stat: 'bonus_wisata',          value:  2, label: '+2% Bonus Tempat Wisata' }] },
+{ id: 'sanksi_ekonomi',            name: 'Perangkat Sanksi Ekonomi',       category: 'diplomasi', tier: 4, cost: 10800, duration: 47, prerequisites: ['bonus_organisasi_regional'], icon: Banknote, description: 'Pembekuan aset musuh. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.',                           effects: [{ stat: 'sanksi',                value:  2, label: '+2% Efek Sanksi Musuh' }] },
+{ id: 'suara_dewan_keamanan',      name: 'Reformasi Birokrasi Kabinet',    category: 'diplomasi', tier: 4, cost: 12500, duration: 54, prerequisites: ['pertahanan_diri'],      icon: Globe2,   description: 'Restrukturisasi tata kelola Dewan Kabinet Menteri untuk menekan biaya upgrade. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.', effects: [{ stat: 'biaya_upgrade_kabinet', value: -2, label: '-2% Biaya Upgrade Dewan Kabinet' }] },
 
-// TIER 3
-{ id: 'kesehatan_mental', name: 'Layanan Kesehatan Mental', category: 'sosial', tier: 3, cost: 4000, duration: 25, prerequisites: ['vaksin_universal'], icon: HeartPulse, description: 'Konseling psikologis publik.', effects: [{ stat: 'bahagia', value: 2, label: '+2% Kepuasan Hidup' }] },
-{ id: 'smart_city', name: 'Kota Pintar & Terintegrasi', category: 'sosial', tier: 3, cost: 4500, duration: 28, prerequisites: ['beasiswa_nasional'], icon: Cpu, description: 'Layanan publik serba otomatis.', effects: [{ stat: 'layanan', value: 2, label: '+2% Efisiensi Kota' }] },
-{ id: 'rumah_sakit_rujukan', name: 'RS Rujukan Antar Provinsi', category: 'sosial', tier: 3, cost: 4200, duration: 26, prerequisites: ['puskesmas_keliling'], icon: HeartPulse, description: 'Spesialis bedah & jantung.', effects: [{ stat: 'harapan', value: 2, label: '+2% Harapan Hidup' }] },
-{ id: 'asuransi_tenaga_kerja', name: 'Jaminan Sosial Buruh', category: 'sosial', tier: 3, cost: 4300, duration: 27, prerequisites: ['subsidi_energi'], icon: Shield, description: 'Perlindungan pekerja industri.', effects: [{ stat: 'buruh', value: 2, label: '+2% Keamanan Buruh' }] },
-{ id: 'taman_kota_hijau', name: 'Taman Rekreasi & Olahraga', category: 'sosial', tier: 3, cost: 3800, duration: 23, prerequisites: ['pelatihan_kerja'], icon: Leaf, description: 'Ruang terbuka hijau warga.', effects: [{ stat: 'stres', value: 2, label: '-2% Stres Perkotaan' }] },
-
-// TIER 4
-{ id: 'rumah_pintar', name: 'Rumah Pintar Terjangkau', category: 'sosial', tier: 4, cost: 7000, duration: 38, prerequisites: ['kesehatan_mental'], icon: Sparkles, description: 'IoT hunian hemat energi.', effects: [{ stat: 'hunian_pintar', value: 2, label: '+2% Kenyamanan Kota' }] },
-{ id: 'transportasi_otonom', name: 'Transportasi Massal Listrik', category: 'sosial', tier: 4, cost: 7500, duration: 40, prerequisites: ['smart_city'], icon: Rocket, description: 'Bus & MRT tanpa pengemudi.', effects: [{ stat: 'macet', value: 2, label: '-2% Kemacetan Kota' }] },
-{ id: 'telemedis_nasional', name: 'Platform Operasi Telemedis', category: 'sosial', tier: 4, cost: 7200, duration: 39, prerequisites: ['rumah_sakit_rujukan'], icon: Wifi, description: 'Bedah robotik jarak jauh.', effects: [{ stat: 'bedah', value: 2, label: '+2% Keberhasilan Medis' }] },
-{ id: 'dana_pensiun_universal', name: 'Dana Pensiun Terjamin', category: 'sosial', tier: 4, cost: 7800, duration: 42, prerequisites: ['asuransi_tenaga_kerja'], icon: Banknote, description: 'Jaminan hari tua lansia.', effects: [{ stat: 'pensiun', value: 2, label: '+2% Kesejahteraan Lansia' }] },
-{ id: 'kesetaraan_gender', name: 'Program Pemberdayaan Ekonomi', category: 'sosial', tier: 4, cost: 6800, duration: 36, prerequisites: ['taman_kota_hijau'], icon: BookOpen, description: 'Kemandirian ekonomi keluarga.', effects: [{ stat: 'keluarga', value: 2, label: '+2% Ekonomi Keluarga' }] },
-
-// TIER 5
-{ id: 'jaminan_universal', name: 'Jaminan Sosial Seumur Hidup', category: 'sosial', tier: 5, cost: 15000, duration: 60, prerequisites: ['rumah_pintar'], icon: HeartPulse, description: 'Layanan sosial gratis seumur hidup.', effects: [{ stat: 'bahagia_max', value: 2, label: '+2% Kepuasan Rakyat' }] },
-{ id: 'kota_utopia', name: 'Kota Bebas Emisi & Kejahatan', category: 'sosial', tier: 5, cost: 17000, duration: 68, prerequisites: ['transportasi_otonom'], icon: Cpu, description: 'Hunian ideal bebas kriminal.', effects: [{ stat: 'kriminal', value: 2, label: '-2% Kriminalitas' }] },
-{ id: 'regenerasi_sel', name: 'Terapi Panjang Umur Nasional', category: 'sosial', tier: 5, cost: 16000, duration: 65, prerequisites: ['telemedis_nasional'], icon: HeartPulse, description: 'Penghambat penuaan dini.', effects: [{ stat: 'umur_max', value: 2, label: '+2% Angka Harapan Hidup' }] },
-{ id: 'pendidikan_gratis', name: 'Pendidikan Tinggi Gratis', category: 'sosial', tier: 5, cost: 14000, duration: 58, prerequisites: ['dana_pensiun_universal'], icon: BookOpen, description: 'Bebas biaya universitas 100%.', effects: [{ stat: 'iq', value: 2, label: '+2% Kapasitas SDM' }] },
-{ id: 'kesetaraan_total', name: 'Indeks Kesejahteraan Maksimum', category: 'sosial', tier: 5, cost: 18000, duration: 70, prerequisites: ['kesetaraan_gender'], icon: Sparkles, description: 'Penghapusan kesenjangan sosial.', effects: [{ stat: 'harmoni', value: 2, label: '+2% Stabilitas Sosial' }] },
-
-// ================= LINGKUNGAN & ENERGI =================
-// TIER 1 (WAKTU PEMBANGUNAN - GROUP 1)
-{ id: 'waktu_pltn', name: 'Pembangunan PLTN', category: 'lingkungan', tier: 1, cost: 2000, duration: 15, prerequisites: [], icon: Atom, description: 'Riset efisiensi metode & percepatan konstruksi PLTN (Nuklir).', effects: [{ stat: 'pltn_waktu', value: -2, label: 'Waktu pembangunan -2%' }] },
-{ id: 'waktu_plta', name: 'Pembangunan PLTA', category: 'lingkungan', tier: 1, cost: 1800, duration: 14, prerequisites: [], icon: Zap, description: 'Riset efisiensi metode & percepatan konstruksi PLTA (Air).', effects: [{ stat: 'plta_waktu', value: -2, label: 'Waktu pembangunan -2%' }] },
-{ id: 'waktu_plts', name: 'Pembangunan PLTS', category: 'lingkungan', tier: 1, cost: 1700, duration: 13, prerequisites: [], icon: Zap, description: 'Riset efisiensi metode & percepatan konstruksi PLTS (Surya).', effects: [{ stat: 'plts_waktu', value: -2, label: 'Waktu pembangunan -2%' }] },
-{ id: 'waktu_pltu', name: 'Pembangunan PLTU', category: 'lingkungan', tier: 1, cost: 1900, duration: 14, prerequisites: [], icon: Zap, description: 'Riset efisiensi metode & percepatan konstruksi PLTU (Uap).', effects: [{ stat: 'pltu_waktu', value: -2, label: 'Waktu pembangunan -2%' }] },
-{ id: 'waktu_pltg', name: 'Pembangunan PLTG', category: 'lingkungan', tier: 1, cost: 1850, duration: 13, prerequisites: [], icon: Zap, description: 'Riset efisiensi metode & percepatan konstruksi PLTG (Gas).', effects: [{ stat: 'pltg_waktu', value: -2, label: 'Waktu pembangunan -2%' }] },
-
-// TIER 2 (PRODUKSI / OUTPUT - GROUP 1)
-{ id: 'output_pltn', name: 'Output PLTN', category: 'lingkungan', tier: 2, cost: 4000, duration: 25, prerequisites: ['waktu_pltn'], icon: Atom, description: 'Optimasi & peningkatan kapasitas output Pembangkit Listrik Tenaga Nuklir.', effects: [{ stat: 'pltn_output', value: 2, label: '+2% Output PLTN' }] },
-{ id: 'output_plta', name: 'Output PLTA', category: 'lingkungan', tier: 2, cost: 3800, duration: 24, prerequisites: ['waktu_plta'], icon: Zap, description: 'Optimasi & peningkatan kapasitas output Pembangkit Listrik Tenaga Air.', effects: [{ stat: 'plta_output', value: 2, label: '+2% Output PLTA' }] },
-{ id: 'output_plts', name: 'Output PLTS', category: 'lingkungan', tier: 2, cost: 3600, duration: 23, prerequisites: ['waktu_plts'], icon: Zap, description: 'Optimasi & peningkatan kapasitas output Pembangkit Listrik Tenaga Surya.', effects: [{ stat: 'plts_output', value: 2, label: '+2% Output PLTS' }] },
-{ id: 'output_pltu', name: 'Output PLTU', category: 'lingkungan', tier: 2, cost: 4200, duration: 26, prerequisites: ['waktu_pltu'], icon: Zap, description: 'Optimasi & peningkatan kapasitas output Pembangkit Listrik Tenaga Uap.', effects: [{ stat: 'pltu_output', value: 2, label: '+2% Output PLTU' }] },
-{ id: 'output_pltg', name: 'Output PLTG', category: 'lingkungan', tier: 2, cost: 3900, duration: 24, prerequisites: ['waktu_pltg'], icon: Zap, description: 'Optimasi & peningkatan kapasitas output Pembangkit Listrik Tenaga Gas.', effects: [{ stat: 'pltg_output', value: 2, label: '+2% Output PLTG' }] },
-
-// TIER 3 (WAKTU PEMBANGUNAN - GROUP 2)
-{ id: 'waktu_pltb', name: 'Pembangunan PLTB', category: 'lingkungan', tier: 3, cost: 6500, duration: 35, prerequisites: ['output_pltn'], icon: Zap, description: 'Riset efisiensi metode & percepatan konstruksi PLTB (Angin/Bayu).', effects: [{ stat: 'pltb_waktu', value: -2, label: 'Waktu pembangunan -2%' }] },
-{ id: 'waktu_pltp', name: 'Pembangunan PLTP', category: 'lingkungan', tier: 3, cost: 6800, duration: 36, prerequisites: ['output_plta'], icon: Zap, description: 'Riset efisiensi metode & percepatan konstruksi PLTP (Panas Bumi).', effects: [{ stat: 'pltp_waktu', value: -2, label: 'Waktu pembangunan -2%' }] },
-{ id: 'waktu_plth', name: 'Pembangunan PLTH', category: 'lingkungan', tier: 3, cost: 6200, duration: 32, prerequisites: ['output_plts'], icon: Zap, description: 'Riset efisiensi metode & percepatan konstruksi PLTH (Hidrogen).', effects: [{ stat: 'plth_waktu', value: -2, label: 'Waktu pembangunan -2%' }] },
-{ id: 'waktu_pltgl', name: 'Pembangunan PLTGL', category: 'lingkungan', tier: 3, cost: 6400, duration: 34, prerequisites: ['output_pltu'], icon: Zap, description: 'Riset efisiensi metode & percepatan konstruksi PLTGL (Gelombang Laut).', effects: [{ stat: 'pltgl_waktu', value: -2, label: 'Waktu pembangunan -2%' }] },
-{ id: 'waktu_pltfn', name: 'Pembangunan PLTFN', category: 'lingkungan', tier: 3, cost: 6100, duration: 31, prerequisites: ['output_pltg'], icon: Atom, description: 'Riset efisiensi metode & percepatan konstruksi PLTFN (Fusi Nuklir).', effects: [{ stat: 'pltfn_waktu', value: -2, label: 'Waktu pembangunan -2%' }] },
-
-// TIER 4 (PRODUKSI / OUTPUT - GROUP 2)
-{ id: 'output_pltb', name: 'Output PLTB', category: 'lingkungan', tier: 4, cost: 10000, duration: 48, prerequisites: ['waktu_pltb'], icon: Zap, description: 'Optimasi & peningkatan kapasitas output Pembangkit Listrik Tenaga Angin.', effects: [{ stat: 'pltb_output', value: 2, label: '+2% Output PLTB' }] },
-{ id: 'output_pltp', name: 'Output PLTP', category: 'lingkungan', tier: 4, cost: 10500, duration: 50, prerequisites: ['waktu_pltp'], icon: Zap, description: 'Optimasi & peningkatan kapasitas output Pembangkit Listrik Panas Bumi.', effects: [{ stat: 'pltp_output', value: 2, label: '+2% Output PLTP' }] },
-{ id: 'output_plth', name: 'Output PLTH', category: 'lingkungan', tier: 4, cost: 9800, duration: 46, prerequisites: ['waktu_plth'], icon: Zap, description: 'Optimasi & peningkatan kapasitas output Pembangkit Listrik Hidrogen.', effects: [{ stat: 'plth_output', value: 2, label: '+2% Output PLTH' }] },
-{ id: 'output_pltgl', name: 'Output PLTGL', category: 'lingkungan', tier: 4, cost: 11000, duration: 52, prerequisites: ['waktu_pltgl'], icon: Zap, description: 'Optimasi & peningkatan kapasitas output Pembangkit Listrik Gelombang Laut.', effects: [{ stat: 'pltgl_output', value: 2, label: '+2% Output PLTGL' }] },
-{ id: 'output_pltfn', name: 'Output PLTFN', category: 'lingkungan', tier: 4, cost: 10800, duration: 51, prerequisites: ['waktu_pltfn'], icon: Atom, description: 'Optimasi & peningkatan kapasitas output Pembangkit Listrik Fusi Nuklir.', effects: [{ stat: 'pltfn_output', value: 2, label: '+2% Output PLTFN' }] },
-
-// ================= DIPLOMASI & INTELIJEN =================
-// TIER 1
-{ id: 'diplomasi_digital', name: 'Diplomasi Digital Global', category: 'diplomasi', tier: 1, cost: 1800, duration: 12, prerequisites: [], icon: Globe2, description: 'Kanal diplomasi daring resmi.', effects: [{ stat: 'pbb', value: 2, label: '+2% Resolusi PBB' }] },
-{ id: 'soft_power_cultural', name: 'Diplomasi Budaya & Seni', category: 'diplomasi', tier: 1, cost: 2000, duration: 14, prerequisites: [], icon: Palette, description: 'Promosi karya seni di luar negeri.', effects: [{ stat: 'unesco', value: 2, label: '+2% Pengaruh UNESCO' }] },
-{ id: 'kedutaan_besar', name: 'Modernisasi Kedutaan Besar', category: 'diplomasi', tier: 1, cost: 1900, duration: 13, prerequisites: [], icon: Globe2, description: 'Atase pertahanan & dagang.', effects: [{ stat: 'atase', value: 2, label: '+2% Pengaruh Kedutaan' }] },
-{ id: 'intelijen_taktis', name: 'Badan Intelijen Daerah', category: 'diplomasi', tier: 1, cost: 1700, duration: 11, prerequisites: [], icon: Shield, description: 'Pengumpulan informasi batas.', effects: [{ stat: 'intel_dasar', value: 2, label: '+2% Info Teritorial' }] },
-{ id: 'perjanjian_dagang', name: 'Pakta Perdagangan Bipartit', category: 'diplomasi', tier: 1, cost: 1600, duration: 10, prerequisites: [], icon: Banknote, description: 'Penurunan tarif bea masuk.', effects: [{ stat: 'tarif', value: 2, label: '-2% Tarif Impor' }] },
-
-// TIER 2
-{ id: 'diplomasi_multilateral', name: 'Blok Diplomasi Regional', category: 'diplomasi', tier: 2, cost: 3500, duration: 22, prerequisites: ['diplomasi_digital'], icon: Globe2, description: 'Aliansi politik kawasan.', effects: [{ stat: 'aliansi', value: 2, label: '+2% Suara Regional' }] },
-{ id: 'kriptografi', name: 'Enkripsi Data Kriptografi', category: 'diplomasi', tier: 2, cost: 3800, duration: 24, prerequisites: ['soft_power_cultural'], icon: Lock, description: 'Pengamanan data diplomatik.', effects: [{ stat: 'enkripsi', value: 2, label: '-2% Risiko Bocor' }] },
-{ id: 'bantuan_kemanusiaan', name: 'Misi Perdamaian Dunia', category: 'diplomasi', tier: 2, cost: 3600, duration: 23, prerequisites: ['kedutaan_besar'], icon: HeartPulse, description: 'Pengiriman pasukan perdamaian.', effects: [{ stat: 'reputasi', value: 2, label: '+2% Reputasi Dunia' }] },
-{ id: 'kontra_spionase', name: 'Penangkal Agensi Asing', category: 'diplomasi', tier: 2, cost: 3700, duration: 23, prerequisites: ['intelijen_taktis'], icon: Shield, description: 'Penangkapan agen rahasia.', effects: [{ stat: 'kontra', value: 2, label: '-2% Spionase Asing' }] },
-{ id: 'bebas_visa', name: 'Kesepakatan Bebas Visa', category: 'diplomasi', tier: 2, cost: 3400, duration: 20, prerequisites: ['perjanjian_dagang'], icon: Globe2, description: 'Kemudahan perjalanan paspor.', effects: [{ stat: 'paspor', value: 2, label: '+2% Kekuatan Paspor' }] },
-
-// TIER 3
-{ id: 'jaringan_intelijen', name: 'Jaringan Agen Global', category: 'diplomasi', tier: 3, cost: 6500, duration: 35, prerequisites: ['diplomasi_multilateral'], icon: Shield, description: 'Operasi rahasia luar negeri.', effects: [{ stat: 'agen', value: 2, label: '+2% Akurasi Spionase' }] },
-{ id: 'kontra_intelijen', name: 'Sistem Kripto Militer', category: 'diplomasi', tier: 3, cost: 6800, duration: 36, prerequisites: ['kriptografi'], icon: Lock, description: 'Enkripsi saluran militer.', effects: [{ stat: 'kripto_militer', value: 2, label: '-2% Sabotase Data' }] },
-{ id: 'lobi_geopolitik', name: 'Konsultan Lobi Geopolitik', category: 'diplomasi', tier: 3, cost: 6200, duration: 33, prerequisites: ['bantuan_kemanusiaan'], icon: Globe2, description: 'Pengaruh keputusan Dewan PBB.', effects: [{ stat: 'lobi', value: 2, label: '+2% Veto Resolusi' }] },
-{ id: 'analitik_data_diplomatik', name: 'AI Analisis Geopolitik', category: 'diplomasi', tier: 3, cost: 6400, duration: 34, prerequisites: ['kontra_spionase'], icon: Cpu, description: 'Prediksi konflik antar negara.', effects: [{ stat: 'prediksi_konflik', value: 2, label: '+2% Akurasi Konflik' }] },
-{ id: 'ekstradisi_internasional', name: 'Perjanjian Ekstradisi Lawan', category: 'diplomasi', tier: 3, cost: 6000, duration: 32, prerequisites: ['bebas_visa'], icon: Shield, description: 'Penangkapan buron negara.', effects: [{ stat: 'hukum', value: 2, label: '+2% Penegakan Hukum' }] },
-
-// TIER 4
-{ id: 'analitik_geopolitik', name: 'Pusat Analisis Konflik Dunia', category: 'diplomasi', tier: 4, cost: 11000, duration: 48, prerequisites: ['jaringan_intelijen'], icon: Globe2, description: 'Prediksi krisis internasional.', effects: [{ stat: 'krisis', value: 2, label: '+2% Kesiapan Krisis' }] },
-{ id: 'cyber_defense', name: 'Pertahanan Siber Pertahanan', category: 'diplomasi', tier: 4, cost: 11500, duration: 50, prerequisites: ['kontra_intelijen'], icon: Cpu, description: 'Benteng siber nasional.', effects: [{ stat: 'cyber_defense', value: 2, label: '+2% Pertahanan Siber' }] },
-{ id: 'aliansi_militer_global', name: 'Pakta Pertahanan Bersama', category: 'diplomasi', tier: 4, cost: 12000, duration: 52, prerequisites: ['lobi_geopolitik'], icon: Shield, description: 'Jaminan bantuan militer.', effects: [{ stat: 'pakta', value: 2, label: '+2% Bantuan Perang' }] },
-{ id: 'sanksi_ekonomi', name: 'Perangkat Sanksi Ekonomi', category: 'diplomasi', tier: 4, cost: 10800, duration: 47, prerequisites: ['analitik_data_diplomatik'], icon: Banknote, description: 'Pembekuan aset musuh.', effects: [{ stat: 'sanksi', value: 2, label: '+2% Efek Sanksi Musuh' }] },
-{ id: 'suara_dewan_keamanan', name: 'Kursi Anggota Dewan PBB', category: 'diplomasi', tier: 4, cost: 12500, duration: 54, prerequisites: ['ekstradisi_internasional'], icon: Globe2, description: 'Hak suara penentu PBB.', effects: [{ stat: 'veto', value: 2, label: '+2% Pengaruh PBB' }] },
-
-// TIER 5
-{ id: 'hegemoni_diplomasi', name: 'Hegemoni Diplomasi Dunia', category: 'diplomasi', tier: 5, cost: 20000, duration: 80, prerequisites: ['analitik_geopolitik'], icon: Globe2, description: 'Pemimpin blok koalisi dunia.', effects: [{ stat: 'hegemoni', value: 2, label: '+2% Kepemimpinan Dunia' }] },
-{ id: 'kriptografi_kuantum', name: 'Kriptografi Kuantum Mutlak', category: 'diplomasi', tier: 5, cost: 22000, duration: 85, prerequisites: ['cyber_defense'], icon: Lock, description: 'Enkripsi tak terretas selamanya.', effects: [{ stat: 'enkripsi_max', value: 2, label: '+2% Keamanan Enkripsi' }] },
-{ id: 'intelijen_satelit_quantum', name: 'Pengawasan Masa Nyata Global', category: 'diplomasi', tier: 5, cost: 21000, duration: 82, prerequisites: ['aliansi_militer_global'], icon: Wifi, description: 'Monitor posisi seluruh armada.', effects: [{ stat: 'vision', value: 2, label: '+2% Penglihatan Peta' }] },
-{ id: 'isolasi_total_musuh', name: 'Embargo Ekonomi Global', category: 'diplomasi', tier: 5, cost: 19000, duration: 76, prerequisites: ['sanksi_ekonomi'], icon: Banknote, description: 'Isolasi perdagangan lawan.', effects: [{ stat: 'embargo', value: 2, label: '+2% Kelumpuhan Musuh' }] },
-{ id: 'tatanan_dunia_baru', name: 'Tatanan Dunia Baru (Pax)', category: 'diplomasi', tier: 5, cost: 25000, duration: 90, prerequisites: ['suara_dewan_keamanan'], icon: Sparkles, description: 'Perjanjian perdamaian abadi.', effects: [{ stat: 'pax', value: 2, label: '+2% Stabilitas Dunia' }] },
-
-// ================= BUDAYA & IDENTITAS =================
-// TIER 1
-{ id: 'digitalisasi_warisan', name: 'Digitalisasi Warisan Sejarah', category: 'budaya', tier: 1, cost: 1500, duration: 12, prerequisites: [], icon: Palette, description: 'Arsip & museum virtual kebudayaan.', effects: [{ stat: 'unesco', value: 2, label: '+2% Peluang UNESCO' }] },
-{ id: 'bahasa_global', name: 'Promosi Bahasa Nasional', category: 'budaya', tier: 1, cost: 1600, duration: 13, prerequisites: [], icon: Globe2, description: 'Pusat pengajaran bahasa di luar negeri.', effects: [{ stat: 'bahasa', value: 2, label: '+2% Pengaruh Bahasa' }] },
-{ id: 'kuliner_nusantara', name: 'Festival Kuliner Tradisional', category: 'budaya', tier: 1, cost: 1400, duration: 11, prerequisites: [], icon: Palette, description: 'Diplomasi kuliner rempah & sajian khas.', effects: [{ stat: 'kuliner', value: 2, label: '+2% Popularitas Kuliner' }] },
-{ id: 'musik_tradisional', name: 'Konser Etnik Nasional', category: 'budaya', tier: 1, cost: 1300, duration: 10, prerequisites: [], icon: Sparkles, description: 'Pertunjukan instrumen musik tradisional.', effects: [{ stat: 'musik', value: 2, label: '+2% Kebanggaan Seni' }] },
-{ id: 'kain_wasutra', name: 'Galeri Wastra & Tekstil', category: 'budaya', tier: 1, cost: 1550, duration: 12, prerequisites: [], icon: Palette, description: 'Promosi tenun & tekstil tradisional.', effects: [{ stat: 'tenun', value: 2, label: '+2% Nilai Ekspor Wastra' }] },
-
-// TIER 2
-{ id: 'industri_kreatif', name: 'Studio Animasi & Game', category: 'budaya', tier: 2, cost: 2800, duration: 18, prerequisites: ['digitalisasi_warisan'], icon: Palette, description: 'Game & animasi komersial.', effects: [{ stat: 'game', value: 2, label: '+2% PDB Ekonomi Kreatif' }] },
-{ id: 'festival_internasional', name: 'Festival Film & Musik Dunia', category: 'budaya', tier: 2, cost: 2600, duration: 17, prerequisites: ['bahasa_global'], icon: Palette, description: 'Pentas seni internasional.', effects: [{ stat: 'pariwisata', value: 2, label: '+2% Turis Asing' }] },
-{ id: 'restorasi_cagar', name: 'Restorasi Situs Sejarah', category: 'budaya', tier: 2, cost: 2700, duration: 17, prerequisites: ['kuliner_nusantara'], icon: Sparkles, description: 'Pemugaran cagar budaya.', effects: [{ stat: 'cagar', value: 2, label: '+2% Daya Tarik Wisata' }] },
-{ id: 'sanggar_seni_daerah', name: 'Sanggar Seni Pemuda', category: 'budaya', tier: 2, cost: 2400, duration: 15, prerequisites: ['musik_tradisional'], icon: BookOpen, description: 'Pendidikan tari & seni rakyat.', effects: [{ stat: 'sanggar', value: 2, label: '+2% Pemuda Berbudaya' }] },
-{ id: 'literasi_sejarah', name: 'Penerbitan Buku Sejarah', category: 'budaya', tier: 2, cost: 2500, duration: 16, prerequisites: ['kain_wasutra'], icon: BookOpen, description: 'Arsip literatur kebudayaan bangsa.', effects: [{ stat: 'buku', value: 2, label: '+2% Literasi Bangsa' }] },
-
-// TIER 3
-{ id: 'pariwisata_virtual', name: 'Pariwisata VR & AR', category: 'budaya', tier: 3, cost: 5000, duration: 28, prerequisites: ['industri_kreatif'], icon: Globe2, description: 'Tur situs sejarah berbasis Metaverse.', effects: [{ stat: 'devisa_vr', value: 2, label: '+2% Devisa Pariwisata' }] },
-{ id: 'sinema_nasional', name: 'Bioskop & Film Layar Lebar', category: 'budaya', tier: 3, cost: 5200, duration: 30, prerequisites: ['festival_internasional'], icon: Palette, description: 'Film nasional pemenang penghargaan.', effects: [{ stat: 'soft_power_film', value: 2, label: '+2% Soft Power Film' }] },
-{ id: 'taman_budaya_nasional', name: 'Kompleks Taman Budaya', category: 'budaya', tier: 3, cost: 4800, duration: 27, prerequisites: ['restorasi_cagar'], icon: Sparkles, description: 'Pusat teater & pameran nasional.', effects: [{ stat: 'teater', value: 2, label: '+2% Kunjungan Budaya' }] },
-{ id: 'arsip_digital_nasional', name: 'Arsip Manuskrip Kuno', category: 'budaya', tier: 3, cost: 4900, duration: 28, prerequisites: ['sanggar_seni_daerah'], icon: BookOpen, description: 'Digitalisasi naskah sejarah kuno.', effects: [{ stat: 'naskah', value: 2, label: '+2% Pengetahuan Kuno' }] },
-{ id: 'desain_arsitektur', name: 'Arsitektur Khas Modern', category: 'budaya', tier: 3, cost: 5100, duration: 29, prerequisites: ['literasi_sejarah'], icon: Sparkles, description: 'Gedung bernuansa estetika etnik.', effects: [{ stat: 'ikon', value: 2, label: '+2% Estetika Kota' }] },
-
-// TIER 4
-{ id: 'diplomasi_budaya', name: 'Pusat Kebudayaan Dunia', category: 'budaya', tier: 4, cost: 9000, duration: 42, prerequisites: ['pariwisata_virtual'], icon: Globe2, description: 'Gedung kebudayaan di 50 negara.', effects: [{ stat: 'global_culture', value: 2, label: '+2% Pengaruh Budaya' }] },
-{ id: 'ekspor_konten_kreatif', name: 'Lisensi Hak Cipta Ekspor', category: 'budaya', tier: 4, cost: 9500, duration: 44, prerequisites: ['sinema_nasional'], icon: Banknote, description: 'Ekspor komik, game, & musik.', effects: [{ stat: 'royalti', value: 2, label: '+2% Royalti Konten' }] },
-{ id: 'destinasi_super_prioritas', name: 'Kawasan Wisata Bahari', category: 'budaya', tier: 4, cost: 9200, duration: 43, prerequisites: ['taman_budaya_nasional'], icon: Globe2, description: 'Resort eco-tourism maritim.', effects: [{ stat: 'turis_max', value: 2, label: '+2% Devisa Wisatawan' }] },
-{ id: 'olahraga_tradisional', name: 'Kompetisi Bela Diri Dunia', category: 'budaya', tier: 4, cost: 8800, duration: 40, prerequisites: ['arsip_digital_nasional'], icon: Shield, description: 'Kejuaraan olahraga bela diri.', effects: [{ stat: 'silat', value: 2, label: '+2% Prestasi Olahraga' }] },
-{ id: 'pusat_fashion_etnik', name: 'Pekan Mode Etnik Dunia', category: 'budaya', tier: 4, cost: 9100, duration: 42, prerequisites: ['desain_arsitektur'], icon: Palette, description: 'Fashion show etnik internasional.', effects: [{ stat: 'fashion', value: 2, label: '+2% Pasar Mode Etnik' }] },
-
-// TIER 5
-{ id: 'hegemoni_kultural', name: 'Gelombang Budaya Global', category: 'budaya', tier: 5, cost: 16000, duration: 70, prerequisites: ['diplomasi_budaya'], icon: Sparkles, description: 'Tren gaya hidup & lagu dunia.', effects: [{ stat: 'wave', value: 2, label: '+2% Trendsetter Dunia' }] },
-{ id: 'metaverse_nusantara', name: 'Metaverse Kebudayaan Global', category: 'budaya', tier: 5, cost: 18000, duration: 75, prerequisites: ['ekspor_konten_kreatif'], icon: Cpu, description: 'Dunia virtual kebudayaan penuh.', effects: [{ stat: 'metaverse', value: 2, label: '+2% Pendapatan Virtual' }] },
-{ id: 'keajaiban_dunia_baru', name: 'Monumen Kebudayaan Megalitikum', category: 'budaya', tier: 5, cost: 20000, duration: 85, prerequisites: ['destinasi_super_prioritas'], icon: Sparkles, description: 'Monumen keajaiban dunia baru.', effects: [{ stat: 'wonder', value: 2, label: '+2% Kehormatan Bangsa' }] },
-{ id: 'filsafat_kebijaksanaan', name: 'Akademi Filsafat & Kebijaksanaan', category: 'budaya', tier: 5, cost: 15000, duration: 65, prerequisites: ['olahraga_tradisional'], icon: BookOpen, description: 'Filsafat kedamaian bagi dunia.', effects: [{ stat: 'filsafat', value: 2, label: '+2% Etika & Karakter' }] },
-{ id: 'identitas_abadi', name: 'Warisan Kebudayaan Abadi', category: 'budaya', tier: 5, cost: 22000, duration: 90, prerequisites: ['pusat_fashion_etnik'], icon: Palette, description: 'Pengakuan mutlak sejarah peradaban.', effects: [{ stat: 'peradaban', value: 2, label: '+2% Legasi Peradaban' }] },
+// ---- TIER 5 ----
+{ id: 'hegemoni_diplomasi',        name: 'Harmonisasi Fiskal Global',      category: 'diplomasi', tier: 5, cost: 20000, duration: 80, prerequisites: ['bonus_organisasi_regional'], icon: Banknote, description: 'Sinkronisasi kebijakan fiskal dengan standar internasional untuk memaksimalkan penerimaan pajak di semua lini. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.', effects: [{ stat: 'pajak_semua_lini',    value: 2, label: '+2% Penerimaan Pajak Seluruh Lini' }] },
+{ id: 'kriptografi_kuantum',       name: 'Diplomasi Perdagangan Strategis', category: 'diplomasi', tier: 5, cost: 22000, duration: 85, prerequisites: ['kursi_tetap_dewan_pbb'],     icon: Lock,     description: 'Jaringan negosiasi dagang tingkat tinggi untuk menekan harga beli dan menaikkan harga jual komoditas nasional. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.', effects: [{ stat: 'harga_beli', value: -2, label: '-2% Harga Beli Komoditas' }, { stat: 'harga_jual', value: 2, label: '+2% Harga Jual Komoditas' }] },
+{ id: 'intelijen_satelit_quantum', name: 'Alokasi Subsidi Terpadu',         category: 'diplomasi', tier: 5, cost: 21000, duration: 82, prerequisites: ['bonus_tempat_wisata'],       icon: Wifi,     description: 'Sistem distribusi subsidi yang efisien dan tepat sasaran untuk menekan kebocoran anggaran. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.', effects: [{ stat: 'biaya_subsidi',     value: -2, label: '-2% Biaya Subsidi Negara' }] },
+{ id: 'isolasi_total_musuh',       name: 'Program Permukiman Diplomatik',   category: 'diplomasi', tier: 5, cost: 19000, duration: 76, prerequisites: ['sanksi_ekonomi'],            icon: Globe2,   description: 'Pembangunan kawasan hunian berstandar internasional untuk menampung populasi dan tenaga ahli asing. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.', effects: [{ stat: 'kapasitas_permukiman', value: 2, label: '+2% Kapasitas Permukiman' }] },
+{ id: 'tatanan_dunia_baru',        name: 'Sinergi Ekonomi Global',          category: 'diplomasi', tier: 5, cost: 25000, duration: 90, prerequisites: ['suara_dewan_keamanan'],      icon: Sparkles, description: 'Integrasi ekonomi lintas sektor nasional melalui jaringan diplomasi global untuk mendorong produktivitas semua lini. Efek penurunan peringkat diperbarui setiap 2 tahun sekali.', effects: [{ stat: 'produksi_semua_lini', value: 2, label: '+2% Produksi Semua Lini' }] },
 ];
 
 const CATEGORIES: { key: CategoryKey; label: string; icon: React.ElementType }[] = [
-  { key: 'ekonomi', label: 'Ekonomi & Industri', icon: Banknote },
-  { key: 'militer', label: 'Militer & Pertahanan', icon: Shield },
-  { key: 'sosial', label: 'Sosial & Kesejahteraan', icon: HeartPulse },
-  { key: 'lingkungan', label: 'Lingkungan & Energi', icon: Leaf },
+  { key: 'ekonomi',   label: 'Ekonomi & Industri',   icon: Banknote },
+  { key: 'militer',   label: 'Militer & Pertahanan', icon: Shield },
   { key: 'diplomasi', label: 'Diplomasi & Intelijen', icon: Globe2 },
-  { key: 'budaya', label: 'Budaya & Identitas', icon: Palette },
 ];
 
 export type SelectionCategoryKey = 'ekonomi' | 'militer' | 'diplomasi';
@@ -417,7 +321,7 @@ export type SelectionCategoryKey = 'ekonomi' | 'militer' | 'diplomasi';
 const FOCUS_CATEGORIES_MAP: Record<SelectionCategoryKey, CategoryKey[]> = {
   ekonomi: ['ekonomi', 'lingkungan'],
   militer: ['militer'],
-  diplomasi: ['diplomasi', 'sosial', 'budaya'],
+  diplomasi: ['diplomasi'],
 };
 
 interface PenelitianPageModalProps {
@@ -521,7 +425,11 @@ export default function PenelitianPageModal({
     if (activeResearchId) return;
 
     const safeDate = getSafeDateString();
-    const endDateStr = addDays(safeDate, getEffectiveResearchDuration(research.duration, research.category));
+    const duration = getEffectiveResearchDuration(research.duration, research.category);
+    const endDateStr = addDays(safeDate, duration);
+
+    const notif = generateResearchStartNotification(research.name, research.category, duration, safeDate, false, 1);
+    const currentPending = Array.isArray(countryDetail.pending_notifications) ? countryDetail.pending_notifications : [];
 
     setCountryDetail({
       ...countryDetail,
@@ -530,6 +438,7 @@ export default function PenelitianPageModal({
       active_research_start_date: safeDate,
       active_research_progress: 0,
       active_research_end_date: endDateStr,
+      pending_notifications: [notif, ...currentPending],
     });
     setConfirmTarget(null);
   };
@@ -545,6 +454,9 @@ export default function PenelitianPageModal({
     const duration = getEffectiveResearchDuration(getCardUpgradeDuration(research, targetLevel), research.category);
     const endDateStr = addDays(safeDate, duration);
 
+    const notif = generateResearchStartNotification(research.name, research.category, duration, safeDate, true, targetLevel);
+    const currentPending = Array.isArray(countryDetail.pending_notifications) ? countryDetail.pending_notifications : [];
+
     setCountryDetail({
       ...countryDetail,
       anggaran: money - cost,
@@ -552,6 +464,7 @@ export default function PenelitianPageModal({
       active_research_start_date: safeDate,
       active_research_progress: 0,
       active_research_end_date: endDateStr,
+      pending_notifications: [notif, ...currentPending],
     });
     setConfirmUpgrade(null);
   };

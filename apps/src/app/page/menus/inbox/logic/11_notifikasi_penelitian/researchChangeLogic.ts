@@ -50,3 +50,36 @@ export function generateResearchChangeNotification(
     focusScope: info.scope,
   };
 }
+
+export function generateResearchStartNotification(
+  researchName: string,
+  categoryKey: string,
+  durationDays: number,
+  dateStr: string,
+  isUpgrade: boolean = false,
+  targetLevel: number = 1
+): ResearchChangeNotification {
+  const validCategoryKey = (categoryKey === 'lingkungan' ? 'ekonomi' : categoryKey) as 'ekonomi' | 'militer' | 'diplomasi';
+  const info = RESEARCH_LABELS[validCategoryKey] || {
+    name: 'Riset Strategis Nasional',
+    scope: 'Inovasi & Pembangunan',
+    desc: ''
+  };
+
+  const statusLabel = isUpgrade ? `Upgrade Level ${targetLevel}` : 'Riset Baru';
+
+  return {
+    id: `research-start-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+    title: `🔬 PELUNCURAN RISET: ${researchName}`,
+    sender: `Badan Riset & Inovasi Nasional (BRIN)`,
+    message: `Pemerintah resmi memproses ${statusLabel}: "${researchName}". Estimasi waktu penyelesaian adalah ${durationDays} hari.`,
+    timestamp: dateStr,
+    type: 'kepuasan',
+    value: 10,
+    isRead: false,
+    tradeType: 'perubahan_fokus_riset',
+    categoryKey: validCategoryKey,
+    categoryName: info.name,
+    focusScope: statusLabel,
+  };
+}

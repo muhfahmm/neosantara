@@ -31,18 +31,6 @@ export default function BottomLeftPenelitianIcon({
 
   const handleSelectCategory = (category: SelectionCategoryKey) => {
     setSelectedFocus(category);
-
-    const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
-    const notif = generateResearchChangeNotification(category, dateStr);
-    let newPending = Array.isArray(countryDetail?.pending_notifications) ? [...countryDetail.pending_notifications] : [];
-    newPending = [notif, ...newPending];
-
-    if (setCountryDetail) {
-      setCountryDetail({
-        ...countryDetail,
-        pending_notifications: newPending,
-      });
-    }
   };
 
   return (
