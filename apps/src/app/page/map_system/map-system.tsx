@@ -18,6 +18,47 @@ const ConfirmRestartModal = dynamic(() => import('../navbar/ConfirmRestartModal'
 const ModalsPeringatanPeringkat = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsPeringatanPeringkat').then(m => m.ModalsPeringatanPeringkat), { ssr: false });
 const ModalsKudeta = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta'), { ssr: false });
 type KudetaType = import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta').KudetaType;
+const ModalsAnnexedGameOver = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsAnnexedGameOver'), { ssr: false });
+
+export function lootUserProductionInventory(countryDetail: any, currentDateStr: string): { updatedDetail: any; lootedSummaryText: string } {
+  if (!countryDetail) return { updatedDetail: countryDetail, lootedSummaryText: '' };
+
+  const nextDetail = JSON.parse(JSON.stringify(countryDetail));
+
+  const PRODUCTION_KEYS = [
+    // Mineral & Energi
+    "emas", "uranium", "batu_bara", "minyak_bumi", "gas_alam", "garam", "litium", "logam_tanah_jarang", "bijih_besi",
+    // Manufaktur
+    "pabrik_semikonduktor", "pabrik_mesin_mobil", "pabrik_mesin_motor", "semen_beton", "kayu",
+    // Peternakan
+    "ayam_unggas", "sapi_perah", "sapi_potong", "domba_kambing",
+    // Agrikultur
+    "padi", "gandum", "jagung", "sayur", "umbi", "kedelai", "kelapa_sawit", "kopi", "teh", "kakao", "tebu", "karet",
+    // Perikanan
+    "udang", "mutiara", "ikan",
+    // Olahan Pangan
+    "air_mineral", "gula", "roti", "pengolahan_daging", "mie_instan", "minyak_goreng", "susu", "beras"
+  ];
+
+  PRODUCTION_KEYS.forEach((key) => {
+    // Reset build date ke tanggal hari ini agar akumulasi stok produksi harian kembali ke 0
+    nextDetail[`build_date_${key}`] = currentDateStr;
+
+    if (typeof nextDetail[`stok_${key}`] === 'number') nextDetail[`stok_${key}`] = 0;
+    if (typeof nextDetail[`stock_${key}`] === 'number') nextDetail[`stock_${key}`] = 0;
+    if (typeof nextDetail[`${key}_stok`] === 'number') nextDetail[`${key}_stok`] = 0;
+    if (typeof nextDetail[`${key}_stock`] === 'number') nextDetail[`${key}_stock`] = 0;
+    if (typeof nextDetail[`${key}_amount`] === 'number') nextDetail[`${key}_amount`] = 0;
+    if (nextDetail.stok && typeof nextDetail.stok === 'object') nextDetail.stok[key] = 0;
+    if (nextDetail.stock && typeof nextDetail.stock === 'object') nextDetail.stock[key] = 0;
+    if (nextDetail.produksi && typeof nextDetail.produksi === 'object') nextDetail.produksi[key] = 0;
+  });
+
+  return {
+    updatedDetail: nextDetail,
+    lootedSummaryText: "Seluruh stok hasil produksi (Mineral & Energi, Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan) telah habis dirampas oleh musuh."
+  };
+}
 const RequireEmbassyModal = dynamic(() => import('./RequireEmbassyModal').then(m => m.RequireEmbassyModal), { ssr: false });
 import { Navbar } from '../navbar/Navbar';
 const BottomNav = dynamic(() => import('../navigasi_menu/2_navigasi_bawah/BottomNav'), { ssr: false });
@@ -1020,6 +1061,15 @@ export default function MapPage() {
     const [presidentRating, setPresidentRating] = useState<number>(50);
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
     const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
+    const [annexedModalData, setAnnexedModalData] = useState<{
+        isOpen: boolean;
+        countryName: string;
+        attackerCountry: string;
+    }>({
+        isOpen: false,
+        countryName: '',
+        attackerCountry: '',
+    });
     const processedReferendumsRef = useRef(new Set<string>());
     const electionScheduleTickRef = useRef<string | null>(null);
     useEffect(() => {
@@ -3979,27 +4029,49 @@ export default function MapPage() {
                         onResolve={({ action, result }) => {
                             if (isUserDefender) {
                                 if (result === 'lose') {
-                                    const { updatedDetail, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.75);
-                                    setCountryDetail(updatedDetail);
-                                    setNotifications((prev: any[]) => [
-                                        {
-                                            id: `war-loss-${Date.now()}`,
-                                            title: '💥 KERUGIAN PASUKAN PERTEMPURAN (75%)',
-                                            sender: `Markas Besar Angkatan Bersenjata (${countryDetail?.country || countryDetail?.nama_negara || 'Indonesia'})`,
-                                            message: `Pertahanan gagal membendung agresi ${activeWarAnimation.attacker}! Kerugian tempur sebesar 75% dari unit yang dikerahkan: ${lossSummaryText}. Data armada di Pertahanan & Keamanan telah diperbarui.`,
-                                            type: 'kepuasan',
-                                            value: 75,
-                                            isRead: false,
-                                        },
-                                        ...prev,
-                                    ]);
-                                    setResultModal({
-                                        isOpen: true,
-                                        title: 'Pertahanan Gagal Terpukul Kalah!',
-                                        message: `Pertahanan negara Anda gagal menahan agresi militer dari ${activeWarAnimation.attacker}. Kerugian tempur sebesar 75% dari armada yang dikerahkan: ${lossSummaryText}.`,
-                                        type: 'error',
-                                    });
+                                    // 1. Potong armada pertahanan 75%
+                                    const { updatedDetail: detailAfterLoss, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.75);
+
+                                    // 2. Acak persentase (80% Dirampas, 20% Dianeksasi)
+                                    const roll = Math.random() * 100;
+                                    const isAnnexed = roll >= 80;
+
+                                    if (isAnnexed) {
+                                        // Peluang 20%: DIANEKSASI (GAME OVER)
+                                        setCountryDetail(detailAfterLoss);
+                                        setAnnexedModalData({
+                                            isOpen: true,
+                                            countryName: countryDetail?.country || countryDetail?.nama_negara || 'Indonesia',
+                                            attackerCountry: activeWarAnimation.attacker,
+                                        });
+                                    } else {
+                                        // Peluang 80%: DIRAMPAS HASIL PRODUKSI (BERTAHAN / LOOTED)
+                                        const currentDateStr = currentDate.toISOString().slice(0, 10);
+                                        const { updatedDetail: detailAfterLoot } = lootUserProductionInventory(detailAfterLoss, currentDateStr);
+                                        setCountryDetail(detailAfterLoot);
+
+                                        setNotifications((prev: any[]) => [
+                                            {
+                                                id: `war-loot-${Date.now()}`,
+                                                title: '⚠️ HASIL PRODUKSI DIRAMPAS MUSUH (80%)',
+                                                sender: `Markas Besar Angkatan Bersenjata (${countryDetail?.country || countryDetail?.nama_negara || 'Indonesia'})`,
+                                                message: `Pertahanan gagal membendung agresi ${activeWarAnimation.attacker}! Musuh merampas habis seluruh stok produksi (Mineral, Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan) hingga kembali ke 0. Kerugian tempur: ${lossSummaryText}.`,
+                                                type: 'kepuasan',
+                                                value: 80,
+                                                isRead: false,
+                                            },
+                                            ...prev,
+                                        ]);
+
+                                        setResultModal({
+                                            isOpen: true,
+                                            title: 'Pertahanan Gagal — Produksi Dirampas!',
+                                            message: `Pertahanan negara Anda gagal menahan agresi militer dari ${activeWarAnimation.attacker}. Negara berhasil menepis aneksasi total (peluang selamat 80%), namun seluruh stok hasil produksi (Mineral & Energi, Manufaktur, Peternakan, Agrikultur, Perikanan, Olahan Pangan) telah dirampas habis oleh musuh hingga 0, serta armada mengalami kerugian 75%: ${lossSummaryText}.`,
+                                            type: 'error',
+                                        });
+                                    }
                                 } else {
+                                    // Pertahanan Berhasil! (User Win)
                                     setNotifications((prev: any[]) => [
                                         {
                                             id: `war-win-${Date.now()}`,
@@ -4351,6 +4423,17 @@ export default function MapPage() {
                 onRestart={() => {
                     handleRestart();
                     setIsKudetaOpen(false);
+                }}
+            />
+
+            {/* Modals Annexed Game Over */}
+            <ModalsAnnexedGameOver
+                isOpen={annexedModalData.isOpen}
+                countryName={annexedModalData.countryName || selectedCountry?.country || countryDetail?.country}
+                attackerCountry={annexedModalData.attackerCountry}
+                onRestart={() => {
+                    handleRestart();
+                    setAnnexedModalData(prev => ({ ...prev, isOpen: false }));
                 }}
             />
 
