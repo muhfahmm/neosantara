@@ -17,7 +17,7 @@ import {
   FastForward,
   AlertTriangle,
 } from 'lucide-react';
-import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
+import { COUNTRIES_DATA, CAPITALS_DATA } from '@/app/page/map_system/map-data';
 import PerbandinganPasukan from './perbandingan_pasukan';
 import PageWar from './page_war/page_war';
 
@@ -73,109 +73,85 @@ export interface WarPath {
 }
 
 /* ============================================================
- * KOORDINAT IBUKOTA
+ * KOORDINAT IBUKOTA (Ditarik Otomatis dari Database CAPITALS_DATA & COUNTRIES_DATA)
  * ============================================================ */
 
-export const CAPITAL_COORDS: Record<string, LatLng> = {
-  // ── Asia Tengah & Timur Tengah ──
-  Afganistan: { lat: 34.52, lng: 69.18 },
-  Afghanistan: { lat: 34.52, lng: 69.18 },
-  Iran: { lat: 35.6892, lng: 51.389 },
-  Turkmenistan: { lat: 37.96, lng: 58.32 },
-  Pakistan: { lat: 33.6844, lng: 73.0479 },
-  Uzbekistan: { lat: 41.2995, lng: 69.2401 },
-  Tajikistan: { lat: 38.5598, lng: 68.787 },
-  Kyrgyzstan: { lat: 42.8746, lng: 74.5698 },
-  Kazakhstan: { lat: 51.1694, lng: 71.4491 },
-  Iraq: { lat: 33.3152, lng: 44.3661 },
-  'Saudi Arabia': { lat: 24.7136, lng: 46.6753 },
-  'Arab Saudi': { lat: 24.7136, lng: 46.6753 },
-  Turkey: { lat: 39.9334, lng: 32.8597 },
-  Turki: { lat: 39.9334, lng: 32.8597 },
-  India: { lat: 28.6139, lng: 77.209 },
-  China: { lat: 39.9042, lng: 116.4074 },
-  Tiongkok: { lat: 39.9042, lng: 116.4074 },
-  Russia: { lat: 55.7558, lng: 37.6173 },
-  Rusia: { lat: 55.7558, lng: 37.6173 },
+export const CAPITAL_COORDS: Record<string, LatLng> = (() => {
+  const map: Record<string, LatLng> = {};
 
-  // ── ASEAN ──
-  Indonesia: { lat: -6.2088, lng: 106.8456 },
-  Malaysia: { lat: 3.139, lng: 101.6869 },
-  Singapore: { lat: 1.3521, lng: 103.8198 },
-  Singapura: { lat: 1.3521, lng: 103.8198 },
-  Philippines: { lat: 14.5995, lng: 120.9842 },
-  Filipina: { lat: 14.5995, lng: 120.9842 },
-  Thailand: { lat: 13.7563, lng: 100.5018 },
-  Vietnam: { lat: 21.0285, lng: 105.8542 },
-  Myanmar: { lat: 19.7633, lng: 96.0785 },
-  Cambodia: { lat: 11.5564, lng: 104.9282 },
-  Kamboja: { lat: 11.5564, lng: 104.9282 },
-  Laos: { lat: 17.9757, lng: 102.6331 },
-  Brunei: { lat: 4.9031, lng: 114.9398 },
+  // 1. Ekstrak dari CAPITALS_DATA
+  CAPITALS_DATA.forEach((item: any) => {
+    if (item.country && typeof item.lat === 'number' && typeof item.lng === 'number') {
+      const countryName = String(item.country).trim();
+      if (countryName) {
+        map[countryName] = { lat: item.lat, lng: item.lng };
+      }
+    }
+  });
 
-  // ── Asia Timur & Selatan ──
-  Japan: { lat: 35.6762, lng: 139.6503 },
-  Jepang: { lat: 35.6762, lng: 139.6503 },
-  'South Korea': { lat: 37.5665, lng: 126.978 },
-  'Korea Selatan': { lat: 37.5665, lng: 126.978 },
-  'North Korea': { lat: 39.0392, lng: 125.7625 },
-  'Korea Utara': { lat: 39.0392, lng: 125.7625 },
-  Bangladesh: { lat: 23.8103, lng: 90.4125 },
-  Nepal: { lat: 27.7172, lng: 85.324 },
-  'Sri Lanka': { lat: 6.9271, lng: 79.8612 },
+  // 2. Ekstrak dari COUNTRIES_DATA
+  COUNTRIES_DATA.forEach((item: any) => {
+    if (item.country) {
+      const lat = item.latitude ?? item.lat;
+      const lng = item.longitude ?? item.lng;
+      if (typeof lat === 'number' && typeof lng === 'number') {
+        const countryName = String(item.country).trim();
+        if (countryName && !map[countryName]) {
+          map[countryName] = { lat, lng };
+        }
+      }
+    }
+  });
 
-  // ── Eropa ──
-  'United Kingdom': { lat: 51.5074, lng: -0.1278 },
-  Inggris: { lat: 51.5074, lng: -0.1278 },
-  France: { lat: 48.8566, lng: 2.3522 },
-  Prancis: { lat: 48.8566, lng: 2.3522 },
-  Germany: { lat: 52.52, lng: 13.405 },
-  Jerman: { lat: 52.52, lng: 13.405 },
-  Italy: { lat: 41.9028, lng: 12.4964 },
-  Italia: { lat: 41.9028, lng: 12.4964 },
-  Spain: { lat: 40.4168, lng: -3.7038 },
-  Spanyol: { lat: 40.4168, lng: -3.7038 },
-  Netherlands: { lat: 52.3676, lng: 4.9041 },
-  Belanda: { lat: 52.3676, lng: 4.9041 },
-  Poland: { lat: 52.2297, lng: 21.0122 },
-  Polandia: { lat: 52.2297, lng: 21.0122 },
-  Ukraine: { lat: 50.4501, lng: 30.5234 },
-  Ukraina: { lat: 50.4501, lng: 30.5234 },
+  return map;
+})();
 
-  // ── Amerika ──
-  'United States': { lat: 38.9072, lng: -77.0369 },
-  'Amerika Serikat': { lat: 38.9072, lng: -77.0369 },
-  Canada: { lat: 45.4215, lng: -75.6972 },
-  Kanada: { lat: 45.4215, lng: -75.6972 },
-  Mexico: { lat: 19.4326, lng: -99.1332 },
-  Meksiko: { lat: 19.4326, lng: -99.1332 },
-  Brazil: { lat: -15.7975, lng: -47.8919 },
-  Brasil: { lat: -15.7975, lng: -47.8919 },
-  Argentina: { lat: -34.6037, lng: -58.3816 },
-
-  // ── Afrika & Oseania ──
-  Egypt: { lat: 30.0444, lng: 31.2357 },
-  Mesir: { lat: 30.0444, lng: 31.2357 },
-  Nigeria: { lat: 9.0765, lng: 7.3986 },
-  'South Africa': { lat: -25.7479, lng: 28.2293 },
-  'Afrika Selatan': { lat: -25.7479, lng: 28.2293 },
-  Australia: { lat: -35.2809, lng: 149.13 },
+const COUNTRY_NAME_ALIASES: Record<string, string> = {
+  brasil: 'Brazil',
+  tiongkok: 'China',
 };
 
-export function getCapitalCoord(countryName: string): LatLng | null {
-  const key = countryName.trim();
-  if (CAPITAL_COORDS[key]) return CAPITAL_COORDS[key];
-  const found = Object.keys(CAPITAL_COORDS).find(
-    (k) => k.toLowerCase() === key.toLowerCase()
-  );
-  if (found) return CAPITAL_COORDS[found];
+const resolveCountryAlias = (name: string): string =>
+  COUNTRY_NAME_ALIASES[name.trim().toLowerCase()] ?? name;
 
-  // Fallback ke COUNTRIES_DATA dari map-data
-  const match = COUNTRIES_DATA.find(
-    (c) => c.country.toLowerCase().trim() === key.toLowerCase()
+export function getCapitalCoord(countryName: string): LatLng | null {
+  if (!countryName) return null;
+  const key = resolveCountryAlias(countryName).trim();
+  if (CAPITAL_COORDS[key]) return CAPITAL_COORDS[key];
+
+  const lowerKey = key.toLowerCase();
+  const foundKey = Object.keys(CAPITAL_COORDS).find(
+    (k) => k.toLowerCase() === lowerKey
   );
-  if (match && match.latitude !== undefined && match.longitude !== undefined) {
-    return { lat: match.latitude, lng: match.longitude };
+  if (foundKey) return CAPITAL_COORDS[foundKey];
+
+  const cleanNorm = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const cleanKey = cleanNorm(key);
+  if (!cleanKey) return null;
+
+  const foundCleanKey = Object.keys(CAPITAL_COORDS).find(
+    (k) => cleanNorm(k) === cleanKey
+  );
+  if (foundCleanKey) return CAPITAL_COORDS[foundCleanKey];
+
+  // Fallback ke CAPITALS_DATA
+  const capMatch = CAPITALS_DATA.find(
+    (c: any) => cleanNorm(String(c.country || '')) === cleanKey
+  );
+  if (capMatch && typeof capMatch.lat === 'number' && typeof capMatch.lng === 'number') {
+    return { lat: capMatch.lat, lng: capMatch.lng };
+  }
+
+  // Fallback ke COUNTRIES_DATA
+  const match = COUNTRIES_DATA.find(
+    (c: any) => cleanNorm(String(c.country || '')) === cleanKey
+  );
+  if (match) {
+    const lat = match.latitude ?? match.lat;
+    const lng = match.longitude ?? match.lng;
+    if (typeof lat === 'number' && typeof lng === 'number') {
+      return { lat, lng };
+    }
   }
 
   return null;
@@ -185,18 +161,24 @@ export function buildCapitalPoint(
   country: string,
   capital?: string
 ): CapitalPoint | null {
+  if (!country) return null;
   const ll = getCapitalCoord(country);
+  const cleanNorm = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const cleanCountry = cleanNorm(resolveCountryAlias(country));
   const match = COUNTRIES_DATA.find(
-    (c) => c.country.toLowerCase().trim() === country.toLowerCase().trim()
+    (c) => cleanNorm(c.country || '') === cleanCountry
   );
-  const capitalName = capital || match?.capital || country;
+  const capMatch = CAPITALS_DATA.find(
+    (c: any) => cleanNorm(c.country || '') === cleanCountry
+  );
+  const capitalName = capital || capMatch?.capital || match?.capital || country;
 
   if (!ll) {
     return {
       country,
       capital: capitalName,
-      lat: 0,
-      lng: 0,
+      lat: match?.latitude ?? match?.lat ?? 0,
+      lng: match?.longitude ?? match?.lng ?? 0,
     };
   }
 
@@ -357,6 +339,7 @@ export interface WarResultInput {
   roll?: number;
   attackerBonus?: number;
   defenderBonus?: number;
+  isUserDefender?: boolean;
 }
 
 export interface WarResultOutput {
@@ -366,10 +349,11 @@ export interface WarResultOutput {
   totalRounds?: number;
   message?: string;
   log?: string[];
+  winner?: 'attacker' | 'target' | 'draw';
 }
 
 export function computeWarResult(input: WarResultInput): WarResultOutput {
-  const { attackerPower, targetPower } = input;
+  const { attackerPower, targetPower, isUserDefender = false } = input;
 
   let deployedPowerRatio = 1.0;
   if (typeof window !== 'undefined') {
@@ -387,20 +371,31 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
     } catch (e) {}
   }
 
-  const actualAttackerPower = Math.round(attackerPower * deployedPowerRatio);
+  // Jika User adalah Penyerang: ratio dikalikan ke attackerPower (User)
+  // Jika User adalah Bertahan (isUserDefender): ratio dikalikan ke targetPower (User), sedangkan attackerPower (NPC) 100%
+  const actualAttackerPower = isUserDefender ? Math.round(attackerPower) : Math.round(attackerPower * deployedPowerRatio);
+  const actualTargetPower = isUserDefender ? Math.round(targetPower * deployedPowerRatio) : Math.round(targetPower);
 
   const battle = simulateBattleTs({
-    attackerPower: actualAttackerPower,
-    targetPower,
+    attackerPower: Math.max(1, actualAttackerPower),
+    targetPower: Math.max(1, actualTargetPower),
   });
 
+  // Dari sudut pandang User:
+  // Jika User Penyerang: battle.winner === 'attacker' => win (User Menang Serangan)
+  // Jika User Bertahan (isUserDefender): battle.winner === 'target' => win (User Menang Pertahanan)
+  const isUserWin = isUserDefender
+    ? battle.winner === 'target'
+    : battle.winner === 'attacker';
+
   return {
-    result: battle.isVictory ? 'win' : 'lose',
+    result: isUserWin ? 'win' : 'lose',
     attackerScore: battle.attackerFinalPower,
     targetScore: battle.targetFinalPower,
     totalRounds: battle.totalRounds,
     message: battle.message,
     log: battle.log,
+    winner: battle.winner,
   };
 }
 
@@ -416,11 +411,13 @@ interface WarMapProps {
   targetPower: number;
   attackerBonus?: number;
   defenderBonus?: number;
+  isUserDefender?: boolean;
   onClose: () => void;
   onResolve: (payload: {
     result: WarResult;
     action: WarAction;
     path: WarPath;
+    isUserDefender?: boolean;
   }) => void;
 }
 
@@ -432,6 +429,7 @@ export default function WarMap({
   targetPower,
   attackerBonus = 1,
   defenderBonus = 1,
+  isUserDefender: isUserDefenderProp,
   onClose,
   onResolve,
 }: WarMapProps) {
@@ -439,6 +437,23 @@ export default function WarMap({
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<WarResult | null>(null);
   const [showFlash, setShowFlash] = useState(false);
+
+  const isUserDefender = useMemo(() => {
+    if (typeof isUserDefenderProp === 'boolean') return isUserDefenderProp;
+    if (typeof window === 'undefined') return false;
+    try {
+      const saved = localStorage.getItem('user_country');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const userCountryName = String(parsed?.country || parsed?.nama_negara || '').toLowerCase().trim();
+        const targetCountryName = String(target?.country || '').toLowerCase().trim();
+        if (userCountryName && targetCountryName && userCountryName === targetCountryName) {
+          return true;
+        }
+      }
+    } catch (e) {}
+    return false;
+  }, [isUserDefenderProp, target.country]);
 
   /* ── Viewport screen size ── */
   const [screenSize, setScreenSize] = useState<{ w: number; h: number }>({
@@ -459,12 +474,31 @@ export default function WarMap({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  /* ── Resolusi Koordinat Ibukota ── */
+  const resolvedAttacker = useMemo<CapitalPoint>(() => {
+    const coord = getCapitalCoord(attacker.country);
+    return {
+      ...attacker,
+      lat: coord ? coord.lat : (typeof attacker.lat === 'number' && attacker.lat !== 0 ? attacker.lat : (attacker.latitude ?? 0)),
+      lng: coord ? coord.lng : (typeof attacker.lng === 'number' && attacker.lng !== 0 ? attacker.lng : (attacker.longitude ?? 0)),
+    };
+  }, [attacker]);
+
+  const resolvedTarget = useMemo<CapitalPoint>(() => {
+    const coord = getCapitalCoord(target.country);
+    return {
+      ...target,
+      lat: coord ? coord.lat : (typeof target.lat === 'number' && target.lat !== 0 ? target.lat : (target.latitude ?? 0)),
+      lng: coord ? coord.lng : (typeof target.lng === 'number' && target.lng !== 0 ? target.lng : (target.longitude ?? 0)),
+    };
+  }, [target]);
+
   /* ── Bangun data WarPath dasar ── */
   const warPath = useMemo<WarPath | null>(() => {
     if (!isOpen) return null;
-    return buildWarPath({ attacker, target });
+    return buildWarPath({ attacker: resolvedAttacker, target: resolvedTarget });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, attacker.country, target.country]);
+  }, [isOpen, resolvedAttacker.country, resolvedTarget.country, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
 
   /* ── Hitung hasil bentrokan ── */
   const battleOutcome = useMemo(() => {
@@ -474,9 +508,10 @@ export default function WarMap({
       targetPower,
       attackerBonus,
       defenderBonus,
+      isUserDefender,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, attackerPower, targetPower, attackerBonus, defenderBonus]);
+  }, [isOpen, attackerPower, targetPower, attackerBonus, defenderBonus, isUserDefender]);
 
   /* ── Reset state saat dibuka ── */
   useEffect(() => {
@@ -501,9 +536,10 @@ export default function WarMap({
       lastTime = now;
 
       // Update posisi ibukota penyerang & target persis di atas Canvas Map real-time
-      const curStart = getMapScreenPos(attacker.lat, attacker.lng);
-      const curEnd = getMapScreenPos(target.lat, target.lng);
+      const curStart = getMapScreenPos(resolvedAttacker.lat, resolvedAttacker.lng);
+      const curEnd = getMapScreenPos(resolvedTarget.lat, resolvedTarget.lng);
       setStartPos(curStart);
+      setEndPos(curEnd);
       setEndPos(curEnd);
 
       const isGamePaused = typeof window !== 'undefined' ? Boolean((window as any).neosantara_is_paused) : false;
@@ -695,6 +731,7 @@ export default function WarMap({
           targetIso={target.iso || 'un'}
           targetPower={targetPower}
           targetDetail={target}
+          isUserDefender={isUserDefender}
           onStartBattle={handleStartBattle}
           onAutoResult={handleAutoResult}
           onClose={onClose}
@@ -722,10 +759,10 @@ export default function WarMap({
               </div>
               <div>
                 <h1 className="text-xs sm:text-sm font-black text-[#FF2D55] uppercase tracking-widest leading-none">
-                  Operasi Militer Aktif
+                  {isUserDefender ? 'Respon Pertahanan Aktif' : 'Operasi Militer Aktif'}
                 </h1>
                 <p className="text-[10px] text-[#6B8A8A] font-bold uppercase tracking-widest mt-1">
-                  Pasukan Menuju -&gt; {target.capital || target.country}
+                  {isUserDefender ? `Agresor (${attacker.country}) Menuju -> ${target.capital || target.country}` : `Pasukan Menuju -> ${target.capital || target.country}`}
                 </p>
               </div>
             </div>
@@ -803,21 +840,39 @@ export default function WarMap({
                   result === 'win' ? 'text-[#00FFAA]' : 'text-[#FF2D55]'
                 }`}
               >
-                {result === 'win' ? 'Kemenangan Mutlak!' : 'Pasukan Terpukul Mundur'}
+                {isUserDefender
+                  ? (result === 'win' ? 'Pertahanan Berhasil!' : 'Pertahanan Terpukul Kalah!')
+                  : (result === 'win' ? 'Kemenangan Mutlak!' : 'Pasukan Terpukul Mundur')}
               </h2>
               <p className="text-xs text-[#E0E0E0] mt-2 leading-relaxed">
-                {result === 'win' ? (
-                  <>
-                    Pasukan <strong className="text-white">{attacker.country}</strong>{' '}
-                    berhasil menembus benteng pertahanan{' '}
-                    <strong className="text-white">{target.country}</strong>!
-                  </>
+                {isUserDefender ? (
+                  result === 'win' ? (
+                    <>
+                      Pasukan <strong className="text-white">{target.country}</strong>{' '}
+                      berhasil memukul mundur agresi militer{' '}
+                      <strong className="text-white">{attacker.country}</strong>! Pertahanan nasional berdiri kokoh.
+                    </>
+                  ) : (
+                    <>
+                      Pasukan <strong className="text-white">{attacker.country}</strong>{' '}
+                      berhasil menembus benteng pertahanan{' '}
+                      <strong className="text-white">{target.country}</strong>. Kerugian armada dialami.
+                    </>
+                  )
                 ) : (
-                  <>
-                    Pasukan <strong className="text-white">{attacker.country}</strong>{' '}
-                    gagal menembus pertahanan{' '}
-                    <strong className="text-white">{target.country}</strong>.
-                  </>
+                  result === 'win' ? (
+                    <>
+                      Pasukan <strong className="text-white">{attacker.country}</strong>{' '}
+                      berhasil menembus benteng pertahanan{' '}
+                      <strong className="text-white">{target.country}</strong>!
+                    </>
+                  ) : (
+                    <>
+                      Pasukan <strong className="text-white">{attacker.country}</strong>{' '}
+                      gagal menembus pertahanan{' '}
+                      <strong className="text-white">{target.country}</strong>.
+                    </>
+                  )
                 )}
               </p>
             </div>
@@ -826,7 +881,7 @@ export default function WarMap({
             <div className="grid grid-cols-2 divide-x divide-[#00FFAA]/10 border-b border-[#00FFAA]/10">
               <div className="p-4 text-center">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mb-1">
-                  Skor Penyerang
+                  Skor Penyerang ({attacker.country})
                 </p>
                 <p className="text-lg font-black text-[#00FFAA]">
                   {battleOutcome?.attackerScore.toLocaleString()}
@@ -834,7 +889,7 @@ export default function WarMap({
               </div>
               <div className="p-4 text-center">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mb-1">
-                  Skor Bertahan
+                  Skor Bertahan ({target.country})
                 </p>
                 <p className="text-lg font-black text-[#FF2D55]">
                   {battleOutcome?.targetScore.toLocaleString()}
@@ -844,50 +899,71 @@ export default function WarMap({
 
             {/* Opsi aksi */}
             <div className="p-5 space-y-3">
-              <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A] mb-2">
-                {result === 'win' ? 'Pilih Aneksasi atau Opsi Taktis:' : 'Pilihan:'}
-              </p>
-
-              {result === 'win' ? (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <ActionButton
-                    icon={<Flag className="h-5 w-5" />}
-                    title="Aneksasi"
-                    desc="Caplok & integrasikan wilayah target"
-                    accent="#00FFAA"
-                    onClick={() => handleAction('annex')}
-                  />
-                  <ActionButton
-                    icon={<Trophy className="h-5 w-5" />}
-                    title="Jarah SDA"
-                    desc="Rampas sumber daya tanpa mencaplok"
-                    accent="#FFEB3B"
-                    onClick={() => handleAction('loot')}
-                  />
-                  <ActionButton
-                    icon={<ArrowLeft className="h-5 w-5" />}
-                    title="Mundur"
-                    desc="Tarik pasukan tanpa aksi lanjutan"
-                    accent="#6B8A8A"
-                    onClick={() => handleAction('retreat')}
-                  />
-                </div>
-              ) : (
+              {isUserDefender ? (
                 <div className="space-y-3">
-                  <div className="flex items-start gap-3 p-3 rounded-xl bg-[#FF2D55]/10 border border-[#FF2D55]/30">
-                    <AlertTriangle className="h-4 w-4 text-[#FF2D55] mt-0.5 flex-shrink-0" />
+                  <div className={`flex items-start gap-3 p-3 rounded-xl ${result === 'win' ? 'bg-[#00FFAA]/10 border border-[#00FFAA]/30' : 'bg-[#FF2D55]/10 border border-[#FF2D55]/30'}`}>
+                    <AlertTriangle className={`h-4 w-4 ${result === 'win' ? 'text-[#00FFAA]' : 'text-[#FF2D55]'} mt-0.5 flex-shrink-0`} />
                     <p className="text-[11px] text-[#E0E0E0] leading-relaxed">
-                      Hubungan diplomatik dengan {target.country} memburuk. Reputasi
-                      internasional Anda menurun.
+                      {result === 'win'
+                        ? `Operasi pertahanan nasional sukses besar! Pasukan ${attacker.country} dipaksa mundur.`
+                        : `Wilayah nasional terdampak serangan musuh (${attacker.country}). Kerugian armada pertahanan telah terjadi.`}
                     </p>
                   </div>
                   <button
                     onClick={() => handleAction('retreat')}
                     className="w-full py-3 rounded-xl bg-[#0F2424] hover:bg-[#1A3838] border border-[#00FFAA]/30 text-xs font-black uppercase tracking-widest text-[#E0E0E0] transition-colors cursor-pointer"
                   >
-                    Tarik Pasukan
+                    {result === 'win' ? 'Selesai Pertahanan' : 'Tarik Sisa Pasukan & Evaluasi'}
                   </button>
                 </div>
+              ) : (
+                <>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A] mb-2">
+                    {result === 'win' ? 'Pilih Aneksasi atau Opsi Taktis:' : 'Pilihan:'}
+                  </p>
+
+                  {result === 'win' ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <ActionButton
+                        icon={<Flag className="h-5 w-5" />}
+                        title="Aneksasi"
+                        desc="Caplok & integrasikan wilayah target"
+                        accent="#00FFAA"
+                        onClick={() => handleAction('annex')}
+                      />
+                      <ActionButton
+                        icon={<Trophy className="h-5 w-5" />}
+                        title="Jarah SDA"
+                        desc="Rampas sumber daya tanpa mencaplok"
+                        accent="#FFEB3B"
+                        onClick={() => handleAction('loot')}
+                      />
+                      <ActionButton
+                        icon={<ArrowLeft className="h-5 w-5" />}
+                        title="Mundur"
+                        desc="Tarik pasukan tanpa aksi lanjutan"
+                        accent="#6B8A8A"
+                        onClick={() => handleAction('retreat')}
+                      />
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3 p-3 rounded-xl bg-[#FF2D55]/10 border border-[#FF2D55]/30">
+                        <AlertTriangle className="h-4 w-4 text-[#FF2D55] mt-0.5 flex-shrink-0" />
+                        <p className="text-[11px] text-[#E0E0E0] leading-relaxed">
+                          Hubungan diplomatik dengan {target.country} memburuk. Reputasi
+                          internasional Anda menurun.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleAction('retreat')}
+                        className="w-full py-3 rounded-xl bg-[#0F2424] hover:bg-[#1A3838] border border-[#00FFAA]/30 text-xs font-black uppercase tracking-widest text-[#E0E0E0] transition-colors cursor-pointer"
+                      >
+                        Tarik Pasukan
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>

@@ -216,12 +216,26 @@ export function applyWarLossesToUserArmada(countryDetail: any, lossRatio: number
   const lostSummaryItems: string[] = [];
 
   ALL_UNIT_KEYS.forEach((key) => {
-    const deployedPct = savedConfig[key] ?? 0;
+    // Jika user belum pernah menyetel slider, anggap 100% unit dikerahkan untuk pertahanan
+    const deployedPct = typeof savedConfig[key] === 'number' ? savedConfig[key] : 100;
     if (deployedPct <= 0) return;
 
-    let currentQty = Number(nextDetail[key] ?? nextDetail?.armada?.[key] ?? 0);
+    let currentQty = Number(
+      nextDetail[key] ??
+      nextDetail?.armada?.[key] ??
+      nextDetail?.armada?.darat?.[key] ??
+      nextDetail?.armada?.laut?.[key] ??
+      nextDetail?.armada?.udara?.[key] ??
+      0
+    );
+
     if (key === 'barak' && currentQty > 0) {
-      const currentInfantry = Number(nextDetail?.pasukan_infanteri ?? (currentQty * 800));
+      const currentInfantry = Number(
+        nextDetail?.pasukan_infanteri ??
+        nextDetail?.armada?.pasukan_infanteri ??
+        nextDetail?.armada?.darat?.pasukan_infanteri ??
+        (currentQty * 800)
+      );
       const deployedInfantry = Math.round((currentInfantry * deployedPct) / 100);
       const lostInfantry = Math.round(deployedInfantry * lossRatio);
 
@@ -232,6 +246,10 @@ export function applyWarLossesToUserArmada(countryDetail: any, lossRatio: number
         if (nextDetail.armada) {
           nextDetail.armada.pasukan_infanteri = remainingInfantry;
           nextDetail.armada.barak = nextDetail.barak;
+          if (nextDetail.armada.darat) {
+            nextDetail.armada.darat.pasukan_infanteri = remainingInfantry;
+            nextDetail.armada.darat.barak = nextDetail.barak;
+          }
         }
         lostSummaryItems.push(`${lostInfantry.toLocaleString('id-ID')} Prajurit Infanteri`);
       }
@@ -244,6 +262,9 @@ export function applyWarLossesToUserArmada(countryDetail: any, lossRatio: number
         nextDetail[key] = remainingQty;
         if (nextDetail.armada) {
           nextDetail.armada[key] = remainingQty;
+          if (nextDetail.armada.darat && key in nextDetail.armada.darat) nextDetail.armada.darat[key] = remainingQty;
+          if (nextDetail.armada.laut && key in nextDetail.armada.laut) nextDetail.armada.laut[key] = remainingQty;
+          if (nextDetail.armada.udara && key in nextDetail.armada.udara) nextDetail.armada.udara[key] = remainingQty;
         }
         const unitName = key.replace(/_/g, ' ').toUpperCase();
         lostSummaryItems.push(`${lostQty.toLocaleString('id-ID')} ${unitName}`);

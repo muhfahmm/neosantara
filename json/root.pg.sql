@@ -5639,11 +5639,11 @@ id, country, country_slug, apc_ifv, artileri_berat, drone_intai_uav, drone_kamik
 (205, 'Suriname', 'suriname', 60, 10, 2, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 1000, 0, 0, 0, 0, 0, 0),
 (206, 'Uruguay', 'uruguay', 200, 30, 3, 5, 5, 5, 0, 0, 0, 0, 3, 2, 0, 0, 0, 150, 18000, 0, 5, 0, 0, 0, 15),
 (207, 'Venezuela', 'venezuela', 1000, 300, 15, 60, 20, 30, 0, 0, 0, 0, 6, 4, 0, 0, 2, 600, 123000, 10, 20, 0, 10, 60, 200),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 10, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 200, 0, 0, 0, 0, 0, 0),
+(209, 'Reunion', 'reunion', 40, 8, 1, 2, 2, 2, 0, 0, 0, 0, 2, 1, 0, 0, 0, 30, 800, 0, 2, 0, 0, 0, 5),
+(210, 'Guadeloupe', 'guadeloupe', 20, 4, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 20, 400, 0, 1, 0, 0, 0, 2),
+(211, 'Martinique', 'martinique', 20, 4, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 20, 400, 0, 1, 0, 0, 0, 2),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 100, 0, 0, 0, 0, 0, 0);
 -- ========================================================
 -- SECTION: json/semua_fitur_negara\2_pertahanan\3_manajemen_pertahanan\database_manajemen_pertahanan.pg.sql
 DROP TABLE IF EXISTS database_manajemen_pertahanan;
@@ -5867,11 +5867,11 @@ id, country, country_slug, barak, gudang_senjata, hangar_tank, pangkalan_udara, 
 (205, 'Suriname', 'suriname', 1, 1, 1, 1, 0),
 (206, 'Uruguay', 'uruguay', 3, 1, 1, 1, 1),
 (207, 'Venezuela', 'venezuela', 16, 1, 1, 1, 1),
-(208, 'Mayotte', 'mayotte', 0, 0, 0, 0, 0),
-(209, 'Reunion', 'reunion', 0, 0, 0, 0, 0),
-(210, 'Guadeloupe', 'guadeloupe', 0, 0, 0, 0, 0),
-(211, 'Martinique', 'martinique', 0, 0, 0, 0, 0),
-(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 0, 0, 0, 0, 0);
+(208, 'Mayotte', 'mayotte', 1, 1, 1, 1, 0),
+(209, 'Reunion', 'reunion', 3, 1, 1, 1, 1),
+(210, 'Guadeloupe', 'guadeloupe', 2, 1, 1, 1, 1),
+(211, 'Martinique', 'martinique', 2, 1, 1, 1, 1),
+(212, 'Bonaire, Sint Eustatius dan Saba', 'bonaire_sint_eustatius_dan_saba', 1, 1, 1, 1, 0);
 -- SECTION: json/database_tempat_wisata\database_tempat_wisata.pg.sql
 DROP TABLE IF EXISTS database_tempat_wisata;
 

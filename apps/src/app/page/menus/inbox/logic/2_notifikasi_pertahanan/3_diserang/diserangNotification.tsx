@@ -20,8 +20,6 @@ export default function DiserangNotificationCard({ notification, userCountryName
           detail: {
             attacker: notification.enemyCountry,
             target: userCountryName,
-            playerPower: 1200,
-            targetPower: 1000,
           },
         })
       );

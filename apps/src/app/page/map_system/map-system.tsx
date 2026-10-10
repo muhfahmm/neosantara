@@ -29,6 +29,7 @@ const NegaraUserModal = dynamic(() => import('./negara_user'), { ssr: false });
 const WarMap = dynamic(() => import('../detail_negara/3_operasi_militer/1_serang_negara/path-war'), { ssr: false });
 import { buildCapitalPoint } from '../detail_negara/3_operasi_militer/1_serang_negara/path-war';
 import { applyWarLossesToUserArmada } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
+import { getArmadaPowerSummary } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateDailyMaterialProduction } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
 import { getDaysElapsed } from '@/app/logic/production_logic';
@@ -860,10 +861,148 @@ export default function MapPage() {
     const [activeWarAnimation, setActiveWarAnimation] = useState<any>(null);
 
     useEffect(() => {
-        const handleStartWarAnimation = (event: Event) => {
+        const handleStartWarAnimation = async (event: Event) => {
             const detail = (event as CustomEvent).detail;
-            if (!detail?.attacker || !detail?.target) return;
-            setActiveWarAnimation(detail);
+            if (typeof detail?.attacker !== 'string' || !detail.attacker.trim() ||
+                typeof detail?.target !== 'string' || !detail.target.trim()) {
+                console.error('[WarAnimation] Invalid attacker or target name', detail);
+                return;
+            }
+
+            const COUNTRY_NAME_ALIASES: Record<string, string> = {
+                brasil: 'brazil',
+                tiongkok: 'china',
+            };
+            const normalizeCountryName = (name: unknown) => {
+                const normalized = String(name || '')
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]/g, '');
+                return COUNTRY_NAME_ALIASES[normalized] ?? normalized;
+            };
+            const getCountryLookupKeys = (countryName: string): Set<string> => {
+                const keys = new Set([normalizeCountryName(countryName)]);
+                const matchedPaths = Object.entries(countryPaths as Record<string, string>)
+                    .filter(([name]) => normalizeCountryName(name) === normalizeCountryName(countryName))
+                    .map(([, relativePath]) => relativePath);
+
+                matchedPaths.forEach((relativePath) => {
+                    const filename = relativePath.split(/[\\/]/).pop() || '';
+                    const withoutExtension = filename.replace(/\.ts$/i, '');
+                    keys.add(normalizeCountryName(withoutExtension.replace(/^\d+_/, '')));
+                });
+
+                return keys;
+            };
+            const userCountryNames = [
+                countryDetail?.country,
+                countryDetail?.nama_negara,
+                countryDetail?.name_id,
+                countryDetail?.name_en,
+                countryDetail?.country_slug,
+                selectedCountry?.country,
+            ].map(normalizeCountryName).filter(Boolean);
+            const findCountryDetail = (countryName: string, countries: any[]) => {
+                const lookupKeys = getCountryLookupKeys(countryName);
+                return countries.find((country: any) => {
+                    const countryKeys = [
+                        country?.country,
+                        country?.nama_negara,
+                        country?.name_id,
+                        country?.name_en,
+                        country?.country_slug,
+                    ].map(normalizeCountryName);
+                    const filename = String(country?.__fileName || '').split(/[\\/]/).pop() || '';
+                    countryKeys.push(normalizeCountryName(filename.replace(/\.ts$/i, '').replace(/^\d+_/, '')));
+                    return countryKeys.some((key) => key && lookupKeys.has(key));
+                });
+            };
+
+            const isCountryRecord = (value: unknown): value is Record<string, any> =>
+                Boolean(value && typeof value === 'object' && !Array.isArray(value));
+            const resolveProvidedCountry = (countryName: string, provided: unknown) => {
+                if (!isCountryRecord(provided)) return null;
+                const candidateNames = [
+                    provided.country,
+                    provided.nama_negara,
+                    provided.name_id,
+                    provided.name_en,
+                    provided.country_slug,
+                ].map(normalizeCountryName).filter(Boolean);
+
+                if (candidateNames.length === 0) {
+                    return applyNpcCountrySimulationState({ ...provided, country: countryName });
+                }
+                const lookupKeys = getCountryLookupKeys(countryName);
+                if (candidateNames.some((name) => lookupKeys.has(name))) {
+                    return applyNpcCountrySimulationState(provided);
+                }
+                return applyNpcCountrySimulationState({ ...provided, country: countryName });
+            };
+
+            let countries: any[] | null = null;
+            const resolveCountryDetail = (countryName: string, provided?: unknown) => {
+                const suppliedDetail = resolveProvidedCountry(countryName, provided);
+                if (suppliedDetail) return suppliedDetail;
+
+                const normalizedName = normalizeCountryName(countryName);
+                if (userCountryNames.includes(normalizedName) && countryDetail) {
+                    return countryDetail;
+                }
+
+                if (!countries) return null;
+                const countryRecord = findCountryDetail(countryName, countries);
+                if (!countryRecord) return null;
+
+                return applyNpcCountrySimulationState({
+                    ...countryRecord,
+                });
+            };
+
+            let attackerDetailData = resolveCountryDetail(detail.attacker, detail.attackerCountryDetail);
+            let targetDetailData = resolveCountryDetail(detail.target, detail.targetCountryDetail);
+            if (!attackerDetailData || !targetDetailData) {
+                try {
+                    const response = await fetch('/api/country-data?all=true');
+                    if (response.ok) {
+                        const data: unknown = await response.json();
+                        if (Array.isArray(data)) {
+                            countries = data;
+                            attackerDetailData = attackerDetailData || resolveCountryDetail(detail.attacker, detail.attackerCountryDetail);
+                            targetDetailData = targetDetailData || resolveCountryDetail(detail.target, detail.targetCountryDetail);
+                        }
+                    }
+                } catch (error) {
+                    console.warn('[WarAnimation] Unable to load country military data from API', error);
+                }
+            }
+
+            if (!attackerDetailData) {
+                attackerDetailData = applyNpcCountrySimulationState({
+                    country: detail.attacker,
+                    nama_negara: detail.attacker,
+                    kekuatanMiliter: Number(detail.playerPower ?? detail.attackerPower ?? 75),
+                });
+            }
+            if (!targetDetailData) {
+                targetDetailData = applyNpcCountrySimulationState({
+                    country: detail.target,
+                    nama_negara: detail.target,
+                    kekuatanMiliter: Number(detail.targetPower ?? 50),
+                });
+            }
+
+            const attackerPowerSummary = getArmadaPowerSummary(attackerDetailData);
+            const targetPowerSummary = getArmadaPowerSummary(targetDetailData);
+
+            setActiveWarAnimation({
+                ...detail,
+                attackerCountryDetail: attackerDetailData,
+                targetCountryDetail: targetDetailData,
+                attackerPower: attackerPowerSummary.totals.totalPower,
+                targetPower: targetPowerSummary.totals.totalPower
+            });
         };
         const handlePauseGameTime = () => {
             setIsPaused(true);
@@ -877,7 +1016,7 @@ export default function MapPage() {
             window.removeEventListener('start_war_animation', handleStartWarAnimation);
             window.removeEventListener('pause_game_time', handlePauseGameTime);
         };
-    }, []);
+    }, [countryDetail, selectedCountry?.country]);
     const [presidentRating, setPresidentRating] = useState<number>(50);
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
     const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
@@ -1496,8 +1635,7 @@ export default function MapPage() {
                             detail: {
                                 attacker: attackerCountry,
                                 target: userCountryName,
-                                playerPower: countryDetail?.kekuatanMiliter ?? 50,
-                                targetPower: 70
+                                targetCountryDetail: countryDetail,
                             }
                         }));
                     }
@@ -3233,6 +3371,14 @@ export default function MapPage() {
                 }}
             />            {/* Top Left Icon - Inbox */}
             <TopLeftIcon
+                userCountryName={String(
+                    countryDetail?.country ||
+                    countryDetail?.nama_negara ||
+                    countryDetail?.name_id ||
+                    countryDetail?.name_en ||
+                    selectedCountry?.country ||
+                    'Indonesia'
+                )}
                 onClick={() => {
                     setInboxModalOpen(true);
                     setGiftModalOpen(false);
@@ -3655,12 +3801,26 @@ export default function MapPage() {
                     if (tNotif.tradeType === 'spionase' || tNotif.tradeType === 'sabotase' || tNotif.tradeType === 'diserang' || tNotif.tradeType === 'pemberontakan' || tNotif.tradeType === 'icbm') {
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
                         if (tNotif.tradeType === 'diserang' && typeof window !== 'undefined') {
+                            const attackerCountry = tNotif.enemyCountry || tNotif.partnerCountry;
+                            const targetCountry = countryDetail?.country ||
+                                countryDetail?.nama_negara ||
+                                countryDetail?.name_id ||
+                                countryDetail?.name_en ||
+                                selectedCountry?.country;
+                            if (typeof attackerCountry !== 'string' || !attackerCountry.trim() ||
+                                typeof targetCountry !== 'string' || !targetCountry.trim()) {
+                                console.error('[WarAnimation] Attack notification has no valid country names', {
+                                    attackerCountry,
+                                    targetCountry,
+                                    notification: tNotif,
+                                });
+                                return;
+                            }
                             window.dispatchEvent(new CustomEvent('start_war_animation', {
                                 detail: {
-                                    attacker: tNotif.partnerCountry ?? 'Jepang',
-                                    target: countryDetail?.country || countryDetail?.nama || 'Indonesia',
-                                    playerPower: countryDetail?.kekuatanMiliter ?? 50,
-                                    targetPower: 70
+                                    attacker: attackerCountry,
+                                    target: targetCountry,
+                                    targetCountryDetail: countryDetail,
                                 }
                             }));
                         }
@@ -3797,38 +3957,90 @@ export default function MapPage() {
             />
 
 
-            {activeWarAnimation && (
-                <WarMap
-                    isOpen={!!activeWarAnimation}
-                    attacker={{
-                        ...(buildCapitalPoint(activeWarAnimation.attacker) || { country: activeWarAnimation.attacker, capital: activeWarAnimation.attacker, lat: 0, lng: 0 }),
-                        ...(activeWarAnimation.attacker.trim().toLowerCase() === (countryDetail?.country || countryDetail?.nama_negara || '').trim().toLowerCase() ? countryDetail : {}),
-                    }}
-                    target={{
-                        ...(buildCapitalPoint(activeWarAnimation.target) || { country: activeWarAnimation.target, capital: activeWarAnimation.target, lat: 0, lng: 0 }),
-                        ...(activeWarAnimation.target.trim().toLowerCase() === (countryDetail?.country || countryDetail?.nama_negara || '').trim().toLowerCase() ? countryDetail : {}),
-                    }}
-                    attackerPower={activeWarAnimation.attackerPower || activeWarAnimation.playerPower || 75}
-                    targetPower={activeWarAnimation.targetPower || (countryDetail?.kekuatanMiliter ?? 50)}
-                    onClose={() => setActiveWarAnimation(null)}
-                    onResolve={({ action }) => {
-                        let mappedAction: 'aneksasi' | 'jarah' | 'mundur' = 'mundur';
-                        if (action === 'annex') mappedAction = 'aneksasi';
-                        else if (action === 'loot') mappedAction = 'jarah';
-                        else mappedAction = 'mundur';
+            {activeWarAnimation && (() => {
+                const userCountryName = (countryDetail?.country || countryDetail?.nama_negara || '').trim().toLowerCase();
+                const isUserDefender = (activeWarAnimation.target || '').trim().toLowerCase() === userCountryName;
 
-                        window.dispatchEvent(
-                            new CustomEvent('trigger_player_attack', {
-                                detail: {
-                                    actionType: mappedAction,
-                                    targetCountry: activeWarAnimation.target,
-                                },
-                            })
-                        );
-                        setActiveWarAnimation(null);
-                    }}
-                />
-            )}
+                return (
+                    <WarMap
+                        isOpen={!!activeWarAnimation}
+                        attacker={{
+                            ...(activeWarAnimation.attackerCountryDetail || (activeWarAnimation.attacker.trim().toLowerCase() === userCountryName ? countryDetail : {})),
+                            ...(buildCapitalPoint(activeWarAnimation.attacker) || { country: activeWarAnimation.attacker, capital: activeWarAnimation.attacker, lat: 0, lng: 0 }),
+                        }}
+                        target={{
+                            ...(activeWarAnimation.targetCountryDetail || (activeWarAnimation.target.trim().toLowerCase() === userCountryName ? countryDetail : {})),
+                            ...(buildCapitalPoint(activeWarAnimation.target) || { country: activeWarAnimation.target, capital: activeWarAnimation.target, lat: 0, lng: 0 }),
+                        }}
+                        attackerPower={activeWarAnimation.attackerPower ?? 0}
+                        targetPower={activeWarAnimation.targetPower ?? 0}
+                        isUserDefender={isUserDefender}
+                        onClose={() => setActiveWarAnimation(null)}
+                        onResolve={({ action, result }) => {
+                            if (isUserDefender) {
+                                if (result === 'lose') {
+                                    const { updatedDetail, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.75);
+                                    setCountryDetail(updatedDetail);
+                                    setNotifications((prev: any[]) => [
+                                        {
+                                            id: `war-loss-${Date.now()}`,
+                                            title: '💥 KERUGIAN PASUKAN PERTEMPURAN (75%)',
+                                            sender: `Markas Besar Angkatan Bersenjata (${countryDetail?.country || countryDetail?.nama_negara || 'Indonesia'})`,
+                                            message: `Pertahanan gagal membendung agresi ${activeWarAnimation.attacker}! Kerugian tempur sebesar 75% dari unit yang dikerahkan: ${lossSummaryText}. Data armada di Pertahanan & Keamanan telah diperbarui.`,
+                                            type: 'kepuasan',
+                                            value: 75,
+                                            isRead: false,
+                                        },
+                                        ...prev,
+                                    ]);
+                                    setResultModal({
+                                        isOpen: true,
+                                        title: 'Pertahanan Gagal Terpukul Kalah!',
+                                        message: `Pertahanan negara Anda gagal menahan agresi militer dari ${activeWarAnimation.attacker}. Kerugian tempur sebesar 75% dari armada yang dikerahkan: ${lossSummaryText}.`,
+                                        type: 'error',
+                                    });
+                                } else {
+                                    setNotifications((prev: any[]) => [
+                                        {
+                                            id: `war-win-${Date.now()}`,
+                                            title: 'Pertahanan Berhasil!',
+                                            sender: 'Kementerian Pertahanan',
+                                            message: `Pasukan pertahanan nasional berhasil memukul mundur agresi militer dari ${activeWarAnimation.attacker}!`,
+                                            type: 'kepuasan',
+                                            value: 0,
+                                            isRead: false,
+                                        },
+                                        ...prev,
+                                    ]);
+                                    setResultModal({
+                                        isOpen: true,
+                                        title: 'Pertahanan Berhasil!',
+                                        message: `Pasukan pertahanan nasional sukses memukul mundur agresi militer dari ${activeWarAnimation.attacker}!`,
+                                        type: 'success',
+                                    });
+                                }
+                                setActiveWarAnimation(null);
+                                return;
+                            }
+
+                            let mappedAction: 'aneksasi' | 'jarah' | 'mundur' = 'mundur';
+                            if (action === 'annex') mappedAction = 'aneksasi';
+                            else if (action === 'loot') mappedAction = 'jarah';
+                            else mappedAction = 'mundur';
+
+                            window.dispatchEvent(
+                                new CustomEvent('trigger_player_attack', {
+                                    detail: {
+                                        actionType: mappedAction,
+                                        targetCountry: activeWarAnimation.target,
+                                    },
+                                })
+                            );
+                            setActiveWarAnimation(null);
+                        }}
+                    />
+                );
+            })()}
 
             {/* Shifted Canvas Container */}
             <MapCanvasView

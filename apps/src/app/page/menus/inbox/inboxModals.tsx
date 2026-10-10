@@ -49,6 +49,7 @@ interface TopLeftIconProps {
   onActionClick?: (notification: NotificationMessage) => void;
   onCrackdownClick?: (notification: NotificationMessage) => void;
   onRedirectClick?: (notification: NotificationMessage) => void;
+  userCountryName?: string;
 }
 
 export default function TopLeftIcon({
@@ -59,7 +60,8 @@ export default function TopLeftIcon({
   onClearAll,
   onActionClick,
   onCrackdownClick,
-  onRedirectClick
+  onRedirectClick,
+  userCountryName,
 }: TopLeftIconProps) {
   const [mounted, setMounted] = useState(false);
   const [toastNotification, setToastNotification] = useState<NotificationMessage | null>(null);
@@ -312,6 +314,7 @@ export default function TopLeftIcon({
                         <DiserangNotificationCard
                           key={notif.id}
                           notification={notif as any}
+                          userCountryName={userCountryName}
                           onAccept={handleAction}
                           onReject={handleRedirect}
                         />

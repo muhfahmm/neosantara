@@ -24,6 +24,7 @@ interface PerbandinganPasukanProps {
   targetPower: number;
   attackerDetail?: any;
   targetDetail?: any;
+  isUserDefender?: boolean;
   onStartBattle: () => void;
   onAutoResult: () => void;
   onClose?: () => void;
@@ -151,6 +152,7 @@ export default function PerbandinganPasukan({
   targetPower,
   attackerDetail,
   targetDetail,
+  isUserDefender = false,
   onStartBattle,
   onAutoResult,
   onClose,
@@ -166,10 +168,16 @@ export default function PerbandinganPasukan({
   const attackerSummary = attackerDetail ? getArmadaPowerSummary(attackerDetail) : null;
   const targetSummary = targetDetail ? getArmadaPowerSummary(targetDetail) : null;
 
-  const attackerTotalPower = (attackerSummary?.totals?.totalPower && attackerSummary.totals.totalPower > 0) ? attackerSummary.totals.totalPower : (attackerPower > 0 ? attackerPower : 60);
-  const targetTotalPower = (targetSummary?.totals?.totalPower && targetSummary.totals.totalPower > 0) ? targetSummary.totals.totalPower : (targetPower > 0 ? targetPower : 50);
+  // Data riil dari database -> jangan pernah diganti estimasi (unit bernilai 0 memang 0)
+  const attackerHasRealData = (attackerSummary?.totals?.totalPower ?? 0) > 0;
+  const targetHasRealData = (targetSummary?.totals?.totalPower ?? 0) > 0;
 
-  // Baca konfigurasi persentase pengerahan dari Konfirmasi Serangan
+  const attackerTotalPower = attackerHasRealData ? attackerSummary!.totals.totalPower : (attackerPower > 0 ? attackerPower : 60);
+  const targetTotalPower = targetHasRealData ? targetSummary!.totals.totalPower : (targetPower > 0 ? targetPower : 50);
+  const attackerFallbackPower = attackerHasRealData ? 0 : attackerTotalPower;
+  const targetFallbackPower = targetHasRealData ? 0 : targetTotalPower;
+
+  // Baca konfigurasi persentase pengerahan dari Konfirmasi Serangan / Mobilisasi
   const getDeployedQuantity = (itemKey: string, rawQty: number) => {
     if (typeof window === "undefined") return rawQty;
     try {
@@ -184,28 +192,52 @@ export default function PerbandinganPasukan({
     return rawQty;
   };
 
+  // Jika User Bertahan (isUserDefender = true), pengerahan berlaku untuk Target (User), sedangkan Attacker (NPC) 100%
+  // Jika User Penyerang (isUserDefender = false), pengerahan berlaku untuk Attacker (User), sedangkan Target (NPC) 100%
   const attackerBreakdown = {
-    darat: getGroupBreakdown(attackerDetail, 'darat', attackerTotalPower).map(i => ({ ...i, quantity: getDeployedQuantity(i.key, i.quantity) })),
-    laut: getGroupBreakdown(attackerDetail, 'laut', attackerTotalPower).map(i => ({ ...i, quantity: getDeployedQuantity(i.key, i.quantity) })),
-    udara: getGroupBreakdown(attackerDetail, 'udara', attackerTotalPower).map(i => ({ ...i, quantity: getDeployedQuantity(i.key, i.quantity) })),
+    darat: getGroupBreakdown(attackerDetail, 'darat', attackerFallbackPower).map(i => ({
+      ...i,
+      quantity: isUserDefender ? i.quantity : getDeployedQuantity(i.key, i.quantity)
+    })),
+    laut: getGroupBreakdown(attackerDetail, 'laut', attackerFallbackPower).map(i => ({
+      ...i,
+      quantity: isUserDefender ? i.quantity : getDeployedQuantity(i.key, i.quantity)
+    })),
+    udara: getGroupBreakdown(attackerDetail, 'udara', attackerFallbackPower).map(i => ({
+      ...i,
+      quantity: isUserDefender ? i.quantity : getDeployedQuantity(i.key, i.quantity)
+    })),
   };
-
-  // Hitung total kekuatan pasukan penyerang yang BENAR-BENAR DIKERAHKAN
-  const totalDeployedAttackerUnits = [...attackerBreakdown.darat, ...attackerBreakdown.laut, ...attackerBreakdown.udara].reduce((acc, curr) => acc + curr.quantity, 0);
-  const totalRawAttackerUnits = [...getGroupBreakdown(attackerDetail, 'darat', attackerTotalPower), ...getGroupBreakdown(attackerDetail, 'laut', attackerTotalPower), ...getGroupBreakdown(attackerDetail, 'udara', attackerTotalPower)].reduce((acc, curr) => acc + curr.quantity, 0);
-
-  const deploymentRatio = totalRawAttackerUnits > 0 ? totalDeployedAttackerUnits / totalRawAttackerUnits : 0;
-  const actualAttackerPower = Math.round(attackerTotalPower * deploymentRatio);
-
-  const totalCombinedPower = Math.max(1, actualAttackerPower + targetTotalPower);
-  const attackerPct = totalCombinedPower > 0 ? (actualAttackerPower / totalCombinedPower) * 100 : 50;
-  const targetPct = 100 - attackerPct;
 
   const targetBreakdown = {
-    darat: getGroupBreakdown(targetDetail, 'darat', targetTotalPower),
-    laut: getGroupBreakdown(targetDetail, 'laut', targetTotalPower),
-    udara: getGroupBreakdown(targetDetail, 'udara', targetTotalPower),
+    darat: getGroupBreakdown(targetDetail, 'darat', targetFallbackPower).map(i => ({
+      ...i,
+      quantity: isUserDefender ? getDeployedQuantity(i.key, i.quantity) : i.quantity
+    })),
+    laut: getGroupBreakdown(targetDetail, 'laut', targetFallbackPower).map(i => ({
+      ...i,
+      quantity: isUserDefender ? getDeployedQuantity(i.key, i.quantity) : i.quantity
+    })),
+    udara: getGroupBreakdown(targetDetail, 'udara', targetFallbackPower).map(i => ({
+      ...i,
+      quantity: isUserDefender ? getDeployedQuantity(i.key, i.quantity) : i.quantity
+    })),
   };
+
+  const totalRawAttackerUnits = [...getGroupBreakdown(attackerDetail, 'darat', attackerFallbackPower), ...getGroupBreakdown(attackerDetail, 'laut', attackerFallbackPower), ...getGroupBreakdown(attackerDetail, 'udara', attackerFallbackPower)].reduce((acc, curr) => acc + curr.quantity, 0);
+  const totalDeployedAttackerUnits = [...attackerBreakdown.darat, ...attackerBreakdown.laut, ...attackerBreakdown.udara].reduce((acc, curr) => acc + curr.quantity, 0);
+  const attackerDeploymentRatio = (!isUserDefender && totalRawAttackerUnits > 0) ? totalDeployedAttackerUnits / totalRawAttackerUnits : 1.0;
+
+  const totalRawTargetUnits = [...getGroupBreakdown(targetDetail, 'darat', targetFallbackPower), ...getGroupBreakdown(targetDetail, 'laut', targetFallbackPower), ...getGroupBreakdown(targetDetail, 'udara', targetFallbackPower)].reduce((acc, curr) => acc + curr.quantity, 0);
+  const totalDeployedTargetUnits = [...targetBreakdown.darat, ...targetBreakdown.laut, ...targetBreakdown.udara].reduce((acc, curr) => acc + curr.quantity, 0);
+  const targetDeploymentRatio = (isUserDefender && totalRawTargetUnits > 0) ? totalDeployedTargetUnits / totalRawTargetUnits : 1.0;
+
+  const actualAttackerPower = Math.round(attackerTotalPower * attackerDeploymentRatio);
+  const actualTargetPower = Math.round(targetTotalPower * targetDeploymentRatio);
+
+  const totalCombinedPower = Math.max(1, actualAttackerPower + actualTargetPower);
+  const attackerPct = totalCombinedPower > 0 ? (actualAttackerPower / totalCombinedPower) * 100 : 50;
+  const targetPct = 100 - attackerPct;
 
   const groupMeta: Record<ArmadaGroup, { icon: typeof Swords; color: string; bg: string }> = {
     darat: { icon: Swords, color: 'text-rose-700', bg: 'bg-rose-100' },
@@ -261,7 +293,7 @@ export default function PerbandinganPasukan({
                     <Shield className="w-6 h-6 text-[#00FFAA]" />
                   </div>
                   <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">
-                    Pasukan Penyerang
+                    {isUserDefender ? "Pasukan Agresor (Musuh)" : "Pasukan Penyerang (Anda)"}
                   </p>
                   <p className="text-xl font-black text-[#00FFAA] uppercase tracking-wide">
                     {attackerName}
@@ -287,7 +319,7 @@ export default function PerbandinganPasukan({
                     <Shield className="w-6 h-6 text-rose-400" />
                   </div>
                   <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">
-                    Pasukan Target
+                    {isUserDefender ? "Pasukan Pertahanan (Anda)" : "Pasukan Target (Musuh)"}
                   </p>
                   <p className="text-xl font-black text-rose-400 uppercase tracking-wide">
                     {targetName}
@@ -295,7 +327,7 @@ export default function PerbandinganPasukan({
                   <p className="text-xs text-[#E0E0E0]">
                     Kekuatan:{' '}
                     <span className="font-black text-rose-400 font-mono">
-                      {formatNumber(targetTotalPower)}
+                      {formatNumber(actualTargetPower)}
                     </span>
                   </p>
                 </div>
@@ -317,11 +349,9 @@ export default function PerbandinganPasukan({
                     </span>
                   </div>
                   <span className="text-[10px] font-bold text-[#E0E0E0]">
-                    {actualAttackerPower > targetTotalPower
-                      ? '🟢 Unggul'
-                      : actualAttackerPower < targetTotalPower
-                      ? '🔴 Tertinggal'
-                      : '⚖️ Seimbang'}
+                    {isUserDefender
+                      ? (actualTargetPower > actualAttackerPower ? '🟢 Pertahanan Unggul' : actualTargetPower < actualAttackerPower ? '🔴 Pertahanan Terancam' : '⚖️ Seimbang')
+                      : (actualAttackerPower > actualTargetPower ? '🟢 Unggul' : actualAttackerPower < actualTargetPower ? '🔴 Tertinggal' : '⚖️ Seimbang')}
                   </span>
                 </div>
 

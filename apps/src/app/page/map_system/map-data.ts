@@ -521,8 +521,8 @@ export const COUNTRIES_DATA: CountryData[] = [
     "country": "Grenada",
     "capital": "St. George's",
     "iso": "gd",
-    "latitude": 32.38,
-    "longitude": -64.68,
+    "latitude": 12.05,
+    "longitude": -61.75,
     "continent": "North America",
     "color": "#6ACA8E"
   },
@@ -2318,8 +2318,8 @@ export const CAPITALS_DATA = [
   },
   {"country": "grenada",
     "capital": "St. George's",
-    "lat": 32.38,
-    "lng": -64.68,
+    "lat": 12.05,
+    "lng": -61.75,
     "iso": "gd",
     "color": "#6ACA8E"
   },
