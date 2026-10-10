@@ -1,5 +1,5 @@
-import { PRODUCTION_BAN_CATEGORIES } from "../../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
-import { RESEARCH_CARD_LEVEL_BONUS } from "../researchCardLevelBonus";
+import { PRODUCTION_BAN_CATEGORIES } from "../../../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
+import { RESEARCH_CARD_LEVEL_BONUS } from "../../researchCardLevelBonus";
 
 export const INDUSTRI_PANGAN_TERPADU_RESEARCH_ID = "industri_pangan_terpadu";
 export const OLAHAN_PANGAN_TERPADU_TARGET_SECTOR = "olahan pangan";

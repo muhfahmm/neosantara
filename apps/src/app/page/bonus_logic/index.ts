@@ -106,67 +106,67 @@ export {
   getOtomasiIndustriBonusPercent,
   getOtomasiIndustriProductionMultiplier,
   OTOMASI_INDUSTRI_RESOURCES,
-} from "./penelitian_bonus_logic/1_Otomasi Fabrikasi Elektronik & Kendaraan";
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/1_Otomasi Fabrikasi Elektronik & Kendaraan";
 
 export {
   getManufakturMaterialBonusPercent,
   MANUFAKTUR_MATERIAL_RESOURCES,
-} from "./penelitian_bonus_logic/2_Rekayasa Material Manufaktur";
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/2_Rekayasa Material Manufaktur";
 
 export {
   getEksplorasiMineralEnergiBonusPercent,
   getEksplorasiMineralEnergiProductionMultiplier,
   MINERAL_ENERGI_RESOURCES,
-} from "./penelitian_bonus_logic/3_Eksplorasi Mineral & Energi";
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/3_Eksplorasi Mineral & Energi";
 
 export {
   getInfrastrukturMineralEnergiBonusPercent,
   INFRASTRUKTUR_MINERAL_ENERGI_RESOURCES,
-} from "./penelitian_bonus_logic/4_Infrastruktur Mineral & Energi Terpadu";
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/4_Infrastruktur Mineral & Energi Terpadu";
 
 export {
   getPeternakanPresisiBonusPercent,
   getPeternakanPresisiProductionMultiplier,
   PETERNAKAN_RESOURCES,
-} from "./penelitian_bonus_logic/5_Peternakan Presisi";
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/5_Peternakan Presisi";
 
 export {
   getGenetikaPakanTernakBonusPercent,
   PETERNAKAN_GENETIKA_RESOURCES,
-} from "./penelitian_bonus_logic/6_Genetika & Pakan Ternak";
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/6_Genetika & Pakan Ternak";
 
 export {
   getAgrikulturCerdasBonusPercent,
   getAgrikulturCerdasProductionMultiplier,
   AGRIKULTUR_RESOURCES,
-} from "./penelitian_bonus_logic/7_Agrikultur Cerdas Multi-Komoditas";
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/7_Agrikultur Cerdas Multi-Komoditas";
 
 export {
   getAgrikulturTangguhBonusPercent,
   AGRIKULTUR_TANGGUH_RESOURCES,
-} from "./penelitian_bonus_logic/8_Agrikultur Tangguh Multi-Komoditas";
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/8_Agrikultur Tangguh Multi-Komoditas";
 
 export {
   getBudidayaPerikananTerpaduBonusPercent,
   getBudidayaPerikananTerpaduProductionMultiplier,
   PERIKANAN_RESOURCES,
-} from "./penelitian_bonus_logic/9_Budidaya Perikanan Terpadu";
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/9_Budidaya Perikanan Terpadu";
 
 export {
   getTeknologiPerikananPascapanenBonusPercent,
   PERIKANAN_PASCAPANEN_RESOURCES,
-} from "./penelitian_bonus_logic/10_Teknologi Perikanan & Pascapanen";
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/10_Teknologi Perikanan & Pascapanen";
 
 export {
   getPengolahanPanganDasarBonusPercent,
   getPengolahanPanganDasarProductionMultiplier,
   OLAHAN_PANGAN_RESOURCES,
-} from "./penelitian_bonus_logic/11_Pengolahan Pangan Dasar";
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/11_Pengolahan Pangan Dasar";
 
 export {
   getIndustriPanganTerintegrasiBonusPercent,
   OLAHAN_PANGAN_TERPADU_RESOURCES,
-} from "./penelitian_bonus_logic/12_Industri Pangan Terintegrasi";
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/12_Industri Pangan Terintegrasi";
 
 
 import { getASEANBuildSpeedModifier } from "./organisasi_bonus_logic/organisasi_regional/asean";

@@ -1,5 +1,5 @@
-import { PRODUCTION_BAN_CATEGORIES } from "../../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
-import { RESEARCH_CARD_LEVEL_BONUS } from "../researchCardLevelBonus";
+import { PRODUCTION_BAN_CATEGORIES } from "../../../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
+import { RESEARCH_CARD_LEVEL_BONUS } from "../../researchCardLevelBonus";
 
 export const MANUFAKTUR_LANJUT_RESEARCH_ID = "manufaktur_lanjut";
 export const MANUFAKTUR_LANJUT_TARGET_SECTOR = "mineral";

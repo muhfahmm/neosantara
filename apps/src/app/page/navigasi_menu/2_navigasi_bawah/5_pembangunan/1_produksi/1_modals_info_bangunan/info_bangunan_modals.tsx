@@ -5,12 +5,12 @@ import { Info, X } from "lucide-react";
 import { getCommunismProductionMultiplier, COMMUNISM_PRODUCTION_BONUS } from "../../../../../bonus_logic/ideologi_bonus_logic/komunisme";
 import { isMemberOfFAO, FAO_BONUS_RESOURCES } from "../../../../../bonus_logic/organisasi_bonus_logic/organisasi_pbb/fao";
 import { isMemberOfILO, ILO_MANUFAKTUR_RESOURCES } from "../../../../../bonus_logic/organisasi_bonus_logic/organisasi_pbb/ilo";
-import { getOtomasiIndustriBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_Otomasi Fabrikasi Elektronik & Kendaraan";
-import { getEksplorasiMineralEnergiBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/3_Eksplorasi Mineral & Energi";
-import { getPeternakanPresisiBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/5_Peternakan Presisi";
-import { getAgrikulturCerdasBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/7_Agrikultur Cerdas Multi-Komoditas";
-import { getBudidayaPerikananTerpaduBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/9_Budidaya Perikanan Terpadu";
-import { getPengolahanPanganDasarBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/11_Pengolahan Pangan Dasar";
+import { getOtomasiIndustriBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/1_Otomasi Fabrikasi Elektronik & Kendaraan";
+import { getEksplorasiMineralEnergiBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/3_Eksplorasi Mineral & Energi";
+import { getPeternakanPresisiBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/5_Peternakan Presisi";
+import { getAgrikulturCerdasBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/7_Agrikultur Cerdas Multi-Komoditas";
+import { getBudidayaPerikananTerpaduBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/9_Budidaya Perikanan Terpadu";
+import { getPengolahanPanganDasarBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/11_Pengolahan Pangan Dasar";
 import { getKelistrikanFuelRequirements } from "../requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
 
 import {

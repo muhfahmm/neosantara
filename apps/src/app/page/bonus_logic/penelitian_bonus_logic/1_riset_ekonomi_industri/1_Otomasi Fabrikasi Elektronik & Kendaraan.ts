@@ -1,5 +1,5 @@
-import { PRODUCTION_BAN_CATEGORIES } from "../../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
-import { RESEARCH_CARD_LEVEL_BONUS } from "../researchCardLevelBonus";
+import { PRODUCTION_BAN_CATEGORIES } from "../../../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog";
+import { RESEARCH_CARD_LEVEL_BONUS } from "../../researchCardLevelBonus";
 
 export const OTOMASI_INDUSTRI_RESEARCH_ID = "otomasi_industri";
 export const OTOMASI_INDUSTRI_TARGET_SECTOR = "manufaktur";
