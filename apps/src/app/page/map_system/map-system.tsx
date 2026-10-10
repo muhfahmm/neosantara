@@ -77,7 +77,7 @@ import { generateWabahPenyakitNotification } from '../menus/inbox/logic/6_notifi
 import { generateSpionaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/1_spionase/spionaseLogic';
 import { generateSabotaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
 import { generateDiserangNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/3_diserang/diserangLogic';
-import { generatePemberontakanNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanLogic';
+import { generatePemberontakanNotification, calculateSeparatismeRiskPercent } from '../menus/inbox/logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanLogic';
 import { generateICBMNotification, generateProgramNuklirSelesaiNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic';
 import { generateListrikDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/1_kelistrikan/listrikDefisitLogic';
 import { generateHunianDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/2_hunian/hunianDefisitLogic';
@@ -1422,17 +1422,20 @@ export default function MapPage() {
             }
 
             // 5. Notifikasi Pertahanan & Intelijen (Spionase, Sabotase, Diserang, Pemberontakan, ICBM)
-            if (Math.random() < 0.25) {
+            const separatismeRisk = calculateSeparatismeRiskPercent(countryDetail);
+            const isSeparatismeTriggered = separatismeRisk > 0 && (Math.random() * 100 < separatismeRisk);
+
+            if (isSeparatismeTriggered || Math.random() < 0.25) {
                 const defRoll = Math.random();
                 const randomPartner = internationalPool[Math.floor(Math.random() * internationalPool.length)];
-                if (defRoll < 0.35) {
+                if (isSeparatismeTriggered) {
+                    newNotifsToAdd.push(generatePemberontakanNotification('Papua Barat', currentDateStr, separatismeRisk));
+                } else if (defRoll < 0.35) {
                     newNotifsToAdd.push(generateSpionaseNotification(randomPartner, currentDateStr));
                 } else if (defRoll < 0.65) {
                     newNotifsToAdd.push(generateSabotaseNotification(randomPartner, currentDateStr));
                 } else if (defRoll < 0.85) {
                     newNotifsToAdd.push(generateDiserangNotification(randomPartner, currentDateStr));
-                } else if (defRoll < 0.95) {
-                    newNotifsToAdd.push(generatePemberontakanNotification('Papua Barat', currentDateStr));
                 } else {
                     newNotifsToAdd.push(generateICBMNotification(randomPartner, 'Jakarta', currentDateStr));
                 }
