@@ -168,6 +168,27 @@ export {
   OLAHAN_PANGAN_TERPADU_RESOURCES,
 } from "./penelitian_bonus_logic/1_riset_ekonomi_industri/12_Industri Pangan Terintegrasi";
 
+// 2_riset_militer_pertahanan
+export { getWaktuPembangunanBarakMiliterBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/1_Pos Pertahanan Perbatasan";
+export { getWaktuPembangunanGudangSenjataBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/2_Senapan Serbu Presisi";
+export { getWaktuPembangunanHangarTankBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/3_Tank Tempur Komposit";
+export { getWaktuPembangunanPangkalanUdaraBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/4_Drone Pengintai Taktis";
+export { getWaktuPembangunanPangkalanLautBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/5_Radar Pesisir Pantai";
+
+export { getKapasitasBarakMiliterBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/6_Kapal Korvet Siluman";
+export { getKapasitasGudangSenjataBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/7_Komando Siber Ofensif";
+export { getKapasitasHangarTankBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/8_Artileri Roket Otonom";
+export { getKapasitasPangkalanUdaraBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/9_Kapal Selam Modern";
+export { getKapasitasPangkalanLautBonusPercent } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/10_Helikopter Tempur";
+
+export { getKekuatanDaratBonusPercent, getKekuatanDaratMultiplier } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/11_Tank Tempur Generasi 5";
+export { getKekuatanUdaraBonusPercent, getKekuatanUdaraMultiplier } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/12_Jet Tempur Superioritas";
+export { getKekuatanLautBonusPercent, getKekuatanLautMultiplier } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/13_Kapal Perang Multi-Peran";
+
+export { getHPDaratBonusPercent, getHPDaratMultiplier } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/14_Armor Reaktif Tank";
+export { getHPUdaraBonusPercent, getHPUdaraMultiplier } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/15_Struktur Jet Diperkuat";
+export { getHPLautBonusPercent, getHPLautMultiplier } from "./penelitian_bonus_logic/2_riset_militer_pertahanan/16_Hull Kapal Diperkuat";
+
 
 import { getASEANBuildSpeedModifier } from "./organisasi_bonus_logic/organisasi_regional/asean";
 import { getUniAfrikaBuildSpeedModifier } from "./organisasi_bonus_logic/organisasi_regional/uni_afrika";

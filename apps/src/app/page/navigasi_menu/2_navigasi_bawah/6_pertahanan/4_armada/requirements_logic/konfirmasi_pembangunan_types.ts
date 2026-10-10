@@ -69,4 +69,6 @@ export interface KonfirmasiPembangunanModalProps {
   
   onNavigateToInfra?: (infraKey: string) => void;
   infraKeyToHighlight?: string | null;
+  countryDetail?: any;
+  selectedBuildingKey?: string;
 }

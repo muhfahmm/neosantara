@@ -5,6 +5,8 @@ export interface CapacityDetail {
   totalCapacity: number;
   infraCount: number;
   capacityPerUnit: number;
+  baseCapacityPerUnit: number;
+  capacityBonusPct: number;
   unitLabel: string;
   isFull: boolean;
   supportedUnits: string[];
@@ -32,16 +34,36 @@ export function getInfraCapacityDetails(infraKey: string, countryDetail: any): C
     return 0;
   };
 
+  const getCapacityResearchInfo = (researchId: string): { mult: number; bonusPct: number } => {
+    const completedResearch = Array.isArray(countryDetail?.completed_research)
+      ? countryDetail.completed_research
+      : [];
+    if (!completedResearch.includes(researchId)) return { mult: 1, bonusPct: 0 };
+
+    const researchLevels = countryDetail?.research_levels && typeof countryDetail.research_levels === "object"
+      ? countryDetail.research_levels
+      : {};
+    const storedLevel = Number(researchLevels[researchId]) || 1;
+    const LEVEL_BONUS = [0, 2, 4, 7, 10, 15];
+    const lvlIndex = Math.min(LEVEL_BONUS.length - 1, Math.max(1, Math.floor(storedLevel)));
+    const bonusPct = LEVEL_BONUS[lvlIndex];
+    return { mult: 1 + bonusPct / 100, bonusPct };
+  };
+
   if (infraKey === "barak") {
     const count = getData("barak");
     const used = getData("pasukan_infanteri", "darat");
-    const capacityPerUnit = 10000;
+    const { mult, bonusPct } = getCapacityResearchInfo("kapal_stealth");
+    const baseCapacityPerUnit = 10000;
+    const capacityPerUnit = Math.round(baseCapacityPerUnit * mult);
     const totalCapacity = count * capacityPerUnit;
     return {
       used,
       totalCapacity,
       infraCount: count,
       capacityPerUnit,
+      baseCapacityPerUnit,
+      capacityBonusPct: bonusPct,
       unitLabel: "Pasukan Infanteri",
       isFull: count > 0 && used >= totalCapacity,
       supportedUnits: ["Pasukan Infanteri"]
@@ -55,13 +77,17 @@ export function getInfraCapacityDetails(infraKey: string, countryDetail: any): C
     const pertahananUdara = getData("pertahanan_udara_mobile", "darat");
     const kensTaktis = getData("kendaraan_taktis", "darat");
     const used = artileri + roket + pertahananUdara + kensTaktis;
-    const capacityPerUnit = 2500;
+    const { mult, bonusPct } = getCapacityResearchInfo("perang_siber");
+    const baseCapacityPerUnit = 2500;
+    const capacityPerUnit = Math.round(baseCapacityPerUnit * mult);
     const totalCapacity = count * capacityPerUnit;
     return {
       used,
       totalCapacity,
       infraCount: count,
       capacityPerUnit,
+      baseCapacityPerUnit,
+      capacityBonusPct: bonusPct,
       unitLabel: "Unit Persenjataan",
       isFull: count > 0 && used >= totalCapacity,
       supportedUnits: [
@@ -78,13 +104,17 @@ export function getInfraCapacityDetails(infraKey: string, countryDetail: any): C
     const mbt = getData("tank_tempur_utama", "darat");
     const apc = getData("apc_ifv", "darat");
     const used = mbt + apc;
-    const capacityPerUnit = 3000;
+    const { mult, bonusPct } = getCapacityResearchInfo("artileri_presisi");
+    const baseCapacityPerUnit = 3000;
+    const capacityPerUnit = Math.round(baseCapacityPerUnit * mult);
     const totalCapacity = count * capacityPerUnit;
     return {
       used,
       totalCapacity,
       infraCount: count,
       capacityPerUnit,
+      baseCapacityPerUnit,
+      capacityBonusPct: bonusPct,
       unitLabel: "Unit Kendaraan Lapis Baja",
       isFull: count > 0 && used >= totalCapacity,
       supportedUnits: [
@@ -105,13 +135,17 @@ export function getInfraCapacityDetails(infraKey: string, countryDetail: any): C
     const droneKamikaze = getData("drone_kamikaze", "udara");
     const angkut = getData("pesawat_angkut", "udara");
     const used = siluman + interceptor + pengebom + helikopter + pengintai + droneIntai + droneKamikaze + angkut;
-    const capacityPerUnit = 500;
+    const { mult, bonusPct } = getCapacityResearchInfo("kapal_selam_diesel");
+    const baseCapacityPerUnit = 500;
+    const capacityPerUnit = Math.round(baseCapacityPerUnit * mult);
     const totalCapacity = count * capacityPerUnit;
     return {
       used,
       totalCapacity,
       infraCount: count,
       capacityPerUnit,
+      baseCapacityPerUnit,
+      capacityBonusPct: bonusPct,
       unitLabel: "Unit Armada Udara",
       isFull: count > 0 && used >= totalCapacity,
       supportedUnits: [
@@ -135,13 +169,17 @@ export function getInfraCapacityDetails(infraKey: string, countryDetail: any): C
     const kRanjau = getData("kapal_ranjau", "laut");
     const kLogistik = getData("kapal_logistik", "laut");
     const used = kInduk + kIndukNuklir + kDestroyer + kKorvet + kSelamNuklir + kSelamReguler + kRanjau + kLogistik;
-    const capacityPerUnit = 50;
+    const { mult, bonusPct } = getCapacityResearchInfo("helikopter_serang");
+    const baseCapacityPerUnit = 50;
+    const capacityPerUnit = Math.round(baseCapacityPerUnit * mult);
     const totalCapacity = count * capacityPerUnit;
     return {
       used,
       totalCapacity,
       infraCount: count,
       capacityPerUnit,
+      baseCapacityPerUnit,
+      capacityBonusPct: bonusPct,
       unitLabel: "Unit Kapal Perang",
       isFull: count > 0 && used >= totalCapacity,
       supportedUnits: [

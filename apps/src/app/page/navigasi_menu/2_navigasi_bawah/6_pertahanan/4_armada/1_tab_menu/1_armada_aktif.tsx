@@ -372,8 +372,11 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
         const baseGroupHealth = unitBreakdown
           .filter((item) => groupItemKeys.includes(item.dataKey))
           .reduce((sum, item) => sum + (item.baseTotalHealth || 0), 0);
-        const hasMilitaryBonus = unitBreakdown.some(
+        const hasPowerBonus = unitBreakdown.some(
           item => groupItemKeys.includes(item.dataKey) && item.totalPower > item.baseTotalPower
+        );
+        const hasHealthBonus = unitBreakdown.some(
+          item => groupItemKeys.includes(item.dataKey) && item.totalHealth > item.baseTotalHealth
         );
 
         return (
@@ -389,14 +392,14 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
               <div className="text-right text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">
                 <p>
                   Kekuatan:{" "}
-                  {hasMilitaryBonus && (
+                  {hasPowerBonus && (
                     <span className="mr-1 text-rose-400 line-through">{formatNumber(baseGroupPower)}</span>
                   )}
                   <span className="text-[#00FFAA]">{formatNumber(totalGroupPower)}</span>
                 </p>
                 <p>
                   Total HP:{" "}
-                  {hasMilitaryBonus && (
+                  {hasHealthBonus && (
                     <span className="mr-1 text-rose-400 line-through">{formatNumber(baseGroupHealth)}</span>
                   )}
                   <span className="text-rose-400">{formatNumber(totalGroupHealth)}</span>

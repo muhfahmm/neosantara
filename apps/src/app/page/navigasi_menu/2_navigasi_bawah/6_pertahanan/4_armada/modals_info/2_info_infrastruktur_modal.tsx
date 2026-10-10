@@ -2,6 +2,18 @@
 import React from "react";
 import { X } from "lucide-react";
 import { getInfraCapacityDetails } from "../logic/infraCapacityHelper";
+import {
+  getWaktuPembangunanBarakMiliterBonusPercent,
+  getWaktuPembangunanGudangSenjataBonusPercent,
+  getWaktuPembangunanHangarTankBonusPercent,
+  getWaktuPembangunanPangkalanUdaraBonusPercent,
+  getWaktuPembangunanPangkalanLautBonusPercent,
+  getKapasitasBarakMiliterBonusPercent,
+  getKapasitasGudangSenjataBonusPercent,
+  getKapasitasHangarTankBonusPercent,
+  getKapasitasPangkalanUdaraBonusPercent,
+  getKapasitasPangkalanLautBonusPercent,
+} from "@/app/page/bonus_logic";
 
 interface InfoInfrastrukturModalProps {
   isOpen: boolean;
@@ -27,9 +39,52 @@ export default function InfoInfrastrukturModal({
 
   const capacityDetail = getInfraCapacityDetails(itemKey, countryDetail);
 
+  let discountPct = 0;
+  let capacityBonusPct = 0;
+  let waktuResearchTitle = "";
+  let capacityResearchTitle = "";
+
+  if (itemKey === "barak") {
+    discountPct = getWaktuPembangunanBarakMiliterBonusPercent(countryDetail);
+    capacityBonusPct = getKapasitasBarakMiliterBonusPercent(countryDetail);
+    waktuResearchTitle = "Pos Pertahanan Perbatasan";
+    capacityResearchTitle = "Kapal Korvet Siluman";
+  } else if (itemKey === "gudang_senjata") {
+    discountPct = getWaktuPembangunanGudangSenjataBonusPercent(countryDetail);
+    capacityBonusPct = getKapasitasGudangSenjataBonusPercent(countryDetail);
+    waktuResearchTitle = "Senapan Serbu Presisi";
+    capacityResearchTitle = "Komando Siber Ofensif";
+  } else if (itemKey === "hangar_tank") {
+    discountPct = getWaktuPembangunanHangarTankBonusPercent(countryDetail);
+    capacityBonusPct = getKapasitasHangarTankBonusPercent(countryDetail);
+    waktuResearchTitle = "Tank Tempur Komposit";
+    capacityResearchTitle = "Artileri Roket Otonom";
+  } else if (itemKey === "pangkalan_udara") {
+    discountPct = getWaktuPembangunanPangkalanUdaraBonusPercent(countryDetail);
+    capacityBonusPct = getKapasitasPangkalanUdaraBonusPercent(countryDetail);
+    waktuResearchTitle = "Drone Pengintai Taktis";
+    capacityResearchTitle = "Kapal Selam Modern";
+  } else if (itemKey === "pangkalan_laut") {
+    discountPct = getWaktuPembangunanPangkalanLautBonusPercent(countryDetail);
+    capacityBonusPct = getKapasitasPangkalanLautBonusPercent(countryDetail);
+    waktuResearchTitle = "Radar Pesisir Pantai";
+    capacityResearchTitle = "Helikopter Tempur";
+  }
+
+  const bonusParts: string[] = [];
+  if (discountPct > 0) {
+    bonusParts.push(`Waktu Pembangunan berkurang ${discountPct}% oleh bonus penelitian ${waktuResearchTitle}`);
+  }
+  if (capacityBonusPct > 0) {
+    bonusParts.push(`Kapasitas bertambah ${capacityBonusPct}% oleh bonus penelitian ${capacityResearchTitle}`);
+  }
+
+  const rawWaktu = Number(selectedItem?.waktu_pembangunan) || 0;
+  const effectiveWaktu = discountPct > 0 ? Math.max(1, Math.floor(rawWaktu * (1 - discountPct / 100))) : rawWaktu;
+
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto shadow-2xl">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-145px)] flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto shadow-2xl">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 
         {/* Header */}
@@ -46,6 +101,11 @@ export default function InfoInfrastrukturModal({
 
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-6 bg-[#0F2424] relative z-10 space-y-4 text-xs font-semibold text-[#E0E0E0] custom-scrollbar">
+          {bonusParts.length > 0 && (
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs font-bold text-emerald-300">
+              Infrastruktur ini ditingkatkan: {bonusParts.join(" dan ")}.
+            </div>
+          )}
           {selectedItem?.deskripsi && (
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
               <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Deskripsi</p>
@@ -67,9 +127,23 @@ export default function InfoInfrastrukturModal({
                 <p className={`text-xl font-black ${capacityDetail.isFull ? "text-rose-400" : "text-[#00FFAA]"}`}>
                   {formatNumber(capacityDetail.used)} / {formatNumber(capacityDetail.totalCapacity)}
                 </p>
-                <p className="text-[10px] text-[#6B8A8A] mt-1">
-                  ({formatNumber(capacityDetail.capacityPerUnit)} {capacityDetail.unitLabel} / 1 {selectedItem?.label})
-                </p>
+                <div className="text-[10px] text-[#6B8A8A] mt-1 flex items-center gap-1 flex-wrap font-medium">
+                  {capacityDetail.capacityBonusPct > 0 ? (
+                    <>
+                      <span>(</span>
+                      <span className="text-red-400 line-through">{formatNumber(capacityDetail.baseCapacityPerUnit)}</span>
+                      <span className="text-[#00FFAA] font-bold">{formatNumber(capacityDetail.capacityPerUnit)}</span>
+                      <span>{capacityDetail.unitLabel} / 1 {selectedItem?.label})</span>
+                      <span className="text-[#00FFAA] font-bold bg-[#0F2424] px-1.5 py-0.5 rounded border border-[#00FFAA]/30">
+                        +{capacityDetail.capacityBonusPct}% Riset
+                      </span>
+                    </>
+                  ) : (
+                    <span>
+                      ({formatNumber(capacityDetail.capacityPerUnit)} {capacityDetail.unitLabel} / 1 {selectedItem?.label})
+                    </span>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -99,9 +173,16 @@ export default function InfoInfrastrukturModal({
             </div>
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
               <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Waktu Pembangunan</p>
-              <p className="text-base font-black text-white">
-                {selectedItem?.waktu_pembangunan} Hari
-              </p>
+              {discountPct > 0 ? (
+                <div className="flex items-center gap-2 text-base font-black">
+                  <span className="text-red-400 line-through text-sm">{rawWaktu} Hari</span>
+                  <span className="text-[#00FFAA]">{effectiveWaktu} Hari</span>
+                </div>
+              ) : (
+                <p className="text-base font-black text-white">
+                  {rawWaktu} Hari
+                </p>
+              )}
             </div>
           </div>
 

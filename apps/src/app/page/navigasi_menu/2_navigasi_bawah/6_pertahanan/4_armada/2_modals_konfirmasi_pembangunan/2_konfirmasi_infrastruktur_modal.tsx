@@ -7,6 +7,18 @@ import { GUDANG_SENJATA_CAPACITY } from "../logic/3_gudang_senjata_logic";
 import { PANGKALAN_LAUT_CAPACITY } from "../logic/4_pangkalan_laut_logic";
 import { PANGKALAN_UDARA_CAPACITY } from "../logic/5_pangkalan_udara_logic";
 import { KonfirmasiPembangunanModalProps } from "../requirements_logic/konfirmasi_pembangunan_types";
+import {
+  getWaktuPembangunanBarakMiliterBonusPercent,
+  getWaktuPembangunanGudangSenjataBonusPercent,
+  getWaktuPembangunanHangarTankBonusPercent,
+  getWaktuPembangunanPangkalanUdaraBonusPercent,
+  getWaktuPembangunanPangkalanLautBonusPercent,
+  getKapasitasBarakMiliterBonusPercent,
+  getKapasitasGudangSenjataBonusPercent,
+  getKapasitasHangarTankBonusPercent,
+  getKapasitasPangkalanUdaraBonusPercent,
+  getKapasitasPangkalanLautBonusPercent
+} from "@/app/page/bonus_logic";
 
 export default function KonfirmasiInfrastrukturModal({
   isOpen,
@@ -59,6 +71,8 @@ export default function KonfirmasiInfrastrukturModal({
   currentPangkalanUdaraCount = 0,
   onNavigateToInfra,
   infraKeyToHighlight,
+  countryDetail,
+  selectedBuildingKey,
 }: KonfirmasiPembangunanModalProps) {
   const [showMaterialGrid, setShowMaterialGrid] = useState(true);
   const [buildQuantity, setBuildQuantity] = useState<number>(1);
@@ -74,8 +88,31 @@ export default function KonfirmasiInfrastrukturModal({
 
   if (!isOpen) return null;
 
+  const completedResearch = countryDetail?.completed_research || {};
+  let discountPct = 0;
+  if (selectedBuildingKey === "barak" || capacityType === "infanteri") {
+    discountPct = getWaktuPembangunanBarakMiliterBonusPercent(countryDetail);
+  } else if (selectedBuildingKey === "gudang_senjata" || capacityType === "gudang_senjata") {
+    discountPct = getWaktuPembangunanGudangSenjataBonusPercent(countryDetail);
+  } else if (selectedBuildingKey === "hangar_tank" || capacityType === "hangar_tank") {
+    discountPct = getWaktuPembangunanHangarTankBonusPercent(countryDetail);
+  } else if (selectedBuildingKey === "pangkalan_udara" || capacityType === "pangkalan_udara") {
+    discountPct = getWaktuPembangunanPangkalanUdaraBonusPercent(countryDetail);
+  } else if (selectedBuildingKey === "pangkalan_laut" || capacityType === "pangkalan_laut") {
+    discountPct = getWaktuPembangunanPangkalanLautBonusPercent(countryDetail);
+  }
+
+  // Menghitung diskon waktu. Misal 15 Hari x (1 - 0.02) = 14.7 Hari => Math.floor / Math.max(1, Math.floor)
+  const rawWaktuCalc = (waktuPembangunan !== undefined && discountPct > 0)
+    ? (waktuPembangunan * (1 - discountPct / 100))
+    : waktuPembangunan;
+
+  const effectiveWaktuPerUnit = rawWaktuCalc !== undefined && discountPct > 0
+    ? Math.max(1, Math.floor(rawWaktuCalc))
+    : waktuPembangunan;
+
   const totalCost = cost * buildQuantity;
-  const totalTime = waktuPembangunan !== undefined ? waktuPembangunan * buildQuantity : undefined;
+  const totalTime = effectiveWaktuPerUnit !== undefined ? effectiveWaktuPerUnit * buildQuantity : undefined;
   const hasMissingMaterials = missingMaterials.length > 0;
   const isAnggaranCukup = anggaran >= totalCost;
 
@@ -98,11 +135,13 @@ export default function KonfirmasiInfrastrukturModal({
   
   if (capacityType === "hangar_tank") {
     const totalVehicles = currentTankCount + currentApcCount;
-    const maxHangarCapacity = currentHangarCount * HANGAR_TANK_CAPACITY;
+    const capBonusPct = getKapasitasHangarTankBonusPercent(countryDetail);
+    const effectiveHangarCap = Math.round(HANGAR_TANK_CAPACITY * (1 + capBonusPct / 100));
+    const maxHangarCapacity = currentHangarCount * effectiveHangarCap;
     const isHangarPenuh = totalVehicles >= maxHangarCapacity;
     hangarTankCapacityFull = currentHangarCount > 0 && isHangarPenuh;
     hangarTankCapacityDisplay = `${totalVehicles.toLocaleString('id-ID')} / ${maxHangarCapacity.toLocaleString('id-ID')}`;
-    hangarTankWarningText = `Kapasitas Hangar Tank sudah penuh (${currentHangarCount} hangar × ${HANGAR_TANK_CAPACITY.toLocaleString('id-ID')} = ${maxHangarCapacity.toLocaleString('id-ID')} unit). Anda harus membangun Hangar Tank baru untuk menambah Tank/APC lebih banyak.`;
+    hangarTankWarningText = `Kapasitas Hangar Tank sudah penuh (${currentHangarCount} hangar × ${effectiveHangarCap.toLocaleString('id-ID')} = ${maxHangarCapacity.toLocaleString('id-ID')} unit). Anda harus membangun Hangar Tank baru untuk menambah Tank/APC lebih banyak.`;
   }
 
   // 🔥 LOGIC KAPASITAS GUDANG SENJATA
@@ -112,11 +151,13 @@ export default function KonfirmasiInfrastrukturModal({
   
   if (capacityType === "gudang_senjata") {
     const totalWeapons = currentArtileriCount + currentRoketCount + currentPertahanUdaraCount + currentKendaraanTaktisCount;
-    const maxGudangCapacity = currentGudangCount * GUDANG_SENJATA_CAPACITY;
+    const capBonusPct = getKapasitasGudangSenjataBonusPercent(countryDetail);
+    const effectiveGudangCap = Math.round(GUDANG_SENJATA_CAPACITY * (1 + capBonusPct / 100));
+    const maxGudangCapacity = currentGudangCount * effectiveGudangCap;
     const isGudangPenuh = totalWeapons >= maxGudangCapacity;
     gudangSenjataCapacityFull = currentGudangCount > 0 && isGudangPenuh;
     gudangSenjataCapacityDisplay = `${totalWeapons.toLocaleString('id-ID')} / ${maxGudangCapacity.toLocaleString('id-ID')}`;
-    gudangSenjataCapacityWarningText = `Kapasitas Gudang Senjata sudah penuh (${currentGudangCount} gudang × ${GUDANG_SENJATA_CAPACITY.toLocaleString('id-ID')} = ${maxGudangCapacity.toLocaleString('id-ID')} unit). Anda harus membangun Gudang Senjata baru untuk menambah Senjata lebih banyak.`;
+    gudangSenjataCapacityWarningText = `Kapasitas Gudang Senjata sudah penuh (${currentGudangCount} gudang × ${effectiveGudangCap.toLocaleString('id-ID')} = ${maxGudangCapacity.toLocaleString('id-ID')} unit). Anda harus membangun Gudang Senjata baru untuk menambah Senjata lebih banyak.`;
   }
 
   // 🔥 LOGIC KAPASITAS PANGKALAN LAUT
@@ -127,11 +168,13 @@ export default function KonfirmasiInfrastrukturModal({
   if (capacityType === "pangkalan_laut") {
     const totalKapal = kapalIndukCount + kapalIndukNuklirCount + kapalDestroyerCount + kapalKorvetCount + 
                        kapalSelamNuklirCount + kapalSelamRegulerCount + kapalRanjauCount + kapalLogistikCount;
-    const maxPangkalanLautCapacity = currentPangkalanLautCount * PANGKALAN_LAUT_CAPACITY;
+    const capBonusPct = getKapasitasPangkalanLautBonusPercent(countryDetail);
+    const effectiveLautCap = Math.round(PANGKALAN_LAUT_CAPACITY * (1 + capBonusPct / 100));
+    const maxPangkalanLautCapacity = currentPangkalanLautCount * effectiveLautCap;
     const isPangkalanLautPenuh = totalKapal >= maxPangkalanLautCapacity;
     pangkalanLautCapacityFull = currentPangkalanLautCount > 0 && isPangkalanLautPenuh;
     pangkalanLautCapacityDisplay = `${totalKapal.toLocaleString('id-ID')} / ${maxPangkalanLautCapacity.toLocaleString('id-ID')}`;
-    pangkalanLautCapacityWarningText = `Kapasitas Pangkalan Laut sudah penuh (${currentPangkalanLautCount} pangkalan × ${PANGKALAN_LAUT_CAPACITY.toLocaleString('id-ID')} = ${maxPangkalanLautCapacity.toLocaleString('id-ID')} unit). Anda harus membangun Pangkalan Laut baru untuk menambah Kapal lebih banyak.`;
+    pangkalanLautCapacityWarningText = `Kapasitas Pangkalan Laut sudah penuh (${currentPangkalanLautCount} pangkalan × ${effectiveLautCap.toLocaleString('id-ID')} = ${maxPangkalanLautCapacity.toLocaleString('id-ID')} unit). Anda harus membangun Pangkalan Laut baru untuk menambah Kapal lebih banyak.`;
   }
 
   // 🔥 LOGIC KAPASITAS PANGKALAN UDARA
@@ -142,11 +185,13 @@ export default function KonfirmasiInfrastrukturModal({
   if (capacityType === "pangkalan_udara") {
     const totalPesawat = jetTemturSilamanCount + jetTemturInterceptorCount + pesawatPengebomCount + helikopterSerangCount + 
                          pesawatPengintaiCount + droneIntaiUavCount + droneKamikazeCount + pesawatAngkutCount;
-    const maxPangkalanUdaraCapacity = currentPangkalanUdaraCount * PANGKALAN_UDARA_CAPACITY;
+    const capBonusPct = getKapasitasPangkalanUdaraBonusPercent(countryDetail);
+    const effectiveUdaraCap = Math.round(PANGKALAN_UDARA_CAPACITY * (1 + capBonusPct / 100));
+    const maxPangkalanUdaraCapacity = currentPangkalanUdaraCount * effectiveUdaraCap;
     const isPangkalanUdaraPenuh = totalPesawat >= maxPangkalanUdaraCapacity;
     pangkalanUdaraCapacityFull = currentPangkalanUdaraCount > 0 && isPangkalanUdaraPenuh;
     pangkalanUdaraCapacityDisplay = `${totalPesawat.toLocaleString('id-ID')} / ${maxPangkalanUdaraCapacity.toLocaleString('id-ID')}`;
-    pangkalanUdaraCapacityWarningText = `Kapasitas Pangkalan Udara sudah penuh (${currentPangkalanUdaraCount} pangkalan × ${PANGKALAN_UDARA_CAPACITY.toLocaleString('id-ID')} = ${maxPangkalanUdaraCapacity.toLocaleString('id-ID')} unit). Anda harus membangun Pangkalan Udara baru untuk menambah Pesawat lebih banyak.`;
+    pangkalanUdaraCapacityWarningText = `Kapasitas Pangkalan Udara sudah penuh (${currentPangkalanUdaraCount} pangkalan × ${effectiveUdaraCap.toLocaleString('id-ID')} = ${maxPangkalanUdaraCapacity.toLocaleString('id-ID')} unit). Anda harus membangun Pangkalan Udara baru untuk menambah Pesawat lebih banyak.`;
   }
 
   const capacityFull = infanteriCapacityFull || hangarTankCapacityFull || gudangSenjataCapacityFull || pangkalanLautCapacityFull || pangkalanUdaraCapacityFull;
@@ -429,11 +474,25 @@ export default function KonfirmasiInfrastrukturModal({
               <>
                 <div className="flex justify-between">
                   <span className="text-[#6B8A8A]">Estimasi Waktu Pembangunan per bangunan:</span>
-                  <span className="text-white font-semibold">{waktuPembangunan} Hari</span>
+                  {discountPct > 0 ? (
+                    <div className="flex items-center gap-2 font-semibold">
+                      <span className="text-red-400 line-through text-xs">{waktuPembangunan} Hari</span>
+                      <span className="text-[#00FFAA]">{effectiveWaktuPerUnit} Hari</span>
+                    </div>
+                  ) : (
+                    <span className="text-white font-semibold">{waktuPembangunan} Hari</span>
+                  )}
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#6B8A8A]">Estimasi Waktu Pembangunan Total:</span>
-                  <span className="text-white font-semibold">{totalTime} Hari</span>
+                  {discountPct > 0 ? (
+                    <div className="flex items-center gap-2 font-semibold">
+                      <span className="text-red-400 line-through text-xs">{waktuPembangunan * buildQuantity} Hari</span>
+                      <span className="text-[#00FFAA]">{totalTime} Hari</span>
+                    </div>
+                  ) : (
+                    <span className="text-white font-semibold">{totalTime} Hari</span>
+                  )}
                 </div>
               </>
             )}

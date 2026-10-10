@@ -7,11 +7,12 @@ interface BuildEmbassyModalProps {
   continent?: string | null;
   currentBudget?: number;
   cost?: number;
+  buildTimeDays?: number;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-export default function BuildEmbassyModal({ isOpen, countryName, continent, currentBudget = 0, cost = 0, onClose, onConfirm }: BuildEmbassyModalProps) {
+export default function BuildEmbassyModal({ isOpen, countryName, continent, currentBudget = 0, cost = 0, buildTimeDays = 60, onClose, onConfirm }: BuildEmbassyModalProps) {
   if (!isOpen) return null;
 
   const continentLabel = continent || 'Lainnya';
@@ -25,7 +26,7 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
       <div className="w-full max-w-[420px] bg-white rounded-2xl p-6 shadow-2xl border border-[#E5DCCF] relative font-sans">
         <h3 className="text-lg font-black text-[#3d2911] mb-3">Konfirmasi Bangun Kedutaan</h3>
         <p className="text-sm text-[#5c3c10] mb-3">
-          Apakah Anda ingin membangun kedutaan di <strong>{countryName}</strong>? Biaya pembangunan di <strong>{continentLabel}</strong> adalah <strong>{cost} NEO</strong>.
+          Apakah Anda ingin membangun kedutaan di <strong>{countryName}</strong>? Biaya pembangunan di <strong>{continentLabel}</strong> adalah <strong>{cost} NEO</strong> dengan waktu pembangunan <strong>{buildTimeDays} hari</strong>.
         </p>
         <p className="text-sm text-[#5c3c10] mb-6">
           Kas negara saat ini: <strong>{currentBudget >= 0 ? '+' : ''}{formattedCurrentBudget} NEO</strong>. Setelah pembangunan, kas akan menjadi <strong>{budgetAfterBuild >= 0 ? '+' : ''}{formattedBudgetAfterBuild} NEO</strong>.

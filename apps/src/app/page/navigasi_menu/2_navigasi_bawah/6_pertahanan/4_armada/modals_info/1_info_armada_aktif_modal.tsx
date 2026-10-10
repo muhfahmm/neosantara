@@ -92,9 +92,9 @@ export default function InfoArmadaAktifModal({
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
               <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Kekuatan</p>
               <p className="flex items-center gap-2 text-lg font-black text-[#00FFAA]">
-                {hasMilitaryBonus && (
+                {currentUnit && currentUnit.totalPower > currentUnit.baseTotalPower && (
                   <span className="text-sm text-rose-400 line-through">
-                    {formatNumber(currentUnit?.baseTotalPower ?? 0)}
+                    {formatNumber(currentUnit.baseTotalPower)}
                   </span>
                 )}
                 {formatNumber(currentUnit?.totalPower ?? 0)}
@@ -103,9 +103,9 @@ export default function InfoArmadaAktifModal({
             <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
               <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Total HP</p>
               <p className="flex items-center gap-2 text-lg font-black text-rose-400">
-                {hasMilitaryBonus && (
+                {currentUnit && currentUnit.totalHealth > currentUnit.baseTotalHealth && (
                   <span className="text-sm text-rose-300/60 line-through">
-                    {formatNumber(currentUnit?.baseTotalHealth ?? 0)}
+                    {formatNumber(currentUnit.baseTotalHealth)}
                   </span>
                 )}
                 {formatNumber(currentUnit?.totalHealth ?? 0)}

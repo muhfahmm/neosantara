@@ -104,6 +104,15 @@ const resolveQuantity = (armada: ArmadaData, dataKey: string): number => {
   return normalizeNumber(groupValues?.[dataKey]);
 };
 
+import {
+  getKekuatanDaratMultiplier,
+  getKekuatanUdaraMultiplier,
+  getKekuatanLautMultiplier,
+  getHPDaratMultiplier,
+  getHPUdaraMultiplier,
+  getHPLautMultiplier
+} from "@/app/page/bonus_logic";
+
 export function getArmadaUnitBreakdown(source: unknown): ArmadaUnitBreakdown[] {
   const armada = resolveCountryArmada(source);
   const sourceData = source && typeof source === "object"
@@ -116,10 +125,31 @@ export function getArmadaUnitBreakdown(source: unknown): ArmadaUnitBreakdown[] {
     getAuthoritarianMilitaryStrengthMultiplier(ideology) *
     getNATOMilitaryMultiplier(countryName);
 
+  const daratPowerMult = getKekuatanDaratMultiplier(sourceData);
+  const udaraPowerMult = getKekuatanUdaraMultiplier(sourceData);
+  const lautPowerMult = getKekuatanLautMultiplier(sourceData);
+
+  const daratHPMult = getHPDaratMultiplier(sourceData);
+  const udaraHPMult = getHPUdaraMultiplier(sourceData);
+  const lautHPMult = getHPLautMultiplier(sourceData);
+
   return Object.values(metadataByDataKey).map((metadata) => {
     const quantity = resolveQuantity(armada, metadata.dataKey);
     const powerPerUnit = normalizeNumber(metadata.kekuatan);
     const healthPerUnit = normalizeNumber(metadata.kesehatan);
+
+    let groupPowerMult = 1;
+    let groupHPMult = 1;
+    if (metadata.groupId === "darat") {
+      groupPowerMult = daratPowerMult;
+      groupHPMult = daratHPMult;
+    } else if (metadata.groupId === "udara") {
+      groupPowerMult = udaraPowerMult;
+      groupHPMult = udaraHPMult;
+    } else if (metadata.groupId === "laut") {
+      groupPowerMult = lautPowerMult;
+      groupHPMult = lautHPMult;
+    }
 
     return {
       key: metadata.dataKey,
@@ -128,9 +158,9 @@ export function getArmadaUnitBreakdown(source: unknown): ArmadaUnitBreakdown[] {
       quantity,
       powerPerUnit,
       healthPerUnit,
-      totalPower: quantity * powerPerUnit * militaryMultiplier *
+      totalPower: quantity * powerPerUnit * militaryMultiplier * groupPowerMult *
         getMilitaryResearchStrengthMultiplier(sourceData, metadata.dataKey),
-      totalHealth: quantity * healthPerUnit * militaryMultiplier,
+      totalHealth: quantity * healthPerUnit * militaryMultiplier * groupHPMult,
       baseTotalPower: quantity * powerPerUnit,
       baseTotalHealth: quantity * healthPerUnit,
     };

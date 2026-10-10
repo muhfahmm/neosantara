@@ -11,6 +11,15 @@ import { REQUIREMENTS as GUDANG_REQUIREMENTS } from "../requirements_logic/3_gud
 import { REQUIREMENTS as LAUT_REQUIREMENTS } from "../requirements_logic/4_pangkalan_laut/requirements";
 import { REQUIREMENTS as UDARA_REQUIREMENTS } from "../requirements_logic/5_pangkalan_udara/requirements";
 
+import {
+  getWaktuPembangunanBarakMiliterBonusPercent,
+  getWaktuPembangunanGudangSenjataBonusPercent,
+  getWaktuPembangunanHangarTankBonusPercent,
+  getWaktuPembangunanPangkalanUdaraBonusPercent,
+  getWaktuPembangunanPangkalanLautBonusPercent,
+  getKapasitasBarakMiliterBonusPercent
+} from "@/app/page/bonus_logic";
+
 import metadataManajemen from "../../../../../../../../../json/semua_fitur_negara/2_pertahanan/3_manajemen_pertahanan/metadata_manajemen.json";
 
 interface TabProps {
@@ -246,8 +255,29 @@ export default function InfrastrukturMiliter({
       qty
     );
 
+    // Calculate discounted build time with research bonuses (Tier 1 military research)
+    let effectiveWaktu = waktu;
+    const completedResearch = countryDetail?.completed_research || {};
+    let discountPct = 0;
+
+    if (key === "barak") {
+      discountPct = getWaktuPembangunanBarakMiliterBonusPercent(countryDetail);
+    } else if (key === "gudang_senjata") {
+      discountPct = getWaktuPembangunanGudangSenjataBonusPercent(countryDetail);
+    } else if (key === "hangar_tank") {
+      discountPct = getWaktuPembangunanHangarTankBonusPercent(countryDetail);
+    } else if (key === "pangkalan_udara") {
+      discountPct = getWaktuPembangunanPangkalanUdaraBonusPercent(countryDetail);
+    } else if (key === "pangkalan_laut") {
+      discountPct = getWaktuPembangunanPangkalanLautBonusPercent(countryDetail);
+    }
+
+    if (discountPct > 0) {
+      effectiveWaktu = Math.max(1, Math.floor(waktu * (1 - discountPct / 100)));
+    }
+
     // 5. Jika waktu 0 (instan), tambahkan langsung
-    if (waktu <= 0) {
+    if (effectiveWaktu <= 0) {
       updatedDetailWithMaterials[key] = (Number(countryDetail?.[key]) || 0) + qty;
       _setCountryDetail(updatedDetailWithMaterials);
       setIsConfirmBuildOpen(false);
@@ -269,7 +299,7 @@ export default function InfrastrukturMiliter({
     const newOngoing = [...ongoing];
     for (let i = 0; i < qty; i++) {
       const nextStart = i === 0 ? startDateStr : addDays(newOngoing[newOngoing.length - 1].endDate, 0);
-      const nextEnd = addDays(nextStart, waktu);
+      const nextEnd = addDays(nextStart, effectiveWaktu);
       newOngoing.push({
         id: Date.now() + Math.random() + i,
         buildingKey: key,
@@ -316,6 +346,8 @@ export default function InfrastrukturMiliter({
       },
       loadingMetadata: false,
       isDisabled: false,
+      countryDetail: countryDetail,
+      selectedBuildingKey: selectedForBuild.key,
     };
 
     const findRequirementsForBuilding = (buildingKey: string, requirementsArray: any[]) => {
@@ -330,7 +362,9 @@ export default function InfrastrukturMiliter({
 
     if (key === "barak") {
       const barakRequirements = findRequirementsForBuilding("barak", INFANTERI_REQUIREMENTS);
-      const maxCap = (currentBarak + ongoingBarak) * 10000;
+      const capBonusPct = getKapasitasBarakMiliterBonusPercent(countryDetail);
+      const capPerUnit = Math.round(10000 * (1 + capBonusPct / 100));
+      const maxCap = (currentBarak + ongoingBarak) * capPerUnit;
       return (
         <KonfirmasiInfrastrukturModal
           {...modalPropsBase}
