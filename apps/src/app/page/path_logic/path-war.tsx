@@ -18,8 +18,8 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '@/app/page/map_system/map-data';
-import PerbandinganPasukan from './perbandingan_pasukan';
-import PageWar from './page_war/page_war';
+import PerbandinganPasukan from '../detail_negara/3_operasi_militer/1_serang_negara/perbandingan_pasukan';
+import PageWar from '../detail_negara/3_operasi_militer/1_serang_negara/page_war/page_war';
 
 /* ============================================================
  * TIPE & INTERFACE (Penggabungan dari path-war.ts)
@@ -327,7 +327,7 @@ export function buildWarPath(input: BuildWarPathInput): WarPath {
   };
 }
 
-import { simulateBattleTs } from './war_algoritm/battleEngine';
+import { simulateBattleTs } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 
 /* ============================================================
  * HASIL PERTEMPURAN (DeepSeek AI Engine)
@@ -368,7 +368,7 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
           deployedPowerRatio = Math.max(0.01, avgPct / 100);
         }
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // Jika User adalah Penyerang: ratio dikalikan ke attackerPower (User)
@@ -451,7 +451,7 @@ export default function WarMap({
           return true;
         }
       }
-    } catch (e) {}
+    } catch (e) { }
     return false;
   }, [isUserDefenderProp, target.country]);
 
@@ -822,11 +822,10 @@ export default function WarMap({
           <div className="w-full max-w-lg bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(0,255,170,0.2)] font-sans select-none">
             {/* Header hasil */}
             <div
-              className={`p-6 text-center border-b ${
-                result === 'win'
+              className={`p-6 text-center border-b ${result === 'win'
                   ? 'bg-[#00FFAA]/10 border-[#00FFAA]/30'
                   : 'bg-[#FF2D55]/10 border-[#FF2D55]/30'
-              }`}
+                }`}
             >
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-3">
                 {result === 'win' ? (
@@ -836,9 +835,8 @@ export default function WarMap({
                 )}
               </div>
               <h2
-                className={`text-xl font-black uppercase tracking-widest ${
-                  result === 'win' ? 'text-[#00FFAA]' : 'text-[#FF2D55]'
-                }`}
+                className={`text-xl font-black uppercase tracking-widest ${result === 'win' ? 'text-[#00FFAA]' : 'text-[#FF2D55]'
+                  }`}
               >
                 {isUserDefender
                   ? (result === 'win' ? 'Pertahanan Berhasil!' : 'Pertahanan Terpukul Kalah!')

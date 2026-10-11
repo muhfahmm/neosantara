@@ -18,6 +18,8 @@ interface GeopolitikProps {
   countryName: string;
   playerCountryDetail?: any;
   setPlayerCountryDetail?: (detail: any | ((prev: any) => any)) => void;
+  targetCountryDetail?: any;
+  setTargetCountryDetail?: (detail: any | ((prev: any) => any)) => void;
 }
 
 // Komponen tombol aksi agar kode lebih rapi (Persis sama dengan InformasiUmum)
@@ -38,7 +40,7 @@ const ActionButton = ({ icon: Icon, label, onClick, disabled }: { icon: any, lab
   );
 };
 
-export default function Geopolitik({ countryName, playerCountryDetail, setPlayerCountryDetail }: GeopolitikProps) {
+export default function Geopolitik({ countryName, playerCountryDetail, setPlayerCountryDetail, targetCountryDetail, setTargetCountryDetail }: GeopolitikProps) {
   const [isBeriTentaraOpen, setIsBeriTentaraOpen] = useState(false);
   const [isBeriHadiahOpen, setIsBeriHadiahOpen] = useState(false);
   const [isTingkatkanOpen, setIsTingkatkanOpen] = useState(false);
@@ -66,7 +68,16 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
         <ActionButton icon={Map} label="Berikan Wilayah" onClick={() => setIsBerikanWilayahOpen(true)} />
       </div>
 
-      <BeriTentaraModal isOpen={isBeriTentaraOpen} countryName={countryName} onClose={() => setIsBeriTentaraOpen(false)} onConfirm={() => { console.log(`Beri Tentara -> ${countryName}`); }} />
+      <BeriTentaraModal
+        isOpen={isBeriTentaraOpen}
+        countryName={countryName}
+        playerCountryDetail={playerCountryDetail}
+        setPlayerCountryDetail={setPlayerCountryDetail}
+        targetCountryDetail={targetCountryDetail}
+        setTargetCountryDetail={setTargetCountryDetail}
+        onClose={() => setIsBeriTentaraOpen(false)}
+        onConfirm={() => { console.log(`Beri Tentara -> ${countryName}`); }}
+      />
       <BeriHadiahModal
         isOpen={isBeriHadiahOpen}
         countryName={countryName}

@@ -22,43 +22,43 @@ type KudetaType = import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta')
 const ModalsAnnexedGameOver = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsAnnexedGameOver'), { ssr: false });
 
 export function lootUserProductionInventory(countryDetail: any, currentDateStr: string): { updatedDetail: any; lootedSummaryText: string } {
-  if (!countryDetail) return { updatedDetail: countryDetail, lootedSummaryText: '' };
+    if (!countryDetail) return { updatedDetail: countryDetail, lootedSummaryText: '' };
 
-  const nextDetail = JSON.parse(JSON.stringify(countryDetail));
+    const nextDetail = JSON.parse(JSON.stringify(countryDetail));
 
-  const PRODUCTION_KEYS = [
-    // Mineral & Energi
-    "emas", "uranium", "batu_bara", "minyak_bumi", "gas_alam", "garam", "litium", "logam_tanah_jarang", "bijih_besi",
-    // Manufaktur
-    "pabrik_semikonduktor", "pabrik_mesin_mobil", "pabrik_mesin_motor", "semen_beton", "kayu",
-    // Peternakan
-    "ayam_unggas", "sapi_perah", "sapi_potong", "domba_kambing",
-    // Agrikultur
-    "padi", "gandum", "jagung", "sayur", "umbi", "kedelai", "kelapa_sawit", "kopi", "teh", "kakao", "tebu", "karet",
-    // Perikanan
-    "udang", "mutiara", "ikan",
-    // Olahan Pangan
-    "air_mineral", "gula", "roti", "pengolahan_daging", "mie_instan", "minyak_goreng", "susu", "beras"
-  ];
+    const PRODUCTION_KEYS = [
+        // Mineral & Energi
+        "emas", "uranium", "batu_bara", "minyak_bumi", "gas_alam", "garam", "litium", "logam_tanah_jarang", "bijih_besi",
+        // Manufaktur
+        "pabrik_semikonduktor", "pabrik_mesin_mobil", "pabrik_mesin_motor", "semen_beton", "kayu",
+        // Peternakan
+        "ayam_unggas", "sapi_perah", "sapi_potong", "domba_kambing",
+        // Agrikultur
+        "padi", "gandum", "jagung", "sayur", "umbi", "kedelai", "kelapa_sawit", "kopi", "teh", "kakao", "tebu", "karet",
+        // Perikanan
+        "udang", "mutiara", "ikan",
+        // Olahan Pangan
+        "air_mineral", "gula", "roti", "pengolahan_daging", "mie_instan", "minyak_goreng", "susu", "beras"
+    ];
 
-  PRODUCTION_KEYS.forEach((key) => {
-    // Reset build date ke tanggal hari ini agar akumulasi stok produksi harian kembali ke 0
-    nextDetail[`build_date_${key}`] = currentDateStr;
+    PRODUCTION_KEYS.forEach((key) => {
+        // Reset build date ke tanggal hari ini agar akumulasi stok produksi harian kembali ke 0
+        nextDetail[`build_date_${key}`] = currentDateStr;
 
-    if (typeof nextDetail[`stok_${key}`] === 'number') nextDetail[`stok_${key}`] = 0;
-    if (typeof nextDetail[`stock_${key}`] === 'number') nextDetail[`stock_${key}`] = 0;
-    if (typeof nextDetail[`${key}_stok`] === 'number') nextDetail[`${key}_stok`] = 0;
-    if (typeof nextDetail[`${key}_stock`] === 'number') nextDetail[`${key}_stock`] = 0;
-    if (typeof nextDetail[`${key}_amount`] === 'number') nextDetail[`${key}_amount`] = 0;
-    if (nextDetail.stok && typeof nextDetail.stok === 'object') nextDetail.stok[key] = 0;
-    if (nextDetail.stock && typeof nextDetail.stock === 'object') nextDetail.stock[key] = 0;
-    if (nextDetail.produksi && typeof nextDetail.produksi === 'object') nextDetail.produksi[key] = 0;
-  });
+        if (typeof nextDetail[`stok_${key}`] === 'number') nextDetail[`stok_${key}`] = 0;
+        if (typeof nextDetail[`stock_${key}`] === 'number') nextDetail[`stock_${key}`] = 0;
+        if (typeof nextDetail[`${key}_stok`] === 'number') nextDetail[`${key}_stok`] = 0;
+        if (typeof nextDetail[`${key}_stock`] === 'number') nextDetail[`${key}_stock`] = 0;
+        if (typeof nextDetail[`${key}_amount`] === 'number') nextDetail[`${key}_amount`] = 0;
+        if (nextDetail.stok && typeof nextDetail.stok === 'object') nextDetail.stok[key] = 0;
+        if (nextDetail.stock && typeof nextDetail.stock === 'object') nextDetail.stock[key] = 0;
+        if (nextDetail.produksi && typeof nextDetail.produksi === 'object') nextDetail.produksi[key] = 0;
+    });
 
-  return {
-    updatedDetail: nextDetail,
-    lootedSummaryText: "Seluruh stok hasil produksi (Mineral & Energi, Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan) telah habis dirampas oleh musuh."
-  };
+    return {
+        updatedDetail: nextDetail,
+        lootedSummaryText: "Seluruh stok hasil produksi (Mineral & Energi, Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan) telah habis dirampas oleh musuh."
+    };
 }
 const RequireEmbassyModal = dynamic(() => import('./RequireEmbassyModal').then(m => m.RequireEmbassyModal), { ssr: false });
 import { Navbar } from '../navbar/Navbar';
@@ -68,8 +68,8 @@ import { calculateDailyPopulationChange, updateDailyPopulation } from '@/app/log
 import { logger } from '../../../lib/logger';
 const CountryDetailModal = dynamic(() => import('../detail_negara/detail_negara').then(m => m.CountryDetailModal), { ssr: false });
 const NegaraUserModal = dynamic(() => import('./negara_user'), { ssr: false });
-const WarMap = dynamic(() => import('../detail_negara/3_operasi_militer/1_serang_negara/path-war'), { ssr: false });
-import { buildCapitalPoint } from '../detail_negara/3_operasi_militer/1_serang_negara/path-war';
+const WarMap = dynamic(() => import('../path_logic/path-war'), { ssr: false });
+import { buildCapitalPoint } from '../path_logic/path-war';
 import { applyWarLossesToUserArmada } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 import { getArmadaPowerSummary } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
@@ -124,8 +124,8 @@ import { generateWabahPenyakitNotification } from '../menus/inbox/logic/6_notifi
 import { generateSpionaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/1_spionase/spionaseLogic';
 import { generateSabotaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
 import {
-  generateDiserangNotification,
-  getAttackChancePercentFromRelation,
+    generateDiserangNotification,
+    getAttackChancePercentFromRelation,
 } from '../menus/inbox/logic/2_notifikasi_pertahanan/3_diserang/diserangLogic';
 import { generatePemberontakanNotification, calculateSeparatismeRiskPercent } from '../menus/inbox/logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanLogic';
 import { getDefenseAllianceOfferChancePercent } from '../bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/3_Aliansi Pertahanan';
@@ -1008,7 +1008,7 @@ export default function MapPage() {
                                         (partner: string) => normalizePartnerName(partner) !== normalizePartnerName(targetCountry)
                                     ),
                                     targetCountry
-                               ])),
+                                ])),
                                 jumlah_penduduk: totalPop,
                                 populasi: totalPop,
                                 anggaran: prevAnggaran + targetAnggaran,
@@ -1917,7 +1917,7 @@ export default function MapPage() {
 
                 const attackerCountry = chosenAttackerObj.attacker;
                 const relationScore = chosenAttackerObj.score;
-                
+
                 // Base chance follows relation (relation <= 10 yields up to 80% chance)
                 let baseChance = getAttackChancePercentFromRelation(relationScore);
                 if (relationScore <= 10) {
@@ -2054,7 +2054,7 @@ export default function MapPage() {
                         if (outcomeRoll < 0.50) {
                             // Dapatkan warna asli negara penyerang
                             const attackerColor = getCountryColor(inv.attackerCountry);
-                            
+
                             const { news: annexationNews } = generateAnnexationNews(
                                 inv.attackerCountry,
                                 inv.attackerIso,
@@ -2064,7 +2064,7 @@ export default function MapPage() {
                                 currentDateStr
                             );
                             generatedNewsItems.push(annexationNews);
-                            
+
                             recordAnnexedTerritory(
                                 inv.targetCountry,
                                 inv.targetIso,
@@ -2072,7 +2072,7 @@ export default function MapPage() {
                                 inv.attackerIso,
                                 attackerColor
                             );
-                            
+
                             console.log(`🚩 ANEKSASI: ${inv.attackerCountry} (${attackerColor}) menganeksasi ${inv.targetCountry}`);
                         } else {
                             const lootNews = generateResourceLootNews(
@@ -2612,8 +2612,8 @@ export default function MapPage() {
                             sector_nationalization: {
                                 ...databaseSectorNationalization,
                                 ...(savedCountryDetail.sector_nationalization &&
-                                typeof savedCountryDetail.sector_nationalization === 'object' &&
-                                !Array.isArray(savedCountryDetail.sector_nationalization)
+                                    typeof savedCountryDetail.sector_nationalization === 'object' &&
+                                    !Array.isArray(savedCountryDetail.sector_nationalization)
                                     ? savedCountryDetail.sector_nationalization
                                     : {}),
                             },
@@ -2704,102 +2704,102 @@ export default function MapPage() {
                 electionYear
             );
             if (electionState.year === electionYear) {
-            const dueStage = currentDate.getDate() >= 30
-                ? 4
-                : currentDate.getDate() >= 25
-                    ? 3
-                    : currentDate.getDate() >= 15
-                        ? 2
-                        : 1;
-            const tickKey = `${currentDateStr}-${electionState.scheduleStage}`;
-            if (electionState.scheduleStage < dueStage && electionScheduleTickRef.current !== tickKey) {
-                electionScheduleTickRef.current = tickKey;
-                fetchAllCountryProfilesFromDb()
-                    .then(profiles => {
-                        const electionCountries = getEligibleUNMemberCountries(profiles);
-                        const profiledVoters = electionCountries.filter(country => country.profile).length;
-                        if (electionCountries.length !== 193 || profiledVoters !== 193) {
-                            const warningId = `pbb-security-election-data-${electionYear}`;
-                            console.error(
-                                `Pemilihan DK PBB ${electionYear} tidak dapat dijadwalkan: ${profiledVoters}/193 profil anggota tersedia.`
+                const dueStage = currentDate.getDate() >= 30
+                    ? 4
+                    : currentDate.getDate() >= 25
+                        ? 3
+                        : currentDate.getDate() >= 15
+                            ? 2
+                            : 1;
+                const tickKey = `${currentDateStr}-${electionState.scheduleStage}`;
+                if (electionState.scheduleStage < dueStage && electionScheduleTickRef.current !== tickKey) {
+                    electionScheduleTickRef.current = tickKey;
+                    fetchAllCountryProfilesFromDb()
+                        .then(profiles => {
+                            const electionCountries = getEligibleUNMemberCountries(profiles);
+                            const profiledVoters = electionCountries.filter(country => country.profile).length;
+                            if (electionCountries.length !== 193 || profiledVoters !== 193) {
+                                const warningId = `pbb-security-election-data-${electionYear}`;
+                                console.error(
+                                    `Pemilihan DK PBB ${electionYear} tidak dapat dijadwalkan: ${profiledVoters}/193 profil anggota tersedia.`
+                                );
+                                setNotifications(previous => previous.some(notification => notification.id === warningId)
+                                    ? previous
+                                    : [{
+                                        id: warningId,
+                                        title: "⚠️ DATA PEMILIHAN DK PBB BELUM LENGKAP",
+                                        sender: "Sekretariat Majelis Umum Perserikatan Bangsa-Bangsa",
+                                        message: `Agenda pemilihan tahunan memerlukan data profil untuk seluruh 193 negara anggota. Saat ini tersedia ${profiledVoters} profil yang cocok; jadwal pemungutan suara belum dapat diproses.`,
+                                        timestamp: currentDateStr,
+                                        type: "peringkat",
+                                        value: 0,
+                                        isRead: false,
+                                    }, ...previous]);
+                                return;
+                            }
+
+                            const result = tickSecurityCouncilElectionSchedule(
+                                currentDateStr,
+                                electionState,
+                                profiles
                             );
+                            if (!result) return;
+                            if (result.error) {
+                                console.error(`Agenda pemilihan DK PBB ${electionYear}: ${result.error}`);
+                                const warningId = `pbb-security-election-schedule-${electionYear}-${electionState.scheduleStage + 1}`;
+                                setNotifications(previous => previous.some(notification => notification.id === warningId)
+                                    ? previous
+                                    : [{
+                                        id: warningId,
+                                        title: "⚠️ AGENDA PEMILIHAN DK PBB TERTUNDA",
+                                        sender: "Sekretariat Majelis Umum Perserikatan Bangsa-Bangsa",
+                                        message: result.error || "Tahapan pemilihan belum dapat diproses.",
+                                        timestamp: currentDateStr,
+                                        type: "peringkat",
+                                        value: 0,
+                                        isRead: false,
+                                    }, ...previous]);
+                                return;
+                            }
+
+                            try {
+                                localStorage.setItem(
+                                    "neosantara_pbb_security_council_election",
+                                    JSON.stringify(result.state)
+                                );
+                            } catch (storageError) {
+                                console.error("Gagal menyimpan jadwal pemilihan Dewan Keamanan:", storageError);
+                                return;
+                            }
+                            setCountryDetail((previous: Record<string, unknown> | null) => previous
+                                ? { ...previous, pbbSecurityCouncilElection: result.state }
+                                : previous
+                            );
+                            setNotifications(previous => {
+                                const knownIds = new Set(previous.map(notification => notification.id));
+                                const newNotifications = result.notifications.filter(notification => !knownIds.has(notification.id));
+                                return [...newNotifications, ...previous];
+                            });
+                            window.dispatchEvent(new CustomEvent("pbb_security_council_election_updated"));
+                            window.dispatchEvent(new CustomEvent("pbb_security_council_election_roster_updated"));
+                        })
+                        .catch(error => {
+                            console.error("Gagal memproses jadwal pemilihan Dewan Keamanan PBB:", error);
+                            const warningId = `pbb-security-election-load-${electionYear}`;
                             setNotifications(previous => previous.some(notification => notification.id === warningId)
                                 ? previous
                                 : [{
                                     id: warningId,
-                                    title: "⚠️ DATA PEMILIHAN DK PBB BELUM LENGKAP",
+                                    title: "⚠️ JADWAL PEMILIHAN DK PBB GAGAL DIMUAT",
                                     sender: "Sekretariat Majelis Umum Perserikatan Bangsa-Bangsa",
-                                    message: `Agenda pemilihan tahunan memerlukan data profil untuk seluruh 193 negara anggota. Saat ini tersedia ${profiledVoters} profil yang cocok; jadwal pemungutan suara belum dapat diproses.`,
+                                    message: "Data negara gagal dimuat sehingga agenda pemilihan bulan Juni belum dapat diproses.",
                                     timestamp: currentDateStr,
                                     type: "peringkat",
                                     value: 0,
                                     isRead: false,
                                 }, ...previous]);
-                            return;
-                        }
-
-                        const result = tickSecurityCouncilElectionSchedule(
-                            currentDateStr,
-                            electionState,
-                            profiles
-                        );
-                        if (!result) return;
-                        if (result.error) {
-                            console.error(`Agenda pemilihan DK PBB ${electionYear}: ${result.error}`);
-                            const warningId = `pbb-security-election-schedule-${electionYear}-${electionState.scheduleStage + 1}`;
-                            setNotifications(previous => previous.some(notification => notification.id === warningId)
-                                ? previous
-                                : [{
-                                    id: warningId,
-                                    title: "⚠️ AGENDA PEMILIHAN DK PBB TERTUNDA",
-                                    sender: "Sekretariat Majelis Umum Perserikatan Bangsa-Bangsa",
-                                    message: result.error || "Tahapan pemilihan belum dapat diproses.",
-                                    timestamp: currentDateStr,
-                                    type: "peringkat",
-                                    value: 0,
-                                    isRead: false,
-                                }, ...previous]);
-                            return;
-                        }
-
-                        try {
-                            localStorage.setItem(
-                                "neosantara_pbb_security_council_election",
-                                JSON.stringify(result.state)
-                            );
-                        } catch (storageError) {
-                            console.error("Gagal menyimpan jadwal pemilihan Dewan Keamanan:", storageError);
-                            return;
-                        }
-                        setCountryDetail((previous: Record<string, unknown> | null) => previous
-                            ? { ...previous, pbbSecurityCouncilElection: result.state }
-                            : previous
-                        );
-                        setNotifications(previous => {
-                            const knownIds = new Set(previous.map(notification => notification.id));
-                            const newNotifications = result.notifications.filter(notification => !knownIds.has(notification.id));
-                            return [...newNotifications, ...previous];
                         });
-                        window.dispatchEvent(new CustomEvent("pbb_security_council_election_updated"));
-                        window.dispatchEvent(new CustomEvent("pbb_security_council_election_roster_updated"));
-                    })
-                    .catch(error => {
-                        console.error("Gagal memproses jadwal pemilihan Dewan Keamanan PBB:", error);
-                        const warningId = `pbb-security-election-load-${electionYear}`;
-                        setNotifications(previous => previous.some(notification => notification.id === warningId)
-                            ? previous
-                            : [{
-                                id: warningId,
-                                title: "⚠️ JADWAL PEMILIHAN DK PBB GAGAL DIMUAT",
-                                sender: "Sekretariat Majelis Umum Perserikatan Bangsa-Bangsa",
-                                message: "Data negara gagal dimuat sehingga agenda pemilihan bulan Juni belum dapat diproses.",
-                                timestamp: currentDateStr,
-                                type: "peringkat",
-                                value: 0,
-                                isRead: false,
-                            }, ...previous]);
-                    });
-            }
+                }
             }
         }
 
@@ -2892,375 +2892,375 @@ export default function MapPage() {
         const runDailyTick = () => {
             if (cancelled) return;
 
-        const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const day = String(currentDate.getDate()).padStart(2, '0');
-        const currentDateStr = `${year}-${month}-${day}`;
-        const managerDate = timeManagerRef.current?.getCurrentDate();
-        if (managerDate) {
-            const managerDateStr = [
-                managerDate.getFullYear(),
-                String(managerDate.getMonth() + 1).padStart(2, '0'),
-                String(managerDate.getDate()).padStart(2, '0'),
-            ].join('-');
-            if (managerDateStr !== currentDateStr) return;
-        }
-
-        if (prevBudgetUpdateDateRef.current === null) {
-            prevBudgetUpdateDateRef.current = currentDateStr;
-            return;
-        }
-
-        if (prevBudgetUpdateDateRef.current === currentDateStr) return;
-
-        const lastDate = prevBudgetUpdateDateRef.current;
-        prevBudgetUpdateDateRef.current = currentDateStr;
-
-        // Calculate economy updates
-        const playerCountryName = selectedCountry?.country || countryDetail.country || countryDetail.nama_negara || '';
-        const netBalance = calculateNetBalanceWithEconomicEmbargo(countryDetail, playerCountryName);
-
-        const populationMetrics = calculateDailyPopulationChange(
-            countryDetail,
-            selectedCountry?.country,
-            metadata,
-            currentDateStr
-        );
-
-        // Store net population change for display in Navbar
-        setPlayerNetPopulationChange(populationMetrics.netDailyChange);
-        setPlayerDailyBirths(populationMetrics.dailyBirths);
-        setPlayerDailyDeaths(populationMetrics.dailyDeaths);
-
-        // ✅ Only calculate material production if metadata is loaded
-        let updates: Record<string, any> = {};
-        if (metadata && Object.keys(metadata).length > 0) {
-            const result = calculateDailyMaterialProduction(
-                countryDetail,
-                metadata,
-                currentDateStr,
-                resourceKey => getEconomicEmbargoProductionMultiplier(playerCountryName, resourceKey),
-                lastDate
-            );
-            updates = result.hasUpdates ? result.updates : {};
-        }
-
-        // Also deduct fuel consumption for power plants daily!
-        const daysPassed = lastDate ? getDaysElapsed(lastDate, currentDateStr) : 0;
-        if (daysPassed > 0) {
-            const electricityFuelBuildings = [
-                "pembangkit_listrik_tenaga_gas",
-                "pembangkit_listrik_tenaga_nuklir",
-                "pembangkit_listrik_tenaga_uap",
-            ];
-
-            const dailyCons: Record<string, number> = {
-                gas_alam: 0,
-                uranium: 0,
-                batu_bara: 0,
-                minyak_bumi: 0,
-            };
-
-            electricityFuelBuildings.forEach((buildingKey) => {
-                const count = Number(countryDetail[buildingKey]) || 0;
-                if (count === 0) return;
-                switch (buildingKey) {
-                    case "pembangkit_listrik_tenaga_gas":
-                        dailyCons.gas_alam += 2 * count;
-                        break;
-                    case "pembangkit_listrik_tenaga_nuklir":
-                        dailyCons.uranium += 1 * count;
-                        break;
-                    case "pembangkit_listrik_tenaga_uap":
-                        dailyCons.batu_bara += 50 * count;
-                        dailyCons.minyak_bumi += 5 * count;
-                        break;
-                }
-            });
-
-            // Deduct the consumption from updates
-            for (const [fuelKey, consPerDay] of Object.entries(dailyCons)) {
-                if (consPerDay > 0) {
-                    const inventoryKey = `inventory_${fuelKey}`;
-                    const currentVal = updates[inventoryKey] !== undefined ? updates[inventoryKey] : (Number(countryDetail[inventoryKey]) || 0);
-                    updates[inventoryKey] = Math.max(0, currentVal - (consPerDay * daysPassed));
-                }
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            const currentDateStr = `${year}-${month}-${day}`;
+            const managerDate = timeManagerRef.current?.getCurrentDate();
+            if (managerDate) {
+                const managerDateStr = [
+                    managerDate.getFullYear(),
+                    String(managerDate.getMonth() + 1).padStart(2, '0'),
+                    String(managerDate.getDate()).padStart(2, '0'),
+                ].join('-');
+                if (managerDateStr !== currentDateStr) return;
             }
-        }
 
-        skipPopulationMetricsRefreshRef.current = true;
-        startTransition(() => setCountryDetail((prev: any) => {
-            if (!prev) return prev;
+            if (prevBudgetUpdateDateRef.current === null) {
+                prevBudgetUpdateDateRef.current = currentDateStr;
+                return;
+            }
 
-            const populationUpdates = updateDailyPopulation(
-                prev,
-                populationMetrics,
+            if (prevBudgetUpdateDateRef.current === currentDateStr) return;
+
+            const lastDate = prevBudgetUpdateDateRef.current;
+            prevBudgetUpdateDateRef.current = currentDateStr;
+
+            // Calculate economy updates
+            const playerCountryName = selectedCountry?.country || countryDetail.country || countryDetail.nama_negara || '';
+            const netBalance = calculateNetBalanceWithEconomicEmbargo(countryDetail, playerCountryName);
+
+            const populationMetrics = calculateDailyPopulationChange(
+                countryDetail,
                 selectedCountry?.country,
                 metadata,
                 currentDateStr
             );
-            const previousCrisisTiers = prev.population_crisis_tiers;
-            const currentCrisisTiers = {
-                pangan: populationMetrics.foodTier,
-                hunian: populationMetrics.housingTier,
-                overpopulasi: populationMetrics.overpopulationTier,
-                kesehatan: populationMetrics.healthTier,
-            };
-            const crisisLabels: Record<string, string> = {
-                pangan: 'Krisis pangan / Food crisis',
-                hunian: 'Krisis hunian / Housing crisis',
-                overpopulasi: 'Overpopulasi / Overpopulation',
-                kesehatan: 'Krisis kesehatan / Health crisis',
-            };
-            const newCrisisNotifications = previousCrisisTiers
-                ? Object.entries(currentCrisisTiers)
-                .filter(([key, tier]) => tier >= 2 && tier > Number(previousCrisisTiers[key] ?? tier))
-                .map(([key, tier]) => ({
-                    id: `population-crisis-${key}-${currentDateStr}-${tier}`,
-                    title: `${populationMetrics.populationStatus.label} / ${populationMetrics.populationStatus.labelEn}`,
-                    sender: 'Kementerian Kependudukan / Ministry of Population',
-                    message: `${crisisLabels[key]} memburuk ke Tier ${tier}. Pertumbuhan bersih: ${populationMetrics.netDailyChange.toLocaleString('id-ID')} jiwa/hari. / Worsened to Tier ${tier}. Net growth: ${populationMetrics.netDailyChange.toLocaleString('en-US')} people/day.`,
-                    timestamp: currentDateStr,
-                    type: 'kesejahteraan' as const,
-                    value: tier,
-                    isRead: false,
-                    tradeType: 'population_crisis',
-                    factor: key,
-                }))
-                : [];
-            let currentCompletedBoost = 0;
-            let currentCompletedKesejahteraanBoost = 0;
-            let currentOngoing = prev.ongoingConstructions || [];
 
-            const currentCompletedEvents = currentOngoing.filter((c: any) => {
-                if (c.type !== "event") return false;
-                return c.endDate <= currentDateStr;
-            });
+            // Store net population change for display in Navbar
+            setPlayerNetPopulationChange(populationMetrics.netDailyChange);
+            setPlayerDailyBirths(populationMetrics.dailyBirths);
+            setPlayerDailyDeaths(populationMetrics.dailyDeaths);
 
-            if (currentCompletedEvents.length > 0) {
-                console.log('[MapPage Tick] Completed events found:', currentCompletedEvents);
-                currentCompletedEvents.forEach((c: any) => {
-                    if (c.category === "Kesejahteraan") {
-                        currentCompletedKesejahteraanBoost += Number(c.boost) || 0;
-                        console.log('[MapPage Tick] Kesejahteraan event completed!', { name: c.name, boost: c.boost });
-                    } else {
-                        currentCompletedBoost += Number(c.boost) || 0;
-                        console.log('[MapPage Tick] Kepuasan event completed!', { name: c.name, boost: c.boost });
+            // ✅ Only calculate material production if metadata is loaded
+            let updates: Record<string, any> = {};
+            if (metadata && Object.keys(metadata).length > 0) {
+                const result = calculateDailyMaterialProduction(
+                    countryDetail,
+                    metadata,
+                    currentDateStr,
+                    resourceKey => getEconomicEmbargoProductionMultiplier(playerCountryName, resourceKey),
+                    lastDate
+                );
+                updates = result.hasUpdates ? result.updates : {};
+            }
+
+            // Also deduct fuel consumption for power plants daily!
+            const daysPassed = lastDate ? getDaysElapsed(lastDate, currentDateStr) : 0;
+            if (daysPassed > 0) {
+                const electricityFuelBuildings = [
+                    "pembangkit_listrik_tenaga_gas",
+                    "pembangkit_listrik_tenaga_nuklir",
+                    "pembangkit_listrik_tenaga_uap",
+                ];
+
+                const dailyCons: Record<string, number> = {
+                    gas_alam: 0,
+                    uranium: 0,
+                    batu_bara: 0,
+                    minyak_bumi: 0,
+                };
+
+                electricityFuelBuildings.forEach((buildingKey) => {
+                    const count = Number(countryDetail[buildingKey]) || 0;
+                    if (count === 0) return;
+                    switch (buildingKey) {
+                        case "pembangkit_listrik_tenaga_gas":
+                            dailyCons.gas_alam += 2 * count;
+                            break;
+                        case "pembangkit_listrik_tenaga_nuklir":
+                            dailyCons.uranium += 1 * count;
+                            break;
+                        case "pembangkit_listrik_tenaga_uap":
+                            dailyCons.batu_bara += 50 * count;
+                            dailyCons.minyak_bumi += 5 * count;
+                            break;
                     }
                 });
-                const completedIds = currentCompletedEvents.map((c: any) => c.id);
-                currentOngoing = currentOngoing.filter((c: any) => !completedIds.includes(c.id));
+
+                // Deduct the consumption from updates
+                for (const [fuelKey, consPerDay] of Object.entries(dailyCons)) {
+                    if (consPerDay > 0) {
+                        const inventoryKey = `inventory_${fuelKey}`;
+                        const currentVal = updates[inventoryKey] !== undefined ? updates[inventoryKey] : (Number(countryDetail[inventoryKey]) || 0);
+                        updates[inventoryKey] = Math.max(0, currentVal - (consPerDay * daysPassed));
+                    }
+                }
             }
 
-            // 🔥 HITUNG SELESAINYA PEMBANGUNAN PROGRAM NUKLIR
-            const completedNuclearBuilds = currentOngoing.filter((c: any) => c.buildingKey === "program_nuklir" && c.endDate <= currentDateStr);
-            let nextProgramNuklirActive = Boolean(prev.programNuklirActive);
-            let nextPendingNotifications = Array.isArray(prev.pending_notifications) ? [...prev.pending_notifications] : [];
+            skipPopulationMetricsRefreshRef.current = true;
+            startTransition(() => setCountryDetail((prev: any) => {
+                if (!prev) return prev;
 
-            if (completedNuclearBuilds.length > 0 && !nextProgramNuklirActive) {
-                nextProgramNuklirActive = true;
-                const completedNuclearIds = completedNuclearBuilds.map((c: any) => c.id);
-                currentOngoing = currentOngoing.filter((c: any) => !completedNuclearIds.includes(c.id));
-                const userCountry = prev?.country || prev?.nama || "Indonesia";
-                const completeNotif = generateProgramNuklirSelesaiNotification(userCountry, currentDateStr);
-                nextPendingNotifications.unshift(completeNotif);
-            }
+                const populationUpdates = updateDailyPopulation(
+                    prev,
+                    populationMetrics,
+                    selectedCountry?.country,
+                    metadata,
+                    currentDateStr
+                );
+                const previousCrisisTiers = prev.population_crisis_tiers;
+                const currentCrisisTiers = {
+                    pangan: populationMetrics.foodTier,
+                    hunian: populationMetrics.housingTier,
+                    overpopulasi: populationMetrics.overpopulationTier,
+                    kesehatan: populationMetrics.healthTier,
+                };
+                const crisisLabels: Record<string, string> = {
+                    pangan: 'Krisis pangan / Food crisis',
+                    hunian: 'Krisis hunian / Housing crisis',
+                    overpopulasi: 'Overpopulasi / Overpopulation',
+                    kesehatan: 'Krisis kesehatan / Health crisis',
+                };
+                const newCrisisNotifications = previousCrisisTiers
+                    ? Object.entries(currentCrisisTiers)
+                        .filter(([key, tier]) => tier >= 2 && tier > Number(previousCrisisTiers[key] ?? tier))
+                        .map(([key, tier]) => ({
+                            id: `population-crisis-${key}-${currentDateStr}-${tier}`,
+                            title: `${populationMetrics.populationStatus.label} / ${populationMetrics.populationStatus.labelEn}`,
+                            sender: 'Kementerian Kependudukan / Ministry of Population',
+                            message: `${crisisLabels[key]} memburuk ke Tier ${tier}. Pertumbuhan bersih: ${populationMetrics.netDailyChange.toLocaleString('id-ID')} jiwa/hari. / Worsened to Tier ${tier}. Net growth: ${populationMetrics.netDailyChange.toLocaleString('en-US')} people/day.`,
+                            timestamp: currentDateStr,
+                            type: 'kesejahteraan' as const,
+                            value: tier,
+                            isRead: false,
+                            tradeType: 'population_crisis',
+                            factor: key,
+                        }))
+                    : [];
+                let currentCompletedBoost = 0;
+                let currentCompletedKesejahteraanBoost = 0;
+                let currentOngoing = prev.ongoingConstructions || [];
 
-            const monthsPassed = lastDate ? getMonthsDifference(lastDate, currentDateStr) : 0;
-            const nationalizationDiplomacyMonthCounter =
-                Math.max(0, Math.floor(Number(prev.nationalization_diplomacy_month_counter) || 0)) +
-                (hasActiveNationalization(prev.sector_nationalization) ? Math.max(0, monthsPassed) : 0);
-            const lowSectorCount = countLowSatisfactionSectors(prev, metadata);
-            const previousSectorDeficitMonths = Math.max(0, Number(prev.sector_deficit_month_counter) || 0);
-            const sectorDeficitMonths = lowSectorCount > 0
-                ? previousSectorDeficitMonths + monthsPassed
-                : 0;
-            const sectorDeficitPeriods = lowSectorCount > 0
-                ? Math.floor(sectorDeficitMonths / LOW_SECTOR_DECAY_INTERVAL_MONTHS)
-                : 0;
-            const sectorDeficitMonthCounter = lowSectorCount > 0
-                ? sectorDeficitMonths % LOW_SECTOR_DECAY_INTERVAL_MONTHS
-                : 0;
-            const sectorDeficitPenaltyPerPeriod = Math.min(
-                LOW_SECTOR_DECAY_MAX_POINTS_PER_INTERVAL,
-                lowSectorCount * LOW_SECTOR_DECAY_POINTS_PER_SECTOR,
-            );
-            const sectorDeficitPenaltyThisTick = sectorDeficitPeriods * sectorDeficitPenaltyPerPeriod;
-            const accumulatedSectorPenalty = lowSectorCount > 0
-                ? Math.max(0, Number(prev.sector_deficit_kepuasan_penalty) || 0) +
+                const currentCompletedEvents = currentOngoing.filter((c: any) => {
+                    if (c.type !== "event") return false;
+                    return c.endDate <= currentDateStr;
+                });
+
+                if (currentCompletedEvents.length > 0) {
+                    console.log('[MapPage Tick] Completed events found:', currentCompletedEvents);
+                    currentCompletedEvents.forEach((c: any) => {
+                        if (c.category === "Kesejahteraan") {
+                            currentCompletedKesejahteraanBoost += Number(c.boost) || 0;
+                            console.log('[MapPage Tick] Kesejahteraan event completed!', { name: c.name, boost: c.boost });
+                        } else {
+                            currentCompletedBoost += Number(c.boost) || 0;
+                            console.log('[MapPage Tick] Kepuasan event completed!', { name: c.name, boost: c.boost });
+                        }
+                    });
+                    const completedIds = currentCompletedEvents.map((c: any) => c.id);
+                    currentOngoing = currentOngoing.filter((c: any) => !completedIds.includes(c.id));
+                }
+
+                // 🔥 HITUNG SELESAINYA PEMBANGUNAN PROGRAM NUKLIR
+                const completedNuclearBuilds = currentOngoing.filter((c: any) => c.buildingKey === "program_nuklir" && c.endDate <= currentDateStr);
+                let nextProgramNuklirActive = Boolean(prev.programNuklirActive);
+                let nextPendingNotifications = Array.isArray(prev.pending_notifications) ? [...prev.pending_notifications] : [];
+
+                if (completedNuclearBuilds.length > 0 && !nextProgramNuklirActive) {
+                    nextProgramNuklirActive = true;
+                    const completedNuclearIds = completedNuclearBuilds.map((c: any) => c.id);
+                    currentOngoing = currentOngoing.filter((c: any) => !completedNuclearIds.includes(c.id));
+                    const userCountry = prev?.country || prev?.nama || "Indonesia";
+                    const completeNotif = generateProgramNuklirSelesaiNotification(userCountry, currentDateStr);
+                    nextPendingNotifications.unshift(completeNotif);
+                }
+
+                const monthsPassed = lastDate ? getMonthsDifference(lastDate, currentDateStr) : 0;
+                const nationalizationDiplomacyMonthCounter =
+                    Math.max(0, Math.floor(Number(prev.nationalization_diplomacy_month_counter) || 0)) +
+                    (hasActiveNationalization(prev.sector_nationalization) ? Math.max(0, monthsPassed) : 0);
+                const lowSectorCount = countLowSatisfactionSectors(prev, metadata);
+                const previousSectorDeficitMonths = Math.max(0, Number(prev.sector_deficit_month_counter) || 0);
+                const sectorDeficitMonths = lowSectorCount > 0
+                    ? previousSectorDeficitMonths + monthsPassed
+                    : 0;
+                const sectorDeficitPeriods = lowSectorCount > 0
+                    ? Math.floor(sectorDeficitMonths / LOW_SECTOR_DECAY_INTERVAL_MONTHS)
+                    : 0;
+                const sectorDeficitMonthCounter = lowSectorCount > 0
+                    ? sectorDeficitMonths % LOW_SECTOR_DECAY_INTERVAL_MONTHS
+                    : 0;
+                const sectorDeficitPenaltyPerPeriod = Math.min(
+                    LOW_SECTOR_DECAY_MAX_POINTS_PER_INTERVAL,
+                    lowSectorCount * LOW_SECTOR_DECAY_POINTS_PER_SECTOR,
+                );
+                const sectorDeficitPenaltyThisTick = sectorDeficitPeriods * sectorDeficitPenaltyPerPeriod;
+                const accumulatedSectorPenalty = lowSectorCount > 0
+                    ? Math.max(0, Number(prev.sector_deficit_kepuasan_penalty) || 0) +
                     sectorDeficitPenaltyThisTick
-                : 0;
-            const nextKepuasan = Math.max(
-                0,
-                Math.min(
-                    100,
-                    parseFloat(
-                        (
-                            (prev.kepuasan ?? 50) +
-                            currentCompletedBoost -
-                            sectorDeficitPenaltyThisTick
-                        ).toFixed(1),
+                    : 0;
+                const nextKepuasan = Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        parseFloat(
+                            (
+                                (prev.kepuasan ?? 50) +
+                                currentCompletedBoost -
+                                sectorDeficitPenaltyThisTick
+                            ).toFixed(1),
+                        ),
                     ),
-                ),
-            );
+                );
 
-            // --- HITUNG PENURUNAN PERINGKAT BERDASARKAN KEPUASAN (menggunakan peringkatCalculator) ---
-            const keterbukaanScore = calculateKeterbukaanScore(prev);
-            const ratingResult = calculatePresidentRating({
-                currentRating: prev.presidentRating ?? 50,
-                ratingMonthCounter: prev.rating_month_counter ?? 0,
-                lastRatingThreshold: prev.last_rating_threshold ?? 12,
-                monthsPassed,
-                currentKepuasan: nextKepuasan,
-                keterbukaanScore,
-                lowSectorCount,
-                additionalDecay: sectorDeficitPenaltyThisTick,
-                currentCompletedBoost: currentCompletedBoost,
-                countryDetail: prev,
-                lastDate,
-                currentDate: currentDateStr,
-            });
+                // --- HITUNG PENURUNAN PERINGKAT BERDASARKAN KEPUASAN (menggunakan peringkatCalculator) ---
+                const keterbukaanScore = calculateKeterbukaanScore(prev);
+                const ratingResult = calculatePresidentRating({
+                    currentRating: prev.presidentRating ?? 50,
+                    ratingMonthCounter: prev.rating_month_counter ?? 0,
+                    lastRatingThreshold: prev.last_rating_threshold ?? 12,
+                    monthsPassed,
+                    currentKepuasan: nextKepuasan,
+                    keterbukaanScore,
+                    lowSectorCount,
+                    additionalDecay: sectorDeficitPenaltyThisTick,
+                    currentCompletedBoost: currentCompletedBoost,
+                    countryDetail: prev,
+                    lastDate,
+                    currentDate: currentDateStr,
+                });
 
-            if (ratingResult.nextRating !== (prev.presidentRating ?? 50) || currentCompletedBoost > 0) {
-                setPresidentRating(ratingResult.nextRating);
-            }
+                if (ratingResult.nextRating !== (prev.presidentRating ?? 50) || currentCompletedBoost > 0) {
+                    setPresidentRating(ratingResult.nextRating);
+                }
 
-            // --- HITUNG PENURUNAN KESEJAHTERAAN BERDASARKAN KEPUASAN ---
-            // Tambahkan boost bantuan sosial kesejahteraan ke score dasar sebelum dikurangi decay
-            const baseKesejahteraan = Math.min(100, (prev.kesejahteraan ?? 50) + currentCompletedKesejahteraanBoost);
-            const decayResult = calculateKesejahteraanDecay({
-                currentKesejahteraan: baseKesejahteraan,
-                kesejahteraanMonthCounter: prev.kesejahteraan_month_counter ?? 0,
-                lastKesejahteraanThreshold: prev.last_kesejahteraan_threshold ?? 12,
-                monthsPassed,
-                currentKepuasan: nextKepuasan,
-                keterbukaanScore,
-                lowSectorCount,
-                additionalDecay: sectorDeficitPenaltyThisTick,
-            });
+                // --- HITUNG PENURUNAN KESEJAHTERAAN BERDASARKAN KEPUASAN ---
+                // Tambahkan boost bantuan sosial kesejahteraan ke score dasar sebelum dikurangi decay
+                const baseKesejahteraan = Math.min(100, (prev.kesejahteraan ?? 50) + currentCompletedKesejahteraanBoost);
+                const decayResult = calculateKesejahteraanDecay({
+                    currentKesejahteraan: baseKesejahteraan,
+                    kesejahteraanMonthCounter: prev.kesejahteraan_month_counter ?? 0,
+                    lastKesejahteraanThreshold: prev.last_kesejahteraan_threshold ?? 12,
+                    monthsPassed,
+                    currentKepuasan: nextKepuasan,
+                    keterbukaanScore,
+                    lowSectorCount,
+                    additionalDecay: sectorDeficitPenaltyThisTick,
+                });
 
-            const nextKesejahteraan = decayResult.nextKesejahteraan;
-            if (nextKesejahteraan !== (prev.kesejahteraan ?? 50)) {
-                setKesejahteraan(nextKesejahteraan);
-            }
+                const nextKesejahteraan = decayResult.nextKesejahteraan;
+                if (nextKesejahteraan !== (prev.kesejahteraan ?? 50)) {
+                    setKesejahteraan(nextKesejahteraan);
+                }
 
-            const nextKesejahteraanBonus = (prev.kesejahteraan_bonus ?? 0) + currentCompletedKesejahteraanBoost;
-            const nextKesejahteraanDecay = (prev.kesejahteraan_decay ?? 0) + decayResult.decayThisTick;
+                const nextKesejahteraanBonus = (prev.kesejahteraan_bonus ?? 0) + currentCompletedKesejahteraanBoost;
+                const nextKesejahteraanDecay = (prev.kesejahteraan_decay ?? 0) + decayResult.decayThisTick;
 
-            const existingEmbassyConstructions = Array.isArray(prev?.ongoingEmbassyConstructions) ? prev.ongoingEmbassyConstructions : [];
-            const completedEmbassyConstructions = existingEmbassyConstructions.filter((c: any) => c.endDate <= currentDateStr);
+                const existingEmbassyConstructions = Array.isArray(prev?.ongoingEmbassyConstructions) ? prev.ongoingEmbassyConstructions : [];
+                const completedEmbassyConstructions = existingEmbassyConstructions.filter((c: any) => c.endDate <= currentDateStr);
 
-            let nextOngoingEmbassyConstructions = existingEmbassyConstructions;
-            let nextEmbassies = Array.isArray(prev?.embassies) ? [...prev.embassies] : [];
-            let nextRemovedEmbassies = Array.isArray(prev?.removedEmbassies) ? [...prev.removedEmbassies] : [];
-            const playerCountryName = String(prev?.country || prev?.nama_negara || prev?.name || '').trim();
-            const previousAutoRemovedEmbassies = Array.isArray(prev?.autoRemovedEmbassies)
-                ? [...prev.autoRemovedEmbassies]
-                : [];
+                let nextOngoingEmbassyConstructions = existingEmbassyConstructions;
+                let nextEmbassies = Array.isArray(prev?.embassies) ? [...prev.embassies] : [];
+                let nextRemovedEmbassies = Array.isArray(prev?.removedEmbassies) ? [...prev.removedEmbassies] : [];
+                const playerCountryName = String(prev?.country || prev?.nama_negara || prev?.name || '').trim();
+                const previousAutoRemovedEmbassies = Array.isArray(prev?.autoRemovedEmbassies)
+                    ? [...prev.autoRemovedEmbassies]
+                    : [];
 
-            if (completedEmbassyConstructions.length > 0) {
-                const completedTargetCountries = completedEmbassyConstructions.map((c: any) => c.targetCountry);
+                if (completedEmbassyConstructions.length > 0) {
+                    const completedTargetCountries = completedEmbassyConstructions.map((c: any) => c.targetCountry);
+                    const normalizeCountryName = (name: unknown) => String(name || '')
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .replace(/[^a-z0-9]/g, '');
+                    const completedTargetNames = new Set(completedTargetCountries.map(normalizeCountryName));
+                    nextOngoingEmbassyConstructions = existingEmbassyConstructions.filter((c: any) => !completedTargetCountries.includes(c.targetCountry));
+                    nextRemovedEmbassies = nextRemovedEmbassies.filter(
+                        (name: string) => !completedTargetNames.has(normalizeCountryName(name))
+                    );
+
+                    completedEmbassyConstructions.forEach((c: any) => {
+                        if (!nextEmbassies.some((emb: any) => {
+                            const embassyCountry = typeof emb === 'string' ? emb : emb.mitra || emb.nama_negara;
+                            return normalizeCountryName(embassyCountry) === normalizeCountryName(c.targetCountry);
+                        })) {
+                            nextEmbassies.push({
+                                id: Date.now() + Math.random(),
+                                mitra: c.targetCountry,
+                                type: 'Kedutaan Besar',
+                                status: 'Aktif',
+                                continent: c.continent || 'Asia',
+                                builtAt: currentDateStr,
+                            });
+                        }
+                    });
+                }
+
                 const normalizeCountryName = (name: unknown) => String(name || '')
                     .toLowerCase()
                     .normalize('NFD')
                     .replace(/[\u0300-\u036f]/g, '')
                     .replace(/[^a-z0-9]/g, '');
-                const completedTargetNames = new Set(completedTargetCountries.map(normalizeCountryName));
-                nextOngoingEmbassyConstructions = existingEmbassyConstructions.filter((c: any) => !completedTargetCountries.includes(c.targetCountry));
-                nextRemovedEmbassies = nextRemovedEmbassies.filter(
-                    (name: string) => !completedTargetNames.has(normalizeCountryName(name))
-                );
-
-                completedEmbassyConstructions.forEach((c: any) => {
-                    if (!nextEmbassies.some((emb: any) => {
-                        const embassyCountry = typeof emb === 'string' ? emb : emb.mitra || emb.nama_negara;
-                        return normalizeCountryName(embassyCountry) === normalizeCountryName(c.targetCountry);
-                    })) {
-                        nextEmbassies.push({
-                            id: Date.now() + Math.random(),
-                            mitra: c.targetCountry,
-                            type: 'Kedutaan Besar',
-                            status: 'Aktif',
-                            continent: c.continent || 'Asia',
-                            builtAt: currentDateStr,
-                        });
-                    }
-                });
-            }
-
-            const normalizeCountryName = (name: unknown) => String(name || '')
-                .toLowerCase()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/[^a-z0-9]/g, '');
-            const embassiesBelowRelationThreshold = nextEmbassies.filter((embassy: any) => {
-                const embassyCountry = typeof embassy === 'string' ? embassy : embassy?.mitra || embassy?.nama_negara;
-                return embassyCountry &&
-                    getRelationValue(playerCountryName, embassyCountry, currentDateStr) <= 40;
-            });
-            if (embassiesBelowRelationThreshold.length > 0) {
-                const autoRemovedNames = embassiesBelowRelationThreshold.map((embassy: any) =>
-                    typeof embassy === 'string' ? embassy : embassy.mitra || embassy.nama_negara
-                );
-                const autoRemovedEvents = embassiesBelowRelationThreshold.map((embassy: any, index: number) => ({
-                    id: `${normalizeCountryName(autoRemovedNames[index])}:${String(embassy?.builtAt || 'legacy')}:${currentDateStr}:${String(embassy?.id || '')}`,
-                    country: autoRemovedNames[index],
-                    date: currentDateStr,
-                }));
-                const normalizedRemovedNames = new Set(autoRemovedNames.map(normalizeCountryName));
-                nextEmbassies = nextEmbassies.filter((embassy: any) => {
+                const embassiesBelowRelationThreshold = nextEmbassies.filter((embassy: any) => {
                     const embassyCountry = typeof embassy === 'string' ? embassy : embassy?.mitra || embassy?.nama_negara;
-                    return !normalizedRemovedNames.has(normalizeCountryName(embassyCountry));
+                    return embassyCountry &&
+                        getRelationValue(playerCountryName, embassyCountry, currentDateStr) <= 40;
                 });
-                nextRemovedEmbassies = Array.from(new Set([...nextRemovedEmbassies, ...autoRemovedNames]));
-                const existingAutoRemovedIds = new Set(previousAutoRemovedEmbassies.map((entry: any) =>
-                    entry && typeof entry === 'object' && 'id' in entry
-                        ? String(entry.id)
-                        : String(entry || '').toLowerCase().trim()
-                ));
-                previousAutoRemovedEmbassies.push(
-                    ...autoRemovedEvents.filter((event: { id: string }) => !existingAutoRemovedIds.has(event.id))
-                );
-            }
+                if (embassiesBelowRelationThreshold.length > 0) {
+                    const autoRemovedNames = embassiesBelowRelationThreshold.map((embassy: any) =>
+                        typeof embassy === 'string' ? embassy : embassy.mitra || embassy.nama_negara
+                    );
+                    const autoRemovedEvents = embassiesBelowRelationThreshold.map((embassy: any, index: number) => ({
+                        id: `${normalizeCountryName(autoRemovedNames[index])}:${String(embassy?.builtAt || 'legacy')}:${currentDateStr}:${String(embassy?.id || '')}`,
+                        country: autoRemovedNames[index],
+                        date: currentDateStr,
+                    }));
+                    const normalizedRemovedNames = new Set(autoRemovedNames.map(normalizeCountryName));
+                    nextEmbassies = nextEmbassies.filter((embassy: any) => {
+                        const embassyCountry = typeof embassy === 'string' ? embassy : embassy?.mitra || embassy?.nama_negara;
+                        return !normalizedRemovedNames.has(normalizeCountryName(embassyCountry));
+                    });
+                    nextRemovedEmbassies = Array.from(new Set([...nextRemovedEmbassies, ...autoRemovedNames]));
+                    const existingAutoRemovedIds = new Set(previousAutoRemovedEmbassies.map((entry: any) =>
+                        entry && typeof entry === 'object' && 'id' in entry
+                            ? String(entry.id)
+                            : String(entry || '').toLowerCase().trim()
+                    ));
+                    previousAutoRemovedEmbassies.push(
+                        ...autoRemovedEvents.filter((event: { id: string }) => !existingAutoRemovedIds.has(event.id))
+                    );
+                }
 
-            return {
-                ...prev,
-                ...updates,
-                ...populationUpdates,
-                anggaran: (Number(prev.anggaran) || 0) + netBalance -
-                    (Number(prev.minister_recruitment_expense_pending) || 0),
-                minister_recruitment_expense_pending: 0,
-                satisfaction: prev.satisfaction, // Preserve satisfaction scores
-                programNuklirActive: nextProgramNuklirActive,
-                population_crisis_tiers: currentCrisisTiers,
-                pending_notifications: [...nextPendingNotifications, ...newCrisisNotifications],
-                active_outbreaks: (Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : []).filter((event: any) => {
-                    const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
-                    return Number.isFinite(elapsed) && elapsed >= 0 && elapsed < (Number(event.durationDays) || 0) * 86_400_000;
-                }),
-                active_disaster_effects: (Array.isArray(prev.active_disaster_effects) ? prev.active_disaster_effects : []).filter((event: any) => {
-                    const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
-                    return Number.isFinite(elapsed) && elapsed >= 0 && elapsed < (Number(event.durationDays) || 30) * 86_400_000;
-                }),
-                ongoingConstructions: currentOngoing,
-                ongoingEmbassyConstructions: nextOngoingEmbassyConstructions,
-                nationalization_diplomacy_month_counter: nationalizationDiplomacyMonthCounter,
-                embassies: nextEmbassies,
-                removedEmbassies: nextRemovedEmbassies,
-                autoRemovedEmbassies: previousAutoRemovedEmbassies,
-                kepuasan: nextKepuasan,
-                sector_deficit_month_counter: sectorDeficitMonthCounter,
-                sector_deficit_kepuasan_penalty: accumulatedSectorPenalty,
-                presidentRating: ratingResult.presidentRating,
-                rating_month_counter: ratingResult.rating_month_counter,
-                last_rating_threshold: ratingResult.last_rating_threshold,
-                kesejahteraan: nextKesejahteraan,
-                kesejahteraan_bonus: nextKesejahteraanBonus,
-                kesejahteraan_decay: nextKesejahteraanDecay,
-                kesejahteraan_month_counter: decayResult.kesejahteraan_month_counter,
-                last_kesejahteraan_threshold: decayResult.last_kesejahteraan_threshold,
-            };
-        }));
+                return {
+                    ...prev,
+                    ...updates,
+                    ...populationUpdates,
+                    anggaran: (Number(prev.anggaran) || 0) + netBalance -
+                        (Number(prev.minister_recruitment_expense_pending) || 0),
+                    minister_recruitment_expense_pending: 0,
+                    satisfaction: prev.satisfaction, // Preserve satisfaction scores
+                    programNuklirActive: nextProgramNuklirActive,
+                    population_crisis_tiers: currentCrisisTiers,
+                    pending_notifications: [...nextPendingNotifications, ...newCrisisNotifications],
+                    active_outbreaks: (Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : []).filter((event: any) => {
+                        const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
+                        return Number.isFinite(elapsed) && elapsed >= 0 && elapsed < (Number(event.durationDays) || 0) * 86_400_000;
+                    }),
+                    active_disaster_effects: (Array.isArray(prev.active_disaster_effects) ? prev.active_disaster_effects : []).filter((event: any) => {
+                        const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
+                        return Number.isFinite(elapsed) && elapsed >= 0 && elapsed < (Number(event.durationDays) || 30) * 86_400_000;
+                    }),
+                    ongoingConstructions: currentOngoing,
+                    ongoingEmbassyConstructions: nextOngoingEmbassyConstructions,
+                    nationalization_diplomacy_month_counter: nationalizationDiplomacyMonthCounter,
+                    embassies: nextEmbassies,
+                    removedEmbassies: nextRemovedEmbassies,
+                    autoRemovedEmbassies: previousAutoRemovedEmbassies,
+                    kepuasan: nextKepuasan,
+                    sector_deficit_month_counter: sectorDeficitMonthCounter,
+                    sector_deficit_kepuasan_penalty: accumulatedSectorPenalty,
+                    presidentRating: ratingResult.presidentRating,
+                    rating_month_counter: ratingResult.rating_month_counter,
+                    last_rating_threshold: ratingResult.last_rating_threshold,
+                    kesejahteraan: nextKesejahteraan,
+                    kesejahteraan_bonus: nextKesejahteraanBonus,
+                    kesejahteraan_decay: nextKesejahteraanDecay,
+                    kesejahteraan_month_counter: decayResult.kesejahteraan_month_counter,
+                    last_kesejahteraan_threshold: decayResult.last_kesejahteraan_threshold,
+                };
+            }));
         };
 
         const idleWindow = window as Window & {
@@ -3968,7 +3968,7 @@ export default function MapPage() {
                         const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
                         const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
                         const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
-                        
+
                         const hasEmbassy = playerHasEmbassyOrTradePartners(partner, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners);
                         if (!hasEmbassy) {
                             setInboxModalOpen(false);
@@ -4775,11 +4775,10 @@ export default function MapPage() {
                                 setResultModal(prev => ({ ...prev, isOpen: false }));
                                 setInboxModalOpen(true);
                             }}
-                            className={`w-full py-3 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all ${
-                                resultModal.type === 'error'
+                            className={`w-full py-3 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all ${resultModal.type === 'error'
                                     ? 'bg-rose-500/20 border border-rose-500/50 text-rose-400 hover:bg-rose-500/30'
                                     : 'bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-[0_0_20px_rgba(0,255,170,0.3)]'
-                            }`}
+                                }`}
                         >
                             Tutup
                         </button>
