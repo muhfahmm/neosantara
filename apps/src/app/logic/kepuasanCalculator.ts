@@ -1,6 +1,6 @@
 /**
  * kepuasanCalculator.ts
- * Utility untuk menghitung skor kepuasan rakyat berdasarkan sembilan sektor.
+ * Utility untuk menghitung skor kepuasan rakyat dari sektor dan kebijakan nasional.
  *
  * Diekstrak dari StatistikKepuasanModal agar bisa dipanggil secara otomatis
  * di map-system.tsx tanpa harus membuka modal terlebih dahulu.
@@ -12,6 +12,14 @@ import {
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
 import { getCountryConsumptionBreakdown } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
 import { calculateTotalTaxIncome } from "@/app/logic/economic_logic/treasuryUpdater";
+import {
+  calculateEconomicPolicyAverage,
+  type NationalizationLevels,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/7_sistem_ekonomi/logic/nationalizationLogic";
+import {
+  INITIAL_SUBSIDY_ITEMS,
+  calculateSubsidySummary,
+} from "@/../../json/database_kebijakan_subsidi/index";
 
 
 // ─── Helper ─────────────────────────────────────────────────────────────────
@@ -331,6 +339,40 @@ export function calculateKeterbukaanScore(countryDetail: any): number {
   return getSatisfactionSectorScores(countryDetail, undefined).keterbukaan;
 }
 
+export function calculateEconomicPolicySatisfaction(countryDetail: any): number {
+  const policyChoices: Record<string, "A" | "B"> = {
+    price_control: countryDetail?.policy_price_control === "B" ? "B" : "A",
+    strategic_ownership: countryDetail?.policy_strategic_ownership === "B" ? "B" : "A",
+    trade_policy: countryDetail?.policy_trade_policy === "B" ? "B" : "A",
+    labor_regulation: countryDetail?.policy_labor_regulation === "B" ? "B" : "A",
+    land_property_rights: countryDetail?.policy_land_property_rights === "B" ? "B" : "A",
+    labor_unions_rights: countryDetail?.policy_labor_unions_rights === "B" ? "B" : "A",
+    monetary_banking: countryDetail?.policy_monetary_banking === "B" ? "B" : "A",
+  };
+  const sectorLevels = countryDetail?.sector_nationalization as NationalizationLevels | undefined;
+  return calculateEconomicPolicyAverage(
+    Number(countryDetail?.sistem_ekonomi_val ?? 50),
+    policyChoices,
+    sectorLevels
+  );
+}
+
+export function calculateSubsidySatisfaction(countryDetail: any): number {
+  const savedStates = countryDetail?.subsidy_states as Record<string, boolean> | undefined;
+  const items = INITIAL_SUBSIDY_ITEMS.map((item) => ({
+    ...item,
+    isSubsidized: savedStates?.[item.id] ?? item.isSubsidized,
+  }));
+  const summary = calculateSubsidySummary(items);
+  const maximumApprovalBonus = INITIAL_SUBSIDY_ITEMS.reduce(
+    (total, item) => total + item.approvalImpact,
+    0
+  );
+  return maximumApprovalBonus > 0
+    ? Math.min(100, Math.max(0, Math.round(summary.totalApprovalBonus / maximumApprovalBonus * 100)))
+    : 0;
+}
+
 export function countLowSatisfactionSectors(countryDetail: any, metadata: any): number {
   return Object.values(getSatisfactionSectorScores(countryDetail, metadata))
     .filter((score) => score < LOW_SECTOR_SCORE_THRESHOLD).length;
@@ -340,17 +382,20 @@ export function countLowSatisfactionSectors(countryDetail: any, metadata: any): 
 
 /**
  * Hitung skor kepuasan rakyat dari countryDetail & metadata.
- * Mengembalikan nilai 0–100 sebagai rata-rata tujuh sektor utama.
+ * Mengembalikan nilai 0–100 sebagai rata-rata tujuh sektor utama ditambah indeks ekonomi dan subsidi.
  */
 export function calculateKepuasan(countryDetail: any, metadata: any): number {
   if (!countryDetail) return 50;
 
   const sectorScores = getSatisfactionSectorScores(countryDetail, metadata);
-  const mainSectorTotal = MAIN_SATISFACTION_SECTOR_KEYS.reduce(
+  const sectorTotal = MAIN_SATISFACTION_SECTOR_KEYS.reduce(
     (total, sector) => total + sectorScores[sector],
     0,
   );
-  const baseScore = mainSectorTotal / MAIN_SATISFACTION_SECTOR_KEYS.length;
+  const economicPolicyScore = calculateEconomicPolicySatisfaction(countryDetail);
+  const subsidyScore = calculateSubsidySatisfaction(countryDetail);
+  const scoreCount = MAIN_SATISFACTION_SECTOR_KEYS.length + 2;
+  const baseScore = (sectorTotal + economicPolicyScore + subsidyScore) / scoreCount;
   const accumulatedSectorPenalty = Math.max(0, Number(countryDetail.sector_deficit_kepuasan_penalty) || 0);
   return Math.max(0, baseScore - accumulatedSectorPenalty);
 }

@@ -888,11 +888,19 @@ export default function MapPage() {
             }
 
             if (actionType === 'aneksasi') {
-                // 1. Berita Invasi
+                // 1. Potong armada penyerang pemain sebesar 25% (kemenangan perang)
+                let userLossText = '';
+                if (countryDetail) {
+                    const { updatedDetail: detailAfterWin, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.25);
+                    setCountryDetail(detailAfterWin);
+                    userLossText = lossSummaryText;
+                }
+
+                // 2. Berita Invasi
                 const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
                 newNewsItems.push(invNews);
 
-                // 2. Berita Aneksasi — Gunakan warna PEMAIN di peta (#10b981 hijau),
+                // 3. Berita Aneksasi — Gunakan warna PEMAIN di peta (#10b981 hijau),
                 // BUKAN getCountryColor() yang mengembalikan warna benua (misal Asia=#a855f7 ungu)
                 // yang bisa sama persis dengan warna asli negara target.
                 const attackerColor = '#10b981';
@@ -908,7 +916,7 @@ export default function MapPage() {
 
                 recordAnnexedTerritory(targetCountry, targetIso, attackerCountry, attackerIso, attackerColor);
 
-                // 3. Gabungkan statistik (populasi, kas negara, kepuasan, kesejahteraan, seluruh bangunan & militer) dari negara target ke user
+                // 4. Gabungkan statistik (populasi, kas negara, kepuasan, kesejahteraan, seluruh bangunan & sisa militer target setelah kalah >50%) dari negara target ke user
                 const targetRelPath = Object.entries(countryPaths as Record<string, string>).find(
                     ([name]) => name.toLowerCase().trim() === targetCountry.toLowerCase().trim()
                 )?.[1];
@@ -957,7 +965,21 @@ export default function MapPage() {
                             const aggregatedFields: Record<string, number> = {};
                             ANNEXED_AGGREGATE_KEYS.forEach(key => {
                                 const prevVal = Number(prev[key] ?? prev?.armada?.[key] ?? prev?.pertahanan?.[key] ?? 0);
-                                const targetVal = Number(targetData[key] ?? targetData?.armada?.[key] ?? targetData?.pertahanan?.[key] ?? 0);
+                                let targetVal = Number(targetData[key] ?? targetData?.armada?.[key] ?? targetData?.pertahanan?.[key] ?? 0);
+                                // Sisa unit militer dari target yang kalah dipotong >50% (75% gugur dalam perang, 25% tersisa dirampas)
+                                const isMilitaryUnit = [
+                                    'pasukan_infanteri', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat',
+                                    'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
+                                    'kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet',
+                                    'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik',
+                                    'jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom',
+                                    'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut'
+                                ].includes(key);
+
+                                if (isMilitaryUnit && targetVal > 0) {
+                                    targetVal = Math.round(targetVal * 0.25);
+                                }
+
                                 if (targetVal > 0 || prevVal > 0) {
                                     aggregatedFields[key] = prevVal + targetVal;
                                 }
@@ -986,7 +1008,7 @@ export default function MapPage() {
                                         (partner: string) => normalizePartnerName(partner) !== normalizePartnerName(targetCountry)
                                     ),
                                     targetCountry
-                                ])),
+                               ])),
                                 jumlah_penduduk: totalPop,
                                 populasi: totalPop,
                                 anggaran: prevAnggaran + targetAnggaran,
@@ -1006,11 +1028,14 @@ export default function MapPage() {
                 mergeTargetDataToUser();
 
                 // Notifikasi Inbox User
+                const lossNote = (userLossText && userLossText !== 'Tidak ada kerugian unit')
+                    ? ` Kerugian tempur armada Anda (25%): ${userLossText}.`
+                    : '';
                 const notifMsg: NotificationMessage = {
                     id: `notif-player-annex-${Date.now()}`,
                     title: `🚩 ANEKSASI WILAYAH BERHASIL`,
                     sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
-                    message: `Pasukan militer Anda telah sukses merebut dan memperluas wilayah kedaulatan ${attackerCountry} dengan mencaplok seluruh teritorial ${targetCountry}! Peta dunia telah diperbarui.`,
+                    message: `Pasukan militer Anda telah sukses merebut dan memperluas wilayah kedaulatan ${attackerCountry} dengan mencaplok seluruh teritorial ${targetCountry}!${lossNote} Peta dunia telah diperbarui.`,
                     timestamp: dateStr,
                     type: 'peringkat',
                     value: 100,
@@ -1019,6 +1044,14 @@ export default function MapPage() {
                 setNotifications(prev => [notifMsg, ...prev]);
 
             } else if (actionType === 'jarah') {
+                // Potong armada pemain sebesar 25% (kemenangan operasi penjarahan)
+                let userLossText = '';
+                if (countryDetail) {
+                    const { updatedDetail: detailAfterWin, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.25);
+                    setCountryDetail(detailAfterWin);
+                    userLossText = lossSummaryText;
+                }
+
                 const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
                 const lootNews = generateResourceLootNews(
                     attackerCountry,
@@ -1031,11 +1064,14 @@ export default function MapPage() {
                 );
                 newNewsItems.push(invNews, lootNews);
 
+                const lossNote = (userLossText && userLossText !== 'Tidak ada kerugian unit')
+                    ? ` Kerugian tempur armada Anda (25%): ${userLossText}.`
+                    : '';
                 const notifMsg: NotificationMessage = {
                     id: `notif-player-loot-${Date.now()}`,
                     title: `💰 OPERASI PENJARAHAN BERHASIL`,
                     sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
-                    message: `Operasi penjarahan atas ${targetCountry} berhasil dilancarkan! Sumber daya alam dan rampasan perang senilai 25.000.000 NEO telah diamankan.`,
+                    message: `Operasi penjarahan atas ${targetCountry} berhasil dilancarkan! Sumber daya alam dan rampasan perang senilai 25.000.000 NEO telah diamankan.${lossNote}`,
                     timestamp: dateStr,
                     type: 'peringkat',
                     value: 80,
@@ -1044,20 +1080,26 @@ export default function MapPage() {
                 setNotifications(prev => [notifMsg, ...prev]);
 
             } else if (actionType === 'mundur') {
-                // Action: mundur (Kurangi 75% dari unit armada yang dikerahkan saat terpukul mundur)
+                // Cek apakah mundur dalam keadaan menang atau kalah terpukul mundur
+                const isVictoryRetreat = detail?.warResult === 'win';
+                const lossRate = isVictoryRetreat ? 0.25 : 0.75;
+                const lossPctStr = isVictoryRetreat ? '25%' : '75%';
+
                 if (countryDetail) {
-                    const { updatedDetail, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.75);
+                    const { updatedDetail, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, lossRate);
                     setCountryDetail(updatedDetail);
 
                     if (lossSummaryText && lossSummaryText !== 'Tidak ada kerugian unit') {
                         setNotifications(prev => [{
                             id: `notif-war-losses-${Date.now()}`,
-                            title: '💥 KERUGIAN PASUKAN PERTEMPURAN (75%)',
+                            title: `💥 KERUGIAN PASUKAN PERTEMPURAN (${lossPctStr})`,
                             sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
-                            message: `Pasukan terpukul mundur dari ${targetCountry}! Kerugian tempur sebesar 75% dari unit yang dikerahkan: ${lossSummaryText}. Data armada di Pertahanan & Keamanan telah diperbarui.`,
+                            message: isVictoryRetreat
+                                ? `Pasukan ditarik mundur setelah memenangkan pertempuran di ${targetCountry}! Kerugian tempur taktis sebesar ${lossPctStr}: ${lossSummaryText}. Data armada telah diperbarui.`
+                                : `Pasukan terpukul mundur dari ${targetCountry}! Kerugian tempur sebesar ${lossPctStr} dari unit yang dikerahkan: ${lossSummaryText}. Data armada di Pertahanan & Keamanan telah diperbarui.`,
                             timestamp: dateStr,
                             type: 'peringkat',
-                            value: 75,
+                            value: isVictoryRetreat ? 25 : 75,
                             isRead: false
                         }, ...prev]);
                     }
@@ -1068,7 +1110,7 @@ export default function MapPage() {
                     id: `notif-retreat-relations-${Date.now()}`,
                     title: '📉 HUBUNGAN DIPLOMATIK MENURUN',
                     sender: 'Kementerian Luar Negeri',
-                    message: `Hubungan diplomatik ${attackerCountry} dengan negara-negara lain turun ${relationPenalty} poin setelah pasukan mundur dari operasi terhadap ${targetCountry}.`,
+                    message: `Hubungan diplomatik ${attackerCountry} dengan negara-negara lain turun ${relationPenalty} poin setelah operasi militer terhadap ${targetCountry}.`,
                     timestamp: dateStr,
                     type: 'peringkat',
                     value: relationPenalty,
@@ -1082,7 +1124,7 @@ export default function MapPage() {
                     id: `notif-player-[#00FFAA]-${Date.now()}`,
                     title: `🏳️ PASUKAN DITARIK MUNDUR`,
                     sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
-                    message: `Operasi agresi terhadap ${targetCountry} dibatalkan. Pasukan ditarik mundur ke markas utama tanpa aneksasi wilayah.`,
+                    message: `Operasi agresi terhadap ${targetCountry} disudahi. Pasukan ditarik mundur ke markas utama tanpa aneksasi wilayah.`,
                     timestamp: dateStr,
                     type: 'peringkat',
                     value: 50,
@@ -4334,13 +4376,16 @@ export default function MapPage() {
                                         });
                                     }
                                 } else {
-                                    // Pertahanan Berhasil! (User Win)
+                                    // Pertahanan Berhasil! (User Win - potong armada user sebesar 25%)
+                                    const { updatedDetail: detailAfterWin, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.25);
+                                    setCountryDetail(detailAfterWin);
+
                                     setNotifications((prev: any[]) => [
                                         {
                                             id: `war-win-${Date.now()}`,
                                             title: 'Pertahanan Berhasil!',
                                             sender: 'Kementerian Pertahanan',
-                                            message: `Pasukan pertahanan nasional berhasil memukul mundur agresi militer dari ${activeWarAnimation.attacker}!`,
+                                            message: `Pasukan pertahanan nasional berhasil memukul mundur agresi militer dari ${activeWarAnimation.attacker}! Kerugian tempur armada pertahanan (25%): ${lossSummaryText}.`,
                                             type: 'kepuasan',
                                             value: 0,
                                             isRead: false,
@@ -4350,7 +4395,7 @@ export default function MapPage() {
                                     setResultModal({
                                         isOpen: true,
                                         title: 'Pertahanan Berhasil!',
-                                        message: `Pasukan pertahanan nasional sukses memukul mundur agresi militer dari ${activeWarAnimation.attacker}!`,
+                                        message: `Pasukan pertahanan nasional sukses memukul mundur agresi militer dari ${activeWarAnimation.attacker}! Armada pertahanan mengalami kerugian tempur sebesar 25%: ${lossSummaryText}.`,
                                         type: 'success',
                                     });
                                 }
@@ -4368,6 +4413,7 @@ export default function MapPage() {
                                     detail: {
                                         actionType: mappedAction,
                                         targetCountry: activeWarAnimation.target,
+                                        warResult: result,
                                     },
                                 })
                             );

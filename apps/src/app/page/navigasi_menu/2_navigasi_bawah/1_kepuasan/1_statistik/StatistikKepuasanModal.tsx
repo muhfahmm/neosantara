@@ -1,8 +1,10 @@
 "use client";
 
-import { X, Smile, TrendingUp, Landmark, Coins, Apple, Plug, Home, Globe } from "lucide-react";
+import { X, Smile, TrendingUp, Landmark, Coins, Apple, Plug, Home, Globe, Scale, HandHelping } from "lucide-react";
 import {
   calculateKepuasan,
+  calculateEconomicPolicySatisfaction,
+  calculateSubsidySatisfaction,
   getSatisfactionSectorScores,
 } from "@/app/logic/kepuasanCalculator";
 
@@ -31,8 +33,9 @@ export default function StatistikKepuasanModal({
 
   // Gunakan utility terpusat agar konsisten dengan nilai di navbar
   const sectorScores = getSatisfactionSectorScores(countryDetail, metadata);
-  
   const generalSatisfaction = calculateKepuasan(countryDetail, metadata);
+  const economicPolicySatisfaction = calculateEconomicPolicySatisfaction(countryDetail);
+  const subsidySatisfaction = calculateSubsidySatisfaction(countryDetail);
 
   // Sektor-sektor yang diminta
   const sectors = [
@@ -84,6 +87,20 @@ export default function StatistikKepuasanModal({
       icon: Globe, 
       color: "text-indigo-600", 
       menuId: "Menu:DoktrinKeterbukaan"
+    },
+    {
+      name: "Kebijakan & Sistem Ekonomi",
+      score: economicPolicySatisfaction,
+      icon: Scale,
+      color: "text-cyan-600",
+      menuId: "Menu:SistemEkonomi"
+    },
+    {
+      name: "Alokasi & Kebijakan Subsidi",
+      score: subsidySatisfaction,
+      icon: HandHelping,
+      color: "text-amber-600",
+      menuId: "Menu:KebijakanSubsidi"
     }
   ];
   return (

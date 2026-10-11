@@ -112,5 +112,26 @@ export const ECONOMIC_POLICIES: EconomicPolicyItem[] = [
     description: "Standar upah minimum nasional dan perlindungan hak-hak pekerja.",
     optionA: { label: "Standar UMR High & Proteksi Ketat", type: "Terpusat", effect: "Kesejahteraan buruh meningkat, daya tarik investasi asing turun" },
     optionB: { label: "Fleksibilitas Kerja & Kontrak Bebas", type: "Pasar Bebas", effect: "Penyerapan tenaga kerja tinggi, potensi ketimpangan sosial naik" },
+  },
+  {
+    id: "land_property_rights",
+    name: "Hak Kepemilikan Tanah & Properti",
+    description: "Mengatur kepemilikan tanah dan aset perumahan.",
+    optionA: { label: "Kepemilikan Negara & Hak Pakai Komunal", type: "Terpusat", effect: "Tanah dan perumahan dikuasai negara; masyarakat memperoleh hak pakai komunal" },
+    optionB: { label: "Hak Milik Privat Absolut", type: "Pasar Bebas", effect: "Jual-beli tanah dan properti berlangsung bebas" },
+  },
+  {
+    id: "labor_unions_rights",
+    name: "Hak Berserikat vs Hak Manajemen",
+    description: "Mengatur hubungan serikat pekerja, manajemen pabrik, dan hak mogok.",
+    optionA: { label: "Serikat Negara & Dewan Pekerja", type: "Terpusat", effect: "Serikat menjadi organ negara; pengelolaan pabrik melibatkan dewan pekerja kolektif" },
+    optionB: { label: "Kebebasan Pasar Tenaga Kerja", type: "Pasar Bebas", effect: "Manajemen swasta memimpin; mogok kerja dapat dibatasi demi kelancaran rantai pasok" },
+  },
+  {
+    id: "monetary_banking",
+    name: "Kebijakan Moneter & Perbankan",
+    description: "Mengatur struktur perbankan dan arus modal lintas negara.",
+    optionA: { label: "Bank Sentral Tunggal & Kontrol Devisa", type: "Terpusat", effect: "Bank dikuasai negara; devisa dikontrol dan pelarian modal ke luar negeri dibatasi" },
+    optionB: { label: "Perbankan Swasta & Arus Modal Bebas", type: "Pasar Bebas", effect: "Perbankan kompetitif; arus modal masuk dan keluar tanpa hambatan" },
   }
 ];

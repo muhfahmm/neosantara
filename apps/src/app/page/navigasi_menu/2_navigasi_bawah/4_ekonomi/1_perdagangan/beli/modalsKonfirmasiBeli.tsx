@@ -127,6 +127,8 @@ interface ModalsKonfirmasiBeliProps {
   initialProductKey?: string;
   prefetchedAllCountries?: any[];
   partnerOffers?: any[];
+  importTariffModifier?: number;
+  canBuy?: boolean;
 }
 
 // --- HARGA DEFAULT PASAR (BERLAKU UNTUK BELI) ---
@@ -240,7 +242,9 @@ export default function ModalsKonfirmasiBeli({
   initialPartnerName,
   initialProductKey,
   prefetchedAllCountries,
-  partnerOffers = []
+  partnerOffers = [],
+  importTariffModifier = 0,
+  canBuy = true,
 }: ModalsKonfirmasiBeliProps) {
   const [metadata, setMetadata] = useState<MetadataMap>({});
   const [selectedProduct, setSelectedProduct] = useState<string>("");
@@ -632,9 +636,12 @@ export default function ModalsKonfirmasiBeli({
   const ministryBuyMultiplier = getKementerianPerdaganganBuyPriceMultiplier(countryDetail);
   const totalDiscountFraction = (1 - wtoBuyMultiplier) + (1 - protestantMultiplier) + (1 - opecBuyMultiplier) + (1 - strategicBuyMultiplier) + (1 - ministryBuyMultiplier);
   const combinedBuyMultiplier = Math.max(0.1, 1 - totalDiscountFraction);
-  const pricePerUnit = Math.round(originalPricePerUnit * combinedBuyMultiplier);
+  const basePricePerUnit = Math.round(originalPricePerUnit * combinedBuyMultiplier);
+  const baseTotalPrice = basePricePerUnit * quantity;
+  const importTariffCost = Math.round(baseTotalPrice * Math.max(0, importTariffModifier));
+  const totalPrice = baseTotalPrice + importTariffCost;
+  const pricePerUnit = Math.round(totalPrice / Math.max(1, quantity));
   const hasTradeDiscount = totalDiscountFraction > 0;
-  const totalPrice = pricePerUnit * quantity;
 
   // --- RENDER CANDLESTICK CHART ---
   const renderCandlestickChart = () => {
@@ -720,6 +727,10 @@ export default function ModalsKonfirmasiBeli({
   };
 
   const handleConfirm = () => {
+    if (!canBuy) {
+      alert("Negara Anda di bawah sanksi ekonomi terbatas. Impor komoditas tidak tersedia.");
+      return;
+    }
     const detail = countryDetail ?? {};
     const currentBudget = typeof detail.anggaran === "number" ? detail.anggaran : 0;
     const ownCountryName = String(detail.country || detail.nama || '');
@@ -912,6 +923,12 @@ export default function ModalsKonfirmasiBeli({
             </div>
           )}
 
+          {importTariffCost > 0 && (
+            <div className="flex justify-between items-center text-xs text-amber-300">
+              <span>Tarif impor tambahan ({Math.round(importTariffModifier * 100)}%)</span>
+              <span>{formatTradePrice(importTariffCost)} NEO</span>
+            </div>
+          )}
           <div className="flex justify-between items-center border-t border-[#00FFAA]/20 pt-2 mt-1">
             <span className="text-[#E0E0E0] font-bold text-sm tracking-wide">Total Pembelian :</span>
             <div className="flex items-center gap-1.5">
@@ -919,7 +936,6 @@ export default function ModalsKonfirmasiBeli({
               <span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span>
             </div>
           </div>
-
           {/* CHART CANDLESTICK HARGA BELI */}
           <div className="pt-3 border-t border-[#00FFAA]/20 mt-2 w-full">
             <div className="flex items-center justify-between mb-3">

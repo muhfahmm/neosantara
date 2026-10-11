@@ -155,6 +155,43 @@ export function getNationalizationLevel(
   return NATIONALIZATION_LEVELS.some((level) => level.value === value) ? value : 0;
 }
 
+export function getAverageNationalization(levels: unknown): number {
+  const total = NATIONALIZATION_SECTORS.reduce(
+    (sum, sector) => sum + getNationalizationLevel(levels, sector.id),
+    0
+  );
+  return total / NATIONALIZATION_SECTORS.length;
+}
+
+export function calculateEconomicPolicyAverage(
+  spectrumValue: number,
+  policyChoices: Record<string, "A" | "B">,
+  sectorLevels: unknown
+): number {
+  const safeSpectrum = Math.min(100, Math.max(0, Number(spectrumValue) || 0));
+  const policyScores = Object.values(policyChoices).map((choice) => choice === "B" ? 100 : 0);
+  const sectorMarketScores = NATIONALIZATION_SECTORS.map(
+    (sector) => 100 - getNationalizationLevel(sectorLevels, sector.id)
+  );
+  const allScores = [safeSpectrum, ...policyScores, ...sectorMarketScores];
+  return Math.round(allScores.reduce((total, score) => total + score, 0) / allScores.length);
+}
+
+export function isCommunistMultilateralLoanRestricted(
+  ideology: unknown,
+  levels: unknown
+): boolean {
+  const normalizedIdeology = String(ideology ?? "")
+    .trim()
+    .toLocaleLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+  return (
+    (normalizedIdeology === "komunisme" || normalizedIdeology === "komunis") &&
+    getAverageNationalization(levels) > 50
+  );
+}
+
 export function getStateProfitSharePercent(level: number): number {
   return NATIONALIZATION_LEVELS.find((item) => item.value === level)?.stateProfitSharePercent ?? 20;
 }

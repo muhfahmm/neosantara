@@ -246,10 +246,22 @@ export default function PerbandinganPasukan({
   };
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none font-sans select-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto shadow-2xl text-white">
+    <div className="fixed inset-0 z-[9999] bg-[#050B0B] flex flex-col w-screen h-screen font-sans select-none overflow-hidden animate-[warFadeIn_0.3s_ease-out] text-white">
+      {/* ══════════ BACKGROUND GRID & GLOW FX ══════════ */}
+      <div
+        className="absolute inset-0 opacity-[0.08] pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(#00FFAA 1px, transparent 1px), linear-gradient(90deg, #00FFAA 1px, transparent 1px)',
+          backgroundSize: '50px 50px',
+        }}
+      />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,255,170,0.08),transparent_70%)] pointer-events-none" />
+
+      {/* ══════════ FULL MENU CONTAINER ══════════ */}
+      <div className="relative z-10 flex flex-col w-full h-full">
         {/* ══════════ HEADER ══════════ */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+        <div className="px-6 sm:px-10 py-3.5 sm:py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] shrink-0 shadow-lg">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
@@ -270,20 +282,11 @@ export default function PerbandinganPasukan({
               </span>
             </div>
           </div>
-          {onClose && (
-            <button
-              onClick={onClose}
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-            >
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-4 w-4" />
-            </button>
-          )}
         </div>
 
         {/* ══════════ BODY ══════════ */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] space-y-6 no-scrollbar">
-          <div className="w-full max-w-4xl mx-auto space-y-6">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#071313] space-y-6 custom-scrollbar">
+          <div className="w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-6">
             {/* BAGIAN 1: PERBANDINGAN TOTAL KEKUATAN */}
             <div className="flex flex-col bg-[#0A1A1A] border border-[#00FFAA]/20 p-5 rounded-2xl shadow-sm gap-4">
               <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">

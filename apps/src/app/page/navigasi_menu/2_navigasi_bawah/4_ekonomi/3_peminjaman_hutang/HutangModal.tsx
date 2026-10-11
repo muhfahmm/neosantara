@@ -6,6 +6,7 @@ import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 // 🔥 IMPOR TAB TERPISAH
 import NegaraLain from "./tab_menu/1_negara_lain";
 import LembagaDunia from "./tab_menu/2_lembaga_dunia";
+import { isCommunistMultilateralLoanRestricted } from "../7_sistem_ekonomi/logic/nationalizationLogic";
 import Riwayat from "./tab_menu/3_riwayat";
 
 // 🔥 IMPOR UTILITAS TAB
@@ -283,6 +284,10 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
   const kasNegara = countryDetail?.anggaran || 0;
   const totalHutang = countryDetail?.totalHutang || 0;
   const riwayatPinjaman: LoanRecord[] = Array.isArray(countryDetail?.pinjamanList) ? countryDetail.pinjamanList : [];
+  const isMultilateralLoanRestricted = isCommunistMultilateralLoanRestricted(
+    countryDetail?.ideology,
+    countryDetail?.sector_nationalization
+  );
 
   const realGDP = calculateCountryGDP(countryDetail) || Number(countryDetail?.pdb) || 500_000;
   const debtRatio = realGDP > 0 ? Math.min(100, Math.round((totalHutang / realGDP) * 100)) : 0;
@@ -291,6 +296,13 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
   const confirmBorrow = () => {
     if (!pendingLoan) return;
     const source = pendingLoan;
+    if (
+      source.type === "multilateral" &&
+      isCommunistMultilateralLoanRestricted(countryDetail?.ideology, countryDetail?.sector_nationalization)
+    ) {
+      setPendingLoan(null);
+      return;
+    }
     const now = currentDate instanceof Date ? new Date(currentDate) : new Date();
     const isMultilateral = source.type === "multilateral";
 
@@ -436,6 +448,7 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
               setPendingLoan={setPendingLoan}
               loanCooldowns={countryDetail?.loanCooldowns}
               currentDate={currentDate}
+              isLoanRestricted={isMultilateralLoanRestricted}
             />
           )}
           {activeTab === "history" && (

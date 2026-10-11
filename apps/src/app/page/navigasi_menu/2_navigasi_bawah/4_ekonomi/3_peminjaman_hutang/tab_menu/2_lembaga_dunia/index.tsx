@@ -12,6 +12,7 @@ interface LembagaDuniaProps {
   setPendingLoan: (loan: any) => void;
   loanCooldowns?: LoanCooldowns;
   currentDate?: Date;
+  isLoanRestricted?: boolean;
 }
 
 interface LembagaInstitution {
@@ -45,7 +46,7 @@ const TENOR_OPTIONS = [
   { label: "5y", days: 1825 },
 ];
 
-export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDate }: LembagaDuniaProps) {
+export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDate, isLoanRestricted = false }: LembagaDuniaProps) {
   const today = currentDate instanceof Date ? currentDate : new Date();
   
   // 🔥 DEKLARASI STATE (Ini yang menyebabkan error "Cannot find name")
@@ -53,6 +54,7 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
   const [terms, setTerms] = useState<Record<number, string>>({});
   const [errors, setErrors] = useState<Record<number, string>>({});
   const [termModalTarget, setTermModalTarget] = useState<number | null>(null);
+  const loanRestriction = isLoanRestricted;
 
   // 🔥 PERBAIKAN: Tambahkan tipe `: Record<number, string>` pada param `prev` agar TypeScript tidak error 'any'
   const handleAmountChange = (id: number, value: string) => {
@@ -89,6 +91,14 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
     const cooldownEnd = cooldownDate ? addDays(new Date(cooldownDate), 90) : null;
     const isCooldownActive = cooldownEnd ? cooldownEnd > today : false;
 
+    if (loanRestriction) {
+      setErrors((prev: Record<number, string>) => ({
+        ...prev,
+        [lembaga.id]: "Pinjaman IMF dan Bank Dunia tidak tersedia bagi negara Komunis dengan rata-rata nasionalisasi di atas 50%.",
+      }));
+      return;
+    }
+
     if (isCooldownActive) {
       setErrors((prev: Record<number, string>) => ({ ...prev, [lembaga.id]: `Cooldown 90 hari: bisa pinjam lagi setelah ${formatIdDate(cooldownEnd!)}.` }));
       return;
@@ -122,6 +132,11 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
 
   return (
     <div className="space-y-4 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
+      {loanRestriction && (
+        <div className="rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm font-bold text-rose-300">
+          Pinjaman IMF dan Bank Dunia diblokir: ideologi Komunis dengan rata-rata nasionalisasi sektor di atas 50%.
+        </div>
+      )}
       {LEMBAGA_MULTILATERAL.map((lembaga) => {
         const cooldownDate = loanCooldowns?.[lembaga.id];
         const cooldownEnd = cooldownDate ? addDays(new Date(cooldownDate), 90) : null;
@@ -144,8 +159,12 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
               </div>
               <div className="flex flex-col gap-2 md:items-end">
                 <div className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">Cooldown</div>
-                <div className={`text-sm font-bold ${isCooldownActive ? "text-rose-400" : "text-emerald-400"}`}>
-                  {isCooldownActive ? `Tersisa sampai ${nextAvailable}` : "Bisa pinjam sekarang"}
+                <div className={`text-sm font-bold ${isCooldownActive || loanRestriction ? "text-rose-400" : "text-emerald-400"}`}>
+                  {loanRestriction
+                    ? "Pengajuan diblokir"
+                    : isCooldownActive
+                      ? `Tersisa sampai ${nextAvailable}`
+                      : "Bisa pinjam sekarang"}
                 </div>
               </div>
             </div>
@@ -208,9 +227,9 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
 
             <button
               onClick={() => handleRequestLoan(lembaga)}
-              disabled={isCooldownActive}
+              disabled={isCooldownActive || loanRestriction}
               className={`w-full px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${
-                isCooldownActive
+                isCooldownActive || loanRestriction
                   ? "bg-[#0A1A1A] text-[#6B8A8A] border border-gray-800 cursor-not-allowed"
                   : "cursor-pointer bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 font-bold"
               }`}

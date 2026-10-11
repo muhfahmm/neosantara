@@ -349,6 +349,9 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
             policy_strategic_ownership: sys.policy_strategic_ownership === 'Pasar Bebas' ? 'B' : 'A',
             policy_trade_policy: sys.policy_trade === 'Pasar Bebas' ? 'B' : 'A',
             policy_labor_regulation: sys.policy_labor === 'Pasar Bebas' ? 'B' : 'A',
+            policy_land_property_rights: sys.policy_land_property_rights === 'Pasar Bebas' ? 'B' : 'A',
+            policy_labor_unions_rights: sys.policy_labor_unions_rights === 'Pasar Bebas' ? 'B' : 'A',
+            policy_monetary_banking: sys.policy_monetary_banking === 'Pasar Bebas' ? 'B' : 'A',
           };
         })(),
 

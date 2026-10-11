@@ -22,6 +22,7 @@ import DetailSubsidiItemModal from "./DetailSubsidiItemModal";
 
 import { generateSubsidiChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/3_kebijakan_subsidi/subsidiChangeLogic";
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
+import { calculateSubsidySatisfaction } from "@/app/logic/kepuasanCalculator";
 
 interface ModalProps {
   isOpen: boolean;
@@ -117,6 +118,9 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
   ];
 
   const summary: TotalSubsidySummary = calculateSubsidySummary(subsidyItems);
+  const subsidySatisfaction = calculateSubsidySatisfaction({
+    subsidy_states: Object.fromEntries(subsidyItems.map((item) => [item.id, item.isSubsidized])),
+  });
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -250,6 +254,23 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
             {selectedCategory === "Perlindungan Sosial" && (
               <PerlindunganSosialTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
             )}
+
+            <div className="mt-6 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-5">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm font-black uppercase tracking-widest text-[#00FFAA]">
+                  Indeks Kepuasan Rakyat (Subsidi)
+                </span>
+                <span className="shrink-0 text-2xl font-black text-amber-400 sm:text-3xl">
+                  {subsidySatisfaction} / 100
+                </span>
+              </div>
+              <div className="mt-3 h-3 w-full overflow-hidden rounded-full border border-[#00FFAA]/20 bg-[#0A1A1A]">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-200"
+                  style={{ width: `${subsidySatisfaction}%` }}
+                />
+              </div>
+            </div>
           </div>
 
         </div>

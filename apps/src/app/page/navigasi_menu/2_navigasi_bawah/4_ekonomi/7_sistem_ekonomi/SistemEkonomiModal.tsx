@@ -17,6 +17,7 @@ import {
   NATIONALIZATION_LEVELS,
   NATIONALIZATION_SECTORS,
   getNationalizationLevel,
+  calculateEconomicPolicyAverage,
   NATIONALIZATION_DIPLOMACY_INTERVAL_MONTHS,
   getStateProfitSharePercent,
   syncNationalizationDiplomacyRelations,
@@ -46,6 +47,9 @@ const resolveSistemEkonomiForCountry = (countryDetail: any) => {
     strategic_ownership: countryDetail?.policy_strategic_ownership || "A",
     trade_policy: countryDetail?.policy_trade_policy || "A",
     labor_regulation: countryDetail?.policy_labor_regulation || "A",
+    land_property_rights: countryDetail?.policy_land_property_rights || "A",
+    labor_unions_rights: countryDetail?.policy_labor_unions_rights || "A",
+    monetary_banking: countryDetail?.policy_monetary_banking || "A",
   };
 
   return { spektrumVal, choices };
@@ -97,6 +101,9 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
     countryDetail?.policy_strategic_ownership,
     countryDetail?.policy_trade_policy,
     countryDetail?.policy_labor_regulation,
+    countryDetail?.policy_land_property_rights,
+    countryDetail?.policy_labor_unions_rights,
+    countryDetail?.policy_monetary_banking,
     countryDetail?.sector_nationalization
   ]);
 
@@ -130,6 +137,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
   if (!isOpen) return null;
 
   const systemDetails: EconomicSystemEffect = getEconomicSystemDetails(sliderValue);
+  const economicPolicyAverage = calculateEconomicPolicyAverage(sliderValue, policyChoices, sectorLevels);
 
   const handlePolicyChange = (policyId: string, choice: "A" | "B") => {
     setPolicyChoices((prev) => ({
@@ -169,6 +177,9 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
             policy_strategic_ownership: policyChoices.strategic_ownership,
             policy_trade_policy: policyChoices.trade_policy,
             policy_labor_regulation: policyChoices.labor_regulation,
+            policy_land_property_rights: policyChoices.land_property_rights,
+            policy_labor_unions_rights: policyChoices.labor_unions_rights,
+            policy_monetary_banking: policyChoices.monetary_banking,
             sector_nationalization: { ...sectorLevels },
             pending_notifications: [notif, ...currentPending],
           };
@@ -368,6 +379,23 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
                 </div>
               </div>
             )}
+
+            <div className="mt-6 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-5">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm font-black uppercase tracking-widest text-[#00FFAA]">
+                  Indeks Kepuasan Rakyat (Kebijakan Ekonomi)
+                </span>
+                <span className="shrink-0 text-2xl font-black text-amber-400 sm:text-3xl">
+                  {economicPolicyAverage} / 100
+                </span>
+              </div>
+              <div className="mt-3 h-3 w-full overflow-hidden rounded-full border border-[#00FFAA]/20 bg-[#0A1A1A]">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-200"
+                  style={{ width: `${economicPolicyAverage}%` }}
+                />
+              </div>
+            </div>
           </div>
 
         </div>

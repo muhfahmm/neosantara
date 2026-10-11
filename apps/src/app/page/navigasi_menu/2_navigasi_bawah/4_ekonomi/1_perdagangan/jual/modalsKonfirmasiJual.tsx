@@ -96,6 +96,8 @@ interface JualModalsMenuProps {
   partners: TradePartner[];
   initialPartnerName?: string;
   prefetchedAllCountries?: any[];
+  exportTariffModifier?: number;
+  canSell?: boolean;
 }
 
 const DEFAULT_PRICES: Record<string, number> = {
@@ -161,7 +163,19 @@ const generateCandleData = (endDate: Date, timeRange: string, currentPrice: numb
   return data.reverse();
 };
 
-export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCountryDetail, onConfirm, currentDate, partners, initialPartnerName, prefetchedAllCountries }: JualModalsMenuProps) {
+export default function JualModalsMenu({
+  isOpen,
+  onClose,
+  countryDetail,
+  setCountryDetail,
+  onConfirm,
+  currentDate,
+  partners,
+  initialPartnerName,
+  prefetchedAllCountries,
+  exportTariffModifier = 0,
+  canSell = true,
+}: JualModalsMenuProps) {
   const [metadata, setMetadata] = useState<MetadataMap>({});
   const [loadingMetadata, setLoadingMetadata] = useState(true);
 
@@ -340,9 +354,13 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
   
   const ministrySellMultiplier = getKementerianPerdaganganSellPriceMultiplier(countryDetail);
   const combinedSellMultiplier = (wtoSellMultiplier - 1) + (protestantMultiplier - 1) + (opecSellMultiplier - 1) + strategicSellBonus + (ministrySellMultiplier - 1);
-  const pricePerUnit = Math.round(currentPrice * (1 + combinedSellMultiplier));
+  const priceBeforeExportTariff = Math.round(currentPrice * (1 + combinedSellMultiplier));
+  const exportTariffRate = Math.min(1, Math.max(0, exportTariffModifier));
+  const grossTotalPrice = priceBeforeExportTariff * quantity;
+  const exportTariffCost = Math.round(grossTotalPrice * exportTariffRate);
+  const totalPrice = grossTotalPrice - exportTariffCost;
+  const pricePerUnit = Math.round(totalPrice / Math.max(1, quantity));
   const hasTradeBonus = combinedSellMultiplier > 0;
-  const totalPrice = pricePerUnit * quantity;
   const nationalizationSector = getTradeProductNationalizationSector(selectedProduct);
   const stateProfitSharePercent = getTradeProductStateProfitSharePercent(countryDetail, selectedProduct);
   const stateProfitIncome = Math.round(totalPrice * stateProfitSharePercent / 100);
@@ -426,6 +444,10 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
   if (!isOpen) return null;
 
   const handleConfirm = () => {
+    if (!canSell) {
+      alert("Akses jual komoditas diblokir karena skor sentralisasi negara Anda mencapai 85 atau lebih.");
+      return;
+    }
     const detail = countryDetail ?? {};
     const currentBudget = typeof detail.anggaran === "number" ? detail.anggaran : 0;
     const ownCountryName = String(detail.country || detail.nama || '');
@@ -575,8 +597,14 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
                   )}
                 </div>
               )}
+              {exportTariffCost > 0 && (
+                <div className="flex justify-between items-center text-xs text-amber-300">
+                  <span>Tarif ekspor tambahan ({Math.round(exportTariffRate * 100)}%)</span>
+                  <span>-{formatTradePrice(exportTariffCost)} NEO</span>
+                </div>
+              )}
               <div className="flex justify-between items-center border-t border-[#00FFAA]/20 pt-2 mt-1">
-                <span className="text-[#E0E0E0] font-bold text-sm tracking-wide">Nilai Bruto Transaksi :</span>
+                <span className="text-[#E0E0E0] font-bold text-sm tracking-wide">Nilai setelah tarif ekspor :</span>
                 <div className="flex items-center gap-1.5"><span className="text-lg font-black text-[#00FFAA]">{formatTradePrice(totalPrice)}</span><span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span></div>
               </div>
               {nationalizationSectorName && (

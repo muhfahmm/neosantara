@@ -259,7 +259,10 @@ category VARCHAR(255) NOT NULL,
 policy_price_control VARCHAR(255) NOT NULL DEFAULT 'Terpusat',
 policy_strategic_ownership VARCHAR(255) NOT NULL DEFAULT 'Terpusat',
 policy_trade VARCHAR(255) NOT NULL DEFAULT 'Pasar Bebas',
-policy_labor VARCHAR(255) NOT NULL DEFAULT 'Pasar Bebas'
+policy_labor VARCHAR(255) NOT NULL DEFAULT 'Pasar Bebas',
+policy_land_property_rights VARCHAR(255) NOT NULL DEFAULT 'Terpusat',
+policy_labor_unions_rights VARCHAR(255) NOT NULL DEFAULT 'Pasar Bebas',
+policy_monetary_banking VARCHAR(255) NOT NULL DEFAULT 'Pasar Bebas'
 );
 INSERT INTO database_sistem_ekonomi
 (country_id, country_slug, country_name, iso, spektrum_val, system_title, category, policy_price_control, policy_strategic_ownership, policy_trade, policy_labor)
@@ -476,6 +479,7 @@ VALUES
 (93060, 'chad', 'Chad', 'td', 35, 'Ekonomi Komando (Command Economy)', 'Terpusat', 'Terpusat', 'Terpusat', 'Terpusat', 'Terpusat'),
 (67981, 'ceko', 'Ceko', 'cz', 72, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
 (9760, 'prancis', 'Prancis', 'fr', 65, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas');
+
 -- ========================================================
 -- SECTION: json/database_kepemilikian_produksi\database_kepemilikian_produksi.pg.sql
 DROP TABLE IF EXISTS database_kepemilikian_produksi;

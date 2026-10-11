@@ -1,6 +1,6 @@
 "use client"
 import React, { useMemo, useState, useEffect } from "react";
-import { X, ArrowRightLeft, Info } from "lucide-react";
+import { X, ArrowRightLeft, Info, AlertTriangle } from "lucide-react";
 import JualModalsMenu from "./jual/modalsKonfirmasiJual";
 import MitraModalsMenu, { TradePartner } from "./mitra/mitraModalsMenu";
 import ModalsKonfirmasiBeli from "./beli/modalsKonfirmasiBeli";
@@ -26,6 +26,10 @@ import {
 } from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
 import { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { isTradeEmbargoActive, isCountryUnderEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
+import {
+  calculateTradeAccess,
+  getAverageNationalization,
+} from "./tradeAccessLogic";
 
 
 interface AgreementData {
@@ -201,14 +205,22 @@ export default function PerdaganganModal({
 
   // Fungsi trigger dari Mitra
   const openBeliModals = (partner: TradePartner) => {
+    if (!tradeAccess.canBuy) {
+      alert(buyRestrictionMessage);
+      return;
+    }
     setActiveTradePartner(partner);
     setActiveOfferProduct(undefined);
     setIsMitraOpen(false);
     setIsConfirmBeliOpen(true);
   };
 
-  const openJualModals = (partner: TradePartner) => {
-    setActiveTradePartner(partner);
+  const openJualModals = (partner?: TradePartner) => {
+    if (!tradeAccess.canSell) {
+      alert("Akses jual komoditas diblokir karena skor sentralisasi negara Anda mencapai 85 atau lebih.");
+      return;
+    }
+    setActiveTradePartner(partner ?? null);
     setIsMitraOpen(false);
     setIsJualOpen(true);
   };
@@ -234,6 +246,22 @@ export default function PerdaganganModal({
   };
 
   const countryName = countryDetail?.country || countryDetail?.nama || "";
+  const tradeAccess = calculateTradeAccess(
+    getAverageNationalization(countryDetail?.sector_nationalization),
+    String(countryDetail?.ideology || ""),
+    String(countryDetail?.religion || "")
+  );
+  const buyRestrictionMessage =
+    "Negara Anda berada di bawah sanksi ekonomi terbatas. Impor komoditas tidak tersedia.";
+  const handleOpenGlobalBuy = () => {
+    if (!tradeAccess.canBuy) {
+      alert(buyRestrictionMessage);
+      return;
+    }
+    setActiveTradePartner(null);
+    setActiveOfferProduct(undefined);
+    setIsConfirmBeliOpen(true);
+  };
 
   const effectiveHistory = useMemo(() => {
     if (!resetTrigger) return history;
@@ -531,6 +559,10 @@ export default function PerdaganganModal({
 
   // --- Fungsi Terima Tawaran ---
   const handleAcceptOffer = (offer: PartnerOffer) => {
+    if (!tradeAccess.canBuy) {
+      alert(buyRestrictionMessage);
+      return;
+    }
     const targetPartner = eligiblePartners.find(
       partner => partner.nama_negara.toLowerCase().trim() === offer.partnerName.toLowerCase().trim()
     ) ?? (offer.sourceNotificationId ? {
@@ -559,6 +591,7 @@ export default function PerdaganganModal({
 
   const [showWTOTradeInfoModal, setShowWTOTradeInfoModal] = useState(false);
   const userCountryName = String(countryName || "");
+  const isTradeMarketBlocked = tradeAccess.status === "diblokir";
   const isWTOActive = isMemberOfWTO(userCountryName);
   const wtoSellMultiplier = applyKerjaSamaRegionalToMultiplier(
     getWTOSellPriceMultiplier(userCountryName),
@@ -678,14 +711,16 @@ export default function PerdaganganModal({
               <div>
                 <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Pasar Perdagangan Global</h2>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowWTOTradeInfoModal(true)}
-                title="Lihat Informasi Efek Harga WTO & Agama"
-                className="p-1.5 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/50 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer shadow-md flex items-center justify-center shrink-0 ml-1"
-              >
-                <Info className="w-4 h-4" />
-              </button>
+              {!isTradeMarketBlocked && (
+                <button
+                  type="button"
+                  onClick={() => setShowWTOTradeInfoModal(true)}
+                  title="Lihat Informasi Efek Harga WTO & Agama"
+                  className="p-1.5 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/50 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer shadow-md flex items-center justify-center shrink-0 ml-1"
+                >
+                  <Info className="w-4 h-4" />
+                </button>
+              )}
             </div>
             <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
               <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
@@ -694,6 +729,57 @@ export default function PerdaganganModal({
           </div>
 
           <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+            {isTradeMarketBlocked ? (
+              <div className="flex min-h-full flex-col items-center justify-center rounded-xl border border-rose-500/30 bg-rose-950/20 p-6 text-center sm:p-8">
+                <AlertTriangle className="mb-4 h-14 w-14 text-rose-400" />
+                <h3 className="mb-2 text-xl font-black uppercase text-rose-400">
+                  Akses Pasar Global Ditolak
+                </h3>
+                <p className="mb-5 max-w-lg text-sm leading-relaxed text-[#A7C4C4]">
+                  Negara Anda terisolasi dari Pasar Perdagangan Global karena skor sentralisasi melewati ambang blokir.
+                  Turunkan rata-rata nasionalisasi atau ubah ideologi/agama agar skor turun di bawah 85.
+                </p>
+                <div className="mb-5 grid w-full max-w-lg grid-cols-2 gap-2 rounded-lg border border-rose-500/20 bg-[#0A1A1A] p-3 text-left text-xs">
+                  <span className="text-[#6B8A8A]">Skor sentralisasi</span>
+                  <strong className="text-right text-rose-300">{tradeAccess.centralizationScore.toFixed(1)}</strong>
+                  <span className="text-[#6B8A8A]">Rata-rata nasionalisasi</span>
+                  <strong className="text-right text-[#E0E0E0]">{tradeAccess.averageNationalization.toFixed(1)}%</strong>
+                  <span className="text-[#6B8A8A]">Modifier ideologi</span>
+                  <strong className="text-right text-[#E0E0E0]">×{tradeAccess.ideologyModifier.toFixed(2)}</strong>
+                  <span className="text-[#6B8A8A]">Modifier agama</span>
+                  <strong className="text-right text-[#E0E0E0]">×{tradeAccess.religionModifier.toFixed(2)}</strong>
+                </div>
+                <ul className="w-full max-w-lg space-y-1 text-left text-xs text-[#E0E0E0]">
+                  {tradeAccess.reason.map((reason) => (
+                    <li key={reason} className="flex gap-2">
+                      <span className="text-rose-400">✕</span>
+                      <span>{reason}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="mt-6 rounded-lg border border-rose-400/40 bg-rose-500/10 px-6 py-2 text-xs font-black uppercase tracking-wide text-rose-300 transition hover:bg-rose-500/20"
+                >
+                  Mengerti
+                </button>
+              </div>
+            ) : (
+              <>
+            {tradeAccess.status === "waspada" && (
+              <p className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs font-bold text-amber-300">
+                Tingkat sentralisasi tinggi. Hubungan dagang Anda dipantau oleh komunitas internasional.
+                Tarif impor tambahan: +{Math.round(tradeAccess.importTariffModifier * 100)}%.
+                Skor: {tradeAccess.centralizationScore.toFixed(1)}.
+              </p>
+            )}
+            {tradeAccess.status === "dibatasi" && (
+              <p className="mb-4 rounded-lg border border-orange-500/30 bg-orange-500/10 px-4 py-3 text-xs font-bold text-orange-300">
+                Akses impor diblokir. Anda hanya dapat menjual komoditas; tarif ekspor tambahan:
+                {" "}+{Math.round(tradeAccess.exportTariffModifier * 100)}%. Skor sentralisasi: {tradeAccess.centralizationScore.toFixed(1)}.
+              </p>
+            )}
             {isCountryUnderEconomicEmbargo(countryName) && (
               <p className="mb-4 rounded-lg border border-rose-500/40 bg-rose-950/40 px-4 py-3 text-xs font-bold text-rose-300">
                 Embargo ekonomi PBB sedang berlaku terhadap negara Anda. Aktivitas perdagangan internasional diblokir selama resolusi aktif.
@@ -702,26 +788,32 @@ export default function PerdaganganModal({
 
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 lg:gap-2.5 mb-4 lg:mb-6">
               <button
-                onClick={() => setIsMitraOpen(true)}
-                className="px-2 py-2 lg:py-2.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider cursor-pointer transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px]"
+                onClick={() => {
+                  if (tradeAccess.status === "diblokir") {
+                    alert("Akses Pasar Perdagangan Global diblokir oleh skor sentralisasi negara Anda.");
+                    return;
+                  }
+                  setIsMitraOpen(true);
+                }}
+                className={`px-2 py-2 lg:py-2.5 rounded-lg border text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${isTradeMarketBlocked ? "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed" : "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer"}`}
               >
                 Mitra
               </button>
               <button
-                onClick={() => setIsJualOpen(true)}
-                className="px-2 py-2 lg:py-2.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider cursor-pointer transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px]"
+                onClick={() => openJualModals()}
+                className={`px-2 py-2 lg:py-2.5 rounded-lg border text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${tradeAccess.canSell ? "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
               >
                 Jual
               </button>
               <button
-                onClick={() => { setActiveTradePartner(null); setActiveOfferProduct(undefined); setIsConfirmBeliOpen(true); }}
-                className="px-2 py-2 lg:py-2.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider cursor-pointer transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px]"
+                onClick={handleOpenGlobalBuy}
+                className={`px-2 py-2 lg:py-2.5 rounded-lg border text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${tradeAccess.canBuy ? "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer" : "bg-orange-950/30 border-orange-500/30 text-orange-300 cursor-not-allowed"}`}
               >
                 Beli
               </button>
               <button
-                onClick={() => setIsJualOpen(true)}
-                className="px-2 py-2 lg:py-2.5 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider cursor-pointer transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px]"
+                onClick={() => openJualModals()}
+                className={`px-2 py-2 lg:py-2.5 rounded-lg border text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${tradeAccess.canSell ? "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
               >
                 Jual Semuanya
               </button>
@@ -779,12 +871,14 @@ export default function PerdaganganModal({
                 </tbody>
               </table>
             </div>
+              </>
+            )}
           </div>
         </div>
       </div>
 
       <ModalsKonfirmasiBeli
-        isOpen={isConfirmBeliOpen}
+        isOpen={isConfirmBeliOpen && tradeAccess.canBuy && !isTradeMarketBlocked}
         onClose={() => { setIsConfirmBeliOpen(false); setActiveTradePartner(null); setActiveOfferProduct(undefined); setActiveInboxOfferId(null); }}
         countryDetail={countryDetail}
         setCountryDetail={setCountryDetail}
@@ -798,10 +892,12 @@ export default function PerdaganganModal({
         initialProductKey={activeOfferProduct}
         prefetchedAllCountries={prefetchedAllCountries}
         partnerOffers={activeOffers}
+        importTariffModifier={tradeAccess.importTariffModifier}
+        canBuy={tradeAccess.canBuy}
       />
 
       <JualModalsMenu 
-        isOpen={isJualOpen} 
+        isOpen={isJualOpen && tradeAccess.canSell && !isTradeMarketBlocked}
         onClose={() => { setIsJualOpen(false); setActiveTradePartner(null); }} 
         countryDetail={countryDetail} 
         setCountryDetail={setCountryDetail} 
@@ -810,6 +906,8 @@ export default function PerdaganganModal({
         partners={eligiblePartners}
         initialPartnerName={activeTradePartner?.nama_negara}
         prefetchedAllCountries={prefetchedAllCountries}
+        exportTariffModifier={tradeAccess.exportTariffModifier}
+        canSell={tradeAccess.canSell}
       />
 
       <MitraModalsMenu 
