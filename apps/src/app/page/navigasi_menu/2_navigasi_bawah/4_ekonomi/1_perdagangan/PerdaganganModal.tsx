@@ -9,9 +9,23 @@ import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import TawaranPembelianTable from "./tawaran_beli/TawaranPembelianTable";
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import { calculateProductionIncrement, formatDate } from '@/app/logic/production_logic';
-import { isCountryUnderEconomicEmbargo, isTradeEmbargoActive } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
-import { isMemberOfWTO } from '@/app/page/bonus_logic';
+import {
+  isMemberOfWTO,
+  isMemberOfOPEC,
+  getWTOSellPriceMultiplier,
+  getWTOBuyPriceMultiplier,
+  getOPECSellPriceMultiplier,
+  getOPECBuyPriceMultiplier,
+  applyKerjaSamaRegionalToMultiplier,
+  getStrategicTradeBonusPercent,
+  getKementerianPerdaganganPriceBonusPercent,
+} from '@/app/page/bonus_logic';
+import {
+  PROTESTANT_SELL_PRICE_BONUS,
+  PROTESTANT_BUY_PRICE_DISCOUNT,
+} from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
 import { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { isTradeEmbargoActive, isCountryUnderEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 
 
 interface AgreementData {
@@ -544,7 +558,109 @@ export default function PerdaganganModal({
   });
 
   const [showWTOTradeInfoModal, setShowWTOTradeInfoModal] = useState(false);
-  const isWTOActive = isMemberOfWTO(String(countryName));
+  const userCountryName = String(countryName || "");
+  const isWTOActive = isMemberOfWTO(userCountryName);
+  const wtoSellMultiplier = applyKerjaSamaRegionalToMultiplier(
+    getWTOSellPriceMultiplier(userCountryName),
+    countryDetail
+  );
+  const wtoBuyMultiplier = applyKerjaSamaRegionalToMultiplier(
+    getWTOBuyPriceMultiplier(userCountryName),
+    countryDetail
+  );
+  const isOPECActive = isMemberOfOPEC(userCountryName);
+  const opecSellMultiplier = applyKerjaSamaRegionalToMultiplier(
+    getOPECSellPriceMultiplier(userCountryName, "minyak"),
+    countryDetail
+  );
+  const opecBuyMultiplier = applyKerjaSamaRegionalToMultiplier(
+    getOPECBuyPriceMultiplier(userCountryName, "minyak"),
+    countryDetail
+  );
+
+  const religionStr = String(countryDetail?.religion || "").toLowerCase();
+  const hasProtestantBonus = religionStr.includes("protestan");
+
+  const strategicTradeBonusPercent = getStrategicTradeBonusPercent(countryDetail);
+  const ministryTradeBonusPercent = getKementerianPerdaganganPriceBonusPercent(countryDetail);
+
+  const activeBonusesList = useMemo(() => {
+    const list: {
+      id: string;
+      title: string;
+      category: string;
+      desc: string;
+      sellBonusText?: string;
+      buyDiscountText?: string;
+    }[] = [];
+
+    if (isWTOActive) {
+      list.push({
+        id: "wto",
+        title: "Organisasi Perdagangan Dunia (WTO)",
+        category: "Organisasi Internasional",
+        desc: "Sebagai anggota resmi WTO, negara Anda terintegrasi dalam sistem pasar bebas multilateral.",
+        sellBonusText: `Harga Jual Komoditas +${Math.round((wtoSellMultiplier - 1) * 100)}%`,
+        buyDiscountText: `Harga Beli Komoditas -${Math.round((1 - wtoBuyMultiplier) * 100)}%`,
+      });
+    }
+
+    if (isOPECActive) {
+      list.push({
+        id: "opec",
+        title: "Organisasi Negara Pengekspor Minyak (OPEC)",
+        category: "Organisasi Regional",
+        desc: "Kartel minyak global yang mengatur kuota dan meningkatkan kekuatan tawar minyak bumi.",
+        sellBonusText: `Harga Jual Minyak Bumi +${Math.round((opecSellMultiplier - 1) * 100)}%`,
+        buyDiscountText: `Harga Beli Minyak Bumi -${Math.round((1 - opecBuyMultiplier) * 100)}%`,
+      });
+    }
+
+    if (ministryTradeBonusPercent > 0) {
+      list.push({
+        id: "kementerian_perdagangan",
+        title: "Kementerian Perdagangan",
+        category: "Kabinet Pemerintahan",
+        desc: "Kebijakan diplomasi niaga dan penguatan neraca perdagangan bilateral/multilateral nasional.",
+        sellBonusText: `Harga Jual Komoditas +${ministryTradeBonusPercent}%`,
+        buyDiscountText: `Harga Beli Komoditas -${ministryTradeBonusPercent}%`,
+      });
+    }
+
+    if (strategicTradeBonusPercent > 0) {
+      list.push({
+        id: "riset_diplomasi_dagang",
+        title: "Riset: Diplomasi Perdagangan Strategis",
+        category: "Penelitian & Riset",
+        desc: "Hasil riset enkripsi negosiasi niaga dan pembukaan koridor logistik perdagangan global.",
+        sellBonusText: `Harga Jual Komoditas +${strategicTradeBonusPercent}%`,
+        buyDiscountText: `Harga Beli Komoditas -${strategicTradeBonusPercent}%`,
+      });
+    }
+
+    if (hasProtestantBonus) {
+      list.push({
+        id: "agama_protestan",
+        title: "Etos Kerja & Perniagaan Protestan",
+        category: "Nilai Agama & Budaya",
+        desc: "Karakteristik etos kewirausahaan dan perdagangan bebas yang menguntungkan perniagaan.",
+        sellBonusText: `Harga Jual Komoditas +${PROTESTANT_SELL_PRICE_BONUS * 100}%`,
+        buyDiscountText: `Harga Beli Komoditas -${PROTESTANT_BUY_PRICE_DISCOUNT * 100}%`,
+      });
+    }
+
+    return list;
+  }, [
+    isWTOActive,
+    wtoSellMultiplier,
+    wtoBuyMultiplier,
+    isOPECActive,
+    opecSellMultiplier,
+    opecBuyMultiplier,
+    ministryTradeBonusPercent,
+    strategicTradeBonusPercent,
+    hasProtestantBonus,
+  ]);
 
   if (!isOpen) return null;
 
@@ -578,9 +694,6 @@ export default function PerdaganganModal({
           </div>
 
           <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
-            <p className="text-[10px] lg:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-3.5 lg:mb-5 2xl:mb-6">
-              Kelola aktivitas jual dan beli komoditas nasional untuk mengoptimalkan pendapatan dan kebutuhan anggaran belanja negara.
-            </p>
             {isCountryUnderEconomicEmbargo(countryName) && (
               <p className="mb-4 rounded-lg border border-rose-500/40 bg-rose-950/40 px-4 py-3 text-xs font-bold text-rose-300">
                 Embargo ekonomi PBB sedang berlaku terhadap negara Anda. Aktivitas perdagangan internasional diblokir selama resolusi aktif.
@@ -768,60 +881,66 @@ export default function PerdaganganModal({
             </div>
 
             {/* Body */}
-            <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] custom-scrollbar space-y-6">
-              {/* Card Status Keanggotaan WTO */}
-              <div className={`p-5 rounded-2xl border ${
-                isWTOActive
-                  ? 'bg-[#0E2A20] border-emerald-500/50 text-emerald-300'
-                  : 'bg-[#0A1A1A] border-[#00FFAA]/20 text-[#C3D5D5]'
-              }`}>
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-sm font-black uppercase tracking-wider text-[#00FFAA]">
-                    Keanggotaan Organisasi Perdagangan Dunia (WTO)
-                  </h4>
-                  <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${
-                    isWTOActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-rose-500/10 text-rose-300 border border-rose-500/30'
-                  }`}>
-                    {isWTOActive ? 'Aktif (Anggota WTO)' : 'Tidak Aktif'}
-                  </span>
+            <div className="flex-1 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] custom-scrollbar space-y-4">
+              {activeBonusesList.length === 0 ? (
+                <div className="p-6 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/20 text-center space-y-2">
+                  <p className="text-sm font-bold text-[#E0E0E0]">
+                    Saat ini belum ada bonus harga perdagangan yang aktif.
+                  </p>
+                  <p className="text-xs text-[#6B8A8A] max-w-lg mx-auto">
+                    Bergabunglah dengan Organisasi Internasional (seperti WTO atau OPEC), tingkatkan level Kementerian Perdagangan di Kabinet, lakukan riset Diplomasi Perdagangan Strategis, atau terapkan kebijakan agama terkait untuk membuka bonus harga jual & diskon harga beli komoditas.
+                  </p>
                 </div>
-                <p className="text-xs sm:text-sm leading-relaxed text-[#C3D5D5]">
-                  {isWTOActive ? (
-                    <span>
-                      ✅ Sebagai anggota resmi WTO, negara Anda mendapatkan keuntungan insentif harga perdagangan global:
-                      <br /><strong className="text-emerald-400">• Harga Jual Komoditas: +15%</strong> (Pendapatan ekspor lebih tinggi)
-                      <br /><strong className="text-emerald-400">• Harga Beli Komoditas: -10%</strong> (Penghematan belanja impor)
+              ) : (
+                <div className="space-y-3.5">
+                  <div className="flex items-center justify-between pb-1 border-b border-[#00FFAA]/15">
+                    <span className="text-xs font-black uppercase tracking-wider text-[#00FFAA]">
+                      Daftar Bonus Aktif ({activeBonusesList.length})
                     </span>
-                  ) : (
-                    <span>
-                      ⚠️ Negara Anda saat ini <strong className="text-rose-400">bukan anggota WTO</strong>. Harga jual dan beli di Pasar Perdagangan Global berlaku tarif standar normal (tanpa diskon impor atau bonus ekspor).
+                    <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider">
+                      Otomatis Diterapkan pada Transaksi Jual / Beli
                     </span>
-                  )}
-                </p>
-              </div>
-
-              {/* Rincian Aturan Efek Harga */}
-              <div className="p-5 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30 space-y-4">
-                <h4 className="text-sm font-black uppercase tracking-wider text-[#00FFAA]">
-                  Panduan Pengaruh Organisasi & Kebijakan Terhadap Harga
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
-                  <div className="p-4 rounded-xl bg-[#0F2424] border border-[#00FFAA]/20 space-y-2">
-                    <p className="font-extrabold text-[#00FFAA] uppercase">1. Pengaruh WTO (Pasar Bebas)</p>
-                    <p className="text-[#C3D5D5] leading-relaxed">
-                      • <strong className="text-[#00FFAA]">Harga Jual (+15%):</strong> Menaikkan hasil keuntungan penjualan komoditas ekspor nasional ke pasar internasional.
-                      <br />• <strong className="text-[#00FFAA]">Harga Beli (-10%):</strong> Memotong beban biaya impor komoditas dari mitra dagang dunia.
-                    </p>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-[#0F2424] border border-[#00FFAA]/20 space-y-2">
-                    <p className="font-extrabold text-[#00FFAA] uppercase">2. Pengaruh Kebijakan Nasional / Agama</p>
-                    <p className="text-[#C3D5D5] leading-relaxed">
-                      • <strong className="text-[#00FFAA]">Bonus Produksi & Perdagangan:</strong> Agama dan ideologi tertentu memberikan bonus pengganda produksi yang mempengaruhi total ketersediaan stok perdagangan nasional.
-                    </p>
-                  </div>
+                  {activeBonusesList.map((item) => (
+                    <div
+                      key={item.id}
+                      className="p-4 sm:p-5 rounded-2xl border border-emerald-500/40 bg-[#0E2A20] text-emerald-200 shadow-md space-y-2 transition-all"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 tracking-wider">
+                            {item.category}
+                          </span>
+                          <h4 className="text-sm sm:text-base font-black text-white mt-1">
+                            {item.title}
+                          </h4>
+                        </div>
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shrink-0">
+                          Aktif
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-[#C3D5D5] leading-relaxed">
+                        {item.desc}
+                      </p>
+
+                      <div className="pt-2 border-t border-emerald-500/20 flex flex-wrap gap-2 text-xs font-black">
+                        {item.sellBonusText && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#0F2424] border border-emerald-500/40 text-emerald-300">
+                            • {item.sellBonusText}
+                          </span>
+                        )}
+                        {item.buyDiscountText && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#0F2424] border border-emerald-500/40 text-emerald-300">
+                            • {item.buyDiscountText}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Footer */}
