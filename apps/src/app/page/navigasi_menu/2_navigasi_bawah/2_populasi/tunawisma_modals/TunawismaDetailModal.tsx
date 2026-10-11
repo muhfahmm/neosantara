@@ -26,15 +26,12 @@ export default function TunawismaDetailModal({
     const populasi = Number(countryDetail?.jumlah_penduduk) || 10_000_000;
     const hunianScore = calculateTempatUmumScore(countryDetail).detail.transportasi;
     
-    // Hitung jumlah tunawisma
     const homelessCount = providedHomelessCount !== undefined
       ? providedHomelessCount
-      : calculateHomelessCount(populasi, 50, countryDetail); // Default jika tidak ada
+      : calculateHomelessCount(populasi, 50, countryDetail);
 
-    // Persentase tunawisma
     const homelessPercentage = (homelessCount / populasi) * 100;
 
-    // Hitung kualitas hunian (dari kesejahteraan)
     const housingMetrics = calculateTempatUmumScore(countryDetail);
     
     return {
@@ -50,12 +47,11 @@ export default function TunawismaDetailModal({
   const countryName = selectedCountry?.country || "Indonesia";
   const { populasi, homelessCount, homelessPercentage } = metrics;
 
-  // Kategori keparahan
   const getSeverity = (percentage: number) => {
-    if (percentage >= 5) return { level: 'KRITIS', color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30', icon: 'text-rose-400' };
-    if (percentage >= 3) return { level: 'SERIUS', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30', icon: 'text-amber-400' };
-    if (percentage >= 1) return { level: 'PERHATIAN', color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', icon: 'text-yellow-400' };
-    return { level: 'TERKONTROL', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', icon: 'text-emerald-400' };
+    if (percentage >= 5) return { level: 'KRITIS', color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30' };
+    if (percentage >= 3) return { level: 'SERIUS', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' };
+    if (percentage >= 1) return { level: 'PERHATIAN', color: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30' };
+    return { level: 'TERKONTROL', color: 'text-[#00FFAA]', bg: 'bg-[#00FFAA]/10', border: 'border-[#00FFAA]/30' };
   };
 
   const severity = getSeverity(homelessPercentage);
@@ -97,7 +93,7 @@ export default function TunawismaDetailModal({
                   </div>
                 </div>
 
-                {/* Persentase */}
+                {/* Persentase — warna severity dipertahankan */}
                 <div>
                   <p className="text-xs text-[#6B8A8A] font-black uppercase tracking-wider mb-2">Persentase Populasi</p>
                   <div className="flex items-baseline gap-2">
@@ -108,7 +104,7 @@ export default function TunawismaDetailModal({
                 {/* Status */}
                 <div>
                   <p className="text-xs text-[#6B8A8A] font-black uppercase tracking-wider mb-2">Status Keparahan</p>
-                  <p className={`text-2xl font-black ${severity.color}`}>{severity.level}</p>
+                  <p className="text-2xl font-black text-[#E0E0E0]">{severity.level}</p>
                 </div>
               </div>
             </div>
@@ -119,37 +115,37 @@ export default function TunawismaDetailModal({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 {/* Faktor 1 */}
-                <div className="bg-[#0F2424] border border-cyan-500/30 p-3.5 rounded-xl flex items-center gap-3">
-                  <Users className="h-5 w-5 text-cyan-400 shrink-0" />
+                <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3.5 rounded-xl flex items-center gap-3">
+                  <Users className="h-5 w-5 text-[#00FFAA] shrink-0" />
                   <div>
-                    <p className="text-xs font-black text-cyan-400">Pertumbuhan Populasi</p>
+                    <p className="text-xs font-black text-[#E0E0E0]">Pertumbuhan Populasi</p>
                     <p className="text-[10px] text-[#6B8A8A] font-bold">Laju populasi mendahului pasokan hunian</p>
                   </div>
                 </div>
 
                 {/* Faktor 2 */}
-                <div className="bg-[#0F2424] border border-amber-500/30 p-3.5 rounded-xl flex items-center gap-3">
-                  <Home className="h-5 w-5 text-amber-400 shrink-0" />
+                <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3.5 rounded-xl flex items-center gap-3">
+                  <Home className="h-5 w-5 text-[#00FFAA] shrink-0" />
                   <div>
-                    <p className="text-xs font-black text-amber-400">Keterbatasan Hunian</p>
+                    <p className="text-xs font-black text-[#E0E0E0]">Keterbatasan Hunian</p>
                     <p className="text-[10px] text-[#6B8A8A] font-bold">Kurangnya unit rumah subsidi & apartemen</p>
                   </div>
                 </div>
 
                 {/* Faktor 3 */}
-                <div className="bg-[#0F2424] border border-rose-500/30 p-3.5 rounded-xl flex items-center gap-3">
-                  <TrendingDown className="h-5 w-5 text-rose-400 shrink-0" />
+                <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3.5 rounded-xl flex items-center gap-3">
+                  <TrendingDown className="h-5 w-5 text-[#00FFAA] shrink-0" />
                   <div>
-                    <p className="text-xs font-black text-rose-400">Tingkat Kemiskinan</p>
+                    <p className="text-xs font-black text-[#E0E0E0]">Tingkat Kemiskinan</p>
                     <p className="text-[10px] text-[#6B8A8A] font-bold">Daya beli perumahan warga rendah</p>
                   </div>
                 </div>
 
                 {/* Faktor 4 */}
-                <div className="bg-[#0F2424] border border-purple-500/30 p-3.5 rounded-xl flex items-center gap-3">
-                  <MapPin className="h-5 w-5 text-purple-400 shrink-0" />
+                <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3.5 rounded-xl flex items-center gap-3">
+                  <MapPin className="h-5 w-5 text-[#00FFAA] shrink-0" />
                   <div>
-                    <p className="text-xs font-black text-purple-400">Kesejahteraan Rendah</p>
+                    <p className="text-xs font-black text-[#E0E0E0]">Kesejahteraan Rendah</p>
                     <p className="text-[10px] text-[#6B8A8A] font-bold">Investasi fasilitas publik & bantuan minim</p>
                   </div>
                 </div>
@@ -160,34 +156,34 @@ export default function TunawismaDetailModal({
             <div className="bg-[#0F2424] border border-[#00FFAA]/30 p-5 rounded-2xl">
               <h3 className="text-sm font-black text-[#00FFAA] uppercase tracking-wider mb-3">Solusi & Rekomendasi</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                <div className="flex items-center gap-2.5 p-2.5 bg-[#0A1A1A] rounded-lg border border-emerald-500/30">
-                  <Building2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                <div className="flex items-center gap-2.5 p-2.5 bg-[#0A1A1A] rounded-lg border border-[#00FFAA]/20">
+                  <Building2 className="h-4 w-4 text-[#00FFAA] shrink-0" />
                   <div>
-                    <p className="text-xs font-black text-emerald-400">Bangun Hunian Massal</p>
+                    <p className="text-xs font-black text-[#E0E0E0]">Bangun Hunian Massal</p>
                     <p className="text-[10px] text-[#6B8A8A] font-medium">Perbanyak rumah subsidi dan apartemen rakyat</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 p-2.5 bg-[#0A1A1A] rounded-lg border border-cyan-500/30">
-                  <BookOpen className="h-4 w-4 text-cyan-400 shrink-0" />
+                <div className="flex items-center gap-2.5 p-2.5 bg-[#0A1A1A] rounded-lg border border-[#00FFAA]/20">
+                  <BookOpen className="h-4 w-4 text-[#00FFAA] shrink-0" />
                   <div>
-                    <p className="text-xs font-black text-cyan-400">Tingkatkan Kesejahteraan</p>
+                    <p className="text-xs font-black text-[#E0E0E0]">Tingkatkan Kesejahteraan</p>
                     <p className="text-[10px] text-[#6B8A8A] font-medium">Perluas program lapangan kerja & layanan sosial</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 p-2.5 bg-[#0A1A1A] rounded-lg border border-amber-500/30">
-                  <Coins className="h-4 w-4 text-amber-400 shrink-0" />
+                <div className="flex items-center gap-2.5 p-2.5 bg-[#0A1A1A] rounded-lg border border-[#00FFAA]/20">
+                  <Coins className="h-4 w-4 text-[#00FFAA] shrink-0" />
                   <div>
-                    <p className="text-xs font-black text-amber-400">Program Pembiayaan Ringan</p>
+                    <p className="text-xs font-black text-[#E0E0E0]">Program Pembiayaan Ringan</p>
                     <p className="text-[10px] text-[#6B8A8A] font-medium">Subsidi bunga KPR & skema kepemilikan terjangkau</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 p-2.5 bg-[#0A1A1A] rounded-lg border border-purple-500/30">
-                  <Scale className="h-4 w-4 text-purple-400 shrink-0" />
+                <div className="flex items-center gap-2.5 p-2.5 bg-[#0A1A1A] rounded-lg border border-[#00FFAA]/20">
+                  <Scale className="h-4 w-4 text-[#00FFAA] shrink-0" />
                   <div>
-                    <p className="text-xs font-black text-purple-400">Pemerataan Pembangunan</p>
+                    <p className="text-xs font-black text-[#E0E0E0]">Pemerataan Pembangunan</p>
                     <p className="text-[10px] text-[#6B8A8A] font-medium">Distribusi kawasan permukiman produktif</p>
                   </div>
                 </div>

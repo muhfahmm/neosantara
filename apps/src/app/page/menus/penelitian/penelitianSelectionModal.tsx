@@ -204,13 +204,9 @@ export default function PenelitianSelectionModal({
                       Produksi & Pajak
                     </span>
 
-                    <h3 className="text-base font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors mb-2 leading-tight">
-                      1. Riset Ekonomi & Industri
+                    <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors leading-tight">
+                      Riset Ekonomi & Industri
                     </h3>
-
-                    <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed">
-                      Pengembangan manufaktur, pertambangan, logistik, & efisiensi pendapatan negara.
-                    </p>
                   </div>
                 </button>
               </div>
@@ -250,13 +246,9 @@ export default function PenelitianSelectionModal({
                       Alutsista & Siber
                     </span>
 
-                    <h3 className="text-base font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors mb-2 leading-tight">
-                      2. Riset Militer & Pertahanan
+                    <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors leading-tight">
+                      Riset Militer & Pertahanan
                     </h3>
-
-                    <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed">
-                      Pengembangan armada darat/laut/udara, perang siber, rudal, & pertahanan nuklir.
-                    </p>
                   </div>
                 </button>
               </div>
@@ -296,13 +288,9 @@ export default function PenelitianSelectionModal({
                       Geopolitik & Spionase
                     </span>
 
-                    <h3 className="text-base font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors mb-2 leading-tight">
-                      3. Riset Diplomasi & Intelijen
+                    <h3 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-[#00FFAA] transition-colors leading-tight">
+                      Riset Diplomasi & Intelijen
                     </h3>
-
-                    <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed">
-                      Jaringan intelijen internasional, enkripsi kriptografi, & diplomasi PBB.
-                    </p>
                   </div>
                 </button>
               </div>
