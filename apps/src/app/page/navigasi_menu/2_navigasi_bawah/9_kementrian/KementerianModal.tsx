@@ -53,30 +53,30 @@ interface Department {
 
 // ==================== KONFIGURASI EFEK PER KEMENTERIAN ====================
 const MINISTRY_EFFECTS: Record<string, { stat: string; perLevel: number; unit: string; label: string }> = {
-  infrastruktur: { stat: "produktivitas", perLevel: 0.03, unit: "%", label: "Produktivitas Ekonomi" },
-  pendidikan: { stat: "riset", perLevel: 0.05, unit: "%", label: "Kecepatan Riset" },
-  sains: { stat: "riset_nuklir", perLevel: 0.05, unit: "%", label: "Riset Nuklir & Industri" },
-  kesehatan: { stat: "kesejahteraan", perLevel: 0.05, unit: "%", label: "Indeks Kesejahteraan" },
-  olahraga: { stat: "kepuasan", perLevel: 0.04, unit: "%", label: "Kepuasan Rakyat" },
-  kehakiman: { stat: "kriminalitas", perLevel: -0.05, unit: "%", label: "Tingkat Kriminalitas" },
-  pertahanan: { stat: "militer_darat", perLevel: 0.05, unit: "%", label: "Kekuatan Militer Darat" },
-  "luar-negeri": { stat: "diplomasi", perLevel: 0.05, unit: "%", label: "Pengaruh Diplomasi" },
-  kebudayaan: { stat: "kepuasan", perLevel: 0.03, unit: "%", label: "Kepuasan Rakyat" },
-  pariwisata: { stat: "devisa", perLevel: 0.05, unit: "%", label: "Pendapatan Devisa" },
-  lingkungan: { stat: "pajak_lingkungan", perLevel: 0.05, unit: "%", label: "Penerimaan Pajak Lingkungan" },
-  perumahan: { stat: "backlog", perLevel: -0.05, unit: "%", label: "Backlog Perumahan" },
-  pembangunan: { stat: "infrastruktur", perLevel: 0.04, unit: "%", label: "Kecepatan Pembangunan" },
-  perdagangan: { stat: "bea_cukai", perLevel: 0.05, unit: "%", label: "Pendapatan Bea Cukai" },
-  keuangan: { stat: "pajak", perLevel: 0.05, unit: "%", label: "Penerimaan Pajak" },
+  infrastruktur: { stat: "infrastruktur", perLevel: 0.01, unit: "%", label: "Kecepatan Pembangunan" },
+  pendidikan: { stat: "produksi_pangan_sda", perLevel: 0.01, unit: "%", label: "Produksi Pangan & Sumber Daya Alam" },
+  sains: { stat: "kecepatan_riset", perLevel: -0.01, unit: "%", label: "Waktu Riset (Lebih Cepat)" },
+  kesehatan: { stat: "kematian_pandemi", perLevel: -0.01, unit: "%", label: "Kematian Akibat Pandemi & Epidemi" },
+  olahraga: { stat: "efektivitas_acara_kepuasan", perLevel: 0.01, unit: "%", label: "Efektivitas Peningkatan Kepuasan Acara" },
+  kehakiman: { stat: "kriminalitas", perLevel: -0.01, unit: "%", label: "Tingkat Kriminalitas" },
+  pertahanan: { stat: "militer", perLevel: 0.01, unit: "%", label: "Kekuatan Militer (Darat/Laut/Udara)" },
+  "luar-negeri": { stat: "peluang_perjanjian", perLevel: 0.01, unit: "%", label: "Peluang Perjanjian dengan Negara Lain" },
+  kebudayaan: { stat: "penurunan_peringkat_presiden", perLevel: -0.01, unit: "%", label: "Penurunan Peringkat Presiden" },
+  pariwisata: { stat: "pendapatan_wisata", perLevel: 0.01, unit: "%", label: "Pendapatan dari Tempat Wisata" },
+  lingkungan: { stat: "kerusakan_bencana", perLevel: -0.01, unit: "%", label: "Peluang & Dampak Kerusakan Bencana Alam" },
+  perumahan: { stat: "kapasitas_perumahan", perLevel: 0.01, unit: "%", label: "Kapasitas Perumahan" },
+  pembangunan: { stat: "infrastruktur", perLevel: 0.01, unit: "%", label: "Kecepatan Pembangunan" },
+  perdagangan: { stat: "perdagangan", perLevel: 0.01, unit: "%", label: "Harga Jual (+1%) & Beli (-1%)" },
+  keuangan: { stat: "pajak", perLevel: 0.01, unit: "%", label: "Penerimaan Pajak" },
   // Keamanan
-  "dinas-keamanan": { stat: "stabilitas", perLevel: 0.04, unit: "%", label: "Stabilitas Politik" },
-  polisi: { stat: "kriminalitas", perLevel: -0.05, unit: "%", label: "Tingkat Kriminalitas" },
-  "garda-nasional": { stat: "respons_krisis", perLevel: 0.05, unit: "%", label: "Respons Krisis" },
-  "komandan-angkatan-darat": { stat: "militer_darat", perLevel: 0.05, unit: "%", label: "Kekuatan Darat" },
-  "komandan-armada": { stat: "militer_laut", perLevel: 0.05, unit: "%", label: "Kekuatan Laut" },
+  "dinas-keamanan": { stat: "stabilitas", perLevel: 0.01, unit: "%", label: "Stabilitas Politik" },
+  polisi: { stat: "kriminalitas", perLevel: -0.01, unit: "%", label: "Tingkat Kriminalitas" },
+  "garda-nasional": { stat: "separatisme", perLevel: -0.01, unit: "%", label: "Separatisme di Wilayah Kependudukan" },
+  "komandan-angkatan-darat": { stat: "militer_darat", perLevel: 0.01, unit: "%", label: "Kekuatan Darat" },
+  "komandan-armada": { stat: "militer_laut", perLevel: 0.01, unit: "%", label: "Kekuatan Laut" },
   // Layanan
-  "layanan-darurat": { stat: "kepuasan", perLevel: 0.04, unit: "%", label: "Kepuasan Rakyat" },
-  "bank-sentral": { stat: "inflasi", perLevel: -0.03, unit: "%", label: "Tingkat Inflasi" },
+  "layanan-darurat": { stat: "kematian_bencana", perLevel: -0.01, unit: "%", label: "Jumlah Kematian Akibat Bencana Alam" },
+  "bank-sentral": { stat: "batas_aman_pinjaman", perLevel: 0.01, unit: "%", label: "Batas Aman Pinjaman" },
 };
 
 // Fungsi untuk mendapatkan deskripsi efek berdasarkan level
@@ -88,6 +88,12 @@ const getEffectDescription = (deptId: string, level: number, ministerTier = 0): 
     : 0;
   const totalEffect = config.perLevel * level + Math.sign(config.perLevel) * ministerBonus;
   const sign = totalEffect >= 0 ? "+" : "";
+
+  if (deptId === "perdagangan") {
+    const val = (Math.abs(totalEffect) * 100).toFixed(1);
+    return `Harga Jual +${val}% & Harga Beli -${val}%`;
+  }
+
   return `${sign}${(totalEffect * 100).toFixed(1)}% ${config.label}`;
 };
 
@@ -100,39 +106,39 @@ const KEMENTERIAN: Department[] = [
     icon: Truck,
     baseIncomeCost: 100,
     description: "Mengelola pembangunan jalan, jembatan, dan proyek infrastruktur nasional.",
-    effects: ["Mengurangi estimasi pembangunan: -5%"],
+    effects: ["Kecepatan Pembangunan: +1% per level"],
   },
   {
     id: "pendidikan",
     name: "Kementerian Pendidikan",
     icon: BookOpen,
     baseIncomeCost: 100,
-    description: "Mengatur kurikulum, sekolah, dan kualitas sumber daya manusia.",
-    effects: ["Produksi Makanan: +5%"],
+    description: "Mengatur kurikulum, sekolah, serta peningkatan produktivitas pangan dan sumber daya alam.",
+    effects: ["Meningkatkan Produksi Pangan dan Sumber Daya Alam: +1% per level"],
   },
   {
     id: "sains",
     name: "Sains dan Penelitian",
     icon: Microscope,
     baseIncomeCost: 100,
-    description: "Mendanai riset teknologi dan inovasi nasional.",
-    effects: ["Kecepatan riset Sains: +5%"],
+    description: "Mendanai riset teknologi, inovasi nasional, dan efisiensi waktu penelitian.",
+    effects: ["Mengurangi Kecepatan/Waktu Riset: -1% per level"],
   },
   {
     id: "kesehatan",
     name: "Kementerian Kesehatan",
     icon: HeartPulse,
     baseIncomeCost: 100,
-    description: "Mengelola rumah sakit, vaksinasi, dan kebijakan kesehatan publik.",
-    effects: ["Menurunkan Jumlah Korban Pandemi dan Epidemi: 5%"],
+    description: "Mengelola rumah sakit, vaksinasi, serta penanggulangan wabah dan pandemi.",
+    effects: ["Mengurangi Kematian Akibat Pandemi dan Epidemi: -1% per level"],
   },
   {
     id: "olahraga",
     name: "Kementerian Olahraga",
     icon: Trophy,
     baseIncomeCost: 100,
-    description: "Mengembangkan fasilitas olahraga dan prestasi atlet nasional.",
-    effects: ["Biaya pembangunan sarana olahraga: -5%"],
+    description: "Mengembangkan fasilitas olahraga nasional dan meningkatkan persentase efek pada program menaikkan kepuasan.",
+    effects: ["Efektivitas Peningkatan Kepuasan Acara: +1% per level"],
   },
   {
     id: "kehakiman",
@@ -140,7 +146,7 @@ const KEMENTERIAN: Department[] = [
     icon: Gavel,
     baseIncomeCost: 100,
     description: "Menjaga penegakan hukum dan sistem peradilan negara.",
-    effects: ["Penerimaan Pajak: +5%"],
+    effects: ["Tingkat Kriminalitas: -1% per level"],
   },
   {
     id: "pertahanan",
@@ -148,47 +154,47 @@ const KEMENTERIAN: Department[] = [
     icon: Shield,
     baseIncomeCost: 100,
     description: "Mengatur kekuatan militer dan pertahanan nasional.",
-    effects: ["Meningkatkan kekuatan militer: +10%"],
+    effects: ["Kekuatan Militer: +1% per level (darat/laut/udara)"],
   },
   {
     id: "luar-negeri",
     name: "Kementerian Luar Negeri",
     icon: Globe2,
     baseIncomeCost: 100,
-    description: "Mengatur hubungan diplomatik dengan negara lain.",
-    effects: ["Pendapatan beacukai: +5%"],
+    description: "Mengatur hubungan diplomatik dan kerja sama antar negara.",
+    effects: ["Meningkatkan Peluang Perjanjian dengan Negara Lain: +1% per level"],
   },
   {
     id: "kebudayaan",
     name: "Kementerian Kebudayaan",
     icon: Palette,
     baseIncomeCost: 100,
-    description: "Melestarikan budaya dan identitas nasional.",
-    effects: ["Peluang Diterima di UNESCO: +5% "],
+    description: "Melestarikan budaya, identitas nasional, dan reputasi kepemimpinan.",
+    effects: ["Menurunkan Penurunan Peringkat Presiden: -1% per level"],
   },
   {
     id: "pariwisata",
     name: "Kementerian Pariwisata",
     icon: Plane,
     baseIncomeCost: 100,
-    description: "Mengembangkan sektor wisata dan promosi destinasi.",
-    effects: ["Menambah pendapatan tempat wisata: +5%"],
+    description: "Mengembangkan sektor wisata dan mengoptimalkan devisa destinasi.",
+    effects: ["Pendapatan dari Tempat Wisata: +1% per level"],
   },
   {
     id: "lingkungan",
     name: "Kementerian Lingkungan Hidup",
     icon: Leaf,
     baseIncomeCost: 100,
-    description: "Mengelola kebijakan lingkungan dan sumber daya alam.",
-    effects: ["Menurunkan risiko bencana alam: +5%"],
+    description: "Mengelola kelestarian alam dan mitigasi risiko bencana hidrometeorologi serta geologi.",
+    effects: ["Mengurangi Peluang & Dampak Kerusakan Bencana Alam: -1% per level"],
   },
   {
     id: "perumahan",
     name: "Kementerian Perumahan",
     icon: Home,
     baseIncomeCost: 100,
-    description: "Mengatur pembangunan perumahan rakyat dan tata kota.",
-    effects: ["Kapasitas Hunian perumahan: +5%"],
+    description: "Mengatur penyediaan tempat tinggal dan perluasan kapasitas hunian permukiman.",
+    effects: ["Kapasitas Perumahan: +1% per level"],
   },
   {
     id: "pembangunan",
@@ -196,7 +202,7 @@ const KEMENTERIAN: Department[] = [
     icon: Building2,
     baseIncomeCost: 100,
     description: "Mengawasi proyek pembangunan nasional skala besar dan tata ruang wilayah.",
-    effects: ["Percepatan Konstruksi Nasional: +5%"],
+    effects: ["Kecepatan Pembangunan: +1% per level"],
   },
   {
     id: "perdagangan",
@@ -204,7 +210,10 @@ const KEMENTERIAN: Department[] = [
     icon: Handshake,
     baseIncomeCost: 100,
     description: "Mengatur kebijakan ekspor-impor dan hubungan dagang antar negara.",
-    effects: ["Harga beli: -5% - Harga jual: +5%"],
+    effects: [
+      "Harga Jual: +1% per level",
+      "Harga Beli: -1% per level",
+    ],
   },
   {
     id: "keuangan",
@@ -212,7 +221,7 @@ const KEMENTERIAN: Department[] = [
     icon: Banknote,
     baseIncomeCost: 100,
     description: "Mengelola anggaran negara, pajak, dan kebijakan fiskal nasional.",
-    effects: ["Efektivitas pajak: +5%"],
+    effects: ["Penerimaan Pajak: +1% per level"],
   },
 ];
 
@@ -223,7 +232,7 @@ const KEAMANAN: Department[] = [
     icon: ShieldCheck,
     baseIncomeCost: 100,
     description: "Mengoordinasikan intelijen dan keamanan dalam negeri.",
-    effects: ["Menurunkan risiko terorisme & sabotase: +5%"],
+    effects: ["Stabilitas Politik: +1% per level"],
   },
   {
     id: "polisi",
@@ -231,15 +240,15 @@ const KEAMANAN: Department[] = [
     icon: Siren,
     baseIncomeCost: 100,
     description: "Menjaga ketertiban umum dan penegakan hukum sehari-hari.",
-    effects: ["Menurunkan tingkat kriminalitas: -5%"],
+    effects: ["Tingkat Kriminalitas: -1% per level"],
   },
   {
     id: "garda-nasional",
     name: "Garda Nasional",
     icon: Shield,
     baseIncomeCost: 100,
-    description: "Pasukan cadangan untuk keadaan darurat dan bencana.",
-    effects: ["Meningkatkan kekuatan tempur: +5%"],
+    description: "Pasukan penjaga stabilitas dalam negeri dan penanganan separatisme di wilayah kependudukan.",
+    effects: ["Mengurangi Separatisme di Wilayah Kependudukan: -1% per level"],
   },
   {
     id: "komandan-angkatan-darat",
@@ -247,7 +256,7 @@ const KEAMANAN: Department[] = [
     icon: ShieldAlert,
     baseIncomeCost: 100,
     description: "Memimpin kekuatan militer darat negara dalam pertahanan wilayah.",
-    effects: ["Meningkatkan kekuatan tempur darat: +5%"],
+    effects: ["Kekuatan Militer Darat: +1% per level"],
   },
   {
     id: "komandan-armada",
@@ -255,7 +264,7 @@ const KEAMANAN: Department[] = [
     icon: Ship,
     baseIncomeCost: 100,
     description: "Memimpin kekuatan angkatan laut dan menjaga perairan negara.",
-    effects: ["Meningkatkan kekuatan militer laut: +5%"],
+    effects: ["Kekuatan Militer Laut: +1% per level"],
   },
 ];
 
@@ -265,16 +274,16 @@ const LAYANAN: Department[] = [
     name: "Layanan Darurat",
     icon: Ambulance,
     baseIncomeCost: 100,
-    description: "Menangani respons cepat bencana, kecelakaan, dan kondisi darurat.",
-    effects: ["Menurunkan angka korban jiwa saat bencana: +5%"],
+    description: "Menangani respons cepat evakuasi medis dan mitigasi korban jiwa bencana alam.",
+    effects: ["Mengurangi Jumlah Kematian Akibat Bencana Alam: -1% per level"],
   },
   {
     id: "bank-sentral",
     name: "Kepala Bank Sentral",
     icon: Coins,
     baseIncomeCost: 100,
-    description: "Mengendalikan kebijakan moneter, suku bunga, dan stabilitas nilai tukar.",
-    effects: ["Mengurangi bunga hutang: -0.1%"],
+    description: "Mengendalikan kebijakan moneter, kapasitas pinjaman nasional, dan rasio batas aman utang negara.",
+    effects: ["Meningkatkan Jumlah Batas Aman Pinjaman: +1% per level"],
   },
 ];
 
