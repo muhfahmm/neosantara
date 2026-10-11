@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Flame } from 'lucide-react';
 import { COUNTRIES_DATA } from '../map_system/map-data';
 import countryPaths from '../map_system/country-paths.json';
@@ -64,6 +64,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   // State untuk menu tab
   const [activeTab, setActiveTab] = useState<"informasi" | "geopolitik" | "militer">("informasi");
   const [, setAnnexationRevision] = useState(0);
+  const [relationRevision, setRelationRevision] = useState(0);
 
   // State untuk data negara yang diklik
   const [fetchedDetail, setFetchedDetail] = useState<any>(null);
@@ -81,11 +82,12 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
   useEffect(() => {
     const refreshAnnexation = () => setAnnexationRevision(revision => revision + 1);
+    const refreshRelations = () => setRelationRevision(revision => revision + 1);
     window.addEventListener('map_territory_color_updated', refreshAnnexation);
-    window.addEventListener('country_relations_updated', refreshAnnexation);
+    window.addEventListener('country_relations_updated', refreshRelations);
     return () => {
       window.removeEventListener('map_territory_color_updated', refreshAnnexation);
-      window.removeEventListener('country_relations_updated', refreshAnnexation);
+      window.removeEventListener('country_relations_updated', refreshRelations);
     };
   }, []);
 
@@ -358,6 +360,15 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     }
   }, [isPlayerOccupiedProvince, activeTab]);
 
+  // Hitung Hubungan berdasarkan penyerang jika dianeksasi (re-evaluate saat relationRevision bertambah)
+  // Dipanggil sebelum conditional return agar urutan Hooks React selalu konsisten
+  const relationPlayerCountryName = playerCountryName || "Indonesia";
+  const relationCountryName = annexedInfo?.attackerCountry || countryName || "";
+  const relationValue = useMemo(() => {
+    if (!countryName) return 0;
+    return getRelationValue(relationPlayerCountryName, relationCountryName);
+  }, [relationPlayerCountryName, relationCountryName, relationRevision, countryName]);
+
   if (!isOpen || !countryName) return null;
 
   const displayCountryName = annexedInfo ? `Provinsi ${countryName}` : countryName;
@@ -378,11 +389,6 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
       displayIso = annexedInfo.attackerIso;
     }
   }
-
-  // Hitung Hubungan berdasarkan penyerang jika dianeksasi
-  const relationPlayerCountryName = playerCountryName || "Indonesia";
-  const relationCountryName = annexedInfo?.attackerCountry || countryName;
-  const relationValue = getRelationValue(relationPlayerCountryName, relationCountryName);
   const provinceTensionStatus = provinceTensionValue <= 25
     ? 'Sangat Stabil'
     : provinceTensionValue <= 40

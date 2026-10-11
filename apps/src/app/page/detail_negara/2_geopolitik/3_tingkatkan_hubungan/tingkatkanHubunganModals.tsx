@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Heart, Coins, TrendingUp, AlertCircle, Sparkles, X, Plus, RotateCcw, ArrowRight, CheckCircle2 } from "lucide-react";
 import { getRelationValue, setRelationModifier } from "@/../../json/database_hubungan_antar_negara/relationsRegistry";
+import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 
 interface TingkatkanHubunganModalProps {
 	isOpen: boolean;
@@ -33,6 +34,7 @@ export default function TingkatkanHubunganModal({
 	if (!isOpen) return null;
 
 	const targetCountryName = countryName || "Negara Target";
+	const isAllCountries = targetCountryName === "Semua Negara";
 	const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || "Indonesia";
 	const playerBudget = Number(playerCountryDetail?.anggaran || 0);
 
@@ -40,13 +42,13 @@ export default function TingkatkanHubunganModal({
 
 	const gainedLevels = Math.floor(inputAmount / 10000);
 	const maxPossibleIncrease = Math.max(0, 100 - currentRelation);
-	const actualGained = Math.min(gainedLevels, maxPossibleIncrease);
+	const actualGained = isAllCountries ? gainedLevels : Math.min(gainedLevels, maxPossibleIncrease);
 	const newRelation = Math.min(100, currentRelation + gainedLevels);
 
 	const isInsufficientBudget = inputAmount > playerBudget;
 	const isLessThanMin = inputAmount < 10000;
-	const isMaxRelation = currentRelation >= 100;
-	const isValid = inputAmount >= 10000 && !isInsufficientBudget && gainedLevels > 0;
+	const isMaxRelation = !isAllCountries && currentRelation >= 100;
+	const isValid = inputAmount >= 10000 && !isInsufficientBudget && gainedLevels > 0 && !isMaxRelation;
 
 	const handleAddAmount = (addValue: number) => {
 		setInputAmount((prev) => Math.max(0, prev + addValue));
@@ -60,7 +62,16 @@ export default function TingkatkanHubunganModal({
 	const handleConfirm = () => {
 		if (!isValid) return;
 
-		setRelationModifier(playerCountryName, targetCountryName, actualGained);
+		if (targetCountryName === "Semua Negara") {
+			const allOtherCountries = (COUNTRIES_DATA || [])
+				.map((c) => c.country)
+				.filter((name): name is string => Boolean(name && name.toLowerCase().trim() !== playerCountryName.toLowerCase().trim()));
+			allOtherCountries.forEach((cName) => {
+				setRelationModifier(playerCountryName, cName, actualGained);
+			});
+		} else {
+			setRelationModifier(playerCountryName, targetCountryName, actualGained);
+		}
 
 		if (setPlayerCountryDetail) {
 			setPlayerCountryDetail((prev: any) => {
@@ -208,55 +219,70 @@ export default function TingkatkanHubunganModal({
 						</div>
 					</div>
 
-					{/* Impact Preview Card */}
-					<div className="bg-[#0A1A1A] p-3 sm:p-4 rounded-xl border border-[#00FFAA]/30 shrink-0">
-						<div className="text-[10px] sm:text-xs font-black text-[#6B8A8A] uppercase tracking-wider flex items-center justify-between mb-3">
-							<span>Kalkulasi Peningkatan Hubungan</span>
-							<TrendingUp className="h-4 w-4 text-[#00FFAA]" />
-						</div>
+					{/* Impact Preview Card — Hanya ditampilkan jika untuk 1 negara spesifik */}
+					{!isAllCountries ? (
+						<div className="bg-[#0A1A1A] p-3 sm:p-4 rounded-xl border border-[#00FFAA]/30 shrink-0">
+							<div className="text-[10px] sm:text-xs font-black text-[#6B8A8A] uppercase tracking-wider flex items-center justify-between mb-3">
+								<span>Kalkulasi Peningkatan Hubungan</span>
+								<TrendingUp className="h-4 w-4 text-[#00FFAA]" />
+							</div>
 
-						<div className="flex items-center justify-between gap-3 bg-[#0F2424] p-3 rounded-lg border border-[#00FFAA]/20">
-							{/* Current Level */}
-							<div className="text-center flex-1">
-								<span className="block text-[9px] sm:text-[10px] font-bold text-[#6B8A8A] uppercase">Saat Ini</span>
-								<span className="text-lg sm:text-xl font-black text-[#E0E0E0]">{currentRelation}</span>
-								<div className="mt-1">
-									<span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${currentBadge.color}`}>
-										{currentBadge.label}
+							<div className="flex items-center justify-between gap-3 bg-[#0F2424] p-3 rounded-lg border border-[#00FFAA]/20">
+								{/* Current Level */}
+								<div className="text-center flex-1">
+									<span className="block text-[9px] sm:text-[10px] font-bold text-[#6B8A8A] uppercase">Saat Ini</span>
+									<span className="text-lg sm:text-xl font-black text-[#E0E0E0]">{currentRelation}</span>
+									<div className="mt-1">
+										<span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${currentBadge.color}`}>
+											{currentBadge.label}
+										</span>
+									</div>
+								</div>
+
+								{/* Arrow & Delta */}
+								<div className="flex flex-col items-center justify-center px-2">
+									<span className="text-[11px] font-black text-[#00FFAA] bg-[#00FFAA]/10 px-2 py-0.5 rounded border border-[#00FFAA]/30 mb-1 whitespace-nowrap">
+										+{actualGained} Tingkat
 									</span>
+									<ArrowRight className="h-4 w-4 text-[#00FFAA]" />
+								</div>
+
+								{/* New Level */}
+								<div className="text-center flex-1">
+									<span className="block text-[9px] sm:text-[10px] font-bold text-[#6B8A8A] uppercase">Setelah Pemberian</span>
+									<span className="text-lg sm:text-xl font-black text-[#00FFAA]">{newRelation}</span>
+									<div className="mt-1">
+										<span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${newBadge.color}`}>
+											{newBadge.label}
+										</span>
+									</div>
 								</div>
 							</div>
 
-							{/* Arrow & Delta */}
-							<div className="flex flex-col items-center justify-center px-2">
-								<span className="text-[11px] font-black text-[#00FFAA] bg-[#00FFAA]/10 px-2 py-0.5 rounded border border-[#00FFAA]/30 mb-1 whitespace-nowrap">
-									+{actualGained} Tingkat
-								</span>
-								<ArrowRight className="h-4 w-4 text-[#00FFAA]" />
-							</div>
-
-							{/* New Level */}
-							<div className="text-center flex-1">
-								<span className="block text-[9px] sm:text-[10px] font-bold text-[#6B8A8A] uppercase">Setelah Pemberian</span>
-								<span className="text-lg sm:text-xl font-black text-[#00FFAA]">{newRelation}</span>
-								<div className="mt-1">
-									<span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${newBadge.color}`}>
-										{newBadge.label}
+							{/* Remainder info */}
+							{inputAmount > 0 && inputAmount % 10000 !== 0 && (
+								<p className="text-[10px] sm:text-[11px] text-amber-300 flex items-center gap-1.5 mt-2.5">
+									<AlertCircle className="h-3.5 w-3.5 shrink-0" />
+									<span>
+										Nominal {formatNEO(inputAmount)} NEO memberi <strong className="text-white">+{gainedLevels} tingkat</strong> (sisa {formatNEO(inputAmount % 10000)} NEO tidak dihitung).
 									</span>
-								</div>
-							</div>
+								</p>
+							)}
 						</div>
-
-						{/* Remainder info */}
-						{inputAmount > 0 && inputAmount % 10000 !== 0 && (
-							<p className="text-[10px] sm:text-[11px] text-amber-300 flex items-center gap-1.5 mt-2.5">
-								<AlertCircle className="h-3.5 w-3.5 shrink-0" />
-								<span>
-									Nominal {formatNEO(inputAmount)} NEO memberi <strong className="text-white">+{gainedLevels} tingkat</strong> (sisa {formatNEO(inputAmount % 10000)} NEO tidak dihitung).
+					) : (
+						/* Info ringkasan global saat target adalah Semua Negara */
+						<div className="bg-[#0A1A1A] p-3 sm:p-4 rounded-xl border border-[#00FFAA]/30 shrink-0 flex items-center justify-between">
+							<div className="flex items-center gap-2.5">
+								<Sparkles className="h-4 w-4 text-[#00FFAA] shrink-0" />
+								<span className="text-xs text-[#E0E0E0] font-semibold">
+									Efek Global ke Seluruh Negara:
 								</span>
-							</p>
-						)}
-					</div>
+							</div>
+							<span className="text-sm font-black text-[#00FFAA] bg-[#00FFAA]/10 px-3 py-1 rounded-lg border border-[#00FFAA]/30">
+								+{actualGained} Tingkat untuk Setiap Negara
+							</span>
+						</div>
+					)}
 
 					{/* Warning / Error Messages */}
 					{isInsufficientBudget && (

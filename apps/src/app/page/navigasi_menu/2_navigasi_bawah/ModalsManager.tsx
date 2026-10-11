@@ -709,6 +709,7 @@ function ModalsManager({
           onClose={onClose}
           selectedCountry={selectedCountry}
           countryDetail={countryDetail}
+          setCountryDetail={setCountryDetail}
         />
       );
 

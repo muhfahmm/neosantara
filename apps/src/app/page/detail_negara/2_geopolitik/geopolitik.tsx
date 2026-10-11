@@ -3,7 +3,6 @@ import {
   Sword, 
   Gift, 
   Heart, 
-  Flag, 
   Phone, 
   Map 
 } from 'lucide-react';
@@ -12,7 +11,6 @@ import { playerHasEmbassyOrTradePartners } from '../1_informasi_umum/1_kedutaan_
 import BeriTentaraModal from './1_beri_tentara/beriTentaraModals';
 import BeriHadiahModal from './2_beri_hadiah/beriHadiahModals';
 import TingkatkanHubunganModal from './3_tingkatkan_hubungan/tingkatkanHubunganModals';
-import DukungKemerdekaanModal from './4_dukung_kemerdekaan/dukungKemerdekaanModals';
 import MintaBantuanModal from './5_minta_bantuan/mintaBantuanModals';
 import BerikanWilayahModal from './6_berikan_wilayah/berikanWilayahModals';
 
@@ -44,7 +42,6 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
   const [isBeriTentaraOpen, setIsBeriTentaraOpen] = useState(false);
   const [isBeriHadiahOpen, setIsBeriHadiahOpen] = useState(false);
   const [isTingkatkanOpen, setIsTingkatkanOpen] = useState(false);
-  const [isDukungKemerdekaanOpen, setIsDukungKemerdekaanOpen] = useState(false);
   const [isMintaBantuanOpen, setIsMintaBantuanOpen] = useState(false);
   const [isBerikanWilayahOpen, setIsBerikanWilayahOpen] = useState(false);
 
@@ -60,19 +57,24 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
 
   return (
     <div className="space-y-6">
-      {/* Grid Layout 4-4 (2 baris x 4 kolom pada desktop) */}
+      {/* Grid Layout 5 Tombol Aksi */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <ActionButton icon={Sword} label="Beri Tentara" onClick={() => setIsBeriTentaraOpen(true)} disabled={!embassyExists} />
         <ActionButton icon={Gift} label="Beri Hadiah" onClick={() => setIsBeriHadiahOpen(true)} />
         <ActionButton icon={Heart} label="Tingkatkan Hubungan" onClick={() => setIsTingkatkanOpen(true)} />
-        <ActionButton icon={Flag} label="Dukung Kemerdekaan" onClick={() => setIsDukungKemerdekaanOpen(true)} />
-        
         <ActionButton icon={Phone} label="Minta Bantuan" onClick={() => setIsMintaBantuanOpen(true)} />
         <ActionButton icon={Map} label="Berikan Wilayah" onClick={() => setIsBerikanWilayahOpen(true)} />
       </div>
 
       <BeriTentaraModal isOpen={isBeriTentaraOpen} countryName={countryName} onClose={() => setIsBeriTentaraOpen(false)} onConfirm={() => { console.log(`Beri Tentara -> ${countryName}`); }} />
-      <BeriHadiahModal isOpen={isBeriHadiahOpen} countryName={countryName} onClose={() => setIsBeriHadiahOpen(false)} onConfirm={() => { console.log(`Beri Hadiah -> ${countryName}`); }} />
+      <BeriHadiahModal
+        isOpen={isBeriHadiahOpen}
+        countryName={countryName}
+        playerCountryDetail={playerCountryDetail}
+        setPlayerCountryDetail={setPlayerCountryDetail}
+        onClose={() => setIsBeriHadiahOpen(false)}
+        onConfirm={() => { console.log(`Beri Hadiah -> ${countryName}`); }}
+      />
       <TingkatkanHubunganModal
         isOpen={isTingkatkanOpen}
         countryName={countryName}
@@ -83,7 +85,6 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
           console.log(`Tingkatkan Hubungan -> ${countryName} sebesar ${amount} NEO (+${gained} tingkat)`);
         }}
       />
-      <DukungKemerdekaanModal isOpen={isDukungKemerdekaanOpen} countryName={countryName} onClose={() => setIsDukungKemerdekaanOpen(false)} onConfirm={() => { console.log(`Dukung Kemerdekaan -> ${countryName}`); }} />
       <MintaBantuanModal isOpen={isMintaBantuanOpen} countryName={countryName} onClose={() => setIsMintaBantuanOpen(false)} onConfirm={() => { console.log(`Minta Bantuan -> ${countryName}`); }} />
       <BerikanWilayahModal isOpen={isBerikanWilayahOpen} countryName={countryName} onClose={() => setIsBerikanWilayahOpen(false)} onConfirm={() => { console.log(`Berikan Wilayah -> ${countryName}`); }} />
     </div>
