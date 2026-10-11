@@ -1,7 +1,7 @@
 import {
   Truck, BookOpen, Microscope, HeartPulse, Trophy, Gavel, Shield, Globe2,
   Palette, Plane, Leaf, Home, Building2, Handshake, Banknote, Coins,
-  ShieldCheck, Siren, ShieldAlert, Ship, Ambulance
+  Siren, ShieldAlert, Ship, Ambulance
 } from "lucide-react";
 
 export interface Department {
@@ -105,12 +105,6 @@ export const KEMENTERIAN: Department[] = [
 ];
 
 export const KEAMANAN: Department[] = [
-  {
-    id: "dinas-keamanan",
-    name: "Dinas Keamanan",
-    icon: ShieldCheck,
-    baseIncomeCost: 100,
-  },
   {
     id: "polisi",
     name: "Polisi",

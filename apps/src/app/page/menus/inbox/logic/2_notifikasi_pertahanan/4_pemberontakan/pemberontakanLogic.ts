@@ -1,5 +1,8 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
-import { applyPencegahanSeparatismeBonus } from '@/app/page/bonus_logic';
+import {
+  applyPencegahanSeparatismeBonus,
+  applyGardaNasionalSeparatismeReduction,
+} from '@/app/page/bonus_logic';
 
 export interface PemberontakanNotification extends NotificationMessage {
   tradeType: 'pemberontakan';
@@ -16,6 +19,7 @@ export interface PemberontakanNotification extends NotificationMessage {
  * - Kekurangan Kesejahteraan: (100 - Kesejahteraan) %
  * - Rata-rata risiko dasar = (Defisit Kepuasan + Defisit Kesejahteraan) / 2
  * - Dikurangi oleh bonus penelitian "Pencegahan Separatisme" jika sudah diteliti.
+ * - Dikurangi oleh bonus Garda Nasional (Departemen Keamanan).
  */
 export function calculateSeparatismeRiskPercent(
   countryDetail: Record<string, any> | null | undefined
@@ -29,12 +33,17 @@ export function calculateSeparatismeRiskPercent(
   const defisitKesejahteraan = 100 - kesejahteraan;
 
   // Akumulasi rata-rata defisit ketidakpuasan & ketidaksejahteraan
-  const rawRisk = applyPencegahanSeparatismeBonus(
+  const researchReducedRisk = applyPencegahanSeparatismeBonus(
     (defisitKepuasan + defisitKesejahteraan) / 2,
     countryDetail
   );
 
-  return Math.max(0, Math.min(100, Math.round(rawRisk * 10) / 10));
+  const finalRisk = applyGardaNasionalSeparatismeReduction(
+    researchReducedRisk,
+    countryDetail
+  );
+
+  return Math.max(0, Math.min(100, Math.round(finalRisk * 10) / 10));
 }
 
 export function generatePemberontakanNotification(

@@ -86,6 +86,33 @@ import {
   getKementerianKeuanganTaxRevenueBonusPercent,
   applyKementerianKeuanganTaxRevenueBonus,
 } from "./kementerian_bonus_logic/15_Kementerian_Keuangan";
+import {
+  getPolisiCrimeReductionBonusPercent,
+  applyPolisiCrimeReduction,
+} from "./kementerian_bonus_logic/16_Polisi";
+import {
+  getGardaNasionalSeparatismeReductionBonusPercent,
+  applyGardaNasionalSeparatismeReduction,
+} from "./kementerian_bonus_logic/17_Garda_Nasional";
+import {
+  getKomandanAngkatanDaratBonusPercent,
+  getKomandanAngkatanDaratMultiplier,
+  applyKomandanAngkatanDaratMilitaryPower,
+} from "./kementerian_bonus_logic/18_Komandan_Angkatan_Darat";
+import {
+  getKomandanArmadaBonusPercent,
+  getKomandanArmadaMultiplier,
+  applyKomandanArmadaMilitaryPower,
+} from "./kementerian_bonus_logic/19_Komandan_Armada";
+import {
+  getLayananDaruratDisasterDeathReductionBonusPercent,
+  applyLayananDaruratDisasterDeathReduction,
+} from "./kementerian_bonus_logic/20_Layanan_Darurat";
+import {
+  getBankSentralLoanSafeLimitBonusPercent,
+  getSafeDebtLimitRatio,
+  applyBankSentralMaxLoanBonus,
+} from "./kementerian_bonus_logic/21_Kepala_Bank_Sentral";
 
 const RESEARCH_CARDS_BY_PRODUCTION_SECTOR: Record<string, string[]> = {
   manufaktur: ["otomasi_industri"],
@@ -495,6 +522,21 @@ export {
   getKementerianPerdaganganBuyPriceMultiplier,
   getKementerianKeuanganTaxRevenueBonusPercent,
   applyKementerianKeuanganTaxRevenueBonus,
+  getPolisiCrimeReductionBonusPercent,
+  applyPolisiCrimeReduction,
+  getGardaNasionalSeparatismeReductionBonusPercent,
+  applyGardaNasionalSeparatismeReduction,
+  getKomandanAngkatanDaratBonusPercent,
+  getKomandanAngkatanDaratMultiplier,
+  applyKomandanAngkatanDaratMilitaryPower,
+  getKomandanArmadaBonusPercent,
+  getKomandanArmadaMultiplier,
+  applyKomandanArmadaMilitaryPower,
+  getLayananDaruratDisasterDeathReductionBonusPercent,
+  applyLayananDaruratDisasterDeathReduction,
+  getBankSentralLoanSafeLimitBonusPercent,
+  getSafeDebtLimitRatio,
+  applyBankSentralMaxLoanBonus,
 };
 
 export function getBuildSpeedModifier(countryName: string): number {

@@ -17,7 +17,6 @@ export interface LevelKabinet {
   kem_perdagangan: number;
   kem_keuangan: number;
   keamanan_pertahanan: number;
-  keamanan_dinas_keamanan: number;
   keamanan_polisi: number;
   keamanan_garda_nasional: number;
   keamanan_komandan_angkatan_darat: number;

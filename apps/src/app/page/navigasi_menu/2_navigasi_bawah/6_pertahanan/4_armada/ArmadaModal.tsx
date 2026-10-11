@@ -4,7 +4,11 @@ import ArmadaAktif from "./1_tab_menu/1_armada_aktif";
 import InfrastrukturMiliter from "./1_tab_menu/2_infrastruktur_militer";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
-import { getKementerianPertahananMilitaryPowerBonusPercent } from "@/app/page/bonus_logic";
+import {
+  getKementerianPertahananMilitaryPowerBonusPercent,
+  getKomandanAngkatanDaratBonusPercent,
+  getKomandanArmadaBonusPercent,
+} from "@/app/page/bonus_logic";
 
 
 interface ModalProps {
@@ -176,6 +180,10 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
                 <p>
                   <strong className="text-white">Kementerian Pertahanan:</strong>{" "}
                   Bonus <strong className="text-emerald-300">+{pertahananBonusPercent.toFixed(1)}%</strong> Kekuatan Militer untuk seluruh matra (Darat, Laut, dan Udara). Berasal dari level kabinet (1% per blok) ditambah bonus pengangkatan menteri jika ada.
+                </p>
+                <p>
+                  <strong className="text-white">Komandan Matra Keamanan:</strong>{" "}
+                  Komandan Angkatan Darat memberikan <strong className="text-emerald-300">+{getKomandanAngkatanDaratBonusPercent(countryDetail).toFixed(1)}%</strong> Kekuatan Darat, dan Komandan Armada memberikan <strong className="text-emerald-300">+{getKomandanArmadaBonusPercent(countryDetail).toFixed(1)}%</strong> Kekuatan Laut (1% per level blok).
                 </p>
                 {countryDetail?.ideology && (
                   <p>

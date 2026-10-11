@@ -18,7 +18,6 @@ import {
   Plane,
   Leaf,
   Home,
-  ShieldCheck,
   Siren,
   Ambulance,
   Building2,
@@ -69,7 +68,6 @@ const MINISTRY_EFFECTS: Record<string, { stat: string; perLevel: number; unit: s
   perdagangan: { stat: "perdagangan", perLevel: 0.01, unit: "%", label: "Harga Jual (+1%) & Beli (-1%)" },
   keuangan: { stat: "pajak", perLevel: 0.01, unit: "%", label: "Penerimaan Pajak" },
   // Keamanan
-  "dinas-keamanan": { stat: "stabilitas", perLevel: 0.01, unit: "%", label: "Stabilitas Politik" },
   polisi: { stat: "kriminalitas", perLevel: -0.01, unit: "%", label: "Tingkat Kriminalitas" },
   "garda-nasional": { stat: "separatisme", perLevel: -0.01, unit: "%", label: "Separatisme di Wilayah Kependudukan" },
   "komandan-angkatan-darat": { stat: "militer_darat", perLevel: 0.01, unit: "%", label: "Kekuatan Darat" },
@@ -226,14 +224,6 @@ const KEMENTERIAN: Department[] = [
 ];
 
 const KEAMANAN: Department[] = [
-  {
-    id: "dinas-keamanan",
-    name: "Dinas Keamanan",
-    icon: ShieldCheck,
-    baseIncomeCost: 100,
-    description: "Mengoordinasikan intelijen dan keamanan dalam negeri.",
-    effects: ["Stabilitas Politik: +1% per level"],
-  },
   {
     id: "polisi",
     name: "Polisi",

@@ -12,6 +12,10 @@ import Riwayat from "./tab_menu/3_riwayat";
 import { LoanRecord, renderFlag } from "./tab_menu/utils";
 import { processDueLoans } from "./tab_menu/logic/loanRepaymentLogic";
 import { calculateCountryGDP } from "@/app/logic/economic_logic/treasuryUpdater";
+import {
+  getBankSentralLoanSafeLimitBonusPercent,
+  getSafeDebtLimitRatio,
+} from "@/app/page/bonus_logic";
 
 // 🔥 IMPOR MODAL KONFIRMASI PINJAMAN
 import KonfirmasiPinjamanModalNegaraLain from "./tab_menu/1_negara_lain/konfirmasiPinjamanModals";
@@ -381,15 +385,33 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
                 <h4 className="text-[8px] lg:text-[9px] text-[#6B8A8A] font-black uppercase tracking-wider mb-1.5">Rasio Hutang terhadap PDB</h4>
                 <div className="flex justify-between items-end gap-2 mb-2">
                   <span className="text-xl lg:text-2xl font-black text-[#00FFAA]">{debtRatio}%</span>
-                  <span className="text-[10px] lg:text-xs font-bold text-[#6B8A8A] text-right">Batas Aman: 60%</span>
+                  <div className="text-[10px] lg:text-xs font-bold text-right flex items-center gap-1">
+                    <span className="text-[#6B8A8A]">Batas Aman:</span>
+                    {getBankSentralLoanSafeLimitBonusPercent(countryDetail) > 0 ? (
+                      <span className="flex items-center gap-1">
+                        <span className="line-through text-rose-400 opacity-80">60%</span>
+                        <span className="text-[#00FFAA] font-black">
+                          {getSafeDebtLimitRatio(countryDetail)}%
+                        </span>
+                      </span>
+                    ) : (
+                      <span className="text-[#6B8A8A]">60%</span>
+                    )}
+                  </div>
                 </div>
                 <div className="h-2.5 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all duration-700 ${
-                      debtRatio > 80 ? "bg-rose-500" : debtRatio > 60 ? "bg-amber-500" : "bg-emerald-500"
-                    }`}
-                    style={{ width: `${debtRatio}%` }}
-                  />
+                  {(() => {
+                    const safeLimit = getSafeDebtLimitRatio(countryDetail);
+                    const dangerLimit = safeLimit + 20;
+                    return (
+                      <div
+                        className={`h-full rounded-full transition-all duration-700 ${
+                          debtRatio > dangerLimit ? "bg-rose-500" : debtRatio > safeLimit ? "bg-amber-500" : "bg-emerald-500"
+                        }`}
+                        style={{ width: `${debtRatio}%` }}
+                      />
+                    );
+                  })()}
                 </div>
               </div>
 

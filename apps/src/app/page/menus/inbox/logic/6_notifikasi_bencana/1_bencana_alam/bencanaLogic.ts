@@ -4,6 +4,7 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import {
   applyKementerianLingkunganHidupDisasterImpactReduction,
+  applyLayananDaruratDisasterDeathReduction,
 } from '@/app/page/bonus_logic';
 
 export interface BencanaAlamNotification extends NotificationMessage {
@@ -245,7 +246,8 @@ function generateIncidentNotification(
 
   const [minK, maxK] = selectedEvent.korbanRange;
   const baseKorban = Math.floor(Math.random() * (maxK - minK + 1)) + minK;
-  const korban = applyKementerianLingkunganHidupDisasterImpactReduction(baseKorban, countryDetail);
+  const lingkunganReducedKorban = applyKementerianLingkunganHidupDisasterImpactReduction(baseKorban, countryDetail);
+  const korban = applyLayananDaruratDisasterDeathReduction(lingkunganReducedKorban, countryDetail);
 
   const [minR, maxR] = selectedEvent.kerugianRange;
   const baseKerugian = Math.floor(Math.random() * (maxR - minR + 1)) + minR;
