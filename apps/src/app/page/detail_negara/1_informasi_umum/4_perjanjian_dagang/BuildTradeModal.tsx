@@ -19,7 +19,7 @@ export default function BuildTradeModal({ isOpen, countryName, chancePercent, on
         <p className="text-sm text-[#5c3c10] mb-3">Apakah Anda ingin mengajukan perjanjian dagang kepada <strong>{countryName}</strong>? Ini akan membuka jalur perdagangan antara kedua negara jika diterima.</p>
         {chancePercent !== undefined && (
           <p className="text-sm font-bold text-[#5c3c10] mb-6">
-            Peluang diterima: {Math.round(chancePercent)}% (berdasarkan hubungan bilateral dan riset).
+            Peluang diterima: {Math.round(chancePercent)}% (berdasarkan hubungan bilateral, kabinet, dan riset).
           </p>
         )}
 

@@ -3,7 +3,13 @@
 import { useState, useEffect } from "react";
 import { X, Smile, Coins, Sparkles, AlertCircle, CheckCircle2, Clock, Info, BarChart3, PartyPopper, Lightbulb } from "lucide-react";
 import DanaTidakCukupModal from "./DanaTidakCukupModal";
-import { getDiplomasiAcaraBonusPercent, applyDiplomasiAcaraSatisfactionBonus } from "@/app/page/bonus_logic";
+import {
+  getDiplomasiAcaraBonusPercent,
+  applyDiplomasiAcaraSatisfactionBonus,
+  applyKementerianOlahragaSatisfactionBoost,
+  getKementerianOlahragaEventSatisfactionBonusPercent,
+  isSportEvent,
+} from "@/app/page/bonus_logic";
 
 interface NaikkanKepuasanModalProps {
   isOpen: boolean;
@@ -283,8 +289,13 @@ export default function NaikkanKepuasanModal({
                 const lastEndDate = isEventOngoing ? ongoingEvents[ongoingEvents.length - 1].endDate : null;
 
                 const baseBoost = item.boost;
-                const boostedBoost = applyDiplomasiAcaraSatisfactionBonus(baseBoost, countryDetail);
-                const hasAcaraResearchBonus = boostedBoost > baseBoost;
+                // 1. Terapkan bonus Diplomasi Acara Nasional (efek_acara)
+                const afterResearchBoost = applyDiplomasiAcaraSatisfactionBonus(baseBoost, countryDetail);
+                // 2. Terapkan bonus Kementerian Olahraga khusus acara olahraga saja
+                const boostedBoost = applyKementerianOlahragaSatisfactionBoost(afterResearchBoost, item.id, countryDetail);
+                const hasAcaraBonus = boostedBoost > baseBoost;
+                const isSport = isSportEvent(item.id);
+                const olahragaBonusPercent = getKementerianOlahragaEventSatisfactionBonusPercent(countryDetail);
 
                 return (
                   <div
@@ -302,11 +313,11 @@ export default function NaikkanKepuasanModal({
                         <Icon className="w-4 h-4 lg:w-5 lg:h-5 2xl:w-6 2xl:h-6" />
                       </div>
                       <div className="space-y-0.5 lg:space-y-1">
-                        <div className="flex items-center gap-2 lg:gap-3">
+                        <div className="flex items-center gap-2 lg:gap-3 flex-wrap">
                           <h4 className="text-xs lg:text-sm 2xl:text-md font-black text-[#E0E0E0] uppercase tracking-wide leading-none">
                             {item.title}
                           </h4>
-                          {hasAcaraResearchBonus ? (
+                          {hasAcaraBonus ? (
                             <span className="bg-[#00FFAA]/10 border border-[#00FFAA]/30 px-1.5 lg:px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5">
                               <span className="text-rose-400 line-through">+{baseBoost}%</span>
                               <span className="text-emerald-400">+{boostedBoost}% Kepuasan</span>
@@ -314,6 +325,11 @@ export default function NaikkanKepuasanModal({
                           ) : (
                             <span className="bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 px-1.5 lg:px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black uppercase tracking-wider">
                               +{baseBoost}% Kepuasan
+                            </span>
+                          )}
+                          {isSport && olahragaBonusPercent > 0 && (
+                            <span className="bg-sky-500/10 text-sky-300 border border-sky-500/30 px-1.5 py-0.5 rounded-md text-[7px] lg:text-[8px] font-black uppercase tracking-wider">
+                              +Kem. Olahraga ({olahragaBonusPercent.toFixed(0)}%)
                             </span>
                           )}
                         </div>

@@ -7,6 +7,8 @@ import { logger } from '../../../lib/logger';
 import { applyHinduPopulationGrowthBonus } from "@/app/page/bonus_logic/agama_bonus_logic/hindu";
 import { applySocialismBirthRateBonus } from "@/app/page/bonus_logic/ideologi_bonus_logic/sosialisme";
 import { applyKontrolPandemiFatalityReduction } from "@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/2_Kontrol Pandemi Global";
+import { applyKementerianKesehatanPandemicFatalityReduction } from "@/app/page/bonus_logic";
+import { applyKementerianPerumahanCapacityBonus, applyTotalHousingCapacityBonus } from "@/app/page/bonus_logic";
 
 // Import dari logic yang baru dibuat
 import { calculateKeamananLogic } from "@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/kematian_modals/logic/keamananLogic";
@@ -114,7 +116,8 @@ export const hitungKeterpenuhanHunian = (country: CountryDetail, metadata: Recor
     return total + Math.max(0, finiteNumber(country[key])) * unitCapacity;
   }, 0);
   const declaredCapacity = finiteNumber(country.total_kapasitas_hunian);
-  const capacity = Math.max(0, declaredCapacity > 0 ? declaredCapacity : calculatedCapacity);
+  const baseCapacity = Math.max(0, declaredCapacity > 0 ? declaredCapacity : calculatedCapacity);
+  const capacity = applyTotalHousingCapacityBonus(baseCapacity, country);
   return capacity / population;
 };
 
@@ -229,7 +232,8 @@ export const hitungDampakWabah = (
       const estimatedDeaths = Number.isFinite(Number(outbreak.perkiraanKematian))
         ? Math.max(0, finiteNumber(outbreak.perkiraanKematian))
         : victims * legacyDailyFatalityRate * durationDays;
-      const totalDeaths = applyKontrolPandemiFatalityReduction(estimatedDeaths, countryDetail);
+      const afterResearchDeaths = applyKontrolPandemiFatalityReduction(estimatedDeaths, countryDetail);
+      const totalDeaths = applyKementerianKesehatanPandemicFatalityReduction(afterResearchDeaths, countryDetail);
       const deathsThroughToday = Math.floor(totalDeaths * (elapsed + 1) / durationDays);
       const deathsBeforeToday = Math.floor(totalDeaths * elapsed / durationDays);
       kematianTambahan += deathsThroughToday - deathsBeforeToday;
@@ -447,13 +451,16 @@ export const calculateHomelessCount = (
   detail?: any
 ): number => {
   if (detail) {
-    if (typeof detail.tunawisma === 'number') {
-      return detail.tunawisma;
-    }
-    const totalHousingCapacity =
+    const baseHousingCapacity =
       (Number(detail.rumah_subsidi) || 0) * 5 +
       (Number(detail.apartemen) || 0) * 6000 +
       (Number(detail.mansion) || 0) * 10;
+    const declaredCapacity = finiteNumber(detail.total_kapasitas_hunian);
+    const baseCapacity = Math.max(0, declaredCapacity > 0 ? declaredCapacity : baseHousingCapacity);
+    const totalHousingCapacity = applyTotalHousingCapacityBonus(baseCapacity, detail);
+    if (typeof detail.tunawisma === 'number') {
+      return Math.max(0, Math.floor(detail.tunawisma - (totalHousingCapacity - baseCapacity)));
+    }
     return Math.max(0, populasi - totalHousingCapacity);
   }
   const baseHomelessRate = 0.007;

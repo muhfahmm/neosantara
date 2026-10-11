@@ -19,6 +19,8 @@ import {
   getWTOBuyPriceMultiplier,
   getOPECBuyPriceMultiplier,
   getStrategicTradeBonusPercent,
+  getKementerianPerdaganganPriceBonusPercent,
+  getKementerianPerdaganganBuyPriceMultiplier,
 } from "@/app/page/bonus_logic";
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import {
@@ -627,7 +629,8 @@ export default function ModalsKonfirmasiBeli({
   const strategicBuyMultiplier = strategicTradeBonusPercent > 0 ? (1 - strategicTradeBonusPercent / 100) : 1.0;
   
   // Combine discount factors (additive deduction: -10% + -5% + -20% = -35%)
-  const totalDiscountFraction = (1 - wtoBuyMultiplier) + (1 - protestantMultiplier) + (1 - opecBuyMultiplier) + (1 - strategicBuyMultiplier);
+  const ministryBuyMultiplier = getKementerianPerdaganganBuyPriceMultiplier(countryDetail);
+  const totalDiscountFraction = (1 - wtoBuyMultiplier) + (1 - protestantMultiplier) + (1 - opecBuyMultiplier) + (1 - strategicBuyMultiplier) + (1 - ministryBuyMultiplier);
   const combinedBuyMultiplier = Math.max(0.1, 1 - totalDiscountFraction);
   const pricePerUnit = Math.round(originalPricePerUnit * combinedBuyMultiplier);
   const hasTradeDiscount = totalDiscountFraction > 0;
@@ -883,17 +886,27 @@ export default function ModalsKonfirmasiBeli({
             <div className="flex justify-end gap-1.5 flex-wrap">
               {hasProtestantDiscount && (
                 <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                  Bonus Protestan: Diskon beli {PROTESTANT_BUY_PRICE_DISCOUNT * 100}%
+                  Bonus Agama Protestan: Diskon beli {PROTESTANT_BUY_PRICE_DISCOUNT * 100}%
                 </span>
               )}
               {isWTOActive && (
                 <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                  Bonus WTO: Diskon beli 10%
+                  Bonus Organisasi WTO: Diskon beli {Math.round((1 - wtoBuyMultiplier) * 100)}%
                 </span>
               )}
               {isOPECActive && (
                 <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                  Bonus OPEC: Diskon beli minyak 20%
+                  Bonus Organisasi OPEC: Diskon beli {Math.round((1 - opecBuyMultiplier) * 100)}%
+                </span>
+              )}
+              {strategicTradeBonusPercent > 0 && (
+                <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                  Bonus Riset Diplomasi Dagang: Diskon beli {strategicTradeBonusPercent}%
+                </span>
+              )}
+              {getKementerianPerdaganganPriceBonusPercent(countryDetail) > 0 && (
+                <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                  Bonus Kementerian Perdagangan: Diskon beli {getKementerianPerdaganganPriceBonusPercent(countryDetail)}%
                 </span>
               )}
             </div>

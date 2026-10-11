@@ -111,7 +111,8 @@ import {
   getKekuatanLautMultiplier,
   getHPDaratMultiplier,
   getHPUdaraMultiplier,
-  getHPLautMultiplier
+  getHPLautMultiplier,
+  getKementerianPertahananMilitaryPowerMultiplier,
 } from "@/app/page/bonus_logic";
 
 export function getArmadaUnitBreakdown(source: unknown): ArmadaUnitBreakdown[] {
@@ -121,10 +122,12 @@ export function getArmadaUnitBreakdown(source: unknown): ArmadaUnitBreakdown[] {
     : {};
   const ideology = sourceData.ideology ?? sourceData.ideologi;
   const countryName = String(sourceData.country || sourceData.nama || "").trim();
+  const kemPertahananPowerMult = getKementerianPertahananMilitaryPowerMultiplier(sourceData);
   const militaryMultiplier =
     getMonarchyMilitaryStrengthMultiplier(ideology) *
     getAuthoritarianMilitaryStrengthMultiplier(ideology) *
-    applyKerjaSamaRegionalToMultiplier(getNATOMilitaryMultiplier(countryName), sourceData);
+    applyKerjaSamaRegionalToMultiplier(getNATOMilitaryMultiplier(countryName), sourceData) *
+    kemPertahananPowerMult;
 
   const daratPowerMult = getKekuatanDaratMultiplier(sourceData);
   const udaraPowerMult = getKekuatanUdaraMultiplier(sourceData);

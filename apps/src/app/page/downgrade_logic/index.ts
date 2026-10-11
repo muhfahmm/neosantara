@@ -16,6 +16,7 @@
 
 import { isMemberOfUNESCO, isMemberOfITU } from '@/app/page/bonus_logic';
 import { applyKerjaSamaRegionalToFlatBonus } from '@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/4_Kerja Sama Organisasi Regional';
+import { getSainsPenelitianResearchSpeedBonusPercent } from '@/app/page/bonus_logic/kementerian_bonus_logic/3_Sains_Penelitian';
 
 export interface EducationResearchModifierInfo {
   educationPoints: number;
@@ -33,6 +34,7 @@ export interface CombinedResearchModifierInfo {
   researchContractPercentageChange: number;
   researchContractCount: number;
   hasAtheismBonus: boolean;
+  sainsPenelitianPercentageChange: number;
   label: string;
 }
 
@@ -139,8 +141,13 @@ export function calculateCombinedResearchDurationModifier(
     ituChange = applyKerjaSamaRegionalToFlatBonus(-5, countryDetail);
   }
 
+  const sainsPenelitianBonus = countryDetail
+    ? getSainsPenelitianResearchSpeedBonusPercent(countryDetail)
+    : 0;
+  const sainsPenelitianPercentageChange = -sainsPenelitianBonus;
+
   const totalPercentageChange = Number((
-    eduMod.percentageChange + atheismPercentageChange + researchContractPercentageChange + unescoChange + ituChange
+    eduMod.percentageChange + atheismPercentageChange + researchContractPercentageChange + unescoChange + ituChange + sainsPenelitianPercentageChange
   ).toFixed(1));
   const multiplier = Math.max(0.1, 1 + totalPercentageChange / 100);
 
@@ -158,6 +165,7 @@ export function calculateCombinedResearchDurationModifier(
     researchContractPercentageChange,
     researchContractCount: contractBonus.count,
     hasAtheismBonus,
+    sainsPenelitianPercentageChange,
     label: formattedTotal,
   };
 }

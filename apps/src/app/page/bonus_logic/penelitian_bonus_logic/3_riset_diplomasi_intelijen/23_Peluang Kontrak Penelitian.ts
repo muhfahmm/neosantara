@@ -1,4 +1,5 @@
 import { getResearchCardBonus, getResearchCardLevel } from "../../researchCardLevelBonus";
+import { getKementerianLuarNegeriTreatyChanceBonusPercent } from "../../kementerian_bonus_logic/8_Kementerian_Luar_Negeri";
 
 export const KONTRAK_PENELITIAN_RESEARCH_ID = "bonus_organisasi_pbb";
 
@@ -13,17 +14,14 @@ export function getResearchContractAcceptanceChancePercent(
   const safeRelationPercent = Number.isFinite(relationPercent)
     ? Math.min(100, Math.max(0, relationPercent))
     : 0;
-  if (!countryDetail) return safeRelationPercent;
-
-  const completedResearch = Array.isArray(countryDetail.completed_research)
+  const completedResearch = Array.isArray(countryDetail?.completed_research)
     ? countryDetail.completed_research
     : [];
-  if (!completedResearch.includes(KONTRAK_PENELITIAN_RESEARCH_ID)) {
-    return safeRelationPercent;
-  }
-
-  const bonusPercent = getResearchCardBonus(
-    getResearchCardLevel(countryDetail.research_levels, KONTRAK_PENELITIAN_RESEARCH_ID)
-  );
-  return Math.min(100, safeRelationPercent + bonusPercent);
+  const researchBonus = completedResearch.includes(KONTRAK_PENELITIAN_RESEARCH_ID)
+    ? getResearchCardBonus(
+      getResearchCardLevel(countryDetail?.research_levels, KONTRAK_PENELITIAN_RESEARCH_ID)
+    )
+    : 0;
+  const ministryBonus = getKementerianLuarNegeriTreatyChanceBonusPercent(countryDetail);
+  return Math.min(100, safeRelationPercent + researchBonus + ministryBonus);
 }

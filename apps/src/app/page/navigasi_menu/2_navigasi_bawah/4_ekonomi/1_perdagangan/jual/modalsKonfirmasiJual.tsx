@@ -18,6 +18,8 @@ import {
   getWTOSellPriceMultiplier,
   getOPECSellPriceMultiplier,
   getStrategicTradeBonusPercent,
+  getKementerianPerdaganganPriceBonusPercent,
+  getKementerianPerdaganganSellPriceMultiplier,
 } from "@/app/page/bonus_logic";
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import {
@@ -331,7 +333,8 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
   const strategicTradeBonusPercent = getStrategicTradeBonusPercent(countryDetail);
   const strategicSellBonus = strategicTradeBonusPercent > 0 ? (strategicTradeBonusPercent / 100) : 0;
   
-  const combinedSellMultiplier = (wtoSellMultiplier - 1) + (protestantMultiplier - 1) + (opecSellMultiplier - 1) + strategicSellBonus;
+  const ministrySellMultiplier = getKementerianPerdaganganSellPriceMultiplier(countryDetail);
+  const combinedSellMultiplier = (wtoSellMultiplier - 1) + (protestantMultiplier - 1) + (opecSellMultiplier - 1) + strategicSellBonus + (ministrySellMultiplier - 1);
   const pricePerUnit = Math.round(currentPrice * (1 + combinedSellMultiplier));
   const hasTradeBonus = combinedSellMultiplier > 0;
   const totalPrice = pricePerUnit * quantity;
@@ -524,7 +527,7 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
                 <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Harga / unit:</span>
                 <div className="flex items-center gap-1.5">
                   {hasTradeBonus && (
-                    <span className="text-sm font-bold text-emerald-400 line-through">
+                    <span className="text-sm font-bold text-rose-400 line-through opacity-80">
                       {formatTradePrice(currentPrice)}
                     </span>
                   )}
@@ -536,17 +539,27 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
                 <div className="flex justify-end gap-1.5 flex-wrap">
                   {hasProtestantBonus && (
                     <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                      Bonus Protestan: Harga jual +{PROTESTANT_SELL_PRICE_BONUS * 100}%
+                      Bonus Agama Protestan: +{PROTESTANT_SELL_PRICE_BONUS * 100}%
                     </span>
                   )}
                   {isWTOActive && (
                     <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                      Bonus WTO: Harga jual +15%
+                      Bonus Organisasi WTO: +{Math.round((wtoSellMultiplier - 1) * 100)}%
                     </span>
                   )}
                   {isOPECActive && (
                     <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                      Bonus OPEC: Harga jual minyak +20%
+                      Bonus Organisasi OPEC: +{Math.round((opecSellMultiplier - 1) * 100)}%
+                    </span>
+                  )}
+                  {strategicTradeBonusPercent > 0 && (
+                    <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                      Bonus Riset Diplomasi Dagang: +{strategicTradeBonusPercent}%
+                    </span>
+                  )}
+                  {getKementerianPerdaganganPriceBonusPercent(countryDetail) > 0 && (
+                    <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                      Bonus Kementerian Perdagangan: +{getKementerianPerdaganganPriceBonusPercent(countryDetail)}%
                     </span>
                   )}
                 </div>

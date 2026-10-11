@@ -19,7 +19,7 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, chancePercent
 				<p className="text-sm text-[#5c3c10] mb-3">Apakah Anda ingin mengajukan Pakta Non-Agresi kepada <strong>{countryName}</strong>? Pakta berlaku jika diterima dan menegaskan kedua negara tidak akan saling menyerang.</p>
 				{chancePercent !== undefined && (
 					<p className="text-sm font-bold text-[#5c3c10] mb-6">
-						Peluang diterima: {Math.round(chancePercent)}% (berdasarkan hubungan bilateral dan riset).
+						Peluang diterima: {Math.round(chancePercent)}% (berdasarkan hubungan bilateral, kabinet, dan riset).
 					</p>
 				)}
 

@@ -10,6 +10,7 @@ import {
   getResearchContractDurationReduction,
 } from '@/app/page/downgrade_logic';
 import { isMemberOfUNESCO, isMemberOfITU } from '@/app/page/bonus_logic';
+import { getSainsPenelitianResearchSpeedBonusPercent } from '@/app/page/bonus_logic/kementerian_bonus_logic/3_Sains_Penelitian';
 
 export type SelectionCategoryKey = 'ekonomi' | 'militer' | 'diplomasi';
 
@@ -33,6 +34,7 @@ export default function PenelitianSelectionModal({
   const countryName = countryDetail?.country || '';
   const isUNESCOMember = isMemberOfUNESCO(countryName);
   const isITUMember = isMemberOfITU(countryName);
+  const sainsPenelitianBonus = getSainsPenelitianResearchSpeedBonusPercent(countryDetail);
 
   const educationPoints = calculateEducationPoints(countryDetail);
   const educationModifier = getEducationResearchModifier(educationPoints);
@@ -100,38 +102,34 @@ export default function PenelitianSelectionModal({
               <div className="space-y-2.5 text-xs">
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20">
                   <span className="font-semibold text-gray-300">Keanggotaan UNESCO:</span>
-                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${
-                    isUNESCOMember ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-gray-800 text-gray-400'
-                  }`}>
+                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${isUNESCOMember ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-gray-800 text-gray-400'
+                    }`}>
                     {isUNESCOMember ? 'Aktif (+5% Riset Sains)' : 'Tidak Aktif'}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20">
                   <span className="font-semibold text-gray-300">Keanggotaan ITU:</span>
-                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${
-                    isITUMember ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-gray-800 text-gray-400'
-                  }`}>
+                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${isITUMember ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-gray-800 text-gray-400'
+                    }`}>
                     {isITUMember ? 'Aktif (+5% Kecepatan Riset)' : 'Tidak Aktif'}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20">
                   <span className="font-semibold text-gray-300">Efek Pendidikan ({educationPoints} Poin):</span>
-                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${
-                    educationModifier.isPenalty
-                      ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30'
-                      : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30'
-                  }`}>
+                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${educationModifier.isPenalty
+                    ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30'
+                    : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30'
+                    }`}>
                     {educationModifier.label.toUpperCase()}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20">
                   <span className="font-semibold text-gray-300">Agama Ateisme:</span>
-                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${
-                    hasAtheismResearchBonus ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-gray-800 text-gray-400'
-                  }`}>
+                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${hasAtheismResearchBonus ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30' : 'bg-gray-800 text-gray-400'
+                    }`}>
                     {hasAtheismResearchBonus ? 'Aktif (Durasi -15%)' : 'Tidak Aktif'}
                   </span>
                 </div>
@@ -140,6 +138,18 @@ export default function PenelitianSelectionModal({
                   <span className="font-semibold text-gray-300">Kontrak Penelitian:</span>
                   <span className="font-bold uppercase px-2 py-0.5 rounded text-[10px] bg-sky-500/10 text-sky-300 border border-sky-500/30">
                     {contractBonus.count} Negara (-{contractBonus.percentage.toFixed(1)}%)
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20">
+                  <span className="font-semibold text-gray-300">Sains & Penelitian:</span>
+                  <span className={`font-bold uppercase px-2 py-0.5 rounded text-[10px] ${sainsPenelitianBonus > 0
+                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                    : 'bg-gray-800 text-gray-400'
+                    }`}>
+                    {sainsPenelitianBonus > 0
+                      ? `Aktif (-${sainsPenelitianBonus.toFixed(1)}% Waktu Riset)`
+                      : 'Tidak Aktif'}
                   </span>
                 </div>
               </div>

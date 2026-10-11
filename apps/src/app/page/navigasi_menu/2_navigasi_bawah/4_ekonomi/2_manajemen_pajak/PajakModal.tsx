@@ -33,6 +33,8 @@ import {
 import {
   getHarmonisasiFiskalGlobalBonusPercent,
   applyHarmonisasiFiskalGlobalTaxRevenueBonus,
+  getKementerianKeuanganTaxRevenueBonusPercent,
+  applyKementerianKeuanganTaxRevenueBonus,
 } from "@/app/page/bonus_logic";
 
 interface ModalProps {
@@ -287,8 +289,9 @@ export default function PajakModal({
   };
 
   const harmonisasiTaxBonusPercent = getHarmonisasiFiskalGlobalBonusPercent(countryDetail);
+  const kemenkeuTaxBonusPercent = getKementerianKeuanganTaxRevenueBonusPercent(countryDetail);
 
-  // Hitung total pendapatan dari semua pajak (untuk ditampilkan)
+  // Hitung total pendapatan dari semua pajak (sebelum bonus kementerian & harmonisasi)
   const baseTotalIncome =
     vatRevenue +
     corporateTaxRevenue +
@@ -296,10 +299,20 @@ export default function PajakModal({
     cigaretteTaxRevenue +
     environmentalTaxRevenue;
 
-  const totalIncome = applyHarmonisasiFiskalGlobalTaxRevenueBonus(
+  const totalIncomeWithHarmonisasi = applyHarmonisasiFiskalGlobalTaxRevenueBonus(
     baseTotalIncome,
     countryDetail
   );
+
+  const totalIncome = Math.round(
+    applyKementerianKeuanganTaxRevenueBonus(
+      totalIncomeWithHarmonisasi,
+      countryDetail
+    )
+  );
+
+  const hasKemenkeuBonus = kemenkeuTaxBonusPercent > 0;
+  const kemenkeuBonusAmount = Math.max(0, totalIncome - Math.round(totalIncomeWithHarmonisasi));
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -486,14 +499,31 @@ export default function PajakModal({
 
           {/* Total Income Summary */}
           <div className="mt-8 p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424]">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-black text-[#00FFAA] uppercase tracking-widest">
+            <div className="flex justify-between items-center flex-wrap gap-2">
+              <span className="text-sm font-black text-[#00FFAA] uppercase tracking-widest flex items-center gap-1.5">
                 Total Pendapatan Pajak
+                {hasKemenkeuBonus && (
+                  <span className="text-xs font-black text-[#00FFAA] normal-case">
+                    + bonus ({kemenkeuTaxBonusPercent}%) =
+                  </span>
+                )}
               </span>
-              <span className="text-2xl font-black text-emerald-400">
-                {totalIncome.toLocaleString("id-ID")} NEO
-              </span>
+              <div className="flex items-center gap-2">
+                {hasKemenkeuBonus && (
+                  <span className="text-base font-bold text-rose-400 line-through opacity-80">
+                    {Math.round(totalIncomeWithHarmonisasi).toLocaleString("id-ID")}
+                  </span>
+                )}
+                <span className="text-2xl font-black text-emerald-400">
+                  {totalIncome.toLocaleString("id-ID")} NEO
+                </span>
+              </div>
             </div>
+            {hasKemenkeuBonus && (
+              <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                Bonus Kementerian Keuangan: Seluruh penerimaan pajak +{kemenkeuTaxBonusPercent}% (+{kemenkeuBonusAmount.toLocaleString("id-ID")} NEO)
+              </span>
+            )}
             {hasDemocracyTaxBonus && (
               <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
                 Bonus Demokrasi: seluruh penerimaan pajak +{DEMOCRACY_TAX_REVENUE_BONUS * 100}%

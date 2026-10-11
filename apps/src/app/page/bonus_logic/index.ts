@@ -22,6 +22,71 @@ import {
   applyKerjaSamaRegionalToMultiplier,
 } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/4_Kerja Sama Organisasi Regional";
 import { applySinergiEkonomiGlobalMultiplier } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/25_Sinergi Ekonomi Global";
+import {
+  getKementerianInfrastrukturBuildSpeedBonusPercent,
+  applyKementerianInfrastrukturBuildTimeDiscount,
+} from "./kementerian_bonus_logic/1_Kementerian_Infrastruktur";
+import {
+  getKementerianPendidikanProductionBonusPercent,
+  applyKementerianPendidikanProductionBonus,
+} from "./kementerian_bonus_logic/2_Kementerian_Pendidikan";
+import {
+  getSainsPenelitianResearchSpeedBonusPercent,
+  applySainsPenelitianResearchDurationDiscount,
+} from "./kementerian_bonus_logic/3_Sains_Penelitian";
+import {
+  getKementerianKesehatanPandemicReductionBonusPercent,
+  applyKementerianKesehatanPandemicFatalityReduction,
+} from "./kementerian_bonus_logic/4_Kementerian_Kesehatan";
+import {
+  SPORT_EVENT_IDS,
+  isSportEvent,
+  getKementerianOlahragaEventSatisfactionBonusPercent,
+  applyKementerianOlahragaSatisfactionBoost,
+} from "./kementerian_bonus_logic/5_Kementerian_Olahraga";
+import {
+  getKementerianKehakimanCrimeReductionBonusPercent,
+  applyKementerianKehakimanCrimeReduction,
+} from "./kementerian_bonus_logic/6_Kementerian_Kehakiman";
+import {
+  getKementerianPertahananMilitaryPowerBonusPercent,
+  getKementerianPertahananMilitaryPowerMultiplier,
+  applyKementerianPertahananMilitaryPower,
+} from "./kementerian_bonus_logic/6_Kementerian_Pertahanan";
+import {
+  getKementerianLuarNegeriTreatyChanceBonusPercent,
+  applyKementerianLuarNegeriTreatyChanceBonus,
+} from "./kementerian_bonus_logic/8_Kementerian_Luar_Negeri";
+import {
+  getKementerianKebudayaanRatingDecayReductionPercent,
+  applyKementerianKebudayaanRatingDecayReduction,
+} from "./kementerian_bonus_logic/9_Kementerian_Kebudayaan";
+import {
+  getKementerianPariwisataIncomeBonusPercent,
+  applyKementerianPariwisataIncomeBonus,
+} from "./kementerian_bonus_logic/10_Kementerian_Pariwisata";
+import {
+  getKementerianLingkunganHidupDisasterReductionPercent,
+  applyKementerianLingkunganHidupDisasterRiskReduction,
+  applyKementerianLingkunganHidupDisasterImpactReduction,
+} from "./kementerian_bonus_logic/11_Kementerian_Lingkungan_Hidup";
+import {
+  getKementerianPerumahanCapacityBonusPercent,
+  applyKementerianPerumahanCapacityBonus,
+  getTotalHousingCapacityBonusPercent,
+  applyTotalHousingCapacityBonus,
+} from "./kementerian_bonus_logic/12_Kementerian_Perumahan";
+import { getKementerianPembangunanBuildSpeedBonusPercent } from "./kementerian_bonus_logic/13_Kementerian_Pembangunan";
+import {
+  getKementerianPerdaganganPriceBonusPercent,
+  getKementerianPerdaganganSellPriceMultiplier,
+  getKementerianPerdaganganBuyPriceMultiplier,
+} from "./kementerian_bonus_logic/14_Kementerian_Perdagangan";
+import {
+  getKementerianKeuanganTaxRevenueBonusPercent,
+  applyKementerianKeuanganTaxRevenueBonus,
+} from "./kementerian_bonus_logic/15_Kementerian_Keuangan";
+
 const RESEARCH_CARDS_BY_PRODUCTION_SECTOR: Record<string, string[]> = {
   manufaktur: ["otomasi_industri"],
   mineral: ["manufaktur_terintegrasi"],
@@ -100,7 +165,12 @@ export function getProductionBonusMultiplier(
   const researchMultiplier = getResearchProductionMultiplier(countryDetail, resourceKey);
   const baseMultiplier = religiousMultiplier * ideologyMultiplier * nationalismMultiplier * faoMultiplier * iloMultiplier * imoMultiplier * okiMultiplier * researchMultiplier;
 
-  return applySinergiEkonomiGlobalMultiplier(baseMultiplier, countryDetail);
+  const ministryMultiplier = applyKementerianPendidikanProductionBonus(
+    baseMultiplier,
+    countryDetail,
+    resourceKey
+  );
+  return applySinergiEkonomiGlobalMultiplier(ministryMultiplier, countryDetail);
 }
 
 // Organisasi PBB
@@ -367,6 +437,66 @@ export {
 } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/20_Program Permukiman Terpadu";
 
 
+export {
+  getKementerianInfrastrukturBuildSpeedBonusPercent,
+  applyKementerianInfrastrukturBuildTimeDiscount,
+};
+
+export {
+  getKementerianPendidikanProductionBonusPercent,
+  applyKementerianPendidikanProductionBonus,
+};
+
+export {
+  getSainsPenelitianResearchSpeedBonusPercent,
+  applySainsPenelitianResearchDurationDiscount,
+};
+
+export {
+  getKementerianKesehatanPandemicReductionBonusPercent,
+  applyKementerianKesehatanPandemicFatalityReduction,
+};
+
+export {
+  SPORT_EVENT_IDS,
+  isSportEvent,
+  getKementerianOlahragaEventSatisfactionBonusPercent,
+  applyKementerianOlahragaSatisfactionBoost,
+};
+
+export {
+  getKementerianKehakimanCrimeReductionBonusPercent,
+  applyKementerianKehakimanCrimeReduction,
+};
+
+export {
+  getKementerianPertahananMilitaryPowerBonusPercent,
+  getKementerianPertahananMilitaryPowerMultiplier,
+  applyKementerianPertahananMilitaryPower,
+};
+
+export {
+  getKementerianLuarNegeriTreatyChanceBonusPercent,
+  applyKementerianLuarNegeriTreatyChanceBonus,
+  getKementerianKebudayaanRatingDecayReductionPercent,
+  applyKementerianKebudayaanRatingDecayReduction,
+  getKementerianPariwisataIncomeBonusPercent,
+  applyKementerianPariwisataIncomeBonus,
+  getKementerianLingkunganHidupDisasterReductionPercent,
+  applyKementerianLingkunganHidupDisasterRiskReduction,
+  applyKementerianLingkunganHidupDisasterImpactReduction,
+  getKementerianPerumahanCapacityBonusPercent,
+  applyKementerianPerumahanCapacityBonus,
+  getTotalHousingCapacityBonusPercent,
+  applyTotalHousingCapacityBonus,
+  getKementerianPembangunanBuildSpeedBonusPercent,
+  getKementerianPerdaganganPriceBonusPercent,
+  getKementerianPerdaganganSellPriceMultiplier,
+  getKementerianPerdaganganBuyPriceMultiplier,
+  getKementerianKeuanganTaxRevenueBonusPercent,
+  applyKementerianKeuanganTaxRevenueBonus,
+};
+
 export function getBuildSpeedModifier(countryName: string): number {
   return getASEANBuildSpeedModifier(countryName) + getUniAfrikaBuildSpeedModifier(countryName);
 }
@@ -377,8 +507,16 @@ export function getEffectiveBuildTime(
   countryDetail?: Record<string, unknown> | null
 ): number {
   const baseSpeedBonus = getBuildSpeedModifier(countryName);
-  const speedBonus = applyKerjaSamaRegionalToFlatBonus(baseSpeedBonus, countryDetail);
-  if (speedBonus <= 0 || !baseDays) return baseDays;
-  const mult = 1 + (speedBonus / 100);
+  const regionalSpeedBonus = applyKerjaSamaRegionalToFlatBonus(baseSpeedBonus, countryDetail);
+  const infrastructureBonus = countryDetail
+    ? getKementerianInfrastrukturBuildSpeedBonusPercent(countryDetail)
+    : 0;
+  const developmentBonus = countryDetail
+    ? getKementerianPembangunanBuildSpeedBonusPercent(countryDetail)
+    : 0;
+
+  const totalSpeedBonus = regionalSpeedBonus + infrastructureBonus + developmentBonus;
+  if (totalSpeedBonus <= 0 || !baseDays) return baseDays;
+  const mult = 1 + (totalSpeedBonus / 100);
   return Math.max(1, Math.ceil(baseDays / mult));
 }

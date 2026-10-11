@@ -8,6 +8,10 @@ import InfoBangunanModal from "./1_modals_info_bangunan/info_bangunan_modals";
 import KonfirmasiPembangunanModal from "./2_modals_konfirmasi_pembangunan/modalsKonfirmasiPembangunan";
 import { useMaterialProduction, getMaterialStock as getMaterialStockFromBuildLogic, deductBuildingMaterials } from "../build_logic/build_logic";
 import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
+import {
+  getTotalHousingCapacityBonusPercent,
+  applyTotalHousingCapacityBonus,
+} from "@/app/page/bonus_logic";
 
 const DEFAULT_ELECTRICITY_CONSUMPTION: Record<string, number> = {
   rumah_subsidi: 0.0009,
@@ -283,13 +287,18 @@ export default function HunianPermukimanModal({
     mansion: 10,
   };
 
+  const housingBonusPercent = useMemo(() => {
+    return getTotalHousingCapacityBonusPercent(countryDetail);
+  }, [countryDetail]);
+
   const totalCapacity = useMemo(() => {
     let cap = 0;
     HUNIAN_KEYS.forEach((key) => {
       const count = Number(countryDetail?.[key]) || 0;
       const bMeta = findMeta(key);
-      const capacity = Number(bMeta?.kapasitas) || DEFAULT_CAPACITIES[key] || 0;
-      cap += count * capacity;
+      const baseCap = Number(bMeta?.kapasitas) || DEFAULT_CAPACITIES[key] || 0;
+      const effectiveCap = applyTotalHousingCapacityBonus(baseCap, countryDetail);
+      cap += count * effectiveCap;
     });
     return cap;
   }, [countryDetail, metadata]);
@@ -302,13 +311,15 @@ export default function HunianPermukimanModal({
     return HUNIAN_KEYS.map((key) => {
       const count = Number(countryDetail?.[key]) || 0;
       const bMeta = findMeta(key);
-      const capacity = Number(bMeta?.kapasitas) || DEFAULT_CAPACITIES[key] || 0;
-      const total = count * capacity;
+      const baseCap = Number(bMeta?.kapasitas) || DEFAULT_CAPACITIES[key] || 0;
+      const effectiveCap = applyTotalHousingCapacityBonus(baseCap, countryDetail);
+      const total = count * effectiveCap;
       return {
         key,
         label: getLabel(key),
         count,
-        capacityPerUnit: capacity,
+        baseCapacityPerUnit: baseCap,
+        capacityPerUnit: effectiveCap,
         totalCapacity: total,
         percentage: population > 0 ? (total / population) * 100 : 0,
       };
@@ -409,13 +420,36 @@ export default function HunianPermukimanModal({
                             <Users className="w-3.5 h-3.5 text-[#00FFAA]" />
                           </div>
                           <div>
-                            <p className="text-[9px] font-black uppercase text-[#6B8A8A] tracking-wider">Kapasitas Standar AI</p>
-                            <p className="text-[10px] sm:text-xs font-black text-[#00FFAA]">
-                              1 Unit : {
-                                activeItem.key === 'rumah_subsidi' ? '5 Jiwa' :
-                                activeItem.key === 'apartemen' ? '6.000 Jiwa' : '10 Jiwa'
-                              }
-                            </p>
+                            <div className="flex items-center gap-1.5">
+                              <p className="text-[9px] font-black uppercase text-[#6B8A8A] tracking-wider">Kapasitas Standar AI</p>
+                              {housingBonusPercent > 0 && (
+                                <span className="text-[8px] font-black px-1.5 py-0.2 rounded bg-[#00FFAA]/20 text-[#00FFAA] border border-[#00FFAA]/40">
+                                  +{housingBonusPercent}% Bonus
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-[10px] sm:text-xs font-black flex items-center gap-1.5 mt-0.5">
+                              <span>1 Unit :</span>
+                              {(() => {
+                                const activeMeta = findMeta(activeItem.key);
+                                const baseCap = Number(activeMeta?.kapasitas) || DEFAULT_CAPACITIES[activeItem.key] || 0;
+                                const effectiveCap = applyTotalHousingCapacityBonus(baseCap, countryDetail);
+                                const hasBonus = housingBonusPercent > 0 && effectiveCap !== baseCap;
+
+                                return (
+                                  <span className="flex items-center gap-1.5">
+                                    {hasBonus && (
+                                      <span className="line-through text-rose-400 font-bold opacity-80">
+                                        {baseCap.toLocaleString('id-ID')}
+                                      </span>
+                                    )}
+                                    <span className="text-[#00FFAA] font-black">
+                                      {effectiveCap.toLocaleString('id-ID')} Jiwa
+                                    </span>
+                                  </span>
+                                );
+                              })()}
+                            </div>
                           </div>
                         </div>
 
@@ -555,7 +589,16 @@ export default function HunianPermukimanModal({
                           </div>
                           <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/20 flex flex-col justify-between">
                             <span className="text-[10px] text-[#6B8A8A] font-bold uppercase">Kapasitas / Unit</span>
-                            <span className="font-black text-sm text-[#E0E0E0] mt-1">{item.capacityPerUnit} jiwa/unit</span>
+                            <div className="flex items-center gap-1.5 mt-1">
+                              {housingBonusPercent > 0 && item.capacityPerUnit !== item.baseCapacityPerUnit && (
+                                <span className="line-through text-rose-400 font-bold text-xs opacity-80">
+                                  {item.baseCapacityPerUnit.toLocaleString('id-ID')}
+                                </span>
+                              )}
+                              <span className="font-black text-sm text-[#E0E0E0]">
+                                {item.capacityPerUnit.toLocaleString('id-ID')} jiwa/unit
+                              </span>
+                            </div>
                           </div>
                           <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/20 flex flex-col justify-between">
                             <span className="text-[10px] text-[#6B8A8A] font-bold uppercase">Total Kapasitas Kategori</span>

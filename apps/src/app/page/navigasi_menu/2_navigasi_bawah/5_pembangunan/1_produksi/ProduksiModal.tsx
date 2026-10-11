@@ -30,7 +30,12 @@ import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid
 import { getEconomicEmbargoIncomeMultiplier, getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
 import { loadActiveResolutions, isPassedResolutionActive, normalizePbbCountryName } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { loadActiveSecurityCouncilItems } from "../../7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic";
-import { getEffectiveBuildTime, getProductionBonusMultiplier } from "../../../../bonus_logic";
+import {
+  getEffectiveBuildTime,
+  getProductionBonusMultiplier,
+  getKementerianPendidikanProductionBonusPercent,
+  getKementerianPembangunanBuildSpeedBonusPercent,
+} from "../../../../bonus_logic";
 import { applyJewishConstructionTimeDiscount } from "../../../../bonus_logic/agama_bonus_logic/yahudi";
 import {
   getManufakturMaterialBonusPercent,
@@ -39,6 +44,7 @@ import {
   getAgrikulturTangguhBonusPercent,
   getTeknologiPerikananPascapanenBonusPercent,
   getIndustriPanganTerintegrasiBonusPercent,
+  getKementerianInfrastrukturBuildSpeedBonusPercent,
 } from "../../../../bonus_logic";
 import {
   DEMOCRACY_TAX_REVENUE_BONUS,
@@ -152,6 +158,10 @@ export default function ProduksiModal({
   const currentReligionBonus = RELIGION_BONUS_INFO[currentReligion.toLowerCase()];
   const currentIdeology = String(countryDetail?.ideology || "").trim();
   const currentIdeologyBonus = IDEOLOGY_BONUS_INFO[currentIdeology.toLowerCase()];
+  const pendidikanProductionBonusPercent = getKementerianPendidikanProductionBonusPercent(
+    countryDetail,
+    "padi"
+  );
 
   const RESOURCE_KEY_ALIASES: Record<string, string> = {};
   const normalizeResourceKey = (key: string) => RESOURCE_KEY_ALIASES[key] || key;
@@ -470,11 +480,17 @@ export default function ProduksiModal({
       buildQuantity
     );
 
+    const userReligion = String(
+      countryDetail?.religion ||
+      countryDetail?.agama_utama ||
+      countryDetail?.agama ||
+      ""
+    ).trim().toLowerCase();
     const baseConstructionTime = Number(bMeta.waktu_pembangunan) || 0;
     let waktu = applyJewishConstructionTimeDiscount(
       baseConstructionTime,
       key,
-      countryDetail?.religion
+      userReligion
     );
 
     const manufakturDiscount = getManufakturMaterialBonusPercent(countryDetail, key);
@@ -651,8 +667,8 @@ export default function ProduksiModal({
               <button
                 type="button"
                 onClick={() => setShowSanctionInfo(true)}
-                aria-label="Informasi bonus agama, sanksi, dan embargo"
-                title="Lihat informasi bonus agama, sanksi, dan embargo"
+                aria-label="Informasi bonus agama, ideologi, kementerian, sanksi, dan embargo"
+                title="Lihat informasi bonus agama, ideologi, kementerian, sanksi, dan embargo"
                 className="flex h-8 w-8 items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 hover:shadow-md hover:shadow-[#00FFAA]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00FFAA] cursor-pointer"
               >
                 <Info className="h-4 w-4" />
@@ -676,7 +692,7 @@ export default function ProduksiModal({
                   <Info className="h-5 w-5 text-[#00FFAA]" />
                 </div>
                 <h3 id="production-sanction-info-title" className="text-sm font-black uppercase tracking-wide text-[#00FFAA]">
-                  Info Bonus Agama, Ideologi & Sanksi
+                  Info Bonus Agama, Ideologi, Kementerian & Sanksi
                 </h3>
               </div>
               <button
@@ -689,8 +705,14 @@ export default function ProduksiModal({
               </button>
             </div>
             <div className="space-y-4 px-5 py-5 text-sm leading-relaxed text-slate-300">
-              {currentReligionBonus || currentIdeologyBonus || isMemberOfFAO(playerCountryName) ? (
+              {currentReligionBonus || currentIdeologyBonus || isMemberOfFAO(playerCountryName) || pendidikanProductionBonusPercent > 0 ? (
                 <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-200 space-y-2">
+                  {pendidikanProductionBonusPercent > 0 && (
+                    <p>
+                      <strong className="text-white">Kementerian Pendidikan:</strong>{" "}
+                      Bonus <strong className="text-emerald-300">+{pendidikanProductionBonusPercent.toFixed(1)}%</strong> produksi pangan dan sumber daya alam, berdasarkan level kabinet (1% per blok) serta bonus menteri jika ada. Berlaku di sektor <strong className="text-emerald-300">Mineral & Energi, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan</strong>.
+                    </p>
+                  )}
                   {currentReligionBonus && (
                     <p>
                       <strong className="text-white">Agama saat ini: {currentReligion}.</strong>{" "}
@@ -791,6 +813,25 @@ export default function ProduksiModal({
           materialStocks[mat.resourceKey] = getMaterialStock(mat.resourceKey);
         });
 
+        const userReligion = String(
+          countryDetail?.religion ||
+          countryDetail?.agama_utama ||
+          countryDetail?.agama ||
+          ""
+        ).trim().toLowerCase();
+        const baseTime = Number(bMeta?.waktu_pembangunan) || 0;
+        const effectiveTime = getEffectiveBuildTime(
+          baseTime,
+          String(countryDetail?.country || countryDetail?.nama || ""),
+          countryDetail
+        );
+        const jewishDiscountedTime = applyJewishConstructionTimeDiscount(
+          effectiveTime,
+          selectedBuilding.key,
+          userReligion
+        );
+        const hasJewishDiscount = userReligion === "yahudi" && jewishDiscountedTime < effectiveTime;
+
         return (
           <KonfirmasiPembangunanModal
             isOpen={true}
@@ -802,16 +843,15 @@ export default function ProduksiModal({
             buildingDescription={bMeta?.deskripsi || bMeta?.desc}
             cost={cost}
             waktuPembangunan={bMeta?.waktu_pembangunan}
-            waktuPembangunanDiskon={applyJewishConstructionTimeDiscount(
-              getEffectiveBuildTime(
-                Number(bMeta?.waktu_pembangunan) || 0,
-                String(countryDetail?.country || countryDetail?.nama || ""),
-                countryDetail
-              ),
-              selectedBuilding.key,
-              countryDetail?.religion
-            )}
+            waktuPembangunanDiskon={jewishDiscountedTime}
+            hasJewishDiscount={hasJewishDiscount}
+            infraBonusPercent={getKementerianInfrastrukturBuildSpeedBonusPercent(countryDetail)}
+            pembangunanBonusPercent={getKementerianPembangunanBuildSpeedBonusPercent(countryDetail)}
             produksiPerHari={bMeta?.produksi}
+            kementerianPendidikanBonusPercent={getKementerianPendidikanProductionBonusPercent(
+              countryDetail,
+              selectedBuilding.key
+            )}
             produksiLabel={bMeta?.label || selectedBuilding.label}
             konsumsiListrik={bMeta?.konsumsi_listrik}
             requirements={selectedBuildingRequirements?.requirements || []}

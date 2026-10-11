@@ -2,6 +2,9 @@
 // Logika dan generator event Bencana Alam (Weight 60%)
 
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import {
+  applyKementerianLingkunganHidupDisasterImpactReduction,
+} from '@/app/page/bonus_logic';
 
 export interface BencanaAlamNotification extends NotificationMessage {
   tradeType: 'bencana_alam';
@@ -222,6 +225,7 @@ export const BENCANA_ALAM_POOL: BencanaEventItem[] = [
 function generateIncidentNotification(
   userCountryName: string,
   dateStr: string,
+  countryDetail?: Record<string, unknown> | null,
 ): BencanaAlamNotification {
   if (BENCANA_ALAM_POOL.length === 0) {
     throw new Error('Tidak ada kejadian yang tersedia untuk dibuat menjadi notifikasi.');
@@ -240,10 +244,12 @@ function generateIncidentNotification(
   }
 
   const [minK, maxK] = selectedEvent.korbanRange;
-  const korban = Math.floor(Math.random() * (maxK - minK + 1)) + minK;
+  const baseKorban = Math.floor(Math.random() * (maxK - minK + 1)) + minK;
+  const korban = applyKementerianLingkunganHidupDisasterImpactReduction(baseKorban, countryDetail);
 
   const [minR, maxR] = selectedEvent.kerugianRange;
-  const totalKerugian = Math.floor(Math.random() * (maxR - minR + 1)) + minR;
+  const baseKerugian = Math.floor(Math.random() * (maxR - minR + 1)) + minR;
+  const totalKerugian = applyKementerianLingkunganHidupDisasterImpactReduction(baseKerugian, countryDetail);
 
   // For natural disasters, emergency aid is calculated at 1 NEO per affected person.
   const bantuanCost = korban;
@@ -272,6 +278,7 @@ function generateIncidentNotification(
 export function generateBencanaAlamNotification(
   userCountryName: string,
   dateStr: string,
+  countryDetail?: Record<string, unknown> | null,
 ): BencanaAlamNotification {
-  return generateIncidentNotification(userCountryName, dateStr);
+  return generateIncidentNotification(userCountryName, dateStr, countryDetail);
 }

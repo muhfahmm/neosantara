@@ -300,6 +300,13 @@ const getLevelUpCostForStep = (targetLevel: number, countryDetail?: any) => {
   return applyReformasiBirokrasiToUpgradeCost(baseCost, countryDetail);
 };
 
+const getDepartmentLevelFieldName = (departmentId: string): string => {
+  const key = departmentId.replace(/-/g, "_");
+  if (KEMENTERIAN.some(department => department.id === departmentId)) return `kem_${key}`;
+  if (KEAMANAN.some(department => department.id === departmentId)) return `keamanan_${key}`;
+  return `layanan_${key}`;
+};
+
 const getTotalUpgradeCost = (currentLevel: number, targetLevel: number, countryDetail?: any) => {
   let total = 0;
   for (let lvl = currentLevel; lvl < targetLevel; lvl++) {
@@ -444,6 +451,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
     setCountryDetail({
       ...countryDetail,
       anggaran: newAnggaran,
+      [getDepartmentLevelFieldName(dept.id)]: targetLevel,
       [`level_${dept.id}`]: targetLevel,
       pending_notifications: newPending,
     });
@@ -465,6 +473,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
 
     setCountryDetail({
       ...countryDetail,
+      [getDepartmentLevelFieldName(dept.id)]: targetLevel,
       [`level_${dept.id}`]: targetLevel,
       pending_notifications: newPending,
     });

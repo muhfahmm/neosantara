@@ -14,6 +14,8 @@ import {
   getBRICSTaxRevenueMultiplier,
   getG20TaxRevenueMultiplier,
   applyPromosiWisataDiplomatikBonus,
+  applyKementerianPariwisataIncomeBonus,
+  applyKementerianKeuanganTaxRevenueBonus,
   applyAlokasiSubsidiTerpaduBonus,
 } from '@/app/page/bonus_logic';
 
@@ -58,9 +60,9 @@ const applyOrgTaxBonus = (revenue: number, countryName: string, countryDetail: R
   return revenue * euMult * bricsMult * g20Mult;
 };
 
-export const getTourismTotalIncome = (detail: any): number => {
+export const getBaseTourismIncome = (detail: any): number => {
   if (!detail || typeof detail !== 'object') return 0;
-  const income = typeof detail.total_wisata_penghasilan === 'number'
+  return typeof detail.total_wisata_penghasilan === 'number'
     ? detail.total_wisata_penghasilan
     : typeof detail.wisata_penghasilan === 'number'
       ? detail.wisata_penghasilan
@@ -69,7 +71,15 @@ export const getTourismTotalIncome = (detail: any): number => {
         : Array.isArray(detail.wisata_items)
           ? detail.wisata_items.reduce((sum: number, item: any) => sum + (Number(item?.penghasilan) || 0), 0)
           : 0;
-  return applyPromosiWisataDiplomatikBonus(income, detail);
+};
+
+export const getTourismTotalIncome = (detail: any): number => {
+  if (!detail || typeof detail !== 'object') return 0;
+  const income = getBaseTourismIncome(detail);
+  return applyKementerianPariwisataIncomeBonus(
+    applyPromosiWisataDiplomatikBonus(income, detail),
+    detail
+  );
 };
 
 export const calculateTotalTaxIncome = (detail: any) => {
@@ -96,7 +106,10 @@ export const calculateTotalTaxIncome = (detail: any) => {
 
   const countryName = String(detail?.country || detail?.nama || "").trim();
   const rawTotal = ppnIncome + korporasiIncome + penghasilanIncome + beaCukaiIncome + lingkunganIncome;
-  return applyOrgTaxBonus(rawTotal, countryName, detail);
+  return applyKementerianKeuanganTaxRevenueBonus(
+    applyOrgTaxBonus(rawTotal, countryName, detail),
+    detail
+  );
 };
 
 export const getDepartmentLevel = (detail: any, dept: Department | string | any): number => {

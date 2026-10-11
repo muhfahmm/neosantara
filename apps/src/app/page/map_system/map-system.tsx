@@ -140,7 +140,11 @@ import { evaluateAIKeamananPBBTrigger } from '../menus/inbox/logic/5_notifikasi_
 import { clearActiveResolutionsForSession, tickPBBResolutions, spawnAIResolutionFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { clearActiveSecurityCouncilItems, tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { initCountryIsoFromDatabase, getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
-import { getWHOPandemicRiskModifier, getWMODisasterRiskModifier } from '../bonus_logic';
+import {
+    getWHOPandemicRiskModifier,
+    getWMODisasterRiskModifier,
+    applyKementerianLingkunganHidupDisasterRiskReduction,
+} from '../bonus_logic';
 import { checkAndProcessOrgApplications } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic';
 import { fetchAllCountryProfilesFromDb } from '@/../../json/semua_fitur_negara/0_profiles';
 import {
@@ -1732,8 +1736,12 @@ export default function MapPage() {
                 const whoPandemicModifier = getWHOPandemicRiskModifier(userCountryName, countryDetail);
                 const disasterSelectionChance = Math.max(0, Math.min(1, 0.60 - whoPandemicModifier / 100));
                 const isBencana = Math.random() < disasterSelectionChance;
-                if (isBencana) {
-                    const disaster = generateBencanaAlamNotification(userCountryName, currentDateStr);
+                const remainingDisasterRisk = applyKementerianLingkunganHidupDisasterRiskReduction(
+                    1,
+                    countryDetail
+                );
+                if (isBencana && Math.random() < remainingDisasterRisk) {
+                    const disaster = generateBencanaAlamNotification(userCountryName, currentDateStr, countryDetail);
                     newNotifsToAdd.push(disaster);
                     setCountryDetail((prev: any) => {
                         if (!prev) return prev;
@@ -1754,7 +1762,7 @@ export default function MapPage() {
                             ]
                         };
                     });
-                } else {
+                } else if (!isBencana) {
                     const currentPopulation = Number(countryDetail?.jumlah_penduduk);
                     const outbreak = generateWabahPenyakitNotification(
                         userCountryName,
@@ -3003,6 +3011,7 @@ export default function MapPage() {
                 lowSectorCount,
                 additionalDecay: sectorDeficitPenaltyThisTick,
                 currentCompletedBoost: currentCompletedBoost,
+                countryDetail: prev,
                 lastDate,
                 currentDate: currentDateStr,
             });

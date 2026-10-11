@@ -13,6 +13,8 @@ export interface KriminalitasCalculationResult {
   crimeFactor: number; // Pengali kematian (semakin kecil jika bangunan semakin banyak)
 }
 
+import { applyKementerianKehakimanCrimeReduction } from "@/app/page/bonus_logic";
+
 export function calculateKriminalitasLogic(
   countryDetail: any,
   populasi: number
@@ -34,7 +36,9 @@ export function calculateKriminalitasLogic(
 
   // Kriminalitas efektif menurun jika polisi melimpah
   // Jika rasio = 1 (ideal), kriminalitas berkurang hingga 50% dari base.
-  const adjustedKriminalitas = Math.max(0.1, baseKriminalitas * (1.0 - 0.5 * polisiRatio));
+  const rawAdjusted = Math.max(0.1, baseKriminalitas * (1.0 - 0.5 * polisiRatio));
+  // Penurunan tingkat kriminalitas dari Kementerian Kehakiman
+  const adjustedKriminalitas = applyKementerianKehakimanCrimeReduction(rawAdjusted, countryDetail);
 
   // Faktor pengali kematian akibat kejahatan: 1 + (adjustedKriminalitas * 0.02)
   // Semakin banyak bangunan -> polisiRatio naik -> adjustedKriminalitas turun -> crimeFactor turun (semakin kecil)

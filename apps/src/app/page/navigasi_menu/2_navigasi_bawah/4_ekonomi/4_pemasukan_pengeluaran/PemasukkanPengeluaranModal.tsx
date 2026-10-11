@@ -7,6 +7,7 @@ import {
   calculateGoldIncome,
   calculateMinistryCost,
   getDepartmentLevel,
+  getBaseTourismIncome,
   getTourismTotalIncome,
   getCommercialTotalIncome,
   calculateActiveSubsidyCost,
@@ -22,7 +23,12 @@ import {
 import { CAPITALISM_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/ideologi_bonus_logic/kapitalisme";
 import { LIBERALISM_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/ideologi_bonus_logic/liberalisme";
 import { CONSERVATISM_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/ideologi_bonus_logic/konservatisme";
-import { isMemberOfEU, isMemberOfBRICS, isMemberOfG20 } from "@/app/page/bonus_logic";
+import {
+  isMemberOfEU,
+  isMemberOfBRICS,
+  isMemberOfG20,
+  getKementerianPariwisataIncomeBonusPercent,
+} from "@/app/page/bonus_logic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -36,6 +42,7 @@ interface ModalProps {
 interface FinancialItem {
   label: string;
   amount: number;
+  baseAmount?: number;
   displayAmount?: string;
   badge?: string;
   onClick?: () => void;
@@ -71,10 +78,13 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
 
   const taxRevenue = calculateTotalTaxIncome(countryDetail);
   const goldIncome = calculateGoldIncome(countryDetail);
+  const baseTourismIncome = getBaseTourismIncome(countryDetail);
   const tourismIncome = getTourismTotalIncome(countryDetail);
   const commercialIncome = getCommercialTotalIncome(countryDetail);
   const ministryCostPerDay = calculateMinistryCost(countryDetail);
   const totalSubsidyCost = calculateActiveSubsidyCost(countryDetail);
+
+  const pariwisataBonusPercent = getKementerianPariwisataIncomeBonusPercent(countryDetail);
 
   const goldBuildingCount = Number(countryDetail?.emas) || 0;
   const goldUnits = calculateGoldMiningDailyProduction(countryDetail);
@@ -120,7 +130,11 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
     {
       label: `Sektor Wisata & Pariwisata (${tourismCount} Destinasi)`,
       amount: tourismIncome,
-      badge: tourismCount > 0 ? `${tourismCount} Destinasi Wisata Terdaftar` : undefined,
+      baseAmount: baseTourismIncome,
+      badge: [
+        tourismCount > 0 ? `${tourismCount} Destinasi Wisata Terdaftar` : undefined,
+        pariwisataBonusPercent > 0 ? `+Kem. Pariwisata (${pariwisataBonusPercent.toFixed(1)}%)` : undefined
+      ].filter(Boolean).join(" | ") || undefined,
     },
     {
       label: goldBuildingCount > 0
@@ -240,7 +254,14 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                         </div>
                         <div className="flex justify-between items-center text-[#E0E0E0]">
                           <span className="font-semibold">• Sektor Wisata & Pariwisata ({tourismCount} Destinasi):</span>
-                          <span className="font-bold text-emerald-400">+ {tourismIncome.toLocaleString("id-ID")}</span>
+                          <span className="font-bold text-emerald-400">
+                            {baseTourismIncome > 0 && tourismIncome > baseTourismIncome && (
+                              <span className="mr-1.5 text-rose-400 line-through">
+                                + {baseTourismIncome.toLocaleString("id-ID")}
+                              </span>
+                            )}
+                            + {tourismIncome.toLocaleString("id-ID")}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center text-[#E0E0E0]">
                           <span className="font-semibold">• Produksi Tambang Emas ({goldBuildingCount} Unit):</span>
@@ -304,7 +325,14 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                               </span>
                             )}
                           </span>
-                          <span>{item.displayAmount ?? `+ ${item.amount.toLocaleString("id-ID")}`}</span>
+                          <span>
+                            {item.baseAmount !== undefined && item.baseAmount > 0 && item.amount > item.baseAmount && (
+                              <span className="mr-1.5 text-rose-400 line-through">
+                                + {item.baseAmount.toLocaleString("id-ID")}
+                              </span>
+                            )}
+                            {item.displayAmount ?? `+ ${item.amount.toLocaleString("id-ID")}`}
+                          </span>
                         </div>
                       </div>
                     ))}

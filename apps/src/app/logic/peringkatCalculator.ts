@@ -9,6 +9,7 @@
  * - Counter di-scale jika tier kepuasan berubah untuk smooth transition
  * - Event dapat memberikan boost rating ke pemain
  */
+import { applyKementerianKebudayaanRatingDecayReduction } from "@/app/page/bonus_logic";
 
 // ─── Helper: Hitung perbedaan bulan antara dua tanggal ────────────────────
 
@@ -133,6 +134,7 @@ export interface PresidentRatingInput {
   lowSectorCount?: number;
   additionalDecay?: number;
   currentCompletedBoost?: number; // Bonus dari event yang selesai
+  countryDetail?: Record<string, unknown> | null;
   lastDate?: string;
   currentDate: string;
 }
@@ -177,11 +179,15 @@ export function calculatePresidentRating(input: PresidentRatingInput): President
   }
 
   // Step 2: Tentukan threshold berdasarkan kepuasan & keterbukaan saat ini
-  const newThreshold = getThresholdFromSatisfaction(
+  const baseThreshold = getThresholdFromSatisfaction(
     currentKepuasan,
     keterbukaanScore,
     serviceDeficitPressure,
     lowSectorCount,
+  );
+  const newThreshold = applyKementerianKebudayaanRatingDecayReduction(
+    baseThreshold,
+    input.countryDetail
   );
 
   // Step 3: Scale counter jika tier kepuasan berubah

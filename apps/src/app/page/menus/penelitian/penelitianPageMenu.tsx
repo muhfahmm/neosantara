@@ -19,6 +19,7 @@ import {
   applyCombinedResearchDuration,
 } from '@/app/page/downgrade_logic';
 import { isMemberOfUNESCO, isMemberOfITU } from '@/app/page/bonus_logic';
+import { getSainsPenelitianResearchSpeedBonusPercent } from '@/app/page/bonus_logic/kementerian_bonus_logic/3_Sains_Penelitian';
 import {
   getResearchCardBonus,
   getResearchCardLevel,
@@ -220,92 +221,92 @@ const RESEARCH_DATA: Research[] = [
   // 1. EKONOMI & INDUSTRI
   // ══════════════════════════════════════════════════════════════════
   // KOLOM 1: MANUFAKTUR → MINERAL & ENERGI
-  { id: 'otomasi_industri',        name: 'Otomasi Fabrikasi Elektronik & Kendaraan', category: 'ekonomi', tier: 1, cost: 2000,  duration: 15, prerequisites: [], icon: Cpu,    description: 'Otomasi lini Pabrik Semikonduktor, Pabrik Mesin Mobil, dan Pabrik Mesin Motor.', effects: [{ stat: 'manufaktur', value: 2, label: '+2% Produksi Manufaktur' }] },
-  { id: 'manufaktur_material',     name: 'Rekayasa Material Manufaktur',              category: 'ekonomi', tier: 2, cost: 3500,  duration: 22, prerequisites: ['otomasi_industri'],    icon: Cpu,    description: 'Proses material dan komponen untuk mempercepat pembangunan pabrik manufaktur.', effects: [{ stat: 'waktu_pembangunan_manufaktur', value: -2, label: '-2% Waktu Pembangunan Manufaktur' }] },
-  { id: 'manufaktur_terintegrasi', name: 'Eksplorasi Mineral & Energi',                category: 'ekonomi', tier: 3, cost: 6500,  duration: 34, prerequisites: ['manufaktur_material'], icon: Beaker, description: 'Teknologi eksplorasi untuk meningkatkan produksi Emas, Uranium, Batu Bara, Minyak Bumi, Gas Alam, Garam, Litium, Logam Tanah Jarang, dan Bijih Besi.', effects: [{ stat: 'mineral_energi', value: 2, label: '+2% Produksi Mineral & Energi' }] },
-  { id: 'manufaktur_lanjut',       name: 'Infrastruktur Mineral & Energi Terpadu',    category: 'ekonomi', tier: 4, cost: 11000, duration: 48, prerequisites: ['manufaktur_terintegrasi'], icon: Beaker, description: 'Metode konstruksi cepat untuk mempercepat pembangunan tambang dan kilang mineral & energi.', effects: [{ stat: 'waktu_pembangunan_mineral_energi', value: -2, label: '-2% Waktu Pembangunan Mineral & Energi' }] },
+  { id: 'otomasi_industri', name: 'Otomasi Fabrikasi Elektronik & Kendaraan', category: 'ekonomi', tier: 1, cost: 2000, duration: 30, prerequisites: [], icon: Cpu, description: 'Otomasi lini Pabrik Semikonduktor, Pabrik Mesin Mobil, dan Pabrik Mesin Motor.', effects: [{ stat: 'manufaktur', value: 2, label: '+2% Produksi Manufaktur' }] },
+  { id: 'manufaktur_material', name: 'Rekayasa Material Manufaktur', category: 'ekonomi', tier: 2, cost: 3500, duration: 60, prerequisites: ['otomasi_industri'], icon: Cpu, description: 'Proses material dan komponen untuk mempercepat pembangunan pabrik manufaktur.', effects: [{ stat: 'waktu_pembangunan_manufaktur', value: -2, label: '-2% Waktu Pembangunan Manufaktur' }] },
+  { id: 'manufaktur_terintegrasi', name: 'Eksplorasi Mineral & Energi', category: 'ekonomi', tier: 3, cost: 6500, duration: 90, prerequisites: ['manufaktur_material'], icon: Beaker, description: 'Teknologi eksplorasi untuk meningkatkan produksi Emas, Uranium, Batu Bara, Minyak Bumi, Gas Alam, Garam, Litium, Logam Tanah Jarang, dan Bijih Besi.', effects: [{ stat: 'mineral_energi', value: 2, label: '+2% Produksi Mineral & Energi' }] },
+  { id: 'manufaktur_lanjut', name: 'Infrastruktur Mineral & Energi Terpadu', category: 'ekonomi', tier: 4, cost: 11000, duration: 120, prerequisites: ['manufaktur_terintegrasi'], icon: Beaker, description: 'Metode konstruksi cepat untuk mempercepat pembangunan tambang dan kilang mineral & energi.', effects: [{ stat: 'waktu_pembangunan_mineral_energi', value: -2, label: '-2% Waktu Pembangunan Mineral & Energi' }] },
 
   // KOLOM 2: PETERNAKAN → AGRIKULTUR
-  { id: 'peternakan_modern',       name: 'Peternakan Presisi',                        category: 'ekonomi', tier: 1, cost: 1800,  duration: 14, prerequisites: [], icon: Beaker, description: 'Peningkatan budidaya Ayam Unggas, Sapi Perah, dan Sapi Potong.', effects: [{ stat: 'peternakan', value: 2, label: '+2% Produksi Peternakan' }] },
-  { id: 'peternakan_genetika',     name: 'Genetika & Pakan Ternak',                   category: 'ekonomi', tier: 2, cost: 3300,  duration: 21, prerequisites: ['peternakan_modern'],    icon: Beaker, description: 'Rekayasa pakan dan percepatan pembangunan fasilitas peternakan modern.', effects: [{ stat: 'waktu_pembangunan_peternakan', value: -2, label: '-2% Waktu Pembangunan Peternakan' }] },
-  { id: 'perkebunan_komoditas',    name: 'Agrikultur Cerdas Multi-Komoditas',         category: 'ekonomi', tier: 3, cost: 6000,  duration: 31, prerequisites: ['peternakan_genetika'],  icon: Wheat,  description: 'Pengelolaan Padi, Gandum, Jagung, Sayur, Umbi, Kedelai, Kelapa Sawit, Kopi, Teh, Kakao, Tebu, dan Karet.', effects: [{ stat: 'agrikultur', value: 2, label: '+2% Produksi Agrikultur' }] },
-  { id: 'agrikultur_cerdas',       name: 'Agrikultur Tangguh Multi-Komoditas',        category: 'ekonomi', tier: 4, cost: 10000, duration: 44, prerequisites: ['perkebunan_komoditas'], icon: Wheat,  description: 'Teknologi budidaya tangguh untuk mempercepat pembangunan lahan agrikultur.', effects: [{ stat: 'waktu_pembangunan_agrikultur', value: -2, label: '-2% Waktu Pembangunan Agrikultur' }] },
+  { id: 'peternakan_modern', name: 'Peternakan Presisi', category: 'ekonomi', tier: 1, cost: 1800, duration: 30, prerequisites: [], icon: Beaker, description: 'Peningkatan budidaya Ayam Unggas, Sapi Perah, dan Sapi Potong.', effects: [{ stat: 'peternakan', value: 2, label: '+2% Produksi Peternakan' }] },
+  { id: 'peternakan_genetika', name: 'Genetika & Pakan Ternak', category: 'ekonomi', tier: 2, cost: 3300, duration: 60, prerequisites: ['peternakan_modern'], icon: Beaker, description: 'Rekayasa pakan dan percepatan pembangunan fasilitas peternakan modern.', effects: [{ stat: 'waktu_pembangunan_peternakan', value: -2, label: '-2% Waktu Pembangunan Peternakan' }] },
+  { id: 'perkebunan_komoditas', name: 'Agrikultur Cerdas Multi-Komoditas', category: 'ekonomi', tier: 3, cost: 6000, duration: 90, prerequisites: ['peternakan_genetika'], icon: Wheat, description: 'Pengelolaan Padi, Gandum, Jagung, Sayur, Umbi, Kedelai, Kelapa Sawit, Kopi, Teh, Kakao, Tebu, dan Karet.', effects: [{ stat: 'agrikultur', value: 2, label: '+2% Produksi Agrikultur' }] },
+  { id: 'agrikultur_cerdas', name: 'Agrikultur Tangguh Multi-Komoditas', category: 'ekonomi', tier: 4, cost: 10000, duration: 120, prerequisites: ['perkebunan_komoditas'], icon: Wheat, description: 'Teknologi budidaya tangguh untuk mempercepat pembangunan lahan agrikultur.', effects: [{ stat: 'waktu_pembangunan_agrikultur', value: -2, label: '-2% Waktu Pembangunan Agrikultur' }] },
 
   // KOLOM 3: PERIKANAN → OLAHAN PANGAN
-  { id: 'perikanan_modern',        name: 'Budidaya Perikanan Terpadu',                category: 'ekonomi', tier: 1, cost: 1400,  duration: 11, prerequisites: [], icon: Leaf,   description: 'Peningkatan produksi Ikan, Udang, dan Mutiara melalui budidaya serta armada tangkap.', effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
-  { id: 'perikanan_pascapanen',    name: 'Teknologi Perikanan & Pascapanen',          category: 'ekonomi', tier: 2, cost: 3100,  duration: 19, prerequisites: ['perikanan_modern'],     icon: Leaf,   description: 'Penanganan hasil tangkap untuk mempercepat pembangunan fasilitas perikanan.', effects: [{ stat: 'waktu_pembangunan_perikanan', value: -2, label: '-2% Waktu Pembangunan Perikanan' }] },
-  { id: 'pengolahan_pangan',       name: 'Pengolahan Pangan Dasar',                   category: 'ekonomi', tier: 3, cost: 6300,  duration: 33, prerequisites: ['perikanan_pascapanen'], icon: Wheat,  description: 'Teknologi produksi Air Mineral, Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan_pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
-  { id: 'industri_pangan_terpadu', name: 'Industri Pangan Terintegrasi',               category: 'ekonomi', tier: 4, cost: 10800, duration: 47, prerequisites: ['pengolahan_pangan'],    icon: Wheat,  description: 'Integrasi produksi untuk mempercepat pembangunan pabrik olahan pangan.', effects: [{ stat: 'waktu_pembangunan_olahan_pangan', value: -2, label: '-2% Waktu Pembangunan Olahan Pangan' }] },
+  { id: 'perikanan_modern', name: 'Budidaya Perikanan Terpadu', category: 'ekonomi', tier: 1, cost: 1400, duration: 30, prerequisites: [], icon: Leaf, description: 'Peningkatan produksi Ikan, Udang, dan Mutiara melalui budidaya serta armada tangkap.', effects: [{ stat: 'perikanan', value: 2, label: '+2% Produksi Perikanan' }] },
+  { id: 'perikanan_pascapanen', name: 'Teknologi Perikanan & Pascapanen', category: 'ekonomi', tier: 2, cost: 3100, duration: 60, prerequisites: ['perikanan_modern'], icon: Leaf, description: 'Penanganan hasil tangkap untuk mempercepat pembangunan fasilitas perikanan.', effects: [{ stat: 'waktu_pembangunan_perikanan', value: -2, label: '-2% Waktu Pembangunan Perikanan' }] },
+  { id: 'pengolahan_pangan', name: 'Pengolahan Pangan Dasar', category: 'ekonomi', tier: 3, cost: 6300, duration: 90, prerequisites: ['perikanan_pascapanen'], icon: Wheat, description: 'Teknologi produksi Air Mineral, Gula, Roti, Pengolahan Daging, Mi Instan, Minyak Goreng, Susu, dan Beras.', effects: [{ stat: 'olahan_pangan', value: 2, label: '+2% Produksi Olahan Pangan' }] },
+  { id: 'industri_pangan_terpadu', name: 'Industri Pangan Terintegrasi', category: 'ekonomi', tier: 4, cost: 10800, duration: 120, prerequisites: ['pengolahan_pangan'], icon: Wheat, description: 'Integrasi produksi untuk mempercepat pembangunan pabrik olahan pangan.', effects: [{ stat: 'waktu_pembangunan_olahan_pangan', value: -2, label: '-2% Waktu Pembangunan Olahan Pangan' }] },
 
   // ══════════════════════════════════════════════════════════════════
   // 2. MILITER & PERTAHANAN (16 kartu — 5/5/3/3)
   // ══════════════════════════════════════════════════════════════════
   // TIER 1 — WAKTU PEMBANGUNAN (5 kartu)
-  { id: 'benteng_perbatasan', name: 'Pos Pertahanan Perbatasan', category: 'militer', tier: 1, cost: 2100, duration: 15, prerequisites: [], icon: Shield,    description: 'Doktrin konstruksi cepat untuk pembangunan Barak Militer tempat pelatihan pasukan infanteri.', effects: [{ stat: 'waktu_pembangunan_barak_militer', value: -2, label: '-2% Waktu Pembangunan Barak Militer' }] },
-  { id: 'senjata_infanteri',  name: 'Senapan Serbu Presisi',     category: 'militer', tier: 1, cost: 2000, duration: 15, prerequisites: [], icon: Crosshair, description: 'Standarisasi produksi senjata untuk mempercepat pembangunan Gudang Senjata militer.', effects: [{ stat: 'waktu_pembangunan_gudang_senjata', value: -2, label: '-2% Waktu Pembangunan Gudang Senjata' }] },
-  { id: 'tank_generasi_baru', name: 'Tank Tempur Komposit',      category: 'militer', tier: 1, cost: 2500, duration: 18, prerequisites: [], icon: Shield,    description: 'Armor komposit ringan untuk mempercepat konstruksi Hangar Tank kendaraan lapis baja.', effects: [{ stat: 'waktu_pembangunan_hangar_tank', value: -2, label: '-2% Waktu Pembangunan Hangar Tank' }] },
-  { id: 'drone_otonom',       name: 'Drone Pengintai Taktis',    category: 'militer', tier: 1, cost: 2200, duration: 16, prerequisites: [], icon: Wifi,      description: 'Sistem kendali drone untuk mempercepat pembangunan Pangkalan Udara & landasan armada udara.', effects: [{ stat: 'waktu_pembangunan_pangkalan_udara', value: -2, label: '-2% Waktu Pembangunan Pangkalan Udara' }] },
-  { id: 'radar_pesisir',      name: 'Radar Pesisir Pantai',      category: 'militer', tier: 1, cost: 2300, duration: 17, prerequisites: [], icon: Wifi,      description: 'Deteksi maritim untuk mempercepat pembangunan Pangkalan Laut & dermaga kapal perang.', effects: [{ stat: 'waktu_pembangunan_pangkalan_laut', value: -2, label: '-2% Waktu Pembangunan Pangkalan Laut' }] },
+  { id: 'benteng_perbatasan', name: 'Pos Pertahanan Perbatasan', category: 'militer', tier: 1, cost: 2100, duration: 30, prerequisites: [], icon: Shield, description: 'Doktrin konstruksi cepat untuk pembangunan Barak Militer tempat pelatihan pasukan infanteri.', effects: [{ stat: 'waktu_pembangunan_barak_militer', value: -2, label: '-2% Waktu Pembangunan Barak Militer' }] },
+  { id: 'senjata_infanteri', name: 'Senapan Serbu Presisi', category: 'militer', tier: 1, cost: 2000, duration: 30, prerequisites: [], icon: Crosshair, description: 'Standarisasi produksi senjata untuk mempercepat pembangunan Gudang Senjata militer.', effects: [{ stat: 'waktu_pembangunan_gudang_senjata', value: -2, label: '-2% Waktu Pembangunan Gudang Senjata' }] },
+  { id: 'tank_generasi_baru', name: 'Tank Tempur Komposit', category: 'militer', tier: 1, cost: 2500, duration: 30, prerequisites: [], icon: Shield, description: 'Armor komposit ringan untuk mempercepat konstruksi Hangar Tank kendaraan lapis baja.', effects: [{ stat: 'waktu_pembangunan_hangar_tank', value: -2, label: '-2% Waktu Pembangunan Hangar Tank' }] },
+  { id: 'drone_otonom', name: 'Drone Pengintai Taktis', category: 'militer', tier: 1, cost: 2200, duration: 30, prerequisites: [], icon: Wifi, description: 'Sistem kendali drone untuk mempercepat pembangunan Pangkalan Udara & landasan armada udara.', effects: [{ stat: 'waktu_pembangunan_pangkalan_udara', value: -2, label: '-2% Waktu Pembangunan Pangkalan Udara' }] },
+  { id: 'radar_pesisir', name: 'Radar Pesisir Pantai', category: 'militer', tier: 1, cost: 2300, duration: 30, prerequisites: [], icon: Wifi, description: 'Deteksi maritim untuk mempercepat pembangunan Pangkalan Laut & dermaga kapal perang.', effects: [{ stat: 'waktu_pembangunan_pangkalan_laut', value: -2, label: '-2% Waktu Pembangunan Pangkalan Laut' }] },
 
   // TIER 2 — KAPASITAS (5 kartu)
-  { id: 'kapal_stealth',       name: 'Kapal Korvet Siluman',           category: 'militer', tier: 2, cost: 4000, duration: 25, prerequisites: ['benteng_perbatasan'], icon: Shield,    description: 'Teknologi siluman untuk memperluas kapasitas Barak Militer.', effects: [{ stat: 'kapasitas_barak_militer', value: 2, label: '+2% Kapasitas Barak Militer' }] },
-  { id: 'perang_siber',        name: 'Komando Siber Ofensif',          category: 'militer', tier: 2, cost: 3800, duration: 24, prerequisites: ['senjata_infanteri'],  icon: Cpu,       description: 'Jaringan komando siber untuk memperluas kapasitas Gudang Senjata.', effects: [{ stat: 'kapasitas_gudang_senjata', value: 2, label: '+2% Kapasitas Gudang Senjata' }] },
-  { id: 'artileri_presisi',    name: 'Artileri Roket Otonom',          category: 'militer', tier: 2, cost: 4200, duration: 26, prerequisites: ['tank_generasi_baru'], icon: Crosshair, description: 'Sistem bidik otonom untuk memperluas kapasitas Hangar Tank.', effects: [{ stat: 'kapasitas_hangar_tank', value: 2, label: '+2% Kapasitas Hangar Tank' }] },
-  { id: 'kapal_selam_diesel',  name: 'Kapal Selam Modern',             category: 'militer', tier: 2, cost: 4500, duration: 28, prerequisites: ['drone_otonom'],       icon: Shield,    description: 'Teknologi patroli laut untuk memperluas kapasitas Pangkalan Udara.', effects: [{ stat: 'kapasitas_pangkalan_udara', value: 2, label: '+2% Kapasitas Pangkalan Udara' }] },
-  { id: 'helikopter_serang',   name: 'Helikopter Tempur',              category: 'militer', tier: 2, cost: 4100, duration: 25, prerequisites: ['radar_pesisir'],      icon: Rocket,    description: 'Dukungan udara jarak dekat untuk memperluas kapasitas Pangkalan Laut.', effects: [{ stat: 'kapasitas_pangkalan_laut', value: 2, label: '+2% Kapasitas Pangkalan Laut' }] },
+  { id: 'kapal_stealth', name: 'Kapal Korvet Siluman', category: 'militer', tier: 2, cost: 4000, duration: 60, prerequisites: ['benteng_perbatasan'], icon: Shield, description: 'Teknologi siluman untuk memperluas kapasitas Barak Militer.', effects: [{ stat: 'kapasitas_barak_militer', value: 2, label: '+2% Kapasitas Barak Militer' }] },
+  { id: 'perang_siber', name: 'Komando Siber Ofensif', category: 'militer', tier: 2, cost: 3800, duration: 60, prerequisites: ['senjata_infanteri'], icon: Cpu, description: 'Jaringan komando siber untuk memperluas kapasitas Gudang Senjata.', effects: [{ stat: 'kapasitas_gudang_senjata', value: 2, label: '+2% Kapasitas Gudang Senjata' }] },
+  { id: 'artileri_presisi', name: 'Artileri Roket Otonom', category: 'militer', tier: 2, cost: 4200, duration: 60, prerequisites: ['tank_generasi_baru'], icon: Crosshair, description: 'Sistem bidik otonom untuk memperluas kapasitas Hangar Tank.', effects: [{ stat: 'kapasitas_hangar_tank', value: 2, label: '+2% Kapasitas Hangar Tank' }] },
+  { id: 'kapal_selam_diesel', name: 'Kapal Selam Modern', category: 'militer', tier: 2, cost: 4500, duration: 60, prerequisites: ['drone_otonom'], icon: Shield, description: 'Teknologi patroli laut untuk memperluas kapasitas Pangkalan Udara.', effects: [{ stat: 'kapasitas_pangkalan_udara', value: 2, label: '+2% Kapasitas Pangkalan Udara' }] },
+  { id: 'helikopter_serang', name: 'Helikopter Tempur', category: 'militer', tier: 2, cost: 4100, duration: 60, prerequisites: ['radar_pesisir'], icon: Rocket, description: 'Dukungan udara jarak dekat untuk memperluas kapasitas Pangkalan Laut.', effects: [{ stat: 'kapasitas_pangkalan_laut', value: 2, label: '+2% Kapasitas Pangkalan Laut' }] },
 
   // TIER 3 — KEKUATAN (3 kartu)
-  { id: 'tank_generasi5',          name: 'Tank Tempur Generasi 5',    category: 'militer', tier: 3, cost: 7000, duration: 35, prerequisites: ['kapal_stealth'],    icon: Shield, description: 'Teknologi tank terbaru meningkatkan kekuatan tempur pasukan darat.', effects: [{ stat: 'kekuatan_darat', value: 2, label: '+2% Kekuatan Darat' }] },
-  { id: 'jet_superioritas',        name: 'Jet Tempur Superioritas',   category: 'militer', tier: 3, cost: 7200, duration: 36, prerequisites: ['artileri_presisi'], icon: Rocket, description: 'Jet tempur generasi terbaru meningkatkan kekuatan tempur udara.',   effects: [{ stat: 'kekuatan_udara', value: 2, label: '+2% Kekuatan Udara' }] },
-  { id: 'kapal_perang_multiperan', name: 'Kapal Perang Multi-Peran',  category: 'militer', tier: 3, cost: 6500, duration: 32, prerequisites: ['helikopter_serang'], icon: Shield, description: 'Kapal perang serbaguna meningkatkan kekuatan tempur laut.',         effects: [{ stat: 'kekuatan_laut',  value: 2, label: '+2% Kekuatan Laut' }] },
+  { id: 'tank_generasi5', name: 'Tank Tempur Generasi 5', category: 'militer', tier: 3, cost: 7000, duration: 90, prerequisites: ['kapal_stealth'], icon: Shield, description: 'Teknologi tank terbaru meningkatkan kekuatan tempur pasukan darat.', effects: [{ stat: 'kekuatan_darat', value: 2, label: '+2% Kekuatan Darat' }] },
+  { id: 'jet_superioritas', name: 'Jet Tempur Superioritas', category: 'militer', tier: 3, cost: 7200, duration: 90, prerequisites: ['artileri_presisi'], icon: Rocket, description: 'Jet tempur generasi terbaru meningkatkan kekuatan tempur udara.', effects: [{ stat: 'kekuatan_udara', value: 2, label: '+2% Kekuatan Udara' }] },
+  { id: 'kapal_perang_multiperan', name: 'Kapal Perang Multi-Peran', category: 'militer', tier: 3, cost: 6500, duration: 90, prerequisites: ['helikopter_serang'], icon: Shield, description: 'Kapal perang serbaguna meningkatkan kekuatan tempur laut.', effects: [{ stat: 'kekuatan_laut', value: 2, label: '+2% Kekuatan Laut' }] },
 
   // TIER 4 — HP / DURABILITAS (3 kartu)
-  { id: 'armor_reaktif',        name: 'Armor Reaktif Tank',     category: 'militer', tier: 4, cost: 11000, duration: 45, prerequisites: ['tank_generasi5'],          icon: Shield, description: 'Lapisan armor reaktif meningkatkan daya tahan pasukan darat.',  effects: [{ stat: 'hp_darat', value: 2, label: '+2% HP Darat' }] },
-  { id: 'struktur_jet',         name: 'Struktur Jet Diperkuat', category: 'militer', tier: 4, cost: 13000, duration: 55, prerequisites: ['jet_superioritas'],        icon: Rocket, description: 'Rangka pesawat diperkuat meningkatkan daya tahan armada udara.', effects: [{ stat: 'hp_udara', value: 2, label: '+2% HP Udara' }] },
-  { id: 'hull_kapal_diperkuat', name: 'Hull Kapal Diperkuat',   category: 'militer', tier: 4, cost: 10000, duration: 42, prerequisites: ['kapal_perang_multiperan'], icon: Shield, description: 'Lambung kapal diperkuat meningkatkan daya tahan armada laut.',   effects: [{ stat: 'hp_laut',  value: 2, label: '+2% HP Laut' }] },
+  { id: 'armor_reaktif', name: 'Armor Reaktif Tank', category: 'militer', tier: 4, cost: 11000, duration: 120, prerequisites: ['tank_generasi5'], icon: Shield, description: 'Lapisan armor reaktif meningkatkan daya tahan pasukan darat.', effects: [{ stat: 'hp_darat', value: 2, label: '+2% HP Darat' }] },
+  { id: 'struktur_jet', name: 'Struktur Jet Diperkuat', category: 'militer', tier: 4, cost: 13000, duration: 120, prerequisites: ['jet_superioritas'], icon: Rocket, description: 'Rangka pesawat diperkuat meningkatkan daya tahan armada udara.', effects: [{ stat: 'hp_udara', value: 2, label: '+2% HP Udara' }] },
+  { id: 'hull_kapal_diperkuat', name: 'Hull Kapal Diperkuat', category: 'militer', tier: 4, cost: 10000, duration: 120, prerequisites: ['kapal_perang_multiperan'], icon: Shield, description: 'Lambung kapal diperkuat meningkatkan daya tahan armada laut.', effects: [{ stat: 'hp_laut', value: 2, label: '+2% HP Laut' }] },
 
   // ══════════════════════════════════════════════════════════════════
   // 3. DIPLOMASI & INTELIJEN (25 kartu — 5×5)
   // ══════════════════════════════════════════════════════════════════
   // TIER 1
-  { id: 'manfaat_kedutaan',   name: 'Manfaat Kedutaan',           category: 'diplomasi', tier: 1, cost: 1800, duration: 12, prerequisites: [], icon: Globe2,   description: 'Metode konstruksi cepat untuk kedutaan besar di seluruh dunia.', effects: [{ stat: 'waktu_kedutaan', value: -2, label: '-2% Waktu Pembangunan Kedutaan' }] },
-  { id: 'suara_pbb',          name: 'Suara di PBB',               category: 'diplomasi', tier: 1, cost: 2000, duration: 14, prerequisites: [], icon: Sparkles, description: 'Meningkatkan jumlah suara negara di forum PBB.',                 effects: [{ stat: 'suara_pbb',      value:  2, label: '+2 Suara PBB' }] },
-  { id: 'biaya_kedutaan',     name: 'Efisiensi Biaya Kedutaan',   category: 'diplomasi', tier: 1, cost: 1900, duration: 13, prerequisites: [], icon: Banknote, description: 'Mengurangi biaya pembangunan kedutaan dari 10 NEO sesuai level penelitian (2–15%).', effects: [{ stat: 'biaya_kedutaan', value: -2, label: '-2% Biaya Kedutaan Besar' }] },
-  { id: 'kontra_separatisme', name: 'Pencegahan Separatisme',     category: 'diplomasi', tier: 1, cost: 1700, duration: 11, prerequisites: [], icon: Shield,   description: 'Mengurangi risiko separatisme sebesar 2–15 poin persentase sesuai level penelitian.', effects: [{ stat: 'separatisme',    value: -2, label: '-2% Separatisme' }] },
-  { id: 'perjanjian_dagang',  name: 'Pakta Perdagangan Bipartit', category: 'diplomasi', tier: 1, cost: 1600, duration: 10, prerequisites: [], icon: Globe2,   description: 'Tim negosiator handal untuk mempercepat perjanjian dagang.', effects: [{ stat: 'peluang_dagang', value:  2, label: '+2% Peluang Perjanjian Dagang' }] },
+  { id: 'manfaat_kedutaan', name: 'Manfaat Kedutaan', category: 'diplomasi', tier: 1, cost: 1800, duration: 30, prerequisites: [], icon: Globe2, description: 'Metode konstruksi cepat untuk kedutaan besar di seluruh dunia.', effects: [{ stat: 'waktu_kedutaan', value: -2, label: '-2% Waktu Pembangunan Kedutaan' }] },
+  { id: 'suara_pbb', name: 'Suara di PBB', category: 'diplomasi', tier: 1, cost: 2000, duration: 30, prerequisites: [], icon: Sparkles, description: 'Meningkatkan jumlah suara negara di forum PBB.', effects: [{ stat: 'suara_pbb', value: 2, label: '+2 Suara PBB' }] },
+  { id: 'biaya_kedutaan', name: 'Efisiensi Biaya Kedutaan', category: 'diplomasi', tier: 1, cost: 1900, duration: 30, prerequisites: [], icon: Banknote, description: 'Mengurangi biaya pembangunan kedutaan dari 10 NEO sesuai level penelitian (2–15%).', effects: [{ stat: 'biaya_kedutaan', value: -2, label: '-2% Biaya Kedutaan Besar' }] },
+  { id: 'kontra_separatisme', name: 'Pencegahan Separatisme', category: 'diplomasi', tier: 1, cost: 1700, duration: 30, prerequisites: [], icon: Shield, description: 'Mengurangi risiko separatisme sebesar 2–15 poin persentase sesuai level penelitian.', effects: [{ stat: 'separatisme', value: -2, label: '-2% Separatisme' }] },
+  { id: 'perjanjian_dagang', name: 'Pakta Perdagangan Bipartit', category: 'diplomasi', tier: 1, cost: 1600, duration: 30, prerequisites: [], icon: Globe2, description: 'Tim negosiator handal untuk mempercepat perjanjian dagang.', effects: [{ stat: 'peluang_dagang', value: 2, label: '+2% Peluang Perjanjian Dagang' }] },
 
   // TIER 2
-  { id: 'pandemi_kontrol',     name: 'Kontrol Pandemi Global',       category: 'diplomasi', tier: 2, cost: 3500, duration: 22, prerequisites: ['manfaat_kedutaan'],   icon: HeartPulse, description: 'Kerja sama internasional mengurangi estimasi korban jiwa epidemi dan pandemi sebesar 2% hingga 15% sesuai level riset.', effects: [{ stat: 'kematian_pandemi', value: -2, label: '-2% Kematian Pandemi/Epidemi' }] },
-  { id: 'efek_acara',          name: 'Diplomasi Acara Nasional',     category: 'diplomasi', tier: 2, cost: 3800, duration: 24, prerequisites: ['suara_pbb'],          icon: Sparkles,   description: 'Penyelenggaraan acara internasional yang berdampak luas.', effects: [{ stat: 'efek_acara',       value:  2, label: '+2% Efek Acara' }] },
-  { id: 'penyebaran_ideologi', name: 'Penyebaran Ideologi',          category: 'diplomasi', tier: 2, cost: 3600, duration: 23, prerequisites: ['kontra_separatisme'], icon: Palette,    description: 'Meningkatkan peluang dasar keberhasilan penanaman ideologi sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'ideologi',         value:  2, label: '+2% Keberhasilan Ideologi' }] },
-  { id: 'misionaris',          name: 'Misi Keagamaan Internasional', category: 'diplomasi', tier: 2, cost: 3700, duration: 23, prerequisites: ['biaya_kedutaan'],     icon: HeartPulse, description: 'Meningkatkan peluang dasar keberhasilan misionaris 75% sebesar 2–15 poin persentase sesuai level penelitian.', effects: [{ stat: 'misionaris',       value:  2, label: '+2% Keberhasilan Misionaris' }] },
-  { id: 'pakta_non_agresi',    name: 'Pakta Non-Agresi',             category: 'diplomasi', tier: 2, cost: 3400, duration: 20, prerequisites: ['perjanjian_dagang'],  icon: Shield,     description: 'Doktrin diplomasi untuk mempercepat pakta non-agresi.', effects: [{ stat: 'peluang_nap',      value:  2, label: '+2% Peluang Pakta Non-Agresi' }] },
+  { id: 'pandemi_kontrol', name: 'Kontrol Pandemi Global', category: 'diplomasi', tier: 2, cost: 3500, duration: 60, prerequisites: ['manfaat_kedutaan'], icon: HeartPulse, description: 'Kerja sama internasional mengurangi estimasi korban jiwa epidemi dan pandemi sebesar 2% hingga 15% sesuai level riset.', effects: [{ stat: 'kematian_pandemi', value: -2, label: '-2% Kematian Pandemi/Epidemi' }] },
+  { id: 'efek_acara', name: 'Diplomasi Acara Nasional', category: 'diplomasi', tier: 2, cost: 3800, duration: 60, prerequisites: ['suara_pbb'], icon: Sparkles, description: 'Penyelenggaraan acara internasional yang berdampak luas.', effects: [{ stat: 'efek_acara', value: 2, label: '+2% Efek Acara' }] },
+  { id: 'penyebaran_ideologi', name: 'Penyebaran Ideologi', category: 'diplomasi', tier: 2, cost: 3600, duration: 60, prerequisites: ['kontra_separatisme'], icon: Palette, description: 'Meningkatkan peluang dasar keberhasilan penanaman ideologi sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'ideologi', value: 2, label: '+2% Keberhasilan Ideologi' }] },
+  { id: 'misionaris', name: 'Misi Keagamaan Internasional', category: 'diplomasi', tier: 2, cost: 3700, duration: 60, prerequisites: ['biaya_kedutaan'], icon: HeartPulse, description: 'Meningkatkan peluang dasar keberhasilan misionaris 75% sebesar 2–15 poin persentase sesuai level penelitian.', effects: [{ stat: 'misionaris', value: 2, label: '+2% Keberhasilan Misionaris' }] },
+  { id: 'pakta_non_agresi', name: 'Pakta Non-Agresi', category: 'diplomasi', tier: 2, cost: 3400, duration: 60, prerequisites: ['perjanjian_dagang'], icon: Shield, description: 'Doktrin diplomasi untuk mempercepat pakta non-agresi.', effects: [{ stat: 'peluang_nap', value: 2, label: '+2% Peluang Pakta Non-Agresi' }] },
 
   // TIER 3
-  { id: 'aliansi_pertahanan',      name: 'Aliansi Pertahanan',          category: 'diplomasi', tier: 3, cost: 6500, duration: 35, prerequisites: ['pakta_non_agresi'],     icon: Shield,     description: 'Meningkatkan peluang menerima tawaran aliansi pertahanan dari 25% hingga 40% per bulan, sesuai level riset.', effects: [{ stat: 'peluang_aliansi',  value:  2, label: '+2% Peluang Aliansi Pertahanan' }] },
-  { id: 'mitigasi_bencana',        name: 'Mitigasi Bencana Alam',       category: 'diplomasi', tier: 3, cost: 6800, duration: 36, prerequisites: ['pandemi_kontrol'],      icon: Leaf,       description: 'Sistem peringatan & bantuan bencana lintas negara.', effects: [{ stat: 'kematian_bencana', value: -2, label: '-2% Kematian Bencana Alam' }] },
-  { id: 'pertahanan_diri',         name: 'Doktrin Pertahanan Diri',     category: 'diplomasi', tier: 3, cost: 6200, duration: 33, prerequisites: ['efek_acara'],           icon: Shield,     description: 'Mengurangi peluang serangan yang dihitung dari hubungan bilateral sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'peluang_diserang', value: -2, label: '-2% Peluang Diserang Negara Lain' }] },
-  { id: 'perlindungan_perang',     name: 'Perlindungan Sipil Perang',   category: 'diplomasi', tier: 3, cost: 6400, duration: 34, prerequisites: ['penyebaran_ideologi'],  icon: HeartPulse, description: 'Protokol perlindungan sipil saat konflik bersenjata.', effects: [{ stat: 'kematian_perang',  value: -2, label: '-2% Kematian Populasi Perang' }] },
-  { id: 'bonus_organisasi_pbb',    name: 'Peluang Kontrak Penelitian',  category: 'diplomasi', tier: 3, cost: 6000, duration: 32, prerequisites: ['misionaris'],           icon: Globe2,     description: 'Meningkatkan peluang keberhasilan penawaran dan penerimaan Kontrak Penelitian sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'peluang_kontrak',   value:  2, label: '+2% Peluang Kontrak Penelitian' }] },
+  { id: 'aliansi_pertahanan', name: 'Aliansi Pertahanan', category: 'diplomasi', tier: 3, cost: 6500, duration: 90, prerequisites: ['pakta_non_agresi'], icon: Shield, description: 'Meningkatkan peluang menerima tawaran aliansi pertahanan dari 25% hingga 40% per bulan, sesuai level riset.', effects: [{ stat: 'peluang_aliansi', value: 2, label: '+2% Peluang Aliansi Pertahanan' }] },
+  { id: 'mitigasi_bencana', name: 'Mitigasi Bencana Alam', category: 'diplomasi', tier: 3, cost: 6800, duration: 90, prerequisites: ['pandemi_kontrol'], icon: Leaf, description: 'Sistem peringatan & bantuan bencana lintas negara.', effects: [{ stat: 'kematian_bencana', value: -2, label: '-2% Kematian Bencana Alam' }] },
+  { id: 'pertahanan_diri', name: 'Doktrin Pertahanan Diri', category: 'diplomasi', tier: 3, cost: 6200, duration: 90, prerequisites: ['efek_acara'], icon: Shield, description: 'Mengurangi peluang serangan yang dihitung dari hubungan bilateral sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'peluang_diserang', value: -2, label: '-2% Peluang Diserang Negara Lain' }] },
+  { id: 'perlindungan_perang', name: 'Perlindungan Sipil Perang', category: 'diplomasi', tier: 3, cost: 6400, duration: 90, prerequisites: ['penyebaran_ideologi'], icon: HeartPulse, description: 'Protokol perlindungan sipil saat konflik bersenjata.', effects: [{ stat: 'kematian_perang', value: -2, label: '-2% Kematian Populasi Perang' }] },
+  { id: 'bonus_organisasi_pbb', name: 'Peluang Kontrak Penelitian', category: 'diplomasi', tier: 3, cost: 6000, duration: 90, prerequisites: ['misionaris'], icon: Globe2, description: 'Meningkatkan peluang keberhasilan penawaran dan penerimaan Kontrak Penelitian sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'peluang_kontrak', value: 2, label: '+2% Peluang Kontrak Penelitian' }] },
 
   // TIER 4
-  { id: 'bonus_organisasi_regional', name: 'Kerja Sama Organisasi Internasional', category: 'diplomasi', tier: 4, cost: 11000, duration: 48, prerequisites: ['aliansi_pertahanan'], icon: Globe2,  description: 'Memperkuat manfaat organisasi PBB dan regional yang diikuti sebesar 2% hingga 15% sesuai level riset.', effects: [{ stat: 'bonus_organisasi_regional', value: 2, label: '+2% Manfaat Organisasi Internasional' }] },
-  { id: 'kursi_tetap_dewan_pbb',     name: 'Kursi Tetap Dewan Keamanan PBB', category: 'diplomasi', tier: 4, cost: 25000, duration: 60, prerequisites: ['bonus_organisasi_pbb'], icon: Sparkles, description: 'Klaim permanen kursi Dewan Keamanan PBB.', effects: [{ stat: 'kursi_dewan_keamanan', value: 1, label: 'Ambil Kursi Tetap Dewan Keamanan PBB' }] },
-  { id: 'bonus_tempat_wisata',       name: 'Promosi Wisata Diplomatik',      category: 'diplomasi', tier: 4, cost: 9500,  duration: 44, prerequisites: ['mitigasi_bencana'],     icon: Palette,  description: 'Meningkatkan pendapatan destinasi wisata di PDB dan neraca keuangan sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'bonus_wisata', value: 2, label: '+2% Bonus Tempat Wisata' }] },
-  { id: 'sanksi_ekonomi',            name: 'Perangkat Sanksi Ekonomi',       category: 'diplomasi', tier: 4, cost: 10800, duration: 47, prerequisites: ['bonus_organisasi_regional'], icon: Banknote, description: 'Pembekuan aset musuh.', effects: [{ stat: 'sanksi', value: 2, label: '+2% Efek Sanksi Musuh' }] },
-  { id: 'suara_dewan_keamanan',      name: 'Reformasi Birokrasi Kabinet',    category: 'diplomasi', tier: 4, cost: 12500, duration: 54, prerequisites: ['pertahanan_diri'],      icon: Globe2,   description: 'Restrukturisasi tata kelola Dewan Kabinet Menteri untuk menekan biaya upgrade.', effects: [{ stat: 'biaya_upgrade_kabinet', value: -2, label: '-2% Biaya Upgrade Dewan Kabinet' }] },
+  { id: 'bonus_organisasi_regional', name: 'Kerja Sama Organisasi Internasional', category: 'diplomasi', tier: 4, cost: 11000, duration: 120, prerequisites: ['aliansi_pertahanan'], icon: Globe2, description: 'Memperkuat manfaat organisasi PBB dan regional yang diikuti sebesar 2% hingga 15% sesuai level riset.', effects: [{ stat: 'bonus_organisasi_regional', value: 2, label: '+2% Manfaat Organisasi Internasional' }] },
+  { id: 'kursi_tetap_dewan_pbb', name: 'Kursi Tetap Dewan Keamanan PBB', category: 'diplomasi', tier: 4, cost: 25000, duration: 120, prerequisites: ['bonus_organisasi_pbb'], icon: Sparkles, description: 'Klaim permanen kursi Dewan Keamanan PBB.', effects: [{ stat: 'kursi_dewan_keamanan', value: 1, label: 'Ambil Kursi Tetap Dewan Keamanan PBB' }] },
+  { id: 'bonus_tempat_wisata', name: 'Promosi Wisata Diplomatik', category: 'diplomasi', tier: 4, cost: 9500, duration: 120, prerequisites: ['mitigasi_bencana'], icon: Palette, description: 'Meningkatkan pendapatan destinasi wisata di PDB dan neraca keuangan sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'bonus_wisata', value: 2, label: '+2% Bonus Tempat Wisata' }] },
+  { id: 'sanksi_ekonomi', name: 'Perangkat Sanksi Ekonomi', category: 'diplomasi', tier: 4, cost: 10800, duration: 120, prerequisites: ['bonus_organisasi_regional'], icon: Banknote, description: 'Pembekuan aset musuh.', effects: [{ stat: 'sanksi', value: 2, label: '+2% Efek Sanksi Musuh' }] },
+  { id: 'suara_dewan_keamanan', name: 'Reformasi Birokrasi Kabinet', category: 'diplomasi', tier: 4, cost: 12500, duration: 120, prerequisites: ['pertahanan_diri'], icon: Globe2, description: 'Restrukturisasi tata kelola Dewan Kabinet Menteri untuk menekan biaya upgrade.', effects: [{ stat: 'biaya_upgrade_kabinet', value: -2, label: '-2% Biaya Upgrade Dewan Kabinet' }] },
 
   // TIER 5
-  { id: 'hegemoni_diplomasi',        name: 'Harmonisasi Fiskal Global',      category: 'diplomasi', tier: 5, cost: 20000, duration: 80, prerequisites: ['bonus_organisasi_regional'], icon: Banknote, description: 'Sinkronisasi kebijakan fiskal dengan standar internasional untuk memaksimalkan penerimaan pajak di semua lini.', effects: [{ stat: 'pajak_semua_lini', value: 2, label: '+2% Penerimaan Pajak Seluruh Lini' }] },
-  { id: 'kriptografi_kuantum',       name: 'Diplomasi Perdagangan Strategis', category: 'diplomasi', tier: 5, cost: 22000, duration: 85, prerequisites: ['kursi_tetap_dewan_pbb'],     icon: Lock,     description: 'Jaringan negosiasi dagang tingkat tinggi untuk menekan harga beli dan menaikkan harga jual komoditas nasional.', effects: [{ stat: 'harga_beli', value: -2, label: '-2% Harga Beli Komoditas' }, { stat: 'harga_jual', value: 2, label: '+2% Harga Jual Komoditas' }] },
-  { id: 'intelijen_satelit_quantum', name: 'Alokasi Subsidi Terpadu',         category: 'diplomasi', tier: 5, cost: 21000, duration: 82, prerequisites: ['bonus_tempat_wisata'],       icon: Wifi,     description: 'Mengurangi biaya subsidi negara sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'biaya_subsidi', value: -2, label: '-2% Biaya Subsidi Negara' }] },
-  { id: 'isolasi_total_musuh',       name: 'Program Permukiman Terpadu',      category: 'diplomasi', tier: 5, cost: 19000, duration: 76, prerequisites: ['sanksi_ekonomi'],            icon: Globe2,   description: 'Pembangunan kawasan hunian berstandar internasional untuk menampung populasi dan tenaga ahli asing.', effects: [{ stat: 'kapasitas_permukiman', value: 2, label: '+2% Kapasitas Permukiman' }] },
-  { id: 'tatanan_dunia_baru',        name: 'Sinergi Ekonomi Global',          category: 'diplomasi', tier: 5, cost: 25000, duration: 90, prerequisites: ['suara_dewan_keamanan'],      icon: Sparkles, description: 'Integrasi ekonomi lintas sektor nasional melalui jaringan diplomasi global untuk mendorong produktivitas semua lini.', effects: [{ stat: 'produksi_semua_lini', value: 2, label: '+2% Produksi Semua Lini' }] },
+  { id: 'hegemoni_diplomasi', name: 'Harmonisasi Fiskal Global', category: 'diplomasi', tier: 5, cost: 20000, duration: 150, prerequisites: ['bonus_organisasi_regional'], icon: Banknote, description: 'Sinkronisasi kebijakan fiskal dengan standar internasional untuk memaksimalkan penerimaan pajak di semua lini.', effects: [{ stat: 'pajak_semua_lini', value: 2, label: '+2% Penerimaan Pajak Seluruh Lini' }] },
+  { id: 'kriptografi_kuantum', name: 'Diplomasi Perdagangan Strategis', category: 'diplomasi', tier: 5, cost: 22000, duration: 150, prerequisites: ['kursi_tetap_dewan_pbb'], icon: Lock, description: 'Jaringan negosiasi dagang tingkat tinggi untuk menekan harga beli dan menaikkan harga jual komoditas nasional.', effects: [{ stat: 'harga_beli', value: -2, label: '-2% Harga Beli Komoditas' }, { stat: 'harga_jual', value: 2, label: '+2% Harga Jual Komoditas' }] },
+  { id: 'intelijen_satelit_quantum', name: 'Alokasi Subsidi Terpadu', category: 'diplomasi', tier: 5, cost: 21000, duration: 150, prerequisites: ['bonus_tempat_wisata'], icon: Wifi, description: 'Mengurangi biaya subsidi negara sebesar 2–15% sesuai level penelitian.', effects: [{ stat: 'biaya_subsidi', value: -2, label: '-2% Biaya Subsidi Negara' }] },
+  { id: 'isolasi_total_musuh', name: 'Program Permukiman Terpadu', category: 'diplomasi', tier: 5, cost: 19000, duration: 150, prerequisites: ['sanksi_ekonomi'], icon: Globe2, description: 'Pembangunan kawasan hunian berstandar internasional untuk menampung populasi dan tenaga ahli asing.', effects: [{ stat: 'kapasitas_permukiman', value: 2, label: '+2% Kapasitas Permukiman' }] },
+  { id: 'tatanan_dunia_baru', name: 'Sinergi Ekonomi Global', category: 'diplomasi', tier: 5, cost: 25000, duration: 150, prerequisites: ['suara_dewan_keamanan'], icon: Sparkles, description: 'Integrasi ekonomi lintas sektor nasional melalui jaringan diplomasi global untuk mendorong produktivitas semua lini.', effects: [{ stat: 'produksi_semua_lini', value: 2, label: '+2% Produksi Semua Lini' }] },
 ];
 
 const CATEGORIES: { key: CategoryKey; label: string; icon: React.ElementType }[] = [
-  { key: 'ekonomi',   label: 'Ekonomi & Industri',    icon: Banknote },
-  { key: 'militer',   label: 'Militer & Pertahanan',  icon: Shield },
+  { key: 'ekonomi', label: 'Ekonomi & Industri', icon: Banknote },
+  { key: 'militer', label: 'Militer & Pertahanan', icon: Shield },
   { key: 'diplomasi', label: 'Diplomasi & Intelijen', icon: Globe2 },
 ];
 
@@ -374,11 +375,11 @@ export default function PenelitianPageModal({
     // Fallback legacy jika active_research milik kategori yang sedang aktif
     countryDetail?.active_research && RESEARCH_DATA.find(r => r.id === (String(countryDetail.active_research).startsWith('upgrade:') ? String(countryDetail.active_research).split(':')[1] : String(countryDetail.active_research)))?.category === activeCategory
       ? {
-          id: countryDetail.active_research,
-          startDate: countryDetail.active_research_start_date,
-          endDate: countryDetail.active_research_end_date,
-          progress: countryDetail.active_research_progress || 0,
-        }
+        id: countryDetail.active_research,
+        startDate: countryDetail.active_research_start_date,
+        endDate: countryDetail.active_research_end_date,
+        progress: countryDetail.active_research_progress || 0,
+      }
       : null
   );
 
@@ -691,8 +692,8 @@ export default function PenelitianPageModal({
                 key={cat.key}
                 onClick={() => setActiveCategory(cat.key)}
                 className={`flex items-center justify-between w-full px-3 py-2.5 rounded-xl border text-left transition-all cursor-pointer ${isActiveTab
-                    ? 'bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md'
-                    : 'bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]'
+                  ? 'bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md'
+                  : 'bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]'
                   }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
@@ -754,11 +755,10 @@ export default function PenelitianPageModal({
               </span>
             </div>
 
-            <div className={`flex items-center justify-between px-3 py-2 rounded-xl border text-xs font-bold ${
-              educationModifier.isPenalty
-                ? 'bg-[#2A141A] border-rose-500/50 text-rose-300'
-                : 'bg-[#0E2A20] border-emerald-500/50 text-emerald-300'
-            }`}>
+            <div className={`flex items-center justify-between px-3 py-2 rounded-xl border text-xs font-bold ${educationModifier.isPenalty
+              ? 'bg-[#2A141A] border-rose-500/50 text-rose-300'
+              : 'bg-[#0E2A20] border-emerald-500/50 text-emerald-300'
+              }`}>
               <span className="font-bold">Pengaruh Waktu Riset:</span>
               <span className="font-black">{educationModifier.label}</span>
             </div>
@@ -781,6 +781,13 @@ export default function PenelitianPageModal({
               <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0E2A20] border border-emerald-500/50 text-emerald-300 text-xs font-bold">
                 <span className="font-bold">Keanggotaan ITU:</span>
                 <span className="font-black">+5% Kecepatan Riset</span>
+              </div>
+            )}
+
+            {getSainsPenelitianResearchSpeedBonusPercent(countryDetail) > 0 && (
+              <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0E2A20] border border-emerald-500/50 text-emerald-300 text-xs font-bold">
+                <span className="font-bold">Sains dan Penelitian:</span>
+                <span className="font-black">-{getSainsPenelitianResearchSpeedBonusPercent(countryDetail).toFixed(1)}% Waktu Riset</span>
               </div>
             )}
           </div>
@@ -826,276 +833,276 @@ export default function PenelitianPageModal({
     LAYOUT GRID — Kolom stretch otomatis setinggi yang tertinggi.
     Tidak ada ghost slot, tidak ada spacer.
 ═══════════════════════════════════════════════════════════════ */}
-<div className="overflow-x-auto custom-scrollbar pb-6 pt-4">
-  <div
-    className="grid gap-6 relative"
-    style={{
-      minWidth: `${tierCount * 250}px`,
-      gridTemplateColumns: `repeat(${tierCount}, minmax(0, 1fr))`,
-    }}
-  >
-    {Array.from({ length: tierCount }, (_, index) => index + 1).map((tierNum) => {
-      const tierItems = filteredData.filter((r) => getResearchTier(r, RESEARCH_DATA) === tierNum);
+          <div className="overflow-x-auto custom-scrollbar pb-6 pt-4">
+            <div
+              className="grid gap-6 relative"
+              style={{
+                minWidth: `${tierCount * 250}px`,
+                gridTemplateColumns: `repeat(${tierCount}, minmax(0, 1fr))`,
+              }}
+            >
+              {Array.from({ length: tierCount }, (_, index) => index + 1).map((tierNum) => {
+                const tierItems = filteredData.filter((r) => getResearchTier(r, RESEARCH_DATA) === tierNum);
 
-      return (
-        <div key={tierNum} className="flex flex-col gap-7 relative z-10">
+                return (
+                  <div key={tierNum} className="flex flex-col gap-7 relative z-10">
 
-          {/* Header Tier Badge */}
-          <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 shrink-0">
-            <span className="text-xs font-black text-[#00FFAA] uppercase tracking-wider">
-              TIER {ROMAN_NUMERALS[tierNum - 1]}
-            </span>
-            <span className="text-[10px] font-bold text-[#6B8A8A]">
-              {tierItems.filter((r) => isUnlocked(r.id)).length}/{tierItems.length}
-            </span>
-          </div>
+                    {/* Header Tier Badge */}
+                    <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 shrink-0">
+                      <span className="text-xs font-black text-[#00FFAA] uppercase tracking-wider">
+                        TIER {ROMAN_NUMERALS[tierNum - 1]}
+                      </span>
+                      <span className="text-[10px] font-bold text-[#6B8A8A]">
+                        {tierItems.filter((r) => isUnlocked(r.id)).length}/{tierItems.length}
+                      </span>
+                    </div>
 
-          {/* Kartu dalam tier ini */}
-          {tierItems.map((research) => {
-            const unlocked = isUnlocked(research.id);
-            const active = isActive(research.id);
-            const locked = isLocked(research);
-            const level = getLevel(research.id);
-            const canUnlock = canAfford(research.cost);
-            const isMaxed = level >= MAX_CARD_LEVEL;
-            const nextLevel = level + 1;
-            const upgradeCost = !isMaxed && unlocked ? getCardUpgradeCost(research, nextLevel) : 0;
-            const canUpgrade = !isMaxed && unlocked && canAfford(upgradeCost) && !activeCategoryResearchId;
-            const Icon = research.icon;
-            const isResearching = active || (activeUpgradeData !== null && activeUpgradeData.research.id === research.id);
+                    {/* Kartu dalam tier ini */}
+                    {tierItems.map((research) => {
+                      const unlocked = isUnlocked(research.id);
+                      const active = isActive(research.id);
+                      const locked = isLocked(research);
+                      const level = getLevel(research.id);
+                      const canUnlock = canAfford(research.cost);
+                      const isMaxed = level >= MAX_CARD_LEVEL;
+                      const nextLevel = level + 1;
+                      const upgradeCost = !isMaxed && unlocked ? getCardUpgradeCost(research, nextLevel) : 0;
+                      const canUpgrade = !isMaxed && unlocked && canAfford(upgradeCost) && !activeCategoryResearchId;
+                      const Icon = research.icon;
+                      const isResearching = active || (activeUpgradeData !== null && activeUpgradeData.research.id === research.id);
 
-            return (
-              <div key={research.id} className={`relative group ${isResearching ? 'pt-5' : ''}`}>
-                {tierNum < tierCount && (
-                  <div className="hidden lg:block absolute -right-6 top-1/2 -translate-y-1/2 w-6 border-t-2 border-dashed border-[#00FFAA]/30 z-0 pointer-events-none" />
-                )}
+                      return (
+                        <div key={research.id} className={`relative group ${isResearching ? 'pt-5' : ''}`}>
+                          {tierNum < tierCount && (
+                            <div className="hidden lg:block absolute -right-6 top-1/2 -translate-y-1/2 w-6 border-t-2 border-dashed border-[#00FFAA]/30 z-0 pointer-events-none" />
+                          )}
 
-                <div
-                  className={`relative rounded-xl overflow-visible border transition-all z-10 flex flex-col justify-between min-h-[195px] ${isMaxed
-                      ? 'bg-gradient-to-r from-[#0F2424] via-[#0A1A1A] to-[#122E2E] border-amber-500/60 shadow-[0_0_15px_rgba(245,158,11,0.15)]'
-                      : unlocked
-                        ? 'bg-[#0F2424] border-[#00FFAA]/50 shadow-[0_2px_10px_rgba(0,255,170,0.1)]'
-                        : active
-                          ? 'bg-[#0F2424] border-[#00FFAA] shadow-[0_0_20px_rgba(0,255,170,0.2)]'
-                          : locked
-                            ? 'bg-[#0A1A1A]/80 border-gray-800 opacity-60'
-                            : 'bg-[#0A1A1A] border-[#00FFAA]/25 hover:border-[#00FFAA]/60'
-                    }`}
-                >
-                  {/* TANGGAL SELESAI */}
-                  {isResearching && (() => {
-                    const durationDays = getEffectiveResearchDuration(
-                      activeUpgradeData ? getCardUpgradeDuration(research, activeUpgradeData.targetLevel) : research.duration
-                    );
-                    const remainingDays = Math.max(1, Math.ceil(durationDays * (100 - activeCategoryResearchProgress) / 100));
-                    const endDateStr = currentCategorySlot?.endDate || countryDetail?.active_research_end_date || addDays(getSafeDateString(), remainingDays);
-
-                    const [y, m, d] = endDateStr.split('-').map(Number);
-                    const date = new Date(y, m - 1, d);
-                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
-                    const formattedDateStr = `${d} ${monthNames[date.getMonth()]}, ${date.getFullYear()}`;
-
-                    return (
-                      <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
-                        {formattedDateStr}
-                      </div>
-                    );
-                  })()}
-
-                  {/* Top Portion (Header + Body Effects) */}
-                  <div className="flex flex-col">
-                    {/* Header Card */}
-                    <div className="p-3 pb-2 flex items-center justify-between gap-2 border-b border-[#00FFAA]/10 bg-[#0F2424] rounded-t-xl min-h-[44px]">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div
-                          className={`p-1.5 rounded-lg border shrink-0 ${isMaxed
-                              ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
+                          <div
+                            className={`relative rounded-xl overflow-visible border transition-all z-10 flex flex-col justify-between min-h-[195px] ${isMaxed
+                              ? 'bg-gradient-to-r from-[#0F2424] via-[#0A1A1A] to-[#122E2E] border-amber-500/60 shadow-[0_0_15px_rgba(245,158,11,0.15)]'
                               : unlocked
-                                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
-                                : 'bg-[#00FFAA]/10 border-[#00FFAA]/30 text-[#00FFAA]'
-                            }`}
-                        >
-                          <Icon className="w-3.5 h-3.5" />
-                        </div>
-                        <div className="min-w-0">
-                          <h3 className="text-[11px] font-bold text-[#E0E0E0] truncate leading-tight">
-                            {research.name}
-                          </h3>
-                        </div>
-                      </div>
-
-                      <div className="px-1.5 py-0.5 rounded border border-[#00FFAA]/30 bg-[#0A1A1A] text-[9px] font-black text-[#00FFAA] shrink-0 uppercase tracking-widest">
-                        {ROMAN_NUMERALS[tierNum - 1]}
-                      </div>
-                    </div>
-
-                    {/* Body Card (Effects) */}
-                    <div className="p-2.5">
-                      <div className="space-y-1 min-h-[28px] flex flex-col justify-center">
-                        {research.effects.map((eff, i) => {
-                          const baseValue = research.category === 'militer'
-                            ? getMilitaryResearchBaseBonus(research.id) ?? eff.value
-                            : eff.value;
-                          const amplifiedLabel = applyLevelBonus(
-                            eff,
-                            level,
-                            baseValue,
-                            research.category === 'militer'
-                              ? getMilitaryResearchLevelBonus(research.id, Math.max(1, level))
-                              : undefined
-                          );
-                          return (
-                            <div key={i} className="flex items-center gap-1 text-[9px] font-bold">
-                              <Sparkles className="w-2.5 h-2.5 text-[#00FFAA] shrink-0" />
-                              <span className="text-[#E0E0E0] truncate">{amplifiedLabel}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Bottom Portion (Progress & Action Button Footer) */}
-                  <div className="p-2.5 pt-0">
-                    <div className="flex items-center justify-between gap-1.5 pt-1.5 border-t border-[#00FFAA]/10">
-                      <div className="flex items-center gap-0.5 text-[9px] font-bold text-[#6B8A8A] shrink-0">
-                        <Clock className="w-2.5 h-2.5 text-sky-400" />
-                        {(() => {
-                          const baseDur = unlocked && !isMaxed ? getCardUpgradeDuration(research, nextLevel) : research.duration;
-                          const effDur = getEffectiveResearchDuration(baseDur, research.category);
-                          const hasDiscount = effDur < baseDur;
-                          const hasPenalty = effDur > baseDur;
-
-                          return (
-                            <span className="flex items-center gap-1">
-                              {hasDiscount && (
-                                <span className="text-rose-400/80 line-through">
-                                  {baseDur}h
-                                </span>
-                              )}
-                              <span className={hasDiscount ? 'text-emerald-400 font-extrabold' : hasPenalty ? 'text-rose-400 font-extrabold' : ''}>
-                                {effDur}h
-                              </span>
-                            </span>
-                          );
-                        })()}
-                      </div>
-
-                      <div className="flex-1 h-1.5 bg-[#0A1A1A] rounded-full overflow-hidden border border-[#00FFAA]/20">
-                        <div
-                          className={`h-full transition-all duration-300 ${isMaxed
-                              ? 'bg-amber-400'
-                              : isResearching
-                                ? 'bg-[#00FFAA] animate-pulse'
-                                : unlocked
-                                  ? 'bg-emerald-400'
-                                  : 'bg-gray-700'
-                            }`}
-                          style={{
-                            width: `${isMaxed
-                                ? 100
-                                : isResearching
-                                  ? activeCategoryResearchProgress
-                                  : (level / MAX_CARD_LEVEL) * 100
-                              }%`,
-                          }}
-                        />
-                      </div>
-
-                      <div className="text-[9px] font-black text-[#00FFAA] shrink-0 tracking-wider">
-                        {level}/{MAX_CARD_LEVEL}
-                      </div>
-                    </div>
-
-                    <div className="mt-2 min-h-[30px] flex flex-col justify-end">
-                      {!unlocked && !active && (
-                        locked ? (
-                          <div className="w-full py-1 rounded bg-gray-800/40 border border-gray-700/50 flex items-center justify-center gap-1 text-gray-500 text-[9px] font-black uppercase">
-                            <Lock className="w-2.5 h-2.5" />
-                            Terkunci
-                          </div>
-                        ) : activeCategoryResearchId ? (
-                          <div className="w-full py-1 rounded bg-[#0A1A1A] border border-[#6B8A8A]/30 flex items-center justify-center gap-1 text-[#6B8A8A] text-[9px] font-black uppercase">
-                            <Clock className="w-2.5 h-2.5" />
-                            Antrian Penuh
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => canUnlock && setConfirmTarget(research)}
-                            disabled={!canUnlock}
-                            className={`w-full py-1 rounded border flex items-center justify-center gap-1 text-[9px] font-black uppercase transition-all cursor-pointer ${canUnlock
-                                ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] hover:bg-[#00FFAA]/80 active:scale-95 shadow-md'
-                                : 'bg-gray-800/50 border-gray-700 text-gray-500 cursor-not-allowed'
+                                ? 'bg-[#0F2424] border-[#00FFAA]/50 shadow-[0_2px_10px_rgba(0,255,170,0.1)]'
+                                : active
+                                  ? 'bg-[#0F2424] border-[#00FFAA] shadow-[0_0_20px_rgba(0,255,170,0.2)]'
+                                  : locked
+                                    ? 'bg-[#0A1A1A]/80 border-gray-800 opacity-60'
+                                    : 'bg-[#0A1A1A] border-[#00FFAA]/25 hover:border-[#00FFAA]/60'
                               }`}
                           >
-                            <Rocket className="w-2.5 h-2.5" />
-                            {canUnlock ? `Riset (${research.cost.toLocaleString('id-ID')})` : 'Kas Tidak Cukup'}
-                          </button>
-                        )
-                      )}
+                            {/* TANGGAL SELESAI */}
+                            {isResearching && (() => {
+                              const durationDays = getEffectiveResearchDuration(
+                                activeUpgradeData ? getCardUpgradeDuration(research, activeUpgradeData.targetLevel) : research.duration
+                              );
+                              const remainingDays = Math.max(1, Math.ceil(durationDays * (100 - activeCategoryResearchProgress) / 100));
+                              const endDateStr = currentCategorySlot?.endDate || countryDetail?.active_research_end_date || addDays(getSafeDateString(), remainingDays);
 
-                      {active && (
-                        <div className="w-full py-1 rounded bg-[#00FFAA]/20 border border-[#00FFAA]/50 flex items-center justify-center gap-1 text-[#00FFAA] text-[9px] font-black uppercase">
-                          <Clock className="w-2.5 h-2.5 animate-pulse" />
-                          Diteliti ({activeCategoryResearchProgress}%)
-                        </div>
-                      )}
+                              const [y, m, d] = endDateStr.split('-').map(Number);
+                              const date = new Date(y, m - 1, d);
+                              const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+                              const formattedDateStr = `${d} ${monthNames[date.getMonth()]}, ${date.getFullYear()}`;
 
-                      {unlocked && (
-                        isMaxed ? (
-                          <div className="w-full py-1 rounded bg-gradient-to-r from-amber-500/20 to-amber-600/20 border border-amber-500/50 flex items-center justify-center gap-1 text-amber-300 text-[9px] font-black uppercase">
-                            <CheckCircle2 className="w-2.5 h-2.5" />
-                            MAX (5/5)
-                          </div>
-                        ) : isResearching ? (
-                          <div className="w-full py-1 rounded bg-[#00FFAA]/20 border border-[#00FFAA]/50 flex items-center justify-center gap-1 text-[#00FFAA] text-[9px] font-black uppercase">
-                            <Clock className="w-2.5 h-2.5 animate-pulse" />
-                            Diteliti ({activeCategoryResearchProgress}%)
-                          </div>
-                        ) : activeCategoryResearchId ? (
-                          <div className="w-full py-1 rounded bg-[#0A1A1A] border border-[#6B8A8A]/30 flex items-center justify-center gap-1 text-[#6B8A8A] text-[9px] font-black uppercase">
-                            <Clock className="w-2.5 h-2.5" />
-                            Antrian Penuh
-                          </div>
-                        ) : (
-                          <div className="flex flex-col gap-1">
-                            <button
-                              onClick={() => canUpgrade && setConfirmUpgrade({ research, targetLevel: nextLevel })}
-                              disabled={!canUpgrade}
-                              className={`w-full py-1 rounded border flex items-center justify-center gap-1 text-[9px] font-black uppercase transition-all cursor-pointer ${canUpgrade
-                                  ? 'bg-gradient-to-r from-[#00FFAA] to-emerald-400 text-[#0A1A1A] border-[#00FFAA] hover:opacity-90 active:scale-95 shadow-md'
-                                  : 'bg-gray-800/50 border-gray-700 text-gray-500 cursor-not-allowed'
-                                }`}
-                            >
-                              <ChevronUp className="w-2.5 h-2.5" />
-                              {canUpgrade ? `Upgrade Lv.${nextLevel}` : 'Kas Tidak Cukup'}
-                            </button>
-                            <div className="text-[8px] font-bold text-[#00FFAA] text-center tracking-tight">
-                              Efek Berikutnya: {applyLevelBonus(
-                                research.effects[0],
-                                nextLevel,
-                                research.category === 'militer'
-                                  ? getMilitaryResearchBaseBonus(research.id) ?? research.effects[0].value
-                                  : research.effects[0].value,
-                                research.category === 'militer'
-                                  ? getMilitaryResearchLevelBonus(research.id, nextLevel)
-                                  : undefined
-                              )}
+                              return (
+                                <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+                                  {formattedDateStr}
+                                </div>
+                              );
+                            })()}
+
+                            {/* Top Portion (Header + Body Effects) */}
+                            <div className="flex flex-col">
+                              {/* Header Card */}
+                              <div className="p-3 pb-2 flex items-center justify-between gap-2 border-b border-[#00FFAA]/10 bg-[#0F2424] rounded-t-xl min-h-[44px]">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <div
+                                    className={`p-1.5 rounded-lg border shrink-0 ${isMaxed
+                                      ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
+                                      : unlocked
+                                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
+                                        : 'bg-[#00FFAA]/10 border-[#00FFAA]/30 text-[#00FFAA]'
+                                      }`}
+                                  >
+                                    <Icon className="w-3.5 h-3.5" />
+                                  </div>
+                                  <div className="min-w-0">
+                                    <h3 className="text-[11px] font-bold text-[#E0E0E0] truncate leading-tight">
+                                      {research.name}
+                                    </h3>
+                                  </div>
+                                </div>
+
+                                <div className="px-1.5 py-0.5 rounded border border-[#00FFAA]/30 bg-[#0A1A1A] text-[9px] font-black text-[#00FFAA] shrink-0 uppercase tracking-widest">
+                                  {ROMAN_NUMERALS[tierNum - 1]}
+                                </div>
+                              </div>
+
+                              {/* Body Card (Effects) */}
+                              <div className="p-2.5">
+                                <div className="space-y-1 min-h-[28px] flex flex-col justify-center">
+                                  {research.effects.map((eff, i) => {
+                                    const baseValue = research.category === 'militer'
+                                      ? getMilitaryResearchBaseBonus(research.id) ?? eff.value
+                                      : eff.value;
+                                    const amplifiedLabel = applyLevelBonus(
+                                      eff,
+                                      level,
+                                      baseValue,
+                                      research.category === 'militer'
+                                        ? getMilitaryResearchLevelBonus(research.id, Math.max(1, level))
+                                        : undefined
+                                    );
+                                    return (
+                                      <div key={i} className="flex items-center gap-1 text-[9px] font-bold">
+                                        <Sparkles className="w-2.5 h-2.5 text-[#00FFAA] shrink-0" />
+                                        <span className="text-[#E0E0E0] truncate">{amplifiedLabel}</span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Bottom Portion (Progress & Action Button Footer) */}
+                            <div className="p-2.5 pt-0">
+                              <div className="flex items-center justify-between gap-1.5 pt-1.5 border-t border-[#00FFAA]/10">
+                                <div className="flex items-center gap-0.5 text-[9px] font-bold text-[#6B8A8A] shrink-0">
+                                  <Clock className="w-2.5 h-2.5 text-sky-400" />
+                                  {(() => {
+                                    const baseDur = unlocked && !isMaxed ? getCardUpgradeDuration(research, nextLevel) : research.duration;
+                                    const effDur = getEffectiveResearchDuration(baseDur, research.category);
+                                    const hasDiscount = effDur < baseDur;
+                                    const hasPenalty = effDur > baseDur;
+
+                                    return (
+                                      <span className="flex items-center gap-1">
+                                        {hasDiscount && (
+                                          <span className="text-rose-400/80 line-through">
+                                            {baseDur}h
+                                          </span>
+                                        )}
+                                        <span className={hasDiscount ? 'text-emerald-400 font-extrabold' : hasPenalty ? 'text-rose-400 font-extrabold' : ''}>
+                                          {effDur}h
+                                        </span>
+                                      </span>
+                                    );
+                                  })()}
+                                </div>
+
+                                <div className="flex-1 h-1.5 bg-[#0A1A1A] rounded-full overflow-hidden border border-[#00FFAA]/20">
+                                  <div
+                                    className={`h-full transition-all duration-300 ${isMaxed
+                                      ? 'bg-amber-400'
+                                      : isResearching
+                                        ? 'bg-[#00FFAA] animate-pulse'
+                                        : unlocked
+                                          ? 'bg-emerald-400'
+                                          : 'bg-gray-700'
+                                      }`}
+                                    style={{
+                                      width: `${isMaxed
+                                        ? 100
+                                        : isResearching
+                                          ? activeCategoryResearchProgress
+                                          : (level / MAX_CARD_LEVEL) * 100
+                                        }%`,
+                                    }}
+                                  />
+                                </div>
+
+                                <div className="text-[9px] font-black text-[#00FFAA] shrink-0 tracking-wider">
+                                  {level}/{MAX_CARD_LEVEL}
+                                </div>
+                              </div>
+
+                              <div className="mt-2 min-h-[30px] flex flex-col justify-end">
+                                {!unlocked && !active && (
+                                  locked ? (
+                                    <div className="w-full py-1 rounded bg-gray-800/40 border border-gray-700/50 flex items-center justify-center gap-1 text-gray-500 text-[9px] font-black uppercase">
+                                      <Lock className="w-2.5 h-2.5" />
+                                      Terkunci
+                                    </div>
+                                  ) : activeCategoryResearchId ? (
+                                    <div className="w-full py-1 rounded bg-[#0A1A1A] border border-[#6B8A8A]/30 flex items-center justify-center gap-1 text-[#6B8A8A] text-[9px] font-black uppercase">
+                                      <Clock className="w-2.5 h-2.5" />
+                                      Antrian Penuh
+                                    </div>
+                                  ) : (
+                                    <button
+                                      onClick={() => canUnlock && setConfirmTarget(research)}
+                                      disabled={!canUnlock}
+                                      className={`w-full py-1 rounded border flex items-center justify-center gap-1 text-[9px] font-black uppercase transition-all cursor-pointer ${canUnlock
+                                        ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] hover:bg-[#00FFAA]/80 active:scale-95 shadow-md'
+                                        : 'bg-gray-800/50 border-gray-700 text-gray-500 cursor-not-allowed'
+                                        }`}
+                                    >
+                                      <Rocket className="w-2.5 h-2.5" />
+                                      {canUnlock ? `Riset (${research.cost.toLocaleString('id-ID')})` : 'Kas Tidak Cukup'}
+                                    </button>
+                                  )
+                                )}
+
+                                {active && (
+                                  <div className="w-full py-1 rounded bg-[#00FFAA]/20 border border-[#00FFAA]/50 flex items-center justify-center gap-1 text-[#00FFAA] text-[9px] font-black uppercase">
+                                    <Clock className="w-2.5 h-2.5 animate-pulse" />
+                                    Diteliti ({activeCategoryResearchProgress}%)
+                                  </div>
+                                )}
+
+                                {unlocked && (
+                                  isMaxed ? (
+                                    <div className="w-full py-1 rounded bg-gradient-to-r from-amber-500/20 to-amber-600/20 border border-amber-500/50 flex items-center justify-center gap-1 text-amber-300 text-[9px] font-black uppercase">
+                                      <CheckCircle2 className="w-2.5 h-2.5" />
+                                      MAX (5/5)
+                                    </div>
+                                  ) : isResearching ? (
+                                    <div className="w-full py-1 rounded bg-[#00FFAA]/20 border border-[#00FFAA]/50 flex items-center justify-center gap-1 text-[#00FFAA] text-[9px] font-black uppercase">
+                                      <Clock className="w-2.5 h-2.5 animate-pulse" />
+                                      Diteliti ({activeCategoryResearchProgress}%)
+                                    </div>
+                                  ) : activeCategoryResearchId ? (
+                                    <div className="w-full py-1 rounded bg-[#0A1A1A] border border-[#6B8A8A]/30 flex items-center justify-center gap-1 text-[#6B8A8A] text-[9px] font-black uppercase">
+                                      <Clock className="w-2.5 h-2.5" />
+                                      Antrian Penuh
+                                    </div>
+                                  ) : (
+                                    <div className="flex flex-col gap-1">
+                                      <button
+                                        onClick={() => canUpgrade && setConfirmUpgrade({ research, targetLevel: nextLevel })}
+                                        disabled={!canUpgrade}
+                                        className={`w-full py-1 rounded border flex items-center justify-center gap-1 text-[9px] font-black uppercase transition-all cursor-pointer ${canUpgrade
+                                          ? 'bg-gradient-to-r from-[#00FFAA] to-emerald-400 text-[#0A1A1A] border-[#00FFAA] hover:opacity-90 active:scale-95 shadow-md'
+                                          : 'bg-gray-800/50 border-gray-700 text-gray-500 cursor-not-allowed'
+                                          }`}
+                                      >
+                                        <ChevronUp className="w-2.5 h-2.5" />
+                                        {canUpgrade ? `Upgrade Lv.${nextLevel}` : 'Kas Tidak Cukup'}
+                                      </button>
+                                      <div className="text-[8px] font-bold text-[#00FFAA] text-center tracking-tight">
+                                        Efek Berikutnya: {applyLevelBonus(
+                                          research.effects[0],
+                                          nextLevel,
+                                          research.category === 'militer'
+                                            ? getMilitaryResearchBaseBonus(research.id) ?? research.effects[0].value
+                                            : research.effects[0].value,
+                                          research.category === 'militer'
+                                            ? getMilitaryResearchLevelBonus(research.id, nextLevel)
+                                            : undefined
+                                        )}
+                                      </div>
+                                    </div>
+                                  )
+                                )}
+                              </div>
                             </div>
                           </div>
-                        )
-                      )}
-                    </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      );
-    })}
-  </div>
-</div>
+                );
+              })}
+            </div>
+          </div>
 
           {filteredData.length === 0 && (
             <div className="text-center py-12 text-[#6B8A8A] text-sm font-bold">

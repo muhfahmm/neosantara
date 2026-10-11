@@ -17,8 +17,12 @@ interface KonfirmasiPembangunanProps {
   cost: number;
   waktuPembangunan?: number;
   waktuPembangunanDiskon?: number;
+  infraBonusPercent?: number;
+  pembangunanBonusPercent?: number;
+  hasJewishDiscount?: boolean;
   dampakKepuasan?: number;      // Untuk Tempat Umum & Hunian
   produksiPerHari?: number;     // Untuk Bangunan Produksi
+  kementerianPendidikanBonusPercent?: number;
   produksiLabel?: string;
   konsumsiListrik?: number;
   requirements: MaterialRequirement[];
@@ -40,8 +44,12 @@ export default function KonfirmasiPembangunanModal({
   cost,
   waktuPembangunan,
   waktuPembangunanDiskon,
+  infraBonusPercent = 0,
+  pembangunanBonusPercent = 0,
+  hasJewishDiscount = false,
   dampakKepuasan,
   produksiPerHari,
+  kementerianPendidikanBonusPercent = 0,
   produksiLabel,
   konsumsiListrik,
   requirements,
@@ -199,21 +207,51 @@ export default function KonfirmasiPembangunanModal({
                     </span>
                   </span>
                 </div>
-                {hasConstructionTimeDiscount && (
-                  <div className="flex justify-end">
-                    <span className="inline-flex rounded-full border border-rose-500/40 bg-rose-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-rose-400">
-                      Bonus Yahudi: waktu pembangunan -10%
-                    </span>
+                {(hasConstructionTimeDiscount || infraBonusPercent > 0 || pembangunanBonusPercent > 0 || hasJewishDiscount) && (
+                  <div className="flex justify-end gap-2 flex-wrap">
+                    {infraBonusPercent > 0 && (
+                      <span className="inline-flex rounded-full border border-[#00FFAA]/40 bg-[#00FFAA]/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-[#00FFAA]">
+                        Kementerian Infrastruktur: +{infraBonusPercent.toFixed(1)}% Kecepatan Pembangunan
+                      </span>
+                    )}
+                    {pembangunanBonusPercent > 0 && (
+                      <span className="inline-flex rounded-full border border-[#00FFAA]/40 bg-[#00FFAA]/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-[#00FFAA]">
+                        Kementerian Pembangunan: +{pembangunanBonusPercent.toFixed(1)}% Kecepatan Pembangunan
+                      </span>
+                    )}
+                    {hasJewishDiscount && (
+                      <span className="inline-flex rounded-full border border-rose-500/40 bg-rose-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-rose-400">
+                        Bonus Yahudi: waktu pembangunan -10%
+                      </span>
+                    )}
                   </div>
                 )}
               </>
             )}
 
             {produksiPerHari !== undefined && (
-              <div className="flex justify-between">
-                <span className="text-[#6B8A8A]">Produksi {produksiLabel || ''} per hari:</span>
-                <span className="text-emerald-400 font-bold">+{produksiPerHari.toLocaleString('id-ID')}</span>
-              </div>
+              <>
+                <div className="flex justify-between">
+                  <span className="text-[#6B8A8A]">Produksi {produksiLabel || ''} per hari:</span>
+                  <span className="flex items-center gap-2 font-bold">
+                    {kementerianPendidikanBonusPercent > 0 && (
+                      <span className="text-rose-400 line-through">
+                        +{produksiPerHari.toLocaleString('id-ID')}
+                      </span>
+                    )}
+                    <span className="text-emerald-400">
+                      +{(produksiPerHari * (1 + kementerianPendidikanBonusPercent / 100)).toLocaleString('id-ID')}
+                    </span>
+                  </span>
+                </div>
+                {kementerianPendidikanBonusPercent > 0 && (
+                  <div className="flex justify-end">
+                    <span className="inline-flex rounded-full border border-[#00FFAA]/40 bg-[#00FFAA]/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-[#00FFAA]">
+                      Kementerian Pendidikan: +{kementerianPendidikanBonusPercent.toFixed(1)}% Produksi Pangan & SDA
+                    </span>
+                  </div>
+                )}
+              </>
             )}
 
             {dampakKepuasan !== undefined && (
