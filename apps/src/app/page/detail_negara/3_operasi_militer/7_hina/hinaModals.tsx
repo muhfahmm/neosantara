@@ -12,14 +12,25 @@ export default function HinaModal({ isOpen, countryName, onClose, onConfirm }: H
 	if (!isOpen) return null;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-			<div className="w-[420px] bg-white rounded-2xl p-6 shadow-lg border border-[#E5DCCF]">
-				<h3 className="text-lg font-black text-[#3d2911] mb-3">Konfirmasi Hina</h3>
-				<p className="text-sm text-[#5c3c10] mb-6">Hina publik atau pemimpin <strong>{countryName}</strong>? Tindakan diplomatik yang memalukan dapat memperburuk hubungan.</p>
+		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans text-white">
+			<div className="w-full max-w-[440px] bg-[#0F2424] border border-amber-500/40 rounded-2xl p-6 shadow-2xl relative">
+				<h3 className="text-lg font-black text-amber-400 tracking-wide uppercase mb-3">Konfirmasi Hina</h3>
+				<p className="text-xs sm:text-sm text-[#E0E0E0] mb-6 leading-relaxed">Hina publik atau pemimpin <strong className="text-white">{countryName}</strong>? Tindakan diplomatik yang memalukan dapat memperburuk hubungan internasional.</p>
 
 				<div className="flex gap-3 justify-end">
-					<button onClick={onClose} className="flex-1 bg-white/70 border border-[#C4B49C]/30 rounded py-2.5 text-center text-[#5c3c10] font-black text-[12px] tracking-widest uppercase">Batal</button>
-					<button onClick={() => { onConfirm(); onClose(); }} className="flex-1 bg-amber-600 hover:bg-amber-700 border border-amber-700 rounded py-2.5 text-white font-black text-[12px] tracking-widest uppercase">Hina</button>
+					<button
+						onClick={onClose}
+						className="flex-1 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl py-2.5 text-center text-[#E0E0E0] font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
+					>
+						Batal
+					</button>
+
+					<button
+						onClick={() => { onConfirm(); onClose(); }}
+						className="flex-1 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 border border-amber-600 rounded-xl py-2.5 text-center text-white font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
+					>
+						Hina
+					</button>
 				</div>
 			</div>
 		</div>

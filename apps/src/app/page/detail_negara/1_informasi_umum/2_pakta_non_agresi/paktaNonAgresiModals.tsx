@@ -13,12 +13,12 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, chancePercent
 	if (!isOpen) return null;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-			<div className="w-[420px] bg-white rounded-2xl p-6 shadow-lg border border-[#E5DCCF]">
-				<h3 className="text-lg font-black text-[#3d2911] mb-3">Konfirmasi Pakta Non-Agresi</h3>
-				<p className="text-sm text-[#5c3c10] mb-3">Apakah Anda ingin mengajukan Pakta Non-Agresi kepada <strong>{countryName}</strong>? Pakta berlaku jika diterima dan menegaskan kedua negara tidak akan saling menyerang.</p>
+		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans">
+			<div className="w-full max-w-[440px] bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-6 shadow-2xl relative text-white">
+				<h3 className="text-lg font-black text-[#00FFAA] tracking-wide uppercase mb-3">Konfirmasi Pakta Non-Agresi</h3>
+				<p className="text-xs sm:text-sm text-[#E0E0E0] mb-3 leading-relaxed">Apakah Anda ingin mengajukan Pakta Non-Agresi kepada <strong className="text-white">{countryName}</strong>? Pakta berlaku jika diterima dan menegaskan kedua negara tidak akan saling menyerang.</p>
 				{chancePercent !== undefined && (
-					<p className="text-sm font-bold text-[#5c3c10] mb-6">
+					<p className="text-xs sm:text-sm font-bold text-[#00FFAA] mb-6">
 						Peluang diterima: {Math.round(chancePercent)}% (berdasarkan hubungan bilateral, kabinet, dan riset).
 					</p>
 				)}
@@ -26,14 +26,14 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, chancePercent
 				<div className="flex gap-3 justify-end">
 					<button
 						onClick={onClose}
-						className="flex-1 bg-white/70 border border-[#C4B49C]/30 rounded py-2.5 text-center text-[#5c3c10] font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer hover:shadow-md"
+						className="flex-1 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl py-2.5 text-center text-[#E0E0E0] font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
 					>
 						Batal
 					</button>
 
 					<button
 						onClick={() => { onConfirm(); onClose(); }}
-						className="flex-1 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 border border-emerald-700 rounded py-2.5 text-center text-white font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
+						className="flex-1 bg-[#00FFAA] hover:bg-[#00e699] border border-[#00FFAA] rounded-xl py-2.5 text-center text-[#0A1A1A] font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
 					>
 						Jalin Pakta
 					</button>

@@ -88,22 +88,22 @@ export default function SpionaseModal({ isOpen, countryName, onClose, onConfirm 
 	};
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-150 font-serif text-[#2a1c0e]">
-			<div className="w-full max-w-[500px] bg-[#d9caad] border-4 border-[#7a6448] rounded-xl overflow-hidden shadow-2xl relative">
+		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans text-white">
+			<div className="w-full max-w-[480px] bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden shadow-2xl relative">
 				
 				{/* BANNER HEADER */}
-				<div className="relative w-full h-11 bg-[#2d4239] border-b-2 border-[#1e2e28] flex items-center justify-center px-4">
-					<div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-xs font-bold text-emerald-300 uppercase tracking-wider">
-						<Eye className="w-4 h-4 animate-pulse" />
+				<div className="relative w-full h-12 bg-[#0A1A1A] border-b border-[#00FFAA]/20 flex items-center justify-between px-5">
+					<div className="flex items-center gap-2 text-xs font-bold text-[#00FFAA] uppercase tracking-wider">
+						<Eye className="w-4 h-4 text-[#00FFAA] animate-pulse" />
 						Operasi Intelijen
 					</div>
-					<h3 className="text-sm sm:text-base font-black text-[#f2ebd9] tracking-wide uppercase drop-shadow-sm text-center">
+					<h3 className="text-sm font-black text-[#00FFAA] tracking-wide uppercase drop-shadow-sm text-center">
 						Spionase Intelijen Negara
 					</h3>
 				</div>
 
 				<div className="p-5 space-y-4">
-					<p className="text-xs sm:text-sm text-[#4a3520] font-sans text-center font-medium">
+					<p className="text-xs sm:text-sm text-[#E0E0E0] text-center font-medium">
 						Pilih negara target untuk melancarkan operasi spionase rahasia:
 					</p>
 
@@ -112,35 +112,35 @@ export default function SpionaseModal({ isOpen, countryName, onClose, onConfirm 
 						<button
 							type="button"
 							onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-							className="w-full h-11 bg-[#2c473e] hover:bg-[#20362f] border-2 border-[#1b2b25] rounded-md px-3 flex items-center justify-between text-white transition-colors shadow-inner cursor-pointer"
+							className="w-full h-11 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl px-3 flex items-center justify-between text-white transition-colors cursor-pointer"
 						>
 							<div className="flex items-center gap-3 truncate">
 								{renderFlag(selectedData?.iso, selectedData?.country)}
-								<span className="font-sans font-bold text-sm tracking-wide truncate">
+								<span className="font-bold text-sm tracking-wide truncate text-[#00FFAA]">
 									{selectedData?.country || "Pilih Negara Target"}
 								</span>
 							</div>
-							<ChevronDown className={`w-4 h-4 text-emerald-200 transition-transform duration-200 shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+							<ChevronDown className={`w-4 h-4 text-[#00FFAA] transition-transform duration-200 shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} />
 						</button>
 
 						{isDropdownOpen && (
-							<div className="absolute left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto bg-[#e8deca] border-2 border-[#7a6448] rounded-md shadow-2xl z-50 divide-y divide-[#c7b799] font-sans">
+							<div className="absolute left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-xl shadow-2xl z-50 divide-y divide-[#00FFAA]/10">
 								{/* INPUT SEARCH INSIDE DROPDOWN */}
-								<div className="p-2 sticky top-0 bg-[#d9caad] border-b border-[#a89574] z-10">
+								<div className="p-2 sticky top-0 bg-[#0F2424] border-b border-[#00FFAA]/20 z-10">
 									<div className="relative">
-										<Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#5c462b]" />
+										<Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#6B8A8A]" />
 										<input
 											type="text"
 											placeholder="Cari negara..."
 											value={searchQuery}
 											onChange={(e) => setSearchQuery(e.target.value)}
-											className="w-full bg-[#eee5d3] border border-[#968363] rounded px-8 py-1 text-xs text-[#2a1c0e] placeholder-[#70583b] outline-none"
+											className="w-full bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-lg px-8 py-1.5 text-xs text-[#E0E0E0] placeholder-[#6B8A8A] outline-none focus:border-[#00FFAA]"
 										/>
 									</div>
 								</div>
 
 								{filteredCountries.length === 0 ? (
-									<div className="p-3 text-center text-xs text-[#70583b]">Tidak ada negara ditemukan</div>
+									<div className="p-3 text-center text-xs text-[#6B8A8A]">Tidak ada negara ditemukan</div>
 								) : (
 									filteredCountries.map((c) => (
 										<button
@@ -150,13 +150,13 @@ export default function SpionaseModal({ isOpen, countryName, onClose, onConfirm 
 												setSelectedCountry(c.country);
 												setIsDropdownOpen(false);
 											}}
-											className={`w-full px-3 py-2 flex items-center gap-3 text-left hover:bg-[#cbb894] transition-colors text-xs font-bold text-[#2a1c0e] ${
-												selectedCountry === c.country ? 'bg-[#bfac87] border-l-4 border-emerald-700' : ''
+											className={`w-full px-3 py-2 flex items-center gap-3 text-left hover:bg-[#00FFAA]/10 transition-colors text-xs font-bold text-[#E0E0E0] ${
+												selectedCountry === c.country ? 'bg-[#00FFAA]/20 text-[#00FFAA] border-l-4 border-[#00FFAA]' : ''
 											}`}
 										>
 											{renderFlag(c.iso, c.country)}
 											<span className="truncate flex-1">{c.country}</span>
-											<span className="text-[10px] text-[#6b5338] font-mono uppercase bg-[#dbcdb2] px-1.5 py-0.5 rounded border border-[#a89574]">
+											<span className="text-[10px] text-[#6B8A8A] font-mono uppercase bg-[#0A1A1A] px-1.5 py-0.5 rounded border border-[#00FFAA]/20">
 												{c.iso?.toUpperCase()}
 											</span>
 										</button>
@@ -166,19 +166,19 @@ export default function SpionaseModal({ isOpen, countryName, onClose, onConfirm 
 						)}
 					</div>
 
-					<div className="bg-[#c2b295] border-2 border-[#8c7657] rounded-md p-3 text-center space-y-1 font-sans">
-						<div className="flex items-center justify-between text-xs font-bold text-[#3d2911]">
+					<div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-3 text-center space-y-1">
+						<div className="flex items-center justify-between text-xs font-bold text-[#6B8A8A]">
 							<span>Tingkat Kerahasiaan Agen:</span>
-							<span className="text-emerald-800 font-black">85% (Tinggi)</span>
+							<span className="text-[#00FFAA] font-black">85% (Tinggi)</span>
 						</div>
 					</div>
 
 					{/* ACTION BUTTONS */}
-					<div className="flex gap-3 pt-1 font-sans">
+					<div className="flex gap-3 pt-1">
 						<button
 							type="button"
 							onClick={onClose}
-							className="flex-1 h-10 bg-[#e0d4be] hover:bg-[#d1c2a7] border-2 border-[#8c7657] rounded-md text-[#3d2911] font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-sm"
+							className="flex-1 h-10 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl text-[#E0E0E0] font-black text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-sm"
 						>
 							Batal
 						</button>
@@ -190,7 +190,7 @@ export default function SpionaseModal({ isOpen, countryName, onClose, onConfirm 
 									onClose();
 								}
 							}}
-							className="flex-1 h-10 bg-[#28483e] hover:bg-[#1a3029] border-2 border-[#12241e] rounded-md text-white font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-md"
+							className="flex-1 h-10 bg-[#00FFAA] hover:bg-[#00e699] border border-[#00FFAA] rounded-xl text-[#0A1A1A] font-black text-xs uppercase tracking-wider transition-colors cursor-pointer shadow-md"
 						>
 							Luncurkan Spionase
 						</button>

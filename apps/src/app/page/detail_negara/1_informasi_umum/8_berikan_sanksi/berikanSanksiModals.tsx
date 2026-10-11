@@ -28,39 +28,39 @@ export default function BerikanSanksiModal({
 		`${value >= 0 ? '+' : ''}${value.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-			<div className="w-full max-w-[420px] bg-white rounded-2xl p-6 shadow-lg border border-[#E5DCCF]">
-				<h3 className="text-lg font-black text-[#3d2911] mb-3">Konfirmasi Berikan Sanksi</h3>
-				<p className="text-sm text-[#5c3c10] mb-4">
-					Terapkan sanksi terhadap <strong>{countryName}</strong>? Hubungan diplomatik akan turun secara acak sebesar <strong>15–30 poin</strong>.
+		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans">
+			<div className="w-full max-w-[440px] bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-6 shadow-2xl relative text-white">
+				<h3 className="text-lg font-black text-[#00FFAA] tracking-wide uppercase mb-3">Konfirmasi Berikan Sanksi</h3>
+				<p className="text-xs sm:text-sm text-[#E0E0E0] mb-4 leading-relaxed">
+					Terapkan sanksi terhadap <strong className="text-white">{countryName}</strong>? Hubungan diplomatik akan turun secara acak sebesar <strong className="text-rose-400">15–30 poin</strong>.
 				</p>
-				<div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-[#5c3c10]">
+				<div className="mb-6 rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 text-xs sm:text-sm text-[#E0E0E0]">
 					<div className="flex justify-between gap-3">
-						<span>Netto kas saat ini</span>
-						<strong className="text-right">{formatNetBalance(currentNetBalance)}</strong>
+						<span className="text-[#6B8A8A]">Netto kas saat ini</span>
+						<strong className="text-right text-[#00FFAA] font-mono">{formatNetBalance(currentNetBalance)}</strong>
 					</div>
-					<div className="my-2 border-t border-amber-200" />
+					<div className="my-2 border-t border-[#00FFAA]/20" />
 					<div className="flex justify-between gap-3">
-						<span>Dampak tiap sanksi</span>
-						<strong className="text-rose-700">-{reductionPercent}%</strong>
+						<span className="text-[#6B8A8A]">Dampak tiap sanksi</span>
+						<strong className="text-rose-400">-{reductionPercent}%</strong>
 					</div>
 					<div className="mt-1 flex justify-between gap-3">
-						<span>Netto kas setelah sanksi</span>
-						<strong className="text-right text-rose-700">{formatNetBalance(reducedNetBalance)}</strong>
+						<span className="text-[#6B8A8A]">Netto kas setelah sanksi</span>
+						<strong className="text-right text-rose-400 font-mono">{formatNetBalance(reducedNetBalance)}</strong>
 					</div>
 				</div>
 
 				<div className="flex gap-3 justify-end">
 					<button
 						onClick={onClose}
-						className="flex-1 bg-white/70 border border-[#C4B49C]/30 rounded py-2.5 text-center text-[#5c3c10] font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer hover:shadow-md"
+						className="flex-1 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl py-2.5 text-center text-[#E0E0E0] font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
 					>
 						Batal
 					</button>
 
 					<button
 						onClick={() => { onConfirm(); onClose(); }}
-						className="flex-1 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 border border-amber-700 rounded py-2.5 text-center text-white font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
+						className="flex-1 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 border border-amber-600 rounded-xl py-2.5 text-center text-white font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
 					>
 						Terapkan Sanksi
 					</button>

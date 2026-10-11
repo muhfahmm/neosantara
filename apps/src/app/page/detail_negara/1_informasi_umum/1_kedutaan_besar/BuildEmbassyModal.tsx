@@ -30,33 +30,33 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
     : buildTimeDays;
 
   return typeof window !== 'undefined' ? createPortal(
-    <div className="fixed inset-0 z-[200000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-      <div className="w-full max-w-[420px] bg-white rounded-2xl p-6 shadow-2xl border border-[#E5DCCF] relative font-sans">
-        <h3 className="text-lg font-black text-[#3d2911] mb-3">Konfirmasi Bangun Kedutaan</h3>
-        <p className="text-sm text-[#5c3c10] mb-3">
-          Apakah Anda ingin membangun kedutaan di <strong>{countryName}</strong>? Biaya pembangunan di <strong>{continentLabel}</strong> adalah {
+    <div className="fixed inset-0 z-[200000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn font-sans">
+      <div className="w-full max-w-[440px] bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-6 shadow-2xl relative text-white">
+        <h3 className="text-lg font-black text-[#00FFAA] tracking-wide uppercase mb-3">Konfirmasi Bangun Kedutaan</h3>
+        <p className="text-xs sm:text-sm text-[#E0E0E0] mb-3 leading-relaxed">
+          Apakah Anda ingin membangun kedutaan di <strong className="text-white">{countryName}</strong>? Biaya pembangunan di <strong className="text-white">{continentLabel}</strong> adalah {
             embassyCostDiscountPct > 0 ? (
-              <span><span className="line-through text-red-500 mr-1">10 NEO</span><strong className="text-emerald-600">{cost.toLocaleString('id-ID')} NEO</strong></span>
-            ) : <strong>{cost} NEO</strong>
+              <span><span className="line-through text-rose-400 mr-1">10 NEO</span><strong className="text-[#00FFAA]">{cost.toLocaleString('id-ID')} NEO</strong></span>
+            ) : <strong className="text-[#00FFAA]">{cost} NEO</strong>
           } dengan waktu pembangunan {
             discountPct > 0 ? (
               <span>
-                <span className="line-through text-red-500 mr-1">{buildTimeDays} hari</span>
-                <strong className="text-emerald-600">{effectiveBuildTimeDays} hari</strong>
+                <span className="line-through text-rose-400 mr-1">{buildTimeDays} hari</span>
+                <strong className="text-[#00FFAA]">{effectiveBuildTimeDays} hari</strong>
               </span>
             ) : (
-              <strong>{buildTimeDays} hari</strong>
+              <strong className="text-[#00FFAA]">{buildTimeDays} hari</strong>
             )
           }.
         </p>
-        <p className="text-sm text-[#5c3c10] mb-6">
-          Kas negara saat ini: <strong>{currentBudget >= 0 ? '+' : ''}{formattedCurrentBudget} NEO</strong>. Setelah pembangunan, kas akan menjadi <strong>{budgetAfterBuild >= 0 ? '+' : ''}{formattedBudgetAfterBuild} NEO</strong>.
+        <p className="text-xs sm:text-sm text-[#6B8A8A] mb-6 leading-relaxed">
+          Kas negara saat ini: <strong className="text-[#E0E0E0]">{currentBudget >= 0 ? '+' : ''}{formattedCurrentBudget} NEO</strong>. Setelah pembangunan, kas akan menjadi <strong className="text-[#00FFAA]">{budgetAfterBuild >= 0 ? '+' : ''}{formattedBudgetAfterBuild} NEO</strong>.
         </p>
 
         <div className="flex gap-3 justify-end">
           <button
             onClick={onClose}
-            className="flex-1 bg-white/70 border border-[#C4B49C]/30 rounded py-2.5 text-center text-[#5c3c10] font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer hover:shadow-md"
+            className="flex-1 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl py-2.5 text-center text-[#E0E0E0] font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
           >
             Batal
           </button>
@@ -65,10 +65,10 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
             onClick={() => { if (hasBudget) { onConfirm(); onClose(); } }}
             disabled={!hasBudget}
             className={
-              `flex-1 rounded py-2.5 text-center text-white font-black text-[12px] tracking-widest uppercase transition-all duration-150 shadow hover:shadow-md active:scale-[0.98] ${
+              `flex-1 rounded-xl py-2.5 text-center font-black text-[12px] tracking-widest uppercase transition-all duration-150 shadow hover:shadow-md active:scale-[0.98] ${
                 hasBudget
-                  ? 'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 border border-emerald-700 cursor-pointer'
-                  : 'bg-gray-300 border border-gray-400 cursor-not-allowed'
+                  ? 'bg-[#00FFAA] hover:bg-[#00e699] text-[#0A1A1A] border border-[#00FFAA] cursor-pointer'
+                  : 'bg-[#0A1A1A] text-[#6B8A8A] border border-[#00FFAA]/20 opacity-40 cursor-not-allowed'
               }`
             }
           >

@@ -12,14 +12,25 @@ export default function PerangNuklirModal({ isOpen, countryName, onClose, onConf
 	if (!isOpen) return null;
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-			<div className="w-[420px] bg-white rounded-2xl p-6 shadow-lg border border-[#E5DCCF]">
-				<h3 className="text-lg font-black text-[#3d2911] mb-3">Konfirmasi Perang Nuklir</h3>
-				<p className="text-sm text-[#5c3c10] mb-6">Melancarkan serangan nuklir terhadap <strong>{countryName}</strong>? Ini adalah eskalasi tertinggi dan hampir selalu membawa kehancuran besar.</p>
+		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans text-white">
+			<div className="w-full max-w-[440px] bg-[#0F2424] border border-rose-500/40 rounded-2xl p-6 shadow-2xl relative">
+				<h3 className="text-lg font-black text-rose-400 tracking-wide uppercase mb-3">Konfirmasi Perang Nuklir</h3>
+				<p className="text-xs sm:text-sm text-[#E0E0E0] mb-6 leading-relaxed">Melancarkan serangan nuklir terhadap <strong className="text-white">{countryName}</strong>? Ini adalah eskalasi tertinggi dan hampir selalu membawa kehancuran besar.</p>
 
 				<div className="flex gap-3 justify-end">
-					<button onClick={onClose} className="flex-1 bg-white/70 border border-[#C4B49C]/30 rounded py-2.5 text-center text-[#5c3c10] font-black text-[12px] tracking-widest uppercase">Batal</button>
-					<button onClick={() => { onConfirm(); onClose(); }} className="flex-1 bg-red-800 hover:bg-red-900 border border-red-900 rounded py-2.5 text-white font-black text-[12px] tracking-widest uppercase">Konfirmasi Nuklir</button>
+					<button
+						onClick={onClose}
+						className="flex-1 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl py-2.5 text-center text-[#E0E0E0] font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
+					>
+						Batal
+					</button>
+
+					<button
+						onClick={() => { onConfirm(); onClose(); }}
+						className="flex-1 bg-rose-700 hover:bg-rose-800 border border-rose-600 rounded-xl py-2.5 text-center text-white font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
+					>
+						Konfirmasi Nuklir
+					</button>
 				</div>
 			</div>
 		</div>
