@@ -21,6 +21,7 @@ import {
   applyKerjaSamaRegionalToFlatBonus,
   applyKerjaSamaRegionalToMultiplier,
 } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/4_Kerja Sama Organisasi Regional";
+import { applySinergiEkonomiGlobalMultiplier } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/25_Sinergi Ekonomi Global";
 const RESEARCH_CARDS_BY_PRODUCTION_SECTOR: Record<string, string[]> = {
   manufaktur: ["otomasi_industri"],
   mineral: ["manufaktur_terintegrasi"],
@@ -97,8 +98,9 @@ export function getProductionBonusMultiplier(
     countryDetail
   );
   const researchMultiplier = getResearchProductionMultiplier(countryDetail, resourceKey);
+  const baseMultiplier = religiousMultiplier * ideologyMultiplier * nationalismMultiplier * faoMultiplier * iloMultiplier * imoMultiplier * okiMultiplier * researchMultiplier;
 
-  return religiousMultiplier * ideologyMultiplier * nationalismMultiplier * faoMultiplier * iloMultiplier * imoMultiplier * okiMultiplier * researchMultiplier;
+  return applySinergiEkonomiGlobalMultiplier(baseMultiplier, countryDetail);
 }
 
 // Organisasi PBB
@@ -316,6 +318,54 @@ export {
   getMisiKeagamaanInternasionalBonusPercent,
   getMissionarySuccessChancePercent,
 } from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/17_Misi Keagamaan Internasional";
+
+export {
+  PERLINDUNGAN_PERANG_RESEARCH_ID,
+  BASE_WAR_CASUALTY_POPULATION_LOSS_PERCENT,
+  getPerlindunganSipilPerangBonusPercent,
+  calculateWarCasualtyPopulationLossPercent,
+  applyWarCasualtyToPopulation,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/18_Perlindungan Sipil Perang";
+
+export {
+  SANKSI_EKONOMI_RESEARCH_ID,
+  getPerangkatSanksiEkonomiBonusPercent,
+  calculateSanctionReductionPercent,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/19_Perangkat Sanksi Ekonomi";
+
+export {
+  PERJANJIAN_DAGANG_RESEARCH_ID,
+  getTradeAgreementAcceptanceChancePercent,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/21_Pakta Perdagangan Bipartit";
+
+export {
+  PAKTA_NON_AGRESI_RESEARCH_ID,
+  getNonAggressionPactAcceptanceChancePercent,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/22_Pakta Non-Agresi";
+
+export {
+  KONTRAK_PENELITIAN_RESEARCH_ID,
+  getResearchContractAcceptanceChancePercent,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/23_Peluang Kontrak Penelitian";
+
+export {
+  REFORMASI_BIROKRASI_KABINET_RESEARCH_ID,
+  getReformasiBirokrasiKabinetBonusPercent,
+  applyReformasiBirokrasiToUpgradeCost,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/24_Reformasi Birokrasi Kabinet";
+
+export {
+  SINERGI_EKONOMI_GLOBAL_RESEARCH_ID,
+  getSinergiEkonomiGlobalBonusPercent,
+  applySinergiEkonomiGlobalMultiplier,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/25_Sinergi Ekonomi Global";
+
+export {
+  PROGRAM_PERMUKIMAN_DIPLOMATIK_RESEARCH_ID,
+  getProgramPermukimanDiplomatikBonusPercent,
+  applyProgramPermukimanDiplomatikBonus,
+} from "./penelitian_bonus_logic/3_riset_diplomasi_intelijen/20_Program Permukiman Terpadu";
+
 
 export function getBuildSpeedModifier(countryName: string): number {
   return getASEANBuildSpeedModifier(countryName) + getUniAfrikaBuildSpeedModifier(countryName);

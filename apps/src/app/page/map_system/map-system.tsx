@@ -124,7 +124,7 @@ import {
 } from '../menus/inbox/logic/2_notifikasi_pertahanan/3_diserang/diserangLogic';
 import { generatePemberontakanNotification, calculateSeparatismeRiskPercent } from '../menus/inbox/logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanLogic';
 import { getDefenseAllianceOfferChancePercent } from '../bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/3_Aliansi Pertahanan';
-import { applyDoktrinPertahananDiriBonus } from '../bonus_logic';
+import { applyDoktrinPertahananDiriBonus, applyWarCasualtyToPopulation } from '../bonus_logic';
 import { generateICBMNotification, generateProgramNuklirSelesaiNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic';
 import { generateListrikDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/1_kelistrikan/listrikDefisitLogic';
 import { generateHunianDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/2_hunian/hunianDefisitLogic';
@@ -4048,14 +4048,20 @@ export default function MapPage() {
                                         // Peluang 80%: DIRAMPAS HASIL PRODUKSI (BERTAHAN / LOOTED)
                                         const currentDateStr = currentDate.toISOString().slice(0, 10);
                                         const { updatedDetail: detailAfterLoot } = lootUserProductionInventory(detailAfterLoss, currentDateStr);
+
+                                        // 3. Potong populasi (Base 5.0%, dikurangi 2% s.d. 15% berdasarkan level riset Perlindungan Sipil Perang)
+                                        const { updatedPopulation, lostPopulation, lossPercent } = applyWarCasualtyToPopulation(detailAfterLoot, 5.0);
+                                        detailAfterLoot.populasi = updatedPopulation;
+                                        if (detailAfterLoot.population !== undefined) detailAfterLoot.population = updatedPopulation;
+
                                         setCountryDetail(detailAfterLoot);
 
                                         setNotifications((prev: any[]) => [
                                             {
                                                 id: `war-loot-${Date.now()}`,
-                                                title: '⚠️ HASIL PRODUKSI DIRAMPAS MUSUH (80%)',
+                                                title: '⚠️ PRODUKSI DIRAMPAS & KORBAN POPULASI (80%)',
                                                 sender: `Markas Besar Angkatan Bersenjata (${countryDetail?.country || countryDetail?.nama_negara || 'Indonesia'})`,
-                                                message: `Pertahanan gagal membendung agresi ${activeWarAnimation.attacker}! Musuh merampas habis seluruh stok produksi (Mineral, Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan) hingga kembali ke 0. Kerugian tempur: ${lossSummaryText}.`,
+                                                message: `Pertahanan gagal membendung agresi ${activeWarAnimation.attacker}! Musuh merampas habis seluruh stok produksi (Mineral, Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan) hingga kembali 0. Korban perang: ${lostPopulation.toLocaleString('id-ID')} jiwa (${lossPercent}% populasi). Kerugian armada: ${lossSummaryText}.`,
                                                 type: 'kepuasan',
                                                 value: 80,
                                                 isRead: false,
@@ -4066,7 +4072,7 @@ export default function MapPage() {
                                         setResultModal({
                                             isOpen: true,
                                             title: 'Pertahanan Gagal — Produksi Dirampas!',
-                                            message: `Pertahanan negara Anda gagal menahan agresi militer dari ${activeWarAnimation.attacker}. Negara berhasil menepis aneksasi total (peluang selamat 80%), namun seluruh stok hasil produksi (Mineral & Energi, Manufaktur, Peternakan, Agrikultur, Perikanan, Olahan Pangan) telah dirampas habis oleh musuh hingga 0, serta armada mengalami kerugian 75%: ${lossSummaryText}.`,
+                                            message: `Pertahanan negara Anda gagal menahan agresi militer dari ${activeWarAnimation.attacker}. Negara berhasil menepis aneksasi total (peluang selamat 80%), namun seluruh stok hasil produksi (Mineral, Manufaktur, Peternakan, Agrikultur, Perikanan, Olahan Pangan) dirampas habis hingga 0. Dampak populasi: ${lostPopulation.toLocaleString('id-ID')} jiwa (${lossPercent}% populasi), serta kerugian armada 75%: ${lossSummaryText}.`,
                                             type: 'error',
                                         });
                                     }

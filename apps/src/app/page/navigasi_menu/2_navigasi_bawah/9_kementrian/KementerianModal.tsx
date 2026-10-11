@@ -32,6 +32,7 @@ import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/econ
 import { LEVEL_UP_COST, MAX_CABINET_LEVEL } from "@/app/logic/economic_logic/departments";
 import { generateKabinetChangeNotification } from "@/app/page/menus/inbox/logic/13_notifikasi_kabinet/kabinetChangeLogic";
 import PilihMenteriModal, { type MinisterCandidateDepartment } from "./PilihMenteriModal";
+import { applyReformasiBirokrasiToUpgradeCost } from "@/app/page/bonus_logic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -285,10 +286,15 @@ const TABS: { key: TabKey; label: string; data: Department[] }[] = [
   { key: "layanan", label: "Layanan", data: LAYANAN },
 ];
 
-const getTotalUpgradeCost = (currentLevel: number, targetLevel: number) => {
+const getLevelUpCostForStep = (targetLevel: number, countryDetail?: any) => {
+  const baseCost = LEVEL_UP_COST[targetLevel] ?? 50;
+  return applyReformasiBirokrasiToUpgradeCost(baseCost, countryDetail);
+};
+
+const getTotalUpgradeCost = (currentLevel: number, targetLevel: number, countryDetail?: any) => {
   let total = 0;
   for (let lvl = currentLevel; lvl < targetLevel; lvl++) {
-    total += LEVEL_UP_COST[lvl];
+    total += getLevelUpCostForStep(lvl + 1, countryDetail);
   }
   return total;
 };
@@ -305,7 +311,7 @@ const canAffordUpgrade = (
   currentLevel: number,
   targetLevel: number
 ) => {
-  const totalCost = getTotalUpgradeCost(currentLevel, targetLevel);
+  const totalCost = getTotalUpgradeCost(currentLevel, targetLevel, detail);
   const remainingCashAfterUpgrade = currentMoney - totalCost;
   const projectedNetBalance = getProjectedNetBalance(detail, dept.id, targetLevel);
 
@@ -361,7 +367,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
 
   const getNextStepCost = (level: number) => {
     if (level >= MAX_LEVEL) return null;
-    return LEVEL_UP_COST[level + 1] ?? 50;
+    return getLevelUpCostForStep(level + 1, countryDetail);
   };
 
   const getDailyCost = (level: number) => {
@@ -401,7 +407,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
 
     if (targetLevel > currentLevel) {
       if (targetLevel > MAX_LEVEL) return;
-      const totalCost = getTotalUpgradeCost(currentLevel, targetLevel);
+      const totalCost = getTotalUpgradeCost(currentLevel, targetLevel, countryDetail);
       const affordable = canAffordUpgrade(countryDetail, money, dept, currentLevel, targetLevel);
       if (!affordable) return;
       setConfirmUpgrade({ dept, fromLevel: currentLevel, targetLevel, cost: totalCost });
@@ -570,7 +576,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                               const boxLevel = i + 1;
                               const filled = boxLevel <= level;
                               const isJumpTarget = boxLevel > level;
-                              const jumpCost = isJumpTarget ? getTotalUpgradeCost(level, boxLevel) : 0;
+                              const jumpCost = isJumpTarget ? getTotalUpgradeCost(level, boxLevel, countryDetail) : 0;
                               const projectedNetBalance = isJumpTarget
                                 ? getProjectedNetBalance(countryDetail, dept.id, boxLevel)
                                 : 0;
@@ -618,7 +624,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                           title={
                             maxed
                               ? "Pilih kandidat menteri"
-                              : `Pilih kandidat menteri • Upgrade 1 level: ${LEVEL_UP_COST[level + 1]?.toLocaleString("id-ID")} NEO`
+                              : `Pilih kandidat menteri • Upgrade 1 level: ${getLevelUpCostForStep(level + 1, countryDetail)?.toLocaleString("id-ID")} NEO`
                           }
                           aria-label={`Pilih kandidat menteri untuk ${dept.name}`}
                           className={`h-12 w-12 shrink-0 rounded-lg border flex items-center justify-center cursor-pointer hover:scale-105 transition-transform ${
@@ -644,7 +650,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
 
                       {!maxed && (
                         <div className="px-4 pb-3 -mt-1 text-[10px] font-bold text-[#6B8A8A]">
-                          Upgrade ke level {level + 1}: <span className="text-[#00FFAA]">{LEVEL_UP_COST[level + 1]?.toLocaleString("id-ID")} NEO</span> &nbsp;•&nbsp;
+                          Upgrade ke level {level + 1}: <span className="text-[#00FFAA]">{getLevelUpCostForStep(level + 1, countryDetail)?.toLocaleString("id-ID")} NEO</span> &nbsp;•&nbsp;
                           Tekan kotak level manapun untuk lompat langsung ke level tersebut
                         </div>
                       )}
@@ -782,7 +788,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                   <div key={stepLevel} className="flex justify-between text-[11px] font-bold text-[#6B8A8A]">
                     <span>Biaya dari level {stepLevel} ke {stepLevel + 1}:</span>
                     <span className="text-[#E0E0E0]">
-                      {LEVEL_UP_COST[stepLevel + 1].toLocaleString("id-ID")} NEO
+                      {getLevelUpCostForStep(stepLevel + 1, countryDetail).toLocaleString("id-ID")} NEO
                     </span>
                   </div>
                 ))}

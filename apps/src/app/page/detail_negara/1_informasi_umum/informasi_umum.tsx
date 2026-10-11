@@ -39,6 +39,9 @@ import {
 import {
   getEffectiveEmbassyBuildTime,
   getEffectiveEmbassyCost,
+  calculateSanctionReductionPercent,
+  getTradeAgreementAcceptanceChancePercent,
+  getNonAggressionPactAcceptanceChancePercent,
 } from "@/app/page/bonus_logic";
 
 interface InformasiUmumProps {
@@ -147,6 +150,14 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     playerCountryName || 'Indonesia',
     countryName,
     currentDate || undefined
+  );
+  const tradeAcceptanceChance = getTradeAgreementAcceptanceChancePercent(
+    embassyRelation,
+    playerCountryDetail
+  );
+  const nonAggressionPactAcceptanceChance = getNonAggressionPactAcceptanceChancePercent(
+    embassyRelation,
+    playerCountryDetail
   );
   const embassyResultBudget = playerBudget - embassyCost;
 
@@ -389,7 +400,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           setAliansiActive(false);
           setKontrakActive(false);
           if (setPlayerCountryDetail) {
-            setPlayerCountryDetail((prev: any) => {
+            setPlayerCountryDetail((prev: Record<string, unknown> | null) => {
               if (!prev) return prev;
               const existingEmbassies = Array.isArray(prev.embassies) ? prev.embassies : [];
               const existingRemovedEmbassies = Array.isArray(prev.removedEmbassies) ? prev.removedEmbassies : [];
@@ -511,8 +522,34 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
       <BuildTradeModal
         isOpen={isBuildTradeModalOpen}
         countryName={countryName}
+        chancePercent={tradeAcceptanceChance}
         onClose={() => setIsBuildTradeModalOpen(false)}
         onConfirm={() => {
+          if (Math.random() * 100 >= tradeAcceptanceChance) {
+            if (setPlayerCountryDetail) {
+              setPlayerCountryDetail((prev: any) => {
+                if (!prev) return prev;
+                const existingNotifications = Array.isArray(prev.pending_notifications)
+                  ? prev.pending_notifications
+                  : [];
+                return {
+                  ...prev,
+                  pending_notifications: [{
+                    id: `trade-offer-rejected-${Date.now()}`,
+                    title: 'Penawaran Perjanjian Dagang Ditolak',
+                    sender: `Pemerintah ${countryName}`,
+                    message: `Negara ${countryName} menolak penawaran perjanjian dagang. Peluang penerimaan saat penawaran diajukan adalah ${Math.round(tradeAcceptanceChance)}%.`,
+                    timestamp: getCurrentDateString(),
+                    type: 'peringkat',
+                    value: Math.round(tradeAcceptanceChance),
+                    isRead: false,
+                  }, ...existingNotifications],
+                };
+              });
+            }
+            return;
+          }
+
           setTradeActive(true);
           if (setPlayerCountryDetail) {
             setPlayerCountryDetail((prev: any) => {
@@ -541,8 +578,34 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
       <PaktaNonAgresiModal
         isOpen={isPaktaModalOpen}
         countryName={countryName}
+        chancePercent={nonAggressionPactAcceptanceChance}
         onClose={() => setIsPaktaModalOpen(false)}
         onConfirm={() => {
+          if (Math.random() * 100 >= nonAggressionPactAcceptanceChance) {
+            if (setPlayerCountryDetail) {
+              setPlayerCountryDetail((prev: Record<string, unknown> | null) => {
+                if (!prev) return prev;
+                const existingNotifications = Array.isArray(prev.pending_notifications)
+                  ? prev.pending_notifications
+                  : [];
+                return {
+                  ...prev,
+                  pending_notifications: [{
+                    id: `non-aggression-pact-rejected-${Date.now()}`,
+                    title: 'Penawaran Pakta Non-Agresi Ditolak',
+                    sender: `Pemerintah ${countryName}`,
+                    message: `Negara ${countryName} menolak penawaran Pakta Non-Agresi. Peluang penerimaan saat penawaran diajukan adalah ${Math.round(nonAggressionPactAcceptanceChance)}%.`,
+                    timestamp: getCurrentDateString(),
+                    type: 'peringkat',
+                    value: Math.round(nonAggressionPactAcceptanceChance),
+                    isRead: false,
+                  }, ...existingNotifications],
+                };
+              });
+            }
+            return;
+          }
+
           setPaktaActive(true);
           if (setPlayerCountryDetail) {
             setPlayerCountryDetail((prev: Record<string, unknown> | null) => {
@@ -682,41 +745,46 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         }}
       />
 
-      <BerikanSanksiModal
-        isOpen={isBerikanSanksiModalOpen}
-        countryName={countryName}
-        currentNetBalance={targetNetBalanceValue}
-        reductionPercent={ECONOMIC_SANCTION_REDUCTION_PER_ACTION * 100}
-        onClose={() => setIsBerikanSanksiModalOpen(false)}
-        onConfirm={() => {
-          const relationPenalty = Math.floor(Math.random() * 16) + 15;
-          const sanctionCount = addEconomicSanction(countryName);
-          const player = playerCountryName || 'Indonesia';
-          const relationSanctionTotal = addRelationSanctionModifier(player, countryName, -relationPenalty);
-          window.dispatchEvent(new CustomEvent('country_relations_updated'));
-          if (setPlayerCountryDetail) {
-            setPlayerCountryDetail((previous: Record<string, unknown> | null) => {
-              if (!previous) return previous;
-              const savedSanctions = previous.economicSanctions &&
-                typeof previous.economicSanctions === 'object' &&
-                !Array.isArray(previous.economicSanctions)
-                ? previous.economicSanctions as Record<string, number>
-                : {};
-              const savedRelationSanctions = previous.relationSanctionModifiers &&
-                typeof previous.relationSanctionModifiers === 'object' &&
-                !Array.isArray(previous.relationSanctionModifiers)
-                ? previous.relationSanctionModifiers as Record<string, number>
-                : {};
-              return {
-                ...previous,
-                economicSanctions: { ...savedSanctions, [countryName]: sanctionCount },
-                relationSanctionModifiers: { ...savedRelationSanctions, [countryName]: relationSanctionTotal },
-              };
-            });
-          }
-          console.log(`Sanksi terhadap ${countryName} diterapkan: hubungan -${relationPenalty}, netto kas -${ECONOMIC_SANCTION_REDUCTION_PER_ACTION * 100}% (sanksi ke-${sanctionCount}).`);
-        }}
-      />
+      {(() => {
+        const sanctionPercent = calculateSanctionReductionPercent(playerCountryDetail);
+        return (
+          <BerikanSanksiModal
+            isOpen={isBerikanSanksiModalOpen}
+            countryName={countryName}
+            currentNetBalance={targetNetBalanceValue}
+            reductionPercent={sanctionPercent}
+            onClose={() => setIsBerikanSanksiModalOpen(false)}
+            onConfirm={() => {
+              const relationPenalty = Math.floor(Math.random() * 16) + 15;
+              const sanctionCount = addEconomicSanction(countryName);
+              const player = playerCountryName || 'Indonesia';
+              const relationSanctionTotal = addRelationSanctionModifier(player, countryName, -relationPenalty);
+              window.dispatchEvent(new CustomEvent('country_relations_updated'));
+              if (setPlayerCountryDetail) {
+                setPlayerCountryDetail((previous: Record<string, unknown> | null) => {
+                  if (!previous) return previous;
+                  const savedSanctions = previous.economicSanctions &&
+                    typeof previous.economicSanctions === 'object' &&
+                    !Array.isArray(previous.economicSanctions)
+                    ? previous.economicSanctions as Record<string, number>
+                    : {};
+                  const savedRelationSanctions = previous.relationSanctionModifiers &&
+                    typeof previous.relationSanctionModifiers === 'object' &&
+                    !Array.isArray(previous.relationSanctionModifiers)
+                    ? previous.relationSanctionModifiers as Record<string, number>
+                    : {};
+                  return {
+                    ...previous,
+                    economicSanctions: { ...savedSanctions, [countryName]: sanctionCount },
+                    relationSanctionModifiers: { ...savedRelationSanctions, [countryName]: relationSanctionTotal },
+                  };
+                });
+              }
+              console.log(`Sanksi terhadap ${countryName} diterapkan: hubungan -${relationPenalty}, netto kas -${sanctionPercent}% (sanksi ke-${sanctionCount}).`);
+            }}
+          />
+        );
+      })()}
 
     </div>
   );

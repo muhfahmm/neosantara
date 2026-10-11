@@ -4,18 +4,24 @@ import React from "react";
 interface BuildTradeModalProps {
   isOpen: boolean;
   countryName?: string | null;
+  chancePercent?: number;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-export default function BuildTradeModal({ isOpen, countryName, onClose, onConfirm }: BuildTradeModalProps) {
+export default function BuildTradeModal({ isOpen, countryName, chancePercent, onClose, onConfirm }: BuildTradeModalProps) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="w-[420px] bg-white rounded-2xl p-6 shadow-lg border border-[#E5DCCF]">
         <h3 className="text-lg font-black text-[#3d2911] mb-3">Konfirmasi Perjanjian Dagang</h3>
-        <p className="text-sm text-[#5c3c10] mb-6">Apakah Anda ingin menjalin perjanjian dagang dengan <strong>{countryName}</strong>? Ini akan membuka jalur perdagangan antara kedua negara.</p>
+        <p className="text-sm text-[#5c3c10] mb-3">Apakah Anda ingin mengajukan perjanjian dagang kepada <strong>{countryName}</strong>? Ini akan membuka jalur perdagangan antara kedua negara jika diterima.</p>
+        {chancePercent !== undefined && (
+          <p className="text-sm font-bold text-[#5c3c10] mb-6">
+            Peluang diterima: {Math.round(chancePercent)}% (berdasarkan hubungan bilateral dan riset).
+          </p>
+        )}
 
         <div className="flex gap-3 justify-end">
           <button
