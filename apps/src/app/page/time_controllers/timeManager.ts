@@ -60,6 +60,15 @@ export class SimulationTimeManager {
         this.triggerCallback();
     }
 
+    // Advance or rewind simulation date by N days
+    public advanceDays(days: number): void {
+        const newDate = new Date(this.currentDate);
+        newDate.setDate(newDate.getDate() + days);
+        this.currentDate = newDate;
+        setSimulationDate(this.currentDate);
+        this.triggerCallback();
+    }
+
     // Set play/pause state
     public setPaused(paused: boolean): void {
         this.isPaused = paused;

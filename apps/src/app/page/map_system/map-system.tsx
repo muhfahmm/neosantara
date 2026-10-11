@@ -4,7 +4,7 @@
 import React, { memo, startTransition, useCallback, useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import {
-    Play, Pause, Settings, Palmtree, Shield
+    Play, Pause, Settings, Palmtree, Shield, Crosshair
 } from 'lucide-react';
 import Link from 'next/link';
 import { COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
@@ -12,6 +12,7 @@ import countryPaths from './country-paths.json';
 import { SimulationTimeManager, createSimulationCalendar } from '../time_controllers';
 import { handleGameRestart } from '../time_controllers';
 import dynamic from 'next/dynamic';
+import useKeyboardShortcuts from '../keyword';
 
 const GameMenuModal = dynamic(() => import('../navbar/GameMenuModal').then(m => m.GameMenuModal), { ssr: false });
 const ConfirmRestartModal = dynamic(() => import('../navbar/ConfirmRestartModal').then(m => m.ConfirmRestartModal), { ssr: false });
@@ -406,6 +407,176 @@ export default function MapPage() {
     const [giftModalOpen, setGiftModalOpen] = useState(false);
     const [newsModalOpen, setNewsModalOpen] = useState(false);
     const [newsList, setNewsList] = useState<NewsItemData[]>([]);
+
+    const isMapFocusedRef = useRef(false);
+
+    const handleFocusHome = useCallback(() => {
+        // 1. Tutup semua modal overlay yang sedang terbuka agar peta terlihat jelas
+        setIsPresidentMenuOpen(false);
+        setCountryDetailModalOpen(false);
+        setPlayerDetailModalOpen(false);
+        setInboxModalOpen(false);
+        setGiftModalOpen(false);
+        setNewsModalOpen(false);
+        setPenelitianModalOpen(false);
+        setIsSaveModalOpen(false);
+        setIsRestartConfirmOpen(false);
+        setActiveMenu('Peta Taktis');
+
+        // 2. Dapatkan ISO negara player
+        let iso = selectedCountry?.iso;
+        if (!iso) {
+            const rawName = (countryDetail?.country || countryDetail?.nama_negara || '').toLowerCase().trim();
+            const found = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === rawName);
+            if (found) iso = found.iso;
+        }
+        if (!iso && typeof window !== 'undefined') {
+            const param = new URLSearchParams(window.location.search).get('country');
+            if (param) {
+                const found = COUNTRIES_DATA.find(
+                    c => c.country.toLowerCase() === param.toLowerCase() || c.iso.toLowerCase() === param.toLowerCase()
+                );
+                if (found) iso = found.iso;
+            }
+        }
+
+        // 3. Toggle Zoom: Jika sudah ter-fokus, kembalikan zoom ke default (overview). Jika belum, fokus ke negara player.
+        if (isMapFocusedRef.current) {
+            const mapCanvas = document.getElementById('map-canvas');
+            if (mapCanvas) {
+                // Trigger event wheel untuk mereset scale dan offset kembali ke default (1.0)
+                mapCanvas.dispatchEvent(new WheelEvent('wheel', {
+                    deltaY: 50000,
+                    clientX: window.innerWidth / 2,
+                    clientY: window.innerHeight / 2,
+                    bubbles: true,
+                }));
+            }
+            isMapFocusedRef.current = false;
+        } else if (iso && wasmModuleRef.current?.set_selected_country_on_map) {
+            try {
+                wasmModuleRef.current.set_selected_country_on_map(iso, true);
+                isMapFocusedRef.current = true;
+            } catch (err) {
+                console.error("Gagal melakukan zoom/pan ke negara player:", err);
+            }
+        }
+    }, [selectedCountry, countryDetail, setActiveMenu]);
+
+    useEffect(() => {
+        const onFocusEvent = () => handleFocusHome();
+        window.addEventListener('focus_home_country', onFocusEvent);
+        return () => {
+            window.removeEventListener('focus_home_country', onFocusEvent);
+        };
+    }, [handleFocusHome]);
+
+    // 🎮 Integrasi Keyboard Shortcuts Neosantara
+    useKeyboardShortcuts({
+        onFocusHome: handleFocusHome,
+        onMenuSelect: (target) => {
+            // Tutup paksa modal overlay yang sedang terbuka saat membuka menu baru
+            setIsPresidentMenuOpen(false);
+            setCountryDetailModalOpen(false);
+            setPlayerDetailModalOpen(false);
+            setGiftModalOpen(false);
+            setNewsModalOpen(false);
+            setIsSaveModalOpen(false);
+            setIsRestartConfirmOpen(false);
+
+            // Tentukan menuId jika target adalah array (siklus sub-tab dengan huruf yang sama)
+            let menuId: string;
+            if (Array.isArray(target)) {
+                const currentIndex = target.indexOf(activeMenu);
+                if (currentIndex >= 0) {
+                    menuId = target[(currentIndex + 1) % target.length];
+                } else {
+                    menuId = target[0];
+                }
+            } else {
+                menuId = target;
+            }
+
+            if (menuId === 'Menu:Penelitian' || menuId === 'penelitian') {
+                setInboxModalOpen(false);
+                setPenelitianModalOpen(true);
+                setActiveMenu("");
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('reset_penelitian_selection'));
+                }
+            } else if (menuId === 'inbox' || menuId === 'Menu:Inbox') {
+                setPenelitianModalOpen(false);
+                setInboxModalOpen(true);
+                setActiveMenu("");
+            } else {
+                setPenelitianModalOpen(false);
+                setInboxModalOpen(false);
+                if (activeMenu === menuId) {
+                    setActiveMenu("");
+                    setTimeout(() => setActiveMenu(menuId), 0);
+                } else {
+                    setActiveMenu(menuId);
+                }
+            }
+        },
+        onCloseAllModals: () => {
+            // M -> Tutup paksa semua modal & kembali ke map utama
+            setIsPresidentMenuOpen(false);
+            setCountryDetailModalOpen(false);
+            setPlayerDetailModalOpen(false);
+            setInboxModalOpen(false);
+            setGiftModalOpen(false);
+            setNewsModalOpen(false);
+            setPenelitianModalOpen(false);
+            setIsSaveModalOpen(false);
+            setIsRestartConfirmOpen(false);
+
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('close_all_game_modals'));
+            }
+
+            setActiveMenu('Peta Taktis');
+        },
+        onCloseMenu: () => {
+            if (penelitianModalOpen) {
+                setPenelitianModalOpen(false);
+            } else if (isPresidentMenuOpen) {
+                setIsPresidentMenuOpen(false);
+            } else if (activeMenu && activeMenu !== 'Peta Taktis') {
+                setActiveMenu('Peta Taktis');
+            } else if (countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || isSaveModalOpen || isRestartConfirmOpen) {
+                setCountryDetailModalOpen(false);
+                setPlayerDetailModalOpen(false);
+                setInboxModalOpen(false);
+                setGiftModalOpen(false);
+                setNewsModalOpen(false);
+                setIsSaveModalOpen(false);
+                setIsRestartConfirmOpen(false);
+            } else {
+                setIsPresidentMenuOpen(true);
+            }
+        },
+        onTogglePlayPause: () => {
+            if (calendarRef.current) {
+                const newPaused = calendarRef.current.controls.handlePlayPauseClick(isPaused);
+                setIsPaused(newPaused);
+                if (timeManagerRef.current) {
+                    timeManagerRef.current.setPaused(newPaused);
+                }
+            }
+        },
+        onTimeSpeedChange: (delta) => {
+            if (calendarRef.current) {
+                const newSpeed = delta > 0
+                    ? calendarRef.current.controls.handleSpeedClick()
+                    : Math.max(1, speed - 1);
+                setSpeed(newSpeed);
+                if (timeManagerRef.current) {
+                    timeManagerRef.current.setSpeed(newSpeed);
+                }
+            }
+        },
+    });
 
     // State untuk tracking perubahan warna negara akibat aneksasi
     // Format: { "NamaNegara": "WarnaHex", ... }
@@ -3375,6 +3546,7 @@ export default function MapPage() {
         // Ignore click handling once the pointer has moved far enough to pan.
         if (dx > 5 || dy > 5) {
             isDraggingRef.current = true;
+            isMapFocusedRef.current = false;
         }
     }, []);
 
@@ -3998,6 +4170,9 @@ export default function MapPage() {
                     setGiftModalOpen(false);
                     setNewsModalOpen(false);
                     setActiveMenu("");
+                    if (typeof window !== 'undefined') {
+                        window.dispatchEvent(new CustomEvent('reset_penelitian_selection'));
+                    }
                 }}
                 isOpen={penelitianModalOpen}
                 onClose={() => setPenelitianModalOpen(false)}
@@ -4005,6 +4180,15 @@ export default function MapPage() {
                 setCountryDetail={setCountryDetail}
                 currentDate={currentDate}
             />
+
+            {/* Tombol Pintas Fokus ke Negara Sendiri (F) */}
+            <button
+                onClick={handleFocusHome}
+                title="🎯 Fokus & Zoom ke Negara Sendiri (F)"
+                className="fixed bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-18 lg:left-20 xl:left-22 2xl:left-26 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
+            >
+                <Crosshair className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
+            </button>
 
 
             {activeWarAnimation && (() => {

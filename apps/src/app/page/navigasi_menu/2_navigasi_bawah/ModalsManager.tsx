@@ -691,6 +691,7 @@ function ModalsManager({
         />
       );
     case "Menu:OrganisasiInternasional:organisasi_pbb":
+    case "Menu:OrganisasiInternasional:organisasi_regional":
       return (
         <OrgIntlModal
           isOpen={true}

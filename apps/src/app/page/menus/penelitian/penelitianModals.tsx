@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FlaskConical } from 'lucide-react';
 import PenelitianSelectionModal, { SelectionCategoryKey } from './penelitianSelectionModal';
 import PenelitianPageModal, { CategoryKey } from './penelitianPageMenu';
@@ -25,6 +25,24 @@ export default function BottomLeftPenelitianIcon({
   currentDate,
 }: BottomLeftPenelitianIconProps) {
   const [selectedFocus, setSelectedFocus] = useState<SelectionCategoryKey | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedFocus(null);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleResetFocus = () => {
+      setSelectedFocus(null);
+    };
+    window.addEventListener('reset_penelitian_selection', handleResetFocus);
+    window.addEventListener('open_penelitian_modal', handleResetFocus);
+    return () => {
+      window.removeEventListener('reset_penelitian_selection', handleResetFocus);
+      window.removeEventListener('open_penelitian_modal', handleResetFocus);
+    };
+  }, []);
 
   const handleCloseAll = () => {
     setSelectedFocus(null);
