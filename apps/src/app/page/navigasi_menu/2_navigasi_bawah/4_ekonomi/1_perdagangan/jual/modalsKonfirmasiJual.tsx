@@ -21,6 +21,11 @@ import {
   getKementerianPerdaganganPriceBonusPercent,
   getKementerianPerdaganganSellPriceMultiplier,
 } from "@/app/page/bonus_logic";
+import {
+  getTradeProductNationalizationSector,
+  getTradeProductStateProfitSharePercent,
+  NATIONALIZATION_SECTORS,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/7_sistem_ekonomi/logic/nationalizationLogic";
 import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
 import {
   applyNpcCountrySimulationState,
@@ -338,6 +343,12 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
   const pricePerUnit = Math.round(currentPrice * (1 + combinedSellMultiplier));
   const hasTradeBonus = combinedSellMultiplier > 0;
   const totalPrice = pricePerUnit * quantity;
+  const nationalizationSector = getTradeProductNationalizationSector(selectedProduct);
+  const stateProfitSharePercent = getTradeProductStateProfitSharePercent(countryDetail, selectedProduct);
+  const stateProfitIncome = Math.round(totalPrice * stateProfitSharePercent / 100);
+  const nationalizationSectorName = NATIONALIZATION_SECTORS.find(
+    (sector) => sector.id === nationalizationSector
+  )?.name;
 
   useEffect(() => {
     if (!currentDate) return;
@@ -427,7 +438,7 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
       alert(`Stok Anda tidak mencukupi! Stok tersedia hanya ${stockAvailable.toLocaleString("id-ID")} unit.`);
       return;
     }
-    const totalPendapatan = pricePerUnit * quantity;
+    const totalPendapatan = Math.round(pricePerUnit * quantity * stateProfitSharePercent / 100);
     const soldKey = `total_sold_${selectedProduct}`;
     const currentSold = Number(detail[soldKey]) || 0;
     const inventoryKey = `inventory_${selectedProduct}`;
@@ -442,7 +453,7 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
       [accumulatedKey]: newInventory,
     });
     onConfirm(totalPendapatan, `${quantity}x Satuan`);
-    alert(`Berhasil menjual ${quantity} ${formatLabel(selectedProduct)} ke ${effectiveSelectedCountry} dengan harga ${formatTradePrice(pricePerUnit)} NEO/unit.`);
+    alert(`Berhasil menjual ${quantity} ${formatLabel(selectedProduct)} ke ${effectiveSelectedCountry}. Bagian APBN (${stateProfitSharePercent}%) sebesar ${formatTradePrice(totalPendapatan)} NEO telah ditambahkan.`);
     onClose();
   };
 
@@ -565,9 +576,17 @@ export default function JualModalsMenu({ isOpen, onClose, countryDetail, setCoun
                 </div>
               )}
               <div className="flex justify-between items-center border-t border-[#00FFAA]/20 pt-2 mt-1">
-                <span className="text-[#E0E0E0] font-bold text-sm tracking-wide">Total Pendapatan :</span>
+                <span className="text-[#E0E0E0] font-bold text-sm tracking-wide">Nilai Bruto Transaksi :</span>
                 <div className="flex items-center gap-1.5"><span className="text-lg font-black text-[#00FFAA]">{formatTradePrice(totalPrice)}</span><span className="text-[10px] text-[#6B8A8A] font-bold mt-0.5">NEO</span></div>
               </div>
+              {nationalizationSectorName && (
+                <div className="mt-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-3">
+                  <div className="flex justify-between gap-3 text-xs">
+                    <span className="text-[#6B8A8A]">{nationalizationSectorName} · bagian negara {stateProfitSharePercent}%</span>
+                    <strong className="text-emerald-400">{formatTradePrice(stateProfitIncome)} NEO ke APBN</strong>
+                  </div>
+                </div>
+              )}
 
               <div className="pt-3 border-t border-[#00FFAA]/20 mt-2 w-full">
                 <div className="flex items-center justify-between mb-3">

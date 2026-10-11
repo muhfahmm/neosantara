@@ -1,8 +1,9 @@
 "use client"
 import React from "react";
 import { X, BarChart3, ArrowUpRight } from "lucide-react";
-import { calculateTotalTaxIncome } from "@/app/logic/economic_logic/treasuryUpdater";
+import { calculateGoldIncome, calculateTotalTaxIncome } from "@/app/logic/economic_logic/treasuryUpdater";
 import { calculateGoldMiningDailyProduction } from "@/app/logic/economic_logic/goldIncome";
+import { getGoldStateProfitSharePercent } from "@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/7_sistem_ekonomi/logic/nationalizationLogic";
 
 interface IncomeModalProps {
   isOpen: boolean;
@@ -43,20 +44,22 @@ export default function IncomeModal({ isOpen, onClose, countryDetail }: IncomeMo
   const tourismIncome = calculateTourismIncome(countryDetail);
   const goldBuildingCount = Number(countryDetail?.emas) || 0;
   const goldDailyProduction = calculateGoldMiningDailyProduction(countryDetail);
+  const goldStateIncome = calculateGoldIncome(countryDetail);
+  const goldStateSharePercent = getGoldStateProfitSharePercent(countryDetail);
 
   const incomeItems: IncomeItem[] = [
     { label: "Revenue Pajak", amount: taxRevenue },
     {
       label: goldBuildingCount > 0
-        ? `Produksi Tambang Emas (${goldDailyProduction.toLocaleString('id-ID')})`
-        : "Produksi Tambang Emas",
-      amount: goldDailyProduction,
+        ? `Bagian Negara dari Tambang Emas (${goldDailyProduction.toLocaleString('id-ID')} unit)`
+        : "Bagian Negara dari Tambang Emas",
+      amount: goldStateIncome,
       displayAmount: goldBuildingCount > 0
-        ? `+ ${goldDailyProduction.toLocaleString('id-ID')}`
+        ? `+ ${goldStateIncome.toLocaleString('id-ID')}`
         : undefined,
       subtitle:
         goldBuildingCount > 0
-          ? `600 × ${goldBuildingCount.toLocaleString('id-ID')} bangunan = ${goldDailyProduction.toLocaleString('id-ID')}`
+          ? `${goldDailyProduction.toLocaleString('id-ID')} unit × ${goldStateSharePercent}% bagian negara = ${goldStateIncome.toLocaleString('id-ID')} NEO/hari`
           : undefined
     }
   ];

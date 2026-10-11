@@ -9,7 +9,6 @@ import {
   getTourismTotalIncome,
   calculateActiveSubsidyCost,
 } from "@/app/logic/economic_logic/treasuryUpdater";
-import { calculateGoldMiningDailyProduction } from "@/app/logic/economic_logic/goldIncome";
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import { applyNpcCountrySimulationState } from '@/app/logic/npcCountrySimulation';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
@@ -75,7 +74,7 @@ const computeTaxValue = (detail: any) => {
 
 const computeGoldValue = (detail: any) => {
   const emasCount = typeof detail?.emas === 'number' ? detail.emas : 0;
-  return calculateGoldMiningDailyProduction({ ...detail, emas: emasCount });
+  return calculateGoldIncome({ ...detail, emas: emasCount });
 };
 
 const computeMinistryCost = (detail: any) => {

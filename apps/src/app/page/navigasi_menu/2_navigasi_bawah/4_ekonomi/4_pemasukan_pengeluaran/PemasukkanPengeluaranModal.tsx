@@ -29,6 +29,7 @@ import {
   isMemberOfG20,
   getKementerianPariwisataIncomeBonusPercent,
 } from "@/app/page/bonus_logic";
+import { getGoldStateProfitSharePercent } from "../7_sistem_ekonomi/logic/nationalizationLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -88,6 +89,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
 
   const goldBuildingCount = Number(countryDetail?.emas) || 0;
   const goldUnits = calculateGoldMiningDailyProduction(countryDetail);
+  const goldStateSharePercent = getGoldStateProfitSharePercent(countryDetail);
   const mallCount = Number(countryDetail?.mall ?? countryDetail?.pusat_belanja ?? countryDetail?.pusat_perbelanjaan ?? 0);
   const hotelCount = Number(countryDetail?.hotel ?? 0);
   const grosirCount = Number(countryDetail?.pusat_grosir_tekstil ?? countryDetail?.pusat_grosir ?? 0);
@@ -138,10 +140,11 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
     },
     {
       label: goldBuildingCount > 0
-        ? `Produksi Tambang Emas (${goldIncome.toLocaleString('id-ID')})`
-        : "Produksi Tambang Emas",
+        ? `Bagian Negara Tambang Emas (${goldUnits.toLocaleString('id-ID')} unit)`
+        : "Bagian Negara Tambang Emas",
       amount: goldIncome,
-      displayAmount: goldBuildingCount > 0 ? `+ ${goldUnits.toLocaleString('id-ID')} unit` : undefined,
+      displayAmount: goldBuildingCount > 0 ? `+ ${goldIncome.toLocaleString('id-ID')} NEO` : undefined,
+      badge: goldBuildingCount > 0 ? `Bagian negara ${goldStateSharePercent}%` : undefined,
       onClick: () => onGotoProduction?.("mineral", "emas"),
     }
   ];

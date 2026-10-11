@@ -46,6 +46,7 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
       doktrin,
       alokasiSubsidi,
       sistemEkonomi,
+      kepemilikanProduksi,
       databaseTempatWisata,
       listrik,
       mineral,
@@ -73,6 +74,7 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
       queryOptional('SELECT * FROM database_doktrin_keterbukaan'),
       queryOptional('SELECT * FROM database_alokasi_subsidi'),
       queryOptional('SELECT * FROM database_sistem_ekonomi'),
+      queryOptional('SELECT * FROM database_kepemilikian_produksi'),
       queryOptional('SELECT * FROM database_tempat_wisata'),
       queryOptional('SELECT * FROM database_sektor_listrik_nasional'),
       queryOptional('SELECT * FROM database_sektor_mineral_kritis'),
@@ -167,6 +169,8 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
         sistemEkonomiMap.set(normalizeKey(item.country_slug), item);
       }
     }
+
+    const kepemilikanProduksiMap = makeMap(kepemilikanProduksi);
 
     const tourismMap = new Map<string, { total_wisata_penghasilan: number; total_tempat_wisata: number; tempat_wisata: any[] }>();
     for (const item of tempatWisata) {
@@ -345,6 +349,19 @@ async function loadAllCountriesFromMySQL(forceRefresh: boolean = false) {
             policy_strategic_ownership: sys.policy_strategic_ownership === 'Pasar Bebas' ? 'B' : 'A',
             policy_trade_policy: sys.policy_trade === 'Pasar Bebas' ? 'B' : 'A',
             policy_labor_regulation: sys.policy_labor === 'Pasar Bebas' ? 'B' : 'A',
+          };
+        })(),
+
+        sector_nationalization: (() => {
+          const ownership = kepemilikanProduksiMap.get(normSlug) || {};
+          return {
+            kelistrikan: Number(ownership.kelistrikan) || 0,
+            mineral_energi: Number(ownership.mineral_energi) || 0,
+            manufaktur: Number(ownership.manufaktur) || 0,
+            peternakan: Number(ownership.peternakan) || 0,
+            agrikultur: Number(ownership.agrikultur) || 0,
+            perikanan: Number(ownership.perikanan) || 0,
+            olahan_pangan: Number(ownership.olahan_pangan) || 0,
           };
         })(),
 

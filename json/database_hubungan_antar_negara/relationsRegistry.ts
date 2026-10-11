@@ -16,6 +16,7 @@ export interface NonAggressionPactPeriod {
 // Memory store for custom relation modifiers or custom scores per pair
 // Pair key format: "country_a:country_b" (alphabetical)
 const relationModifiersMap = new Map<string, number>();
+const relationSourceModifiersMap = new Map<string, Map<string, number>>();
 const relationSanctionModifiersMap = new Map<string, number>();
 let nonAggressionPactHistory: NonAggressionPactPeriod[] = [];
 
@@ -195,6 +196,52 @@ export function setRelationModifier(sourceCountry: string, targetCountry: string
   relationModifiersMap.set(key, currentMod + delta);
 }
 
+/**
+ * Replaces one named relation effect without accumulating duplicate penalties.
+ */
+export function setRelationSourceModifier(
+  sourceCountry: string,
+  targetCountry: string,
+  sourceId: string,
+  value: number
+): void {
+  const key = getPairKey(sourceCountry, targetCountry);
+  const sourceModifiers = relationSourceModifiersMap.get(key) || new Map<string, number>();
+  if (!Number.isFinite(value) || value === 0) {
+    sourceModifiers.delete(sourceId);
+  } else {
+    sourceModifiers.set(sourceId, value);
+  }
+  if (sourceModifiers.size === 0) {
+    relationSourceModifiersMap.delete(key);
+  } else {
+    relationSourceModifiersMap.set(key, sourceModifiers);
+  }
+}
+
+export function replaceRelationSourceModifiers(
+  sourceCountry: string,
+  sourceId: string,
+  targetModifiers: Record<string, number>
+): void {
+  const normalizedSource = sourceCountry.trim().toLowerCase();
+  for (const [pairKey, sourceModifiers] of relationSourceModifiersMap) {
+    if (pairKey.startsWith(`${normalizedSource}:`) || pairKey.endsWith(`:${normalizedSource}`)) {
+      sourceModifiers.delete(sourceId);
+      if (sourceModifiers.size === 0) relationSourceModifiersMap.delete(pairKey);
+    }
+  }
+
+  Object.entries(targetModifiers).forEach(([targetCountry, value]) => {
+    const target = targetCountry.trim();
+    if (!target || !Number.isFinite(value) || value === 0) return;
+    const pairKey = getPairKey(sourceCountry, target);
+    const sourceModifiers = relationSourceModifiersMap.get(pairKey) || new Map<string, number>();
+    sourceModifiers.set(sourceId, value);
+    relationSourceModifiersMap.set(pairKey, sourceModifiers);
+  });
+}
+
 export function setRelationSanctionModifiers(sourceCountry: string, modifiers: Record<string, unknown>): void {
   const normalizedSource = sourceCountry.trim().toLowerCase();
   if (!normalizedSource) {
@@ -242,7 +289,12 @@ export function getRelationValue(
 
   const baseScore = getBaseRelationValue(s1, s2);
   const key = getPairKey(s1, s2);
-  const manualModifier = (relationModifiersMap.get(key) || 0) + (relationSanctionModifiersMap.get(key) || 0);
+  const sourceModifier = Array.from(relationSourceModifiersMap.get(key)?.values() || [])
+    .reduce((total, modifier) => total + modifier, 0);
+  const manualModifier =
+    (relationModifiersMap.get(key) || 0) +
+    sourceModifier +
+    (relationSanctionModifiersMap.get(key) || 0);
 
   // Determine evaluation date
   let evalDate = currentSimulationDate;

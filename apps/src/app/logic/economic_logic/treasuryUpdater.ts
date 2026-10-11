@@ -1,5 +1,6 @@
 import { calculateIncomeAtRate } from './2_tax_logic/taxLogic';
 import { calculateGoldMiningDailyProduction } from './goldIncome';
+import { getGoldStateProfitSharePercent } from '@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/7_sistem_ekonomi/logic/nationalizationLogic';
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from './departments';
 import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
 import { applyOrthodoxPersonalIncomeTaxRevenueBonus } from '@/app/page/bonus_logic/agama_bonus_logic/kristen';
@@ -148,10 +149,14 @@ export const getCommercialTotalIncome = (detail: any): number => {
   return mallIncome + hotelIncome + grosirIncome;
 };
 
+export const calculateGoldIncome = (detail: any): number =>
+  calculateGoldMiningDailyProduction(detail) *
+  (getGoldStateProfitSharePercent(detail) / 100);
+
 export const calculateTotalPDB = (detail: any) => {
   if (!detail || typeof detail !== 'object') return 0;
   const totalTaxIncome = calculateTotalTaxIncome(detail);
-  const goldIncome = calculateGoldMiningDailyProduction(detail);
+  const goldIncome = calculateGoldIncome(detail);
   const tourismIncome = getTourismTotalIncome(detail);
   const commercialIncome = getCommercialTotalIncome(detail);
   return totalTaxIncome + goldIncome + tourismIncome + commercialIncome;
@@ -176,8 +181,7 @@ export const calculateActiveSubsidyCost = (detail: any) => {
 export const calculateCountryNetBalance = (detail: any) => {
   if (!detail || typeof detail !== 'object') return 0;
   const totalTaxIncome = calculateTotalTaxIncome(detail);
-  const goldUnits = calculateGoldMiningDailyProduction(detail);
-  const goldIncome = goldUnits; // use production units (from metadata), do not multiply by price
+  const goldIncome = calculateGoldIncome(detail);
   const tourismIncome = getTourismTotalIncome(detail);
   const commercialIncome = getCommercialTotalIncome(detail);
   const ministryCost = calculateTotalMinistryCostPerDay(detail);
@@ -185,7 +189,6 @@ export const calculateCountryNetBalance = (detail: any) => {
   return totalTaxIncome + goldIncome + tourismIncome + commercialIncome - ministryCost - subsidyCost;
 };
 
-export const calculateGoldIncome = calculateGoldMiningDailyProduction;
 export const calculateMinistryCost = calculateTotalMinistryCostPerDay;
 export const calculateCountryGDP = calculateTotalPDB;
 

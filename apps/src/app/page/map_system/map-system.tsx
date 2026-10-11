@@ -73,6 +73,10 @@ import { buildCapitalPoint } from '../detail_negara/3_operasi_militer/1_serang_n
 import { applyWarLossesToUserArmada } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 import { getArmadaPowerSummary } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
+import {
+    hasActiveNationalization,
+    syncNationalizationDiplomacyRelations,
+} from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/7_sistem_ekonomi/logic/nationalizationLogic';
 import { calculateDailyMaterialProduction } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
 import { getDaysElapsed } from '@/app/logic/production_logic';
 import {
@@ -342,6 +346,32 @@ export default function MapPage() {
             window.dispatchEvent(new CustomEvent('country_relations_updated'));
         }
     }, [countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, countryDetail?.nonAggressionPacts, countryDetail?.nonAggressionPactHistory, currentDate, simulationDateString]);
+
+    useEffect(() => {
+        const playerCountry = String(
+            selectedCountry?.country ||
+            countryDetail?.country ||
+            countryDetail?.nama_negara ||
+            countryDetail?.name ||
+            ''
+        ).trim();
+        if (!playerCountry || !countryDetail) return;
+
+        void syncNationalizationDiplomacyRelations(
+            playerCountry,
+            countryDetail.sector_nationalization,
+            countryDetail.nationalization_diplomacy_month_counter
+        ).catch((error) => {
+            console.error('Gagal memperbarui dampak hubungan nasionalisasi:', error);
+        });
+    }, [
+        selectedCountry?.country,
+        countryDetail?.country,
+        countryDetail?.nama_negara,
+        countryDetail?.name,
+        countryDetail?.sector_nationalization,
+        countryDetail?.nationalization_diplomacy_month_counter,
+    ]);
 
     useEffect(() => {
         if (!countryDetail) {
@@ -2488,6 +2518,7 @@ export default function MapPage() {
                         window.dispatchEvent(new CustomEvent('map_territory_color_updated'));
                         let databaseReligion = '';
                         let databaseSlug = '';
+                        let databaseSectorNationalization: Record<string, unknown> = {};
                         const relPath = Object.entries(countryPaths as Record<string, string>).find(
                             ([name]) => name.toLowerCase() === chosen.country.toLowerCase()
                         )?.[1];
@@ -2504,6 +2535,13 @@ export default function MapPage() {
                                 if (profile?.error) throw new Error(profile.error);
                                 databaseReligion = typeof profile?.religion === 'string' ? profile.religion : '';
                                 databaseSlug = typeof profile?.country_slug === 'string' ? profile.country_slug : '';
+                                if (
+                                    profile?.sector_nationalization &&
+                                    typeof profile.sector_nationalization === 'object' &&
+                                    !Array.isArray(profile.sector_nationalization)
+                                ) {
+                                    databaseSectorNationalization = profile.sector_nationalization;
+                                }
                                 if (databaseSlug && databaseReligion) {
                                     cacheDatabaseReligion(databaseSlug, databaseReligion);
                                 }
@@ -2529,9 +2567,22 @@ export default function MapPage() {
                             kepuasan: Number(savedState.kepuasan) || 50,
                             ...savedCountryDetail,
                             ...(databaseSlug ? { country_slug: databaseSlug } : {}),
+                            sector_nationalization: {
+                                ...databaseSectorNationalization,
+                                ...(savedCountryDetail.sector_nationalization &&
+                                typeof savedCountryDetail.sector_nationalization === 'object' &&
+                                !Array.isArray(savedCountryDetail.sector_nationalization)
+                                    ? savedCountryDetail.sector_nationalization
+                                    : {}),
+                            },
                             religion: databaseReligion || cachedReligion || savedDetail.religion || savedState.religion || '-',
                         };
 
+                        await syncNationalizationDiplomacyRelations(
+                            String(restoredDetail.country || restoredDetail.nama_negara || savedCountryName),
+                            restoredDetail.sector_nationalization,
+                            restoredDetail.nationalization_diplomacy_month_counter
+                        );
                         setCountryDetail(restoredDetail);
                         if (restoredDetail.presidentRating !== undefined) {
                             setPresidentRating(Number(restoredDetail.presidentRating));
@@ -2803,6 +2854,15 @@ export default function MapPage() {
         const month = String(currentDate.getMonth() + 1).padStart(2, '0');
         const day = String(currentDate.getDate()).padStart(2, '0');
         const currentDateStr = `${year}-${month}-${day}`;
+        const managerDate = timeManagerRef.current?.getCurrentDate();
+        if (managerDate) {
+            const managerDateStr = [
+                managerDate.getFullYear(),
+                String(managerDate.getMonth() + 1).padStart(2, '0'),
+                String(managerDate.getDate()).padStart(2, '0'),
+            ].join('-');
+            if (managerDateStr !== currentDateStr) return;
+        }
 
         if (prevBudgetUpdateDateRef.current === null) {
             prevBudgetUpdateDateRef.current = currentDateStr;
@@ -2965,6 +3025,9 @@ export default function MapPage() {
             }
 
             const monthsPassed = lastDate ? getMonthsDifference(lastDate, currentDateStr) : 0;
+            const nationalizationDiplomacyMonthCounter =
+                Math.max(0, Math.floor(Number(prev.nationalization_diplomacy_month_counter) || 0)) +
+                (hasActiveNationalization(prev.sector_nationalization) ? Math.max(0, monthsPassed) : 0);
             const lowSectorCount = countLowSatisfactionSectors(prev, metadata);
             const previousSectorDeficitMonths = Math.max(0, Number(prev.sector_deficit_month_counter) || 0);
             const sectorDeficitMonths = lowSectorCount > 0
@@ -3139,6 +3202,7 @@ export default function MapPage() {
                 }),
                 ongoingConstructions: currentOngoing,
                 ongoingEmbassyConstructions: nextOngoingEmbassyConstructions,
+                nationalization_diplomacy_month_counter: nationalizationDiplomacyMonthCounter,
                 embassies: nextEmbassies,
                 removedEmbassies: nextRemovedEmbassies,
                 autoRemovedEmbassies: previousAutoRemovedEmbassies,

@@ -41,8 +41,7 @@ import { COUNTRIES_DATA, CAPITALS_DATA } from '../map-data';
 import countryPaths from '../country-paths.json';
 
 // Import logika ekonomi dari folder logic agar kalkulasi sama persis
-import { calculateCountryNetBalance, calculateTotalTaxIncome, calculateTotalMinistryCostPerDay } from '@/app/logic/economic_logic/treasuryUpdater';
-import { calculateGoldMiningDailyProduction } from '@/app/logic/economic_logic/goldIncome';
+import { calculateCountryNetBalance, calculateGoldIncome, calculateTotalTaxIncome, calculateTotalMinistryCostPerDay } from '@/app/logic/economic_logic/treasuryUpdater';
 import { KEMENTERIAN, KEAMANAN, LAYANAN } from '@/app/logic/economic_logic/departments';
 
 
@@ -79,7 +78,7 @@ interface Country {
 // === LOGIKA KALKULASI EKONOMI UNTUK NAVBAR (SAMA PERSIS DENGAN MODAL) ===
 
 const calculateGoldMiningIncome = (detail: any) => {
-  return calculateGoldMiningDailyProduction(detail);
+  return calculateGoldIncome(detail);
 };
 
 // --- LOGIKA PARIWISATA DIHAPUS ---

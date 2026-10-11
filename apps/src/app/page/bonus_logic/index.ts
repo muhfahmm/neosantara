@@ -113,6 +113,12 @@ import {
   getSafeDebtLimitRatio,
   applyBankSentralMaxLoanBonus,
 } from "./kementerian_bonus_logic/21_Kepala_Bank_Sentral";
+import {
+  MINISTER_CANDIDATE_TIER_BONUS_PERCENT,
+  getKandidatMenteriBonusPercent,
+  getTotalDepartmentBonusPercent,
+  isKandidatMenteriHired,
+} from "./kementerian_bonus_logic/0_kandidat_menteri";
 
 const RESEARCH_CARDS_BY_PRODUCTION_SECTOR: Record<string, string[]> = {
   manufaktur: ["otomasi_industri"],
@@ -537,6 +543,10 @@ export {
   getBankSentralLoanSafeLimitBonusPercent,
   getSafeDebtLimitRatio,
   applyBankSentralMaxLoanBonus,
+  MINISTER_CANDIDATE_TIER_BONUS_PERCENT,
+  getKandidatMenteriBonusPercent,
+  getTotalDepartmentBonusPercent,
+  isKandidatMenteriHired,
 };
 
 export function getBuildSpeedModifier(countryName: string): number {

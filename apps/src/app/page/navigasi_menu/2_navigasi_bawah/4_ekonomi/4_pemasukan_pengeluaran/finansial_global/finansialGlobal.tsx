@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import { calculateGoldMiningDailyProduction } from '@/app/logic/economic_logic/goldIncome';
 import { getDailyMinistryCost } from '@/app/logic/economic_logic/departments';
+import { getGoldStateProfitSharePercent } from '@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/7_sistem_ekonomi/logic/nationalizationLogic';
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import {
   applyNpcCountrySimulationState,
@@ -62,8 +63,9 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
   };
 
   const computeGoldValue = (detail: any) => {
+    const stateProfitShare = getGoldStateProfitSharePercent(detail) / 100;
     if (typeof detail?.emas === 'number') {
-      return calculateGoldMiningDailyProduction(detail);
+      return calculateGoldMiningDailyProduction(detail) * stateProfitShare;
     }
     if (typeof detail?.tambang_emas_daily === 'number') {
       return detail.tambang_emas_daily;
