@@ -7,6 +7,7 @@ import {
     Play, Pause, Settings, Palmtree, Shield, Crosshair
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
 import countryPaths from './country-paths.json';
 import { SimulationTimeManager, createSimulationCalendar } from '../time_controllers';
@@ -289,6 +290,7 @@ function applyInvasionRelationPenalty(attackerCountry: string, minimum: number, 
 }
 
 export default function MapPage() {
+    const router = useRouter();
     const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
     const [countryDetail, setCountryDetail] = useState<any>(null);
     const [metadata, setMetadata] = useState<Record<string, any>>({});
@@ -1193,6 +1195,20 @@ export default function MapPage() {
 
     const [penelitianModalOpen, setPenelitianModalOpen] = useState(false);
     const [missionModalOpen, setMissionModalOpen] = useState(false);
+    const [playerDiamonds, setPlayerDiamonds] = useState<number>(150);
+
+    // Sinkronisasi saldo diamond dari localStorage saat client mounted (mencegah hydration mismatch)
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('player_diamonds');
+            if (saved !== null) {
+                const parsed = parseInt(saved, 10);
+                if (!isNaN(parsed)) {
+                    setPlayerDiamonds(parsed);
+                }
+            }
+        }
+    }, []);
     const [activeWarAnimation, setActiveWarAnimation] = useState<any>(null);
     useEffect(() => {
         const handleStartWarAnimation = async (event: Event) => {
@@ -3999,6 +4015,10 @@ export default function MapPage() {
                 onOpenKesejahteraan={() => {
                     setKesejahteraanDeepLink(true);
                     setActiveMenu("Dashboard:Populasi:Overview");
+                }}
+                diamond={playerDiamonds}
+                onOpenTopUp={() => {
+                    router.push('/page/topup_page');
                 }}
             />            {/* Top Left Icon - Inbox */}
             <TopLeftIcon

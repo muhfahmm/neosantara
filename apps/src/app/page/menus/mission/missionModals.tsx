@@ -13,7 +13,9 @@ import {
   Bike, Route, Bus, Train, Gamepad2, Film, Theater, Egg, Package,
   Sparkles, Crown, Award as AwardIcon, Cross, Heart, Landmark as LandmarkIcon,
   MapPinned, Handshake, Utensils as UtensilsIcon, Banknote as BanknoteIcon,
+  Gift,
 } from 'lucide-react';
+import { formatProductionProductName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog';
 
 interface MissionModalsProps {
   isOpen?: boolean;
@@ -216,6 +218,59 @@ function getMissionRoute(mission: Pick<MissionCard, 'id' | 'category'>): Mission
   }
 
   return target;
+}
+
+function getMissionRewardPreview(card: MissionCard): string {
+  const productKey = PRODUCTION_KEYS_BY_MISSION[card.id];
+  const productRewardCategories = [
+    'Mineral & Energi',
+    'Manufaktur',
+    'Peternakan',
+    'Agrikultur',
+    'Perikanan',
+    'Olahan Pangan',
+  ];
+
+  if (productKey && productRewardCategories.includes(card.categoryLabel)) {
+    return `5.000–25.000 ${formatProductionProductName(productKey)}`;
+  }
+
+  switch (card.category) {
+    case 'event':
+      return 'Rp5.000–15.000 + kepuasan rakyat';
+    case 'kesejahteraan':
+    case 'populasi':
+      return 'Rp5.000–15.000 + kesejahteraan rakyat';
+    case 'ekonomi':
+      return 'Rp5.000–20.000 + stabilitas ekonomi';
+    case 'produksi':
+    case 'pangan':
+      return 'Rp5.000–25.000 + kapasitas energi';
+    case 'layanan_publik':
+      return 'Rp5.000–20.000 + kualitas layanan';
+    case 'hunian':
+      return 'Rp5.000–20.000 + kapasitas hunian';
+    case 'penelitian':
+      return 'Rp5.000–20.000 + kemajuan riset';
+    case 'pertahanan':
+      return 'Rp5.000–25.000 + kesiapan pertahanan';
+    case 'geopolitik':
+      return 'Rp5.000–15.000 + pengaruh diplomatik';
+    case 'resolusi_pbb':
+    case 'resolusi_dk_pbb':
+    case 'organisasi_pbb':
+    case 'organisasi_regional':
+      return 'Rp5.000–15.000 + pengaruh internasional';
+    case 'sosial_budaya':
+      return 'Rp5.000–15.000 + stabilitas sosial';
+    case 'kementerian':
+    case 'kabinet':
+      return 'Rp5.000–15.000 + efektivitas pemerintahan';
+    case 'krisis':
+      return 'Rp10.000–25.000 + stabilitas nasional';
+    default:
+      return 'Hadiah akan ditentukan';
+  }
 }
 
 // =====================================================================
@@ -627,6 +682,10 @@ export default function MissionModals({
 
             {/* BODY — List Vertikal */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A] relative z-10 custom-scrollbar space-y-3">
+              <div className="flex items-center gap-2 rounded-lg border border-amber-400/20 bg-amber-400/5 px-3 py-2 text-[10px] font-semibold text-amber-200/80">
+                <Gift className="h-3.5 w-3.5 shrink-0 text-amber-300" />
+                Pratinjau hadiah usulan. Hadiah belum aktif dan belum dapat diklaim.
+              </div>
               {filteredCards.map(card => {
                 const Icon = card.icon;
                 return (
@@ -666,6 +725,15 @@ export default function MissionModals({
                             ({card.progress})
                           </span>
                         )}
+                      </div>
+                      <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px]">
+                        <span className="inline-flex items-center gap-1 font-bold uppercase tracking-wide text-amber-300">
+                          <Gift className="h-3 w-3" />
+                          Hadiah usulan
+                        </span>
+                        <span className="font-semibold text-[#C3D6D1]">
+                          {getMissionRewardPreview(card)}
+                        </span>
                       </div>
                     </div>
 

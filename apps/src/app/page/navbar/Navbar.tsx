@@ -4,7 +4,7 @@
 import React from 'react';
 import {
     Power, Users, Landmark, Save, RotateCcw, Smile, LayoutGrid, Star,
-    Activity // ✅ TAMBAHAN: Import Activity agar error hilang
+    Activity, Gem, Plus // ✅ TAMBAHAN: Import Gem dan Plus untuk Diamond Top Up
 } from 'lucide-react';
 import { formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
@@ -36,6 +36,8 @@ interface NavbarProps {
     dailyBirths?: number;
     dailyDeaths?: number;
     activeMenu?: string;
+    diamond?: number;
+    onOpenTopUp?: () => void;
     onOpenGameMenu: () => void;
     onOpenSaveModal: () => void;
     onOpenRestartConfirm: () => void;
@@ -54,6 +56,8 @@ export function Navbar({
     dailyBirths = 0,
     dailyDeaths = 0,
     activeMenu = 'Peta Taktis',
+    diamond = 0,
+    onOpenTopUp,
     onOpenGameMenu,
     onOpenSaveModal,
     onOpenRestartConfirm,
@@ -254,8 +258,27 @@ export function Navbar({
                 </div>
             </div>
 
-            {/* 3. Right Side: Save & Restart Buttons */}
+            {/* 3. Right Side: Diamond Top Up, Save & Restart Buttons */}
             <div className="flex items-center gap-1.5 2xl:gap-2 shrink-0 relative z-20 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
+                {/* 💎 Diamond Balance & Top Up Button */}
+                <button
+                    onClick={onOpenTopUp}
+                    title="Pusat Top Up Diamond Neosantara"
+                    className="flex items-center gap-1.5 lg:gap-2 px-2 lg:px-2.5 py-1 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA]/15 hover:border-[#00FFAA] transition-all cursor-pointer group shadow-sm"
+                >
+                    <div className="p-0.5 rounded-md text-[#00FFAA] group-hover:scale-110 transition-transform">
+                        <Gem className="w-3.5 h-3.5 2xl:w-4 2xl:h-4 text-[#00FFAA]" />
+                    </div>
+                    <span className="text-[11px] lg:text-[12px] 2xl:text-[13px] font-black tracking-tight text-[#E0E0E0] group-hover:text-white">
+                        {diamond.toLocaleString('id-ID')}
+                    </span>
+                    <span className="w-4 h-4 lg:w-4.5 lg:h-4.5 rounded-md bg-[#00FFAA] text-[#0A1A1A] flex items-center justify-center font-black text-[10px] group-hover:scale-105 transition-transform shadow-sm">
+                        <Plus className="w-3 h-3 stroke-[3]" />
+                    </span>
+                </button>
+
+                <div className="w-[1px] h-5 bg-[#00FFAA]/20 mx-0.5" />
+
                 <button
                     onClick={onOpenSaveModal}
                     title="Simpan Game"
