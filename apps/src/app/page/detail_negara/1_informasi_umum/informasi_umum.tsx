@@ -67,6 +67,8 @@ interface InformasiUmumProps {
   provinceNetBalance?: number;
   provinceTension?: number;
   provinceData?: Record<string, unknown> | null;
+  onCloseDetailModal?: () => void;
+  onActionModalStateChange?: (isOpen: boolean) => void;
 }
 
 // Komponen tombol aksi
@@ -89,7 +91,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   );
 };
 
-export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, targetNetBalance, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, isAnnexedTerritory, occupyingCountry, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension, provinceData }: InformasiUmumProps) {
+export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, targetNetBalance, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, isAnnexedTerritory, occupyingCountry, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension, provinceData, onCloseDetailModal, onActionModalStateChange }: InformasiUmumProps) {
   const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || null;
   const [isDestroyModalOpen, setIsDestroyModalOpen] = useState(false);
   const [isBuildEmbassyModalOpen, setIsBuildEmbassyModalOpen] = useState(false);
@@ -111,6 +113,16 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const [isKirimPasukanModalOpen, setIsKirimPasukanModalOpen] = useState(false);
   const [isPanggilSekutuModalOpen, setIsPanggilSekutuModalOpen] = useState(false);
   const [isBerikanSanksiModalOpen, setIsBerikanSanksiModalOpen] = useState(false);
+
+  const isAnyModalActive = isDestroyModalOpen || isBuildEmbassyModalOpen || isEmbassyRelationRequirementModalOpen ||
+    isDestroyTradeModalOpen || isBuildTradeModalOpen || isPaktaModalOpen || isAliansiModalOpen || isKontrakModalOpen ||
+    isDestroyPaktaOpen || isDestroyAliansiOpen || isDestroyKontrakOpen || isKirimPasukanModalOpen || isPanggilSekutuModalOpen || isBerikanSanksiModalOpen;
+
+  useEffect(() => {
+    if (onActionModalStateChange) {
+      onActionModalStateChange(isAnyModalActive);
+    }
+  }, [isAnyModalActive, onActionModalStateChange]);
 
   const handleAction = (action: string) => {
     // Fallback handler if needed; most actions open dedicated modals now.
@@ -214,8 +226,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
       if (autoBuildRequestRef.current !== requestKey) {
         autoBuildRequestRef.current = requestKey;
         if (embassyRelation >= minimumEmbassyRelation) {
+          if (onCloseDetailModal) onCloseDetailModal();
           setIsBuildEmbassyModalOpen(true);
         } else {
+          if (onCloseDetailModal) onCloseDetailModal();
           setIsEmbassyRelationRequirementModalOpen(true);
         }
       }
@@ -230,10 +244,13 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const handleEmbassyClick = () => {
     if (isAnnexedTerritory) return;
     if (embassyActive) {
+      if (onCloseDetailModal) onCloseDetailModal();
       setIsDestroyModalOpen(true);
     } else if (embassyRelation < minimumEmbassyRelation) {
+      if (onCloseDetailModal) onCloseDetailModal();
       setIsEmbassyRelationRequirementModalOpen(true);
     } else {
+      if (onCloseDetailModal) onCloseDetailModal();
       setIsBuildEmbassyModalOpen(true);
     }
   };
@@ -333,14 +350,15 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           />
         </div>}
         
-        <ActionButton icon={ShieldOff} label={paktaIsActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => paktaIsActive ? setIsDestroyPaktaOpen(true) : setIsPaktaModalOpen(true)} disabled={!hasUsableEmbassy} className={paktaIsActive ? modernGreenBorderClass : undefined} iconClass={paktaIsActive ? 'text-[#00FFAA]' : undefined} labelClass={paktaIsActive ? 'text-[#00FFAA]' : undefined} />
-        <ActionButton icon={ShieldCheck} label={aliansiIsActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => aliansiIsActive ? setIsDestroyAliansiOpen(true) : setIsAliansiModalOpen(true)} disabled={!hasUsableEmbassy} className={aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={aliansiIsActive ? 'text-[#00FFAA]' : undefined} labelClass={aliansiIsActive ? 'text-[#00FFAA]' : undefined} />
+        <ActionButton icon={ShieldOff} label={paktaIsActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); paktaIsActive ? setIsDestroyPaktaOpen(true) : setIsPaktaModalOpen(true); }} disabled={!hasUsableEmbassy} className={paktaIsActive ? modernGreenBorderClass : undefined} iconClass={paktaIsActive ? 'text-[#00FFAA]' : undefined} labelClass={paktaIsActive ? 'text-[#00FFAA]' : undefined} />
+        <ActionButton icon={ShieldCheck} label={aliansiIsActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); aliansiIsActive ? setIsDestroyAliansiOpen(true) : setIsAliansiModalOpen(true); }} disabled={!hasUsableEmbassy} className={aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={aliansiIsActive ? 'text-[#00FFAA]' : undefined} labelClass={aliansiIsActive ? 'text-[#00FFAA]' : undefined} />
         
         {/* PERBAIKAN: Tombol Perjanjian Dagang diubah menggunakan modernGreenBorderClass yang sama */}
         <ActionButton
           icon={Handshake}
           label={tradeLabel}
           onClick={() => {
+            if (onCloseDetailModal) onCloseDetailModal();
             if (tradeIsActive) {
               setIsDestroyTradeModalOpen(true);
             } else {
@@ -353,9 +371,9 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           labelClass={tradeIsActive ? 'text-[#00FFAA]' : tradeLabelClass}
         />
         
-        <ActionButton icon={FlaskConical} label={kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => kontrakIsActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true)} disabled={!hasUsableEmbassy} className={kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
-        <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => setIsKirimPasukanModalOpen(true)} disabled={!hasUsableEmbassy} />
-        <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => setIsPanggilSekutuModalOpen(true)} disabled={!hasUsableEmbassy} />
+        <ActionButton icon={FlaskConical} label={kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); kontrakIsActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true); }} disabled={!hasUsableEmbassy} className={kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
+        <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsKirimPasukanModalOpen(true); }} disabled={!hasUsableEmbassy} />
+        <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsPanggilSekutuModalOpen(true); }} disabled={!hasUsableEmbassy} />
         <ActionButton
           icon={Ban}
           label={isSanctionActive ? 'Cabut Sanksi' : 'Berikan Sanksi'}
@@ -381,6 +399,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
               console.log(`Sanksi ekonomi terhadap ${countryName} dicabut. ${previousCount} sanksi dihapus; netto kas kembali tanpa pengurangan sanksi.`);
               return;
             }
+            if (onCloseDetailModal) onCloseDetailModal();
             setIsBerikanSanksiModalOpen(true);
           }}
           className={isSanctionActive ? modernGreenBorderClass : undefined}

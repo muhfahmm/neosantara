@@ -66,6 +66,9 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   const [, setAnnexationRevision] = useState(0);
   const [relationRevision, setRelationRevision] = useState(0);
 
+  // State untuk menyembunyikan tampilan modal Detail Negara saat salah satu modal aksi dibuka
+  const [isActionModalOpen, setIsActionModalOpen] = useState(false);
+
   // State untuk data negara yang diklik
   const [fetchedDetail, setFetchedDetail] = useState<any>(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
@@ -90,6 +93,13 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
       window.removeEventListener('country_relations_updated', refreshRelations);
     };
   }, []);
+
+  // Reset status hide ketika modal dibuka kembali
+  useEffect(() => {
+    if (isOpen) {
+      setIsActionModalOpen(false);
+    }
+  }, [isOpen, countryName]);
 
   // PERBAIKAN: Fetch data & Agregasi Kekaisaran saat pertama kali negara dibuka
   useEffect(() => {
@@ -415,8 +425,8 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none ${isActionModalOpen ? 'p-0 !pt-0 !pb-0 !px-0' : ''}`}>
+      <div className={`bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl ${isActionModalOpen ? 'hidden' : ''}`}>
         
         {/* Background Glow Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
@@ -607,7 +617,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
           <div className="max-w-4xl mx-auto">
             
             {/* Menu 3 Tab Navigasi */}
-            <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex mb-6 shadow-sm flex-wrap gap-1 backdrop-blur-md">
+            <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex mb-6 shadow-sm flex-wrap gap-1">
               <button
                 onClick={() => setActiveTab("informasi")}
                 className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
@@ -660,6 +670,8 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 provinceNetBalance={targetBaseNetBalance}
                 provinceTension={provinceTensionValue}
                 provinceData={detailData}
+                onCloseDetailModal={() => setIsActionModalOpen(true)}
+                onActionModalStateChange={(isOpen: boolean) => setIsActionModalOpen(isOpen)}
               />
             )}
 
@@ -678,7 +690,11 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 countryName={countryName}
                 playerCountryDetail={countryDetail}
                 targetCountryDetail={detailData}
-                onCloseDetailModal={onClose}
+                onCloseDetailModal={() => {
+                  setIsActionModalOpen(true);
+                  // Juga panggil onClose jika bukan sekadar hide (atau SerangNegaraModal onCloseDetailModal)
+                }}
+                onActionModalStateChange={(isOpen: boolean) => setIsActionModalOpen(isOpen)}
                 isOccupiedProvince={isPlayerOccupiedProvince}
                 occupyingCountry={occupyingCountry}
                 provinceTension={provinceTensionValue}

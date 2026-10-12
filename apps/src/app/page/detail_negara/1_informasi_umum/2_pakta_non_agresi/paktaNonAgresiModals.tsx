@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { createPortal } from "react-dom";
 
 interface PaktaNonAgresiModalProps {
 	isOpen: boolean;
@@ -12,8 +13,8 @@ interface PaktaNonAgresiModalProps {
 export default function PaktaNonAgresiModal({ isOpen, countryName, chancePercent, onClose, onConfirm }: PaktaNonAgresiModalProps) {
 	if (!isOpen) return null;
 
-	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans">
+	const modalContent = (
+		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 font-sans pointer-events-auto">
 			<div className="w-full max-w-[440px] bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-6 shadow-2xl relative text-white">
 				<h3 className="text-lg font-black text-[#00FFAA] tracking-wide uppercase mb-3">Konfirmasi Pakta Non-Agresi</h3>
 				<p className="text-xs sm:text-sm text-[#E0E0E0] mb-3 leading-relaxed">Apakah Anda ingin mengajukan Pakta Non-Agresi kepada <strong className="text-white">{countryName}</strong>? Pakta berlaku jika diterima dan menegaskan kedua negara tidak akan saling menyerang.</p>
@@ -41,4 +42,10 @@ export default function PaktaNonAgresiModal({ isOpen, countryName, chancePercent
 			</div>
 		</div>
 	);
+
+	if (typeof window !== "undefined") {
+		return createPortal(modalContent, document.body);
+	}
+
+	return modalContent;
 }

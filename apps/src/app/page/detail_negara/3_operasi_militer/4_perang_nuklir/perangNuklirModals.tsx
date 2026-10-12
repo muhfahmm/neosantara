@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { createPortal } from "react-dom";
 
 interface PerangNuklirModalProps {
 	isOpen: boolean;
@@ -11,8 +12,8 @@ interface PerangNuklirModalProps {
 export default function PerangNuklirModal({ isOpen, countryName, onClose, onConfirm }: PerangNuklirModalProps) {
 	if (!isOpen) return null;
 
-	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans text-white">
+	const modalContent = (
+		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 font-sans text-white pointer-events-auto">
 			<div className="w-full max-w-[440px] bg-[#0F2424] border border-rose-500/40 rounded-2xl p-6 shadow-2xl relative">
 				<h3 className="text-lg font-black text-rose-400 tracking-wide uppercase mb-3">Konfirmasi Perang Nuklir</h3>
 				<p className="text-xs sm:text-sm text-[#E0E0E0] mb-6 leading-relaxed">Melancarkan serangan nuklir terhadap <strong className="text-white">{countryName}</strong>? Ini adalah eskalasi tertinggi dan hampir selalu membawa kehancuran besar.</p>
@@ -35,5 +36,11 @@ export default function PerangNuklirModal({ isOpen, countryName, onClose, onConf
 			</div>
 		</div>
 	);
+
+	if (typeof window !== "undefined") {
+		return createPortal(modalContent, document.body);
+	}
+
+	return modalContent;
 }
 

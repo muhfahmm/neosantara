@@ -1,5 +1,5 @@
-"use client";
 import React, { useState, useMemo, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, Bomb, Search } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 
@@ -87,8 +87,8 @@ export default function SabotaseModal({ isOpen, countryName, onClose, onConfirm 
 		);
 	};
 
-	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans text-white">
+	const modalContent = (
+		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 font-sans text-white pointer-events-auto">
 			<div className="w-full max-w-[480px] bg-[#0F2424] border border-rose-500/40 rounded-2xl overflow-hidden shadow-2xl relative">
 				
 				{/* BANNER HEADER */}
@@ -199,5 +199,11 @@ export default function SabotaseModal({ isOpen, countryName, onClose, onConfirm 
 			</div>
 		</div>
 	);
+
+	if (typeof window !== "undefined") {
+		return createPortal(modalContent, document.body);
+	}
+
+	return modalContent;
 }
 

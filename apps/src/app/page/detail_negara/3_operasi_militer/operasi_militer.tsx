@@ -8,7 +8,7 @@ import {
   Phone,
   MessageSquare
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SerangNegaraModal from './1_serang_negara/serangNegaraModals';
 import SpionaseModal from './2_spionase/spionaseModals';
 import SabotaseModal from './3_sabotase/sabotaseModals';
@@ -23,6 +23,7 @@ interface OperasiMiliterProps {
   playerCountryDetail?: any;
   targetCountryDetail?: any;
   onCloseDetailModal?: () => void;
+  onActionModalStateChange?: (isOpen: boolean) => void;
   isOccupiedProvince?: boolean;
   occupyingCountry?: string;
   provinceTension?: number;
@@ -42,7 +43,7 @@ const ActionButton = ({ icon: Icon, label, onClick }: { icon: any, label: string
   </button>
 );
 
-export default function OperasiMiliter({ countryName, playerCountryDetail, targetCountryDetail, onCloseDetailModal, isOccupiedProvince, occupyingCountry, provinceTension, updatePlayerCountryDetail }: OperasiMiliterProps) {
+export default function OperasiMiliter({ countryName, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, updatePlayerCountryDetail }: OperasiMiliterProps) {
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isSpionaseOpen, setIsSpionaseOpen] = useState(false);
   const [isSabotaseOpen, setIsSabotaseOpen] = useState(false);
@@ -50,6 +51,14 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
   const [isKudetaOpen, setIsKudetaOpen] = useState(false);
   const [isMintaSerangOpen, setIsMintaSerangOpen] = useState(false);
   const [isHinaOpen, setIsHinaOpen] = useState(false);
+
+  const isAnyMiliterModalActive = isSerangOpen || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isHinaOpen;
+
+  useEffect(() => {
+    if (onActionModalStateChange) {
+      onActionModalStateChange(isAnyMiliterModalActive);
+    }
+  }, [isAnyMiliterModalActive, onActionModalStateChange]);
 
   const handleAction = (action: string) => {
     console.log(`Aksi militer: ${action} untuk ${countryName}`);
@@ -72,13 +81,13 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
       {/* Grid Layout 4-4 (2 baris x 4 kolom pada desktop) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <ActionButton icon={Crosshair} label="Serang Negara" onClick={() => setIsSerangOpen(true)} />
-        <ActionButton icon={Eye} label="Spionase" onClick={() => setIsSpionaseOpen(true)} />
-        <ActionButton icon={Bomb} label="Sabotase" onClick={() => setIsSabotaseOpen(true)} />
-        <ActionButton icon={Radiation} label="Perang Nuklir" onClick={() => setIsNuklirOpen(true)} />
+        <ActionButton icon={Eye} label="Spionase" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsSpionaseOpen(true); }} />
+        <ActionButton icon={Bomb} label="Sabotase" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsSabotaseOpen(true); }} />
+        <ActionButton icon={Radiation} label="Perang Nuklir" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsNuklirOpen(true); }} />
         
-        <ActionButton icon={UserX} label="Lakukan Kudeta" onClick={() => setIsKudetaOpen(true)} />
+        <ActionButton icon={UserX} label="Lakukan Kudeta" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsKudetaOpen(true); }} />
         <ActionButton icon={Phone} label="Minta Menyerang Negara" onClick={() => setIsMintaSerangOpen(true)} />
-        <ActionButton icon={MessageSquare} label="Hina" onClick={() => setIsHinaOpen(true)} />
+        <ActionButton icon={MessageSquare} label="Hina" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsHinaOpen(true); }} />
       </div>
 
       <SerangNegaraModal

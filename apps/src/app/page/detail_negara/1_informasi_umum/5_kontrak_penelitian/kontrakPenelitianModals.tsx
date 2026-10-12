@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { createPortal } from "react-dom";
 
 interface KontrakPenelitianModalProps {
 	isOpen: boolean;
@@ -11,8 +12,8 @@ interface KontrakPenelitianModalProps {
 export default function KontrakPenelitianModal({ isOpen, countryName, onClose, onConfirm }: KontrakPenelitianModalProps) {
 	if (!isOpen) return null;
 
-	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans">
+	const modalContent = (
+		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 font-sans pointer-events-auto">
 			<div className="w-full max-w-[440px] bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-6 shadow-2xl relative text-white">
 				<h3 className="text-lg font-black text-[#00FFAA] tracking-wide uppercase mb-3">Konfirmasi Kontrak Penelitian</h3>
 				<p className="text-xs sm:text-sm text-[#E0E0E0] mb-6 leading-relaxed">Mulai kontrak penelitian dengan <strong className="text-white">{countryName}</strong>? Kolaborasi ini mengurangi durasi semua penelitian nasional sebesar <strong className="text-[#00FFAA]">0,1%</strong> per negara mitra.</p>
@@ -35,4 +36,10 @@ export default function KontrakPenelitianModal({ isOpen, countryName, onClose, o
 			</div>
 		</div>
 	);
+
+	if (typeof window !== "undefined") {
+		return createPortal(modalContent, document.body);
+	}
+
+	return modalContent;
 }

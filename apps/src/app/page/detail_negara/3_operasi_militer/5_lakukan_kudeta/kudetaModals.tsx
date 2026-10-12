@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { createPortal } from "react-dom";
 
 interface KudetaModalProps {
 	isOpen: boolean;
@@ -11,8 +12,8 @@ interface KudetaModalProps {
 export default function KudetaModal({ isOpen, countryName, onClose, onConfirm }: KudetaModalProps) {
 	if (!isOpen) return null;
 
-	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans text-white">
+	const modalContent = (
+		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 font-sans text-white pointer-events-auto">
 			<div className="w-full max-w-[440px] bg-[#0F2424] border border-rose-500/40 rounded-2xl p-6 shadow-2xl relative">
 				<h3 className="text-lg font-black text-rose-400 tracking-wide uppercase mb-3">Konfirmasi Lakukan Kudeta</h3>
 				<p className="text-xs sm:text-sm text-[#E0E0E0] mb-6 leading-relaxed">Lakukan kudeta di <strong className="text-white">{countryName}</strong>? Ini adalah operasi rahasia yang berisiko tinggi terhadap stabilitas pemerintahan.</p>
@@ -35,5 +36,11 @@ export default function KudetaModal({ isOpen, countryName, onClose, onConfirm }:
 			</div>
 		</div>
 	);
+
+	if (typeof window !== "undefined") {
+		return createPortal(modalContent, document.body);
+	}
+
+	return modalContent;
 }
 
