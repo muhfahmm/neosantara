@@ -11,7 +11,7 @@ import {
   Ban 
 } from 'lucide-react';
 // (useState moved into React import above)
-import { getEmbassyButtonLabel, getEmbassyButtonClass, playerHasEmbassyOrTradePartners } from './1_kedutaan_besar/logic/kedutaanBesarLogic';
+import { getEmbassyButtonLabel, getEmbassyButtonClass } from './1_kedutaan_besar/logic/kedutaanBesarLogic';
 import DestroyEmbassyModal from './1_kedutaan_besar/logic/DestroyEmbassyModal';
 import BuildEmbassyModal from './1_kedutaan_besar/BuildEmbassyModal';
 import EmbassyRelationRequirementModal from './1_kedutaan_besar/EmbassyRelationRequirementModal';
@@ -43,6 +43,7 @@ import {
   getTradeAgreementAcceptanceChancePercent,
   getNonAggressionPactAcceptanceChancePercent,
 } from "@/app/page/bonus_logic";
+import { estimateTravelTime } from '../../path_logic/time_logic';
 
 interface InformasiUmumProps {
   countryName: string;
@@ -138,6 +139,87 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     ].join('-');
   };
 
+  const withDiplomacyNotification = (detail: Record<string, any>, title: string, message: string, value = 0) => ({
+    ...detail,
+    pending_notifications: [{
+      id: `diplomacy-action-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      title,
+      sender: `Kementerian Luar Negeri ${playerCountryName || 'Indonesia'}`,
+      message,
+      timestamp: getCurrentDateString(),
+      type: 'peringkat' as const,
+      value,
+      isRead: false,
+    }, ...(Array.isArray(detail.pending_notifications) ? detail.pending_notifications : [])],
+  });
+  const startDiplomacyPath = (
+    kind: 'non-aggression-pact' | 'defense-alliance' | 'trade-agreement' | 'research-contract'
+  ) => {
+    window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
+      detail: {
+        pathId: `diplomacy-path-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+        kind,
+        senderCountry: playerCountryName || 'Indonesia',
+        targetCountry: countryName,
+      },
+    }));
+  };
+  const getDiplomacyTravelArrival = () => {
+    const senderCountry = playerCountryName || 'Indonesia';
+    const travelEstimate = estimateTravelTime(senderCountry, countryName);
+    if (!travelEstimate) {
+      console.error('[Diplomacy] Unable to estimate route arrival date', { senderCountry, targetCountry: countryName });
+      return null;
+    }
+
+    const arrivalDate = currentDate ? new Date(currentDate) : new Date();
+    if (!Number.isFinite(arrivalDate.getTime())) {
+      console.error('[Diplomacy] Invalid simulation date while estimating route arrival', { currentDate });
+      return null;
+    }
+    arrivalDate.setHours(0, 0, 0, 0);
+    arrivalDate.setDate(arrivalDate.getDate() + travelEstimate.days);
+
+    return {
+      date: [
+        arrivalDate.getFullYear(),
+        String(arrivalDate.getMonth() + 1).padStart(2, '0'),
+        String(arrivalDate.getDate()).padStart(2, '0'),
+      ].join('-'),
+      days: travelEstimate.days,
+    };
+  };
+  const startDiplomacyRatification = (
+    kind: 'defense-alliance' | 'trade-agreement' | 'research-contract'
+  ) => {
+    const arrival = getDiplomacyTravelArrival();
+    if (!arrival) return;
+    setPlayerCountryDetail?.((prev: Record<string, unknown> | null) => {
+      if (!prev) return prev;
+      const ongoing = Array.isArray(prev.ongoingDiplomacyRatifications)
+        ? prev.ongoingDiplomacyRatifications as Array<{ kind: string; targetCountry: string }>
+        : [];
+      const filtered = ongoing.filter(ratification =>
+        !(ratification.kind === kind && normalizeDiplomaticPartner(ratification.targetCountry) === normCountryName)
+      );
+      return withDiplomacyNotification({
+        ...prev,
+        ongoingDiplomacyRatifications: [
+          ...filtered,
+          {
+            id: `ratification-${kind}-${Date.now()}`,
+            kind,
+            targetCountry: countryName,
+            startDate: getCurrentDateString(),
+            endDate: arrival.date,
+            durationDays: arrival.days,
+          },
+        ],
+      }, 'Ratifikasi Diplomatik Dimulai', `Ratifikasi ${kind === 'defense-alliance' ? 'Aliansi Pertahanan' : kind === 'trade-agreement' ? 'Perjanjian Dagang' : 'Kontrak Penelitian'} dengan ${countryName} dimulai. Perjalanan diplomatik diperkirakan tiba pada ${arrival.date}.`);
+    });
+    startDiplomacyPath(kind);
+  };
+
   const currentNetBalance = Number(currentNetBalanceProp ?? 0);
   const targetNetBalanceValue = Number(targetNetBalance ?? 0);
   const savedEconomicSanctions = playerCountryDetail?.economicSanctions;
@@ -179,26 +261,44 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const embassyIconClass = embassyLabel === 'Hancurkan Kedutaan' ? 'text-[#00FFAA]' : undefined;
   const embassyLabelClass = embassyLabel === 'Hancurkan Kedutaan' ? 'text-[#00FFAA]' : undefined;
 
-  const hasTrade = getTradeButtonLabel(countryName, playerCountryName, removedTradePartners, addedTradePartners) === 'Putus Hubungan Dagang';
-  const tradeIsActive = hasTrade || tradeActive;
-  const tradeLabel = tradeIsActive ? 'Putus Hubungan Dagang' : 'Perjanjian Dagang';
-  const tradeClass = getTradeButtonClass(countryName, playerCountryName, removedTradePartners, addedTradePartners);
-  const tradeIconClass = tradeIsActive ? 'text-[#00FFAA]' : undefined;
-  const tradeLabelClass = tradeIsActive ? 'text-[#00FFAA]' : undefined;
-
   // Extract active treaties from playerCountryDetail
   const nonAggressionPacts = Array.isArray(playerCountryDetail?.nonAggressionPacts) ? playerCountryDetail.nonAggressionPacts : [];
   const defenseAlliances = Array.isArray(playerCountryDetail?.defenseAlliances) ? playerCountryDetail.defenseAlliances : [];
   const researchContracts = Array.isArray(playerCountryDetail?.researchContracts) ? playerCountryDetail.researchContracts : [];
 
-  const normCountryName = String(countryName || '').toLowerCase().trim();
-  const hasPaktaInDetail = nonAggressionPacts.some((p: string) => String(p).toLowerCase().trim() === normCountryName);
-  const hasAliansiInDetail = defenseAlliances.some((p: string) => String(p).toLowerCase().trim() === normCountryName);
-  const hasKontrakInDetail = researchContracts.some((p: string) => String(p).toLowerCase().trim() === normCountryName);
+  const normalizeDiplomaticPartner = (name: unknown) => String(name || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '');
+  const normCountryName = normalizeDiplomaticPartner(countryName);
+  const hasPaktaInDetail = nonAggressionPacts.some((p: string) => normalizeDiplomaticPartner(p) === normCountryName);
+  const hasAliansiInDetail = defenseAlliances.some((p: string) => normalizeDiplomaticPartner(p) === normCountryName);
+  const hasKontrakInDetail = researchContracts.some((p: string) => normalizeDiplomaticPartner(p) === normCountryName);
 
-  const paktaIsActive = hasPaktaInDetail || paktaActive;
-  const aliansiIsActive = hasAliansiInDetail || aliansiActive;
-  const kontrakIsActive = hasKontrakInDetail || kontrakActive;
+  const ongoingDiplomacyRatifications = Array.isArray(playerCountryDetail?.ongoingDiplomacyRatifications)
+    ? playerCountryDetail.ongoingDiplomacyRatifications
+    : [];
+  const currentDiplomacyRatification = (kind: string) => ongoingDiplomacyRatifications.find(
+    (ratification: any) =>
+      ratification.kind === kind && normalizeDiplomaticPartner(ratification.targetCountry) === normCountryName
+  );
+  const allianceRatification = currentDiplomacyRatification('defense-alliance');
+  const tradeRatification = currentDiplomacyRatification('trade-agreement');
+  const researchRatification = currentDiplomacyRatification('research-contract');
+  const isAllianceRatifying = hasUsableEmbassy && !!allianceRatification;
+  const isTradeRatifying = hasUsableEmbassy && !!tradeRatification;
+  const isResearchRatifying = hasUsableEmbassy && !!researchRatification;
+  const hasTrade = getTradeButtonLabel(countryName, playerCountryName, removedTradePartners, addedTradePartners) === 'Putus Hubungan Dagang';
+  const tradeIsActive = hasUsableEmbassy && !isTradeRatifying && (hasTrade || tradeActive);
+  const tradeLabel = tradeIsActive ? 'Putus Hubungan Dagang' : 'Perjanjian Dagang';
+  const tradeClass = getTradeButtonClass(countryName, playerCountryName, removedTradePartners, addedTradePartners);
+  const tradeIconClass = tradeIsActive ? 'text-[#00FFAA]' : undefined;
+  const tradeLabelClass = tradeIsActive ? 'text-[#00FFAA]' : undefined;
+
+  const paktaIsActive = hasUsableEmbassy && (hasPaktaInDetail || paktaActive);
+  const aliansiIsActive = hasUsableEmbassy && (hasAliansiInDetail || aliansiActive);
+  const kontrakIsActive = hasUsableEmbassy && (hasKontrakInDetail || kontrakActive);
 
   // Local active states: sync initial values when country/player changes
   // Sync initial active states from logic at mount / when country changes
@@ -240,6 +340,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
 
   // PERBAIKAN: Style tombol aktif dalam tema dark mode sci-fi
   const modernGreenBorderClass = 'border-2 border-[#00FFAA] bg-[#00FFAA]/20 text-[#00FFAA] hover:bg-[#00FFAA]/30';
+  const inProgressBorderClass = 'border border-amber-400/50 bg-amber-400/5 text-amber-300';
 
   const handleEmbassyClick = () => {
     if (isAnnexedTerritory) return;
@@ -265,15 +366,26 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   }, [embassyActive]);
 
   // Hitung status konstruksi kedutaan besar (Lama pembangunan: 60 Hari)
-  const normTargetCountry = String(countryName || '').toLowerCase().trim();
+  const normTargetCountry = normCountryName;
   const ongoingEmbassyConstructions = Array.isArray(playerCountryDetail?.ongoingEmbassyConstructions)
     ? playerCountryDetail.ongoingEmbassyConstructions
     : [];
   const currentEmbassyConstruction = ongoingEmbassyConstructions.find(
-    (c: any) => String(c.targetCountry || '').toLowerCase().trim() === normTargetCountry
+    (c: any) => normalizeDiplomaticPartner(c.targetCountry) === normTargetCountry
   );
   const isEmbassyBuilding = !!currentEmbassyConstruction;
   const embassyEndDate = currentEmbassyConstruction?.endDate || null;
+  const ongoingPactRatifications = Array.isArray(playerCountryDetail?.ongoingNonAggressionPactRatifications)
+    ? playerCountryDetail.ongoingNonAggressionPactRatifications
+    : [];
+  const currentPactRatification = ongoingPactRatifications.find(
+    (p: any) => normalizeDiplomaticPartner(p.targetCountry) === normTargetCountry
+  );
+  const isPactRatifying = hasUsableEmbassy && !!currentPactRatification;
+  const pactEndDate = currentPactRatification?.endDate || null;
+  const ratificationDate = (ratification: any) => ratification?.endDate
+    ? formatBadgeDate(ratification.endDate)
+    : null;
 
   // Format badge tanggal selesai (DD MMM, YYYY)
   const formatBadgeDate = (dateString: string | null) => {
@@ -322,7 +434,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         {/* Tombol Kedutaan dengan Badge Tanggal Selesai */}
         {!isAnnexedTerritory && <div className="relative min-w-0">
           {isEmbassyBuilding && embassyEndDate && (
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[10px] font-bold px-2 py-1 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
               {formatBadgeDate(embassyEndDate)}
             </div>
           )}
@@ -340,38 +452,51 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             keepOpacity={isEmbassyBuilding}
             className={
               isEmbassyBuilding
-                ? 'border border-[#00FFAA]/40 bg-[#0A1A1A] text-[#00FFAA]'
+                ? inProgressBorderClass
                 : embassyActive 
                   ? modernGreenBorderClass 
                   : embassyClass
             } 
-            iconClass={embassyActive || isEmbassyBuilding ? 'text-[#00FFAA]' : embassyIconClass}
-            labelClass={embassyActive || isEmbassyBuilding ? 'text-[#00FFAA]' : embassyLabelClass}
+            iconClass={isEmbassyBuilding ? 'text-amber-300' : embassyActive ? 'text-[#00FFAA]' : embassyIconClass}
+            labelClass={isEmbassyBuilding ? 'text-amber-300' : embassyActive ? 'text-[#00FFAA]' : embassyLabelClass}
           />
         </div>}
         
-        <ActionButton icon={ShieldOff} label={paktaIsActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); paktaIsActive ? setIsDestroyPaktaOpen(true) : setIsPaktaModalOpen(true); }} disabled={!hasUsableEmbassy} className={paktaIsActive ? modernGreenBorderClass : undefined} iconClass={paktaIsActive ? 'text-[#00FFAA]' : undefined} labelClass={paktaIsActive ? 'text-[#00FFAA]' : undefined} />
-        <ActionButton icon={ShieldCheck} label={aliansiIsActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); aliansiIsActive ? setIsDestroyAliansiOpen(true) : setIsAliansiModalOpen(true); }} disabled={!hasUsableEmbassy} className={aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={aliansiIsActive ? 'text-[#00FFAA]' : undefined} labelClass={aliansiIsActive ? 'text-[#00FFAA]' : undefined} />
+        <div className="relative min-w-0">
+          {isPactRatifying && pactEndDate && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{formatBadgeDate(pactEndDate)}</div>}
+          <ActionButton icon={ShieldOff} label={isPactRatifying ? 'Dalam Ratifikasi' : paktaIsActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); paktaIsActive ? setIsDestroyPaktaOpen(true) : setIsPaktaModalOpen(true); }} disabled={!hasUsableEmbassy || isPactRatifying} keepOpacity={isPactRatifying} className={isPactRatifying ? inProgressBorderClass : paktaIsActive ? modernGreenBorderClass : undefined} iconClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-[#00FFAA]' : undefined} />
+        </div>
+        <div className="relative min-w-0">
+          {isAllianceRatifying && ratificationDate(allianceRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(allianceRatification)}</div>}
+          <ActionButton icon={ShieldCheck} label={isAllianceRatifying ? 'Dalam Ratifikasi' : aliansiIsActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); aliansiIsActive ? setIsDestroyAliansiOpen(true) : setIsAliansiModalOpen(true); }} disabled={!hasUsableEmbassy || isAllianceRatifying} keepOpacity={isAllianceRatifying} className={isAllianceRatifying ? inProgressBorderClass : aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-[#00FFAA]' : undefined} />
+        </div>
         
         {/* PERBAIKAN: Tombol Perjanjian Dagang diubah menggunakan modernGreenBorderClass yang sama */}
-        <ActionButton
-          icon={Handshake}
-          label={tradeLabel}
-          onClick={() => {
-            if (onCloseDetailModal) onCloseDetailModal();
-            if (tradeIsActive) {
-              setIsDestroyTradeModalOpen(true);
-            } else {
-              setIsBuildTradeModalOpen(true);
-            }
-          }}
-          className={tradeIsActive ? modernGreenBorderClass : tradeClass}
-          disabled={!hasUsableEmbassy}
-          iconClass={tradeIsActive ? 'text-[#00FFAA]' : tradeIconClass}
-          labelClass={tradeIsActive ? 'text-[#00FFAA]' : tradeLabelClass}
-        />
+        <div className="relative min-w-0">
+          {isTradeRatifying && ratificationDate(tradeRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(tradeRatification)}</div>}
+          <ActionButton
+            icon={Handshake}
+            label={isTradeRatifying ? 'Dalam Ratifikasi' : tradeLabel}
+            onClick={() => {
+              if (onCloseDetailModal) onCloseDetailModal();
+              if (tradeIsActive) {
+                setIsDestroyTradeModalOpen(true);
+              } else {
+                setIsBuildTradeModalOpen(true);
+              }
+            }}
+            className={isTradeRatifying ? inProgressBorderClass : tradeIsActive ? modernGreenBorderClass : tradeClass}
+            disabled={!hasUsableEmbassy || isTradeRatifying}
+            keepOpacity={isTradeRatifying}
+            iconClass={isTradeRatifying ? 'text-amber-300' : tradeIsActive ? 'text-[#00FFAA]' : tradeIconClass}
+            labelClass={isTradeRatifying ? 'text-amber-300' : tradeIsActive ? 'text-[#00FFAA]' : tradeLabelClass}
+          />
+        </div>
         
-        <ActionButton icon={FlaskConical} label={kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); kontrakIsActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true); }} disabled={!hasUsableEmbassy} className={kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
+        <div className="relative min-w-0">
+          {isResearchRatifying && ratificationDate(researchRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(researchRatification)}</div>}
+          <ActionButton icon={FlaskConical} label={isResearchRatifying ? 'Dalam Ratifikasi' : kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); kontrakIsActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true); }} disabled={!hasUsableEmbassy || isResearchRatifying} keepOpacity={isResearchRatifying} className={isResearchRatifying ? inProgressBorderClass : kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
+        </div>
         <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsKirimPasukanModalOpen(true); }} disabled={!hasUsableEmbassy} />
         <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsPanggilSekutuModalOpen(true); }} disabled={!hasUsableEmbassy} />
         <ActionButton
@@ -393,7 +518,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
                       ([name]) => name.trim().toLowerCase() !== countryName.trim().toLowerCase()
                     )
                   );
-                  return { ...previous, economicSanctions: remainingSanctions };
+                  return withDiplomacyNotification({ ...previous, economicSanctions: remainingSanctions }, 'Sanksi Ekonomi Dicabut', `Sanksi ekonomi terhadap ${countryName} telah dicabut.`);
                 });
               }
               console.log(`Sanksi ekonomi terhadap ${countryName} dicabut. ${previousCount} sanksi dihapus; netto kas kembali tanpa pengurangan sanksi.`);
@@ -418,28 +543,70 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           setPaktaActive(false);
           setAliansiActive(false);
           setKontrakActive(false);
+          removeEconomicSanctions(countryName);
           if (setPlayerCountryDetail) {
             setPlayerCountryDetail((prev: Record<string, unknown> | null) => {
               if (!prev) return prev;
               const existingEmbassies = Array.isArray(prev.embassies) ? prev.embassies : [];
               const existingRemovedEmbassies = Array.isArray(prev.removedEmbassies) ? prev.removedEmbassies : [];
               const existingRemovedTrade = Array.isArray(prev.removedTradePartners) ? prev.removedTradePartners : [];
+              const existingAddedTrade = Array.isArray(prev.addedTradePartners) ? prev.addedTradePartners : [];
               const existingConstructions = Array.isArray(prev.ongoingEmbassyConstructions) ? prev.ongoingEmbassyConstructions : [];
-              const normTarget = String(countryName || '').toLowerCase().trim();
+              const existingPactRatifications = Array.isArray(prev.ongoingNonAggressionPactRatifications) ? prev.ongoingNonAggressionPactRatifications : [];
+              const existingDiplomacyRatifications = Array.isArray(prev.ongoingDiplomacyRatifications) ? prev.ongoingDiplomacyRatifications : [];
+              const existingPacts = Array.isArray(prev.nonAggressionPacts) ? prev.nonAggressionPacts : [];
+              const existingPactHistory = Array.isArray(prev.nonAggressionPactHistory) ? prev.nonAggressionPactHistory : [];
+              const existingAlliances = Array.isArray(prev.defenseAlliances) ? prev.defenseAlliances : [];
+              const existingResearchContracts = Array.isArray(prev.researchContracts) ? prev.researchContracts : [];
+              const sanctions = prev.economicSanctions && typeof prev.economicSanctions === 'object' && !Array.isArray(prev.economicSanctions)
+                ? prev.economicSanctions as Record<string, number>
+                : {};
 
-              return {
+              return withDiplomacyNotification({
                 ...prev,
                 embassies: existingEmbassies.filter(
-                  (embassy: any) => String(embassy.mitra || '').toLowerCase().trim() !== normTarget
+                  (embassy: any) => normalizeDiplomaticPartner(typeof embassy === 'string' ? embassy : embassy?.mitra || embassy?.nama_negara) !== normCountryName
                 ),
                 ongoingEmbassyConstructions: existingConstructions.filter(
-                  (c: any) => String(c.targetCountry || '').toLowerCase().trim() !== normTarget
+                  (construction: any) => normalizeDiplomaticPartner(construction.targetCountry) !== normCountryName
+                ),
+                ongoingNonAggressionPactRatifications: existingPactRatifications.filter(
+                  (pact: any) => normalizeDiplomaticPartner(pact.targetCountry) !== normCountryName
+                ),
+                ongoingDiplomacyRatifications: existingDiplomacyRatifications.filter(
+                  (ratification: any) => normalizeDiplomaticPartner(ratification.targetCountry) !== normCountryName
+                ),
+                nonAggressionPacts: existingPacts.filter(
+                  (pact: unknown) => normalizeDiplomaticPartner(pact) !== normCountryName
+                ),
+                nonAggressionPactHistory: existingPactHistory.map((period: NonAggressionPactPeriod) =>
+                  normalizeDiplomaticPartner(period.partner) === normCountryName && !period.endDate
+                    ? { ...period, endDate: getCurrentDateString() }
+                    : period
+                ),
+                defenseAlliances: existingAlliances.filter(
+                  (partner: unknown) => normalizeDiplomaticPartner(partner) !== normCountryName
+                ),
+                researchContracts: existingResearchContracts.filter(
+                  (partner: unknown) => normalizeDiplomaticPartner(partner) !== normCountryName
+                ),
+                addedTradePartners: existingAddedTrade.filter(
+                  (partner: unknown) => normalizeDiplomaticPartner(partner) !== normCountryName
                 ),
                 removedEmbassies: Array.from(new Set([...existingRemovedEmbassies, countryName])),
                 removedTradePartners: Array.from(new Set([...existingRemovedTrade, countryName])),
-              };
+                economicSanctions: Object.fromEntries(
+                  Object.entries(sanctions).filter(([partner]) => normalizeDiplomaticPartner(partner) !== normCountryName)
+                ),
+              }, 'Kedutaan Dihancurkan', `Kedutaan Besar di ${countryName} telah dihancurkan dan hubungan diplomatik terkait dihentikan.`);
             });
           }
+          window.dispatchEvent(new CustomEvent('neosantara_cancel_diplomacy_path', {
+            detail: { targetCountry: countryName }
+          }));
+          window.dispatchEvent(new CustomEvent('neosantara_cancel_non_aggression_pact_path', {
+            detail: { targetCountry: countryName }
+          }));
           console.log(`Kedutaan di ${countryName} dihancurkan.`);
         }}
       />
@@ -473,7 +640,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
               const existingConstructions = Array.isArray(prev?.ongoingEmbassyConstructions) ? prev.ongoingEmbassyConstructions : [];
               const normTarget = String(countryName || '').toLowerCase().trim();
 
-              return {
+              return withDiplomacyNotification({
                 ...prev,
                 ongoingEmbassyConstructions: [
                   ...existingConstructions.filter(
@@ -488,7 +655,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
                     continent: continentLabel
                   }
                 ]
-              };
+              }, 'Pembangunan Kedutaan Dimulai', `Pembangunan Kedutaan Besar di ${countryName} dimulai dan dijadwalkan selesai pada ${endDateStr}.`);
             });
           }
 
@@ -519,7 +686,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
               const normalizePartner = (name: unknown) => String(name || '').toLowerCase().trim();
               const existingRemovedTrade = Array.isArray(prev.removedTradePartners) ? prev.removedTradePartners : [];
               const existingAddedTrade = Array.isArray(prev.addedTradePartners) ? prev.addedTradePartners : [];
-              return {
+              return withDiplomacyNotification({
                 ...prev,
                 addedTradePartners: existingAddedTrade.filter(
                   (partner: string) => normalizePartner(partner) !== normalizePartner(countryName)
@@ -530,7 +697,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
                   ),
                   countryName
                 ])),
-              };
+              }, 'Perjanjian Dagang Diakhiri', `Perjanjian dagang bilateral dengan ${countryName} telah diakhiri.`);
             });
           }
           console.log(`Perjanjian dagang dengan ${countryName} diputus.`);
@@ -569,28 +736,9 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             return;
           }
 
-          setTradeActive(true);
-          if (setPlayerCountryDetail) {
-            setPlayerCountryDetail((prev: any) => {
-              if (!prev) return prev;
-              const normalizePartner = (name: unknown) => String(name || '').toLowerCase().trim();
-              const existingAddedTrade = Array.isArray(prev.addedTradePartners) ? prev.addedTradePartners : [];
-              const existingRemovedTrade = Array.isArray(prev.removedTradePartners) ? prev.removedTradePartners : [];
-              return {
-                ...prev,
-                addedTradePartners: Array.from(new Set([
-                  ...existingAddedTrade.filter(
-                    (partner: string) => normalizePartner(partner) !== normalizePartner(countryName)
-                  ),
-                  countryName
-                ])),
-                removedTradePartners: existingRemovedTrade.filter(
-                  (partner: string) => normalizePartner(partner) !== normalizePartner(countryName)
-                )
-              };
-            });
-          }
-          console.log(`Perjanjian dagang dengan ${countryName} dijalin.`);
+          setTradeActive(false);
+          startDiplomacyRatification('trade-agreement');
+          console.log(`Ratifikasi perjanjian dagang dengan ${countryName} dimulai.`);
         }}
       />
 
@@ -625,31 +773,15 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             return;
           }
 
-          setPaktaActive(true);
-          if (setPlayerCountryDetail) {
-            setPlayerCountryDetail((prev: Record<string, unknown> | null) => {
-              const existingHistory = Array.isArray(prev?.nonAggressionPactHistory)
-                ? prev.nonAggressionPactHistory as NonAggressionPactPeriod[]
-                : [];
-              const playerName = String(prev?.country || prev?.nama_negara || prev?.name || playerCountryName || 'Indonesia');
-              const existingPacts = Array.isArray(prev?.nonAggressionPacts)
-                ? prev.nonAggressionPacts.filter((pact): pact is string => typeof pact === 'string')
-                : [];
-              const hasActiveHistory = existingHistory.some(period =>
-                String(period.country || '').toLowerCase().trim() === String(playerName).toLowerCase().trim() &&
-                String(period.partner || '').toLowerCase().trim() === normCountryName &&
-                !period.endDate
-              );
-              return {
-                ...(prev || {}),
-                nonAggressionPacts: Array.from(new Set([...existingPacts, countryName])),
-                nonAggressionPactHistory: hasActiveHistory
-                  ? existingHistory
-                  : [...existingHistory, { country: playerName, partner: countryName, startDate: getCurrentDateString() }],
-              };
-            });
-          }
-          console.log(`Pakta Non-Agresi dengan ${countryName} dijalin.`);
+          const arrival = getDiplomacyTravelArrival();
+          if (!arrival) return;
+          setPlayerCountryDetail?.((prev: Record<string, unknown> | null) => {
+            if (!prev) return prev;
+            const ongoing = Array.isArray(prev.ongoingNonAggressionPactRatifications) ? prev.ongoingNonAggressionPactRatifications : [];
+            return withDiplomacyNotification({ ...prev, ongoingNonAggressionPactRatifications: [...ongoing.filter((p: any) => String(p.targetCountry || '').toLowerCase().trim() !== normCountryName), { id: `pact-${Date.now()}`, targetCountry: countryName, startDate: getCurrentDateString(), endDate: arrival.date, durationDays: arrival.days }] }, 'Ratifikasi Pakta Non-Agresi Dimulai', `Pakta Non-Agresi dengan ${countryName} sedang diratifikasi. Perjalanan diplomatik diperkirakan tiba pada ${arrival.date}.`);
+          });
+          startDiplomacyPath('non-aggression-pact');
+          console.log(`Ratifikasi Pakta Non-Agresi dengan ${countryName} dimulai. Estimasi tiba: ${arrival.date} (${arrival.days} hari).`);
         }}
       />
 
@@ -667,7 +799,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
               const history = Array.isArray(prev?.nonAggressionPactHistory)
                 ? prev.nonAggressionPactHistory as NonAggressionPactPeriod[]
                 : [];
-              return {
+              return withDiplomacyNotification({
                 ...(prev || {}),
                 nonAggressionPacts: existingPacts.filter(pact => pact.toLowerCase().trim() !== normCountryName),
                 nonAggressionPactHistory: history.map(period =>
@@ -675,7 +807,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
                     ? { ...period, endDate: getCurrentDateString() }
                     : period
                 ),
-              };
+              }, 'Pakta Non-Agresi Diakhiri', `Pakta Non-Agresi dengan ${countryName} telah diakhiri.`);
             });
           }
           console.log(`Pakta Non-Agresi dengan ${countryName} diputus.`);
@@ -687,14 +819,9 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         countryName={countryName}
         onClose={() => setIsAliansiModalOpen(false)}
         onConfirm={() => {
-          setAliansiActive(true);
-          if (setPlayerCountryDetail) {
-            setPlayerCountryDetail((prev: any) => ({
-              ...prev,
-              defenseAlliances: Array.from(new Set([...(prev?.defenseAlliances || []), countryName]))
-            }));
-          }
-          console.log(`Aliansi Pertahanan dengan ${countryName} diajukan.`);
+          setAliansiActive(false);
+          startDiplomacyRatification('defense-alliance');
+          console.log(`Ratifikasi aliansi pertahanan dengan ${countryName} dimulai.`);
         }}
       />
 
@@ -705,10 +832,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         onConfirm={() => {
           setAliansiActive(false);
           if (setPlayerCountryDetail) {
-            setPlayerCountryDetail((prev: any) => ({
+            setPlayerCountryDetail((prev: any) => withDiplomacyNotification({
               ...prev,
               defenseAlliances: (prev?.defenseAlliances || []).filter((c: string) => String(c).toLowerCase().trim() !== normCountryName)
-            }));
+            }, 'Aliansi Pertahanan Diakhiri', `Aliansi Pertahanan dengan ${countryName} telah diakhiri.`));
           }
           console.log(`Aliansi Pertahanan dengan ${countryName} diputus.`);
         }}
@@ -719,14 +846,9 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         countryName={countryName}
         onClose={() => setIsKontrakModalOpen(false)}
         onConfirm={() => {
-          setKontrakActive(true);
-          if (setPlayerCountryDetail) {
-            setPlayerCountryDetail((prev: any) => ({
-              ...prev,
-              researchContracts: Array.from(new Set([...(prev?.researchContracts || []), countryName]))
-            }));
-          }
-          console.log(`Kontrak Penelitian dengan ${countryName} dimulai.`);
+          setKontrakActive(false);
+          startDiplomacyRatification('research-contract');
+          console.log(`Ratifikasi kontrak penelitian dengan ${countryName} dimulai.`);
         }}
       />
 
@@ -737,10 +859,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         onConfirm={() => {
           setKontrakActive(false);
           if (setPlayerCountryDetail) {
-            setPlayerCountryDetail((prev: any) => ({
+            setPlayerCountryDetail((prev: any) => withDiplomacyNotification({
               ...prev,
               researchContracts: (prev?.researchContracts || []).filter((c: string) => String(c).toLowerCase().trim() !== normCountryName)
-            }));
+            }, 'Kontrak Penelitian Diakhiri', `Kontrak penelitian bersama ${countryName} telah diakhiri.`));
           }
           console.log(`Kontrak Penelitian dengan ${countryName} diputus.`);
         }}
@@ -751,6 +873,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         countryName={countryName}
         onClose={() => setIsKirimPasukanModalOpen(false)}
         onConfirm={() => {
+          setPlayerCountryDetail?.((prev: Record<string, any> | null) => prev ? withDiplomacyNotification(prev, 'Pasukan Dikirim', `Perintah pengiriman pasukan ke ${countryName} telah dikonfirmasi.`) : prev);
           console.log(`Perintah kirim pasukan ke ${countryName} dikonfirmasi.`);
         }}
       />
@@ -760,6 +883,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         countryName={countryName}
         onClose={() => setIsPanggilSekutuModalOpen(false)}
         onConfirm={() => {
+          setPlayerCountryDetail?.((prev: Record<string, any> | null) => prev ? withDiplomacyNotification(prev, 'Sekutu Dipanggil', `Permintaan bantuan sekutu terkait ${countryName} telah dikirim.`) : prev);
           console.log(`Sekutu dipanggil terkait ${countryName}.`);
         }}
       />
@@ -792,11 +916,11 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
                     !Array.isArray(previous.relationSanctionModifiers)
                     ? previous.relationSanctionModifiers as Record<string, number>
                     : {};
-                  return {
+                  return withDiplomacyNotification({
                     ...previous,
                     economicSanctions: { ...savedSanctions, [countryName]: sanctionCount },
                     relationSanctionModifiers: { ...savedRelationSanctions, [countryName]: relationSanctionTotal },
-                  };
+                  }, 'Sanksi Ekonomi Diterapkan', `Sanksi ekonomi terhadap ${countryName} telah diterapkan. Hubungan bilateral berkurang ${relationPenalty} poin.`);
                 });
               }
               console.log(`Sanksi terhadap ${countryName} diterapkan: hubungan -${relationPenalty}, netto kas -${sanctionPercent}% (sanksi ke-${sanctionCount}).`);

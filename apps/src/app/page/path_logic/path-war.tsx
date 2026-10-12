@@ -223,8 +223,10 @@ export function getMapScreenPos(lat: number, lng: number): ScreenPoint {
   const px = x_norm * canvasWidth;
   const py = y_norm * canvasHeight;
 
-  const x = rect.left + px * scale + offsetX;
-  const y = rect.top + py * scale + offsetY;
+  // Canvas coordinates use its backing-store resolution, while overlays use CSS pixels.
+  // Convert after the map transform so routes stay aligned at any browser DPI/zoom level.
+  const x = rect.left + (px * scale + offsetX) * (rect.width / canvasWidth);
+  const y = rect.top + (py * scale + offsetY) * (rect.height / canvasHeight);
 
   return { x, y };
 }

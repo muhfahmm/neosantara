@@ -7,6 +7,8 @@ export interface NotificationMessage {
   type: 'kepuasan' | 'peringkat' | 'kesejahteraan';
   value: number;
   isRead: boolean;
+  diplomacyArrivalDate?: string;
+  diplomacyArrivalDays?: number;
   provinceIncident?: {
     kind: 'demonstration' | 'referendum';
     targetCountry: string;

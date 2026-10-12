@@ -139,6 +139,15 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
   };
 
   if (!isOpen || !mounted) return null;
+  const userCountry = worldIdeologies.find((item) =>
+    item.country.toLowerCase().trim() === countryDetail?.country?.toLowerCase().trim()
+  );
+  const userIdeology = userCountry?.ideology || countryDetail?.ideology;
+  const sameIdeologyCount = userIdeology && userIdeology !== "Belum tersedia" && worldIdeologies.length > 0
+    ? worldIdeologies.filter((item) =>
+      item.ideology.toLowerCase().trim() === userIdeology.toLowerCase().trim()
+    ).length
+    : null;
   const ideology = countryDetail?.ideology || "Demokratis Pancasila";
   const anggaran = Number(countryDetail?.anggaran) || 0;
 
@@ -330,6 +339,11 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                   <div className="flex items-center gap-2">
                     <Globe className="h-5 w-5 text-[#00FFAA]" />
                     <h4 className="text-sm font-bold text-[#E0E0E0] uppercase tracking-wider">Daftar Ideologi Seluruh Negara ({worldIdeologies.length} Negara)</h4>
+                    {sameIdeologyCount !== null && (
+                      <span className="text-xs font-bold text-[#00FFAA] bg-[#00FFAA]/10 rounded-full px-2.5 py-1 whitespace-nowrap">
+                        {sameIdeologyCount}/212 seideologi
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="overflow-x-auto border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm max-h-[400px] custom-scrollbar">

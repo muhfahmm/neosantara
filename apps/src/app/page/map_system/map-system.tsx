@@ -20,6 +20,7 @@ const ModalsPeringatanPeringkat = dynamic(() => import('./menu_notifikasi/notifi
 const ModalsKudeta = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta'), { ssr: false });
 type KudetaType = import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta').KudetaType;
 const ModalsAnnexedGameOver = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsAnnexedGameOver'), { ssr: false });
+const DiplomacyTracking = dynamic(() => import('../menus/tracking-modals/tracking'), { ssr: false });
 
 export function lootUserProductionInventory(countryDetail: any, currentDateStr: string): { updatedDetail: any; lootedSummaryText: string } {
     if (!countryDetail) return { updatedDetail: countryDetail, lootedSummaryText: '' };
@@ -114,6 +115,7 @@ import { getRelationValue, setNonAggressionPactHistory, setRelationModifier, set
 import type { NonAggressionPactPeriod } from '../../../../../json/database_hubungan_antar_negara/relationsRegistry';
 import { setEconomicSanctionCounts } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { playerHasEmbassyWith, playerHasEmbassyOrTradePartners } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
+import { areSameWarCountry } from '../detail_negara/3_operasi_militer/1_serang_negara/warCountryIdentity';
 import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/2_beli/tradeBeliLogic';
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
 import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationLogic';
@@ -725,13 +727,26 @@ export default function MapPage() {
             if (!detail) return;
 
             const { attackerCountry, targetCountry, amount } = detail;
-            const attackerIso = getIsoForCountryName(attackerCountry) || 'un';
-            const targetIso = getIsoForCountryName(targetCountry) || 'un';
 
             const year = currentDate.getFullYear();
             const month = String(currentDate.getMonth() + 1).padStart(2, '0');
             const day = String(currentDate.getDate()).padStart(2, '0');
             const dateStr = `${year}-${month}-${day}`;
+            if (areSameWarCountry(attackerCountry, targetCountry)) {
+                setNotifications(prev => [{
+                    id: `notif-self-invasion-block-${Date.now()}`,
+                    title: 'Serangan Sekutu Dibatalkan',
+                    sender: 'Kementerian Pertahanan',
+                    message: `Serangan dibatalkan karena ${attackerCountry} dan ${targetCountry} adalah negara yang sama.`,
+                    timestamp: dateStr,
+                    type: 'peringkat',
+                    value: 0,
+                    isRead: false,
+                }, ...prev]);
+                return;
+            }
+            const attackerIso = getIsoForCountryName(attackerCountry) || 'un';
+            const targetIso = getIsoForCountryName(targetCountry) || 'un';
 
             const warBanActive = hasActiveGlobalWarBan();
             const hasInvasionMandate = hasActiveApprovedInvasionResolution(attackerCountry, targetCountry);
@@ -821,6 +836,19 @@ export default function MapPage() {
             const { actionType, targetCountry } = detail;
             const attackerCountry = countryDetail?.country || 'China';
             const attackerIso = (countryDetail?.iso || 'cn').toLowerCase();
+            if (areSameWarCountry(attackerCountry, targetCountry, attackerIso, getIsoForCountryName(targetCountry))) {
+                setNotifications(prev => [{
+                    id: `notif-self-attack-block-${Date.now()}`,
+                    title: 'Serangan Dibatalkan',
+                    sender: 'Kementerian Pertahanan',
+                    message: `Serangan dibatalkan karena ${targetCountry} adalah negara Anda sendiri.`,
+                    timestamp: currentDate.toISOString().slice(0, 10),
+                    type: 'peringkat',
+                    value: 0,
+                    isRead: false,
+                }, ...prev]);
+                return;
+            }
             const targetIso = getIsoForCountryName(targetCountry) || 'un';
 
             const year = currentDate.getFullYear();
@@ -1147,13 +1175,24 @@ export default function MapPage() {
 
     const [penelitianModalOpen, setPenelitianModalOpen] = useState(false);
     const [activeWarAnimation, setActiveWarAnimation] = useState<any>(null);
-
     useEffect(() => {
         const handleStartWarAnimation = async (event: Event) => {
             const detail = (event as CustomEvent).detail;
             if (typeof detail?.attacker !== 'string' || !detail.attacker.trim() ||
                 typeof detail?.target !== 'string' || !detail.target.trim()) {
                 console.error('[WarAnimation] Invalid attacker or target name', detail);
+                return;
+            }
+            if (areSameWarCountry(
+                detail.attacker,
+                detail.target,
+                detail.attackerCountryDetail?.iso,
+                detail.targetCountryDetail?.iso
+            )) {
+                console.error('[WarAnimation] Blocked attack targeting the attacker country itself', {
+                    attacker: detail.attacker,
+                    target: detail.target,
+                });
                 return;
             }
 
@@ -2346,6 +2385,9 @@ export default function MapPage() {
 
         // Assign manager to ref immediately after construction
         timeManagerRef.current = manager;
+        if (typeof window !== 'undefined') {
+            (window as Window & { neosantara_time_controller?: SimulationTimeManager }).neosantara_time_controller = manager;
+        }
 
         // Create calendar system with factory
         const calendarSystem = createSimulationCalendar(manager);
@@ -2386,6 +2428,12 @@ export default function MapPage() {
         setCurrentDate(manager.getCurrentDate());
 
         return () => {
+            if (typeof window !== 'undefined') {
+                const runtimeWindow = window as Window & { neosantara_time_controller?: SimulationTimeManager };
+                if (runtimeWindow.neosantara_time_controller === manager) {
+                    delete runtimeWindow.neosantara_time_controller;
+                }
+            }
             manager.destroy();
             if (dateCommitTimerRef.current !== null) {
                 clearTimeout(dateCommitTimerRef.current);
@@ -3212,6 +3260,83 @@ export default function MapPage() {
                     });
                 }
 
+                const ongoingPactRatifications = Array.isArray(prev?.ongoingNonAggressionPactRatifications)
+                    ? prev.ongoingNonAggressionPactRatifications
+                    : [];
+                const hasEmbassyForPact = (targetCountry: unknown) => playerHasEmbassyOrTradePartners(
+                    String(targetCountry || ''),
+                    playerCountryName,
+                    nextEmbassies,
+                    nextRemovedEmbassies,
+                    Array.isArray(prev?.removedTradePartners) ? prev.removedTradePartners : []
+                );
+                const validPactRatifications = ongoingPactRatifications.filter((pact: any) => hasEmbassyForPact(pact.targetCountry));
+                const completedPactRatifications = validPactRatifications.filter((p: any) => p.endDate <= currentDateStr);
+                const nextOngoingPactRatifications = validPactRatifications.filter((p: any) => p.endDate > currentDateStr);
+                const ongoingDiplomacyRatifications = Array.isArray(prev?.ongoingDiplomacyRatifications)
+                    ? prev.ongoingDiplomacyRatifications
+                    : [];
+                const validDiplomacyRatifications = ongoingDiplomacyRatifications.filter(
+                    (ratification: any) => hasEmbassyForPact(ratification.targetCountry)
+                );
+                const completedDiplomacyRatifications = validDiplomacyRatifications.filter(
+                    (ratification: any) => ratification.endDate <= currentDateStr
+                );
+                const nextOngoingDiplomacyRatifications = validDiplomacyRatifications.filter(
+                    (ratification: any) => ratification.endDate > currentDateStr
+                );
+                const existingPacts = Array.isArray(prev?.nonAggressionPacts) ? prev.nonAggressionPacts : [];
+                const nextPacts = Array.from(new Set([...existingPacts, ...completedPactRatifications.map((p: any) => p.targetCountry)]));
+                const existingPactHistory = Array.isArray(prev?.nonAggressionPactHistory) ? prev.nonAggressionPactHistory : [];
+                const nextPactHistory = completedPactRatifications.reduce((history: any[], pact: any) => {
+                    const exists = history.some((period: any) => String(period.partner || '').toLowerCase().trim() === String(pact.targetCountry || '').toLowerCase().trim() && !period.endDate);
+                    return exists ? history : [...history, { country: playerCountryName, partner: pact.targetCountry, startDate: currentDateStr }];
+                }, existingPactHistory);
+                const diplomacyCompletionNotifications = [
+                    ...completedEmbassyConstructions.map((construction: any) => ({
+                        id: `embassy-completed-${construction.id || construction.targetCountry}-${currentDateStr}`,
+                        title: 'Pembangunan Kedutaan Selesai',
+                        sender: 'Kementerian Luar Negeri',
+                        message: `Kedutaan Besar di ${construction.targetCountry} telah selesai dibangun dan kini aktif.`,
+                        timestamp: currentDateStr,
+                        type: 'peringkat' as const,
+                        value: 0,
+                        isRead: false,
+                    })),
+                    ...completedPactRatifications.map((pact: any) => ({
+                        id: `pact-ratified-${pact.id || pact.targetCountry}-${currentDateStr}`,
+                        title: 'Pakta Non-Agresi Resmi Berlaku',
+                        sender: 'Kementerian Luar Negeri',
+                        message: `Masa ratifikasi telah selesai. Pakta Non-Agresi dengan ${pact.targetCountry} kini resmi berlaku.`,
+                        timestamp: String(pact.endDate || currentDateStr),
+                        diplomacyArrivalDate: String(pact.endDate || currentDateStr),
+                        diplomacyArrivalDays: Number(pact.durationDays) || 0,
+                        type: 'peringkat' as const,
+                        value: 0,
+                        isRead: false,
+                    })),
+                    ...completedDiplomacyRatifications.map((ratification: any) => ({
+                        id: `diplomacy-ratified-${ratification.id || ratification.targetCountry}-${currentDateStr}`,
+                        title: ratification.kind === 'defense-alliance'
+                            ? 'Aliansi Pertahanan Resmi Berlaku'
+                            : ratification.kind === 'trade-agreement'
+                                ? 'Perjanjian Dagang Resmi Berlaku'
+                                : 'Kontrak Penelitian Resmi Berlaku',
+                        sender: 'Kementerian Luar Negeri',
+                        message: `Masa ratifikasi telah selesai. ${ratification.kind === 'defense-alliance'
+                            ? 'Aliansi Pertahanan'
+                            : ratification.kind === 'trade-agreement'
+                                ? 'Perjanjian Dagang'
+                                : 'Kontrak Penelitian'} dengan ${ratification.targetCountry} kini resmi berlaku.`,
+                        timestamp: String(ratification.endDate || currentDateStr),
+                        diplomacyArrivalDate: String(ratification.endDate || currentDateStr),
+                        diplomacyArrivalDays: Number(ratification.durationDays) || 0,
+                        type: 'peringkat' as const,
+                        value: 0,
+                        isRead: false,
+                    })),
+                ];
+
                 const normalizeCountryName = (name: unknown) => String(name || '')
                     .toLowerCase()
                     .normalize('NFD')
@@ -3257,7 +3382,7 @@ export default function MapPage() {
                     satisfaction: prev.satisfaction, // Preserve satisfaction scores
                     programNuklirActive: nextProgramNuklirActive,
                     population_crisis_tiers: currentCrisisTiers,
-                    pending_notifications: [...nextPendingNotifications, ...newCrisisNotifications],
+                    pending_notifications: [...diplomacyCompletionNotifications, ...nextPendingNotifications, ...newCrisisNotifications],
                     active_outbreaks: (Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : []).filter((event: any) => {
                         const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
                         return Number.isFinite(elapsed) && elapsed >= 0 && elapsed < (Number(event.durationDays) || 0) * 86_400_000;
@@ -3268,6 +3393,28 @@ export default function MapPage() {
                     }),
                     ongoingConstructions: currentOngoing,
                     ongoingEmbassyConstructions: nextOngoingEmbassyConstructions,
+                    ongoingNonAggressionPactRatifications: nextOngoingPactRatifications,
+                    ongoingDiplomacyRatifications: nextOngoingDiplomacyRatifications,
+                    nonAggressionPacts: nextPacts,
+                    nonAggressionPactHistory: nextPactHistory,
+                    defenseAlliances: Array.from(new Set([
+                        ...(Array.isArray(prev?.defenseAlliances) ? prev.defenseAlliances : []),
+                        ...completedDiplomacyRatifications
+                            .filter((ratification: any) => ratification.kind === 'defense-alliance')
+                            .map((ratification: any) => ratification.targetCountry),
+                    ])),
+                    addedTradePartners: Array.from(new Set([
+                        ...(Array.isArray(prev?.addedTradePartners) ? prev.addedTradePartners : []),
+                        ...completedDiplomacyRatifications
+                            .filter((ratification: any) => ratification.kind === 'trade-agreement')
+                            .map((ratification: any) => ratification.targetCountry),
+                    ])),
+                    researchContracts: Array.from(new Set([
+                        ...(Array.isArray(prev?.researchContracts) ? prev.researchContracts : []),
+                        ...completedDiplomacyRatifications
+                            .filter((ratification: any) => ratification.kind === 'research-contract')
+                            .map((ratification: any) => ratification.targetCountry),
+                    ])),
                     nationalization_diplomacy_month_counter: nationalizationDiplomacyMonthCounter,
                     embassies: nextEmbassies,
                     removedEmbassies: nextRemovedEmbassies,
@@ -4342,18 +4489,23 @@ export default function MapPage() {
 
 
             {activeWarAnimation && (() => {
-                const userCountryName = (countryDetail?.country || countryDetail?.nama_negara || '').trim().toLowerCase();
-                const isUserDefender = (activeWarAnimation.target || '').trim().toLowerCase() === userCountryName;
+                const userCountryName = countryDetail?.country || countryDetail?.nama_negara || '';
+                const isUserDefender = areSameWarCountry(
+                    activeWarAnimation.target,
+                    userCountryName,
+                    activeWarAnimation.targetCountryDetail?.iso,
+                    countryDetail?.iso
+                );
 
                 return (
                     <WarMap
                         isOpen={!!activeWarAnimation}
                         attacker={{
-                            ...(activeWarAnimation.attackerCountryDetail || (activeWarAnimation.attacker.trim().toLowerCase() === userCountryName ? countryDetail : {})),
+                            ...(activeWarAnimation.attackerCountryDetail || (areSameWarCountry(activeWarAnimation.attacker, userCountryName, undefined, countryDetail?.iso) ? countryDetail : {})),
                             ...(buildCapitalPoint(activeWarAnimation.attacker) || { country: activeWarAnimation.attacker, capital: activeWarAnimation.attacker, lat: 0, lng: 0 }),
                         }}
                         target={{
-                            ...(activeWarAnimation.targetCountryDetail || (activeWarAnimation.target.trim().toLowerCase() === userCountryName ? countryDetail : {})),
+                            ...(activeWarAnimation.targetCountryDetail || (areSameWarCountry(activeWarAnimation.target, userCountryName, activeWarAnimation.targetCountryDetail?.iso, countryDetail?.iso) ? countryDetail : {})),
                             ...(buildCapitalPoint(activeWarAnimation.target) || { country: activeWarAnimation.target, capital: activeWarAnimation.target, lat: 0, lng: 0 }),
                         }}
                         attackerPower={activeWarAnimation.attackerPower ?? 0}
@@ -4469,6 +4621,8 @@ export default function MapPage() {
                 onPointerLeave={handleCanvasPointerLeave}
                 onWheel={handleCanvasWheel}
             />
+
+            <DiplomacyTracking />
 
             {!(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
                 <BottomNav

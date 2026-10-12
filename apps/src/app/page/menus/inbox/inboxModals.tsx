@@ -68,6 +68,18 @@ export default function TopLeftIcon({
   const [showToast, setShowToast] = useState(false);
   const dismissedToastIdRef = useRef<string | null>(null);
   const unreadCount = notifications.filter(n => !n.isRead).length;
+  const orderedNotifications = [...notifications].sort((first, second) => {
+    const firstArrivalDate = first.diplomacyArrivalDate;
+    const secondArrivalDate = second.diplomacyArrivalDate;
+    if (firstArrivalDate && secondArrivalDate) {
+      const arrivalDateOrder = firstArrivalDate.localeCompare(secondArrivalDate);
+      if (arrivalDateOrder !== 0) return arrivalDateOrder;
+      return (first.diplomacyArrivalDays ?? 0) - (second.diplomacyArrivalDays ?? 0);
+    }
+    if (firstArrivalDate) return -1;
+    if (secondArrivalDate) return 1;
+    return 0;
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -209,7 +221,7 @@ export default function TopLeftIcon({
                 </div>
               ) : (
                 <div className="space-y-4 max-w-4xl mx-auto w-full">
-                  {notifications.map((notif) => {
+                  {orderedNotifications.map((notif) => {
                     const handleAction = onActionClick ? () => onActionClick(notif) : undefined;
                     const handleCrackdown = onCrackdownClick ? () => onCrackdownClick(notif) : undefined;
                     const handleRedirect = onRedirectClick ? () => onRedirectClick(notif) : undefined;

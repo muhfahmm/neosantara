@@ -6,7 +6,7 @@ export class SimulationTimeManager {
     private isPaused: boolean = true;
     private speed: number = 1;
     private lastTickTime: number = 0;
-    private loopTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    private loopTimeoutId: number | null = null;
     private onDateChangeCallback: (formattedDate: string) => void;
     private onProgressChangeCallback?: (progress: number) => void;
     private lastProgressCallbackTime: number = 0;
@@ -96,6 +96,16 @@ export class SimulationTimeManager {
         return this.speed;
     }
 
+    public getMillisecondsPerDay(): number {
+        return this.speedIntervals[this.speed] || this.speedIntervals[1];
+    }
+
+    public getDayProgress(): number {
+        if (this.isPaused) return 0;
+        const elapsed = Math.max(0, performance.now() - this.lastTickTime);
+        return Math.min(elapsed / this.getMillisecondsPerDay(), 1);
+    }
+
     // Check if simulation is paused
     public getIsPaused(): boolean {
         return this.isPaused;
@@ -114,7 +124,7 @@ export class SimulationTimeManager {
                 return;
             }
 
-            const interval = this.speedIntervals[this.speed] || 2500;
+            const interval = this.getMillisecondsPerDay();
             const delta = now - this.lastTickTime;
 
             if (delta >= interval) {
@@ -136,15 +146,15 @@ export class SimulationTimeManager {
                 this.onProgressChangeCallback(progress);
             }
 
-            this.loopTimeoutId = requestAnimationFrame(loop) as any;
+            this.loopTimeoutId = requestAnimationFrame(loop);
         };
 
-        this.loopTimeoutId = requestAnimationFrame(loop) as any;
+        this.loopTimeoutId = requestAnimationFrame(loop);
     }
 
     private stopLoop(): void {
         if (this.loopTimeoutId !== null) {
-            cancelAnimationFrame(this.loopTimeoutId as any);
+            cancelAnimationFrame(this.loopTimeoutId);
             this.loopTimeoutId = null;
         }
     }

@@ -174,7 +174,7 @@ export function Navbar({
             </div>
 
             {/* 2. Center: Live Stats Items */}
-            <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden scroll-smooth z-10 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 px-3.5 lg:px-4.5 xl:px-5.5 2xl:px-6 py-1.5 2xl:py-2 rounded-2xl shadow-2xl">
+            <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 overflow-hidden z-10 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 px-3.5 lg:px-4.5 xl:px-5.5 2xl:px-6 py-1.5 2xl:py-2 rounded-2xl shadow-2xl">
                 <div className="flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 min-w-max">
                     
                     {/* 🔥 POPULASI DENGAN TOOLTIP DEMOGRAFI */}

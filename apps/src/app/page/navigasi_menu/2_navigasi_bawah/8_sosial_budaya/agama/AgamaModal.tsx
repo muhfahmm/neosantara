@@ -140,6 +140,15 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
   };
 
   if (!isOpen || !mounted) return null;
+  const userCountry = worldReligions.find((item) =>
+    item.country.toLowerCase().trim() === countryDetail?.country?.toLowerCase().trim()
+  );
+  const userReligion = userCountry?.religion || countryDetail?.religion;
+  const sameReligionCount = userReligion && userReligion !== "Belum tersedia" && worldReligions.length > 0
+    ? worldReligions.filter((item) =>
+      item.religion.toLowerCase().trim() === userReligion.toLowerCase().trim()
+    ).length
+    : null;
   const religion = countryDetail?.religion || "Mayoritas Muslim";
   const anggaran = Number(countryDetail?.anggaran) || 0;
 
@@ -297,6 +306,11 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                   <div className="flex items-center gap-2">
                     <Globe className="h-5 w-5 text-[#00FFAA]" />
                     <h4 className="text-sm font-bold text-[#E0E0E0] uppercase tracking-wider">Daftar Agama Seluruh Negara ({worldReligions.length} Negara)</h4>
+                    {sameReligionCount !== null && (
+                      <span className="text-xs font-bold text-[#00FFAA] bg-[#00FFAA]/10 rounded-full px-2.5 py-1 whitespace-nowrap">
+                        {sameReligionCount}/212 seagama
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="overflow-x-auto border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm max-h-[400px] custom-scrollbar">
