@@ -21,17 +21,17 @@ export const REQUIREMENTS: BuildingRequirements[] = [
     ],
   },
   {
-    buildingKey: 'pabrik_mesin_mobil',
+    buildingKey: 'pabrik_mesin',
     requirements: [
-      { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 750 },
-      { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 500 },
+      { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 625 },
+      { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 400 },
     ],
   },
   {
-    buildingKey: 'pabrik_mesin_motor',
+    buildingKey: 'pabrik_besi',
     requirements: [
-      { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 500 },
-      { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 300 },
+      { group: 'pembangunan', label: 'semen beton', resourceKey: 'semen_beton', amount: 625 },
+      { group: 'pembangunan', label: 'kayu', resourceKey: 'kayu', amount: 400 },
     ],
   },
   {
@@ -56,8 +56,8 @@ export function findRequirements(buildingKey: string) {
 
 export function getTotalProduction(
   buildingKey: string,
-  countryDetail: Record<string, any> | null,
-  metadata: Record<string, any> | null,
+  countryDetail: Record<string, unknown> | null,
+  metadata: Record<string, { produksi?: unknown }> | null,
 ) {
   const count = Number(countryDetail?.[buildingKey] ?? 0);
   const productionPerUnit = Number(metadata?.[buildingKey]?.produksi ?? 0);

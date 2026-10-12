@@ -9,6 +9,7 @@ import {
   calculateConsumption,
 } from "../../3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
+import { getTotalIndustrialMaterialConsumption } from "../1_produksi/requirements_logic/1_produksi/industrialMaterialLogic";
 
 export const RESOURCE_KEY_ALIASES: Record<string, string> = {};
 
@@ -130,7 +131,13 @@ export function calculateDailyMaterialProduction(
       const dailyCons = calculateConsumption(pop, FOOD_CONSUMPTION_PER_CAPITA[resourceKey]);
       dailyAmount = Math.max(0, dailyProd - dailyCons);
     } else {
-      dailyAmount = Number(bMeta.produksi) * buildingCount * productionMultiplier;
+      const dailyProduction = Number(bMeta.produksi) * buildingCount * productionMultiplier;
+      const dailyIndustrialConsumption = getTotalIndustrialMaterialConsumption(
+        countryDetail,
+        resourceKey,
+        dailyProduction,
+      );
+      dailyAmount = Math.max(0, dailyProduction - dailyIndustrialConsumption);
     }
 
     const productionAdded = dailyAmount * daysPassed;

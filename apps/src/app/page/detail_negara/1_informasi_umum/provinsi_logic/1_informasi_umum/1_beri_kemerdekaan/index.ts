@@ -13,7 +13,7 @@ export const ANNEXED_AGGREGATE_KEYS = [
   'jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom', 'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut',
   'pembangkit_listrik_tenaga_gas', 'pembangkit_listrik_tenaga_nuklir', 'pembangkit_listrik_tenaga_uap', 'pembangkit_listrik_tenaga_surya', 'pembangkit_listrik_tenaga_angin', 'pembangkit_listrik_tenaga_air', 'pembangkit_listrik_tenaga_geotermal',
   'emas', 'uranium', 'batu_bara', 'minyak_bumi', 'gas_alam', 'garam', 'litium', 'logam_tanah_jarang', 'bijih_besi',
-  'pabrik_mesin_mobil', 'semen_beton', 'pabrik_mesin_motor', 'pabrik_semikonduktor', 'kayu',
+  'pabrik_mesin', 'pabrik_besi', 'semen_beton', 'pabrik_semikonduktor', 'kayu',
   'ayam_unggas', 'sapi_perah', 'sapi_potong', 'domba_kambing',
   'padi', 'gandum', 'jagung', 'sayur', 'umbi', 'kedelai', 'kelapa_sawit', 'kopi', 'teh', 'kakao', 'tebu', 'karet',
   'udang', 'mutiara', 'ikan', 'air_mineral', 'gula', 'roti', 'pengolahan_daging', 'mie_instan', 'minyak_goreng', 'susu', 'beras',

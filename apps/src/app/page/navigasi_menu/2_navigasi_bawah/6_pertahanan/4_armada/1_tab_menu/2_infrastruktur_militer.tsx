@@ -156,7 +156,7 @@ export default function InfrastrukturMiliter({
   // 🟢 Helper untuk stok material
   const calculateMaterialStocks = (countryDetailData: any) => {
     const stocks: Record<string, number> = {};
-    const materialKeys = ['emas', 'uranium', 'batu_bara', 'minyak_bumi', 'gas_alam', 'garam', 'litium', 'logam_tanah_jarang', 'bijih_besi', 'pabrik_semikonduktor', 'pabrik_mesin_mobil', 'pabrik_mesin_motor', 'semen_beton', 'kayu'];
+    const materialKeys = ['emas', 'uranium', 'batu_bara', 'minyak_bumi', 'gas_alam', 'garam', 'litium', 'logam_tanah_jarang', 'bijih_besi', 'pabrik_semikonduktor', 'pabrik_mesin', 'pabrik_besi', 'semen_beton', 'kayu'];
     materialKeys.forEach(key => {
       stocks[key] = Number(countryDetailData?.[`inventory_${key}`]) || 0;
     });
@@ -182,8 +182,8 @@ export default function InfrastrukturMiliter({
       logam_tanah_jarang: { tab: 'mineral', buildingKey: 'logam_tanah_jarang' },
       bijih_besi: { tab: 'mineral', buildingKey: 'bijih_besi' },
       pabrik_semikonduktor: { tab: 'manufaktur', buildingKey: 'pabrik_semikonduktor' },
-      pabrik_mesin_mobil: { tab: 'manufaktur', buildingKey: 'pabrik_mesin_mobil' },
-      pabrik_mesin_motor: { tab: 'manufaktur', buildingKey: 'pabrik_mesin_motor' },
+      pabrik_mesin: { tab: 'manufaktur', buildingKey: 'pabrik_mesin' },
+      pabrik_besi: { tab: 'manufaktur', buildingKey: 'pabrik_besi' },
       semen_beton: { tab: 'manufaktur', buildingKey: 'semen_beton' },
       kayu: { tab: 'manufaktur', buildingKey: 'kayu' },
     };

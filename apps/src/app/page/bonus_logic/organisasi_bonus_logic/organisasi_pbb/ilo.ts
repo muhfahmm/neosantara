@@ -3,8 +3,8 @@ import { isUserJoinedOrg } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geo
 
 export const ILO_MANUFAKTUR_RESOURCES = new Set([
   "pabrik_semikonduktor",
-  "pabrik_mesin_mobil",
-  "pabrik_mesin_motor",
+  "pabrik_mesin",
+  "pabrik_besi",
   "semen_beton",
   "kayu",
 ]);
@@ -28,4 +28,3 @@ export function getILOProductionMultiplier(countryName: string, resourceKey: str
   const normalizedKey = resourceKey.trim().toLowerCase().replace(/^\d+_/, "");
   return ILO_MANUFAKTUR_RESOURCES.has(normalizedKey) ? 1.10 : 1.0;
 }
-

@@ -67,8 +67,8 @@ const CARD_TAB_MAP: Record<string, string> = {
   litium: 'mineral',
   logam_tanah_jarang: 'mineral',
   pabrik_semikonduktor: 'manufaktur',
-  pabrik_mesin_mobil: 'manufaktur',
-  pabrik_mesin_motor: 'manufaktur',
+  pabrik_mesin: 'manufaktur',
+  pabrik_besi: 'manufaktur',
 };
 
 const RESOURCE_KEY_ALIASES: Record<string, string> = {};

@@ -10,8 +10,8 @@ const DISCOUNTED_BUILDING_KEYS = new Set([
   "logam_tanah_jarang",
   "bijih_besi",
   "pabrik_semikonduktor",
-  "pabrik_mesin_mobil",
-  "pabrik_mesin_motor",
+  "pabrik_mesin",
+  "pabrik_besi",
   "semen_beton",
   "kayu",
 ]);

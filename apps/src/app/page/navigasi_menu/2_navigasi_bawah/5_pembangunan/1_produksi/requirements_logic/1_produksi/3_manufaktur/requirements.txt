@@ -3,28 +3,23 @@
  > pembangunan
  semen beton (dari semen_beton)
  kayu (dari kayu)
- baja (dari baja)
 
-2. mobil
+2. pabrik_mesin
  > pembangunan
  semen beton (dari semen_beton)
  kayu (dari kayu)
- baja (dari baja)
 
-3. sepeda_motor
+3. pabrik_besi
  > pembangunan
  semen beton (dari semen_beton)
  kayu (dari kayu)
- baja (dari baja)
 
 4. semen_beton
  > pembangunan
  semen beton (dari semen_beton)
  kayu (dari kayu)
- baja (dari baja)
 
 5. kayu
  > pembangunan
  semen beton (dari semen_beton)
  kayu (dari kayu)
- baja (dari baja)

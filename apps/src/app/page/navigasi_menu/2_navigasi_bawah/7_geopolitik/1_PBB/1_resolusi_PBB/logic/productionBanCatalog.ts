@@ -15,7 +15,7 @@ export const PRODUCTION_BAN_CATEGORIES = [
   {
     id: "manufaktur",
     label: "Manufaktur",
-    products: ["pabrik_semikonduktor", "pabrik_mesin_mobil", "pabrik_mesin_motor", "semen_beton", "kayu"],
+    products: ["pabrik_semikonduktor", "pabrik_mesin", "pabrik_besi", "semen_beton", "kayu"],
   },
   {
     id: "peternakan",

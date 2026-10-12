@@ -1,17 +1,24 @@
 // info_bangunan_modals.tsx
 "use client";
 import React from "react";
+import { createPortal } from "react-dom";
 import { Info, X } from "lucide-react";
 import { getCommunismProductionMultiplier, COMMUNISM_PRODUCTION_BONUS } from "../../../../../bonus_logic/ideologi_bonus_logic/komunisme";
 import { isMemberOfFAO, FAO_BONUS_RESOURCES } from "../../../../../bonus_logic/organisasi_bonus_logic/organisasi_pbb/fao";
 import { isMemberOfILO, ILO_MANUFAKTUR_RESOURCES } from "../../../../../bonus_logic/organisasi_bonus_logic/organisasi_pbb/ilo";
-import { getOtomasiIndustriBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/1_Otomasi Fabrikasi Elektronik & Kendaraan";
+import { getOtomasiIndustriBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/1_Otomasi Fabrikasi Elektronik & Mesin";
 import { getEksplorasiMineralEnergiBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/3_Eksplorasi Mineral & Energi";
 import { getPeternakanPresisiBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/5_Peternakan Presisi";
 import { getAgrikulturCerdasBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/7_Agrikultur Cerdas Multi-Komoditas";
 import { getBudidayaPerikananTerpaduBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/9_Budidaya Perikanan Terpadu";
 import { getPengolahanPanganDasarBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/11_Pengolahan Pangan Dasar";
 import { getKelistrikanFuelRequirements } from "../requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
+import {
+  getIndustrialMaterialConsumers,
+  getIndustrialMaterialRequirements,
+  getTotalIndustrialMaterialConsumption,
+} from "../requirements_logic/1_produksi/industrialMaterialLogic";
+import { getProductionBonusMultiplier } from "../../../../../bonus_logic";
 
 import {
   FOOD_CONSUMPTION_PER_CAPITA,
@@ -125,7 +132,11 @@ export default function InfoBangunan({
 }: InfoBangunanProps) {
   const fuelRequirements = isElectricityTab ? getKelistrikanFuelRequirements(buildingKey) : [];
   const hasFuelConsumption = fuelRequirements.length > 0;
+  const industrialMaterialRequirements = getIndustrialMaterialRequirements(buildingKey);
+  const hasIndustrialMaterialConsumption = industrialMaterialRequirements.length > 0;
   const isFuelResource = ELECTRICITY_FUEL_RESOURCE_KEYS.includes(buildingKey);
+  const hasIndustrialResourceConsumption = getIndustrialMaterialConsumers(countryDetail, buildingKey)
+    .length > 0;
   const hasShintoElectricityBonus =
     isElectricityTab &&
     String(countryDetail?.religion || "").trim().toLowerCase() === "shinto" &&
@@ -192,7 +203,9 @@ export default function InfoBangunan({
   const foodNettoRaw = totalFoodProduction - totalFoodConsumption;
   const foodNetto = Math.max(0, foodNettoRaw);
 
-  return (
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div
         className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto shadow-2xl"
@@ -243,7 +256,7 @@ export default function InfoBangunan({
               if (hasIslamProductionBonus) bonusParts.push(`10% oleh bonus agama Islam`);
               if (hasFAOBonus) bonusParts.push(`10% oleh bonus keanggotaan FAO`);
               if (hasILOBonus) bonusParts.push(`10% oleh bonus keanggotaan ILO`);
-              if (otomasiIndustriBonusPercent > 0) bonusParts.push(`${otomasiIndustriBonusPercent}% oleh bonus penelitian Otomasi Fabrikasi Elektronik & Kendaraan`);
+              if (otomasiIndustriBonusPercent > 0) bonusParts.push(`${otomasiIndustriBonusPercent}% oleh bonus penelitian Otomasi Fabrikasi Elektronik & Mesin`);
               if (eksplorasiMineralEnergiBonusPercent > 0) bonusParts.push(`${eksplorasiMineralEnergiBonusPercent}% oleh bonus penelitian Eksplorasi Mineral & Energi`);
               if (peternakanPresisiBonusPercent > 0) bonusParts.push(`${peternakanPresisiBonusPercent}% oleh bonus penelitian Peternakan Presisi`);
               if (agrikulturCerdasBonusPercent > 0) bonusParts.push(`${agrikulturCerdasBonusPercent}% oleh bonus penelitian Agrikultur Cerdas Multi-Komoditas`);
@@ -574,23 +587,69 @@ export default function InfoBangunan({
               );
             })()}
 
-          {isFuelResource &&
+          {hasIndustrialMaterialConsumption && (
+            <div className="rounded-xl bg-[#0A1A1A] border border-rose-500/30 p-4 space-y-3 mt-3">
+              <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-2 flex items-center gap-1.5 text-sm">
+                ⚙️ Total Konsumsi Bahan Baku
+              </div>
+              {industrialMaterialRequirements.map((requirement) => {
+                const resourceCount = Math.max(0, Number(countryDetail?.[requirement.resourceKey]) || 0);
+                const resourceMeta = findMeta(requirement.resourceKey);
+                const production = resourceCount
+                  * (Number(resourceMeta?.produksi) || 0)
+                  * getProductionBonusMultiplier(countryDetail, requirement.resourceKey);
+                const consumption = getTotalIndustrialMaterialConsumption(
+                  countryDetail,
+                  requirement.resourceKey,
+                  production,
+                );
+                const balance = production - consumption;
+
+                return (
+                  <div key={requirement.resourceKey} className="flex flex-col gap-1">
+                    <div className="font-bold text-rose-300 text-[11px] uppercase tracking-tight">
+                      {requirement.label}
+                    </div>
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-[#E0E0E0]">Produksi tambang / hari:</span>
+                      <span className="font-black text-emerald-400">+{production.toLocaleString("id-ID")}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-[#E0E0E0]">Konsumsi pabrik / hari:</span>
+                      <span className="font-black text-rose-400">-{consumption.toLocaleString("id-ID")}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs pt-1 border-t border-rose-500/20 mt-0.5">
+                      <span className="text-rose-400 font-black uppercase">Saldo:</span>
+                      <span className={`font-black ${balance < 0 ? "text-rose-400" : "text-emerald-400"}`}>
+                        {balance >= 0 ? `+${balance.toLocaleString("id-ID")}` : balance.toLocaleString("id-ID")}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {(isFuelResource || hasIndustrialResourceConsumption) &&
             (() => {
               const fuelName = label.toLowerCase();
-              const prodVal = perCount * (Number(bMeta?.produksi) || 0);
-              const consVal = calculateTotalFuelConsumption(countryDetail)[buildingKey] || 0;
+              const prodVal = perCount
+                * (Number(bMeta?.produksi) || 0)
+                * getProductionBonusMultiplier(countryDetail, buildingKey);
+              const consVal = (calculateTotalFuelConsumption(countryDetail)[buildingKey] || 0)
+                + getTotalIndustrialMaterialConsumption(countryDetail, buildingKey, prodVal);
               const saldoVal = prodVal - consVal;
               return (
                 <div className="rounded-xl bg-[#0A1A1A] border border-rose-500/30 p-4 space-y-2 mt-3">
                   <div className="font-black uppercase tracking-wider text-rose-400 border-b border-rose-500/20 pb-2 mb-1 flex items-center gap-1.5 text-sm">
-                    ⚡ Total Konsumsi Bahan Bakar
+                    ⚡ Total Konsumsi {hasIndustrialResourceConsumption ? "Bahan Baku" : "Bahan Bakar"}
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-[#E0E0E0] font-bold">Total Produksi ({fuelName}):</span>
+                    <span className="text-[#E0E0E0] font-bold">Total Produksi ({fuelName}) / hari:</span>
                     <span className="font-black text-emerald-400">+{prodVal.toLocaleString('id-ID')}</span>
                   </div>
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-[#E0E0E0] font-bold">Konsumsi ({fuelName}):</span>
+                    <span className="text-[#E0E0E0] font-bold">Konsumsi ({fuelName}) / hari:</span>
                     <span className="font-black text-rose-400">-{consVal.toLocaleString('id-ID')}</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-rose-500/20 mt-1 text-xs">
@@ -616,6 +675,7 @@ export default function InfoBangunan({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

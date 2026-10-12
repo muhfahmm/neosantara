@@ -58,8 +58,8 @@ export const NATIONALIZATION_SECTORS = [
     name: "Manufaktur",
     productKeys: [
       "pabrik_semikonduktor",
-      "pabrik_mesin_mobil",
-      "pabrik_mesin_motor",
+      "pabrik_mesin",
+      "pabrik_besi",
       "semen_beton",
       "kayu",
     ],

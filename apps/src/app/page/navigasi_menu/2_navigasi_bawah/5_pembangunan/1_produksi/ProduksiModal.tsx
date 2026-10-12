@@ -177,8 +177,8 @@ export default function ProduksiModal({
     logam_tanah_jarang: 'mineral',
     bijih_besi: 'mineral',
     pabrik_semikonduktor: 'manufaktur',
-    pabrik_mesin_mobil: 'manufaktur',
-    pabrik_mesin_motor: 'manufaktur',
+    pabrik_mesin: 'manufaktur',
+    pabrik_besi: 'manufaktur',
     semen_beton: 'manufaktur',
     kayu: 'manufaktur',
   };

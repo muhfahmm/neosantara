@@ -16,8 +16,8 @@ export const hasBijihBesiBuilding = (data: any) => Number(data?.bijih_besi || 0)
 // 2. MANUFAKTUR
 // ===========================
 export const hasSemikonduktorBuilding = (data: any) => Number(data?.semikonduktor || 0) > 0;
-export const hasMobilBuilding = (data: any) => Number(data?.mobil || 0) > 0;
-export const hasSepedaMotorBuilding = (data: any) => Number(data?.sepeda_motor || 0) > 0;
+export const hasPabrikMesinBuilding = (data: any) => Number(data?.pabrik_mesin || 0) > 0;
+export const hasPabrikBesiBuilding = (data: any) => Number(data?.pabrik_besi || 0) > 0;
 export const hasSemenBetonBuilding = (data: any) => Number(data?.semen_beton || 0) > 0;
 export const hasKayuBuilding = (data: any) => Number(data?.kayu || 0) > 0;
 

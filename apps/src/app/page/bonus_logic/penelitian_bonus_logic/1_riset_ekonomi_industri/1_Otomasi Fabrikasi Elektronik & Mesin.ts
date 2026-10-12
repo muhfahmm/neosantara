@@ -7,11 +7,11 @@ export const OTOMASI_INDUSTRI_TARGET_SECTOR = "manufaktur";
 // Mencari resource key yang termasuk ke dalam sektor manufaktur dari catalog
 const MANUFAKTUR_CATEGORY = PRODUCTION_BAN_CATEGORIES.find((cat) => cat.id === OTOMASI_INDUSTRI_TARGET_SECTOR);
 export const OTOMASI_INDUSTRI_RESOURCES = new Set<string>(
-  MANUFAKTUR_CATEGORY ? MANUFAKTUR_CATEGORY.products : ["pabrik_semikonduktor", "pabrik_mesin_mobil", "pabrik_mesin_motor"]
+  MANUFAKTUR_CATEGORY ? MANUFAKTUR_CATEGORY.products : ["pabrik_semikonduktor", "pabrik_mesin", "pabrik_besi", "semen_beton", "kayu"]
 );
 
 /**
- * Menghitung persentase bonus produksi dari penelitian "Otomasi Fabrikasi Elektronik & Kendaraan" (otomasi_industri).
+ * Menghitung persentase bonus produksi dari penelitian "Otomasi Fabrikasi Elektronik & Mesin" (otomasi_industri).
  * Jika belum selesai diriset, mengembalikan 0.
  * Jika sudah diriset (Lvl 1 = +2%, dengan bonus level sesuai RESEARCH_CARD_LEVEL_BONUS).
  */

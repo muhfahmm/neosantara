@@ -232,7 +232,7 @@ export {
   getOtomasiIndustriBonusPercent,
   getOtomasiIndustriProductionMultiplier,
   OTOMASI_INDUSTRI_RESOURCES,
-} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/1_Otomasi Fabrikasi Elektronik & Kendaraan";
+} from "./penelitian_bonus_logic/1_riset_ekonomi_industri/1_Otomasi Fabrikasi Elektronik & Mesin";
 
 export {
   getManufakturMaterialBonusPercent,

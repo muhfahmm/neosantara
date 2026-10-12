@@ -10,26 +10,26 @@
     "biaya_pembangunan": 9500,
     "konsumsi_listrik": 0.0250
   },
-  "pabrik_mesin_mobil": {
-    "key": "2_pabrik_mobil",
-    "dataKey": "pabrik_mesin_mobil",
-    "label": "Pabrik Mesin Mobil",
-    "deskripsi": "Memproduksi mesin heavy-duty roda 4 untuk kendaraan tempur militer (tank, panser APC, truk logistik)",
-    "produksi": 25,
-    "satuan": "UNIT",
-    "waktu_pembangunan": 240,
-    "biaya_pembangunan": 6500,
-    "konsumsi_listrik": 0.0200
-  },
-  "pabrik_mesin_motor": {
-    "key": "3_pabrik_motor",
-    "dataKey": "pabrik_mesin_motor",
-    "label": "Pabrik Mesin Motor",
-    "deskripsi": "Memproduksi mesin ringan roda 2 untuk kendaraan militer taktis & drone rekognisi ringan",
+  "pabrik_mesin": {
+    "key": "2_pabrik_mesin",
+    "dataKey": "pabrik_mesin",
+    "label": "Pabrik Mesin",
+    "deskripsi": "Memproduksi mesin untuk kebutuhan industri dan kendaraan.",
     "produksi": 50,
     "satuan": "UNIT",
     "waktu_pembangunan": 120,
-    "biaya_pembangunan": 3500,
+    "biaya_pembangunan": 5000,
+    "konsumsi_listrik": 0.0150
+  },
+  "pabrik_besi": {
+    "key": "4_pabrik_besi",
+    "dataKey": "pabrik_besi",
+    "label": "Pabrik Besi",
+    "deskripsi": "Mengolah bijih besi menjadi besi untuk kebutuhan pembangunan dan industri.",
+    "produksi": 50,
+    "satuan": "UNIT",
+    "waktu_pembangunan": 120,
+    "biaya_pembangunan": 5000,
     "konsumsi_listrik": 0.0150
   },
   "semen_beton": {

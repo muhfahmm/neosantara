@@ -388,7 +388,7 @@ function ModalsManager({
                     "litium", "logam_tanah_jarang", "bijih_besi"
                   ],
                   manufaktur: [
-                    "pabrik_semikonduktor", "pabrik_mesin_mobil", "pabrik_mesin_motor", "semen_beton", "kayu"
+                    "pabrik_semikonduktor", "pabrik_mesin", "pabrik_besi", "semen_beton", "kayu"
                   ],
                   peternakan: [
                     "ayam_unggas", "sapi_perah", "sapi_potong", "domba_kambing"

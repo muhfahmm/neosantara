@@ -47,8 +47,8 @@ import {
   hasLogamTanahJarangBuilding,
   hasBijihBesiBuilding,
   hasSemikonduktorBuilding,
-  hasMobilBuilding,
-  hasSepedaMotorBuilding,
+  hasPabrikMesinBuilding,
+  hasPabrikBesiBuilding,
   hasSemenBetonBuilding,
   hasKayuBuilding,
   hasAyamUnggasBuilding,
@@ -98,7 +98,7 @@ type MetadataMap = Record<string, MetadataEntry>;
 
 const ALL_IMPORT_KEYS = [
   "uranium", "batu_bara", "minyak_bumi", "gas_alam", "garam", "litium", "logam_tanah_jarang",
-  "pabrik_semikonduktor", "pabrik_mesin_mobil", "pabrik_mesin_motor", "semen_beton", "kayu",
+  "pabrik_semikonduktor", "pabrik_mesin", "pabrik_besi", "semen_beton", "kayu",
   "ayam_unggas", "sapi_perah", "sapi_potong", "domba_kambing",
   "padi", "gandum", "jagung", "sayur", "umbi", "kedelai", "kelapa_sawit", "kopi", "teh", "kakao", "tebu", "karet",
   "udang", "mutiara", "ikan",
@@ -108,7 +108,7 @@ const ALL_IMPORT_KEYS = [
 // --- DEFINISI KATEGORI UNTUK PRODUK BELI ---
 const CATEGORY_MAP: Record<string, string[]> = {
   'Mineral Kritis': ["uranium", "batu_bara", "minyak_bumi", "gas_alam", "garam", "litium", "logam_tanah_jarang", "bijih_besi"],
-  'Manufaktur': ["pabrik_semikonduktor", "pabrik_mesin_mobil", "pabrik_mesin_motor", "semen_beton", "kayu"],
+  'Manufaktur': ["pabrik_semikonduktor", "pabrik_mesin", "pabrik_besi", "semen_beton", "kayu"],
   'Peternakan': ["ayam_unggas", "sapi_perah", "sapi_potong", "domba_kambing"],
   'Agrikultur': ["padi", "gandum", "jagung", "sayur", "umbi", "kedelai", "kelapa_sawit", "kopi", "teh", "kakao", "tebu", "karet"],
   'Perikanan': ["udang", "mutiara", "ikan"],
@@ -135,7 +135,7 @@ interface ModalsKonfirmasiBeliProps {
 const DEFAULT_PRICES: Record<string, number> = {
   uranium: 8000, batu_bara: 100, minyak_bumi: 150, gas_alam: 120, garam: 50,
   litium: 3000, logam_tanah_jarang: 5000,
-  pabrik_semikonduktor: 4000, pabrik_mesin_mobil: 15000, pabrik_mesin_motor: 5000,
+  pabrik_semikonduktor: 4000, pabrik_mesin: 10000, pabrik_besi: 10000,
   semen_beton: 300, kayu: 200, ayam_unggas: 60, sapi_perah: 200,
   sapi_potong: 180, domba_kambing: 150, padi: 80, gandum: 90, jagung: 70,
   sayur: 100, umbi: 60, kedelai: 120, kelapa_sawit: 130, kopi: 300,
@@ -410,8 +410,8 @@ export default function ModalsKonfirmasiBeli({
     logam_tanah_jarang: hasLogamTanahJarangBuilding,
     bijih_besi: hasBijihBesiBuilding,
     pabrik_semikonduktor: hasSemikonduktorBuilding,
-    pabrik_mesin_mobil: hasMobilBuilding,
-    pabrik_mesin_motor: hasSepedaMotorBuilding,
+    pabrik_mesin: hasPabrikMesinBuilding,
+    pabrik_besi: hasPabrikBesiBuilding,
     semen_beton: hasSemenBetonBuilding,
     kayu: hasKayuBuilding,
     ayam_unggas: hasAyamUnggasBuilding,

@@ -28,8 +28,8 @@ const AID_SECTORS: ProvinceAidSector[] = [
     label: 'Manufaktur',
     items: [
       { key: 'pabrik_semikonduktor', label: 'Pabrik Semikonduktor' },
-      { key: 'pabrik_mesin_mobil', label: 'Pabrik Mesin Mobil' },
-      { key: 'pabrik_mesin_motor', label: 'Pabrik Mesin Motor' },
+      { key: 'pabrik_mesin', label: 'Pabrik Mesin' },
+      { key: 'pabrik_besi', label: 'Pabrik Besi' },
       { key: 'semen_beton', label: 'Pabrik Beton & Semen' },
       { key: 'kayu', label: 'Penggergajian Kayu' }
     ]

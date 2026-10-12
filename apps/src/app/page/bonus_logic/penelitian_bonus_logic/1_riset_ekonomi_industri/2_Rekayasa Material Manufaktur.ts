@@ -6,7 +6,7 @@ export const MANUFAKTUR_MATERIAL_TARGET_SECTOR = "manufaktur";
 
 const MANUFAKTUR_CATEGORY = PRODUCTION_BAN_CATEGORIES.find((cat) => cat.id === MANUFAKTUR_MATERIAL_TARGET_SECTOR);
 export const MANUFAKTUR_MATERIAL_RESOURCES = new Set<string>(
-  MANUFAKTUR_CATEGORY ? MANUFAKTUR_CATEGORY.products : ["pabrik_semikonduktor", "pabrik_mesin_mobil", "pabrik_mesin_motor", "semen_beton", "kayu"]
+  MANUFAKTUR_CATEGORY ? MANUFAKTUR_CATEGORY.products : ["pabrik_semikonduktor", "pabrik_mesin", "pabrik_besi", "semen_beton", "kayu"]
 );
 
 /**

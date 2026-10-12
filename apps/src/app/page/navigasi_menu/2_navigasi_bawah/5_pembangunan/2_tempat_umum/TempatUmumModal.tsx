@@ -75,7 +75,7 @@ const formatNumber = (value: number) => value.toLocaleString("id-ID");
 const CARD_TAB_MAP: Record<string, string> = {
   kayu: 'manufaktur', semen_beton: 'manufaktur', bijih_besi: 'mineral', gas_alam: 'mineral', emas: 'mineral',
   uranium: 'mineral', batu_bara: 'mineral', minyak_bumi: 'mineral', garam: 'mineral', litium: 'mineral',
-  logam_tanah_jarang: 'mineral', pabrik_semikonduktor: 'manufaktur', pabrik_mesin_mobil: 'manufaktur', pabrik_mesin_motor: 'manufaktur',
+  logam_tanah_jarang: 'mineral', pabrik_semikonduktor: 'manufaktur', pabrik_mesin: 'manufaktur', pabrik_besi: 'manufaktur',
 };
 
 export default function TempatUmumModal({
