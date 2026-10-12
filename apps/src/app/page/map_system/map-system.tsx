@@ -106,6 +106,7 @@ const TopLeftIcon = dynamic(() => import('../menus/inbox/inboxModals'), { ssr: f
 const TopRightGiftIcon = dynamic(() => import('../menus/reward/rewardModals'), { ssr: false });
 const TopRightNewsIcon = dynamic(() => import('../menus/news/newsModals'), { ssr: false });
 const BottomLeftPenelitianIcon = dynamic(() => import('../menus/penelitian/penelitianModals'), { ssr: false });
+const BottomLeftMissionIcon = dynamic(() => import('../menus/mission/missionModals'), { ssr: false });
 import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/2_peringkat/peringkatLogic';
 import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
@@ -463,6 +464,7 @@ export default function MapPage() {
         setGiftModalOpen(false);
         setNewsModalOpen(false);
         setPenelitianModalOpen(false);
+        setMissionModalOpen(false);
         setIsSaveModalOpen(false);
         setIsRestartConfirmOpen(false);
         setActiveMenu('Peta Taktis');
@@ -527,6 +529,7 @@ export default function MapPage() {
             setNewsModalOpen(false);
             setIsSaveModalOpen(false);
             setIsRestartConfirmOpen(false);
+            setMissionModalOpen(false);
 
             // Tentukan menuId jika target adalah array (siklus sub-tab dengan huruf yang sama)
             let menuId: string;
@@ -544,16 +547,19 @@ export default function MapPage() {
             if (menuId === 'Menu:Penelitian' || menuId === 'penelitian') {
                 setInboxModalOpen(false);
                 setPenelitianModalOpen(true);
+                setMissionModalOpen(false);
                 setActiveMenu("");
                 if (typeof window !== 'undefined') {
                     window.dispatchEvent(new CustomEvent('reset_penelitian_selection'));
                 }
             } else if (menuId === 'inbox' || menuId === 'Menu:Inbox') {
                 setPenelitianModalOpen(false);
+                setMissionModalOpen(false);
                 setInboxModalOpen(true);
                 setActiveMenu("");
             } else {
                 setPenelitianModalOpen(false);
+                setMissionModalOpen(false);
                 setInboxModalOpen(false);
                 if (activeMenu === menuId) {
                     setActiveMenu("");
@@ -572,6 +578,7 @@ export default function MapPage() {
             setGiftModalOpen(false);
             setNewsModalOpen(false);
             setPenelitianModalOpen(false);
+            setMissionModalOpen(false);
             setIsSaveModalOpen(false);
             setIsRestartConfirmOpen(false);
 
@@ -582,7 +589,9 @@ export default function MapPage() {
             setActiveMenu('Peta Taktis');
         },
         onCloseMenu: () => {
-            if (penelitianModalOpen) {
+            if (missionModalOpen) {
+                setMissionModalOpen(false);
+            } else if (penelitianModalOpen) {
                 setPenelitianModalOpen(false);
             } else if (isPresidentMenuOpen) {
                 setIsPresidentMenuOpen(false);
@@ -1182,6 +1191,7 @@ export default function MapPage() {
     }, [currentDate, countryDetail]);
 
     const [penelitianModalOpen, setPenelitianModalOpen] = useState(false);
+    const [missionModalOpen, setMissionModalOpen] = useState(false);
     const [activeWarAnimation, setActiveWarAnimation] = useState<any>(null);
     useEffect(() => {
         const handleStartWarAnimation = async (event: Event) => {
@@ -2447,12 +2457,12 @@ export default function MapPage() {
             notifModalMountedRef.current = true;
             return; // skip initial mount
         }
-        if (inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) {
+        if (inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen || missionModalOpen) {
             window.dispatchEvent(new Event('hide_strategy_modal'));
         } else {
             window.dispatchEvent(new Event('show_strategy_modal'));
         }
-    }, [inboxModalOpen, giftModalOpen, newsModalOpen, penelitianModalOpen]);
+    }, [inboxModalOpen, giftModalOpen, newsModalOpen, penelitianModalOpen, missionModalOpen]);
 
     // Close inbox, gift, news, and penelitian modals if a navigation menu modal is opened
     useEffect(() => {
@@ -2461,6 +2471,7 @@ export default function MapPage() {
             setGiftModalOpen(false);
             setNewsModalOpen(false);
             setPenelitianModalOpen(false);
+            setMissionModalOpen(false);
         }
     }, [activeMenu]);
 
@@ -4003,6 +4014,7 @@ export default function MapPage() {
                     setGiftModalOpen(false);
                     setNewsModalOpen(false);
                     setPenelitianModalOpen(false);
+                    setMissionModalOpen(false);
                     setActiveMenu("");
                     // Mark all notifications as read when opening inbox
                     setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
@@ -4542,6 +4554,7 @@ export default function MapPage() {
                     setInboxModalOpen(false);
                     setNewsModalOpen(false);
                     setPenelitianModalOpen(false);
+                    setMissionModalOpen(false);
                     setActiveMenu("");
                 }}
                 isOpen={giftModalOpen}
@@ -4564,6 +4577,7 @@ export default function MapPage() {
                     setInboxModalOpen(false);
                     setGiftModalOpen(false);
                     setPenelitianModalOpen(false);
+                    setMissionModalOpen(false);
                     setActiveMenu("");
                 }}
                 isOpen={newsModalOpen}
@@ -4574,6 +4588,7 @@ export default function MapPage() {
             <BottomLeftPenelitianIcon
                 onClick={() => {
                     setPenelitianModalOpen(true);
+                    setMissionModalOpen(false);
                     setInboxModalOpen(false);
                     setGiftModalOpen(false);
                     setNewsModalOpen(false);
@@ -4587,6 +4602,18 @@ export default function MapPage() {
                 countryDetail={countryDetail}
                 setCountryDetail={setCountryDetail}
                 currentDate={currentDate}
+            />
+            <BottomLeftMissionIcon
+                onClick={() => {
+                    setMissionModalOpen(true);
+                    setPenelitianModalOpen(false);
+                    setInboxModalOpen(false);
+                    setGiftModalOpen(false);
+                    setNewsModalOpen(false);
+                    setActiveMenu("");
+                }}
+                isOpen={missionModalOpen}
+                onClose={() => setMissionModalOpen(false)}
             />
 
             {/* Tombol Pintas Fokus ke Negara Sendiri (F) */}
