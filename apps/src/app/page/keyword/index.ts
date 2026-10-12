@@ -12,7 +12,7 @@ export interface ShortcutDefinition {
   code?: string;
   label: string;
   description: string;
-  category: 'Menu Utama' | 'Sub Menu (Angka)' | 'Time Controller' | 'Navigasi Panel' | 'Zoom & Map';
+  category: 'Menu Utama' | 'Sub Menu (Angka)' | 'Time Controller' | 'Navigasi Panel' | 'Zoom & Map' | 'Menu Cepat';
   action: string;
 }
 
@@ -63,6 +63,10 @@ export const GAME_SHORTCUTS: Record<string, ShortcutDefinition> = {
 
   // ❌ 4. Navigasi Panel
   NAV_CLOSE: { key: 'Escape', code: 'Escape', label: 'Esc', description: '❌ Tutup Panel Aktif', category: 'Navigasi Panel', action: 'NAV_CLOSE' },
+
+  // ⚡ 5. Menu Cepat
+  OPEN_TOP_UP: { key: 'F2', code: 'F2', label: 'F2', description: '💎 Buka menu Top Up Diamond', category: 'Menu Cepat', action: 'OPEN_TOP_UP' },
+  OPEN_MISSION: { key: 'F3', code: 'F3', label: 'F3', description: '🎯 Buka Misi Presiden', category: 'Menu Cepat', action: 'OPEN_MISSION' },
 };
 
 /**
@@ -85,6 +89,8 @@ export interface ShortcutHandlers {
   onTogglePlayPause?: () => void;
   onTimeSpeedChange?: (delta: number) => void;
   onFocusHome?: () => void;
+  onOpenTopUp?: () => void;
+  onOpenMission?: () => void;
 }
 
 /**
@@ -155,6 +161,19 @@ export function handleGameShortcut(e: KeyboardEvent, handlers: ShortcutHandlers)
     e.preventDefault();
     dispatchGameShortcutEvent('MAP_FOCUS_HOME');
     handlers.onFocusHome?.();
+    return true;
+  }
+
+  if (e.key === 'F2') {
+    e.preventDefault();
+    dispatchGameShortcutEvent('OPEN_TOP_UP');
+    handlers.onOpenTopUp?.();
+    return true;
+  }
+  if (e.key === 'F3') {
+    e.preventDefault();
+    dispatchGameShortcutEvent('OPEN_MISSION');
+    handlers.onOpenMission?.();
     return true;
   }
 

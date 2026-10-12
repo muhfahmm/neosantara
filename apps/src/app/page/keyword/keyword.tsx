@@ -21,7 +21,7 @@ export function KeywordModal({ isOpen, onClose }: KeywordModalProps) {
 
   if (!isOpen || !mounted) return null;
 
-  const categories = ['Semua', 'Menu Utama', 'Sub Menu (Angka)', 'Time Controller', 'Navigasi Panel', 'Zoom & Map'];
+  const categories = ['Semua', 'Menu Utama', 'Sub Menu (Angka)', 'Menu Cepat', 'Time Controller', 'Navigasi Panel', 'Zoom & Map'];
 
   const allShortcuts: ShortcutDefinition[] = Object.values(GAME_SHORTCUTS);
 

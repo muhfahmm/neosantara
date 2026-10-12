@@ -523,6 +523,29 @@ export default function MapPage() {
     // 🎮 Integrasi Keyboard Shortcuts Neosantara
     useKeyboardShortcuts({
         onFocusHome: handleFocusHome,
+        onOpenTopUp: () => {
+            setIsPresidentMenuOpen(false);
+            setCountryDetailModalOpen(false);
+            setPlayerDetailModalOpen(false);
+            setInboxModalOpen(false);
+            setGiftModalOpen(false);
+            setNewsModalOpen(false);
+            setPenelitianModalOpen(false);
+            setMissionModalOpen(false);
+            setIsSaveModalOpen(false);
+            setIsRestartConfirmOpen(false);
+            setActiveMenu('Peta Taktis');
+            router.push('/page/topup_page');
+        },
+        onOpenMission: () => {
+            setMissionModalOpen(true);
+            setPenelitianModalOpen(false);
+            setInboxModalOpen(false);
+            setGiftModalOpen(false);
+            setNewsModalOpen(false);
+            setIsPresidentMenuOpen(false);
+            setActiveMenu('');
+        },
         onMenuSelect: (target) => {
             // Tutup paksa modal overlay yang sedang terbuka saat membuka menu baru
             setIsPresidentMenuOpen(false);
