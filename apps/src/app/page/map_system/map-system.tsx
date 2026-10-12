@@ -4264,6 +4264,17 @@ export default function MapPage() {
                 }}
                 isOpen={giftModalOpen}
                 onClose={() => setGiftModalOpen(false)}
+                canClaimReward={Boolean(countryDetail)}
+                onClaimReward={(resourceKey, amount) => {
+                    setCountryDetail((previous: Record<string, unknown> | null) => previous
+                        ? {
+                            ...previous,
+                            [`inventory_${resourceKey}`]:
+                                (Number(previous[`inventory_${resourceKey}`]) || 0) + amount,
+                        }
+                        : previous
+                    );
+                }}
             />
             <TopRightNewsIcon
                 onClick={() => {

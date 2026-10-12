@@ -37,6 +37,8 @@ export function handleGameRestart(options: RestartOptions): void {
 
     // Clear active PBB resolutions & annexed countries state on restart
     if (typeof window !== 'undefined') {
+        localStorage.removeItem('dailyRewardData');
+        window.dispatchEvent(new CustomEvent('daily_reward_reset'));
         clearActiveResolutionsForSession();
         clearActiveSecurityCouncilItems();
         clearReportedInvasionViolations();

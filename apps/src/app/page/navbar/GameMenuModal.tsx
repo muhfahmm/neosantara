@@ -92,12 +92,14 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
 
     const handleExitGame = () => {
         if (window.confirm("Apakah Anda yakin ingin kembali ke Menu Utama? Progres yang tidak disimpan akan hilang.")) {
+            localStorage.removeItem('dailyRewardData');
             window.location.href = '/page';
         }
     };
 
     const handleCloseWindow = () => {
         if (window.confirm("Apakah Anda yakin ingin keluar dari permainan?")) {
+            localStorage.removeItem('dailyRewardData');
             window.close();
         }
     };

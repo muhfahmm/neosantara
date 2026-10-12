@@ -475,6 +475,7 @@ export default function PilihNegaraPage() {
                     return;
                   }
                   if (typeof window !== 'undefined') {
+                    window.localStorage.removeItem('dailyRewardData');
                     window.localStorage.setItem('presiden_simulator_new_game', '1');
                   }
                 }}
@@ -739,6 +740,7 @@ export default function PilihNegaraPage() {
                 return;
               }
               if (typeof window !== 'undefined') {
+                window.localStorage.removeItem('dailyRewardData');
                 window.localStorage.setItem('presiden_simulator_new_game', '1');
               }
             }}

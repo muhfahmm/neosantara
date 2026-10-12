@@ -3,12 +3,90 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Gift, X, Check, Lock, Zap, AlertTriangle } from 'lucide-react';
+import {
+  formatProductionProductName,
+  PRODUCTION_BAN_CATEGORIES,
+} from '../../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog';
 
-// ----------------------------------------------------------------------
-// Reward data per hari (1–7)
-// ----------------------------------------------------------------------
-const DAILY_REWARDS = [100, 200, 300, 400, 500, 600, 1000];
-const WEEKLY_BONUS = 5000;
+const DAILY_REWARD_AMOUNTS = [10_000, 15_000, 20_000, 25_000] as const;
+const REWARD_DAYS = 7;
+const REWARD_PRODUCTS = PRODUCTION_BAN_CATEGORIES.flatMap(category =>
+  category.products.map(resourceKey => ({
+    resourceKey,
+    categoryLabel: category.label,
+  }))
+);
+
+interface DailySdaReward {
+  resourceKey: string;
+  categoryLabel: string;
+  amount: number;
+}
+
+const shuffle = <T,>(items: T[]): T[] => {
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled;
+};
+
+const createWeeklyRewards = (): DailySdaReward[] => {
+  const resources = shuffle(REWARD_PRODUCTS).slice(0, REWARD_DAYS);
+  const amounts = shuffle([...DAILY_REWARD_AMOUNTS]);
+
+  while (amounts.length < REWARD_DAYS) {
+    const previousAmount = amounts[amounts.length - 1];
+    const availableAmounts = DAILY_REWARD_AMOUNTS.filter(amount => amount !== previousAmount);
+    amounts.push(availableAmounts[Math.floor(Math.random() * availableAmounts.length)]);
+  }
+
+  return resources.map((resource, index) => ({
+    ...resource,
+    amount: amounts[index],
+  }));
+};
+
+const isWeeklyRewardSchedule = (value: unknown): value is Array<{ resourceKey: string; amount: number }> => {
+  if (!Array.isArray(value) || value.length !== REWARD_DAYS) return false;
+
+  const resourceKeys = new Set<string>();
+  for (const reward of value) {
+    if (
+      !reward ||
+      typeof reward !== 'object' ||
+      !('resourceKey' in reward) ||
+      !('amount' in reward) ||
+      typeof reward.resourceKey !== 'string' ||
+      !DAILY_REWARD_AMOUNTS.some(amount => amount === reward.amount) ||
+      !REWARD_PRODUCTS.some(product => product.resourceKey === reward.resourceKey) ||
+      resourceKeys.has(reward.resourceKey)
+    ) {
+      return false;
+    }
+    resourceKeys.add(reward.resourceKey);
+  }
+
+  return true;
+};
+
+const restoreWeeklyRewards = (value: unknown): DailySdaReward[] | null => {
+  if (!isWeeklyRewardSchedule(value)) return null;
+
+  return value.map(reward => ({
+    ...REWARD_PRODUCTS.find(product => product.resourceKey === reward.resourceKey)!,
+    amount: reward.amount,
+  }));
+};
+
+const getWeekKey = (dateString: string): string => {
+  const date = new Date(`${dateString}T00:00:00.000Z`);
+  date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  const week = Math.ceil((((date.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  return `${date.getUTCFullYear()}-W${String(week).padStart(2, '0')}`;
+};
 
 // ----------------------------------------------------------------------
 // Helper: tanggal dalam format YYYY-MM-DD
@@ -28,6 +106,8 @@ interface TopRightGiftIconProps {
   onClick?: () => void;
   isOpen?: boolean;
   onClose?: () => void;
+  canClaimReward: boolean;
+  onClaimReward: (resourceKey: string, amount: number) => void;
 }
 
 interface FeedbackModalData {
@@ -43,10 +123,17 @@ interface FeedbackModalData {
 // ----------------------------------------------------------------------
 // Komponen utama
 // ----------------------------------------------------------------------
-export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightGiftIconProps) {
+export default function TopRightGiftIcon({
+  onClick,
+  isOpen,
+  onClose,
+  canClaimReward,
+  onClaimReward,
+}: TopRightGiftIconProps) {
   const [currentDay, setCurrentDay] = useState<number>(1);
   const [claimedToday, setClaimedToday] = useState<boolean>(false);
   const [lastClaimDate, setLastClaimDate] = useState<string | null>(null);
+  const [weeklyRewards, setWeeklyRewards] = useState<DailySdaReward[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [mounted, setMounted] = useState(false);
 
@@ -67,13 +154,18 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
     let day = 1;
     let claimed = false;
     let lastDate: string | null = null;
+    let storedData: Record<string, unknown> = {};
 
     if (stored) {
       try {
-        const data = JSON.parse(stored);
-        day = data.currentDay ?? 1;
-        lastDate = data.lastClaimDate ?? null;
-        claimed = data.claimedToday ?? false;
+        const parsedData: unknown = JSON.parse(stored);
+        if (!parsedData || typeof parsedData !== 'object' || Array.isArray(parsedData)) {
+          throw new Error('Format data hadiah harian tidak valid.');
+        }
+        storedData = parsedData as Record<string, unknown>;
+        day = Number(storedData.currentDay) || 1;
+        lastDate = typeof storedData.lastClaimDate === 'string' ? storedData.lastClaimDate : null;
+        claimed = storedData.claimedToday === true;
 
         if (lastDate === today) {
           claimed = true;
@@ -96,9 +188,16 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
       }
     }
 
+    const weekKey = getWeekKey(today);
+    const savedWeeklyRewards = restoreWeeklyRewards(storedData.weeklyRewards);
+    const rewards = storedData.weeklyRewardWeek === weekKey && savedWeeklyRewards
+      ? savedWeeklyRewards
+      : createWeeklyRewards();
+
     setCurrentDay(day);
     setClaimedToday(claimed);
     setLastClaimDate(lastDate);
+    setWeeklyRewards(rewards);
     setIsLoading(false);
 
     localStorage.setItem(
@@ -107,6 +206,8 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
         currentDay: day,
         lastClaimDate: lastDate,
         claimedToday: claimed,
+        weeklyRewardWeek: weekKey,
+        weeklyRewards: rewards.map(({ resourceKey, amount }) => ({ resourceKey, amount })),
       })
     );
   }, []);
@@ -114,13 +215,28 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
   useEffect(() => {
     loadRewardStatus();
 
+    const resetRewardStatus = () => {
+      localStorage.removeItem('dailyRewardData');
+      loadRewardStatus();
+    };
+
+    const handlePageExit = () => {
+      localStorage.removeItem('dailyRewardData');
+    };
+
+    window.addEventListener('daily_reward_reset', resetRewardStatus);
+    window.addEventListener('pagehide', handlePageExit);
+
     const interval = setInterval(() => {
       const stored = localStorage.getItem('dailyRewardData');
       if (stored) {
         try {
           const data = JSON.parse(stored);
           const today = getToday();
-          if (data.lastClaimDate && data.lastClaimDate !== today) {
+          if (
+            (data.lastClaimDate && data.lastClaimDate !== today) ||
+            data.weeklyRewardWeek !== getWeekKey(today)
+          ) {
             loadRewardStatus();
           }
         } catch (e) {
@@ -129,7 +245,11 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
       }
     }, 60000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('daily_reward_reset', resetRewardStatus);
+      window.removeEventListener('pagehide', handlePageExit);
+    };
   }, [loadRewardStatus]);
 
   // --------------------------------------------------------------------
@@ -137,19 +257,22 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
   // --------------------------------------------------------------------
   const handleClaim = () => {
     if (claimedToday) return;
+    const reward = weeklyRewards[currentDay - 1];
+    if (!canClaimReward || !reward) {
+      setFeedbackModal({
+        title: 'Hadiah Belum Dapat Diklaim',
+        message: 'Pilih atau muat negara terlebih dahulu sebelum mengklaim hadiah.',
+        variant: 'danger',
+      });
+      return;
+    }
 
     const today = getToday();
     let newDay = currentDay;
-    const reward = DAILY_REWARDS[currentDay - 1];
-    let bonusMessage = '';
+    const weekKey = getWeekKey(today);
+    newDay = currentDay === REWARD_DAYS ? 1 : currentDay + 1;
 
-    if (currentDay === 7) {
-      bonusMessage = `Bonus Mingguan +${WEEKLY_BONUS.toLocaleString('id-ID')} koin!`;
-      newDay = 1;
-    } else {
-      newDay = currentDay + 1;
-    }
-
+    onClaimReward(reward.resourceKey, reward.amount);
     setCurrentDay(newDay);
     setClaimedToday(true);
     setLastClaimDate(today);
@@ -160,13 +283,15 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
         currentDay: newDay,
         lastClaimDate: today,
         claimedToday: true,
+        weeklyRewardWeek: weekKey,
+        weeklyRewards: weeklyRewards.map(({ resourceKey, amount }) => ({ resourceKey, amount })),
       })
     );
 
     // Tampilkan modal feedback (menggantikan alert)
     setFeedbackModal({
       title: 'Hadiah Diklaim!',
-      message: `Anda mendapatkan ${reward.toLocaleString('id-ID')} koin!${bonusMessage ? '\n\n🎉 ' + bonusMessage : ''}`,
+      message: `Anda mendapatkan ${reward.amount.toLocaleString('id-ID')} ${formatProductionProductName(reward.resourceKey)} dari sektor ${reward.categoryLabel}.`,
       variant: 'success',
     });
   };
@@ -243,8 +368,9 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4 w-full max-w-4xl">
-                {DAILY_REWARDS.map((reward, index) => {
+                {Array.from({ length: 7 }, (_, index) => {
                   const day = index + 1;
+                  const reward = weeklyRewards[day - 1];
                   const isPast = day < currentDay;
                   const isToday = day === currentDay;
                   const isFuture = day > currentDay;
@@ -291,9 +417,12 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
                         Hari {day}
                       </span>
 
-                      <span className="text-base sm:text-lg font-black text-[#E0E0E0] mt-1">
-                        {reward}
-                        <span className="text-xs font-medium text-[#6B8A8A] ml-1">koin</span>
+                      <span className="text-xs sm:text-sm font-bold text-[#E0E0E0] mt-1 whitespace-nowrap">
+                        {reward?.amount.toLocaleString('id-ID') ?? '—'}
+                      </span>
+
+                      <span className="text-[9px] sm:text-[10px] text-center text-[#6B8A8A] mt-1 leading-tight">
+                        {reward ? formatProductionProductName(reward.resourceKey) : 'Memuat produk'}
                       </span>
 
                       <div className={`mt-2 ${statusColor}`}>{statusIcon}</div>
@@ -312,8 +441,11 @@ export default function TopRightGiftIcon({ onClick, isOpen, onClose }: TopRightG
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#0F2424] rounded-full border border-[#00FFAA]/30 text-[#00FFAA] text-xs">
                   <Zap className="h-4 w-4" />
                   <span>
-                    Selesaikan 7 hari berturut-turut dan dapatkan{' '}
-                    <span className="font-black text-white">+{WEEKLY_BONUS} koin</span> bonus!
+                    Hadiah berbeda setiap hari dan diacak setiap minggu. Nominal{' '}
+                    <span className="font-black text-white">
+                      10.000, 15.000, 20.000, atau 25.000
+                    </span>
+                    {' '}diacak untuk tiap hari.
                   </span>
                 </div>
               </div>
