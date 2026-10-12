@@ -19,6 +19,7 @@ interface MissionModalsProps {
   isOpen?: boolean;
   onClose?: () => void;
   onClick?: () => void;
+  onStartMission?: (destination: MissionNavigationTarget) => void;
 }
 
 export type MissionCategory =
@@ -50,6 +51,171 @@ interface MissionCard {
   accent: string;
   title: string;
   progress?: string;
+}
+
+export interface MissionNavigationTarget {
+  menuId: string;
+  productionDeepLink?: { tab: string; key: string };
+  tempatUmumTab?: string;
+  openWelfareActions?: boolean;
+}
+
+const MISSION_CATEGORY_MENU: Record<MissionCategory, string> = {
+  event: 'Action:NaikkanKepuasan',
+  kesejahteraan: 'Dashboard:Populasi:Overview',
+  ekonomi: 'Menu:Pajak',
+  produksi: 'Menu:Produksi',
+  pangan: 'Menu:Produksi',
+  layanan_publik: 'Menu:TempatUmum',
+  hunian: 'Menu:HunianPermukiman',
+  penelitian: 'Menu:Penelitian',
+  pertahanan: 'Menu:Armada',
+  geopolitik: 'Menu:KedutaanBesar',
+  resolusi_pbb: 'Menu:PBB',
+  resolusi_dk_pbb: 'Menu:PBB',
+  organisasi_pbb: 'Menu:OrganisasiInternasional:organisasi_pbb',
+  organisasi_regional: 'Menu:OrganisasiInternasional:organisasi_regional',
+  sosial_budaya: 'Menu:Agama',
+  kementerian: 'Dashboard:Kementerian',
+  kabinet: 'Dashboard:Kementerian',
+  krisis: 'Menu:TempatUmum',
+  populasi: 'Dashboard:Populasi:Overview',
+};
+
+const PRODUCTION_KEYS_BY_MISSION: Record<string, string> = {
+  bangun_pltn: 'pembangkit_listrik_tenaga_nuklir',
+  bangun_plta: 'pembangkit_listrik_tenaga_air',
+  bangun_plts: 'pembangkit_listrik_tenaga_surya',
+  bangun_pltu: 'pembangkit_listrik_tenaga_uap',
+  bangun_pltg: 'pembangkit_listrik_tenaga_gas',
+  bangun_pltb: 'pembangkit_listrik_tenaga_angin',
+  bangun_pltp: 'pembangkit_listrik_tenaga_panas_bumi',
+  bangun_plth: 'pembangkit_listrik_tenaga_hidrogen',
+  bangun_pltgl: 'pembangkit_listrik_tenaga_gelombang_laut',
+  bangun_pltfn: 'pembangkit_listrik_tenaga_fusi_nuklir',
+  tambang_emas: 'emas',
+  tambang_uranium: 'uranium',
+  tambang_batu_bara: 'batu_bara',
+  kilang_minyak_bumi: 'minyak_bumi',
+  kilang_gas_alam: 'gas_alam',
+  tambang_garam: 'garam',
+  tambang_litium: 'litium',
+  tambang_ltj: 'logam_tanah_jarang',
+  tambang_bijih_besi: 'bijih_besi',
+  pabrik_semikonduktor: 'pabrik_semikonduktor',
+  pabrik_mesin: 'pabrik_mesin',
+  pabrik_besi: 'pabrik_besi',
+  pabrik_semen_beton: 'semen_beton',
+  pabrik_kayu: 'kayu',
+  peternakan_ayam: 'ayam_unggas',
+  peternakan_sapi_perah: 'sapi_perah',
+  peternakan_sapi_potong: 'sapi_potong',
+  peternakan_domba: 'domba_kambing',
+  sawah_padi: 'padi',
+  ladang_gandum: 'gandum',
+  ladang_jagung: 'jagung',
+  kebun_sayur: 'sayur',
+  ladang_umbi: 'umbi',
+  ladang_kedelai: 'kedelai',
+  kebun_sawit: 'kelapa_sawit',
+  kebun_kopi: 'kopi',
+  kebun_teh: 'teh',
+  kebun_kakao: 'kakao',
+  kebun_tebu: 'tebu',
+  kebun_karet: 'karet',
+  tambak_udang: 'udang',
+  budidaya_mutiara: 'mutiara',
+  perikanan_ikan: 'ikan',
+  pabrik_air_mineral: 'air_mineral',
+  pabrik_gula: 'gula',
+  pabrik_roti: 'roti',
+  pabrik_daging: 'pengolahan_daging',
+  pabrik_mie_instan: 'mie_instan',
+  pabrik_minyak_goreng: 'minyak_goreng',
+  pabrik_susu: 'susu',
+  pabrik_beras: 'beras',
+};
+
+function getMissionRoute(mission: Pick<MissionCard, 'id' | 'category'>): MissionNavigationTarget {
+  const { id, category } = mission;
+  let menuId = MISSION_CATEGORY_MENU[category];
+  const target: MissionNavigationTarget = { menuId };
+
+  if (category === 'ekonomi') {
+    if (id.startsWith('pinjam_') || id === 'hutang_lunas') menuId = 'Menu:Hutang';
+    else if (id === 'harga_pokok') menuId = 'Menu:Harga';
+    else if (id === 'sistem_ekonomi') menuId = 'Menu:SistemEkonomi';
+    else if (id === 'subsidi') menuId = 'Menu:KebijakanSubsidi';
+    else if (id === 'ekspor_perdagangan' || id === 'impor_perdagangan') menuId = 'Menu:Perdagangan';
+    else if (id === 'surplus_apbn') menuId = 'Menu:Budget';
+    else if (id === 'pdb_ranking') menuId = 'Menu:PDB';
+  }
+
+  if (category === 'pertahanan') {
+    if (id.startsWith('operasi_spionase') || id.startsWith('operasi_sabotase')) menuId = 'Menu:Intelijen';
+    else if (id === 'operasi_serang_negara') menuId = 'Menu:SerangNegara';
+    else if (id === 'pertahankan_wilayah') menuId = 'Menu:WilayahDirebut';
+    else if (id === 'program_icbm' || id === 'silo_nuklir') menuId = 'Menu:ICBM';
+  }
+
+  if (category === 'geopolitik') {
+    if (id === 'naikkan_hubungan') menuId = 'Menu:TingkatHubungan';
+  }
+
+  if (category === 'sosial_budaya') {
+    if (id.includes('ideologi')) menuId = 'Menu:Ideologi';
+    else if (id === 'doktrin_keterbukaan') menuId = 'Menu:DoktrinKeterbukaan';
+  }
+
+  if (category === 'krisis' && id === 'krisis_klaim_hadiah') menuId = 'Menu:Hadiah';
+
+  if (category === 'populasi') {
+    if (id === 'hapus_tunawisma') menuId = 'Menu:HunianPermukiman';
+    else if (id === 'tekan_kematian') menuId = 'Menu:TempatUmum';
+  }
+
+  target.menuId = menuId;
+
+  if (category === 'produksi' || category === 'pangan') {
+    const key = PRODUCTION_KEYS_BY_MISSION[id];
+    if (key) {
+      let tab = 'kelistrikan';
+      if (category === 'pangan') {
+        tab = id.startsWith('peternakan_')
+          ? 'peternakan'
+          : id.startsWith('sawah_') || id.startsWith('ladang_') || id.startsWith('kebun_')
+            ? 'agrikultur'
+            : id.startsWith('budidaya_') || id.startsWith('perikanan_')
+              ? 'perikanan'
+              : 'olahan pangan';
+      } else if (id.startsWith('tambang_') || id.startsWith('kilang_')) {
+        tab = 'mineral';
+      } else if (id.startsWith('pabrik_')) {
+        tab = 'manufaktur';
+      }
+      target.productionDeepLink = { tab, key };
+    }
+  }
+
+  if (category === 'layanan_publik') {
+    target.tempatUmumTab = id.startsWith('edukasi_')
+      ? 'pendidikan'
+      : id.startsWith('medis_')
+        ? 'kesehatan'
+        : id.startsWith('hukum_')
+          ? 'penegakan_hukum'
+          : id.startsWith('sport_')
+            ? 'olahraga_hiburan'
+            : id.startsWith('komersial_')
+              ? 'komersial'
+              : 'infrastruktur';
+  }
+
+  if (category === 'kesejahteraan' || id === 'indeks_kesejahteraan') {
+    target.openWelfareActions = true;
+  }
+
+  return target;
 }
 
 // =====================================================================
@@ -378,6 +544,7 @@ export default function MissionModals({
   isOpen = false,
   onClose,
   onClick,
+  onStartMission,
 }: MissionModalsProps) {
   const [mounted, setMounted] = useState(false);
   const [activeCategory, setActiveCategory] = useState<MissionCategory>('event');
@@ -505,6 +672,8 @@ export default function MissionModals({
                     {/* TOMBOL MULAI */}
                     <button
                       type="button"
+                      onClick={() => onStartMission?.(getMissionRoute(card))}
+                      aria-label={`Mulai misi: ${card.title}`}
                       className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-gradient-to-b from-[#00FFAA] to-emerald-400 hover:from-[#00e699] hover:to-emerald-500 active:scale-95 text-[#0A1A1A] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer"
                     >
                       <Play className="w-3.5 h-3.5 fill-[#0A1A1A]" />

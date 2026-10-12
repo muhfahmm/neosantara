@@ -186,6 +186,7 @@ import {
 import { generateMilitaryAchievementNews } from '../menus/news/logic/6_pencapaian_militer/pencapaianMiliterNewsLogic';
 import { generateWorldNewsEvents } from '../menus/news/logic/worldNewsLogic';
 import { NewsItemData } from '../menus/news/newsModals';
+import type { MissionNavigationTarget } from '../menus/mission/missionModals';
 import { calculateFoodCoverageByGroup } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic';
 import {
     clearExpelledOrganizationCountries,
@@ -4614,6 +4615,40 @@ export default function MapPage() {
                 }}
                 isOpen={missionModalOpen}
                 onClose={() => setMissionModalOpen(false)}
+                onStartMission={(destination: MissionNavigationTarget) => {
+                    setMissionModalOpen(false);
+                    setInboxModalOpen(false);
+                    setNewsModalOpen(false);
+                    setPenelitianModalOpen(false);
+
+                    if (destination.menuId === 'Menu:Penelitian') {
+                        setActiveMenu("");
+                        setPenelitianModalOpen(true);
+                        window.dispatchEvent(new CustomEvent('reset_penelitian_selection'));
+                        return;
+                    }
+
+                    if (destination.menuId === 'Menu:Hadiah') {
+                        setActiveMenu("");
+                        setGiftModalOpen(true);
+                        return;
+                    }
+
+                    if (destination.productionDeepLink) {
+                        setProductionDeepLink(destination.productionDeepLink);
+                    }
+
+                    if (destination.tempatUmumTab) {
+                        setTempatUmumDeepLink(destination.tempatUmumTab);
+                    }
+
+                    if (destination.openWelfareActions) {
+                        setKesejahteraanDeepLink(true);
+                        setKesejahteraanInitialTab("naikkan");
+                    }
+
+                    setActiveMenu(destination.menuId);
+                }}
             />
 
             {/* Tombol Pintas Fokus ke Negara Sendiri (F) */}
