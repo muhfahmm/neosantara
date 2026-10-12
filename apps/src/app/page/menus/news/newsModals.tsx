@@ -6,8 +6,20 @@ import { Newspaper, X, Swords, Flag, Coins, ShieldAlert, Sparkles, Filter } from
 import { InvasionNewsData } from './logic/1_berita_invasi/beritaInvasiLogic';
 import { AnnexationNewsData } from './logic/2_berita_aneksasi/beritaAneksasiLogic';
 import { ResourceLootNewsData } from './logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
+import { DiplomacyNewsData } from './logic/4_diplomasi/diplomasiNewsLogic';
+import { EconomyNewsData } from './logic/5_ekonomi_keuangan/ekonomiKeuanganNewsLogic';
+import { MilitaryAchievementNewsData } from './logic/6_pencapaian_militer/pencapaianMiliterNewsLogic';
 
-export type NewsItemData = InvasionNewsData | AnnexationNewsData | ResourceLootNewsData;
+export type NewsItemData =
+  | InvasionNewsData
+  | AnnexationNewsData
+  | ResourceLootNewsData
+  | DiplomacyNewsData
+  | EconomyNewsData
+  | MilitaryAchievementNewsData;
+
+type NewsCategory = 'semua' | 'diplomasi' | 'ekonomi_keuangan' | 'pencapaian_militer' | 'operasi_militer';
+type NewsType = NewsItemData['type'];
 
 interface TopRightNewsIconProps {
   onClick?: () => void;
@@ -25,7 +37,8 @@ export default function TopRightNewsIcon({
   onClearNews
 }: TopRightNewsIconProps) {
   const [mounted, setMounted] = useState(false);
-  const [filterType, setFilterType] = useState<'semua' | 'invasi' | 'aneksasi' | 'pengambilan_sda'>('semua');
+  const [filterCategory, setFilterCategory] = useState<NewsCategory>('semua');
+  const [filterType, setFilterType] = useState<'semua' | NewsType>('semua');
 
   const [toastNews, setToastNews] = useState<NewsItemData | null>(null);
   const [showToast, setShowToast] = useState(false);
@@ -60,10 +73,36 @@ export default function TopRightNewsIcon({
     return () => window.clearTimeout(timer);
   }, [showToast, toastNews?.id]);
 
-  const filteredNews = newsList.filter((item) => {
-    if (filterType === 'semua') return true;
-    return item.type === filterType;
-  });
+  const getCategory = (item: NewsItemData): Exclude<NewsCategory, 'semua'> => {
+    if ('category' in item) return item.category;
+    return 'operasi_militer';
+  };
+
+  const filteredNews = newsList.filter((item) => (
+    (filterCategory === 'semua' || getCategory(item) === filterCategory) &&
+    (filterType === 'semua' || item.type === filterType)
+  ));
+
+  const categoryTypes: Record<Exclude<NewsCategory, 'semua'>, NewsType[]> = {
+    diplomasi: ['pakta_non_agresi', 'aliansi_pertahanan', 'perjanjian_dagang', 'kontrak_penelitian', 'sanksi_ekonomi'],
+    ekonomi_keuangan: ['krisis_ekonomi', 'pajak_baru'],
+    pencapaian_militer: ['program_nuklir'],
+    operasi_militer: ['invasi', 'aneksasi', 'pengambilan_sda'],
+  };
+
+  const typeLabels: Record<NewsType, string> = {
+    invasi: 'Invasi Militer',
+    aneksasi: 'Aneksasi Wilayah',
+    pengambilan_sda: 'Perampasan Aset & SDA',
+    pakta_non_agresi: 'Pakta Non-Agresi',
+    aliansi_pertahanan: 'Aliansi Pertahanan',
+    perjanjian_dagang: 'Perjanjian Dagang',
+    kontrak_penelitian: 'Kontrak Penelitian',
+    sanksi_ekonomi: 'Sanksi Ekonomi',
+    krisis_ekonomi: 'Krisis Ekonomi',
+    pajak_baru: 'Pajak Baru',
+    program_nuklir: 'Program Nuklir',
+  };
 
   const renderBadge = (type: NewsItemData['type']) => {
     switch (type) {
@@ -89,7 +128,11 @@ export default function TopRightNewsIcon({
           </span>
         );
       default:
-        return null;
+        return (
+          <span className="text-[10px] font-extrabold text-[#00FFAA] bg-[#00FFAA]/10 px-2.5 py-0.5 rounded-full border border-[#00FFAA]/30 uppercase tracking-wider">
+            {typeLabels[type]}
+          </span>
+        );
     }
   };
 
@@ -111,6 +154,12 @@ export default function TopRightNewsIcon({
         return (
           <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0 shadow-inner">
             <Coins className="w-5 h-5 text-emerald-400" />
+          </div>
+        );
+      default:
+        return (
+          <div className="w-10 h-10 rounded-xl bg-[#00FFAA]/10 border border-[#00FFAA]/30 text-[#00FFAA] flex items-center justify-center shrink-0 shadow-inner">
+            <Newspaper className="w-5 h-5" />
           </div>
         );
     }
@@ -199,56 +248,64 @@ export default function TopRightNewsIcon({
             </div>
 
             {/* 🔥 FILTER BAR */}
-            <div className="px-4 sm:px-6 py-2 bg-[#051111] border-b border-[#00FFAA]/15 flex items-center justify-between gap-2 overflow-x-auto custom-scrollbar shrink-0">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <Filter className="w-3.5 h-3.5 text-[#6B8A8A] shrink-0" />
-                <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider shrink-0 mr-1">Filter:</span>
-                
-                <button
-                  onClick={() => setFilterType('semua')}
-                  className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
-                    filterType === 'semua'
-                      ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20'
-                      : 'bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] border border-[#00FFAA]/20'
-                  }`}
-                >
-                  Semua ({newsList.length})
-                </button>
-
-                <button
-                  onClick={() => setFilterType('invasi')}
-                  className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
-                    filterType === 'invasi'
-                      ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20'
-                      : 'bg-[#0F2424] text-[#6B8A8A] hover:text-rose-400 border border-[#00FFAA]/20'
-                  }`}
-                >
-                  Invasi ({newsList.filter(n => n.type === 'invasi').length})
-                </button>
-
-                <button
-                  onClick={() => setFilterType('aneksasi')}
-                  className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
-                    filterType === 'aneksasi'
-                      ? 'bg-amber-500 text-[#0A1A1A] shadow-md shadow-amber-500/20'
-                      : 'bg-[#0F2424] text-[#6B8A8A] hover:text-amber-400 border border-[#00FFAA]/20'
-                  }`}
-                >
-                  Aneksasi ({newsList.filter(n => n.type === 'aneksasi').length})
-                </button>
-
-                <button
-                  onClick={() => setFilterType('pengambilan_sda')}
-                  className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer ${
-                    filterType === 'pengambilan_sda'
-                      ? 'bg-emerald-500 text-[#0A1A1A] shadow-md shadow-emerald-500/20'
-                      : 'bg-[#0F2424] text-[#6B8A8A] hover:text-emerald-400 border border-[#00FFAA]/20'
-                  }`}
-                >
-                  Perampasan Aset ({newsList.filter(n => n.type === 'pengambilan_sda').length})
-                </button>
+            <div className="px-4 sm:px-6 py-2 bg-[#051111] border-b border-[#00FFAA]/15 flex items-center justify-between gap-2 shrink-0">
+              <div className="min-w-0 space-y-2 overflow-x-auto custom-scrollbar">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Filter className="w-3.5 h-3.5 text-[#6B8A8A] shrink-0" />
+                  <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider shrink-0 mr-1">Filter:</span>
+                  {([
+                    ['semua', 'Semua'],
+                    ['diplomasi', 'Diplomasi'],
+                    ['ekonomi_keuangan', 'Ekonomi & Keuangan'],
+                    ['pencapaian_militer', 'Pencapaian Militer'],
+                    ['operasi_militer', 'Operasi Perang'],
+                  ] as Array<[NewsCategory, string]>).map(([category, label]) => (
+                    <button
+                      key={category}
+                      onClick={() => {
+                        setFilterCategory(category);
+                        setFilterType('semua');
+                      }}
+                      className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer whitespace-nowrap ${
+                        filterCategory === category
+                          ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20'
+                          : 'bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] border border-[#00FFAA]/20'
+                      }`}
+                    >
+                      {label} ({category === 'semua'
+                        ? newsList.length
+                        : newsList.filter(item => getCategory(item) === category).length})
+                    </button>
+                  ))}
+                </div>
+                {filterCategory !== 'semua' && (
+                  <div className="flex items-center gap-1.5 pl-5">
+                    <button
+                      onClick={() => setFilterType('semua')}
+                      className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase transition-all cursor-pointer whitespace-nowrap ${
+                        filterType === 'semua'
+                          ? 'bg-[#00FFAA]/20 text-[#00FFAA]'
+                          : 'bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA]'
+                      }`}
+                    >
+                      Semua Subkategori
+                    </button>
+                    {categoryTypes[filterCategory].map(type => (
+                      <button
+                        key={type}
+                        onClick={() => setFilterType(type)}
+                        className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase transition-all cursor-pointer whitespace-nowrap ${
+                          filterType === type
+                            ? 'bg-[#00FFAA]/20 text-[#00FFAA]'
+                            : 'bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA]'
+                        }`}
+                      >
+                        {typeLabels[type]} ({newsList.filter(item => item.type === type).length})
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-
               {onClearNews && newsList.length > 0 && (
                 <button
                   onClick={onClearNews}
@@ -284,11 +341,15 @@ export default function TopRightNewsIcon({
                             {renderBadge(news.type)}
                           </div>
 
-                          <div className="flex items-center gap-3 text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider">
-                            <span>Penyerang: <strong className="text-white">{news.attackerCountry}</strong></span>
-                            <span>•</span>
-                            <span>Target: <strong className="text-white">{news.targetCountry}</strong></span>
-                            <span>•</span>
+                          <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider">
+                            {('attackerCountry' in news) && (
+                              <>
+                                <span>Penyerang: <strong className="text-white">{news.attackerCountry}</strong></span>
+                                <span>•</span>
+                                <span>Target: <strong className="text-white">{news.targetCountry}</strong></span>
+                                <span>•</span>
+                              </>
+                            )}
                             <span>Waktu: <strong className="text-amber-400">{news.dateStr} ({news.timestamp})</strong></span>
                           </div>
 

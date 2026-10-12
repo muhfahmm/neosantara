@@ -177,6 +177,13 @@ import {
     submitInvasionViolationSanctions
 } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 import { generateResourceLootNews } from '../menus/news/logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
+import { generateDiplomacyNews } from '../menus/news/logic/4_diplomasi/diplomasiNewsLogic';
+import {
+    generateEconomicCrisisNotification,
+    generateEconomyNews,
+} from '../menus/news/logic/5_ekonomi_keuangan/ekonomiKeuanganNewsLogic';
+import { generateMilitaryAchievementNews } from '../menus/news/logic/6_pencapaian_militer/pencapaianMiliterNewsLogic';
+import { generateWorldNewsEvents } from '../menus/news/logic/worldNewsLogic';
 import { NewsItemData } from '../menus/news/newsModals';
 import { calculateFoodCoverageByGroup } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic';
 import {
@@ -443,6 +450,7 @@ export default function MapPage() {
     const [giftModalOpen, setGiftModalOpen] = useState(false);
     const [newsModalOpen, setNewsModalOpen] = useState(false);
     const [newsList, setNewsList] = useState<NewsItemData[]>([]);
+    const lastObservedNewsResetDateRef = useRef<string | null>(null);
 
     const isMapFocusedRef = useRef(false);
 
@@ -1710,12 +1718,67 @@ export default function MapPage() {
         if (Array.isArray(countryDetail?.pending_notifications) && countryDetail.pending_notifications.length > 0) {
             const pending = countryDetail.pending_notifications;
             setNotifications(prev => [...pending, ...prev]);
+            const generatedNews: NewsItemData[] = [];
+            for (const notification of pending) {
+                const candidates: Array<NewsItemData | null> = [
+                    generateDiplomacyNews(notification),
+                    generateEconomyNews(notification),
+                    generateMilitaryAchievementNews(notification),
+                ];
+                for (const item of candidates) {
+                    if (item) generatedNews.push(item);
+                }
+            }
+            if (generatedNews.length > 0) {
+                setNewsList(previous => {
+                    const existingIds = new Set(previous.map(item => item.id));
+                    return [
+                        ...generatedNews.filter(item => !existingIds.has(item.id)),
+                        ...previous,
+                    ];
+                });
+            }
             setCountryDetail((prev: any) => ({
                 ...prev,
                 pending_notifications: []
             }));
         }
     }, [countryDetail?.pending_notifications, setCountryDetail]);
+
+    useEffect(() => {
+        if (!countryDetail) return;
+        const budget = Number(countryDetail.anggaran) || 0;
+        const crisisActive = Boolean(countryDetail.economic_crisis_active);
+
+        if (budget < 0 && !crisisActive) {
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+            setCountryDetail((prev: Record<string, unknown> | null) => {
+                if (!prev || (Number(prev.anggaran) || 0) >= 0 || prev.economic_crisis_active) return prev;
+                const eventNumber = (Number(prev.economic_crisis_event_count) || 0) + 1;
+                const crisisNotification = generateEconomicCrisisNotification(
+                    String(prev.country || prev.nama || selectedCountry?.country || 'negara'),
+                    Number(prev.anggaran) || 0,
+                    dateStr,
+                    eventNumber,
+                );
+                return {
+                    ...prev,
+                    economic_crisis_active: true,
+                    economic_crisis_event_count: eventNumber,
+                    pending_notifications: [crisisNotification, ...(Array.isArray(prev.pending_notifications) ? prev.pending_notifications : [])],
+                };
+            });
+        } else if (budget >= 0 && crisisActive) {
+            setCountryDetail((prev: Record<string, unknown> | null) => (
+                prev && (Number(prev.anggaran) || 0) >= 0 && prev.economic_crisis_active
+                    ? { ...prev, economic_crisis_active: false }
+                    : prev
+            ));
+        }
+    }, [countryDetail?.anggaran, countryDetail?.economic_crisis_active, currentDate, selectedCountry?.country, setCountryDetail]);
 
     // --- TIMED WEEKLY TRADE OFFER NOTIFICATIONS (1-2 PER WEEK) ---
     useEffect(() => {
@@ -1741,6 +1804,35 @@ export default function MapPage() {
 
     }, [currentDate, countryDetail, setCountryDetail]);
 
+    // Clear the previous year's inbox and news when simulation time rolls into January 1.
+    useEffect(() => {
+        if (!currentDate) return;
+
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+        const currentDay = currentDate.getDate();
+        const currentDateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(currentDay).padStart(2, '0')}`;
+        const previousDateKey = lastObservedNewsResetDateRef.current;
+        lastObservedNewsResetDateRef.current = currentDateKey;
+
+        if (
+            !previousDateKey ||
+            currentMonth !== 0 ||
+            currentDay !== 1 ||
+            Number(previousDateKey.slice(0, 4)) >= currentYear
+        ) {
+            return;
+        }
+
+        setNotifications([]);
+        setNewsList([]);
+        setCountryDetail((previous: Record<string, unknown> | null) => (
+            previous && Array.isArray(previous.pending_notifications) && previous.pending_notifications.length > 0
+                ? { ...previous, pending_notifications: [] }
+                : previous
+        ));
+    }, [currentDate, setCountryDetail]);
+
     // --- MONTHLY NOTIFICATIONS GENERATOR (25% CHANCE PER BULAN ~ 3-5 EVENT / TAHUN) ---
     useEffect(() => {
         if (!currentDate || !countryDetail) return;
@@ -1763,6 +1855,22 @@ export default function MapPage() {
 
         if (lastCheckedYearMonth !== currentYearMonth) {
             const userCountryName = countryDetail.country || countryDetail.nama || "Indonesia";
+            const worldNewsResult = generateWorldNewsEvents(
+                COUNTRIES_DATA,
+                userCountryName,
+                Number(countryDetail.world_news_country_cursor) || 0,
+                currentDateStr,
+            );
+            if (worldNewsResult.news.length > 0) {
+                setNewsList(previous => {
+                    const existingIds = new Set(previous.map(item => item.id));
+                    return [
+                        ...worldNewsResult.news.filter(item => !existingIds.has(item.id)),
+                        ...previous,
+                    ];
+                });
+            }
+
             const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
             const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
             const addedTradePartners = Array.isArray(countryDetail?.addedTradePartners) ? countryDetail.addedTradePartners : [];
@@ -2246,6 +2354,7 @@ export default function MapPage() {
             setCountryDetail((prev: any) => ({
                 ...prev,
                 last_checked_notification_month: currentYearMonth,
+                world_news_country_cursor: worldNewsResult.nextCursor,
                 last_notified_listrik_step: currentListrikStep
             }));
         }
@@ -3372,12 +3481,14 @@ export default function MapPage() {
                     );
                 }
 
+                const nextBudget = (Number(prev.anggaran) || 0) + netBalance -
+                    (Number(prev.minister_recruitment_expense_pending) || 0);
+
                 return {
                     ...prev,
                     ...updates,
                     ...populationUpdates,
-                    anggaran: (Number(prev.anggaran) || 0) + netBalance -
-                        (Number(prev.minister_recruitment_expense_pending) || 0),
+                    anggaran: nextBudget,
                     minister_recruitment_expense_pending: 0,
                     satisfaction: prev.satisfaction, // Preserve satisfaction scores
                     programNuklirActive: nextProgramNuklirActive,
