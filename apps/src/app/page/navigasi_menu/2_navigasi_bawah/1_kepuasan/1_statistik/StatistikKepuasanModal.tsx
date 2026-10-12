@@ -149,10 +149,7 @@ export default function StatistikKepuasanModal({
                   <Smile className="h-4 w-4 lg:h-5 lg:w-5 2xl:h-7 2xl:w-7 text-[#00FFAA]" />
                 </div>
                 <div>
-                  <h3 className="text-xs lg:text-sm 2xl:text-base font-black text-[#E0E0E0] uppercase tracking-wide leading-none mb-0.5 lg:mb-1">Persetujuan Umum Rakyat</h3>
-                  <p className="text-[9px] lg:text-[10px] 2xl:text-xs text-[#6B8A8A] font-semibold max-w-sm sm:max-w-md leading-tight">
-                    Rata-rata persetujuan nasional rakyat terhadap kebijakan kepemimpinan kabinet saat ini.
-                  </p>
+                  <h3 className="text-xs lg:text-sm 2xl:text-base font-black text-[#E0E0E0] uppercase tracking-wide leading-none mb-0.5 lg:mb-1">Persetujuan Umum Rakyat</h3>              
                 </div>
               </div>
               <div className="text-right bg-[#0A1A1A] border border-[#00FFAA]/30 px-2.5 lg:px-3.5 2xl:px-4 py-1 lg:py-1.5 2xl:py-2 rounded-lg shrink-0 min-w-[75px] lg:min-w-[95px] 2xl:min-w-[110px]">

@@ -131,7 +131,7 @@ export default function TopRightNewsIcon({
         )}
       </button>
 
-      {/* 🔥 POPUP TOAST NOTIFIKASI BERITA DI SEBELAH KIRI (DI BAWAH INBOX, RENDERED VIA PORTAL Z-200000) */}
+      {/* 🔥 POPUP TOAST NOTIFIKASI BERITA DI SEBELAH KIRI */}
       {mounted && showToast && toastNews && createPortal(
         <div className="fixed top-[19rem] left-7 z-[100100] pointer-events-auto">
           <div
@@ -174,7 +174,7 @@ export default function TopRightNewsIcon({
         document.body
       )}
 
-      {/* 🔥 News Modal - Render via Portal agar sama dengan Sidang Umum PBB */}
+      {/* 🔥 News Modal - Render via Portal */}
       {isOpen && mounted && createPortal(
         <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
           <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
@@ -187,7 +187,6 @@ export default function TopRightNewsIcon({
                 </div>
                 <div>
                   <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Berita & Update Geopolitik</h2>
-                  <p className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider mt-0.5">Kabar konflik, aneksasi, dan perubahan peta kekuatan dunia</p>
                 </div>
               </div>
               <button 
@@ -266,9 +265,6 @@ export default function TopRightNewsIcon({
                 <div className="flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto my-auto py-16">
                   <Newspaper className="h-16 w-16 text-[#00FFAA]/20" />
                   <h4 className="text-lg font-bold text-[#00FFAA] uppercase">Tidak Ada Berita</h4>
-                  <p className="text-xs text-[#6B8A8A] leading-relaxed">
-                    Belum ada berita atau update perang yang sesuai dengan filter ini. Pantau terus perkembangan situasi nasional dan internasional.
-                  </p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -324,19 +320,6 @@ export default function TopRightNewsIcon({
                   ))}
                 </div>
               )}
-            </div>
-
-            {/* 🔥 FOOTER MODAL */}
-            <div className="p-3 bg-[#0A1A1A] border-t border-[#00FFAA]/20 flex justify-between items-center relative z-10 shrink-0">
-              <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider pl-2">
-                Total {filteredNews.length} Laporan Berita
-              </span>
-              <button 
-                onClick={onClose}
-                className="px-6 py-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all font-bold text-xs uppercase tracking-wider cursor-pointer shadow-sm"
-              >
-                Tutup
-              </button>
             </div>
           </div>
         </div>,
