@@ -11,8 +11,7 @@ import {
   Gem, Factory, Beef, Wheat, Fish, Milk, Activity, Smile, Microscope,
   Gavel, HeartPulse, Leaf, Siren, Ambulance, Banknote, BookOpen,
   Bike, Route, Bus, Train, Gamepad2, Film, Theater, Egg, Package,
-  Sparkles, Crown, Award as AwardIcon, Cross, Heart, Landmark as LandmarkIcon,
-  MapPinned, Handshake, Utensils as UtensilsIcon, Banknote as BanknoteIcon,
+  Sparkles, Crown,
   Gift,
 } from 'lucide-react';
 import { formatProductionProductName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog';
@@ -62,6 +61,9 @@ export interface MissionNavigationTarget {
   openWelfareActions?: boolean;
 }
 
+// =====================================================================
+// MAPPING KATEGORI → MENU
+// =====================================================================
 const MISSION_CATEGORY_MENU: Record<MissionCategory, string> = {
   event: 'Action:NaikkanKepuasan',
   kesejahteraan: 'Dashboard:Populasi:Overview',
@@ -84,6 +86,9 @@ const MISSION_CATEGORY_MENU: Record<MissionCategory, string> = {
   populasi: 'Dashboard:Populasi:Overview',
 };
 
+// =====================================================================
+// MAPPING MISI → PRODUCTION KEY
+// =====================================================================
 const PRODUCTION_KEYS_BY_MISSION: Record<string, string> = {
   bangun_pltn: 'pembangkit_listrik_tenaga_nuklir',
   bangun_plta: 'pembangkit_listrik_tenaga_air',
@@ -138,6 +143,117 @@ const PRODUCTION_KEYS_BY_MISSION: Record<string, string> = {
   pabrik_beras: 'beras',
 };
 
+// =====================================================================
+// SISTEM HADIAH BERJENJANG (Progressive Scaling)
+// =====================================================================
+const MISSION_COMPLETION_STORAGE_KEY = 'presiden_simulator_mission_completions';
+
+const NEO_REWARD_TIERS = [5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500, 25000] as const;
+const NEO_BASE_INCREMENT = 2500;
+
+const SDA_REWARD_TIERS = [5000, 10000, 15000, 20000, 25000] as const;
+const SDA_BASE_INCREMENT = 5000;
+
+export const MIN_DIAMOND_REWARD = 5;
+export const MAX_DIAMOND_REWARD = 100;
+export const DIAMOND_TIER_INCREMENT = 5;
+
+export function getProgressiveDiamondReward(completionCount = 0): number {
+  const safeCount = Math.max(0, Math.floor(completionCount));
+  const calculated = MIN_DIAMOND_REWARD + safeCount * DIAMOND_TIER_INCREMENT;
+  return Math.min(calculated, MAX_DIAMOND_REWARD);
+}
+
+export function getMissionCompletionsMap(): Record<string, number> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(MISSION_COMPLETION_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function getMissionCompletionCount(cardId: string): number {
+  const map = getMissionCompletionsMap();
+  return Number(map[cardId]) || 0;
+}
+
+export function recordMissionCompletion(cardId: string): number {
+  if (typeof window === 'undefined') return 0;
+  try {
+    const map = getMissionCompletionsMap();
+    const nextCount = (Number(map[cardId]) || 0) + 1;
+    map[cardId] = nextCount;
+    localStorage.setItem(MISSION_COMPLETION_STORAGE_KEY, JSON.stringify(map));
+    window.dispatchEvent(new CustomEvent('mission_completions_updated', { detail: { cardId, count: nextCount } }));
+    return nextCount;
+  } catch {
+    return 0;
+  }
+}
+
+export function getProgressiveNeoReward(completionCount = 0): number {
+  const safeCount = Math.max(0, Math.floor(completionCount));
+  if (safeCount < NEO_REWARD_TIERS.length) {
+    return NEO_REWARD_TIERS[safeCount];
+  }
+  const maxTier = NEO_REWARD_TIERS[NEO_REWARD_TIERS.length - 1];
+  const extraLevels = safeCount - (NEO_REWARD_TIERS.length - 1);
+  return maxTier + extraLevels * NEO_BASE_INCREMENT;
+}
+
+export function getProgressiveSdaReward(completionCount = 0): number {
+  const safeCount = Math.max(0, Math.floor(completionCount));
+  if (safeCount < SDA_REWARD_TIERS.length) {
+    return SDA_REWARD_TIERS[safeCount];
+  }
+  const maxTier = SDA_REWARD_TIERS[SDA_REWARD_TIERS.length - 1];
+  const extraLevels = safeCount - (SDA_REWARD_TIERS.length - 1);
+  return maxTier + extraLevels * SDA_BASE_INCREMENT;
+}
+
+// =====================================================================
+// SISTEM REWARD BADGE
+// =====================================================================
+interface MissionRewardBadges {
+  neo?: number;
+  sda?: { amount: number; productKey: string };
+  diamond: number;
+}
+
+function getMissionRewardBadges(card: MissionCard, completionCount = 0): MissionRewardBadges {
+  const productKey = PRODUCTION_KEYS_BY_MISSION[card.id];
+  const productRewardCategories = [
+    'Mineral & Energi',
+    'Manufaktur',
+    'Peternakan',
+    'Agrikultur',
+    'Perikanan',
+    'Olahan Pangan',
+  ];
+
+  const diamond = getProgressiveDiamondReward(completionCount);
+
+  if (productKey && productRewardCategories.includes(card.categoryLabel)) {
+    return {
+      sda: {
+        amount: getProgressiveSdaReward(completionCount),
+        productKey,
+      },
+      diamond,
+    };
+  }
+
+  return {
+    neo: getProgressiveNeoReward(completionCount),
+    diamond,
+  };
+}
+
+// =====================================================================
+// ROUTING MISI
+// =====================================================================
 function getMissionRoute(mission: Pick<MissionCard, 'id' | 'category'>): MissionNavigationTarget {
   const { id, category } = mission;
   let menuId = MISSION_CATEGORY_MENU[category];
@@ -220,61 +336,23 @@ function getMissionRoute(mission: Pick<MissionCard, 'id' | 'category'>): Mission
   return target;
 }
 
-function getMissionRewardPreview(card: MissionCard): string {
-  const productKey = PRODUCTION_KEYS_BY_MISSION[card.id];
-  const productRewardCategories = [
-    'Mineral & Energi',
-    'Manufaktur',
-    'Peternakan',
-    'Agrikultur',
-    'Perikanan',
-    'Olahan Pangan',
-  ];
-
-  if (productKey && productRewardCategories.includes(card.categoryLabel)) {
-    return `5.000–25.000 ${formatProductionProductName(productKey)}`;
-  }
-
-  switch (card.category) {
-    case 'event':
-      return 'Rp5.000–15.000 + kepuasan rakyat';
-    case 'kesejahteraan':
-    case 'populasi':
-      return 'Rp5.000–15.000 + kesejahteraan rakyat';
-    case 'ekonomi':
-      return 'Rp5.000–20.000 + stabilitas ekonomi';
-    case 'produksi':
-    case 'pangan':
-      return 'Rp5.000–25.000 + kapasitas energi';
-    case 'layanan_publik':
-      return 'Rp5.000–20.000 + kualitas layanan';
-    case 'hunian':
-      return 'Rp5.000–20.000 + kapasitas hunian';
-    case 'penelitian':
-      return 'Rp5.000–20.000 + kemajuan riset';
-    case 'pertahanan':
-      return 'Rp5.000–25.000 + kesiapan pertahanan';
-    case 'geopolitik':
-      return 'Rp5.000–15.000 + pengaruh diplomatik';
-    case 'resolusi_pbb':
-    case 'resolusi_dk_pbb':
-    case 'organisasi_pbb':
-    case 'organisasi_regional':
-      return 'Rp5.000–15.000 + pengaruh internasional';
-    case 'sosial_budaya':
-      return 'Rp5.000–15.000 + stabilitas sosial';
-    case 'kementerian':
-    case 'kabinet':
-      return 'Rp5.000–15.000 + efektivitas pemerintahan';
-    case 'krisis':
-      return 'Rp10.000–25.000 + stabilitas nasional';
-    default:
-      return 'Hadiah akan ditentukan';
+/** Helper untuk menambah saldo player_diamonds */
+export function addPlayerDiamonds(amount: number): number {
+  if (typeof window === 'undefined' || amount <= 0) return 0;
+  try {
+    const saved = localStorage.getItem('player_diamonds');
+    const current = saved !== null ? parseInt(saved, 10) || 0 : 150;
+    const nextTotal = current + amount;
+    localStorage.setItem('player_diamonds', nextTotal.toString());
+    window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: nextTotal, added: amount } }));
+    return nextTotal;
+  } catch {
+    return 0;
   }
 }
 
 // =====================================================================
-// DATA MISI LENGKAP
+// DATA MISI
 // =====================================================================
 const MISSION_CARDS: MissionCard[] = [
   // ═══ 1. GELAR ACARA ═══
@@ -288,7 +366,7 @@ const MISSION_CARDS: MissionCard[] = [
   { id: 'event_balap_f1',         category: 'event', categoryLabel: 'Gelar Acara', icon: Rocket,       accent: '#FBBF24', title: 'Grand Prix Balap F1' },
   { id: 'kepuasan_target',        category: 'event', categoryLabel: 'Gelar Acara', icon: Smile,        accent: '#FBBF24', title: 'Capai Indeks Kepuasan Rakyat 80%' },
 
-  // ═══ 2. NAIKKAN KESEJAHTERAAN (BARU) ═══
+  // ═══ 2. KESEJAHTERAAN ═══
   { id: 'kes_bantuan_tunai',      category: 'kesejahteraan', categoryLabel: 'Bantuan Sosial', icon: Banknote,   accent: '#22D3EE', title: 'Bantuan Tunai Langsung' },
   { id: 'kes_subsidi_pangan',     category: 'kesejahteraan', categoryLabel: 'Bantuan Sosial', icon: Wheat,      accent: '#22D3EE', title: 'Subsidi Pangan Pokok' },
   { id: 'kes_bantuan_pendidikan', category: 'kesejahteraan', categoryLabel: 'Bantuan Sosial', icon: BookOpen,   accent: '#22D3EE', title: 'Bantuan Pendidikan Siswa' },
@@ -456,49 +534,49 @@ const MISSION_CARDS: MissionCard[] = [
   { id: 'program_icbm',           category: 'pertahanan', categoryLabel: 'Senjata Strategis', icon: Atom, accent: '#FB7185', title: 'Pengembangan Fasilitas Rudal ICBM' },
   { id: 'silo_nuklir',            category: 'pertahanan', categoryLabel: 'Senjata Strategis', icon: Atom, accent: '#FB7185', title: 'Kesiapan Peluncuran Hulu Ledak Nuklir' },
 
-  // ═══ 23. GEOPOLITIK — DIPLOMASI & HUBUNGAN ═══
+  // ═══ 23. GEOPOLITIK ═══
   { id: 'bangun_kedubes',         category: 'geopolitik', categoryLabel: 'Kedutaan Besar',   icon: Landmark,       accent: '#38BDF8', title: 'Bangun Kedutaan Besar Bilateral' },
   { id: 'naikkan_hubungan',       category: 'geopolitik', categoryLabel: 'Tingkat Hubungan', icon: HeartHandshake, accent: '#38BDF8', title: 'Tingkatkan Hubungan Bilateral Positif' },
   { id: 'pakta_non_agresi',       category: 'geopolitik', categoryLabel: 'Diplomasi',         icon: HeartHandshake, accent: '#38BDF8', title: 'Ratifikasi Pakta Non-Agresi' },
   { id: 'aliansi_pertahanan',     category: 'geopolitik', categoryLabel: 'Diplomasi',         icon: Shield,         accent: '#38BDF8', title: 'Bentuk Aliansi Pertahanan Militer' },
   { id: 'kontrak_penelitian',     category: 'geopolitik', categoryLabel: 'Diplomasi',         icon: Atom,           accent: '#38BDF8', title: 'Kerja Sama Kontrak Penelitian Internasional' },
 
-  // ═══ 24. RESOLUSI PBB (BARU) ═══
-  { id: 'resolusi_larangan_perang',    category: 'resolusi_pbb', categoryLabel: 'Resolusi PBB', icon: Shield, accent: '#38BDF8', title: 'Larangan Perang' },
-  { id: 'resolusi_embargo_senjata',    category: 'resolusi_pbb', categoryLabel: 'Resolusi PBB', icon: Swords, accent: '#38BDF8', title: 'Embargo Penjualan Senjata' },
+  // ═══ 24. RESOLUSI PBB ═══
+  { id: 'resolusi_larangan_perang',    category: 'resolusi_pbb', categoryLabel: 'Resolusi PBB', icon: Shield,   accent: '#38BDF8', title: 'Larangan Perang' },
+  { id: 'resolusi_embargo_senjata',    category: 'resolusi_pbb', categoryLabel: 'Resolusi PBB', icon: Swords,   accent: '#38BDF8', title: 'Embargo Penjualan Senjata' },
   { id: 'resolusi_embargo_ekonomi',    category: 'resolusi_pbb', categoryLabel: 'Resolusi PBB', icon: Banknote, accent: '#38BDF8', title: 'Embargo Ekonomi' },
-  { id: 'resolusi_invasi',             category: 'resolusi_pbb', categoryLabel: 'Resolusi PBB', icon: Globe, accent: '#38BDF8', title: 'Resolusi Invasi' },
-  { id: 'resolusi_larangan_produksi',  category: 'resolusi_pbb', categoryLabel: 'Resolusi PBB', icon: Factory, accent: '#38BDF8', title: 'Larangan Produksi' },
+  { id: 'resolusi_invasi',             category: 'resolusi_pbb', categoryLabel: 'Resolusi PBB', icon: Globe,    accent: '#38BDF8', title: 'Resolusi Invasi' },
+  { id: 'resolusi_larangan_produksi',  category: 'resolusi_pbb', categoryLabel: 'Resolusi PBB', icon: Factory,  accent: '#38BDF8', title: 'Larangan Produksi' },
 
-  // ═══ 25. RESOLUSI DEWAN KEAMANAN PBB (BARU) ═══
-  { id: 'dk_invasi_militer',      category: 'resolusi_dk_pbb', categoryLabel: 'Dewan Keamanan', icon: Swords, accent: '#A78BFA', title: 'Invasi Militer' },
+  // ═══ 25. RESOLUSI DEWAN KEAMANAN PBB ═══
+  { id: 'dk_invasi_militer',      category: 'resolusi_dk_pbb', categoryLabel: 'Dewan Keamanan', icon: Swords,         accent: '#A78BFA', title: 'Invasi Militer' },
   { id: 'dk_dukung_negara',       category: 'resolusi_dk_pbb', categoryLabel: 'Dewan Keamanan', icon: HeartHandshake, accent: '#A78BFA', title: 'Dukung Negara' },
-  { id: 'dk_blokade_ekonomi',     category: 'resolusi_dk_pbb', categoryLabel: 'Dewan Keamanan', icon: Banknote, accent: '#A78BFA', title: 'Blokade Ekonomi' },
-  { id: 'dk_blokade_laut',        category: 'resolusi_dk_pbb', categoryLabel: 'Dewan Keamanan', icon: Ship, accent: '#A78BFA', title: 'Blokade Laut' },
-  { id: 'dk_blokade_penuh',       category: 'resolusi_dk_pbb', categoryLabel: 'Dewan Keamanan', icon: Shield, accent: '#A78BFA', title: 'Blokade Penuh' },
-  { id: 'dk_bantuan_logistik',    category: 'resolusi_dk_pbb', categoryLabel: 'Dewan Keamanan', icon: Package, accent: '#A78BFA', title: 'Bantuan Logistik' },
+  { id: 'dk_blokade_ekonomi',     category: 'resolusi_dk_pbb', categoryLabel: 'Dewan Keamanan', icon: Banknote,       accent: '#A78BFA', title: 'Blokade Ekonomi' },
+  { id: 'dk_blokade_laut',        category: 'resolusi_dk_pbb', categoryLabel: 'Dewan Keamanan', icon: Ship,           accent: '#A78BFA', title: 'Blokade Laut' },
+  { id: 'dk_blokade_penuh',       category: 'resolusi_dk_pbb', categoryLabel: 'Dewan Keamanan', icon: Shield,         accent: '#A78BFA', title: 'Blokade Penuh' },
+  { id: 'dk_bantuan_logistik',    category: 'resolusi_dk_pbb', categoryLabel: 'Dewan Keamanan', icon: Package,        accent: '#A78BFA', title: 'Bantuan Logistik' },
 
-  // ═══ 26. ORGANISASI PBB (BARU) ═══
-  { id: 'pbb_interpol',           category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Shield, accent: '#0EA5E9', title: 'Interpol' },
+  // ═══ 26. ORGANISASI PBB ═══
+  { id: 'pbb_interpol',           category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Shield,     accent: '#0EA5E9', title: 'Interpol' },
   { id: 'pbb_who',                category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: HeartPulse, accent: '#0EA5E9', title: 'WHO - Organisasi Kesehatan Dunia' },
-  { id: 'pbb_unesco',             category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Palette_PH, accent: '#0EA5E9', title: 'UNESCO' },
-  { id: 'pbb_wto',                category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Coins, accent: '#0EA5E9', title: 'WTO - Organisasi Perdagangan Dunia' },
-  { id: 'pbb_ilo',                category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Users2, accent: '#0EA5E9', title: 'ILO - Organisasi Buruh Internasional' },
-  { id: 'pbb_fao',                category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Wheat, accent: '#0EA5E9', title: 'FAO - Organisasi Pangan & Pertanian' },
-  { id: 'pbb_imo',                category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Ship, accent: '#0EA5E9', title: 'IMO - Organisasi Maritim Internasional' },
-  { id: 'pbb_itu',                category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Radio, accent: '#0EA5E9', title: 'ITU - Organisasi Telekomunikasi' },
-  { id: 'pbb_wmo',                category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Wind, accent: '#0EA5E9', title: 'WMO - Organisasi Meteorologi Dunia' },
+  { id: 'pbb_unesco',             category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Star,       accent: '#0EA5E9', title: 'UNESCO' },
+  { id: 'pbb_wto',                category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Coins,      accent: '#0EA5E9', title: 'WTO - Organisasi Perdagangan Dunia' },
+  { id: 'pbb_ilo',                category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Users2,     accent: '#0EA5E9', title: 'ILO - Organisasi Buruh Internasional' },
+  { id: 'pbb_fao',                category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Wheat,      accent: '#0EA5E9', title: 'FAO - Organisasi Pangan & Pertanian' },
+  { id: 'pbb_imo',                category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Ship,       accent: '#0EA5E9', title: 'IMO - Organisasi Maritim Internasional' },
+  { id: 'pbb_itu',                category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Radio,      accent: '#0EA5E9', title: 'ITU - Organisasi Telekomunikasi' },
+  { id: 'pbb_wmo',                category: 'organisasi_pbb', categoryLabel: 'Badan PBB', icon: Wind,       accent: '#0EA5E9', title: 'WMO - Organisasi Meteorologi Dunia' },
 
-  // ═══ 27. ORGANISASI REGIONAL (BARU) ═══
-  { id: 'reg_asean',              category: 'organisasi_regional', categoryLabel: 'Regional', icon: Globe, accent: '#10B981', title: 'ASEAN - Asia Tenggara' },
-  { id: 'reg_eu',                 category: 'organisasi_regional', categoryLabel: 'Regional', icon: Star, accent: '#10B981', title: 'Uni Eropa (EU)' },
-  { id: 'reg_liga_arab',          category: 'organisasi_regional', categoryLabel: 'Regional', icon: Globe, accent: '#10B981', title: 'Liga Arab' },
-  { id: 'reg_uni_afrika',         category: 'organisasi_regional', categoryLabel: 'Regional', icon: Globe, accent: '#10B981', title: 'Uni Afrika (AU)' },
-  { id: 'reg_oki',                category: 'organisasi_regional', categoryLabel: 'Regional', icon: Star, accent: '#10B981', title: 'OKI - Organisasi Kerja Sama Islam' },
-  { id: 'reg_brics',              category: 'organisasi_regional', categoryLabel: 'Regional', icon: Coins, accent: '#10B981', title: 'BRICS' },
-  { id: 'reg_nato',               category: 'organisasi_regional', categoryLabel: 'Regional', icon: Shield, accent: '#10B981', title: 'NATO - Pakta Pertahanan Atlantik Utara' },
+  // ═══ 27. ORGANISASI REGIONAL ═══
+  { id: 'reg_asean',              category: 'organisasi_regional', categoryLabel: 'Regional', icon: Globe,   accent: '#10B981', title: 'ASEAN - Asia Tenggara' },
+  { id: 'reg_eu',                 category: 'organisasi_regional', categoryLabel: 'Regional', icon: Star,    accent: '#10B981', title: 'Uni Eropa (EU)' },
+  { id: 'reg_liga_arab',          category: 'organisasi_regional', categoryLabel: 'Regional', icon: Globe,   accent: '#10B981', title: 'Liga Arab' },
+  { id: 'reg_uni_afrika',         category: 'organisasi_regional', categoryLabel: 'Regional', icon: Globe,   accent: '#10B981', title: 'Uni Afrika (AU)' },
+  { id: 'reg_oki',                category: 'organisasi_regional', categoryLabel: 'Regional', icon: Star,    accent: '#10B981', title: 'OKI - Organisasi Kerja Sama Islam' },
+  { id: 'reg_brics',              category: 'organisasi_regional', categoryLabel: 'Regional', icon: Coins,   accent: '#10B981', title: 'BRICS' },
+  { id: 'reg_nato',               category: 'organisasi_regional', categoryLabel: 'Regional', icon: Shield,  accent: '#10B981', title: 'NATO - Pakta Pertahanan Atlantik Utara' },
   { id: 'reg_opec',               category: 'organisasi_regional', categoryLabel: 'Regional', icon: Droplet, accent: '#10B981', title: 'OPEC - Negara Pengekspor Minyak' },
-  { id: 'reg_g20',                category: 'organisasi_regional', categoryLabel: 'Regional', icon: Globe, accent: '#10B981', title: 'G20 - Kelompok Duapuluh' },
+  { id: 'reg_g20',                category: 'organisasi_regional', categoryLabel: 'Regional', icon: Globe,   accent: '#10B981', title: 'G20 - Kelompok Duapuluh' },
 
   // ═══ 28. SOSIAL, BUDAYA & IDEOLOGI ═══
   { id: 'toleransi_agama',        category: 'sosial_budaya', categoryLabel: 'Agama',       icon: Star,   accent: '#E879F9', title: 'Harmoni & Kehidupan Beragama' },
@@ -528,7 +606,7 @@ const MISSION_CARDS: MissionCard[] = [
   { id: 'hapus_tunawisma',        category: 'populasi', categoryLabel: 'Populasi', icon: Home,       accent: '#10B981', title: 'Entaskan Warga Tunawisma ke Hunian Layak' },
   { id: 'indeks_kesejahteraan',   category: 'populasi', categoryLabel: 'Populasi', icon: Activity,   accent: '#10B981', title: 'Capai Indeks Kesejahteraan Rakyat 75%' },
 
-  // ═══ 31. RISET & PENELITIAN TEKNOLOGI (BARU) ═══
+  // ═══ 31. RISET & PENELITIAN ═══
   { id: 'riset_otomasi',          category: 'penelitian', categoryLabel: 'Riset Ekonomi', icon: Microscope, accent: '#00FFAA', title: 'Riset Otomasi Fabrikasi & Semikonduktor' },
   { id: 'riset_rekayasa_material',category: 'penelitian', categoryLabel: 'Riset Ekonomi', icon: Microscope, accent: '#00FFAA', title: 'Riset Rekayasa Material Manufaktur' },
   { id: 'riset_eksplorasi_sda',   category: 'penelitian', categoryLabel: 'Riset Ekonomi', icon: Microscope, accent: '#00FFAA', title: 'Riset Eksplorasi Mineral & Energi' },
@@ -537,7 +615,7 @@ const MISSION_CARDS: MissionCard[] = [
   { id: 'riset_perikanan_terpadu',category: 'penelitian', categoryLabel: 'Riset Ekonomi', icon: Microscope, accent: '#00FFAA', title: 'Riset Budidaya Perikanan Terpadu' },
   { id: 'riset_pangan_dasar',     category: 'penelitian', categoryLabel: 'Riset Ekonomi', icon: Microscope, accent: '#00FFAA', title: 'Riset Pengolahan Pangan Dasar' },
   { id: 'riset_pos_perbatasan',   category: 'penelitian', categoryLabel: 'Riset Militer', icon: Shield,     accent: '#FB7185', title: 'Riset Pos Pertahanan Perbatasan' },
-  { id: 'riset_senjata_presisi',  category: 'penelitian', categoryLabel: 'Riset Militer', icon: Crosshair_PH,accent: '#FB7185', title: 'Riset Senapan Serbu Presisi' },
+  { id: 'riset_senjata_presisi',  category: 'penelitian', categoryLabel: 'Riset Militer', icon: Target,     accent: '#FB7185', title: 'Riset Senapan Serbu Presisi' },
   { id: 'riset_tank_komposit',    category: 'penelitian', categoryLabel: 'Riset Militer', icon: Shield,     accent: '#FB7185', title: 'Riset Tank Tempur Komposit' },
   { id: 'riset_drone_otonom',     category: 'penelitian', categoryLabel: 'Riset Militer', icon: Radio,      accent: '#FB7185', title: 'Riset Drone Pengintai Taktis' },
   { id: 'riset_radar_pesisir',    category: 'penelitian', categoryLabel: 'Riset Militer', icon: Radio,      accent: '#FB7185', title: 'Riset Radar Pesisir Pantai' },
@@ -547,17 +625,17 @@ const MISSION_CARDS: MissionCard[] = [
   { id: 'riset_aliansi_tahan',    category: 'penelitian', categoryLabel: 'Riset Diplomasi', icon: Shield,   accent: '#38BDF8', title: 'Riset Protokol Aliansi Pertahanan' },
   { id: 'riset_harmonisasi_fiskal',category: 'penelitian', categoryLabel: 'Riset Diplomasi', icon: Coins,   accent: '#38BDF8', title: 'Riset Harmonisasi Fiskal Global' },
   { id: 'riset_mitigasi_bencana', category: 'penelitian', categoryLabel: 'Riset Diplomasi', icon: Leaf,    accent: '#38BDF8', title: 'Riset Mitigasi Bencana Alam Global' },
-  { id: 'riset_upgrade_card',     category: 'penelitian', categoryLabel: 'Riset Umum',     icon: Sparkles,  accent: '#00FFAA', title: 'Tingkatkan Kartu Riset ke Level II / III' },
+  { id: 'riset_upgrade_card',     category: 'penelitian', categoryLabel: 'Riset Umum',     icon: Sparkles, accent: '#00FFAA', title: 'Tingkatkan Kartu Riset ke Level II / III' },
 
-  // ═══ 32. REKRUTMEN MENTERI & KABINET (BARU) ═══
-  { id: 'menteri_rekrut_keuangan',   category: 'kabinet', categoryLabel: 'Rekrutmen Menteri', icon: Banknote, accent: '#F97316', title: 'Angkat Menteri Keuangan Profesional' },
-  { id: 'menteri_rekrut_pertahanan', category: 'kabinet', categoryLabel: 'Rekrutmen Menteri', icon: Shield,   accent: '#F97316', title: 'Angkat Menteri Pertahanan Veteran' },
-  { id: 'menteri_rekrut_pendidikan', category: 'kabinet', categoryLabel: 'Rekrutmen Menteri', icon: BookOpen, accent: '#F97316', title: 'Angkat Menteri Pendidikan Cendekiawan' },
-  { id: 'menteri_rekrut_kesehatan',  category: 'kabinet', categoryLabel: 'Rekrutmen Menteri', icon: HeartPulse,accent: '#F97316', title: 'Angkat Menteri Kesehatan Spesialis' },
-  { id: 'menteri_rekrut_polisi',     category: 'kabinet', categoryLabel: 'Rekrutmen Menteri', icon: Siren,    accent: '#F97316', title: 'Angkat Kepala Polisi Berintegritas' },
-  { id: 'menteri_rekrut_tier_tinggi',category: 'kabinet', categoryLabel: 'Rekrutmen Menteri', icon: Crown,    accent: '#F97316', title: 'Rekrut Tokoh Menteri Berbakat (Tier IV / V)' },
+  // ═══ 32. REKRUTMEN MENTERI & KABINET ═══
+  { id: 'menteri_rekrut_keuangan',   category: 'kabinet', categoryLabel: 'Rekrutmen Menteri', icon: Banknote,   accent: '#F97316', title: 'Angkat Menteri Keuangan Profesional' },
+  { id: 'menteri_rekrut_pertahanan', category: 'kabinet', categoryLabel: 'Rekrutmen Menteri', icon: Shield,     accent: '#F97316', title: 'Angkat Menteri Pertahanan Veteran' },
+  { id: 'menteri_rekrut_pendidikan', category: 'kabinet', categoryLabel: 'Rekrutmen Menteri', icon: BookOpen,   accent: '#F97316', title: 'Angkat Menteri Pendidikan Cendekiawan' },
+  { id: 'menteri_rekrut_kesehatan',  category: 'kabinet', categoryLabel: 'Rekrutmen Menteri', icon: HeartPulse, accent: '#F97316', title: 'Angkat Menteri Kesehatan Spesialis' },
+  { id: 'menteri_rekrut_polisi',     category: 'kabinet', categoryLabel: 'Rekrutmen Menteri', icon: Siren,      accent: '#F97316', title: 'Angkat Kepala Polisi Berintegritas' },
+  { id: 'menteri_rekrut_tier_tinggi',category: 'kabinet', categoryLabel: 'Rekrutmen Menteri', icon: Crown,      accent: '#F97316', title: 'Rekrut Tokoh Menteri Berbakat (Tier IV / V)' },
 
-  // ═══ 33. KRISIS, BENCANA & TANGGAP DARURAT (BARU) ═══
+  // ═══ 33. KRISIS, BENCANA & TANGGAP DARURAT ═══
   { id: 'krisis_bencana_alam',    category: 'krisis', categoryLabel: 'Tanggap Darurat', icon: Waves,      accent: '#EF4444', title: 'Salurkan Bantuan Darurat Bencana Alam' },
   { id: 'krisis_wabah_penyakit',  category: 'krisis', categoryLabel: 'Tanggap Darurat', icon: HeartPulse, accent: '#EF4444', title: 'Tangani Wabah Penyakit & Salurkan Vaksin' },
   { id: 'krisis_operasi_polisi',  category: 'krisis', categoryLabel: 'Keamanan Nasional',icon: Siren,     accent: '#EF4444', title: 'Danai Operasi Penumpasan Kriminalitas' },
@@ -565,36 +643,34 @@ const MISSION_CARDS: MissionCard[] = [
   { id: 'krisis_klaim_hadiah',    category: 'krisis', categoryLabel: 'Logistik',        icon: Package,   accent: '#EF4444', title: 'Klaim Hadiah Bantuan SDA Harian' },
 ];
 
-// Placeholder untuk icon
-function Palette_PH(props: any) {
-  return <Star {...props} />;
-}
-function Crosshair_PH(props: any) {
-  return <Target {...props} />;
-}
-
+// =====================================================================
+// KATEGORI FILTER
+// =====================================================================
 const CATEGORIES: { key: MissionCategory; label: string; icon: React.ElementType }[] = [
-  { key: 'event',               label: 'Gelar Acara',       icon: Trophy },
-  { key: 'kesejahteraan',       label: 'Kesejahteraan',     icon: Sparkles },
-  { key: 'ekonomi',             label: 'Ekonomi',           icon: Coins },
-  { key: 'produksi',            label: 'Produksi',          icon: Factory },
-  { key: 'pangan',              label: 'Pangan',            icon: Wheat },
-  { key: 'layanan_publik',      label: 'Layanan Publik',    icon: Building2 },
-  { key: 'hunian',              label: 'Hunian',            icon: Home },
-  { key: 'penelitian',          label: 'Penelitian',        icon: Microscope },
-  { key: 'pertahanan',          label: 'Pertahanan',        icon: Radio },
-  { key: 'geopolitik',          label: 'Geopolitik',        icon: Globe },
-  { key: 'resolusi_pbb',        label: 'Resolusi PBB',      icon: Globe },
-  { key: 'resolusi_dk_pbb',     label: 'Dewan Keamanan',    icon: Shield },
-  { key: 'organisasi_pbb',      label: 'Organisasi PBB',    icon: Landmark },
+  { key: 'event',               label: 'Gelar Acara',         icon: Trophy },
+  { key: 'kesejahteraan',       label: 'Kesejahteraan',       icon: Sparkles },
+  { key: 'ekonomi',             label: 'Ekonomi',             icon: Coins },
+  { key: 'produksi',            label: 'Produksi',            icon: Factory },
+  { key: 'pangan',              label: 'Pangan',              icon: Wheat },
+  { key: 'layanan_publik',      label: 'Layanan Publik',      icon: Building2 },
+  { key: 'hunian',              label: 'Hunian',              icon: Home },
+  { key: 'penelitian',          label: 'Penelitian',          icon: Microscope },
+  { key: 'pertahanan',          label: 'Pertahanan',          icon: Radio },
+  { key: 'geopolitik',          label: 'Geopolitik',          icon: Globe },
+  { key: 'resolusi_pbb',        label: 'Resolusi PBB',        icon: Globe },
+  { key: 'resolusi_dk_pbb',     label: 'Dewan Keamanan',      icon: Shield },
+  { key: 'organisasi_pbb',      label: 'Organisasi PBB',      icon: Landmark },
   { key: 'organisasi_regional', label: 'Organisasi Regional', icon: Globe },
-  { key: 'sosial_budaya',       label: 'Sosial Budaya',     icon: Star },
-  { key: 'kementerian',         label: 'Kementerian',       icon: Landmark },
-  { key: 'kabinet',             label: 'Pilih Menteri',     icon: Crown },
-  { key: 'krisis',              label: 'Krisis & Darurat',  icon: Siren },
-  { key: 'populasi',            label: 'Populasi',          icon: Users2 },
+  { key: 'sosial_budaya',       label: 'Sosial Budaya',       icon: Star },
+  { key: 'kementerian',         label: 'Kementerian',         icon: Landmark },
+  { key: 'kabinet',             label: 'Pilih Menteri',       icon: Crown },
+  { key: 'krisis',              label: 'Krisis & Darurat',    icon: Siren },
+  { key: 'populasi',            label: 'Populasi',            icon: Users2 },
 ];
 
+// =====================================================================
+// KOMPONEN UTAMA
+// =====================================================================
 export default function MissionModals({
   isOpen = false,
   onClose,
@@ -603,9 +679,22 @@ export default function MissionModals({
 }: MissionModalsProps) {
   const [mounted, setMounted] = useState(false);
   const [activeCategory, setActiveCategory] = useState<MissionCategory>('event');
+  const [completionsMap, setCompletionsMap] = useState<Record<string, number>>({});
 
   useEffect(() => {
     setMounted(true);
+    setCompletionsMap(getMissionCompletionsMap());
+
+    const handleUpdate = () => {
+      setCompletionsMap(getMissionCompletionsMap());
+    };
+
+    window.addEventListener('mission_completions_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('mission_completions_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
   }, []);
 
   const filteredCards = MISSION_CARDS.filter(card => card.category === activeCategory);
@@ -680,14 +769,18 @@ export default function MissionModals({
               })}
             </div>
 
-            {/* BODY — List Vertikal */}
+            {/* BODY */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A] relative z-10 custom-scrollbar space-y-3">
               <div className="flex items-center gap-2 rounded-lg border border-amber-400/20 bg-amber-400/5 px-3 py-2 text-[10px] font-semibold text-amber-200/80">
                 <Gift className="h-3.5 w-3.5 shrink-0 text-amber-300" />
-                Pratinjau hadiah usulan. Hadiah belum aktif dan belum dapat diklaim.
+                Pratinjau hadiah bertingkat: misi awal mulai dari nilai terkecil dan meningkat setiap kali diselesaikan.
               </div>
+
               {filteredCards.map(card => {
                 const Icon = card.icon;
+                const completionCount = completionsMap[card.id] || 0;
+                const badges = getMissionRewardBadges(card, completionCount);
+
                 return (
                   <div
                     key={card.id}
@@ -726,13 +819,31 @@ export default function MissionModals({
                           </span>
                         )}
                       </div>
-                      <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px]">
-                        <span className="inline-flex items-center gap-1 font-bold uppercase tracking-wide text-amber-300">
+
+                      {/* BADGES HADIAH USULAN */}
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-amber-300">
                           <Gift className="h-3 w-3" />
                           Hadiah usulan
                         </span>
-                        <span className="font-semibold text-[#C3D6D1]">
-                          {getMissionRewardPreview(card)}
+
+                        {badges.neo !== undefined && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-500/15 border border-blue-400/40 text-blue-200 font-black text-[10px]">
+                            <Coins className="h-3 w-3 text-blue-300" />
+                            {badges.neo.toLocaleString('id-ID')} NEO
+                          </span>
+                        )}
+
+                        {badges.sda && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-500/15 border border-orange-400/40 text-orange-200 font-black text-[10px]">
+                            <Package className="h-3 w-3 text-orange-300" />
+                            {badges.sda.amount.toLocaleString('id-ID')} {formatProductionProductName(badges.sda.productKey)}
+                          </span>
+                        )}
+
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-500/15 border border-cyan-400/40 text-cyan-200 font-black text-[10px]">
+                          <Gem className="h-3 w-3 text-cyan-300" />
+                          {badges.diamond} Gems
                         </span>
                       </div>
                     </div>

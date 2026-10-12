@@ -65,8 +65,8 @@ export const GAME_SHORTCUTS: Record<string, ShortcutDefinition> = {
   NAV_CLOSE: { key: 'Escape', code: 'Escape', label: 'Esc', description: '❌ Tutup Panel Aktif', category: 'Navigasi Panel', action: 'NAV_CLOSE' },
 
   // ⚡ 5. Menu Cepat
-  OPEN_TOP_UP: { key: 'F2', code: 'F2', label: 'F2', description: '💎 Buka menu Top Up Diamond', category: 'Menu Cepat', action: 'OPEN_TOP_UP' },
-  OPEN_MISSION: { key: 'F3', code: 'F3', label: 'F3', description: '🎯 Buka Misi Presiden', category: 'Menu Cepat', action: 'OPEN_MISSION' },
+  OPEN_TOP_UP: { key: 'F', code: 'KeyF', label: 'Shift + F', description: '💎 Buka menu Top Up Diamond', category: 'Menu Cepat', action: 'OPEN_TOP_UP' },
+  OPEN_MISSION: { key: 'M', code: 'KeyM', label: 'Shift + M', description: '🎯 Buka Misi Presiden', category: 'Menu Cepat', action: 'OPEN_MISSION' },
 };
 
 /**
@@ -116,6 +116,19 @@ export function handleGameShortcut(e: KeyboardEvent, handlers: ShortcutHandlers)
 
   // Abaikan tombol jika menggabungkan Ctrl / Alt untuk shortcut browser dasar
   if (isCtrlOrCmd) return false;
+
+  if (e.shiftKey && keyLower === 'f') {
+    e.preventDefault();
+    dispatchGameShortcutEvent('OPEN_TOP_UP');
+    handlers.onOpenTopUp?.();
+    return true;
+  }
+  if (e.shiftKey && keyLower === 'm') {
+    e.preventDefault();
+    dispatchGameShortcutEvent('OPEN_MISSION');
+    handlers.onOpenMission?.();
+    return true;
+  }
 
   // 1. TOMBOL M -> TUTUP PAKSA SEMUA MODAL & KEMBALI KE MAP UTAMA
   if (keyLower === 'm') {
