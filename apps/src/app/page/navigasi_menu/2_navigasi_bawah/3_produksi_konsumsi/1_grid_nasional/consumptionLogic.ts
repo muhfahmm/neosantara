@@ -93,7 +93,7 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
 
   // 2. Sektor Tempat Umum — key disesuaikan dengan dataKey di metadata JSON dan kolom DB
   const tempatUmumKeys = [
-    // Infrastruktur (metadata_infrastruktur.json)
+    // Infrastruktur metadata
     { key: "jalur_sepeda", label: "Jalur Sepeda", sector: "Infrastruktur" },
     { key: "jalan_raya", label: "Jalan Raya & Tol", sector: "Infrastruktur" },
     { key: "terminal_bus", label: "Terminal Bus", sector: "Infrastruktur" },
@@ -102,7 +102,7 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
     { key: "pelabuhan", label: "Pelabuhan Laut", sector: "Infrastruktur" },
     { key: "bandara", label: "Bandara Udara", sector: "Infrastruktur" },
     { key: "helipad", label: "Helipad", sector: "Infrastruktur" },
-    // Pendidikan (metadata_pendidikan.json)
+    // Pendidikan metadata
     { key: "prasekolah", label: "PAUD & TK", sector: "Pendidikan" },
     { key: "dasar", label: "Sekolah Dasar (SD)", sector: "Pendidikan" },
     { key: "menengah", label: "Sekolah Menengah (SMP)", sector: "Pendidikan" },
@@ -113,11 +113,11 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
     { key: "observatorium", label: "Observatorium Antariksa", sector: "Pendidikan" },
     { key: "pusat_penelitian", label: "Pusat Penelitian", sector: "Pendidikan" },
     { key: "pusat_pengembangan", label: "Pusat Pengembangan & Inovasi", sector: "Pendidikan" },
-    // Kesehatan (metadata_kesehatan.json)
+    // Kesehatan metadata
     { key: "rumah_sakit_besar", label: "Rumah Sakit Umum Pusat", sector: "Kesehatan" },
     { key: "rumah_sakit_kecil", label: "Rumah Sakit Daerah", sector: "Kesehatan" },
     { key: "pusat_diagnostik", label: "Laboratorium Medik & Diagnostik", sector: "Kesehatan" },
-    // Hukum (metadata_hukum.json)
+    // Hukum metadata
     { key: "kejaksaan_court", label: "Kejaksaan & Peradilan", sector: "Hukum & Keamanan" },
     { key: "legal_aid", label: "Bantuan Hukum", sector: "Hukum & Keamanan" },
     { key: "pusat_bantuan_hukum", label: "Pusat Bantuan Hukum", sector: "Hukum & Keamanan" },
@@ -126,7 +126,7 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
     { key: "pos_polisi", label: "Pos Polisi", sector: "Hukum & Keamanan" },
     { key: "armada_mobil_polisi", label: "Armada Mobil Polisi", sector: "Hukum & Keamanan" },
     { key: "akademi_polisi", label: "Akademi Polisi", sector: "Hukum & Keamanan" },
-    // Olahraga (metadata_olahraga.json)
+    // Olahraga metadata
     { key: "kolam_renang", label: "Fasilitas Akuatik", sector: "Olahraga & Hiburan" },
     { key: "sirkuit_balap", label: "Sirkuit Balap", sector: "Olahraga & Hiburan" },
     { key: "stadium_int", label: "Stadion Internasional", sector: "Olahraga & Hiburan" },
@@ -134,11 +134,11 @@ export function getCountryConsumptionBreakdown(countryData: any, metadata: Recor
     { key: "lapangan_golf", label: "Lapangan Golf", sector: "Olahraga & Hiburan" },
     { key: "esports_arena", label: "Arena E-Sports", sector: "Olahraga & Hiburan" },
     { key: "gokart_circuit", label: "Sirkuit Gokart", sector: "Olahraga & Hiburan" },
-    // Komersial (metadata_komersial.json)
+    // Komersial metadata
     { key: "pusat_belanja", label: "Pusat Perbelanjaan / Mall", sector: "Komersial" },
     { key: "hotel", label: "Hotel & Resort", sector: "Komersial" },
     { key: "pusat_grosir_tekstil", label: "Pusat Grosir", sector: "Komersial" },
-    // Hiburan (metadata_hiburan.json)
+    // Hiburan metadata
     { key: "bioskop", label: "Bioskop", sector: "Hiburan" },
     { key: "gedung_teater", label: "Gedung Teater", sector: "Hiburan" },
   ];

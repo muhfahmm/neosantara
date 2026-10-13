@@ -9,7 +9,7 @@ import { getArmadaCapacityInfo, getInfraCapacityDetails } from "../logic/infraCa
 import KonfirmasiArmadaAktifModal from "../2_modals_konfirmasi_pembangunan/1_konfirmasi_armada_aktif_modal";
 import InfoArmadaAktifModal from "../modals_info/1_info_armada_aktif_modal";
 import { REQUIREMENTS as INFANTERI_REQUIREMENTS, findRequirements as findInfanteriRequirements } from "../construction_support/1_barak_militer/requirements";
-import armadaMetadata from "../../../../../../../../../json/semua_fitur_negara/2_pertahanan/1_armada_militer/metadata_armada_militer.json";
+import { getBuildingMetadata } from "@/lib/buildingMetadataRegistry";
 
 interface TabProps {
   countryDetail: any;
@@ -203,7 +203,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
   const [isConfirmBuildOpen, setIsConfirmBuildOpen] = useState(false);
 
   const buildTimeForKey = (key: string): number => {
-    const meta = (armadaMetadata as Record<string, any>)[key];
+    const meta = getBuildingMetadata()[key];
     if (meta && typeof meta.waktu_pembangunan_armada_aktif === 'number') {
       return meta.waktu_pembangunan_armada_aktif;
     }
@@ -211,7 +211,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
   };
 
   const costForKey = (key: string): number => {
-    const meta = (armadaMetadata as Record<string, any>)[key];
+    const meta = getBuildingMetadata()[key];
     if (meta && typeof meta.biaya_pembangunan === 'number') {
       return meta.biaya_pembangunan;
     }
@@ -500,7 +500,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
           }}
           buildingLabel={selectedForBuild.label}
           buildingDescription={selectedForBuild.label}
-          cost={Number((armadaMetadata as Record<string, any>)[selectedForBuild.key]?.biaya_pembangunan ?? 0)}
+          cost={Number(getBuildingMetadata()[selectedForBuild.key]?.biaya_pembangunan ?? 0)}
           waktuPembangunan={buildTimeForKey(selectedForBuild.key)}
           requirements={selectedForBuild.key === "barak" ? (findInfanteriRequirements("barak")?.requirements || []) : []}
           materialStocks={calculateMaterialStocks(countryDetail)}

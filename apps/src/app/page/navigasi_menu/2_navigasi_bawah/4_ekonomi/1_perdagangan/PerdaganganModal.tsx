@@ -31,7 +31,7 @@ import {
   getAverageNationalization,
 } from "./tradeAccessLogic";
 import {
-  ARMS_TRADE_PRODUCTS,
+  getArmsTradeProducts,
   getArmsTransferUpdate,
   getArmsUnitCount,
 } from "./armsTradeLogic";
@@ -526,7 +526,7 @@ export default function PerdaganganModal({
       const partnerBudget = Math.max(0, Number(partner.anggaran) || 0);
       const candidates: PartnerOffer[] = [];
 
-      for (const product of [...ARMS_TRADE_PRODUCTS].sort(() => Math.random() - 0.5)) {
+      for (const product of [...getArmsTradeProducts()].sort(() => Math.random() - 0.5)) {
         const partnerStock = getArmsUnitCount(partner, product);
         const playerStock = getArmsUnitCount(countryDetail, product);
         const maxQuantity = Math.max(1, Math.min(50, Math.floor(Math.max(partnerStock, playerStock) * 0.05)));
@@ -761,7 +761,7 @@ export default function PerdaganganModal({
         return;
       }
       const partner = applyNpcCountrySimulationState(rawPartner);
-      const product = ARMS_TRADE_PRODUCTS.find(item => item.dataKey === offer.productKey);
+      const product = getArmsTradeProducts().find(item => item.dataKey === offer.productKey);
       if (!product) {
         alert("Jenis alutsista pada tawaran tidak dikenali.");
         return;

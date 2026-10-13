@@ -1,4 +1,4 @@
-import armadaMetadata from "../../../../../../../../json/semua_fitur_negara/2_pertahanan/1_armada_militer/metadata_armada_militer.json";
+import { getBuildingMetadata } from "@/lib/buildingMetadataRegistry";
 
 export interface ArmsTradeProduct {
   dataKey: string;
@@ -32,18 +32,20 @@ const productLabels: Record<string, string> = {
   pesawat_angkut: "Pesawat Angkut",
 };
 
-const rawMetadata = armadaMetadata as Record<string, {
+type ArmadaMetadata = {
   dataKey: string;
   groupId: string;
   biaya_pembangunan: number;
-}>;
+};
 
 const asRecord = (value: unknown): Record<string, unknown> =>
   value && typeof value === "object" && !Array.isArray(value)
     ? value as Record<string, unknown>
     : {};
 
-export const ARMS_TRADE_PRODUCTS: ArmsTradeProduct[] = Object.values(rawMetadata)
+export const getArmsTradeProducts = (): ArmsTradeProduct[] =>
+  Object.values(getBuildingMetadata())
+  .map(item => item as ArmadaMetadata)
   .filter((item) => item.dataKey in productLabels && ["darat", "laut", "udara"].includes(item.groupId))
   .map((item) => ({
     dataKey: item.dataKey,

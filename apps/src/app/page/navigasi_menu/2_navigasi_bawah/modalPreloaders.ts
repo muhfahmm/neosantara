@@ -1,0 +1,36 @@
+const modalPreloaders: Record<string, () => Promise<unknown>> = {
+  "Dashboard:Kepuasan": () => import("./1_kepuasan/1_statistik/StatistikKepuasanModal"),
+  "Action:NaikkanKepuasan": () => import("./1_kepuasan/2_naikkan_kepuasan/NaikkanKepuasanModal"),
+  "Dashboard:Populasi:Overview": () => import("./2_populasi/RingkasanPopulasiModal"),
+  "Menu:Kelistrikan": () => import("./3_produksi_konsumsi/1_grid_nasional/KelistrikanModal"),
+  "Menu:IndustriPangan": () => import("./3_produksi_konsumsi/2_industri_pangan/IndustriPanganModal"),
+  "Menu:Perdagangan": () => import("./4_ekonomi/1_perdagangan/PerdaganganModal"),
+  "Menu:Pajak": () => import("./4_ekonomi/2_manajemen_pajak/PajakModal"),
+  "Menu:Hutang": () => import("./4_ekonomi/3_peminjaman_hutang/HutangModal"),
+  "Menu:Budget": () => import("./4_ekonomi/4_pemasukan_pengeluaran/PemasukkanPengeluaranModal"),
+  "Menu:PDB": () => import("./4_ekonomi/5_pdb_nasional_dunia/PDBModal"),
+  "Menu:Harga": () => import("./4_ekonomi/6_harga/HargaModal"),
+  "Menu:SistemEkonomi": () => import("./4_ekonomi/7_sistem_ekonomi/SistemEkonomiModal"),
+  "Menu:KebijakanSubsidi": () => import("./4_ekonomi/8_kebijakan_subsidi/SubsidiModal"),
+  "Menu:Produksi": () => import("./5_pembangunan/1_produksi/ProduksiModal"),
+  "Menu:TempatUmum": () => import("./5_pembangunan/2_tempat_umum/TempatUmumModal"),
+  "Menu:HunianPermukiman": () => import("./5_pembangunan/3_hunian/HunianPermukimanModal"),
+  "Menu:SerangNegara": () => import("./6_pertahanan/1_serang_negara/SerangNegaraModal"),
+  "Menu:Intelijen": () => import("./6_pertahanan/2_intelijen/IntelijenModal"),
+  "Menu:WilayahDirebut": () => import("./6_pertahanan/3_wilayah_direbut/WilayahDirebutModal"),
+  "Menu:Armada": () => import("./6_pertahanan/4_armada/ArmadaModal"),
+  "Menu:ICBM": () => import("./6_pertahanan/5_icbm/IcbmModal"),
+  "Menu:PBB": () => import("./7_geopolitik/1_PBB/PBBModal"),
+  "Menu:KedutaanBesar": () => import("./7_geopolitik/KedutaanBesarModal"),
+  "Menu:OrganisasiInternasional:organisasi_pbb": () => import("./7_geopolitik/3_organisasi_internasional/OrgIntlModal"),
+  "Menu:TingkatHubungan": () => import("./7_geopolitik/TingkatHubunganModal"),
+  "Menu:Agama": () => import("./8_sosial_budaya/agama/AgamaModal"),
+  "Menu:Ideologi": () => import("./8_sosial_budaya/ideologi/IdeologiModal"),
+  "Menu:DoktrinKeterbukaan": () => import("./8_sosial_budaya/keterbukaan/DoktrinKeterbukaanModal"),
+  "Dashboard:Kementerian": () => import("./9_kementrian/KementerianModal"),
+  "Menu:AntiKorupsi": () => import("./9_kementrian/1_pemberantasan_korupsi/KorupsiMenu"),
+};
+
+export function preloadModalForMenu(menuId: string) {
+  return modalPreloaders[menuId]?.();
+}

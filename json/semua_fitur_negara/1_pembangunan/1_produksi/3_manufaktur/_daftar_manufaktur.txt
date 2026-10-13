@@ -1,5 +1,0 @@
-1. semikonduktor
-2. mobil
-3. sepeda_motor
-4. semen_beton
-5. kayu

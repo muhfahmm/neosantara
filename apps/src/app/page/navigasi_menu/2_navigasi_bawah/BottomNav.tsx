@@ -8,20 +8,35 @@ import {
   Droplet, Activity, Bolt, Radiation, Info, Bug
 } from "lucide-react";
 import { menuItems, subMenuItems } from "../navigationData";
+import { preloadModalForMenu } from "./modalPreloaders";
 
 const modalPreloadPromises = new Map<string, Promise<unknown>>();
+let modalsManagerPromise: Promise<typeof import("./ModalsManager")> | null = null;
+
+function loadModalsManager() {
+  if (!modalsManagerPromise) {
+    modalsManagerPromise = import("./ModalsManager").catch(error => {
+      modalsManagerPromise = null;
+      throw error;
+    });
+  }
+  return modalsManagerPromise;
+}
 
 function prefetchMenuModal(menuId: string) {
   if (modalPreloadPromises.has(menuId)) return;
 
-  const preloadPromise = import("./ModalsManager").then(({ preloadModalForMenu }) =>
-    preloadModalForMenu(menuId)
-  );
+  const preloadPromise = Promise.resolve(preloadModalForMenu(menuId));
   modalPreloadPromises.set(menuId, preloadPromise);
   void preloadPromise.catch(error => {
     modalPreloadPromises.delete(menuId);
     console.error(`BottomNav: failed to preload menu "${menuId}"`, error);
   });
+}
+
+function prefetchMenuGroup(menuId: string) {
+  const menuOptions = subMenuItems[menuId] || [];
+  menuOptions.forEach(menu => prefetchMenuModal(menu.id));
 }
 
 interface BottomNavProps {
@@ -33,6 +48,18 @@ interface BottomNavProps {
 
 export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, isDetailModalOpen = false }: BottomNavProps) {
   const [isTemporarilyHidden, setIsTemporarilyHidden] = useState(false);
+
+  useEffect(() => {
+    const preload = () => {
+      void loadModalsManager().catch(error => {
+        console.error('BottomNav: failed to preload menu manager', error);
+      });
+    };
+
+    const timeoutId = window.setTimeout(preload, 1000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   useEffect(() => {
     const handleHide = () => setIsTemporarilyHidden(true);
@@ -119,6 +146,12 @@ export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, is
             return (
               <div key={item.id} className="group relative">
                 <button
+                  onFocus={() => {
+                    if (!isActive && !isMap) prefetchMenuGroup(item.id);
+                  }}
+                  onPointerDown={() => {
+                    if (!isActive && !isMap) prefetchMenuGroup(item.id);
+                  }}
                   onClick={() => isMap ? handleFullReset() : handleMainClick(item.id)}
                   className={`px-2 py-1.5 lg:px-2.5 lg:py-2 2xl:px-4 2xl:py-3 rounded-lg xl:rounded-xl cursor-pointer transition-all duration-300 flex items-center gap-1.5 lg:gap-2 2xl:gap-2.5 justify-center ${isActive
                     ? "bg-[#00FFAA] text-[#0A1A1A] font-bold border border-[#00FFAA]"

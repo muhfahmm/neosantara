@@ -21,7 +21,7 @@ import {
   getKapasitasBarakMiliterBonusPercent
 } from "@/app/page/bonus_logic";
 
-import metadataManajemen from "../../../../../../../../../json/semua_fitur_negara/2_pertahanan/3_manajemen_pertahanan/metadata_manajemen.json";
+import { getBuildingMetadata } from "@/lib/buildingMetadataRegistry";
 
 interface TabProps {
   countryDetail: any;
@@ -106,7 +106,10 @@ export default function InfrastrukturMiliter({
 }: TabProps) {
   const [selectedForBuild, setSelectedForBuild] = useState<{ key: string; label: string } | null>(null);
   const [isConfirmBuildOpen, setIsConfirmBuildOpen] = useState(false);
-  const [infrastrukturData] = useState<Record<string, any>>(metadataManajemen);
+  const [infrastrukturData] = useState<Record<string, any>>(
+    Object.fromEntries(Object.entries(getBuildingMetadata()).filter(([key, metadata]) =>
+      key === "barak" || metadata.groupId === "pertahanan")),
+  );
 
   // 🟢 Proses konstruksi yang selesai (berdasarkan tanggal simulasi)
   useEffect(() => {

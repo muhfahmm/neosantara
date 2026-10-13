@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
+import { queryDb } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
 async function readAllTsFiles(dir: string, files: string[] = []) {
   const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -18,47 +23,120 @@ async function readAllTsFiles(dir: string, files: string[] = []) {
   return files;
 }
 
-async function loadJsonCategoryFiles(baseDir: string): Promise<Record<string, any>> {
-  const metadata: Record<string, any> = {};
+async function loadCategoryMetadata(baseDir: string): Promise<Record<string, unknown>> {
+  const metadata: Record<string, unknown> = {};
+  const databaseRows = await queryDb<Array<{
+    source_file: string;
+    file_order: number;
+    entry_key: string;
+    entry_order: number;
+    metadata: Record<string, unknown>;
+  }>>(
+    'SELECT source_file, file_order, entry_key, entry_order, metadata FROM database_building_metadata ORDER BY file_order, entry_order'
+  );
+  const metadataByFile = new Map<string, Record<string, unknown>>();
+  databaseRows.forEach(row => {
+    const fileMetadata = metadataByFile.get(row.source_file) ?? {};
+    fileMetadata[row.entry_key] = row.metadata;
+    metadataByFile.set(row.source_file, fileMetadata);
+  });
   
-  // Try to load from organized category JSON files first
-  const categoryFiles = [
+  // Load organized category metadata in source order.
+  const categoryFiles: Array<string | { path: string; sourceFile?: string }> = [
     // Produksi (Production)
-    '1_pembangunan/1_produksi/1_sektor_listrik_nasional/1_metadata_listrik.json',
-    '1_pembangunan/1_produksi/2_sektor_mineral_kritis/2_metadata_ekstraksi.json',
-    '1_pembangunan/1_produksi/3_manufaktur/3_metadata_manufaktur.json',
-    '1_pembangunan/1_produksi/4_sektor_peternakan/4_metadata_peternakan.json',
-    '1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.json',
-    '1_pembangunan/1_produksi/6_sektor_perikanan/6_metadata_perikanan.json',
-    '1_pembangunan/1_produksi/7_sektor_olahan_pangan/7_metadata_olahan_pangan.json',
+    {
+      path: '1_pembangunan/1_produksi/1_sektor_listrik_nasional',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/1_produksi/1_sektor_listrik_nasional/1_metadata_listrik.pg.sql',
+    },
+    {
+      path: '1_pembangunan/1_produksi/2_sektor_mineral_kritis',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/1_produksi/2_sektor_mineral_kritis/2_metadata_ekstraksi.pg.sql',
+    },
+    {
+      path: '1_pembangunan/1_produksi/3_manufaktur',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/1_produksi/3_manufaktur/3_metadata_manufaktur.pg.sql',
+    },
+    {
+      path: '1_pembangunan/1_produksi/4_sektor_peternakan',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/1_produksi/4_sektor_peternakan/4_metadata_peternakan.pg.sql',
+    },
+    {
+      path: '1_pembangunan/1_produksi/5_sektor_agrikultur',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/1_produksi/5_sektor_agrikultur/5_metadata_agrikultur.pg.sql',
+    },
+    {
+      path: '1_pembangunan/1_produksi/6_sektor_perikanan',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/1_produksi/6_sektor_perikanan/6_metadata_perikanan.pg.sql',
+    },
+    {
+      path: '1_pembangunan/1_produksi/7_sektor_olahan_pangan',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/1_produksi/7_sektor_olahan_pangan/7_metadata_olahan_pangan.pg.sql',
+    },
     // Tempat Umum (Public Places)
-    '1_pembangunan/2_tempat_umum/1_Layanan Publik/1_infrastruktur/metadata_infrastruktur.json',
-    '1_pembangunan/2_tempat_umum/1_Layanan Publik/2_pendidikan/metadata_pendidikan.json',
-    '1_pembangunan/2_tempat_umum/1_Layanan Publik/3_kesehatan/metadata_kesehatan.json',
-    '1_pembangunan/2_tempat_umum/1_Layanan Publik/4_hukum/metadata_hukum.json',
-    '1_pembangunan/2_tempat_umum/1_Layanan Publik/5_olahraga/metadata_olahraga.json',
-    '1_pembangunan/2_tempat_umum/1_Layanan Publik/6_komersial/metadata_komersial.json',
-    '1_pembangunan/2_tempat_umum/1_Layanan Publik/7_hiburan/metadata_hiburan.json',
-    '1_pembangunan/2_tempat_umum/2_hunian_permukiman/metadata_hunian.json',
+    {
+      path: '1_pembangunan/2_tempat_umum/1_Layanan Publik/1_infrastruktur',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/1_infrastruktur/metadata_infrastruktur.pg.sql',
+    },
+    {
+      path: '1_pembangunan/2_tempat_umum/1_Layanan Publik/2_pendidikan',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/2_pendidikan/metadata_pendidikan.pg.sql',
+    },
+    {
+      path: '1_pembangunan/2_tempat_umum/1_Layanan Publik/3_kesehatan',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/3_kesehatan/metadata_kesehatan.pg.sql',
+    },
+    {
+      path: '1_pembangunan/2_tempat_umum/1_Layanan Publik/4_hukum',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/4_hukum/metadata_hukum.pg.sql',
+    },
+    {
+      path: '1_pembangunan/2_tempat_umum/1_Layanan Publik/5_olahraga',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/5_olahraga/metadata_olahraga.pg.sql',
+    },
+    {
+      path: '1_pembangunan/2_tempat_umum/1_Layanan Publik/6_komersial',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/2_tempat_umum/1_Layanan Publik/6_komersial/metadata_komersial.pg.sql',
+    },
+    {
+      path: '1_pembangunan/2_tempat_umum/2_hunian_permukiman',
+      sourceFile: 'json/semua_fitur_negara/1_pembangunan/2_tempat_umum/2_hunian_permukiman/metadata_hunian.pg.sql',
+    },
     // Pertahanan (Defense)
-    '2_pertahanan/1_armada_militer/metadata_armada_militer.json',
-    '2_pertahanan/3_manajemen_pertahanan/metadata_manajemen.json',
-    '2_pertahanan/1_serang_negara/metadata_serang_negara.json',
-    '2_pertahanan/2_intelijen/metadata_intelijen.json',
-    '2_pertahanan/3_wilayah_direbut/metadata_wilayah_direbut.json',
-    '2_pertahanan/4_armada/metadata_armada.json',
-    '2_pertahanan/5_icbm/metadata_icbm.json'
+    {
+      path: '2_pertahanan/1_armada_militer',
+      sourceFile: 'json/semua_fitur_negara/2_pertahanan/1_armada_militer/metadata_armada_militer.pg.sql',
+    },
+    {
+      path: '2_pertahanan/3_manajemen_pertahanan',
+      sourceFile: 'json/semua_fitur_negara/2_pertahanan/3_manajemen_pertahanan/metadata_manajemen.pg.sql',
+    },
   ];
   
-  for (const catFile of categoryFiles) {
+  for (const entry of categoryFiles) {
+    const category = typeof entry === 'string' ? { path: entry } : entry;
+    if (category.sourceFile) {
+      const databaseMetadata = metadataByFile.get(category.sourceFile);
+      if (!databaseMetadata) {
+        throw new Error(`No database metadata rows found for ${category.sourceFile}`);
+      }
+      Object.assign(metadata, databaseMetadata);
+      continue;
+    }
+
     try {
-      const fullPath = path.join(baseDir, catFile);
+      const fullPath = path.join(baseDir, category.path);
       const content = await fs.readFile(fullPath, 'utf8');
-      const data = JSON.parse(content);
+      const data: unknown = JSON.parse(content);
+      if (!isRecord(data)) {
+        throw new Error(`Invalid category metadata in ${category.path}`);
+      }
       Object.assign(metadata, data);
-      console.log('[building-metadata] loaded category file:', catFile);
-    } catch (e) {
-      // silently skip if not found
+      console.log('[building-metadata] loaded category file:', category.path);
+    } catch (error) {
+      if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+        continue;
+      }
+      throw error;
     }
   }
   
@@ -71,22 +149,21 @@ export async function GET() {
     // In dev server process.cwd() may be apps/; try parent folder as fallback
     try {
       await fs.access(base);
-    } catch (e) {
+    } catch {
       const alt = path.join(process.cwd(), '..', 'json', 'semua_fitur_negara');
       try {
         await fs.access(alt);
         base = alt;
-      } catch (e2) {
+      } catch {
         throw new Error(`Cannot locate json/semua_fitur_negara at ${base} or ${alt}`);
       }
     }
     
     console.log('[building-metadata] using base path:', base);
     
-    // Try to load from organized category JSON files first
-    const metadata = await loadJsonCategoryFiles(base);
+    const metadata = await loadCategoryMetadata(base);
     if (Object.keys(metadata).length > 0) {
-      console.log('[building-metadata] loaded from category files:', Object.keys(metadata).length, 'items');
+      console.log('[building-metadata] loaded category metadata:', Object.keys(metadata).length, 'items');
       return NextResponse.json(metadata, {
         headers: { 'Cache-Control': 'no-store, max-age=0' },
       });
@@ -95,7 +172,11 @@ export async function GET() {
     // Fallback: parse TS files if category JSON not available
     console.log('[building-metadata] category files not found, falling back to TS parsing');
     const tsFiles = await readAllTsFiles(base);
-    const fallbackMetadata: Record<string, any> = {};
+    const fallbackMetadata: Record<string, {
+      biaya_pembangunan?: number;
+      produksi?: number;
+      satuan?: string;
+    }> = {};
     
     const dataKeyRegex = /dataKey\s*:\s*"([^\"]+)"/g;
     for (const f of tsFiles) {
@@ -104,7 +185,7 @@ export async function GET() {
       while ((m = dataKeyRegex.exec(content)) !== null) {
         const dataKey = m[1];
         const idx = m.index;
-        let start = content.lastIndexOf('{', idx);
+        const start = content.lastIndexOf('{', idx);
         if (start === -1) continue;
         let depth = 0;
         let end = -1;

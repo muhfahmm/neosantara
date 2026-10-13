@@ -1,4 +1,4 @@
-import armadaMetadata from "../../../../../../../../../json/semua_fitur_negara/2_pertahanan/1_armada_militer/metadata_armada_militer.json";
+import { getBuildingMetadata } from "@/lib/buildingMetadataRegistry";
 import { getMonarchyMilitaryStrengthMultiplier } from "@/app/page/bonus_logic/ideologi_bonus_logic/monarki";
 import { getAuthoritarianMilitaryStrengthMultiplier } from "@/app/page/bonus_logic/ideologi_bonus_logic/otoritarianisme";
 import { getNATOMilitaryMultiplier } from "@/app/page/bonus_logic";
@@ -38,13 +38,21 @@ const normalizeNumber = (value: unknown): number => {
   return Number.isFinite(numeric) ? numeric : 0;
 };
 
-const metadataByDataKey = Object.values(armadaMetadata as Record<string, ArmadaMetadataRecord>).reduce(
-  (accumulator, item) => {
-    accumulator[item.dataKey] = item;
-    return accumulator;
-  },
-  {} as Record<string, ArmadaMetadataRecord>,
-);
+const isArmadaMetadataRecord = (
+  value: Record<string, unknown>,
+): value is Record<string, unknown> & ArmadaMetadataRecord =>
+  typeof value.dataKey === "string" &&
+  typeof value.groupId === "string" &&
+  ["darat", "laut", "udara"].includes(value.groupId);
+
+const getMetadataByDataKey = (): Record<string, ArmadaMetadataRecord> =>
+  Object.values(getBuildingMetadata()).filter(isArmadaMetadataRecord).reduce<Record<string, ArmadaMetadataRecord>>(
+    (accumulator, item) => {
+      accumulator[item.dataKey] = item;
+      return accumulator;
+    },
+    {},
+  );
 
 const resolveCountryArmada = (source: unknown): ArmadaData => {
   if (!source || typeof source !== "object") {
@@ -59,6 +67,7 @@ const resolveCountryArmada = (source: unknown): ArmadaData => {
   const daratObj: Record<string, number> = {};
   const lautObj: Record<string, number> = {};
   const udaraObj: Record<string, number> = {};
+  const metadataByDataKey = getMetadataByDataKey();
 
   Object.values(metadataByDataKey).forEach((meta) => {
     const key = meta.dataKey;
@@ -96,7 +105,7 @@ const resolveQuantity = (armada: ArmadaData, dataKey: string): number => {
     return normalizeNumber(armada.barak);
   }
 
-  const group = metadataByDataKey[dataKey]?.groupId;
+  const group = getMetadataByDataKey()[dataKey]?.groupId;
   if (!group) {
     return 0;
   }
@@ -118,6 +127,7 @@ import {
 } from "@/app/page/bonus_logic";
 
 export function getArmadaUnitBreakdown(source: unknown): ArmadaUnitBreakdown[] {
+  const metadataByDataKey = getMetadataByDataKey();
   const armada = resolveCountryArmada(source);
   const sourceData = source && typeof source === "object"
     ? source as Record<string, unknown>

@@ -33,7 +33,7 @@ import {
   updateNpcCountrySimulationState,
 } from "@/app/logic/npcCountrySimulation";
 import {
-  ARMS_TRADE_PRODUCTS,
+  getArmsTradeProducts,
   getArmsTransferUpdate,
   getArmsUnitCount,
 } from "../armsTradeLogic";
@@ -94,14 +94,17 @@ const CATEGORY_MAP: Record<string, string[]> = {
   'Olahan Pangan': ["air_mineral", "gula", "roti", "pengolahan_daging", "mie_instan", "minyak_goreng", "susu"]
 };
 
-const ARMS_CATEGORY_MAP: Record<string, string[]> = {
-  "Alutsista Darat": ARMS_TRADE_PRODUCTS.filter(product => product.groupId === "darat").map(product => product.dataKey),
-  "Alutsista Laut": ARMS_TRADE_PRODUCTS.filter(product => product.groupId === "laut").map(product => product.dataKey),
-  "Alutsista Udara": ARMS_TRADE_PRODUCTS.filter(product => product.groupId === "udara").map(product => product.dataKey),
+const getArmsCategoryMap = (): Record<string, string[]> => {
+  const products = getArmsTradeProducts();
+  return {
+    "Alutsista Darat": products.filter(product => product.groupId === "darat").map(product => product.dataKey),
+    "Alutsista Laut": products.filter(product => product.groupId === "laut").map(product => product.dataKey),
+    "Alutsista Udara": products.filter(product => product.groupId === "udara").map(product => product.dataKey),
+  };
 };
 
 const isArmsProduct = (productKey: string) =>
-  ARMS_TRADE_PRODUCTS.some(product => product.dataKey === productKey);
+  getArmsTradeProducts().some(product => product.dataKey === productKey);
 
 interface JualModalsMenuProps {
   isOpen: boolean;
@@ -273,14 +276,14 @@ export default function JualModalsMenu({
   const stockAvailable = useMemo(() => {
     if (!selectedProduct) return 0;
     if (isArmsProduct(selectedProduct)) {
-      return getArmsUnitCount(countryDetail || {}, ARMS_TRADE_PRODUCTS.find(product => product.dataKey === selectedProduct)!);
+      return getArmsUnitCount(countryDetail || {}, getArmsTradeProducts().find(product => product.dataKey === selectedProduct)!);
     }
     return getMaterialStock(countryDetail, selectedProduct);
   }, [selectedProduct, countryDetail]);
 
   const partnerProduction = useMemo(() => {
     if (!selectedProduct || !partnerData) return 0;
-    const armsProduct = ARMS_TRADE_PRODUCTS.find(product => product.dataKey === selectedProduct);
+    const armsProduct = getArmsTradeProducts().find(product => product.dataKey === selectedProduct);
     if (armsProduct) return getArmsUnitCount(partnerData, armsProduct);
     const pBuildingCount = Number(partnerData[selectedProduct] || 0);
     if (pBuildingCount === 0) return 0;
@@ -345,10 +348,10 @@ export default function JualModalsMenu({
         disabled: checkMap[key] ? !checkMap[key](partnerData) : false
       }))
     }));
-    const armsGroups = Object.entries(ARMS_CATEGORY_MAP).map(([category, keys]) => ({
+    const armsGroups = Object.entries(getArmsCategoryMap()).map(([category, keys]) => ({
       category,
       items: keys.map(key => {
-        const product = ARMS_TRADE_PRODUCTS.find(item => item.dataKey === key)!;
+        const product = getArmsTradeProducts().find(item => item.dataKey === key)!;
         return {
           label: product.label,
           value: key,
@@ -370,7 +373,7 @@ export default function JualModalsMenu({
   const effectiveSelectedCountry = selectedCountry || partners[0]?.nama_negara || "";
   const seriesKey = `${selectedProduct}-${timeRange}`;
   const currentPrice = useMemo(() => {
-    const armsProduct = ARMS_TRADE_PRODUCTS.find(product => product.dataKey === selectedProduct);
+    const armsProduct = getArmsTradeProducts().find(product => product.dataKey === selectedProduct);
     return armsProduct
       ? Math.round(armsProduct.unitPrice * 0.85)
       : Math.round(marketPrices[selectedProduct] || 0);
@@ -500,7 +503,7 @@ export default function JualModalsMenu({
       return;
     }
 
-    const armsProduct = ARMS_TRADE_PRODUCTS.find(product => product.dataKey === selectedProduct);
+    const armsProduct = getArmsTradeProducts().find(product => product.dataKey === selectedProduct);
     if (armsProduct) {
       if (isArmsSaleEmbargoActive(ownCountryName, effectiveSelectedCountry)) {
         alert(`Resolusi PBB melarang penjualan alutsista kepada ${effectiveSelectedCountry}.`);
@@ -593,7 +596,7 @@ export default function JualModalsMenu({
                 <div className="flex flex-col gap-1">
                   <label className="text-[#E0E0E0] font-bold text-sm tracking-wide">Produk:</label>
                   <button onClick={() => setIsProductPickerOpen(true)} className="w-full px-4 py-3 rounded-md bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] text-sm font-bold flex items-center justify-between hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer">
-                    <span>{ARMS_TRADE_PRODUCTS.find(product => product.dataKey === selectedProduct)?.label || formatLabel(selectedProduct)}</span>
+                    <span>{getArmsTradeProducts().find(product => product.dataKey === selectedProduct)?.label || formatLabel(selectedProduct)}</span>
                     <span className="text-[10px] opacity-70 uppercase tracking-wider">Ubah</span>
                   </button>
                 </div>
@@ -630,7 +633,7 @@ export default function JualModalsMenu({
                 <div className="flex justify-between items-center pt-1 pb-0">
                   <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">{isArmsProduct(selectedProduct) ? "Unit Alutsista Mitra:" : `Bangunan ${formatLabel(selectedProduct)} (Mitra):`}</span>
                   <span className="text-sm font-black text-[#E0E0E0]">{(isArmsProduct(selectedProduct)
-                    ? getArmsUnitCount(partnerData || {}, ARMS_TRADE_PRODUCTS.find(product => product.dataKey === selectedProduct)!)
+                    ? getArmsUnitCount(partnerData || {}, getArmsTradeProducts().find(product => product.dataKey === selectedProduct)!)
                     : Number(partnerData?.[selectedProduct] || 0)
                   ).toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span></span>
                 </div>

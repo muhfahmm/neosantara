@@ -1,9 +1,0 @@
-1. emas
-2. uranium
-3. batu_bara
-4. minyak_bumi
-5. gas_alam
-6. garam
-7. litium
-8. logam_tanah_jarang
-9. bijih_besi

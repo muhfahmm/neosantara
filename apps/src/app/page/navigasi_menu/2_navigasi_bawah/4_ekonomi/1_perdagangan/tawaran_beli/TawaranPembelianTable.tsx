@@ -2,7 +2,7 @@
 import React from "react";
 import { X } from "lucide-react";
 import { PartnerOffer } from "../PerdaganganModal";
-import { ARMS_TRADE_PRODUCTS } from "../armsTradeLogic";
+import { getArmsTradeProducts } from "../armsTradeLogic";
 
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 
@@ -84,7 +84,7 @@ export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, 
                   </td>
                   <td className="px-4 py-3 text-xs font-bold text-[#00FFAA]">
                     {offer.marketType === "arms"
-                      ? ARMS_TRADE_PRODUCTS.find(product => product.dataKey === offer.productKey)?.label || formatLabel(offer.productKey)
+                      ? getArmsTradeProducts().find(product => product.dataKey === offer.productKey)?.label || formatLabel(offer.productKey)
                       : formatLabel(offer.productKey)}
                   </td>
                   <td className="px-4 py-3 text-xs font-semibold text-[#E0E0E0]">{offer.quantity.toLocaleString()}</td>

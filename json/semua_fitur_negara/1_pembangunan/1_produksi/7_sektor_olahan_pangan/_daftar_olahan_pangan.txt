@@ -1,7 +1,0 @@
-1. air_mineral
-2. gula
-3. roti
-4. pengolahan_daging
-5. mie_instan
-6. minyak_goreng
-7. susu

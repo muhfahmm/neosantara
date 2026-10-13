@@ -29,7 +29,7 @@ import {
   updateNpcCountrySimulationState,
 } from "@/app/logic/npcCountrySimulation";
 import {
-  ARMS_TRADE_PRODUCTS,
+  getArmsTradeProducts,
   getArmsTransferUpdate,
   getArmsUnitCount,
 } from "../armsTradeLogic";
@@ -122,14 +122,17 @@ const CATEGORY_MAP: Record<string, string[]> = {
   'Olahan Pangan': ["air_mineral", "gula", "roti", "pengolahan_daging", "mie_instan", "minyak_goreng", "susu"]
 };
 
-const ARMS_CATEGORY_MAP: Record<string, string[]> = {
-  "Alutsista Darat": ARMS_TRADE_PRODUCTS.filter(product => product.groupId === "darat").map(product => product.dataKey),
-  "Alutsista Laut": ARMS_TRADE_PRODUCTS.filter(product => product.groupId === "laut").map(product => product.dataKey),
-  "Alutsista Udara": ARMS_TRADE_PRODUCTS.filter(product => product.groupId === "udara").map(product => product.dataKey),
+const getArmsCategoryMap = (): Record<string, string[]> => {
+  const products = getArmsTradeProducts();
+  return {
+    "Alutsista Darat": products.filter(product => product.groupId === "darat").map(product => product.dataKey),
+    "Alutsista Laut": products.filter(product => product.groupId === "laut").map(product => product.dataKey),
+    "Alutsista Udara": products.filter(product => product.groupId === "udara").map(product => product.dataKey),
+  };
 };
 
 const isArmsProduct = (productKey: string) =>
-  ARMS_TRADE_PRODUCTS.some(product => product.dataKey === productKey);
+  getArmsTradeProducts().some(product => product.dataKey === productKey);
 
 interface ModalsKonfirmasiBeliProps {
   isOpen: boolean;
@@ -471,7 +474,7 @@ export default function ModalsKonfirmasiBeli({
 
   const isProductAvailable = (key: string): boolean => {
     if (!partnerData) return false;
-    const armsProduct = ARMS_TRADE_PRODUCTS.find(product => product.dataKey === key);
+    const armsProduct = getArmsTradeProducts().find(product => product.dataKey === key);
     if (armsProduct) return getArmsUnitCount(partnerData, armsProduct) > 0;
     const checkFn = checkMap[key];
     if (checkFn) {
@@ -492,10 +495,10 @@ export default function ModalsKonfirmasiBeli({
         disabled: checkMap[key] ? !checkMap[key](partnerData) : false
       }))
     }));
-    const armsGroups = Object.entries(ARMS_CATEGORY_MAP).map(([category, keys]) => ({
+    const armsGroups = Object.entries(getArmsCategoryMap()).map(([category, keys]) => ({
       category,
       items: keys.map(key => {
-        const product = ARMS_TRADE_PRODUCTS.find(item => item.dataKey === key)!;
+        const product = getArmsTradeProducts().find(item => item.dataKey === key)!;
         return {
           label: product.label,
           value: key,
@@ -519,14 +522,14 @@ export default function ModalsKonfirmasiBeli({
 
   const stockAvailable = useMemo(() => {
     if (!effectiveSelectedProduct) return 0;
-    const armsProduct = ARMS_TRADE_PRODUCTS.find(product => product.dataKey === effectiveSelectedProduct);
+    const armsProduct = getArmsTradeProducts().find(product => product.dataKey === effectiveSelectedProduct);
     if (armsProduct) return getArmsUnitCount(countryDetail || {}, armsProduct);
     return getMaterialStock(countryDetail, effectiveSelectedProduct);
   }, [effectiveSelectedProduct, countryDetail]);
 
   const partnerProduction = useMemo(() => {
     if (!effectiveSelectedProduct || !partnerData) return 0;
-    const armsProduct = ARMS_TRADE_PRODUCTS.find(product => product.dataKey === effectiveSelectedProduct);
+    const armsProduct = getArmsTradeProducts().find(product => product.dataKey === effectiveSelectedProduct);
     if (armsProduct) return getArmsUnitCount(partnerData, armsProduct);
     const pBuildingCount = Number(partnerData[effectiveSelectedProduct] || 0);
     if (pBuildingCount === 0) return 0;
@@ -641,7 +644,7 @@ export default function ModalsKonfirmasiBeli({
   const currentMeta = findMeta(effectiveSelectedProduct);
 
   // HARGA DINAMIS PASAR
-  const selectedArmsProduct = ARMS_TRADE_PRODUCTS.find(product => product.dataKey === effectiveSelectedProduct);
+  const selectedArmsProduct = getArmsTradeProducts().find(product => product.dataKey === effectiveSelectedProduct);
   const currentPrice = selectedArmsProduct
     ? Math.round(selectedArmsProduct.unitPrice * 1.15)
     : marketPrices[effectiveSelectedProduct] || 0;
@@ -776,7 +779,7 @@ export default function ModalsKonfirmasiBeli({
       return;
     }
 
-    const armsProduct = ARMS_TRADE_PRODUCTS.find(product => product.dataKey === effectiveSelectedProduct);
+    const armsProduct = getArmsTradeProducts().find(product => product.dataKey === effectiveSelectedProduct);
     if (armsProduct) {
       if (isArmsSaleEmbargoActive(targetCountry, ownCountryName)) {
         alert(`Resolusi PBB melarang penjualan alutsista kepada ${ownCountryName}.`);
@@ -892,7 +895,7 @@ export default function ModalsKonfirmasiBeli({
                 onClick={() => setIsProductPickerOpen(true)}
                 className="w-full px-4 py-3 rounded-md bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] text-sm font-bold flex items-center justify-between hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
               >
-                <span>{ARMS_TRADE_PRODUCTS.find(product => product.dataKey === effectiveSelectedProduct)?.label || formatLabel(effectiveSelectedProduct)}</span>
+                <span>{getArmsTradeProducts().find(product => product.dataKey === effectiveSelectedProduct)?.label || formatLabel(effectiveSelectedProduct)}</span>
                 <span className="text-[10px] opacity-70 uppercase tracking-wider">Ubah</span>
               </button>
             </div>

@@ -1,4 +1,4 @@
-import armadaMetadata from "../../../../../../../../../json/semua_fitur_negara/2_pertahanan/1_armada_militer/metadata_armada_militer.json";
+import { getBuildingMetadata } from "@/lib/buildingMetadataRegistry";
 
 /**
  * Menghitung waktu perekrutan berdasarkan jumlah pasukan
@@ -24,8 +24,8 @@ export function calculateRecruitmentDays(
  * @returns waktu dalam hari
  */
 export function getArmadaRecruitmentTime(unitDataKey: string): number {
-  const metadata = Object.values(armadaMetadata as Record<string, any>).find(
-    (item) => item.dataKey === unitDataKey
+  const metadata = Object.values(getBuildingMetadata()).find(
+    (item) => (item as { dataKey?: string }).dataKey === unitDataKey
   );
   
   if (!metadata) {
@@ -33,7 +33,8 @@ export function getArmadaRecruitmentTime(unitDataKey: string): number {
     return 8;
   }
 
-  return metadata.waktu_pembangunan_armada_aktif || 8;
+  const days = (metadata as { waktu_pembangunan_armada_aktif?: number }).waktu_pembangunan_armada_aktif;
+  return days || 8;
 }
 
 /**

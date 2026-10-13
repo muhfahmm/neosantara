@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClientErrorCatcher from './ClientErrorCatcher';
+import RelationsDataLoader from './RelationsDataLoader';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,8 +32,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <RelationsDataLoader>
           {children}
-          <ClientErrorCatcher />
+        </RelationsDataLoader>
+        <ClientErrorCatcher />
       </body>
     </html>
   );

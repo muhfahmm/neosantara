@@ -12,7 +12,7 @@ import {
   getCommercialTotalIncome,
   calculateActiveSubsidyCost,
 } from "@/app/logic/economic_logic/treasuryUpdater";
-import { calculateGoldMiningDailyProduction, GOLD_MINING_PRODUCTION_PER_BUILDING } from "@/app/logic/economic_logic/goldIncome";
+import { calculateGoldMiningDailyProduction } from "@/app/logic/economic_logic/goldIncome";
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from "@/app/logic/economic_logic/departments";
 import AlokasiSubsidiTab from "./alokasi_subsidi/AlokasiSubsidiTab";
 import { ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
