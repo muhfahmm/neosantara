@@ -1518,6 +1518,8 @@ export default function MapPage() {
         }
     }, []);
     const [activeWarAnimation, setActiveWarAnimation] = useState<any>(null);
+    const [npcWarQueue, setNpcWarQueue] = useState<Array<{ attacker: string; target: string }>>([]);
+    const npcWarQueueRunningRef = useRef(false);
     useEffect(() => {
         const handleStartWarAnimation = async (event: Event) => {
             const detail = (event as CustomEvent).detail;
@@ -1716,6 +1718,19 @@ export default function MapPage() {
             window.removeEventListener('pause_game_time', handlePauseGameTime);
         };
     }, [countryDetail, selectedCountry?.country]);
+
+    useEffect(() => {
+        if (activeWarAnimation || npcWarQueue.length === 0 || npcWarQueueRunningRef.current) return;
+
+        const [nextWar, ...remainingWars] = npcWarQueue;
+        if (!nextWar) return;
+        npcWarQueueRunningRef.current = true;
+        setNpcWarQueue(remainingWars);
+        window.dispatchEvent(new CustomEvent('start_war_animation', {
+            detail: { ...nextWar, isNpcWar: true },
+        }));
+    }, [activeWarAnimation, npcWarQueue]);
+
     const [presidentRating, setPresidentRating] = useState<number>(50);
     const [kesejahteraan, setKesejahteraan] = useState<number>(50);
     const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
@@ -2526,6 +2541,16 @@ export default function MapPage() {
                     ? proposedInvasions.filter(() => Math.random() < 0.2)
                     : proposedInvasions;
 
+                if (annualInvasions.length > 0) {
+                    setNpcWarQueue(previous => [
+                        ...previous,
+                        ...annualInvasions.map(invasion => ({
+                            attacker: invasion.attackerCountry,
+                            target: invasion.targetCountry,
+                        })),
+                    ]);
+                }
+
                 if (warBanActive && annualInvasions.length < proposedInvasions.length) {
                     newNotifsToAdd.push({
                         id: `notif-war-ban-ai-block-${currentDateStr}`,
@@ -2542,6 +2567,17 @@ export default function MapPage() {
                 if (annualInvasions.length > 0) {
                     const generatedNewsItems: NewsItemData[] = [];
                     annualInvasions.forEach(inv => {
+                        newNotifsToAdd.push({
+                            id: `notif-npc-war-${currentDateStr}-${inv.attackerIso}-${inv.targetIso}`,
+                            title: '⚔️ PERANG ANTARNEGARA',
+                            sender: `Kementerian Luar Negeri — ${inv.attackerCountry}`,
+                            message: `${inv.attackerCountry} melancarkan serangan terhadap ${inv.targetCountry}. Pergerakan pasukan terlihat pada peta dan perkembangan konflik akan diberitakan.`,
+                            timestamp: currentDateStr,
+                            type: 'peringkat',
+                            value: 50,
+                            isRead: false,
+                        });
+
                         const hasInvasionMandate = hasActiveApprovedInvasionResolution(inv.attackerCountry, inv.targetCountry);
                         if (warBanActive || !hasInvasionMandate) {
                             const reason = warBanActive
@@ -5165,8 +5201,14 @@ export default function MapPage() {
                         }}
                         attackerPower={activeWarAnimation.attackerPower ?? 0}
                         targetPower={activeWarAnimation.targetPower ?? 0}
-                        isUserDefender={isUserDefender}
-                        onClose={() => setActiveWarAnimation(null)}
+                        isUserDefender={activeWarAnimation.isNpcWar ? false : isUserDefender}
+                        isNpcWar={activeWarAnimation.isNpcWar === true}
+                        onClose={() => {
+                            setActiveWarAnimation(null);
+                            if (activeWarAnimation.isNpcWar) {
+                                npcWarQueueRunningRef.current = false;
+                            }
+                        }}
                         onResolve={({ action, result }) => {
                             if (isUserDefender) {
                                 if (result === 'lose') {

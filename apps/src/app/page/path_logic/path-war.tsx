@@ -410,6 +410,7 @@ interface WarMapProps {
   attackerBonus?: number;
   defenderBonus?: number;
   isUserDefender?: boolean;
+  isNpcWar?: boolean;
   onClose: () => void;
   onResolve: (payload: {
     result: WarResult;
@@ -428,6 +429,7 @@ export default function WarMap({
   attackerBonus = 1,
   defenderBonus = 1,
   isUserDefender: isUserDefenderProp,
+  isNpcWar = false,
   onClose,
   onResolve,
 }: WarMapProps) {
@@ -565,6 +567,14 @@ export default function WarMap({
   useEffect(() => {
     if (phase !== 'impact' || !battleOutcome) return;
     setShowFlash(true);
+    if (isNpcWar) {
+      const closeTimer = setTimeout(onClose, 1300);
+      const flashTimer = setTimeout(() => setShowFlash(false), 500);
+      return () => {
+        clearTimeout(closeTimer);
+        clearTimeout(flashTimer);
+      };
+    }
     const t1 = setTimeout(() => {
       setPhase('comparison');
     }, 700);
@@ -573,7 +583,7 @@ export default function WarMap({
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, [phase, battleOutcome]);
+  }, [phase, battleOutcome, isNpcWar, onClose]);
 
   /* ── Titik kontrol Bezier & jalur ── */
   const controlPos = useMemo(() => {
