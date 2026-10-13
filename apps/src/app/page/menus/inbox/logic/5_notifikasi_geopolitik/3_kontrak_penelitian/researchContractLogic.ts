@@ -1,4 +1,5 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { getDisplayCountryName } from '@/app/logic/countryNameLogic';
 
 export interface ResearchContractOfferNotification extends NotificationMessage {
   tradeType: 'penawaran_kontrak_penelitian';
@@ -12,6 +13,7 @@ export function generateResearchContractOfferNotification(
   userCountryName: string,
   dateStr: string
 ): ResearchContractOfferNotification {
+  partnerCountry = getDisplayCountryName(partnerCountry);
   return {
     id: `research-contract-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     title: `🔬 Penawaran Kontrak Penelitian Joint-R&D: ${partnerCountry}`,

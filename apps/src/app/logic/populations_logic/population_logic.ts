@@ -9,6 +9,7 @@ import { applySocialismBirthRateBonus } from "@/app/page/bonus_logic/ideologi_bo
 import { applyKontrolPandemiFatalityReduction } from "@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/2_Kontrol Pandemi Global";
 import { applyKementerianKesehatanPandemicFatalityReduction } from "@/app/page/bonus_logic";
 import { applyKementerianPerumahanCapacityBonus, applyTotalHousingCapacityBonus } from "@/app/page/bonus_logic";
+import { getActiveSectorImpacts } from "@/app/page/navigasi_menu/2_navigasi_bawah/9_kementrian/1_pemberantasan_korupsi/logic/corruptionLogic";
 
 // Import dari logic yang baru dibuat
 import { calculateKeamananLogic } from "@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/kematian_modals/logic/keamananLogic";
@@ -542,7 +543,12 @@ export const calculateDailyPopulationChange = (
   const food = getPanganMultiplier(foodRatio);
   const housing = getHunianMultiplier(housingFulfillment);
   const disasterEffects = hitungDampakBencana(detail.active_disaster_effects || [], date);
-  const healthIndex = Math.min(100, Math.max(0, finiteNumber(detail.indeks_kesehatan, 50) * disasterEffects.healthMultiplier));
+  const healthIndex = Math.min(100, Math.max(
+    0,
+    finiteNumber(detail.indeks_kesehatan, 50) *
+      disasterEffects.healthMultiplier *
+      (1 - getActiveSectorImpacts(detail).publicServiceLossPercent / 100),
+  ));
   const health = getKesehatanMultiplier(healthIndex);
   const outbreakEffects = hitungDampakWabah(detail.active_outbreaks || [], date, detail);
   const severeFactorCount = [

@@ -11,6 +11,7 @@ import {
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npcCountrySimulation';
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { processCorruptionMonth } from './9_kementrian/1_pemberantasan_korupsi/logic/scandalLogic';
 
 import dynamic from 'next/dynamic';
 
@@ -73,6 +74,7 @@ const DoktrinKeterbukaanModal = dynamic(() => import("./8_sosial_budaya/keterbuk
 
 // 9. Kementerian
 const KementerianModal = dynamic(() => import("./9_kementrian/KementerianModal"), { ssr: false, loading: ModalLoadingFallback });
+const CorruptionMenu = dynamic(() => import("./9_kementrian/1_pemberantasan_korupsi/KorupsiMenu"), { ssr: false, loading: ModalLoadingFallback });
 
 const modalPreloaders: Record<string, () => Promise<unknown>> = {
   "Dashboard:Kepuasan": () => import("./1_kepuasan/1_statistik/StatistikKepuasanModal"),
@@ -104,6 +106,7 @@ const modalPreloaders: Record<string, () => Promise<unknown>> = {
   "Menu:Ideologi": () => import("./8_sosial_budaya/ideologi/IdeologiModal"),
   "Menu:DoktrinKeterbukaan": () => import("./8_sosial_budaya/keterbukaan/DoktrinKeterbukaanModal"),
   "Dashboard:Kementerian": () => import("./9_kementrian/KementerianModal"),
+  "Menu:AntiKorupsi": () => import("./9_kementrian/1_pemberantasan_korupsi/KorupsiMenu"),
 };
 
 export function preloadModalForMenu(menuId: string) {
@@ -259,6 +262,26 @@ function ModalsManager({
       console.warn('ModalsManager: failed to process active research on date change', e);
     }
   }, [currentDate, countryDetail, setCountryDetail]);
+
+  useEffect(() => {
+    if (!currentDate || !countryDetail) return;
+    const date = new Date(currentDate);
+    if (Number.isNaN(date.getTime())) {
+      console.warn('ModalsManager: skipped corruption processing for an invalid simulation date');
+      return;
+    }
+
+    const updatedDetail = processCorruptionMonth(countryDetail, date);
+    if (updatedDetail !== countryDetail) {
+      setCountryDetail(updatedDetail);
+      if (
+        typeof updatedDetail.presidentRating === 'number' &&
+        updatedDetail.presidentRating !== countryDetail.presidentRating
+      ) {
+        setPresidentRating?.(updatedDetail.presidentRating);
+      }
+    }
+  }, [currentDate, countryDetail, setCountryDetail, setPresidentRating]);
 
   // Jika tidak ada negara yang dipilih, jangan render apapun
   if (!selectedCountry) return null;
@@ -762,6 +785,17 @@ function ModalsManager({
           countryDetail={countryDetail}
           setCountryDetail={setCountryDetail}
           resetTrigger={resetTrigger}
+        />
+      );
+    case "Menu:AntiKorupsi":
+      return (
+        <CorruptionMenu
+          isOpen={true}
+          onClose={onClose}
+          countryDetail={countryDetail}
+          setCountryDetail={setCountryDetail}
+          currentDate={currentDate}
+          setPresidentRating={setPresidentRating}
         />
       );
 

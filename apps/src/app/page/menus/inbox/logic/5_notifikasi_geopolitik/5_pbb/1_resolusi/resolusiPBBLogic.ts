@@ -3,6 +3,7 @@ import { chooseAIResolutionDuration } from '@/app/page/navigasi_menu/2_navigasi_
 import { PRODUCTION_BAN_PRODUCTS, formatProductionProductName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog';
 import { isCountryAnnexed } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbVotingEligibility';
 import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
+import { getDisplayCountryName } from '@/app/logic/countryNameLogic';
 
 export interface AIResolusiPBBNotification extends NotificationMessage {
   tradeType: 'usulan_resolusi_pbb';
@@ -59,6 +60,8 @@ export function generateAIResolusiPBBNotification(
   dateStr: string,
   forcedResolutionType?: AIResolusiPBBNotification['resolutionType']
 ): AIResolusiPBBNotification {
+  proposerCountry = getDisplayCountryName(proposerCountry);
+  targetCountry = getDisplayCountryName(targetCountry);
   const chosen = forcedResolutionType
     ? RESOLUTION_TYPES.find(resolution => resolution.type === forcedResolutionType) || RESOLUTION_TYPES[0]
     : RESOLUTION_TYPES[Math.floor(Math.random() * RESOLUTION_TYPES.length)];

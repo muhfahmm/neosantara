@@ -1,4 +1,5 @@
 import { calculateIncomeAtRate } from './2_tax_logic/taxLogic';
+import { getActiveSectorImpacts } from '@/app/page/navigasi_menu/2_navigasi_bawah/9_kementrian/1_pemberantasan_korupsi/logic/corruptionLogic';
 import { calculateGoldMiningDailyProduction } from './goldIncome';
 import { getGoldStateProfitSharePercent } from '@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/7_sistem_ekonomi/logic/nationalizationLogic';
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from './departments';
@@ -106,9 +107,10 @@ export const calculateTotalTaxIncome = (detail: any) => {
   );
 
   const countryName = String(detail?.country || detail?.nama || "").trim();
-  const rawTotal = ppnIncome + korporasiIncome + penghasilanIncome + beaCukaiIncome + lingkunganIncome;
+  const taxRevenueAfterCorruption = (ppnIncome + korporasiIncome + penghasilanIncome + beaCukaiIncome + lingkunganIncome) *
+    (1 - getActiveSectorImpacts(detail).taxRevenueLossPercent / 100);
   return applyKementerianKeuanganTaxRevenueBonus(
-    applyOrgTaxBonus(rawTotal, countryName, detail),
+    applyOrgTaxBonus(taxRevenueAfterCorruption, countryName, detail),
     detail
   );
 };

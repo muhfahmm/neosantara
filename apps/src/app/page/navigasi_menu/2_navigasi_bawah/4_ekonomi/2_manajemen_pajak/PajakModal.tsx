@@ -36,6 +36,7 @@ import {
   getKementerianKeuanganTaxRevenueBonusPercent,
   applyKementerianKeuanganTaxRevenueBonus,
 } from "@/app/page/bonus_logic";
+import { getActiveSectorImpacts } from "@/app/page/navigasi_menu/2_navigasi_bawah/9_kementrian/1_pemberantasan_korupsi/logic/corruptionLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -298,9 +299,10 @@ export default function PajakModal({
     personalIncomeTaxRevenue +
     cigaretteTaxRevenue +
     environmentalTaxRevenue;
+  const corruptionImpacts = getActiveSectorImpacts(countryDetail);
 
   const totalIncomeWithHarmonisasi = applyHarmonisasiFiskalGlobalTaxRevenueBonus(
-    baseTotalIncome,
+    baseTotalIncome * (1 - corruptionImpacts.taxRevenueLossPercent / 100),
     countryDetail
   );
 
@@ -339,6 +341,11 @@ export default function PajakModal({
             <X className="h-4 w-4" />
           </button>
         </div>
+        {corruptionImpacts.taxRevenueLossPercent > 0 && (
+          <div className="mx-4 mt-3 rounded-xl border border-rose-500/25 bg-rose-950/20 px-4 py-3 text-xs text-rose-200 sm:mx-6">
+            Kebocoran pajak dari kasus korupsi aktif mengurangi estimasi penerimaan sebesar {corruptionImpacts.taxRevenueLossPercent}%.
+          </div>
+        )}
         <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
           <p className="text-[10px] lg:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-3.5 lg:mb-5 2xl:mb-6">
             Sesuaikan tarif pajak nasional untuk membiayai belanja militer dan
