@@ -180,14 +180,14 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
         ideology: selectedIdeology,
         anggaran: result.newAnggaran,
         pending_notifications: newPending,
-        message: `Ideologi negara diubah ke ${selectedIdeology}. Biaya perubahan ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID')} NEO.`
+        message: `Ideologi negara diubah ke ${selectedIdeology}. Biaya perubahan ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO.`
       }));
       setCountryProfiles(profiles => profiles.map(profile =>
         profile.country_slug === countrySlug ? { ...profile, ideology: selectedIdeology } : profile
       ));
       setFeedback({
         type: "success",
-        message: `Ideologi berhasil diubah menjadi ${selectedIdeology}. Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID')} NEO telah dipotong.`
+        message: `Ideologi berhasil diubah menjadi ${selectedIdeology}. Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`
       });
       setIsConfirmOpen(false);
     } catch (error) {
@@ -267,7 +267,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                   </div>
                   <div className="text-xs font-bold text-[#E0E0E0]">
                     <span>Anggaran:</span>
-                    <span className="ml-1.5 text-[#00FFAA]">{anggaran.toLocaleString('id-ID')} NEO</span>
+                    <span className="ml-1.5 text-[#00FFAA]">{anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
                   </div>
                 </div>
 

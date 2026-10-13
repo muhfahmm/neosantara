@@ -1211,10 +1211,10 @@ export default function MissionModals({
     const result = claimMissionReward(cardId, countryDetail, setCountryDetail);
     let rewardText = `+${result.diamond} Gems`;
     if (result.neo) {
-      rewardText += ` & +${result.neo.toLocaleString('id-ID')} NEO kas`;
+      rewardText += ` & +${result.neo.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO kas`;
     }
     if (result.sda) {
-      rewardText += ` & +${result.sda.amount.toLocaleString('id-ID')} ${formatProductionProductName(result.sda.productKey)}`;
+      rewardText += ` & +${result.sda.amount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ${formatProductionProductName(result.sda.productKey)}`;
     }
     setClaimFeedback(`🎉 Selamat! Hadiah misi "${title}" berhasil diklaim: ${rewardText}!`);
     setTimeout(() => {
@@ -1398,14 +1398,14 @@ export default function MissionModals({
                         {badges.neo !== undefined && (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-500/15 border border-blue-400/40 text-blue-200 font-black text-[10px]">
                             <Coins className="h-3 w-3 text-blue-300" />
-                            {badges.neo.toLocaleString('id-ID')} NEO
+                            {badges.neo.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO
                           </span>
                         )}
 
                         {badges.sda && (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-500/15 border border-orange-400/40 text-orange-200 font-black text-[10px]">
                             <Package className="h-3 w-3 text-orange-300" />
-                            {badges.sda.amount.toLocaleString('id-ID')} {formatProductionProductName(badges.sda.productKey)}
+                            {badges.sda.amount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} {formatProductionProductName(badges.sda.productKey)}
                           </span>
                         )}
 

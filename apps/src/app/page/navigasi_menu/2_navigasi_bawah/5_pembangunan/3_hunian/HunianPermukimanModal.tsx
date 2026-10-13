@@ -96,7 +96,7 @@ const safeNumber = (value: any): number => {
 
 const formatNumber = (value: any) => {
   const parsed = safeNumber(value);
-  return Number.isFinite(parsed) ? parsed.toLocaleString('id-ID') : '0';
+  return Number.isFinite(parsed) ? parsed.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : '0';
 };
 
 export default function HunianPermukimanModal({
@@ -466,11 +466,11 @@ export default function HunianPermukimanModal({
                                   <span className="flex items-center gap-1.5">
                                     {hasBonus && (
                                       <span className="line-through text-rose-400 font-bold opacity-80">
-                                        {baseCap.toLocaleString('id-ID')}
+                                        {baseCap.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                                       </span>
                                     )}
                                     <span className="text-[#00FFAA] font-black">
-                                      {effectiveCap.toLocaleString('id-ID')} Jiwa
+                                      {effectiveCap.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa
                                     </span>
                                   </span>
                                 );
@@ -523,7 +523,7 @@ export default function HunianPermukimanModal({
                           <Info className="w-3 h-3" />
                         </button>
                       </div>
-                      <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#00FFAA] mt-2 leading-tight break-words">{activeItem.value.toLocaleString('id-ID')}</p>
+                      <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#00FFAA] mt-2 leading-tight break-words">{activeItem.value.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
                       <div className="border-t border-[#00FFAA]/10 mt-6 pt-3">
                         <button
                           onClick={() => handleBuild(activeItem.key, activeItem.label)}
@@ -543,7 +543,7 @@ export default function HunianPermukimanModal({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4">
                     <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Total Keseluruhan Unit Hunian</p>
-                    <p className="text-lg sm:text-xl font-black text-[#00FFAA] mt-1 break-words">{totalValue.toLocaleString('id-ID')}</p>
+                    <p className="text-lg sm:text-xl font-black text-[#00FFAA] mt-1 break-words">{totalValue.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
                   </div>
                   <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4">
                     <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Populasi</p>
@@ -562,13 +562,13 @@ export default function HunianPermukimanModal({
                     <div className="bg-[#0F2424] rounded-xl p-3 border border-[#00FFAA]/20 flex flex-col justify-between">
                       <p className="text-[9px] font-bold uppercase text-[#6B8A8A]">Total Kapasitas</p>
                       <p className="text-xs sm:text-sm lg:text-base font-black text-emerald-400 leading-tight mt-1 break-words">
-                        {totalCapacity.toLocaleString('id-ID')} <span className="text-[9px] font-bold text-[#6B8A8A]">orang</span>
+                        {totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[9px] font-bold text-[#6B8A8A]">orang</span>
                       </p>
                     </div>
                     <div className="bg-[#0F2424] rounded-xl p-3 border border-[#00FFAA]/20 flex flex-col justify-between">
                       <p className="text-[9px] font-bold uppercase text-[#6B8A8A]">Kebutuhan (Populasi)</p>
                       <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 break-words ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
-                        {population.toLocaleString('id-ID')} <span className={`text-[9px] font-bold ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>orang</span>
+                        {population.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className={`text-[9px] font-bold ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>orang</span>
                       </p>
                     </div>
                     <div className={`bg-[#0F2424] rounded-xl p-3 border ${isSufficient ? 'border-emerald-500/30' : 'border-rose-500/30'} flex flex-col justify-between`}>
@@ -577,8 +577,8 @@ export default function HunianPermukimanModal({
                       </p>
                       <p className={`text-xs sm:text-sm lg:text-base font-black leading-tight mt-1 break-words ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
                         {isSufficient 
-                          ? `+${(totalCapacity - population).toLocaleString('id-ID')}` 
-                          : `-${shortage.toLocaleString('id-ID')}`}
+                          ? `+${(totalCapacity - population).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`
+                          : `-${shortage.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`}
                         <span className={`text-[9px] font-bold block sm:inline ${isSufficient ? 'text-emerald-400' : 'text-rose-400'}`}>
                           {isSufficient ? ' (surplus)' : ' (tunawisma)'}
                         </span>
@@ -611,24 +611,24 @@ export default function HunianPermukimanModal({
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/20 flex flex-col justify-between">
                             <span className="text-[10px] text-[#6B8A8A] font-bold uppercase">Jumlah Unit Terdaftar</span>
-                            <span className="font-black text-sm text-[#E0E0E0] mt-1">{item.count.toLocaleString('id-ID')} unit</span>
+                            <span className="font-black text-sm text-[#E0E0E0] mt-1">{item.count.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span>
                           </div>
                           <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/20 flex flex-col justify-between">
                             <span className="text-[10px] text-[#6B8A8A] font-bold uppercase">Kapasitas / Unit</span>
                             <div className="flex items-center gap-1.5 mt-1">
                               {housingBonusPercent > 0 && item.capacityPerUnit !== item.baseCapacityPerUnit && (
                                 <span className="line-through text-rose-400 font-bold text-xs opacity-80">
-                                  {item.baseCapacityPerUnit.toLocaleString('id-ID')}
+                                  {item.baseCapacityPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                                 </span>
                               )}
                               <span className="font-black text-sm text-[#E0E0E0]">
-                                {item.capacityPerUnit.toLocaleString('id-ID')} jiwa/unit
+                                {item.capacityPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa/unit
                               </span>
                             </div>
                           </div>
                           <div className="bg-[#0F2424] p-2.5 rounded-lg border border-[#00FFAA]/20 flex flex-col justify-between">
                             <span className="text-[10px] text-[#6B8A8A] font-bold uppercase">Total Kapasitas Kategori</span>
-                            <span className="font-black text-sm text-[#00FFAA] mt-1">{item.totalCapacity.toLocaleString('id-ID')} jiwa</span>
+                            <span className="font-black text-sm text-[#00FFAA] mt-1">{item.totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa</span>
                           </div>
                         </div>
 
@@ -645,8 +645,8 @@ export default function HunianPermukimanModal({
 
                   <div className={`mt-4 p-3 rounded-xl text-xs font-bold ${isSufficient ? 'bg-[#0F2424] border border-emerald-500/30 text-emerald-400' : 'bg-[#0F2424] border border-rose-500/30 text-rose-400'}`}>
                     {isSufficient 
-                      ? `✅ Kapasitas hunian mencukupi untuk seluruh populasi. Tersedia kelebihan ${(totalCapacity - population).toLocaleString('id-ID')} tempat.`
-                      : `⚠️ Masih terdapat ${shortage.toLocaleString('id-ID')} tunawisma (kekurangan tempat hunian). ${Math.round(100 - percentageMet)}% populasi belum terakomodasi.`}
+                      ? `✅ Kapasitas hunian mencukupi untuk seluruh populasi. Tersedia kelebihan ${(totalCapacity - population).toLocaleString('id-ID', { maximumFractionDigits: 2 })} tempat.`
+                      : `⚠️ Masih terdapat ${shortage.toLocaleString('id-ID', { maximumFractionDigits: 2 })} tunawisma (kekurangan tempat hunian). ${Math.round(100 - percentageMet)}% populasi belum terakomodasi.`}
                   </div>
                 </div>
 

@@ -1038,7 +1038,7 @@ export default function PenelitianPageModal({
                                         }`}
                                     >
                                       <Rocket className="w-2.5 h-2.5" />
-                                      {canUnlock ? `Riset (${research.cost.toLocaleString('id-ID')})` : 'Kas Tidak Cukup'}
+                                      {canUnlock ? `Riset (${research.cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })})` : 'Kas Tidak Cukup'}
                                     </button>
                                   )
                                 )}
@@ -1146,7 +1146,7 @@ export default function PenelitianPageModal({
               <div className="flex justify-between items-center mb-2.5">
                 <span className="text-xs font-bold text-[#6B8A8A] uppercase">Biaya Riset</span>
                 <span className="text-sm font-black text-[#00FFAA]">
-                  {confirmTarget.cost.toLocaleString('id-ID')} NEO
+                  {confirmTarget.cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO
                 </span>
               </div>
 
@@ -1274,7 +1274,7 @@ export default function PenelitianPageModal({
               <div className="flex justify-between items-center mb-2.5">
                 <span className="text-xs font-bold text-[#6B8A8A] uppercase">Biaya Upgrade</span>
                 <span className="text-sm font-black text-[#00FFAA]">
-                  {getCardUpgradeCost(confirmUpgrade.research, confirmUpgrade.targetLevel).toLocaleString('id-ID')} NEO
+                  {getCardUpgradeCost(confirmUpgrade.research, confirmUpgrade.targetLevel).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO
                 </span>
               </div>
 

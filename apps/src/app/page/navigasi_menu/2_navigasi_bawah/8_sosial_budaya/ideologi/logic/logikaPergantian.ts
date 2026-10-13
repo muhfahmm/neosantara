@@ -11,14 +11,14 @@ export function attemptChangeIdeology(currentAnggaran: number): ChangeIdeologyRe
   if (anggaran < IDEOLOGY_CHANGE_COST) {
     return {
       success: false,
-      message: `Kas negara tidak cukup. Dibutuhkan ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID')} NEO.`,
+      message: `Kas negara tidak cukup. Dibutuhkan ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO.`,
       newAnggaran: anggaran,
     };
   }
 
   return {
     success: true,
-    message: `Biaya ideologi berhasil dipotong ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID')} NEO.`,
+    message: `Biaya ideologi berhasil dipotong ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO.`,
     newAnggaran: anggaran - IDEOLOGY_CHANGE_COST,
   };
 }

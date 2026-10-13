@@ -63,7 +63,7 @@ const groupKeys = Object.keys(groupMeta) as (keyof typeof groupMeta)[];
 
 const formatNumber = (value: unknown) => {
   const numeric = Number(value ?? 0);
-  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID") : "0";
+  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 2 }) : "0";
 };
 
 // Format Tanggal

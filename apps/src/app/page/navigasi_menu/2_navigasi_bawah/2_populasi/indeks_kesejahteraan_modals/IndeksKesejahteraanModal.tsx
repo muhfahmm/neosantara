@@ -330,11 +330,11 @@ export default function IndeksKesejahteraanModal({
                             </div>
                           </div>
                           <div className="space-y-1 text-xs text-[#E0E0E0] font-semibold">
-                            <p>• Fasilitas Saat Ini: <span className="font-black text-[#00FFAA]">{currentPendidikan.toLocaleString("id-ID")}</span> unit</p>
-                            <p>• Target Ideal (100%): <span className="font-black text-[#00FFAA]">{targetPendidikan.toLocaleString("id-ID")}</span> unit (1 per 10.000 jiwa)</p>
+                            <p>• Fasilitas Saat Ini: <span className="font-black text-[#00FFAA]">{currentPendidikan.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span> unit</p>
+                            <p>• Target Ideal (100%): <span className="font-black text-[#00FFAA]">{targetPendidikan.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span> unit (1 per 10.000 jiwa)</p>
                             {neededPendidikan > 0 ? (
                               <p className="text-rose-400 bg-rose-500/10 p-1.5 rounded border border-rose-500/30 mt-1">
-                                • Kebutuhan Tambahan: <span className="font-black">+{neededPendidikan.toLocaleString("id-ID")}</span> unit sekolah/kampus lagi untuk mencapai 100%
+                                • Kebutuhan Tambahan: <span className="font-black">+{neededPendidikan.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span> unit sekolah/kampus lagi untuk mencapai 100%
                               </p>
                             ) : (
                               <p className="text-emerald-400 bg-emerald-500/10 p-1.5 rounded border border-emerald-500/30 mt-1 flex items-center gap-1.5">

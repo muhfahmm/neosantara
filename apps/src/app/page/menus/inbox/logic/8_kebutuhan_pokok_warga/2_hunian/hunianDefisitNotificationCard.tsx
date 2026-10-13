@@ -44,15 +44,15 @@ export default function HunianDefisitNotificationCard({ notification }: Props) {
           </div>
           <div className="flex flex-col">
             <span className="text-[9px] font-bold text-slate-400 uppercase">Kapasitas Hunian</span>
-            <span className="text-emerald-400 font-black">{totalCapacity.toLocaleString('id-ID')} jiwa</span>
+            <span className="text-emerald-400 font-black">{totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa</span>
           </div>
           <div className="flex flex-col">
             <span className="text-[9px] font-bold text-slate-400 uppercase">Total Populasi</span>
-            <span className="text-slate-200 font-black">{population.toLocaleString('id-ID')} jiwa</span>
+            <span className="text-slate-200 font-black">{population.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa</span>
           </div>
           <div className="flex flex-col">
             <span className="text-[9px] font-bold text-slate-400 uppercase">Tunawisma / Defisit</span>
-            <span className="text-rose-400 font-black">-{shortage.toLocaleString('id-ID')} jiwa</span>
+            <span className="text-rose-400 font-black">-{shortage.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa</span>
           </div>
         </div>
       </div>

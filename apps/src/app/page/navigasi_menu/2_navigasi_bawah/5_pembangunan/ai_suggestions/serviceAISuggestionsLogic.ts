@@ -149,9 +149,9 @@ export const generateHunianAIAnalysis = (
 
   let recommendation = "";
   if (isDeficit) {
-    recommendation = `Terdapat Defisit Kapasitas Hunian sebesar ${populationDeficit.toLocaleString('id-ID')} jiwa (tunawisma). Disarankan membangun minimal ${deficitUnitsNeeded.toLocaleString('id-ID')} unit ${tabLabel} tambahan.`;
+    recommendation = `Terdapat Defisit Kapasitas Hunian sebesar ${populationDeficit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa (tunawisma). Disarankan membangun minimal ${deficitUnitsNeeded.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit ${tabLabel} tambahan.`;
   } else {
-    recommendation = `Kapasitas hunian nasional dalam kondisi aman dengan Surplus Kapasitas sebesar ${populationSurplus.toLocaleString('id-ID')} jiwa dari total populasi ${population.toLocaleString('id-ID')} jiwa.`;
+    recommendation = `Kapasitas hunian nasional dalam kondisi aman dengan Surplus Kapasitas sebesar ${populationSurplus.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa dari total populasi ${population.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa.`;
   }
 
   const housingKeys = [

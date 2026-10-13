@@ -13,6 +13,7 @@ export interface AIResolusiPBBNotification extends NotificationMessage {
   resolutionTitle: string;
   duration: string;
   productKey?: string;
+  aiInvasionAttackChance?: number;
 }
 
 const RESOLUTION_TYPES: Array<{
@@ -55,9 +56,12 @@ export function generateAIResolusiPBBNotification(
   proposerCountry: string,
   targetCountry: string,
   relationScore: number,
-  dateStr: string
+  dateStr: string,
+  forcedResolutionType?: AIResolusiPBBNotification['resolutionType']
 ): AIResolusiPBBNotification {
-  const chosen = RESOLUTION_TYPES[Math.floor(Math.random() * RESOLUTION_TYPES.length)];
+  const chosen = forcedResolutionType
+    ? RESOLUTION_TYPES.find(resolution => resolution.type === forcedResolutionType) || RESOLUTION_TYPES[0]
+    : RESOLUTION_TYPES[Math.floor(Math.random() * RESOLUTION_TYPES.length)];
   const isWarBan = chosen.type === 'war_ban' || targetCountry?.toLowerCase().includes('dunia') || targetCountry?.toLowerCase().includes('global');
 
   const title = isWarBan

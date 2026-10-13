@@ -18,7 +18,7 @@ export function generateListrikDefisitNotification(
   dateStr: string
 ): ListrikDefisitNotification {
   const formattedDeficitMW = deficitMW.toLocaleString('id-ID', { maximumFractionDigits: 2 });
-  const formattedProd = totalProduction.toLocaleString('id-ID');
+  const formattedProd = totalProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 });
   const formattedCons = totalConsumption.toLocaleString('id-ID', { maximumFractionDigits: 2 });
 
   return {

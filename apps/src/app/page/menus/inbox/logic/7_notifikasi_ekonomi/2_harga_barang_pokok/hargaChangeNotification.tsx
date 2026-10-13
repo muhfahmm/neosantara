@@ -38,7 +38,7 @@ export default function HargaChangeNotificationCard({ notification, onAccept, on
         <div className="bg-[#0A1A1A] border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex items-center justify-between">
           <span>Komoditas: {notification.itemName}</span>
           <span className={isIncrease ? 'text-rose-400 font-black' : 'text-emerald-400 font-black'}>
-            Rp {notification.oldPrice.toLocaleString('id-ID')} ➔ Rp {notification.newPrice.toLocaleString('id-ID')}
+            Rp {notification.oldPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ➔ Rp {notification.newPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
           </span>
         </div>
       </div>

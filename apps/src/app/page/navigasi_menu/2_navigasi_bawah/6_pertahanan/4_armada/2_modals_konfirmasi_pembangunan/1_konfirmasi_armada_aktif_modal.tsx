@@ -192,16 +192,16 @@ export default function KonfirmasiArmadaAktifModal({
   if (capacityType === "infanteri") {
     const used = safeCurrentInfanteriCount;
     const total = maxCapacity;
-    capacityDisplay = `${used.toLocaleString('id-ID')} / ${total.toLocaleString('id-ID')}`;
-    warningText = `Kapasitas Infanteri sudah penuh (${total.toLocaleString('id-ID')} pasukan). Anda harus membangun Barak baru untuk menambah Infanteri lebih banyak.`;
+    capacityDisplay = `${used.toLocaleString('id-ID', { maximumFractionDigits: 2 })} / ${total.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
+    warningText = `Kapasitas Infanteri sudah penuh (${total.toLocaleString('id-ID', { maximumFractionDigits: 2 })} pasukan). Anda harus membangun Barak baru untuk menambah Infanteri lebih banyak.`;
     capacityInfoComponent = (
       <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-4 space-y-2">
         <p className="text-xs font-bold text-emerald-900">Detail Kapasitas Barak:</p>
         <div className="text-xs text-emerald-800 space-y-1">
-          <div className="flex justify-between"><span>Infanteri Saat Ini:</span><span className="font-bold">{used.toLocaleString('id-ID')} pasukan</span></div>
+          <div className="flex justify-between"><span>Infanteri Saat Ini:</span><span className="font-bold">{used.toLocaleString('id-ID', { maximumFractionDigits: 2 })} pasukan</span></div>
           <div className="flex justify-between"><span>Jumlah Barak:</span><span className="font-bold">{currentBarakCount} unit</span></div>
-          <div className="flex justify-between border-t border-emerald-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-emerald-900">{total.toLocaleString('id-ID')} pasukan</span></div>
-          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID')} pasukan</span></div>
+          <div className="flex justify-between border-t border-emerald-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-emerald-900">{total.toLocaleString('id-ID', { maximumFractionDigits: 2 })} pasukan</span></div>
+          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID', { maximumFractionDigits: 2 })} pasukan</span></div>
         </div>
       </div>
     );
@@ -211,18 +211,18 @@ export default function KonfirmasiArmadaAktifModal({
   else if (capacityType === "hangar_tank") {
     const totalVehicles = currentTankCount + currentApcCount;
     const maxHangar = currentHangarCount * HANGAR_TANK_CAPACITY;
-    capacityDisplay = `${totalVehicles.toLocaleString('id-ID')} / ${maxHangar.toLocaleString('id-ID')}`;
-    warningText = `Kapasitas Hangar Tank sudah penuh (${currentHangarCount} hangar × ${HANGAR_TANK_CAPACITY.toLocaleString('id-ID')} = ${maxHangar.toLocaleString('id-ID')} unit). Anda harus membangun Hangar Tank baru untuk menambah Tank/APC lebih banyak.`;
+    capacityDisplay = `${totalVehicles.toLocaleString('id-ID', { maximumFractionDigits: 2 })} / ${maxHangar.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
+    warningText = `Kapasitas Hangar Tank sudah penuh (${currentHangarCount} hangar × ${HANGAR_TANK_CAPACITY.toLocaleString('id-ID', { maximumFractionDigits: 2 })} = ${maxHangar.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit). Anda harus membangun Hangar Tank baru untuk menambah Tank/APC lebih banyak.`;
     capacityInfoComponent = (
       <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-4 space-y-2">
         <p className="text-xs font-bold text-amber-900">🚜 Detail Kapasitas Hangar Tank:</p>
         <div className="text-xs text-amber-800 space-y-1">
-          <div className="flex justify-between"><span>Tank Tempur Utama:</span><span className="font-bold">{currentTankCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>APC / IFV:</span><span className="font-bold">{currentApcCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Total Kendaraan:</span><span className="font-bold">{totalVehicles.toLocaleString('id-ID')} unit</span></div>
+          <div className="flex justify-between"><span>Tank Tempur Utama:</span><span className="font-bold">{currentTankCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>APC / IFV:</span><span className="font-bold">{currentApcCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Total Kendaraan:</span><span className="font-bold">{totalVehicles.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
           <div className="flex justify-between"><span>Jumlah Hangar:</span><span className="font-bold">{currentHangarCount} unit</span></div>
-          <div className="flex justify-between border-t border-amber-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-amber-900">{maxHangar.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID')} unit</span></div>
+          <div className="flex justify-between border-t border-amber-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-amber-900">{maxHangar.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
         </div>
       </div>
     );
@@ -232,20 +232,20 @@ export default function KonfirmasiArmadaAktifModal({
   else if (capacityType === "gudang_senjata") {
     const totalWeapons = currentArtileriCount + currentRoketCount + currentPertahanUdaraCount + currentKendaraanTaktisCount;
     const maxGudang = currentGudangCount * GUDANG_SENJATA_CAPACITY;
-    capacityDisplay = `${totalWeapons.toLocaleString('id-ID')} / ${maxGudang.toLocaleString('id-ID')}`;
-    warningText = `Kapasitas Gudang Senjata sudah penuh (${currentGudangCount} gudang × ${GUDANG_SENJATA_CAPACITY.toLocaleString('id-ID')} = ${maxGudang.toLocaleString('id-ID')} unit). Anda harus membangun Gudang Senjata baru untuk menambah Senjata lebih banyak.`;
+    capacityDisplay = `${totalWeapons.toLocaleString('id-ID', { maximumFractionDigits: 2 })} / ${maxGudang.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
+    warningText = `Kapasitas Gudang Senjata sudah penuh (${currentGudangCount} gudang × ${GUDANG_SENJATA_CAPACITY.toLocaleString('id-ID', { maximumFractionDigits: 2 })} = ${maxGudang.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit). Anda harus membangun Gudang Senjata baru untuk menambah Senjata lebih banyak.`;
     capacityInfoComponent = (
       <div className="bg-purple-50/80 border border-purple-200 rounded-xl p-4 space-y-2">
         <p className="text-xs font-bold text-purple-900">💣 Detail Kapasitas Gudang Senjata:</p>
         <div className="text-xs text-purple-800 space-y-1">
-          <div className="flex justify-between"><span>Artileri Berat:</span><span className="font-bold">{currentArtileriCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Sistem Peluncur Roket:</span><span className="font-bold">{currentRoketCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Pertahanan Udara Mobile:</span><span className="font-bold">{currentPertahanUdaraCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Kendaraan Taktis:</span><span className="font-bold">{currentKendaraanTaktisCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Total Senjata:</span><span className="font-bold">{totalWeapons.toLocaleString('id-ID')} unit</span></div>
+          <div className="flex justify-between"><span>Artileri Berat:</span><span className="font-bold">{currentArtileriCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Sistem Peluncur Roket:</span><span className="font-bold">{currentRoketCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Pertahanan Udara Mobile:</span><span className="font-bold">{currentPertahanUdaraCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Kendaraan Taktis:</span><span className="font-bold">{currentKendaraanTaktisCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Total Senjata:</span><span className="font-bold">{totalWeapons.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
           <div className="flex justify-between"><span>Jumlah Gudang:</span><span className="font-bold">{currentGudangCount} unit</span></div>
-          <div className="flex justify-between border-t border-purple-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-purple-900">{maxGudang.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID')} unit</span></div>
+          <div className="flex justify-between border-t border-purple-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-purple-900">{maxGudang.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
         </div>
       </div>
     );
@@ -256,24 +256,24 @@ export default function KonfirmasiArmadaAktifModal({
     const totalKapal = kapalIndukCount + kapalIndukNuklirCount + kapalDestroyerCount + kapalKorvetCount +
                        kapalSelamNuklirCount + kapalSelamRegulerCount + kapalRanjauCount + kapalLogistikCount;
     const maxPangkalan = currentPangkalanLautCount * PANGKALAN_LAUT_CAPACITY;
-    capacityDisplay = `${totalKapal.toLocaleString('id-ID')} / ${maxPangkalan.toLocaleString('id-ID')}`;
-    warningText = `Kapasitas Pangkalan Laut sudah penuh (${currentPangkalanLautCount} pangkalan × ${PANGKALAN_LAUT_CAPACITY.toLocaleString('id-ID')} = ${maxPangkalan.toLocaleString('id-ID')} unit). Anda harus membangun Pangkalan Laut baru untuk menambah Kapal lebih banyak.`;
+    capacityDisplay = `${totalKapal.toLocaleString('id-ID', { maximumFractionDigits: 2 })} / ${maxPangkalan.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
+    warningText = `Kapasitas Pangkalan Laut sudah penuh (${currentPangkalanLautCount} pangkalan × ${PANGKALAN_LAUT_CAPACITY.toLocaleString('id-ID', { maximumFractionDigits: 2 })} = ${maxPangkalan.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit). Anda harus membangun Pangkalan Laut baru untuk menambah Kapal lebih banyak.`;
     capacityInfoComponent = (
       <div className="bg-sky-50/80 border border-sky-200 rounded-xl p-4 space-y-2">
         <p className="text-xs font-bold text-sky-900">⚓ Detail Kapasitas Pangkalan Laut:</p>
         <div className="text-xs text-sky-800 space-y-1">
-          <div className="flex justify-between"><span>Kapal Induk:</span><span className="font-bold">{kapalIndukCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Induk Nuklir:</span><span className="font-bold">{kapalIndukNuklirCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Destroyer:</span><span className="font-bold">{kapalDestroyerCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Korvet:</span><span className="font-bold">{kapalKorvetCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Selam Nuklir:</span><span className="font-bold">{kapalSelamNuklirCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Selam Reguler:</span><span className="font-bold">{kapalSelamRegulerCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Ranjau:</span><span className="font-bold">{kapalRanjauCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Kapal Logistik:</span><span className="font-bold">{kapalLogistikCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Total Kapal:</span><span className="font-bold">{totalKapal.toLocaleString('id-ID')} unit</span></div>
+          <div className="flex justify-between"><span>Kapal Induk:</span><span className="font-bold">{kapalIndukCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Kapal Induk Nuklir:</span><span className="font-bold">{kapalIndukNuklirCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Kapal Destroyer:</span><span className="font-bold">{kapalDestroyerCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Kapal Korvet:</span><span className="font-bold">{kapalKorvetCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Kapal Selam Nuklir:</span><span className="font-bold">{kapalSelamNuklirCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Kapal Selam Reguler:</span><span className="font-bold">{kapalSelamRegulerCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Kapal Ranjau:</span><span className="font-bold">{kapalRanjauCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Kapal Logistik:</span><span className="font-bold">{kapalLogistikCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Total Kapal:</span><span className="font-bold">{totalKapal.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
           <div className="flex justify-between"><span>Jumlah Pangkalan:</span><span className="font-bold">{currentPangkalanLautCount} unit</span></div>
-          <div className="flex justify-between border-t border-sky-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-sky-900">{maxPangkalan.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID')} unit</span></div>
+          <div className="flex justify-between border-t border-sky-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-sky-900">{maxPangkalan.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
         </div>
       </div>
     );
@@ -284,24 +284,24 @@ export default function KonfirmasiArmadaAktifModal({
     const totalPesawat = jetTemturSilamanCount + jetTemturInterceptorCount + pesawatPengebomCount + helikopterSerangCount +
                          pesawatPengintaiCount + droneIntaiUavCount + droneKamikazeCount + pesawatAngkutCount;
     const maxPangkalan = currentPangkalanUdaraCount * PANGKALAN_UDARA_CAPACITY;
-    capacityDisplay = `${totalPesawat.toLocaleString('id-ID')} / ${maxPangkalan.toLocaleString('id-ID')}`;
-    warningText = `Kapasitas Pangkalan Udara sudah penuh (${currentPangkalanUdaraCount} pangkalan × ${PANGKALAN_UDARA_CAPACITY.toLocaleString('id-ID')} = ${maxPangkalan.toLocaleString('id-ID')} unit). Anda harus membangun Pangkalan Udara baru untuk menambah Pesawat lebih banyak.`;
+    capacityDisplay = `${totalPesawat.toLocaleString('id-ID', { maximumFractionDigits: 2 })} / ${maxPangkalan.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
+    warningText = `Kapasitas Pangkalan Udara sudah penuh (${currentPangkalanUdaraCount} pangkalan × ${PANGKALAN_UDARA_CAPACITY.toLocaleString('id-ID', { maximumFractionDigits: 2 })} = ${maxPangkalan.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit). Anda harus membangun Pangkalan Udara baru untuk menambah Pesawat lebih banyak.`;
     capacityInfoComponent = (
       <div className="bg-indigo-50/80 border border-indigo-200 rounded-xl p-4 space-y-2">
         <p className="text-xs font-bold text-indigo-900">✈️ Detail Kapasitas Pangkalan Udara:</p>
         <div className="text-xs text-indigo-800 space-y-1">
-          <div className="flex justify-between"><span>Jet Tempur Siluman:</span><span className="font-bold">{jetTemturSilamanCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Jet Tempur Interceptor:</span><span className="font-bold">{jetTemturInterceptorCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Pesawat Pengebom:</span><span className="font-bold">{pesawatPengebomCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Helikopter Serang:</span><span className="font-bold">{helikopterSerangCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Pesawat Pengintai:</span><span className="font-bold">{pesawatPengintaiCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Drone Intai UAV:</span><span className="font-bold">{droneIntaiUavCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Drone Kamikaze:</span><span className="font-bold">{droneKamikazeCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Pesawat Angkut:</span><span className="font-bold">{pesawatAngkutCount?.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Total Pesawat:</span><span className="font-bold">{totalPesawat.toLocaleString('id-ID')} unit</span></div>
+          <div className="flex justify-between"><span>Jet Tempur Siluman:</span><span className="font-bold">{jetTemturSilamanCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Jet Tempur Interceptor:</span><span className="font-bold">{jetTemturInterceptorCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Pesawat Pengebom:</span><span className="font-bold">{pesawatPengebomCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Helikopter Serang:</span><span className="font-bold">{helikopterSerangCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Pesawat Pengintai:</span><span className="font-bold">{pesawatPengintaiCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Drone Intai UAV:</span><span className="font-bold">{droneIntaiUavCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Drone Kamikaze:</span><span className="font-bold">{droneKamikazeCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Pesawat Angkut:</span><span className="font-bold">{pesawatAngkutCount?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Total Pesawat:</span><span className="font-bold">{totalPesawat.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
           <div className="flex justify-between"><span>Jumlah Pangkalan:</span><span className="font-bold">{currentPangkalanUdaraCount} unit</span></div>
-          <div className="flex justify-between border-t border-indigo-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-indigo-900">{maxPangkalan.toLocaleString('id-ID')} unit</span></div>
-          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID')} unit</span></div>
+          <div className="flex justify-between border-t border-indigo-200 pt-1 mt-1"><span>Kapasitas Total:</span><span className="font-bold text-indigo-900">{maxPangkalan.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
+          <div className="flex justify-between"><span>Sisa Kapasitas:</span><span className={`font-bold ${remaining <= 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{Math.max(0, remaining).toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit</span></div>
         </div>
       </div>
     );
@@ -407,7 +407,7 @@ export default function KonfirmasiArmadaAktifModal({
                 <div>
                   <p className="text-sm font-black uppercase tracking-wider text-rose-400">Kas Negara Tidak Cukup</p>
                   <p className="text-xs leading-relaxed text-[#E0E0E0] mt-1">
-                    Total biaya pembangunan ({totalCost.toLocaleString('id-ID')} NEO) melebihi kas negara saat ini ({anggaran.toLocaleString('id-ID')} NEO). Kurangi jumlah unit atau tunggu kas negara bertambah.
+                    Total biaya pembangunan ({totalCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO) melebihi kas negara saat ini ({anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO). Kurangi jumlah unit atau tunggu kas negara bertambah.
                   </p>
                 </div>
               </div>
@@ -449,11 +449,11 @@ export default function KonfirmasiArmadaAktifModal({
               />
             </label>
             <p className="text-[10px] text-[#6B8A8A]">
-              Maksimal: {Math.max(0, effectiveMaxBuildable).toLocaleString('id-ID')} {capacityType === "infanteri" ? "pasukan" : "unit"}.
+              Maksimal: {Math.max(0, effectiveMaxBuildable).toLocaleString('id-ID', { maximumFractionDigits: 2 })} {capacityType === "infanteri" ? "pasukan" : "unit"}.
             </p>
             {budgetLimited && (
               <p className="text-[10px] font-bold text-amber-400">
-                ⚠️ Dibatasi oleh kas negara — sisa slot infra masih {Math.max(0, remaining).toLocaleString('id-ID')} unit, tapi kas negara hanya cukup untuk {Math.max(0, getMaxAffordableQuantity()).toLocaleString('id-ID')} unit.
+                ⚠️ Dibatasi oleh kas negara — sisa slot infra masih {Math.max(0, remaining).toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit, tapi kas negara hanya cukup untuk {Math.max(0, getMaxAffordableQuantity()).toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit.
               </p>
             )}
           </div>
@@ -493,7 +493,7 @@ export default function KonfirmasiArmadaAktifModal({
               <div className="flex justify-between font-bold">
                 <span className="text-[#6B8A8A]">Biaya Pembangunan:</span>
                 <span className="text-[#00FFAA] font-black">
-                  {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID')} NEO`}
+                  {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
                 </span>
               </div>
             ) : (
@@ -501,13 +501,13 @@ export default function KonfirmasiArmadaAktifModal({
                 <div className="flex justify-between">
                   <span className="text-[#6B8A8A]">Biaya per Unit:</span>
                   <span className="text-[#E0E0E0] font-bold">
-                    {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID')} NEO`}
+                    {loadingMetadata ? 'Memuat...' : `${costPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
                   </span>
                 </div>
                 <div className="flex justify-between font-bold">
-                  <span className="text-[#6B8A8A]">Total Biaya ({buildAmount.toLocaleString('id-ID')} unit):</span>
+                  <span className="text-[#6B8A8A]">Total Biaya ({buildAmount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit):</span>
                   <span className={isAnggaranCukup ? "text-[#00FFAA] font-black" : "text-rose-400 font-black"}>
-                    {loadingMetadata ? 'Memuat...' : `${totalCost.toLocaleString('id-ID')} NEO`}
+                    {loadingMetadata ? 'Memuat...' : `${totalCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
                   </span>
                 </div>
               </>
@@ -568,7 +568,7 @@ export default function KonfirmasiArmadaAktifModal({
                             </div>
                           )}
                           <div className={`text-[10px] font-black mt-0.5 ${isStockZero ? 'text-rose-400' : 'text-emerald-400'}`}>
-                            {stock.toLocaleString('id-ID')}
+                            {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                           </div>
                         </button>
                       );
@@ -587,7 +587,7 @@ export default function KonfirmasiArmadaAktifModal({
             <div className="flex justify-between items-center text-xs font-bold pt-1">
               <span className="text-[#6B8A8A]">Sisa Kas Setelah Pembangunan:</span>
               <span className={isAnggaranCukup ? "text-emerald-400 font-black" : "text-rose-400 font-black"}>
-                {(anggaran - totalCost).toLocaleString('id-ID')} NEO
+                {(anggaran - totalCost).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO
               </span>
             </div>
           )}

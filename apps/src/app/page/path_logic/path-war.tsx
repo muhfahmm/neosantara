@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import {
@@ -437,6 +438,11 @@ export default function WarMap({
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<WarResult | null>(null);
   const [showFlash, setShowFlash] = useState(false);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   const isUserDefender = useMemo(() => {
     if (typeof isUserDefenderProp === 'boolean') return isUserDefenderProp;
@@ -568,7 +574,7 @@ export default function WarMap({
     if (phase !== 'impact' || !battleOutcome) return;
     setShowFlash(true);
     if (isNpcWar) {
-      const closeTimer = setTimeout(onClose, 1300);
+      const closeTimer = setTimeout(() => onCloseRef.current(), 1300);
       const flashTimer = setTimeout(() => setShowFlash(false), 500);
       return () => {
         clearTimeout(closeTimer);
@@ -583,7 +589,7 @@ export default function WarMap({
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, [phase, battleOutcome, isNpcWar, onClose]);
+  }, [phase, battleOutcome, isNpcWar]);
 
   /* ── Titik kontrol Bezier & jalur ── */
   const controlPos = useMemo(() => {

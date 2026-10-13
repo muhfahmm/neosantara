@@ -51,15 +51,15 @@ export default function IncomeModal({ isOpen, onClose, countryDetail }: IncomeMo
     { label: "Revenue Pajak", amount: taxRevenue },
     {
       label: goldBuildingCount > 0
-        ? `Bagian Negara dari Tambang Emas (${goldDailyProduction.toLocaleString('id-ID')} unit)`
+        ? `Bagian Negara dari Tambang Emas (${goldDailyProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit)`
         : "Bagian Negara dari Tambang Emas",
       amount: goldStateIncome,
       displayAmount: goldBuildingCount > 0
-        ? `+ ${goldStateIncome.toLocaleString('id-ID')}`
+        ? `+ ${goldStateIncome.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`
         : undefined,
       subtitle:
         goldBuildingCount > 0
-          ? `${goldDailyProduction.toLocaleString('id-ID')} unit × ${goldStateSharePercent}% bagian negara = ${goldStateIncome.toLocaleString('id-ID')} NEO/hari`
+          ? `${goldDailyProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit × ${goldStateSharePercent}% bagian negara = ${goldStateIncome.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO/hari`
           : undefined
     }
   ];
@@ -97,7 +97,7 @@ export default function IncomeModal({ isOpen, onClose, countryDetail }: IncomeMo
                   <div key={index} className="border-b border-[#00FFAA]/10 last:border-0 pb-2">
                     <div className="flex justify-between items-center text-xs font-bold text-emerald-400 py-2">
                       <span className="font-semibold text-[#E0E0E0]">{item.label}</span>
-                      <span>{item.displayAmount ?? `+ ${item.amount.toLocaleString("id-ID")}`}</span>
+                      <span>{item.displayAmount ?? `+ ${item.amount.toLocaleString("id-ID", { maximumFractionDigits: 2 })}`}</span>
                     </div>
                     {item.subtitle && (
                       <div className="text-[10px] text-[#6B8A8A] pl-1 pb-2">
@@ -111,14 +111,14 @@ export default function IncomeModal({ isOpen, onClose, countryDetail }: IncomeMo
               <div className="pt-4 border-t border-[#00FFAA]/20 mt-4">
                 <div className="flex justify-between items-center text-sm font-black text-[#00FFAA]">
                   <span>Total Pemasukkan Harian:</span>
-                  <span className="text-emerald-400">+ {totalIncome.toLocaleString("id-ID")}</span>
+                  <span className="text-emerald-400">+ {totalIncome.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                 </div>
               </div>
             </div>
 
             <div className="flex justify-between items-center text-xs font-black text-[#00FFAA] pt-2 px-1">
               <span className="text-[#6B8A8A]">Total Saldo Kas Negara:</span>
-              <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} NEO</span>
+              <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
             </div>
           </div>
         </div>

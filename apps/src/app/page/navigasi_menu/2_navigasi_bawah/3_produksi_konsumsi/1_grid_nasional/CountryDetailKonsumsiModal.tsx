@@ -375,7 +375,7 @@ export default function CountryDetailKonsumsiModal({
                         {item.sector}
                       </span>
                       <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-[#0F2424] border border-[#00FFAA]/20 text-[#00FFAA] shrink-0">
-                        {item.count.toLocaleString("id-ID")} unit
+                        {item.count.toLocaleString("id-ID", { maximumFractionDigits: 2 })} unit
                       </span>
                     </div>
                     <h4 className="text-xs sm:text-sm font-black text-[#E0E0E0] uppercase tracking-wide leading-snug">

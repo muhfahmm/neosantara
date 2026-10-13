@@ -64,7 +64,7 @@ export default function DetailKetahananPanganModal({
               <div className="mt-4 grid grid-cols-2 gap-4">
                 <div className="bg-[#0F2424] p-3 rounded-xl border border-emerald-500/30">
                   <p className="text-[10px] text-emerald-400 font-black uppercase">Faktor Pengali</p>
-                  <p className="text-xl font-black text-emerald-400">× {factor.toFixed(3)}</p>
+                  <p className="text-xl font-black text-emerald-400">× {factor.toFixed(2)}</p>
                 </div>
                 <div className="bg-[#0F2424] p-3 rounded-xl border border-[#00FFAA]/20">
                   <p className="text-[10px] text-[#6B8A8A] font-black uppercase">Semakin tinggi</p>

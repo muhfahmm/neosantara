@@ -113,7 +113,7 @@ export default function AlokasiSubsidiTab({ countryDetail }: AlokasiSubsidiTabPr
                 </span>
               </div>
               <span className="font-black text-right shrink-0 pl-2">
-                {item.isSubsidized ? `- ${item.budgetCost.toLocaleString("id-ID")}` : "0"}
+                {item.isSubsidized ? `- ${item.budgetCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })}` : "0"}
               </span>
             </div>
           ))}
@@ -122,7 +122,7 @@ export default function AlokasiSubsidiTab({ countryDetail }: AlokasiSubsidiTabPr
         <div className="pt-4 border-t border-[#00FFAA]/30 mt-4">
           <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
             <span>Subtotal Subsidi {activeCategory}:</span>
-            <span className="text-rose-400">- {subtotalCost.toLocaleString("id-ID")}</span>
+            <span className="text-rose-400">- {subtotalCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
           </div>
         </div>
       </div>
@@ -132,7 +132,7 @@ export default function AlokasiSubsidiTab({ countryDetail }: AlokasiSubsidiTabPr
         <div className="pt-2">
           <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
             <span>Total Pengeluaran Subsidi Alokasi:</span>
-            <span className="text-rose-400">- {totalOverallCost.toLocaleString("id-ID")}</span>
+            <span className="text-rose-400">- {totalOverallCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
           </div>
         </div>
       </div>

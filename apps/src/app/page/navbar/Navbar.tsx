@@ -73,12 +73,12 @@ export function Navbar({
         netBalanceAdjustment -
         (Number(countryDetail?.minister_recruitment_expense_pending) || 0);
     const netBalanceColor = netBalance >= 0 ? 'text-emerald-700' : 'text-rose-700';
-    const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID')}`;
+    const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
     
     // Populasi logic
     const populasi = Number(countryDetail?.jumlah_penduduk) || 0;
     const netPopulationChangeColor = getNetPopulationChangeColor(netPopulationChange);
-    const netPopulationLabel = `${netPopulationChange >= 0 ? '+ ' : '- '}${Math.abs(netPopulationChange).toLocaleString('id-ID')}`;
+    const netPopulationLabel = `${netPopulationChange >= 0 ? '+ ' : '- '}${Math.abs(netPopulationChange).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
     const kepuasanScore = calculateKepuasan(countryDetail, metadata);
 
     // Function to get active menu information
@@ -188,7 +188,7 @@ export function Navbar({
                             label="POPULASI" 
                             value={
                                 <span className="flex items-center gap-1.5 2xl:gap-2 text-[#E0E0E0]">
-                                    <span>{populasi.toLocaleString('id-ID')}</span>
+                                    <span>{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                                     <span className={`${netPopulationChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
                                         ({netPopulationLabel})
                                     </span>
@@ -199,8 +199,8 @@ export function Navbar({
                         <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max bg-[#0F2424] border border-[#00FFAA]/30 rounded-xl p-3 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none">
                             <p className="text-[10px] font-black text-[#00FFAA] uppercase tracking-wider mb-1.5 border-b border-[#00FFAA]/20 pb-1.5 text-center">Rincian Demografi</p>
                             <div className="grid grid-cols-2 gap-x-6 text-[11px] font-bold text-[#E0E0E0]">
-                                <span className="text-[#00FFAA] text-center">Lahir: +{dailyBirths.toLocaleString('id-ID')}</span>
-                                <span className="text-rose-400 text-center">Mati: -{dailyDeaths.toLocaleString('id-ID')}</span>
+                                <span className="text-[#00FFAA] text-center">Lahir: +{dailyBirths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
+                                <span className="text-rose-400 text-center">Mati: -{dailyDeaths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                             </div>
                             <div className="mt-1.5 pt-1.5 border-t border-[#00FFAA]/20 text-[10px] text-[#6B8A8A] text-center">
                                 Pertumbuhan Bersih: <span className={`font-bold ${netPopulationChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{netPopulationLabel}</span>
@@ -270,7 +270,7 @@ export function Navbar({
                         <Gem className="w-3.5 h-3.5 2xl:w-4 2xl:h-4 text-[#00FFAA]" />
                     </div>
                     <span className="text-[11px] lg:text-[12px] 2xl:text-[13px] font-black tracking-tight text-[#E0E0E0] group-hover:text-white">
-                        {diamond.toLocaleString('id-ID')}
+                        {diamond.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                     </span>
                     <span className="w-4 h-4 lg:w-4.5 lg:h-4.5 rounded-md bg-[#00FFAA] text-[#0A1A1A] flex items-center justify-center font-black text-[10px] group-hover:scale-105 transition-transform shadow-sm">
                         <Plus className="w-3 h-3 stroke-[3]" />

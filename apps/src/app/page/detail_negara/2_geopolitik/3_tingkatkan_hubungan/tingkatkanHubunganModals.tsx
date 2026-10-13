@@ -96,7 +96,7 @@ export default function TingkatkanHubunganModal({
 	};
 
 	const formatNEO = (num: number) => {
-		return num.toLocaleString("id-ID");
+		return num.toLocaleString("id-ID", { maximumFractionDigits: 2 });
 	};
 
 	const getRelationStatusBadge = (val: number) => {

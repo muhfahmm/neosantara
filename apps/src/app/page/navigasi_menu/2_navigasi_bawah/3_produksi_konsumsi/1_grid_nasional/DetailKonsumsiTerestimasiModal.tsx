@@ -104,7 +104,7 @@ export default function DetailKonsumsiTerestimasiModal({
                   <p className="text-[9px] font-black uppercase tracking-wider text-emerald-400">Total Produksi Listrik</p>
                 </div>
                 <p className="text-base sm:text-lg font-black text-emerald-400 mt-1 break-words">
-                  {totalProductionMW.toLocaleString("id-ID")} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
+                  {totalProductionMW.toLocaleString("id-ID", { maximumFractionDigits: 2 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
                 </p>
               </div>
               <p className="text-[9px] text-emerald-300/70 mt-1.5 font-medium">Pembangkit aktif</p>
@@ -287,7 +287,7 @@ export default function DetailKonsumsiTerestimasiModal({
                         {item.sector}
                       </span>
                       <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-[#0F2424] border border-[#00FFAA]/20 text-[#00FFAA] shrink-0">
-                        {item.count.toLocaleString("id-ID")} unit
+                        {item.count.toLocaleString("id-ID", { maximumFractionDigits: 2 })} unit
                       </span>
                     </div>
                     <h4 className="text-xs sm:text-sm font-black text-[#E0E0E0] uppercase tracking-wide leading-snug">

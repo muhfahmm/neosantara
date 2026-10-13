@@ -75,6 +75,8 @@ export interface ActiveResolutionItem {
   finishedAt?: string;
   lastProcessedDate?: string;
   violationId?: string;
+  aiInvasionAttackChance?: number;
+  aiInvasionDecisionProcessed?: boolean;
   bribedCountries?: Record<string, 'yes' | 'no' | 'abstain'>;
   notifiedDay1?: boolean;
   notified10Days?: boolean;
@@ -319,7 +321,14 @@ const RESOLUTION_TYPE_META: Record<string, { label: string; desc: string }> = {
  * Notifikasi inbox sudah dikirim oleh pemicu bulanan, jadi notifiedDay1 = true agar tidak dobel.
  */
 export function spawnAIResolutionFromTrigger(
-  trigger: { proposerCountry: string; targetCountry: string; resolutionType: string; duration?: string; productKey?: string },
+  trigger: {
+    proposerCountry: string;
+    targetCountry: string;
+    resolutionType: string;
+    duration?: string;
+    productKey?: string;
+    aiInvasionAttackChance?: number;
+  },
   dateStr: string
 ): void {
   if (typeof window === 'undefined') return;
@@ -363,7 +372,8 @@ export function spawnAIResolutionFromTrigger(
     createdAt: dateStr,
     lastProcessedDate: dateStr,
     notifiedDay1: true,
-    notified10Days: false
+    notified10Days: false,
+    aiInvasionAttackChance: trigger.aiInvasionAttackChance
   };
 
   saveActiveResolutions([newItem, ...items]);
@@ -500,10 +510,10 @@ export function tickPBBResolutions(
           );
           if (isNoTarget) {
             notifCard.title = `⚠️ PERINGATAN VOTING PBB (SISA ${newDaysRemaining} HARI): ${proposer.name}`;
-            notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara ${activeUser} untuk usulan "${item.label}" selama ${durationText} untuk ${defaultTargetName}. Sejauh ini ${votes.supportersCount} negara setuju dan ${votes.opponentsCount} menolak.`;
+            notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara ${activeUser} untuk usulan "${item.label}" selama ${durationText} untuk ${defaultTargetName}. Sejauh ini ${votes.supportersCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} negara setuju dan ${votes.opponentsCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} menolak.`;
           } else {
             notifCard.title = `⚠️ PERINGATAN VOTING PBB (SISA ${newDaysRemaining} HARI): ${proposer.name} ➔ ${item.target.name}`;
-            notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara ${activeUser} untuk usulan "${item.label}" yang menargetkan ${item.target.name} selama ${durationText}. Sejauh ini ${votes.supportersCount} negara setuju dan ${votes.opponentsCount} menolak.`;
+            notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara ${activeUser} untuk usulan "${item.label}" yang menargetkan ${item.target.name} selama ${durationText}. Sejauh ini ${votes.supportersCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} negara setuju dan ${votes.opponentsCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} menolak.`;
           }
           notifCard.resolutionTitle = `${item.label} (${durationText})`;
           onTriggerNotification(notifCard);
@@ -531,9 +541,9 @@ export function tickPBBResolutions(
             );
             finishCard.title = `🏛️ HASIL RESOLUSI PBB: ${item.label} (${statusLabel})`;
             if (isNoTarget) {
-              finishCard.message = `Pemungutan suara Sidang Umum Majelis PBB untuk usulan "${item.label}" selama ${durationText} (Pengusul: ${proposer.name}, Target: ${defaultTargetName}) telah SELESAI. Perolehan suara akhir: ${votes.supportersCount} Setuju, ${votes.opponentsCount} Menolak, ${votes.abstainCount} Abstain. Status resmi: RESOLUSI ${statusLabel}.`;
+              finishCard.message = `Pemungutan suara Sidang Umum Majelis PBB untuk usulan "${item.label}" selama ${durationText} (Pengusul: ${proposer.name}, Target: ${defaultTargetName}) telah SELESAI. Perolehan suara akhir: ${votes.supportersCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Setuju, ${votes.opponentsCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Menolak, ${votes.abstainCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Abstain. Status resmi: RESOLUSI ${statusLabel}.`;
             } else {
-              finishCard.message = `Pemungutan suara Sidang Umum Majelis PBB untuk usulan "${item.label}" selama ${durationText} (Pengusul: ${proposer.name}, Target: ${item.target.name}) telah SELESAI. Perolehan suara akhir: ${votes.supportersCount} Setuju, ${votes.opponentsCount} Menolak, ${votes.abstainCount} Abstain. Status resmi: RESOLUSI ${statusLabel}.`;
+              finishCard.message = `Pemungutan suara Sidang Umum Majelis PBB untuk usulan "${item.label}" selama ${durationText} (Pengusul: ${proposer.name}, Target: ${item.target.name}) telah SELESAI. Perolehan suara akhir: ${votes.supportersCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Setuju, ${votes.opponentsCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Menolak, ${votes.abstainCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Abstain. Status resmi: RESOLUSI ${statusLabel}.`;
             }
             finishCard.resolutionTitle = `${item.label} (${durationText})`;
             onTriggerNotification(finishCard);
@@ -705,5 +715,5 @@ export function getCountryPBBVote(countryName: string): number {
 
 export function formatBribeCost(countryName: string): string {
   const vote = getCountryPBBVote(countryName);
-  return `${vote.toLocaleString('id-ID')}.000`;
+  return `${vote.toLocaleString('id-ID', { maximumFractionDigits: 2 })}.000`;
 }

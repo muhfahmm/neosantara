@@ -22,7 +22,7 @@ export default function DetailKriminalitasModal({
   const populasi = countryDetail?.jumlah_penduduk || 10_000_000;
   const result = calculateKriminalitasLogic(countryDetail, populasi);
   const countryName = selectedCountry?.country || "Indonesia";
-  const formatNumber = (num: number) => num.toLocaleString('id-ID');
+  const formatNumber = (num: number) => num.toLocaleString('id-ID', { maximumFractionDigits: 2 });
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -65,7 +65,7 @@ export default function DetailKriminalitasModal({
                 </div>
                 <div className="bg-[#0F2424] p-3 rounded-xl border border-rose-500/30">
                   <p className="text-[10px] text-rose-400 font-black uppercase">Faktor Pengali Kematian</p>
-                  <p className="text-xl font-black text-rose-400">× {result.crimeFactor.toFixed(3)}</p>
+                  <p className="text-xl font-black text-rose-400">× {result.crimeFactor.toFixed(2)}</p>
                 </div>
                 <div className="bg-[#0F2424] p-3 rounded-xl border border-[#00FFAA]/20">
                   <p className="text-[10px] text-[#6B8A8A] font-black uppercase">Keterangan</p>

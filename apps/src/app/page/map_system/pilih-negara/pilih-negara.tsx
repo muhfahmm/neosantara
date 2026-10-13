@@ -406,7 +406,7 @@ export default function PilihNegaraPage() {
             <StatusItem
               icon={<Users className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-[#00FFAA]" />}
               label="POPULASI"
-              value={hasInteracted && countryDetail ? (countryDetail?.jumlah_penduduk?.toLocaleString('id-ID') || '0') : '-'}
+              value={hasInteracted && countryDetail ? (countryDetail?.jumlah_penduduk?.toLocaleString('id-ID', { maximumFractionDigits: 2 }) || '0') : '-'}
             />
             <StatusItem
               icon={<Landmark className="w-3 h-3 xl:w-3.5 xl:h-3.5 text-[#00FFAA]" />}
@@ -420,8 +420,8 @@ export default function PilihNegaraPage() {
               value={
                 hasInteracted && countryDetail && Object.keys(countryDetail).length > 0
                   ? netBalance >= 0
-                    ? `+ ${netBalance.toLocaleString('id-ID')}`
-                    : `- ${Math.abs(netBalance).toLocaleString('id-ID')}`
+                    ? `+ ${netBalance.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`
+                    : `- ${Math.abs(netBalance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`
                   : '-'
               }
               color={

@@ -59,7 +59,7 @@ export default function PilihTenorModal({ isOpen, onClose, selectedTerm, onSelec
                   }`}
                 >
                   <div className="text-lg font-black">{option.label}</div>
-                  <div className={`text-[10px] mt-1 ${active ? "text-[#0A1A1A]" : "text-[#6B8A8A]"}`}>{option.days.toLocaleString("id-ID")} hari</div>
+                  <div className={`text-[10px] mt-1 ${active ? "text-[#0A1A1A]" : "text-[#6B8A8A]"}`}>{option.days.toLocaleString("id-ID", { maximumFractionDigits: 2 })} hari</div>
                 </button>
               );
             })}
@@ -67,7 +67,7 @@ export default function PilihTenorModal({ isOpen, onClose, selectedTerm, onSelec
 
           <div className="mt-6 rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] p-4 text-sm text-[#E0E0E0]">
             <p className="font-black text-[#00FFAA]">Terpilih:</p>
-            <p className="mt-1 font-bold">{selectedTerm.toLocaleString("id-ID")} hari</p>
+            <p className="mt-1 font-bold">{selectedTerm.toLocaleString("id-ID", { maximumFractionDigits: 2 })} hari</p>
           </div>
         </div>
       </div>

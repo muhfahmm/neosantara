@@ -35,7 +35,7 @@ export default function FinansialGlobal({ countryDetail }: FinansialGlobalProps)
     return () => window.removeEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcCountries);
   }, []);
 
-  const formatNumber = (num: number) => num.toLocaleString('id-ID');
+  const formatNumber = (num: number) => num.toLocaleString('id-ID', { maximumFractionDigits: 2 });
 
 
   const calcTax = (rate: number) => {

@@ -165,7 +165,7 @@ export default function CountryKelistrikanModal({
             <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
               <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
               <span className="text-[10px] lg:text-[11px] font-black text-emerald-400 uppercase tracking-wider">Produksi</span>
-              <span className="text-[10px] lg:text-[11px] font-black text-emerald-400">{totalProductionMW.toLocaleString('id-ID')} MW</span>
+              <span className="text-[10px] lg:text-[11px] font-black text-emerald-400">{totalProductionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</span>
             </div>
             <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 bg-[#0F2424] border border-rose-500/30 rounded-lg">
               <TrendingDown className="h-3.5 w-3.5 text-rose-400" />
@@ -208,7 +208,7 @@ export default function CountryKelistrikanModal({
                       </p>
                       {source.unitProduction > 0 && (
                         <span className="text-[9px] font-bold text-[#00FFAA] bg-[#00FFAA]/10 px-1.5 py-0.5 rounded border border-[#00FFAA]/20 shrink-0">
-                          {source.unitProduction.toLocaleString('id-ID')} MW
+                          {source.unitProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                         </span>
                       )}
                     </div>
@@ -219,7 +219,7 @@ export default function CountryKelistrikanModal({
 
                   <div className="border-t border-[#00FFAA]/10 mt-3 pt-2 text-center min-h-[44px] flex flex-col justify-center">
                     <span className={`font-black text-xs sm:text-sm leading-tight break-words ${source.isFuelDeficit ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
-                      {source.isFuelDeficit ? '0 MW' : `${source.totalProduction.toLocaleString('id-ID')} MW`}
+                      {source.isFuelDeficit ? '0 MW' : `${source.totalProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW`}
                     </span>
                     {source.isFuelDeficit && (
                       <span className="text-[8px] sm:text-[9px] font-bold text-rose-400 leading-tight">(bahan bakar defisit)</span>
@@ -250,7 +250,7 @@ export default function CountryKelistrikanModal({
                     <p className="text-[9px] font-black uppercase tracking-wider text-emerald-400">Total Produksi Listrik</p>
                   </div>
                   <p className="text-base sm:text-lg font-black text-emerald-400 mt-1 break-words">
-                    {totalProductionMW.toLocaleString("id-ID")} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
+                    {totalProductionMW.toLocaleString("id-ID", { maximumFractionDigits: 2 })} <span className="text-xs font-bold text-[#6B8A8A]">MW</span>
                   </p>
                 </div>
                 <p className="text-[9px] text-emerald-300/70 mt-1.5 font-medium">Pembangkit aktif</p>
@@ -425,7 +425,7 @@ export default function CountryKelistrikanModal({
                           {item.sector}
                         </span>
                         <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-[#0F2424] border border-[#00FFAA]/20 text-[#00FFAA] shrink-0">
-                          {item.count.toLocaleString("id-ID")} unit
+                          {item.count.toLocaleString("id-ID", { maximumFractionDigits: 2 })} unit
                         </span>
                       </div>
                       <h4 className="text-xs sm:text-sm font-black text-[#E0E0E0] uppercase tracking-wide leading-snug">

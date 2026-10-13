@@ -278,18 +278,18 @@ export default function InfoBangunan({
                   <span className="flex items-center gap-2 font-black text-sm">
                     {hasShintoElectricityBonus && (
                       <span className="text-rose-400 line-through">
-                        {baseElectricityProduction.toLocaleString('id-ID')} MW
+                        {baseElectricityProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                       </span>
                     )}
                     <span className={isProductionZero ? "text-rose-400" : "text-emerald-400"}>
-                      {rawProduction.toLocaleString('id-ID')} MW
+                      {rawProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                     </span>
                     {isProductionZero && ' (bahan bakar defisit)'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pl-4 text-[#6B8A8A]">
                   <span>Per Unit:</span>
-                  <span className="text-[#E0E0E0]">{(bMeta?.produksi || 0).toLocaleString('id-ID')} MW</span>
+                  <span className="text-[#E0E0E0]">{(bMeta?.produksi || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</span>
                 </div>
 
               </>
@@ -326,7 +326,7 @@ export default function InfoBangunan({
 
             <div className="flex justify-between items-center border-t border-[#00FFAA]/10 pt-2 mt-2">
               <span className="text-[#6B8A8A]">Biaya Pembangunan:</span>
-              <span className="text-[#00FFAA] font-black">{(Number(bMeta?.biaya_pembangunan) || 0).toLocaleString('id-ID')} NEO</span>
+              <span className="text-[#00FFAA] font-black">{(Number(bMeta?.biaya_pembangunan) || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
             </div>
             {bMeta?.waktu_pembangunan !== undefined && (
               <div className="flex justify-between items-center">
@@ -568,16 +568,16 @@ export default function InfoBangunan({
                         </div>
                         <div className="flex justify-between items-center text-xs">
                           <span className="text-[#E0E0E0]">Produksi:</span>
-                          <span className="font-black text-emerald-400">+{totalFuelProd.toLocaleString('id-ID')}</span>
+                          <span className="font-black text-emerald-400">+{totalFuelProd.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between items-center text-xs">
                           <span className="text-[#E0E0E0]">Konsumsi:</span>
-                          <span className="font-black text-rose-400">-{totalFuelCons.toLocaleString('id-ID')}</span>
+                          <span className="font-black text-rose-400">-{totalFuelCons.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between items-center text-xs pt-1 border-t border-rose-500/20 mt-0.5">
                           <span className="text-rose-400 font-black uppercase">Saldo:</span>
                           <span className={`font-black ${saldo < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
-                            {saldo >= 0 ? `+${saldo.toLocaleString('id-ID')}` : saldo.toLocaleString('id-ID')}
+                            {saldo >= 0 ? `+${saldo.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : saldo.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                           </span>
                         </div>
                       </div>
@@ -612,16 +612,16 @@ export default function InfoBangunan({
                     </div>
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-[#E0E0E0]">Produksi tambang / hari:</span>
-                      <span className="font-black text-emerald-400">+{production.toLocaleString("id-ID")}</span>
+                      <span className="font-black text-emerald-400">+{production.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-[#E0E0E0]">Konsumsi pabrik / hari:</span>
-                      <span className="font-black text-rose-400">-{consumption.toLocaleString("id-ID")}</span>
+                      <span className="font-black text-rose-400">-{consumption.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="flex justify-between items-center text-xs pt-1 border-t border-rose-500/20 mt-0.5">
                       <span className="text-rose-400 font-black uppercase">Saldo:</span>
                       <span className={`font-black ${balance < 0 ? "text-rose-400" : "text-emerald-400"}`}>
-                        {balance >= 0 ? `+${balance.toLocaleString("id-ID")}` : balance.toLocaleString("id-ID")}
+                        {balance >= 0 ? `+${balance.toLocaleString("id-ID", { maximumFractionDigits: 2 })}` : balance.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                       </span>
                     </div>
                   </div>
@@ -646,16 +646,16 @@ export default function InfoBangunan({
                   </div>
                   <div className="flex justify-between items-center text-xs">
                     <span className="text-[#E0E0E0] font-bold">Total Produksi ({fuelName}) / hari:</span>
-                    <span className="font-black text-emerald-400">+{prodVal.toLocaleString('id-ID')}</span>
+                    <span className="font-black text-emerald-400">+{prodVal.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex justify-between items-center text-xs">
                     <span className="text-[#E0E0E0] font-bold">Konsumsi ({fuelName}) / hari:</span>
-                    <span className="font-black text-rose-400">-{consVal.toLocaleString('id-ID')}</span>
+                    <span className="font-black text-rose-400">-{consVal.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-rose-500/20 mt-1 text-xs">
                     <span className="text-rose-400 font-black uppercase">Saldo (Prod - Konsumsi):</span>
                     <span className={`font-black ${saldoVal < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
-                      {saldoVal >= 0 ? `+${saldoVal.toLocaleString('id-ID')}` : saldoVal.toLocaleString('id-ID')}
+                      {saldoVal >= 0 ? `+${saldoVal.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : saldoVal.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                     </span>
                   </div>
                 </div>

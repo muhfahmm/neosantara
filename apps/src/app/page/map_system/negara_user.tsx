@@ -34,14 +34,14 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
 
   const anggaran = Number(countryDetail?.anggaran) || 0;
   const netBalance = calculateNetBalanceWithEconomicEmbargo(countryDetail, selectedCountry?.country);
-  const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID')}`;
+  const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
 
   const ideology = countryDetail?.ideology || countryDetail?.ideologi || '—';
   const religion = countryDetail?.religion || countryDetail?.agama_utama || countryDetail?.agama || '—';
 
   const formatNumber = (n: number | undefined) => {
     if (n == null || n === 0) return '—';
-    return n.toLocaleString('id-ID');
+    return n.toLocaleString('id-ID', { maximumFractionDigits: 2 });
   };
 
   return (

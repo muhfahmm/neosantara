@@ -146,9 +146,18 @@ import { generateNonAggressionOfferNotification } from '../menus/inbox/logic/5_n
 import { generateDefenseAllianceOfferNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/2_aliansi_pertahanan/defenseAllianceLogic';
 import { generateResearchContractOfferNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/3_kontrak_penelitian/researchContractLogic';
 import { generateHubunganPanasNotification } from '../menus/inbox/logic/5_notifikasi_geopolitik/4_hubungan_panas/hubunganPanasLogic';
-import { evaluateAIResolusiPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBLogic';
+import {
+    evaluateAIResolusiPBBTrigger,
+    generateAIResolusiPBBNotification
+} from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBLogic';
 import { evaluateAIKeamananPBBTrigger } from '../menus/inbox/logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBLogic';
-import { clearActiveResolutionsForSession, tickPBBResolutions, spawnAIResolutionFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
+import {
+    clearActiveResolutionsForSession,
+    loadActiveResolutions,
+    saveActiveResolutions,
+    tickPBBResolutions,
+    spawnAIResolutionFromTrigger
+} from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { clearActiveSecurityCouncilItems, tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { initCountryIsoFromDatabase, getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import {
@@ -216,6 +225,20 @@ import {
     resolveProvinceReferendum,
     type ProvinceReferendum
 } from '../detail_negara/1_informasi_umum/provinsi_logic/ketegangan_provinsi/3_referendum';
+
+type AnnexedTerritoryEntry = { attackerCountry?: string };
+type AnnexedTerritories = Record<string, AnnexedTerritoryEntry>;
+
+function hasAnnexedTerritories(countryName: string): boolean {
+    if (typeof window === 'undefined') return false;
+
+    const territories = (window as Window & {
+        neosantara_annexed_countries?: AnnexedTerritories;
+    }).neosantara_annexed_countries || {};
+    return Object.values(territories).some(territory =>
+        areSameWarCountry(territory.attackerCountry, countryName)
+    );
+}
 
 interface Country {
     id: number;
@@ -376,7 +399,7 @@ export default function MapPage() {
                         id: `aid-arrived-${detail.id}`,
                         title: 'Bantuan Sekutu Tiba',
                         sender: detail.senderCountry || 'Sekutu',
-                        message: `Konvoi bantuan tiba: +${amount.toLocaleString('id-ID')} ${resourceKey.replaceAll('_', ' ')} telah ditambahkan ke inventaris nasional.`,
+                        message: `Konvoi bantuan tiba: +${amount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ${resourceKey.replaceAll('_', ' ')} telah ditambahkan ke inventaris nasional.`,
                         timestamp: new Date().toISOString().slice(0, 10),
                         type: 'peringkat',
                         value: 0,
@@ -1129,7 +1152,7 @@ export default function MapPage() {
                 id: `notif-req-inv-${Date.now()}`,
                 title: `⚔️ OPERASI SERANGAN SEKUTU DILUNCURKAN`,
                 sender: `Kementerian Pertahanan & Sekutu (${attackerCountry})`,
-                message: `Permintaan serangan telah diproses! Angkatan Bersenjata ${attackerCountry} resmi melancarkan serangan terhadap ${targetCountry} setelah menerima bayaran $${Number(amount || 0).toLocaleString('id-ID')}. Berita resmi geopolitik telah diterbitkan!`,
+                message: `Permintaan serangan telah diproses! Angkatan Bersenjata ${attackerCountry} resmi melancarkan serangan terhadap ${targetCountry} setelah menerima bayaran $${Number(amount || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })}. Berita resmi geopolitik telah diterbitkan!`,
                 timestamp: dateStr,
                 type: 'peringkat',
                 value: 100,
@@ -2457,17 +2480,63 @@ export default function MapPage() {
                 const attackChancePercent = applyDoktrinPertahananDiriBonus(baseChance, countryDetail);
 
                 if (Math.random() * 100 < attackChancePercent) {
-                    const annexedTerritories = typeof window !== 'undefined'
-                        ? (window as any).neosantara_annexed_countries || {}
-                        : {};
-                    const hasAnnexedTerritories = Object.values(annexedTerritories).some(
-                        (territory: any) => areSameWarCountry(territory?.attackerCountry, userCountryName)
+                    const userHasAnnexedTerritories = hasAnnexedTerritories(userCountryName);
+                    const attackNotification = generateDiserangNotification(
+                        attackerCountry,
+                        currentDateStr,
+                        userHasAnnexedTerritories
                     );
-                    newNotifsToAdd.push(
-                        generateDiserangNotification(attackerCountry, currentDateStr, hasAnnexedTerritories)
-                    );
-                    // Trigger visual attack animation on map
-                    if (typeof window !== 'undefined') {
+                    if (attackNotification.attackLevel === 'invasi') {
+                        const activeResolutions = loadActiveResolutions();
+                        const pendingInvasionResolution = activeResolutions.find(item =>
+                            item.type === 'military_invasion' &&
+                            item.status === 'voting' &&
+                            areSameWarCountry(item.proposer.name, attackerCountry) &&
+                            areSameWarCountry(item.target.name, userCountryName)
+                        );
+                        const hasApprovedInvasionResolution = hasActiveApprovedInvasionResolution(
+                            attackerCountry,
+                            userCountryName
+                        );
+
+                        if (hasApprovedInvasionResolution) {
+                            if (Math.random() < 0.95) {
+                                newNotifsToAdd.push(generateDiserangNotification(
+                                    attackerCountry,
+                                    currentDateStr,
+                                    userHasAnnexedTerritories,
+                                    'invasi'
+                                ));
+                                window.dispatchEvent(new CustomEvent('start_war_animation', {
+                                    detail: {
+                                        attacker: attackerCountry,
+                                        target: userCountryName,
+                                        targetCountryDetail: countryDetail,
+                                    }
+                                }));
+                            }
+                        } else if (pendingInvasionResolution) {
+                            if (pendingInvasionResolution.aiInvasionAttackChance === undefined) {
+                                saveActiveResolutions(activeResolutions.map(item =>
+                                    item.id === pendingInvasionResolution.id
+                                        ? { ...item, aiInvasionAttackChance: attackChancePercent }
+                                        : item
+                                ));
+                            }
+                        } else {
+                            const invasionProposal = generateAIResolusiPBBNotification(
+                                attackerCountry,
+                                userCountryName,
+                                relationScore,
+                                currentDateStr,
+                                'military_invasion'
+                            );
+                            invasionProposal.aiInvasionAttackChance = attackChancePercent;
+                            newNotifsToAdd.push(invasionProposal);
+                            spawnAIResolutionFromTrigger(invasionProposal, currentDateStr);
+                        }
+                    } else {
+                        newNotifsToAdd.push(attackNotification);
                         window.dispatchEvent(new CustomEvent('start_war_animation', {
                             detail: {
                                 attacker: attackerCountry,
@@ -3500,9 +3569,82 @@ export default function MapPage() {
 
         // Tick PBB resolutions and Security Council countdown & AI 206 country voting logic
         if (typeof tickPBBResolutions === 'function') {
-            tickPBBResolutions(currentDateStr, (newNotif) => {
+            const updatedResolutions = tickPBBResolutions(currentDateStr, (newNotif) => {
                 setNotifications((prev: any[]) => [newNotif, ...prev]);
             }, selectedCountry?.country);
+            const decidedInvasions = updatedResolutions.filter(item =>
+                item.aiInvasionAttackChance !== undefined &&
+                item.status !== 'voting' &&
+                !item.aiInvasionDecisionProcessed
+            );
+
+            if (decidedInvasions.length > 0) {
+                const decidedIds = new Set(decidedInvasions.map(item => item.id));
+                saveActiveResolutions(updatedResolutions.map(item =>
+                    decidedIds.has(item.id)
+                        ? { ...item, aiInvasionDecisionProcessed: true }
+                        : item
+                ));
+
+                decidedInvasions.forEach(item => {
+                    const isApproved = item.status === 'passed';
+                    const relationAttackChance = Math.max(
+                        0,
+                        Math.min(100, Number(item.aiInvasionAttackChance) || 0)
+                    );
+                    const willDefyRejection = !isApproved &&
+                        Math.random() < 0.1 &&
+                        Math.random() * 100 < relationAttackChance;
+                    const willInvade = isApproved
+                        ? Math.random() < 0.95
+                        : willDefyRejection;
+                    const targetHasAnnexedTerritories = hasAnnexedTerritories(item.target.name);
+
+                    if (willInvade) {
+                        const attackNotification = generateDiserangNotification(
+                            item.proposer.name,
+                            currentDateStr,
+                            targetHasAnnexedTerritories,
+                            'invasi'
+                        );
+                        const sanctionsNotifications = willDefyRejection
+                            ? submitInvasionViolationSanctions(
+                                item.proposer.name,
+                                item.target.name,
+                                currentDateStr,
+                                'missing_military_resolution'
+                            )
+                            : [];
+                        setNotifications(previous => [
+                            ...sanctionsNotifications,
+                            attackNotification,
+                            ...previous
+                        ]);
+                        window.dispatchEvent(new CustomEvent('start_war_animation', {
+                            detail: {
+                                attacker: item.proposer.name,
+                                target: item.target.name,
+                                targetCountryDetail: countryDetail,
+                            }
+                        }));
+                    } else {
+                        setNotifications(previous => [{
+                            id: `ai-invasion-decision-${item.id}`,
+                            title: isApproved
+                                ? '🏛️ RESOLUSI INVASI DISETUJUI, SERANGAN DIBATALKAN'
+                                : '🕊️ NEGARA AI MENGHORMATI PENOLAKAN PBB',
+                            sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
+                            message: isApproved
+                                ? `Resolusi invasi ${item.proposer.name} terhadap ${item.target.name} disetujui, tetapi negara tersebut tidak melanjutkan serangan.`
+                                : `Resolusi invasi ${item.proposer.name} terhadap ${item.target.name} ditolak. Negara tersebut mengurungkan niat menyerang.`,
+                            timestamp: currentDateStr,
+                            type: 'peringkat',
+                            value: 0,
+                            isRead: false,
+                        }, ...previous]);
+                    }
+                });
+            }
         }
         if (typeof tickPBBSecurityCouncil === 'function') {
             tickPBBSecurityCouncil(currentDateStr, (newNotif) => {
@@ -3714,7 +3856,7 @@ export default function MapPage() {
                             id: `population-crisis-${key}-${currentDateStr}-${tier}`,
                             title: `${populationMetrics.populationStatus.label} / ${populationMetrics.populationStatus.labelEn}`,
                             sender: 'Kementerian Kependudukan / Ministry of Population',
-                            message: `${crisisLabels[key]} memburuk ke Tier ${tier}. Pertumbuhan bersih: ${populationMetrics.netDailyChange.toLocaleString('id-ID')} jiwa/hari. / Worsened to Tier ${tier}. Net growth: ${populationMetrics.netDailyChange.toLocaleString('en-US')} people/day.`,
+                            message: `${crisisLabels[key]} memburuk ke Tier ${tier}. Pertumbuhan bersih: ${populationMetrics.netDailyChange.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa/hari. / Worsened to Tier ${tier}. Net growth: ${populationMetrics.netDailyChange.toLocaleString('en-US')} people/day.`,
                             timestamp: currentDateStr,
                             type: 'kesejahteraan' as const,
                             value: tier,
@@ -4656,7 +4798,7 @@ export default function MapPage() {
                     setNotifications(previous => previous.map(item => item.id === notif.id
                         ? {
                             ...item,
-                            message: `${item.message} Pasukan membubarkan massa dengan kekerasan: ${casualties.toLocaleString('id-ID')} korban jiwa tercatat dan ketegangan naik ${tensionIncrease} poin menjadi ${nextTension}/100.`,
+                            message: `${item.message} Pasukan membubarkan massa dengan kekerasan: ${casualties.toLocaleString('id-ID', { maximumFractionDigits: 2 })} korban jiwa tercatat dan ketegangan naik ${tensionIncrease} poin menjadi ${nextTension}/100.`,
                             provinceIncident: { ...incident, handled: true }
                         }
                         : item
@@ -4664,7 +4806,7 @@ export default function MapPage() {
                     setResultModal({
                         isOpen: true,
                         title: 'Massa Dibubarkan dengan Kekerasan',
-                        message: `Operasi di ${targetCountry} menyebabkan ${casualties.toLocaleString('id-ID')} korban jiwa. Ketegangan naik ${tensionIncrease} poin menjadi ${nextTension}/100.${currentReferendum?.status === 'pending'
+                        message: `Operasi di ${targetCountry} menyebabkan ${casualties.toLocaleString('id-ID', { maximumFractionDigits: 2 })} korban jiwa. Ketegangan naik ${tensionIncrease} poin menjadi ${nextTension}/100.${currentReferendum?.status === 'pending'
                             ? ' Penindakan ini memperkuat dukungan kemerdekaan dalam referendum yang sedang berlangsung.'
                             : startedReferendum
                                 ? ` Ketegangan mencapai 100; referendum kemerdekaan dimulai dan berlangsung hingga ${newReferendum?.votingEndsAt}.`
@@ -4726,7 +4868,7 @@ export default function MapPage() {
                         setResultModal({
                             isOpen: true,
                             title: 'Transaksi Ekspor Berhasil',
-                            message: `Berhasil mengekspor ${tNotif.quantity} unit ${tNotif.productKey} ke ${tNotif.partnerName} senilai +${tNotif.totalPrice.toLocaleString('id-ID')} NEO!`,
+                            message: `Berhasil mengekspor ${tNotif.quantity} unit ${tNotif.productKey} ke ${tNotif.partnerName} senilai +${tNotif.totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO!`,
                             type: 'success'
                         });
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
@@ -4741,7 +4883,7 @@ export default function MapPage() {
                             setResultModal({
                                 isOpen: true,
                                 title: 'Gagal Menyelesaikan Impor',
-                                message: `Anggaran negara tidak mencukupi untuk melakukan impor ini. (${budget.toLocaleString('id-ID')} NEO tersedia dari ${tNotif.totalPrice.toLocaleString('id-ID')} NEO).`,
+                                message: `Anggaran negara tidak mencukupi untuk melakukan impor ini. (${budget.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO tersedia dari ${tNotif.totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO).`,
                                 type: 'error'
                             });
                             return;
@@ -4758,7 +4900,7 @@ export default function MapPage() {
                         setResultModal({
                             isOpen: true,
                             title: 'Transaksi Impor Berhasil',
-                            message: `Berhasil mengimpor ${tNotif.quantity} unit ${tNotif.productKey} dari ${tNotif.partnerName} senilai -${tNotif.totalPrice.toLocaleString('id-ID')} NEO!`,
+                            message: `Berhasil mengimpor ${tNotif.quantity} unit ${tNotif.productKey} dari ${tNotif.partnerName} senilai -${tNotif.totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO!`,
                             type: 'success'
                         });
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
@@ -5004,7 +5146,7 @@ export default function MapPage() {
                             setResultModal({
                                 isOpen: true,
                                 title: isPoliceIncident ? 'Operasi Kepolisian Gagal' : 'Gagal Menyalurkan Bantuan',
-                                message: `Anggaran negara tidak mencukupi untuk ${isPoliceIncident ? 'mendanai operasi kepolisian' : 'menyalurkan bantuan'} (${budget.toLocaleString('id-ID')} NEO dari ${cost.toLocaleString('id-ID')} NEO).`,
+                                message: `Anggaran negara tidak mencukupi untuk ${isPoliceIncident ? 'mendanai operasi kepolisian' : 'menyalurkan bantuan'} (${budget.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO dari ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO).`,
                                 type: 'error'
                             });
                             return;
@@ -5025,8 +5167,8 @@ export default function MapPage() {
                             isOpen: true,
                             title: isPoliceIncident ? 'Operasi Kepolisian Berhasil' : 'Bantuan Darurat Disalurkan',
                             message: isPoliceIncident
-                                ? `Operasi kepolisian berhasil didanai sebesar ${cost.toLocaleString('id-ID')} NEO. Tingkat keamanan, kepuasan, dan kesejahteraan meningkat.`
-                                : `Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID')} NEO! Kepuasan & Kesejahteraan masyarakat meningkat +2.0%.`,
+                                ? `Operasi kepolisian berhasil didanai sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO. Tingkat keamanan, kepuasan, dan kesejahteraan meningkat.`
+                                : `Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO! Kepuasan & Kesejahteraan masyarakat meningkat +2.0%.`,
                             type: 'success'
                         });
                         return;
@@ -5258,7 +5400,7 @@ export default function MapPage() {
                                                 id: `war-loot-${Date.now()}`,
                                                 title: '⚠️ PRODUKSI DIRAMPAS & KORBAN POPULASI (80%)',
                                                 sender: `Markas Besar Angkatan Bersenjata (${countryDetail?.country || countryDetail?.nama_negara || 'Indonesia'})`,
-                                                message: `Pertahanan gagal membendung agresi ${activeWarAnimation.attacker}! Musuh merampas habis seluruh stok produksi (Mineral, Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan) hingga kembali 0. Korban perang: ${lostPopulation.toLocaleString('id-ID')} jiwa (${lossPercent}% populasi). Kerugian armada: ${lossSummaryText}.`,
+                                                message: `Pertahanan gagal membendung agresi ${activeWarAnimation.attacker}! Musuh merampas habis seluruh stok produksi (Mineral, Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan) hingga kembali 0. Korban perang: ${lostPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa (${lossPercent}% populasi). Kerugian armada: ${lossSummaryText}.`,
                                                 type: 'kepuasan',
                                                 value: 80,
                                                 isRead: false,
@@ -5269,7 +5411,7 @@ export default function MapPage() {
                                         setResultModal({
                                             isOpen: true,
                                             title: 'Pertahanan Gagal — Produksi Dirampas!',
-                                            message: `Pertahanan negara Anda gagal menahan agresi militer dari ${activeWarAnimation.attacker}. Negara berhasil menepis aneksasi total (peluang selamat 80%), namun seluruh stok hasil produksi (Mineral, Manufaktur, Peternakan, Agrikultur, Perikanan, Olahan Pangan) dirampas habis hingga 0. Dampak populasi: ${lostPopulation.toLocaleString('id-ID')} jiwa (${lossPercent}% populasi), serta kerugian armada 75%: ${lossSummaryText}.`,
+                                            message: `Pertahanan negara Anda gagal menahan agresi militer dari ${activeWarAnimation.attacker}. Negara berhasil menepis aneksasi total (peluang selamat 80%), namun seluruh stok hasil produksi (Mineral, Manufaktur, Peternakan, Agrikultur, Perikanan, Olahan Pangan) dirampas habis hingga 0. Dampak populasi: ${lostPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa (${lossPercent}% populasi), serta kerugian armada 75%: ${lossSummaryText}.`,
                                             type: 'error',
                                         });
                                     }

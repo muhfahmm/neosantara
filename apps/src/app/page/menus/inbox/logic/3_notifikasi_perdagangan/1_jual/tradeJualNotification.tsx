@@ -34,15 +34,15 @@ export default function TradeJualNotification({ notification, onAccept, onReject
         <div className="bg-white/80 border border-amber-100 rounded-lg p-2.5 mt-2 grid grid-cols-3 gap-2 text-center text-[10px] font-bold text-[#5c3c10]">
           <div>
             <div className="text-slate-400 text-[9px] uppercase">Kuantitas Ekspor</div>
-            <div>{notification.quantity?.toLocaleString('id-ID')} Unit</div>
+            <div>{notification.quantity?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Unit</div>
           </div>
           <div>
             <div className="text-slate-400 text-[9px] uppercase">Harga Penawaran</div>
-            <div>{notification.pricePerUnit?.toLocaleString('id-ID')} NEO</div>
+            <div>{notification.pricePerUnit?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
           <div>
             <div className="text-slate-400 text-[9px] uppercase">Total Pendapatan</div>
-            <div className="text-amber-700">{notification.totalPrice?.toLocaleString('id-ID')} NEO</div>
+            <div className="text-amber-700">{notification.totalPrice?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
         </div>
 

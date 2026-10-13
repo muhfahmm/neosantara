@@ -52,7 +52,7 @@ export default function ProgramNuklirTimeDetail({
             <div className="mt-8 grid grid-cols-1 gap-4 text-sm text-[#5c3c10]">
               <div className="rounded-2xl bg-[#f7f1e4] p-4 border border-[#C4B49C]/20">
                 <p className="font-bold">Total Waktu:</p>
-                <p className="mt-2 text-base text-[#5c3c10]">{durationDays.toLocaleString("id-ID")} Hari</p>
+                <p className="mt-2 text-base text-[#5c3c10]">{durationDays.toLocaleString("id-ID", { maximumFractionDigits: 2 })} Hari</p>
               </div>
               <div className="rounded-2xl bg-[#f7f1e4] p-4 border border-[#C4B49C]/20">
                 <p className="font-bold">Keterangan:</p>

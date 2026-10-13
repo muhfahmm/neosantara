@@ -176,11 +176,11 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
       religion: selectedReligion,
       anggaran: result.newAnggaran,
       pending_notifications: newPending,
-      message: `Agama negara diubah ke ${selectedReligion}. Biaya perubahan ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} NEO.`
+      message: `Agama negara diubah ke ${selectedReligion}. Biaya perubahan ${RELIGION_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO.`
     }));
     setFeedback({
       type: "success",
-      message: `Agama berhasil diubah menjadi ${selectedReligion}. Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID')} NEO telah dipotong.`
+      message: `Agama berhasil diubah menjadi ${selectedReligion}. Biaya ${RELIGION_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`
     });
     setIsConfirmOpen(false);
     setIsSaving(false);
@@ -246,7 +246,7 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                   </div>
                   <div className="text-xs font-bold text-[#E0E0E0]">
                     <span>Anggaran:</span>
-                    <span className="ml-1.5 text-[#00FFAA]">{anggaran.toLocaleString('id-ID')} NEO</span>
+                    <span className="ml-1.5 text-[#00FFAA]">{anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
                   </div>
                 </div>
 

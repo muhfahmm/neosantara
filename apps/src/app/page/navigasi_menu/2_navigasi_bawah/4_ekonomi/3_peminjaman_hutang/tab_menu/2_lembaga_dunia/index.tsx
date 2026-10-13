@@ -110,7 +110,7 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
     }
 
     if (requestedAmount > lembaga.maxCap) {
-      setErrors((prev: Record<number, string>) => ({ ...prev, [lembaga.id]: `Maksimal pinjaman untuk ${lembaga.name} adalah ${lembaga.maxCap.toLocaleString("id-ID")} NEO.` }));
+      setErrors((prev: Record<number, string>) => ({ ...prev, [lembaga.id]: `Maksimal pinjaman untuk ${lembaga.name} adalah ${lembaga.maxCap.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO.` }));
       return;
     }
 
@@ -153,7 +153,7 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
                 <div>
                   <h4 className="text-base font-black text-[#00FFAA]">{lembaga.name}</h4>
                   <p className="text-[10px] text-[#6B8A8A]">
-                    Bunga: {lembaga.interest}% | Maks: {lembaga.maxCap.toLocaleString("id-ID")} NEO | Tenor: 180–1825 hari
+                    Bunga: {lembaga.interest}% | Maks: {lembaga.maxCap.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO | Tenor: 180–1825 hari
                   </p>
                 </div>
               </div>
@@ -176,8 +176,8 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
                   <input
                     type="text"
                     inputMode="numeric"
-                    placeholder={lembaga.maxCap.toLocaleString("id-ID")}
-                    value={amounts[lembaga.id] && amounts[lembaga.id] !== "" ? Number(amounts[lembaga.id]).toLocaleString('id-ID') : ""}
+                    placeholder={lembaga.maxCap.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
+                    value={amounts[lembaga.id] && amounts[lembaga.id] !== "" ? Number(amounts[lembaga.id]).toLocaleString('id-ID', { maximumFractionDigits: 2 }) : ""}
                     onChange={(e) => handleAmountChange(lembaga.id, e.target.value)}
                     className="w-full rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] px-4 py-3 pr-24 text-sm font-bold text-[#E0E0E0] outline-none focus:border-[#00FFAA]"
                   />
@@ -214,7 +214,7 @@ export default function LembagaDunia({ setPendingLoan, loanCooldowns, currentDat
                   onClick={() => setTermModalTarget(lembaga.id)}
                   className="w-full rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] px-4 py-3 text-left text-sm font-bold text-[#E0E0E0] outline-none transition hover:border-[#00FFAA] cursor-pointer"
                 >
-                  {TENOR_OPTIONS.find((option) => option.days === Number(terms[lembaga.id] ?? 180))?.label ?? "6m"} / {Number(terms[lembaga.id] ?? 180).toLocaleString("id-ID")} hari
+                  {TENOR_OPTIONS.find((option) => option.days === Number(terms[lembaga.id] ?? 180))?.label ?? "6m"} / {Number(terms[lembaga.id] ?? 180).toLocaleString("id-ID", { maximumFractionDigits: 2 })} hari
                 </button>
               </div>
             </div>

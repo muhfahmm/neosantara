@@ -601,7 +601,7 @@ export function tickPBBSecurityCouncil(
               dateStr
             );
             finishCard.title = `🛡️ HASIL DEWAN KEAMANAN PBB: ${item.label} (${statusLabel})`;
-            finishCard.message = `Pemungutan suara Dewan Keamanan PBB untuk draf "${item.label}" (Pengusul: ${proposer.name}, Target: ${item.target.name}) secara resmi telah SELESAI. Perolehan suara akhir: ${votes.supportersCount} Setuju, ${votes.opponentsCount} Menolak, ${votes.abstainCount} Abstain, ${vetoCount} Veto. Status resmi: RESOLUSI ${statusLabel}.`;
+            finishCard.message = `Pemungutan suara Dewan Keamanan PBB untuk draf "${item.label}" (Pengusul: ${proposer.name}, Target: ${item.target.name}) secara resmi telah SELESAI. Perolehan suara akhir: ${votes.supportersCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Setuju, ${votes.opponentsCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Menolak, ${votes.abstainCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Abstain, ${vetoCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Veto. Status resmi: RESOLUSI ${statusLabel}.`;
             onTriggerNotification(finishCard);
           }
         }
@@ -668,7 +668,7 @@ export function getCountryPBBVote(countryName: string): number {
 
 export function formatBribeCost(countryName: string): string {
   const vote = getCountryPBBVote(countryName);
-  return `${vote.toLocaleString('id-ID')}.000`;
+  return `${vote.toLocaleString('id-ID', { maximumFractionDigits: 2 })}.000`;
 }
 
 export function getSecurityCouncilCountryBreakdown(

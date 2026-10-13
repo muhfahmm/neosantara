@@ -174,7 +174,7 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
                     <div>
                       <p className="text-xs lg:text-sm font-black text-[#00FFAA] uppercase">{key.replace("harga_", "").replace(/_/g, " ")}</p>
                       <p className="text-[11px] lg:text-xs text-[#6B8A8A]">
-                        Nilai saat ini: <span className="font-bold text-[#E0E0E0]">{Number(value).toLocaleString("id-ID")}</span>
+                        Nilai saat ini: <span className="font-bold text-[#E0E0E0]">{Number(value).toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                       </p>
                     </div>
                   </div>
@@ -190,7 +190,7 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
                             : "bg-[#0F2424] text-[#E0E0E0] border-[#00FFAA]/30 hover:border-[#00FFAA]"
                         }`}
                       >
-                        {option.toLocaleString("id-ID")}
+                        {option.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                       </button>
                     ))}
                   </div>

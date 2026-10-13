@@ -83,7 +83,7 @@ const computeMinistryCost = (detail: any) => {
   return calculateTotalMinistryCostPerDay(merged);
 };
 
-const formatNumber = (num: number) => num.toLocaleString('id-ID');
+const formatNumber = (num: number) => num.toLocaleString('id-ID', { maximumFractionDigits: 2 });
 
 const getDisplayName = (detail: any) =>
   detail?.name_id || detail?.nama_negara || detail?.country || detail?.country_name || detail?.__fileName || 'Unknown';

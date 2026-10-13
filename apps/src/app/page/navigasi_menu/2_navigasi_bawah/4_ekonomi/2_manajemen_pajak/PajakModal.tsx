@@ -511,17 +511,17 @@ export default function PajakModal({
               <div className="flex items-center gap-2">
                 {hasKemenkeuBonus && (
                   <span className="text-base font-bold text-rose-400 line-through opacity-80">
-                    {Math.round(totalIncomeWithHarmonisasi).toLocaleString("id-ID")}
+                    {Math.round(totalIncomeWithHarmonisasi).toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                   </span>
                 )}
                 <span className="text-2xl font-black text-emerald-400">
-                  {totalIncome.toLocaleString("id-ID")} NEO
+                  {totalIncome.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
                 </span>
               </div>
             </div>
             {hasKemenkeuBonus && (
               <span className="mt-3 inline-flex rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-emerald-400">
-                Bonus Kementerian Keuangan: Seluruh penerimaan pajak +{kemenkeuTaxBonusPercent}% (+{kemenkeuBonusAmount.toLocaleString("id-ID")} NEO)
+                Bonus Kementerian Keuangan: Seluruh penerimaan pajak +{kemenkeuTaxBonusPercent}% (+{kemenkeuBonusAmount.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO)
               </span>
             )}
             {hasDemocracyTaxBonus && (

@@ -122,12 +122,12 @@ export default function KonfirmasiPembangunanModal({
             <div className="flex justify-between font-bold">
               <span className="text-[#6B8A8A]">Biaya Pembangunan (Total):</span>
               <span className="text-[#00FFAA] font-black">
-                {loadingMetadata ? 'Memuat...' : `${totalCost.toLocaleString('id-ID')} NEO`}
+                {loadingMetadata ? 'Memuat...' : `${totalCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
               </span>
             </div>
             <div className="flex justify-between text-xs text-[#6B8A8A]">
               <span>Biaya per bangunan:</span>
-              <span className="text-[#E0E0E0]">{cost.toLocaleString('id-ID')} NEO</span>
+              <span className="text-[#E0E0E0]">{cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
             </div>
 
             <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-xl p-4 mt-3 text-xs text-[#E0E0E0]">
@@ -180,7 +180,7 @@ export default function KonfirmasiPembangunanModal({
             {produksiPerHari !== undefined && (
               <div className="flex justify-between">
                 <span className="text-[#6B8A8A]">Produksi {produksiLabel || ''} per hari:</span>
-                <span className="text-emerald-400 font-bold">+{produksiPerHari.toLocaleString('id-ID')}</span>
+                <span className="text-emerald-400 font-bold">+{produksiPerHari.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
               </div>
             )}
 
@@ -246,11 +246,11 @@ export default function KonfirmasiPembangunanModal({
                         <div className="font-bold text-[10px] text-center">{material.label}</div>
                         {material.amount !== undefined && (
                           <div className="text-[9px] uppercase tracking-wider text-[#00FFAA] mt-1">
-                            x{requiredAmount.toLocaleString('id-ID')}
+                            x{requiredAmount.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                           </div>
                         )}
                         <div className={`text-[10px] font-black mt-0.5 ${isStockInsufficient ? 'text-rose-400' : 'text-[#6B8A8A]'}`}>
-                          {stock.toLocaleString('id-ID')}
+                          {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                         </div>
                       </button>
                     );
@@ -264,7 +264,7 @@ export default function KonfirmasiPembangunanModal({
 
           <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-1">
             <span className="text-[#6B8A8A]">Kas Negara Saat Ini:</span>
-            <span className="text-[#00FFAA]">{anggaran.toLocaleString('id-ID')} NEO</span>
+            <span className="text-[#00FFAA]">{anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
           </div>
         </div>
 

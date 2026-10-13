@@ -20,8 +20,8 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
 
   const continentLabel = continent || 'Lainnya';
   const budgetAfterBuild = currentBudget - cost;
-  const formattedCurrentBudget = currentBudget.toLocaleString('id-ID');
-  const formattedBudgetAfterBuild = budgetAfterBuild.toLocaleString('id-ID');
+  const formattedCurrentBudget = currentBudget.toLocaleString('id-ID', { maximumFractionDigits: 2 });
+  const formattedBudgetAfterBuild = budgetAfterBuild.toLocaleString('id-ID', { maximumFractionDigits: 2 });
   const hasBudget = currentBudget >= cost;
 
   const discountPct = getWaktuPembangunanKedutaanBonusPercent(countryDetail);
@@ -37,7 +37,7 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
         <p className="text-xs sm:text-sm text-[#E0E0E0] mb-3 leading-relaxed">
           Apakah Anda ingin membangun kedutaan di <strong className="text-white">{countryName}</strong>? Biaya pembangunan di <strong className="text-white">{continentLabel}</strong> adalah {
             embassyCostDiscountPct > 0 ? (
-              <span><span className="line-through text-rose-400 mr-1">10 NEO</span><strong className="text-[#00FFAA]">{cost.toLocaleString('id-ID')} NEO</strong></span>
+              <span><span className="line-through text-rose-400 mr-1">10 NEO</span><strong className="text-[#00FFAA]">{cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</strong></span>
             ) : <strong className="text-[#00FFAA]">{cost} NEO</strong>
           } dengan waktu pembangunan {
             discountPct > 0 ? (

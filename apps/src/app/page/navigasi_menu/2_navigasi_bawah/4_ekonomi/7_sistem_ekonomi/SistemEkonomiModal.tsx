@@ -365,9 +365,9 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
                               <p>{electricityMetadataError}</p>
                             ) : (
                               <p>
-                                Estimasi bagian negara dari surplus: {electricitySurplusMW.toLocaleString("id-ID")} MW ×{" "}
-                                {electricityPrice.toLocaleString("id-ID")} NEO × {electricityProfitShare}% ={" "}
-                                {electricityEstimatedStateShare.toLocaleString("id-ID")} NEO. Estimasi ini belum
+                                Estimasi bagian negara dari surplus: {electricitySurplusMW.toLocaleString("id-ID", { maximumFractionDigits: 2 })} MW ×{" "}
+                                {electricityPrice.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO × {electricityProfitShare}% ={" "}
+                                {electricityEstimatedStateShare.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO. Estimasi ini belum
                                 dimasukkan ke APBN karena listrik belum memiliki transaksi jual-beli.
                               </p>
                             )}

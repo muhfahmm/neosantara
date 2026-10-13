@@ -76,7 +76,7 @@ const REQUIREMENTS_MODULES: Record<string, any> = {
 
 const RESOURCE_KEY_ALIASES: Record<string, string> = {};
 const normalizeResourceKey = (key: string) => RESOURCE_KEY_ALIASES[key] || key;
-const formatNumber = (value: number) => value.toLocaleString("id-ID");
+const formatNumber = (value: number) => value.toLocaleString("id-ID", { maximumFractionDigits: 2 });
 
 const CARD_TAB_MAP: Record<string, string> = {
   kayu: 'manufaktur', semen_beton: 'manufaktur', bijih_besi: 'mineral', gas_alam: 'mineral', emas: 'mineral',
@@ -664,7 +664,7 @@ export default function TempatUmumModal({
                         </div>
 
                         <div className="mt-2 grid grid-cols-2 gap-2 text-[9px] text-[#6B8A8A] border-t border-[#00FFAA]/10 pt-1.5">
-                          <div>Rasio: <span className="font-bold text-[#E0E0E0]">{activeCategory.index.toFixed(6)}</span></div>
+                          <div>Rasio: <span className="font-bold text-[#E0E0E0]">{activeCategory.index.toFixed(2)}</span></div>
                           <div>Keterpenuhan fasilitas: <span className="font-bold text-[#E0E0E0]">{percentageMet.toFixed(1)}%</span></div>
                         </div>
                       </div>

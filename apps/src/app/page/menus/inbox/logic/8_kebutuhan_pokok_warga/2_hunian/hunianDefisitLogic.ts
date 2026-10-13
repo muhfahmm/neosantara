@@ -17,8 +17,8 @@ export function generateHunianDefisitNotification(
   housingSatisfaction: number,
   dateStr: string
 ): HunianDefisitNotification {
-  const formattedShortage = shortage.toLocaleString('id-ID');
-  const formattedPop = population.toLocaleString('id-ID');
+  const formattedShortage = shortage.toLocaleString('id-ID', { maximumFractionDigits: 2 });
+  const formattedPop = population.toLocaleString('id-ID', { maximumFractionDigits: 2 });
 
   const title = housingSatisfaction <= 20
     ? `🏠 KRISIS KRITIS PERUMAHAN: Indeks Kepuasan Perumahan ${housingSatisfaction}/100!`

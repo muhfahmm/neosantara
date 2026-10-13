@@ -139,7 +139,7 @@ export function simulateBattleTs(input: BattleInput): BattleResult {
     }
 
     if (round <= 15) {
-      logs.push(`Ronde ${round}: Penyerang ${Math.round(curAtk).toLocaleString('id-ID')} | Target ${Math.round(curTgt).toLocaleString('id-ID')}`);
+      logs.push(`Ronde ${round}: Penyerang ${Math.round(curAtk).toLocaleString('id-ID', { maximumFractionDigits: 2 })} | Target ${Math.round(curTgt).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`);
     }
 
     round++;
@@ -251,7 +251,7 @@ export function applyWarLossesToUserArmada(countryDetail: any, lossRatio: number
             nextDetail.armada.darat.barak = nextDetail.barak;
           }
         }
-        lostSummaryItems.push(`${lostInfantry.toLocaleString('id-ID')} Prajurit Infanteri`);
+        lostSummaryItems.push(`${lostInfantry.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Prajurit Infanteri`);
       }
     } else if (key !== 'pasukan_infanteri' && currentQty > 0) {
       const deployedQty = Math.round((currentQty * deployedPct) / 100);
@@ -267,7 +267,7 @@ export function applyWarLossesToUserArmada(countryDetail: any, lossRatio: number
           if (nextDetail.armada.udara && key in nextDetail.armada.udara) nextDetail.armada.udara[key] = remainingQty;
         }
         const unitName = key.replace(/_/g, ' ').toUpperCase();
-        lostSummaryItems.push(`${lostQty.toLocaleString('id-ID')} ${unitName}`);
+        lostSummaryItems.push(`${lostQty.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ${unitName}`);
       }
     }
   });

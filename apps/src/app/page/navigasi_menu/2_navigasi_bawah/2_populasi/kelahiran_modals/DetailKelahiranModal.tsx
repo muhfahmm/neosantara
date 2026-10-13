@@ -93,7 +93,7 @@ export default function DetailKelahiranModal({
   // Variabel perhitungan multiplier UI
   const welfareFactor = 0.75; // Tanpa livingCostIndex
 
-  const formatNumber = (num: number) => num.toLocaleString('id-ID');
+  const formatNumber = (num: number) => num.toLocaleString('id-ID', { maximumFractionDigits: 2 });
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -169,7 +169,7 @@ export default function DetailKelahiranModal({
                   <span className="text-sm font-bold text-[#E0E0E0]">
                     {countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : 50} INDX
                   </span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {welfareFactor.toFixed(3)}</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {welfareFactor.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -186,7 +186,7 @@ export default function DetailKelahiranModal({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-[#E0E0E0]">{kesehatanScore} POIN <span className="text-xs font-normal text-[#6B8A8A]">(rasio {hospitalRatio.toFixed(2)})</span></span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {healthFactor.toFixed(3)}</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {healthFactor.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -203,7 +203,7 @@ export default function DetailKelahiranModal({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-[#E0E0E0]">{pendidikanScore} POIN <span className="text-xs font-normal text-[#6B8A8A]">(rasio {educationRatio.toFixed(2)})</span></span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {educationFactor.toFixed(3)}</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {educationFactor.toFixed(2)}</span>
                 </div>
               </div>
 

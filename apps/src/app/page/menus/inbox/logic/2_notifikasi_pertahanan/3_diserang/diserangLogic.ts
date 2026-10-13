@@ -73,11 +73,14 @@ export function getAttackChancePercentFromRelation(relationScore: number): numbe
 export function generateDiserangNotification(
   enemyCountry: string,
   dateStr: string,
-  hasAnnexedTerritories: boolean
+  hasAnnexedTerritories: boolean,
+  forcedAttackLevel?: AttackLevel
 ): DiserangNotification {
   const roll = Math.random();
   let item = ATTACK_POOL[0];
-  if (roll < 0.10) {
+  if (forcedAttackLevel) {
+    item = ATTACK_POOL.find(candidate => candidate.attackLevel === forcedAttackLevel) || ATTACK_POOL[0];
+  } else if (roll < 0.10) {
     item = ATTACK_POOL[3]; // invasi
   } else if (roll < 0.30) {
     item = ATTACK_POOL[2]; // deklarasi perang

@@ -15,7 +15,7 @@ interface ProductionAISuggestionsModalProps {
 
 const formatNumber = (value: any) => {
   const parsed = Number(value) || 0;
-  return parsed.toLocaleString('id-ID');
+  return parsed.toLocaleString('id-ID', { maximumFractionDigits: 2 });
 };
 
 export default function ProductionAISuggestionsModal({

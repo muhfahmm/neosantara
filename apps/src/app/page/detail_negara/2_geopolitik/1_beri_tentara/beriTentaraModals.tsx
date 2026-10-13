@@ -81,7 +81,7 @@ const UNIT_CATALOG: Record<ArmadaMatra, UnitDefinition[]> = {
 
 const formatNumber = (num: number | string | undefined | null) => {
   const n = Number(num || 0);
-  return Number.isFinite(n) ? n.toLocaleString('id-ID') : '0';
+  return Number.isFinite(n) ? n.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : '0';
 };
 
 // Helper resolver quantity unit

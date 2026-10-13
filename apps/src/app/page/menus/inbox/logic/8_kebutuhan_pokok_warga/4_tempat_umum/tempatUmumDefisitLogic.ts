@@ -11,7 +11,7 @@ export function generateTempatUmumDefisitNotification(
   population: number,
   dateStr: string
 ): TempatUmumDefisitNotification {
-  const formattedPop = population.toLocaleString('id-ID');
+  const formattedPop = population.toLocaleString('id-ID', { maximumFractionDigits: 2 });
 
   return {
     id: `tempat-umum-defisit-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,

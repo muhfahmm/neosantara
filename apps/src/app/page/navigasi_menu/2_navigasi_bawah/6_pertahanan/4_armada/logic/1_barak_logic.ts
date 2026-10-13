@@ -30,5 +30,5 @@ export const getBarakMultiplier = (): number => {
  * @returns String deskripsi multiplier
  */
 export const getBarakDescription = (): string => {
-  return `1 barak = ${BARAK_TO_SOLDIERS_MULTIPLIER.toLocaleString('id-ID')} pasukan infanteri`;
+  return `1 barak = ${BARAK_TO_SOLDIERS_MULTIPLIER.toLocaleString('id-ID', { maximumFractionDigits: 2 })} pasukan infanteri`;
 };

@@ -242,7 +242,7 @@ export default function NaikkanKepuasanModal({
 
     setFeedback({
       type: "success",
-      message: `Presiden meluncurkan program ${title}! Anggaran berkurang -${cost.toLocaleString('id-ID')} NEO. Acara berlangsung selama ${duration} hari dan akan selesai serta meningkatkan kepuasan pada ${formatBadgeDate(endDateStr)}.`,
+      message: `Presiden meluncurkan program ${title}! Anggaran berkurang -${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO. Acara berlangsung selama ${duration} hari dan akan selesai serta meningkatkan kepuasan pada ${formatBadgeDate(endDateStr)}.`,
     });
     setTimeout(() => setFeedback(null), 6000);
   };
@@ -408,7 +408,7 @@ export default function NaikkanKepuasanModal({
                           Biaya Alokasi
                         </p>
                         <p className="text-xs lg:text-sm font-black text-[#00FFAA] mt-0.5 lg:mt-1">
-                          {item.cost.toLocaleString("id-ID")}
+                          {item.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                         </p>
                       </div>
                       <button

@@ -54,7 +54,7 @@ export default function DanaTidakCukupModal({
               Kas Negara Saat Ini:
             </span>
             <span className="text-sm font-black text-[#00FFAA]">
-              {currentBudget.toLocaleString("id-ID")}
+              {currentBudget.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -62,7 +62,7 @@ export default function DanaTidakCukupModal({
               Dibutuhkan:
             </span>
             <span className="text-sm font-black text-rose-400">
-              {requiredCost.toLocaleString("id-ID")}
+              {requiredCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
             </span>
           </div>
         </div>
@@ -87,15 +87,15 @@ export default function DanaTidakCukupModal({
               <div className="mt-2 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 text-xs space-y-1 text-[#E0E0E0]">
                 <div className="flex justify-between">
                   <span className="font-bold text-[#6B8A8A]">Dana dibutuhkan:</span>
-                  <span className="text-rose-400 font-black">{requiredCost.toLocaleString("id-ID")} NEO</span>
+                  <span className="text-rose-400 font-black">{requiredCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-bold text-[#6B8A8A]">Kas tersedia:</span>
-                  <span className="text-[#00FFAA] font-black">{currentBudget.toLocaleString("id-ID")} NEO</span>
+                  <span className="text-[#00FFAA] font-black">{currentBudget.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
                 </div>
                 <div className="flex justify-between border-t border-[#00FFAA]/20 pt-2 mt-1">
                   <span className="font-bold text-[#6B8A8A]">Kekurangan dana:</span>
-                  <span className="text-rose-400 font-black">- {shortage.toLocaleString("id-ID")} NEO</span>
+                  <span className="text-rose-400 font-black">- {shortage.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
                 </div>
               </div>
               <p className="text-xs text-[#6B8A8A] mt-2">

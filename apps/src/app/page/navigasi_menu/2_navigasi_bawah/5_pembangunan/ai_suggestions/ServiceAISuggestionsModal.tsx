@@ -91,7 +91,7 @@ export default function ServiceAISuggestionsModal({
                 {/* DIVIDER & METRICS */}
                 <div className="border-t border-[#00FFAA]/15 pt-3 flex justify-between items-center text-xs text-[#6B8A8A] font-semibold">
                   <div>
-                    Rasio per kapita: <strong className="text-[#E0E0E0] font-black">{tempatUmumAnalysis.ratio.toFixed(6)}</strong>
+                    Rasio per kapita: <strong className="text-[#E0E0E0] font-black">{tempatUmumAnalysis.ratio.toFixed(2)}</strong>
                   </div>
                   <div>
                     Persentase keterpenuhan: <strong className="text-[#E0E0E0] font-black">{tempatUmumAnalysis.percentageMet.toFixed(1)}%</strong>
@@ -167,11 +167,11 @@ export default function ServiceAISuggestionsModal({
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="rounded-xl bg-[#0A1A1A] p-4 border border-[#00FFAA]/20">
                   <div className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-tight">Kapasitas Per Unit</div>
-                  <div className="mt-1 font-black text-[#00FFAA] text-lg">{hunianAnalysis.capacityPerUnit.toLocaleString('id-ID')} Jiwa</div>
+                  <div className="mt-1 font-black text-[#00FFAA] text-lg">{hunianAnalysis.capacityPerUnit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa</div>
                 </div>
                 <div className="rounded-xl bg-[#0A1A1A] p-4 border border-[#00FFAA]/20">
                   <div className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-tight">Total Kapasitas Terpasang</div>
-                  <div className="mt-1 font-black text-[#00FFAA] text-lg">{hunianAnalysis.totalCapacity.toLocaleString('id-ID')} Jiwa</div>
+                  <div className="mt-1 font-black text-[#00FFAA] text-lg">{hunianAnalysis.totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa</div>
                 </div>
                 <div className={`rounded-xl p-4 border ${hunianAnalysis.isDeficit ? 'bg-rose-950/40 border-rose-500/30' : 'bg-emerald-950/40 border-emerald-500/30'}`}>
                   <div className={`text-[10px] font-bold uppercase tracking-tight ${hunianAnalysis.isDeficit ? 'text-rose-400' : 'text-emerald-400'}`}>
@@ -179,8 +179,8 @@ export default function ServiceAISuggestionsModal({
                   </div>
                   <div className={`mt-1 font-black text-lg ${hunianAnalysis.isDeficit ? 'text-rose-400' : 'text-emerald-400'}`}>
                     {hunianAnalysis.isDeficit
-                      ? `Defisit -${hunianAnalysis.populationDeficit.toLocaleString('id-ID')} Jiwa`
-                      : `Surplus +${hunianAnalysis.populationSurplus.toLocaleString('id-ID')} Jiwa`}
+                      ? `Defisit -${hunianAnalysis.populationDeficit.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa`
+                      : `Surplus +${hunianAnalysis.populationSurplus.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa`}
                   </div>
                 </div>
               </div>
@@ -209,7 +209,7 @@ export default function ServiceAISuggestionsModal({
                         <div>
                           <span className="font-bold text-xs uppercase text-[#E0E0E0] block">{item.label}</span>
                           <span className="text-[10px] text-[#6B8A8A] block">
-                            Kapasitas/Unit: {item.capacityPerUnit} Jiwa | Terpasang: <strong className="text-[#E0E0E0]">{item.count} Unit</strong> ({item.totalCapacity.toLocaleString('id-ID')} Jiwa)
+                            Kapasitas/Unit: {item.capacityPerUnit} Jiwa | Terpasang: <strong className="text-[#E0E0E0]">{item.count} Unit</strong> ({item.totalCapacity.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa)
                           </span>
                         </div>
                       </div>

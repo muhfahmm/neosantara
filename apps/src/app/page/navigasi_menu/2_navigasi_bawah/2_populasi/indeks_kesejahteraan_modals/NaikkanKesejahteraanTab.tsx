@@ -344,7 +344,7 @@ export default function NaikkanKesejahteraanTab({
 
               <div className="flex items-center justify-between pt-2 border-t border-[#00FFAA]/10">
                 <div className="text-[11px] text-[#6B8A8A] font-bold space-y-0.5">
-                  <p>Biaya: <span className="font-black text-[#00FFAA]">{init.cost.toLocaleString("id-ID")} NEO</span></p>
+                  <p>Biaya: <span className="font-black text-[#00FFAA]">{init.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span></p>
                   <p>Durasi: <span className="font-black text-[#E0E0E0]">{init.duration} hari</span></p>
                 </div>
 

@@ -798,26 +798,26 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                       className="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-lg border border-emerald-500/20 transition-all cursor-pointer"
                     >
                       <Shield className="w-4 h-4" />
-                      <span>{item.voteStats.supportersCount} Setuju</span>
+                      <span>{item.voteStats.supportersCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Setuju</span>
                     </button>
                     <button
                       onClick={() => { setActiveModalItem(item); setActiveModalType('no'); }}
                       className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 px-3 py-1.5 rounded-lg border border-rose-500/20 transition-all cursor-pointer"
                     >
-                      <span>{item.voteStats.opponentsCount} Menolak</span>
+                      <span>{item.voteStats.opponentsCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Menolak</span>
                     </button>
                     <button
                       onClick={() => { setActiveModalItem(item); setActiveModalType('veto'); }}
                       className="flex items-center gap-1.5 text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 px-3 py-1.5 rounded-lg border border-amber-500/20 transition-all cursor-pointer"
                     >
-                      <span>{item.voteStats.vetoCount} Veto</span>
+                      <span>{item.voteStats.vetoCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Veto</span>
                     </button>
                     {(item.voteStats.abstainCount || 0) > 0 && (
                       <button
                         onClick={() => { setActiveModalItem(item); setActiveModalType('abstain'); }}
                         className="flex items-center gap-1.5 text-slate-300 bg-slate-500/10 hover:bg-slate-500/20 px-3 py-1.5 rounded-lg border border-slate-500/20 transition-all cursor-pointer"
                       >
-                        <span>{item.voteStats.abstainCount} Abstain</span>
+                        <span>{item.voteStats.abstainCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Abstain</span>
                       </button>
                     )}
                   </div>

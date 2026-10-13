@@ -54,11 +54,11 @@ export default function WabahNotification({ notification, onAccept, onReject }: 
         <div className="bg-[#0A1A1A] border border-teal-500/30 rounded-xl p-3 grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs font-bold text-white shadow-inner">
           <div className="border-r border-teal-500/20 pr-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Kasus Terinfeksi</div>
-            <div className="text-purple-400 font-extrabold mt-0.5">{notification.korban?.toLocaleString('id-ID')} Orang</div>
+            <div className="text-purple-400 font-extrabold mt-0.5">{notification.korban?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Orang</div>
           </div>
           <div className="border-r border-teal-500/20 px-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Perkiraan Kematian</div>
-            <div className="text-rose-400 font-extrabold mt-0.5">{notification.perkiraanKematian?.toLocaleString('id-ID')} Orang</div>
+            <div className="text-rose-400 font-extrabold mt-0.5">{notification.perkiraanKematian?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Orang</div>
           </div>
           <div className="border-r border-teal-500/20 px-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Durasi</div>
@@ -66,11 +66,11 @@ export default function WabahNotification({ notification, onAccept, onReject }: 
           </div>
           <div className="border-r border-teal-500/20 px-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Kerugian Sektor Medis</div>
-            <div className="text-amber-400 font-extrabold mt-0.5">{notification.totalKerugian?.toLocaleString('id-ID')} NEO</div>
+            <div className="text-amber-400 font-extrabold mt-0.5">{notification.totalKerugian?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
           <div className="pl-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Biaya Medis (1 NEO/Pasien)</div>
-            <div className="text-[#00FFAA] font-extrabold mt-0.5">{notification.bantuanCost?.toLocaleString('id-ID')} NEO</div>
+            <div className="text-[#00FFAA] font-extrabold mt-0.5">{notification.bantuanCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
         </div>
 
@@ -79,7 +79,7 @@ export default function WabahNotification({ notification, onAccept, onReject }: 
           {isHandled ? (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
-              <span>DANA MEDIS SEBESAR {notification.bantuanCost?.toLocaleString('id-ID')} NEO TELAH DISALURKAN</span>
+              <span>DANA MEDIS SEBESAR {notification.bantuanCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO TELAH DISALURKAN</span>
             </div>
           ) : (
             <>
@@ -98,7 +98,7 @@ export default function WabahNotification({ notification, onAccept, onReject }: 
                   className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-[#00FFAA] hover:bg-emerald-400 text-[#0A1A1A] rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <Stethoscope className="w-3.5 h-3.5" />
-                  Bantu Medis ({notification.bantuanCost?.toLocaleString('id-ID')} NEO)
+                  Bantu Medis ({notification.bantuanCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO)
                 </button>
               )}
             </>

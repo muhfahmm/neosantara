@@ -291,7 +291,7 @@ export default function TopRightGiftIcon({
     // Tampilkan modal feedback (menggantikan alert)
     setFeedbackModal({
       title: 'Hadiah Diklaim!',
-      message: `Anda mendapatkan ${reward.amount.toLocaleString('id-ID')} ${formatProductionProductName(reward.resourceKey)} dari sektor ${reward.categoryLabel}.`,
+      message: `Anda mendapatkan ${reward.amount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ${formatProductionProductName(reward.resourceKey)} dari sektor ${reward.categoryLabel}.`,
       variant: 'success',
     });
   };
@@ -418,7 +418,7 @@ export default function TopRightGiftIcon({
                       </span>
 
                       <span className="text-xs sm:text-sm font-bold text-[#E0E0E0] mt-1 whitespace-nowrap">
-                        {reward?.amount.toLocaleString('id-ID') ?? '—'}
+                        {reward?.amount.toLocaleString('id-ID', { maximumFractionDigits: 2 }) ?? '—'}
                       </span>
 
                       <span className="text-[9px] sm:text-[10px] text-center text-[#6B8A8A] mt-1 leading-tight">

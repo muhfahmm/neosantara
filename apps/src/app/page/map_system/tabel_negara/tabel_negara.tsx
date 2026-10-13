@@ -343,10 +343,10 @@ export default function TabelNegaraPage() {
             <div>
               <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-widest">Total Populasi Dunia</p>
               <p className="text-xl font-black text-[#00FFAA] mt-0.5">
-                {isLoading ? '...' : summary.totalPop.toLocaleString('id-ID')}
+                {isLoading ? '...' : summary.totalPop.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
               </p>
               <p className={`text-[10px] font-bold ${summary.totalPopChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>
-                {summary.totalPopChange >= 0 ? '+' : ''}{summary.totalPopChange.toLocaleString('id-ID')} /hari
+                {summary.totalPopChange >= 0 ? '+' : ''}{summary.totalPopChange.toLocaleString('id-ID', { maximumFractionDigits: 2 })} /hari
               </p>
             </div>
           </div>
@@ -358,7 +358,7 @@ export default function TabelNegaraPage() {
             <div>
               <p className="text-[10px] font-black text-[#6B8A8A] uppercase tracking-widest">Total Kas Global</p>
               <p className="text-xl font-black text-[#E0E0E0] mt-0.5">
-                {isLoading ? '...' : `${summary.totalKas.toLocaleString('id-ID')} NEO`}
+                {isLoading ? '...' : `${summary.totalKas.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
               </p>
             </div>
           </div>
@@ -376,7 +376,7 @@ export default function TabelNegaraPage() {
               >
                 {isLoading
                   ? '...'
-                  : `${summary.totalNetto >= 0 ? '+' : ''}${summary.totalNetto.toLocaleString('id-ID')} NEO`}
+                  : `${summary.totalNetto >= 0 ? '+' : ''}${summary.totalNetto.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`}
               </p>
             </div>
           </div>
@@ -541,7 +541,7 @@ export default function TabelNegaraPage() {
 
                       {/* Column 3: Populasi */}
                       <td className="py-4 px-6 text-right font-mono font-bold text-[#E0E0E0]">
-                        {country.population ? country.population.toLocaleString('id-ID') : '0'}
+                        {country.population ? country.population.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : '0'}
                       </td>
 
                       {/* Column 4: Perubahan Populasi (+ / -) */}
@@ -554,13 +554,13 @@ export default function TabelNegaraPage() {
                           }`}
                         >
                           {country.netPopChange >= 0 ? '+' : ''}
-                          {country.netPopChange.toLocaleString('id-ID')} /hari
+                          {country.netPopChange.toLocaleString('id-ID', { maximumFractionDigits: 2 })} /hari
                         </span>
                       </td>
 
                       {/* Column 5: Kas Negara */}
                       <td className="py-4 px-6 text-right font-mono font-bold text-[#00FFAA]">
-                        {country.treasury ? `${country.treasury.toLocaleString('id-ID')} NEO` : '0 NEO'}
+                        {country.treasury ? `${country.treasury.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO` : '0 NEO'}
                       </td>
 
                       {/* Column 6: Netto APBN */}
@@ -573,7 +573,7 @@ export default function TabelNegaraPage() {
                           }`}
                         >
                           {country.netBalance >= 0 ? '+' : ''}
-                          {country.netBalance.toLocaleString('id-ID')} NEO/hari
+                          {country.netBalance.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO/hari
                         </span>
                       </td>
                     </tr>

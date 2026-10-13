@@ -260,7 +260,7 @@ export default function RingkasanPopulasiModal({
               </div>
               <div className="min-w-0">
                 <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider whitespace-nowrap">Total Populasi</p>
-                <p className="text-[11px] lg:text-xs 2xl:text-base font-black text-[#E0E0E0] leading-tight whitespace-nowrap">{populasi.toLocaleString('id-ID')} <span className="text-[7px] lg:text-[8px] 2xl:text-[9px] text-[#6B8A8A]">JIWA</span></p>
+                <p className="text-[11px] lg:text-xs 2xl:text-base font-black text-[#E0E0E0] leading-tight whitespace-nowrap">{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[7px] lg:text-[8px] 2xl:text-[9px] text-[#6B8A8A]">JIWA</span></p>
               </div>
             </div>
 
@@ -275,7 +275,7 @@ export default function RingkasanPopulasiModal({
                 <div className="min-w-0">
                   <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider whitespace-nowrap">Laju Pertumbuhan</p>
                   <p className={`text-[11px] lg:text-xs 2xl:text-base font-black leading-tight whitespace-nowrap ${totalDailyDelta >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>
-                    {totalDailyDelta >= 0 ? '+' : ''}{totalDailyDelta.toLocaleString('id-ID')} <span className="text-[7px] lg:text-[8px] 2xl:text-[9px] text-[#6B8A8A]">/hr</span>
+                    {totalDailyDelta >= 0 ? '+' : ''}{totalDailyDelta.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[7px] lg:text-[8px] 2xl:text-[9px] text-[#6B8A8A]">/hr</span>
                   </p>
                 </div>
               </div>
@@ -292,7 +292,7 @@ export default function RingkasanPopulasiModal({
                 </div>
                 <div className="min-w-0">
                   <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider whitespace-nowrap">Tunawisma</p>
-                  <p className="text-[11px] lg:text-xs 2xl:text-base font-black text-[#E0E0E0] leading-tight whitespace-nowrap">{homelessCount.toLocaleString('id-ID')} <span className="text-[7px] lg:text-[8px] 2xl:text-[9px] text-[#6B8A8A]">JIWA</span></p>
+                  <p className="text-[11px] lg:text-xs 2xl:text-base font-black text-[#E0E0E0] leading-tight whitespace-nowrap">{homelessCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[7px] lg:text-[8px] 2xl:text-[9px] text-[#6B8A8A]">JIWA</span></p>
                 </div>
               </div>
               <ChevronRight className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-[#6B8A8A] group-hover:text-rose-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5" />
@@ -333,7 +333,7 @@ export default function RingkasanPopulasiModal({
                 </div>
                 <div className="text-right">
                   <p className="text-[9px] lg:text-[10px] text-[#6B8A8A] font-bold uppercase">Proyeksi 30 hari / 30-day projection</p>
-                  <p className="text-xs lg:text-sm text-[#E0E0E0] font-black">{projectedPopulation30Days.toLocaleString('id-ID')} jiwa</p>
+                  <p className="text-xs lg:text-sm text-[#E0E0E0] font-black">{projectedPopulation30Days.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa</p>
                 </div>
               </div>
 
@@ -378,7 +378,7 @@ export default function RingkasanPopulasiModal({
                   >
                     <div className="flex flex-col items-start">
                       <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase">Angka Kelahiran Harian</p>
-                      <p className="text-base lg:text-xl 2xl:text-2xl font-black text-[#00FFAA] mt-0.5 lg:mt-1">+{dailyBirths.toLocaleString('id-ID')}</p>
+                      <p className="text-base lg:text-xl 2xl:text-2xl font-black text-[#00FFAA] mt-0.5 lg:mt-1">+{dailyBirths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
                     </div>
                     <ChevronRight className="h-4 w-4 lg:h-4.5 lg:w-4.5 2xl:h-5 2xl:w-5 text-[#00FFAA] group-hover:translate-x-1 transition-all shrink-0 ml-1.5" />
                   </div>
@@ -388,7 +388,7 @@ export default function RingkasanPopulasiModal({
                   >
                     <div className="flex flex-col items-start">
                       <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] text-[#6B8A8A] font-black uppercase">Angka Kematian Harian</p>
-                      <p className="text-base lg:text-xl 2xl:text-2xl font-black text-rose-400 mt-0.5 lg:mt-1">-{dailyDeaths.toLocaleString('id-ID')}</p>
+                      <p className="text-base lg:text-xl 2xl:text-2xl font-black text-rose-400 mt-0.5 lg:mt-1">-{dailyDeaths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
                     </div>
                     <ChevronRight className="h-4 w-4 lg:h-4.5 lg:w-4.5 2xl:h-5 2xl:w-5 text-rose-400 group-hover:translate-x-1 transition-all shrink-0 ml-1.5" />
                   </div>

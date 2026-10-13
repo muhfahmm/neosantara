@@ -747,7 +747,7 @@ export default function ModalsKonfirmasiBeli({
     );
 
     if (!matchedOffer && quantity > partnerProduction) {
-      alert(`Stok mitra tidak mencukupi! Stok tersedia hanya ${partnerProduction.toLocaleString("id-ID")} unit.`);
+      alert(`Stok mitra tidak mencukupi! Stok tersedia hanya ${partnerProduction.toLocaleString("id-ID", { maximumFractionDigits: 2 })} unit.`);
       return;
     }
 
@@ -853,7 +853,7 @@ export default function ModalsKonfirmasiBeli({
             <div className="flex justify-between items-center pt-1 pb-0">
               <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Bangunan {formatLabel(effectiveSelectedProduct)} (Mitra):</span>
               <span className="text-sm font-black text-[#E0E0E0]">
-                {Number(partnerData?.[effectiveSelectedProduct] || 0).toLocaleString('id-ID')} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span>
+                {Number(partnerData?.[effectiveSelectedProduct] || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span>
               </span>
             </div>
             <div className="flex justify-between items-center pt-0 pb-1">
@@ -865,7 +865,7 @@ export default function ModalsKonfirmasiBeli({
                       o.productKey === effectiveSelectedProduct
                   );
                   const displayValue = matchedOffer ? Math.max(matchedOffer.quantity, partnerProduction) : partnerProduction;
-                  return displayValue.toLocaleString('id-ID');
+                  return displayValue.toLocaleString('id-ID', { maximumFractionDigits: 2 });
                 })()} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span>
               </span>
             </div>

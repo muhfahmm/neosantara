@@ -458,7 +458,7 @@ export default function JualModalsMenu({
     }
 
     if (quantity > stockAvailable) {
-      alert(`Stok Anda tidak mencukupi! Stok tersedia hanya ${stockAvailable.toLocaleString("id-ID")} unit.`);
+      alert(`Stok Anda tidak mencukupi! Stok tersedia hanya ${stockAvailable.toLocaleString("id-ID", { maximumFractionDigits: 2 })} unit.`);
       return;
     }
     const totalPendapatan = Math.round(pricePerUnit * quantity * stateProfitSharePercent / 100);
@@ -539,11 +539,11 @@ export default function JualModalsMenu({
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between items-center pt-1 pb-0">
                   <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Bangunan {formatLabel(selectedProduct)} (Mitra):</span>
-                  <span className="text-sm font-black text-[#E0E0E0]">{Number(partnerData?.[selectedProduct] || 0).toLocaleString('id-ID')} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span></span>
+                  <span className="text-sm font-black text-[#E0E0E0]">{Number(partnerData?.[selectedProduct] || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span></span>
                 </div>
                 <div className="flex justify-between items-center pt-0 pb-1">
                   <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Produksi Mitra (Total):</span>
-                  <span className="text-sm font-black text-[#E0E0E0]">{(stockAvailable > 0 ? partnerProduction : 0).toLocaleString('id-ID')} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span></span>
+                  <span className="text-sm font-black text-[#E0E0E0]">{(stockAvailable > 0 ? partnerProduction : 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span></span>
                 </div>
               </div>
 

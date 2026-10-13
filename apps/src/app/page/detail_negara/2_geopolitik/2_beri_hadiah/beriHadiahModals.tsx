@@ -113,7 +113,7 @@ export default function BeriHadiahModal({
       items: keys.map((key) => {
         const itemStock = playerCountryDetail ? getMaterialStock(playerCountryDetail, key) : 0;
         return {
-          label: `${formatLabel(key)} (Stok: ${itemStock.toLocaleString("id-ID")})`,
+          label: `${formatLabel(key)} (Stok: ${itemStock.toLocaleString("id-ID", { maximumFractionDigits: 2 })})`,
           value: key,
           disabled: false
         };
@@ -235,7 +235,7 @@ export default function BeriHadiahModal({
                   Stok Komoditas Tersedia:
                 </span>
                 <span className={`font-black text-sm ${stockAvailable > 0 ? "text-[#00FFAA]" : "text-rose-400"}`}>
-                  {stockAvailable.toLocaleString("id-ID")} Unit
+                  {stockAvailable.toLocaleString("id-ID", { maximumFractionDigits: 2 })} Unit
                 </span>
               </div>
             </div>
@@ -309,10 +309,10 @@ export default function BeriHadiahModal({
             {/* Nilai Diplomatik Hadiah */}
             <div className="p-3 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl flex items-center justify-between shrink-0 text-xs">
               <span className="text-[#6B8A8A] font-semibold">
-                Estimasi Nilai Diplomatik ({quantity.toLocaleString("id-ID")} x {unitValue.toLocaleString("id-ID")}):
+                Estimasi Nilai Diplomatik ({quantity.toLocaleString("id-ID", { maximumFractionDigits: 2 })} x {unitValue.toLocaleString("id-ID", { maximumFractionDigits: 2 })}):
               </span>
               <span className="font-black text-[#00FFAA] text-sm">
-                {totalGiftValue.toLocaleString("id-ID")} Nilai
+                {totalGiftValue.toLocaleString("id-ID", { maximumFractionDigits: 2 })} Nilai
               </span>
             </div>
 
@@ -361,7 +361,7 @@ export default function BeriHadiahModal({
                   <p className="text-[10px] sm:text-[11px] text-amber-300 flex items-center gap-1.5 mt-2.5">
                     <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                     <span>
-                      Nilai komoditas saat ini ({totalGiftValue.toLocaleString("id-ID")}) belum mencapai ambang minimum 10.000 untuk menaikkan 1 tingkat hubungan.
+                      Nilai komoditas saat ini ({totalGiftValue.toLocaleString("id-ID", { maximumFractionDigits: 2 })}) belum mencapai ambang minimum 10.000 untuk menaikkan 1 tingkat hubungan.
                     </span>
                   </p>
                 )}
@@ -385,7 +385,7 @@ export default function BeriHadiahModal({
             {isInsufficientStock && (
               <div className="p-2.5 sm:p-3 bg-rose-950/60 border border-rose-500/40 rounded-xl text-rose-300 text-[11px] sm:text-xs flex items-center gap-2 shrink-0">
                 <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
-                <span>Stok komoditas Anda tidak mencukupi (Tersedia: {stockAvailable.toLocaleString("id-ID")} unit).</span>
+                <span>Stok komoditas Anda tidak mencukupi (Tersedia: {stockAvailable.toLocaleString("id-ID", { maximumFractionDigits: 2 })} unit).</span>
               </div>
             )}
 

@@ -101,7 +101,7 @@ export default function DetailKematianModal({
 
   const dailyDeaths = calculateDailyDeaths(populasi, lifeExpectancy, securityLevel, detailWithDefaults);
 
-  const formatNumber = (num: number) => num.toLocaleString('id-ID');
+  const formatNumber = (num: number) => num.toLocaleString('id-ID', { maximumFractionDigits: 2 });
   const countryDisplayName = selectedCountry?.country || "Indonesia";
 
   return (
@@ -159,7 +159,7 @@ export default function DetailKematianModal({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-[#E0E0E0]">{harapanHidup} tahun</span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {lifeExpectancyFactor.toFixed(3)}</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {lifeExpectancyFactor.toFixed(2)}</span>
                 </div>
                 <p className="text-[10px] text-[#6B8A8A]">Semakin tinggi harapan hidup, semakin rendah angka kematian.</p>
               </div>
@@ -180,7 +180,7 @@ export default function DetailKematianModal({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-[#E0E0E0]">{tingkatKeamanan}%</span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {securityFactor.toFixed(3)}</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {securityFactor.toFixed(2)}</span>
                 </div>
                 <p className="text-[10px] text-[#6B8A8A]">Lingkungan aman mengurangi kematian akibat kriminalitas dan kecelakaan.</p>
               </div>
@@ -201,7 +201,7 @@ export default function DetailKematianModal({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-[#E0E0E0]">{formatNumber(homelessCount)} jiwa ({ (homelessRatio * 100).toFixed(2)}%)</span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {homelessFactor.toFixed(3)}</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {homelessFactor.toFixed(2)}</span>
                 </div>
                 <p className="text-[10px] text-[#6B8A8A]">Setiap 1% populasi tunawisma meningkatkan kematian sebesar 5%.</p>
               </div>
@@ -228,7 +228,7 @@ export default function DetailKematianModal({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-[#E0E0E0]">{calculateKesehatanScore(countryDetail)} POIN <span className="text-xs font-normal text-[#6B8A8A]">(rasio {hospitalRatio.toFixed(2)})</span></span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {healthFactor.toFixed(3)}</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {healthFactor.toFixed(2)}</span>
                 </div>
                 <p className="text-[10px] text-[#6B8A8A]">Ketersediaan RS yang cukup menurunkan kematian akibat penyakit yang dapat diobati.</p>
               </div>
@@ -255,7 +255,7 @@ export default function DetailKematianModal({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-[#E0E0E0]">{indeksKetahananPangan} POIN</span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {foodSecurityFactor.toFixed(3)}</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {foodSecurityFactor.toFixed(2)}</span>
                 </div>
                 <p className="text-[10px] text-[#6B8A8A]">Ketersediaan pangan yang cukup mengurangi kematian akibat malnutrisi.</p>
               </div>
@@ -282,7 +282,7 @@ export default function DetailKematianModal({
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-[#E0E0E0]">{calculatePenegakanHukumScore(countryDetail)} POIN</span>
-                  <span className="text-[10px] text-[#6B8A8A]">× {crimeFactor.toFixed(3)}</span>
+                  <span className="text-[10px] text-[#6B8A8A]">× {crimeFactor.toFixed(2)}</span>
                 </div>
                 <p className="text-[10px] text-[#6B8A8A]">Skor kepuasan penegakan hukum dari Indeks Kesejahteraan.</p>
               </div>

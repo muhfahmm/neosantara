@@ -268,7 +268,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
                 <TrendingUp className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-[#00FFAA]" />
                 <span className="text-[9px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider">Produksi</span>
-                <span className="text-[9px] lg:text-[11px] font-black text-[#00FFAA]">{totalCapacityMW > 0 ? totalCapacityMW.toLocaleString('id-ID') : '0'} MW</span>
+                <span className="text-[9px] lg:text-[11px] font-black text-[#00FFAA]">{totalCapacityMW > 0 ? totalCapacityMW.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : '0'} MW</span>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -325,7 +325,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   <div className="grid grid-cols-1 gap-2.5 lg:gap-3">
                     <div className="bg-emerald-950/40 border border-emerald-500/30 p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl">
                       <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest text-emerald-400">✓ Total Produksi Listrik</p>
-                      <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-emerald-400 mt-1.5 lg:mt-2 2xl:mt-3">{totalCapacityMW.toLocaleString('id-ID')} MW</p>
+                      <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-emerald-400 mt-1.5 lg:mt-2 2xl:mt-3">{totalCapacityMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</p>
                     </div>
                     <div
                       onClick={() => setIsDetailKonsumsiOpen(true)}
@@ -389,7 +389,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-black text-[#00FFAA]">
-                            {(source.value * source.unitProduction).toLocaleString('id-ID')} MW
+                            {(source.value * source.unitProduction).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                           </p>
                           <p className="text-[10px] text-[#6B8A8A]">{source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}</p>
                         </div>
@@ -519,7 +519,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                               </div>
                             </td>
                             <td className="px-4 py-3 font-bold text-emerald-400 text-right">
-                              {isNaN(country.production) || country.production <= 0 ? '0' : country.production.toLocaleString('id-ID')}
+                              {isNaN(country.production) || country.production <= 0 ? '0' : country.production.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                             </td>
                             <td className="px-4 py-3 font-bold text-rose-400 text-right">
                               {isNaN(country.consumption) || country.consumption <= 0 ? '0' : country.consumption.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
@@ -553,7 +553,7 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               {filteredData.length > 0 && (
                 <div className="mt-4 p-4 bg-[#0F2424] border border-[#00FFAA]/20 rounded-lg text-xs text-[#6B8A8A]">
                   <p className="font-bold text-[#E0E0E0]">Total: {filteredData.length} negara {searchQuery && `(difilter dari ${globalElectricityData.length})`}</p>
-                  <p className="mt-1">Produksi: <span className="font-black text-emerald-400">{filteredData.reduce((sum, c) => sum + c.production, 0).toLocaleString('id-ID')} MW</span></p>
+                  <p className="mt-1">Produksi: <span className="font-black text-emerald-400">{filteredData.reduce((sum, c) => sum + c.production, 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</span></p>
                   <p>Konsumsi: <span className="font-black text-rose-400">{filteredData.reduce((sum, c) => sum + c.consumption, 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</span></p>
                 </div>
               )}

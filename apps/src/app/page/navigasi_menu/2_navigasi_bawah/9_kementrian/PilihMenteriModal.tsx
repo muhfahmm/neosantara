@@ -85,13 +85,13 @@ export default function PilihMenteriModal({
             </p>
             <p className="flex items-center gap-1.5 text-xs font-bold text-[#00FFAA]">
               <Banknote className="h-4 w-4" />
-              Netto harian: {availableNetIncome.toLocaleString("id-ID")} NEO
+              Netto harian: {availableNetIncome.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
             </p>
           </div>
 
           {insufficientFunds !== null && (
             <div role="alert" className="mb-4 rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs font-bold text-rose-300">
-              Netto harian negara tidak cukup. Kandidat ini membutuhkan {insufficientFunds.toLocaleString("id-ID")} NEO dari netto.
+              Netto harian negara tidak cukup. Kandidat ini membutuhkan {insufficientFunds.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO dari netto.
             </div>
           )}
 
@@ -129,7 +129,7 @@ export default function PilihMenteriModal({
                   </p>
                   <div className="mb-3 flex items-center justify-between border-t border-[#00FFAA]/10 pt-3 text-[11px]">
                     <span className="font-semibold text-[#6B8A8A]">Biaya rekrutmen</span>
-                    <span className="font-black text-[#E0E0E0]">{candidate.cost.toLocaleString("id-ID")} NEO</span>
+                    <span className="font-black text-[#E0E0E0]">{candidate.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
                   </div>
                   <button
                     type="button"

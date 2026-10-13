@@ -42,7 +42,7 @@ export function generateResourceLootNews(
   const formattedCash = new Intl.NumberFormat('id-ID').format(lootedCash);
   const resourceSummary = Object.entries(lootedResources)
     .filter(([_, qty]) => qty > 0)
-    .map(([res, qty]) => `${res}: +${qty.toLocaleString('id-ID')}`)
+    .map(([res, qty]) => `${res}: +${qty.toLocaleString('id-ID', { maximumFractionDigits: 2 })}`)
     .join(', ');
 
   const headline = `💰 PERAMPASAN ASET: ${attackerCountry} Merampas Kas & SDA ${targetCountry}!`;

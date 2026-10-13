@@ -66,7 +66,7 @@ export default function BuildingRequirementCard({
         </div>
         {cost > 0 && (
           <div className="text-right">
-            <div className="text-sm font-black text-[#2e261a]">{cost.toLocaleString('id-ID')}</div>
+            <div className="text-sm font-black text-[#2e261a]">{cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</div>
             <p className="text-[9px] font-bold text-[#8b7e66]">NEO</p>
           </div>
         )}

@@ -61,7 +61,7 @@ export default function MaterialRequirementsDisplay({
                   </div>
                 )}
                 <div className={`text-[9px] font-black mt-0.5 ${isStockZero ? 'text-red-600' : 'text-[#8b7e66]'}`}>
-                  {stock.toLocaleString('id-ID')}
+                  {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                 </div>
               </div>
             );
@@ -126,7 +126,7 @@ export default function MaterialRequirementsDisplay({
                 </div>
               )}
               <div className={`text-[10px] font-black mt-0.5 ${isStockZero ? 'text-red-600' : 'text-[#8b7e66]'}`}>
-                {stock.toLocaleString('id-ID')}
+                {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
               </div>
             </button>
           );

@@ -17,7 +17,7 @@ type RankingRow = {
 
 const formatNumber = (value: unknown) => {
   const numeric = Number(value ?? 0);
-  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID") : "0";
+  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 2 }) : "0";
 };
 
 // 🔥 Fungsi pencarian ISO (cari dari COUNTRIES_DATA terlebih dahulu)

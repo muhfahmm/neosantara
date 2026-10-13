@@ -39,7 +39,7 @@ export default function ListrikDefisitNotificationCard({ notification }: Props) 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-[#0A1A1A] border border-rose-500/20 rounded-xl p-2.5 text-xs">
           <div className="flex flex-col">
             <span className="text-[9px] font-bold text-slate-400 uppercase">Produksi Aktif</span>
-            <span className="text-emerald-400 font-black">{totalProduction.toLocaleString('id-ID')} MW</span>
+            <span className="text-emerald-400 font-black">{totalProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</span>
           </div>
           <div className="flex flex-col">
             <span className="text-[9px] font-bold text-slate-400 uppercase">Konsumsi Terestimasi</span>

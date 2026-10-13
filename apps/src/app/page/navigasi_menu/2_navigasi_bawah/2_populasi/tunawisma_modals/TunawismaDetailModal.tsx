@@ -88,7 +88,7 @@ export default function TunawismaDetailModal({
                 <div>
                   <p className="text-xs text-[#6B8A8A] font-black uppercase tracking-wider mb-2">Jumlah Tunawisma</p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-[#00FFAA]">{homelessCount.toLocaleString('id-ID')}</span>
+                    <span className="text-4xl font-black text-[#00FFAA]">{homelessCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                     <span className="text-sm font-bold text-[#6B8A8A]">JIWA</span>
                   </div>
                 </div>

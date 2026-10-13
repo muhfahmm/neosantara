@@ -305,7 +305,7 @@ export default function BaseProduksiGrid({
                 {isElectricityTab && (
                   <div className="border-t border-[#00FFAA]/10 mt-2 pt-1.5 pb-0.5 text-center min-h-[44px] flex flex-col justify-center">
                     <span className={`font-black text-xs sm:text-sm leading-tight break-words ${isProductionZero ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
-                      {rawProduction.toLocaleString('id-ID')} MW
+                      {rawProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                     </span>
                     {isProductionZero && (
                       <span className="text-[8px] sm:text-[9px] font-bold text-rose-400 leading-tight">(bahan bakar defisit)</span>
@@ -322,7 +322,7 @@ export default function BaseProduksiGrid({
                         const fixedProd = Number(bMeta?.produksi || 0) * perCount * productionMultiplier;
                         return (
                           <span className="font-black text-xs sm:text-sm text-[#00FFAA] leading-tight break-words">
-                            {fixedProd.toLocaleString('id-ID')}
+                            {fixedProd.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                           </span>
                         );
                       }
@@ -351,7 +351,7 @@ export default function BaseProduksiGrid({
                       const colorClass = (isFuel && stock > 0) ? 'text-emerald-400' : 'text-[#00FFAA]';
                       return (
                         <span className={`font-black text-xs sm:text-sm lg:text-base leading-tight break-words ${colorClass}`}>
-                          {stock.toLocaleString('id-ID')}
+                          {stock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                         </span>
                       );
                     })()}

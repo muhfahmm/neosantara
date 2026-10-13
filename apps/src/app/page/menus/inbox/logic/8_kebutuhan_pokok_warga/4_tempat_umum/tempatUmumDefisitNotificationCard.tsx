@@ -43,7 +43,7 @@ export default function TempatUmumDefisitNotificationCard({ notification }: Prop
           </div>
           <div className="flex flex-col">
             <span className="text-[9px] font-bold text-slate-400 uppercase">Total Populasi</span>
-            <span className="text-slate-200 font-black">{population.toLocaleString('id-ID')} jiwa</span>
+            <span className="text-slate-200 font-black">{population.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa</span>
           </div>
           <div className="flex flex-col">
             <span className="text-[9px] font-bold text-slate-400 uppercase">Status Fasilitas</span>

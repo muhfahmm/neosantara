@@ -586,7 +586,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 <div className="flex items-center gap-1.5">
                   <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
                     {detailData?.jumlah_penduduk
-                      ? detailData.jumlah_penduduk.toLocaleString('id-ID')
+                      ? detailData.jumlah_penduduk.toLocaleString('id-ID', { maximumFractionDigits: 2 })
                       : isLoadingDetail
                         ? <span className="inline-block w-20 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
                         : '-'
@@ -594,7 +594,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                   </span>
                   {!isLoadingDetail && detailData && (
                     <span className={`text-[10px] font-black ${dailyNetPopulation >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                      ({dailyNetPopulation >= 0 ? `+${dailyNetPopulation.toLocaleString('id-ID')}` : dailyNetPopulation.toLocaleString('id-ID')})
+                      ({dailyNetPopulation >= 0 ? `+${dailyNetPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : dailyNetPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
                     </span>
                   )}
                 </div>
@@ -612,12 +612,12 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                   <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
                     {isLoadingDetail
                       ? <span className="inline-block w-16 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
-                      : detailData?.anggaran !== undefined ? `${detailData.anggaran.toLocaleString('id-ID')} NEO` : '-'
+                      : detailData?.anggaran !== undefined ? `${detailData.anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO` : '-'
                     }
                   </span>
                   {!isLoadingDetail && detailData && (
                     <span className={`text-[10px] font-black ${targetEffectiveNetBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                      ({targetEffectiveNetBalance >= 0 ? `+${targetEffectiveNetBalance.toLocaleString('id-ID')}` : targetEffectiveNetBalance.toLocaleString('id-ID')})
+                      ({targetEffectiveNetBalance >= 0 ? `+${targetEffectiveNetBalance.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : targetEffectiveNetBalance.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
                     </span>
                   )}
                 </div>

@@ -1224,7 +1224,7 @@ export default function PlayMenuPage() {
                                                                 </span>
                                                                 <span className="flex items-center gap-1.5">
                                                                     <Landmark className="w-3.5 h-3.5 text-amber-500" />
-                                                                    {save.anggaran ? `${save.anggaran.toLocaleString('id-ID')} NEO` : '0 NEO'}
+                                                                    {save.anggaran ? `${save.anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO` : '0 NEO'}
                                                                 </span>
                                                                 <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 uppercase tracking-wider font-extrabold shrink-0">
                                                                     {save.ideology || '-'}

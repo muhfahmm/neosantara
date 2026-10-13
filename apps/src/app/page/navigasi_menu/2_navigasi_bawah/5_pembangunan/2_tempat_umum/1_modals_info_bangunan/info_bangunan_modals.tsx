@@ -66,12 +66,12 @@ export default function InfoBangunanModal({
                 <div className="flex justify-between items-center">
                   <span className="text-[#6B8A8A]">Total Pendapatan ({satuan || 'NEO'}) Per Hari:</span>
                   <span className="font-black text-sm text-emerald-400">
-                    {totalRevenue.toLocaleString('id-ID')} {satuan || 'NEO'}
+                    {totalRevenue.toLocaleString('id-ID', { maximumFractionDigits: 2 })} {satuan || 'NEO'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pl-4 text-[#6B8A8A]">
                   <span>Total Pendapatan Per Unit:</span>
-                  <span className="text-[#E0E0E0] font-bold">{revenueVal.toLocaleString('id-ID')}</span>
+                  <span className="text-[#E0E0E0] font-bold">{revenueVal.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                 </div>
               </>
             )}
@@ -81,12 +81,12 @@ export default function InfoBangunanModal({
                 <div className="flex justify-between items-center">
                   <span className="text-[#6B8A8A]">Total Produksi ({satuan || 'Unit'}) Per Hari:</span>
                   <span className="font-black text-sm text-emerald-400">
-                    {totalProd.toLocaleString('id-ID')} {satuan || 'Unit'}
+                    {totalProd.toLocaleString('id-ID', { maximumFractionDigits: 2 })} {satuan || 'Unit'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center pl-4 text-[#6B8A8A]">
                   <span>Total Produksi Per Unit:</span>
-                  <span className="text-[#E0E0E0] font-bold">{prodVal.toLocaleString('id-ID')}</span>
+                  <span className="text-[#E0E0E0] font-bold">{prodVal.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                 </div>
               </>
             )}
@@ -101,7 +101,7 @@ export default function InfoBangunanModal({
             </div>
             <div className="flex justify-between items-center border-t border-[#00FFAA]/10 pt-2 mt-2">
               <span className="text-[#6B8A8A]">Biaya Pembangunan:</span>
-              <span className="text-[#00FFAA] font-black text-sm">{biaya.toLocaleString('id-ID')} NEO</span>
+              <span className="text-[#00FFAA] font-black text-sm">{biaya.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
             </div>
             {waktu !== undefined && (
               <div className="flex justify-between items-center">

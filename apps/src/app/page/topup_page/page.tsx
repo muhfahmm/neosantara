@@ -168,7 +168,7 @@ export default function TopUpPage() {
       }
       setSuccessInfo({
         amount: totalDiamonds,
-        name: `Paket ${selectedPackage.diamondAmount.toLocaleString('id-ID')} Diamond`,
+        name: `Paket ${selectedPackage.diamondAmount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Diamond`,
       });
     }, 1000);
   };
@@ -220,7 +220,7 @@ export default function TopUpPage() {
               Saldo Diamond
             </span>
             <span className="text-sm sm:text-base font-black text-[#00FFAA] leading-tight">
-              {mounted ? currentDiamonds.toLocaleString('id-ID') : '150'}
+              {mounted ? currentDiamonds.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : '150'}
             </span>
           </div>
         </div>
@@ -247,7 +247,7 @@ export default function TopUpPage() {
                   Diamond Ditambahkan
                 </span>
                 <span className="text-2xl sm:text-3xl font-black text-[#00FFAA]">
-                  +{successInfo.amount.toLocaleString('id-ID')} Diamond
+                  +{successInfo.amount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Diamond
                 </span>
               </div>
             </div>
@@ -283,7 +283,7 @@ export default function TopUpPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[10px] font-bold text-[#6B8A8A]">
-                    {currentVipProgress.toLocaleString('id-ID')} / {currentVipMax.toLocaleString('id-ID')}
+                    {currentVipProgress.toLocaleString('id-ID', { maximumFractionDigits: 2 })} / {currentVipMax.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                   </span>
                   <span className="text-[10px] font-bold text-[#00FFAA]">{vipPercent.toFixed(1)}%</span>
                 </div>
@@ -346,7 +346,7 @@ export default function TopUpPage() {
                           <div className="flex items-center gap-1.5 text-[#3D2911]">
                             <Gem className="w-4 h-4 text-rose-600 fill-rose-500" />
                             <span className="text-base sm:text-lg font-black">
-                              {pkg.diamondAmount.toLocaleString('id-ID')}
+                              {pkg.diamondAmount.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                             </span>
                           </div>
                         </div>
@@ -356,7 +356,7 @@ export default function TopUpPage() {
                           <div className="flex items-center gap-1 text-white">
                             <Crown className="w-3.5 h-3.5 text-amber-300 fill-amber-300" />
                             <span className="text-[10px] font-black">
-                              +{pkg.vipPoints.toLocaleString('id-ID')}
+                              +{pkg.vipPoints.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                             </span>
                           </div>
 
@@ -368,7 +368,7 @@ export default function TopUpPage() {
                                 : 'bg-gradient-to-b from-amber-500 to-amber-700 text-white border-amber-800/50 group-hover:from-amber-400 group-hover:to-amber-600'
                             }`}
                           >
-                            {pkg.priceRupiah.toLocaleString('id-ID')}Rp
+                            {pkg.priceRupiah.toLocaleString('id-ID', { maximumFractionDigits: 2 })}Rp
                           </button>
                         </div>
                       </div>
@@ -397,7 +397,7 @@ export default function TopUpPage() {
                     <div className="flex items-center gap-1.5 text-[#3D2911] mt-2">
                       <Gem className="w-5 h-5 text-rose-600 fill-rose-500" />
                       <span className="text-lg font-black">
-                        {SUBSCRIPTION_PLAN.dailyDiamonds.toLocaleString('id-ID')}
+                        {SUBSCRIPTION_PLAN.dailyDiamonds.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                       </span>
                     </div>
 
@@ -414,7 +414,7 @@ export default function TopUpPage() {
                     <div className="flex items-center gap-1 text-[#3D2911]">
                       <Crown className="w-3.5 h-3.5 text-amber-600 fill-amber-500" />
                       <span className="text-xs font-black">
-                        +{SUBSCRIPTION_PLAN.vipPoints.toLocaleString('id-ID')}
+                        +{SUBSCRIPTION_PLAN.vipPoints.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
                       </span>
                     </div>
 
@@ -422,7 +422,7 @@ export default function TopUpPage() {
                       type="button"
                       className="w-full py-2.5 rounded-lg text-xs font-black bg-gradient-to-b from-amber-400 to-amber-600 text-[#3D2911] border border-amber-300 shadow-[0_2px_0_rgba(120,60,0,0.5)] hover:from-amber-300 hover:to-amber-500 transition-all cursor-pointer"
                     >
-                      {SUBSCRIPTION_PLAN.priceRupiah.toLocaleString('id-ID')}Rp/{SUBSCRIPTION_PLAN.period}
+                      {SUBSCRIPTION_PLAN.priceRupiah.toLocaleString('id-ID', { maximumFractionDigits: 2 })}Rp/{SUBSCRIPTION_PLAN.period}
                     </button>
                   </div>
                 </div>
@@ -441,10 +441,10 @@ export default function TopUpPage() {
                   </span>
                   <div className="flex items-baseline gap-2">
                     <span className="text-base sm:text-lg font-black text-white">
-                      {totalDiamonds.toLocaleString('id-ID')} Diamonds
+                      {totalDiamonds.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Diamonds
                     </span>
                     <span className="text-xs sm:text-sm text-[#00FFAA] font-bold">
-                      (Rp {selectedPackage.priceRupiah.toLocaleString('id-ID')})
+                      (Rp {selectedPackage.priceRupiah.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
                     </span>
                   </div>
                 </div>
@@ -470,7 +470,7 @@ export default function TopUpPage() {
                   ) : (
                     <>
                       <Zap className="w-4 h-4 fill-[#0A1A1A]" />
-                      <span>Bayar Sekarang (Rp {selectedPackage.priceRupiah.toLocaleString('id-ID')})</span>
+                      <span>Bayar Sekarang (Rp {selectedPackage.priceRupiah.toLocaleString('id-ID', { maximumFractionDigits: 2 })})</span>
                     </>
                   )}
                 </button>

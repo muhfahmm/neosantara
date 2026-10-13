@@ -140,10 +140,10 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
     },
     {
       label: goldBuildingCount > 0
-        ? `Bagian Negara Tambang Emas (${goldUnits.toLocaleString('id-ID')} unit)`
+        ? `Bagian Negara Tambang Emas (${goldUnits.toLocaleString('id-ID', { maximumFractionDigits: 2 })} unit)`
         : "Bagian Negara Tambang Emas",
       amount: goldIncome,
-      displayAmount: goldBuildingCount > 0 ? `+ ${goldIncome.toLocaleString('id-ID')} NEO` : undefined,
+      displayAmount: goldBuildingCount > 0 ? `+ ${goldIncome.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO` : undefined,
       badge: goldBuildingCount > 0 ? `Bagian negara ${goldStateSharePercent}%` : undefined,
       onClick: () => onGotoProduction?.("mineral", "emas"),
     }
@@ -244,31 +244,31 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                         <span className="flex items-center gap-2">
                           <ArrowUpRight className="h-4 w-4" /> Rincian Pemasukkan (Pendapatan Negara)
                         </span>
-                        <span>+ {totalIncome.toLocaleString("id-ID")}</span>
+                        <span>+ {totalIncome.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                       </div>
                       <div className="pl-4 space-y-1.5 text-xs">
                         <div className="flex justify-between items-center text-[#E0E0E0]">
                           <span className="font-semibold">• Revenue Pajak Nasional:</span>
-                          <span className="font-bold text-emerald-400">+ {taxRevenue.toLocaleString("id-ID")}</span>
+                          <span className="font-bold text-emerald-400">+ {taxRevenue.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between items-center text-[#E0E0E0]">
                           <span className="font-semibold">• Sektor Komersial ({commercialCount} Gedung):</span>
-                          <span className="font-bold text-emerald-400">+ {commercialIncome.toLocaleString("id-ID")}</span>
+                          <span className="font-bold text-emerald-400">+ {commercialIncome.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between items-center text-[#E0E0E0]">
                           <span className="font-semibold">• Sektor Wisata & Pariwisata ({tourismCount} Destinasi):</span>
                           <span className="font-bold text-emerald-400">
                             {baseTourismIncome > 0 && tourismIncome > baseTourismIncome && (
                               <span className="mr-1.5 text-rose-400 line-through">
-                                + {baseTourismIncome.toLocaleString("id-ID")}
+                                + {baseTourismIncome.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                               </span>
                             )}
-                            + {tourismIncome.toLocaleString("id-ID")}
+                            + {tourismIncome.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                           </span>
                         </div>
                         <div className="flex justify-between items-center text-[#E0E0E0]">
                           <span className="font-semibold">• Produksi Tambang Emas ({goldBuildingCount} Unit):</span>
-                          <span className="font-bold text-emerald-400">+ {goldIncome.toLocaleString("id-ID")}</span>
+                          <span className="font-bold text-emerald-400">+ {goldIncome.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                         </div>
                       </div>
                     </div>
@@ -279,16 +279,16 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                         <span className="flex items-center gap-2">
                           <ArrowDownRight className="h-4 w-4" /> Rincian Pengeluaran (Beban Negara)
                         </span>
-                        <span>- {totalOutcome.toLocaleString("id-ID")}</span>
+                        <span>- {totalOutcome.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                       </div>
                       <div className="pl-4 space-y-1.5 text-xs">
                         <div className="flex justify-between items-center text-[#E0E0E0]">
                           <span className="font-semibold">• Biaya Operasional Dewan Kabinet (22 Departemen):</span>
-                          <span className="font-bold text-rose-400">- {ministryCostPerDay.toLocaleString("id-ID")}</span>
+                          <span className="font-bold text-rose-400">- {ministryCostPerDay.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex justify-between items-center text-[#E0E0E0]">
                           <span className="font-semibold">• Alokasi Kebijakan Subsidi (6 Pos Kebutuhan):</span>
-                          <span className="font-bold text-rose-400">- {totalSubsidyCost.toLocaleString("id-ID")}</span>
+                          <span className="font-bold text-rose-400">- {totalSubsidyCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                         </div>
                       </div>
                     </div>
@@ -297,14 +297,14 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                     <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
                       <span>Netto Saldo Harian (Pemasukkan - Pengeluaran):</span>
                       <span className={`${netBalance >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
-                        {netBalance >= 0 ? "+ " : "- "}{Math.abs(netBalance).toLocaleString("id-ID")}
+                        {netBalance >= 0 ? "+ " : "- "}{Math.abs(netBalance).toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-2 px-1">
                   <span className="text-[#6B8A8A]">Total Saldo Kas Negara:</span>
-                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} NEO</span>
+                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
                 </div>
               </div>
             )}
@@ -331,10 +331,10 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                           <span>
                             {item.baseAmount !== undefined && item.baseAmount > 0 && item.amount > item.baseAmount && (
                               <span className="mr-1.5 text-rose-400 line-through">
-                                + {item.baseAmount.toLocaleString("id-ID")}
+                                + {item.baseAmount.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                               </span>
                             )}
-                            {item.displayAmount ?? `+ ${item.amount.toLocaleString("id-ID")}`}
+                            {item.displayAmount ?? `+ ${item.amount.toLocaleString("id-ID", { maximumFractionDigits: 2 })}`}
                           </span>
                         </div>
                       </div>
@@ -343,13 +343,13 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                   <div className="pt-4 border-t border-[#00FFAA]/30 mt-4">
                     <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
                       <span>Total Pemasukkan:</span>
-                      <span className="text-emerald-400">+ {totalIncome.toLocaleString("id-ID")}</span>
+                      <span className="text-emerald-400">+ {totalIncome.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-2 px-1">
                   <span className="text-[#6B8A8A]">Total Saldo Kas Negara:</span>
-                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} NEO</span>
+                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
                 </div>
               </div>
             )}
@@ -399,33 +399,33 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                       <div className="space-y-3">
                         <div className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-[#00FFAA]/20">
                           <span className="font-semibold text-[#E0E0E0]">1. Biaya Operasional Kabinet (22)</span>
-                          <span>- {ministryCostPerDay.toLocaleString("id-ID")}</span>
+                          <span>- {ministryCostPerDay.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="pl-4 space-y-1 text-[11px] text-[#6B8A8A]">
                           <div className="flex justify-between">
                             <span>• Subtotal Kementerian (15):</span>
-                            <span>- {calculateTabCostDaily(countryDetail, KEMENTERIAN).toLocaleString("id-ID")}</span>
+                            <span>- {calculateTabCostDaily(countryDetail, KEMENTERIAN).toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                           </div>
                           <div className="flex justify-between">
                             <span>• Subtotal Keamanan (5):</span>
-                            <span>- {calculateTabCostDaily(countryDetail, KEAMANAN).toLocaleString("id-ID")}</span>
+                            <span>- {calculateTabCostDaily(countryDetail, KEAMANAN).toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                           </div>
                           <div className="flex justify-between">
                             <span>• Subtotal Layanan (2):</span>
-                            <span>- {calculateTabCostDaily(countryDetail, LAYANAN).toLocaleString("id-ID")}</span>
+                            <span>- {calculateTabCostDaily(countryDetail, LAYANAN).toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                           </div>
                         </div>
 
                         <div className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-[#00FFAA]/20 pt-3">
                           <span className="font-semibold text-[#E0E0E0]">2. Alokasi Kebijakan Subsidi (6)</span>
-                          <span>- {totalSubsidyCost.toLocaleString("id-ID")}</span>
+                          <span>- {totalSubsidyCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                         </div>
                       </div>
 
                       <div className="pt-4 border-t border-[#00FFAA]/30 mt-4">
                         <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
                           <span>Grand Total Pengeluaran (Kabinet + Subsidi):</span>
-                          <span className="text-rose-400">- {totalOutcome.toLocaleString("id-ID")}</span>
+                          <span className="text-rose-400">- {totalOutcome.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                         </div>
                       </div>
                     </div>
@@ -479,7 +479,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                                 <span className="font-semibold text-[#E0E0E0]">{dept.name}</span>
                                 <span className="text-[10px] text-[#6B8A8A]">(Level {level})</span>
                               </div>
-                              <span>- {dailyCost.toLocaleString("id-ID")}</span>
+                              <span>- {dailyCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                             </div>
                           );
                         })}
@@ -487,7 +487,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                       <div className="pt-4 border-t border-[#00FFAA]/30 mt-4">
                         <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
                           <span>Subtotal {kabinetSubTab === "kementerian" ? "Kementerian" : kabinetSubTab === "keamanan" ? "Keamanan" : "Layanan"}:</span>
-                          <span className="text-rose-400">- {outcomeTabCostDaily.toLocaleString("id-ID")}</span>
+                          <span className="text-rose-400">- {outcomeTabCostDaily.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                         </div>
                       </div>
                     </div>
@@ -496,7 +496,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                       <div className="pt-2">
                         <div className="flex justify-between items-center text-sm font-black text-[#E0E0E0]">
                           <span>Total Pengeluaran Dewan Kabinet:</span>
-                          <span className="text-rose-400">- {ministryCostPerDay.toLocaleString("id-ID")}</span>
+                          <span className="text-rose-400">- {ministryCostPerDay.toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
                         </div>
                       </div>
                     </div>
@@ -505,7 +505,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
 
                 <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-2 px-1">
                   <span className="text-[#6B8A8A]">Total Saldo Kas Negara:</span>
-                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID")} NEO</span>
+                  <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
                 </div>
               </div>
             )}
