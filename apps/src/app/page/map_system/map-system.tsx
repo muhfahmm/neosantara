@@ -6,7 +6,6 @@ import {
     Play, Pause, Settings, Palmtree, Shield, Crosshair
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
 import countryPaths from './country-paths.json';
 import { mergeClaimedTerritories } from './world-map-geometry';
@@ -25,6 +24,7 @@ type KudetaType = import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta')
 const ModalsAnnexedGameOver = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsAnnexedGameOver'), { ssr: false });
 const DiplomacyTracking = dynamic(() => import('../menus/tracking-modals/tracking'), { ssr: false });
 const ResultModal = dynamic(() => import('./warResultModal'), { ssr: false });
+const TopUpModal = dynamic(() => import('../menus/topup/TopUpModal'), { ssr: false });
 
 export function lootUserProductionInventory(countryDetail: any, currentDateStr: string): { updatedDetail: any; lootedSummaryText: string } {
     if (!countryDetail) return { updatedDetail: countryDetail, lootedSummaryText: '' };
@@ -80,6 +80,7 @@ import { applyWarLossesToUserArmada } from '../detail_negara/3_operasi_militer/1
 import { getArmadaPowerSummary } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
 import { convertBarakToSoldiers } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/1_barak_logic';
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
+import { setCountryProfileSummaries, type CountryProfileSummary } from '@/lib/countryProfileSummaryRegistry';
 import {
     hasActiveNationalization,
     syncNationalizationDiplomacyRelations,
@@ -411,7 +412,6 @@ function setMilitaryAttackRelation(
 }
 
 export default function MapPage() {
-    const router = useRouter();
     const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
     const [countryDetail, setCountryDetail] = useState<any>(null);
     const [metadata, setMetadata] = useState<Record<string, any>>({});
@@ -453,6 +453,16 @@ export default function MapPage() {
         fetchBuildingMetadata()
             .then(data => setMetadata(data || {}))
             .catch(err => console.error("Failed to load metadata in MapPage:", err));
+        fetch('/api/country-data?summary=true')
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.json();
+            })
+            .then((summaries: CountryProfileSummary[]) => {
+                if (!Array.isArray(summaries)) throw new Error('Country summary response is not an array');
+                setCountryProfileSummaries(summaries);
+            })
+            .catch(error => console.error('Failed to preload country profile summaries:', error));
     }, []);
     const [playerNetBalanceAdjustment, setPlayerNetBalanceAdjustment] = useState<number>(0);
     const [playerNetPopulationChange, setPlayerNetPopulationChange] = useState<number>(0);
@@ -594,7 +604,9 @@ export default function MapPage() {
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [isPresidentMenuOpen, setIsPresidentMenuOpen] = useState(false);
     const [isRestartConfirmOpen, setIsRestartConfirmOpen] = useState(false);
+    const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
     const [activeMenu, setActiveMenu] = useState('Peta Taktis');
+    const topUpWasPausedRef = useRef(true);
     const [isDiplomacyMapActive, setIsDiplomacyMapActive] = useState(false);
     const [resetTrigger, setResetTrigger] = useState(false);
     const [productionDeepLink, setProductionDeepLink] = useState<{ tab: string; key: string } | null>(null);
@@ -775,6 +787,27 @@ export default function MapPage() {
         };
     }, [handleFocusHome]);
 
+    function openTopUpPage() {
+        if (isTopUpModalOpen) return;
+        topUpWasPausedRef.current = timeManagerRef.current?.getIsPaused() ?? isPaused;
+        timeManagerRef.current?.setPaused(true);
+        setIsPaused(true);
+        setIsTopUpModalOpen(true);
+    }
+
+    function closeTopUpPage() {
+        setIsTopUpModalOpen(false);
+        timeManagerRef.current?.setPaused(topUpWasPausedRef.current);
+        setIsPaused(topUpWasPausedRef.current);
+    }
+
+    function handleTopUpSuccess(addedDiamonds: number) {
+        const newTotal = playerDiamonds + addedDiamonds;
+        localStorage.setItem('player_diamonds', newTotal.toString());
+        setPlayerDiamonds(newTotal);
+        window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: newTotal } }));
+    }
+
     // 🎮 Integrasi Keyboard Shortcuts Neosantara
     useKeyboardShortcuts({
         onFocusHome: handleFocusHome,
@@ -790,7 +823,7 @@ export default function MapPage() {
             setIsSaveModalOpen(false);
             setIsRestartConfirmOpen(false);
             setActiveMenu('Peta Taktis');
-            router.push('/page/topup_page');
+            openTopUpPage();
         },
         onOpenMission: () => {
             setMissionModalOpen(true);
@@ -4903,9 +4936,7 @@ export default function MapPage() {
                     setActiveMenu("Dashboard:Populasi:Overview");
                 }}
                 diamond={playerDiamonds}
-                onOpenTopUp={() => {
-                    router.push('/page/topup_page');
-                }}
+                onOpenTopUp={openTopUpPage}
             />            {/* Top Left Icon - Inbox */}
             <TopLeftIcon
                 userCountryName={String(
@@ -6009,6 +6040,18 @@ export default function MapPage() {
                 onSaveGameClick={openSaveModal}
                 onRestartClick={() => setIsRestartConfirmOpen(true)}
             />
+
+            {isTopUpModalOpen && (
+                <>
+                    <div className="fixed inset-0 z-[99999] bg-black/60" aria-hidden="true" />
+                    <TopUpModal
+                        isOpen={true}
+                        onClose={closeTopUpPage}
+                        currentDiamonds={playerDiamonds}
+                        onTopUpSuccess={handleTopUpSuccess}
+                    />
+                </>
+            )}
 
             {/* Confirm Restart Modal */}
             <ConfirmRestartModal

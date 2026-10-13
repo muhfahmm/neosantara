@@ -15,6 +15,7 @@ import { getProvinceReligionOverride } from './1_informasi_umum/provinsi_logic/1
 import { getProvinceIdeologyOverride } from './1_informasi_umum/provinsi_logic/1_informasi_umum/5_tanamkan_ideologi';
 import { getProvinceRebellionChance } from './1_informasi_umum/provinsi_logic/ketegangan_provinsi/1_pemberontakan';
 import { getProvinceDemonstrationChance } from './1_informasi_umum/provinsi_logic/ketegangan_provinsi/2_demonstrasi';
+import { getCountryProfileSummary } from '@/lib/countryProfileSummaryRegistry';
 
 // Import 3 komponen terpisah
 import InformasiUmum from "./1_informasi_umum/informasi_umum";
@@ -64,6 +65,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   const [activeTab, setActiveTab] = useState<"informasi" | "geopolitik" | "militer">("informasi");
   const [annexationRevision, setAnnexationRevision] = useState(0);
   const [relationRevision, setRelationRevision] = useState(0);
+  const [profileSummaryRevision, setProfileSummaryRevision] = useState(0);
   const [militaryActionDates, setMilitaryActionDates] = useState<Record<string, string>>({});
 
   // State untuk menyembunyikan tampilan modal Detail Negara saat salah satu modal aksi dibuka
@@ -122,6 +124,12 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     window.addEventListener('requested_invasion_arrival_scheduled', handleRequestedInvasionArrival);
     return () => window.removeEventListener('requested_invasion_arrival_scheduled', handleRequestedInvasionArrival);
   }, [countryName]);
+
+  useEffect(() => {
+    const refreshProfileSummaries = () => setProfileSummaryRevision(revision => revision + 1);
+    window.addEventListener('country_profile_summaries_ready', refreshProfileSummaries);
+    return () => window.removeEventListener('country_profile_summaries_ready', refreshProfileSummaries);
+  }, []);
 
   useEffect(() => {
     const refreshAnnexation = (event: Event) => {
@@ -387,6 +395,11 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   const detailData = fetchedDetail || (
     normalizeCountryKey(playerCountryName) === normalizeCountryKey(countryName) ? countryDetail : null
   );
+  const profileSummary = useMemo(
+    () => getCountryProfileSummary(countryName),
+    [countryName, profileSummaryRevision]
+  );
+  const headerDetailData = detailData || profileSummary;
 
   // Cek apakah negara ini telah dianeksasi oleh negara lain
   const annexedInfo = getAnnexedInfo(
@@ -605,8 +618,8 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Populasi</span>
                 <div className="flex items-center gap-1.5">
                   <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
-                    {detailData?.jumlah_penduduk
-                      ? detailData.jumlah_penduduk.toLocaleString('id-ID', { maximumFractionDigits: 2 })
+                    {headerDetailData?.jumlah_penduduk
+                      ? Number(headerDetailData.jumlah_penduduk).toLocaleString('id-ID', { maximumFractionDigits: 2 })
                       : isLoadingDetail
                         ? <span className="inline-block w-20 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
                         : '-'
@@ -630,9 +643,11 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Anggaran</span>
                 <div className="flex items-center gap-1.5">
                   <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
-                    {isLoadingDetail
-                      ? <span className="inline-block w-16 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
-                      : detailData?.anggaran !== undefined ? `${detailData.anggaran.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO` : '-'
+                    {headerDetailData?.anggaran !== undefined
+                      ? `${Number(headerDetailData.anggaran).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`
+                      : isLoadingDetail
+                        ? <span className="inline-block w-16 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
+                        : '-'
                     }
                   </span>
                   {!isLoadingDetail && detailData && (
@@ -652,8 +667,8 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
               <div className="flex flex-col">
                 <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Ideologi</span>
                 <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
-                  {detailData?.ideology
-                    ? detailData.ideology
+                  {headerDetailData?.ideology
+                    ? headerDetailData.ideology
                     : isLoadingDetail
                       ? <span className="inline-block w-20 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
                       : '-'
@@ -670,8 +685,8 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
               <div className="flex flex-col">
                 <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Agama</span>
                 <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
-                  {detailData?.religion
-                    ? detailData.religion
+                  {headerDetailData?.religion
+                    ? headerDetailData.religion
                     : isLoadingDetail
                       ? <span className="inline-block w-16 h-3 bg-[#00FFAA]/20 animate-pulse rounded" />
                       : '-'

@@ -459,9 +459,34 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const countryPath = searchParams.get('path');
   const requestAll = searchParams.get('all') === 'true';
+  const requestSummary = searchParams.get('summary') === 'true';
   const forceRefresh = searchParams.get('force') === 'true';
 
   try {
+    if (requestSummary) {
+      const rows = await queryDb<Array<{
+        id: number;
+        country_slug: string;
+        name_id: string;
+        name_en: string;
+        capital: string;
+        jumlah_penduduk: number | string;
+        anggaran: number | string;
+        religion: string;
+        ideology: string;
+      }>>(
+        `SELECT id, country_slug, name_id, name_en, capital, jumlah_penduduk, anggaran, religion, ideology
+         FROM database_profiles_negara
+         ORDER BY id`
+      );
+      const summaries = rows.map(row => ({
+        ...row,
+        jumlah_penduduk: Number(row.jumlah_penduduk),
+        anggaran: Number(row.anggaran),
+      }));
+      return NextResponse.json(summaries);
+    }
+
     const allData = await loadAllCountriesFromMySQL(forceRefresh);
 
     if (requestAll || !countryPath) {
