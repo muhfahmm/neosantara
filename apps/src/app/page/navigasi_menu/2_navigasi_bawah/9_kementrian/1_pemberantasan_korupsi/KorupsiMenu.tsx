@@ -90,8 +90,8 @@ export default function KorupsiMenu({
   ];
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[200] flex items-center justify-center px-4 pb-4 pt-[100px] sm:px-8 sm:pb-5 sm:pt-[110px]">
-      <div className="pointer-events-auto relative flex h-full max-h-[calc(100vh-125px)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] font-sans shadow-2xl sm:max-h-[calc(100vh-138px)] lg:max-w-[920px] lg:max-h-[calc(100vh-145px)] xl:max-w-[1020px]">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
         <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-[#00FFAA]/30 bg-[#0A1A1A] px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <div className="rounded-lg border border-[#00FFAA]/30 bg-[#00FFAA]/10 p-2 text-[#00FFAA]">
@@ -106,9 +106,10 @@ export default function KorupsiMenu({
             type="button"
             onClick={onClose}
             aria-label="Tutup menu pemberantasan korupsi"
-            className="rounded-lg p-2 text-[#8BA3A3] transition hover:bg-[#00FFAA]/10 hover:text-[#00FFAA]"
+            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
           >
-            <X className="h-5 w-5" />
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-4 w-4" />
           </button>
         </header>
 
