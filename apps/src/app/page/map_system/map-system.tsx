@@ -232,8 +232,39 @@ import {
     type ProvinceReferendum
 } from '../detail_negara/1_informasi_umum/provinsi_logic/ketegangan_provinsi/3_referendum';
 
-type AnnexedTerritoryEntry = { attackerCountry?: string };
+type AnnexedTerritoryEntry = { attackerCountry?: string; attackerIso?: string };
 type AnnexedTerritories = Record<string, AnnexedTerritoryEntry>;
+
+function getCapitalFlagsForCurrentTerritories() {
+    const annexedCountries = typeof window === 'undefined'
+        ? {}
+        : ((window as Window & { neosantara_annexed_countries?: AnnexedTerritories })
+            .neosantara_annexed_countries || {});
+    const normalizeKey = (value: unknown) =>
+        String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    return CAPITALS_DATA.map(capital => {
+        const capitalKeys = new Set([
+            normalizeKey(capital.country),
+            normalizeKey(capital.iso),
+            normalizeKey(`iso_${capital.iso}`)
+        ]);
+        const annexation = Object.entries(annexedCountries).find(([key]) =>
+            capitalKeys.has(normalizeKey(key))
+        )?.[1];
+        if (!annexation?.attackerCountry) return capital;
+
+        const attackerIso = COUNTRIES_DATA.find(country =>
+            normalizeKey(country.country) === normalizeKey(annexation.attackerCountry)
+        )?.iso || (
+            annexation.attackerIso?.trim().length === 2
+                ? annexation.attackerIso
+                : undefined
+        );
+
+        return attackerIso ? { ...capital, iso: attackerIso.toLowerCase() } : capital;
+    });
+}
 
 function hasAnnexedTerritories(countryName: string): boolean {
     if (typeof window === 'undefined') return false;
@@ -302,7 +333,6 @@ const MapCanvasView = memo(function MapCanvasView({
                     event.currentTarget.dispatchEvent(mouseUp);
                 }}
             />
-            <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_200px_rgba(0,0,0,0.6)] vignette-gradient" />
         </div>
     );
 });
@@ -1059,6 +1089,7 @@ export default function MapPage() {
             if (overrides && typeof overrides === 'object') {
                 setCountryColorOverrides({ ...overrides });
             }
+            wasmModuleRef.current?.set_capitals_on_map(getCapitalFlagsForCurrentTerritories());
         };
         window.addEventListener('map_territory_color_updated', syncTerritoryColorOverrides);
         return () => window.removeEventListener('map_territory_color_updated', syncTerritoryColorOverrides);
@@ -4684,7 +4715,7 @@ export default function MapPage() {
                 wasmModuleRef.current = wasmModule;
 
                 // After init, the exported functions are available on the module
-                const { start_map_engine, set_selected_country_on_map } = wasmModule;
+                const { start_map_engine, set_selected_country_on_map, set_map_horizontal_wrap } = wasmModule;
 
                 const mapCanvasEl = document.getElementById('map-canvas') as HTMLCanvasElement | null;
                 const mapCtx = mapCanvasEl?.getContext('2d');
@@ -4797,6 +4828,8 @@ export default function MapPage() {
                     COUNTRIES_DATA,
                     CAPITALS_DATA
                 );
+                set_map_horizontal_wrap(true);
+                wasmModule.set_capitals_on_map(getCapitalFlagsForCurrentTerritories());
 
                 // Highlight and center player country if present
                 if (typeof window !== 'undefined') {
