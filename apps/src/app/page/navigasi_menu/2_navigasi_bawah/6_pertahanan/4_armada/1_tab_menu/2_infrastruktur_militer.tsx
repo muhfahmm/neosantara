@@ -2,14 +2,15 @@
 import React, { useState, useEffect } from "react";
 import { Info } from "lucide-react";
 import { convertBarakToSoldiers } from "../logic/1_barak_logic";
+import { getArmadaUnitCount } from "../logic/infraCapacityHelper";
 import KonfirmasiInfrastrukturModal from "../2_modals_konfirmasi_pembangunan/2_konfirmasi_infrastruktur_modal";
 import InfoInfrastrukturModal from "../modals_info/2_info_infrastruktur_modal";
 import { deductBuildingMaterials } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
-import { REQUIREMENTS as INFANTERI_REQUIREMENTS } from "../requirements_logic/1_infanteri/requirements";
-import { REQUIREMENTS as HANGAR_REQUIREMENTS } from "../requirements_logic/2_hangar_tank/requirements";
-import { REQUIREMENTS as GUDANG_REQUIREMENTS } from "../requirements_logic/3_gudang_senjata/requirements";
-import { REQUIREMENTS as LAUT_REQUIREMENTS } from "../requirements_logic/4_pangkalan_laut/requirements";
-import { REQUIREMENTS as UDARA_REQUIREMENTS } from "../requirements_logic/5_pangkalan_udara/requirements";
+import { REQUIREMENTS as INFANTERI_REQUIREMENTS } from "../construction_support/1_barak_militer/requirements";
+import { REQUIREMENTS as HANGAR_REQUIREMENTS } from "../construction_support/2_hangar_tank/requirements";
+import { REQUIREMENTS as GUDANG_REQUIREMENTS } from "../construction_support/3_gudang_senjata/requirements";
+import { REQUIREMENTS as LAUT_REQUIREMENTS } from "../construction_support/4_pangkalan_laut/requirements";
+import { REQUIREMENTS as UDARA_REQUIREMENTS } from "../construction_support/5_pangkalan_udara/requirements";
 
 import {
   getWaktuPembangunanBarakMiliterBonusPercent,
@@ -163,10 +164,14 @@ export default function InfrastrukturMiliter({
     return stocks;
   };
 
-  const calculateMissingMaterials = (requirements: any[], stocks: Record<string, number>) => {
+  const calculateMissingMaterials = (
+    requirements: any[],
+    stocks: Record<string, number>,
+    quantity: number = 1
+  ) => {
     return requirements.filter(req => {
       const stock = stocks[req.resourceKey] ?? 0;
-      return stock <= 0;
+      return stock < (Number(req.amount) || 0) * quantity;
     });
   };
 
@@ -209,7 +214,7 @@ export default function InfrastrukturMiliter({
 
     const key = selectedForBuild.key;
     const buildingData = infrastrukturData[key];
-    const qty = Math.max(1, Math.floor(quantity));
+    const qty = Number.isFinite(quantity) ? Math.max(1, Math.floor(quantity)) : 1;
     const waktu = Number(buildingData.waktu_pembangunan) || 0;
     const costPerUnit = Number(buildingData.biaya_pembangunan) || 0;
     const totalCost = costPerUnit * qty;
@@ -242,9 +247,9 @@ export default function InfrastrukturMiliter({
 
     // 3. Cek material (gunakan stok saat ini)
     const materialStocks = calculateMaterialStocks(countryDetail);
-    const missing = calculateMissingMaterials(requirementsForDeduction, materialStocks);
+    const missing = calculateMissingMaterials(requirementsForDeduction, materialStocks, qty);
     if (missing.length > 0) {
-      alert(`❌ Material berikut tidak mencukupi:\n${missing.map(m => `${m.label} (butuh ${m.amount || 1})`).join('\n')}`);
+      alert(`❌ Material berikut tidak mencukupi:\n${missing.map(m => `${m.label} (butuh ${(Number(m.amount) || 0) * qty})`).join('\n')}`);
       return;
     }
 
@@ -358,7 +363,7 @@ export default function InfrastrukturMiliter({
     const key = selectedForBuild.key;
     const currentBarak = Number(getNestedValue(countryDetail, "barak")) || 0;
     const ongoingBarak = (ongoingConstructions || []).filter((c: any) => c.buildingKey === "barak").length || 0;
-    const storedInfantry = Number((countryDetail?.armada?.darat?.pasukan_infanteri ?? getNestedValue(countryDetail, "pasukan_infanteri")) || 0);
+    const storedInfantry = getArmadaUnitCount(countryDetail, "pasukan_infanteri", "darat");
 
     if (key === "barak") {
       const barakRequirements = findRequirementsForBuilding("barak", INFANTERI_REQUIREMENTS);
@@ -386,8 +391,8 @@ export default function InfrastrukturMiliter({
           requirements={hangarRequirements}
           missingMaterials={calculateMissingMaterials(hangarRequirements, materialStocks)}
           capacityType="hangar_tank"
-          currentTankCount={Number(countryDetail?.armada?.darat?.tank_tempur_utama ?? 0)}
-          currentApcCount={Number(countryDetail?.armada?.darat?.apc_ifv ?? 0)}
+          currentTankCount={getArmadaUnitCount(countryDetail, "tank_tempur_utama", "darat")}
+          currentApcCount={getArmadaUnitCount(countryDetail, "apc_ifv", "darat")}
           currentHangarCount={Number(getNestedValue(countryDetail, "hangar_tank"))}
         />
       );
@@ -401,10 +406,10 @@ export default function InfrastrukturMiliter({
           requirements={gudangRequirements}
           missingMaterials={calculateMissingMaterials(gudangRequirements, materialStocks)}
           capacityType="gudang_senjata"
-          currentArtileriCount={Number(countryDetail?.armada?.darat?.artileri_berat ?? 0)}
-          currentRoketCount={Number(countryDetail?.armada?.darat?.sistem_peluncur_roket ?? 0)}
-          currentPertahanUdaraCount={Number(countryDetail?.armada?.darat?.pertahanan_udara_mobile ?? 0)}
-          currentKendaraanTaktisCount={Number(countryDetail?.armada?.darat?.kendaraan_taktis ?? 0)}
+          currentArtileriCount={getArmadaUnitCount(countryDetail, "artileri_berat", "darat")}
+          currentRoketCount={getArmadaUnitCount(countryDetail, "sistem_peluncur_roket", "darat")}
+          currentPertahanUdaraCount={getArmadaUnitCount(countryDetail, "pertahanan_udara_mobile", "darat")}
+          currentKendaraanTaktisCount={getArmadaUnitCount(countryDetail, "kendaraan_taktis", "darat")}
           currentGudangCount={Number(getNestedValue(countryDetail, "gudang_senjata"))}
         />
       );
@@ -418,14 +423,14 @@ export default function InfrastrukturMiliter({
           requirements={lautRequirements}
           missingMaterials={calculateMissingMaterials(lautRequirements, materialStocks)}
           capacityType="pangkalan_laut"
-          kapalIndukCount={Number(countryDetail?.armada?.laut?.kapal_induk ?? 0)}
-          kapalIndukNuklirCount={Number(countryDetail?.armada?.laut?.kapal_induk_nuklir ?? 0)}
-          kapalDestroyerCount={Number(countryDetail?.armada?.laut?.kapal_destroyer ?? 0)}
-          kapalKorvetCount={Number(countryDetail?.armada?.laut?.kapal_korvet ?? 0)}
-          kapalSelamNuklirCount={Number(countryDetail?.armada?.laut?.kapal_selam_nuklir ?? 0)}
-          kapalSelamRegulerCount={Number(countryDetail?.armada?.laut?.kapal_selam_regular ?? 0)}
-          kapalRanjauCount={Number(countryDetail?.armada?.laut?.kapal_ranjau ?? 0)}
-          kapalLogistikCount={Number(countryDetail?.armada?.laut?.kapal_logistik ?? 0)}
+          kapalIndukCount={getArmadaUnitCount(countryDetail, "kapal_induk", "laut")}
+          kapalIndukNuklirCount={getArmadaUnitCount(countryDetail, "kapal_induk_nuklir", "laut")}
+          kapalDestroyerCount={getArmadaUnitCount(countryDetail, "kapal_destroyer", "laut")}
+          kapalKorvetCount={getArmadaUnitCount(countryDetail, "kapal_korvet", "laut")}
+          kapalSelamNuklirCount={getArmadaUnitCount(countryDetail, "kapal_selam_nuklir", "laut")}
+          kapalSelamRegulerCount={getArmadaUnitCount(countryDetail, "kapal_selam_regular", "laut")}
+          kapalRanjauCount={getArmadaUnitCount(countryDetail, "kapal_ranjau", "laut")}
+          kapalLogistikCount={getArmadaUnitCount(countryDetail, "kapal_logistik", "laut")}
           currentPangkalanLautCount={Number(getNestedValue(countryDetail, "pangkalan_laut"))}
         />
       );
@@ -439,14 +444,14 @@ export default function InfrastrukturMiliter({
           requirements={udaraRequirements}
           missingMaterials={calculateMissingMaterials(udaraRequirements, materialStocks)}
           capacityType="pangkalan_udara"
-          jetTemturSilamanCount={Number(countryDetail?.armada?.udara?.jet_tempur_siluman ?? 0)}
-          jetTemturInterceptorCount={Number(countryDetail?.armada?.udara?.jet_tempur_interceptor ?? 0)}
-          pesawatPengebomCount={Number(countryDetail?.armada?.udara?.pesawat_pengebom ?? 0)}
-          helikopterSerangCount={Number(countryDetail?.armada?.udara?.helikopter_serang ?? 0)}
-          pesawatPengintaiCount={Number(countryDetail?.armada?.udara?.pesawat_pengintai ?? 0)}
-          droneIntaiUavCount={Number(countryDetail?.armada?.udara?.drone_intai_uav ?? 0)}
-          droneKamikazeCount={Number(countryDetail?.armada?.udara?.drone_kamikaze ?? 0)}
-          pesawatAngkutCount={Number(countryDetail?.armada?.udara?.pesawat_angkut ?? 0)}
+          jetTemturSilamanCount={getArmadaUnitCount(countryDetail, "jet_tempur_siluman", "udara")}
+          jetTemturInterceptorCount={getArmadaUnitCount(countryDetail, "jet_tempur_interceptor", "udara")}
+          pesawatPengebomCount={getArmadaUnitCount(countryDetail, "pesawat_pengebom", "udara")}
+          helikopterSerangCount={getArmadaUnitCount(countryDetail, "helikopter_serang", "udara")}
+          pesawatPengintaiCount={getArmadaUnitCount(countryDetail, "pesawat_pengintai", "udara")}
+          droneIntaiUavCount={getArmadaUnitCount(countryDetail, "drone_intai_uav", "udara")}
+          droneKamikazeCount={getArmadaUnitCount(countryDetail, "drone_kamikaze", "udara")}
+          pesawatAngkutCount={getArmadaUnitCount(countryDetail, "pesawat_angkut", "udara")}
           currentPangkalanUdaraCount={Number(getNestedValue(countryDetail, "pangkalan_udara"))}
         />
       );

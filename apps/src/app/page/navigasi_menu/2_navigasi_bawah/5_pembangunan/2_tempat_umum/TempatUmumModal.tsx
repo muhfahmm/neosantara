@@ -7,17 +7,23 @@ import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsMod
 import { generateTempatUmumAIAnalysis } from "../ai_suggestions/serviceAISuggestionsLogic";
 
 // --- IMPOR MODUL REQUIREMENTS MATERIAL ---
-import * as infrastrukturRequirements from "./requirements_logic/1_infrastruktur/requirements";
-import * as pendidikanRequirements from "./requirements_logic/2_pendidikan/requirements";
-import * as kesehatanRequirements from "./requirements_logic/3_kesehatan/requirements";
-import * as penegakanHukumRequirements from "./requirements_logic/4_penegakan_hukum/requirements";
-import * as olahragaHiburanRequirements from "./requirements_logic/5_olahraga_hiburan/requirements";
-import * as komersialRequirements from "./requirements_logic/6_komersial/requirements";
+import * as infrastrukturRequirements from "./construction_support/1_infrastruktur/requirements";
+import * as pendidikanRequirements from "./construction_support/2_pendidikan/requirements";
+import * as kesehatanRequirements from "./construction_support/3_kesehatan/requirements";
+import * as penegakanHukumRequirements from "./construction_support/4_penegakan_hukum/requirements";
+import * as olahragaHiburanRequirements from "./construction_support/5_olahraga_hiburan/requirements";
+import * as komersialRequirements from "./construction_support/6_komersial/requirements";
 
 // --- IMPOR KOMPONEN MODAL ---
 import InfoBangunanModal from "./1_modals_info_bangunan/info_bangunan_modals";
 import KonfirmasiPembangunanModal from "./2_modals_konfirmasi_pembangunan/modalsKonfirmasiPembangunan";
-import { useMaterialProduction, getMaterialStock as getMaterialStockFromBuildLogic, deductBuildingMaterials } from "../build_logic/build_logic";
+import {
+  useMaterialProduction,
+  getMaterialStock as getMaterialStockFromBuildLogic,
+  deductBuildingMaterials,
+  calculateMaxBuildQuantity,
+  getBulkBuildQuantityTarget,
+} from "../build_logic/build_logic";
 import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
 import { getEffectiveBuildTime } from "@/app/page/bonus_logic";
 import {
@@ -196,9 +202,11 @@ export default function TempatUmumModal({
     const bMeta = metadata[key] || {};
 
     const buildingReq = getSelectedBuildingRequirements();
-    const missingMaterials = buildingReq?.requirements?.filter(
-      (material) => getMaterialStock(material.resourceKey) <= 0
-    ) || [];
+    const requirements = buildingReq?.requirements || [];
+    const quantity = Number.isFinite(buildQuantity) ? Math.max(1, Math.floor(buildQuantity)) : 1;
+    const missingMaterials = requirements.filter(
+      (material) => getMaterialStock(material.resourceKey) < (Number(material.amount) || 0) * quantity
+    );
 
     if (missingMaterials.length > 0) {
       setInsufficientMaterials(missingMaterials);
@@ -206,19 +214,37 @@ export default function TempatUmumModal({
       return;
     }
 
-    const cost = Number(bMeta.biaya_pembangunan) || 0;
-    const totalCost = cost * buildQuantity;
+    const originalCost = Number(bMeta.biaya_pembangunan) || 0;
+    const cost = originalCost;
     const anggaran = Number(countryDetail?.anggaran) || 0;
+    const materialStocks = requirements.reduce<Record<string, number>>((stocks, material) => {
+      stocks[material.resourceKey] = getMaterialStock(material.resourceKey);
+      return stocks;
+    }, {});
+    const maxQuantity = calculateMaxBuildQuantity(
+      cost,
+      anggaran,
+      requirements,
+      materialStocks,
+      getBulkBuildQuantityTarget(originalCost)
+    );
+    if (quantity > maxQuantity) {
+      setToast(`Jumlah pembangunan melebihi batas anggaran atau material tersedia (maksimal ${maxQuantity}).`);
+      setTimeout(() => setToast(null), 2500);
+      return;
+    }
+
+    const totalCost = cost * quantity;
     if (anggaran < totalCost) {
-      setToast(`Kas negara tidak mencukupi untuk membangun ${buildQuantity} ${label}!`);
+      setToast(`Kas negara tidak mencukupi untuk membangun ${quantity} ${label}!`);
       setTimeout(() => setToast(null), 2500);
       return;
     }
 
     const updatedDetail = deductBuildingMaterials(
       { ...countryDetail, anggaran: anggaran - totalCost },
-      buildingReq?.requirements,
-      buildQuantity
+      requirements,
+      quantity
     );
 
     const waktu = getEffectiveBuildTime(
@@ -228,8 +254,8 @@ export default function TempatUmumModal({
     );
 
     if (waktu <= 0) {
-      updatedDetail[key] = (Number(countryDetail?.[key]) || 0) + buildQuantity;
-      updatedDetail.kepuasan = Math.min(100, (Number(countryDetail?.kepuasan) || 65.0) + (1.0 * buildQuantity));
+      updatedDetail[key] = (Number(countryDetail?.[key]) || 0) + quantity;
+      updatedDetail.kepuasan = Math.min(100, (Number(countryDetail?.kepuasan) || 65.0) + (1.0 * quantity));
       setCountryDetail(updatedDetail);
       setSelectedBuilding(null);
       return;
@@ -247,7 +273,7 @@ export default function TempatUmumModal({
     const newConstructions = [];
     let currentStartDate = startDateStr;
     
-    for (let i = 0; i < buildQuantity; i++) {
+    for (let i = 0; i < quantity; i++) {
       const endDateStr = addDays(currentStartDate, waktu);
       newConstructions.push({
         id: Date.now() + Math.random() + i,
@@ -655,13 +681,14 @@ export default function TempatUmumModal({
 
       {selectedBuilding && (() => {
         const bMeta = findMeta(selectedBuilding.key) || metadata[selectedBuilding.key] || {};
-        const cost = Number(bMeta.biaya_pembangunan) || 0;
+        const originalCost = Number(bMeta.biaya_pembangunan) || 0;
+        const cost = originalCost;
         const pendapatan = Number(bMeta?.pendapatan || (bMeta?.satuan === 'NEO' ? bMeta?.produksi : 0)) || 0;
         const buildingReq = getSelectedBuildingRequirements();
         const requirements = buildingReq?.requirements || [];
         
         const missingMaterials = requirements.filter(
-          (mat) => getMaterialStock(mat.resourceKey) <= 0
+          (mat) => getMaterialStock(mat.resourceKey) < (Number(mat.amount) || 0)
         );
 
         const materialStocks: Record<string, number> = {};
@@ -693,6 +720,7 @@ export default function TempatUmumModal({
             onMaterialClick={handleMaterialClick}
             loadingMetadata={loadingMetadata}
             initialQuantity={initialBuildQty}
+            quantityTarget={getBulkBuildQuantityTarget(originalCost)}
           />
         );
       })()}

@@ -12,10 +12,27 @@ export interface CapacityDetail {
   supportedUnits: string[];
 }
 
+export function getArmadaUnitCount(countryDetail: any, key: string, group: string): number {
+  const values = [
+    countryDetail?.armada?.[group]?.[key],
+    countryDetail?.[key],
+    countryDetail?.pertahanan?.[key],
+    countryDetail?.armada?.[key],
+    countryDetail?.[group]?.[key],
+  ];
+  const counts = values
+    .map(Number)
+    .filter((value) => Number.isFinite(value) && value >= 0);
+
+  return counts.find((value) => value > 0) ?? counts[0] ?? 0;
+}
+
 export function getInfraCapacityDetails(infraKey: string, countryDetail: any): CapacityDetail | null {
   if (!countryDetail) return null;
 
   const getData = (key: string, group?: string): number => {
+    if (group) return getArmadaUnitCount(countryDetail, key, group);
+
     if (countryDetail?.[key] !== undefined && countryDetail?.[key] !== null) {
       const val = Number(countryDetail[key]); if (!Number.isNaN(val)) return val;
     }

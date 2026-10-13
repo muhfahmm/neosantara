@@ -7,7 +7,7 @@ import { HANGAR_TANK_CAPACITY } from "../logic/2_hangar_tank_logic";
 import { GUDANG_SENJATA_CAPACITY } from "../logic/3_gudang_senjata_logic";
 import { PANGKALAN_LAUT_CAPACITY } from "../logic/4_pangkalan_laut_logic";
 import { PANGKALAN_UDARA_CAPACITY } from "../logic/5_pangkalan_udara_logic";
-import { KonfirmasiPembangunanModalProps } from "../requirements_logic/konfirmasi_pembangunan_types";
+import { KonfirmasiPembangunanModalProps } from "../construction_support/konfirmasi_pembangunan_types";
 import { calculateRecruitmentDays } from "../logic/recruitmentLogic";
 
 export default function KonfirmasiArmadaAktifModal({
@@ -367,13 +367,6 @@ export default function KonfirmasiArmadaAktifModal({
             <p className="text-xs text-[#6B8A8A]">{buildingDescription || 'Tidak ada deskripsi tersedia.'}</p>
           </div>
 
-          {/* Detail Kapasitas */}
-          {capacityInfoComponent && (
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-xl p-4 space-y-2 text-[#E0E0E0]">
-              {capacityInfoComponent}
-            </div>
-          )}
-
           {/* ========== PERINGATAN KAPASITAS PENUH ========== */}
           {capacityFull && (
             <div className="bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-xl p-4 space-y-4 shadow-sm">
@@ -588,10 +581,7 @@ export default function KonfirmasiArmadaAktifModal({
             )}
           </div>
 
-          <div className="flex justify-between items-center text-xs font-black pt-1">
-            <span className="text-[#6B8A8A]">Kas Negara Saat Ini:</span>
-            <span className="text-[#00FFAA]">{anggaran.toLocaleString('id-ID')} NEO</span>
-          </div>
+
 
           {capacityType !== "infanteri" && buildAmount > 0 && (
             <div className="flex justify-between items-center text-xs font-bold pt-1">

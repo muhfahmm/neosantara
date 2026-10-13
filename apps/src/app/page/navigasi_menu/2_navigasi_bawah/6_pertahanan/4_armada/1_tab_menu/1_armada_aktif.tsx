@@ -8,7 +8,7 @@ import { convertBarakToSoldiers } from "../logic/1_barak_logic";
 import { getArmadaCapacityInfo, getInfraCapacityDetails } from "../logic/infraCapacityHelper";
 import KonfirmasiArmadaAktifModal from "../2_modals_konfirmasi_pembangunan/1_konfirmasi_armada_aktif_modal";
 import InfoArmadaAktifModal from "../modals_info/1_info_armada_aktif_modal";
-import { REQUIREMENTS as INFANTERI_REQUIREMENTS, findRequirements as findInfanteriRequirements } from "../requirements_logic/1_infanteri/requirements";
+import { REQUIREMENTS as INFANTERI_REQUIREMENTS, findRequirements as findInfanteriRequirements } from "../construction_support/1_barak_militer/requirements";
 import armadaMetadata from "../../../../../../../../../json/semua_fitur_negara/2_pertahanan/1_armada_militer/metadata_armada_militer.json";
 
 interface TabProps {

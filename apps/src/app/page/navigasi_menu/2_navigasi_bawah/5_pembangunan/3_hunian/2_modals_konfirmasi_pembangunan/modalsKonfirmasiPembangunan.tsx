@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { X, Hammer, Eye, EyeOff } from "lucide-react";
+import { calculateMaxBuildQuantity, getBulkBuildQuantityTarget } from "../../build_logic/build_logic";
 
 interface MaterialRequirement {
   resourceKey: string;
@@ -29,6 +30,7 @@ interface KonfirmasiPembangunanProps {
   loadingMetadata: boolean;
   isDisabled?: boolean;
   initialQuantity?: number;
+  quantityTarget?: number;
 }
 
 export default function KonfirmasiPembangunanModal({
@@ -45,12 +47,12 @@ export default function KonfirmasiPembangunanModal({
   requirements,
   materialStocks,
   anggaran,
-  missingMaterials,
   onConfirm,
   onMaterialClick,
   loadingMetadata,
   isDisabled = false,
   initialQuantity = 1,
+  quantityTarget,
 }: KonfirmasiPembangunanProps) {
   const [showMaterialGrid, setShowMaterialGrid] = useState(true);
   const [buildQuantity, setBuildQuantity] = useState<number>(initialQuantity);
@@ -68,33 +70,23 @@ export default function KonfirmasiPembangunanModal({
 
   if (!isOpen) return null;
 
-  const hasMissingMaterials = missingMaterials.length > 0;
   const totalCost = cost * buildQuantity;
   const isAnggaranCukup = anggaran >= totalCost;
   const totalTime = (waktuPembangunan || 1) * buildQuantity;
 
-  // 🔥 Fungsi kalkulasi jumlah bangunan maksimal
-  const calculateMaxBuildings = (): number => {
-    let maxByBudget = Math.floor(anggaran / cost);
-    if (maxByBudget < 1) return 1;
-
-    // Cek batasan berdasarkan material
-    let maxByMaterials = Infinity;
-    for (const req of requirements) {
-      const availableStock = materialStocks[req.resourceKey] ?? 0;
-      const costPerBuilding = req.amount ?? 0;
-      if (costPerBuilding > 0) {
-        const maxForThisMaterial = Math.floor(availableStock / costPerBuilding);
-        maxByMaterials = Math.min(maxByMaterials, maxForThisMaterial);
-      }
-    }
-
-    if (maxByMaterials === Infinity) {
-      maxByMaterials = maxByBudget;
-    }
-
-    return Math.max(1, Math.min(maxByBudget, maxByMaterials));
-  };
+  const maxBuildQuantity = calculateMaxBuildQuantity(
+    cost,
+    anggaran,
+    requirements,
+    materialStocks,
+    quantityTarget ?? getBulkBuildQuantityTarget(cost * 1000)
+  );
+  const hasMissingMaterials = requirements.some(
+    (material) =>
+      (materialStocks[material.resourceKey] ?? 0) <
+      (material.amount ?? 0) * buildQuantity
+  );
+  const quantityExceedsAvailable = maxBuildQuantity < 1 || buildQuantity > maxBuildQuantity;
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -145,20 +137,27 @@ export default function KonfirmasiPembangunanModal({
                   <input
                     type="number"
                     min={1}
+                    max={maxBuildQuantity}
                     step={1}
+                    disabled={maxBuildQuantity < 1}
                     value={buildQuantity}
                     onChange={(event) => {
                       const value = Number(event.target.value);
-                      setBuildQuantity(Number.isFinite(value) ? Math.max(1, Math.floor(value)) : 1);
+                      setBuildQuantity(
+                        Number.isFinite(value)
+                          ? Math.min(maxBuildQuantity, Math.max(1, Math.floor(value)))
+                          : 1
+                      );
                     }}
                     className="flex-1 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] px-3 py-2 text-sm font-bold text-[#E0E0E0] focus:outline-none focus:border-[#00FFAA]"
                   />
                   <button
                     type="button"
-                    onClick={() => setBuildQuantity(calculateMaxBuildings())}
-                    className="px-4 py-2 rounded-xl bg-[#00FFAA] hover:bg-[#00FFAA]/80 text-[#0A1A1A] text-xs font-black uppercase cursor-pointer transition-all shadow-sm"
+                    onClick={() => setBuildQuantity(maxBuildQuantity)}
+                    disabled={maxBuildQuantity < 1}
+                    className="px-4 py-2 rounded-xl bg-[#00FFAA] hover:bg-[#00FFAA]/80 text-[#0A1A1A] text-xs font-black uppercase cursor-pointer transition-all shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Maks
+                    Maks ({maxBuildQuantity})
                   </button>
                 </div>
               </label>
@@ -223,8 +222,8 @@ export default function KonfirmasiPembangunanModal({
                 >
                   {requirements.map((material) => {
                     const stock = materialStocks[material.resourceKey] ?? 0;
-                    const isStockZero = stock <= 0;
                     const requiredAmount = (material.amount ?? 0) * buildQuantity;
+                    const isStockInsufficient = stock < requiredAmount;
                     const materialKey = `${material.resourceKey}-${material.group}`;
                     const isSelected = selectedMaterialKey === materialKey;
 
@@ -239,7 +238,7 @@ export default function KonfirmasiPembangunanModal({
                         className={`flex flex-col items-center justify-center border rounded-xl p-2.5 min-h-[50px] cursor-pointer transition-all ${
                           isSelected
                             ? 'border-[#00FFAA] bg-[#00FFAA]/15 text-[#00FFAA]'
-                            : isStockZero
+                            : isStockInsufficient
                             ? 'border-rose-500/40 bg-rose-500/10 text-rose-300'
                             : 'border-[#00FFAA]/20 bg-[#0F2424] text-[#E0E0E0] hover:border-[#00FFAA]/50'
                         }`}
@@ -250,7 +249,7 @@ export default function KonfirmasiPembangunanModal({
                             x{requiredAmount.toLocaleString('id-ID')}
                           </div>
                         )}
-                        <div className={`text-[10px] font-black mt-0.5 ${isStockZero ? 'text-rose-400' : 'text-[#6B8A8A]'}`}>
+                        <div className={`text-[10px] font-black mt-0.5 ${isStockInsufficient ? 'text-rose-400' : 'text-[#6B8A8A]'}`}>
                           {stock.toLocaleString('id-ID')}
                         </div>
                       </button>
@@ -278,14 +277,14 @@ export default function KonfirmasiPembangunanModal({
           </button>
           <button
             onClick={() => onConfirm(buildQuantity)}
-            disabled={loadingMetadata || hasMissingMaterials || !isAnggaranCukup || isDisabled}
+            disabled={loadingMetadata || hasMissingMaterials || !isAnggaranCukup || isDisabled || quantityExceedsAvailable}
             className={`flex-1 py-2.5 rounded-xl text-xs font-black uppercase transition-all text-center cursor-pointer ${
-              hasMissingMaterials || !isAnggaranCukup || loadingMetadata || isDisabled
+              hasMissingMaterials || !isAnggaranCukup || loadingMetadata || isDisabled || quantityExceedsAvailable
                 ? 'bg-[#0F2424] text-[#6B8A8A] border border-[#00FFAA]/10 cursor-not-allowed opacity-50'
                 : 'bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-md'
             }`}
           >
-            {hasMissingMaterials ? 'Material Kurang' : !isAnggaranCukup ? 'Dana Tidak Cukup' : 'Mulai Pembangunan'}
+            {hasMissingMaterials ? 'Material Kurang' : quantityExceedsAvailable ? 'Jumlah Melebihi Stok' : !isAnggaranCukup ? 'Dana Tidak Cukup' : 'Mulai Pembangunan'}
           </button>
         </div>
       </div>

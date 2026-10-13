@@ -6,7 +6,13 @@ import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsMod
 import { generateHunianAIAnalysis } from "../ai_suggestions/serviceAISuggestionsLogic";
 import InfoBangunanModal from "./1_modals_info_bangunan/info_bangunan_modals";
 import KonfirmasiPembangunanModal from "./2_modals_konfirmasi_pembangunan/modalsKonfirmasiPembangunan";
-import { useMaterialProduction, getMaterialStock as getMaterialStockFromBuildLogic, deductBuildingMaterials } from "../build_logic/build_logic";
+import {
+  useMaterialProduction,
+  getMaterialStock as getMaterialStockFromBuildLogic,
+  deductBuildingMaterials,
+  calculateMaxBuildQuantity,
+  getBulkBuildQuantityTarget,
+} from "../build_logic/build_logic";
 import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
 import {
   getTotalHousingCapacityBonusPercent,
@@ -21,9 +27,9 @@ const DEFAULT_ELECTRICITY_CONSUMPTION: Record<string, number> = {
 
 
 // 🟢 IMPOR REQUIREMENTS
-import * as perumahanSubsidiRequirements from "./requirements_logic/1_perumahan_subsidi/requirements";
-import * as apartemenRequirements from "./requirements_logic/2_apartement/requirements";
-import * as mansionRequirements from "./requirements_logic/3_mansion/requirements";
+import * as perumahanSubsidiRequirements from "./construction_support/1_perumahan_subsidi/requirements";
+import * as apartemenRequirements from "./construction_support/2_apartement/requirements";
+import * as mansionRequirements from "./construction_support/3_mansion/requirements";
 
 interface ModalProps {
   isOpen: boolean;
@@ -198,9 +204,11 @@ export default function HunianPermukimanModal({
     const bMeta = metadata[key] || {};
 
     const buildingReq = getSelectedBuildingRequirements();
-    const missingMaterials = buildingReq?.requirements?.filter(
-      (material) => getMaterialStock(material.resourceKey) <= 0
-    ) || [];
+    const requirements = buildingReq?.requirements || [];
+    const quantity = Number.isFinite(buildQuantity) ? Math.max(1, Math.floor(buildQuantity)) : 1;
+    const missingMaterials = requirements.filter(
+      (material) => getMaterialStock(material.resourceKey) < (Number(material.amount) || 0) * quantity
+    );
 
     if (missingMaterials.length > 0) {
       setInsufficientMaterials(missingMaterials);
@@ -208,11 +216,29 @@ export default function HunianPermukimanModal({
       return;
     }
 
-    const cost = Number(bMeta.biaya_pembangunan) || 0;
-    const totalCost = cost * buildQuantity;
+    const originalCost = Number(bMeta.biaya_pembangunan) || 0;
+    const cost = originalCost;
     const anggaran = Number(countryDetail?.anggaran) || 0;
+    const materialStocks = requirements.reduce<Record<string, number>>((stocks, material) => {
+      stocks[material.resourceKey] = getMaterialStock(material.resourceKey);
+      return stocks;
+    }, {});
+    const maxQuantity = calculateMaxBuildQuantity(
+      cost,
+      anggaran,
+      requirements,
+      materialStocks,
+      getBulkBuildQuantityTarget(originalCost)
+    );
+    if (quantity > maxQuantity) {
+      setToast(`Jumlah pembangunan melebihi batas anggaran atau material tersedia (maksimal ${maxQuantity}).`);
+      setTimeout(() => setToast(null), 2500);
+      return;
+    }
+
+    const totalCost = cost * quantity;
     if (anggaran < totalCost) {
-      setToast(`Kas negara tidak mencukupi untuk membangun ${buildQuantity} ${label}!`);
+      setToast(`Kas negara tidak mencukupi untuk membangun ${quantity} ${label}!`);
       setTimeout(() => setToast(null), 2500);
       return;
     }
@@ -221,18 +247,18 @@ export default function HunianPermukimanModal({
       {
         ...countryDetail,
         anggaran: anggaran - totalCost,
-        [key]: (Number(countryDetail?.[key]) || 0) + buildQuantity,
-        kepuasan: Math.min(100, (Number(countryDetail?.kepuasan) || 65.0) + (1.5 * buildQuantity))
+        [key]: (Number(countryDetail?.[key]) || 0) + quantity,
+        kepuasan: Math.min(100, (Number(countryDetail?.kepuasan) || 65.0) + (1.5 * quantity))
       },
-      buildingReq?.requirements,
-      buildQuantity
+      requirements,
+      quantity
     );
 
     setCountryDetail(updatedDetail);
     
     setShowConfirm(false);
     setSelectedBuilding(null);
-    setToast(`✅ Berhasil! ${buildQuantity} ${label} dibangun.`);
+    setToast(`✅ Berhasil! ${quantity} ${label} dibangun.`);
     setTimeout(() => setToast(null), 2500);
   };
 
@@ -674,11 +700,12 @@ export default function HunianPermukimanModal({
       {/* KONFIRMASI PEMBANGUNAN */}
       {showConfirm && selectedBuilding && (() => {
         const bMeta = metadata[selectedBuilding.key] || {};
-        const cost = Number(bMeta.biaya_pembangunan) || 0;
+        const originalCost = Number(bMeta.biaya_pembangunan) || 0;
+        const cost = originalCost;
         const buildingReq = getSelectedBuildingRequirements();
         const requirements = buildingReq?.requirements || [];
         const missingMaterials = requirements.filter(
-          (mat) => getMaterialStock(mat.resourceKey) <= 0
+          (mat) => getMaterialStock(mat.resourceKey) < (Number(mat.amount) || 0)
         );
 
         const materialStocks: Record<string, number> = {};
@@ -704,6 +731,7 @@ export default function HunianPermukimanModal({
             onMaterialClick={handleMaterialClick}
             loadingMetadata={false}
             initialQuantity={initialBuildQty}
+            quantityTarget={getBulkBuildQuantityTarget(originalCost)}
           />
         );
       })()}

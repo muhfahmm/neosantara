@@ -186,14 +186,6 @@ export default function InfoInfrastrukturModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4">
-            <div className="bg-[#0A1A1A] p-4 rounded-xl border border-[#00FFAA]/20">
-              <p className="text-[12px] font-bold text-[#6B8A8A] mb-1">Tenaga Kerja</p>
-              <p className="text-base font-black text-white">
-                {formatNumber(selectedItem?.lowongan_kerja || selectedItem?.kekuatan || 0)} orang
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Footer */}

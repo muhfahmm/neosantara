@@ -166,7 +166,7 @@ import {
 } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logika_anggota_tidak_tetap/securityCouncilElection';
 import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
-import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic';
+import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/construction_support/1_produksi/1_kelistrikan/fuelLogic';
 import { getMaterialStock } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
 import { generateInvasionNews, evaluateAnnualHotRelationsInvasion, getCountryColor } from '../menus/news/logic/1_berita_invasi/beritaInvasiLogic';
 import { generateAnnexationNews, updateMapTerritoryColor } from '../menus/news/logic/2_berita_aneksasi/beritaAneksasiLogic';

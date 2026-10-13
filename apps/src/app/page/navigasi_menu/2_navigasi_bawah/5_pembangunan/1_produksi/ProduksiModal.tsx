@@ -16,17 +16,23 @@ import AgrikulturTab from "./card_data/5_agrikultur";
 import PerikananTab from "./card_data/6_perikanan";
 import OlahanPanganTab from "./card_data/7_olahan_pangan";
 
-import * as kelistrikanRequirements from "./requirements_logic/1_produksi/1_kelistrikan/requirements";
-import * as mineralKritisRequirements from "./requirements_logic/1_produksi/2_mineral_kritis/requirements";
-import * as manufakturRequirements from "./requirements_logic/1_produksi/3_manufaktur/requirements";
-import * as peternakanRequirements from "./requirements_logic/1_produksi/4_peternakan/requirements";
-import * as agrikulturRequirements from "./requirements_logic/1_produksi/5_agrikultur/requirements";
-import * as perikananRequirements from "./requirements_logic/1_produksi/6_perikanan/requirements";
-import * as olahanPanganRequirements from "./requirements_logic/1_produksi/7_olahan_pangan/requirements";
+import * as kelistrikanRequirements from "./construction_support/1_produksi/1_kelistrikan/requirements";
+import * as mineralKritisRequirements from "./construction_support/1_produksi/2_mineral_kritis/requirements";
+import * as manufakturRequirements from "./construction_support/1_produksi/3_manufaktur/requirements";
+import * as peternakanRequirements from "./construction_support/1_produksi/4_peternakan/requirements";
+import * as agrikulturRequirements from "./construction_support/1_produksi/5_agrikultur/requirements";
+import * as perikananRequirements from "./construction_support/1_produksi/6_perikanan/requirements";
+import * as olahanPanganRequirements from "./construction_support/1_produksi/7_olahan_pangan/requirements";
 
-import { getKelistrikanFuelRequirements } from "./requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
+import { getKelistrikanFuelRequirements } from "./construction_support/1_produksi/1_kelistrikan/fuelLogic";
 import KonfirmasiPembangunanModal from "./2_modals_konfirmasi_pembangunan/modalsKonfirmasiPembangunan";
-import { useMaterialProduction, getMaterialStock as getMaterialStockFromBuildLogic, deductBuildingMaterials } from "../build_logic/build_logic";
+import {
+  useMaterialProduction,
+  getMaterialStock as getMaterialStockFromBuildLogic,
+  deductBuildingMaterials,
+  calculateMaxBuildQuantity,
+  getBulkBuildQuantityTarget,
+} from "../build_logic/build_logic";
 import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
 import { getEconomicEmbargoIncomeMultiplier, getEconomicEmbargoProductionMultiplier } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
 import { loadActiveResolutions, isPassedResolutionActive, normalizePbbCountryName } from "../../7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
@@ -456,9 +462,11 @@ export default function ProduksiModal({
       return;
     }
 
-    const missingMaterials = selectedBuildingRequirements?.requirements?.filter(
-      (material) => getMaterialStock(material.resourceKey) <= 0
-    ) || [];
+    const requirements = selectedBuildingRequirements?.requirements || [];
+    const quantity = Number.isFinite(buildQuantity) ? Math.max(1, Math.floor(buildQuantity)) : 1;
+    const missingMaterials = requirements.filter(
+      (material) => getMaterialStock(material.resourceKey) < (Number(material.amount) || 0) * quantity
+    );
 
     if (missingMaterials.length > 0) {
       setInsufficientMaterials(missingMaterials);
@@ -466,19 +474,37 @@ export default function ProduksiModal({
       return;
     }
 
-    const cost = Number(bMeta.biaya_pembangunan);
-    const totalCost = cost * buildQuantity;
+    const originalCost = Number(bMeta.biaya_pembangunan) || 0;
+    const cost = originalCost;
     const anggaran = Number(countryDetail?.anggaran) || 0;
+    const materialStocks = requirements.reduce<Record<string, number>>((stocks, material) => {
+      stocks[material.resourceKey] = getMaterialStock(material.resourceKey);
+      return stocks;
+    }, {});
+    const maxQuantity = calculateMaxBuildQuantity(
+      cost,
+      anggaran,
+      requirements,
+      materialStocks,
+      getBulkBuildQuantityTarget(originalCost)
+    );
+    if (quantity > maxQuantity) {
+      setToast(`Jumlah pembangunan melebihi batas anggaran atau material tersedia (maksimal ${maxQuantity}).`);
+      setTimeout(() => setToast(null), 2500);
+      return;
+    }
+
+    const totalCost = cost * quantity;
     if (anggaran < totalCost) {
-      setToast(`Kas negara tidak mencukupi untuk membangun ${buildQuantity} ${label}!`);
+      setToast(`Kas negara tidak mencukupi untuk membangun ${quantity} ${label}!`);
       setTimeout(() => setToast(null), 2500);
       return;
     }
 
     const updatedDetail = deductBuildingMaterials(
       { ...countryDetail, anggaran: anggaran - totalCost },
-      selectedBuildingRequirements?.requirements,
-      buildQuantity
+      requirements,
+      quantity
     );
 
     const userReligion = String(
@@ -513,7 +539,7 @@ export default function ProduksiModal({
     );
 
     if (waktu <= 0) {
-      updatedDetail[key] = (Number(countryDetail?.[key]) || 0) + buildQuantity;
+      updatedDetail[key] = (Number(countryDetail?.[key]) || 0) + quantity;
       const buildDateKey = `build_date_${key}`;
       updatedDetail[buildDateKey] = safeDateString;
       updatedDetail[`accumulated_${key}`] = 0;
@@ -521,8 +547,8 @@ export default function ProduksiModal({
 
       setCountryDetail(updatedDetail);
       setSelectedBuilding(null);
-      recordBuildingProgress(key, buildQuantity);
-      setToast(`✅ Berhasil! ${buildQuantity} ${label} dibangun secara instan.`);
+      recordBuildingProgress(key, quantity);
+      setToast(`✅ Berhasil! ${quantity} ${label} dibangun secara instan.`);
       setTimeout(() => setToast(null), 3000);
       return;
     }
@@ -541,7 +567,7 @@ export default function ProduksiModal({
     const newConstructions = [];
     let currentStartDate = startDateStr;
 
-    for (let i = 0; i < buildQuantity; i++) {
+    for (let i = 0; i < quantity; i++) {
       const endDateStr = addDays(currentStartDate, waktu);
       newConstructions.push({
         id: Date.now() + Math.random() + i,
@@ -560,8 +586,8 @@ export default function ProduksiModal({
 
     setCountryDetail(updatedDetail);
     setSelectedBuilding(null);
-    recordBuildingProgress(key, buildQuantity);
-    setToast(`✅ Pembangunan ${buildQuantity} ${label} telah dijadwalkan!`);
+    recordBuildingProgress(key, quantity);
+    setToast(`✅ Pembangunan ${quantity} ${label} telah dijadwalkan!`);
     setTimeout(() => setToast(null), 3000);
   };
 
@@ -808,11 +834,13 @@ export default function ProduksiModal({
 
       {selectedBuilding && (() => {
         const bMeta = findMeta(selectedBuilding.key);
-        const cost = bMeta?.biaya_pembangunan !== undefined ? Number(bMeta.biaya_pembangunan) : 0;
-        const missingMaterials = selectedBuildingRequirements?.requirements?.filter((mat) => getMaterialStock(mat.resourceKey) <= 0) || [];
+        const originalCost = bMeta?.biaya_pembangunan !== undefined ? Number(bMeta.biaya_pembangunan) : 0;
+        const cost = originalCost;
+        const requirements = selectedBuildingRequirements?.requirements || [];
+        const missingMaterials = requirements.filter((mat) => getMaterialStock(mat.resourceKey) < (Number(mat.amount) || 0));
 
         const materialStocks: Record<string, number> = {};
-        (selectedBuildingRequirements?.requirements || []).forEach((mat) => {
+        requirements.forEach((mat) => {
           materialStocks[mat.resourceKey] = getMaterialStock(mat.resourceKey);
         });
 
@@ -857,7 +885,7 @@ export default function ProduksiModal({
             )}
             produksiLabel={bMeta?.label || selectedBuilding.label}
             konsumsiListrik={bMeta?.konsumsi_listrik}
-            requirements={selectedBuildingRequirements?.requirements || []}
+            requirements={requirements}
             materialStocks={materialStocks}
             anggaran={Number(countryDetail?.anggaran) || 0}
             missingMaterials={missingMaterials}
@@ -865,6 +893,7 @@ export default function ProduksiModal({
             onMaterialClick={handleMaterialClick}
             loadingMetadata={loadingMetadata}
             initialQuantity={selectedBuilding.initialQuantity}
+            quantityTarget={getBulkBuildQuantityTarget(originalCost)}
           />
         );
       })()}

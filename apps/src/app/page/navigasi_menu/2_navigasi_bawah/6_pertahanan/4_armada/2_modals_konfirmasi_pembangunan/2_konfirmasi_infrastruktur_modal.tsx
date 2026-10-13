@@ -6,7 +6,7 @@ import { HANGAR_TANK_CAPACITY } from "../logic/2_hangar_tank_logic";
 import { GUDANG_SENJATA_CAPACITY } from "../logic/3_gudang_senjata_logic";
 import { PANGKALAN_LAUT_CAPACITY } from "../logic/4_pangkalan_laut_logic";
 import { PANGKALAN_UDARA_CAPACITY } from "../logic/5_pangkalan_udara_logic";
-import { KonfirmasiPembangunanModalProps } from "../requirements_logic/konfirmasi_pembangunan_types";
+import { KonfirmasiPembangunanModalProps } from "../construction_support/konfirmasi_pembangunan_types";
 import {
   getWaktuPembangunanBarakMiliterBonusPercent,
   getWaktuPembangunanGudangSenjataBonusPercent,
@@ -34,7 +34,6 @@ export default function KonfirmasiInfrastrukturModal({
   requirements,
   materialStocks,
   anggaran,
-  missingMaterials,
   onConfirm,
   onMaterialClick,
   loadingMetadata,
@@ -113,7 +112,6 @@ export default function KonfirmasiInfrastrukturModal({
 
   const totalCost = cost * buildQuantity;
   const totalTime = effectiveWaktuPerUnit !== undefined ? effectiveWaktuPerUnit * buildQuantity : undefined;
-  const hasMissingMaterials = missingMaterials.length > 0;
   const isAnggaranCukup = anggaran >= totalCost;
 
   // 🔥 LOGIC KAPASITAS INFANTERI
@@ -200,26 +198,24 @@ export default function KonfirmasiInfrastrukturModal({
 
   // 🔥 Fungsi kalkulasi jumlah bangunan maksimal
   const calculateMaxBuildings = (): number => {
-    let maxByBudget = Math.floor(anggaran / cost);
-    if (maxByBudget < 1) return 1;
-
-    // Cek batasan berdasarkan material
-    let maxByMaterials = Infinity;
+    let maxQuantity = cost > 0 ? Math.floor(Math.max(0, anggaran) / cost) : Infinity;
     for (const req of requirements) {
       const availableStock = materialStocks[req.resourceKey] ?? 0;
       const costPerBuilding = req.amount ?? 0;
       if (costPerBuilding > 0) {
-        const maxForThisMaterial = Math.floor(availableStock / costPerBuilding);
-        maxByMaterials = Math.min(maxByMaterials, maxForThisMaterial);
+        maxQuantity = Math.min(maxQuantity, Math.floor(Math.max(0, availableStock) / costPerBuilding));
       }
     }
 
-    if (maxByMaterials === Infinity) {
-      maxByMaterials = maxByBudget;
-    }
-
-    return Math.max(1, Math.min(maxByBudget, maxByMaterials));
+    return Number.isFinite(maxQuantity) ? Math.max(0, maxQuantity) : 0;
   };
+  const maxBuildQuantity = calculateMaxBuildings();
+  const missingMaterialsForQuantity = requirements.filter((material) => {
+    const requiredAmount = (material.amount ?? 0) * buildQuantity;
+    return (materialStocks[material.resourceKey] ?? 0) < requiredAmount;
+  });
+  const hasMissingMaterials = missingMaterialsForQuantity.length > 0;
+  const quantityExceedsAvailable = maxBuildQuantity < 1 || buildQuantity > maxBuildQuantity;
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -258,7 +254,7 @@ export default function KonfirmasiInfrastrukturModal({
           {/* ================= DETAIL KAPASITAS PER JENIS ================= */}
 
           {/* 🔵 BARAK / INFANTERI: WARNA HIJAU */}
-          {capacityType === "infanteri" && (
+          {false && capacityType === "infanteri" && (
             <div className="bg-[#0A1A1A]/80 border border-[#00FFAA]/30 rounded-xl p-4 space-y-2">
               <p className="text-xs font-bold text-[#00FFAA]">Detail Kapasitas Barak:</p>
               <div className="text-xs text-[#E0E0E0] space-y-1">
@@ -285,7 +281,7 @@ export default function KonfirmasiInfrastrukturModal({
           )}
 
           {/* 🟠 HANGAR TANK: WARNA AMBER */}
-          {capacityType === "hangar_tank" && (
+          {false && capacityType === "hangar_tank" && (
             <div className="bg-[#0A1A1A]/80 border border-[#00FFAA]/30 rounded-xl p-4 space-y-2">
               <p className="text-xs font-bold text-[#00FFAA]">🚜 Detail Kapasitas Hangar Tank:</p>
               <div className="text-xs text-[#E0E0E0] space-y-1">
@@ -320,7 +316,7 @@ export default function KonfirmasiInfrastrukturModal({
           )}
 
           {/* 🟣 GUDANG SENJATA: WARNA UNGU */}
-          {capacityType === "gudang_senjata" && (
+          {false && capacityType === "gudang_senjata" && (
             <div className="bg-[#0A1A1A]/80 border border-[#00FFAA]/30 rounded-xl p-4 space-y-2">
               <p className="text-xs font-bold text-[#00FFAA]">💣 Detail Kapasitas Gudang Senjata:</p>
               <div className="text-xs text-[#E0E0E0] space-y-1">
@@ -363,7 +359,7 @@ export default function KonfirmasiInfrastrukturModal({
           )}
 
           {/* 🔵 PANGKALAN LAUT: WARNA BIRU LANGIT (SKY) */}
-          {capacityType === "pangkalan_laut" && (
+          {false && capacityType === "pangkalan_laut" && (
             <div className="bg-[#0A1A1A]/80 border border-[#00FFAA]/30 rounded-xl p-4 space-y-2">
               <p className="text-xs font-bold text-[#00FFAA]">⚓ Detail Kapasitas Pangkalan Laut:</p>
               <div className="text-xs text-[#E0E0E0] space-y-1">
@@ -392,7 +388,7 @@ export default function KonfirmasiInfrastrukturModal({
           )}
 
           {/* 🟦 PANGKALAN UDARA: WARNA INDIGO */}
-          {capacityType === "pangkalan_udara" && (
+          {false && capacityType === "pangkalan_udara" && (
             <div className="bg-[#0A1A1A]/80 border border-[#00FFAA]/30 rounded-xl p-4 space-y-2">
               <p className="text-xs font-bold text-[#00FFAA]">✈️ Detail Kapasitas Pangkalan Udara:</p>
               <div className="text-xs text-[#E0E0E0] space-y-1">
@@ -440,20 +436,27 @@ export default function KonfirmasiInfrastrukturModal({
                   <input
                     type="number"
                     min={1}
+                    max={maxBuildQuantity}
                     step={1}
+                    disabled={maxBuildQuantity < 1}
                     value={buildQuantity}
                     onChange={(event) => {
                       const value = Number(event.target.value);
-                      setBuildQuantity(Number.isFinite(value) ? Math.max(1, Math.floor(value)) : 1);
+                      setBuildQuantity(
+                        Number.isFinite(value)
+                          ? Math.min(maxBuildQuantity, Math.max(1, Math.floor(value)))
+                          : 1
+                      );
                     }}
                     className="flex-1 rounded-xl border border-[#00FFAA]/40 bg-[#0F2424] px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#00FFAA]"
                   />
                   <button
                     type="button"
-                    onClick={() => setBuildQuantity(calculateMaxBuildings())}
+                    onClick={() => setBuildQuantity(maxBuildQuantity)}
+                    disabled={maxBuildQuantity < 1}
                     className="px-4 py-2 rounded-xl bg-[#00FFAA] hover:bg-[#00FFAA]/80 text-[#0A1A1A] text-[10px] font-black uppercase cursor-pointer transition-all shadow-sm hover:shadow-md"
                   >
-                    Maks
+                    Maks ({maxBuildQuantity})
                   </button>
                   <button
                     type="button"
@@ -542,8 +545,8 @@ export default function KonfirmasiInfrastrukturModal({
                 >
                   {requirements.map((material) => {
                     const stock = materialStocks[material.resourceKey] ?? 0;
-                    const isStockZero = stock <= 0;
                     const requiredAmount = (material.amount ?? 0) * buildQuantity;
+                    const isStockInsufficient = stock < requiredAmount;
                     const materialKey = `${material.resourceKey}-${material.group}`;
                     const isSelected = selectedMaterialKey === materialKey;
 
@@ -558,7 +561,7 @@ export default function KonfirmasiInfrastrukturModal({
                         className={`flex flex-col items-center justify-center border rounded-xl p-2.5 min-h-[50px] cursor-pointer hover:border-[#00FFAA] transition-all ${
                           isSelected
                             ? 'border-[#00FFAA] bg-[#00FFAA]/10 text-white'
-                            : isStockZero
+                            : isStockInsufficient
                             ? 'border-red-500/50 bg-red-950/30 text-red-300'
                             : 'border-[#00FFAA]/30 bg-[#0A1A1A] text-white'
                         }`}
@@ -569,7 +572,7 @@ export default function KonfirmasiInfrastrukturModal({
                             x{requiredAmount.toLocaleString('id-ID')}
                           </div>
                         )}
-                        <div className={`text-[10px] font-black mt-0.5 ${isStockZero ? 'text-red-400' : 'text-[#00FFAA]'}`}>
+                        <div className={`text-[10px] font-black mt-0.5 ${isStockInsufficient ? 'text-red-400' : 'text-[#00FFAA]'}`}>
                           {stock.toLocaleString('id-ID')}
                         </div>
                       </button>
@@ -582,10 +585,6 @@ export default function KonfirmasiInfrastrukturModal({
             )}
           </div>
 
-          <div className="flex justify-between items-center text-xs font-black text-[#E0E0E0] pt-1">
-            <span className="text-[#6B8A8A]">Kas Negara Saat Ini:</span>
-            <span className="text-[#00FFAA] font-bold">{anggaran.toLocaleString('id-ID')} NEO</span>
-          </div>
         </div>
 
         {/* Footer */}
@@ -598,14 +597,14 @@ export default function KonfirmasiInfrastrukturModal({
           </button>
           <button
             onClick={() => onConfirm(buildQuantity)}
-            disabled={loadingMetadata || hasMissingMaterials || !isAnggaranCukup || isDisabled || buildQuantity <= 0}
+            disabled={loadingMetadata || hasMissingMaterials || !isAnggaranCukup || isDisabled || quantityExceedsAvailable}
             className={`flex-1 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all text-center cursor-pointer ${
-              hasMissingMaterials || !isAnggaranCukup || loadingMetadata || isDisabled
+              hasMissingMaterials || !isAnggaranCukup || loadingMetadata || isDisabled || quantityExceedsAvailable
                 ? 'bg-[#1A3838] text-[#6B8A8A] border border-[#00FFAA]/10 cursor-not-allowed opacity-60'
                 : 'bg-[#00FFAA] text-[#0A1A1A] font-extrabold hover:bg-[#00FFAA]/90 hover:shadow-lg shadow-[#00FFAA]/20'
             }`}
           >
-            {hasMissingMaterials ? 'Material Kurang' : !isAnggaranCukup ? 'Dana Tidak Cukup' : 'Mulai Pembangunan'}
+            {hasMissingMaterials ? 'Material Kurang' : quantityExceedsAvailable ? 'Jumlah Melebihi Stok' : !isAnggaranCukup ? 'Dana Tidak Cukup' : 'Mulai Pembangunan'}
           </button>
         </div>
       </div>

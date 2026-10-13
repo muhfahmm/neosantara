@@ -9,7 +9,7 @@ import {
   calculateConsumption,
 } from "../../3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
-import { getTotalIndustrialMaterialConsumption } from "../1_produksi/requirements_logic/1_produksi/industrialMaterialLogic";
+import { getTotalIndustrialMaterialConsumption } from "../1_produksi/construction_support/1_produksi/industrialMaterialLogic";
 
 export const RESOURCE_KEY_ALIASES: Record<string, string> = {};
 
@@ -27,6 +27,41 @@ export const getMaterialStock = (countryDetail: any, resourceKey: string, metada
 
   // Jika belum ada data akumulasi inventory (hari pertama), stok diawali dari 0
   return 0;
+};
+
+export const getBulkBuildQuantityTarget = (originalCost: number): number =>
+  Math.max(
+    30000,
+    Math.min(50000, 50000 - Math.floor(Math.max(0, Number(originalCost) || 0) / 4.5))
+  );
+
+export const calculateMaxBuildQuantity = (
+  cost: number,
+  budget: number,
+  requirements: { resourceKey: string; amount?: number }[],
+  materialStocks: Record<string, number>,
+  quantityTarget?: number
+): number => {
+  let maxQuantity = Number.POSITIVE_INFINITY;
+  const unitCost = Number(cost);
+  if (Number.isFinite(unitCost) && unitCost > 0) {
+    maxQuantity = Math.floor(Math.max(0, Number(budget) || 0) / unitCost);
+  }
+
+  for (const requirement of requirements) {
+    const amountPerUnit = Number(requirement.amount) || 0;
+    if (amountPerUnit <= 0) continue;
+    const availableStock = Number(materialStocks[requirement.resourceKey]) || 0;
+    maxQuantity = Math.min(
+      maxQuantity,
+      Math.floor(Math.max(0, availableStock) / amountPerUnit)
+    );
+  }
+
+  const availableQuantity = Number.isFinite(maxQuantity) ? Math.max(0, maxQuantity) : 0;
+  return quantityTarget === undefined
+    ? availableQuantity
+    : Math.min(availableQuantity, quantityTarget);
 };
 
 const buildingMetadataLookupCache = new WeakMap<Record<string, any>, Map<string, any>>();

@@ -12,12 +12,12 @@ import { getPeternakanPresisiBonusPercent } from "../../../../../bonus_logic/pen
 import { getAgrikulturCerdasBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/7_Agrikultur Cerdas Multi-Komoditas";
 import { getBudidayaPerikananTerpaduBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/9_Budidaya Perikanan Terpadu";
 import { getPengolahanPanganDasarBonusPercent } from "../../../../../bonus_logic/penelitian_bonus_logic/1_riset_ekonomi_industri/11_Pengolahan Pangan Dasar";
-import { getKelistrikanFuelRequirements } from "../requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
+import { getKelistrikanFuelRequirements } from "../construction_support/1_produksi/1_kelistrikan/fuelLogic";
 import {
   getIndustrialMaterialConsumers,
   getIndustrialMaterialRequirements,
   getTotalIndustrialMaterialConsumption,
-} from "../requirements_logic/1_produksi/industrialMaterialLogic";
+} from "../construction_support/1_produksi/industrialMaterialLogic";
 import { getProductionBonusMultiplier } from "../../../../../bonus_logic";
 
 import {

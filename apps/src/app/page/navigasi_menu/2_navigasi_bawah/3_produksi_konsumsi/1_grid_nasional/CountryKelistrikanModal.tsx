@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { X, Zap, TrendingUp, TrendingDown, Building2, Home, Factory, Search, Shield, Activity } from "lucide-react";
-import { getElectricityFuelBalance, getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
+import { getElectricityFuelBalance, getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/construction_support/1_produksi/1_kelistrikan/fuelLogic";
 import { getCountryConsumptionBreakdown } from "./consumptionLogic";
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 

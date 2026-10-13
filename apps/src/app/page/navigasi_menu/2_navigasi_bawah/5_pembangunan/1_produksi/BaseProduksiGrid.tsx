@@ -2,7 +2,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Info, MessageSquare } from "lucide-react";
-import { getKelistrikanFuelRequirements } from "./requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
+import { getKelistrikanFuelRequirements } from "./construction_support/1_produksi/1_kelistrikan/fuelLogic";
 import { getDaysElapsed, formatDate } from '@/app/logic/production_logic';
 import InfoBangunan from "./1_modals_info_bangunan/info_bangunan_modals";
 import { getMaterialStock } from "../build_logic/build_logic";

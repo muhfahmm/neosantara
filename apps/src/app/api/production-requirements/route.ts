@@ -5,15 +5,15 @@ import {
   mapActiveTabToRequirementsFolder,
   parseRequirementsFile,
   findBuildingRequirements,
-} from '../../page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/requirements_logic/indexRequirements';
+} from '../../page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/construction_support/indexRequirements';
 
 async function resolveRequirementsBasePath(): Promise<string> {
-  const candidate = path.join(process.cwd(), 'src', 'app', 'page', 'navigasi_menu', '2_navigasi_bawah', '5_pembangunan', '1_produksi', 'requirements_logic', '1_produksi');
+  const candidate = path.join(process.cwd(), 'src', 'app', 'page', 'navigasi_menu', '2_navigasi_bawah', '5_pembangunan', '1_produksi', 'construction_support', '1_produksi');
   try {
     await fs.access(candidate);
     return candidate;
   } catch {
-    const alt = path.join(process.cwd(), 'apps', 'src', 'app', 'page', 'navigasi_menu', '2_navigasi_bawah', '5_pembangunan', '1_produksi', 'requirements_logic', '1_produksi');
+    const alt = path.join(process.cwd(), 'apps', 'src', 'app', 'page', 'navigasi_menu', '2_navigasi_bawah', '5_pembangunan', '1_produksi', 'construction_support', '1_produksi');
     await fs.access(alt);
     return alt;
   }

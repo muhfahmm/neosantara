@@ -14,7 +14,7 @@ import {
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
 import CountryKelistrikanModal from "./CountryKelistrikanModal";
-import { getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/requirements_logic/1_produksi/1_kelistrikan/fuelLogic";
+import { getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/construction_support/1_produksi/1_kelistrikan/fuelLogic";
 import { getCountryConsumptionBreakdown } from "./consumptionLogic";
 import { getProductionBonusMultiplier } from "../../../../bonus_logic";
 import { applyNpcCountrySimulationState } from "@/app/logic/npcCountrySimulation";
