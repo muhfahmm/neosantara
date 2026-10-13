@@ -493,8 +493,8 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           {isResearchRatifying && ratificationDate(researchRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(researchRatification)}</div>}
           <ActionButton icon={FlaskConical} label={isResearchRatifying ? 'Dalam Ratifikasi' : kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => { kontrakIsActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true); }} disabled={!hasUsableEmbassy || isResearchRatifying} keepOpacity={isResearchRatifying} className={isResearchRatifying ? inProgressBorderClass : kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
         </div>
-        <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => { setIsKirimPasukanModalOpen(true); }} disabled={!hasUsableEmbassy} />
-        <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => { setIsPanggilSekutuModalOpen(true); }} disabled={!hasUsableEmbassy} />
+        <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => { setIsKirimPasukanModalOpen(true); }} disabled={!aliansiIsActive} />
+        <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => { setIsPanggilSekutuModalOpen(true); }} disabled={!aliansiIsActive} />
         <ActionButton
           icon={Ban}
           label={isSanctionActive ? 'Cabut Sanksi' : 'Berikan Sanksi'}
