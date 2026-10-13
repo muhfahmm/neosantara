@@ -2269,7 +2269,7 @@ export default function MapPage() {
             ]));
 
             const internationalPool = [
-                'Jepang', 'Amerika Serikat', 'Jerman', 'Inggris', 'Prancis', 'Tiongkok',
+                'Jepang', 'Amerika Serikat', 'Jerman', 'Inggris', 'Prancis', 'China',
                 'Korea Selatan', 'Australia', 'Rusia', 'Arab Saudi', 'Kanada', 'Brasil',
                 'India', 'Turki', 'Meksiko', 'Singapura', 'Malaysia', 'Thailand', 'Vietnam'
             ];
@@ -2457,7 +2457,15 @@ export default function MapPage() {
                 const attackChancePercent = applyDoktrinPertahananDiriBonus(baseChance, countryDetail);
 
                 if (Math.random() * 100 < attackChancePercent) {
-                    newNotifsToAdd.push(generateDiserangNotification(attackerCountry, currentDateStr));
+                    const annexedTerritories = typeof window !== 'undefined'
+                        ? (window as any).neosantara_annexed_countries || {}
+                        : {};
+                    const hasAnnexedTerritories = Object.values(annexedTerritories).some(
+                        (territory: any) => areSameWarCountry(territory?.attackerCountry, userCountryName)
+                    );
+                    newNotifsToAdd.push(
+                        generateDiserangNotification(attackerCountry, currentDateStr, hasAnnexedTerritories)
+                    );
                     // Trigger visual attack animation on map
                     if (typeof window !== 'undefined') {
                         window.dispatchEvent(new CustomEvent('start_war_animation', {

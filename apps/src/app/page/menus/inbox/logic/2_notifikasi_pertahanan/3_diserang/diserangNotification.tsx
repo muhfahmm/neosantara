@@ -1,5 +1,5 @@
 import React from 'react';
-import { Swords, Check, X, ShieldAlert } from 'lucide-react';
+import { Swords, Check, X } from 'lucide-react';
 import { DiserangNotification } from './diserangLogic';
 
 interface DiserangNotificationProps {
@@ -56,38 +56,41 @@ export default function DiserangNotificationCard({ notification, userCountryName
         </div>
 
         <div className="pt-2 flex flex-wrap items-center justify-end gap-2.5">
-          <button
-            type="button"
-            onClick={handleLaunchWarAnimation}
-            className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
-          >
-            <Swords className="w-3.5 h-3.5 text-amber-400" />
-            Lihat Animasi Serangan
-          </button>
-          {isHandled ? (
-            <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
-              <Check className="w-3.5 h-3.5" />
-              <span>PASUKAN DIPERTAHANKAN & PERANG DITANGANI</span>
-            </div>
-          ) : (
+          {notification.attackLevel !== 'invasi' && (
             <>
-              {onReject && (
-                <button
-                  onClick={onReject}
-                  className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
-                >
-                  <X className="w-3.5 h-3.5" />
-                  Bertahan Pasif (Hemat Biaya)
-                </button>
-              )}
-              {onAccept && (
-                <button
-                  onClick={onAccept}
-                  className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-[#00FFAA] hover:bg-emerald-400 text-[#0A1A1A] rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <ShieldAlert className="w-3.5 h-3.5" />
-                  Mobilisasi Pertahanan ({notification.costEM} EM)
-                </button>
+              <button
+                type="button"
+                onClick={handleLaunchWarAnimation}
+                className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
+              >
+                <Swords className="w-3.5 h-3.5 text-amber-400" />
+                Lihat Animasi Serangan
+              </button>
+              {isHandled ? (
+                <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5" />
+                  <span>PASUKAN DIPERTAHANKAN & PERANG DITANGANI</span>
+                </div>
+              ) : (
+                <>
+                  {onReject && (
+                    <button
+                      onClick={onReject}
+                      className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-rose-950/60 hover:bg-rose-900 border border-rose-500/40 text-rose-300 rounded-xl transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      Bertahan Pasif (Hemat Biaya)
+                    </button>
+                  )}
+                  {onAccept && (
+                    <button
+                      onClick={onAccept}
+                      className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-[#00FFAA] hover:bg-emerald-400 text-[#0A1A1A] rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      Mobilisasi Pertahanan ({notification.costEM} EM)
+                    </button>
+                  )}
+                </>
               )}
             </>
           )}

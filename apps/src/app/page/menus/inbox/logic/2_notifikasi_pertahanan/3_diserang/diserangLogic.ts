@@ -72,7 +72,8 @@ export function getAttackChancePercentFromRelation(relationScore: number): numbe
 
 export function generateDiserangNotification(
   enemyCountry: string,
-  dateStr: string
+  dateStr: string,
+  hasAnnexedTerritories: boolean
 ): DiserangNotification {
   const roll = Math.random();
   let item = ATTACK_POOL[0];
@@ -84,11 +85,17 @@ export function generateDiserangNotification(
     item = ATTACK_POOL[1]; // serangan perbatasan
   }
 
+  const isInvasionWithoutTerritories = item.attackLevel === 'invasi' && !hasAnnexedTerritories;
+
   return {
     id: `diserang-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: item.title,
+    title: isInvasionWithoutTerritories
+      ? '🚨 Invasi Skala Penuh: Pertahanan Wilayah Nasional!'
+      : item.title,
     sender: `Markas Besar Angkatan Bersenjata`,
-    message: item.message(enemyCountry),
+    message: isInvasionWithoutTerritories
+      ? `INVASI MILITER MASIF! Pasukan gabungan ${enemyCountry} melancarkan operasi invasi darat dan udara untuk menembus pertahanan nasional kita. Saat ini kita belum memiliki wilayah aneksasi yang dapat direbut.`
+      : item.message(enemyCountry),
     timestamp: dateStr,
     type: 'kepuasan',
     value: 0,
@@ -97,7 +104,9 @@ export function generateDiserangNotification(
     enemyCountry,
     attackLevel: item.attackLevel,
     costEM: item.costEM,
-    effectText: item.effectText,
+    effectText: isInvasionWithoutTerritories
+      ? 'Tidak ada wilayah aneksasi yang dapat hilang'
+      : item.effectText,
     isHandled: false
   };
 }

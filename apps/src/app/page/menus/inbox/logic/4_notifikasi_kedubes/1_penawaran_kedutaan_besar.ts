@@ -67,7 +67,7 @@ export function checkAndGenerateEmbassyOffers(
   // Candidate pool negara-negara internasional
   const candidateCountries: string[] = [
     'Indonesia', 'Malaysia', 'Singapura', 'Brunei', 'Thailand', 'Vietnam', 'Filipina',
-    'Jepang', 'Korea Selatan', 'Tiongkok', 'India', 'Australia', 'Selandia Baru',
+    'Jepang', 'Korea Selatan', 'China', 'India', 'Australia', 'Selandia Baru',
     'Amerika Serikat', 'Inggris', 'Jerman', 'Prancis', 'Rusia', 'Arab Saudi', 'Turki',
     'Brasil', 'Afrika Selatan', 'Mesir', 'Kanada', 'Meksiko', 'Argentina'
   ];
