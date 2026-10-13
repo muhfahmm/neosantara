@@ -63,7 +63,7 @@ function getAnnexedInfo(countryNames: unknown[], countryIso?: unknown) {
 export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail, setCountryDetail, currentDate, playerNetBalanceAdjustment = 0, adjustPlayerNetBalance, autoBuildEmbassy }: CountryDetailModalProps) {
   // State untuk menu tab
   const [activeTab, setActiveTab] = useState<"informasi" | "geopolitik" | "militer">("informasi");
-  const [, setAnnexationRevision] = useState(0);
+  const [annexationRevision, setAnnexationRevision] = useState(0);
   const [relationRevision, setRelationRevision] = useState(0);
 
   // State untuk menyembunyikan tampilan modal Detail Negara saat salah satu modal aksi dibuka
@@ -82,11 +82,30 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   
   // PERBAIKAN: Ref untuk mencegah fetch ulang data saat modal dibuka/tutup (Data tetap progresif)
   const fetchedRef = useRef<string | null>(null);
+  const preserveActiveTabRef = useRef(false);
   const countryDetailRef = useRef(countryDetail);
   countryDetailRef.current = countryDetail;
 
   useEffect(() => {
-    const refreshAnnexation = () => setAnnexationRevision(revision => revision + 1);
+    const refreshAnnexation = (event: Event) => {
+      const detail = (event as CustomEvent<{ attackerCountry?: string; transferredFrom?: string }>).detail;
+      if (
+        detail?.transferredFrom &&
+        normalizeCountryKey(detail.attackerCountry) === normalizeCountryKey(countryName)
+      ) {
+        fetchedRef.current = null;
+        preserveActiveTabRef.current = true;
+      }
+      if (
+        Array.isArray(detail?.returnedTerritories) &&
+        detail.returnedTerritories.length > 0 &&
+        normalizeCountryKey(detail.targetCountry) === normalizeCountryKey(countryName)
+      ) {
+        fetchedRef.current = null;
+        preserveActiveTabRef.current = true;
+      }
+      setAnnexationRevision(revision => revision + 1);
+    };
     const refreshRelations = () => setRelationRevision(revision => revision + 1);
     window.addEventListener('map_territory_color_updated', refreshAnnexation);
     window.addEventListener('country_relations_updated', refreshRelations);
@@ -94,7 +113,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
       window.removeEventListener('map_territory_color_updated', refreshAnnexation);
       window.removeEventListener('country_relations_updated', refreshRelations);
     };
-  }, []);
+  }, [countryName]);
 
   // Reset status hide ketika modal dibuka kembali atau negara berganti
   useEffect(() => {
@@ -116,7 +135,8 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
     setFetchedDetail(null);
     setIsLoadingDetail(true);
-    setActiveTab("informasi");
+    if (!preserveActiveTabRef.current) setActiveTab("informasi");
+    preserveActiveTabRef.current = false;
     prevModalUpdateDateRef.current = null;
 
     const loadDetail = async () => {
@@ -251,7 +271,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     };
 
     loadDetail();
-  }, [isOpen, countryName]);
+  }, [isOpen, countryName, annexationRevision]);
 
   // PERBAIKAN: Logika Simulasi Update Kas & Populasi Harian (Tetap berjalan saat modal terbuka)
   useEffect(() => {

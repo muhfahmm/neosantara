@@ -10,7 +10,7 @@ interface BerikanWilayahModalProps {
 	countryName?: string | null;
 	playerCountryName?: string | null;
 	onClose: () => void;
-	onConfirm: (territoryName: string) => void;
+	onConfirm: (territoryName: string) => boolean;
 }
 
 // =====================================================================
@@ -88,10 +88,14 @@ export default function BerikanWilayahModal({
 	})();
 
 	const [selectedTerritory, setSelectedTerritory] = useState('');
+	const [transferError, setTransferError] = useState('');
 	const territorySignature = annexedTerritories.join('|');
 
 	useEffect(() => {
-		if (isOpen) setSelectedTerritory(annexedTerritories[0] || '');
+		if (isOpen) {
+			setSelectedTerritory(annexedTerritories[0] || '');
+			setTransferError('');
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isOpen, territorySignature]);
 
@@ -123,6 +127,16 @@ export default function BerikanWilayahModal({
 
 				{/* ═══════════ BODY: LIST WILAYAH ═══════════ */}
 				<div className="flex-1 min-h-0 bg-[#0F2424] relative z-10 p-6 sm:p-8 flex flex-col gap-4 overflow-y-auto custom-scrollbar">
+					{countryName && (
+						<p className="text-center text-xs font-black uppercase tracking-wider text-[#00FFAA]">
+							Penerima: {countryName}
+						</p>
+					)}
+					{transferError && (
+						<p role="alert" className="text-center text-sm font-bold text-rose-400">
+							{transferError}
+						</p>
+					)}
 					{annexedTerritories.length === 0 ? (
 						<div className="flex-1 flex items-center justify-center text-center">
 							<p className="text-sm font-bold text-[#6B8A8A] uppercase tracking-wider">
@@ -139,7 +153,10 @@ export default function BerikanWilayahModal({
 									<button
 										key={territory}
 										type="button"
-										onClick={() => setSelectedTerritory(territory)}
+										onClick={() => {
+											setSelectedTerritory(territory);
+											setTransferError('');
+										}}
 										className={`w-full rounded-xl border px-4 py-3 text-left text-sm font-black uppercase tracking-wide transition-all cursor-pointer flex items-center gap-3 ${
 											isSelected
 												? 'border-[#00FFAA] bg-[#00FFAA]/15 text-[#00FFAA]'
@@ -182,10 +199,9 @@ export default function BerikanWilayahModal({
 						</button>
 						<button
 							onClick={() => {
-								if (selectedTerritory) {
-									onConfirm(selectedTerritory);
-									onClose();
-								}
+								if (!selectedTerritory) return;
+								if (onConfirm(selectedTerritory)) onClose();
+								else setTransferError('Wilayah tidak dapat diberikan. Pastikan wilayah masih dikuasai dan negara tujuan merupakan sekutu.');
 							}}
 							disabled={!selectedTerritory}
 							className="px-6 py-3 bg-amber-500 hover:bg-amber-400 border border-amber-500 rounded-xl text-center text-[#0A1A1A] font-black text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md disabled:cursor-not-allowed disabled:opacity-40"

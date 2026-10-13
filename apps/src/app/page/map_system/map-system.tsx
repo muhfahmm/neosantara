@@ -758,8 +758,6 @@ export default function MapPage() {
             };
         });
 
-        setCountryColorOverrides(previous => ({ ...previous, ...overrideUpdates }));
-
         if (typeof window === 'undefined') return;
 
         const nextOverrides = {
@@ -775,11 +773,74 @@ export default function MapPage() {
             [targetIsoNorm]: annexationInfo,
             [`iso_${targetIsoNorm}`]: annexationInfo
         };
+        const normalizedTargetCountry = targetCountry.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const normalizedTerritoryKeys = new Set<string>();
+        const returnedTerritories: string[] = [];
+        Object.entries(previousAnnexed).forEach(([key, info]: [string, any]) => {
+            if (
+                !info?.returnedToCountry ||
+                info?.returnedToColor !== '#10b981' ||
+                info?.attackerCountry?.toLowerCase().replace(/[^a-z0-9]/g, '') !== normalizedTargetCountry
+            ) {
+                return;
+            }
 
+            const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const territory = COUNTRIES_DATA.find(country =>
+                country.country.toLowerCase().replace(/[^a-z0-9]/g, '') === normalizedKey ||
+                country.iso.toLowerCase() === normalizedKey ||
+                `iso${country.iso.toLowerCase()}` === normalizedKey
+            );
+            if (!territory || normalizedTerritoryKeys.has(territory.country.toLowerCase().replace(/[^a-z0-9]/g, ''))) {
+                return;
+            }
+
+            const territoryNorm = territory.country.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const territoryIsoNorm = territory.iso.toLowerCase();
+            const territoryAliases = new Set([territoryNorm, territoryIsoNorm, `iso${territoryIsoNorm}`]);
+            normalizedTerritoryKeys.add(territoryNorm);
+            returnedTerritories.push(territory.country);
+
+            Object.entries(previousAnnexed).forEach(([alias, aliasInfo]: [string, any]) => {
+                if (
+                    territoryAliases.has(alias.toLowerCase().replace(/[^a-z0-9]/g, '')) &&
+                    aliasInfo?.attackerCountry?.toLowerCase().replace(/[^a-z0-9]/g, '') === normalizedTargetCountry
+                ) {
+                    const { returnedToCountry, returnedToIso, returnedToColor, ...reclaimedInfo } = aliasInfo;
+                    nextAnnexed[alias] = {
+                        ...reclaimedInfo,
+                        attackerCountry: returnedToCountry,
+                        attackerIso: returnedToIso,
+                    };
+                }
+            });
+
+            [
+                territory.country,
+                territoryNorm,
+                territoryIsoNorm,
+                `iso_${territoryIsoNorm}`,
+            ].forEach(alias => {
+                nextAnnexed[alias] = {
+                    attackerCountry: info.returnedToCountry,
+                    attackerIso: info.returnedToIso,
+                };
+                overrideUpdates[alias] = info.returnedToColor;
+                nextOverrides[alias] = info.returnedToColor;
+            });
+            Object.keys(nextOverrides).forEach(alias => {
+                if (territoryAliases.has(alias.toLowerCase().replace(/[^a-z0-9]/g, ''))) {
+                    overrideUpdates[alias] = info.returnedToColor;
+                    nextOverrides[alias] = info.returnedToColor;
+                }
+            });
+        });
+
+        setCountryColorOverrides(previous => ({ ...previous, ...overrideUpdates }));
         (window as any).neosantara_country_color_overrides = nextOverrides;
         (window as any).neosantara_annexed_countries = nextAnnexed;
         window.dispatchEvent(new CustomEvent('map_territory_color_updated', {
-            detail: { targetCountry, newColor: attackerColor, attackerCountry }
+            detail: { targetCountry, newColor: attackerColor, attackerCountry, returnedTerritories }
         }));
     };
 
@@ -797,6 +858,17 @@ export default function MapPage() {
             (window as any).neosantara_country_color_overrides = countryColorOverrides;
         }
     }, [countryColorOverrides]);
+
+    useEffect(() => {
+        const syncTerritoryColorOverrides = () => {
+            const overrides = (window as any).neosantara_country_color_overrides;
+            if (overrides && typeof overrides === 'object') {
+                setCountryColorOverrides({ ...overrides });
+            }
+        };
+        window.addEventListener('map_territory_color_updated', syncTerritoryColorOverrides);
+        return () => window.removeEventListener('map_territory_color_updated', syncTerritoryColorOverrides);
+    }, []);
 
     // Listener custom event ketika pemain berhasil meminta negara sekutu menyerang negara target
     useEffect(() => {

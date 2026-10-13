@@ -13,6 +13,7 @@ import TingkatkanHubunganModal from './3_tingkatkan_hubungan/tingkatkanHubunganM
 import MintaBantuanModal from './5_minta_bantuan/mintaBantuanModals';
 import BerikanWilayahModal from './6_berikan_wilayah/berikanWilayahModals';
 import { sdaIcons } from '@/app/page/navigasi_menu/1_navigasi_atas/2_sda/sdaIcons';
+import { COUNTRIES_DATA } from '../../map_system/map-data';
 
 interface GeopolitikProps {
   countryName: string;
@@ -74,6 +75,96 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
     annexation => normalizeCountryName(annexation?.attackerCountry) === normalizeCountryName(playerCountryName)
   );
 
+  const transferAnnexedTerritory = (territoryName: string) => {
+    if (!playerCountryName || !hasDefenseAlliance) {
+      console.error(`Gagal memberikan wilayah ${territoryName}: negara tujuan bukan sekutu pertahanan.`);
+      return false;
+    }
+
+    const recipient = COUNTRIES_DATA.find(
+      country => normalizeCountryName(country.country) === normalizeCountryName(countryName) ||
+        normalizeCountryName(country.iso) === normalizeCountryName(countryName)
+    );
+    const territory = COUNTRIES_DATA.find(
+      country => normalizeCountryName(country.country) === normalizeCountryName(territoryName) ||
+        normalizeCountryName(country.iso) === normalizeCountryName(territoryName)
+    );
+    const recipientColor = recipient?.color;
+    if (!recipient?.iso || !recipientColor || !territory?.iso) {
+      console.error(`Gagal memberikan wilayah ${territoryName}: data ISO atau warna negara tidak ditemukan.`);
+      return false;
+    }
+
+    const gameWindow = window as Window & {
+      neosantara_annexed_countries?: Record<string, {
+        attackerCountry?: string;
+        attackerIso?: string;
+        returnedToCountry?: string;
+        returnedToIso?: string;
+        returnedToColor?: string;
+      }>;
+      neosantara_country_color_overrides?: Record<string, string>;
+    };
+    const currentAnnexed = gameWindow.neosantara_annexed_countries || {};
+    const territoryAliases = new Set([
+      normalizeCountryName(territory.country),
+      normalizeCountryName(territory.iso),
+      normalizeCountryName(`iso_${territory.iso}`),
+    ]);
+    const playerKey = normalizeCountryName(playerCountryName);
+    const currentlyOwned = Object.entries(currentAnnexed).some(
+      ([key, annexation]) =>
+        territoryAliases.has(normalizeCountryName(key)) &&
+        normalizeCountryName(annexation?.attackerCountry) === playerKey
+    );
+    if (!currentlyOwned) {
+      console.error(`Gagal memberikan wilayah ${territoryName}: wilayah tidak lagi dikuasai ${playerCountryName}.`);
+      return false;
+    }
+
+    const nextAnnexed = { ...currentAnnexed };
+    Object.entries(nextAnnexed).forEach(([key, annexation]) => {
+      if (
+        territoryAliases.has(normalizeCountryName(key)) &&
+        normalizeCountryName(annexation?.attackerCountry) === playerKey
+      ) {
+        nextAnnexed[key] = {
+          attackerCountry: recipient.country,
+          attackerIso: recipient.iso.toLowerCase(),
+          returnedToCountry: playerCountryName,
+          returnedToIso: String(playerCountryDetail?.iso || '').toLowerCase() || undefined,
+          returnedToColor: '#10b981',
+        };
+      }
+    });
+    const nextOverrides = { ...(gameWindow.neosantara_country_color_overrides || {}) };
+    Object.keys(nextOverrides).forEach(key => {
+      if (territoryAliases.has(normalizeCountryName(key))) {
+        nextOverrides[key] = recipientColor;
+      }
+    });
+    [
+      territory.country,
+      territory.country.toLowerCase(),
+      territory.iso.toLowerCase(),
+      `iso_${territory.iso.toLowerCase()}`,
+    ].forEach(key => {
+      nextOverrides[key] = recipientColor;
+    });
+
+    gameWindow.neosantara_annexed_countries = nextAnnexed;
+    gameWindow.neosantara_country_color_overrides = nextOverrides;
+    window.dispatchEvent(new CustomEvent('map_territory_color_updated', {
+      detail: {
+        targetCountry: territory.country,
+        newColor: recipientColor,
+        attackerCountry: recipient.country,
+        transferredFrom: playerCountryName,
+      },
+    }));
+    return true;
+  };
+
   const requestAid = async () => {
     if (!playerCountryName) return;
     try {
@@ -114,7 +205,7 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
           setIsMintaBantuanOpen(true);
           onActionModalStateChange?.(true);
         }} />
-        <ActionButton icon={Map} label="Berikan Wilayah" onClick={() => setIsBerikanWilayahOpen(true)} disabled={!hasAnnexedTerritory} />
+        <ActionButton icon={Map} label="Berikan Wilayah" onClick={() => setIsBerikanWilayahOpen(true)} disabled={!hasAnnexedTerritory || !hasDefenseAlliance} />
       </div>
 
       <BeriTentaraModal
@@ -146,7 +237,7 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
         }}
       />
       <MintaBantuanModal isOpen={isMintaBantuanOpen} countryName={countryName} onClose={closeAidRequestModal} onConfirm={requestAid} />
-      <BerikanWilayahModal isOpen={isBerikanWilayahOpen} countryName={countryName} playerCountryName={playerCountryName} onClose={() => setIsBerikanWilayahOpen(false)} onConfirm={(territoryName) => { console.log(`Berikan Wilayah ${territoryName} -> ${countryName}`); }} />
+      <BerikanWilayahModal isOpen={isBerikanWilayahOpen} countryName={countryName} playerCountryName={playerCountryName} onClose={() => setIsBerikanWilayahOpen(false)} onConfirm={transferAnnexedTerritory} />
     </div>
   );
 }
