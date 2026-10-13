@@ -15,6 +15,10 @@ import {
 
 export const PBB_RESOLUTION_DURATION_OPTIONS = ['1 bulan', '3 bulan', '6 bulan', '9 bulan', '1 tahun'] as const;
 
+function formatVoteCount(count: number): string {
+  return String(Math.round(count));
+}
+
 export function getResolutionDurationDays(duration: string | undefined): number {
   if (!duration) return 30;
 
@@ -42,6 +46,58 @@ export function isPassedResolutionActive(item: {
   daysRemaining: number;
 }): boolean {
   return item.status === 'passed' && item.daysRemaining > 0;
+}
+
+type StandardVote = 'yes' | 'no' | 'abstain';
+type VoteBucket = 'supporters' | 'opponents' | 'abstain';
+
+function applyResolutionBribes(
+  item: ActiveResolutionItem,
+  votes: { supportersCount: number; opponentsCount: number; abstainCount: number },
+  activeUserCountryName: string
+) {
+  const bribedCountries = item.bribedCountries || {};
+  if (Object.keys(bribedCountries).length === 0) return votes;
+
+  const baselineItem: ActiveResolutionItem = {
+    ...item,
+    userVote: item.userVote,
+    voteStats: votes,
+    bribedCountries: {},
+  };
+  const countries = STATIC_PBB_VOTES.map((country, index) => ({
+    id: index,
+    name: country.name_id,
+    iso: getIsoForCountryName(country.name_id),
+    continent: '',
+  }));
+  const breakdown = getResolutionCountryBreakdown(baselineItem, countries, activeUserCountryName);
+  const previousVoteByIso = new Map<string, VoteBucket>();
+  breakdown.supporters.forEach(country => previousVoteByIso.set(country.iso.toLowerCase(), 'supporters'));
+  breakdown.opponents.forEach(country => previousVoteByIso.set(country.iso.toLowerCase(), 'opponents'));
+  breakdown.abstain.forEach(country => previousVoteByIso.set(country.iso.toLowerCase(), 'abstain'));
+
+  const adjusted = { ...votes };
+  const countKey: Record<VoteBucket, keyof typeof adjusted> = {
+    supporters: 'supportersCount',
+    opponents: 'opponentsCount',
+    abstain: 'abstainCount',
+  };
+  const destination: Record<StandardVote, VoteBucket> = {
+    yes: 'supporters',
+    no: 'opponents',
+    abstain: 'abstain',
+  };
+
+  Object.entries(bribedCountries).forEach(([iso, forcedVote]) => {
+    const previousVote = previousVoteByIso.get(iso.toLowerCase());
+    const forcedBucket = destination[forcedVote];
+    if (!previousVote || !forcedBucket || previousVote === forcedBucket) return;
+    adjusted[countKey[previousVote]] = Math.max(0, adjusted[countKey[previousVote]] - 1);
+    adjusted[countKey[forcedBucket]] += 1;
+  });
+
+  return adjusted;
 }
 
 export function normalizePbbCountryName(countryName: string): string {
@@ -208,10 +264,10 @@ export function calculate206AIVotes(
     if (userVote === 'abstain') abstainCount += userVoteWeight;
 
     return {
-      supportersCount,
-      opponentsCount,
-      abstainCount,
-      totalVotesCast: supportersCount + opponentsCount + abstainCount
+      supportersCount: Math.round(supportersCount),
+      opponentsCount: Math.round(opponentsCount),
+      abstainCount: Math.round(abstainCount),
+      totalVotesCast: Math.round(supportersCount + opponentsCount + abstainCount)
     };
   }
 
@@ -253,10 +309,10 @@ export function calculate206AIVotes(
   if (userVote === 'abstain') abstainCount += userVoteWeight;
 
   return {
-    supportersCount: Math.max(0, supportersCount),
-    opponentsCount: Math.max(0, opponentsCount),
-    abstainCount: Math.max(0, abstainCount),
-    totalVotesCast: votesCastSoFar + extraCouncilInfluenceVotes + (userVote ? userVoteWeight : 0)
+    supportersCount: Math.max(0, Math.round(supportersCount)),
+    opponentsCount: Math.max(0, Math.round(opponentsCount)),
+    abstainCount: Math.max(0, Math.round(abstainCount)),
+    totalVotesCast: Math.round(votesCastSoFar + extraCouncilInfluenceVotes + (userVote ? userVoteWeight : 0))
   };
 }
 
@@ -453,12 +509,17 @@ export function tickPBBResolutions(
       const finalUserVote = newDaysRemaining === 0 && !activeUserAnnexed
         ? eligibleUserVote || 'abstain'
         : eligibleUserVote;
-      const votes = calculate206AIVotes(
+      const calculatedVotes = calculate206AIVotes(
         newDaysRemaining,
         finalUserVote,
         proposer?.name,
         item.target?.name,
         item.type,
+        activeUser
+      );
+      const votes = applyResolutionBribes(
+        { ...item, userVote: finalUserVote },
+        calculatedVotes,
         activeUser
       );
       let notified = item.notified10Days || false;
@@ -510,10 +571,10 @@ export function tickPBBResolutions(
           );
           if (isNoTarget) {
             notifCard.title = `⚠️ PERINGATAN VOTING PBB (SISA ${newDaysRemaining} HARI): ${proposer.name}`;
-            notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara ${activeUser} untuk usulan "${item.label}" selama ${durationText} untuk ${defaultTargetName}. Sejauh ini ${votes.supportersCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} negara setuju dan ${votes.opponentsCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} menolak.`;
+            notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara ${activeUser} untuk usulan "${item.label}" selama ${durationText} untuk ${defaultTargetName}. Sejauh ini ${formatVoteCount(votes.supportersCount)} negara setuju dan ${formatVoteCount(votes.opponentsCount)} menolak.`;
           } else {
             notifCard.title = `⚠️ PERINGATAN VOTING PBB (SISA ${newDaysRemaining} HARI): ${proposer.name} ➔ ${item.target.name}`;
-            notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara ${activeUser} untuk usulan "${item.label}" yang menargetkan ${item.target.name} selama ${durationText}. Sejauh ini ${votes.supportersCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} negara setuju dan ${votes.opponentsCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} menolak.`;
+            notifCard.message = `Batas waktu tersisa ${newDaysRemaining} hari! Sidang Umum Majelis PBB membutuhkan suara ${activeUser} untuk usulan "${item.label}" yang menargetkan ${item.target.name} selama ${durationText}. Sejauh ini ${formatVoteCount(votes.supportersCount)} negara setuju dan ${formatVoteCount(votes.opponentsCount)} menolak.`;
           }
           notifCard.resolutionTitle = `${item.label} (${durationText})`;
           onTriggerNotification(notifCard);
@@ -541,9 +602,9 @@ export function tickPBBResolutions(
             );
             finishCard.title = `🏛️ HASIL RESOLUSI PBB: ${item.label} (${statusLabel})`;
             if (isNoTarget) {
-              finishCard.message = `Pemungutan suara Sidang Umum Majelis PBB untuk usulan "${item.label}" selama ${durationText} (Pengusul: ${proposer.name}, Target: ${defaultTargetName}) telah SELESAI. Perolehan suara akhir: ${votes.supportersCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Setuju, ${votes.opponentsCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Menolak, ${votes.abstainCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Abstain. Status resmi: RESOLUSI ${statusLabel}.`;
+              finishCard.message = `Pemungutan suara Sidang Umum Majelis PBB untuk usulan "${item.label}" selama ${durationText} (Pengusul: ${proposer.name}, Target: ${defaultTargetName}) telah SELESAI. Perolehan suara akhir: ${formatVoteCount(votes.supportersCount)} Setuju, ${formatVoteCount(votes.opponentsCount)} Menolak, ${formatVoteCount(votes.abstainCount)} Abstain. Status resmi: RESOLUSI ${statusLabel}.`;
             } else {
-              finishCard.message = `Pemungutan suara Sidang Umum Majelis PBB untuk usulan "${item.label}" selama ${durationText} (Pengusul: ${proposer.name}, Target: ${item.target.name}) telah SELESAI. Perolehan suara akhir: ${votes.supportersCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Setuju, ${votes.opponentsCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Menolak, ${votes.abstainCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Abstain. Status resmi: RESOLUSI ${statusLabel}.`;
+              finishCard.message = `Pemungutan suara Sidang Umum Majelis PBB untuk usulan "${item.label}" selama ${durationText} (Pengusul: ${proposer.name}, Target: ${item.target.name}) telah SELESAI. Perolehan suara akhir: ${formatVoteCount(votes.supportersCount)} Setuju, ${formatVoteCount(votes.opponentsCount)} Menolak, ${formatVoteCount(votes.abstainCount)} Abstain. Status resmi: RESOLUSI ${statusLabel}.`;
             }
             finishCard.resolutionTitle = `${item.label} (${durationText})`;
             onTriggerNotification(finishCard);

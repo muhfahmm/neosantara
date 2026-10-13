@@ -22,9 +22,11 @@ interface PerbandinganPasukanProps {
   targetName: string;
   targetIso?: string;
   targetPower: number;
+  attackerPowerOverride?: number;
   attackerDetail?: any;
   targetDetail?: any;
   isUserDefender?: boolean;
+  isCoalitionForce?: boolean;
   onStartBattle: () => void;
   onAutoResult: () => void;
   onClose?: () => void;
@@ -150,9 +152,11 @@ export default function PerbandinganPasukan({
   targetName,
   targetIso = 'un',
   targetPower,
+  attackerPowerOverride,
   attackerDetail,
   targetDetail,
   isUserDefender = false,
+  isCoalitionForce = false,
   onStartBattle,
   onAutoResult,
   onClose,
@@ -161,7 +165,7 @@ export default function PerbandinganPasukan({
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('pause_game_time'));
+      window.dispatchEvent(new CustomEvent('pause_game_time', { detail: { source: 'war' } }));
     }
   }, []);
 
@@ -172,7 +176,9 @@ export default function PerbandinganPasukan({
   const attackerHasRealData = (attackerSummary?.totals?.totalPower ?? 0) > 0;
   const targetHasRealData = (targetSummary?.totals?.totalPower ?? 0) > 0;
 
-  const attackerTotalPower = attackerHasRealData ? attackerSummary!.totals.totalPower : (attackerPower > 0 ? attackerPower : 60);
+  const attackerTotalPower = attackerPowerOverride && attackerPowerOverride > 0
+    ? attackerPowerOverride
+    : attackerHasRealData ? attackerSummary!.totals.totalPower : (attackerPower > 0 ? attackerPower : 60);
   const targetTotalPower = targetHasRealData ? targetSummary!.totals.totalPower : (targetPower > 0 ? targetPower : 50);
   const attackerFallbackPower = attackerHasRealData ? 0 : attackerTotalPower;
   const targetFallbackPower = targetHasRealData ? 0 : targetTotalPower;
@@ -197,15 +203,15 @@ export default function PerbandinganPasukan({
   const attackerBreakdown = {
     darat: getGroupBreakdown(attackerDetail, 'darat', attackerFallbackPower).map(i => ({
       ...i,
-      quantity: isUserDefender ? i.quantity : getDeployedQuantity(i.key, i.quantity)
+      quantity: isUserDefender || isCoalitionForce ? i.quantity : getDeployedQuantity(i.key, i.quantity)
     })),
     laut: getGroupBreakdown(attackerDetail, 'laut', attackerFallbackPower).map(i => ({
       ...i,
-      quantity: isUserDefender ? i.quantity : getDeployedQuantity(i.key, i.quantity)
+      quantity: isUserDefender || isCoalitionForce ? i.quantity : getDeployedQuantity(i.key, i.quantity)
     })),
     udara: getGroupBreakdown(attackerDetail, 'udara', attackerFallbackPower).map(i => ({
       ...i,
-      quantity: isUserDefender ? i.quantity : getDeployedQuantity(i.key, i.quantity)
+      quantity: isUserDefender || isCoalitionForce ? i.quantity : getDeployedQuantity(i.key, i.quantity)
     })),
   };
 
@@ -296,7 +302,9 @@ export default function PerbandinganPasukan({
                     <Shield className="w-6 h-6 text-[#00FFAA]" />
                   </div>
                   <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">
-                    {isUserDefender ? "Pasukan Agresor (Musuh)" : "Pasukan Penyerang (Anda)"}
+                    {isCoalitionForce
+                      ? "Pasukan Gabungan PBB"
+                      : isUserDefender ? "Pasukan Agresor (Musuh)" : "Pasukan Penyerang (Anda)"}
                   </p>
                   <p className="text-xl font-black text-[#00FFAA] uppercase tracking-wide">
                     {attackerName}
@@ -322,7 +330,9 @@ export default function PerbandinganPasukan({
                     <Shield className="w-6 h-6 text-rose-400" />
                   </div>
                   <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A]">
-                    {isUserDefender ? "Pasukan Pertahanan (Anda)" : "Pasukan Target (Musuh)"}
+                    {isCoalitionForce
+                      ? `Pasukan Target (${targetName})`
+                      : isUserDefender ? "Pasukan Pertahanan (Anda)" : "Pasukan Target (Musuh)"}
                   </p>
                   <p className="text-xl font-black text-rose-400 uppercase tracking-wide">
                     {targetName}
@@ -455,4 +465,3 @@ export default function PerbandinganPasukan({
     </div>
   );
 }
-

@@ -1,6 +1,6 @@
 import { loadActiveSecurityCouncilItems } from "./keamananPBBUILogic";
 import { isPassedResolutionActive, normalizePbbCountryName } from "../../1_resolusi_PBB/logic/resolusiPBBUILogic";
-import { isEconomicBlockadeProductionResource } from "./3_blokadeEkonomi";
+import { isEconomicBlockadeProductionResource } from "./2_blokadeEkonomi";
 
 export function getSecurityCouncilNavalBlockadeMultiplier(
   countryName: string,

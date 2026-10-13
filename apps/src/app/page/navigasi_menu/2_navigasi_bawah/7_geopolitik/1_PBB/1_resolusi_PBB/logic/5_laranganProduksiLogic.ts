@@ -4,7 +4,7 @@ import {
   loadActiveResolutions,
 } from "./resolusiPBBUILogic";
 import { getProductionBanProduct } from "./productionBanCatalog";
-import { isGoldResource } from "../../2_keamanan_PBB/logic/3_blokadeEkonomi";
+import { isGoldResource } from "../../2_keamanan_PBB/logic/2_blokadeEkonomi";
 
 export function getActiveProductionBanForResource(resourceKey: string): ActiveResolutionItem | undefined {
   if (isGoldResource(resourceKey)) return undefined;

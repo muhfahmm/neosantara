@@ -79,6 +79,24 @@ export function getNpcCountrySimulationSnapshot(): NpcSimulationState | null {
   return JSON.parse(JSON.stringify(activeNpcSimulationState)) as NpcSimulationState;
 }
 
+export function updateNpcCountrySimulationState(
+  countrySlug: string,
+  updates: Record<string, unknown>,
+): boolean {
+  const state = activeNpcSimulationState;
+  const slug = normalizeSlug(countrySlug);
+  if (!state || !slug || slug === state.playerCountrySlug) return false;
+
+  state.countries[slug] = {
+    ...(state.countries[slug] || {}),
+    ...updates,
+  };
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(NPC_COUNTRY_SIMULATION_UPDATED_EVENT));
+  }
+  return true;
+}
+
 export function restoreNpcCountrySimulationState(value: unknown): void {
   simulationGeneration += 1;
   pendingSimulationJob = null;
@@ -124,6 +142,7 @@ function getMutableCountryState(country: CountryRecord): Record<string, unknown>
       key === "overpop_tier" ||
       key === "health_tier" ||
       key === "population_status" ||
+      key === "armada" ||
       key.startsWith("inventory_") ||
       key.startsWith("last_update_date_")
     )

@@ -8,13 +8,13 @@ export interface AIKeamananPBBNotification extends NotificationMessage {
   proposerCountry: string;
   targetCountry: string;
   relationScore: number;
-  securityAction: 'military' | 'support' | 'economic' | 'naval' | 'full' | 'treasure';
+  securityAction: 'military' | 'economic' | 'naval' | 'full' | 'treasure';
   actionTitle: string;
   duration: string;
 }
 
 const SECURITY_ACTIONS: Array<{
-  action: 'military' | 'support' | 'economic' | 'naval' | 'full' | 'treasure';
+  action: 'military' | 'economic' | 'naval' | 'full' | 'treasure';
   title: string;
   desc: string;
 }> = [
@@ -22,11 +22,6 @@ const SECURITY_ACTIONS: Array<{
     action: 'military',
     title: 'Invasi Militer',
     desc: 'Semua tentara bersatu dari semua negara menyerang negara yang dipilih.'
-  },
-  {
-    action: 'support',
-    title: 'Dukung Negara',
-    desc: 'Dukungan kepada negara yang dipilih meningkatkan hubungan diplomatiknya dengan semua negara lain sebesar 10 unit.'
   },
   {
     action: 'economic',

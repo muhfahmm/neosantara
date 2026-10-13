@@ -14,9 +14,9 @@ import {
   getSecurityCouncilEconomicBlockadeMultiplier,
   isEconomicBlockadeProductionResource,
   isGoldResource
-} from '../../2_keamanan_PBB/logic/3_blokadeEkonomi';
-import { getSecurityCouncilNavalBlockadeMultiplier } from '../../2_keamanan_PBB/logic/4_blokadeLaut';
-import { isCountryUnderFullBlockade } from '../../2_keamanan_PBB/logic/5_blokadePenuh';
+} from '../../2_keamanan_PBB/logic/2_blokadeEkonomi';
+import { getSecurityCouncilNavalBlockadeMultiplier } from '../../2_keamanan_PBB/logic/3_blokadeLaut';
+import { isCountryUnderFullBlockade } from '../../2_keamanan_PBB/logic/4_blokadePenuh';
 
 const ECONOMIC_EMBARGO_REDUCTION = 0.6;
 export const ECONOMIC_SANCTION_REDUCTION_PER_ACTION = 0.05;

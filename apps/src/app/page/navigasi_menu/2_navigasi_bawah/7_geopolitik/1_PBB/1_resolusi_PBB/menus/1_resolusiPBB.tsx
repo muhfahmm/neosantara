@@ -569,7 +569,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                       className="flex items-center gap-1.5 text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/30 hover:bg-emerald-500/20 active:scale-95 transition-all cursor-pointer"
                     >
                       <ThumbsUp className="w-4 h-4" />
-                      <span>{res.voteStats.supportersCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Setuju</span>
+                      <span>{Math.round(res.voteStats.supportersCount)} Setuju</span>
                     </button>
                     <button
                       type="button"
@@ -580,7 +580,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                       className="flex items-center gap-1.5 text-rose-400 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/30 hover:bg-rose-500/20 active:scale-95 transition-all cursor-pointer"
                     >
                       <ThumbsDown className="w-4 h-4" />
-                      <span>{res.voteStats.opponentsCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Menolak</span>
+                      <span>{Math.round(res.voteStats.opponentsCount)} Menolak</span>
                     </button>
                     {res.voteStats.abstainCount > 0 && (
                       <button
@@ -591,7 +591,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                         }}
                         className="flex items-center gap-1.5 text-slate-300 bg-slate-500/10 px-3 py-1.5 rounded-lg border border-slate-500/30 hover:bg-slate-500/20 active:scale-95 transition-all cursor-pointer"
                       >
-                        <span>{res.voteStats.abstainCount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Abstain</span>
+                        <span>{Math.round(res.voteStats.abstainCount)} Abstain</span>
                       </button>
                     )}
                   </div>

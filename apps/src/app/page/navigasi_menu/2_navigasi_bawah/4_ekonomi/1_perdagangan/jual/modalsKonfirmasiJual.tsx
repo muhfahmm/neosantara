@@ -30,7 +30,15 @@ import { getMaterialStock } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pe
 import {
   applyNpcCountrySimulationState,
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
+  updateNpcCountrySimulationState,
 } from "@/app/logic/npcCountrySimulation";
+import {
+  ARMS_TRADE_PRODUCTS,
+  getArmsTransferUpdate,
+  getArmsUnitCount,
+} from "../armsTradeLogic";
+import ArmsTradeBudgetModal from "../ArmsTradeBudgetModal";
+import { isArmsSaleEmbargoActive } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/2_armsSalesEmbargoLogic";
 
 const getFlagEmoji = (countryName: string) => {
   const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === countryName.toLowerCase().trim());
@@ -85,6 +93,15 @@ const CATEGORY_MAP: Record<string, string[]> = {
   'Perikanan': ["udang", "mutiara", "ikan"],
   'Olahan Pangan': ["air_mineral", "gula", "roti", "pengolahan_daging", "mie_instan", "minyak_goreng", "susu"]
 };
+
+const ARMS_CATEGORY_MAP: Record<string, string[]> = {
+  "Alutsista Darat": ARMS_TRADE_PRODUCTS.filter(product => product.groupId === "darat").map(product => product.dataKey),
+  "Alutsista Laut": ARMS_TRADE_PRODUCTS.filter(product => product.groupId === "laut").map(product => product.dataKey),
+  "Alutsista Udara": ARMS_TRADE_PRODUCTS.filter(product => product.groupId === "udara").map(product => product.dataKey),
+};
+
+const isArmsProduct = (productKey: string) =>
+  ARMS_TRADE_PRODUCTS.some(product => product.dataKey === productKey);
 
 interface JualModalsMenuProps {
   isOpen: boolean;
@@ -182,6 +199,10 @@ export default function JualModalsMenu({
   const [selectedProduct, setSelectedProduct] = useState<string>("");
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
+  const [armsBudgetShortfall, setArmsBudgetShortfall] = useState<{
+    availableCash: number;
+    requiredCash: number;
+  } | null>(null);
   const [partnerData, setPartnerData] = useState<Record<string, any> | null>(null);
   const partnerStartDateRef = useRef<string | null>(null);
 
@@ -217,7 +238,7 @@ export default function JualModalsMenu({
       return cName === name.toLowerCase().trim();
     });
     if (matched) {
-      setPartnerData(matched);
+      setPartnerData(applyNpcCountrySimulationState(matched));
       if (!partnerStartDateRef.current) partnerStartDateRef.current = currentDate ? formatDate(currentDate) : formatDate(new Date());
       return;
     }
@@ -251,11 +272,16 @@ export default function JualModalsMenu({
 
   const stockAvailable = useMemo(() => {
     if (!selectedProduct) return 0;
+    if (isArmsProduct(selectedProduct)) {
+      return getArmsUnitCount(countryDetail || {}, ARMS_TRADE_PRODUCTS.find(product => product.dataKey === selectedProduct)!);
+    }
     return getMaterialStock(countryDetail, selectedProduct);
   }, [selectedProduct, countryDetail]);
 
   const partnerProduction = useMemo(() => {
     if (!selectedProduct || !partnerData) return 0;
+    const armsProduct = ARMS_TRADE_PRODUCTS.find(product => product.dataKey === selectedProduct);
+    if (armsProduct) return getArmsUnitCount(partnerData, armsProduct);
     const pBuildingCount = Number(partnerData[selectedProduct] || 0);
     if (pBuildingCount === 0) return 0;
     const pMeta = findMeta(selectedProduct);
@@ -311,7 +337,7 @@ export default function JualModalsMenu({
 
   // --- DATA KATEGORI PRODUK (TERBARU) ---
   const groupedProductItems = useMemo(() => {
-    return Object.entries(CATEGORY_MAP).map(([category, keys]) => ({
+    const commodityGroups = Object.entries(CATEGORY_MAP).map(([category, keys]) => ({
       category,
       items: keys.map(key => ({
         label: formatLabel(key),
@@ -319,7 +345,19 @@ export default function JualModalsMenu({
         disabled: checkMap[key] ? !checkMap[key](partnerData) : false
       }))
     }));
-  }, [partnerData]);
+    const armsGroups = Object.entries(ARMS_CATEGORY_MAP).map(([category, keys]) => ({
+      category,
+      items: keys.map(key => {
+        const product = ARMS_TRADE_PRODUCTS.find(item => item.dataKey === key)!;
+        return {
+          label: product.label,
+          value: key,
+          disabled: getArmsUnitCount(countryDetail || {}, product) <= 0,
+        };
+      }),
+    }));
+    return [...commodityGroups, ...armsGroups];
+  }, [partnerData, countryDetail]);
 
   const countryItems = useMemo(() => {
     return partners.map(p => ({
@@ -331,7 +369,12 @@ export default function JualModalsMenu({
 
   const effectiveSelectedCountry = selectedCountry || partners[0]?.nama_negara || "";
   const seriesKey = `${selectedProduct}-${timeRange}`;
-  const currentPrice = useMemo(() => Math.round(marketPrices[selectedProduct] || 0), [marketPrices, selectedProduct]);
+  const currentPrice = useMemo(() => {
+    const armsProduct = ARMS_TRADE_PRODUCTS.find(product => product.dataKey === selectedProduct);
+    return armsProduct
+      ? Math.round(armsProduct.unitPrice * 0.85)
+      : Math.round(marketPrices[selectedProduct] || 0);
+  }, [marketPrices, selectedProduct]);
   
   const userCountryName = countryDetail?.country || countryDetail?.nama || "";
   const isWTOActive = isMemberOfWTO(userCountryName);
@@ -457,6 +500,53 @@ export default function JualModalsMenu({
       return;
     }
 
+    const armsProduct = ARMS_TRADE_PRODUCTS.find(product => product.dataKey === selectedProduct);
+    if (armsProduct) {
+      if (isArmsSaleEmbargoActive(ownCountryName, effectiveSelectedCountry)) {
+        alert(`Resolusi PBB melarang penjualan alutsista kepada ${effectiveSelectedCountry}.`);
+        return;
+      }
+      if (!Number.isInteger(quantity) || quantity <= 0 || quantity > stockAvailable) {
+        alert(`Stok alutsista Anda tidak mencukupi. Tersedia ${stockAvailable.toLocaleString("id-ID")} unit.`);
+        return;
+      }
+      if (!partnerData) {
+        alert("Data negara mitra belum tersedia untuk menyelesaikan transaksi alutsista.");
+        return;
+      }
+      const partnerSlug = String(partnerData?.country_slug || "").trim().toLowerCase();
+      if (!partnerSlug) {
+        alert("Data negara mitra belum tersedia untuk menyelesaikan transaksi alutsista.");
+        return;
+      }
+      const livePartner = applyNpcCountrySimulationState(partnerData);
+      const partnerBudget = Math.max(0, Number(livePartner.anggaran) || 0);
+      const transactionTotal = pricePerUnit * quantity;
+      if (partnerBudget < transactionTotal) {
+        setArmsBudgetShortfall({
+          availableCash: partnerBudget,
+          requiredCash: transactionTotal,
+        });
+        return;
+      }
+      if (!updateNpcCountrySimulationState(partnerSlug, {
+        ...getArmsTransferUpdate(livePartner, armsProduct, quantity),
+        anggaran: partnerBudget - transactionTotal,
+      })) {
+        alert("Simulasi negara mitra belum siap. Coba lagi setelah data negara selesai dimuat.");
+        return;
+      }
+      setCountryDetail({
+        ...detail,
+        ...getArmsTransferUpdate(detail, armsProduct, -quantity),
+        anggaran: currentBudget + transactionTotal,
+      });
+      onConfirm(transactionTotal, `${quantity} unit`);
+      alert(`Berhasil menjual ${quantity} unit ${armsProduct.label} kepada ${effectiveSelectedCountry}.`);
+      onClose();
+      return;
+    }
+
     if (quantity > stockAvailable) {
       alert(`Stok Anda tidak mencukupi! Stok tersedia hanya ${stockAvailable.toLocaleString("id-ID", { maximumFractionDigits: 2 })} unit.`);
       return;
@@ -503,7 +593,7 @@ export default function JualModalsMenu({
                 <div className="flex flex-col gap-1">
                   <label className="text-[#E0E0E0] font-bold text-sm tracking-wide">Produk:</label>
                   <button onClick={() => setIsProductPickerOpen(true)} className="w-full px-4 py-3 rounded-md bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA] text-sm font-bold flex items-center justify-between hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer">
-                    <span>{formatLabel(selectedProduct)}</span>
+                    <span>{ARMS_TRADE_PRODUCTS.find(product => product.dataKey === selectedProduct)?.label || formatLabel(selectedProduct)}</span>
                     <span className="text-[10px] opacity-70 uppercase tracking-wider">Ubah</span>
                   </button>
                 </div>
@@ -538,13 +628,18 @@ export default function JualModalsMenu({
 
               <div className="flex flex-col gap-1">
                 <div className="flex justify-between items-center pt-1 pb-0">
-                  <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Bangunan {formatLabel(selectedProduct)} (Mitra):</span>
-                  <span className="text-sm font-black text-[#E0E0E0]">{Number(partnerData?.[selectedProduct] || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span></span>
+                  <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">{isArmsProduct(selectedProduct) ? "Unit Alutsista Mitra:" : `Bangunan ${formatLabel(selectedProduct)} (Mitra):`}</span>
+                  <span className="text-sm font-black text-[#E0E0E0]">{(isArmsProduct(selectedProduct)
+                    ? getArmsUnitCount(partnerData || {}, ARMS_TRADE_PRODUCTS.find(product => product.dataKey === selectedProduct)!)
+                    : Number(partnerData?.[selectedProduct] || 0)
+                  ).toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span></span>
                 </div>
-                <div className="flex justify-between items-center pt-0 pb-1">
-                  <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Produksi Mitra (Total):</span>
-                  <span className="text-sm font-black text-[#E0E0E0]">{(stockAvailable > 0 ? partnerProduction : 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span></span>
-                </div>
+                {!isArmsProduct(selectedProduct) && (
+                  <div className="flex justify-between items-center pt-0 pb-1">
+                    <span className="text-[#6B8A8A] font-bold text-sm tracking-wide">Produksi Mitra (Total):</span>
+                    <span className="text-sm font-black text-[#E0E0E0]">{(stockAvailable > 0 ? partnerProduction : 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} <span className="text-[10px] text-[#6B8A8A] font-bold">Unit</span></span>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-between gap-2">
@@ -642,7 +737,7 @@ export default function JualModalsMenu({
       <PilihItemModal
         isOpen={isProductPickerOpen}
         onClose={() => setIsProductPickerOpen(false)}
-        title="Pilih Produk Komoditas"
+        title="Pilih Komoditas atau Alutsista"
         data={groupedProductItems}
         selectedValue={selectedProduct}
         onSelect={(val) => setSelectedProduct(val)}
@@ -657,6 +752,13 @@ export default function JualModalsMenu({
         selectedValue={effectiveSelectedCountry}
         onSelect={(val) => setSelectedCountry(val)}
       />
+      {armsBudgetShortfall && (
+        <ArmsTradeBudgetModal
+          availableCash={armsBudgetShortfall.availableCash}
+          requiredCash={armsBudgetShortfall.requiredCash}
+          onClose={() => setArmsBudgetShortfall(null)}
+        />
+      )}
     </>
   );
 }

@@ -2,7 +2,6 @@
 'use client';
 
 import React, { memo, startTransition, useCallback, useState, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import {
     Play, Pause, Settings, Palmtree, Shield, Crosshair
 } from 'lucide-react';
@@ -25,6 +24,7 @@ const ModalsKudeta = dynamic(() => import('./menu_notifikasi/notifikasi_peringat
 type KudetaType = import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta').KudetaType;
 const ModalsAnnexedGameOver = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsAnnexedGameOver'), { ssr: false });
 const DiplomacyTracking = dynamic(() => import('../menus/tracking-modals/tracking'), { ssr: false });
+const ResultModal = dynamic(() => import('./warResultModal'), { ssr: false });
 
 export function lootUserProductionInventory(countryDetail: any, currentDateStr: string): { updatedDetail: any; lootedSummaryText: string } {
     if (!countryDetail) return { updatedDetail: countryDetail, lootedSummaryText: '' };
@@ -75,8 +75,10 @@ const CountryDetailModal = dynamic(() => import('../detail_negara/detail_negara'
 const NegaraUserModal = dynamic(() => import('./negara_user'), { ssr: false });
 const WarMap = dynamic(() => import('../path_logic/path-war'), { ssr: false });
 import { buildCapitalPoint } from '../path_logic/path-war';
+import { estimateTravelTime } from '../path_logic/time_logic';
 import { applyWarLossesToUserArmada } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 import { getArmadaPowerSummary } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
+import { convertBarakToSoldiers } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/1_barak_logic';
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
 import {
     hasActiveNationalization,
@@ -199,6 +201,10 @@ import {
 import { generateMilitaryAchievementNews } from '../menus/news/logic/6_pencapaian_militer/pencapaianMiliterNewsLogic';
 import { generateWorldNewsEvents } from '../menus/news/logic/worldNewsLogic';
 import { NewsItemData } from '../menus/news/newsModals';
+import {
+    createSecurityCouncilInvasionNews,
+    type SecurityCouncilInvasionOperation,
+} from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/1_invasiMiliterGabunganLogic';
 import {
     clearMissionProgressData,
     type MissionNavigationTarget
@@ -423,10 +429,13 @@ export default function MapPage() {
     const [playerDailyBirths, setPlayerDailyBirths] = useState<number>(0);
     const [playerDailyDeaths, setPlayerDailyDeaths] = useState<number>(0);
     const [isPaused, setIsPaused] = useState(true);
+    const isPausedRef = useRef(isPaused);
+    const warPauseStateRef = useRef<{ wasPaused: boolean } | null>(null);
     const [speed, setSpeed] = useState(1);
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
     useEffect(() => {
+        isPausedRef.current = isPaused;
         if (typeof window !== 'undefined') {
             (window as any).neosantara_is_paused = isPaused;
         }
@@ -1083,6 +1092,22 @@ export default function MapPage() {
             const attackerIso = getIsoForCountryName(attackerCountry) || 'un';
             const targetIso = getIsoForCountryName(targetCountry) || 'un';
 
+            const paymentAmount = Math.max(0, Number(amount) || 0);
+            const acceptanceChance = Math.min(100, Math.floor((paymentAmount / 100000) * 100));
+            if (Math.random() * 100 >= acceptanceChance) {
+                setNotifications(prev => [{
+                    id: `notif-requested-invasion-declined-${Date.now()}`,
+                    title: '📩 PERMINTAAN SERANGAN DITOLAK',
+                    sender: `Kementerian Luar Negeri — ${attackerCountry}`,
+                    message: `${attackerCountry} menolak permintaan serangan terhadap ${targetCountry}. Peluang persetujuan dari tawaran ${paymentAmount.toLocaleString('id-ID')} NEO adalah ${acceptanceChance}%.`,
+                    timestamp: dateStr,
+                    type: 'peringkat',
+                    value: 0,
+                    isRead: false,
+                }, ...prev]);
+                return;
+            }
+
             const warBanActive = hasActiveGlobalWarBan();
             const hasInvasionMandate = hasActiveApprovedInvasionResolution(attackerCountry, targetCountry);
             if (warBanActive) {
@@ -1100,16 +1125,33 @@ export default function MapPage() {
                     return;
                 }
             }
-            if (warBanActive || !hasInvasionMandate) {
-                const reason = warBanActive
-                    ? 'war_ban'
-                    : hasActiveApprovedInvasionResolutionForDifferentTarget(attackerCountry, targetCountry)
-                        ? 'wrong_military_target'
-                        : 'missing_military_resolution';
-                const sanctionsNotifications = warBanActive
-                    ? submitWarBanViolationSanctions(attackerCountry, targetCountry, dateStr)
-                    : submitInvasionViolationSanctions(attackerCountry, targetCountry, dateStr, reason);
+            if (warBanActive) {
+                const sanctionsNotifications = submitWarBanViolationSanctions(attackerCountry, targetCountry, dateStr);
                 setNotifications(prev => [...sanctionsNotifications, ...prev]);
+            }
+
+            setNpcWarQueue(previous => [...previous, {
+                attacker: attackerCountry,
+                target: targetCountry,
+                isNpcWar: true,
+                resolutionViolationAuthorized: !hasInvasionMandate,
+            }]);
+            const travelEstimate = estimateTravelTime(attackerCountry, targetCountry);
+            if (travelEstimate) {
+                const arrivalDate = new Date(currentDate);
+                arrivalDate.setHours(0, 0, 0, 0);
+                arrivalDate.setDate(arrivalDate.getDate() + travelEstimate.days);
+                window.dispatchEvent(new CustomEvent('requested_invasion_arrival_scheduled', {
+                    detail: {
+                        attackerCountry,
+                        targetCountry,
+                        arrivalDate: [
+                            arrivalDate.getFullYear(),
+                            String(arrivalDate.getMonth() + 1).padStart(2, '0'),
+                            String(arrivalDate.getDate()).padStart(2, '0'),
+                        ].join('-'),
+                    },
+                }));
             }
 
             // 1. Berita Invasi Deklarasi Perang
@@ -1152,7 +1194,7 @@ export default function MapPage() {
                 id: `notif-req-inv-${Date.now()}`,
                 title: `⚔️ OPERASI SERANGAN SEKUTU DILUNCURKAN`,
                 sender: `Kementerian Pertahanan & Sekutu (${attackerCountry})`,
-                message: `Permintaan serangan telah diproses! Angkatan Bersenjata ${attackerCountry} resmi melancarkan serangan terhadap ${targetCountry} setelah menerima bayaran $${Number(amount || 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })}. Berita resmi geopolitik telah diterbitkan!`,
+                message: `Permintaan serangan diterima! Angkatan Bersenjata ${attackerCountry} sedang bergerak menuju ${targetCountry} setelah menerima tawaran ${paymentAmount.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO. Peluang persetujuan: ${acceptanceChance}%.`,
                 timestamp: dateStr,
                 type: 'peringkat',
                 value: 100,
@@ -1543,7 +1585,15 @@ export default function MapPage() {
         }
     }, []);
     const [activeWarAnimation, setActiveWarAnimation] = useState<any>(null);
-    const [npcWarQueue, setNpcWarQueue] = useState<Array<{ attacker: string; target: string }>>([]);
+    const [npcWarQueue, setNpcWarQueue] = useState<Array<{
+        attacker: string;
+        target: string;
+        isNpcWar?: boolean;
+        isPbbCoalition?: boolean;
+        isPlayerCoalitionProposer?: boolean;
+        resolutionViolationAuthorized?: boolean;
+        coalitionParticipants?: Array<{ name: string; iso: string }>;
+    }>>([]);
     const npcWarQueueRunningRef = useRef(false);
     useEffect(() => {
         const handleStartWarAnimation = async (event: Event) => {
@@ -1570,6 +1620,59 @@ export default function MapPage() {
                 countryDetail?.country ||
                 countryDetail?.nama_negara ||
                 countryDetail?.name_id;
+            const isPlayerAttacker = Boolean(playerCountryName) && areSameWarCountry(
+                detail.attacker,
+                playerCountryName || '',
+                detail.attackerCountryDetail?.iso,
+                selectedCountry?.iso || countryDetail?.iso
+            );
+            const hasApprovedInvasionMandate = hasActiveApprovedInvasionResolution(
+                detail.attacker,
+                detail.target
+            );
+            const resolutionViolationAuthorized = detail.resolutionViolationAuthorized === true;
+            if (
+                !isPlayerAttacker &&
+                !hasApprovedInvasionMandate &&
+                !resolutionViolationAuthorized &&
+                Math.random() >= 0.25
+            ) {
+                npcWarQueueRunningRef.current = false;
+                setNotifications(previous => [{
+                    id: `notif-war-no-mandate-${Date.now()}`,
+                    title: '🕊️ RENCANA SERANGAN TANPA MANDAT DIBATALKAN',
+                    sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
+                    message: `Serangan ${detail.attacker} terhadap ${detail.target} tidak jadi diluncurkan. Serangan tanpa mandat hanya memiliki peluang 25%; upaya ini dibatalkan sebelum konflik dimulai.`,
+                    timestamp: currentDate.toISOString().slice(0, 10),
+                    type: 'peringkat',
+                    value: 100,
+                    isRead: false,
+                }, ...previous]);
+                return;
+            }
+            if (!isPlayerAttacker && !hasApprovedInvasionMandate) {
+                const violationReason = hasActiveGlobalWarBan()
+                    ? 'war_ban'
+                    : hasActiveApprovedInvasionResolutionForDifferentTarget(detail.attacker, detail.target)
+                        ? 'wrong_military_target'
+                        : 'missing_military_resolution';
+                const violationNotifications = violationReason === 'war_ban'
+                    ? submitWarBanViolationSanctions(
+                        detail.attacker,
+                        detail.target,
+                        currentDate.toISOString().slice(0, 10)
+                    )
+                    : submitInvasionViolationSanctions(
+                        detail.attacker,
+                        detail.target,
+                        currentDate.toISOString().slice(0, 10),
+                        violationReason
+                    );
+                if (violationNotifications.length > 0) {
+                    setNotifications(previous => [...violationNotifications, ...previous]);
+                }
+            }
+
             if (playerCountryName && areSameWarCountry(
                 detail.attacker,
                 playerCountryName,
@@ -1688,7 +1791,7 @@ export default function MapPage() {
 
             let attackerDetailData = resolveCountryDetail(detail.attacker, detail.attackerCountryDetail);
             let targetDetailData = resolveCountryDetail(detail.target, detail.targetCountryDetail);
-            if (!attackerDetailData || !targetDetailData) {
+            if (!attackerDetailData || !targetDetailData || detail.isPbbCoalition) {
                 try {
                     const response = await fetch('/api/country-data?all=true');
                     if (response.ok) {
@@ -1719,6 +1822,71 @@ export default function MapPage() {
                 });
             }
 
+            if (detail.isPbbCoalition && Array.isArray(detail.coalitionParticipants)) {
+                const coalitionProfiles = detail.coalitionParticipants
+                    .map((participant: { name: string; iso: string }) =>
+                        resolveCountryDetail(participant.name, undefined)
+                    )
+                    .filter((profile: Record<string, unknown> | null): profile is Record<string, unknown> => Boolean(profile));
+                const forceSources = coalitionProfiles.length > 0
+                    ? coalitionProfiles
+                    : attackerDetailData
+                        ? [attackerDetailData]
+                        : [];
+                if (forceSources.length !== detail.coalitionParticipants.length) {
+                    console.warn('[PBBMilitaryOperation] Some participant force data could not be resolved', {
+                        expected: detail.coalitionParticipants.length,
+                        resolved: forceSources.length,
+                    });
+                }
+
+                const coalitionArmada: Record<string, Record<string, number>> = {
+                    darat: {},
+                    laut: {},
+                    udara: {},
+                };
+                let coalitionPower = 0;
+                forceSources.forEach(profile => {
+                    const profileSummary = getArmadaPowerSummary(profile);
+                    profileSummary.breakdown.forEach(unit => {
+                        coalitionArmada[unit.groupId] ??= {};
+                        coalitionArmada[unit.groupId][unit.dataKey] =
+                            (coalitionArmada[unit.groupId][unit.dataKey] || 0) + Math.round(unit.quantity * 0.1);
+                        coalitionPower += unit.totalPower * 0.1;
+                    });
+
+                    const profileArmada = profile.armada && typeof profile.armada === 'object'
+                        ? profile.armada as Record<string, unknown>
+                        : profile;
+                    const groundForces = profileArmada.darat && typeof profileArmada.darat === 'object'
+                        ? profileArmada.darat as Record<string, unknown>
+                        : {};
+                    const infantry = Number(
+                        groundForces.pasukan_infanteri ??
+                        profileArmada.pasukan_infanteri ??
+                        profile.pasukan_infanteri
+                    ) || convertBarakToSoldiers(Number(
+                        groundForces.barak ??
+                        profileArmada.barak ??
+                        profile.barak ??
+                        0
+                    ));
+                    if (infantry > 0) {
+                        coalitionArmada.darat.pasukan_infanteri =
+                            (coalitionArmada.darat.pasukan_infanteri || 0) + Math.round(infantry * 0.1);
+                    }
+                });
+
+                attackerDetailData = {
+                    ...attackerDetailData,
+                    armada: coalitionArmada,
+                    pbbCoalitionPower: Math.round(coalitionPower),
+                    pbbCoalitionParticipants: detail.coalitionParticipants.map(
+                        (participant: { name: string }) => participant.name
+                    ),
+                };
+            }
+
             const attackerPowerSummary = getArmadaPowerSummary(attackerDetailData);
             const targetPowerSummary = getArmadaPowerSummary(targetDetailData);
 
@@ -1726,20 +1894,81 @@ export default function MapPage() {
                 ...detail,
                 attackerCountryDetail: attackerDetailData,
                 targetCountryDetail: targetDetailData,
-                attackerPower: attackerPowerSummary.totals.totalPower,
+                attackerPower: Number(attackerDetailData.pbbCoalitionPower) || attackerPowerSummary.totals.totalPower,
                 targetPower: targetPowerSummary.totals.totalPower
             });
         };
-        const handlePauseGameTime = () => {
+        const handlePauseGameTime = (event: Event) => {
+            const source = (event as CustomEvent<{ source?: string }>).detail?.source;
+            if (source === 'war' && !warPauseStateRef.current) {
+                warPauseStateRef.current = { wasPaused: isPausedRef.current };
+            }
             setIsPaused(true);
             if (timeManagerRef.current) {
                 timeManagerRef.current.setPaused(true);
             }
         };
+        const handlePbbMilitaryOperation = (event: Event) => {
+            const operation = (event as CustomEvent<SecurityCouncilInvasionOperation>).detail;
+            if (
+                !operation?.resolutionId ||
+                !operation.proposer?.name ||
+                !operation.target?.name ||
+                !Array.isArray(operation.participants)
+            ) {
+                console.error('[PBBMilitaryOperation] Invalid approved operation', operation);
+                return;
+            }
+
+            setNewsList(previous => {
+                const news = createSecurityCouncilInvasionNews(operation);
+                return [news, ...previous.filter(item => item.id !== news.id)];
+            });
+
+            const playerCountryName = selectedCountry?.country ||
+                countryDetail?.country ||
+                countryDetail?.nama_negara ||
+                countryDetail?.name_id ||
+                '';
+            const targetsPlayer = Boolean(playerCountryName) && areSameWarCountry(
+                operation.target.name,
+                playerCountryName,
+                operation.target.iso,
+                selectedCountry?.iso || countryDetail?.iso
+            );
+            const operationForces = [
+                operation.proposer,
+                ...operation.participants,
+            ].filter((participant, index, forces) =>
+                participant?.name &&
+                !areSameWarCountry(participant.name, operation.target.name, participant.iso, operation.target.iso) &&
+                forces.findIndex(candidate =>
+                    candidate?.name &&
+                    areSameWarCountry(candidate.name, participant.name, candidate.iso, participant.iso)
+                ) === index
+            );
+            const attacks = [{
+                attacker: operation.proposer.name,
+                target: operation.target.name,
+                isNpcWar: !targetsPlayer,
+                isPbbCoalition: true,
+                isPlayerCoalitionProposer: Boolean(playerCountryName) && areSameWarCountry(
+                    operation.proposer.name,
+                    playerCountryName,
+                    operation.proposer.iso,
+                    selectedCountry?.iso || countryDetail?.iso
+                ),
+                coalitionParticipants: operationForces,
+            }];
+
+            setNpcWarQueue(previous => [...previous, ...attacks]);
+        };
         window.addEventListener('start_war_animation', handleStartWarAnimation);
+        window.addEventListener('start_pbb_military_operation', handlePbbMilitaryOperation);
         window.addEventListener('pause_game_time', handlePauseGameTime);
         return () => {
             window.removeEventListener('start_war_animation', handleStartWarAnimation);
+            window.removeEventListener('start_pbb_military_operation', handlePbbMilitaryOperation);
             window.removeEventListener('pause_game_time', handlePauseGameTime);
         };
     }, [countryDetail, selectedCountry?.country]);
@@ -1752,7 +1981,7 @@ export default function MapPage() {
         npcWarQueueRunningRef.current = true;
         setNpcWarQueue(remainingWars);
         window.dispatchEvent(new CustomEvent('start_war_animation', {
-            detail: { ...nextWar, isNpcWar: true },
+            detail: { ...nextWar, isNpcWar: nextWar.isNpcWar ?? true },
         }));
     }, [activeWarAnimation, npcWarQueue]);
 
@@ -1943,16 +2172,23 @@ export default function MapPage() {
             }
         });
     }, [countryDetail, currentDate]);
-    const [resultModal, setResultModal] = useState<{ isOpen: boolean; title: string; message: string; type?: 'success' | 'error' | 'info' }>({
+    const [resultModal, setResultModal] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        type?: 'success' | 'error' | 'info';
+        persistent?: boolean;
+        openInboxOnClose?: boolean;
+    }>({
         isOpen: false,
         title: '',
         message: '',
         type: 'success'
     });
 
-    // Auto close resultModal after 3 seconds (3000ms) & reopen inboxModal
+    // Keep war results visible until the player closes them.
     useEffect(() => {
-        if (!resultModal.isOpen) return;
+        if (!resultModal.isOpen || resultModal.persistent) return;
 
         const timer = setTimeout(() => {
             setResultModal(prev => ({ ...prev, isOpen: false }));
@@ -1960,7 +2196,7 @@ export default function MapPage() {
         }, 3000);
 
         return () => clearTimeout(timer);
-    }, [resultModal.isOpen]);
+    }, [resultModal.isOpen, resultModal.persistent]);
 
     // Track triggers to prevent spamming notifications on every tick when index is in warning zone
     const [hasShownEarlyWarning, setHasShownEarlyWarning] = useState<{
@@ -2486,64 +2722,66 @@ export default function MapPage() {
                         currentDateStr,
                         userHasAnnexedTerritories
                     );
-                    if (attackNotification.attackLevel === 'invasi') {
-                        const activeResolutions = loadActiveResolutions();
-                        const pendingInvasionResolution = activeResolutions.find(item =>
-                            item.type === 'military_invasion' &&
-                            item.status === 'voting' &&
-                            areSameWarCountry(item.proposer.name, attackerCountry) &&
-                            areSameWarCountry(item.target.name, userCountryName)
-                        );
-                        const hasApprovedInvasionResolution = hasActiveApprovedInvasionResolution(
-                            attackerCountry,
-                            userCountryName
-                        );
-
-                        if (hasApprovedInvasionResolution) {
-                            if (Math.random() < 0.95) {
-                                newNotifsToAdd.push(generateDiserangNotification(
-                                    attackerCountry,
-                                    currentDateStr,
-                                    userHasAnnexedTerritories,
-                                    'invasi'
-                                ));
-                                window.dispatchEvent(new CustomEvent('start_war_animation', {
-                                    detail: {
-                                        attacker: attackerCountry,
-                                        target: userCountryName,
-                                        targetCountryDetail: countryDetail,
-                                    }
-                                }));
-                            }
-                        } else if (pendingInvasionResolution) {
-                            if (pendingInvasionResolution.aiInvasionAttackChance === undefined) {
-                                saveActiveResolutions(activeResolutions.map(item =>
-                                    item.id === pendingInvasionResolution.id
-                                        ? { ...item, aiInvasionAttackChance: attackChancePercent }
-                                        : item
-                                ));
-                            }
-                        } else {
-                            const invasionProposal = generateAIResolusiPBBNotification(
-                                attackerCountry,
-                                userCountryName,
-                                relationScore,
-                                currentDateStr,
-                                'military_invasion'
-                            );
-                            invasionProposal.aiInvasionAttackChance = attackChancePercent;
-                            newNotifsToAdd.push(invasionProposal);
-                            spawnAIResolutionFromTrigger(invasionProposal, currentDateStr);
+                    const hasApprovedInvasionResolution = hasActiveApprovedInvasionResolution(
+                        attackerCountry,
+                        userCountryName
+                    );
+                    if (hasApprovedInvasionResolution) {
+                        if (Math.random() < 0.95) {
+                            newNotifsToAdd.push(attackNotification);
+                            window.dispatchEvent(new CustomEvent('start_war_animation', {
+                                detail: {
+                                    attacker: attackerCountry,
+                                    target: userCountryName,
+                                    targetCountryDetail: countryDetail,
+                                }
+                            }));
                         }
                     } else {
-                        newNotifsToAdd.push(attackNotification);
-                        window.dispatchEvent(new CustomEvent('start_war_animation', {
-                            detail: {
-                                attacker: attackerCountry,
-                                target: userCountryName,
-                                targetCountryDetail: countryDetail,
+                        if (Math.random() < 0.25) {
+                            newNotifsToAdd.push(generateDiserangNotification(
+                                attackerCountry,
+                                currentDateStr,
+                                userHasAnnexedTerritories,
+                                'invasi'
+                            ));
+                            window.dispatchEvent(new CustomEvent('start_war_animation', {
+                                detail: {
+                                    attacker: attackerCountry,
+                                    target: userCountryName,
+                                    targetCountryDetail: countryDetail,
+                                    resolutionViolationAuthorized: true,
+                                }
+                            }));
+                        } else {
+                            const activeResolutions = loadActiveResolutions();
+                            const pendingInvasionResolution = activeResolutions.find(item =>
+                                item.type === 'military_invasion' &&
+                                item.status === 'voting' &&
+                                areSameWarCountry(item.proposer.name, attackerCountry) &&
+                                areSameWarCountry(item.target.name, userCountryName)
+                            );
+                            if (pendingInvasionResolution) {
+                                if (pendingInvasionResolution.aiInvasionAttackChance === undefined) {
+                                    saveActiveResolutions(activeResolutions.map(item =>
+                                        item.id === pendingInvasionResolution.id
+                                            ? { ...item, aiInvasionAttackChance: attackChancePercent }
+                                            : item
+                                    ));
+                                }
+                            } else {
+                                const invasionProposal = generateAIResolusiPBBNotification(
+                                    attackerCountry,
+                                    userCountryName,
+                                    relationScore,
+                                    currentDateStr,
+                                    'military_invasion'
+                                );
+                                invasionProposal.aiInvasionAttackChance = attackChancePercent;
+                                newNotifsToAdd.push(invasionProposal);
+                                spawnAIResolutionFromTrigger(invasionProposal, currentDateStr);
                             }
-                        }));
+                        }
                     }
                 }
             }
@@ -2616,9 +2854,17 @@ export default function MapPage() {
             if (Math.random() < 0.35) {
                 const proposedInvasions = evaluateAnnualHotRelationsInvasion(currentDateStr, userCountryName);
                 const warBanActive = hasActiveGlobalWarBan();
+                const authorizedInvasions = proposedInvasions.filter(invasion =>
+                    hasActiveApprovedInvasionResolution(invasion.attackerCountry, invasion.targetCountry)
+                );
+                const violationInvasions = proposedInvasions.filter(invasion =>
+                    !hasActiveApprovedInvasionResolution(invasion.attackerCountry, invasion.targetCountry) &&
+                    Math.random() < 0.25
+                );
+                const possibleInvasions = [...authorizedInvasions, ...violationInvasions];
                 const annualInvasions = warBanActive
-                    ? proposedInvasions.filter(() => Math.random() < 0.2)
-                    : proposedInvasions;
+                    ? possibleInvasions.filter(() => Math.random() < 0.2)
+                    : possibleInvasions;
 
                 if (annualInvasions.length > 0) {
                     setNpcWarQueue(previous => [
@@ -2626,16 +2872,36 @@ export default function MapPage() {
                         ...annualInvasions.map(invasion => ({
                             attacker: invasion.attackerCountry,
                             target: invasion.targetCountry,
+                            resolutionViolationAuthorized: !hasActiveApprovedInvasionResolution(
+                                invasion.attackerCountry,
+                                invasion.targetCountry
+                            ),
                         })),
                     ]);
                 }
 
-                if (warBanActive && annualInvasions.length < proposedInvasions.length) {
+                const cancelledUnauthorizedCount = proposedInvasions.length -
+                    authorizedInvasions.length -
+                    violationInvasions.length;
+                if (cancelledUnauthorizedCount > 0) {
+                    newNotifsToAdd.push({
+                        id: `notif-npc-war-no-mandate-${currentDateStr}`,
+                        title: '🕊️ SERANGAN TANPA MANDAT DIBATALKAN',
+                        sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
+                        message: `${cancelledUnauthorizedCount} rencana konflik AI tanpa mandat dibatalkan. Peluang serangan tanpa resolusi adalah 25%; pelanggaran yang lolos akan diajukan untuk sanksi dan embargo.`,
+                        timestamp: currentDateStr,
+                        type: 'peringkat',
+                        value: 100,
+                        isRead: false
+                    });
+                }
+
+                if (warBanActive && annualInvasions.length < possibleInvasions.length) {
                     newNotifsToAdd.push({
                         id: `notif-war-ban-ai-block-${currentDateStr}`,
                         title: '🕊️ LARANGAN PERANG PBB MENGHENTIKAN SERANGAN',
                         sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
-                        message: `${proposedInvasions.length - annualInvasions.length} rencana serangan negara AI dibatalkan. Larangan perang aktif; hanya 20% serangan AI yang biasanya terjadi dapat lolos.`,
+                        message: `${possibleInvasions.length - annualInvasions.length} rencana serangan negara AI dibatalkan. Larangan perang aktif; hanya 20% dari rencana yang lolos pemeriksaan mandat/peluang pelanggaran dapat berjalan.`,
                         timestamp: currentDateStr,
                         type: 'peringkat',
                         value: 100,
@@ -2867,6 +3133,15 @@ export default function MapPage() {
     const progressBarRef = useRef<HTMLDivElement | null>(null);
     const timeManagerRef = useRef<SimulationTimeManager | null>(null);
     const calendarRef = useRef<any>(null);
+    const resumeGameTimeAfterWar = () => {
+        const pauseState = warPauseStateRef.current;
+        warPauseStateRef.current = null;
+        if (!pauseState || pauseState.wasPaused) return;
+
+        isPausedRef.current = false;
+        setIsPaused(false);
+        timeManagerRef.current?.setPaused(false);
+    };
     const wasmModuleRef = useRef<any>(null);
     const hasInitRef = useRef(false);
     const dragStartRef = useRef({ x: 0, y: 0 });
@@ -3588,16 +3863,8 @@ export default function MapPage() {
 
                 decidedInvasions.forEach(item => {
                     const isApproved = item.status === 'passed';
-                    const relationAttackChance = Math.max(
-                        0,
-                        Math.min(100, Number(item.aiInvasionAttackChance) || 0)
-                    );
-                    const willDefyRejection = !isApproved &&
-                        Math.random() < 0.1 &&
-                        Math.random() * 100 < relationAttackChance;
-                    const willInvade = isApproved
-                        ? Math.random() < 0.95
-                        : willDefyRejection;
+                    const resolutionViolationAuthorized = !isApproved && Math.random() < 0.25;
+                    const willInvade = (isApproved && Math.random() < 0.95) || resolutionViolationAuthorized;
                     const targetHasAnnexedTerritories = hasAnnexedTerritories(item.target.name);
 
                     if (willInvade) {
@@ -3607,16 +3874,7 @@ export default function MapPage() {
                             targetHasAnnexedTerritories,
                             'invasi'
                         );
-                        const sanctionsNotifications = willDefyRejection
-                            ? submitInvasionViolationSanctions(
-                                item.proposer.name,
-                                item.target.name,
-                                currentDateStr,
-                                'missing_military_resolution'
-                            )
-                            : [];
                         setNotifications(previous => [
-                            ...sanctionsNotifications,
                             attackNotification,
                             ...previous
                         ]);
@@ -3625,6 +3883,7 @@ export default function MapPage() {
                                 attacker: item.proposer.name,
                                 target: item.target.name,
                                 targetCountryDetail: countryDetail,
+                                resolutionViolationAuthorized,
                             }
                         }));
                     } else {
@@ -3632,11 +3891,11 @@ export default function MapPage() {
                             id: `ai-invasion-decision-${item.id}`,
                             title: isApproved
                                 ? '🏛️ RESOLUSI INVASI DISETUJUI, SERANGAN DIBATALKAN'
-                                : '🕊️ NEGARA AI MENGHORMATI PENOLAKAN PBB',
+                                : '🕊️ NEGARA AI MENGHORMATI KEPUTUSAN PBB',
                             sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
                             message: isApproved
                                 ? `Resolusi invasi ${item.proposer.name} terhadap ${item.target.name} disetujui, tetapi negara tersebut tidak melanjutkan serangan.`
-                                : `Resolusi invasi ${item.proposer.name} terhadap ${item.target.name} ditolak. Negara tersebut mengurungkan niat menyerang.`,
+                                : `Resolusi invasi ${item.proposer.name} terhadap ${item.target.name} ditolak. Negara tersebut mengurungkan niat menyerang setelah peluang pelanggaran tanpa mandat sebesar 25% tidak berhasil.`,
                             timestamp: currentDateStr,
                             type: 'peringkat',
                             value: 0,
@@ -5357,13 +5616,13 @@ export default function MapPage() {
                         }}
                         attackerPower={activeWarAnimation.attackerPower ?? 0}
                         targetPower={activeWarAnimation.targetPower ?? 0}
-                        isUserDefender={activeWarAnimation.isNpcWar ? false : isUserDefender}
+                        isUserDefender={activeWarAnimation.isPbbCoalition ? isUserDefender : activeWarAnimation.isNpcWar ? false : isUserDefender}
                         isNpcWar={activeWarAnimation.isNpcWar === true}
+                        isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
                         onClose={() => {
                             setActiveWarAnimation(null);
-                            if (activeWarAnimation.isNpcWar) {
-                                npcWarQueueRunningRef.current = false;
-                            }
+                            npcWarQueueRunningRef.current = false;
+                            resumeGameTimeAfterWar();
                         }}
                         onResolve={({ action, result }) => {
                             if (isUserDefender) {
@@ -5437,9 +5696,13 @@ export default function MapPage() {
                                         title: 'Pertahanan Berhasil!',
                                         message: `Pasukan pertahanan nasional sukses memukul mundur agresi militer dari ${activeWarAnimation.attacker}! Armada pertahanan mengalami kerugian tempur sebesar 25%: ${lossSummaryText}.`,
                                         type: 'success',
+                                        persistent: true,
+                                        openInboxOnClose: false,
                                     });
                                 }
                                 setActiveWarAnimation(null);
+                                npcWarQueueRunningRef.current = false;
+                                resumeGameTimeAfterWar();
                                 return;
                             }
 
@@ -5447,6 +5710,16 @@ export default function MapPage() {
                             if (action === 'annex') mappedAction = 'aneksasi';
                             else if (action === 'loot') mappedAction = 'jarah';
                             else mappedAction = 'mundur';
+
+                            if (
+                                activeWarAnimation.isPbbCoalition &&
+                                !activeWarAnimation.isPlayerCoalitionProposer
+                            ) {
+                                setActiveWarAnimation(null);
+                                npcWarQueueRunningRef.current = false;
+                                resumeGameTimeAfterWar();
+                                return;
+                            }
 
                             if (mappedAction !== 'aneksasi') {
                                 setMilitaryAttackRelation(activeWarAnimation.attacker, activeWarAnimation.target, 25);
@@ -5462,6 +5735,7 @@ export default function MapPage() {
                                 })
                             );
                             setActiveWarAnimation(null);
+                            resumeGameTimeAfterWar();
                         }}
                     />
                 );
@@ -5800,46 +6074,16 @@ export default function MapPage() {
                 }}
             />
 
-            {/* Custom Result Modal (Pengganti alert peramban, Rendered via React Portal ke document.body) */}
-            {typeof window !== 'undefined' && resultModal.isOpen && createPortal(
-                <div className="fixed inset-0 z-[500000] flex items-center justify-center p-4 animate-fadeIn pointer-events-auto">
-                    <div className="bg-[#0A1A1A] border-2 border-[#00FFAA]/40 rounded-2xl p-6 shadow-[0_0_50px_rgba(0,255,170,0.25)] w-full max-w-md relative overflow-hidden flex flex-col font-sans">
-                        <div className="flex items-center justify-between mb-4 border-b border-[#00FFAA]/20 pb-3">
-                            <span className={`text-xs font-black tracking-widest uppercase ${resultModal.type === 'error' ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
-                                {resultModal.type === 'error' ? '⚠️ PERINGATAN KETIDAKSAMAAN' : '✓ INFORMASI TRANSAKSI & HASIL'}
-                            </span>
-                            <button
-                                onClick={() => {
-                                    setResultModal(prev => ({ ...prev, isOpen: false }));
-                                    setInboxModalOpen(true);
-                                }}
-                                className="text-[#6B8A8A] hover:text-[#00FFAA] font-black text-base cursor-pointer transition-colors"
-                            >
-                                ✕
-                            </button>
-                        </div>
-                        <h3 className={`text-lg font-black uppercase tracking-wide mb-2 ${resultModal.type === 'error' ? 'text-rose-400' : 'text-[#E0E0E0]'}`}>
-                            {resultModal.title}
-                        </h3>
-                        <p className="text-sm text-[#A0B0B0] leading-relaxed mb-6 font-medium">
-                            {resultModal.message}
-                        </p>
-                        <button
-                            onClick={() => {
-                                setResultModal(prev => ({ ...prev, isOpen: false }));
-                                setInboxModalOpen(true);
-                            }}
-                            className={`w-full py-3 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all ${resultModal.type === 'error'
-                                    ? 'bg-rose-500/20 border border-rose-500/50 text-rose-400 hover:bg-rose-500/30'
-                                    : 'bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-[0_0_20px_rgba(0,255,170,0.3)]'
-                                }`}
-                        >
-                            Tutup
-                        </button>
-                    </div>
-                </div>,
-                document.body
-            )}
+            <ResultModal
+                isOpen={resultModal.isOpen}
+                title={resultModal.title}
+                message={resultModal.message}
+                type={resultModal.type}
+                onClose={() => {
+                    setResultModal(prev => ({ ...prev, isOpen: false }));
+                    if (resultModal.openInboxOnClose !== false) setInboxModalOpen(true);
+                }}
+            />
         </main>
     );
 }

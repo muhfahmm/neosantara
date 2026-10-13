@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { 
-  X, Shield, ShieldAlert, Angry, Smile, Banknote, Anchor, Lock, Package,
+  X, Shield, ShieldAlert, Angry, Banknote, Anchor, Lock, Package,
   ChevronDown, Clock, FileText, Plus, Users
 } from "lucide-react";
 import { createPortal } from "react-dom";
@@ -37,7 +37,6 @@ interface CountryOption {
 
 const RESOLUTION_ACTIONS = [
   { id: 'military', icon: Angry, label: 'Invasi Militer', desc: 'Semua tentara bersatu dari semua negara menyerang negara yang dipilih.' },
-  { id: 'support', icon: Smile, label: 'Dukung Negara', desc: 'Dukungan kepada negara yang dipilih meningkatkan hubungan diplomatiknya dengan semua negara lain sebesar 10 unit.' },
   { id: 'economic', icon: Banknote, label: 'Blokade Ekonomi', desc: 'Selama resolusi aktif, produksi manufaktur, peternakan, agrikultur, perikanan, olahan pangan, serta tambang selain emas berkurang 50%.' },
   { id: 'naval', icon: Anchor, label: 'Blokade Laut', desc: 'Selama resolusi aktif, produksi manufaktur, peternakan, agrikultur, perikanan, olahan pangan, serta tambang selain emas berkurang 25%.' },
   { id: 'full', icon: Lock, label: 'Blokade Penuh', desc: 'Selama periode yang dipilih, negara ini tidak dapat menandatangani kontrak apa pun atau berdagang.' },
@@ -292,6 +291,25 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
     let updatedModalItem: ActiveSecurityCouncilItem | null = null;
     const updated = currentItems.map(item => {
       if (item.id !== activeModalItem.id) return item;
+      const previousForcedVote = item.bribedCountries?.[countryKey];
+      const sourceVote = previousForcedVote || (
+        activeBreakdown.supporters.some(country => country.iso.toLowerCase() === countryKey)
+          ? 'yes'
+          : activeBreakdown.opponents.some(country => country.iso.toLowerCase() === countryKey)
+            ? 'no'
+            : activeBreakdown.abstain.some(country => country.iso.toLowerCase() === countryKey)
+              ? 'abstain'
+              : null
+      );
+      const voteBucket = (vote: 'yes' | 'no' | 'abstain' | 'veto') =>
+        vote === 'yes' ? 'supportersCount' : vote === 'abstain' ? 'abstainCount' : 'opponentsCount';
+      const voteStats = { ...item.voteStats };
+      if (sourceVote && sourceVote !== targetVote) {
+        const sourceCount = voteBucket(sourceVote);
+        const targetCount = voteBucket(targetVote);
+        voteStats[sourceCount] = Math.max(0, voteStats[sourceCount] - 1);
+        voteStats[targetCount] += 1;
+      }
       const bribed = { ...(item.bribedCountries || {}), [countryKey]: targetVote };
       const currentVetoedBy = Array.isArray(item.vetoedBy)
         ? item.vetoedBy
@@ -304,7 +322,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
         bribedCountries: bribed,
         vetoedBy,
         voteStats: {
-          ...item.voteStats,
+          ...voteStats,
           vetoCount: vetoedBy.length
         }
       };

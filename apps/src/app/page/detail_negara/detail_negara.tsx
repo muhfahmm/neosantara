@@ -101,6 +101,30 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   };
 
   useEffect(() => {
+    const handleRequestedInvasionArrival = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        attackerCountry?: string;
+        targetCountry?: string;
+        arrivalDate?: string;
+      }>).detail;
+      if (
+        !detail?.attackerCountry ||
+        !detail.arrivalDate ||
+        normalizeCountryKey(detail.attackerCountry) !== normalizeCountryKey(countryName)
+      ) {
+        return;
+      }
+      setMilitaryActionDates(previous => ({
+        ...previous,
+        [`${normalizeCountryKey(countryName)}:minta_serang`]: detail.arrivalDate!,
+      }));
+    };
+
+    window.addEventListener('requested_invasion_arrival_scheduled', handleRequestedInvasionArrival);
+    return () => window.removeEventListener('requested_invasion_arrival_scheduled', handleRequestedInvasionArrival);
+  }, [countryName]);
+
+  useEffect(() => {
     const refreshAnnexation = (event: Event) => {
       const detail = (event as CustomEvent<{
         attackerCountry?: string;
@@ -745,6 +769,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                   serang: militaryActionDates[`${normalizeCountryKey(countryName)}:serang`],
                   spionase: militaryActionDates[`${normalizeCountryKey(countryName)}:spionase`],
                   sabotase: militaryActionDates[`${normalizeCountryKey(countryName)}:sabotase`],
+                  mintaSerang: militaryActionDates[`${normalizeCountryKey(countryName)}:minta_serang`],
                 }}
                 onMilitaryActionLaunched={recordMilitaryAction}
                 onCloseDetailModal={() => {

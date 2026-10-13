@@ -2,6 +2,7 @@
 import React from "react";
 import { X } from "lucide-react";
 import { PartnerOffer } from "../PerdaganganModal";
+import { ARMS_TRADE_PRODUCTS } from "../armsTradeLogic";
 
 import { COUNTRIES_DATA } from "../../../../../map_system/map-data";
 
@@ -10,6 +11,7 @@ interface TawaranPembelianTableProps {
   onAcceptOffer: (offer: PartnerOffer) => void;
   onClose: () => void;
   currentDate: Date; // <--- TAMBAHAN: Ambil tanggal simulasi saat ini
+  marketType?: "arms";
 }
 
 // Helper formatting
@@ -22,11 +24,12 @@ const getFlagEmoji = (countryName: string) => {
   return String.fromCodePoint(...codePoints);
 };
 
-export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, currentDate }: TawaranPembelianTableProps) {
+export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, currentDate, marketType }: TawaranPembelianTableProps) {
+  const isArmsMarket = marketType === "arms" || offers.some(offer => offer.marketType === "arms");
   return (
     <div className="mb-8 border border-[#00FFAA]/30 rounded-xl overflow-hidden animate-in fade-in zoom-in duration-300 bg-[#0F2424]">
       <div className="bg-[#0A1A1A] px-6 py-3 flex justify-between items-center text-[#00FFAA] text-xs font-black uppercase tracking-wider border-b border-[#00FFAA]/20">
-        <span>Tawaran Khusus dari Mitra Dagang</span>
+        <span>{isArmsMarket ? "Tawaran Alutsista dari Negara Mitra" : "Tawaran Khusus dari Mitra Dagang"}</span>
         <button onClick={onClose} className="hover:text-rose-400 transition-colors cursor-pointer">
           <X className="h-4 w-4" />
         </button>
@@ -35,10 +38,10 @@ export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, 
         <thead>
           <tr className="bg-[#0A1A1A] border-b border-[#00FFAA]/20">
             <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Mitra</th>
-            <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Produk</th>
-            <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Kuantitas</th>
+            <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">{isArmsMarket ? "Alutsista" : "Produk"}</th>
+            <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">{isArmsMarket ? "Unit" : "Kuantitas"}</th>
             <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Harga/Unit</th>
-            <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Total Biaya</th>
+            <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">{isArmsMarket ? "Nilai Transaksi" : "Total Biaya"}</th>
             <th className="px-4 py-2.5 text-[10px] font-black text-[#00FFAA] uppercase tracking-wider text-center">Aksi</th>
           </tr>
         </thead>
@@ -79,7 +82,11 @@ export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, 
                     })()}
                     <span>{offer.partnerName}</span>
                   </td>
-                  <td className="px-4 py-3 text-xs font-bold text-[#00FFAA]">{formatLabel(offer.productKey)}</td>
+                  <td className="px-4 py-3 text-xs font-bold text-[#00FFAA]">
+                    {offer.marketType === "arms"
+                      ? ARMS_TRADE_PRODUCTS.find(product => product.dataKey === offer.productKey)?.label || formatLabel(offer.productKey)
+                      : formatLabel(offer.productKey)}
+                  </td>
                   <td className="px-4 py-3 text-xs font-semibold text-[#E0E0E0]">{offer.quantity.toLocaleString()}</td>
                   <td className="px-4 py-3 text-xs text-[#6B8A8A]">{offer.pricePerUnit.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</td>
                   <td className="px-4 py-3 text-xs font-bold text-[#00FFAA]">{offer.totalPrice.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</td>
@@ -89,7 +96,9 @@ export default function TawaranPembelianTable({ offers, onAcceptOffer, onClose, 
                         onClick={() => onAcceptOffer(offer)}
                         className="px-3 py-1.5 rounded bg-[#00FFAA] hover:bg-[#00FFAA]/80 text-[#0A1A1A] text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer"
                       >
-                        Terima
+                        {offer.marketType === "arms"
+                          ? offer.armsDirection === "buy_from_partner" ? "Beli" : "Jual"
+                          : "Terima"}
                       </button>
                     ) : (
                       <span className="px-3 py-1.5 rounded bg-[#0A1A1A] text-[#6B8A8A] text-[10px] font-bold uppercase cursor-not-allowed border border-[#6B8A8A]/30">

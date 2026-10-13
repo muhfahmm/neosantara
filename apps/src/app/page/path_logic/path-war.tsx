@@ -412,6 +412,7 @@ interface WarMapProps {
   defenderBonus?: number;
   isUserDefender?: boolean;
   isNpcWar?: boolean;
+  isPbbCoalition?: boolean;
   onClose: () => void;
   onResolve: (payload: {
     result: WarResult;
@@ -431,6 +432,7 @@ export default function WarMap({
   defenderBonus = 1,
   isUserDefender: isUserDefenderProp,
   isNpcWar = false,
+  isPbbCoalition = false,
   onClose,
   onResolve,
 }: WarMapProps) {
@@ -510,7 +512,7 @@ export default function WarMap({
   const battleOutcome = useMemo(() => {
     if (!isOpen) return null;
     return computeWarResult({
-      attackerPower,
+      attackerPower: Number((attacker as Record<string, unknown>).pbbCoalitionPower) || attackerPower,
       targetPower,
       attackerBonus,
       defenderBonus,
@@ -573,7 +575,7 @@ export default function WarMap({
   useEffect(() => {
     if (phase !== 'impact' || !battleOutcome) return;
     setShowFlash(true);
-    if (isNpcWar) {
+    if (isNpcWar && !isPbbCoalition) {
       const closeTimer = setTimeout(() => onCloseRef.current(), 1300);
       const flashTimer = setTimeout(() => setShowFlash(false), 500);
       return () => {
@@ -589,7 +591,7 @@ export default function WarMap({
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, [phase, battleOutcome, isNpcWar]);
+  }, [phase, battleOutcome, isNpcWar, isPbbCoalition]);
 
   /* ── Titik kontrol Bezier & jalur ── */
   const controlPos = useMemo(() => {
@@ -730,15 +732,17 @@ export default function WarMap({
       {/* ══════════ MODAL PERBANDINGAN PASUKAN (Fase 'comparison') ══════════ */}
       {phase === 'comparison' && (
         <PerbandinganPasukan
-          attackerName={attacker.country}
+          attackerName={isPbbCoalition ? 'Pasukan Gabungan PBB' : attacker.country}
           attackerIso={attacker.iso || 'cn'}
           attackerPower={attackerPower}
+          attackerPowerOverride={Number((attacker as Record<string, unknown>).pbbCoalitionPower) || undefined}
           attackerDetail={attacker}
           targetName={target.country}
           targetIso={target.iso || 'un'}
           targetPower={targetPower}
           targetDetail={target}
           isUserDefender={isUserDefender}
+          isCoalitionForce={isPbbCoalition}
           onStartBattle={handleStartBattle}
           onAutoResult={handleAutoResult}
           onClose={onClose}
@@ -786,12 +790,14 @@ export default function WarMap({
                   result === 'win' ? (
                     <>
                       Pasukan <strong className="text-white">{target.country}</strong>{' '}
-                      berhasil memukul mundur agresi militer{' '}
-                      <strong className="text-white">{attacker.country}</strong>! Pertahanan nasional berdiri kokoh.
+                      berhasil memukul mundur{' '}
+                      {isPbbCoalition ? 'Pasukan Gabungan PBB' : <>agresi militer <strong className="text-white">{attacker.country}</strong></>}! Pertahanan nasional berdiri kokoh.
                     </>
                   ) : (
                     <>
-                      Pasukan <strong className="text-white">{attacker.country}</strong>{' '}
+                      {isPbbCoalition
+                        ? <strong className="text-white">Pasukan Gabungan PBB</strong>
+                        : <>Pasukan <strong className="text-white">{attacker.country}</strong></>}{' '}
                       berhasil menembus benteng pertahanan{' '}
                       <strong className="text-white">{target.country}</strong>. Kerugian armada dialami.
                     </>
@@ -799,13 +805,17 @@ export default function WarMap({
                 ) : (
                   result === 'win' ? (
                     <>
-                      Pasukan <strong className="text-white">{attacker.country}</strong>{' '}
+                      {isPbbCoalition
+                        ? <strong className="text-white">Pasukan Gabungan PBB</strong>
+                        : <>Pasukan <strong className="text-white">{attacker.country}</strong></>}{' '}
                       berhasil menembus benteng pertahanan{' '}
                       <strong className="text-white">{target.country}</strong>!
                     </>
                   ) : (
                     <>
-                      Pasukan <strong className="text-white">{attacker.country}</strong>{' '}
+                      {isPbbCoalition
+                        ? <strong className="text-white">Pasukan Gabungan PBB</strong>
+                        : <>Pasukan <strong className="text-white">{attacker.country}</strong></>}{' '}
                       gagal menembus pertahanan{' '}
                       <strong className="text-white">{target.country}</strong>.
                     </>
@@ -818,7 +828,7 @@ export default function WarMap({
             <div className="grid grid-cols-2 divide-x divide-[#00FFAA]/10 border-b border-[#00FFAA]/10">
               <div className="p-4 text-center">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mb-1">
-                  Skor Penyerang ({attacker.country})
+                  {isPbbCoalition ? 'Skor Pasukan Gabungan PBB' : `Skor Penyerang (${attacker.country})`}
                 </p>
                 <p className="text-lg font-black text-[#00FFAA]">
                   {battleOutcome?.attackerScore.toLocaleString()}
@@ -826,7 +836,7 @@ export default function WarMap({
               </div>
               <div className="p-4 text-center">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mb-1">
-                  Skor Bertahan ({target.country})
+                  {isPbbCoalition ? `Skor Pertahanan (${target.country})` : `Skor Bertahan (${target.country})`}
                 </p>
                 <p className="text-lg font-black text-[#FF2D55]">
                   {battleOutcome?.targetScore.toLocaleString()}
@@ -842,8 +852,8 @@ export default function WarMap({
                     <AlertTriangle className={`h-4 w-4 ${result === 'win' ? 'text-[#00FFAA]' : 'text-[#FF2D55]'} mt-0.5 flex-shrink-0`} />
                     <p className="text-[11px] text-[#E0E0E0] leading-relaxed">
                       {result === 'win'
-                        ? `Operasi pertahanan nasional sukses besar! Pasukan ${attacker.country} dipaksa mundur.`
-                        : `Wilayah nasional terdampak serangan musuh (${attacker.country}). Kerugian armada pertahanan telah terjadi.`}
+                        ? `Operasi pertahanan nasional sukses besar! ${isPbbCoalition ? 'Pasukan Gabungan PBB' : `Pasukan ${attacker.country}`} dipaksa mundur.`
+                        : `Wilayah nasional terdampak serangan ${isPbbCoalition ? 'Pasukan Gabungan PBB' : `musuh (${attacker.country})`}. Kerugian armada pertahanan telah terjadi.`}
                     </p>
                   </div>
                   <button

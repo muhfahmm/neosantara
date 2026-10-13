@@ -19,6 +19,10 @@ import {
   markLimitedVetoUsed,
   PERMANENT_SECURITY_COUNCIL_MEMBERS,
 } from "../logika_anggota_tidak_tetap/securityCouncilElection";
+import {
+  getSecurityCouncilInvasionParticipants,
+  type SecurityCouncilInvasionOperation,
+} from "./1_invasiMiliterGabunganLogic";
 
 const PERMANENT_SECURITY_COUNCIL_MEMBER_ISOS = new Set(
   PERMANENT_SECURITY_COUNCIL_MEMBERS.map(member => member.iso)
@@ -31,6 +35,55 @@ export function isPermanentSecurityCouncilMember(countryIso: string): boolean {
 export function canUseSecurityCouncilVeto(countryIso: string, resolutionId?: string): boolean {
   const normalizedIso = countryIso.toLowerCase().trim();
   return isPermanentSecurityCouncilMember(normalizedIso) || isLimitedVetoAvailable(normalizedIso, resolutionId);
+}
+
+type SecurityCouncilVote = 'yes' | 'no' | 'abstain';
+type SecurityCouncilVoteBucket = 'supporters' | 'opponents' | 'abstain';
+
+function applySecurityCouncilBribes(
+  item: ActiveSecurityCouncilItem,
+  votes: { supportersCount: number; opponentsCount: number; abstainCount: number },
+  activeUserCountryName: string,
+  userVote: SecurityCouncilVote | null
+) {
+  const bribedCountries = item.bribedCountries || {};
+  if (Object.keys(bribedCountries).length === 0) return votes;
+
+  const baselineItem: ActiveSecurityCouncilItem = {
+    ...item,
+    userVote,
+    voteStats: { ...votes, vetoCount: 0 },
+    bribedCountries: {},
+    vetoedBy: [],
+  };
+  const breakdown = getSecurityCouncilCountryBreakdown(baselineItem, [], activeUserCountryName);
+  const previousVoteByIso = new Map<string, SecurityCouncilVoteBucket>();
+  breakdown.supporters.forEach(country => previousVoteByIso.set(country.iso.toLowerCase(), 'supporters'));
+  breakdown.opponents.forEach(country => previousVoteByIso.set(country.iso.toLowerCase(), 'opponents'));
+  breakdown.abstain.forEach(country => previousVoteByIso.set(country.iso.toLowerCase(), 'abstain'));
+
+  const adjusted = { ...votes };
+  const countKey: Record<SecurityCouncilVoteBucket, keyof typeof adjusted> = {
+    supporters: 'supportersCount',
+    opponents: 'opponentsCount',
+    abstain: 'abstainCount',
+  };
+  const destination: Record<SecurityCouncilVote | 'veto', SecurityCouncilVoteBucket> = {
+    yes: 'supporters',
+    no: 'opponents',
+    abstain: 'abstain',
+    veto: 'opponents',
+  };
+
+  Object.entries(bribedCountries).forEach(([iso, forcedVote]) => {
+    const previousVote = previousVoteByIso.get(iso.toLowerCase());
+    const forcedBucket = destination[forcedVote];
+    if (!previousVote || !forcedBucket || previousVote === forcedBucket) return;
+    adjusted[countKey[previousVote]] = Math.max(0, adjusted[countKey[previousVote]] - 1);
+    adjusted[countKey[forcedBucket]] += 1;
+  });
+
+  return adjusted;
 }
 
 export interface ActiveSecurityCouncilItem {
@@ -67,6 +120,7 @@ export interface ActiveSecurityCouncilItem {
   notifiedDay1?: boolean;
   notified10Days?: boolean;
   notifiedFinished?: boolean;
+  militaryOperationStarted?: boolean;
 }
 
 export const STORAGE_KEY_PBB_KEAMANAN = 'pbb_active_keamanan_v4';
@@ -108,7 +162,6 @@ const DEFAULT_SECURITY_TARGETS = [
 
 const SECURITY_TEMPLATES = [
   { type: 'military', label: 'Invasi Militer Gabungan PBB', desc: 'Semua tentara bersatu dari semua negara menyerang negara yang dipilih.' },
-  { type: 'support', label: 'Dukungan Diplomatik Internasional', desc: 'Dukungan kepada negara yang dipilih meningkatkan hubungan diplomatiknya dengan semua negara lain sebesar 10 unit.' },
   { type: 'economic', label: 'Blokade Ekonomi & Sanksi Industri', desc: 'Selama resolusi aktif, produksi manufaktur, peternakan, agrikultur, perikanan, olahan pangan, serta tambang selain emas berkurang 50%.' },
   { type: 'naval', label: 'Blokade Laut & Maritim', desc: 'Selama resolusi aktif, produksi manufaktur, peternakan, agrikultur, perikanan, olahan pangan, serta tambang selain emas berkurang 25%.' },
   { type: 'full', label: 'Blokade Penuh & Isolasi Perdagangan', desc: 'Selama periode yang dipilih, negara ini tidak dapat menandatangani kontrak apa pun atau berdagang.' },
@@ -471,6 +524,7 @@ export function tickPBBSecurityCouncil(
     }];
   });
 
+  const militaryOperationsToStart: SecurityCouncilInvasionOperation[] = [];
   let updated: ActiveSecurityCouncilItem[] = eligibleItems
     .map(item => {
       let startDate = item.createdAt || dateStr;
@@ -510,7 +564,7 @@ export function tickPBBSecurityCouncil(
       const finalUserVote = newDaysRemaining === 0 && !activeUserAnnexed
         ? eligibleUserVote || 'abstain'
         : eligibleUserVote;
-      const votes = calculate15SecurityCouncilVotes(
+      const calculatedVotes = calculate15SecurityCouncilVotes(
         newDaysRemaining,
         finalUserVote,
         proposer?.name,
@@ -520,6 +574,12 @@ export function tickPBBSecurityCouncil(
         item.id,
         item.userVeto,
         item.userVetoIso
+      );
+      const votes = applySecurityCouncilBribes(
+        { ...item, userVote: finalUserVote },
+        calculatedVotes,
+        activeUser,
+        finalUserVote
       );
       const eligibleCouncilCount = Math.max(
         0,
@@ -588,6 +648,19 @@ export function tickPBBSecurityCouncil(
           finalStatus = votes.supportersCount > votes.opponentsCount ? 'passed' : 'rejected';
         }
         finishedAtDate = dateStr;
+        if (
+          finalStatus === 'passed' &&
+          item.type === 'military' &&
+          !item.militaryOperationStarted
+        ) {
+          militaryOperationsToStart.push({
+            resolutionId: item.id,
+            proposer: item.proposer,
+            target: item.target,
+            participants: getSecurityCouncilInvasionParticipants(item.target.name, item.target.iso),
+            dateStr,
+          });
+        }
 
         if (!notifiedFinished) {
           notifiedFinished = true;
@@ -639,6 +712,9 @@ export function tickPBBSecurityCouncil(
         notifiedDay1: notifiedDay1,
         notified10Days: notified,
         notifiedFinished: notifiedFinished,
+        militaryOperationStarted: item.militaryOperationStarted || (
+          finalStatus === 'passed' && item.type === 'military'
+        ),
         lastProcessedDate: dateStr
       };
     })
@@ -652,6 +728,9 @@ export function tickPBBSecurityCouncil(
 
   saveActiveSecurityCouncilItems(updated);
   if (typeof window !== 'undefined') {
+    militaryOperationsToStart.forEach(operation => {
+      window.dispatchEvent(new CustomEvent('start_pbb_military_operation', { detail: operation }));
+    });
     window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
   }
   return updated;

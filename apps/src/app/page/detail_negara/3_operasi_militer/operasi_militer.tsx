@@ -29,7 +29,7 @@ interface OperasiMiliterProps {
   isOccupiedProvince?: boolean;
   occupyingCountry?: string;
   provinceTension?: number;
-  actionDates?: Partial<Record<'serang' | 'spionase' | 'sabotase', string>>;
+  actionDates?: Partial<Record<'serang' | 'spionase' | 'sabotase' | 'mintaSerang', string>>;
   onMilitaryActionLaunched?: (action: 'serang' | 'spionase' | 'sabotase') => void;
   updatePlayerCountryDetail?: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
 }
@@ -146,7 +146,17 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
         <ActionButton icon={Radiation} label="Perang Nuklir" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsNuklirOpen(true); }} />
         
         <ActionButton icon={UserX} label="Lakukan Kudeta" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsKudetaOpen(true); }} />
-        <ActionButton icon={Phone} label="Minta Menyerang Negara" onClick={() => setIsMintaSerangOpen(true)} />
+        <div className="relative w-full min-w-0">
+          {actionDates?.mintaSerang && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.mintaSerang)}</div>}
+          <ActionButton
+            icon={Phone}
+            label="Minta Menyerang Negara"
+            className={actionDates?.mintaSerang ? datedActionClass : undefined}
+            iconClass={actionDates?.mintaSerang ? 'text-amber-300' : undefined}
+            labelClass={actionDates?.mintaSerang ? 'text-amber-300' : undefined}
+            onClick={() => setIsMintaSerangOpen(true)}
+          />
+        </div>
         <ActionButton icon={MessageSquare} label="Hina" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsHinaOpen(true); }} />
       </div>
 

@@ -9,6 +9,7 @@ import { ResourceLootNewsData } from './logic/3_berita_pengambilan_sda/beritaPen
 import { DiplomacyNewsData } from './logic/4_diplomasi/diplomasiNewsLogic';
 import { EconomyNewsData } from './logic/5_ekonomi_keuangan/ekonomiKeuanganNewsLogic';
 import { MilitaryAchievementNewsData } from './logic/6_pencapaian_militer/pencapaianMiliterNewsLogic';
+import { SecurityCouncilInvasionNews } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/1_invasiMiliterGabunganLogic';
 
 export type NewsItemData =
   | InvasionNewsData
@@ -16,7 +17,8 @@ export type NewsItemData =
   | ResourceLootNewsData
   | DiplomacyNewsData
   | EconomyNewsData
-  | MilitaryAchievementNewsData;
+  | MilitaryAchievementNewsData
+  | SecurityCouncilInvasionNews;
 
 type NewsCategory = 'semua' | 'diplomasi' | 'ekonomi_keuangan' | 'pencapaian_militer' | 'operasi_militer';
 type NewsType = NewsItemData['type'];
@@ -42,6 +44,7 @@ export default function TopRightNewsIcon({
 
   const [toastNews, setToastNews] = useState<NewsItemData | null>(null);
   const [showToast, setShowToast] = useState(false);
+  const [selectedOperationNews, setSelectedOperationNews] = useState<SecurityCouncilInvasionNews | null>(null);
   const dismissedToastIdRef = React.useRef<string | null>(null);
 
   useEffect(() => {
@@ -87,7 +90,7 @@ export default function TopRightNewsIcon({
     diplomasi: ['pakta_non_agresi', 'aliansi_pertahanan', 'perjanjian_dagang', 'kontrak_penelitian', 'sanksi_ekonomi'],
     ekonomi_keuangan: ['krisis_ekonomi', 'pajak_baru'],
     pencapaian_militer: ['program_nuklir'],
-    operasi_militer: ['invasi', 'aneksasi', 'pengambilan_sda'],
+    operasi_militer: ['invasi', 'invasi_gabungan_pbb', 'aneksasi', 'pengambilan_sda'],
   };
 
   const typeLabels: Record<NewsType, string> = {
@@ -102,6 +105,7 @@ export default function TopRightNewsIcon({
     krisis_ekonomi: 'Krisis Ekonomi',
     pajak_baru: 'Pajak Baru',
     program_nuklir: 'Program Nuklir',
+    invasi_gabungan_pbb: 'Invasi Gabungan PBB',
   };
 
   const renderBadge = (type: NewsItemData['type']) => {
@@ -125,6 +129,13 @@ export default function TopRightNewsIcon({
           <span className="text-[10px] font-extrabold text-emerald-400 bg-emerald-500/15 px-2.5 py-0.5 rounded-full border border-emerald-500/30 uppercase tracking-wider flex items-center gap-1">
             <Coins className="w-3 h-3 text-emerald-400" />
             Perampasan Aset & SDA
+          </span>
+        );
+      case 'invasi_gabungan_pbb':
+        return (
+          <span className="text-[10px] font-extrabold text-cyan-300 bg-cyan-500/15 px-2.5 py-0.5 rounded-full border border-cyan-500/30 uppercase tracking-wider flex items-center gap-1">
+            <Swords className="w-3 h-3" />
+            Invasi Gabungan PBB
           </span>
         );
       default:
@@ -328,7 +339,22 @@ export default function TopRightNewsIcon({
                   {filteredNews.map((news) => (
                     <div
                       key={news.id}
-                      className="bg-[#0F2424] border border-[#00FFAA]/25 p-4 sm:p-5 rounded-2xl shadow-lg relative space-y-3 hover:border-[#00FFAA]/50 transition-all"
+                      onClick={() => {
+                        if (news.type === 'invasi_gabungan_pbb') setSelectedOperationNews(news);
+                      }}
+                      onKeyDown={event => {
+                        if (
+                          news.type === 'invasi_gabungan_pbb' &&
+                          (event.key === 'Enter' || event.key === ' ')
+                        ) {
+                          event.preventDefault();
+                          setSelectedOperationNews(news);
+                        }
+                      }}
+                      role={news.type === 'invasi_gabungan_pbb' ? 'button' : undefined}
+                      tabIndex={news.type === 'invasi_gabungan_pbb' ? 0 : undefined}
+                      title={news.type === 'invasi_gabungan_pbb' ? 'Klik untuk melihat negara peserta' : undefined}
+                      className={`bg-[#0F2424] border border-[#00FFAA]/25 p-4 sm:p-5 rounded-2xl shadow-lg relative space-y-3 hover:border-[#00FFAA]/50 transition-all ${news.type === 'invasi_gabungan_pbb' ? 'cursor-pointer' : ''}`}
                     >
                       <div className="flex items-start gap-3.5">
                         {renderIcon(news.type)}
@@ -375,6 +401,11 @@ export default function TopRightNewsIcon({
                               </span>
                             </div>
                           )}
+                          {news.type === 'invasi_gabungan_pbb' && (
+                            <div className="mt-2 text-xs font-bold text-cyan-300">
+                              Klik untuk melihat {news.participants.length} negara anggota Dewan Keamanan yang terlibat.
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -383,6 +414,56 @@ export default function TopRightNewsIcon({
               )}
             </div>
           </div>
+          {selectedOperationNews && (
+            <div
+              className="fixed inset-0 z-[220] flex items-center justify-center bg-black/70 p-4 pointer-events-auto"
+              onClick={() => setSelectedOperationNews(null)}
+            >
+              <section
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="pbb-operation-title"
+                className="w-full max-w-xl max-h-[80vh] overflow-hidden rounded-2xl border border-cyan-400/40 bg-[#0F2424] shadow-2xl"
+                onClick={event => event.stopPropagation()}
+              >
+                <header className="flex items-center justify-between gap-3 border-b border-cyan-400/20 bg-[#0A1A1A] px-5 py-4">
+                  <div>
+                    <h3 id="pbb-operation-title" className="font-black text-cyan-300">
+                      Pasukan Operasi Gabungan PBB
+                    </h3>
+                    <p className="mt-1 text-xs text-slate-400">
+                      Target: <strong className="text-white">{selectedOperationNews.target.name}</strong>
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedOperationNews(null)}
+                    aria-label="Tutup daftar negara peserta"
+                    className="rounded-lg border border-cyan-400/30 p-2 text-cyan-300 hover:bg-cyan-400/10"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </header>
+                <div className="max-h-[60vh] space-y-2 overflow-y-auto p-4">
+                  {selectedOperationNews.participants.map(participant => (
+                    <div
+                      key={`${selectedOperationNews.resolutionId}-${participant.iso}`}
+                      className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-[#051111] px-4 py-3"
+                    >
+                      <span className="font-bold text-white">{participant.name}</span>
+                      <span className="shrink-0 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-1 text-[10px] font-bold uppercase text-cyan-300">
+                        {participant.role}
+                      </span>
+                    </div>
+                  ))}
+                  {selectedOperationNews.participants.length === 0 && (
+                    <p className="py-8 text-center text-sm text-slate-400">
+                      Tidak ada anggota Dewan Keamanan yang tersedia untuk operasi ini.
+                    </p>
+                  )}
+                </div>
+              </section>
+            </div>
+          )}
         </div>,
         document.body
       )}
