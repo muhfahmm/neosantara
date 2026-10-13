@@ -20,7 +20,8 @@ export type DiplomacyPathKind =
   | 'non-aggression-pact'
   | 'defense-alliance'
   | 'trade-agreement'
-  | 'research-contract';
+  | 'research-contract'
+  | 'aid-delivery';
 
 interface DiplomacyPathAnimationProps {
   kind: DiplomacyPathKind;
@@ -44,6 +45,9 @@ const PATH_DETAILS: Record<DiplomacyPathKind, { accent: string }> = {
   },
   'research-contract': {
     accent: '#FB7185',
+  },
+  'aid-delivery': {
+    accent: '#38BDF8',
   },
 };
 

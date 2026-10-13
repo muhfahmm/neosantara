@@ -7,12 +7,12 @@ import {
   Map 
 } from 'lucide-react';
 import { useState } from 'react';
-import { playerHasEmbassyOrTradePartners } from '../1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
 import BeriTentaraModal from './1_beri_tentara/beriTentaraModals';
 import BeriHadiahModal from './2_beri_hadiah/beriHadiahModals';
 import TingkatkanHubunganModal from './3_tingkatkan_hubungan/tingkatkanHubunganModals';
 import MintaBantuanModal from './5_minta_bantuan/mintaBantuanModals';
 import BerikanWilayahModal from './6_berikan_wilayah/berikanWilayahModals';
+import { sdaIcons } from '@/app/page/navigasi_menu/1_navigasi_atas/2_sda/sdaIcons';
 
 interface GeopolitikProps {
   countryName: string;
@@ -20,6 +20,7 @@ interface GeopolitikProps {
   setPlayerCountryDetail?: (detail: any | ((prev: any) => any)) => void;
   targetCountryDetail?: any;
   setTargetCountryDetail?: (detail: any | ((prev: any) => any)) => void;
+  onActionModalStateChange?: (isOpen: boolean) => void;
 }
 
 // Komponen tombol aksi agar kode lebih rapi (Persis sama dengan InformasiUmum)
@@ -40,7 +41,7 @@ const ActionButton = ({ icon: Icon, label, onClick, disabled }: { icon: any, lab
   );
 };
 
-export default function Geopolitik({ countryName, playerCountryDetail, setPlayerCountryDetail, targetCountryDetail, setTargetCountryDetail }: GeopolitikProps) {
+export default function Geopolitik({ countryName, playerCountryDetail, setPlayerCountryDetail, targetCountryDetail, setTargetCountryDetail, onActionModalStateChange }: GeopolitikProps) {
   const [isBeriTentaraOpen, setIsBeriTentaraOpen] = useState(false);
   const [isBeriHadiahOpen, setIsBeriHadiahOpen] = useState(false);
   const [isTingkatkanOpen, setIsTingkatkanOpen] = useState(false);
@@ -51,21 +52,69 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
     console.log(`Aksi geopolitik: ${action} untuk ${countryName}`);
   };
 
+  const closeAidRequestModal = () => {
+    setIsMintaBantuanOpen(false);
+    onActionModalStateChange?.(false);
+  };
+
   const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || null;
-  const playerEmbassies = Array.isArray(playerCountryDetail?.embassies) ? playerCountryDetail.embassies : [];
-  const removedEmbassies = Array.isArray(playerCountryDetail?.removedEmbassies) ? playerCountryDetail.removedEmbassies : [];
-  const removedTradePartners = Array.isArray(playerCountryDetail?.removedTradePartners) ? playerCountryDetail.removedTradePartners : [];
-  const embassyExists = playerHasEmbassyOrTradePartners(countryName, playerCountryName, playerEmbassies, removedEmbassies, removedTradePartners);
+  const normalizeCountryName = (name: unknown) => String(name || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '');
+  const hasDefenseAlliance = (Array.isArray(playerCountryDetail?.defenseAlliances)
+    ? playerCountryDetail.defenseAlliances
+    : []).some((partner: unknown) => normalizeCountryName(partner) === normalizeCountryName(countryName));
+  const annexedCountries = typeof window === 'undefined'
+    ? {}
+    : (window as Window & { neosantara_annexed_countries?: Record<string, { attackerCountry?: string }> })
+      .neosantara_annexed_countries || {};
+  const hasAnnexedTerritory = Object.values(annexedCountries).some(
+    annexation => normalizeCountryName(annexation?.attackerCountry) === normalizeCountryName(playerCountryName)
+  );
+
+  const requestAid = async () => {
+    if (!playerCountryName) return;
+    try {
+      const response = await fetch(`/api/sda-data?country=${encodeURIComponent(countryName)}`);
+      const sda = response.ok ? await response.json() as Record<string, boolean> : null;
+      const availableResources = Object.keys(sdaIcons).filter(resource => sda?.[resource] === true);
+      if (availableResources.length === 0) {
+        console.warn(`Bantuan dari ${countryName} tidak dapat dikirim karena SDA tidak tersedia.`);
+        return;
+      }
+
+      const resourceKey = availableResources[Math.floor(Math.random() * availableResources.length)];
+      const maximumAmount = Math.max(5000, Math.round((availableResources.length / Object.keys(sdaIcons).length) * 10) * 5000);
+      const amount = (Math.floor(Math.random() * (maximumAmount / 5000)) + 1) * 5000;
+      window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
+        detail: {
+          pathId: `aid-delivery-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+          kind: 'aid-delivery',
+          senderCountry: countryName,
+          targetCountry: playerCountryName,
+          resourceKey,
+          amount,
+        },
+      }));
+    } catch (error) {
+      console.error('Gagal menyiapkan bantuan sekutu.', error);
+    }
+  };
 
   return (
     <div className="space-y-6">
       {/* Grid Layout 5 Tombol Aksi */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <ActionButton icon={Sword} label="Beri Tentara" onClick={() => setIsBeriTentaraOpen(true)} disabled={!embassyExists} />
+        <ActionButton icon={Sword} label="Beri Tentara" onClick={() => setIsBeriTentaraOpen(true)} disabled={!hasDefenseAlliance} />
         <ActionButton icon={Gift} label="Beri Hadiah" onClick={() => setIsBeriHadiahOpen(true)} />
         <ActionButton icon={Heart} label="Tingkatkan Hubungan" onClick={() => setIsTingkatkanOpen(true)} />
-        <ActionButton icon={Phone} label="Minta Bantuan" onClick={() => setIsMintaBantuanOpen(true)} />
-        <ActionButton icon={Map} label="Berikan Wilayah" onClick={() => setIsBerikanWilayahOpen(true)} />
+        <ActionButton icon={Phone} label="Minta Bantuan" onClick={() => {
+          setIsMintaBantuanOpen(true);
+          onActionModalStateChange?.(true);
+        }} />
+        <ActionButton icon={Map} label="Berikan Wilayah" onClick={() => setIsBerikanWilayahOpen(true)} disabled={!hasAnnexedTerritory} />
       </div>
 
       <BeriTentaraModal
@@ -96,8 +145,8 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
           console.log(`Tingkatkan Hubungan -> ${countryName} sebesar ${amount} NEO (+${gained} tingkat)`);
         }}
       />
-      <MintaBantuanModal isOpen={isMintaBantuanOpen} countryName={countryName} onClose={() => setIsMintaBantuanOpen(false)} onConfirm={() => { console.log(`Minta Bantuan -> ${countryName}`); }} />
-      <BerikanWilayahModal isOpen={isBerikanWilayahOpen} countryName={countryName} onClose={() => setIsBerikanWilayahOpen(false)} onConfirm={() => { console.log(`Berikan Wilayah -> ${countryName}`); }} />
+      <MintaBantuanModal isOpen={isMintaBantuanOpen} countryName={countryName} onClose={closeAidRequestModal} onConfirm={requestAid} />
+      <BerikanWilayahModal isOpen={isBerikanWilayahOpen} countryName={countryName} playerCountryName={playerCountryName} onClose={() => setIsBerikanWilayahOpen(false)} onConfirm={(territoryName) => { console.log(`Berikan Wilayah ${territoryName} -> ${countryName}`); }} />
     </div>
   );
 }

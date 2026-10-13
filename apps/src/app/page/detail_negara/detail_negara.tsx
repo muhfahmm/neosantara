@@ -687,6 +687,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 setPlayerCountryDetail={setCountryDetail}
                 targetCountryDetail={detailData}
                 setTargetCountryDetail={setFetchedDetail}
+                onActionModalStateChange={setIsActionModalOpen}
               />
             )}
 

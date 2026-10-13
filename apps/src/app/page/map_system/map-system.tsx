@@ -299,6 +299,38 @@ export default function MapPage() {
     const [metadata, setMetadata] = useState<Record<string, any>>({});
 
     useEffect(() => {
+        const handleAidArrival = (event: Event) => {
+            const detail = (event as CustomEvent<{ id?: string; resourceKey?: string; amount?: number; senderCountry?: string }>).detail;
+            const resourceKey = String(detail?.resourceKey || '');
+            const amount = Number(detail?.amount) || 0;
+            if (!detail?.id || !resourceKey || amount < 5000) return;
+
+            setCountryDetail((previous: any) => {
+                if (!previous || Array.isArray(previous.receivedAidDeliveryIds) && previous.receivedAidDeliveryIds.includes(detail.id)) return previous;
+                const inventory = { ...(previous.inventory || {}) };
+                inventory[resourceKey] = (Number(inventory[resourceKey]) || 0) + amount;
+                return {
+                    ...previous,
+                    inventory,
+                    receivedAidDeliveryIds: [...(Array.isArray(previous.receivedAidDeliveryIds) ? previous.receivedAidDeliveryIds : []), detail.id],
+                    pending_notifications: [{
+                        id: `aid-arrived-${detail.id}`,
+                        title: 'Bantuan Sekutu Tiba',
+                        sender: detail.senderCountry || 'Sekutu',
+                        message: `Konvoi bantuan tiba: +${amount.toLocaleString('id-ID')} ${resourceKey.replaceAll('_', ' ')} telah ditambahkan ke inventaris nasional.`,
+                        timestamp: new Date().toISOString().slice(0, 10),
+                        type: 'peringkat',
+                        value: 0,
+                        isRead: false,
+                    }, ...(Array.isArray(previous.pending_notifications) ? previous.pending_notifications : [])],
+                };
+            });
+        };
+        window.addEventListener('neosantara_aid_arrived', handleAidArrival);
+        return () => window.removeEventListener('neosantara_aid_arrived', handleAidArrival);
+    }, []);
+
+    useEffect(() => {
         initCountryIsoFromDatabase().catch(err => console.error("Failed to init country ISO from DB:", err));
         fetchBuildingMetadata()
             .then(data => setMetadata(data || {}))

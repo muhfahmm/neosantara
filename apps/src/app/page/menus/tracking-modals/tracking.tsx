@@ -11,12 +11,14 @@ const NonAggressionPactPath = dynamic(() => import('../../path_logic/path-non-ag
 const DefenseAlliancePath = dynamic(() => import('../../path_logic/path-defense-alliance'), { ssr: false });
 const TradeAgreementPath = dynamic(() => import('../../path_logic/path-trade-agreement'), { ssr: false });
 const ResearchContractPath = dynamic(() => import('../../path_logic/path-research-contract'), { ssr: false });
+const AidDeliveryPath = dynamic(() => import('../../path_logic/path-aid-delivery'), { ssr: false });
 
 const DIPLOMACY_PATH_COMPONENTS = {
   'non-aggression-pact': NonAggressionPactPath,
   'defense-alliance': DefenseAlliancePath,
   'trade-agreement': TradeAgreementPath,
   'research-contract': ResearchContractPath,
+  'aid-delivery': AidDeliveryPath,
 };
 
 const PATH_DETAILS: Record<DiplomacyPathKind, { document: string; accent: string }> = {
@@ -24,6 +26,7 @@ const PATH_DETAILS: Record<DiplomacyPathKind, { document: string; accent: string
   'defense-alliance': { document: 'Perjanjian Pertahanan', accent: '#A78BFA' },
   'trade-agreement': { document: 'Dokumen Perdagangan', accent: '#FBBF24' },
   'research-contract': { document: 'Protokol Penelitian Bersama', accent: '#FB7185' },
+  'aid-delivery': { document: 'Konvoi Bantuan Sekutu', accent: '#38BDF8' },
 };
 
 interface ActiveDiplomacyPath {
@@ -32,6 +35,8 @@ interface ActiveDiplomacyPath {
   senderCountry: string;
   targetCountry: string;
   progress: number;
+  resourceKey?: string;
+  amount?: number;
 }
 
 const normalizeCountryName = (name: unknown) => String(name || '')
@@ -50,9 +55,10 @@ export default function DiplomacyTracking() {
       'defense-alliance',
       'trade-agreement',
       'research-contract',
+      'aid-delivery',
     ];
 
-    const addPath = (kindValue: unknown, pathIdValue: unknown, senderValue: unknown, targetValue: unknown) => {
+    const addPath = (kindValue: unknown, pathIdValue: unknown, senderValue: unknown, targetValue: unknown, resourceKey?: unknown, amount?: unknown) => {
       const kind = String(kindValue || '') as DiplomacyPathKind;
       const senderCountry = String(senderValue || '').trim();
       const targetCountry = String(targetValue || '').trim();
@@ -62,7 +68,7 @@ export default function DiplomacyTracking() {
         `diplomacy-path-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
       setActivePaths(current => current.some(path => path.id === id)
         ? current
-        : [...current, { id, kind, senderCountry, targetCountry, progress: 0 }]);
+        : [...current, { id, kind, senderCountry, targetCountry, progress: 0, resourceKey: typeof resourceKey === 'string' ? resourceKey : undefined, amount: Number(amount) || undefined }]);
     };
 
     const handleDiplomacyPath = (event: Event) => {
@@ -71,8 +77,10 @@ export default function DiplomacyTracking() {
         pathId?: unknown;
         senderCountry?: unknown;
         targetCountry?: unknown;
+        resourceKey?: unknown;
+        amount?: unknown;
       }>).detail;
-      addPath(detail?.kind, detail?.pathId, detail?.senderCountry, detail?.targetCountry);
+      addPath(detail?.kind, detail?.pathId, detail?.senderCountry, detail?.targetCountry, detail?.resourceKey, detail?.amount);
     };
 
     const handlePactPath = (event: Event) => {
@@ -125,7 +133,12 @@ export default function DiplomacyTracking() {
             onProgress={progress => setActivePaths(current => current.map(item =>
               item.id === path.id ? { ...item, progress } : item
             ))}
-            onArrive={() => setActivePaths(current => current.filter(item => item.id !== path.id))}
+            onArrive={() => {
+              if (path.kind === 'aid-delivery') {
+                window.dispatchEvent(new CustomEvent('neosantara_aid_arrived', { detail: path }));
+              }
+              setActivePaths(current => current.filter(item => item.id !== path.id));
+            }}
           />
         );
       })}
