@@ -728,6 +728,10 @@ tarif_penghasilan INT NOT NULL,
 tarif_bea_cukai INT NOT NULL,
 tarif_lingkungan INT NOT NULL
 );
+CREATE INDEX IF NOT EXISTS idx_database_pajak_negara_country_lower
+ON database_pajak_negara (LOWER(country));
+CREATE INDEX IF NOT EXISTS idx_database_pajak_negara_country_slug_lower
+ON database_pajak_negara (LOWER(country_slug));
 INSERT INTO database_pajak_negara (
 id, country, country_slug, tarif_ppn, tarif_korporasi, tarif_penghasilan, tarif_bea_cukai, tarif_lingkungan
 ) VALUES
@@ -1244,6 +1248,12 @@ harga_telur INT NOT NULL,
 harga_listrik INT NOT NULL,
 harga_air INT NOT NULL
 );
+CREATE INDEX IF NOT EXISTS idx_database_harga_barang_country_lower
+ON database_harga_barang (LOWER(country));
+CREATE INDEX IF NOT EXISTS idx_database_harga_barang_country_slug_lower
+ON database_harga_barang (LOWER(country_slug));
+CREATE INDEX IF NOT EXISTS idx_database_harga_barang_country_slug_normalized
+ON database_harga_barang (REPLACE(LOWER(country_slug), '_', ' '));
 INSERT INTO database_harga_barang (
 id, country, country_slug, harga_beras, harga_daging_sapi, harga_ayam,
 harga_minyak_goreng, harga_gula, harga_telur, harga_listrik, harga_air
@@ -1478,6 +1488,10 @@ trade_score INT NOT NULL,
 diplomacy_score INT NOT NULL,
 openness_index INT NOT NULL
 );
+CREATE INDEX IF NOT EXISTS idx_database_doktrin_keterbukaan_country_lower
+ON database_doktrin_keterbukaan (LOWER(country));
+CREATE INDEX IF NOT EXISTS idx_database_doktrin_keterbukaan_name_en_lower
+ON database_doktrin_keterbukaan (LOWER(name_en));
 INSERT INTO database_doktrin_keterbukaan (
 id, country, name_en, speech_score, religion_score, demo_score,
 transparency_score, media_score, internet_score, border_score, trade_score,
@@ -1961,6 +1975,12 @@ litium BOOLEAN NOT NULL DEFAULT FALSE,
 logam_tanah_jarang BOOLEAN NOT NULL DEFAULT FALSE,
 bijih_besi BOOLEAN NOT NULL DEFAULT FALSE
 );
+CREATE INDEX IF NOT EXISTS idx_database_sda_country_lower
+ON database_sda (LOWER(country));
+CREATE INDEX IF NOT EXISTS idx_database_sda_country_slug_lower
+ON database_sda (LOWER(country_slug));
+CREATE INDEX IF NOT EXISTS idx_database_sda_country_slug_normalized
+ON database_sda (REPLACE(LOWER(country_slug), '_', ' '));
 INSERT INTO database_sda (
 id, country, country_slug, emas, uranium, batu_bara, minyak_bumi, gas_alam, garam, litium, logam_tanah_jarang, bijih_besi
 ) VALUES

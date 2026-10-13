@@ -13,6 +13,12 @@ litium BOOLEAN NOT NULL DEFAULT FALSE,
 logam_tanah_jarang BOOLEAN NOT NULL DEFAULT FALSE,
 bijih_besi BOOLEAN NOT NULL DEFAULT FALSE
 );
+CREATE INDEX IF NOT EXISTS idx_database_sda_country_lower
+ON database_sda (LOWER(country));
+CREATE INDEX IF NOT EXISTS idx_database_sda_country_slug_lower
+ON database_sda (LOWER(country_slug));
+CREATE INDEX IF NOT EXISTS idx_database_sda_country_slug_normalized
+ON database_sda (REPLACE(LOWER(country_slug), '_', ' '));
 INSERT INTO database_sda (
 id, country, country_slug, emas, uranium, batu_bara, minyak_bumi, gas_alam, garam, litium, logam_tanah_jarang, bijih_besi
 ) VALUES

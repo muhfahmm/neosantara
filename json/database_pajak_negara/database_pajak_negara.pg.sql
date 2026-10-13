@@ -9,6 +9,10 @@ tarif_penghasilan INT NOT NULL,
 tarif_bea_cukai INT NOT NULL,
 tarif_lingkungan INT NOT NULL
 );
+CREATE INDEX IF NOT EXISTS idx_database_pajak_negara_country_lower
+ON database_pajak_negara (LOWER(country));
+CREATE INDEX IF NOT EXISTS idx_database_pajak_negara_country_slug_lower
+ON database_pajak_negara (LOWER(country_slug));
 INSERT INTO database_pajak_negara (
 id, country, country_slug, tarif_ppn, tarif_korporasi, tarif_penghasilan, tarif_bea_cukai, tarif_lingkungan
 ) VALUES

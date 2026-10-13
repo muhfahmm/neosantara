@@ -12,6 +12,12 @@ harga_telur INT NOT NULL,
 harga_listrik INT NOT NULL,
 harga_air INT NOT NULL
 );
+CREATE INDEX IF NOT EXISTS idx_database_harga_barang_country_lower
+ON database_harga_barang (LOWER(country));
+CREATE INDEX IF NOT EXISTS idx_database_harga_barang_country_slug_lower
+ON database_harga_barang (LOWER(country_slug));
+CREATE INDEX IF NOT EXISTS idx_database_harga_barang_country_slug_normalized
+ON database_harga_barang (REPLACE(LOWER(country_slug), '_', ' '));
 INSERT INTO database_harga_barang (
 id, country, country_slug, harga_beras, harga_daging_sapi, harga_ayam,
 harga_minyak_goreng, harga_gula, harga_telur, harga_listrik, harga_air

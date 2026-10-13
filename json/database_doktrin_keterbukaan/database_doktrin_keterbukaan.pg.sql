@@ -14,6 +14,10 @@ trade_score INT NOT NULL,
 diplomacy_score INT NOT NULL,
 openness_index INT NOT NULL
 );
+CREATE INDEX IF NOT EXISTS idx_database_doktrin_keterbukaan_country_lower
+ON database_doktrin_keterbukaan (LOWER(country));
+CREATE INDEX IF NOT EXISTS idx_database_doktrin_keterbukaan_name_en_lower
+ON database_doktrin_keterbukaan (LOWER(name_en));
 INSERT INTO database_doktrin_keterbukaan (
 id, country, name_en, speech_score, religion_score, demo_score,
 transparency_score, media_score, internet_score, border_score, trade_score,
