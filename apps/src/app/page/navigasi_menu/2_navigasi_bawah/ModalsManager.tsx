@@ -180,6 +180,14 @@ function ModalsManager({
   }, []);
 
   useEffect(() => {
+    if (activeMenu !== 'Menu:Kelistrikan' && activeMenu !== 'Menu:Produksi') return;
+
+    fetchBuildingMetadata()
+      .then((data) => setMetadata(data || {}))
+      .catch((err) => console.error('ModalsManager: failed to refresh building metadata', err));
+  }, [activeMenu]);
+
+  useEffect(() => {
     const refreshNpcCountries = () => {
       setPrefetchedAllCountries(current =>
         current ? applyNpcCountrySimulationStates(current) : current

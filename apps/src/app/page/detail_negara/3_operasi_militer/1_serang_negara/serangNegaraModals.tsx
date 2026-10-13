@@ -16,6 +16,7 @@ interface SerangNegaraModalProps {
 	onClose: () => void;
 	onConfirm: (actionType: 'aneksasi' | 'jarah' | 'mundur', targetCountry: string) => void;
 	onCloseDetailModal?: () => void;
+	onAttackLaunched?: () => void;
 }
 
 export default function SerangNegaraModal({
@@ -26,6 +27,7 @@ export default function SerangNegaraModal({
 	onClose,
 	onConfirm,
 	onCloseDetailModal,
+	onAttackLaunched,
 }: SerangNegaraModalProps) {
 	const [isLaunchConfirmationOpen, setIsLaunchConfirmationOpen] = useState(false);
 	const [blockedAttackReason, setBlockedAttackReason] = useState<'pact' | 'self' | null>(null);
@@ -104,6 +106,7 @@ export default function SerangNegaraModal({
 			return;
 		}
 
+		onAttackLaunched?.();
 		setIsLaunchConfirmationOpen(false);
 		onClose();
 		if (onCloseDetailModal) {

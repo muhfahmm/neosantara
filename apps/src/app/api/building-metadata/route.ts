@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 async function readAllTsFiles(dir: string, files: string[] = []) {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   for (const e of entries) {
@@ -62,13 +65,7 @@ async function loadJsonCategoryFiles(baseDir: string): Promise<Record<string, an
   return metadata;
 }
 
-let cachedBuildingMetadata: Record<string, any> | null = null;
-
 export async function GET() {
-  if (cachedBuildingMetadata) {
-    return NextResponse.json(cachedBuildingMetadata);
-  }
-
   try {
     let base = path.join(process.cwd(), 'json', 'semua_fitur_negara');
     // In dev server process.cwd() may be apps/; try parent folder as fallback
@@ -90,8 +87,9 @@ export async function GET() {
     const metadata = await loadJsonCategoryFiles(base);
     if (Object.keys(metadata).length > 0) {
       console.log('[building-metadata] loaded from category files:', Object.keys(metadata).length, 'items');
-      cachedBuildingMetadata = metadata;
-      return NextResponse.json(cachedBuildingMetadata);
+      return NextResponse.json(metadata, {
+        headers: { 'Cache-Control': 'no-store, max-age=0' },
+      });
     }
     
     // Fallback: parse TS files if category JSON not available
@@ -130,10 +128,14 @@ export async function GET() {
       }
     }
 
-    cachedBuildingMetadata = fallbackMetadata;
-    return NextResponse.json(cachedBuildingMetadata);
+    return NextResponse.json(fallbackMetadata, {
+      headers: { 'Cache-Control': 'no-store, max-age=0' },
+    });
   } catch (err) {
     console.error('[building-metadata] error', err);
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: String(err) },
+      { status: 500, headers: { 'Cache-Control': 'no-store, max-age=0' } }
+    );
   }
 }

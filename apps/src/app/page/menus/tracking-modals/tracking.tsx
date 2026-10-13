@@ -12,6 +12,8 @@ const DefenseAlliancePath = dynamic(() => import('../../path_logic/path-defense-
 const TradeAgreementPath = dynamic(() => import('../../path_logic/path-trade-agreement'), { ssr: false });
 const ResearchContractPath = dynamic(() => import('../../path_logic/path-research-contract'), { ssr: false });
 const AidDeliveryPath = dynamic(() => import('../../path_logic/path-aid-delivery'), { ssr: false });
+const SpionasePath = dynamic(() => import('../../path_logic/path-spionase'), { ssr: false });
+const SabotasePath = dynamic(() => import('../../path_logic/path-sabotase'), { ssr: false });
 
 const DIPLOMACY_PATH_COMPONENTS = {
   'non-aggression-pact': NonAggressionPactPath,
@@ -19,6 +21,8 @@ const DIPLOMACY_PATH_COMPONENTS = {
   'trade-agreement': TradeAgreementPath,
   'research-contract': ResearchContractPath,
   'aid-delivery': AidDeliveryPath,
+  spionase: SpionasePath,
+  sabotase: SabotasePath,
 };
 
 const PATH_DETAILS: Record<DiplomacyPathKind, { document: string; accent: string }> = {
@@ -27,6 +31,8 @@ const PATH_DETAILS: Record<DiplomacyPathKind, { document: string; accent: string
   'trade-agreement': { document: 'Dokumen Perdagangan', accent: '#FBBF24' },
   'research-contract': { document: 'Protokol Penelitian Bersama', accent: '#FB7185' },
   'aid-delivery': { document: 'Konvoi Bantuan Sekutu', accent: '#38BDF8' },
+  spionase: { document: 'Operasi Spionase', accent: '#A3E635' },
+  sabotase: { document: 'Operasi Sabotase', accent: '#F43F5E' },
 };
 
 interface ActiveDiplomacyPath {
@@ -56,6 +62,8 @@ export default function DiplomacyTracking() {
       'trade-agreement',
       'research-contract',
       'aid-delivery',
+      'spionase',
+      'sabotase',
     ];
 
     const addPath = (kindValue: unknown, pathIdValue: unknown, senderValue: unknown, targetValue: unknown, resourceKey?: unknown, amount?: unknown) => {
@@ -137,6 +145,11 @@ export default function DiplomacyTracking() {
               if (path.kind === 'aid-delivery') {
                 window.dispatchEvent(new CustomEvent('neosantara_aid_arrived', { detail: path }));
               }
+              if (path.kind === 'spionase' || path.kind === 'sabotase') {
+                window.dispatchEvent(new CustomEvent('neosantara_covert_operation_arrived', {
+                  detail: { ...path, pathId: path.id },
+                }));
+              }
               setActivePaths(current => current.filter(item => item.id !== path.id));
             }}
           />
@@ -179,7 +192,7 @@ export default function DiplomacyTracking() {
                     Pelacakan Aktivitas
                   </h2>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">
-                    {activePaths.length} aktivitas diplomasi berlangsung
+                    {activePaths.length} aktivitas berlangsung
                   </p>
                 </div>
               </div>
@@ -197,7 +210,7 @@ export default function DiplomacyTracking() {
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A] relative z-10 custom-scrollbar flex flex-col gap-3">
               {activePaths.length === 0 && (
                 <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0F2424]/70 px-5 py-8 text-center text-sm font-bold text-[#B9D7D1]">
-                  Tidak ada aktivitas diplomasi yang sedang berlangsung.
+                  Tidak ada aktivitas yang sedang berlangsung.
                 </div>
               )}
 

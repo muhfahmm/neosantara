@@ -73,7 +73,7 @@ interface InformasiUmumProps {
 }
 
 // Komponen tombol aksi
-const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelClass, disabled, keepOpacity }: { icon: any, label: string, onClick?: () => void, className?: string, iconClass?: string, labelClass?: string, disabled?: boolean, keepOpacity?: boolean }) => {
+const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelClass, disabled, keepOpacity, title }: { icon: any, label: string, onClick?: () => void, className?: string, iconClass?: string, labelClass?: string, disabled?: boolean, keepOpacity?: boolean, title?: string }) => {
   const base = `${className ?? 'bg-[#0A1A1A] border border-[#00FFAA]/20'} w-full min-w-0 rounded-xl p-5 flex flex-col items-center justify-center gap-3 transition-all group h-32`;
   const interactive = disabled 
     ? (keepOpacity ? 'cursor-not-allowed' : 'opacity-40 cursor-not-allowed pointer-events-none') 
@@ -82,6 +82,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
     <button
       onClick={disabled ? undefined : onClick}
       aria-disabled={disabled}
+      title={title}
       className={`${base} ${interactive}`}
     >
       <Icon className={`h-8 w-8 ${iconClass ?? 'text-[#00FFAA]'} ${disabled && !keepOpacity ? '' : 'group-hover:scale-110'} transition-transform`} />
@@ -249,6 +250,11 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     embassyRelation,
     playerCountryDetail
   );
+  const normalizedPlayerIdeology = String(
+    playerIdeology || playerCountryDetail?.ideology || playerCountryDetail?.ideologi || ''
+  ).trim().toLocaleLowerCase('id-ID');
+  const isTradeIdeologyRestricted = normalizedPlayerIdeology === 'komunisme' ||
+    normalizedPlayerIdeology === 'sosialisme';
   const nonAggressionPactAcceptanceChance = getNonAggressionPactAcceptanceChancePercent(
     embassyRelation,
     playerCountryDetail
@@ -482,8 +488,9 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
               }
             }}
             className={isTradeRatifying ? inProgressBorderClass : tradeIsActive ? modernGreenBorderClass : tradeClass}
-            disabled={!hasUsableEmbassy || isTradeRatifying}
+            disabled={!hasUsableEmbassy || isTradeRatifying || isTradeIdeologyRestricted}
             keepOpacity={isTradeRatifying}
+            title={isTradeIdeologyRestricted ? 'Perjanjian dagang tidak tersedia untuk ideologi Komunisme atau Sosialisme.' : undefined}
             iconClass={isTradeRatifying ? 'text-amber-300' : tradeIsActive ? 'text-[#00FFAA]' : tradeIconClass}
             labelClass={isTradeRatifying ? 'text-amber-300' : tradeIsActive ? 'text-[#00FFAA]' : tradeLabelClass}
           />

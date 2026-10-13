@@ -8,7 +8,7 @@ import {
   Phone,
   MessageSquare
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SerangNegaraModal from './1_serang_negara/serangNegaraModals';
 import SpionaseModal from './2_spionase/spionaseModals';
 import SabotaseModal from './3_sabotase/sabotaseModals';
@@ -29,23 +29,25 @@ interface OperasiMiliterProps {
   isOccupiedProvince?: boolean;
   occupyingCountry?: string;
   provinceTension?: number;
+  actionDates?: Partial<Record<'serang' | 'spionase' | 'sabotase', string>>;
+  onMilitaryActionLaunched?: (action: 'serang' | 'spionase' | 'sabotase') => void;
   updatePlayerCountryDetail?: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
 }
 
 // Komponen tombol aksi (Persis sama dengan menu lainnya)
-const ActionButton = ({ icon: Icon, label, onClick }: { icon: any, label: string, onClick?: () => void }) => (
+const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelClass }: { icon: any, label: string, onClick?: () => void, className?: string, iconClass?: string, labelClass?: string }) => (
   <button
     onClick={onClick}
-    className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-5 flex flex-col items-center justify-center gap-3 hover:shadow-md hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10 transition-all cursor-pointer group h-32"
+    className={`w-full ${className || 'bg-[#0A1A1A] border border-[#00FFAA]/20'} rounded-xl p-5 flex flex-col items-center justify-center gap-3 ${className ? 'hover:border-amber-300 hover:bg-amber-400/10' : 'hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10'} hover:shadow-md transition-all cursor-pointer group h-32`}
   >
-    <Icon className="h-8 w-8 text-[#00FFAA] group-hover:scale-110 transition-transform" />
-    <span className="text-xs font-black text-[#00FFAA] uppercase tracking-wider text-center leading-tight">
+    <Icon className={`h-8 w-8 ${iconClass || 'text-[#00FFAA]'} group-hover:scale-110 transition-transform`} />
+    <span className={`text-xs font-black ${labelClass || 'text-[#00FFAA]'} uppercase tracking-wider text-center leading-tight`}>
       {label}
     </span>
   </button>
 );
 
-export default function OperasiMiliter({ countryName, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, updatePlayerCountryDetail }: OperasiMiliterProps) {
+export default function OperasiMiliter({ countryName, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, actionDates, onMilitaryActionLaunched, updatePlayerCountryDetail }: OperasiMiliterProps) {
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isSpionaseOpen, setIsSpionaseOpen] = useState(false);
   const [isSabotaseOpen, setIsSabotaseOpen] = useState(false);
@@ -54,12 +56,53 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
   const [isMintaSerangOpen, setIsMintaSerangOpen] = useState(false);
   const [isHinaOpen, setIsHinaOpen] = useState(false);
   const [covertOperationResult, setCovertOperationResult] = useState<CovertOperationResult | null>(null);
+  const pendingCovertOperationsRef = useRef(new Map<string, CovertOperationType>());
+  const formatActionDate = (dateString?: string) => {
+    if (!dateString) return '';
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    if (Number.isNaN(date.getTime())) return dateString;
+    const parts = new Intl.DateTimeFormat('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }).formatToParts(date);
+    const dayPart = parts.find(part => part.type === 'day')?.value || '';
+    const monthPart = parts.find(part => part.type === 'month')?.value || '';
+    const yearPart = parts.find(part => part.type === 'year')?.value || '';
+    return `${dayPart} ${monthPart}, ${yearPart}`;
+  };
+  const datedActionClass = 'border border-amber-400/50 bg-amber-400/5 text-amber-300';
+  const operationDateBadgeClass = 'absolute -top-6 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-sm border border-amber-400/30 bg-[#0A1A1A] px-2 py-1 text-[10px] font-bold tracking-wider text-amber-300 shadow-md';
 
   const isAnyMiliterModalActive = isSerangOpen || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isHinaOpen || !!covertOperationResult;
 
+  useEffect(() => {
+    const handleCovertOperationArrival = (event: Event) => {
+      const path = (event as CustomEvent<{ pathId?: string; targetCountry?: string }>).detail;
+      const operation = path?.pathId ? pendingCovertOperationsRef.current.get(path.pathId) : undefined;
+      if (!path?.pathId || !operation || !path.targetCountry) return;
+
+      pendingCovertOperationsRef.current.delete(path.pathId);
+      const result = resolveCovertOperation(operation, playerCountryDetail);
+      setCovertOperationResult({ operation, targetCountry: path.targetCountry, ...result });
+    };
+
+    window.addEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
+    return () => window.removeEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
+  }, [playerCountryDetail]);
+
   const launchCovertOperation = (operation: CovertOperationType, targetCountry: string) => {
-    const result = resolveCovertOperation(operation, playerCountryDetail);
-    setCovertOperationResult({ operation, targetCountry, ...result });
+    const pathId = `covert-${operation}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    pendingCovertOperationsRef.current.set(pathId, operation);
+    window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
+      detail: {
+        pathId,
+        kind: operation,
+        senderCountry: playerCountryDetail?.country || playerCountryDetail?.nama_negara || playerCountryDetail?.name_id || playerCountryDetail?.name_en || countryName,
+        targetCountry,
+      },
+    }));
   };
 
   useEffect(() => {
@@ -88,9 +131,18 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
     <div className="space-y-6">
       {/* Grid Layout 4-4 (2 baris x 4 kolom pada desktop) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <ActionButton icon={Crosshair} label="Serang Negara" onClick={() => setIsSerangOpen(true)} />
-        <ActionButton icon={Eye} label="Spionase" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsSpionaseOpen(true); }} />
-        <ActionButton icon={Bomb} label="Sabotase" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsSabotaseOpen(true); }} />
+        <div className="relative w-full min-w-0">
+          {actionDates?.serang && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.serang)}</div>}
+          <ActionButton icon={Crosshair} label="Serang Negara" className={actionDates?.serang ? datedActionClass : undefined} iconClass={actionDates?.serang ? 'text-amber-300' : undefined} labelClass={actionDates?.serang ? 'text-amber-300' : undefined} onClick={() => setIsSerangOpen(true)} />
+        </div>
+        <div className="relative w-full min-w-0">
+          {actionDates?.spionase && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.spionase)}</div>}
+          <ActionButton icon={Eye} label="Spionase" className={actionDates?.spionase ? datedActionClass : undefined} iconClass={actionDates?.spionase ? 'text-amber-300' : undefined} labelClass={actionDates?.spionase ? 'text-amber-300' : undefined} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsSpionaseOpen(true); }} />
+        </div>
+        <div className="relative w-full min-w-0">
+          {actionDates?.sabotase && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.sabotase)}</div>}
+          <ActionButton icon={Bomb} label="Sabotase" className={actionDates?.sabotase ? datedActionClass : undefined} iconClass={actionDates?.sabotase ? 'text-amber-300' : undefined} labelClass={actionDates?.sabotase ? 'text-amber-300' : undefined} onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsSabotaseOpen(true); }} />
+        </div>
         <ActionButton icon={Radiation} label="Perang Nuklir" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsNuklirOpen(true); }} />
         
         <ActionButton icon={UserX} label="Lakukan Kudeta" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsKudetaOpen(true); }} />
@@ -105,6 +157,7 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
         targetCountryDetail={targetCountryDetail}
         onClose={() => setIsSerangOpen(false)}
         onCloseDetailModal={onCloseDetailModal}
+        onAttackLaunched={() => onMilitaryActionLaunched?.('serang')}
         onConfirm={(actionType, targetCountry) => {
           setIsSerangOpen(false);
           if (onCloseDetailModal) onCloseDetailModal();
@@ -121,9 +174,11 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
         }}
       />
       <SpionaseModal isOpen={isSpionaseOpen} countryName={countryName} playerCountryDetail={playerCountryDetail} onClose={() => setIsSpionaseOpen(false)} onConfirm={(target) => {
+        onMilitaryActionLaunched?.('spionase');
         launchCovertOperation('spionase', target);
       }} />
       <SabotaseModal isOpen={isSabotaseOpen} countryName={countryName} playerCountryDetail={playerCountryDetail} onClose={() => setIsSabotaseOpen(false)} onConfirm={(target) => {
+        onMilitaryActionLaunched?.('sabotase');
         launchCovertOperation('sabotase', target);
       }} />
       <PerangNuklirModal isOpen={isNuklirOpen} countryName={countryName} onClose={() => setIsNuklirOpen(false)} onConfirm={() => { console.log(`Nuklir -> ${countryName}`); }} />

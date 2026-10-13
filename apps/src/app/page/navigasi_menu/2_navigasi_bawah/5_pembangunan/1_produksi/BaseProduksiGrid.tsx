@@ -154,6 +154,16 @@ export default function BaseProduksiGrid({
     setIsAIModalOpen(true);
   };
 
+  const fuelRequiredKeys = isElectricityTab
+    ? keys.filter(key => getKelistrikanFuelRequirements(key).length > 0)
+    : [];
+  const noFuelRequiredKeys = isElectricityTab
+    ? keys.filter(key => getKelistrikanFuelRequirements(key).length === 0)
+    : [];
+  const displayedKeys = isElectricityTab
+    ? [...fuelRequiredKeys, ...noFuelRequiredKeys]
+    : keys;
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -178,7 +188,7 @@ export default function BaseProduksiGrid({
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
-        {keys.map((key) => {
+        {displayedKeys.map((key) => {
           const bMeta = findMeta(key) || {};
           const perCount = Number(countryDetail?.[key]) || 0;
           const label = formatLabel(key);
@@ -208,8 +218,18 @@ export default function BaseProduksiGrid({
           const lastEndDate = isBuilding ? buildingConstructions[buildingConstructions.length - 1].endDate : null;
 
           return (
-            <div
-              key={key}
+            <React.Fragment key={key}>
+              {isElectricityTab && key === fuelRequiredKeys[0] && (
+                <div className="col-span-full border-b border-[#00FFAA]/15 pb-2 pt-1 text-xs font-black uppercase tracking-wider text-[#8AB0A8]">
+                  Pembangkit Membutuhkan Bahan Bakar
+                </div>
+              )}
+              {isElectricityTab && key === noFuelRequiredKeys[0] && (
+                <div className="col-span-full border-b border-[#00FFAA]/15 pb-2 pt-4 text-xs font-black uppercase tracking-wider text-[#8AB0A8]">
+                  Pembangkit Tidak Membutuhkan Bahan Bakar
+                </div>
+              )}
+              <div
               onClick={() => {
                 if (!isAvailable) return;
                 onBuildClick(key, label);
@@ -338,7 +358,8 @@ export default function BaseProduksiGrid({
                   </div>
                 )}
               </div>
-            </div>
+              </div>
+            </React.Fragment>
           );
         })}
         {keys.length === 0 && (

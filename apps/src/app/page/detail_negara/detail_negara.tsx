@@ -65,6 +65,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   const [activeTab, setActiveTab] = useState<"informasi" | "geopolitik" | "militer">("informasi");
   const [annexationRevision, setAnnexationRevision] = useState(0);
   const [relationRevision, setRelationRevision] = useState(0);
+  const [militaryActionDates, setMilitaryActionDates] = useState<Record<string, string>>({});
 
   // State untuk menyembunyikan tampilan modal Detail Negara saat salah satu modal aksi dibuka
   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
@@ -85,6 +86,19 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   const preserveActiveTabRef = useRef(false);
   const countryDetailRef = useRef(countryDetail);
   countryDetailRef.current = countryDetail;
+
+  const recordMilitaryAction = (action: 'serang' | 'spionase' | 'sabotase') => {
+    const actionDate = currentDate ? new Date(currentDate) : new Date();
+    const dateString = [
+      actionDate.getFullYear(),
+      String(actionDate.getMonth() + 1).padStart(2, '0'),
+      String(actionDate.getDate()).padStart(2, '0'),
+    ].join('-');
+    setMilitaryActionDates(previous => ({
+      ...previous,
+      [`${normalizeCountryKey(countryName)}:${action}`]: dateString,
+    }));
+  };
 
   useEffect(() => {
     const refreshAnnexation = (event: Event) => {
@@ -727,6 +741,12 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 countryName={countryName}
                 playerCountryDetail={countryDetail}
                 targetCountryDetail={detailData}
+                actionDates={{
+                  serang: militaryActionDates[`${normalizeCountryKey(countryName)}:serang`],
+                  spionase: militaryActionDates[`${normalizeCountryKey(countryName)}:spionase`],
+                  sabotase: militaryActionDates[`${normalizeCountryKey(countryName)}:sabotase`],
+                }}
+                onMilitaryActionLaunched={recordMilitaryAction}
                 onCloseDetailModal={() => {
                   setIsActionModalOpen(true);
                   // Juga panggil onClose jika bukan sekadar hide (atau SerangNegaraModal onCloseDetailModal)

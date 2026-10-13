@@ -21,7 +21,9 @@ export type DiplomacyPathKind =
   | 'defense-alliance'
   | 'trade-agreement'
   | 'research-contract'
-  | 'aid-delivery';
+  | 'aid-delivery'
+  | 'spionase'
+  | 'sabotase';
 
 interface DiplomacyPathAnimationProps {
   kind: DiplomacyPathKind;
@@ -48,6 +50,12 @@ const PATH_DETAILS: Record<DiplomacyPathKind, { accent: string }> = {
   },
   'aid-delivery': {
     accent: '#38BDF8',
+  },
+  spionase: {
+    accent: '#A3E635',
+  },
+  sabotase: {
+    accent: '#F43F5E',
   },
 };
 

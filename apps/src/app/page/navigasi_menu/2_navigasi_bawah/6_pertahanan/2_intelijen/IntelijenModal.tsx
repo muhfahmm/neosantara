@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { X, Eye, Bomb } from "lucide-react";
 import Spionase from "./table_menu/1_tabel_spionase";
 import Sabotase from "./table_menu/2_tabel_sabotase";
@@ -21,12 +21,37 @@ interface ModalProps {
 export default function IntelijenModal({ isOpen, onClose, countryDetail, setCountryDetail, prefetchedAllCountries }: ModalProps) {
   const [activeTab, setActiveTab] = useState<'spionase' | 'sabotase'>('spionase');
   const [covertOperationResult, setCovertOperationResult] = useState<CovertOperationResult | null>(null);
+  const pendingCovertOperationsRef = useRef(new Map<string, CovertOperationType>());
+
+  useEffect(() => {
+    const handleCovertOperationArrival = (event: Event) => {
+      const path = (event as CustomEvent<{ pathId?: string; targetCountry?: string }>).detail;
+      const operation = path?.pathId ? pendingCovertOperationsRef.current.get(path.pathId) : undefined;
+      if (!path?.pathId || !operation || !path.targetCountry) return;
+
+      pendingCovertOperationsRef.current.delete(path.pathId);
+      const result = resolveCovertOperation(operation, countryDetail);
+      setCovertOperationResult({ operation, targetCountry: path.targetCountry, ...result });
+    };
+
+    window.addEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
+    return () => window.removeEventListener('neosantara_covert_operation_arrived', handleCovertOperationArrival);
+  }, [countryDetail]);
+
   if (!isOpen) return null;
 
   const anggaran = countryDetail?.anggaran || 0;
   const launchCovertOperation = (operation: CovertOperationType, targetCountry: string) => {
-    const result = resolveCovertOperation(operation, countryDetail);
-    setCovertOperationResult({ operation, targetCountry, ...result });
+    const pathId = `covert-${operation}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    pendingCovertOperationsRef.current.set(pathId, operation);
+    window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
+      detail: {
+        pathId,
+        kind: operation,
+        senderCountry: countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id,
+        targetCountry,
+      },
+    }));
   };
 
   // 🔥 Logika aksi untuk Spionase
