@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
 import countryPaths from './country-paths.json';
+import { mergeClaimedTerritories } from './world-map-geometry';
 import { SimulationTimeManager, createSimulationCalendar } from '../time_controllers';
 import { handleGameRestart } from '../time_controllers';
 import dynamic from 'next/dynamic';
@@ -4250,12 +4251,16 @@ export default function MapPage() {
                 if (!geojsonResponse.ok) {
                     throw new Error(`Gagal memuat data peta: HTTP ${geojsonResponse.status}`);
                 }
-                const rawGeojsonStr = await geojsonResponse.text();
+                let rawGeojsonStr = await geojsonResponse.text();
                 const geojsonObj = JSON.parse(rawGeojsonStr);
                 if (!Array.isArray(geojsonObj.features)) {
                     throw new Error('Format GeoJSON peta tidak valid.');
                 }
-                const drawableFeatures = geojsonObj.features.filter((feature: { geometry?: unknown }) => feature.geometry);
+                const drawableFeatures = mergeClaimedTerritories(
+                    geojsonObj.features.filter((feature: { geometry?: unknown }) => feature.geometry)
+                );
+                geojsonObj.features = drawableFeatures;
+                rawGeojsonStr = JSON.stringify(geojsonObj);
 
                 if (typeof window !== 'undefined') {
                     (window as any).neosantara_world_geojson_features = drawableFeatures;

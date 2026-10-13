@@ -39,6 +39,7 @@ import {
 import Link from 'next/link';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '../map-data';
 import countryPaths from '../country-paths.json';
+import { mergeClaimedTerritories } from '../world-map-geometry';
 
 // Import logika ekonomi dari folder logic agar kalkulasi sama persis
 import { calculateCountryNetBalance, calculateGoldIncome, calculateTotalTaxIncome, calculateTotalMinistryCostPerDay } from '@/app/logic/economic_logic/treasuryUpdater';
@@ -170,11 +171,15 @@ export default function PilihNegaraPage() {
         if (!geojsonResponse.ok) {
           throw new Error(`Failed to load world map data: HTTP ${geojsonResponse.status}`);
         }
-        const geojsonStr = await geojsonResponse.text();
+        let geojsonStr = await geojsonResponse.text();
         const geojson = JSON.parse(geojsonStr);
         if (!Array.isArray(geojson.features)) {
           throw new Error('Invalid world map GeoJSON payload.');
         }
+        geojson.features = mergeClaimedTerritories(
+          geojson.features.filter((feature: { geometry?: unknown }) => feature.geometry)
+        );
+        geojsonStr = JSON.stringify(geojson);
         try {
           await mod.default(); // Initialize WASM module
         } catch (wasmErr) {
