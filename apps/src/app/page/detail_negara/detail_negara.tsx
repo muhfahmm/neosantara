@@ -82,6 +82,8 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   
   // PERBAIKAN: Ref untuk mencegah fetch ulang data saat modal dibuka/tutup (Data tetap progresif)
   const fetchedRef = useRef<string | null>(null);
+  const countryDetailRef = useRef(countryDetail);
+  countryDetailRef.current = countryDetail;
 
   useEffect(() => {
     const refreshAnnexation = () => setAnnexationRevision(revision => revision + 1);
@@ -94,10 +96,12 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     };
   }, []);
 
-  // Reset status hide ketika modal dibuka kembali
+  // Reset status hide ketika modal dibuka kembali atau negara berganti
   useEffect(() => {
     if (isOpen) {
       setIsActionModalOpen(false);
+    } else {
+      fetchedRef.current = null;
     }
   }, [isOpen, countryName]);
 
@@ -138,8 +142,9 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
       // 2. Fetch data untuk seluruh negara dalam kekaisaran ini secara paralel
       const memberDataList = await Promise.all(
         empireMemberNames.map(async (memberName) => {
-          if (countryDetail?.country?.toLowerCase().trim() === memberName) {
-            return countryDetail;
+          const currentCountryDetail = countryDetailRef.current;
+          if (currentCountryDetail?.country?.toLowerCase().trim() === memberName) {
+            return currentCountryDetail;
           }
 
           const relPath = Object.entries(countryPaths as Record<string, string>).find(
@@ -246,7 +251,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     };
 
     loadDetail();
-  }, [isOpen, countryName, countryDetail]);
+  }, [isOpen, countryName]);
 
   // PERBAIKAN: Logika Simulasi Update Kas & Populasi Harian (Tetap berjalan saat modal terbuka)
   useEffect(() => {
