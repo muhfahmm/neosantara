@@ -219,6 +219,30 @@ export function setRelationSourceModifier(
   }
 }
 
+/**
+ * Sets an exact effective relation score while keeping other relation sources intact.
+ */
+export function setRelationSourceValue(
+  sourceCountry: string,
+  targetCountry: string,
+  sourceId: string,
+  targetValue: number
+): void {
+  if (!Number.isFinite(targetValue)) return;
+
+  const key = getPairKey(sourceCountry, targetCountry);
+  const existingSourceModifier = relationSourceModifiersMap.get(key)?.get(sourceId) || 0;
+  const currentValueWithoutSource = getRelationValue(sourceCountry, targetCountry) - existingSourceModifier;
+  const desiredValue = Math.min(100, Math.max(0, Math.round(targetValue)));
+
+  setRelationSourceModifier(
+    sourceCountry,
+    targetCountry,
+    sourceId,
+    desiredValue - currentValueWithoutSource
+  );
+}
+
 export function replaceRelationSourceModifiers(
   sourceCountry: string,
   sourceId: string,

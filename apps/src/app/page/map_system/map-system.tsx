@@ -16,6 +16,7 @@ import dynamic from 'next/dynamic';
 import useKeyboardShortcuts from '../keyword';
 
 const GameMenuModal = dynamic(() => import('../navbar/GameMenuModal').then(m => m.GameMenuModal), { ssr: false });
+const TopNav = dynamic(() => import('../navigasi_menu/1_navigasi_atas/TopNav'), { ssr: false });
 const ConfirmRestartModal = dynamic(() => import('../navbar/ConfirmRestartModal').then(m => m.ConfirmRestartModal), { ssr: false });
 const ModalsPeringatanPeringkat = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsPeringatanPeringkat').then(m => m.ModalsPeringatanPeringkat), { ssr: false });
 const ModalsKudeta = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta'), { ssr: false });
@@ -113,11 +114,11 @@ import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_ke
 import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
 import { getTradeAgreementsForCountry } from '../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
 import { getEmbassiesForCountry } from '../../../../../json/database_kedutaan_besar/embassyRegistry';
-import { getRelationValue, setNonAggressionPactHistory, setRelationModifier, setRelationSanctionModifiers, setSimulationDate } from '../../../../../json/database_hubungan_antar_negara/relationsRegistry';
+import { getRelationValue, setNonAggressionPactHistory, setRelationModifier, setRelationSanctionModifiers, setRelationSourceValue, setSimulationDate } from '../../../../../json/database_hubungan_antar_negara/relationsRegistry';
 import type { NonAggressionPactPeriod } from '../../../../../json/database_hubungan_antar_negara/relationsRegistry';
 import { setEconomicSanctionCounts } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { playerHasEmbassyWith, playerHasEmbassyOrTradePartners } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
-import { areSameWarCountry } from '../detail_negara/3_operasi_militer/1_serang_negara/warCountryIdentity';
+import { areSameWarCountry, getWarCountryIdentity } from '../detail_negara/3_operasi_militer/1_serang_negara/warCountryIdentity';
 import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/2_beli/tradeBeliLogic';
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
 import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationLogic';
@@ -275,12 +276,12 @@ const MapCanvasView = memo(function MapCanvasView({
     );
 });
 
-function applyInvasionRelationPenalty(attackerCountry: string, minimum: number, maximum: number): number {
+function applyUniformRelationPenalty(attackerCountry: string, minimum: number, maximum: number): number {
     const penalty = Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
-    const normalizedAttacker = attackerCountry.trim().toLowerCase();
+    const attackerIdentity = getWarCountryIdentity(attackerCountry);
 
     COUNTRIES_DATA.forEach(country => {
-        if (country.country.trim().toLowerCase() !== normalizedAttacker) {
+        if (getWarCountryIdentity(country.country, country.iso) !== attackerIdentity) {
             setRelationModifier(attackerCountry, country.country, -penalty);
         }
     });
@@ -290,6 +291,62 @@ function applyInvasionRelationPenalty(attackerCountry: string, minimum: number, 
     }
 
     return penalty;
+}
+
+function applyInvasionRelationPenalty(attackerCountry: string, targetCountry: string): string {
+    const attackerIdentity = getWarCountryIdentity(attackerCountry);
+    const targetIdentity = getWarCountryIdentity(targetCountry);
+    const penaltyRanges = [
+        { minimumRelation: 0, maximumRelation: 25, minimumPenalty: 5, maximumPenalty: 10 },
+        { minimumRelation: 26, maximumRelation: 40, minimumPenalty: 10, maximumPenalty: 15 },
+        { minimumRelation: 41, maximumRelation: 65, minimumPenalty: 15, maximumPenalty: 20 },
+        { minimumRelation: 66, maximumRelation: 80, minimumPenalty: 20, maximumPenalty: 25 },
+        { minimumRelation: 81, maximumRelation: 100, minimumPenalty: 25, maximumPenalty: 30 },
+    ];
+    let affectedCountries = 0;
+
+    COUNTRIES_DATA.forEach(country => {
+        const countryIdentity = getWarCountryIdentity(country.country, country.iso);
+        if (countryIdentity === attackerIdentity || countryIdentity === targetIdentity) return;
+
+        const relation = getRelationValue(attackerCountry, country.country);
+        const range = penaltyRanges.find(
+            candidate => relation >= candidate.minimumRelation && relation <= candidate.maximumRelation
+        );
+        if (!range) return;
+
+        const penalty = Math.floor(
+            Math.random() * (range.maximumPenalty - range.minimumPenalty + 1)
+        ) + range.minimumPenalty;
+        setRelationModifier(attackerCountry, country.country, -penalty);
+        affectedCountries += 1;
+    });
+
+    if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('country_relations_updated'));
+    }
+
+    return `${affectedCountries} negara lain terdampak: hubungan 0–25 turun 5–10 poin, 26–40 turun 10–15 poin, 41–65 turun 15–20 poin, 66–80 turun 20–25 poin, dan 81–100 turun 25–30 poin.`;
+}
+
+function setMilitaryAttackRelation(
+    attackerCountry: string,
+    targetCountry: string,
+    relationValue: 1 | 25
+): void {
+    const canonicalCountryName = (name: string) => {
+        const identity = getWarCountryIdentity(name);
+        return COUNTRIES_DATA.find(country => country.iso.toLowerCase() === identity)?.country || name;
+    };
+    setRelationSourceValue(
+        canonicalCountryName(attackerCountry),
+        canonicalCountryName(targetCountry),
+        'military-attack',
+        relationValue
+    );
+    if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('country_relations_updated'));
+    }
 }
 
 export default function MapPage() {
@@ -474,6 +531,7 @@ export default function MapPage() {
     const [isPresidentMenuOpen, setIsPresidentMenuOpen] = useState(false);
     const [isRestartConfirmOpen, setIsRestartConfirmOpen] = useState(false);
     const [activeMenu, setActiveMenu] = useState('Peta Taktis');
+    const [isDiplomacyMapActive, setIsDiplomacyMapActive] = useState(false);
     const [resetTrigger, setResetTrigger] = useState(false);
     const [productionDeepLink, setProductionDeepLink] = useState<{ tab: string; key: string } | null>(null);
     const [tempatUmumDeepLink, setTempatUmumDeepLink] = useState<string | null>(null);
@@ -488,6 +546,100 @@ export default function MapPage() {
     const [inboxModalOpen, setInboxModalOpen] = useState(false);
     const [giftModalOpen, setGiftModalOpen] = useState(false);
     const [newsModalOpen, setNewsModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const gameWindow = window as any;
+        const normalizeKey = (value: unknown) =>
+            String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const updateDiplomacyMapColors = () => {
+            gameWindow.neosantara_diplomacy_map_active = isDiplomacyMapActive;
+            if (!isDiplomacyMapActive) {
+                gameWindow.neosantara_diplomacy_map_colors = {};
+                return;
+            }
+
+            const features = gameWindow.neosantara_world_geojson_features;
+            if (!Array.isArray(features)) return;
+
+            const playerCountryName = String(
+                selectedCountry?.country ||
+                countryDetail?.country ||
+                countryDetail?.nama_negara ||
+                countryDetail?.name ||
+                ''
+            ).trim();
+            const colors: Record<string, string> = {};
+            const featureColors: Array<string | undefined> = [];
+            const colorForRelation = (relation: number) => {
+                if (relation <= 25) return '#f87171';
+                if (relation <= 40) return '#fb7185';
+                if (relation <= 65) return '#facc15';
+                if (relation <= 80) return '#4ade80';
+                return '#00FFAA';
+            };
+
+            features.forEach((feature: { properties?: Record<string, unknown> }) => {
+                const properties = feature.properties;
+                if (!properties) {
+                    featureColors.push(undefined);
+                    return;
+                }
+
+                const isoKeys = [
+                    properties.ISO_A2,
+                    properties.ISO_A2_EH,
+                    properties.ISO_A3,
+                    properties.ISO_A3_EH,
+                ].map(normalizeKey).filter(Boolean);
+                const nameKeys = [
+                    properties.NAME,
+                    properties.ADMIN,
+                    properties.NAME_LONG,
+                    properties.GEOUNIT,
+                    properties.NAME_ID,
+                    properties.NAME_EN,
+                    properties.NAME_IND,
+                ].map(normalizeKey).filter(Boolean);
+                const country = COUNTRIES_DATA.find(candidate => {
+                    const countryIso = normalizeKey(candidate.iso);
+                    const countryName = normalizeKey(candidate.country);
+                    return isoKeys.includes(countryIso) ||
+                        nameKeys.includes(countryName) ||
+                        nameKeys.some(name => name.length > 4 && countryName.length > 4 &&
+                            (name.includes(countryName) || countryName.includes(name)));
+                });
+
+                if (!country) {
+                    featureColors.push(undefined);
+                    return;
+                }
+
+                const relation = getRelationValue(playerCountryName, country.country, currentDate);
+                const color = colorForRelation(relation);
+                featureColors.push(color);
+                [...isoKeys, ...nameKeys].forEach(key => {
+                    colors[key] = color;
+                });
+            });
+
+            gameWindow.neosantara_diplomacy_map_colors = colors;
+            gameWindow.neosantara_diplomacy_map_feature_colors = featureColors;
+        };
+
+        updateDiplomacyMapColors();
+        window.addEventListener('country_relations_updated', updateDiplomacyMapColors);
+        window.addEventListener('world_map_features_ready', updateDiplomacyMapColors);
+        return () => {
+            window.removeEventListener('country_relations_updated', updateDiplomacyMapColors);
+            window.removeEventListener('world_map_features_ready', updateDiplomacyMapColors);
+        };
+    }, [isDiplomacyMapActive, selectedCountry?.country, countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, currentDate]);
+
+    const handleTopNavSelect = (view: 'map' | 'diplomacy') => {
+        setIsDiplomacyMapActive(view === 'diplomacy');
+    };
     const [newsList, setNewsList] = useState<NewsItemData[]>([]);
     const lastObservedNewsResetDateRef = useRef<string | null>(null);
 
@@ -1059,17 +1211,6 @@ export default function MapPage() {
                     if (sanctionsNotifications.length > 0) {
                         setNotifications(prev => [...sanctionsNotifications, ...prev]);
                     }
-                    const relationPenalty = applyInvasionRelationPenalty(attackerCountry, 5, 10);
-                    setNotifications(prev => [{
-                        id: `notif-unapproved-invasion-relations-${Date.now()}`,
-                        title: '📉 HUBUNGAN DIPLOMATIK MEMBURUK',
-                        sender: 'Kementerian Luar Negeri',
-                        message: `Hubungan diplomatik ${attackerCountry} dengan negara-negara lain turun ${relationPenalty} poin karena menyerang ${targetCountry} tanpa mandat Resolusi Invasi PBB yang sesuai.`,
-                        timestamp: dateStr,
-                        type: 'peringkat',
-                        value: relationPenalty,
-                        isRead: false
-                    }, ...prev]);
                 }
             }
 
@@ -1291,7 +1432,7 @@ export default function MapPage() {
                     }
                 }
 
-                const relationPenalty = applyInvasionRelationPenalty(attackerCountry, 1, 5);
+                const relationPenalty = applyUniformRelationPenalty(attackerCountry, 1, 5);
                 setNotifications(prev => [{
                     id: `notif-retreat-relations-${Date.now()}`,
                     title: '📉 HUBUNGAN DIPLOMATIK MENURUN',
@@ -1396,6 +1537,35 @@ export default function MapPage() {
                     target: detail.target,
                 });
                 return;
+            }
+
+            const playerCountryName = selectedCountry?.country ||
+                countryDetail?.country ||
+                countryDetail?.nama_negara ||
+                countryDetail?.name_id;
+            if (playerCountryName && areSameWarCountry(
+                detail.attacker,
+                playerCountryName,
+                detail.attackerCountryDetail?.iso,
+                selectedCountry?.iso || countryDetail?.iso
+            )) {
+                setMilitaryAttackRelation(detail.attacker, detail.target, 1);
+                if (
+                    !hasActiveGlobalWarBan() &&
+                    !hasActiveApprovedInvasionResolution(detail.attacker, detail.target)
+                ) {
+                    const relationPenaltySummary = applyInvasionRelationPenalty(detail.attacker, detail.target);
+                    setNotifications(previous => [{
+                        id: `notif-unapproved-invasion-relations-${Date.now()}`,
+                        title: '📉 HUBUNGAN DIPLOMATIK MEMBURUK',
+                        sender: 'Kementerian Luar Negeri',
+                        message: `Hubungan diplomatik ${detail.attacker} dengan negara-negara lain menurun karena menyerang ${detail.target} tanpa mandat Resolusi Invasi PBB. ${relationPenaltySummary}`,
+                        timestamp: currentDate.toISOString().slice(0, 10),
+                        type: 'peringkat',
+                        value: 30,
+                        isRead: false,
+                    }, ...previous]);
+                }
             }
 
             const COUNTRY_NAME_ALIASES: Record<string, string> = {
@@ -4052,6 +4222,7 @@ export default function MapPage() {
 
                 if (typeof window !== 'undefined') {
                     (window as any).neosantara_world_geojson_features = drawableFeatures;
+                    window.dispatchEvent(new Event('world_map_features_ready'));
                 }
 
                 try {
@@ -4144,11 +4315,23 @@ export default function MapPage() {
                                 value !== '#1e3a8a' &&
                                 value !== '#fbbf24' &&
                                 value !== 'white' &&
+                                !(window as any).neosantara_diplomacy_map_active &&
                                 features &&
                                 fillCount < features.length
                             ) {
                                 const annexedColor = annexedFeatureColors[fillCount];
                                 if (annexedColor) realFillStyle = annexedColor;
+                            }
+                            if (
+                                typeof value === 'string' &&
+                                value !== '#1e3a8a' &&
+                                value !== '#fbbf24' &&
+                                value !== 'white' &&
+                                (window as any).neosantara_diplomacy_map_active
+                            ) {
+                                const diplomacyColor =
+                                    (window as any).neosantara_diplomacy_map_feature_colors?.[fillCount];
+                                if (diplomacyColor) realFillStyle = diplomacyColor;
                             }
                             Object.getOwnPropertyDescriptor(Object.getPrototypeOf(mapCtx), 'fillStyle')
                                 ?.set?.call(mapCtx, realFillStyle);
@@ -5067,6 +5250,10 @@ export default function MapPage() {
                             else if (action === 'loot') mappedAction = 'jarah';
                             else mappedAction = 'mundur';
 
+                            if (mappedAction !== 'aneksasi') {
+                                setMilitaryAttackRelation(activeWarAnimation.attacker, activeWarAnimation.target, 25);
+                            }
+
                             window.dispatchEvent(
                                 new CustomEvent('trigger_player_attack', {
                                     detail: {
@@ -5097,12 +5284,18 @@ export default function MapPage() {
             <DiplomacyTracking />
 
             {!(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
-                <BottomNav
-                    activeMenu={activeMenu}
-                    setActiveMenu={setActiveMenu}
-                    countryDetail={countryDetail}
-                    isDetailModalOpen={countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen}
-                />
+                <>
+                    <TopNav
+                        activeView={isDiplomacyMapActive ? 'diplomacy' : 'map'}
+                        onSelect={handleTopNavSelect}
+                    />
+                    <BottomNav
+                        activeMenu={activeMenu}
+                        setActiveMenu={setActiveMenu}
+                        countryDetail={countryDetail}
+                        isDetailModalOpen={countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen}
+                    />
+                </>
             )}
 
             <ModalsManager

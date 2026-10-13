@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import {
-  Star, Wallet, Wrench, Shield, Globe, Landmark, LayoutGrid, ChevronLeft,
+  Star, Wallet, Wrench, Shield, Globe, Landmark, LayoutGrid,
   Hammer, Swords as MilitaryIcon, Users2, BarChart3, TrendingUp,
   ArrowRightLeft, FileText, CreditCard, Zap, Package, Home, ShieldAlert, Gem, Tag, Smile, Eye, HeartHandshake, HandHelping, Handshake,
   Droplet, Activity, Bolt, Radiation, Info, Bug
@@ -54,7 +54,7 @@ export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, is
     if (activeMenu === "") {
       setActiveTab(null);
     } else if (activeMenu === "Peta Taktis") {
-      // Do nothing, allow manual reset via Grid Icon click
+      setActiveTab(null);
     } else {
       // Check if activeMenu is a group itself (Step Back state)
       if (subMenuItems[activeMenu]) {
@@ -106,7 +106,6 @@ export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, is
     <div className={`absolute bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-1/2 -translate-x-1/2 w-max max-w-[95vw] transition-all duration-500 cursor-not-allowed z-[200] ${isOtherModalOpen ? 'opacity-50' : 'opacity-100'
       }`}>
       <nav className="flex items-center gap-1 lg:gap-1.5 bg-[#0F2424]/90 backdrop-blur-md px-1.5 lg:px-2 py-1 lg:py-1.5 rounded-xl lg:rounded-2xl border border-[#00FFAA]/30 transition-all duration-500 ease-in-out overflow-visible">
-
         {/* Main Navigation Section */}
         <div className="flex items-center gap-0.5 lg:gap-1 2xl:gap-2">
           {(isMenuSelected

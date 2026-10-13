@@ -7,14 +7,10 @@ import React, {
   useState,
 } from 'react';
 import {
-  X,
-  Swords,
   Flag,
   Trophy,
   TrendingDown,
   ArrowLeft,
-  Shield,
-  FastForward,
   AlertTriangle,
 } from 'lucide-react';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '@/app/page/map_system/map-data';
@@ -606,13 +602,6 @@ export default function WarMap({
     [warPath, result, onResolve]
   );
 
-  const handleSkip = useCallback(() => {
-    if (phase === 'travel') {
-      setProgress(1);
-      setPhase('impact');
-    }
-  }, [phase]);
-
   const handleAutoResult = useCallback(() => {
     if (battleOutcome) {
       setResult(battleOutcome.result);
@@ -748,74 +737,6 @@ export default function WarMap({
           onAutoResult={handleAutoResult}
           onClose={onClose}
         />
-      )}
-
-      {/* ══════════ HUD HEADER & PROGRESS BAR (HANYA SAAT FASE TRAVEL) ══════════ */}
-      {phase === 'travel' && (
-        <div className="fixed inset-0 z-[150] pointer-events-none font-sans select-none overflow-hidden">
-          {/* ── HEADER HUD ── */}
-          <div className="absolute top-4 left-0 right-0 p-4 sm:p-6 flex items-start justify-between gap-4 pointer-events-none">
-            <div className="flex items-center gap-3 pointer-events-auto bg-[#0a1a1a]/95 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-[#FF2D55]/40 shadow-2xl">
-              <div className="p-2 rounded-xl bg-[#FF2D55]/20 border border-[#FF2D55]/50">
-                <Swords className="h-5 w-5 text-[#FF2D55]" />
-              </div>
-              <div>
-                <h1 className="text-xs sm:text-sm font-black text-[#FF2D55] uppercase tracking-widest leading-none">
-                  {isUserDefender ? 'Respon Pertahanan Aktif' : 'Operasi Militer Aktif'}
-                </h1>
-                <p className="text-[10px] text-[#6B8A8A] font-bold uppercase tracking-widest mt-1">
-                  {isUserDefender ? `Agresor (${attacker.country}) Menuju -> ${target.capital || target.country}` : `Pasukan Menuju -> ${target.capital || target.country}`}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 pointer-events-auto">
-              <button
-                onClick={handleSkip}
-                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-[#0A1A1A]/95 hover:bg-[#0F2424] backdrop-blur-md border border-[#FF2D55]/40 text-[#FF2D55] text-[10px] font-black uppercase tracking-widest cursor-pointer transition-colors shadow-xl"
-              >
-                <FastForward className="h-3.5 w-3.5" />
-                Percepat
-              </button>
-              <button
-                onClick={onClose}
-                className="p-2.5 rounded-xl bg-[#0A1A1A]/95 hover:bg-[#0F2424] backdrop-blur-md border border-[#FF2D55]/40 text-[#FF2D55] transition-colors cursor-pointer shadow-xl"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* ── HUD BAWAH (PROGRESS BAR) ── */}
-          <div className="absolute bottom-24 sm:bottom-28 left-0 right-0 p-4 flex justify-center pointer-events-none">
-            <div className="w-full max-w-xl bg-[#0A1A1A]/95 backdrop-blur-md border border-[#FF2D55]/40 rounded-2xl p-4 pointer-events-auto shadow-2xl">
-              <div className="flex items-center justify-between mb-2.5">
-                <div className="flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-[#00FFAA]" />
-                  <span className="text-[10px] font-black text-[#00FFAA] uppercase tracking-widest">
-                    {attacker.capital} ({attacker.country})
-                  </span>
-                </div>
-                <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-widest">
-                  {Math.round(progress * 100)}% · ETA{' '}
-                  {Math.max(0, Math.round((warPath.durationMs * (1 - progress)) / 1000))}s
-                </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-black text-[#FF2D55] uppercase tracking-widest">
-                    {target.capital} ({target.country})
-                  </span>
-                  <Flag className="h-4 w-4 text-[#FF2D55]" />
-                </div>
-              </div>
-              <div className="h-2.5 bg-[#050B0B] rounded-full overflow-hidden border border-[#FF2D55]/30">
-                <div
-                  className="h-full bg-gradient-to-r from-[#00FFAA] via-[#FFEB3B] to-[#FF2D55] transition-[width] duration-100 ease-linear"
-                  style={{ width: `${progress * 100}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
       )}
 
       {/* ══════════ LAYAR HASIL PERTEMPURAN (Fase 'result') ══════════ */}

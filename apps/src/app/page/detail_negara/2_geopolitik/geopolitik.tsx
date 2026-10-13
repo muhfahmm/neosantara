@@ -12,7 +12,6 @@ import BeriHadiahModal from './2_beri_hadiah/beriHadiahModals';
 import TingkatkanHubunganModal from './3_tingkatkan_hubungan/tingkatkanHubunganModals';
 import MintaBantuanModal from './5_minta_bantuan/mintaBantuanModals';
 import BerikanWilayahModal from './6_berikan_wilayah/berikanWilayahModals';
-import { sdaIcons } from '@/app/page/navigasi_menu/1_navigasi_atas/2_sda/sdaIcons';
 import { COUNTRIES_DATA } from '../../map_system/map-data';
 
 interface GeopolitikProps {
@@ -170,14 +169,15 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
     try {
       const response = await fetch(`/api/sda-data?country=${encodeURIComponent(countryName)}`);
       const sda = response.ok ? await response.json() as Record<string, boolean> : null;
-      const availableResources = Object.keys(sdaIcons).filter(resource => sda?.[resource] === true);
+      const resourceKeys = Object.keys(sda || {}).filter(resource => typeof sda?.[resource] === 'boolean');
+      const availableResources = resourceKeys.filter(resource => sda?.[resource] === true);
       if (availableResources.length === 0) {
         console.warn(`Bantuan dari ${countryName} tidak dapat dikirim karena SDA tidak tersedia.`);
         return;
       }
 
       const resourceKey = availableResources[Math.floor(Math.random() * availableResources.length)];
-      const maximumAmount = Math.max(5000, Math.round((availableResources.length / Object.keys(sdaIcons).length) * 10) * 5000);
+      const maximumAmount = Math.max(5000, Math.round((availableResources.length / resourceKeys.length) * 10) * 5000);
       const amount = (Math.floor(Math.random() * (maximumAmount / 5000)) + 1) * 5000;
       window.dispatchEvent(new CustomEvent('neosantara_diplomacy_path', {
         detail: {
