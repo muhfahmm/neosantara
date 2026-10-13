@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, Info, Shield, Globe, Vote, Crown, DollarSign, Handshake, Hammer, Flag, Feather, Sword, Check } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
-import { fetchAllCountryProfilesFromDb, updateCountryProfileSocialData, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
+import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
 
 import IdeologiConfirmModal from "./modalsGanti";
 import IdeologiGagalModal from "./modalsGagalGanti";
@@ -166,10 +166,6 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
 
     setIsSaving(true);
     try {
-      const countrySlug = String(countryDetail?.country_slug || '');
-      if (!countrySlug) throw new Error('Slug negara pemain tidak tersedia; perubahan ideologi tidak dapat disimpan.');
-      await updateCountryProfileSocialData(countrySlug, { ideology: selectedIdeology });
-
       const oldIdeology = countryDetail?.ideology || "Demokrasi";
       const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
       const notif = generateIdeologyChangeNotification(oldIdeology, selectedIdeology, dateStr);
@@ -182,9 +178,6 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
         pending_notifications: newPending,
         message: `Ideologi negara diubah ke ${selectedIdeology}. Biaya perubahan ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO.`
       }));
-      setCountryProfiles(profiles => profiles.map(profile =>
-        profile.country_slug === countrySlug ? { ...profile, ideology: selectedIdeology } : profile
-      ));
       setFeedback({
         type: "success",
         message: `Ideologi berhasil diubah menjadi ${selectedIdeology}. Biaya ${IDEOLOGY_CHANGE_COST.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO telah dipotong.`
