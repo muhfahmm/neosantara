@@ -147,6 +147,103 @@ const PRODUCTION_KEYS_BY_MISSION: Record<string, string> = {
 };
 
 // =====================================================================
+// KATEGORI KHUSUS TARGET PRODUKSI & BANGUNAN (Progressive Target: 5, 10, 15, dst.)
+// =====================================================================
+export const PRODUCTION_PROGRESS_CATEGORIES = [
+  'Mineral & Energi',
+  'Manufaktur',
+  'Peternakan',
+  'Agrikultur',
+  'Perikanan',
+  'Olahan Pangan',
+] as const;
+
+export const BASE_PRODUCTION_TARGET = 5;
+
+const MISSION_BUILDING_PROGRESS_STORAGE_KEY = 'presiden_simulator_mission_building_progress';
+
+/**
+ * Menghitung target unit bangunan berdasarkan tingkat penyelesaian misi saat ini.
+ * Tingkat 0 = 5, Tingkat 1 = 10, Tingkat 2 = 15, dst.
+ */
+export function getMissionRequiredTarget(card: Pick<MissionCard, 'categoryLabel' | 'id'>, completionCount = 0): number | null {
+  if (PRODUCTION_PROGRESS_CATEGORIES.includes(card.categoryLabel as any)) {
+    return BASE_PRODUCTION_TARGET * (Math.max(0, completionCount) + 1);
+  }
+  return null;
+}
+
+/**
+ * Mengambil map progres akumulasi unit bangunan yang telah dibangun untuk misi.
+ */
+export function getMissionBuildingProgressMap(): Record<string, number> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Mengambil jumlah unit yang sudah dibangun untuk kartu misi tertentu.
+ */
+export function getMissionBuildingProgress(cardId: string): number {
+  const map = getMissionBuildingProgressMap();
+  return Number(map[cardId]) || 0;
+}
+
+/**
+ * Mencatat progres penambahan bangunan saat pemain membangun fasilitas.
+ * Jika kartu misi aktif berhubungan dengan buildingKey atau kategori yang dibangun,
+ * counter progres bertambah. Bila target (misal 5) tercapai, misi ditandai siap diklaim!
+ */
+export function recordBuildingProgress(buildingKey: string, quantity = 1): void {
+  if (typeof window === 'undefined' || quantity <= 0) return;
+  try {
+    const activeId = getActiveMissionId();
+    if (!activeId) return;
+
+    const card = MISSION_CARDS.find(c => c.id === activeId);
+    if (!card) return;
+
+    // Cek apakah misi aktif merupakan salah satu dari 6 kategori produksi
+    if (!PRODUCTION_PROGRESS_CATEGORIES.includes(card.categoryLabel as any)) return;
+
+    // Validasi apakah buildingKey sesuai dengan misi
+    const targetProductKey = PRODUCTION_KEYS_BY_MISSION[activeId];
+    if (targetProductKey && targetProductKey !== buildingKey) {
+      // Tidak cocok dengan buildingKey misi
+      return;
+    }
+
+    const completions = getMissionCompletionCount(activeId);
+    const requiredTarget = getMissionRequiredTarget(card, completions) || BASE_PRODUCTION_TARGET;
+
+    const map = getMissionBuildingProgressMap();
+    const curVal = Number(map[activeId]) || 0;
+    const nextVal = curVal + quantity;
+    map[activeId] = nextVal;
+    localStorage.setItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY, JSON.stringify(map));
+
+    window.dispatchEvent(
+      new CustomEvent('mission_building_progress_updated', {
+        detail: { cardId: activeId, progress: nextVal, target: requiredTarget },
+      })
+    );
+
+    // Jika mencapai atau melebihi target kuantitas (misal >= 5), tandai siap diklaim!
+    if (nextVal >= requiredTarget) {
+      markMissionAsClaimable(activeId);
+    }
+  } catch (err) {
+    console.warn('Gagal mencatat progres misi bangunan:', err);
+  }
+}
+
+
+// =====================================================================
 // SISTEM HADIAH BERJENJANG & STATUS MISI (Progressive Scaling & Mission Tracking)
 // =====================================================================
 const MISSION_COMPLETION_STORAGE_KEY = 'presiden_simulator_mission_completions';
@@ -324,9 +421,15 @@ export function claimMissionReward(
       window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId: null } }));
     }
 
-    // 4. Hapus dari antrean klaim
+    // 4. Hapus dari antrean klaim & reset building progress misi ini
     const list = getClaimableMissionsList().filter(id => id !== cardId);
     localStorage.setItem(MISSION_CLAIMABLE_STORAGE_KEY, JSON.stringify(list));
+    try {
+      const bMap = getMissionBuildingProgressMap();
+      delete bMap[cardId];
+      localStorage.setItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY, JSON.stringify(bMap));
+      window.dispatchEvent(new CustomEvent('mission_building_progress_updated', { detail: { cardId, progress: 0 } }));
+    } catch {}
     window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { cardId, claimableList: list } }));
 
     // 5. Ganti kartu yang selesai dengan kartu baru secara acak di dalam pool 5 kartu
@@ -387,6 +490,7 @@ export function clearMissionProgressData(): void {
     localStorage.removeItem(MISSION_COMPLETION_STORAGE_KEY);
     localStorage.removeItem(MISSION_ACTIVE_STORAGE_KEY);
     localStorage.removeItem(MISSION_CLAIMABLE_STORAGE_KEY);
+    localStorage.removeItem(MISSION_BUILDING_PROGRESS_STORAGE_KEY);
     // Acak ulang 5 kartu misi baru saat reset / refresh
     const freshPool = generateRandomMissionIds(MISSION_POOL_SIZE);
     localStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(freshPool));
@@ -394,6 +498,7 @@ export function clearMissionProgressData(): void {
     window.dispatchEvent(new CustomEvent('mission_completions_updated', { detail: {} }));
     window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId: null } }));
     window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { claimableList: [] } }));
+    window.dispatchEvent(new CustomEvent('mission_building_progress_updated', { detail: {} }));
   } catch {}
 }
 
@@ -570,11 +675,12 @@ export function addPlayerDiamonds(amount: number): number {
 }
 
 /** Helper untuk memberikan penjelasan detail instruksi apa yang harus dilakukan pemain untuk menyelesaikan misi */
-export function getMissionInstruction(card: MissionCard): string {
+export function getMissionInstruction(card: MissionCard, completionCount = 0): string {
   if (card.description) return card.description;
 
   const id = card.id;
   const title = card.title;
+  const reqTarget = getMissionRequiredTarget(card, completionCount);
 
   // Gelar Acara
   if (card.category === 'event') {
@@ -606,21 +712,32 @@ export function getMissionInstruction(card: MissionCard): string {
     return `Buka menu Ekonomi & APBN lalu terapkan langkah kebijakan "${title}".`;
   }
 
-  // Produksi (Tambang, Kilang, Pembangkit, Pabrik)
-  if (card.category === 'produksi' || card.category === 'pangan') {
+  // Produksi & Pangan: Target Progressive Khusus (Mineral & Energi, Manufaktur, Peternakan, Agrikultur, Perikanan, Olahan Pangan)
+  if (reqTarget !== null) {
     if (id.startsWith('tambang_') || id.startsWith('kilang_')) {
-      return `Buka menu Produksi SDA lalu bangun atau tingkatkan kapasitas fasilitas ${title}.`;
+      return `Buka menu Produksi SDA lalu bangun minimal ${reqTarget} unit fasilitas ${title}.`;
     }
+    if (id.startsWith('pabrik_')) {
+      return `Buka menu Industri & Manufaktur lalu dirikan minimal ${reqTarget} unit ${title}.`;
+    }
+    if (id.startsWith('peternakan_')) {
+      return `Buka sektor Peternakan lalu kembangkan minimal ${reqTarget} unit fasilitas ${title}.`;
+    }
+    if (id.startsWith('sawah_') || id.startsWith('ladang_') || id.startsWith('kebun_')) {
+      return `Buka sektor Agrikultur lalu bangun minimal ${reqTarget} unit ${title}.`;
+    }
+    if (id.startsWith('tambak_') || id.startsWith('budidaya_') || id.startsWith('perikanan_')) {
+      return `Buka sektor Perikanan lalu kembangkan minimal ${reqTarget} unit ${title}.`;
+    }
+    return `Buka menu Produksi Pangan lalu dirikan minimal ${reqTarget} unit ${title}.`;
+  }
+
+  // Produksi Kelistrikan
+  if (card.category === 'produksi' || card.category === 'pangan') {
     if (id.startsWith('bangun_plt')) {
       return `Buka menu Produksi Kelistrikan lalu bangun unit pembangkit listrik ${title}.`;
     }
-    if (id.startsWith('pabrik_')) {
-      return `Buka menu Industri & Manufaktur lalu dirikan unit ${title} untuk memacu rantai pasok.`;
-    }
-    if (id.startsWith('peternakan_') || id.startsWith('sawah_') || id.startsWith('ladang_') || id.startsWith('kebun_') || id.startsWith('tambak_') || id.startsWith('budidaya_') || id.startsWith('perikanan_')) {
-      return `Buka sektor Pangan & Agrikultur lalu kembangkan lahan ${title} untuk ketahanan pangan.`;
-    }
-    return `Buka menu Produksi Nasional lalu bangun atau tingkatkan kapasitas ${title}.`;
+    return `Buka menu Produksi Nasional lalu bangun fasilitas ${title}.`;
   }
 
   // Layanan Publik (Infrastruktur, Penegakan Hukum, Olahraga, Komersial)
@@ -751,57 +868,57 @@ const MISSION_CARDS: MissionCard[] = [
   { id: 'bangun_pltfn',           category: 'produksi', categoryLabel: 'Kelistrikan', icon: Atom,      accent: '#8B5CF6', title: 'PLT Fusi Nuklir (PLTFN)',      progress: '0 / 400' },
 
   // ═══ 5. PRODUKSI — MINERAL & ENERGI ═══
-  { id: 'tambang_emas',           category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Gem,      accent: '#8B5CF6', title: 'Tambang Emas',                  progress: '30 / 600' },
-  { id: 'tambang_uranium',        category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Atom,     accent: '#8B5CF6', title: 'Tambang Uranium',               progress: '16 / 0' },
-  { id: 'tambang_batu_bara',      category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Gem,      accent: '#8B5CF6', title: 'Tambang Batu Bara',             progress: '53 / 0' },
-  { id: 'kilang_minyak_bumi',     category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Droplet,  accent: '#8B5CF6', title: 'Kilang Minyak Bumi',            progress: '51 / 0' },
-  { id: 'kilang_gas_alam',        category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Wind,     accent: '#8B5CF6', title: 'Kilang Gas Alam',               progress: '26 / 0' },
-  { id: 'tambang_garam',          category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Gem,      accent: '#8B5CF6', title: 'Tambang Garam',                 progress: '27 / 0' },
-  { id: 'tambang_litium',         category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Battery,  accent: '#8B5CF6', title: 'Tambang Litium',                progress: '9 / 0' },
-  { id: 'tambang_ltj',            category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Gem,      accent: '#8B5CF6', title: 'Tambang Logam Tanah Jarang',    progress: '9 / 0' },
-  { id: 'tambang_bijih_besi',     category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Gem,      accent: '#8B5CF6', title: 'Tambang Bijih Besi',            progress: '150 / 0' },
+  { id: 'tambang_emas',           category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Gem,      accent: '#8B5CF6', title: 'Tambang Emas' },
+  { id: 'tambang_uranium',        category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Atom,     accent: '#8B5CF6', title: 'Tambang Uranium' },
+  { id: 'tambang_batu_bara',      category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Gem,      accent: '#8B5CF6', title: 'Tambang Batu Bara' },
+  { id: 'kilang_minyak_bumi',     category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Droplet,  accent: '#8B5CF6', title: 'Kilang Minyak Bumi' },
+  { id: 'kilang_gas_alam',        category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Wind,     accent: '#8B5CF6', title: 'Kilang Gas Alam' },
+  { id: 'tambang_garam',          category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Gem,      accent: '#8B5CF6', title: 'Tambang Garam' },
+  { id: 'tambang_litium',         category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Battery,  accent: '#8B5CF6', title: 'Tambang Litium' },
+  { id: 'tambang_ltj',            category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Gem,      accent: '#8B5CF6', title: 'Tambang Logam Tanah Jarang' },
+  { id: 'tambang_bijih_besi',     category: 'produksi', categoryLabel: 'Mineral & Energi', icon: Gem,      accent: '#8B5CF6', title: 'Tambang Bijih Besi' },
 
   // ═══ 6. PRODUKSI — MANUFAKTUR ═══
-  { id: 'pabrik_semikonduktor',   category: 'produksi', categoryLabel: 'Manufaktur', icon: Factory,   accent: '#8B5CF6', title: 'Pabrik Semikonduktor',          progress: '3795 / 0' },
-  { id: 'pabrik_mesin',           category: 'produksi', categoryLabel: 'Manufaktur', icon: Factory,   accent: '#8B5CF6', title: 'Pabrik Mesin Mobil & Motor',    progress: '4807 / 0' },
-  { id: 'pabrik_besi',            category: 'produksi', categoryLabel: 'Manufaktur', icon: Factory,   accent: '#8B5CF6', title: 'Pabrik Besi Baja',              progress: '49 / 0' },
-  { id: 'pabrik_semen_beton',     category: 'produksi', categoryLabel: 'Manufaktur', icon: Building2, accent: '#8B5CF6', title: 'Pabrik Semen Beton',            progress: '3795 / 0' },
-  { id: 'pabrik_kayu',            category: 'produksi', categoryLabel: 'Manufaktur', icon: Leaf,      accent: '#8B5CF6', title: 'Pabrik Pengolahan Kayu',        progress: '3289 / 0' },
+  { id: 'pabrik_semikonduktor',   category: 'produksi', categoryLabel: 'Manufaktur', icon: Factory,   accent: '#8B5CF6', title: 'Pabrik Semikonduktor' },
+  { id: 'pabrik_mesin',           category: 'produksi', categoryLabel: 'Manufaktur', icon: Factory,   accent: '#8B5CF6', title: 'Pabrik Mesin Mobil & Motor' },
+  { id: 'pabrik_besi',            category: 'produksi', categoryLabel: 'Manufaktur', icon: Factory,   accent: '#8B5CF6', title: 'Pabrik Besi Baja' },
+  { id: 'pabrik_semen_beton',     category: 'produksi', categoryLabel: 'Manufaktur', icon: Building2, accent: '#8B5CF6', title: 'Pabrik Semen Beton' },
+  { id: 'pabrik_kayu',            category: 'produksi', categoryLabel: 'Manufaktur', icon: Leaf,      accent: '#8B5CF6', title: 'Pabrik Pengolahan Kayu' },
 
   // ═══ 7. PANGAN — PETERNAKAN ═══
-  { id: 'peternakan_ayam',        category: 'pangan', categoryLabel: 'Peternakan', icon: Egg,   accent: '#F97316', title: 'Peternakan Ayam Unggas',        progress: '1409 / 0' },
-  { id: 'peternakan_sapi_perah',  category: 'pangan', categoryLabel: 'Peternakan', icon: Milk,  accent: '#F97316', title: 'Peternakan Sapi Perah',         progress: '1127 / 0' },
-  { id: 'peternakan_sapi_potong', category: 'pangan', categoryLabel: 'Peternakan', icon: Beef,  accent: '#F97316', title: 'Peternakan Sapi Potong',        progress: '939 / 0' },
-  { id: 'peternakan_domba',       category: 'pangan', categoryLabel: 'Peternakan', icon: Beef,  accent: '#F97316', title: 'Peternakan Domba & Kambing',    progress: '392 / 0' },
+  { id: 'peternakan_ayam',        category: 'pangan', categoryLabel: 'Peternakan', icon: Egg,   accent: '#F97316', title: 'Peternakan Ayam Unggas' },
+  { id: 'peternakan_sapi_perah',  category: 'pangan', categoryLabel: 'Peternakan', icon: Milk,  accent: '#F97316', title: 'Peternakan Sapi Perah' },
+  { id: 'peternakan_sapi_potong', category: 'pangan', categoryLabel: 'Peternakan', icon: Beef,  accent: '#F97316', title: 'Peternakan Sapi Potong' },
+  { id: 'peternakan_domba',       category: 'pangan', categoryLabel: 'Peternakan', icon: Beef,  accent: '#F97316', title: 'Peternakan Domba & Kambing' },
 
   // ═══ 8. PANGAN — AGRIKULTUR ═══
-  { id: 'sawah_padi',             category: 'pangan', categoryLabel: 'Agrikultur', icon: Wheat, accent: '#F97316', title: 'Sawah Padi',                    progress: '2465 / 0' },
-  { id: 'ladang_gandum',          category: 'pangan', categoryLabel: 'Agrikultur', icon: Wheat, accent: '#F97316', title: 'Ladang Gandum',                 progress: '2254 / 0' },
-  { id: 'ladang_jagung',          category: 'pangan', categoryLabel: 'Agrikultur', icon: Wheat, accent: '#F97316', title: 'Ladang Jagung',                 progress: '3169 / 0' },
-  { id: 'kebun_sayur',            category: 'pangan', categoryLabel: 'Agrikultur', icon: Leaf,  accent: '#F97316', title: 'Kebun Sayur Mayur',             progress: '6500 / 0' },
-  { id: 'ladang_umbi',            category: 'pangan', categoryLabel: 'Agrikultur', icon: Wheat, accent: '#F97316', title: 'Ladang Umbi-umbian',            progress: '5634 / 0' },
-  { id: 'ladang_kedelai',         category: 'pangan', categoryLabel: 'Agrikultur', icon: Wheat, accent: '#F97316', title: 'Ladang Kedelai',                progress: '8450 / 0' },
-  { id: 'kebun_sawit',            category: 'pangan', categoryLabel: 'Agrikultur', icon: Leaf,  accent: '#F97316', title: 'Kebun Kelapa Sawit',            progress: '939 / 0' },
-  { id: 'kebun_kopi',             category: 'pangan', categoryLabel: 'Agrikultur', icon: Leaf,  accent: '#F97316', title: 'Kebun Kopi',                    progress: '2790 / 0' },
-  { id: 'kebun_teh',              category: 'pangan', categoryLabel: 'Agrikultur', icon: Leaf,  accent: '#F97316', title: 'Kebun Teh',                     progress: '3380 / 0' },
-  { id: 'kebun_kakao',            category: 'pangan', categoryLabel: 'Agrikultur', icon: Leaf,  accent: '#F97316', title: 'Kebun Kakao',                   progress: '5634 / 0' },
-  { id: 'kebun_tebu',             category: 'pangan', categoryLabel: 'Agrikultur', icon: Wheat, accent: '#F97316', title: 'Kebun Tebu',                    progress: '2486 / 0' },
-  { id: 'kebun_karet',            category: 'pangan', categoryLabel: 'Agrikultur', icon: Leaf,  accent: '#F97316', title: 'Kebun Karet',                   progress: '805 / 0' },
+  { id: 'sawah_padi',             category: 'pangan', categoryLabel: 'Agrikultur', icon: Wheat, accent: '#F97316', title: 'Sawah Padi' },
+  { id: 'ladang_gandum',          category: 'pangan', categoryLabel: 'Agrikultur', icon: Wheat, accent: '#F97316', title: 'Ladang Gandum' },
+  { id: 'ladang_jagung',          category: 'pangan', categoryLabel: 'Agrikultur', icon: Wheat, accent: '#F97316', title: 'Ladang Jagung' },
+  { id: 'kebun_sayur',            category: 'pangan', categoryLabel: 'Agrikultur', icon: Leaf,  accent: '#F97316', title: 'Kebun Sayur Mayur' },
+  { id: 'ladang_umbi',            category: 'pangan', categoryLabel: 'Agrikultur', icon: Wheat, accent: '#F97316', title: 'Ladang Umbi-umbian' },
+  { id: 'ladang_kedelai',         category: 'pangan', categoryLabel: 'Agrikultur', icon: Wheat, accent: '#F97316', title: 'Ladang Kedelai' },
+  { id: 'kebun_sawit',            category: 'pangan', categoryLabel: 'Agrikultur', icon: Leaf,  accent: '#F97316', title: 'Kebun Kelapa Sawit' },
+  { id: 'kebun_kopi',             category: 'pangan', categoryLabel: 'Agrikultur', icon: Leaf,  accent: '#F97316', title: 'Kebun Kopi' },
+  { id: 'kebun_teh',              category: 'pangan', categoryLabel: 'Agrikultur', icon: Leaf,  accent: '#F97316', title: 'Kebun Teh' },
+  { id: 'kebun_kakao',            category: 'pangan', categoryLabel: 'Agrikultur', icon: Leaf,  accent: '#F97316', title: 'Kebun Kakao' },
+  { id: 'kebun_tebu',             category: 'pangan', categoryLabel: 'Agrikultur', icon: Wheat, accent: '#F97316', title: 'Kebun Tebu' },
+  { id: 'kebun_karet',            category: 'pangan', categoryLabel: 'Agrikultur', icon: Leaf,  accent: '#F97316', title: 'Kebun Karet' },
 
   // ═══ 9. PANGAN — PERIKANAN ═══
-  { id: 'tambak_udang',           category: 'pangan', categoryLabel: 'Perikanan', icon: Fish, accent: '#F97316', title: 'Tambak Udang',                  progress: '4507 / 0' },
-  { id: 'budidaya_mutiara',       category: 'pangan', categoryLabel: 'Perikanan', icon: Gem,  accent: '#F97316', title: 'Budidaya Mutiara',              progress: '904 / 0' },
-  { id: 'perikanan_ikan',         category: 'pangan', categoryLabel: 'Perikanan', icon: Fish, accent: '#F97316', title: 'Tambak & Armada Ikan',          progress: '11736 / 0' },
+  { id: 'tambak_udang',           category: 'pangan', categoryLabel: 'Perikanan', icon: Fish, accent: '#F97316', title: 'Tambak Udang' },
+  { id: 'budidaya_mutiara',       category: 'pangan', categoryLabel: 'Perikanan', icon: Gem,  accent: '#F97316', title: 'Budidaya Mutiara' },
+  { id: 'perikanan_ikan',         category: 'pangan', categoryLabel: 'Perikanan', icon: Fish, accent: '#F97316', title: 'Tambak & Armada Ikan' },
 
   // ═══ 10. PANGAN — OLAHAN PANGAN ═══
-  { id: 'pabrik_air_mineral',     category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Droplet,   accent: '#F97316', title: 'Pabrik Air Mineral',            progress: '70 / 0' },
-  { id: 'pabrik_gula',            category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Package,   accent: '#F97316', title: 'Pabrik Gula',                   progress: '9 / 0' },
-  { id: 'pabrik_roti',            category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Utensils,  accent: '#F97316', title: 'Pabrik Roti',                   progress: '1683 / 0' },
-  { id: 'pabrik_daging',          category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Beef,      accent: '#F97316', title: 'Pengolahan Daging',             progress: '1174 / 0' },
-  { id: 'pabrik_mie_instan',      category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Utensils,  accent: '#F97316', title: 'Pabrik Mie Instan',             progress: '705 / 0' },
-  { id: 'pabrik_minyak_goreng',   category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Droplet,   accent: '#F97316', title: 'Pabrik Minyak Goreng',          progress: '563 / 0' },
-  { id: 'pabrik_susu',            category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Milk,      accent: '#F97316', title: 'Pabrik Susu & Olahan',          progress: '1174 / 0' },
-  { id: 'pabrik_beras',           category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Wheat,     accent: '#F97316', title: 'Pabrik Penggilingan Beras',     progress: '1643 / 0' },
+  { id: 'pabrik_air_mineral',     category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Droplet,   accent: '#F97316', title: 'Pabrik Air Mineral' },
+  { id: 'pabrik_gula',            category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Package,   accent: '#F97316', title: 'Pabrik Gula' },
+  { id: 'pabrik_roti',            category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Utensils,  accent: '#F97316', title: 'Pabrik Roti' },
+  { id: 'pabrik_daging',          category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Beef,      accent: '#F97316', title: 'Pengolahan Daging' },
+  { id: 'pabrik_mie_instan',      category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Utensils,  accent: '#F97316', title: 'Pabrik Mie Instan' },
+  { id: 'pabrik_minyak_goreng',   category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Droplet,   accent: '#F97316', title: 'Pabrik Minyak Goreng' },
+  { id: 'pabrik_susu',            category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Milk,      accent: '#F97316', title: 'Pabrik Susu & Olahan' },
+  { id: 'pabrik_beras',           category: 'pangan', categoryLabel: 'Olahan Pangan', icon: Wheat,     accent: '#F97316', title: 'Pabrik Penggilingan Beras' },
 
   // ═══ 11. LAYANAN PUBLIK — INFRASTRUKTUR ═══
   { id: 'infra_jalur_sepeda',     category: 'layanan_publik', categoryLabel: 'Infrastruktur', icon: Bike,    accent: '#0EA5E9', title: 'Jalur Sepeda',                  progress: '4.335' },
@@ -1034,6 +1151,7 @@ export default function MissionModals({
   const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
   const [claimableList, setClaimableList] = useState<string[]>([]);
   const [claimFeedback, setClaimFeedback] = useState<string | null>(null);
+  const [buildingProgressMap, setBuildingProgressMap] = useState<Record<string, number>>({});
 
   useEffect(() => {
     setMounted(true);
@@ -1041,6 +1159,7 @@ export default function MissionModals({
     setCompletionsMap(getMissionCompletionsMap());
     setActiveMissionId(getActiveMissionId());
     setClaimableList(getClaimableMissionsList());
+    setBuildingProgressMap(getMissionBuildingProgressMap());
 
     const handleCompletionsUpdate = () => {
       setCompletionsMap(getMissionCompletionsMap());
@@ -1052,6 +1171,10 @@ export default function MissionModals({
 
     const handleClaimableUpdate = () => {
       setClaimableList(getClaimableMissionsList());
+    };
+
+    const handleBuildingProgressUpdate = () => {
+      setBuildingProgressMap(getMissionBuildingProgressMap());
     };
 
     const handlePoolUpdate = (e: any) => {
@@ -1066,6 +1189,7 @@ export default function MissionModals({
     window.addEventListener('mission_active_updated', handleActiveUpdate);
     window.addEventListener('mission_claimable_updated', handleClaimableUpdate);
     window.addEventListener('mission_pool_updated', handlePoolUpdate);
+    window.addEventListener('mission_building_progress_updated', handleBuildingProgressUpdate);
     window.addEventListener('storage', handleCompletionsUpdate);
 
     return () => {
@@ -1073,6 +1197,7 @@ export default function MissionModals({
       window.removeEventListener('mission_active_updated', handleActiveUpdate);
       window.removeEventListener('mission_claimable_updated', handleClaimableUpdate);
       window.removeEventListener('mission_pool_updated', handlePoolUpdate);
+      window.removeEventListener('mission_building_progress_updated', handleBuildingProgressUpdate);
       window.removeEventListener('storage', handleCompletionsUpdate);
     };
   }, []);
@@ -1237,16 +1362,30 @@ export default function MissionModals({
                         <h3 className="text-sm sm:text-base font-black text-[#E0E0E0] leading-tight">
                           {card.title}
                         </h3>
-                        {card.progress && (
-                          <span className="text-[10px] text-amber-400 font-black">
-                            ({card.progress})
-                          </span>
-                        )}
+                        {(() => {
+                          const reqTarget = getMissionRequiredTarget(card, completionCount);
+                          if (reqTarget !== null) {
+                            const curProgress = Math.min(reqTarget, buildingProgressMap[card.id] || 0);
+                            return (
+                              <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-400/10 border border-amber-400/40 text-amber-300">
+                                ({curProgress} / {reqTarget})
+                              </span>
+                            );
+                          }
+                          if (card.progress) {
+                            return (
+                              <span className="text-[10px] text-amber-400 font-black">
+                                ({card.progress})
+                              </span>
+                            );
+                          }
+                          return null;
+                        })()}
                       </div>
 
                       {/* PENJELASAN TINDAKAN / INSTRUKSI MISI */}
                       <p className="mt-1 text-xs text-[#9BB5B5] leading-relaxed">
-                        👉 <span className="text-[#C2D6D6] font-medium">{getMissionInstruction(card)}</span>
+                        👉 <span className="text-[#C2D6D6] font-medium">{getMissionInstruction(card, completionCount)}</span>
                       </p>
 
                       {/* BADGES HADIAH USULAN */}

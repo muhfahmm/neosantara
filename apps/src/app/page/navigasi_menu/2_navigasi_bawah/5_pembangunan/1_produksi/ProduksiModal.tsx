@@ -6,6 +6,7 @@ import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
 import { isBuildingAvailable } from '../../../../../logic';
 import { calculateProductionIncrement, formatDate, getDaysElapsed } from '../../../../../logic/production_logic';
 import { logger } from '../../../../../../lib/logger';
+import { recordBuildingProgress } from '../../../../menus/mission/missionModals';
 
 import KelistrikanTab from "./card_data/1_kelistrikan";
 import MineralEnergiTab from "./card_data/2_mineral_energi";
@@ -520,6 +521,7 @@ export default function ProduksiModal({
 
       setCountryDetail(updatedDetail);
       setSelectedBuilding(null);
+      recordBuildingProgress(key, buildQuantity);
       setToast(`✅ Berhasil! ${buildQuantity} ${label} dibangun secara instan.`);
       setTimeout(() => setToast(null), 3000);
       return;
@@ -558,6 +560,7 @@ export default function ProduksiModal({
 
     setCountryDetail(updatedDetail);
     setSelectedBuilding(null);
+    recordBuildingProgress(key, buildQuantity);
     setToast(`✅ Pembangunan ${buildQuantity} ${label} telah dijadwalkan!`);
     setTimeout(() => setToast(null), 3000);
   };

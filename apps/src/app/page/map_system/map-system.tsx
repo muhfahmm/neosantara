@@ -2566,12 +2566,40 @@ export default function MapPage() {
             const activeMission = typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_active_mission') : null;
             if (activeMission) {
                 try {
-                    const rawList = localStorage.getItem('presiden_simulator_claimable_missions');
-                    const list: string[] = rawList ? JSON.parse(rawList) : [];
-                    if (!list.includes(activeMission)) {
-                        list.push(activeMission);
-                        localStorage.setItem('presiden_simulator_claimable_missions', JSON.stringify(list));
-                        window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { cardId: activeMission, claimableList: list } }));
+                    // Cek apakah misi aktif merupakan salah satu misi produksi dengan kuantitas khusus (0/5, dst.)
+                    // Jika iya, biarkan recordBuildingProgress yang memvalidasi target terpenuhi
+                    const rawProgressMap = localStorage.getItem('presiden_simulator_mission_building_progress');
+                    const bMap = rawProgressMap ? JSON.parse(rawProgressMap) : {};
+                    const curProgress = Number(bMap[activeMission]) || 0;
+
+                    const rawCompletions = localStorage.getItem('presiden_simulator_mission_completions');
+                    const compMap = rawCompletions ? JSON.parse(rawCompletions) : {};
+                    const completionCount = Number(compMap[activeMission]) || 0;
+                    const requiredTarget = 5 * (completionCount + 1);
+
+                    const productionMissionIds = [
+                        'tambang_emas', 'tambang_uranium', 'tambang_batu_bara', 'kilang_minyak_bumi',
+                        'kilang_gas_alam', 'tambang_garam', 'tambang_litium', 'tambang_ltj', 'tambang_bijih_besi',
+                        'pabrik_semikonduktor', 'pabrik_mesin', 'pabrik_besi', 'pabrik_semen_beton', 'pabrik_kayu',
+                        'peternakan_ayam', 'peternakan_sapi_perah', 'peternakan_sapi_potong', 'peternakan_domba',
+                        'sawah_padi', 'ladang_gandum', 'ladang_jagung', 'kebun_sayur', 'ladang_umbi',
+                        'ladang_kedelai', 'kebun_sawit', 'kebun_kopi', 'kebun_teh', 'kebun_kakao', 'kebun_tebu', 'kebun_karet',
+                        'tambak_udang', 'budidaya_mutiara', 'perikanan_ikan',
+                        'pabrik_air_mineral', 'pabrik_gula', 'pabrik_roti', 'pabrik_daging', 'pabrik_mie_instan',
+                        'pabrik_minyak_goreng', 'pabrik_susu', 'pabrik_beras'
+                    ];
+
+                    const isProductionBuildingMission = productionMissionIds.includes(activeMission);
+
+                    // Jika ini misi pembangunan produksi dan target belum tercapai (misal belum mencapai 5), jangan tandai claimable
+                    if (!isProductionBuildingMission || curProgress >= requiredTarget) {
+                        const rawList = localStorage.getItem('presiden_simulator_claimable_missions');
+                        const list: string[] = rawList ? JSON.parse(rawList) : [];
+                        if (!list.includes(activeMission)) {
+                            list.push(activeMission);
+                            localStorage.setItem('presiden_simulator_claimable_missions', JSON.stringify(list));
+                            window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { cardId: activeMission, claimableList: list } }));
+                        }
                     }
                 } catch {}
             }
