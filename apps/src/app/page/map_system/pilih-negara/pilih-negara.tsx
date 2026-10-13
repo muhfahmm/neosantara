@@ -476,6 +476,10 @@ export default function PilihNegaraPage() {
                   }
                   if (typeof window !== 'undefined') {
                     window.localStorage.removeItem('dailyRewardData');
+                    window.localStorage.removeItem('presiden_simulator_mission_completions');
+                    window.localStorage.removeItem('presiden_simulator_active_mission');
+                    window.localStorage.removeItem('presiden_simulator_claimable_missions');
+                    window.localStorage.setItem('player_diamonds', '150');
                     window.localStorage.setItem('presiden_simulator_new_game', '1');
                   }
                 }}
@@ -741,6 +745,10 @@ export default function PilihNegaraPage() {
               }
               if (typeof window !== 'undefined') {
                 window.localStorage.removeItem('dailyRewardData');
+                window.localStorage.removeItem('presiden_simulator_mission_completions');
+                window.localStorage.removeItem('presiden_simulator_active_mission');
+                window.localStorage.removeItem('presiden_simulator_claimable_missions');
+                window.localStorage.setItem('player_diamonds', '150');
                 window.localStorage.setItem('presiden_simulator_new_game', '1');
               }
             }}

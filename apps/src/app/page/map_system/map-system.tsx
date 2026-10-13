@@ -187,7 +187,10 @@ import {
 import { generateMilitaryAchievementNews } from '../menus/news/logic/6_pencapaian_militer/pencapaianMiliterNewsLogic';
 import { generateWorldNewsEvents } from '../menus/news/logic/worldNewsLogic';
 import { NewsItemData } from '../menus/news/newsModals';
-import type { MissionNavigationTarget } from '../menus/mission/missionModals';
+import {
+    clearMissionProgressData,
+    type MissionNavigationTarget
+} from '../menus/mission/missionModals';
 import { calculateFoodCoverageByGroup } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic';
 import {
     clearExpelledOrganizationCountries,
@@ -1220,16 +1223,45 @@ export default function MapPage() {
     const [missionModalOpen, setMissionModalOpen] = useState(false);
     const [playerDiamonds, setPlayerDiamonds] = useState<number>(150);
 
-    // Sinkronisasi saldo diamond dari localStorage saat client mounted (mencegah hydration mismatch)
+    // Sinkronisasi saldo diamond dari localStorage saat client mounted & realtime event
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            const saved = localStorage.getItem('player_diamonds');
-            if (saved !== null) {
-                const parsed = parseInt(saved, 10);
-                if (!isNaN(parsed)) {
-                    setPlayerDiamonds(parsed);
-                }
+            const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
+            if (!loadSaveStr) {
+                localStorage.setItem('player_diamonds', '150');
+                setPlayerDiamonds(150);
             }
+
+            const syncDiamonds = () => {
+                const saved = localStorage.getItem('player_diamonds');
+                if (saved !== null) {
+                    const parsed = parseInt(saved, 10);
+                    if (!isNaN(parsed)) {
+                        setPlayerDiamonds(parsed);
+                        return;
+                    }
+                }
+                setPlayerDiamonds(150);
+            };
+
+            if (loadSaveStr) {
+                syncDiamonds();
+            }
+
+            const handleDiamondsUpdated = (e: any) => {
+                if (e.detail?.diamonds !== undefined) {
+                    setPlayerDiamonds(Number(e.detail.diamonds));
+                } else {
+                    syncDiamonds();
+                }
+            };
+
+            window.addEventListener('player_diamonds_updated', handleDiamondsUpdated);
+            window.addEventListener('storage', syncDiamonds);
+            return () => {
+                window.removeEventListener('player_diamonds_updated', handleDiamondsUpdated);
+                window.removeEventListener('storage', syncDiamonds);
+            };
         }
     }, []);
     const [activeWarAnimation, setActiveWarAnimation] = useState<any>(null);
@@ -2515,6 +2547,38 @@ export default function MapPage() {
         }
     }, [activeMenu]);
 
+    // Deteksi aksi user / perubahan pembangunan / kebijakan / anggaran negara saat misi sedang aktif
+    const lastCountryDetailStateRef = React.useRef<string>('');
+    useEffect(() => {
+        if (!countryDetail) return;
+        const serialized = JSON.stringify({
+            anggaran: countryDetail.anggaran,
+            ongoingConstructions: countryDetail.ongoingConstructions?.length || 0,
+            populasi: countryDetail.populasi,
+            produksi: countryDetail.produksi,
+            kebijakan: countryDetail.kebijakan,
+            armada: countryDetail.armada,
+            fasilitas: countryDetail.fasilitas,
+        });
+
+        if (lastCountryDetailStateRef.current && lastCountryDetailStateRef.current !== serialized) {
+            // Ada tindakan pembangunan, pelaksanaan event, alokasi anggaran, atau perubahan negara
+            const activeMission = typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_active_mission') : null;
+            if (activeMission) {
+                try {
+                    const rawList = localStorage.getItem('presiden_simulator_claimable_missions');
+                    const list: string[] = rawList ? JSON.parse(rawList) : [];
+                    if (!list.includes(activeMission)) {
+                        list.push(activeMission);
+                        localStorage.setItem('presiden_simulator_claimable_missions', JSON.stringify(list));
+                        window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { cardId: activeMission, claimableList: list } }));
+                    }
+                } catch {}
+            }
+        }
+        lastCountryDetailStateRef.current = serialized;
+    }, [countryDetail]);
+
     // Initialize high-performance simulation clock on mount
     useEffect(() => {
         let lastDateKey = '';
@@ -2559,6 +2623,15 @@ export default function MapPage() {
             clearAllOrganizationMembershipData();
             const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
             const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
+            // Reset data misi dan diamond ke tingkat awal setiap kali permainan dimulai atau halaman direfresh
+            // kecuali jika ada data save yang sedang dimuat (presiden_simulator_load_save).
+            if (!loadSaveStr || newGameMarker === '1') {
+                clearMissionProgressData();
+                localStorage.setItem('player_diamonds', '150');
+                setPlayerDiamonds(150);
+                window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: 150 } }));
+            }
+
             if (newGameMarker === '1') {
                 clearActiveResolutionsForSession();
                 clearActiveSecurityCouncilItems();
@@ -2865,6 +2938,36 @@ export default function MapPage() {
                             setKesejahteraan(Number(restoredDetail.kesejahteraan));
                         }
 
+                        if (restoredDetail.playerDiamonds !== undefined) {
+                            const dia = Number(restoredDetail.playerDiamonds);
+                            setPlayerDiamonds(dia);
+                            localStorage.setItem('player_diamonds', dia.toString());
+                        }
+                        if (restoredDetail.missionCompletions !== undefined) {
+                            if (restoredDetail.missionCompletions) {
+                                localStorage.setItem('presiden_simulator_mission_completions', restoredDetail.missionCompletions);
+                            } else {
+                                localStorage.removeItem('presiden_simulator_mission_completions');
+                            }
+                            window.dispatchEvent(new CustomEvent('mission_completions_updated'));
+                        }
+                        if (restoredDetail.activeMissionId !== undefined) {
+                            if (restoredDetail.activeMissionId) {
+                                localStorage.setItem('presiden_simulator_active_mission', restoredDetail.activeMissionId);
+                            } else {
+                                localStorage.removeItem('presiden_simulator_active_mission');
+                            }
+                            window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId: restoredDetail.activeMissionId } }));
+                        }
+                        if (restoredDetail.claimableMissions !== undefined) {
+                            if (restoredDetail.claimableMissions) {
+                                localStorage.setItem('presiden_simulator_claimable_missions', restoredDetail.claimableMissions);
+                            } else {
+                                localStorage.removeItem('presiden_simulator_claimable_missions');
+                            }
+                            window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { claimableList: restoredDetail.claimableMissions ? JSON.parse(restoredDetail.claimableMissions) : [] } }));
+                        }
+
                         sessionStorage.removeItem('presiden_simulator_load_save');
                     } catch (error) {
                         console.error('Gagal memulihkan data save:', error);
@@ -2886,6 +2989,10 @@ export default function MapPage() {
                     loadCountryStats(chosen.country, chosen.capital);
                     if (isNewGame || !loadSaveStr) {
                         expelCountryFromOrganizations(chosen.country);
+                        clearMissionProgressData();
+                        localStorage.setItem('player_diamonds', '150');
+                        setPlayerDiamonds(150);
+                        window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: 150 } }));
                     }
                 }
             }
@@ -3674,6 +3781,9 @@ export default function MapPage() {
             if (typeof window !== 'undefined') {
                 window.localStorage.removeItem('hutangModalLoanSources');
                 window.localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
+                clearMissionProgressData();
+                window.localStorage.setItem('player_diamonds', '150');
+                setPlayerDiamonds(150);
                 // Reset country color overrides dan data aneksasi saat restart game
                 clearActiveNpcCountrySimulationState();
                 (window as any).neosantara_country_color_overrides = {};
@@ -3752,6 +3862,10 @@ export default function MapPage() {
                     countryDetail: {
                         ...countryDetail,
                         presidentRating: presidentRating,
+                        playerDiamonds: playerDiamonds,
+                        missionCompletions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_mission_completions') : null,
+                        activeMissionId: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_active_mission') : null,
+                        claimableMissions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_claimable_missions') : null,
                         __neosantara_game_session: sessionState,
                     }, // Save entire countryDetail with all production data and president rating
                 }),
@@ -4658,6 +4772,8 @@ export default function MapPage() {
                 }}
                 isOpen={missionModalOpen}
                 onClose={() => setMissionModalOpen(false)}
+                countryDetail={countryDetail}
+                setCountryDetail={setCountryDetail}
                 onStartMission={(destination: MissionNavigationTarget) => {
                     setMissionModalOpen(false);
                     setInboxModalOpen(false);

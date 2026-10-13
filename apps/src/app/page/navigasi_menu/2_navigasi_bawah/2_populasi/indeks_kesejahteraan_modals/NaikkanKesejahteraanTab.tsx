@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { X, Heart, Coins, Sparkles, AlertCircle, CheckCircle2, Clock } from "lucide-react";
 import DanaTidakCukupModal from "../../1_kepuasan/2_naikkan_kepuasan/DanaTidakCukupModal";
@@ -11,6 +9,15 @@ interface NaikkanKesejahteraanTabProps {
   currentDate?: string | Date;
 }
 
+const MISSION_ID_BY_INITIATIVE: Record<string, string> = {
+  cash_transfer: 'kes_bantuan_tunai',
+  food_subsidy: 'kes_subsidi_pangan',
+  student_aid: 'kes_bantuan_pendidikan',
+  health_coverage: 'kes_jaminan_kesehatan',
+  housing_upgrade: 'kes_perbaikan_rumah',
+  national_market: 'kes_pasar_murah',
+};
+
 export default function NaikkanKesejahteraanTab({
   countryDetail,
   setCountryDetail,
@@ -21,6 +28,44 @@ export default function NaikkanKesejahteraanTab({
   const [isDanaTidakCukupOpen, setIsDanaTidakCukupOpen] = useState(false);
   const [pendingCost, setPendingCost] = useState(0);
   const [pendingTitle, setPendingTitle] = useState("");
+  const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
+  const [highlightedInitId, setHighlightedInitId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const currentActive = localStorage.getItem("presiden_simulator_active_mission");
+      setActiveMissionId(currentActive);
+
+      // Cari init.id yang cocok dengan active mission saat tab dimuat
+      if (currentActive) {
+        const found = Object.entries(MISSION_ID_BY_INITIATIVE).find(([, missionId]) => missionId === currentActive);
+        if (found) {
+          setHighlightedInitId(found[0]);
+          const timer = setTimeout(() => {
+            setHighlightedInitId(null);
+          }, 6000);
+          return () => clearTimeout(timer);
+        }
+      }
+
+      const handleActiveUpdate = (e: any) => {
+        const newActive = e.detail?.cardId ?? localStorage.getItem("presiden_simulator_active_mission");
+        setActiveMissionId(newActive);
+        if (newActive) {
+          const found = Object.entries(MISSION_ID_BY_INITIATIVE).find(([, missionId]) => missionId === newActive);
+          if (found) {
+            setHighlightedInitId(found[0]);
+            setTimeout(() => {
+              setHighlightedInitId(null);
+            }, 6000);
+          }
+        }
+      };
+
+      window.addEventListener("mission_active_updated", handleActiveUpdate);
+      return () => window.removeEventListener("mission_active_updated", handleActiveUpdate);
+    }
+  }, []);
 
   const countryName = selectedCountry?.country || "Indonesia";
   const anggaran = countryDetail?.anggaran || 0;
@@ -160,6 +205,26 @@ export default function NaikkanKesejahteraanTab({
       ongoingConstructions: newConstructions,
     });
 
+    // Tandai misi terkait / aktif sebagai siap klaim
+    if (typeof window !== "undefined") {
+      try {
+        const matchingMissionId = MISSION_ID_BY_INITIATIVE[init.id] || activeMissionId;
+        if (matchingMissionId) {
+          const raw = localStorage.getItem("presiden_simulator_claimable_missions");
+          const list: string[] = raw ? JSON.parse(raw) : [];
+          if (!list.includes(matchingMissionId)) {
+            list.push(matchingMissionId);
+            localStorage.setItem("presiden_simulator_claimable_missions", JSON.stringify(list));
+            window.dispatchEvent(
+              new CustomEvent("mission_claimable_updated", {
+                detail: { cardId: matchingMissionId, claimableList: list },
+              })
+            );
+          }
+        }
+      } catch {}
+    }
+
     setFeedback({
       type: "success",
       message: `Inisiatif "${init.title}" berhasil diluncurkan! Target selesai: ${formatBadgeDate(endStr)}.`,
@@ -239,14 +304,27 @@ export default function NaikkanKesejahteraanTab({
         {initiatives.map((init) => {
           const isLaunched = ongoingEvents.some((c: any) => c.buildingKey === init.id);
           const Icon = init.icon;
+          const isHighlighted = highlightedInitId === init.id;
 
           return (
             <div
               key={init.id}
-              className={`rounded-xl p-5 border bg-[#0A1A1A] flex flex-col justify-between space-y-4 relative overflow-hidden transition-all duration-200 ${
-                isLaunched ? "border-amber-500/60" : "border-[#00FFAA]/20 hover:border-[#00FFAA]/50"
+              id={`initiative-card-${init.id}`}
+              className={`rounded-xl p-5 border bg-[#0A1A1A] flex flex-col justify-between space-y-4 relative overflow-hidden transition-all duration-500 ${
+                isHighlighted
+                  ? "border-2 border-[#00FFAA] shadow-[0_0_25px_rgba(0,255,170,0.6)] ring-2 ring-[#00FFAA]/50 bg-[#0d2621] scale-[1.01]"
+                  : isLaunched
+                  ? "border-amber-500/60"
+                  : "border-[#00FFAA]/20 hover:border-[#00FFAA]/50"
               }`}
             >
+              {isHighlighted && (
+                <div className="absolute top-0 left-0 bg-[#00FFAA] text-[#0A1A1A] px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-br-lg shadow-sm flex items-center gap-1 animate-pulse">
+                  <Sparkles className="h-2.5 w-2.5" />
+                  Target Misi Aktif
+                </div>
+              )}
+
               {isLaunched && (
                 <div className="absolute top-0 right-0 bg-amber-500/10 text-amber-400 px-3 py-1 text-[9px] font-black uppercase tracking-wider rounded-bl-lg border-l border-b border-amber-500/40 flex items-center gap-1">
                   <Clock className="h-3 w-3" />

@@ -39,6 +39,39 @@ export default function NaikkanKepuasanModal({
   const [pendingCost, setPendingCost] = useState(0);
   const [pendingTitle, setPendingTitle] = useState("");
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
+  const [highlightedEventId, setHighlightedEventId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && isOpen) {
+      const currentActive = localStorage.getItem("presiden_simulator_active_mission");
+      setActiveMissionId(currentActive);
+
+      // Misi format: 'event_konser', 'event_festival', dll.
+      if (currentActive && currentActive.startsWith("event_")) {
+        const evId = currentActive.replace("event_", "");
+        setHighlightedEventId(evId);
+        const timer = setTimeout(() => {
+          setHighlightedEventId(null);
+        }, 6000);
+        return () => clearTimeout(timer);
+      }
+
+      const handleActiveUpdate = (e: any) => {
+        const newActive = e.detail?.cardId ?? localStorage.getItem("presiden_simulator_active_mission");
+        setActiveMissionId(newActive);
+        if (newActive && newActive.startsWith("event_")) {
+          setHighlightedEventId(newActive.replace("event_", ""));
+          setTimeout(() => {
+            setHighlightedEventId(null);
+          }, 6000);
+        }
+      };
+
+      window.addEventListener("mission_active_updated", handleActiveUpdate);
+      return () => window.removeEventListener("mission_active_updated", handleActiveUpdate);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -192,6 +225,21 @@ export default function NaikkanKepuasanModal({
 
     setCountryDetail(updatedDetail);
 
+    // Tandai penyelesaian misi jika pemain sedang menjalankan misi event / kepuasan
+    if (typeof window !== 'undefined') {
+      try {
+        const activeMission = localStorage.getItem('presiden_simulator_active_mission');
+        const rawList = localStorage.getItem('presiden_simulator_claimable_missions');
+        const list: string[] = rawList ? JSON.parse(rawList) : [];
+        const targetMissionId = activeMission || `event_${itemId}`;
+        if (targetMissionId && !list.includes(targetMissionId)) {
+          list.push(targetMissionId);
+          localStorage.setItem('presiden_simulator_claimable_missions', JSON.stringify(list));
+          window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { cardId: targetMissionId, claimableList: list } }));
+        }
+      } catch {}
+    }
+
     setFeedback({
       type: "success",
       message: `Presiden meluncurkan program ${title}! Anggaran berkurang -${cost.toLocaleString('id-ID')} NEO. Acara berlangsung selama ${duration} hari dan akan selesai serta meningkatkan kepuasan pada ${formatBadgeDate(endDateStr)}.`,
@@ -297,11 +345,25 @@ export default function NaikkanKepuasanModal({
                 const isSport = isSportEvent(item.id);
                 const olahragaBonusPercent = getKementerianOlahragaEventSatisfactionBonusPercent(countryDetail);
 
+                const isHighlighted = highlightedEventId === item.id;
+
                 return (
                   <div
                     key={item.id}
-                    className="relative bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3.5 2xl:p-5 rounded-xl 2xl:rounded-2xl flex flex-col md:flex-row items-center justify-between gap-3 lg:gap-4 2xl:gap-5 transition-all hover:border-[#00FFAA]/50"
+                    id={`event-card-${item.id}`}
+                    className={`relative bg-[#0F2424] p-2.5 lg:p-3.5 2xl:p-5 rounded-xl 2xl:rounded-2xl flex flex-col md:flex-row items-center justify-between gap-3 lg:gap-4 2xl:gap-5 transition-all duration-500 ${
+                      isHighlighted
+                        ? "border-2 border-[#00FFAA] shadow-[0_0_25px_rgba(0,255,170,0.6)] ring-2 ring-[#00FFAA]/50 bg-[#122A26] scale-[1.01]"
+                        : "border border-[#00FFAA]/20 hover:border-[#00FFAA]/50"
+                    }`}
                   >
+                    {isHighlighted && (
+                      <div className="absolute top-0 left-3 bg-[#00FFAA] text-[#0A1A1A] px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-b-md shadow-sm flex items-center gap-1 animate-pulse z-20">
+                        <Sparkles className="h-2.5 w-2.5" />
+                        Target Misi Aktif
+                      </div>
+                    )}
+
                     {isEventOngoing && (
                       <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[9px] font-bold px-2 py-0.5 border border-[#00FFAA]/40 rounded-sm tracking-wider whitespace-nowrap uppercase">
                         Selesai: {formatBadgeDate(lastEndDate)}

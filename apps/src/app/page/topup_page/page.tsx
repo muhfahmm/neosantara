@@ -16,7 +16,7 @@ import {
 // =====================================================================
 // DATA PAKET
 // =====================================================================
-export interface TopUpPackage {
+interface TopUpPackage {
   id: string;
   diamondAmount: number;
   bonusMultiplier: number;
@@ -29,7 +29,7 @@ export interface TopUpPackage {
   gemTier: 'small' | 'medium' | 'large' | 'chest' | 'chest_double' | 'vault';
 }
 
-export const TOP_UP_PACKAGES: TopUpPackage[] = [
+const TOP_UP_PACKAGES: TopUpPackage[] = [
   {
     id: 'pack_600',
     diamondAmount: 600,

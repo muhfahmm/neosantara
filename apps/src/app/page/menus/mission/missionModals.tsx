@@ -12,7 +12,7 @@ import {
   Gavel, HeartPulse, Leaf, Siren, Ambulance, Banknote, BookOpen,
   Bike, Route, Bus, Train, Gamepad2, Film, Theater, Egg, Package,
   Sparkles, Crown,
-  Gift,
+  Gift, CheckCircle2, Bell, Dices, RefreshCw,
 } from 'lucide-react';
 import { formatProductionProductName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/productionBanCatalog';
 
@@ -21,6 +21,8 @@ interface MissionModalsProps {
   onClose?: () => void;
   onClick?: () => void;
   onStartMission?: (destination: MissionNavigationTarget) => void;
+  countryDetail?: any;
+  setCountryDetail?: (updater: any) => void;
 }
 
 export type MissionCategory =
@@ -52,6 +54,7 @@ interface MissionCard {
   accent: string;
   title: string;
   progress?: string;
+  description?: string;
 }
 
 export interface MissionNavigationTarget {
@@ -144,9 +147,208 @@ const PRODUCTION_KEYS_BY_MISSION: Record<string, string> = {
 };
 
 // =====================================================================
-// SISTEM HADIAH BERJENJANG (Progressive Scaling)
+// SISTEM HADIAH BERJENJANG & STATUS MISI (Progressive Scaling & Mission Tracking)
 // =====================================================================
 const MISSION_COMPLETION_STORAGE_KEY = 'presiden_simulator_mission_completions';
+const MISSION_ACTIVE_STORAGE_KEY = 'presiden_simulator_active_mission';
+const MISSION_CLAIMABLE_STORAGE_KEY = 'presiden_simulator_claimable_missions';
+const MISSION_RANDOM_POOL_STORAGE_KEY = 'presiden_simulator_active_pool_ids';
+
+export const MISSION_POOL_SIZE = 5;
+
+/**
+ * Mengambil 5 misi acak dari seluruh daftar MISSION_CARDS (tanpa duplikat).
+ */
+export function generateRandomMissionIds(count = MISSION_POOL_SIZE): string[] {
+  const allIds = MISSION_CARDS.map(c => c.id);
+  const shuffled = [...allIds].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(count, shuffled.length));
+}
+
+/**
+ * Mengambil daftar ID misi aktif saat ini.
+ * Jika belum ada, otomatis membuat 5 misi acak baru dan menyimpannya.
+ */
+export function getActiveMissionPoolIds(): string[] {
+  if (typeof window === 'undefined') {
+    return MISSION_CARDS.slice(0, MISSION_POOL_SIZE).map(c => c.id);
+  }
+  try {
+    const raw = localStorage.getItem(MISSION_RANDOM_POOL_STORAGE_KEY);
+    if (raw) {
+      const parsed: string[] = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Validasi ID apakah ada di MISSION_CARDS
+        const valid = parsed.filter(id => MISSION_CARDS.some(c => c.id === id));
+        if (valid.length === MISSION_POOL_SIZE) return valid;
+      }
+    }
+    const fresh = generateRandomMissionIds(MISSION_POOL_SIZE);
+    localStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(fresh));
+    return fresh;
+  } catch {
+    return MISSION_CARDS.slice(0, MISSION_POOL_SIZE).map(c => c.id);
+  }
+}
+
+/**
+ * Mengacak ulang 5 kartu misi aktif.
+ */
+export function rerollMissionPoolIds(): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const fresh = generateRandomMissionIds(MISSION_POOL_SIZE);
+    localStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(fresh));
+    window.dispatchEvent(new CustomEvent('mission_pool_updated', { detail: { pool: fresh } }));
+    return fresh;
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Mengganti 1 misi yang sudah selesai/diklaim dengan misi baru secara acak dari luar pool.
+ */
+export function replaceCompletedMissionInPool(completedId: string): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const current = getActiveMissionPoolIds();
+    const available = MISSION_CARDS.filter(c => !current.includes(c.id)).map(c => c.id);
+    const replacement = available.length > 0
+      ? available[Math.floor(Math.random() * available.length)]
+      : completedId;
+    const nextPool = current.map(id => id === completedId ? replacement : id);
+    localStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(nextPool));
+    window.dispatchEvent(new CustomEvent('mission_pool_updated', { detail: { pool: nextPool } }));
+    return nextPool;
+  } catch {
+    return [];
+  }
+}
+
+export function getActiveMissionId(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return localStorage.getItem(MISSION_ACTIVE_STORAGE_KEY) || null;
+  } catch {
+    return null;
+  }
+}
+
+export function setActiveMission(cardId: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(MISSION_ACTIVE_STORAGE_KEY, cardId);
+    window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId } }));
+  } catch {}
+}
+
+export function getClaimableMissionsList(): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(MISSION_CLAIMABLE_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Menandai misi selesai dan siap diklaim.
+ * Otomatis memicu notifikasi visual (lonceng/badge merah & banner klaim).
+ */
+export function markMissionAsClaimable(cardId: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const list = getClaimableMissionsList();
+    if (!list.includes(cardId)) {
+      list.push(cardId);
+      localStorage.setItem(MISSION_CLAIMABLE_STORAGE_KEY, JSON.stringify(list));
+      window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { cardId, claimableList: list } }));
+    }
+  } catch {}
+}
+
+/**
+ * Klaim hadiah misi yang sudah selesai:
+ * 1. Tambah saldo Diamond (5 s.d 100)
+ * 2. Tambah kas anggaran (NEO) atau stok SDA ke negara
+ * 3. Catat jumlah penyelesaian misi (sehingga hadiah berikutnya bertambah)
+ * 4. Hapus dari daftar klaim
+ */
+export function claimMissionReward(
+  cardId: string,
+  countryDetail?: any,
+  setCountryDetail?: (updater: any) => void
+): { diamond: number; nextCompletionCount: number; neo?: number; sda?: { amount: number; productKey: string } } {
+  if (typeof window === 'undefined') return { diamond: 5, nextCompletionCount: 1 };
+  try {
+    const card = MISSION_CARDS.find(c => c.id === cardId);
+    const count = getMissionCompletionCount(cardId);
+    const diamond = getProgressiveDiamondReward(count);
+    
+    // 1. Tambah diamond pemain
+    addPlayerDiamonds(diamond);
+
+    let grantedNeo: number | undefined;
+    let grantedSda: { amount: number; productKey: string } | undefined;
+
+    if (card) {
+      const badges = getMissionRewardBadges(card, count);
+      grantedNeo = badges.neo;
+      grantedSda = badges.sda;
+
+      if (setCountryDetail) {
+        setCountryDetail((prev: any) => {
+          if (!prev) return prev;
+          const next = { ...prev };
+          if (grantedNeo && grantedNeo > 0) {
+            next.anggaran = (Number(next.anggaran) || 0) + grantedNeo;
+          }
+          if (grantedSda && grantedSda.amount > 0) {
+            if (!next.inventory) next.inventory = {};
+            const curVal = Number(next.inventory[grantedSda.productKey]) || 0;
+            next.inventory[grantedSda.productKey] = curVal + grantedSda.amount;
+          }
+          return next;
+        });
+      }
+    }
+
+    // 2. Tingkatkan level penyelesaian
+    const nextCompletionCount = recordMissionCompletion(cardId);
+
+    // 3. Hapus dari status aktif jika ini misi yang aktif
+    if (getActiveMissionId() === cardId) {
+      localStorage.removeItem(MISSION_ACTIVE_STORAGE_KEY);
+      window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId: null } }));
+    }
+
+    // 4. Hapus dari antrean klaim
+    const list = getClaimableMissionsList().filter(id => id !== cardId);
+    localStorage.setItem(MISSION_CLAIMABLE_STORAGE_KEY, JSON.stringify(list));
+    window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { cardId, claimableList: list } }));
+
+    // 5. Ganti kartu yang selesai dengan kartu baru secara acak di dalam pool 5 kartu
+    replaceCompletedMissionInPool(cardId);
+
+    return { diamond, nextCompletionCount, neo: grantedNeo, sda: grantedSda };
+  } catch {
+    return { diamond: 5, nextCompletionCount: 1 };
+  }
+}
+
+/**
+ * Memicu penyelesaian misi yang sedang aktif atau misi tertentu saat user melakukan tindakan/pembangunan.
+ * Jika cardId tidak diberikan, akan otomatis menyelesaikan misi yang sedang aktif saat ini.
+ */
+export function triggerMissionProgressAction(specificCardId?: string): boolean {
+  if (typeof window === 'undefined') return false;
+  const targetId = specificCardId || getActiveMissionId();
+  if (!targetId) return false;
+  markMissionAsClaimable(targetId);
+  return true;
+}
 
 const NEO_REWARD_TIERS = [5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500, 25000] as const;
 const NEO_BASE_INCREMENT = 2500;
@@ -177,6 +379,22 @@ export function getMissionCompletionsMap(): Record<string, number> {
 export function getMissionCompletionCount(cardId: string): number {
   const map = getMissionCompletionsMap();
   return Number(map[cardId]) || 0;
+}
+
+export function clearMissionProgressData(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem(MISSION_COMPLETION_STORAGE_KEY);
+    localStorage.removeItem(MISSION_ACTIVE_STORAGE_KEY);
+    localStorage.removeItem(MISSION_CLAIMABLE_STORAGE_KEY);
+    // Acak ulang 5 kartu misi baru saat reset / refresh
+    const freshPool = generateRandomMissionIds(MISSION_POOL_SIZE);
+    localStorage.setItem(MISSION_RANDOM_POOL_STORAGE_KEY, JSON.stringify(freshPool));
+    window.dispatchEvent(new CustomEvent('mission_pool_updated', { detail: { pool: freshPool } }));
+    window.dispatchEvent(new CustomEvent('mission_completions_updated', { detail: {} }));
+    window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId: null } }));
+    window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { claimableList: [] } }));
+  } catch {}
 }
 
 export function recordMissionCompletion(cardId: string): number {
@@ -351,19 +569,150 @@ export function addPlayerDiamonds(amount: number): number {
   }
 }
 
+/** Helper untuk memberikan penjelasan detail instruksi apa yang harus dilakukan pemain untuk menyelesaikan misi */
+export function getMissionInstruction(card: MissionCard): string {
+  if (card.description) return card.description;
+
+  const id = card.id;
+  const title = card.title;
+
+  // Gelar Acara
+  if (card.category === 'event') {
+    if (id === 'kepuasan_target') {
+      return 'Tingkatkan indeks kepuasan rakyat hingga mencapai minimal 80% melalui perayaan acara atau kebijakan publik.';
+    }
+    return `Buka menu Kepuasan Rakyat lalu pilih dan selenggarakan acara "${title}" untuk membahagiakan warga.`;
+  }
+
+  // Kesejahteraan
+  if (card.category === 'kesejahteraan') {
+    return `Buka menu Populasi & Kesejahteraan lalu luncurkan program "${title}" untuk mengangkat taraf hidup rakyat.`;
+  }
+
+  // Ekonomi & Pajak / Pinjaman
+  if (card.category === 'ekonomi') {
+    if (id === 'pinjam_negara') {
+      return 'Buka menu Keuangan & Hutang lalu lakukan pengajuan pinjaman modal bilateral dari negara mitra.';
+    }
+    if (id === 'pinjam_bank') {
+      return 'Buka menu Keuangan & Hutang lalu ajukan pinjaman dana darurat kepada Bank Internasional.';
+    }
+    if (id === 'hutang_lunas') {
+      return 'Buka menu Keuangan & Hutang lalu bayar dan lunasi cicilan pinjaman negara yang sedang berjalan.';
+    }
+    if (id === 'pajak_naik' || id === 'pajak_turun' || id === 'pajak_kelola') {
+      return 'Buka menu Pajak Negara lalu atur penyesuaian tarif pajak nasional sesuai arahan.';
+    }
+    return `Buka menu Ekonomi & APBN lalu terapkan langkah kebijakan "${title}".`;
+  }
+
+  // Produksi (Tambang, Kilang, Pembangkit, Pabrik)
+  if (card.category === 'produksi' || card.category === 'pangan') {
+    if (id.startsWith('tambang_') || id.startsWith('kilang_')) {
+      return `Buka menu Produksi SDA lalu bangun atau tingkatkan kapasitas fasilitas ${title}.`;
+    }
+    if (id.startsWith('bangun_plt')) {
+      return `Buka menu Produksi Kelistrikan lalu bangun unit pembangkit listrik ${title}.`;
+    }
+    if (id.startsWith('pabrik_')) {
+      return `Buka menu Industri & Manufaktur lalu dirikan unit ${title} untuk memacu rantai pasok.`;
+    }
+    if (id.startsWith('peternakan_') || id.startsWith('sawah_') || id.startsWith('ladang_') || id.startsWith('kebun_') || id.startsWith('tambak_') || id.startsWith('budidaya_') || id.startsWith('perikanan_')) {
+      return `Buka sektor Pangan & Agrikultur lalu kembangkan lahan ${title} untuk ketahanan pangan.`;
+    }
+    return `Buka menu Produksi Nasional lalu bangun atau tingkatkan kapasitas ${title}.`;
+  }
+
+  // Layanan Publik (Infrastruktur, Penegakan Hukum, Olahraga, Komersial)
+  if (card.category === 'layanan_publik') {
+    if (id.startsWith('infra_')) {
+      return `Buka menu Fasilitas Publik lalu bangun dan sediakan infrastruktur transportasi ${title}.`;
+    }
+    if (id.startsWith('hukum_')) {
+      return `Buka menu Penegakan Hukum & Keamanan lalu dirikan fasilitas ${title} demi ketertiban.`;
+    }
+    if (id.startsWith('sport_')) {
+      return `Buka menu Olahraga & Hiburan lalu bangun sarana rekreasi ${title} bagi masyarakat.`;
+    }
+    if (id.startsWith('komersial_')) {
+      return `Buka sektor Komersial Publik lalu kembangkan pusat bisnis ${title}.`;
+    }
+    return `Buka menu Tempat Umum lalu bangun fasilitas ${title}.`;
+  }
+
+  // Hunian
+  if (card.category === 'hunian') {
+    return `Buka menu Hunian & Permukiman lalu bangun proyek perumahan ${title}.`;
+  }
+
+  // Riset & Penelitian
+  if (card.category === 'penelitian') {
+    return `Buka menu Laboratorium Riset & Teknologi lalu kembangkan proyek inovasi ${title}.`;
+  }
+
+  // Pertahanan & Militer
+  if (card.category === 'pertahanan') {
+    return `Buka menu Pertahanan & Militer lalu laksanakan tindakan strategis ${title}.`;
+  }
+
+  // Geopolitik & Kedubes
+  if (card.category === 'geopolitik') {
+    return `Buka menu Diplomasi & Kedubes lalu lakukan kerja sama bilateral berupa ${title}.`;
+  }
+
+  // PBB & Dewan Keamanan
+  if (card.category === 'resolusi_pbb' || card.category === 'resolusi_dk_pbb') {
+    return `Buka forum Sidang PBB lalu ajukan atau ikuti pemungutan suara untuk agenda "${title}".`;
+  }
+
+  // Organisasi Internasional & Regional
+  if (card.category === 'organisasi_pbb') {
+    return `Buka menu Hubungan Internasional lalu jalin kerja sama atau keanggotaan dengan badan ${title}.`;
+  }
+  if (card.category === 'organisasi_regional') {
+    return `Buka menu Organisasi Regional lalu aktifkan hubungan diplomasi atau kerja sama dengan blok ${title}.`;
+  }
+
+  // Sosial Budaya & Ideologi
+  if (card.category === 'sosial_budaya') {
+    if (id === 'ideologi_negara' || id === 'ganti_ideologi') {
+      return 'Buka menu Nilai & Ideologi Negara lalu ambil tindakan penguatan atau pembaruan falsafah kenegaraan.';
+    }
+    if (id === 'toleransi_agama' || id === 'ganti_agama') {
+      return 'Buka menu Kehidupan Beragama lalu kelola kerukunan dan kebijakan kepercayaan negara.';
+    }
+    return `Buka menu Sosial Budaya lalu terapkan kebijakan ${title}.`;
+  }
+
+  // Kementerian & Kabinet
+  if (card.category === 'kementerian' || card.category === 'kabinet') {
+    return `Buka menu Kabinet & Kementerian lalu lakukan pengangkatan atau peningkatan kapasitas pada ${title}.`;
+  }
+
+  // Krisis & Populasi
+  if (card.category === 'krisis') {
+    return `Buka panel Tanggap Darurat lalu salurkan tindakan penanganan krisis "${title}".`;
+  }
+  if (card.category === 'populasi') {
+    return `Buka indikator Kependudukan lalu buat program kebijakan untuk ${title}.`;
+  }
+
+  return `Lakukan tindakan "${title}" melalui menu terkait untuk menyelesaikan misi ini.`;
+}
+
 // =====================================================================
 // DATA MISI
 // =====================================================================
 const MISSION_CARDS: MissionCard[] = [
   // ═══ 1. GELAR ACARA ═══
-  { id: 'event_konser',           category: 'event', categoryLabel: 'Gelar Acara', icon: Music,        accent: '#FBBF24', title: 'Konser Musik Nasional' },
-  { id: 'event_festival',         category: 'event', categoryLabel: 'Gelar Acara', icon: PartyPopper,  accent: '#FBBF24', title: 'Festival Budaya Nusantara' },
-  { id: 'event_karnaval',         category: 'event', categoryLabel: 'Gelar Acara', icon: Trophy,       accent: '#FBBF24', title: 'Karnaval Rakyat Raya' },
-  { id: 'event_piala_davis',      category: 'event', categoryLabel: 'Gelar Acara', icon: Trophy,       accent: '#FBBF24', title: 'Turnamen Piala Davis' },
+  { id: 'event_konser',           category: 'event', categoryLabel: 'Gelar Acara', icon: Music,        accent: '#FBBF24', title: 'Konser' },
+  { id: 'event_festival',         category: 'event', categoryLabel: 'Gelar Acara', icon: PartyPopper,  accent: '#FBBF24', title: 'Festival' },
+  { id: 'event_karnaval',         category: 'event', categoryLabel: 'Gelar Acara', icon: Trophy,       accent: '#FBBF24', title: 'Karnaval' },
+  { id: 'event_piala_davis',      category: 'event', categoryLabel: 'Gelar Acara', icon: Trophy,       accent: '#FBBF24', title: 'Piala Davis' },
   { id: 'event_piala_rugbi',      category: 'event', categoryLabel: 'Gelar Acara', icon: Trophy,       accent: '#FBBF24', title: 'Piala Dunia Rugbi' },
-  { id: 'event_olimpiade',        category: 'event', categoryLabel: 'Gelar Acara', icon: Award,        accent: '#FBBF24', title: 'Penyelenggaraan Olimpiade' },
-  { id: 'event_piala_fifa',       category: 'event', categoryLabel: 'Gelar Acara', icon: Trophy,       accent: '#FBBF24', title: 'Piala Dunia Sepak Bola FIFA' },
-  { id: 'event_balap_f1',         category: 'event', categoryLabel: 'Gelar Acara', icon: Rocket,       accent: '#FBBF24', title: 'Grand Prix Balap F1' },
+  { id: 'event_olimpiade',        category: 'event', categoryLabel: 'Gelar Acara', icon: Award,        accent: '#FBBF24', title: 'Olimpiade' },
+  { id: 'event_piala_fifa',       category: 'event', categoryLabel: 'Gelar Acara', icon: Trophy,       accent: '#FBBF24', title: 'Piala Dunia FIFA' },
+  { id: 'event_balap_f1',         category: 'event', categoryLabel: 'Gelar Acara', icon: Rocket,       accent: '#FBBF24', title: 'Balap F1' },
   { id: 'kepuasan_target',        category: 'event', categoryLabel: 'Gelar Acara', icon: Smile,        accent: '#FBBF24', title: 'Capai Indeks Kepuasan Rakyat 80%' },
 
   // ═══ 2. KESEJAHTERAAN ═══
@@ -676,29 +1025,85 @@ export default function MissionModals({
   onClose,
   onClick,
   onStartMission,
+  countryDetail,
+  setCountryDetail,
 }: MissionModalsProps) {
   const [mounted, setMounted] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<MissionCategory>('event');
+  const [activePoolIds, setActivePoolIds] = useState<string[]>([]);
   const [completionsMap, setCompletionsMap] = useState<Record<string, number>>({});
+  const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
+  const [claimableList, setClaimableList] = useState<string[]>([]);
+  const [claimFeedback, setClaimFeedback] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
+    setActivePoolIds(getActiveMissionPoolIds());
     setCompletionsMap(getMissionCompletionsMap());
+    setActiveMissionId(getActiveMissionId());
+    setClaimableList(getClaimableMissionsList());
 
-    const handleUpdate = () => {
+    const handleCompletionsUpdate = () => {
       setCompletionsMap(getMissionCompletionsMap());
     };
 
-    window.addEventListener('mission_completions_updated', handleUpdate);
-    window.addEventListener('storage', handleUpdate);
+    const handleActiveUpdate = () => {
+      setActiveMissionId(getActiveMissionId());
+    };
+
+    const handleClaimableUpdate = () => {
+      setClaimableList(getClaimableMissionsList());
+    };
+
+    const handlePoolUpdate = (e: any) => {
+      if (e.detail?.pool) {
+        setActivePoolIds(e.detail.pool);
+      } else {
+        setActivePoolIds(getActiveMissionPoolIds());
+      }
+    };
+
+    window.addEventListener('mission_completions_updated', handleCompletionsUpdate);
+    window.addEventListener('mission_active_updated', handleActiveUpdate);
+    window.addEventListener('mission_claimable_updated', handleClaimableUpdate);
+    window.addEventListener('mission_pool_updated', handlePoolUpdate);
+    window.addEventListener('storage', handleCompletionsUpdate);
+
     return () => {
-      window.removeEventListener('mission_completions_updated', handleUpdate);
-      window.removeEventListener('storage', handleUpdate);
+      window.removeEventListener('mission_completions_updated', handleCompletionsUpdate);
+      window.removeEventListener('mission_active_updated', handleActiveUpdate);
+      window.removeEventListener('mission_claimable_updated', handleClaimableUpdate);
+      window.removeEventListener('mission_pool_updated', handlePoolUpdate);
+      window.removeEventListener('storage', handleCompletionsUpdate);
     };
   }, []);
 
-  const filteredCards = MISSION_CARDS.filter(card => card.category === activeCategory);
+  const handleStart = (card: MissionCard) => {
+    setActiveMission(card.id);
+    onStartMission?.(getMissionRoute(card));
+  };
+
+  const handleClaim = (cardId: string, title: string) => {
+    const result = claimMissionReward(cardId, countryDetail, setCountryDetail);
+    let rewardText = `+${result.diamond} Gems`;
+    if (result.neo) {
+      rewardText += ` & +${result.neo.toLocaleString('id-ID')} NEO kas`;
+    }
+    if (result.sda) {
+      rewardText += ` & +${result.sda.amount.toLocaleString('id-ID')} ${formatProductionProductName(result.sda.productKey)}`;
+    }
+    setClaimFeedback(`🎉 Selamat! Hadiah misi "${title}" berhasil diklaim: ${rewardText}!`);
+    setTimeout(() => {
+      setClaimFeedback(null);
+    }, 5000);
+  };
+
+  // Ambil hanya 5 kartu yang ada di dalam activePoolIds
+  const currentCards = activePoolIds
+    .map(id => MISSION_CARDS.find(c => c.id === id))
+    .filter((card): card is MissionCard => Boolean(card));
+
   const totalExp = 0;
+  const totalClaimable = claimableList.length;
 
   return (
     <>
@@ -709,6 +1114,11 @@ export default function MissionModals({
         className="fixed bottom-14 lg:bottom-16 xl:bottom-20 2xl:bottom-26 left-7 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
       >
         <Target className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
+        {totalClaimable > 0 && (
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-black text-white shadow-lg animate-pulse">
+            {totalClaimable}
+          </span>
+        )}
       </button>
 
       {/* Modal Misi */}
@@ -725,9 +1135,21 @@ export default function MissionModals({
                   <Target className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                 </div>
                 <div>
-                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
-                    Misi Presiden
-                  </h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+                      Misi Presiden
+                    </h2>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[#00FFAA]/15 border border-[#00FFAA]/30 px-2 py-0.5 text-[9px] font-black uppercase text-[#00FFAA]">
+                      <Dices className="h-2.5 w-2.5" />
+                      5 Misi Aktif
+                    </span>
+                    {totalClaimable > 0 && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-red-500/20 border border-red-500/40 px-2 py-0.5 text-[9px] font-black uppercase text-red-300">
+                        <Bell className="h-2.5 w-2.5" />
+                        {totalClaimable} Siap Klaim
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[10px] text-[#6B8A8A] font-semibold uppercase tracking-wider mt-1">
                     Jumlah Pengalaman: <span className="text-amber-400 font-black">Ex {totalExp}</span>
                   </p>
@@ -742,49 +1164,38 @@ export default function MissionModals({
               </button>
             </div>
 
-            {/* FILTER TAB */}
-            <div className="px-4 sm:px-6 py-2 bg-[#051111] border-b border-[#00FFAA]/15 flex items-center gap-2 overflow-x-auto custom-scrollbar shrink-0">
-              <Compass className="w-3.5 h-3.5 text-[#6B8A8A] shrink-0" />
-              <span className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider shrink-0 mr-1">
-                Kategori:
-              </span>
-              {CATEGORIES.map(cat => {
-                const Icon = cat.icon;
-                const isActive = activeCategory === cat.key;
-                const count = MISSION_CARDS.filter(c => c.category === cat.key).length;
-                return (
-                  <button
-                    key={cat.key}
-                    onClick={() => setActiveCategory(cat.key)}
-                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
-                      isActive
-                        ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20'
-                        : 'bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] border border-[#00FFAA]/20'
-                    }`}
-                  >
-                    <Icon className="w-3 h-3" />
-                    {cat.label} ({count})
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* BODY */}
+            {/* BODY: HANYA 5 KARTU KEBAWAH */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A] relative z-10 custom-scrollbar space-y-3">
+              {/* FEEDBACK TOAST */}
+              {claimFeedback && (
+                <div className="flex items-center gap-2 rounded-xl border border-emerald-400/50 bg-emerald-500/15 p-3 text-xs font-black text-emerald-300 shadow-lg animate-fadeIn">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-300" />
+                  <span>{claimFeedback}</span>
+                </div>
+              )}
+
               <div className="flex items-center gap-2 rounded-lg border border-amber-400/20 bg-amber-400/5 px-3 py-2 text-[10px] font-semibold text-amber-200/80">
                 <Gift className="h-3.5 w-3.5 shrink-0 text-amber-300" />
-                Pratinjau hadiah bertingkat: misi awal mulai dari nilai terkecil dan meningkat setiap kali diselesaikan.
+                Klik Mulai untuk menjalankan misi. Selesaikan tindakan/pembangunan sesuai arahan untuk mengklaim hadiah!
               </div>
 
-              {filteredCards.map(card => {
+              {currentCards.map(card => {
                 const Icon = card.icon;
                 const completionCount = completionsMap[card.id] || 0;
                 const badges = getMissionRewardBadges(card, completionCount);
+                const isClaimable = claimableList.includes(card.id);
+                const isActiveThis = activeMissionId === card.id;
 
                 return (
                   <div
                     key={card.id}
-                    className="group flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-[#0F2424] border border-[#00FFAA]/20 hover:border-[#00FFAA]/50 transition-all"
+                    className={`group flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl transition-all ${
+                      isClaimable
+                        ? 'bg-[#122A26] border-2 border-emerald-400 shadow-[0_0_15px_rgba(0,255,170,0.2)]'
+                        : isActiveThis
+                        ? 'bg-[#152824] border border-[#00FFAA]/50'
+                        : 'bg-[#0F2424] border border-[#00FFAA]/20 hover:border-[#00FFAA]/50'
+                    }`}
                   >
                     {/* ICON BESAR */}
                     <div
@@ -810,6 +1221,19 @@ export default function MissionModals({
                         >
                           {card.categoryLabel}
                         </span>
+
+                        {isClaimable && (
+                          <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded border border-emerald-400/50 bg-emerald-400/20 text-emerald-300 animate-pulse">
+                            🎉 Siap Diklaim
+                          </span>
+                        )}
+
+                        {isActiveThis && !isClaimable && (
+                          <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded border border-cyan-400/50 bg-cyan-400/20 text-cyan-300">
+                            ⏳ Sedang Berjalan
+                          </span>
+                        )}
+
                         <h3 className="text-sm sm:text-base font-black text-[#E0E0E0] leading-tight">
                           {card.title}
                         </h3>
@@ -820,8 +1244,13 @@ export default function MissionModals({
                         )}
                       </div>
 
+                      {/* PENJELASAN TINDAKAN / INSTRUKSI MISI */}
+                      <p className="mt-1 text-xs text-[#9BB5B5] leading-relaxed">
+                        👉 <span className="text-[#C2D6D6] font-medium">{getMissionInstruction(card)}</span>
+                      </p>
+
                       {/* BADGES HADIAH USULAN */}
-                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <div className="mt-2.5 flex flex-wrap items-center gap-2">
                         <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-amber-300">
                           <Gift className="h-3 w-3" />
                           Hadiah usulan
@@ -848,23 +1277,35 @@ export default function MissionModals({
                       </div>
                     </div>
 
-                    {/* TOMBOL MULAI */}
-                    <button
-                      type="button"
-                      onClick={() => onStartMission?.(getMissionRoute(card))}
-                      aria-label={`Mulai misi: ${card.title}`}
-                      className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-gradient-to-b from-[#00FFAA] to-emerald-400 hover:from-[#00e699] hover:to-emerald-500 active:scale-95 text-[#0A1A1A] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer"
-                    >
-                      <Play className="w-3.5 h-3.5 fill-[#0A1A1A]" />
-                      Mulai
-                    </button>
+                    {/* TOMBOL AKSI: KLAIM ATAU MULAI */}
+                    {isClaimable ? (
+                      <button
+                        type="button"
+                        onClick={() => handleClaim(card.id, card.title)}
+                        aria-label={`Klaim hadiah misi: ${card.title}`}
+                        className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-gradient-to-r from-emerald-400 via-[#00FFAA] to-emerald-400 hover:from-emerald-300 hover:to-emerald-400 active:scale-95 text-[#0A1A1A] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-emerald-500/30 cursor-pointer animate-bounce"
+                      >
+                        <Gift className="w-3.5 h-3.5" />
+                        Klaim Hadiah
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleStart(card)}
+                        aria-label={`Mulai misi: ${card.title}`}
+                        className="w-full sm:w-auto shrink-0 px-5 py-2.5 rounded-lg bg-gradient-to-b from-[#00FFAA] to-emerald-400 hover:from-[#00e699] hover:to-emerald-500 active:scale-95 text-[#0A1A1A] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer"
+                      >
+                        <Play className="w-3.5 h-3.5 fill-[#0A1A1A]" />
+                        {isActiveThis ? 'Lanjutkan' : 'Mulai'}
+                      </button>
+                    )}
                   </div>
                 );
               })}
 
-              {filteredCards.length === 0 && (
+              {currentCards.length === 0 && (
                 <div className="text-center py-12 text-sm font-bold text-[#6B8A8A]">
-                  Belum ada misi untuk kategori ini.
+                  Tidak ada misi aktif saat ini.
                 </div>
               )}
             </div>
