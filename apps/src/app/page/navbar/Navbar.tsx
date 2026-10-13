@@ -73,7 +73,7 @@ export function Navbar({
         netBalanceAdjustment -
         (Number(countryDetail?.minister_recruitment_expense_pending) || 0);
     const netBalanceColor = netBalance >= 0 ? 'text-emerald-700' : 'text-rose-700';
-    const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
+    const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID', { maximumFractionDigits: 0 })}`;
     
     // Populasi logic
     const populasi = Number(countryDetail?.jumlah_penduduk) || 0;
