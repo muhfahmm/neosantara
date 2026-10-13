@@ -14,6 +14,7 @@ import { SimulationTimeManager, createSimulationCalendar } from '../time_control
 import { handleGameRestart } from '../time_controllers';
 import dynamic from 'next/dynamic';
 import useKeyboardShortcuts from '../keyword';
+import { subMenuItems } from '../navigasi_menu/navigationData';
 
 const GameMenuModal = dynamic(() => import('../navbar/GameMenuModal').then(m => m.GameMenuModal), { ssr: false });
 const TopNav = dynamic(() => import('../navigasi_menu/1_navigasi_atas/TopNav'), { ssr: false });
@@ -5327,10 +5328,12 @@ export default function MapPage() {
 
             {!(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
                 <>
-                    <TopNav
-                        activeView={isDiplomacyMapActive ? 'diplomacy' : 'map'}
-                        onSelect={handleTopNavSelect}
-                    />
+                    {!Object.values(subMenuItems).flat().some((item: { id: string }) => activeMenu.startsWith(item.id)) && (
+                        <TopNav
+                            activeView={isDiplomacyMapActive ? 'diplomacy' : 'map'}
+                            onSelect={handleTopNavSelect}
+                        />
+                    )}
                     <BottomNav
                         activeMenu={activeMenu}
                         setActiveMenu={setActiveMenu}
