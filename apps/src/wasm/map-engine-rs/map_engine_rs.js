@@ -91,12 +91,23 @@ export class MapEngine {
         wasm.mapengine_set_countries(this.__wbg_ptr, ptr0, len0);
     }
     /**
+     * Parse GeoJSON sekali, proyeksikan semua titik & hitung bbox (cache).
      * @param {string} geojson_str
      */
     set_data(geojson_str) {
         const ptr0 = passStringToWasm0(geojson_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
         wasm.mapengine_set_data(this.__wbg_ptr, ptr0, len0);
+    }
+    /**
+     * Warna override per feature (indeks sama dengan urutan GeoJSON). null/undefined = tanpa override.
+     * @param {any[]} colors
+     * @param {boolean} beat_selected
+     */
+    set_feature_colors(colors, beat_selected) {
+        const ptr0 = passArrayJsValueToWasm0(colors, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.mapengine_set_feature_colors(this.__wbg_ptr, ptr0, len0, beat_selected);
     }
     /**
      * @param {boolean} enabled
@@ -112,6 +123,13 @@ export class MapEngine {
         var ptr0 = isLikeNone(iso) ? 0 : passStringToWasm0(iso, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         wasm.mapengine_set_selected_country(this.__wbg_ptr, ptr0, len0, should_center);
+    }
+    /**
+     * Dipanggil dari requestAnimationFrame. Throttle ke ~30 FPS saat pan.
+     * @param {number} now_ms
+     */
+    tick(now_ms) {
+        wasm.mapengine_tick(this.__wbg_ptr, now_ms);
     }
 }
 if (Symbol.dispose) MapEngine.prototype[Symbol.dispose] = MapEngine.prototype.free;
@@ -133,6 +151,16 @@ export function set_capitals_on_map(capitals) {
     const ptr0 = passArrayJsValueToWasm0(capitals, wasm.__wbindgen_malloc);
     const len0 = WASM_VECTOR_LEN;
     wasm.set_capitals_on_map(ptr0, len0);
+}
+
+/**
+ * @param {any[]} colors
+ * @param {boolean} beat_selected
+ */
+export function set_feature_colors_on_map(colors, beat_selected) {
+    const ptr0 = passArrayJsValueToWasm0(colors, wasm.__wbindgen_malloc);
+    const len0 = WASM_VECTOR_LEN;
+    wasm.set_feature_colors_on_map(ptr0, len0, beat_selected);
 }
 
 /**
@@ -237,9 +265,6 @@ function __wbg_get_imports() {
         __wbg_buttons_de1e6c7f6de70736: function(arg0) {
             const ret = arg0.buttons;
             return ret;
-        },
-        __wbg_clearRect_a5e36505218c247a: function(arg0, arg1, arg2, arg3, arg4) {
-            arg0.clearRect(arg1, arg2, arg3, arg4);
         },
         __wbg_clientX_5075231ed45e8ef5: function(arg0) {
             const ret = arg0.clientX;
@@ -456,12 +481,6 @@ function __wbg_get_imports() {
         __wbg_set_lineWidth_cc15473552c60c9c: function(arg0, arg1) {
             arg0.lineWidth = arg1;
         },
-        __wbg_set_shadowBlur_216915d92b179fbe: function(arg0, arg1) {
-            arg0.shadowBlur = arg1;
-        },
-        __wbg_set_shadowColor_0e2bd5d3400b0d3b: function(arg0, arg1, arg2) {
-            arg0.shadowColor = getStringFromWasm0(arg1, arg2);
-        },
         __wbg_set_src_e0fe5ef5d5c648aa: function(arg0, arg1, arg2) {
             arg0.src = getStringFromWasm0(arg1, arg2);
         },
@@ -510,22 +529,25 @@ function __wbg_get_imports() {
         __wbg_strokeRect_c6e73405ca787ae9: function(arg0, arg1, arg2, arg3, arg4) {
             arg0.strokeRect(arg1, arg2, arg3, arg4);
         },
+        __wbg_strokeText_acf127bdbf1ec111: function() { return handleError(function (arg0, arg1, arg2, arg3, arg4) {
+            arg0.strokeText(getStringFromWasm0(arg1, arg2), arg3, arg4);
+        }, arguments); },
         __wbg_stroke_385d731098398489: function(arg0) {
             arg0.stroke();
         },
         __wbindgen_generic_0000000000000001: function(arg0, arg1) {
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [F64], shim_idx: 34, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___f64______true_);
+            return ret;
+        },
+        __wbindgen_generic_0000000000000002: function(arg0, arg1) {
             // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("PointerEvent")], shim_idx: 31, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true_);
             return ret;
         },
-        __wbindgen_generic_0000000000000002: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("WheelEvent")], shim_idx: 31, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true__19);
-            return ret;
-        },
         __wbindgen_generic_0000000000000003: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 34, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke_______true_);
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("WheelEvent")], shim_idx: 31, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true__23);
             return ret;
         },
         __wbindgen_generic_0000000000000004: function(arg0, arg1) {
@@ -549,16 +571,16 @@ function __wbg_get_imports() {
     };
 }
 
-function wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke_______true_(arg0, arg1) {
-    wasm.wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke_______true_(arg0, arg1);
-}
-
 function wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true_(arg0, arg1, arg2) {
     wasm.wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true_(arg0, arg1, arg2);
 }
 
-function wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true__19(arg0, arg1, arg2) {
-    wasm.wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true__19(arg0, arg1, arg2);
+function wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true__23(arg0, arg1, arg2) {
+    wasm.wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true__23(arg0, arg1, arg2);
+}
+
+function wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___f64______true_(arg0, arg1, arg2) {
+    wasm.wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___f64______true_(arg0, arg1, arg2);
 }
 
 const MapEngineFinalization = (typeof FinalizationRegistry === 'undefined')

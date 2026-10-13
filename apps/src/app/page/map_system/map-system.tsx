@@ -692,12 +692,16 @@ export default function MapPage() {
             gameWindow.neosantara_diplomacy_map_feature_colors = featureColors;
         };
 
-        updateDiplomacyMapColors();
-        window.addEventListener('country_relations_updated', updateDiplomacyMapColors);
-        window.addEventListener('world_map_features_ready', updateDiplomacyMapColors);
+        const notifyColorsChanged = () => {
+            updateDiplomacyMapColors();
+            window.dispatchEvent(new Event('map_feature_colors_dirty'));
+        };
+        notifyColorsChanged();
+        window.addEventListener('country_relations_updated', notifyColorsChanged);
+        window.addEventListener('world_map_features_ready', notifyColorsChanged);
         return () => {
-            window.removeEventListener('country_relations_updated', updateDiplomacyMapColors);
-            window.removeEventListener('world_map_features_ready', updateDiplomacyMapColors);
+            window.removeEventListener('country_relations_updated', notifyColorsChanged);
+            window.removeEventListener('world_map_features_ready', notifyColorsChanged);
         };
     }, [isDiplomacyMapActive, selectedCountry?.country, countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, currentDate]);
 
@@ -1877,7 +1881,7 @@ export default function MapPage() {
                     udara: {},
                 };
                 let coalitionPower = 0;
-                forceSources.forEach(profile => {
+                forceSources.forEach((profile: Record<string, unknown>) => {
                     const profileSummary = getArmadaPowerSummary(profile);
                     profileSummary.breakdown.forEach(unit => {
                         coalitionArmada[unit.groupId] ??= {};
@@ -4717,110 +4721,45 @@ export default function MapPage() {
                 // After init, the exported functions are available on the module
                 const { start_map_engine, set_selected_country_on_map, set_map_horizontal_wrap } = wasmModule;
 
-                const mapCanvasEl = document.getElementById('map-canvas') as HTMLCanvasElement | null;
-                const mapCtx = mapCanvasEl?.getContext('2d');
-                if (mapCanvasEl && mapCtx) {
-                    let fillCount = 0;
-                    let realFillStyle: string | CanvasGradient | CanvasPattern = '#000';
-                    let cachedFeatures: any[] | null = null;
-                    let cachedOverrides: Record<string, string> | null = null;
-                    let cachedAnnexedCountries: Record<string, any> | null = null;
-                    let annexedFeatureColors: Array<string | undefined> = [];
-                    const normalizeCountryKey = (key: string) => key.toLowerCase().replace(/[^a-z0-9]/g, '');
-                    const originalFill = mapCtx.fill.bind(mapCtx);
-                    const originalFillRect = mapCtx.fillRect.bind(mapCtx);
-                    mapCtx.fill = ((...args: Parameters<typeof mapCtx.fill>) => {
-                        fillCount++;
-                        originalFill(...args);
-                    }) as typeof mapCtx.fill;
-                    mapCtx.fillRect = ((...args: Parameters<typeof mapCtx.fillRect>) => {
-                        fillCount = 0;
-                        originalFillRect(...args);
-                    }) as typeof mapCtx.fillRect;
-                    Object.defineProperty(mapCtx, 'fillStyle', {
-                        configurable: true,
-                        get: () => realFillStyle,
-                        set: (value: string | CanvasGradient | CanvasPattern) => {
-                            realFillStyle = value;
-                            const features = (window as any).neosantara_world_geojson_features;
-                            const overrides = (window as any).neosantara_country_color_overrides || EMPTY_COUNTRY_OVERRIDES;
-                            const annexedCountries = (window as any).neosantara_annexed_countries || EMPTY_ANNEXED_COUNTRIES;
-
-                            if (
-                                features &&
-                                (features !== cachedFeatures ||
-                                    overrides !== cachedOverrides ||
-                                    annexedCountries !== cachedAnnexedCountries)
-                            ) {
-                                const annexedKeys = new Set(
-                                    Object.entries(annexedCountries)
-                                        .filter(([, info]) =>
-                                            typeof info === 'object' &&
-                                            info !== null &&
-                                            'attackerCountry' in info
-                                        )
-                                        .map(([key]) => normalizeCountryKey(key))
-                                );
-                                const validOverrides = Object.entries(overrides)
-                                    .filter(([key]) => annexedKeys.has(normalizeCountryKey(key)))
-                                    .map(([key, color]) => [normalizeCountryKey(key), color] as const);
-
-                                annexedFeatureColors = features.map((feature: { properties?: Record<string, unknown> }) => {
-                                    const properties = feature?.properties;
-                                    if (!properties) return undefined;
-                                    const featureKeys = new Set([
-                                        properties.ISO_A2,
-                                        properties.ISO_A2_EH,
-                                        properties.ISO_A3,
-                                        properties.ISO_A3_EH,
-                                        `iso_${properties.ISO_A2 || properties.ISO_A2_EH || ''}`,
-                                        `iso_${properties.ISO_A3 || properties.ISO_A3_EH || ''}`,
-                                        properties.NAME,
-                                        properties.ADMIN,
-                                        properties.NAME_LONG,
-                                        properties.GEOUNIT,
-                                        properties.NAME_ID,
-                                        properties.NAME_EN,
-                                        properties.NAME_IND
-                                    ].filter((key): key is string => typeof key === 'string' && key.length > 0)
-                                        .map(normalizeCountryKey));
-                                    return validOverrides.find(([key]) => featureKeys.has(key))?.[1];
-                                });
-                                cachedFeatures = features;
-                                cachedOverrides = overrides;
-                                cachedAnnexedCountries = annexedCountries;
-                            }
-
-                            if (
-                                typeof value === 'string' &&
-                                value !== '#10b981' &&
-                                value !== '#1e3a8a' &&
-                                value !== '#fbbf24' &&
-                                value !== 'white' &&
-                                !(window as any).neosantara_diplomacy_map_active &&
-                                features &&
-                                fillCount < features.length
-                            ) {
-                                const annexedColor = annexedFeatureColors[fillCount];
-                                if (annexedColor) realFillStyle = annexedColor;
-                            }
-                            if (
-                                typeof value === 'string' &&
-                                value !== '#1e3a8a' &&
-                                value !== '#fbbf24' &&
-                                value !== 'white' &&
-                                (window as any).neosantara_diplomacy_map_active
-                            ) {
-                                const diplomacyColor =
-                                    (window as any).neosantara_diplomacy_map_feature_colors?.[fillCount];
-                                if (diplomacyColor) realFillStyle = diplomacyColor;
-                            }
-                            Object.getOwnPropertyDescriptor(Object.getPrototypeOf(mapCtx), 'fillStyle')
-                                ?.set?.call(mapCtx, realFillStyle);
-                        }
-                    });
-
-                }
+                const normalizeCountryKey = (key: string) => key.toLowerCase().replace(/[^a-z0-9]/g, '');
+                // Warna override (aneksasi / diplomasi) dihitung di JS hanya saat data berubah,
+                // lalu dikirim ke engine WASM. Tidak ada lagi hook di setiap fillStyle.
+                const syncFeatureColors = () => {
+                    const w = window as any;
+                    const features = w.neosantara_world_geojson_features;
+                    if (!Array.isArray(features)) return;
+                    const diplomacyActive = Boolean(w.neosantara_diplomacy_map_active);
+                    let colors: Array<string | null>;
+                    if (diplomacyActive) {
+                        const src: Array<string | undefined> = w.neosantara_diplomacy_map_feature_colors || [];
+                        colors = features.map((_: unknown, i: number) => src[i] ?? null);
+                    } else {
+                        const overrides = w.neosantara_country_color_overrides || EMPTY_COUNTRY_OVERRIDES;
+                        const annexedCountries = w.neosantara_annexed_countries || EMPTY_ANNEXED_COUNTRIES;
+                        const annexedKeys = new Set(
+                            Object.entries(annexedCountries)
+                                .filter(([, info]) => typeof info === 'object' && info !== null && 'attackerCountry' in (info as object))
+                                .map(([key]) => normalizeCountryKey(key))
+                        );
+                        const validOverrides = Object.entries(overrides as Record<string, string>)
+                            .filter(([key]) => annexedKeys.has(normalizeCountryKey(key)))
+                            .map(([key, color]) => [normalizeCountryKey(key), color] as const);
+                        colors = features.map((feature: { properties?: Record<string, unknown> }) => {
+                            const properties = feature?.properties;
+                            if (!properties || validOverrides.length === 0) return null;
+                            const featureKeys = new Set([
+                                properties.ISO_A2, properties.ISO_A2_EH, properties.ISO_A3, properties.ISO_A3_EH,
+                                `iso_${properties.ISO_A2 || properties.ISO_A2_EH || ''}`,
+                                `iso_${properties.ISO_A3 || properties.ISO_A3_EH || ''}`,
+                                properties.NAME, properties.ADMIN, properties.NAME_LONG, properties.GEOUNIT,
+                                properties.NAME_ID, properties.NAME_EN, properties.NAME_IND
+                            ].filter((key): key is string => typeof key === 'string' && key.length > 0)
+                                .map(normalizeCountryKey));
+                            return validOverrides.find(([key]) => featureKeys.has(key))?.[1] ?? null;
+                        });
+                    }
+                    wasmModule.set_feature_colors_on_map(colors, diplomacyActive);
+                };
 
                 await start_map_engine(
                     "map-canvas",
@@ -4830,6 +4769,9 @@ export default function MapPage() {
                 );
                 set_map_horizontal_wrap(true);
                 wasmModule.set_capitals_on_map(getCapitalFlagsForCurrentTerritories());
+                syncFeatureColors();
+                window.addEventListener('map_feature_colors_dirty', syncFeatureColors);
+                window.addEventListener('map_territory_color_updated', syncFeatureColors);
 
                 // Highlight and center player country if present
                 if (typeof window !== 'undefined') {

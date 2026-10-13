@@ -1,4 +1,4 @@
-﻿use wasm_bindgen::prelude::*;
+use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement, PointerEvent, WheelEvent};
 use serde::Deserialize;
@@ -33,6 +33,7 @@ struct CachedFeature {
     bbox: [f64; 4],
     iso: String, // lowercase
     fill: JsValue,
+    override_fill: Option<JsValue>,
 }
 
 struct CachedCountry {
@@ -120,6 +121,7 @@ pub struct MapEngine {
     last_render_ms: f64,
     frame_counter: u32,
     flags_ready: usize,
+    override_beats_selected: bool,
 }
 
 #[wasm_bindgen]
@@ -160,6 +162,7 @@ impl MapEngine {
             last_render_ms: 0.0,
             frame_counter: 0,
             flags_ready: 0,
+            override_beats_selected: false,
         }
     }
 
@@ -205,15 +208,25 @@ impl MapEngine {
                     _ => {}
                 }
             }
-            if polys.is_empty() { continue; }
+            // Jangan di-skip: indeks feature harus sejajar dengan array GeoJSON di JS
             out.push(CachedFeature {
                 polys,
                 bbox: fbox,
                 iso,
                 fill: JsValue::from_str(continent_color(continent)),
+                override_fill: None,
             });
         }
         self.features = out;
+        self.dirty = true;
+    }
+
+    /// Warna override per feature (indeks sama dengan urutan GeoJSON). null/undefined = tanpa override.
+    pub fn set_feature_colors(&mut self, colors: Vec<JsValue>, beat_selected: bool) {
+        for (f, c) in self.features.iter_mut().zip(colors.into_iter()) {
+            f.override_fill = if c.as_string().is_some() { Some(c) } else { None };
+        }
+        self.override_beats_selected = beat_selected;
         self.dirty = true;
     }
 
@@ -459,7 +472,13 @@ impl MapEngine {
             // Fill
             for &i in &visible {
                 let f = &self.features[i];
-                self.ctx.set_fill_style(if is_sel(f) { &self.styles.sel_fill } else { &f.fill });
+                let style = match (is_sel(f), f.override_fill.as_ref()) {
+                    (true, Some(o)) if self.override_beats_selected => o,
+                    (true, _) => &self.styles.sel_fill,
+                    (false, Some(o)) => o,
+                    _ => &f.fill,
+                };
+                self.ctx.set_fill_style(style);
                 self.ctx.begin_path();
                 self.trace_feature(f, vx0, vy0, vx1, vy1);
                 self.ctx.fill();
@@ -667,6 +686,15 @@ pub fn set_map_horizontal_wrap(enabled: bool) {
     ACTIVE_ENGINE.with(|global_engine| {
         if let Some(engine) = global_engine.borrow().as_ref() {
             engine.borrow_mut().set_horizontal_wrap(enabled);
+        }
+    });
+}
+
+#[wasm_bindgen]
+pub fn set_feature_colors_on_map(colors: Vec<JsValue>, beat_selected: bool) {
+    ACTIVE_ENGINE.with(|global_engine| {
+        if let Some(engine) = global_engine.borrow().as_ref() {
+            engine.borrow_mut().set_feature_colors(colors, beat_selected);
         }
     });
 }

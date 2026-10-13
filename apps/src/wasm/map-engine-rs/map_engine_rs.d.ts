@@ -15,14 +15,27 @@ export class MapEngine {
     render(): void;
     set_capitals(capitals: any[]): void;
     set_countries(countries: any[]): void;
+    /**
+     * Parse GeoJSON sekali, proyeksikan semua titik & hitung bbox (cache).
+     */
     set_data(geojson_str: string): void;
+    /**
+     * Warna override per feature (indeks sama dengan urutan GeoJSON). null/undefined = tanpa override.
+     */
+    set_feature_colors(colors: any[], beat_selected: boolean): void;
     set_horizontal_wrap(enabled: boolean): void;
     set_selected_country(iso: string | null | undefined, should_center: boolean): void;
+    /**
+     * Dipanggil dari requestAnimationFrame. Throttle ke ~30 FPS saat pan.
+     */
+    tick(now_ms: number): void;
 }
 
 export function get_country_at_on_map(mouse_x: number, mouse_y: number): any;
 
 export function set_capitals_on_map(capitals: any[]): void;
+
+export function set_feature_colors_on_map(colors: any[], beat_selected: boolean): void;
 
 export function set_map_horizontal_wrap(enabled: boolean): void;
 
@@ -47,15 +60,18 @@ export interface InitOutput {
     readonly mapengine_set_capitals: (a: number, b: number, c: number) => void;
     readonly mapengine_set_countries: (a: number, b: number, c: number) => void;
     readonly mapengine_set_data: (a: number, b: number, c: number) => void;
+    readonly mapengine_set_feature_colors: (a: number, b: number, c: number, d: number) => void;
     readonly mapengine_set_horizontal_wrap: (a: number, b: number) => void;
     readonly mapengine_set_selected_country: (a: number, b: number, c: number, d: number) => void;
+    readonly mapengine_tick: (a: number, b: number) => void;
     readonly set_capitals_on_map: (a: number, b: number) => void;
+    readonly set_feature_colors_on_map: (a: number, b: number, c: number) => void;
     readonly set_map_horizontal_wrap: (a: number) => void;
     readonly set_selected_country_on_map: (a: number, b: number, c: number) => void;
     readonly start_map_engine: (a: number, b: number, c: number, d: number, e: any, f: any) => [number, number];
+    readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___f64______true_: (a: number, b: number, c: number) => void;
     readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true_: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true__19: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke_______true_: (a: number, b: number) => void;
+    readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true__23: (a: number, b: number, c: any) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_exn_store: (a: number) => void;
