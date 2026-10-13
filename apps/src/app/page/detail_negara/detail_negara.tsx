@@ -88,7 +88,13 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
   useEffect(() => {
     const refreshAnnexation = (event: Event) => {
-      const detail = (event as CustomEvent<{ attackerCountry?: string; transferredFrom?: string }>).detail;
+      const detail = (event as CustomEvent<{
+        attackerCountry?: string;
+        transferredFrom?: string;
+        targetCountry?: string;
+        returnedTerritories?: string[];
+        returnedToCountries?: string[];
+      }>).detail;
       if (
         detail?.transferredFrom &&
         normalizeCountryKey(detail.attackerCountry) === normalizeCountryKey(countryName)
@@ -99,7 +105,12 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
       if (
         Array.isArray(detail?.returnedTerritories) &&
         detail.returnedTerritories.length > 0 &&
-        normalizeCountryKey(detail.targetCountry) === normalizeCountryKey(countryName)
+        (
+          normalizeCountryKey(detail.targetCountry) === normalizeCountryKey(countryName) ||
+          detail.returnedToCountries?.some(
+            returnedToCountry => normalizeCountryKey(returnedToCountry) === normalizeCountryKey(countryName)
+          )
+        )
       ) {
         fetchedRef.current = null;
         preserveActiveTabRef.current = true;

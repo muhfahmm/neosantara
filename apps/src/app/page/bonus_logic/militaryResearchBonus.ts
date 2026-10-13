@@ -1,4 +1,8 @@
 const MILITARY_RESEARCH_LEVEL_BONUS = [0, 2, 5, 8, 12, 15];
+const MILITARY_RESEARCH_EFFECTS = new Set([
+  "spionase_strategis",
+  "sabotase_terarah",
+]);
 
 const MILITARY_RESEARCH_UNITS: Record<string, string[]> = {
   tank_generasi_baru: ["tank_tempur_utama"],
@@ -31,7 +35,7 @@ export function getMilitaryResearchBaseBonus(researchId: string): number | undef
 }
 
 export function getMilitaryResearchLevelBonus(researchId: string, level: number): number | undefined {
-  if (!MILITARY_RESEARCH_UNITS[researchId]) return undefined;
+  if (!MILITARY_RESEARCH_UNITS[researchId] && !MILITARY_RESEARCH_EFFECTS.has(researchId)) return undefined;
   const normalizedLevel = Math.min(
     MILITARY_RESEARCH_LEVEL_BONUS.length - 1,
     Math.max(1, Math.floor(level))

@@ -17,6 +17,8 @@ import KudetaModal from './5_lakukan_kudeta/kudetaModals';
 import MintaSerangNegaraModal from './6_minta_serang_negara/mintaSerangNegaraModals';
 import HinaModal from './7_hina/hinaModals';
 import ProvinsiOperasiMiliter from '../1_informasi_umum/provinsi_logic/ProvinsiOperasiMiliter';
+import CovertOperationResultModal from './CovertOperationResultModal';
+import { resolveCovertOperation, type CovertOperationResult, type CovertOperationType } from './covertOperationLogic';
 
 interface OperasiMiliterProps {
   countryName: string;
@@ -51,8 +53,14 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
   const [isKudetaOpen, setIsKudetaOpen] = useState(false);
   const [isMintaSerangOpen, setIsMintaSerangOpen] = useState(false);
   const [isHinaOpen, setIsHinaOpen] = useState(false);
+  const [covertOperationResult, setCovertOperationResult] = useState<CovertOperationResult | null>(null);
 
-  const isAnyMiliterModalActive = isSerangOpen || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isHinaOpen;
+  const isAnyMiliterModalActive = isSerangOpen || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isHinaOpen || !!covertOperationResult;
+
+  const launchCovertOperation = (operation: CovertOperationType, targetCountry: string) => {
+    const result = resolveCovertOperation(operation, playerCountryDetail);
+    setCovertOperationResult({ operation, targetCountry, ...result });
+  };
 
   useEffect(() => {
     if (onActionModalStateChange) {
@@ -112,8 +120,12 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
           }
         }}
       />
-      <SpionaseModal isOpen={isSpionaseOpen} countryName={countryName} onClose={() => setIsSpionaseOpen(false)} onConfirm={(target) => { console.log(`Spionase -> ${target}`); }} />
-      <SabotaseModal isOpen={isSabotaseOpen} countryName={countryName} onClose={() => setIsSabotaseOpen(false)} onConfirm={(target) => { console.log(`Sabotase -> ${target}`); }} />
+      <SpionaseModal isOpen={isSpionaseOpen} countryName={countryName} playerCountryDetail={playerCountryDetail} onClose={() => setIsSpionaseOpen(false)} onConfirm={(target) => {
+        launchCovertOperation('spionase', target);
+      }} />
+      <SabotaseModal isOpen={isSabotaseOpen} countryName={countryName} playerCountryDetail={playerCountryDetail} onClose={() => setIsSabotaseOpen(false)} onConfirm={(target) => {
+        launchCovertOperation('sabotase', target);
+      }} />
       <PerangNuklirModal isOpen={isNuklirOpen} countryName={countryName} onClose={() => setIsNuklirOpen(false)} onConfirm={() => { console.log(`Nuklir -> ${countryName}`); }} />
       <KudetaModal isOpen={isKudetaOpen} countryName={countryName} onClose={() => setIsKudetaOpen(false)} onConfirm={() => { console.log(`Kudeta -> ${countryName}`); }} />
       <MintaSerangNegaraModal 
@@ -137,6 +149,10 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
         }} 
       />
       <HinaModal isOpen={isHinaOpen} countryName={countryName} onClose={() => setIsHinaOpen(false)} onConfirm={() => { console.log(`Hina -> ${countryName}`); }} />
+      <CovertOperationResultModal
+        result={covertOperationResult}
+        onClose={() => setCovertOperationResult(null)}
+      />
     </div>
   );
 }

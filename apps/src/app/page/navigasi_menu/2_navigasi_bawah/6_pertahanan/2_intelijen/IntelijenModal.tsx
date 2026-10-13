@@ -3,6 +3,12 @@ import React, { useState } from "react";
 import { X, Eye, Bomb } from "lucide-react";
 import Spionase from "./table_menu/1_tabel_spionase";
 import Sabotase from "./table_menu/2_tabel_sabotase";
+import CovertOperationResultModal from "@/app/page/detail_negara/3_operasi_militer/CovertOperationResultModal";
+import {
+  resolveCovertOperation,
+  type CovertOperationResult,
+  type CovertOperationType,
+} from "@/app/page/detail_negara/3_operasi_militer/covertOperationLogic";
 
 interface ModalProps {
   isOpen: boolean;
@@ -14,9 +20,14 @@ interface ModalProps {
 
 export default function IntelijenModal({ isOpen, onClose, countryDetail, setCountryDetail, prefetchedAllCountries }: ModalProps) {
   const [activeTab, setActiveTab] = useState<'spionase' | 'sabotase'>('spionase');
+  const [covertOperationResult, setCovertOperationResult] = useState<CovertOperationResult | null>(null);
   if (!isOpen) return null;
 
   const anggaran = countryDetail?.anggaran || 0;
+  const launchCovertOperation = (operation: CovertOperationType, targetCountry: string) => {
+    const result = resolveCovertOperation(operation, countryDetail);
+    setCovertOperationResult({ operation, targetCountry, ...result });
+  };
 
   // 🔥 Logika aksi untuk Spionase
   const handleSpionaseAction = (target: any) => {
@@ -28,7 +39,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
       ...countryDetail,
       anggaran: anggaran - 10000000
     });
-    alert(`Misi spionase 'Sandi Garuda' sukses diluncurkan ke negara: ${target.countryName}!`);
+    launchCovertOperation('spionase', target.countryName);
   };
 
   // 🔥 Logika aksi untuk Sabotase
@@ -41,7 +52,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
       ...countryDetail,
       anggaran: anggaran - 20000000
     });
-    alert(`Divisi Operasi Khusus berhasil melakukan sabotase di negara: ${target.countryName}!`);
+    launchCovertOperation('sabotase', target.countryName);
   };
 
   return (
@@ -113,6 +124,10 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
           </div>
         </div>
       </div>
+      <CovertOperationResultModal
+        result={covertOperationResult}
+        onClose={() => setCovertOperationResult(null)}
+      />
     </div>
   );
 }

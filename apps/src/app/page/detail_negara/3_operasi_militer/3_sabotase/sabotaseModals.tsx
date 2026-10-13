@@ -2,15 +2,17 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown, Bomb, Search } from "lucide-react";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
+import { getCovertOperationSuccessChance } from "../covertOperationLogic";
 
 interface SabotaseModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
+	playerCountryDetail?: Record<string, unknown> | null;
 	onClose: () => void;
 	onConfirm: (targetCountry: string) => void;
 }
 
-export default function SabotaseModal({ isOpen, countryName, onClose, onConfirm }: SabotaseModalProps) {
+export default function SabotaseModal({ isOpen, countryName, playerCountryDetail, onClose, onConfirm }: SabotaseModalProps) {
 	const [selectedCountry, setSelectedCountry] = useState<string>("");
 	const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 	const [searchQuery, setSearchQuery] = useState<string>("");
@@ -69,6 +71,7 @@ export default function SabotaseModal({ isOpen, countryName, onClose, onConfirm 
 
 	if (!isOpen) return null;
 
+	const successChance = getCovertOperationSuccessChance("sabotase", playerCountryDetail);
 	const selectedData = countryList.find((c) => c.country === selectedCountry) || countryList[0];
 
 	const renderFlag = (iso?: string, name?: string) => {
@@ -168,8 +171,8 @@ export default function SabotaseModal({ isOpen, countryName, onClose, onConfirm 
 
 					<div className="bg-[#0A1A1A] border border-rose-500/20 rounded-xl p-3 text-center space-y-1">
 						<div className="flex items-center justify-between text-xs font-bold text-[#6B8A8A]">
-							<span>Tingkat Risiko Terungkap:</span>
-							<span className="text-rose-400 font-black">40% (Sedang)</span>
+							<span>Peluang Keberhasilan:</span>
+							<span className="text-rose-400 font-black">{successChance}%</span>
 						</div>
 					</div>
 
@@ -206,4 +209,3 @@ export default function SabotaseModal({ isOpen, countryName, onClose, onConfirm 
 
 	return modalContent;
 }
-

@@ -6,7 +6,7 @@ import {
   FlaskConical, X, Sparkles, Cpu, Shield, Zap, BookOpen, Leaf, Globe2,
   Palette, Lock, CheckCircle2, Clock, Coins, Beaker, Atom, Rocket,
   Wifi, Crosshair, HeartPulse, Wheat, Banknote, Search, TrendingUp,
-  ChevronUp,
+  ChevronUp, Eye,
 } from 'lucide-react';
 import {
   applyAtheismResearchSpeedBonus,
@@ -213,7 +213,7 @@ const getResearchTier = (research: Research, data: Research[]): number => {
 // ╔══════════════════════════════════════════════════════════════════╗
 // ║  RESEARCH_DATA — FINAL                                          ║
 // ║  Ekonomi: 12 kartu (3 kolom × 4 tier)                           ║
-// ║  Militer: 16 kartu (5/5/3/3)                                    ║
+// ║  Militer: 18 kartu (5/5/5/3)                                    ║
 // ║  Diplomasi: 25 kartu (5×5)                                      ║
 // ╚══════════════════════════════════════════════════════════════════╝
 const RESEARCH_DATA: Research[] = [
@@ -255,7 +255,9 @@ const RESEARCH_DATA: Research[] = [
   { id: 'kapal_selam_diesel', name: 'Kapal Selam Modern', category: 'militer', tier: 2, cost: 4500, duration: 60, prerequisites: ['drone_otonom'], icon: Shield, description: 'Teknologi patroli laut untuk memperluas kapasitas Pangkalan Udara.', effects: [{ stat: 'kapasitas_pangkalan_udara', value: 2, label: '+2% Kapasitas Pangkalan Udara' }] },
   { id: 'helikopter_serang', name: 'Helikopter Tempur', category: 'militer', tier: 2, cost: 4100, duration: 60, prerequisites: ['radar_pesisir'], icon: Rocket, description: 'Dukungan udara jarak dekat untuk memperluas kapasitas Pangkalan Laut.', effects: [{ stat: 'kapasitas_pangkalan_laut', value: 2, label: '+2% Kapasitas Pangkalan Laut' }] },
 
-  // TIER 3 — KEKUATAN (3 kartu)
+  // TIER 3 — KEKUATAN & INTELIJEN (5 kartu)
+  { id: 'spionase_strategis', name: 'Spionase Strategis', category: 'militer', tier: 3, cost: 6800, duration: 90, prerequisites: ['kapal_selam_diesel'], icon: Eye, description: 'Pelatihan agen dan analisis intelijen meningkatkan peluang keberhasilan operasi spionase.', effects: [{ stat: 'peluang_spionase', value: 2, label: '+2% Peluang Keberhasilan Spionase' }] },
+  { id: 'sabotase_terarah', name: 'Sabotase Terarah', category: 'militer', tier: 3, cost: 6800, duration: 90, prerequisites: ['helikopter_serang'], icon: Crosshair, description: 'Perencanaan operasi khusus meningkatkan peluang keberhasilan sabotase.', effects: [{ stat: 'peluang_sabotase', value: 2, label: '+2% Peluang Keberhasilan Sabotase' }] },
   { id: 'tank_generasi5', name: 'Tank Tempur Generasi 5', category: 'militer', tier: 3, cost: 7000, duration: 90, prerequisites: ['kapal_stealth'], icon: Shield, description: 'Teknologi tank terbaru meningkatkan kekuatan tempur pasukan darat.', effects: [{ stat: 'kekuatan_darat', value: 2, label: '+2% Kekuatan Darat' }] },
   { id: 'jet_superioritas', name: 'Jet Tempur Superioritas', category: 'militer', tier: 3, cost: 7200, duration: 90, prerequisites: ['artileri_presisi'], icon: Rocket, description: 'Jet tempur generasi terbaru meningkatkan kekuatan tempur udara.', effects: [{ stat: 'kekuatan_udara', value: 2, label: '+2% Kekuatan Udara' }] },
   { id: 'kapal_perang_multiperan', name: 'Kapal Perang Multi-Peran', category: 'militer', tier: 3, cost: 6500, duration: 90, prerequisites: ['helikopter_serang'], icon: Shield, description: 'Kapal perang serbaguna meningkatkan kekuatan tempur laut.', effects: [{ stat: 'kekuatan_laut', value: 2, label: '+2% Kekuatan Laut' }] },

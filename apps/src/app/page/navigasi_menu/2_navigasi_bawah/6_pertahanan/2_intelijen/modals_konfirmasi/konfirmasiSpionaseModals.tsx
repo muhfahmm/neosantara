@@ -1,11 +1,13 @@
 "use client"
 import React from "react";
-import { X, Binoculars, Eye, Shield } from "lucide-react";
+import { X, Binoculars, Eye } from "lucide-react";
+import { getCovertOperationSuccessChance } from "@/app/page/detail_negara/3_operasi_militer/covertOperationLogic";
 
 interface KonfirmasiSpionaseModalsProps {
   isOpen: boolean;
   onClose: () => void;
   targetCountry: any;
+  playerCountryDetail?: Record<string, unknown> | null;
   onConfirm: () => void;
 }
 
@@ -13,11 +15,13 @@ export default function KonfirmasiSpionaseModals({
   isOpen,
   onClose,
   targetCountry,
+  playerCountryDetail,
   onConfirm,
 }: KonfirmasiSpionaseModalsProps) {
   if (!isOpen || !targetCountry) return null;
 
   const targetName = targetCountry.countryName || "Target";
+  const successChance = getCovertOperationSuccessChance('spionase', playerCountryDetail);
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -68,6 +72,9 @@ export default function KonfirmasiSpionaseModals({
               <p className="text-base font-black text-[#00FFAA]">{targetName}</p>
               <p className="text-xs text-[#6B8A8A] mt-1">
                 Kekuatan Militer: <span className="font-black text-[#E0E0E0]">{targetCountry?.totalPower?.toLocaleString("id-ID") || "Tidak diketahui"}</span>
+              </p>
+              <p className="text-xs text-[#6B8A8A] mt-2">
+                Peluang keberhasilan: <span className="font-black text-[#00FFAA]">{successChance}%</span>
               </p>
             </div>
           </div>

@@ -245,6 +245,7 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           targetCountry={selectedTarget}
+          playerCountryDetail={countryDetail}
           onConfirm={() => {
             setIsModalOpen(false);
             onAction(selectedTarget);

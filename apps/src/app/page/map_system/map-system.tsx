@@ -776,6 +776,7 @@ export default function MapPage() {
         const normalizedTargetCountry = targetCountry.toLowerCase().replace(/[^a-z0-9]/g, '');
         const normalizedTerritoryKeys = new Set<string>();
         const returnedTerritories: string[] = [];
+        const returnedToCountries = new Set<string>();
         Object.entries(previousAnnexed).forEach(([key, info]: [string, any]) => {
             if (
                 !info?.returnedToCountry ||
@@ -800,13 +801,14 @@ export default function MapPage() {
             const territoryAliases = new Set([territoryNorm, territoryIsoNorm, `iso${territoryIsoNorm}`]);
             normalizedTerritoryKeys.add(territoryNorm);
             returnedTerritories.push(territory.country);
+            returnedToCountries.add(info.returnedToCountry);
 
             Object.entries(previousAnnexed).forEach(([alias, aliasInfo]: [string, any]) => {
                 if (
                     territoryAliases.has(alias.toLowerCase().replace(/[^a-z0-9]/g, '')) &&
                     aliasInfo?.attackerCountry?.toLowerCase().replace(/[^a-z0-9]/g, '') === normalizedTargetCountry
                 ) {
-                    const { returnedToCountry, returnedToIso, returnedToColor, ...reclaimedInfo } = aliasInfo;
+                    const { returnedToCountry, returnedToIso, ...reclaimedInfo } = aliasInfo;
                     nextAnnexed[alias] = {
                         ...reclaimedInfo,
                         attackerCountry: returnedToCountry,
@@ -840,7 +842,13 @@ export default function MapPage() {
         (window as any).neosantara_country_color_overrides = nextOverrides;
         (window as any).neosantara_annexed_countries = nextAnnexed;
         window.dispatchEvent(new CustomEvent('map_territory_color_updated', {
-            detail: { targetCountry, newColor: attackerColor, attackerCountry, returnedTerritories }
+            detail: {
+                targetCountry,
+                newColor: attackerColor,
+                attackerCountry,
+                returnedTerritories,
+                returnedToCountries: Array.from(returnedToCountries),
+            }
         }));
     };
 
