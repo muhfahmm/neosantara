@@ -758,7 +758,9 @@ function ModalsManager({
           isOpen={true}
           onClose={onClose}
           countryDetail={countryDetail}
-          setCountryDetail={setCountryDetail}
+          setCountryDetail={update => setCountryDetail(previous =>
+            typeof update === 'function' ? update(previous) : update
+          )}
           currentDate={currentDate}
           setPresidentRating={setPresidentRating}
         />

@@ -139,7 +139,7 @@ function getCountryCorruptionDefaults(detail: CorruptionCountryDetail) {
 
   return {
     index: Math.round(baseIndex),
-    agencyLevel: Math.round(clamp(1 + ((seed >>> 7) % 4) + ruleOfLawLevel * 0.3, 0, 10)),
+    agencyLevel: Math.round(clamp(1 + ((seed >>> 7) % 4) + ruleOfLawLevel * 0.3, 1, 20)),
     auditCoverage: Math.round(clamp(
       8 + ((seed >>> 13) % 24) + (hasTransparency ? clamp(transparency, 0, 100) * 0.12 : 0),
       2,
@@ -147,8 +147,8 @@ function getCountryCorruptionDefaults(detail: CorruptionCountryDetail) {
     )),
     whistleblowerProtection: Math.round(clamp(
       ((seed >>> 19) % 3) + (hasTransparency ? clamp(transparency, 0, 100) * 0.025 : 0),
-      0,
-      10,
+      1,
+      20,
     )),
   };
 }
@@ -168,13 +168,13 @@ export function initializeCorruptionProfile<T extends CorruptionCountryDetail>(d
     ? clamp(currentIndex, 0, 100)
     : defaults.index;
   const agencyLevel = currentAgencyLevel !== null
-    ? clamp(currentAgencyLevel, 0, 10)
+    ? clamp(currentAgencyLevel, 1, 20)
     : defaults.agencyLevel;
   const auditCoverage = currentAuditCoverage !== null
     ? clamp(currentAuditCoverage, 0, 100)
     : defaults.auditCoverage;
   const whistleblowerProtection = currentWhistleblowerProtection !== null
-    ? clamp(currentWhistleblowerProtection, 0, 10)
+    ? clamp(currentWhistleblowerProtection, 1, 20)
     : defaults.whistleblowerProtection;
   const activeScandals = Array.isArray(detail.active_scandals) ? detail.active_scandals : [];
 
@@ -201,9 +201,9 @@ export function initializeCorruptionProfile<T extends CorruptionCountryDetail>(d
 export function getCorruptionMetrics(detail: CorruptionCountryDetail | null | undefined) {
   const initialized = initializeCorruptionProfile(detail ?? {});
   const index = clamp(Number(initialized.corruption_index), 0, 100);
-  const agencyLevel = Math.floor(clamp(Number(initialized.anti_corruption_agency_level), 0, 10));
+  const agencyLevel = Math.floor(clamp(Number(initialized.anti_corruption_agency_level), 1, 20));
   const auditCoverage = clamp(Number(initialized.audit_coverage), 0, 100);
-  const whistleblowerProtection = Math.floor(clamp(Number(initialized.whistleblower_protection), 0, 10));
+  const whistleblowerProtection = Math.floor(clamp(Number(initialized.whistleblower_protection), 1, 20));
   return {
     index,
     agencyLevel,

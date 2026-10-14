@@ -1,4 +1,7 @@
 import { getCorruptionMetrics, type CorruptionCountryDetail } from './corruptionLogic';
+import { calculateCountryNetBalance } from '@/app/logic/economic_logic/treasuryUpdater';
+import { getDailyMinistryCost, LEVEL_UP_COST } from '@/app/logic/economic_logic/departments';
+import { applyReformasiBirokrasiToUpgradeCost } from '@/app/page/bonus_logic';
 
 export interface CorruptionActionResult {
   updatedDetail: CorruptionCountryDetail;
@@ -6,27 +9,65 @@ export interface CorruptionActionResult {
   cost: number;
 }
 
+export type CorruptionUpgradeTrack = 'agency' | 'whistleblower';
+
+const MAX_CORRUPTION_LEVEL = 20;
+
+const getTrackLevel = (detail: CorruptionCountryDetail, track: CorruptionUpgradeTrack) => {
+  const metrics = getCorruptionMetrics(detail);
+  return track === 'agency' ? metrics.agencyLevel : metrics.whistleblowerProtection;
+};
+
+export function getCorruptionUpgradeCost(
+  detail: CorruptionCountryDetail,
+  fromLevel: number,
+  targetLevel: number,
+): number {
+  let totalCost = 0;
+  for (let level = fromLevel + 1; level <= targetLevel; level += 1) {
+    totalCost += applyReformasiBirokrasiToUpgradeCost(LEVEL_UP_COST[level] ?? 10, detail);
+  }
+  return totalCost;
+}
+
+export function canUpgradeCorruptionTrack(
+  detail: CorruptionCountryDetail,
+  track: CorruptionUpgradeTrack,
+  targetLevel: number,
+  currentNet = calculateCountryNetBalance(detail),
+): boolean {
+  const currentLevel = getTrackLevel(detail, track);
+  if (!Number.isInteger(targetLevel) || targetLevel <= currentLevel || targetLevel > MAX_CORRUPTION_LEVEL) {
+    return false;
+  }
+
+  const cost = getCorruptionUpgradeCost(detail, currentLevel, targetLevel);
+  const budget = Math.max(0, Number(detail.anggaran) || 0);
+  if (budget < cost) return false;
+
+  const projectedNet = currentNet + getDailyMinistryCost(currentLevel) - getDailyMinistryCost(targetLevel);
+  return projectedNet >= 0;
+}
+
 export function upgradeAntiCorruptionAgency(
   detail: CorruptionCountryDetail,
-  date: Date
+  date: Date,
+  targetLevel: number,
 ): CorruptionActionResult | null {
   const metrics = getCorruptionMetrics(detail);
-  if (metrics.agencyLevel >= 10) return null;
-
-  const cost = Math.round(25_000 * (metrics.agencyLevel + 1) ** 1.65);
+  if (!canUpgradeCorruptionTrack(detail, 'agency', targetLevel)) return null;
+  const cost = getCorruptionUpgradeCost(detail, metrics.agencyLevel, targetLevel);
   const budget = Math.max(0, Number(detail.anggaran) || 0);
-  if (budget < cost) return null;
-
-  const nextLevel = metrics.agencyLevel + 1;
+  const levelsGained = targetLevel - metrics.agencyLevel;
   const dateString = date.toISOString().slice(0, 10);
   return {
     cost,
-    message: `Lembaga antikorupsi ditingkatkan ke level ${nextLevel}.`,
+    message: `Lembaga antikorupsi ditingkatkan ke level ${targetLevel}.`,
     updatedDetail: {
       ...detail,
       anggaran: budget - cost,
-      anti_corruption_agency_level: nextLevel,
-      corruption_index: Math.max(0, metrics.index - 1),
+      anti_corruption_agency_level: targetLevel,
+      corruption_index: Math.max(0, metrics.index - levelsGained),
       corruption_last_agency_upgrade: dateString,
     },
   };
@@ -34,23 +75,20 @@ export function upgradeAntiCorruptionAgency(
 
 export function improveWhistleblowerProtection(
   detail: CorruptionCountryDetail,
-  date: Date
+  date: Date,
+  targetLevel: number,
 ): CorruptionActionResult | null {
   const metrics = getCorruptionMetrics(detail);
-  if (metrics.whistleblowerProtection >= 10) return null;
-
-  const cost = Math.round(15_000 * (metrics.whistleblowerProtection + 1) ** 1.55);
+  if (!canUpgradeCorruptionTrack(detail, 'whistleblower', targetLevel)) return null;
+  const cost = getCorruptionUpgradeCost(detail, metrics.whistleblowerProtection, targetLevel);
   const budget = Math.max(0, Number(detail.anggaran) || 0);
-  if (budget < cost) return null;
-
-  const nextLevel = metrics.whistleblowerProtection + 1;
   return {
     cost,
-    message: `Perlindungan pelapor ditingkatkan ke level ${nextLevel}.`,
+    message: `Perlindungan pelapor ditingkatkan ke level ${targetLevel}.`,
     updatedDetail: {
       ...detail,
       anggaran: budget - cost,
-      whistleblower_protection: nextLevel,
+      whistleblower_protection: targetLevel,
       corruption_last_whistleblower_upgrade: date.toISOString().slice(0, 10),
     },
   };

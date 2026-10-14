@@ -1,5 +1,5 @@
 import { calculateIncomeAtRate } from './2_tax_logic/taxLogic';
-import { getActiveSectorImpacts } from '@/app/page/navigasi_menu/2_navigasi_bawah/9_kementrian/1_pemberantasan_korupsi/logic/corruptionLogic';
+import { getActiveSectorImpacts, getCorruptionMetrics } from '@/app/page/navigasi_menu/2_navigasi_bawah/9_kementrian/1_pemberantasan_korupsi/logic/corruptionLogic';
 import { calculateGoldMiningDailyProduction } from './goldIncome';
 import { getGoldStateProfitSharePercent } from '@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/7_sistem_ekonomi/logic/nationalizationLogic';
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from './departments';
@@ -187,8 +187,12 @@ export const calculateCountryNetBalance = (detail: any) => {
   const tourismIncome = getTourismTotalIncome(detail);
   const commercialIncome = getCommercialTotalIncome(detail);
   const ministryCost = calculateTotalMinistryCostPerDay(detail);
+  const corruptionMetrics = getCorruptionMetrics(detail);
+  const antiCorruptionCost =
+    getDailyMinistryCost(corruptionMetrics.agencyLevel) +
+    getDailyMinistryCost(corruptionMetrics.whistleblowerProtection);
   const subsidyCost = calculateActiveSubsidyCost(detail);
-  return totalTaxIncome + goldIncome + tourismIncome + commercialIncome - ministryCost - subsidyCost;
+  return totalTaxIncome + goldIncome + tourismIncome + commercialIncome - ministryCost - antiCorruptionCost - subsidyCost;
 };
 
 export const calculateMinistryCost = calculateTotalMinistryCostPerDay;
