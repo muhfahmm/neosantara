@@ -97,7 +97,7 @@ export interface SubscriptionPlan {
   period: 'minggu' | 'bulan';
 }
 
-export const SUBSCRIPTION_PLAN: SubscriptionPlan = {
+const SUBSCRIPTION_PLAN: SubscriptionPlan = {
   id: 'sub_weekly',
   dailyDiamonds: 600,
   daysCount: 7,

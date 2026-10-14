@@ -495,30 +495,40 @@ export async function GET(request: Request) {
 
     const baseName = path.basename(countryPath).replace(/\.ts$/, '');
     const normInput = normalizeKey(baseName);
+    const slugOnly = normalizeKey(baseName.replace(/^\d+_/, ''));
 
     if (cachedCountryMap.has(normInput)) {
       return NextResponse.json(cachedCountryMap.get(normInput));
     }
+    if (cachedCountryMap.has(slugOnly)) {
+      return NextResponse.json(cachedCountryMap.get(slugOnly));
+    }
 
     const matched = allData.find((c) => {
       const fileNameNorm = normalizeKey(c.__fileName.replace(/\.ts$/, ''));
+      const fileSlugOnly = normalizeKey(c.__fileName.replace(/\.ts$/, '').replace(/^\d+_/, ''));
+      const slugNorm = normalizeKey(c.country_slug || '');
       const nameIdNorm = normalizeKey(c.name_id || '');
       const nameEnNorm = normalizeKey(c.name_en || '');
       return (
         fileNameNorm === normInput ||
+        fileSlugOnly === slugOnly ||
+        slugNorm === slugOnly ||
+        slugNorm === normInput ||
         nameIdNorm === normInput ||
         nameEnNorm === normInput ||
-        fileNameNorm.includes(normInput) ||
-        normInput.includes(fileNameNorm)
+        nameIdNorm === slugOnly ||
+        nameEnNorm === slugOnly
       );
     });
 
     if (matched) {
       cachedCountryMap.set(normInput, matched);
+      if (slugOnly) cachedCountryMap.set(slugOnly, matched);
       return NextResponse.json(matched);
     }
 
-    return NextResponse.json(allData[0] || {});
+    return NextResponse.json({ error: 'Country not found', requestedPath: countryPath }, { status: 404 });
   } catch (e: any) {
     console.error('Failed to load country data from PostgreSQL:', e.message);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

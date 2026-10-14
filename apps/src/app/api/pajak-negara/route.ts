@@ -21,25 +21,25 @@ export async function GET(request: Request) {
     });
 
     if (slug) {
-      const [rows]: any = await pool.query(
-        'SELECT * FROM database_pajak_negara WHERE LOWER(country_slug) = LOWER(?) LIMIT 1',
+      const res = await pool.query(
+        'SELECT * FROM database_pajak_negara WHERE LOWER(country_slug) = LOWER($1) LIMIT 1',
         [slug.trim()]
       );
-      if (rows.length > 0) return NextResponse.json(mapRow(rows[0]));
+      if (res.rows.length > 0) return NextResponse.json(mapRow(res.rows[0]));
       return NextResponse.json(null);
     }
 
     if (country) {
-      const [rows]: any = await pool.query(
-        'SELECT * FROM database_pajak_negara WHERE LOWER(country) = LOWER(?) LIMIT 1',
+      const res = await pool.query(
+        'SELECT * FROM database_pajak_negara WHERE LOWER(country) = LOWER($1) OR REPLACE(LOWER(country_slug), \'_\', \' \') = LOWER($1) LIMIT 1',
         [country.trim()]
       );
-      if (rows.length > 0) return NextResponse.json(mapRow(rows[0]));
+      if (res.rows.length > 0) return NextResponse.json(mapRow(res.rows[0]));
       return NextResponse.json(null);
     }
 
-    const [rows]: any = await pool.query('SELECT * FROM database_pajak_negara');
-    return NextResponse.json(rows.map(mapRow));
+    const res = await pool.query('SELECT * FROM database_pajak_negara');
+    return NextResponse.json(res.rows.map(mapRow));
   } catch (error: any) {
     console.error('Error querying database_pajak_negara:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
