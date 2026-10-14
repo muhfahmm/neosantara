@@ -15,7 +15,6 @@ export default function IndeksKorupsiCard({ countryDetail }: { countryDetail: Co
         </div>
         <div>
           <h3 className="font-black text-[#E0E0E0]">Indeks Korupsi Nasional</h3>
-          <p className="text-xs text-[#6B8A8A]">Skor tinggi berarti korupsi lebih meluas; audit membantu mengungkap skandal.</p>
         </div>
       </div>
       <div className="mb-2 flex items-end justify-between">
