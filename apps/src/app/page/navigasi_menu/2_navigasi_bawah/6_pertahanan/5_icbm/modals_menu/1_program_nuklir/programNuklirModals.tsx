@@ -124,20 +124,9 @@ export default function ProgramNuklirModals({
               <div className="p-4 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/30 inline-block mx-auto shadow-md">
                 <Atom className="w-12 h-12 sm:w-16 sm:h-16 text-[#00FFAA]" />
               </div>
-              <p className="text-sm sm:text-base font-bold text-[#E0E0E0]">
-                Anda akan memulai riset pengayaan uranium skala besar untuk membangun hulu ledak nuklir pertama negara.
-              </p>
-              <p className="text-xs text-[#6B8A8A] leading-relaxed text-center">
-                Pendanaan ini mencakup pembangunan fasilitas sentrifugal rahasia, pengadaan bahan baku, hingga pengujian sistem detonasi bawah tanah. 
-                Dengan mengaktifkan program ini, Anda akan membuka akses ke teknologi rudal balistik antarbenua (ICBM) dan opsi perang nuklir.
-              </p>
             </div>
 
             <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-5 sm:p-6 rounded-2xl space-y-3 shadow-inner">
-              <div className="flex justify-between text-xs sm:text-sm font-bold text-[#E0E0E0]">
-                <span>Kas Anggaran Negara:</span>
-                <span className="text-[#00FFAA]">{anggaran.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
-              </div>
               <div className="flex justify-between text-xs sm:text-sm font-bold text-[#E0E0E0]">
                 <span>Waktu Pembangunan:</span>
                 <span className="text-[#E0E0E0]">1 Tahun / 365 Hari</span>

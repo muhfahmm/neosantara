@@ -236,6 +236,14 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
 
   const nuclearOptions = [
     {
+      id: 1,
+      title: "Program Nuklir",
+      icon: Atom,
+      color: "text-amber-400",
+      bg: "bg-amber-400/10",
+      isUnlocker: true
+    },
+    {
       id: 2,
       title: "ICBM",
       icon: Rocket,
@@ -307,17 +315,11 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
 
             {/* STATUS PENGEMBANGAN */}
             <div className="p-6 rounded-2xl bg-[#0A1A1A] border border-[#00FFAA]/20 shadow-inner">
-              <p className="text-center text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider mb-3">
-                STATUS PENGEMBANGAN SENJATA NUKLIR
-              </p>
               <div className="flex justify-center items-center gap-4">
                 <div className={`px-6 py-3 rounded-xl border ${status.isActive ? 'border-[#00FFAA]/40 bg-[#00FFAA]/10 text-[#00FFAA]' : isNuclearProgramBuilding ? 'border-amber-500/40 bg-amber-500/10 text-amber-400' : 'border-rose-500/40 bg-rose-500/10 text-rose-400'} shadow-sm min-w-[200px] text-center transition-colors duration-300`}>
                   <p className="text-[11px] font-black uppercase tracking-wider mb-1">
                     {status.message}
                   </p>
-                  {!isNuclearProgramActive && !isNuclearProgramBuilding && (
-                    <p className="text-[10px] text-[#6B8A8A]">Klik kartu "Program Nuklir" untuk membuka akses</p>
-                  )}
                   {isNuclearProgramBuilding && (
                     <p className="text-[10px] text-amber-400 font-bold">
                       Dalam tahap pembangunan hingga {formatTanggalIndo(buildEndDate)}
