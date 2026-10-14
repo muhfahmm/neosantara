@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Flame } from 'lucide-react';
+import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Flame, Hammer } from 'lucide-react';
 import { COUNTRIES_DATA } from '../map_system/map-data';
 import countryPaths from '../map_system/country-paths.json';
 import {
@@ -21,6 +21,7 @@ import { getCountryProfileSummary } from '@/lib/countryProfileSummaryRegistry';
 import InformasiUmum from "./1_informasi_umum/informasi_umum";
 import Geopolitik from "./2_geopolitik/geopolitik";
 import OperasiMiliter from "./3_operasi_militer/operasi_militer";
+import DevelopingAIBuilding from "./4_developing_ai_building";
 
 interface CountryDetailModalProps {
   isOpen: boolean;
@@ -62,7 +63,7 @@ function getAnnexedInfo(countryNames: unknown[], countryIso?: unknown) {
 
 export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail, setCountryDetail, currentDate, playerNetBalanceAdjustment = 0, adjustPlayerNetBalance, autoBuildEmbassy }: CountryDetailModalProps) {
   // State untuk menu tab
-  const [activeTab, setActiveTab] = useState<"informasi" | "geopolitik" | "militer">("informasi");
+  const [activeTab, setActiveTab] = useState<"informasi" | "geopolitik" | "militer" | "developing_ai_building">("informasi");
   const [annexationRevision, setAnnexationRevision] = useState(0);
   const [relationRevision, setRelationRevision] = useState(0);
   const [profileSummaryRevision, setProfileSummaryRevision] = useState(0);
@@ -729,6 +730,14 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
               >
                 <Shield className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Operasi Militer
               </button>
+              <button
+                onClick={() => setActiveTab("developing_ai_building")}
+                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
+                  activeTab === "developing_ai_building" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
+                }`}
+              >
+                <Hammer className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Progress Pembangunan
+              </button>
             </div>
 
             {/* Render 3 Komponen Berdasarkan Active Tab */}
@@ -792,6 +801,13 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                 occupyingCountry={occupyingCountry}
                 provinceTension={provinceTensionValue}
                 updatePlayerCountryDetail={setCountryDetail}
+              />
+            )}
+
+            {activeTab === "developing_ai_building" && (
+              <DevelopingAIBuilding
+                countryDetail={detailData}
+                currentDate={currentDate}
               />
             )}
 
