@@ -249,7 +249,6 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
       icon: Rocket,
       color: "text-rose-700",
       bg: "bg-rose-100",
-      desc: "Mengaktifkan silo rudal balistik antarbenua untuk mencapai target di benua mana pun.",
       isUnlocker: false
     },
     {
@@ -258,7 +257,6 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
       icon: Bomb,
       color: "text-orange-600",
       bg: "bg-orange-100",
-      desc: "Mendeklarasikan serangan nuklir pertama. Ini akan memicu bencana global yang tak terbayangkan.",
       isUnlocker: false
     }
   ];
@@ -372,9 +370,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                       <div className="mt-2 inline-flex items-center justify-center gap-1 rounded-full bg-[#00FFAA]/20 px-3 py-0.5 text-[10px] font-bold text-[#00FFAA]">
                         <Check className="w-3.5 h-3.5 text-[#00FFAA]" /> Semua ICBM telah selesai dibangun!
                       </div>
-                    ) : (
-                      <p className="mt-2 text-[10px] text-[#6B8A8A]">Bangun ICBM untuk melihat jadwal penyelesaian.</p>
-                    )}
+                    ) : null}
                     
                     <button
                       onClick={() => setIsIcbmBuildStatusOpen(true)}
@@ -431,20 +427,15 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                       {isUnlockerCardActive ? "Program Aktif!" : option.title}
                     </span>
                     
-                    <p className={`text-[10px] leading-relaxed ${
-                      isLockedCard ? 'text-[#6B8A8A]' : isUnlockerCardActive ? 'text-[#00FFAA]' : 'text-[#6B8A8A]'
-                    }`}>
+                    {(isLockedCard || isUnlockerBuilding) && (
+                      <p className="text-[10px] leading-relaxed text-[#6B8A8A]">
                       {isLockedCard ? (
                         <span className="flex items-center justify-center gap-1">
                           <Lock className="w-3 h-3 inline shrink-0" /> Terkunci. Aktifkan Program Nuklir terlebih dahulu.
                         </span>
-                      ) : isUnlockerCardActive 
-                        ? "Program nuklir telah diaktifkan. Kini Anda dapat mengakses ICBM dan Perang Nuklir."
-                        : isUnlockerBuilding
-                        ? "Program nuklir sedang dibangun. Tunggu hingga selesai untuk membuka ICBM dan Perang Nuklir."
-                        : option.desc
-                      }
-                    </p>
+                      ) : "Program nuklir sedang dibangun. Tunggu hingga selesai untuk membuka ICBM dan Perang Nuklir."}
+                      </p>
+                    )}
                   </button>
                 );
               })}
