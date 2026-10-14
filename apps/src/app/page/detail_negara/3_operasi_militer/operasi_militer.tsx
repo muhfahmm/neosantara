@@ -38,10 +38,10 @@ interface OperasiMiliterProps {
 const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelClass }: { icon: any, label: string, onClick?: () => void, className?: string, iconClass?: string, labelClass?: string }) => (
   <button
     onClick={onClick}
-    className={`w-full ${className || 'bg-[#0A1A1A] border border-[#00FFAA]/20'} rounded-xl p-5 flex flex-col items-center justify-center gap-3 ${className ? 'hover:border-amber-300 hover:bg-amber-400/10' : 'hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10'} hover:shadow-md transition-all cursor-pointer group h-32`}
+    className={`w-full ${className || 'bg-[#0A1A1A] border border-[#00FFAA]/20'} rounded-xl p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-3 lg:gap-2 xl:gap-3 ${className ? 'hover:border-amber-300 hover:bg-amber-400/10' : 'hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10'} hover:shadow-md transition-all cursor-pointer group h-32 lg:h-24 xl:h-32`}
   >
-    <Icon className={`h-8 w-8 ${iconClass || 'text-[#00FFAA]'} group-hover:scale-110 transition-transform`} />
-    <span className={`text-xs font-black ${labelClass || 'text-[#00FFAA]'} uppercase tracking-wider text-center leading-tight`}>
+    <Icon className={`h-8 w-8 lg:h-6 lg:w-6 xl:h-8 xl:w-8 ${iconClass || 'text-[#00FFAA]'} group-hover:scale-110 transition-transform`} />
+    <span className={`text-xs lg:text-[10px] xl:text-xs font-black ${labelClass || 'text-[#00FFAA]'} uppercase tracking-wider text-center leading-tight`}>
       {label}
     </span>
   </button>
@@ -128,9 +128,9 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 lg:space-y-4 xl:space-y-6">
       {/* Grid Layout 4-4 (2 baris x 4 kolom pada desktop) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-3 xl:gap-4">
         <div className="relative w-full min-w-0">
           {actionDates?.serang && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.serang)}</div>}
           <ActionButton icon={Crosshair} label="Serang Negara" className={actionDates?.serang ? datedActionClass : undefined} iconClass={actionDates?.serang ? 'text-amber-300' : undefined} labelClass={actionDates?.serang ? 'text-amber-300' : undefined} onClick={() => setIsSerangOpen(true)} />

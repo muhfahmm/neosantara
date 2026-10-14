@@ -509,24 +509,24 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none ${isActionModalOpen ? 'p-0 !pt-0 !pb-0 !px-0' : ''}`}>
-      <div className={`bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl ${isActionModalOpen ? 'hidden' : ''}`}>
+      <div className={`bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[840px] xl:max-w-[960px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-165px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl ${isActionModalOpen ? 'hidden' : ''}`}>
         
         {/* Background Glow Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
 
         {/* HEADER Modal */}
-        <div className="px-6 sm:px-8 py-4 sm:py-5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-6 sm:px-8 py-4 sm:py-5 lg:px-5 lg:py-3 xl:px-8 xl:py-5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-3 sm:gap-4">
             
             {/* 1. Icon Globe */}
-            <div className="p-2 sm:p-2.5 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30 shrink-0 flex items-center justify-center">
-              <Globe className="h-6 w-6 text-[#00FFAA]" />
+            <div className="p-2 sm:p-2.5 lg:p-2 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30 shrink-0 flex items-center justify-center">
+              <Globe className="h-6 w-6 lg:h-5 lg:w-5 xl:h-6 xl:w-6 text-[#00FFAA]" />
             </div>
             
             {/* 2. Judul & Subjudul */}
             <div>
               {/* Judul Utama */}
-              <h2 className="text-xl sm:text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+              <h2 className="text-xl sm:text-2xl lg:text-xl xl:text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
                 DETAIL NEGARA
               </h2>
               
@@ -552,20 +552,20 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
         </div>
 
         {/* DATA RINGKASAN */}
-        <div className="px-6 sm:px-8 py-3 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/20 flex items-center gap-6 sm:gap-8 relative z-10 overflow-x-auto shrink-0 no-scrollbar">
-          <div className="flex items-center gap-6 min-w-max">
+        <div className="px-6 sm:px-8 py-3 lg:px-3 lg:py-1.5 xl:px-8 xl:py-3 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/20 flex items-center gap-6 sm:gap-8 lg:gap-3 xl:gap-8 relative z-10 overflow-x-auto lg:overflow-x-hidden shrink-0 no-scrollbar">
+          <div className="flex items-center gap-6 lg:grid lg:grid-cols-6 lg:gap-3 lg:w-full lg:min-w-0 xl:gap-6">
             {/* Hubungan */}
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
+            <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
+              <div className="p-1.5 lg:p-1 xl:p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
                 {isPlayerOccupiedProvince
-                  ? <Flame className="h-4 w-4 text-orange-400" />
-                  : <Handshake className="h-4 w-4 text-[#00FFAA]" />}
+                  ? <Flame className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-orange-400" />
+                  : <Handshake className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-[#00FFAA]" />}
               </div>
-              <div className="flex flex-col">
-                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">
+              <div className="flex min-w-0 flex-col">
+                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">
                   {isPlayerOccupiedProvince ? 'Ketegangan' : 'Hubungan'}
                 </span>
-                <span className={`text-[11px] font-extrabold uppercase ${
+                <span className={`text-[11px] lg:text-[9px] xl:text-[11px] font-extrabold uppercase ${
                   isPlayerOccupiedProvince
                     ? 'text-emerald-400'
                     : relationValue >= 75
@@ -597,27 +597,27 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             </div>
 
             {/* Ibukota */}
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
-                <Landmark className="h-4 w-4 text-[#00FFAA]" />
+            <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
+              <div className="p-1.5 lg:p-1 xl:p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
+                <Landmark className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-[#00FFAA]" />
               </div>
-              <div className="flex flex-col">
-                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Ibukota</span>
-                <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
+              <div className="flex min-w-0 flex-col">
+                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Ibukota</span>
+                <span className="text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-[#00FFAA] uppercase">
                   {displayCapital}
                 </span>
               </div>
             </div>
 
             {/* Populasi */}
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
-                <Users className="h-4 w-4 text-[#00FFAA]" />
+            <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
+              <div className="p-1.5 lg:p-1 xl:p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
+                <Users className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-[#00FFAA]" />
               </div>
-              <div className="flex flex-col">
-                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Populasi</span>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
+              <div className="flex min-w-0 flex-col">
+                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Populasi</span>
+                <div className="flex min-w-0 flex-wrap items-center gap-x-1 lg:gap-x-0.5">
+                  <span className="text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-[#00FFAA] uppercase">
                     {headerDetailData?.jumlah_penduduk
                       ? Number(headerDetailData.jumlah_penduduk).toLocaleString('id-ID', { maximumFractionDigits: 2 })
                       : isLoadingDetail
@@ -626,7 +626,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                     }
                   </span>
                   {!isLoadingDetail && detailData && (
-                    <span className={`text-[10px] font-black ${dailyNetPopulation >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <span className={`text-[10px] lg:text-[8px] xl:text-[10px] font-black ${dailyNetPopulation >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                       ({dailyNetPopulation >= 0 ? `+${dailyNetPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : dailyNetPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
                     </span>
                   )}
@@ -635,14 +635,14 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             </div>
 
             {/* Anggaran Negara */}
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
-                <Banknote className="h-4 w-4 text-[#00FFAA]" />
+            <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
+              <div className="p-1.5 lg:p-1 xl:p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
+                <Banknote className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-[#00FFAA]" />
               </div>
-              <div className="flex flex-col">
-                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Anggaran</span>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
+              <div className="flex min-w-0 flex-col">
+                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Anggaran</span>
+                <div className="flex min-w-0 flex-wrap items-center gap-x-1 lg:gap-x-0.5">
+                  <span className="text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-[#00FFAA] uppercase">
                     {headerDetailData?.anggaran !== undefined
                       ? `${Number(headerDetailData.anggaran).toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`
                       : isLoadingDetail
@@ -651,7 +651,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
                     }
                   </span>
                   {!isLoadingDetail && detailData && (
-                    <span className={`text-[10px] font-black ${targetEffectiveNetBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <span className={`text-[10px] lg:text-[8px] xl:text-[10px] font-black ${targetEffectiveNetBalance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                       ({targetEffectiveNetBalance >= 0 ? `+${targetEffectiveNetBalance.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : targetEffectiveNetBalance.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
                     </span>
                   )}
@@ -660,13 +660,13 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             </div>
 
             {/* Ideologi */}
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
-                <Scale className="h-4 w-4 text-[#00FFAA]" />
+            <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
+              <div className="p-1.5 lg:p-1 xl:p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
+                <Scale className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-[#00FFAA]" />
               </div>
-              <div className="flex flex-col">
-                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Ideologi</span>
-                <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
+              <div className="flex min-w-0 flex-col">
+                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Ideologi</span>
+                <span className="text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-[#00FFAA] uppercase">
                   {headerDetailData?.ideology
                     ? headerDetailData.ideology
                     : isLoadingDetail
@@ -678,13 +678,13 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             </div>
 
             {/* Agama */}
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
-                <Home className="h-4 w-4 text-[#00FFAA]" />
+            <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
+              <div className="p-1.5 lg:p-1 xl:p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
+                <Home className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-[#00FFAA]" />
               </div>
-              <div className="flex flex-col">
-                <span className="text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Agama</span>
-                <span className="text-[11px] font-bold text-[#00FFAA] uppercase">
+              <div className="flex min-w-0 flex-col">
+                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Agama</span>
+                <span className="text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-[#00FFAA] uppercase">
                   {headerDetailData?.religion
                     ? headerDetailData.religion
                     : isLoadingDetail
@@ -698,36 +698,36 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
         </div>
 
         {/* BODY CONTENT */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 bg-[#0F2424] relative z-10 no-scrollbar">
-          <div className="max-w-4xl mx-auto">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 lg:p-4 xl:p-8 bg-[#0F2424] relative z-10 no-scrollbar">
+          <div className="max-w-4xl lg:max-w-[780px] xl:max-w-4xl mx-auto">
             
             {/* Menu 3 Tab Navigasi */}
-            <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex mb-6 shadow-sm flex-wrap gap-1">
+            <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex mb-6 lg:mb-4 shadow-sm flex-wrap gap-1">
               <button
                 onClick={() => setActiveTab("informasi")}
-                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
+                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
                   activeTab === "informasi" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
                 }`}
               >
-                <Globe className="h-4 w-4" /> Informasi Umum
+                <Globe className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Informasi Umum
               </button>
               {!isPlayerOccupiedProvince && (
                 <button
                   onClick={() => setActiveTab("geopolitik")}
-                  className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
+                  className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
                     activeTab === "geopolitik" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
                   }`}
                 >
-                  <Landmark className="h-4 w-4" /> Geopolitik
+                  <Landmark className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Geopolitik
                 </button>
               )}
               <button
                 onClick={() => setActiveTab("militer")}
-                className={`px-5 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
+                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
                   activeTab === "militer" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
                 }`}
               >
-                <Shield className="h-4 w-4" /> Operasi Militer
+                <Shield className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Operasi Militer
               </button>
             </div>
 

@@ -134,11 +134,11 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
         </div>
 
         {/* BODY MODAL */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col items-center">
-          <div className="w-full space-y-4">
+        <div className="flex-1 min-h-0 overflow-hidden p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col">
+          <div className="w-full flex-1 min-h-0 flex flex-col gap-4">
 
             {/* 2 TAB MENU - tampilan mobile */}
-            <div className="flex sm:hidden bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 w-full shadow-sm">
+            <div className="flex sm:hidden bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 w-full shadow-sm shrink-0">
               <button
                 onClick={() => setActiveTab('spionase')}
                 className={`flex-1 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
@@ -162,8 +162,8 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
             </div>
 
             {/* RENDER KOMPONEN TABEL TERPISAH */}
-            <div className="w-full overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
-              <div className="max-h-[52vh] overflow-auto">
+            <div className="w-full flex-1 min-h-0 overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
+              <div className="h-full min-h-0 overflow-hidden">
                 {activeTab === 'spionase' && (
                   <Spionase
                     prefetchedAllCountries={prefetchedAllCountries}

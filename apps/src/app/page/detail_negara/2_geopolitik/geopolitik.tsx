@@ -25,7 +25,7 @@ interface GeopolitikProps {
 
 // Komponen tombol aksi agar kode lebih rapi (Persis sama dengan InformasiUmum)
 const ActionButton = ({ icon: Icon, label, onClick, disabled }: { icon: any, label: string, onClick?: () => void, disabled?: boolean }) => {
-  const base = 'bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-5 flex flex-col items-center justify-center gap-3 transition-all group h-32';
+  const base = 'bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-3 lg:gap-2 xl:gap-3 transition-all group h-32 lg:h-24 xl:h-32';
   const interactive = disabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'hover:shadow-md hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10 cursor-pointer';
   return (
     <button
@@ -33,8 +33,8 @@ const ActionButton = ({ icon: Icon, label, onClick, disabled }: { icon: any, lab
       aria-disabled={disabled}
       className={`${base} ${interactive}`}
     >
-      <Icon className={`h-8 w-8 text-[#00FFAA] ${disabled ? '' : 'group-hover:scale-110'} transition-transform`} />
-      <span className="text-xs font-black text-[#00FFAA] uppercase tracking-wider text-center leading-tight">
+      <Icon className={`h-8 w-8 lg:h-6 lg:w-6 xl:h-8 xl:w-8 text-[#00FFAA] ${disabled ? '' : 'group-hover:scale-110'} transition-transform`} />
+      <span className="text-xs lg:text-[10px] xl:text-xs font-black text-[#00FFAA] uppercase tracking-wider text-center leading-tight">
         {label}
       </span>
     </button>
@@ -195,9 +195,9 @@ export default function Geopolitik({ countryName, playerCountryDetail, setPlayer
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 lg:space-y-4 xl:space-y-6">
       {/* Grid Layout 5 Tombol Aksi */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-3 xl:gap-4">
         <ActionButton icon={Sword} label="Beri Tentara" onClick={() => setIsBeriTentaraOpen(true)} disabled={!hasDefenseAlliance} />
         <ActionButton icon={Gift} label="Beri Hadiah" onClick={() => setIsBeriHadiahOpen(true)} />
         <ActionButton icon={Heart} label="Tingkatkan Hubungan" onClick={() => setIsTingkatkanOpen(true)} />

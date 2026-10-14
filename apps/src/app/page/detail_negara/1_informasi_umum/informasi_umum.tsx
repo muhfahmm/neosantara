@@ -74,7 +74,7 @@ interface InformasiUmumProps {
 
 // Komponen tombol aksi
 const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelClass, disabled, keepOpacity, title }: { icon: any, label: string, onClick?: () => void, className?: string, iconClass?: string, labelClass?: string, disabled?: boolean, keepOpacity?: boolean, title?: string }) => {
-  const base = `${className ?? 'bg-[#0A1A1A] border border-[#00FFAA]/20'} w-full min-w-0 rounded-xl p-5 flex flex-col items-center justify-center gap-3 transition-all group h-32`;
+  const base = `${className ?? 'bg-[#0A1A1A] border border-[#00FFAA]/20'} w-full min-w-0 rounded-xl p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-3 lg:gap-2 xl:gap-3 transition-all group h-32 lg:h-24 xl:h-32`;
   const interactive = disabled 
     ? (keepOpacity ? 'cursor-not-allowed' : 'opacity-40 cursor-not-allowed pointer-events-none') 
     : 'hover:shadow-md hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10 cursor-pointer';
@@ -85,8 +85,8 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
       title={title}
       className={`${base} ${interactive}`}
     >
-      <Icon className={`h-8 w-8 ${iconClass ?? 'text-[#00FFAA]'} ${disabled && !keepOpacity ? '' : 'group-hover:scale-110'} transition-transform`} />
-      <span className={`text-xs font-black ${labelClass ?? 'text-[#00FFAA]'} uppercase tracking-wider text-center leading-tight`}>
+      <Icon className={`h-8 w-8 lg:h-6 lg:w-6 xl:h-8 xl:w-8 ${iconClass ?? 'text-[#00FFAA]'} ${disabled && !keepOpacity ? '' : 'group-hover:scale-110'} transition-transform`} />
+      <span className={`text-xs lg:text-[10px] xl:text-xs font-black ${labelClass ?? 'text-[#00FFAA]'} uppercase tracking-wider text-center leading-tight`}>
         {label}
       </span>
     </button>
@@ -432,7 +432,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           adjustPlayerNetBalance={adjustNetBalance}
         />
 
-      ) : <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 pt-6">
+      ) : <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 lg:gap-3 xl:gap-4 pt-6 lg:pt-4 xl:pt-6">
         
         {/* Tombol Kedutaan dengan Badge Tanggal Selesai */}
         {!isAnnexedTerritory && <div className="relative min-w-0">

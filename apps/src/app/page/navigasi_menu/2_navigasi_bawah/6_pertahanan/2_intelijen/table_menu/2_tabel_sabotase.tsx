@@ -141,9 +141,9 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
   };
 
   return (
-    <div className="w-full space-y-3">
+    <div className="w-full h-full min-h-0 flex flex-col gap-3">
       {/* Search Input Bar */}
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end shrink-0 pt-3">
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#00FFAA]/60" />
           <input
@@ -156,8 +156,8 @@ export default function Sabotase({ prefetchedAllCountries, countryDetail, onActi
         </div>
       </div>
 
-      <div className="overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
-        <div className="max-h-[52vh] overflow-auto">
+      <div className="flex-1 min-h-0 overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
+        <div className="h-full min-h-0 overflow-auto">
           <table className="w-full text-xs">
             <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/20 sticky top-0 z-10 text-[9px] sm:text-[10px] lg:text-xs whitespace-nowrap">
               <tr>
