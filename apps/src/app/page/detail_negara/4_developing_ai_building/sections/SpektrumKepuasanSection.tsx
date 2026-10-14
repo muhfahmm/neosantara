@@ -29,6 +29,59 @@ interface SpektrumKepuasanSectionProps {
   onNavigateTab?: (tabId: string) => void;
 }
 
+// 5 Kategori Spektrum Warna Persis Gambar Referensi 2:
+// 0 - 25:   Sangat Buruk (Merah Terang / Rose Red)
+// 26 - 40:  Buruk (Merah Tua Keunguan / Wine Red)
+// 41 - 65:  Netral (Kuning / Amber / Gold)
+// 66 - 80:  Baik (Hijau Medium / Green)
+// 81 - 100: Sangat Baik (Hijau Neon Terang / Mint Cyan-Green)
+export function getSatisfactionGrade(score: number) {
+  const clamped = Math.min(100, Math.max(0, Math.round(score)));
+  if (clamped <= 25) {
+    return {
+      label: "Sangat Buruk",
+      textColor: "text-[#EF4444]", // Merah terang
+      barColor: "bg-[#EF4444]",
+      glowColor: "shadow-[0_0_8px_rgba(239,68,68,0.5)]",
+      badgeBg: "bg-[#EF4444]/15 border-[#EF4444]/30 text-[#EF4444]",
+    };
+  }
+  if (clamped <= 40) {
+    return {
+      label: "Buruk",
+      textColor: "text-[#F43F5E]", // Merah raspberry / rose
+      barColor: "bg-[#E11D48]",
+      glowColor: "shadow-[0_0_8px_rgba(225,29,72,0.5)]",
+      badgeBg: "bg-[#881337]/30 border-[#BE123C]/40 text-[#FB7185]",
+    };
+  }
+  if (clamped <= 65) {
+    return {
+      label: "Netral",
+      textColor: "text-[#EAB308]", // Kuning emas
+      barColor: "bg-[#EAB308]",
+      glowColor: "shadow-[0_0_8px_rgba(234,179,8,0.5)]",
+      badgeBg: "bg-[#CA8A04]/15 border-[#EAB308]/30 text-[#FACC15]",
+    };
+  }
+  if (clamped <= 80) {
+    return {
+      label: "Baik",
+      textColor: "text-[#10B981]", // Hijau emerald
+      barColor: "bg-[#10B981]",
+      glowColor: "shadow-[0_0_8px_rgba(16,185,129,0.5)]",
+      badgeBg: "bg-[#064E3B]/40 border-[#059669]/40 text-[#34D399]",
+    };
+  }
+  return {
+    label: "Sangat Baik",
+    textColor: "text-[#00FFAA]", // Hijau neon / mint
+    barColor: "bg-[#00FFAA]",
+    glowColor: "shadow-[0_0_8px_rgba(0,255,170,0.5)]",
+    badgeBg: "bg-[#064E3B]/60 border-[#00FFAA]/40 text-[#00FFAA]",
+  };
+}
+
 export default function SpektrumKepuasanSection({
   countryDetail,
   metadata = {},
@@ -74,7 +127,7 @@ export default function SpektrumKepuasanSection({
       name: "PRODUKSI PANGAN",
       score: sectorScores.pangan,
       icon: Apple,
-      tabTarget: "fasilitas_militer",
+      tabTarget: "produksi_pangan",
       desc: "Kecukupan hasil panen pertanian, peternakan, perikanan dan olahan",
     },
     {
@@ -90,7 +143,7 @@ export default function SpektrumKepuasanSection({
       name: "HUNIAN PERMUKIMAN",
       score: sectorScores.hunian,
       icon: Home,
-      tabTarget: "fasilitas_militer",
+      tabTarget: "hunian",
       desc: "Ketersediaan rumah subsidi, apartemen, dan perumahan bagi seluruh warga",
     },
     {
@@ -106,7 +159,7 @@ export default function SpektrumKepuasanSection({
       name: "DOKTRIN & KETERBUKAAN",
       score: sectorScores.keterbukaan,
       icon: Globe,
-      tabTarget: null,
+      tabTarget: "keterbukaan",
       desc: "Kebebasan berekspresi, pers, toleransi beragama dan transparansi pemerintahan",
     },
     {
@@ -237,11 +290,43 @@ export default function SpektrumKepuasanSection({
           <div className="h-[1px] flex-1 bg-gradient-to-r from-[#00FFAA]/30 to-transparent ml-2" />
         </div>
 
+        {/* LEGENDA SPEKTRUM WARNA (PERSIS GAMBAR 2) */}
+        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 rounded-2xl mb-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] font-bold">
+            <span className="text-[#6B8A8A] uppercase tracking-wider font-black text-[9px] flex items-center gap-1">
+              <Percent className="w-3 h-3 text-[#00FFAA]" /> Spektrum Kepuasan:
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#EF4444]/15 border border-[#EF4444]/30 text-[#EF4444]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
+                0 - 25: Sangat Buruk
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#881337]/30 border border-[#BE123C]/40 text-[#FB7185]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E11D48]" />
+                26 - 40: Buruk
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#CA8A04]/15 border border-[#EAB308]/30 text-[#FACC15]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#EAB308]" />
+                41 - 65: Netral
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#064E3B]/40 border border-[#059669]/40 text-[#34D399]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                66 - 80: Baik
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#064E3B]/60 border border-[#00FFAA]/40 text-[#00FFAA]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#00FFAA]" />
+                81 - 100: Sangat Baik
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* 9 KARTU GRID SEKTOR UTAMA SESUAI GAMBAR */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {sectors.map((sector) => {
             const Icon = sector.icon;
             const isClickable = Boolean(sector.tabTarget && onNavigateTab);
+            const grade = getSatisfactionGrade(sector.score);
 
             return (
               <div
@@ -251,26 +336,55 @@ export default function SpektrumKepuasanSection({
                     onNavigateTab(sector.tabTarget);
                   }
                 }}
-                className={`bg-[#0A1A1A] border border-[#00FFAA]/25 p-3.5 sm:p-4 rounded-2xl flex items-center gap-3.5 transition-all relative overflow-hidden group shadow-sm ${
+                className={`bg-[#0A1A1A] border p-3.5 sm:p-4 rounded-2xl flex items-center gap-3.5 transition-all relative overflow-hidden group shadow-sm ${
+                  grade.textColor.includes("00FFAA")
+                    ? "border-[#00FFAA]/30 hover:border-[#00FFAA]"
+                    : grade.textColor.includes("10B981")
+                    ? "border-emerald-500/30 hover:border-emerald-400"
+                    : grade.textColor.includes("EAB308")
+                    ? "border-amber-500/30 hover:border-amber-400"
+                    : grade.textColor.includes("E11D48") || grade.textColor.includes("F43F5E")
+                    ? "border-rose-700/40 hover:border-rose-500"
+                    : "border-red-500/35 hover:border-red-500"
+                } ${
                   isClickable
-                    ? "hover:border-[#00FFAA] hover:bg-[#00FFAA]/5 cursor-pointer"
+                    ? "hover:bg-[#0F2424]/80 cursor-pointer"
                     : "cursor-default"
                 }`}
               >
-                <div className="p-2.5 rounded-xl bg-[#0F2424] border border-[#00FFAA]/20 text-[#00FFAA] group-hover:border-[#00FFAA] shrink-0 transition-colors">
+                <div
+                  className={`p-2.5 rounded-xl bg-[#0F2424] border shrink-0 transition-colors ${
+                    grade.textColor.includes("00FFAA")
+                      ? "border-[#00FFAA]/30 text-[#00FFAA]"
+                      : grade.textColor.includes("10B981")
+                      ? "border-emerald-500/30 text-emerald-400"
+                      : grade.textColor.includes("EAB308")
+                      ? "border-amber-500/30 text-amber-400"
+                      : grade.textColor.includes("E11D48") || grade.textColor.includes("F43F5E")
+                      ? "border-rose-700/40 text-rose-400"
+                      : "border-red-500/40 text-red-400"
+                  }`}
+                >
                   <Icon className="w-5 h-5" />
                 </div>
 
                 <div className="flex-1 min-w-0 space-y-1.5">
-                  <div className="flex items-center justify-between text-xs font-black text-[#E0E0E0] uppercase tracking-wide group-hover:text-[#00FFAA] transition-colors">
+                  <div className="flex items-center justify-between text-xs font-black text-[#E0E0E0] uppercase tracking-wide transition-colors">
                     <span className="truncate pr-2">{sector.name}</span>
-                    <span className="text-[#00FFAA] shrink-0 font-black">{sector.score}%</span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md border ${grade.badgeBg}`}>
+                        {grade.label}
+                      </span>
+                      <span className={`shrink-0 font-black ${grade.textColor}`}>
+                        {sector.score}%
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Progress Bar Glow Hijau Neon */}
-                  <div className="h-2 w-full bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/20">
+                  {/* Progress Bar Dinamis Mengikuti Spektrum Persentase */}
+                  <div className="h-2 w-full bg-[#0F2424] rounded-full overflow-hidden border border-[#00FFAA]/15">
                     <div
-                      className="h-full bg-[#00FFAA] rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(0,255,170,0.4)]"
+                      className={`h-full rounded-full transition-all duration-500 ${grade.barColor} ${grade.glowColor}`}
                       style={{ width: `${Math.min(100, Math.max(0, sector.score))}%` }}
                     />
                   </div>

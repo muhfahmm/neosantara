@@ -10,6 +10,8 @@ import {
   HandHelping,
   Building2,
   Globe,
+  Wheat,
+  Home,
 } from "lucide-react";
 import {
   applyNpcCountrySimulationState,
@@ -23,6 +25,9 @@ import SistemEkonomiSection from "./sections/SistemEkonomiSection";
 import SubsidiSection from "./sections/SubsidiSection";
 import PembangunanSipilMiliterSection from "./sections/PembangunanSipilMiliterSection";
 import SpektrumKepuasanSection from "./sections/SpektrumKepuasanSection";
+import ProduksiPanganSection from "./sections/ProduksiPanganSection";
+import HunianPermukimanSection from "./sections/HunianPermukimanSection";
+import DoktrinKeterbukaanSection from "./sections/DoktrinKeterbukaanSection";
 
 interface DevelopingAIBuildingProps {
   countryDetail?: Record<string, unknown> | null;
@@ -31,6 +36,9 @@ interface DevelopingAIBuildingProps {
 
 type MenuTab =
   | "kepuasan_rakyat"
+  | "produksi_pangan"
+  | "hunian"
+  | "keterbukaan"
   | "kelistrikan"
   | "pajak"
   | "harga"
@@ -46,6 +54,9 @@ interface TabConfig {
 
 const TABS: TabConfig[] = [
   { id: "kepuasan_rakyat", label: "Kepuasan Rakyat", icon: Smile },
+  { id: "produksi_pangan", label: "Produksi Pangan", icon: Wheat },
+  { id: "hunian", label: "Hunian Permukiman", icon: Home },
+  { id: "keterbukaan", label: "Doktrin & Keterbukaan", icon: Globe },
   { id: "kelistrikan", label: "Statistik Kelistrikan", icon: Zap },
   { id: "pajak", label: "Pajak", icon: FileText },
   { id: "harga", label: "Harga Barang Pokok", icon: Tag },
@@ -120,6 +131,24 @@ export default function DevelopingAIBuilding({
             metadata={metadata}
             onNavigateTab={(targetTab) => setActiveTab(targetTab as MenuTab)}
           />
+        )}
+
+        {activeTab === "produksi_pangan" && (
+          <ProduksiPanganSection
+            countryDetail={liveCountryDetail}
+            metadata={metadata}
+          />
+        )}
+
+        {activeTab === "hunian" && (
+          <HunianPermukimanSection
+            countryDetail={liveCountryDetail}
+            metadata={metadata}
+          />
+        )}
+
+        {activeTab === "keterbukaan" && (
+          <DoktrinKeterbukaanSection countryDetail={liveCountryDetail} />
         )}
 
         {activeTab === "kelistrikan" && (
