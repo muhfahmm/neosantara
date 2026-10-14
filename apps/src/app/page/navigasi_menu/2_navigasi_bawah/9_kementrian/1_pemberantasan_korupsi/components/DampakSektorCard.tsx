@@ -16,7 +16,6 @@ export default function DampakSektorCard({ countryDetail }: { countryDetail: Cor
         <Building2 className="h-5 w-5 text-[#00FFAA]" />
         <div>
           <h3 className="font-black text-[#E0E0E0]">Dampak Skandal per Sektor</h3>
-          <p className="text-xs text-[#6B8A8A]">Dihitung dari kasus yang belum dituntaskan dan pulih setelah kasus ditutup.</p>
         </div>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">

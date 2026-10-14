@@ -52,7 +52,6 @@ export default function LembagaAntikorupsiPanel({
         <ShieldCheck className="h-5 w-5 text-[#00FFAA]" />
         <div>
           <h3 className="font-black text-[#E0E0E0]">Lembaga Antikorupsi & Audit</h3>
-          <p className="text-xs text-[#6B8A8A]">Investasikan anggaran untuk pencegahan, perlindungan pelapor, dan pengawasan.</p>
         </div>
       </div>
       {actions.map(({ title, description, level, max, cost, icon: Icon, action }) => (

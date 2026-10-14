@@ -119,7 +119,11 @@ export default function KorupsiMenu({
               type="button"
               aria-current={activeTab === id ? 'page' : undefined}
               onClick={() => setActiveTab(id)}
-              className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold transition ${activeTab === id ? 'bg-[#00FFAA] text-[#0A1A1A]' : 'text-[#8BA3A3] hover:bg-[#00FFAA]/10 hover:text-[#00FFAA]'}`}
+              className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold transition cursor-pointer ${
+                activeTab === id
+                  ? 'bg-[#00FFAA] text-[#0A1A1A]'
+                  : 'text-[#8BA3A3] hover:bg-[#00FFAA]/10 hover:text-[#00FFAA]'
+              }`}
             >
               <Icon className="h-4 w-4" />
               {label}
@@ -136,21 +140,6 @@ export default function KorupsiMenu({
           )}
           {(activeTab === 'ringkasan' || activeTab === 'penyelidikan') && (
             <IndeksKorupsiCard countryDetail={countryDetail} />
-          )}
-          {activeTab === 'ringkasan' && (
-            <div className="rounded-2xl border border-[#00FFAA]/15 bg-[#0A1A1A] p-5">
-              <div className="mb-2 flex items-center gap-2">
-                <Activity className="h-4 w-4 text-[#00FFAA]" />
-                <h3 className="text-sm font-black text-white">Situasi pemerintahan</h3>
-              </div>
-              <p className="text-sm leading-relaxed text-[#9DB5B5]">
-                Ada <strong className="text-white">{activeCases}</strong> skandal aktif. Audit dan perlindungan pelapor meningkatkan peluang menemukan bukti; kasus yang belum dituntaskan terus menimbulkan dampak sektoral.
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <button type="button" onClick={() => setActiveTab('lembaga')} className="rounded-lg border border-[#00FFAA]/20 px-3 py-2 text-xs font-bold text-[#00FFAA] hover:bg-[#00FFAA]/10">Kelola lembaga</button>
-                <button type="button" onClick={() => setActiveTab('kasus')} className="rounded-lg border border-[#00FFAA]/20 px-3 py-2 text-xs font-bold text-[#00FFAA] hover:bg-[#00FFAA]/10">Buka daftar kasus</button>
-              </div>
-            </div>
           )}
           {(activeTab === 'lembaga' || activeTab === 'penyelidikan') && (
             <LembagaAntikorupsiPanel

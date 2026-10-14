@@ -23,7 +23,6 @@ export default function SkandalAktifList({
         <AlertTriangle className="h-5 w-5 text-amber-300" />
         <div>
           <h3 className="font-black text-[#E0E0E0]">Skandal & Pengungkapan</h3>
-          <p className="text-xs text-[#6B8A8A]">Skandal terungkap mengikuti risiko korupsi, audit, dan perlindungan pelapor.</p>
         </div>
       </div>
       {scandals.length === 0 ? (
