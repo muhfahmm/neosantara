@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Smile, TrendingUp, Landmark, Coins, Apple, Plug, Home, Globe, Scale, HandHelping } from "lucide-react";
+import { X, Smile, TrendingUp, Landmark, Coins, Apple, Plug, Home, Globe, Scale, HandHelping, ShieldCheck } from "lucide-react";
 import {
   calculateKepuasan,
   calculateSatisfactionIndicatorScores,
@@ -101,6 +101,13 @@ export default function StatistikKepuasanModal({
       icon: HandHelping,
       color: "text-amber-600",
       menuId: "Menu:KebijakanSubsidi"
+    },
+    {
+      name: "Integritas & Anti-Korupsi",
+      score: sectorScores.integritas,
+      icon: ShieldCheck,
+      color: "text-emerald-600",
+      menuId: "Menu:AntiKorupsi"
     }
   ];
   return (

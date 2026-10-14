@@ -27,6 +27,7 @@ import {
   calculateSubsidySummary,
 } from "@/../../json/database_kebijakan_subsidi/index";
 import { applyTotalHousingCapacityBonus } from "@/app/page/bonus_logic";
+import { getCorruptionMetrics } from "@/app/page/navigasi_menu/2_navigasi_bawah/9_kementrian/1_pemberantasan_korupsi/logic/corruptionLogic";
 
 
 // ─── Helper ─────────────────────────────────────────────────────────────────
@@ -263,6 +264,7 @@ export interface SatisfactionIndicatorScores {
   keterbukaan: number;
   sistemEkonomi: number;
   subsidi: number;
+  integritas: number;
 }
 
 interface SatisfactionSectorBaseline {
@@ -474,6 +476,7 @@ export function calculateSatisfactionIndicatorScores(
     keterbukaan: calculateRawKeterbukaanScore(countryDetail),
     sistemEkonomi: calculateEconomicPolicySatisfaction(countryDetail),
     subsidi: calculateSubsidySatisfaction(countryDetail),
+    integritas: 100 - Math.round(getCorruptionMetrics(countryDetail).index),
   };
 }
 
