@@ -71,7 +71,7 @@ export default function KonfirmasiSpionaseModals({
               <p className="text-[10px] font-black uppercase tracking-wider text-[#6B8A8A] mb-1">Target Misi</p>
               <p className="text-base font-black text-[#00FFAA]">{targetName}</p>
               <p className="text-xs text-[#6B8A8A] mt-1">
-                Kekuatan Militer: <span className="font-black text-[#E0E0E0]">{targetCountry?.totalPower?.toLocaleString("id-ID", { maximumFractionDigits: 2 }) || "Tidak diketahui"}</span>
+                Kekuatan Militer: <span className="font-black text-[#E0E0E0]">{targetCountry?.totalPower?.toLocaleString("id-ID", { maximumFractionDigits: 0 }) || "Tidak diketahui"}</span>
               </p>
               <p className="text-xs text-[#6B8A8A] mt-2">
                 Peluang keberhasilan: <span className="font-black text-[#00FFAA]">{successChance}%</span>

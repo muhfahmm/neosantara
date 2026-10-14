@@ -165,7 +165,7 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
             <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2">
               <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 sm:p-5">
                 <h3 className="text-[10px] sm:text-xs font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Stok Uranium</h3>
-                <div className="text-lg sm:text-xl font-black leading-tight text-amber-400 break-words">{uraniumStock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</div>
+                <div className="text-lg sm:text-xl font-black leading-tight text-amber-400 break-words">{uraniumStock.toLocaleString('id-ID', { maximumFractionDigits: 0 })}</div>
               </div>
               <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 sm:p-5">
                 <h3 className="text-[10px] sm:text-xs font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Selesai Pada</h3>
@@ -203,30 +203,32 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
                   </div>
                 </div>
 
-                <div className="flex w-full flex-col gap-3 lg:min-w-0 lg:flex-1 lg:flex-row lg:items-center">
-                  <div className="grid grid-cols-2 gap-x-3 text-[10px] font-bold text-rose-400 lg:flex lg:shrink-0 lg:flex-col lg:gap-1">
-                    <span className="whitespace-nowrap">-{totalCashCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
-                    <span className="whitespace-nowrap">-{totalUraniumCost} uranium</span>
-                  </div>
-
-                  {/* Tombol Seketika & Bangun */}
-                  <div className="flex w-full min-w-0 items-center gap-2 lg:flex-1 lg:gap-3">
+                <div className="flex w-full min-w-0 flex-col gap-3 lg:w-auto lg:flex-1 lg:flex-row lg:items-center lg:gap-3">
+                  <div className="flex shrink-0 items-center justify-center">
                     <button
                       onClick={() => console.log(`Membangun ${quantity} ICBM secara instan!`)}
-                      className="flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/20 px-3 py-2.5 text-[10px] font-bold uppercase text-amber-400 transition-all hover:bg-amber-500/30 active:scale-95 sm:gap-2 sm:px-5 sm:text-xs"
+                      className="flex w-full min-w-0 items-center justify-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/20 px-3 py-2.5 text-[10px] font-bold uppercase text-amber-400 transition-all hover:bg-amber-500/30 active:scale-95 sm:gap-2 sm:px-4 sm:text-xs"
                     >
                       <Gem className="h-4 w-4 text-amber-400" />
                       <span className="whitespace-nowrap">Seketika</span>
                       <span className="whitespace-nowrap rounded-full bg-amber-400/20 px-2 py-0.5 text-[10px] font-black text-amber-300">{quantity * 6}</span>
                     </button>
-                    <button
-                      onClick={handleBuildClick}
-                      className="flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#00FFAA] px-3 py-2.5 text-[10px] font-black uppercase text-[#0A1A1A] shadow-md transition-all hover:bg-[#00FFAA]/80 active:scale-95 sm:gap-2 sm:px-5 sm:text-xs"
-                    >
-                      <Clock className="h-4 w-4 text-[#0A1A1A]" />
-                      <span className="whitespace-nowrap">Bangun</span>
-                      <span className="whitespace-nowrap rounded-full bg-black/20 px-2 py-0.5 text-[10px] font-black text-[#0A1A1A]">{totalBuildDays} hari</span>
-                    </button>
+                  </div>
+                  <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center lg:gap-3">
+                    <div className="flex shrink-0 flex-col gap-1 text-[10px] font-bold text-rose-400">
+                      <span className="whitespace-nowrap">-{totalCashCost.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</span>
+                      <span className="whitespace-nowrap">-{totalUraniumCost} uranium</span>
+                    </div>
+                    <div className="flex min-w-0 flex-1 items-center">
+                      <button
+                        onClick={handleBuildClick}
+                        className="flex w-full min-w-0 items-center justify-center gap-1.5 rounded-xl bg-[#00FFAA] px-3 py-2.5 text-[10px] font-black uppercase text-[#0A1A1A] shadow-md transition-all hover:bg-[#00FFAA]/80 active:scale-95 sm:gap-2 sm:px-4 sm:text-xs"
+                      >
+                        <Clock className="h-4 w-4 text-[#0A1A1A]" />
+                        <span className="whitespace-nowrap">Bangun</span>
+                        <span className="whitespace-nowrap rounded-full bg-black/20 px-2 py-0.5 text-[10px] font-black text-[#0A1A1A]">{totalBuildDays} hari</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -21,7 +21,7 @@ type RankingRow = {
 
 const formatNumber = (value: unknown) => {
   const numeric = Number(value ?? 0);
-  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID") : "0";
+  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 0 }) : "0";
 };
 
 export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail, prefetchedAllCountries, onAction }: PerangNuklirDetailModalProps) {

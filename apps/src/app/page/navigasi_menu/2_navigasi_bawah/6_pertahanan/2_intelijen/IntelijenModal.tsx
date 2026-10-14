@@ -83,7 +83,7 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        
+
         {/* HEADER MODAL */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
           <div className="flex items-center gap-4 lg:gap-8">
@@ -101,22 +101,12 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
                 </h2>
               </div>
             </div>
-          </div>
-          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
-        </div>
 
-        {/* BODY MODAL */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col items-center">
-          <div className="w-full space-y-4">
-            
-            {/* 2 TAB MENU */}
-            <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex shadow-sm">
+            {/* 2 TAB MENU - dipindah ke header */}
+            <div className="hidden sm:flex items-center gap-1 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-[#00FFAA]/30">
               <button
                 onClick={() => setActiveTab('spionase')}
-                className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+                className={`px-4 lg:px-5 py-1.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
                   activeTab === 'spionase'
                     ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20'
                     : 'text-[#6B8A8A] hover:text-[#00FFAA]'
@@ -126,7 +116,42 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
               </button>
               <button
                 onClick={() => setActiveTab('sabotase')}
-                className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+                className={`px-4 lg:px-5 py-1.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${
+                  activeTab === 'sabotase'
+                    ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20'
+                    : 'text-[#6B8A8A] hover:text-[#00FFAA]'
+                }`}
+              >
+                Sabotase
+              </button>
+            </div>
+          </div>
+
+          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* BODY MODAL */}
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col items-center">
+          <div className="w-full space-y-4">
+
+            {/* 2 TAB MENU - tampilan mobile */}
+            <div className="flex sm:hidden bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 w-full shadow-sm">
+              <button
+                onClick={() => setActiveTab('spionase')}
+                className={`flex-1 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
+                  activeTab === 'spionase'
+                    ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20'
+                    : 'text-[#6B8A8A] hover:text-[#00FFAA]'
+                }`}
+              >
+                Spionase
+              </button>
+              <button
+                onClick={() => setActiveTab('sabotase')}
+                className={`flex-1 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer ${
                   activeTab === 'sabotase'
                     ? 'bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20'
                     : 'text-[#6B8A8A] hover:text-[#00FFAA]'
@@ -137,18 +162,29 @@ export default function IntelijenModal({ isOpen, onClose, countryDetail, setCoun
             </div>
 
             {/* RENDER KOMPONEN TABEL TERPISAH */}
-            <div className="w-full mt-2">
-              {activeTab === 'spionase' && (
-                <Spionase prefetchedAllCountries={prefetchedAllCountries} countryDetail={countryDetail} onAction={handleSpionaseAction} />
-              )}
-              {activeTab === 'sabotase' && (
-                <Sabotase prefetchedAllCountries={prefetchedAllCountries} countryDetail={countryDetail} onAction={handleSabotaseAction} />
-              )}
+            <div className="w-full overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
+              <div className="max-h-[52vh] overflow-auto">
+                {activeTab === 'spionase' && (
+                  <Spionase
+                    prefetchedAllCountries={prefetchedAllCountries}
+                    countryDetail={countryDetail}
+                    onAction={handleSpionaseAction}
+                  />
+                )}
+                {activeTab === 'sabotase' && (
+                  <Sabotase
+                    prefetchedAllCountries={prefetchedAllCountries}
+                    countryDetail={countryDetail}
+                    onAction={handleSabotaseAction}
+                  />
+                )}
+              </div>
             </div>
-            
+
           </div>
         </div>
       </div>
+
       <CovertOperationResultModal
         result={covertOperationResult}
         onClose={() => setCovertOperationResult(null)}

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useMemo, useState } from "react";
 import { X, Shield, Swords, ChevronUp, ChevronDown, Search } from "lucide-react";
 import { getArmadaPowerSummary } from "../4_armada/logic/armadaLogic";
@@ -31,7 +31,7 @@ type RankingRow = {
 
 const formatNumber = (value: unknown) => {
   const numeric = Number(value ?? 0);
-  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 2 }) : "0";
+  return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 0 }) : "0";
 };
 
 export default function SerangNegaraModal({ 
@@ -291,9 +291,6 @@ export default function SerangNegaraModal({
                   <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Serang Negara</h2>
                 </div>
               </div>
-              <div className="hidden sm:flex items-center gap-2 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-[#00FFAA]/30">
-                <span className="text-[10px] lg:text-[11px] font-black uppercase tracking-wider text-[#6B8A8A]">{selectedCountryName}</span>
-              </div>
             </div>
 
             <div className="flex items-center gap-3">
@@ -318,10 +315,6 @@ export default function SerangNegaraModal({
 
           <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col items-center">
             <div className="w-full space-y-4">
-              <div className="text-xs font-semibold text-[#6B8A8A] leading-relaxed">
-                Tabel ranking 207 negara berdasarkan total kekuatan gabungan darat, laut, dan udara. Klik header kolom untuk mengurutkan data. Klik ikon <Swords className="inline w-3.5 h-3.5 text-rose-400" /> untuk menyerang target.
-              </div>
-
               <div className="w-full overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
                 <div className="max-h-[52vh] overflow-auto">
                   <table className="w-full text-xs">

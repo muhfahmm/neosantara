@@ -133,7 +133,7 @@ export default function ProgramNuklirModals({
               </div>
               <div className="flex justify-between text-xs sm:text-sm font-bold text-rose-400 border-t border-[#00FFAA]/20 pt-3">
                 <span>Biaya Riset & Pengembangan:</span>
-                <span>- {biayaProgram.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+                <span>- {biayaProgram.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO</span>
               </div>
             </div>
             {isProgramBuilding && (
@@ -154,7 +154,7 @@ export default function ProgramNuklirModals({
                 disabled={isProgramBuilding}
                 className={`px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-md transition-all ${isProgramBuilding ? 'bg-[#6B8A8A]/30 text-[#6B8A8A] cursor-not-allowed' : 'bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 active:scale-95 cursor-pointer'}`}
               >
-                Danai Program ({biayaProgram.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO)
+                Danai Program ({biayaProgram.toLocaleString("id-ID", { maximumFractionDigits: 0 })} NEO)
               </button>
             </div>
 
