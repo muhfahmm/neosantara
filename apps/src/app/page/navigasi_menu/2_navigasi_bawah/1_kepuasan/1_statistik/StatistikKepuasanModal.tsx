@@ -3,9 +3,9 @@
 import { X, Smile, TrendingUp, Landmark, Coins, Apple, Plug, Home, Globe, Scale, HandHelping } from "lucide-react";
 import {
   calculateKepuasan,
+  calculateSatisfactionIndicatorScores,
   calculateEconomicPolicySatisfaction,
   calculateSubsidySatisfaction,
-  getSatisfactionSectorScores,
 } from "@/app/logic/kepuasanCalculator";
 
 interface StatistikKepuasanModalProps {
@@ -32,7 +32,7 @@ export default function StatistikKepuasanModal({
   if (!isOpen) return null;
 
   // Gunakan utility terpusat agar konsisten dengan nilai di navbar
-  const sectorScores = getSatisfactionSectorScores(countryDetail, metadata);
+  const sectorScores = calculateSatisfactionIndicatorScores(countryDetail, metadata ?? {});
   const generalSatisfaction = calculateKepuasan(countryDetail, metadata);
   const economicPolicySatisfaction = calculateEconomicPolicySatisfaction(countryDetail);
   const subsidySatisfaction = calculateSubsidySatisfaction(countryDetail);

@@ -2,6 +2,7 @@ export interface MilitaryAchievementNewsData {
   id: string;
   type: 'program_nuklir';
   category: 'pencapaian_militer';
+  countryName?: string;
   headline: string;
   content: string;
   timestamp: string;

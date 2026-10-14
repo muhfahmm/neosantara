@@ -23,6 +23,7 @@ export interface SecurityCouncilInvasionNews extends SecurityCouncilInvasionOper
   id: string;
   type: "invasi_gabungan_pbb";
   category: "operasi_militer";
+  countryName?: string;
   headline: string;
   content: string;
   timestamp: string;

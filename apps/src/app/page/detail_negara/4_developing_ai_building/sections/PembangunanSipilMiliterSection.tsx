@@ -27,6 +27,7 @@ import { convertBarakToSoldiers } from "@/app/page/navigasi_menu/2_navigasi_bawa
 interface PembangunanSipilMiliterSectionProps {
   countryDetail: Record<string, any> | null;
   metadata: Record<string, any>;
+  initialBuildingKey?: string;
 }
 
 // ----------------------------------------------------
@@ -325,12 +326,60 @@ const formatNumber = (val: unknown): string => {
   return Number.isFinite(num) ? num.toLocaleString("id-ID", { maximumFractionDigits: 2 }) : "0";
 };
 
+const formatCompletionDate = (value: unknown): string => {
+  if (typeof value !== "string" || !value) return "";
+  const date = new Date(`${value.slice(0, 10)}T00:00:00`);
+  return Number.isNaN(date.getTime())
+    ? ""
+    : date.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+};
+
 export default function PembangunanSipilMiliterSection({
   countryDetail,
+  initialBuildingKey,
 }: PembangunanSipilMiliterSectionProps) {
-  const [subTab, setSubTab] = React.useState<"sipil" | "militer">("sipil");
-  const [activeCivilCategory, setActiveCivilCategory] = React.useState<string>("kelistrikan_infra");
-  const [searchQuery, setSearchQuery] = React.useState<string>("");
+  const initialCivilCategory = CIVIL_CATEGORIES.find((category) =>
+    category.items.some((item) => item.key === initialBuildingKey),
+  );
+  const initialMilitaryItem = [...MILITARY_UNITS, ...MILITARY_INFRASTRUCTURES].find(
+    (item) => item.key === initialBuildingKey,
+  );
+  const [subTab, setSubTab] = React.useState<"sipil" | "militer">(
+    initialCivilCategory ? "sipil" : initialMilitaryItem ? "militer" : "sipil",
+  );
+  const [activeCivilCategory, setActiveCivilCategory] = React.useState<string>(
+    initialCivilCategory?.id || "kelistrikan_infra",
+  );
+  const [searchQuery, setSearchQuery] = React.useState<string>(
+    initialCivilCategory?.items.find((item) => item.key === initialBuildingKey)?.label ||
+      initialMilitaryItem?.label ||
+      "",
+  );
+
+  const pendingCivilianConstructions = Array.isArray(countryDetail?.ai_civilian_construction_queue)
+    ? countryDetail.ai_civilian_construction_queue as Array<{
+        buildingKey: string;
+        jumlah: number;
+        completionDate?: string;
+        daysRemaining?: number;
+      }>
+    : [];
+  const pendingMilitaryInfra = Array.isArray(countryDetail?.ai_military_infra_queue)
+    ? countryDetail.ai_military_infra_queue as Array<{
+        infraKey: string;
+        jumlah: number;
+        completionDate?: string;
+        daysRemaining?: number;
+      }>
+    : [];
+  const pendingMilitaryUnits = Array.isArray(countryDetail?.ai_military_unit_queue)
+    ? countryDetail.ai_military_unit_queue as Array<{
+        unitKey: string;
+        jumlah: number;
+        completionDate?: string;
+        daysRemaining?: number;
+      }>
+    : [];
 
   const getBuildingValue = (key: string): number => {
     if (!countryDetail) return 0;
@@ -528,11 +577,27 @@ export default function PembangunanSipilMiliterSection({
                 {filteredCivilItems.map((item) => {
                   const count = getBuildingValue(item.key);
                   const isZero = count === 0;
+                  const pending = pendingCivilianConstructions.filter((entry) => entry.buildingKey === item.key);
+                  const pendingCount = pending.reduce((total, entry) => total + (Number(entry.jumlah) || 0), 0);
+                  const completionDate = pending
+                    .map((entry) => entry.completionDate)
+                    .filter((date): date is string => Boolean(date))
+                    .sort()
+                    .at(-1);
+                  const remainingDays = pending.length > 0
+                    ? Math.min(...pending.map((entry) => Math.max(0, Number(entry.daysRemaining) || 0)))
+                    : 0;
                   return (
                     <div
                       key={item.key}
-                      className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-2xl p-3 flex flex-col justify-between hover:border-[#00FFAA]/50 transition-all shadow-sm min-h-[95px]"
+                      className="relative overflow-visible bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-2xl p-3 flex flex-col justify-between hover:border-[#00FFAA]/50 transition-all shadow-sm min-h-[95px]"
                     >
+                      {pendingCount > 0 && completionDate && (
+                        <div className="absolute -top-3 left-2 z-10 bg-[#0A1A1A] text-amber-300 text-[9px] font-bold px-2 py-0.5 border border-amber-400/40 rounded whitespace-nowrap">
+                          Dalam pembangunan · selesai {formatCompletionDate(completionDate)}
+                          {remainingDays > 0 ? ` · ${remainingDays} hari` : ""}
+                        </div>
+                      )}
                       <p className="text-[10px] font-black uppercase tracking-wider text-[#8AB0A8] leading-tight line-clamp-2">
                         {item.label}
                       </p>
@@ -549,6 +614,11 @@ export default function PembangunanSipilMiliterSection({
                             {item.unitSuffix || "unit"}
                           </span>
                         </div>
+                        {pendingCount > 0 && (
+                          <p className="text-[9px] font-bold text-amber-300 mt-1">
+                            +{formatNumber(pendingCount)} dalam pembangunan
+                          </p>
+                        )}
                         {item.defaultUnit && (
                           <p className="text-[8px] text-[#6B8A8A] font-semibold mt-0.5 truncate">
                             {item.defaultUnit}
@@ -591,16 +661,32 @@ export default function PembangunanSipilMiliterSection({
 
                   const GroupIcon =
                     unit.group === "darat" ? Swords : unit.group === "laut" ? Ship : Plane;
+                  const pending = pendingMilitaryUnits.filter((entry) => entry.unitKey === unit.key);
+                  const pendingCount = pending.reduce((total, entry) => total + (Number(entry.jumlah) || 0), 0);
+                  const completionDate = pending
+                    .map((entry) => entry.completionDate)
+                    .filter((date): date is string => Boolean(date))
+                    .sort()
+                    .at(-1);
+                  const remainingDays = pending.length > 0
+                    ? Math.min(...pending.map((entry) => Math.max(0, Number(entry.daysRemaining) || 0)))
+                    : 0;
 
                   return (
                     <div
                       key={unit.key}
-                      className={`bg-[#0A1A1A] border rounded-2xl p-3 flex flex-col justify-between transition-all shadow-sm min-h-[95px] ${
+                      className={`relative overflow-visible bg-[#0A1A1A] border rounded-2xl p-3 flex flex-col justify-between transition-all shadow-sm min-h-[95px] ${
                         isHighlighted
                           ? "border-[#00FFAA]/40 bg-[#0A1A1A]/90 hover:border-[#00FFAA]"
                           : "border-[#00FFAA]/20 hover:border-[#00FFAA]/50"
                       }`}
                     >
+                      {pendingCount > 0 && completionDate && (
+                        <div className="absolute -top-3 left-2 z-10 bg-[#0A1A1A] text-amber-300 text-[9px] font-bold px-2 py-0.5 border border-amber-400/40 rounded whitespace-nowrap">
+                          Dalam pembuatan · selesai {formatCompletionDate(completionDate)}
+                          {remainingDays > 0 ? ` · ${remainingDays} hari` : ""}
+                        </div>
+                      )}
                       <div className="flex items-start justify-between gap-1 mb-1.5">
                         <p className="text-[10px] font-black uppercase tracking-wider text-[#8AB0A8] leading-tight line-clamp-2">
                           {unit.label}
@@ -621,6 +707,11 @@ export default function PembangunanSipilMiliterSection({
                         <p className="text-[9px] font-bold text-[#6B8A8A] mt-0.5 uppercase tracking-wider">
                           {subText}
                         </p>
+                        {pendingCount > 0 && (
+                          <p className="text-[9px] font-bold text-amber-300 mt-1">
+                            +{formatNumber(pendingCount)} dalam pembuatan
+                          </p>
+                        )}
                       </div>
                     </div>
                   );
@@ -641,11 +732,27 @@ export default function PembangunanSipilMiliterSection({
                 {filteredMilitaryInfra.map((infra) => {
                   const count = getBuildingValue(infra.key);
                   const isZero = count === 0;
+                  const pending = pendingMilitaryInfra.filter((entry) => entry.infraKey === infra.key);
+                  const pendingCount = pending.reduce((total, entry) => total + (Number(entry.jumlah) || 0), 0);
+                  const completionDate = pending
+                    .map((entry) => entry.completionDate)
+                    .filter((date): date is string => Boolean(date))
+                    .sort()
+                    .at(-1);
+                  const remainingDays = pending.length > 0
+                    ? Math.min(...pending.map((entry) => Math.max(0, Number(entry.daysRemaining) || 0)))
+                    : 0;
                   return (
                     <div
                       key={infra.key}
-                      className="bg-[#0A1A1A] border border-[#00FFAA]/25 rounded-2xl p-3 flex flex-col justify-between hover:border-[#00FFAA] transition-all shadow-sm min-h-[95px]"
+                      className="relative overflow-visible bg-[#0A1A1A] border border-[#00FFAA]/25 rounded-2xl p-3 flex flex-col justify-between hover:border-[#00FFAA] transition-all shadow-sm min-h-[95px]"
                     >
+                      {pendingCount > 0 && completionDate && (
+                        <div className="absolute -top-3 left-2 z-10 bg-[#0A1A1A] text-amber-300 text-[9px] font-bold px-2 py-0.5 border border-amber-400/40 rounded whitespace-nowrap">
+                          Dalam pembangunan · selesai {formatCompletionDate(completionDate)}
+                          {remainingDays > 0 ? ` · ${remainingDays} hari` : ""}
+                        </div>
+                      )}
                       <div className="flex items-start justify-between gap-1 mb-1">
                         <p className="text-[10px] font-black uppercase tracking-wider text-[#8AB0A8] leading-tight line-clamp-2">
                           {infra.label}
@@ -668,6 +775,11 @@ export default function PembangunanSipilMiliterSection({
                             Pangkalan
                           </span>
                         </div>
+                        {pendingCount > 0 && (
+                          <p className="text-[9px] font-bold text-amber-300 mt-1">
+                            +{formatNumber(pendingCount)} dalam pembangunan
+                          </p>
+                        )}
                         <p className="text-[8px] font-semibold text-[#6B8A8A] mt-0.5 leading-tight truncate">
                           {infra.supportedUnitsLabel}
                         </p>

@@ -27,10 +27,10 @@ import {
 import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
 import { getEffectiveBuildTime } from "@/app/page/bonus_logic";
 import {
-  calculateKesehatanScore,
-  calculatePenegakanHukumScore,
+  calculateLayananPublikScore,
+  calculatePublicServiceCategoryScores,
+  PUBLIC_SERVICE_CATEGORIES,
   PENEGAKAN_HUKUM_KEYS,
-  PENEGAKAN_HUKUM_TARGET_RATIO,
 } from "@/app/logic/kepuasanCalculator";
 
 
@@ -393,13 +393,13 @@ export default function TempatUmumModal({
   const ongoingConstructions = countryDetail?.ongoingConstructions || [];
 
   const categoriesList = [
-    { id: "infrastruktur", label: "Infrastruktur", keys: ["jalur_sepeda", "jalan_raya", "terminal_bus", "stasiun_kereta_api", "kereta_bawah_tanah", "pelabuhan", "bandara", "helipad"] },
-    { id: "pendidikan", label: "Pendidikan", keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan"] },
-    { id: "kesehatan", label: "Kesehatan", keys: ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik"] },
+    { id: "infrastruktur", label: "Infrastruktur", keys: PUBLIC_SERVICE_CATEGORIES.infrastruktur.keys },
+    { id: "pendidikan", label: "Pendidikan", keys: PUBLIC_SERVICE_CATEGORIES.pendidikan.keys },
+    { id: "kesehatan", label: "Kesehatan", keys: PUBLIC_SERVICE_CATEGORIES.kesehatan.keys },
     { id: "penegakan_hukum", label: "Penegakan Hukum", keys: PENEGAKAN_HUKUM_KEYS },
-    { id: "olahraga_hiburan", label: "Olahraga & Hiburan", keys: ["kolam_renang", "sirkuit_balap", "stadion", "stadion_internasional", "gym", "golf", "esports", "gokart", "bioskop", "teater"] },
-    { id: "komersial", label: "Komersial", keys: ["mall", "hotel", "pusat_grosir_tekstil"] },
-  ];
+    { id: "olahraga_hiburan", label: "Olahraga & Hiburan", keys: PUBLIC_SERVICE_CATEGORIES.olahraga_hiburan.keys },
+    { id: "komersial", label: "Komersial", keys: PUBLIC_SERVICE_CATEGORIES.komersial.keys },
+  ] as const;
 
   const totalPenduduk = Number(data.jumlah_penduduk) || 1;
 
@@ -415,6 +415,9 @@ export default function TempatUmumModal({
     };
   });
 
+  const publicServiceCategoryScores = calculatePublicServiceCategoryScores(data);
+  const averageServiceSatisfaction = calculateLayananPublikScore(data);
+
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -428,10 +431,16 @@ export default function TempatUmumModal({
                 <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Tempat Umum & Layanan Publik</h2>
               </div>
             </div>
-            <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-4 w-4" />
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="px-2 py-1 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-right">
+                <p className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-[#6B8A8A]">Indeks Kepuasan</p>
+                <p className="text-xs sm:text-sm font-black leading-tight text-[#00FFAA]">{averageServiceSatisfaction} / 100</p>
+              </div>
+              <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
+                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+                <X className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
           <div className="flex-1 flex min-h-0 relative z-10">
@@ -610,22 +619,9 @@ export default function TempatUmumModal({
                     const activeCategory = calculatedCategories.find((cat) => cat.id === activeTabId);
                     if (!activeCategory) return null;
 
-                    const targets: Record<string, number> = {
-                      infrastruktur: 0.00005,
-                      pendidikan: 0.0001,
-                      kesehatan: 0.00004,
-                      penegakan_hukum: PENEGAKAN_HUKUM_TARGET_RATIO,
-                      olahraga_hiburan: 0.00008,
-                      komersial: 0.00002,
-                    };
-
-                    const targetRatio = targets[activeCategory.id] || 0.0001;
+                    const targetRatio = PUBLIC_SERVICE_CATEGORIES[activeCategory.id].targetRatio;
                     const percentageMet = Math.min(100, (activeCategory.index / targetRatio) * 100);
-                    const satisfactionScore = activeCategory.id === "kesehatan"
-                      ? calculateKesehatanScore(data)
-                      : activeCategory.id === "penegakan_hukum"
-                        ? calculatePenegakanHukumScore(data)
-                        : Math.round(percentageMet);
+                    const satisfactionScore = publicServiceCategoryScores[activeCategory.id];
 
                     return (
                       <div className="rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-4 shadow-md flex flex-col justify-between">

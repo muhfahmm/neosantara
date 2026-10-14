@@ -37,6 +37,7 @@ import {
   applyKementerianKeuanganTaxRevenueBonus,
 } from "@/app/page/bonus_logic";
 import { getActiveSectorImpacts } from "@/app/page/navigasi_menu/2_navigasi_bawah/9_kementrian/1_pemberantasan_korupsi/logic/corruptionLogic";
+import { calculateTaxSatisfaction } from "@/app/logic/kepuasanCalculator";
 
 interface ModalProps {
   isOpen: boolean;
@@ -128,31 +129,7 @@ export default function PajakModal({
 
   // ---- FUNGSI MENGHITUNG INDEKS KEPUASAN ----
   const calculateSatisfaction = (rates: typeof tempRates) => {
-    const { vat, corporate_tax, income_tax, cigarette_tax, environment_tax } = rates;
-    const avgRate = (vat + corporate_tax + income_tax + cigarette_tax + environment_tax) / 5;
-    const total =
-      applyIdeologyTaxBonus(calculateIncomeAtRate(vat, 500), countryDetail?.ideology) +
-      applyIdeologyTaxBonus(calculateIncomeAtRate(corporate_tax, 500), countryDetail?.ideology) +
-      applyIdeologyTaxBonus(
-        applyOrthodoxPersonalIncomeTaxRevenueBonus(
-          calculateIncomeAtRate(income_tax, 500),
-          countryDetail?.religion
-        ),
-        countryDetail?.ideology
-      ) +
-      applyIdeologyTaxBonus(calculateIncomeAtRate(cigarette_tax, 500), countryDetail?.ideology) +
-      applyIdeologyTaxBonus(
-        applyBuddhaEnvironmentalTaxRevenueBonus(
-          calculateIncomeAtRate(environment_tax, 500),
-          countryDetail?.religion
-        ),
-        countryDetail?.ideology
-      );
-    const maxIncome = 5 * 500; // 2500 NEO
-    // Kepuasan = 100 - rata-rata tarif + (pendapatan / maxPendapatan * 20)
-    let satisfaction = 100 - avgRate + (total / maxIncome) * 20;
-    // Clamp antara 1 dan 100
-    return Math.min(100, Math.max(1, Math.round(satisfaction)));
+    return calculateTaxSatisfaction(countryDetail, rates);
   };
 
   const satisfaction = calculateSatisfaction(tempRates);

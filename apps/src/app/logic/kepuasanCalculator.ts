@@ -11,7 +11,13 @@ import {
   calculateWeightedFoodCoverage,
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
 import { getCountryConsumptionBreakdown } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
-import { calculateTotalTaxIncome } from "@/app/logic/economic_logic/treasuryUpdater";
+import { calculateIncomeAtRate } from "@/app/logic/economic_logic/2_tax_logic/taxLogic";
+import { applyOrthodoxPersonalIncomeTaxRevenueBonus } from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
+import { applyBuddhaEnvironmentalTaxRevenueBonus } from "@/app/page/bonus_logic/agama_bonus_logic/buddha";
+import { applyDemocracyTaxRevenueBonus } from "@/app/page/bonus_logic/ideologi_bonus_logic/demokrasi";
+import { applyCapitalismTaxRevenueBonus } from "@/app/page/bonus_logic/ideologi_bonus_logic/kapitalisme";
+import { applyLiberalismTaxRevenueBonus } from "@/app/page/bonus_logic/ideologi_bonus_logic/liberalisme";
+import { applyConservatismTaxRevenueBonus } from "@/app/page/bonus_logic/ideologi_bonus_logic/konservatisme";
 import {
   calculateEconomicPolicyAverage,
   type NationalizationLevels,
@@ -20,17 +26,18 @@ import {
   INITIAL_SUBSIDY_ITEMS,
   calculateSubsidySummary,
 } from "@/../../json/database_kebijakan_subsidi/index";
+import { applyTotalHousingCapacityBonus } from "@/app/page/bonus_logic";
 
 
 // ─── Helper ─────────────────────────────────────────────────────────────────
 
-function getTaxValue(detail: any, path: string[], fallback = 0): number {
+function getTaxValue(detail: any, path: string[]): number | undefined {
   let current: any = detail;
   for (const key of path) {
-    if (current == null || typeof current !== "object") return fallback;
+    if (current == null || typeof current !== "object") return undefined;
     current = current[key];
   }
-  return typeof current === "number" ? current : fallback;
+  return typeof current === "number" && Number.isFinite(current) ? current : undefined;
 }
 
 function findMeta(key: string, metadata: any): any {
@@ -47,17 +54,86 @@ function findMeta(key: string, metadata: any): any {
 
 // ─── Scorer Functions ────────────────────────────────────────────────────────
 
-function calculateRawPajakScore(countryDetail: any): number {
-  const vat = Number(getTaxValue(countryDetail, ["ppn"]) || getTaxValue(countryDetail, ["pajak", "ppn", "tarif"]) || 0);
-  const corporate_tax = Number(getTaxValue(countryDetail, ["corporate"]) || getTaxValue(countryDetail, ["pajak", "korporasi", "tarif"]) || 0);
-  const income_tax = Number(getTaxValue(countryDetail, ["income_tax"]) || getTaxValue(countryDetail, ["pajak", "penghasilan", "tarif"]) || 0);
-  const cigarette_tax = Number(getTaxValue(countryDetail, ["cigarette_tax"]) || getTaxValue(countryDetail, ["pajak", "bea_cukai", "tarif"]) || 0);
-  const environment_tax = Number(getTaxValue(countryDetail, ["environment_tax"]) || getTaxValue(countryDetail, ["pajak", "lingkungan", "tarif"]) || 0);
+export interface TaxSatisfactionRates {
+  income_tax: number;
+  corporate_tax: number;
+  vat: number;
+  cigarette_tax: number;
+  environment_tax: number;
+}
 
-  const avgRate = (vat + corporate_tax + income_tax + cigarette_tax + environment_tax) / 5;
-  const totalIncome = calculateTotalTaxIncome(countryDetail);
-  const maxIncome = 5 * 500;
-  return Math.min(100, Math.max(1, Math.round(100 - avgRate + (totalIncome / maxIncome) * 20)));
+const applyIdeologyTaxBonus = (revenue: number, ideology: unknown) =>
+  applyLiberalismTaxRevenueBonus(
+    applyCapitalismTaxRevenueBonus(
+      applyConservatismTaxRevenueBonus(
+        applyDemocracyTaxRevenueBonus(revenue, ideology),
+        ideology,
+      ),
+      ideology,
+    ),
+    ideology,
+  );
+
+export function calculateTaxSatisfaction(
+  countryDetail: Record<string, unknown> | null,
+  rates?: Partial<TaxSatisfactionRates>,
+): number {
+  const resolvedRates: TaxSatisfactionRates = {
+    income_tax:
+      rates?.income_tax ??
+      getTaxValue(countryDetail, ["income_tax"]) ??
+      getTaxValue(countryDetail, ["pajak", "penghasilan", "tarif"]) ??
+      0,
+    corporate_tax:
+      rates?.corporate_tax ??
+      getTaxValue(countryDetail, ["corporate"]) ??
+      getTaxValue(countryDetail, ["pajak", "korporasi", "tarif"]) ??
+      0,
+    vat:
+      rates?.vat ??
+      getTaxValue(countryDetail, ["ppn"]) ??
+      getTaxValue(countryDetail, ["pajak", "ppn", "tarif"]) ??
+      0,
+    cigarette_tax:
+      rates?.cigarette_tax ??
+      getTaxValue(countryDetail, ["cigarette_tax"]) ??
+      getTaxValue(countryDetail, ["pajak", "bea_cukai", "tarif"]) ??
+      0,
+    environment_tax:
+      rates?.environment_tax ??
+      getTaxValue(countryDetail, ["environment_tax"]) ??
+      getTaxValue(countryDetail, ["pajak", "lingkungan", "tarif"]) ??
+      0,
+  };
+  const averageRate = Object.values(resolvedRates).reduce((total, rate) => total + rate, 0) / 5;
+  const ideology = countryDetail?.ideology;
+  const totalIncome =
+    applyIdeologyTaxBonus(calculateIncomeAtRate(resolvedRates.vat, 500), ideology) +
+    applyIdeologyTaxBonus(calculateIncomeAtRate(resolvedRates.corporate_tax, 500), ideology) +
+    applyIdeologyTaxBonus(
+      applyOrthodoxPersonalIncomeTaxRevenueBonus(
+        calculateIncomeAtRate(resolvedRates.income_tax, 500),
+        countryDetail?.religion,
+      ),
+      ideology,
+    ) +
+    applyIdeologyTaxBonus(calculateIncomeAtRate(resolvedRates.cigarette_tax, 500), ideology) +
+    applyIdeologyTaxBonus(
+      applyBuddhaEnvironmentalTaxRevenueBonus(
+        calculateIncomeAtRate(resolvedRates.environment_tax, 500),
+        countryDetail?.religion,
+      ),
+      ideology,
+    );
+
+  return Math.min(
+    100,
+    Math.max(1, Math.round(100 - averageRate + (totalIncome / (5 * 500)) * 20)),
+  );
+}
+
+function calculateRawPajakScore(countryDetail: any): number {
+  return calculateTaxSatisfaction(countryDetail);
 }
 
 function calculateRawHargaScore(countryDetail: any): number {
@@ -106,13 +182,15 @@ function calculateRawHunianScore(countryDetail: any, metadata?: any): number {
   HUNIAN_KEYS.forEach((key) => {
     const count = Number(countryDetail?.[key]) || 0;
     const meta = metadata ? findMeta(key, metadata) : undefined;
-    const capacity = Number(meta?.kapasitas) || DEFAULT_CAPACITIES[key] || 4;
+    const baseCapacity = Number(meta?.kapasitas) || DEFAULT_CAPACITIES[key] || 4;
+    const capacity = applyTotalHousingCapacityBonus(baseCapacity, countryDetail);
     totalHousingCapacity += count * capacity;
   });
 
   if (population <= 0) return 50;
+  if (totalHousingCapacity <= 0) return 1;
   const coverage = Math.min(1, Math.max(0, totalHousingCapacity / population));
-  return Math.round(coverage * 100);
+  return Math.min(100, Math.max(1, Math.round(coverage * 100)));
 }
 
 export interface ServiceDeficitMetrics {
@@ -130,6 +208,33 @@ export const PENEGAKAN_HUKUM_KEYS = [
   "akademi_polisi",
 ];
 export const PENEGAKAN_HUKUM_TARGET_RATIO = 1 / 7000;
+export const PUBLIC_SERVICE_CATEGORIES = {
+  infrastruktur: {
+    keys: ["jalur_sepeda", "jalan_raya", "terminal_bus", "stasiun_kereta_api", "kereta_bawah_tanah", "pelabuhan", "bandara", "helipad"],
+    targetRatio: 0.00005,
+  },
+  pendidikan: {
+    keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan"],
+    targetRatio: 0.0001,
+  },
+  kesehatan: {
+    keys: ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik"],
+    targetRatio: 0.00004,
+  },
+  penegakan_hukum: {
+    keys: PENEGAKAN_HUKUM_KEYS,
+    targetRatio: PENEGAKAN_HUKUM_TARGET_RATIO,
+  },
+  olahraga_hiburan: {
+    keys: ["kolam_renang", "sirkuit_balap", "stadion", "stadion_internasional", "gym", "golf", "esports", "gokart", "bioskop", "teater"],
+    targetRatio: 0.00008,
+  },
+  komersial: {
+    keys: ["mall", "hotel", "pusat_grosir_tekstil"],
+    targetRatio: 0.00002,
+  },
+} as const;
+export type PublicServiceCategoryId = keyof typeof PUBLIC_SERVICE_CATEGORIES;
 export const LOW_SECTOR_SCORE_THRESHOLD = 25;
 export const LOW_SECTOR_DECAY_INTERVAL_MONTHS = 6;
 export const LOW_SECTOR_DECAY_POINTS_PER_SECTOR = 2;
@@ -148,15 +253,17 @@ export const INITIAL_SATISFACTION_SECTOR_SCORES = {
 } as const;
 
 type SatisfactionSectorScores = Record<keyof typeof INITIAL_SATISFACTION_SECTOR_SCORES, number>;
-const MAIN_SATISFACTION_SECTOR_KEYS: (keyof SatisfactionSectorScores)[] = [
-  "pajak",
-  "harga",
-  "pangan",
-  "listrik",
-  "hunian",
-  "layananPublik",
-  "keterbukaan",
-];
+export interface SatisfactionIndicatorScores {
+  pajak: number;
+  harga: number;
+  pangan: number;
+  listrik: number;
+  hunian: number;
+  layananPublik: number;
+  keterbukaan: number;
+  sistemEkonomi: number;
+  subsidi: number;
+}
 
 interface SatisfactionSectorBaseline {
   rawScores: SatisfactionSectorScores;
@@ -217,34 +324,48 @@ export function calculateServiceDeficitMetrics(countryDetail: any, metadata: any
 }
 
 function calculateRawLayananPublikScore(countryDetail: any): number {
-  const population = Number(countryDetail?.jumlah_penduduk) || 0;
-  if (population <= 0) return 50;
+  const scores = Object.values(PUBLIC_SERVICE_CATEGORIES).map((category) =>
+    calculatePublicServiceCategoryRawScore(countryDetail, category.keys, category.targetRatio),
+  );
+  return Math.round(scores.reduce((total, score) => total + score, 0) / scores.length);
+}
 
-  const categories = [
-    { keys: ["jalur_sepeda", "jalan_raya", "terminal_bus", "stasiun_kereta_api", "kereta_bawah_tanah", "pelabuhan", "bandara", "helipad"], target: 0.00005 },
-    { keys: ["prasekolah", "dasar", "menengah", "lanjutan", "universitas", "lembaga_pendidikan", "laboratorium", "observatorium", "pusat_penelitian", "pusat_pengembangan"], target: 0.0001 },
-    { keys: ["rumah_sakit_besar", "rumah_sakit_kecil", "pusat_diagnostik"], target: 0.00004 },
-    { keys: PENEGAKAN_HUKUM_KEYS, target: PENEGAKAN_HUKUM_TARGET_RATIO },
-    { keys: ["kolam_renang", "sirkuit_balap", "stadion", "stadion_internasional", "gym", "golf", "esports", "gokart", "bioskop", "teater"], target: 0.00008 },
-    { keys: ["mall", "hotel", "pusat_grosir_tekstil"], target: 0.00002 },
+function calculatePublicServiceCategoryRawScore(
+  countryDetail: Record<string, unknown> | null,
+  keys: readonly string[],
+  targetRatio: number,
+): number {
+  const population = Number(countryDetail?.jumlah_penduduk) || 1;
+  const totalFacilities = keys.reduce(
+    (total, key) => total + (Number(countryDetail?.[key]) || 0),
+    0,
+  );
+  return Math.round(Math.min(100, (totalFacilities / population / targetRatio) * 100));
+}
+
+function calculateRawInfrastructureScore(
+  countryDetail: Record<string, unknown> | null,
+): number {
+  const population = Number(countryDetail?.jumlah_penduduk) || 10_000_000;
+  const infrastructureKeys = [
+    "jalur_sepeda",
+    "jalan_raya",
+    "terminal_bus",
+    "stasiun_kereta_api",
+    "kereta_bawah_tanah",
+    "pelabuhan",
+    "bandara",
+    "helipad",
   ];
-
-  let totalScore = 0;
-  categories.forEach((cat) => {
-    const totalVal = cat.keys.reduce((sum, key) => sum + (Number(countryDetail[key]) || 0), 0);
-    const indexVal = totalVal / population;
-    const percentageMet = Math.min(100, (indexVal / cat.target) * 100);
-    totalScore += percentageMet;
-  });
-
-  return Math.round(totalScore / categories.length);
+  const totalFacilities = infrastructureKeys.reduce(
+    (total, key) => total + (Number(countryDetail?.[key]) || 0),
+    0,
+  );
+  return Math.round(Math.min(100, (totalFacilities / population / 0.00005) * 100));
 }
 
 function calculateRawKeterbukaanScore(countryDetail: any): number {
   if (!countryDetail) return 50;
-  if (countryDetail.opennessIndex !== undefined && countryDetail.opennessIndex !== null) {
-    return Math.min(100, Math.max(0, Number(countryDetail.opennessIndex)));
-  }
 
   const speechScore = Number(countryDetail?.speechScore ?? 50);
   const religionScore = Number(countryDetail?.religionScore ?? 60);
@@ -303,6 +424,59 @@ export function getSatisfactionSectorScores(
   ) as SatisfactionSectorScores;
 }
 
+export function calculatePublicServiceCategoryScores(
+  countryDetail: Record<string, unknown> | null,
+): Record<PublicServiceCategoryId, number> {
+  const sectorScores = getSatisfactionSectorScores(countryDetail, undefined);
+
+  return {
+    infrastruktur: calculatePublicServiceCategoryRawScore(
+      countryDetail,
+      PUBLIC_SERVICE_CATEGORIES.infrastruktur.keys,
+      PUBLIC_SERVICE_CATEGORIES.infrastruktur.targetRatio,
+    ),
+    pendidikan: calculatePublicServiceCategoryRawScore(
+      countryDetail,
+      PUBLIC_SERVICE_CATEGORIES.pendidikan.keys,
+      PUBLIC_SERVICE_CATEGORIES.pendidikan.targetRatio,
+    ),
+    kesehatan: sectorScores.kesehatan,
+    penegakan_hukum: sectorScores.penegakanHukum,
+    olahraga_hiburan: calculatePublicServiceCategoryRawScore(
+      countryDetail,
+      PUBLIC_SERVICE_CATEGORIES.olahraga_hiburan.keys,
+      PUBLIC_SERVICE_CATEGORIES.olahraga_hiburan.targetRatio,
+    ),
+    komersial: calculatePublicServiceCategoryRawScore(
+      countryDetail,
+      PUBLIC_SERVICE_CATEGORIES.komersial.keys,
+      PUBLIC_SERVICE_CATEGORIES.komersial.targetRatio,
+    ),
+  };
+}
+
+export function calculateLayananPublikScore(countryDetail: any): number {
+  const categoryScores = Object.values(calculatePublicServiceCategoryScores(countryDetail));
+  return Math.round(categoryScores.reduce((total, score) => total + score, 0) / 6);
+}
+
+export function calculateSatisfactionIndicatorScores(
+  countryDetail: Record<string, unknown> | null,
+  metadata: Record<string, unknown>,
+): SatisfactionIndicatorScores {
+  return {
+    pajak: calculateRawPajakScore(countryDetail),
+    harga: calculateRawHargaScore(countryDetail),
+    pangan: getSatisfactionSectorScores(countryDetail, metadata).pangan,
+    listrik: calculateRawListrikScore(countryDetail, metadata),
+    hunian: calculateRawHunianScore(countryDetail, metadata),
+    layananPublik: calculateLayananPublikScore(countryDetail),
+    keterbukaan: calculateRawKeterbukaanScore(countryDetail),
+    sistemEkonomi: calculateEconomicPolicySatisfaction(countryDetail),
+    subsidi: calculateSubsidySatisfaction(countryDetail),
+  };
+}
+
 export function calculatePajakScore(countryDetail: any): number {
   return getSatisfactionSectorScores(countryDetail, undefined).pajak;
 }
@@ -331,10 +505,6 @@ export function calculatePenegakanHukumScore(countryDetail: any): number {
   return getSatisfactionSectorScores(countryDetail, undefined).penegakanHukum;
 }
 
-export function calculateLayananPublikScore(countryDetail: any): number {
-  return getSatisfactionSectorScores(countryDetail, undefined).layananPublik;
-}
-
 export function calculateKeterbukaanScore(countryDetail: any): number {
   return getSatisfactionSectorScores(countryDetail, undefined).keterbukaan;
 }
@@ -358,11 +528,15 @@ export function calculateEconomicPolicySatisfaction(countryDetail: any): number 
 }
 
 export function calculateSubsidySatisfaction(countryDetail: any): number {
-  const savedStates = countryDetail?.subsidy_states as Record<string, boolean> | undefined;
-  const items = INITIAL_SUBSIDY_ITEMS.map((item) => ({
-    ...item,
-    isSubsidized: savedStates?.[item.id] ?? item.isSubsidized,
-  }));
+  const items = Array.isArray(countryDetail)
+    ? countryDetail
+    : INITIAL_SUBSIDY_ITEMS.map((item) => {
+        const savedStates = countryDetail?.subsidy_states as Record<string, boolean> | undefined;
+        return {
+          ...item,
+          isSubsidized: savedStates?.[item.id] ?? item.isSubsidized,
+        };
+      });
   const summary = calculateSubsidySummary(items);
   const maximumApprovalBonus = INITIAL_SUBSIDY_ITEMS.reduce(
     (total, item) => total + item.approvalImpact,
@@ -382,20 +556,12 @@ export function countLowSatisfactionSectors(countryDetail: any, metadata: any): 
 
 /**
  * Hitung skor kepuasan rakyat dari countryDetail & metadata.
- * Mengembalikan nilai 0–100 sebagai rata-rata tujuh sektor utama ditambah indeks ekonomi dan subsidi.
+ * Skor umum adalah rata-rata dari sembilan indikator yang ditampilkan pada kartu Kepuasan Rakyat.
  */
 export function calculateKepuasan(countryDetail: any, metadata: any): number {
   if (!countryDetail) return 50;
 
-  const sectorScores = getSatisfactionSectorScores(countryDetail, metadata);
-  const sectorTotal = MAIN_SATISFACTION_SECTOR_KEYS.reduce(
-    (total, sector) => total + sectorScores[sector],
-    0,
-  );
-  const economicPolicyScore = calculateEconomicPolicySatisfaction(countryDetail);
-  const subsidyScore = calculateSubsidySatisfaction(countryDetail);
-  const scoreCount = MAIN_SATISFACTION_SECTOR_KEYS.length + 2;
-  const baseScore = (sectorTotal + economicPolicyScore + subsidyScore) / scoreCount;
-  const accumulatedSectorPenalty = Math.max(0, Number(countryDetail.sector_deficit_kepuasan_penalty) || 0);
-  return Math.max(0, baseScore - accumulatedSectorPenalty);
+  const indicatorScores = calculateSatisfactionIndicatorScores(countryDetail, metadata ?? {});
+  const scores = Object.values(indicatorScores);
+  return Math.round(scores.reduce((total, score) => total + score, 0) / scores.length);
 }

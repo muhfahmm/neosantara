@@ -10,6 +10,7 @@ import { DiplomacyNewsData } from './logic/4_diplomasi/diplomasiNewsLogic';
 import { EconomyNewsData } from './logic/5_ekonomi_keuangan/ekonomiKeuanganNewsLogic';
 import { MilitaryAchievementNewsData } from './logic/6_pencapaian_militer/pencapaianMiliterNewsLogic';
 import { SecurityCouncilInvasionNews } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/1_invasiMiliterGabunganLogic';
+import type { AiNewsItem } from '@/app/logic/npc_ai_brain/core/aiNewsBridge';
 
 export type NewsItemData =
   | InvasionNewsData
@@ -18,7 +19,8 @@ export type NewsItemData =
   | DiplomacyNewsData
   | EconomyNewsData
   | MilitaryAchievementNewsData
-  | SecurityCouncilInvasionNews;
+  | SecurityCouncilInvasionNews
+  | AiNewsItem;
 
 type NewsCategory = 'semua' | 'diplomasi' | 'ekonomi_keuangan' | 'pencapaian_militer' | 'operasi_militer';
 type NewsType = NewsItemData['type'];
@@ -29,6 +31,31 @@ interface TopRightNewsIconProps {
   onClose?: () => void;
   newsList?: NewsItemData[];
   onClearNews?: () => void;
+  onOpenAiConstruction?: (news: AiNewsItem) => void;
+  onOpenNewsCountry?: (countryName: string) => void;
+}
+
+function isAiConstructionNews(item: NewsItemData): item is AiNewsItem {
+  return (
+    (item.type === "pembangunan_sipil" ||
+      item.type === "ekspansi_militer" ||
+      item.type === "pengadaan_armada" ||
+      item.type === "kebijakan_negara") &&
+    "countryName" in item &&
+    Boolean(item.countryName)
+  );
+}
+
+function getNewsCountryName(item: NewsItemData): string | undefined {
+  if ('countryName' in item && typeof item.countryName === 'string' && item.countryName) {
+    return item.countryName;
+  }
+  if ('targetCountry' in item && item.targetCountry) return item.targetCountry;
+  if ('target' in item && typeof item.target?.name === 'string' && item.target.name) {
+    return item.target.name;
+  }
+  if ('attackerCountry' in item && item.attackerCountry) return item.attackerCountry;
+  return undefined;
 }
 
 export default function TopRightNewsIcon({
@@ -36,7 +63,9 @@ export default function TopRightNewsIcon({
   isOpen,
   onClose,
   newsList = [],
-  onClearNews
+  onClearNews,
+  onOpenAiConstruction,
+  onOpenNewsCountry,
 }: TopRightNewsIconProps) {
   const [mounted, setMounted] = useState(false);
   const [filterCategory, setFilterCategory] = useState<NewsCategory>('semua');
@@ -87,9 +116,9 @@ export default function TopRightNewsIcon({
   ));
 
   const categoryTypes: Record<Exclude<NewsCategory, 'semua'>, NewsType[]> = {
-    diplomasi: ['pakta_non_agresi', 'aliansi_pertahanan', 'perjanjian_dagang', 'kontrak_penelitian', 'sanksi_ekonomi'],
-    ekonomi_keuangan: ['krisis_ekonomi', 'pajak_baru'],
-    pencapaian_militer: ['program_nuklir'],
+    diplomasi: ['pakta_non_agresi', 'aliansi_pertahanan', 'perjanjian_dagang', 'kontrak_penelitian', 'sanksi_ekonomi', 'update_geopolitik'],
+    ekonomi_keuangan: ['krisis_ekonomi', 'pajak_baru', 'kebijakan_negara', 'pembangunan_sipil', 'update_geopolitik'],
+    pencapaian_militer: ['program_nuklir', 'ekspansi_militer', 'pengadaan_armada', 'update_geopolitik'],
     operasi_militer: ['invasi', 'invasi_gabungan_pbb', 'aneksasi', 'pengambilan_sda'],
   };
 
@@ -106,6 +135,11 @@ export default function TopRightNewsIcon({
     pajak_baru: 'Pajak Baru',
     program_nuklir: 'Program Nuklir',
     invasi_gabungan_pbb: 'Invasi Gabungan PBB',
+    kebijakan_negara: 'Penyesuaian Kebijakan Negara',
+    pembangunan_sipil: 'Pembangunan Fasilitas Sipil',
+    ekspansi_militer: 'Pembangunan Infrastruktur Militer',
+    pengadaan_armada: 'Penambahan Unit Militer',
+    update_geopolitik: 'Langkah Geopolitik AI',
   };
 
   const renderBadge = (type: NewsItemData['type']) => {
@@ -198,6 +232,15 @@ export default function TopRightNewsIcon({
             onClick={() => {
               if (toastNews) {
                 dismissedToastIdRef.current = toastNews.id;
+                setShowToast(false);
+                const targetCountry = getNewsCountryName(toastNews);
+                if (isAiConstructionNews(toastNews) && onOpenAiConstruction) {
+                  onOpenAiConstruction(toastNews);
+                  return;
+                } else if (targetCountry && onOpenNewsCountry) {
+                  onOpenNewsCountry(targetCountry);
+                  return;
+                }
               }
               setShowToast(false);
               if (onClick) onClick();
@@ -227,7 +270,7 @@ export default function TopRightNewsIcon({
             </h5>
             <div className="flex items-center justify-between mt-1.5 pt-1 border-t border-[#00FFAA]/10 text-[9px] text-[#6B8A8A]">
               <span>{toastNews.timestamp}</span>
-              <span className="font-extrabold text-[#00FFAA] group-hover:underline">Buka Berita →</span>
+              <span className="font-extrabold text-[#00FFAA] group-hover:underline">Buka Menu →</span>
             </div>
           </div>
         </div>,
@@ -336,25 +379,36 @@ export default function TopRightNewsIcon({
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {filteredNews.map((news) => (
+                  {filteredNews.map((news) => {
+                    const targetCountry = getNewsCountryName(news);
+                    const canOpenCountry = Boolean(targetCountry && onOpenNewsCountry);
+                    const canOpenConstruction = isAiConstructionNews(news) && Boolean(onOpenAiConstruction);
+                    const canOpenParticipants = news.type === 'invasi_gabungan_pbb';
+                    const canNavigate = canOpenConstruction || canOpenCountry || canOpenParticipants;
+                    const openNews = () => {
+                      if (isAiConstructionNews(news) && onOpenAiConstruction) {
+                        onOpenAiConstruction(news);
+                      } else if (targetCountry && onOpenNewsCountry) {
+                        onOpenNewsCountry(targetCountry);
+                      } else if (news.type === 'invasi_gabungan_pbb') {
+                        setSelectedOperationNews(news);
+                      }
+                    };
+
+                    return (
                     <div
                       key={news.id}
-                      onClick={() => {
-                        if (news.type === 'invasi_gabungan_pbb') setSelectedOperationNews(news);
-                      }}
+                      onClick={canNavigate ? openNews : undefined}
                       onKeyDown={event => {
-                        if (
-                          news.type === 'invasi_gabungan_pbb' &&
-                          (event.key === 'Enter' || event.key === ' ')
-                        ) {
+                        if (canNavigate && (event.key === 'Enter' || event.key === ' ')) {
                           event.preventDefault();
-                          setSelectedOperationNews(news);
+                          openNews();
                         }
                       }}
-                      role={news.type === 'invasi_gabungan_pbb' ? 'button' : undefined}
-                      tabIndex={news.type === 'invasi_gabungan_pbb' ? 0 : undefined}
-                      title={news.type === 'invasi_gabungan_pbb' ? 'Klik untuk melihat negara peserta' : undefined}
-                      className={`bg-[#0F2424] border border-[#00FFAA]/25 p-4 sm:p-5 rounded-2xl shadow-lg relative space-y-3 hover:border-[#00FFAA]/50 transition-all ${news.type === 'invasi_gabungan_pbb' ? 'cursor-pointer' : ''}`}
+                      role={canNavigate ? 'button' : undefined}
+                      tabIndex={canNavigate ? 0 : undefined}
+                      title={canOpenConstruction ? `Klik untuk melihat pembangunan di ${targetCountry}` : canOpenCountry ? `Klik untuk melihat negara ${targetCountry}` : canOpenParticipants ? 'Klik untuk melihat negara peserta' : undefined}
+                      className={`bg-[#0F2424] border border-[#00FFAA]/25 p-4 sm:p-5 rounded-2xl shadow-lg relative space-y-3 hover:border-[#00FFAA]/50 transition-all ${canNavigate ? 'cursor-pointer' : ''}`}
                     >
                       <div className="flex items-start gap-3.5">
                         {renderIcon(news.type)}
@@ -406,10 +460,19 @@ export default function TopRightNewsIcon({
                               Klik untuk melihat {news.participants.length} negara anggota Dewan Keamanan yang terlibat.
                             </div>
                           )}
+
+                          {canNavigate && (
+                            <div className="pt-2 flex items-center justify-end">
+                              <span className="text-[10px] font-black text-[#00FFAA] group-hover:underline flex items-center gap-1">
+                                {canOpenConstruction ? 'Buka Menu Pembangunan / Kebijakan →' : canOpenCountry ? 'Buka Profil Negara →' : 'Buka Detail Operasi →'}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>

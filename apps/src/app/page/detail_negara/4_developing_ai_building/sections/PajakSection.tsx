@@ -35,19 +35,11 @@ import {
 import {
   applyBuddhaEnvironmentalTaxRevenueBonus,
 } from "@/app/page/bonus_logic/agama_bonus_logic/buddha";
+import { calculateTaxSatisfaction } from "@/app/logic/kepuasanCalculator";
 
 interface PajakSectionProps {
   countryDetail: Record<string, any> | null;
 }
-
-const getTaxValue = (detail: any, path: string[], fallback: number = 0): number => {
-  let current: any = detail;
-  for (const key of path) {
-    if (current == null || typeof current !== "object") return fallback;
-    current = current[key];
-  }
-  return typeof current === "number" ? current : fallback;
-};
 
 const applyIdeologyTaxBonus = (revenue: number, ideology: unknown) =>
   applyLiberalismTaxRevenueBonus(
@@ -199,20 +191,15 @@ export default function PajakSection({ countryDetail }: PajakSectionProps) {
     [taxCalculations]
   );
 
-  const averageTaxRate = useMemo(() => {
-    const sum = Object.values(taxRates).reduce((acc, r) => acc + r, 0);
-    return (sum / Object.keys(taxRates).length).toFixed(1);
-  }, [taxRates]);
-
   // Indeks kepuasan rakyat terhadap beban pajak (Rumus resmi kepuasanCalculator)
   const taxSatisfactionScore = useMemo(() => {
-    const avgRate = Number(averageTaxRate);
-    const maxPossibleIncome = 5 * 500;
-    return Math.min(
-      100,
-      Math.max(1, Math.round(100 - avgRate + (totalEstimatedRevenue / maxPossibleIncome) * 20))
-    );
-  }, [averageTaxRate, totalEstimatedRevenue]);
+    return calculateTaxSatisfaction(countryDetail, taxRates);
+  }, [countryDetail, taxRates]);
+
+  const averageTaxRate = useMemo(() => {
+    const sum = Object.values(taxRates).reduce((acc, rate) => acc + rate, 0);
+    return (sum / Object.keys(taxRates).length).toFixed(1);
+  }, [taxRates]);
 
   return (
     <div className="space-y-4">

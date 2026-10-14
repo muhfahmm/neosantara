@@ -1,6 +1,7 @@
 export interface AnnexationNewsData {
   id: string;
   type: 'aneksasi';
+  countryName?: string;
   attackerCountry: string;
   attackerIso: string;
   attackerColor: string;

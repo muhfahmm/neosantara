@@ -47,7 +47,7 @@ export function calculateSeparatismeRiskPercent(
 }
 
 export function generatePemberontakanNotification(
-  provinceName: string,
+  countryName: string,
   dateStr: string,
   riskPercent?: number
 ): PemberontakanNotification {
@@ -55,18 +55,18 @@ export function generatePemberontakanNotification(
 
   return {
     id: `pemberontakan-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    title: `🔥 Pemberontakan Bersenjata: Provinsi ${provinceName}`,
-    sender: `Gubernur & Pangdam Provinsi ${provinceName}`,
-    message: `Lapor Presiden! Terjadi gelombang demonstrasi radikal dan gerakan separatis bersenjata di wilayah provinsi ${provinceName}. Milisi lokal menuntut deklarasi kemerdekaan penuh dari kedaulatan negara!`,
+    title: `🔥 Pemberontakan Bersenjata di ${countryName}`,
+    sender: `Otoritas Keamanan ${countryName}`,
+    message: `Lapor Presiden! Terjadi gelombang demonstrasi radikal dan gerakan separatis bersenjata di ${countryName}. Kelompok pemberontak menuntut perubahan status politik dari pemerintah pusat!`,
     timestamp: dateStr,
     type: 'kepuasan',
     value: 0,
     isRead: false,
     tradeType: 'pemberontakan',
-    provinceName,
-    rebelGroup: `Gerakan Kemerdekaan ${provinceName}`,
+    provinceName: countryName,
+    rebelGroup: `Kelompok Pemberontak ${countryName}`,
     costEM: 250,
-    effectText: `Risiko Separatisme: ${displayRisk} | Risiko Lepas Provinsi`,
+    effectText: `Risiko Separatisme: ${displayRisk} | Risiko Instabilitas Nasional`,
     isHandled: false
   };
 }

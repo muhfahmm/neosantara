@@ -112,6 +112,13 @@ import { calculateKesejahteraan, calculateKesejahteraanDecay } from '@/app/logic
 const TopLeftIcon = dynamic(() => import('../menus/inbox/inboxModals'), { ssr: false });
 const TopRightGiftIcon = dynamic(() => import('../menus/reward/rewardModals'), { ssr: false });
 const TopRightNewsIcon = dynamic(() => import('../menus/news/newsModals'), { ssr: false });
+import {
+    acknowledgeAiNews,
+    clearPendingAiNews,
+    clearStoredAiNews,
+    takePendingAiNews,
+    type AiNewsItem,
+} from '@/app/logic/npc_ai_brain/core/aiNewsBridge';
 const BottomLeftPenelitianIcon = dynamic(() => import('../menus/penelitian/penelitianModals'), { ssr: false });
 const BottomLeftMissionIcon = dynamic(() => import('../menus/mission/missionModals'), { ssr: false });
 import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
@@ -615,6 +622,11 @@ export default function MapPage() {
     const [kesejahteraanInitialTab, setKesejahteraanInitialTab] = useState<"statistik" | "naikkan">("statistik");
     const [countryDetailModalOpen, setCountryDetailModalOpen] = useState(false);
     const [countryDetailModalName, setCountryDetailModalName] = useState<string | null>(null);
+    const [aiConstructionNavigation, setAiConstructionNavigation] = useState<{
+        countryName: string;
+        buildingKey?: string;
+        targetTab?: string;
+    } | null>(null);
     const [autoBuildEmbassyState, setAutoBuildEmbassyState] = useState(false);
     const [requireEmbassyModalOpen, setRequireEmbassyModalOpen] = useState(false);
     const [requireEmbassyPartner, setRequireEmbassyPartner] = useState<string | null>(null);
@@ -2427,6 +2439,13 @@ export default function MapPage() {
             const pending = countryDetail.pending_notifications;
             setNotifications(prev => [...pending, ...prev]);
             const generatedNews: NewsItemData[] = [];
+            const notificationCountry = String(
+                countryDetail.country ||
+                countryDetail.nama_negara ||
+                countryDetail.nama ||
+                selectedCountry?.country ||
+                '',
+            );
             for (const notification of pending) {
                 const candidates: Array<NewsItemData | null> = [
                     generateDiplomacyNews(notification),
@@ -2434,7 +2453,7 @@ export default function MapPage() {
                     generateMilitaryAchievementNews(notification),
                 ];
                 for (const item of candidates) {
-                    if (item) generatedNews.push(item);
+                    if (item) generatedNews.push({ ...item, countryName: notificationCountry });
                 }
             }
             if (generatedNews.length > 0) {
@@ -2451,7 +2470,44 @@ export default function MapPage() {
                 pending_notifications: []
             }));
         }
-    }, [countryDetail?.pending_notifications, setCountryDetail]);
+    }, [countryDetail?.pending_notifications, countryDetail?.country, countryDetail?.nama_negara, countryDetail?.nama, selectedCountry?.country, setCountryDetail]);
+
+    // Sinkronisasi Berita dari Pembangunan & Aksi AI NPC ke daftar Berita & Update Geopolitik
+    useEffect(() => {
+        const handleAiNewsUpdated = (e: Event) => {
+            // Jika game sedang paused, abaikan notifikasi
+            if (isPausedRef.current || (typeof window !== "undefined" && (window as any).neosantara_is_paused)) {
+                return;
+            }
+
+            const detail = (e as CustomEvent)?.detail as NewsItemData | undefined;
+            if (!detail || !detail.id) return;
+            acknowledgeAiNews(detail.id);
+            setNewsList(prev => {
+                if (prev.some(item => item.id === detail.id)) return prev;
+                return [detail, ...prev];
+            });
+        };
+
+        if (typeof window !== "undefined") {
+            window.addEventListener("neosantara:ai-news-updated", handleAiNewsUpdated);
+            clearStoredAiNews();
+            const pending = takePendingAiNews();
+            if (pending.length > 0) {
+                setNewsList(previous => {
+                    const existingIds = new Set(previous.map(item => item.id));
+                    const additions = pending.filter(item => !existingIds.has(item.id));
+                    return additions.length > 0 ? [...additions, ...previous] : previous;
+                });
+            }
+        }
+
+        return () => {
+            if (typeof window !== "undefined") {
+                window.removeEventListener("neosantara:ai-news-updated", handleAiNewsUpdated);
+            }
+        };
+    }, []);
 
     useEffect(() => {
         if (!countryDetail) return;
@@ -2743,7 +2799,7 @@ export default function MapPage() {
                 const defRoll = Math.random();
                 const randomPartner = defensePartners[Math.floor(Math.random() * defensePartners.length)];
                 if (isSeparatismeTriggered) {
-                    newNotifsToAdd.push(generatePemberontakanNotification('Papua Barat', currentDateStr, separatismeRisk));
+                    newNotifsToAdd.push(generatePemberontakanNotification(userCountryName, currentDateStr, separatismeRisk));
                 } else if (defRoll < 0.35) {
                     newNotifsToAdd.push(generateSpionaseNotification(randomPartner, currentDateStr));
                 } else if (defRoll < 0.65) {
@@ -4867,6 +4923,7 @@ export default function MapPage() {
                 setPlayerDetailModalOpen(true);
             } else {
                 setCountryDetailModalName(countryName);
+                setAiConstructionNavigation(null);
                 setCountryDetailModalOpen(true);
             }
         } catch (error) {
@@ -5521,7 +5578,37 @@ export default function MapPage() {
                 isOpen={newsModalOpen}
                 onClose={() => setNewsModalOpen(false)}
                 newsList={newsList}
-                onClearNews={() => setNewsList([])}
+                onClearNews={() => {
+                    setNewsList([]);
+                    clearPendingAiNews();
+                    clearStoredAiNews();
+                }}
+                onOpenAiConstruction={(news: AiNewsItem) => {
+                    const targetCountry = news.countryName;
+                    if (!targetCountry) return;
+                    const buildingKey = news.buildingKey;
+                    const targetTab = news.targetTab || news.indicatorKey;
+                    setAiConstructionNavigation({ countryName: targetCountry, buildingKey, targetTab });
+                    setCountryDetailModalName(targetCountry);
+                    setCountryDetailModalOpen(true);
+                    setNewsModalOpen(false);
+                    setInboxModalOpen(false);
+                    setGiftModalOpen(false);
+                    setPenelitianModalOpen(false);
+                    setMissionModalOpen(false);
+                    setActiveMenu("");
+                }}
+                onOpenNewsCountry={(countryName) => {
+                    setAiConstructionNavigation(null);
+                    setCountryDetailModalName(countryName);
+                    setCountryDetailModalOpen(true);
+                    setNewsModalOpen(false);
+                    setInboxModalOpen(false);
+                    setGiftModalOpen(false);
+                    setPenelitianModalOpen(false);
+                    setMissionModalOpen(false);
+                    setActiveMenu("");
+                }}
             />
             <BottomLeftPenelitianIcon
                 onClick={() => {
@@ -5916,6 +6003,7 @@ export default function MapPage() {
             </div>
 
             <CountryDetailModal
+                key={`${aiConstructionNavigation?.countryName || ""}:${aiConstructionNavigation?.buildingKey || ""}:${aiConstructionNavigation?.targetTab || ""}`}
                 isOpen={countryDetailModalOpen}
                 countryName={countryDetailModalName}
                 countryDetail={countryDetail}
@@ -5925,9 +6013,22 @@ export default function MapPage() {
                 playerNetBalanceAdjustment={playerNetBalanceAdjustment}
                 adjustPlayerNetBalance={(delta: number) => setPlayerNetBalanceAdjustment((prev) => prev + delta)}
                 autoBuildEmbassy={autoBuildEmbassyState}
+                initialDevelopingBuildingKey={
+                    aiConstructionNavigation &&
+                    aiConstructionNavigation.countryName.toLowerCase() === countryDetailModalName?.toLowerCase()
+                        ? aiConstructionNavigation.buildingKey
+                        : undefined
+                }
+                initialDevelopingTab={
+                    aiConstructionNavigation &&
+                    aiConstructionNavigation.countryName.toLowerCase() === countryDetailModalName?.toLowerCase()
+                        ? aiConstructionNavigation.targetTab
+                        : undefined
+                }
                 onClose={() => {
                     setCountryDetailModalOpen(false);
                     setCountryDetailModalName(null);
+                    setAiConstructionNavigation(null);
                     setAutoBuildEmbassyState(false);
                 }}
             />

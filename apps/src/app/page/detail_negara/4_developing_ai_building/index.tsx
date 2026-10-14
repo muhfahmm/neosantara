@@ -32,9 +32,11 @@ import DoktrinKeterbukaanSection from "./sections/DoktrinKeterbukaanSection";
 interface DevelopingAIBuildingProps {
   countryDetail?: Record<string, unknown> | null;
   metadata: Record<string, unknown>;
+  initialBuildingKey?: string;
+  initialTab?: string;
 }
 
-type MenuTab =
+export type MenuTab =
   | "kepuasan_rakyat"
   | "produksi_pangan"
   | "hunian"
@@ -65,14 +67,69 @@ const TABS: TabConfig[] = [
   { id: "fasilitas_militer", label: "Fasilitas & Militer", icon: Building2 },
 ];
 
+export function resolveMenuTabFromKey(keyOrTab?: string): MenuTab {
+  if (!keyOrTab) return "kepuasan_rakyat";
+  const normalized = keyOrTab.toLowerCase().trim();
+
+  // 1. Direct matching tab names
+  if (normalized === "kepuasan_rakyat" || normalized === "kepuasan") return "kepuasan_rakyat";
+  if (normalized === "produksi_pangan" || normalized === "pangan") return "produksi_pangan";
+  if (normalized === "hunian" || normalized === "perumahan") return "hunian";
+  if (normalized === "keterbukaan" || normalized === "doktrin") return "keterbukaan";
+  if (normalized === "kelistrikan" || normalized === "listrik") return "kelistrikan";
+  if (normalized === "pajak") return "pajak";
+  if (normalized === "harga" || normalized === "harga_barang_pokok") return "harga";
+  if (normalized === "sistem_ekonomi" || normalized === "sistemekonomi") return "sistem_ekonomi";
+  if (normalized === "subsidi") return "subsidi";
+  if (normalized === "fasilitas_militer" || normalized === "militer" || normalized === "layananpublik") return "fasilitas_militer";
+
+  // 2. Kelistrikan items
+  if (
+    normalized.startsWith("pembangkit_listrik") ||
+    normalized.includes("pltn") ||
+    normalized.includes("pltu") ||
+    normalized.includes("plta") ||
+    normalized.includes("plts") ||
+    normalized.includes("listrik")
+  ) {
+    return "kelistrikan";
+  }
+
+  // 3. Pangan items
+  const panganKeywords = [
+    "padi", "gandum", "jagung", "kedelai", "ayam", "sapi", "domba", "kambing",
+    "udang", "salmon", "tuna", "ikan", "tepung", "minyak", "gula", "daging", "susu", "makanan"
+  ];
+  if (panganKeywords.some((k) => normalized.includes(k))) {
+    return "produksi_pangan";
+  }
+
+  // 4. Hunian items
+  const hunianKeywords = [
+    "rumah", "apartemen", "mansion", "hunian", "subsidi_perumahan", "rusun", "kondominium"
+  ];
+  if (hunianKeywords.some((k) => normalized.includes(k))) {
+    return "hunian";
+  }
+
+  // 5. Default fallback for construction / military items
+  return "fasilitas_militer";
+}
+
 export default function DevelopingAIBuilding({
   countryDetail,
   metadata,
+  initialBuildingKey,
+  initialTab,
 }: DevelopingAIBuildingProps) {
   const [liveCountryDetail, setLiveCountryDetail] = useState<Record<string, any> | null>(
     countryDetail ? (countryDetail as Record<string, any>) : null
   );
-  const [activeTab, setActiveTab] = useState<MenuTab>("kepuasan_rakyat");
+  const [activeTab, setActiveTab] = useState<MenuTab>(() => {
+    if (initialTab) return resolveMenuTabFromKey(initialTab);
+    if (initialBuildingKey) return resolveMenuTabFromKey(initialBuildingKey);
+    return "kepuasan_rakyat";
+  });
 
   useEffect(() => {
     const refreshSimulation = () => {
@@ -175,6 +232,7 @@ export default function DevelopingAIBuilding({
           <PembangunanSipilMiliterSection
             countryDetail={liveCountryDetail}
             metadata={metadata}
+            initialBuildingKey={initialBuildingKey}
           />
         )}
       </div>

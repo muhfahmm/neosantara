@@ -4,6 +4,7 @@ export interface EconomyNewsData {
   id: string;
   type: EconomyNewsType;
   category: 'ekonomi_keuangan';
+  countryName?: string;
   headline: string;
   content: string;
   timestamp: string;

@@ -24,6 +24,7 @@ import {
   calculateKesejahteraanDecay,
 } from "@/app/logic/kesejahteraanCalculator";
 import { calculatePresidentRating, getMonthsDifference } from "@/app/logic/peringkatCalculator";
+import { runNpcCountryBrain } from "@/app/logic/npc_ai_brain/orchestrator";
 
 export const NPC_COUNTRY_SIMULATION_UPDATED_EVENT = "neosantara:npc-country-simulation-updated";
 
@@ -170,8 +171,34 @@ function getMutableCountryState(country: CountryRecord): Record<string, unknown>
       key === "last_kesejahteraan_threshold" ||
       key === "sector_deficit_month_counter" ||
       key === "sector_deficit_kepuasan_penalty" ||
+      key === "ai_brain_state" ||
+      key === "ai_civilian_construction_queue" ||
+      key === "ai_military_infra_queue" ||
+      key === "ai_military_unit_queue" ||
+      key === "opennessIndex" ||
+      key === "speechScore" ||
+      key === "religionScore" ||
+      key === "demoScore" ||
+      key === "transparencyScore" ||
+      key === "mediaScore" ||
+      key === "internetScore" ||
+      key === "borderScore" ||
+      key === "tradeScore" ||
+      key === "diplomacyScore" ||
+      key === "pajak" ||
+      key === "ppn" ||
+      key === "corporate" ||
+      key === "income_tax" ||
+      key === "cigarette_tax" ||
+      key === "environment_tax" ||
+      key === "harga" ||
+      key === "sistem_ekonomi_val" ||
+      key.startsWith("policy_") ||
+      key === "subsidy_states" ||
       key.startsWith("inventory_") ||
-      key.startsWith("last_update_date_")
+      key.startsWith("build_date_") ||
+      key.startsWith("last_update_date_") ||
+      typeof country[key] === "number" // izinkan penambahan jumlah bangunan oleh AI
     )
   );
 }
@@ -314,7 +341,7 @@ function simulateCountryDay(
     additionalDecay: sectorDeficitPenaltyThisTick,
   });
 
-  return {
+  const withSimulation: CountryRecord = {
     ...withSatisfaction,
     presidentRating: ratingResult.presidentRating,
     rating_month_counter: ratingResult.rating_month_counter,
@@ -329,6 +356,10 @@ function simulateCountryDay(
       (Number(withSatisfaction.anggaran) || 0) +
       calculateNetBalanceWithEconomicEmbargo(withSatisfaction, countryName),
   };
+
+  // Eksekusi Otak AI Negara NPC (9 Indikator & Pembangunan Sektor)
+  const brainExecution = runNpcCountryBrain(withSimulation, metadata, date);
+  return brainExecution.updatedCountry as CountryRecord;
 }
 
 function yieldToBrowser(): Promise<void> {

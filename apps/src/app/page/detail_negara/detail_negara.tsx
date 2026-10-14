@@ -35,6 +35,8 @@ interface CountryDetailModalProps {
   playerNetBalanceAdjustment?: number;
   adjustPlayerNetBalance?: (delta: number) => void;
   autoBuildEmbassy?: boolean;
+  initialDevelopingBuildingKey?: string;
+  initialDevelopingTab?: string;
 }
 
 const normalizeCountryKey = (value: unknown) => String(value || '').toLowerCase().trim();
@@ -63,7 +65,20 @@ function getAnnexedInfo(countryNames: unknown[], countryIso?: unknown) {
   return Object.entries(annexedStore).find(([key]) => lookupKeys.has(normalizeCountryKey(key)))?.[1];
 }
 
-export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail, metadata = {}, setCountryDetail, currentDate, playerNetBalanceAdjustment = 0, adjustPlayerNetBalance, autoBuildEmbassy }: CountryDetailModalProps) {
+export function CountryDetailModal({
+  isOpen,
+  countryName,
+  onClose,
+  countryDetail,
+  metadata = {},
+  setCountryDetail,
+  currentDate,
+  playerNetBalanceAdjustment = 0,
+  adjustPlayerNetBalance,
+  autoBuildEmbassy,
+  initialDevelopingBuildingKey,
+  initialDevelopingTab,
+}: CountryDetailModalProps) {
   // State untuk menu tab
   const [activeTab, setActiveTab] = useState<"informasi" | "geopolitik" | "militer" | "developing_ai_building">("informasi");
   const [annexationRevision, setAnnexationRevision] = useState(0);
@@ -181,7 +196,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     } else {
       fetchedRef.current = null;
     }
-  }, [isOpen, countryName]);
+  }, [isOpen, countryName, initialDevelopingBuildingKey, initialDevelopingTab]);
 
   // PERBAIKAN: Fetch data & Agregasi Kekaisaran saat pertama kali negara dibuka
   useEffect(() => {
@@ -194,7 +209,13 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
     setFetchedDetail(null);
     setIsLoadingDetail(true);
-    if (!preserveActiveTabRef.current) setActiveTab("informasi");
+    if (!preserveActiveTabRef.current) {
+      setActiveTab(
+        initialDevelopingBuildingKey || initialDevelopingTab
+          ? "developing_ai_building"
+          : "informasi"
+      );
+    }
     preserveActiveTabRef.current = false;
     prevModalUpdateDateRef.current = null;
 
@@ -810,8 +831,11 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
             {activeTab === "developing_ai_building" && (
               <DevelopingAIBuilding
+                key={`${initialDevelopingBuildingKey || ""}:${initialDevelopingTab || ""}`}
                 countryDetail={detailData}
                 metadata={metadata}
+                initialBuildingKey={initialDevelopingBuildingKey}
+                initialTab={initialDevelopingTab}
               />
             )}
 

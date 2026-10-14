@@ -1,6 +1,7 @@
 export interface ResourceLootNewsData {
   id: string;
   type: 'pengambilan_sda';
+  countryName?: string;
   attackerCountry: string;
   attackerIso: string;
   targetCountry: string;

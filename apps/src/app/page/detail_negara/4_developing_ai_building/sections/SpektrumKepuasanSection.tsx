@@ -13,14 +13,15 @@ import {
   Scale,
   HandHelping,
   AlertCircle,
+  AlertTriangle,
+  ShieldAlert,
   ShieldCheck,
   Percent,
 } from "lucide-react";
+import type { NpcAiBrainState, NpcAlert } from "@/app/logic/npc_ai_brain/types/alertTypes";
 import {
   calculateKepuasan,
-  calculateEconomicPolicySatisfaction,
-  calculateSubsidySatisfaction,
-  getSatisfactionSectorScores,
+  calculateSatisfactionIndicatorScores,
 } from "@/app/logic/kepuasanCalculator";
 
 interface SpektrumKepuasanSectionProps {
@@ -88,28 +89,21 @@ export default function SpektrumKepuasanSection({
   onNavigateTab,
 }: SpektrumKepuasanSectionProps) {
   // Hitung skor kepuasan secara komprehensif
-  const sectorScores = useMemo(() => {
-    return getSatisfactionSectorScores(countryDetail, metadata);
-  }, [countryDetail, metadata]);
+  const indicatorScores = useMemo(
+    () => calculateSatisfactionIndicatorScores(countryDetail, metadata),
+    [countryDetail, metadata],
+  );
 
   const generalSatisfaction = useMemo(() => {
     return Math.round(calculateKepuasan(countryDetail, metadata));
   }, [countryDetail, metadata]);
-
-  const economicPolicySatisfaction = useMemo(() => {
-    return calculateEconomicPolicySatisfaction(countryDetail);
-  }, [countryDetail]);
-
-  const subsidySatisfaction = useMemo(() => {
-    return calculateSubsidySatisfaction(countryDetail);
-  }, [countryDetail]);
 
   // Daftar 9 sektor utama persis sesuai menu Kepuasan Rakyat
   const sectors = useMemo(() => [
     {
       id: "pajak",
       name: "PAJAK",
-      score: sectorScores.pajak,
+      score: indicatorScores.pajak,
       icon: Landmark,
       tabTarget: "pajak",
       desc: "Keterjangkauan beban tarif fiskal bagi masyarakat dan pelaku usaha",
@@ -117,7 +111,7 @@ export default function SpektrumKepuasanSection({
     {
       id: "harga",
       name: "HARGA BARANG POKOK",
-      score: sectorScores.harga,
+      score: indicatorScores.harga,
       icon: Coins,
       tabTarget: "harga",
       desc: "Stabilitas dan keterjangkauan 8 bahan pangan pokok kebutuhan harian",
@@ -125,7 +119,7 @@ export default function SpektrumKepuasanSection({
     {
       id: "pangan",
       name: "PRODUKSI PANGAN",
-      score: sectorScores.pangan,
+      score: indicatorScores.pangan,
       icon: Apple,
       tabTarget: "produksi_pangan",
       desc: "Kecukupan hasil panen pertanian, peternakan, perikanan dan olahan",
@@ -133,7 +127,7 @@ export default function SpektrumKepuasanSection({
     {
       id: "listrik",
       name: "PRODUKSI LISTRIK",
-      score: sectorScores.listrik,
+      score: indicatorScores.listrik,
       icon: Plug,
       tabTarget: "kelistrikan",
       desc: "Keandalan kapasitas daya pembangkit terhadap beban puncak konsumsi",
@@ -141,7 +135,7 @@ export default function SpektrumKepuasanSection({
     {
       id: "hunian",
       name: "HUNIAN PERMUKIMAN",
-      score: sectorScores.hunian,
+      score: indicatorScores.hunian,
       icon: Home,
       tabTarget: "hunian",
       desc: "Ketersediaan rumah subsidi, apartemen, dan perumahan bagi seluruh warga",
@@ -149,7 +143,7 @@ export default function SpektrumKepuasanSection({
     {
       id: "layananPublik",
       name: "LAYANAN PUBLIK & TEMPAT UMUM",
-      score: sectorScores.layananPublik,
+      score: indicatorScores.layananPublik,
       icon: Landmark,
       tabTarget: "fasilitas_militer",
       desc: "Akses fasilitas pendidikan, kesehatan, fasilitas hukum, dan rekreasi publik",
@@ -157,7 +151,7 @@ export default function SpektrumKepuasanSection({
     {
       id: "keterbukaan",
       name: "DOKTRIN & KETERBUKAAN",
-      score: sectorScores.keterbukaan,
+      score: indicatorScores.keterbukaan,
       icon: Globe,
       tabTarget: "keterbukaan",
       desc: "Kebebasan berekspresi, pers, toleransi beragama dan transparansi pemerintahan",
@@ -165,7 +159,7 @@ export default function SpektrumKepuasanSection({
     {
       id: "sistem_ekonomi",
       name: "KEBIJAKAN & SISTEM EKONOMI",
-      score: economicPolicySatisfaction,
+      score: indicatorScores.sistemEkonomi,
       icon: Scale,
       tabTarget: "sistem_ekonomi",
       desc: "Keseimbangan regulasi pasar bebas, proteksi tenaga kerja, dan investasi",
@@ -173,12 +167,32 @@ export default function SpektrumKepuasanSection({
     {
       id: "subsidi",
       name: "ALOKASI & KEBIJAKAN SUBSIDI",
-      score: subsidySatisfaction,
+      score: indicatorScores.subsidi,
       icon: HandHelping,
       tabTarget: "subsidi",
       desc: "Cakupan perlindungan sosial, bantuan pangan, tarif energi, dan jaring pengaman",
     },
-  ], [sectorScores, economicPolicySatisfaction, subsidySatisfaction]);
+  ], [indicatorScores]);
+
+  // Map alert AI aktif per indikator
+  const alertMap = useMemo(() => {
+    const map: Record<string, NpcAlert | undefined> = {};
+    const brain = countryDetail?.ai_brain_state as NpcAiBrainState | undefined;
+    if (brain?.alerts) {
+      for (const a of brain.alerts) {
+        if (a.status !== "selesai") {
+          // Normalisasi key
+          const key = a.indikator === "sistemEkonomi" ? "sistem_ekonomi" : a.indikator;
+          map[key] = a;
+        }
+      }
+    }
+    return map;
+  }, [countryDetail]);
+
+  const totalActiveAlerts = useMemo(() => {
+    return Object.keys(alertMap).length;
+  }, [alertMap]);
 
   // Statistik ringkasan
   const highestSector = useMemo(() => {
@@ -328,7 +342,9 @@ export default function SpektrumKepuasanSection({
             const isClickable = Boolean(sector.tabTarget && onNavigateTab);
             const grade = getSatisfactionGrade(sector.score);
 
-            return (
+              const activeAlert = alertMap[sector.id];
+
+              return (
               <div
                 key={sector.id}
                 onClick={() => {
@@ -337,7 +353,13 @@ export default function SpektrumKepuasanSection({
                   }
                 }}
                 className={`bg-[#0A1A1A] border p-3.5 sm:p-4 rounded-2xl flex items-center gap-3.5 transition-all relative overflow-hidden group shadow-sm ${
-                  grade.textColor.includes("00FFAA")
+                  activeAlert?.tingkat === "KRITIS"
+                    ? "border-red-500/70 shadow-[0_0_12px_rgba(239,68,68,0.25)]"
+                    : activeAlert?.tingkat === "TINGGI"
+                    ? "border-rose-500/50"
+                    : activeAlert?.tingkat === "SEDANG"
+                    ? "border-amber-500/40"
+                    : grade.textColor.includes("00FFAA")
                     ? "border-[#00FFAA]/30 hover:border-[#00FFAA]"
                     : grade.textColor.includes("10B981")
                     ? "border-emerald-500/30 hover:border-emerald-400"
@@ -354,7 +376,11 @@ export default function SpektrumKepuasanSection({
               >
                 <div
                   className={`p-2.5 rounded-xl bg-[#0F2424] border shrink-0 transition-colors ${
-                    grade.textColor.includes("00FFAA")
+                    activeAlert?.tingkat === "KRITIS"
+                      ? "border-red-500 text-red-400"
+                      : activeAlert?.tingkat === "TINGGI"
+                      ? "border-rose-500 text-rose-400"
+                      : grade.textColor.includes("00FFAA")
                       ? "border-[#00FFAA]/30 text-[#00FFAA]"
                       : grade.textColor.includes("10B981")
                       ? "border-emerald-500/30 text-emerald-400"
@@ -370,7 +396,24 @@ export default function SpektrumKepuasanSection({
 
                 <div className="flex-1 min-w-0 space-y-1.5">
                   <div className="flex items-center justify-between text-xs font-black text-[#E0E0E0] uppercase tracking-wide transition-colors">
-                    <span className="truncate pr-2">{sector.name}</span>
+                    <div className="flex items-center gap-2 truncate pr-2">
+                      <span className="truncate">{sector.name}</span>
+                      {activeAlert && (
+                        <span
+                          className={`inline-flex items-center gap-1 text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md border shrink-0 animate-pulse ${
+                            activeAlert.tingkat === "KRITIS"
+                              ? "bg-red-500/20 border-red-500 text-red-400"
+                              : activeAlert.tingkat === "TINGGI"
+                              ? "bg-rose-500/20 border-rose-500 text-rose-300"
+                              : "bg-amber-500/20 border-amber-500 text-amber-300"
+                          }`}
+                          title={activeAlert.penyebab}
+                        >
+                          <AlertTriangle className="w-2.5 h-2.5" />
+                          <span>{activeAlert.tingkat}</span>
+                        </span>
+                      )}
+                    </div>
                     <div className="flex items-center gap-1.5 shrink-0">
                       <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md border ${grade.badgeBg}`}>
                         {grade.label}
@@ -390,7 +433,7 @@ export default function SpektrumKepuasanSection({
                   </div>
 
                   <p className="text-[9px] text-[#6B8A8A] font-medium leading-tight truncate">
-                    {sector.desc}
+                    {activeAlert ? activeAlert.penyebab : sector.desc}
                   </p>
                 </div>
               </div>

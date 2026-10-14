@@ -35,6 +35,7 @@ export function getCountryColor(countryName: string): string {
 export interface InvasionNewsData {
   id: string;
   type: 'invasi';
+  countryName?: string;
   attackerCountry: string;
   attackerIso: string;
   targetCountry: string;
