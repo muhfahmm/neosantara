@@ -141,9 +141,7 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
               <Rocket className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
             </div>
             <div>
-              <h2 className="text-sm sm:text-lg font-bold text-[#00FFAA] tracking-tight leading-none uppercase">ICBM Strategis</h2>
-              <p className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-[#6B8A8A] mt-1">Pengelolaan persenjataan dan peluncuran rudal balistik antarbenua</p>
-            </div>
+              <h2 className="text-sm sm:text-lg font-bold text-[#00FFAA] tracking-tight leading-none uppercase">ICBM Strategis</h2>            </div>
           </div>
 
           <button 
@@ -162,39 +160,26 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
                 <Rocket className="w-12 h-12 sm:w-14 sm:h-14 text-rose-500" />
               </div>
               <p className="text-xs sm:text-sm font-bold text-[#E0E0E0]">Kas Negara & Produksi Uranium</p>
-              <p className="text-[10px] sm:text-xs text-[#6B8A8A] leading-relaxed text-center">
-                Menampilkan saldo kas negara saat ini dan pendapatan tambang uranium berdasarkan data Produksi & Pembangunan.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-3">
-              <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 sm:p-5">
-                <h3 className="text-[10px] sm:text-xs font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Kas Negara</h3>
-                <p className="text-[9px] sm:text-[10px] text-[#6B8A8A] mb-3">Saldo anggaran milik pengguna saat ini.</p>
-                <div className="text-xl sm:text-2xl font-black leading-tight text-[#00FFAA] break-words">{currentCash.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
-                <p className="text-[10px] text-rose-400 font-bold mt-3">Biaya: -{totalCashCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</p>
               </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2">
               <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 sm:p-5">
                 <h3 className="text-[10px] sm:text-xs font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Stok Uranium</h3>
-                <p className="text-[9px] sm:text-[10px] text-[#6B8A8A] mb-3">Persediaan uranium yang tersedia.</p>
-                <div className="text-xl sm:text-2xl font-black leading-tight text-amber-400 break-words">{uraniumStock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</div>
-                <p className="text-[10px] text-rose-400 font-bold mt-3">Biaya: -{totalUraniumCost} uranium</p>
+                <div className="text-lg sm:text-xl font-black leading-tight text-amber-400 break-words">{uraniumStock.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</div>
               </div>
               <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 sm:p-5">
                 <h3 className="text-[10px] sm:text-xs font-black text-[#6B8A8A] uppercase tracking-wider mb-2">Selesai Pada</h3>
-                <p className="text-[9px] sm:text-[10px] text-[#6B8A8A] mb-3">Jadwal estimasi penyelesaian.</p>
-                <div className="text-xl sm:text-2xl font-black leading-tight text-emerald-400 break-words">{completionDate}</div>
-                <p className="text-[10px] text-[#6B8A8A] mt-3">Estimasi setelah {totalBuildDays} hari pembangunan.</p>
+                <div className="text-lg sm:text-xl font-black leading-tight text-emerald-400 break-words">{completionDate}</div>
               </div>
             </div>
 
             {/* KUANTITAS & BANGUN */}
             <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-2xl p-4 sm:p-5 mt-2">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
                 
                 {/* Kuantitas */}
-                <div className="flex flex-col gap-2">
-                  <span className="text-[11px] sm:text-xs font-bold text-[#E0E0E0]">Kuantitas:</span>
+                <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-3">
+                  <span className="whitespace-nowrap text-[11px] sm:text-xs font-bold text-[#E0E0E0]">Kuantitas:</span>
                   <div className="flex items-center gap-2">
                     <input
                       type="number"
@@ -218,24 +203,31 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
                   </div>
                 </div>
 
-                {/* Tombol Seketika & Bangun */}
-                <div className="flex items-center gap-3 w-full sm:w-auto">
-                  <button
-                    onClick={() => console.log(`Membangun ${quantity} ICBM secara instan!`)}
-                    className="flex flex-1 sm:flex-none items-center justify-center gap-1.5 sm:gap-2 rounded-xl bg-amber-500/20 border border-amber-500/40 px-3 sm:px-5 py-2.5 font-bold text-amber-400 hover:bg-amber-500/30 active:scale-95 transition-all cursor-pointer text-[10px] sm:text-xs uppercase"
-                  >
-                    <Gem className="h-4 w-4 text-amber-400" />
-                    <span>Seketika</span>
-                    <span className="text-[10px] font-black bg-amber-400/20 px-2 py-0.5 rounded-full text-amber-300">{quantity * 6}</span>
-                  </button>
-                  <button
-                    onClick={handleBuildClick}
-                    className="flex flex-1 sm:flex-none items-center justify-center gap-1.5 sm:gap-2 rounded-xl bg-[#00FFAA] px-3 sm:px-5 py-2.5 font-black text-[#0A1A1A] shadow-md hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer text-[10px] sm:text-xs uppercase"
-                  >
-                    <Clock className="h-4 w-4 text-[#0A1A1A]" />
-                    <span>Bangun</span>
-                    <span className="text-[10px] font-black bg-black/20 px-2 py-0.5 rounded-full text-[#0A1A1A]">{totalBuildDays} hari</span>
-                  </button>
+                <div className="flex w-full flex-col gap-3 lg:min-w-0 lg:flex-1 lg:flex-row lg:items-center">
+                  <div className="grid grid-cols-2 gap-x-3 text-[10px] font-bold text-rose-400 lg:flex lg:shrink-0 lg:flex-col lg:gap-1">
+                    <span className="whitespace-nowrap">-{totalCashCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</span>
+                    <span className="whitespace-nowrap">-{totalUraniumCost} uranium</span>
+                  </div>
+
+                  {/* Tombol Seketika & Bangun */}
+                  <div className="flex w-full min-w-0 items-center gap-2 lg:flex-1 lg:gap-3">
+                    <button
+                      onClick={() => console.log(`Membangun ${quantity} ICBM secara instan!`)}
+                      className="flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/20 px-3 py-2.5 text-[10px] font-bold uppercase text-amber-400 transition-all hover:bg-amber-500/30 active:scale-95 sm:gap-2 sm:px-5 sm:text-xs"
+                    >
+                      <Gem className="h-4 w-4 text-amber-400" />
+                      <span className="whitespace-nowrap">Seketika</span>
+                      <span className="whitespace-nowrap rounded-full bg-amber-400/20 px-2 py-0.5 text-[10px] font-black text-amber-300">{quantity * 6}</span>
+                    </button>
+                    <button
+                      onClick={handleBuildClick}
+                      className="flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#00FFAA] px-3 py-2.5 text-[10px] font-black uppercase text-[#0A1A1A] shadow-md transition-all hover:bg-[#00FFAA]/80 active:scale-95 sm:gap-2 sm:px-5 sm:text-xs"
+                    >
+                      <Clock className="h-4 w-4 text-[#0A1A1A]" />
+                      <span className="whitespace-nowrap">Bangun</span>
+                      <span className="whitespace-nowrap rounded-full bg-black/20 px-2 py-0.5 text-[10px] font-black text-[#0A1A1A]">{totalBuildDays} hari</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
