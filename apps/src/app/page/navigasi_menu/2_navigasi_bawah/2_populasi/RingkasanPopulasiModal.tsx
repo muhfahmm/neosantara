@@ -144,7 +144,7 @@ export default function RingkasanPopulasiModal({
   const [isDetailDeathOpen, setIsDetailDeathOpen] = useState(false);
   const [isTempatUmumOpen, setIsTempatUmumOpen] = useState(false);
   const [tempatUmumActiveTab, setTempatUmumActiveTab] = useState<string>("infrastruktur");
-  const [isKesejahteraanOpen, setIsKesejahteraanOpen] = useState(false);
+  const [isKesejahteraanOpen, setIsKesejahteraanOpen] = useState(Boolean(initialOpenKesejahteraan));
   const [isTunawismaOpen, setIsTunawismaOpen] = useState(false);
 
   // Buka otomatis modal Kesejahteraan jika dipanggil via Deep Link Kesejahteraan Navbar
@@ -155,12 +155,51 @@ export default function RingkasanPopulasiModal({
   }, [isOpen, initialOpenKesejahteraan]);
 
   const metrics = useMemo(() => {
-    if (!countryDetail) return null;
+    if (!countryDetail || (initialOpenKesejahteraan && isKesejahteraanOpen)) return null;
     // ðŸ”¥ Kirim countryName ke fungsi hitungDemografi
     return hitungDemografi(countryDetail, selectedCountry?.country, metadata, currentDate);
-  }, [countryDetail, selectedCountry, metadata, currentDate]);
+  }, [countryDetail, selectedCountry, metadata, currentDate, initialOpenKesejahteraan, isKesejahteraanOpen]);
 
-  if (!isOpen || !metrics) return null;
+  if (!isOpen) return null;
+
+  const kesejahteraanModal = (
+    <IndeksKesejahteraanModal
+      isOpen={isKesejahteraanOpen}
+      onClose={() => {
+        if (initialOpenKesejahteraan) {
+          onClose();
+          return;
+        }
+        setIsKesejahteraanOpen(false);
+      }}
+      countryDetail={countryDetail}
+      setCountryDetail={setCountryDetail}
+      selectedCountry={selectedCountry}
+      metrics={metrics}
+      setActiveMenu={setActiveMenu}
+      currentDate={currentDate}
+      initialTab={initialKesejahteraanTab}
+      onOpenTempatUmum={(tabId: string) => {
+        if (onOpenTempatUmum) {
+          onOpenTempatUmum(tabId);
+        } else {
+          setTempatUmumActiveTab(tabId);
+          setIsTempatUmumOpen(true);
+        }
+        setIsKesejahteraanOpen(false);
+      }}
+      onOpenIndustriPangan={() => {
+        setActiveMenu?.("Menu:IndustriPangan");
+        setIsKesejahteraanOpen(false);
+      }}
+    />
+  );
+
+  if (isKesejahteraanOpen && initialOpenKesejahteraan) {
+    return kesejahteraanModal;
+  }
+
+  if (!metrics) return null;
 
   const {
     populasi,
@@ -460,30 +499,7 @@ export default function RingkasanPopulasiModal({
         initialTab={tempatUmumActiveTab}
       />
 
-      <IndeksKesejahteraanModal
-        isOpen={isKesejahteraanOpen}
-        onClose={() => setIsKesejahteraanOpen(false)}
-        countryDetail={countryDetail}
-        setCountryDetail={setCountryDetail}
-        selectedCountry={selectedCountry}
-        metrics={metrics}
-        setActiveMenu={setActiveMenu}
-        currentDate={currentDate}
-        initialTab={initialKesejahteraanTab}
-        onOpenTempatUmum={(tabId: string) => {
-          if (onOpenTempatUmum) {
-            onOpenTempatUmum(tabId);
-          } else {
-            setTempatUmumActiveTab(tabId);
-            setIsTempatUmumOpen(true);
-          }
-          setIsKesejahteraanOpen(false);
-        }}
-        onOpenIndustriPangan={() => {
-          setActiveMenu?.("Menu:IndustriPangan");
-          setIsKesejahteraanOpen(false);
-        }}
-      />
+      {kesejahteraanModal}
 
       <TunawismaDetailModal
         isOpen={isTunawismaOpen}
