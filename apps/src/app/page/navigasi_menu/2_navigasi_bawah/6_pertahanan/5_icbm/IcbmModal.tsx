@@ -236,15 +236,6 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
 
   const nuclearOptions = [
     {
-      id: 1,
-      title: "Program Nuklir",
-      icon: Atom,
-      color: "text-yellow-600",
-      bg: "bg-yellow-100",
-      desc: "Mempercepat riset pengayaan uranium untuk membangun hulu ledak nuklir pertama.",
-      isUnlocker: true 
-    },
-    {
       id: 2,
       title: "ICBM",
       icon: Rocket,
