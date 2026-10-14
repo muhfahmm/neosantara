@@ -99,7 +99,6 @@ export default function KorupsiMenu({
             </div>
             <div>
               <h2 className="text-sm font-black uppercase tracking-wide text-[#E0E0E0] sm:text-base">Pemberantasan Korupsi</h2>
-              <p className="text-xs text-[#6B8A8A]">{String(countryDetail.nama_negara ?? countryDetail.country ?? 'Pemerintahan nasional')}</p>
             </div>
           </div>
           <button
