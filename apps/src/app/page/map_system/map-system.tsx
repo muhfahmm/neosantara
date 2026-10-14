@@ -94,7 +94,7 @@ import {
     applyNpcCountrySimulationState,
     useNpcCountrySimulation,
     clearActiveNpcCountrySimulationState,
-} from '@/app/logic/npcCountrySimulation';
+} from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { setCurrentGameDateString } from '@/app/logic/gameSessionState';
 import {
     calculateKepuasan,
@@ -5919,6 +5919,7 @@ export default function MapPage() {
                 isOpen={countryDetailModalOpen}
                 countryName={countryDetailModalName}
                 countryDetail={countryDetail}
+                metadata={metadata}
                 setCountryDetail={setCountryDetail}
                 currentDate={currentDate}
                 playerNetBalanceAdjustment={playerNetBalanceAdjustment}

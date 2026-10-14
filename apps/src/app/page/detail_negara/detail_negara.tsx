@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Flame, Hammer } from 'lucide-react';
 import { COUNTRIES_DATA } from '../map_system/map-data';
 import countryPaths from '../map_system/country-paths.json';
@@ -8,7 +9,7 @@ import {
   calculateNetBalanceWithEconomicEmbargo,
   ECONOMIC_SANCTIONS_UPDATED_EVENT,
 } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
-import { applyNpcCountrySimulationState } from '@/app/logic/npcCountrySimulation';
+import { applyNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
 import { getProvinceReligionOverride } from './1_informasi_umum/provinsi_logic/1_informasi_umum/2_tugaskan_misionaris';
@@ -28,6 +29,7 @@ interface CountryDetailModalProps {
   countryName: string | null;
   onClose: () => void;
   countryDetail?: any; // Data detail negara dari API (negara yang sedang dimainkan)
+  metadata?: Record<string, unknown>;
   setCountryDetail?: (detail: any | ((prev: any) => any)) => void;
   currentDate?: Date; // Tanggal terkini dari TimeController
   playerNetBalanceAdjustment?: number;
@@ -61,7 +63,7 @@ function getAnnexedInfo(countryNames: unknown[], countryIso?: unknown) {
   return Object.entries(annexedStore).find(([key]) => lookupKeys.has(normalizeCountryKey(key)))?.[1];
 }
 
-export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail, setCountryDetail, currentDate, playerNetBalanceAdjustment = 0, adjustPlayerNetBalance, autoBuildEmbassy }: CountryDetailModalProps) {
+export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail, metadata = {}, setCountryDetail, currentDate, playerNetBalanceAdjustment = 0, adjustPlayerNetBalance, autoBuildEmbassy }: CountryDetailModalProps) {
   // State untuk menu tab
   const [activeTab, setActiveTab] = useState<"informasi" | "geopolitik" | "militer" | "developing_ai_building">("informasi");
   const [annexationRevision, setAnnexationRevision] = useState(0);
@@ -464,6 +466,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
   }, [relationPlayerCountryName, relationCountryName, relationRevision, countryName]);
 
   if (!isOpen || !countryName) return null;
+  if (typeof document === "undefined") return null;
 
   const displayCountryName = annexedInfo ? `Provinsi ${countryName}` : countryName;
 
@@ -492,6 +495,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
         : provinceTensionValue <= 80
           ? 'Panas'
           : 'Sangat Panas';
+  const isDevelopingAIBuildingTab = activeTab === "developing_ai_building";
 
   // Fungsi Helper untuk bendera di Header
   const renderFlagHeader = (iso: string | undefined, altName: string) => {
@@ -508,9 +512,9 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
     );
   };
 
-  return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none ${isActionModalOpen ? 'p-0 !pt-0 !pb-0 !px-0' : ''}`}>
-      <div className={`bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[840px] xl:max-w-[960px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-165px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl ${isActionModalOpen ? 'hidden' : ''}`}>
+  return createPortal(
+    <div className={`fixed inset-0 z-[100000000] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent ${isDevelopingAIBuildingTab ? 'pointer-events-auto' : 'pointer-events-none'} ${isActionModalOpen || isDevelopingAIBuildingTab ? '!p-0' : ''}`}>
+      <div className={`bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[840px] xl:max-w-[960px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-165px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl ${isDevelopingAIBuildingTab ? '!max-w-none !h-[100dvh] !max-h-none !rounded-none' : ''} ${isActionModalOpen ? 'hidden' : ''}`}>
         
         {/* Background Glow Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
@@ -700,7 +704,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
 
         {/* BODY CONTENT */}
         <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 lg:p-4 xl:p-8 bg-[#0F2424] relative z-10 no-scrollbar">
-          <div className="max-w-4xl lg:max-w-[780px] xl:max-w-4xl mx-auto">
+          <div className={`${isDevelopingAIBuildingTab ? 'w-full max-w-none' : 'max-w-4xl lg:max-w-[780px] xl:max-w-4xl mx-auto'}`}>
             
             {/* Menu 3 Tab Navigasi */}
             <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex mb-6 lg:mb-4 shadow-sm flex-wrap gap-1">
@@ -807,7 +811,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
             {activeTab === "developing_ai_building" && (
               <DevelopingAIBuilding
                 countryDetail={detailData}
-                currentDate={currentDate}
+                metadata={metadata}
               />
             )}
 
@@ -815,6 +819,7 @@ export function CountryDetailModal({ isOpen, countryName, onClose, countryDetail
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

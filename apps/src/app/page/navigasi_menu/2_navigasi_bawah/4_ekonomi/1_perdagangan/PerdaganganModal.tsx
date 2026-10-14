@@ -42,7 +42,7 @@ import {
   flushNpcCountrySimulation,
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
   updateNpcCountrySimulationState,
-} from "@/app/logic/npcCountrySimulation";
+} from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 
 
 interface AgreementData {

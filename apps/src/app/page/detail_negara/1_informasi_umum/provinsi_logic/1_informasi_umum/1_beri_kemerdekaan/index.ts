@@ -1,7 +1,7 @@
 import { Flag } from 'lucide-react';
 import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
-import { applyNpcCountrySimulationState } from '@/app/logic/npcCountrySimulation';
+import { applyNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import countryPaths from '../../../../../map_system/country-paths.json';
 import { COUNTRIES_DATA } from '../../../../../map_system/map-data';
 import type { ProvinceAction, ProvinceActionEventDetail } from '../../provinceActionTypes';

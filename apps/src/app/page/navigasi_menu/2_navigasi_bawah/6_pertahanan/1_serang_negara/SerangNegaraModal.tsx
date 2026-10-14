@@ -6,7 +6,7 @@ import { getArmadaPowerSummary } from "../4_armada/logic/armadaLogic";
 import SerangModals from "./modals_menu/KonfirmasiSerangModals";
 // 🔥 Import COUNTRIES_DATA untuk meng-enrich ISO
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
-import { applyNpcCountrySimulationState } from "@/app/logic/npcCountrySimulation";
+import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 import KonfirmasiPeluncuranSerangan from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/konfirmasi_peluncuran_serangan";
 import HasilPertempuran from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/hasil_pertempuran";
 

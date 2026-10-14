@@ -10,6 +10,20 @@ import {
   calculateDailyPopulationChange,
   updateDailyPopulation,
 } from "@/app/logic/populations_logic/population_logic";
+import {
+  calculateKepuasan,
+  calculateKeterbukaanScore,
+  createSatisfactionSectorBaseline,
+  countLowSatisfactionSectors,
+  LOW_SECTOR_DECAY_INTERVAL_MONTHS,
+  LOW_SECTOR_DECAY_MAX_POINTS_PER_INTERVAL,
+  LOW_SECTOR_DECAY_POINTS_PER_SECTOR,
+} from "@/app/logic/kepuasanCalculator";
+import {
+  calculateKesejahteraan,
+  calculateKesejahteraanDecay,
+} from "@/app/logic/kesejahteraanCalculator";
+import { calculatePresidentRating, getMonthsDifference } from "@/app/logic/peringkatCalculator";
 
 export const NPC_COUNTRY_SIMULATION_UPDATED_EVENT = "neosantara:npc-country-simulation-updated";
 
@@ -143,10 +157,61 @@ function getMutableCountryState(country: CountryRecord): Record<string, unknown>
       key === "health_tier" ||
       key === "population_status" ||
       key === "armada" ||
+      key === "kepuasan" ||
+      key === "npc_country_metrics_initialized" ||
+      key === "satisfaction_sector_baseline" ||
+      key === "presidentRating" ||
+      key === "rating_month_counter" ||
+      key === "last_rating_threshold" ||
+      key === "kesejahteraan" ||
+      key === "kesejahteraan_bonus" ||
+      key === "kesejahteraan_decay" ||
+      key === "kesejahteraan_month_counter" ||
+      key === "last_kesejahteraan_threshold" ||
+      key === "sector_deficit_month_counter" ||
+      key === "sector_deficit_kepuasan_penalty" ||
       key.startsWith("inventory_") ||
       key.startsWith("last_update_date_")
     )
   );
+}
+
+function initializeNpcCountryMetrics(
+  country: CountryRecord,
+  metadata: Record<string, any>,
+): CountryRecord {
+  const initialized: CountryRecord = { ...country };
+  const wasInitialized = initialized.npc_country_metrics_initialized === true;
+  initialized.kepuasan = Number(initialized.kepuasan ?? 50);
+  initialized.presidentRating = Number(
+    initialized.presidentRating ??
+    initialized.president_rating ??
+    initialized.rating_presiden ??
+    initialized.peringkat ??
+    50
+  );
+  initialized.rating_month_counter = Number(initialized.rating_month_counter ?? 0);
+  initialized.last_rating_threshold = Number(initialized.last_rating_threshold ?? 12);
+  initialized.kesejahteraan = Number(
+    initialized.kesejahteraan ?? initialized.indeks_kesejahteraan ?? 50
+  );
+  initialized.kesejahteraan_bonus = Number(initialized.kesejahteraan_bonus ?? 0);
+  initialized.kesejahteraan_decay = Number(initialized.kesejahteraan_decay ?? 0);
+  initialized.kesejahteraan_month_counter = Number(initialized.kesejahteraan_month_counter ?? 0);
+  initialized.last_kesejahteraan_threshold = Number(initialized.last_kesejahteraan_threshold ?? 12);
+  initialized.sector_deficit_month_counter = Number(initialized.sector_deficit_month_counter ?? 0);
+  initialized.sector_deficit_kepuasan_penalty = Number(initialized.sector_deficit_kepuasan_penalty ?? 0);
+  initialized.satisfaction_sector_baseline ??= createSatisfactionSectorBaseline(initialized, metadata);
+  if (!wasInitialized) {
+    initialized.kepuasan = calculateKepuasan(initialized, metadata);
+    initialized.kesejahteraan = calculateKesejahteraan(
+      initialized,
+      metadata,
+      initialized.kesejahteraan,
+    ).overallScore;
+    initialized.npc_country_metrics_initialized = true;
+  }
+  return initialized;
 }
 
 function simulateCountryDay(
@@ -175,7 +240,7 @@ function simulateCountryDay(
     metadata,
     date
   );
-  const withPopulation = {
+  const withPopulation: CountryRecord = {
     ...withProduction,
     ...updateDailyPopulation(
       withProduction,
@@ -186,11 +251,83 @@ function simulateCountryDay(
     ),
   };
 
-  return {
+  const monthsPassed = Math.max(0, getMonthsDifference(previousDate, date));
+  const lowSectorCount = countLowSatisfactionSectors(country, metadata);
+  const previousDeficitMonths = Math.max(0, Number(country.sector_deficit_month_counter) || 0);
+  const accumulatedDeficitMonths = lowSectorCount > 0
+    ? previousDeficitMonths + monthsPassed
+    : 0;
+  const completedDeficitPeriods = lowSectorCount > 0
+    ? Math.floor(accumulatedDeficitMonths / LOW_SECTOR_DECAY_INTERVAL_MONTHS)
+    : 0;
+  const sectorDeficitPenaltyThisTick = completedDeficitPeriods * Math.min(
+    LOW_SECTOR_DECAY_MAX_POINTS_PER_INTERVAL,
+    lowSectorCount * LOW_SECTOR_DECAY_POINTS_PER_SECTOR,
+  );
+  const sectorDeficitMonthCounter = lowSectorCount > 0
+    ? accumulatedDeficitMonths % LOW_SECTOR_DECAY_INTERVAL_MONTHS
+    : 0;
+  const accumulatedSectorPenalty = lowSectorCount > 0
+    ? Math.max(0, Number(country.sector_deficit_kepuasan_penalty) || 0) +
+      sectorDeficitPenaltyThisTick
+    : 0;
+  const nextKepuasan = Math.max(
+    0,
+    Math.min(
+      100,
+      parseFloat(
+        (
+          Number(country.kepuasan ?? 50) -
+          sectorDeficitPenaltyThisTick
+        ).toFixed(1),
+      ),
+    ),
+  );
+  const withSatisfaction: CountryRecord = {
     ...withPopulation,
+    kepuasan: nextKepuasan,
+    sector_deficit_month_counter: sectorDeficitMonthCounter,
+    sector_deficit_kepuasan_penalty: accumulatedSectorPenalty,
+  };
+  const keterbukaanScore = calculateKeterbukaanScore(country);
+  const ratingResult = calculatePresidentRating({
+    currentRating: Number(country.presidentRating ?? 50),
+    ratingMonthCounter: Number(country.rating_month_counter) || 0,
+    lastRatingThreshold: Number(country.last_rating_threshold) || 12,
+    monthsPassed,
+    currentKepuasan: nextKepuasan,
+    keterbukaanScore,
+    lowSectorCount,
+    additionalDecay: sectorDeficitPenaltyThisTick,
+    countryDetail: country,
+    lastDate: previousDate,
+    currentDate: date,
+  });
+  const welfareResult = calculateKesejahteraanDecay({
+    currentKesejahteraan: Number(country.kesejahteraan ?? 50),
+    kesejahteraanMonthCounter: Number(country.kesejahteraan_month_counter) || 0,
+    lastKesejahteraanThreshold: Number(country.last_kesejahteraan_threshold) || 12,
+    monthsPassed,
+    currentKepuasan: nextKepuasan,
+    keterbukaanScore,
+    lowSectorCount,
+    additionalDecay: sectorDeficitPenaltyThisTick,
+  });
+
+  return {
+    ...withSatisfaction,
+    presidentRating: ratingResult.presidentRating,
+    rating_month_counter: ratingResult.rating_month_counter,
+    last_rating_threshold: ratingResult.last_rating_threshold,
+    kesejahteraan: welfareResult.nextKesejahteraan,
+    kesejahteraan_bonus: Number(country.kesejahteraan_bonus) || 0,
+    kesejahteraan_decay:
+      (Number(country.kesejahteraan_decay) || 0) + welfareResult.decayThisTick,
+    kesejahteraan_month_counter: welfareResult.kesejahteraan_month_counter,
+    last_kesejahteraan_threshold: welfareResult.last_kesejahteraan_threshold,
     anggaran:
-      (Number(withPopulation.anggaran) || 0) +
-      calculateNetBalanceWithEconomicEmbargo(withPopulation, countryName),
+      (Number(withSatisfaction.anggaran) || 0) +
+      calculateNetBalanceWithEconomicEmbargo(withSatisfaction, countryName),
   };
 }
 
@@ -228,10 +365,28 @@ async function persistNpcSimulation(
   };
 
   if (!previousState) {
+    for (const country of sourceCountries) {
+      const slug = normalizeSlug(country.country_slug);
+      if (!slug || slug === playerCountrySlug) continue;
+      state.countries[slug] = getMutableCountryState(
+        initializeNpcCountryMetrics(country, metadata),
+      );
+    }
     activeNpcSimulationState = state;
+    window.dispatchEvent(new CustomEvent(NPC_COUNTRY_SIMULATION_UPDATED_EVENT));
     return;
   }
-  if (currentDate <= state.lastSimulatedDate) return;
+  if (currentDate < state.lastSimulatedDate) return;
+  if (
+    currentDate === state.lastSimulatedDate &&
+    sourceCountries.every(country => {
+      const slug = normalizeSlug(country.country_slug);
+      return !slug || slug === playerCountrySlug ||
+        state.countries[slug]?.npc_country_metrics_initialized === true;
+    })
+  ) {
+    return;
+  }
 
   const simulatedCountries = new Map<string, CountryRecord>();
   const annexedCountries =
@@ -253,12 +408,12 @@ async function persistNpcSimulation(
       continue;
     }
 
-    simulatedCountries.set(slug, {
+    simulatedCountries.set(slug, initializeNpcCountryMetrics({
       ...baseline,
       ...(state.countries[slug] || {}),
       religion: baseline.religion,
       ideology: baseline.ideology,
-    });
+    }, metadata));
   }
 
   let simulationDate = state.lastSimulatedDate;

@@ -10,7 +10,7 @@ import {
   applyNpcCountrySimulationState,
   applyNpcCountrySimulationStates,
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
-} from '@/app/logic/npcCountrySimulation';
+} from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 
 interface FinansialGlobalProps {
   countryDetail: any;

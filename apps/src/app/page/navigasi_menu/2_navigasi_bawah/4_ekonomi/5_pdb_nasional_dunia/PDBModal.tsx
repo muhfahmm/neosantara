@@ -10,7 +10,7 @@ import {
   calculateActiveSubsidyCost,
 } from "@/app/logic/economic_logic/treasuryUpdater";
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
-import { applyNpcCountrySimulationState } from '@/app/logic/npcCountrySimulation';
+import { applyNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
 
 const getNormalizedSlug = (detail: any) => {

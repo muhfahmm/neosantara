@@ -18,7 +18,7 @@ import { getIslamProductionMultiplier } from "../../../../bonus_logic/agama_bonu
 import { getShintoElectricityProductionMultiplier } from "../../../../bonus_logic/agama_bonus_logic/shinto";
 import { getCommunismProductionMultiplier, COMMUNISM_PRODUCTION_BONUS } from "../../../../bonus_logic/ideologi_bonus_logic/komunisme";
 import { isMemberOfFAO, FAO_BONUS_RESOURCES } from "../../../../bonus_logic/organisasi_bonus_logic/organisasi_pbb/fao";
-import { applyNpcCountrySimulationState } from "@/app/logic/npcCountrySimulation";
+import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 import { calculatePanganScore } from "@/app/logic/kepuasanCalculator";
 
 // 🔥 IMPOR MODAL DAN LOGIKA

@@ -4,7 +4,7 @@ import { clearActiveSecurityCouncilItems } from '@/app/page/navigasi_menu/2_navi
 import { clearReportedInvasionViolations } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
 import { clearExpelledOrganizationCountries } from '@/../../json/database_organisasi_internasional';
 import { clearAllOrganizationMembershipData } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic';
-import { clearActiveNpcCountrySimulationState } from '@/app/logic/npcCountrySimulation';
+import { clearActiveNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 
 export interface RestartOptions {
     timeManager: SimulationTimeManager | null;

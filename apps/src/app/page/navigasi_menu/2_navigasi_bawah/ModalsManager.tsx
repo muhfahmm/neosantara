@@ -9,7 +9,7 @@ import { isCountryUnderEconomicEmbargo } from './7_geopolitik/1_PBB/1_resolusi_P
 import {
   applyNpcCountrySimulationStates,
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
-} from '@/app/logic/npcCountrySimulation';
+} from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { processCorruptionMonth } from './9_kementrian/1_pemberantasan_korupsi/logic/scandalLogic';
 
