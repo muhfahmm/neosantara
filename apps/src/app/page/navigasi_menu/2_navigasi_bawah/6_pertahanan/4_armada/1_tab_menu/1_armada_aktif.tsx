@@ -413,7 +413,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
               </span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 lg:gap-3">
               {armadaCatalog[group].map((item) => {
                 const value = getData(item.key, group);
                 let displayText = formatNumber(value);
@@ -442,7 +442,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                       setSelectedForBuild({ key: item.key, label: item.label });
                       setIsConfirmBuildOpen(true);
                     }}
-                    className={`relative rounded-2xl flex flex-col justify-between transition-all bg-[#0A1A1A] border border-[#00FFAA]/20 shadow-sm hover:border-[#00FFAA]/50 hover:shadow-md cursor-pointer p-2.5 sm:p-3 min-h-[100px] sm:min-h-[110px] ${hasPending ? 'overflow-visible' : 'overflow-hidden'}`}
+                    className={`relative rounded-xl flex flex-col justify-between transition-all bg-[#0A1A1A] border border-[#00FFAA]/20 shadow-sm hover:border-[#00FFAA]/50 hover:shadow-md cursor-pointer p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] ${hasPending ? 'overflow-visible' : 'overflow-hidden'}`}
                   >
                     {hasPending && lastEndDate && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[9px] sm:text-[10px] font-bold px-2 py-0.5 border border-[#00FFAA]/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">
@@ -468,7 +468,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                     <div className="flex flex-col justify-between">
                       <div>
                         <div className="flex items-end gap-1 flex-wrap">
-                          <span className={`${item.key === "barak" ? "text-xs sm:text-sm" : "text-sm sm:text-base lg:text-lg"} font-black text-[#E0E0E0] leading-tight break-words`}>
+                          <span className={`${item.key === "barak" ? "text-[11px] sm:text-xs" : "text-xs sm:text-sm lg:text-base"} font-black text-[#E0E0E0] leading-tight break-words`}>
                             {displayText}
                           </span>
                           {hasPending && (

@@ -128,14 +128,13 @@ export class SimulationTimeManager {
             const delta = now - this.lastTickTime;
 
             if (delta >= interval) {
-                const daysToAdvance = Math.floor(delta / interval);
                 const newDate = new Date(this.currentDate);
-                newDate.setDate(newDate.getDate() + daysToAdvance);
+                newDate.setDate(newDate.getDate() + 1);
                 this.currentDate = newDate;
                 
                 setSimulationDate(this.currentDate);
                 
-                this.lastTickTime = now - (delta % interval);
+                this.lastTickTime = now;
                 this.triggerCallback();
             }
 

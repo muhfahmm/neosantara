@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { useState, useEffect } from "react";
 import { X, Users, Info, TrendingUp, ShieldAlert, BadgeDollarSign, Users2, ChevronRight } from "lucide-react";
 import {
   calculateSectoralSatisfaction,
@@ -12,19 +13,14 @@ import {
   calculateHomelessCount,
   calculateDailyPopulationChange,
   getPopulationProjection,
-  getPanganMultiplier,
-  getHunianMultiplier,
-  getOverpopMultiplier,
-  getKesehatanMultiplier,
-  type PopulationDailyMetrics,
   type PopulationSectoral,
 } from "@/app/logic/populations_logic/population_logic";
 
-import DetailKelahiranModal from "./kelahiran_modals/DetailKelahiranModal";
-import DetailKematianModal from "./kematian_modals/DetailKematianModal";
-import TempatUmumModal from "../5_pembangunan/2_tempat_umum/TempatUmumModal";
-import IndeksKesejahteraanModal from "./indeks_kesejahteraan_modals/IndeksKesejahteraanModal";
-import TunawismaDetailModal from "./tunawisma_modals/TunawismaDetailModal";
+const DetailKelahiranModal = dynamic(() => import("./kelahiran_modals/DetailKelahiranModal"), { ssr: false });
+const DetailKematianModal = dynamic(() => import("./kematian_modals/DetailKematianModal"), { ssr: false });
+const TempatUmumModal = dynamic(() => import("../5_pembangunan/2_tempat_umum/TempatUmumModal"), { ssr: false });
+const IndeksKesejahteraanModal = dynamic(() => import("./indeks_kesejahteraan_modals/IndeksKesejahteraanModal"), { ssr: false });
+const TunawismaDetailModal = dynamic(() => import("./tunawisma_modals/TunawismaDetailModal"), { ssr: false });
 import {
   HINDU_POPULATION_GROWTH_BONUS,
 } from "@/app/page/bonus_logic/agama_bonus_logic/hindu";
@@ -108,8 +104,6 @@ function hitungDemografi(
   const metrics = calculateDailyPopulationChange(detailWithDefaults, countryName, metadata, currentDate);
   const totalDailyDelta = metrics.netDailyChange;
   const totalMonthlyGrowthPercent = ((totalDailyDelta * 30) / populasi) * 100;
-  const projectedPopulation30Days = getPopulationProjection(detailWithDefaults, 30, metadata, currentDate).at(-1) ?? populasi;
-
   const homelessCount = calculateHomelessCount(populasi, sektoral.hunian, detailWithDefaults);
 
   return {
@@ -118,7 +112,6 @@ function hitungDemografi(
     totalDailyDelta,
     totalMonthlyGrowthPercent,
     sektoral,
-    projectedPopulation30Days,
   };
 }
 
@@ -146,6 +139,17 @@ export default function RingkasanPopulasiModal({
   const [tempatUmumActiveTab, setTempatUmumActiveTab] = useState<string>("infrastruktur");
   const [isKesejahteraanOpen, setIsKesejahteraanOpen] = useState(Boolean(initialOpenKesejahteraan));
   const [isTunawismaOpen, setIsTunawismaOpen] = useState(false);
+  const [metricsResult, setMetricsResult] = useState<{
+    countryDetail: CountryDetail;
+    countryName?: string;
+    metadata: Record<string, any>;
+    currentDate?: Date | string;
+    value: ReturnType<typeof hitungDemografi>;
+  } | null>(null);
+  const [projectionResult, setProjectionResult] = useState<{
+    metrics: ReturnType<typeof hitungDemografi>;
+    value: number;
+  } | null>(null);
 
   // Buka otomatis modal Kesejahteraan jika dipanggil via Deep Link Kesejahteraan Navbar
   useEffect(() => {
@@ -154,15 +158,45 @@ export default function RingkasanPopulasiModal({
     }
   }, [isOpen, initialOpenKesejahteraan]);
 
-  const metrics = useMemo(() => {
-    if (!countryDetail || (initialOpenKesejahteraan && isKesejahteraanOpen)) return null;
-    // ðŸ”¥ Kirim countryName ke fungsi hitungDemografi
-    return hitungDemografi(countryDetail, selectedCountry?.country, metadata, currentDate);
-  }, [countryDetail, selectedCountry, metadata, currentDate, initialOpenKesejahteraan, isKesejahteraanOpen]);
+  useEffect(() => {
+    if (!isOpen || !countryDetail || (initialOpenKesejahteraan && isKesejahteraanOpen)) return;
+
+    const countryName = selectedCountry?.country;
+    const timeoutId = window.setTimeout(() => {
+      setMetricsResult({
+        countryDetail,
+        countryName,
+        metadata,
+        currentDate,
+        value: hitungDemografi(countryDetail, countryName, metadata, currentDate),
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isOpen, countryDetail, selectedCountry?.country, metadata, currentDate, initialOpenKesejahteraan, isKesejahteraanOpen]);
+
+  const metrics =
+    metricsResult && metricsResult.countryName === selectedCountry?.country
+      ? metricsResult.value
+      : null;
+
+  useEffect(() => {
+    if (!isOpen || !metrics || !countryDetail) return;
+
+    const timeoutId = window.setTimeout(() => {
+      const projection = getPopulationProjection(countryDetail, 30, metadata, currentDate);
+      setProjectionResult({
+        metrics,
+        value: projection.at(-1) ?? metrics.populasi,
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isOpen, metrics, countryDetail, metadata, currentDate]);
 
   if (!isOpen) return null;
 
-  const kesejahteraanModal = (
+  const kesejahteraanModal = isKesejahteraanOpen ? (
     <IndeksKesejahteraanModal
       isOpen={isKesejahteraanOpen}
       onClose={() => {
@@ -193,13 +227,33 @@ export default function RingkasanPopulasiModal({
         setIsKesejahteraanOpen(false);
       }}
     />
-  );
+  ) : null;
 
   if (isKesejahteraanOpen && initialOpenKesejahteraan) {
     return kesejahteraanModal;
   }
 
-  if (!metrics) return null;
+  if (!metrics) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
+        <div className="flex h-full max-h-[calc(100vh-125px)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] pointer-events-auto lg:max-h-[calc(100vh-145px)] lg:max-w-[920px]">
+          <div className="flex shrink-0 items-center justify-between border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:px-6 sm:py-3">
+            <h2 className="text-base font-bold uppercase tracking-tight text-[#00FFAA] sm:text-xl">Kependudukan</h2>
+            <button onClick={onClose} className="flex items-center gap-1 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 text-xs font-bold uppercase text-[#6B8A8A] transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] lg:p-2">
+              <span className="pl-1 text-[10px] font-semibold tracking-widest lg:text-xs">Tutup</span>
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="flex flex-1 items-center justify-center" role="status" aria-live="polite">
+            <div className="flex items-center gap-3 text-sm font-semibold text-[#E0E0E0]">
+              <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#00FFAA]/30 border-t-[#00FFAA]" />
+              Menyiapkan ringkasan populasi...
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const {
     populasi,
@@ -208,41 +262,12 @@ export default function RingkasanPopulasiModal({
     totalDailyDelta,
     totalMonthlyGrowthPercent,
     homelessCount,
-    kepuasanUmum,
-    foodRatio,
-    housingFulfillment,
-    overpopulationTier,
-    healthIndex,
     populationStatus,
-    projectedPopulation30Days,
   } = metrics;
+  const projectedPopulation30Days =
+    projectionResult?.metrics === metrics ? projectionResult.value : null;
 
-  const factorCards = [
-    {
-      label: 'Pangan / Food',
-      value: `${(foodRatio * 100).toFixed(1)}%`,
-      status: getPanganMultiplier(foodRatio),
-      progress: Math.min(100, foodRatio * 100),
-    },
-    {
-      label: 'Hunian / Housing',
-      value: `${(housingFulfillment * 100).toFixed(1)}%`,
-      status: getHunianMultiplier(housingFulfillment),
-      progress: Math.min(100, housingFulfillment * 100),
-    },
-    {
-      label: 'Overpopulasi / Overpopulation',
-      value: getOverpopMultiplier(populasi).label,
-      status: getOverpopMultiplier(populasi),
-      progress: (overpopulationTier / 5) * 100,
-    },
-    {
-      label: 'Kesehatan / Health',
-      value: `${Math.round(healthIndex)}/100`,
-      status: getKesehatanMultiplier(healthIndex),
-      progress: healthIndex,
-    },
-  ];
+  // Peta warna status (dipakai untuk label status demografi)
   const factorColors: Record<string, { text: string; bar: string }> = {
     emerald: { text: 'text-emerald-300', bar: 'bg-emerald-400' },
     green: { text: 'text-green-300', bar: 'bg-green-400' },
@@ -252,20 +277,6 @@ export default function RingkasanPopulasiModal({
     red: { text: 'text-red-300', bar: 'bg-red-400' },
     rose: { text: 'text-rose-300', bar: 'bg-rose-400' },
   };
-  const activePopulationEvents = [
-    ...(Array.isArray(countryDetail?.active_outbreaks) ? countryDetail.active_outbreaks : []).map((event: any) => ({
-      id: event.id,
-      label: `Wabah / Outbreak: ${event.eventName || event.category}`,
-      korban: Number(event.korban) || 0,
-      days: Number(event.durationDays) || 0,
-    })),
-    ...(Array.isArray(countryDetail?.active_disaster_effects) ? countryDetail.active_disaster_effects : []).map((event: any) => ({
-      id: event.id,
-      label: `Bencana / Disaster: ${event.eventName || event.category}`,
-      korban: Number(event.korban) || 0,
-      days: Number(event.durationDays) || 0,
-    })),
-  ];
 
   const countryName = selectedCountry?.country || "Indonesia";
 
@@ -362,46 +373,6 @@ export default function RingkasanPopulasiModal({
         <div className="flex-1 overflow-y-auto p-3 lg:p-4.5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
           <div className="space-y-3.5 lg:space-y-4.5 2xl:space-y-6 animate-in fade-in duration-500">
 
-            <section className="bg-[#0F2424] border border-[#00FFAA]/20 p-3.5 lg:p-4.5 2xl:p-6 rounded-xl space-y-3" aria-label="Status demografi / Demographic status">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <h3 className="text-xs lg:text-sm font-black text-[#00FFAA] uppercase">Status Demografi / Demographic Status</h3>
-                  <p className={`text-[10px] lg:text-xs font-bold mt-1 ${factorColors[populationStatus.color]?.text || 'text-[#E0E0E0]'}`}>
-                    {populationStatus.label} / {populationStatus.labelEn}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-[9px] lg:text-[10px] text-[#6B8A8A] font-bold uppercase">Proyeksi 30 hari / 30-day projection</p>
-                  <p className="text-xs lg:text-sm text-[#E0E0E0] font-black">{projectedPopulation30Days.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 lg:gap-3">
-                {factorCards.map((factor) => {
-                  const colors = factorColors[factor.status.color] || factorColors.green;
-                  return (
-                    <div key={factor.label} className="bg-[#0A1A1A] border border-[#00FFAA]/15 rounded-lg p-2.5 lg:p-3">
-                      <div className="flex items-baseline justify-between gap-2">
-                        <span className="text-[9px] lg:text-[10px] text-[#8BA5A5] font-black uppercase">{factor.label}</span>
-                        <span className={`text-[10px] lg:text-xs font-black ${colors.text}`}>{factor.value}</span>
-                      </div>
-                      <p className="text-[9px] text-[#6B8A8A] mt-1">{factor.status.label} / {factor.status.labelEn}</p>
-                      <div
-                        className="h-1.5 mt-2 rounded-full bg-[#173131] overflow-hidden"
-                        role="progressbar"
-                        aria-label={factor.label}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                        aria-valuenow={Math.round(factor.progress)}
-                      >
-                        <div className={`h-full rounded-full ${colors.bar}`} style={{ width: `${Math.max(0, Math.min(100, factor.progress))}%` }} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-
             {/* Informasi Demografi */}
             <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3.5 lg:p-4.5 2xl:p-6 rounded-xl 2xl:rounded-2xl space-y-2.5 lg:space-y-3 2xl:space-y-4">
               <h3 className="text-xs lg:text-sm 2xl:text-md font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-2">
@@ -450,7 +421,7 @@ export default function RingkasanPopulasiModal({
       </div>
 
       {/* Render modal detail */}
-      <DetailKelahiranModal
+      {isDetailBirthOpen && <DetailKelahiranModal
         isOpen={isDetailBirthOpen}
         onClose={() => setIsDetailBirthOpen(false)}
         countryDetail={countryDetail}
@@ -463,9 +434,9 @@ export default function RingkasanPopulasiModal({
           setIsTempatUmumOpen(true);
           setIsDetailBirthOpen(false);
         }}
-      />
+      />}
 
-      <DetailKematianModal
+      {isDetailDeathOpen && <DetailKematianModal
         isOpen={isDetailDeathOpen}
         onClose={() => setIsDetailDeathOpen(false)}
         countryDetail={countryDetail}
@@ -486,10 +457,10 @@ export default function RingkasanPopulasiModal({
             onOpenArmadaTab?.('aktif');
           }
         }}
-      />
+      />}
 
-      <TempatUmumModal
-        isOpen={isTempatUmumOpen}
+      {isTempatUmumOpen && <TempatUmumModal
+        isOpen={true}
         onClose={() => setIsTempatUmumOpen(false)}
         countryDetail={countryDetail}
         setCountryDetail={(updated) => {
@@ -497,17 +468,17 @@ export default function RingkasanPopulasiModal({
           // Atau gunakan hook context jika tersedia
         }}
         initialTab={tempatUmumActiveTab}
-      />
+      />}
 
       {kesejahteraanModal}
 
-      <TunawismaDetailModal
+      {isTunawismaOpen && <TunawismaDetailModal
         isOpen={isTunawismaOpen}
         onClose={() => setIsTunawismaOpen(false)}
         countryDetail={countryDetail}
         selectedCountry={selectedCountry}
         homelessCount={homelessCount}
-      />
+      />}
     </div>
   );
 }

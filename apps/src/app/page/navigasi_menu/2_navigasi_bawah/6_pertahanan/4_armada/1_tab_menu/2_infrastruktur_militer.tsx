@@ -466,7 +466,7 @@ export default function InfrastrukturMiliter({
   // 🟢 Render UI
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 lg:gap-3">
         {Object.keys(infrastrukturData).map((key) => {
           const item = infrastrukturData[key];
           if (!item) return null;
@@ -486,7 +486,7 @@ export default function InfrastrukturMiliter({
                 setSelectedForBuild({ key, label: item.label });
                 setIsConfirmBuildOpen(true);
               }}
-              className={`relative rounded-2xl overflow-visible flex flex-col justify-between transition-all bg-[#0A1A1A] border p-2.5 sm:p-3 min-h-[100px] sm:min-h-[110px] cursor-pointer ${
+              className={`relative rounded-xl overflow-visible flex flex-col justify-between transition-all bg-[#0A1A1A] border p-2 sm:p-2.5 min-h-[88px] sm:min-h-[96px] cursor-pointer ${
                 highlightKey === key 
                   ? 'border-[#00FFAA] shadow-[0_0_12px_rgba(0,255,170,0.3)]' 
                   : 'border-[#00FFAA]/20 hover:border-[#00FFAA]/50 hover:shadow-md'
@@ -516,7 +516,7 @@ export default function InfrastrukturMiliter({
               <div className="flex flex-col justify-between">
                 <div>
                   <div className="flex items-end gap-1 flex-wrap">
-                    <span className="text-sm sm:text-base lg:text-lg font-black text-[#E0E0E0] leading-tight break-words">{formatNumber(value)}</span>
+                    <span className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-tight break-words">{formatNumber(value)}</span>
                     {isBuilding && (
                       <span className="text-[10px] sm:text-xs font-bold text-[#00FFAA] leading-none">
                         +{queueCount}

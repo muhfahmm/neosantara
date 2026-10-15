@@ -157,23 +157,23 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
         </div>
 
         {/* TOP STATS SUMMARY BANNER */}
-        <div className="px-4 lg:px-6 py-2.5 lg:py-4 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3 shrink-0">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3 rounded-xl">
+        <div className="px-4 lg:px-6 py-2 lg:py-3 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-2.5 shrink-0">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
             <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Total Beban Anggaran Subsidi</p>
             <p className="text-xs lg:text-sm font-black text-[#00FFAA] mt-0.5">{formatCurrencyCompact(summary.totalCost)}</p>
           </div>
 
-          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3 rounded-xl">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
             <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Sektor Aktif / Total</p>
             <p className="text-xs lg:text-sm font-black text-[#E0E0E0] mt-0.5">{summary.activeCount} dari {summary.totalCount} Sektor</p>
           </div>
 
-          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3 rounded-xl">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
             <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Dukungan Kepuasan Rakyat</p>
             <p className="text-xs lg:text-sm font-black text-emerald-400 mt-0.5">+{summary.totalApprovalBonus}% Approval</p>
           </div>
 
-          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3 rounded-xl">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
             <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Risiko Gejolak Demo</p>
             <p className={`text-xs lg:text-sm font-black mt-0.5 ${
               summary.highestDemoRisk === "Kritis" ? "text-rose-500" :
@@ -195,7 +195,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
         <div className="flex-1 flex min-h-0 relative z-10">
           
           {/* SIDEBAR TABS */}
-          <div className="w-48 lg:w-56 2xl:w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2.5 lg:p-4 flex flex-col gap-2 overflow-y-auto no-scrollbar shrink-0">
+          <div className="w-44 lg:w-48 2xl:w-52 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 lg:p-3 flex flex-col gap-1.5 lg:gap-2 overflow-y-auto no-scrollbar shrink-0">
             {categories.map((cat) => {
               const activeCountInCat = subsidyItems.filter(
                 (i) => (cat.id === "Semua" || i.category === cat.id) && i.isSubsidized
@@ -208,14 +208,14 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`flex items-center justify-between w-full p-2.5 lg:p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  className={`flex items-center justify-between w-full p-2 lg:p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                     selectedCategory === cat.id
                       ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
                       : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
                   }`}
                 >
-                  <span className="text-[11px] lg:text-xs font-bold uppercase tracking-wider">{cat.label}</span>
-                  <span className={`text-[9px] lg:text-[10px] font-black px-2 py-0.5 rounded-full ${
+                  <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{cat.label}</span>
+                  <span className={`text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${
                     selectedCategory === cat.id ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
                   }`}>
                     {activeCountInCat}/{totalCountInCat}

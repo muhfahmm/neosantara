@@ -97,10 +97,10 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
         {/* BODY MODAL WITH SIDEBAR */}
         <div className="flex-1 flex min-h-0 relative z-10">
           {/* SIDEBAR MENU */}
-          <div className="w-44 sm:w-48 lg:w-52 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2.5 sm:p-3 flex flex-col gap-1.5 sm:gap-2 overflow-y-auto custom-scrollbar shrink-0">
+          <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto custom-scrollbar shrink-0">
             <button 
               onClick={() => setActiveTab("aktif")} 
-              className={`flex items-center justify-between w-full px-2.5 py-2 sm:px-3 sm:py-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+              className={`flex items-center justify-between w-full px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl border text-left transition-all cursor-pointer ${
                 activeTab === "aktif" 
                   ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md" 
                   : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
@@ -114,7 +114,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
 
             <button 
               onClick={() => setActiveTab("infrastruktur")} 
-              className={`flex items-center justify-between w-full px-2.5 py-2 sm:px-3 sm:py-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+              className={`flex items-center justify-between w-full px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl border text-left transition-all cursor-pointer ${
                 activeTab === "infrastruktur" 
                   ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md" 
                   : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"

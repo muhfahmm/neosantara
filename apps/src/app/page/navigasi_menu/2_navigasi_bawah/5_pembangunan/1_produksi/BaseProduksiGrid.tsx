@@ -187,7 +187,7 @@ export default function BaseProduksiGrid({
         )}
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 lg:gap-3">
         {displayedKeys.map((key) => {
           const bMeta = findMeta(key) || {};
           const perCount = Number(countryDetail?.[key]) || 0;
@@ -272,7 +272,7 @@ export default function BaseProduksiGrid({
                 />
               )}
 
-              <div className="p-2.5 sm:p-3 flex flex-col flex-grow justify-between">
+              <div className="p-2 sm:p-2.5 flex flex-col flex-grow justify-between">
                 <div>
                   <div className="flex items-start justify-between gap-1 mb-0.5">
                     <p className="text-[9px] sm:text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-1 leading-snug">{label}</p>
@@ -292,7 +292,7 @@ export default function BaseProduksiGrid({
 
                   {/* Indikator +1, +2 */}
                   <div className="flex items-end gap-1 mt-1 flex-wrap">
-                    <span className="text-sm sm:text-base lg:text-lg font-black text-[#E0E0E0] leading-none">{perCount}</span>
+                    <span className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-none">{perCount}</span>
                     {isBuilding && (
                       <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">
                         +{queueCount}
@@ -303,7 +303,7 @@ export default function BaseProduksiGrid({
 
                 {/* FOOTER LISTRIK */}
                 {isElectricityTab && (
-                  <div className="border-t border-[#00FFAA]/10 mt-2 pt-1.5 pb-0.5 text-center min-h-[44px] flex flex-col justify-center">
+                  <div className="border-t border-[#00FFAA]/10 mt-1.5 pt-1 pb-0.5 text-center min-h-[36px] flex flex-col justify-center">
                     <span className={`font-black text-xs sm:text-sm leading-tight break-words ${isProductionZero ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
                       {rawProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
                     </span>
@@ -315,7 +315,7 @@ export default function BaseProduksiGrid({
 
                 {/* FOOTER NON-LISTRIK */}
                 {!isElectricityTab && (
-                  <div className="border-t border-[#00FFAA]/10 mt-2 pt-1.5 pb-0.5 text-center min-h-[44px] flex flex-col justify-center gap-0.5">
+                  <div className="border-t border-[#00FFAA]/10 mt-1.5 pt-1 pb-0.5 text-center min-h-[36px] flex flex-col justify-center gap-0.5">
                     {(() => {
                       // Emas: tampilkan produksi tetap (tidak berubah-ubah seperti stok)
                       if (key === 'emas') {

@@ -309,7 +309,7 @@ export default function NaikkanKepuasanModal({
 
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-5 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
-          <div className="space-y-6 animate-in fade-in duration-500">
+          <div className="space-y-4 animate-in fade-in duration-500">
             {feedback && (
               <div
                 className={`p-4 rounded-xl border flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300 ${
@@ -327,7 +327,7 @@ export default function NaikkanKepuasanModal({
               </div>
             )}
 
-            <div className="grid grid-cols-1 gap-2.5 lg:gap-3.5 2xl:gap-4">
+            <div className="grid grid-cols-1 gap-2.5 lg:gap-3">
               {initiatives.map((item) => {
                 const Icon = item.icon;
                 const ongoingEvents = (countryDetail?.ongoingConstructions || []).filter(
@@ -351,7 +351,7 @@ export default function NaikkanKepuasanModal({
                   <div
                     key={item.id}
                     id={`event-card-${item.id}`}
-                    className={`relative bg-[#0F2424] p-2.5 lg:p-3.5 2xl:p-5 rounded-xl 2xl:rounded-2xl flex flex-col md:flex-row items-center justify-between gap-3 lg:gap-4 2xl:gap-5 transition-all duration-500 ${
+                    className={`relative bg-[#0F2424] p-2.5 lg:p-3 rounded-xl flex flex-col md:flex-row items-center justify-between gap-2.5 lg:gap-3 transition-all duration-500 ${
                       isHighlighted
                         ? "border-2 border-[#00FFAA] shadow-[0_0_25px_rgba(0,255,170,0.6)] ring-2 ring-[#00FFAA]/50 bg-[#122A26] scale-[1.01]"
                         : "border border-[#00FFAA]/20 hover:border-[#00FFAA]/50"
@@ -370,9 +370,9 @@ export default function NaikkanKepuasanModal({
                       </div>
                     )}
 
-                    <div className="flex items-start gap-2.5 lg:gap-3.5 2xl:gap-4">
-                      <div className="p-2 lg:p-2.5 2xl:p-3.5 rounded-lg 2xl:rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#00FFAA] shrink-0">
-                        <Icon className="w-4 h-4 lg:w-5 lg:h-5 2xl:w-6 2xl:h-6" />
+                    <div className="flex items-start gap-2 lg:gap-2.5">
+                      <div className="p-2 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#00FFAA] shrink-0">
+                        <Icon className="w-4 h-4" />
                       </div>
                       <div className="space-y-0.5 lg:space-y-1">
                         <div className="flex items-center gap-2 lg:gap-3 flex-wrap">
@@ -402,7 +402,7 @@ export default function NaikkanKepuasanModal({
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-center md:items-end gap-1.5 lg:gap-2 shrink-0">
+                    <div className="flex flex-col items-center md:items-end gap-1 lg:gap-1.5 shrink-0">
                       <div className="text-right">
                         <p className="text-[8px] lg:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider text-center md:text-right leading-none">
                           Biaya Alokasi
@@ -414,7 +414,7 @@ export default function NaikkanKepuasanModal({
                       <button
                         onClick={() => handleInitiative(item.cost, boostedBoost, item.title, item.duration, item.id)}
                         disabled={isEventOngoing}
-                        className={`px-3.5 py-1.5 lg:px-4 lg:py-2 2xl:px-6 2xl:py-2.5 rounded-lg 2xl:rounded-xl font-black text-[10px] lg:text-xs uppercase transition-all ${
+                        className={`px-3.5 py-1.5 lg:px-4 lg:py-1.5 rounded-lg font-black text-[10px] lg:text-xs uppercase transition-all ${
                           isEventOngoing
                             ? "bg-[#0A1A1A] text-[#6B8A8A] border border-[#6B8A8A]/30 cursor-not-allowed opacity-60"
                             : "bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] hover:brightness-110 active:scale-95 cursor-pointer"

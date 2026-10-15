@@ -407,18 +407,18 @@ export default function HunianPermukimanModal({
           {/* BODY */}
           <div className="flex-1 flex min-h-0 relative z-10">
             {/* SIDEBAR TABS */}
-            <div className="w-44 sm:w-48 lg:w-52 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto custom-scrollbar shrink-0">
+            <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto custom-scrollbar shrink-0">
               {items.map((it) => (
                 <button
                   key={it.key}
                   onClick={() => setActiveTab(it.key)}
-                  className={`flex items-center justify-between w-full px-2.5 py-2 rounded-xl border text-left transition-all cursor-pointer ${
+                  className={`flex items-center justify-between w-full px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl border text-left transition-all cursor-pointer ${
                     activeTab === it.key
                       ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
                       : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
                   }`}
                 >
-                  <span className="text-[11px] lg:text-xs font-bold uppercase tracking-wider">{it.label}</span>
+                  <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{it.label}</span>
                   <span className={`text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${
                     activeTab === it.key ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
                   }`}>
@@ -490,7 +490,7 @@ export default function HunianPermukimanModal({
                       <p className="text-[11px] sm:text-xs text-[#E0E0E0] mt-3 leading-relaxed bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 sm:p-4 rounded-xl sm:rounded-2xl">{activeItem.detailDesc}</p>
                     </div>
 
-                    <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-3xl p-6 shadow-sm max-w-sm relative overflow-visible">
+                    <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-2xl p-4 shadow-sm max-w-sm relative overflow-visible">
                       {hoveredBuildingKey === activeItem.key && (() => {
                         const bMeta = findMeta(activeItem.key) || {};
                         const perCount = activeItem.value || 0;
@@ -523,8 +523,8 @@ export default function HunianPermukimanModal({
                           <Info className="w-3 h-3" />
                         </button>
                       </div>
-                      <p className="text-xl sm:text-2xl lg:text-3xl font-black text-[#00FFAA] mt-2 leading-tight break-words">{activeItem.value.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
-                      <div className="border-t border-[#00FFAA]/10 mt-6 pt-3">
+                      <p className="text-lg sm:text-xl lg:text-2xl font-black text-[#00FFAA] mt-1.5 leading-tight break-words">{activeItem.value.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
+                      <div className="border-t border-[#00FFAA]/10 mt-4 pt-2.5">
                         <button
                           onClick={() => handleBuild(activeItem.key, activeItem.label)}
                           className="w-full py-2 rounded-xl bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] text-xs font-black uppercase cursor-pointer hover:bg-[#00FFAA]/80 transition-all shadow-md active:scale-[0.98]"
@@ -552,8 +552,8 @@ export default function HunianPermukimanModal({
                 </div>
 
                 {/* 🏠 CARD KAPASITAS HUNIAN */}
-                <div className="rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-sm">
-                  <div className="flex items-center gap-2 mb-4">
+                <div className="rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-4 shadow-sm">
+                  <div className="flex items-center gap-2 mb-3">
                     <Home className="h-5 w-5 text-[#00FFAA]" />
                     <h4 className="text-sm font-black uppercase tracking-wider text-[#00FFAA]">Kapasitas Hunian vs Kebutuhan</h4>
                   </div>

@@ -444,7 +444,7 @@ export default function TempatUmumModal({
           </div>
 
           <div className="flex-1 flex min-h-0 relative z-10">
-            <div className="w-44 sm:w-48 lg:w-52 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto custom-scrollbar shrink-0">
+            <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto custom-scrollbar shrink-0">
               {groups.map((group) => {
                 const hasConstruction = group.keys.some((key) => 
                   ongoingConstructions.some((c: any) => c.buildingKey === key)
@@ -453,13 +453,13 @@ export default function TempatUmumModal({
                   <button
                     key={group.id}
                     onClick={() => setActiveTabId(group.id)}
-                    className={`flex items-center justify-between w-full px-2.5 py-2 rounded-xl border text-left transition-all cursor-pointer ${
+                    className={`flex items-center justify-between w-full px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl border text-left transition-all cursor-pointer ${
                       activeTabId === group.id
                         ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
                         : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
                     }`}
                   >
-                    <span className="text-[11px] lg:text-xs font-bold uppercase tracking-wider">{group.label}</span>
+                    <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{group.label}</span>
                     <div className="flex items-center gap-1">
                        {hasConstruction && (
                          <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
@@ -515,7 +515,7 @@ export default function TempatUmumModal({
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 lg:gap-3">
                       {activeGroup.items.map((it) => {
                         const bMeta = findMeta(it.key) || {};
                         const perCount = it.value || 0;
@@ -561,7 +561,7 @@ export default function TempatUmumModal({
                               />
                             )}
 
-                            <div className="p-4 flex flex-col flex-grow justify-between">
+                            <div className="p-2.5 sm:p-3 flex flex-col flex-grow justify-between">
                               <div>
                                 <div className="flex items-center justify-between gap-2 mb-1">
                                   <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider">{it.label}</p>
@@ -576,14 +576,14 @@ export default function TempatUmumModal({
                                     <Info className="w-3 h-3" />
                                   </button>
                                 </div>
-                                <div className="flex items-end gap-1.5 mt-2 flex-wrap">
-                                  <p className="text-base sm:text-lg lg:text-xl font-black text-[#E0E0E0] leading-tight break-words">{formatNumber(perCount)}</p>
+                                <div className="flex items-end gap-1 mt-1.5 flex-wrap">
+                                  <p className="text-sm sm:text-base lg:text-lg font-black text-[#E0E0E0] leading-tight break-words">{formatNumber(perCount)}</p>
                                   {isBuilding && (
                                     <span className="text-xs sm:text-sm font-bold text-emerald-400 leading-none">+{queueCount}</span>
                                   )}
                                 </div>
                               </div>
-                              <div className="border-t border-[#00FFAA]/10 mt-4 pt-2">
+                              <div className="border-t border-[#00FFAA]/10 mt-3 pt-1.5">
                                 <button
                                   onClick={() => handleBuild(it.key, it.label)}
                                   className="w-full py-1.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black border border-[#00FFAA] text-[10px] uppercase cursor-pointer hover:bg-[#00FFAA]/80 transition-all shadow-md active:scale-[0.98]"
