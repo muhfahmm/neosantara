@@ -108,7 +108,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
             >
               <div className="flex items-center gap-2">
                 <Swords className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate">Armada Aktif</span>
+                <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">Armada Aktif</span>
               </div>
             </button>
 
@@ -122,7 +122,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
             >
               <div className="flex items-center gap-2">
                 <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider truncate">Infrastruktur</span>
+                <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">Infrastruktur</span>
               </div>
             </button>
           </div>

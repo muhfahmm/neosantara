@@ -936,13 +936,18 @@ export default function MapPage() {
             }
         },
         onTogglePlayPause: () => {
-            if (calendarRef.current) {
-                const newPaused = calendarRef.current.controls.handlePlayPauseClick(isPaused);
-                setIsPaused(newPaused);
-                if (timeManagerRef.current) {
-                    timeManagerRef.current.setPaused(newPaused);
-                }
+            const nextPaused = !isPausedRef.current;
+            isPausedRef.current = nextPaused;
+            if (typeof window !== 'undefined') {
+                (window as any).neosantara_is_paused = nextPaused;
             }
+            if (calendarRef.current) {
+                calendarRef.current.controls.handlePlayPauseClick(!nextPaused);
+            }
+            if (timeManagerRef.current) {
+                timeManagerRef.current.setPaused(nextPaused);
+            }
+            setIsPaused(nextPaused);
         },
         onTimeSpeedChange: (delta) => {
             if (calendarRef.current) {
@@ -5936,12 +5941,18 @@ export default function MapPage() {
                         {/* 1. Play/Pause button */}
                         <button
                             onClick={() => {
-                                if (!calendarRef.current) return;
-                                const newPaused = calendarRef.current.controls.handlePlayPauseClick(isPaused);
-                                setIsPaused(newPaused);
-                                if (timeManagerRef.current) {
-                                    timeManagerRef.current.setPaused(newPaused);
+                                const nextPaused = !isPausedRef.current;
+                                isPausedRef.current = nextPaused;
+                                if (typeof window !== 'undefined') {
+                                    (window as any).neosantara_is_paused = nextPaused;
                                 }
+                                if (calendarRef.current) {
+                                    calendarRef.current.controls.handlePlayPauseClick(!nextPaused);
+                                }
+                                if (timeManagerRef.current) {
+                                    timeManagerRef.current.setPaused(nextPaused);
+                                }
+                                setIsPaused(nextPaused);
                             }}
                             title={calendarRef.current?.calendar.getPauseButtonTitle(isPaused) || (isPaused ? "Mulai Waktu" : "Jeda Waktu")}
                             className="w-9 h-9 lg:w-10 lg:h-10 xl:w-14 xl:h-14 rounded-full bg-[#00FFAA] text-[#0A1A1A] border-2 xl:border-4 border-[#0A1A1A] flex items-center justify-center cursor-pointer hover:scale-105 active:scale-95 transition-all z-20 group"

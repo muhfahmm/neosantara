@@ -561,32 +561,32 @@ export default function TempatUmumModal({
                               />
                             )}
 
-                            <div className="p-2.5 sm:p-3 flex flex-col flex-grow justify-between">
+                            <div className="p-2 sm:p-2.5 flex flex-col flex-grow justify-between">
                               <div>
-                                <div className="flex items-center justify-between gap-2 mb-1">
-                                  <p className="text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider">{it.label}</p>
+                                <div className="flex items-start justify-between gap-1 mb-0.5">
+                                  <p className="text-[9px] sm:text-[10px] font-black uppercase text-[#6B8A8A] tracking-wider flex-1 pr-1 leading-snug">{it.label}</p>
                                   <button
-                                    className="flex items-center justify-center w-5 h-5 rounded-full transition-colors cursor-help bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] text-[#6B8A8A] hover:text-[#00FFAA]"
+                                    className="flex-shrink-0 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-colors cursor-pointer bg-[#0F2424] border border-[#00FFAA]/30 hover:border-[#00FFAA] text-[#6B8A8A] hover:text-[#00FFAA]"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       setHoveredBuildingKey(hoveredBuildingKey === it.key ? null : it.key);
                                     }}
                                     title="Info bangunan"
                                   >
-                                    <Info className="w-3 h-3" />
+                                    <Info className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                                   </button>
                                 </div>
-                                <div className="flex items-end gap-1 mt-1.5 flex-wrap">
-                                  <p className="text-sm sm:text-base lg:text-lg font-black text-[#E0E0E0] leading-tight break-words">{formatNumber(perCount)}</p>
+                                <div className="flex items-end gap-1 mt-1 flex-wrap">
+                                  <p className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-none">{formatNumber(perCount)}</p>
                                   {isBuilding && (
-                                    <span className="text-xs sm:text-sm font-bold text-emerald-400 leading-none">+{queueCount}</span>
+                                    <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">+{queueCount}</span>
                                   )}
                                 </div>
                               </div>
-                              <div className="border-t border-[#00FFAA]/10 mt-3 pt-1.5">
+                              <div className="border-t border-[#00FFAA]/10 mt-1.5 pt-1">
                                 <button
                                   onClick={() => handleBuild(it.key, it.label)}
-                                  className="w-full py-1.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black border border-[#00FFAA] text-[10px] uppercase cursor-pointer hover:bg-[#00FFAA]/80 transition-all shadow-md active:scale-[0.98]"
+                                  className="w-full py-1 sm:py-1.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black border border-[#00FFAA] text-[9px] sm:text-[10px] uppercase cursor-pointer hover:bg-[#00FFAA]/80 transition-all shadow-md active:scale-[0.98]"
                                 >
                                   Bangun
                                 </button>

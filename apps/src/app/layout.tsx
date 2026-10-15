@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClientErrorCatcher from './ClientErrorCatcher';
 import RelationsDataLoader from './RelationsDataLoader';
+import SecurityProtector from './SecurityProtector';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,11 +32,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+      <body className="min-h-full flex flex-col select-none" suppressHydrationWarning>
         <RelationsDataLoader>
           {children}
         </RelationsDataLoader>
         <ClientErrorCatcher />
+        <SecurityProtector />
       </body>
     </html>
   );
