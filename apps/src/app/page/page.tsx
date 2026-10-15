@@ -12,20 +12,94 @@ import Link from 'next/link';
 /* ============================================================
    HOLOGRAPHIC WORLD MAP  —  wireframe + network nodes + pings
    ============================================================ */
+type MapPoint = readonly [number, number];
+
+function projectMapPoint([longitude, latitude]: MapPoint) {
+    return {
+        x: ((longitude + 180) / 360) * 1000,
+        y: ((90 - latitude) / 180) * 500,
+    };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function worldGeometryToPath(geometry: unknown): string {
+    if (!isRecord(geometry) || !Array.isArray(geometry.coordinates)) return '';
+
+    const polygons =
+        geometry.type === 'Polygon'
+            ? [geometry.coordinates]
+            : geometry.type === 'MultiPolygon'
+                ? geometry.coordinates
+                : [];
+
+    return polygons
+        .flatMap(polygon => Array.isArray(polygon) ? polygon : [])
+        .map(ring => {
+            if (!Array.isArray(ring)) return '';
+            const points = ring
+                .filter((point): point is number[] =>
+                    Array.isArray(point) &&
+                    typeof point[0] === 'number' &&
+                    typeof point[1] === 'number'
+                )
+                .map(([longitude, latitude]) => {
+                    const { x, y } = projectMapPoint([longitude, latitude]);
+                    return `${x.toFixed(1)} ${y.toFixed(1)}`;
+                });
+            return points.length >= 3 ? `M${points.join('L')}Z` : '';
+        })
+        .filter(Boolean)
+        .join('');
+}
+
 const HolographicMap = () => {
-    const nodes = [
-        { x: 180, y: 130 }, { x: 260, y: 320 }, { x: 510, y: 120 },
-        { x: 530, y: 280 }, { x: 720, y: 120 }, { x: 760, y: 255 },
-        { x: 840, y: 350 },
+    const [landPaths, setLandPaths] = useState<string[]>([]);
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadWorldMap() {
+            try {
+                const response = await fetch('/world.geojson', { cache: 'force-cache' });
+                if (!response.ok) {
+                    throw new Error(`Failed to load world map data: HTTP ${response.status}`);
+                }
+
+                const data: unknown = await response.json();
+                if (!isRecord(data) || !Array.isArray(data.features)) {
+                    throw new Error('Invalid world map data');
+                }
+
+                const paths = data.features
+                    .filter(isRecord)
+                    .map(feature => worldGeometryToPath(feature.geometry))
+                    .filter(Boolean);
+                if (isMounted) setLandPaths(paths);
+            } catch (error) {
+                console.error('Failed to load world map for main menu:', error);
+            }
+        }
+
+        void loadWorldMap();
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    const nodeLocations: MapPoint[] = [
+        [-100, 40], [-50, -10], [-5, 50], [30, 25], [78, 22], [110, 35], [135, -25],
     ];
+    const nodes = nodeLocations.map(projectMapPoint);
     const links: [number, number][] = [
         [0, 2], [2, 4], [2, 3], [3, 5], [4, 5], [5, 6], [2, 5], [1, 3],
     ];
     const pings = [
-        { x: 140, y: 300, delay: 0.4 }, { x: 320, y: 180, delay: 2.1 },
-        { x: 430, y: 380, delay: 1.3 }, { x: 610, y: 240, delay: 3.2 },
-        { x: 700, y: 90, delay: 0.8 }, { x: 830, y: 200, delay: 2.7 },
-        { x: 900, y: 400, delay: 4.1 },
+        { ...projectMapPoint([-122, 37]), delay: 0.4 }, { ...projectMapPoint([-74, 4]), delay: 2.1 },
+        { ...projectMapPoint([-46, -23]), delay: 1.3 }, { ...projectMapPoint([2, 48]), delay: 3.2 },
+        { ...projectMapPoint([77, 28]), delay: 0.8 }, { ...projectMapPoint([139, 36]), delay: 2.7 },
+        { ...projectMapPoint([151, -34]), delay: 4.1 },
     ];
 
     return (
@@ -50,17 +124,11 @@ const HolographicMap = () => {
                         </filter>
                     </defs>
 
-                    {/* Continents */}
+                    {/* Accurate country outlines using the same GeoJSON and projection as the game map. */}
                     <g filter="url(#mapGlow)" stroke="currentColor" strokeWidth="0.8" strokeOpacity="0.55">
-                        <path d="M 80 80 Q 130 50 200 60 Q 250 70 275 110 Q 290 150 270 195 Q 250 230 220 250 Q 195 265 175 255 Q 155 240 145 215 Q 130 185 115 165 Q 95 140 80 115 Z" fill="url(#mapDots)" />
-                        <path d="M 280 40 Q 320 30 350 55 Q 355 85 325 100 Q 295 95 280 40 Z" fill="url(#mapDots)" />
-                        <path d="M 235 280 Q 270 275 290 300 Q 305 350 295 405 Q 280 455 255 475 Q 235 470 230 425 Q 225 365 230 320 Z" fill="url(#mapDots)" />
-                        <path d="M 460 75 Q 500 55 545 65 Q 570 85 560 115 Q 545 145 520 155 Q 490 150 475 130 Q 465 105 460 75 Z" fill="url(#mapDots)" />
-                        <path d="M 475 190 Q 520 175 565 195 Q 590 240 580 300 Q 565 360 530 405 Q 510 420 495 400 Q 480 360 470 305 Q 460 240 475 190 Z" fill="url(#mapDots)" />
-                        <path d="M 575 65 Q 660 40 760 55 Q 830 70 860 115 Q 870 155 840 185 Q 800 210 750 205 Q 690 195 640 175 Q 600 155 585 125 Z" fill="url(#mapDots)" />
-                        <path d="M 720 235 Q 755 230 780 245 Q 790 265 770 275 Q 740 270 725 255 Z" fill="url(#mapDots)" />
-                        <path d="M 775 315 Q 825 300 875 320 Q 895 345 875 375 Q 850 395 810 390 Q 780 375 775 345 Z" fill="url(#mapDots)" />
-                        <path d="M 100 455 Q 300 440 500 445 Q 700 450 900 445 L 900 480 L 100 480 Z" fill="url(#mapDots)" />
+                        {landPaths.map((path, index) => (
+                            <path key={index} d={path} fill="url(#mapDots)" />
+                        ))}
                     </g>
 
                     {/* Network links */}

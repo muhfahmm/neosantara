@@ -11,10 +11,13 @@ export const MINERAL_SDA_BUILDING_KEYS = [
 ] as const;
 
 const MINERAL_SDA_LOOKUP = new Map<string, Record<string, boolean>>();
+const MINERAL_SDA_REQUESTS = new Map<string, Promise<Record<string, boolean> | null>>();
+let allMineralSdaRequest: Promise<void> | null = null;
+let hasLoadedAllMineralSda = false;
 
 const normalizeSdaCountryName = (countryName: string) => {
   if (!countryName) return '';
-  return countryName.trim().toLowerCase();
+  return countryName.trim().toLowerCase().replace(/[_-]+/g, ' ').replace(/\s+/g, ' ');
 };
 
 export const getMineralSDAStatusForCountry = async (countryName: string): Promise<Record<string, boolean> | null> => {
@@ -30,22 +33,65 @@ export const getMineralSDAStatusForCountry = async (countryName: string): Promis
     return null;
   }
 
-  try {
-    const response = await fetch(`/api/sda-data?country=${encodeURIComponent(normalized)}`);
-    if (!response.ok) {
+  const pendingRequest = MINERAL_SDA_REQUESTS.get(normalized);
+  if (pendingRequest) return pendingRequest;
+
+  const request = (async (): Promise<Record<string, boolean> | null> => {
+    try {
+      if (!hasLoadedAllMineralSda) {
+        if (!allMineralSdaRequest) {
+          allMineralSdaRequest = (async () => {
+            const response = await fetch('/api/sda-data', { cache: 'no-store' });
+            if (!response.ok) {
+              throw new Error(`Failed to fetch mineral SDA data: HTTP ${response.status}`);
+            }
+
+            const data: unknown = await response.json();
+            if (!data || typeof data !== 'object' || Array.isArray(data)) {
+              throw new Error('Invalid response from /api/sda-data');
+            }
+
+            for (const [country, status] of Object.entries(data)) {
+              if (status && typeof status === 'object' && !Array.isArray(status)) {
+                MINERAL_SDA_LOOKUP.set(normalizeSdaCountryName(country), status as Record<string, boolean>);
+              }
+            }
+            hasLoadedAllMineralSda = true;
+          })().catch((error: unknown) => {
+            console.error('getMineralSDAStatusForCountry error', error);
+            throw error;
+          }).finally(() => {
+            allMineralSdaRequest = null;
+          });
+        }
+        await allMineralSdaRequest;
+      }
+
+      const loadedStatus = MINERAL_SDA_LOOKUP.get(normalized);
+      if (loadedStatus) return loadedStatus;
+
+      const response = await fetch(`/api/sda-data?country=${encodeURIComponent(normalized)}`, { cache: 'no-store' });
+      if (!response.ok) return null;
+
+      const data: unknown = await response.json();
+      if (data && typeof data === 'object' && !Array.isArray(data)) {
+        const status = data as Record<string, boolean>;
+        MINERAL_SDA_LOOKUP.set(normalized, status);
+        return status;
+      }
+    } catch {
       return null;
     }
 
-    const data = await response.json();
-    if (data && typeof data === 'object' && !Array.isArray(data)) {
-      MINERAL_SDA_LOOKUP.set(normalized, data as Record<string, boolean>);
-      return data as Record<string, boolean>;
-    }
-  } catch {
     return null;
-  }
+  })();
+  MINERAL_SDA_REQUESTS.set(normalized, request);
 
-  return null;
+  try {
+    return await request;
+  } finally {
+    MINERAL_SDA_REQUESTS.delete(normalized);
+  }
 };
 
 export const getDisabledMineralBuildingsForCountry = (
