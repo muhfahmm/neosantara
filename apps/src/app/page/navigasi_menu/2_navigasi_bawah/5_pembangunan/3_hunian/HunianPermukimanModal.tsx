@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
+import Image from "next/image";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
+import { getBuildingCardImage } from "../../buildingCardImages";
 import { X, Home, TrendingUp, TrendingDown, Hammer, AlertCircle, Info, Sparkles, Users } from "lucide-react";
 import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
 import { generateHunianAIAnalysis } from "../ai_suggestions/serviceAISuggestionsLogic";
@@ -519,6 +521,15 @@ export default function HunianPermukimanModal({
                             <Info className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                           </button>
                         </div>
+                        {getBuildingCardImage(activeItem.key) && (
+                          <Image
+                            src={getBuildingCardImage(activeItem.key)!}
+                            alt=""
+                            width={104}
+                            height={104}
+                            className="h-20 w-20 sm:h-24 sm:w-24 object-contain mt-2"
+                          />
+                        )}
                         <div className="flex items-end gap-1 mt-1 flex-wrap">
                           <p className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-none">{activeItem.value.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</p>
                         </div>

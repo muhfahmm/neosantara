@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import Image from 'next/image';
 import { Route, X } from 'lucide-react';
 import { estimateTravelTime } from '../../path_logic/time_logic';
 import type { DiplomacyPathKind } from '../../path_logic/diplomacy-path-animation';
@@ -164,9 +165,16 @@ export default function DiplomacyTracking() {
         title="Pelacakan aktivitas diplomasi"
         aria-label={isTrackingOpen ? 'Tutup pelacakan aktivitas' : 'Buka pelacakan aktivitas'}
         aria-expanded={isTrackingOpen}
-        className="fixed bottom-3 left-[7.25rem] z-[100] flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] shadow-[0_4px_12px_rgba(0,0,0,0.4)] transition-all hover:bg-[#00FFAA] hover:text-[#0A1A1A] group lg:bottom-4 lg:left-[8rem] lg:h-10 lg:w-10 xl:bottom-6 xl:left-[9rem] xl:h-12 xl:w-12 2xl:bottom-12 2xl:left-[10.5rem]"
+        className="fixed bottom-3 left-[7.25rem] z-[100] flex h-12 w-12 cursor-pointer items-center justify-center transition-transform hover:scale-110 group lg:bottom-4 lg:left-[8rem] lg:h-14 lg:w-14 xl:bottom-6 xl:left-[9rem] xl:h-16 xl:w-16 2xl:bottom-12 2xl:left-[10.5rem]"
       >
-        <Route className="h-4 w-4 transition-transform group-hover:scale-110 lg:h-5 lg:w-5 xl:h-6 xl:w-6" />
+        <Image
+          src="/images/game/interface/menu/diplomacy-activity.svg"
+          alt=""
+          aria-hidden="true"
+          width={24}
+          height={24}
+          className="h-10 w-10 object-contain lg:h-12 lg:w-12 xl:h-14 xl:w-14"
+        />
         {activePaths.length > 0 && (
           <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-black text-white">
             {activePaths.length}

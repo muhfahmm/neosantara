@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { FlaskConical } from 'lucide-react';
+import Image from 'next/image';
 import PenelitianSelectionModal, { SelectionCategoryKey } from './penelitianSelectionModal';
 import PenelitianPageModal, { CategoryKey } from './penelitianPageMenu';
 
@@ -59,9 +59,16 @@ export default function BottomLeftPenelitianIcon({
       <button
         onClick={onClick}
         title="Penelitian - Riset dan Teknologi"
-        className="fixed bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-7 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
+        className="fixed bottom-3 left-7 z-[100] flex h-12 w-12 cursor-pointer items-center justify-center transition-transform group hover:scale-110 lg:bottom-4 lg:h-14 lg:w-14 xl:bottom-6 xl:h-16 xl:w-16 2xl:bottom-12"
       >
-        <FlaskConical className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
+        <Image
+          src="/images/game/interface/menu/research.svg"
+          alt=""
+          aria-hidden="true"
+          width={24}
+          height={24}
+          className="h-10 w-10 object-contain lg:h-12 lg:w-12 xl:h-14 xl:w-14"
+        />
       </button>
 
       {/* Modal 1: Selection Modal 3 Pilihan (Ekonomi, Militer, Diplomasi) */}

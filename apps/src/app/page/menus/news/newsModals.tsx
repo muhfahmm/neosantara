@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import Image from 'next/image';
 import { Newspaper, X, Swords, Flag, Coins, ShieldAlert, Sparkles, Filter } from 'lucide-react';
 import { InvasionNewsData } from './logic/1_berita_invasi/beritaInvasiLogic';
 import { AnnexationNewsData } from './logic/2_berita_aneksasi/beritaAneksasiLogic';
@@ -215,9 +216,16 @@ export default function TopRightNewsIcon({
       <button
         onClick={onClick}
         title="Berita - Berita dan Update Negara"
-        className="fixed top-36 lg:top-40 xl:top-44 right-7 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
+        className="fixed top-36 right-7 z-[100] flex h-12 w-12 cursor-pointer items-center justify-center transition-transform group hover:scale-110 lg:top-40 lg:h-14 lg:w-14 xl:top-44 xl:h-16 xl:w-16"
       >
-        <Newspaper className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
+        <Image
+          src="/images/game/interface/menu/news.svg"
+          alt=""
+          aria-hidden="true"
+          width={24}
+          height={24}
+          className="h-10 w-10 object-contain lg:h-12 lg:w-12 xl:h-14 xl:w-14"
+        />
         {newsList.length > 0 && (
           <span className="absolute -top-1 -right-1 flex h-4 w-4 lg:h-5 lg:w-5 items-center justify-center rounded-full bg-rose-500 text-[9px] lg:text-[10px] font-black text-white shadow-md border border-[#0F2424]">
             {newsList.length}

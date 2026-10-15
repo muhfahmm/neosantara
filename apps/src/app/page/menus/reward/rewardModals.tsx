@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import Image from 'next/image';
 import { Gift, X, Check, Lock, Zap, AlertTriangle } from 'lucide-react';
 import {
   formatProductionProductName,
@@ -304,9 +305,16 @@ export default function TopRightGiftIcon({
       <button
         onClick={onClick}
         title="Hadiah - Bonus dan Reward"
-        className="fixed top-24 right-7 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-default opacity-70"
+        className="fixed top-24 right-7 z-[100] flex h-12 w-12 cursor-default items-center justify-center opacity-70 lg:h-14 lg:w-14 xl:h-16 xl:w-16"
       >
-        <Gift className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-[#00FFAA] animate-pulse" />
+        <Image
+          src="/images/game/interface/menu/reward.svg"
+          alt=""
+          aria-hidden="true"
+          width={24}
+          height={24}
+          className="h-10 w-10 object-contain animate-pulse lg:h-12 lg:w-12 xl:h-14 xl:w-14"
+        />
       </button>
     );
   }
@@ -320,9 +328,16 @@ export default function TopRightGiftIcon({
       <button
         onClick={onClick}
         title="Hadiah - Bonus dan Reward"
-        className="fixed top-24 right-7 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
+        className="fixed top-24 right-7 z-[100] flex h-12 w-12 cursor-pointer items-center justify-center transition-transform group hover:scale-110 lg:h-14 lg:w-14 xl:h-16 xl:w-16"
       >
-        <Gift className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
+        <Image
+          src="/images/game/interface/menu/reward.svg"
+          alt=""
+          aria-hidden="true"
+          width={24}
+          height={24}
+          className="h-10 w-10 object-contain lg:h-12 lg:w-12 xl:h-14 xl:w-14"
+        />
         {!claimedToday && (
           <span className="absolute -top-1 -right-1 bg-red-500 border border-[#0A1A1A] text-white text-[9px] font-bold rounded-full w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center animate-pulse">
             !

@@ -1,6 +1,8 @@
 "use client"
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { Swords, Ship, Plane, Info } from "lucide-react";
+import { getDefenseUnitCardImage } from "../../../buildingCardImages";
 import { BARAK_TO_SOLDIERS_MULTIPLIER } from "../logic/1_barak_logic";
 import { getArmadaUnitBreakdown } from "../logic/armadaLogic";
 import { isMemberOfNATO } from "@/app/page/bonus_logic";
@@ -465,7 +467,15 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                       </button>
                     </div>
 
-                    <div className="flex flex-col justify-between">
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={getDefenseUnitCardImage(item.key)!}
+                        alt=""
+                        width={88}
+                        height={88}
+                        className="h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0"
+                      />
+                      <div className="flex flex-col justify-between">
                       <div>
                         <div className="flex items-end gap-1 flex-wrap">
                           <span className={`${item.key === "barak" ? "text-[11px] sm:text-xs" : "text-xs sm:text-sm lg:text-base"} font-black text-[#E0E0E0] leading-tight break-words`}>
@@ -480,6 +490,7 @@ export default function ArmadaAktif({ countryDetail, setCountryDetail: _setCount
                         <p className="text-[9px] sm:text-[10px] mt-0.5 font-bold text-[#6B8A8A]">
                           {item.key === "barak" ? "Pasukan / Kapasitas" : "unit"}
                         </p>
+                      </div>
                       </div>
                     </div>
                   </div>

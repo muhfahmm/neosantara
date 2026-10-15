@@ -1,7 +1,9 @@
 // BaseProduksiGrid.tsx
 "use client";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { Info, MessageSquare } from "lucide-react";
+import { getBuildingCardImage } from "../../buildingCardImages";
 import { getKelistrikanFuelRequirements } from "./construction_support/1_produksi/1_kelistrikan/fuelLogic";
 import { getDaysElapsed, formatDate } from '@/app/logic/production_logic';
 import InfoBangunan from "./1_modals_info_bangunan/info_bangunan_modals";
@@ -290,14 +292,24 @@ export default function BaseProduksiGrid({
                     </button>
                   </div>
 
-                  {/* Indikator +1, +2 */}
-                  <div className="flex items-end gap-1 mt-1 flex-wrap">
-                    <span className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-none">{perCount}</span>
-                    {isBuilding && (
-                      <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">
-                        +{queueCount}
-                      </span>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    {getBuildingCardImage(key) && (
+                      <Image
+                        src={getBuildingCardImage(key)!}
+                        alt=""
+                        width={88}
+                        height={88}
+                        className="h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0"
+                      />
                     )}
+                    <div className="flex items-end gap-1 flex-wrap">
+                      <span className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-none">{perCount}</span>
+                      {isBuilding && (
+                        <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">
+                          +{queueCount}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 

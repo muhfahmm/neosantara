@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
+import Image from "next/image";
 import { fetchBuildingMetadata } from '../../../../../../lib/buildingMetadata';
+import { getBuildingCardImage } from "../../buildingCardImages";
 // 🔥 FIX 1: Tambahkan MapPin, DollarSign, BarChart3, Sparkles, Users
 import { X, Landmark, AlertTriangle, TrendingUp, TrendingDown, Hammer, Info, MapPin, DollarSign, BarChart3, Sparkles, Users } from "lucide-react";
 import ServiceAISuggestionsModal from "../ai_suggestions/ServiceAISuggestionsModal";
@@ -576,11 +578,22 @@ export default function TempatUmumModal({
                                     <Info className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                                   </button>
                                 </div>
-                                <div className="flex items-end gap-1 mt-1 flex-wrap">
-                                  <p className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-none">{formatNumber(perCount)}</p>
-                                  {isBuilding && (
-                                    <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">+{queueCount}</span>
+                                <div className="flex items-center gap-2 mt-1.5">
+                                  {getBuildingCardImage(it.key) && (
+                                    <Image
+                                      src={getBuildingCardImage(it.key)!}
+                                      alt=""
+                                      width={88}
+                                      height={88}
+                                      className="h-16 w-16 sm:h-20 sm:w-20 object-contain shrink-0"
+                                    />
                                   )}
+                                  <div className="flex items-end gap-1 flex-wrap">
+                                    <p className="text-xs sm:text-sm lg:text-base font-black text-[#E0E0E0] leading-none">{formatNumber(perCount)}</p>
+                                    {isBuilding && (
+                                      <span className="text-[10px] sm:text-xs font-bold text-emerald-400 leading-none">+{queueCount}</span>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                               <div className="border-t border-[#00FFAA]/10 mt-1.5 pt-1">

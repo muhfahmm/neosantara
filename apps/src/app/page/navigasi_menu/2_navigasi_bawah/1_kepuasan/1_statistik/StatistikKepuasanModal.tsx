@@ -1,6 +1,7 @@
 "use client";
 
-import { X, Smile, TrendingUp, Landmark, Coins, Apple, Plug, Home, Globe, Scale, HandHelping, ShieldCheck } from "lucide-react";
+import Image from "next/image";
+import { X, Smile, TrendingUp } from "lucide-react";
 import {
   calculateKepuasan,
   calculateSatisfactionIndicatorScores,
@@ -42,70 +43,70 @@ export default function StatistikKepuasanModal({
     { 
       name: "Pajak", 
       score: sectorScores.pajak,
-      icon: Landmark, 
+      image: "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-01.svg",
       color: "text-emerald-600", 
       menuId: "Menu:Pajak"
     },
     { 
       name: "Harga Barang Pokok", 
       score: sectorScores.harga,
-      icon: Coins, 
+      image: "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-02.svg",
       color: "text-amber-600", 
       menuId: "Menu:Harga"
     },
     { 
       name: "Produksi Pangan", 
       score: sectorScores.pangan,
-      icon: Apple, 
+      image: "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-03.svg",
       color: "text-green-600", 
       menuId: "Menu:IndustriPangan"
     },
     { 
       name: "Produksi Listrik", 
       score: sectorScores.listrik,
-      icon: Plug, 
+      image: "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-04.svg",
       color: "text-blue-600", 
       menuId: "Menu:Kelistrikan"
     },
     { 
       name: "Hunian Permukiman", 
       score: sectorScores.hunian,
-      icon: Home, 
+      image: "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-05.svg",
       color: "text-rose-600", 
       menuId: "Menu:HunianPermukiman"
     },
     { 
       name: "Layanan Publik & Tempat Umum", 
       score: sectorScores.layananPublik,
-      icon: Landmark, 
+      image: "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-06.svg",
       color: "text-yellow-700", 
       menuId: "Menu:TempatUmum"
     },
     { 
       name: "Doktrin & Keterbukaan", 
       score: sectorScores.keterbukaan,
-      icon: Globe, 
+      image: "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-07.svg",
       color: "text-indigo-600", 
       menuId: "Menu:DoktrinKeterbukaan"
     },
     {
       name: "Kebijakan & Sistem Ekonomi",
       score: economicPolicySatisfaction,
-      icon: Scale,
+      image: "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-08.svg",
       color: "text-cyan-600",
       menuId: "Menu:SistemEkonomi"
     },
     {
       name: "Alokasi & Kebijakan Subsidi",
       score: subsidySatisfaction,
-      icon: HandHelping,
+      image: "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-09.svg",
       color: "text-amber-600",
       menuId: "Menu:KebijakanSubsidi"
     },
     {
       name: "Integritas & Anti-Korupsi",
       score: sectorScores.integritas,
-      icon: ShieldCheck,
+      image: "/images/game/population/satisfaction-sectors/satisfaction-sector-asset-10.svg",
       color: "text-emerald-600",
       menuId: "Menu:AntiKorupsi"
     }
@@ -180,7 +181,6 @@ export default function StatistikKepuasanModal({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 lg:gap-3 2xl:gap-4">
                   {sectors.map((sector) => {
-                    const Icon = sector.icon;
                     return (
                       <button
                         key={sector.name}
@@ -189,8 +189,14 @@ export default function StatistikKepuasanModal({
                         }}
                         className="bg-[#0F2424] border border-[#00FFAA]/20 p-2.5 lg:p-3.5 2xl:p-5 rounded-xl 2xl:rounded-2xl flex gap-2.5 lg:gap-3.5 2xl:gap-4 transition-all hover:border-[#00FFAA] hover:bg-[#00FFAA]/10 relative overflow-hidden group cursor-pointer text-left items-center"
                       >
-                        <div className="p-2 lg:p-2.5 2xl:p-3 rounded-lg 2xl:rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#00FFAA] group-hover:border-[#00FFAA] shrink-0">
-                          <Icon className="w-4 h-4 lg:w-4.5 lg:h-4.5 2xl:w-5 2xl:h-5" />
+                        <div className="shrink-0">
+                          <Image
+                            src={sector.image}
+                            alt=""
+                            width={56}
+                            height={56}
+                            className="h-10 w-10 object-contain lg:h-12 lg:w-12 2xl:h-14 2xl:w-14"
+                          />
                         </div>
                         <div className="flex-1 space-y-1 lg:space-y-1.5 min-w-0">
                           <div className="flex items-center justify-between text-[11px] lg:text-xs font-black text-[#E0E0E0] uppercase group-hover:text-[#00FFAA]">

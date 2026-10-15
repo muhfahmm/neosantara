@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { X, Smile, Coins, Sparkles, AlertCircle, CheckCircle2, Clock, Info, BarChart3, PartyPopper, Lightbulb } from "lucide-react";
 import DanaTidakCukupModal from "./DanaTidakCukupModal";
 import {
@@ -107,14 +108,14 @@ export default function NaikkanKepuasanModal({
   };
 
   const initiatives = [
-    { id: "konser", title: "Konser", cost: 25000, boost: 5, duration: 1, icon: Sparkles, color: "text-amber-600", bg: "bg-amber-800/10" },
-    { id: "festival", title: "Festival", cost: 50000, boost: 10, duration: 3, icon: Sparkles, color: "text-amber-600", bg: "bg-amber-800/10" },
-    { id: "karnaval", title: "Karnaval", cost: 150000, boost: 15, duration: 3, icon: Sparkles, color: "text-amber-600", bg: "bg-amber-800/10" },
-    { id: "piala_davis", title: "Piala Davis", cost: 400000, boost: 30, duration: 7, icon: Sparkles, color: "text-amber-600", bg: "bg-amber-800/10" },
-    { id: "piala_dunia_rugbi", title: "Piala Dunia Rugbi", cost: 500000, boost: 50, duration: 14, icon: Sparkles, color: "text-amber-600", bg: "bg-amber-800/10" },
-    { id: "olimpiade", title: "Olimpiade", cost: 1500000, boost: 75, duration: 40, icon: Sparkles, color: "text-amber-600", bg: "bg-amber-800/10" },
-    { id: "piala_dunia_fifa", title: "Piala Dunia FIFA", cost: 2500000, boost: 100, duration: 30, icon: Sparkles, color: "text-amber-600", bg: "bg-amber-800/10" },
-    { id: "balap_f1", title: "Balap F1", cost: 800000, boost: 40, duration: 3, icon: Sparkles, color: "text-amber-600", bg: "bg-amber-800/10" },
+    { id: "konser", title: "Konser", cost: 25000, boost: 5, duration: 1, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-01.svg" },
+    { id: "festival", title: "Festival", cost: 50000, boost: 10, duration: 3, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-02.svg" },
+    { id: "karnaval", title: "Karnaval", cost: 150000, boost: 15, duration: 3, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-03.svg" },
+    { id: "piala_davis", title: "Piala Davis", cost: 400000, boost: 30, duration: 7, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-04.svg" },
+    { id: "piala_dunia_rugbi", title: "Piala Dunia Rugbi", cost: 500000, boost: 50, duration: 14, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-05.svg" },
+    { id: "olimpiade", title: "Olimpiade", cost: 1500000, boost: 75, duration: 40, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-06.svg" },
+    { id: "piala_dunia_fifa", title: "Piala Dunia FIFA", cost: 2500000, boost: 100, duration: 30, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-07.svg" },
+    { id: "balap_f1", title: "Balap F1", cost: 800000, boost: 40, duration: 3, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-08.svg" },
   ];
 
   const formatBadgeDate = (dateString: string) => {
@@ -329,7 +330,6 @@ export default function NaikkanKepuasanModal({
 
             <div className="grid grid-cols-1 gap-2.5 lg:gap-3">
               {initiatives.map((item) => {
-                const Icon = item.icon;
                 const ongoingEvents = (countryDetail?.ongoingConstructions || []).filter(
                   (c: any) => c.type === "event" && c.buildingKey === item.id
                 );
@@ -371,8 +371,14 @@ export default function NaikkanKepuasanModal({
                     )}
 
                     <div className="flex items-start gap-2 lg:gap-2.5">
-                      <div className="p-2 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/20 text-[#00FFAA] shrink-0">
-                        <Icon className="w-4 h-4" />
+                      <div className="shrink-0">
+                        <Image
+                          src={item.image}
+                          alt=""
+                          width={56}
+                          height={56}
+                          className="h-12 w-12 object-contain lg:h-14 lg:w-14"
+                        />
                       </div>
                       <div className="space-y-0.5 lg:space-y-1">
                         <div className="flex items-center gap-2 lg:gap-3 flex-wrap">
