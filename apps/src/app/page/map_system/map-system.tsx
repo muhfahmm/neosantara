@@ -139,7 +139,11 @@ import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_n
 import { checkAndGenerateEmbassyOffers, createEmbassyOfferNotification } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
 import { generateBencanaAlamNotification } from '../menus/inbox/logic/6_notifikasi_bencana/1_bencana_alam/bencanaLogic';
 import { generateKeamananNotification } from '../menus/inbox/logic/14_notifikasi_keamanan/keamananLogic';
-import { generateWabahPenyakitNotification } from '../menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic';
+import {
+    EPIDEMIC_BASE_CHANCE_PERCENT,
+    generateWabahPenyakitNotification,
+    PANDEMIC_BASE_CHANCE_PERCENT,
+} from '../menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic';
 import { generateSpionaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/1_spionase/spionaseLogic';
 import { generateSabotaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
 import {
@@ -2324,6 +2328,10 @@ export default function MapPage() {
     // Tampilkan modal peringatan ketika peringkat, kepuasan, atau kesejahteraan turun ke 10 atau kurang
     // Serta trigger notifikasi peringatan dini di inbox saat mencapai threshold (25-20-15)
     useEffect(() => {
+        if (isPausedRef.current || (typeof window !== "undefined" && (window as any).neosantara_is_paused)) {
+            return;
+        }
+
         const kepuasanVal = countryDetail?.kepuasan ?? 50;
         const kesejahteraanVal = countryDetail?.kesejahteraan ?? 50;
 
@@ -2514,13 +2522,16 @@ export default function MapPage() {
         if (typeof window !== "undefined") {
             window.addEventListener("neosantara:ai-news-updated", handleAiNewsUpdated);
             clearStoredAiNews();
-            const pending = takePendingAiNews();
-            if (pending.length > 0) {
-                setNewsList(previous => {
-                    const existingIds = new Set(previous.map(item => item.id));
-                    const additions = pending.filter(item => !existingIds.has(item.id));
-                    return additions.length > 0 ? [...additions, ...previous] : previous;
-                });
+            const isGamePaused = isPausedRef.current || (window as any).neosantara_is_paused;
+            if (!isGamePaused) {
+                const pending = takePendingAiNews();
+                if (pending.length > 0) {
+                    setNewsList(previous => {
+                        const existingIds = new Set(previous.map(item => item.id));
+                        const additions = pending.filter(item => !existingIds.has(item.id));
+                        return additions.length > 0 ? [...additions, ...previous] : previous;
+                    });
+                }
             }
         }
 
@@ -2533,6 +2544,9 @@ export default function MapPage() {
 
     useEffect(() => {
         if (!countryDetail) return;
+        if (isPausedRef.current || (typeof window !== "undefined" && (window as any).neosantara_is_paused)) {
+            return;
+        }
         const budget = Number(countryDetail.anggaran) || 0;
         const crisisActive = Boolean(countryDetail.economic_crisis_active);
 
@@ -2640,6 +2654,10 @@ export default function MapPage() {
         }
 
         if (lastCheckedYearMonth !== currentYearMonth) {
+            if (isPausedRef.current || (typeof window !== "undefined" && (window as any).neosantara_is_paused)) {
+                return;
+            }
+
             const userCountryName = countryDetail.country || countryDetail.nama || "Indonesia";
             const worldNewsResult = generateWorldNewsEvents(
                 COUNTRIES_DATA,
@@ -2725,18 +2743,16 @@ export default function MapPage() {
                 newNotifsToAdd.push(generateTradeRelationOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
-            // 4. Bencana Alam & Wabah Penyakit (25% per bulan standard; 20% untuk anggota WMO karena -5% risiko bencana)
+            // Risiko bencana tetap terpisah; wabah memiliki peluang epidemi/pandemi tersendiri.
             const wmoDisasterModifier = getWMODisasterRiskModifier(userCountryName, countryDetail);
             const disasterBaseChance = Math.max(0, 0.25 + wmoDisasterModifier / 100);
-            if (Math.random() < disasterBaseChance) {
-                const whoPandemicModifier = getWHOPandemicRiskModifier(userCountryName, countryDetail);
-                const disasterSelectionChance = Math.max(0, Math.min(1, 0.60 - whoPandemicModifier / 100));
-                const isBencana = Math.random() < disasterSelectionChance;
+            const disasterOccurrenceChance = disasterBaseChance * 0.60;
+            if (Math.random() < disasterOccurrenceChance) {
                 const remainingDisasterRisk = applyKementerianLingkunganHidupDisasterRiskReduction(
                     1,
                     countryDetail
                 );
-                if (isBencana && Math.random() < remainingDisasterRisk) {
+                if (Math.random() < remainingDisasterRisk) {
                     const disaster = generateBencanaAlamNotification(userCountryName, currentDateStr, countryDetail);
                     newNotifsToAdd.push(disaster);
                     setCountryDetail((prev: any) => {
@@ -2758,35 +2774,47 @@ export default function MapPage() {
                             ]
                         };
                     });
-                } else if (!isBencana) {
-                    const currentPopulation = Number(countryDetail?.jumlah_penduduk);
-                    const outbreak = generateWabahPenyakitNotification(
-                        userCountryName,
-                        currentDateStr,
-                        Number.isFinite(currentPopulation) && currentPopulation > 0
-                            ? currentPopulation
-                            : undefined
-                    );
-                    newNotifsToAdd.push(outbreak);
-                    setCountryDetail((prev: any) => {
-                        if (!prev) return prev;
-                        return {
-                            ...prev,
-                            active_outbreaks: [
-                                ...(Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : []),
-                                {
-                                    id: outbreak.id,
-                                    eventName: outbreak.eventName,
-                                    category: outbreak.category,
-                                    korban: outbreak.korban,
-                                    perkiraanKematian: outbreak.perkiraanKematian,
-                                    durationDays: outbreak.durationDays,
-                                    startDate: currentDateStr,
-                                }
-                            ]
-                        };
-                    });
                 }
+            }
+
+            const whoPandemicModifier = getWHOPandemicRiskModifier(userCountryName, countryDetail);
+            const pandemicChance = Math.max(0, PANDEMIC_BASE_CHANCE_PERCENT + whoPandemicModifier);
+            const epidemicChance = Math.max(0, EPIDEMIC_BASE_CHANCE_PERCENT + whoPandemicModifier);
+            const outbreakRoll = Math.random() * 100;
+            const outbreakType = outbreakRoll < pandemicChance
+                ? 'pandemi'
+                : outbreakRoll < pandemicChance + epidemicChance
+                    ? 'epidemi'
+                    : null;
+            if (outbreakType) {
+                const currentPopulation = Number(countryDetail?.jumlah_penduduk);
+                const outbreak = generateWabahPenyakitNotification(
+                    userCountryName,
+                    currentDateStr,
+                    Number.isFinite(currentPopulation) && currentPopulation > 0
+                        ? currentPopulation
+                        : undefined,
+                    outbreakType
+                );
+                newNotifsToAdd.push(outbreak);
+                setCountryDetail((prev: any) => {
+                    if (!prev) return prev;
+                    return {
+                        ...prev,
+                        active_outbreaks: [
+                            ...(Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : []),
+                            {
+                                id: outbreak.id,
+                                eventName: outbreak.eventName,
+                                category: outbreak.category,
+                                korban: outbreak.korban,
+                                perkiraanKematian: outbreak.perkiraanKematian,
+                                durationDays: outbreak.durationDays,
+                                startDate: currentDateStr,
+                            }
+                        ]
+                    };
+                });
             }
 
             // Risiko keamanan mengikuti rata-rata kekurangan fasilitas kesehatan dan hukum.
@@ -3853,6 +3881,9 @@ export default function MapPage() {
             }
         }
 
+        const isGamePaused = isPausedRef.current || (typeof window !== 'undefined' && (window as any).neosantara_is_paused);
+        if (isGamePaused) return;
+
         if (countryDetail && !countryDetail.pbbSecurityCouncilElection) {
             const initialElectionState = createInitialElectionState(currentDate.getFullYear());
             try {
@@ -4687,6 +4718,9 @@ export default function MapPage() {
             setKesejahteraan(50);
             // Reset semua notifikasi, warning flags, dan deep links
             setNotifications([]);
+            setNewsList([]);
+            prevBudgetUpdateDateRef.current = null;
+            lastObservedNewsResetDateRef.current = null;
             setHasShownEarlyWarning({ kepuasan: false, peringkat: false, kesejahteraan: false });
             setHasShownRatingWarning(false);
             setProductionDeepLink(null);
@@ -4701,6 +4735,8 @@ export default function MapPage() {
             setGiftModalOpen(false);
             setNewsModalOpen(false);
             setPenelitianModalOpen(false);
+            setMissionModalOpen(false);
+            setActiveMenu('Peta Taktis');
             // Toggle resetTrigger to signal all modals to reset
             setResetTrigger(prev => !prev);
         }

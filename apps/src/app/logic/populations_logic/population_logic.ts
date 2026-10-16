@@ -559,13 +559,42 @@ export const calculateDailyPopulationChange = (
   ].filter(Boolean).length;
   const isPopulationCrisis = severeFactorCount >= 2 || food.tier >= 6 || foodDeficitDeclineRate > 0;
   const growthMultiplier = getPopulationGrowthMultiplier(food.tier, housing.tier, overpopulation.tier, health.tier);
+
+  // Deterministic realistic daily & seasonal demographic fluctuation
+  // Menggunakan hash tanggal dan identitas negara agar stabil saat di-render ulang di hari yang sama
+  const parsedDate = new Date(`${date}T00:00:00Z`);
+  const dayOfYear = Math.floor((parsedDate.getTime() - Date.UTC(parsedDate.getUTCFullYear(), 0, 0)) / 86_400_000);
+  const countryId = String(countryName || detail.country || detail.nama_negara || 'global');
+
+  // Pseudo-random seed berbasis hari dan negara
+  let seed = 0;
+  const seedString = `${countryId}_${date}`;
+  for (let i = 0; i < seedString.length; i++) {
+    seed = ((seed << 5) - seed + seedString.charCodeAt(i)) | 0;
+  }
+  const pseudoRandom1 = ((Math.sin(seed) * 10000) % 1 + 1) % 1; // 0..1
+  const pseudoRandom2 = ((Math.cos(seed * 1.5) * 10000) % 1 + 1) % 1; // 0..1
+
+  // 1. Variasi Musiman (Seasonal Cycles)
+  // Di dunia nyata: Kelahiran cenderung berpuncak di bulan-bulan tertentu (~musim gugur/kemarau) ±3-5%
+  // Kematian cenderung meningkat di musim dingin/peralihan cuaca (fluktuasi suhu/penyakit musiman) ±4-6%
+  const seasonalBirthWave = Math.sin((dayOfYear / 365) * 2 * Math.PI) * 0.035;
+  const seasonalDeathWave = Math.cos((dayOfYear / 365) * 2 * Math.PI) * 0.045;
+
+  // 2. Fluktuasi Harian (Daily Stochastic Noise: ±4% untuk kelahiran, ±5% untuk kematian)
+  const dailyBirthNoise = (pseudoRandom1 - 0.5) * 0.08;
+  const dailyDeathNoise = (pseudoRandom2 - 0.5) * 0.10;
+
+  const birthFluctuationMultiplier = Math.max(0.85, Math.min(1.15, 1 + seasonalBirthWave + dailyBirthNoise));
+  const deathFluctuationMultiplier = Math.max(0.85, Math.min(1.15, 1 + seasonalDeathWave + dailyDeathNoise));
+
   const baselineDeaths = Math.min(rawDailyDeaths, Math.floor(dailyBirths * 0.7));
   const adjustedBirths = Math.max(0, Math.floor(
-    dailyBirths * growthMultiplier * foodBirthBonus - outbreakEffects.kelahiranBerkurang
+    dailyBirths * growthMultiplier * foodBirthBonus * birthFluctuationMultiplier - outbreakEffects.kelahiranBerkurang
   ));
   const famineDeaths = isPopulationCrisis ? hitungKematianKelaparan(populasi, foodRatio) : 0;
   const calculatedDeaths = Math.max(0, Math.floor(
-    baselineDeaths * growthMultiplier * foodDeathReduction +
+    (baselineDeaths * growthMultiplier * foodDeathReduction * deathFluctuationMultiplier) +
     famineDeaths +
     foodDeficitDeaths +
     outbreakEffects.kematianTambahan

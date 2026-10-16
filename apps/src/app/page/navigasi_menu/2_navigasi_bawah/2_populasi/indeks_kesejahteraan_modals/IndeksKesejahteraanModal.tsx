@@ -22,6 +22,10 @@ import {
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import { getEducationResearchModifier } from "@/app/page/downgrade_logic";
 import { isMemberOfInterpol, getInterpolCrimeRiskModifier, isMemberOfWHO, getWHOPandemicRiskModifier } from "@/app/page/bonus_logic";
+import {
+  EPIDEMIC_BASE_CHANCE_PERCENT,
+  PANDEMIC_BASE_CHANCE_PERCENT,
+} from "@/app/page/menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic";
 import NaikkanKesejahteraanTab from "./NaikkanKesejahteraanTab";
 
 
@@ -349,11 +353,11 @@ export default function IndeksKesejahteraanModal({
 
                     {/* Kesehatan - 40% */}
                     {(() => {
-                      const baseRisikoWabah = Math.max(0, Math.min(100, Math.round(100 - kesehatanActualScore)));
                       const countryName = selectedCountry?.country || countryDetail?.country || "";
                       const whoModifier = getWHOPandemicRiskModifier(countryName, countryDetail);
                       const isWHOMember = isMemberOfWHO(countryName);
-                      const risikoWabahPercent = Math.max(0, Math.min(100, baseRisikoWabah + whoModifier));
+                      const risikoEpidemiPercent = Math.max(0, EPIDEMIC_BASE_CHANCE_PERCENT + whoModifier);
+                      const risikoPandemiPercent = Math.max(0, PANDEMIC_BASE_CHANCE_PERCENT + whoModifier);
 
                       return (
                         <div
@@ -391,7 +395,8 @@ export default function IndeksKesejahteraanModal({
                           <div className="space-y-1 text-xs text-[#E0E0E0] font-semibold">
                             <p>• Skor Kepuasan Kesehatan: <span className="font-black text-[#00FFAA]">{kesehatanActualScore}/100</span></p>
                             <div className="flex items-center gap-2 flex-wrap">
-                              <p>• Risiko Wabah Penyakit (Epidemi & Pandemi): <span className="font-black text-rose-400">{risikoWabahPercent}%</span></p>
+                              <p>• Peluang epidemi: <span className="font-black text-rose-400">{risikoEpidemiPercent}%</span></p>
+                              <p>• Peluang pandemi: <span className="font-black text-rose-400">{risikoPandemiPercent}%</span></p>
                               {isWHOMember && (
                                 <span className="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/50 rounded-md shadow-sm">
                                   WHO -5%
@@ -785,11 +790,11 @@ export default function IndeksKesejahteraanModal({
 
             {/* Content */}
             {(() => {
-              const baseRisikoWabah = Math.max(0, Math.min(100, Math.round(100 - kesehatanActualScore)));
               const countryName = selectedCountry?.country || countryDetail?.country || "";
               const whoModifier = getWHOPandemicRiskModifier(countryName, countryDetail);
               const isWHOMember = isMemberOfWHO(countryName);
-              const risikoWabahPercent = Math.max(0, Math.min(100, baseRisikoWabah + whoModifier));
+              const risikoEpidemiPercent = Math.max(0, EPIDEMIC_BASE_CHANCE_PERCENT + whoModifier);
+              const risikoPandemiPercent = Math.max(0, PANDEMIC_BASE_CHANCE_PERCENT + whoModifier);
               const isPenalty = kesehatanActualScore <= 65;
               return (
                 <div className="space-y-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
@@ -805,15 +810,21 @@ export default function IndeksKesejahteraanModal({
                         ? 'bg-[#2A141A] border-rose-500/50 text-rose-300'
                         : 'bg-[#0E2A20] border-emerald-500/50 text-emerald-300'
                     }`}>
-                      <span>Risiko Wabah Penyakit (Epidemi):</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-black text-base">{risikoWabahPercent}%</span>
-                        {isWHOMember && (
-                          <span className="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/20 border border-emerald-500/60 rounded-md">
-                            WHO -5%
-                          </span>
-                        )}
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between gap-4">
+                          <span>Peluang Epidemi:</span>
+                          <span className="font-black text-base">{risikoEpidemiPercent}%</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-4">
+                          <span>Peluang Pandemi:</span>
+                          <span className="font-black text-base">{risikoPandemiPercent}%</span>
+                        </div>
                       </div>
+                      {isWHOMember && (
+                        <span className="ml-3 shrink-0 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/20 border border-emerald-500/60 rounded-md">
+                          WHO -5%
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -861,7 +872,7 @@ export default function IndeksKesejahteraanModal({
                         <div className="flex items-start gap-2">
                           <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
                           <span>
-                            <span className="font-bold text-rose-400">Kesehatan Masyarakat Rentan!</span> Skor kesehatan saat ini (<span className="font-bold text-amber-400">{kesehatanActualScore}/100</span>) memicu potensi wabah sebesar <span className="font-bold text-rose-400">{risikoWabahPercent}%</span>.
+                            <span className="font-bold text-rose-400">Kesehatan Masyarakat Rentan!</span> Skor kesehatan saat ini (<span className="font-bold text-amber-400">{kesehatanActualScore}/100</span>). Peluang wabah per bulan: epidemi <span className="font-bold text-rose-400">{risikoEpidemiPercent}%</span>, pandemi <span className="font-bold text-rose-400">{risikoPandemiPercent}%</span>.
                           </span>
                         </div>
                         <div className="flex items-start gap-2">
@@ -876,7 +887,7 @@ export default function IndeksKesejahteraanModal({
                         <div className="flex items-start gap-2">
                           <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                           <span>
-                            <span className="font-bold text-emerald-400">Pelayanan Kesehatan Baik!</span> Skor kesehatan saat ini (<span className="font-bold text-amber-400">{kesehatanActualScore}/100</span>) menekan potensi wabah ke angka rendah (<span className="font-bold text-emerald-400">{risikoWabahPercent}%</span>).
+                            <span className="font-bold text-emerald-400">Pelayanan Kesehatan Baik!</span> Skor kesehatan saat ini (<span className="font-bold text-amber-400">{kesehatanActualScore}/100</span>). Peluang wabah per bulan: epidemi <span className="font-bold text-emerald-400">{risikoEpidemiPercent}%</span>, pandemi <span className="font-bold text-emerald-400">{risikoPandemiPercent}%</span>.
                           </span>
                         </div>
                         <div className="flex items-start gap-2">

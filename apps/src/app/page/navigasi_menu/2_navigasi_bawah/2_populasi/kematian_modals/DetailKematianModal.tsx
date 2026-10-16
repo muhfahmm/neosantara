@@ -31,6 +31,7 @@ interface DetailKematianModalProps {
   onClose: () => void;
   countryDetail?: any;
   selectedCountry?: any;
+  dailyDeaths?: number;
   homelessCount?: number; // Data tunawisma dari induk
   onOpenTempatUmum?: (tabId: string) => void;
   onOpenIndustriPangan?: () => void;
@@ -42,6 +43,7 @@ export default function DetailKematianModal({
   onClose,
   countryDetail,
   selectedCountry,
+  dailyDeaths: propsDailyDeaths,
   homelessCount: propsHomelessCount,
   onOpenTempatUmum,
   onOpenIndustriPangan,
@@ -99,7 +101,9 @@ export default function DetailKematianModal({
   const foodSecurityFactor = Math.max(0.5, 1.2 - (0.005 * indeksKetahananPangan));
   const crimeFactor = kriminalitasRes.crimeFactor;
 
-  const dailyDeaths = calculateDailyDeaths(populasi, lifeExpectancy, securityLevel, detailWithDefaults);
+  const dailyDeaths = propsDailyDeaths !== undefined
+    ? propsDailyDeaths
+    : calculateDailyDeaths(populasi, lifeExpectancy, securityLevel, detailWithDefaults);
 
   const formatNumber = (num: number) => num.toLocaleString('id-ID', { maximumFractionDigits: 2 });
   const countryDisplayName = selectedCountry?.country || "Indonesia";

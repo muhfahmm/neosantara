@@ -441,6 +441,7 @@ export default function RingkasanPopulasiModal({
         onClose={() => setIsDetailDeathOpen(false)}
         countryDetail={countryDetail}
         selectedCountry={selectedCountry}
+        dailyDeaths={dailyDeaths}
         homelessCount={homelessCount}
         onOpenTempatUmum={(tabId: string) => {
           setTempatUmumActiveTab(tabId);

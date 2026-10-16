@@ -36,6 +36,9 @@ const SKENARIO_PANDEMI = [
 
 const POPULASI_ACUAN = 50_000_000;
 
+export const EPIDEMIC_BASE_CHANCE_PERCENT = 50;
+export const PANDEMIC_BASE_CHANCE_PERCENT = 25;
+
 const randomInRange = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -276,13 +279,19 @@ export const WABAH_PENYAKIT_POOL: WabahEventItem[] = [
 export function generateWabahPenyakitNotification(
   userCountryName: string,
   dateStr: string,
-  jumlahPenduduk?: number
+  jumlahPenduduk?: number,
+  jenisWabah?: 'epidemi' | 'pandemi'
 ): WabahPenyakitNotification {
-  const totalWeight = WABAH_PENYAKIT_POOL.reduce((acc, item) => acc + item.weight, 0);
+  const eventPool = jenisWabah
+    ? WABAH_PENYAKIT_POOL.filter(item =>
+        item.category.includes('Pandemi') === (jenisWabah === 'pandemi')
+      )
+    : WABAH_PENYAKIT_POOL;
+  const totalWeight = eventPool.reduce((acc, item) => acc + item.weight, 0);
   let roll = Math.random() * totalWeight;
 
-  let selectedEvent = WABAH_PENYAKIT_POOL[0];
-  for (const item of WABAH_PENYAKIT_POOL) {
+  let selectedEvent = eventPool[0] ?? WABAH_PENYAKIT_POOL[0];
+  for (const item of eventPool) {
     if (roll < item.weight) {
       selectedEvent = item;
       break;

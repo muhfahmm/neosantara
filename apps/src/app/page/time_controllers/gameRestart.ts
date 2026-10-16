@@ -5,6 +5,8 @@ import { clearReportedInvasionViolations } from '@/app/page/navigasi_menu/2_navi
 import { clearExpelledOrganizationCountries } from '@/../../json/database_organisasi_internasional';
 import { clearAllOrganizationMembershipData } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic';
 import { clearActiveNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
+import { clearAllRelationModifiers } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
+import { clearPendingAiNews, clearStoredAiNews } from '@/app/logic/npc_ai_brain/core/aiNewsBridge';
 
 export interface RestartOptions {
     timeManager: SimulationTimeManager | null;
@@ -55,14 +57,28 @@ export function handleGameRestart(options: RestartOptions): void {
         localStorage.removeItem('neosantara_expelled_organization_countries');
         localStorage.removeItem('neosantara_org_applications');
 
-        // Hapus semua storage keanggotaan organisasi per negara
+        // Hapus semua storage keanggotaan organisasi per negara, penelitian, covert op, dsb
         try {
             for (let i = localStorage.length - 1; i >= 0; i--) {
                 const key = localStorage.key(i);
-                if (key && (key.startsWith('neosantara_joined_orgs_') || key.startsWith('research_') || key.startsWith('covert_op_'))) {
+                if (key && (
+                    key.startsWith('neosantara_joined_orgs_') ||
+                    key.startsWith('research_') ||
+                    key.startsWith('covert_op_') ||
+                    key.startsWith('neosantara_country_religion_')
+                )) {
                     localStorage.removeItem(key);
                 }
             }
+        } catch (e) {}
+
+        // Hapus session storage terkait sesi game berjalan
+        try {
+            sessionStorage.removeItem('presiden_simulator_load_save');
+            sessionStorage.removeItem('programNuklirActive');
+            sessionStorage.removeItem('program_nuklir_modal_open');
+            sessionStorage.removeItem('icbm_detail_open');
+            sessionStorage.removeItem('perang_nuklir_detail_open');
         } catch (e) {}
 
         window.dispatchEvent(new CustomEvent('daily_reward_reset'));
@@ -72,13 +88,18 @@ export function handleGameRestart(options: RestartOptions): void {
         clearExpelledOrganizationCountries();
         clearAllOrganizationMembershipData();
         clearActiveNpcCountrySimulationState();
+        clearAllRelationModifiers();
+        clearPendingAiNews();
+        clearStoredAiNews();
 
         try {
             (window as any).neosantara_annexed_countries = {};
             (window as any).neosantara_country_color_overrides = {};
+            (window as any).neosantara_diplomacy_map_colors = {};
             (window as any).neosantara_is_paused = true;
             window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
             window.dispatchEvent(new CustomEvent('map_territory_color_updated'));
+            window.dispatchEvent(new CustomEvent('country_relations_updated'));
             window.dispatchEvent(new CustomEvent('reset_penelitian_selection'));
             window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId: null } }));
             window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { claimableList: [] } }));

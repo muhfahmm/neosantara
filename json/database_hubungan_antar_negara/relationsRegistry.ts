@@ -390,4 +390,14 @@ export function getRelationValue(
   return Math.round(finalScore);
 }
 
+/**
+ * Clears all manual relation modifiers, source modifiers, sanction modifiers, and pact history back to initial state.
+ */
+export function clearAllRelationModifiers(): void {
+  relationModifiersMap.clear();
+  relationSourceModifiersMap.clear();
+  relationSanctionModifiersMap.clear();
+  nonAggressionPactHistory = [];
+}
+
 export default getRelationValue;

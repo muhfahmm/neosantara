@@ -90,7 +90,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'production', direction: 'desc' });
   const [expandedRows, setExpandedRows] = useState<'all' | Set<number>>('all');
-  const [selectedCommodityInfo, setSelectedCommodityInfo] = useState<{ key: string; label: string; population: number; consumptionPerCapita: number; production: number; consumption: number; balance: number; } | null>(null);
+  const [selectedCommodityInfo, setSelectedCommodityInfo] = useState<{ key: string; label: string; population: number; consumptionPerCapita: number; production: number; consumption: number; balance: number; bonusDescription: string | null; } | null>(null);
 
   // 🔥 STATE UNTUK AI DETAIL DEFISIT
   const [aiSectorAnalysis, setAiSectorAnalysis] = useState<{ sectorId: string; sectorLabel: string; totalDeficit: number; totalSurplus: number; commodities: { key: string; label: string; balance: number; isDeficit: boolean; isSurplus: boolean; }[]; } | null>(null);
@@ -172,8 +172,39 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
     }
   };
 
+  const getCommodityBonusDescription = (key: string): string | null => {
+    const countryName = countryDetail?.country || countryDetail?.nama || "";
+    const normalizedKey = key.trim().toLowerCase().replace(/^\d+_/, "");
+    const religion = String(countryDetail?.religion ?? countryDetail?.agama_utama ?? countryDetail?.agama ?? "").trim().toLowerCase();
+    const bonusParts: string[] = [];
+
+    if (getCommunismProductionMultiplier(key, countryDetail?.ideology) > 1) {
+      bonusParts.push(`${COMMUNISM_PRODUCTION_BONUS * 100}% oleh bonus ideologi Komunisme`);
+    }
+    if (religion === "shinto" && getShintoElectricityProductionMultiplier(key) > 1) {
+      bonusParts.push("10% oleh bonus agama Shinto");
+    }
+    if (religion === "islam" && getIslamProductionMultiplier(key) > 1) {
+      bonusParts.push("10% oleh bonus agama Islam");
+    }
+    if (isMemberOfFAO(countryName) && FAO_BONUS_RESOURCES.has(normalizedKey)) {
+      bonusParts.push("10% oleh bonus keanggotaan FAO");
+    }
+
+    return bonusParts.length > 0 ? `Produksi ditingkatkan ${bonusParts.join(" dan ")}.` : null;
+  };
+
   const openCommodityInfo = (key: string, label: string, production: number, consumption: number, balance: number) => {
-    setSelectedCommodityInfo({ key, label, population, consumptionPerCapita: FOOD_CONSUMPTION_PER_CAPITA[key] ?? 0, production, consumption, balance });
+    setSelectedCommodityInfo({
+      key,
+      label,
+      population,
+      consumptionPerCapita: FOOD_CONSUMPTION_PER_CAPITA[key] ?? 0,
+      production,
+      consumption,
+      balance,
+      bonusDescription: getCommodityBonusDescription(key),
+    });
   };
 
   const analyzeSector = (sectorId: string) => {
@@ -252,7 +283,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
       />
 
       {selectedCommodityInfo && (
-        <div className="fixed inset-0 z-[65] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm pointer-events-auto">
+        <div className="fixed inset-0 z-[65] flex items-center justify-center p-4 bg-transparent pointer-events-auto">
           <div className="w-full max-w-md bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-[#00FFAA]/20 bg-[#0A1A1A]">
               <div>
@@ -284,6 +315,11 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                   <div className="mt-1 font-black text-rose-400">{formatColoredNumber(selectedCommodityInfo.consumption, false)}</div>
                 </div>
               </div>
+              {selectedCommodityInfo.bonusDescription && (
+                <div className="rounded-xl bg-emerald-500/10 p-3 border border-emerald-500/30 text-emerald-300 font-bold">
+                  {selectedCommodityInfo.bonusDescription}
+                </div>
+              )}
               <div className="rounded-xl bg-[#0A1A1A] p-3 border border-[#00FFAA]/20">
                 <div className="flex justify-between items-center">
                   <span className="font-bold uppercase tracking-wider text-[#6B8A8A]">Konsumsi / Kapita</span>
@@ -303,6 +339,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
         </div>
       )}
 
+      {!selectedCommodityInfo && (
       <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
         <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
           {/* HEADER */}
@@ -352,30 +389,6 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                               </div>
                               {onGotoProduction && (<button onClick={() => handleBuildClick(key)} title={`Bangun ${label}`} className="p-0.5 lg:p-1 rounded-md lg:rounded-lg bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 transition-all cursor-pointer shrink-0"><Plus className="w-3 h-3 lg:w-3.5 lg:h-3.5 font-bold" /></button>)}
                             </div>
-                            {(() => {
-                              const countryName = countryDetail?.country || countryDetail?.nama || "";
-                              const normalizedKey = (key || "").trim().toLowerCase().replace(/^\d+_/, "");
-                              const religion = String(countryDetail?.religion ?? countryDetail?.agama_utama ?? countryDetail?.agama ?? "").trim().toLowerCase();
-
-                              const hasIslamBonus = religion === "islam" && getIslamProductionMultiplier(key) > 1;
-                              const hasShintoBonus = religion === "shinto" && getShintoElectricityProductionMultiplier(key) > 1;
-                              const hasCommunismBonus = getCommunismProductionMultiplier(key, countryDetail?.ideology) > 1;
-                              const hasFAOBonus = isMemberOfFAO(countryName) && FAO_BONUS_RESOURCES.has(normalizedKey);
-
-                              const bonusParts: string[] = [];
-                              if (hasCommunismBonus) bonusParts.push(`${COMMUNISM_PRODUCTION_BONUS * 100}% oleh bonus ideologi Komunisme`);
-                              if (hasShintoBonus) bonusParts.push(`10% oleh bonus agama Shinto`);
-                              if (hasIslamBonus) bonusParts.push(`10% oleh bonus agama Islam`);
-                              if (hasFAOBonus) bonusParts.push(`10% oleh bonus keanggotaan FAO`);
-
-                              if (bonusParts.length === 0) return null;
-
-                              return (
-                                <div className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-1 text-[8px] lg:text-[9px] font-bold leading-tight text-emerald-300">
-                                  Produksi ditingkatkan {bonusParts.join(" dan ")}.
-                                </div>
-                              );
-                            })()}
                             <div className="space-y-1 text-[10px] lg:text-xs">
                               <div className="flex justify-between items-center bg-emerald-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-md border border-emerald-500/30"><span className="text-[8px] lg:text-[9px] font-bold text-emerald-400 uppercase tracking-tight">Total Produksi</span>{formatColoredNumber(production, true)}</div>
                               <div className="flex justify-between items-center bg-rose-950/40 px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-md border border-rose-500/30"><span className="text-[8px] lg:text-[9px] font-bold text-rose-400 uppercase tracking-tight">Total Konsumsi</span>{formatColoredNumber(consumption, false)}</div>
@@ -410,6 +423,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
           </div>
         </div>
       </div>
+      )}
     </>
   );
 }
