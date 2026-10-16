@@ -633,26 +633,20 @@ export const calculateDailyPopulationChange = (
   const boundedNetDailyChange = Math.max(-maxDailyDecline, Math.min(maxDailyGrowth, unboundedNetChange));
   const religionAdjustedNetChange = applyHinduPopulationGrowthBonus(boundedNetDailyChange, detail.religion);
   const socialismAdjustedNetChange = applySocialismBirthRateBonus(religionAdjustedNetChange, detail.ideology);
-  const taxBirthChange = taxPopulationChange >= 0
-    ? taxPopulationChange
-    : -Math.min(adjustedBirths, Math.ceil(Math.abs(taxPopulationChange) * 0.6));
-  const economicBirthChange = economicPopulationChange >= 0
-    ? economicPopulationChange
-    : -Math.min(adjustedBirths, Math.ceil(Math.abs(economicPopulationChange) * 0.6));
-  const dailyBirthsWithPolicies = Math.max(0, adjustedBirths + taxBirthChange + economicBirthChange);
-  // Demographic capacity caps the base rate. Price/tax policy then changes the
-  // displayed daily trend, so every commodity adjustment has an immediate effect.
+  const demographicNetDailyChange = socialismAdjustedNetChange - outbreakDeaths;
   const netDailyChange = Math.max(
     -Math.min(populasi, maxDailyDecline),
-    socialismAdjustedNetChange - outbreakDeaths + taxPopulationChange + economicPopulationChange,
+    demographicNetDailyChange + taxPopulationChange + economicPopulationChange,
   );
-  const adjustedDeaths = Math.max(0, dailyBirthsWithPolicies - netDailyChange);
+  // Adjusted deaths harus mencerminkan total pengurangan netto populasi harian
+  // sehingga selalu berlaku mutlak secara matematis: dailyBirths - dailyDeaths === netDailyChange
+  const adjustedDeaths = Math.max(0, adjustedBirths - netDailyChange);
   const populationStatus = getPopulationStatus(food.tier, housing.tier, overpopulation.tier, health.tier);
   const sektoral = calculateSectoralSatisfaction(detailWithDefaults);
   const homelessCount = calculateHomelessCount(populasi, sektoral.hunian, detailWithDefaults);
 
   return {
-    dailyBirths: dailyBirthsWithPolicies,
+    dailyBirths: adjustedBirths,
     dailyDeaths: adjustedDeaths,
     netDailyChange,
     homelessCount,

@@ -9,6 +9,7 @@ import {
 import { formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { calculateDailyPopulationChange } from '@/app/logic/populations_logic/population_logic';
+import { hitungDemografi } from '@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/RingkasanPopulasiModal';
 import { calculateKepuasan } from '@/app/logic/kepuasanCalculator';
 import { menuItems, subMenuItems } from '../navigasi_menu/navigationData';
 
@@ -37,6 +38,7 @@ interface NavbarProps {
     onOpenRestartConfirm: () => void;
     onOpenKepuasan?: () => void;
     onOpenKesejahteraan?: () => void;
+    onOpenPopulasi?: () => void;
     presidentRating?: number;
     kesejahteraan?: number;
 }
@@ -53,6 +55,7 @@ export function Navbar({
     onOpenRestartConfirm,
     onOpenKepuasan,
     onOpenKesejahteraan,
+    onOpenPopulasi,
     presidentRating = 50,
     kesejahteraan = 50,
 }: NavbarProps) {
@@ -65,12 +68,15 @@ export function Navbar({
     const netBalanceColor = netBalance >= 0 ? 'text-emerald-700' : 'text-rose-700';
     const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID', { maximumFractionDigits: 0 })}`;
     
-    const populationMetrics = useMemo(
-        () => calculateDailyPopulationChange(countryDetail, selectedCountry?.country, metadata, currentDate),
-        [countryDetail, selectedCountry?.country, metadata, currentDate]
-    );
-    const populasi = Number(countryDetail?.jumlah_penduduk) || 0;
-    const { netDailyChange, dailyBirths, dailyDeaths } = populationMetrics;
+    const demographyResult = useMemo(() => {
+        if (!countryDetail) return null;
+        return hitungDemografi(countryDetail, countryName, metadata, currentDate);
+    }, [countryDetail, countryName, metadata, currentDate]);
+
+    const populasi = demographyResult?.populasi ?? (Number(countryDetail?.jumlah_penduduk) || 0);
+    const netDailyChange = demographyResult?.netDailyChange ?? 0;
+    const dailyBirths = demographyResult?.dailyBirths ?? 0;
+    const dailyDeaths = demographyResult?.dailyDeaths ?? 0;
     const netPopulationLabel = `${netDailyChange >= 0 ? '+ ' : '- '}${Math.abs(netDailyChange).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
     const kepuasanScore = calculateKepuasan(countryDetail, metadata);
 
@@ -174,8 +180,12 @@ export function Navbar({
             <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 overflow-hidden z-10 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 px-3.5 lg:px-4.5 xl:px-5.5 2xl:px-6 py-1.5 2xl:py-2 rounded-2xl shadow-2xl">
                 <div className="flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 min-w-max">
                     
-                    {/* 🔥 POPULASI DENGAN TOOLTIP DEMOGRAFI */}
-                    <div className="group relative flex-shrink-0">
+                    {/* 🔥 POPULASI DENGAN TOOLTIP DEMOGRAFI & KLIK KE KEPENDUDUKAN */}
+                    <button
+                        onClick={onOpenPopulasi}
+                        className="group relative flex-shrink-0 cursor-pointer text-left hover:opacity-85 transition-opacity"
+                        title="Klik untuk membuka Ringkasan Kependudukan"
+                    >
                         <StatusItem 
                             icon={<Users className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-[#00FFAA]" />} 
                             label="POPULASI" 
@@ -199,7 +209,7 @@ export function Navbar({
                                 Pertumbuhan Bersih: <span className={`font-bold ${netDailyChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{netPopulationLabel}</span>
                             </div>
                         </div>
-                    </div>
+                    </button>
 
                     <StatusItem
                         icon={<Landmark className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-[#00FFAA]" />}

@@ -216,57 +216,59 @@ export default function PajakModal({
       newPendingNotifs = [notif, ...newPendingNotifs];
     }
 
-    setCountryDetail({
-      ...countryDetail,
-      pending_notifications: newPendingNotifs,
-      income_tax:
-        taxId === "income_tax"
-          ? nextVal
-          : getTaxValue(countryDetail, ["income_tax"], countryDetail?.income_tax ?? 0),
-      corporate:
-        taxId === "corporate_tax"
-          ? nextVal
-          : getTaxValue(countryDetail, ["corporate"], countryDetail?.corporate ?? 0),
-      ppn:
-        taxId === "vat"
-          ? nextVal
-          : getTaxValue(countryDetail, ["ppn"], countryDetail?.ppn ?? 0),
-      cigarette_tax:
-        taxId === "cigarette_tax"
-          ? nextVal
-          : getTaxValue(countryDetail, ["cigarette_tax"], countryDetail?.cigarette_tax ?? 0),
-      environment_tax:
-        taxId === "environment_tax"
-          ? nextVal
-          : getTaxValue(countryDetail, ["environment_tax"], countryDetail?.environment_tax ?? 0),
-      pajak: {
-        ...(countryDetail?.pajak || {}),
-        penghasilan:
+    setCountryDetail?.((prev: any) => {
+      const current = prev || countryDetail || {};
+      return {
+        ...current,
+        pending_notifications: newPendingNotifs,
+        income_tax:
           taxId === "income_tax"
-            ? { ...(countryDetail?.pajak?.penghasilan || {}), tarif: nextVal }
-            : countryDetail?.pajak?.penghasilan,
-        korporasi:
+            ? nextVal
+            : getTaxValue(current, ["income_tax"], current?.income_tax ?? 0),
+        corporate:
           taxId === "corporate_tax"
-            ? { ...(countryDetail?.pajak?.korporasi || {}), tarif: nextVal }
-            : countryDetail?.pajak?.korporasi,
+            ? nextVal
+            : getTaxValue(current, ["corporate"], current?.corporate ?? 0),
         ppn:
           taxId === "vat"
-            ? { ...(countryDetail?.pajak?.ppn || {}), tarif: nextVal }
-            : countryDetail?.pajak?.ppn,
-        bea_cukai:
+            ? nextVal
+            : getTaxValue(current, ["ppn"], current?.ppn ?? 0),
+        cigarette_tax:
           taxId === "cigarette_tax"
-            ? { ...(countryDetail?.pajak?.bea_cukai || {}), tarif: nextVal }
-            : countryDetail?.pajak?.bea_cukai,
-        lingkungan:
+            ? nextVal
+            : getTaxValue(current, ["cigarette_tax"], current?.cigarette_tax ?? 0),
+        environment_tax:
           taxId === "environment_tax"
-            ? { ...(countryDetail?.pajak?.lingkungan || {}), tarif: nextVal }
-            : countryDetail?.pajak?.lingkungan,
-      },
-      // Simpan indeks kepuasan ke dalam countryDetail (gunakan key 'satisfaction' dengan subkey 'tax')
-      satisfaction: {
-        ...(countryDetail?.satisfaction || {}),
-        tax: newSatisfaction,
-      },
+            ? nextVal
+            : getTaxValue(current, ["environment_tax"], current?.environment_tax ?? 0),
+        pajak: {
+          ...(current?.pajak || {}),
+          penghasilan:
+            taxId === "income_tax"
+              ? { ...(current?.pajak?.penghasilan || {}), tarif: nextVal }
+              : current?.pajak?.penghasilan,
+          korporasi:
+            taxId === "corporate_tax"
+              ? { ...(current?.pajak?.korporasi || {}), tarif: nextVal }
+              : current?.pajak?.korporasi,
+          ppn:
+            taxId === "vat"
+              ? { ...(current?.pajak?.ppn || {}), tarif: nextVal }
+              : current?.pajak?.ppn,
+          bea_cukai:
+            taxId === "cigarette_tax"
+              ? { ...(current?.pajak?.bea_cukai || {}), tarif: nextVal }
+              : current?.pajak?.bea_cukai,
+          lingkungan:
+            taxId === "environment_tax"
+              ? { ...(current?.pajak?.lingkungan || {}), tarif: nextVal }
+              : current?.pajak?.lingkungan,
+        },
+        satisfaction: {
+          ...(current?.satisfaction || {}),
+          tax: newSatisfaction,
+        },
+      };
     });
   };
 

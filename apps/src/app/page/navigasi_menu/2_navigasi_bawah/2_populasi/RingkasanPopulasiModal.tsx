@@ -1,7 +1,7 @@
 "use client"
 
 import dynamic from "next/dynamic";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { X, Users, Info, TrendingUp, ShieldAlert, BadgeDollarSign, Users2, ChevronRight } from "lucide-react";
 import NotebookModalWrapper from "../NotebookModalWrapper";
 import {
@@ -76,7 +76,7 @@ function hitungKepuasanSektoral(detail: CountryDetail): PopulationSectoral {
 // ==============================
 // Fungsi Penghitung Metrik Demografi Dinamis (diperbarui)
 // ==============================
-function hitungDemografi(
+export function hitungDemografi(
   detail: CountryDetail,
   countryName?: string,
   metadata: Record<string, any> = {},
@@ -144,42 +144,13 @@ export default function RingkasanPopulasiModal({
   const [isKesejahteraanOpen, setIsKesejahteraanOpen] = useState(Boolean(initialOpenKesejahteraan));
   const [isTunawismaOpen, setIsTunawismaOpen] = useState(false);
   const [activePopulationTab, setActivePopulationTab] = useState<"ringkasan" | "negara">("ringkasan");
-  const [metricsResult, setMetricsResult] = useState<{
-    countryDetail: CountryDetail;
-    countryName?: string;
-    metadata: Record<string, any>;
-    currentDate?: Date | string;
-    value: ReturnType<typeof hitungDemografi>;
-  } | null>(null);
-
-  // Buka otomatis modal Kesejahteraan jika dipanggil via Deep Link Kesejahteraan Navbar
-  useEffect(() => {
-    if (isOpen && initialOpenKesejahteraan) {
-      setIsKesejahteraanOpen(true);
-    }
-  }, [isOpen, initialOpenKesejahteraan]);
-
-  useEffect(() => {
-    if (!isOpen || !countryDetail || (initialOpenKesejahteraan && isKesejahteraanOpen)) return;
-
-    const countryName = selectedCountry?.country;
-    const timeoutId = window.setTimeout(() => {
-      setMetricsResult({
-        countryDetail,
-        countryName,
-        metadata,
-        currentDate,
-        value: hitungDemografi(countryDetail, countryName, metadata, currentDate),
-      });
-    }, 0);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [isOpen, countryDetail, selectedCountry?.country, metadata, currentDate, initialOpenKesejahteraan, isKesejahteraanOpen]);
-
-  const metrics =
-    metricsResult && metricsResult.countryName === selectedCountry?.country
-      ? metricsResult.value
-      : null;
+  // Hitung metrik demografi secara sinkron (instant memoized) agar setiap perubahan
+  // pajak, harga pokok, spektrum ekonomi, dan subsidi langsung terupdate seketika
+  const countryName = selectedCountry?.country;
+  const metrics = useMemo(() => {
+    if (!countryDetail) return null;
+    return hitungDemografi(countryDetail, countryName, metadata, currentDate);
+  }, [countryDetail, countryName, metadata, currentDate]);
 
   if (!isOpen) return null;
 
@@ -286,7 +257,7 @@ export default function RingkasanPopulasiModal({
     rose: { text: 'text-rose-300', bar: 'bg-rose-400' },
   };
 
-  const countryName = selectedCountry?.country || "Indonesia";
+  const activeCountryName = countryName || "Indonesia";
 
   return (
     <>

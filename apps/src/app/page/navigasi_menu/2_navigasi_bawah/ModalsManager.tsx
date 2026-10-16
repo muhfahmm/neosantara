@@ -111,6 +111,7 @@ interface ModalsManagerProps {
   presidentRating?: number;
   setPresidentRating?: (rating: number) => void;
   notifications?: NotificationMessage[];
+  metadata?: Record<string, any>;
   onRemoveNotification?: (notificationId: string) => void;
 }
 
@@ -135,9 +136,16 @@ function ModalsManager({
   presidentRating = 50,
   setPresidentRating,
   notifications = [],
+  metadata: initialMetadata,
   onRemoveNotification,
 }: ModalsManagerProps) {
-  const [metadata, setMetadata] = useState<Record<string, any>>({});
+  const [metadata, setMetadata] = useState<Record<string, any>>(() => initialMetadata || {});
+
+  useEffect(() => {
+    if (initialMetadata && Object.keys(initialMetadata).length > 0) {
+      setMetadata(initialMetadata);
+    }
+  }, [initialMetadata]);
   const [prefetchedAllCountries, setPrefetchedAllCountries] = useState<any[] | null>(null);
   const [armadaInitialTab, setArmadaInitialTab] = useState<'aktif' | 'infrastruktur'>('aktif');
   const [tempatUmumInitialTab, setTempatUmumInitialTab] = useState<string>('infrastruktur');

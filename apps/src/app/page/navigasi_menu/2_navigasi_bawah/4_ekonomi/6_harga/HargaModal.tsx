@@ -102,16 +102,19 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
       newPendingNotifs = [notif, ...newPendingNotifs];
     }
 
-    setCountryDetail({
-      ...countryDetail,
-      harga: updatedPrices,
-      pending_notifications: newPendingNotifs,
-      ...(key === 'harga_beras' ? { price_rice: value } : {}),
-      ...(key === 'harga_minyak_goreng' ? { price_fuel: value } : {}),
-      satisfaction: {
-        ...(countryDetail?.satisfaction || {}),
-        price: newSatisfaction,
-      },
+    setCountryDetail?.((prev: any) => {
+      const current = prev || countryDetail || {};
+      return {
+        ...current,
+        harga: updatedPrices,
+        pending_notifications: newPendingNotifs,
+        ...(key === 'harga_beras' ? { price_rice: value } : {}),
+        ...(key === 'harga_minyak_goreng' ? { price_fuel: value } : {}),
+        satisfaction: {
+          ...(current?.satisfaction || {}),
+          price: newSatisfaction,
+        },
+      };
     });
   };
 
@@ -222,6 +225,15 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
                 style={{ width: `${satisfaction}%` }}
               />
             </div>
+            {commodityImpacts.length > 0 && (() => {
+              const avgCommodityModifier = commodityImpacts.reduce((sum, item) => sum + item.monthlyModifierPercent, 0) / commodityImpacts.length;
+              const scaledModifier = avgCommodityModifier * 0.25;
+              return (
+                <p className={`mt-3 text-center text-xs font-bold ${scaledModifier >= 0 ? "text-[#00FFAA]" : "text-rose-400"}`}>
+                  Dampak populasi harga pokok: {scaledModifier >= 0 ? "+" : ""}{scaledModifier.toFixed(2)}% / bulan
+                </p>
+              );
+            })()}
           </div>
         </div>
       </div>

@@ -1667,7 +1667,9 @@ export default function MapPage() {
         resolutionViolationAuthorized?: boolean;
         coalitionParticipants?: Array<{ name: string; iso: string }>;
     }>>([]);
+    
     const npcWarQueueRunningRef = useRef(false);
+
     useEffect(() => {
         const handleStartWarAnimation = async (event: Event) => {
             const detail = (event as CustomEvent).detail;
@@ -5063,6 +5065,10 @@ export default function MapPage() {
                     setKesejahteraanDeepLink(true);
                     setActiveMenu("Dashboard:Populasi:Overview");
                 }}
+                onOpenPopulasi={() => {
+                    setKesejahteraanDeepLink(false);
+                    setActiveMenu("Dashboard:Populasi:Overview");
+                }}
             />            {/* Top Left Icon - Inbox */}
             <TopLeftIcon
                 userCountryName={String(
@@ -5940,6 +5946,7 @@ export default function MapPage() {
                 activeMenu={activeMenu}
                 setActiveMenu={setActiveMenu}
                 countryDetail={countryDetail}
+                metadata={metadata}
                 setCountryDetail={setCountryDetail}
                 selectedCountry={selectedCountry}
                 currentDate={currentDate}

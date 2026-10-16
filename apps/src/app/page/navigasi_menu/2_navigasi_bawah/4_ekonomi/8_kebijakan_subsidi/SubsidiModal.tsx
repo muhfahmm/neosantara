@@ -24,6 +24,7 @@ import DetailSubsidiItemModal from "./DetailSubsidiItemModal";
 import { generateSubsidiChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/3_kebijakan_subsidi/subsidiChangeLogic";
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 import { calculateSubsidySatisfaction } from "@/app/logic/kepuasanCalculator";
+import { calculateEconomicPopulationImpact } from "@/app/logic/economic_logic/economicPopulationImpact";
 
 interface ModalProps {
   isOpen: boolean;
@@ -134,6 +135,13 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
     subsidy_states: Object.fromEntries(subsidyItems.map((item) => [item.id, item.isSubsidized])),
   });
 
+  const subsidyStatesRecord = Object.fromEntries(subsidyItems.map((item) => [item.id, item.isSubsidized]));
+  const subsidyPopulationImpact = calculateEconomicPopulationImpact({
+    ...(countryDetail || {}),
+    subsidy_states: subsidyStatesRecord,
+  });
+  const subsidyMonthlyPopModifier = subsidyPopulationImpact.subsidyMonthlyModifierPercent * 0.25;
+
   return (
     <>
       <NotebookModalWrapper onClose={onClose}>
@@ -179,12 +187,11 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
           </div>
 
           <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
-            <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Risiko Gejolak Demo</p>
+            <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Dampak Netto Populasi</p>
             <p className={`text-xs lg:text-sm font-black mt-0.5 ${
-              summary.highestDemoRisk === "Kritis" ? "text-rose-500" :
-              summary.highestDemoRisk === "Tinggi" ? "text-amber-400" : "text-emerald-400"
+              subsidyMonthlyPopModifier >= 0 ? "text-[#00FFAA]" : "text-rose-400"
             }`}>
-              {summary.highestDemoRisk}
+              {subsidyMonthlyPopModifier >= 0 ? "+" : ""}{subsidyMonthlyPopModifier.toFixed(2)}% / bln
             </p>
           </div>
         </div>
