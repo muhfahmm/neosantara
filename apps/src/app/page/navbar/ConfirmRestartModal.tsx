@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { AlertTriangle, RotateCcw, X } from 'lucide-react';
 
 interface ConfirmRestartModalProps {
@@ -12,7 +13,7 @@ interface ConfirmRestartModalProps {
 export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmRestartModalProps) {
     if (!isOpen) return null;
 
-    return (
+    const content = (
         <div className="fixed inset-0 z-[999999999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md font-sans select-none animate-fadeIn">
             {/* Notebook-style Frame — Green Cyberpunk Theme */}
             <div className="bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full max-w-[440px] shadow-2xl relative flex flex-col p-4 pl-12 overflow-hidden">
@@ -106,6 +107,12 @@ export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmResta
             </div>
         </div>
     );
+
+    if (typeof document !== 'undefined') {
+        return createPortal(content, document.body);
+    }
+
+    return content;
 }
 
 export default ConfirmRestartModal;

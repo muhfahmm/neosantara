@@ -2,6 +2,7 @@
 'use client';
 
 import React, { memo, startTransition, useCallback, useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import {
     Play, Pause, Settings, Palmtree, Shield, Crosshair, Globe, Calendar, ArrowLeft, Plus, RotateCw
 } from 'lucide-react';
@@ -6134,7 +6135,7 @@ export default function MapPage() {
             />
 
             {/* Modal Simpan Permainan - Notebook Style (Identik dengan Muat Permainan) */}
-            {isSaveModalOpen && (
+            {isSaveModalOpen && typeof document !== 'undefined' && createPortal(
                 <div className="fixed inset-0 z-[99999999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-black/75 backdrop-blur-md font-sans select-none">
                     {/* Notebook-style Game Menu Frame — Green Theme */}
                     <div className="bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] shadow-2xl relative flex flex-col p-4 pl-12 overflow-hidden">
@@ -6416,7 +6417,8 @@ export default function MapPage() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* Custom Toast Alert */}
