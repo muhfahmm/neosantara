@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { X, Scale, Check } from "lucide-react";
+import React, { startTransition, useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { X, Scale } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { 
   getEconomicSystemDetails, 
@@ -10,8 +10,6 @@ import {
 
 import SpektrumSistemTab from "./tab_menu/1_spektrum_sistem/SpektrumSistemTab";
 import KartuKebijakanTab from "./tab_menu/2_kartu_kebijakan/KartuKebijakanTab";
-import { generateSistemEkonomiChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/4_sistem_ekonomi/sistemEkonomiChangeLogic";
-import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import { getCountryConsumptionBreakdown } from "../../3_produksi_konsumsi/1_grid_nasional/consumptionLogic";
 import {
@@ -23,6 +21,7 @@ import {
   getStateProfitSharePercent,
   syncNationalizationDiplomacyRelations,
   type NationalizationLevels,
+  type NationalizationSectorId,
 } from "./logic/nationalizationLogic";
 
 const NATIONALIZATION_ESTIMATE_YEAR = 2026;
@@ -76,9 +75,6 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
     () => resolveNationalizationLevels(countryDetail)
   );
 
-  const [isSavedSuccess, setIsSavedSuccess] = useState<boolean>(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
   const [electricityMetadata, setElectricityMetadata] = useState<Record<string, BuildingMetadataEntry>>({});
   const [isElectricityMetadataLoading, setIsElectricityMetadataLoading] = useState(true);
   const [electricityMetadataError, setElectricityMetadataError] = useState<string | null>(null);
@@ -137,65 +133,67 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
 
   if (!isOpen) return null;
 
-  const systemDetails: EconomicSystemEffect = getEconomicSystemDetails(sliderValue);
-  const economicPolicyAverage = calculateEconomicPolicyAverage(sliderValue, policyChoices, sectorLevels);
+  const systemDetails: EconomicSystemEffect = useMemo(
+    () => getEconomicSystemDetails(sliderValue),
+    [sliderValue]
+  );
 
-  const handlePolicyChange = (policyId: string, choice: "A" | "B") => {
-    setPolicyChoices((prev) => ({
-      ...prev,
-      [policyId]: choice,
-    }));
-  };
+  const economicPolicyAverage = useMemo(
+    () => calculateEconomicPolicyAverage(sliderValue, policyChoices, sectorLevels),
+    [sliderValue, policyChoices, sectorLevels]
+  );
 
-  const handleSaveSystem = async () => {
-    setIsSaving(true);
-    setSaveError(null);
-    const dateStr = getCurrentGameDateString();
-    const notif = generateSistemEkonomiChangeNotification(sliderValue, systemDetails.title, policyChoices, dateStr);
+  const handlePolicyChange = useCallback((policyId: string, choice: "A" | "B") => {
+    setPolicyChoices((prev) => {
+      if (prev[policyId] === choice) return prev;
+      return {
+        ...prev,
+        [policyId]: choice,
+      };
+    });
 
-    try {
-      const countryName = String(
-        countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || ""
-      ).trim();
-      if (!countryName) throw new Error("Negara aktif tidak ditemukan; kebijakan belum diterapkan.");
+    setCountryDetail?.((prev: any) => {
+      if (!prev || prev[`policy_${policyId}`] === choice) return prev;
+      return {
+        ...prev,
+        [`policy_${policyId}`]: choice,
+      };
+    });
+  }, [setCountryDetail]);
 
-      await syncNationalizationDiplomacyRelations(
-        countryName,
-        sectorLevels,
-        countryDetail?.nationalization_diplomacy_month_counter
-      );
+  const handleSpectrumChange = useCallback((value: number) => {
+    setSliderValue(value);
+    const details = getEconomicSystemDetails(value);
+    setCountryDetail?.((prev: any) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        sistem_ekonomi_val: value,
+        sistem_ekonomi_name: details.title,
+      };
+    });
+  }, [setCountryDetail]);
 
-      if (setCountryDetail) {
-        setCountryDetail((prev: any) => {
-          const currentPending = Array.isArray(prev?.pending_notifications)
-            ? prev.pending_notifications
-            : [];
-          return {
-            ...prev,
-            sistem_ekonomi_val: sliderValue,
-            sistem_ekonomi_name: systemDetails.title,
-            policy_price_control: policyChoices.price_control,
-            policy_strategic_ownership: policyChoices.strategic_ownership,
-            policy_trade_policy: policyChoices.trade_policy,
-            policy_labor_regulation: policyChoices.labor_regulation,
-            policy_land_property_rights: policyChoices.land_property_rights,
-            policy_labor_unions_rights: policyChoices.labor_unions_rights,
-            policy_monetary_banking: policyChoices.monetary_banking,
-            sector_nationalization: { ...sectorLevels },
-            pending_notifications: [notif, ...currentPending],
-          };
-        });
+  const handleSectorLevelChange = useCallback((sectorId: NationalizationSectorId, value: number) => {
+    setSectorLevels((prev) => {
+      if (prev[sectorId] === value) return prev;
+      const nextLevels = { ...prev, [sectorId]: value };
+      const countryName = String(countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || "").trim();
+      if (countryName) {
+        void syncNationalizationDiplomacyRelations(
+          countryName,
+          nextLevels,
+          countryDetail?.nationalization_diplomacy_month_counter,
+        ).catch((error) => console.error("Gagal menyinkronkan nasionalisasi:", error));
       }
+      return nextLevels;
+    });
 
-      setIsSavedSuccess(true);
-      setTimeout(() => setIsSavedSuccess(false), 2500);
-    } catch (error) {
-      console.error("Gagal menerapkan kebijakan nasionalisasi:", error);
-      setSaveError(error instanceof Error ? error.message : "Gagal menerapkan kebijakan ekonomi.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    setCountryDetail?.((prev: any) => ({
+      ...prev,
+      sector_nationalization: { ...(prev?.sector_nationalization || {}), [sectorId]: value },
+    }));
+  }, [countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name_id, countryDetail?.nationalization_diplomacy_month_counter, setCountryDetail]);
 
   const tabs: { id: typeof activeTab; label: string; desc: string }[] = [
     { id: "sistem", label: "Spektrum Sistem", desc: "Kontrol Skala Terpusat vs Pasar" },
@@ -235,15 +233,6 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
           </div>
 
           <div className="flex items-center gap-2 lg:gap-3">
-            <button
-              onClick={handleSaveSystem}
-              disabled={isSaving}
-              className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 lg:py-1.5 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500 hover:text-[#0A1A1A] font-black text-[9px] lg:text-xs uppercase tracking-wider transition-all cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-wait"
-            >
-              <Check className="w-3.5 h-3.5" />
-              {isSaving ? "Menerapkan..." : "Terapkan Kebijakan"}
-            </button>
-
             <button 
               onClick={onClose} 
               className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
@@ -253,13 +242,6 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
             </button>
           </div>
         </div>
-
-        {/* FEEDBACK SUCCESS TOAST */}
-        {isSavedSuccess && (
-          <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 px-4 py-2 rounded-xl bg-emerald-500 text-[#0A1A1A] font-black text-xs uppercase tracking-widest shadow-2xl flex items-center gap-2 animate-in fade-in zoom-in-95">
-            <Check className="w-4 h-4" /> Kebijakan Ekonomi Berhasil Diperbarui!
-          </div>
-        )}
 
         {/* MAIN BODY WITH SIDEBAR TAB MENU */}
         <div className="flex-1 flex min-h-0 relative z-10">
@@ -286,16 +268,13 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
 
           {/* RIGHT CONTENT AREA */}
           <div className="flex-1 overflow-y-auto p-3 lg:p-5 2xl:p-8 bg-[#0F2424] no-scrollbar">
-            {saveError && (
-              <div className="mb-4 rounded-lg border border-rose-500/40 bg-rose-950/30 px-3 py-2 text-xs text-rose-300">
-                {saveError}
-              </div>
-            )}
             {activeTab === "sistem" && (
               <SpektrumSistemTab
                 sliderValue={sliderValue}
                 setSliderValue={setSliderValue}
+                onCommit={handleSpectrumChange}
                 systemDetails={systemDetails}
+                countryDetail={countryDetail}
               />
             )}
 
@@ -331,7 +310,11 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
                     const level = getNationalizationLevel(sectorLevels, sector.id);
                     const levelDetails = NATIONALIZATION_LEVELS.find((item) => item.value === level) ?? NATIONALIZATION_LEVELS[0];
                     return (
-                      <section key={sector.id} className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4">
+                      <section
+                        key={sector.id}
+                        className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4"
+                        style={{ contentVisibility: "auto", containIntrinsicSize: "170px" }}
+                      >
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                           <div>
                             <h4 className="text-sm font-black text-white">{sector.name}</h4>
@@ -341,10 +324,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
                             Level
                             <select
                               value={level}
-                              onChange={(event) => setSectorLevels((previous) => ({
-                                ...previous,
-                                [sector.id]: Number(event.target.value),
-                              }))}
+                              onChange={(event) => handleSectorLevelChange(sector.id, Number(event.target.value))}
                               className="rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] px-3 py-2 text-xs font-bold text-[#00FFAA] outline-none"
                             >
                               {NATIONALIZATION_LEVELS.map((option) => (

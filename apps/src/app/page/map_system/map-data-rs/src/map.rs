@@ -140,7 +140,7 @@ impl MapEngine {
             capital_flags: Vec::new(),
             styles: Styles {
                 bg: JsValue::from_str("#1e3a8a"),
-                sel_fill: JsValue::from_str("#10b981"),
+                sel_fill: JsValue::from_str("#00FFAA"),
                 sel_stroke: JsValue::from_str("#34d399"),
                 stroke: JsValue::from_str("rgba(255, 255, 255, 0.6)"),
                 white: JsValue::from_str("white"),

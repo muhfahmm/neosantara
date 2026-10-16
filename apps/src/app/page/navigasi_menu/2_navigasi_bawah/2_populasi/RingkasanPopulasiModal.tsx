@@ -13,7 +13,6 @@ import {
   calculateDailyDeaths,
   calculateHomelessCount,
   calculateDailyPopulationChange,
-  getPopulationProjection,
   type PopulationSectoral,
 } from "@/app/logic/populations_logic/population_logic";
 
@@ -26,6 +25,10 @@ import {
   HINDU_POPULATION_GROWTH_BONUS,
 } from "@/app/page/bonus_logic/agama_bonus_logic/hindu";
 import { SOCIALISM_BIRTH_RATE_BONUS } from "@/app/page/bonus_logic/ideologi_bonus_logic/sosialisme";
+import { calculateTaxPopulationImpact } from "@/app/logic/economic_logic/2_tax_logic/taxPopulationImpact";
+import { calculateEconomicPopulationImpact } from "@/app/logic/economic_logic/economicPopulationImpact";
+import { calculatePopulationPolicyImpact } from "@/app/logic/populations_logic/populationPolicyImpact";
+import TabelPopulasiNegara from "./TabelPopulasiNegara";
 
 // ==============================
 // Tipe data yang diharapkan dari countryDetail
@@ -140,16 +143,13 @@ export default function RingkasanPopulasiModal({
   const [tempatUmumActiveTab, setTempatUmumActiveTab] = useState<string>("infrastruktur");
   const [isKesejahteraanOpen, setIsKesejahteraanOpen] = useState(Boolean(initialOpenKesejahteraan));
   const [isTunawismaOpen, setIsTunawismaOpen] = useState(false);
+  const [activePopulationTab, setActivePopulationTab] = useState<"ringkasan" | "negara">("ringkasan");
   const [metricsResult, setMetricsResult] = useState<{
     countryDetail: CountryDetail;
     countryName?: string;
     metadata: Record<string, any>;
     currentDate?: Date | string;
     value: ReturnType<typeof hitungDemografi>;
-  } | null>(null);
-  const [projectionResult, setProjectionResult] = useState<{
-    metrics: ReturnType<typeof hitungDemografi>;
-    value: number;
   } | null>(null);
 
   // Buka otomatis modal Kesejahteraan jika dipanggil via Deep Link Kesejahteraan Navbar
@@ -180,20 +180,6 @@ export default function RingkasanPopulasiModal({
     metricsResult && metricsResult.countryName === selectedCountry?.country
       ? metricsResult.value
       : null;
-
-  useEffect(() => {
-    if (!isOpen || !metrics || !countryDetail) return;
-
-    const timeoutId = window.setTimeout(() => {
-      const projection = getPopulationProjection(countryDetail, 30, metadata, currentDate);
-      setProjectionResult({
-        metrics,
-        value: projection.at(-1) ?? metrics.populasi,
-      });
-    }, 0);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [isOpen, metrics, countryDetail, metadata, currentDate]);
 
   if (!isOpen) return null;
 
@@ -265,8 +251,29 @@ export default function RingkasanPopulasiModal({
     homelessCount,
     populationStatus,
   } = metrics;
-  const projectedPopulation30Days =
-    projectionResult?.metrics === metrics ? projectionResult.value : null;
+  const totalBirthsAndDeaths = dailyBirths + dailyDeaths;
+  const birthShare = totalBirthsAndDeaths > 0 ? (dailyBirths / totalBirthsAndDeaths) * 100 : 0;
+  const deathShare = totalBirthsAndDeaths > 0 ? (dailyDeaths / totalBirthsAndDeaths) * 100 : 0;
+  const taxImpact = calculateTaxPopulationImpact(countryDetail);
+  const economicImpact = calculateEconomicPopulationImpact(countryDetail);
+  const populationPolicyImpact = calculatePopulationPolicyImpact(
+    taxImpact.monthlyModifierPercent,
+    economicImpact.totalMonthlyModifierPercent,
+  );
+  const totalPolicyMonthlyModifier =
+    populationPolicyImpact.totalMonthlyModifierPercent;
+  const estimatedPolicyDailyChange = Math.round(
+    populasi * (totalPolicyMonthlyModifier / 100) / 30,
+  );
+  const estimatedPolicyMonthlyChange = Math.round(
+    populasi * totalPolicyMonthlyModifier / 100,
+  );
+  const policyImpactColor =
+    totalPolicyMonthlyModifier < 0 ? "text-rose-400" : "text-[#00FFAA]";
+  const formatModifier = (value: number) =>
+    `${value > 0 ? "+" : ""}${value.toFixed(2)}%`;
+  const formatPeople = (value: number) =>
+    `${value > 0 ? "+" : ""}${value.toLocaleString("id-ID")} jiwa`;
 
   // Peta warna status (dipakai untuk label status demografi)
   const factorColors: Record<string, { text: string; bar: string }> = {
@@ -372,6 +379,35 @@ export default function RingkasanPopulasiModal({
 
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-3 lg:p-4.5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+          <div className="mb-3 flex gap-2 border-b border-[#00FFAA]/15 pb-2">
+            <button
+              type="button"
+              onClick={() => setActivePopulationTab("ringkasan")}
+              aria-pressed={activePopulationTab === "ringkasan"}
+              className={`rounded-lg border px-3 py-2 text-[10px] font-black uppercase tracking-wider transition-colors ${
+                activePopulationTab === "ringkasan"
+                  ? "border-[#00FFAA] bg-[#00FFAA]/10 text-[#00FFAA]"
+                  : "border-[#00FFAA]/15 text-[#6B8A8A] hover:text-[#00FFAA]"
+              }`}
+            >
+              Ringkasan
+            </button>
+            <button
+              type="button"
+              onClick={() => setActivePopulationTab("negara")}
+              aria-pressed={activePopulationTab === "negara"}
+              className={`rounded-lg border px-3 py-2 text-[10px] font-black uppercase tracking-wider transition-colors ${
+                activePopulationTab === "negara"
+                  ? "border-[#00FFAA] bg-[#00FFAA]/10 text-[#00FFAA]"
+                  : "border-[#00FFAA]/15 text-[#6B8A8A] hover:text-[#00FFAA]"
+              }`}
+            >
+              Tabel Populasi Negara
+            </button>
+          </div>
+          {activePopulationTab === "negara" ? (
+            <TabelPopulasiNegara />
+          ) : (
           <div className="space-y-3.5 lg:space-y-4.5 2xl:space-y-6 animate-in fade-in duration-500">
 
             {/* Informasi Demografi */}
@@ -414,10 +450,123 @@ export default function RingkasanPopulasiModal({
                     </div>
                   </div>
                 </div>
+                <div className="mt-3 space-y-2">
+                  <div className="flex items-center justify-between gap-3 text-[8px] lg:text-[9px] font-black uppercase tracking-wider">
+                    <span className="text-[#6B8A8A]">Perbandingan kelahiran &amp; kematian</span>
+                    <div className="flex shrink-0 items-center gap-3">
+                      <span className="text-[#00FFAA]">Kelahiran {birthShare.toFixed(1)}%</span>
+                      <span className="text-rose-400">Kematian {deathShare.toFixed(1)}%</span>
+                    </div>
+                  </div>
+                  <div
+                    role="img"
+                    aria-label={`Perbandingan harian: kelahiran ${birthShare.toFixed(1)}%, kematian ${deathShare.toFixed(1)}%`}
+                    className="flex h-2.5 w-full overflow-hidden rounded-full bg-[#152626]"
+                  >
+                    <div
+                      className="h-full bg-[#00FFAA] transition-[width] duration-500"
+                      style={{ width: `${birthShare}%` }}
+                    />
+                    <div
+                      className="h-full bg-rose-400 transition-[width] duration-500"
+                      style={{ width: `${deathShare}%` }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
+            <section
+              aria-label="Perhitungan dampak kebijakan ekonomi terhadap populasi"
+              className="rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-3.5 lg:p-4.5 2xl:p-6"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#00FFAA]/15 pb-3">
+                <div>
+                  <h3 className="text-xs lg:text-sm font-black uppercase tracking-wider text-[#00FFAA]">
+                    Perhitungan Dampak Kebijakan ke Populasi
+                  </h3>
+                  <p className="mt-1 text-[9px] lg:text-[10px] text-[#6B8A8A]">
+                    Pajak, harga, sistem ekonomi, dan subsidi hanya menerapkan 25% dampak modifier ke populasi.
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[8px] lg:text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">
+                    Total modifier kebijakan / bulan
+                  </p>
+                  <p className={`text-lg lg:text-xl font-black ${policyImpactColor}`}>
+                    {formatModifier(totalPolicyMonthlyModifier)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 lg:grid-cols-4 gap-2">
+                {[
+                  {
+                    label: "Pajak",
+                    detail: `Beban ${taxImpact.burden.toFixed(1)}%`,
+                    modifier: populationPolicyImpact.taxMonthlyModifierPercent,
+                  },
+                  {
+                    label: "Harga pokok",
+                    detail: `Kepuasan ${economicImpact.priceScore.toFixed(0)}/100`,
+                    modifier: economicImpact.priceMonthlyModifierPercent * populationPolicyImpact.scaleFactor,
+                  },
+                  {
+                    label: "Sistem ekonomi",
+                    detail: `Skor ${economicImpact.policyScore.toFixed(0)}/100`,
+                    modifier: economicImpact.systemMonthlyModifierPercent * populationPolicyImpact.scaleFactor,
+                  },
+                  {
+                    label: "Subsidi",
+                    detail: `Dukungan ${economicImpact.subsidyScore.toFixed(0)}/100`,
+                    modifier: economicImpact.subsidyMonthlyModifierPercent * populationPolicyImpact.scaleFactor,
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-lg border border-[#00FFAA]/15 bg-[#0A1A1A] p-2.5"
+                  >
+                    <p className="text-[8px] lg:text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">
+                      {item.label}
+                    </p>
+                    <p className="mt-1 text-[10px] font-bold text-[#E0E0E0]">
+                      {item.detail}
+                    </p>
+                    <p className={`mt-1 text-xs lg:text-sm font-black ${item.modifier < 0 ? "text-rose-400" : "text-[#00FFAA]"}`}>
+                      {formatModifier(item.modifier)} / bln
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {populationPolicyImpact.wasCapped && (
+                <p className="mt-2 text-[9px] font-bold text-amber-300">
+                  Modifier gabungan dibatasi maksimal ±0,75% per bulan.
+                </p>
+              )}
+
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <div className="rounded-lg border border-[#00FFAA]/15 bg-[#0A1A1A] p-2.5">
+                  <p className="text-[8px] lg:text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">
+                    Estimasi dampak harian
+                  </p>
+                  <p className={`mt-1 text-sm font-black ${policyImpactColor}`}>
+                    {formatPeople(estimatedPolicyDailyChange)}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-[#00FFAA]/15 bg-[#0A1A1A] p-2.5">
+                  <p className="text-[8px] lg:text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">
+                    Estimasi dampak bulanan
+                  </p>
+                  <p className={`mt-1 text-sm font-black ${policyImpactColor}`}>
+                    {formatPeople(estimatedPolicyMonthlyChange)}
+                  </p>
+                </div>
+              </div>
+            </section>
+
           </div>
+          )}
         </div>
       </div>
     </NotebookModalWrapper>

@@ -19,7 +19,7 @@ export function NotebookModalWrapper({
 }: NotebookModalWrapperProps) {
   return (
     <div
-      className={`fixed inset-0 ${zIndexClass} flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent font-sans pointer-events-none select-none`}
+      className={`fixed inset-0 ${zIndexClass} flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent font-sans pointer-events-none`}
     >
       {/* Notebook Outer Frame */}
       <div

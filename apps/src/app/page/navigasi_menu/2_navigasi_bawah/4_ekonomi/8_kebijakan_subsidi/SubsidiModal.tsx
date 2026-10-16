@@ -66,23 +66,34 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
     let toggledItemName = "";
     let nextStatus = false;
 
-    setSubsidyItems((prev) =>
-      prev.map((item) => {
-        if (item.id === id) {
-          toggledItemName = item.name;
-          nextStatus = !item.isSubsidized;
-          return { ...item, isSubsidized: !item.isSubsidized };
-        }
-        return item;
-      })
-    );
+    const nextItems = subsidyItems.map((item) => {
+      if (item.id === id) {
+        toggledItemName = item.name;
+        nextStatus = !item.isSubsidized;
+        return { ...item, isSubsidized: !item.isSubsidized };
+      }
+      return item;
+    });
 
-    if (setCountryDetail && toggledItemName) {
+    setSubsidyItems(nextItems);
+
+    if (setCountryDetail) {
       const dateStr = getCurrentGameDateString();
-      const notif = generateSubsidiChangeNotification(toggledItemName, nextStatus, dateStr);
+      const notif = toggledItemName ? generateSubsidiChangeNotification(toggledItemName, nextStatus, dateStr) : null;
+      const subsidyStatesRecord: Record<string, boolean> = {};
+      nextItems.forEach((item) => {
+        subsidyStatesRecord[item.id] = item.isSubsidized;
+      });
+      const summary = calculateSubsidySummary(nextItems);
+
       setCountryDetail((prev: any) => ({
         ...prev,
-        pending_notifications: [notif, ...(prev?.pending_notifications || [])]
+        subsidy_states: subsidyStatesRecord,
+        total_subsidy_cost: summary.totalCost,
+        subsidy_approval_bonus: summary.totalApprovalBonus,
+        pending_notifications: notif
+          ? [notif, ...(prev?.pending_notifications || [])]
+          : prev?.pending_notifications,
       }));
     }
   };
@@ -140,14 +151,6 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
           </div>
 
           <div className="flex items-center gap-2 lg:gap-3">
-            <button
-              onClick={handleSaveSubsidy}
-              className="flex items-center gap-1.5 px-3 lg:px-4 py-1.5 lg:py-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500 hover:text-[#0A1A1A] font-black text-[10px] lg:text-xs uppercase tracking-wider transition-all cursor-pointer shadow-sm shrink-0"
-            >
-              <Check className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-              Terapkan Subsidi
-            </button>
-
             <button 
               onClick={onClose} 
               className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"

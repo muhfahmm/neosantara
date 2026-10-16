@@ -6,6 +6,7 @@ import {
   TAX_CONFIGS,
   calculateIncomeAtRate,
 } from "@/app/logic/economic_logic/2_tax_logic/taxLogic";
+import { calculateTaxPopulationImpact } from "@/app/logic/economic_logic/2_tax_logic/taxPopulationImpact";
 import { generatePajakChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/1_perubahan_pajak/pajakChangeLogic";
 import {
   applyOrthodoxPersonalIncomeTaxRevenueBonus,
@@ -134,6 +135,8 @@ export default function PajakModal({
   };
 
   const satisfaction = calculateSatisfaction(tempRates);
+  const taxPopulationImpact = calculateTaxPopulationImpact(countryDetail, tempRates);
+  const populationTaxModifier = taxPopulationImpact.monthlyModifierPercent * 0.25;
   const ideology = String(countryDetail?.ideology || "").trim().toLowerCase();
   const hasDemocracyTaxBonus = ideology === "demokrasi";
   const hasCapitalismTaxBonus = ideology === "kapitalisme";
@@ -553,6 +556,10 @@ export default function PajakModal({
               />
             </div>
           </div>
+
+          <p className={`mt-3 text-center text-xs font-bold ${populationTaxModifier >= 0 ? "text-[#00FFAA]" : "text-rose-400"}`}>
+            Dampak populasi pajak: {populationTaxModifier >= 0 ? "+" : ""}{populationTaxModifier.toFixed(2)}% / bulan
+          </p>
         </div>
       </div>
     </NotebookModalWrapper>

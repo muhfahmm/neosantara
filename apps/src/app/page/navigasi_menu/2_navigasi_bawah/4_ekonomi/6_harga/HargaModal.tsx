@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { X, Tag, Loader2 } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { generateHargaChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/2_harga_barang_pokok/hargaChangeLogic";
+import { calculatePriceCommodityImpacts } from "@/app/logic/economic_logic/economicPopulationImpact";
 
 interface ModalProps {
   isOpen: boolean;
@@ -85,6 +86,7 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
   if (!isOpen) return null;
 
   const satisfaction = calculateSatisfaction(prices, subsidyActive);
+  const commodityImpacts = calculatePriceCommodityImpacts({ harga: prices, subsidyActive });
 
   const handlePriceChange = (key: string, value: number) => {
     const oldPrice = prices[key] ?? value;
@@ -175,6 +177,9 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
                       <p className="text-xs lg:text-sm font-black text-[#00FFAA] uppercase">{key.replace("harga_", "").replace(/_/g, " ")}</p>
                       <p className="text-[11px] lg:text-xs text-[#6B8A8A]">
                         Nilai saat ini: <span className="font-bold text-[#E0E0E0]">{Number(value).toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
+                      </p>
+                      <p className="text-[11px] lg:text-xs text-[#6B8A8A] mt-1">
+                        Dampak populasi: <span className="font-bold text-[#00FFAA]">{(commodityImpacts.find((impact) => impact.key === key)?.monthlyModifierPercent ?? 0).toFixed(2)}% / bulan</span>
                       </p>
                     </div>
                   </div>

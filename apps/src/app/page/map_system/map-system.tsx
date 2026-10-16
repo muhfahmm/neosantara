@@ -271,10 +271,10 @@ function getCapitalFlagsForCurrentTerritories() {
         const attackerIso = COUNTRIES_DATA.find(country =>
             normalizeKey(country.country) === normalizeKey(annexation.attackerCountry)
         )?.iso || (
-            annexation.attackerIso?.trim().length === 2
-                ? annexation.attackerIso
-                : undefined
-        );
+                annexation.attackerIso?.trim().length === 2
+                    ? annexation.attackerIso
+                    : undefined
+            );
 
         return attackerIso ? { ...capital, iso: attackerIso.toLowerCase() } : capital;
     });
@@ -3433,7 +3433,7 @@ export default function MapPage() {
                             window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { cardId: activeMission, claimableList: list } }));
                         }
                     }
-                } catch {}
+                } catch { }
             }
         }
         lastCountryDetailStateRef.current = serialized;
@@ -6092,13 +6092,13 @@ export default function MapPage() {
                 autoBuildEmbassy={autoBuildEmbassyState}
                 initialDevelopingBuildingKey={
                     aiConstructionNavigation &&
-                    aiConstructionNavigation.countryName.toLowerCase() === countryDetailModalName?.toLowerCase()
+                        aiConstructionNavigation.countryName.toLowerCase() === countryDetailModalName?.toLowerCase()
                         ? aiConstructionNavigation.buildingKey
                         : undefined
                 }
                 initialDevelopingTab={
                     aiConstructionNavigation &&
-                    aiConstructionNavigation.countryName.toLowerCase() === countryDetailModalName?.toLowerCase()
+                        aiConstructionNavigation.countryName.toLowerCase() === countryDetailModalName?.toLowerCase()
                         ? aiConstructionNavigation.targetTab
                         : undefined
                 }

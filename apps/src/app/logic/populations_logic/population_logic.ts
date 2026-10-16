@@ -4,6 +4,9 @@
  */
 
 import { logger } from '../../../lib/logger';
+import { calculateEconomicPopulationImpact } from '../economic_logic/economicPopulationImpact';
+import { calculateTaxPopulationImpact } from '../economic_logic/2_tax_logic/taxPopulationImpact';
+import { calculatePopulationPolicyImpact } from './populationPolicyImpact';
 import { applyHinduPopulationGrowthBonus } from "@/app/page/bonus_logic/agama_bonus_logic/hindu";
 import { applySocialismBirthRateBonus } from "@/app/page/bonus_logic/ideologi_bonus_logic/sosialisme";
 import { applyKontrolPandemiFatalityReduction } from "@/app/page/bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/2_Kontrol Pandemi Global";
@@ -293,13 +296,19 @@ export const getPopulationStatus = (
 // 1. Hitung Kepuasan Sektoral
 // ==============================
 export const calculateSectoralSatisfaction = (detail: CountryDetail): PopulationSectoral => {
-  const pajak = detail.rata_rata_pajak !== undefined
-    ? Math.max(0, Math.min(100, 100 - detail.rata_rata_pajak))
-    : 50;
+  const taxSatisfaction = detail.satisfaction?.tax;
+  const pajak = typeof taxSatisfaction === 'number' && Number.isFinite(taxSatisfaction)
+    ? Math.max(0, Math.min(100, taxSatisfaction))
+    : detail.rata_rata_pajak !== undefined
+      ? Math.max(0, Math.min(100, 100 - detail.rata_rata_pajak))
+      : 50;
 
-  const harga = detail.living_cost_index !== undefined
-    ? Math.max(0, Math.min(100, 100 - detail.living_cost_index))
-    : 50;
+  const priceSatisfaction = detail.satisfaction?.price;
+  const harga = typeof priceSatisfaction === 'number' && Number.isFinite(priceSatisfaction)
+    ? Math.max(0, Math.min(100, priceSatisfaction))
+    : detail.living_cost_index !== undefined
+      ? Math.max(0, Math.min(100, 100 - detail.living_cost_index))
+      : 50;
 
   const pangan = detail.indeks_ketahanan_pangan ?? 50;
 
@@ -413,7 +422,7 @@ export const calculateDailyDeaths = (
   const baseDeathRate = 0.000018;
 
   if (detail) {
-    const harapanHidup = detail?.harapan_hidup ?? 70;
+    const harapanHidup = lifeExpectancy ?? detail?.harapan_hidup ?? 70;
     const indeksKetahananPangan = detail?.indeks_ketahanan_pangan ?? 60;
 
     const keamananRes = calculateKeamananLogic(detail, populasi);
@@ -503,6 +512,18 @@ export const calculateDailyPopulationChange = (
   }
 
   const populasi = Math.max(0, finiteNumber(detail.jumlah_penduduk, 10_000_000));
+  const taxPopulationImpact = calculateTaxPopulationImpact(detail);
+  const economicPopulationImpact = calculateEconomicPopulationImpact(detail);
+  const populationPolicyImpact = calculatePopulationPolicyImpact(
+    taxPopulationImpact.monthlyModifierPercent,
+    economicPopulationImpact.totalMonthlyModifierPercent,
+  );
+  const taxPopulationChange = Math.round(
+    populasi * (populationPolicyImpact.taxMonthlyModifierPercent / 100) / 30,
+  );
+  const economicPopulationChange = Math.round(
+    populasi * (populationPolicyImpact.economicMonthlyModifierPercent / 100) / 30,
+  );
   const date = currentDate instanceof Date
     ? currentDate.toISOString().slice(0, 10)
     : String(currentDate || detail.currentDate || new Date().toISOString()).slice(0, 10);
@@ -605,20 +626,33 @@ export const calculateDailyPopulationChange = (
   }
   const hasFoodOrHousingDeficit = foodRatio < 1 || housingFulfillment < 1;
   const growthCoverage = Math.min(1, Math.max(0, Math.min(foodRatio, housingFulfillment)));
-  const maxAnnualGrowthRate = hasFoodOrHousingDeficit ? 0.005 : 0.03;
+  const maxAnnualGrowthRate = hasFoodOrHousingDeficit ? 0.005 : 0.015;
   const maxDailyGrowth = Math.floor(populasi * maxAnnualGrowthRate * growthCoverage / 365);
-  const maxDailyDecline = isPopulationCrisis ? Math.ceil(populasi * 0.05 / 365) : 0;
+  const maxAnnualDeclineRate = isPopulationCrisis ? 0.03 : 0.015;
+  const maxDailyDecline = Math.ceil(populasi * maxAnnualDeclineRate / 365);
   const boundedNetDailyChange = Math.max(-maxDailyDecline, Math.min(maxDailyGrowth, unboundedNetChange));
   const religionAdjustedNetChange = applyHinduPopulationGrowthBonus(boundedNetDailyChange, detail.religion);
   const socialismAdjustedNetChange = applySocialismBirthRateBonus(religionAdjustedNetChange, detail.ideology);
-  const netDailyChange = Math.max(-populasi, socialismAdjustedNetChange - outbreakDeaths);
-  const adjustedDeaths = Math.max(0, adjustedBirths - netDailyChange);
+  const taxBirthChange = taxPopulationChange >= 0
+    ? taxPopulationChange
+    : -Math.min(adjustedBirths, Math.ceil(Math.abs(taxPopulationChange) * 0.6));
+  const economicBirthChange = economicPopulationChange >= 0
+    ? economicPopulationChange
+    : -Math.min(adjustedBirths, Math.ceil(Math.abs(economicPopulationChange) * 0.6));
+  const dailyBirthsWithPolicies = Math.max(0, adjustedBirths + taxBirthChange + economicBirthChange);
+  // Demographic capacity caps the base rate. Price/tax policy then changes the
+  // displayed daily trend, so every commodity adjustment has an immediate effect.
+  const netDailyChange = Math.max(
+    -Math.min(populasi, maxDailyDecline),
+    socialismAdjustedNetChange - outbreakDeaths + taxPopulationChange + economicPopulationChange,
+  );
+  const adjustedDeaths = Math.max(0, dailyBirthsWithPolicies - netDailyChange);
   const populationStatus = getPopulationStatus(food.tier, housing.tier, overpopulation.tier, health.tier);
   const sektoral = calculateSectoralSatisfaction(detailWithDefaults);
   const homelessCount = calculateHomelessCount(populasi, sektoral.hunian, detailWithDefaults);
 
   return {
-    dailyBirths: adjustedBirths,
+    dailyBirths: dailyBirthsWithPolicies,
     dailyDeaths: adjustedDeaths,
     netDailyChange,
     homelessCount,

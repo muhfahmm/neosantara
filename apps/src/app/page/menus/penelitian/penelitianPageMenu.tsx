@@ -1117,7 +1117,7 @@ export default function PenelitianPageModal({
       {/* MODAL KONFIRMASI MULAI RISET */}
       {confirmTarget && (
         <div
-          className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60"
+          className="fixed inset-0 z-[300] flex items-center justify-center p-4"
           onClick={() => setConfirmTarget(null)}
         >
           <div
@@ -1225,7 +1225,7 @@ export default function PenelitianPageModal({
       {/* MODAL KONFIRMASI UPGRADE */}
       {confirmUpgrade && (
         <div
-          className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60"
+          className="fixed inset-0 z-[300] flex items-center justify-center p-4"
           onClick={() => setConfirmUpgrade(null)}
         >
           <div

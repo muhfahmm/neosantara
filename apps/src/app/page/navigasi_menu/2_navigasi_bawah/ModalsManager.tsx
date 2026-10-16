@@ -12,6 +12,8 @@ import {
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { processCorruptionMonth } from './9_kementrian/1_pemberantasan_korupsi/logic/scandalLogic';
+import { calculateDailyPopulationChange, type CountryDetail } from '@/app/logic/populations_logic/population_logic';
+import { generatePopulasiDefisitNotification } from '@/app/page/menus/inbox/logic/8_kebutuhan_pokok_warga/5_populasi/populasiDefisitLogic';
 
 import dynamic from 'next/dynamic';
 
@@ -214,6 +216,59 @@ function ModalsManager({
       console.warn('ModalsManager: failed to process due loans on date change', e);
     }
   }, [currentDate, countryDetail, setCountryDetail]);
+
+  useEffect(() => {
+    if (!currentDate || !countryDetail) return;
+    const date = currentDate instanceof Date
+      ? `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
+      : String(currentDate).slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+
+    const population = Number(countryDetail.jumlah_penduduk);
+    if (!Number.isFinite(population) || population <= 0) return;
+
+    const countryName = String(
+      countryDetail.country ||
+      countryDetail.nama_negara ||
+      countryDetail.nama ||
+      selectedCountry?.country ||
+      'Negara',
+    );
+    const monthlyKey = date.slice(0, 7);
+
+    try {
+      const metrics = calculateDailyPopulationChange(
+        { ...countryDetail, jumlah_penduduk: population } as CountryDetail,
+        countryName,
+        metadata,
+        date,
+      );
+      if (metrics.netDailyChange >= 0) return;
+
+      setCountryDetail((previous) => {
+        if (!previous || previous.population_deficit_notification_month === monthlyKey) {
+          return previous;
+        }
+        const pendingNotifications = Array.isArray(previous.pending_notifications)
+          ? previous.pending_notifications
+          : [];
+        const notification = generatePopulasiDefisitNotification(
+          metrics.netDailyChange,
+          population,
+          date,
+          countryName,
+        );
+
+        return {
+          ...previous,
+          population_deficit_notification_month: monthlyKey,
+          pending_notifications: [notification, ...pendingNotifications],
+        };
+      });
+    } catch (error) {
+      console.error('Gagal memeriksa defisit populasi untuk notifikasi inbox:', error);
+    }
+  }, [currentDate, countryDetail, metadata, selectedCountry?.country, setCountryDetail]);
 
   // Ensure active research progress and level completion are processed whenever global date advances
   useEffect(() => {

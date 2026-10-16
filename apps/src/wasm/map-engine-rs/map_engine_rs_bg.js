@@ -167,87 +167,7 @@ export function __wbg_addEventListener_aedacff123afaebd() { return handleError(f
     arg0.addEventListener(getStringFromWasm0(arg1, arg2), arg3);
 }, arguments); }
 export function __wbg_beginPath_0362b3134ed67152(arg0) {
-    arg0.beginPath();
-}
-export function __wbg_call_dfde26266607c996() { return handleError(function (arg0, arg1, arg2) {
-    const ret = arg0.call(arg1, arg2);
-    return ret;
-}, arguments); }
-export function __wbg_closePath_ab8775c8f9ce941f(arg0) {
-    arg0.closePath();
-}
-export function __wbg_deltaY_9bad500402885525(arg0) {
-    const ret = arg0.deltaY;
-    return ret;
-}
-export function __wbg_document_3540635616a18455(arg0) {
-    const ret = arg0.document;
-    return isLikeNone(ret) ? 0 : addToExternrefTable0(ret);
-}
-export function __wbg_error_a6fa202b58aa1cd3(arg0, arg1) {
-    let deferred0_0;
-    let deferred0_1;
-    try {
-        deferred0_0 = arg0;
-        deferred0_1 = arg1;
-        console.error(getStringFromWasm0(arg0, arg1));
-    } finally {
-        wasm.__wbindgen_free(deferred0_0, deferred0_1, 1);
-    }
-}
-export function __wbg_fetch_872c7c4b806963cc(arg0, arg1, arg2) {
-    const ret = arg0.fetch(getStringFromWasm0(arg1, arg2));
-    return ret;
-}
-export function __wbg_fillRect_4f7134801b257e68(arg0, arg1, arg2, arg3, arg4) {
-    if (typeof window !== 'undefined') {
-        (window)._neosantara_feature_index = 0;
-    }
-    arg0.fillRect(arg1, arg2, arg3, arg4);
-}
-export function __wbg_fillText_b32475d6cb52486d() { return handleError(function (arg0, arg1, arg2, arg3, arg4) {
-    arg0.fillText(getStringFromWasm0(arg1, arg2), arg3, arg4);
-}, arguments); }
-export function __wbg_fill_48694a86c0e175cf(arg0) {
-    arg0.fill();
-}
-export function __wbg_getContext_e1463ff7aa682d57() { return handleError(function (arg0, arg1, arg2) {
-    const ret = arg0.getContext(getStringFromWasm0(arg1, arg2));
-    return isLikeNone(ret) ? 0 : addToExternrefTable0(ret);
-}, arguments); }
-export function __wbg_getElementById_78449141d07cd8ef(arg0, arg1, arg2) {
-    const ret = arg0.getElementById(getStringFromWasm0(arg1, arg2));
-    return isLikeNone(ret) ? 0 : addToExternrefTable0(ret);
-}
-let currentFeatureProps = null;
-
-export function __wbg_get_with_ref_key_6412cf3094599694(arg0, arg1) {
-    if (arg0 && typeof arg0 === 'object' && ('ISO_A2' in arg0 || 'NAME' in arg0 || 'ADMIN' in arg0)) {
-        currentFeatureProps = arg0;
-    }
-    const ret = arg0[arg1];
-    return ret;
-}
-export function __wbg_instanceof_ArrayBuffer_53db37b06f6b9afe(arg0) {
-    let result;
-    try {
-        result = arg0 instanceof ArrayBuffer;
-    } catch (_) {
-        result = false;
-    }
-    const ret = result;
-    return ret;
-}
-export function __wbg_instanceof_CanvasRenderingContext2d_d4be74cff7165c1e(arg0) {
-    let result;
-    try {
-        result = arg0 instanceof CanvasRenderingContext2D;
-    } catch (_) {
-        result = false;
-    }
-    const ret = result;
-    return ret;
-}
+ }
 export function __wbg_instanceof_HtmlCanvasElement_a02da0a417f1bf3f(arg0) {
     let result;
     try {
@@ -396,7 +316,7 @@ export function __wbg_set_fillStyle_24e3cfb685552e88(arg0, arg1) {
                 const currentFeature = features[idx];
                 win._neosantara_feature_index = idx + 1;
 
-                if (arg1 !== '#10b981' && win.neosantara_country_color_overrides && currentFeature && currentFeature.properties) {
+                if (arg1 !== '#10b981' && arg1 !== '#00FFAA' && win.neosantara_country_color_overrides && currentFeature && currentFeature.properties) {
                     const overrides = win.neosantara_country_color_overrides;
                     const props = currentFeature.properties;
                     const iso = (props.ISO_A2 || props.ISO_A3 || '').toLowerCase().trim();
