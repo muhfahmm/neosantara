@@ -191,9 +191,16 @@ export async function runDeepSeekWarSimulation(input: BattleInput): Promise<Batt
  * Fungsi untuk mengurangi 75% dari unit armada yang DIKERAHKAN oleh user ketika mengalami kekalahan / terpukul mundur.
  * Pengurangan ini hanya memutasi state/localStorage user aktif tanpa mengubah template default database.
  */
-export function applyWarLossesToUserArmada(countryDetail: any, lossRatio: number = 0.75): { updatedDetail: any; lossSummaryText: string } {
+export function applyWarLossesToUserArmada(
+  countryDetail: any,
+  lossRatio: number = 0.75,
+): {
+  updatedDetail: any;
+  lossSummaryText: string;
+  losses: Array<{ unitKey: string; quantity: number }>;
+} {
   if (!countryDetail || typeof window === "undefined") {
-    return { updatedDetail: countryDetail, lossSummaryText: "" };
+    return { updatedDetail: countryDetail, lossSummaryText: "", losses: [] };
   }
 
   let savedConfig: Record<string, number> = {};
@@ -214,6 +221,7 @@ export function applyWarLossesToUserArmada(countryDetail: any, lossRatio: number
   ];
 
   const lostSummaryItems: string[] = [];
+  const losses: Array<{ unitKey: string; quantity: number }> = [];
 
   ALL_UNIT_KEYS.forEach((key) => {
     // Jika user belum pernah menyetel slider, anggap 100% unit dikerahkan untuk pertahanan
@@ -252,6 +260,7 @@ export function applyWarLossesToUserArmada(countryDetail: any, lossRatio: number
           }
         }
         lostSummaryItems.push(`${lostInfantry.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Prajurit Infanteri`);
+        losses.push({ unitKey: "pasukan_infanteri", quantity: lostInfantry });
       }
     } else if (key !== 'pasukan_infanteri' && currentQty > 0) {
       const deployedQty = Math.round((currentQty * deployedPct) / 100);
@@ -268,6 +277,7 @@ export function applyWarLossesToUserArmada(countryDetail: any, lossRatio: number
         }
         const unitName = key.replace(/_/g, ' ').toUpperCase();
         lostSummaryItems.push(`${lostQty.toLocaleString('id-ID', { maximumFractionDigits: 2 })} ${unitName}`);
+        losses.push({ unitKey: key, quantity: lostQty });
       }
     }
   });
@@ -275,5 +285,6 @@ export function applyWarLossesToUserArmada(countryDetail: any, lossRatio: number
   return {
     updatedDetail: nextDetail,
     lossSummaryText: lostSummaryItems.length > 0 ? lostSummaryItems.join(', ') : 'Tidak ada kerugian unit',
+    losses,
   };
 }

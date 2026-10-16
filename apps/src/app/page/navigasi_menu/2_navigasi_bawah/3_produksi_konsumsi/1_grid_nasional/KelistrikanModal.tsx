@@ -75,6 +75,17 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     })();
   }, [isOpen, prefetchedAllCountries, allCountries.length]);
 
+  useEffect(() => {
+    const selectedSlug = String(selectedCountryData?.country_slug || '').trim().toLowerCase();
+    if (!selectedSlug) return;
+    const refreshedCountry = allCountries.find(
+      country => String(country?.country_slug || '').trim().toLowerCase() === selectedSlug,
+    );
+    if (refreshedCountry && refreshedCountry !== selectedCountryData) {
+      setSelectedCountryData(refreshedCountry);
+    }
+  }, [allCountries, selectedCountryData?.country_slug, selectedCountryData]);
+
   if (!isOpen) return null;
 
   const findMeta = (key: string) => {

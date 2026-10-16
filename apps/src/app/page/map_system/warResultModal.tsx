@@ -1,11 +1,19 @@
 'use client';
 
+import Image from 'next/image';
 import { createPortal } from 'react-dom';
+import { DEFENSE_UNIT_LABELS, getDefenseUnitCardImage } from '../navigasi_menu/2_navigasi_bawah/buildingCardImages';
+
+export interface WarUnitLoss {
+    unitKey: string;
+    quantity: number;
+}
 
 export interface ResultModalProps {
     isOpen: boolean;
     title: string;
     message: string;
+    losses?: WarUnitLoss[];
     type?: 'success' | 'error' | 'info';
     onClose: () => void;
 }
@@ -14,6 +22,7 @@ export default function ResultModal({
     isOpen,
     title,
     message,
+    losses = [],
     type = 'success',
     onClose,
 }: ResultModalProps) {
@@ -49,9 +58,46 @@ export default function ResultModal({
                         >
                             {title}
                         </h3>
-                        <p className="text-sm sm:text-base lg:text-lg text-[#A0B0B0] leading-relaxed mb-6 font-medium whitespace-pre-wrap">
+                        <p className={`text-sm sm:text-base lg:text-lg text-[#A0B0B0] leading-relaxed font-medium whitespace-pre-wrap ${losses.length > 0 ? 'mb-5' : 'mb-6'}`}>
                             {message}
                         </p>
+                        {losses.length > 0 && (
+                            <section aria-label="Rincian kerugian alutsista" className="mb-6">
+                                <h4 className="mb-3 text-xs sm:text-sm font-black uppercase tracking-wider text-[#00FFAA]">
+                                    Rincian Kerugian Alutsista
+                                </h4>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    {losses.map((loss) => {
+                                        const imageKey = loss.unitKey === 'pasukan_infanteri' ? 'barak' : loss.unitKey;
+                                        const image = getDefenseUnitCardImage(imageKey);
+                                        const label = DEFENSE_UNIT_LABELS[loss.unitKey] || loss.unitKey.replace(/_/g, ' ');
+                                        return (
+                                            <article
+                                                key={loss.unitKey}
+                                                className="flex min-h-24 items-center gap-3 rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-3"
+                                            >
+                                                {image && (
+                                                    <Image
+                                                        src={image}
+                                                        alt={label}
+                                                        width={72}
+                                                        height={72}
+                                                        className="h-16 w-16 shrink-0 object-contain"
+                                                    />
+                                                )}
+                                                <div className="min-w-0">
+                                                    <p className="text-xs font-bold uppercase leading-snug text-[#A0B0B0]">{label}</p>
+                                                    <p className="mt-1 text-lg font-black text-[#E0E0E0]">
+                                                        −{loss.quantity.toLocaleString('id-ID')}
+                                                    </p>
+                                                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#6B8A8A]">unit hilang</p>
+                                                </div>
+                                            </article>
+                                        );
+                                    })}
+                                </div>
+                            </section>
+                        )}
                         <div className="flex justify-end">
                             <button
                                 type="button"

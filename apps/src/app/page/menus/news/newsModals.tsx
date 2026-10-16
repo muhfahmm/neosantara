@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { Newspaper, X, Swords, Flag, Coins, ShieldAlert, Sparkles, Filter } from 'lucide-react';
@@ -59,6 +59,17 @@ function getNewsCountryName(item: NewsItemData): string | undefined {
   return undefined;
 }
 
+function limitNewsPerMonth(news: NewsItemData[]): NewsItemData[] {
+  const monthlyNewsCounts = new Map<string, number>();
+  return news.filter((item) => {
+    const month = item.dateStr.slice(0, 7);
+    const count = monthlyNewsCounts.get(month) ?? 0;
+    if (count >= 30) return false;
+    monthlyNewsCounts.set(month, count + 1);
+    return true;
+  });
+}
+
 export default function TopRightNewsIcon({
   onClick,
   isOpen,
@@ -76,6 +87,7 @@ export default function TopRightNewsIcon({
   const [showToast, setShowToast] = useState(false);
   const [selectedOperationNews, setSelectedOperationNews] = useState<SecurityCouncilInvasionNews | null>(null);
   const dismissedToastIdRef = React.useRef<string | null>(null);
+  const cappedNewsList = useMemo(() => limitNewsPerMonth(newsList), [newsList]);
 
   useEffect(() => {
     setMounted(true);
@@ -83,8 +95,8 @@ export default function TopRightNewsIcon({
 
   // Popup Toast Otomatis Muncul di Sebelah Kiri (Seperti Inbox) saat ada Berita Baru
   useEffect(() => {
-    if (newsList.length > 0) {
-      const latest = newsList[0];
+    if (cappedNewsList.length > 0) {
+      const latest = cappedNewsList[0];
       if (dismissedToastIdRef.current !== latest.id) {
         setToastNews(latest);
         setShowToast(true);
@@ -93,7 +105,7 @@ export default function TopRightNewsIcon({
       setToastNews(null);
       setShowToast(false);
     }
-  }, [newsList]);
+  }, [cappedNewsList]);
 
   useEffect(() => {
     if (!showToast || !toastNews) return;
@@ -111,7 +123,7 @@ export default function TopRightNewsIcon({
     return 'operasi_militer';
   };
 
-  const filteredNews = newsList.filter((item) => (
+  const filteredNews = cappedNewsList.filter((item) => (
     (filterCategory === 'semua' || getCategory(item) === filterCategory) &&
     (filterType === 'semua' || item.type === filterType)
   ));

@@ -114,6 +114,32 @@ const DEFENSE_UNIT_IMAGES: Record<string, string> = {
   pesawat_angkut: "/images/game/defense/air/pesawat-angkut.svg",
 };
 
+export const DEFENSE_UNIT_LABELS: Record<string, string> = {
+  pasukan_infanteri: "Prajurit Infanteri",
+  tank_tempur_utama: "Tank Tempur Utama",
+  apc_ifv: "APC / IFV",
+  artileri_berat: "Artileri Berat",
+  sistem_peluncur_roket: "Sistem Peluncur Roket",
+  pertahanan_udara_mobile: "Pertahanan Udara Mobile",
+  kendaraan_taktis: "Kendaraan Taktis",
+  kapal_induk: "Kapal Induk",
+  kapal_induk_nuklir: "Kapal Induk Nuklir",
+  kapal_destroyer: "Kapal Destroyer",
+  kapal_korvet: "Kapal Korvet",
+  kapal_selam_nuklir: "Kapal Selam Nuklir",
+  kapal_selam_regular: "Kapal Selam Reguler",
+  kapal_ranjau: "Kapal Ranjau",
+  kapal_logistik: "Kapal Logistik",
+  jet_tempur_siluman: "Jet Tempur Siluman",
+  jet_tempur_interceptor: "Jet Tempur Interceptor",
+  pesawat_pengebom: "Pesawat Pengebom",
+  helikopter_serang: "Helikopter Serang",
+  pesawat_pengintai: "Pesawat Pengintai",
+  drone_intai_uav: "Drone Intai UAV",
+  drone_kamikaze: "Drone Kamikaze",
+  pesawat_angkut: "Pesawat Angkut",
+};
+
 const DEFENSE_INFRASTRUCTURE_IMAGES: Record<string, string> = {
   barak: "/images/game/defense/infrastructure/barak.svg",
   gudang_senjata: "/images/game/defense/infrastructure/gudang-senjata.svg",

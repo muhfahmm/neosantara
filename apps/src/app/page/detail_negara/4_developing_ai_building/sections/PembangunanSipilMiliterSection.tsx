@@ -28,6 +28,7 @@ interface PembangunanSipilMiliterSectionProps {
   countryDetail: Record<string, any> | null;
   metadata: Record<string, any>;
   initialBuildingKey?: string;
+  categoryOnly?: "mineral_energi" | "manufaktur";
 }
 
 // ----------------------------------------------------
@@ -337,6 +338,7 @@ const formatCompletionDate = (value: unknown): string => {
 export default function PembangunanSipilMiliterSection({
   countryDetail,
   initialBuildingKey,
+  categoryOnly,
 }: PembangunanSipilMiliterSectionProps) {
   const initialCivilCategory = CIVIL_CATEGORIES.find((category) =>
     category.items.some((item) => item.key === initialBuildingKey),
@@ -345,16 +347,12 @@ export default function PembangunanSipilMiliterSection({
     (item) => item.key === initialBuildingKey,
   );
   const [subTab, setSubTab] = React.useState<"sipil" | "militer">(
-    initialCivilCategory ? "sipil" : initialMilitaryItem ? "militer" : "sipil",
+    categoryOnly || initialCivilCategory ? "sipil" : initialMilitaryItem ? "militer" : "sipil",
   );
   const [activeCivilCategory, setActiveCivilCategory] = React.useState<string>(
-    initialCivilCategory?.id || "kelistrikan_infra",
+    categoryOnly || initialCivilCategory?.id || "kelistrikan_infra",
   );
-  const [searchQuery, setSearchQuery] = React.useState<string>(
-    initialCivilCategory?.items.find((item) => item.key === initialBuildingKey)?.label ||
-      initialMilitaryItem?.label ||
-      "",
-  );
+  const [searchQuery, setSearchQuery] = React.useState<string>("");
 
   const pendingCivilianConstructions = Array.isArray(countryDetail?.ai_civilian_construction_queue)
     ? countryDetail.ai_civilian_construction_queue as Array<{
@@ -435,6 +433,7 @@ export default function PembangunanSipilMiliterSection({
     () => CIVIL_CATEGORIES.find((c) => c.id === activeCivilCategory) || CIVIL_CATEGORIES[0],
     [activeCivilCategory]
   );
+  const CategoryIcon = activeCategoryObj.icon;
 
   const filteredCivilItems = useMemo(() => {
     if (!searchQuery.trim()) return activeCategoryObj.items;
@@ -458,7 +457,7 @@ export default function PembangunanSipilMiliterSection({
     <div className="flex flex-col h-full w-full bg-[#0F2424] text-[#E0E0E0] rounded-2xl overflow-hidden border border-[#00FFAA]/20 shadow-sm">
       {/* HEADER SUB SWITCHER */}
       <div className="bg-[#0A1A1A] border-b border-[#00FFAA]/20 px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-1.5 bg-[#0F2424] p-1 rounded-xl border border-[#00FFAA]/30">
+        {!categoryOnly && <div className="flex items-center gap-1.5 bg-[#0F2424] p-1 rounded-xl border border-[#00FFAA]/30">
           <button
             onClick={() => {
               setSubTab("sipil");
@@ -487,7 +486,7 @@ export default function PembangunanSipilMiliterSection({
             <Shield className="w-3.5 h-3.5" />
             <span>Militer & Infrastruktur</span>
           </button>
-        </div>
+        </div>}
 
         <div className="relative min-w-[200px]">
           <Search className="w-3.5 h-3.5 text-[#6B8A8A] absolute left-3 top-1/2 -translate-y-1/2" />
@@ -506,7 +505,7 @@ export default function PembangunanSipilMiliterSection({
         {subTab === "sipil" && (
           <>
             {/* Sidebar Kategori */}
-            <div className="w-48 sm:w-56 border-r border-[#00FFAA]/20 bg-[#0A1A1A] p-2.5 flex flex-col gap-1 overflow-y-auto no-scrollbar shrink-0">
+            {!categoryOnly && <div className="w-48 sm:w-56 border-r border-[#00FFAA]/20 bg-[#0A1A1A] p-2.5 flex flex-col gap-1 overflow-y-auto no-scrollbar shrink-0">
               <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A] px-2 py-1 mb-1">
                 Kategori Sektor
               </p>
@@ -559,13 +558,13 @@ export default function PembangunanSipilMiliterSection({
                   </button>
                 );
               })}
-            </div>
+            </div>}
 
             {/* Grid Kartu Sipil */}
             <div className="flex-1 flex flex-col min-w-0 bg-[#0F2424] overflow-y-auto p-4 custom-scrollbar">
               <div className="mb-3">
                 <h4 className="text-sm font-black uppercase tracking-wider text-[#00FFAA] flex items-center gap-2">
-                  <activeCategoryObj.icon className="w-4 h-4 text-[#00FFAA]" />
+                  <CategoryIcon className="w-4 h-4 text-[#00FFAA]" />
                   {activeCategoryObj.title}
                 </h4>
                 <p className="text-[10px] text-[#6B8A8A] font-semibold">

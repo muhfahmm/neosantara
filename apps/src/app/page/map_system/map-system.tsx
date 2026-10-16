@@ -94,6 +94,7 @@ import {
     applyNpcCountrySimulationState,
     useNpcCountrySimulation,
     clearActiveNpcCountrySimulationState,
+    NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { setCurrentGameDateString } from '@/app/logic/gameSessionState';
 import {
@@ -492,6 +493,18 @@ export default function MapPage() {
         String(currentDate.getDate()).padStart(2, '0'),
     ].join('-');
     useNpcCountrySimulation(currentDate, countryDetail?.country_slug, metadata);
+
+    useEffect(() => {
+        const refreshNpcCountryDetail = () => {
+            setCountryDetail((previous: Record<string, unknown> | null) => {
+                if (!previous) return previous;
+                const updated = applyNpcCountrySimulationState(previous);
+                return updated === previous ? previous : updated;
+            });
+        };
+        window.addEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcCountryDetail);
+        return () => window.removeEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcCountryDetail);
+    }, []);
 
     useEffect(() => {
         setSimulationDate(currentDate);
@@ -2258,6 +2271,7 @@ export default function MapPage() {
         isOpen: boolean;
         title: string;
         message: string;
+        losses?: Array<{ unitKey: string; quantity: number }>;
         type?: 'success' | 'error' | 'info';
         persistent?: boolean;
         openInboxOnClose?: boolean;
@@ -5712,7 +5726,7 @@ export default function MapPage() {
                             if (isUserDefender) {
                                 if (result === 'lose') {
                                     // 1. Potong armada pertahanan 75%
-                                    const { updatedDetail: detailAfterLoss, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.75);
+                                    const { updatedDetail: detailAfterLoss, lossSummaryText, losses } = applyWarLossesToUserArmada(countryDetail, 0.75);
 
                                     // 2. Acak persentase (80% Dirampas, 20% Dianeksasi)
                                     const roll = Math.random() * 100;
@@ -5754,13 +5768,14 @@ export default function MapPage() {
                                         setResultModal({
                                             isOpen: true,
                                             title: 'Pertahanan Gagal — Produksi Dirampas!',
-                                            message: `Pertahanan negara Anda gagal menahan agresi militer dari ${activeWarAnimation.attacker}. Negara berhasil menepis aneksasi total (peluang selamat 80%), namun seluruh stok hasil produksi (Mineral, Manufaktur, Peternakan, Agrikultur, Perikanan, Olahan Pangan) dirampas habis hingga 0. Dampak populasi: ${lostPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa (${lossPercent}% populasi), serta kerugian armada 75%: ${lossSummaryText}.`,
+                                            message: `Pertahanan negara Anda gagal menahan agresi militer dari ${activeWarAnimation.attacker}. Negara berhasil menepis aneksasi total (peluang selamat 80%), namun seluruh stok hasil produksi (Mineral, Manufaktur, Peternakan, Agrikultur, Perikanan, Olahan Pangan) dirampas habis hingga 0. Dampak populasi: ${lostPopulation.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jiwa (${lossPercent}% populasi). Kerugian alutsista dirinci di bawah.`,
+                                            losses,
                                             type: 'error',
                                         });
                                     }
                                 } else {
                                     // Pertahanan Berhasil! (User Win - potong armada user sebesar 25%)
-                                    const { updatedDetail: detailAfterWin, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.25);
+                                    const { updatedDetail: detailAfterWin, lossSummaryText, losses } = applyWarLossesToUserArmada(countryDetail, 0.25);
                                     setCountryDetail(detailAfterWin);
 
                                     setNotifications((prev: any[]) => [
@@ -5778,7 +5793,8 @@ export default function MapPage() {
                                     setResultModal({
                                         isOpen: true,
                                         title: 'Pertahanan Berhasil!',
-                                        message: `Pasukan pertahanan nasional sukses memukul mundur agresi militer dari ${activeWarAnimation.attacker}! Armada pertahanan mengalami kerugian tempur sebesar 25%: ${lossSummaryText}.`,
+                                        message: `Pasukan pertahanan nasional sukses memukul mundur agresi militer dari ${activeWarAnimation.attacker}! Kerugian tempur armada pertahanan sebesar 25%.`,
+                                        losses,
                                         type: 'success',
                                         persistent: true,
                                         openInboxOnClose: false,
@@ -6195,6 +6211,7 @@ export default function MapPage() {
                 isOpen={resultModal.isOpen}
                 title={resultModal.title}
                 message={resultModal.message}
+                losses={resultModal.losses}
                 type={resultModal.type}
                 onClose={() => {
                     setResultModal(prev => ({ ...prev, isOpen: false }));

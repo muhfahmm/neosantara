@@ -9,7 +9,10 @@ import {
   calculateNetBalanceWithEconomicEmbargo,
   ECONOMIC_SANCTIONS_UPDATED_EVENT,
 } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
-import { applyNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
+import {
+  applyNpcCountrySimulationState,
+  NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
+} from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
 import { getProvinceReligionOverride } from './1_informasi_umum/provinsi_logic/1_informasi_umum/2_tugaskan_misionaris';
@@ -390,6 +393,21 @@ export function CountryDetailModal({
       };
     });
   }, [currentDate, fetchedDetail, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !fetchedDetail?.country_slug) return;
+
+    const refreshNpcDetail = () => {
+      const updatedDetail = applyNpcCountrySimulationState(fetchedDetail);
+      if (updatedDetail === fetchedDetail) return;
+      setFetchedDetail(updatedDetail);
+      setDailyNetBalance(calculateNetBalanceWithEconomicEmbargo(updatedDetail, countryName || undefined));
+      setDailyNetPopulation(calculateCountryNetPopulation(updatedDetail));
+    };
+
+    window.addEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcDetail);
+    return () => window.removeEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcDetail);
+  }, [countryName, fetchedDetail, isOpen]);
 
   useEffect(() => {
     if (!isOpen || !fetchedDetail) return;

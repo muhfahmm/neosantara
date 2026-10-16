@@ -98,7 +98,7 @@ export default function SpektrumKepuasanSection({
     return Math.round(calculateKepuasan(countryDetail, metadata));
   }, [countryDetail, metadata]);
 
-  // Daftar 9 sektor utama persis sesuai menu Kepuasan Rakyat
+  // Tampilkan seluruh indikator yang digunakan menu Kepuasan Rakyat.
   const sectors = useMemo(() => [
     {
       id: "pajak",
@@ -129,7 +129,7 @@ export default function SpektrumKepuasanSection({
       name: "PRODUKSI LISTRIK",
       score: indicatorScores.listrik,
       icon: Plug,
-      tabTarget: "kelistrikan",
+      tabTarget: "pembangkit_listrik_tenaga_nuklir",
       desc: "Keandalan kapasitas daya pembangkit terhadap beban puncak konsumsi",
     },
     {
@@ -171,6 +171,13 @@ export default function SpektrumKepuasanSection({
       icon: HandHelping,
       tabTarget: "subsidi",
       desc: "Cakupan perlindungan sosial, bantuan pangan, tarif energi, dan jaring pengaman",
+    },
+    {
+      id: "integritas",
+      name: "INTEGRITAS & ANTI-KORUPSI",
+      score: indicatorScores.integritas,
+      icon: ShieldCheck,
+      desc: "Tingkat integritas pemerintahan berdasarkan indeks korupsi negara",
     },
   ], [indicatorScores]);
 
@@ -335,7 +342,7 @@ export default function SpektrumKepuasanSection({
           </div>
         </div>
 
-        {/* 9 KARTU GRID SEKTOR UTAMA SESUAI GAMBAR */}
+        {/* Kartu seluruh indikator sektor utama */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {sectors.map((sector) => {
             const Icon = sector.icon;

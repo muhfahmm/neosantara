@@ -30,11 +30,8 @@ export interface AiNewsItem {
 }
 
 export const AI_NEWS_UPDATED_EVENT = "neosantara:ai-news-updated";
-export const MAX_AI_NEWS_PER_DAY = 10;
 
 const AI_NEWS_STORAGE_KEY = "neosantara_world_news_list";
-const AI_NEWS_DAILY_COUNT_STORAGE_KEY = "neosantara_ai_news_daily_count";
-const publishedAiNewsCountByDate = new Map<string, number>();
 const pendingAiNews: AiNewsItem[] = [];
 const pendingAiNewsIds = new Set<string>();
 
@@ -64,45 +61,8 @@ export function terbitkanBeritaAI(news: AiNewsItem): void {
       return;
     }
 
-    // Batasi seluruh berita tindakan AI agar satu hari simulasi tidak membanjiri inbox.
-    let storedDailyCounts: Record<string, number> = {};
-    try {
-      const storedCounts = sessionStorage.getItem(AI_NEWS_DAILY_COUNT_STORAGE_KEY);
-      if (storedCounts) {
-        const parsed: unknown = JSON.parse(storedCounts);
-        if (typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)) {
-          storedDailyCounts = Object.fromEntries(
-            Object.entries(parsed).filter(
-              (entry): entry is [string, number] =>
-                typeof entry[1] === "number" && Number.isFinite(entry[1]) && entry[1] >= 0,
-            ),
-          );
-        } else {
-          console.warn("[AI News] Format hitungan harian tersimpan tidak valid.");
-        }
-      }
-    } catch (err) {
-      console.warn("[AI News] Gagal membaca hitungan berita harian tersimpan:", err);
-    }
-
     if (pendingAiNewsIds.has(news.id)) return;
 
-    const publishedCount = Math.max(
-      storedDailyCounts[news.dateStr] ?? 0,
-      publishedAiNewsCountByDate.get(news.dateStr) ?? 0,
-    );
-    if (publishedCount >= MAX_AI_NEWS_PER_DAY) return;
-
-    storedDailyCounts[news.dateStr] = publishedCount + 1;
-    try {
-      sessionStorage.setItem(
-        AI_NEWS_DAILY_COUNT_STORAGE_KEY,
-        JSON.stringify(storedDailyCounts),
-      );
-    } catch (err) {
-      console.warn("[AI News] Gagal menyimpan hitungan berita harian:", err);
-    }
-    publishedAiNewsCountByDate.set(news.dateStr, publishedCount + 1);
     pendingAiNews.unshift(news);
     pendingAiNewsIds.add(news.id);
 

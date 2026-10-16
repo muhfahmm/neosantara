@@ -55,6 +55,11 @@ export default function CountryKelistrikanModal({
   const powerSources = SOURCE_ORDER.map((key) => {
     const bMeta = findMeta(key);
     const count = Number(countryData?.[key]) || 0;
+    const pendingCount = Array.isArray(countryData?.ai_civilian_construction_queue)
+      ? countryData.ai_civilian_construction_queue
+          .filter((item: { buildingKey?: string }) => item.buildingKey === key)
+          .reduce((total: number, item: { jumlah?: number }) => total + (Number(item.jumlah) || 0), 0)
+      : 0;
     const unitProduction = Number(bMeta?.produksi) || 0;
 
     let isFuelDeficit = false;
@@ -91,6 +96,7 @@ export default function CountryKelistrikanModal({
       key,
       label: formatLabel(key),
       count,
+      pendingCount,
       unitProduction,
       totalProduction: count * unitProduction * getProductionBonusMultiplier(countryData, key),
       isFuelDeficit,
@@ -215,6 +221,11 @@ export default function CountryKelistrikanModal({
                     <p className="text-lg font-black text-[#E0E0E0] leading-none mt-1">
                       {source.count} <span className="text-xs font-bold text-[#6B8A8A]">Unit</span>
                     </p>
+                    {source.pendingCount > 0 && (
+                      <p className="mt-1 text-[9px] font-bold text-amber-300">
+                        +{source.pendingCount.toLocaleString('id-ID')} sedang dibangun
+                      </p>
+                    )}
                   </div>
 
                   <div className="border-t border-[#00FFAA]/10 mt-3 pt-2 text-center min-h-[44px] flex flex-col justify-center">
