@@ -24,7 +24,6 @@ type KudetaType = import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta')
 const ModalsAnnexedGameOver = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsAnnexedGameOver'), { ssr: false });
 const DiplomacyTracking = dynamic(() => import('../menus/tracking-modals/tracking'), { ssr: false });
 const ResultModal = dynamic(() => import('./warResultModal'), { ssr: false });
-const TopUpModal = dynamic(() => import('../menus/topup/TopUpModal'), { ssr: false });
 
 export function lootUserProductionInventory(countryDetail: any, currentDateStr: string): { updatedDetail: any; lootedSummaryText: string } {
     if (!countryDetail) return { updatedDetail: countryDetail, lootedSummaryText: '' };
@@ -626,9 +625,8 @@ export default function MapPage() {
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [isPresidentMenuOpen, setIsPresidentMenuOpen] = useState(false);
     const [isRestartConfirmOpen, setIsRestartConfirmOpen] = useState(false);
-    const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
     const [activeMenu, setActiveMenu] = useState('Peta Taktis');
-    const topUpWasPausedRef = useRef(true);
+
     const [isDiplomacyMapActive, setIsDiplomacyMapActive] = useState(false);
     const [resetTrigger, setResetTrigger] = useState(false);
     const [productionDeepLink, setProductionDeepLink] = useState<{ tab: string; key: string } | null>(null);
@@ -814,44 +812,9 @@ export default function MapPage() {
         };
     }, [handleFocusHome]);
 
-    function openTopUpPage() {
-        if (isTopUpModalOpen) return;
-        topUpWasPausedRef.current = timeManagerRef.current?.getIsPaused() ?? isPaused;
-        timeManagerRef.current?.setPaused(true);
-        setIsPaused(true);
-        setIsTopUpModalOpen(true);
-    }
-
-    function closeTopUpPage() {
-        setIsTopUpModalOpen(false);
-        timeManagerRef.current?.setPaused(topUpWasPausedRef.current);
-        setIsPaused(topUpWasPausedRef.current);
-    }
-
-    function handleTopUpSuccess(addedDiamonds: number) {
-        const newTotal = playerDiamonds + addedDiamonds;
-        localStorage.setItem('player_diamonds', newTotal.toString());
-        setPlayerDiamonds(newTotal);
-        window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: newTotal } }));
-    }
-
     // 🎮 Integrasi Keyboard Shortcuts Neosantara
     useKeyboardShortcuts({
         onFocusHome: handleFocusHome,
-        onOpenTopUp: () => {
-            setIsPresidentMenuOpen(false);
-            setCountryDetailModalOpen(false);
-            setPlayerDetailModalOpen(false);
-            setInboxModalOpen(false);
-            setGiftModalOpen(false);
-            setNewsModalOpen(false);
-            setPenelitianModalOpen(false);
-            setMissionModalOpen(false);
-            setIsSaveModalOpen(false);
-            setIsRestartConfirmOpen(false);
-            setActiveMenu('Peta Taktis');
-            openTopUpPage();
-        },
         onOpenMission: () => {
             setMissionModalOpen(true);
             setPenelitianModalOpen(false);
@@ -5065,8 +5028,6 @@ export default function MapPage() {
                     setKesejahteraanDeepLink(true);
                     setActiveMenu("Dashboard:Populasi:Overview");
                 }}
-                diamond={playerDiamonds}
-                onOpenTopUp={openTopUpPage}
             />            {/* Top Left Icon - Inbox */}
             <TopLeftIcon
                 userCountryName={String(
@@ -6224,17 +6185,6 @@ export default function MapPage() {
                 onRestartClick={() => setIsRestartConfirmOpen(true)}
             />
 
-            {isTopUpModalOpen && (
-                <>
-                    <div className="fixed inset-0 z-[99999] bg-black/60" aria-hidden="true" />
-                    <TopUpModal
-                        isOpen={true}
-                        onClose={closeTopUpPage}
-                        currentDiamonds={playerDiamonds}
-                        onTopUpSuccess={handleTopUpSuccess}
-                    />
-                </>
-            )}
 
             {/* Confirm Restart Modal */}
             <ConfirmRestartModal
