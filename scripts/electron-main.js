@@ -1,5 +1,8 @@
 const { app, BrowserWindow, screen } = require("electron");
 
+// Izinkan autoplay musik segera saat aplikasi Electron terbuka tanpa perlu klik pertama dari user
+app.commandLine.appendSwitch("autoplay-policy", "no-user-gesture-required");
+
 const startUrl = process.env.ELECTRON_START_URL || "http://localhost:3000";
 
 function applyScreenAdaptiveZoom(window) {
@@ -49,6 +52,10 @@ function createWindow() {
     window.maximize();
     window.show();
     applyScreenAdaptiveZoom(window);
+  });
+
+  window.on("closed", () => {
+    app.quit();
   });
 
   window.loadURL(startUrl);

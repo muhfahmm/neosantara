@@ -6,6 +6,8 @@ import {
     Save, Trash2, Calendar, Globe, Landmark, ArrowLeft, Volume2, Music, Monitor, Keyboard
 } from 'lucide-react';
 import { KeywordModal } from '../keyword/keyword';
+import { ExitConfirmModal } from './ExitConfirmModal';
+import { soundManager } from '@/lib/soundManager';
 
 interface GameMenuModalProps {
     isOpen: boolean;
@@ -21,18 +23,28 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
     const [mounted, setMounted] = useState(false);
     const [showKeywordModal, setShowKeywordModal] = useState(false);
 
-    // Mock options states
-    const [musicVol, setMusicVol] = useState(80);
-    const [sfxVol, setSfxVol] = useState(70);
+    // Options states terhubung ke soundManager
+    const [musicVol, setMusicVol] = useState(() => soundManager ? soundManager.getMusicVolume() : 80);
+    const [sfxVol, setSfxVol] = useState(() => soundManager ? soundManager.getSfxVolume() : 70);
     const [resolution, setResolution] = useState('1920x1080');
+    const [showExitConfirm, setShowExitConfirm] = useState(false);
+    const [showMainMenuConfirm, setShowMainMenuConfirm] = useState(false);
 
     useEffect(() => {
         setMounted(true);
+        if (soundManager) {
+            setMusicVol(soundManager.getMusicVolume());
+            setSfxVol(soundManager.getSfxVolume());
+        }
     }, []);
 
     useEffect(() => {
         if (isOpen) {
             setSubview('menu');
+            if (soundManager) {
+                setMusicVol(soundManager.getMusicVolume());
+                setSfxVol(soundManager.getSfxVolume());
+            }
             // Auto pause simulation game time when menu modal is opened
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(new CustomEvent('pause_game_time'));
@@ -91,22 +103,31 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
     };
 
     const handleExitGame = () => {
-        if (window.confirm("Apakah Anda yakin ingin kembali ke Menu Utama? Progres yang tidak disimpan akan hilang.")) {
-            localStorage.removeItem('dailyRewardData');
-            window.location.href = '/page';
-        }
+        setShowMainMenuConfirm(true);
     };
 
     const handleCloseWindow = () => {
-        if (window.confirm("Apakah Anda yakin ingin keluar dari permainan?")) {
-            localStorage.removeItem('dailyRewardData');
-            window.close();
-        }
+        setShowExitConfirm(true);
     };
+
+    const executeMainMenu = () => {
+        localStorage.removeItem('dailyRewardData');
+        window.location.href = '/page';
+    };
+
+    const executeCloseWindow = () => {
+        localStorage.removeItem('dailyRewardData');
+        if (soundManager) {
+            soundManager.stopMusic();
+        }
+        window.close();
+    };
+
+    const isConfirming = showExitConfirm || showMainMenuConfirm;
 
     return createPortal(
         <React.Fragment>
-            <div className="fixed inset-0 z-[99999999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-black/75 backdrop-blur-md font-sans pointer-events-none">
+            <div className={`fixed inset-0 z-[99999999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-black/75 backdrop-blur-md font-sans pointer-events-none transition-opacity duration-150 ${isConfirming ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
                 {/* Notebook-style Game Menu Frame — Green Theme */}
                 <div className="bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] shadow-2xl relative flex flex-col p-4 pl-12 pointer-events-auto select-none overflow-y-auto custom-scrollbar">
                     {/* Silver Binder Spine on the Left */}
@@ -299,7 +320,11 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                             min="0"
                                             max="100"
                                             value={musicVol}
-                                            onChange={(e) => setMusicVol(Number(e.target.value))}
+                                            onChange={(e) => {
+                                                const val = Number(e.target.value);
+                                                setMusicVol(val);
+                                                soundManager?.setMusicVolume(val);
+                                            }}
                                             className="w-full accent-[#00FFAA] cursor-pointer"
                                         />
                                     </div>
@@ -315,7 +340,11 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                             min="0"
                                             max="100"
                                             value={sfxVol}
-                                            onChange={(e) => setSfxVol(Number(e.target.value))}
+                                            onChange={(e) => {
+                                                const val = Number(e.target.value);
+                                                setSfxVol(val);
+                                                soundManager?.setSfxVolume(val);
+                                            }}
                                             className="w-full accent-[#00FFAA] cursor-pointer"
                                         />
                                     </div>
@@ -357,6 +386,26 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
             <KeywordModal
                 isOpen={showKeywordModal}
                 onClose={() => setShowKeywordModal(false)}
+            />
+            {/* Modal Konfirmasi Exit Game */}
+            <ExitConfirmModal
+                isOpen={showExitConfirm}
+                onClose={() => setShowExitConfirm(false)}
+                onConfirm={executeCloseWindow}
+                title="Keluar dari Permainan?"
+                subtitle="TERMINASI SESI"
+                message="Apakah Anda yakin ingin keluar dari permainan? Progres yang belum disimpan akan hilang."
+                confirmText="Keluar Game"
+            />
+            {/* Modal Konfirmasi Kembali ke Main Menu */}
+            <ExitConfirmModal
+                isOpen={showMainMenuConfirm}
+                onClose={() => setShowMainMenuConfirm(false)}
+                onConfirm={executeMainMenu}
+                title="Kembali ke Main Menu?"
+                subtitle="NAVIGASI UTAMA"
+                message="Apakah Anda yakin ingin kembali ke Menu Utama? Progres yang tidak disimpan akan hilang."
+                confirmText="Ke Main Menu"
             />
         </React.Fragment>,
         document.body

@@ -5,6 +5,7 @@ import "./globals.css";
 import ClientErrorCatcher from './ClientErrorCatcher';
 import RelationsDataLoader from './RelationsDataLoader';
 import SecurityProtector from './SecurityProtector';
+import SoundProvider from './SoundProvider';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,6 +39,7 @@ export default function RootLayout({
         </RelationsDataLoader>
         <ClientErrorCatcher />
         <SecurityProtector />
+        <SoundProvider />
       </body>
     </html>
   );

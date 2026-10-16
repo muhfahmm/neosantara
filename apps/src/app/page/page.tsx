@@ -8,6 +8,9 @@ import {
     Wifi, Cpu, HardDrive, Star, Zap
 } from 'lucide-react';
 import Link from 'next/link';
+import { GameMenuModal } from './navbar/GameMenuModal';
+import { ExitConfirmModal } from './navbar/ExitConfirmModal';
+import { soundManager } from '@/lib/soundManager';
 
 /* ============================================================
    HOLOGRAPHIC WORLD MAP  —  wireframe + network nodes + pings
@@ -961,11 +964,16 @@ export default function PlayMenuPage() {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
     const [isContinueModalOpen, setIsContinueModalOpen] = useState(false);
+    const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+    const [isExitModalOpen, setIsExitModalOpen] = useState(false);
     const [saveFiles, setSaveFiles] = useState<any[]>([]);
     const [isLoadingSaves, setIsLoadingSaves] = useState(false);
 
     useEffect(() => {
         setIsLoaded(true);
+        if (soundManager) {
+            soundManager.playMusic();
+        }
     }, []);
 
     const fetchSaveFiles = async () => {
@@ -1171,7 +1179,9 @@ export default function PlayMenuPage() {
                                         <button
                                             onClick={() => {
                                                 if (item.id === 'exit') {
-                                                    if (window.confirm("Apakah Anda yakin ingin keluar?")) window.close();
+                                                    setIsExitModalOpen(true);
+                                                } else if (item.id === 'settings') {
+                                                    setIsSettingsModalOpen(true);
                                                 } else {
                                                     alert("Fitur pengaturan segera hadir!");
                                                 }
@@ -1326,6 +1336,26 @@ export default function PlayMenuPage() {
                         </div>
                     )}
                 </AnimatePresence>
+
+                <GameMenuModal
+                    isOpen={isSettingsModalOpen}
+                    onClose={() => setIsSettingsModalOpen(false)}
+                    onSaveGameClick={() => {}}
+                    onRestartClick={() => {}}
+                />
+
+                <ExitConfirmModal
+                    isOpen={isExitModalOpen}
+                    onClose={() => setIsExitModalOpen(false)}
+                    onConfirm={() => {
+                        if (soundManager) {
+                            soundManager.stopMusic();
+                        }
+                        if (typeof window !== 'undefined') {
+                            window.close();
+                        }
+                    }}
+                />
             </div>
         </>
     );
