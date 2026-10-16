@@ -1,16 +1,14 @@
-# Dependensi Instalasi (Lakukan sekali saja saat setup awal)
+# Jalankan dari root repository.
+# Instal dependensi sekali saat setup awal:
 npm install
 
-# --- TAURI (DESKTOP NATIVE RUST) ---
-# Menjalankan development mode:
+# --- TAURI (DESKTOP) ---
+# Menjalankan aplikasi Tauri bersama Next.js di http://localhost:3000:
 npm run tauri:dev
 
-# Membangun file executable desktop (Production/Release):
-npm run tauri:build
-
-# --- ELECTRON (DESKTOP HYBRID CHROME) ---
-# Menjalankan development mode (otomatis menyalakan dev server & window):
-npm run electron:dev
-
-# Menjalankan window electron secara manual (server harus sudah jalan):
+# --- ELECTRON (DESKTOP) ---
+# Menyalakan Next.js, menunggu server siap, lalu membuka Electron:
 npm run electron:start
+
+# Alias yang setara:
+npm run electron:dev
