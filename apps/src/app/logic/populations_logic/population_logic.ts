@@ -593,11 +593,11 @@ export const calculateDailyPopulationChange = (
     dailyBirths * growthMultiplier * foodBirthBonus * birthFluctuationMultiplier - outbreakEffects.kelahiranBerkurang
   ));
   const famineDeaths = isPopulationCrisis ? hitungKematianKelaparan(populasi, foodRatio) : 0;
+  const outbreakDeaths = Math.min(populasi, outbreakEffects.kematianTambahan);
   const calculatedDeaths = Math.max(0, Math.floor(
     (baselineDeaths * growthMultiplier * foodDeathReduction * deathFluctuationMultiplier) +
     famineDeaths +
-    foodDeficitDeaths +
-    outbreakEffects.kematianTambahan
+    foodDeficitDeaths
   ));
   let unboundedNetChange = adjustedBirths - calculatedDeaths;
   if (foodDeficitDeclineRate > 0) {
@@ -610,7 +610,8 @@ export const calculateDailyPopulationChange = (
   const maxDailyDecline = isPopulationCrisis ? Math.ceil(populasi * 0.05 / 365) : 0;
   const boundedNetDailyChange = Math.max(-maxDailyDecline, Math.min(maxDailyGrowth, unboundedNetChange));
   const religionAdjustedNetChange = applyHinduPopulationGrowthBonus(boundedNetDailyChange, detail.religion);
-  const netDailyChange = applySocialismBirthRateBonus(religionAdjustedNetChange, detail.ideology);
+  const socialismAdjustedNetChange = applySocialismBirthRateBonus(religionAdjustedNetChange, detail.ideology);
+  const netDailyChange = Math.max(-populasi, socialismAdjustedNetChange - outbreakDeaths);
   const adjustedDeaths = Math.max(0, adjustedBirths - netDailyChange);
   const populationStatus = getPopulationStatus(food.tier, housing.tier, overpopulation.tier, health.tier);
   const sektoral = calculateSectoralSatisfaction(detailWithDefaults);

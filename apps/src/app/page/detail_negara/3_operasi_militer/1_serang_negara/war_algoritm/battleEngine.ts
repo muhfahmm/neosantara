@@ -187,13 +187,38 @@ export async function runDeepSeekWarSimulation(input: BattleInput): Promise<Batt
   return simulateBattleTs(input);
 }
 
+function sampleBinomialLoss(deployedQty: number, lossRatio: number): number {
+  const trials = Math.max(0, Math.floor(deployedQty));
+  const probability = Math.max(0, Math.min(1, lossRatio));
+  if (trials === 0 || probability === 0) return 0;
+  if (probability === 1) return trials;
+
+  if (trials <= 100) {
+    let losses = 0;
+    for (let index = 0; index < trials; index += 1) {
+      if (Math.random() < probability) losses += 1;
+    }
+    return losses;
+  }
+
+  const mean = trials * probability;
+  const standardDeviation = Math.sqrt(trials * probability * (1 - probability));
+  const firstUniform = Math.max(Number.EPSILON, Math.random());
+  const secondUniform = Math.random();
+  const standardNormal = Math.sqrt(-2 * Math.log(firstUniform)) *
+    Math.cos(2 * Math.PI * secondUniform);
+
+  return Math.max(0, Math.min(trials, Math.round(mean + standardDeviation * standardNormal)));
+}
+
 /**
- * Fungsi untuk mengurangi 75% dari unit armada yang DIKERAHKAN oleh user ketika mengalami kekalahan / terpukul mundur.
+ * Mengambil sampel jumlah unit yang hilang dengan peluang kerugian sesuai lossRatio.
  * Pengurangan ini hanya memutasi state/localStorage user aktif tanpa mengubah template default database.
  */
 export function applyWarLossesToUserArmada(
   countryDetail: any,
   lossRatio: number = 0.75,
+  randomizeLosses = false,
 ): {
   updatedDetail: any;
   lossSummaryText: string;
@@ -245,7 +270,9 @@ export function applyWarLossesToUserArmada(
         (currentQty * 800)
       );
       const deployedInfantry = Math.round((currentInfantry * deployedPct) / 100);
-      const lostInfantry = Math.round(deployedInfantry * lossRatio);
+      const lostInfantry = randomizeLosses
+        ? sampleBinomialLoss(deployedInfantry, lossRatio)
+        : Math.round(deployedInfantry * lossRatio);
 
       if (lostInfantry > 0) {
         const remainingInfantry = Math.max(0, currentInfantry - lostInfantry);
@@ -264,7 +291,9 @@ export function applyWarLossesToUserArmada(
       }
     } else if (key !== 'pasukan_infanteri' && currentQty > 0) {
       const deployedQty = Math.round((currentQty * deployedPct) / 100);
-      const lostQty = Math.round(deployedQty * lossRatio);
+      const lostQty = randomizeLosses
+        ? sampleBinomialLoss(deployedQty, lossRatio)
+        : Math.round(deployedQty * lossRatio);
 
       if (lostQty > 0) {
         const remainingQty = Math.max(0, currentQty - lostQty);

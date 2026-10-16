@@ -69,10 +69,15 @@ export default function TopLeftIcon({
   const [toastNotification, setToastNotification] = useState<NotificationMessage | null>(null);
   const [showToast, setShowToast] = useState(false);
   const dismissedToastIdRef = useRef<string | null>(null);
-  const visibleNotifications = useMemo(
-    () => notifications.filter(notification => !isNonActionableUpdateNotification(notification)),
-    [notifications],
-  );
+  const visibleNotifications = useMemo(() => {
+    const seen = new Set<string>();
+    return notifications.filter(notification => {
+      if (!notification || isNonActionableUpdateNotification(notification)) return false;
+      if (seen.has(notification.id)) return false;
+      seen.add(notification.id);
+      return true;
+    });
+  }, [notifications]);
   const unreadCount = visibleNotifications.filter(n => !n.isRead).length;
   const orderedNotifications = [...visibleNotifications].sort((first, second) => {
     const firstArrivalDate = first.diplomacyArrivalDate;

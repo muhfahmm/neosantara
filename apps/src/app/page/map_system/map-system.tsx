@@ -1385,7 +1385,7 @@ export default function MapPage() {
                 // 1. Potong armada penyerang pemain sebesar 25% (kemenangan perang)
                 let userLossText = '';
                 if (countryDetail) {
-                    const { updatedDetail: detailAfterWin, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.25);
+                    const { updatedDetail: detailAfterWin, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.25, true);
                     setCountryDetail(detailAfterWin);
                     userLossText = lossSummaryText;
                 }
@@ -1541,7 +1541,7 @@ export default function MapPage() {
                 // Potong armada pemain sebesar 25% (kemenangan operasi penjarahan)
                 let userLossText = '';
                 if (countryDetail) {
-                    const { updatedDetail: detailAfterWin, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.25);
+                    const { updatedDetail: detailAfterWin, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.25, true);
                     setCountryDetail(detailAfterWin);
                     userLossText = lossSummaryText;
                 }
@@ -1580,7 +1580,11 @@ export default function MapPage() {
                 const lossPctStr = isVictoryRetreat ? '25%' : '75%';
 
                 if (countryDetail) {
-                    const { updatedDetail, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, lossRate);
+                    const { updatedDetail, lossSummaryText } = applyWarLossesToUserArmada(
+                        countryDetail,
+                        lossRate,
+                        isVictoryRetreat,
+                    );
                     setCountryDetail(updatedDetail);
 
                     if (lossSummaryText && lossSummaryText !== 'Tidak ada kerugian unit') {
@@ -2466,7 +2470,16 @@ export default function MapPage() {
                 (notification: unknown) => !isNonActionableUpdateNotification(notification),
             );
             if (inboxNotifications.length > 0) {
-                setNotifications(prev => [...inboxNotifications, ...prev]);
+                setNotifications(prev => {
+                    const existingIds = new Set(prev.map(n => n.id));
+                    const uniqueNew: NotificationMessage[] = [];
+                    for (const notif of inboxNotifications) {
+                        if (!notif || !notif.id || existingIds.has(notif.id)) continue;
+                        existingIds.add(notif.id);
+                        uniqueNew.push(notif);
+                    }
+                    return uniqueNew.length > 0 ? [...uniqueNew, ...prev] : prev;
+                });
             }
             const generatedNews: NewsItemData[] = [];
             const notificationCountry = String(
@@ -2633,6 +2646,8 @@ export default function MapPage() {
         ));
     }, [currentDate, setCountryDetail]);
 
+    const lastProcessedNotificationMonthRef = useRef<string | null>(null);
+
     // --- MONTHLY NOTIFICATIONS GENERATOR (25% CHANCE PER BULAN ~ 3-5 EVENT / TAHUN) ---
     useEffect(() => {
         if (!currentDate || !countryDetail) return;
@@ -2646,6 +2661,7 @@ export default function MapPage() {
         const lastCheckedYearMonth = countryDetail.last_checked_notification_month;
 
         if (!lastCheckedYearMonth) {
+            lastProcessedNotificationMonthRef.current = currentYearMonth;
             setCountryDetail((prev: any) => ({
                 ...prev,
                 last_checked_notification_month: currentYearMonth
@@ -2653,10 +2669,11 @@ export default function MapPage() {
             return;
         }
 
-        if (lastCheckedYearMonth !== currentYearMonth) {
+        if (lastCheckedYearMonth !== currentYearMonth && lastProcessedNotificationMonthRef.current !== currentYearMonth) {
             if (isPausedRef.current || (typeof window !== "undefined" && (window as any).neosantara_is_paused)) {
                 return;
             }
+            lastProcessedNotificationMonthRef.current = currentYearMonth;
 
             const userCountryName = countryDetail.country || countryDetail.nama || "Indonesia";
             const worldNewsResult = generateWorldNewsEvents(
@@ -3258,7 +3275,16 @@ export default function MapPage() {
             }
 
             if (newNotifsToAdd.length > 0) {
-                setNotifications(prev => [...newNotifsToAdd, ...prev]);
+                setNotifications(prev => {
+                    const existingIds = new Set(prev.map(n => n.id));
+                    const uniqueNew: NotificationMessage[] = [];
+                    for (const notif of newNotifsToAdd) {
+                        if (!notif || !notif.id || existingIds.has(notif.id)) continue;
+                        existingIds.add(notif.id);
+                        uniqueNew.push(notif);
+                    }
+                    return uniqueNew.length > 0 ? [...uniqueNew, ...prev] : prev;
+                });
             }
 
             setCountryDetail((prev: any) => ({
@@ -5817,7 +5843,7 @@ export default function MapPage() {
                                     }
                                 } else {
                                     // Pertahanan Berhasil! (User Win - potong armada user sebesar 25%)
-                                    const { updatedDetail: detailAfterWin, lossSummaryText, losses } = applyWarLossesToUserArmada(countryDetail, 0.25);
+                                    const { updatedDetail: detailAfterWin, lossSummaryText, losses } = applyWarLossesToUserArmada(countryDetail, 0.25, true);
                                     setCountryDetail(detailAfterWin);
 
                                     setNotifications((prev: any[]) => [
