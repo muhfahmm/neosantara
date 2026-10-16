@@ -472,9 +472,6 @@ export default function MapPage() {
             .catch(error => console.error('Failed to preload country profile summaries:', error));
     }, []);
     const [playerNetBalanceAdjustment, setPlayerNetBalanceAdjustment] = useState<number>(0);
-    const [playerNetPopulationChange, setPlayerNetPopulationChange] = useState<number>(0);
-    const [playerDailyBirths, setPlayerDailyBirths] = useState<number>(0);
-    const [playerDailyDeaths, setPlayerDailyDeaths] = useState<number>(0);
     const [isPaused, setIsPaused] = useState(true);
     const isPausedRef = useRef(isPaused);
     const warPauseStateRef = useRef<{ wasPaused: boolean } | null>(null);
@@ -4083,7 +4080,7 @@ export default function MapPage() {
     const prevBudgetUpdateDateRef = useRef<string | null>(null);
     const skipPopulationMetricsRefreshRef = useRef(false);
 
-    // ✅ NEW: Initialize population metrics when countryDetail first loads
+    // Log initial population metrics when the active country data changes.
     useEffect(() => {
         if (!countryDetail) return;
         if (skipPopulationMetricsRefreshRef.current) {
@@ -4098,15 +4095,11 @@ export default function MapPage() {
             metadata,
             currentDate
         );
-        setPlayerNetPopulationChange(populationMetrics.netDailyChange);
-        setPlayerDailyBirths(populationMetrics.dailyBirths);
-        setPlayerDailyDeaths(populationMetrics.dailyDeaths);
-
         logger.log('PopulationInit', 'Initial population metrics calculated', {
             populasi: countryDetail.jumlah_penduduk,
             netChange: populationMetrics.netDailyChange,
         });
-    }, [countryDetail?.jumlah_penduduk, countryDetail?.active_outbreaks, countryDetail?.active_disaster_effects, selectedCountry?.country, metadata]);
+    }, [countryDetail?.jumlah_penduduk, countryDetail?.active_outbreaks, countryDetail?.active_disaster_effects, selectedCountry?.country, metadata, currentDate]);
 
     useEffect(() => {
         if (!countryDetail || !currentDate) return;
@@ -4153,10 +4146,6 @@ export default function MapPage() {
             );
 
             // Store net population change for display in Navbar
-            setPlayerNetPopulationChange(populationMetrics.netDailyChange);
-            setPlayerDailyBirths(populationMetrics.dailyBirths);
-            setPlayerDailyDeaths(populationMetrics.dailyDeaths);
-
             // ✅ Only calculate material production if metadata is loaded
             let updates: Record<string, any> = {};
             if (metadata && Object.keys(metadata).length > 0) {
@@ -4684,7 +4673,6 @@ export default function MapPage() {
                 skipConfirm: true
             });
             setPlayerNetBalanceAdjustment(0);
-            setPlayerNetPopulationChange(0);
             setPresidentRating(50);
             setKesejahteraan(50);
             // 🔥 Reset semua notifikasi dan early warning flags agar tidak terbawa ke game baru
@@ -4984,9 +4972,7 @@ export default function MapPage() {
                 countryDetail={countryDetail}
                 metadata={metadata}
                 netBalanceAdjustment={playerNetBalanceAdjustment}
-                netPopulationChange={playerNetPopulationChange}
-                dailyBirths={playerDailyBirths}
-                dailyDeaths={playerDailyDeaths}
+                currentDate={currentDate}
                 presidentRating={presidentRating}
                 kesejahteraan={countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : kesejahteraan}
                 onOpenGameMenu={() => setIsPresidentMenuOpen(true)}

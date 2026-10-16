@@ -1,15 +1,14 @@
 // navbar
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
     Power, Users, Landmark, Save, RotateCcw, Smile, LayoutGrid, Star,
     Activity, Gem, Plus // ✅ TAMBAHAN: Import Gem dan Plus untuk Diamond Top Up
 } from 'lucide-react';
 import { formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
-// 🔥 Import fungsi warna dari logic populasi
-import { getNetPopulationChangeColor } from '@/app/logic/populations_logic/population_logic';
+import { calculateDailyPopulationChange } from '@/app/logic/populations_logic/population_logic';
 import { calculateKepuasan } from '@/app/logic/kepuasanCalculator';
 import { menuItems, subMenuItems } from '../navigasi_menu/navigationData';
 
@@ -31,10 +30,7 @@ interface NavbarProps {
     countryDetail: any;
     metadata?: any;
     netBalanceAdjustment?: number;
-    netPopulationChange?: number;
-    // 🔥 Data demografi harian
-    dailyBirths?: number;
-    dailyDeaths?: number;
+    currentDate?: Date;
     activeMenu?: string;
     diamond?: number;
     onOpenTopUp?: () => void;
@@ -52,9 +48,7 @@ export function Navbar({
     countryDetail,
     metadata,
     netBalanceAdjustment = 0,
-    netPopulationChange = 0,
-    dailyBirths = 0,
-    dailyDeaths = 0,
+    currentDate,
     activeMenu = 'Peta Taktis',
     diamond = 0,
     onOpenTopUp,
@@ -75,10 +69,13 @@ export function Navbar({
     const netBalanceColor = netBalance >= 0 ? 'text-emerald-700' : 'text-rose-700';
     const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID', { maximumFractionDigits: 0 })}`;
     
-    // Populasi logic
+    const populationMetrics = useMemo(
+        () => calculateDailyPopulationChange(countryDetail, selectedCountry?.country, metadata, currentDate),
+        [countryDetail, selectedCountry?.country, metadata, currentDate]
+    );
     const populasi = Number(countryDetail?.jumlah_penduduk) || 0;
-    const netPopulationChangeColor = getNetPopulationChangeColor(netPopulationChange);
-    const netPopulationLabel = `${netPopulationChange >= 0 ? '+ ' : '- '}${Math.abs(netPopulationChange).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
+    const { netDailyChange, dailyBirths, dailyDeaths } = populationMetrics;
+    const netPopulationLabel = `${netDailyChange >= 0 ? '+ ' : '- '}${Math.abs(netDailyChange).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
     const kepuasanScore = calculateKepuasan(countryDetail, metadata);
 
     // Function to get active menu information
@@ -189,7 +186,7 @@ export function Navbar({
                             value={
                                 <span className="flex items-center gap-1.5 2xl:gap-2 text-[#E0E0E0]">
                                     <span>{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
-                                    <span className={`${netPopulationChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
+                                    <span className={`${netDailyChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
                                         ({netPopulationLabel})
                                     </span>
                                 </span>
@@ -203,7 +200,7 @@ export function Navbar({
                                 <span className="text-rose-400 text-center">Mati: -{dailyDeaths.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
                             </div>
                             <div className="mt-1.5 pt-1.5 border-t border-[#00FFAA]/20 text-[10px] text-[#6B8A8A] text-center">
-                                Pertumbuhan Bersih: <span className={`font-bold ${netPopulationChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{netPopulationLabel}</span>
+                                Pertumbuhan Bersih: <span className={`font-bold ${netDailyChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'}`}>{netPopulationLabel}</span>
                             </div>
                         </div>
                     </div>
