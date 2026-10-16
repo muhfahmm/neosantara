@@ -131,9 +131,9 @@ export default function TopLeftIcon({
               src="/images/game/interface/menu/inbox.svg"
               alt=""
               aria-hidden="true"
-              width={24}
-              height={24}
-              className="h-10 w-10 object-contain lg:h-12 lg:w-12 xl:h-14 xl:w-14"
+              width={72}
+              height={72}
+              className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
             />
             {unreadCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-600 border border-[#0A1A1A] text-white text-[9px] font-black w-4 h-4 lg:w-5 lg:h-5 rounded-full flex items-center justify-center shadow animate-pulse">

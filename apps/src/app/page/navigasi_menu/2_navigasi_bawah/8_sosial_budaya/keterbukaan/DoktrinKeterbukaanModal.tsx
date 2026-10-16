@@ -1,24 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import {
   X,
   Globe,
   Lock,
   Unlock,
-  Shield,
-  Radio,
-  TrendingUp,
   CheckCircle2,
-  Sliders,
-  Plane,
-  ShoppingBag,
-  HeartHandshake,
-  MessageSquare,
-  BookOpen,
   Users,
-  Eye,
   Tv,
-  Wifi,
+  Plane,
 } from "lucide-react";
 
 import { fetchDoktrinKeterbukaanFromDb } from "@/../../json/database_doktrin_keterbukaan/index";
@@ -282,8 +273,8 @@ export default function DoktrinKeterbukaanModal({
               { id: "media", label: "Media & Informasi", icon: Tv },
               { id: "global", label: "Perbatasan & Geopolitik", icon: Plane },
             ].map((tab) => {
-              const Icon = tab.icon;
               const isActive = activeTab === tab.id;
+              const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
@@ -293,7 +284,7 @@ export default function DoktrinKeterbukaanModal({
                       : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
                     }`}
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
+                  <Icon className="h-4 w-4 shrink-0" />
                   <span className="text-xs font-bold uppercase tracking-wider">{tab.label}</span>
                 </button>
               );
@@ -350,8 +341,8 @@ export default function DoktrinKeterbukaanModal({
                 <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="p-2 bg-[#00FFAA]/10 text-[#00FFAA] rounded-lg border border-[#00FFAA]/30">
-                        <MessageSquare className="w-5 h-5" />
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center">
+                        <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/kebebasan-sipil-ham/kebebasan-sipil-ham-asset-01.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
                         <h4 className="text-sm font-bold text-[#E0E0E0]">Kebebasan Berbicara & Berekspresi</h4>
@@ -388,8 +379,8 @@ export default function DoktrinKeterbukaanModal({
                 <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="p-2 bg-[#00FFAA]/10 text-[#00FFAA] rounded-lg border border-[#00FFAA]/30">
-                        <BookOpen className="w-5 h-5" />
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center">
+                        <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/kebebasan-sipil-ham/kebebasan-sipil-ham-asset-02.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
                         <h4 className="text-sm font-bold text-[#E0E0E0]">Kebebasan Beragama & Kepercayaan</h4>
@@ -426,8 +417,8 @@ export default function DoktrinKeterbukaanModal({
                 <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="p-2 bg-[#00FFAA]/10 text-[#00FFAA] rounded-lg border border-[#00FFAA]/30">
-                        <Users className="w-5 h-5" />
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center">
+                        <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/kebebasan-sipil-ham/kebebasan-sipil-ham-asset-03.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
                         <h4 className="text-sm font-bold text-[#E0E0E0]">Hak Demonstrasi & Unjuk Rasa</h4>
@@ -464,8 +455,8 @@ export default function DoktrinKeterbukaanModal({
                 <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="p-2 bg-[#00FFAA]/10 text-[#00FFAA] rounded-lg border border-[#00FFAA]/30">
-                        <Eye className="w-5 h-5" />
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center">
+                        <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/kebebasan-sipil-ham/kebebasan-sipil-ham-asset-04.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
                         <h4 className="text-sm font-bold text-[#E0E0E0]">Transparansi Pemerintah & Akuntabilitas</h4>
@@ -507,8 +498,8 @@ export default function DoktrinKeterbukaanModal({
                 <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="p-2 bg-[#00FFAA]/10 text-[#00FFAA] rounded-lg border border-[#00FFAA]/30">
-                        <Tv className="w-5 h-5" />
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center">
+                        <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/media-informasi/media-informasi-asset-01.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
                         <h4 className="text-sm font-bold text-[#E0E0E0]">Kebebasan Media Konvensional & Sosmed</h4>
@@ -545,8 +536,8 @@ export default function DoktrinKeterbukaanModal({
                 <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="p-2 bg-[#00FFAA]/10 text-[#00FFAA] rounded-lg border border-[#00FFAA]/30">
-                        <Wifi className="w-5 h-5" />
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center">
+                        <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/media-informasi/media-informasi-asset-02.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
                         <h4 className="text-sm font-bold text-[#E0E0E0]">Kebebasan Internet (Internet Freedom)</h4>
@@ -588,8 +579,8 @@ export default function DoktrinKeterbukaanModal({
                 <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="p-2 bg-[#00FFAA]/10 text-[#00FFAA] rounded-lg border border-[#00FFAA]/30">
-                        <Plane className="w-5 h-5" />
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center">
+                        <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/perbatasan-geopolitik/perbatasan-geopolitik-asset-01.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
                         <h4 className="text-sm font-bold text-[#E0E0E0]">Akses Perbatasan & Imigrasi</h4>
@@ -626,8 +617,8 @@ export default function DoktrinKeterbukaanModal({
                 <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="p-2 bg-[#00FFAA]/10 text-[#00FFAA] rounded-lg border border-[#00FFAA]/30">
-                        <ShoppingBag className="w-5 h-5" />
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center">
+                        <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/perbatasan-geopolitik/perbatasan-geopolitik-asset-02.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
                         <h4 className="text-sm font-bold text-[#E0E0E0]">Perdagangan Bebas & Investasi Asing (PMA)</h4>
@@ -664,8 +655,8 @@ export default function DoktrinKeterbukaanModal({
                 <div className="p-4 bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-sm space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="p-2 bg-[#00FFAA]/10 text-[#00FFAA] rounded-lg border border-[#00FFAA]/30">
-                        <HeartHandshake className="w-5 h-5" />
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center">
+                        <Image src="/images/game/interface/sub-tabs/sosial-budaya/doktrin-keterbukaan/perbatasan-geopolitik/perbatasan-geopolitik-asset-03.svg" alt="" aria-hidden="true" width={56} height={56} className="h-14 w-14 object-contain" />
                       </div>
                       <div>
                         <h4 className="text-sm font-bold text-[#E0E0E0]">Kerjasama Multilateral & Aliansi Global</h4>
@@ -720,4 +711,3 @@ export default function DoktrinKeterbukaanModal({
     document.body
   );
 }
-

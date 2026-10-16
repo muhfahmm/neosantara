@@ -1,10 +1,11 @@
 "use client"
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { 
-  X, Shield, ShieldAlert, Angry, Banknote, Anchor, Lock, Package,
+  X, Shield, ShieldAlert,
   ChevronDown, Clock, FileText, Plus, Users
 } from "lucide-react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import { COUNTRIES_DATA } from "../../../../../../map_system/map-data";
 import { calculateKeamananVoting } from "../../voting_logic/keamananPBB_logic";
 import ModalSetuju from "./4_modal_setuju";
@@ -36,11 +37,11 @@ interface CountryOption {
 }
 
 const RESOLUTION_ACTIONS = [
-  { id: 'military', icon: Angry, label: 'Invasi Militer', desc: 'Semua tentara bersatu dari semua negara menyerang negara yang dipilih.' },
-  { id: 'economic', icon: Banknote, label: 'Blokade Ekonomi', desc: 'Selama resolusi aktif, produksi manufaktur, peternakan, agrikultur, perikanan, olahan pangan, serta tambang selain emas berkurang 50%.' },
-  { id: 'naval', icon: Anchor, label: 'Blokade Laut', desc: 'Selama resolusi aktif, produksi manufaktur, peternakan, agrikultur, perikanan, olahan pangan, serta tambang selain emas berkurang 25%.' },
-  { id: 'full', icon: Lock, label: 'Blokade Penuh', desc: 'Selama periode yang dipilih, negara ini tidak dapat menandatangani kontrak apa pun atau berdagang.' },
-  { id: 'treasure', icon: Package, label: 'Bantuan Logistik', desc: 'Memberikan bantuan sumber daya dan logistik ke negara yang dipilih.' },
+  { id: 'military', image: '/images/game/interface/sub-tabs/geopolitik/dewan-keamanan-pbb/invasi-militer.svg', label: 'Invasi Militer', desc: 'Semua tentara bersatu dari semua negara menyerang negara yang dipilih.' },
+  { id: 'economic', image: '/images/game/interface/sub-tabs/geopolitik/dewan-keamanan-pbb/blokade-ekonomi.svg', label: 'Blokade Ekonomi', desc: 'Selama resolusi aktif, produksi manufaktur, peternakan, agrikultur, perikanan, olahan pangan, serta tambang selain emas berkurang 50%.' },
+  { id: 'naval', image: '/images/game/interface/sub-tabs/geopolitik/dewan-keamanan-pbb/blokade-laut.svg', label: 'Blokade Laut', desc: 'Selama resolusi aktif, produksi manufaktur, peternakan, agrikultur, perikanan, olahan pangan, serta tambang selain emas berkurang 25%.' },
+  { id: 'full', image: '/images/game/interface/sub-tabs/geopolitik/dewan-keamanan-pbb/blokade-penuh.svg', label: 'Blokade Penuh', desc: 'Selama periode yang dipilih, negara ini tidak dapat menandatangani kontrak apa pun atau berdagang.' },
+  { id: 'treasure', image: '/images/game/interface/sub-tabs/geopolitik/dewan-keamanan-pbb/bantuan-logistik.svg', label: 'Bantuan Logistik', desc: 'Memberikan bantuan sumber daya dan logistik ke negara yang dipilih.' },
 ];
 
 const PERMANENT_MEMBERS = [
@@ -946,20 +947,19 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                 <div>
                   <div className="flex flex-wrap justify-center items-center gap-4">
                     {RESOLUTION_ACTIONS.map((action) => {
-                      const Icon = action.icon;
                       const isActive = selectedType === action.id;
                       return (
                         <button
                           key={action.id}
                           onClick={() => setSelectedType(action.id)}
-                          className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col items-center justify-center w-24 h-24 group ${
+                          className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col items-center justify-center w-28 h-28 group ${
                             isActive
                               ? 'border-[#00FFAA] bg-[#00FFAA]/15 shadow-md text-[#00FFAA]'
                               : 'border-[#00FFAA]/20 bg-[#0A1A1A] text-[#6B8A8A] hover:border-[#00FFAA]/50 hover:text-[#E0E0E0]'
                           }`}
                           title={action.label}
                         >
-                          <Icon className={`w-8 h-8 ${isActive ? 'stroke-[#00FFAA]' : ''}`} />
+                          <Image src={action.image} alt="" aria-hidden="true" width={64} height={64} className="h-16 w-16 shrink-0 object-contain" />
                           <span className="text-[10px] font-bold mt-1.5 text-center leading-tight">{action.label}</span>
                         </button>
                       );

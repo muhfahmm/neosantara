@@ -216,15 +216,15 @@ export default function TopRightNewsIcon({
       <button
         onClick={onClick}
         title="Berita - Berita dan Update Negara"
-        className="fixed top-36 right-7 z-[100] flex h-12 w-12 cursor-pointer items-center justify-center transition-transform group hover:scale-110 lg:top-40 lg:h-14 lg:w-14 xl:top-44 xl:h-16 xl:w-16"
+        className="fixed top-40 right-7 z-[100] flex h-12 w-12 cursor-pointer items-center justify-center transition-transform group hover:scale-110 lg:top-40 lg:h-14 lg:w-14 xl:top-48 xl:h-16 xl:w-16"
       >
         <Image
           src="/images/game/interface/menu/news.svg"
           alt=""
           aria-hidden="true"
-          width={24}
-          height={24}
-          className="h-10 w-10 object-contain lg:h-12 lg:w-12 xl:h-14 xl:w-14"
+          width={72}
+          height={72}
+          className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
         />
         {newsList.length > 0 && (
           <span className="absolute -top-1 -right-1 flex h-4 w-4 lg:h-5 lg:w-5 items-center justify-center rounded-full bg-rose-500 text-[9px] lg:text-[10px] font-black text-white shadow-md border border-[#0F2424]">

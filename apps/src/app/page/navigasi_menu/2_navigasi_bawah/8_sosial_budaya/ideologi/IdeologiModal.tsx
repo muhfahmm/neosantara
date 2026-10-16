@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import { X, Info, Shield, Globe, Vote, Crown, DollarSign, Handshake, Hammer, Flag, Feather, Sword, Check } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
@@ -22,6 +23,13 @@ interface ModalProps {
 const IDEOLOGY_OPTIONS = [
   'Demokrasi', 'Monarki', 'Kapitalisme', 'Sosialisme', 'Komunisme', 'Nasionalisme', 'Konservatisme', 'Liberalisme', 'Otoritarianisme',
 ];
+
+const getIdeologyImage = (ideologyName: string) => {
+  const index = IDEOLOGY_OPTIONS.indexOf(ideologyName);
+  return index >= 0
+    ? `/images/game/interface/sub-tabs/sosial-budaya/ideologi/ideologi-asset-${String(index + 1).padStart(2, '0')}.svg`
+    : null;
+};
 
 const IDEOLOGY_BONUSES: Record<string, string> = {
   'Demokrasi': 'Penerimaan Pajak: +10%',
@@ -293,11 +301,11 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                         </button>
 
                         <div className={`relative w-14 h-16 flex-shrink-0 rounded-md flex items-center justify-center shadow-lg border-b-[4px] bg-[#051111] border-[#00FFAA]/40`}>
-                          <div className="absolute top-1 left-2 w-2 h-4 bg-[#00FFAA]/20 rounded-full" />
-                          <div className="absolute top-1 right-2 w-2 h-4 bg-[#00FFAA]/20 rounded-full" />
-                          <div className="text-[#00FFAA]">
-                            {IDEOLOGY_ICONS[option] || <Shield className="w-5 h-5" />}
-                          </div>
+                          {getIdeologyImage(option) ? (
+                            <Image src={getIdeologyImage(option)!} alt="" aria-hidden="true" width={56} height={64} className="h-full w-full object-contain p-1" />
+                          ) : (
+                            <div className="text-[#00FFAA]">{IDEOLOGY_ICONS[option] || <Shield className="w-5 h-5" />}</div>
+                          )}
                         </div>
 
                         <div className="flex-1 flex flex-col min-w-0 pr-6">
@@ -371,7 +379,11 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
                                 <span className="text-[#6B8A8A] italic font-medium">Belum tersedia</span>
                               ) : (
                                 <div className="flex items-center gap-2 font-bold">
-                                  {IDEOLOGY_ICONS[item.ideology] || <Shield className="w-4 h-4 text-[#00FFAA]" />}
+                                  {getIdeologyImage(item.ideology) ? (
+                                    <Image src={getIdeologyImage(item.ideology)!} alt="" aria-hidden="true" width={24} height={24} className="h-6 w-6 object-contain" />
+                                  ) : (
+                                    IDEOLOGY_ICONS[item.ideology] || <Shield className="w-4 h-4 text-[#00FFAA]" />
+                                  )}
                                   {item.ideology}
                                 </div>
                               )}

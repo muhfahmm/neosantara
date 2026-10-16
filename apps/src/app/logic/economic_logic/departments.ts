@@ -11,6 +11,30 @@ export interface Department {
   baseIncomeCost: number;
 }
 
+export const CABINET_DEPARTMENT_IMAGES: Record<string, string> = {
+  infrastruktur: "kementerian-infrastruktur",
+  pendidikan: "kementerian-pendidikan",
+  sains: "sains-penelitian",
+  kesehatan: "kementerian-kesehatan",
+  olahraga: "kementerian-olahraga",
+  kehakiman: "kementerian-kehakiman",
+  pertahanan: "kementerian-pertahanan",
+  "luar-negeri": "kementerian-luar-negeri",
+  kebudayaan: "kementerian-kebudayaan",
+  pariwisata: "kementerian-pariwisata",
+  lingkungan: "kementerian-lingkungan-hidup",
+  perumahan: "kementerian-perumahan",
+  pembangunan: "kementerian-pembangunan",
+  perdagangan: "kementerian-perdagangan",
+  keuangan: "kementerian-keuangan",
+  polisi: "polisi",
+  "garda-nasional": "garda-nasional",
+  "komandan-angkatan-darat": "komandan-angkatan-darat",
+  "komandan-armada": "komandan-armada",
+  "layanan-darurat": "layanan-darurat",
+  "bank-sentral": "bank-sentral",
+};
+
 export const KEMENTERIAN: Department[] = [
   {
     id: "infrastruktur",

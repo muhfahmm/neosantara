@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import { X, Star, Globe, MoonStar, Church, Sun, CircleDot, Atom, Check } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 import { fetchAllCountryProfilesFromDb, type CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles/index";
@@ -24,6 +25,13 @@ interface ModalProps {
 const RELIGION_OPTIONS = [
   'Islam', 'Katolik', 'Protestan', 'Kristen Ortodoks', 'Hindu', 'Buddha', 'Yahudi', 'Shinto', 'Ateisme',
 ];
+
+const getReligionImage = (religionName: string) => {
+  const index = RELIGION_OPTIONS.indexOf(religionName);
+  return index >= 0
+    ? `/images/game/interface/sub-tabs/sosial-budaya/agama/agama-asset-${String(index + 1).padStart(2, '0')}.svg`
+    : null;
+};
 
 const RELIGION_BONUSES: Record<string, string> = {
   'Islam': 'Jumlah makanan dan sumber daya: +10%',
@@ -266,13 +274,13 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                             : 'border-[#00FFAA]/20 bg-[#0A1A1A] hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/5'
                           }`}
                       >
-                        <div className={`relative w-14 h-16 flex-shrink-0 rounded-md flex items-center justify-center shadow-lg border-b-[4px] bg-[#051111] border-[#00FFAA]/40`}>
-                          <div className="absolute top-1 left-2 w-2 h-4 bg-[#00FFAA]/20 rounded-full" />
-                          <div className="absolute top-1 right-2 w-2 h-4 bg-[#00FFAA]/20 rounded-full" />
-                          <div className="text-[#00FFAA]">
-                            {RELIGION_ICONS[r] || <Globe className="w-5 h-5" />}
+                          <div className={`relative w-14 h-16 flex-shrink-0 rounded-md flex items-center justify-center shadow-lg border-b-[4px] bg-[#051111] border-[#00FFAA]/40`}>
+                            {getReligionImage(r) ? (
+                              <Image src={getReligionImage(r)!} alt="" aria-hidden="true" width={56} height={64} className="h-full w-full object-contain p-1" />
+                            ) : (
+                              <div className="text-[#00FFAA]">{RELIGION_ICONS[r] || <Globe className="w-5 h-5" />}</div>
+                            )}
                           </div>
-                        </div>
 
                         <div className="flex-1 flex flex-col min-w-0">
                           <div className="flex items-center gap-2">
@@ -345,7 +353,11 @@ export default function AgamaModal({ isOpen, onClose, onOpenDebt, countryDetail,
                                 <span className="text-[#6B8A8A] italic font-medium">Belum tersedia</span>
                               ) : (
                                 <div className="flex items-center gap-2 font-bold">
-                                  {RELIGION_ICONS[item.religion] || <Globe className="w-4 h-4 text-[#00FFAA]" />}
+                                  {getReligionImage(item.religion) ? (
+                                    <Image src={getReligionImage(item.religion)!} alt="" aria-hidden="true" width={24} height={24} className="h-6 w-6 object-contain" />
+                                  ) : (
+                                    RELIGION_ICONS[item.religion] || <Globe className="w-4 h-4 text-[#00FFAA]" />
+                                  )}
                                   {item.religion}
                                 </div>
                               )}

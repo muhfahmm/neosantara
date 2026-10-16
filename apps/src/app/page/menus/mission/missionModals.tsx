@@ -1237,15 +1237,15 @@ export default function MissionModals({
       <button
         onClick={onClick}
         title="Misi & Sasaran Strategis"
-        className="fixed bottom-14 left-7 z-[100] flex h-12 w-12 cursor-pointer items-center justify-center transition-transform group hover:scale-110 lg:bottom-16 lg:h-14 lg:w-14 xl:bottom-20 xl:h-16 xl:w-16 2xl:bottom-26"
+        className="fixed bottom-20 left-7 z-[100] flex h-12 w-12 cursor-pointer items-center justify-center transition-transform group hover:scale-110 lg:bottom-20 lg:h-14 lg:w-14 xl:bottom-24 xl:h-16 xl:w-16 2xl:bottom-32"
       >
         <Image
           src="/images/game/interface/menu/mission.svg"
           alt=""
           aria-hidden="true"
-          width={24}
-          height={24}
-          className="h-10 w-10 object-contain lg:h-12 lg:w-12 xl:h-14 xl:w-14"
+          width={72}
+          height={72}
+          className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
         />
         {totalClaimable > 0 && (
           <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-black text-white shadow-lg animate-pulse">

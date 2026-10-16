@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import {
   X,
   Landmark,
@@ -28,7 +29,7 @@ import {
   Ship,
 } from "lucide-react";
 import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/economic_logic/treasuryUpdater";
-import { LEVEL_UP_COST, MAX_CABINET_LEVEL } from "@/app/logic/economic_logic/departments";
+import { CABINET_DEPARTMENT_IMAGES, LEVEL_UP_COST, MAX_CABINET_LEVEL } from "@/app/logic/economic_logic/departments";
 import { generateKabinetChangeNotification } from "@/app/page/menus/inbox/logic/13_notifikasi_kabinet/kabinetChangeLogic";
 import PilihMenteriModal, { type MinisterCandidateDepartment } from "./PilihMenteriModal";
 import { applyReformasiBirokrasiToUpgradeCost } from "@/app/page/bonus_logic";
@@ -569,8 +570,19 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
                       </div>
 
                       <div className="p-4 flex items-center gap-4">
-                        <div className="h-16 w-16 rounded-lg bg-[#0F2424] border border-[#00FFAA]/30 flex items-center justify-center shrink-0">
-                          <Icon className="h-8 w-8 text-[#00FFAA]" />
+                        <div className="flex h-20 w-20 shrink-0 items-center justify-center">
+                          {CABINET_DEPARTMENT_IMAGES[dept.id] ? (
+                            <Image
+                              src={`/images/game/interface/sub-tabs/kementerian/dewan-kabinet/${CABINET_DEPARTMENT_IMAGES[dept.id]}.svg`}
+                              alt=""
+                              aria-hidden="true"
+                              width={80}
+                              height={80}
+                              className="h-20 w-20 object-contain"
+                            />
+                          ) : (
+                            <Icon className="h-8 w-8 text-[#00FFAA]" />
+                          )}
                         </div>
 
                         <div className="flex-1 min-w-0">

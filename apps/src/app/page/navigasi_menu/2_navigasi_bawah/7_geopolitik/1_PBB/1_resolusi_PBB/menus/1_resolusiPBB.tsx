@@ -1,9 +1,10 @@
 "use client"
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import { 
   X, FileText, Plus, CheckCircle, ChevronDown, Users, ThumbsUp, ThumbsDown, 
-  Clock, Swords, ShieldBan, Coins, Bomb, Package 
+  Clock, Package
 } from "lucide-react";
 import { COUNTRIES_DATA } from "../../../../../../map_system/map-data";
 import { calculateResolusiVoting } from "../../voting_logic/resolusiPBB_logic";
@@ -90,11 +91,11 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
   });
 
   const RESOLUTION_ACTIONS = [
-    { id: 'war_ban', icon: Swords, label: 'Larangan Perang', desc: 'Dilarang melakukan peperangan antar negara di seluruh dunia selama periode yang dipilih.' },
-    { id: 'arms_embargo', icon: ShieldBan, label: 'Embargo Penjualan Senjata', desc: 'Perdagangan senjata dilarang selama periode yang dipilih.' },
-    { id: 'economic_embargo', icon: Coins, label: 'Embargo Ekonomi', desc: 'Produksi sektor industri dan tambang selain emas serta pendapatan non-emas turun 60% selama periode yang dipilih.' },
-    { id: 'military_invasion', icon: Bomb, label: 'Resolusi Invasi', desc: 'Resolusi memungkinkan negara diinvasi tanpa kecaman oleh negara lain.' },
-    { id: 'production_ban', icon: Package, label: 'Larangan Produksi', desc: 'Produksi produk yang dipilih dihentikan selama periode yang dipilih.' },
+    { id: 'war_ban', image: '/images/game/interface/sub-tabs/geopolitik/resolusi-pbb/larangan-perang.svg', label: 'Larangan Perang', desc: 'Dilarang melakukan peperangan antar negara di seluruh dunia selama periode yang dipilih.' },
+    { id: 'arms_embargo', image: '/images/game/interface/sub-tabs/geopolitik/resolusi-pbb/embargo-penjualan-senjata.svg', label: 'Embargo Penjualan Senjata', desc: 'Perdagangan senjata dilarang selama periode yang dipilih.' },
+    { id: 'economic_embargo', image: '/images/game/interface/sub-tabs/geopolitik/resolusi-pbb/embargo-ekonomi.svg', label: 'Embargo Ekonomi', desc: 'Produksi sektor industri dan tambang selain emas serta pendapatan non-emas turun 60% selama periode yang dipilih.' },
+    { id: 'military_invasion', image: '/images/game/interface/sub-tabs/geopolitik/resolusi-pbb/resolusi-invasi.svg', label: 'Resolusi Invasi', desc: 'Resolusi memungkinkan negara diinvasi tanpa kecaman oleh negara lain.' },
+    { id: 'production_ban', image: '/images/game/interface/sub-tabs/geopolitik/resolusi-pbb/larangan-produksi.svg', label: 'Larangan Produksi', desc: 'Produksi produk yang dipilih dihentikan selama periode yang dipilih.' },
   ];
 
   useEffect(() => {
@@ -686,20 +687,19 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
                 <div>
                   <div className="flex flex-wrap justify-center items-center gap-4">
                     {RESOLUTION_ACTIONS.map((action) => {
-                      const Icon = action.icon;
                       const isActive = selectedType === action.id;
                       return (
                         <button
                           key={action.id}
                           onClick={() => setSelectedType(action.id)}
-                          className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col items-center justify-center w-24 h-24 group ${
+                          className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col items-center justify-center w-28 h-28 group ${
                             isActive
                               ? 'border-[#00FFAA] bg-[#00FFAA]/15 shadow-md text-[#00FFAA]'
                               : 'border-[#00FFAA]/20 bg-[#0A1A1A] text-[#6B8A8A] hover:border-[#00FFAA]/50 hover:text-[#E0E0E0]'
                           }`}
                           title={action.label}
                         >
-                          <Icon className={`w-8 h-8 ${isActive ? 'stroke-[#00FFAA]' : ''}`} />
+                          <Image src={action.image} alt="" aria-hidden="true" width={64} height={64} className="h-16 w-16 shrink-0 object-contain" />
                           <span className="text-[10px] font-bold mt-1.5 text-center leading-tight">{action.label}</span>
                         </button>
                       );

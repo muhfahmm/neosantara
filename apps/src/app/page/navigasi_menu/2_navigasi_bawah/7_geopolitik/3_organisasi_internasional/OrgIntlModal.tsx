@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { X, Info, Globe, Shield, HeartPulse, BookOpen, ArrowRightLeft, Users, Sprout, Plane, Ship, Wifi, Cloud, Landmark, Flag, Star, Handshake, BarChart, Crown, TrendingUp } from "lucide-react";
 import OrganisasiPBBModal from "./1_organisasi_PBB/organisasiPBBmodal";
 import OrganisasiRegional from "./2_organisasi_regional/organisasiRegional";
@@ -62,6 +63,27 @@ const orgIconMap: Record<string, React.ElementType> = {
   "Kelompok Tujuh (G7)": Star,
   "Dialog Keamanan Kuadrilateral (QUAD)": Shield,
   "Organisasi Kerja Sama dan Pembangunan Ekonomi (OECD)": TrendingUp,
+};
+
+const orgImageMap: Record<string, string> = {
+  "Interpol": "/images/game/interface/sub-tabs/geopolitik/organisasi-pbb/interpol.svg",
+  "Organisasi Kesehatan Dunia (WHO)": "/images/game/interface/sub-tabs/geopolitik/organisasi-pbb/organisasi-kesehatan-dunia-who.svg",
+  "UNESCO": "/images/game/interface/sub-tabs/geopolitik/organisasi-pbb/unesco.svg",
+  "Organisasi Perdagangan Dunia (WTO)": "/images/game/interface/sub-tabs/geopolitik/organisasi-pbb/organisasi-perdagangan-dunia-wto.svg",
+  "Organisasi Buruh Internasional (ILO)": "/images/game/interface/sub-tabs/geopolitik/organisasi-pbb/organisasi-buruh-internasional-ilo.svg",
+  "Organisasi Pangan dan Pertanian (FAO)": "/images/game/interface/sub-tabs/geopolitik/organisasi-pbb/organisasi-pangan-pertanian-fao.svg",
+  "Organisasi Maritim Internasional (IMO)": "/images/game/interface/sub-tabs/geopolitik/organisasi-pbb/organisasi-maritim-internasional-imo.svg",
+  "Organisasi Telekomunikasi Internasional (ITU)": "/images/game/interface/sub-tabs/geopolitik/organisasi-pbb/organisasi-telekomunikasi-internasional-itu.svg",
+  "Organisasi Meteorologi Dunia (WMO)": "/images/game/interface/sub-tabs/geopolitik/organisasi-pbb/organisasi-meteorologi-dunia-wmo.svg",
+  "Perhimpunan Bangsa-Bangsa Asia Tenggara (ASEAN)": "/images/game/interface/sub-tabs/geopolitik/organisasi-regional/asean.svg",
+  "Uni Eropa (EU)": "/images/game/interface/sub-tabs/geopolitik/organisasi-regional/uni-eropa-eu.svg",
+  "Liga Arab": "/images/game/interface/sub-tabs/geopolitik/organisasi-regional/liga-arab.svg",
+  "Uni Afrika (AU)": "/images/game/interface/sub-tabs/geopolitik/organisasi-regional/uni-afrika-au.svg",
+  "Organisasi Kerja Sama Islam (OKI)": "/images/game/interface/sub-tabs/geopolitik/organisasi-regional/organisasi-kerja-sama-islam-oki.svg",
+  "BRICS (Brasil, Rusia, India, China, Afrika Selatan)": "/images/game/interface/sub-tabs/geopolitik/organisasi-regional/brics.svg",
+  "Pakta Pertahanan Atlantik Utara (NATO)": "/images/game/interface/sub-tabs/geopolitik/organisasi-regional/nato.svg",
+  "Organisasi Negara-Negara Pengekspor Minyak Bumi (OPEC)": "/images/game/interface/sub-tabs/geopolitik/organisasi-regional/opec.svg",
+  "Kelompok Duapuluh (G20)": "/images/game/interface/sub-tabs/geopolitik/organisasi-regional/g20.svg",
 };
 
 export default function OrgIntlModal({ isOpen, onClose, selectedCountry, countryDetail, onOpenCountryDetail, onOpenPlayerDetail }: ModalProps) {
@@ -173,10 +195,14 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                     <button
                       type="button"
                       onClick={() => handleOrgClick(org)}
-                      className="flex min-h-[72px] w-full items-center gap-3 pr-7 text-left cursor-pointer"
+                      className="flex min-h-[88px] w-full items-center gap-3 pr-7 text-left cursor-pointer"
                       aria-label={`Lihat keanggotaan ${org}`}
                     >
-                      <Icon className="h-6 w-6 flex-shrink-0 text-[#00FFAA]" />
+                      {orgImageMap[org] ? (
+                        <Image src={orgImageMap[org]} alt="" aria-hidden="true" width={48} height={48} className="h-12 w-12 flex-shrink-0 object-contain" />
+                      ) : (
+                        <Icon className="h-6 w-6 flex-shrink-0 text-[#00FFAA]" />
+                      )}
                       <span className="text-[10px] font-bold text-[#E0E0E0] uppercase tracking-tight leading-tight">{org}</span>
                     </button>
                     <button
@@ -207,10 +233,14 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
                     <button
                       type="button"
                       onClick={() => handleOrgClick(org)}
-                      className="flex min-h-[72px] w-full items-center gap-3 pr-7 text-left cursor-pointer"
+                      className="flex min-h-[88px] w-full items-center gap-3 pr-7 text-left cursor-pointer"
                       aria-label={`Lihat keanggotaan ${org}`}
                     >
-                      <Icon className="h-6 w-6 flex-shrink-0 text-[#00FFAA]" />
+                      {orgImageMap[org] ? (
+                        <Image src={orgImageMap[org]} alt="" aria-hidden="true" width={48} height={48} className="h-12 w-12 flex-shrink-0 object-contain" />
+                      ) : (
+                        <Icon className="h-6 w-6 flex-shrink-0 text-[#00FFAA]" />
+                      )}
                       <span className="text-[10px] font-bold text-[#E0E0E0] uppercase tracking-tight leading-tight">{org}</span>
                     </button>
                     <button

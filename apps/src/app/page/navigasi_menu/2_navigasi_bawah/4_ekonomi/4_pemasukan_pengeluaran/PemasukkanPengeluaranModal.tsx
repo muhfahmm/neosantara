@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { X, BarChart3, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import {
   calculateTotalTaxIncome,
@@ -13,7 +14,7 @@ import {
   calculateActiveSubsidyCost,
 } from "@/app/logic/economic_logic/treasuryUpdater";
 import { calculateGoldMiningDailyProduction } from "@/app/logic/economic_logic/goldIncome";
-import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from "@/app/logic/economic_logic/departments";
+import { CABINET_DEPARTMENT_IMAGES, KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from "@/app/logic/economic_logic/departments";
 import AlokasiSubsidiTab from "./alokasi_subsidi/AlokasiSubsidiTab";
 import { ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/agama_bonus_logic/kristen";
 import { BUDDHA_ENVIRONMENTAL_TAX_REVENUE_BONUS } from "@/app/page/bonus_logic/agama_bonus_logic/buddha";
@@ -472,10 +473,22 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
                           const level = getDepartmentLevel(countryDetail, dept);
                           const dailyCost = getDailyMinistryCost(level);
                           const Icon = dept.icon;
+                          const cabinetImage = CABINET_DEPARTMENT_IMAGES[dept.id];
                           return (
                             <div key={index} className="flex justify-between items-center text-xs font-bold text-rose-400 py-2 border-b border-[#00FFAA]/20 last:border-0">
-                              <div className="flex items-center gap-2">
-                                <Icon className="h-4 w-4 text-[#6B8A8A]" />
+                              <div className="flex min-w-0 items-center gap-2">
+                                {cabinetImage ? (
+                                  <Image
+                                    src={`/images/game/interface/sub-tabs/kementerian/dewan-kabinet/${cabinetImage}.svg`}
+                                    alt=""
+                                    aria-hidden="true"
+                                    width={32}
+                                    height={32}
+                                    className="h-8 w-8 shrink-0 object-contain"
+                                  />
+                                ) : (
+                                  <Icon className="h-4 w-4 shrink-0 text-[#6B8A8A]" />
+                                )}
                                 <span className="font-semibold text-[#E0E0E0]">{dept.name}</span>
                                 <span className="text-[10px] text-[#6B8A8A]">(Level {level})</span>
                               </div>

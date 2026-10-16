@@ -65,9 +65,9 @@ export default function BottomLeftPenelitianIcon({
           src="/images/game/interface/menu/research.svg"
           alt=""
           aria-hidden="true"
-          width={24}
-          height={24}
-          className="h-10 w-10 object-contain lg:h-12 lg:w-12 xl:h-14 xl:w-14"
+          width={72}
+          height={72}
+          className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
         />
       </button>
 
