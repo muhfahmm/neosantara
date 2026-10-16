@@ -1,13 +1,16 @@
 import { NextResponse } from 'next/server';
 import { getDbPool } from '../../../lib/db';
+import { ensureGameSavesTable } from '@/lib/initGameSavesTable';
 
 /**
  * GET handler: Fetch all saved game records, sorted by latest first.
  */
 export async function GET() {
     try {
+        await ensureGameSavesTable();
         const pool = await getDbPool();
-        const [rows]: any = await pool.query('SELECT * FROM game_saves ORDER BY id DESC');
+        const result = await pool.query('SELECT * FROM game_saves ORDER BY id DESC');
+        const rows = result.rows || [];
 
         // Parse country_detail JSON strings back to objects
         const parsedRows = rows.map((row: any) => ({
@@ -33,6 +36,7 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
         const {
+            saveId,
             saveName,
             countryName,
             countryIso,
@@ -57,11 +61,44 @@ export async function POST(request: Request) {
         // Serialize full countryDetail for production tracking
         const countryDetailJson = JSON.stringify(countryDetail || {});
 
+        await ensureGameSavesTable();
         const pool = await getDbPool();
+
+        if (saveId) {
+            // Overwrite existing save file
+            await pool.query(
+                `UPDATE game_saves 
+                SET save_name = $1, country_name = $2, country_iso = $3, game_date = $4, capital = $5, 
+                    jumlah_penduduk = $6, anggaran = $7, ideology = $8, religion = $9, un_vote = $10, 
+                    country_detail = $11, created_at = CURRENT_TIMESTAMP
+                WHERE id = $12`,
+                [
+                    saveName,
+                    countryName,
+                    countryIso,
+                    gameDate,
+                    capital || null,
+                    jumlahPenduduk ? Number(jumlahPenduduk) : 0,
+                    anggaran ? Number(anggaran) : 0,
+                    ideology || null,
+                    religion || null,
+                    unVote ? Number(unVote) : 0,
+                    countryDetailJson,
+                    saveId,
+                ]
+            );
+
+            return NextResponse.json({
+                success: true,
+                insertId: saveId,
+                message: 'Save file berhasil diperbarui.',
+            });
+        }
+
         const result = await pool.query(
             `INSERT INTO game_saves 
             (save_name, country_name, country_iso, game_date, capital, jumlah_penduduk, anggaran, ideology, religion, un_vote, country_detail) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
             [
                 saveName,
                 countryName,
@@ -79,7 +116,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json({
             success: true,
-            insertId: (result as any).rows?.[0]?.id || (result as any).insertId,
+            insertId: (result as any).rows?.[0]?.id,
             message: 'Game state saved successfully.',
         });
     } catch (error: any) {

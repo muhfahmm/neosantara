@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect, useRef } from "react";
 import { X, CreditCard, ArrowRight, AlertCircle } from "lucide-react";
+import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { COUNTRIES_DATA } from "../../../../map_system/map-data";
 
 // 🔥 IMPOR TAB TERPISAH
@@ -347,11 +348,12 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
   const cancelBorrow = () => setPendingLoan(null);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
+    <>
+      <NotebookModalWrapper onClose={onClose}>
+        <div className="flex flex-col h-full overflow-hidden">
 
-        {/* Header */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+          {/* Header */}
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
               <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
@@ -466,80 +468,80 @@ export default function HutangModal({ isOpen, onClose, countryDetail, setCountry
           )}
 
         </div>
+        </div>
+      </NotebookModalWrapper>
 
-        {/* 🔥 RENDER MODAL BAYAR HUTANG */}
-        {pendingPaymentLoan && (
-          <BayarHutangModal
-            isOpen={!!pendingPaymentLoan}
-            onClose={() => setPendingPaymentLoan(null)}
-            onConfirm={handleManualPaymentConfirm}
-            loanSource={pendingPaymentLoan.source}
-            paymentAmount={Math.min(kasNegara, pendingPaymentLoan.totalRepayment)}
-            currentMoney={kasNegara}
-            iso={pendingPaymentLoan.iso} 
-          />
-        )}
-
-        {/* Penalty info modal */}
-        <PenaltyInfoModal
-          isOpen={!!penaltyInfoLoan}
-          onClose={() => setPenaltyInfoLoan(null)}
-          loan={penaltyInfoLoan}
+      {/* 🔥 RENDER MODAL BAYAR HUTANG */}
+      {pendingPaymentLoan && (
+        <BayarHutangModal
+          isOpen={!!pendingPaymentLoan}
+          onClose={() => setPendingPaymentLoan(null)}
+          onConfirm={handleManualPaymentConfirm}
+          loanSource={pendingPaymentLoan.source}
+          paymentAmount={Math.min(kasNegara, pendingPaymentLoan.totalRepayment)}
+          currentMoney={kasNegara}
+          iso={pendingPaymentLoan.iso} 
         />
+      )}
 
-        {/* General penalty explanation modal (header info) */}
-        <GeneralPenaltyModal
-          isOpen={isGeneralPenaltyOpen}
-          onClose={() => setIsGeneralPenaltyOpen(false)}
+      {/* Penalty info modal */}
+      <PenaltyInfoModal
+        isOpen={!!penaltyInfoLoan}
+        onClose={() => setPenaltyInfoLoan(null)}
+        loan={penaltyInfoLoan}
+      />
+
+      {/* General penalty explanation modal (header info) */}
+      <GeneralPenaltyModal
+        isOpen={isGeneralPenaltyOpen}
+        onClose={() => setIsGeneralPenaltyOpen(false)}
+      />
+
+      {/* Modal Konfirmasi Peminjaman Baru */}
+      {pendingLoan && activeTab === "bilateral" && (
+        <KonfirmasiPinjamanModalNegaraLain
+          isOpen={!!pendingLoan}
+          onClose={cancelBorrow}
+          onConfirm={confirmBorrow}
+          loanSource={pendingLoan.name}
+          iso={pendingLoan.iso}
+          maxLoan={pendingLoan.maxLoan}
+          interest={pendingLoan.interest}
+          term={pendingLoan.term}
+          totalPayment={pendingLoan.maxLoan + (pendingLoan.maxLoan * (pendingLoan.interest / 100))}
+          currentMoney={kasNegara}
         />
+      )}
 
-        {/* Modal Konfirmasi Peminjaman Baru */}
-        {pendingLoan && activeTab === "bilateral" && (
-          <KonfirmasiPinjamanModalNegaraLain
-            isOpen={!!pendingLoan}
-            onClose={cancelBorrow}
-            onConfirm={confirmBorrow}
-            loanSource={pendingLoan.name}
-            iso={pendingLoan.iso}
-            maxLoan={pendingLoan.maxLoan}
-            interest={pendingLoan.interest}
-            term={pendingLoan.term}
-            totalPayment={pendingLoan.maxLoan + (pendingLoan.maxLoan * (pendingLoan.interest / 100))}
-            currentMoney={kasNegara}
-          />
-        )}
+      {pendingLoan && activeTab === "multilateral" && (
+        <KonfirmasiPinjamanModalLembagaDunia
+          isOpen={!!pendingLoan}
+          onClose={cancelBorrow}
+          onConfirm={confirmBorrow}
+          loanSource={pendingLoan.name}
+          iso={pendingLoan.iso}
+          maxLoan={pendingLoan.maxLoan}
+          interest={pendingLoan.interest}
+          term={pendingLoan.term}
+          totalPayment={pendingLoan.maxLoan + (pendingLoan.maxLoan * (pendingLoan.interest / 100))}
+          currentMoney={kasNegara}
+        />
+      )}
 
-        {pendingLoan && activeTab === "multilateral" && (
-          <KonfirmasiPinjamanModalLembagaDunia
-            isOpen={!!pendingLoan}
-            onClose={cancelBorrow}
-            onConfirm={confirmBorrow}
-            loanSource={pendingLoan.name}
-            iso={pendingLoan.iso}
-            maxLoan={pendingLoan.maxLoan}
-            interest={pendingLoan.interest}
-            term={pendingLoan.term}
-            totalPayment={pendingLoan.maxLoan + (pendingLoan.maxLoan * (pendingLoan.interest / 100))}
-            currentMoney={kasNegara}
-          />
-        )}
-
-        {pendingLoan && activeTab === "history" && (
-          <KonfirmasiPinjamanModalRiwayat
-            isOpen={!!pendingLoan}
-            onClose={cancelBorrow}
-            onConfirm={confirmBorrow}
-            loanSource={pendingLoan.name}
-            iso={pendingLoan.iso}
-            maxLoan={pendingLoan.maxLoan}
-            interest={pendingLoan.interest}
-            term={pendingLoan.term}
-            totalPayment={pendingLoan.maxLoan + (pendingLoan.maxLoan * (pendingLoan.interest / 100))}
-            currentMoney={kasNegara}
-          />
-        )}
-
-      </div>
-    </div>
+      {pendingLoan && activeTab === "history" && (
+        <KonfirmasiPinjamanModalRiwayat
+          isOpen={!!pendingLoan}
+          onClose={cancelBorrow}
+          onConfirm={confirmBorrow}
+          loanSource={pendingLoan.name}
+          iso={pendingLoan.iso}
+          maxLoan={pendingLoan.maxLoan}
+          interest={pendingLoan.interest}
+          term={pendingLoan.term}
+          totalPayment={pendingLoan.maxLoan + (pendingLoan.maxLoan * (pendingLoan.interest / 100))}
+          currentMoney={kasNegara}
+        />
+      )}
+    </>
   );
 }

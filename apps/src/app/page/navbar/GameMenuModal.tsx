@@ -164,7 +164,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                         onClick={onClose}
                                         className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
-                                        Resume
+                                        Lanjutkan
                                     </button>
                                     <button
                                         onClick={() => {
@@ -173,13 +173,13 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                         }}
                                         className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
-                                        Save Game
+                                        Simpan Permainan
                                     </button>
                                     <button
                                         onClick={handleOpenLoad}
                                         className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
-                                        Load Game
+                                        Muat Permainan
                                     </button>
                                     <button
                                         onClick={() => {
@@ -188,20 +188,20 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                         }}
                                         className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
-                                        Restart
+                                        Mulai Ulang
                                     </button>
                                     <button
                                         onClick={() => setSubview('options')}
                                         className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
-                                        Options
+                                        Pengaturan
                                     </button>
                                     <button
                                         onClick={() => setShowKeywordModal(true)}
                                         className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99] flex items-center justify-center gap-2"
                                     >
                                         <Keyboard className="w-4 h-4 text-[#00FFAA]" />
-                                        <span>Keyboard Shortcuts</span>
+                                        <span>Pintasan Keyboard</span>
                                     </button>
                                 </div>
 
@@ -210,13 +210,13 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                         onClick={handleExitGame}
                                         className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3.5 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
-                                        Main Menu
+                                        Menu Utama
                                     </button>
                                     <button
                                         onClick={handleCloseWindow}
                                         className="w-full bg-[#0A1A1A] hover:bg-rose-500/10 active:bg-rose-500/20 border border-rose-500/30 hover:border-rose-500/60 rounded py-3.5 text-center text-[#E0E0E0] hover:text-rose-300 font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(244,63,94,0.15)] active:scale-[0.99]"
                                     >
-                                        Exit Game
+                                        Keluar Permainan
                                     </button>
                                 </div>
                             </div>
@@ -232,19 +232,19 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     >
                                         <ArrowLeft className="w-4 h-4" />
                                     </button>
-                                    <span className="font-extrabold text-[14px] text-[#00FFAA] uppercase tracking-wider">LOAD GAME</span>
+                                    <span className="font-extrabold text-[14px] text-[#00FFAA] uppercase tracking-wider">MUAT PERMAINAN</span>
                                 </div>
 
                                 <div className="flex-1 overflow-y-auto pr-1 space-y-3 no-scrollbar shrink-0">
                                     {isLoadingSaves ? (
                                         <div className="flex flex-col items-center justify-center py-16 gap-2 text-[#6B8A8A] font-bold text-xs">
                                             <div className="w-5 h-5 rounded-full border-2 border-[#00FFAA]/20 border-t-[#00FFAA] animate-spin" />
-                                            <span>Memuat save file...</span>
+                                            <span>Memuat data simpanan...</span>
                                         </div>
                                     ) : saveFiles.length === 0 ? (
                                         <div className="flex flex-col items-center justify-center py-20 text-center gap-2">
-                                            <span className="text-[#6B8A8A] text-xs font-bold uppercase tracking-wider">TIDAK ADA SAVE FILE</span>
-                                            <p className="text-[#6B8A8A]/70 text-[10px] max-w-[200px]">Simpan permainan Anda melalui tombol "Save Game" terlebih dahulu.</p>
+                                            <span className="text-[#6B8A8A] text-xs font-bold uppercase tracking-wider">TIDAK ADA DATA SIMPANAN</span>
+                                            <p className="text-[#6B8A8A]/70 text-[10px] max-w-[200px]">Simpan permainan Anda melalui tombol "Simpan Permainan" terlebih dahulu.</p>
                                         </div>
                                     ) : (
                                         <div className="space-y-2">
@@ -305,7 +305,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     >
                                         <ArrowLeft className="w-4 h-4" />
                                     </button>
-                                    <span className="font-extrabold text-[14px] text-[#00FFAA] uppercase tracking-wider">OPTIONS</span>
+                                    <span className="font-extrabold text-[14px] text-[#00FFAA] uppercase tracking-wider">PENGATURAN</span>
                                 </div>
 
                                 <div className="flex-1 space-y-6 text-left shrink-0">
@@ -313,7 +313,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     <div className="space-y-2">
                                         <label className="text-[11px] font-black text-[#E0E0E0] uppercase tracking-wider flex items-center gap-1.5">
                                             <Music className="w-3.5 h-3.5 text-[#00FFAA]" />
-                                            <span>Music Volume ({musicVol}%)</span>
+                                            <span>Volume Musik ({musicVol}%)</span>
                                         </label>
                                         <input
                                             type="range"
@@ -333,7 +333,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     <div className="space-y-2">
                                         <label className="text-[11px] font-black text-[#E0E0E0] uppercase tracking-wider flex items-center gap-1.5">
                                             <Volume2 className="w-3.5 h-3.5 text-[#00FFAA]" />
-                                            <span>Sound Effects ({sfxVol}%)</span>
+                                            <span>Efek Suara ({sfxVol}%)</span>
                                         </label>
                                         <input
                                             type="range"
@@ -353,7 +353,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                     <div className="space-y-2">
                                         <label className="text-[11px] font-black text-[#E0E0E0] uppercase tracking-wider flex items-center gap-1.5">
                                             <Monitor className="w-3.5 h-3.5 text-[#00FFAA]" />
-                                            <span>Screen Resolution</span>
+                                            <span>Resolusi Layar</span>
                                         </label>
                                         <select
                                             value={resolution}

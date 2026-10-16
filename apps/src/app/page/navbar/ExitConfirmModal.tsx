@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, AlertTriangle, X } from 'lucide-react';
 
 interface ExitConfirmModalProps {
@@ -34,91 +33,106 @@ export function ExitConfirmModal({
         }
     };
 
+    const isExitWindow = confirmText?.toLowerCase().includes('keluar') ?? false;
+
     const content = (
-        <AnimatePresence>
-            <div className="fixed inset-0 z-[9999999999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md select-none font-sans">
-                {/* Backdrop Click */}
-                <div className="absolute inset-0" onClick={onClose} aria-hidden="true" />
+        <div className="fixed inset-0 z-[9999999999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md font-sans select-none animate-fadeIn">
+            {/* Notebook-style Frame — Green Cyberpunk Theme */}
+            <div className="bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full max-w-[440px] shadow-2xl relative flex flex-col p-4 pl-12 overflow-hidden">
+                {/* Silver Binder Spine on the Left */}
+                <div className="absolute left-3 top-5 bottom-5 w-2 bg-gradient-to-r from-[#2A3F3F] via-[#3D5252] to-[#1F3030] rounded-full shadow-md z-20 border border-[#0A1A1A]/80" />
+                <div className="absolute left-[8px] top-[22px] w-[16px] h-3 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
+                <div className="absolute left-[8px] bottom-[22px] w-[16px] h-3 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
 
-                {/* Modal Container */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.92, y: 12 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.92, y: 12 }}
-                    transition={{ type: 'spring', duration: 0.3, bounce: 0.15 }}
-                    className="relative w-full max-w-[440px] bg-[#071313]/98 border border-[#00FFAA]/40 rounded-2xl p-6 shadow-[0_0_60px_rgba(0,255,170,0.25)] overflow-hidden z-20"
-                >
-                    {/* Futuristic Background Accents */}
-                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#00FFAA]/10 rounded-full blur-3xl pointer-events-none" />
-                    <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-red-500/10 rounded-full blur-3xl pointer-events-none" />
+                {/* Notebook Rings binding the paper */}
+                <div className="absolute left-[24px] top-9 bottom-9 flex flex-col justify-between items-center py-3 pointer-events-none z-30">
+                    {[...Array(7)].map((_, i) => (
+                        <div key={i} className="w-3 h-3 rounded-full bg-[#0A1A1A] shadow-inner border border-[#00FFAA]/20 flex items-center justify-center">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#0F2424]" />
+                        </div>
+                    ))}
+                </div>
 
-                    {/* Corner Tech Lines */}
-                    <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#00FFAA]/60 rounded-tl-xl pointer-events-none" />
-                    <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-[#00FFAA]/60 rounded-tr-xl pointer-events-none" />
-                    <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-[#00FFAA]/60 rounded-bl-xl pointer-events-none" />
-                    <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-[#00FFAA]/60 rounded-br-xl pointer-events-none" />
+                {/* Main Panel Sheet — Green Theme */}
+                <div className="flex-1 bg-[#0F2424] border-[3px] border-[#00FFAA]/20 rounded-r-xl shadow-inner relative p-6 flex flex-col justify-between overflow-hidden text-center">
+                    {/* Subtle radial glow */}
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
+
+                    {/* Decorative Elegant Divider at the Top */}
+                    <div className="flex items-center justify-center gap-1.5 text-[#00FFAA]/40 mb-3 shrink-0">
+                        <div className="h-[1.5px] w-8 bg-gradient-to-r from-transparent to-[#00FFAA]/40" />
+                        <span className="text-[9px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
+                        <div className="h-[1.5px] w-8 bg-gradient-to-l from-transparent to-[#00FFAA]/40" />
+                    </div>
 
                     {/* Close Button Top Right */}
                     <button
                         onClick={onClose}
                         title="Tutup"
-                        className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                        className="absolute top-4 right-4 p-1 rounded-lg text-[#6B8A8A] hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
                     >
                         <X className="w-4 h-4" />
                     </button>
 
-                    {/* Modal Content */}
-                    <div className="flex flex-col items-center text-center pt-2">
+                    {/* Content Section */}
+                    <div className="flex flex-col items-center gap-3 my-2">
                         {/* Icon Glow Badge */}
-                        <div className="relative mb-4">
-                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500/20 to-red-900/30 border border-red-500/40 flex items-center justify-center text-red-400 shadow-[0_0_25px_rgba(239,68,68,0.25)]">
+                        <div className="relative">
+                            <div className={`w-13 h-13 rounded-2xl flex items-center justify-center shadow-lg ${
+                                isExitWindow
+                                    ? 'bg-rose-500/15 border-2 border-rose-500/40 text-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.2)]'
+                                    : 'bg-[#00FFAA]/15 border-2 border-[#00FFAA]/40 text-[#00FFAA] shadow-[0_0_20px_rgba(0,255,170,0.2)]'
+                            }`}>
                                 <LogOut className="w-6 h-6 stroke-[2.2]" />
                             </div>
-                            <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#0A1A1A] border border-amber-500/50 flex items-center justify-center text-amber-400">
+                            <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#0A1A1A] border border-amber-500/60 flex items-center justify-center text-amber-400">
                                 <AlertTriangle className="w-3 h-3" />
                             </div>
                         </div>
 
-                        {/* Heading */}
-                        <div className="space-y-1 mb-2">
+                        {/* Heading & Subtitle */}
+                        <div className="space-y-1">
                             <div className="text-[10px] font-black uppercase tracking-[0.25em] text-[#00FFAA]/70">
                                 {subtitle}
                             </div>
-                            <h3 className="text-lg font-black text-white tracking-tight">
+                            <h3 className="text-base font-black text-white tracking-tight">
                                 {title}
                             </h3>
-                        </div>
-
-                        {/* Description */}
-                        <p className="text-xs text-slate-300/80 leading-relaxed max-w-[320px] mb-6">
-                            {message}
-                        </p>
-
-                        {/* Action Buttons */}
-                        <div className="w-full grid grid-cols-2 gap-3">
-                            <button
-                                onClick={onClose}
-                                className="py-2.5 px-4 rounded-xl border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 active:bg-white/15 text-slate-200 text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
-                            >
-                                Batalkan
-                            </button>
-                            <button
-                                onClick={handleExit}
-                                className="py-2.5 px-4 rounded-xl border border-red-500/60 bg-red-600 hover:bg-red-500 active:bg-red-700 text-white text-xs font-black uppercase tracking-wider shadow-[0_0_20px_rgba(239,68,68,0.35)] transition-all cursor-pointer"
-                            >
-                                {confirmText}
-                            </button>
+                            <p className="text-[11px] font-semibold text-[#6B8A8A] leading-relaxed max-w-[280px] mx-auto pt-1">
+                                {message}
+                            </p>
                         </div>
                     </div>
 
-                    {/* Bottom Status Ticker */}
-                    <div className="mt-5 pt-3 border-t border-[#00FFAA]/10 flex items-center justify-between text-[9px] font-mono text-slate-500">
-                        <span>SYS.TERM_ID: 16FA-923</span>
-                        <span className="text-red-400/80 uppercase">SESSION ABORT</span>
+                    {/* Action Buttons */}
+                    <div className="grid grid-cols-2 gap-3 shrink-0 pt-3 z-10">
+                        <button
+                            onClick={onClose}
+                            className="bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded-xl py-2.5 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[11px] tracking-wider uppercase transition-all duration-150 cursor-pointer shadow-sm active:scale-[0.98]"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            onClick={handleExit}
+                            className={`rounded-xl py-2.5 text-center font-black text-[11px] tracking-wider uppercase transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+                                isExitWindow
+                                    ? 'bg-rose-500/20 hover:bg-rose-500/30 active:bg-rose-500/40 border border-rose-500/60 hover:border-rose-500 text-rose-300 shadow-[0_0_12px_rgba(244,63,94,0.2)]'
+                                    : 'bg-[#00FFAA]/20 hover:bg-[#00FFAA]/30 active:bg-[#00FFAA]/40 border border-[#00FFAA]/60 hover:border-[#00FFAA] text-[#00FFAA] shadow-[0_0_12px_rgba(0,255,170,0.2)]'
+                            }`}
+                        >
+                            {confirmText}
+                        </button>
                     </div>
-                </motion.div>
+
+                    {/* Decorative Elegant Divider at the Bottom */}
+                    <div className="flex items-center justify-center gap-1.5 text-[#00FFAA]/40 mt-4 shrink-0">
+                        <div className="h-[1.5px] w-8 bg-gradient-to-r from-transparent to-[#00FFAA]/40" />
+                        <span className="text-[9px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
+                        <div className="h-[1.5px] w-8 bg-gradient-to-l from-transparent to-[#00FFAA]/40" />
+                    </div>
+                </div>
             </div>
-        </AnimatePresence>
+        </div>
     );
 
     if (typeof document !== 'undefined') {
@@ -129,3 +143,4 @@ export function ExitConfirmModal({
 }
 
 export default ExitConfirmModal;
+

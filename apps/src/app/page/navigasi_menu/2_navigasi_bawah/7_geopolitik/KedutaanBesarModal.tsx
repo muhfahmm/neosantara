@@ -1,6 +1,7 @@
 "use client"
 import React, { useState } from "react";
 import { X, Globe } from "lucide-react";
+import NotebookModalWrapper from "../NotebookModalWrapper";
 // PERBAIKAN: Import data negara untuk mendapatkan ISO bendera
 import { COUNTRIES_DATA } from "../../../map_system/map-data";
 import getTradeAgreementsForCountry from '../../../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
@@ -161,12 +162,13 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        
-        {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-          <div className="flex items-center gap-2 sm:gap-3">
+    <>
+      <NotebookModalWrapper onClose={onClose}>
+        <div className="flex flex-col h-full overflow-hidden">
+          
+          {/* HEADER */}
+          <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3">
             <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
               <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA] animate-pulse" />
             </div>
@@ -240,58 +242,58 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
             </div>
           )}
         </div>
+      </div>
+    </NotebookModalWrapper>
 
-        {/* Modal Konfirmasi Hancurkan Kedutaan */}
-        {confirmModal.isOpen && (
-          <div className="absolute inset-0 bg-black/60 z-30 flex items-center justify-center p-8 pointer-events-auto backdrop-blur-sm rounded-2xl">
-            <div className="bg-[#0F2424] border border-rose-500/40 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
+      {/* Modal Konfirmasi Hancurkan Kedutaan */}
+      {confirmModal.isOpen && (
+        <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-8 pointer-events-auto rounded-2xl">
+          <div className="bg-[#0F2424] border border-rose-500/40 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
+            <button
+              onClick={() => setConfirmModal({ isOpen: false, partnerName: null })}
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <h3 className="text-lg font-bold text-rose-400 uppercase tracking-wide mb-3">Konfirmasi Hancurkan Kedutaan</h3>
+            <p className="text-sm text-[#6B8A8A] font-medium leading-relaxed mb-6">
+              Apakah Anda yakin ingin menghancurkan Kedutaan Besar di <strong className="text-[#E0E0E0]">{confirmModal.partnerName}</strong>? Tindakan ini tidak dapat dibatalkan dan akan memutuskan hubungan diplomatik.
+            </p>
+            <div className="flex gap-3">
               <button
                 onClick={() => setConfirmModal({ isOpen: false, partnerName: null })}
-                className="absolute top-4 right-4 p-1.5 rounded-lg text-[#6B8A8A] hover:text-[#00FFAA] transition-colors cursor-pointer"
+                className="flex-1 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] text-xs font-bold uppercase transition-all cursor-pointer"
               >
-                <X className="h-5 w-5" />
+                Batal
               </button>
-              <h3 className="text-lg font-bold text-rose-400 uppercase tracking-wide mb-3">Konfirmasi Hancurkan Kedutaan</h3>
-              <p className="text-sm text-[#6B8A8A] font-medium leading-relaxed mb-6">
-                Apakah Anda yakin ingin menghancurkan Kedutaan Besar di <strong className="text-[#E0E0E0]">{confirmModal.partnerName}</strong>? Tindakan ini tidak dapat dibatalkan dan akan memutuskan hubungan diplomatik.
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setConfirmModal({ isOpen: false, partnerName: null })}
-                  className="flex-1 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#E0E0E0] text-xs font-bold uppercase transition-all cursor-pointer"
-                >
-                  Batal
-                </button>
-                <button
-                  onClick={handleConfirmDestroy}
-                  className="flex-1 py-2.5 rounded-xl border border-rose-500/50 bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 transition-all font-bold text-xs uppercase cursor-pointer"
-                >
-                  Hancurkan Kedutaan
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Modal Notifikasi Sukses */}
-        {successModal.isOpen && (
-          <div className="absolute inset-0 bg-black/60 z-30 flex items-center justify-center p-8 pointer-events-auto backdrop-blur-sm rounded-2xl">
-            <div className="bg-[#0F2424] border border-[#00FFAA]/40 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
-              <h3 className="text-lg font-bold text-[#00FFAA] uppercase tracking-wide mb-3">Berhasil</h3>
-              <p className="text-sm text-[#6B8A8A] font-medium leading-relaxed mb-6">
-                {successModal.message}
-              </p>
               <button
-                onClick={() => setSuccessModal({ isOpen: false, message: null })}
-                className="w-full py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 transition-all font-black text-xs uppercase cursor-pointer"
+                onClick={handleConfirmDestroy}
+                className="flex-1 py-2.5 rounded-xl border border-rose-500/50 bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 transition-all font-bold text-xs uppercase cursor-pointer"
               >
-                Tutup
+                Hancurkan Kedutaan
               </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-      </div>
-    </div>
+      {/* Modal Notifikasi Sukses */}
+      {successModal.isOpen && (
+        <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-8 pointer-events-auto rounded-2xl">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/40 rounded-2xl max-w-md w-full p-8 shadow-2xl relative">
+            <h3 className="text-lg font-bold text-[#00FFAA] uppercase tracking-wide mb-3">Berhasil</h3>
+            <p className="text-sm text-[#6B8A8A] font-medium leading-relaxed mb-6">
+              {successModal.message}
+            </p>
+            <button
+              onClick={() => setSuccessModal({ isOpen: false, message: null })}
+              className="w-full py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 transition-all font-black text-xs uppercase cursor-pointer"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

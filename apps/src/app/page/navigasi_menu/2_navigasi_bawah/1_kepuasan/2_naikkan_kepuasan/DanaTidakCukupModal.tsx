@@ -25,7 +25,7 @@ export default function DanaTidakCukupModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden flex flex-col relative font-sans pointer-events-auto">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden flex flex-col relative font-sans pointer-events-auto">
 
         {/* Header */}
         <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">

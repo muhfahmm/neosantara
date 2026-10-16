@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { X, Info, Globe, Shield, HeartPulse, BookOpen, ArrowRightLeft, Users, Sprout, Plane, Ship, Wifi, Cloud, Landmark, Flag, Star, Handshake, BarChart, Crown, TrendingUp } from "lucide-react";
+import NotebookModalWrapper from "../../NotebookModalWrapper";
 import OrganisasiPBBModal from "./1_organisasi_PBB/organisasiPBBmodal";
 import OrganisasiRegional from "./2_organisasi_regional/organisasiRegional";
 import OrgIntlInfoModal from "./OrgIntlInfoModal";
@@ -126,8 +127,8 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+    <NotebookModalWrapper onClose={handleClose}>
+      <div className="flex flex-col h-full overflow-hidden relative">
         <OrgIntlInfoModal
           isOpen={Boolean(infoOrgName)}
           onClose={() => setInfoOrgName(null)}
@@ -138,7 +139,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
         />
         
         {/* HEADER */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
               <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA] animate-pulse" />
@@ -285,6 +286,6 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
         )}
 
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

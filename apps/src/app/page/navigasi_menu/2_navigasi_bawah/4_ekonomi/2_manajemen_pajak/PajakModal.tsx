@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { X, FileText } from "lucide-react";
+import NotebookModalWrapper from "../../NotebookModalWrapper";
 import {
   TAX_CONFIGS,
   calculateIncomeAtRate,
@@ -294,9 +295,9 @@ export default function PajakModal({
   const kemenkeuBonusAmount = Math.max(0, totalIncome - Math.round(totalIncomeWithHarmonisasi));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
+    <NotebookModalWrapper onClose={onClose}>
+      <div className="flex flex-col h-full overflow-hidden">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
               <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
@@ -554,6 +555,6 @@ export default function PajakModal({
           </div>
         </div>
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }
