@@ -123,6 +123,7 @@ import {
 const BottomLeftPenelitianIcon = dynamic(() => import('../menus/penelitian/penelitianModals'), { ssr: false });
 const BottomLeftMissionIcon = dynamic(() => import('../menus/mission/missionModals'), { ssr: false });
 import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
+import { isNonActionableUpdateNotification } from '../menus/inbox/logic/automaticChangeNotification';
 import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/2_peringkat/peringkatLogic';
 import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
 import { getTradeAgreementsForCountry } from '../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
@@ -2453,7 +2454,12 @@ export default function MapPage() {
     useEffect(() => {
         if (Array.isArray(countryDetail?.pending_notifications) && countryDetail.pending_notifications.length > 0) {
             const pending = countryDetail.pending_notifications;
-            setNotifications(prev => [...pending, ...prev]);
+            const inboxNotifications = pending.filter(
+                (notification: unknown) => !isNonActionableUpdateNotification(notification),
+            );
+            if (inboxNotifications.length > 0) {
+                setNotifications(prev => [...inboxNotifications, ...prev]);
+            }
             const generatedNews: NewsItemData[] = [];
             const notificationCountry = String(
                 countryDetail.country ||
@@ -2641,15 +2647,6 @@ export default function MapPage() {
                 Number(countryDetail.world_news_country_cursor) || 0,
                 currentDateStr,
             );
-            if (worldNewsResult.news.length > 0) {
-                setNewsList(previous => {
-                    const existingIds = new Set(previous.map(item => item.id));
-                    return [
-                        ...worldNewsResult.news.filter(item => !existingIds.has(item.id)),
-                        ...previous,
-                    ];
-                });
-            }
 
             const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
             const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
@@ -4673,7 +4670,6 @@ export default function MapPage() {
                 clearMissionProgressData();
                 window.localStorage.setItem('player_diamonds', '150');
                 setPlayerDiamonds(150);
-                // Reset country color overrides dan data aneksasi saat restart game
                 clearActiveNpcCountrySimulationState();
                 (window as any).neosantara_country_color_overrides = {};
                 (window as any).neosantara_annexed_countries = {};
@@ -4682,19 +4678,29 @@ export default function MapPage() {
                 timeManager: timeManagerRef.current,
                 setIsPaused,
                 setSpeed,
-                setCountryDetail, // Add this to reset production data
+                setCountryDetail,
                 reloadStats: () => loadCountryStats(selectedCountry.country, selectedCountry.capital),
                 skipConfirm: true
             });
             setPlayerNetBalanceAdjustment(0);
             setPresidentRating(50);
             setKesejahteraan(50);
-            // 🔥 Reset semua notifikasi dan early warning flags agar tidak terbawa ke game baru
+            // Reset semua notifikasi, warning flags, dan deep links
             setNotifications([]);
             setHasShownEarlyWarning({ kepuasan: false, peringkat: false, kesejahteraan: false });
             setHasShownRatingWarning(false);
-            // Reset country color overrides
+            setProductionDeepLink(null);
+            setTempatUmumDeepLink(null);
+            setKesejahteraanDeepLink(false);
+            setAiConstructionNavigation(null);
             setCountryColorOverrides({});
+            // Reset status tampilan modal detail
+            setCountryDetailModalOpen(false);
+            setPlayerDetailModalOpen(false);
+            setInboxModalOpen(false);
+            setGiftModalOpen(false);
+            setNewsModalOpen(false);
+            setPenelitianModalOpen(false);
             // Toggle resetTrigger to signal all modals to reset
             setResetTrigger(prev => !prev);
         }

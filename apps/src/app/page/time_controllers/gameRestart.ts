@@ -35,9 +35,36 @@ export function handleGameRestart(options: RestartOptions): void {
     options.setIsPaused(true);
     options.setSpeed(1);
 
-    // Clear active PBB resolutions & annexed countries state on restart
+    // Clear active PBB resolutions, election, missions, debt, research & annexed countries state on restart
     if (typeof window !== 'undefined') {
         localStorage.removeItem('dailyRewardData');
+        localStorage.removeItem('player_diamonds');
+        localStorage.removeItem('deployed_units_config');
+        localStorage.removeItem('user_country');
+        localStorage.removeItem('hutangModalLoanSources');
+        localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
+        localStorage.removeItem('presiden_simulator_active_mission');
+        localStorage.removeItem('presiden_simulator_claimable_missions');
+        localStorage.removeItem('presiden_simulator_mission_completions');
+        localStorage.removeItem('presiden_simulator_mission_building_progress');
+        localStorage.removeItem('presiden_simulator_mission_pool');
+        localStorage.removeItem('neosantara_pbb_security_council_election');
+        localStorage.removeItem('pbb_active_resolutions_v4');
+        localStorage.removeItem('pbb_active_keamanan_v4');
+        localStorage.removeItem('pbb_reported_war_ban_violations_v1');
+        localStorage.removeItem('neosantara_expelled_organization_countries');
+        localStorage.removeItem('neosantara_org_applications');
+
+        // Hapus semua storage keanggotaan organisasi per negara
+        try {
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+                const key = localStorage.key(i);
+                if (key && (key.startsWith('neosantara_joined_orgs_') || key.startsWith('research_') || key.startsWith('covert_op_'))) {
+                    localStorage.removeItem(key);
+                }
+            }
+        } catch (e) {}
+
         window.dispatchEvent(new CustomEvent('daily_reward_reset'));
         clearActiveResolutionsForSession();
         clearActiveSecurityCouncilItems();
@@ -45,14 +72,16 @@ export function handleGameRestart(options: RestartOptions): void {
         clearExpelledOrganizationCountries();
         clearAllOrganizationMembershipData();
         clearActiveNpcCountrySimulationState();
+
         try {
-            localStorage.removeItem('pbb_active_resolutions_v4');
-            localStorage.removeItem('pbb_active_keamanan_v4');
-            localStorage.removeItem('pbb_reported_war_ban_violations_v1');
             (window as any).neosantara_annexed_countries = {};
             (window as any).neosantara_country_color_overrides = {};
+            (window as any).neosantara_is_paused = true;
             window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
             window.dispatchEvent(new CustomEvent('map_territory_color_updated'));
+            window.dispatchEvent(new CustomEvent('reset_penelitian_selection'));
+            window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId: null } }));
+            window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { claimableList: [] } }));
         } catch (e) {}
     }
 

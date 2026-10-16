@@ -87,7 +87,10 @@ export default function TopRightNewsIcon({
   const [showToast, setShowToast] = useState(false);
   const [selectedOperationNews, setSelectedOperationNews] = useState<SecurityCouncilInvasionNews | null>(null);
   const dismissedToastIdRef = React.useRef<string | null>(null);
-  const cappedNewsList = useMemo(() => limitNewsPerMonth(newsList), [newsList]);
+  const cappedNewsList = useMemo(
+    () => limitNewsPerMonth(newsList.filter(item => !item.id.startsWith('world-news-'))),
+    [newsList],
+  );
 
   useEffect(() => {
     setMounted(true);

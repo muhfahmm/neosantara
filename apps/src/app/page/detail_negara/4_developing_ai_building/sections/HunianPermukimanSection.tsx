@@ -11,7 +11,6 @@ import {
   TrendingUp,
   ShieldCheck,
   Search,
-  PieChart,
 } from "lucide-react";
 import {
   getTotalHousingCapacityBonusPercent,
@@ -270,18 +269,6 @@ export default function HunianPermukimanSection({
       {/* 3. CONTROLS: FILTER CATEGORY & SEARCH */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#0A1A1A] p-3 rounded-xl border border-[#00FFAA]/20">
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
-          <button
-            onClick={() => setSelectedCategory("all")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-              selectedCategory === "all"
-                ? "bg-[#00FFAA] text-[#0A1A1A] shadow-sm font-black"
-                : "bg-[#0F2424] text-[#A0C0C0] hover:text-[#00FFAA] border border-[#00FFAA]/20"
-            }`}
-          >
-            <PieChart className="w-3.5 h-3.5" />
-            <span>Semua Kategori ({formatNumber(housingStats.totalUnits)} Unit)</span>
-          </button>
-
           {HOUSING_CONFIGS.map((cfg) => {
             const Icon = cfg.icon;
             const count = Number(countryDetail?.[cfg.key]) || 0;

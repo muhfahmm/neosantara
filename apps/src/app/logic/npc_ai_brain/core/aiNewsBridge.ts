@@ -49,9 +49,19 @@ const LABEL_MENU_INDIKATOR: Record<string, string> = {
 
 /**
  * Menerbitkan berita ke antrian global / window event agar otomatis muncul di menu Berita.
+ * Perubahan kebijakan dan pembangunan AI tetap dieksekusi, tetapi tidak dipublikasikan sebagai berita.
  * Tidak menerbitkan notifikasi bila game sedang di-pause.
  */
 export function terbitkanBeritaAI(news: AiNewsItem): void {
+  if (
+    news.type === "kebijakan_negara" ||
+    news.type === "pembangunan_sipil" ||
+    news.type === "ekspansi_militer" ||
+    news.type === "pengadaan_armada"
+  ) {
+    return;
+  }
+
   if (typeof window !== "undefined") {
     // Jika game sedang di-pause, jangan kirim notifikasi berita
     const isGamePaused = Boolean(

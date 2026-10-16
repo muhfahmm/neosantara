@@ -265,6 +265,15 @@ const CIVIL_CATEGORIES: CivilCategory[] = [
   },
 ];
 
+const PUBLIC_PLACE_CATEGORY_IDS = new Set([
+  "infrastruktur",
+  "pendidikan",
+  "kesehatan",
+  "penegakan_hukum",
+  "olahraga_hiburan",
+  "komersial",
+]);
+
 // ----------------------------------------------------
 // DEFINISI KARTU MILITER: ARMADA AKTIF & INFRASTRUKTUR
 // ----------------------------------------------------
@@ -513,6 +522,7 @@ export default function PembangunanSipilMiliterSection({
                 const Icon = cat.icon;
                 const isActive = activeCivilCategory === cat.id;
                 const totalCount = categoryStats[cat.id] ?? 0;
+                const showCounts = !PUBLIC_PLACE_CATEGORY_IDS.has(cat.id);
                 return (
                   <button
                     key={cat.id}
@@ -537,24 +547,26 @@ export default function PembangunanSipilMiliterSection({
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1 shrink-0 ml-1">
-                      {cat.badgeCount !== undefined && (
+                    {showCounts && (
+                      <div className="flex items-center gap-1 shrink-0 ml-1">
+                        {cat.badgeCount !== undefined && (
+                          <span
+                            className={`text-[9px] font-black px-1.5 py-0.2 rounded ${
+                              isActive ? "bg-[#0A1A1A]/30 text-[#0A1A1A]" : "bg-[#0A1A1A] text-amber-400 border border-amber-400/30"
+                            }`}
+                          >
+                            {cat.badgeCount}
+                          </span>
+                        )}
                         <span
-                          className={`text-[9px] font-black px-1.5 py-0.2 rounded ${
-                            isActive ? "bg-[#0A1A1A]/30 text-[#0A1A1A]" : "bg-[#0A1A1A] text-amber-400 border border-amber-400/30"
+                          className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
+                            isActive ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
                           }`}
                         >
-                          {cat.badgeCount}
+                          {formatNumber(totalCount)}
                         </span>
-                      )}
-                      <span
-                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
-                          isActive ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
-                        }`}
-                      >
-                        {formatNumber(totalCount)}
-                      </span>
-                    </div>
+                      </div>
+                    )}
                   </button>
                 );
               })}

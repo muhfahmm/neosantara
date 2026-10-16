@@ -5,7 +5,7 @@
   "workspaces": [
     "apps"
   ],
-  "main": "electron-main.js",
+  "main": "scripts/electron-main.js",
   "scripts": {
     "dev": "npm run dev -w frontend",
     "build": "npm run build --workspaces --if-present",

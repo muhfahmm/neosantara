@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { Inbox, X, Trash2 } from 'lucide-react';
@@ -40,6 +40,7 @@ import HubunganPanasNotificationCard from './logic/5_notifikasi_geopolitik/4_hub
 import ResolusiPBBNotificationCard from './logic/5_notifikasi_geopolitik/5_pbb/1_resolusi/resolusiPBBNotificationCard';
 import KeamananPBBNotificationCard from './logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBNotificationCard';
 import { getActiveUserCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
+import { isNonActionableUpdateNotification } from './logic/automaticChangeNotification';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -68,8 +69,12 @@ export default function TopLeftIcon({
   const [toastNotification, setToastNotification] = useState<NotificationMessage | null>(null);
   const [showToast, setShowToast] = useState(false);
   const dismissedToastIdRef = useRef<string | null>(null);
-  const unreadCount = notifications.filter(n => !n.isRead).length;
-  const orderedNotifications = [...notifications].sort((first, second) => {
+  const visibleNotifications = useMemo(
+    () => notifications.filter(notification => !isNonActionableUpdateNotification(notification)),
+    [notifications],
+  );
+  const unreadCount = visibleNotifications.filter(n => !n.isRead).length;
+  const orderedNotifications = [...visibleNotifications].sort((first, second) => {
     const firstArrivalDate = first.diplomacyArrivalDate;
     const secondArrivalDate = second.diplomacyArrivalDate;
     if (firstArrivalDate && secondArrivalDate) {
@@ -88,7 +93,7 @@ export default function TopLeftIcon({
 
   // Popup Toast Otomatis Muncul & Sinkron secara Realtime Saat Ada Notifikasi Belum Dibaca
   useEffect(() => {
-    const latestUnread = notifications.find(n => !n.isRead);
+    const latestUnread = visibleNotifications.find(n => !n.isRead);
 
     if (latestUnread) {
       setToastNotification(latestUnread);
@@ -99,7 +104,7 @@ export default function TopLeftIcon({
       setToastNotification(null);
       setShowToast(false);
     }
-  }, [notifications]);
+  }, [visibleNotifications]);
 
   useEffect(() => {
     if (!showToast || !toastNotification) return;
@@ -201,7 +206,7 @@ export default function TopLeftIcon({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {notifications.length > 0 && onClearAll && (
+                {visibleNotifications.length > 0 && onClearAll && (
                   <button
                     onClick={onClearAll}
                     className="px-3 py-1.5 rounded-xl border border-red-500/40 bg-red-950/40 text-red-400 hover:bg-red-900/60 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
@@ -222,7 +227,7 @@ export default function TopLeftIcon({
 
             {/* 🔥 BODY MODAL */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A] relative z-10 custom-scrollbar flex flex-col">
-              {notifications.length === 0 ? (
+              {visibleNotifications.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto my-auto">
                   <Inbox className="h-16 w-16 text-[#00FFAA]/30" />
                   <h4 className="text-lg font-bold text-[#00FFAA] uppercase">Tidak Ada Pesan</h4>
