@@ -25,6 +25,7 @@ import {
 } from "@/app/logic/kesejahteraanCalculator";
 import { calculatePresidentRating, getMonthsDifference } from "@/app/logic/peringkatCalculator";
 import { runNpcCountryBrain } from "@/app/logic/npc_ai_brain/orchestrator";
+import { evaluateAndControlDemographics } from "@/app/logic/npc_ai_brain/demographics/demographicControllerAI";
 
 export const NPC_COUNTRY_SIMULATION_UPDATED_EVENT = "neosantara:npc-country-simulation-updated";
 
@@ -359,7 +360,15 @@ function simulateCountryDay(
 
   // Eksekusi Otak AI Negara NPC (9 Indikator & Pembangunan Sektor)
   const brainExecution = runNpcCountryBrain(withSimulation, metadata, date);
-  return brainExecution.updatedCountry as CountryRecord;
+  const updatedNpcCountry = brainExecution.updatedCountry as CountryRecord;
+
+  // Evaluasi dan Kontrol Demografi Cerdas oleh AI (Pajak, Harga, Sistem Ekonomi, Subsidi)
+  // Memastikan laju pertumbuhan tidak boleh minus, menjaga rentang minimal +1 s/d +500 jiwa/hari
+  const currentNetGrowth = Number(updatedNpcCountry.laju_pertumbuhan ?? populationMetrics.netDailyChange ?? 0);
+  const currentPop = Math.max(0, Number(updatedNpcCountry.jumlah_penduduk) || 10_000_000);
+  evaluateAndControlDemographics(updatedNpcCountry, currentNetGrowth, currentPop);
+
+  return updatedNpcCountry;
 }
 
 function yieldToBrowser(): Promise<void> {

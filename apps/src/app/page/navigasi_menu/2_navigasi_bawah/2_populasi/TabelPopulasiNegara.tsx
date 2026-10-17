@@ -6,6 +6,8 @@ import { calculateDailyPopulationChange } from "@/app/logic/populations_logic/po
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 
+import { NPC_COUNTRY_SIMULATION_UPDATED_EVENT } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
+
 interface CountryPopulationRow {
   id: number;
   country_slug: string;
@@ -15,21 +17,45 @@ interface CountryPopulationRow {
   perubahan_harian: number;
 }
 
+interface TabelPopulasiNegaraProps {
+  userCountryDetail?: Record<string, any>;
+  currentDate?: Date | string;
+}
+
 const getDailyChange = (value: unknown): number => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
-export default function TabelPopulasiNegara() {
-  const [countries, setCountries] = useState<CountryPopulationRow[]>([]);
+export default function TabelPopulasiNegara({
+  userCountryDetail,
+  currentDate,
+}: TabelPopulasiNegaraProps = {}) {
+  const [rawCountries, setRawCountries] = useState<Record<string, unknown>[]>([]);
+  const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+  // Dengarkan event simulasi NPC dan tanggal agar tabel langsung terupdate seketika
+  useEffect(() => {
+    const handleUpdate = () => {
+      setRefreshTrigger((prev) => prev + 1);
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, handleUpdate);
+      return () => {
+        window.removeEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, handleUpdate);
+      };
+    }
+  }, []);
+
+  // Ambil data dasar negara dan metadata hanya sekali saat mount
   useEffect(() => {
     const controller = new AbortController();
 
-    const loadCountries = async () => {
+    const loadInitialData = async () => {
       setLoading(true);
       setError(null);
       try {
@@ -47,7 +73,7 @@ export default function TabelPopulasiNegara() {
           throw new Error(`Permintaan data negara gagal (HTTP ${countryResponse.status}).`);
         }
 
-        const [rows, metadata] = await Promise.all([
+        const [rows, meta] = await Promise.all([
           countryResponse.json() as Promise<unknown>,
           metadataResponse.ok ? metadataResponse.json() : Promise.resolve({}),
         ]);
@@ -55,56 +81,16 @@ export default function TabelPopulasiNegara() {
           throw new Error("Format data populasi negara tidak valid.");
         }
 
-        const gameDate = getCurrentGameDateString();
-        const validRows = rows
-          .filter((row): row is Record<string, unknown> =>
-            row !== null &&
-            typeof row === "object" &&
-            typeof row.name_id === "string",
-          )
-          .map((row, index): CountryPopulationRow | null => {
-            const country = applyNpcCountrySimulationState(row);
-            const population = Number(
-              country.jumlah_penduduk ?? country.populasi,
-            );
-            if (!Number.isFinite(population) || population < 0) return null;
+        const validRows = rows.filter(
+          (row): row is Record<string, unknown> =>
+            row !== null && typeof row === "object" && typeof row.name_id === "string",
+        );
 
-            const countryName = String(
-              country.name_id ??
-              country.nama_negara ??
-              country.name_en ??
-              country.country ??
-              "Negara tidak diketahui",
-            );
-            const dailyChange = calculateDailyPopulationChange(
-              { ...country, jumlah_penduduk: population },
-              countryName,
-              metadata,
-              gameDate,
-            ).netDailyChange;
-
-            return {
-              id: Number(country.id) || index + 1,
-              country_slug: String(country.country_slug ?? countryName),
-              name_id: countryName,
-              name_en: String(country.name_en ?? ""),
-              jumlah_penduduk: population,
-              perubahan_harian: dailyChange,
-            };
-          })
-          .filter((row): row is CountryPopulationRow => row !== null)
-          .sort((a, b) =>
-            getDailyChange(b.perubahan_harian) -
-            getDailyChange(a.perubahan_harian),
-          );
-
-        if (validRows.length === 0) {
-          throw new Error("Data perubahan populasi negara belum tersedia.");
-        }
-        setCountries(validRows);
+        setRawCountries(validRows);
+        setMetadata(meta && typeof meta === "object" ? meta : {});
       } catch (cause) {
         if (cause instanceof DOMException && cause.name === "AbortError") return;
-        console.error("Gagal memuat tabel populasi negara:", cause);
+        console.error("Gagal memuat data awal populasi negara:", cause);
         setError(
           cause instanceof Error
             ? cause.message
@@ -115,9 +101,73 @@ export default function TabelPopulasiNegara() {
       }
     };
 
-    void loadCountries();
+    void loadInitialData();
     return () => controller.abort();
   }, []);
+
+  // Hitung ulang baris secara instan di memori (O(N) cepat tanpa fetch ulang API & tanpa spinner)
+  // setiap kali tanggal berjalan, simulasi NPC terupdate, atau user mengubah kebijakan
+  const countries = useMemo<CountryPopulationRow[]>(() => {
+    if (rawCountries.length === 0) return [];
+
+    const gameDate = currentDate
+      ? (currentDate instanceof Date ? currentDate.toISOString().slice(0, 10) : String(currentDate).slice(0, 10))
+      : getCurrentGameDateString();
+
+    const userSlug = String(
+      userCountryDetail?.country_slug ||
+      userCountryDetail?.slug ||
+      userCountryDetail?.country ||
+      ""
+    ).toLowerCase();
+
+    return rawCountries
+      .map((row, index): CountryPopulationRow | null => {
+        const rawSlug = String(row.country_slug ?? row.slug ?? "").toLowerCase();
+        const rawName = String(row.name_id ?? row.nama_negara ?? row.country ?? "").toLowerCase();
+        const isUser = Boolean(
+          userCountryDetail &&
+          (rawSlug === userSlug || rawName === userSlug || (row.is_user as boolean) === true)
+        );
+
+        // Jika user country, gunakan data terbaru yang live dari state user
+        const countrySource = isUser ? { ...row, ...userCountryDetail, is_user: true } : row;
+        const country = isUser ? countrySource : applyNpcCountrySimulationState(countrySource);
+
+        const population = Number(
+          country.jumlah_penduduk ?? country.populasi,
+        );
+        if (!Number.isFinite(population) || population < 0) return null;
+
+        const countryName = String(
+          country.name_id ??
+          country.nama_negara ??
+          country.name_en ??
+          country.country ??
+          "Negara tidak diketahui",
+        );
+        const dailyChange = calculateDailyPopulationChange(
+          { ...country, jumlah_penduduk: population },
+          countryName,
+          metadata,
+          gameDate,
+        ).netDailyChange;
+
+        return {
+          id: Number(country.id) || index + 1,
+          country_slug: String(country.country_slug ?? countryName),
+          name_id: countryName,
+          name_en: String(country.name_en ?? ""),
+          jumlah_penduduk: population,
+          perubahan_harian: dailyChange,
+        };
+      })
+      .filter((row): row is CountryPopulationRow => row !== null)
+      .sort((a, b) =>
+        getDailyChange(b.perubahan_harian) -
+        getDailyChange(a.perubahan_harian),
+      );
+  }, [rawCountries, metadata, currentDate, userCountryDetail, refreshTrigger]);
 
   const filteredCountries = useMemo(() => {
     const query = search.trim().toLocaleLowerCase("id-ID");

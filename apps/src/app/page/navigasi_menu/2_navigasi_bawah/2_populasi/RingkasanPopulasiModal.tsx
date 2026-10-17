@@ -377,7 +377,10 @@ export default function RingkasanPopulasiModal({
             </button>
           </div>
           {activePopulationTab === "negara" ? (
-            <TabelPopulasiNegara />
+            <TabelPopulasiNegara
+              userCountryDetail={countryDetail}
+              currentDate={currentDate}
+            />
           ) : (
           <div className="space-y-3.5 lg:space-y-4.5 2xl:space-y-6 animate-in fade-in duration-500">
 

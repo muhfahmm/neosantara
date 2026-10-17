@@ -638,6 +638,7 @@ export const calculateDailyPopulationChange = (
     -Math.min(populasi, maxDailyDecline),
     demographicNetDailyChange + taxPopulationChange + economicPopulationChange,
   );
+
   // Adjusted deaths harus mencerminkan total pengurangan netto populasi harian
   // sehingga selalu berlaku mutlak secara matematis: dailyBirths - dailyDeaths === netDailyChange
   const adjustedDeaths = Math.max(0, adjustedBirths - netDailyChange);
