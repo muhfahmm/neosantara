@@ -3481,8 +3481,6 @@ export default function MapPage() {
 
         // Check if there is a save to load to restore the date
         if (typeof window !== 'undefined') {
-            clearExpelledOrganizationCountries();
-            clearAllOrganizationMembershipData();
             const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
             const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
             // Reset data misi dan diamond ke tingkat awal setiap kali permainan dimulai atau halaman direfresh
@@ -3495,6 +3493,8 @@ export default function MapPage() {
             }
 
             if (newGameMarker === '1') {
+                clearExpelledOrganizationCountries();
+                clearAllOrganizationMembershipData();
                 clearActiveResolutionsForSession();
                 clearActiveSecurityCouncilItems();
                 clearReportedInvasionViolations();

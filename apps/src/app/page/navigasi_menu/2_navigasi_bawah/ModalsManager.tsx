@@ -227,6 +227,9 @@ function ModalsManager({
 
   useEffect(() => {
     if (!currentDate || !countryDetail) return;
+    // Pastikan metadata sudah selesai dimuat agar rasio pangan & hunian tidak default ke 0 / defisit palsu
+    if (!metadata || Object.keys(metadata).length === 0) return;
+
     const date = currentDate instanceof Date
       ? `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
       : String(currentDate).slice(0, 10);
@@ -243,6 +246,7 @@ function ModalsManager({
       'Negara',
     );
     const monthlyKey = date.slice(0, 7);
+    const deficitNotifPrefix = `population-deficit-${countryName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-`;
 
     try {
       const metrics = calculateDailyPopulationChange(
@@ -251,7 +255,19 @@ function ModalsManager({
         metadata,
         date,
       );
-      if (metrics.netDailyChange >= 0) return;
+
+      // Jika pertumbuhan populasi positif (surplus / aman), bersihkan notifikasi defisit lama yang sempat masuk inbox
+      if (metrics.netDailyChange >= 0) {
+        if (onRemoveNotification && Array.isArray(notifications) && notifications.some(n => n.id?.startsWith(deficitNotifPrefix))) {
+          notifications
+            .filter(n => n.id?.startsWith(deficitNotifPrefix))
+            .forEach(n => onRemoveNotification(n.id));
+        }
+        if (countryDetail.population_deficit_notification_month) {
+          setCountryDetail(prev => prev ? { ...prev, population_deficit_notification_month: undefined } : prev);
+        }
+        return;
+      }
 
       setCountryDetail((previous) => {
         if (!previous || previous.population_deficit_notification_month === monthlyKey) {
@@ -276,7 +292,7 @@ function ModalsManager({
     } catch (error) {
       console.error('Gagal memeriksa defisit populasi untuk notifikasi inbox:', error);
     }
-  }, [currentDate, countryDetail, metadata, selectedCountry?.country, setCountryDetail]);
+  }, [currentDate, countryDetail, metadata, selectedCountry?.country, setCountryDetail, notifications, onRemoveNotification]);
 
   // Ensure active research progress and level completion are processed whenever global date advances
   useEffect(() => {

@@ -32,12 +32,6 @@ export function clearAllOrganizationMembershipData(): void {
   }
 }
 
-if (typeof window !== "undefined") {
-  // Menghapus data anggota PBB & Regional di LocalStorage saat user merefresh halaman atau menutup tab
-  window.addEventListener("beforeunload", () => {
-    clearAllOrganizationMembershipData();
-  });
-}
 
 function normalizeKey(str: string): string {
   return str.toLowerCase().trim().replace(/[^a-z0-9]/g, "");
