@@ -32,6 +32,10 @@ import {
   type MilitaryDecision,
 } from "./military/militaryOrchestrator";
 import {
+  jalankanKeputusanNuklirAI,
+  type NuclearDecision,
+} from "./military/nuclearControllerAI";
+import {
   jalankanEventOrkestratorAI,
 } from "./events/eventOrchestrator";
 import type { AiEventDecision } from "./events/eventTypes";
@@ -58,6 +62,7 @@ export interface OrchestrationResult {
   };
   civilianDecision?: CivilianConstructionDecision;
   militaryDecision?: MilitaryDecision;
+  nuclearDecision?: NuclearDecision;
   eventDecisions?: AiEventDecision[];
 }
 
@@ -244,6 +249,14 @@ export function runNpcCountryBrain(
     militaryDecision = jalankanKeputusanMiliter(ctx);
   } catch (err) {
     console.error(`[AI Brain] Error eksekusi militer untuk ${negaraNama}:`, err);
+  }
+
+  // 8. BAGIAN 5: Eksekusi Program Nuklir & Rudal ICBM Cerdas
+  let nuclearDecision: NuclearDecision | undefined;
+  try {
+    nuclearDecision = jalankanKeputusanNuklirAI(ctx);
+  } catch (err) {
+    console.error(`[AI Brain] Error eksekusi nuklir untuk ${negaraNama}:`, err);
   }
 
   // Re-read the final country snapshot so AI scores match what the dashboard renders.

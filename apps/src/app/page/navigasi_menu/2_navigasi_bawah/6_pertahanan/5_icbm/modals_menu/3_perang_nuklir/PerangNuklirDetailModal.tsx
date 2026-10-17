@@ -2,6 +2,10 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { X, Radiation, Search, Rocket, ShieldAlert } from "lucide-react";
 import { getArmadaPowerSummary } from "../../../4_armada/logic/armadaLogic";
+import {
+  getNpcCountrySimulationSnapshot,
+  NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
+} from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 
 export interface DatabaseIcbmRow {
   country_id: number;
@@ -10,14 +14,18 @@ export interface DatabaseIcbmRow {
   iso: string;
   icbm_status: boolean;
   icbm_jumlah: number;
+  has_nuclear_program?: boolean;
+  nuclear_program_status?: 'AKTIF' | 'RISET' | 'BELUM AKTIF';
 }
 
 interface PerangNuklirDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   countryDetail?: any; // 🔥 Tambahkan prop untuk negara user
+  currentDate?: string | Date;
   prefetchedAllCountries?: any[];
   onAction?: (targetCountry: any) => void;
+  initialTab?: 'ranking' | 'icbm_owners';
 }
 
 type RankingRow = {
@@ -33,11 +41,29 @@ const formatNumber = (value: unknown) => {
   return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 0 }) : "0";
 };
 
-export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail, prefetchedAllCountries, onAction }: PerangNuklirDetailModalProps) {
-  const [activeTab, setActiveTab] = useState<'ranking' | 'icbm_owners'>('ranking');
+export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail, currentDate, prefetchedAllCountries, onAction, initialTab = 'ranking' }: PerangNuklirDetailModalProps) {
+  const [activeTab, setActiveTab] = useState<'ranking' | 'icbm_owners'>(initialTab);
   const [searchQuery, setSearchQuery] = useState("");
   const [icbmList, setIcbmList] = useState<DatabaseIcbmRow[]>([]);
   const [isLoadingIcbm, setIsLoadingIcbm] = useState(false);
+  const [simulationVersion, setSimulationVersion] = useState(0);
+
+  useEffect(() => {
+    if (isOpen && initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [isOpen, initialTab]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleSimulationUpdate = () => {
+      setSimulationVersion((v) => v + 1);
+    };
+    window.addEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, handleSimulationUpdate);
+    return () => {
+      window.removeEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, handleSimulationUpdate);
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -102,14 +128,253 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
       if (a.totalPower !== b.totalPower) {
         return b.totalPower - a.totalPower;
       }
-      return a.countryName.localeCompare(b.countryName, "id", { sensitivity: "base" });
+      return a.countryName.localeCompare(a.countryName, "id", { sensitivity: "base" });
     });
     return sortableItems;
   }, [rawRankings, searchQuery]);
 
-  // 🔥 Filter data negara pemilik ICBM (icbm_status = true) + pencarian
+  // 🔥 Helper parser tanggal lokal untuk menghitung ICBM yang sudah selesai dirakit
+  const parseDateLocal = (dateValue: string | Date | null | undefined) => {
+    if (!dateValue) return null;
+    const dateObj = typeof dateValue === 'string' ? new Date(`${dateValue}T00:00:00`) : dateValue;
+    return dateObj instanceof Date && !isNaN(dateObj.getTime()) ? dateObj : null;
+  };
+  const getDurationDaysLocal = (start: string | Date | null | undefined, end: string | Date | null | undefined) => {
+    const startDate = parseDateLocal(start);
+    const endDate = parseDateLocal(end);
+    if (!startDate || !endDate) return 0;
+    const diff = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    return diff > 0 ? diff : 0;
+  };
+  const addDaysLocal = (date: Date, days: number) => {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  };
+
+  // 🔥 Hitung total ICBM user yang telah siap (sama persis dengan yang ditampilkan di Card Komando Strategis Nuklir)
+  const calculatePlayerReadyIcbm = () => {
+    const baseExisting = Math.max(
+      Number(countryDetail?.icbm_jumlah || 0),
+      Number(countryDetail?.icbm || 0)
+    );
+
+    const task = countryDetail?.icbmBuildTask;
+    if (!task) return baseExisting;
+
+    const quantity = Math.max(0, Number(task.quantity) || 0);
+    if (task.completed) {
+      return Math.max(baseExisting, quantity);
+    }
+
+    const startDate = parseDateLocal(task.startDate);
+    const endDate = parseDateLocal(task.endDate);
+    const totalDurationDays = getDurationDaysLocal(startDate, endDate);
+
+    let currDateObj: Date | null = null;
+    if (currentDate) {
+      currDateObj = parseDateLocal(currentDate);
+    } else if (typeof window !== 'undefined' && (window as any).neosantara_current_date) {
+      currDateObj = parseDateLocal((window as any).neosantara_current_date);
+    }
+
+    if (!currDateObj) {
+      currDateObj = new Date();
+    }
+
+    let completedCount = 0;
+    if (startDate && quantity > 0) {
+      const unitDurationDays = quantity > 0 ? Math.max(1, Math.round(totalDurationDays / quantity)) : 0;
+      for (let i = 0; i < quantity; i++) {
+        const entryEndDate = addDaysLocal(startDate, unitDurationDays * (i + 1));
+        if (entryEndDate && currDateObj && entryEndDate <= currDateObj) {
+          completedCount++;
+        }
+      }
+    }
+
+    return Math.max(baseExisting, completedCount);
+  };
+
+  // 🔥 Gabungkan data default database_icbm dengan perkembangan dinamis negara AI / Player
+  const mergedIcbmOwners = useMemo(() => {
+    const mapBySlug = new Map<string, DatabaseIcbmRow>();
+
+    // 0. Ambil identitas negara user / pemain saat ini
+    const selectedCountryName = String(countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "").toLowerCase().trim();
+    const playerSlug = String(countryDetail?.country_slug || "").toLowerCase().trim();
+    const playerIso = String(countryDetail?.iso || countryDetail?.iso_code || "").toLowerCase().trim();
+
+    const checkIsPlayer = (slug: string, name: string, iso: string) => {
+      const s = String(slug || '').toLowerCase().trim();
+      const n = String(name || '').toLowerCase().trim();
+      const i = String(iso || '').toLowerCase().trim();
+
+      if (playerSlug && s && playerSlug === s) return true;
+      if (selectedCountryName && n && selectedCountryName === n) return true;
+      if (playerIso && i && playerIso === i) return true;
+      return false;
+    };
+
+    const calculatedPlayerTotal = calculatePlayerReadyIcbm();
+    const hasPlayerActiveProgram = Boolean(countryDetail?.programNuklirActive);
+    const isPlayerResearching = Boolean(
+      !hasPlayerActiveProgram &&
+      Array.isArray(countryDetail?.ongoingConstructions) &&
+      countryDetail.ongoingConstructions.some((c: any) => c.buildingKey === "program_nuklir")
+    );
+
+    // 1. Masukkan data default dari DB (pemilik ICBM default dunia)
+    // ⚠️ ATURAN KHUSUS: Jika negara tersebut sedang digunakan oleh USER,
+    // maka nilai ICBM default di database TIDAK dipakai langsung (diubah default ke 0 / pencapaian aktual user),
+    // tanpa mengubah data yang ada di database MySQL fisik.
+    let userFoundInDefault = false;
+    for (const item of icbmList) {
+      if (item.icbm_status) {
+        const itemSlug = item.country_slug.toLowerCase().trim();
+        const isUser = checkIsPlayer(itemSlug, item.country_name, item.iso);
+
+        if (isUser) {
+          userFoundInDefault = true;
+          // Negara player: gunakan jumlah ICBM yang telah siap dirakit (0 secara default, atau bertambah saat selesai)
+          const playerHasNuclear = hasPlayerActiveProgram || calculatedPlayerTotal > 0 || isPlayerResearching;
+          mapBySlug.set(itemSlug, {
+            ...item,
+            icbm_jumlah: calculatedPlayerTotal,
+            icbm_status: calculatedPlayerTotal > 0,
+            has_nuclear_program: playerHasNuclear,
+            nuclear_program_status: (hasPlayerActiveProgram || calculatedPlayerTotal > 0) ? 'AKTIF' : isPlayerResearching ? 'RISET' : 'BELUM AKTIF',
+          });
+        } else {
+          // Negara AI / NPC: tetap menggunakan data bawaan database
+          mapBySlug.set(itemSlug, {
+            ...item,
+            has_nuclear_program: true,
+            nuclear_program_status: 'AKTIF',
+          });
+        }
+      }
+    }
+
+    // 2. Cek jika negara player belum ada di list default
+    if (!userFoundInDefault && playerSlug) {
+      const playerHasNuclear = hasPlayerActiveProgram || calculatedPlayerTotal > 0 || isPlayerResearching;
+      mapBySlug.set(playerSlug, {
+        country_id: Number(countryDetail?.id) || 999,
+        country_slug: playerSlug,
+        country_name: countryDetail?.country || countryDetail?.nama_negara || "Negara Pemain",
+        iso: countryDetail?.iso || "ID",
+        icbm_status: calculatedPlayerTotal > 0,
+        icbm_jumlah: calculatedPlayerTotal,
+        has_nuclear_program: playerHasNuclear,
+        nuclear_program_status: (hasPlayerActiveProgram || calculatedPlayerTotal > 0) ? 'AKTIF' : isPlayerResearching ? 'RISET' : 'BELUM AKTIF',
+      });
+    }
+
+    // 3. Masukkan negara AI yang berhasil mengembangkan Program Nuklir, sedang riset, atau punya ICBM lewat simulasi
+    const simSnapshot = getNpcCountrySimulationSnapshot();
+    const simCountriesMap = simSnapshot?.countries || {};
+
+    const currDateObj = currentDate
+      ? parseDateLocal(currentDate)
+      : (typeof window !== 'undefined' && (window as any).neosantara_current_date)
+        ? parseDateLocal((window as any).neosantara_current_date)
+        : new Date();
+
+    // Gabungkan slug dari prefetchedAllCountries dan simCountriesMap
+    const processedSlugs = new Set<string>();
+
+    const evaluateNpcNuclear = (npcSlug: string, fallbackMeta?: any) => {
+      if (!npcSlug || processedSlugs.has(npcSlug)) return;
+      if (checkIsPlayer(npcSlug, fallbackMeta?.name_id || fallbackMeta?.nama_negara || fallbackMeta?.country || "", fallbackMeta?.iso || "")) {
+        return;
+      }
+      processedSlugs.add(npcSlug);
+
+      const liveState = (simCountriesMap[npcSlug] || {}) as Record<string, any>;
+      const npcIcbmStatus = Boolean(liveState.icbm_status);
+      const npcIcbmCount = Number(liveState.icbm_jumlah ?? 0);
+      let npcNuclearActive = Boolean(liveState.programNuklirActive);
+
+      // Cek apakah ada antrean riset/pembangunan program nuklir
+      const npcNuclearQueue = Array.isArray(liveState.ai_nuclear_queue) ? liveState.ai_nuclear_queue : [];
+      const ongoingList = Array.isArray(liveState.ongoingConstructions) ? liveState.ongoingConstructions : [];
+
+      // Evaluasi apakah riset program nuklir sebenarnya sudah selesai berdasarkan tanggal
+      let isNpcResearchingNuclear = false;
+
+      if (!npcNuclearActive) {
+        // Cek ongoing constructions
+        const programOngoing = ongoingList.find((c: any) => c.buildingKey === "program_nuklir");
+        const programQueue = npcNuclearQueue.find((q: any) => q.type === "program_nuklir");
+
+        const targetDateStr = programOngoing?.endDate || programQueue?.completionDate;
+        if (targetDateStr && currDateObj) {
+          const targetDateObj = parseDateLocal(targetDateStr);
+          if (targetDateObj && targetDateObj <= currDateObj) {
+            // Tanggal target sudah lewat / selesai!
+            npcNuclearActive = true;
+          } else {
+            isNpcResearchingNuclear = true;
+          }
+        } else if (programOngoing || programQueue) {
+          isNpcResearchingNuclear = true;
+        }
+      }
+
+      // Masukkan negara AI jika mereka memiliki program nuklir aktif, sedang riset nuklir, ATAU memiliki rudal ICBM
+      const existing = mapBySlug.get(npcSlug);
+      const isDefaultNuclear = Boolean(existing && existing.icbm_jumlah > 0);
+      if (isDefaultNuclear) {
+        npcNuclearActive = true;
+        isNpcResearchingNuclear = false;
+      }
+
+      if (npcNuclearActive || isNpcResearchingNuclear || (npcIcbmStatus && npcIcbmCount > 0) || isDefaultNuclear) {
+        const hasNuclear = npcNuclearActive || isNpcResearchingNuclear || Boolean(existing?.has_nuclear_program);
+        const progStatus: 'AKTIF' | 'RISET' | 'BELUM AKTIF' =
+          (npcNuclearActive || isDefaultNuclear || existing?.nuclear_program_status === 'AKTIF')
+            ? 'AKTIF'
+            : isNpcResearchingNuclear
+              ? 'RISET'
+              : 'BELUM AKTIF';
+
+        mapBySlug.set(npcSlug, {
+          country_id: Number(liveState.id || fallbackMeta?.id || existing?.country_id || 0),
+          country_slug: npcSlug,
+          country_name: String(fallbackMeta?.name_id || fallbackMeta?.nama_negara || fallbackMeta?.country || liveState.name_id || liveState.nama_negara || liveState.country || existing?.country_name || npcSlug),
+          iso: String(fallbackMeta?.iso || liveState.iso || existing?.iso || ""),
+          icbm_status: (npcIcbmStatus && npcIcbmCount > 0) || Boolean(existing?.icbm_status),
+          icbm_jumlah: Math.max(npcIcbmCount, existing?.icbm_jumlah || 0),
+          has_nuclear_program: hasNuclear,
+          nuclear_program_status: progStatus,
+        });
+      }
+    };
+
+    if (Array.isArray(prefetchedAllCountries)) {
+      for (const npc of prefetchedAllCountries) {
+        const npcSlug = String(npc.country_slug || npc.slug || "").toLowerCase().trim();
+        if (npcSlug) {
+          evaluateNpcNuclear(npcSlug, npc);
+        }
+      }
+    }
+
+    // Periksa juga jika ada negara di simSnapshot yang belum ada di prefetchedAllCountries
+    for (const slug of Object.keys(simCountriesMap)) {
+      evaluateNpcNuclear(slug.toLowerCase().trim());
+    }
+
+    return Array.from(mapBySlug.values());
+  }, [icbmList, countryDetail, prefetchedAllCountries, currentDate, simulationVersion]);
+
+  // 🔥 Filter data negara pemilik ICBM + pencarian
   const filteredIcbmOwners = useMemo(() => {
-    let list = icbmList.filter((item) => item.icbm_status === true);
+    // Tampilkan negara yang memiliki ICBM (> 0) ATAU memiliki Program Nuklir aktif
+    let list = mergedIcbmOwners.filter(
+      (item) => (item.icbm_status && item.icbm_jumlah > 0) || item.has_nuclear_program
+    );
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
@@ -120,9 +385,17 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
       );
     }
 
-    // Urutkan berdasarkan jumlah ICBM terbanyak
-    return list.sort((a, b) => b.icbm_jumlah - a.icbm_jumlah);
-  }, [icbmList, searchQuery]);
+    // Urutkan berdasarkan jumlah ICBM terbanyak, lalu yang memiliki program nuklir aktif
+    return list.sort((a, b) => {
+      if (b.icbm_jumlah !== a.icbm_jumlah) {
+        return b.icbm_jumlah - a.icbm_jumlah;
+      }
+      if (a.has_nuclear_program !== b.has_nuclear_program) {
+        return a.has_nuclear_program ? -1 : 1;
+      }
+      return a.country_name.localeCompare(b.country_name, 'id');
+    });
+  }, [mergedIcbmOwners, searchQuery, countryDetail]);
 
   if (!isOpen) return null;
 
@@ -137,11 +410,11 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
               <Radiation className="h-4 w-4 sm:h-5 sm:w-5 text-rose-500 animate-pulse" />
             </div>
             <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Perang Nuklir Strategis</h2>
+              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Perang Nuklir & Intelijen Strategis</h2>
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">
                 {activeTab === 'ranking'
                   ? `Ranking kekuatan militer ${rankings.length} negara`
-                  : `Daftar negara berkemampuan ICBM global (${filteredIcbmOwners.length} negara)`}
+                  : `Daftar negara berkemampuan Nuklir & ICBM global (${filteredIcbmOwners.length} negara)`}
               </p>
             </div>
           </div>
@@ -151,7 +424,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#00FFAA]/60" />
               <input
                 type="text"
-                placeholder={activeTab === 'ranking' ? "Cari negara..." : "Cari negara ICBM..."}
+                placeholder={activeTab === 'ranking' ? "Cari negara..." : "Cari negara nuklir / ICBM..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-[#0F2424] border border-[#00FFAA]/30 rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#00FFAA] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-all"
@@ -191,7 +464,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
               }`}
             >
               <Rocket className="w-3.5 h-3.5 text-rose-500" />
-              Negara Pemilik ICBM
+              Negara Nuklir & ICBM
               <span className={`ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-black ${
                 activeTab === 'icbm_owners' ? 'bg-[#0A1A1A] text-[#00FFAA]' : 'bg-[#00FFAA]/20 text-[#00FFAA]'
               }`}>
@@ -269,23 +542,24 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                   </tbody>
                 </table>
               ) : (
-                /* TAB 2: NEGARA PEMILIK ICBM (DARI DATABASE_ICBM) */
+                /* TAB 2: NEGARA PEMILIK NUKLIR & ICBM */
                 <table className="w-full text-xs">
                   <thead className="bg-[#0A1A1A] text-[#00FFAA] border-b border-[#00FFAA]/20 sticky top-0 z-10">
                     <tr>
                       <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">No</th>
                       <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-left text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Negara</th>
                       <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Kode ISO</th>
+                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Program Nuklir</th>
                       <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Status ICBM</th>
-                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Perkiraan Hulu Ledak / Peluncur</th>
+                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Jumlah ICBM</th>
                       <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Level Ancaman</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#00FFAA]/10 text-xs font-bold text-[#E0E0E0]">
                     {isLoadingIcbm ? (
                       <tr>
-                        <td colSpan={6} className="px-4 py-8 text-center text-[#00FFAA]">
-                          Memuat data negara berkemampuan ICBM...
+                        <td colSpan={7} className="px-4 py-8 text-center text-[#00FFAA]">
+                          Memuat data negara berkemampuan Nuklir & ICBM...
                         </td>
                       </tr>
                     ) : filteredIcbmOwners.length > 0 ? (
@@ -296,7 +570,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
 
                         return (
                           <tr 
-                            key={row.country_id}
+                            key={row.country_id || row.country_slug}
                             className={`transition-colors ${
                               isUserCountry
                                 ? 'bg-[#00FFAA]/10 border-l-4 border-l-[#00FFAA]'
@@ -313,17 +587,38 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                               {row.iso}
                             </td>
                             <td className="px-3 py-2.5 text-center">
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30">
-                                <ShieldAlert className="w-3 h-3" />
-                                AKTIF
-                              </span>
+                              {row.nuclear_program_status === 'AKTIF' || (!row.nuclear_program_status && row.has_nuclear_program) ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-[#00FFAA]/20 text-[#00FFAA] border border-[#00FFAA]/40">
+                                  AKTIF
+                                </span>
+                              ) : row.nuclear_program_status === 'RISET' ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-400/20 text-amber-300 border border-amber-400/40 animate-pulse">
+                                  DALAM RISET
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#6B8A8A]/10 text-[#6B8A8A] border border-[#6B8A8A]/20">
+                                  BELUM AKTIF
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-3 py-2.5 text-center">
+                              {row.icbm_status && row.icbm_jumlah > 0 ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                                  <ShieldAlert className="w-3 h-3" />
+                                  AKTIF
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#6B8A8A]/10 text-[#6B8A8A] border border-[#6B8A8A]/20">
+                                  BELUM ADA
+                                </span>
+                              )}
                             </td>
                             <td className="px-3 py-2.5 text-right font-black text-[#00FFAA] text-sm">
                               {formatNumber(row.icbm_jumlah)} <span className="text-[10px] font-normal text-[#6B8A8A]">Unit</span>
                             </td>
                             <td className="px-3 py-2.5 text-center">
                               <span className="px-2 py-0.5 rounded text-[10px] font-black bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA]">
-                                {row.icbm_jumlah >= 300 ? 'Level V (Superpower)' : row.icbm_jumlah >= 10 ? 'Level III (Regional)' : 'Level II (Terkonfirmasi)'}
+                                {row.icbm_jumlah >= 300 ? 'Level V (Superpower)' : row.icbm_jumlah >= 10 ? 'Level III (Regional)' : row.icbm_jumlah > 0 ? 'Level II (Terkonfirmasi)' : 'Level I (Riset Nuklir)'}
                               </span>
                             </td>
                           </tr>
@@ -331,8 +626,8 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                       })
                     ) : (
                       <tr>
-                        <td colSpan={6} className="px-4 py-8 text-center text-[#6B8A8A]">
-                          Tidak ditemukan negara dengan status ICBM.
+                        <td colSpan={7} className="px-4 py-8 text-center text-[#6B8A8A]">
+                          Tidak ditemukan negara dengan status Nuklir atau ICBM.
                         </td>
                       </tr>
                     )}

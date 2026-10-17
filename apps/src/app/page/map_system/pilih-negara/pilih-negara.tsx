@@ -44,6 +44,7 @@ import { mergeClaimedTerritories } from '../world-map-geometry';
 // Import logika ekonomi dari folder logic agar kalkulasi sama persis
 import { calculateCountryNetBalance, calculateGoldIncome, calculateTotalTaxIncome, calculateTotalMinistryCostPerDay } from '@/app/logic/economic_logic/treasuryUpdater';
 import { KEMENTERIAN, KEAMANAN, LAYANAN } from '@/app/logic/economic_logic/departments';
+import { clearActiveNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 
 
 
@@ -159,6 +160,19 @@ export default function PilihNegaraPage() {
   }, []);
 
   useEffect(() => {
+    // Pastikan seluruh state NPC dan game simulasi sebelumnya dibersihkan saat kembali ke menu Pilih Negara
+    clearActiveNpcCountrySimulationState();
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('programNuklirActive');
+        localStorage.removeItem('icbmBuildTask');
+        sessionStorage.removeItem('programNuklirActive');
+        sessionStorage.removeItem('program_nuklir_modal_open');
+        sessionStorage.removeItem('icbm_detail_open');
+        sessionStorage.removeItem('perang_nuklir_detail_open');
+      } catch (e) {}
+    }
+
     const initMap = async () => {
       if (hasInitRef.current) return;
       hasInitRef.current = true;
@@ -484,6 +498,18 @@ export default function PilihNegaraPage() {
                     window.localStorage.removeItem('presiden_simulator_mission_completions');
                     window.localStorage.removeItem('presiden_simulator_active_mission');
                     window.localStorage.removeItem('presiden_simulator_claimable_missions');
+                    window.localStorage.removeItem('hutangModalLoanSources');
+                    window.localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
+                    window.localStorage.removeItem('pbb_active_resolutions_v4');
+                    window.localStorage.removeItem('pbb_active_keamanan_v4');
+                    window.localStorage.removeItem('pbb_reported_war_ban_violations_v1');
+                    window.localStorage.removeItem('programNuklirActive');
+                    window.localStorage.removeItem('icbmBuildTask');
+                    window.sessionStorage.removeItem('programNuklirActive');
+                    window.sessionStorage.removeItem('program_nuklir_modal_open');
+                    window.sessionStorage.removeItem('icbm_detail_open');
+                    window.sessionStorage.removeItem('perang_nuklir_detail_open');
+                    window.sessionStorage.removeItem('presiden_simulator_load_save');
                     window.localStorage.setItem('player_diamonds', '150');
                     window.localStorage.setItem('presiden_simulator_new_game', '1');
                   }
@@ -753,6 +779,18 @@ export default function PilihNegaraPage() {
                 window.localStorage.removeItem('presiden_simulator_mission_completions');
                 window.localStorage.removeItem('presiden_simulator_active_mission');
                 window.localStorage.removeItem('presiden_simulator_claimable_missions');
+                window.localStorage.removeItem('hutangModalLoanSources');
+                window.localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
+                window.localStorage.removeItem('pbb_active_resolutions_v4');
+                window.localStorage.removeItem('pbb_active_keamanan_v4');
+                window.localStorage.removeItem('pbb_reported_war_ban_violations_v1');
+                window.localStorage.removeItem('programNuklirActive');
+                window.localStorage.removeItem('icbmBuildTask');
+                window.sessionStorage.removeItem('programNuklirActive');
+                window.sessionStorage.removeItem('program_nuklir_modal_open');
+                window.sessionStorage.removeItem('icbm_detail_open');
+                window.sessionStorage.removeItem('perang_nuklir_detail_open');
+                window.sessionStorage.removeItem('presiden_simulator_load_save');
                 window.localStorage.setItem('player_diamonds', '150');
                 window.localStorage.setItem('presiden_simulator_new_game', '1');
               }

@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { X, Rocket, ArrowUp, Plus, Clock, Gem } from "lucide-react";
+import { X, Rocket, ArrowUp, Plus, Clock } from "lucide-react";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import { calculateProductionIncrement, formatDate, getDaysElapsed } from "@/app/logic/production_logic";
 import ConfirmBuildIcbmModal from "./ConfirmBuildIcbmModal";
@@ -116,11 +116,30 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
       setCountryDetail((prev: any) => {
         const prevAnggaran = Number(prev?.anggaran) || 0;
         const prevUraniumStock = Number(prev?.inventory_uranium) || 0;
+        const userCountryName = prev?.country || prev?.nama || "Indonesia";
+        const existingPending = Array.isArray(prev?.pending_notifications) ? prev.pending_notifications : [];
+
+        const icbmNotif = {
+          id: `icbm-build-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+          title: `🚀 PRODUKSI RUDAL ICBM DIMULAI: ${quantity} Unit`,
+          sender: `Komando Strategis Nuklir Nasional`,
+          message: `Lapor Presiden! Perakitan ${quantity} unit Rudal Balistik Antar-Benua (ICBM) untuk negara ${userCountryName} resmi dimulai pada ${safeDateString}. Estimasi rampung pada ${completionIso}.`,
+          timestamp: safeDateString,
+          type: 'peringkat',
+          value: 0,
+          isRead: false,
+          tradeType: 'icbm_dimulai',
+          endDateStr: completionIso,
+          effectText: `Estimasi Rampung: ${completionIso}`,
+          isHandled: false,
+        };
+
         return {
           ...(prev || {}),
           anggaran: Math.max(0, prevAnggaran - totalCashCost),
           inventory_uranium: Math.max(0, prevUraniumStock - totalUraniumCost),
           icbmBuildTask: task,
+          pending_notifications: [icbmNotif, ...existingPending],
         };
       });
     }
@@ -129,6 +148,7 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
     setIsConfirmBuildOpen(false);
     onClose();
   };
+
 
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -204,16 +224,6 @@ export default function IcbmDetailModal({ isOpen, onClose, countryDetail, curren
                 </div>
 
                 <div className="flex w-full min-w-0 flex-col gap-3 lg:w-auto lg:flex-1 lg:flex-row lg:items-center lg:gap-3">
-                  <div className="flex shrink-0 items-center justify-center">
-                    <button
-                      onClick={() => console.log(`Membangun ${quantity} ICBM secara instan!`)}
-                      className="flex w-full min-w-0 items-center justify-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/20 px-3 py-2.5 text-[10px] font-bold uppercase text-amber-400 transition-all hover:bg-amber-500/30 active:scale-95 sm:gap-2 sm:px-4 sm:text-xs"
-                    >
-                      <Gem className="h-4 w-4 text-amber-400" />
-                      <span className="whitespace-nowrap">Seketika</span>
-                      <span className="whitespace-nowrap rounded-full bg-amber-400/20 px-2 py-0.5 text-[10px] font-black text-amber-300">{quantity * 6}</span>
-                    </button>
-                  </div>
                   <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center lg:gap-3">
                     <div className="flex shrink-0 flex-col gap-1 text-[10px] font-bold text-rose-400">
                       <span className="whitespace-nowrap">-{totalCashCost.toLocaleString('id-ID', { maximumFractionDigits: 0 })} NEO</span>

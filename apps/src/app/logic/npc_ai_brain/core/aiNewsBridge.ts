@@ -63,14 +63,6 @@ export function terbitkanBeritaAI(news: AiNewsItem): void {
   }
 
   if (typeof window !== "undefined") {
-    // Jika game sedang di-pause, jangan kirim notifikasi berita
-    const isGamePaused = Boolean(
-      (window as Window & { neosantara_is_paused?: boolean }).neosantara_is_paused ?? false
-    );
-    if (isGamePaused) {
-      return;
-    }
-
     if (pendingAiNewsIds.has(news.id)) return;
 
     pendingAiNews.unshift(news);
@@ -302,5 +294,76 @@ export function buatBeritaEventAI(
     dateStr,
     countryName: negaraNama,
     countrySlug,
+  };
+}
+
+/**
+ * Generator berita untuk pencapaian & riset Program Nuklir negara (Player / NPC AI).
+ */
+export function buatBeritaProgramNuklirAI(
+  negaraNama: string,
+  tahap: "dimulai" | "selesai",
+  dateStr: string,
+  completionDate?: string,
+  countrySlug?: string,
+): AiNewsItem {
+  const isDimulai = tahap === "dimulai";
+  const headline = isDimulai
+    ? `☢️ ${negaraNama} Memulai Pengembangan Program Nuklir!`
+    : `⚛️ Program Nuklir ${negaraNama} Resmi Beroperasi Penuh!`;
+
+  const content = isDimulai
+    ? `Intelijen pertahanan mengonfirmasi bahwa pemerintah ${negaraNama} telah resmi mengalokasikan anggaran dan memulai riset pengayaan bahan bakar nuklir strategis. Fasilitas reaktor dan laboratorium diproyeksikan selesai pada ${completionDate || dateStr}.`
+    : `Pemerintah ${negaraNama} secara resmi mengumumkan keberhasilan pengaktifan fasilitas Program Nuklir Nasional. Dengan pencapaian ini, ${negaraNama} kini masuk ke dalam jajaran negara dengan kapabilitas teknologi nuklir strategis global.`;
+
+  return {
+    id: `news-nuclear-${tahap}-${negaraNama.replace(/\s+/g, "_").toLowerCase()}-${dateStr}-${Date.now().toString(36)}`,
+    type: "update_geopolitik",
+    category: "pencapaian_militer",
+    headline,
+    content,
+    timestamp: dateStr,
+    dateStr,
+    countryName: negaraNama,
+    countrySlug,
+    completionDate,
+    constructionSection: "militer",
+  };
+}
+
+/**
+ * Generator berita untuk perakitan & pencapaian Rudal Balistik Antar-Benua (ICBM) negara.
+ */
+export function buatBeritaIcbmAI(
+  negaraNama: string,
+  tahap: "dimulai" | "selesai",
+  jumlah: number,
+  dateStr: string,
+  completionDate?: string,
+  countrySlug?: string,
+): AiNewsItem {
+  const isDimulai = tahap === "dimulai";
+  const headline = isDimulai
+    ? `🚀 ${negaraNama} Mengembangkan ${jumlah} Rudal Balistik Antar-Benua (ICBM)!`
+    : `💥 Gudang Rudal ${negaraNama} Resmi Memperoleh ${jumlah} Unit Rudal ICBM Siap Luncur!`;
+
+  const content = isDimulai
+    ? `Otoritas Komando Strategis ${negaraNama} telah menandatangani perintah produksi perakitan ${jumlah} unit Rudal Balistik Antar-Benua (ICBM). Rudal jelajah antar-benua ini diperkirakan tuntas dirakit pada ${completionDate || dateStr}.`
+    : `Sebanyak ${jumlah} unit Rudal Balistik Antar-Benua (ICBM) milik ${negaraNama} telah selesai dirakit dan dinyatakan siap tempur di silo peluncuran. Hal ini menaikkan status pencegahan nuklir negara tersebut secara drastis di panggung geopolitik dunia.`;
+
+  return {
+    id: `news-icbm-${tahap}-${negaraNama.replace(/\s+/g, "_").toLowerCase()}-${dateStr}-${Date.now().toString(36)}`,
+    type: "update_geopolitik",
+    category: "pencapaian_militer",
+    headline,
+    content,
+    timestamp: dateStr,
+    dateStr,
+    countryName: negaraNama,
+    countrySlug,
+    completionDate,
+    countFrom: 0,
+    countTo: jumlah,
+    constructionSection: "militer",
   };
 }

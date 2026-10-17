@@ -8,6 +8,7 @@ import { processActiveResearch } from '@/app/page/menus/penelitian/penelitianPag
 import { isCountryUnderEconomicEmbargo } from './7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import {
   applyNpcCountrySimulationStates,
+  getNpcCountrySimulationSnapshot,
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import type { NotificationMessage } from '@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
@@ -167,6 +168,11 @@ function ModalsManager({
 
   useEffect(() => {
     const refreshNpcCountries = () => {
+      const snapshot = getNpcCountrySimulationSnapshot();
+      if (!snapshot) {
+        setPrefetchedAllCountries(null);
+        return;
+      }
       setPrefetchedAllCountries(current =>
         current ? applyNpcCountrySimulationStates(current) : current
       );
@@ -174,6 +180,13 @@ function ModalsManager({
     window.addEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcCountries);
     return () => window.removeEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, refreshNpcCountries);
   }, []);
+
+  // Tanggapi resetTrigger dari restart simulasi: bersihkan data negara dan re-fetch baseline
+  useEffect(() => {
+    if (resetTrigger !== undefined) {
+      setPrefetchedAllCountries(null);
+    }
+  }, [resetTrigger]);
 
   // Fetch full country dataset lazily when a menu that requires global country comparison is opened
   useEffect(() => {

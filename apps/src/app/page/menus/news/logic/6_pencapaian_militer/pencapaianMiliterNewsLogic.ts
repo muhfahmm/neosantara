@@ -22,19 +22,23 @@ export function generateMilitaryAchievementNews(
 ): MilitaryAchievementNewsData | null {
   if (
     notification.tradeType !== 'program_nuklir_dimulai' &&
-    notification.tradeType !== 'program_nuklir_selesai'
+    notification.tradeType !== 'program_nuklir_selesai' &&
+    notification.tradeType !== 'icbm' &&
+    notification.tradeType !== 'icbm_dimulai' &&
+    notification.tradeType !== 'icbm_selesai'
   ) {
     return null;
   }
 
   const timestamp = notification.timestamp || new Date().toISOString().slice(0, 10);
   return {
-    id: `news-${notification.id || `${timestamp}-program-nuklir`}`,
+    id: `news-${notification.id || `${timestamp}-${notification.tradeType}`}`,
     type: 'program_nuklir',
     category: 'pencapaian_militer',
-    headline: notification.title || 'Program Nuklir',
+    headline: notification.title || 'Pencapaian Rudal & Nuklir Strategis',
     content: notification.message || '',
     timestamp,
     dateStr: timestamp,
   };
 }
+

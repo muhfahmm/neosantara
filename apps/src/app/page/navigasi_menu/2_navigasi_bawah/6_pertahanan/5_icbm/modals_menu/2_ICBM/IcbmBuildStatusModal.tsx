@@ -85,19 +85,22 @@ export default function IcbmBuildStatusModal({
           label: `ICBM ${runningIndex}`, // 🔥 Bersih, tanpa durasi lagi
           amount: 1,
           endDate: entryEndDate,
+          completed: Boolean(task?.completed),
         };
       });
     });
   })();
 
   const pendingEntries = scheduledEntries.filter((entry) => {
+    if ((entry as any).completed) return false;
     if (!entry.endDate || !todayDate) return true;
-    return entry.endDate >= todayDate;
+    return entry.endDate > todayDate;
   });
 
   const completedEntries = scheduledEntries.filter((entry) => {
+    if ((entry as any).completed) return true;
     if (!entry.endDate || !todayDate) return false;
-    return entry.endDate < todayDate;
+    return entry.endDate <= todayDate;
   });
 
   const activeTabOptions = ['Dalam Pembangunan', 'Selesai'] as const;
@@ -160,24 +163,6 @@ export default function IcbmBuildStatusModal({
                 )}
               </div>
             </div>
-
-            {/* PANEL INFORMASI BAWAH */}
-            <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 sm:p-5 shadow-sm">
-              <div className="flex flex-col gap-2.5">
-                <p className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#6B8A8A]">Informasi Tambahan</p>
-                <p className="text-xs sm:text-sm text-[#E0E0E0] leading-relaxed">
-                  Tabel tab pertama menampilkan daftar ICBM yang sedang dibangun. Tab kedua menyimpan total ICBM yang sudah selesai.
-                </p>
-                <button
-                  onClick={onOpenDetail}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#00FFAA] px-4 py-2 text-xs font-black text-[#0A1A1A] uppercase tracking-wider shadow-sm hover:bg-[#00FFAA]/80 transition-all cursor-pointer mt-1"
-                >
-                  <Clock className="h-4 w-4" />
-                  Lihat Detail Pembangunan
-                </button>
-              </div>
-            </div>
-
           </div>
         </div>
       </div>

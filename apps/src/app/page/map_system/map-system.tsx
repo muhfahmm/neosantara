@@ -497,7 +497,7 @@ export default function MapPage() {
         String(currentDate.getMonth() + 1).padStart(2, '0'),
         String(currentDate.getDate()).padStart(2, '0'),
     ].join('-');
-    useNpcCountrySimulation(currentDate, countryDetail?.country_slug, metadata);
+    useNpcCountrySimulation(currentDate, countryDetail?.country_slug, metadata, isPaused);
 
     useEffect(() => {
         const refreshNpcCountryDetail = () => {
@@ -2489,11 +2489,6 @@ export default function MapPage() {
     // Sinkronisasi Berita dari Pembangunan & Aksi AI NPC ke daftar Berita & Update Geopolitik
     useEffect(() => {
         const handleAiNewsUpdated = (e: Event) => {
-            // Jika game sedang paused, abaikan notifikasi
-            if (isPausedRef.current || (typeof window !== "undefined" && (window as any).neosantara_is_paused)) {
-                return;
-            }
-
             const detail = (e as CustomEvent)?.detail as NewsItemData | undefined;
             if (!detail || !detail.id) return;
             acknowledgeAiNews(detail.id);
@@ -2506,16 +2501,13 @@ export default function MapPage() {
         if (typeof window !== "undefined") {
             window.addEventListener("neosantara:ai-news-updated", handleAiNewsUpdated);
             clearStoredAiNews();
-            const isGamePaused = isPausedRef.current || (window as any).neosantara_is_paused;
-            if (!isGamePaused) {
-                const pending = takePendingAiNews();
-                if (pending.length > 0) {
-                    setNewsList(previous => {
-                        const existingIds = new Set(previous.map(item => item.id));
-                        const additions = pending.filter(item => !existingIds.has(item.id));
-                        return additions.length > 0 ? [...additions, ...previous] : previous;
-                    });
-                }
+            const pending = takePendingAiNews();
+            if (pending.length > 0) {
+                setNewsList(previous => {
+                    const existingIds = new Set(previous.map(item => item.id));
+                    const additions = pending.filter(item => !existingIds.has(item.id));
+                    return additions.length > 0 ? [...additions, ...previous] : previous;
+                });
             }
         }
 
@@ -3503,6 +3495,15 @@ export default function MapPage() {
                 localStorage.removeItem('pbb_active_resolutions_v4');
                 localStorage.removeItem('pbb_active_keamanan_v4');
                 localStorage.removeItem('pbb_reported_war_ban_violations_v1');
+                localStorage.removeItem('programNuklirActive');
+                localStorage.removeItem('icbmBuildTask');
+                try {
+                    sessionStorage.removeItem('programNuklirActive');
+                    sessionStorage.removeItem('program_nuklir_modal_open');
+                    sessionStorage.removeItem('icbm_detail_open');
+                    sessionStorage.removeItem('perang_nuklir_detail_open');
+                    sessionStorage.removeItem('presiden_simulator_load_save');
+                } catch (e) {}
                 clearActiveNpcCountrySimulationState();
                 (window as any).neosantara_annexed_countries = {};
                 (window as any).neosantara_country_color_overrides = {};
@@ -3852,6 +3853,15 @@ export default function MapPage() {
                     if (isNewGame || !loadSaveStr) {
                         expelCountryFromOrganizations(chosen.country);
                         clearMissionProgressData();
+                        clearActiveNpcCountrySimulationState();
+                        localStorage.removeItem('programNuklirActive');
+                        localStorage.removeItem('icbmBuildTask');
+                        try {
+                            sessionStorage.removeItem('programNuklirActive');
+                            sessionStorage.removeItem('program_nuklir_modal_open');
+                            sessionStorage.removeItem('icbm_detail_open');
+                            sessionStorage.removeItem('perang_nuklir_detail_open');
+                        } catch (e) {}
                         localStorage.setItem('player_diamonds', '150');
                         setPlayerDiamonds(150);
                         window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: 150 } }));
@@ -4319,6 +4329,35 @@ export default function MapPage() {
                     nextPendingNotifications.unshift(completeNotif);
                 }
 
+                // 🔥 HITUNG SELESAINYA PEMBANGUNAN RUDAL ICBM PEMAIN
+                let nextIcbmTask = prev.icbmBuildTask || null;
+                let nextIcbmJumlah = Number(prev.icbm_jumlah || 0);
+                let nextIcbmStatus = Boolean(prev.icbm_status);
+                if (nextIcbmTask && nextIcbmTask.endDate && nextIcbmTask.endDate <= currentDateStr && !nextIcbmTask.completed) {
+                    const finishedQty = Math.max(1, Number(nextIcbmTask.quantity) || 1);
+                    nextIcbmJumlah += finishedQty;
+                    nextIcbmStatus = true;
+                    nextIcbmTask = {
+                        ...nextIcbmTask,
+                        completed: true,
+                    };
+                    const userCountry = prev?.country || prev?.nama || "Indonesia";
+                    const icbmSelesaiNotif = {
+                        id: `icbm-done-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+                        title: `🚀 PERAKITAN SELESAI: ${finishedQty} Rudal ICBM Siap Tempur!`,
+                        sender: `Komando Strategis Nuklir Nasional`,
+                        message: `KABAR STRATEGIS KENEGARAAN! Perakitan ${finishedQty} unit Rudal Balistik Antar-Benua (ICBM) milik negara ${userCountry} telah rampung sepenuhnya dan siap dioperasikan di pangkalan militer!`,
+                        timestamp: currentDateStr,
+                        type: 'peringkat',
+                        value: 100,
+                        isRead: false,
+                        tradeType: 'icbm_selesai',
+                        effectText: `${finishedQty} Unit Rudal ICBM Siap Tempur Ditambahkan ke Arsenal`,
+                        isHandled: true,
+                    };
+                    nextPendingNotifications.unshift(icbmSelesaiNotif);
+                }
+
                 const monthsPassed = lastDate ? getMonthsDifference(lastDate, currentDateStr) : 0;
                 const nationalizationDiplomacyMonthCounter =
                     Math.max(0, Math.floor(Number(prev.nationalization_diplomacy_month_counter) || 0)) +
@@ -4564,6 +4603,9 @@ export default function MapPage() {
                     minister_recruitment_expense_pending: 0,
                     satisfaction: prev.satisfaction, // Preserve satisfaction scores
                     programNuklirActive: nextProgramNuklirActive,
+                    icbm_jumlah: nextIcbmJumlah,
+                    icbm_status: nextIcbmStatus,
+                    icbmBuildTask: nextIcbmTask,
                     population_crisis_tiers: currentCrisisTiers,
                     pending_notifications: [...diplomacyCompletionNotifications, ...nextPendingNotifications, ...newCrisisNotifications],
                     active_outbreaks: (Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : []).filter((event: any) => {

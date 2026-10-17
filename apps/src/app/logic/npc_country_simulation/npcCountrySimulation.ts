@@ -26,6 +26,7 @@ import {
 import { calculatePresidentRating, getMonthsDifference } from "@/app/logic/peringkatCalculator";
 import { runNpcCountryBrain } from "@/app/logic/npc_ai_brain/orchestrator";
 import { evaluateAndControlDemographics } from "@/app/logic/npc_ai_brain/demographics/demographicControllerAI";
+import { isNegaraNuklirBawaan } from "@/app/logic/npc_ai_brain/military/nuclearControllerAI";
 
 export const NPC_COUNTRY_SIMULATION_UPDATED_EVENT = "neosantara:npc-country-simulation-updated";
 
@@ -88,6 +89,9 @@ export function clearActiveNpcCountrySimulationState(): void {
     window.clearTimeout(pendingSimulationTimer);
   }
   pendingSimulationTimer = null;
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(NPC_COUNTRY_SIMULATION_UPDATED_EVENT));
+  }
 }
 
 export function getNpcCountrySimulationSnapshot(): NpcSimulationState | null {
@@ -176,6 +180,12 @@ function getMutableCountryState(country: CountryRecord): Record<string, unknown>
       key === "ai_civilian_construction_queue" ||
       key === "ai_military_infra_queue" ||
       key === "ai_military_unit_queue" ||
+      key === "ai_nuclear_queue" ||
+      key === "programNuklirActive" ||
+      key === "icbm_status" ||
+      key === "icbm_jumlah" ||
+      key === "icbmBuildTask" ||
+      key === "ongoingConstructions" ||
       key === "opennessIndex" ||
       key === "speechScore" ||
       key === "religionScore" ||
@@ -239,6 +249,24 @@ function initializeNpcCountryMetrics(
     ).overallScore;
     initialized.npc_country_metrics_initialized = true;
   }
+
+  // Jika negara adalah salah satu dari 5 negara pemilik nuklir default dunia (AS, Rusia, China, Korut, India),
+  // pastikan status Program Nuklir selalu AKTIF dan bersih dari antrean riset program nuklir!
+  const isDefaultNuclear = isNegaraNuklirBawaan(
+    String(initialized.country_slug || ""),
+    String(initialized.name_id || initialized.nama_negara || initialized.country || ""),
+    String(initialized.iso || "")
+  );
+  if (isDefaultNuclear) {
+    initialized.programNuklirActive = true;
+    if (Array.isArray(initialized.ai_nuclear_queue)) {
+      initialized.ai_nuclear_queue = initialized.ai_nuclear_queue.filter((q: any) => q.type !== "program_nuklir");
+    }
+    if (Array.isArray(initialized.ongoingConstructions)) {
+      initialized.ongoingConstructions = initialized.ongoingConstructions.filter((c: any) => c.buildingKey !== "program_nuklir");
+    }
+  }
+
   return initialized;
 }
 
@@ -416,6 +444,10 @@ async function persistNpcSimulation(
     window.dispatchEvent(new CustomEvent(NPC_COUNTRY_SIMULATION_UPDATED_EVENT));
     return;
   }
+  // Jika permainan sedang dijeda (paused), AI tidak boleh melakukan aktivitas/simulasi pertambahan hari
+  const isGlobalPaused = typeof window !== "undefined" && Boolean((window as any).neosantara_is_paused);
+  if (isGlobalPaused) return;
+
   if (currentDate < state.lastSimulatedDate) return;
   if (
     currentDate === state.lastSimulatedDate &&
@@ -516,7 +548,8 @@ export function applyNpcCountrySimulationState<T extends Record<string, any>>(co
 export function useNpcCountrySimulation(
   currentDate: Date | string | null | undefined,
   playerCountrySlug: unknown,
-  metadata: Record<string, any>
+  metadata: Record<string, any>,
+  isPaused: boolean = false
 ): void {
   const [countries, setCountries] = useState<CountryRecord[]>([]);
   const [loadedForPlayerSlug, setLoadedForPlayerSlug] = useState("");
@@ -557,6 +590,17 @@ export function useNpcCountrySimulation(
   }, [normalizedPlayerSlug]);
 
   useEffect(() => {
+    // Jika game dalam keadaan PAUSED, jangan jadwalkan atau jalankan simulasi AI NPC!
+    const isGamePaused = isPaused || (typeof window !== "undefined" && Boolean((window as any).neosantara_is_paused));
+    if (isGamePaused) {
+      if (pendingSimulationTimer !== null && typeof window !== "undefined") {
+        window.clearTimeout(pendingSimulationTimer);
+        pendingSimulationTimer = null;
+      }
+      pendingSimulationJob = null;
+      return;
+    }
+
     if (
       typeof window === "undefined" ||
       !normalizedPlayerSlug ||
@@ -581,7 +625,7 @@ export function useNpcCountrySimulation(
         console.error("Gagal menjalankan simulasi NPC:", error);
       });
     }, 50);
-  }, [normalizedPlayerSlug, loadedForPlayerSlug, currentDateString, countries, metadata]);
+  }, [normalizedPlayerSlug, loadedForPlayerSlug, currentDateString, countries, metadata, isPaused]);
 }
 
 export async function flushNpcCountrySimulation(): Promise<void> {

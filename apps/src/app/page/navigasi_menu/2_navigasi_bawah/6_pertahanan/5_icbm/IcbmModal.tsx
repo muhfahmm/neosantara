@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { X, Shield, Atom, Rocket, Bomb, Clock, Target, Lock, Check } from "lucide-react";
+import { X, Shield, Atom, Rocket, Bomb, Clock, Target, Lock, Check, Globe } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import { calculateProductionIncrement, formatDate, getDaysElapsed } from "@/app/logic/production_logic";
@@ -74,10 +74,13 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
   const icbmBuildTask = localIcbmBuildTask || countryDetail?.icbmBuildTask || null;
   const icbmBuildEndDate = icbmBuildTask?.endDate || null;
   const icbmBuildQuantity = Number(icbmBuildTask?.quantity || 0);
-  const existingIcbmCount = Number(countryDetail?.icbm || 0);
+  const existingIcbmCount = Math.max(
+    Number(countryDetail?.icbm_jumlah || 0),
+    Number(countryDetail?.icbm || 0)
+  );
   const currentIcbmDateObj = new Date(`${safeCurrentDate}T00:00:00`);
   const icbmBuildEndDateObj = icbmBuildEndDate ? new Date(`${icbmBuildEndDate}T00:00:00`) : null;
-  const isIcbmBuildQueued = icbmBuildEndDateObj ? icbmBuildEndDateObj > currentIcbmDateObj : false;
+  const isIcbmBuildQueued = icbmBuildEndDateObj ? icbmBuildEndDateObj >= currentIcbmDateObj : false;
   const formattedIcbmEndDate = icbmBuildEndDate ? formatTanggalIndo(icbmBuildEndDate) : null;
 
   // 🔥 LOGIKA BARU: HITUNG SISA ICBM YANG SEDANG DIBANGUN & TOTAL YANG SUDAH SELESAI
@@ -108,13 +111,16 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
     const endDate = parseDateLocal(task?.endDate);
     const totalDurationDays = getDurationDaysLocal(startDate, endDate);
     
-    if (startDate && quantity > 0) {
+    if (task?.completed) {
+      completedFromQueue = quantity;
+      remainingBuildQuantity = 0;
+    } else if (startDate && quantity > 0) {
       const unitDurationDays = quantity > 0 ? Math.max(1, Math.round(totalDurationDays / quantity)) : 0;
       let completedCount = 0;
       // Loop per unit untuk menghitung mana yang sudah lewat tanggal jatuh temponya
       for (let i = 0; i < quantity; i++) {
         const entryEndDate = addDaysLocal(startDate, unitDurationDays * (i + 1));
-        if (entryEndDate && currentIcbmDateObj && entryEndDate < currentIcbmDateObj) {
+        if (entryEndDate && currentIcbmDateObj && entryEndDate <= currentIcbmDateObj) {
           completedCount++;
         }
       }
@@ -124,7 +130,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
   }
 
   // 🔥 LOGIKA BARU: TOTAL ICBM YANG SUDAH SIAP / SELESAI (Angka 0 nya akan bertambah!)
-  const totalReadyIcbm = existingIcbmCount + completedFromQueue;
+  const totalReadyIcbm = Math.max(existingIcbmCount, completedFromQueue);
 
   const ongoingConstructions = countryDetail?.ongoingConstructions || [];
   const programBuildTask = ongoingConstructions.find((c: any) => c.buildingKey === "program_nuklir");
@@ -203,6 +209,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
   const [isProgramNuklirModalOpen, setIsProgramNuklirModalOpen] = useState(false);
   const [isIcbmDetailOpen, setIsIcbmDetailOpen] = useState(false);
   const [isPerangNuklirDetailOpen, setIsPerangNuklirDetailOpen] = useState(false);
+  const [perangNuklirInitialTab, setPerangNuklirInitialTab] = useState<'ranking' | 'icbm_owners'>('ranking');
   const [isIcbmBuildStatusOpen, setIsIcbmBuildStatusOpen] = useState(false);
 
   // Bersihkan lingering session flag sub-menu ICBM agar selalu berada di menu awal
@@ -221,7 +228,8 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
       icon: Atom,
       color: "text-amber-400",
       bg: "bg-amber-400/10",
-      isUnlocker: true
+      isUnlocker: true,
+      isAlwaysUnlocked: false
     },
     {
       id: 2,
@@ -229,7 +237,8 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
       icon: Rocket,
       color: "text-rose-700",
       bg: "bg-rose-100",
-      isUnlocker: false
+      isUnlocker: false,
+      isAlwaysUnlocked: false
     },
     {
       id: 3,
@@ -237,12 +246,23 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
       icon: Bomb,
       color: "text-orange-600",
       bg: "bg-orange-100",
-      isUnlocker: false
+      isUnlocker: false,
+      isAlwaysUnlocked: false
+    },
+    {
+      id: 4,
+      title: "Status Nuklir & ICBM Dunia",
+      icon: Globe,
+      color: "text-[#00FFAA]",
+      bg: "bg-[#00FFAA]/10",
+      isUnlocker: false,
+      isAlwaysUnlocked: true,
+      description: "Intelijen global negara pemilik program nuklir & rudal ICBM."
     }
   ];
 
   const handleOptionClick = (option: typeof nuclearOptions[0]) => {
-    if (!option.isUnlocker && !isNuclearProgramActive) return;
+    if (!option.isUnlocker && !option.isAlwaysUnlocked && !isNuclearProgramActive) return;
 
     if (option.isUnlocker) {
       if (isNuclearProgramActive) return;
@@ -256,6 +276,13 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
     }
 
     if (option.id === 3) {
+      setPerangNuklirInitialTab('ranking');
+      setIsPerangNuklirDetailOpen(true);
+      return;
+    }
+
+    if (option.id === 4) {
+      setPerangNuklirInitialTab('icbm_owners');
       setIsPerangNuklirDetailOpen(true);
       return;
     }
@@ -366,11 +393,11 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
               </div>
             </div>
 
-            {/* GRID 3 KARTU STRATEGI */}
-            <div className="grid grid-cols-3 gap-4">
+            {/* GRID KARTU STRATEGI & INTELIJEN GLOBAL */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {nuclearOptions.map((option) => {
                 const Icon = option.icon;
-                const isLockedCard = !option.isUnlocker && !isNuclearProgramActive;
+                const isLockedCard = !option.isUnlocker && !option.isAlwaysUnlocked && !isNuclearProgramActive;
                 const isUnlockerCardActive = option.isUnlocker && isNuclearProgramActive;
                 const isUnlockerBuilding = option.isUnlocker && isNuclearProgramBuilding;
 
@@ -379,34 +406,42 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                     key={option.id}
                     onClick={() => handleOptionClick(option)}
                     disabled={isLockedCard || isUnlockerCardActive || isUnlockerBuilding}
-                    className={`group flex flex-col items-center text-center p-5 rounded-2xl border transition-all duration-200 h-full ${
+                    className={`group flex flex-col items-center text-center p-4 sm:p-5 rounded-2xl border transition-all duration-200 h-full ${
                         isLockedCard
                           ? 'bg-[#0A1A1A] border-[#00FFAA]/10 opacity-60 cursor-not-allowed'
                           : isUnlockerCardActive
                           ? 'bg-[#00FFAA]/10 border-[#00FFAA]/40 cursor-default'
+                          : option.isAlwaysUnlocked
+                          ? 'bg-[#0A1A1A] border-[#00FFAA]/30 hover:border-[#00FFAA] hover:bg-[#00FFAA]/5 hover:shadow-lg cursor-pointer ring-1 ring-[#00FFAA]/20'
                           : 'bg-[#0A1A1A] border-[#00FFAA]/20 hover:border-[#00FFAA] hover:shadow-lg cursor-pointer'
                       }`}
                   >
-                    <div className={`p-3.5 rounded-full ${
+                    <div className={`p-3 sm:p-3.5 rounded-full ${
                         isUnlockerCardActive ? 'bg-[#00FFAA]/20 border-[#00FFAA]/40' : 'bg-[#0F2424] border-[#00FFAA]/20'
-                      } border mb-3 ${
+                      } border mb-2.5 sm:mb-3 ${
                         isLockedCard || isUnlockerCardActive ? '' : 'group-hover:scale-110 transition-transform'
                       }`}
                     >
                       {isUnlockerCardActive ? (
-                        <div className="w-10 h-10 text-[#00FFAA] flex items-center justify-center">
-                          <Check className="w-7 h-7 text-[#00FFAA]" />
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 text-[#00FFAA] flex items-center justify-center">
+                          <Check className="w-6 h-6 sm:w-7 sm:h-7 text-[#00FFAA]" />
                         </div>
                       ) : (
-                        <Icon className={`w-10 h-10 ${isLockedCard ? 'text-[#6B8A8A]' : 'text-[#00FFAA]'}`} />
+                        <Icon className={`w-8 h-8 sm:w-10 sm:h-10 ${isLockedCard ? 'text-[#6B8A8A]' : 'text-[#00FFAA]'}`} />
                       )}
                     </div>
                     
-                    <span className={`text-sm font-black uppercase tracking-wide mb-1 ${
-                      isLockedCard ? 'text-[#6B8A8A]' : isUnlockerCardActive ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'
+                    <span className={`text-xs sm:text-sm font-black uppercase tracking-wide mb-1 ${
+                      isLockedCard ? 'text-[#6B8A8A]' : isUnlockerCardActive ? 'text-[#00FFAA]' : option.isAlwaysUnlocked ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'
                     }`}>
                       {isUnlockerCardActive ? "Program Aktif!" : option.title}
                     </span>
+
+                    {option.isAlwaysUnlocked && (
+                      <p className="text-[10px] leading-relaxed text-[#6B8A8A] mt-0.5">
+                        {option.description || "Akses langsung intelijen kekuatan nuklir & rudal ICBM dunia."}
+                      </p>
+                    )}
                     
                     {(isLockedCard || isUnlockerBuilding) && (
                       <p className="text-[10px] leading-relaxed text-[#6B8A8A]">
@@ -462,7 +497,9 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
         isOpen={isPerangNuklirDetailOpen}
         onClose={() => setIsPerangNuklirDetailOpen(false)}
         countryDetail={countryDetail}
+        currentDate={safeCurrentDate}
         prefetchedAllCountries={prefetchedAllCountries}
+        initialTab={perangNuklirInitialTab}
         onAction={(target) => {
           alert(`Deklarasi perang nuklir terhadap ${target.countryName}! Konsekuensi global tak terbayangkan telah dimulai.`);
         }}
