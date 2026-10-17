@@ -4,8 +4,8 @@ import { X, Globe } from "lucide-react";
 import NotebookModalWrapper from "../NotebookModalWrapper";
 // PERBAIKAN: Import data negara untuk mendapatkan ISO bendera
 import { COUNTRIES_DATA } from "../../../map_system/map-data";
-import getTradeAgreementsForCountry from '../../../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
-import { getEmbassiesForCountry } from '../../../../../../../json/database_kedutaan_besar/embassyRegistry';
+import getTradeAgreementsForCountry from '../../../../../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
+import { getEmbassiesForCountry } from '../../../../../../../json/6_database_kedutaan_besar/embassyRegistry';
 
 type TradeAgreement = {
   mitra: string;
@@ -35,7 +35,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
   const directEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
   const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
   const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
-  
+
   const currentCountryName = countryDetail?.country || countryDetail?.nama || countryDetail?.country_name || countryDetail?.nama_negara || "Senegal";
   const dbEmbassies = getEmbassiesForCountry(currentCountryName).map(mitra => ({
     mitra,
@@ -50,17 +50,17 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
 
   const allPartnersFromTrade: EmbassyRecord[] = Array.isArray(customTradeAgreements)
     ? customTradeAgreements
-        .filter((agreement: TradeAgreement) => {
-          const normMitra = String(agreement.mitra || '').toLowerCase().trim();
-          const isRemovedTrade = removedTradePartners.some((r: string) => String(r || '').toLowerCase().trim() === normMitra);
-          const isRemovedEmbassy = removedEmbassies.some((r: string) => String(r || '').toLowerCase().trim() === normMitra);
-          return !isRemovedTrade && !isRemovedEmbassy;
-        })
-        .map((agreement: TradeAgreement) => ({
-          mitra: agreement.mitra,
-          status: agreement.status || 'Aktif',
-          type: agreement.type || 'Perdagangan',
-        }))
+      .filter((agreement: TradeAgreement) => {
+        const normMitra = String(agreement.mitra || '').toLowerCase().trim();
+        const isRemovedTrade = removedTradePartners.some((r: string) => String(r || '').toLowerCase().trim() === normMitra);
+        const isRemovedEmbassy = removedEmbassies.some((r: string) => String(r || '').toLowerCase().trim() === normMitra);
+        return !isRemovedTrade && !isRemovedEmbassy;
+      })
+      .map((agreement: TradeAgreement) => ({
+        mitra: agreement.mitra,
+        status: agreement.status || 'Aktif',
+        type: agreement.type || 'Perdagangan',
+      }))
     : [];
 
   const mergedEmbassies: EmbassyRecord[] = [
@@ -165,85 +165,85 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
     <>
       <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
-          
+
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
             <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-              <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA] animate-pulse" />
+              <div className="p-1.5 sm:p-2 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
+                <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA] animate-pulse" />
+              </div>
+              <div>
+                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Kantor Kedutaan Besar Asing</h2>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">{currentCountryName}</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Kantor Kedutaan Besar Asing</h2>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mt-1">{currentCountryName}</p>
-            </div>
+            <button
+              onClick={onClose}
+              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+            >
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
+            </button>
           </div>
-          <button 
-            onClick={onClose} 
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
-        </div>
 
-        {/* BODY */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar">
-          <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-4">
-            Kelola daftar kedutaan asing yang dimiliki negara Anda. Setiap kedutaan yang dibangun akan muncul di sini dan dapat dihancurkan jika diperlukan.
-          </p>
+          {/* BODY */}
+          <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar">
+            <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-4">
+              Kelola daftar kedutaan asing yang dimiliki negara Anda. Setiap kedutaan yang dibangun akan muncul di sini dan dapat dihancurkan jika diperlukan.
+            </p>
 
-          {embassies.length === 0 ? (
-            <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-8 text-center">
-              <p className="text-sm text-[#00FFAA] font-black mb-2">Belum ada kedutaan asing yang terdaftar.</p>
-              <p className="text-xs text-[#6B8A8A]">Bangun kedutaan melalui halaman detail negara untuk mulai menambahkan hubungan diplomatik.</p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3 w-full">
-              {embassies.map((item: any, idx: number) => {
-                const iso = getIsoFromName(item.mitra);
-                return (
-                  <div key={idx} className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl flex flex-row items-center justify-between w-full gap-4">
-                    
-                    {/* Bagian Informasi Kedutaan */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        {renderFlag(iso, item.mitra)}
-                        <h4 className="text-sm font-black text-[#E0E0E0] uppercase tracking-wider">{item.mitra}</h4>
+            {embassies.length === 0 ? (
+              <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-8 text-center">
+                <p className="text-sm text-[#00FFAA] font-black mb-2">Belum ada kedutaan asing yang terdaftar.</p>
+                <p className="text-xs text-[#6B8A8A]">Bangun kedutaan melalui halaman detail negara untuk mulai menambahkan hubungan diplomatik.</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3 w-full">
+                {embassies.map((item: any, idx: number) => {
+                  const iso = getIsoFromName(item.mitra);
+                  return (
+                    <div key={idx} className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-4 rounded-xl flex flex-row items-center justify-between w-full gap-4">
+
+                      {/* Bagian Informasi Kedutaan */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          {renderFlag(iso, item.mitra)}
+                          <h4 className="text-sm font-black text-[#E0E0E0] uppercase tracking-wider">{item.mitra}</h4>
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-[10px] leading-none mt-2">
+                          <span className="bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.status || 'Aktif'}</span>
+                          {item.type && <span className="bg-[#0F2424] text-[#6B8A8A] border border-[#00FFAA]/20 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.type}</span>}
+                        </div>
+                        {item.continent && (
+                          <p className="text-[10px] text-[#6B8A8A] mt-2">Benua: {item.continent}</p>
+                        )}
                       </div>
-                      <div className="flex flex-wrap gap-2 text-[10px] leading-none mt-2">
-                        <span className="bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.status || 'Aktif'}</span>
-                        {item.type && <span className="bg-[#0F2424] text-[#6B8A8A] border border-[#00FFAA]/20 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">{item.type}</span>}
+
+                      {/* Bagian Tombol Aksi */}
+                      <div className="flex flex-row items-center gap-2 flex-shrink-0">
+                        <button
+                          onClick={() => handleOpenCountryDetail(item.mitra)}
+                          className="border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
+                        >
+                          <Globe className="w-3.5 h-3.5" />
+                          Lihat Detail
+                        </button>
+
+                        <button
+                          onClick={() => handleDestroyEmbassy(item.mitra)}
+                          className="border border-rose-500/40 bg-[#0F2424] text-rose-400 hover:bg-rose-500 hover:text-white px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer"
+                        >
+                          Hancurkan Kedutaan
+                        </button>
                       </div>
-                      {item.continent && (
-                        <p className="text-[10px] text-[#6B8A8A] mt-2">Benua: {item.continent}</p>
-                      )}
                     </div>
-
-                    {/* Bagian Tombol Aksi */}
-                    <div className="flex flex-row items-center gap-2 flex-shrink-0">
-                      <button
-                        onClick={() => handleOpenCountryDetail(item.mitra)}
-                        className="border border-[#00FFAA]/40 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5"
-                      >
-                        <Globe className="w-3.5 h-3.5" />
-                        Lihat Detail
-                      </button>
-
-                      <button
-                        onClick={() => handleDestroyEmbassy(item.mitra)}
-                        className="border border-rose-500/40 bg-[#0F2424] text-rose-400 hover:bg-rose-500 hover:text-white px-3.5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer"
-                      >
-                        Hancurkan Kedutaan
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </NotebookModalWrapper>
+      </NotebookModalWrapper>
 
       {/* Modal Konfirmasi Hancurkan Kedutaan */}
       {confirmModal.isOpen && (

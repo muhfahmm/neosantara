@@ -12,7 +12,7 @@ import {
   Plane,
 } from "lucide-react";
 
-import { fetchDoktrinKeterbukaanFromDb } from "@/../../json/database_doktrin_keterbukaan/index";
+import { fetchDoktrinKeterbukaanFromDb } from "../../../../../../../../json/2_database_doktrin_keterbukaan/index";
 import { generateDoctrineChangeNotification } from "@/app/page/menus/inbox/logic/10_sosial_budaya/3_keterbukaan/doctrineChangeLogic";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 
@@ -280,8 +280,8 @@ export default function DoktrinKeterbukaanModal({
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center gap-2.5 w-full px-3.5 py-3 rounded-2xl border text-left transition-all cursor-pointer ${isActive
-                      ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                      : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
+                    ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
+                    : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
                     }`}
                 >
                   <Icon className="h-4 w-4 shrink-0" />

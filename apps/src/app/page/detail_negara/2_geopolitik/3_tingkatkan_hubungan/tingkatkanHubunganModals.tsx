@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Heart, Coins, TrendingUp, AlertCircle, Sparkles, X, Plus, RotateCcw, ArrowRight, CheckCircle2 } from "lucide-react";
-import { getRelationValue, setRelationModifier } from "@/../../json/database_hubungan_antar_negara/relationsRegistry";
+import { getRelationValue, setRelationModifier } from "../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 
 interface TingkatkanHubunganModalProps {
@@ -324,11 +324,10 @@ export default function TingkatkanHubunganModal({
 							type="button"
 							disabled={!isValid}
 							onClick={handleConfirm}
-							className={`flex-1 rounded-xl py-2.5 sm:py-3 text-center font-black text-xs tracking-wider uppercase transition-all shadow-lg flex items-center justify-center gap-2 ${
-								isValid
+							className={`flex-1 rounded-xl py-2.5 sm:py-3 text-center font-black text-xs tracking-wider uppercase transition-all shadow-lg flex items-center justify-center gap-2 ${isValid
 									? "bg-[#00FFAA] hover:bg-[#00e699] text-[#0A1A1A] border border-[#00FFAA] cursor-pointer"
 									: "bg-gray-700 text-gray-400 border border-gray-600 cursor-not-allowed opacity-50"
-							}`}
+								}`}
 						>
 							<Heart className="h-4 w-4" />
 							Tingkatkan (+{actualGained})

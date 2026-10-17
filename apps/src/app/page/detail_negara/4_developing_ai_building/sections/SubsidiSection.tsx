@@ -16,7 +16,7 @@ import {
   calculateSubsidySummary,
   formatCurrencyCompact,
   clampSubsidyCost,
-} from "@/../../json/database_kebijakan_subsidi/index";
+} from "../../../../../../../json/5_database_kebijakan_subsidi/index";
 import { calculateSubsidySatisfaction } from "@/app/logic/kepuasanCalculator";
 
 interface SubsidiSectionProps {
@@ -192,11 +192,10 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                selectedCategory === cat
+              className={`px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${selectedCategory === cat
                   ? "bg-[#00FFAA] text-[#0A1A1A] font-black shadow-sm"
                   : "bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] border border-[#00FFAA]/20"
-              }`}
+                }`}
             >
               {cat}
             </button>
@@ -221,11 +220,10 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
           return (
             <div
               key={item.id}
-              className={`rounded-2xl p-3.5 flex flex-col justify-between border transition-all shadow-sm ${
-                item.isSubsidized
+              className={`rounded-2xl p-3.5 flex flex-col justify-between border transition-all shadow-sm ${item.isSubsidized
                   ? "bg-[#0A1A1A] border-[#00FFAA]/40"
                   : "bg-[#0A1A1A]/70 border-[#00FFAA]/15 opacity-70"
-              }`}
+                }`}
             >
               <div>
                 <div className="flex items-start justify-between gap-2 mb-2">
@@ -233,11 +231,10 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
                     {item.category}
                   </span>
                   <span
-                    className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 border ${
-                      item.isSubsidized
+                    className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1 border ${item.isSubsidized
                         ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-300"
                         : "bg-rose-500/15 border-rose-500/30 text-rose-300"
-                    }`}
+                      }`}
                   >
                     {item.isSubsidized ? (
                       <>
@@ -264,9 +261,8 @@ export default function SubsidiSection({ countryDetail }: SubsidiSectionProps) {
                   Alokasi Biaya:
                 </span>
                 <span
-                  className={`font-black ${
-                    item.isSubsidized ? "text-rose-400" : "text-[#6B8A8A]"
-                  }`}
+                  className={`font-black ${item.isSubsidized ? "text-rose-400" : "text-[#6B8A8A]"
+                    }`}
                 >
                   {formatNumber(item.budgetCost)} NEO/hari
                 </span>

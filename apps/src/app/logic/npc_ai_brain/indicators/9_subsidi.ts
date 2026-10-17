@@ -9,7 +9,7 @@ import {
   INITIAL_SUBSIDY_ITEMS,
   calculateSubsidySummary,
   type SubsidyItem,
-} from "@/../../json/database_kebijakan_subsidi/index";
+} from "../../../../../../json/5_database_kebijakan_subsidi/index";
 import { calculateSubsidySatisfaction } from "@/app/logic/kepuasanCalculator";
 import type { AlertCandidate, NpcAlert } from "../types/alertTypes";
 import { COOLDOWN_HARI } from "../types/alertTypes";

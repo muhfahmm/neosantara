@@ -12,7 +12,7 @@ import {
 } from "@/app/logic/economic_logic/treasuryUpdater";
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import { applyNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
-import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
+import { getRelationValue } from '../../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 
 const getNormalizedSlug = (detail: any) => {
   if (!detail) return '';
@@ -182,11 +182,11 @@ function AllCountriesGDP({
       return prefetchedAllCountries.map((rawCountry, idx) => {
         const c = applyNpcCountrySimulationState(rawCountry);
         return {
-        ...c,
-        __displayName: getDisplayName(c),
-        continent: normalizeContinent(c.__continent || c.continent || getContinentFromOrder(idx + 1)),
-        __fileOrder: idx + 1,
-        __loaded: true,
+          ...c,
+          __displayName: getDisplayName(c),
+          continent: normalizeContinent(c.__continent || c.continent || getContinentFromOrder(idx + 1)),
+          __fileOrder: idx + 1,
+          __loaded: true,
         };
       });
     }
@@ -204,11 +204,11 @@ function AllCountriesGDP({
       const processed = prefetchedAllCountries.map((rawCountry, idx) => {
         const c = applyNpcCountrySimulationState(rawCountry);
         return {
-        ...c,
-        __displayName: getDisplayName(c),
-        continent: normalizeContinent(c.__continent || c.continent || getContinentFromOrder(idx + 1)),
-        __fileOrder: idx + 1,
-        __loaded: true,
+          ...c,
+          __displayName: getDisplayName(c),
+          continent: normalizeContinent(c.__continent || c.continent || getContinentFromOrder(idx + 1)),
+          __fileOrder: idx + 1,
+          __loaded: true,
         };
       });
       cachedAllCountries = processed;
@@ -221,11 +221,11 @@ function AllCountriesGDP({
             const processed = data.map((rawCountry: any, idx: number) => {
               const c = applyNpcCountrySimulationState(rawCountry);
               return {
-              ...c,
-              __displayName: getDisplayName(c),
-              continent: normalizeContinent(c.__continent || c.continent || getContinentFromOrder(idx + 1)),
-              __fileOrder: idx + 1,
-              __loaded: true,
+                ...c,
+                __displayName: getDisplayName(c),
+                continent: normalizeContinent(c.__continent || c.continent || getContinentFromOrder(idx + 1)),
+                __fileOrder: idx + 1,
+                __loaded: true,
               };
             });
             cachedAllCountries = processed;
@@ -335,18 +335,16 @@ function AllCountriesGDP({
       return (
         <tr
           key={`${row.name}-${index}`}
-          className={`transition-colors ${
-            isPlayer
+          className={`transition-colors ${isPlayer
               ? 'bg-[#00FFAA]/20 border-l-4 border-l-[#00FFAA] font-bold'
               : `${rankStyle.rowBg} ${rankStyle.rowBorder}`
-          }`}
+            }`}
         >
           {/* ✅ KOLOM NOMOR DENGAN BADGE BERWARNA */}
           <td className="px-1 sm:px-1.5 py-1.5 lg:py-2 text-center border-b border-[#00FFAA]/10 whitespace-nowrap">
             <span
-              className={`inline-flex items-center justify-center min-w-[24px] h-[20px] px-1.5 rounded-md font-black text-[10px] sm:text-[11px] ${
-                isPlayer ? 'bg-[#00FFAA] text-[#0A1A1A]' : rankStyle.noBadge
-              }`}
+              className={`inline-flex items-center justify-center min-w-[24px] h-[20px] px-1.5 rounded-md font-black text-[10px] sm:text-[11px] ${isPlayer ? 'bg-[#00FFAA] text-[#0A1A1A]' : rankStyle.noBadge
+                }`}
             >
               {rank}
             </span>

@@ -1,6 +1,6 @@
 // Logic helper for Kedutaan Besar actions
-import getTradeAgreementsForCountry from '../../../../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
-import { getEmbassiesForCountry } from '../../../../../../../../json/database_kedutaan_besar/embassyRegistry';
+import getTradeAgreementsForCountry from '../../../../../../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
+import { getEmbassiesForCountry } from '../../../../../../../../json/6_database_kedutaan_besar/embassyRegistry';
 import { COUNTRIES_DATA } from '../../../../map_system/map-data';
 
 export type TradeAgreement = {

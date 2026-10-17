@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Zap, Utensils, GraduationCap, Bus, Store, ShieldAlert } from "lucide-react";
-import { INITIAL_SUBSIDY_ITEMS, SubsidyItem, clampSubsidyCost } from "@/../../json/database_kebijakan_subsidi/index";
+import { INITIAL_SUBSIDY_ITEMS, SubsidyItem, clampSubsidyCost } from "../../../../../../../../../json/5_database_kebijakan_subsidi/index";
 
 interface AlokasiSubsidiTabProps {
   countryDetail: any;
@@ -67,19 +67,17 @@ export default function AlokasiSubsidiTab({ countryDetail }: AlokasiSubsidiTabPr
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`flex items-center justify-between p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
-                isActive
+              className={`flex items-center justify-between p-2.5 rounded-xl border text-left transition-all cursor-pointer ${isActive
                   ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
                   : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
-              }`}
+                }`}
             >
               <span className="text-[11px] font-black uppercase tracking-wider truncate pr-1">
                 {cat.label}
               </span>
               <span
-                className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${
-                  isActive ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
-                }`}
+                className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${isActive ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
+                  }`}
               >
                 {countInCat}/{totalInCat}
               </span>
@@ -100,9 +98,8 @@ export default function AlokasiSubsidiTab({ countryDetail }: AlokasiSubsidiTabPr
           {filteredItems.map((item) => (
             <div
               key={item.id}
-              className={`flex justify-between items-center text-xs font-bold py-2 border-b border-[#00FFAA]/20 last:border-0 ${
-                item.isSubsidized ? "text-rose-400" : "text-gray-500"
-              }`}
+              className={`flex justify-between items-center text-xs font-bold py-2 border-b border-[#00FFAA]/20 last:border-0 ${item.isSubsidized ? "text-rose-400" : "text-gray-500"
+                }`}
             >
               <div className="flex flex-col">
                 <span className={`font-semibold ${item.isSubsidized ? "text-[#E0E0E0]" : "text-gray-500 line-through"}`}>

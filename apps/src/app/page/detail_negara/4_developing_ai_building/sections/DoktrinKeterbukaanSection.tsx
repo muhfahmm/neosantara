@@ -16,7 +16,7 @@ import {
   Sparkles,
   Info,
 } from "lucide-react";
-import { fetchDoktrinKeterbukaanFromDb } from "@/../../json/database_doktrin_keterbukaan/index";
+import { fetchDoktrinKeterbukaanFromDb } from "../../../../../../../json/2_database_doktrin_keterbukaan/index";
 
 interface DoktrinKeterbukaanSectionProps {
   countryDetail?: Record<string, any> | null;
@@ -311,11 +311,10 @@ export default function DoktrinKeterbukaanSection({
             <button
               key={tab.id}
               onClick={() => setSelectedCategory(tab.id)}
-              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${
-                isActive
+              className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 ${isActive
                   ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md font-black"
                   : "bg-[#0F2424] text-[#A0C0C0] hover:text-[#00FFAA] border border-[#00FFAA]/20"
-              }`}
+                }`}
             >
               <Icon className="w-3.5 h-3.5" />
               <span>{tab.label}</span>
@@ -351,8 +350,8 @@ export default function DoktrinKeterbukaanSection({
                         {item.category === "civil"
                           ? "Sipil & HAM"
                           : item.category === "media"
-                          ? "Media & Digital"
-                          : "Geopolitik & Perbatasan"}
+                            ? "Media & Digital"
+                            : "Geopolitik & Perbatasan"}
                       </span>
                     </div>
                   </div>
@@ -386,8 +385,8 @@ export default function DoktrinKeterbukaanSection({
                     {val >= 70
                       ? "Terbuka & Bebas"
                       : val >= 45
-                      ? "Moderat Berimbang"
-                      : "Dibatasi Regulasi"}
+                        ? "Moderat Berimbang"
+                        : "Dibatasi Regulasi"}
                   </span>
                 </div>
               </div>

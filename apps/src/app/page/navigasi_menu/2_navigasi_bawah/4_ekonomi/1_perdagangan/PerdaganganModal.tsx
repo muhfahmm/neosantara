@@ -5,7 +5,7 @@ import NotebookModalWrapper from "../../NotebookModalWrapper";
 import JualModalsMenu from "./jual/modalsKonfirmasiJual";
 import MitraModalsMenu, { TradePartner } from "./mitra/mitraModalsMenu";
 import ModalsKonfirmasiBeli from "./beli/modalsKonfirmasiBeli";
-import { getTradeAgreementsForCountry } from '../../../../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
+import { getTradeAgreementsForCountry } from '../../../../../../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
 import TawaranPembelianTable from "./tawaran_beli/TawaranPembelianTable";
 import { fetchBuildingMetadata } from '@/lib/buildingMetadata';
@@ -137,12 +137,12 @@ const formatTradeHistoryDate = (date: Date): string => {
   return `${day}.${month}.${year}`;
 };
 
-export default function PerdaganganModal({ 
-  isOpen, 
-  onClose, 
-  countryDetail, 
-  setCountryDetail, 
-  currentDate, 
+export default function PerdaganganModal({
+  isOpen,
+  onClose,
+  countryDetail,
+  setCountryDetail,
+  currentDate,
   resetTrigger,
   prefetchedAllCountries,
   inboxNotifications = [],
@@ -406,11 +406,11 @@ export default function PerdaganganModal({
   const storedActiveOffers = useMemo((): PartnerOffer[] => {
     if (!countryDetail || !countryDetail.ai_trade_offers) return [];
     try {
-      const rawOffers = typeof countryDetail.ai_trade_offers === 'string' 
-        ? JSON.parse(countryDetail.ai_trade_offers) 
+      const rawOffers = typeof countryDetail.ai_trade_offers === 'string'
+        ? JSON.parse(countryDetail.ai_trade_offers)
         : countryDetail.ai_trade_offers;
       if (!Array.isArray(rawOffers)) return [];
-      
+
       // Filter out expired offers
       if (currentDate) {
         return rawOffers.filter((o: any) => {
@@ -609,10 +609,10 @@ export default function PerdaganganModal({
     const startParts = gameStartStr.split("-").map(Number);
     const startDate = new Date(startParts[0], startParts[1] - 1, startParts[2]);
     const currentOnlyDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-    
+
     const diffTime = currentOnlyDate.getTime() - startDate.getTime();
     const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-    
+
     // Jangan munculkan apa pun di bawah 7 hari pertama
     if (diffDays < 7) {
       if (storedActiveOffers.length > 0) {
@@ -632,7 +632,7 @@ export default function PerdaganganModal({
       // Jumlah negara acak: 2 sampai 3
       const offerSize = 2 + Math.floor(Math.random() * 2);
       const shuffledPartners = [...eligiblePartners].sort(() => 0.5 - Math.random()).slice(0, offerSize);
-      
+
       const newOffers: PartnerOffer[] = [];
 
       shuffledPartners.forEach((partner) => {
@@ -641,7 +641,7 @@ export default function PerdaganganModal({
         );
 
         let chosenProduct: string | null = null;
-        let partnerProd = 500; 
+        let partnerProd = 500;
 
         if (partnerData) {
           const shuffledProducts = [...ALL_IMPORT_KEYS].sort(() => 0.5 - Math.random());
@@ -1050,131 +1050,131 @@ export default function PerdaganganModal({
               </div>
             ) : (
               <>
-            {tradeAccess.status === "waspada" && (
-              <p className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs font-bold text-amber-300">
-                Tingkat sentralisasi tinggi. Hubungan dagang Anda dipantau oleh komunitas internasional.
-                Tarif impor tambahan: +{Math.round(tradeAccess.importTariffModifier * 100)}%.
-                Skor: {tradeAccess.centralizationScore.toFixed(1)}.
-              </p>
-            )}
-            {tradeAccess.status === "dibatasi" && (
-              <p className="mb-4 rounded-lg border border-orange-500/30 bg-orange-500/10 px-4 py-3 text-xs font-bold text-orange-300">
-                Akses impor diblokir. Anda hanya dapat menjual komoditas; tarif ekspor tambahan:
-                {" "}+{Math.round(tradeAccess.exportTariffModifier * 100)}%. Skor sentralisasi: {tradeAccess.centralizationScore.toFixed(1)}.
-              </p>
-            )}
-            {isCountryUnderEconomicEmbargo(countryName) && (
-              <p className="mb-4 rounded-lg border border-rose-500/40 bg-rose-950/40 px-4 py-3 text-xs font-bold text-rose-300">
-                Embargo ekonomi PBB sedang berlaku terhadap negara Anda. Aktivitas perdagangan internasional diblokir selama resolusi aktif.
-              </p>
-            )}
+                {tradeAccess.status === "waspada" && (
+                  <p className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs font-bold text-amber-300">
+                    Tingkat sentralisasi tinggi. Hubungan dagang Anda dipantau oleh komunitas internasional.
+                    Tarif impor tambahan: +{Math.round(tradeAccess.importTariffModifier * 100)}%.
+                    Skor: {tradeAccess.centralizationScore.toFixed(1)}.
+                  </p>
+                )}
+                {tradeAccess.status === "dibatasi" && (
+                  <p className="mb-4 rounded-lg border border-orange-500/30 bg-orange-500/10 px-4 py-3 text-xs font-bold text-orange-300">
+                    Akses impor diblokir. Anda hanya dapat menjual komoditas; tarif ekspor tambahan:
+                    {" "}+{Math.round(tradeAccess.exportTariffModifier * 100)}%. Skor sentralisasi: {tradeAccess.centralizationScore.toFixed(1)}.
+                  </p>
+                )}
+                {isCountryUnderEconomicEmbargo(countryName) && (
+                  <p className="mb-4 rounded-lg border border-rose-500/40 bg-rose-950/40 px-4 py-3 text-xs font-bold text-rose-300">
+                    Embargo ekonomi PBB sedang berlaku terhadap negara Anda. Aktivitas perdagangan internasional diblokir selama resolusi aktif.
+                  </p>
+                )}
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 lg:gap-2.5 mb-4 lg:mb-6">
-              <button
-                onClick={() => {
-                  if (tradeAccess.status === "diblokir") {
-                    alert("Akses Pasar Perdagangan Global diblokir oleh skor sentralisasi negara Anda.");
-                    return;
-                  }
-                  setIsMitraOpen(true);
-                }}
-                className={`px-2 py-2 lg:py-2.5 rounded-lg border text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${isTradeMarketBlocked ? "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed" : "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer"}`}
-              >
-                Mitra
-              </button>
-              <button
-                onClick={() => openJualModals()}
-                className={`px-2 py-2 lg:py-2.5 rounded-lg border text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${tradeAccess.canSell ? "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
-              >
-                Jual
-              </button>
-              <button
-                onClick={handleOpenGlobalBuy}
-                className={`px-2 py-2 lg:py-2.5 rounded-lg border text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${tradeAccess.canBuy ? "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer" : "bg-orange-950/30 border-orange-500/30 text-orange-300 cursor-not-allowed"}`}
-              >
-                Beli
-              </button>
-              <button
-                onClick={() => openJualModals()}
-                className={`px-2 py-2 lg:py-2.5 rounded-lg border text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${tradeAccess.canSell ? "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
-              >
-                Jual Semuanya
-              </button>
-              <button
-                onClick={() => {
-                  setIsOfferOpen(!isOfferOpen);
-                  setIsArmsOfferOpen(false);
-                }}
-                className={`px-2 py-2 lg:py-2.5 rounded-lg text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider cursor-pointer transition-all border flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${isOfferOpen ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]' : 'bg-[#0F2424] border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A]'}`}
-              >
-                Tawaran Pembelian
-              </button>
-              <button
-                onClick={() => {
-                  setIsArmsOfferOpen(!isArmsOfferOpen);
-                  setIsOfferOpen(false);
-                }}
-                className={`px-2 py-2 lg:py-2.5 rounded-lg text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider cursor-pointer transition-all border flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${isArmsOfferOpen ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]' : 'bg-[#0F2424] border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A]'}`}
-              >
-                Tawaran Alutsista
-              </button>
-            </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 lg:gap-2.5 mb-4 lg:mb-6">
+                  <button
+                    onClick={() => {
+                      if (tradeAccess.status === "diblokir") {
+                        alert("Akses Pasar Perdagangan Global diblokir oleh skor sentralisasi negara Anda.");
+                        return;
+                      }
+                      setIsMitraOpen(true);
+                    }}
+                    className={`px-2 py-2 lg:py-2.5 rounded-lg border text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${isTradeMarketBlocked ? "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed" : "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer"}`}
+                  >
+                    Mitra
+                  </button>
+                  <button
+                    onClick={() => openJualModals()}
+                    className={`px-2 py-2 lg:py-2.5 rounded-lg border text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${tradeAccess.canSell ? "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
+                  >
+                    Jual
+                  </button>
+                  <button
+                    onClick={handleOpenGlobalBuy}
+                    className={`px-2 py-2 lg:py-2.5 rounded-lg border text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${tradeAccess.canBuy ? "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer" : "bg-orange-950/30 border-orange-500/30 text-orange-300 cursor-not-allowed"}`}
+                  >
+                    Beli
+                  </button>
+                  <button
+                    onClick={() => openJualModals()}
+                    className={`px-2 py-2 lg:py-2.5 rounded-lg border text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${tradeAccess.canSell ? "bg-[#0F2424] border-[#00FFAA]/30 hover:bg-[#00FFAA] hover:text-[#0A1A1A] text-[#00FFAA] cursor-pointer" : "bg-rose-950/30 border-rose-500/30 text-rose-300 cursor-not-allowed"}`}
+                  >
+                    Jual Semuanya
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsOfferOpen(!isOfferOpen);
+                      setIsArmsOfferOpen(false);
+                    }}
+                    className={`px-2 py-2 lg:py-2.5 rounded-lg text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider cursor-pointer transition-all border flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${isOfferOpen ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]' : 'bg-[#0F2424] border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A]'}`}
+                  >
+                    Tawaran Pembelian
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsArmsOfferOpen(!isArmsOfferOpen);
+                      setIsOfferOpen(false);
+                    }}
+                    className={`px-2 py-2 lg:py-2.5 rounded-lg text-[10px] lg:text-[11px] xl:text-xs font-bold uppercase tracking-wider cursor-pointer transition-all border flex items-center justify-center text-center leading-tight min-h-[38px] lg:min-h-[42px] ${isArmsOfferOpen ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]' : 'bg-[#0F2424] border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A]'}`}
+                  >
+                    Tawaran Alutsista
+                  </button>
+                </div>
 
-            {/* --- PERBAIKAN: Kirim currentDate ke komponen tabel agar bisa mengecek kadaluwarsa --- */}
-            {isOfferOpen && (
-              <TawaranPembelianTable 
-                offers={activeOffers} 
-                onAcceptOffer={handleAcceptOffer} 
-                onClose={() => setIsOfferOpen(false)} 
-                currentDate={currentDate || new Date()} 
-              />
-            )}
-            {isArmsOfferOpen && (
-              <TawaranPembelianTable
-                offers={storedArmsOffers}
-                onAcceptOffer={handleAcceptOffer}
-                onClose={() => setIsArmsOfferOpen(false)}
-                currentDate={currentDate || new Date()}
-                marketType="arms"
-              />
-            )}
+                {/* --- PERBAIKAN: Kirim currentDate ke komponen tabel agar bisa mengecek kadaluwarsa --- */}
+                {isOfferOpen && (
+                  <TawaranPembelianTable
+                    offers={activeOffers}
+                    onAcceptOffer={handleAcceptOffer}
+                    onClose={() => setIsOfferOpen(false)}
+                    currentDate={currentDate || new Date()}
+                  />
+                )}
+                {isArmsOfferOpen && (
+                  <TawaranPembelianTable
+                    offers={storedArmsOffers}
+                    onAcceptOffer={handleAcceptOffer}
+                    onClose={() => setIsArmsOfferOpen(false)}
+                    currentDate={currentDate || new Date()}
+                    marketType="arms"
+                  />
+                )}
 
-            <div className="flex items-center justify-between mb-2.5 lg:mb-3">
-              <h3 className="text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-widest">Riwayat 90 Hari Terakhir</h3>
-              <div className="inline-flex rounded-lg overflow-hidden border border-[#00FFAA]/30">
-                <button onClick={() => setHistoryFilter(effectiveFilter === "jual" ? "semua" : "jual")} className={`px-3 lg:px-4 py-1 lg:py-1.5 text-[9px] lg:text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "jual" ? "bg-rose-600 text-white" : "bg-[#0A1A1A] text-rose-400 hover:bg-rose-950/40"}`}>Jual</button>
-                <button onClick={() => setHistoryFilter(effectiveFilter === "beli" ? "semua" : "beli")} className={`px-3 lg:px-4 py-1 lg:py-1.5 text-[9px] lg:text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "beli" ? "bg-emerald-600 text-white" : "bg-[#0A1A1A] text-emerald-400 hover:bg-emerald-950/40"}`}>Beli</button>
-              </div>
-            </div>
+                <div className="flex items-center justify-between mb-2.5 lg:mb-3">
+                  <h3 className="text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-widest">Riwayat 90 Hari Terakhir</h3>
+                  <div className="inline-flex rounded-lg overflow-hidden border border-[#00FFAA]/30">
+                    <button onClick={() => setHistoryFilter(effectiveFilter === "jual" ? "semua" : "jual")} className={`px-3 lg:px-4 py-1 lg:py-1.5 text-[9px] lg:text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "jual" ? "bg-rose-600 text-white" : "bg-[#0A1A1A] text-rose-400 hover:bg-rose-950/40"}`}>Jual</button>
+                    <button onClick={() => setHistoryFilter(effectiveFilter === "beli" ? "semua" : "beli")} className={`px-3 lg:px-4 py-1 lg:py-1.5 text-[9px] lg:text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer ${effectiveFilter === "beli" ? "bg-emerald-600 text-white" : "bg-[#0A1A1A] text-emerald-400 hover:bg-emerald-950/40"}`}>Beli</button>
+                  </div>
+                </div>
 
-            <div className="border border-[#00FFAA]/30 rounded-xl overflow-hidden bg-[#0F2424]">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="bg-[#0A1A1A] border-b border-[#00FFAA]/20">
-                    <th className="px-3 lg:px-4 py-2 lg:py-3 text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Tanggal</th>
-                    <th className="px-3 lg:px-4 py-2 lg:py-3 text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Tipe</th>
-                    <th className="px-3 lg:px-4 py-2 lg:py-3 text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Kuantitas</th>
-                    <th className="px-3 lg:px-4 py-2 lg:py-3 text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Biaya</th>
-                    <th className="px-3 lg:px-4 py-2 lg:py-3 text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Negara</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-[#0F2424] divide-y divide-[#00FFAA]/10">
-                  {filteredHistory.length === 0 ? (
-                    <tr><td colSpan={5} className="px-4 py-6 lg:py-8 text-center text-xs text-[#6B8A8A] font-semibold">Belum ada riwayat transaksi.</td></tr>
-                  ) : (
-                    filteredHistory.map((item, idx) => (
-                      <tr key={idx} className="hover:bg-[#00FFAA]/5 transition-colors">
-                        <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-semibold text-[#E0E0E0]">{item.tanggal}</td>
-                        <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-bold uppercase"><span className={item.tipe === "jual" ? "text-rose-400" : "text-emerald-400"}>{item.tipe}</span></td>
-                        <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-semibold text-[#E0E0E0]">{item.kuantitas}</td>
-                        <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-bold text-[#00FFAA]">{item.tipe === "jual" ? "+" : "-"} {item.biaya.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</td>
-                        <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-semibold text-[#E0E0E0]">{item.negara}</td>
+                <div className="border border-[#00FFAA]/30 rounded-xl overflow-hidden bg-[#0F2424]">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="bg-[#0A1A1A] border-b border-[#00FFAA]/20">
+                        <th className="px-3 lg:px-4 py-2 lg:py-3 text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Tanggal</th>
+                        <th className="px-3 lg:px-4 py-2 lg:py-3 text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Tipe</th>
+                        <th className="px-3 lg:px-4 py-2 lg:py-3 text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Kuantitas</th>
+                        <th className="px-3 lg:px-4 py-2 lg:py-3 text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Biaya</th>
+                        <th className="px-3 lg:px-4 py-2 lg:py-3 text-[9px] lg:text-[10px] font-black text-[#00FFAA] uppercase tracking-wider">Negara</th>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                    </thead>
+                    <tbody className="bg-[#0F2424] divide-y divide-[#00FFAA]/10">
+                      {filteredHistory.length === 0 ? (
+                        <tr><td colSpan={5} className="px-4 py-6 lg:py-8 text-center text-xs text-[#6B8A8A] font-semibold">Belum ada riwayat transaksi.</td></tr>
+                      ) : (
+                        filteredHistory.map((item, idx) => (
+                          <tr key={idx} className="hover:bg-[#00FFAA]/5 transition-colors">
+                            <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-semibold text-[#E0E0E0]">{item.tanggal}</td>
+                            <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-bold uppercase"><span className={item.tipe === "jual" ? "text-rose-400" : "text-emerald-400"}>{item.tipe}</span></td>
+                            <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-semibold text-[#E0E0E0]">{item.kuantitas}</td>
+                            <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-bold text-[#00FFAA]">{item.tipe === "jual" ? "+" : "-"} {item.biaya.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</td>
+                            <td className="px-3 lg:px-4 py-2 lg:py-3 text-[11px] lg:text-xs font-semibold text-[#E0E0E0]">{item.negara}</td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </>
             )}
           </div>
@@ -1200,12 +1200,12 @@ export default function PerdaganganModal({
         canBuy={tradeAccess.canBuy}
       />
 
-      <JualModalsMenu 
+      <JualModalsMenu
         isOpen={isJualOpen && tradeAccess.canSell && !isTradeMarketBlocked}
-        onClose={() => { setIsJualOpen(false); setActiveTradePartner(null); }} 
-        countryDetail={countryDetail} 
-        setCountryDetail={setCountryDetail} 
-        onConfirm={(biaya, kuantitas) => addHistoryEntry("jual", biaya, kuantitas)} 
+        onClose={() => { setIsJualOpen(false); setActiveTradePartner(null); }}
+        countryDetail={countryDetail}
+        setCountryDetail={setCountryDetail}
+        onConfirm={(biaya, kuantitas) => addHistoryEntry("jual", biaya, kuantitas)}
         currentDate={currentDate}
         partners={eligiblePartners}
         initialPartnerName={activeTradePartner?.nama_negara}
@@ -1214,9 +1214,9 @@ export default function PerdaganganModal({
         canSell={tradeAccess.canSell}
       />
 
-      <MitraModalsMenu 
-        isOpen={isMitraOpen} 
-        onClose={() => setIsMitraOpen(false)} 
+      <MitraModalsMenu
+        isOpen={isMitraOpen}
+        onClose={() => setIsMitraOpen(false)}
         partners={eligiblePartners}
         onOpenBeli={openBeliModals}
         onOpenJual={openJualModals}

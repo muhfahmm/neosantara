@@ -1,5 +1,5 @@
 // Logic helper for Perjanjian Dagang card in Detail Negara
-import getTradeAgreementsForCountry from '../../../../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
+import getTradeAgreementsForCountry from '../../../../../../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
 
 export type TradeAgreement = {
   no: number;

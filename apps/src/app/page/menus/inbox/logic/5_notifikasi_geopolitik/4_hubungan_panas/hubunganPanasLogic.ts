@@ -1,6 +1,6 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import { COUNTRIES_DATA } from '@/app/page/map_system/map-data';
-import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
+import { getRelationValue } from '../../../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 
 export interface HubunganPanasNotification extends NotificationMessage {
   tradeType: 'hubungan_panas';

@@ -2,10 +2,10 @@ import { SimulationTimeManager } from './timeManager';
 import { clearActiveResolutionsForSession } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { clearActiveSecurityCouncilItems } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { clearReportedInvasionViolations } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
-import { clearExpelledOrganizationCountries } from '@/../../json/database_organisasi_internasional';
+import { clearExpelledOrganizationCountries } from '@/../../json/14_database_organisasi_internasional';
 import { clearAllOrganizationMembershipData } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic';
 import { clearActiveNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
-import { clearAllRelationModifiers } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
+import { clearAllRelationModifiers } from '../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import { clearPendingAiNews, clearStoredAiNews } from '@/app/logic/npc_ai_brain/core/aiNewsBridge';
 
 export interface RestartOptions {
@@ -70,7 +70,7 @@ export function handleGameRestart(options: RestartOptions): void {
                     localStorage.removeItem(key);
                 }
             }
-        } catch (e) {}
+        } catch (e) { }
 
         // Hapus session storage terkait sesi game berjalan
         try {
@@ -79,7 +79,7 @@ export function handleGameRestart(options: RestartOptions): void {
             sessionStorage.removeItem('program_nuklir_modal_open');
             sessionStorage.removeItem('icbm_detail_open');
             sessionStorage.removeItem('perang_nuklir_detail_open');
-        } catch (e) {}
+        } catch (e) { }
 
         window.dispatchEvent(new CustomEvent('daily_reward_reset'));
         clearActiveResolutionsForSession();
@@ -103,17 +103,17 @@ export function handleGameRestart(options: RestartOptions): void {
             window.dispatchEvent(new CustomEvent('reset_penelitian_selection'));
             window.dispatchEvent(new CustomEvent('mission_active_updated', { detail: { cardId: null } }));
             window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { claimableList: [] } }));
-        } catch (e) {}
+        } catch (e) { }
     }
 
     // 2. Reset production data (accumulated production, build dates, and price controls)
     if (options.setCountryDetail) {
         options.setCountryDetail((prev: any) => {
             if (!prev) return prev;
-            
+
             // Create a new object without any accumulated_* or build_date_* fields
             const reset: any = { ...prev };
-            
+
             // Remove all production-related fields and custom price controls
             Object.keys(reset).forEach(key => {
                 if (key.startsWith('accumulated_') || key.startsWith('build_date_') || key.startsWith('last_prod_date_')) {
@@ -123,7 +123,7 @@ export function handleGameRestart(options: RestartOptions): void {
             delete reset.harga;
             delete reset.price_rice;
             delete reset.price_fuel;
-            
+
             console.log('[gameRestart] Production data and custom price controls cleared');
             return reset;
         });

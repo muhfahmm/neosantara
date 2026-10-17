@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react";
 import { X, Loader2, User, ChevronRight, Send, Clock, Check } from "lucide-react";
-import { getOrgMembers } from "@/../../json/database_organisasi_internasional";
+import { getOrgMembers } from "@/../../json/14_database_organisasi_internasional";
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import PermohonanKeanggotaanModal from "../PermohonanKeanggotaanModal";
 import { getApplicationForOrg, isUserJoinedOrg } from "../orgMembershipLogic";

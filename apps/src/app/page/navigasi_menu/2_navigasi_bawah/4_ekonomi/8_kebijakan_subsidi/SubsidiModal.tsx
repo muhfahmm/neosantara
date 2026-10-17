@@ -3,14 +3,14 @@
 import React, { useState, useEffect } from "react";
 import { X, HandHelping, Check } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
-import { 
-  INITIAL_SUBSIDY_ITEMS, 
-  SubsidyItem, 
-  calculateSubsidySummary, 
+import {
+  INITIAL_SUBSIDY_ITEMS,
+  SubsidyItem,
+  calculateSubsidySummary,
   TotalSubsidySummary,
   formatCurrencyCompact,
-  clampSubsidyCost 
-} from "@/../../json/database_kebijakan_subsidi/index";
+  clampSubsidyCost
+} from "../../../../../../../../json/5_database_kebijakan_subsidi/index";
 
 import SemuaSektorTab from "./tab_menu/1_semua_sektor/SemuaSektorTab";
 import EnergiTab from "./tab_menu/2_energi/EnergiTab";
@@ -146,148 +146,145 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
     <>
       <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
-          
+
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-              <HandHelping className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+                <HandHelping className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+              </div>
+              <div>
+                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Alokasi & Kebijakan Subsidi</h2>
+              </div>
             </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Alokasi & Kebijakan Subsidi</h2>
+
+            <div className="flex items-center gap-2 lg:gap-3">
+              <button
+                onClick={onClose}
+                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+              >
+                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+                <X className="h-4 w-4" />
+              </button>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 lg:gap-3">
-            <button 
-              onClick={onClose} 
-              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-            >
-              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
+          {/* TOP STATS SUMMARY BANNER */}
+          <div className="px-4 lg:px-6 py-2 lg:py-3 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-2.5 shrink-0">
+            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
+              <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Total Beban Anggaran Subsidi</p>
+              <p className="text-xs lg:text-sm font-black text-[#00FFAA] mt-0.5">{formatCurrencyCompact(summary.totalCost)}</p>
+            </div>
 
-        {/* TOP STATS SUMMARY BANNER */}
-        <div className="px-4 lg:px-6 py-2 lg:py-3 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-2.5 shrink-0">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
-            <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Total Beban Anggaran Subsidi</p>
-            <p className="text-xs lg:text-sm font-black text-[#00FFAA] mt-0.5">{formatCurrencyCompact(summary.totalCost)}</p>
-          </div>
+            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
+              <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Sektor Aktif / Total</p>
+              <p className="text-xs lg:text-sm font-black text-[#E0E0E0] mt-0.5">{summary.activeCount} dari {summary.totalCount} Sektor</p>
+            </div>
 
-          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
-            <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Sektor Aktif / Total</p>
-            <p className="text-xs lg:text-sm font-black text-[#E0E0E0] mt-0.5">{summary.activeCount} dari {summary.totalCount} Sektor</p>
-          </div>
+            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
+              <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Dukungan Kepuasan Rakyat</p>
+              <p className="text-xs lg:text-sm font-black text-emerald-400 mt-0.5">+{summary.totalApprovalBonus}% Approval</p>
+            </div>
 
-          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
-            <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Dukungan Kepuasan Rakyat</p>
-            <p className="text-xs lg:text-sm font-black text-emerald-400 mt-0.5">+{summary.totalApprovalBonus}% Approval</p>
+            <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
+              <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Dampak Netto Populasi</p>
+              <p className={`text-xs lg:text-sm font-black mt-0.5 ${subsidyMonthlyPopModifier >= 0 ? "text-[#00FFAA]" : "text-rose-400"
+                }`}>
+                {subsidyMonthlyPopModifier >= 0 ? "+" : ""}{subsidyMonthlyPopModifier.toFixed(2)}% / bln
+              </p>
+            </div>
           </div>
 
-          <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
-            <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Dampak Netto Populasi</p>
-            <p className={`text-xs lg:text-sm font-black mt-0.5 ${
-              subsidyMonthlyPopModifier >= 0 ? "text-[#00FFAA]" : "text-rose-400"
-            }`}>
-              {subsidyMonthlyPopModifier >= 0 ? "+" : ""}{subsidyMonthlyPopModifier.toFixed(2)}% / bln
-            </p>
-          </div>
-        </div>
+          {/* FEEDBACK SUCCESS TOAST */}
+          {isSavedSuccess && (
+            <div className="absolute top-24 left-1/2 -translate-x-1/2 z-30 px-6 py-2.5 rounded-xl bg-emerald-500 text-[#0A1A1A] font-black text-xs uppercase tracking-widest shadow-2xl flex items-center gap-2 animate-in fade-in zoom-in-95">
+              <Check className="w-4 h-4" /> Alokasi Subsidi Berhasil Diperbarui!
+            </div>
+          )}
 
-        {/* FEEDBACK SUCCESS TOAST */}
-        {isSavedSuccess && (
-          <div className="absolute top-24 left-1/2 -translate-x-1/2 z-30 px-6 py-2.5 rounded-xl bg-emerald-500 text-[#0A1A1A] font-black text-xs uppercase tracking-widest shadow-2xl flex items-center gap-2 animate-in fade-in zoom-in-95">
-            <Check className="w-4 h-4" /> Alokasi Subsidi Berhasil Diperbarui!
-          </div>
-        )}
+          {/* MAIN BODY WITH SIDEBAR TAB MENU */}
+          <div className="flex-1 flex min-h-0 relative z-10">
 
-        {/* MAIN BODY WITH SIDEBAR TAB MENU */}
-        <div className="flex-1 flex min-h-0 relative z-10">
-          
-          {/* SIDEBAR TABS */}
-          <div className="w-44 lg:w-48 2xl:w-52 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 lg:p-3 flex flex-col gap-1.5 lg:gap-2 overflow-y-auto no-scrollbar shrink-0">
-            {categories.map((cat) => {
-              const activeCountInCat = subsidyItems.filter(
-                (i) => (cat.id === "Semua" || i.category === cat.id) && i.isSubsidized
-              ).length;
-              const totalCountInCat = subsidyItems.filter(
-                (i) => cat.id === "Semua" || i.category === cat.id
-              ).length;
+            {/* SIDEBAR TABS */}
+            <div className="w-44 lg:w-48 2xl:w-52 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 lg:p-3 flex flex-col gap-1.5 lg:gap-2 overflow-y-auto no-scrollbar shrink-0">
+              {categories.map((cat) => {
+                const activeCountInCat = subsidyItems.filter(
+                  (i) => (cat.id === "Semua" || i.category === cat.id) && i.isSubsidized
+                ).length;
+                const totalCountInCat = subsidyItems.filter(
+                  (i) => cat.id === "Semua" || i.category === cat.id
+                ).length;
 
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`flex items-center justify-between w-full p-2 lg:p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
-                    selectedCategory === cat.id
-                      ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                      : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
-                  }`}
-                >
-                  <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{cat.label}</span>
-                  <span className={`text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${
-                    selectedCategory === cat.id ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
-                  }`}>
-                    {activeCountInCat}/{totalCountInCat}
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={`flex items-center justify-between w-full p-2 lg:p-2.5 rounded-xl border text-left transition-all cursor-pointer ${selectedCategory === cat.id
+                        ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
+                        : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
+                      }`}
+                  >
+                    <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{cat.label}</span>
+                    <span className={`text-[9px] lg:text-[10px] font-black px-1.5 py-0.5 rounded-full ${selectedCategory === cat.id ? "bg-[#0A1A1A] text-[#00FFAA]" : "bg-[#0A1A1A] text-[#6B8A8A]"
+                      }`}>
+                      {activeCountInCat}/{totalCountInCat}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* RIGHT CONTENT AREA - SECTOR GRID FROM SEPARATE TAB COMPONENTS */}
+            <div className="flex-1 overflow-y-auto p-4 lg:p-6 2xl:p-8 bg-[#0F2424] no-scrollbar">
+              {selectedCategory === "Semua" && (
+                <SemuaSektorTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
+              )}
+
+              {selectedCategory === "Energi" && (
+                <EnergiTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
+              )}
+
+              {selectedCategory === "Pangan" && (
+                <PanganTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
+              )}
+
+              {selectedCategory === "Pendidikan & Kesehatan" && (
+                <PendidikanKesehatanTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
+              )}
+
+              {selectedCategory === "Transportasi & Perumahan" && (
+                <TransportasiPerumahanTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
+              )}
+
+              {selectedCategory === "UMKM & Ekonomi" && (
+                <UmkmEkonomiTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
+              )}
+
+              {selectedCategory === "Perlindungan Sosial" && (
+                <PerlindunganSosialTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
+              )}
+
+              <div className="mt-6 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-sm font-black uppercase tracking-widest text-[#00FFAA]">
+                    Indeks Kepuasan Rakyat (Subsidi)
                   </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* RIGHT CONTENT AREA - SECTOR GRID FROM SEPARATE TAB COMPONENTS */}
-          <div className="flex-1 overflow-y-auto p-4 lg:p-6 2xl:p-8 bg-[#0F2424] no-scrollbar">
-            {selectedCategory === "Semua" && (
-              <SemuaSektorTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
-            )}
-
-            {selectedCategory === "Energi" && (
-              <EnergiTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
-            )}
-
-            {selectedCategory === "Pangan" && (
-              <PanganTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
-            )}
-
-            {selectedCategory === "Pendidikan & Kesehatan" && (
-              <PendidikanKesehatanTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
-            )}
-
-            {selectedCategory === "Transportasi & Perumahan" && (
-              <TransportasiPerumahanTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
-            )}
-
-            {selectedCategory === "UMKM & Ekonomi" && (
-              <UmkmEkonomiTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
-            )}
-
-            {selectedCategory === "Perlindungan Sosial" && (
-              <PerlindunganSosialTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
-            )}
-
-            <div className="mt-6 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-5">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-sm font-black uppercase tracking-widest text-[#00FFAA]">
-                  Indeks Kepuasan Rakyat (Subsidi)
-                </span>
-                <span className="shrink-0 text-2xl font-black text-amber-400 sm:text-3xl">
-                  {subsidySatisfaction} / 100
-                </span>
-              </div>
-              <div className="mt-3 h-3 w-full overflow-hidden rounded-full border border-[#00FFAA]/20 bg-[#0A1A1A]">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-200"
-                  style={{ width: `${subsidySatisfaction}%` }}
-                />
+                  <span className="shrink-0 text-2xl font-black text-amber-400 sm:text-3xl">
+                    {subsidySatisfaction} / 100
+                  </span>
+                </div>
+                <div className="mt-3 h-3 w-full overflow-hidden rounded-full border border-[#00FFAA]/20 bg-[#0A1A1A]">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-200"
+                    style={{ width: `${subsidySatisfaction}%` }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
+          </div>
         </div>
-      </div>
-    </NotebookModalWrapper>
+      </NotebookModalWrapper>
 
       {/* DETAIL ITEM SUBSIDI MODAL */}
       <DetailSubsidiItemModal

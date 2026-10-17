@@ -23,7 +23,7 @@ import {
 import { getArmadaPowerSummary } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
 import { convertBarakToSoldiers } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/1_barak_logic';
 import { getInfraCapacityDetails } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/infraCapacityHelper';
-import { setRelationModifier } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
+import { setRelationModifier } from '../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 
 interface BeriTentaraModalProps {
   isOpen: boolean;
@@ -362,7 +362,7 @@ export default function BeriTentaraModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
       {/* Modal Container: Ukuran sama persis dengan modal detail negara */}
       <div className="bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
-        
+
         {/* Background Glow */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
 
@@ -463,18 +463,16 @@ export default function BeriTentaraModal({
               <button
                 key={matra}
                 onClick={() => setActiveTab(matra)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer border ${
-                  isActive
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all cursor-pointer border ${isActive
                     ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] shadow-md shadow-[#00FFAA]/20'
                     : 'bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] border-[#00FFAA]/20 hover:border-[#00FFAA]/40'
-                }`}
+                  }`}
               >
                 <Icon className="w-4 h-4" />
                 <span>{label}</span>
                 {matraGiftCount > 0 && (
-                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${
-                    isActive ? 'bg-[#0A1A1A] text-[#00FFAA]' : 'bg-[#00FFAA]/20 text-[#00FFAA]'
-                  }`}>
+                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${isActive ? 'bg-[#0A1A1A] text-[#00FFAA]' : 'bg-[#00FFAA]/20 text-[#00FFAA]'
+                    }`}>
                     {formatNumber(matraGiftCount)}
                   </span>
                 )}
@@ -498,7 +496,7 @@ export default function BeriTentaraModal({
             const userStock = getUnitQuantity(playerCountryDetail, unit);
             const targetStock = getUnitQuantity(targetCountryDetail, unit);
             const infraCap = targetInfraCapacities[unit.infraKey] || { used: 0, total: 0, remaining: 0 };
-            
+
             // Sisa slot efektif pada infrastruktur sekutu
             const currentGiftAmount = giftAmounts[unit.key] || 0;
             const otherAllocatedInSameInfra = (allocatedByInfra[unit.infraKey] || 0) - currentGiftAmount;
@@ -513,7 +511,7 @@ export default function BeriTentaraModal({
                 className="bg-[#0A1A1A] border border-[#00FFAA]/20 hover:border-[#00FFAA]/40 rounded-xl p-4 transition-all"
               >
                 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-                  
+
                   {/* Kolom Info Unit & Perbandingan Pasukan */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">

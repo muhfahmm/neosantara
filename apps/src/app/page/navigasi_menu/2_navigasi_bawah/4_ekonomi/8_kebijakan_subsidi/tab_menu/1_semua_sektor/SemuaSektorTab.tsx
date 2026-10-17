@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { SubsidyItem } from "@/../../json/database_kebijakan_subsidi/index";
+import { SubsidyItem } from "../../../../../../../../../../json/5_database_kebijakan_subsidi/index";
 import SubsidyCardGrid from "../common/SubsidyCardGrid";
 
 interface Props {

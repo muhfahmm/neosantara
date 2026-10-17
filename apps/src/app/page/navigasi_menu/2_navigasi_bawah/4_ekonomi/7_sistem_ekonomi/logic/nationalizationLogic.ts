@@ -1,4 +1,4 @@
-import { replaceRelationSourceModifiers } from "@/../../json/database_hubungan_antar_negara/relationsRegistry";
+import { replaceRelationSourceModifiers } from "../../../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
 
 export const NATIONALIZATION_LEVELS = [
   {

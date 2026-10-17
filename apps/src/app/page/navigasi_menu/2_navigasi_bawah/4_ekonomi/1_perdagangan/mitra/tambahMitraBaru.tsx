@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from 'react';
 import { X, Search, AlertTriangle } from 'lucide-react';
 import { COUNTRIES_DATA } from '../../../../../map_system/map-data';
-import { getEmbassiesForCountry } from "@/../../json/database_kedutaan_besar/embassyRegistry";
+import { getEmbassiesForCountry } from "../../../../../../../../../json/6_database_kedutaan_besar/embassyRegistry";
 
 interface TambahMitraBaruProps {
   isOpen: boolean;
@@ -48,7 +48,7 @@ export default function TambahMitraBaru({
       .filter((a: any) => {
         const norm = String(a.mitra || '').toLowerCase().trim();
         return !removedTradePartners.some((r: string) => String(r || '').toLowerCase().trim() === norm) &&
-               !removedEmbassies.some((r: string) => String(r || '').toLowerCase().trim() === norm);
+          !removedEmbassies.some((r: string) => String(r || '').toLowerCase().trim() === norm);
       })
       .map((a: any) => a.mitra);
 
@@ -167,11 +167,10 @@ export default function TambahMitraBaru({
                           <button
                             key={item.id}
                             onClick={() => handleSelectCountry(item.country, item.continent || 'Internasional')}
-                            className={`p-4 rounded-xl flex items-center gap-3 transition-all cursor-pointer text-left w-full group relative ${
-                              hasEmbassy
+                            className={`p-4 rounded-xl flex items-center gap-3 transition-all cursor-pointer text-left w-full group relative ${hasEmbassy
                                 ? 'bg-[#0A1A1A] hover:bg-[#00FFAA]/15 border-2 border-[#00FFAA] shadow-[0_0_10px_rgba(0,255,170,0.15)]'
                                 : 'bg-[#0A1A1A] hover:bg-[#00FFAA]/5 border border-[#00FFAA]/20 hover:border-[#00FFAA]/50 opacity-80 hover:opacity-100'
-                            }`}
+                              }`}
                           >
                             {item.iso ? (
                               <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 bg-[#0F2424] relative group-hover:scale-105 transition-transform">

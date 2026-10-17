@@ -1,6 +1,6 @@
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
-import { getRelationValue } from "@/../../json/database_hubungan_antar_negara/relationsRegistry";
+import { getRelationValue } from "../../../../../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
 import type { CountryProfile } from "@/../../json/semua_fitur_negara/0_profiles";
 import type { NotificationMessage } from "@/app/page/menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic";
 
@@ -223,20 +223,20 @@ export function normalizeElectionState(
     : nextElectionYear;
   const cohort: "A" | "B" = electionYear % 2 === 0 ? "A" : "B";
   return {
-      ...fallback,
-      ...state,
-      year: electionYear,
-      nextElectionYear,
-      cohort,
-      members: state.members.map(member => ({
-        ...member,
-        termStartYear: Number.isFinite(member.termStartYear) ? member.termStartYear : year - 1,
-      })),
-      nominees: hasScheduledElectionYear && Array.isArray(state.nominees) ? state.nominees : [],
-      scheduleStage: hasScheduledElectionYear && Number.isInteger(state.scheduleStage) ? state.scheduleStage : 0,
-      phase: hasScheduledElectionYear ? state.phase || "nomination" : "nomination",
-      history: Array.isArray(state.history) ? state.history : [],
-      permanentBonuses: state.permanentBonuses || {},
+    ...fallback,
+    ...state,
+    year: electionYear,
+    nextElectionYear,
+    cohort,
+    members: state.members.map(member => ({
+      ...member,
+      termStartYear: Number.isFinite(member.termStartYear) ? member.termStartYear : year - 1,
+    })),
+    nominees: hasScheduledElectionYear && Array.isArray(state.nominees) ? state.nominees : [],
+    scheduleStage: hasScheduledElectionYear && Number.isInteger(state.scheduleStage) ? state.scheduleStage : 0,
+    phase: hasScheduledElectionYear ? state.phase || "nomination" : "nomination",
+    history: Array.isArray(state.history) ? state.history : [],
+    permanentBonuses: state.permanentBonuses || {},
   } as SecurityCouncilElectionState;
 }
 

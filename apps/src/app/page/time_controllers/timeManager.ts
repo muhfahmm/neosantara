@@ -1,5 +1,5 @@
 // detail path: c:\EM\apps\src\app\page\time_controllers\timeManager.ts
-import { setSimulationDate } from "@/../../json/database_hubungan_antar_negara/relationsRegistry";
+import { setSimulationDate } from "../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
 
 export class SimulationTimeManager {
     private currentDate: Date;
@@ -21,7 +21,7 @@ export class SimulationTimeManager {
         this.currentDate = new Date(); // Start with real life date
         this.onDateChangeCallback = onDateChange;
         this.onProgressChangeCallback = onProgress;
-        
+
         // Trigger initial callback to show today's date instantly
         this.triggerCallback();
     }
@@ -30,7 +30,7 @@ export class SimulationTimeManager {
     public getFormattedDate(): string {
         const day = this.currentDate.getDate();
         const monthNames = [
-            "Jan", "Feb", "Mar", "Apr", "Mei", "Jun", 
+            "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
             "Jul", "Agt", "Sep", "Okt", "Nov", "Des"
         ];
         const month = monthNames[this.currentDate.getMonth()];
@@ -131,9 +131,9 @@ export class SimulationTimeManager {
                 const newDate = new Date(this.currentDate);
                 newDate.setDate(newDate.getDate() + 1);
                 this.currentDate = newDate;
-                
+
                 setSimulationDate(this.currentDate);
-                
+
                 this.lastTickTime = now;
                 this.triggerCallback();
             }

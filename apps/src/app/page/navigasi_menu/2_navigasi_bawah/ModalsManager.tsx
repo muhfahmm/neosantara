@@ -1,7 +1,7 @@
 // detail path: c:\EM\apps\src\app\page\navigasi_menu\2_navigasi_bawah\ModalsManager.tsx
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { fetchBuildingMetadata } from '../../../../lib/buildingMetadata';
 import { processDueLoans } from './4_ekonomi/3_peminjaman_hutang/tab_menu/logic/loanRepaymentLogic';
 import { processActiveResearch } from '@/app/page/menus/penelitian/penelitianPageMenu';
@@ -225,6 +225,8 @@ function ModalsManager({
     }
   }, [currentDate, countryDetail, setCountryDetail]);
 
+  const lastEvaluatedDeficitMonthRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (!currentDate || !countryDetail) return;
     // Pastikan metadata sudah selesai dimuat agar rasio pangan & hunian tidak default ke 0 / defisit palsu
@@ -258,16 +260,24 @@ function ModalsManager({
 
       // Jika pertumbuhan populasi positif (surplus / aman), bersihkan notifikasi defisit lama yang sempat masuk inbox
       if (metrics.netDailyChange >= 0) {
+        lastEvaluatedDeficitMonthRef.current = null;
         if (onRemoveNotification && Array.isArray(notifications) && notifications.some(n => n.id?.startsWith(deficitNotifPrefix))) {
           notifications
             .filter(n => n.id?.startsWith(deficitNotifPrefix))
             .forEach(n => onRemoveNotification(n.id));
         }
         if (countryDetail.population_deficit_notification_month) {
-          setCountryDetail(prev => prev ? { ...prev, population_deficit_notification_month: undefined } : prev);
+          setCountryDetail(prev => prev && prev.population_deficit_notification_month ? { ...prev, population_deficit_notification_month: undefined } : prev);
         }
         return;
       }
+
+      // Jika defisit dan sudah diproses untuk bulan ini, jangan panggil setCountryDetail lagi
+      if (lastEvaluatedDeficitMonthRef.current === monthlyKey || countryDetail.population_deficit_notification_month === monthlyKey) {
+        return;
+      }
+
+      lastEvaluatedDeficitMonthRef.current = monthlyKey;
 
       setCountryDetail((previous) => {
         if (!previous || previous.population_deficit_notification_month === monthlyKey) {
@@ -292,7 +302,7 @@ function ModalsManager({
     } catch (error) {
       console.error('Gagal memeriksa defisit populasi untuk notifikasi inbox:', error);
     }
-  }, [currentDate, countryDetail, metadata, selectedCountry?.country, setCountryDetail, notifications, onRemoveNotification]);
+  }, [currentDate, countryDetail?.jumlah_penduduk, countryDetail?.population_deficit_notification_month, metadata, selectedCountry?.country, setCountryDetail, notifications, onRemoveNotification]);
 
   // Ensure active research progress and level completion are processed whenever global date advances
   useEffect(() => {

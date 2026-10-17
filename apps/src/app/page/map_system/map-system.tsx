@@ -126,10 +126,10 @@ import { NotificationMessage, getKepuasanWarningMessage } from '../menus/inbox/l
 import { isNonActionableUpdateNotification } from '../menus/inbox/logic/automaticChangeNotification';
 import { getPeringkatWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/2_peringkat/peringkatLogic';
 import { getKesejahteraanWarningMessage } from '../menus/inbox/logic/1_notifikasi_kepuasan_dan_peringkat/3_kesejahteraan/kesejahteraanLogic';
-import { getTradeAgreementsForCountry } from '../../../../../json/database_mitra_perdagangan/tradeAgreementRegistry';
-import { getEmbassiesForCountry } from '../../../../../json/database_kedutaan_besar/embassyRegistry';
-import { getRelationValue, setNonAggressionPactHistory, setRelationModifier, setRelationSanctionModifiers, setRelationSourceValue, setSimulationDate } from '../../../../../json/database_hubungan_antar_negara/relationsRegistry';
-import type { NonAggressionPactPeriod } from '../../../../../json/database_hubungan_antar_negara/relationsRegistry';
+import { getTradeAgreementsForCountry } from '../../../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
+import { getEmbassiesForCountry } from '../../../../../json/6_database_kedutaan_besar/embassyRegistry';
+import { getRelationValue, setNonAggressionPactHistory, setRelationModifier, setRelationSanctionModifiers, setRelationSourceValue, setSimulationDate } from '../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
+import type { NonAggressionPactPeriod } from '../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import { setEconomicSanctionCounts } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { playerHasEmbassyWith, playerHasEmbassyOrTradePartners } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
 import { areSameWarCountry, getWarCountryIdentity } from '../detail_negara/3_operasi_militer/1_serang_negara/warCountryIdentity';
@@ -228,7 +228,7 @@ import {
     clearExpelledOrganizationCountries,
     expelCountryFromOrganizations,
     expelCountryFromUNOrganizations
-} from '@/../../json/database_organisasi_internasional';
+} from '@/../../json/14_database_organisasi_internasional';
 import { clearAllOrganizationMembershipData } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/3_organisasi_internasional/orgMembershipLogic';
 import {
     PROVINCE_ACTION_EVENT,
@@ -1667,7 +1667,7 @@ export default function MapPage() {
         resolutionViolationAuthorized?: boolean;
         coalitionParticipants?: Array<{ name: string; iso: string }>;
     }>>([]);
-    
+
     const npcWarQueueRunningRef = useRef(false);
 
     useEffect(() => {

@@ -14,7 +14,7 @@ import {
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
-import { getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
+import { getRelationValue } from '../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import { getProvinceReligionOverride } from './1_informasi_umum/provinsi_logic/1_informasi_umum/2_tugaskan_misionaris';
 import { getProvinceIdeologyOverride } from './1_informasi_umum/provinsi_logic/1_informasi_umum/5_tanamkan_ideologi';
 import { getProvinceRebellionChance } from './1_informasi_umum/provinsi_logic/ketegangan_provinsi/1_pemberontakan';
@@ -102,7 +102,7 @@ export function CountryDetailModal({
 
   // Ref untuk melacak pergantian hari khusus di modal
   const prevModalUpdateDateRef = useRef<string | null>(null);
-  
+
   // PERBAIKAN: Ref untuk mencegah fetch ulang data saat modal dibuka/tutup (Data tetap progresif)
   const fetchedRef = useRef<string | null>(null);
   const preserveActiveTabRef = useRef(false);
@@ -269,13 +269,13 @@ export function CountryDetailModal({
       const validMembers = memberDataList.filter(Boolean);
 
       // Ambil data utama dari negara yang sedang dibuka (misal: Pakistan)
-      const primaryData = validMembers.find(m => 
+      const primaryData = validMembers.find(m =>
         normalizeCountryKey(m.country || m.nama_negara || m.name_id || m.name || m.country_slug) ===
-          normalizeCountryKey(
-            Object.keys(countryPaths as Record<string, string>).find(
-              name => normalizeCountryKey(name) === normalizeCountryKey(countryName)
-            ) || countryName
-          )
+        normalizeCountryKey(
+          Object.keys(countryPaths as Record<string, string>).find(
+            name => normalizeCountryKey(name) === normalizeCountryKey(countryName)
+          ) || countryName
+        )
       );
 
       if (!primaryData) {
@@ -554,26 +554,26 @@ export function CountryDetailModal({
   return createPortal(
     <div className={`fixed inset-0 z-[100000000] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent ${isDevelopingAIBuildingTab ? 'pointer-events-auto' : 'pointer-events-none'} ${isActionModalOpen || isDevelopingAIBuildingTab ? '!p-0' : ''}`}>
       <div className={`bg-[#0F2424] border-2 sm:border-3 border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[840px] xl:max-w-[960px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-165px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl ${isDevelopingAIBuildingTab ? '!max-w-none !h-[100dvh] !max-h-none !rounded-none' : ''} ${isActionModalOpen ? 'hidden' : ''}`}>
-        
+
         {/* Background Glow Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
 
         {/* HEADER Modal */}
         <div className="px-6 sm:px-8 py-4 sm:py-5 lg:px-5 lg:py-3 xl:px-8 xl:py-5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
           <div className="flex items-center gap-3 sm:gap-4">
-            
+
             {/* 1. Icon Globe */}
             <div className="p-2 sm:p-2.5 lg:p-2 bg-[#00FFAA]/10 rounded-xl border border-[#00FFAA]/30 shrink-0 flex items-center justify-center">
               <Globe className="h-6 w-6 lg:h-5 lg:w-5 xl:h-6 xl:w-6 text-[#00FFAA]" />
             </div>
-            
+
             {/* 2. Judul & Subjudul */}
             <div>
               {/* Judul Utama */}
               <h2 className="text-xl sm:text-2xl lg:text-xl xl:text-2xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
                 DETAIL NEGARA
               </h2>
-              
+
               <div className="flex items-center gap-2 mt-1">
                 {renderFlagHeader(displayIso, displayCountryName)}
                 {annexedInfo && renderFlagHeader(originalIso, countryName)}
@@ -609,15 +609,14 @@ export function CountryDetailModal({
                 <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">
                   {isPlayerOccupiedProvince ? 'Ketegangan' : 'Hubungan'}
                 </span>
-                <span className={`text-[11px] lg:text-[9px] xl:text-[11px] font-extrabold uppercase ${
-                  isPlayerOccupiedProvince
+                <span className={`text-[11px] lg:text-[9px] xl:text-[11px] font-extrabold uppercase ${isPlayerOccupiedProvince
                     ? 'text-emerald-400'
                     : relationValue >= 75
                       ? 'text-emerald-400'
                       : relationValue >= 50
                         ? 'text-[#00FFAA]'
                         : 'text-rose-400'
-                }`}>
+                  }`}>
                   {isPlayerOccupiedProvince
                     ? `${provinceTensionValue} · ${provinceTensionStatus}`
                     : relationValue}
@@ -744,40 +743,36 @@ export function CountryDetailModal({
         {/* BODY CONTENT */}
         <div className="flex-1 min-h-0 overflow-y-auto p-6 sm:p-8 lg:p-4 xl:p-8 bg-[#0F2424] relative z-10 no-scrollbar">
           <div className={`${isDevelopingAIBuildingTab ? 'w-full max-w-none' : 'max-w-4xl lg:max-w-[780px] xl:max-w-4xl mx-auto'}`}>
-            
+
             {/* Menu 3 Tab Navigasi */}
             <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex mb-6 lg:mb-4 shadow-sm flex-wrap gap-1">
               <button
                 onClick={() => setActiveTab("informasi")}
-                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
-                  activeTab === "informasi" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
-                }`}
+                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${activeTab === "informasi" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
+                  }`}
               >
                 <Globe className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Informasi Umum
               </button>
               {!isPlayerOccupiedProvince && (
                 <button
                   onClick={() => setActiveTab("geopolitik")}
-                  className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
-                    activeTab === "geopolitik" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
-                  }`}
+                  className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${activeTab === "geopolitik" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
+                    }`}
                 >
                   <Landmark className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Geopolitik
                 </button>
               )}
               <button
                 onClick={() => setActiveTab("militer")}
-                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
-                  activeTab === "militer" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
-                }`}
+                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${activeTab === "militer" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
+                  }`}
               >
                 <Shield className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Operasi Militer
               </button>
               <button
                 onClick={() => setActiveTab("developing_ai_building")}
-                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${
-                  activeTab === "developing_ai_building" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
-                }`}
+                className={`px-5 py-2.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2.5 rounded-lg text-xs lg:text-[10px] xl:text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 ${activeTab === "developing_ai_building" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-md shadow-[#00FFAA]/20" : "text-[#00FFAA]/60 hover:text-[#00FFAA]"
+                  }`}
               >
                 <Hammer className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4" /> Progress Pembangunan
               </button>

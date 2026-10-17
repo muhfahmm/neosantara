@@ -1,14 +1,14 @@
 "use client";
 import React, { useEffect, useRef, useState } from 'react';
-import { 
-  Building2, 
-  ShieldOff, 
-  ShieldCheck, 
-  Handshake, 
-  FlaskConical, 
-  Sword, 
-  Phone, 
-  Ban 
+import {
+  Building2,
+  ShieldOff,
+  ShieldCheck,
+  Handshake,
+  FlaskConical,
+  Sword,
+  Phone,
+  Ban
 } from 'lucide-react';
 // (useState moved into React import above)
 import { getEmbassyButtonLabel, getEmbassyButtonClass } from './1_kedutaan_besar/logic/kedutaanBesarLogic';
@@ -28,8 +28,8 @@ import KirimPasukanModal from './6_kirim_pasukan/kirimPasukanModals';
 import PanggilSekutuModal from './7_panggil_sekutu/panggilSekutuModals';
 import BerikanSanksiModal from './8_berikan_sanksi/berikanSanksiModals';
 import ProvinsiInformasiUmum from './provinsi_logic/ProvinsiInformasiUmum';
-import type { NonAggressionPactPeriod } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
-import { addRelationSanctionModifier, getRelationValue } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
+import type { NonAggressionPactPeriod } from '../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
+import { addRelationSanctionModifier, getRelationValue } from '../../../../../../json/4_database_hubungan_antar_negara/relationsRegistry';
 import {
   addEconomicSanction,
   removeEconomicSanctions,
@@ -75,8 +75,8 @@ interface InformasiUmumProps {
 // Komponen tombol aksi
 const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelClass, disabled, keepOpacity, title }: { icon: any, label: string, onClick?: () => void, className?: string, iconClass?: string, labelClass?: string, disabled?: boolean, keepOpacity?: boolean, title?: string }) => {
   const base = `${className ?? 'bg-[#0A1A1A] border border-[#00FFAA]/20'} w-full min-w-0 rounded-xl p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-3 lg:gap-2 xl:gap-3 transition-all group h-32 lg:h-24 xl:h-32`;
-  const interactive = disabled 
-    ? (keepOpacity ? 'cursor-not-allowed' : 'opacity-40 cursor-not-allowed pointer-events-none') 
+  const interactive = disabled
+    ? (keepOpacity ? 'cursor-not-allowed' : 'opacity-40 cursor-not-allowed pointer-events-none')
     : 'hover:shadow-md hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10 cursor-pointer';
   return (
     <button
@@ -433,7 +433,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         />
 
       ) : <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-4 lg:gap-3 xl:gap-4 pt-6 lg:pt-4 xl:pt-6">
-        
+
         {/* Tombol Kedutaan dengan Badge Tanggal Selesai */}
         {!isAnnexedTerritory && <div className="relative min-w-0">
           {isEmbassyBuilding && embassyEndDate && (
@@ -441,30 +441,30 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
               {formatBadgeDate(embassyEndDate)}
             </div>
           )}
-          <ActionButton 
-            icon={Building2} 
+          <ActionButton
+            icon={Building2}
             label={
-              isEmbassyBuilding 
-                ? 'Dalam Pembangunan' 
-                : embassyActive 
-                  ? 'Hancurkan Kedutaan' 
+              isEmbassyBuilding
+                ? 'Dalam Pembangunan'
+                : embassyActive
+                  ? 'Hancurkan Kedutaan'
                   : 'Bangun Kedutaan'
-            } 
-            onClick={handleEmbassyClick} 
+            }
+            onClick={handleEmbassyClick}
             disabled={isEmbassyBuilding}
             keepOpacity={isEmbassyBuilding}
             className={
               isEmbassyBuilding
                 ? inProgressBorderClass
-                : embassyActive 
-                  ? modernGreenBorderClass 
+                : embassyActive
+                  ? modernGreenBorderClass
                   : embassyClass
-            } 
+            }
             iconClass={isEmbassyBuilding ? 'text-amber-300' : embassyActive ? 'text-[#00FFAA]' : embassyIconClass}
             labelClass={isEmbassyBuilding ? 'text-amber-300' : embassyActive ? 'text-[#00FFAA]' : embassyLabelClass}
           />
         </div>}
-        
+
         <div className="relative min-w-0">
           {isPactRatifying && pactEndDate && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{formatBadgeDate(pactEndDate)}</div>}
           <ActionButton icon={ShieldOff} label={isPactRatifying ? 'Dalam Ratifikasi' : paktaIsActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => { paktaIsActive ? setIsDestroyPaktaOpen(true) : setIsPaktaModalOpen(true); }} disabled={!hasUsableEmbassy || isPactRatifying} keepOpacity={isPactRatifying} className={isPactRatifying ? inProgressBorderClass : paktaIsActive ? modernGreenBorderClass : undefined} iconClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-[#00FFAA]' : undefined} />
@@ -473,7 +473,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           {isAllianceRatifying && ratificationDate(allianceRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(allianceRatification)}</div>}
           <ActionButton icon={ShieldCheck} label={isAllianceRatifying ? 'Dalam Ratifikasi' : aliansiIsActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => { aliansiIsActive ? setIsDestroyAliansiOpen(true) : setIsAliansiModalOpen(true); }} disabled={!hasUsableEmbassy || isAllianceRatifying} keepOpacity={isAllianceRatifying} className={isAllianceRatifying ? inProgressBorderClass : aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-[#00FFAA]' : undefined} />
         </div>
-        
+
         {/* PERBAIKAN: Tombol Perjanjian Dagang diubah menggunakan modernGreenBorderClass yang sama */}
         <div className="relative min-w-0">
           {isTradeRatifying && ratificationDate(tradeRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(tradeRatification)}</div>}
@@ -495,7 +495,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             labelClass={isTradeRatifying ? 'text-amber-300' : tradeIsActive ? 'text-[#00FFAA]' : tradeLabelClass}
           />
         </div>
-        
+
         <div className="relative min-w-0">
           {isResearchRatifying && ratificationDate(researchRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(researchRatification)}</div>}
           <ActionButton icon={FlaskConical} label={isResearchRatifying ? 'Dalam Ratifikasi' : kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => { kontrakIsActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true); }} disabled={!hasUsableEmbassy || isResearchRatifying} keepOpacity={isResearchRatifying} className={isResearchRatifying ? inProgressBorderClass : kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
@@ -631,7 +631,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
           const baseDate = currentDate ? new Date(currentDate) : new Date();
           const endDateObj = new Date(baseDate);
           endDateObj.setDate(endDateObj.getDate() + effectiveDays);
-          
+
           const endYear = endDateObj.getFullYear();
           const endMonth = String(endDateObj.getMonth() + 1).padStart(2, '0');
           const endDay = String(endDateObj.getDate()).padStart(2, '0');

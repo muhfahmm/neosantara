@@ -17,7 +17,7 @@
  * - Berjalan terintegrasi dalam tick harian yang sudah ada, 0 overhead thread/timer terpisah.
  */
 
-import { INITIAL_SUBSIDY_ITEMS } from "@/../../json/database_kebijakan_subsidi/index";
+import { INITIAL_SUBSIDY_ITEMS } from "../../../../../../json/5_database_kebijakan_subsidi/index";
 
 export interface DemographicAdjustmentResult {
   triggered: boolean;

@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { setBaseRelationData, type BaseRelationRow } from '@/../../json/database_hubungan_antar_negara/relationsRegistry';
-import { setEmbassyData, type EmbassyDataRow } from '@/../../json/database_kedutaan_besar/embassyRegistry';
-import { setTradeAgreementData, type TradeAgreementDataRow } from '@/../../json/database_mitra_perdagangan/tradeAgreementRegistry';
+import { setBaseRelationData, type BaseRelationRow } from '../../../json/4_database_hubungan_antar_negara/relationsRegistry';
+import { setEmbassyData, type EmbassyDataRow } from '../../../json/6_database_kedutaan_besar/embassyRegistry';
+import { setTradeAgreementData, type TradeAgreementDataRow } from '../../../json/9_database_mitra_perdagangan/tradeAgreementRegistry';
 import { setBuildingMetadata, type BuildingMetadata } from '@/lib/buildingMetadataRegistry';
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

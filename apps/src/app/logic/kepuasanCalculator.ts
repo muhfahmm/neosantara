@@ -25,7 +25,7 @@ import {
 import {
   INITIAL_SUBSIDY_ITEMS,
   calculateSubsidySummary,
-} from "@/../../json/database_kebijakan_subsidi/index";
+} from "../../../../json/5_database_kebijakan_subsidi/index";
 import { applyTotalHousingCapacityBonus } from "@/app/page/bonus_logic";
 import { getCorruptionMetrics } from "@/app/page/navigasi_menu/2_navigasi_bawah/9_kementrian/1_pemberantasan_korupsi/logic/corruptionLogic";
 
@@ -534,12 +534,12 @@ export function calculateSubsidySatisfaction(countryDetail: any): number {
   const items = Array.isArray(countryDetail)
     ? countryDetail
     : INITIAL_SUBSIDY_ITEMS.map((item) => {
-        const savedStates = countryDetail?.subsidy_states as Record<string, boolean> | undefined;
-        return {
-          ...item,
-          isSubsidized: savedStates?.[item.id] ?? item.isSubsidized,
-        };
-      });
+      const savedStates = countryDetail?.subsidy_states as Record<string, boolean> | undefined;
+      return {
+        ...item,
+        isSubsidized: savedStates?.[item.id] ?? item.isSubsidized,
+      };
+    });
   const summary = calculateSubsidySummary(items);
   const maximumApprovalBonus = INITIAL_SUBSIDY_ITEMS.reduce(
     (total, item) => total + item.approvalImpact,

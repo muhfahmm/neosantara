@@ -1,5 +1,5 @@
 import { getDaysElapsed, formatDate } from "@/app/logic/production_logic";
-import { clearExpelledOrganizationCountries, ORGANIZATION_MEMBERSHIP_UPDATED_EVENT } from "@/../../json/database_organisasi_internasional/organizationMembers";
+import { clearExpelledOrganizationCountries, ORGANIZATION_MEMBERSHIP_UPDATED_EVENT } from "@/../../json/14_database_organisasi_internasional/organizationMembers";
 
 export interface OrgApplication {
   orgName: string;

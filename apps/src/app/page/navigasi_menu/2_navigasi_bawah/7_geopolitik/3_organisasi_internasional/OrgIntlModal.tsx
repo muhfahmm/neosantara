@@ -9,7 +9,7 @@ import OrgIntlInfoModal from "./OrgIntlInfoModal";
 import {
   getOrgMembers,
   ORGANIZATION_MEMBERSHIP_UPDATED_EVENT
-} from "@/../../json/database_organisasi_internasional";
+} from "@/../../json/14_database_organisasi_internasional";
 
 interface ModalProps {
   isOpen: boolean;

@@ -3,7 +3,7 @@ import { getActiveSectorImpacts, getCorruptionMetrics } from '@/app/page/navigas
 import { calculateGoldMiningDailyProduction } from './goldIncome';
 import { getGoldStateProfitSharePercent } from '@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/7_sistem_ekonomi/logic/nationalizationLogic';
 import { KEMENTERIAN, KEAMANAN, LAYANAN, Department, getDailyMinistryCost } from './departments';
-import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "@/../../json/database_kebijakan_subsidi/index";
+import { INITIAL_SUBSIDY_ITEMS, calculateSubsidySummary } from "../../../../../json/5_database_kebijakan_subsidi/index";
 import { applyOrthodoxPersonalIncomeTaxRevenueBonus } from '@/app/page/bonus_logic/agama_bonus_logic/kristen';
 import { applyBuddhaEnvironmentalTaxRevenueBonus } from '@/app/page/bonus_logic/agama_bonus_logic/buddha';
 import { applyDemocracyTaxRevenueBonus } from '@/app/page/bonus_logic/ideologi_bonus_logic/demokrasi';

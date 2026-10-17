@@ -1,4 +1,4 @@
-import { INITIAL_SUBSIDY_ITEMS } from '@/../../json/database_kebijakan_subsidi/index';
+import { INITIAL_SUBSIDY_ITEMS } from '../../../../../json/5_database_kebijakan_subsidi/index';
 import {
   calculateEconomicPolicyAverage,
   getNationalizationLevel,
