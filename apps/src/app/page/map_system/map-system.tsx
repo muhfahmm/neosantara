@@ -310,6 +310,7 @@ const EMPTY_ANNEXED_COUNTRIES: Record<string, unknown> = {};
 const MapCanvasView = memo(function MapCanvasView({
     containerRef,
     interactionDisabled,
+    isSelectingTarget,
     onClick,
     onPointerDown,
     onPointerMove,
@@ -319,6 +320,7 @@ const MapCanvasView = memo(function MapCanvasView({
 }: {
     containerRef: React.RefObject<HTMLDivElement | null>;
     interactionDisabled: boolean;
+    isSelectingTarget?: boolean;
     onClick: (event: React.MouseEvent<HTMLCanvasElement>) => void;
     onPointerDown: (event: React.PointerEvent<HTMLCanvasElement>) => void;
     onPointerMove: (event: React.PointerEvent<HTMLCanvasElement>) => void;
@@ -326,11 +328,29 @@ const MapCanvasView = memo(function MapCanvasView({
     onPointerLeave: () => void;
     onWheel: () => void;
 }) {
+    // Custom target reticle cursor SVG encoded
+    const targetCursorSvg = encodeURIComponent(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="14" fill="none" stroke="#FF4D4D" stroke-width="2.5" opacity="0.9"/>
+            <circle cx="18" cy="18" r="6" fill="none" stroke="#FF4D4D" stroke-width="2" opacity="0.95"/>
+            <circle cx="18" cy="18" r="2" fill="#FF4D4D"/>
+            <line x1="18" y1="0" x2="18" y2="8" stroke="#FF4D4D" stroke-width="2.5"/>
+            <line x1="18" y1="28" x2="18" y2="36" stroke="#FF4D4D" stroke-width="2.5"/>
+            <line x1="0" y1="18" x2="8" y2="18" stroke="#FF4D4D" stroke-width="2.5"/>
+            <line x1="28" y1="18" x2="36" y2="18" stroke="#FF4D4D" stroke-width="2.5"/>
+        </svg>`
+    );
+    const targetCursorStyle = `url("data:image/svg+xml,${targetCursorSvg}") 18 18, crosshair`;
+
     return (
-        <div ref={containerRef} className={`fixed top-20 inset-x-0 bottom-0 z-0 ${interactionDisabled ? 'pointer-events-none' : ''}`}>
+        <div 
+            ref={containerRef} 
+            className={`fixed top-20 inset-x-0 bottom-0 z-0 ${interactionDisabled && !isSelectingTarget ? 'pointer-events-none' : ''}`}
+        >
             <canvas
                 id="map-canvas"
-                className="w-full h-full block cursor-grab"
+                style={isSelectingTarget ? { cursor: targetCursorStyle } : undefined}
+                className={`w-full h-full block ${isSelectingTarget ? '' : 'cursor-grab'}`}
                 onClick={onClick}
                 onPointerDown={onPointerDown}
                 onPointerMove={onPointerMove}
@@ -1611,6 +1631,50 @@ export default function MapPage() {
             window.removeEventListener('trigger_player_attack', handlePlayerAttack);
         };
     }, [currentDate, countryDetail]);
+
+    // ICBM Target Selection Mode & Efek Keclap Putih
+    const [isSelectingIcbmTarget, setIsSelectingIcbmTarget] = useState(false);
+    const [icbmFlashEffect, setIcbmFlashEffect] = useState<{
+        x: number;
+        y: number;
+        visible: boolean;
+        targetName?: string;
+    } | null>(null);
+
+    useEffect(() => {
+        const handleStartSelection = (event: any) => {
+            setIsSelectingIcbmTarget(Boolean(event.detail?.active));
+        };
+
+        const handleExplosionFlash = (event: any) => {
+            const detail = event.detail;
+            if (detail) {
+                setIcbmFlashEffect({
+                    x: detail.x,
+                    y: detail.y,
+                    visible: true,
+                    targetName: detail.targetName,
+                });
+
+                // Efek kilatan keclap putih berlangsung cepat lalu memudar
+                setTimeout(() => {
+                    setIcbmFlashEffect(prev => (prev ? { ...prev, visible: false } : null));
+                }, 1200);
+
+                setTimeout(() => {
+                    setIcbmFlashEffect(null);
+                }, 2000);
+            }
+        };
+
+        window.addEventListener('start_icbm_target_selection', handleStartSelection);
+        window.addEventListener('trigger_icbm_explosion_flash', handleExplosionFlash);
+
+        return () => {
+            window.removeEventListener('start_icbm_target_selection', handleStartSelection);
+            window.removeEventListener('trigger_icbm_explosion_flash', handleExplosionFlash);
+        };
+    }, []);
 
     const [penelitianModalOpen, setPenelitianModalOpen] = useState(false);
     const [missionModalOpen, setMissionModalOpen] = useState(false);
@@ -3273,15 +3337,17 @@ export default function MapPage() {
         "Kementerian"
     ];
     const isMapInteractionDisabled =
-        isSaveModalOpen ||
-        isPresidentMenuOpen ||
-        isRestartConfirmOpen ||
-        countryDetailModalOpen ||
-        playerDetailModalOpen ||
-        inboxModalOpen ||
-        giftModalOpen ||
-        newsModalOpen ||
-        !nonModalMenus.includes(activeMenu);
+        !isSelectingIcbmTarget && (
+            isSaveModalOpen ||
+            isPresidentMenuOpen ||
+            isRestartConfirmOpen ||
+            countryDetailModalOpen ||
+            playerDetailModalOpen ||
+            inboxModalOpen ||
+            giftModalOpen ||
+            newsModalOpen ||
+            !nonModalMenus.includes(activeMenu)
+        );
 
     const dateTextRef = useRef<HTMLSpanElement | null>(null);
     const progressBarRef = useRef<HTMLDivElement | null>(null);
@@ -5006,10 +5072,11 @@ export default function MapPage() {
         initMap();
     }, []);
 
-    const mapClickContextRef = useRef({ interactionDisabled: false, playerCountryName: '' });
+    const mapClickContextRef = useRef({ interactionDisabled: false, playerCountryName: '', isSelectingIcbmTarget: false });
     mapClickContextRef.current = {
         interactionDisabled: isMapInteractionDisabled,
         playerCountryName: selectedCountry?.country || countryDetail?.country || countryDetail?.nama_negara || '',
+        isSelectingIcbmTarget,
     };
 
     const handleCanvasCountryClick = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -5025,6 +5092,30 @@ export default function MapPage() {
         const rect = canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
+
+        // JIKA SEDANG DALAM MODE PEMILIHAN TEMPAT ICBM:
+        if (mapClickContextRef.current.isSelectingIcbmTarget) {
+            try {
+                const wasmModule = wasmModuleRef.current;
+                const clickedCountry = wasmModule?.get_country_at_on_map?.(x, y);
+                const countryName = clickedCountry?.country || clickedCountry?.name || clickedCountry?.country_name || "Perairan Samudra";
+
+                // Kirim event pemilihan target ICBM ke modal
+                window.dispatchEvent(
+                    new CustomEvent('icbm_target_selected', {
+                        detail: {
+                            locationName: countryName,
+                            x,
+                            y,
+                        },
+                    })
+                );
+                setIsSelectingIcbmTarget(false);
+                return;
+            } catch (err) {
+                console.error("Error choosing ICBM target:", err);
+            }
+        }
 
         try {
             const wasmModule = wasmModuleRef.current;
@@ -5957,6 +6048,7 @@ export default function MapPage() {
             <MapCanvasView
                 containerRef={containerRef}
                 interactionDisabled={isMapInteractionDisabled}
+                isSelectingTarget={isSelectingIcbmTarget}
                 onClick={handleCanvasCountryClick}
                 onPointerDown={handleCanvasPointerDown}
                 onPointerMove={handleCanvasPointerMove}
@@ -5964,6 +6056,46 @@ export default function MapPage() {
                 onPointerLeave={handleCanvasPointerLeave}
                 onWheel={handleCanvasWheel}
             />
+
+            {/* Efek Keclap Putih Uji Coba ICBM di Koordinat Sasaran */}
+            {icbmFlashEffect && (
+                <div className="fixed top-20 inset-x-0 bottom-0 pointer-events-none z-30 overflow-hidden">
+                    {/* Flash cahaya putih terang global sekilas */}
+                    <div
+                        className={`absolute inset-0 bg-white transition-opacity duration-700 ${
+                            icbmFlashEffect.visible ? 'opacity-85' : 'opacity-0'
+                        }`}
+                    />
+
+                    {/* Titik Ledakan Keclap Putih Fokus di Koordinat Target */}
+                    <div
+                        className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                        style={{
+                            left: `${icbmFlashEffect.x}px`,
+                            top: `${icbmFlashEffect.y}px`,
+                        }}
+                    >
+                        {/* Lingkaran ledakan putih berkilau */}
+                        <div
+                            className={`rounded-full bg-white shadow-[0_0_100px_40px_rgba(255,255,255,0.95)] transition-all duration-1000 ${
+                                icbmFlashEffect.visible ? 'w-48 h-48 opacity-100 scale-125' : 'w-72 h-72 opacity-0 scale-150'
+                            }`}
+                        />
+                        {/* Gelombang kejut ring putih */}
+                        <div
+                            className={`absolute inset-0 rounded-full border-4 border-white shadow-[0_0_50px_#ffffff] transition-all duration-1000 ${
+                                icbmFlashEffect.visible ? 'scale-150 opacity-100' : 'scale-[3.5] opacity-0'
+                            }`}
+                        />
+                        {/* Label lokasi target */}
+                        {icbmFlashEffect.targetName && (
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-10 whitespace-nowrap bg-black/80 border border-white/60 text-white font-black text-xs px-3 py-1 rounded-full shadow-lg tracking-wider uppercase animate-bounce">
+                                💥 Titik Dampak: {icbmFlashEffect.targetName}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
 
             <DiplomacyTracking />
 

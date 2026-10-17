@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { X, Shield, Atom, Rocket, Bomb, Clock, Target, Lock, Check, Globe } from "lucide-react";
+import { X, Shield, Atom, Rocket, Bomb, Clock, Target, Lock, Check, Globe, Flame } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { fetchBuildingMetadata } from "@/lib/buildingMetadata";
 import { calculateProductionIncrement, formatDate, getDaysElapsed } from "@/app/logic/production_logic";
@@ -8,6 +8,8 @@ import ProgramNuklirModals from "./modals_menu/1_program_nuklir/programNuklirMod
 import IcbmDetailModal from "./modals_menu/2_ICBM/IcbmDetailModal";
 import IcbmBuildStatusModal from "./modals_menu/2_ICBM/IcbmBuildStatusModal";
 import PerangNuklirDetailModal from "./modals_menu/3_perang_nuklir/PerangNuklirDetailModal";
+import StatusNuklirIcbmDuniaModal from "./modals_menu/4_status_nuklir_icbm_dunia/StatusNuklirIcbmDuniaModal";
+import UjicobaIcbmModal from "./modals_menu/5_ujicoba_icbm/UjicobaIcbmModal";
 import { generateProgramNuklirSelesaiNotification } from "@/app/page/menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic";
 
 interface ModalProps {
@@ -210,7 +212,9 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
   const [isIcbmDetailOpen, setIsIcbmDetailOpen] = useState(false);
   const [isPerangNuklirDetailOpen, setIsPerangNuklirDetailOpen] = useState(false);
   const [perangNuklirInitialTab, setPerangNuklirInitialTab] = useState<'ranking' | 'icbm_owners'>('ranking');
+  const [isStatusNuklirDuniaOpen, setIsStatusNuklirDuniaOpen] = useState(false);
   const [isIcbmBuildStatusOpen, setIsIcbmBuildStatusOpen] = useState(false);
+  const [isUjicobaIcbmOpen, setIsUjicobaIcbmOpen] = useState(false);
 
   // Bersihkan lingering session flag sub-menu ICBM agar selalu berada di menu awal
   useEffect(() => {
@@ -257,7 +261,6 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
       bg: "bg-[#00FFAA]/10",
       isUnlocker: false,
       isAlwaysUnlocked: true,
-      description: "Intelijen global negara pemilik program nuklir & rudal ICBM."
     }
   ];
 
@@ -282,16 +285,16 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
     }
 
     if (option.id === 4) {
-      setPerangNuklirInitialTab('icbm_owners');
-      setIsPerangNuklirDetailOpen(true);
+      setIsStatusNuklirDuniaOpen(true);
       return;
     }
   };
 
   return (
     <>
-      <NotebookModalWrapper onClose={onClose}>
-        <div className="flex flex-col h-full overflow-hidden">
+      {!isUjicobaIcbmOpen && (
+        <NotebookModalWrapper onClose={onClose}>
+          <div className="flex flex-col h-full overflow-hidden">
           
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
@@ -436,12 +439,6 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
                     }`}>
                       {isUnlockerCardActive ? "Program Aktif!" : option.title}
                     </span>
-
-                    {option.isAlwaysUnlocked && (
-                      <p className="text-[10px] leading-relaxed text-[#6B8A8A] mt-0.5">
-                        {option.description || "Akses langsung intelijen kekuatan nuklir & rudal ICBM dunia."}
-                      </p>
-                    )}
                     
                     {(isLockedCard || isUnlockerBuilding) && (
                       <p className="text-[10px] leading-relaxed text-[#6B8A8A]">
@@ -457,10 +454,60 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
               })}
             </div>
 
+            {/* TOMBOL UJI COBA ICBM DI BAWAH 4 CARD */}
+            <div className="pt-2">
+              <button
+                onClick={() => setIsUjicobaIcbmOpen(true)}
+                disabled={!isNuclearProgramActive || totalReadyIcbm <= 0}
+                className={`w-full group relative overflow-hidden rounded-2xl border p-4 sm:p-5 flex items-center justify-between transition-all duration-300 shadow-md ${
+                  !isNuclearProgramActive || totalReadyIcbm <= 0
+                    ? 'bg-[#0A1A1A] border-[#00FFAA]/10 opacity-60 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-[#0F2424] via-[#0A1A1A] to-[#0F2424] border-rose-500/40 hover:border-rose-400 hover:shadow-rose-500/10 cursor-pointer active:scale-[0.99]'
+                }`}
+              >
+                <div className="flex items-center gap-3.5 sm:gap-4">
+                  <div className={`p-3 sm:p-3.5 rounded-xl border flex items-center justify-center transition-transform duration-200 ${
+                    !isNuclearProgramActive || totalReadyIcbm <= 0
+                      ? 'bg-[#0A1A1A] border-[#6B8A8A]/30 text-[#6B8A8A]'
+                      : 'bg-rose-500/10 border-rose-500/40 text-rose-400 group-hover:scale-105 group-hover:bg-rose-500/20'
+                  }`}>
+                    <Flame className="w-6 h-6 sm:w-7 sm:h-7 animate-pulse" />
+                  </div>
+                  <div className="text-left">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-sm sm:text-base font-black uppercase tracking-wider ${
+                        !isNuclearProgramActive || totalReadyIcbm <= 0 ? 'text-[#6B8A8A]' : 'text-rose-400 group-hover:text-rose-300'
+                      }`}>
+                        Uji Coba ICBM
+                      </span>
+                      {isNuclearProgramActive && totalReadyIcbm > 0 && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                          Siap Uji
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-[#6B8A8A] font-medium mt-0.5">
+                      {!isNuclearProgramActive 
+                        ? "Terkunci: Memerlukan Program Nuklir Aktif" 
+                        : totalReadyIcbm <= 0 
+                        ? "Tidak ada rudal ICBM yang siap diluncurkan" 
+                        : `Lakukan uji coba balistik samudra (Sisa rudal: ${totalReadyIcbm} unit)`}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-rose-500/30 bg-[#0A1A1A] text-xs font-bold text-rose-400 group-hover:border-rose-400">
+                  <span>Protokol Luncur</span>
+                  <Rocket className="w-3.5 h-3.5 text-rose-400" />
+                </div>
+              </button>
+            </div>
+
           </div>
         </div>
         </div>
       </NotebookModalWrapper>
+      )}
 
       <ProgramNuklirModals 
         isOpen={isProgramNuklirModalOpen}
@@ -503,6 +550,23 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
         onAction={(target) => {
           alert(`Deklarasi perang nuklir terhadap ${target.countryName}! Konsekuensi global tak terbayangkan telah dimulai.`);
         }}
+      />
+
+      <StatusNuklirIcbmDuniaModal
+        isOpen={isStatusNuklirDuniaOpen}
+        onClose={() => setIsStatusNuklirDuniaOpen(false)}
+        countryDetail={countryDetail}
+        currentDate={safeCurrentDate}
+        prefetchedAllCountries={prefetchedAllCountries}
+      />
+
+      <UjicobaIcbmModal
+        isOpen={isUjicobaIcbmOpen}
+        onClose={() => setIsUjicobaIcbmOpen(false)}
+        currentDate={safeCurrentDate}
+        countryDetail={countryDetail}
+        setCountryDetail={setCountryDetail}
+        totalReadyIcbm={totalReadyIcbm}
       />
     </>
   );
