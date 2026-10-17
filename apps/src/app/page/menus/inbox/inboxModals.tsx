@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
-import { Inbox, X, Trash2 } from 'lucide-react';
+import { Inbox, X, Trash2, Clock, CheckCircle2, AlertTriangle, ShieldAlert, ChevronRight, User } from 'lucide-react';
+import { getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import { NotificationMessage } from './logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 import KepuasanNotification from './logic/1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanNotification';
 import PeringkatNotification from './logic/1_notifikasi_kepuasan_dan_peringkat/2_peringkat/peringkatNotification';
@@ -69,6 +70,7 @@ export default function TopLeftIcon({
   const [mounted, setMounted] = useState(false);
   const [toastNotification, setToastNotification] = useState<NotificationMessage | null>(null);
   const [showToast, setShowToast] = useState(false);
+  const [selectedNotificationId, setSelectedNotificationId] = useState<string | null>(null);
   const dismissedToastIdRef = useRef<string | null>(null);
   const visibleNotifications = useMemo(() => {
     const seen = new Set<string>();
@@ -80,18 +82,35 @@ export default function TopLeftIcon({
     });
   }, [notifications]);
   const unreadCount = visibleNotifications.filter(n => !n.isRead).length;
-  const orderedNotifications = [...visibleNotifications].sort((first, second) => {
-    const firstArrivalDate = first.diplomacyArrivalDate;
-    const secondArrivalDate = second.diplomacyArrivalDate;
-    if (firstArrivalDate && secondArrivalDate) {
-      const arrivalDateOrder = firstArrivalDate.localeCompare(secondArrivalDate);
-      if (arrivalDateOrder !== 0) return arrivalDateOrder;
-      return (first.diplomacyArrivalDays ?? 0) - (second.diplomacyArrivalDays ?? 0);
+  const orderedNotifications = useMemo(() => {
+    return [...visibleNotifications].sort((first, second) => {
+      const firstArrivalDate = first.diplomacyArrivalDate;
+      const secondArrivalDate = second.diplomacyArrivalDate;
+      if (firstArrivalDate && secondArrivalDate) {
+        const arrivalDateOrder = firstArrivalDate.localeCompare(secondArrivalDate);
+        if (arrivalDateOrder !== 0) return arrivalDateOrder;
+        return (first.diplomacyArrivalDays ?? 0) - (second.diplomacyArrivalDays ?? 0);
+      }
+      if (firstArrivalDate) return -1;
+      if (secondArrivalDate) return 1;
+      return 0;
+    });
+  }, [visibleNotifications]);
+
+  useEffect(() => {
+    if (orderedNotifications.length > 0) {
+      if (!selectedNotificationId || !orderedNotifications.some(n => n.id === selectedNotificationId)) {
+        setSelectedNotificationId(orderedNotifications[0].id);
+      }
+    } else {
+      setSelectedNotificationId(null);
     }
-    if (firstArrivalDate) return -1;
-    if (secondArrivalDate) return 1;
-    return 0;
-  });
+  }, [orderedNotifications, selectedNotificationId]);
+
+  const selectedNotification = useMemo(() => {
+    if (!selectedNotificationId) return orderedNotifications[0] || null;
+    return orderedNotifications.find(n => n.id === selectedNotificationId) || orderedNotifications[0] || null;
+  }, [orderedNotifications, selectedNotificationId]);
 
   useEffect(() => {
     setMounted(true);
@@ -123,6 +142,364 @@ export default function TopLeftIcon({
     return () => window.clearTimeout(timer);
   }, [showToast, toastNotification?.id]);
 
+
+
+  const renderActiveNotificationDetail = (notif: NotificationMessage) => {
+    const handleAction = onActionClick ? () => onActionClick(notif) : undefined;
+    const handleCrackdown = onCrackdownClick ? () => onCrackdownClick(notif) : undefined;
+    const handleRedirect = onRedirectClick ? () => onRedirectClick(notif) : undefined;
+
+    const tradeType = (notif as any).tradeType;
+    if (tradeType === 'jual') {
+      return (
+        <TradeJualNotification
+          key={notif.id}
+          notification={notif}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'beli') {
+      return (
+        <TradeBeliNotification
+          key={notif.id}
+          notification={notif}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'penawaran_kedutaan_besar') {
+      return (
+        <EmbassyNotification
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'penawaran_hubungan_dagang') {
+      return (
+        <TradeRelationNotification
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'bencana_alam' && (notif as any).eventType !== 'police') {
+      return (
+        <BencanaNotification
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'keamanan' || (tradeType === 'bencana_alam' && (notif as any).eventType === 'police')) {
+      return (
+        <KeamananNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'wabah_penyakit') {
+      return (
+        <WabahNotification
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'spionase') {
+      return (
+        <SpionaseNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'sabotase') {
+      return (
+        <SabotaseNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'diserang') {
+      return (
+        <DiserangNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          userCountryName={userCountryName}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'pemberontakan') {
+      return (
+        <PemberontakanNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'icbm' || tradeType === 'program_nuklir_dimulai' || tradeType === 'program_nuklir_selesai') {
+      return (
+        <ICBMNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'perubahan_pajak') {
+      return (
+        <PajakChangeNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'harga_barang_pokok') {
+      return (
+        <HargaChangeNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'kebijakan_subsidi') {
+      return (
+        <SubsidiChangeNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'defisit_listrik') {
+      return (
+        <ListrikDefisitNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'defisit_hunian') {
+      return (
+        <HunianDefisitNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'defisit_pangan') {
+      return (
+        <PanganDefisitNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'defisit_populasi') {
+      return (
+        <PopulasiDefisitNotificationCard
+          key={notif.id}
+          notification={notif as any}
+        />
+      );
+    }
+    if (tradeType === 'defisit_tempat_umum') {
+      return (
+        <TempatUmumDefisitNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'perubahan_ideologi') {
+      return (
+        <IdeologyChangeNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'perubahan_agama') {
+      return (
+        <ReligionChangeNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'perubahan_doktrin') {
+      return (
+        <DoctrineChangeNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'perubahan_fokus_riset') {
+      return (
+        <ResearchChangeNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'perubahan_sistem_ekonomi') {
+      return (
+        <SistemEkonomiChangeNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'perubahan_kabinet') {
+      return (
+        <KabinetChangeNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'penawaran_pakta_non_agresi') {
+      return (
+        <NonAggressionNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'penawaran_aliansi_pertahanan') {
+      return (
+        <DefenseAllianceNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'penawaran_kontrak_penelitian') {
+      return (
+        <ResearchContractNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onReject={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'hubungan_panas') {
+      return (
+        <HubunganPanasNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onRedirect={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'usulan_resolusi_pbb') {
+      const activeUser = getActiveUserCountryName();
+      const proposer = (notif as any).proposerCountry;
+      const isUserCreated = (notif as any).id?.includes('user');
+      if (proposer && proposer.toLowerCase() === activeUser.toLowerCase() && !isUserCreated) {
+        return null;
+      }
+      return (
+        <ResolusiPBBNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onRedirect={handleRedirect}
+        />
+      );
+    }
+    if (tradeType === 'usulan_keamanan_pbb') {
+      const activeUser = getActiveUserCountryName();
+      const proposer = (notif as any).proposerCountry;
+      const isUserCreated = (notif as any).id?.includes('user');
+      if (proposer && proposer.toLowerCase() === activeUser.toLowerCase() && !isUserCreated) {
+        return null;
+      }
+      return (
+        <KeamananPBBNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAccept={handleAction}
+          onRedirect={handleRedirect}
+        />
+      );
+    }
+
+    switch (notif.type) {
+      case 'kepuasan':
+        return <KepuasanNotification key={notif.id} notification={notif} onActionClick={handleAction} onRedirectClick={handleRedirect} />;
+      case 'peringkat':
+        return <PeringkatNotification key={notif.id} notification={notif} onCrackdownClick={handleCrackdown} />;
+      case 'kesejahteraan':
+        return <KesejahteraanNotification key={notif.id} notification={notif} />;
+      default:
+        return (
+          <div key={notif.id} className="bg-[#0F2424] border border-[#00FFAA]/30 p-5 rounded-xl shadow-sm">
+            <h4 className="font-bold text-[#00FFAA] text-sm uppercase">{notif.title}</h4>
+            <div className="text-xs text-[#6B8A8A] mt-1">Pengirim: {notif.sender || 'Pemerintah'} | {notif.timestamp}</div>
+            <div className="text-xs text-[#E0E0E0] mt-3 leading-relaxed">{notif.message}</div>
+          </div>
+        );
+    }
+  };
+
   return (
     <>
       {mounted && createPortal(
@@ -138,35 +515,38 @@ export default function TopLeftIcon({
             title="Inbox - Pesan dan Notifikasi"
             className="relative flex h-12 w-12 cursor-pointer items-center justify-center transition-transform group hover:scale-110 lg:h-14 lg:w-14 xl:h-16 xl:w-16"
           >
-            <Image
-              src="/images/game/interface/menu/inbox.svg"
-              alt=""
-              aria-hidden="true"
-              width={72}
-              height={72}
-              className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
-            />
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-600 border border-[#0A1A1A] text-white text-[9px] font-black w-4 h-4 lg:w-5 lg:h-5 rounded-full flex items-center justify-center shadow animate-pulse">
-                {unreadCount}
-              </span>
-            )}
+            <div className="relative flex h-full w-full items-center justify-center">
+              <Image
+                src="/images/game/interface/menu/inbox.png"
+                alt="Inbox"
+                width={64}
+                height={64}
+                className="h-full w-full object-contain filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] transition-all duration-200 group-hover:brightness-110"
+              />
+              {unreadCount > 0 && (
+                <div className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-600 px-1 text-[10px] font-black text-white shadow-lg border-2 border-[#0A1A1A] animate-pulse">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </div>
+              )}
+            </div>
           </button>
-        </div>,
-        document.body
-      )}
 
-      {mounted && showToast && toastNotification && createPortal(
-        <div className="fixed top-[9.5rem] left-7 z-[100200] pointer-events-auto">
+          {/* Toast Notification Box */}
           <div
+            className={`transition-all duration-300 ease-out origin-top-left ${
+              showToast && toastNotification
+                ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
+                : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
+            } w-72 rounded-xl border border-[#00FFAA]/40 bg-[#0F2424]/95 p-3 shadow-2xl backdrop-blur-md cursor-pointer group`}
             onClick={() => {
-              dismissedToastIdRef.current = toastNotification.id;
+              if (toastNotification) {
+                dismissedToastIdRef.current = toastNotification.id;
+              }
               setShowToast(false);
-              onClick?.();
+              if (onClick) onClick();
             }}
-            className="w-64 rounded-xl border-2 border-[#00FFAA] bg-[#0F2424] p-2.5 shadow-[0_8px_22px_rgba(0,255,170,0.3)] animate-in fade-in slide-in-from-top-3 duration-300 cursor-pointer hover:bg-[#143030] transition-all group"
           >
-            <div className="flex items-center justify-between border-b border-[#00FFAA]/30 pb-1">
+            <div className="flex items-center justify-between border-b border-[#00FFAA]/20 pb-1.5">
               <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
                 <span className="h-2 w-2 rounded-full bg-[#00FFAA] animate-ping" />
                 Pesan Baru Masuk
@@ -174,7 +554,7 @@ export default function TopLeftIcon({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  dismissedToastIdRef.current = toastNotification.id;
+                  dismissedToastIdRef.current = toastNotification?.id || null;
                   setShowToast(false);
                 }}
                 className="rounded p-0.5 text-slate-400 hover:text-white"
@@ -183,10 +563,10 @@ export default function TopLeftIcon({
               </button>
             </div>
             <h5 className="mt-1.5 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-[#00FFAA]">
-              {toastNotification.title}
+              {toastNotification?.title}
             </h5>
             <div className="mt-1.5 flex items-center justify-between border-t border-[#00FFAA]/10 pt-1">
-              <span className="text-[8px] font-semibold text-[#6B8A8A]">{toastNotification.timestamp}</span>
+              <span className="text-[8px] font-semibold text-[#6B8A8A]">{toastNotification?.timestamp}</span>
               <span className="text-[9px] font-black text-[#00FFAA] underline transition-transform group-hover:translate-x-1">
                 Buka Inbox ({unreadCount}) →
               </span>
@@ -196,406 +576,143 @@ export default function TopLeftIcon({
         document.body
       )}
 
-      {/* 🔥 Inbox Modal */}
+      {/* 🔥 Inbox Modal Prototype (2 Kolom: Master List di Kiri & Detail Konten di Kanan) */}
       {isOpen && mounted && createPortal(
         <div className="fixed inset-0 z-[100000] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
             {/* 🔥 HEADER MODAL */}
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 rounded-t-2xl">
-              <div className="flex items-center gap-2">
-                <div className="p-1 sm:p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] shrink-0">
-                  <Inbox className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] shrink-0 text-[#00FFAA]">
+                  <Inbox className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
                 <div>
-                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Inbox & Notifikasi</h2>
+                  <h2 className="text-base sm:text-lg font-black text-[#00FFAA] tracking-tight leading-none uppercase">
+                    Inbox & Notifikasi
+                  </h2>
+                  <span className="text-[9px] font-bold text-[#6B8A8A] uppercase tracking-wider">
+                    {orderedNotifications.length} Pesan ({unreadCount} Belum Dibaca)
+                  </span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {visibleNotifications.length > 0 && onClearAll && (
-                  <button
-                    onClick={onClearAll}
-                    className="px-3 py-1.5 rounded-xl border border-red-500/40 bg-red-950/40 text-red-400 hover:bg-red-900/60 transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span className="hidden sm:inline">Bersihkan Semua</span>
-                  </button>
-                )}
                 <button
                   onClick={onClose}
-                  className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
+                  className="p-1.5 sm:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
                 >
                   <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </button>
               </div>
             </div>
 
-            {/* 🔥 BODY MODAL */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A] relative z-10 custom-scrollbar flex flex-col">
+            {/* 🔥 BODY MODAL: 2-COLUMN SPLIT PROTOTYPE */}
+            <div className="flex-1 flex overflow-hidden bg-[#0A1A1A]">
               {visibleNotifications.length === 0 ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto my-auto">
+                <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto my-auto p-6">
                   <Inbox className="h-16 w-16 text-[#00FFAA]/30" />
                   <h4 className="text-lg font-bold text-[#00FFAA] uppercase">Tidak Ada Pesan</h4>
+                  <div className="text-xs text-[#6B8A8A]">Kotak masuk Anda bersih. Tidak ada notifikasi atau penawaran yang tertunda.</div>
                 </div>
               ) : (
-                <div className="space-y-4 max-w-4xl mx-auto w-full">
-                  {orderedNotifications.map((notif) => {
-                    const handleAction = onActionClick ? () => onActionClick(notif) : undefined;
-                    const handleCrackdown = onCrackdownClick ? () => onCrackdownClick(notif) : undefined;
-                    const handleRedirect = onRedirectClick ? () => onRedirectClick(notif) : undefined;
+                <>
+                  {/* === KOLOM KIRI: DAFTAR PESAN / MASTER LIST === */}
+                  <div className="w-[42%] sm:w-[40%] lg:w-[36%] flex flex-col border-r border-[#00FFAA]/20 bg-[#081515] overflow-hidden shrink-0">
+                    <div className="flex-1 overflow-y-auto custom-scrollbar p-2 sm:p-2.5 space-y-1.5">
+                      {orderedNotifications.map((notif) => {
+                        const isSelected = selectedNotification?.id === notif.id;
+                        const notifSender = String(notif.sender || (notif as any).partnerCountry || (notif as any).proposerCountry || 'Pemerintah');
+                        const countryIso = getIsoForCountryName(notifSender);
+                        const isUrgent = notif.title?.toLowerCase().includes('peringatan') || notif.title?.toLowerCase().includes('krisis') || notif.title?.toLowerCase().includes('diserang');
 
-                    const tradeType = (notif as any).tradeType;
-                    if (tradeType === 'jual') {
-                      return (
-                        <TradeJualNotification
-                          key={notif.id}
-                          notification={notif}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'beli') {
-                      return (
-                        <TradeBeliNotification
-                          key={notif.id}
-                          notification={notif}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'penawaran_kedutaan_besar') {
-                      return (
-                        <EmbassyNotification
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'penawaran_hubungan_dagang') {
-                      return (
-                        <TradeRelationNotification
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'bencana_alam' && (notif as any).eventType !== 'police') {
-                      return (
-                        <BencanaNotification
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'keamanan' || (tradeType === 'bencana_alam' && (notif as any).eventType === 'police')) {
-                      return (
-                        <KeamananNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'wabah_penyakit') {
-                      return (
-                        <WabahNotification
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'spionase') {
-                      return (
-                        <SpionaseNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'sabotase') {
-                      return (
-                        <SabotaseNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'diserang') {
-                      return (
-                        <DiserangNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          userCountryName={userCountryName}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'pemberontakan') {
-                      return (
-                        <PemberontakanNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'icbm' || tradeType === 'program_nuklir_dimulai' || tradeType === 'program_nuklir_selesai') {
-                      return (
-                        <ICBMNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'perubahan_pajak') {
-                      return (
-                        <PajakChangeNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'harga_barang_pokok') {
-                      return (
-                        <HargaChangeNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'kebijakan_subsidi') {
-                      return (
-                        <SubsidiChangeNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'defisit_listrik') {
-                      return (
-                        <ListrikDefisitNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'defisit_hunian') {
-                      return (
-                        <HunianDefisitNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'defisit_pangan') {
-                      return (
-                        <PanganDefisitNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'defisit_populasi') {
-                      return (
-                        <PopulasiDefisitNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                        />
-                      );
-                    }
-                    if (tradeType === 'defisit_tempat_umum') {
-                      return (
-                        <TempatUmumDefisitNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'perubahan_ideologi') {
-                      return (
-                        <IdeologyChangeNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'perubahan_agama') {
-                      return (
-                        <ReligionChangeNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'perubahan_doktrin') {
-                      return (
-                        <DoctrineChangeNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'perubahan_fokus_riset') {
-                      return (
-                        <ResearchChangeNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'perubahan_sistem_ekonomi') {
-                      return (
-                        <SistemEkonomiChangeNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'perubahan_kabinet') {
-                      return (
-                        <KabinetChangeNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'penawaran_pakta_non_agresi') {
-                      return (
-                        <NonAggressionNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'penawaran_aliansi_pertahanan') {
-                      return (
-                        <DefenseAllianceNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'penawaran_kontrak_penelitian') {
-                      return (
-                        <ResearchContractNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onReject={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'hubungan_panas') {
-                      return (
-                        <HubunganPanasNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onRedirect={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'usulan_resolusi_pbb') {
-                      const activeUser = getActiveUserCountryName();
-                      const proposer = (notif as any).proposerCountry;
-                      const isUserCreated = (notif as any).id?.includes('user');
-                      if (proposer && proposer.toLowerCase() === activeUser.toLowerCase() && !isUserCreated) {
-                        return null;
-                      }
-                      return (
-                        <ResolusiPBBNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onRedirect={handleRedirect}
-                        />
-                      );
-                    }
-                    if (tradeType === 'usulan_keamanan_pbb') {
-                      const activeUser = getActiveUserCountryName();
-                      const proposer = (notif as any).proposerCountry;
-                      const isUserCreated = (notif as any).id?.includes('user');
-                      if (proposer && proposer.toLowerCase() === activeUser.toLowerCase() && !isUserCreated) {
-                        return null;
-                      }
-                      return (
-                        <KeamananPBBNotificationCard
-                          key={notif.id}
-                          notification={notif as any}
-                          onAccept={handleAction}
-                          onRedirect={handleRedirect}
-                        />
-                      );
-                    }
-
-                    switch (notif.type) {
-                      case 'kepuasan':
-                        return <KepuasanNotification key={notif.id} notification={notif} onActionClick={handleAction} onRedirectClick={handleRedirect} />;
-                      case 'peringkat':
-                        return <PeringkatNotification key={notif.id} notification={notif} onCrackdownClick={handleCrackdown} />;
-                      case 'kesejahteraan':
-                        return <KesejahteraanNotification key={notif.id} notification={notif} />;
-                      default:
                         return (
-                          <div key={notif.id} className="bg-[#0F2424] border border-[#00FFAA]/30 p-4 rounded-xl shadow-sm">
-                            <h4 className="font-bold text-[#00FFAA]">{notif.title}</h4>
-                            <p className="text-xs text-[#6B8A8A]">{notif.timestamp}</p>
-                            <p className="text-xs text-[#E0E0E0] mt-2">{notif.message}</p>
+                          <div
+                            key={notif.id}
+                            onClick={() => setSelectedNotificationId(notif.id)}
+                            className={`group relative rounded-xl p-2.5 sm:p-3 transition-all cursor-pointer border flex items-center gap-2.5 sm:gap-3 ${
+                              isSelected
+                                ? 'bg-[#00FFAA]/15 border-[#00FFAA] shadow-[0_0_12px_rgba(0,255,170,0.2)]'
+                                : 'bg-[#0F2424]/60 border-[#00FFAA]/15 hover:bg-[#0F2424] hover:border-[#00FFAA]/40'
+                            }`}
+                          >
+                            {/* Avatar / Country Flag / Persona */}
+                            <div className="relative shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 overflow-hidden flex items-center justify-center shadow">
+                              {countryIso && countryIso !== 'un' ? (
+                                <img
+                                  src={`https://flagcdn.com/w80/${countryIso.toLowerCase()}.png`}
+                                  alt={notifSender}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
+                                  }}
+                                />
+                              ) : (
+                                <User className="w-4 h-4 text-[#00FFAA]" />
+                              )}
+                              {!notif.isRead && (
+                                <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                              )}
+                            </div>
+
+                            {/* Info Singkat */}
+                            <div className="flex-1 min-w-0">
+                              <h4 className={`text-[11px] sm:text-xs font-black truncate leading-tight ${
+                                isUrgent ? 'text-rose-400' : isSelected ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'
+                              }`}>
+                                {notif.title}
+                              </h4>
+                              <div className="flex items-center gap-1.5 mt-1 text-[9px] text-[#6B8A8A] font-semibold">
+                                {countryIso && countryIso !== 'un' && (
+                                  <img
+                                    src={`https://flagcdn.com/w20/${countryIso.toLowerCase()}.png`}
+                                    alt=""
+                                    className="w-3.5 h-2.5 object-cover rounded-xs"
+                                  />
+                                )}
+                                <span className="truncate max-w-[85px] sm:max-w-[105px]">{notifSender}</span>
+                                <span className="ml-auto shrink-0 flex items-center gap-0.5 text-[8.5px] text-[#557575]">
+                                  <Clock className="w-2.5 h-2.5" />
+                                  {notif.timestamp}
+                                </span>
+                              </div>
+                            </div>
+
+                            <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${
+                              isSelected ? 'text-[#00FFAA] translate-x-0.5' : 'text-[#6B8A8A]/50 group-hover:text-[#00FFAA]'
+                            }`} />
                           </div>
                         );
-                    }
-                  })}
-                </div>
+                      })}
+                    </div>
+
+                    {/* Tombol Bersihkan Semua di Footer Kolom Kiri */}
+                    {visibleNotifications.length > 0 && onClearAll && (
+                      <div className="p-2 sm:p-2.5 border-t border-[#00FFAA]/20 bg-[#051111]">
+                        <button
+                          onClick={onClearAll}
+                          className="w-full py-2 px-3 rounded-lg border border-red-500/40 bg-red-950/30 text-red-400 hover:bg-red-900/50 hover:text-red-300 transition-all cursor-pointer font-bold text-[10px] sm:text-xs uppercase flex items-center justify-center gap-1.5 shadow-sm"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          <span>Hapus Semua Pesan</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* === KOLOM KANAN: DETAIL KONTEN & AKSI === */}
+                  <div className="flex-1 overflow-y-auto custom-scrollbar p-4 sm:p-6 bg-[#0A1A1A]">
+                    {selectedNotification ? (
+                      <div className="max-w-2xl mx-auto space-y-4">
+                        {renderActiveNotificationDetail(selectedNotification)}
+                      </div>
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-center text-slate-500 text-xs">
+                        Pilih pesan di sebelah kiri untuk melihat detail.
+                      </div>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           </div>
