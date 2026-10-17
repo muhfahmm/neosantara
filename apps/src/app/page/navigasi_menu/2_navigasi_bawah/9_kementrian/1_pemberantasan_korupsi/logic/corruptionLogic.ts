@@ -2,6 +2,8 @@ export interface CorruptionScheme {
   id: string;
   name: string;
   category: string;
+  ministry: string; // Kementerian/Jabatan terkait
+  description: string; // Deskripsi detail skandal
 }
 
 export interface ActiveCorruptionScandal extends CorruptionScheme {
@@ -36,56 +38,391 @@ export interface CorruptionCountryDetail extends Record<string, unknown> {
 }
 
 export const CORRUPTION_SCHEMES: CorruptionScheme[] = [
-  { id: 'mark_up_pengadaan', name: 'Mark-up Pengadaan', category: 'Korupsi Anggaran' },
-  { id: 'anggaran_fiktif', name: 'Anggaran Fiktif', category: 'Korupsi Anggaran' },
-  { id: 'double_budgeting', name: 'Double Budgeting', category: 'Korupsi Anggaran' },
-  { id: 'dana_hibah_gelap', name: 'Dana Hibah Gelap', category: 'Korupsi Anggaran' },
-  { id: 'subsidi_bocor', name: 'Subsidi Bocor', category: 'Korupsi Anggaran' },
-  { id: 'suap_izin_usaha', name: 'Suap Izin Usaha', category: 'Suap & Gratifikasi' },
-  { id: 'gratifikasi_pejabat', name: 'Gratifikasi Pejabat', category: 'Suap & Gratifikasi' },
-  { id: 'uang_pelicin', name: 'Uang Pelicin', category: 'Suap & Gratifikasi' },
-  { id: 'kickback_kontrak', name: 'Kickback Kontrak', category: 'Suap & Gratifikasi' },
-  { id: 'suap_pajak', name: 'Suap Pajak', category: 'Suap & Gratifikasi' },
-  { id: 'nepotisme_jabatan', name: 'Nepotisme Jabatan', category: 'Nepotisme & Kolusi' },
-  { id: 'kolusi_pengusaha', name: 'Kolusi Pengusaha', category: 'Nepotisme & Kolusi' },
-  { id: 'kroni_kabinet', name: 'Kroni Kabinet', category: 'Nepotisme & Kolusi' },
-  { id: 'dinasti_politik', name: 'Dinasti Politik', category: 'Nepotisme & Kolusi' },
-  { id: 'titip_proyek', name: 'Titip Proyek', category: 'Nepotisme & Kolusi' },
-  { id: 'mark_up_alutsista', name: 'Mark-up Alutsista', category: 'Militer & Pertahanan' },
-  { id: 'alutsista_bekas', name: 'Alutsista Bekas Dijual Baru', category: 'Militer & Pertahanan' },
-  { id: 'suap_lelang_militer', name: 'Suap Lelang Militer', category: 'Militer & Pertahanan' },
-  { id: 'korupsi_logistik', name: 'Korupsi Logistik', category: 'Militer & Pertahanan' },
-  { id: 'jual_bantuan_militer', name: 'Jual Bantuan Militer', category: 'Militer & Pertahanan' },
-  { id: 'royalti_tambang_gelap', name: 'Royalti Tambang Gelap', category: 'Energi & SDA' },
-  { id: 'izin_tambang_liar', name: 'Izin Tambang Liar', category: 'Energi & SDA' },
-  { id: 'smuggling_minyak', name: 'Penyelundupan Minyak', category: 'Energi & SDA' },
-  { id: 'korupsi_pertamina', name: 'Korupsi BUMN Energi', category: 'Energi & SDA' },
-  { id: 'reklamasi_palsu', name: 'Reklamasi Palsu', category: 'Energi & SDA' },
-  { id: 'beli_suara', name: 'Beli Suara', category: 'Politik & Pemilu' },
-  { id: 'dana_kampanye_gelap', name: 'Dana Kampanye Gelap', category: 'Politik & Pemilu' },
-  { id: 'penggelembungan_dpt', name: 'Penggelembungan DPT', category: 'Politik & Pemilu' },
-  { id: 'politik_uang', name: 'Politik Uang', category: 'Politik & Pemilu' },
-  { id: 'suap_parlemen', name: 'Suap Parlemen', category: 'Politik & Pemilu' },
-  { id: 'pungli_layanan', name: 'Pungli Layanan', category: 'Birokrasi & Layanan Publik' },
-  { id: 'calo_birokrasi', name: 'Calo Birokrasi', category: 'Birokrasi & Layanan Publik' },
-  { id: 'proses_lambat', name: 'Proses Sengaja Dilambatkan', category: 'Birokrasi & Layanan Publik' },
-  { id: 'data_palsu', name: 'Manipulasi Data', category: 'Birokrasi & Layanan Publik' },
-  { id: 'pajak_gelap', name: 'Pajak Gelap', category: 'Birokrasi & Layanan Publik' },
-  { id: 'mafia_peradilan', name: 'Mafia Peradilan', category: 'Peradilan & Penegakan Hukum' },
-  { id: 'suap_polisi', name: 'Suap Polisi', category: 'Peradilan & Penegakan Hukum' },
-  { id: 'jual_putusan', name: 'Jual Putusan', category: 'Peradilan & Penegakan Hukum' },
-  { id: 'rekayasa_kasus', name: 'Rekayasa Kasus', category: 'Peradilan & Penegakan Hukum' },
-  { id: 'tahanan_bayar', name: 'Tahanan Bayar', category: 'Peradilan & Penegakan Hukum' },
-  { id: 'bailout_palsu', name: 'Bailout Palsu', category: 'Keuangan & Perbankan' },
-  { id: 'kredit_macet_gelap', name: 'Kredit Macet Gelap', category: 'Keuangan & Perbankan' },
-  { id: 'pencucian_uang', name: 'Pencucian Uang', category: 'Keuangan & Perbankan' },
-  { id: 'transfer_gelap', name: 'Transfer Gelap ke Luar Negeri', category: 'Keuangan & Perbankan' },
-  { id: 'obligasi_fiktif', name: 'Obligasi Fiktif', category: 'Keuangan & Perbankan' },
-  { id: 'dana_bansos_gelap', name: 'Dana Bansos Gelap', category: 'Kesehatan, Pendidikan & Sosial' },
-  { id: 'obat_palsu', name: 'Obat Palsu', category: 'Kesehatan, Pendidikan & Sosial' },
-  { id: 'buku_fiktif', name: 'Buku Fiktif', category: 'Kesehatan, Pendidikan & Sosial' },
-  { id: 'beasiswa_palsu', name: 'Beasiswa Palsu', category: 'Kesehatan, Pendidikan & Sosial' },
-  { id: 'korupsi_vaksin', name: 'Korupsi Vaksin', category: 'Kesehatan, Pendidikan & Sosial' },
+  // Kementerian Infrastruktur & Pembangunan
+  { 
+    id: 'mark_up_pengadaan', 
+    name: 'Mark-up Proyek Infrastruktur', 
+    category: 'Korupsi Anggaran',
+    ministry: 'Kementerian Infrastruktur',
+    description: 'Pejabat di Kementerian Infrastruktur diduga melakukan mark-up harga pada proyek pembangunan jalan dan jembatan, merugikan negara miliaran NEO'
+  },
+  { 
+    id: 'anggaran_fiktif', 
+    name: 'Proyek Fiktif Pembangunan', 
+    category: 'Korupsi Anggaran',
+    ministry: 'Kementerian Pembangunan',
+    description: 'Terungkap penggelembungan anggaran proyek pembangunan yang tidak pernah dikerjakan oleh oknum di Kementerian Pembangunan'
+  },
+  { 
+    id: 'double_budgeting', 
+    name: 'Double Budgeting Infrastruktur', 
+    category: 'Korupsi Anggaran',
+    ministry: 'Kementerian Infrastruktur',
+    description: 'Satu proyek infrastruktur dibiayai ganda dari dua sumber anggaran berbeda, menimbulkan kerugian negara'
+  },
+  
+  // Kementerian Keuangan
+  { 
+    id: 'suap_pajak', 
+    name: 'Suap Keringanan Pajak', 
+    category: 'Suap & Gratifikasi',
+    ministry: 'Kementerian Keuangan',
+    description: 'Oknum pejabat Kementerian Keuangan menerima suap untuk memberikan keringanan pajak kepada konglomerat tertentu'
+  },
+  { 
+    id: 'pajak_gelap', 
+    name: 'Manipulasi Penerimaan Pajak', 
+    category: 'Birokrasi & Layanan Publik',
+    ministry: 'Kementerian Keuangan',
+    description: 'Penerimaan pajak tidak tercatat dengan benar, diduga mengalir ke kantong oknum Dirjen Pajak'
+  },
+  
+  // Kepala Bank Sentral
+  { 
+    id: 'bailout_palsu', 
+    name: 'Bailout Fiktif Bank Bermasalah', 
+    category: 'Keuangan & Perbankan',
+    ministry: 'Kepala Bank Sentral',
+    description: 'Dana bailout disalurkan ke bank yang sebenarnya tidak bermasalah, diduga ada kongkalikong dengan Kepala Bank Sentral'
+  },
+  { 
+    id: 'kredit_macet_gelap', 
+    name: 'Penghapusan Kredit Macet Ilegal', 
+    category: 'Keuangan & Perbankan',
+    ministry: 'Kepala Bank Sentral',
+    description: 'Kredit macet pengusaha besar dihapus tanpa prosedur, merugikan perbankan nasional'
+  },
+  { 
+    id: 'pencucian_uang', 
+    name: 'Pencucian Uang Lintas Negara', 
+    category: 'Keuangan & Perbankan',
+    ministry: 'Kepala Bank Sentral',
+    description: 'Uang hasil korupsi dicuci melalui transaksi perbankan yang lolos dari pengawasan Bank Sentral'
+  },
+  
+  // Kementerian Pertahanan & Militer
+  { 
+    id: 'mark_up_alutsista', 
+    name: 'Mark-up Alutsista', 
+    category: 'Militer & Pertahanan',
+    ministry: 'Kementerian Pertahanan',
+    description: 'Pembelian alutsista di-mark-up hingga 300% dari harga pasar oleh oknum Kementerian Pertahanan'
+  },
+  { 
+    id: 'alutsista_bekas', 
+    name: 'Alutsista Bekas Dijual Baru', 
+    category: 'Militer & Pertahanan',
+    ministry: 'Kementerian Pertahanan',
+    description: 'Alutsista bekas dipalsukan dokumennya sebagai barang baru dalam pengadaan Kementerian Pertahanan'
+  },
+  { 
+    id: 'suap_lelang_militer', 
+    name: 'Suap Tender Militer', 
+    category: 'Militer & Pertahanan',
+    ministry: 'Kementerian Pertahanan',
+    description: 'Tender pengadaan alutsista dikondisikan untuk pemenang tertentu yang menyuap pejabat Kemhan'
+  },
+  { 
+    id: 'korupsi_logistik', 
+    name: 'Korupsi Logistik Militer', 
+    category: 'Militer & Pertahanan',
+    ministry: 'Komandan Angkatan Darat',
+    description: 'Logistik untuk pasukan dikorupsi oleh oknum perwira tinggi, prajurit kekurangan supplies'
+  },
+  { 
+    id: 'jual_bantuan_militer', 
+    name: 'Bantuan Militer Dijual', 
+    category: 'Militer & Pertahanan',
+    ministry: 'Komandan Armada',
+    description: 'Bantuan militer dari negara sekutu dijual ke pasar gelap oleh oknum komandan armada laut'
+  },
+  
+  // Kementerian Pendidikan
+  { 
+    id: 'buku_fiktif', 
+    name: 'Pengadaan Buku Fiktif', 
+    category: 'Kesehatan, Pendidikan & Sosial',
+    ministry: 'Kementerian Pendidikan',
+    description: 'Dana pengadaan buku pelajaran dikorupsi, buku tidak pernah sampai ke sekolah-sekolah'
+  },
+  { 
+    id: 'beasiswa_palsu', 
+    name: 'Beasiswa Fiktif', 
+    category: 'Kesehatan, Pendidikan & Sosial',
+    ministry: 'Kementerian Pendidikan',
+    description: 'Dana beasiswa untuk mahasiswa kurang mampu dikurangi dan dialihkan ke nama-nama fiktif'
+  },
+  
+  // Kementerian Kesehatan
+  { 
+    id: 'obat_palsu', 
+    name: 'Pengadaan Obat Palsu', 
+    category: 'Kesehatan, Pendidikan & Sosial',
+    ministry: 'Kementerian Kesehatan',
+    description: 'Oknum pejabat Kementerian Kesehatan mengadakan obat palsu/kadaluarsa untuk rumah sakit pemerintah'
+  },
+  { 
+    id: 'korupsi_vaksin', 
+    name: 'Korupsi Program Vaksinasi', 
+    category: 'Kesehatan, Pendidikan & Sosial',
+    ministry: 'Kementerian Kesehatan',
+    description: 'Dana program vaksinasi nasional dikorupsi, jumlah vaksin tidak sesuai dengan anggaran yang dikucurkan'
+  },
+  { 
+    id: 'dana_bansos_gelap', 
+    name: 'Bantuan Sosial Tidak Tepat Sasaran', 
+    category: 'Kesehatan, Pendidikan & Sosial',
+    ministry: 'Kementerian Kesehatan',
+    description: 'Dana bantuan sosial untuk rakyat miskin dipotong dan tidak sampai pada penerima yang berhak'
+  },
+  
+  // Kementerian Kehakiman & Polisi
+  { 
+    id: 'mafia_peradilan', 
+    name: 'Mafia Peradilan', 
+    category: 'Peradilan & Penegakan Hukum',
+    ministry: 'Kementerian Kehakiman',
+    description: 'Jaringan mafia peradilan melibatkan hakim, jaksa, dan panitera untuk memperjualbelikan putusan'
+  },
+  { 
+    id: 'jual_putusan', 
+    name: 'Jual Beli Putusan Hakim', 
+    category: 'Peradilan & Penegakan Hukum',
+    ministry: 'Kementerian Kehakiman',
+    description: 'Hakim menerima suap untuk meringankan atau membebaskan terdakwa koruptor dalam persidangan'
+  },
+  { 
+    id: 'rekayasa_kasus', 
+    name: 'Rekayasa Kasus Hukum', 
+    category: 'Peradilan & Penegakan Hukum',
+    ministry: 'Kementerian Kehakiman',
+    description: 'Kasus hukum direkayasa untuk menjerat atau membebaskan pihak tertentu sesuai pesanan'
+  },
+  { 
+    id: 'suap_polisi', 
+    name: 'Suap Penegakan Hukum', 
+    category: 'Peradilan & Penegakan Hukum',
+    ministry: 'Polisi',
+    description: 'Oknum polisi menerima suap untuk menghentikan penyidikan atau memanipulasi bukti dalam kasus korupsi'
+  },
+  { 
+    id: 'tahanan_bayar', 
+    name: 'Fasilitas Tahanan Berbayar', 
+    category: 'Peradilan & Penegakan Hukum',
+    ministry: 'Polisi',
+    description: 'Tahanan koruptor mendapat fasilitas mewah dengan membayar oknum penjaga lapas dan polisi'
+  },
+  
+  // Kementerian Perdagangan
+  { 
+    id: 'suap_izin_usaha', 
+    name: 'Suap Izin Usaha', 
+    category: 'Suap & Gratifikasi',
+    ministry: 'Kementerian Perdagangan',
+    description: 'Pengusaha menyuap pejabat Kementerian Perdagangan untuk mempercepat atau mendapatkan izin usaha'
+  },
+  { 
+    id: 'kolusi_pengusaha', 
+    name: 'Kolusi Izin Monopoli', 
+    category: 'Nepotisme & Kolusi',
+    ministry: 'Kementerian Perdagangan',
+    description: 'Pejabat Kemdag berkolusi dengan pengusaha tertentu untuk memberikan hak monopoli impor/ekspor'
+  },
+  
+  // Kementerian Luar Negeri
+  { 
+    id: 'transfer_gelap', 
+    name: 'Transfer Gelap ke Luar Negeri', 
+    category: 'Keuangan & Perbankan',
+    ministry: 'Kementerian Luar Negeri',
+    description: 'Dana pemerintah ditransfer ke luar negeri menggunakan jalur diplomatik untuk menghindari deteksi'
+  },
+  { 
+    id: 'gratifikasi_pejabat', 
+    name: 'Gratifikasi Diplomatik', 
+    category: 'Suap & Gratifikasi',
+    ministry: 'Kementerian Luar Negeri',
+    description: 'Pejabat Kemenlu menerima gratifikasi dari negara asing untuk mempengaruhi kebijakan diplomatik'
+  },
+  
+  // Kementerian Lingkungan Hidup
+  { 
+    id: 'royalti_tambang_gelap', 
+    name: 'Royalti Tambang Tidak Masuk Kas', 
+    category: 'Energi & SDA',
+    ministry: 'Kementerian Lingkungan Hidup',
+    description: 'Royalti dari perusahaan tambang tidak masuk kas negara, diduga dikorupsi oknum Kementerian LH'
+  },
+  { 
+    id: 'izin_tambang_liar', 
+    name: 'Izin Tambang Tanpa Kajian', 
+    category: 'Energi & SDA',
+    ministry: 'Kementerian Lingkungan Hidup',
+    description: 'Izin tambang diterbitkan tanpa kajian lingkungan yang proper setelah ada suap ke pejabat KLH'
+  },
+  { 
+    id: 'reklamasi_palsu', 
+    name: 'Reklamasi Tambang Fiktif', 
+    category: 'Energi & SDA',
+    ministry: 'Kementerian Lingkungan Hidup',
+    description: 'Dana reklamasi bekas tambang dikorupsi, lokasi tambang tidak pernah direklamasi'
+  },
+  { 
+    id: 'smuggling_minyak', 
+    name: 'Penyelundupan Sumber Daya Alam', 
+    category: 'Energi & SDA',
+    ministry: 'Kementerian Lingkungan Hidup',
+    description: 'Penyelundupan minyak dan SDA lainnya terjadi dengan sepengetahuan oknum di Kementerian LH'
+  },
+  { 
+    id: 'korupsi_pertamina', 
+    name: 'Korupsi BUMN Energi', 
+    category: 'Energi & SDA',
+    ministry: 'Kementerian Lingkungan Hidup',
+    description: 'BUMN pengelola energi dan SDA dikorupsi oleh direksi yang ditunjuk secara politis'
+  },
+  
+  // Kementerian Perumahan
+  { 
+    id: 'subsidi_bocor', 
+    name: 'Subsidi Perumahan Rakyat Bocor', 
+    category: 'Korupsi Anggaran',
+    ministry: 'Kementerian Perumahan',
+    description: 'Dana subsidi untuk program rumah rakyat dipotong oleh oknum di Kementerian Perumahan'
+  },
+  { 
+    id: 'dana_hibah_gelap', 
+    name: 'Hibah Tanah Untuk Kroni', 
+    category: 'Korupsi Anggaran',
+    ministry: 'Kementerian Perumahan',
+    description: 'Tanah negara untuk program perumahan rakyat dihibahkan kepada kroni pejabat Kemenpera'
+  },
+  
+  // Kementerian Pariwisata
+  { 
+    id: 'uang_pelicin', 
+    name: 'Uang Pelicin Perizinan Pariwisata', 
+    category: 'Suap & Gratifikasi',
+    ministry: 'Kementerian Pariwisata',
+    description: 'Investor pariwisata harus membayar uang pelicin ke oknum Kementerian Pariwisata untuk mendapat izin'
+  },
+  
+  // Kementerian Olahraga
+  { 
+    id: 'kickback_kontrak', 
+    name: 'Kickback Pembangunan Stadion', 
+    category: 'Suap & Gratifikasi',
+    ministry: 'Kementerian Olahraga',
+    description: 'Kontraktor pembangunan stadion memberikan kickback ke pejabat Kementerian Olahraga untuk memenangkan tender'
+  },
+  
+  // Kementerian Kebudayaan
+  { 
+    id: 'titip_proyek', 
+    name: 'Titipan Proyek Kebudayaan', 
+    category: 'Nepotisme & Kolusi',
+    ministry: 'Kementerian Kebudayaan',
+    description: 'Proyek pelestarian budaya dititipkan kepada kerabat dan kroni pejabat Kemendikbud'
+  },
+  { 
+    id: 'nepotisme_jabatan', 
+    name: 'Nepotisme Jabatan Kebudayaan', 
+    category: 'Nepotisme & Kolusi',
+    ministry: 'Kementerian Kebudayaan',
+    description: 'Jabatan strategis di museum dan lembaga budaya diberikan kepada keluarga dan kerabat pejabat'
+  },
+  
+  // Sains dan Penelitian
+  { 
+    id: 'data_palsu', 
+    name: 'Manipulasi Data Penelitian', 
+    category: 'Birokrasi & Layanan Publik',
+    ministry: 'Sains dan Penelitian',
+    description: 'Data hasil penelitian negara dipalsukan untuk membenarkan kebijakan yang menguntungkan pihak tertentu'
+  },
+  
+  // Garda Nasional
+  { 
+    id: 'pungli_layanan', 
+    name: 'Pungutan Liar Pengamanan', 
+    category: 'Birokrasi & Layanan Publik',
+    ministry: 'Garda Nasional',
+    description: 'Oknum Garda Nasional melakukan pungli kepada warga di wilayah kependudukan yang dijaga'
+  },
+  
+  // Layanan Darurat
+  { 
+    id: 'calo_birokrasi', 
+    name: 'Calo Layanan Darurat', 
+    category: 'Birokrasi & Layanan Publik',
+    ministry: 'Layanan Darurat',
+    description: 'Muncul calo yang menjanjikan respons cepat layanan darurat dengan membayar sejumlah uang'
+  },
+  { 
+    id: 'proses_lambat', 
+    name: 'Bantuan Darurat Sengaja Diperlambat', 
+    category: 'Birokrasi & Layanan Publik',
+    ministry: 'Layanan Darurat',
+    description: 'Proses bantuan darurat diperlambat kecuali ada uang pelicin kepada oknum petugas'
+  },
+  
+  // Politik Umum
+  { 
+    id: 'beli_suara', 
+    name: 'Politik Uang Pemilu', 
+    category: 'Politik & Pemilu',
+    ministry: 'Kabinet',
+    description: 'Praktik politik uang dan pembelian suara rakyat terdeteksi dalam pemilu yang baru saja berlangsung'
+  },
+  { 
+    id: 'dana_kampanye_gelap', 
+    name: 'Dana Kampanye Gelap', 
+    category: 'Politik & Pemilu',
+    ministry: 'Kabinet',
+    description: 'Sumber dana kampanye tidak jelas, diduga dari hasil korupsi dan pencucian uang'
+  },
+  { 
+    id: 'penggelembungan_dpt', 
+    name: 'Manipulasi Daftar Pemilih', 
+    category: 'Politik & Pemilu',
+    ministry: 'Kabinet',
+    description: 'Daftar pemilih tetap dimanipulasi untuk menguntungkan kandidat tertentu dalam pemilu'
+  },
+  { 
+    id: 'politik_uang', 
+    name: 'Suap Untuk Jabatan', 
+    category: 'Politik & Pemilu',
+    ministry: 'Kabinet',
+    description: 'Jabatan menteri dan pejabat tinggi diperjualbelikan dalam praktik politik uang'
+  },
+  { 
+    id: 'suap_parlemen', 
+    name: 'Suap Anggota Parlemen', 
+    category: 'Politik & Pemilu',
+    ministry: 'Kabinet',
+    description: 'Anggota parlemen menerima suap untuk meloloskan atau menggagalkan RUU tertentu'
+  },
+  { 
+    id: 'kroni_kabinet', 
+    name: 'Kronisme dalam Kabinet', 
+    category: 'Nepotisme & Kolusi',
+    ministry: 'Kabinet',
+    description: 'Penunjukan menteri dan pejabat tinggi lebih mengutamakan kedekatan pribadi daripada kompetensi'
+  },
+  { 
+    id: 'dinasti_politik', 
+    name: 'Dinasti Politik Keluarga', 
+    category: 'Nepotisme & Kolusi',
+    ministry: 'Kabinet',
+    description: 'Anggota keluarga pejabat tinggi menduduki posisi strategis di berbagai kementerian'
+  },
+  { 
+    id: 'obligasi_fiktif', 
+    name: 'Obligasi Negara Fiktif', 
+    category: 'Keuangan & Perbankan',
+    ministry: 'Kabinet',
+    description: 'Penerbitan obligasi negara dimanipulasi, dana tidak masuk kas negara sepenuhnya'
+  },
 ];
 
 const clamp = (value: number, min: number, max: number) =>
@@ -290,3 +627,17 @@ export function formatCorruptionCurrency(value: number): string {
 export function getCorruptionCategories(): string[] {
   return Array.from(new Set(CORRUPTION_SCHEMES.map(scheme => scheme.category)));
 }
+
+export function getCorruptionMinistries(): string[] {
+  return Array.from(new Set(CORRUPTION_SCHEMES.map(scheme => scheme.ministry)));
+}
+
+export function getSchemesByMinistry(ministry: string): CorruptionScheme[] {
+  return CORRUPTION_SCHEMES.filter(scheme => scheme.ministry === ministry);
+}
+
+export function getSchemeDescription(schemeId: string): string {
+  const scheme = CORRUPTION_SCHEMES.find(s => s.id === schemeId);
+  return scheme?.description || 'Kasus korupsi terdeteksi dalam pemerintahan.';
+}
+

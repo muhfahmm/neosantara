@@ -8,11 +8,21 @@ const REPLACEMENT_PROPOSERS: PbbVotingCountry[] = [
   { name: "Inggris", iso: "gb" },
   { name: "Perancis", iso: "fr" },
   { name: "Rusia", iso: "ru" },
+  { name: "China", iso: "cn" },
   { name: "Jepang", iso: "jp" },
   { name: "India", iso: "in" },
   { name: "Australia", iso: "au" },
   { name: "Jerman", iso: "de" },
   { name: "Brasil", iso: "br" },
+  { name: "Italia", iso: "it" },
+  { name: "Kanada", iso: "ca" },
+  { name: "Korea Selatan", iso: "kr" },
+  { name: "Turki", iso: "tr" },
+  { name: "Arab Saudi", iso: "sa" },
+  { name: "Afrika Selatan", iso: "za" },
+  { name: "Meksiko", iso: "mx" },
+  { name: "Spanyol", iso: "es" },
+  { name: "Indonesia", iso: "id" },
 ];
 
 interface AnnexedCountryInfo {
@@ -50,10 +60,15 @@ export function isCountryAnnexed(countryName: string, countryIso?: string): bool
 
 export function getEligibleReplacementProposer(excludedCountryNames: string[]): PbbVotingCountry | null {
   const excluded = new Set(excludedCountryNames.map(normalizeCountryKey));
-  return REPLACEMENT_PROPOSERS.find(country =>
+  const candidates = REPLACEMENT_PROPOSERS.filter(country =>
     !excluded.has(normalizeCountryKey(country.name)) &&
     !isCountryAnnexed(country.name, country.iso)
-  ) || null;
+  );
+
+  if (candidates.length === 0) return null;
+  // Pilih secara acak dari kandidat yang memenuhi syarat agar tidak monoton hanya Amerika Serikat
+  const randomIndex = Math.floor(Math.random() * candidates.length);
+  return candidates[randomIndex];
 }
 
 export function getAnnexedCountryCount(

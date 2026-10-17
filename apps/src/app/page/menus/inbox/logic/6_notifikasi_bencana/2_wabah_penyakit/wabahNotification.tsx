@@ -62,7 +62,11 @@ export default function WabahNotification({ notification, onAccept, onReject }: 
           </div>
           <div className="border-r border-teal-500/20 px-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Durasi</div>
-            <div className="text-cyan-300 font-extrabold mt-0.5">{notification.durationDays} Hari</div>
+            <div className="text-cyan-300 font-extrabold mt-0.5">
+              {notification.remainingDurationDays !== undefined
+                ? `${Math.max(0, notification.remainingDurationDays)} Hari`
+                : `${notification.durationDays} Hari`}
+            </div>
           </div>
           <div className="border-r border-teal-500/20 px-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Kerugian Sektor Medis</div>

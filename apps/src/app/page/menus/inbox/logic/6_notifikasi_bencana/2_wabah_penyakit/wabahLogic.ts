@@ -10,6 +10,8 @@ export interface WabahPenyakitNotification extends NotificationMessage {
   korban: number; // Jumlah pasien terinfeksi / korban terdampak
   perkiraanKematian: number;
   durationDays: number;
+  remainingDurationDays?: number;
+  startDate?: string;
   skenario?: string;
   persentaseTerinfeksi?: number;
   persentaseKematian?: number;
@@ -426,6 +428,8 @@ export function generateWabahPenyakitNotification(
     korban,
     perkiraanKematian,
     durationDays,
+    remainingDurationDays: durationDays,
+    startDate: dateStr,
     ...(skenario ? { skenario } : {}),
     ...(persentaseTerinfeksi === undefined ? {} : { persentaseTerinfeksi }),
     ...(!isNonHumanOutbreak ? { persentaseKematian } : {}),

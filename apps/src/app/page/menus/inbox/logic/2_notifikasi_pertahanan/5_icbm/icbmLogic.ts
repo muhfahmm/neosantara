@@ -1,9 +1,10 @@
 import { NotificationMessage } from '../../1_notifikasi_kepuasan_dan_peringkat/1_kepuasan/kepuasanLogic';
 
 export interface ICBMNotification extends NotificationMessage {
-  tradeType: 'icbm' | 'program_nuklir_dimulai' | 'program_nuklir_selesai';
+  tradeType: 'icbm' | 'program_nuklir_dimulai' | 'program_nuklir_selesai' | 'ujicoba_nuklir';
   launcherCountry?: string;
   targetCity?: string;
+  targetLocation?: string;
   costEM?: number;
   effectText?: string;
   isHandled?: boolean;
@@ -69,6 +70,29 @@ export function generateProgramNuklirSelesaiNotification(
     isRead: false,
     tradeType: 'program_nuklir_selesai',
     effectText: 'Fasilitas Pengayaan Nuklir Aktif & Akses Perakitan ICBM Terbuka',
+    isHandled: true
+  };
+}
+
+export function generateUjicobaNuklirAINotification(
+  testerCountry: string,
+  targetLocation: string,
+  remainingIcbm: number,
+  dateStr: string
+): ICBMNotification {
+  return {
+    id: `ujicoba-nuklir-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    title: `🚀 UJI COBA NUKLIR & RUDAL ICBM: ${testerCountry}`,
+    sender: `Badan Intelijen Strategis & Deteksi Seismik Global`,
+    message: `LAPORAN INTELIJEN GLOBAL: Negara ${testerCountry} baru saja melaksanakan uji coba peluncuran rudal balistik antarbenua (ICBM) bertulu ledak hulu nuklir ke ${targetLocation}. Sensor seismik dan satelit pengintai mencatat getaran getaran ledakan berkekuatan tinggi di area pengujian!`,
+    timestamp: dateStr,
+    type: 'peringkat',
+    value: 0,
+    isRead: false,
+    tradeType: 'ujicoba_nuklir',
+    launcherCountry: testerCountry,
+    targetLocation,
+    effectText: `Status Persediaan Rudal ${testerCountry}: ${remainingIcbm} Unit Siap Tempur`,
     isHandled: true
   };
 }

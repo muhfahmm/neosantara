@@ -9,6 +9,8 @@ export interface NotificationMessage {
   isRead: boolean;
   diplomacyArrivalDate?: string;
   diplomacyArrivalDays?: number;
+  isHandled?: boolean;
+  status?: string;
   provinceIncident?: {
     kind: 'demonstration' | 'referendum';
     targetCountry: string;

@@ -92,7 +92,53 @@ export default function ICBMNotificationCard({ notification, onAccept, onReject 
     );
   }
 
-  // 3. Notifikasi Deteksi Peluncuran ICBM Darurat
+  // 3. Notifikasi Laporan Uji Coba Nuklir / ICBM Negara Lain
+  if (tradeType === 'ujicoba_nuklir') {
+    return (
+      <div className="border-l-4 bg-purple-950/40 border-purple-400 p-4 sm:p-5 rounded-r-2xl shadow-xl flex gap-4 items-start select-none relative overflow-hidden transition-all border border-purple-500/40 shadow-[0_0_20px_rgba(168,85,247,0.2)]">
+        <div className="w-11 h-11 rounded-xl bg-purple-500/20 border border-purple-400/50 text-purple-400 flex items-center justify-center shrink-0 shadow-inner">
+          <Atom className="w-6 h-6 animate-pulse text-purple-400" />
+        </div>
+
+        <div className="flex-1 space-y-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h4 className="text-sm font-black text-purple-200 uppercase tracking-wide leading-tight">
+              {notification.title}
+            </h4>
+            <span className="text-[10px] font-black text-purple-300 bg-purple-900/80 px-2.5 py-0.5 rounded-full border border-purple-400/60 uppercase tracking-wider">
+              UJI COBA NUKLIR
+            </span>
+          </div>
+
+          <p className="text-[10px] font-bold text-purple-400/80 uppercase tracking-wider">
+            Pengirim: {notification.sender} | Waktu: {notification.timestamp}
+          </p>
+
+          <p className="text-xs font-medium text-slate-100 leading-relaxed pt-0.5">
+            {notification.message}
+          </p>
+
+          <div className="bg-[#140A1A] border border-purple-500/40 rounded-xl p-2.5 text-xs text-purple-300 font-bold flex items-center justify-between">
+            <span>{notification.effectText}</span>
+          </div>
+
+          {onAccept && (
+            <div className="pt-2 flex justify-end">
+              <button
+                onClick={onAccept}
+                className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-purple-400 hover:bg-purple-300 text-[#0A1A1A] rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(168,85,247,0.4)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <span>Lihat Status Nuklir Dunia</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // 4. Notifikasi Deteksi Peluncuran ICBM Darurat
   return (
     <div className={`border-l-4 ${isHandled ? 'bg-emerald-950/30 border-emerald-500' : 'bg-rose-950/70 border-rose-600'} p-4 sm:p-5 rounded-r-2xl shadow-xl flex gap-4 items-start select-none relative overflow-hidden transition-all border border-rose-600/40 animate-pulse`}>
       <div className={`w-11 h-11 rounded-xl ${isHandled ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' : 'bg-rose-600/30 border-rose-500/50 text-rose-400'} border flex items-center justify-center shrink-0 shadow-inner`}>

@@ -14,6 +14,9 @@ export interface BencanaAlamNotification extends NotificationMessage {
   korban: number; // Jumlah korban jiwa/terdampak
   totalKerugian: number; // Dalam NEO
   bantuanCost: number; // 1 NEO / Korban = korban
+  durationDays?: number;
+  remainingDurationDays?: number;
+  startDate?: string;
   isHandled?: boolean;
 }
 
@@ -333,6 +336,9 @@ function generateIncidentNotification(
     korban,
     totalKerugian,
     bantuanCost,
+    durationDays: 30,
+    remainingDurationDays: 30,
+    startDate: dateStr,
   };
 }
 

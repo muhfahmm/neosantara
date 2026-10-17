@@ -134,6 +134,7 @@ export interface PresidentRatingInput {
   lowSectorCount?: number;
   additionalDecay?: number;
   currentCompletedBoost?: number; // Bonus dari event yang selesai
+  hasUnhandledPopulationCrisis?: boolean; // Krisis wabah/pandemi/bencana yang belum teratasi setelah 1 bulan
   countryDetail?: Record<string, unknown> | null;
   lastDate?: string;
   currentDate: string;
@@ -185,10 +186,16 @@ export function calculatePresidentRating(input: PresidentRatingInput): President
     serviceDeficitPressure,
     lowSectorCount,
   );
-  const newThreshold = applyKementerianKebudayaanRatingDecayReduction(
+  let newThreshold = applyKementerianKebudayaanRatingDecayReduction(
     baseThreshold,
     input.countryDetail
   );
+
+  // Jika ada krisis bencana alam/pandemi/epidemi yang tidak diatasi setelah 1 bulan pertama,
+  // percepat penurunan peringkat menjadi 1 bulan (turun 1 poin per bulan)
+  if (input.hasUnhandledPopulationCrisis) {
+    newThreshold = 1;
+  }
 
   // Step 3: Scale counter jika tier kepuasan berubah
   const prevThreshold = lastRatingThreshold || newThreshold;

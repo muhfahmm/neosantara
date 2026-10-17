@@ -220,6 +220,26 @@ export const hitungDampakWabah = (
 ): { kematianTambahan: number; kelahiranBerkurang: number } => {
   let kematianTambahan = 0;
   let kelahiranBerkurang = 0;
+
+  // Filter wabah yang sedang aktif pada tanggal saat ini
+  const activeHumanOutbreaks = outbreaks.filter((o) => {
+    const startDate = String(o.startDate || o.timestamp || '').slice(0, 10);
+    const durationDays = Math.max(0, finiteNumber(o.durationDays));
+    const elapsed = getElapsedDays(startDate, currentDate);
+    const category = String(o.category || '');
+    const isHuman = !category.includes('Hewan') && !category.includes('Tumbuhan');
+    return isHuman && startDate && elapsed >= 0 && elapsed < durationDays;
+  });
+
+  // 🔥 EFEK MULTI-GELOMBANG / KOMPAUN WABAH & PANDEMI BERUNTUN:
+  // Jika negara terkena wabah lebih dari 1 secara bersamaan ATAU memiliki riwayat wabah/pandemi berturut-turut,
+  // sistem kesehatan mengalami kelebihan beban (overwhelmed health system), sehingga fatalitas dan penurunan netto bertambah drastis!
+  const activeCount = activeHumanOutbreaks.length;
+  const historyCount = Math.max(0, Number(countryDetail?.consecutive_outbreak_count || 0));
+  
+  // Pengganda kompaun: setiap wabah aktif tambahan atau riwayat gelombang beruntun menambah fatalitas sebesar +40% per tier (1.0x -> 1.4x -> 1.8x -> ...)
+  const compoundMultiplier = Math.max(1, 1 + (Math.max(0, activeCount - 1) * 0.45) + (Math.min(5, historyCount) * 0.25));
+
   for (const outbreak of outbreaks) {
     const startDate = String(outbreak.startDate || outbreak.timestamp || '').slice(0, 10);
     const durationDays = Math.max(0, finiteNumber(outbreak.durationDays));
@@ -233,9 +253,12 @@ export const hitungDampakWabah = (
         : category.includes('Mutasi')
           ? 0.1
           : 0.05;
-      const estimatedDeaths = Number.isFinite(Number(outbreak.perkiraanKematian))
+      const rawEstimated = Number.isFinite(Number(outbreak.perkiraanKematian))
         ? Math.max(0, finiteNumber(outbreak.perkiraanKematian))
         : victims * legacyDailyFatalityRate * durationDays;
+
+      // Kalikan dengan compound multiplier beban ganda wabah
+      const estimatedDeaths = rawEstimated * compoundMultiplier;
       const afterResearchDeaths = applyKontrolPandemiFatalityReduction(estimatedDeaths, countryDetail);
       const totalDeaths = applyKementerianKesehatanPandemicFatalityReduction(afterResearchDeaths, countryDetail);
       const deathsThroughToday = Math.floor(totalDeaths * (elapsed + 1) / durationDays);
@@ -245,11 +268,11 @@ export const hitungDampakWabah = (
     if (category.includes('Hewan') || category.includes('Tumbuhan')) {
       kelahiranBerkurang += victims * 0.01;
     } else if (category.includes('Mutasi')) {
-      kelahiranBerkurang += victims * 0.05;
+      kelahiranBerkurang += victims * 0.05 * compoundMultiplier;
     } else if (category.includes('Pandemi')) {
-      kelahiranBerkurang += victims * 0.1;
+      kelahiranBerkurang += victims * 0.12 * compoundMultiplier;
     } else {
-      kelahiranBerkurang += victims * 0.02;
+      kelahiranBerkurang += victims * 0.03 * compoundMultiplier;
     }
   }
   return { kematianTambahan: Math.floor(kematianTambahan), kelahiranBerkurang: Math.floor(kelahiranBerkurang) };
@@ -628,14 +651,19 @@ export const calculateDailyPopulationChange = (
   const growthCoverage = Math.min(1, Math.max(0, Math.min(foodRatio, housingFulfillment)));
   const maxAnnualGrowthRate = hasFoodOrHousingDeficit ? 0.005 : 0.015;
   const maxDailyGrowth = Math.floor(populasi * maxAnnualGrowthRate * growthCoverage / 365);
-  const maxAnnualDeclineRate = isPopulationCrisis ? 0.03 : 0.015;
+  // Batas penurunan harian dinaikkan secara dinamis jika ada krisis populasi atau wabah kematian aktif (agar kompaun pandemi/epidemi berulang dapat menekan penurunan netto lebih dalam)
+  const baseAnnualDeclineRate = isPopulationCrisis ? 0.03 : 0.015;
+  const outbreakDeclineBoost = outbreakDeaths > 0
+    ? Math.min(0.08, (outbreakDeaths / Math.max(1, populasi)) * 365 * 1.5)
+    : 0;
+  const maxAnnualDeclineRate = baseAnnualDeclineRate + outbreakDeclineBoost;
   const maxDailyDecline = Math.ceil(populasi * maxAnnualDeclineRate / 365);
   const boundedNetDailyChange = Math.max(-maxDailyDecline, Math.min(maxDailyGrowth, unboundedNetChange));
   const religionAdjustedNetChange = applyHinduPopulationGrowthBonus(boundedNetDailyChange, detail.religion);
   const socialismAdjustedNetChange = applySocialismBirthRateBonus(religionAdjustedNetChange, detail.ideology);
   const demographicNetDailyChange = socialismAdjustedNetChange - outbreakDeaths;
   const netDailyChange = Math.max(
-    -Math.min(populasi, maxDailyDecline),
+    -Math.min(populasi, maxDailyDecline + outbreakDeaths),
     demographicNetDailyChange + taxPopulationChange + economicPopulationChange,
   );
 

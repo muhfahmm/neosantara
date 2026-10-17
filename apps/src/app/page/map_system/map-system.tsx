@@ -94,6 +94,7 @@ import {
     applyNpcCountrySimulationState,
     useNpcCountrySimulation,
     clearActiveNpcCountrySimulationState,
+    updateNpcCountrySimulationState,
     NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { setCurrentGameDateString } from '@/app/logic/gameSessionState';
@@ -153,7 +154,10 @@ import {
 import { generatePemberontakanNotification, calculateSeparatismeRiskPercent } from '../menus/inbox/logic/2_notifikasi_pertahanan/4_pemberontakan/pemberontakanLogic';
 import { getDefenseAllianceOfferChancePercent } from '../bonus_logic/penelitian_bonus_logic/3_riset_diplomasi_intelijen/3_Aliansi Pertahanan';
 import { applyDoktrinPertahananDiriBonus, applyWarCasualtyToPopulation } from '../bonus_logic';
-import { generateICBMNotification, generateProgramNuklirSelesaiNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic';
+import { generateICBMNotification, generateProgramNuklirSelesaiNotification, generateUjicobaNuklirAINotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic';
+import { isNegaraNuklirBawaan, getNegaraNuklirBaseIcbm } from '@/app/logic/npc_ai_brain/military/nuclearControllerAI';
+import { getRealisticTargetLocationName } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/5_icbm/modals_menu/5_ujicoba_icbm/ujicobaIcbmLogic';
+import { terbitkanBeritaAI } from '@/app/logic/npc_ai_brain/core/aiNewsBridge';
 import { generateListrikDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/1_kelistrikan/listrikDefisitLogic';
 import { generateHunianDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/2_hunian/hunianDefisitLogic';
 import { generatePanganDefisitNotification } from '../menus/inbox/logic/8_kebutuhan_pokok_warga/3_pangan/panganDefisitLogic';
@@ -185,11 +189,13 @@ import { checkAndProcessOrgApplications } from '../navigasi_menu/2_navigasi_bawa
 import { fetchAllCountryProfilesFromDb } from '@/../../json/semua_fitur_negara/0_profiles';
 import {
     createInitialElectionState,
+    expelCountryFromSecurityCouncil,
     getEligibleUNMemberCountries,
     normalizeElectionState,
     tickSecurityCouncilElectionSchedule,
 } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logika_anggota_tidak_tetap/securityCouncilElection';
-import { calculateLayananPublikScore } from '@/app/logic/kepuasanCalculator';
+import { calculateLayananPublikScore, calculateHunianScore } from '@/app/logic/kepuasanCalculator';
+import { applyTotalHousingCapacityBonus } from '../bonus_logic';
 import { getCountryConsumptionBreakdown } from '../navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/1_grid_nasional/consumptionLogic';
 import { getKelistrikanFuelRequirements } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/construction_support/1_produksi/1_kelistrikan/fuelLogic';
 import { getMaterialStock } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
@@ -1345,13 +1351,26 @@ export default function MapPage() {
                     const reason = hasActiveApprovedInvasionResolutionForDifferentTarget(attackerCountry, targetCountry)
                         ? 'wrong_military_target'
                         : 'missing_military_resolution';
-                    const expelledOrganizations = expelCountryFromUNOrganizations(attackerCountry);
+                    const expelledOrganizations = expelCountryFromOrganizations(attackerCountry);
                     if (expelledOrganizations.length > 0) {
                         setNotifications(prev => [{
                             id: `notif-organization-expulsion-${Date.now()}`,
-                            title: '🚫 KEANGGOTAAN ORGANISASI PBB DICABUT',
-                            sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
-                            message: `${attackerCountry} dikeluarkan dari ${expelledOrganizations.join(', ')} karena menyerang ${targetCountry} tanpa resolusi invasi yang disetujui.`,
+                            title: '🚫 KEANGGOTAAN ORGANISASI INTERNASIONAL DICABUT',
+                            sender: 'Sekretariat Perserikatan Bangsa-Bangsa & Komunitas Global',
+                            message: `${attackerCountry} dikeluarkan secara tidak hormat dari organisasi internasional (${expelledOrganizations.join(', ')}) karena menyerang ${targetCountry} tanpa resolusi invasi yang disetujui.`,
+                            timestamp: dateStr,
+                            type: 'peringkat',
+                            value: 100,
+                            isRead: false
+                        }, ...prev]);
+                    }
+                    const revokedCouncilMember = expelCountryFromSecurityCouncil(attackerCountry);
+                    if (revokedCouncilMember) {
+                        setNotifications(prev => [{
+                            id: `notif-dk-pbb-expulsion-${Date.now()}`,
+                            title: '🏛️ KURSI ANGGOTA TIDAK TETAP DK PBB DICABUT',
+                            sender: 'Presidensi Dewan Keamanan PBB',
+                            message: `Status ${attackerCountry} sebagai Anggota Tidak Tetap Dewan Keamanan PBB resmi DICABUT seketika akibat melancarkan agresi militer terhadap ${targetCountry} tanpa mandat resolusi PBB. Hak suara istimewa di DK PBB dibatalkan!`,
                             timestamp: dateStr,
                             type: 'peringkat',
                             value: 100,
@@ -1789,12 +1808,14 @@ export default function MapPage() {
                 }, ...previous]);
                 return;
             }
-            if (!isPlayerAttacker && !hasApprovedInvasionMandate) {
+            if (!hasApprovedInvasionMandate) {
                 const violationReason = hasActiveGlobalWarBan()
                     ? 'war_ban'
                     : hasActiveApprovedInvasionResolutionForDifferentTarget(detail.attacker, detail.target)
                         ? 'wrong_military_target'
                         : 'missing_military_resolution';
+                
+                // 1. Sanksi PBB Resmi (Embargo Ekonomi & Sanksi Dewan Keamanan)
                 const violationNotifications = violationReason === 'war_ban'
                     ? submitWarBanViolationSanctions(
                         detail.attacker,
@@ -1810,6 +1831,49 @@ export default function MapPage() {
                 if (violationNotifications.length > 0) {
                     setNotifications(previous => [...violationNotifications, ...previous]);
                 }
+
+                // 2. Pencabutan Keanggotaan Organisasi Internasional & Seluruh Organisasi PBB
+                const expelledOrganizations = expelCountryFromOrganizations(detail.attacker);
+                if (expelledOrganizations.length > 0) {
+                    setNotifications(previous => [{
+                        id: `notif-organization-expulsion-${Date.now()}-${Math.random()}`,
+                        title: '🚫 KEANGGOTAAN ORGANISASI INTERNASIONAL DICABUT',
+                        sender: 'Sekretariat Perserikatan Bangsa-Bangsa & Komunitas Global',
+                        message: `${detail.attacker} dikeluarkan secara tidak hormat dari organisasi internasional (${expelledOrganizations.join(', ')}) karena memaksa melancarkan invasi militer terhadap ${detail.target} tanpa mandat Resolusi Invasi PBB.`,
+                        timestamp: currentDate.toISOString().slice(0, 10),
+                        type: 'peringkat',
+                        value: 100,
+                        isRead: false
+                    }, ...previous]);
+                }
+
+                // 3. Pencabutan Kursi Anggota Tidak Tetap Dewan Keamanan PBB
+                const revokedCouncilMember = expelCountryFromSecurityCouncil(detail.attacker);
+                if (revokedCouncilMember) {
+                    setNotifications(previous => [{
+                        id: `notif-dk-pbb-expulsion-${Date.now()}-${Math.random()}`,
+                        title: '🏛️ KURSI ANGGOTA TIDAK TETAP DK PBB DICABUT',
+                        sender: 'Presidensi Dewan Keamanan PBB',
+                        message: `Status ${detail.attacker} sebagai Anggota Tidak Tetap Dewan Keamanan PBB resmi DICABUT seketika akibat melancarkan agresi militer ilegal terhadap ${detail.target} tanpa mandat resolusi PBB. Hak suara istimewa dan pengaruh di DK PBB dibatalkan!`,
+                        timestamp: currentDate.toISOString().slice(0, 10),
+                        type: 'peringkat',
+                        value: 100,
+                        isRead: false
+                    }, ...previous]);
+                }
+
+                // 3. Sanksi Hubungan Diplomatik Bertubi-tubi: Hubungan dengan SELURUH negara dunia hancur lebur
+                const relationPenaltySummary = applyInvasionRelationPenalty(detail.attacker, detail.target);
+                setNotifications(previous => [{
+                    id: `notif-unapproved-invasion-relations-${Date.now()}-${Math.random()}`,
+                    title: '💥 KECAMAN INTERNASIONAL & SANKSI BERTUBI-TUBI',
+                    sender: 'Kementerian Luar Negeri & Komunitas Internasional',
+                    message: `${detail.attacker} dijatuhi sanksi bertubi-tubi dan kecaman keras oleh komunitas global karena memaksakan agresi militer terhadap ${detail.target} saat resolusi invasi ditolak/tanpa mandat PBB. Hubungan diplomatik dengan seluruh negara dunia memburuk drastis! ${relationPenaltySummary}`,
+                    timestamp: currentDate.toISOString().slice(0, 10),
+                    type: 'peringkat',
+                    value: 30,
+                    isRead: false,
+                }, ...previous]);
             }
 
             if (playerCountryName && areSameWarCountry(
@@ -1819,22 +1883,6 @@ export default function MapPage() {
                 selectedCountry?.iso || countryDetail?.iso
             )) {
                 setMilitaryAttackRelation(detail.attacker, detail.target, 1);
-                if (
-                    !hasActiveGlobalWarBan() &&
-                    !hasActiveApprovedInvasionResolution(detail.attacker, detail.target)
-                ) {
-                    const relationPenaltySummary = applyInvasionRelationPenalty(detail.attacker, detail.target);
-                    setNotifications(previous => [{
-                        id: `notif-unapproved-invasion-relations-${Date.now()}`,
-                        title: '📉 HUBUNGAN DIPLOMATIK MEMBURUK',
-                        sender: 'Kementerian Luar Negeri',
-                        message: `Hubungan diplomatik ${detail.attacker} dengan negara-negara lain menurun karena menyerang ${detail.target} tanpa mandat Resolusi Invasi PBB. ${relationPenaltySummary}`,
-                        timestamp: currentDate.toISOString().slice(0, 10),
-                        type: 'peringkat',
-                        value: 30,
-                        isRead: false,
-                    }, ...previous]);
-                }
             }
 
             const COUNTRY_NAME_ALIASES: Record<string, string> = {
@@ -2326,9 +2374,9 @@ export default function MapPage() {
         type: 'success'
     });
 
-    // Keep war results visible until the player closes them.
+    // Keep war results and inbox notification result modals visible until the player closes them manually.
     useEffect(() => {
-        if (!resultModal.isOpen || resultModal.persistent) return;
+        if (!resultModal.isOpen || resultModal.persistent || resultModal.openInboxOnClose) return;
 
         const timer = setTimeout(() => {
             setResultModal(prev => ({ ...prev, isOpen: false }));
@@ -2336,7 +2384,7 @@ export default function MapPage() {
         }, 3000);
 
         return () => clearTimeout(timer);
-    }, [resultModal.isOpen, resultModal.persistent]);
+    }, [resultModal.isOpen, resultModal.persistent, resultModal.openInboxOnClose]);
 
     // Track triggers to prevent spamming notifications on every tick when index is in warning zone
     const [hasShownEarlyWarning, setHasShownEarlyWarning] = useState<{
@@ -2820,7 +2868,8 @@ export default function MapPage() {
                                     korban: disaster.korban,
                                     startDate: currentDateStr,
                                     durationDays: 30,
-                                    healthMultiplier: 0.9
+                                    healthMultiplier: 0.9,
+                                    isHandled: false
                                 }
                             ]
                         };
@@ -2853,8 +2902,11 @@ export default function MapPage() {
                 newNotifsToAdd.push(outbreak);
                 setCountryDetail((prev: any) => {
                     if (!prev) return prev;
+                    const prevConsecutive = Number(prev.consecutive_outbreak_count || 0);
+                    const outbreakSeverityBoost = outbreakType === 'pandemi' ? 2 : 1;
                     return {
                         ...prev,
+                        consecutive_outbreak_count: prevConsecutive + outbreakSeverityBoost,
                         active_outbreaks: [
                             ...(Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : []),
                             {
@@ -2865,6 +2917,7 @@ export default function MapPage() {
                                 perkiraanKematian: outbreak.perkiraanKematian,
                                 durationDays: outbreak.durationDays,
                                 startDate: currentDateStr,
+                                isHandled: false
                             }
                         ]
                     };
@@ -2901,6 +2954,102 @@ export default function MapPage() {
                     newNotifsToAdd.push(generateSabotaseNotification(randomPartner, currentDateStr));
                 } else {
                     newNotifsToAdd.push(generateICBMNotification(randomPartner, 'Jakarta', currentDateStr));
+                }
+            }
+
+            // 5.1 Simulasi Uji Coba Nuklir / ICBM Negara Lain (Peluang 25% per bulan)
+            // Mengevaluasi negara-negara lain di dunia yang telah memiliki Program Nuklir atau ICBM
+            if (Math.random() < 0.25) {
+                const simSnapshot = getNpcCountrySimulationSnapshot();
+                const defaultNuclearNames = ['Amerika Serikat', 'Rusia', 'China', 'Korea Utara', 'India'];
+                const userNorm = userCountryName.trim().toLowerCase();
+
+                // Kumpulkan kandidat negara pemilik nuklir / ICBM selain negara pemain
+                const candidateNuclearCountries: Array<{
+                    name: string;
+                    slug: string;
+                    icbmCount: number;
+                    isDefault: boolean;
+                }> = [];
+
+                // 1. Masukkan negara superpower default nuklir yang bukan pemain
+                defaultNuclearNames.forEach(name => {
+                    if (name.trim().toLowerCase() !== userNorm) {
+                        const slug = name.toLowerCase().replace(/\s+/g, '_');
+                        const baseIcbm = getNegaraNuklirBaseIcbm(slug, name);
+                        const npcData = simSnapshot?.countries?.[slug];
+                        const currentIcbm = Number(npcData?.icbm_jumlah ?? baseIcbm);
+                        candidateNuclearCountries.push({
+                            name,
+                            slug,
+                            icbmCount: Math.max(0, currentIcbm),
+                            isDefault: true,
+                        });
+                    }
+                });
+
+                // 2. Masukkan negara NPC lain yang mengembangkan program nuklir atau memiliki ICBM di snapshot
+                if (simSnapshot?.countries) {
+                    Object.entries(simSnapshot.countries).forEach(([cSlug, cData]: [string, any]) => {
+                        const cName = String(cData?.nama_negara || cData?.country || cData?.name_id || cSlug);
+                        if (
+                            cSlug !== simSnapshot.playerCountrySlug &&
+                            cName.trim().toLowerCase() !== userNorm &&
+                            !candidateNuclearCountries.some(c => c.slug === cSlug)
+                        ) {
+                            const hasActiveNuclear = Boolean(cData?.programNuklirActive);
+                            const icbmNum = Number(cData?.icbm_jumlah ?? 0);
+                            const hasIcbm = Boolean(cData?.icbm_status) || icbmNum > 0;
+                            if (hasActiveNuclear || hasIcbm) {
+                                candidateNuclearCountries.push({
+                                    name: cName,
+                                    slug: cSlug,
+                                    icbmCount: Math.max(0, icbmNum),
+                                    isDefault: isNegaraNuklirBawaan(cSlug, cName),
+                                });
+                            }
+                        }
+                    });
+                }
+
+                if (candidateNuclearCountries.length > 0) {
+                    const chosenTester = candidateNuclearCountries[Math.floor(Math.random() * candidateNuclearCountries.length)];
+                    const targetLoc = getRealisticTargetLocationName(chosenTester.name, chosenTester.name);
+                    const targetLocationName = targetLoc.realisticName;
+
+                    // Kurangi 1 ICBM jika negara memiliki stok ICBM
+                    let remainingCount = chosenTester.icbmCount;
+                    if (remainingCount > 0) {
+                        remainingCount -= 1;
+                        updateNpcCountrySimulationState(chosenTester.slug, {
+                            icbm_jumlah: remainingCount,
+                            icbm_status: remainingCount > 0,
+                        });
+                    }
+
+                    // Tambahkan notifikasi uji coba nuklir ke Inbox
+                    newNotifsToAdd.push(
+                        generateUjicobaNuklirAINotification(
+                            chosenTester.name,
+                            targetLocationName,
+                            remainingCount,
+                            currentDateStr
+                        )
+                    );
+
+                    // Siarkan berita geopolitik uji coba nuklir / rudal balistik
+                    terbitkanBeritaAI({
+                        id: `news-ujicoba-${chosenTester.slug}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+                        type: 'update_geopolitik',
+                        category: 'pencapaian_militer',
+                        headline: `💥 ${chosenTester.name} Menggelar Uji Coba Rudal Balistik Nuklir!`,
+                        content: `Otoritas militer ${chosenTester.name} berhasil meluncurkan dan menguji coba sistem rudal strategis berkemampuan nuklir di ${targetLocationName}. Radar pertahanan internasional mencatat lintasan balistik sukses terkonfirmasi, memicu kewaspadaan tinggi di kawasan regional.`,
+                        timestamp: currentDateStr,
+                        dateStr: currentDateStr,
+                        countryName: chosenTester.name,
+                        countrySlug: chosenTester.slug,
+                        constructionSection: 'militer',
+                    });
                 }
             }
 
@@ -3149,6 +3298,32 @@ export default function MapPage() {
                                 : hasActiveApprovedInvasionResolutionForDifferentTarget(inv.attackerCountry, inv.targetCountry)
                                     ? 'wrong_military_target'
                                     : 'missing_military_resolution';
+                            const expelledOrganizations = expelCountryFromOrganizations(inv.attackerCountry);
+                            if (expelledOrganizations.length > 0) {
+                                newNotifsToAdd.push({
+                                    id: `notif-org-expulsion-ai-${currentDateStr}-${inv.attackerIso}`,
+                                    title: '🚫 KEANGGOTAAN ORGANISASI INTERNASIONAL DICABUT',
+                                    sender: 'Sekretariat Perserikatan Bangsa-Bangsa & Komunitas Global',
+                                    message: `${inv.attackerCountry} dikeluarkan secara tidak hormat dari organisasi internasional (${expelledOrganizations.join(', ')}) karena menyerang ${inv.targetCountry} tanpa mandat Resolusi Invasi PBB.`,
+                                    timestamp: currentDateStr,
+                                    type: 'peringkat',
+                                    value: 100,
+                                    isRead: false
+                                });
+                            }
+                            const revokedCouncilMember = expelCountryFromSecurityCouncil(inv.attackerCountry);
+                            if (revokedCouncilMember) {
+                                newNotifsToAdd.push({
+                                    id: `notif-dk-expulsion-ai-${currentDateStr}-${inv.attackerIso}`,
+                                    title: '🏛️ KURSI ANGGOTA TIDAK TETAP DK PBB DICABUT',
+                                    sender: 'Presidensi Dewan Keamanan PBB',
+                                    message: `Status ${inv.attackerCountry} sebagai Anggota Tidak Tetap Dewan Keamanan PBB resmi DICABUT seketika akibat melancarkan agresi militer terhadap ${inv.targetCountry} tanpa mandat resolusi PBB. Hak suara istimewa di DK PBB dibatalkan!`,
+                                    timestamp: currentDateStr,
+                                    type: 'peringkat',
+                                    value: 100,
+                                    isRead: false
+                                });
+                            }
                             const sanctionsNotifications = warBanActive
                                 ? submitWarBanViolationSanctions(inv.attackerCountry, inv.targetCountry, currentDateStr)
                                 : submitInvasionViolationSanctions(
@@ -3261,17 +3436,37 @@ export default function MapPage() {
                 apartemen: 6000,
                 mansion: 10,
             };
-            const totalHousingCap = (Number(countryDetail?.rumah_subsidi) || 0) * (Number(metadata?.rumah_subsidi?.kapasitas) || DEFAULT_HUNIAN_CAPACITIES.rumah_subsidi) +
-                (Number(countryDetail?.apartemen) || 0) * (Number(metadata?.apartemen?.kapasitas) || DEFAULT_HUNIAN_CAPACITIES.apartemen) +
-                (Number(countryDetail?.mansion) || 0) * (Number(metadata?.mansion?.kapasitas) || DEFAULT_HUNIAN_CAPACITIES.mansion);
+            const findHousingMeta = (key: string) => {
+                if (!metadata) return undefined;
+                if (metadata[key]) return metadata[key];
+                for (const k of Object.keys(metadata)) {
+                    const entry = metadata[k];
+                    if (!entry) continue;
+                    if (entry.dataKey === key || k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
+                }
+                return undefined;
+            };
+
+            let totalHousingCap = 0;
+            const hunianBuildingKeys = ["rumah_subsidi", "apartemen", "mansion"] as const;
+            hunianBuildingKeys.forEach((key) => {
+                const count = Number(countryDetail?.[key]) || 0;
+                const bMeta = findHousingMeta(key);
+                const baseCap = Number(bMeta?.kapasitas) || DEFAULT_HUNIAN_CAPACITIES[key] || 0;
+                const effectiveCap = applyTotalHousingCapacityBonus(baseCap, countryDetail);
+                totalHousingCap += count * effectiveCap;
+            });
+
             const totalPop = Number(countryDetail?.jumlah_penduduk) || 0;
             const housingShortage = Math.max(0, totalPop - totalHousingCap);
+            // Sinkronkan indeks kepuasan perumahan dengan formula resmi HunianPermukimanModal / calculateHunianScore
             const housingSatisfaction = totalPop > 0
                 ? (totalHousingCap <= 0 ? 1 : Math.min(100, Math.max(1, Math.round((Math.min(totalHousingCap / totalPop, 1)) * 100))))
-                : 50;
+                : (countryDetail?.satisfaction?.housing !== undefined ? Number(countryDetail.satisfaction.housing) : 100);
 
-            if (housingShortage > 0 || housingSatisfaction <= 20) {
-                const percentageMet = totalPop > 0 ? (totalHousingCap / totalPop) * 100 : 0;
+            // Hanya memicu notifikasi defisit hunian jika benar-benar terjadi krisis/kekurangan nyata (defisit > 0 DAN kepuasan perumahan di bawah ambang waspada)
+            if (housingShortage > 0 && housingSatisfaction < 100 && (housingSatisfaction <= 40 || housingShortage >= 1000)) {
+                const percentageMet = totalPop > 0 ? Math.min(100, (totalHousingCap / totalPop) * 100) : 0;
                 newNotifsToAdd.push(generateHunianDefisitNotification(
                     totalHousingCap,
                     totalPop,
@@ -4499,7 +4694,57 @@ export default function MapPage() {
                     ),
                 );
 
+                // --- FILTER BENCANA & WABAH SERTA DETEKSI EVENT KEDALUWARSA TANPA BANTUAN ---
+                const rawOutbreaks = Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : [];
+                const rawDisasters = Array.isArray(prev.active_disaster_effects) ? prev.active_disaster_effects : [];
+
+                let unhandledExpiredDisastersCount = 0;
+                const nextActiveOutbreaks = rawOutbreaks.filter((event: any) => {
+                    const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
+                    const isStillActive = Number.isFinite(elapsed) && elapsed >= 0 && elapsed < (Number(event.durationDays) || 0) * 86_400_000;
+                    if (!isStillActive) {
+                        const notif = notifications.find((n: any) => n.id === event.id);
+                        const isHandled = event.isHandled || notif?.isHandled;
+                        const isRejected = event.isRejected;
+                        if (!isHandled && !isRejected) {
+                            unhandledExpiredDisastersCount++;
+                        }
+                    }
+                    return isStillActive;
+                });
+
+                const nextActiveDisasters = rawDisasters.filter((event: any) => {
+                    const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
+                    const isStillActive = Number.isFinite(elapsed) && elapsed >= 0 && elapsed < (Number(event.durationDays) || 30) * 86_400_000;
+                    if (!isStillActive) {
+                        const notif = notifications.find((n: any) => n.id === event.id);
+                        const isHandled = event.isHandled || notif?.isHandled;
+                        const isRejected = event.isRejected;
+                        if (!isHandled && !isRejected) {
+                            unhandledExpiredDisastersCount++;
+                        }
+                    }
+                    return isStillActive;
+                });
+
+                // Penalti -2 poin peringkat presiden jika didiamkan hingga hilang sendiri
+                const unhandledDisasterPenalty = unhandledExpiredDisastersCount * 2;
+
                 // --- HITUNG PENURUNAN PERINGKAT BERDASARKAN KEPUASAN (menggunakan peringkatCalculator) ---
+                // Cek apakah ada bencana alam, epidemi, atau pandemi aktif yang belum diatasi dan sudah melebihi 1 bulan (>= 30 hari)
+                const isCrisisUnhandledAndPastOneMonth = (event: any) => {
+                    if (event?.isHandled) return false;
+                    const notif = notifications.find((n: any) => n.id === event.id);
+                    if (notif?.isHandled) return false;
+                    const startDateStr = String(event.startDate || '').slice(0, 10);
+                    if (!startDateStr) return false;
+                    const elapsedDays = Math.max(0, (Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${startDateStr}T00:00:00Z`)) / 86_400_000);
+                    return elapsedDays >= 30;
+                };
+
+                const hasUnhandledCrisis = nextActiveOutbreaks.some(isCrisisUnhandledAndPastOneMonth) ||
+                    nextActiveDisasters.some(isCrisisUnhandledAndPastOneMonth);
+
                 const keterbukaanScore = calculateKeterbukaanScore(prev);
                 const ratingResult = calculatePresidentRating({
                     currentRating: prev.presidentRating ?? 50,
@@ -4509,7 +4754,8 @@ export default function MapPage() {
                     currentKepuasan: nextKepuasan,
                     keterbukaanScore,
                     lowSectorCount,
-                    additionalDecay: sectorDeficitPenaltyThisTick,
+                    hasUnhandledPopulationCrisis: hasUnhandledCrisis,
+                    additionalDecay: sectorDeficitPenaltyThisTick + unhandledDisasterPenalty,
                     currentCompletedBoost: currentCompletedBoost,
                     countryDetail: prev,
                     lastDate,
@@ -4711,14 +4957,8 @@ export default function MapPage() {
                     icbmBuildTask: nextIcbmTask,
                     population_crisis_tiers: currentCrisisTiers,
                     pending_notifications: [...diplomacyCompletionNotifications, ...nextPendingNotifications, ...newCrisisNotifications],
-                    active_outbreaks: (Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : []).filter((event: any) => {
-                        const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
-                        return Number.isFinite(elapsed) && elapsed >= 0 && elapsed < (Number(event.durationDays) || 0) * 86_400_000;
-                    }),
-                    active_disaster_effects: (Array.isArray(prev.active_disaster_effects) ? prev.active_disaster_effects : []).filter((event: any) => {
-                        const elapsed = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(event.startDate || '').slice(0, 10)}T00:00:00Z`);
-                        return Number.isFinite(elapsed) && elapsed >= 0 && elapsed < (Number(event.durationDays) || 30) * 86_400_000;
-                    }),
+                    active_outbreaks: nextActiveOutbreaks,
+                    active_disaster_effects: nextActiveDisasters,
                     ongoingConstructions: currentOngoing,
                     ongoingEmbassyConstructions: nextOngoingEmbassyConstructions,
                     ongoingNonAggressionPactRatifications: nextOngoingPactRatifications,
@@ -4760,6 +5000,37 @@ export default function MapPage() {
                     last_kesejahteraan_threshold: decayResult.last_kesejahteraan_threshold,
                 };
             }));
+
+            // ⏳ Hitung mundur durasi notifikasi wabah (pandemi/epidemi) dan bencana alam setiap pergantian hari
+            setNotifications((prevNotifications) => {
+                let hasChanges = false;
+                const nextNotifications = prevNotifications.map((notif: any) => {
+                    if (notif.tradeType === 'wabah_penyakit' || notif.tradeType === 'bencana_alam') {
+                        const totalDuration = Number(notif.durationDays) || (notif.tradeType === 'bencana_alam' ? 30 : 14);
+                        const start = notif.startDate || notif.timestamp;
+                        let remaining: number;
+                        if (start) {
+                            const elapsedMs = Date.parse(`${currentDateStr}T00:00:00Z`) - Date.parse(`${String(start).slice(0, 10)}T00:00:00Z`);
+                            const elapsedDays = Math.max(0, Math.floor(elapsedMs / 86_400_000));
+                            remaining = Math.max(0, totalDuration - elapsedDays);
+                        } else if (typeof notif.remainingDurationDays === 'number') {
+                            remaining = Math.max(0, notif.remainingDurationDays - 1);
+                        } else {
+                            remaining = Math.max(0, totalDuration - 1);
+                        }
+
+                        if (notif.remainingDurationDays !== remaining) {
+                            hasChanges = true;
+                            return {
+                                ...notif,
+                                remainingDurationDays: remaining,
+                            };
+                        }
+                    }
+                    return notif;
+                });
+                return hasChanges ? nextNotifications : prevNotifications;
+            });
         };
 
         const idleWindow = window as Window & {
@@ -5281,11 +5552,14 @@ export default function MapPage() {
                             ? { ...item, provinceIncident: { ...incident, handled: true } }
                             : item
                         ));
+                        setInboxModalOpen(false);
                         setResultModal({
                             isOpen: true,
                             title: 'Referendum Tidak Lagi Berlangsung',
                             message: `Referendum ${targetCountry} sudah selesai atau tidak lagi aktif. Tidak ada tindakan yang dilakukan.`,
-                            type: 'info'
+                            type: 'info',
+                            persistent: true,
+                            openInboxOnClose: true
                         });
                         return;
                     }
@@ -5370,6 +5644,7 @@ export default function MapPage() {
                         }
                         : item
                     ));
+                    setInboxModalOpen(false);
                     setResultModal({
                         isOpen: true,
                         title: 'Massa Dibubarkan dengan Kekerasan',
@@ -5378,7 +5653,9 @@ export default function MapPage() {
                             : startedReferendum
                                 ? ` Ketegangan mencapai 100; referendum kemerdekaan dimulai dan berlangsung hingga ${newReferendum?.votingEndsAt}.`
                                 : ''}`,
-                        type: 'error'
+                        type: 'error',
+                        persistent: true,
+                        openInboxOnClose: true
                     });
                     if (startedReferendum && newReferendum) {
                         window.dispatchEvent(new CustomEvent(PROVINCE_ACTION_EVENT, {
@@ -5401,11 +5678,14 @@ export default function MapPage() {
                         (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli') &&
                         isTradeEmbargoActive(countryDetail?.country || countryDetail?.nama_negara || '', tNotif.partnerName || '')
                     ) {
+                        setInboxModalOpen(false);
                         setResultModal({
                             isOpen: true,
                             title: 'Transaksi Diblokir oleh Embargo PBB',
                             message: `Perdagangan dengan ${tNotif.partnerName || 'negara terkait'} tidak dapat dilakukan selama embargo ekonomi PBB masih berlaku.`,
-                            type: 'error'
+                            type: 'error',
+                            persistent: true,
+                            openInboxOnClose: true
                         });
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         return;
@@ -5415,16 +5695,23 @@ export default function MapPage() {
                         // AI Ingin Membeli Produk User (Jual): Tambah Kas, Kurangi Stok User
                         const myStock = Number(countryDetail?.[tNotif.productKey] || 0);
                         if (myStock < tNotif.quantity) {
+                            setInboxModalOpen(false);
                             setResultModal({
                                 isOpen: true,
                                 title: 'Gagal Menyelesaikan Ekspor',
                                 message: `Stok ${tNotif.productKey} Anda tidak mencukupi (${myStock} unit dari ${tNotif.quantity} unit yang dibutuhkan).`,
-                                type: 'error'
+                                type: 'error',
+                                persistent: true,
+                                openInboxOnClose: true
                             });
                             return;
                         }
 
                         const budget = Number(countryDetail?.anggaran || 0);
+                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        if (tNotif.partnerName) {
+                            setRelationModifier(playerCountryName, tNotif.partnerName, 5);
+                        }
                         setCountryDetail((prev: any) => ({
                             ...prev,
                             anggaran: budget + tNotif.totalPrice,
@@ -5432,14 +5719,16 @@ export default function MapPage() {
                             [`total_sold_${tNotif.productKey}`]: Number(prev?.[`total_sold_${tNotif.productKey}`] || 0) + tNotif.quantity
                         }));
 
+                        setInboxModalOpen(false);
                         setResultModal({
                             isOpen: true,
                             title: 'Transaksi Ekspor Berhasil',
-                            message: `Berhasil mengekspor ${tNotif.quantity} unit ${tNotif.productKey} ke ${tNotif.partnerName} senilai +${tNotif.totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO!`,
-                            type: 'success'
+                            message: `Berhasil mengekspor ${tNotif.quantity} unit ${tNotif.productKey} ke ${tNotif.partnerName} senilai +${tNotif.totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO! Hubungan bilateral meningkat +5 poin.`,
+                            type: 'success',
+                            persistent: true,
+                            openInboxOnClose: true
                         });
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
-                        setInboxModalOpen(false);
                         return;
                     }
 
@@ -5447,16 +5736,23 @@ export default function MapPage() {
                         // AI Menjual ke User (Beli): Kurangi Kas, Tambah Stok User
                         const budget = Number(countryDetail?.anggaran || 0);
                         if (budget < tNotif.totalPrice) {
+                            setInboxModalOpen(false);
                             setResultModal({
                                 isOpen: true,
                                 title: 'Gagal Menyelesaikan Impor',
                                 message: `Anggaran negara tidak mencukupi untuk melakukan impor ini. (${budget.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO tersedia dari ${tNotif.totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO).`,
-                                type: 'error'
+                                type: 'error',
+                                persistent: true,
+                                openInboxOnClose: true
                             });
                             return;
                         }
 
                         const myStock = Number(countryDetail?.[tNotif.productKey] || 0);
+                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        if (tNotif.partnerName) {
+                            setRelationModifier(playerCountryName, tNotif.partnerName, 5);
+                        }
                         setCountryDetail((prev: any) => ({
                             ...prev,
                             anggaran: budget - tNotif.totalPrice,
@@ -5464,19 +5760,25 @@ export default function MapPage() {
                             [`total_bought_${tNotif.productKey}`]: Number(prev?.[`total_bought_${tNotif.productKey}`] || 0) + tNotif.quantity
                         }));
 
+                        setInboxModalOpen(false);
                         setResultModal({
                             isOpen: true,
                             title: 'Transaksi Impor Berhasil',
-                            message: `Berhasil mengimpor ${tNotif.quantity} unit ${tNotif.productKey} dari ${tNotif.partnerName} senilai -${tNotif.totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO!`,
-                            type: 'success'
+                            message: `Berhasil mengimpor ${tNotif.quantity} unit ${tNotif.productKey} dari ${tNotif.partnerName} senilai -${tNotif.totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO! Hubungan bilateral meningkat +5 poin.`,
+                            type: 'success',
+                            persistent: true,
+                            openInboxOnClose: true
                         });
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
-                        setInboxModalOpen(false);
                         return;
                     }
 
                     if (tNotif.tradeType === 'penawaran_kedutaan_besar') {
                         const partner = tNotif.partnerCountry;
+                        const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                        if (partner) {
+                            setRelationModifier(playerCountryName, partner, 5);
+                        }
                         // Buka Detail Negara mitra dan otomatis munculkan modal konfirmasi bangun kedutaan
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         setInboxModalOpen(false);
@@ -5495,7 +5797,9 @@ export default function MapPage() {
                                 isOpen: true,
                                 title: 'Ratifikasi Diblokir oleh Embargo PBB',
                                 message: `Perjanjian dagang dengan ${partner} tidak dapat diratifikasi selama embargo ekonomi PBB masih berlaku.`,
-                                type: 'error'
+                                type: 'error',
+                                persistent: true,
+                                openInboxOnClose: true
                             });
                             return;
                         }
@@ -5510,11 +5814,16 @@ export default function MapPage() {
                                 isOpen: true,
                                 title: 'Ratifikasi Perjanjian Dagang Gagal',
                                 message: `Gagal meratifikasi Perjanjian Hubungan Dagang! Anda belum membangun Kedutaan Besar di ${partner}. Bangun Kedutaan Besar terlebih dahulu di menu Detail Negara ${partner}.`,
-                                type: 'error'
+                                type: 'error',
+                                persistent: true,
+                                openInboxOnClose: true
                             });
                             return;
                         }
 
+                        if (partner) {
+                            setRelationModifier(playerCountryName, partner, 5);
+                        }
                         setCountryDetail((prev: any) => ({
                             ...prev,
                             addedTradePartners: Array.from(new Set([...(prev?.addedTradePartners || []), partner]))
@@ -5524,8 +5833,10 @@ export default function MapPage() {
                         setResultModal({
                             isOpen: true,
                             title: 'Perjanjian Hubungan Dagang Resmi',
-                            message: `Berhasil meratifikasi Perjanjian Hubungan Dagang bilateral dengan ${partner}! Sektor perdagangan aktif dibuka.`,
-                            type: 'success'
+                            message: `Berhasil meratifikasi Perjanjian Hubungan Dagang bilateral dengan ${partner}! Sektor perdagangan aktif dibuka dan hubungan bilateral meningkat +5 poin.`,
+                            type: 'success',
+                            persistent: true,
+                            openInboxOnClose: true
                         });
                         return;
                     }
@@ -5544,11 +5855,16 @@ export default function MapPage() {
                                 isOpen: true,
                                 title: 'Ratifikasi Pakta Non-Agresi Gagal',
                                 message: `Gagal meratifikasi Pakta Non-Agresi! Anda belum membangun Kedutaan Besar di ${partner}. Bangun Kedutaan Besar terlebih dahulu di menu Detail Negara ${partner}.`,
-                                type: 'error'
+                                type: 'error',
+                                persistent: true,
+                                openInboxOnClose: true
                             });
                             return;
                         }
 
+                        if (partner) {
+                            setRelationModifier(playerCountryName, partner, 5);
+                        }
                         setCountryDetail((prev: Record<string, unknown> | null) => {
                             const history = Array.isArray(prev?.nonAggressionPactHistory)
                                 ? prev.nonAggressionPactHistory as NonAggressionPactPeriod[]
@@ -5575,8 +5891,10 @@ export default function MapPage() {
                         setResultModal({
                             isOpen: true,
                             title: 'Pakta Non-Agresi Ratifikasi',
-                            message: `Berhasil meratifikasi Pakta Non-Agresi Bilateral dengan ${partner}! Perdamaian wilayah tetap terjaga.`,
-                            type: 'success'
+                            message: `Berhasil meratifikasi Pakta Non-Agresi Bilateral dengan ${partner}! Perdamaian wilayah tetap terjaga dan hubungan bilateral meningkat +5 poin.`,
+                            type: 'success',
+                            persistent: true,
+                            openInboxOnClose: true
                         });
                         return;
                     }
@@ -5595,11 +5913,16 @@ export default function MapPage() {
                                 isOpen: true,
                                 title: 'Pembentukan Aliansi Pertahanan Gagal',
                                 message: `Gagal membentuk Aliansi Pertahanan! Anda belum membangun Kedutaan Besar di ${partner}. Bangun Kedutaan Besar terlebih dahulu di menu Detail Negara ${partner}.`,
-                                type: 'error'
+                                type: 'error',
+                                persistent: true,
+                                openInboxOnClose: true
                             });
                             return;
                         }
 
+                        if (partner) {
+                            setRelationModifier(playerCountryName, partner, 5);
+                        }
                         setCountryDetail((prev: any) => ({
                             ...prev,
                             defenseAlliances: Array.from(new Set([...(prev?.defenseAlliances || []), partner]))
@@ -5609,8 +5932,10 @@ export default function MapPage() {
                         setResultModal({
                             isOpen: true,
                             title: 'Aliansi Pertahanan Dibentuk',
-                            message: `Berhasil membentuk Aliansi Pertahanan Militer Bersama dengan ${partner}! Bantuan pertahanan dijamin.`,
-                            type: 'success'
+                            message: `Berhasil membentuk Aliansi Pertahanan Militer Bersama dengan ${partner}! Bantuan pertahanan dijamin dan hubungan bilateral meningkat +5 poin.`,
+                            type: 'success',
+                            persistent: true,
+                            openInboxOnClose: true
                         });
                         return;
                     }
@@ -5629,11 +5954,16 @@ export default function MapPage() {
                                 isOpen: true,
                                 title: 'Ratifikasi Kontrak Penelitian Gagal',
                                 message: `Gagal meratifikasi Kontrak Penelitian Joint-R&D! Anda belum membangun Kedutaan Besar di ${partner}. Bangun Kedutaan Besar terlebih dahulu di menu Detail Negara ${partner}.`,
-                                type: 'error'
+                                type: 'error',
+                                persistent: true,
+                                openInboxOnClose: true
                             });
                             return;
                         }
 
+                        if (partner) {
+                            setRelationModifier(playerCountryName, partner, 5);
+                        }
                         setCountryDetail((prev: any) => ({
                             ...prev,
                             researchContracts: Array.from(new Set([...(prev?.researchContracts || []), partner]))
@@ -5643,8 +5973,10 @@ export default function MapPage() {
                         setResultModal({
                             isOpen: true,
                             title: 'Kontrak Penelitian Joint-R&D',
-                            message: `Berhasil meratifikasi Kontrak Penelitian Joint-R&D dengan ${partner}! Durasi seluruh penelitian nasional berkurang 0,1% per negara mitra.`,
-                            type: 'success'
+                            message: `Berhasil meratifikasi Kontrak Penelitian Joint-R&D dengan ${partner}! Durasi seluruh penelitian nasional berkurang 0,1% per negara mitra dan hubungan bilateral meningkat +5 poin.`,
+                            type: 'success',
+                            persistent: true,
+                            openInboxOnClose: true
                         });
                         return;
                     }
@@ -5663,7 +5995,11 @@ export default function MapPage() {
                         return;
                     }
 
-                    if (tNotif.tradeType === 'program_nuklir_dimulai' || tNotif.tradeType === 'program_nuklir_selesai') {
+                    if (
+                        tNotif.tradeType === 'program_nuklir_dimulai' ||
+                        tNotif.tradeType === 'program_nuklir_selesai' ||
+                        tNotif.tradeType === 'ujicoba_nuklir'
+                    ) {
                         setInboxModalOpen(false);
                         setActiveMenu("Pertahanan");
                         return;
@@ -5695,11 +6031,14 @@ export default function MapPage() {
                                 }
                             }));
                         }
+                        setInboxModalOpen(false);
                         setResultModal({
                             isOpen: true,
                             title: tNotif.tradeType === 'diserang' ? 'Merespon Serangan Militer' : 'Operasi Pertahanan Berhasil',
                             message: `Operasi penanganan "${tNotif.title}" sukses dilaksanakan oleh divisi pertahanan & intelijen nasional!`,
-                            type: 'success'
+                            type: 'success',
+                            persistent: true,
+                            openInboxOnClose: true
                         });
                         return;
                     }
@@ -5710,33 +6049,56 @@ export default function MapPage() {
                         const cost = Number((isPoliceIncident ? tNotif.responseCost : undefined) ?? tNotif.bantuanCost ?? 0);
                         const budget = Number(countryDetail?.anggaran || 0);
                         if (budget < cost) {
+                            setInboxModalOpen(false);
                             setResultModal({
                                 isOpen: true,
                                 title: isPoliceIncident ? 'Operasi Kepolisian Gagal' : 'Gagal Menyalurkan Bantuan',
                                 message: `Anggaran negara tidak mencukupi untuk ${isPoliceIncident ? 'mendanai operasi kepolisian' : 'menyalurkan bantuan'} (${budget.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO dari ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO).`,
-                                type: 'error'
+                                type: 'error',
+                                persistent: true,
+                                openInboxOnClose: true
                             });
                             return;
+                        }
+
+                        const currentPresidentRating = Number(countryDetail?.presidentRating ?? 50);
+                        const isDisasterOrOutbreak = tNotif.tradeType === 'bencana_alam' || tNotif.tradeType === 'wabah_penyakit';
+                        const nextPresidentRating = isDisasterOrOutbreak
+                            ? Math.min(100, currentPresidentRating + 5)
+                            : currentPresidentRating;
+
+                        if (isDisasterOrOutbreak) {
+                            setPresidentRating(nextPresidentRating);
                         }
 
                         setCountryDetail((prev: any) => ({
                             ...prev,
                             anggaran: budget - cost,
+                            presidentRating: nextPresidentRating,
                             tingkat_keamanan: isPoliceIncident
                                 ? Math.min(100, Number(prev?.tingkat_keamanan || 0) + 2)
                                 : prev?.tingkat_keamanan,
                             kepuasan_masyarakat: Math.min(100, Number(prev?.kepuasan_masyarakat || 50) + (isPoliceIncident ? 1 : 2)),
-                            indeks_kesejahteraan: Math.min(100, Number(prev?.indeks_kesejahteraan || 50) + (isPoliceIncident ? 1 : 2))
+                            indeks_kesejahteraan: Math.min(100, Number(prev?.indeks_kesejahteraan || 50) + (isPoliceIncident ? 1 : 2)),
+                            active_outbreaks: Array.isArray(prev?.active_outbreaks)
+                                ? prev.active_outbreaks.map((o: any) => o.id === notif.id ? { ...o, isHandled: true } : o)
+                                : prev?.active_outbreaks,
+                            active_disaster_effects: Array.isArray(prev?.active_disaster_effects)
+                                ? prev.active_disaster_effects.map((d: any) => d.id === notif.id ? { ...d, isHandled: true } : d)
+                                : prev?.active_disaster_effects,
                         }));
 
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
+                        setInboxModalOpen(false);
                         setResultModal({
                             isOpen: true,
                             title: isPoliceIncident ? 'Operasi Kepolisian Berhasil' : 'Bantuan Darurat Disalurkan',
                             message: isPoliceIncident
                                 ? `Operasi kepolisian berhasil didanai sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO. Tingkat keamanan, kepuasan, dan kesejahteraan meningkat.`
-                                : `Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO! Kepuasan & Kesejahteraan masyarakat meningkat +2.0%.`,
-                            type: 'success'
+                                : `Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO! Peringkat Presiden naik +5 poin, serta Kepuasan & Kesejahteraan masyarakat meningkat.`,
+                            type: 'success',
+                            persistent: true,
+                            openInboxOnClose: true
                         });
                         return;
                     }
@@ -5754,6 +6116,9 @@ export default function MapPage() {
                 }}
                 onRedirectClick={(notif) => {
                     const tNotif = notif as any;
+                    const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+                    const offerPartner = tNotif.partnerCountry || tNotif.partnerName;
+
                     if (tNotif.tradeType === 'penawaran_pakta_non_agresi' || tNotif.tradeType === 'penawaran_aliansi_pertahanan' || tNotif.tradeType === 'penawaran_kontrak_penelitian') {
                         if (tNotif.isHandled) {
                             setInboxModalOpen(false);
@@ -5761,12 +6126,53 @@ export default function MapPage() {
                             setCountryDetailModalOpen(true);
                             return;
                         }
+                        if (offerPartner) {
+                            setRelationModifier(playerCountryName, offerPartner, -2);
+                        }
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'rejected' } : n));
                         return;
                     }
 
-                    const specialNotifTypes = ['jual', 'beli', 'penawaran_kedutaan_besar', 'penawaran_hubungan_dagang', 'bencana_alam', 'wabah_penyakit', 'keamanan', 'spionase', 'sabotase', 'diserang', 'pemberontakan', 'icbm'];
-                    if (specialNotifTypes.includes(tNotif.tradeType)) {
+                    const internationalOfferTypes = ['jual', 'beli', 'penawaran_kedutaan_besar', 'penawaran_hubungan_dagang'];
+                    if (internationalOfferTypes.includes(tNotif.tradeType)) {
+                        if (offerPartner) {
+                            setRelationModifier(playerCountryName, offerPartner, -2);
+                        }
+                        setNotifications(prev => prev.filter(n => n.id !== notif.id));
+                        setInboxModalOpen(false);
+                        return;
+                    }
+
+                    if (tNotif.tradeType === 'bencana_alam' || tNotif.tradeType === 'wabah_penyakit') {
+                        // Tolak / Abaikan Bencana atau Wabah: Turunkan peringkat presiden 4 poin
+                        const currentP = Number(countryDetail?.presidentRating ?? 50);
+                        const nextP = Math.max(0, currentP - 4);
+                        setPresidentRating(nextP);
+                        setCountryDetail((prev: any) => ({
+                            ...prev,
+                            presidentRating: nextP,
+                            active_outbreaks: Array.isArray(prev?.active_outbreaks)
+                                ? prev.active_outbreaks.map((o: any) => o.id === notif.id ? { ...o, isRejected: true } : o)
+                                : prev?.active_outbreaks,
+                            active_disaster_effects: Array.isArray(prev?.active_disaster_effects)
+                                ? prev.active_disaster_effects.map((d: any) => d.id === notif.id ? { ...d, isRejected: true } : d)
+                                : prev?.active_disaster_effects,
+                        }));
+                        setNotifications(prev => prev.filter(n => n.id !== notif.id));
+                        setInboxModalOpen(false);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Bantuan Bencana Ditolak',
+                            message: `Anda menolak memberikan bantuan untuk penanganan "${tNotif.title}". Peringkat Presiden turun -4 poin akibat respon publik yang negatif.`,
+                            type: 'error',
+                            persistent: true,
+                            openInboxOnClose: true
+                        });
+                        return;
+                    }
+
+                    const otherSpecialNotifTypes = ['keamanan', 'spionase', 'sabotase', 'diserang', 'pemberontakan', 'icbm'];
+                    if (otherSpecialNotifTypes.includes(tNotif.tradeType)) {
                         // Tolak / Abaikan Notifikasi: Hapus notifikasi dari feed
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         setInboxModalOpen(false);

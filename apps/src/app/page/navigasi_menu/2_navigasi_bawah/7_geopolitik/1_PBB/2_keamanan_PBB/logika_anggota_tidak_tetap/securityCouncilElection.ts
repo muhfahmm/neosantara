@@ -327,6 +327,96 @@ export function markLimitedVetoUsed(countryIso: string, resolutionId: string): S
   }
 }
 
+export function expelCountryFromSecurityCouncil(countryNameOrIso: string): SecurityCouncilMember | null {
+  if (typeof window === "undefined") return null;
+  const currentYear = getCurrentElectionYear();
+  const searchKey = normalizeName(countryNameOrIso);
+  const searchIso = countryNameOrIso.toLowerCase().trim();
+
+  try {
+    const raw = localStorage.getItem(SECURITY_COUNCIL_ELECTION_STATE_KEY);
+    const state = normalizeElectionState(raw ? JSON.parse(raw) : null, currentYear);
+    
+    // Cari apakah negara tersebut saat ini menjabat sebagai Anggota Tidak Tetap
+    const memberIndex = state.members.findIndex(m =>
+      normalizeName(m.name) === searchKey || m.iso.toLowerCase() === searchIso
+    );
+
+    if (memberIndex === -1) {
+      // Periksa juga jika ada di nominees/kandidat kampanye, hapus dari nominasi
+      if (state.nominees.some(n => normalizeName(n.name) === searchKey || n.iso.toLowerCase() === searchIso)) {
+        const filteredNominees = state.nominees.filter(n =>
+          normalizeName(n.name) !== searchKey && n.iso.toLowerCase() !== searchIso
+        );
+        const updatedState = { ...state, nominees: filteredNominees };
+        localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, JSON.stringify(updatedState));
+        window.dispatchEvent(new CustomEvent("pbb_security_council_roster_updated"));
+      }
+      return null;
+    }
+
+    const removedMember = state.members[memberIndex];
+    const region = removedMember.region;
+    const cohort = removedMember.cohort;
+
+    // Cari negara pengganti dari kawasan (region) yang sama untuk mengisi sisa masa jabatan
+    const eligibleCountries = getEligibleUNMemberCountries([]);
+    const occupiedIsos = new Set([
+      ...PERMANENT_SECURITY_COUNCIL_MEMBERS.map(p => p.iso.toLowerCase()),
+      ...state.members.map(m => m.iso.toLowerCase())
+    ]);
+
+    const replacementCandidate = eligibleCountries.find(c =>
+      c.region === region &&
+      !occupiedIsos.has(c.iso.toLowerCase()) &&
+      normalizeName(c.name) !== searchKey &&
+      c.iso.toLowerCase() !== searchIso
+    );
+
+    const replacementMember: SecurityCouncilMember = replacementCandidate
+      ? {
+          name: replacementCandidate.name,
+          iso: replacementCandidate.iso,
+          region,
+          cohort,
+          termStartYear: removedMember.termStartYear,
+          termEndYear: removedMember.termEndYear,
+          vetoUsed: false,
+        }
+      : {
+          name: "Swiss",
+          iso: "ch",
+          region: "Eropa Barat",
+          cohort,
+          termStartYear: removedMember.termStartYear,
+          termEndYear: removedMember.termEndYear,
+          vetoUsed: false,
+        };
+
+    const newMembers = [...state.members];
+    newMembers[memberIndex] = replacementMember;
+
+    // Bersihkan juga dari calon nominasi jika ada
+    const newNominees = state.nominees.filter(n =>
+      normalizeName(n.name) !== searchKey && n.iso.toLowerCase() !== searchIso
+    );
+
+    const updatedState: SecurityCouncilElectionState = {
+      ...state,
+      members: newMembers,
+      nominees: newNominees,
+    };
+
+    localStorage.setItem(SECURITY_COUNCIL_ELECTION_STATE_KEY, JSON.stringify(updatedState));
+    window.dispatchEvent(new CustomEvent("pbb_security_council_roster_updated"));
+
+    return removedMember;
+  } catch (error) {
+    console.error("Gagal mencopot anggota tidak tetap Dewan Keamanan:", error);
+    return null;
+  }
+}
+
 function numberOrDiplomaticScore(value: unknown): number {
   if (typeof value === "number") return Math.max(0, Math.min(100, value));
   const normalized = String(value || "").toLowerCase();

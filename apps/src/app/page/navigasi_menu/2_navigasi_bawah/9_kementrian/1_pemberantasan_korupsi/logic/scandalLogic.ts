@@ -101,11 +101,16 @@ export function processCorruptionMonth(
     ];
 
     const pending = Array.isArray(next.pending_notifications) ? next.pending_notifications : [];
+    
+    // Generate narasi yang lebih detail berdasarkan severity
+    const severityLabel = severity === 'berat' ? 'KASUS BERAT' : severity === 'sedang' ? 'KASUS SEDANG' : 'KASUS RINGAN';
+    const detailMessage = `${scheme.description}. Kerugian negara diperkirakan ${budgetLoss.toLocaleString('id-ID')} NEO. Tingkat kepuasan rakyat turun ${satisfactionLoss} poin akibat skandal ini. Segera buka menu Pemberantasan Korupsi untuk menyelidiki dan menuntaskan kasus.`;
+    
     const notification = {
       id: `corruption-scandal-${scheme.id}-${processedMonth}`,
-      title: `Skandal korupsi terungkap: ${scheme.name}`,
+      title: `🚨 [${severityLabel}] ${scheme.name} - ${scheme.ministry}`,
       sender: 'Komisi Pemberantasan Korupsi',
-      message: `Skandal ${scheme.name} (${severity}) terungkap. Kas negara bocor ${budgetLoss.toLocaleString('id-ID')} NEO dan kepuasan turun ${satisfactionLoss} poin. Buka menu Pemberantasan Korupsi untuk menyelidiki kasus.`,
+      message: detailMessage,
       timestamp: exposedDate,
       type: 'peringkat' as const,
       value: Math.max(0, metrics.index + 1),

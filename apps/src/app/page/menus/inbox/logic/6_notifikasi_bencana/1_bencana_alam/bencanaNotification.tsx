@@ -44,10 +44,18 @@ export default function BencanaNotification({ notification, onAccept, onReject }
         </p>
 
         {/* Details Grid: Korban & Kerugian */}
-        <div className="bg-[#0A1A1A] border border-rose-500/30 rounded-xl p-3 grid grid-cols-3 gap-2 text-center text-xs font-bold text-white shadow-inner">
+        <div className="bg-[#0A1A1A] border border-rose-500/30 rounded-xl p-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-bold text-white shadow-inner">
           <div className="border-r border-rose-500/20 pr-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Korban Terdampak</div>
             <div className="text-rose-400 font-extrabold mt-0.5">{notification.korban?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} Jiwa</div>
+          </div>
+          <div className="border-r border-rose-500/20 px-1">
+            <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Durasi</div>
+            <div className="text-cyan-300 font-extrabold mt-0.5">
+              {notification.remainingDurationDays !== undefined
+                ? `${Math.max(0, notification.remainingDurationDays)} Hari`
+                : `${notification.durationDays ?? 30} Hari`}
+            </div>
           </div>
           <div className="border-r border-rose-500/20 px-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Total Kerugian</div>

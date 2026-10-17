@@ -102,25 +102,47 @@ export function submitInvasionViolationSanctions(
     name: targetCountry,
     iso: getIsoForCountryName(targetCountry)
   };
-  const eligibleReplacement = isCountryAnnexed(target.name, target.iso)
-    ? getEligibleReplacementProposer([attacker.name, target.name])
-    : target;
-  const eligibleProposer = eligibleReplacement || (
-    isCountryAnnexed(target.name, target.iso)
-      ? COUNTRIES_DATA.find(country =>
-          normalizePbbCountryName(country.country) !== normalizePbbCountryName(attacker.name) &&
-          normalizePbbCountryName(country.country) !== normalizePbbCountryName(target.name) &&
-          !isCountryAnnexed(country.country, country.iso)
-        )
-      : undefined
-  );
-  if (!eligibleProposer) return [];
-  const proposer = {
-    name: 'name' in eligibleProposer ? eligibleProposer.name : eligibleProposer.country,
-    iso: eligibleProposer.iso || getIsoForCountryName(
-      'name' in eligibleProposer ? eligibleProposer.name : eligibleProposer.country
-    )
+  // Pilih pengusul sanksi: Bisa negara target langsung (korban) ATAU negara-negara lain anggota PBB
+  // (misal anggota Dewan Keamanan / negara berpengaruh dunia yang geram atas invasi ilegal).
+  const getProposerForSanction = (excludedNames: string[]) => {
+    // 50% peluang diajukan langsung oleh negara korban jika tidak dianeksasi,
+    // 50% peluang (atau 100% jika korban dianeksasi) diajukan oleh negara lain di dunia
+    const targetIsAvailable = !isCountryAnnexed(target.name, target.iso) && !excludedNames.includes(target.name);
+    if (targetIsAvailable && Math.random() < 0.4) {
+      return target;
+    }
+    const replacement = getEligibleReplacementProposer([attacker.name, ...excludedNames]);
+    if (replacement) return replacement;
+
+    const fallbackCountry = COUNTRIES_DATA.find(country =>
+      normalizePbbCountryName(country.country) !== normalizePbbCountryName(attacker.name) &&
+      !excludedNames.some(name => normalizePbbCountryName(name) === normalizePbbCountryName(country.country)) &&
+      !isCountryAnnexed(country.country, country.iso)
+    );
+    if (fallbackCountry) {
+      return {
+        name: fallbackCountry.country,
+        iso: fallbackCountry.iso || getIsoForCountryName(fallbackCountry.country)
+      };
+    }
+    return targetIsAvailable ? target : null;
   };
+
+  const rawGAProposer = getProposerForSanction([]);
+  if (!rawGAProposer) return [];
+  const generalAssemblyProposer = {
+    name: rawGAProposer.name,
+    iso: rawGAProposer.iso || getIsoForCountryName(rawGAProposer.name)
+  };
+
+  // Pengusul sanksi DK PBB bisa negara lain lagi agar sanksi yang datang benar-benar dari berbagai negara
+  const securityProposerCandidate = getProposerForSanction([generalAssemblyProposer.name]);
+  const rawSCProposer = securityProposerCandidate || rawGAProposer;
+  const securityCouncilProposer = {
+    name: rawSCProposer.name,
+    iso: rawSCProposer.iso || getIsoForCountryName(rawSCProposer.name)
+  };
+
   const duration = chooseAIResolutionDuration('economic_embargo', 1);
   const suffix = encodeURIComponent(violationId);
   const createdAt = dateStr;
@@ -151,18 +173,18 @@ export function submitInvasionViolationSanctions(
   const securityAlreadyExists = securityItems.some(item => item.violationId === violationId);
 
   if (!resolutionAlreadyExists) {
-    const votes = calculate206AIVotes(30, null, proposer.name, attacker.name, 'economic_embargo');
+    const votes = calculate206AIVotes(30, null, generalAssemblyProposer.name, attacker.name, 'economic_embargo');
     const item: ActiveResolutionItem = {
       id: `res-user-violation-${suffix}`,
-      proposer,
+      proposer: generalAssemblyProposer,
       target: attacker,
       type: 'economic_embargo',
       label: 'Embargo Ekonomi atas Pelanggaran Resolusi PBB',
       desc: reason === 'war_ban'
-        ? `Embargo perdagangan ekonomi terhadap ${attackerCountry} sebagai sanksi atas pelanggaran larangan perang PBB.`
+        ? `Embargo perdagangan ekonomi terhadap ${attackerCountry} diusulkan oleh ${generalAssemblyProposer.name} sebagai sanksi atas pelanggaran larangan perang PBB.`
         : reason === 'wrong_military_target'
-          ? `Embargo perdagangan ekonomi terhadap ${attackerCountry} karena menggunakan mandat invasi PBB untuk menyerang negara yang bukan target resolusi.`
-          : `Embargo perdagangan ekonomi terhadap ${attackerCountry} karena menyerang ${targetCountry} tanpa mandat Resolusi Invasi PBB yang disetujui untuk target tersebut.`,
+          ? `Embargo perdagangan ekonomi terhadap ${attackerCountry} diusulkan oleh ${generalAssemblyProposer.name} karena menggunakan mandat invasi PBB untuk menyerang negara yang bukan target resolusi.`
+          : `Embargo perdagangan ekonomi terhadap ${attackerCountry} diusulkan oleh ${generalAssemblyProposer.name} karena menyerang ${targetCountry} tanpa mandat Resolusi Invasi PBB yang disetujui untuk target tersebut.`,
       duration,
       daysRemaining: 30,
       voteStats: {
@@ -184,21 +206,21 @@ export function submitInvasionViolationSanctions(
     const votes = calculate15SecurityCouncilVotes(
       30,
       null,
-      proposer.name,
+      securityCouncilProposer.name,
       attacker.name,
       selectedSecuritySanction.type
     );
     const item: ActiveSecurityCouncilItem = {
       id: `sec-user-violation-${suffix}`,
-      proposer,
+      proposer: securityCouncilProposer,
       target: attacker,
       type: selectedSecuritySanction.type,
       label: `${selectedSecuritySanction.label} atas Pelanggaran Resolusi PBB`,
       desc: reason === 'war_ban'
-        ? `${selectedSecuritySanction.description} terhadap ${attackerCountry} sebagai respons atas pelanggaran larangan perang PBB.`
+        ? `${selectedSecuritySanction.description} terhadap ${attackerCountry} diusulkan oleh ${securityCouncilProposer.name} sebagai respons atas pelanggaran larangan perang PBB.`
         : reason === 'wrong_military_target'
-          ? `${selectedSecuritySanction.description} terhadap ${attackerCountry} karena mandat invasi PBB berlaku untuk target lain, bukan ${targetCountry}.`
-          : `${selectedSecuritySanction.description} terhadap ${attackerCountry} karena menyerang ${targetCountry} tanpa mandat Resolusi Invasi PBB yang disetujui untuk target tersebut.`,
+          ? `${selectedSecuritySanction.description} terhadap ${attackerCountry} diusulkan oleh ${securityCouncilProposer.name} karena mandat invasi PBB berlaku untuk target lain, bukan ${targetCountry}.`
+          : `${selectedSecuritySanction.description} terhadap ${attackerCountry} diusulkan oleh ${securityCouncilProposer.name} karena menyerang ${targetCountry} tanpa mandat Resolusi Invasi PBB yang disetujui untuk target tersebut.`,
       duration,
       daysRemaining: 30,
       voteStats: {
@@ -221,6 +243,10 @@ export function submitInvasionViolationSanctions(
 
   window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
 
+  const proposerInfoText = generalAssemblyProposer.name === securityCouncilProposer.name
+    ? `Diusulkan oleh ${generalAssemblyProposer.name}.`
+    : `Embargo diajukan oleh ${generalAssemblyProposer.name}, dan sanksi keamanan diajukan oleh ${securityCouncilProposer.name}.`;
+
   return [
     {
       id: `notif-invasion-sanctions-${suffix}`,
@@ -229,10 +255,10 @@ export function submitInvasionViolationSanctions(
         : '⚠️ INVASI TANPA RESOLUSI DEWAN KEAMANAN PBB',
       sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
       message: reason === 'war_ban'
-        ? `${attackerCountry} menyerang ${targetCountry} saat larangan perang global berlaku. Embargo ekonomi diajukan ke Sidang Umum PBB dan ${selectedSecuritySanction.label.toLowerCase()} diajukan ke Dewan Keamanan; sanksi hanya berlaku jika resolusi masing-masing disetujui.`
+        ? `${attackerCountry} menyerang ${targetCountry} saat larangan perang global berlaku. Embargo ekonomi diajukan ke Sidang Umum PBB dan ${selectedSecuritySanction.label.toLowerCase()} diajukan ke Dewan Keamanan (${proposerInfoText}); sanksi hanya berlaku jika resolusi masing-masing disetujui.`
         : reason === 'wrong_military_target'
-          ? `${attackerCountry} menyerang ${targetCountry}, padahal mandat Resolusi Invasi PBB yang dimilikinya tidak mencakup negara tersebut. Embargo ekonomi diajukan ke Sidang Umum PBB dan ${selectedSecuritySanction.label.toLowerCase()} diajukan ke Dewan Keamanan; sanksi hanya berlaku jika resolusi masing-masing disetujui.`
-          : `${attackerCountry} menyerang ${targetCountry} tanpa mandat Resolusi Invasi PBB yang disetujui untuk target tersebut. Embargo ekonomi diajukan ke Sidang Umum PBB dan ${selectedSecuritySanction.label.toLowerCase()} diajukan ke Dewan Keamanan; sanksi hanya berlaku jika resolusi masing-masing disetujui.`,
+          ? `${attackerCountry} menyerang ${targetCountry}, padahal mandat Resolusi Invasi PBB yang dimilikinya tidak mencakup negara tersebut. Embargo ekonomi diajukan ke Sidang Umum PBB dan ${selectedSecuritySanction.label.toLowerCase()} diajukan ke Dewan Keamanan (${proposerInfoText}); sanksi hanya berlaku jika resolusi masing-masing disetujui.`
+          : `${attackerCountry} menyerang ${targetCountry} tanpa mandat Resolusi Invasi PBB yang disetujui untuk target tersebut. Embargo ekonomi diajukan ke Sidang Umum PBB dan ${selectedSecuritySanction.label.toLowerCase()} diajukan ke Dewan Keamanan (${proposerInfoText}); sanksi hanya berlaku jika resolusi masing-masing disetujui.`,
       timestamp: dateStr,
       type: 'peringkat',
       value: 100,

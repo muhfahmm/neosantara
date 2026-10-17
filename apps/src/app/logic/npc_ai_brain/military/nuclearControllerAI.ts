@@ -361,29 +361,35 @@ export function jalankanKeputusanNuklirAI(ctx: BrainContext): NuclearDecision {
 
   // =========================================================================
   // TAHAP B: PENGEMBANGAN RUDAL ICBM (Program nuklir sudah aktif & syarat terpenuhi)
-  // Aturan: Negara yang sudah memiliki Program Nuklir & ICBM dapat menambah ICBM sesuka hati
-  // selama kas negara mencukupi dan mengikuti durasi perakitan 30 hari.
+  // Aturan: Seluruh negara yang sudah memiliki Program Nuklir aktif dapat mengembangkan & menambah ICBM
+  // selama memiliki kas yang cukup. Pembuatan kuantitasnya dibuat acak proporsional sesuai uang negara AI.
   // =========================================================================
   const biayaIcbmPerUnit = getBiayaIcbmDinamis(ctx.metadata);
   const durasiPerUnit = getDurasiIcbmDinamis(ctx.metadata); // 30 hari per unit
-  const cadanganKasMiliter = 1000;
+  // Cadangan kas minimum disesuaikan agar AI tidak menghabiskan seluruh kasnya untuk militer
+  const cadanganKasMiliter = Math.max(2000, Math.round(currentKas * 0.15));
 
   // Cek kecukupan kas negara untuk minimal 1 unit ICBM
   if (currentKas < biayaIcbmPerUnit + cadanganKasMiliter) {
     setCooldown(ctx, "ai_nuclear_evaluation", 7);
     return {
       tipe: "tahan",
-      alasan: `Kas negara AI ${ctx.negaraNama} (${currentKas.toLocaleString("id-ID")} NEO) belum mencukupi untuk biaya perakitan ICBM (${biayaIcbmPerUnit.toLocaleString("id-ID")} NEO).`,
+      alasan: `Kas negara AI ${ctx.negaraNama} (${currentKas.toLocaleString("id-ID")} NEO) belum mencukupi untuk biaya perakitan ICBM (${biayaIcbmPerUnit.toLocaleString("id-ID")} NEO + cadangan kas).`,
     };
   }
 
-  // Jika sudah memiliki ICBM atau Program Nuklir aktif, AI bebas menambahkan ICBM sesuka hati
   // Hitung jumlah maksimum unit yang dapat dibeli negara AI berdasarkan kas yang tersedia
   const kasTersedia = Math.max(0, currentKas - cadanganKasMiliter);
   const maxBisaDibangunKas = Math.max(1, Math.floor(kasTersedia / biayaIcbmPerUnit));
 
-  // Tentukan kuantitas produksi (AI membangun 1 s/d 5 unit sekaligus sesuai batas kas negara)
-  const kuantitas = Math.min(5, maxBisaDibangunKas);
+  // Kuantitas dibuat secara acak sesuai kapasitas uang/kas negara AI
+  // Alih-alih selalu fix 5 unit:
+  // - Batas atas acak mengikuti kemampuan kas (maksimal 10 unit per batch produksi agar realistis)
+  // - Nilai diacak antara 1 hingga maxBatch
+  const maxBatch = Math.min(10, maxBisaDibangunKas);
+  const kuantitas = maxBatch > 1 
+    ? Math.floor(Math.random() * maxBatch) + 1 
+    : 1;
 
   const totalBiayaKas = biayaIcbmPerUnit * kuantitas;
   const totalDurasi = durasiPerUnit * kuantitas;
@@ -411,7 +417,8 @@ export function jalankanKeputusanNuklirAI(ctx: BrainContext): NuclearDecision {
     endDate: completionDate,
   };
 
-  setCooldown(ctx, "ai_nuclear_evaluation", 14);
+  // Cooldown acak 14-30 hari agar jadwal produksi antar negara bervariasi
+  setCooldown(ctx, "ai_nuclear_evaluation", Math.floor(Math.random() * 16) + 14);
 
   // Siarkan berita geopolitik: AI memulai perakitan Rudal ICBM
   terbitkanBeritaAI(
