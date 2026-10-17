@@ -79,6 +79,8 @@ export function handleGameRestart(options: RestartOptions): void {
             sessionStorage.removeItem('program_nuklir_modal_open');
             sessionStorage.removeItem('icbm_detail_open');
             sessionStorage.removeItem('perang_nuklir_detail_open');
+            localStorage.removeItem('programNuklirActive');
+            localStorage.removeItem('icbmBuildTask');
         } catch (e) { }
 
         window.dispatchEvent(new CustomEvent('daily_reward_reset'));
@@ -123,8 +125,13 @@ export function handleGameRestart(options: RestartOptions): void {
             delete reset.harga;
             delete reset.price_rice;
             delete reset.price_fuel;
+            delete reset.programNuklirActive;
+            delete reset.icbmBuildTask;
+            if (Array.isArray(reset.ongoingConstructions)) {
+                reset.ongoingConstructions = reset.ongoingConstructions.filter((c: any) => c.buildingKey !== 'program_nuklir');
+            }
 
-            console.log('[gameRestart] Production data and custom price controls cleared');
+            console.log('[gameRestart] Production, nuclear and ICBM state reset to initial');
             return reset;
         });
     }

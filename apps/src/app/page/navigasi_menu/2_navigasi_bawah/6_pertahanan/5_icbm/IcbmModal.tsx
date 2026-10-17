@@ -205,35 +205,14 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
   const [isPerangNuklirDetailOpen, setIsPerangNuklirDetailOpen] = useState(false);
   const [isIcbmBuildStatusOpen, setIsIcbmBuildStatusOpen] = useState(false);
 
+  // Bersihkan lingering session flag sub-menu ICBM agar selalu berada di menu awal
   useEffect(() => {
     try {
-      const p = sessionStorage.getItem('program_nuklir_modal_open') === '1';
-      const i = sessionStorage.getItem('icbm_detail_open') === '1';
-      const pe = sessionStorage.getItem('perang_nuklir_detail_open') === '1';
-      if (p) setIsProgramNuklirModalOpen(true);
-      if (i) setIsIcbmDetailOpen(true);
-      if (pe) setIsPerangNuklirDetailOpen(true);
+      sessionStorage.removeItem('program_nuklir_modal_open');
+      sessionStorage.removeItem('icbm_detail_open');
+      sessionStorage.removeItem('perang_nuklir_detail_open');
     } catch (e) {}
   }, []);
-
-  useEffect(() => {
-    try {
-      if (isProgramNuklirModalOpen) sessionStorage.setItem('program_nuklir_modal_open', '1');
-      else sessionStorage.removeItem('program_nuklir_modal_open');
-    } catch {}
-  }, [isProgramNuklirModalOpen]);
-  useEffect(() => {
-    try {
-      if (isIcbmDetailOpen) sessionStorage.setItem('icbm_detail_open', '1');
-      else sessionStorage.removeItem('icbm_detail_open');
-    } catch {}
-  }, [isIcbmDetailOpen]);
-  useEffect(() => {
-    try {
-      if (isPerangNuklirDetailOpen) sessionStorage.setItem('perang_nuklir_detail_open', '1');
-      else sessionStorage.removeItem('perang_nuklir_detail_open');
-    } catch {}
-  }, [isPerangNuklirDetailOpen]);
 
   const nuclearOptions = [
     {

@@ -111,12 +111,30 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
     };
 
     const executeMainMenu = () => {
-        localStorage.removeItem('dailyRewardData');
+        try {
+            localStorage.removeItem('dailyRewardData');
+            sessionStorage.removeItem('programNuklirActive');
+            sessionStorage.removeItem('program_nuklir_modal_open');
+            sessionStorage.removeItem('icbm_detail_open');
+            sessionStorage.removeItem('perang_nuklir_detail_open');
+            sessionStorage.removeItem('presiden_simulator_load_save');
+            localStorage.removeItem('programNuklirActive');
+            localStorage.removeItem('icbmBuildTask');
+        } catch (e) {}
         window.location.href = '/page';
     };
 
     const executeCloseWindow = () => {
-        localStorage.removeItem('dailyRewardData');
+        try {
+            localStorage.removeItem('dailyRewardData');
+            sessionStorage.removeItem('programNuklirActive');
+            sessionStorage.removeItem('program_nuklir_modal_open');
+            sessionStorage.removeItem('icbm_detail_open');
+            sessionStorage.removeItem('perang_nuklir_detail_open');
+            sessionStorage.removeItem('presiden_simulator_load_save');
+            localStorage.removeItem('programNuklirActive');
+            localStorage.removeItem('icbmBuildTask');
+        } catch (e) {}
         if (soundManager) {
             soundManager.stopMusic();
         }
