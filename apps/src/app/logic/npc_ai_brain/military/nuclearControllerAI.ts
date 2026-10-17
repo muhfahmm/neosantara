@@ -22,6 +22,7 @@ import {
   buatBeritaIcbmAI,
   terbitkanBeritaAI,
 } from "../core/aiNewsBridge";
+import { launchIcbmWarStrike } from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/5_icbm/modals_menu/3_perang_nuklir/icbmWarLogic";
 
 export interface PendingNuclearTask {
   type: "program_nuklir" | "icbm";
@@ -32,10 +33,11 @@ export interface PendingNuclearTask {
 }
 
 export interface NuclearDecision {
-  tipe: "program_nuklir" | "bangun_icbm" | "tahan";
+  tipe: "program_nuklir" | "bangun_icbm" | "serang_icbm" | "tahan";
   alasan: string;
   biaya?: number;
   jumlah?: number;
+  target?: string;
 }
 
 /**
@@ -264,7 +266,8 @@ export function jalankanKeputusanNuklirAI(ctx: BrainContext): NuclearDecision {
   // 3. Cek Syarat Kepemilikan Nuklir & Uranium
   // Jika negara sudah memiliki program nuklir aktif atau sudah punya ICBM bawaan/sebelumnya,
   // mereka telah menguasai teknologi nuklir dan dapat langsung memproduksi ICBM selama kas mencukupi.
-  const hasExistingIcbm = Boolean(ctx.country.icbm_status) || nilaiAngka(ctx.country.icbm_jumlah) > 0;
+  const currentIcbmCount = nilaiAngka(ctx.country.icbm_jumlah);
+  const hasExistingIcbm = Boolean(ctx.country.icbm_status) || currentIcbmCount > 0;
   const isDefaultNuclear = isNegaraNuklirBawaan(
     String(ctx.country.country_slug || ""),
     ctx.negaraNama,
@@ -272,6 +275,47 @@ export function jalankanKeputusanNuklirAI(ctx: BrainContext): NuclearDecision {
   );
   if (isDefaultNuclear) {
     ctx.country.programNuklirActive = true;
+  }
+
+  // =========================================================================
+  // LOGIKA STRATEGIS: SERANGAN ICBM OLEH NEGARA AI
+  // Jika AI memiliki stok rudal ICBM (> 0), tidak sedang cooldown serangan nuklir,
+  // dan ada target musuh konflik bersenjata / perang dingin ekstrem:
+  // =========================================================================
+  if (currentIcbmCount > 0 && !sedangCooldown(ctx, "ai_icbm_attack_cooldown")) {
+    const enemyTarget = ctx.country.target_perang || ctx.country.rival_geopolitik || ctx.country.ai_war_target;
+    // Probabilitas taktis peluncuran ICBM per evaluasi berkala (10% peluang jika memiliki target rival/perang)
+    if (enemyTarget && typeof enemyTarget === "string" && Math.random() < 0.10) {
+      const targetCountryName = enemyTarget.trim();
+      const currentSenderName = ctx.negaraNama;
+
+      if (targetCountryName.toLowerCase() !== currentSenderName.toLowerCase()) {
+        // Kurangi 1 stok ICBM negara AI
+        ctx.country.icbm_jumlah = Math.max(0, currentIcbmCount - 1);
+        if (ctx.country.icbm_jumlah === 0) {
+          ctx.country.icbm_status = false;
+        }
+
+        // Terapkan penalti hubungan 5 poin ke 210 negara dan mulai lintasan merah
+        launchIcbmWarStrike({
+          attackerCountry: currentSenderName,
+          targetCountry: targetCountryName,
+          attackerIso: String(ctx.country.iso || ""),
+          currentDate: ctx.date,
+          isPlayerAttacker: false,
+        });
+
+        // Set cooldown peluncuran nuklir negara AI (90 - 180 hari)
+        setCooldown(ctx, "ai_icbm_attack_cooldown", Math.floor(Math.random() * 90) + 90);
+        setCooldown(ctx, "ai_nuclear_evaluation", 30);
+
+        return {
+          tipe: "serang_icbm",
+          target: targetCountryName,
+          alasan: `Negara AI ${currentSenderName} meluncurkan rudal balistik ICBM berkepala nuklir terhadap ${targetCountryName}! Seluruh 210 negara dunia memberikan pinalti hubungan diplomatik -5 poin.`,
+        };
+      }
+    }
   }
 
   const isProgramActive = Boolean(ctx.country.programNuklirActive) || isDefaultNuclear;

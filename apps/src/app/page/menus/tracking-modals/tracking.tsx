@@ -15,6 +15,7 @@ const ResearchContractPath = dynamic(() => import('../../path_logic/path-researc
 const AidDeliveryPath = dynamic(() => import('../../path_logic/path-aid-delivery'), { ssr: false });
 const SpionasePath = dynamic(() => import('../../path_logic/path-spionase'), { ssr: false });
 const SabotasePath = dynamic(() => import('../../path_logic/path-sabotase'), { ssr: false });
+const IcbmPath = dynamic(() => import('../../path_logic/path-icbm'), { ssr: false });
 
 const DIPLOMACY_PATH_COMPONENTS = {
   'non-aggression-pact': NonAggressionPactPath,
@@ -24,6 +25,7 @@ const DIPLOMACY_PATH_COMPONENTS = {
   'aid-delivery': AidDeliveryPath,
   spionase: SpionasePath,
   sabotase: SabotasePath,
+  icbm: IcbmPath,
 };
 
 const PATH_DETAILS: Record<DiplomacyPathKind, { document: string; accent: string }> = {
@@ -34,6 +36,7 @@ const PATH_DETAILS: Record<DiplomacyPathKind, { document: string; accent: string
   'aid-delivery': { document: 'Konvoi Bantuan Sekutu', accent: '#38BDF8' },
   spionase: { document: 'Operasi Spionase', accent: '#A3E635' },
   sabotase: { document: 'Operasi Sabotase', accent: '#F43F5E' },
+  icbm: { document: 'Serangan Rudal Balistik ICBM', accent: '#EF4444' },
 };
 
 interface ActiveDiplomacyPath {
@@ -65,6 +68,7 @@ export default function DiplomacyTracking() {
       'aid-delivery',
       'spionase',
       'sabotase',
+      'icbm',
     ];
 
     const addPath = (kindValue: unknown, pathIdValue: unknown, senderValue: unknown, targetValue: unknown, resourceKey?: unknown, amount?: unknown) => {
@@ -148,6 +152,11 @@ export default function DiplomacyTracking() {
               }
               if (path.kind === 'spionase' || path.kind === 'sabotase') {
                 window.dispatchEvent(new CustomEvent('neosantara_covert_operation_arrived', {
+                  detail: { ...path, pathId: path.id },
+                }));
+              }
+              if (path.kind === 'icbm') {
+                window.dispatchEvent(new CustomEvent('neosantara_icbm_strike_arrived', {
                   detail: { ...path, pathId: path.id },
                 }));
               }

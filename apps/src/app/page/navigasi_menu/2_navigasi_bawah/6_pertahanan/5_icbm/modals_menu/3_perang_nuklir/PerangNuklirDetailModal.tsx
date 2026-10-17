@@ -616,6 +616,7 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                       <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Status ICBM</th>
                       <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-right text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Jumlah ICBM</th>
                       <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Level Ancaman</th>
+                      <th className="sticky top-0 z-10 bg-[#0A1A1A] px-3 py-2.5 text-center text-[9px] sm:text-[10px] font-black uppercase tracking-wider whitespace-nowrap">Aksi Serang</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#00FFAA]/10 text-xs font-bold text-[#E0E0E0]">
@@ -690,12 +691,26 @@ export default function PerangNuklirDetailModal({ isOpen, onClose, countryDetail
                                 {row.icbm_jumlah >= 300 ? 'Level V (Superpower)' : row.icbm_jumlah >= 10 ? 'Level III (Regional)' : row.icbm_jumlah > 0 ? 'Level II (Terkonfirmasi)' : 'Level I (Riset Nuklir)'}
                               </span>
                             </td>
+                            <td className="px-3 py-2.5 text-center">
+                              <button
+                                onClick={() => onAction?.({ countryName: row.country_name, iso: row.iso, slug: row.country_slug })}
+                                disabled={isUserCountry}
+                                className={`p-1.5 rounded-lg transition-all ${
+                                  isUserCountry 
+                                    ? 'bg-[#6B8A8A]/20 text-[#6B8A8A] cursor-not-allowed' 
+                                    : 'bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white border border-rose-500/30 cursor-pointer shadow-sm'
+                                }`}
+                                title={`Luncurkan rudal ICBM terhadap ${row.country_name}`}
+                              >
+                                <Radiation className="w-4 h-4" />
+                              </button>
+                            </td>
                           </tr>
                         );
                       })
                     ) : (
                       <tr>
-                        <td colSpan={7} className="px-4 py-8 text-center text-[#6B8A8A]">
+                        <td colSpan={8} className="px-4 py-8 text-center text-[#6B8A8A]">
                           Tidak ditemukan negara dengan status Nuklir atau ICBM.
                         </td>
                       </tr>

@@ -11,6 +11,8 @@ import PerangNuklirDetailModal from "./modals_menu/3_perang_nuklir/PerangNuklirD
 import StatusNuklirIcbmDuniaModal from "./modals_menu/4_status_nuklir_icbm_dunia/StatusNuklirIcbmDuniaModal";
 import UjicobaIcbmModal from "./modals_menu/5_ujicoba_icbm/UjicobaIcbmModal";
 import { generateProgramNuklirSelesaiNotification } from "@/app/page/menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic";
+import { launchIcbmWarStrike } from "./modals_menu/3_perang_nuklir/icbmWarLogic";
+import PerangNuklirModal from "@/app/page/detail_negara/3_operasi_militer/4_perang_nuklir/perangNuklirModals";
 
 interface ModalProps {
   isOpen: boolean;
@@ -231,6 +233,8 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
   const [isIcbmDetailOpen, setIsIcbmDetailOpen] = useState(false);
   const [isPerangNuklirDetailOpen, setIsPerangNuklirDetailOpen] = useState(false);
   const [perangNuklirInitialTab, setPerangNuklirInitialTab] = useState<'ranking' | 'icbm_owners'>('ranking');
+  const [targetNuclearStrike, setTargetNuclearStrike] = useState<{ countryName: string; iso?: string; slug?: string } | null>(null);
+  const [isConfirmStrikeOpen, setIsConfirmStrikeOpen] = useState(false);
   const [isStatusNuklirDuniaOpen, setIsStatusNuklirDuniaOpen] = useState(false);
   const [isIcbmBuildStatusOpen, setIsIcbmBuildStatusOpen] = useState(false);
   const [isUjicobaIcbmOpen, setIsUjicobaIcbmOpen] = useState(false);
@@ -568,7 +572,77 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
         prefetchedAllCountries={prefetchedAllCountries}
         initialTab={perangNuklirInitialTab}
         onAction={(target) => {
-          alert(`Deklarasi perang nuklir terhadap ${target.countryName}! Konsekuensi global tak terbayangkan telah dimulai.`);
+          if (totalReadyIcbm <= 0) {
+            alert(`Gagal meluncurkan: Persediaan rudal ICBM Anda tidak mencukupi (0 unit). Silakan rakit rudal ICBM terlebih dahulu.`);
+            return;
+          }
+          setTargetNuclearStrike({
+            countryName: target.countryName,
+            iso: target.iso,
+            slug: target.slug || target.country_slug,
+          });
+          setIsConfirmStrikeOpen(true);
+        }}
+      />
+
+      <PerangNuklirModal
+        isOpen={isConfirmStrikeOpen}
+        countryName={targetNuclearStrike?.countryName}
+        onClose={() => {
+          setIsConfirmStrikeOpen(false);
+          setTargetNuclearStrike(null);
+        }}
+        onConfirm={() => {
+          if (!targetNuclearStrike) return;
+          const userCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name_id || countryDetail?.name_en || "Indonesia";
+          const userIso = countryDetail?.iso || "ID";
+
+          // 1. Eksekusi peluncuran ICBM
+          const strikeResult = launchIcbmWarStrike({
+            attackerCountry: userCountryName,
+            targetCountry: targetNuclearStrike.countryName,
+            attackerIso: userIso,
+            targetIso: targetNuclearStrike.iso,
+            currentDate: safeCurrentDate,
+            isPlayerAttacker: true,
+          });
+
+          if (!strikeResult.success) {
+            alert(strikeResult.message);
+            return;
+          }
+
+          // 2. Kurangi 1 persediaan rudal ICBM pemain
+          setCountryDetail((prev: any) => {
+            const consumedCount = Math.max(0, Number(prev?.icbm_consumed || 0) + 1);
+            const remainingCount = Math.max(0, Number(prev?.icbm_jumlah || prev?.icbm || 0) - 1);
+            return {
+              ...(prev || {}),
+              icbm_consumed: consumedCount,
+              icbm_jumlah: remainingCount,
+              icbm: remainingCount,
+            };
+          });
+
+          // 3. Tutup modal detail perang nuklir & modal utama agar pemain dapat melihat animasi lintasan merah di peta
+          setIsConfirmStrikeOpen(false);
+          setIsPerangNuklirDetailOpen(false);
+          onClose();
+
+          // 4. Kirim notifikasi pertahanan resmi
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(
+              new CustomEvent("neosantara_system_notification", {
+                detail: {
+                  title: `💥 SERANGAN RUDAL ICBM DILUNCURKAN`,
+                  sender: `Pusat Komando Strategis Nuklir`,
+                  message: `Presiden! Satu unit Rudal Balistik Antarbenua (ICBM) berkepala nuklir telah berhasil diluncurkan menuju target sasaran di ${targetNuclearStrike.countryName}. Seluruh 210 negara dunia memberikan pinalti hubungan diplomatik -5 poin atas peluncuran senjata pemusnah massal ini!`,
+                  date: safeCurrentDate,
+                  type: "peringkat",
+                },
+              })
+            );
+          }
         }}
       />
 
