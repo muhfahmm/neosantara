@@ -43,6 +43,7 @@ import ResolusiPBBNotificationCard from './logic/5_notifikasi_geopolitik/5_pbb/1
 import KeamananPBBNotificationCard from './logic/5_notifikasi_geopolitik/5_pbb/2_keamanan/keamananPBBNotificationCard';
 import { getActiveUserCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
 import { isNonActionableUpdateNotification } from './logic/automaticChangeNotification';
+import { getInboxNotificationImage } from './inboxAssetMapping';
 
 interface TopLeftIconProps {
   onClick?: () => void;
@@ -517,11 +518,12 @@ export default function TopLeftIcon({
           >
             <div className="relative flex h-full w-full items-center justify-center">
               <Image
-                src="/images/game/interface/menu/inbox.png"
+                src="/images/game/interface/menu/inbox.svg"
                 alt="Inbox"
-                width={64}
-                height={64}
-                className="h-full w-full object-contain filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] transition-all duration-200 group-hover:brightness-110"
+                width={72}
+                height={72}
+                priority
+                className="h-14 w-14 object-contain brightness-125 saturate-150 drop-shadow-[0_0_6px_rgba(0,255,170,0.55)] lg:h-16 lg:w-16 xl:h-[4.5rem] xl:w-[4.5rem]"
               />
               {unreadCount > 0 && (
                 <div className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-600 px-1 text-[10px] font-black text-white shadow-lg border-2 border-[#0A1A1A] animate-pulse">
@@ -657,20 +659,22 @@ export default function TopLeftIcon({
 
                             {/* Info Singkat */}
                             <div className="flex-1 min-w-0">
-                              <h4 className={`text-[11px] sm:text-xs font-black truncate leading-tight ${
+                              {/* PERBAIKAN: Menghapus truncate dan menambahkan break-words agar judul wrap ke bawah */}
+                              <h4 className={`text-[11px] sm:text-xs font-black leading-tight whitespace-normal break-words ${
                                 isUrgent ? 'text-rose-400' : isSelected ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'
                               }`}>
                                 {notif.title}
                               </h4>
-                              <div className="flex items-center gap-1.5 mt-1 text-[9px] text-[#6B8A8A] font-semibold">
+                              {/* PERBAIKAN: Menambahkan flex-wrap pada container dan menghapus truncate di span */}
+                              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mt-1 text-[9px] text-[#6B8A8A] font-semibold">
                                 {countryIso && countryIso !== 'un' && (
                                   <img
                                     src={`https://flagcdn.com/w20/${countryIso.toLowerCase()}.png`}
                                     alt=""
-                                    className="w-3.5 h-2.5 object-cover rounded-xs"
+                                    className="w-3.5 h-2.5 object-cover rounded-xs shrink-0"
                                   />
                                 )}
-                                <span className="truncate max-w-[85px] sm:max-w-[105px]">{notifSender}</span>
+                                <span className="whitespace-normal break-words">{notifSender}</span>
                                 <span className="ml-auto shrink-0 flex items-center gap-0.5 text-[8.5px] text-[#557575]">
                                   <Clock className="w-2.5 h-2.5" />
                                   {notif.timestamp}
@@ -705,6 +709,25 @@ export default function TopLeftIcon({
                     {selectedNotification ? (
                       <div className="max-w-2xl mx-auto space-y-4">
                         {renderActiveNotificationDetail(selectedNotification)}
+
+                        {/* 🔥 Ilustrasi Gambar Notifikasi */}
+                        {(() => {
+                          const imageUrl = getInboxNotificationImage(selectedNotification);
+                          if (!imageUrl) return null;
+                          return (
+                            <div className="mt-4 rounded-2xl border border-[#00FFAA]/25 bg-[#081515] p-3 shadow-lg flex items-center justify-center overflow-hidden">
+                              <img
+                                src={imageUrl}
+                                alt={selectedNotification.title || 'Ilustrasi Notifikasi'}
+                                className="w-full max-h-56 sm:max-h-64 object-contain rounded-xl"
+                                onError={(e) => {
+                                  // Fallback sembunyikan jika ada error load gambar
+                                  (e.target as HTMLElement).style.display = 'none';
+                                }}
+                              />
+                            </div>
+                          );
+                        })()}
                       </div>
                     ) : (
                       <div className="h-full flex items-center justify-center text-center text-slate-500 text-xs">
