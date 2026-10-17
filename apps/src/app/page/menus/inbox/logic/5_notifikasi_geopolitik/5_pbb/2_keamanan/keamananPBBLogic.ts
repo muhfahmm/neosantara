@@ -87,25 +87,48 @@ export function evaluateAIKeamananPBBTrigger(
   getRelationScore: (countryA: string, countryB: string) => number,
   dateStr: string
 ): AIKeamananPBBNotification | null {
-  // Probabilitas kemunculan ditentukan oleh pemanggil (map-system) agar Resolusi PBB & DK PBB tidak bertabrakan.
+  const fullCountryList = Array.isArray(allCountries) && allCountries.length > 25
+    ? allCountries
+    : [
+        ...allCountries,
+        'Amerika Serikat', 'Rusia', 'China', 'Inggris', 'Prancis', 'Jerman',
+        'Jepang', 'India', 'Korea Utara', 'Iran', 'Israel', 'Turki',
+        'Arab Saudi', 'Korea Selatan', 'Australia', 'Pakistan', 'Ukraina', 'Brasil'
+      ];
 
+  const uniqueCountries = Array.from(new Set(fullCountryList.filter(Boolean)));
   const candidatePairs: Array<{ proposer: string; target: string; score: number }> = [];
 
-  // Cari pasangan negara (AI vs User atau AI vs AI) yang skor hubungannya antara 1 s/d 20
-  for (const proposer of allCountries) {
+  // Cari pasangan negara (AI vs User atau AI vs AI) yang skor hubungannya antara 1 s/d 30
+  for (const proposer of uniqueCountries) {
     if (!proposer || proposer === userCountryName) continue;
     if (isCountryAnnexed(proposer, getIsoForCountryName(proposer))) continue;
 
-    const potentialTargets = [...allCountries, userCountryName].filter(c => c && c !== proposer);
+    const potentialTargets = [...uniqueCountries, userCountryName].filter(c => c && c !== proposer);
     for (const target of potentialTargets) {
       const score = getRelationScore(proposer, target);
-      if (score >= 1 && score <= 20) {
+      if (score >= 1 && score <= 30) {
         candidatePairs.push({ proposer, target, score });
       }
     }
   }
 
-  if (candidatePairs.length === 0) return null;
+  // Jika tidak ada hubungan kritis, tetap ada kemungkinan 20% DK PBB membahas isu keamanan global / bantuan darurat
+  if (candidatePairs.length === 0) {
+    const councilProposers = uniqueCountries.filter(c => c !== userCountryName);
+    if (councilProposers.length > 0) {
+      const randomProposer = councilProposers[Math.floor(Math.random() * councilProposers.length)];
+      const targetCandidates = uniqueCountries.filter(c => c !== randomProposer);
+      const randomTarget = targetCandidates[Math.floor(Math.random() * targetCandidates.length)] || 'Suriah';
+      return generateAIKeamananPBBNotification(
+        randomProposer,
+        randomTarget,
+        40,
+        dateStr
+      );
+    }
+    return null;
+  }
 
   const selectedPair = candidatePairs[Math.floor(Math.random() * candidatePairs.length)];
   return generateAIKeamananPBBNotification(

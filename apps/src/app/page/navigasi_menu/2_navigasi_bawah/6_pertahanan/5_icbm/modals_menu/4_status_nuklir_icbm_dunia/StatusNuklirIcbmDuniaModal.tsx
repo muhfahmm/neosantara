@@ -13,6 +13,7 @@ export interface DatabaseIcbmRow {
   iso: string;
   icbm_status: boolean;
   icbm_jumlah: number;
+  in_progress_icbm?: number;
   has_nuclear_program?: boolean;
   nuclear_program_status?: 'AKTIF' | 'RISET' | 'BELUM AKTIF';
 }
@@ -127,7 +128,11 @@ export default function StatusNuklirIcbmDuniaModal({
       }
     }
 
-    return Math.max(baseExisting, completedCount);
+    const deliveredFromTask = Number(task.deliveredUnits || 0);
+    const activeCompleted = Math.max(deliveredFromTask, completedCount);
+    const effectiveReady = Math.max(baseExisting, activeCompleted);
+    const consumed = Math.max(0, Number(countryDetail?.icbm_consumed || 0));
+    return Math.max(0, effectiveReady - consumed);
   };
 
   const mergedIcbmOwners = useMemo(() => {
@@ -250,7 +255,64 @@ export default function StatusNuklirIcbmDuniaModal({
         isNpcResearchingNuclear = false;
       }
 
-      if (npcNuclearActive || isNpcResearchingNuclear || (npcIcbmStatus && npcIcbmCount > 0) || isDefaultNuclear) {
+      // Hitung unit ICBM dari antrean NPC yang sedang dibangun atau sudah selesai bertahap
+      let npcQueueDelivered = 0;
+      let npcQueueInProgress = 0;
+      const icbmTask = liveState.icbmBuildTask;
+      const icbmQueue = npcNuclearQueue.filter((q: any) => q.type === "icbm");
+
+      if (icbmTask && icbmTask.startDate) {
+        const qty = Math.max(0, Number(icbmTask.quantity) || 0);
+        const sDate = parseDateLocal(icbmTask.startDate);
+        const eDate = parseDateLocal(icbmTask.endDate);
+        const totalDur = getDurationDaysLocal(sDate, eDate);
+        if (icbmTask.completed) {
+          npcQueueDelivered = qty;
+        } else if (sDate && qty > 0) {
+          const unitDur = Math.max(1, Math.round(totalDur / qty));
+          let finished = 0;
+          for (let i = 0; i < qty; i++) {
+            const dueDate = addDaysLocal(sDate, unitDur * (i + 1));
+            if (dueDate && currDateObj && dueDate <= currDateObj) {
+              finished++;
+            }
+          }
+          const deliveredSaved = Number(icbmTask.deliveredUnits || 0);
+          npcQueueDelivered = Math.max(deliveredSaved, finished);
+          npcQueueInProgress = Math.max(0, qty - npcQueueDelivered);
+        }
+      } else if (icbmQueue.length > 0) {
+        for (const q of icbmQueue) {
+          const qty = Math.max(0, Number(q.quantity) || 0);
+          const sDate = parseDateLocal(q.startDate);
+          const eDate = parseDateLocal(q.completionDate);
+          const totalDur = getDurationDaysLocal(sDate, eDate);
+          if (eDate && currDateObj && eDate <= currDateObj) {
+            npcQueueDelivered += qty;
+          } else if (sDate && qty > 0) {
+            const unitDur = Math.max(1, Math.round(totalDur / qty));
+            let finished = 0;
+            for (let i = 0; i < qty; i++) {
+              const dueDate = addDaysLocal(sDate, unitDur * (i + 1));
+              if (dueDate && currDateObj && dueDate <= currDateObj) {
+                finished++;
+              }
+            }
+            npcQueueDelivered += finished;
+            npcQueueInProgress += Math.max(0, qty - finished);
+          } else {
+            npcQueueInProgress += qty;
+          }
+        }
+      }
+
+      const baseDefaultCount = Number(existing?.icbm_jumlah || 0);
+      const totalIcbmCurrent = Math.max(
+        npcIcbmCount,
+        baseDefaultCount + npcQueueDelivered
+      );
+
+      if (npcNuclearActive || isNpcResearchingNuclear || (npcIcbmStatus && totalIcbmCurrent > 0) || isDefaultNuclear || npcQueueInProgress > 0) {
         const hasNuclear = npcNuclearActive || isNpcResearchingNuclear || Boolean(existing?.has_nuclear_program);
         const progStatus: 'AKTIF' | 'RISET' | 'BELUM AKTIF' =
           (npcNuclearActive || isDefaultNuclear || existing?.nuclear_program_status === 'AKTIF')
@@ -264,8 +326,9 @@ export default function StatusNuklirIcbmDuniaModal({
           country_slug: npcSlug,
           country_name: String(fallbackMeta?.name_id || fallbackMeta?.nama_negara || fallbackMeta?.country || liveState.name_id || liveState.nama_negara || liveState.country || existing?.country_name || npcSlug),
           iso: String(fallbackMeta?.iso || liveState.iso || existing?.iso || ""),
-          icbm_status: (npcIcbmStatus && npcIcbmCount > 0) || Boolean(existing?.icbm_status),
-          icbm_jumlah: Math.max(npcIcbmCount, existing?.icbm_jumlah || 0),
+          icbm_status: totalIcbmCurrent > 0 || Boolean(existing?.icbm_status),
+          icbm_jumlah: totalIcbmCurrent,
+          in_progress_icbm: npcQueueInProgress,
           has_nuclear_program: hasNuclear,
           nuclear_program_status: progStatus,
         });
@@ -429,8 +492,14 @@ export default function StatusNuklirIcbmDuniaModal({
                               </span>
                             )}
                           </td>
-                          <td className="px-3 py-2.5 text-right font-black text-[#00FFAA] text-sm">
-                            {formatNumber(row.icbm_jumlah)} <span className="text-[10px] font-normal text-[#6B8A8A]">Unit</span>
+                          <td className="px-3 py-2.5 text-right font-black text-[#00FFAA] text-sm whitespace-nowrap">
+                            {formatNumber(row.icbm_jumlah)}{" "}
+                            {Boolean(row.in_progress_icbm && row.in_progress_icbm > 0) && (
+                              <span className="text-[11px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/30 px-1.5 py-0.5 rounded-full ml-1" title="Sedang dalam proses perakitan">
+                                +{row.in_progress_icbm}
+                              </span>
+                            )}
+                            <span className="text-[10px] font-normal text-[#6B8A8A] ml-1">Unit</span>
                           </td>
                           <td className="px-3 py-2.5 text-center">
                             <span className="px-2 py-0.5 rounded text-[10px] font-black bg-[#0A1A1A] border border-[#00FFAA]/30 text-[#00FFAA]">

@@ -112,26 +112,55 @@ export function evaluateAIResolusiPBBTrigger(
   getRelationScore: (countryA: string, countryB: string) => number,
   dateStr: string
 ): AIResolusiPBBNotification | null {
-  // Probabilitas kemunculan ditentukan oleh pemanggil (map-system) agar Resolusi PBB & DK PBB tidak bertabrakan.
+  // Gunakan seluruh daftar negara jika ada, fallback ke allCountries
+  const fullCountryList = Array.isArray(allCountries) && allCountries.length > 25
+    ? allCountries
+    : [
+        ...allCountries,
+        'Jepang', 'Amerika Serikat', 'Jerman', 'Inggris', 'Prancis', 'China',
+        'Korea Selatan', 'Australia', 'Rusia', 'Arab Saudi', 'Kanada', 'Brasil',
+        'India', 'Turki', 'Meksiko', 'Singapura', 'Malaysia', 'Thailand', 'Vietnam',
+        'Afrika Selatan', 'Italia', 'Spanyol', 'Mesir', 'Iran', 'Israel', 'Ukraina',
+        'Pakistan', 'Polandia', 'Argentina', 'Indonesia', 'Nigeria'
+      ];
 
+  const uniqueCountries = Array.from(new Set(fullCountryList.filter(Boolean)));
   const candidatePairs: Array<{ proposer: string; target: string; score: number }> = [];
 
-  // Cari pasangan negara (AI vs User atau AI vs AI) yang skor hubungannya antara 1 s/d 20
-  for (const proposer of allCountries) {
+  // Cari pasangan negara (AI vs User atau AI vs AI) yang skor hubungannya antara 1 s/d 30
+  // (Range lebih luas 1-30 agar resolusi tidak selalu monoton negara yang sama)
+  for (const proposer of uniqueCountries) {
     if (!proposer || proposer === userCountryName) continue;
     if (isCountryAnnexed(proposer, getIsoForCountryName(proposer))) continue;
 
-    const potentialTargets = [...allCountries, userCountryName].filter(c => c && c !== proposer);
+    const potentialTargets = [...uniqueCountries, userCountryName].filter(c => c && c !== proposer);
     for (const target of potentialTargets) {
       const score = getRelationScore(proposer, target);
-      if (score >= 1 && score <= 20) {
+      if (score >= 1 && score <= 30) {
         candidatePairs.push({ proposer, target, score });
       }
     }
   }
 
-  if (candidatePairs.length === 0) return null;
+  // Jika tidak ada hubungan buruk <30, ada kemungkinan 35% resolusi global (Larangan Perang / Larangan Produksi)
+  if (candidatePairs.length === 0) {
+    const globalProposers = uniqueCountries.filter(c => c !== userCountryName);
+    if (globalProposers.length > 0) {
+      const randomProposer = globalProposers[Math.floor(Math.random() * globalProposers.length)];
+      const globalTypes: Array<AIResolusiPBBNotification['resolutionType']> = ['war_ban', 'production_ban'];
+      const chosenGlobalType = globalTypes[Math.floor(Math.random() * globalTypes.length)];
+      return generateAIResolusiPBBNotification(
+        randomProposer,
+        'Seluruh Dunia (Global)',
+        50,
+        dateStr,
+        chosenGlobalType
+      );
+    }
+    return null;
+  }
 
+  // Acak pasangan secara dinamis dan tidak terduga
   const selectedPair = candidatePairs[Math.floor(Math.random() * candidatePairs.length)];
   return generateAIResolusiPBBNotification(
     selectedPair.proposer,

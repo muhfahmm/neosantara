@@ -98,6 +98,13 @@ export default function TopRightNewsIcon({
 
   // Popup Toast Otomatis Muncul di Sebelah Kiri (Seperti Inbox) saat ada Berita Baru
   useEffect(() => {
+    // Jangan munculkan popup toast jika game sedang di-pause
+    const isGamePaused = typeof window !== 'undefined' ? Boolean((window as any).neosantara_is_paused) : false;
+    if (isGamePaused) {
+      setShowToast(false);
+      return;
+    }
+
     if (cappedNewsList.length > 0) {
       const latest = cappedNewsList[0];
       if (dismissedToastIdRef.current !== latest.id) {

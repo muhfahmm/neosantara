@@ -2553,6 +2553,10 @@ export default function MapPage() {
     // Sinkronisasi Berita dari Pembangunan & Aksi AI NPC ke daftar Berita & Update Geopolitik
     useEffect(() => {
         const handleAiNewsUpdated = (e: Event) => {
+            // Jika game sedang paused, jangan masukkan berita baru
+            const isPaused = isPausedRef.current || (typeof window !== "undefined" && Boolean((window as any).neosantara_is_paused));
+            if (isPaused) return;
+
             const detail = (e as CustomEvent)?.detail as NewsItemData | undefined;
             if (!detail || !detail.id) return;
             acknowledgeAiNews(detail.id);
@@ -2787,10 +2791,13 @@ export default function MapPage() {
                 newNotifsToAdd.push(generateTradeRelationOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
-            // Risiko bencana tetap terpisah; wabah memiliki peluang epidemi/pandemi tersendiri.
+            // 🎲 RANDOMISASI BENCANA ALAM & WABAH (Sangat Tidak Terduga & Sulit Ditebak)
+            // Menggunakan jitter acak, ambang batas dinamis, dan faktor kejutan musiman
+            const surpriseJitter = (Math.random() - 0.5) * 0.15; // Jitter tak terduga ±7.5%
             const wmoDisasterModifier = getWMODisasterRiskModifier(userCountryName, countryDetail);
-            const disasterBaseChance = Math.max(0, 0.25 + wmoDisasterModifier / 100);
-            const disasterOccurrenceChance = disasterBaseChance * 0.60;
+            const disasterBaseChance = Math.max(0.05, 0.22 + wmoDisasterModifier / 100 + surpriseJitter);
+            const disasterOccurrenceChance = disasterBaseChance * (0.45 + Math.random() * 0.35); // 0.45x - 0.80x fluktuasi
+
             if (Math.random() < disasterOccurrenceChance) {
                 const remainingDisasterRisk = applyKementerianLingkunganHidupDisasterRiskReduction(
                     1,
@@ -2821,15 +2828,18 @@ export default function MapPage() {
                 }
             }
 
+            // 🎲 WABAH & PANDEMI: Anomali acak, faktor resistensi & variabilitas tidak tertebak
             const whoPandemicModifier = getWHOPandemicRiskModifier(userCountryName, countryDetail);
-            const pandemicChance = Math.max(0, PANDEMIC_BASE_CHANCE_PERCENT + whoPandemicModifier);
-            const epidemicChance = Math.max(0, EPIDEMIC_BASE_CHANCE_PERCENT + whoPandemicModifier);
+            const randomOutbreakNoise = (Math.random() - 0.5) * 12; // Fluktuasi risiko ±6%
+            const dynamicPandemicChance = Math.max(5, PANDEMIC_BASE_CHANCE_PERCENT + whoPandemicModifier + randomOutbreakNoise);
+            const dynamicEpidemicChance = Math.max(10, EPIDEMIC_BASE_CHANCE_PERCENT + whoPandemicModifier + randomOutbreakNoise);
             const outbreakRoll = Math.random() * 100;
-            const outbreakType = outbreakRoll < pandemicChance
-                ? 'pandemi'
-                : outbreakRoll < pandemicChance + epidemicChance
-                    ? 'epidemi'
-                    : null;
+
+            // Ambang acak ganda agar probabilitas tidak berpola tetap
+            const isPandemicHit = outbreakRoll < (dynamicPandemicChance * (0.7 + Math.random() * 0.6));
+            const isEpidemicHit = !isPandemicHit && outbreakRoll < (dynamicEpidemicChance * (0.75 + Math.random() * 0.5));
+            const outbreakType = isPandemicHit ? 'pandemi' : isEpidemicHit ? 'epidemi' : null;
+
             if (outbreakType) {
                 const currentPopulation = Number(countryDetail?.jumlah_penduduk);
                 const outbreak = generateWabahPenyakitNotification(
@@ -4395,33 +4405,60 @@ export default function MapPage() {
                     nextPendingNotifications.unshift(completeNotif);
                 }
 
-                // 🔥 HITUNG SELESAINYA PEMBANGUNAN RUDAL ICBM PEMAIN
+                // 🔥 HITUNG SELESAINYA PEMBANGUNAN RUDAL ICBM PEMAIN (BERTAHAP PER UNIT)
                 let nextIcbmTask = prev.icbmBuildTask || null;
                 let nextIcbmJumlah = Number(prev.icbm_jumlah || 0);
                 let nextIcbmStatus = Boolean(prev.icbm_status);
-                if (nextIcbmTask && nextIcbmTask.endDate && nextIcbmTask.endDate <= currentDateStr && !nextIcbmTask.completed) {
-                    const finishedQty = Math.max(1, Number(nextIcbmTask.quantity) || 1);
-                    nextIcbmJumlah += finishedQty;
-                    nextIcbmStatus = true;
-                    nextIcbmTask = {
-                        ...nextIcbmTask,
-                        completed: true,
-                    };
-                    const userCountry = prev?.country || prev?.nama || "Indonesia";
-                    const icbmSelesaiNotif = {
-                        id: `icbm-done-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
-                        title: `🚀 PERAKITAN SELESAI: ${finishedQty} Rudal ICBM Siap Tempur!`,
-                        sender: `Komando Strategis Nuklir Nasional`,
-                        message: `KABAR STRATEGIS KENEGARAAN! Perakitan ${finishedQty} unit Rudal Balistik Antar-Benua (ICBM) milik negara ${userCountry} telah rampung sepenuhnya dan siap dioperasikan di pangkalan militer!`,
-                        timestamp: currentDateStr,
-                        type: 'peringkat',
-                        value: 100,
-                        isRead: false,
-                        tradeType: 'icbm_selesai',
-                        effectText: `${finishedQty} Unit Rudal ICBM Siap Tempur Ditambahkan ke Arsenal`,
-                        isHandled: true,
-                    };
-                    nextPendingNotifications.unshift(icbmSelesaiNotif);
+                if (nextIcbmTask && nextIcbmTask.startDate && nextIcbmTask.endDate) {
+                    const totalTaskQty = Math.max(1, Number(nextIcbmTask.quantity) || 1);
+                    const taskStartDate = new Date(`${nextIcbmTask.startDate}T00:00:00`);
+                    const taskEndDate = new Date(`${nextIcbmTask.endDate}T00:00:00`);
+                    const currDateObj = new Date(`${currentDateStr}T00:00:00`);
+                    
+                    const totalDays = Math.max(1, Math.round((taskEndDate.getTime() - taskStartDate.getTime()) / (1000 * 60 * 60 * 24)));
+                    const daysPerUnit = Math.max(1, Math.round(totalDays / totalTaskQty));
+
+                    // Hitung berapa unit yang seharusnya sudah selesai sampai currentDateStr
+                    let finishedUnits = 0;
+                    for (let i = 0; i < totalTaskQty; i++) {
+                        const unitDueDate = new Date(taskStartDate);
+                        unitDueDate.setDate(unitDueDate.getDate() + daysPerUnit * (i + 1));
+                        if (unitDueDate <= currDateObj) {
+                            finishedUnits++;
+                        }
+                    }
+
+                    const prevDeliveredUnits = Number(nextIcbmTask.deliveredUnits || 0);
+                    const newlyFinished = Math.max(0, finishedUnits - prevDeliveredUnits);
+
+                    if (newlyFinished > 0) {
+                        nextIcbmJumlah += newlyFinished;
+                        nextIcbmStatus = true;
+                        const newDelivered = prevDeliveredUnits + newlyFinished;
+                        const isAllDone = newDelivered >= totalTaskQty;
+
+                        nextIcbmTask = {
+                            ...nextIcbmTask,
+                            deliveredUnits: newDelivered,
+                            completed: isAllDone,
+                        };
+
+                        const userCountry = prev?.country || prev?.nama || "Indonesia";
+                        const icbmSelesaiNotif = {
+                            id: `icbm-done-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+                            title: `🚀 PERAKITAN SELESAI: ${newlyFinished} Rudal ICBM Siap Tempur!`,
+                            sender: `Komando Strategis Nuklir Nasional`,
+                            message: `KABAR STRATEGIS KENEGARAAN! Perakitan ${newlyFinished} unit Rudal Balistik Antar-Benua (ICBM) milik negara ${userCountry} telah rampung dan siap siaga di pangkalan militer! Total stok ICBM aktif: ${nextIcbmJumlah} unit.`,
+                            timestamp: currentDateStr,
+                            type: 'peringkat',
+                            value: 100,
+                            isRead: false,
+                            tradeType: 'icbm_selesai',
+                            effectText: `${newlyFinished} Unit Rudal ICBM Siap Tempur Ditambahkan ke Arsenal`,
+                            isHandled: true,
+                        };
+                        nextPendingNotifications.unshift(icbmSelesaiNotif);
+                    }
                 }
 
                 const monthsPassed = lastDate ? getMonthsDifference(lastDate, currentDateStr) : 0;

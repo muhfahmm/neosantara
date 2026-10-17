@@ -273,6 +273,39 @@ export const WABAH_PENYAKIT_POOL: WabahEventItem[] = [
     korbanRange: [12000, 80000],
     kerugianRange: [9000000, 45000000],
     descriptionTemplate: (country) => `Mutasi ganas virus influenza klasik merebak masif mengancam keselamatan sistem kesehatan nasional ${country}.`,
+  },
+  // Varian Baru Tak Terduga
+  {
+    name: 'Wabah Ensefalitis Misterius',
+    category: 'Wabah Penyakit Menular (Epidemi)',
+    weight: 1.5,
+    korbanRange: [700, 4800],
+    kerugianRange: [600000, 3200000],
+    descriptionTemplate: (country) => `Gejala peradangan otak misterius menyebar cepat pada masyarakat perkotaan ${country}, memicu kepanikan dokter spesialis.`,
+  },
+  {
+    name: 'Wabah Demam Berdarah Kongo (CCHF)',
+    category: 'Wabah Penyakit Menular (Epidemi)',
+    weight: 1.0,
+    korbanRange: [400, 3200],
+    kerugianRange: [500000, 2800000],
+    descriptionTemplate: (country) => `Transmisi virus Crimean-Congo Hemorrhagic Fever yang ditularkan kutu parasit terdeteksi di beberapa distrik ${country}.`,
+  },
+  {
+    name: 'Pandemi Virus Marburg Subtipe Baru',
+    category: 'Pandemi Global',
+    weight: 0.8,
+    korbanRange: [6000, 38000],
+    kerugianRange: [5000000, 25000000],
+    descriptionTemplate: (country) => `Peringatan darurat kesehatan internasional diterbitkan setelah virus demam berdarah Marburg subtipe baru meluas ke perbatasan ${country}.`,
+  },
+  {
+    name: 'Anomali Bio-Toksin Laut (Red Tide)',
+    category: 'Penyakit Hewan & Tumbuhan (Epidemi)',
+    weight: 1.2,
+    korbanRange: [900, 6500],
+    kerugianRange: [800000, 4200000],
+    descriptionTemplate: (country) => `Ledakan alga beracun (Red Tide) mencemari biota laut dan tambak nelayan pesisir ${country}, melumpuhkan ekspor perikanan.`,
   }
 ];
 
@@ -282,25 +315,50 @@ export function generateWabahPenyakitNotification(
   jumlahPenduduk?: number,
   jenisWabah?: 'epidemi' | 'pandemi'
 ): WabahPenyakitNotification {
-  const eventPool = jenisWabah
+  const basePool = jenisWabah
     ? WABAH_PENYAKIT_POOL.filter(item =>
         item.category.includes('Pandemi') === (jenisWabah === 'pandemi')
       )
     : WABAH_PENYAKIT_POOL;
-  const totalWeight = eventPool.reduce((acc, item) => acc + item.weight, 0);
+
+  // 🎲 Randomisasi Acak Berfluktuasi: Bobot tiap wabah mengalami noise acak dinamis (0.5x - 1.5x)
+  const dynamicEventPool = basePool.map(item => ({
+    ...item,
+    dynamicWeight: item.weight * (0.5 + Math.random() * 1.0)
+  }));
+
+  const totalWeight = dynamicEventPool.reduce((acc, item) => acc + item.dynamicWeight, 0);
   let roll = Math.random() * totalWeight;
 
-  let selectedEvent = eventPool[0] ?? WABAH_PENYAKIT_POOL[0];
-  for (const item of eventPool) {
-    if (roll < item.weight) {
+  let selectedEvent = dynamicEventPool[0] ?? WABAH_PENYAKIT_POOL[0];
+  for (const item of dynamicEventPool) {
+    if (roll < item.dynamicWeight) {
       selectedEvent = item;
       break;
     }
-    roll -= item.weight;
+    roll -= item.dynamicWeight;
+  }
+
+  // 🦠 Mutasi / Tingkat Virulensi Tak Terduga
+  const virulensiRoll = Math.random();
+  let virulensiMultiplier = 1.0;
+  let mutasiLabel = "";
+
+  if (virulensiRoll < 0.20) {
+    // 20% Varian Terkendali / Respons Cepat
+    virulensiMultiplier = 0.5 + Math.random() * 0.3; // 50% - 80%
+    mutasiLabel = " (Klaster Terlokalisir)";
+  } else if (virulensiRoll > 0.80) {
+    // 20% Mutasi Ganas / Super-Spreader Tak Terduga
+    virulensiMultiplier = 1.5 + Math.random() * 0.9; // 150% - 240%
+    mutasiLabel = " (Mutasi Strain Super-Spreader)";
+  } else {
+    // 60% Tingkat Penularan Reguler
+    virulensiMultiplier = 0.85 + Math.random() * 0.4; // 85% - 125%
   }
 
   const [minK, maxK] = selectedEvent.korbanRange;
-  const korbanDasar = Math.floor(Math.random() * (maxK - minK + 1)) + minK;
+  const korbanDasar = Math.floor((Math.random() * (maxK - minK + 1) + minK) * virulensiMultiplier);
   const populasiValid = typeof jumlahPenduduk === 'number' && Number.isFinite(jumlahPenduduk)
     ? Math.max(0, Math.floor(jumlahPenduduk))
     : null;
@@ -314,11 +372,12 @@ export function generateWabahPenyakitNotification(
   if (populasiValid && populasiValid > 0 && !isNonHumanOutbreak) {
     if (isPandemi) {
       const scenario = SKENARIO_PANDEMI[Math.floor(Math.random() * SKENARIO_PANDEMI.length)];
-      skenario = scenario.nama;
-      persentaseTerinfeksi = scenario.persentaseTerinfeksi;
+      skenario = `${scenario.nama}${mutasiLabel ? ` - ${mutasiLabel.replace(/[\(\)]/g, '')}` : ''}`;
+      // Variabilitas persentase infeksi dinamis
+      persentaseTerinfeksi = Math.min(0.7, scenario.persentaseTerinfeksi * virulensiMultiplier);
     } else {
-      skenario = 'Epidemi regional';
-      persentaseTerinfeksi = 0.1 + Math.random() * 0.2;
+      skenario = `Epidemi ${mutasiLabel ? mutasiLabel.replace(/[\(\)]/g, '') : 'regional'}`;
+      persentaseTerinfeksi = Math.min(0.35, (0.05 + Math.random() * 0.15) * virulensiMultiplier);
     }
   }
 
@@ -329,7 +388,7 @@ export function generateWabahPenyakitNotification(
     : Math.min(populasiValid, Math.max(1, Math.round(populasiValid * persentaseTerinfeksi)));
 
   const [minR, maxR] = selectedEvent.kerugianRange;
-  const kerugianDasar = Math.floor(Math.random() * (maxR - minR + 1)) + minR;
+  const kerugianDasar = Math.floor((Math.random() * (maxR - minR + 1) + minR) * virulensiMultiplier);
   const totalKerugian = populasiValid === null
     ? kerugianDasar
     : Math.floor(kerugianDasar * faktorPopulasi);
@@ -337,24 +396,24 @@ export function generateWabahPenyakitNotification(
   // Rule: 1 Korban = 1 NEO
   const bantuanCost = korban;
   const durationDays = isNonHumanOutbreak
-    ? 14
-    : randomInRange(isPandemi ? 60 : 30, isPandemi ? 120 : 60);
+    ? randomInRange(10, 25)
+    : randomInRange(isPandemi ? 45 : 20, isPandemi ? 150 : 75);
   const populationScale = populasiValid === null ? 1 : populasiValid / POPULASI_ACUAN;
-  const [minimumDeaths, maximumDeaths] = isPandemi ? [20_000, 100_000] : [5_000, 10_000];
+  const [minimumDeaths, maximumDeaths] = isPandemi ? [15_000, 90_000] : [3_000, 12_000];
   const estimatedDeaths = isNonHumanOutbreak
     ? 0
-    : Math.round(randomInRange(minimumDeaths, maximumDeaths) * populationScale);
+    : Math.round(randomInRange(minimumDeaths, maximumDeaths) * populationScale * virulensiMultiplier);
   const perkiraanKematian = Math.min(korban, populasiValid === null
     ? estimatedDeaths
     : Math.min(populasiValid, estimatedDeaths));
   const persentaseKematian = korban > 0 ? perkiraanKematian / korban : 0;
 
   const country = userCountryName || 'Indonesia';
-  const message = selectedEvent.descriptionTemplate(country, korban, totalKerugian);
+  const message = `${selectedEvent.descriptionTemplate(country, korban, totalKerugian)}${mutasiLabel ? ` [Laporan Medis: Terkonfirmasi ${mutasiLabel.replace(/[\(\)]/g, '')}]` : ''}`;
 
   return {
     id: `wabah-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-    title: `${isPandemi ? '☣️ PANDEMI GLOBAL:' : '🦠 WABAH PENYAKIT:'} ${selectedEvent.name.toUpperCase()}`,
+    title: `${isPandemi ? '☣️ PANDEMI GLOBAL:' : '🦠 WABAH PENYAKIT:'} ${selectedEvent.name.toUpperCase()}${mutasiLabel ? mutasiLabel.toUpperCase() : ''}`,
     sender: `KEMENTERIAN KESEHATAN & WHO (${country.toUpperCase()})`,
     message,
     timestamp: dateStr,

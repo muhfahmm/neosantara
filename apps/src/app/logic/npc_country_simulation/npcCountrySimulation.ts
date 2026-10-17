@@ -26,7 +26,7 @@ import {
 import { calculatePresidentRating, getMonthsDifference } from "@/app/logic/peringkatCalculator";
 import { runNpcCountryBrain } from "@/app/logic/npc_ai_brain/orchestrator";
 import { evaluateAndControlDemographics } from "@/app/logic/npc_ai_brain/demographics/demographicControllerAI";
-import { isNegaraNuklirBawaan } from "@/app/logic/npc_ai_brain/military/nuclearControllerAI";
+import { isNegaraNuklirBawaan, getNegaraNuklirBaseIcbm } from "@/app/logic/npc_ai_brain/military/nuclearControllerAI";
 
 export const NPC_COUNTRY_SIMULATION_UPDATED_EVENT = "neosantara:npc-country-simulation-updated";
 
@@ -259,6 +259,15 @@ function initializeNpcCountryMetrics(
   );
   if (isDefaultNuclear) {
     initialized.programNuklirActive = true;
+    const baseIcbm = getNegaraNuklirBaseIcbm(
+      String(initialized.country_slug || ""),
+      String(initialized.name_id || initialized.nama_negara || initialized.country || ""),
+      String(initialized.iso || "")
+    );
+    if (initialized.icbm_jumlah === undefined || initialized.icbm_jumlah === null || Number(initialized.icbm_jumlah) < baseIcbm) {
+      initialized.icbm_jumlah = baseIcbm;
+      initialized.icbm_status = baseIcbm > 0;
+    }
     if (Array.isArray(initialized.ai_nuclear_queue)) {
       initialized.ai_nuclear_queue = initialized.ai_nuclear_queue.filter((q: any) => q.type !== "program_nuklir");
     }

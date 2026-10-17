@@ -220,7 +220,39 @@ export const BENCANA_ALAM_POOL: BencanaEventItem[] = [
     kerugianRange: [400000, 2000000],
     descriptionTemplate: (country) => `Kebocoran limbah bahan berbahaya dan beracun dari industri mencemari area permukiman warga ${country}.`,
   },
-
+  // Bencana Ekstrem Anomali / Cuaca Tak Terduga
+  {
+    name: 'Gelombang Panas Mematikan',
+    category: 'Bencana Hidrometeorologi',
+    weight: 2,
+    korbanRange: [800, 6000],
+    kerugianRange: [700000, 3500000],
+    descriptionTemplate: (country) => `Anomali iklim memicu gelombang panas ekstrem dengan suhu menembus rekor tertinggi, melumpuhkan aktivitas publik di ${country}.`,
+  },
+  {
+    name: 'Badai Salju & Frostbite Ekstrem',
+    category: 'Bencana Hidrometeorologi',
+    weight: 1.5,
+    korbanRange: [500, 4500],
+    kerugianRange: [600000, 3000000],
+    descriptionTemplate: (country) => `Penurunan suhu anjlok secara drastis disertai badai pembekuan, memutus jaringan transmisi listrik dan logistik ${country}.`,
+  },
+  {
+    name: 'Sinkhole Raksasa Tiba-Tiba',
+    category: 'Bencana Geologi',
+    weight: 1,
+    korbanRange: [200, 1800],
+    kerugianRange: [400000, 2200000],
+    descriptionTemplate: (country) => `Runtuhan tanah misterius berskala masif (sinkhole) terbentuk secara tiba-tiba di kawasan urban ${country}, menelan bangunan dan ruas jalan utama.`,
+  },
+  {
+    name: 'Kebakaran Kilang & Depo Minyak',
+    category: 'Bencana Kebakaran',
+    weight: 1.5,
+    korbanRange: [400, 3500],
+    kerugianRange: [1500000, 8000000],
+    descriptionTemplate: (country) => `Insiden kebakaran hebat melahap tangki kilang minyak strategis di ${country}, memicu ledakan beruntun dan ancaman krisis bahan bakar.`,
+  },
 ];
 
 function generateIncidentNotification(
@@ -232,36 +264,63 @@ function generateIncidentNotification(
     throw new Error('Tidak ada kejadian yang tersedia untuk dibuat menjadi notifikasi.');
   }
 
-  const totalWeight = BENCANA_ALAM_POOL.reduce((acc, item) => acc + item.weight, 0);
+  // 🎲 Randomisasi Acak Dinamis (Noise berat agar tidak tertebak urutan maupun bobotnya)
+  const randomizedPool = [...BENCANA_ALAM_POOL].map(item => ({
+    ...item,
+    // Fluktuasi bobot dinamis ±40% agar variasi bencana yang muncul selalu tak terduga
+    dynamicWeight: item.weight * (0.6 + Math.random() * 0.8)
+  }));
+
+  const totalWeight = randomizedPool.reduce((acc, item) => acc + item.dynamicWeight, 0);
   let roll = Math.random() * totalWeight;
 
-  let selectedEvent = BENCANA_ALAM_POOL[0];
-  for (const item of BENCANA_ALAM_POOL) {
-    if (roll < item.weight) {
+  let selectedEvent = randomizedPool[0];
+  for (const item of randomizedPool) {
+    if (roll < item.dynamicWeight) {
       selectedEvent = item;
       break;
     }
-    roll -= item.weight;
+    roll -= item.dynamicWeight;
+  }
+
+  // Variabilitas Skala Kejadian (Bisa Skala Kecil/Lokal, Sedang, hingga Skala Ekstrem / Mega Disasters)
+  const severityRoll = Math.random();
+  let severityMultiplier = 1.0;
+  let severityNote = "";
+
+  if (severityRoll < 0.15) {
+    // 15% Kemungkinan Kejadian Anomali Ringan / Terisolasi
+    severityMultiplier = 0.4 + Math.random() * 0.3; // 40% - 70%
+    severityNote = " (Skala Terisolasi)";
+  } else if (severityRoll > 0.85) {
+    // 15% Kemungkinan Kejadian Katastropik Ekstrem Tak Terduga
+    severityMultiplier = 1.6 + Math.random() * 0.9; // 160% - 250%
+    severityNote = " (Skala Bencana Katastropik)";
+  } else {
+    // 70% Fluktuasi Reguler
+    severityMultiplier = 0.8 + Math.random() * 0.5; // 80% - 130%
   }
 
   const [minK, maxK] = selectedEvent.korbanRange;
-  const baseKorban = Math.floor(Math.random() * (maxK - minK + 1)) + minK;
+  const rawKorban = Math.floor((Math.random() * (maxK - minK + 1) + minK) * severityMultiplier);
+  const baseKorban = Math.max(50, rawKorban);
   const lingkunganReducedKorban = applyKementerianLingkunganHidupDisasterImpactReduction(baseKorban, countryDetail);
   const korban = applyLayananDaruratDisasterDeathReduction(lingkunganReducedKorban, countryDetail);
 
   const [minR, maxR] = selectedEvent.kerugianRange;
-  const baseKerugian = Math.floor(Math.random() * (maxR - minR + 1)) + minR;
+  const rawKerugian = Math.floor((Math.random() * (maxR - minR + 1) + minR) * severityMultiplier);
+  const baseKerugian = Math.max(50000, rawKerugian);
   const totalKerugian = applyKementerianLingkunganHidupDisasterImpactReduction(baseKerugian, countryDetail);
 
   // For natural disasters, emergency aid is calculated at 1 NEO per affected person.
   const bantuanCost = korban;
 
   const country = userCountryName || 'Indonesia';
-  const message = selectedEvent.descriptionTemplate(country, korban, totalKerugian);
+  const message = `${selectedEvent.descriptionTemplate(country, korban, totalKerugian)}${severityNote ? ` [Status Analisis Lapangan: Terkonfirmasi Bencana${severityNote}]` : ''}`;
 
   return {
     id: `bencana-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-    title: `🚨 BENCANA ALAM: ${selectedEvent.name.toUpperCase()}`,
+    title: `🚨 BENCANA ALAM: ${selectedEvent.name.toUpperCase()}${severityNote ? severityNote.toUpperCase() : ''}`,
     sender: `BADAN NASIONAL PENANGGULANGAN BENCANA (${country.toUpperCase()})`,
     message,
     timestamp: dateStr,

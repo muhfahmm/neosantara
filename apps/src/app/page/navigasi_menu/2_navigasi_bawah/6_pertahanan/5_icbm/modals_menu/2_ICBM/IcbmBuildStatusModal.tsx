@@ -3,12 +3,14 @@ import React, { useState } from "react";
 import { X, Clock, ShieldCheck, Rocket } from "lucide-react";
 import TabelDalamPembangunan from "./tab_menu/tabelDalamPembangunan";
 import TabelSelesai from "./tab_menu/tabelSelesai";
+import TabelStokIcbm from "./tab_menu/tabelStokIcbm";
 
 interface IcbmBuildStatusModalProps {
   isOpen: boolean;
   onClose: () => void;
   countryDetail: any;
   currentDate?: string | Date;
+  totalReadyIcbm?: number;
   onOpenDetail?: () => void;
 }
 
@@ -29,6 +31,7 @@ export default function IcbmBuildStatusModal({
   onClose, 
   countryDetail, 
   currentDate, 
+  totalReadyIcbm,
   onOpenDetail 
 }: IcbmBuildStatusModalProps) {
   if (!isOpen) return null;
@@ -103,9 +106,20 @@ export default function IcbmBuildStatusModal({
     return entry.endDate <= todayDate;
   });
 
-  const activeTabOptions = ['Dalam Pembangunan', 'Selesai'] as const;
+  const activeTabOptions = ['Dalam Pembangunan', 'Selesai', 'Stok ICBM'] as const;
   type ActiveTab = (typeof activeTabOptions)[number];
   const [activeTab, setActiveTab] = useState<ActiveTab>('Dalam Pembangunan');
+
+  const resolvedTotalReady = typeof totalReadyIcbm === 'number'
+    ? totalReadyIcbm
+    : Math.max(
+        0,
+        (Number(countryDetail?.icbm_jumlah || 0) || Number(countryDetail?.icbm || 0) || completedEntries.length) -
+          Number(countryDetail?.icbm_consumed || 0)
+      );
+
+  const userCountryName = countryDetail?.country || countryDetail?.nama_negara || "Indonesia";
+  const consumedCount = Math.max(0, Number(countryDetail?.icbm_consumed || 0));
 
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
@@ -149,6 +163,11 @@ export default function IcbmBuildStatusModal({
                   }`}
                 >
                   {tab}
+                  {tab === 'Stok ICBM' && (
+                    <span className="ml-1.5 px-1.5 py-0.2 rounded-full text-[10px] bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30">
+                      {resolvedTotalReady}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
@@ -158,8 +177,14 @@ export default function IcbmBuildStatusModal({
               <div className="overflow-x-auto custom-scrollbar">
                 {activeTab === 'Dalam Pembangunan' ? (
                   <TabelDalamPembangunan entries={pendingEntries} />
-                ) : (
+                ) : activeTab === 'Selesai' ? (
                   <TabelSelesai entries={completedEntries} />
+                ) : (
+                  <TabelStokIcbm
+                    totalReadyIcbm={resolvedTotalReady}
+                    countryName={userCountryName}
+                    consumedCount={consumedCount}
+                  />
                 )}
               </div>
             </div>

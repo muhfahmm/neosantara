@@ -51,6 +51,38 @@ export const DEFAULT_NUCLEAR_COUNTRIES = [
   "india",
 ];
 
+/**
+ * Jumlah stok dasar rudal ICBM awal untuk masing-masing negara bawaan nuklir (sesuai database_icbm_negara)
+ */
+export const DEFAULT_NUCLEAR_BASE_ICBM: Record<string, number> = {
+  amerika_serikat: 400,
+  rusia: 306,
+  china: 104,
+  korea_utara: 20,
+  india: 10,
+};
+
+export function getNegaraNuklirBaseIcbm(countrySlug?: string, countryName?: string, iso?: string): number {
+  const s = String(countrySlug || "").toLowerCase().trim();
+  const i = String(iso || "").toLowerCase().trim();
+  const n = String(countryName || "").toLowerCase().trim();
+
+  if (s && DEFAULT_NUCLEAR_BASE_ICBM[s] !== undefined) return DEFAULT_NUCLEAR_BASE_ICBM[s];
+  if (i === "us") return 400;
+  if (i === "ru") return 306;
+  if (i === "cn") return 104;
+  if (i === "kp") return 20;
+  if (i === "in") return 10;
+
+  if (n === "amerika serikat" || n === "united states" || n === "usa") return 400;
+  if (n === "rusia" || n === "russia") return 306;
+  if (n === "china" || n === "tiongkok") return 104;
+  if (n === "korea utara" || n === "north korea") return 20;
+  if (n === "india") return 10;
+
+  return 0;
+}
+
 export function isNegaraNuklirBawaan(countrySlug?: string, countryName?: string, iso?: string): boolean {
   const s = String(countrySlug || "").toLowerCase().trim();
   const n = String(countryName || "").toLowerCase().trim();
@@ -159,7 +191,13 @@ function updateNuclearQueue(ctx: BrainContext): void {
         )
       );
     } else if (item.type === "icbm") {
-      const currentIcbm = nilaiAngka(ctx.country.icbm_jumlah);
+      const baseCount = getNegaraNuklirBaseIcbm(
+        String(ctx.country.country_slug || ""),
+        ctx.negaraNama,
+        String(ctx.country.iso || "")
+      );
+      const existingIcbm = nilaiAngka(ctx.country.icbm_jumlah);
+      const currentIcbm = Math.max(existingIcbm, baseCount);
       const nextIcbm = currentIcbm + item.quantity;
       ctx.country.icbm_jumlah = nextIcbm;
       ctx.country.icbm_status = true;
@@ -169,6 +207,7 @@ function updateNuclearQueue(ctx: BrainContext): void {
         ctx.country.icbmBuildTask = {
           ...ctx.country.icbmBuildTask,
           completed: true,
+          deliveredUnits: item.quantity,
         };
       }
 
@@ -222,20 +261,10 @@ export function jalankanKeputusanNuklirAI(ctx: BrainContext): NuclearDecision {
     };
   }
 
-  // 3. Cek Syarat 2: Kepemilikan Tambang Uranium minimal 1 atau SDA Uranium
-  const uraniumMines = nilaiAngka(ctx.country.uranium);
-  const hasUraniumSda = Boolean(ctx.country.sda?.uranium);
-  if (uraniumMines < 1 && !hasUraniumSda) {
-    return {
-      tipe: "tahan",
-      alasan: "Negara AI belum memiliki tambang atau potensi SDA uranium.",
-    };
-  }
-
-  const currentKas = nilaiAngka(ctx.country.anggaran);
-
-  // Jika negara merupakan 5 negara pemilik nuklir default (AS, Rusia, China, Korut, India),
-  // pastikan program nuklir selalu aktif dan tidak pernah memulai riset program nuklir dari awal!
+  // 3. Cek Syarat Kepemilikan Nuklir & Uranium
+  // Jika negara sudah memiliki program nuklir aktif atau sudah punya ICBM bawaan/sebelumnya,
+  // mereka telah menguasai teknologi nuklir dan dapat langsung memproduksi ICBM selama kas mencukupi.
+  const hasExistingIcbm = Boolean(ctx.country.icbm_status) || nilaiAngka(ctx.country.icbm_jumlah) > 0;
   const isDefaultNuclear = isNegaraNuklirBawaan(
     String(ctx.country.country_slug || ""),
     ctx.negaraNama,
@@ -245,7 +274,19 @@ export function jalankanKeputusanNuklirAI(ctx: BrainContext): NuclearDecision {
     ctx.country.programNuklirActive = true;
   }
 
-  const isProgramActive = Boolean(ctx.country.programNuklirActive);
+  const isProgramActive = Boolean(ctx.country.programNuklirActive) || isDefaultNuclear;
+  const uraniumMines = nilaiAngka(ctx.country.uranium);
+  const hasUraniumSda = Boolean(ctx.country.sda?.uranium);
+
+  // Jika belum punya program nuklir aktif dan bukan negara nuklir bawaan, wajib punya uranium untuk mulai riset
+  if (!isProgramActive && !hasExistingIcbm && uraniumMines < 1 && !hasUraniumSda) {
+    return {
+      tipe: "tahan",
+      alasan: "Negara AI belum memiliki tambang atau potensi SDA uranium.",
+    };
+  }
+
+  const currentKas = nilaiAngka(ctx.country.anggaran);
 
   // =========================================================================
   // TAHAP A: PENGEMBANGAN PROGRAM NUKLIR (Jika belum aktif)
@@ -319,63 +360,39 @@ export function jalankanKeputusanNuklirAI(ctx: BrainContext): NuclearDecision {
   }
 
   // =========================================================================
-  // TAHAP B: PENGEMBANGAN RUDAL ICBM (Program nuklir sudah aktif & syarat 1-3 terpenuhi)
-  // Aturan: Jika negara AI sudah memiliki Program Nuklir, peluang membangun ICBM adalah 20%
+  // TAHAP B: PENGEMBANGAN RUDAL ICBM (Program nuklir sudah aktif & syarat terpenuhi)
+  // Aturan: Negara yang sudah memiliki Program Nuklir & ICBM dapat menambah ICBM sesuka hati
+  // selama kas negara mencukupi dan mengikuti durasi perakitan 30 hari.
   // =========================================================================
-  const icbmBuildChance = Math.random();
-  if (icbmBuildChance > 0.2) {
-    // 80% kemungkinan AI menahan diri pada evaluasi ini, evaluasi ulang dalam 7 hari
+  const biayaIcbmPerUnit = getBiayaIcbmDinamis(ctx.metadata);
+  const durasiPerUnit = getDurasiIcbmDinamis(ctx.metadata); // 30 hari per unit
+  const cadanganKasMiliter = 1000;
+
+  // Cek kecukupan kas negara untuk minimal 1 unit ICBM
+  if (currentKas < biayaIcbmPerUnit + cadanganKasMiliter) {
     setCooldown(ctx, "ai_nuclear_evaluation", 7);
     return {
       tipe: "tahan",
-      alasan: `Negara AI ${ctx.negaraNama} memutuskan belum mengalokasikan prioritas perakitan ICBM pada periode ini (probabilitas 20%).`,
+      alasan: `Kas negara AI ${ctx.negaraNama} (${currentKas.toLocaleString("id-ID")} NEO) belum mencukupi untuk biaya perakitan ICBM (${biayaIcbmPerUnit.toLocaleString("id-ID")} NEO).`,
     };
   }
 
-  const biayaIcbmPerUnit = getBiayaIcbmDinamis(ctx.metadata);
-  const uraniumCostPerUnit = 1;
-  const stokUranium = Math.max(
-    nilaiAngka(ctx.country.inventory_uranium),
-    uraniumMines > 0 ? uraniumMines * 10 : 0
-  );
+  // Jika sudah memiliki ICBM atau Program Nuklir aktif, AI bebas menambahkan ICBM sesuka hati
+  // Hitung jumlah maksimum unit yang dapat dibeli negara AI berdasarkan kas yang tersedia
+  const kasTersedia = Math.max(0, currentKas - cadanganKasMiliter);
+  const maxBisaDibangunKas = Math.max(1, Math.floor(kasTersedia / biayaIcbmPerUnit));
 
-  // Cek apakah stok uranium cukup untuk 1 unit rudal ICBM
-  if (stokUranium < uraniumCostPerUnit) {
-    setCooldown(ctx, "ai_nuclear_evaluation", 14);
-    return {
-      tipe: "tahan",
-      alasan: `Stok uranium negara AI (${stokUranium}) belum mencukupi untuk memproduksi ICBM (butuh ${uraniumCostPerUnit}).`,
-    };
-  }
-
-  // Cek kecukupan kas untuk 1 unit ICBM
-  const cadanganKasMiliter = 2000;
-  if (currentKas < biayaIcbmPerUnit + cadanganKasMiliter) {
-    setCooldown(ctx, "ai_nuclear_evaluation", 14);
-    return {
-      tipe: "tahan",
-      alasan: `Kas negara AI (${currentKas.toLocaleString("id-ID")} NEO) belum cukup untuk produksi ICBM (${biayaIcbmPerUnit.toLocaleString("id-ID")} NEO + cadangan).`,
-    };
-  }
-
-  // Produksi 1 hingga 5 unit ICBM secara cerdas tergantung kelimpahan kas AI
-  let kuantitas = 1;
-  if (currentKas >= (biayaIcbmPerUnit * 5) + cadanganKasMiliter && stokUranium >= 5) {
-    kuantitas = 5;
-  } else if (currentKas >= (biayaIcbmPerUnit * 2) + cadanganKasMiliter && stokUranium >= 2) {
-    kuantitas = 2;
-  }
+  // Tentukan kuantitas produksi (AI membangun 1 s/d 5 unit sekaligus sesuai batas kas negara)
+  const kuantitas = Math.min(5, maxBisaDibangunKas);
 
   const totalBiayaKas = biayaIcbmPerUnit * kuantitas;
-  const totalUranium = uraniumCostPerUnit * kuantitas;
-  const durasiPerUnit = getDurasiIcbmDinamis(ctx.metadata); // Dinamis mengikuti standar modal user (30 hari/unit)
   const totalDurasi = durasiPerUnit * kuantitas;
   const completionDate = tambahHari(ctx.date, totalDurasi);
 
-  // Potong kas dan uranium
+  // Potong kas negara
   ctx.country.anggaran = Math.max(0, currentKas - totalBiayaKas);
-  if (ctx.country.inventory_uranium !== undefined) {
-    ctx.country.inventory_uranium = Math.max(0, nilaiAngka(ctx.country.inventory_uranium) - totalUranium);
+  if (ctx.country.inventory_uranium !== undefined && nilaiAngka(ctx.country.inventory_uranium) > 0) {
+    ctx.country.inventory_uranium = Math.max(0, nilaiAngka(ctx.country.inventory_uranium) - kuantitas);
   }
 
   const newIcbmTask: PendingNuclearTask = {

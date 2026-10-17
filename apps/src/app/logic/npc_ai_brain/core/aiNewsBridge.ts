@@ -53,6 +53,7 @@ const LABEL_MENU_INDIKATOR: Record<string, string> = {
  * Tidak menerbitkan notifikasi bila game sedang di-pause.
  */
 export function terbitkanBeritaAI(news: AiNewsItem): void {
+  // Jangan terbitkan berita kebijakan & pembangunan biasa
   if (
     news.type === "kebijakan_negara" ||
     news.type === "pembangunan_sipil" ||
@@ -62,7 +63,12 @@ export function terbitkanBeritaAI(news: AiNewsItem): void {
     return;
   }
 
+  // JANGAN terbitkan berita bila game sedang di-pause oleh user
   if (typeof window !== "undefined") {
+    const isPaused = Boolean((window as any).neosantara_is_paused);
+    if (isPaused) {
+      return;
+    }
     if (pendingAiNewsIds.has(news.id)) return;
 
     pendingAiNews.unshift(news);

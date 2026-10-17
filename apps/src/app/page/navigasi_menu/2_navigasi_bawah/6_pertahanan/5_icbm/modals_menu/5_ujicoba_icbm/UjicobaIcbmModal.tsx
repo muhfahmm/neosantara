@@ -160,10 +160,25 @@ export default function UjicobaIcbmModal({
       const existingPending = Array.isArray(prev?.pending_notifications)
         ? prev.pending_notifications
         : [];
+
+      // Update atau kurangi icbmBuildTask jika ada agar tidak mengembalikan completedCount yang lama
+      let updatedTask = prev?.icbmBuildTask;
+      if (updatedTask && typeof updatedTask === "object") {
+        const currentQty = Math.max(0, Number(updatedTask.quantity) || 0);
+        if (currentQty > 0) {
+          const nextQty = Math.max(0, currentQty - 1);
+          updatedTask = nextQty > 0 ? { ...updatedTask, quantity: nextQty } : null;
+        }
+      }
+
+      const consumedCount = Math.max(0, Number(prev?.icbm_consumed || 0) + 1);
+
       return {
         ...(prev || {}),
         icbm: result.remainingIcbm,
         icbm_jumlah: result.remainingIcbm,
+        icbmBuildTask: updatedTask,
+        icbm_consumed: consumedCount,
         pending_notifications: [...newInboxItems, ...existingPending],
       };
     });

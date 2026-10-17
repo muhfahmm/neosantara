@@ -54,6 +54,13 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [localIcbmBuildTask, setLocalIcbmBuildTask] = useState<any>(null);
 
+  // Selaraskan local task jika countryDetail berubah (misal task dikurangi/dihapus saat uji coba)
+  useEffect(() => {
+    if (countryDetail?.icbmBuildTask !== undefined) {
+      setLocalIcbmBuildTask(countryDetail.icbmBuildTask);
+    }
+  }, [countryDetail?.icbmBuildTask]);
+
   useEffect(() => {
     fetchBuildingMetadata()
       .then((data) => setMetadata(data || {}))
@@ -131,8 +138,20 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
     }
   }
 
-  // 🔥 LOGIKA BARU: TOTAL ICBM YANG SUDAH SIAP / SELESAI (Angka 0 nya akan bertambah!)
-  const totalReadyIcbm = Math.max(existingIcbmCount, completedFromQueue);
+  // 🔥 LOGIKA BARU: TOTAL ICBM YANG SUDAH SIAP / SELESAI
+  // Total rudal siap tempur adalah persediaan rudal awal + rudal yang telah selesai dibangun dari antrean.
+  // Jika rudal telah dikurangi melalui pemakaian/uji coba (icbm_consumed), kurangi dari total tersebut.
+  const baseStoredCount = Number(countryDetail?.icbm_jumlah ?? countryDetail?.icbm ?? 0);
+  const deliveredFromTask = Number(icbmBuildTask?.deliveredUnits || 0);
+  
+  // Rudal yang selesai dari antrean: ambil yang terbesar antara deliveredUnits tersimpan atau completedFromQueue berdasarkan tanggal saat ini
+  const activeCompleted = Math.max(deliveredFromTask, completedFromQueue);
+  
+  // Jika icbm_jumlah sudah mencakup deliveredUnits dari map-system, cegah double count
+  const effectiveReady = Math.max(baseStoredCount, activeCompleted);
+  const consumedIcbm = Math.max(0, Number(countryDetail?.icbm_consumed || 0));
+
+  const totalReadyIcbm = Math.max(0, effectiveReady - consumedIcbm);
 
   const ongoingConstructions = countryDetail?.ongoingConstructions || [];
   const programBuildTask = ongoingConstructions.find((c: any) => c.buildingKey === "program_nuklir");
@@ -534,6 +553,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
         onClose={() => setIsIcbmBuildStatusOpen(false)}
         countryDetail={countryDetail}
         currentDate={safeCurrentDate}
+        totalReadyIcbm={totalReadyIcbm}
         onOpenDetail={() => {
           setIsIcbmBuildStatusOpen(false);
           setIsIcbmDetailOpen(true);
