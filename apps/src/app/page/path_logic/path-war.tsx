@@ -7,6 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { flushSync } from 'react-dom';
 import {
   Flag,
   Trophy,
@@ -191,10 +192,20 @@ export function buildCapitalPoint(
  * PROYEKSI REAL-TIME TERHADAP CANVASES MAP (#map-canvas)
  * ============================================================ */
 
-export function getMapScreenPos(lat: number, lng: number): ScreenPoint {
-  if (typeof window === 'undefined') return { x: 0, y: 0 };
+export interface MapCanvasTransform {
+  rect: DOMRect;
+  scale: number;
+  offsetX: number;
+  offsetY: number;
+  canvasWidth: number;
+  canvasHeight: number;
+  worldCssWidth: number;
+}
+
+export function getMapCanvasTransform(): MapCanvasTransform | null {
+  if (typeof window === 'undefined') return null;
   const canvasEl = document.getElementById('map-canvas') as HTMLCanvasElement | null;
-  if (!canvasEl) return { x: 0, y: 0 };
+  if (!canvasEl) return null;
 
   const rect = canvasEl.getBoundingClientRect();
   const ctx = canvasEl.getContext('2d');
@@ -203,7 +214,13 @@ export function getMapScreenPos(lat: number, lng: number): ScreenPoint {
   let offsetX = 0;
   let offsetY = 0;
 
-  if (ctx && typeof ctx.getTransform === 'function') {
+  // Cek apakah data camera hook tersedia
+  const hookCam = (window as any).__neosantara_map_camera;
+  if (hookCam && typeof hookCam.scale === 'number') {
+    scale = hookCam.scale;
+    offsetX = hookCam.offsetX;
+    offsetY = hookCam.offsetY;
+  } else if (ctx && typeof ctx.getTransform === 'function') {
     const matrix = ctx.getTransform();
     scale = matrix.a || 1;
     offsetX = matrix.e || 0;
@@ -212,6 +229,24 @@ export function getMapScreenPos(lat: number, lng: number): ScreenPoint {
 
   const canvasWidth = canvasEl.width || rect.width || 1000;
   const canvasHeight = canvasEl.height || rect.height || 500;
+  const worldCssWidth = rect.width * scale;
+
+  return {
+    rect,
+    scale,
+    offsetX,
+    offsetY,
+    canvasWidth,
+    canvasHeight,
+    worldCssWidth,
+  };
+}
+
+export function getMapScreenPos(lat: number, lng: number): ScreenPoint {
+  const transform = getMapCanvasTransform();
+  if (!transform) return { x: 0, y: 0 };
+
+  const { rect, scale, offsetX, offsetY, canvasWidth, canvasHeight, worldCssWidth } = transform;
 
   // Proyeksi Equirectangular yang persis sama dengan MapEngine WASM
   const x_norm = (lng + 180.0) / 360.0;
@@ -220,12 +255,92 @@ export function getMapScreenPos(lat: number, lng: number): ScreenPoint {
   const px = x_norm * canvasWidth;
   const py = y_norm * canvasHeight;
 
-  // Canvas coordinates use its backing-store resolution, while overlays use CSS pixels.
-  // Convert after the map transform so routes stay aligned at any browser DPI/zoom level.
-  const x = rect.left + (px * scale + offsetX) * (rect.width / canvasWidth);
+  // Koordinat CSS screen pixel
+  let x = rect.left + (px * scale + offsetX) * (rect.width / canvasWidth);
   const y = rect.top + (py * scale + offsetY) * (rect.height / canvasHeight);
 
+  // Normalisasi horizontal wrap agar x selalu berada di rentang viewport layar
+  if (worldCssWidth > 0) {
+    const viewCenter = window.innerWidth / 2;
+    const shiftCopies = Math.round((viewCenter - x) / worldCssWidth);
+    x += shiftCopies * worldCssWidth;
+  }
+
   return { x, y };
+}
+
+export interface MapRouteGeometry {
+  start: ScreenPoint;
+  end: ScreenPoint;
+  control: ScreenPoint;
+  path: string;
+}
+
+/**
+ * Menghitung titik awal, titik akhir, dan titik kontrol kurva yang sinkron
+ * dengan transformasi canvas map (pan, zoom in/out, dan perulangan dunia horizontal / wrap).
+ * Memastikan garis tidak melompat, tidak hilang, dan tidak goyang saat pan/zoom.
+ */
+export function getMapRouteGeometry(
+  originLat: number,
+  originLng: number,
+  targetLat: number,
+  targetLng: number,
+  routeCurvature = 0.18
+): MapRouteGeometry {
+  const transform = getMapCanvasTransform();
+  if (!transform) {
+    const start = { x: 0, y: 0 };
+    const end = { x: 0, y: 0 };
+    const control = { x: 0, y: 0 };
+    return { start, end, control, path: 'M 0 0' };
+  }
+
+  const { rect, scale, offsetX, offsetY, canvasWidth, canvasHeight, worldCssWidth } = transform;
+
+  const sNormX = (originLng + 180.0) / 360.0;
+  const sNormY = (90.0 - originLat) / 180.0;
+  const tNormX = (targetLng + 180.0) / 360.0;
+  const tNormY = (90.0 - targetLat) / 180.0;
+
+  const sPx = sNormX * canvasWidth;
+  const sPy = sNormY * canvasHeight;
+  const tPx = tNormX * canvasWidth;
+  const tPy = tNormY * canvasHeight;
+
+  // Posisi dasar di layar
+  let startX = rect.left + (sPx * scale + offsetX) * (rect.width / canvasWidth);
+  const startY = rect.top + (sPy * scale + offsetY) * (rect.height / canvasHeight);
+
+  let endX = rect.left + (tPx * scale + offsetX) * (rect.width / canvasWidth);
+  const endY = rect.top + (tPy * scale + offsetY) * (rect.height / canvasHeight);
+
+  // Koreksi horizontal wrap:
+  // Pilih copy dunia untuk endX yang memiliki jarak horizontal terpendek terhadap startX
+  if (worldCssWidth > 0) {
+    let diff = endX - startX;
+    // Bawa diff ke rentang [-worldCssWidth / 2, worldCssWidth / 2]
+    diff = ((diff + worldCssWidth / 2) % worldCssWidth + worldCssWidth) % worldCssWidth - worldCssWidth / 2;
+    endX = startX + diff;
+
+    // Geser rute secara keseluruhan ke salinan dunia yang paling dekat dengan viewport (tengah layar)
+    // agar saat peta digeser berulang kali (horizontal wrap), garis tetap berada di layar yang dilihat user
+    const viewCenter = window.innerWidth / 2;
+    const routeCenter = (startX + endX) / 2;
+    const shiftCopies = Math.round((viewCenter - routeCenter) / worldCssWidth);
+    if (shiftCopies !== 0) {
+      const shiftPx = shiftCopies * worldCssWidth;
+      startX += shiftPx;
+      endX += shiftPx;
+    }
+  }
+
+  const start: ScreenPoint = { x: startX, y: startY };
+  const end: ScreenPoint = { x: endX, y: endY };
+  const control = buildControlPoint(start, end, routeCurvature);
+  const path = buildSVGPath(start, control, end);
+
+  return { start, end, control, path };
 }
 
 /* ============================================================
@@ -543,12 +658,18 @@ export default function WarMap({
       const delta = now - lastTime;
       lastTime = now;
 
-      // Update posisi ibukota penyerang & target persis di atas Canvas Map real-time
-      const curStart = getMapScreenPos(resolvedAttacker.lat, resolvedAttacker.lng);
-      const curEnd = getMapScreenPos(resolvedTarget.lat, resolvedTarget.lng);
-      setStartPos(curStart);
-      setEndPos(curEnd);
-      setEndPos(curEnd);
+      // Update posisi ibukota penyerang & target persis di atas Canvas Map real-time dengan sinkronisasi wrap/pan/zoom
+      const geo = getMapRouteGeometry(
+        resolvedAttacker.lat,
+        resolvedAttacker.lng,
+        resolvedTarget.lat,
+        resolvedTarget.lng,
+        0.18
+      );
+      flushSync(() => {
+        setStartPos(geo.start);
+        setEndPos(geo.end);
+      });
 
       const isGamePaused = typeof window !== 'undefined' ? Boolean((window as any).neosantara_is_paused) : false;
 
@@ -568,8 +689,25 @@ export default function WarMap({
     };
 
     raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [isOpen, phase, warPath, attacker.lat, attacker.lng, target.lat, target.lng]);
+    const onCamera = () => {
+      const geo = getMapRouteGeometry(
+        resolvedAttacker.lat,
+        resolvedAttacker.lng,
+        resolvedTarget.lat,
+        resolvedTarget.lng,
+        0.18
+      );
+      flushSync(() => {
+        setStartPos(geo.start);
+        setEndPos(geo.end);
+      });
+    };
+    window.addEventListener('neosantara_map_camera', onCamera);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('neosantara_map_camera', onCamera);
+    };
+  }, [isOpen, phase, warPath, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
 
   /* ── Fase impact -> fase comparison (Perbandingan Pasukan) ── */
   useEffect(() => {

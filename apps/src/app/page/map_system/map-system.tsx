@@ -5355,6 +5355,38 @@ export default function MapPage() {
                     wasmModule.set_feature_colors_on_map(colors, diplomacyActive);
                 };
 
+                // Hook context setTransform sebelum start_map_engine untuk menangkap kamera WASM secara presisi (bebas dari gangguan last_copy dan throttle)
+                const canvasEl = document.getElementById('map-canvas') as HTMLCanvasElement | null;
+                if (canvasEl) {
+                    const originalGetContext = canvasEl.getContext.bind(canvasEl);
+                    const ctx2d = originalGetContext('2d') as CanvasRenderingContext2D | null;
+                    if (ctx2d) {
+                        const origSetTransform = ctx2d.setTransform.bind(ctx2d);
+                        (ctx2d as any).__origSetTransform = origSetTransform;
+                        ctx2d.setTransform = function (a: any, b?: any, c?: any, d?: any, e?: any, f?: any) {
+                            if (typeof a === 'number' && typeof d === 'number' && typeof e === 'number' && typeof f === 'number') {
+                                // Jika a !== 1.0 atau e !== 0 atau f !== 0 (bukan reset transform untuk clearRect)
+                                if (a > 0.05 && b === 0 && c === 0) {
+                                    (window as any).__neosantara_map_camera = {
+                                        scale: a,
+                                        offsetX: e,
+                                        offsetY: f,
+                                        time: performance.now(),
+                                    };
+                                    if (!(window as any).__neosantara_cam_notify) {
+                                        (window as any).__neosantara_cam_notify = true;
+                                        queueMicrotask(() => {
+                                            (window as any).__neosantara_cam_notify = false;
+                                            window.dispatchEvent(new Event('neosantara_map_camera'));
+                                        });
+                                    }
+                                }
+                            }
+                            return origSetTransform.apply(this, arguments as any);
+                        };
+                    }
+                }
+
                 await start_map_engine(
                     "map-canvas",
                     rawGeojsonStr,

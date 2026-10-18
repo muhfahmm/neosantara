@@ -3,9 +3,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import {
   buildCapitalPoint,
-  buildControlPoint,
-  buildSVGPath,
-  getMapScreenPos,
+  getMapRouteGeometry,
   pointOnQuadraticBezier,
   tangentOnQuadraticBezier,
 } from './path-war';
@@ -127,10 +125,13 @@ export default function DiplomacyPathAnimation({
         elapsedDays += delta / millisecondsPerDay;
       }
 
-      const start = getMapScreenPos(sender.lat, sender.lng);
-      const end = getMapScreenPos(target.lat, target.lng);
-      const control = buildControlPoint(start, end, routeCurvature);
-      const path = buildSVGPath(start, control, end);
+      const { start, end, control, path } = getMapRouteGeometry(
+        sender.lat,
+        sender.lng,
+        target.lat,
+        target.lng,
+        routeCurvature
+      );
       const progress = Math.min(1, elapsedDays / travelEstimate.days);
       const progressPercent = Math.floor(progress * 100);
       if (progressPercent !== lastReportedProgress.current) {
@@ -164,7 +165,15 @@ export default function DiplomacyPathAnimation({
     };
 
     frame = requestAnimationFrame(updateRoute);
-    return () => cancelAnimationFrame(frame);
+    const onCamera = () => {
+      cancelAnimationFrame(frame);
+      updateRoute(performance.now());
+    };
+    window.addEventListener('neosantara_map_camera', onCamera);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('neosantara_map_camera', onCamera);
+    };
   }, [sender, target, senderCountry, targetCountry, travelEstimate, routeCurvature]);
 
   if (!sender || !target || !travelEstimate) return null;
