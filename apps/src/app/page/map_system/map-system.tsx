@@ -212,6 +212,11 @@ import {
     isTradeEmbargoActive,
     submitInvasionViolationSanctions
 } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbWarSanctions';
+import {
+    getCountryIcbmCount,
+    consumeCountryIcbm,
+    launchIcbmWarStrike
+} from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/5_icbm/modals_menu/3_perang_nuklir/icbmWarLogic';
 import { generateResourceLootNews } from '../menus/news/logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
 import { generateDiplomacyNews } from '../menus/news/logic/4_diplomasi/diplomasiNewsLogic';
 import {
@@ -1697,6 +1702,78 @@ export default function MapPage() {
                 if (typeof window !== 'undefined') {
                     window.dispatchEvent(new CustomEvent('country_relations_updated'));
                 }
+
+                // ── LOGIKA SERANGAN BALASAN (COUNTER-ATTACK) ──
+                // Jika serangan ICBM ini diluncurkan terlebih dahulu oleh USER:
+                const playerCountryName = selectedCountry?.country ||
+                    countryDetail?.country ||
+                    countryDetail?.nama_negara ||
+                    countryDetail?.name_id ||
+                    'Indonesia';
+                
+                const isUserAttacker = detail.isPlayerAttacker === true ||
+                    areSameWarCountry(detail.senderCountry, playerCountryName, undefined, countryDetail?.iso);
+
+                if (isUserAttacker) {
+                    const victimCountry = detail.targetCountry;
+                    const victimIso = detail.targetIso;
+                    const targetHasIcbmStock = getCountryIcbmCount(victimCountry, victimIso) > 0;
+                    const roll = Math.random();
+
+                    // Peluang 50% untuk serangan balasan
+                    const willCounterAttack = roll < 0.50;
+
+                    if (willCounterAttack) {
+                        const dateString = currentDate ? currentDate.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10);
+
+                        if (targetHasIcbmStock) {
+                            // 1. Serangan Balasan Menggunakan ICBM (Peluang 50% jika target memiliki ICBM)
+                            consumeCountryIcbm(victimCountry, victimIso);
+                            launchIcbmWarStrike({
+                                attackerCountry: victimCountry,
+                                targetCountry: playerCountryName,
+                                attackerIso: victimIso,
+                                targetIso: countryDetail?.iso,
+                                currentDate: dateString,
+                                isPlayerAttacker: false,
+                            });
+
+                            setNotifications(previous => [{
+                                id: `notif-icbm-retaliation-${Date.now()}-${Math.random()}`,
+                                title: '🚨 SERANGAN BALASAN ICBM DILUNCURKAN!',
+                                sender: `Kementerian Pertahanan & Radar Dini Nasional`,
+                                message: `PERINGATAN DARURAT NUKLIR! ${victimCountry} tidak tinggal diam setelah diserang. Mereka mendeteksi peluncuran dan langsung membalas meluncurkan rudal balistik ICBM strategis menuju ibukota ${playerCountryName}!`,
+                                timestamp: dateString,
+                                type: 'peringkat',
+                                value: 10,
+                                isRead: false,
+                            }, ...previous]);
+                        } else {
+                            // 2. Jika tidak ada ICBM, peluang 50% berubah menjadi Invasi Konvensional Biasa.
+                            // Masih terikat dengan sanksi dan embargo PBB jika tidak memiliki resolusi resmi dari PBB.
+                            setNotifications(previous => [{
+                                id: `notif-invasion-retaliation-${Date.now()}-${Math.random()}`,
+                                title: '⚔️ SERANGAN BALASAN: OPERASI INVASI DILUNCURKAN!',
+                                sender: `Markas Besar Intelijen Militer`,
+                                message: `DARURAT PERANG! Merespons agresi rudal ICBM kita, angkatan bersenjata ${victimCountry} memobilisasi seluruh armada darat, laut, dan udara untuk melancarkan serangan invasi militer balasan ke ${playerCountryName}!`,
+                                timestamp: dateString,
+                                type: 'peringkat',
+                                value: 10,
+                                isRead: false,
+                            }, ...previous]);
+
+                            // Jalankan invasi melalui antrean perang map-system (memeriksa resolusi resmi PBB, sanksi pelanggaran, dan embargo)
+                            window.dispatchEvent(new CustomEvent('start_war_animation', {
+                                detail: {
+                                    attacker: victimCountry,
+                                    target: playerCountryName,
+                                    isNpcWar: false, // Targetnya adalah pemain!
+                                    resolutionViolationAuthorized: false,
+                                },
+                            }));
+                        }
+                    }
+                }
             }
         };
 
@@ -1707,7 +1784,7 @@ export default function MapPage() {
             window.removeEventListener('trigger_icbm_explosion_flash', handleExplosionFlash);
             window.removeEventListener('neosantara_icbm_strike_arrived', handleIcbmStrikeArrived);
         };
-    }, []);
+    }, [currentDate, countryDetail, selectedCountry?.country]);
 
     const [penelitianModalOpen, setPenelitianModalOpen] = useState(false);
     const [missionModalOpen, setMissionModalOpen] = useState(false);

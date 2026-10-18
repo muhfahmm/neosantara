@@ -47,6 +47,7 @@ interface ActiveDiplomacyPath {
   progress: number;
   resourceKey?: string;
   amount?: number;
+  isPlayerAttacker?: boolean;
 }
 
 const normalizeCountryName = (name: unknown) => String(name || '')
@@ -71,7 +72,15 @@ export default function DiplomacyTracking() {
       'icbm',
     ];
 
-    const addPath = (kindValue: unknown, pathIdValue: unknown, senderValue: unknown, targetValue: unknown, resourceKey?: unknown, amount?: unknown) => {
+    const addPath = (
+      kindValue: unknown,
+      pathIdValue: unknown,
+      senderValue: unknown,
+      targetValue: unknown,
+      resourceKey?: unknown,
+      amount?: unknown,
+      isPlayerAttacker?: boolean
+    ) => {
       const kind = String(kindValue || '') as DiplomacyPathKind;
       const senderCountry = String(senderValue || '').trim();
       const targetCountry = String(targetValue || '').trim();
@@ -81,7 +90,16 @@ export default function DiplomacyTracking() {
         `diplomacy-path-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
       setActivePaths(current => current.some(path => path.id === id)
         ? current
-        : [...current, { id, kind, senderCountry, targetCountry, progress: 0, resourceKey: typeof resourceKey === 'string' ? resourceKey : undefined, amount: Number(amount) || undefined }]);
+        : [...current, {
+            id,
+            kind,
+            senderCountry,
+            targetCountry,
+            progress: 0,
+            resourceKey: typeof resourceKey === 'string' ? resourceKey : undefined,
+            amount: Number(amount) || undefined,
+            isPlayerAttacker: isPlayerAttacker === true,
+          }]);
     };
 
     const handleDiplomacyPath = (event: Event) => {
@@ -92,8 +110,17 @@ export default function DiplomacyTracking() {
         targetCountry?: unknown;
         resourceKey?: unknown;
         amount?: unknown;
+        isPlayerAttacker?: boolean;
       }>).detail;
-      addPath(detail?.kind, detail?.pathId, detail?.senderCountry, detail?.targetCountry, detail?.resourceKey, detail?.amount);
+      addPath(
+        detail?.kind,
+        detail?.pathId,
+        detail?.senderCountry,
+        detail?.targetCountry,
+        detail?.resourceKey,
+        detail?.amount,
+        detail?.isPlayerAttacker
+      );
     };
 
     const handlePactPath = (event: Event) => {

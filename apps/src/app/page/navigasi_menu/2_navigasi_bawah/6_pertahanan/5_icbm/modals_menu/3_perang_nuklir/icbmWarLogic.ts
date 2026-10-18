@@ -16,6 +16,8 @@
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { setRelationModifier, setRelationSourceValue } from "@/../../json/4_database_hubungan_antar_negara/relationsRegistry";
 import { expelCountryFromSecurityCouncil } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logika_anggota_tidak_tetap/securityCouncilElection";
+import { getNegaraNuklirBaseIcbm } from "@/app/logic/npc_ai_brain/military/nuclearControllerAI";
+import { getNpcCountrySimulationSnapshot, updateNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 
 export interface IcbmStrikeParams {
   attackerCountry: string;
@@ -42,6 +44,63 @@ const normalizeCountryString = (name: unknown): string => {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]/g, "");
 };
+
+/**
+ * Memeriksa apakah sebuah negara target memiliki stok rudal ICBM siap tempur.
+ * Sumber pengecekan:
+ * 1. State simulasi NPC dinamis (activeNpcSimulationState).
+ * 2. Fallback stok dasar negara nuklir bawaan (nuclearControllerAI / database_icbm_negara).
+ */
+export function getCountryIcbmCount(countryName: string, iso?: string): number {
+  const norm = normalizeCountryString(countryName);
+  const match = COUNTRIES_DATA.find((c) => {
+    const cNorm = normalizeCountryString(c.country || (c as any).nama_negara);
+    return cNorm === norm || (iso && c.iso && c.iso.toLowerCase() === iso.toLowerCase());
+  });
+
+  const slug = match?.country?.toLowerCase().replace(/[^a-z0-9]/g, "_") || norm;
+  const targetIso = iso || match?.iso;
+
+  // Cek state simulasi dinamis NPC
+  const snapshot = getNpcCountrySimulationSnapshot();
+  if (snapshot?.countries) {
+    const simState = snapshot.countries[slug] || (match?.country ? snapshot.countries[match.country.toLowerCase()] : null);
+    if (simState) {
+      const liveCount = Number((simState as any).icbm_jumlah ?? (simState as any).icbm ?? -1);
+      if (liveCount >= 0) {
+        return liveCount;
+      }
+    }
+  }
+
+  // Fallback ke negara nuklir bawaan (US, Rusia, China, Korut, India)
+  return getNegaraNuklirBaseIcbm(slug, match?.country || countryName, targetIso);
+}
+
+/**
+ * Mengurangi 1 stok ICBM dari negara target jika melancarkan serangan balasan ICBM.
+ */
+export function consumeCountryIcbm(countryName: string, iso?: string): void {
+  const norm = normalizeCountryString(countryName);
+  const match = COUNTRIES_DATA.find((c) => {
+    const cNorm = normalizeCountryString(c.country || (c as any).nama_negara);
+    return cNorm === norm || (iso && c.iso && c.iso.toLowerCase() === iso.toLowerCase());
+  });
+  const slug = match?.country?.toLowerCase().replace(/[^a-z0-9]/g, "_") || norm;
+
+  const currentCount = getCountryIcbmCount(countryName, iso);
+  const nextCount = Math.max(0, currentCount - 1);
+
+  try {
+    updateNpcCountrySimulationState(slug, {
+      icbm_jumlah: nextCount,
+      icbm: nextCount,
+      icbm_status: nextCount > 0,
+    });
+  } catch (err) {
+    console.warn("[ICBM] Gagal mengupdate stok ICBM NPC:", err);
+  }
+}
 
 /**
  * Mengatur hubungan bilateral khusus antara negara penyerang dan negara target.
@@ -148,6 +207,7 @@ export function launchIcbmWarStrike(params: IcbmStrikeParams): IcbmStrikeResult 
           kind: "icbm",
           senderCountry: attackerCountry,
           targetCountry: targetCountry,
+          isPlayerAttacker: params.isPlayerAttacker === true,
         },
       })
     );
