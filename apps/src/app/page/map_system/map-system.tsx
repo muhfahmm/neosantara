@@ -148,6 +148,10 @@ import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifika
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
 import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationLogic';
 import { checkAndGenerateEmbassyOffers, createEmbassyOfferNotification } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
+import { executeBubarkanAparat } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/bubarkanAparatLogic';
+import { startDialogTerbuka } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/dialogTerbukaLogic';
+import { executePenuhiTuntutan } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/3_penuhi_tuntutan/penuhiTuntutanLogic';
+import { executeAbaikanDemo, calculateDailyIgnoredDemoPenalties } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/4_abaikan_demo/abaikanDemoLogic';
 import { generateBencanaAlamNotification } from '../menus/inbox/logic/6_notifikasi_bencana/1_bencana_alam/bencanaLogic';
 import { generateKeamananNotification } from '../menus/inbox/logic/14_notifikasi_keamanan/keamananLogic';
 import {
@@ -5360,10 +5364,23 @@ export default function MapPage() {
                 };
             }));
 
-            // ⏳ Hitung mundur durasi notifikasi wabah (pandemi/epidemi) dan bencana alam setiap pergantian hari
+            // ⏳ Hitung mundur durasi notifikasi wabah (pandemi/epidemi), bencana alam, serta demonstrasi rakyat setiap pergantian hari
+            let demoKepuasanDelta = 0;
+            let demoRatingDelta = 0;
+
             setNotifications((prevNotifications) => {
                 let hasChanges = false;
+                let ignoredCount = 0;
+
                 const nextNotifications = prevNotifications.map((notif: any) => {
+                    // 1. Evaluasi demonstrasi rakyat
+                    if (notif.tradeType === 'demonstrasi_rakyat') {
+                        if (notif.demo_status === 'ignored' || notif.demo_status === 'aktif' || !notif.demo_status) {
+                            ignoredCount++;
+                        }
+                    }
+
+                    // 2. Evaluasi wabah dan bencana alam
                     if (notif.tradeType === 'wabah_penyakit' || notif.tradeType === 'bencana_alam') {
                         const totalDuration = Number(notif.durationDays) || (notif.tradeType === 'bencana_alam' ? 30 : 14);
                         const start = notif.startDate || notif.timestamp;
@@ -5388,6 +5405,26 @@ export default function MapPage() {
                     }
                     return notif;
                 });
+
+                if (ignoredCount > 0) {
+                    const ignoredPenalties = calculateDailyIgnoredDemoPenalties(ignoredCount);
+                    demoKepuasanDelta -= ignoredPenalties.dailyKepuasanPenalty;
+                    demoRatingDelta -= ignoredPenalties.dailyRatingPenalty;
+                }
+
+                if (demoKepuasanDelta !== 0 || demoRatingDelta !== 0) {
+                    setCountryDetail((prev: any) => {
+                        if (!prev) return prev;
+                        const currentK = Number(prev.kepuasan ?? 50);
+                        const nextK = Math.max(0, Math.min(100, currentK + demoKepuasanDelta));
+                        return { ...prev, kepuasan: nextK };
+                    });
+
+                    if (demoRatingDelta !== 0) {
+                        setPresidentRating((prev: number) => Math.max(0, Math.min(100, prev + demoRatingDelta)));
+                    }
+                }
+
                 return hasChanges ? nextNotifications : prevNotifications;
             });
         };
@@ -6080,59 +6117,13 @@ export default function MapPage() {
                     // Intersep aksi demonstrasi rakyat jika ada
                     if (tNotif.tradeType === 'demonstrasi_rakyat') {
                         if (actionType === 'hard_power') {
-                            setCountryDetail((prev: any) => ({
-                                ...prev,
-                                kepuasan_masyarakat: Math.max(0, Number(prev?.kepuasan_masyarakat || 50) - 10),
-                                tingkat_keamanan: Math.min(100, Number(prev?.tingkat_keamanan || 50) + 5),
-                            }));
-                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, demo_status: 'selesai', isHandled: true } : n));
-                            setInboxModalOpen(false);
-                            setResultModal({
-                                isOpen: true,
-                                title: 'Demonstrasi Dibubarkan Paksa',
-                                message: 'Aparat keamanan membubarkan demonstrasi dengan ketat. Keamanan terkendali namun kepuasan rakyat menurun drastis.',
-                                type: 'error',
-                                persistent: true,
-                            });
-                            return;
-                        } else if (actionType === 'dialog') {
-                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, demo_status: 'dialog' } : n));
-                            setInboxModalOpen(false);
-                            setResultModal({
-                                isOpen: true,
-                                title: 'Dialog Terbuka Dimulai',
-                                message: 'Perwakilan pemerintah memulai perundingan terbuka dengan perwakilan massa demonstran guna meredakan tensi.',
-                                type: 'info',
-                                persistent: true,
-                            });
-                            return;
-                        } else if (actionType === 'fulfill') {
-                            setCountryDetail((prev: any) => ({
-                                ...prev,
-                                kepuasan_masyarakat: Math.min(100, Number(prev?.kepuasan_masyarakat || 50) + 12),
-                            }));
-                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, demo_status: 'selesai', isHandled: true } : n));
-                            setInboxModalOpen(false);
-                            setResultModal({
-                                isOpen: true,
-                                title: 'Tuntutan Rakyat Dipenuhi',
-                                message: 'Pemerintah menyetujui evaluasi dan pemulihan kebijakan. Massa membubarkan diri dengan damai, kepuasan rakyat melonjak naik.',
-                                type: 'success',
-                                persistent: true,
-                            });
-                            return;
-                        } else if (actionType === 'ignore') {
-                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, demo_status: 'ignored' } : n));
-                            setInboxModalOpen(false);
-                            return;
-                        } else if (actionType === 'distraction') {
-                            const budget = Number(countryDetail?.anggaran || 0);
-                            const cost = 250000;
-                            if (budget < cost) {
+                            const currentBudget = Number(countryDetail?.anggaran || 0);
+                            const result = executeBubarkanAparat(tNotif, currentBudget);
+                            if (!result.success) {
                                 setResultModal({
                                     isOpen: true,
                                     title: 'Anggaran Tidak Cukup',
-                                    message: 'Dibutuhkan 250.000 NEO untuk kampanye media pengalihan isu.',
+                                    message: result.message,
                                     type: 'error',
                                     persistent: true,
                                 });
@@ -6140,17 +6131,43 @@ export default function MapPage() {
                             }
                             setCountryDetail((prev: any) => ({
                                 ...prev,
-                                anggaran: Math.max(0, budget - cost),
+                                anggaran: Math.max(0, currentBudget - result.cost),
                             }));
-                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, demo_status: 'selesai', isHandled: true } : n));
+                            setPresidentRating((prev: number) => Math.max(0, prev - result.presidentRatingPenalty));
+                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, ...(result.updatedNotification || {}), isHandled: true } : n));
                             setInboxModalOpen(false);
                             setResultModal({
                                 isOpen: true,
-                                title: 'Isu Publik Dialihkan',
-                                message: 'Media nasional sukses mengalihkan atensi publik dengan isu populer lain. Demonstrasi berangsur mereda.',
-                                type: 'info',
+                                title: 'Demonstrasi Dibubarkan Paksa',
+                                message: result.message,
+                                type: 'error',
                                 persistent: true,
                             });
+                            return;
+                        } else if (actionType === 'dialog') {
+                            const result = startDialogTerbuka(tNotif);
+                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, ...(result.updatedNotification || {}) } : n));
+                            setInboxModalOpen(false);
+                            setActiveMenu(result.targetMenuId);
+                            return;
+                        } else if (actionType === 'fulfill') {
+                            const result = executePenuhiTuntutan(tNotif);
+                            setPresidentRating((prev: number) => Math.min(100, prev + result.presidentRatingBonus));
+                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, ...(result.updatedNotification || {}), isHandled: true } : n));
+                            setInboxModalOpen(false);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Tuntutan Rakyat Dipenuhi',
+                                message: result.message,
+                                type: 'success',
+                                persistent: true,
+                            });
+                            setActiveMenu(result.targetMenuId);
+                            return;
+                        } else if (actionType === 'ignore') {
+                            const result = executeAbaikanDemo(tNotif);
+                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, ...(result.updatedNotification || {}) } : n));
+                            setInboxModalOpen(false);
                             return;
                         }
                     }

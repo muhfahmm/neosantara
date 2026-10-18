@@ -53,6 +53,7 @@ const PDBModal = dynamic(() => import("./4_ekonomi/5_pdb_nasional_dunia/PDBModal
 const HargaModal = dynamic(() => import("./4_ekonomi/6_harga/HargaModal"), { ssr: false, loading: ModalLoadingFallback });
 const SistemEkonomiModal = dynamic(() => import("./4_ekonomi/7_sistem_ekonomi/SistemEkonomiModal"), { ssr: false, loading: ModalLoadingFallback });
 const SubsidiModal = dynamic(() => import("./4_ekonomi/8_kebijakan_subsidi/SubsidiModal"), { ssr: false, loading: ModalLoadingFallback });
+const DialogTerbukaModal = dynamic(() => import("@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/DialogTerbukaModal"), { ssr: false, loading: ModalLoadingFallback });
 
 // 5. Pembangunan
 const ProduksiModal = dynamic(() => import("./5_pembangunan/1_produksi/ProduksiModal"), { ssr: false, loading: ModalLoadingFallback });
@@ -652,6 +653,14 @@ function ModalsManager({
           onClose={onClose}
           countryDetail={countryDetail}
           setCountryDetail={setCountryDetail}
+        />
+      );
+    case "Menu:DialogTerbukaDemo":
+      return (
+        <DialogTerbukaModal
+          isOpen={true}
+          onClose={onClose}
+          countryDetail={countryDetail}
         />
       );
 

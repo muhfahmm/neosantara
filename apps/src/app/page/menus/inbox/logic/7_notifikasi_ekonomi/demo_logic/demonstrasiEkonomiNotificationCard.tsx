@@ -1,11 +1,10 @@
-// File: DemonstrasiEkonomiNotificationCard.tsx
 import React from 'react';
-import { Flame, Megaphone, ShieldAlert, MessageSquare, Banknote, EyeOff, Tv, AlertTriangle } from 'lucide-react';
+import { Flame, Megaphone, ShieldAlert, MessageSquare, Banknote, EyeOff } from 'lucide-react';
 import { DemonstrasiNotification } from './demonstrasiEkonomiLogic';
 
 interface Props {
   notification: DemonstrasiNotification;
-  onAction?: (actionType: 'hard_power' | 'dialog' | 'fulfill' | 'ignore' | 'distraction') => void;
+  onAction?: (actionType: 'hard_power' | 'dialog' | 'fulfill' | 'ignore') => void;
 }
 
 export default function DemonstrasiEkonomiNotificationCard({ notification, onAction }: Props) {
@@ -48,7 +47,7 @@ export default function DemonstrasiEkonomiNotificationCard({ notification, onAct
 
       {/* TOMBOL AKSI (Hanya muncul jika belum ditangani & bukan kerusuhan) */}
       {!isHandled && notification.demo_status !== 'dialog' && notification.demo_status !== 'ignored' && onAction && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2 pt-3 border-t border-slate-700/50">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2 pt-3 border-t border-slate-700/50">
           <button onClick={() => onAction('hard_power')} className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-rose-900/40 hover:bg-rose-800/60 border border-rose-500/30 text-rose-200 transition-all cursor-pointer">
             <ShieldAlert className="w-4 h-4" />
             <span className="text-[9px] font-bold uppercase text-center">Bubarkan<br/>(Aparat)</span>
@@ -64,12 +63,7 @@ export default function DemonstrasiEkonomiNotificationCard({ notification, onAct
             <span className="text-[9px] font-bold uppercase text-center">Penuhi<br/>Tuntutan</span>
           </button>
 
-          <button onClick={() => onAction('distraction')} className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-purple-200 transition-all cursor-pointer">
-            <Tv className="w-4 h-4" />
-            <span className="text-[9px] font-bold uppercase text-center">Pengalihan<br/>Isu</span>
-          </button>
-
-          <button onClick={() => onAction('ignore')} className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-slate-800/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-300 transition-all cursor-pointer col-span-2 md:col-span-1">
+          <button onClick={() => onAction('ignore')} className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-slate-800/40 hover:bg-slate-700/60 border border-slate-500/30 text-slate-300 transition-all cursor-pointer">
             <EyeOff className="w-4 h-4" />
             <span className="text-[9px] font-bold uppercase text-center">Abaikan<br/>Demo</span>
           </button>
@@ -77,9 +71,13 @@ export default function DemonstrasiEkonomiNotificationCard({ notification, onAct
       )}
 
       {notification.demo_status === 'dialog' && (
-         <div className="mt-2 text-center p-2 bg-blue-900/30 border border-blue-500/30 rounded-lg text-blue-300 text-[10px] font-bold uppercase">
-            ⏳ Negosiasi sedang berlangsung... (Selesai pada {notification.demo_deadline})
-         </div>
+        <button
+          onClick={() => onAction && onAction('dialog')}
+          className="mt-2 w-full text-center p-2.5 bg-blue-900/40 hover:bg-blue-800/60 border border-blue-500/40 rounded-xl text-blue-200 text-[10px] font-bold uppercase flex items-center justify-center gap-2 cursor-pointer transition-all shadow-sm"
+        >
+          <MessageSquare className="w-4 h-4 text-blue-400" />
+          <span>Buka Forum Dialog Terbuka (Dalam Mediasi)</span>
+        </button>
       )}
     </div>
   );

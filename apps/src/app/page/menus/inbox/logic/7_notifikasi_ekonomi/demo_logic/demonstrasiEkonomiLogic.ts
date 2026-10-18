@@ -16,6 +16,7 @@ export interface DemonstrasiNotification {
   // Tambahan properti untuk interaksi
   demo_status?: 'aktif' | 'dialog' | 'ignored' | 'selesai' | 'kerusuhan';
   demo_deadline?: string;
+  dialog_days_left?: number;
 }
 
 // Update fungsi generator agar saat dibuat statusnya default 'aktif'
@@ -36,12 +37,9 @@ export function generateDemonstrasiSubsidiNotification(
     cause: 'subsidi',
     severity: 'ekstrem',
     details: { subsidyName },
-    demo_status: 'aktif', // <-- TAMBAHAN
+    demo_status: 'aktif',
   };
 }
-
-// Lakukan hal yang sama untuk generateDemonstrasiHargaNotification dan generateDemonstrasiPajakNotification
-// Tambahkan properti demo_status: 'aktif' di dalam return object-nya.
 
 export function generateDemonstrasiHargaNotification(
   itemName: string,
@@ -71,7 +69,8 @@ export function generateDemonstrasiHargaNotification(
     tradeType: 'demonstrasi_rakyat',
     cause: 'harga',
     severity: isExtreme ? 'ekstrem' : 'tinggi',
-    details: { itemName, oldPrice, newPrice, levelJump }
+    details: { itemName, oldPrice, newPrice, levelJump },
+    demo_status: 'aktif',
   };
 }
 
@@ -94,6 +93,7 @@ export function generateDemonstrasiPajakNotification(
     tradeType: 'demonstrasi_rakyat',
     cause: 'pajak',
     severity: 'ekstrem',
-    details: { taxName, oldRate, newRate, rateDifference }
+    details: { taxName, oldRate, newRate, rateDifference },
+    demo_status: 'aktif',
   };
 }
