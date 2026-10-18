@@ -5444,13 +5444,15 @@ export default function MapPage() {
                             if (typeof a === 'number' && typeof d === 'number' && typeof e === 'number' && typeof f === 'number') {
                                 // Jika a !== 1.0 atau e !== 0 atau f !== 0 (bukan reset transform untuk clearRect)
                                 if (a > 0.05 && b === 0 && c === 0) {
+                                    const prevCam = (window as any).__neosantara_map_camera;
+                                    const changed = !prevCam || prevCam.scale !== a || prevCam.offsetX !== e || prevCam.offsetY !== f;
                                     (window as any).__neosantara_map_camera = {
                                         scale: a,
                                         offsetX: e,
                                         offsetY: f,
                                         time: performance.now(),
                                     };
-                                    if (!(window as any).__neosantara_cam_notify) {
+                                    if (changed && !(window as any).__neosantara_cam_notify) {
                                         (window as any).__neosantara_cam_notify = true;
                                         queueMicrotask(() => {
                                             (window as any).__neosantara_cam_notify = false;

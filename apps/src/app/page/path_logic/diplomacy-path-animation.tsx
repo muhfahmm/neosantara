@@ -110,6 +110,7 @@ export default function DiplomacyPathAnimation({
     let lastFrame = performance.now();
     let elapsedDays = 0;
     let completed = false;
+    let lastPath = '';
     lastReportedProgress.current = -1;
     const startingDayPosition = getSimulationDayPosition();
 
@@ -141,16 +142,19 @@ export default function DiplomacyPathAnimation({
       const vehicle = pointOnQuadraticBezier(start, control, end, progress);
       const angle = tangentOnQuadraticBezier(start, control, end, progress) * 180 / Math.PI;
 
-      routeRef.current?.setAttribute('d', path);
-      glowRouteRef.current?.setAttribute('d', path);
+      if (path !== lastPath) {
+        lastPath = path;
+        routeRef.current?.setAttribute('d', path);
+        glowRouteRef.current?.setAttribute('d', path);
+        startRef.current?.setAttribute('cx', String(start.x));
+        startRef.current?.setAttribute('cy', String(start.y));
+        endRef.current?.setAttribute('cx', String(end.x));
+        endRef.current?.setAttribute('cy', String(end.y));
+        pulseRef.current?.setAttribute('cx', String(end.x));
+        pulseRef.current?.setAttribute('cy', String(end.y));
+      }
       if (routeRef.current) routeRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
       if (pulseRef.current) pulseRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
-      startRef.current?.setAttribute('cx', String(start.x));
-      startRef.current?.setAttribute('cy', String(start.y));
-      endRef.current?.setAttribute('cx', String(end.x));
-      endRef.current?.setAttribute('cy', String(end.y));
-      pulseRef.current?.setAttribute('cx', String(end.x));
-      pulseRef.current?.setAttribute('cy', String(end.y));
       vehicleRef.current?.setAttribute('transform', `translate(${vehicle.x} ${vehicle.y}) rotate(${angle})`);
       if (svgRef.current) svgRef.current.setAttribute('viewBox', `0 0 ${window.innerWidth} ${window.innerHeight}`);
 
@@ -187,12 +191,12 @@ export default function DiplomacyPathAnimation({
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
         </defs>
-        <path ref={glowRouteRef} fill="none" stroke={details.accent} strokeWidth="10" opacity=".18" filter="url(#diplomacy-path-glow)" />
+        <path ref={glowRouteRef} fill="none" stroke={details.accent} strokeWidth="10" opacity=".18" />
         <path ref={routeRef} fill="none" stroke={details.accent} strokeWidth="4" strokeDasharray="16 11" className="diplomacy-route-dash" />
         <circle ref={startRef} r="10" fill={details.accent} />
         <circle ref={pulseRef} r="30" fill="none" stroke={details.accent} strokeWidth="2" className="diplomacy-target-pulse" />
         <circle ref={endRef} r="10" fill={details.accent} />
-        <g ref={vehicleRef} filter="url(#diplomacy-path-glow)">
+        <g ref={vehicleRef}>
           <circle r="27" fill={details.accent} opacity=".18" />
           <rect x="-23" y="-10" width="46" height="20" rx="5" fill={details.accent} />
           <path d="M-14 -10 L-6 -20 H11 L18 -10Z" fill={details.accent} />

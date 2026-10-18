@@ -202,12 +202,23 @@ export interface MapCanvasTransform {
   worldCssWidth: number;
 }
 
+let cachedRect: DOMRect | null = null;
+let cachedRectAt = 0;
+let cachedRectEl: HTMLCanvasElement | null = null;
+
 export function getMapCanvasTransform(): MapCanvasTransform | null {
   if (typeof window === 'undefined') return null;
   const canvasEl = document.getElementById('map-canvas') as HTMLCanvasElement | null;
   if (!canvasEl) return null;
 
-  const rect = canvasEl.getBoundingClientRect();
+  // getBoundingClientRect memaksa layout; cukup disegarkan tiap 250ms
+  const nowTs = performance.now();
+  if (!cachedRect || cachedRectEl !== canvasEl || nowTs - cachedRectAt > 250) {
+    cachedRect = canvasEl.getBoundingClientRect();
+    cachedRectAt = nowTs;
+    cachedRectEl = canvasEl;
+  }
+  const rect = cachedRect;
   const ctx = canvasEl.getContext('2d');
 
   let scale = 1;
@@ -281,7 +292,29 @@ export interface MapRouteGeometry {
  * dengan transformasi canvas map (pan, zoom in/out, dan perulangan dunia horizontal / wrap).
  * Memastikan garis tidak melompat, tidak hilang, dan tidak goyang saat pan/zoom.
  */
+const routeMemo = new Map<string, MapRouteGeometry>();
+
 export function getMapRouteGeometry(
+  originLat: number,
+  originLng: number,
+  targetLat: number,
+  targetLng: number,
+  routeCurvature = 0.18
+): MapRouteGeometry {
+  const t = getMapCanvasTransform();
+  if (t) {
+    const key = `${originLat},${originLng},${targetLat},${targetLng},${routeCurvature},${t.scale},${t.offsetX},${t.offsetY},${t.rect.left},${t.rect.top},${t.rect.width},${t.rect.height},${window.innerWidth}`;
+    const hit = routeMemo.get(key);
+    if (hit) return hit;
+    const val = computeMapRouteGeometry(originLat, originLng, targetLat, targetLng, routeCurvature);
+    if (routeMemo.size > 64) routeMemo.clear();
+    routeMemo.set(key, val);
+    return val;
+  }
+  return computeMapRouteGeometry(originLat, originLng, targetLat, targetLng, routeCurvature);
+}
+
+function computeMapRouteGeometry(
   originLat: number,
   originLng: number,
   targetLat: number,
@@ -653,6 +686,7 @@ export default function WarMap({
     let lastTime = performance.now();
     let accumulatedMs = 0;
     const dur = warPath.durationMs;
+    let lastGeo: unknown = null;
 
     const loop = (now: number) => {
       const delta = now - lastTime;
@@ -666,10 +700,10 @@ export default function WarMap({
         resolvedTarget.lng,
         0.18
       );
-      flushSync(() => {
+      if (geo !== lastGeo) { lastGeo = geo; flushSync(() => {
         setStartPos(geo.start);
         setEndPos(geo.end);
-      });
+      }); }
 
       const isGamePaused = typeof window !== 'undefined' ? Boolean((window as any).neosantara_is_paused) : false;
 
@@ -697,6 +731,8 @@ export default function WarMap({
         resolvedTarget.lng,
         0.18
       );
+      if (geo === lastGeo) return;
+      lastGeo = geo;
       flushSync(() => {
         setStartPos(geo.start);
         setEndPos(geo.end);
@@ -817,7 +853,6 @@ export default function WarMap({
               stroke="#FF2D55"
               strokeWidth={6}
               strokeLinecap="round"
-              filter="url(#glow-red)"
               pathLength={100}
               strokeDasharray={`${progress * 100} 100`}
             />

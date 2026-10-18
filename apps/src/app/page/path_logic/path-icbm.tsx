@@ -76,6 +76,7 @@ export default function IcbmPath({
     let lastFrame = performance.now();
     let elapsedDays = 0;
     let completed = false;
+    let lastPath = '';
     lastReportedProgress.current = -1;
     const startingDayPosition = getSimulationDayPosition();
 
@@ -110,17 +111,19 @@ export default function IcbmPath({
       const warhead = pointOnQuadraticBezier(start, control, end, progress);
       const angle = (tangentOnQuadraticBezier(start, control, end, progress) * 180) / Math.PI;
 
-      routeRef.current?.setAttribute('d', path);
-      glowRouteRef.current?.setAttribute('d', path);
+      if (path !== lastPath) {
+        lastPath = path;
+        routeRef.current?.setAttribute('d', path);
+        glowRouteRef.current?.setAttribute('d', path);
+        startRef.current?.setAttribute('cx', String(start.x));
+        startRef.current?.setAttribute('cy', String(start.y));
+        endRef.current?.setAttribute('cx', String(end.x));
+        endRef.current?.setAttribute('cy', String(end.y));
+        pulseRef.current?.setAttribute('cx', String(end.x));
+        pulseRef.current?.setAttribute('cy', String(end.y));
+      }
       if (routeRef.current) routeRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
       if (pulseRef.current) pulseRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
-
-      startRef.current?.setAttribute('cx', String(start.x));
-      startRef.current?.setAttribute('cy', String(start.y));
-      endRef.current?.setAttribute('cx', String(end.x));
-      endRef.current?.setAttribute('cy', String(end.y));
-      pulseRef.current?.setAttribute('cx', String(end.x));
-      pulseRef.current?.setAttribute('cy', String(end.y));
 
       warheadRef.current?.setAttribute('transform', `translate(${warhead.x} ${warhead.y}) rotate(${angle})`);
       if (svgRef.current) svgRef.current.setAttribute('viewBox', `0 0 ${window.innerWidth} ${window.innerHeight}`);
@@ -182,7 +185,6 @@ export default function IcbmPath({
           stroke={glowAccent}
           strokeWidth="14"
           opacity=".35"
-          filter="url(#icbm-path-glow)"
         />
 
         {/* Garis putus-putus merah menyala dengan animasi lesatan */}
@@ -210,7 +212,7 @@ export default function IcbmPath({
         <circle ref={endRef} r="9" fill={accent} stroke="#FFFFFF" strokeWidth="2" />
 
         {/* Hulu Ledak Rudal Balistik ICBM */}
-        <g ref={warheadRef} filter="url(#icbm-path-glow)">
+        <g ref={warheadRef}>
           {/* Efek lidah api roket pendorong di belakang */}
           <polygon points="-32,0 -22,-5 -24,0 -22,5" fill="#F59E0B" opacity=".95" />
           <polygon points="-42,0 -28,-3 -30,0 -28,3" fill="#EF4444" opacity=".8" />
