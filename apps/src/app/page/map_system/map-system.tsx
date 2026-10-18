@@ -215,7 +215,8 @@ import {
 import {
     getCountryIcbmCount,
     consumeCountryIcbm,
-    launchIcbmWarStrike
+    launchIcbmWarStrike,
+    applyIcbmMilitaryDamageToNpc
 } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/5_icbm/modals_menu/3_perang_nuklir/icbmWarLogic';
 import { generateResourceLootNews } from '../menus/news/logic/3_berita_pengambilan_sda/beritaPengambilanSDALogic';
 import { generateDiplomacyNews } from '../menus/news/logic/4_diplomasi/diplomasiNewsLogic';
@@ -1713,6 +1714,71 @@ export default function MapPage() {
                 
                 const isUserAttacker = detail.isPlayerAttacker === true ||
                     areSameWarCountry(detail.senderCountry, playerCountryName, undefined, countryDetail?.iso);
+
+                const isUserTarget = areSameWarCountry(detail.targetCountry, playerCountryName, undefined, countryDetail?.iso);
+
+                // ── PENGURANGAN KEKUATAN MILITER AKIBAT LEDAKAN ICBM ──
+                // 1. Jika user yang menyerang target: target kehilangan 30% kekuatan militernya
+                if (isUserAttacker && !isUserTarget) {
+                    const victimCountry = detail.targetCountry;
+                    const victimIso = detail.targetIso;
+                    const { reducedCount, losses } = applyIcbmMilitaryDamageToNpc(victimCountry, victimIso);
+
+                    setNotifications(previous => [{
+                        id: `notif-icbm-impact-${Date.now()}-${Math.random()}`,
+                        title: '💥 DAMPAK HANTAMAN NUKLIR ICBM!',
+                        sender: `Pusat Komando Strategis Nuklir`,
+                        message: `Hulu ledak ICBM kita berhasil menghancurkan infrastruktur pertahanan dan memangkas 30% kekuatan militer ${victimCountry}!`,
+                        timestamp: currentDate ? currentDate.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10),
+                        type: 'peringkat',
+                        value: 20,
+                        isRead: false,
+                    }, ...previous]);
+
+                    setResultModal({
+                        isOpen: true,
+                        title: `💥 Hantaman Nuklir Sukses — 30% Militer ${victimCountry} Musnah!`,
+                        message: `Hulu ledak ICBM kita berhasil meledak di sasaran strategis ${victimCountry}. Ledakan nuklir melumpuhkan 30% kekuatan armada pertahanan militer musuh. Rincian unit alutsista musuh yang dihancurkan dirinci di bawah:`,
+                        losses,
+                        type: 'success',
+                        persistent: true,
+                        openInboxOnClose: false,
+                    });
+                }
+
+                // 2. Jika user yang menjadi target serangan ICBM: user kehilangan 15% kekuatan militernya
+                if (isUserTarget) {
+                    let userLosses: Array<{ unitKey: string; quantity: number }> = [];
+                    if (setCountryDetail) {
+                        setCountryDetail((prev: any) => {
+                            if (!prev) return prev;
+                            const { updatedDetail, lossSummaryText, losses } = applyWarLossesToUserArmada(prev, 0.15);
+                            userLosses = losses;
+                            return updatedDetail;
+                        });
+                    }
+
+                    setNotifications(previous => [{
+                        id: `notif-user-icbm-damage-${Date.now()}-${Math.random()}`,
+                        title: '☢️ KERUSAKAN MILITER AKIBAT HANTAMAN ICBM!',
+                        sender: `Markas Besar Angkatan Bersenjata`,
+                        message: `PERINGATAN DARURAT! Ledakan hulu ledak ICBM musuh (${detail.senderCountry}) meluluhlantakkan pangkalan militer kita. Negara kehilangan 15% kekuatan militer pertahanan nasional!`,
+                        timestamp: currentDate ? currentDate.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10),
+                        type: 'peringkat',
+                        value: 50,
+                        isRead: false,
+                    }, ...previous]);
+
+                    setResultModal({
+                        isOpen: true,
+                        title: '☢️ Negara Terkena Ledakan Rudal ICBM Musuh!',
+                        message: `PERINGATAN TERTINGGI! Hulu ledak ICBM dari ${detail.senderCountry} berhasil menghantam wilayah nasional. Sebanyak 15% dari seluruh armada kekuatan militer kita hancur lebur. Rincian kerugian alutsista dirinci di bawah:`,
+                        losses: userLosses,
+                        type: 'error',
+                        persistent: true,
+                        openInboxOnClose: false,
+                    });
+                }
 
                 if (isUserAttacker) {
                     const victimCountry = detail.targetCountry;

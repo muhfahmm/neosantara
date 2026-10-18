@@ -13,6 +13,7 @@ import UjicobaIcbmModal from "./modals_menu/5_ujicoba_icbm/UjicobaIcbmModal";
 import { generateProgramNuklirSelesaiNotification } from "@/app/page/menus/inbox/logic/2_notifikasi_pertahanan/5_icbm/icbmLogic";
 import { launchIcbmWarStrike } from "./modals_menu/3_perang_nuklir/icbmWarLogic";
 import PerangNuklirModal from "@/app/page/detail_negara/3_operasi_militer/4_perang_nuklir/perangNuklirModals";
+import NeonAlertModal from "./modals_menu/NeonAlertModal";
 
 interface ModalProps {
   isOpen: boolean;
@@ -55,6 +56,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
 
   const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [localIcbmBuildTask, setLocalIcbmBuildTask] = useState<any>(null);
+  const [neonAlert, setNeonAlert] = useState<{ title: string; message: string } | null>(null);
 
   // Selaraskan local task jika countryDetail berubah (misal task dikurangi/dihapus saat uji coba)
   useEffect(() => {
@@ -313,9 +315,19 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
     }
   };
 
+  const isAnySubModalOpen =
+    isProgramNuklirModalOpen ||
+    isIcbmDetailOpen ||
+    isPerangNuklirDetailOpen ||
+    isConfirmStrikeOpen ||
+    isStatusNuklirDuniaOpen ||
+    isIcbmBuildStatusOpen ||
+    isUjicobaIcbmOpen ||
+    neonAlert !== null;
+
   return (
     <>
-      {!isUjicobaIcbmOpen && (
+      {!isAnySubModalOpen && (
         <NotebookModalWrapper onClose={onClose}>
           <div className="flex flex-col h-full overflow-hidden">
           
@@ -573,7 +585,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
         initialTab={perangNuklirInitialTab}
         onAction={(target) => {
           if (totalReadyIcbm <= 0) {
-            alert(`Gagal meluncurkan: Persediaan rudal ICBM Anda tidak mencukupi (0 unit). Silakan rakit rudal ICBM terlebih dahulu.`);
+            setNeonAlert({ title: "Gagal Meluncurkan", message: "Persediaan rudal ICBM Anda tidak mencukupi (0 unit). Silakan rakit rudal ICBM terlebih dahulu." });
             return;
           }
           setTargetNuclearStrike({
@@ -608,7 +620,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
           });
 
           if (!strikeResult.success) {
-            alert(strikeResult.message);
+            setNeonAlert({ title: "Gagal Meluncurkan", message: strikeResult.message });
             return;
           }
 
@@ -661,6 +673,14 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
         countryDetail={countryDetail}
         setCountryDetail={setCountryDetail}
         totalReadyIcbm={totalReadyIcbm}
+      />
+
+      <NeonAlertModal
+        isOpen={neonAlert !== null}
+        onClose={() => setNeonAlert(null)}
+        title={neonAlert?.title}
+        message={neonAlert?.message || ""}
+        variant="error"
       />
     </>
   );

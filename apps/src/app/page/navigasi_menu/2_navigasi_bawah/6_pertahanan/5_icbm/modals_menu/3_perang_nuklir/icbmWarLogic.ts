@@ -101,7 +101,104 @@ export function consumeCountryIcbm(countryName: string, iso?: string): void {
     console.warn("[ICBM] Gagal mengupdate stok ICBM NPC:", err);
   }
 }
+/**
+ * Mengurangi 30% kekuatan militer (armada) negara target yang terkena ledakan ICBM.
+ */
+export function applyIcbmMilitaryDamageToNpc(countryName: string, iso?: string): {
+  reducedCount: number;
+  losses: Array<{ unitKey: string; quantity: number }>;
+} {
+  const norm = normalizeCountryString(countryName);
+  const match = COUNTRIES_DATA.find((c) => {
+    const cNorm = normalizeCountryString(c.country || (c as any).nama_negara);
+    return cNorm === norm || (iso && c.iso && c.iso.toLowerCase() === iso.toLowerCase());
+  });
+  const slug = match?.country?.toLowerCase().replace(/[^a-z0-9]/g, "_") || norm;
 
+  const snapshot = getNpcCountrySimulationSnapshot();
+  const currentSim = (snapshot?.countries?.[slug] || {}) as Record<string, any>;
+  const baseArmada = (currentSim.armada || match || {}) as Record<string, any>;
+
+  const ALL_UNIT_KEYS = [
+    'barak', 'pasukan_infanteri', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat',
+    'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
+    'kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet',
+    'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik',
+    'jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom',
+    'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut'
+  ];
+
+  const updatedArmada: Record<string, any> = {
+    ...(typeof currentSim.armada === 'object' ? currentSim.armada : {}),
+    darat: { ...(currentSim.armada?.darat || baseArmada?.darat || {}) },
+    laut: { ...(currentSim.armada?.laut || baseArmada?.laut || {}) },
+    udara: { ...(currentSim.armada?.udara || baseArmada?.udara || {}) },
+  };
+
+  let reducedCount = 0;
+  const losses: Array<{ unitKey: string; quantity: number }> = [];
+
+  ALL_UNIT_KEYS.forEach((unitKey) => {
+    let currentQty = Number(
+      currentSim[unitKey] ??
+      currentSim?.armada?.[unitKey] ??
+      updatedArmada?.darat?.[unitKey] ??
+      updatedArmada?.laut?.[unitKey] ??
+      updatedArmada?.udara?.[unitKey] ??
+      (match as any)?.[unitKey] ??
+      0
+    );
+
+    if (unitKey === 'barak' && currentQty > 0) {
+      const currentInfantry = Number(
+        currentSim?.pasukan_infanteri ??
+        currentSim?.armada?.pasukan_infanteri ??
+        updatedArmada?.darat?.pasukan_infanteri ??
+        (currentQty * 800)
+      );
+      const lostInfantry = Math.round(currentInfantry * 0.30);
+      if (lostInfantry > 0) {
+        const remainingInfantry = Math.max(0, currentInfantry - lostInfantry);
+        const remainingBarak = Math.max(0, Math.floor(remainingInfantry / 800));
+        currentSim.pasukan_infanteri = remainingInfantry;
+        currentSim.barak = remainingBarak;
+        updatedArmada.pasukan_infanteri = remainingInfantry;
+        updatedArmada.barak = remainingBarak;
+        if (updatedArmada.darat) {
+          updatedArmada.darat.pasukan_infanteri = remainingInfantry;
+          updatedArmada.darat.barak = remainingBarak;
+        }
+        reducedCount += lostInfantry;
+        losses.push({ unitKey: 'pasukan_infanteri', quantity: lostInfantry });
+      }
+    } else if (unitKey !== 'pasukan_infanteri' && currentQty > 0) {
+      // Potong 30% kekuatan militer
+      const remaining = Math.max(0, Math.floor(currentQty * 0.70));
+      const lostQty = currentQty - remaining;
+      if (lostQty > 0) {
+        reducedCount += lostQty;
+        losses.push({ unitKey, quantity: lostQty });
+      }
+
+      currentSim[unitKey] = remaining;
+      updatedArmada[unitKey] = remaining;
+      if (unitKey in updatedArmada.darat) updatedArmada.darat[unitKey] = remaining;
+      if (unitKey in updatedArmada.laut) updatedArmada.laut[unitKey] = remaining;
+      if (unitKey in updatedArmada.udara) updatedArmada.udara[unitKey] = remaining;
+    }
+  });
+
+  try {
+    updateNpcCountrySimulationState(slug, {
+      ...currentSim,
+      armada: updatedArmada,
+    });
+  } catch (err) {
+    console.warn("[ICBM War] Gagal memotong kekuatan militer negara target:", err);
+  }
+
+  return { reducedCount, losses };
+}
 /**
  * Mengatur hubungan bilateral khusus antara negara penyerang dan negara target.
  * Saat pertama kali diserang: diset ke 1.
