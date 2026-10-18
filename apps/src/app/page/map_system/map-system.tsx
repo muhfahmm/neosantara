@@ -1742,7 +1742,7 @@ export default function MapPage() {
                         losses,
                         type: 'success',
                         persistent: true,
-                        openInboxOnClose: false,
+                        
                     });
                 }
 
@@ -1776,7 +1776,7 @@ export default function MapPage() {
                         losses: userLosses,
                         type: 'error',
                         persistent: true,
-                        openInboxOnClose: false,
+                        
                     });
                 }
 
@@ -2523,7 +2523,6 @@ export default function MapPage() {
         losses?: Array<{ unitKey: string; quantity: number }>;
         type?: 'success' | 'error' | 'info';
         persistent?: boolean;
-        openInboxOnClose?: boolean;
     }>({
         isOpen: false,
         title: '',
@@ -2531,17 +2530,7 @@ export default function MapPage() {
         type: 'success'
     });
 
-    // Keep war results and inbox notification result modals visible until the player closes them manually.
-    useEffect(() => {
-        if (!resultModal.isOpen || resultModal.persistent || resultModal.openInboxOnClose) return;
-
-        const timer = setTimeout(() => {
-            setResultModal(prev => ({ ...prev, isOpen: false }));
-            setInboxModalOpen(true);
-        }, 3000);
-
-        return () => clearTimeout(timer);
-    }, [resultModal.isOpen, resultModal.persistent, resultModal.openInboxOnClose]);
+    // Confirmation & war result modals remain visible until the player closes them manually.
 
     // Track triggers to prevent spamming notifications on every tick when index is in warning zone
     const [hasShownEarlyWarning, setHasShownEarlyWarning] = useState<{
@@ -5750,7 +5739,7 @@ export default function MapPage() {
                             message: `Referendum ${targetCountry} sudah selesai atau tidak lagi aktif. Tidak ada tindakan yang dilakukan.`,
                             type: 'info',
                             persistent: true,
-                            openInboxOnClose: true
+                            // modal decoupled
                         });
                         return;
                     }
@@ -5846,7 +5835,7 @@ export default function MapPage() {
                                 : ''}`,
                         type: 'error',
                         persistent: true,
-                        openInboxOnClose: true
+                        // modal decoupled
                     });
                     if (startedReferendum && newReferendum) {
                         window.dispatchEvent(new CustomEvent(PROVINCE_ACTION_EVENT, {
@@ -5876,7 +5865,7 @@ export default function MapPage() {
                             message: `Perdagangan dengan ${tNotif.partnerName || 'negara terkait'} tidak dapat dilakukan selama embargo ekonomi PBB masih berlaku.`,
                             type: 'error',
                             persistent: true,
-                            openInboxOnClose: true
+                            // modal decoupled
                         });
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         return;
@@ -5893,7 +5882,7 @@ export default function MapPage() {
                                 message: `Stok ${tNotif.productKey} Anda tidak mencukupi (${myStock} unit dari ${tNotif.quantity} unit yang dibutuhkan).`,
                                 type: 'error',
                                 persistent: true,
-                                openInboxOnClose: true
+                                // modal decoupled
                             });
                             return;
                         }
@@ -5917,7 +5906,7 @@ export default function MapPage() {
                             message: `Berhasil mengekspor ${tNotif.quantity} unit ${tNotif.productKey} ke ${tNotif.partnerName} senilai +${tNotif.totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO! Hubungan bilateral meningkat +5 poin.`,
                             type: 'success',
                             persistent: true,
-                            openInboxOnClose: true
+                            // modal decoupled
                         });
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         return;
@@ -5934,7 +5923,7 @@ export default function MapPage() {
                                 message: `Anggaran negara tidak mencukupi untuk melakukan impor ini. (${budget.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO tersedia dari ${tNotif.totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO).`,
                                 type: 'error',
                                 persistent: true,
-                                openInboxOnClose: true
+                                // modal decoupled
                             });
                             return;
                         }
@@ -5958,7 +5947,7 @@ export default function MapPage() {
                             message: `Berhasil mengimpor ${tNotif.quantity} unit ${tNotif.productKey} dari ${tNotif.partnerName} senilai -${tNotif.totalPrice.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO! Hubungan bilateral meningkat +5 poin.`,
                             type: 'success',
                             persistent: true,
-                            openInboxOnClose: true
+                            // modal decoupled
                         });
                         setNotifications(prev => prev.filter(n => n.id !== notif.id));
                         return;
@@ -5990,7 +5979,7 @@ export default function MapPage() {
                                 message: `Perjanjian dagang dengan ${partner} tidak dapat diratifikasi selama embargo ekonomi PBB masih berlaku.`,
                                 type: 'error',
                                 persistent: true,
-                                openInboxOnClose: true
+                                // modal decoupled
                             });
                             return;
                         }
@@ -6007,7 +5996,7 @@ export default function MapPage() {
                                 message: `Gagal meratifikasi Perjanjian Hubungan Dagang! Anda belum membangun Kedutaan Besar di ${partner}. Bangun Kedutaan Besar terlebih dahulu di menu Detail Negara ${partner}.`,
                                 type: 'error',
                                 persistent: true,
-                                openInboxOnClose: true
+                                // modal decoupled
                             });
                             return;
                         }
@@ -6027,7 +6016,7 @@ export default function MapPage() {
                             message: `Berhasil meratifikasi Perjanjian Hubungan Dagang bilateral dengan ${partner}! Sektor perdagangan aktif dibuka dan hubungan bilateral meningkat +5 poin.`,
                             type: 'success',
                             persistent: true,
-                            openInboxOnClose: true
+                            // modal decoupled
                         });
                         return;
                     }
@@ -6048,7 +6037,7 @@ export default function MapPage() {
                                 message: `Gagal meratifikasi Pakta Non-Agresi! Anda belum membangun Kedutaan Besar di ${partner}. Bangun Kedutaan Besar terlebih dahulu di menu Detail Negara ${partner}.`,
                                 type: 'error',
                                 persistent: true,
-                                openInboxOnClose: true
+                                // modal decoupled
                             });
                             return;
                         }
@@ -6085,7 +6074,7 @@ export default function MapPage() {
                             message: `Berhasil meratifikasi Pakta Non-Agresi Bilateral dengan ${partner}! Perdamaian wilayah tetap terjaga dan hubungan bilateral meningkat +5 poin.`,
                             type: 'success',
                             persistent: true,
-                            openInboxOnClose: true
+                            // modal decoupled
                         });
                         return;
                     }
@@ -6106,7 +6095,7 @@ export default function MapPage() {
                                 message: `Gagal membentuk Aliansi Pertahanan! Anda belum membangun Kedutaan Besar di ${partner}. Bangun Kedutaan Besar terlebih dahulu di menu Detail Negara ${partner}.`,
                                 type: 'error',
                                 persistent: true,
-                                openInboxOnClose: true
+                                // modal decoupled
                             });
                             return;
                         }
@@ -6126,7 +6115,7 @@ export default function MapPage() {
                             message: `Berhasil membentuk Aliansi Pertahanan Militer Bersama dengan ${partner}! Bantuan pertahanan dijamin dan hubungan bilateral meningkat +5 poin.`,
                             type: 'success',
                             persistent: true,
-                            openInboxOnClose: true
+                            // modal decoupled
                         });
                         return;
                     }
@@ -6147,7 +6136,7 @@ export default function MapPage() {
                                 message: `Gagal meratifikasi Kontrak Penelitian Joint-R&D! Anda belum membangun Kedutaan Besar di ${partner}. Bangun Kedutaan Besar terlebih dahulu di menu Detail Negara ${partner}.`,
                                 type: 'error',
                                 persistent: true,
-                                openInboxOnClose: true
+                                // modal decoupled
                             });
                             return;
                         }
@@ -6167,7 +6156,7 @@ export default function MapPage() {
                             message: `Berhasil meratifikasi Kontrak Penelitian Joint-R&D dengan ${partner}! Durasi seluruh penelitian nasional berkurang 0,1% per negara mitra dan hubungan bilateral meningkat +5 poin.`,
                             type: 'success',
                             persistent: true,
-                            openInboxOnClose: true
+                            // modal decoupled
                         });
                         return;
                     }
@@ -6229,7 +6218,7 @@ export default function MapPage() {
                             message: `Operasi penanganan "${tNotif.title}" sukses dilaksanakan oleh divisi pertahanan & intelijen nasional!`,
                             type: 'success',
                             persistent: true,
-                            openInboxOnClose: true
+                            // modal decoupled
                         });
                         return;
                     }
@@ -6247,7 +6236,7 @@ export default function MapPage() {
                                 message: `Anggaran negara tidak mencukupi untuk ${isPoliceIncident ? 'mendanai operasi kepolisian' : 'menyalurkan bantuan'} (${budget.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO dari ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO).`,
                                 type: 'error',
                                 persistent: true,
-                                openInboxOnClose: true
+                                // modal decoupled
                             });
                             return;
                         }
@@ -6289,7 +6278,7 @@ export default function MapPage() {
                                 : `Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO! Peringkat Presiden naik +5 poin, serta Kepuasan & Kesejahteraan masyarakat meningkat.`,
                             type: 'success',
                             persistent: true,
-                            openInboxOnClose: true
+                            // modal decoupled
                         });
                         return;
                     }
@@ -6357,7 +6346,7 @@ export default function MapPage() {
                             message: `Anda menolak memberikan bantuan untuk penanganan "${tNotif.title}". Peringkat Presiden turun -4 poin akibat respon publik yang negatif.`,
                             type: 'error',
                             persistent: true,
-                            openInboxOnClose: true
+                            // modal decoupled
                         });
                         return;
                     }
@@ -6634,7 +6623,7 @@ export default function MapPage() {
                                         losses,
                                         type: 'success',
                                         persistent: true,
-                                        openInboxOnClose: false,
+                                        
                                     });
                                 }
                                 setActiveWarAnimation(null);
@@ -7300,7 +7289,6 @@ export default function MapPage() {
                 type={resultModal.type}
                 onClose={() => {
                     setResultModal(prev => ({ ...prev, isOpen: false }));
-                    if (resultModal.openInboxOnClose !== false) setInboxModalOpen(true);
                 }}
             />
         </main>

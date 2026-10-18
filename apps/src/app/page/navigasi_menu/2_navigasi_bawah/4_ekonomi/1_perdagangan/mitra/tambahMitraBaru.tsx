@@ -206,42 +206,50 @@ export default function TambahMitraBaru({
       {/* MODAL GAGAL TAMBAH MITRA (KARENA TIDAK ADA KEDUBES) */}
       {noEmbassyModalData && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
-          <div className="bg-[#0A1A1A] border border-rose-500/50 rounded-2xl p-5 sm:p-6 w-full max-w-md shadow-none relative space-y-4">
-            <div className="flex items-center justify-between border-b border-rose-500/30 pb-3">
+          <div className="bg-[#0F2424] border-2 border-rose-500/40 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl shadow-2xl flex flex-col font-sans pointer-events-auto relative space-y-0">
+            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-rose-500/20 flex items-center justify-between bg-[#0A1A1A] shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-rose-500/20 border border-rose-500/40 rounded-xl">
-                  <AlertTriangle className="h-5 w-5 text-rose-400" />
+                <div className="p-1.5 rounded-lg border border-rose-500/30 bg-rose-950/40 text-rose-400">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
                 </div>
-                <div>
-                  <h3 className="text-base font-black text-rose-400 uppercase tracking-wide">
-                    Gagal Menambahkan Mitra
-                  </h3>
-                  <p className="text-[10px] text-[#6B8A8A] uppercase tracking-wider font-bold">
-                    Hubungan Diplomatik Terbatas
-                  </p>
-                </div>
+                <h2 className="text-sm sm:text-base font-black tracking-wider uppercase text-rose-400">
+                  Pemberitahuan / Peringatan
+                </h2>
               </div>
               <button
+                type="button"
                 onClick={() => setNoEmbassyModalData(null)}
-                className="p-1.5 rounded-lg bg-[#0F2424] text-[#6B8A8A] hover:text-white hover:border-rose-500 border border-[#00FFAA]/20 transition-all cursor-pointer"
+                aria-label="Tutup modal"
+                className="p-1.5 rounded-lg border border-rose-500/30 bg-rose-950/30 text-rose-400 hover:bg-rose-500 hover:text-white transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
               >
-                <X className="h-4 w-4" />
+                <span className="text-[11px] font-bold uppercase tracking-wider pl-0.5">Tutup</span>
+                <span aria-hidden="true" className="text-base leading-none">×</span>
               </button>
             </div>
 
-            <div className="space-y-2 text-xs text-[#E0E0E0] leading-relaxed">
-              <p>
-                Anda tidak dapat menjalin hubungan dagang dengan <strong className="text-white uppercase">{noEmbassyModalData.countryName}</strong> karena negara Anda belum memiliki <strong className="text-rose-400">Kedutaan Besar (Kedubes)</strong> yang aktif di sana.
-              </p>
-              <p className="text-[11px] text-[#6B8A8A]">
-                💡 Buka kantor Kedutaan Besar terlebih dahulu di menu <strong>Geopolitik &rarr; Kedutaan Besar</strong> sebelum mengajukan perjanjian perdagangan bilateral.
-              </p>
+            {/* Body Content */}
+            <div className="flex-1 min-h-0 p-6 sm:p-8 overflow-y-auto">
+              <h3 className="text-lg sm:text-xl font-black uppercase tracking-wide mb-3 text-rose-400">
+                Gagal Menambahkan Mitra
+              </h3>
+              <div className="space-y-2 text-sm sm:text-base text-[#A0B0B0] leading-relaxed font-medium">
+                <p>
+                  Anda tidak dapat menjalin hubungan dagang dengan <strong className="text-white uppercase">{noEmbassyModalData.countryName}</strong> karena negara Anda belum memiliki <strong className="text-rose-400">Kedutaan Besar (Kedubes)</strong> yang aktif di sana.
+                </p>
+                <p className="text-xs text-[#6B8A8A]">
+                  💡 Buka kantor Kedutaan Besar terlebih dahulu di menu <strong>Geopolitik → Kedutaan Besar</strong> sebelum mengajukan perjanjian perdagangan bilateral.
+                </p>
+              </div>
             </div>
 
-            <div className="pt-2 flex justify-end">
+            {/* Footer Actions */}
+            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-t border-rose-500/20 bg-[#0A1A1A] flex justify-end shrink-0">
               <button
+                type="button"
                 onClick={() => setNoEmbassyModalData(null)}
-                className="px-4 py-2 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 rounded-xl text-xs font-black uppercase text-rose-300 transition-all cursor-pointer"
+                className="min-w-28 px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all bg-rose-500/20 border border-rose-500/50 text-rose-400 hover:bg-rose-500/30"
               >
                 Paham
               </button>
@@ -253,48 +261,57 @@ export default function TambahMitraBaru({
       {/* MODAL KONFIRMASI TAMBAH MITRA DAGANG */}
       {confirmModalData && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-auto">
-          <div className="bg-[#0A1A1A] border border-[#00FFAA]/40 rounded-2xl p-5 sm:p-6 w-full max-w-md shadow-none relative space-y-4 font-sans">
-            <div className="flex items-center justify-between border-b border-[#00FFAA]/20 pb-3">
+          <div className="bg-[#0F2424] border-2 border-[#00FFAA]/40 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl shadow-2xl flex flex-col font-sans pointer-events-auto relative space-y-0">
+            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 bg-[#00FFAA]/10 border border-[#00FFAA]/30 rounded-xl">
-                  <Search className="h-5 w-5 text-[#00FFAA]" />
+                <div className="p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA]">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
                 </div>
-                <div>
-                  <h3 className="text-base font-black text-[#00FFAA] uppercase tracking-wide">
-                    Konfirmasi Perjanjian Dagang
-                  </h3>
-                  <p className="text-[10px] text-[#6B8A8A] uppercase tracking-wider font-bold">
-                    Kerjasama Bilateral
-                  </p>
-                </div>
+                <h2 className="text-sm sm:text-base font-black tracking-wider uppercase text-[#00FFAA]">
+                  Konfirmasi Perjanjian Dagang
+                </h2>
               </div>
               <button
+                type="button"
                 onClick={() => setConfirmModalData(null)}
-                className="p-1.5 rounded-lg bg-[#0F2424] text-[#6B8A8A] hover:text-white hover:border-[#00FFAA] border border-[#00FFAA]/20 transition-all cursor-pointer"
+                aria-label="Tutup modal"
+                className="p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1"
               >
-                <X className="h-4 w-4" />
+                <span className="text-[11px] font-bold uppercase tracking-wider pl-0.5">Tutup</span>
+                <span aria-hidden="true" className="text-base leading-none">×</span>
               </button>
             </div>
 
-            <div className="space-y-2 text-xs text-[#E0E0E0] leading-relaxed">
-              <p>
-                Apakah Anda yakin ingin menjalin hubungan mitra dagang resmi dengan negara <strong className="text-[#00FFAA] uppercase">{confirmModalData.countryName}</strong>?
-              </p>
-              <p className="text-[11px] text-[#6B8A8A]">
-                🤝 Setelah bermitra, Anda dapat melakukan transaksi jual-beli komoditas strategis secara langsung dengan negara tersebut.
-              </p>
+            {/* Body Content */}
+            <div className="flex-1 min-h-0 p-6 sm:p-8 overflow-y-auto">
+              <h3 className="text-lg sm:text-xl font-black uppercase tracking-wide mb-3 text-[#E0E0E0]">
+                Konfirmasi Perjanjian Dagang
+              </h3>
+              <div className="space-y-2 text-sm sm:text-base text-[#A0B0B0] leading-relaxed font-medium">
+                <p>
+                  Apakah Anda yakin ingin menjalin hubungan mitra dagang resmi dengan negara <strong className="text-[#00FFAA] uppercase">{confirmModalData.countryName}</strong>?
+                </p>
+                <p className="text-xs text-[#6B8A8A]">
+                  🤝 Setelah bermitra, Anda dapat melakukan transaksi jual-beli komoditas strategis secara langsung dengan negara tersebut.
+                </p>
+              </div>
             </div>
 
-            <div className="pt-2 flex justify-end gap-3">
+            {/* Footer Actions */}
+            <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] flex justify-end gap-3 shrink-0">
               <button
+                type="button"
                 onClick={() => setConfirmModalData(null)}
-                className="px-4 py-2 bg-[#0F2424] hover:bg-[#1A3838] border border-[#00FFAA]/30 rounded-xl text-xs font-bold uppercase text-[#6B8A8A] hover:text-white transition-all cursor-pointer"
+                className="min-w-24 px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all bg-[#0F2424] border border-[#00FFAA]/30 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A]"
               >
                 Batal
               </button>
               <button
+                type="button"
                 onClick={handleConfirmAddPartner}
-                className="px-4 py-2 bg-[#00FFAA] hover:bg-[#00FFAA]/80 rounded-xl text-xs font-black uppercase text-[#0A1A1A] transition-all cursor-pointer shadow-sm"
+                className="min-w-28 px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider cursor-pointer transition-all bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 shadow-[0_0_15px_rgba(0,255,170,0.3)]"
               >
                 Setuju & Tambahkan
               </button>

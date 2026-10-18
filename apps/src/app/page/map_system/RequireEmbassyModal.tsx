@@ -25,8 +25,8 @@ export function RequireEmbassyModal({
   const iso = foundCountry?.iso?.toLowerCase() || '';
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60 animate-in fade-in duration-200">
-      <div className="bg-[#0F2424] border-2 border-[#00FFAA]/40 rounded-2xl p-6 sm:p-7 shadow-[0_0_50px_rgba(0,255,170,0.2)] max-w-md w-full relative overflow-hidden flex flex-col font-sans">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-transparent pointer-events-none animate-in fade-in duration-200">
+      <div className="bg-[#0F2424] border-2 border-[#00FFAA]/40 rounded-2xl p-6 sm:p-7 shadow-[0_0_50px_rgba(0,255,170,0.2)] max-w-md w-full relative overflow-hidden flex flex-col font-sans pointer-events-auto">
         
         {/* Glow Accent Header */}
         <div className="absolute -top-12 -left-12 w-36 h-36 bg-[#00FFAA]/10 rounded-full blur-2xl pointer-events-none" />

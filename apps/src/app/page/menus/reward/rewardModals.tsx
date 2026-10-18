@@ -347,33 +347,31 @@ export default function TopRightGiftIcon({
 
       {/* Modal Hadiah */}
       {isOpen && mounted && createPortal(
-        <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-transparent pointer-events-none">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/40 rounded-2xl overflow-hidden w-full max-w-md flex flex-col relative font-sans pointer-events-auto shadow-lg">
 
             {/* ---- HEADER ---- */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 rounded-t-2xl">
+            <div className="px-5 sm:px-6 py-3 sm:py-3.5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
               <div className="flex items-center gap-2">
-                <div className="p-1 sm:p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] shrink-0">
-                  <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+                <div className="p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] shrink-0">
+                  <Gift className="h-3.5 w-3.5 text-[#00FFAA]" />
                 </div>
-                <div>
-                  <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
-                    Hadiah Harian
-                  </h2>
-                </div>
+                <h2 className="text-sm sm:text-base font-black text-[#00FFAA] tracking-wide uppercase">
+                  Hadiah Harian
+                </h2>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
+                className="p-1.5 sm:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5"
               >
                 <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* ---- BODY (GRID HARIAN) ---- */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0A1A1A] relative z-10 custom-scrollbar flex flex-col items-center justify-start">
-              <div className="w-full max-w-4xl mb-6 text-center">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 bg-[#0A1A1A] relative z-10 flex flex-col items-center justify-start">
+              <div className="w-full text-center mb-4">
                 <p className="text-xs sm:text-sm text-[#6B8A8A] font-semibold">
                   Hari ke-{currentDay} dari 7
                   {claimedToday
@@ -382,7 +380,7 @@ export default function TopRightGiftIcon({
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4 w-full max-w-4xl">
+              <div className="grid grid-cols-4 gap-2 w-full">
                 {Array.from({ length: 7 }, (_, index) => {
                   const day = index + 1;
                   const reward = weeklyRewards[day - 1];
@@ -421,12 +419,7 @@ export default function TopRightGiftIcon({
                     <div
                       key={day}
                       onClick={onClickHandler}
-                      className={`
-                        relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border 
-                        ${borderColor} ${bgColor} ${cursor}
-                        transition-all duration-200
-                        ${isToday && !claimedToday ? 'hover:scale-105 hover:shadow-[0_0_15px_rgba(0,255,170,0.2)]' : ''}
-                      `}
+                      className={`relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border ${borderColor} ${bgColor} ${cursor} transition-all duration-200 ${isToday && !claimedToday ? 'hover:scale-105 hover:shadow-[0_0_15px_rgba(0,255,170,0.2)]' : ''}`}
                     >
                       <span className="text-[10px] sm:text-xs font-bold text-[#6B8A8A] uppercase tracking-wider">
                         Hari {day}
@@ -472,51 +465,57 @@ export default function TopRightGiftIcon({
 
       {/* ---- MODAL FEEDBACK ---- */}
       {mounted && feedbackModal && createPortal(
-        <div className="fixed inset-0 z-[300] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-md shadow-2xl pointer-events-auto">
+        <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-transparent pointer-events-none">
+          <div className="bg-[#0F2424] border border-[#00FFAA]/40 rounded-2xl overflow-hidden w-full max-w-md shadow-lg pointer-events-auto flex flex-col">
 
             {/* Header */}
-            <div className="px-4 sm:px-5 py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] gap-2 shrink-0 rounded-t-2xl">
-              <div className="flex items-center gap-2 sm:gap-2.5">
+            <div className="px-5 sm:px-6 py-3 sm:py-3.5 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] gap-2 shrink-0">
+              <div className="flex items-center gap-2">
                 <div className={`p-1.5 rounded-lg border shrink-0 ${
                   feedbackModal.variant === 'success'
                     ? 'bg-[#00FFAA]/10 border-[#00FFAA]/30'
                     : 'bg-rose-500/10 border-rose-500/30'
                 }`}>
                   {feedbackModal.variant === 'success' ? (
-                    <Check className="h-4 w-4 text-[#00FFAA]" />
+                    <Check className="h-3.5 w-3.5 text-[#00FFAA]" />
                   ) : (
-                    <AlertTriangle className="h-4 w-4 text-rose-400" />
+                    <AlertTriangle className="h-3.5 w-3.5 text-rose-400" />
                   )}
                 </div>
-                <h3 className={`text-sm sm:text-base font-bold tracking-tight leading-none uppercase ${
+                <h3 className={`text-xs sm:text-sm font-black tracking-wide uppercase ${
                   feedbackModal.variant === 'success' ? 'text-[#00FFAA]' : 'text-rose-400'
                 }`}>
                   {feedbackModal.title}
                 </h3>
               </div>
-
               <button
                 onClick={() => setFeedbackModal(null)}
-                className="p-1.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer"
+                type="button"
+                aria-label="Tutup feedback"
+                className={`p-1 rounded-lg border transition-all cursor-pointer font-bold text-xs uppercase flex items-center justify-center w-6 h-6 ${
+                  feedbackModal.variant === 'success'
+                    ? 'border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A]'
+                    : 'border-rose-500/30 bg-rose-950/30 text-rose-400 hover:bg-rose-500 hover:text-white'
+                }`}
               >
-                <X className="h-4 w-4" />
+                <span aria-hidden="true" className="text-lg leading-none">×</span>
               </button>
             </div>
 
             {/* Body */}
-            <div className="p-5">
-              <p className="text-xs sm:text-sm text-[#E0E0E0] whitespace-pre-line leading-relaxed">
+            <div className="flex-1 min-h-0 p-4 sm:p-5 overflow-y-auto">
+              <p className="text-xs sm:text-sm text-[#A0B0B0] leading-relaxed font-medium">
                 {feedbackModal.message}
               </p>
             </div>
 
             {/* Footer */}
-            <div className="px-5 py-3 border-t border-[#00FFAA]/20 bg-[#0A1A1A] flex gap-3 justify-end shrink-0 rounded-b-2xl">
+            <div className="px-5 sm:px-6 py-2.5 sm:py-3 border-t border-[#00FFAA]/20 bg-[#0A1A1A] flex gap-2 justify-end shrink-0">
               {feedbackModal.variant === 'success' ? (
                 <button
                   onClick={() => setFeedbackModal(null)}
-                  className="px-6 py-2.5 bg-[#00FFAA] hover:bg-[#00e699] border border-[#00FFAA] rounded-xl text-center text-[#0A1A1A] font-black text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md"
+                  type="button"
+                  className="px-4 py-1.5 bg-[#00FFAA] hover:bg-[#00FFAA]/80 text-[#0A1A1A] rounded-lg font-black text-xs uppercase tracking-wider cursor-pointer transition-all"
                 >
                   Mengerti
                 </button>
@@ -524,13 +523,15 @@ export default function TopRightGiftIcon({
                 <>
                   <button
                     onClick={feedbackModal.onCancel ?? (() => setFeedbackModal(null))}
-                    className="px-5 py-2.5 bg-[#0F2424] hover:bg-[#163535] border border-[#00FFAA]/30 rounded-xl text-center text-[#E0E0E0] font-black text-xs tracking-wider uppercase transition-all cursor-pointer"
+                    type="button"
+                    className="px-4 py-1.5 bg-[#0F2424] hover:bg-[#1A3838] border border-[#00FFAA]/30 rounded-lg text-[#6B8A8A] hover:text-white font-black text-xs uppercase tracking-wider cursor-pointer transition-all"
                   >
                     {feedbackModal.cancelLabel ?? 'Batal'}
                   </button>
                   <button
                     onClick={feedbackModal.onConfirm ?? (() => setFeedbackModal(null))}
-                    className="px-5 py-2.5 bg-rose-500 hover:bg-rose-400 border border-rose-500 rounded-xl text-center text-white font-black text-xs tracking-wider uppercase transition-all cursor-pointer shadow-md"
+                    type="button"
+                    className="px-4 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 rounded-lg text-rose-400 font-black text-xs uppercase tracking-wider cursor-pointer transition-all"
                   >
                     {feedbackModal.confirmLabel ?? 'Konfirmasi'}
                   </button>
