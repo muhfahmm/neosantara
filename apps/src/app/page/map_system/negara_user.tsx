@@ -5,6 +5,7 @@ import { X, User, Globe, Building2, Users, Landmark, ShieldCheck } from 'lucide-
 
 import { calculateCountryGDP, formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
+import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
 
 interface NegaraUserModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
     countryDetail?.penduduk ??
     0
   );
+  const netPopulationChange = calculateCountryNetPopulation(countryDetail);
 
   const anggaran = Number(countryDetail?.anggaran) || 0;
   const netBalance = calculateNetBalanceWithEconomicEmbargo(countryDetail, selectedCountry?.country);
@@ -114,7 +116,12 @@ export default function NegaraUserModal({ isOpen, onClose, selectedCountry, coun
                 </div>
                 <div>
                   <p className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-widest">Populasi</p>
-                  <p className="text-base font-black text-[#E0E0E0] mt-0.5">{formatNumber(population)}</p>
+                  <p className="text-base font-black text-[#E0E0E0] mt-0.5 flex items-center gap-2">
+                    <span>{formatNumber(population)}</span>
+                    <span className={`${netPopulationChange >= 0 ? 'text-emerald-400' : 'text-rose-400'} text-xs font-black`}>
+                      ({netPopulationChange >= 0 ? `+${netPopulationChange.toLocaleString('id-ID', { maximumFractionDigits: 2 })}` : netPopulationChange.toLocaleString('id-ID', { maximumFractionDigits: 2 })})
+                    </span>
+                  </p>
                 </div>
               </div>
 

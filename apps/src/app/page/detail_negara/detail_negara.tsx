@@ -11,6 +11,7 @@ import {
 } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import {
   applyNpcCountrySimulationState,
+  updateNpcCountrySimulationState,
   NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { calculateCountryNetPopulation } from '@/app/logic/populations_logic/population_logic';
@@ -210,7 +211,6 @@ export function CountryDetailModal({
 
     fetchedRef.current = countryName;
 
-    setFetchedDetail(null);
     setIsLoadingDetail(true);
     if (!preserveActiveTabRef.current) {
       setActiveTab(
@@ -246,12 +246,19 @@ export function CountryDetailModal({
       const memberDataList = await Promise.all(
         empireMemberNames.map(async (memberName) => {
           const currentCountryDetail = countryDetailRef.current;
-          if (currentCountryDetail?.country?.toLowerCase().trim() === memberName) {
+          const currentPlayerCountry = normalizeCountryKey(
+            currentCountryDetail?.country ||
+            currentCountryDetail?.nama_negara ||
+            currentCountryDetail?.name_id ||
+            currentCountryDetail?.name
+          );
+
+          if (currentPlayerCountry && currentPlayerCountry === normalizeCountryKey(memberName)) {
             return currentCountryDetail;
           }
 
           const relPath = Object.entries(countryPaths as Record<string, string>).find(
-            ([name]) => name.toLowerCase().trim() === memberName
+            ([name]) => normalizeCountryKey(name) === normalizeCountryKey(memberName)
           )?.[1];
 
           if (!relPath) return null;
@@ -383,16 +390,43 @@ export function CountryDetailModal({
     setDailyNetPopulation(netPopulationChange);
 
     // 3. Update Anggaran dan Jumlah Penduduk secara real-time
+    const currentPop = Number(fetchedDetail.jumlah_penduduk) || 0;
+    const nextBudget = (Number(fetchedDetail.anggaran) || 0) + netBalance;
+    const nextPop = Math.max(0, currentPop + netPopulationChange);
+
     setFetchedDetail((prev: any) => {
       if (!prev) return prev;
-      const currentPop = Number(prev.jumlah_penduduk) || 0;
       return {
         ...prev,
-        anggaran: (Number(prev.anggaran) || 0) + netBalance,
-        jumlah_penduduk: Math.max(0, currentPop + netPopulationChange),
+        anggaran: nextBudget,
+        jumlah_penduduk: nextPop,
       };
     });
-  }, [currentDate, fetchedDetail, isOpen]);
+
+    const currentPlayerCountry = normalizeCountryKey(
+      countryDetail?.country ||
+      countryDetail?.nama_negara ||
+      countryDetail?.name_id ||
+      countryDetail?.name
+    );
+    const isPlayer = currentPlayerCountry && currentPlayerCountry === normalizeCountryKey(countryName);
+
+    if (isPlayer && setCountryDetail) {
+      setCountryDetail((prev: any) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          anggaran: nextBudget,
+          jumlah_penduduk: nextPop,
+        };
+      });
+    } else if (fetchedDetail.country_slug) {
+      updateNpcCountrySimulationState(fetchedDetail.country_slug, {
+        anggaran: nextBudget,
+        jumlah_penduduk: nextPop,
+      });
+    }
+  }, [currentDate, fetchedDetail, isOpen, countryName, countryDetail, setCountryDetail]);
 
   useEffect(() => {
     if (!isOpen || !fetchedDetail?.country_slug) return;
