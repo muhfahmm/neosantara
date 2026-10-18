@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { X, Tag, Loader2 } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { generateHargaChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/2_harga_barang_pokok/hargaChangeLogic";
+import { generateDemonstrasiHargaNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/demonstrasiEkonomiLogic";
 import { calculatePriceCommodityImpacts } from "@/app/logic/economic_logic/economicPopulationImpact";
 
 interface ModalProps {
@@ -100,6 +101,30 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
       const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
       const notif = generateHargaChangeNotification(formattedItemName, oldPrice, value, dateStr);
       newPendingNotifs = [notif, ...newPendingNotifs];
+
+      // Cek apakah harga mengalami kenaikan
+      if (value > oldPrice) {
+        const oldIndex = priceOptions.indexOf(oldPrice);
+        const newIndex = priceOptions.indexOf(value);
+        const levelJump = (oldIndex !== -1 && newIndex !== -1)
+          ? (newIndex - oldIndex)
+          : (value >= oldPrice * 2 ? 3 : 1);
+
+        const roll = Math.random();
+        if (levelJump >= 3) {
+          // Naik 3 level sekaligus: persentase demo 80%
+          if (roll < 0.80) {
+            const demoNotif = generateDemonstrasiHargaNotification(formattedItemName, oldPrice, value, levelJump, dateStr);
+            newPendingNotifs.unshift(demoNotif);
+          }
+        } else {
+          // Kenaikan bertahap: persentase demo 40%
+          if (roll < 0.40) {
+            const demoNotif = generateDemonstrasiHargaNotification(formattedItemName, oldPrice, value, levelJump, dateStr);
+            newPendingNotifs.unshift(demoNotif);
+          }
+        }
+      }
     }
 
     setCountryDetail?.((prev: any) => {
@@ -192,11 +217,10 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
                       <button
                         key={option}
                         onClick={() => handlePriceChange(key, option)}
-                        className={`px-2.5 lg:px-3 py-1.5 lg:py-2 rounded-lg border text-[10px] lg:text-xs font-black uppercase transition cursor-pointer ${
-                          value === option
+                        className={`px-2.5 lg:px-3 py-1.5 lg:py-2 rounded-lg border text-[10px] lg:text-xs font-black uppercase transition cursor-pointer ${value === option
                             ? "bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] font-bold"
                             : "bg-[#0F2424] text-[#E0E0E0] border-[#00FFAA]/30 hover:border-[#00FFAA]"
-                        }`}
+                          }`}
                       >
                         {option.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                       </button>

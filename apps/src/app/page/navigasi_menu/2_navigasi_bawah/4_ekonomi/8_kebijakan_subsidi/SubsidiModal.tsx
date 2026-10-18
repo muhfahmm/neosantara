@@ -22,6 +22,7 @@ import PerlindunganSosialTab from "./tab_menu/7_perlindungan_sosial/Perlindungan
 import DetailSubsidiItemModal from "./DetailSubsidiItemModal";
 
 import { generateSubsidiChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/3_kebijakan_subsidi/subsidiChangeLogic";
+import { generateDemonstrasiSubsidiNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/demonstrasiEkonomiLogic";
 import { getCurrentGameDateString } from "@/app/logic/gameSessionState";
 import { calculateSubsidySatisfaction } from "@/app/logic/kepuasanCalculator";
 import { calculateEconomicPopulationImpact } from "@/app/logic/economic_logic/economicPopulationImpact";
@@ -66,10 +67,12 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
   const toggleSubsidy = (id: string) => {
     let toggledItemName = "";
     let nextStatus = false;
+    let toggledItemCategory = "";
 
     const nextItems = subsidyItems.map((item) => {
       if (item.id === id) {
         toggledItemName = item.name;
+        toggledItemCategory = item.category; // Simpan kategori
         nextStatus = !item.isSubsidized;
         return { ...item, isSubsidized: !item.isSubsidized };
       }
@@ -86,15 +89,41 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
         subsidyStatesRecord[item.id] = item.isSubsidized;
       });
       const summary = calculateSubsidySummary(nextItems);
+      const newNotifs: any[] = [];
+      if (notif) newNotifs.push(notif);
+
+      // --- LOGIKA BARU DIMULAI DI SINI ---
+
+      // 1. Tentukan apakah ini subsidi "Krusial" / Paling Dibutuhkan
+      const criticalCategories = ["Pangan", "Energi", "Pendidikan & Kesehatan"]; // Sesuaikan kategori dengan data Anda
+      const isCriticalSubsidy = criticalCategories.includes(toggledItemCategory) || id.includes("beras") || id.includes("bbm");
+
+      if (!nextStatus) { // Jika user MENCABUT subsidi
+        if (isCriticalSubsidy) {
+          // Peluang Demo Sangat Tinggi (90%) untuk kebutuhan pokok
+          if (Math.random() < 0.90) {
+            const demoNotif = generateDemonstrasiSubsidiNotification(toggledItemName, dateStr);
+            newNotifs.unshift(demoNotif);
+          }
+        } else if (summary.totalApprovalBonus <= 0) {
+          // Logika lama: Jika bukan krusial, tapi total approval udah 0
+          if (Math.random() < 0.70) {
+            const demoNotif = generateDemonstrasiSubsidiNotification(toggledItemName, dateStr);
+            newNotifs.unshift(demoNotif);
+          }
+        }
+      }
+      // --- LOGIKA BARU SELESAI ---
 
       setCountryDetail((prev: any) => ({
         ...prev,
         subsidy_states: subsidyStatesRecord,
         total_subsidy_cost: summary.totalCost,
         subsidy_approval_bonus: summary.totalApprovalBonus,
-        pending_notifications: notif
-          ? [notif, ...(prev?.pending_notifications || [])]
-          : prev?.pending_notifications,
+        pending_notifications: [
+          ...newNotifs,
+          ...(prev?.pending_notifications || [])
+        ],
       }));
     }
   };
@@ -220,8 +249,8 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
                     className={`flex items-center justify-between w-full p-2 lg:p-2.5 rounded-xl border text-left transition-all cursor-pointer ${selectedCategory === cat.id
-                        ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
-                        : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
+                      ? "bg-[#00FFAA] border-[#00FFAA] text-[#0A1A1A] font-black shadow-md"
+                      : "bg-[#0F2424] border-[#00FFAA]/20 text-[#E0E0E0] hover:border-[#00FFAA]/50 hover:text-[#00FFAA]"
                       }`}
                   >
                     <span className="text-[10px] lg:text-[11px] font-bold uppercase tracking-wider">{cat.label}</span>

@@ -2393,9 +2393,12 @@ export default function MapPage() {
             const next = typeof action === 'function'
                 ? (action as (value: NotificationMessage[]) => NotificationMessage[])(prev)
                 : action;
-            const prevIds = new Set(prev.map(n => n.id));
             const isExempt = (n: NotificationMessage) =>
-                /player|user|province|requested|self-|aid-/i.test(String(n.id));
+                /player|user|province|requested|self-|aid-|demo|demonstrasi|subsidi|harga|pajak/i.test(String(n.id)) ||
+                (n as any).tradeType === 'demonstrasi_rakyat' ||
+                (n as any).tradeType === 'kebijakan_subsidi' ||
+                (n as any).tradeType === 'harga_barang_pokok' ||
+                (n as any).tradeType === 'perubahan_pajak';
             const isPausedNow = isPausedRef.current ||
                 (typeof window !== 'undefined' && Boolean((window as any).neosantara_is_paused));
             const today = notificationDateRef.current;
@@ -2408,6 +2411,7 @@ export default function MapPage() {
             }
             const alreadySent = prev.filter(n => !isExempt(n) && n.timestamp === today).length;
             let quota = Math.max(0, dailyQuotaRef.current.quota - alreadySent);
+            const prevIds = new Set(prev.map(n => n.id));
             const result: NotificationMessage[] = [];
             for (const n of next) {
                 if (!n || prevIds.has(n.id) || isExempt(n)) {
@@ -6070,9 +6074,88 @@ export default function MapPage() {
                         }));
                     }
                 }}
-                onActionClick={(notif) => {
-                    // Intersep jika ini tawaran transaksi dagang AI
+                onActionClick={(notif, actionType) => {
                     const tNotif = notif as any;
+
+                    // Intersep aksi demonstrasi rakyat jika ada
+                    if (tNotif.tradeType === 'demonstrasi_rakyat') {
+                        if (actionType === 'hard_power') {
+                            setCountryDetail((prev: any) => ({
+                                ...prev,
+                                kepuasan_masyarakat: Math.max(0, Number(prev?.kepuasan_masyarakat || 50) - 10),
+                                tingkat_keamanan: Math.min(100, Number(prev?.tingkat_keamanan || 50) + 5),
+                            }));
+                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, demo_status: 'selesai', isHandled: true } : n));
+                            setInboxModalOpen(false);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Demonstrasi Dibubarkan Paksa',
+                                message: 'Aparat keamanan membubarkan demonstrasi dengan ketat. Keamanan terkendali namun kepuasan rakyat menurun drastis.',
+                                type: 'error',
+                                persistent: true,
+                            });
+                            return;
+                        } else if (actionType === 'dialog') {
+                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, demo_status: 'dialog' } : n));
+                            setInboxModalOpen(false);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Dialog Terbuka Dimulai',
+                                message: 'Perwakilan pemerintah memulai perundingan terbuka dengan perwakilan massa demonstran guna meredakan tensi.',
+                                type: 'info',
+                                persistent: true,
+                            });
+                            return;
+                        } else if (actionType === 'fulfill') {
+                            setCountryDetail((prev: any) => ({
+                                ...prev,
+                                kepuasan_masyarakat: Math.min(100, Number(prev?.kepuasan_masyarakat || 50) + 12),
+                            }));
+                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, demo_status: 'selesai', isHandled: true } : n));
+                            setInboxModalOpen(false);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Tuntutan Rakyat Dipenuhi',
+                                message: 'Pemerintah menyetujui evaluasi dan pemulihan kebijakan. Massa membubarkan diri dengan damai, kepuasan rakyat melonjak naik.',
+                                type: 'success',
+                                persistent: true,
+                            });
+                            return;
+                        } else if (actionType === 'ignore') {
+                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, demo_status: 'ignored' } : n));
+                            setInboxModalOpen(false);
+                            return;
+                        } else if (actionType === 'distraction') {
+                            const budget = Number(countryDetail?.anggaran || 0);
+                            const cost = 250000;
+                            if (budget < cost) {
+                                setResultModal({
+                                    isOpen: true,
+                                    title: 'Anggaran Tidak Cukup',
+                                    message: 'Dibutuhkan 250.000 NEO untuk kampanye media pengalihan isu.',
+                                    type: 'error',
+                                    persistent: true,
+                                });
+                                return;
+                            }
+                            setCountryDetail((prev: any) => ({
+                                ...prev,
+                                anggaran: Math.max(0, budget - cost),
+                            }));
+                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, demo_status: 'selesai', isHandled: true } : n));
+                            setInboxModalOpen(false);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Isu Publik Dialihkan',
+                                message: 'Media nasional sukses mengalihkan atensi publik dengan isu populer lain. Demonstrasi berangsur mereda.',
+                                type: 'info',
+                                persistent: true,
+                            });
+                            return;
+                        }
+                    }
+
+                    // Intersep jika ini tawaran transaksi dagang AI
                     if (
                         (tNotif.tradeType === 'jual' || tNotif.tradeType === 'beli') &&
                         isTradeEmbargoActive(countryDetail?.country || countryDetail?.nama_negara || '', tNotif.partnerName || '')

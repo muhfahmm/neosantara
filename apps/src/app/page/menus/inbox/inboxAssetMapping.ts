@@ -164,7 +164,10 @@ export function getInboxNotificationImage(notif: any): string | null {
     return '/images/game/inbox_assets/8_wabah_penyakit_epidemi/12_wabah_penyakit_menular/Wabah Demam Berdarah (DBD).svg';
   }
 
-  // Notifikasi Kebijakan / Sosial
+  // Notifikasi Kebijakan / Sosial / Demonstrasi
+  if (tradeType === 'demonstrasi_rakyat') {
+    return '/images/game/inbox_assets/2_hubungan_internasional_diplomasi/Hubungan Panas.svg';
+  }
   if (tradeType === 'perubahan_pajak' || tradeType === 'harga_barang_pokok' || tradeType === 'kebijakan_subsidi' || tradeType === 'perubahan_sistem_ekonomi') {
     return '/images/game/inbox_assets/4_perdagangan_komoditas_bilateral/jual.svg';
   }

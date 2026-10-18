@@ -24,6 +24,7 @@ import ICBMNotificationCard from './logic/2_notifikasi_pertahanan/5_icbm/icbmNot
 import PajakChangeNotificationCard from './logic/7_notifikasi_ekonomi/1_perubahan_pajak/pajakChangeNotification';
 import HargaChangeNotificationCard from './logic/7_notifikasi_ekonomi/2_harga_barang_pokok/hargaChangeNotification';
 import SubsidiChangeNotificationCard from './logic/7_notifikasi_ekonomi/3_kebijakan_subsidi/subsidiChangeNotification';
+import DemonstrasiEkonomiNotificationCard from './logic/7_notifikasi_ekonomi/demo_logic/demonstrasiEkonomiNotificationCard';
 import ListrikDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/1_kelistrikan/listrikDefisitNotificationCard';
 import HunianDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/2_hunian/hunianDefisitNotificationCard';
 import PanganDefisitNotificationCard from './logic/8_kebutuhan_pokok_warga/3_pangan/panganDefisitNotificationCard';
@@ -51,7 +52,7 @@ interface TopLeftIconProps {
   onClose?: () => void;
   notifications?: NotificationMessage[];
   onClearAll?: () => void;
-  onActionClick?: (notification: NotificationMessage) => void;
+  onActionClick?: (notification: NotificationMessage, actionType?: string) => void;
   onCrackdownClick?: (notification: NotificationMessage) => void;
   onRedirectClick?: (notification: NotificationMessage) => void;
   userCountryName?: string;
@@ -302,6 +303,17 @@ export default function TopLeftIcon({
         />
       );
     }
+    if (tradeType === 'demonstrasi_rakyat') {
+      return (
+        <DemonstrasiEkonomiNotificationCard
+          key={notif.id}
+          notification={notif as any}
+          onAction={(actionType) => {
+            if (onActionClick) onActionClick(notif, actionType);
+          }}
+        />
+      );
+    }
     if (tradeType === 'defisit_listrik') {
       return (
         <ListrikDefisitNotificationCard
@@ -535,11 +547,10 @@ export default function TopLeftIcon({
 
           {/* Toast Notification Box */}
           <div
-            className={`transition-all duration-300 ease-out origin-top-left ${
-              showToast && toastNotification
+            className={`transition-all duration-300 ease-out origin-top-left ${showToast && toastNotification
                 ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
                 : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
-            } w-72 rounded-xl border border-[#00FFAA]/40 bg-[#0F2424] p-3 shadow-2xl cursor-pointer group`}
+              } w-72 rounded-xl border border-[#00FFAA]/40 bg-[#0F2424] p-3 shadow-2xl cursor-pointer group`}
             onClick={() => {
               if (toastNotification) {
                 dismissedToastIdRef.current = toastNotification.id;
@@ -632,11 +643,10 @@ export default function TopLeftIcon({
                           <div
                             key={notif.id}
                             onClick={() => setSelectedNotificationId(notif.id)}
-                            className={`group relative rounded-xl p-2.5 sm:p-3 transition-all cursor-pointer border flex items-center gap-2.5 sm:gap-3 ${
-                              isSelected
+                            className={`group relative rounded-xl p-2.5 sm:p-3 transition-all cursor-pointer border flex items-center gap-2.5 sm:gap-3 ${isSelected
                                 ? 'bg-[#00FFAA]/15 border-[#00FFAA] shadow-[0_0_12px_rgba(0,255,170,0.2)]'
                                 : 'bg-[#0F2424]/60 border-[#00FFAA]/15 hover:bg-[#0F2424] hover:border-[#00FFAA]/40'
-                            }`}
+                              }`}
                           >
                             {/* Avatar / Country Flag / Persona */}
                             <div className="relative shrink-0 w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 overflow-hidden flex items-center justify-center shadow">
@@ -660,9 +670,8 @@ export default function TopLeftIcon({
                             {/* Info Singkat */}
                             <div className="flex-1 min-w-0">
                               {/* PERBAIKAN: Menghapus truncate dan menambahkan break-words agar judul wrap ke bawah */}
-                              <h4 className={`text-[11px] sm:text-xs font-black leading-tight whitespace-normal break-words ${
-                                isUrgent ? 'text-rose-400' : isSelected ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'
-                              }`}>
+                              <h4 className={`text-[11px] sm:text-xs font-black leading-tight whitespace-normal break-words ${isUrgent ? 'text-rose-400' : isSelected ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'
+                                }`}>
                                 {notif.title}
                               </h4>
                               {/* PERBAIKAN: Menambahkan flex-wrap pada container dan menghapus truncate di span */}
@@ -682,9 +691,8 @@ export default function TopLeftIcon({
                               </div>
                             </div>
 
-                            <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${
-                              isSelected ? 'text-[#00FFAA] translate-x-0.5' : 'text-[#6B8A8A]/50 group-hover:text-[#00FFAA]'
-                            }`} />
+                            <ChevronRight className={`w-3.5 h-3.5 shrink-0 transition-transform ${isSelected ? 'text-[#00FFAA] translate-x-0.5' : 'text-[#6B8A8A]/50 group-hover:text-[#00FFAA]'
+                              }`} />
                           </div>
                         );
                       })}

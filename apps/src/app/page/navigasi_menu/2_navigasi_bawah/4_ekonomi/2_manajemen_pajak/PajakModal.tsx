@@ -8,6 +8,7 @@ import {
 } from "@/app/logic/economic_logic/2_tax_logic/taxLogic";
 import { calculateTaxPopulationImpact } from "@/app/logic/economic_logic/2_tax_logic/taxPopulationImpact";
 import { generatePajakChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/1_perubahan_pajak/pajakChangeLogic";
+import { generateDemonstrasiPajakNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/demonstrasiEkonomiLogic";
 import {
   applyOrthodoxPersonalIncomeTaxRevenueBonus,
   ORTHODOX_PERSONAL_INCOME_TAX_REVENUE_BONUS,
@@ -214,6 +215,16 @@ export default function PajakModal({
       const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
       const notif = generatePajakChangeNotification(taxLabel, oldVal, nextVal, dateStr);
       newPendingNotifs = [notif, ...newPendingNotifs];
+
+      // Jika user menaikkan pajak secara gila-gilaan 10-20 poin/persen dari nilai awalnya: persentase demo 80%
+      const diff = nextVal - oldVal;
+      if (diff >= 10) {
+        const roll = Math.random();
+        if (roll < 0.80) {
+          const demoNotif = generateDemonstrasiPajakNotification(taxLabel, oldVal, nextVal, diff, dateStr);
+          newPendingNotifs.unshift(demoNotif);
+        }
+      }
     }
 
     setCountryDetail?.((prev: any) => {
