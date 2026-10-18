@@ -27,7 +27,7 @@ export interface YearlyOutbreakDistribution {
  * - Tahun ke-6: kembali ke 30%
  * - ... Tahun ke-10: 40% (siklus 5 tahunan: [30, 35, 40, 45, 50])
  */
-export const PANDEMIC_YEARLY_PERCENTAGE_CYCLE = [30, 35, 40, 45, 50] as const;
+export const PANDEMIC_YEARLY_PERCENTAGE_CYCLE = [10, 20, 30, 40, 50] as const;
 
 export function getPandemicBaseChancePercentByYear(
   countryDetail: any,

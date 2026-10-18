@@ -16,6 +16,7 @@ const AidDeliveryPath = dynamic(() => import('../../path_logic/path-aid-delivery
 const SpionasePath = dynamic(() => import('../../path_logic/path-spionase'), { ssr: false });
 const SabotasePath = dynamic(() => import('../../path_logic/path-sabotase'), { ssr: false });
 const IcbmPath = dynamic(() => import('../../path_logic/path-icbm'), { ssr: false });
+const SerangNegaraPath = dynamic(() => import('../../path_logic/path-serang-negara'), { ssr: false });
 
 const DIPLOMACY_PATH_COMPONENTS = {
   'non-aggression-pact': NonAggressionPactPath,
@@ -26,6 +27,7 @@ const DIPLOMACY_PATH_COMPONENTS = {
   spionase: SpionasePath,
   sabotase: SabotasePath,
   icbm: IcbmPath,
+  'serang-negara': SerangNegaraPath,
 };
 
 const PATH_DETAILS: Record<DiplomacyPathKind, { document: string; accent: string }> = {
@@ -37,6 +39,7 @@ const PATH_DETAILS: Record<DiplomacyPathKind, { document: string; accent: string
   spionase: { document: 'Operasi Spionase', accent: '#A3E635' },
   sabotase: { document: 'Operasi Sabotase', accent: '#F43F5E' },
   icbm: { document: 'Serangan Rudal Balistik ICBM', accent: '#EF4444' },
+  'serang-negara': { document: 'Serangan Militer', accent: '#FF2D55' },
 };
 
 interface ActiveDiplomacyPath {
@@ -70,6 +73,7 @@ export default function DiplomacyTracking() {
       'spionase',
       'sabotase',
       'icbm',
+      'serang-negara',
     ];
 
     const addPath = (
@@ -141,15 +145,27 @@ export default function DiplomacyTracking() {
       );
     };
 
+    const handleSerangNegaraPath = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        pathId?: unknown;
+        senderCountry?: unknown;
+        targetCountry?: unknown;
+        isPlayerAttacker?: boolean;
+      }>).detail;
+      addPath('serang-negara', detail?.pathId, detail?.senderCountry, detail?.targetCountry, undefined, undefined, detail?.isPlayerAttacker);
+    };
+
     window.addEventListener('neosantara_diplomacy_path', handleDiplomacyPath);
     window.addEventListener('neosantara_non_aggression_pact_path', handlePactPath);
     window.addEventListener('neosantara_cancel_diplomacy_path', handleCancelPath);
+    window.addEventListener('neosantara_serang_negara_path', handleSerangNegaraPath);
     window.addEventListener('neosantara_cancel_non_aggression_pact_path', handleCancelPath);
     return () => {
       window.removeEventListener('neosantara_diplomacy_path', handleDiplomacyPath);
       window.removeEventListener('neosantara_non_aggression_pact_path', handlePactPath);
       window.removeEventListener('neosantara_cancel_diplomacy_path', handleCancelPath);
       window.removeEventListener('neosantara_cancel_non_aggression_pact_path', handleCancelPath);
+      window.removeEventListener('neosantara_serang_negara_path', handleSerangNegaraPath);
     };
   }, []);
 
@@ -170,6 +186,7 @@ export default function DiplomacyTracking() {
             targetCountry={path.targetCountry}
             laneIndex={laneIndex}
             laneCount={sameRoute.length}
+            isPlayerAttacker={path.isPlayerAttacker}
             onProgress={progress => setActivePaths(current => current.map(item =>
               item.id === path.id ? { ...item, progress } : item
             ))}
@@ -184,6 +201,11 @@ export default function DiplomacyTracking() {
               }
               if (path.kind === 'icbm') {
                 window.dispatchEvent(new CustomEvent('neosantara_icbm_strike_arrived', {
+                  detail: { ...path, pathId: path.id },
+                }));
+              }
+              if (path.kind === 'serang-negara') {
+                window.dispatchEvent(new CustomEvent('neosantara_serang_negara_arrived', {
                   detail: { ...path, pathId: path.id },
                 }));
               }

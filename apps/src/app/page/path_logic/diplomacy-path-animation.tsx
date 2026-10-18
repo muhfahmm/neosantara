@@ -22,7 +22,8 @@ export type DiplomacyPathKind =
   | 'aid-delivery'
   | 'spionase'
   | 'sabotase'
-  | 'icbm';
+  | 'icbm'
+  | 'serang-negara';
 
 interface DiplomacyPathAnimationProps {
   kind: DiplomacyPathKind;
@@ -32,6 +33,7 @@ interface DiplomacyPathAnimationProps {
   laneCount?: number;
   onArrive: () => void;
   onProgress?: (progress: number) => void;
+  isPlayerAttacker?: boolean;
 }
 
 const PATH_DETAILS: Record<DiplomacyPathKind, { accent: string }> = {
@@ -59,6 +61,9 @@ const PATH_DETAILS: Record<DiplomacyPathKind, { accent: string }> = {
   icbm: {
     accent: '#EF4444',
   },
+  'serang-negara': {
+    accent: '#FF2D55',
+  },
 };
 
 export default function DiplomacyPathAnimation({
@@ -69,6 +74,7 @@ export default function DiplomacyPathAnimation({
   laneCount = 1,
   onArrive,
   onProgress,
+  isPlayerAttacker,
 }: DiplomacyPathAnimationProps) {
   const onArriveRef = useRef(onArrive);
   const onProgressRef = useRef(onProgress);
