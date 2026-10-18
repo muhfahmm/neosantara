@@ -32,7 +32,7 @@ export default function ClosedTradeRejectionModal({
   if (!isOpen) return null;
 
   return (
-    <NotebookModalWrapper onClose={onClose}>
+    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[500000]">
       <div className="flex flex-col h-full overflow-hidden">
         
         {/* HEADER */}
