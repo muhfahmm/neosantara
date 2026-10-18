@@ -15,6 +15,9 @@ export default function WabahNotification({ notification, onAccept, onReject }: 
   const isHandled = notification.isHandled;
   const isPandemi = notification.category?.includes('Pandemi');
 
+  // Format medical cost: remove last 3 digits (divide by 1000, floor)
+  const formattedBantuanCost = Math.floor((notification.bantuanCost ?? 0) / 1000);
+
   return (
     <div className={`border-l-4 ${isHandled ? 'bg-emerald-950/30 border-emerald-500' : isPandemi ? 'bg-purple-950/40 border-purple-500' : 'bg-teal-950/40 border-teal-500'} p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border ${isPandemi ? 'border-purple-500/20' : 'border-teal-500/20'}`}>
       {/* Icon */}
@@ -74,7 +77,7 @@ export default function WabahNotification({ notification, onAccept, onReject }: 
           </div>
           <div className="pl-1">
             <div className="text-slate-400 text-[9px] uppercase font-bold tracking-wider">Biaya Medis (1 NEO/Pasien)</div>
-            <div className="text-[#00FFAA] font-extrabold mt-0.5">{notification.bantuanCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
+            <div className="text-[#00FFAA] font-extrabold mt-0.5">{formattedBantuanCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</div>
           </div>
         </div>
 
@@ -83,7 +86,7 @@ export default function WabahNotification({ notification, onAccept, onReject }: 
           {isHandled ? (
             <div className="text-[11px] font-bold text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/50 flex items-center gap-1.5">
               <Check className="w-3.5 h-3.5" />
-              <span>DANA MEDIS SEBESAR {notification.bantuanCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO TELAH DISALURKAN</span>
+              <span>DANA MEDIS SEBESAR {formattedBantuanCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO TELAH DISALURKAN</span>
             </div>
           ) : (
             <>
@@ -102,7 +105,7 @@ export default function WabahNotification({ notification, onAccept, onReject }: 
                   className="px-4 py-1.5 text-[10px] font-black uppercase tracking-wider bg-[#00FFAA] hover:bg-emerald-400 text-[#0A1A1A] rounded-xl transition-all cursor-pointer shadow-[0_0_15px_rgba(0,255,170,0.3)] flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <Stethoscope className="w-3.5 h-3.5" />
-                  Bantu Medis ({notification.bantuanCost?.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO)
+                  Bantu Medis ({formattedBantuanCost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO)
                 </button>
               )}
             </>

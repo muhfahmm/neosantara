@@ -7,6 +7,7 @@ export interface ListrikDefisitNotification extends NotificationMessage {
   deficitMW: number;
   deficitPct: number;
   deficitStep: number;
+  ratingPenalty?: number;
 }
 
 export function generateListrikDefisitNotification(
@@ -21,14 +22,19 @@ export function generateListrikDefisitNotification(
   const formattedProd = totalProduction.toLocaleString('id-ID', { maximumFractionDigits: 2 });
   const formattedCons = totalConsumption.toLocaleString('id-ID', { maximumFractionDigits: 2 });
 
+  // Setiap notifikasi kelistrikan kurang menurunkan rating sebesar 1 poin
+  const ratingPenalty = 1; // Setiap notifikasi turun 1 poin
+
+  const penaltyMessage = `\n\n⚠️ DAMPAK TERHADAP KEPERCAYAAN PUBLIK:\nKrisis kelistrikan ini mengurangi peringkat kepuasan rakyat sebesar ${ratingPenalty} poin. Setiap notifikasi kelistrikan kurang akan menurunkan peringkat Anda.`;
+
   return {
     id: `listrik-defisit-${deficitStep}-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
     title: `⚡ PERINGATAN KRISIS LISTRIK: Defisit Daya reach ${deficitStep}%`,
     sender: `PT PLN (Persero) & Grid Kelistrikan Nasional`,
-    message: `Grid kelistrikan nasional mengalami defisit pasokan listrik sebesar -${formattedDeficitMW} MW (-${deficitStep}% dari total beban). Total produksi saat ini ${formattedProd} MW sedangkan estimasi konsumsi mencapai ${formattedCons} MW. Segera bangun atau operasikan pembangkit listrik tambahan untuk menghindari pemadaman bergilir masif!`,
+    message: `Grid kelistrikan nasional mengalami defisit pasokan listrik sebesar -${formattedDeficitMW} MW (-${deficitStep}% dari total beban). Total produksi saat ini ${formattedProd} MW sedangkan estimasi konsumsi mencapai ${formattedCons} MW. Segera bangun atau operasikan pembangkit listrik tambahan untuk menghindari pemadatan bergilir masif!${penaltyMessage}`,
     timestamp: dateStr,
-    type: 'kepuasan',
-    value: deficitStep,
+    type: 'peringkat', // Mengubah dari 'kepuasan' ke 'peringkat' untuk memicu penurunan rating
+    value: -ratingPenalty, // Nilai negatif untuk menurunkan rating
     isRead: false,
     tradeType: 'defisit_listrik',
     totalProduction,
@@ -36,5 +42,6 @@ export function generateListrikDefisitNotification(
     deficitMW,
     deficitPct,
     deficitStep,
+    ratingPenalty,
   };
 }

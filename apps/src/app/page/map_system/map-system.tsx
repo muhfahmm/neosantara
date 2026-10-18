@@ -15,6 +15,14 @@ import { handleGameRestart } from '../time_controllers';
 import dynamic from 'next/dynamic';
 import useKeyboardShortcuts from '../keyword';
 import { subMenuItems } from '../navigasi_menu/navigationData';
+import {
+    canAcceptTradeDeal,
+    getTradeRejectionDescription,
+} from '../menus/inbox/logic/3_notifikasi_perdagangan/tradeValidationLogic';
+import {
+    calculateTradeAccess,
+    getAverageNationalization,
+} from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/tradeAccessLogic';
 
 const GameMenuModal = dynamic(() => import('../navbar/GameMenuModal').then(m => m.GameMenuModal), { ssr: false });
 const TopNav = dynamic(() => import('../navigasi_menu/1_navigasi_atas/TopNav'), { ssr: false });
@@ -25,6 +33,8 @@ type KudetaType = import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta')
 const ModalsAnnexedGameOver = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsAnnexedGameOver'), { ssr: false });
 const DiplomacyTracking = dynamic(() => import('../menus/tracking-modals/tracking'), { ssr: false });
 const ResultModal = dynamic(() => import('./warResultModal'), { ssr: false });
+const TradeRejectionModal = dynamic(() => import('../menus/inbox/logic/3_notifikasi_perdagangan/tradeRejectionModal'), { ssr: false });
+const ClosedTradeRejectionModal = dynamic(() => import('../menus/inbox/logic/3_notifikasi_perdagangan/ClosedTradeRejectionModal'), { ssr: false });
 
 export function lootUserProductionInventory(countryDetail: any, currentDateStr: string): { updatedDetail: any; lootedSummaryText: string } {
     if (!countryDetail) return { updatedDetail: countryDetail, lootedSummaryText: '' };
@@ -143,7 +153,12 @@ import { generateKeamananNotification } from '../menus/inbox/logic/14_notifikasi
 import {
     EPIDEMIC_BASE_CHANCE_PERCENT,
     generateWabahPenyakitNotification,
+    canPandemicOccur,
+    canEpidemicOccur,
     PANDEMIC_BASE_CHANCE_PERCENT,
+    handleMedicalAssistance,
+    deactivateOutbreak,
+    applyOutbreakPopulationLoss,
 } from '../menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic';
 import { generateSpionaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/1_spionase/spionaseLogic';
 import { generateSabotaseNotification } from '../menus/inbox/logic/2_notifikasi_pertahanan/2_sabotase/sabotaseLogic';
@@ -685,6 +700,34 @@ export default function MapPage() {
     const [inboxModalOpen, setInboxModalOpen] = useState(false);
     const [giftModalOpen, setGiftModalOpen] = useState(false);
     const [newsModalOpen, setNewsModalOpen] = useState(false);
+    const [tradeRejectionState, setTradeRejectionState] = useState<{
+        isOpen: boolean;
+        partnerCountry: string;
+        tradeType: 'jual' | 'beli';
+        reason?: 'closed_system' | 'high_centralization';
+        ekonomiNegara?: string;
+    }>({
+        isOpen: false,
+        partnerCountry: '',
+        tradeType: 'jual',
+    });
+    const [closedTradeRejectionState, setClosedTradeRejectionState] = useState<{
+        isOpen: boolean;
+        partnerCountry: string;
+        centralizationScore: number;
+        averageNationalization: number;
+        ideologyModifier: number;
+        religionModifier: number;
+        reasons: string[];
+    }>({
+        isOpen: false,
+        partnerCountry: '',
+        centralizationScore: 0,
+        averageNationalization: 0,
+        ideologyModifier: 1,
+        religionModifier: 1,
+        reasons: [],
+    });
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -3031,8 +3074,20 @@ export default function MapPage() {
             const outbreakRoll = Math.random() * 100;
 
             // Ambang acak ganda agar probabilitas tidak berpola tetap
-            const isPandemicHit = outbreakRoll < (dynamicPandemicChance * (0.7 + Math.random() * 0.6));
-            const isEpidemicHit = !isPandemicHit && outbreakRoll < (dynamicEpidemicChance * (0.75 + Math.random() * 0.5));
+            let isPandemicHit = outbreakRoll < (dynamicPandemicChance * (0.7 + Math.random() * 0.6));
+            let isEpidemicHit = !isPandemicHit && outbreakRoll < (dynamicEpidemicChance * (0.75 + Math.random() * 0.5));
+
+            // 🔒 APPLY FREQUENCY CONTROLS
+            // Pandemi: 0-1 kali setahun
+            if (isPandemicHit && !canPandemicOccur(countryDetail, currentDateStr)) {
+                isPandemicHit = false;
+            }
+
+            // Epidemi: 1-5 kali setahun dengan minimum 2 minggu spacing
+            if (isEpidemicHit && !canEpidemicOccur(countryDetail, currentDateStr)) {
+                isEpidemicHit = false;
+            }
+
             const outbreakType = isPandemicHit ? 'pandemi' : isEpidemicHit ? 'epidemi' : null;
 
             if (outbreakType) {
@@ -3046,12 +3101,18 @@ export default function MapPage() {
                     outbreakType
                 );
                 newNotifsToAdd.push(outbreak);
+                
+                // 💀 APPLY POPULATION LOSS IMMEDIATELY
+                // Populasi langsung berkurang sebesar perkiraanKematian (tidak bertahap)
+                const populationAfterOutbreak = applyOutbreakPopulationLoss(currentPopulation, outbreak);
+                
                 setCountryDetail((prev: any) => {
                     if (!prev) return prev;
                     const prevConsecutive = Number(prev.consecutive_outbreak_count || 0);
                     const outbreakSeverityBoost = outbreakType === 'pandemi' ? 2 : 1;
                     return {
                         ...prev,
+                        jumlah_penduduk: populationAfterOutbreak,
                         consecutive_outbreak_count: prevConsecutive + outbreakSeverityBoost,
                         active_outbreaks: [
                             ...(Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : []),
@@ -5872,6 +5933,40 @@ export default function MapPage() {
                     }
 
                     if (tNotif.tradeType === 'jual') {
+                        // ✅ CHECK 1: Apakah negara terisolasi karena sistem ekonomi tertutup (skor sentralisasi >= 85)?
+                        const userTradeAccess = calculateTradeAccess(
+                            getAverageNationalization(countryDetail?.sector_nationalization),
+                            String(countryDetail?.ideology || ''),
+                            String(countryDetail?.religion || '')
+                        );
+                        if (userTradeAccess.status === 'diblokir' || !userTradeAccess.canSell) {
+                            setInboxModalOpen(false);
+                            setClosedTradeRejectionState({
+                                isOpen: true,
+                                partnerCountry: tNotif.partnerName || 'Mitra Dagang',
+                                centralizationScore: userTradeAccess.centralizationScore,
+                                averageNationalization: userTradeAccess.averageNationalization,
+                                ideologyModifier: userTradeAccess.ideologyModifier,
+                                religionModifier: userTradeAccess.religionModifier,
+                                reasons: userTradeAccess.reason,
+                            });
+                            return;
+                        }
+
+                        // ✅ CHECK 2: EKONOMI TERBUKA?
+                        const { isAllowed, reason, ekonomiNegara } = canAcceptTradeDeal(countryDetail);
+                        if (!isAllowed) {
+                            setInboxModalOpen(false);
+                            setTradeRejectionState({
+                                isOpen: true,
+                                partnerCountry: tNotif.partnerName || 'Mitra Dagang',
+                                tradeType: 'jual',
+                                reason: reason as any,
+                                ekonomiNegara,
+                            });
+                            return;
+                        }
+
                         // AI Ingin Membeli Produk User (Jual): Tambah Kas, Kurangi Stok User
                         const myStock = Number(countryDetail?.[tNotif.productKey] || 0);
                         if (myStock < tNotif.quantity) {
@@ -5913,6 +6008,40 @@ export default function MapPage() {
                     }
 
                     if (tNotif.tradeType === 'beli') {
+                        // ✅ CHECK 1: Apakah negara terisolasi karena sistem ekonomi tertutup (skor sentralisasi >= 85 atau canBuy false)?
+                        const userTradeAccess = calculateTradeAccess(
+                            getAverageNationalization(countryDetail?.sector_nationalization),
+                            String(countryDetail?.ideology || ''),
+                            String(countryDetail?.religion || '')
+                        );
+                        if (userTradeAccess.status === 'diblokir' || !userTradeAccess.canBuy) {
+                            setInboxModalOpen(false);
+                            setClosedTradeRejectionState({
+                                isOpen: true,
+                                partnerCountry: tNotif.partnerName || 'Mitra Dagang',
+                                centralizationScore: userTradeAccess.centralizationScore,
+                                averageNationalization: userTradeAccess.averageNationalization,
+                                ideologyModifier: userTradeAccess.ideologyModifier,
+                                religionModifier: userTradeAccess.religionModifier,
+                                reasons: userTradeAccess.reason,
+                            });
+                            return;
+                        }
+
+                        // ✅ CHECK 2: EKONOMI TERBUKA?
+                        const { isAllowed, reason, ekonomiNegara } = canAcceptTradeDeal(countryDetail);
+                        if (!isAllowed) {
+                            setInboxModalOpen(false);
+                            setTradeRejectionState({
+                                isOpen: true,
+                                partnerCountry: tNotif.partnerName || 'Mitra Dagang',
+                                tradeType: 'beli',
+                                reason: reason as any,
+                                ekonomiNegara,
+                            });
+                            return;
+                        }
+
                         // AI Menjual ke User (Beli): Kurangi Kas, Tambah Stok User
                         const budget = Number(countryDetail?.anggaran || 0);
                         if (budget < tNotif.totalPrice) {
@@ -5971,6 +6100,27 @@ export default function MapPage() {
                     if (tNotif.tradeType === 'penawaran_hubungan_dagang') {
                         const partner = tNotif.partnerCountry;
                         const playerCountryName = countryDetail?.country || countryDetail?.nama_negara || countryDetail?.name || 'Indonesia';
+
+                        // ✅ CHECK: Apakah negara menganut sistem tertutup (skor sentralisasi >= 85)?
+                        const userTradeAccess = calculateTradeAccess(
+                            getAverageNationalization(countryDetail?.sector_nationalization),
+                            String(countryDetail?.ideology || ''),
+                            String(countryDetail?.religion || '')
+                        );
+                        if (userTradeAccess.status === 'diblokir') {
+                            setInboxModalOpen(false);
+                            setClosedTradeRejectionState({
+                                isOpen: true,
+                                partnerCountry: partner || 'Mitra Dagang',
+                                centralizationScore: userTradeAccess.centralizationScore,
+                                averageNationalization: userTradeAccess.averageNationalization,
+                                ideologyModifier: userTradeAccess.ideologyModifier,
+                                religionModifier: userTradeAccess.religionModifier,
+                                reasons: userTradeAccess.reason,
+                            });
+                            return;
+                        }
+
                         if (isTradeEmbargoActive(playerCountryName, partner)) {
                             setInboxModalOpen(false);
                             setResultModal({
@@ -6226,7 +6376,13 @@ export default function MapPage() {
                     if (tNotif.tradeType === 'keamanan' || tNotif.tradeType === 'bencana_alam' || tNotif.tradeType === 'wabah_penyakit') {
                         const isPoliceIncident = tNotif.tradeType === 'keamanan' ||
                             (tNotif.tradeType === 'bencana_alam' && tNotif.eventType === 'police');
-                        const cost = Number((isPoliceIncident ? tNotif.responseCost : undefined) ?? tNotif.bantuanCost ?? 0);
+                        let cost = Number((isPoliceIncident ? tNotif.responseCost : undefined) ?? tNotif.bantuanCost ?? 0);
+                        
+                        // Format medical cost for wabah_penyakit (remove last 3 digits)
+                        if (tNotif.tradeType === 'wabah_penyakit') {
+                            cost = Math.floor(cost / 1000);
+                        }
+                        
                         const budget = Number(countryDetail?.anggaran || 0);
                         if (budget < cost) {
                             setInboxModalOpen(false);
@@ -6251,22 +6407,45 @@ export default function MapPage() {
                             setPresidentRating(nextPresidentRating);
                         }
 
-                        setCountryDetail((prev: any) => ({
-                            ...prev,
-                            anggaran: budget - cost,
-                            presidentRating: nextPresidentRating,
-                            tingkat_keamanan: isPoliceIncident
-                                ? Math.min(100, Number(prev?.tingkat_keamanan || 0) + 2)
-                                : prev?.tingkat_keamanan,
-                            kepuasan_masyarakat: Math.min(100, Number(prev?.kepuasan_masyarakat || 50) + (isPoliceIncident ? 1 : 2)),
-                            indeks_kesejahteraan: Math.min(100, Number(prev?.indeks_kesejahteraan || 50) + (isPoliceIncident ? 1 : 2)),
-                            active_outbreaks: Array.isArray(prev?.active_outbreaks)
-                                ? prev.active_outbreaks.map((o: any) => o.id === notif.id ? { ...o, isHandled: true } : o)
-                                : prev?.active_outbreaks,
-                            active_disaster_effects: Array.isArray(prev?.active_disaster_effects)
-                                ? prev.active_disaster_effects.map((d: any) => d.id === notif.id ? { ...d, isHandled: true } : d)
-                                : prev?.active_disaster_effects,
-                        }));
+                        // Restore populasi yang hilang dari outbreak
+                        let populationToRestore = 0;
+                        if (tNotif.tradeType === 'wabah_penyakit') {
+                            // Cari outbreak yang ditangani
+                            const activeOutbreak = Array.isArray(countryDetail?.active_outbreaks)
+                                ? countryDetail.active_outbreaks.find((o: any) => o.id === notif.id)
+                                : null;
+                            
+                            if (activeOutbreak) {
+                                // Restore semua korban yang hilang karena bantuan medis diberikan
+                                populationToRestore = activeOutbreak.perkiraanKematian || 0;
+                            }
+                        }
+
+                        setCountryDetail((prev: any) => {
+                            let updatedPrev = {
+                                ...prev,
+                                anggaran: budget - cost,
+                                presidentRating: nextPresidentRating,
+                                tingkat_keamanan: isPoliceIncident
+                                    ? Math.min(100, Number(prev?.tingkat_keamanan || 0) + 2)
+                                    : prev?.tingkat_keamanan,
+                                kepuasan_masyarakat: Math.min(100, Number(prev?.kepuasan_masyarakat || 50) + (isPoliceIncident ? 1 : 2)),
+                                indeks_kesejahteraan: Math.min(100, Number(prev?.indeks_kesejahteraan || 50) + (isPoliceIncident ? 1 : 2)),
+                                active_outbreaks: Array.isArray(prev?.active_outbreaks)
+                                    ? prev.active_outbreaks.map((o: any) => o.id === notif.id ? { ...o, isHandled: true } : o)
+                                    : prev?.active_outbreaks,
+                                active_disaster_effects: Array.isArray(prev?.active_disaster_effects)
+                                    ? prev.active_disaster_effects.map((d: any) => d.id === notif.id ? { ...d, isHandled: true } : d)
+                                    : prev?.active_disaster_effects,
+                            };
+
+                            // Restore populasi - tambahkan kembali semua perkiraanKematian
+                            if (populationToRestore > 0 && tNotif.tradeType === 'wabah_penyakit') {
+                                updatedPrev.jumlah_penduduk = Number(prev?.jumlah_penduduk || 0) + populationToRestore;
+                            }
+
+                            return updatedPrev;
+                        });
 
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
                         setInboxModalOpen(false);
@@ -6275,7 +6454,7 @@ export default function MapPage() {
                             title: isPoliceIncident ? 'Operasi Kepolisian Berhasil' : 'Bantuan Darurat Disalurkan',
                             message: isPoliceIncident
                                 ? `Operasi kepolisian berhasil didanai sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO. Tingkat keamanan, kepuasan, dan kesejahteraan meningkat.`
-                                : `Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO! Peringkat Presiden naik +5 poin, serta Kepuasan & Kesejahteraan masyarakat meningkat.`,
+                                : `Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO! ${populationToRestore > 0 ? `${populationToRestore.toLocaleString('id-ID')} jiwa selamat. ` : ''}Peringkat Presiden naik +5 poin, serta Kepuasan & Kesejahteraan masyarakat meningkat.`,
                             type: 'success',
                             persistent: true,
                             // modal decoupled
@@ -7290,6 +7469,30 @@ export default function MapPage() {
                 onClose={() => {
                     setResultModal(prev => ({ ...prev, isOpen: false }));
                 }}
+            />
+
+            <TradeRejectionModal
+                isOpen={tradeRejectionState.isOpen}
+                onClose={() => {
+                    setTradeRejectionState(prev => ({ ...prev, isOpen: false }));
+                }}
+                partnerCountry={tradeRejectionState.partnerCountry}
+                tradeType={tradeRejectionState.tradeType}
+                reason={tradeRejectionState.reason}
+                customReason={tradeRejectionState.ekonomiNegara}
+            />
+
+            <ClosedTradeRejectionModal
+                isOpen={closedTradeRejectionState.isOpen}
+                onClose={() => {
+                    setClosedTradeRejectionState(prev => ({ ...prev, isOpen: false }));
+                }}
+                partnerCountry={closedTradeRejectionState.partnerCountry}
+                centralizationScore={closedTradeRejectionState.centralizationScore}
+                averageNationalization={closedTradeRejectionState.averageNationalization}
+                ideologyModifier={closedTradeRejectionState.ideologyModifier}
+                religionModifier={closedTradeRejectionState.religionModifier}
+                reasons={closedTradeRejectionState.reasons}
             />
         </main>
     );
