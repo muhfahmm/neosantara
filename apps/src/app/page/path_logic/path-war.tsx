@@ -1039,18 +1039,22 @@ export default function WarMap({
               ) : (
                 <>
                   <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A] mb-2">
-                    {result === 'win' ? 'Pilih Aneksasi atau Opsi Taktis:' : 'Pilihan:'}
+                    {result === 'win'
+                      ? (isPbbCoalition ? 'PILIH OPSI TAKTIS PASUKAN PBB:' : 'Pilih Aneksasi atau Opsi Taktis:')
+                      : 'Pilihan:'}
                   </p>
 
                   {result === 'win' ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <ActionButton
-                        icon={<Flag className="h-5 w-5" />}
-                        title="Aneksasi"
-                        desc="Caplok & integrasikan wilayah target"
-                        accent="#00FFAA"
-                        onClick={() => handleAction('annex')}
-                      />
+                    <div className={`grid grid-cols-1 ${isPbbCoalition ? 'sm:grid-cols-2' : 'sm:grid-cols-3'} gap-3`}>
+                      {!isPbbCoalition && (
+                        <ActionButton
+                          icon={<Flag className="h-5 w-5" />}
+                          title="Aneksasi"
+                          desc="Caplok & integrasikan wilayah target"
+                          accent="#00FFAA"
+                          onClick={() => handleAction('annex')}
+                        />
+                      )}
                       <ActionButton
                         icon={<Trophy className="h-5 w-5" />}
                         title="Jarah SDA"
