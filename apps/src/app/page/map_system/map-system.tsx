@@ -1689,9 +1689,23 @@ export default function MapPage() {
         window.addEventListener('start_icbm_target_selection', handleStartSelection);
         window.addEventListener('trigger_icbm_explosion_flash', handleExplosionFlash);
 
+        const handleIcbmStrikeArrived = (event: any) => {
+            const detail = event?.detail;
+            if (detail && detail.senderCountry && detail.targetCountry) {
+                // Ketika selesai penyerangan dengan ICBM, hubungan bilateral kedua negara berubah ke 20 secara default
+                setRelationSourceValue(detail.senderCountry, detail.targetCountry, 'icbm-strike', 20);
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('country_relations_updated'));
+                }
+            }
+        };
+
+        window.addEventListener('neosantara_icbm_strike_arrived', handleIcbmStrikeArrived);
+
         return () => {
             window.removeEventListener('start_icbm_target_selection', handleStartSelection);
             window.removeEventListener('trigger_icbm_explosion_flash', handleExplosionFlash);
+            window.removeEventListener('neosantara_icbm_strike_arrived', handleIcbmStrikeArrived);
         };
     }, []);
 

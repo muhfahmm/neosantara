@@ -14,7 +14,7 @@
  */
 
 import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
-import { setRelationModifier } from "@/../../json/4_database_hubungan_antar_negara/relationsRegistry";
+import { setRelationModifier, setRelationSourceValue } from "@/../../json/4_database_hubungan_antar_negara/relationsRegistry";
 import { expelCountryFromSecurityCouncil } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logika_anggota_tidak_tetap/securityCouncilElection";
 
 export interface IcbmStrikeParams {
@@ -42,6 +42,29 @@ const normalizeCountryString = (name: unknown): string => {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]/g, "");
 };
+
+/**
+ * Mengatur hubungan bilateral khusus antara negara penyerang dan negara target.
+ * Saat pertama kali diserang: diset ke 1.
+ * Saat serangan selesai: diubah ke 20 secara default.
+ */
+export function setIcbmBilateralRelation(
+  attackerCountry: string,
+  targetCountry: string,
+  value: 1 | 20
+): void {
+  const normA = normalizeCountryString(attackerCountry);
+  const normB = normalizeCountryString(targetCountry);
+
+  const matchA = COUNTRIES_DATA.find(c => normalizeCountryString(c.country || (c as any).nama_negara) === normA)?.country || attackerCountry;
+  const matchB = COUNTRIES_DATA.find(c => normalizeCountryString(c.country || (c as any).nama_negara) === normB)?.country || targetCountry;
+
+  setRelationSourceValue(matchA, matchB, "icbm-strike", value);
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("country_relations_updated"));
+  }
+}
 
 /**
  * Menerapkan pinalti hubungan diplomatik -5 poin ke seluruh 210 negara lain
@@ -102,17 +125,20 @@ export function launchIcbmWarStrike(params: IcbmStrikeParams): IcbmStrikeResult 
     };
   }
 
-  // 1. Terapkan pinalti hubungan diplomatik -5 poin ke seluruh negara di database selain 2 negara yang bertikai
+  // 1. Hubungan dengan negara yang diserang langsung turun ke 1 terlebih dulu saat pertama kali diserang
+  setIcbmBilateralRelation(attackerCountry, targetCountry, 1);
+
+  // 2. Terapkan pinalti hubungan diplomatik -5 poin ke seluruh negara di database selain 2 negara yang bertikai
   const affectedCount = applyIcbmGlobalRelationPenalty(attackerCountry, targetCountry);
 
-  // 2. Karena peluncuran ICBM adalah agresi tanpa mandat PBB, cabut status keanggotaan Dewan Keamanan
+  // 3. Karena peluncuran ICBM adalah agresi tanpa mandat PBB, cabut status keanggotaan Dewan Keamanan
   try {
     expelCountryFromSecurityCouncil(attackerCountry);
   } catch (err) {
     console.warn("[ICBM War] Gagal memeriksa status DK PBB:", err);
   }
 
-  // 3. Picu animasi path-icbm berwarna merah di layar lewat event pelacakan diplomasi/perang
+  // 4. Picu animasi path-icbm berwarna merah di layar lewat event pelacakan diplomasi/perang
   if (typeof window !== "undefined") {
     const pathId = `icbm-strike-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     window.dispatchEvent(
@@ -141,7 +167,7 @@ export function launchIcbmWarStrike(params: IcbmStrikeParams): IcbmStrikeResult 
 
   return {
     success: true,
-    message: `Rudal balistik ICBM berhasil diluncurkan dari ${attackerCountry} menuju ${targetCountry}! Hubungan dengan ${affectedCount} negara dunia lainnya turun 5 poin sebagai sanksi pinalti penggunaan senjata pemusnah massal.`,
+    message: `Rudal balistik ICBM berhasil diluncurkan dari ${attackerCountry} menuju ${targetCountry}! Hubungan bilateral turun ke level 1. Hubungan dengan ${affectedCount} negara dunia lainnya turun 5 poin sebagai sanksi pinalti.`,
     attackerCountry,
     targetCountry,
     affectedWorldCountriesCount: affectedCount,

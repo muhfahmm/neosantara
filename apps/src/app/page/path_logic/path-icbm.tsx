@@ -81,9 +81,6 @@ export default function IcbmPath({
     lastReportedProgress.current = -1;
     const startingDayPosition = getSimulationDayPosition();
 
-    // Kecepatan balistik ICBM supersonik (2.5x lebih cepat dari armada/diplomasi biasa)
-    const speedMultiplier = 2.5;
-
     const updateRoute = (now: number) => {
       const delta = now - lastFrame;
       lastFrame = now;
@@ -91,10 +88,10 @@ export default function IcbmPath({
       const currentDayPosition = getSimulationDayPosition();
 
       if (startingDayPosition !== null && currentDayPosition !== null) {
-        elapsedDays = Math.max(elapsedDays, (currentDayPosition - startingDayPosition) * speedMultiplier);
+        elapsedDays = Math.max(elapsedDays, currentDayPosition - startingDayPosition);
       } else if (!isPaused) {
         const millisecondsPerDay = getSimulationMillisecondsPerDay() ?? 2500;
-        elapsedDays += (delta / millisecondsPerDay) * speedMultiplier;
+        elapsedDays += delta / millisecondsPerDay;
       }
 
       const start = getMapScreenPos(sender.lat, sender.lng);
