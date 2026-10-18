@@ -819,9 +819,13 @@ export default function MapPage() {
         notifyColorsChanged();
         window.addEventListener('country_relations_updated', notifyColorsChanged);
         window.addEventListener('world_map_features_ready', notifyColorsChanged);
+        window.addEventListener('map_territory_color_updated', notifyColorsChanged);
+        window.addEventListener('annexation_completed', notifyColorsChanged);
         return () => {
             window.removeEventListener('country_relations_updated', notifyColorsChanged);
             window.removeEventListener('world_map_features_ready', notifyColorsChanged);
+            window.removeEventListener('map_territory_color_updated', notifyColorsChanged);
+            window.removeEventListener('annexation_completed', notifyColorsChanged);
         };
     }, [isDiplomacyMapActive, selectedCountry?.country, countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, currentDate]);
 
@@ -2390,14 +2394,8 @@ export default function MapPage() {
                 ? (action as (value: NotificationMessage[]) => NotificationMessage[])(prev)
                 : action;
             const prevIds = new Set(prev.map(n => n.id));
-            const isExempt = (n: NotificationMessage) => {
-                // Aksi langsung pemain: selalu lolos
-                if (/player|user|province|requested|self-|aid-/i.test(String(n.id))) return true;
-                // Sanksi & notifikasi pelanggaran PBB: selalu langsung masuk tanpa kuota
-                // (mis. serangan tanpa resolusi, larangan perang, pencabutan keanggotaan, ekspulsi DK PBB)
-                if (/pbb|expulsion|unapproved|war-ban|war-no-mandate|sanction|violation|dk-/i.test(String(n.id))) return true;
-                return false;
-            };
+            const isExempt = (n: NotificationMessage) =>
+                /player|user|province|requested|self-|aid-/i.test(String(n.id));
             const isPausedNow = isPausedRef.current ||
                 (typeof window !== 'undefined' && Boolean((window as any).neosantara_is_paused));
             const today = notificationDateRef.current;
@@ -5666,33 +5664,43 @@ export default function MapPage() {
                     const features = w.neosantara_world_geojson_features;
                     if (!Array.isArray(features)) return;
                     const diplomacyActive = Boolean(w.neosantara_diplomacy_map_active);
+                    const overrides = w.neosantara_country_color_overrides || EMPTY_COUNTRY_OVERRIDES;
+                    const annexedCountries = w.neosantara_annexed_countries || EMPTY_ANNEXED_COUNTRIES;
+                    const annexedKeys = new Set(
+                        Object.entries(annexedCountries)
+                            .filter(([, info]) => typeof info === 'object' && info !== null && 'attackerCountry' in (info as object))
+                            .map(([key]) => normalizeCountryKey(key))
+                    );
+                    const validOverrides = Object.entries(overrides as Record<string, string>)
+                        .filter(([key]) => annexedKeys.has(normalizeCountryKey(key)))
+                        .map(([key, color]) => [normalizeCountryKey(key), color] as const);
+
+                    const getFeatureOverrideColor = (feature: { properties?: Record<string, unknown> }) => {
+                        const properties = feature?.properties;
+                        if (!properties || validOverrides.length === 0) return null;
+                        const featureKeys = new Set([
+                            properties.ISO_A2, properties.ISO_A2_EH, properties.ISO_A3, properties.ISO_A3_EH,
+                            `iso_${properties.ISO_A2 || properties.ISO_A2_EH || ''}`,
+                            `iso_${properties.ISO_A3 || properties.ISO_A3_EH || ''}`,
+                            properties.NAME, properties.ADMIN, properties.NAME_LONG, properties.GEOUNIT,
+                            properties.NAME_ID, properties.NAME_EN, properties.NAME_IND
+                        ].filter((key): key is string => typeof key === 'string' && key.length > 0)
+                            .map(normalizeCountryKey));
+                        return validOverrides.find(([key]) => featureKeys.has(key))?.[1] ?? null;
+                    };
+
                     let colors: Array<string | null>;
                     if (diplomacyActive) {
                         const src: Array<string | undefined> = w.neosantara_diplomacy_map_feature_colors || [];
-                        colors = features.map((_: unknown, i: number) => src[i] ?? null);
+                        colors = features.map((feature: { properties?: Record<string, unknown> }, i: number) => {
+                            // Jika negara ini adalah wilayah aneksasi pemain, SELALU gunakan warna aneksasi (hijau)
+                            const overrideColor = getFeatureOverrideColor(feature);
+                            if (overrideColor) return overrideColor;
+                            return src[i] ?? null;
+                        });
                     } else {
-                        const overrides = w.neosantara_country_color_overrides || EMPTY_COUNTRY_OVERRIDES;
-                        const annexedCountries = w.neosantara_annexed_countries || EMPTY_ANNEXED_COUNTRIES;
-                        const annexedKeys = new Set(
-                            Object.entries(annexedCountries)
-                                .filter(([, info]) => typeof info === 'object' && info !== null && 'attackerCountry' in (info as object))
-                                .map(([key]) => normalizeCountryKey(key))
-                        );
-                        const validOverrides = Object.entries(overrides as Record<string, string>)
-                            .filter(([key]) => annexedKeys.has(normalizeCountryKey(key)))
-                            .map(([key, color]) => [normalizeCountryKey(key), color] as const);
                         colors = features.map((feature: { properties?: Record<string, unknown> }) => {
-                            const properties = feature?.properties;
-                            if (!properties || validOverrides.length === 0) return null;
-                            const featureKeys = new Set([
-                                properties.ISO_A2, properties.ISO_A2_EH, properties.ISO_A3, properties.ISO_A3_EH,
-                                `iso_${properties.ISO_A2 || properties.ISO_A2_EH || ''}`,
-                                `iso_${properties.ISO_A3 || properties.ISO_A3_EH || ''}`,
-                                properties.NAME, properties.ADMIN, properties.NAME_LONG, properties.GEOUNIT,
-                                properties.NAME_ID, properties.NAME_EN, properties.NAME_IND
-                            ].filter((key): key is string => typeof key === 'string' && key.length > 0)
-                                .map(normalizeCountryKey));
-                            return validOverrides.find(([key]) => featureKeys.has(key))?.[1] ?? null;
+                            return getFeatureOverrideColor(feature);
                         });
                     }
                     wasmModule.set_feature_colors_on_map(colors, diplomacyActive);
