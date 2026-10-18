@@ -10,10 +10,19 @@ import {
   handleMedicalAssistance,
   deactivateOutbreak,
   PANDEMIC_YEARLY_DISTRIBUTION,
+  PANDEMIC_YEARLY_PERCENTAGE_CYCLE,
+  getPandemicBaseChancePercentByYear,
+  getPandemicYearlyDistribution,
   EPIDEMIC_YEARLY_DISTRIBUTION,
   determineYearlyOutbreakCount,
   parseYearMonth,
 } from './outbreakManagement';
+
+export {
+  PANDEMIC_YEARLY_PERCENTAGE_CYCLE,
+  getPandemicBaseChancePercentByYear,
+  getPandemicYearlyDistribution,
+};
 
 export interface WabahPenyakitNotification extends NotificationMessage {
   tradeType: 'wabah_penyakit';
@@ -51,7 +60,7 @@ const SKENARIO_PANDEMI = [
 const POPULASI_ACUAN = 50_000_000;
 
 export const EPIDEMIC_BASE_CHANCE_PERCENT = 50;
-export const PANDEMIC_BASE_CHANCE_PERCENT = 25;
+export const PANDEMIC_BASE_CHANCE_PERCENT = 30; // Tahun pertama: 30%
 
 const randomInRange = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min + 1)) + min;

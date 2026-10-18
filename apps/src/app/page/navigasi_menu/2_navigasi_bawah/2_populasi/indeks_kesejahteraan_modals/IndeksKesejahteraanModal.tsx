@@ -25,6 +25,7 @@ import { isMemberOfInterpol, getInterpolCrimeRiskModifier, isMemberOfWHO, getWHO
 import {
   EPIDEMIC_BASE_CHANCE_PERCENT,
   PANDEMIC_BASE_CHANCE_PERCENT,
+  getPandemicBaseChancePercentByYear,
 } from "@/app/page/menus/inbox/logic/6_notifikasi_bencana/2_wabah_penyakit/wabahLogic";
 import NaikkanKesejahteraanTab from "./NaikkanKesejahteraanTab";
 
@@ -356,8 +357,14 @@ export default function IndeksKesejahteraanModal({
                       const countryName = selectedCountry?.country || countryDetail?.country || "";
                       const whoModifier = getWHOPandemicRiskModifier(countryName, countryDetail);
                       const isWHOMember = isMemberOfWHO(countryName);
+                      const currentDateStr = currentDate instanceof Date
+                        ? `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
+                        : typeof currentDate === 'string'
+                        ? currentDate
+                        : new Date().toISOString().slice(0, 10);
+                      const pandemicBase = getPandemicBaseChancePercentByYear(countryDetail, currentDateStr);
                       const risikoEpidemiPercent = Math.max(0, EPIDEMIC_BASE_CHANCE_PERCENT + whoModifier);
-                      const risikoPandemiPercent = Math.max(0, PANDEMIC_BASE_CHANCE_PERCENT + whoModifier);
+                      const risikoPandemiPercent = Math.max(0, pandemicBase + whoModifier);
 
                       return (
                         <div
@@ -793,8 +800,14 @@ export default function IndeksKesejahteraanModal({
               const countryName = selectedCountry?.country || countryDetail?.country || "";
               const whoModifier = getWHOPandemicRiskModifier(countryName, countryDetail);
               const isWHOMember = isMemberOfWHO(countryName);
+              const currentDateStr = currentDate instanceof Date
+                ? `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
+                : typeof currentDate === 'string'
+                ? currentDate
+                : new Date().toISOString().slice(0, 10);
+              const pandemicBase = getPandemicBaseChancePercentByYear(countryDetail, currentDateStr);
               const risikoEpidemiPercent = Math.max(0, EPIDEMIC_BASE_CHANCE_PERCENT + whoModifier);
-              const risikoPandemiPercent = Math.max(0, PANDEMIC_BASE_CHANCE_PERCENT + whoModifier);
+              const risikoPandemiPercent = Math.max(0, pandemicBase + whoModifier);
               const isPenalty = kesehatanActualScore <= 65;
               return (
                 <div className="space-y-4 flex-1 overflow-y-auto custom-scrollbar pr-1">

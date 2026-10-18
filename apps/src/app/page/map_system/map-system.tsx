@@ -156,6 +156,7 @@ import {
     canPandemicOccur,
     canEpidemicOccur,
     PANDEMIC_BASE_CHANCE_PERCENT,
+    getPandemicBaseChancePercentByYear,
     handleMedicalAssistance,
     deactivateOutbreak,
     applyOutbreakPopulationLoss,
@@ -3069,7 +3070,8 @@ export default function MapPage() {
             // 🎲 WABAH & PANDEMI: Anomali acak, faktor resistensi & variabilitas tidak tertebak
             const whoPandemicModifier = getWHOPandemicRiskModifier(userCountryName, countryDetail);
             const randomOutbreakNoise = (Math.random() - 0.5) * 12; // Fluktuasi risiko ±6%
-            const dynamicPandemicChance = Math.max(5, PANDEMIC_BASE_CHANCE_PERCENT + whoPandemicModifier + randomOutbreakNoise);
+            const currentYearPandemicBase = getPandemicBaseChancePercentByYear(countryDetail, currentDateStr);
+            const dynamicPandemicChance = Math.max(5, currentYearPandemicBase + whoPandemicModifier + randomOutbreakNoise);
             const dynamicEpidemicChance = Math.max(10, EPIDEMIC_BASE_CHANCE_PERCENT + whoPandemicModifier + randomOutbreakNoise);
             const outbreakRoll = Math.random() * 100;
 

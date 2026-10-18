@@ -18,14 +18,57 @@ export interface YearlyOutbreakDistribution {
 
 /**
  * Pandemi: 0-1 kali per tahun
- * - 0 kali: 70%
- * - 1 kali: 20%
- * - >1 kali: 10% (fallback ke 1 kali)
+ * Pola Persentase Kemunculan Pandemi per Tahun:
+ * - Tahun ke-1: 30%
+ * - Tahun ke-2: 35%
+ * - Tahun ke-3: 40%
+ * - Tahun ke-4: 45%
+ * - Tahun ke-5: 50%
+ * - Tahun ke-6: kembali ke 30%
+ * - ... Tahun ke-10: 40% (siklus 5 tahunan: [30, 35, 40, 45, 50])
  */
+export const PANDEMIC_YEARLY_PERCENTAGE_CYCLE = [30, 35, 40, 45, 50] as const;
+
+export function getPandemicBaseChancePercentByYear(
+  countryDetail: any,
+  currentDateStr: string
+): number {
+  const currentYearMonth = parseYearMonth(currentDateStr);
+  const currentYear = currentYearMonth ? currentYearMonth.year : new Date().getFullYear();
+
+  // Ambil tahun mulai simulasi jika ada
+  let startYear = currentYear;
+  const gameStartStr = countryDetail?.game_start_date as string | undefined;
+  if (gameStartStr) {
+    const parsedStart = parseYearMonth(gameStartStr) || { year: parseInt(gameStartStr.split('-')[0], 10), month: 1 };
+    if (parsedStart && !isNaN(parsedStart.year)) {
+      startYear = parsedStart.year;
+    }
+  } else if (countryDetail?.game_start_year) {
+    startYear = Number(countryDetail.game_start_year);
+  }
+
+  // Hitung index tahun ke-berapa (tahun ke-1 = index 0)
+  const yearIndex = Math.max(0, currentYear - startYear);
+  const cycleIndex = yearIndex % PANDEMIC_YEARLY_PERCENTAGE_CYCLE.length;
+  return PANDEMIC_YEARLY_PERCENTAGE_CYCLE[cycleIndex];
+}
+
+export function getPandemicYearlyDistribution(
+  countryDetail: any,
+  currentDateStr: string
+): YearlyOutbreakDistribution[] {
+  const chancePercent = getPandemicBaseChancePercentByYear(countryDetail, currentDateStr);
+  const prob = chancePercent / 100;
+  return [
+    { count: 0, probability: Math.max(0, 1 - prob), description: `Tahun aman, 0 pandemi (${(100 - chancePercent)}%)` },
+    { count: 1, probability: prob, description: `1 pandemi dalam tahun ini (${chancePercent}%)` },
+  ];
+}
+
 export const PANDEMIC_YEARLY_DISTRIBUTION: YearlyOutbreakDistribution[] = [
   { count: 0, probability: 0.70, description: 'Tahun aman, 0 pandemi' },
-  { count: 1, probability: 0.20, description: '1 pandemi dalam tahun ini' },
-  { count: 1, probability: 0.10, description: '1 pandemi (fallback dari >1)' },
+  { count: 1, probability: 0.30, description: '1 pandemi dalam tahun ini (default th-1)' },
 ];
 
 /**
@@ -149,7 +192,7 @@ export function getRemainingOutbreakQuota(
     storedQuota = determineYearlyOutbreakCount(
       isEpidemic
         ? EPIDEMIC_YEARLY_DISTRIBUTION
-        : PANDEMIC_YEARLY_DISTRIBUTION
+        : getPandemicYearlyDistribution(countryDetail, currentDateStr)
     );
     console.log(
       `[Outbreak Quota] Year ${currentYearMonth.year}: ${isEpidemic ? 'Epidemi' : 'Pandemi'} quota = ${storedQuota}`
