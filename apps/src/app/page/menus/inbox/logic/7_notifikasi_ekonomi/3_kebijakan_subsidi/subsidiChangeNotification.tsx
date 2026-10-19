@@ -14,7 +14,7 @@ export default function SubsidiChangeNotificationCard({ notification, onAccept, 
   return (
     <div className={`border-l-4 ${isSubsidized ? 'bg-emerald-950/40 border-emerald-500' : 'bg-rose-950/40 border-rose-500'} p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border ${isSubsidized ? 'border-emerald-500/20' : 'border-rose-500/20'}`}>
       <div className={`w-11 h-11 rounded-xl ${isSubsidized ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' : 'bg-rose-500/20 border-rose-500/40 text-rose-400'} border flex items-center justify-center shrink-0 shadow-inner`}>
-        {isSubsidized ? <HandHelping className="w-6 h-6 text-emerald-400 animate-bounce" /> : <AlertTriangle className="w-6 h-6 text-rose-400 animate-pulse" />}
+        {isSubsidized ? <HandHelping className="w-6 h-6 text-emerald-400" /> : <AlertTriangle className="w-6 h-6 text-rose-400" />}
       </div>
 
       <div className="flex-1 space-y-2">

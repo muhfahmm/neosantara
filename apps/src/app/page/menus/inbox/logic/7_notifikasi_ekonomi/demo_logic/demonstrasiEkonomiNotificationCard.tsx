@@ -17,7 +17,7 @@ export default function DemonstrasiEkonomiNotificationCard({ notification, onAct
       {/* HEADER KARTU */}
       <div className="flex gap-4 items-start">
         <div className={`w-12 h-12 rounded-xl ${isEkstrem ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/20 text-amber-400'} border flex items-center justify-center shrink-0`}>
-          {isEkstrem ? <Flame className="w-7 h-7 animate-bounce" /> : <Megaphone className="w-6 h-6 animate-pulse" />}
+          {isEkstrem ? <Flame className="w-7 h-7" /> : <Megaphone className="w-6 h-6" />}
         </div>
         <div className="flex-1 space-y-1">
           <h4 className="text-sm font-black text-white uppercase tracking-wide leading-tight">
@@ -44,7 +44,7 @@ export default function DemonstrasiEkonomiNotificationCard({ notification, onAct
           notification.demo_status === 'selesai'
             ? 'text-emerald-400'
             : notification.demo_status === 'kerusuhan'
-            ? 'text-rose-500 animate-pulse font-extrabold'
+            ? 'text-rose-500 font-extrabold'
             : notification.demo_status === 'dialog'
             ? 'text-blue-400'
             : notification.demo_status === 'ignored'

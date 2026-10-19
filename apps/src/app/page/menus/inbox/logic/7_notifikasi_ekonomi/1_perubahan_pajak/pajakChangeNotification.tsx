@@ -14,7 +14,7 @@ export default function PajakChangeNotificationCard({ notification, onAccept, on
   return (
     <div className={`border-l-4 ${isIncrease ? 'bg-amber-950/40 border-amber-500' : 'bg-emerald-950/40 border-emerald-500'} p-4 sm:p-5 rounded-r-2xl shadow-lg flex gap-4 items-start select-none relative overflow-hidden transition-all border ${isIncrease ? 'border-amber-500/20' : 'border-emerald-500/20'}`}>
       <div className={`w-11 h-11 rounded-xl ${isIncrease ? 'bg-amber-500/20 border-amber-500/40 text-amber-400' : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'} border flex items-center justify-center shrink-0 shadow-inner`}>
-        {isIncrease ? <TrendingUp className="w-6 h-6 text-amber-400 animate-pulse" /> : <TrendingDown className="w-6 h-6 text-emerald-400 animate-bounce" />}
+        {isIncrease ? <TrendingUp className="w-6 h-6 text-amber-400" /> : <TrendingDown className="w-6 h-6 text-emerald-400" />}
       </div>
 
       <div className="flex-1 space-y-2">

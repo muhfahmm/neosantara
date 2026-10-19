@@ -663,7 +663,7 @@ export default function TopLeftIcon({
                                 <User className="w-4 h-4 text-[#00FFAA]" />
                               )}
                               {!notif.isRead && (
-                                <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                                <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-rose-500" />
                               )}
                             </div>
 
