@@ -1,4 +1,4 @@
-﻿// detail path: c:\EM\apps\src\app\page\map_system\map-system.tsx
+// detail path: c:\EM\apps\src\app\page\map_system\map-system.tsx
 'use client';
 
 import React, { memo, startTransition, useCallback, useState, useEffect, useRef } from 'react';
@@ -6195,13 +6195,6 @@ export default function MapPage() {
                             setPresidentRating((prev: number) => Math.min(100, prev + result.presidentRatingBonus));
                             setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, ...(result.updatedNotification || {}), isHandled: true } : n));
                             setInboxModalOpen(false);
-                            setResultModal({
-                                isOpen: true,
-                                title: 'Tuntutan Rakyat Dipenuhi',
-                                message: result.message,
-                                type: 'success',
-                                persistent: true,
-                            });
                             setActiveMenu(result.targetMenuId);
                             return;
                         } else if (actionType === 'ignore') {
