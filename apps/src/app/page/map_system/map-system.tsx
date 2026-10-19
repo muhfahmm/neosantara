@@ -3041,6 +3041,10 @@ export default function MapPage() {
         if (isPausedRef.current || (typeof window !== "undefined" && (window as any).neosantara_is_paused)) {
             return;
         }
+
+        let idleCallbackId: number | null = null;
+        let fallbackTimerId: number | null = null;
+        const runNotificationGenerator = () => {
         lastProcessedNotificationMonthRef.current = currentDateStr;
         lastProcessedNotificationDateRef.current = currentDateStr;
 
@@ -3945,6 +3949,21 @@ export default function MapPage() {
                 last_notified_listrik_step: currentListrikStep
             };
         });
+        };
+
+        const idleWindow = window as Window & {
+            requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+            cancelIdleCallback?: (id: number) => void;
+        };
+        if (idleWindow.requestIdleCallback) {
+            idleCallbackId = idleWindow.requestIdleCallback(runNotificationGenerator, { timeout: 1000 });
+        } else {
+            fallbackTimerId = window.setTimeout(runNotificationGenerator, 250);
+        }
+        return () => {
+            if (idleCallbackId !== null) idleWindow.cancelIdleCallback?.(idleCallbackId);
+            if (fallbackTimerId !== null) window.clearTimeout(fallbackTimerId);
+        };
     }, [currentDate, countryDetail, notifications, metadata, setCountryDetail]);
 
     const nonModalMenus = [
@@ -3994,20 +4013,37 @@ export default function MapPage() {
     const lastMapInteractionAtRef = useRef(0);
     const pendingDateRef = useRef<Date | null>(null);
     const dateCommitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const dateCommitIdleRef = useRef<number | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
     const schedulePendingDateCommit = useCallback(() => {
         if (!pendingDateRef.current) return;
         if (dateCommitTimerRef.current !== null) clearTimeout(dateCommitTimerRef.current);
+        if (dateCommitIdleRef.current !== null) {
+            (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(dateCommitIdleRef.current);
+            dateCommitIdleRef.current = null;
+        }
         const elapsedSinceInteraction = Date.now() - lastMapInteractionAtRef.current;
         // Jika user sedang drag peta, tunda commit (jangan batalkan) agar pergantian hari tidak terlewat
         const delay = isMapPointerDownRef.current ? 500 : Math.max(0, 180 - elapsedSinceInteraction);
-        dateCommitTimerRef.current = setTimeout(() => {
+        const commit = () => {
             dateCommitTimerRef.current = null;
+            dateCommitIdleRef.current = null;
             if (!pendingDateRef.current) return;
             const pendingDate = pendingDateRef.current;
             pendingDateRef.current = null;
             startTransition(() => setCurrentDate(pendingDate));
+        };
+        dateCommitTimerRef.current = setTimeout(() => {
+            dateCommitTimerRef.current = null;
+            const idleWindow = window as Window & {
+                requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+            };
+            if (idleWindow.requestIdleCallback) {
+                dateCommitIdleRef.current = idleWindow.requestIdleCallback(commit, { timeout: 150 });
+            } else {
+                commit();
+            }
         }, delay);
     }, []);
 
@@ -4016,6 +4052,10 @@ export default function MapPage() {
         if (dateCommitTimerRef.current !== null) {
             clearTimeout(dateCommitTimerRef.current);
             dateCommitTimerRef.current = null;
+        }
+        if (dateCommitIdleRef.current !== null) {
+            (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(dateCommitIdleRef.current);
+            dateCommitIdleRef.current = null;
         }
     }, []);
 
@@ -4819,7 +4859,6 @@ export default function MapPage() {
         }
     }, [currentDate, countryDetail, selectedCountry?.country]);
 
-    const prevBudgetUpdateDateRef = useRef<string | null>(null);
     const skipPopulationMetricsRefreshRef = useRef(false);
 
     // Log initial population metrics when the active country data changes.
@@ -4866,15 +4905,19 @@ export default function MapPage() {
                 if (managerDateStr !== currentDateStr) return;
             }
 
-            if (prevBudgetUpdateDateRef.current === null) {
-                prevBudgetUpdateDateRef.current = currentDateStr;
+            const lastDate = typeof countryDetail.last_daily_tick_date === 'string'
+                ? countryDetail.last_daily_tick_date.slice(0, 10)
+                : null;
+            if (!lastDate) {
+                // Persist the baseline so remounts cannot skip the next calendar tick.
+                setCountryDetail((prev: any) => prev && {
+                    ...prev,
+                    last_daily_tick_date: currentDateStr,
+                });
                 return;
             }
 
-            if (prevBudgetUpdateDateRef.current === currentDateStr) return;
-
-            const lastDate = prevBudgetUpdateDateRef.current;
-            prevBudgetUpdateDateRef.current = currentDateStr;
+            if (lastDate >= currentDateStr) return;
 
             // Calculate economy updates
             const playerCountryName = selectedCountry?.country || countryDetail.country || countryDetail.nama_negara || '';
@@ -5371,6 +5414,7 @@ export default function MapPage() {
                     ...updates,
                     ...populationUpdates,
                     anggaran: nextBudget,
+                    last_daily_tick_date: currentDateStr,
                     minister_recruitment_expense_pending: 0,
                     satisfaction: prev.satisfaction, // Preserve satisfaction scores
                     programNuklirActive: nextProgramNuklirActive,
@@ -5492,9 +5536,13 @@ export default function MapPage() {
             requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
             cancelIdleCallback?: (callbackId: number) => void;
         };
-        // Gunakan setTimeout yang reliabel & deterministik untuk memastikan daily tick
-        // selalu berjalan. requestIdleCallback tidak dijamin jalan saat browser busy.
-        fallbackTimerId = window.setTimeout(runDailyTick, 50);
+        // Daily simulation is expensive. Let the animation frame finish first;
+        // `timeout` guarantees progress while the map remains continuously busy.
+        if (idleWindow.requestIdleCallback) {
+            idleCallbackId = idleWindow.requestIdleCallback(runDailyTick, { timeout: 1000 });
+        } else {
+            fallbackTimerId = window.setTimeout(runDailyTick, 250);
+        }
 
         return () => {
             cancelled = true;
@@ -5585,7 +5633,6 @@ export default function MapPage() {
             // Reset semua notifikasi, warning flags, dan deep links
             setNotifications([]);
             setNewsList([]);
-            prevBudgetUpdateDateRef.current = null;
             lastObservedNewsResetDateRef.current = null;
             setHasShownEarlyWarning({ kepuasan: false, peringkat: false, kesejahteraan: false });
             setHasShownRatingWarning(false);

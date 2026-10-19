@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState, useEffect, useMemo } from "react";
-import { X, Users, Info, TrendingUp, ShieldAlert, BadgeDollarSign, Users2, ChevronRight } from "lucide-react";
+import { X, Users, Info, TrendingUp, ShieldAlert, BadgeDollarSign, Users2, ChevronRight, Clock } from "lucide-react";
 import NotebookModalWrapper from "../NotebookModalWrapper";
 import {
   calculateSectoralSatisfaction,
@@ -144,6 +144,7 @@ export default function RingkasanPopulasiModal({
   const [isKesejahteraanOpen, setIsKesejahteraanOpen] = useState(Boolean(initialOpenKesejahteraan));
   const [isTunawismaOpen, setIsTunawismaOpen] = useState(false);
   const [activePopulationTab, setActivePopulationTab] = useState<"ringkasan" | "negara">("ringkasan");
+  
   // Hitung metrik demografi secara sinkron (instant memoized) agar setiap perubahan
   // pajak, harga pokok, spektrum ekonomi, dan subsidi langsung terupdate seketika
   const countryName = selectedCountry?.country;
@@ -245,6 +246,61 @@ export default function RingkasanPopulasiModal({
     `${value > 0 ? "+" : ""}${value.toFixed(2)}%`;
   const formatPeople = (value: number) =>
     `${value > 0 ? "+" : ""}${value.toLocaleString("id-ID")} jiwa`;
+    
+  const activePandemic = Array.isArray(countryDetail?.active_outbreaks)
+    ? countryDetail.active_outbreaks.find((outbreak: any) =>
+        !outbreak.isHandled && String(outbreak.category || "").toLowerCase().includes("pandemi")
+      )
+    : null;
+  const pandemicCost = Math.max(0, Number(activePandemic?.korban) || 0);
+  const pandemicDeaths = Math.max(0, Number(activePandemic?.perkiraanKematian) || 0);
+  const canTreatPandemic = Number(countryDetail?.anggaran || 0) >= pandemicCost;
+  
+  // 🔥 PERHITUNGAN SISA HARI PANDEMI
+  const getRemainingDays = () => {
+    if (!activePandemic || !activePandemic.startDate || !activePandemic.durationDays) return null;
+    
+    let current: Date;
+    if (!currentDate) {
+      current = new Date();
+    } else if (typeof currentDate === 'string') {
+      current = new Date(currentDate);
+    } else {
+      current = currentDate;
+    }
+    
+    const start = new Date(activePandemic.startDate);
+    
+    if (isNaN(start.getTime()) || isNaN(current.getTime())) return null;
+
+    // Normalisasi ke tengah malam agar perhitungan selisih hari akurat
+    const startMidnight = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const currentMidnight = new Date(current.getFullYear(), current.getMonth(), current.getDate());
+
+    const diffTime = currentMidnight.getTime() - startMidnight.getTime();
+    const elapsedDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    const duration = Number(activePandemic.durationDays) || 0;
+    const remaining = duration - elapsedDays;
+    
+    return Math.max(0, remaining); // Tidak boleh minus
+  };
+
+  const remainingPandemicDays = getRemainingDays();
+
+  const treatPandemic = () => {
+    if (!activePandemic || !canTreatPandemic || !setCountryDetail) return;
+    setCountryDetail((prev: any) => ({
+      ...prev,
+      anggaran: Math.max(0, Number(prev?.anggaran || 0) - pandemicCost),
+      jumlah_penduduk: Math.max(0, Number(prev?.jumlah_penduduk || 0) + pandemicDeaths),
+      active_outbreaks: Array.isArray(prev?.active_outbreaks)
+        ? prev.active_outbreaks.map((outbreak: any) =>
+            outbreak.id === activePandemic.id ? { ...outbreak, isHandled: true } : outbreak
+          )
+        : prev?.active_outbreaks,
+    }));
+  };
 
   // Peta warna status (dipakai untuk label status demografi)
   const factorColors: Record<string, { text: string; bar: string }> = {
@@ -449,6 +505,41 @@ export default function RingkasanPopulasiModal({
                 </div>
               </div>
             </div>
+
+            {activePandemic && (
+              <section className="rounded-xl border border-rose-500/50 bg-rose-500/10 p-3.5 lg:p-4.5" aria-label="Pandemi aktif">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-lg border border-rose-400/40 bg-[#0A1A1A] p-2 text-rose-400">
+                      <ShieldAlert className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="text-[10px] font-black uppercase tracking-wider text-rose-400">Pandemi Aktif</p>
+                        {/* 🔥 BADGE SISA HARI PANDEMI */}
+                        {remainingPandemicDays !== null && (
+                          <span className="flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                            <Clock className="w-2.5 h-2.5" />
+                            Sisa {remainingPandemicDays} Hari
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="mt-0.5 text-sm font-black text-[#E0E0E0]">{activePandemic.eventName || "Pandemi global"}</h3>
+                      <p className="mt-1 text-[11px] text-[#6B8A8A]">Tangani sekarang: pulihkan {pandemicDeaths.toLocaleString("id-ID")} jiwa.</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={!canTreatPandemic || !setCountryDetail}
+                    onClick={treatPandemic}
+                    className="rounded-lg border border-rose-400 bg-rose-500/20 px-3 py-2 text-[10px] font-black uppercase tracking-wider text-rose-300 transition-colors hover:bg-rose-500 hover:text-white disabled:cursor-not-allowed disabled:border-[#6B8A8A]/40 disabled:bg-transparent disabled:text-[#6B8A8A]"
+                  >
+                    Tangani · {pandemicCost.toLocaleString("id-ID")} NEO
+                  </button>
+                </div>
+                {!canTreatPandemic && <p className="mt-2 text-[10px] font-bold text-rose-300">Kas negara tidak mencukupi.</p>}
+              </section>
+            )}
 
             <section
               aria-label="Perhitungan dampak kebijakan ekonomi terhadap populasi"

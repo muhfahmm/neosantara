@@ -12,6 +12,7 @@ import {
   getSimulationDayPosition,
   getSimulationMillisecondsPerDay,
   isSimulationTimePaused,
+  subscribeRouteAnimation,
 } from './time_logic';
 
 export interface IcbmPathProps {
@@ -40,6 +41,8 @@ export default function IcbmPath({
   const pulseRef = useRef<SVGCircleElement>(null);
   const warheadRef = useRef<SVGGElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const geometryRef = useRef<ReturnType<typeof getMapRouteGeometry> | null>(null);
+  const viewBoxRef = useRef('');
 
   const sender = useMemo(() => buildCapitalPoint(senderCountry), [senderCountry]);
   const target = useMemo(() => buildCapitalPoint(targetCountry), [targetCountry]);
@@ -72,7 +75,6 @@ export default function IcbmPath({
       return;
     }
 
-    let frame = 0;
     let lastFrame = performance.now();
     let elapsedDays = 0;
     let completed = false;
@@ -93,12 +95,8 @@ export default function IcbmPath({
         elapsedDays += delta / millisecondsPerDay;
       }
 
-      const { start, end, control, path } = getMapRouteGeometry(
-        sender.lat,
-        sender.lng,
-        target.lat,
-        target.lng,
-        routeCurvature
+      const { start, end, control, path } = geometryRef.current || getMapRouteGeometry(
+        sender.lat, sender.lng, target.lat, target.lng, routeCurvature
       );
       const progress = Math.min(1, elapsedDays / travelEstimate.days);
       const progressPercent = Math.floor(progress * 100);
@@ -126,7 +124,11 @@ export default function IcbmPath({
       if (pulseRef.current) pulseRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
 
       warheadRef.current?.setAttribute('transform', `translate(${warhead.x} ${warhead.y}) rotate(${angle})`);
-      if (svgRef.current) svgRef.current.setAttribute('viewBox', `0 0 ${window.innerWidth} ${window.innerHeight}`);
+      const viewBox = `0 0 ${window.innerWidth} ${window.innerHeight}`;
+      if (svgRef.current && viewBox !== viewBoxRef.current) {
+        viewBoxRef.current = viewBox;
+        svgRef.current.setAttribute('viewBox', viewBox);
+      }
 
       if (progress >= 1) {
         if (!completed) {
@@ -148,17 +150,17 @@ export default function IcbmPath({
         return;
       }
 
-      frame = requestAnimationFrame(updateRoute);
     };
 
-    frame = requestAnimationFrame(updateRoute);
+    geometryRef.current = getMapRouteGeometry(sender.lat, sender.lng, target.lat, target.lng, routeCurvature);
+    const unsubscribe = subscribeRouteAnimation(updateRoute);
     const onCamera = () => {
-      cancelAnimationFrame(frame);
+      geometryRef.current = getMapRouteGeometry(sender.lat, sender.lng, target.lat, target.lng, routeCurvature);
       updateRoute(performance.now());
     };
     window.addEventListener('neosantara_map_camera', onCamera);
     return () => {
-      cancelAnimationFrame(frame);
+      unsubscribe();
       window.removeEventListener('neosantara_map_camera', onCamera);
     };
   }, [sender, target, senderCountry, targetCountry, travelEstimate, routeCurvature]);
@@ -212,7 +214,7 @@ export default function IcbmPath({
         <circle ref={endRef} r="9" fill={accent} stroke="#FFFFFF" strokeWidth="2" />
 
         {/* Hulu Ledak Rudal Balistik ICBM */}
-        <g ref={warheadRef}>
+        <g ref={warheadRef} style={{ willChange: 'transform' }}>
           {/* Efek lidah api roket pendorong di belakang */}
           <polygon points="-32,0 -22,-5 -24,0 -22,5" fill="#F59E0B" opacity=".95" />
           <polygon points="-42,0 -28,-3 -30,0 -28,3" fill="#EF4444" opacity=".8" />

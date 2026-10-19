@@ -10,6 +10,7 @@ export class SimulationTimeManager {
     private onDateChangeCallback: (formattedDate: string) => void;
     private onProgressChangeCallback?: (progress: number) => void;
     private lastProgressCallbackTime: number = 0;
+    private readonly progressUpdateInterval = 100;
     // Mapping speed multipliers to millisecond intervals per day tick
     private speedIntervals: Record<number, number> = {
         1: 2500, // 1x speed: 1 day every 2.5 seconds
@@ -138,10 +139,11 @@ export class SimulationTimeManager {
                 this.triggerCallback();
             }
 
-            // Calculate exact sub-tick progress for the progress bar (0% to 100%) per day tick
+            // The bar needs smooth feedback, not 60 DOM writes per second.
             const currentDelta = Math.max(0, now - this.lastTickTime);
             const progress = Math.min((currentDelta / interval) * 100, 100);
-            if (this.onProgressChangeCallback) {
+            if (this.onProgressChangeCallback && now - this.lastProgressCallbackTime >= this.progressUpdateInterval) {
+                this.lastProgressCallbackTime = now;
                 this.onProgressChangeCallback(progress);
             }
 

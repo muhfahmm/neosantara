@@ -633,7 +633,7 @@ export function useNpcCountrySimulation(
       void flushNpcCountrySimulation().catch(error => {
         console.error("Gagal menjalankan simulasi NPC:", error);
       });
-    }, 50);
+    }, 250);
   }, [normalizedPlayerSlug, loadedForPlayerSlug, currentDateString, countries, metadata, isPaused]);
 }
 

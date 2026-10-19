@@ -12,6 +12,7 @@ import {
   getSimulationDayPosition,
   getSimulationMillisecondsPerDay,
   isSimulationTimePaused,
+  subscribeRouteAnimation,
 } from './time_logic';
 
 export type DiplomacyPathKind =
@@ -85,6 +86,8 @@ export default function DiplomacyPathAnimation({
   const pulseRef = useRef<SVGCircleElement>(null);
   const vehicleRef = useRef<SVGGElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const geometryRef = useRef<ReturnType<typeof getMapRouteGeometry> | null>(null);
+  const viewBoxRef = useRef('');
 
   const sender = useMemo(() => buildCapitalPoint(senderCountry), [senderCountry]);
   const target = useMemo(() => buildCapitalPoint(targetCountry), [targetCountry]);
@@ -112,7 +115,6 @@ export default function DiplomacyPathAnimation({
       }
       return;
     }
-    let frame = 0;
     let lastFrame = performance.now();
     let elapsedDays = 0;
     let completed = false;
@@ -132,12 +134,8 @@ export default function DiplomacyPathAnimation({
         elapsedDays += delta / millisecondsPerDay;
       }
 
-      const { start, end, control, path } = getMapRouteGeometry(
-        sender.lat,
-        sender.lng,
-        target.lat,
-        target.lng,
-        routeCurvature
+      const { start, end, control, path } = geometryRef.current || getMapRouteGeometry(
+        sender.lat, sender.lng, target.lat, target.lng, routeCurvature
       );
       const progress = Math.min(1, elapsedDays / travelEstimate.days);
       const progressPercent = Math.floor(progress * 100);
@@ -162,7 +160,11 @@ export default function DiplomacyPathAnimation({
       if (routeRef.current) routeRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
       if (pulseRef.current) pulseRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
       vehicleRef.current?.setAttribute('transform', `translate(${vehicle.x} ${vehicle.y}) rotate(${angle})`);
-      if (svgRef.current) svgRef.current.setAttribute('viewBox', `0 0 ${window.innerWidth} ${window.innerHeight}`);
+      const viewBox = `0 0 ${window.innerWidth} ${window.innerHeight}`;
+      if (svgRef.current && viewBox !== viewBoxRef.current) {
+        viewBoxRef.current = viewBox;
+        svgRef.current.setAttribute('viewBox', viewBox);
+      }
 
       if (progress >= 1) {
         if (!completed) {
@@ -171,17 +173,17 @@ export default function DiplomacyPathAnimation({
         }
         return;
       }
-      frame = requestAnimationFrame(updateRoute);
     };
 
-    frame = requestAnimationFrame(updateRoute);
+    geometryRef.current = getMapRouteGeometry(sender.lat, sender.lng, target.lat, target.lng, routeCurvature);
+    const unsubscribe = subscribeRouteAnimation(updateRoute);
     const onCamera = () => {
-      cancelAnimationFrame(frame);
+      geometryRef.current = getMapRouteGeometry(sender.lat, sender.lng, target.lat, target.lng, routeCurvature);
       updateRoute(performance.now());
     };
     window.addEventListener('neosantara_map_camera', onCamera);
     return () => {
-      cancelAnimationFrame(frame);
+      unsubscribe();
       window.removeEventListener('neosantara_map_camera', onCamera);
     };
   }, [sender, target, senderCountry, targetCountry, travelEstimate, routeCurvature]);
@@ -202,7 +204,7 @@ export default function DiplomacyPathAnimation({
         <circle ref={startRef} r="10" fill={details.accent} />
         <circle ref={pulseRef} r="30" fill="none" stroke={details.accent} strokeWidth="2" className="diplomacy-target-pulse" />
         <circle ref={endRef} r="10" fill={details.accent} />
-        <g ref={vehicleRef}>
+        <g ref={vehicleRef} style={{ willChange: 'transform' }}>
           <circle r="27" fill={details.accent} opacity=".18" />
           <rect x="-23" y="-10" width="46" height="20" rx="5" fill={details.accent} />
           <path d="M-14 -10 L-6 -20 H11 L18 -10Z" fill={details.accent} />
