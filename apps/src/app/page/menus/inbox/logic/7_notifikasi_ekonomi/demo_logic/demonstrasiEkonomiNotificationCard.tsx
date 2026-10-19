@@ -40,13 +40,33 @@ export default function DemonstrasiEkonomiNotificationCard({ notification, onAct
           <ShieldAlert className="w-4 h-4 text-rose-400" />
           <span>Penyebab: <strong className="text-white uppercase">{notification.cause}</strong></span>
         </div>
-        <span className={`text-[11px] font-black uppercase ${notification.demo_status === 'selesai' ? 'text-emerald-400' : notification.demo_status === 'kerusuhan' ? 'text-rose-600' : 'text-rose-400'}`}>
-          STATUS: {notification.demo_status === 'dialog' ? 'DALAM DIALOG' : notification.demo_status === 'ignored' ? 'DIABAIKAN' : notification.demo_status === 'selesai' ? 'DITANGANI' : notification.demo_status === 'kerusuhan' ? 'KERUSUHAN' : 'GEJOLAK AKTIF'}
+        <span className={`text-[11px] font-black uppercase ${
+          notification.demo_status === 'selesai'
+            ? 'text-emerald-400'
+            : notification.demo_status === 'kerusuhan'
+            ? 'text-rose-500 animate-pulse font-extrabold'
+            : notification.demo_status === 'dialog'
+            ? 'text-blue-400'
+            : notification.demo_status === 'ignored'
+            ? 'text-slate-400'
+            : 'text-rose-400'
+        }`}>
+          STATUS: {
+            notification.demo_status === 'selesai'
+              ? (notification.message.includes('[KEPUTUSAN PEMERINTAH]') ? 'DITANGANI (APARAT)' : 'DITANGANI')
+              : notification.demo_status === 'kerusuhan'
+              ? 'KERUSUHAN'
+              : notification.demo_status === 'dialog'
+              ? 'DALAM DIALOG'
+              : notification.demo_status === 'ignored'
+              ? 'DIABAIKAN'
+              : 'GEJOLAK AKTIF'
+          }
         </span>
       </div>
 
-      {/* TOMBOL AKSI (Hanya muncul jika belum ditangani & bukan kerusuhan) */}
-      {!isHandled && notification.demo_status !== 'dialog' && notification.demo_status !== 'ignored' && onAction && (
+      {/* TOMBOL AKSI (Hanya muncul jika belum ditangani & bukan kerusuhan & bukan diabaikan) */}
+      {!isHandled && notification.demo_status !== 'ignored' && onAction && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2 pt-3 border-t border-slate-700/50">
           <button onClick={() => onAction('hard_power')} className="flex flex-col items-center justify-center gap-1 p-2 rounded-lg bg-rose-900/40 hover:bg-rose-800/60 border border-rose-500/30 text-rose-200 transition-all cursor-pointer">
             <ShieldAlert className="w-4 h-4" />
@@ -68,16 +88,6 @@ export default function DemonstrasiEkonomiNotificationCard({ notification, onAct
             <span className="text-[9px] font-bold uppercase text-center">Abaikan<br/>Demo</span>
           </button>
         </div>
-      )}
-
-      {notification.demo_status === 'dialog' && (
-        <button
-          onClick={() => onAction && onAction('dialog')}
-          className="mt-2 w-full text-center p-2.5 bg-blue-900/40 hover:bg-blue-800/60 border border-blue-500/40 rounded-xl text-blue-200 text-[10px] font-bold uppercase flex items-center justify-center gap-2 cursor-pointer transition-all shadow-sm"
-        >
-          <MessageSquare className="w-4 h-4 text-blue-400" />
-          <span>Buka Forum Dialog Terbuka (Dalam Mediasi)</span>
-        </button>
       )}
     </div>
   );

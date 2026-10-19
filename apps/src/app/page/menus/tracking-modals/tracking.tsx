@@ -53,13 +53,17 @@ interface ActiveDiplomacyPath {
   isPlayerAttacker?: boolean;
 }
 
+interface DiplomacyTrackingProps {
+  onOpen?: () => void;
+}
+
 const normalizeCountryName = (name: unknown) => String(name || '')
   .toLowerCase()
   .normalize('NFD')
   .replace(/[\u0300-\u036f]/g, '')
   .replace(/[^a-z0-9]/g, '');
 
-export default function DiplomacyTracking() {
+export default function DiplomacyTracking({ onOpen }: DiplomacyTrackingProps) {
   const [activePaths, setActivePaths] = useState<ActiveDiplomacyPath[]>([]);
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
 
@@ -219,7 +223,12 @@ export default function DiplomacyTracking() {
         <>
           <button
         type="button"
-        onClick={() => setIsTrackingOpen(open => !open)}
+        onClick={() => {
+          if (!isTrackingOpen) {
+            onOpen?.();
+          }
+          setIsTrackingOpen(open => !open);
+        }}
         title="Pelacakan aktivitas diplomasi"
         aria-label={isTrackingOpen ? 'Tutup pelacakan aktivitas' : 'Buka pelacakan aktivitas'}
         aria-expanded={isTrackingOpen}

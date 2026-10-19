@@ -115,6 +115,7 @@ interface ModalsManagerProps {
   notifications?: NotificationMessage[];
   metadata?: Record<string, any>;
   onRemoveNotification?: (notificationId: string) => void;
+  onOpenInbox?: () => void;
 }
 
 function ModalsManager({
@@ -140,6 +141,7 @@ function ModalsManager({
   notifications = [],
   metadata: initialMetadata,
   onRemoveNotification,
+  onOpenInbox,
 }: ModalsManagerProps) {
   const [metadata, setMetadata] = useState<Record<string, any>>(() => initialMetadata || {});
 
@@ -659,7 +661,12 @@ function ModalsManager({
       return (
         <DialogTerbukaModal
           isOpen={true}
-          onClose={onClose}
+          onClose={() => {
+            setActiveMenu("");
+            if (onOpenInbox) {
+              onOpenInbox();
+            }
+          }}
           countryDetail={countryDetail}
         />
       );

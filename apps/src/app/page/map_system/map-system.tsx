@@ -148,7 +148,8 @@ import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifika
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
 import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationLogic';
 import { checkAndGenerateEmbassyOffers, createEmbassyOfferNotification } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
-import { executeBubarkanAparat } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/bubarkanAparatLogic';
+import { executeAparatOperation } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/bubarkanAparatLogic';
+const KonfirmasiAparatModal = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/KonfirmasiAparatModal'), { ssr: false });
 import { startDialogTerbuka } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/dialogTerbukaLogic';
 import { executePenuhiTuntutan } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/3_penuhi_tuntutan/penuhiTuntutanLogic';
 import { executeAbaikanDemo, calculateDailyIgnoredDemoPenalties } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/4_abaikan_demo/abaikanDemoLogic';
@@ -704,6 +705,13 @@ export default function MapPage() {
     const [requireEmbassyPartner, setRequireEmbassyPartner] = useState<string | null>(null);
     const [playerDetailModalOpen, setPlayerDetailModalOpen] = useState(false);
     const [inboxModalOpen, setInboxModalOpen] = useState(false);
+    const [aparatConfirmState, setAparatConfirmState] = useState<{
+        isOpen: boolean;
+        notification: any | null;
+    }>({
+        isOpen: false,
+        notification: null,
+    });
     const [giftModalOpen, setGiftModalOpen] = useState(false);
     const [newsModalOpen, setNewsModalOpen] = useState(false);
     const [tradeRejectionState, setTradeRejectionState] = useState<{
@@ -5961,6 +5969,7 @@ export default function MapPage() {
                     'Indonesia'
                 )}
                 onClick={() => {
+                    setCountryDetailModalOpen(false);
                     setInboxModalOpen(true);
                     setGiftModalOpen(false);
                     setNewsModalOpen(false);
@@ -6117,36 +6126,14 @@ export default function MapPage() {
                     // Intersep aksi demonstrasi rakyat jika ada
                     if (tNotif.tradeType === 'demonstrasi_rakyat') {
                         if (actionType === 'hard_power') {
-                            const currentBudget = Number(countryDetail?.anggaran || 0);
-                            const result = executeBubarkanAparat(tNotif, currentBudget);
-                            if (!result.success) {
-                                setResultModal({
-                                    isOpen: true,
-                                    title: 'Anggaran Tidak Cukup',
-                                    message: result.message,
-                                    type: 'error',
-                                    persistent: true,
-                                });
-                                return;
-                            }
-                            setCountryDetail((prev: any) => ({
-                                ...prev,
-                                anggaran: Math.max(0, currentBudget - result.cost),
-                            }));
-                            setPresidentRating((prev: number) => Math.max(0, prev - result.presidentRatingPenalty));
-                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, ...(result.updatedNotification || {}), isHandled: true } : n));
                             setInboxModalOpen(false);
-                            setResultModal({
+                            setAparatConfirmState({
                                 isOpen: true,
-                                title: 'Demonstrasi Dibubarkan Paksa',
-                                message: result.message,
-                                type: 'error',
-                                persistent: true,
+                                notification: tNotif,
                             });
                             return;
                         } else if (actionType === 'dialog') {
                             const result = startDialogTerbuka(tNotif);
-                            setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, ...(result.updatedNotification || {}) } : n));
                             setInboxModalOpen(false);
                             setActiveMenu(result.targetMenuId);
                             return;
@@ -6813,6 +6800,7 @@ export default function MapPage() {
             {/* Top Right Icons - Gift and News */}
             <TopRightGiftIcon
                 onClick={() => {
+                    setCountryDetailModalOpen(false);
                     setGiftModalOpen(true);
                     setInboxModalOpen(false);
                     setNewsModalOpen(false);
@@ -6836,6 +6824,7 @@ export default function MapPage() {
             />
             <TopRightNewsIcon
                 onClick={() => {
+                    setCountryDetailModalOpen(false);
                     setNewsModalOpen(true);
                     setInboxModalOpen(false);
                     setGiftModalOpen(false);
@@ -6880,6 +6869,7 @@ export default function MapPage() {
             />
             <BottomLeftPenelitianIcon
                 onClick={() => {
+                    setCountryDetailModalOpen(false);
                     setPenelitianModalOpen(true);
                     setMissionModalOpen(false);
                     setInboxModalOpen(false);
@@ -6898,6 +6888,7 @@ export default function MapPage() {
             />
             <BottomLeftMissionIcon
                 onClick={() => {
+                    setCountryDetailModalOpen(false);
                     setMissionModalOpen(true);
                     setPenelitianModalOpen(false);
                     setInboxModalOpen(false);
@@ -7154,7 +7145,7 @@ export default function MapPage() {
                 </div>
             )}
 
-            <DiplomacyTracking />
+            <DiplomacyTracking onOpen={() => setCountryDetailModalOpen(false)} />
 
             {!(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
                 <>
@@ -7202,6 +7193,9 @@ export default function MapPage() {
                 notifications={notifications}
                 onRemoveNotification={(notificationId) => {
                     setNotifications(previous => previous.filter(notification => notification.id !== notificationId));
+                }}
+                onOpenInbox={() => {
+                    setInboxModalOpen(true);
                 }}
             />
 
@@ -7748,6 +7742,93 @@ export default function MapPage() {
                 ideologyModifier={closedTradeRejectionState.ideologyModifier}
                 religionModifier={closedTradeRejectionState.religionModifier}
                 reasons={closedTradeRejectionState.reasons}
+            />
+
+            {/* Modal Konfirmasi Operasi Aparat */}
+            <KonfirmasiAparatModal
+                isOpen={aparatConfirmState.isOpen}
+                onClose={() => {
+                    setAparatConfirmState({ isOpen: false, notification: null });
+                    setInboxModalOpen(true);
+                }}
+                onConfirm={() => {
+                    const targetNotif = aparatConfirmState.notification;
+                    setAparatConfirmState({ isOpen: false, notification: null });
+                    if (!targetNotif) return;
+
+                    const currentBudget = Number(countryDetail?.anggaran || 0);
+                    const currentTingkatKeamanan = Number(countryDetail?.tingkat_keamanan || 50);
+                    const currentPopulasi = Number(countryDetail?.jumlah_penduduk || countryDetail?.populasi || 50000000);
+                    const playerCountry = String(countryDetail?.country || countryDetail?.nama_negara || countryDetail?.nama || 'Indonesia');
+
+                    const op = executeAparatOperation({
+                        notification: targetNotif,
+                        currentBudget,
+                        tingkatKeamanan: currentTingkatKeamanan,
+                        populasi: currentPopulasi,
+                        currentDateStr: simulationDateString,
+                        playerCountry,
+                    });
+
+                    if (!op.canProceed || !op.result) {
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Anggaran Tidak Cukup',
+                            message: op.errorMessage || 'Anggaran tidak mencukupi.',
+                            type: 'error',
+                            persistent: true,
+                        });
+                        return;
+                    }
+
+                    const res = op.result;
+
+                    // Potong anggaran, kurangi populasi korban jiwa, kurangi kepuasan, catat pelanggaran HAM
+                    setCountryDetail((prev: any) => {
+                        if (!prev) return prev;
+                        const prevPop = Number(prev.jumlah_penduduk || prev.populasi || currentPopulasi);
+                        const nextPop = Math.max(0, prevPop - res.casualties);
+                        const prevKepuasan = Number(prev.kepuasan || prev.kepuasan_masyarakat || 50);
+                        const nextKepuasan = Math.max(0, prevKepuasan - res.kepuasanPenalty);
+
+                        return {
+                            ...prev,
+                            anggaran: Math.max(0, currentBudget - res.cost),
+                            jumlah_penduduk: nextPop,
+                            populasi: nextPop,
+                            kepuasan: nextKepuasan,
+                            kepuasan_masyarakat: nextKepuasan,
+                            ham_violation_count: (Number(prev.ham_violation_count) || 0) + 1,
+                        };
+                    });
+
+                    // Potong Peringkat Presiden
+                    setPresidentRating((prev: number) => Math.max(0, prev - res.ratingPenalty));
+
+                    // Turunkan hubungan diplomatik dengan negara-negara penggiat HAM sebesar -20 poin
+                    if (res.affectedCountries && res.affectedCountries.length > 0) {
+                        res.affectedCountries.forEach((c) => {
+                            setRelationModifier(playerCountry, c, -20);
+                        });
+                    }
+
+                    // Update notifikasi demonstrasi asli & tambahkan notifikasi ekstra (Kerusakan infrastruktur / Kecaman PBB)
+                    setNotifications((prev) => {
+                        const updated = prev.map((n) =>
+                            n.id === targetNotif.id ? { ...n, ...(res.updatedNotification || {}), isHandled: true } : n
+                        );
+                        return [...res.extraNotifications, ...updated];
+                    });
+
+                    // Tampilkan ResultModal (Hasil Operasi atau Kerusuhan)
+                    setResultModal({
+                        isOpen: true,
+                        title: res.resultModal.title,
+                        message: res.resultModal.message,
+                        type: res.resultModal.type,
+                        persistent: true,
+                    });
+                }}
             />
         </main>
     );
