@@ -547,10 +547,10 @@ export default function TopLeftIcon({
 
           {/* Toast Notification Box */}
           <div
-            className={`transition-all duration-300 ease-out origin-top-left ${showToast && toastNotification
+            className={`transition-[opacity,transform] duration-300 ease-out origin-top-left will-change-[opacity,transform] ${showToast && toastNotification
                 ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
                 : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
-              } w-72 rounded-xl border border-[#00FFAA]/40 bg-[#0F2424] p-3 shadow-2xl cursor-pointer group`}
+              } w-72 rounded-xl border border-[#00FFAA]/40 bg-[#0F2424] p-3 shadow-lg cursor-pointer group`}
             onClick={() => {
               if (toastNotification) {
                 dismissedToastIdRef.current = toastNotification.id;
@@ -561,7 +561,7 @@ export default function TopLeftIcon({
           >
             <div className="flex items-center justify-between border-b border-[#00FFAA]/20 pb-1.5">
               <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
-                <span className="h-2 w-2 rounded-full bg-[#00FFAA] animate-ping" />
+                <span className={`h-2 w-2 rounded-full bg-[#00FFAA] ${showToast ? 'animate-ping' : ''}`} />
                 Pesan Baru Masuk
               </span>
               <button

@@ -27,7 +27,7 @@ export interface YearlyOutbreakDistribution {
  * - Tahun ke-6: kembali ke 30%
  * - ... Tahun ke-10: 40% (siklus 5 tahunan: [30, 35, 40, 45, 50])
  */
-export const PANDEMIC_YEARLY_PERCENTAGE_CYCLE = [10, 20, 30, 40, 50] as const;
+export const PANDEMIC_YEARLY_PERCENTAGE_CYCLE = [30, 35, 40, 45, 50] as const;
 
 export function getPandemicBaseChancePercentByYear(
   countryDetail: any,
@@ -96,6 +96,18 @@ export const EPIDEMIC_YEARLY_DISTRIBUTION: YearlyOutbreakDistribution[] = [
 export function parseYearMonth(
   dateStr: string
 ): { year: number; month: number } | null {
+  if (!dateStr || typeof dateStr !== 'string') return null;
+
+  // Coba format ISO "YYYY-MM-DD" atau "YYYY-MM"
+  const isoMatch = dateStr.match(/^(\d{4})-(\d{1,2})(?:-\d{1,2})?/);
+  if (isoMatch) {
+    const year = parseInt(isoMatch[1], 10);
+    const month = parseInt(isoMatch[2], 10);
+    if (!isNaN(year) && !isNaN(month)) {
+      return { year, month };
+    }
+  }
+
   const months: Record<string, number> = {
     january: 1, jan: 1, januari: 1,
     february: 2, feb: 2, februari: 2,

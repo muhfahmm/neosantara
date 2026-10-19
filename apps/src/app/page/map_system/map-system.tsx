@@ -1,4 +1,4 @@
-﻿// detail path: c:\EM\apps\src\app\page\map_system\map-system.tsx
+// detail path: c:\EM\apps\src\app\page\map_system\map-system.tsx
 'use client';
 
 import React, { memo, startTransition, useCallback, useState, useEffect, useRef } from 'react';
@@ -824,27 +824,52 @@ export default function MapPage() {
             gameWindow.neosantara_diplomacy_map_feature_colors = featureColors;
         };
 
-        const notifyColorsChanged = () => {
+        const runColorsChanged = () => {
             updateDiplomacyMapColors();
             window.dispatchEvent(new Event('map_feature_colors_dirty'));
         };
-        notifyColorsChanged();
+        // Gabungkan burst event (notifikasi inbox/berita) menjadi satu pekerjaan saat browser idle
+        let scheduled = false;
+        let rafId = 0;
+        let idleId: number | null = null;
+        const notifyColorsChanged = () => {
+            if (scheduled) return;
+            scheduled = true;
+            rafId = requestAnimationFrame(() => {
+                const run = () => {
+                    scheduled = false;
+                    idleId = null;
+                    runColorsChanged();
+                };
+                const ric = (window as any).requestIdleCallback as undefined | ((cb: () => void, o?: { timeout: number }) => number);
+                if (ric) idleId = ric(run, { timeout: 300 });
+                else setTimeout(run, 0);
+            });
+        };
+        runColorsChanged();
         window.addEventListener('country_relations_updated', notifyColorsChanged);
         window.addEventListener('world_map_features_ready', notifyColorsChanged);
         window.addEventListener('map_territory_color_updated', notifyColorsChanged);
         window.addEventListener('annexation_completed', notifyColorsChanged);
         return () => {
+            cancelAnimationFrame(rafId);
+            const cic = (window as any).cancelIdleCallback as undefined | ((id: number) => void);
+            if (idleId !== null && cic) cic(idleId);
             window.removeEventListener('country_relations_updated', notifyColorsChanged);
             window.removeEventListener('world_map_features_ready', notifyColorsChanged);
             window.removeEventListener('map_territory_color_updated', notifyColorsChanged);
             window.removeEventListener('annexation_completed', notifyColorsChanged);
         };
-    }, [isDiplomacyMapActive, selectedCountry?.country, countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, currentDate]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isDiplomacyMapActive, selectedCountry?.country, countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, isDiplomacyMapActive ? simulationDateString.slice(0, 7) : '']);
 
     const handleTopNavSelect = (view: 'map' | 'diplomacy') => {
         setIsDiplomacyMapActive(view === 'diplomacy');
     };
-    const [newsList, setNewsList] = useState<NewsItemData[]>([]);
+    const [newsList, setNewsListRaw] = useState<NewsItemData[]>([]);
+    const setNewsList = useCallback((action: React.SetStateAction<NewsItemData[]>) => {
+        startTransition(() => setNewsListRaw(action));
+    }, []);
     const lastObservedNewsResetDateRef = useRef<string | null>(null);
 
     const isMapFocusedRef = useRef(false);
@@ -2401,7 +2426,7 @@ export default function MapPage() {
     // - Notifikasi hasil aksi langsung pemain dikecualikan dari batas.
     const dailyQuotaRef = useRef<{ date: string; quota: number }>({ date: '', quota: 0 });
     const setNotifications = useCallback((action: React.SetStateAction<NotificationMessage[]>) => {
-        setNotificationsRaw(prev => {
+        startTransition(() => setNotificationsRaw(prev => {
             const next = typeof action === 'function'
                 ? (action as (value: NotificationMessage[]) => NotificationMessage[])(prev)
                 : action;
@@ -2438,7 +2463,7 @@ export default function MapPage() {
                 result.push(n);
             }
             return result.length === next.length ? next : result;
-        });
+        }));
     }, []);
 
     const [annexedModalData, setAnnexedModalData] = useState<{
@@ -3000,6 +3025,19 @@ export default function MapPage() {
             return; // Already checked today (both persisted state and in-memory ref match)
         }
 
+        // Catat tanggal awal permainan jika belum ada
+        if (!countryDetail.game_start_date) {
+            setCountryDetail((prev: any) => (prev ? { ...prev, game_start_date: currentDateStr } : prev));
+            // Jangan langsung spawn/spam event di hari pertama game dimulai
+            return;
+        }
+
+        // Cek apakah minimal 1 hari sudah berlalu sejak hari pertama game dimulai
+        const startDiff = getDaysDifference(countryDetail.game_start_date, currentDateStr);
+        if (startDiff < 1) {
+            return;
+        }
+
         if (isPausedRef.current || (typeof window !== "undefined" && (window as any).neosantara_is_paused)) {
             return;
         }
@@ -3098,6 +3136,8 @@ export default function MapPage() {
         const disasterBaseChance = Math.max(0.05, 0.22 + wmoDisasterModifier / 100 + surpriseJitter);
         const disasterOccurrenceChance = disasterBaseChance * (0.45 + Math.random() * 0.35); // 0.45x - 0.80x fluktuasi
 
+        let pendingDisasterEffect: any = null;
+        let pendingDisasterCasualties = 0;
         if (Math.random() < disasterOccurrenceChance) {
             const remainingDisasterRisk = applyKementerianLingkunganHidupDisasterRiskReduction(
                 1,
@@ -3106,26 +3146,17 @@ export default function MapPage() {
             if (Math.random() < remainingDisasterRisk) {
                 const disaster = generateBencanaAlamNotification(userCountryName, currentDateStr, countryDetail);
                 newNotifsToAdd.push(disaster);
-                setCountryDetail((prev: any) => {
-                    if (!prev) return prev;
-                    return {
-                        ...prev,
-                        jumlah_penduduk: Math.max(0, (Number(prev.jumlah_penduduk) || 0) - disaster.korban),
-                        active_disaster_effects: [
-                            ...(Array.isArray(prev.active_disaster_effects) ? prev.active_disaster_effects : []),
-                            {
-                                id: disaster.id,
-                                eventName: disaster.eventName,
-                                category: disaster.category,
-                                korban: disaster.korban,
-                                startDate: currentDateStr,
-                                durationDays: 30,
-                                healthMultiplier: 0.9,
-                                isHandled: false
-                            }
-                        ]
-                    };
-                });
+                pendingDisasterCasualties = disaster.korban;
+                pendingDisasterEffect = {
+                    id: disaster.id,
+                    eventName: disaster.eventName,
+                    category: disaster.category,
+                    korban: disaster.korban,
+                    startDate: currentDateStr,
+                    durationDays: 30,
+                    healthMultiplier: 0.9,
+                    isHandled: false
+                };
             }
         }
 
@@ -3135,7 +3166,7 @@ export default function MapPage() {
         const currentYearPandemicBase = getPandemicBaseChancePercentByYear(countryDetail, currentDateStr);
         const dynamicPandemicChance = Math.max(5, currentYearPandemicBase + whoPandemicModifier + randomOutbreakNoise);
 
-        // ===== GRACE PERIOD: Jangan spawn outbreak di 7 hari pertama game =====
+        // ===== GRACE PERIOD: Jangan spawn outbreak di 30 hari pertama game =====
         const gameStartStr = countryDetail?.game_start_date as string | undefined;
         let daysSinceGameStart = 365 * 10; // Default: jauh di masa depan (no grace period)
         if (gameStartStr) {
@@ -3146,14 +3177,14 @@ export default function MapPage() {
             daysSinceGameStart = Math.floor((currentDate.getTime() - gameStartDate.getTime()) / (1000 * 60 * 60 * 24));
         }
 
-        const isInGracePeriod = daysSinceGameStart < 7;
+        const isInGracePeriod = daysSinceGameStart < 30;
         const epidemicBaseForDaily = isInGracePeriod ? 1 : 25; // 25% base untuk daily = ~1x per 4 hari, atau ~7x per bulan (match dengan 1-5x per tahun frequency)
         const dynamicEpidemicChance = Math.max(10, epidemicBaseForDaily + whoPandemicModifier + randomOutbreakNoise);
         const outbreakRoll = Math.random() * 100;
         let nextPandemicSchedule: { year: number; hit: boolean; day: number; fired?: boolean } | undefined;
 
         // Ambang acak ganda agar probabilitas tidak berpola tetap
-        // Pandemi: diundi SEKALI per tahun dengan persentase siklus (10/20/30/40/50%),
+        // Pandemi: diundi SEKALI per tahun dengan persentase siklus (30/35/40/45/50%),
         // lalu dijadwalkan pada hari acak di tahun tersebut (bukan diundi tiap hari).
         const pandemicYear = currentDate.getFullYear();
         const dayOfYear = Math.floor(
@@ -3164,10 +3195,13 @@ export default function MapPage() {
             { year: number; hit: boolean; day: number; fired?: boolean } | undefined;
         if (!pandemicSchedule || pandemicSchedule.year !== pandemicYear) {
             const yearlyChance = Math.min(100, Math.max(0, currentYearPandemicBase + whoPandemicModifier));
+            // Jadwalkan paling cepat 30 hari setelah hari ini/tahun baru agar tidak langsung muncul di bulan pertama
+            const minDay = Math.max(30, dayOfYear + 30);
+            const remainingDaysInYear = Math.max(1, 350 - minDay);
             pandemicSchedule = {
                 year: pandemicYear,
                 hit: Math.random() * 100 < yearlyChance,
-                day: 7 + Math.floor(Math.random() * 350),
+                day: minDay + Math.floor(Math.random() * remainingDaysInYear),
                 fired: false,
             };
         }
@@ -3191,6 +3225,9 @@ export default function MapPage() {
         }
 
         const outbreakType = isPandemicHit ? 'pandemi' : isEpidemicHit ? 'epidemi' : null;
+        let pendingOutbreakEffect: any = null;
+        let pendingOutbreakPopulationLoss = 0;
+        let pendingConsecutiveOutbreakBoost = 0;
 
         if (outbreakType) {
             const currentPopulation = Number(countryDetail?.jumlah_penduduk);
@@ -3207,30 +3244,18 @@ export default function MapPage() {
             // 💀 APPLY POPULATION LOSS IMMEDIATELY
             // Populasi langsung berkurang sebesar perkiraanKematian (tidak bertahap)
             const populationAfterOutbreak = applyOutbreakPopulationLoss(currentPopulation, outbreak);
-
-            setCountryDetail((prev: any) => {
-                if (!prev) return prev;
-                const prevConsecutive = Number(prev.consecutive_outbreak_count || 0);
-                const outbreakSeverityBoost = outbreakType === 'pandemi' ? 2 : 1;
-                return {
-                    ...prev,
-                    jumlah_penduduk: populationAfterOutbreak,
-                    consecutive_outbreak_count: prevConsecutive + outbreakSeverityBoost,
-                    active_outbreaks: [
-                        ...(Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : []),
-                        {
-                            id: outbreak.id,
-                            eventName: outbreak.eventName,
-                            category: outbreak.category,
-                            korban: outbreak.korban,
-                            perkiraanKematian: outbreak.perkiraanKematian,
-                            durationDays: outbreak.durationDays,
-                            startDate: currentDateStr,
-                            isHandled: false
-                        }
-                    ]
-                };
-            });
+            pendingOutbreakPopulationLoss = Math.max(0, currentPopulation - populationAfterOutbreak);
+            pendingConsecutiveOutbreakBoost = outbreakType === 'pandemi' ? 2 : 1;
+            pendingOutbreakEffect = {
+                id: outbreak.id,
+                eventName: outbreak.eventName,
+                category: outbreak.category,
+                korban: outbreak.korban,
+                perkiraanKematian: outbreak.perkiraanKematian,
+                durationDays: outbreak.durationDays,
+                startDate: currentDateStr,
+                isHandled: false
+            };
         }
 
         // Risiko keamanan mengikuti rata-rata kekurangan fasilitas kesehatan dan hukum.
@@ -3890,16 +3915,36 @@ export default function MapPage() {
             });
         }
 
-        setCountryDetail((prev: any) => ({
-            ...prev,
-            last_checked_notification_date: currentDateStr,
-            ...(nextPandemicSchedule ? { pandemic_schedule: nextPandemicSchedule } : {}),
-            ...((countryDetail as any).__invasionSchedulePending
-                ? { invasion_schedule: (countryDetail as any).__invasionSchedulePending }
-                : {}),
-            world_news_country_cursor: worldNewsResult.nextCursor,
-            last_notified_listrik_step: currentListrikStep
-        }));
+        setCountryDetail((prev: any) => {
+            if (!prev) return prev;
+            const currentPop = Number(prev.jumlah_penduduk || 0);
+            const totalCasualties = pendingDisasterCasualties + pendingOutbreakPopulationLoss;
+            const nextPop = totalCasualties > 0 ? Math.max(0, currentPop - totalCasualties) : currentPop;
+
+            const prevDisasters = Array.isArray(prev.active_disaster_effects) ? prev.active_disaster_effects : [];
+            const nextDisasters = pendingDisasterEffect ? [...prevDisasters, pendingDisasterEffect] : prevDisasters;
+
+            const prevOutbreaks = Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : [];
+            const nextOutbreaks = pendingOutbreakEffect ? [...prevOutbreaks, pendingOutbreakEffect] : prevOutbreaks;
+
+            const prevConsecutive = Number(prev.consecutive_outbreak_count || 0);
+            const nextConsecutive = prevConsecutive + pendingConsecutiveOutbreakBoost;
+
+            return {
+                ...prev,
+                jumlah_penduduk: nextPop,
+                active_disaster_effects: nextDisasters,
+                active_outbreaks: nextOutbreaks,
+                consecutive_outbreak_count: nextConsecutive,
+                last_checked_notification_date: currentDateStr,
+                ...(nextPandemicSchedule ? { pandemic_schedule: nextPandemicSchedule } : {}),
+                ...((countryDetail as any).__invasionSchedulePending
+                    ? { invasion_schedule: (countryDetail as any).__invasionSchedulePending }
+                    : {}),
+                world_news_country_cursor: worldNewsResult.nextCursor,
+                last_notified_listrik_step: currentListrikStep
+            };
+        });
     }, [currentDate, countryDetail, notifications, metadata, setCountryDetail]);
 
     const nonModalMenus = [
@@ -5711,6 +5756,7 @@ export default function MapPage() {
                 const normalizeCountryKey = (key: string) => key.toLowerCase().replace(/[^a-z0-9]/g, '');
                 // Warna override (aneksasi / diplomasi) dihitung di JS hanya saat data berubah,
                 // lalu dikirim ke engine WASM. Tidak ada lagi hook di setiap fillStyle.
+                let lastColorSignature = '';
                 const syncFeatureColors = () => {
                     const w = window as any;
                     const features = w.neosantara_world_geojson_features;
@@ -5755,6 +5801,9 @@ export default function MapPage() {
                             return getFeatureOverrideColor(feature);
                         });
                     }
+                    const signature = `${diplomacyActive ? 1 : 0}|${colors.join(',')}`;
+                    if (signature === lastColorSignature) return; // tidak berubah: hindari redraw WASM
+                    lastColorSignature = signature;
                     wasmModule.set_feature_colors_on_map(colors, diplomacyActive);
                 };
 

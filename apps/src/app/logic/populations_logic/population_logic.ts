@@ -221,8 +221,9 @@ export const hitungDampakWabah = (
   let kematianTambahan = 0;
   let kelahiranBerkurang = 0;
 
-  // Filter wabah yang sedang aktif pada tanggal saat ini
+  // Filter wabah yang sedang aktif pada tanggal saat ini (dan belum ditangani/tidak ditolak)
   const activeHumanOutbreaks = outbreaks.filter((o) => {
+    if (o.isHandled || o.isRejected) return false;
     const startDate = String(o.startDate || o.timestamp || '').slice(0, 10);
     const durationDays = Math.max(0, finiteNumber(o.durationDays));
     const elapsed = getElapsedDays(startDate, currentDate);
@@ -235,12 +236,13 @@ export const hitungDampakWabah = (
   // Jika negara terkena wabah lebih dari 1 secara bersamaan ATAU memiliki riwayat wabah/pandemi berturut-turut,
   // sistem kesehatan mengalami kelebihan beban (overwhelmed health system), sehingga fatalitas dan penurunan netto bertambah drastis!
   const activeCount = activeHumanOutbreaks.length;
-  const historyCount = Math.max(0, Number(countryDetail?.consecutive_outbreak_count || 0));
+  const historyCount = activeCount > 0 ? Math.max(0, Number(countryDetail?.consecutive_outbreak_count || 0)) : 0;
   
   // Pengganda kompaun: setiap wabah aktif tambahan atau riwayat gelombang beruntun menambah fatalitas sebesar +40% per tier (1.0x -> 1.4x -> 1.8x -> ...)
   const compoundMultiplier = Math.max(1, 1 + (Math.max(0, activeCount - 1) * 0.45) + (Math.min(5, historyCount) * 0.25));
 
   for (const outbreak of outbreaks) {
+    if (outbreak.isHandled || outbreak.isRejected) continue;
     const startDate = String(outbreak.startDate || outbreak.timestamp || '').slice(0, 10);
     const durationDays = Math.max(0, finiteNumber(outbreak.durationDays));
     const elapsed = getElapsedDays(startDate, currentDate);
@@ -265,15 +267,16 @@ export const hitungDampakWabah = (
       const deathsBeforeToday = Math.floor(totalDeaths * elapsed / durationDays);
       kematianTambahan += deathsThroughToday - deathsBeforeToday;
     }
-    if (category.includes('Hewan') || category.includes('Tumbuhan')) {
-      kelahiranBerkurang += victims * 0.01;
-    } else if (category.includes('Mutasi')) {
-      kelahiranBerkurang += victims * 0.05 * compoundMultiplier;
-    } else if (category.includes('Pandemi')) {
-      kelahiranBerkurang += victims * 0.12 * compoundMultiplier;
-    } else {
-      kelahiranBerkurang += victims * 0.03 * compoundMultiplier;
-    }
+    const dailyKelahiranLoss = durationDays > 0 ? (
+      category.includes('Hewan') || category.includes('Tumbuhan')
+        ? (victims * 0.01) / durationDays
+        : category.includes('Mutasi')
+          ? (victims * 0.05 * compoundMultiplier) / durationDays
+          : category.includes('Pandemi')
+            ? (victims * 0.12 * compoundMultiplier) / durationDays
+            : (victims * 0.03 * compoundMultiplier) / durationDays
+    ) : 0;
+    kelahiranBerkurang += dailyKelahiranLoss;
   }
   return { kematianTambahan: Math.floor(kematianTambahan), kelahiranBerkurang: Math.floor(kelahiranBerkurang) };
 };
@@ -633,15 +636,17 @@ export const calculateDailyPopulationChange = (
   const deathFluctuationMultiplier = Math.max(0.85, Math.min(1.15, 1 + seasonalDeathWave + dailyDeathNoise));
 
   const baselineDeaths = Math.min(rawDailyDeaths, Math.floor(dailyBirths * 0.7));
-  const adjustedBirths = Math.max(0, Math.floor(
-    dailyBirths * growthMultiplier * foodBirthBonus * birthFluctuationMultiplier - outbreakEffects.kelahiranBerkurang
-  ));
+  const grossBirths = dailyBirths * growthMultiplier * foodBirthBonus * birthFluctuationMultiplier;
+  // Kehilangan kelahiran akibat wabah dibatasi maks 40% dari kelahiran kotor agar tidak pernah anjlok ke 0
+  const outbreakBirthLoss = Math.min(outbreakEffects.kelahiranBerkurang, grossBirths * 0.4);
+  const adjustedBirths = Math.max(0, Math.floor(grossBirths - outbreakBirthLoss));
   const famineDeaths = isPopulationCrisis ? hitungKematianKelaparan(populasi, foodRatio) : 0;
   const outbreakDeaths = Math.min(populasi, outbreakEffects.kematianTambahan);
   const calculatedDeaths = Math.max(0, Math.floor(
     (baselineDeaths * growthMultiplier * foodDeathReduction * deathFluctuationMultiplier) +
     famineDeaths +
-    foodDeficitDeaths
+    foodDeficitDeaths +
+    outbreakDeaths
   ));
   let unboundedNetChange = adjustedBirths - calculatedDeaths;
   if (foodDeficitDeclineRate > 0) {
@@ -661,7 +666,7 @@ export const calculateDailyPopulationChange = (
   const boundedNetDailyChange = Math.max(-maxDailyDecline, Math.min(maxDailyGrowth, unboundedNetChange));
   const religionAdjustedNetChange = applyHinduPopulationGrowthBonus(boundedNetDailyChange, detail.religion);
   const socialismAdjustedNetChange = applySocialismBirthRateBonus(religionAdjustedNetChange, detail.ideology);
-  const demographicNetDailyChange = socialismAdjustedNetChange - outbreakDeaths;
+  const demographicNetDailyChange = socialismAdjustedNetChange;
   const netDailyChange = Math.max(
     -Math.min(populasi, maxDailyDecline + outbreakDeaths),
     demographicNetDailyChange + taxPopulationChange + economicPopulationChange,
