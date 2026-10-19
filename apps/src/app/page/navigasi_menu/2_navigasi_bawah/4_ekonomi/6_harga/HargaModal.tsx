@@ -1,169 +1,476 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+  useDeferredValue,
+} from "react";
 import { X, Tag, Loader2 } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { generateHargaChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/2_harga_barang_pokok/hargaChangeLogic";
 import { generateDemonstrasiHargaNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/demonstrasiEkonomiLogic";
 import { calculatePriceCommodityImpacts } from "@/app/logic/economic_logic/economicPopulationImpact";
 
+// ─────────────────────────────────────────────────────────────────────────
+// Helper murni & Pre-computed Constants
+// ─────────────────────────────────────────────────────────────────────────
+const PRICE_OPTIONS = [10000, 25000, 50000, 75000, 100000].map((val) => ({
+  value: val,
+  label: val.toLocaleString("id-ID", { maximumFractionDigits: 2 }),
+}));
+
+const MIN_PRICE = 10000;
+const MAX_PRICE = 100000;
+const SUBSIDY_COST = 20_000_000;
+const DEBOUNCE_MS = 200;
+
+function calculateSatisfactionFromPrices(
+  currentPrices: Record<string, number>,
+  subsidized: boolean
+): number {
+  const entries = Object.entries(currentPrices).filter(([key]) =>
+    key.startsWith("harga_")
+  );
+  if (entries.length === 0) return 50;
+
+  let totalScore = 0;
+  for (const [, value] of entries) {
+    let score = 100 - ((value - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100;
+    score = Math.min(100, Math.max(0, score));
+    totalScore += score;
+  }
+
+  let avgScore = totalScore / entries.length;
+  if (subsidized) avgScore = Math.min(100, avgScore + 5);
+  return Math.round(avgScore);
+}
+
+type PendingChange = { key: string; value: number; oldValue: number };
+
+// ─────────────────────────────────────────────────────────────────────────
+// 1. MEMOIZED COMPONENT: Hanya me-render ulang kartu yang diklik
+// ─────────────────────────────────────────────────────────────────────────
+interface CommodityCardProps {
+  itemKey: string;
+  currentValue: number;
+  impact: number;
+  onPriceChange: (key: string, val: number) => void;
+}
+
+const CommodityCard = React.memo(
+  ({ itemKey, currentValue, impact, onPriceChange }: CommodityCardProps) => {
+    const formattedName = itemKey
+      .replace("harga_", "")
+      .replace(/_/g, " ")
+      .toUpperCase();
+    const formattedValue = currentValue.toLocaleString("id-ID", {
+      maximumFractionDigits: 2,
+    });
+
+    return (
+      <div className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-xl p-3 lg:p-4">
+        <div className="flex items-center justify-between mb-2.5 lg:mb-3">
+          <div>
+            <p className="text-xs lg:text-sm font-black text-[#00FFAA] uppercase">
+              {formattedName}
+            </p>
+            <p className="text-[11px] lg:text-xs text-[#6B8A8A]">
+              Nilai saat ini:{" "}
+              <span className="font-bold text-[#E0E0E0]">
+                {formattedValue}
+              </span>
+            </p>
+            <p className="text-[11px] lg:text-xs text-[#6B8A8A] mt-1">
+              Dampak populasi:{" "}
+              <span className="font-bold text-[#00FFAA]">
+                {impact.toFixed(2)}% / bulan
+              </span>
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-1.5 lg:gap-2">
+          {PRICE_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => onPriceChange(itemKey, option.value)}
+              className={`px-2.5 lg:px-3 py-1.5 lg:py-2 rounded-lg border text-[10px] lg:text-xs font-black uppercase transition cursor-pointer ${
+                currentValue === option.value
+                  ? "bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] font-bold"
+                  : "bg-[#0F2424] text-[#E0E0E0] border-[#00FFAA]/30 hover:border-[#00FFAA]"
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+);
+CommodityCard.displayName = "CommodityCard";
+
+// ─────────────────────────────────────────────────────────────────────────
+// Wrapper — Rules of Hooks fix
+// ─────────────────────────────────────────────────────────────────────────
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   countryDetail: any;
-  setCountryDetail: (detail: any) => void;
+  setCountryDetail: React.Dispatch<React.SetStateAction<any>>;
 }
 
-export default function HargaModal({ isOpen, onClose, countryDetail, setCountryDetail }: ModalProps) {
+export default function HargaModal(props: ModalProps) {
+  if (!props.isOpen) return null;
+  return (
+    <HargaModalContent
+      onClose={props.onClose}
+      countryDetail={props.countryDetail}
+      setCountryDetail={props.setCountryDetail}
+    />
+  );
+}
+
+function HargaModalContent({
+  onClose,
+  countryDetail,
+  setCountryDetail,
+}: Omit<ModalProps, "isOpen">) {
+  const [, startTransition] = useTransition();
+
   const [prices, setPrices] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [subsidyActive, setSubsidyActive] = useState(false);
 
-  const countryName = countryDetail?.country || "";
-  const anggaran = countryDetail?.anggaran || 0;
-  const kepuasan = countryDetail?.kepuasan || 65.0;
+  // 2. DEFERRED STATE: Memberikan prioritas utama pada klik tombol.
+  // Kalkulasi berat (satisfaction & impacts) akan mengekor di belakang.
+  const deferredPrices = useDeferredValue(prices);
 
-  const priceOptions = useMemo(() => [10000, 25000, 50000, 75000, 100000], []);
+  const countryName = String(countryDetail?.country || "");
+  const anggaran = Number(countryDetail?.anggaran || 0);
 
-  // --- Fungsi menghitung indeks kepuasan berdasarkan keterjangkauan ---
-  const calculateSatisfaction = (currentPrices: Record<string, number>, subsidized: boolean) => {
-    const entries = Object.entries(currentPrices).filter(([key]) => key.startsWith("harga_"));
-    if (entries.length === 0) return 50; // default jika tidak ada data
+  // ── Refs ──────────────────────────────────────────────────────────────
+  const pricesInitializedRef = useRef<string>("");
+  const committedPricesRef = useRef<Record<string, number>>({});
+  const countryDetailRef = useRef(countryDetail);
 
-    const minPrice = 10000;  // harga termurah yang tersedia
-    const maxPrice = 100000; // harga termahal yang tersedia
-    let totalScore = 0;
-
-    for (const [, value] of entries) {
-      // Skor 100 jika harga <= minPrice, 0 jika harga >= maxPrice, linier di antaranya
-      let score = 100 - ((value - minPrice) / (maxPrice - minPrice)) * 100;
-      score = Math.min(100, Math.max(0, score));
-      totalScore += score;
-    }
-
-    let avgScore = totalScore / entries.length;
-    if (subsidized) avgScore = Math.min(100, avgScore + 5); // bonus subsidi
-    return Math.round(avgScore);
-  };
-
-  // --- Load data ---
   useEffect(() => {
-    if (!isOpen || !countryName) return;
+    countryDetailRef.current = countryDetail;
+  }, [countryDetail]);
 
-    if (countryDetail?.harga && Object.keys(countryDetail.harga).length > 0) {
-      setPrices(countryDetail.harga);
-      setSubsidyActive(countryDetail?.subsidyActive || false);
+  const pendingRef = useRef<PendingChange[]>([]);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Load data harga (1× per negara)
+  // ─────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!countryName) return;
+    if (pricesInitializedRef.current === countryName) return;
+    pricesInitializedRef.current = countryName;
+
+    if (
+      countryDetailRef.current?.harga &&
+      typeof countryDetailRef.current.harga === "object" &&
+      Object.keys(countryDetailRef.current.harga).length > 0
+    ) {
+      const initial = countryDetailRef.current.harga as Record<string, number>;
+      setPrices(initial);
+      committedPricesRef.current = initial;
+      setSubsidyActive(Boolean(countryDetailRef.current?.subsidyActive));
       return;
     }
 
+    let cancelled = false;
     const loadPrices = async () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await fetch(`/api/price-data?country=${encodeURIComponent(countryName)}`);
+        const res = await fetch(
+          `/api/price-data?country=${encodeURIComponent(countryName)}`
+        );
         const data = await res.json();
+        if (cancelled) return;
+
         if (data?.prices) {
-          const defaultPrices = data.prices;
+          const defaultPrices = data.prices as Record<string, number>;
           setPrices(defaultPrices);
-          setCountryDetail({
-            ...countryDetail,
-            harga: defaultPrices,
-            subsidyActive: false,
+          committedPricesRef.current = defaultPrices;
+          startTransition(() => {
+            setCountryDetail((prev: any) => {
+              if (!prev) return prev;
+              return {
+                ...prev,
+                harga: defaultPrices,
+                subsidyActive: false,
+              };
+            });
           });
         } else {
           setPrices({});
+          committedPricesRef.current = {};
         }
       } catch (err) {
+        if (cancelled) return;
         console.error("Failed to load price data", err);
         setError("Gagal memuat data harga dari database.");
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     loadPrices();
-  }, [isOpen, countryName, countryDetail?.harga]);
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countryName]);
 
-  if (!isOpen) return null;
+  // ─────────────────────────────────────────────────────────────────────
+  // useMemo — Berbasis `deferredPrices` agar UI tidak nge-lag
+  // ─────────────────────────────────────────────────────────────────────
+  const satisfaction = useMemo(
+    () => calculateSatisfactionFromPrices(deferredPrices, subsidyActive),
+    [deferredPrices, subsidyActive]
+  );
 
-  const satisfaction = calculateSatisfaction(prices, subsidyActive);
-  const commodityImpacts = calculatePriceCommodityImpacts({ harga: prices, subsidyActive });
+  const commodityImpacts = useMemo(
+    () =>
+      calculatePriceCommodityImpacts({
+        harga: deferredPrices,
+        subsidyActive,
+      }),
+    [deferredPrices, subsidyActive]
+  );
 
-  const handlePriceChange = (key: string, value: number) => {
-    const oldPrice = prices[key] ?? value;
-    const updatedPrices = { ...prices, [key]: value };
-    setPrices(updatedPrices);
-    const newSatisfaction = calculateSatisfaction(updatedPrices, subsidyActive);
+  const impactByKey = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of commodityImpacts) {
+      map.set(item.key, item.monthlyModifierPercent);
+    }
+    return map;
+  }, [commodityImpacts]);
 
-    let newPendingNotifs: any[] = Array.isArray(countryDetail?.pending_notifications) ? [...countryDetail.pending_notifications] : [];
-    if (oldPrice !== value) {
-      const formattedItemName = key.replace("harga_", "").replace(/_/g, " ").toUpperCase();
-      const dateStr = countryDetail?.current_date || new Date().toISOString().split('T')[0];
-      const notif = generateHargaChangeNotification(formattedItemName, oldPrice, value, dateStr);
-      newPendingNotifs = [notif, ...newPendingNotifs];
+  const avgCommodityModifier = useMemo(() => {
+    if (commodityImpacts.length === 0) return 0;
+    const sum = commodityImpacts.reduce(
+      (acc, item) => acc + item.monthlyModifierPercent,
+      0
+    );
+    return (sum / commodityImpacts.length) * 0.25;
+  }, [commodityImpacts]);
 
-      // Cek apakah harga mengalami kenaikan
-      if (value > oldPrice) {
-        const oldIndex = priceOptions.indexOf(oldPrice);
-        const newIndex = priceOptions.indexOf(value);
-        const levelJump = (oldIndex !== -1 && newIndex !== -1)
-          ? (newIndex - oldIndex)
-          : (value >= oldPrice * 2 ? 3 : 1);
+  const priceEntries = useMemo(
+    () => Object.entries(prices).filter(([key]) => key.startsWith("harga_")),
+    [prices]
+  );
 
-        const roll = Math.random();
-        if (levelJump >= 3) {
-          // Naik 3 level sekaligus: persentase demo 80%
-          if (roll < 0.80) {
-            const demoNotif = generateDemonstrasiHargaNotification(formattedItemName, oldPrice, value, levelJump, dateStr);
-            newPendingNotifs.unshift(demoNotif);
-          }
-        } else {
-          // Kenaikan bertahap: persentase demo 40%
-          if (roll < 0.40) {
-            const demoNotif = generateDemonstrasiHargaNotification(formattedItemName, oldPrice, value, levelJump, dateStr);
-            newPendingNotifs.unshift(demoNotif);
-          }
+  // ─────────────────────────────────────────────────────────────────────
+  // Flush (Menggabungkan pending changes & commit via startTransition)
+  // ─────────────────────────────────────────────────────────────────────
+  const flushPending = useCallback(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+      debounceRef.current = null;
+    }
+
+    const batch = pendingRef.current;
+    if (batch.length === 0) return;
+    pendingRef.current = [];
+
+    const next = { ...committedPricesRef.current };
+    const notifs: any[] = [];
+    const dateStr =
+      countryDetailRef.current?.current_date ||
+      new Date().toISOString().split("T")[0];
+    const isSubsidy = Boolean(countryDetailRef.current?.subsidyActive);
+
+    for (const { key, value, oldValue } of batch) {
+      next[key] = value;
+
+      const formatted = key
+        .replace("harga_", "")
+        .replace(/_/g, " ")
+        .toUpperCase();
+
+      notifs.push(
+        generateHargaChangeNotification(formatted, oldValue, value, dateStr)
+      );
+
+      if (value > oldValue) {
+        const oldIndex = PRICE_OPTIONS.findIndex((o) => o.value === oldValue);
+        const newIndex = PRICE_OPTIONS.findIndex((o) => o.value === value);
+        const levelJump =
+          oldIndex !== -1 && newIndex !== -1
+            ? newIndex - oldIndex
+            : value >= oldValue * 2
+              ? 3
+              : 1;
+        const demoChance = levelJump >= 3 ? 0.8 : 0.4;
+        if (Math.random() < demoChance) {
+          notifs.unshift(
+            generateDemonstrasiHargaNotification(
+              formatted,
+              oldValue,
+              value,
+              levelJump,
+              dateStr
+            )
+          );
         }
       }
     }
 
-    setCountryDetail?.((prev: any) => {
-      const current = prev || countryDetail || {};
-      return {
-        ...current,
-        harga: updatedPrices,
-        pending_notifications: newPendingNotifs,
-        ...(key === 'harga_beras' ? { price_rice: value } : {}),
-        ...(key === 'harga_minyak_goreng' ? { price_fuel: value } : {}),
-        satisfaction: {
-          ...(current?.satisfaction || {}),
-          price: newSatisfaction,
-        },
-      };
-    });
-  };
+    committedPricesRef.current = next;
+    const newSat = calculateSatisfactionFromPrices(next, isSubsidy);
 
-  const handleSubsidize = () => {
-    if (anggaran < 20000000) {
-      return;
-    }
-    setSubsidyActive(true);
-    const newKepuasan = Math.min(100, kepuasan + 5.0);
-    const newSatisfaction = calculateSatisfaction(prices, true);
-    setCountryDetail({
-      ...countryDetail,
-      anggaran: anggaran - 20000000,
-      kepuasan: newKepuasan,
-      subsidyActive: true,
-      satisfaction: {
-        ...(countryDetail?.satisfaction || {}),
-        price: newSatisfaction,
+    startTransition(() => {
+      setCountryDetail((prev: any) => {
+        if (!prev) return prev;
+        const existing: any[] = Array.isArray(prev.pending_notifications)
+          ? [...prev.pending_notifications]
+          : [];
+        return {
+          ...prev,
+          harga: next,
+          pending_notifications: [...notifs, ...existing],
+          ...(next.harga_beras !== undefined
+            ? { price_rice: next.harga_beras }
+            : {}),
+          ...(next.harga_minyak_goreng !== undefined
+            ? { price_fuel: next.harga_minyak_goreng }
+            : {}),
+          satisfaction: {
+            ...(prev.satisfaction || {}),
+            price: newSat,
+          },
+        };
+      });
+    });
+  }, [setCountryDetail]);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Cleanup (Flush on unmount)
+  // ─────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = null;
       }
+      const batch = pendingRef.current;
+      if (batch.length === 0) return;
+      pendingRef.current = [];
+
+      const next = { ...committedPricesRef.current };
+      const notifs: any[] = [];
+      const dateStr =
+        countryDetailRef.current?.current_date ||
+        new Date().toISOString().split("T")[0];
+      const isSubsidy = Boolean(countryDetailRef.current?.subsidyActive);
+
+      for (const { key, value, oldValue } of batch) {
+        next[key] = value;
+        const formatted = key
+          .replace("harga_", "")
+          .replace(/_/g, " ")
+          .toUpperCase();
+        notifs.push(
+          generateHargaChangeNotification(formatted, oldValue, value, dateStr)
+        );
+      }
+
+      committedPricesRef.current = next;
+      const newSat = calculateSatisfactionFromPrices(next, isSubsidy);
+
+      // on unmount, do sync update
+      setCountryDetail((prev: any) => {
+        if (!prev) return prev;
+        const existing: any[] = Array.isArray(prev.pending_notifications)
+          ? [...prev.pending_notifications]
+          : [];
+        return {
+          ...prev,
+          harga: next,
+          pending_notifications: [...notifs, ...existing],
+          ...(next.harga_beras !== undefined
+            ? { price_rice: next.harga_beras }
+            : {}),
+          ...(next.harga_minyak_goreng !== undefined
+            ? { price_fuel: next.harga_minyak_goreng }
+            : {}),
+          satisfaction: {
+            ...(prev.satisfaction || {}),
+            price: newSat,
+          },
+        };
+      });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Handlers
+  // ─────────────────────────────────────────────────────────────────────
+  const handlePriceChange = useCallback(
+    (key: string, value: number) => {
+      const committed = committedPricesRef.current;
+      const oldValue = committed[key] ?? value;
+      if (oldValue === value) return;
+
+      // Update UI secara instan
+      setPrices((prev) =>
+        prev[key] === value ? prev : { ...prev, [key]: value }
+      );
+
+      pendingRef.current.push({ key, value, oldValue });
+
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(flushPending, DEBOUNCE_MS);
+    },
+    [flushPending]
+  );
+
+  const handleSubsidize = useCallback(() => {
+    if (!setCountryDetail) return;
+    if (Number(countryDetailRef.current?.anggaran || 0) < SUBSIDY_COST) return;
+
+    flushPending();
+    setSubsidyActive(true);
+
+    const newSat = calculateSatisfactionFromPrices(
+      committedPricesRef.current,
+      true
+    );
+
+    startTransition(() => {
+      setCountryDetail((prev: any) => {
+        if (!prev) return prev;
+        const prevAnggaran = Number(prev.anggaran || 0);
+        if (prevAnggaran < SUBSIDY_COST) return prev;
+        const prevKepuasan = Number(prev.kepuasan || 65);
+        const newKepuasan = Math.min(100, prevKepuasan + 5.0);
+        return {
+          ...prev,
+          anggaran: prevAnggaran - SUBSIDY_COST,
+          kepuasan: newKepuasan,
+          subsidyActive: true,
+          satisfaction: {
+            ...(prev.satisfaction || {}),
+            price: newSat,
+          },
+        };
+      });
     });
-  };
+  }, [flushPending, setCountryDetail]);
 
-  const priceEntries = Object.entries(prices).filter(([key]) => key.startsWith("harga_"));
-
+  // ─────────────────────────────────────────────────────────────────────
+  // Render
+  // ─────────────────────────────────────────────────────────────────────
   return (
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
@@ -173,18 +480,24 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
               <Tag className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
             </div>
             <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Kontrol Harga Barang Pokok</h2>
+              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">
+                Kontrol Harga Barang Pokok
+              </h2>
             </div>
           </div>
 
-          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+          <button
+            onClick={onClose}
+            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+          >
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">
+              Tutup
+            </span>
             <X className="h-4 w-4" />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[#0F2424] relative z-10 custom-scrollbar">
-
           {loading ? (
             <div className="flex items-center gap-2 text-sm text-[#00FFAA] mb-6">
               <Loader2 className="h-4 w-4 animate-spin text-[#00FFAA]" />
@@ -196,42 +509,40 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
 
           <div className="space-y-3 lg:space-y-4 mb-4 lg:mb-6">
             {priceEntries.length === 0 ? (
-              <p className="text-sm text-[#6B8A8A]">Belum ada data harga yang tersedia untuk negara ini.</p>
+              <p className="text-sm text-[#6B8A8A]">
+                Belum ada data harga yang tersedia untuk negara ini.
+              </p>
             ) : (
               priceEntries.map(([key, value]) => (
-                <div key={key} className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-xl p-3 lg:p-4">
-                  <div className="flex items-center justify-between mb-2.5 lg:mb-3">
-                    <div>
-                      <p className="text-xs lg:text-sm font-black text-[#00FFAA] uppercase">{key.replace("harga_", "").replace(/_/g, " ")}</p>
-                      <p className="text-[11px] lg:text-xs text-[#6B8A8A]">
-                        Nilai saat ini: <span className="font-bold text-[#E0E0E0]">{Number(value).toLocaleString("id-ID", { maximumFractionDigits: 2 })}</span>
-                      </p>
-                      <p className="text-[11px] lg:text-xs text-[#6B8A8A] mt-1">
-                        Dampak populasi: <span className="font-bold text-[#00FFAA]">{(commodityImpacts.find((impact) => impact.key === key)?.monthlyModifierPercent ?? 0).toFixed(2)}% / bulan</span>
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-1.5 lg:gap-2">
-                    {priceOptions.map((option) => (
-                      <button
-                        key={option}
-                        onClick={() => handlePriceChange(key, option)}
-                        className={`px-2.5 lg:px-3 py-1.5 lg:py-2 rounded-lg border text-[10px] lg:text-xs font-black uppercase transition cursor-pointer ${value === option
-                            ? "bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA] font-bold"
-                            : "bg-[#0F2424] text-[#E0E0E0] border-[#00FFAA]/30 hover:border-[#00FFAA]"
-                          }`}
-                      >
-                        {option.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <CommodityCard
+                  key={key}
+                  itemKey={key}
+                  currentValue={value}
+                  impact={impactByKey.get(key) ?? 0}
+                  onPriceChange={handlePriceChange}
+                />
               ))
             )}
           </div>
 
-
+          {/* Tombol Subsidi */}
+          <button
+            onClick={handleSubsidize}
+            disabled={anggaran < SUBSIDY_COST || subsidyActive}
+            className={`w-full mt-2 mb-4 py-2.5 rounded-xl border font-black text-xs uppercase tracking-wider transition cursor-pointer ${
+              subsidyActive
+                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300 cursor-not-allowed"
+                : anggaran < SUBSIDY_COST
+                  ? "bg-[#0F2424] border-[#00FFAA]/20 text-[#6B8A8A] cursor-not-allowed"
+                  : "bg-[#00FFAA]/15 border-[#00FFAA]/50 text-[#00FFAA] hover:bg-[#00FFAA]/25"
+            }`}
+          >
+            {subsidyActive
+              ? "Subsidi Harga Aktif"
+              : `Aktifkan Subsidi Harga (-${SUBSIDY_COST.toLocaleString(
+                  "id-ID"
+                )} NEO)`}
+          </button>
 
           {/* ---- INDEKS KEPUASAN RAKYAT (HARGA) ---- */}
           <div className="mt-4 lg:mt-6 p-4 lg:p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
@@ -249,15 +560,19 @@ export default function HargaModal({ isOpen, onClose, countryDetail, setCountryD
                 style={{ width: `${satisfaction}%` }}
               />
             </div>
-            {commodityImpacts.length > 0 && (() => {
-              const avgCommodityModifier = commodityImpacts.reduce((sum, item) => sum + item.monthlyModifierPercent, 0) / commodityImpacts.length;
-              const scaledModifier = avgCommodityModifier * 0.25;
-              return (
-                <p className={`mt-3 text-center text-xs font-bold ${scaledModifier >= 0 ? "text-[#00FFAA]" : "text-rose-400"}`}>
-                  Dampak populasi harga pokok: {scaledModifier >= 0 ? "+" : ""}{scaledModifier.toFixed(2)}% / bulan
-                </p>
-              );
-            })()}
+            {commodityImpacts.length > 0 && (
+              <p
+                className={`mt-3 text-center text-xs font-bold ${
+                  avgCommodityModifier >= 0
+                    ? "text-[#00FFAA]"
+                    : "text-rose-400"
+                }`}
+              >
+                Dampak populasi harga pokok:{" "}
+                {avgCommodityModifier >= 0 ? "+" : ""}
+                {avgCommodityModifier.toFixed(2)}% / bulan
+              </p>
+            )}
           </div>
         </div>
       </div>

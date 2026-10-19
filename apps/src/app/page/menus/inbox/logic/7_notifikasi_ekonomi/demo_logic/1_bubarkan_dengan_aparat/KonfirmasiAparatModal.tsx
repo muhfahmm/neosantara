@@ -13,12 +13,13 @@ export default function KonfirmasiAparatModal({
   isOpen,
   onClose,
   onConfirm,
-  cost = 5000000,
+  cost = 250000,
 }: KonfirmasiAparatModalProps) {
   if (typeof window === 'undefined' || !isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[500000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm pointer-events-auto animate-fade-in font-sans">
+    // bg-black/80 dan backdrop-blur-sm telah dihapus
+    <div className="fixed inset-0 z-[500000] flex items-center justify-center p-4 pointer-events-auto animate-fade-in font-sans">
       <div
         role="dialog"
         aria-modal="true"
