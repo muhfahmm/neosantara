@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { Gift, X, Check, Lock, Zap, AlertTriangle } from 'lucide-react';
@@ -11,6 +11,8 @@ import {
 
 const DAILY_REWARD_AMOUNTS = [10_000, 15_000, 20_000, 25_000] as const;
 const REWARD_DAYS = 7;
+const REWARD_STORAGE_KEY = 'dailyRewardData';
+const REWARD_STORAGE_VERSION = 2;
 const REWARD_PRODUCTS = PRODUCTION_BAN_CATEGORIES.flatMap(category =>
   category.products.map(resourceKey => ({
     resourceKey,
@@ -90,14 +92,50 @@ const getWeekKey = (dateString: string): string => {
 };
 
 // ----------------------------------------------------------------------
-// Helper: tanggal dalam format YYYY-MM-DD
+// Helper: tanggal dalam format YYYY-MM-DD (konsisten UTC)
 // ----------------------------------------------------------------------
 const getToday = (): string => new Date().toISOString().slice(0, 10);
 
 const getYesterday = (): string => {
   const d = new Date();
-  d.setDate(d.getDate() - 1);
+  d.setUTCDate(d.getUTCDate() - 1);
   return d.toISOString().slice(0, 10);
+};
+
+const isValidDayIndex = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= REWARD_DAYS;
+
+// ----------------------------------------------------------------------
+// Helper: turunkan status hari secara deterministik.
+// Idempoten: dipanggil berapa kali pun pada tanggal yang sama hasilnya sama.
+// ----------------------------------------------------------------------
+const deriveRewardStatus = (
+  lastClaimDate: string | null,
+  claimedDay: number | null
+): { day: number; claimed: boolean } => {
+  const today = getToday();
+
+  if (!lastClaimDate) {
+    return { day: 1, claimed: false };
+  }
+
+  if (lastClaimDate === today) {
+    return {
+      day: isValidDayIndex(claimedDay) ? claimedDay : 1,
+      claimed: true,
+    };
+  }
+
+  if (lastClaimDate === getYesterday()) {
+    if (!isValidDayIndex(claimedDay)) return { day: 1, claimed: false };
+    return {
+      day: claimedDay === REWARD_DAYS ? 1 : claimedDay + 1,
+      claimed: false,
+    };
+  }
+
+  // Bolong lebih dari satu hari -> streak direset
+  return { day: 1, claimed: false };
 };
 
 // ----------------------------------------------------------------------
@@ -138,6 +176,9 @@ export default function TopRightGiftIcon({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [mounted, setMounted] = useState(false);
 
+  // Tanggal terakhir status disinkronkan (untuk cek pergantian hari)
+  const syncedDateRef = useRef<string>(getToday());
+
   // State untuk modal feedback (menggantikan alert)
   const [feedbackModal, setFeedbackModal] = useState<FeedbackModalData | null>(null);
 
@@ -149,13 +190,16 @@ export default function TopRightGiftIcon({
   // Load & update status dari localStorage
   // --------------------------------------------------------------------
   const loadRewardStatus = useCallback(() => {
-    const stored = localStorage.getItem('dailyRewardData');
     const today = getToday();
+    const weekKey = getWeekKey(today);
+    syncedDateRef.current = today;
 
-    let day = 1;
-    let claimed = false;
-    let lastDate: string | null = null;
-    let storedData: Record<string, unknown> = {};
+    const stored = localStorage.getItem(REWARD_STORAGE_KEY);
+
+    let lastClaimDate: string | null = null;
+    let claimedDay: number | null = null;
+    let weeklyRewardWeek: string | null = null;
+    let storedWeeklyRewards: unknown = null;
 
     if (stored) {
       try {
@@ -163,50 +207,51 @@ export default function TopRightGiftIcon({
         if (!parsedData || typeof parsedData !== 'object' || Array.isArray(parsedData)) {
           throw new Error('Format data hadiah harian tidak valid.');
         }
-        storedData = parsedData as Record<string, unknown>;
-        day = Number(storedData.currentDay) || 1;
-        lastDate = typeof storedData.lastClaimDate === 'string' ? storedData.lastClaimDate : null;
-        claimed = storedData.claimedToday === true;
+        const data = parsedData as Record<string, unknown>;
 
-        if (lastDate === today) {
-          claimed = true;
-        } else if (lastDate === getYesterday()) {
-          claimed = false;
-          if (day === 7) {
-            day = 1;
-          } else {
-            day = day + 1;
-          }
-        } else {
-          day = 1;
-          claimed = false;
-          lastDate = null;
+        lastClaimDate = typeof data.lastClaimDate === 'string' ? data.lastClaimDate : null;
+        weeklyRewardWeek = typeof data.weeklyRewardWeek === 'string' ? data.weeklyRewardWeek : null;
+        storedWeeklyRewards = data.weeklyRewards ?? null;
+
+        const rawClaimedDay = data.claimedDay;
+        if (isValidDayIndex(rawClaimedDay)) {
+          claimedDay = rawClaimedDay;
+        } else if (lastClaimDate && data.version !== REWARD_STORAGE_VERSION) {
+          // Migrasi format lama: currentDay sudah terlanjur maju ke hari berikutnya,
+          // jadi hari yang benar-benar diklaim adalah currentDay - 1.
+          const legacyDay = Math.min(Math.max(Number(data.currentDay) || 1, 1), REWARD_DAYS);
+          claimedDay = legacyDay <= 1 ? REWARD_DAYS : legacyDay - 1;
         }
-      } catch (e) {
-        day = 1;
-        claimed = false;
-        lastDate = null;
+      } catch {
+        lastClaimDate = null;
+        claimedDay = null;
+        weeklyRewardWeek = null;
+        storedWeeklyRewards = null;
       }
     }
 
-    const weekKey = getWeekKey(today);
-    const savedWeeklyRewards = restoreWeeklyRewards(storedData.weeklyRewards);
-    const rewards = storedData.weeklyRewardWeek === weekKey && savedWeeklyRewards
-      ? savedWeeklyRewards
-      : createWeeklyRewards();
+    // Status hari diturunkan dari data klaim, bukan disimpan sebagai counter
+    // yang bisa "meloncat" setiap reload.
+    const { day, claimed } = deriveRewardStatus(lastClaimDate, claimedDay);
+
+    const savedWeeklyRewards = restoreWeeklyRewards(storedWeeklyRewards);
+    const rewards =
+      weeklyRewardWeek === weekKey && savedWeeklyRewards
+        ? savedWeeklyRewards
+        : createWeeklyRewards();
 
     setCurrentDay(day);
     setClaimedToday(claimed);
-    setLastClaimDate(lastDate);
+    setLastClaimDate(lastClaimDate);
     setWeeklyRewards(rewards);
     setIsLoading(false);
 
     localStorage.setItem(
-      'dailyRewardData',
+      REWARD_STORAGE_KEY,
       JSON.stringify({
-        currentDay: day,
-        lastClaimDate: lastDate,
-        claimedToday: claimed,
+        version: REWARD_STORAGE_VERSION,
+        claimedDay,
+        lastClaimDate,
         weeklyRewardWeek: weekKey,
         weeklyRewards: rewards.map(({ resourceKey, amount }) => ({ resourceKey, amount })),
       })
@@ -217,32 +262,22 @@ export default function TopRightGiftIcon({
     loadRewardStatus();
 
     const resetRewardStatus = () => {
-      localStorage.removeItem('dailyRewardData');
+      localStorage.removeItem(REWARD_STORAGE_KEY);
       loadRewardStatus();
     };
 
     const handlePageExit = () => {
-      localStorage.removeItem('dailyRewardData');
+      localStorage.removeItem(REWARD_STORAGE_KEY);
     };
 
     window.addEventListener('daily_reward_reset', resetRewardStatus);
     window.addEventListener('pagehide', handlePageExit);
 
+    // Hanya sinkronkan ulang saat tanggal benar-benar berganti,
+    // supaya hari tidak maju berkali-kali dalam satu hari.
     const interval = setInterval(() => {
-      const stored = localStorage.getItem('dailyRewardData');
-      if (stored) {
-        try {
-          const data = JSON.parse(stored);
-          const today = getToday();
-          if (
-            (data.lastClaimDate && data.lastClaimDate !== today) ||
-            data.weeklyRewardWeek !== getWeekKey(today)
-          ) {
-            loadRewardStatus();
-          }
-        } catch (e) {
-          // ignore
-        }
+      if (getToday() !== syncedDateRef.current) {
+        loadRewardStatus();
       }
     }, 60000);
 
@@ -258,6 +293,7 @@ export default function TopRightGiftIcon({
   // --------------------------------------------------------------------
   const handleClaim = () => {
     if (claimedToday) return;
+
     const reward = weeklyRewards[currentDay - 1];
     if (!canClaimReward || !reward) {
       setFeedbackModal({
@@ -269,21 +305,22 @@ export default function TopRightGiftIcon({
     }
 
     const today = getToday();
-    let newDay = currentDay;
     const weekKey = getWeekKey(today);
-    newDay = currentDay === REWARD_DAYS ? 1 : currentDay + 1;
 
     onClaimReward(reward.resourceKey, reward.amount);
-    setCurrentDay(newDay);
+
+    // currentDay TIDAK dimajukan di sini.
+    // Hari yang baru diklaim tetap ditandai "sudah diklaim hari ini",
+    // dan hari berikutnya baru terbuka besok.
     setClaimedToday(true);
     setLastClaimDate(today);
 
     localStorage.setItem(
-      'dailyRewardData',
+      REWARD_STORAGE_KEY,
       JSON.stringify({
-        currentDay: newDay,
+        version: REWARD_STORAGE_VERSION,
+        claimedDay: currentDay,
         lastClaimDate: today,
-        claimedToday: true,
         weeklyRewardWeek: weekKey,
         weeklyRewards: weeklyRewards.map(({ resourceKey, amount }) => ({ resourceKey, amount })),
       })
