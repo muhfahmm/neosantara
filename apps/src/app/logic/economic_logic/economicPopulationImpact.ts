@@ -101,13 +101,15 @@ export function calculateEconomicPopulationImpact(
     const level = getNationalizationLevel(countryDetail.sector_nationalization, sector.id);
     return total + (level >= 75 ? ((level - 50) / 50) * 0.1 : 0);
   }, 0);
-  // Sistem ekonomi: Semakin terpusat/komando, tren pertumbuhan ditekan (-0.80% s/d +0.50% / bln).
-  // Preset Komando Mutlak, Sosialisme, Campuran, Pasar Bebas terasa jelas perbedaannya di netto populasi.
-  const systemMonthlyModifierPercent = policyScore < 50
-    ? -Math.min(0.8, (50 - policyScore) * 0.016)
-    : Math.min(0.5, (policyScore - 50) * 0.010);
+  // Sistem ekonomi: Nilai policyScore sekitar 50 (campuran) adalah titik netral.
+  // Nilai < 35 menandakan komando sangat otoriter/penuh yang menekan tren demografi.
+  const systemMonthlyModifierPercent = policyScore < 40
+    ? -Math.min(0.6, (40 - policyScore) * 0.015)
+    : policyScore > 60
+      ? Math.min(0.4, (policyScore - 60) * 0.010)
+      : 0;
   const nationalizationAdjustedSystemModifierPercent = Math.max(
-    -1.0,
+    -0.8,
     systemMonthlyModifierPercent - highNationalizationPenalty,
   );
 

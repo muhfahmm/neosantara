@@ -1,4 +1,4 @@
-// detail path: c:\EM\apps\src\app\page\map_system\map-system.tsx
+﻿// detail path: c:\EM\apps\src\app\page\map_system\map-system.tsx
 'use client';
 
 import React, { memo, startTransition, useCallback, useState, useEffect, useRef } from 'react';
@@ -2444,8 +2444,8 @@ export default function MapPage() {
             // logika persentase kemunculan notifikasi di inbox
             if (dailyQuotaRef.current.date !== today) {
                 const roll = Math.random();
-                // 30% → 0 notif, 50% → 1 notif, 20% → 2 notif
-                const maxForDay = roll < 0.30 ? 0 : roll < 0.80 ? 1 : 2;
+                // 40% → 0 notif, 50% → 1 notif, 10% → 2 notif
+                const maxForDay = roll < 0.40 ? 0 : roll < 0.90 ? 1 : 2;
                 dailyQuotaRef.current = { date: today, quota: maxForDay };
             }
             
@@ -3997,13 +3997,14 @@ export default function MapPage() {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const schedulePendingDateCommit = useCallback(() => {
-        if (!pendingDateRef.current || isMapPointerDownRef.current) return;
+        if (!pendingDateRef.current) return;
         if (dateCommitTimerRef.current !== null) clearTimeout(dateCommitTimerRef.current);
         const elapsedSinceInteraction = Date.now() - lastMapInteractionAtRef.current;
-        const delay = Math.max(0, 180 - elapsedSinceInteraction);
+        // Jika user sedang drag peta, tunda commit (jangan batalkan) agar pergantian hari tidak terlewat
+        const delay = isMapPointerDownRef.current ? 500 : Math.max(0, 180 - elapsedSinceInteraction);
         dateCommitTimerRef.current = setTimeout(() => {
             dateCommitTimerRef.current = null;
-            if (isMapPointerDownRef.current || !pendingDateRef.current) return;
+            if (!pendingDateRef.current) return;
             const pendingDate = pendingDateRef.current;
             pendingDateRef.current = null;
             startTransition(() => setCurrentDate(pendingDate));
@@ -4138,8 +4139,10 @@ export default function MapPage() {
                     const newDate = activeManager.getCurrentDate();
                     const dateKey = `${newDate.getFullYear()}-${newDate.getMonth()}-${newDate.getDate()}`;
                     if (dateKey !== lastDateKey) {
-                        lastDateKey = dateKey;
+                        // Update lastDateKey SETELAH menyimpan pending date agar tidak terlewat
+                        // jika schedulePendingDateCommit ditunda karena interaksi peta
                         pendingDateRef.current = newDate;
+                        lastDateKey = dateKey;
                         schedulePendingDateCommit();
                     }
                 }
@@ -5489,11 +5492,9 @@ export default function MapPage() {
             requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
             cancelIdleCallback?: (callbackId: number) => void;
         };
-        if (idleWindow.requestIdleCallback) {
-            idleCallbackId = idleWindow.requestIdleCallback(runDailyTick, { timeout: 300 });
-        } else {
-            fallbackTimerId = window.setTimeout(runDailyTick, 50);
-        }
+        // Gunakan setTimeout yang reliabel & deterministik untuk memastikan daily tick
+        // selalu berjalan. requestIdleCallback tidak dijamin jalan saat browser busy.
+        fallbackTimerId = window.setTimeout(runDailyTick, 50);
 
         return () => {
             cancelled = true;

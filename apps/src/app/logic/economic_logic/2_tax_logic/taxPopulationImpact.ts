@@ -70,12 +70,15 @@ export function calculateTaxPopulationImpact(
       ? 35
       : ideology === 'kapitalis' || ideology === 'kapitalisme' ||
           ideology === 'capitalist' || ideology === 'capitalism'
-        ? 15
+        ? 20
         : 25;
   const difference = burden - threshold;
+  // Ketika tidak ada kenaikan pajak di atas threshold default (beban pajak normal/standar),
+  // dampak ke populasi adalah netral (0%). Hanya ketika pajak dinaikkan melebihi threshold
+  // beban pajak akan berdampak negatif (mengurangi netto populasi hingga bisa minus).
   const monthlyModifierPercent = difference > 0
     ? -(difference * 0.05)
-    : Math.min(0.5, Math.abs(difference) * 0.02);
+    : 0;
 
   return { burden, threshold, monthlyModifierPercent };
 }

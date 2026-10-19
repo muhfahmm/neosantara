@@ -604,7 +604,11 @@ export const calculateDailyPopulationChange = (
     overpopulation.tier >= 3,
     health.tier >= 4,
   ].filter(Boolean).length;
-  const isPopulationCrisis = severeFactorCount >= 2 || food.tier >= 6 || foodDeficitDeclineRate > 0;
+
+  // Hanya krisis jika 3+ faktor parah ATAU benar-benar kelaparan (tier 6).
+  // Jangan jadikan defisit pangan ringan sebagai pemicu krisis maksimal.
+  const isPopulationCrisis = severeFactorCount >= 3 || food.tier >= 6;
+
   const growthMultiplier = getPopulationGrowthMultiplier(food.tier, housing.tier, overpopulation.tier, health.tier);
 
   // Deterministic realistic daily & seasonal demographic fluctuation
@@ -656,21 +660,33 @@ export const calculateDailyPopulationChange = (
   const growthCoverage = Math.min(1, Math.max(0, Math.min(foodRatio, housingFulfillment)));
   const maxAnnualGrowthRate = hasFoodOrHousingDeficit ? 0.005 : 0.015;
   const maxDailyGrowth = Math.floor(populasi * maxAnnualGrowthRate * growthCoverage / 365);
-  // Batas penurunan harian dinaikkan secara dinamis jika ada krisis populasi atau wabah kematian aktif (agar kompaun pandemi/epidemi berulang dapat menekan penurunan netto lebih dalam)
-  const baseAnnualDeclineRate = isPopulationCrisis ? 0.03 : 0.015;
+
+  // Batas penurunan diperbarui: Krisis tidak lagi memicu penurunan ekstrem (maks 2% per tahun).
+  const baseAnnualDeclineRate = isPopulationCrisis ? 0.01 : 0.005;
   const outbreakDeclineBoost = outbreakDeaths > 0
     ? Math.min(0.08, (outbreakDeaths / Math.max(1, populasi)) * 365 * 1.5)
     : 0;
-  const maxAnnualDeclineRate = baseAnnualDeclineRate + outbreakDeclineBoost;
+  const maxAnnualDeclineRate = Math.min(0.02, baseAnnualDeclineRate + outbreakDeclineBoost);
+  
   const maxDailyDecline = Math.ceil(populasi * maxAnnualDeclineRate / 365);
   const boundedNetDailyChange = Math.max(-maxDailyDecline, Math.min(maxDailyGrowth, unboundedNetChange));
   const religionAdjustedNetChange = applyHinduPopulationGrowthBonus(boundedNetDailyChange, detail.religion);
   const socialismAdjustedNetChange = applySocialismBirthRateBonus(religionAdjustedNetChange, detail.ideology);
   const demographicNetDailyChange = socialismAdjustedNetChange;
-  const netDailyChange = Math.max(
-    -Math.min(populasi, maxDailyDecline + outbreakDeaths),
-    demographicNetDailyChange + taxPopulationChange + economicPopulationChange,
-  );
+  const policyAdjustedNetChange = demographicNetDailyChange + taxPopulationChange + economicPopulationChange;
+  // Jika tidak ada krisis populasi, tidak ada wabah kematian aktif, dan defisit pangan nihil:
+  // - Jika tidak ada kebijakan yang menekan (tax & economic change >= 0), populasi mempertahankan netto alami positif (demographicNetDailyChange).
+  // - Namun jika user mengubah pajak / ekonomi hingga menimbulkan penalti negatif (taxPopulationChange < 0),
+  //   penalti tersebut dapat mengurangi pertumbuhan hingga bisa minus.
+  const hasNegativePolicyImpact = (taxPopulationChange + economicPopulationChange) < 0;
+  const netDailyChange = (!isPopulationCrisis && outbreakDeaths === 0 && foodDeficitDeaths === 0)
+    ? (hasNegativePolicyImpact
+        ? Math.max(-maxDailyDecline, Math.min(maxDailyGrowth, policyAdjustedNetChange))
+        : Math.max(1, Math.min(maxDailyGrowth, demographicNetDailyChange)))
+    : Math.max(
+        -Math.min(populasi, maxDailyDecline + outbreakDeaths),
+        policyAdjustedNetChange,
+      );
 
   // Adjusted deaths harus mencerminkan total pengurangan netto populasi harian
   // sehingga selalu berlaku mutlak secara matematis: dailyBirths - dailyDeaths === netDailyChange
