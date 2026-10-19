@@ -1,4 +1,4 @@
-// detail path: c:\EM\apps\src\app\page\map_system\map-system.tsx
+﻿// detail path: c:\EM\apps\src\app\page\map_system\map-system.tsx
 'use client';
 
 import React, { memo, startTransition, useCallback, useState, useEffect, useRef } from 'react';
@@ -2415,12 +2415,15 @@ export default function MapPage() {
                 (typeof window !== 'undefined' && Boolean((window as any).neosantara_is_paused));
             const today = notificationDateRef.current;
             // Tentukan kuota untuk hari ini jika belum ada (diundi sekali per hari)
+
+            // logika persentase kemunculan notifikasi di inbox
             if (dailyQuotaRef.current.date !== today) {
                 const roll = Math.random();
                 // 30% → 0 notif, 50% → 1 notif, 20% → 2 notif
                 const maxForDay = roll < 0.30 ? 0 : roll < 0.80 ? 1 : 2;
                 dailyQuotaRef.current = { date: today, quota: maxForDay };
             }
+            
             const alreadySent = prev.filter(n => !isExempt(n) && n.timestamp === today).length;
             let quota = Math.max(0, dailyQuotaRef.current.quota - alreadySent);
             const prevIds = new Set(prev.map(n => n.id));
