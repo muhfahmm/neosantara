@@ -626,7 +626,7 @@ export default function TopLeftIcon({
                 <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 max-w-md mx-auto my-auto p-6">
                   <Inbox className="h-16 w-16 text-[#00FFAA]/30" />
                   <h4 className="text-lg font-bold text-[#00FFAA] uppercase">Tidak Ada Pesan</h4>
-                  <div className="text-xs text-[#6B8A8A]">Kotak masuk Anda bersih. Tidak ada notifikasi atau penawaran yang tertunda.</div>
+                  {/* 🔥 Teks "Kotak masuk Anda bersih..." telah dihapus dari sini */}
                 </div>
               ) : (
                 <>
@@ -669,12 +669,10 @@ export default function TopLeftIcon({
 
                             {/* Info Singkat */}
                             <div className="flex-1 min-w-0">
-                              {/* PERBAIKAN: Menghapus truncate dan menambahkan break-words agar judul wrap ke bawah */}
                               <h4 className={`text-[11px] sm:text-xs font-black leading-tight whitespace-normal break-words ${isUrgent ? 'text-rose-400' : isSelected ? 'text-[#00FFAA]' : 'text-[#E0E0E0]'
                                 }`}>
                                 {notif.title}
                               </h4>
-                              {/* PERBAIKAN: Menambahkan flex-wrap pada container dan menghapus truncate di span */}
                               <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 mt-1 text-[9px] text-[#6B8A8A] font-semibold">
                                 {countryIso && countryIso !== 'un' && (
                                   <img
