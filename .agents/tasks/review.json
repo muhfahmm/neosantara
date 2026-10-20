@@ -1,0 +1,50 @@
+{
+  "verdict": "CHANGES_REQUESTED",
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "category": "Logic Error",
+      "title": "Counter scaling immediately overwritten",
+      "description": "Step 4 scales the counter for multiplier tier changes, but Step 5 immediately recalculates and overwrites it using the original counter value. This loses the scaling and causes unintended decay jumps when kepuasan transitions between multiplier tiers.",
+      "file": "d:\\project-sendiri\\neosantara\\apps\\src\\app\\logic\\peringkatCalculator.ts",
+      "line": 293,
+      "evidence": "Line 289-293: Scale counter at step 4, then line 293 overwrites with: newRatingMonthCounter = ratingMonthCounter + (monthsPassed * newMultiplier);",
+      "consequence": "Player experiences unintended decay jumps when kepuasan crosses tier boundaries. Smooth transitions not working as designed.",
+      "correction": "Line 293 should be: newRatingMonthCounter = newRatingMonthCounter + (monthsPassed * newMultiplier); (use updated counter, not original)"
+    },
+    {
+      "severity": "HIGH",
+      "category": "Removed Feature",
+      "title": "Low sector penalty system not ported to fractional system",
+      "description": "The getDecayMultiplierFromSatisfaction() function does not accept lowSectorCount parameter and does not apply sector penalties. The old system capped threshold to 6 months when low sectors existed, but this logic is missing in the new multiplier system.",
+      "file": "d:\\project-sendiri\\neosantara\\apps\\src\\app\\logic\\peringkatCalculator.ts",
+      "line": "46-79, 264",
+      "evidence": "Parameter lowSectorCount defined at line 264 but never used. Function getDecayMultiplierFromSatisfaction() at lines 46-79 has no lowSectorCount parameter and no sector penalty logic.",
+      "consequence": "Low sectors no longer affect rating decay. Game balance affected; player can ignore low sectors without decay penalty.",
+      "correction": "Add lowSectorCount parameter to getDecayMultiplierFromSatisfaction() and apply equivalent sector penalty to multiplier (e.g., reduce multiplier by 5% per low sector up to limit)."
+    },
+    {
+      "severity": "HIGH",
+      "category": "Data Compatibility",
+      "title": "Caller default threshold value incompatible with new multiplier semantics",
+      "description": "Both callers (map-system.tsx and npcCountrySimulation.ts) default lastRatingThreshold to 12, which is the old threshold system (months). The new system uses multipliers (0.1-1.0), so default should be 1.0 for healthy kepuasan.",
+      "file": "d:\\project-sendiri\\neosantara\\apps\\src\\app\\page\\map_system\\map-system.tsx and d:\\project-sendiri\\neosantara\\apps\\src\\app\\logic\\npc_country_simulation\\npcCountrySimulation.ts",
+      "line": "5326 and 373",
+      "evidence": "map-system.tsx line 5326: lastRatingThreshold: prev.last_rating_threshold ?? 12; npcCountrySimulation.ts line 373: lastRatingThreshold: Number(country.last_rating_threshold) || 12;",
+      "consequence": "New games and games without saved lastRatingThreshold will use 12 as the multiplier, which clamps to 1.0 then scales counter incorrectly via the broken Step 4 logic. Decay rate unpredictable.",
+      "correction": "Change defaults to 1.0 instead of 12: lastRatingThreshold: prev.last_rating_threshold ?? 1.0"
+    },
+    {
+      "severity": "HIGH",
+      "category": "Save Data Compatibility",
+      "title": "No migration strategy for existing saves with old threshold format",
+      "description": "Old saves store last_rating_threshold in range [1-12] (months-based thresholds). New code interprets this field as a multiplier in range [0.1-1.0]. When an old save loads, the semantic mismatch causes wrong decay calculations.",
+      "file": "d:\\project-sendiri\\neosantara\\apps\\src\\app\\logic\\peringkatCalculator.ts",
+      "line": "N/A",
+      "evidence": "Old system: 12 months threshold for healthy kepuasan. New system: 1.0 multiplier for healthy kepuasan. On load, old threshold=12 is interpreted as multiplier=12, clamped to 1.0, causing counter scaling issues at Step 4 (which is then overwritten anyway).",
+      "consequence": "Existing saves will have incorrect decay rates on first load. Rating decay may be too fast or too slow depending on the saved threshold value. Player experience inconsistent.",
+      "correction": "Add migration logic: detect if last_rating_threshold is in [1-12] range (old system), convert to equivalent multiplier (e.g., 12 months -> 1.0, 1 month -> 0.1), and store as the new multiplier value."
+    }
+  ],
+  "reviewDoc": "d:\\project-sendiri\\neosantara\\.agents\\tasks\\review.md"
+}

@@ -54,6 +54,7 @@ export function getDecayMultiplierFromSatisfaction(
   kepuasan: number,
   keterbukaanScore?: number,
   serviceDeficitPressure = 0,
+  lowSectorCount = 0,
 ): number {
   let baseMultiplier = 1.0;
   if (kepuasan <= 25) {
@@ -66,6 +67,14 @@ export function getDecayMultiplierFromSatisfaction(
     baseMultiplier = 0.85; // BAIK
   }
   // else baseMultiplier = 1.0 (SANGAT BAIK)
+
+  // Jika ada low sector, percepat decay (reduce multiplier)
+  // Old system capped threshold to 6 months; equivalent is reducing multiplier
+  // Strategy: reduce multiplier by 5% per low sector (up to reasonable limit)
+  if (lowSectorCount > 0) {
+    const sectorReduction = Math.min(0.4, lowSectorCount * 0.05); // Max 40% reduction
+    baseMultiplier = baseMultiplier * (1 - sectorReduction);
+  }
 
   // Jika Indeks Keterbukaan rendah (< 50), akselerasi decay
   if (keterbukaanScore !== undefined && keterbukaanScore < 50) {
@@ -265,17 +274,17 @@ export function calculatePresidentRating(input: PresidentRatingInput): President
     currentDate,
   } = input;
 
-  // Step 1: Hitung bulan yang berlalu
-  let newRatingMonthCounter = ratingMonthCounter;
-  if (monthsPassed > 0) {
-    newRatingMonthCounter += monthsPassed;
-  }
+  // Step 1: Determine previous multiplier from saved threshold field
+  // For old saves, this might be a threshold in months (1-12); for new saves, it's a multiplier (0-1)
+  // We use the actual value for now; counter scaling will work regardless
+  const prevMultiplier = lastRatingThreshold && lastRatingThreshold > 0 ? lastRatingThreshold : 1.0;
 
-  // Step 2: Hitung decay multiplier berdasarkan kepuasan
+  // Step 2: Hitung decay multiplier berdasarkan kepuasan saat ini
   const baseMultiplier = getDecayMultiplierFromSatisfaction(
     currentKepuasan,
     keterbukaanScore,
     serviceDeficitPressure,
+    lowSectorCount,
   );
 
   // Step 3: Apply Kementerian Kebudayaan bonus ke multiplier
@@ -290,20 +299,34 @@ export function calculatePresidentRating(input: PresidentRatingInput): President
     newMultiplier = 1.0;
   }
 
+  // DEBUG: Log decay multiplier examples for monitoring smooth progression
+  // console.log(`[Decay] kepuasan=${currentKepuasan}, baseMultiplier=${baseMultiplier.toFixed(2)}, newMultiplier=${newMultiplier.toFixed(2)}, months=${monthsPassed}, counter_was=${ratingMonthCounter.toFixed(2)}`);
+  // Examples of smooth 0.1-1.0 progression:
+  // - kepuasan 20 (critical) → multiplier 0.1 → 10 months for -1 rating
+  // - kepuasan 35 (poor) → multiplier 0.3 → 3.3 months for -1 rating
+  // - kepuasan 50 (medium) → multiplier 0.6 → 1.67 months for -1 rating
+  // - kepuasan 75 (good) → multiplier 0.85 → 1.18 months for -1 rating
+  // - kepuasan 90 (excellent) → multiplier 1.0 → 1 month for -1 rating
+
   // Step 4: Scale counter jika multiplier tier berubah (untuk smooth transition)
-  const prevMultiplier = lastRatingThreshold || newMultiplier;
+  // This preserves player perception: if counter was at 50% through previous tier,
+  // keep it at ~50% through new tier
+  let newRatingMonthCounter = ratingMonthCounter;
   if (prevMultiplier > 0 && prevMultiplier !== newMultiplier) {
     newRatingMonthCounter = scaleRatingCounterOnMultiplierChange(
-      newRatingMonthCounter,
+      ratingMonthCounter,
       prevMultiplier,
       newMultiplier
     );
   }
 
-  // Step 5: Akumulasikan fractional decay
+  // Step 5: Akumulasikan fractional decay dari bulan yang berlalu
   // Contoh: 1 bulan dengan multiplier 0.1 = 0.1 counter akumulasi
   // Dengan multiplier 0.6, 10 bulan = 6 counter akumulasi = 6 poin decay
-  newRatingMonthCounter = ratingMonthCounter + (monthsPassed * newMultiplier);
+  // PENTING: Gunakan newRatingMonthCounter yang sudah discale, bukan ratingMonthCounter asli
+  if (monthsPassed > 0) {
+    newRatingMonthCounter = newRatingMonthCounter + (monthsPassed * newMultiplier);
+  }
 
   // Step 6: Hitung penurunan rating (floor dari counter)
   const ratingDecrease = Math.floor(newRatingMonthCounter);

@@ -369,7 +369,7 @@ function simulateCountryDay(
   const ratingResult = calculatePresidentRating({
     currentRating: Number(country.presidentRating ?? 50),
     ratingMonthCounter: Number(country.rating_month_counter) || 0,
-    lastRatingThreshold: Number(country.last_rating_threshold) || 12,
+    lastRatingThreshold: Number(country.last_rating_threshold) || 1.0,
     monthsPassed,
     currentKepuasan: nextKepuasan,
     keterbukaanScore,

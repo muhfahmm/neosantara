@@ -5321,7 +5321,7 @@ export default function MapPage() {
                 const ratingResult = calculatePresidentRating({
                     currentRating: prev.presidentRating ?? 50,
                     ratingMonthCounter: prev.rating_month_counter ?? 0,
-                    lastRatingThreshold: prev.last_rating_threshold ?? 12,
+                    lastRatingThreshold: prev.last_rating_threshold ?? 1.0,
                     monthsPassed,
                     currentKepuasan: nextKepuasan,
                     keterbukaanScore,
