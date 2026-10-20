@@ -19,7 +19,7 @@ import { COUNTRIES_DATA } from '../map-data';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { calculateDailyPopulationChange } from '@/app/logic/populations_logic/population_logic';
 import { getCurrentGameDateString } from '@/app/logic/gameSessionState';
-import { applyNpcCountrySimulationState } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
+import { applyNpcCountrySimulationState, NPC_COUNTRY_SIMULATION_UPDATED_EVENT } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 
 interface CountryDetailData {
   id: number;
@@ -60,9 +60,11 @@ const getContinentFromOrder = (order: number): string => {
 };
 
 export default function TabelNegaraPage() {
-  const [countries, setCountries] = useState<CountryDetailData[]>([]);
+  const [rawCountries, setRawCountries] = useState<any[]>([]);
+  const [metadata, setMetadata] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
 
   // Filter & Search states
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -84,6 +86,23 @@ export default function TabelNegaraPage() {
     return { isoLookup: isoMap, continentLookup: contMap };
   }, []);
 
+  // Dengarkan event simulasi agar tabel langsung live terupdate seketika
+  useEffect(() => {
+    const handleUpdate = () => {
+      setRefreshTrigger(prev => prev + 1);
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, handleUpdate);
+      window.addEventListener('country_relations_updated', handleUpdate);
+      const intervalId = window.setInterval(handleUpdate, 1500);
+      return () => {
+        window.removeEventListener(NPC_COUNTRY_SIMULATION_UPDATED_EVENT, handleUpdate);
+        window.removeEventListener('country_relations_updated', handleUpdate);
+        window.clearInterval(intervalId);
+      };
+    }
+  }, []);
+
   // Load data directly from MySQL API (/api/country-data?all=true)
   const fetchData = async () => {
     setIsLoading(true);
@@ -96,11 +115,10 @@ export default function TabelNegaraPage() {
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
-      const [data, metadata] = await Promise.all([
+      const [data, meta] = await Promise.all([
         res.json(),
         metadataResponse?.ok ? metadataResponse.json() : Promise.resolve({}),
       ]);
-      const gameDate = getCurrentGameDateString();
 
       let rawList: any[] = [];
       if (Array.isArray(data)) {
@@ -112,82 +130,26 @@ export default function TabelNegaraPage() {
       if (rawList.length === 0) {
         throw new Error('Data kosong dari database');
       }
-      rawList = rawList.map(countryItem => applyNpcCountrySimulationState(countryItem));
 
-      // Map directly over the 207 database entries
-      const processed: CountryDetailData[] = rawList.map((countryItem, idx) => {
-        const id = countryItem.id || idx + 1;
-        const countryName =
-          countryItem.name_id ||
-          countryItem.nama_negara ||
-          countryItem.name_en ||
-          countryItem.country ||
-          'Unknown';
-        const capitalName = countryItem.capital || countryItem.ibu_kota || '-';
-
-        const normName = normalizeKey(countryName);
-        const normSlug = normalizeKey(countryItem.country_slug || '');
-
-        // Match ISO code
-        const isoCode =
-          (countryItem.iso || '').toLowerCase() ||
-          isoLookup.get(normName) ||
-          isoLookup.get(normSlug) ||
-          'un';
-
-        // Match Continent
-        const continentName =
-          countryItem.benua ||
-          countryItem.continent ||
-          continentLookup.get(normName) ||
-          continentLookup.get(normSlug) ||
-          getContinentFromOrder(id);
-
-        const population = Number(countryItem.jumlah_penduduk ?? countryItem.populasi ?? 10_000_000);
-        const treasury = Number(countryItem.anggaran ?? countryItem.kas_negara ?? 100);
-
-        // Calculate economy net balance
-        const netBalance = calculateNetBalanceWithEconomicEmbargo(countryItem, countryName);
-
-        // Calculate population change
-        const popMetrics = calculateDailyPopulationChange(countryItem, countryName, metadata, gameDate);
-        const netPopChange = popMetrics.netDailyChange;
-
-        return {
-          ...countryItem,
-          id,
-          countryName,
-          capitalName,
-          isoCode,
-          continentName,
-          population,
-          treasury,
-          netBalance,
-          netPopChange,
-        };
-      });
-
-      setCountries(processed);
+      setRawCountries(rawList);
+      setMetadata(meta || {});
     } catch (err: any) {
       console.error('Gagal mengambil data dari database:', err);
       setError('Gagal memuat data dari database. Menampilkan data standar.');
 
       // Fallback load from local map data
-      const fallback: CountryDetailData[] = COUNTRIES_DATA.map((base, idx) => {
-        const pop = Number((base as any).jumlah_penduduk ?? (base as any).population ?? 0);
-        return {
-          id: idx + 1,
-          countryName: base.country,
-          capitalName: base.capital,
-          isoCode: base.iso.toLowerCase(),
-          continentName: base.continent || 'Lainnya',
-          population: pop,
-          treasury: 0,
-          netBalance: 0,
-          netPopChange: 0,
-        };
-      });
-      setCountries(fallback);
+      const fallback = COUNTRIES_DATA.map((base, idx) => ({
+        id: idx + 1,
+        country: base.country,
+        nama_negara: base.country,
+        name_id: base.country,
+        capital: base.capital,
+        iso: base.iso.toLowerCase(),
+        continent: base.continent || 'Lainnya',
+        jumlah_penduduk: (base as any).jumlah_penduduk ?? (base as any).population ?? 0,
+        anggaran: 100_000,
+      }));
+      setRawCountries(fallback);
     } finally {
       setIsLoading(false);
     }
@@ -196,6 +158,84 @@ export default function TabelNegaraPage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Compute live processed countries with compounding and live user/NPC stats
+  const countries = useMemo<CountryDetailData[]>(() => {
+    if (rawCountries.length === 0) return [];
+    const gameDate = getCurrentGameDateString();
+
+    const playerDetail = typeof window !== 'undefined'
+      ? (window as any).neosantara_player_country_detail
+      : null;
+
+    const normPlayerName = normalizeKey(
+      playerDetail?.country ||
+      playerDetail?.nama_negara ||
+      playerDetail?.name_id ||
+      playerDetail?.name ||
+      ''
+    );
+
+    return rawCountries.map((rawItem, idx) => {
+      const id = rawItem.id || idx + 1;
+      const countryName =
+        rawItem.name_id ||
+        rawItem.nama_negara ||
+        rawItem.name_en ||
+        rawItem.country ||
+        'Unknown';
+      const capitalName = rawItem.capital || rawItem.ibu_kota || '-';
+      const normName = normalizeKey(countryName);
+      const normSlug = normalizeKey(rawItem.country_slug || '');
+
+      const isPlayer = Boolean(
+        playerDetail && (normName === normPlayerName || (normSlug && normSlug === normPlayerName))
+      );
+
+      // Jika negara user, gabungkan state live user; jika NPC, gunakan simulasi NPC live
+      const countryItem = isPlayer
+        ? { ...rawItem, ...playerDetail, is_user: true }
+        : applyNpcCountrySimulationState(rawItem);
+
+      // Match ISO code
+      const isoCode =
+        (countryItem.iso || '').toLowerCase() ||
+        isoLookup.get(normName) ||
+        isoLookup.get(normSlug) ||
+        'un';
+
+      // Match Continent
+      const continentName =
+        countryItem.benua ||
+        countryItem.continent ||
+        continentLookup.get(normName) ||
+        continentLookup.get(normSlug) ||
+        getContinentFromOrder(id);
+
+      const population = Number(countryItem.jumlah_penduduk ?? countryItem.populasi ?? 10_000_000);
+      const treasury = Number(countryItem.anggaran ?? countryItem.kas_negara ?? 100);
+
+      // Calculate economy net balance
+      const netBalance = calculateNetBalanceWithEconomicEmbargo(countryItem, countryName);
+
+      // Calculate population change
+      const popMetrics = calculateDailyPopulationChange(countryItem, countryName, metadata, gameDate);
+      const netPopChange = popMetrics.netDailyChange;
+
+      return {
+        ...countryItem,
+        id,
+        countryName,
+        capitalName,
+        isoCode,
+        continentName,
+        population,
+        treasury,
+        netBalance,
+        netPopChange,
+      };
+    });
+  }, [rawCountries, metadata, refreshTrigger, isoLookup, continentLookup]);
 
   // List benua unik
   const continents = useMemo(() => {

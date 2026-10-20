@@ -389,20 +389,6 @@ export function CountryDetailModal({
     const netPopulationChange = calculateCountryNetPopulation(fetchedDetail);
     setDailyNetPopulation(netPopulationChange);
 
-    // 3. Update Anggaran dan Jumlah Penduduk secara real-time
-    const currentPop = Number(fetchedDetail.jumlah_penduduk) || 0;
-    const nextBudget = (Number(fetchedDetail.anggaran) || 0) + netBalance;
-    const nextPop = Math.max(0, currentPop + netPopulationChange);
-
-    setFetchedDetail((prev: any) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        anggaran: nextBudget,
-        jumlah_penduduk: nextPop,
-      };
-    });
-
     const currentPlayerCountry = normalizeCountryKey(
       countryDetail?.country ||
       countryDetail?.nama_negara ||
@@ -411,22 +397,23 @@ export function CountryDetailModal({
     );
     const isPlayer = currentPlayerCountry && currentPlayerCountry === normalizeCountryKey(countryName);
 
-    if (isPlayer && setCountryDetail) {
-      setCountryDetail((prev: any) => {
-        if (!prev) return prev;
-        return {
+    if (isPlayer && countryDetail) {
+      setFetchedDetail((prev: any) => (prev ? {
+        ...prev,
+        anggaran: countryDetail.anggaran,
+        jumlah_penduduk: countryDetail.jumlah_penduduk,
+      } : prev));
+    } else if (fetchedDetail?.country_slug) {
+      const liveNpc = applyNpcCountrySimulationState(fetchedDetail);
+      if (liveNpc) {
+        setFetchedDetail((prev: any) => (prev ? {
           ...prev,
-          anggaran: nextBudget,
-          jumlah_penduduk: nextPop,
-        };
-      });
-    } else if (fetchedDetail.country_slug) {
-      updateNpcCountrySimulationState(fetchedDetail.country_slug, {
-        anggaran: nextBudget,
-        jumlah_penduduk: nextPop,
-      });
+          anggaran: liveNpc.anggaran,
+          jumlah_penduduk: liveNpc.jumlah_penduduk,
+        } : prev));
+      }
     }
-  }, [currentDate, fetchedDetail, isOpen, countryName, countryDetail, setCountryDetail]);
+  }, [currentDate, fetchedDetail, isOpen, countryName, countryDetail]);
 
   useEffect(() => {
     if (!isOpen || !fetchedDetail?.country_slug) return;

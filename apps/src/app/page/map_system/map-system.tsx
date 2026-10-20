@@ -484,6 +484,12 @@ export default function MapPage() {
     const [metadata, setMetadata] = useState<Record<string, any>>({});
 
     useEffect(() => {
+        if (countryDetail && typeof window !== 'undefined') {
+            (window as any).neosantara_player_country_detail = countryDetail;
+        }
+    }, [countryDetail]);
+
+    useEffect(() => {
         const handleAidArrival = (event: Event) => {
             const detail = (event as CustomEvent<{ id?: string; resourceKey?: string; amount?: number; senderCountry?: string }>).detail;
             const resourceKey = String(detail?.resourceKey || '');
@@ -1781,6 +1787,31 @@ export default function MapPage() {
         window.addEventListener('start_icbm_target_selection', handleStartSelection);
         window.addEventListener('trigger_icbm_explosion_flash', handleExplosionFlash);
 
+        const handleIcbmLaunched = (event: any) => {
+            const detail = event?.detail;
+            const playerCountryName = selectedCountry?.country ||
+                countryDetail?.country ||
+                countryDetail?.nama_negara ||
+                countryDetail?.name_id ||
+                'Indonesia';
+
+            // The defense action belongs only to an incoming strike against the player.
+            if (!detail?.attackerCountry || !detail?.targetCountry || !areSameWarCountry(detail.targetCountry, playerCountryName, detail.targetIso, countryDetail?.iso)) {
+                return;
+            }
+
+            const target = COUNTRIES_DATA.find((country) =>
+                areSameWarCountry(country.country, detail.targetCountry, country.iso, detail.targetIso)
+            );
+            const targetCity = target?.capital || detail.targetCountry;
+            const dateStr = detail.currentDate || (currentDate ? currentDate.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10));
+
+            setNotifications((previous) => [
+                generateICBMNotification(detail.attackerCountry, targetCity, dateStr),
+                ...previous,
+            ]);
+        };
+
         const handleIcbmStrikeArrived = (event: any) => {
             const detail = event?.detail;
             if (detail && detail.senderCountry && detail.targetCountry) {
@@ -1930,11 +1961,13 @@ export default function MapPage() {
         };
 
         window.addEventListener('neosantara_icbm_strike_arrived', handleIcbmStrikeArrived);
+        window.addEventListener('neosantara_icbm_launched', handleIcbmLaunched);
 
         return () => {
             window.removeEventListener('start_icbm_target_selection', handleStartSelection);
             window.removeEventListener('trigger_icbm_explosion_flash', handleExplosionFlash);
             window.removeEventListener('neosantara_icbm_strike_arrived', handleIcbmStrikeArrived);
+            window.removeEventListener('neosantara_icbm_launched', handleIcbmLaunched);
         };
     }, [currentDate, countryDetail, selectedCountry?.country]);
 
@@ -3290,8 +3323,6 @@ export default function MapPage() {
                 newNotifsToAdd.push(generateSpionaseNotification(randomPartner, currentDateStr));
             } else if (defRoll < 0.65) {
                 newNotifsToAdd.push(generateSabotaseNotification(randomPartner, currentDateStr));
-            } else {
-                newNotifsToAdd.push(generateICBMNotification(randomPartner, 'Jakarta', currentDateStr));
             }
         }
 
@@ -4032,7 +4063,7 @@ export default function MapPage() {
             if (!pendingDateRef.current) return;
             const pendingDate = pendingDateRef.current;
             pendingDateRef.current = null;
-            startTransition(() => setCurrentDate(pendingDate));
+            setCurrentDate(pendingDate);
         };
         dateCommitTimerRef.current = setTimeout(() => {
             dateCommitTimerRef.current = null;
@@ -4885,12 +4916,7 @@ export default function MapPage() {
     useEffect(() => {
         if (!countryDetail || !currentDate) return;
 
-        let cancelled = false;
-        let idleCallbackId: number | null = null;
-        let fallbackTimerId: number | null = null;
         const runDailyTick = () => {
-            if (cancelled) return;
-
             const year = currentDate.getFullYear();
             const month = String(currentDate.getMonth() + 1).padStart(2, '0');
             const day = String(currentDate.getDate()).padStart(2, '0');
@@ -4988,22 +5014,79 @@ export default function MapPage() {
             }
 
             skipPopulationMetricsRefreshRef.current = true;
-            startTransition(() => setCountryDetail((prev: any) => {
+            setCountryDetail((prev: any) => {
                 if (!prev) return prev;
 
-                const populationUpdates = updateDailyPopulation(
-                    prev,
-                    populationMetrics,
-                    selectedCountry?.country,
-                    metadata,
-                    currentDateStr
-                );
+                const currentPlayerCountryName = String(prev?.country || prev?.nama_negara || prev?.name || selectedCountry?.country || '').trim();
+
+                // Step-by-step compounding day-by-day:
+                // Hari 1: default populasi misal 10, pertumbuhan 5 -> 10 + 5 = 15
+                // Hari 2: pertumbuhan 4 -> 15 + 4 = 19, dst.
+                // Begitu juga kas negara: saldo awal + netto hari 1 -> saldo hari 2, dst.
+                let simPop = Math.max(0, Number(prev.jumlah_penduduk) || 10_000_000);
+                let simBudget = Number(prev.anggaran) || 0;
+                let accumulatedBirths = Number(prev.accumulated_births) || 0;
+                let accumulatedDeaths = Number(prev.accumulated_deaths) || 0;
+
+                const advanceOneDay = (dStr: string) => {
+                    const d = new Date(`${dStr}T00:00:00.000Z`);
+                    d.setUTCDate(d.getUTCDate() + 1);
+                    return d.toISOString().slice(0, 10);
+                };
+
+                const intermediateCountry = { ...prev };
+                let simDate = lastDate;
+                let latestMetrics = populationMetrics;
+
+                while (simDate < currentDateStr) {
+                    const stepFromDate = simDate;
+                    const stepToDate = advanceOneDay(simDate);
+
+                    intermediateCountry.jumlah_penduduk = simPop;
+                    intermediateCountry.anggaran = simBudget;
+
+                    const stepMetrics = calculateDailyPopulationChange(
+                        intermediateCountry,
+                        selectedCountry?.country,
+                        metadata,
+                        stepFromDate
+                    );
+                    latestMetrics = stepMetrics;
+
+                    const stepNetBalance = calculateNetBalanceWithEconomicEmbargo(
+                        intermediateCountry,
+                        currentPlayerCountryName
+                    );
+
+                    simPop = Math.max(0, Math.floor(simPop + stepMetrics.netDailyChange));
+                    accumulatedBirths += stepMetrics.dailyBirths;
+                    accumulatedDeaths += stepMetrics.dailyDeaths;
+                    simBudget = simBudget + stepNetBalance;
+
+                    simDate = stepToDate;
+                }
+
+                simBudget = simBudget - (Number(prev.minister_recruitment_expense_pending) || 0);
+
+                const populationUpdates = {
+                    jumlah_penduduk: simPop,
+                    accumulated_births: accumulatedBirths,
+                    accumulated_deaths: accumulatedDeaths,
+                    laju_pertumbuhan: latestMetrics.netDailyChange,
+                    food_supply_ratio: latestMetrics.foodRatio,
+                    food_deficit_tier: latestMetrics.foodTier,
+                    housing_fulfillment: latestMetrics.housingFulfillment,
+                    housing_deficit_tier: latestMetrics.housingTier,
+                    overpop_tier: latestMetrics.overpopulationTier,
+                    health_tier: latestMetrics.healthTier,
+                    population_status: latestMetrics.populationStatus.label,
+                };
                 const previousCrisisTiers = prev.population_crisis_tiers;
                 const currentCrisisTiers = {
-                    pangan: populationMetrics.foodTier,
-                    hunian: populationMetrics.housingTier,
-                    overpopulasi: populationMetrics.overpopulationTier,
-                    kesehatan: populationMetrics.healthTier,
+                    pangan: latestMetrics.foodTier,
+                    hunian: latestMetrics.housingTier,
+                    overpopulasi: latestMetrics.overpopulationTier,
+                    kesehatan: latestMetrics.healthTier,
                 };
                 const crisisLabels: Record<string, string> = {
                     pangan: 'Krisis pangan / Food crisis',
@@ -5192,8 +5275,8 @@ export default function MapPage() {
                     return isStillActive;
                 });
 
-                // Penalti -2 poin peringkat presiden jika didiamkan hingga hilang sendiri
-                const unhandledDisasterPenalty = unhandledExpiredDisastersCount * 2;
+                // Setiap krisis yang dibiarkan selesai memberi satu penalti peringkat.
+                const unhandledDisasterPenalty = unhandledExpiredDisastersCount;
 
                 // --- HITUNG PENURUNAN PERINGKAT BERDASARKAN KEPUASAN (menggunakan peringkatCalculator) ---
                 // Cek apakah ada bencana alam, epidemi, atau pandemi aktif yang belum diatasi dan sudah melebihi 1 bulan (>= 30 hari)
@@ -5259,7 +5342,7 @@ export default function MapPage() {
                 let nextOngoingEmbassyConstructions = existingEmbassyConstructions;
                 let nextEmbassies = Array.isArray(prev?.embassies) ? [...prev.embassies] : [];
                 let nextRemovedEmbassies = Array.isArray(prev?.removedEmbassies) ? [...prev.removedEmbassies] : [];
-                const playerCountryName = String(prev?.country || prev?.nama_negara || prev?.name || '').trim();
+                const playerCountryName = currentPlayerCountryName;
                 const previousAutoRemovedEmbassies = Array.isArray(prev?.autoRemovedEmbassies)
                     ? [...prev.autoRemovedEmbassies]
                     : [];
@@ -5406,14 +5489,11 @@ export default function MapPage() {
                     );
                 }
 
-                const nextBudget = (Number(prev.anggaran) || 0) + netBalance -
-                    (Number(prev.minister_recruitment_expense_pending) || 0);
-
-                return {
+                const updatedCountry = {
                     ...prev,
                     ...updates,
                     ...populationUpdates,
-                    anggaran: nextBudget,
+                    anggaran: simBudget,
                     last_daily_tick_date: currentDateStr,
                     minister_recruitment_expense_pending: 0,
                     satisfaction: prev.satisfaction, // Preserve satisfaction scores
@@ -5465,7 +5545,11 @@ export default function MapPage() {
                     kesejahteraan_month_counter: decayResult.kesejahteraan_month_counter,
                     last_kesejahteraan_threshold: decayResult.last_kesejahteraan_threshold,
                 };
-            }));
+                if (typeof window !== 'undefined') {
+                    (window as any).neosantara_player_country_detail = updatedCountry;
+                }
+                return updatedCountry;
+            });
 
             // ⏳ Hitung mundur durasi notifikasi wabah (pandemi/epidemi), bencana alam, serta demonstrasi rakyat setiap pergantian hari
             let demoKepuasanDelta = 0;
@@ -5532,23 +5616,9 @@ export default function MapPage() {
             });
         };
 
-        const idleWindow = window as Window & {
-            requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
-            cancelIdleCallback?: (callbackId: number) => void;
-        };
-        // Daily simulation is expensive. Let the animation frame finish first;
-        // `timeout` guarantees progress while the map remains continuously busy.
-        if (idleWindow.requestIdleCallback) {
-            idleCallbackId = idleWindow.requestIdleCallback(runDailyTick, { timeout: 1000 });
-        } else {
-            fallbackTimerId = window.setTimeout(runDailyTick, 250);
-        }
-
-        return () => {
-            cancelled = true;
-            if (idleCallbackId !== null) idleWindow.cancelIdleCallback?.(idleCallbackId);
-            if (fallbackTimerId !== null) window.clearTimeout(fallbackTimerId);
-        };
+        // Run in the same React cycle as the calendar tick. At 3x, the next
+        // date arrives before an idle callback with a 1s timeout can run.
+        runDailyTick();
     }, [currentDate, countryDetail, metadata, selectedCountry?.country]);
 
     // ─── Auto-refresh kepuasan di navbar ────────────────────────────────
@@ -6735,13 +6805,15 @@ export default function MapPage() {
                             return;
                         }
 
-                        const currentPresidentRating = Number(countryDetail?.presidentRating ?? 50);
+                        const currentPresidentRating = Number(presidentRating ?? countryDetail?.presidentRating ?? 50);
                         const isDisasterOrOutbreak = tNotif.tradeType === 'bencana_alam' || tNotif.tradeType === 'wabah_penyakit';
                         const nextPresidentRating = isDisasterOrOutbreak
                             ? Math.min(100, currentPresidentRating + 5)
-                            : currentPresidentRating;
+                            : isPoliceIncident
+                                ? Math.min(100, currentPresidentRating + 2)
+                                : currentPresidentRating;
 
-                        if (isDisasterOrOutbreak) {
+                        if (isDisasterOrOutbreak || isPoliceIncident) {
                             setPresidentRating(nextPresidentRating);
                         }
 
@@ -6791,7 +6863,7 @@ export default function MapPage() {
                             isOpen: true,
                             title: isPoliceIncident ? 'Operasi Kepolisian Berhasil' : 'Bantuan Darurat Disalurkan',
                             message: isPoliceIncident
-                                ? `Operasi kepolisian berhasil didanai sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO. Tingkat keamanan, kepuasan, dan kesejahteraan meningkat.`
+                                ? `Operasi kepolisian berhasil didanai sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO. Peringkat Presiden naik +2 poin, serta tingkat keamanan, kepuasan, dan kesejahteraan meningkat.`
                                 : `Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO! ${populationToRestore > 0 ? `${populationToRestore.toLocaleString('id-ID')} jiwa selamat. ` : ''}Peringkat Presiden naik +5 poin, serta Kepuasan & Kesejahteraan masyarakat meningkat.`,
                             type: 'success',
                             persistent: true,

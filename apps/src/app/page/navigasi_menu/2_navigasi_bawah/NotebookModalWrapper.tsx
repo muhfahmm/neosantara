@@ -19,12 +19,12 @@ export function NotebookModalWrapper({
 }: NotebookModalWrapperProps) {
   return (
     <div
-      className={`fixed inset-0 ${zIndexClass} flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent font-sans pointer-events-none`}
+      className={`fixed inset-0 ${zIndexClass} flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 bg-transparent font-sans pointer-events-none`}
     >
       {/* Notebook Outer Frame */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full ${maxWidthClass} h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] shadow-2xl relative flex flex-col p-3 sm:p-4 pl-10 sm:pl-12 pointer-events-auto overflow-hidden`}
+        className={`bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full ${maxWidthClass} h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)] shadow-2xl relative flex flex-col min-w-0 p-3 sm:p-4 pl-10 sm:pl-12 pointer-events-auto overflow-hidden`}
       >
         {/* Silver Binder Spine on the Left */}
         <div className="absolute left-3 sm:left-3.5 top-6 bottom-6 w-2 sm:w-2.5 bg-gradient-to-r from-[#2A3F3F] via-[#3D5252] to-[#1F3030] rounded-full shadow-md z-20 border border-[#0A1A1A]/80" />

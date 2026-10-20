@@ -240,6 +240,17 @@ function initializeNpcCountryMetrics(
   initialized.sector_deficit_month_counter = Number(initialized.sector_deficit_month_counter ?? 0);
   initialized.sector_deficit_kepuasan_penalty = Number(initialized.sector_deficit_kepuasan_penalty ?? 0);
   initialized.satisfaction_sector_baseline ??= createSatisfactionSectorBaseline(initialized, metadata);
+  initialized.anggaran = Number(
+    initialized.anggaran ??
+    initialized.kas_negara ??
+    initialized.kas ??
+    100_000
+  );
+  initialized.jumlah_penduduk = Number(
+    initialized.jumlah_penduduk ??
+    initialized.populasi ??
+    10_000_000
+  );
   if (!wasInitialized) {
     initialized.kepuasan = calculateKepuasan(initialized, metadata);
     initialized.kesejahteraan = calculateKesejahteraan(
@@ -303,7 +314,7 @@ function simulateCountryDay(
     withProduction,
     countryName,
     metadata,
-    date
+    previousDate
   );
   const withPopulation: CountryRecord = {
     ...withProduction,

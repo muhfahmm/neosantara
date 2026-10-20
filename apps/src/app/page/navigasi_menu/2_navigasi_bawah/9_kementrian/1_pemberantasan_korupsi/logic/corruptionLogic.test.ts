@@ -112,7 +112,7 @@ console.log(`✅ getSchemesByMinistry('Kementerian Pertahanan') returns ${testSc
 console.log('\n=== Test 7: Preview Format Notifikasi ===');
 const previewScheme = CORRUPTION_SCHEMES.find(s => s.id === 'mark_up_alutsista');
 if (previewScheme) {
-  const severity: 'ringan' | 'sedang' | 'berat' = 'sedang';
+  const severity: string = 'sedang';
   const budgetLoss = 1500000;
   const satisfactionLoss = 2;
   

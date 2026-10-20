@@ -316,6 +316,8 @@ export function launchIcbmWarStrike(params: IcbmStrikeParams): IcbmStrikeResult 
           pathId,
           attackerCountry,
           targetCountry,
+          attackerIso: params.attackerIso,
+          targetIso: params.targetIso,
           currentDate,
         },
       })
