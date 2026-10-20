@@ -1,6 +1,6 @@
 "use client";
 
-import React, { startTransition, useState, useEffect, useCallback, useMemo, useRef } from "react";
+import React, { startTransition, useState, useEffect, useCallback, useMemo, useRef, useDeferredValue } from "react";
 import { X, Scale } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { 
@@ -59,6 +59,122 @@ const resolveNationalizationLevels = (countryDetail: any): NationalizationLevels
   countryDetail?.sector_nationalization && typeof countryDetail.sector_nationalization === "object"
     ? countryDetail.sector_nationalization
     : {};
+
+// --- MEMOIZED COMPONENTS UNTUK MENCEGAH RE-RENDER SAAT SLIDER DIGESER ---
+
+const MemoizedKartuKebijakanTab = React.memo(KartuKebijakanTab);
+
+const SektorTab = React.memo(({
+  sectorLevels,
+  handleSectorLevelChange,
+  isElectricityMetadataLoading,
+  electricityMetadataError,
+  electricitySurplusMW,
+  electricityPrice,
+  electricityProfitShare,
+  electricityEstimatedStateShare,
+  diplomacyMonthsToNextPoint
+}: any) => {
+  return (
+    <div className="space-y-4">
+      <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4">
+        <h3 className="text-sm font-black uppercase tracking-wide text-[#00FFAA]">Nasionalisasi & Ekonomi Terpusat</h3>
+        <p className="mt-2 text-xs leading-relaxed text-[#A7C4C4]">
+          Atur kepemilikan setiap sektor. Bagian negara berlaku saat komoditas dijual melalui Perdagangan;
+          emas mengikuti porsi Mineral & Energi pada pemasukan tambang yang sudah ada. Nasionalisasi aktif
+          secara bertahap menurunkan hubungan dengan negara berideologi Kapitalisme.
+        </p>
+        <p className="mt-2 text-xs font-bold text-amber-300">
+          Hubungan dengan negara terbuka turun 1 poin setiap 6 bulan selama ada sektor yang dinasionalisasi.
+          Penurunan berjalan untuk negara berideologi Kapitalisme.
+        </p>
+        <p className="mt-1 text-[10px] text-[#6B8A8A]">
+          Progres periode berjalan: {diplomacyMonthsToNextPoint}/
+          {NATIONALIZATION_DIPLOMACY_INTERVAL_MONTHS} bulan menuju penurunan 1 poin berikutnya.
+        </p>
+        <p className="mt-1 text-[10px] text-[#6B8A8A]">
+          Tahun acuan estimasi: {NATIONALIZATION_ESTIMATE_YEAR}
+        </p>
+      </div>
+      <div className="grid gap-3">
+        {NATIONALIZATION_SECTORS.map((sector) => {
+          const level = getNationalizationLevel(sectorLevels, sector.id);
+          const levelDetails = NATIONALIZATION_LEVELS.find((item) => item.value === level) ?? NATIONALIZATION_LEVELS[0];
+          return (
+            <section
+              key={sector.id}
+              className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4"
+              style={{ contentVisibility: "auto", containIntrinsicSize: "170px" }}
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h4 className="text-sm font-black text-white">{sector.name}</h4>
+                  <p className="mt-1 text-[11px] text-[#A7C4C4]">{levelDetails.description}</p>
+                </div>
+                <label className="flex items-center gap-2 text-[10px] font-bold uppercase text-[#6B8A8A]">
+                  Level
+                  <select
+                    value={level}
+                    onChange={(event) => handleSectorLevelChange(sector.id, Number(event.target.value))}
+                    className="rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] px-3 py-2 text-xs font-bold text-[#00FFAA] outline-none"
+                  >
+                    {NATIONALIZATION_LEVELS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.value}% — {option.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 border-t border-[#00FFAA]/10 pt-3 text-[11px]">
+                <span className="text-emerald-300">Bagian negara: {levelDetails.stateProfitSharePercent}%</span>
+              </div>
+              {sector.id === "kelistrikan" && (
+                <div className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-[11px] text-amber-200">
+                  {isElectricityMetadataLoading ? (
+                    <p>Menghitung estimasi surplus listrik...</p>
+                  ) : electricityMetadataError ? (
+                    <p>{electricityMetadataError}</p>
+                  ) : (
+                    <p>
+                      Estimasi bagian negara dari surplus: {electricitySurplusMW.toLocaleString("id-ID", { maximumFractionDigits: 2 })} MW ×{" "}
+                      {electricityPrice.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO × {electricityProfitShare}% ={" "}
+                      {electricityEstimatedStateShare.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO. Estimasi ini belum
+                      dimasukkan ke APBN karena listrik belum memiliki transaksi jual-beli.
+                    </p>
+                  )}
+                </div>
+              )}
+            </section>
+          );
+        })}
+      </div>
+    </div>
+  );
+});
+
+const SatisfactionBar = React.memo(({ average }: { average: number }) => {
+  return (
+    <div className="mt-6 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-5">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-sm font-black uppercase tracking-widest text-[#00FFAA]">
+          Indeks Kepuasan Rakyat (Kebijakan Ekonomi)
+        </span>
+        <span className="shrink-0 text-2xl font-black text-amber-400 sm:text-3xl">
+          {average} / 100
+        </span>
+      </div>
+      <div className="mt-3 h-3 w-full overflow-hidden rounded-full border border-[#00FFAA]/20 bg-[#0A1A1A]">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-200"
+          style={{ width: `${average}%` }}
+        />
+      </div>
+    </div>
+  );
+});
+
+// --- MAIN COMPONENT ---
 
 export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, setCountryDetail }: ModalProps) {
   const [activeTab, setActiveTab] = useState<"sistem" | "kebijakan" | "sektor">("sistem");
@@ -133,14 +249,18 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
 
   if (!isOpen) return null;
 
+  // OPTIMASI: Gunakan useDeferredValue untuk nilai yang memicu kalkulasi berat.
+  // Ini memungkinkan slider bergerak mulus (60fps) tanpa tertahan oleh render UI di bawahnya.
+  const deferredSliderValue = useDeferredValue(sliderValue);
+
   const systemDetails: EconomicSystemEffect = useMemo(
-    () => getEconomicSystemDetails(sliderValue),
+    () => getEconomicSystemDetails(sliderValue), // Tetap gunakan sliderValue asli untuk teks deskripsi instan
     [sliderValue]
   );
 
   const economicPolicyAverage = useMemo(
-    () => calculateEconomicPolicyAverage(sliderValue, policyChoices, sectorLevels),
-    [sliderValue, policyChoices, sectorLevels]
+    () => calculateEconomicPolicyAverage(deferredSliderValue, policyChoices, sectorLevels),
+    [deferredSliderValue, policyChoices, sectorLevels]
   );
 
   const handlePolicyChange = useCallback((policyId: string, choice: "A" | "B") => {
@@ -152,25 +272,31 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
       };
     });
 
-    setCountryDetail?.((prev: any) => {
-      if (!prev || prev[`policy_${policyId}`] === choice) return prev;
-      return {
-        ...prev,
-        [`policy_${policyId}`]: choice,
-      };
+    startTransition(() => {
+      setCountryDetail?.((prev: any) => {
+        if (!prev || prev[`policy_${policyId}`] === choice) return prev;
+        return {
+          ...prev,
+          [`policy_${policyId}`]: choice,
+        };
+      });
     });
   }, [setCountryDetail]);
 
   const handleSpectrumChange = useCallback((value: number) => {
     setSliderValue(value);
     const details = getEconomicSystemDetails(value);
-    setCountryDetail?.((prev: any) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        sistem_ekonomi_val: value,
-        sistem_ekonomi_name: details.title,
-      };
+    
+    // OPTIMASI: Bungkus update global state dengan startTransition
+    startTransition(() => {
+      setCountryDetail?.((prev: any) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          sistem_ekonomi_val: value,
+          sistem_ekonomi_name: details.title,
+        };
+      });
     });
   }, [setCountryDetail]);
 
@@ -189,10 +315,12 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
       return nextLevels;
     });
 
-    setCountryDetail?.((prev: any) => ({
-      ...prev,
-      sector_nationalization: { ...(prev?.sector_nationalization || {}), [sectorId]: value },
-    }));
+    startTransition(() => {
+      setCountryDetail?.((prev: any) => ({
+        ...prev,
+        sector_nationalization: { ...(prev?.sector_nationalization || {}), [sectorId]: value },
+      }));
+    });
   }, [countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name_id, countryDetail?.nationalization_diplomacy_month_counter, setCountryDetail]);
 
   const tabs: { id: typeof activeTab; label: string; desc: string }[] = [
@@ -279,104 +407,27 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
             )}
 
             {activeTab === "kebijakan" && (
-              <KartuKebijakanTab
+              <MemoizedKartuKebijakanTab
                 policyChoices={policyChoices}
                 handlePolicyChange={handlePolicyChange}
               />
             )}
+            
             {activeTab === "sektor" && (
-              <div className="space-y-4">
-                <div className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4">
-                  <h3 className="text-sm font-black uppercase tracking-wide text-[#00FFAA]">Nasionalisasi & Ekonomi Terpusat</h3>
-                  <p className="mt-2 text-xs leading-relaxed text-[#A7C4C4]">
-                    Atur kepemilikan setiap sektor. Bagian negara berlaku saat komoditas dijual melalui Perdagangan;
-                    emas mengikuti porsi Mineral & Energi pada pemasukan tambang yang sudah ada. Nasionalisasi aktif
-                    secara bertahap menurunkan hubungan dengan negara berideologi Kapitalisme.
-                  </p>
-                  <p className="mt-2 text-xs font-bold text-amber-300">
-                    Hubungan dengan negara terbuka turun 1 poin setiap 6 bulan selama ada sektor yang dinasionalisasi.
-                    Penurunan berjalan untuk negara berideologi Kapitalisme.
-                  </p>
-                  <p className="mt-1 text-[10px] text-[#6B8A8A]">
-                    Progres periode berjalan: {diplomacyMonthsToNextPoint}/
-                    {NATIONALIZATION_DIPLOMACY_INTERVAL_MONTHS} bulan menuju penurunan 1 poin berikutnya.
-                  </p>
-                  <p className="mt-1 text-[10px] text-[#6B8A8A]">
-                    Tahun acuan estimasi: {NATIONALIZATION_ESTIMATE_YEAR}
-                  </p>
-                </div>
-                <div className="grid gap-3">
-                  {NATIONALIZATION_SECTORS.map((sector) => {
-                    const level = getNationalizationLevel(sectorLevels, sector.id);
-                    const levelDetails = NATIONALIZATION_LEVELS.find((item) => item.value === level) ?? NATIONALIZATION_LEVELS[0];
-                    return (
-                      <section
-                        key={sector.id}
-                        className="rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4"
-                        style={{ contentVisibility: "auto", containIntrinsicSize: "170px" }}
-                      >
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                          <div>
-                            <h4 className="text-sm font-black text-white">{sector.name}</h4>
-                            <p className="mt-1 text-[11px] text-[#A7C4C4]">{levelDetails.description}</p>
-                          </div>
-                          <label className="flex items-center gap-2 text-[10px] font-bold uppercase text-[#6B8A8A]">
-                            Level
-                            <select
-                              value={level}
-                              onChange={(event) => handleSectorLevelChange(sector.id, Number(event.target.value))}
-                              className="rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] px-3 py-2 text-xs font-bold text-[#00FFAA] outline-none"
-                            >
-                              {NATIONALIZATION_LEVELS.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                  {option.value}% — {option.name}
-                                </option>
-                              ))}
-                            </select>
-                          </label>
-                        </div>
-                        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 border-t border-[#00FFAA]/10 pt-3 text-[11px]">
-                          <span className="text-emerald-300">Bagian negara: {levelDetails.stateProfitSharePercent}%</span>
-                        </div>
-                        {sector.id === "kelistrikan" && (
-                          <div className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-[11px] text-amber-200">
-                            {isElectricityMetadataLoading ? (
-                              <p>Menghitung estimasi surplus listrik...</p>
-                            ) : electricityMetadataError ? (
-                              <p>{electricityMetadataError}</p>
-                            ) : (
-                              <p>
-                                Estimasi bagian negara dari surplus: {electricitySurplusMW.toLocaleString("id-ID", { maximumFractionDigits: 2 })} MW ×{" "}
-                                {electricityPrice.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO × {electricityProfitShare}% ={" "}
-                                {electricityEstimatedStateShare.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO. Estimasi ini belum
-                                dimasukkan ke APBN karena listrik belum memiliki transaksi jual-beli.
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      </section>
-                    );
-                  })}
-                </div>
-              </div>
+              <SektorTab
+                sectorLevels={sectorLevels}
+                handleSectorLevelChange={handleSectorLevelChange}
+                isElectricityMetadataLoading={isElectricityMetadataLoading}
+                electricityMetadataError={electricityMetadataError}
+                electricitySurplusMW={electricitySurplusMW}
+                electricityPrice={electricityPrice}
+                electricityProfitShare={electricityProfitShare}
+                electricityEstimatedStateShare={electricityEstimatedStateShare}
+                diplomacyMonthsToNextPoint={diplomacyMonthsToNextPoint}
+              />
             )}
 
-            <div className="mt-6 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-5">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-sm font-black uppercase tracking-widest text-[#00FFAA]">
-                  Indeks Kepuasan Rakyat (Kebijakan Ekonomi)
-                </span>
-                <span className="shrink-0 text-2xl font-black text-amber-400 sm:text-3xl">
-                  {economicPolicyAverage} / 100
-                </span>
-              </div>
-              <div className="mt-3 h-3 w-full overflow-hidden rounded-full border border-[#00FFAA]/20 bg-[#0A1A1A]">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-200"
-                  style={{ width: `${economicPolicyAverage}%` }}
-                />
-              </div>
-            </div>
+            <SatisfactionBar average={economicPolicyAverage} />
           </div>
 
         </div>
