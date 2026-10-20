@@ -14,6 +14,7 @@ import {
 
 import DetailKonsumsiTerestimasiModal from "./DetailKonsumsiTerestimasiModal";
 import CountryKelistrikanModal from "./CountryKelistrikanModal";
+import NegaraKhususKelistrikan from "./NegaraKhususKelistrikan";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { getKelistrikanFuelRequirements } from "../../5_pembangunan/1_produksi/construction_support/1_produksi/1_kelistrikan/fuelLogic";
 import { getCountryConsumptionBreakdown } from "./consumptionLogic";
@@ -49,7 +50,7 @@ const SOURCE_ORDER = [
 ];
 
 export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCountryDetail, metadata, prefetchedAllCountries, onNavigateToMenu }: ModalProps) {
-  const [activeTab, setActiveTab] = useState<"user" | "global">("user");
+  const [activeTab, setActiveTab] = useState<"user" | "global" | "khusus">("user");
   const [allCountries, setAllCountries] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'production', direction: 'desc' });
@@ -316,6 +317,12 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
             >
               Neraca {allCountries.length || 207} Negara
             </button>
+            <button
+              onClick={() => setActiveTab("khusus")}
+              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${activeTab === "khusus" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"}`}
+            >
+              Negara Khusus
+            </button>
           </div>
 
           {/* TAB NERACA USER */}
@@ -571,6 +578,8 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
               )}
             </div>
           )}
+
+          {activeTab === "khusus" && <NegaraKhususKelistrikan countries={allCountries} />}
         </div>
       </div>
     </NotebookModalWrapper>
