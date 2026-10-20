@@ -5,8 +5,6 @@ import {
   Zap,
   BatteryCharging,
   MapPin,
-  TrendingUp,
-  TrendingDown,
   Search,
   ChevronUp,
   ChevronDown,
@@ -275,22 +273,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
             </div>
           </div>
 
-          <div className="hidden sm:flex items-center gap-2.5 lg:gap-4 ml-4 lg:ml-8 pl-4 lg:pl-8 border-l border-[#00FFAA]/20">
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 bg-[#0F2424] border border-[#00FFAA]/30 rounded-lg">
-                <TrendingUp className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-[#00FFAA]" />
-                <span className="text-[9px] lg:text-[11px] font-black text-[#00FFAA] uppercase tracking-wider">Produksi</span>
-                <span className="text-[9px] lg:text-[11px] font-black text-[#00FFAA]">{totalCapacityMW > 0 ? totalCapacityMW.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : '0'} MW</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1 lg:py-1.5 bg-[#0F2424] border border-rose-500/30 rounded-lg">
-                <TrendingDown className="h-3.5 w-3.5 lg:h-4 lg:w-4 text-rose-400" />
-                <span className="text-[9px] lg:text-[11px] font-black text-rose-400 uppercase tracking-wider">Konsumsi</span>
-                <span className="text-[9px] lg:text-[11px] font-black text-rose-400">{estimatedConsumptionMW > 0 ? estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : '0'} MW</span>
-              </div>
-            </div>
-          </div>
           <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
@@ -438,15 +420,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
           {/* TAB NERACA GLOBAL */}
           {activeTab === "global" && (
             <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl w-full">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 rounded-2xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
-                  <Zap className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wide">Neraca {allCountries.length || 207} Negara</h3>
-                </div>
-              </div>
-
               <div className="mb-4 relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-[#6B8A8A] pointer-events-none" />
                 <input
@@ -561,14 +534,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                   </tbody>
                 </table>
               </div>
-
-              {filteredData.length > 0 && (
-                <div className="mt-4 p-4 bg-[#0F2424] border border-[#00FFAA]/20 rounded-lg text-xs text-[#6B8A8A]">
-                  <p className="font-bold text-[#E0E0E0]">Total: {filteredData.length} negara {searchQuery && `(difilter dari ${globalElectricityData.length})`}</p>
-                  <p className="mt-1">Produksi: <span className="font-black text-emerald-400">{filteredData.reduce((sum, c) => sum + c.production, 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</span></p>
-                  <p>Konsumsi: <span className="font-black text-rose-400">{filteredData.reduce((sum, c) => sum + c.consumption, 0).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</span></p>
-                </div>
-              )}
             </div>
           )}
 
