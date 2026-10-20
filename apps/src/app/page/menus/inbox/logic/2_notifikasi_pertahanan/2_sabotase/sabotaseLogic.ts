@@ -16,21 +16,21 @@ const SABOTASE_POOL = [
     sabotaseType: 'infrastruktur' as SabotaseType,
     title: '💣 Sabotase Infrastruktur Nasional',
     message: (partner: string) => `Pipa minyak, jembatan komersial, dan jaringan transportasi utama diduga disabotase oleh kelompok suruhan dari ${partner}!`,
-    costEM: 80,
+    costEM: 8000,
     effectText: '-10% Infrastruktur & -3% PDB'
   },
   {
     sabotaseType: 'militer' as SabotaseType,
     title: '🔥 Sabotase Militer: Ledakan Gudang Amunisi',
     message: (partner: string) => `Gudang alutsista dan instalasi militer utama mengalami ledakan sabotase terencana yang dipicu oleh agen asing ${partner}!`,
-    costEM: 150,
+    costEM: 15000,
     effectText: '-15% Kekuatan Militer (14 hari)'
   },
   {
     sabotaseType: 'siber' as SabotaseType,
     title: '⚡ Sabotase Siber: Kelumpuhan Jaringan Komunikasi',
     message: (partner: string) => `Serangan peretas siber berskala besar melumpuhkan radar dan sistem pertahanan udara nasional selama beberapa hari!`,
-    costEM: 100,
+    costEM: 10000,
     effectText: 'Sistem Pertahanan Lumpuh 3 Hari'
   },
   {

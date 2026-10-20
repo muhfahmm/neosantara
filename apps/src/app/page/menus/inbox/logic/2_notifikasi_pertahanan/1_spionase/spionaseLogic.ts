@@ -16,21 +16,21 @@ const SPIONASE_POOL = [
     level: 'ringan' as SpionaseLevel,
     title: '🕵️ Spionase Ringan: Penyusupan Perbatasan',
     message: (partner: string) => `Lapor Komandan! Agen intelijen asing asal ${partner} terdeteksi mencoba melintasi pos perbatasan tanpa izin resmi. Penjaga batas berhasil memblokir pergerakan awal mereka.`,
-    costEM: 50,
+    costEM: 20000,
     effectText: '+5% Approval Rakyat (jika ditangkap)'
   },
   {
     level: 'sedang' as SpionaseLevel,
     title: '⚠️ Spionase Sedang: Infiltrasi Pangkalan Militer',
     message: (partner: string) => `Peringatan Keamanan! Agen spionase ${partner} menyusup ke instalasi militer wilayah timur. Beberapa dokumen rahasia efektivitas persenjataan berisiko bocor!`,
-    costEM: 100,
+    costEM: 10000,
     effectText: '-5% Efektivitas Militer (7 hari jika dibiarkan)'
   },
   {
     level: 'berat' as SpionaseLevel,
     title: '🚨 Spionase Berat: Jaringan Mata-Mata Besar',
     message: (partner: string) => `DARURAT INTELIJEN! Jaringan mata-mata tingkat tinggi dari ${partner} membocorkan data strategis riset nasional dan posisi armada armada militer kita!`,
-    costEM: 150,
+    costEM: 15000,
     effectText: '-15% Efektivitas Militer (14 hari) + Bocor 1 Riset'
   }
 ];

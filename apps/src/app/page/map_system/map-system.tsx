@@ -2481,7 +2481,7 @@ export default function MapPage() {
                 const maxForDay = roll < 0.40 ? 0 : roll < 0.90 ? 1 : 2;
                 dailyQuotaRef.current = { date: today, quota: maxForDay };
             }
-            
+
             const alreadySent = prev.filter(n => !isExempt(n) && n.timestamp === today).length;
             let quota = Math.max(0, dailyQuotaRef.current.quota - alreadySent);
             const prevIds = new Set(prev.map(n => n.id));
@@ -3078,908 +3078,931 @@ export default function MapPage() {
         let idleCallbackId: number | null = null;
         let fallbackTimerId: number | null = null;
         const runNotificationGenerator = () => {
-        lastProcessedNotificationMonthRef.current = currentDateStr;
-        lastProcessedNotificationDateRef.current = currentDateStr;
+            lastProcessedNotificationMonthRef.current = currentDateStr;
+            lastProcessedNotificationDateRef.current = currentDateStr;
 
-        const userCountryName = countryDetail.country || countryDetail.nama || "Indonesia";
-        const worldNewsResult = generateWorldNewsEvents(
-            COUNTRIES_DATA,
-            userCountryName,
-            Number(countryDetail.world_news_country_cursor) || 0,
-            currentDateStr,
-        );
-
-        const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
-        const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
-        const addedTradePartners = Array.isArray(countryDetail?.addedTradePartners) ? countryDetail.addedTradePartners : [];
-        const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
-        const normalizePartnerName = (name: string) => name.toLowerCase().trim();
-
-        const staticPartners = getTradeAgreementsForCountry(userCountryName).map(c => c.mitra);
-        const allTradePartners = Array.from(new Set([
-            ...staticPartners.filter(p => !removedTradePartners.some(
-                (removed: string) => normalizePartnerName(removed) === normalizePartnerName(p)
-            )),
-            ...addedTradePartners.filter((partner: string) => !removedTradePartners.some(
-                (removed: string) => normalizePartnerName(removed) === normalizePartnerName(partner)
-            ))
-        ]));
-
-        const internationalPool = [
-            'Jepang', 'Amerika Serikat', 'Jerman', 'Inggris', 'Prancis', 'China',
-            'Korea Selatan', 'Australia', 'Rusia', 'Arab Saudi', 'Kanada', 'Brasil',
-            'India', 'Turki', 'Meksiko', 'Singapura', 'Malaysia', 'Thailand', 'Vietnam'
-        ];
-
-        const staticEmbassyPartners = getEmbassiesForCountry(userCountryName);
-        const activeEmbassies = Array.from(new Set([
-            ...staticEmbassyPartners.filter(p => !removedEmbassies.includes(p)),
-            ...playerEmbassies.map((e: any) => typeof e === 'string' ? e : e.mitra || e.nama_negara || '')
-        ])).filter(Boolean);
-
-        const embassyPartnerPool = activeEmbassies.length > 0 ? activeEmbassies : internationalPool;
-
-        const newNotifsToAdd: any[] = [];
-
-        // 1. Penawaran Transaksi Ekspor / Impor (2% daily chance)
-        if (Math.random() < 0.02) {
-            const partnerName = allTradePartners.length > 0
-                ? allTradePartners[Math.floor(Math.random() * allTradePartners.length)]
-                : internationalPool[Math.floor(Math.random() * internationalPool.length)];
-            const premiumProducts = ["uranium", "pabrik_semikonduktor", "logam_tanah_jarang", "pabrik_mesin", "pabrik_besi", "litium"];
-            const productKey = premiumProducts[Math.floor(Math.random() * premiumProducts.length)];
-            const quantity = Math.floor(Math.random() * 300) + 20;
-            const prices: Record<string, number> = {
-                uranium: 8000, pabrik_semikonduktor: 4000, logam_tanah_jarang: 5000, pabrik_mesin: 10000, pabrik_besi: 10000, litium: 3000
-            };
-            const basePrice = prices[productKey] || 100;
-            const pricePerUnit = Math.round(basePrice * (0.85 + Math.random() * 0.3) * 100) / 100;
-
-            if (Math.random() > 0.5) {
-                newNotifsToAdd.push(generateAITradeJualNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr));
-            } else {
-                newNotifsToAdd.push(generateAITradeBeliNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr));
-            }
-        }
-
-        // 2. Penawaran Kedutaan Besar (2% daily chance)
-        if (Math.random() < 0.02) {
-            const embassyNotif = checkAndGenerateEmbassyOffers(
+            const userCountryName = countryDetail.country || countryDetail.nama || "Indonesia";
+            const worldNewsResult = generateWorldNewsEvents(
+                COUNTRIES_DATA,
                 userCountryName,
-                notifications,
+                Number(countryDetail.world_news_country_cursor) || 0,
                 currentDateStr,
-                true,
-                playerEmbassies,
-                removedEmbassies
             );
-            if (embassyNotif) {
-                newNotifsToAdd.push(embassyNotif);
-            } else {
-                const randomPartner = internationalPool[Math.floor(Math.random() * internationalPool.length)];
-                newNotifsToAdd.push(createEmbassyOfferNotification(randomPartner, userCountryName, currentDateStr));
-            }
-        }
 
-        // 3. Penawaran Hubungan Dagang Bilateral (2% daily chance)
-        if (Math.random() < 0.02) {
-            const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
-            newNotifsToAdd.push(generateTradeRelationOfferNotification(randomPartner, userCountryName, currentDateStr));
-        }
+            const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
+            const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
+            const addedTradePartners = Array.isArray(countryDetail?.addedTradePartners) ? countryDetail.addedTradePartners : [];
+            const removedTradePartners = Array.isArray(countryDetail?.removedTradePartners) ? countryDetail.removedTradePartners : [];
+            const normalizePartnerName = (name: string) => name.toLowerCase().trim();
 
-        // 🎲 RANDOMISASI BENCANA ALAM & WABAH (Sangat Tidak Terduga & Sulit Ditebak)
-        // Menggunakan jitter acak, ambang batas dinamis, dan faktor kejutan musiman
-        const surpriseJitter = (Math.random() - 0.5) * 0.15; // Jitter tak terduga ±7.5%
-        const wmoDisasterModifier = getWMODisasterRiskModifier(userCountryName, countryDetail);
-        const disasterBaseChance = Math.max(0.05, 0.22 + wmoDisasterModifier / 100 + surpriseJitter);
-        const disasterOccurrenceChance = disasterBaseChance * (0.45 + Math.random() * 0.35); // 0.45x - 0.80x fluktuasi
+            const staticPartners = getTradeAgreementsForCountry(userCountryName).map(c => c.mitra);
+            const allTradePartners = Array.from(new Set([
+                ...staticPartners.filter(p => !removedTradePartners.some(
+                    (removed: string) => normalizePartnerName(removed) === normalizePartnerName(p)
+                )),
+                ...addedTradePartners.filter((partner: string) => !removedTradePartners.some(
+                    (removed: string) => normalizePartnerName(removed) === normalizePartnerName(partner)
+                ))
+            ]));
 
-        let pendingDisasterEffect: any = null;
-        let pendingDisasterCasualties = 0;
-        if (Math.random() < disasterOccurrenceChance) {
-            const remainingDisasterRisk = applyKementerianLingkunganHidupDisasterRiskReduction(
-                1,
-                countryDetail
-            );
-            if (Math.random() < remainingDisasterRisk) {
-                const disaster = generateBencanaAlamNotification(userCountryName, currentDateStr, countryDetail);
-                newNotifsToAdd.push(disaster);
-                pendingDisasterCasualties = disaster.korban;
-                pendingDisasterEffect = {
-                    id: disaster.id,
-                    eventName: disaster.eventName,
-                    category: disaster.category,
-                    korban: disaster.korban,
-                    startDate: currentDateStr,
-                    durationDays: 30,
-                    healthMultiplier: 0.9,
-                    isHandled: false
+            const internationalPool = [
+                'Jepang', 'Amerika Serikat', 'Jerman', 'Inggris', 'Prancis', 'China',
+                'Korea Selatan', 'Australia', 'Rusia', 'Arab Saudi', 'Kanada', 'Brasil',
+                'India', 'Turki', 'Meksiko', 'Singapura', 'Malaysia', 'Thailand', 'Vietnam'
+            ];
+
+            const staticEmbassyPartners = getEmbassiesForCountry(userCountryName);
+            const activeEmbassies = Array.from(new Set([
+                ...staticEmbassyPartners.filter(p => !removedEmbassies.includes(p)),
+                ...playerEmbassies.map((e: any) => typeof e === 'string' ? e : e.mitra || e.nama_negara || '')
+            ])).filter(Boolean);
+
+            const embassyPartnerPool = activeEmbassies.length > 0 ? activeEmbassies : internationalPool;
+
+            const newNotifsToAdd: any[] = [];
+
+            // 1. Penawaran Transaksi Ekspor / Impor (2% daily chance)
+            if (Math.random() < 0.02) {
+                const partnerName = allTradePartners.length > 0
+                    ? allTradePartners[Math.floor(Math.random() * allTradePartners.length)]
+                    : internationalPool[Math.floor(Math.random() * internationalPool.length)];
+                const premiumProducts = ["uranium", "pabrik_semikonduktor", "logam_tanah_jarang", "pabrik_mesin", "pabrik_besi", "litium"];
+                const productKey = premiumProducts[Math.floor(Math.random() * premiumProducts.length)];
+                const quantity = Math.floor(Math.random() * 300) + 20;
+                const prices: Record<string, number> = {
+                    uranium: 8000, pabrik_semikonduktor: 4000, logam_tanah_jarang: 5000, pabrik_mesin: 10000, pabrik_besi: 10000, litium: 3000
                 };
-            }
-        }
+                const basePrice = prices[productKey] || 100;
+                const pricePerUnit = Math.round(basePrice * (0.85 + Math.random() * 0.3) * 100) / 100;
 
-        // 🎲 WABAH & PANDEMI: Anomali acak, faktor resistensi & variabilitas tidak tertebak
-        const whoPandemicModifier = getWHOPandemicRiskModifier(userCountryName, countryDetail);
-        const randomOutbreakNoise = (Math.random() - 0.5) * 12; // Fluktuasi risiko ±6%
-        const currentYearPandemicBase = getPandemicBaseChancePercentByYear(countryDetail, currentDateStr);
-        const dynamicPandemicChance = Math.max(5, currentYearPandemicBase + whoPandemicModifier + randomOutbreakNoise);
-
-        // ===== GRACE PERIOD: Jangan spawn outbreak di 30 hari pertama game =====
-        const gameStartStr = countryDetail?.game_start_date as string | undefined;
-        let daysSinceGameStart = 365 * 10; // Default: jauh di masa depan (no grace period)
-        if (gameStartStr) {
-            daysSinceGameStart = getDaysDifference(gameStartStr, currentDateStr);
-        } else if (countryDetail?.game_start_year) {
-            const gameStartDate = new Date(Number(countryDetail.game_start_year), 0, 1);
-            const currentDate = new Date(currentDateStr);
-            daysSinceGameStart = Math.floor((currentDate.getTime() - gameStartDate.getTime()) / (1000 * 60 * 60 * 24));
-        }
-
-        const isInGracePeriod = daysSinceGameStart < 30;
-        const epidemicBaseForDaily = isInGracePeriod ? 1 : 25; // 25% base untuk daily = ~1x per 4 hari, atau ~7x per bulan (match dengan 1-5x per tahun frequency)
-        const dynamicEpidemicChance = Math.max(10, epidemicBaseForDaily + whoPandemicModifier + randomOutbreakNoise);
-        const outbreakRoll = Math.random() * 100;
-        let nextPandemicSchedule: { year: number; hit: boolean; day: number; fired?: boolean } | undefined;
-
-        // Ambang acak ganda agar probabilitas tidak berpola tetap
-        // Pandemi: diundi SEKALI per tahun dengan persentase siklus (30/35/40/45/50%),
-        // lalu dijadwalkan pada hari acak di tahun tersebut (bukan diundi tiap hari).
-        const pandemicYear = currentDate.getFullYear();
-        const dayOfYear = Math.floor(
-            (new Date(pandemicYear, currentDate.getMonth(), currentDate.getDate()).getTime() -
-                new Date(pandemicYear, 0, 1).getTime()) / 86400000
-        );
-        let pandemicSchedule = countryDetail?.pandemic_schedule as
-            { year: number; hit: boolean; day: number; fired?: boolean } | undefined;
-        if (!pandemicSchedule || pandemicSchedule.year !== pandemicYear) {
-            const yearlyChance = Math.min(100, Math.max(0, currentYearPandemicBase + whoPandemicModifier));
-            // Jadwalkan paling cepat 30 hari setelah hari ini/tahun baru agar tidak langsung muncul di bulan pertama
-            const minDay = Math.max(30, dayOfYear + 30);
-            const remainingDaysInYear = Math.max(1, 350 - minDay);
-            pandemicSchedule = {
-                year: pandemicYear,
-                hit: Math.random() * 100 < yearlyChance,
-                day: minDay + Math.floor(Math.random() * remainingDaysInYear),
-                fired: false,
-            };
-        }
-        let isPandemicHit = !isInGracePeriod && pandemicSchedule.hit &&
-            !pandemicSchedule.fired && dayOfYear >= pandemicSchedule.day;
-        nextPandemicSchedule = pandemicSchedule;
-        let isEpidemicHit = !isPandemicHit && outbreakRoll < (dynamicEpidemicChance * (0.75 + Math.random() * 0.5));
-
-        // 🔒 APPLY FREQUENCY CONTROLS
-        // Pandemi: 0-1 kali setahun
-        if (isPandemicHit && !canPandemicOccur(countryDetail, currentDateStr)) {
-            isPandemicHit = false;
-        }
-        if (isPandemicHit && nextPandemicSchedule) {
-            nextPandemicSchedule = { ...nextPandemicSchedule, fired: true };
-        }
-
-        // Epidemi: 1-5 kali setahun dengan minimum 2 minggu spacing
-        if (isEpidemicHit && !canEpidemicOccur(countryDetail, currentDateStr)) {
-            isEpidemicHit = false;
-        }
-
-        const outbreakType = isPandemicHit ? 'pandemi' : isEpidemicHit ? 'epidemi' : null;
-        let pendingOutbreakEffect: any = null;
-        let pendingOutbreakPopulationLoss = 0;
-        let pendingConsecutiveOutbreakBoost = 0;
-
-        if (outbreakType) {
-            const currentPopulation = Number(countryDetail?.jumlah_penduduk);
-            const outbreak = generateWabahPenyakitNotification(
-                userCountryName,
-                currentDateStr,
-                Number.isFinite(currentPopulation) && currentPopulation > 0
-                    ? currentPopulation
-                    : undefined,
-                outbreakType
-            );
-            newNotifsToAdd.push(outbreak);
-
-            // 💀 APPLY POPULATION LOSS IMMEDIATELY
-            // Populasi langsung berkurang sebesar perkiraanKematian (tidak bertahap)
-            const populationAfterOutbreak = applyOutbreakPopulationLoss(currentPopulation, outbreak);
-            pendingOutbreakPopulationLoss = Math.max(0, currentPopulation - populationAfterOutbreak);
-            pendingConsecutiveOutbreakBoost = outbreakType === 'pandemi' ? 2 : 1;
-            pendingOutbreakEffect = {
-                id: outbreak.id,
-                eventName: outbreak.eventName,
-                category: outbreak.category,
-                korban: outbreak.korban,
-                perkiraanKematian: outbreak.perkiraanKematian,
-                durationDays: outbreak.durationDays,
-                startDate: currentDateStr,
-                isHandled: false
-            };
-        }
-
-        // Risiko keamanan mengikuti rata-rata kekurangan fasilitas kesehatan dan hukum.
-        const healthAndLawScore = (
-            calculateKesehatanScore(countryDetail) +
-            calculatePenegakanHukumScore(countryDetail)
-        ) / 2;
-        const securityRiskPercent = 100 - healthAndLawScore;
-        if (securityRiskPercent > 0 && Math.random() * 100 < securityRiskPercent) {
-            newNotifsToAdd.push(
-                generateKeamananNotification(userCountryName, currentDateStr, securityRiskPercent),
-            );
-        }
-
-        // 5. Notifikasi Pertahanan & Intelijen (Spionase, Sabotase, Diserang, Pemberontakan, ICBM)
-        const separatismeRisk = calculateSeparatismeRiskPercent(countryDetail);
-        const isSeparatismeTriggered = separatismeRisk > 0 && (Math.random() * 100 < separatismeRisk);
-        const defensePartners = internationalPool.filter(
-            partner => partner.trim().toLowerCase() !== userCountryName.trim().toLowerCase()
-        );
-
-        if (isSeparatismeTriggered || (defensePartners.length > 0 && Math.random() < 0.25)) {
-            const defRoll = Math.random();
-            const randomPartner = defensePartners[Math.floor(Math.random() * defensePartners.length)];
-            if (isSeparatismeTriggered) {
-                newNotifsToAdd.push(generatePemberontakanNotification(userCountryName, currentDateStr, separatismeRisk));
-            } else if (defRoll < 0.35) {
-                newNotifsToAdd.push(generateSpionaseNotification(randomPartner, currentDateStr));
-            } else if (defRoll < 0.65) {
-                newNotifsToAdd.push(generateSabotaseNotification(randomPartner, currentDateStr));
-            }
-        }
-
-        // 5.1 Simulasi Uji Coba Nuklir / ICBM Negara Lain (2% daily chance)
-        // Mengevaluasi negara-negara lain di dunia yang telah memiliki Program Nuklir atau ICBM
-        if (Math.random() < 0.02) {
-            const simSnapshot = getNpcCountrySimulationSnapshot();
-            const defaultNuclearNames = ['Amerika Serikat', 'Rusia', 'China', 'Korea Utara', 'India'];
-            const userNorm = userCountryName.trim().toLowerCase();
-
-            // Kumpulkan kandidat negara pemilik nuklir / ICBM selain negara pemain
-            const candidateNuclearCountries: Array<{
-                name: string;
-                slug: string;
-                icbmCount: number;
-                isDefault: boolean;
-            }> = [];
-
-            // 1. Masukkan negara superpower default nuklir yang bukan pemain
-            defaultNuclearNames.forEach(name => {
-                if (name.trim().toLowerCase() !== userNorm) {
-                    const slug = name.toLowerCase().replace(/\s+/g, '_');
-                    const baseIcbm = getNegaraNuklirBaseIcbm(slug, name);
-                    const npcData = simSnapshot?.countries?.[slug];
-                    const currentIcbm = Number(npcData?.icbm_jumlah ?? baseIcbm);
-                    candidateNuclearCountries.push({
-                        name,
-                        slug,
-                        icbmCount: Math.max(0, currentIcbm),
-                        isDefault: true,
-                    });
+                if (Math.random() > 0.5) {
+                    newNotifsToAdd.push(generateAITradeJualNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr));
+                } else {
+                    newNotifsToAdd.push(generateAITradeBeliNotification(partnerName, productKey, quantity, pricePerUnit, currentDateStr));
                 }
-            });
-
-            // 2. Masukkan negara NPC lain yang mengembangkan program nuklir atau memiliki ICBM di snapshot
-            if (simSnapshot?.countries) {
-                Object.entries(simSnapshot.countries).forEach(([cSlug, cData]: [string, any]) => {
-                    const cName = String(cData?.nama_negara || cData?.country || cData?.name_id || cSlug);
-                    if (
-                        cSlug !== simSnapshot.playerCountrySlug &&
-                        cName.trim().toLowerCase() !== userNorm &&
-                        !candidateNuclearCountries.some(c => c.slug === cSlug)
-                    ) {
-                        const hasActiveNuclear = Boolean(cData?.programNuklirActive);
-                        const icbmNum = Number(cData?.icbm_jumlah ?? 0);
-                        const hasIcbm = Boolean(cData?.icbm_status) || icbmNum > 0;
-                        if (hasActiveNuclear || hasIcbm) {
-                            candidateNuclearCountries.push({
-                                name: cName,
-                                slug: cSlug,
-                                icbmCount: Math.max(0, icbmNum),
-                                isDefault: isNegaraNuklirBawaan(cSlug, cName),
-                            });
-                        }
-                    }
-                });
             }
 
-            if (candidateNuclearCountries.length > 0) {
-                const chosenTester = candidateNuclearCountries[Math.floor(Math.random() * candidateNuclearCountries.length)];
-                const targetLoc = getRealisticTargetLocationName(chosenTester.name, chosenTester.name);
-                const targetLocationName = targetLoc.realisticName;
-
-                // Kurangi 1 ICBM jika negara memiliki stok ICBM
-                let remainingCount = chosenTester.icbmCount;
-                if (remainingCount > 0) {
-                    remainingCount -= 1;
-                    updateNpcCountrySimulationState(chosenTester.slug, {
-                        icbm_jumlah: remainingCount,
-                        icbm_status: remainingCount > 0,
-                    });
-                }
-
-                // Tambahkan notifikasi uji coba nuklir ke Inbox
-                newNotifsToAdd.push(
-                    generateUjicobaNuklirAINotification(
-                        chosenTester.name,
-                        targetLocationName,
-                        remainingCount,
-                        currentDateStr
-                    )
+            // 2. Penawaran Kedutaan Besar (2% daily chance)
+            if (Math.random() < 0.02) {
+                const embassyNotif = checkAndGenerateEmbassyOffers(
+                    userCountryName,
+                    notifications,
+                    currentDateStr,
+                    true,
+                    playerEmbassies,
+                    removedEmbassies
                 );
-
-                // Siarkan berita geopolitik uji coba nuklir / rudal balistik
-                terbitkanBeritaAI({
-                    id: `news-ujicoba-${chosenTester.slug}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-                    type: 'update_geopolitik',
-                    category: 'pencapaian_militer',
-                    headline: `💥 ${chosenTester.name} Menggelar Uji Coba Rudal Balistik Nuklir!`,
-                    content: `Otoritas militer ${chosenTester.name} berhasil meluncurkan dan menguji coba sistem rudal strategis berkemampuan nuklir di ${targetLocationName}. Radar pertahanan internasional mencatat lintasan balistik sukses terkonfirmasi, memicu kewaspadaan tinggi di kawasan regional.`,
-                    timestamp: currentDateStr,
-                    dateStr: currentDateStr,
-                    countryName: chosenTester.name,
-                    countrySlug: chosenTester.slug,
-                    constructionSection: 'militer',
-                });
+                if (embassyNotif) {
+                    newNotifsToAdd.push(embassyNotif);
+                } else {
+                    const randomPartner = internationalPool[Math.floor(Math.random() * internationalPool.length)];
+                    newNotifsToAdd.push(createEmbassyOfferNotification(randomPartner, userCountryName, currentDateStr));
+                }
             }
-        }
 
-        // Check all international countries for attack pool
-        const potentialAttackers = internationalPool.filter(
-            p => p.trim().toLowerCase() !== userCountryName.trim().toLowerCase()
-        );
+            // 3. Penawaran Hubungan Dagang Bilateral (2% daily chance)
+            if (Math.random() < 0.02) {
+                const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
+                newNotifsToAdd.push(generateTradeRelationOfferNotification(randomPartner, userCountryName, currentDateStr));
+            }
 
-        // === INVASION YEARLY GATE (siklus 10/20/30/40/50%) ===
-        // Probabilitas invasi meningkat tiap tahun, sama seperti pandemi.
-        // Undian dilakukan SEKALI per tahun; jika lolos, invasi dijadwalkan pada hari acak.
-        const INVASION_YEARLY_CYCLE = [10, 20, 30, 40, 50]; // %
-        const invasionYear = currentDate.getFullYear();
-        let invasionYearlyGatePassed = false;
-        {
-            const gameStartStr2 = countryDetail?.game_start_date as string | undefined;
-            let gameStartYear2 = invasionYear;
-            if (gameStartStr2) {
-                gameStartYear2 = parseInt(gameStartStr2.split('-')[0], 10) || invasionYear;
+            // 🎲 RANDOMISASI BENCANA ALAM & WABAH (Sangat Tidak Terduga & Sulit Ditebak)
+            // Menggunakan jitter acak, ambang batas dinamis, dan faktor kejutan musiman
+            const surpriseJitter = (Math.random() - 0.5) * 0.15; // Jitter tak terduga ±7.5%
+            const wmoDisasterModifier = getWMODisasterRiskModifier(userCountryName, countryDetail);
+            const disasterBaseChance = Math.max(0.05, 0.22 + wmoDisasterModifier / 100 + surpriseJitter);
+            const disasterOccurrenceChance = disasterBaseChance * (0.45 + Math.random() * 0.35); // 0.45x - 0.80x fluktuasi
+
+            let pendingDisasterEffect: any = null;
+            let pendingDisasterCasualties = 0;
+            if (Math.random() < disasterOccurrenceChance) {
+                const remainingDisasterRisk = applyKementerianLingkunganHidupDisasterRiskReduction(
+                    1,
+                    countryDetail
+                );
+                if (Math.random() < remainingDisasterRisk) {
+                    const disaster = generateBencanaAlamNotification(userCountryName, currentDateStr, countryDetail);
+                    newNotifsToAdd.push(disaster);
+                    pendingDisasterCasualties = disaster.korban;
+                    pendingDisasterEffect = {
+                        id: disaster.id,
+                        eventName: disaster.eventName,
+                        category: disaster.category,
+                        korban: disaster.korban,
+                        startDate: currentDateStr,
+                        durationDays: 30,
+                        healthMultiplier: 0.9,
+                        isHandled: false
+                    };
+                }
+            }
+
+            // 🎲 WABAH & PANDEMI: Anomali acak, faktor resistensi & variabilitas tidak tertebak
+            const whoPandemicModifier = getWHOPandemicRiskModifier(userCountryName, countryDetail);
+            const randomOutbreakNoise = (Math.random() - 0.5) * 12; // Fluktuasi risiko ±6%
+            const currentYearPandemicBase = getPandemicBaseChancePercentByYear(countryDetail, currentDateStr);
+            const dynamicPandemicChance = Math.max(5, currentYearPandemicBase + whoPandemicModifier + randomOutbreakNoise);
+
+            // ===== GRACE PERIOD: Jangan spawn outbreak di 30 hari pertama game =====
+            const gameStartStr = countryDetail?.game_start_date as string | undefined;
+            let daysSinceGameStart = 365 * 10; // Default: jauh di masa depan (no grace period)
+            if (gameStartStr) {
+                daysSinceGameStart = getDaysDifference(gameStartStr, currentDateStr);
             } else if (countryDetail?.game_start_year) {
-                gameStartYear2 = Number(countryDetail.game_start_year);
+                const gameStartDate = new Date(Number(countryDetail.game_start_year), 0, 1);
+                const currentDate = new Date(currentDateStr);
+                daysSinceGameStart = Math.floor((currentDate.getTime() - gameStartDate.getTime()) / (1000 * 60 * 60 * 24));
             }
-            const yearIndex2 = Math.max(0, invasionYear - gameStartYear2);
-            const cycleIdx = yearIndex2 % INVASION_YEARLY_CYCLE.length;
-            const yearlyChance = INVASION_YEARLY_CYCLE[cycleIdx];
 
-            let invSchedule = countryDetail?.invasion_schedule as
+            const isInGracePeriod = daysSinceGameStart < 30;
+            const epidemicBaseForDaily = isInGracePeriod ? 1 : 25; // 25% base untuk daily = ~1x per 4 hari, atau ~7x per bulan (match dengan 1-5x per tahun frequency)
+            const dynamicEpidemicChance = Math.max(10, epidemicBaseForDaily + whoPandemicModifier + randomOutbreakNoise);
+            const outbreakRoll = Math.random() * 100;
+            let nextPandemicSchedule: { year: number; hit: boolean; day: number; fired?: boolean } | undefined;
+
+            // Ambang acak ganda agar probabilitas tidak berpola tetap
+            // Pandemi: diundi SEKALI per tahun dengan persentase siklus (30/35/40/45/50%),
+            // lalu dijadwalkan pada hari acak di tahun tersebut (bukan diundi tiap hari).
+            const pandemicYear = currentDate.getFullYear();
+            const dayOfYear = Math.floor(
+                (new Date(pandemicYear, currentDate.getMonth(), currentDate.getDate()).getTime() -
+                    new Date(pandemicYear, 0, 1).getTime()) / 86400000
+            );
+            let pandemicSchedule = countryDetail?.pandemic_schedule as
                 { year: number; hit: boolean; day: number; fired?: boolean } | undefined;
-            if (!invSchedule || invSchedule.year !== invasionYear) {
-                invSchedule = {
-                    year: invasionYear,
+            if (!pandemicSchedule || pandemicSchedule.year !== pandemicYear) {
+                const yearlyChance = Math.min(100, Math.max(0, currentYearPandemicBase + whoPandemicModifier));
+                // Jadwalkan paling cepat 30 hari setelah hari ini/tahun baru agar tidak langsung muncul di bulan pertama
+                const minDay = Math.max(30, dayOfYear + 30);
+                const remainingDaysInYear = Math.max(1, 350 - minDay);
+                pandemicSchedule = {
+                    year: pandemicYear,
                     hit: Math.random() * 100 < yearlyChance,
-                    day: 7 + Math.floor(Math.random() * 350),
+                    day: minDay + Math.floor(Math.random() * remainingDaysInYear),
                     fired: false,
                 };
             }
-            const dayOfYearInv = Math.floor(
-                (new Date(invasionYear, currentDate.getMonth(), currentDate.getDate()).getTime() -
-                    new Date(invasionYear, 0, 1).getTime()) / 86400000
-            );
-            invasionYearlyGatePassed = !isInGracePeriod &&
-                invSchedule.hit && !invSchedule.fired && dayOfYearInv >= invSchedule.day;
-            // Simpan jadwal ke countryDetail (akan di-persist bersama last_checked_notification_date)
-            (countryDetail as any).__invasionSchedulePending = invSchedule;
-        }
+            let isPandemicHit = !isInGracePeriod && pandemicSchedule.hit &&
+                !pandemicSchedule.fired && dayOfYear >= pandemicSchedule.day;
+            nextPandemicSchedule = pandemicSchedule;
+            let isEpidemicHit = !isPandemicHit && outbreakRoll < (dynamicEpidemicChance * (0.75 + Math.random() * 0.5));
 
-        if (potentialAttackers.length > 0 && invasionYearlyGatePassed) {
-            // Find countries with lowest relations or pick random
-            const attackerScores = potentialAttackers.map(attacker => ({
-                attacker,
-                score: getRelationValue(userCountryName, attacker, currentDateStr)
-            })).sort((a, b) => a.score - b.score);
-
-            // Pick from top 3 worst relation countries or random if relations are fine
-            const criticalAttackers = attackerScores.filter(item => item.score < 25);
-            const chosenAttackerObj = criticalAttackers.length > 0
-                ? criticalAttackers[Math.floor(Math.random() * criticalAttackers.length)]
-                : attackerScores[Math.floor(Math.random() * attackerScores.length)];
-
-            const attackerCountry = chosenAttackerObj.attacker;
-            const relationScore = chosenAttackerObj.score;
-
-            // Base chance follows relation (relation <= 10 yields up to 80% chance)
-            let baseChance = getAttackChancePercentFromRelation(relationScore);
-            if (relationScore <= 10) {
-                baseChance = Math.max(baseChance, 80);
-            } else if (relationScore <= 20) {
-                baseChance = Math.max(baseChance, 50);
+            // 🔒 APPLY FREQUENCY CONTROLS
+            // Pandemi: 0-1 kali setahun
+            if (isPandemicHit && !canPandemicOccur(countryDetail, currentDateStr)) {
+                isPandemicHit = false;
+            }
+            if (isPandemicHit && nextPandemicSchedule) {
+                nextPandemicSchedule = { ...nextPandemicSchedule, fired: true };
             }
 
-            const attackChancePercent = applyDoktrinPertahananDiriBonus(baseChance, countryDetail);
+            // Epidemi: 1-5 kali setahun dengan minimum 2 minggu spacing
+            if (isEpidemicHit && !canEpidemicOccur(countryDetail, currentDateStr)) {
+                isEpidemicHit = false;
+            }
 
-            if (Math.random() * 100 < attackChancePercent) {
-                // Tandai jadwal invasi sebagai sudah dieksekusi
-                if ((countryDetail as any).__invasionSchedulePending) {
-                    (countryDetail as any).__invasionSchedulePending = {
-                        ...(countryDetail as any).__invasionSchedulePending,
-                        fired: true,
+            const outbreakType = isPandemicHit ? 'pandemi' : isEpidemicHit ? 'epidemi' : null;
+            let pendingOutbreakEffect: any = null;
+            let pendingOutbreakPopulationLoss = 0;
+            let pendingConsecutiveOutbreakBoost = 0;
+
+            if (outbreakType) {
+                const currentPopulation = Number(countryDetail?.jumlah_penduduk);
+                const outbreak = generateWabahPenyakitNotification(
+                    userCountryName,
+                    currentDateStr,
+                    Number.isFinite(currentPopulation) && currentPopulation > 0
+                        ? currentPopulation
+                        : undefined,
+                    outbreakType
+                );
+                newNotifsToAdd.push(outbreak);
+
+                // 💀 APPLY POPULATION LOSS IMMEDIATELY
+                // Populasi langsung berkurang sebesar perkiraanKematian (tidak bertahap)
+                const populationAfterOutbreak = applyOutbreakPopulationLoss(currentPopulation, outbreak);
+                pendingOutbreakPopulationLoss = Math.max(0, currentPopulation - populationAfterOutbreak);
+                pendingConsecutiveOutbreakBoost = outbreakType === 'pandemi' ? 2 : 1;
+                pendingOutbreakEffect = {
+                    id: outbreak.id,
+                    eventName: outbreak.eventName,
+                    category: outbreak.category,
+                    korban: outbreak.korban,
+                    perkiraanKematian: outbreak.perkiraanKematian,
+                    durationDays: outbreak.durationDays,
+                    startDate: currentDateStr,
+                    isHandled: false
+                };
+            }
+
+            // Risiko keamanan mengikuti rata-rata kekurangan fasilitas kesehatan dan hukum.
+            const healthAndLawScore = (
+                calculateKesehatanScore(countryDetail) +
+                calculatePenegakanHukumScore(countryDetail)
+            ) / 2;
+            const securityRiskPercent = 100 - healthAndLawScore;
+
+            // ── FIX: notifikasi kepolisian sebelumnya muncul tiap hari karena peluangnya
+            // langsung = securityRiskPercent% (bisa 50–100%), tanpa cooldown & tanpa grace.
+            // Sekarang: flat 2%/hari (selaras dengan notifikasi lain), hanya saat risiko
+            // benar-benar berarti (>= 20%), dan ada jeda minimal 14 hari antar-notifikasi.
+            const SECURITY_COOLDOWN_DAYS = 14;
+            const SECURITY_DAILY_CHANCE_PERCENT = 2;
+            const SECURITY_MIN_RISK_PERCENT = 20;
+
+            const lastSecurityNotifDate = typeof countryDetail?.last_keamanan_notification_date === 'string'
+                ? countryDetail.last_keamanan_notification_date
+                : null;
+            const daysSinceLastSecurityNotif = lastSecurityNotifDate
+                ? getDaysDifference(lastSecurityNotifDate, currentDateStr)
+                : Number.POSITIVE_INFINITY;
+            let nextKeamananNotificationDate: string | null = lastSecurityNotifDate;
+
+            if (
+                !isInGracePeriod &&
+                securityRiskPercent >= SECURITY_MIN_RISK_PERCENT &&
+                daysSinceLastSecurityNotif >= SECURITY_COOLDOWN_DAYS &&
+                Math.random() * 100 < SECURITY_DAILY_CHANCE_PERCENT
+            ) {
+                newNotifsToAdd.push(
+                    generateKeamananNotification(userCountryName, currentDateStr, securityRiskPercent),
+                );
+                nextKeamananNotificationDate = currentDateStr;
+            }
+
+            // 5. Notifikasi Pertahanan & Intelijen (Spionase, Sabotase, Diserang, Pemberontakan, ICBM)
+            const separatismeRisk = calculateSeparatismeRiskPercent(countryDetail);
+            const isSeparatismeTriggered = separatismeRisk > 0 && (Math.random() * 100 < separatismeRisk);
+            const defensePartners = internationalPool.filter(
+                partner => partner.trim().toLowerCase() !== userCountryName.trim().toLowerCase()
+            );
+
+            if (isSeparatismeTriggered || (defensePartners.length > 0 && Math.random() < 0.25)) {
+                const defRoll = Math.random();
+                const randomPartner = defensePartners[Math.floor(Math.random() * defensePartners.length)];
+                if (isSeparatismeTriggered) {
+                    newNotifsToAdd.push(generatePemberontakanNotification(userCountryName, currentDateStr, separatismeRisk));
+                } else if (defRoll < 0.35) {
+                    newNotifsToAdd.push(generateSpionaseNotification(randomPartner, currentDateStr));
+                } else if (defRoll < 0.65) {
+                    newNotifsToAdd.push(generateSabotaseNotification(randomPartner, currentDateStr));
+                }
+            }
+
+            // 5.1 Simulasi Uji Coba Nuklir / ICBM Negara Lain (2% daily chance)
+            // Mengevaluasi negara-negara lain di dunia yang telah memiliki Program Nuklir atau ICBM
+            if (Math.random() < 0.02) {
+                const simSnapshot = getNpcCountrySimulationSnapshot();
+                const defaultNuclearNames = ['Amerika Serikat', 'Rusia', 'China', 'Korea Utara', 'India'];
+                const userNorm = userCountryName.trim().toLowerCase();
+
+                // Kumpulkan kandidat negara pemilik nuklir / ICBM selain negara pemain
+                const candidateNuclearCountries: Array<{
+                    name: string;
+                    slug: string;
+                    icbmCount: number;
+                    isDefault: boolean;
+                }> = [];
+
+                // 1. Masukkan negara superpower default nuklir yang bukan pemain
+                defaultNuclearNames.forEach(name => {
+                    if (name.trim().toLowerCase() !== userNorm) {
+                        const slug = name.toLowerCase().replace(/\s+/g, '_');
+                        const baseIcbm = getNegaraNuklirBaseIcbm(slug, name);
+                        const npcData = simSnapshot?.countries?.[slug];
+                        const currentIcbm = Number(npcData?.icbm_jumlah ?? baseIcbm);
+                        candidateNuclearCountries.push({
+                            name,
+                            slug,
+                            icbmCount: Math.max(0, currentIcbm),
+                            isDefault: true,
+                        });
+                    }
+                });
+
+                // 2. Masukkan negara NPC lain yang mengembangkan program nuklir atau memiliki ICBM di snapshot
+                if (simSnapshot?.countries) {
+                    Object.entries(simSnapshot.countries).forEach(([cSlug, cData]: [string, any]) => {
+                        const cName = String(cData?.nama_negara || cData?.country || cData?.name_id || cSlug);
+                        if (
+                            cSlug !== simSnapshot.playerCountrySlug &&
+                            cName.trim().toLowerCase() !== userNorm &&
+                            !candidateNuclearCountries.some(c => c.slug === cSlug)
+                        ) {
+                            const hasActiveNuclear = Boolean(cData?.programNuklirActive);
+                            const icbmNum = Number(cData?.icbm_jumlah ?? 0);
+                            const hasIcbm = Boolean(cData?.icbm_status) || icbmNum > 0;
+                            if (hasActiveNuclear || hasIcbm) {
+                                candidateNuclearCountries.push({
+                                    name: cName,
+                                    slug: cSlug,
+                                    icbmCount: Math.max(0, icbmNum),
+                                    isDefault: isNegaraNuklirBawaan(cSlug, cName),
+                                });
+                            }
+                        }
+                    });
+                }
+
+                if (candidateNuclearCountries.length > 0) {
+                    const chosenTester = candidateNuclearCountries[Math.floor(Math.random() * candidateNuclearCountries.length)];
+                    const targetLoc = getRealisticTargetLocationName(chosenTester.name, chosenTester.name);
+                    const targetLocationName = targetLoc.realisticName;
+
+                    // Kurangi 1 ICBM jika negara memiliki stok ICBM
+                    let remainingCount = chosenTester.icbmCount;
+                    if (remainingCount > 0) {
+                        remainingCount -= 1;
+                        updateNpcCountrySimulationState(chosenTester.slug, {
+                            icbm_jumlah: remainingCount,
+                            icbm_status: remainingCount > 0,
+                        });
+                    }
+
+                    // Tambahkan notifikasi uji coba nuklir ke Inbox
+                    newNotifsToAdd.push(
+                        generateUjicobaNuklirAINotification(
+                            chosenTester.name,
+                            targetLocationName,
+                            remainingCount,
+                            currentDateStr
+                        )
+                    );
+
+                    // Siarkan berita geopolitik uji coba nuklir / rudal balistik
+                    terbitkanBeritaAI({
+                        id: `news-ujicoba-${chosenTester.slug}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+                        type: 'update_geopolitik',
+                        category: 'pencapaian_militer',
+                        headline: `💥 ${chosenTester.name} Menggelar Uji Coba Rudal Balistik Nuklir!`,
+                        content: `Otoritas militer ${chosenTester.name} berhasil meluncurkan dan menguji coba sistem rudal strategis berkemampuan nuklir di ${targetLocationName}. Radar pertahanan internasional mencatat lintasan balistik sukses terkonfirmasi, memicu kewaspadaan tinggi di kawasan regional.`,
+                        timestamp: currentDateStr,
+                        dateStr: currentDateStr,
+                        countryName: chosenTester.name,
+                        countrySlug: chosenTester.slug,
+                        constructionSection: 'militer',
+                    });
+                }
+            }
+
+            // Check all international countries for attack pool
+            const potentialAttackers = internationalPool.filter(
+                p => p.trim().toLowerCase() !== userCountryName.trim().toLowerCase()
+            );
+
+            // === INVASION YEARLY GATE (siklus 10/20/30/40/50%) ===
+            // Probabilitas invasi meningkat tiap tahun, sama seperti pandemi.
+            // Undian dilakukan SEKALI per tahun; jika lolos, invasi dijadwalkan pada hari acak.
+            const INVASION_YEARLY_CYCLE = [10, 20, 30, 40, 50]; // %
+            const invasionYear = currentDate.getFullYear();
+            let invasionYearlyGatePassed = false;
+            {
+                const gameStartStr2 = countryDetail?.game_start_date as string | undefined;
+                let gameStartYear2 = invasionYear;
+                if (gameStartStr2) {
+                    gameStartYear2 = parseInt(gameStartStr2.split('-')[0], 10) || invasionYear;
+                } else if (countryDetail?.game_start_year) {
+                    gameStartYear2 = Number(countryDetail.game_start_year);
+                }
+                const yearIndex2 = Math.max(0, invasionYear - gameStartYear2);
+                const cycleIdx = yearIndex2 % INVASION_YEARLY_CYCLE.length;
+                const yearlyChance = INVASION_YEARLY_CYCLE[cycleIdx];
+
+                let invSchedule = countryDetail?.invasion_schedule as
+                    { year: number; hit: boolean; day: number; fired?: boolean } | undefined;
+                if (!invSchedule || invSchedule.year !== invasionYear) {
+                    invSchedule = {
+                        year: invasionYear,
+                        hit: Math.random() * 100 < yearlyChance,
+                        day: 7 + Math.floor(Math.random() * 350),
+                        fired: false,
                     };
                 }
-                const userHasAnnexedTerritories = hasAnnexedTerritories(userCountryName);
-                const attackNotification = generateDiserangNotification(
-                    attackerCountry,
-                    currentDateStr,
-                    userHasAnnexedTerritories
+                const dayOfYearInv = Math.floor(
+                    (new Date(invasionYear, currentDate.getMonth(), currentDate.getDate()).getTime() -
+                        new Date(invasionYear, 0, 1).getTime()) / 86400000
                 );
-                const hasApprovedInvasionResolution = hasActiveApprovedInvasionResolution(
-                    attackerCountry,
-                    userCountryName
-                );
-                if (hasApprovedInvasionResolution) {
-                    if (Math.random() < 0.95) {
-                        newNotifsToAdd.push(attackNotification);
-                        window.dispatchEvent(new CustomEvent('start_war_animation', {
-                            detail: {
-                                attacker: attackerCountry,
-                                target: userCountryName,
-                                targetCountryDetail: countryDetail,
-                            }
-                        }));
+                invasionYearlyGatePassed = !isInGracePeriod &&
+                    invSchedule.hit && !invSchedule.fired && dayOfYearInv >= invSchedule.day;
+                // Simpan jadwal ke countryDetail (akan di-persist bersama last_checked_notification_date)
+                (countryDetail as any).__invasionSchedulePending = invSchedule;
+            }
+
+            if (potentialAttackers.length > 0 && invasionYearlyGatePassed) {
+                // Find countries with lowest relations or pick random
+                const attackerScores = potentialAttackers.map(attacker => ({
+                    attacker,
+                    score: getRelationValue(userCountryName, attacker, currentDateStr)
+                })).sort((a, b) => a.score - b.score);
+
+                // Pick from top 3 worst relation countries or random if relations are fine
+                const criticalAttackers = attackerScores.filter(item => item.score < 25);
+                const chosenAttackerObj = criticalAttackers.length > 0
+                    ? criticalAttackers[Math.floor(Math.random() * criticalAttackers.length)]
+                    : attackerScores[Math.floor(Math.random() * attackerScores.length)];
+
+                const attackerCountry = chosenAttackerObj.attacker;
+                const relationScore = chosenAttackerObj.score;
+
+                // Base chance follows relation (relation <= 10 yields up to 80% chance)
+                let baseChance = getAttackChancePercentFromRelation(relationScore);
+                if (relationScore <= 10) {
+                    baseChance = Math.max(baseChance, 80);
+                } else if (relationScore <= 20) {
+                    baseChance = Math.max(baseChance, 50);
+                }
+
+                const attackChancePercent = applyDoktrinPertahananDiriBonus(baseChance, countryDetail);
+
+                if (Math.random() * 100 < attackChancePercent) {
+                    // Tandai jadwal invasi sebagai sudah dieksekusi
+                    if ((countryDetail as any).__invasionSchedulePending) {
+                        (countryDetail as any).__invasionSchedulePending = {
+                            ...(countryDetail as any).__invasionSchedulePending,
+                            fired: true,
+                        };
                     }
-                } else {
-                    if (Math.random() < 0.25) {
-                        newNotifsToAdd.push(generateDiserangNotification(
-                            attackerCountry,
-                            currentDateStr,
-                            userHasAnnexedTerritories,
-                            'invasi'
-                        ));
-                        window.dispatchEvent(new CustomEvent('start_war_animation', {
-                            detail: {
-                                attacker: attackerCountry,
-                                target: userCountryName,
-                                targetCountryDetail: countryDetail,
-                                resolutionViolationAuthorized: true,
-                            }
-                        }));
+                    const userHasAnnexedTerritories = hasAnnexedTerritories(userCountryName);
+                    const attackNotification = generateDiserangNotification(
+                        attackerCountry,
+                        currentDateStr,
+                        userHasAnnexedTerritories
+                    );
+                    const hasApprovedInvasionResolution = hasActiveApprovedInvasionResolution(
+                        attackerCountry,
+                        userCountryName
+                    );
+                    if (hasApprovedInvasionResolution) {
+                        if (Math.random() < 0.95) {
+                            newNotifsToAdd.push(attackNotification);
+                            window.dispatchEvent(new CustomEvent('start_war_animation', {
+                                detail: {
+                                    attacker: attackerCountry,
+                                    target: userCountryName,
+                                    targetCountryDetail: countryDetail,
+                                }
+                            }));
+                        }
                     } else {
-                        const activeResolutions = loadActiveResolutions();
-                        const pendingInvasionResolution = activeResolutions.find(item =>
-                            item.type === 'military_invasion' &&
-                            item.status === 'voting' &&
-                            areSameWarCountry(item.proposer.name, attackerCountry) &&
-                            areSameWarCountry(item.target.name, userCountryName)
-                        );
-                        if (pendingInvasionResolution) {
-                            if (pendingInvasionResolution.aiInvasionAttackChance === undefined) {
-                                saveActiveResolutions(activeResolutions.map(item =>
-                                    item.id === pendingInvasionResolution.id
-                                        ? { ...item, aiInvasionAttackChance: attackChancePercent }
-                                        : item
-                                ));
-                            }
-                        } else {
-                            const invasionProposal = generateAIResolusiPBBNotification(
+                        if (Math.random() < 0.25) {
+                            newNotifsToAdd.push(generateDiserangNotification(
                                 attackerCountry,
-                                userCountryName,
-                                relationScore,
                                 currentDateStr,
-                                'military_invasion'
+                                userHasAnnexedTerritories,
+                                'invasi'
+                            ));
+                            window.dispatchEvent(new CustomEvent('start_war_animation', {
+                                detail: {
+                                    attacker: attackerCountry,
+                                    target: userCountryName,
+                                    targetCountryDetail: countryDetail,
+                                    resolutionViolationAuthorized: true,
+                                }
+                            }));
+                        } else {
+                            const activeResolutions = loadActiveResolutions();
+                            const pendingInvasionResolution = activeResolutions.find(item =>
+                                item.type === 'military_invasion' &&
+                                item.status === 'voting' &&
+                                areSameWarCountry(item.proposer.name, attackerCountry) &&
+                                areSameWarCountry(item.target.name, userCountryName)
                             );
-                            invasionProposal.aiInvasionAttackChance = attackChancePercent;
-                            newNotifsToAdd.push(invasionProposal);
-                            spawnAIResolutionFromTrigger(invasionProposal, currentDateStr);
+                            if (pendingInvasionResolution) {
+                                if (pendingInvasionResolution.aiInvasionAttackChance === undefined) {
+                                    saveActiveResolutions(activeResolutions.map(item =>
+                                        item.id === pendingInvasionResolution.id
+                                            ? { ...item, aiInvasionAttackChance: attackChancePercent }
+                                            : item
+                                    ));
+                                }
+                            } else {
+                                const invasionProposal = generateAIResolusiPBBNotification(
+                                    attackerCountry,
+                                    userCountryName,
+                                    relationScore,
+                                    currentDateStr,
+                                    'military_invasion'
+                                );
+                                invasionProposal.aiInvasionAttackChance = attackChancePercent;
+                                newNotifsToAdd.push(invasionProposal);
+                                spawnAIResolutionFromTrigger(invasionProposal, currentDateStr);
+                            }
                         }
                     }
                 }
             }
-        }
 
-        // 5B. Penawaran Pakta Non-Agresi Bilateral (2% daily chance)
-        if (Math.random() < 0.02) {
-            const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
-            newNotifsToAdd.push(generateNonAggressionOfferNotification(randomPartner, userCountryName, currentDateStr));
-        }
-
-        // 5C. Peluang dasar 25% per bulan, ditambah bonus riset Aliansi Pertahanan.
-        const defenseAllianceOfferChance = getDefenseAllianceOfferChancePercent(countryDetail);
-        if (Math.random() * 100 < defenseAllianceOfferChance) {
-            const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
-            newNotifsToAdd.push(generateDefenseAllianceOfferNotification(randomPartner, userCountryName, currentDateStr));
-        }
-
-        // 5D. Penawaran Kontrak Penelitian Joint-R&D (2% daily chance)
-        if (Math.random() < 0.02) {
-            const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
-            newNotifsToAdd.push(generateResearchContractOfferNotification(randomPartner, userCountryName, currentDateStr));
-        }
-
-        // 5E. Notifikasi Hubungan Panas / Memburuk (Setiap bulan jika skor hubungan <= 20, 15, 10, 5, 1)
-        internationalPool.forEach(partner => {
-            const relScore = getRelationValue(userCountryName, partner, currentDateStr);
-            if (relScore <= 20) {
-                newNotifsToAdd.push(generateHubunganPanasNotification(partner, relScore, currentDateStr));
-            }
-        });
-
-        // 5F & 5G. Usulan Resolusi PBB & Dewan Keamanan PBB oleh AI.
-        // Satu kali undian per bulan agar presisi:
-        //  - 10% keduanya muncul bersamaan
-        //  - 15% hanya Resolusi PBB
-        //  - 15% hanya Dewan Keamanan PBB
-        //  - 60% tidak ada
-        // => masing-masing tetap tepat 25% per bulan (~3-5x/tahun).
-        const pbbRoll = Math.random();
-        const triggerRes = pbbRoll < 0.25; // 0.00-0.10 (bersamaan) + 0.10-0.25 (hanya Resolusi)
-        const triggerSec = pbbRoll < 0.10 || (pbbRoll >= 0.25 && pbbRoll < 0.40); // 0.00-0.10 (bersamaan) + 0.25-0.40 (hanya DK)
-
-        if (triggerRes) {
-            const aiResNotif = evaluateAIResolusiPBBTrigger(
-                internationalPool,
-                userCountryName,
-                (c1, c2) => getRelationValue(c1, c2, currentDateStr),
-                currentDateStr
-            );
-            if (aiResNotif) {
-                newNotifsToAdd.push(aiResNotif);
-                spawnAIResolutionFromTrigger(aiResNotif, currentDateStr);
-            }
-        }
-
-        if (triggerSec) {
-            const aiSecNotif = evaluateAIKeamananPBBTrigger(
-                internationalPool,
-                userCountryName,
-                (c1, c2) => getRelationValue(c1, c2, currentDateStr),
-                currentDateStr
-            );
-            if (aiSecNotif) {
-                newNotifsToAdd.push(aiSecNotif);
-                spawnAISecurityCouncilFromTrigger(aiSecNotif, currentDateStr);
-            }
-        }
-
-        // 5H. Evaluasi Berita Perang / Invasi / Aneksasi / Rampasan SDA Geopolitik (2% daily chance)
-        if (Math.random() < 0.02) {
-            const proposedInvasions = evaluateAnnualHotRelationsInvasion(currentDateStr, userCountryName);
-            const warBanActive = hasActiveGlobalWarBan();
-            const authorizedInvasions = proposedInvasions.filter(invasion =>
-                hasActiveApprovedInvasionResolution(invasion.attackerCountry, invasion.targetCountry)
-            );
-            const violationInvasions = proposedInvasions.filter(invasion =>
-                !hasActiveApprovedInvasionResolution(invasion.attackerCountry, invasion.targetCountry) &&
-                Math.random() < 0.25
-            );
-            const possibleInvasions = [...authorizedInvasions, ...violationInvasions];
-            const annualInvasions = warBanActive
-                ? possibleInvasions.filter(() => Math.random() < 0.2)
-                : possibleInvasions;
-
-            if (annualInvasions.length > 0) {
-                setNpcWarQueue(previous => [
-                    ...previous,
-                    ...annualInvasions.map(invasion => ({
-                        attacker: invasion.attackerCountry,
-                        target: invasion.targetCountry,
-                        resolutionViolationAuthorized: !hasActiveApprovedInvasionResolution(
-                            invasion.attackerCountry,
-                            invasion.targetCountry
-                        ),
-                    })),
-                ]);
+            // 5B. Penawaran Pakta Non-Agresi Bilateral (2% daily chance)
+            if (Math.random() < 0.02) {
+                const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
+                newNotifsToAdd.push(generateNonAggressionOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
-            const cancelledUnauthorizedCount = proposedInvasions.length -
-                authorizedInvasions.length -
-                violationInvasions.length;
-            if (cancelledUnauthorizedCount > 0) {
-                newNotifsToAdd.push({
-                    id: `notif-npc-war-no-mandate-${currentDateStr}`,
-                    title: '🕊️ SERANGAN TANPA MANDAT DIBATALKAN',
-                    sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
-                    message: `${cancelledUnauthorizedCount} rencana konflik AI tanpa mandat dibatalkan. Peluang serangan tanpa resolusi adalah 25%; pelanggaran yang lolos akan diajukan untuk sanksi dan embargo.`,
-                    timestamp: currentDateStr,
-                    type: 'peringkat',
-                    value: 100,
-                    isRead: false
-                });
+            // 5C. Peluang dasar 25% per bulan, ditambah bonus riset Aliansi Pertahanan.
+            const defenseAllianceOfferChance = getDefenseAllianceOfferChancePercent(countryDetail);
+            if (Math.random() * 100 < defenseAllianceOfferChance) {
+                const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
+                newNotifsToAdd.push(generateDefenseAllianceOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
-            if (warBanActive && annualInvasions.length < possibleInvasions.length) {
-                newNotifsToAdd.push({
-                    id: `notif-war-ban-ai-block-${currentDateStr}`,
-                    title: '🕊️ LARANGAN PERANG PBB MENGHENTIKAN SERANGAN',
-                    sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
-                    message: `${possibleInvasions.length - annualInvasions.length} rencana serangan negara AI dibatalkan. Larangan perang aktif; hanya 20% dari rencana yang lolos pemeriksaan mandat/peluang pelanggaran dapat berjalan.`,
-                    timestamp: currentDateStr,
-                    type: 'peringkat',
-                    value: 100,
-                    isRead: false
-                });
+            // 5D. Penawaran Kontrak Penelitian Joint-R&D (2% daily chance)
+            if (Math.random() < 0.02) {
+                const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
+                newNotifsToAdd.push(generateResearchContractOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
-            if (annualInvasions.length > 0) {
-                const generatedNewsItems: NewsItemData[] = [];
-                annualInvasions.forEach(inv => {
+            // 5E. Notifikasi Hubungan Panas / Memburuk (Setiap bulan jika skor hubungan <= 20, 15, 10, 5, 1)
+            internationalPool.forEach(partner => {
+                const relScore = getRelationValue(userCountryName, partner, currentDateStr);
+                if (relScore <= 20) {
+                    newNotifsToAdd.push(generateHubunganPanasNotification(partner, relScore, currentDateStr));
+                }
+            });
+
+            // 5F & 5G. Usulan Resolusi PBB & Dewan Keamanan PBB oleh AI.
+            // Satu kali undian per bulan agar presisi:
+            //  - 10% keduanya muncul bersamaan
+            //  - 15% hanya Resolusi PBB
+            //  - 15% hanya Dewan Keamanan PBB
+            //  - 60% tidak ada
+            // => masing-masing tetap tepat 25% per bulan (~3-5x/tahun).
+            const pbbRoll = Math.random();
+            const triggerRes = pbbRoll < 0.25; // 0.00-0.10 (bersamaan) + 0.10-0.25 (hanya Resolusi)
+            const triggerSec = pbbRoll < 0.10 || (pbbRoll >= 0.25 && pbbRoll < 0.40); // 0.00-0.10 (bersamaan) + 0.25-0.40 (hanya DK)
+
+            if (triggerRes) {
+                const aiResNotif = evaluateAIResolusiPBBTrigger(
+                    internationalPool,
+                    userCountryName,
+                    (c1, c2) => getRelationValue(c1, c2, currentDateStr),
+                    currentDateStr
+                );
+                if (aiResNotif) {
+                    newNotifsToAdd.push(aiResNotif);
+                    spawnAIResolutionFromTrigger(aiResNotif, currentDateStr);
+                }
+            }
+
+            if (triggerSec) {
+                const aiSecNotif = evaluateAIKeamananPBBTrigger(
+                    internationalPool,
+                    userCountryName,
+                    (c1, c2) => getRelationValue(c1, c2, currentDateStr),
+                    currentDateStr
+                );
+                if (aiSecNotif) {
+                    newNotifsToAdd.push(aiSecNotif);
+                    spawnAISecurityCouncilFromTrigger(aiSecNotif, currentDateStr);
+                }
+            }
+
+            // 5H. Evaluasi Berita Perang / Invasi / Aneksasi / Rampasan SDA Geopolitik (2% daily chance)
+            if (Math.random() < 0.02) {
+                const proposedInvasions = evaluateAnnualHotRelationsInvasion(currentDateStr, userCountryName);
+                const warBanActive = hasActiveGlobalWarBan();
+                const authorizedInvasions = proposedInvasions.filter(invasion =>
+                    hasActiveApprovedInvasionResolution(invasion.attackerCountry, invasion.targetCountry)
+                );
+                const violationInvasions = proposedInvasions.filter(invasion =>
+                    !hasActiveApprovedInvasionResolution(invasion.attackerCountry, invasion.targetCountry) &&
+                    Math.random() < 0.25
+                );
+                const possibleInvasions = [...authorizedInvasions, ...violationInvasions];
+                const annualInvasions = warBanActive
+                    ? possibleInvasions.filter(() => Math.random() < 0.2)
+                    : possibleInvasions;
+
+                if (annualInvasions.length > 0) {
+                    setNpcWarQueue(previous => [
+                        ...previous,
+                        ...annualInvasions.map(invasion => ({
+                            attacker: invasion.attackerCountry,
+                            target: invasion.targetCountry,
+                            resolutionViolationAuthorized: !hasActiveApprovedInvasionResolution(
+                                invasion.attackerCountry,
+                                invasion.targetCountry
+                            ),
+                        })),
+                    ]);
+                }
+
+                const cancelledUnauthorizedCount = proposedInvasions.length -
+                    authorizedInvasions.length -
+                    violationInvasions.length;
+                if (cancelledUnauthorizedCount > 0) {
                     newNotifsToAdd.push({
-                        id: `notif-npc-war-${currentDateStr}-${inv.attackerIso}-${inv.targetIso}`,
-                        title: '⚔️ PERANG ANTARNEGARA',
-                        sender: `Kementerian Luar Negeri — ${inv.attackerCountry}`,
-                        message: `${inv.attackerCountry} melancarkan serangan terhadap ${inv.targetCountry}. Pergerakan pasukan terlihat pada peta dan perkembangan konflik akan diberitakan.`,
+                        id: `notif-npc-war-no-mandate-${currentDateStr}`,
+                        title: '🕊️ SERANGAN TANPA MANDAT DIBATALKAN',
+                        sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
+                        message: `${cancelledUnauthorizedCount} rencana konflik AI tanpa mandat dibatalkan. Peluang serangan tanpa resolusi adalah 25%; pelanggaran yang lolos akan diajukan untuk sanksi dan embargo.`,
                         timestamp: currentDateStr,
                         type: 'peringkat',
-                        value: 50,
-                        isRead: false,
+                        value: 100,
+                        isRead: false
+                    });
+                }
+
+                if (warBanActive && annualInvasions.length < possibleInvasions.length) {
+                    newNotifsToAdd.push({
+                        id: `notif-war-ban-ai-block-${currentDateStr}`,
+                        title: '🕊️ LARANGAN PERANG PBB MENGHENTIKAN SERANGAN',
+                        sender: 'Sekretariat Perserikatan Bangsa-Bangsa',
+                        message: `${possibleInvasions.length - annualInvasions.length} rencana serangan negara AI dibatalkan. Larangan perang aktif; hanya 20% dari rencana yang lolos pemeriksaan mandat/peluang pelanggaran dapat berjalan.`,
+                        timestamp: currentDateStr,
+                        type: 'peringkat',
+                        value: 100,
+                        isRead: false
+                    });
+                }
+
+                if (annualInvasions.length > 0) {
+                    const generatedNewsItems: NewsItemData[] = [];
+                    annualInvasions.forEach(inv => {
+                        newNotifsToAdd.push({
+                            id: `notif-npc-war-${currentDateStr}-${inv.attackerIso}-${inv.targetIso}`,
+                            title: '⚔️ PERANG ANTARNEGARA',
+                            sender: `Kementerian Luar Negeri — ${inv.attackerCountry}`,
+                            message: `${inv.attackerCountry} melancarkan serangan terhadap ${inv.targetCountry}. Pergerakan pasukan terlihat pada peta dan perkembangan konflik akan diberitakan.`,
+                            timestamp: currentDateStr,
+                            type: 'peringkat',
+                            value: 50,
+                            isRead: false,
+                        });
+
+                        const hasInvasionMandate = hasActiveApprovedInvasionResolution(inv.attackerCountry, inv.targetCountry);
+                        if (warBanActive || !hasInvasionMandate) {
+                            const reason = warBanActive
+                                ? 'war_ban'
+                                : hasActiveApprovedInvasionResolutionForDifferentTarget(inv.attackerCountry, inv.targetCountry)
+                                    ? 'wrong_military_target'
+                                    : 'missing_military_resolution';
+                            const expelledOrganizations = expelCountryFromOrganizations(inv.attackerCountry);
+                            if (expelledOrganizations.length > 0) {
+                                newNotifsToAdd.push({
+                                    id: `notif-org-expulsion-ai-${currentDateStr}-${inv.attackerIso}`,
+                                    title: '🚫 KEANGGOTAAN ORGANISASI INTERNASIONAL DICABUT',
+                                    sender: 'Sekretariat Perserikatan Bangsa-Bangsa & Komunitas Global',
+                                    message: `${inv.attackerCountry} dikeluarkan secara tidak hormat dari organisasi internasional (${expelledOrganizations.join(', ')}) karena menyerang ${inv.targetCountry} tanpa mandat Resolusi Invasi PBB.`,
+                                    timestamp: currentDateStr,
+                                    type: 'peringkat',
+                                    value: 100,
+                                    isRead: false
+                                });
+                            }
+                            const revokedCouncilMember = expelCountryFromSecurityCouncil(inv.attackerCountry);
+                            if (revokedCouncilMember) {
+                                newNotifsToAdd.push({
+                                    id: `notif-dk-expulsion-ai-${currentDateStr}-${inv.attackerIso}`,
+                                    title: '🏛️ KURSI ANGGOTA TIDAK TETAP DK PBB DICABUT',
+                                    sender: 'Presidensi Dewan Keamanan PBB',
+                                    message: `Status ${inv.attackerCountry} sebagai Anggota Tidak Tetap Dewan Keamanan PBB resmi DICABUT seketika akibat melancarkan agresi militer terhadap ${inv.targetCountry} tanpa mandat resolusi PBB. Hak suara istimewa di DK PBB dibatalkan!`,
+                                    timestamp: currentDateStr,
+                                    type: 'peringkat',
+                                    value: 100,
+                                    isRead: false
+                                });
+                            }
+                            const sanctionsNotifications = warBanActive
+                                ? submitWarBanViolationSanctions(inv.attackerCountry, inv.targetCountry, currentDateStr)
+                                : submitInvasionViolationSanctions(
+                                    inv.attackerCountry,
+                                    inv.targetCountry,
+                                    currentDateStr,
+                                    reason
+                                );
+                            newNotifsToAdd.push(...sanctionsNotifications);
+                        }
+                        generatedNewsItems.push(inv);
+
+                        const outcomeRoll = Math.random();
+                        if (outcomeRoll < 0.50) {
+                            // Dapatkan warna asli negara penyerang
+                            const attackerColor = getCountryColor(inv.attackerCountry);
+
+                            const { news: annexationNews } = generateAnnexationNews(
+                                inv.attackerCountry,
+                                inv.attackerIso,
+                                attackerColor, // Gunakan warna asli penyerang, bukan hardcoded
+                                inv.targetCountry,
+                                inv.targetIso,
+                                currentDateStr
+                            );
+                            generatedNewsItems.push(annexationNews);
+
+                            recordAnnexedTerritory(
+                                inv.targetCountry,
+                                inv.targetIso,
+                                inv.attackerCountry,
+                                inv.attackerIso,
+                                attackerColor
+                            );
+
+                            console.log(`🚩 ANEKSASI: ${inv.attackerCountry} (${attackerColor}) menganeksasi ${inv.targetCountry}`);
+                        } else {
+                            const lootNews = generateResourceLootNews(
+                                inv.attackerCountry,
+                                inv.attackerIso,
+                                inv.targetCountry,
+                                inv.targetIso,
+                                5000000,
+                                { emas: 100, minyak_bumi: 250, beras: 500 },
+                                currentDateStr
+                            );
+                            generatedNewsItems.push(lootNews);
+                        }
                     });
 
-                    const hasInvasionMandate = hasActiveApprovedInvasionResolution(inv.attackerCountry, inv.targetCountry);
-                    if (warBanActive || !hasInvasionMandate) {
-                        const reason = warBanActive
-                            ? 'war_ban'
-                            : hasActiveApprovedInvasionResolutionForDifferentTarget(inv.attackerCountry, inv.targetCountry)
-                                ? 'wrong_military_target'
-                                : 'missing_military_resolution';
-                        const expelledOrganizations = expelCountryFromOrganizations(inv.attackerCountry);
-                        if (expelledOrganizations.length > 0) {
-                            newNotifsToAdd.push({
-                                id: `notif-org-expulsion-ai-${currentDateStr}-${inv.attackerIso}`,
-                                title: '🚫 KEANGGOTAAN ORGANISASI INTERNASIONAL DICABUT',
-                                sender: 'Sekretariat Perserikatan Bangsa-Bangsa & Komunitas Global',
-                                message: `${inv.attackerCountry} dikeluarkan secara tidak hormat dari organisasi internasional (${expelledOrganizations.join(', ')}) karena menyerang ${inv.targetCountry} tanpa mandat Resolusi Invasi PBB.`,
-                                timestamp: currentDateStr,
-                                type: 'peringkat',
-                                value: 100,
-                                isRead: false
-                            });
-                        }
-                        const revokedCouncilMember = expelCountryFromSecurityCouncil(inv.attackerCountry);
-                        if (revokedCouncilMember) {
-                            newNotifsToAdd.push({
-                                id: `notif-dk-expulsion-ai-${currentDateStr}-${inv.attackerIso}`,
-                                title: '🏛️ KURSI ANGGOTA TIDAK TETAP DK PBB DICABUT',
-                                sender: 'Presidensi Dewan Keamanan PBB',
-                                message: `Status ${inv.attackerCountry} sebagai Anggota Tidak Tetap Dewan Keamanan PBB resmi DICABUT seketika akibat melancarkan agresi militer terhadap ${inv.targetCountry} tanpa mandat resolusi PBB. Hak suara istimewa di DK PBB dibatalkan!`,
-                                timestamp: currentDateStr,
-                                type: 'peringkat',
-                                value: 100,
-                                isRead: false
-                            });
-                        }
-                        const sanctionsNotifications = warBanActive
-                            ? submitWarBanViolationSanctions(inv.attackerCountry, inv.targetCountry, currentDateStr)
-                            : submitInvasionViolationSanctions(
-                                inv.attackerCountry,
-                                inv.targetCountry,
-                                currentDateStr,
-                                reason
-                            );
-                        newNotifsToAdd.push(...sanctionsNotifications);
-                    }
-                    generatedNewsItems.push(inv);
-
-                    const outcomeRoll = Math.random();
-                    if (outcomeRoll < 0.50) {
-                        // Dapatkan warna asli negara penyerang
-                        const attackerColor = getCountryColor(inv.attackerCountry);
-
-                        const { news: annexationNews } = generateAnnexationNews(
-                            inv.attackerCountry,
-                            inv.attackerIso,
-                            attackerColor, // Gunakan warna asli penyerang, bukan hardcoded
-                            inv.targetCountry,
-                            inv.targetIso,
-                            currentDateStr
-                        );
-                        generatedNewsItems.push(annexationNews);
-
-                        recordAnnexedTerritory(
-                            inv.targetCountry,
-                            inv.targetIso,
-                            inv.attackerCountry,
-                            inv.attackerIso,
-                            attackerColor
-                        );
-
-                        console.log(`🚩 ANEKSASI: ${inv.attackerCountry} (${attackerColor}) menganeksasi ${inv.targetCountry}`);
-                    } else {
-                        const lootNews = generateResourceLootNews(
-                            inv.attackerCountry,
-                            inv.attackerIso,
-                            inv.targetCountry,
-                            inv.targetIso,
-                            5000000,
-                            { emas: 100, minyak_bumi: 250, beras: 500 },
-                            currentDateStr
-                        );
-                        generatedNewsItems.push(lootNews);
-                    }
-                });
-
-                setNewsList(prev => [...generatedNewsItems, ...prev]);
-            }
-        }
-
-        // 6. Notifikasi Defisit Listrik Grid Nasional (Kelipatan -5%: -5, -10, -15, ...)
-        const sourceKeys = [
-            "pembangkit_listrik_tenaga_nuklir",
-            "pembangkit_listrik_tenaga_air",
-            "pembangkit_listrik_tenaga_surya",
-            "pembangkit_listrik_tenaga_uap",
-            "pembangkit_listrik_tenaga_gas",
-            "pembangkit_listrik_tenaga_angin"
-        ];
-        let totalElectricityProd = 0;
-        sourceKeys.forEach(k => {
-            const count = Number(countryDetail?.[k]) || 0;
-            const bMeta = metadata?.[k];
-            const unitProd = Number(bMeta?.produksi) || 0;
-            let isFuelDeficit = false;
-            if (count > 0) {
-                const fuelReqs = getKelistrikanFuelRequirements(k);
-                for (const req of fuelReqs) {
-                    const stock = getMaterialStock(countryDetail, req.resourceKey);
-                    if (stock < req.amount * count) {
-                        isFuelDeficit = true;
-                        break;
-                    }
+                    setNewsList(prev => [...generatedNewsItems, ...prev]);
                 }
             }
-            if (!isFuelDeficit) {
-                totalElectricityProd += count * unitProd;
+
+            // 6. Notifikasi Defisit Listrik Grid Nasional (Kelipatan -5%: -5, -10, -15, ...)
+            const sourceKeys = [
+                "pembangkit_listrik_tenaga_nuklir",
+                "pembangkit_listrik_tenaga_air",
+                "pembangkit_listrik_tenaga_surya",
+                "pembangkit_listrik_tenaga_uap",
+                "pembangkit_listrik_tenaga_gas",
+                "pembangkit_listrik_tenaga_angin"
+            ];
+            let totalElectricityProd = 0;
+            sourceKeys.forEach(k => {
+                const count = Number(countryDetail?.[k]) || 0;
+                const bMeta = metadata?.[k];
+                const unitProd = Number(bMeta?.produksi) || 0;
+                let isFuelDeficit = false;
+                if (count > 0) {
+                    const fuelReqs = getKelistrikanFuelRequirements(k);
+                    for (const req of fuelReqs) {
+                        const stock = getMaterialStock(countryDetail, req.resourceKey);
+                        if (stock < req.amount * count) {
+                            isFuelDeficit = true;
+                            break;
+                        }
+                    }
+                }
+                if (!isFuelDeficit) {
+                    totalElectricityProd += count * unitProd;
+                }
+            });
+            const totalElectricityCons = getCountryConsumptionBreakdown(countryDetail, metadata).totalAllBreakdownConsumption;
+            let currentListrikStep = countryDetail?.last_notified_listrik_step || 0;
+
+            if (totalElectricityCons > 0 && totalElectricityProd < totalElectricityCons) {
+                const deficitMW = totalElectricityCons - totalElectricityProd;
+                const deficitPct = (deficitMW / totalElectricityCons) * 100;
+                const deficitStep = Math.floor(deficitPct / 5) * 5;
+
+                if (deficitStep >= 5 && deficitStep !== currentListrikStep) {
+                    newNotifsToAdd.push(generateListrikDefisitNotification(
+                        totalElectricityProd,
+                        totalElectricityCons,
+                        deficitMW,
+                        deficitPct,
+                        deficitStep,
+                        currentDateStr
+                    ));
+                    currentListrikStep = deficitStep;
+                }
+            } else if (totalElectricityProd >= totalElectricityCons) {
+                currentListrikStep = 0;
             }
-        });
-        const totalElectricityCons = getCountryConsumptionBreakdown(countryDetail, metadata).totalAllBreakdownConsumption;
-        let currentListrikStep = countryDetail?.last_notified_listrik_step || 0;
 
-        if (totalElectricityCons > 0 && totalElectricityProd < totalElectricityCons) {
-            const deficitMW = totalElectricityCons - totalElectricityProd;
-            const deficitPct = (deficitMW / totalElectricityCons) * 100;
-            const deficitStep = Math.floor(deficitPct / 5) * 5;
+            // 7. Notifikasi Defisit Hunian Permukiman (Setiap Bulan)
+            const DEFAULT_HUNIAN_CAPACITIES: Record<string, number> = {
+                rumah_subsidi: 5,
+                apartemen: 6000,
+                mansion: 10,
+            };
+            const findHousingMeta = (key: string) => {
+                if (!metadata) return undefined;
+                if (metadata[key]) return metadata[key];
+                for (const k of Object.keys(metadata)) {
+                    const entry = metadata[k];
+                    if (!entry) continue;
+                    if (entry.dataKey === key || k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
+                }
+                return undefined;
+            };
 
-            if (deficitStep >= 5 && deficitStep !== currentListrikStep) {
-                newNotifsToAdd.push(generateListrikDefisitNotification(
-                    totalElectricityProd,
-                    totalElectricityCons,
-                    deficitMW,
-                    deficitPct,
-                    deficitStep,
+            let totalHousingCap = 0;
+            const hunianBuildingKeys = ["rumah_subsidi", "apartemen", "mansion"] as const;
+            hunianBuildingKeys.forEach((key) => {
+                const count = Number(countryDetail?.[key]) || 0;
+                const bMeta = findHousingMeta(key);
+                const baseCap = Number(bMeta?.kapasitas) || DEFAULT_HUNIAN_CAPACITIES[key] || 0;
+                const effectiveCap = applyTotalHousingCapacityBonus(baseCap, countryDetail);
+                totalHousingCap += count * effectiveCap;
+            });
+
+            const totalPop = Number(countryDetail?.jumlah_penduduk) || 0;
+            const housingShortage = Math.max(0, totalPop - totalHousingCap);
+            // Sinkronkan indeks kepuasan perumahan dengan formula resmi HunianPermukimanModal / calculateHunianScore
+            const housingSatisfaction = totalPop > 0
+                ? (totalHousingCap <= 0 ? 1 : Math.min(100, Math.max(1, Math.round((Math.min(totalHousingCap / totalPop, 1)) * 100))))
+                : (countryDetail?.satisfaction?.housing !== undefined ? Number(countryDetail.satisfaction.housing) : 100);
+
+            // Hanya memicu notifikasi defisit hunian jika benar-benar terjadi krisis/kekurangan nyata (defisit > 0 DAN kepuasan perumahan di bawah ambang waspada)
+            if (housingShortage > 0 && housingSatisfaction < 100 && (housingSatisfaction <= 40 || housingShortage >= 1000)) {
+                const percentageMet = totalPop > 0 ? Math.min(100, (totalHousingCap / totalPop) * 100) : 0;
+                newNotifsToAdd.push(generateHunianDefisitNotification(
+                    totalHousingCap,
+                    totalPop,
+                    housingShortage,
+                    percentageMet,
+                    housingSatisfaction,
                     currentDateStr
                 ));
-                currentListrikStep = deficitStep;
             }
-        } else if (totalElectricityProd >= totalElectricityCons) {
-            currentListrikStep = 0;
-        }
 
-        // 7. Notifikasi Defisit Hunian Permukiman (Setiap Bulan)
-        const DEFAULT_HUNIAN_CAPACITIES: Record<string, number> = {
-            rumah_subsidi: 5,
-            apartemen: 6000,
-            mansion: 10,
-        };
-        const findHousingMeta = (key: string) => {
-            if (!metadata) return undefined;
-            if (metadata[key]) return metadata[key];
-            for (const k of Object.keys(metadata)) {
-                const entry = metadata[k];
-                if (!entry) continue;
-                if (entry.dataKey === key || k.endsWith(`_${key}`) || k === `1_${key}`) return entry;
+            // 8. Notifikasi defisit kategori pangan inti (diperiksa setiap bulan)
+            const foodCoverageGroups = calculateFoodCoverageByGroup(countryDetail, metadata);
+            const deficitFoodCategories = foodCoverageGroups
+                .filter(group => group.coverage < 0.95)
+                .map(group => group.label);
+            const weightedFoodCoverage = foodCoverageGroups.reduce(
+                (sum, group) => sum + group.coverage * group.weight,
+                0
+            );
+
+            if (deficitFoodCategories.length >= 2 || weightedFoodCoverage < 0.85 || foodCoverageGroups.some(group => group.coverage < 0.7)) {
+                newNotifsToAdd.push(generatePanganDefisitNotification(
+                    deficitFoodCategories.length,
+                    foodCoverageGroups.length,
+                    deficitFoodCategories,
+                    currentDateStr
+                ));
             }
-            return undefined;
-        };
 
-        let totalHousingCap = 0;
-        const hunianBuildingKeys = ["rumah_subsidi", "apartemen", "mansion"] as const;
-        hunianBuildingKeys.forEach((key) => {
-            const count = Number(countryDetail?.[key]) || 0;
-            const bMeta = findHousingMeta(key);
-            const baseCap = Number(bMeta?.kapasitas) || DEFAULT_HUNIAN_CAPACITIES[key] || 0;
-            const effectiveCap = applyTotalHousingCapacityBonus(baseCap, countryDetail);
-            totalHousingCap += count * effectiveCap;
-        });
+            // 9. Notifikasi Defisit Tempat Umum & Layanan Publik (Setiap bulan jika skor <= 20)
+            const tempatUmumScore = calculateLayananPublikScore(countryDetail);
+            if (tempatUmumScore <= 20) {
+                newNotifsToAdd.push(generateTempatUmumDefisitNotification(
+                    tempatUmumScore,
+                    totalPop,
+                    currentDateStr
+                ));
+            }
 
-        const totalPop = Number(countryDetail?.jumlah_penduduk) || 0;
-        const housingShortage = Math.max(0, totalPop - totalHousingCap);
-        // Sinkronkan indeks kepuasan perumahan dengan formula resmi HunianPermukimanModal / calculateHunianScore
-        const housingSatisfaction = totalPop > 0
-            ? (totalHousingCap <= 0 ? 1 : Math.min(100, Math.max(1, Math.round((Math.min(totalHousingCap / totalPop, 1)) * 100))))
-            : (countryDetail?.satisfaction?.housing !== undefined ? Number(countryDetail.satisfaction.housing) : 100);
+            // Ambil maks 2 notifikasi berbeda jenis dari generator; kuota aktual ditentukan
+            // oleh gerbang pusat (0/1/2 berdasarkan undian 30/50/20%).
+            const MAX_GENERATOR_CAP = 2;
+            const shuffledNotifs = newNotifsToAdd
+                .filter(n => n && n.id)
+                .sort(() => Math.random() - 0.5);
+            const usedKinds = new Set<string>();
+            const cappedNotifs: any[] = [];
+            for (const n of shuffledNotifs) {
+                const kind = String(n.tradeType || n.type || n.title);
+                if (usedKinds.has(kind)) continue;
+                usedKinds.add(kind);
+                cappedNotifs.push(n);
+                if (cappedNotifs.length >= MAX_GENERATOR_CAP) break;
+            }
 
-        // Hanya memicu notifikasi defisit hunian jika benar-benar terjadi krisis/kekurangan nyata (defisit > 0 DAN kepuasan perumahan di bawah ambang waspada)
-        if (housingShortage > 0 && housingSatisfaction < 100 && (housingSatisfaction <= 40 || housingShortage >= 1000)) {
-            const percentageMet = totalPop > 0 ? Math.min(100, (totalHousingCap / totalPop) * 100) : 0;
-            newNotifsToAdd.push(generateHunianDefisitNotification(
-                totalHousingCap,
-                totalPop,
-                housingShortage,
-                percentageMet,
-                housingSatisfaction,
-                currentDateStr
-            ));
-        }
+            if (cappedNotifs.length > 0) {
+                setNotifications(prev => {
+                    const existingIds = new Set(prev.map(n => n.id));
+                    const uniqueNew: NotificationMessage[] = [];
+                    for (const notif of cappedNotifs) {
+                        if (!notif || !notif.id || existingIds.has(notif.id)) continue;
+                        existingIds.add(notif.id);
+                        uniqueNew.push(notif);
+                    }
+                    return uniqueNew.length > 0 ? [...uniqueNew, ...prev] : prev;
+                });
+            }
 
-        // 8. Notifikasi defisit kategori pangan inti (diperiksa setiap bulan)
-        const foodCoverageGroups = calculateFoodCoverageByGroup(countryDetail, metadata);
-        const deficitFoodCategories = foodCoverageGroups
-            .filter(group => group.coverage < 0.95)
-            .map(group => group.label);
-        const weightedFoodCoverage = foodCoverageGroups.reduce(
-            (sum, group) => sum + group.coverage * group.weight,
-            0
-        );
+            setCountryDetail((prev: any) => {
+                if (!prev) return prev;
+                const currentPop = Number(prev.jumlah_penduduk || 0);
+                const totalCasualties = pendingDisasterCasualties + pendingOutbreakPopulationLoss;
+                const nextPop = totalCasualties > 0 ? Math.max(0, currentPop - totalCasualties) : currentPop;
 
-        if (deficitFoodCategories.length >= 2 || weightedFoodCoverage < 0.85 || foodCoverageGroups.some(group => group.coverage < 0.7)) {
-            newNotifsToAdd.push(generatePanganDefisitNotification(
-                deficitFoodCategories.length,
-                foodCoverageGroups.length,
-                deficitFoodCategories,
-                currentDateStr
-            ));
-        }
+                const prevDisasters = Array.isArray(prev.active_disaster_effects) ? prev.active_disaster_effects : [];
+                const nextDisasters = pendingDisasterEffect ? [...prevDisasters, pendingDisasterEffect] : prevDisasters;
 
-        // 9. Notifikasi Defisit Tempat Umum & Layanan Publik (Setiap bulan jika skor <= 20)
-        const tempatUmumScore = calculateLayananPublikScore(countryDetail);
-        if (tempatUmumScore <= 20) {
-            newNotifsToAdd.push(generateTempatUmumDefisitNotification(
-                tempatUmumScore,
-                totalPop,
-                currentDateStr
-            ));
-        }
+                const prevOutbreaks = Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : [];
+                const nextOutbreaks = pendingOutbreakEffect ? [...prevOutbreaks, pendingOutbreakEffect] : prevOutbreaks;
 
-        // Ambil maks 2 notifikasi berbeda jenis dari generator; kuota aktual ditentukan
-        // oleh gerbang pusat (0/1/2 berdasarkan undian 30/50/20%).
-        const MAX_GENERATOR_CAP = 2;
-        const shuffledNotifs = newNotifsToAdd
-            .filter(n => n && n.id)
-            .sort(() => Math.random() - 0.5);
-        const usedKinds = new Set<string>();
-        const cappedNotifs: any[] = [];
-        for (const n of shuffledNotifs) {
-            const kind = String(n.tradeType || n.type || n.title);
-            if (usedKinds.has(kind)) continue;
-            usedKinds.add(kind);
-            cappedNotifs.push(n);
-            if (cappedNotifs.length >= MAX_GENERATOR_CAP) break;
-        }
+                const prevConsecutive = Number(prev.consecutive_outbreak_count || 0);
+                const nextConsecutive = prevConsecutive + pendingConsecutiveOutbreakBoost;
 
-        if (cappedNotifs.length > 0) {
-            setNotifications(prev => {
-                const existingIds = new Set(prev.map(n => n.id));
-                const uniqueNew: NotificationMessage[] = [];
-                for (const notif of cappedNotifs) {
-                    if (!notif || !notif.id || existingIds.has(notif.id)) continue;
-                    existingIds.add(notif.id);
-                    uniqueNew.push(notif);
-                }
-                return uniqueNew.length > 0 ? [...uniqueNew, ...prev] : prev;
+                return {
+                    ...prev,
+                    jumlah_penduduk: nextPop,
+                    active_disaster_effects: nextDisasters,
+                    active_outbreaks: nextOutbreaks,
+                    consecutive_outbreak_count: nextConsecutive,
+                    last_checked_notification_date: currentDateStr,
+                    ...(nextPandemicSchedule ? { pandemic_schedule: nextPandemicSchedule } : {}),
+                    ...((countryDetail as any).__invasionSchedulePending
+                        ? { invasion_schedule: (countryDetail as any).__invasionSchedulePending }
+                        : {}),
+                    world_news_country_cursor: worldNewsResult.nextCursor,
+                    last_notified_listrik_step: currentListrikStep
+                };
             });
-        }
-
-        setCountryDetail((prev: any) => {
-            if (!prev) return prev;
-            const currentPop = Number(prev.jumlah_penduduk || 0);
-            const totalCasualties = pendingDisasterCasualties + pendingOutbreakPopulationLoss;
-            const nextPop = totalCasualties > 0 ? Math.max(0, currentPop - totalCasualties) : currentPop;
-
-            const prevDisasters = Array.isArray(prev.active_disaster_effects) ? prev.active_disaster_effects : [];
-            const nextDisasters = pendingDisasterEffect ? [...prevDisasters, pendingDisasterEffect] : prevDisasters;
-
-            const prevOutbreaks = Array.isArray(prev.active_outbreaks) ? prev.active_outbreaks : [];
-            const nextOutbreaks = pendingOutbreakEffect ? [...prevOutbreaks, pendingOutbreakEffect] : prevOutbreaks;
-
-            const prevConsecutive = Number(prev.consecutive_outbreak_count || 0);
-            const nextConsecutive = prevConsecutive + pendingConsecutiveOutbreakBoost;
-
-            return {
-                ...prev,
-                jumlah_penduduk: nextPop,
-                active_disaster_effects: nextDisasters,
-                active_outbreaks: nextOutbreaks,
-                consecutive_outbreak_count: nextConsecutive,
-                last_checked_notification_date: currentDateStr,
-                ...(nextPandemicSchedule ? { pandemic_schedule: nextPandemicSchedule } : {}),
-                ...((countryDetail as any).__invasionSchedulePending
-                    ? { invasion_schedule: (countryDetail as any).__invasionSchedulePending }
-                    : {}),
-                world_news_country_cursor: worldNewsResult.nextCursor,
-                last_notified_listrik_step: currentListrikStep
-            };
-        });
         };
 
         const idleWindow = window as Window & {
@@ -6743,8 +6766,53 @@ export default function MapPage() {
                         return;
                     }
 
-                    if (tNotif.tradeType === 'spionase' || tNotif.tradeType === 'sabotase' || tNotif.tradeType === 'diserang' || tNotif.tradeType === 'pemberontakan' || tNotif.tradeType === 'icbm') {
+                    // ── LOGIKA KHUSUS PEMBERONTAKAN ──
+                    if (tNotif.tradeType === 'pemberontakan') {
+                        // Ambil biaya dari notifikasi (gambar menunjukkan 25000 EM)
+                        const cost = Number(tNotif.responseCost ?? tNotif.bantuanCost ?? 25000);
+                        const budget = Number(countryDetail?.anggaran || 0);
+
+                        // Cek apakah anggaran cukup
+                        if (budget < cost) {
+                            setInboxModalOpen(false);
+                            setResultModal({
+                                isOpen: true,
+                                title: 'Gagal Mengirim Pasukan',
+                                message: `Anggaran negara tidak mencukupi untuk mengirim pasukan pengamanan (Tersedia: ${budget.toLocaleString('id-ID')} NEO, Dibutuhkan: ${cost.toLocaleString('id-ID')} NEO).`,
+                                type: 'error',
+                                persistent: true,
+                            });
+                            return;
+                        }
+
+                        // 1. Potong anggaran negara
+                        setCountryDetail((prev: any) => ({
+                            ...prev,
+                            anggaran: budget - cost,
+                        }));
+
+                        // 2. Naikkan Peringkat Presiden +2 Poin
+                        setPresidentRating((prev: number) => Math.min(100, prev + 2));
+
+                        // 3. Tandai notifikasi sebagai selesai ditangani
+                        setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true, status: 'handled' } : n));
+
+                        // 4. Tampilkan Modal Sukses
+                        setInboxModalOpen(false);
+                        setResultModal({
+                            isOpen: true,
+                            title: 'Pemberontakan Berhasil Ditumpas!',
+                            message: `Pasukan pengamanan berhasil dikirim dan meredam pemberontakan. Anggaran terpotong sebesar ${cost.toLocaleString('id-ID')} NEO, dan Peringkat Presiden Anda naik +2 poin!`,
+                            type: 'success',
+                            persistent: true,
+                        });
+                        return;
+                    }
+
+                    // ── LOGIKA NOTIFIKASI PERTAHANAN LAINNYA (Spionase, Sabotase, Diserang, ICBM) ──
+                    if (tNotif.tradeType === 'spionase' || tNotif.tradeType === 'sabotase' || tNotif.tradeType === 'diserang' || tNotif.tradeType === 'icbm') {
                         setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, isHandled: true } : n));
+
                         if (tNotif.tradeType === 'diserang' && typeof window !== 'undefined') {
                             const attackerCountry = tNotif.enemyCountry || tNotif.partnerCountry;
                             const targetCountry = countryDetail?.country ||
@@ -6752,15 +6820,15 @@ export default function MapPage() {
                                 countryDetail?.name_id ||
                                 countryDetail?.name_en ||
                                 selectedCountry?.country;
+
                             if (typeof attackerCountry !== 'string' || !attackerCountry.trim() ||
                                 typeof targetCountry !== 'string' || !targetCountry.trim()) {
                                 console.error('[WarAnimation] Attack notification has no valid country names', {
-                                    attackerCountry,
-                                    targetCountry,
-                                    notification: tNotif,
+                                    attackerCountry, targetCountry, notification: tNotif,
                                 });
                                 return;
                             }
+
                             window.dispatchEvent(new CustomEvent('start_war_animation', {
                                 detail: {
                                     attacker: attackerCountry,
@@ -6769,6 +6837,7 @@ export default function MapPage() {
                                 }
                             }));
                         }
+
                         setInboxModalOpen(false);
                         setResultModal({
                             isOpen: true,
@@ -6776,7 +6845,6 @@ export default function MapPage() {
                             message: `Operasi penanganan "${tNotif.title}" sukses dilaksanakan oleh divisi pertahanan & intelijen nasional!`,
                             type: 'success',
                             persistent: true,
-                            // modal decoupled
                         });
                         return;
                     }

@@ -18,9 +18,10 @@ import {
 import { COUNTRIES_DATA, CAPITALS_DATA } from '@/app/page/map_system/map-data';
 import PerbandinganPasukan from '../detail_negara/3_operasi_militer/1_serang_negara/perbandingan_pasukan';
 import PageWar from '../detail_negara/3_operasi_militer/1_serang_negara/page_war/page_war';
+import { simulateBattleTs } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 
 /* ============================================================
- * TIPE & INTERFACE (Penggabungan dari path-war.ts)
+ * TIPE & INTERFACE
  * ============================================================ */
 
 export interface LatLng {
@@ -29,11 +30,8 @@ export interface LatLng {
 }
 
 export interface CapitalPoint extends LatLng {
-  /** Nama negara (untuk display & lookup) */
   country: string;
-  /** Nama ibukota (mis. "Kabul", "Tehran", "Jakarta") */
   capital: string;
-  /** Kode ISO 2 huruf negara (opsional) */
   iso?: string;
   [key: string]: any;
 }
@@ -71,13 +69,12 @@ export interface WarPath {
 }
 
 /* ============================================================
- * KOORDINAT IBUKOTA (Ditarik Otomatis dari Database CAPITALS_DATA & COUNTRIES_DATA)
+ * KOORDINAT IBUKOTA
  * ============================================================ */
 
 export const CAPITAL_COORDS: Record<string, LatLng> = (() => {
   const map: Record<string, LatLng> = {};
 
-  // 1. Ekstrak dari CAPITALS_DATA
   CAPITALS_DATA.forEach((item: any) => {
     if (item.country && typeof item.lat === 'number' && typeof item.lng === 'number') {
       const countryName = String(item.country).trim();
@@ -87,7 +84,6 @@ export const CAPITAL_COORDS: Record<string, LatLng> = (() => {
     }
   });
 
-  // 2. Ekstrak dari COUNTRIES_DATA
   COUNTRIES_DATA.forEach((item: any) => {
     if (item.country) {
       const lat = item.latitude ?? item.lat;
@@ -132,7 +128,6 @@ export function getCapitalCoord(countryName: string): LatLng | null {
   );
   if (foundCleanKey) return CAPITAL_COORDS[foundCleanKey];
 
-  // Fallback ke CAPITALS_DATA
   const capMatch = CAPITALS_DATA.find(
     (c: any) => cleanNorm(String(c.country || '')) === cleanKey
   );
@@ -140,7 +135,6 @@ export function getCapitalCoord(countryName: string): LatLng | null {
     return { lat: capMatch.lat, lng: capMatch.lng };
   }
 
-  // Fallback ke COUNTRIES_DATA
   const match = COUNTRIES_DATA.find(
     (c: any) => cleanNorm(String(c.country || '')) === cleanKey
   );
@@ -211,7 +205,6 @@ export function getMapCanvasTransform(): MapCanvasTransform | null {
   const canvasEl = document.getElementById('map-canvas') as HTMLCanvasElement | null;
   if (!canvasEl) return null;
 
-  // getBoundingClientRect memaksa layout; cukup disegarkan tiap 250ms
   const nowTs = performance.now();
   if (!cachedRect || cachedRectEl !== canvasEl || nowTs - cachedRectAt > 250) {
     cachedRect = canvasEl.getBoundingClientRect();
@@ -225,7 +218,6 @@ export function getMapCanvasTransform(): MapCanvasTransform | null {
   let offsetX = 0;
   let offsetY = 0;
 
-  // Cek apakah data camera hook tersedia
   const hookCam = (window as any).__neosantara_map_camera;
   if (hookCam && typeof hookCam.scale === 'number') {
     scale = hookCam.scale;
@@ -259,18 +251,15 @@ export function getMapScreenPos(lat: number, lng: number): ScreenPoint {
 
   const { rect, scale, offsetX, offsetY, canvasWidth, canvasHeight, worldCssWidth } = transform;
 
-  // Proyeksi Equirectangular yang persis sama dengan MapEngine WASM
   const x_norm = (lng + 180.0) / 360.0;
   const y_norm = (90.0 - lat) / 180.0;
 
   const px = x_norm * canvasWidth;
   const py = y_norm * canvasHeight;
 
-  // Koordinat CSS screen pixel
   let x = rect.left + (px * scale + offsetX) * (rect.width / canvasWidth);
   const y = rect.top + (py * scale + offsetY) * (rect.height / canvasHeight);
 
-  // Normalisasi horizontal wrap agar x selalu berada di rentang viewport layar
   if (worldCssWidth > 0) {
     const viewCenter = window.innerWidth / 2;
     const shiftCopies = Math.round((viewCenter - x) / worldCssWidth);
@@ -287,11 +276,6 @@ export interface MapRouteGeometry {
   path: string;
 }
 
-/**
- * Menghitung titik awal, titik akhir, dan titik kontrol kurva yang sinkron
- * dengan transformasi canvas map (pan, zoom in/out, dan perulangan dunia horizontal / wrap).
- * Memastikan garis tidak melompat, tidak hilang, dan tidak goyang saat pan/zoom.
- */
 const routeMemo = new Map<string, MapRouteGeometry>();
 
 export function getMapRouteGeometry(
@@ -341,23 +325,17 @@ function computeMapRouteGeometry(
   const tPx = tNormX * canvasWidth;
   const tPy = tNormY * canvasHeight;
 
-  // Posisi dasar di layar
   let startX = rect.left + (sPx * scale + offsetX) * (rect.width / canvasWidth);
   const startY = rect.top + (sPy * scale + offsetY) * (rect.height / canvasHeight);
 
   let endX = rect.left + (tPx * scale + offsetX) * (rect.width / canvasWidth);
   const endY = rect.top + (tPy * scale + offsetY) * (rect.height / canvasHeight);
 
-  // Koreksi horizontal wrap:
-  // Pilih copy dunia untuk endX yang memiliki jarak horizontal terpendek terhadap startX
   if (worldCssWidth > 0) {
     let diff = endX - startX;
-    // Bawa diff ke rentang [-worldCssWidth / 2, worldCssWidth / 2]
     diff = ((diff + worldCssWidth / 2) % worldCssWidth + worldCssWidth) % worldCssWidth - worldCssWidth / 2;
     endX = startX + diff;
 
-    // Geser rute secara keseluruhan ke salinan dunia yang paling dekat dengan viewport (tengah layar)
-    // agar saat peta digeser berulang kali (horizontal wrap), garis tetap berada di layar yang dilihat user
     const viewCenter = window.innerWidth / 2;
     const routeCenter = (startX + endX) / 2;
     const shiftCopies = Math.round((viewCenter - routeCenter) / worldCssWidth);
@@ -474,8 +452,6 @@ export function buildWarPath(input: BuildWarPathInput): WarPath {
   };
 }
 
-import { simulateBattleTs } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
-
 /* ============================================================
  * HASIL PERTEMPURAN (DeepSeek AI Engine)
  * ============================================================ */
@@ -518,8 +494,6 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
     } catch (e) { }
   }
 
-  // Jika User adalah Penyerang: ratio dikalikan ke attackerPower (User)
-  // Jika User adalah Bertahan (isUserDefender): ratio dikalikan ke targetPower (User), sedangkan attackerPower (NPC) 100%
   const actualAttackerPower = isUserDefender ? Math.round(attackerPower) : Math.round(attackerPower * deployedPowerRatio);
   const actualTargetPower = isUserDefender ? Math.round(targetPower * deployedPowerRatio) : Math.round(targetPower);
 
@@ -528,9 +502,6 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
     targetPower: Math.max(1, actualTargetPower),
   });
 
-  // Dari sudut pandang User:
-  // Jika User Penyerang: battle.winner === 'attacker' => win (User Menang Serangan)
-  // Jika User Bertahan (isUserDefender): battle.winner === 'target' => win (User Menang Pertahanan)
   const isUserWin = isUserDefender
     ? battle.winner === 'target'
     : battle.winner === 'attacker';
@@ -611,17 +582,14 @@ export default function WarMap({
     return false;
   }, [isUserDefenderProp, target.country]);
 
-  /* ── Viewport screen size ── */
   const [screenSize, setScreenSize] = useState<{ w: number; h: number }>({
     w: typeof window !== 'undefined' ? window.innerWidth : 1920,
     h: typeof window !== 'undefined' ? window.innerHeight : 1080,
   });
 
-  /* ── State Posisi Real-time di Canvas Map ── */
   const [startPos, setStartPos] = useState<ScreenPoint>({ x: 0, y: 0 });
   const [endPos, setEndPos] = useState<ScreenPoint>({ x: 0, y: 0 });
 
-  /* ── Listener Resize Window ── */
   useEffect(() => {
     const handleResize = () => {
       setScreenSize({ w: window.innerWidth, h: window.innerHeight });
@@ -630,7 +598,6 @@ export default function WarMap({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  /* ── Resolusi Koordinat Ibukota ── */
   const resolvedAttacker = useMemo<CapitalPoint>(() => {
     const coord = getCapitalCoord(attacker.country);
     return {
@@ -649,14 +616,12 @@ export default function WarMap({
     };
   }, [target]);
 
-  /* ── Bangun data WarPath dasar ── */
   const warPath = useMemo<WarPath | null>(() => {
     if (!isOpen) return null;
     return buildWarPath({ attacker: resolvedAttacker, target: resolvedTarget });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, resolvedAttacker.country, resolvedTarget.country, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
 
-  /* ── Hitung hasil bentrokan ── */
   const battleOutcome = useMemo(() => {
     if (!isOpen) return null;
     return computeWarResult({
@@ -669,7 +634,6 @@ export default function WarMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, attackerPower, targetPower, attackerBonus, defenderBonus, isUserDefender]);
 
-  /* ── Reset state saat dibuka ── */
   useEffect(() => {
     if (isOpen) {
       setPhase('travel');
@@ -679,7 +643,6 @@ export default function WarMap({
     }
   }, [isOpen]);
 
-  /* ── Main Loop (RAF) update posisi canvas & pergerakan tank ── */
   useEffect(() => {
     if (!isOpen || !warPath) return;
     let raf = 0;
@@ -692,7 +655,6 @@ export default function WarMap({
       const delta = now - lastTime;
       lastTime = now;
 
-      // Update posisi ibukota penyerang & target persis di atas Canvas Map real-time dengan sinkronisasi wrap/pan/zoom
       const geo = getMapRouteGeometry(
         resolvedAttacker.lat,
         resolvedAttacker.lng,
@@ -700,10 +662,13 @@ export default function WarMap({
         resolvedTarget.lng,
         0.18
       );
-      if (geo !== lastGeo) { lastGeo = geo; flushSync(() => {
-        setStartPos(geo.start);
-        setEndPos(geo.end);
-      }); }
+      if (geo !== lastGeo) {
+        lastGeo = geo;
+        flushSync(() => {
+          setStartPos(geo.start);
+          setEndPos(geo.end);
+        });
+      }
 
       const isGamePaused = typeof window !== 'undefined' ? Boolean((window as any).neosantara_is_paused) : false;
 
@@ -745,7 +710,6 @@ export default function WarMap({
     };
   }, [isOpen, phase, warPath, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
 
-  /* ── Fase impact -> fase comparison (Perbandingan Pasukan) ── */
   useEffect(() => {
     if (phase !== 'impact' || !battleOutcome) return;
     setShowFlash(true);
@@ -767,7 +731,6 @@ export default function WarMap({
     };
   }, [phase, battleOutcome, isNpcWar, isPbbCoalition]);
 
-  /* ── Titik kontrol Bezier & jalur ── */
   const controlPos = useMemo(() => {
     return buildControlPoint(startPos, endPos, 0.18);
   }, [startPos, endPos]);
@@ -776,16 +739,12 @@ export default function WarMap({
     return buildSVGPath(startPos, controlPos, endPos);
   }, [startPos, controlPos, endPos]);
 
-  /* ── Posisi & rotasi tank ── */
   const tank = useMemo(() => {
     const p = pointOnQuadraticBezier(startPos, controlPos, endPos, progress);
-    const angle =
-      (tangentOnQuadraticBezier(startPos, controlPos, endPos, progress) * 180) /
-      Math.PI;
+    const angle = (tangentOnQuadraticBezier(startPos, controlPos, endPos, progress) * 180) / Math.PI;
     return { ...p, angle };
   }, [startPos, controlPos, endPos, progress]);
 
-  /* ── Handlers ── */
   const handleAction = useCallback(
     (action: WarAction) => {
       if (!warPath || !result) return;
@@ -811,7 +770,6 @@ export default function WarMap({
 
   return (
     <>
-      {/* ══════════ SVG MAP OVERLAY (HANYA MUNCUL SAAT FASE TRAVEL / IMPACT) ══════════ */}
       {(phase === 'travel' || phase === 'impact') && (
         <div className="fixed inset-0 z-[10] pointer-events-none font-sans select-none overflow-hidden">
           <svg
@@ -833,7 +791,6 @@ export default function WarMap({
               </radialGradient>
             </defs>
 
-            {/* ── Garis putus-putus merah (rencana jalur penyerangan) ── */}
             <path
               d={svgPathStr}
               fill="none"
@@ -841,12 +798,9 @@ export default function WarMap({
               strokeWidth={4}
               strokeDasharray="14 10"
               opacity={phase === 'travel' ? 0.85 : 0.4}
-              style={{
-                animation: 'warPathMarch 1s linear infinite',
-              }}
+              style={{ animation: 'warPathMarch 1s linear infinite' }}
             />
 
-            {/* ── Bagian jalur yang sudah dilalui tank (solid glow) ── */}
             <path
               d={svgPathStr}
               fill="none"
@@ -857,23 +811,18 @@ export default function WarMap({
               strokeDasharray={`${progress * 100} 100`}
             />
 
-            {/* ── Marker ibukota penyerang ── */}
             <circle cx={startPos.x} cy={startPos.y} r={8} fill="#00FFAA" opacity={0.8} />
             <circle cx={startPos.x} cy={startPos.y} r={16} fill="none" stroke="#00FFAA" strokeWidth={2} opacity={0.5} />
 
-            {/* ── Marker ibukota target ── */}
             <circle cx={endPos.x} cy={endPos.y} r={8} fill="#FF2D55" opacity={0.8} />
             <circle cx={endPos.x} cy={endPos.y} r={20} fill="none" stroke="#FF2D55" strokeWidth={2}>
               <animate attributeName="r" values="16;30;16" dur="1.6s" repeatCount="indefinite" />
               <animate attributeName="opacity" values="0.7;0;0.7" dur="1.6s" repeatCount="indefinite" />
             </circle>
 
-            {/* ── Tank penyerang bergerak di atas Canvas ── */}
             {tank && phase === 'travel' && (
               <g transform={`translate(${tank.x} ${tank.y})`}>
-                {/* Halo Merah */}
                 <circle r={30} fill="#FF2D55" opacity={0.25} />
-                {/* Tank (rotasi sesuai arah kurva) */}
                 <g transform={`rotate(${tank.angle})`}>
                   <rect x={-22} y={-10} width={40} height={16} rx={3} fill="#FF2D55" />
                   <rect x={-12} y={-20} width={22} height={10} rx={2} fill="#FF2D55" />
@@ -886,7 +835,6 @@ export default function WarMap({
               </g>
             )}
 
-            {/* ── Impact burst saat tiba di ibukota target ── */}
             {phase === 'impact' && (
               <circle cx={endPos.x} cy={endPos.y} r={0} fill="url(#impact-burst)">
                 <animate attributeName="r" from="0" to="160" dur="0.7s" fill="freeze" />
@@ -895,14 +843,12 @@ export default function WarMap({
             )}
           </svg>
 
-          {/* ══════════ FLASH OVERLAY saat impact ══════════ */}
           {showFlash && (
             <div className="absolute inset-0 bg-white/70 pointer-events-none animate-[warFlash_0.6s_ease-out_forwards]" />
           )}
         </div>
       )}
 
-      {/* ══════════ MODAL PERBANDINGAN PASUKAN (Fase 'comparison') ══════════ */}
       {phase === 'comparison' && (
         <PerbandinganPasukan
           attackerName={isPbbCoalition ? 'Pasukan Gabungan PBB' : attacker.country}
@@ -922,7 +868,6 @@ export default function WarMap({
         />
       )}
 
-      {/* ══════════ PAGE WAR HALAMAN SEDANG DALAM PENGEMBANGAN (Fase 'battle_page') ══════════ */}
       {phase === 'battle_page' && (
         <PageWar
           attackerName={attacker.country}
@@ -933,10 +878,11 @@ export default function WarMap({
       )}
 
       {/* ══════════ LAYAR HASIL PERTEMPURAN (Fase 'result') ══════════ */}
+      {/* FIX: Container utama transparan (tanpa bg-black/backdrop-blur) dan pointer-events-none. */}
       {phase === 'result' && result && (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm pointer-events-auto animate-[warFadeIn_0.4s_ease-out]">
-          <div className="w-full max-w-lg bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(0,255,170,0.2)] font-sans select-none">
-            {/* Header hasil */}
+        <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 pointer-events-none animate-[warFadeIn_0.4s_ease-out]">
+          {/* FIX: pointer-events-auto ditambahkan di sini agar kotak modal bisa diklik */}
+          <div className="w-full max-w-lg bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(0,255,170,0.2)] font-sans select-none pointer-events-auto">
             <div
               className={`p-6 text-center border-b ${result === 'win'
                   ? 'bg-[#00FFAA]/10 border-[#00FFAA]/30'
@@ -997,7 +943,6 @@ export default function WarMap({
               </p>
             </div>
 
-            {/* Skor */}
             <div className="grid grid-cols-2 divide-x divide-[#00FFAA]/10 border-b border-[#00FFAA]/10">
               <div className="p-4 text-center">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B8A8A] mb-1">
@@ -1017,7 +962,6 @@ export default function WarMap({
               </div>
             </div>
 
-            {/* Opsi aksi */}
             <div className="p-5 space-y-3">
               {isUserDefender ? (
                 <div className="space-y-3">
@@ -1046,22 +990,28 @@ export default function WarMap({
 
                   {result === 'win' ? (
                     <div className={`grid grid-cols-1 ${isPbbCoalition ? 'sm:grid-cols-2' : 'sm:grid-cols-3'} gap-3`}>
+                      
+                      {/* FIX: Tombol Duduki / Aneksasi */}
+                      <ActionButton
+                        icon={<Flag className="h-5 w-5" />}
+                        title={isPbbCoalition ? 'Duduki Negara' : 'Aneksasi'}
+                        desc={isPbbCoalition ? 'Kendalikan wilayah target' : 'Caplok & integrasikan wilayah target'}
+                        accent="#00FFAA"
+                        onClick={() => handleAction('annex')}
+                      />
+
+                      {/* FIX: Tombol Jarah SDA (Disembunyikan jika PBB) */}
                       {!isPbbCoalition && (
                         <ActionButton
-                          icon={<Flag className="h-5 w-5" />}
-                          title="Aneksasi"
-                          desc="Caplok & integrasikan wilayah target"
-                          accent="#00FFAA"
-                          onClick={() => handleAction('annex')}
+                          icon={<Trophy className="h-5 w-5" />}
+                          title="Jarah SDA"
+                          desc="Rampas sumber daya tanpa mencaplok"
+                          accent="#FFEB3B"
+                          onClick={() => handleAction('loot')}
                         />
                       )}
-                      <ActionButton
-                        icon={<Trophy className="h-5 w-5" />}
-                        title="Jarah SDA"
-                        desc="Rampas sumber daya tanpa mencaplok"
-                        accent="#FFEB3B"
-                        onClick={() => handleAction('loot')}
-                      />
+
+                      {/* Tombol Mundur */}
                       <ActionButton
                         icon={<ArrowLeft className="h-5 w-5" />}
                         title="Mundur"
