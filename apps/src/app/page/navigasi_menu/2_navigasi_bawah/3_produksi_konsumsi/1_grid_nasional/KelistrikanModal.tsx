@@ -99,7 +99,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
     return undefined;
   };
 
-
   const powerSources = SOURCE_ORDER
     .map((key) => {
       const bMeta = findMeta(key);
@@ -264,282 +263,286 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
         <div className="flex flex-col h-full overflow-hidden">
           {/* HEADER */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-              <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+                <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+              </div>
+              <div>
+                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Grid Kelistrikan Nasional</h2>
+              </div>
             </div>
-            <div>
-              <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Grid Kelistrikan Nasional</h2>
-            </div>
-          </div>
 
-          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        {/* BODY */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
-
-          {/* TAB NAVIGASI */}
-          <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/30 inline-flex mb-3.5 lg:mb-5 2xl:mb-6">
-            <button
-              onClick={() => setActiveTab("user")}
-              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${activeTab === "user" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-                }`}
-            >
-              Neraca User
-            </button>
-            <button
-              onClick={() => setActiveTab("global")}
-              className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${activeTab === "global" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
-                }`}
-            >
-              Neraca {allCountries.length || 207} Negara
+            <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+              <X className="h-4 w-4" />
             </button>
           </div>
 
-          {/* TAB NERACA USER */}
-          {activeTab === "user" && (
-            <>
-              <div className="grid grid-cols-1 lg:grid-cols-[1.25fr_0.95fr] gap-3 lg:gap-4">
-                {/* KOLOM KIRI: STATISTIK GRID */}
-                <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 lg:p-3.5 2xl:p-4 rounded-xl 2xl:rounded-2xl">
-                  <div className="flex items-center gap-2.5 lg:gap-3 mb-2.5 lg:mb-3">
-                    <div className="p-2 lg:p-2.5 2xl:p-3 rounded-xl 2xl:rounded-2xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
-                      <BatteryCharging className="h-4 w-4 lg:h-5 lg:w-5" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs lg:text-sm 2xl:text-base font-black text-[#00FFAA] uppercase tracking-wide">Statistik Grid</h3>
-                      <p className="text-[9px] lg:text-[10px] text-[#6B8A8A] uppercase tracking-wider">Ringkasan kapasitas dan beban listrik nasional</p>
-                    </div>
-                  </div>
+          {/* BODY */}
+          <div className="flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
 
-                  <div className="grid grid-cols-1 gap-2.5 lg:gap-3">
-                    <div className="bg-emerald-950/40 border border-emerald-500/30 p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl">
-                      <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest text-emerald-400">✓ Total Produksi Listrik</p>
-                      <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-emerald-400 mt-1.5 lg:mt-2 2xl:mt-3">{totalCapacityMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</p>
-                    </div>
-                    <div
-                      onClick={() => setIsDetailKonsumsiOpen(true)}
-                      className="bg-rose-950/40 border border-rose-500/30 hover:border-rose-400 hover:scale-[1.01] p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl transition-all cursor-pointer group shadow-md"
-                    >
-                      <div className="flex items-center justify-between">
-                        <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest text-rose-400">✗ Konsumsi Terestimasi</p>
-                        <span className="text-[9px] text-rose-300 font-bold opacity-80 group-hover:opacity-100 transition-opacity">Detail →</span>
-                      </div>
-                      <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-rose-400 mt-1.5 lg:mt-2 2xl:mt-3">{estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</p>
-                    </div>
-
-                    {/* NERACA DAYA: LOGIKA WARNA HIJAU/MERAH/ABU-ABU */}
-                    <div className={`p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl border ${balanceMW > 0 ? 'bg-emerald-950/40 border-emerald-500/30' :
-                        balanceMW < 0 ? 'bg-rose-950/40 border-rose-500/30' :
-                          'bg-slate-900/40 border-slate-500/30'
-                      }`}>
-                      <p className={`text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest ${balanceMW > 0 ? 'text-emerald-400' :
-                          balanceMW < 0 ? 'text-rose-400' :
-                            'text-slate-400'
-                        }`}>Neraca Daya</p>
-                      <p className={`text-lg lg:text-xl 2xl:text-2xl font-black mt-1.5 lg:mt-2 2xl:mt-3 ${balanceMW > 0 ? 'text-emerald-400' :
-                          balanceMW < 0 ? 'text-rose-400' :
-                            'text-slate-400'
-                        }`}>
-                        {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-2xl">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Jumlah Sumber Energi Aktif</p>
-                      <p className="text-lg font-black text-[#E0E0E0] mt-2">{totalSources}</p>
-                    </div>
-                    <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-2xl">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Perkiraan Beban Warga</p>
-                      <p className="text-lg font-black text-[#E0E0E0] mt-2">{((countryDetail?.jumlah_penduduk ?? 0) / 1000000).toFixed(1)} Juta Jiwa</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* KOLOM KANAN: RINGKASAN SUMBER DAYA */}
-                <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 rounded-2xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
-                      <MapPin className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wide">Ringkasan Sumber Daya</h3>
-                      <p className="text-[10px] text-[#6B8A8A] uppercase tracking-wider">Detail berdasarkan data metadata</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    {powerSources.length > 0 ? powerSources.map((source) => (
-                      <div key={source.key} className="flex items-center justify-between gap-3 p-4 bg-[#0F2424] border border-[#00FFAA]/20 rounded-2xl">
-                        <div>
-                          <p className="text-sm font-black text-[#E0E0E0] uppercase tracking-wide">{source.label}</p>
-                          <p className="text-[10px] text-[#6B8A8A]">{source.desc}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-black text-[#00FFAA]">
-                            {(source.value * source.unitProduction).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
-                          </p>
-                          <p className="text-[10px] text-[#6B8A8A]">{source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}</p>
-                        </div>
-                      </div>
-                    )) : (
-                      <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0F2424] p-4 text-sm text-[#6B8A8A]">
-                        Data pembangkit listrik tidak tersedia.
-                      </div>
-                    )}
-                  </div>
-                </div>
+            {/* TAB NAVIGASI & SEARCH BAR */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 lg:gap-4 mb-3.5 lg:mb-5 2xl:mb-6">
+              {/* Tab Menu */}
+              <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/30 inline-flex">
+                <button
+                  onClick={() => setActiveTab("user")}
+                  className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${activeTab === "user" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
+                    }`}
+                >
+                  Neraca User
+                </button>
+                <button
+                  onClick={() => setActiveTab("global")}
+                  className={`px-3.5 lg:px-4.5 2xl:px-6 py-1.5 lg:py-2 2xl:py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all cursor-pointer ${activeTab === "global" ? "bg-[#00FFAA] text-[#0A1A1A]" : "text-[#6B8A8A] hover:text-[#E0E0E0]"
+                    }`}
+                >
+                  Neraca {allCountries.length || 207} Negara
+                </button>
               </div>
 
-              {/* INDEKS KEPUASAN LISTRIK */}
-              <div className="mt-6 p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-black text-[#00FFAA] uppercase tracking-widest">
-                    Indeks Kepuasan Rakyat (Listrik)
-                  </span>
-                  <span className="text-3xl font-black text-[#00FFAA]">
-                    {electricitySatisfaction} / 100
-                  </span>
-                </div>
-                <div className="w-full h-3 bg-[#0F2424] rounded-full mt-3 overflow-hidden border border-[#00FFAA]/20">
-                  <div
-                    className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
-                    style={{ width: `${electricitySatisfaction}%` }}
+              {/* Input Search (Hanya muncul di tab global) */}
+              {activeTab === "global" && (
+                <div className="relative w-full sm:w-64 lg:w-80">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-[#6B8A8A] pointer-events-none" />
+                  <input
+                    type="text"
+                    placeholder="Cari nama negara..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-all font-semibold text-sm"
                   />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3 top-3 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* TAB NERACA USER */}
+            {activeTab === "user" && (
+              <>
+                <div className="grid grid-cols-1 lg:grid-cols-[1.25fr_0.95fr] gap-3 lg:gap-4">
+                  {/* KOLOM KIRI: STATISTIK GRID */}
+                  <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 lg:p-3.5 2xl:p-4 rounded-xl 2xl:rounded-2xl">
+                    <div className="flex items-center gap-2.5 lg:gap-3 mb-2.5 lg:mb-3">
+                      <div className="p-2 lg:p-2.5 2xl:p-3 rounded-xl 2xl:rounded-2xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
+                        <BatteryCharging className="h-4 w-4 lg:h-5 lg:w-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-xs lg:text-sm 2xl:text-base font-black text-[#00FFAA] uppercase tracking-wide">Statistik Grid</h3>
+                        <p className="text-[9px] lg:text-[10px] text-[#6B8A8A] uppercase tracking-wider">Ringkasan kapasitas dan beban listrik nasional</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-2.5 lg:gap-3">
+                      <div className="bg-emerald-950/40 border border-emerald-500/30 p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl">
+                        <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest text-emerald-400">✓ Total Produksi Listrik</p>
+                        <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-emerald-400 mt-1.5 lg:mt-2 2xl:mt-3">{totalCapacityMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</p>
+                      </div>
+                      <div
+                        onClick={() => setIsDetailKonsumsiOpen(true)}
+                        className="bg-rose-950/40 border border-rose-500/30 hover:border-rose-400 hover:scale-[1.01] p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl transition-all cursor-pointer group shadow-md"
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest text-rose-400">✗ Konsumsi Terestimasi</p>
+                          <span className="text-[9px] text-rose-300 font-bold opacity-80 group-hover:opacity-100 transition-opacity">Detail →</span>
+                        </div>
+                        <p className="text-lg lg:text-xl 2xl:text-2xl font-black text-rose-400 mt-1.5 lg:mt-2 2xl:mt-3">{estimatedConsumptionMW.toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW</p>
+                      </div>
+
+                      {/* NERACA DAYA: LOGIKA WARNA HIJAU/MERAH/ABU-ABU */}
+                      <div className={`p-2.5 lg:p-3 rounded-xl 2xl:rounded-2xl border ${balanceMW > 0 ? 'bg-emerald-950/40 border-emerald-500/30' :
+                          balanceMW < 0 ? 'bg-rose-950/40 border-rose-500/30' :
+                            'bg-slate-900/40 border-slate-500/30'
+                        }`}>
+                        <p className={`text-[8px] lg:text-[9px] 2xl:text-[10px] font-black uppercase tracking-widest ${balanceMW > 0 ? 'text-emerald-400' :
+                            balanceMW < 0 ? 'text-rose-400' :
+                              'text-slate-400'
+                          }`}>Neraca Daya</p>
+                        <p className={`text-lg lg:text-xl 2xl:text-2xl font-black mt-1.5 lg:mt-2 2xl:mt-3 ${balanceMW > 0 ? 'text-emerald-400' :
+                            balanceMW < 0 ? 'text-rose-400' :
+                              'text-slate-400'
+                          }`}>
+                          {balanceMW > 0 ? '+' : balanceMW < 0 ? '-' : ''}{Math.abs(balanceMW).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-2xl">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Jumlah Sumber Energi Aktif</p>
+                        <p className="text-lg font-black text-[#E0E0E0] mt-2">{totalSources}</p>
+                      </div>
+                      <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-3 rounded-2xl">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[#6B8A8A]">Perkiraan Beban Warga</p>
+                        <p className="text-lg font-black text-[#E0E0E0] mt-2">{((countryDetail?.jumlah_penduduk ?? 0) / 1000000).toFixed(1)} Juta Jiwa</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* KOLOM KANAN: RINGKASAN SUMBER DAYA */}
+                  <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-3 rounded-2xl bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30">
+                        <MapPin className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wide">Ringkasan Sumber Daya</h3>
+                        <p className="text-[10px] text-[#6B8A8A] uppercase tracking-wider">Detail berdasarkan data metadata</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      {powerSources.length > 0 ? powerSources.map((source) => (
+                        <div key={source.key} className="flex items-center justify-between gap-3 p-4 bg-[#0F2424] border border-[#00FFAA]/20 rounded-2xl">
+                          <div>
+                            <p className="text-sm font-black text-[#E0E0E0] uppercase tracking-wide">{source.label}</p>
+                            <p className="text-[10px] text-[#6B8A8A]">{source.desc}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm font-black text-[#00FFAA]">
+                              {(source.value * source.unitProduction).toLocaleString('id-ID', { maximumFractionDigits: 2 })} MW
+                            </p>
+                            <p className="text-[10px] text-[#6B8A8A]">{source.value > 0 ? `${source.value} unit` : 'Tidak tersedia'}</p>
+                          </div>
+                        </div>
+                      )) : (
+                        <div className="rounded-2xl border border-[#00FFAA]/20 bg-[#0F2424] p-4 text-sm text-[#6B8A8A]">
+                          Data pembangkit listrik tidak tersedia.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* INDEKS KEPUASAN LISTRIK */}
+                <div className="mt-6 p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-black text-[#00FFAA] uppercase tracking-widest">
+                      Indeks Kepuasan Rakyat (Listrik)
+                    </span>
+                    <span className="text-3xl font-black text-[#00FFAA]">
+                      {electricitySatisfaction} / 100
+                    </span>
+                  </div>
+                  <div className="w-full h-3 bg-[#0F2424] rounded-full mt-3 overflow-hidden border border-[#00FFAA]/20">
+                    <div
+                      className="h-full rounded-full bg-[#00FFAA] transition-all duration-200"
+                      style={{ width: `${electricitySatisfaction}%` }}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* TAB NERACA GLOBAL */}
+            {activeTab === "global" && (
+              <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl w-full">
+                <div className="overflow-x-auto border border-[#00FFAA]/20 rounded-xl bg-[#0F2424] max-h-[60vh] overflow-y-auto no-scrollbar">
+                  <table className="w-full text-xs">
+                    <thead className="sticky top-0 text-[10px] sm:text-xs">
+                      <tr className="bg-[#0A1A1A] border-b border-[#00FFAA]/20">
+                        <th className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-left font-black text-[#00FFAA] uppercase tracking-wider">No</th>
+                        <th
+                          onClick={() => handleSort('name')}
+                          className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-left font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors"
+                        >
+                          Negara <SortIndicator column="name" />
+                        </th>
+                        <th
+                          onClick={() => handleSort('production')}
+                          className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-right font-black text-emerald-400 uppercase tracking-wider cursor-pointer hover:bg-emerald-950/40 transition-colors"
+                        >
+                          Produksi (MW) <SortIndicator column="production" />
+                        </th>
+                        <th
+                          onClick={() => handleSort('consumption')}
+                          className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-right font-black text-rose-400 uppercase tracking-wider cursor-pointer hover:bg-rose-950/40 transition-colors"
+                        >
+                          Konsumsi (MW) <SortIndicator column="consumption" />
+                        </th>
+                        <th
+                          onClick={() => handleSort('balance')}
+                          className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors"
+                        >
+                          Neraca Daya <SortIndicator column="balance" />
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#00FFAA]/10 bg-[#0F2424]">
+                      {allCountries.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
+                            📡 Memuat data {globalElectricityData.length || 207} negara...
+                          </td>
+                        </tr>
+                      ) : filteredData.length > 0 ? (
+                        filteredData.map((country, rowIndex) => {
+                          const isUserCountry = country.isUser;
+                          return (
+                            <tr
+                              key={`country-${country.name}-${rowIndex}`}
+                              onClick={() => setSelectedCountryData(country.rawData)}
+                              className={`transition-colors cursor-pointer hover:bg-[#00FFAA]/10 ${isUserCountry
+                                  ? 'bg-emerald-950/50 font-black border-l-4 border-l-emerald-400'
+                                  : 'bg-[#0F2424]'
+                                }`}
+                            >
+                              <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black' : 'text-[#6B8A8A]'}`}>
+                                {rowIndex + 1}
+                              </td>
+                              <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black flex items-center gap-2' : 'text-[#E0E0E0]'}`}>
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span>{country.name}</span>
+                                  {isUserCountry && (
+                                    <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-[#0A1A1A] text-[9px] font-black uppercase tracking-wider">
+                                      Negara Anda
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="px-4 py-3 font-bold text-emerald-400 text-right">
+                                {isNaN(country.production) || country.production <= 0 ? '0' : country.production.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                              </td>
+                              <td className="px-4 py-3 font-bold text-rose-400 text-right">
+                                {isNaN(country.consumption) || country.consumption <= 0 ? '0' : country.consumption.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                              </td>
+
+                              <td className={`px-4 py-3 font-black text-right ${country.balance > 0.01 ? 'text-emerald-400' :
+                                  country.balance < -0.01 ? 'text-rose-400' :
+                                    'text-slate-400'
+                                }`}>
+                                <div className="flex items-center justify-end gap-1">
+                                  <span>
+                                    {isNaN(country.balance) || country.balance === 0 ? '0' : (country.balance > 0 ? '+' : '-') + Math.abs(country.balance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}
+                                  </span>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      ) : (
+                        <tr>
+                          <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
+                            {searchQuery ? `Tidak ada negara yang cocok dengan "${searchQuery}"` : 'Tidak ada data tersedia'}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
-            </>
-          )}
+            )}
 
-          {/* TAB NERACA GLOBAL */}
-          {activeTab === "global" && (
-            <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl w-full">
-              <div className="mb-4 relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-[#6B8A8A] pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder="Cari nama negara..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] text-[#E0E0E0] placeholder-[#6B8A8A] focus:outline-none focus:border-[#00FFAA] transition-all font-semibold text-sm"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-3 text-[#6B8A8A] hover:text-[#00FFAA] transition-colors"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-
-              <div className="overflow-x-auto border border-[#00FFAA]/20 rounded-xl bg-[#0F2424] max-h-[60vh] overflow-y-auto no-scrollbar">
-                <table className="w-full text-xs">
-                  <thead className="sticky top-0 text-[10px] sm:text-xs">
-                    <tr className="bg-[#0A1A1A] border-b border-[#00FFAA]/20">
-                      <th className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-left font-black text-[#00FFAA] uppercase tracking-wider">No</th>
-                      <th
-                        onClick={() => handleSort('name')}
-                        className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-left font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors"
-                      >
-                        Negara <SortIndicator column="name" />
-                      </th>
-                      <th
-                        onClick={() => handleSort('production')}
-                        className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-right font-black text-emerald-400 uppercase tracking-wider cursor-pointer hover:bg-emerald-950/40 transition-colors"
-                      >
-                        Produksi (MW) <SortIndicator column="production" />
-                      </th>
-                      <th
-                        onClick={() => handleSort('consumption')}
-                        className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-right font-black text-rose-400 uppercase tracking-wider cursor-pointer hover:bg-rose-950/40 transition-colors"
-                      >
-                        Konsumsi (MW) <SortIndicator column="consumption" />
-                      </th>
-                      <th
-                        onClick={() => handleSort('balance')}
-                        className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-right font-black text-[#00FFAA] uppercase tracking-wider cursor-pointer hover:bg-[#0F2424] transition-colors"
-                      >
-                        Neraca Daya <SortIndicator column="balance" />
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#00FFAA]/10 bg-[#0F2424]">
-                    {allCountries.length === 0 ? (
-                      <tr>
-                        <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
-                          📡 Memuat data {globalElectricityData.length || 207} negara...
-                        </td>
-                      </tr>
-                    ) : filteredData.length > 0 ? (
-                      filteredData.map((country, rowIndex) => {
-                        const isUserCountry = country.isUser;
-                        return (
-                          <tr
-                            key={`country-${country.name}-${rowIndex}`}
-                            onClick={() => setSelectedCountryData(country.rawData)}
-                            className={`transition-colors cursor-pointer hover:bg-[#00FFAA]/10 ${isUserCountry
-                                ? 'bg-emerald-950/50 font-black border-l-4 border-l-emerald-400'
-                                : 'bg-[#0F2424]'
-                              }`}
-                          >
-                            {/* MENGGUNAKAN rowIndex + 1 AGAR NOMOR URUT SELALU 1,2,3... MESKIPUN DI-SORTING */}
-                            <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black' : 'text-[#6B8A8A]'}`}>
-                              {rowIndex + 1}
-                            </td>
-                            <td className={`px-4 py-3 font-bold ${isUserCountry ? 'text-emerald-400 font-black flex items-center gap-2' : 'text-[#E0E0E0]'}`}>
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <span>{country.name}</span>
-                                {isUserCountry && (
-                                  <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-[#0A1A1A] text-[9px] font-black uppercase tracking-wider">
-                                    Negara Anda
-                                  </span>
-                                )}
-                              </div>
-                            </td>
-                            <td className="px-4 py-3 font-bold text-emerald-400 text-right">
-                              {isNaN(country.production) || country.production <= 0 ? '0' : country.production.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
-                            </td>
-                            <td className="px-4 py-3 font-bold text-rose-400 text-right">
-                              {isNaN(country.consumption) || country.consumption <= 0 ? '0' : country.consumption.toLocaleString('id-ID', { maximumFractionDigits: 2 })}
-                            </td>
-
-                            {/* NERACA DAYA TABLE: LOGIKA WARNA HIJAU/MERAH/ABU-ABU */}
-                            <td className={`px-4 py-3 font-black text-right ${country.balance > 0.01 ? 'text-emerald-400' :
-                                country.balance < -0.01 ? 'text-rose-400' :
-                                  'text-slate-400'
-                              }`}>
-                              <div className="flex items-center justify-end gap-1">
-                                <span>
-                                  {isNaN(country.balance) || country.balance === 0 ? '0' : (country.balance > 0 ? '+' : '-') + Math.abs(country.balance).toLocaleString('id-ID', { maximumFractionDigits: 2 })}
-                                </span>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    ) : (
-                      <tr>
-                        <td colSpan={5} className="px-4 py-6 text-center text-xs font-bold text-[#6B8A8A]">
-                          {searchQuery ? `Tidak ada negara yang cocok dengan "${searchQuery}"` : 'Tidak ada data tersedia'}
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
+          </div>
         </div>
-      </div>
-    </NotebookModalWrapper>
+      </NotebookModalWrapper>
 
       <DetailKonsumsiTerestimasiModal
         isOpen={isDetailKonsumsiOpen}
