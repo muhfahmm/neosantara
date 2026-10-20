@@ -538,6 +538,7 @@ interface WarMapProps {
     action: WarAction;
     path: WarPath;
     isUserDefender?: boolean;
+    isPbbCoalition?: boolean;
   }) => void;
 }
 
@@ -745,12 +746,13 @@ export default function WarMap({
     return { ...p, angle };
   }, [startPos, controlPos, endPos, progress]);
 
-  const handleAction = useCallback(
+    const handleAction = useCallback(
     (action: WarAction) => {
       if (!warPath || !result) return;
-      onResolve({ result, action, path: warPath });
+      // 👈 Sertakan isPbbCoalition ke dalam payload
+      onResolve({ result, action, path: warPath, isPbbCoalition }); 
     },
-    [warPath, result, onResolve]
+    [warPath, result, onResolve, isPbbCoalition]
   );
 
   const handleAutoResult = useCallback(() => {

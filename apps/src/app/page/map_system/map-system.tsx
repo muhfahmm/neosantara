@@ -280,7 +280,7 @@ import {
     type ProvinceReferendum
 } from '../detail_negara/1_informasi_umum/provinsi_logic/ketegangan_provinsi/3_referendum';
 
-type AnnexedTerritoryEntry = { attackerCountry?: string; attackerIso?: string };
+type AnnexedTerritoryEntry = { attackerCountry?: string; attackerIso?: string; isPbbOccupied?: boolean };
 type AnnexedTerritories = Record<string, AnnexedTerritoryEntry>;
 
 function getCapitalFlagsForCurrentTerritories() {
@@ -1081,8 +1081,10 @@ export default function MapPage() {
         targetIso: string,
         attackerCountry: string,
         attackerIso: string,
-        attackerColor: string
+        attackerColor: string,
+        isPbbOccupied: boolean = false
     ) => {
+        const annexationInfo = { attackerCountry, attackerIso, isPbbOccupied };
         const targetNorm = targetCountry.toLowerCase().trim();
         const mapCountry = COUNTRIES_DATA.find(
             country => country.country.toLowerCase().trim() === targetNorm
@@ -1143,7 +1145,6 @@ export default function MapPage() {
             ...overrideUpdates
         };
         const previousAnnexed = (window as any).neosantara_annexed_countries || {};
-        const annexationInfo = { attackerCountry, attackerIso };
         const nextAnnexed = {
             ...previousAnnexed,
             [targetCountry]: annexationInfo,
@@ -1403,7 +1404,7 @@ export default function MapPage() {
             const detail = (e as CustomEvent)?.detail;
             if (!detail) return;
 
-            const { actionType, targetCountry } = detail;
+            const { actionType, targetCountry, isPbbCoalition } = detail;
             const attackerCountry = countryDetail?.country || 'China';
             const attackerIso = (countryDetail?.iso || 'cn').toLowerCase();
             if (areSameWarCountry(attackerCountry, targetCountry, attackerIso, getIsoForCountryName(targetCountry))) {
@@ -1514,7 +1515,7 @@ export default function MapPage() {
                 );
                 newNewsItems.push(annexationNews);
 
-                recordAnnexedTerritory(targetCountry, targetIso, attackerCountry, attackerIso, attackerColor);
+                recordAnnexedTerritory(targetCountry, targetIso, attackerCountry, attackerIso, attackerColor, isPbbCoalition);
 
                 // 4. Gabungkan statistik (populasi, kas negara, kepuasan, kesejahteraan, seluruh bangunan & sisa militer target setelah kalah >50%) dari negara target ke user
                 const targetRelPath = Object.entries(countryPaths as Record<string, string>).find(
@@ -7300,8 +7301,9 @@ export default function MapPage() {
 
                             if (
                                 activeWarAnimation.isPbbCoalition &&
-                                !activeWarAnimation.isPlayerCoalitionProposer
+                                activeWarAnimation.isNpcWar === true
                             ) {
+                                // Perang PBB sepenuhnya antara NPC — player tidak terlibat.
                                 setActiveWarAnimation(null);
                                 npcWarQueueRunningRef.current = false;
                                 resumeGameTimeAfterWar();
@@ -7318,6 +7320,7 @@ export default function MapPage() {
                                         actionType: mappedAction,
                                         targetCountry: activeWarAnimation.target,
                                         warResult: result,
+                                        isPbbCoalition: activeWarAnimation.isPbbCoalition ?? false,
                                     },
                                 })
                             );

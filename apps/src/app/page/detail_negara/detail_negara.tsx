@@ -48,6 +48,7 @@ const normalizeCountryKey = (value: unknown) => String(value || '').toLowerCase(
 interface AnnexationInfo {
   attackerCountry?: string;
   attackerIso?: string;
+  isPbbOccupied?: boolean;
 }
 
 type AnnexedCountryStore = Record<string, AnnexationInfo>;
@@ -598,6 +599,19 @@ export function CountryDetailModal({
               <div className="flex items-center gap-2 mt-1">
                 {renderFlagHeader(displayIso, displayCountryName)}
                 {annexedInfo && renderFlagHeader(originalIso, countryName)}
+
+                {/* 👈 TAMBAHKAN BENDERA PBB DI SINI */}
+                {annexedInfo?.isPbbOccupied && (
+                  <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 shadow-sm bg-[#0A1A1A] relative flex items-center justify-center">
+                    <img
+                      src="https://flagcdn.com/w80/un.png"
+                      alt="PBB"
+                      className="w-full h-full object-cover absolute inset-0"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                  </div>
+                )}
+
                 <p className="text-xs text-[#00FFAA]/70 font-semibold uppercase tracking-wider">
                   {displayCountryName}, {displayCapital}
                 </p>
@@ -630,12 +644,12 @@ export function CountryDetailModal({
                   {isPlayerOccupiedProvince ? 'Ketegangan' : 'Hubungan'}
                 </span>
                 <span className={`text-[11px] lg:text-[9px] xl:text-[11px] font-extrabold uppercase ${isPlayerOccupiedProvince
+                  ? 'text-emerald-400'
+                  : relationValue >= 75
                     ? 'text-emerald-400'
-                    : relationValue >= 75
-                      ? 'text-emerald-400'
-                      : relationValue >= 50
-                        ? 'text-[#00FFAA]'
-                        : 'text-rose-400'
+                    : relationValue >= 50
+                      ? 'text-[#00FFAA]'
+                      : 'text-rose-400'
                   }`}>
                   {isPlayerOccupiedProvince
                     ? `${provinceTensionValue} · ${provinceTensionStatus}`
