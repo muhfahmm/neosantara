@@ -60,6 +60,7 @@ import {
 import {
   getKementerianKebudayaanRatingDecayReductionPercent,
   applyKementerianKebudayaanRatingDecayReduction,
+  applyKementerianKebudayaanDecayMultiplierBonus,
 } from "./kementerian_bonus_logic/9_Kementerian_Kebudayaan";
 import {
   getKementerianPariwisataIncomeBonusPercent,
@@ -513,6 +514,7 @@ export {
   applyKementerianLuarNegeriTreatyChanceBonus,
   getKementerianKebudayaanRatingDecayReductionPercent,
   applyKementerianKebudayaanRatingDecayReduction,
+  applyKementerianKebudayaanDecayMultiplierBonus,
   getKementerianPariwisataIncomeBonusPercent,
   applyKementerianPariwisataIncomeBonus,
   getKementerianLingkunganHidupDisasterReductionPercent,
