@@ -32,12 +32,12 @@ export default function ResultModal({
     const isError = type === 'error';
 
     return createPortal(
-        <div className="fixed inset-0 z-[500000] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] p-4 pointer-events-none">
+        <div className="fixed inset-0 z-[500000] flex items-center justify-center p-4 pointer-events-auto font-sans">
             <div
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="result-modal-title"
-                className={`bg-[#0F2424] border ${isError ? 'border-rose-500/40' : 'border-[#00FFAA]/40'} rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] pointer-events-auto shadow-lg flex flex-col font-sans`}
+                className={`bg-[#0F2424] border ${isError ? 'border-rose-500/40' : 'border-[#00FFAA]/40'} rounded-2xl overflow-hidden w-full max-w-md max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] pointer-events-auto shadow-lg flex flex-col font-sans`}
             >
                 {/* Header */}
                 <div className="px-4 sm:px-5 lg:px-6 py-3 sm:py-3.5 lg:py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] shrink-0">

@@ -73,12 +73,8 @@ export function calculateTaxPopulationImpact(
         ? 20
         : 25;
   const difference = burden - threshold;
-  // Ketika tidak ada kenaikan pajak di atas threshold default (beban pajak normal/standar),
-  // dampak ke populasi adalah netral (0%). Hanya ketika pajak dinaikkan melebihi threshold
-  // beban pajak akan berdampak negatif (mengurangi netto populasi hingga bisa minus).
-  const monthlyModifierPercent = difference > 0
-    ? -(difference * 0.05)
-    : 0;
+  // ponytail: threshold is the baseline; add tax history when changes must be measured from a prior rate.
+  const monthlyModifierPercent = -(difference * 0.05);
 
   return { burden, threshold, monthlyModifierPercent };
 }

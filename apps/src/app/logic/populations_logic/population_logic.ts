@@ -679,10 +679,12 @@ export const calculateDailyPopulationChange = (
   // - Namun jika user mengubah pajak / ekonomi hingga menimbulkan penalti negatif (taxPopulationChange < 0),
   //   penalti tersebut dapat mengurangi pertumbuhan hingga bisa minus.
   const hasNegativePolicyImpact = (taxPopulationChange + economicPopulationChange) < 0;
+  const positivePolicyChange = Math.min(maxDailyGrowth, Math.max(0, taxPopulationChange + economicPopulationChange));
   const netDailyChange = (!isPopulationCrisis && outbreakDeaths === 0 && foodDeficitDeaths === 0)
     ? (hasNegativePolicyImpact
         ? Math.max(-maxDailyDecline, Math.min(maxDailyGrowth, policyAdjustedNetChange))
-        : Math.max(1, Math.min(maxDailyGrowth, demographicNetDailyChange)))
+        // Policy bonus gets its own demographic-sized cap, avoiding an unbounded tax-growth loop.
+        : Math.max(1, Math.min(maxDailyGrowth, demographicNetDailyChange)) + positivePolicyChange)
     : Math.max(
         -Math.min(populasi, maxDailyDecline + outbreakDeaths),
         policyAdjustedNetChange,
