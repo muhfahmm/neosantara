@@ -25,6 +25,7 @@ import { calculateKeamananLogic } from "./logic/keamananLogic";
 import { calculateKesehatanLogic } from "./logic/kesehatanLogic";
 import { calculateTunawismaLogic } from "./logic/tunawismaLogic";
 import { calculateKriminalitasLogic } from "./logic/kriminalitasLogic";
+import NotebookModalWrapper from "../../NotebookModalWrapper";
 
 interface DetailKematianModalProps {
   isOpen: boolean;
@@ -109,8 +110,8 @@ export default function DetailKematianModal({
   const countryDisplayName = selectedCountry?.country || "Indonesia";
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
+    <>
+      <NotebookModalWrapper onClose={onClose}>
 
         {/* Header */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
@@ -295,7 +296,7 @@ export default function DetailKematianModal({
           </div>
         </div>
 
-      </div>
+      </NotebookModalWrapper>
 
       {/* ðŸ”¥ RENDER 7 MODAL DETAIL DI SINI (Agar tombol Info berfungsi) */}
       <DetailHarapanHidupModal
@@ -334,6 +335,6 @@ export default function DetailKematianModal({
         countryDetail={countryDetail}
         selectedCountry={selectedCountry}
       />
-    </div>
+    </>
   );
 }

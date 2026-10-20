@@ -113,7 +113,7 @@ export default function StatistikKepuasanModal({
     }
   ];
   return (
-    <NotebookModalWrapper onClose={onClose}>
+    <NotebookModalWrapper onClose={onClose} maxWidthClass="max-w-4xl lg:max-w-[1000px] xl:max-w-[1100px] 2xl:max-w-6xl">
       <div className="flex flex-col h-full overflow-hidden">
         {/* Header */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
