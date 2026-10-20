@@ -152,9 +152,9 @@ export default function SpektrumSistemTab({
       </div>
 
       {/* IMPACT & EFFECT INDICATORS GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 lg:gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-3">
         {/* CARD DAMPAK NETTO POPULASI */}
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-2.5 lg:p-3 rounded-xl flex items-center gap-2.5">
+        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 rounded-xl flex items-center gap-3 min-w-0">
           <div
             className={`p-1.5 lg:p-2 rounded-lg shrink-0 border ${
               populationImpact.monthlyModifierPercent < 0
@@ -164,12 +164,12 @@ export default function SpektrumSistemTab({
           >
             <HeartPulse className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-[8px] lg:text-[9px] font-black text-[#6B8A8A] uppercase tracking-wider">
               Dampak Netto Populasi
             </p>
             <p
-              className={`text-xs lg:text-sm font-black mt-0.5 ${
+              className={`text-sm font-black mt-0.5 whitespace-nowrap ${
                 populationImpact.monthlyModifierPercent < 0 ? "text-rose-400" : "text-[#00FFAA]"
               }`}
             >
@@ -179,29 +179,29 @@ export default function SpektrumSistemTab({
           </div>
         </div>
 
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-2.5 lg:p-3 rounded-xl flex items-center gap-2.5">
+        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 rounded-xl flex items-center gap-3 min-w-0">
           <div className="p-1.5 lg:p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400 shrink-0">
             <TrendingUp className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-[8px] lg:text-[9px] font-black text-[#6B8A8A] uppercase tracking-wider">
               Bonus Pertumbuhan PDB
             </p>
-            <p className="text-xs lg:text-sm font-black text-[#E0E0E0] mt-0.5">
+            <p className="text-sm font-black text-[#E0E0E0] mt-0.5 whitespace-nowrap">
               +{systemDetails.gdpGrowthBonus.toFixed(1)}% / Tahun
             </p>
           </div>
         </div>
 
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-2.5 lg:p-3 rounded-xl flex items-center gap-2.5">
+        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 rounded-xl flex items-center gap-3 min-w-0">
           <div className="p-1.5 lg:p-2 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 shrink-0">
             <AlertCircle className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-[8px] lg:text-[9px] font-black text-[#6B8A8A] uppercase tracking-wider">
               Dampak Inflasi
             </p>
-            <p className="text-xs lg:text-sm font-black text-[#E0E0E0] mt-0.5">
+            <p className="text-sm font-black text-[#E0E0E0] mt-0.5 whitespace-nowrap">
               {systemDetails.inflationImpact >= 0
                 ? `+${systemDetails.inflationImpact.toFixed(1)}%`
                 : `${systemDetails.inflationImpact.toFixed(1)}%`}
@@ -209,15 +209,15 @@ export default function SpektrumSistemTab({
           </div>
         </div>
 
-        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-2.5 lg:p-3 rounded-xl flex items-center gap-2.5">
+        <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-3 rounded-xl flex items-center gap-3 min-w-0">
           <div className="p-1.5 lg:p-2 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-400 shrink-0">
             <Users className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-[8px] lg:text-[9px] font-black text-[#6B8A8A] uppercase tracking-wider">
               Ketimpangan (Gini)
             </p>
-            <p className="text-xs lg:text-sm font-black text-[#E0E0E0] mt-0.5">
+            <p className="text-sm font-black text-[#E0E0E0] mt-0.5 whitespace-nowrap">
               {systemDetails.giniIndexImpact >= 0
                 ? `+${systemDetails.giniIndexImpact.toFixed(2)}`
                 : `${systemDetails.giniIndexImpact.toFixed(2)}`}
