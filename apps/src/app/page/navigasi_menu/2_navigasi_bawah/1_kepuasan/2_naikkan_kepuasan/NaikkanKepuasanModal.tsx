@@ -252,18 +252,16 @@ export default function NaikkanKepuasanModal({
   return (
     <>
       <NotebookModalWrapper onClose={onClose} maxWidthClass="max-w-4xl lg:max-w-[1000px] xl:max-w-[1100px] 2xl:max-w-6xl">
-        <div className="flex flex-col h-full overflow-hidden bg-[#0A1A1A] rounded-xl border border-[#00FFAA]/20 shadow-[0_0_30px_rgba(0,255,170,0.15)] relative">
+        <div className="flex flex-col h-full overflow-hidden">
         {/* Header */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
           <div className="flex items-center gap-3 sm:gap-6 flex-wrap">
             <div className="flex items-center gap-2">
-              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0 shadow-[0_0_10px_rgba(0,255,170,0.2)]">
+              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
                 <Smile className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
               </div>
               <div>
-                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase drop-shadow-[0_0_8px_rgba(0,255,170,0.5)]">
-                  Kepuasan Rakyat
-                </h2>
+                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Kepuasan Rakyat</h2>
               </div>
             </div>
 
@@ -276,7 +274,7 @@ export default function NaikkanKepuasanModal({
                   Statistik
                 </button>
                 <button
-                  className="px-3 py-1 rounded-md text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all bg-[#00FFAA] text-[#0A1A1A] shadow-[0_0_10px_rgba(0,255,170,0.4)] cursor-pointer"
+                  className="px-3 py-1 rounded-md text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all bg-[#00FFAA] text-[#0A1A1A] cursor-pointer"
                 >
                   Naikkan Peringkat
                 </button>
@@ -285,14 +283,14 @@ export default function NaikkanKepuasanModal({
               <button
                 onClick={() => setShowInfoModal(true)}
                 title="Lihat penjelasan setiap tab"
-                className="p-1.5 sm:p-2 rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] hover:shadow-[0_0_10px_rgba(0,255,170,0.2)] transition-all cursor-pointer flex items-center justify-center shrink-0"
+                className="p-1.5 sm:p-2 rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer flex items-center justify-center shrink-0"
               >
                 <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </button>
             </div>
           </div>
 
-          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] hover:shadow-[0_0_15px_rgba(0,255,170,0.3)] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
+          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
             <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
             <X className="h-4 w-4" />
           </button>
@@ -300,37 +298,26 @@ export default function NaikkanKepuasanModal({
 
         {/* Treasury Bar */}
         <div className="px-4 sm:px-6 py-2 bg-[#0A1A1A] border-b border-[#00FFAA]/20 flex flex-wrap items-center justify-between gap-2 relative z-10 shrink-0">
-          <div className="flex items-center gap-2 bg-[#0F2424] px-3 py-1.5 rounded-lg border border-[#00FFAA]/20 shadow-[inset_0_0_10px_rgba(0,255,170,0.05)]">
-            <Smile className="h-4 w-4 text-[#00FFAA] shrink-0 drop-shadow-[0_0_5px_rgba(0,255,170,0.5)]" />
+          <div className="flex items-center gap-2">
+            <Smile className="h-4 w-4 text-[#00FFAA] shrink-0" />
             <span className="text-[10px] sm:text-xs font-bold text-[#6B8A8A] uppercase tracking-wide">
               Kepuasan Sipil:
             </span>
-            <span className="text-xs sm:text-sm font-black text-[#00FFAA] drop-shadow-[0_0_5px_rgba(0,255,170,0.4)]">
+            <span className="text-xs sm:text-sm font-black text-[#00FFAA]">
               {Math.round(kepuasan)}%
             </span>
           </div>
         </div>
 
-        {/* Content Area dengan Modern Scrollbar */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-5 bg-[#0A1A1A]/80 relative z-10 
-          [&::-webkit-scrollbar]:w-2 
-          [&::-webkit-scrollbar-track]:bg-[#0A1A1A] 
-          [&::-webkit-scrollbar-track]:rounded-full 
-          [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/20
-          [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
-          [&::-webkit-scrollbar-thumb]:rounded-full 
-          [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A]
-          [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)]
-          hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
-          [&::-webkit-scrollbar-button]:hidden
-        ">
+        {/* Content Area */}
+        <div className="flex-1 overflow-y-auto p-3 sm:p-5 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
           <div className="space-y-4 animate-in fade-in duration-500">
             {feedback && (
               <div
                 className={`p-4 rounded-xl border flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300 ${
                   feedback.type === "success"
-                    ? "bg-[#00FFAA]/10 border-[#00FFAA]/30 text-[#00FFAA] shadow-[0_0_15px_rgba(0,255,170,0.2)]"
-                    : "bg-rose-500/10 border-rose-500/30 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.2)]"
+                    ? "bg-[#00FFAA]/10 border-[#00FFAA]/30 text-[#00FFAA]"
+                    : "bg-rose-500/10 border-rose-500/30 text-rose-400"
                 }`}
               >
                 {feedback.type === "success" ? (
@@ -351,7 +338,9 @@ export default function NaikkanKepuasanModal({
                 const lastEndDate = isEventOngoing ? ongoingEvents[ongoingEvents.length - 1].endDate : null;
 
                 const baseBoost = item.boost;
+                // 1. Terapkan bonus Diplomasi Acara Nasional (efek_acara)
                 const afterResearchBoost = applyDiplomasiAcaraSatisfactionBonus(baseBoost, countryDetail);
+                // 2. Terapkan bonus Kementerian Olahraga khusus acara olahraga saja
                 const boostedBoost = applyKementerianOlahragaSatisfactionBoost(afterResearchBoost, item.id, countryDetail);
                 const hasAcaraBonus = boostedBoost > baseBoost;
                 const isSport = isSportEvent(item.id);
@@ -363,55 +352,52 @@ export default function NaikkanKepuasanModal({
                   <div
                     key={item.id}
                     id={`event-card-${item.id}`}
-                    className={`relative bg-gradient-to-br from-[#0F2424] to-[#0A1A1A] p-2.5 lg:p-3 rounded-xl flex flex-col md:flex-row items-center justify-between gap-2.5 lg:gap-3 transition-all duration-300 group overflow-hidden ${
+                    className={`relative bg-[#0F2424] p-2.5 lg:p-3 rounded-xl flex flex-col md:flex-row items-center justify-between gap-2.5 lg:gap-3 transition-all duration-500 ${
                       isHighlighted
-                        ? "border-2 border-[#00FFAA] shadow-[0_0_25px_rgba(0,255,170,0.6)] ring-2 ring-[#00FFAA]/50 scale-[1.01]"
-                        : "border border-[#00FFAA]/20 hover:border-[#00FFAA]/60 hover:shadow-[0_0_15px_rgba(0,255,170,0.15)]"
+                        ? "border-2 border-[#00FFAA] shadow-[0_0_25px_rgba(0,255,170,0.6)] ring-2 ring-[#00FFAA]/50 bg-[#122A26] scale-[1.01]"
+                        : "border border-[#00FFAA]/20 hover:border-[#00FFAA]/50"
                     }`}
                   >
-                    {/* Efek Garis Menyala di Atas Card saat Hover */}
-                    <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#00FFAA] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
                     {isHighlighted && (
-                      <div className="absolute top-0 left-3 bg-[#00FFAA] text-[#0A1A1A] px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-b-md shadow-[0_0_10px_rgba(0,255,170,0.5)] flex items-center gap-1 animate-pulse z-20">
+                      <div className="absolute top-0 left-3 bg-[#00FFAA] text-[#0A1A1A] px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-b-md shadow-sm flex items-center gap-1 animate-pulse z-20">
                         <Sparkles className="h-2.5 w-2.5" />
                         Target Misi Aktif
                       </div>
                     )}
 
                     {isEventOngoing && (
-                      <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[9px] font-bold px-2 py-0.5 border border-[#00FFAA]/40 rounded-b-sm tracking-wider whitespace-nowrap uppercase shadow-[0_0_10px_rgba(0,0,0,0.5)]">
+                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[9px] font-bold px-2 py-0.5 border border-[#00FFAA]/40 rounded-sm tracking-wider whitespace-nowrap uppercase">
                         Selesai: {formatBadgeDate(lastEndDate)}
                       </div>
                     )}
 
-                    <div className="flex items-start gap-2 lg:gap-2.5 relative z-10">
+                    <div className="flex items-start gap-2 lg:gap-2.5">
                       <div className="shrink-0">
                         <Image
                           src={item.image}
                           alt=""
                           width={56}
                           height={56}
-                          className="h-12 w-12 object-contain lg:h-14 lg:w-14 transition-transform duration-300 group-hover:scale-110 drop-shadow-md"
+                          className="h-12 w-12 object-contain lg:h-14 lg:w-14"
                         />
                       </div>
                       <div className="space-y-0.5 lg:space-y-1">
                         <div className="flex items-center gap-2 lg:gap-3 flex-wrap">
-                          <h4 className="text-xs lg:text-sm 2xl:text-md font-black text-[#E0E0E0] uppercase tracking-wide leading-none group-hover:text-[#00FFAA] transition-colors">
+                          <h4 className="text-xs lg:text-sm 2xl:text-md font-black text-[#E0E0E0] uppercase tracking-wide leading-none">
                             {item.title}
                           </h4>
                           {hasAcaraBonus ? (
-                            <span className="bg-[#00FFAA]/10 border border-[#00FFAA]/30 px-1.5 lg:px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_8px_rgba(0,255,170,0.1)]">
+                            <span className="bg-[#00FFAA]/10 border border-[#00FFAA]/30 px-1.5 lg:px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5">
                               <span className="text-rose-400 line-through">+{baseBoost}%</span>
-                              <span className="text-emerald-400 drop-shadow-[0_0_5px_rgba(0,255,170,0.5)]">+{boostedBoost}% Kepuasan</span>
+                              <span className="text-emerald-400">+{boostedBoost}% Kepuasan</span>
                             </span>
                           ) : (
-                            <span className="bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 px-1.5 lg:px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black uppercase tracking-wider shadow-[0_0_8px_rgba(0,255,170,0.1)]">
+                            <span className="bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 px-1.5 lg:px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black uppercase tracking-wider">
                               +{baseBoost}% Kepuasan
                             </span>
                           )}
                           {isSport && olahragaBonusPercent > 0 && (
-                            <span className="bg-sky-500/10 text-sky-300 border border-sky-500/30 px-1.5 py-0.5 rounded-md text-[7px] lg:text-[8px] font-black uppercase tracking-wider shadow-[0_0_8px_rgba(14,165,233,0.2)]">
+                            <span className="bg-sky-500/10 text-sky-300 border border-sky-500/30 px-1.5 py-0.5 rounded-md text-[7px] lg:text-[8px] font-black uppercase tracking-wider">
                               +Kem. Olahraga ({olahragaBonusPercent.toFixed(0)}%)
                             </span>
                           )}
@@ -423,22 +409,22 @@ export default function NaikkanKepuasanModal({
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-center md:items-end gap-1 lg:gap-1.5 shrink-0 relative z-10">
+                    <div className="flex flex-col items-center md:items-end gap-1 lg:gap-1.5 shrink-0">
                       <div className="text-right">
                         <p className="text-[8px] lg:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider text-center md:text-right leading-none">
                           Biaya Alokasi
                         </p>
-                        <p className="text-xs lg:text-sm font-black text-[#00FFAA] mt-0.5 lg:mt-1 drop-shadow-[0_0_5px_rgba(0,255,170,0.3)]">
+                        <p className="text-xs lg:text-sm font-black text-[#00FFAA] mt-0.5 lg:mt-1">
                           {item.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
                         </p>
                       </div>
                       <button
                         onClick={() => handleInitiative(item.cost, boostedBoost, item.title, item.duration, item.id)}
                         disabled={isEventOngoing}
-                        className={`px-3.5 py-1.5 lg:px-4 lg:py-1.5 rounded-lg font-black text-[10px] lg:text-xs uppercase transition-all duration-300 ${
+                        className={`px-3.5 py-1.5 lg:px-4 lg:py-1.5 rounded-lg font-black text-[10px] lg:text-xs uppercase transition-all ${
                           isEventOngoing
                             ? "bg-[#0A1A1A] text-[#6B8A8A] border border-[#6B8A8A]/30 cursor-not-allowed opacity-60"
-                            : "bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] hover:bg-[#00FFAA] hover:shadow-[0_0_15px_rgba(0,255,170,0.5)] active:scale-95 cursor-pointer"
+                            : "bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] hover:brightness-110 active:scale-95 cursor-pointer"
                         }`}
                       >
                         {isEventOngoing ? "Sedang Berlangsung" : "Pilih Acara"}
@@ -459,11 +445,11 @@ export default function NaikkanKepuasanModal({
             {/* Header Modal */}
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] shrink-0 rounded-t-2xl">
               <div className="flex items-center gap-2.5 sm:gap-3">
-                <div className="p-1.5 sm:p-2 rounded-lg bg-[#00FFAA]/10 border border-[#00FFAA]/30 shadow-[0_0_10px_rgba(0,255,170,0.2)]">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-[#00FFAA]/10 border border-[#00FFAA]/30">
                   <Info className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                 </div>
                 <div>
-                  <h3 className="text-sm sm:text-base font-black text-[#00FFAA] uppercase tracking-wider leading-none drop-shadow-[0_0_5px_rgba(0,255,170,0.4)]">
+                  <h3 className="text-sm sm:text-base font-black text-[#00FFAA] uppercase tracking-wider leading-none">
                     Panduan Menu Kepuasan
                   </h3>
                   <p className="text-[10px] sm:text-xs text-[#6B8A8A] font-semibold mt-1">
@@ -473,33 +459,22 @@ export default function NaikkanKepuasanModal({
               </div>
               <button
                 onClick={() => setShowInfoModal(false)}
-                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] hover:shadow-[0_0_15px_rgba(0,255,170,0.3)] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
               >
                 <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            {/* Body Modal dengan Modern Scrollbar (Warna disesuaikan dengan background #0F2424) */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#0F2424] space-y-4
-              [&::-webkit-scrollbar]:w-2 
-              [&::-webkit-scrollbar-track]:bg-[#0F2424] 
-              [&::-webkit-scrollbar-track]:rounded-full 
-              [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/20
-              [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
-              [&::-webkit-scrollbar-thumb]:rounded-full 
-              [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0F2424]
-              [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)]
-              hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
-              [&::-webkit-scrollbar-button]:hidden
-            ">
+            {/* Body Modal */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#0F2424] custom-scrollbar space-y-4">
               {/* Tab 1: Statistik */}
-              <div className="p-4 sm:p-5 rounded-xl bg-[#0A1A1A] border border-sky-500/30 hover:border-sky-500/60 transition-colors duration-300 shadow-[0_0_15px_rgba(14,165,233,0.1)]">
+              <div className="p-4 sm:p-5 rounded-xl bg-[#0A1A1A] border border-sky-500/30">
                 <div className="flex items-center gap-2.5 mb-3">
                   <div className="p-1.5 sm:p-2 rounded-lg bg-sky-500/10 border border-sky-500/30">
                     <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-sky-400" />
                   </div>
-                  <h4 className="text-xs sm:text-sm font-black text-sky-300 uppercase tracking-widest drop-shadow-[0_0_5px_rgba(14,165,233,0.3)]">
+                  <h4 className="text-xs sm:text-sm font-black text-sky-300 uppercase tracking-widest">
                     Tab Statistik
                   </h4>
                 </div>
@@ -512,12 +487,12 @@ export default function NaikkanKepuasanModal({
               </div>
 
               {/* Tab 2: Naikkan Peringkat */}
-              <div className="p-4 sm:p-5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/50 hover:border-[#00FFAA] transition-colors duration-300 shadow-[0_0_15px_rgba(0,255,170,0.15)]">
+              <div className="p-4 sm:p-5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/50">
                 <div className="flex items-center gap-2.5 mb-3">
                   <div className="p-1.5 sm:p-2 rounded-lg bg-[#00FFAA]/10 border border-[#00FFAA]/30">
                     <PartyPopper className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
                   </div>
-                  <h4 className="text-xs sm:text-sm font-black text-[#00FFAA] uppercase tracking-widest drop-shadow-[0_0_5px_rgba(0,255,170,0.3)]">
+                  <h4 className="text-xs sm:text-sm font-black text-[#00FFAA] uppercase tracking-widest">
                     Tab Naikkan Peringkat
                   </h4>
                 </div>
@@ -532,7 +507,7 @@ export default function NaikkanKepuasanModal({
               </div>
 
               {/* Info Ekstra — Tips */}
-              <div className="p-3 sm:p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-2.5 hover:border-amber-500/50 transition-colors duration-300">
+              <div className="p-3 sm:p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-2.5">
                 <div className="p-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 shrink-0">
                   <Lightbulb className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-400" />
                 </div>
@@ -546,7 +521,7 @@ export default function NaikkanKepuasanModal({
             <div className="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] shrink-0">
               <button
                 onClick={() => setShowInfoModal(false)}
-                className="w-full py-2.5 sm:py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs sm:text-sm uppercase tracking-widest hover:bg-[#00FFAA]/80 hover:shadow-[0_0_20px_rgba(0,255,170,0.4)] active:scale-[0.98] transition-all cursor-pointer"
+                className="w-full py-2.5 sm:py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs sm:text-sm uppercase tracking-widest hover:bg-[#00FFAA]/80 transition-all cursor-pointer"
               >
                 Mengerti
               </button>
