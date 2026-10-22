@@ -2,11 +2,21 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { X, Smile, Coins, Sparkles, AlertCircle, CheckCircle2, Clock, Info, BarChart3, PartyPopper, Lightbulb } from "lucide-react";
+import {
+  X,
+  Smile,
+  Sparkles,
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  Info,
+  BarChart3,
+  PartyPopper,
+  Lightbulb,
+} from "lucide-react";
 import DanaTidakCukupModal from "./DanaTidakCukupModal";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import {
-  getDiplomasiAcaraBonusPercent,
   applyDiplomasiAcaraSatisfactionBonus,
   applyKementerianOlahragaSatisfactionBoost,
   getKementerianOlahragaEventSatisfactionBonusPercent,
@@ -36,17 +46,24 @@ export default function NaikkanKepuasanModal({
   setPresidentRating,
   currentDate,
 }: NaikkanKepuasanModalProps) {
-  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [feedback, setFeedback] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
   const [isDanaTidakCukupOpen, setIsDanaTidakCukupOpen] = useState(false);
   const [pendingCost, setPendingCost] = useState(0);
   const [pendingTitle, setPendingTitle] = useState("");
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
-  const [highlightedEventId, setHighlightedEventId] = useState<string | null>(null);
+  const [highlightedEventId, setHighlightedEventId] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     if (typeof window !== "undefined" && isOpen) {
-      const currentActive = localStorage.getItem("presiden_simulator_active_mission");
+      const currentActive = localStorage.getItem(
+        "presiden_simulator_active_mission"
+      );
       setActiveMissionId(currentActive);
 
       // Misi format: 'event_konser', 'event_festival', dll.
@@ -60,7 +77,9 @@ export default function NaikkanKepuasanModal({
       }
 
       const handleActiveUpdate = (e: any) => {
-        const newActive = e.detail?.cardId ?? localStorage.getItem("presiden_simulator_active_mission");
+        const newActive =
+          e.detail?.cardId ??
+          localStorage.getItem("presiden_simulator_active_mission");
         setActiveMissionId(newActive);
         if (newActive && newActive.startsWith("event_")) {
           setHighlightedEventId(newActive.replace("event_", ""));
@@ -71,7 +90,8 @@ export default function NaikkanKepuasanModal({
       };
 
       window.addEventListener("mission_active_updated", handleActiveUpdate);
-      return () => window.removeEventListener("mission_active_updated", handleActiveUpdate);
+      return () =>
+        window.removeEventListener("mission_active_updated", handleActiveUpdate);
     }
   }, [isOpen]);
 
@@ -82,12 +102,12 @@ export default function NaikkanKepuasanModal({
   const kepuasan = countryDetail?.kepuasan ?? 50.0;
 
   const addDays = (dateString: string, days: number): string => {
-    const [y, m, d] = dateString.split('-').map(Number);
+    const [y, m, d] = dateString.split("-").map(Number);
     const date = new Date(y, m - 1, d);
     date.setDate(date.getDate() + days);
     const yy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
     return `${yy}-${mm}-${dd}`;
   };
 
@@ -96,40 +116,110 @@ export default function NaikkanKepuasanModal({
       const d = currentDate instanceof Date ? currentDate : new Date(currentDate);
       if (!isNaN(d.getTime())) {
         const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
         return `${y}-${m}-${day}`;
       }
     }
     const now = new Date();
     const y = now.getFullYear();
-    const m = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
     return `${y}-${m}-${day}`;
   };
 
   const initiatives = [
-    { id: "konser", title: "Konser", cost: 25000, boost: 5, duration: 1, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-01.svg" },
-    { id: "festival", title: "Festival", cost: 50000, boost: 10, duration: 3, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-02.svg" },
-    { id: "karnaval", title: "Karnaval", cost: 150000, boost: 15, duration: 3, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-03.svg" },
-    { id: "piala_davis", title: "Piala Davis", cost: 400000, boost: 30, duration: 7, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-04.svg" },
-    { id: "piala_dunia_rugbi", title: "Piala Dunia Rugbi", cost: 500000, boost: 50, duration: 14, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-05.svg" },
-    { id: "olimpiade", title: "Olimpiade", cost: 1500000, boost: 75, duration: 40, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-06.svg" },
-    { id: "piala_dunia_fifa", title: "Piala Dunia FIFA", cost: 2500000, boost: 100, duration: 30, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-07.svg" },
-    { id: "balap_f1", title: "Balap F1", cost: 800000, boost: 40, duration: 3, image: "/images/game/population/satisfaction-events/satisfaction-event-asset-08.svg" },
+    {
+      id: "konser",
+      title: "Konser",
+      cost: 25000,
+      boost: 5,
+      duration: 1,
+      image:
+        "/images/game/population/satisfaction-events/satisfaction-event-asset-01.svg",
+    },
+    {
+      id: "festival",
+      title: "Festival",
+      cost: 50000,
+      boost: 10,
+      duration: 3,
+      image:
+        "/images/game/population/satisfaction-events/satisfaction-event-asset-02.svg",
+    },
+    {
+      id: "karnaval",
+      title: "Karnaval",
+      cost: 150000,
+      boost: 15,
+      duration: 3,
+      image:
+        "/images/game/population/satisfaction-events/satisfaction-event-asset-03.svg",
+    },
+    {
+      id: "piala_davis",
+      title: "Piala Davis",
+      cost: 400000,
+      boost: 30,
+      duration: 7,
+      image:
+        "/images/game/population/satisfaction-events/satisfaction-event-asset-04.svg",
+    },
+    {
+      id: "piala_dunia_rugbi",
+      title: "Piala Dunia Rugbi",
+      cost: 500000,
+      boost: 50,
+      duration: 14,
+      image:
+        "/images/game/population/satisfaction-events/satisfaction-event-asset-05.svg",
+    },
+    {
+      id: "olimpiade",
+      title: "Olimpiade",
+      cost: 1500000,
+      boost: 75,
+      duration: 40,
+      image:
+        "/images/game/population/satisfaction-events/satisfaction-event-asset-06.svg",
+    },
+    {
+      id: "piala_dunia_fifa",
+      title: "Piala Dunia FIFA",
+      cost: 2500000,
+      boost: 100,
+      duration: 30,
+      image:
+        "/images/game/population/satisfaction-events/satisfaction-event-asset-07.svg",
+    },
+    {
+      id: "balap_f1",
+      title: "Balap F1",
+      cost: 800000,
+      boost: 40,
+      duration: 3,
+      image:
+        "/images/game/population/satisfaction-events/satisfaction-event-asset-08.svg",
+    },
   ];
 
   const formatBadgeDate = (dateString: string) => {
-    if (!dateString) return '';
+    if (!dateString) return "";
     try {
-      const [y, m, d] = dateString.split('-').map(Number);
+      const [y, m, d] = dateString.split("-").map(Number);
       const date = new Date(y, m - 1, d);
       if (isNaN(date.getTime())) return dateString;
-      const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
-      const parts = new Intl.DateTimeFormat('id-ID', options).formatToParts(date);
-      const day = parts.find((p) => p.type === 'day')?.value || '';
-      const month = parts.find((p) => p.type === 'month')?.value || '';
-      const year = parts.find((p) => p.type === 'year')?.value || '';
+      const options: Intl.DateTimeFormatOptions = {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      };
+      const parts = new Intl.DateTimeFormat("id-ID", options).formatToParts(
+        date
+      );
+      const day = parts.find((p) => p.type === "day")?.value || "";
+      const month = parts.find((p) => p.type === "month")?.value || "";
+      const year = parts.find((p) => p.type === "year")?.value || "";
       return `${day} ${month}, ${year}`;
     } catch {
       return dateString;
@@ -142,8 +232,8 @@ export default function NaikkanKepuasanModal({
     const safeDateString = getSafeDateString();
     let now: Date;
     try {
-      now = new Date(safeDateString + 'T00:00:00');
-      if (isNaN(now.getTime())) throw new Error('Invalid date');
+      now = new Date(safeDateString + "T00:00:00");
+      if (isNaN(now.getTime())) throw new Error("Invalid date");
     } catch {
       now = new Date();
     }
@@ -158,8 +248,8 @@ export default function NaikkanKepuasanModal({
       if (c.type !== "event") return false;
       let endDate: Date;
       try {
-        endDate = new Date(c.endDate + 'T00:00:00');
-        if (isNaN(endDate.getTime())) throw new Error('Invalid endDate');
+        endDate = new Date(c.endDate + "T00:00:00");
+        if (isNaN(endDate.getTime())) throw new Error("Invalid endDate");
       } catch {
         return false;
       }
@@ -169,13 +259,18 @@ export default function NaikkanKepuasanModal({
     if (completedEvents.length > 0) {
       completedEvents.forEach((c) => {
         const boost = Number(c.boost) || 0;
-        newDetail.kepuasan = Math.min(100, parseFloat(((newDetail.kepuasan ?? 50) + boost).toFixed(1)));
+        newDetail.kepuasan = Math.min(
+          100,
+          parseFloat(((newDetail.kepuasan ?? 50) + boost).toFixed(1))
+        );
         const ratingBoost = boost;
         newPresidentRating = Math.min(100, newPresidentRating + ratingBoost);
       });
 
       const completedIds = completedEvents.map((c) => c.id);
-      newConstructions = newConstructions.filter((c) => !completedIds.includes(c.id));
+      newConstructions = newConstructions.filter(
+        (c) => !completedIds.includes(c.id)
+      );
       newDetail.ongoingConstructions = newConstructions;
       updated = true;
     }
@@ -192,7 +287,13 @@ export default function NaikkanKepuasanModal({
     checkCompletion();
   }, [currentDate, isOpen, countryDetail]);
 
-  const handleInitiative = (cost: number, boost: number, title: string, duration: number, itemId: string) => {
+  const handleInitiative = (
+    cost: number,
+    boost: number,
+    title: string,
+    duration: number,
+    itemId: string
+  ) => {
     if (anggaran < cost) {
       setPendingCost(cost);
       setPendingTitle(title);
@@ -228,315 +329,396 @@ export default function NaikkanKepuasanModal({
     setCountryDetail(updatedDetail);
 
     // Tandai penyelesaian misi jika pemain sedang menjalankan misi event / kepuasan
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
-        const activeMission = localStorage.getItem('presiden_simulator_active_mission');
-        const rawList = localStorage.getItem('presiden_simulator_claimable_missions');
+        const activeMission = localStorage.getItem(
+          "presiden_simulator_active_mission"
+        );
+        const rawList = localStorage.getItem(
+          "presiden_simulator_claimable_missions"
+        );
         const list: string[] = rawList ? JSON.parse(rawList) : [];
         const targetMissionId = activeMission || `event_${itemId}`;
         if (targetMissionId && !list.includes(targetMissionId)) {
           list.push(targetMissionId);
-          localStorage.setItem('presiden_simulator_claimable_missions', JSON.stringify(list));
-          window.dispatchEvent(new CustomEvent('mission_claimable_updated', { detail: { cardId: targetMissionId, claimableList: list } }));
+          localStorage.setItem(
+            "presiden_simulator_claimable_missions",
+            JSON.stringify(list)
+          );
+          window.dispatchEvent(
+            new CustomEvent("mission_claimable_updated", {
+              detail: { cardId: targetMissionId, claimableList: list },
+            })
+          );
         }
       } catch {}
     }
 
     setFeedback({
       type: "success",
-      message: `Presiden meluncurkan program ${title}! Anggaran berkurang -${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO. Acara berlangsung selama ${duration} hari dan akan selesai serta meningkatkan kepuasan pada ${formatBadgeDate(endDateStr)}.`,
+      message: `Presiden meluncurkan program ${title}! Anggaran berkurang -${cost.toLocaleString(
+        "id-ID",
+        { maximumFractionDigits: 2 }
+      )} NEO. Acara berlangsung selama ${duration} hari dan akan selesai serta meningkatkan kepuasan pada ${formatBadgeDate(
+        endDateStr
+      )}.`,
     });
     setTimeout(() => setFeedback(null), 6000);
   };
 
   return (
     <>
-      <NotebookModalWrapper onClose={onClose} maxWidthClass="max-w-4xl lg:max-w-[1000px] xl:max-w-[1100px] 2xl:max-w-6xl">
-        <div className="flex flex-col h-full overflow-hidden">
-        {/* Header */}
-        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
-          <div className="flex items-center gap-3 sm:gap-6 flex-wrap">
-            <div className="flex items-center gap-2">
-              <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
-                <Smile className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
-              </div>
-              <div>
-                <h2 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Kepuasan Rakyat</h2>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-1.5">
-              <div className="flex items-center bg-[#0A1A1A] p-0.5 sm:p-1 rounded-lg border border-[#00FFAA]/30">
-                <button
-                  onClick={() => setActiveMenu?.("Dashboard:Kepuasan")}
-                  className="px-3 py-1 rounded-md text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all text-[#6B8A8A] hover:text-[#E0E0E0] cursor-pointer"
-                >
-                  Statistik
-                </button>
-                <button
-                  className="px-3 py-1 rounded-md text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all bg-[#00FFAA] text-[#0A1A1A] cursor-pointer"
-                >
-                  Naikkan Peringkat
-                </button>
-              </div>
-
-              <button
-                onClick={() => setShowInfoModal(true)}
-                title="Lihat penjelasan setiap tab"
-                className="p-1.5 sm:p-2 rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer flex items-center justify-center shrink-0"
-              >
-                <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              </button>
-            </div>
-          </div>
-
-          <button onClick={onClose} className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm">
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        {/* Treasury Bar */}
-        <div className="px-4 sm:px-6 py-2 bg-[#0A1A1A] border-b border-[#00FFAA]/20 flex flex-wrap items-center justify-between gap-2 relative z-10 shrink-0">
-          <div className="flex items-center gap-2">
-            <Smile className="h-4 w-4 text-[#00FFAA] shrink-0" />
-            <span className="text-[10px] sm:text-xs font-bold text-[#6B8A8A] uppercase tracking-wide">
-              Kepuasan Sipil:
-            </span>
-            <span className="text-xs sm:text-sm font-black text-[#00FFAA]">
-              {Math.round(kepuasan)}%
-            </span>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-5 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
-          <div className="space-y-4 animate-in fade-in duration-500">
-            {feedback && (
-              <div
-                className={`p-4 rounded-xl border flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300 ${
-                  feedback.type === "success"
-                    ? "bg-[#00FFAA]/10 border-[#00FFAA]/30 text-[#00FFAA]"
-                    : "bg-rose-500/10 border-rose-500/30 text-rose-400"
-                }`}
-              >
-                {feedback.type === "success" ? (
-                  <CheckCircle2 className="h-5 w-5 shrink-0 text-[#00FFAA]" />
-                ) : (
-                  <AlertCircle className="h-5 w-5 shrink-0 text-rose-400" />
-                )}
-                <p className="text-xs font-bold">{feedback.message}</p>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 gap-2.5 lg:gap-3">
-              {initiatives.map((item) => {
-                const ongoingEvents = (countryDetail?.ongoingConstructions || []).filter(
-                  (c: any) => c.type === "event" && c.buildingKey === item.id
-                );
-                const isEventOngoing = ongoingEvents.length > 0;
-                const lastEndDate = isEventOngoing ? ongoingEvents[ongoingEvents.length - 1].endDate : null;
-
-                const baseBoost = item.boost;
-                // 1. Terapkan bonus Diplomasi Acara Nasional (efek_acara)
-                const afterResearchBoost = applyDiplomasiAcaraSatisfactionBonus(baseBoost, countryDetail);
-                // 2. Terapkan bonus Kementerian Olahraga khusus acara olahraga saja
-                const boostedBoost = applyKementerianOlahragaSatisfactionBoost(afterResearchBoost, item.id, countryDetail);
-                const hasAcaraBonus = boostedBoost > baseBoost;
-                const isSport = isSportEvent(item.id);
-                const olahragaBonusPercent = getKementerianOlahragaEventSatisfactionBonusPercent(countryDetail);
-
-                const isHighlighted = highlightedEventId === item.id;
-
-                return (
-                  <div
-                    key={item.id}
-                    id={`event-card-${item.id}`}
-                    className={`relative bg-[#0F2424] p-2.5 lg:p-3 rounded-xl flex flex-col md:flex-row items-center justify-between gap-2.5 lg:gap-3 transition-all duration-500 ${
-                      isHighlighted
-                        ? "border-2 border-[#00FFAA] shadow-[0_0_25px_rgba(0,255,170,0.6)] ring-2 ring-[#00FFAA]/50 bg-[#122A26] scale-[1.01]"
-                        : "border border-[#00FFAA]/20 hover:border-[#00FFAA]/50"
-                    }`}
-                  >
-                    {isHighlighted && (
-                      <div className="absolute top-0 left-3 bg-[#00FFAA] text-[#0A1A1A] px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest rounded-b-md shadow-sm flex items-center gap-1 animate-pulse z-20">
-                        <Sparkles className="h-2.5 w-2.5" />
-                        Target Misi Aktif
-                      </div>
-                    )}
-
-                    {isEventOngoing && (
-                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-[#00FFAA] text-[9px] font-bold px-2 py-0.5 border border-[#00FFAA]/40 rounded-sm tracking-wider whitespace-nowrap uppercase">
-                        Selesai: {formatBadgeDate(lastEndDate)}
-                      </div>
-                    )}
-
-                    <div className="flex items-start gap-2 lg:gap-2.5">
-                      <div className="shrink-0">
-                        <Image
-                          src={item.image}
-                          alt=""
-                          width={56}
-                          height={56}
-                          className="h-12 w-12 object-contain lg:h-14 lg:w-14"
-                        />
-                      </div>
-                      <div className="space-y-0.5 lg:space-y-1">
-                        <div className="flex items-center gap-2 lg:gap-3 flex-wrap">
-                          <h4 className="text-xs lg:text-sm 2xl:text-md font-black text-[#E0E0E0] uppercase tracking-wide leading-none">
-                            {item.title}
-                          </h4>
-                          {hasAcaraBonus ? (
-                            <span className="bg-[#00FFAA]/10 border border-[#00FFAA]/30 px-1.5 lg:px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5">
-                              <span className="text-rose-400 line-through">+{baseBoost}%</span>
-                              <span className="text-emerald-400">+{boostedBoost}% Kepuasan</span>
-                            </span>
-                          ) : (
-                            <span className="bg-[#00FFAA]/10 text-[#00FFAA] border border-[#00FFAA]/30 px-1.5 lg:px-2 py-0.5 rounded-full text-[8px] lg:text-[9px] font-black uppercase tracking-wider">
-                              +{baseBoost}% Kepuasan
-                            </span>
-                          )}
-                          {isSport && olahragaBonusPercent > 0 && (
-                            <span className="bg-sky-500/10 text-sky-300 border border-sky-500/30 px-1.5 py-0.5 rounded-md text-[7px] lg:text-[8px] font-black uppercase tracking-wider">
-                              +Kem. Olahraga ({olahragaBonusPercent.toFixed(0)}%)
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1.5 text-[9px] lg:text-[10px] text-[#6B8A8A] font-medium mt-0.5 lg:mt-1">
-                          <Clock className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-[#00FFAA]" />
-                          <span>Durasi: {item.duration} hari</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col items-center md:items-end gap-1 lg:gap-1.5 shrink-0">
-                      <div className="text-right">
-                        <p className="text-[8px] lg:text-[10px] text-[#6B8A8A] font-black uppercase tracking-wider text-center md:text-right leading-none">
-                          Biaya Alokasi
-                        </p>
-                        <p className="text-xs lg:text-sm font-black text-[#00FFAA] mt-0.5 lg:mt-1">
-                          {item.cost.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => handleInitiative(item.cost, boostedBoost, item.title, item.duration, item.id)}
-                        disabled={isEventOngoing}
-                        className={`px-3.5 py-1.5 lg:px-4 lg:py-1.5 rounded-lg font-black text-[10px] lg:text-xs uppercase transition-all ${
-                          isEventOngoing
-                            ? "bg-[#0A1A1A] text-[#6B8A8A] border border-[#6B8A8A]/30 cursor-not-allowed opacity-60"
-                            : "bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] hover:brightness-110 active:scale-95 cursor-pointer"
-                        }`}
-                      >
-                        {isEventOngoing ? "Sedang Berlangsung" : "Pilih Acara"}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-    </NotebookModalWrapper>
-
-      {/* MODAL INFO — tanpa backdrop */}
-      {showInfoModal && (
-        <NotebookModalWrapper onClose={() => setShowInfoModal(false)} zIndexClass="z-[300]" maxWidthClass="max-w-4xl lg:max-w-[1000px] xl:max-w-[1100px] 2xl:max-w-6xl">
-            {/* Header Modal */}
-            <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] shrink-0 rounded-t-2xl">
-              <div className="flex items-center gap-2.5 sm:gap-3">
-                <div className="p-1.5 sm:p-2 rounded-lg bg-[#00FFAA]/10 border border-[#00FFAA]/30">
-                  <Info className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+      <NotebookModalWrapper onClose={onClose}>
+        <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] shadow-[0_0_30px_rgba(0,255,170,0.15)]">
+          {/* ============ HEADER — responsif, Tutup SELALU sejajar dengan judul ============ */}
+          <div className="relative z-10 flex shrink-0 items-start justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:items-center sm:px-6 sm:py-3">
+            {/* KIRI: judul + tabs (stacked di mobile, sejajar di desktop) */}
+            <div className="flex min-w-0 flex-1 flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-6">
+              {/* Judul — selalu di baris pertama, sejajar dengan Tutup */}
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="shrink-0 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] p-1 shadow-[0_0_10px_rgba(0,255,170,0.2)] sm:p-1.5">
+                  <Smile className="h-4 w-4 text-[#00FFAA] sm:h-5 sm:w-5" />
                 </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-black text-[#00FFAA] uppercase tracking-wider leading-none">
+                <h2 className="text-base font-bold uppercase leading-none tracking-tight text-[#00FFAA] drop-shadow-[0_0_8px_rgba(0,255,170,0.5)] sm:text-xl">
+                  Kepuasan Rakyat
+                </h2>
+              </div>
+
+              {/* Tabs toggle + Info */}
+              <div className="flex items-center gap-1.5">
+                <div className="flex items-center rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] p-0.5 sm:p-1">
+                  <button
+                    onClick={() => setActiveMenu?.("Dashboard:Kepuasan")}
+                    className="cursor-pointer rounded-md px-3 py-1 text-[10px] font-black uppercase tracking-wider text-[#6B8A8A] transition-all hover:text-[#E0E0E0] sm:text-xs"
+                  >
+                    Statistik
+                  </button>
+                  <button className="cursor-pointer rounded-md bg-[#00FFAA] px-3 py-1 text-[10px] font-black uppercase tracking-wider text-[#0A1A1A] transition-all sm:text-xs">
+                    Naikkan Peringkat
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => setShowInfoModal(true)}
+                  title="Lihat penjelasan setiap tab"
+                  className="flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] p-1.5 text-[#6B8A8A] transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] sm:p-2"
+                >
+                  <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* KANAN: Tutup — selalu di baris pertama, sejajar judul */}
+            <button
+              onClick={onClose}
+              className="flex shrink-0 cursor-pointer items-center gap-1 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 text-xs font-bold uppercase text-[#6B8A8A] shadow-sm transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] hover:shadow-[0_0_15px_rgba(0,255,170,0.3)] lg:p-2"
+            >
+              <span className="pl-1 text-[10px] font-semibold uppercase tracking-widest lg:text-xs">
+                Tutup
+              </span>
+              <X className="h-4 w-4 shrink-0" />
+            </button>
+          </div>
+
+          {/* ============ TREASURY BAR ============ */}
+          <div className="relative z-10 flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2 sm:px-6">
+            <div className="flex items-center gap-2">
+              <Smile className="h-4 w-4 shrink-0 text-[#00FFAA]" />
+              <span className="text-[10px] font-bold uppercase tracking-wide text-[#6B8A8A] sm:text-xs">
+                Kepuasan Sipil:
+              </span>
+              <span className="text-xs font-black text-[#00FFAA] sm:text-sm">
+                {Math.round(kepuasan)}%
+              </span>
+            </div>
+          </div>
+
+          {/* ============ CONTENT ============ */}
+          <div className="custom-scrollbar relative z-10 flex-1 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:p-5">
+            <div className="animate-in fade-in space-y-4 duration-500">
+              {feedback && (
+                <div
+                  className={`animate-in fade-in slide-in-from-top-4 flex items-center gap-3 rounded-xl border p-4 duration-300 ${
+                    feedback.type === "success"
+                      ? "border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA]"
+                      : "border-rose-500/30 bg-rose-500/10 text-rose-400"
+                  }`}
+                >
+                  {feedback.type === "success" ? (
+                    <CheckCircle2 className="h-5 w-5 shrink-0 text-[#00FFAA]" />
+                  ) : (
+                    <AlertCircle className="h-5 w-5 shrink-0 text-rose-400" />
+                  )}
+                  <p className="text-xs font-bold">{feedback.message}</p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 gap-2.5 lg:gap-3">
+                {initiatives.map((item) => {
+                  const ongoingEvents = (
+                    countryDetail?.ongoingConstructions || []
+                  ).filter(
+                    (c: any) =>
+                      c.type === "event" && c.buildingKey === item.id
+                  );
+                  const isEventOngoing = ongoingEvents.length > 0;
+                  const lastEndDate = isEventOngoing
+                    ? ongoingEvents[ongoingEvents.length - 1].endDate
+                    : null;
+
+                  const baseBoost = item.boost;
+                  const afterResearchBoost =
+                    applyDiplomasiAcaraSatisfactionBonus(
+                      baseBoost,
+                      countryDetail
+                    );
+                  const boostedBoost =
+                    applyKementerianOlahragaSatisfactionBoost(
+                      afterResearchBoost,
+                      item.id,
+                      countryDetail
+                    );
+                  const hasAcaraBonus = boostedBoost > baseBoost;
+                  const isSport = isSportEvent(item.id);
+                  const olahragaBonusPercent =
+                    getKementerianOlahragaEventSatisfactionBonusPercent(
+                      countryDetail
+                    );
+
+                  const isHighlighted = highlightedEventId === item.id;
+
+                  return (
+                    <div
+                      key={item.id}
+                      id={`event-card-${item.id}`}
+                      className={`relative flex flex-col items-center justify-between gap-2.5 rounded-xl bg-[#0F2424] p-2.5 transition-all duration-500 md:flex-row lg:gap-3 lg:p-3 ${
+                        isHighlighted
+                          ? "scale-[1.01] border-2 border-[#00FFAA] bg-[#122A26] shadow-[0_0_25px_rgba(0,255,170,0.6)] ring-2 ring-[#00FFAA]/50"
+                          : "border border-[#00FFAA]/20 hover:border-[#00FFAA]/50"
+                      }`}
+                    >
+                      {isHighlighted && (
+                        <div className="absolute left-3 top-0 z-20 flex animate-pulse items-center gap-1 rounded-b-md bg-[#00FFAA] px-2.5 py-0.5 text-[8px] font-black uppercase tracking-widest text-[#0A1A1A] shadow-sm">
+                          <Sparkles className="h-2.5 w-2.5" />
+                          Target Misi Aktif
+                        </div>
+                      )}
+
+                      {isEventOngoing && (
+                        <div className="absolute -top-3.5 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-sm border border-[#00FFAA]/40 bg-[#0A1A1A] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#00FFAA]">
+                          Selesai: {formatBadgeDate(lastEndDate)}
+                        </div>
+                      )}
+
+                      <div className="flex items-start gap-2 lg:gap-2.5">
+                        <div className="shrink-0">
+                          <Image
+                            src={item.image}
+                            alt=""
+                            width={56}
+                            height={56}
+                            className="h-12 w-12 object-contain lg:h-14 lg:w-14"
+                          />
+                        </div>
+                        <div className="space-y-0.5 lg:space-y-1">
+                          <div className="flex flex-wrap items-center gap-2 lg:gap-3">
+                            <h4 className="text-xs font-black uppercase leading-none tracking-wide text-[#E0E0E0] lg:text-sm 2xl:text-base">
+                              {item.title}
+                            </h4>
+                            {hasAcaraBonus ? (
+                              <span className="flex items-center gap-1.5 rounded-full border border-[#00FFAA]/30 bg-[#00FFAA]/10 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider lg:px-2 lg:text-[9px]">
+                                <span className="text-rose-400 line-through">
+                                  +{baseBoost}%
+                                </span>
+                                <span className="text-emerald-400">
+                                  +{boostedBoost}% Kepuasan
+                                </span>
+                              </span>
+                            ) : (
+                              <span className="rounded-full border border-[#00FFAA]/30 bg-[#00FFAA]/10 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider text-[#00FFAA] lg:px-2 lg:text-[9px]">
+                                +{baseBoost}% Kepuasan
+                              </span>
+                            )}
+                            {isSport && olahragaBonusPercent > 0 && (
+                              <span className="rounded-md border border-sky-500/30 bg-sky-500/10 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-wider text-sky-300 lg:text-[8px]">
+                                +Kem. Olahraga (
+                                {olahragaBonusPercent.toFixed(0)}%)
+                              </span>
+                            )}
+                          </div>
+                          <div className="mt-0.5 flex items-center gap-1.5 text-[9px] font-medium text-[#6B8A8A] lg:mt-1 lg:text-[10px]">
+                            <Clock className="h-3 w-3 text-[#00FFAA] lg:h-3.5 lg:w-3.5" />
+                            <span>Durasi: {item.duration} hari</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex shrink-0 flex-col items-center gap-1 md:items-end lg:gap-1.5">
+                        <div className="text-right">
+                          <p className="text-center text-[8px] font-black uppercase leading-none tracking-wider text-[#6B8A8A] md:text-right lg:text-[10px]">
+                            Biaya Alokasi
+                          </p>
+                          <p className="mt-0.5 text-xs font-black text-[#00FFAA] lg:mt-1 lg:text-sm">
+                            {item.cost.toLocaleString("id-ID", {
+                              maximumFractionDigits: 2,
+                            })}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() =>
+                            handleInitiative(
+                              item.cost,
+                              boostedBoost,
+                              item.title,
+                              item.duration,
+                              item.id
+                            )
+                          }
+                          disabled={isEventOngoing}
+                          className={`rounded-lg px-3.5 py-1.5 text-[10px] font-black uppercase transition-all lg:px-4 lg:py-1.5 lg:text-xs ${
+                            isEventOngoing
+                              ? "cursor-not-allowed border border-[#6B8A8A]/30 bg-[#0A1A1A] text-[#6B8A8A] opacity-60"
+                              : "cursor-pointer border border-[#00FFAA] bg-[#00FFAA] text-[#0A1A1A] hover:brightness-110 active:scale-95"
+                          }`}
+                        >
+                          {isEventOngoing ? "Sedang Berlangsung" : "Pilih Acara"}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </NotebookModalWrapper>
+
+      {/* ============ MODAL INFO ============ */}
+      {showInfoModal && (
+        <NotebookModalWrapper
+          onClose={() => setShowInfoModal(false)}
+          zIndexClass="z-[300]"
+        >
+          <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] shadow-[0_0_30px_rgba(0,255,170,0.15)]">
+            {/* Header Modal Info — struktur sama, Tutup sejajar judul */}
+            <div className="relative z-10 flex shrink-0 items-start justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:items-center sm:px-6 sm:py-3">
+              <div className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3">
+                <div className="shrink-0 rounded-lg border border-[#00FFAA]/30 bg-[#00FFAA]/10 p-1.5 sm:p-2">
+                  <Info className="h-4 w-4 text-[#00FFAA] sm:h-5 sm:w-5" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-sm font-black uppercase leading-none tracking-wider text-[#00FFAA] sm:text-base">
                     Panduan Menu Kepuasan
                   </h3>
-                  <p className="text-[10px] sm:text-xs text-[#6B8A8A] font-semibold mt-1">
+                  <p className="mt-1 text-[10px] font-semibold text-[#6B8A8A] sm:text-xs">
                     Penjelasan setiap tab di atas
                   </p>
                 </div>
               </div>
+
               <button
                 onClick={() => setShowInfoModal(false)}
-                className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+                className="flex shrink-0 cursor-pointer items-center gap-1 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 text-xs font-bold uppercase text-[#6B8A8A] shadow-sm transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] hover:shadow-[0_0_15px_rgba(0,255,170,0.3)] lg:p-2"
               >
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
+                <span className="pl-1 text-[10px] font-semibold uppercase tracking-widest lg:text-xs">
+                  Tutup
+                </span>
+                <X className="h-4 w-4 shrink-0" />
               </button>
             </div>
 
-            {/* Body Modal */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#0F2424] custom-scrollbar space-y-4">
+            {/* Body Modal Info */}
+            <div className="custom-scrollbar flex-1 space-y-4 overflow-y-auto bg-[#0F2424] p-4 sm:p-6 lg:p-8">
               {/* Tab 1: Statistik */}
-              <div className="p-4 sm:p-5 rounded-xl bg-[#0A1A1A] border border-sky-500/30">
-                <div className="flex items-center gap-2.5 mb-3">
-                  <div className="p-1.5 sm:p-2 rounded-lg bg-sky-500/10 border border-sky-500/30">
-                    <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-sky-400" />
+              <div className="rounded-xl border border-sky-500/30 bg-[#0A1A1A] p-4 sm:p-5">
+                <div className="mb-3 flex items-center gap-2.5">
+                  <div className="rounded-lg border border-sky-500/30 bg-sky-500/10 p-1.5 sm:p-2">
+                    <BarChart3 className="h-4 w-4 text-sky-400 sm:h-5 sm:w-5" />
                   </div>
-                  <h4 className="text-xs sm:text-sm font-black text-sky-300 uppercase tracking-widest">
+                  <h4 className="text-xs font-black uppercase tracking-widest text-sky-300 sm:text-sm">
                     Tab Statistik
                   </h4>
                 </div>
-                <p className="text-[11px] sm:text-xs text-[#E0E0E0] font-semibold leading-relaxed">
-                  Menampilkan <strong className="text-sky-300">dashboard lengkap</strong> kondisi kepuasan rakyat saat ini. Berisi grafik historis, faktor-faktor yang mempengaruhi kepuasan (ekonomi, keamanan, layanan publik), serta proyeksi tren beberapa hari ke depan.
+                <p className="text-[11px] font-semibold leading-relaxed text-[#E0E0E0] sm:text-xs">
+                  Menampilkan{" "}
+                  <strong className="text-sky-300">dashboard lengkap</strong>{" "}
+                  kondisi kepuasan rakyat saat ini. Berisi grafik historis,
+                  faktor-faktor yang mempengaruhi kepuasan (ekonomi, keamanan,
+                  layanan publik), serta proyeksi tren beberapa hari ke depan.
                 </p>
-                <p className="text-[10px] sm:text-[11px] text-[#6B8A8A] font-medium mt-2.5 italic">
-                  Cocok untuk: analisis mendalam sebelum mengambil keputusan strategis.
+                <p className="mt-2.5 text-[10px] font-medium italic text-[#6B8A8A] sm:text-[11px]">
+                  Cocok untuk: analisis mendalam sebelum mengambil keputusan
+                  strategis.
                 </p>
               </div>
 
               {/* Tab 2: Naikkan Peringkat */}
-              <div className="p-4 sm:p-5 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/50">
-                <div className="flex items-center gap-2.5 mb-3">
-                  <div className="p-1.5 sm:p-2 rounded-lg bg-[#00FFAA]/10 border border-[#00FFAA]/30">
-                    <PartyPopper className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
+              <div className="rounded-xl border border-[#00FFAA]/50 bg-[#0A1A1A] p-4 sm:p-5">
+                <div className="mb-3 flex items-center gap-2.5">
+                  <div className="rounded-lg border border-[#00FFAA]/30 bg-[#00FFAA]/10 p-1.5 sm:p-2">
+                    <PartyPopper className="h-4 w-4 text-[#00FFAA] sm:h-5 sm:w-5" />
                   </div>
-                  <h4 className="text-xs sm:text-sm font-black text-[#00FFAA] uppercase tracking-widest">
+                  <h4 className="text-xs font-black uppercase tracking-widest text-[#00FFAA] sm:text-sm">
                     Tab Naikkan Peringkat
                   </h4>
                 </div>
-                <p className="text-[11px] sm:text-xs text-[#E0E0E0] font-semibold leading-relaxed">
-                  Menampilkan daftar <strong className="text-[#00FFAA]">acara & program publik</strong> yang bisa presiden luncurkan untuk meningkatkan kepuasan rakyat. Setiap acara punya biaya, durasi, dan boost kepuasan tersendiri.
+                <p className="text-[11px] font-semibold leading-relaxed text-[#E0E0E0] sm:text-xs">
+                  Menampilkan daftar{" "}
+                  <strong className="text-[#00FFAA]">
+                    acara & program publik
+                  </strong>{" "}
+                  yang bisa presiden luncurkan untuk meningkatkan kepuasan
+                  rakyat. Setiap acara punya biaya, durasi, dan boost kepuasan
+                  tersendiri.
                 </p>
-                <ul className="text-[10px] sm:text-[11px] text-[#6B8A8A] font-medium mt-2.5 space-y-1.5 list-disc list-inside">
-                  <li>Acara berjalan sesuai durasi, boost kepuasan berlaku setelah selesai.</li>
+                <ul className="mt-2.5 list-inside list-disc space-y-1.5 text-[10px] font-medium text-[#6B8A8A] sm:text-[11px]">
+                  <li>
+                    Acara berjalan sesuai durasi, boost kepuasan berlaku setelah
+                    selesai.
+                  </li>
                   <li>Satu acara hanya bisa aktif satu kali dalam satu waktu.</li>
-                  <li>Bonus riset <strong className="text-[#00FFAA]">Diplomasi Acara</strong> dapat meningkatkan boost secara signifikan.</li>
+                  <li>
+                    Bonus riset{" "}
+                    <strong className="text-[#00FFAA]">Diplomasi Acara</strong>{" "}
+                    dapat meningkatkan boost secara signifikan.
+                  </li>
                 </ul>
               </div>
 
-              {/* Info Ekstra — Tips */}
-              <div className="p-3 sm:p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-2.5">
-                <div className="p-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 shrink-0">
-                  <Lightbulb className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-400" />
+              {/* Tips */}
+              <div className="flex items-start gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 sm:p-4">
+                <div className="shrink-0 rounded-lg border border-amber-500/40 bg-amber-500/20 p-1.5">
+                  <Lightbulb className="h-3.5 w-3.5 text-amber-400 sm:h-4 sm:w-4" />
                 </div>
-                <p className="text-[10px] sm:text-[11px] text-amber-200 font-semibold leading-relaxed">
-                  <strong>Tips:</strong> Cek tab <strong>Statistik</strong> dulu untuk melihat kondisi kepuasan saat ini, lalu pilih acara yang paling cocok di tab <strong>Naikkan Peringkat</strong>.
+                <p className="text-[10px] font-semibold leading-relaxed text-amber-200 sm:text-[11px]">
+                  <strong>Tips:</strong> Cek tab <strong>Statistik</strong> dulu
+                  untuk melihat kondisi kepuasan saat ini, lalu pilih acara yang
+                  paling cocok di tab <strong>Naikkan Peringkat</strong>.
                 </p>
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] shrink-0">
+            {/* Footer Modal Info */}
+            <div className="shrink-0 border-t border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
               <button
                 onClick={() => setShowInfoModal(false)}
-                className="w-full py-2.5 sm:py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs sm:text-sm uppercase tracking-widest hover:bg-[#00FFAA]/80 transition-all cursor-pointer"
+                className="w-full cursor-pointer rounded-xl bg-[#00FFAA] py-2.5 text-xs font-black uppercase tracking-widest text-[#0A1A1A] transition-all hover:bg-[#00FFAA]/80 sm:py-3 sm:text-sm"
               >
                 Mengerti
               </button>
             </div>
+          </div>
         </NotebookModalWrapper>
       )}
 
-        {/* Modal Dana Tidak Cukup */}
-        <DanaTidakCukupModal
-          isOpen={isDanaTidakCukupOpen}
-          onClose={() => setIsDanaTidakCukupOpen(false)}
-          requiredCost={pendingCost}
-          currentBudget={anggaran}
-          actionName={`Sponsori ${pendingTitle}`}
-        />
+      {/* ============ Modal Dana Tidak Cukup ============ */}
+      <DanaTidakCukupModal
+        isOpen={isDanaTidakCukupOpen}
+        onClose={() => setIsDanaTidakCukupOpen(false)}
+        requiredCost={pendingCost}
+        currentBudget={anggaran}
+        actionName={`Sponsori ${pendingTitle}`}
+      />
     </>
   );
 }

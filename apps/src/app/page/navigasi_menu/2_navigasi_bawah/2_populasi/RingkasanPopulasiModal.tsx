@@ -568,9 +568,6 @@ export default function RingkasanPopulasiModal({
                   </h3>
                 </div>
                 <div className="text-right">
-                  <p className="text-[8px] lg:text-[9px] font-black uppercase tracking-wider text-[#6B8A8A]">
-                    Total modifier kebijakan / bulan
-                  </p>
                   <p className={`text-lg lg:text-xl font-black ${policyImpactColor} ${totalPolicyMonthlyModifier >= 0 ? 'drop-shadow-[0_0_5px_rgba(0,255,170,0.4)]' : 'drop-shadow-[0_0_5px_rgba(244,63,94,0.4)]'}`}>
                     {formatModifier(totalPolicyMonthlyModifier)}
                   </p>
