@@ -166,8 +166,19 @@ export default function StatistikKepuasanModal({
           </button>
         </div>
 
-        {/* Content */}
-        <div className="custom-scrollbar relative z-10 flex-1 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:p-5">
+        {/* Content Area: HANYA MENGGANTI custom-scrollbar DENGAN TAILWIND SCROLLBAR */}
+        <div className="relative z-10 flex-1 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:p-5
+          [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
+          [&::-webkit-scrollbar-track]:bg-[#0A1A1A] 
+          [&::-webkit-scrollbar-track]:rounded-full 
+          [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/20
+          [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
+          [&::-webkit-scrollbar-thumb]:rounded-full 
+          [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A]
+          [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)]
+          hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
+          [&::-webkit-scrollbar-button]:hidden
+        ">
           <div className="animate-in fade-in space-y-4 duration-300 sm:space-y-5">
             {/* Kartu skor umum */}
             <div className="flex flex-row items-center justify-between gap-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-2.5 lg:gap-3 lg:p-3 2xl:p-4">

@@ -370,12 +370,14 @@ export default function NaikkanKepuasanModal({
     <>
       <NotebookModalWrapper onClose={onClose}>
         <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] shadow-[0_0_30px_rgba(0,255,170,0.15)]">
-          {/* ============ HEADER — responsif, Tutup SELALU sejajar dengan judul ============ */}
-          <div className="relative z-10 flex shrink-0 items-start justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:items-center sm:px-6 sm:py-3">
-            {/* KIRI: judul + tabs (stacked di mobile, sejajar di desktop) */}
-            <div className="flex min-w-0 flex-1 flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-6">
-              {/* Judul — selalu di baris pertama, sejajar dengan Tutup */}
-              <div className="flex items-center gap-2 sm:gap-3">
+          
+          {/* ============ HEADER ============ */}
+          <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:px-6 sm:py-3">
+            
+            {/* Container Kiri: Judul + Tabs */}
+            <div className="flex items-center gap-3 sm:gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
+              {/* Judul */}
+              <div className="flex items-center gap-2">
                 <div className="shrink-0 rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] p-1 shadow-[0_0_10px_rgba(0,255,170,0.2)] sm:p-1.5">
                   <Smile className="h-4 w-4 text-[#00FFAA] sm:h-5 sm:w-5" />
                 </div>
@@ -384,31 +386,21 @@ export default function NaikkanKepuasanModal({
                 </h2>
               </div>
 
-              {/* Tabs toggle + Info */}
-              <div className="flex items-center gap-1.5">
-                <div className="flex items-center rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] p-0.5 sm:p-1">
-                  <button
-                    onClick={() => setActiveMenu?.("Dashboard:Kepuasan")}
-                    className="cursor-pointer rounded-md px-3 py-1 text-[10px] font-black uppercase tracking-wider text-[#6B8A8A] transition-all hover:text-[#E0E0E0] sm:text-xs"
-                  >
-                    Statistik
-                  </button>
-                  <button className="cursor-pointer rounded-md bg-[#00FFAA] px-3 py-1 text-[10px] font-black uppercase tracking-wider text-[#0A1A1A] transition-all sm:text-xs">
-                    Naikkan Peringkat
-                  </button>
-                </div>
-
+              {/* Tabs */}
+              <div className="flex items-center rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] p-0.5 sm:p-1">
                 <button
-                  onClick={() => setShowInfoModal(true)}
-                  title="Lihat penjelasan setiap tab"
-                  className="flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-[#00FFAA]/30 bg-[#0A1A1A] p-1.5 text-[#6B8A8A] transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] sm:p-2"
+                  onClick={() => setActiveMenu?.("Dashboard:Kepuasan")}
+                  className="cursor-pointer whitespace-nowrap rounded-md px-2 py-1 text-[9px] font-black uppercase tracking-wider text-[#6B8A8A] transition-all hover:text-[#E0E0E0] sm:px-3 sm:text-[10px] lg:text-xs"
                 >
-                  <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  Statistik
+                </button>
+                <button className="cursor-pointer whitespace-nowrap rounded-md bg-[#00FFAA] px-2 py-1 text-[9px] font-black uppercase tracking-wider text-[#0A1A1A] transition-all sm:px-3 sm:text-[10px] lg:text-xs">
+                  Naikkan Peringkat
                 </button>
               </div>
             </div>
 
-            {/* KANAN: Tutup — selalu di baris pertama, sejajar judul */}
+            {/* Tombol Tutup */}
             <button
               onClick={onClose}
               className="flex shrink-0 cursor-pointer items-center gap-1 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 text-xs font-bold uppercase text-[#6B8A8A] shadow-sm transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] hover:shadow-[0_0_15px_rgba(0,255,170,0.3)] lg:p-2"
@@ -420,8 +412,10 @@ export default function NaikkanKepuasanModal({
             </button>
           </div>
 
-          {/* ============ TREASURY BAR ============ */}
-          <div className="relative z-10 flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2 sm:px-6">
+          {/* ============ TREASURY BAR (Info Button Dipindah ke Sini) ============ */}
+          <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2 sm:px-6">
+            
+            {/* Teks Kepuasan Sipil */}
             <div className="flex items-center gap-2">
               <Smile className="h-4 w-4 shrink-0 text-[#00FFAA]" />
               <span className="text-[10px] font-bold uppercase tracking-wide text-[#6B8A8A] sm:text-xs">
@@ -431,10 +425,30 @@ export default function NaikkanKepuasanModal({
                 {Math.round(kepuasan)}%
               </span>
             </div>
+
+            {/* Tombol Info (Sejajar dengan Teks di Atas) */}
+            <button
+              onClick={() => setShowInfoModal(true)}
+              title="Lihat penjelasan setiap tab"
+              className="flex shrink-0 cursor-pointer items-center justify-center rounded-lg border border-[#00FFAA]/30 bg-[#0F2424] p-1 text-[#6B8A8A] transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] hover:shadow-[0_0_10px_rgba(0,255,170,0.2)] sm:p-1.5"
+            >
+              <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            </button>
           </div>
 
           {/* ============ CONTENT ============ */}
-          <div className="custom-scrollbar relative z-10 flex-1 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:p-5">
+          <div className="relative z-10 flex-1 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:p-5
+            [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
+            [&::-webkit-scrollbar-track]:bg-transparent 
+            [&::-webkit-scrollbar-track]:rounded-full 
+            [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/20
+            [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
+            [&::-webkit-scrollbar-thumb]:rounded-full 
+            [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A]
+            [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)]
+            hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
+            [&::-webkit-scrollbar-button]:hidden
+          ">
             <div className="animate-in fade-in space-y-4 duration-500">
               {feedback && (
                 <div
@@ -600,13 +614,13 @@ export default function NaikkanKepuasanModal({
           zIndexClass="z-[300]"
         >
           <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] shadow-[0_0_30px_rgba(0,255,170,0.15)]">
-            {/* Header Modal Info — struktur sama, Tutup sejajar judul */}
-            <div className="relative z-10 flex shrink-0 items-start justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:items-center sm:px-6 sm:py-3">
-              <div className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3">
+            {/* Header Modal Info */}
+            <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:px-6 sm:py-3">
+              <div className="flex items-center gap-2.5 sm:gap-3">
                 <div className="shrink-0 rounded-lg border border-[#00FFAA]/30 bg-[#00FFAA]/10 p-1.5 sm:p-2">
                   <Info className="h-4 w-4 text-[#00FFAA] sm:h-5 sm:w-5" />
                 </div>
-                <div className="min-w-0">
+                <div>
                   <h3 className="text-sm font-black uppercase leading-none tracking-wider text-[#00FFAA] sm:text-base">
                     Panduan Menu Kepuasan
                   </h3>
@@ -628,7 +642,18 @@ export default function NaikkanKepuasanModal({
             </div>
 
             {/* Body Modal Info */}
-            <div className="custom-scrollbar flex-1 space-y-4 overflow-y-auto bg-[#0F2424] p-4 sm:p-6 lg:p-8">
+            <div className="flex-1 space-y-4 overflow-y-auto bg-[#0F2424] p-4 sm:p-6 lg:p-8
+              [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
+              [&::-webkit-scrollbar-track]:bg-transparent 
+              [&::-webkit-scrollbar-track]:rounded-full 
+              [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/20
+              [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
+              [&::-webkit-scrollbar-thumb]:rounded-full 
+              [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0F2424]
+              [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)]
+              hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
+              [&::-webkit-scrollbar-button]:hidden
+            ">
               {/* Tab 1: Statistik */}
               <div className="rounded-xl border border-sky-500/30 bg-[#0A1A1A] p-4 sm:p-5">
                 <div className="mb-3 flex items-center gap-2.5">

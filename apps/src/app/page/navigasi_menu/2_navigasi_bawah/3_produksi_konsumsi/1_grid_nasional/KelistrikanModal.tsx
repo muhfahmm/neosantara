@@ -252,9 +252,9 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       return <span className="text-[#8b7e66]/30 ml-1 text-xs">⇅</span>;
     }
     if (sortConfig.direction === 'asc') {
-      return <ChevronUp className="h-3 w-3 ml-1 inline text-emerald-700" />;
+      return <ChevronUp className="h-3 w-3 ml-1 inline text-[#00FFAA]" />;
     }
-    return <ChevronDown className="h-3 w-3 ml-1 inline text-emerald-700" />;
+    return <ChevronDown className="h-3 w-3 ml-1 inline text-[#00FFAA]" />;
   };
 
   return (
@@ -278,8 +278,19 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
             </button>
           </div>
 
-          {/* BODY */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+          {/* BODY (SCROLLBAR HIJAU DITERAPKAN DI SINI) */}
+          <div className="flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10
+            [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
+            [&::-webkit-scrollbar-track]:bg-[#0A1A1A] 
+            [&::-webkit-scrollbar-track]:rounded-full 
+            [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/20
+            [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
+            [&::-webkit-scrollbar-thumb]:rounded-full 
+            [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A]
+            [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)]
+            hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
+            [&::-webkit-scrollbar-button]:hidden
+          ">
 
             {/* TAB NAVIGASI & SEARCH BAR */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 lg:gap-4 mb-3.5 lg:mb-5 2xl:mb-6">
@@ -336,7 +347,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       </div>
                       <div>
                         <h3 className="text-xs lg:text-sm 2xl:text-base font-black text-[#00FFAA] uppercase tracking-wide">Statistik Grid</h3>
-                        <p className="text-[9px] lg:text-[10px] text-[#6B8A8A] uppercase tracking-wider">Ringkasan kapasitas dan beban listrik nasional</p>
                       </div>
                     </div>
 
@@ -394,7 +404,6 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
                       </div>
                       <div>
                         <h3 className="text-lg font-black text-[#00FFAA] uppercase tracking-wide">Ringkasan Sumber Daya</h3>
-                        <p className="text-[10px] text-[#6B8A8A] uppercase tracking-wider">Detail berdasarkan data metadata</p>
                       </div>
                     </div>
 
@@ -444,9 +453,22 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
             {/* TAB NERACA GLOBAL */}
             {activeTab === "global" && (
               <div className="bg-[#0A1A1A] border border-[#00FFAA]/20 p-6 rounded-2xl w-full">
-                <div className="overflow-x-auto border border-[#00FFAA]/20 rounded-xl bg-[#0F2424] max-h-[60vh] overflow-y-auto no-scrollbar">
+                {/* SCROLLBAR HIJAU DITERAPKAN JUGA DI TABEL (VERTIKAL & HORIZONTAL) */}
+                <div className="overflow-x-auto border border-[#00FFAA]/20 rounded-xl bg-[#0F2424] max-h-[60vh] overflow-y-auto
+                  [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 
+                  [&::-webkit-scrollbar]:h-1.5 sm:[&::-webkit-scrollbar]:h-2
+                  [&::-webkit-scrollbar-track]:bg-[#0F2424] 
+                  [&::-webkit-scrollbar-track]:rounded-full 
+                  [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/10
+                  [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A]
+                  [&::-webkit-scrollbar-thumb]:rounded-full 
+                  [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0F2424]
+                  [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)]
+                  hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]
+                  [&::-webkit-scrollbar-button]:hidden
+                ">
                   <table className="w-full text-xs">
-                    <thead className="sticky top-0 text-[10px] sm:text-xs">
+                    <thead className="sticky top-0 text-[10px] sm:text-xs z-10">
                       <tr className="bg-[#0A1A1A] border-b border-[#00FFAA]/20">
                         <th className="bg-[#0A1A1A] px-2.5 sm:px-3 py-2 text-left font-black text-[#00FFAA] uppercase tracking-wider">No</th>
                         <th
@@ -575,4 +597,4 @@ export default function KelistrikanModal({ isOpen, onClose, countryDetail, setCo
       />
     </>
   );
-}
+} 
