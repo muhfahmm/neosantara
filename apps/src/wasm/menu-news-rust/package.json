@@ -1,0 +1,15 @@
+{
+  "name": "menu-news-rust",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "news_simulation_bg.wasm",
+    "news_simulation.js",
+    "news_simulation.d.ts"
+  ],
+  "main": "news_simulation.js",
+  "types": "news_simulation.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

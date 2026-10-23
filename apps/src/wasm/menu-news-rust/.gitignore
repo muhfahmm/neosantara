@@ -1,0 +1,7 @@
+*
+!.gitignore
+!package.json
+!news_simulation.js
+!news_simulation.d.ts
+!news_simulation_bg.wasm
+!news_simulation_bg.wasm.d.ts

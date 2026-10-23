@@ -338,6 +338,29 @@ function getNpcMaterialRules(
   return rules;
 }
 
+export async function calculatePlayerDailyMaterialsInRust(
+  country: CountryRecord,
+  metadata: Record<string, any>,
+  currentDate: string,
+  fallbackDate: string,
+): Promise<Record<string, unknown>> {
+  const slug = normalizeSlug(country.country_slug || country.slug) || "player-country";
+  const results = await simulateNpcMaterialsInRust({
+    current_date: currentDate,
+    fallback_date: fallbackDate,
+    metadata,
+    countries: [{ ...country, country_slug: slug }],
+    resource_rules: {
+      [slug]: getNpcMaterialRules(country, metadata),
+    },
+  });
+  const result = results.find(entry => normalizeSlug(entry.slug) === slug);
+  if (!result) {
+    throw new Error("Rust daily material simulation returned no player-country result.");
+  }
+  return result.updates;
+}
+
 interface PreparedCountryDay {
   countryName: string;
   withPopulation: CountryRecord;

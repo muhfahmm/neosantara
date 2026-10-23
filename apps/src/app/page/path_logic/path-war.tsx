@@ -3,11 +3,11 @@
 import React, {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
-import { flushSync } from 'react-dom';
 import {
   Flag,
   Trophy,
@@ -588,8 +588,27 @@ export default function WarMap({
     h: typeof window !== 'undefined' ? window.innerHeight : 1080,
   });
 
-  const [startPos, setStartPos] = useState<ScreenPoint>({ x: 0, y: 0 });
-  const [endPos, setEndPos] = useState<ScreenPoint>({ x: 0, y: 0 });
+  const progressRef = useRef(progress);
+  const routeGeometryRef = useRef<MapRouteGeometry | null>(null);
+  const routePathRef = useRef<SVGPathElement>(null);
+  const progressPathRef = useRef<SVGPathElement>(null);
+  const startMarkerRef = useRef<SVGCircleElement>(null);
+  const startHaloRef = useRef<SVGCircleElement>(null);
+  const endMarkerRef = useRef<SVGCircleElement>(null);
+  const endHaloRef = useRef<SVGCircleElement>(null);
+  const impactBurstRef = useRef<SVGCircleElement>(null);
+  const tankRef = useRef<SVGGElement>(null);
+  const tankRotationRef = useRef<SVGGElement>(null);
+
+  useLayoutEffect(() => {
+    progressRef.current = progress;
+    const geo = routeGeometryRef.current;
+    if (!geo || !tankRef.current || !tankRotationRef.current) return;
+    const position = pointOnQuadraticBezier(geo.start, geo.control, geo.end, progress);
+    const angle = (tangentOnQuadraticBezier(geo.start, geo.control, geo.end, progress) * 180) / Math.PI;
+    tankRef.current.setAttribute('transform', `translate(${position.x} ${position.y})`);
+    tankRotationRef.current.setAttribute('transform', `rotate(${angle})`);
+  }, [progress]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -650,12 +669,32 @@ export default function WarMap({
     let lastTime = performance.now();
     let accumulatedMs = 0;
     const dur = warPath.durationMs;
-    let lastGeo: unknown = null;
+    let lastGeo: MapRouteGeometry | null = null;
 
-    const loop = (now: number) => {
-      const delta = now - lastTime;
-      lastTime = now;
+    const updateOverlayGeometry = (geo: MapRouteGeometry) => {
+      routePathRef.current?.setAttribute('d', geo.path);
+      progressPathRef.current?.setAttribute('d', geo.path);
+      startMarkerRef.current?.setAttribute('cx', String(geo.start.x));
+      startMarkerRef.current?.setAttribute('cy', String(geo.start.y));
+      startHaloRef.current?.setAttribute('cx', String(geo.start.x));
+      startHaloRef.current?.setAttribute('cy', String(geo.start.y));
+      endMarkerRef.current?.setAttribute('cx', String(geo.end.x));
+      endMarkerRef.current?.setAttribute('cy', String(geo.end.y));
+      endHaloRef.current?.setAttribute('cx', String(geo.end.x));
+      endHaloRef.current?.setAttribute('cy', String(geo.end.y));
+      impactBurstRef.current?.setAttribute('cx', String(geo.end.x));
+      impactBurstRef.current?.setAttribute('cy', String(geo.end.y));
 
+      if (tankRef.current && tankRotationRef.current) {
+        const currentProgress = progressRef.current;
+        const position = pointOnQuadraticBezier(geo.start, geo.control, geo.end, currentProgress);
+        const angle = (tangentOnQuadraticBezier(geo.start, geo.control, geo.end, currentProgress) * 180) / Math.PI;
+        tankRef.current.setAttribute('transform', `translate(${position.x} ${position.y})`);
+        tankRotationRef.current.setAttribute('transform', `rotate(${angle})`);
+      }
+    };
+
+    const refreshCameraGeometry = () => {
       const geo = getMapRouteGeometry(
         resolvedAttacker.lat,
         resolvedAttacker.lng,
@@ -663,13 +702,17 @@ export default function WarMap({
         resolvedTarget.lng,
         0.18
       );
-      if (geo !== lastGeo) {
-        lastGeo = geo;
-        flushSync(() => {
-          setStartPos(geo.start);
-          setEndPos(geo.end);
-        });
-      }
+      if (geo === lastGeo) return;
+      lastGeo = geo;
+      routeGeometryRef.current = geo;
+      updateOverlayGeometry(geo);
+    };
+    refreshCameraGeometry();
+    window.addEventListener('neosantara_map_camera', refreshCameraGeometry);
+
+    const loop = (now: number) => {
+      const delta = now - lastTime;
+      lastTime = now;
 
       const isGamePaused = typeof window !== 'undefined' ? Boolean((window as any).neosantara_is_paused) : false;
 
@@ -689,25 +732,9 @@ export default function WarMap({
     };
 
     raf = requestAnimationFrame(loop);
-    const onCamera = () => {
-      const geo = getMapRouteGeometry(
-        resolvedAttacker.lat,
-        resolvedAttacker.lng,
-        resolvedTarget.lat,
-        resolvedTarget.lng,
-        0.18
-      );
-      if (geo === lastGeo) return;
-      lastGeo = geo;
-      flushSync(() => {
-        setStartPos(geo.start);
-        setEndPos(geo.end);
-      });
-    };
-    window.addEventListener('neosantara_map_camera', onCamera);
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener('neosantara_map_camera', onCamera);
+      window.removeEventListener('neosantara_map_camera', refreshCameraGeometry);
     };
   }, [isOpen, phase, warPath, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
 
@@ -732,21 +759,7 @@ export default function WarMap({
     };
   }, [phase, battleOutcome, isNpcWar, isPbbCoalition]);
 
-  const controlPos = useMemo(() => {
-    return buildControlPoint(startPos, endPos, 0.18);
-  }, [startPos, endPos]);
-
-  const svgPathStr = useMemo(() => {
-    return buildSVGPath(startPos, controlPos, endPos);
-  }, [startPos, controlPos, endPos]);
-
-  const tank = useMemo(() => {
-    const p = pointOnQuadraticBezier(startPos, controlPos, endPos, progress);
-    const angle = (tangentOnQuadraticBezier(startPos, controlPos, endPos, progress) * 180) / Math.PI;
-    return { ...p, angle };
-  }, [startPos, controlPos, endPos, progress]);
-
-    const handleAction = useCallback(
+  const handleAction = useCallback(
     (action: WarAction) => {
       if (!warPath || !result) return;
       // 👈 Sertakan isPbbCoalition ke dalam payload
@@ -794,7 +807,8 @@ export default function WarMap({
             </defs>
 
             <path
-              d={svgPathStr}
+              ref={routePathRef}
+              d="M 0 0"
               fill="none"
               stroke="#FF2D55"
               strokeWidth={4}
@@ -804,7 +818,8 @@ export default function WarMap({
             />
 
             <path
-              d={svgPathStr}
+              ref={progressPathRef}
+              d="M 0 0"
               fill="none"
               stroke="#FF2D55"
               strokeWidth={6}
@@ -813,19 +828,19 @@ export default function WarMap({
               strokeDasharray={`${progress * 100} 100`}
             />
 
-            <circle cx={startPos.x} cy={startPos.y} r={8} fill="#00FFAA" opacity={0.8} />
-            <circle cx={startPos.x} cy={startPos.y} r={16} fill="none" stroke="#00FFAA" strokeWidth={2} opacity={0.5} />
+            <circle ref={startMarkerRef} cx={0} cy={0} r={8} fill="#00FFAA" opacity={0.8} />
+            <circle ref={startHaloRef} cx={0} cy={0} r={16} fill="none" stroke="#00FFAA" strokeWidth={2} opacity={0.5} />
 
-            <circle cx={endPos.x} cy={endPos.y} r={8} fill="#FF2D55" opacity={0.8} />
-            <circle cx={endPos.x} cy={endPos.y} r={20} fill="none" stroke="#FF2D55" strokeWidth={2}>
+            <circle ref={endMarkerRef} cx={0} cy={0} r={8} fill="#FF2D55" opacity={0.8} />
+            <circle ref={endHaloRef} cx={0} cy={0} r={20} fill="none" stroke="#FF2D55" strokeWidth={2}>
               <animate attributeName="r" values="16;30;16" dur="1.6s" repeatCount="indefinite" />
               <animate attributeName="opacity" values="0.7;0;0.7" dur="1.6s" repeatCount="indefinite" />
             </circle>
 
-            {tank && phase === 'travel' && (
-              <g transform={`translate(${tank.x} ${tank.y})`}>
+            {phase === 'travel' && (
+              <g ref={tankRef} transform="translate(0 0)">
                 <circle r={30} fill="#FF2D55" opacity={0.25} />
-                <g transform={`rotate(${tank.angle})`}>
+                <g ref={tankRotationRef} transform="rotate(0)">
                   <rect x={-22} y={-10} width={40} height={16} rx={3} fill="#FF2D55" />
                   <rect x={-12} y={-20} width={22} height={10} rx={2} fill="#FF2D55" />
                   <rect x={10} y={-17} width={28} height={4} fill="#FF2D55" />
@@ -838,7 +853,7 @@ export default function WarMap({
             )}
 
             {phase === 'impact' && (
-              <circle cx={endPos.x} cy={endPos.y} r={0} fill="url(#impact-burst)">
+              <circle ref={impactBurstRef} cx={0} cy={0} r={0} fill="url(#impact-burst)">
                 <animate attributeName="r" from="0" to="160" dur="0.7s" fill="freeze" />
                 <animate attributeName="opacity" from="1" to="0" dur="0.7s" fill="freeze" />
               </circle>

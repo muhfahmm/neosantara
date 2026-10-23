@@ -5,7 +5,8 @@ use std::rc::Rc;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{
-    CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement, Path2d, PointerEvent, WheelEvent,
+    CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement, MouseEvent, Path2d,
+    PointerEvent, WheelEvent,
 };
 
 #[derive(Deserialize)]
@@ -152,14 +153,12 @@ pub struct MapEngine {
     cached_map_canvas: Option<HtmlCanvasElement>,
     cached_capitals_canvas: Option<HtmlCanvasElement>,
     cached_batches_ready: bool,
+    cached_capital_labels: Vec<(usize, f64, f64)>,
+    cached_capital_labels_scale: f64,
     visible_features: Vec<usize>,
     feature_grid: Vec<Vec<usize>>,
     feature_query_marks: Vec<u32>,
     feature_query_generation: u32,
-    label_collision_grid: Vec<Vec<usize>>,
-    label_collision_boxes: Vec<[f64; 4]>,
-    label_grid_columns: usize,
-    label_grid_rows: usize,
     countries: Vec<CachedCountry>,
     capitals: Vec<CachedCapital>,
     capital_flags: Vec<(String, HtmlImageElement)>,
@@ -178,7 +177,6 @@ pub struct MapEngine {
     dirty: bool,
     last_frame_ms: Option<f64>,
     frame_accumulator_ms: f64,
-    lightweight_frames_remaining: u8,
     frame_counter: u32,
     flags_ready: usize,
     override_beats_selected: bool,
@@ -201,14 +199,12 @@ impl MapEngine {
             cached_map_canvas: None,
             cached_capitals_canvas: None,
             cached_batches_ready: false,
+            cached_capital_labels: Vec::new(),
+            cached_capital_labels_scale: f64::NAN,
             visible_features: Vec::with_capacity(256),
             feature_grid: vec![Vec::new(); 36 * 18],
             feature_query_marks: Vec::new(),
             feature_query_generation: 0,
-            label_collision_grid: Vec::new(),
-            label_collision_boxes: Vec::new(),
-            label_grid_columns: 0,
-            label_grid_rows: 0,
             countries: Vec::new(),
             capitals: Vec::new(),
             capital_flags: Vec::new(),
@@ -235,7 +231,6 @@ impl MapEngine {
             dirty: true,
             last_frame_ms: None,
             frame_accumulator_ms: 0.0,
-            lightweight_frames_remaining: 0,
             frame_counter: 0,
             flags_ready: 0,
             override_beats_selected: false,
@@ -614,6 +609,13 @@ impl MapEngine {
                 }
             })
             .collect();
+        self.cached_capital_labels.clear();
+        self.cached_capital_labels_scale = f64::NAN;
+        self.flags_ready = self
+            .capital_flags
+            .iter()
+            .filter(|(_, image)| image.complete() && image.natural_width() > 0)
+            .count();
         self.rebuild_capitals_canvas();
         self.dirty = true;
     }
@@ -676,7 +678,6 @@ impl MapEngine {
         self.target_offset_x = self.offset_x;
         self.target_offset_y = self.offset_y;
         self.apply_clamping();
-        self.lightweight_frames_remaining = 12;
         self.dirty = true;
     }
 
@@ -716,7 +717,6 @@ impl MapEngine {
     pub fn handle_mouse_up(&mut self) {
         if self.is_panning {
             self.dirty = true;
-            self.lightweight_frames_remaining = self.lightweight_frames_remaining.max(8);
         }
         self.is_panning = false;
         self.active_pointer_id = None;
@@ -827,11 +827,6 @@ impl MapEngine {
 
     pub fn render(&mut self) {
         let animating = self.update_camera();
-        let lightweight_frame = self.is_panning || self.lightweight_frames_remaining > 0;
-        self.lightweight_frames_remaining = self.lightweight_frames_remaining.saturating_sub(1);
-        if !self.is_panning && self.lightweight_frames_remaining == 0 && lightweight_frame {
-            self.dirty = true;
-        }
         let detail_level = if self.scale <= 1.0 {
             0
         } else if self.scale < 6.0 {
@@ -840,18 +835,22 @@ impl MapEngine {
             2
         };
 
-        // Bendera yang selesai dimuat -> render ulang (dicek tiap 20 frame saja)
+        // Rebuild cache bendera sekali setelah semua image selesai, bukan untuk
+        // setiap batch image yang selesai dimuat.
         self.frame_counter = self.frame_counter.wrapping_add(1);
         if self.frame_counter % 20 == 0 {
-            let ready = self
-                .capital_flags
-                .iter()
-                .filter(|(_, i)| i.complete() && i.natural_width() > 0)
-                .count();
-            if ready != self.flags_ready {
-                self.flags_ready = ready;
-                self.rebuild_capitals_canvas();
-                self.dirty = true;
+            let all_flags_settled = self.capital_flags.iter().all(|(_, image)| image.complete());
+            if all_flags_settled {
+                let ready = self
+                    .capital_flags
+                    .iter()
+                    .filter(|(_, image)| image.natural_width() > 0)
+                    .count();
+                if ready != self.flags_ready && !self.is_panning {
+                    self.flags_ready = ready;
+                    self.rebuild_capitals_canvas();
+                    self.dirty = true;
+                }
             }
         }
 
@@ -899,7 +898,7 @@ impl MapEngine {
 
             let sel = self.selected_lower.as_deref();
             let is_sel = |f: &CachedFeature| sel.map_or(false, |s| !f.iso.is_empty() && f.iso == s);
-            let use_raster_cache = self.scale <= 3.0 || (lightweight_frame && self.scale <= 6.0);
+            let use_raster_cache = self.scale <= 6.0;
             let use_global_batches =
                 detail_level == 0 && visible.len() * 4 >= self.features.len() * 3;
             let mut drew_cached_map = false;
@@ -1019,7 +1018,7 @@ impl MapEngine {
                 }
             }
 
-            self.draw_capitals(copy_offset_x, vx0, vy0, vx1, vy1, true);
+            self.draw_capitals(vx0, vy0, vx1, vy1, true);
         }
         self.visible_features = visible;
     }
@@ -1053,15 +1052,7 @@ impl MapEngine {
         }
     }
 
-    fn draw_capitals(
-        &mut self,
-        copy_offset_x: f64,
-        vx0: f64,
-        vy0: f64,
-        vx1: f64,
-        vy1: f64,
-        draw_labels: bool,
-    ) {
+    fn draw_capitals(&mut self, vx0: f64, vy0: f64, vx1: f64, vy1: f64, draw_labels: bool) {
         if self.scale <= 1.0 {
             if let Some(cached_canvas) = &self.cached_capitals_canvas {
                 match self
@@ -1092,93 +1083,81 @@ impl MapEngine {
         if !draw_labels || self.scale <= 1.0 {
             return;
         }
+
+        if self.cached_capital_labels_scale != self.scale {
+            self.rebuild_capital_label_layout();
+        }
+
         let font_size = (8.0 + (self.scale - 1.0) * 0.5) / self.scale;
-        let text_height = font_size;
         self.ctx
             .set_font(&format!("bold {}px sans-serif", font_size));
         self.ctx.set_line_width(2.5 / self.scale);
         self.ctx.set_stroke_style(&self.styles.label_outline);
         self.ctx.set_fill_style(&self.styles.white);
 
-        const LABEL_GRID_CELL_SIZE: f64 = 64.0;
-        let grid_columns = (self.width / LABEL_GRID_CELL_SIZE).ceil().max(1.0) as usize;
-        let grid_rows = (self.height / LABEL_GRID_CELL_SIZE).ceil().max(1.0) as usize;
-        if self.label_grid_columns != grid_columns || self.label_grid_rows != grid_rows {
-            self.label_grid_columns = grid_columns;
-            self.label_grid_rows = grid_rows;
-            self.label_collision_grid = (0..grid_columns * grid_rows).map(|_| Vec::new()).collect();
+        for &(capital_index, x, y) in &self.cached_capital_labels {
+            let Some(capital) = self.capitals.get(capital_index) else {
+                continue;
+            };
+            if capital.x < vx0 - margin
+                || capital.x > vx1 + margin
+                || capital.y < vy0 - margin
+                || capital.y > vy1 + margin
+            {
+                continue;
+            }
+            let _ = self.ctx.stroke_text(&capital.name, x, y);
+            let _ = self.ctx.fill_text(&capital.name, x, y);
         }
-        for cell in &mut self.label_collision_grid {
-            cell.clear();
-        }
-        self.label_collision_boxes.clear();
+    }
 
-        for cap in self.capitals.iter().filter(|c| {
-            c.x >= vx0 - margin && c.x <= vx1 + margin && c.y >= vy0 - margin && c.y <= vy1 + margin
-        }) {
-            let (x, y) = (cap.x, cap.y);
-            let text_width = font_size * (cap.name.len() as f64) * 0.5;
+    fn rebuild_capital_label_layout(&mut self) {
+        let scale = self.scale;
+        let font_size = (8.0 + (scale - 1.0) * 0.5) / scale;
+        let text_height = font_size;
+        let mut accepted_boxes: Vec<[f64; 4]> = Vec::with_capacity(self.capitals.len());
+        let mut labels = Vec::with_capacity(self.capitals.len());
+
+        for (capital_index, capital) in self.capitals.iter().enumerate() {
+            let text_width = font_size * capital.name.len() as f64 * 0.5;
             let positions = [
-                (x + 9.0 / self.scale, y + 3.0 / self.scale),
-                (x - text_width / 2.0, y - 7.0 / self.scale),
-                (x - text_width / 2.0, y + text_height + 7.0 / self.scale),
-                (x - text_width - 9.0 / self.scale, y + 3.0 / self.scale),
+                (capital.x + 9.0 / scale, capital.y + 3.0 / scale),
+                (capital.x - text_width / 2.0, capital.y - 7.0 / scale),
+                (
+                    capital.x - text_width / 2.0,
+                    capital.y + text_height + 7.0 / scale,
+                ),
+                (
+                    capital.x - text_width - 9.0 / scale,
+                    capital.y + 3.0 / scale,
+                ),
             ];
 
-            for (tx, ty) in positions {
-                let bx1 = tx * self.scale + copy_offset_x;
-                let by1 = (ty - text_height) * self.scale + self.offset_y;
-                let bx2 = bx1 + text_width * self.scale;
-                let by2 = by1 + text_height * self.scale;
-                let p = 1.0;
-                let bb = [bx1 - p, by1 - p, bx2 + p, by2 + p];
-
-                if bb[2] < 0.0 || bb[0] > self.width || bb[3] < 0.0 || bb[1] > self.height {
-                    break;
+            for (x, y) in positions {
+                let box_bounds = [
+                    x * scale - 1.0,
+                    (y - text_height) * scale - 1.0,
+                    (x + text_width) * scale + 1.0,
+                    y * scale + 1.0,
+                ];
+                let collides = accepted_boxes.iter().any(|existing| {
+                    !(box_bounds[2] < existing[0]
+                        || box_bounds[0] > existing[2]
+                        || box_bounds[3] < existing[1]
+                        || box_bounds[1] > existing[3])
+                });
+                if collides {
+                    continue;
                 }
 
-                let min_cell_x = ((bb[0].max(0.0) / LABEL_GRID_CELL_SIZE).floor() as usize)
-                    .min(self.label_grid_columns - 1);
-                let max_cell_x = ((bb[2].min(self.width) / LABEL_GRID_CELL_SIZE).floor() as usize)
-                    .min(self.label_grid_columns - 1);
-                let min_cell_y = ((bb[1].max(0.0) / LABEL_GRID_CELL_SIZE).floor() as usize)
-                    .min(self.label_grid_rows - 1);
-                let max_cell_y = ((bb[3].min(self.height) / LABEL_GRID_CELL_SIZE).floor() as usize)
-                    .min(self.label_grid_rows - 1);
-                let mut collides = false;
-                'collision_check: for cell_y in min_cell_y..=max_cell_y {
-                    for cell_x in min_cell_x..=max_cell_x {
-                        let cell =
-                            &self.label_collision_grid[cell_y * self.label_grid_columns + cell_x];
-                        if cell.iter().any(|&index| {
-                            let existing = self.label_collision_boxes[index];
-                            !(bb[2] < existing[0]
-                                || bb[0] > existing[2]
-                                || bb[3] < existing[1]
-                                || bb[1] > existing[3])
-                        }) {
-                            collides = true;
-                            break 'collision_check;
-                        }
-                    }
-                }
-
-                if !collides {
-                    // Outline murah menggantikan shadow blur
-                    let _ = self.ctx.stroke_text(&cap.name, tx, ty);
-                    let _ = self.ctx.fill_text(&cap.name, tx, ty);
-                    let label_index = self.label_collision_boxes.len();
-                    self.label_collision_boxes.push(bb);
-                    for cell_y in min_cell_y..=max_cell_y {
-                        for cell_x in min_cell_x..=max_cell_x {
-                            self.label_collision_grid[cell_y * self.label_grid_columns + cell_x]
-                                .push(label_index);
-                        }
-                    }
-                    break;
-                }
+                accepted_boxes.push(box_bounds);
+                labels.push((capital_index, x, y));
+                break;
             }
         }
+
+        self.cached_capital_labels = labels;
+        self.cached_capital_labels_scale = scale;
     }
 
     fn draw_capital_flag(&self, image: Option<&HtmlImageElement>, iso: &str, x: f64, y: f64) {
@@ -1393,7 +1372,8 @@ pub fn start_map_engine(
         let engine = engine.clone();
         let canvas_for_pointer_capture = canvas.clone();
         let closure = Closure::wrap(Box::new(move |e: PointerEvent| {
-            if e.is_primary() && e.button() == 0 {
+            if e.is_primary() && (e.button() == 0 || e.button() == 2) {
+                e.prevent_default();
                 if let Err(error) = canvas_for_pointer_capture.set_pointer_capture(e.pointer_id()) {
                     web_sys::console::error_2(&"Failed to capture the map pointer.".into(), &error);
                 }
@@ -1405,6 +1385,14 @@ pub fn start_map_engine(
             }
         }) as Box<dyn FnMut(_)>);
         canvas.add_event_listener_with_callback("pointerdown", closure.as_ref().unchecked_ref())?;
+        closure.forget();
+    }
+
+    {
+        let closure = Closure::wrap(Box::new(move |e: MouseEvent| {
+            e.prevent_default();
+        }) as Box<dyn FnMut(_)>);
+        canvas.add_event_listener_with_callback("contextmenu", closure.as_ref().unchecked_ref())?;
         closure.forget();
     }
 

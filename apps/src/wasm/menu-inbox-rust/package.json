@@ -1,0 +1,15 @@
+{
+  "name": "menu-inbox-rust",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "inbox_simulation_bg.wasm",
+    "inbox_simulation.js",
+    "inbox_simulation.d.ts"
+  ],
+  "main": "inbox_simulation.js",
+  "types": "inbox_simulation.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

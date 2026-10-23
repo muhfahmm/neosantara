@@ -98,6 +98,7 @@ import {
 import { calculateDailyMaterialProduction } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
 import { getDaysElapsed } from '@/app/logic/production_logic';
 import {
+    calculatePlayerDailyMaterialsInRust,
     flushNpcCountrySimulation,
     getNpcCountrySimulationSnapshot,
     restoreNpcCountrySimulationState,
@@ -248,6 +249,8 @@ import {
 } from '../menus/news/logic/5_ekonomi_keuangan/ekonomiKeuanganNewsLogic';
 import { generateMilitaryAchievementNews } from '../menus/news/logic/6_pencapaian_militer/pencapaianMiliterNewsLogic';
 import { generateWorldNewsEvents } from '../menus/news/logic/worldNewsLogic';
+import { generateWorldNewsEventsInRust } from '../menus/news/rust/newsWorkerClient';
+import { selectDailyNotificationsInRust } from '../menus/inbox/rust/inboxWorkerClient';
 import { NewsItemData } from '../menus/news/newsModals';
 import {
     createSecurityCouncilInvasionNews,
@@ -340,6 +343,7 @@ interface Country {
 
 const EMPTY_COUNTRY_OVERRIDES: Record<string, string> = {};
 const EMPTY_ANNEXED_COUNTRIES: Record<string, unknown> = {};
+const MAP_INTERACTION_IDLE_MS = 600;
 
 const MapCanvasView = memo(function MapCanvasView({
     containerRef,
@@ -351,6 +355,7 @@ const MapCanvasView = memo(function MapCanvasView({
     onPointerUp,
     onPointerLeave,
     onWheel,
+    onContextMenu,
 }: {
     containerRef: React.RefObject<HTMLDivElement | null>;
     interactionDisabled: boolean;
@@ -361,6 +366,7 @@ const MapCanvasView = memo(function MapCanvasView({
     onPointerUp: () => void;
     onPointerLeave: (event: React.PointerEvent<HTMLCanvasElement>) => void;
     onWheel: () => void;
+    onContextMenu: (event: React.MouseEvent<HTMLCanvasElement>) => void;
 }) {
     // Custom target reticle cursor SVG encoded
     const targetCursorSvg = encodeURIComponent(
@@ -392,6 +398,7 @@ const MapCanvasView = memo(function MapCanvasView({
                 onPointerCancel={onPointerUp}
                 onPointerLeave={onPointerLeave}
                 onWheel={onWheel}
+                onContextMenu={onContextMenu}
                 onMouseLeave={event => {
                     const mouseUp = new MouseEvent('mouseup', {
                         bubbles: true,
@@ -3080,17 +3087,50 @@ export default function MapPage() {
 
         let idleCallbackId: number | null = null;
         let fallbackTimerId: number | null = null;
-        const runNotificationGenerator = () => {
+        const runNotificationGenerator = async () => {
+            if (lastProcessedNotificationDateRef.current === currentDateStr) return;
             lastProcessedNotificationMonthRef.current = currentDateStr;
             lastProcessedNotificationDateRef.current = currentDateStr;
 
             const userCountryName = countryDetail.country || countryDetail.nama || "Indonesia";
-            const worldNewsResult = generateWorldNewsEvents(
-                COUNTRIES_DATA,
-                userCountryName,
-                Number(countryDetail.world_news_country_cursor) || 0,
-                currentDateStr,
-            );
+            let worldNewsResult;
+            try {
+                worldNewsResult = await generateWorldNewsEventsInRust(
+                    COUNTRIES_DATA,
+                    userCountryName,
+                    Number(countryDetail.world_news_country_cursor) || 0,
+                    currentDateStr,
+                );
+            } catch (error) {
+                console.error('Rust world news generation failed; using TypeScript fallback:', error);
+                worldNewsResult = generateWorldNewsEvents(
+                    COUNTRIES_DATA,
+                    userCountryName,
+                    Number(countryDetail.world_news_country_cursor) || 0,
+                    currentDateStr,
+                );
+            }
+
+            const currentNotificationDate = notificationDateRef.current;
+            const interactionStarted = Boolean(
+                (window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active
+            ) || isTimeControllerHoveredRef.current;
+            if (currentNotificationDate !== currentDateStr || interactionStarted) {
+                if (lastProcessedNotificationDateRef.current === currentDateStr) {
+                    lastProcessedNotificationDateRef.current = null;
+                }
+                if (currentNotificationDate === currentDateStr && interactionStarted) {
+                    scheduleNotificationGenerator();
+                }
+                return;
+            }
+            if (worldNewsResult.news.length > 0) {
+                setNewsList(previous => {
+                    const existingIds = new Set(previous.map(item => item.id));
+                    const uniqueNews = worldNewsResult.news.filter(item => !existingIds.has(item.id));
+                    return uniqueNews.length > 0 ? [...uniqueNews, ...previous] : previous;
+                });
+            }
 
             const playerEmbassies = Array.isArray(countryDetail?.embassies) ? countryDetail.embassies : [];
             const removedEmbassies = Array.isArray(countryDetail?.removedEmbassies) ? countryDetail.removedEmbassies : [];
@@ -3950,17 +3990,27 @@ export default function MapPage() {
             // Ambil maks 2 notifikasi berbeda jenis dari generator; kuota aktual ditentukan
             // oleh gerbang pusat (0/1/2 berdasarkan undian 30/50/20%).
             const MAX_GENERATOR_CAP = 2;
-            const shuffledNotifs = newNotifsToAdd
-                .filter(n => n && n.id)
-                .sort(() => Math.random() - 0.5);
-            const usedKinds = new Set<string>();
-            const cappedNotifs: any[] = [];
-            for (const n of shuffledNotifs) {
-                const kind = String(n.tradeType || n.type || n.title);
-                if (usedKinds.has(kind)) continue;
-                usedKinds.add(kind);
-                cappedNotifs.push(n);
-                if (cappedNotifs.length >= MAX_GENERATOR_CAP) break;
+            let cappedNotifs: any[];
+            try {
+                cappedNotifs = await selectDailyNotificationsInRust(
+                    newNotifsToAdd,
+                    Math.floor(Math.random() * 0x1_0000_0000),
+                    MAX_GENERATOR_CAP,
+                );
+            } catch (error) {
+                console.error('Rust inbox selection failed; using TypeScript fallback:', error);
+                const shuffledNotifs = newNotifsToAdd
+                    .filter(n => n && n.id)
+                    .sort(() => Math.random() - 0.5);
+                const usedKinds = new Set<string>();
+                cappedNotifs = [];
+                for (const notification of shuffledNotifs) {
+                    const kind = String(notification.tradeType || notification.type || notification.title);
+                    if (usedKinds.has(kind)) continue;
+                    usedKinds.add(kind);
+                    cappedNotifs.push(notification);
+                    if (cappedNotifs.length >= MAX_GENERATOR_CAP) break;
+                }
             }
 
             if (cappedNotifs.length > 0) {
@@ -4012,14 +4062,50 @@ export default function MapPage() {
             requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
             cancelIdleCallback?: (id: number) => void;
         };
-        if (idleWindow.requestIdleCallback) {
-            idleCallbackId = idleWindow.requestIdleCallback(runNotificationGenerator, { timeout: 1000 });
-        } else {
-            fallbackTimerId = window.setTimeout(runNotificationGenerator, 250);
-        }
+        const interactionActive = () =>
+            Boolean((window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active) ||
+            isTimeControllerHoveredRef.current;
+        const cancelNotificationGenerator = () => {
+            if (idleCallbackId !== null) {
+                idleWindow.cancelIdleCallback?.(idleCallbackId);
+                idleCallbackId = null;
+            }
+            if (fallbackTimerId !== null) {
+                window.clearTimeout(fallbackTimerId);
+                fallbackTimerId = null;
+            }
+        };
+        const scheduleNotificationGenerator = () => {
+            cancelNotificationGenerator();
+            if (interactionActive()) return;
+            if (idleWindow.requestIdleCallback) {
+                idleCallbackId = idleWindow.requestIdleCallback(() => {
+                    idleCallbackId = null;
+                    if (!interactionActive()) void runNotificationGenerator().catch(error => {
+                        console.error('Daily inbox/news generator failed:', error);
+                    });
+                }, { timeout: 1000 });
+            } else {
+                fallbackTimerId = window.setTimeout(() => {
+                    fallbackTimerId = null;
+                    if (!interactionActive()) void runNotificationGenerator().catch(error => {
+                        console.error('Daily inbox/news generator failed:', error);
+                    });
+                }, 250);
+            }
+        };
+        const pauseNotificationGenerator = () => cancelNotificationGenerator();
+        window.addEventListener('neosantara:map-pan-started', pauseNotificationGenerator);
+        window.addEventListener('neosantara:time-controller-hovered', pauseNotificationGenerator);
+        window.addEventListener('neosantara:map-pan-ended', scheduleNotificationGenerator);
+        window.addEventListener('neosantara:time-controller-idle', scheduleNotificationGenerator);
+        scheduleNotificationGenerator();
         return () => {
-            if (idleCallbackId !== null) idleWindow.cancelIdleCallback?.(idleCallbackId);
-            if (fallbackTimerId !== null) window.clearTimeout(fallbackTimerId);
+            cancelNotificationGenerator();
+            window.removeEventListener('neosantara:map-pan-started', pauseNotificationGenerator);
+            window.removeEventListener('neosantara:time-controller-hovered', pauseNotificationGenerator);
+            window.removeEventListener('neosantara:map-pan-ended', scheduleNotificationGenerator);
+            window.removeEventListener('neosantara:time-controller-idle', scheduleNotificationGenerator);
         };
     }, [currentDate, countryDetail, notifications, metadata, setCountryDetail]);
 
@@ -4067,6 +4153,8 @@ export default function MapPage() {
     const dragStartRef = useRef({ x: 0, y: 0 });
     const isDraggingRef = useRef(false);
     const isMapPointerDownRef = useRef(false);
+    const isTimeControllerHoveredRef = useRef(false);
+    const playerDailyTickInFlightRef = useRef(false);
     const lastMapInteractionAtRef = useRef(0);
     const pendingDateRef = useRef<Date | null>(null);
     const pendingDateTimingRef = useRef<{
@@ -4099,12 +4187,13 @@ export default function MapPage() {
     const schedulePendingDateCommit = useCallback(() => {
         if (!pendingDateRef.current) return;
         if (dateCommitTimerRef.current !== null) clearTimeout(dateCommitTimerRef.current);
-        if (isMapPointerDownRef.current) return;
+        if (isMapPointerDownRef.current || isTimeControllerHoveredRef.current) return;
         const elapsedSinceInteraction = Date.now() - lastMapInteractionAtRef.current;
-        const delay = Math.max(0, 180 - elapsedSinceInteraction);
+        const delay = Math.max(0, MAP_INTERACTION_IDLE_MS - elapsedSinceInteraction);
         const commit = () => {
             dateCommitTimerRef.current = null;
             if (!pendingDateRef.current) return;
+            if (isMapPointerDownRef.current || isTimeControllerHoveredRef.current) return;
             const pendingDate = pendingDateRef.current;
             pendingDateRef.current = null;
             const dateKey = `${pendingDate.getFullYear()}-${pendingDate.getMonth()}-${pendingDate.getDate()}`;
@@ -5030,7 +5119,19 @@ export default function MapPage() {
     useEffect(() => {
         if (!countryDetail || !currentDate) return;
 
-        const runDailyTick = () => {
+        const runDailyTick = async () => {
+            if (playerDailyTickInFlightRef.current) return;
+            playerDailyTickInFlightRef.current = true;
+            try {
+                await runDailyTickWork();
+            } catch (error) {
+                console.error('Player daily simulation failed:', error);
+            } finally {
+                playerDailyTickInFlightRef.current = false;
+            }
+        };
+
+        const runDailyTickWork = async () => {
             const year = currentDate.getFullYear();
             const month = String(currentDate.getMonth() + 1).padStart(2, '0');
             const day = String(currentDate.getDate()).padStart(2, '0');
@@ -5061,6 +5162,45 @@ export default function MapPage() {
 
             // Calculate economy updates
             const playerCountryName = selectedCountry?.country || countryDetail.country || countryDetail.nama_negara || '';
+            const isMapInteractionActive = () =>
+                Boolean((window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active) ||
+                isTimeControllerHoveredRef.current;
+            const materialUpdatesPromise = metadata && Object.keys(metadata).length > 0
+                ? calculatePlayerDailyMaterialsInRust(
+                    { ...countryDetail, name_id: playerCountryName },
+                    metadata,
+                    currentDateStr,
+                    lastDate,
+                )
+                : Promise.resolve({});
+            // Store net population change for display in Navbar
+            let updates: Record<string, any>;
+            try {
+                updates = await materialUpdatesPromise;
+            } catch (error) {
+                console.error('Rust daily material simulation failed; using TypeScript fallback:', error);
+                if (isMapInteractionActive()) {
+                    waitForInteractionToEnd();
+                    return;
+                }
+                updates = calculateDailyMaterialProduction(
+                    countryDetail,
+                    metadata,
+                    currentDateStr,
+                    resourceKey => getEconomicEmbargoProductionMultiplier(playerCountryName, resourceKey),
+                    lastDate,
+                ).updates;
+            }
+            if (isMapInteractionActive()) {
+                waitForInteractionToEnd();
+                return;
+            }
+            const latestManagerDate = timeManagerRef.current?.getCurrentDate();
+            if (latestManagerDate && [
+                latestManagerDate.getFullYear(),
+                String(latestManagerDate.getMonth() + 1).padStart(2, '0'),
+                String(latestManagerDate.getDate()).padStart(2, '0'),
+            ].join('-') !== currentDateStr) return;
 
             const populationMetrics = calculateDailyPopulationChange(
                 countryDetail,
@@ -5068,20 +5208,6 @@ export default function MapPage() {
                 metadata,
                 currentDateStr
             );
-
-            // Store net population change for display in Navbar
-            // ✅ Only calculate material production if metadata is loaded
-            let updates: Record<string, any> = {};
-            if (metadata && Object.keys(metadata).length > 0) {
-                const result = calculateDailyMaterialProduction(
-                    countryDetail,
-                    metadata,
-                    currentDateStr,
-                    resourceKey => getEconomicEmbargoProductionMultiplier(playerCountryName, resourceKey),
-                    lastDate
-                );
-                updates = result.hasUpdates ? result.updates : {};
-            }
 
             // Also deduct fuel consumption for power plants daily!
             const daysPassed = lastDate ? getDaysElapsed(lastDate, currentDateStr) : 0;
@@ -5728,14 +5854,53 @@ export default function MapPage() {
             });
         };
 
-        // Run in the same React cycle as the calendar tick. At 3x, the next
-        // date arrives before an idle callback with a 1s timeout can run.
-        if ((window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active) {
-            const resumeDailyTick = () => window.setTimeout(runDailyTick, 0);
-            window.addEventListener('neosantara:map-pan-ended', resumeDailyTick, { once: true });
-            return () => window.removeEventListener('neosantara:map-pan-ended', resumeDailyTick);
-        }
-        runDailyTick();
+        let dailyTickTimer: number | null = null;
+        let waitingForInteractionEnd = false;
+        const interactionActive = () =>
+            Boolean((window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active) ||
+            isTimeControllerHoveredRef.current;
+        const cancelScheduledDailyTick = () => {
+            if (dailyTickTimer === null) return;
+            window.clearTimeout(dailyTickTimer);
+            dailyTickTimer = null;
+        };
+        const scheduleDailyTick = () => {
+            cancelScheduledDailyTick();
+            if (interactionActive()) return;
+            dailyTickTimer = window.setTimeout(() => {
+                dailyTickTimer = null;
+                if (interactionActive()) return;
+                runDailyTick();
+            }, 250);
+        };
+        const resumeDailyTickWhenIdle = () => {
+            if (interactionActive()) return;
+            waitingForInteractionEnd = false;
+            window.removeEventListener('neosantara:map-pan-ended', resumeDailyTickWhenIdle);
+            window.removeEventListener('neosantara:time-controller-idle', resumeDailyTickWhenIdle);
+            scheduleDailyTick();
+        };
+        const waitForInteractionToEnd = () => {
+            if (waitingForInteractionEnd) return;
+            waitingForInteractionEnd = true;
+            window.addEventListener('neosantara:map-pan-ended', resumeDailyTickWhenIdle);
+            window.addEventListener('neosantara:time-controller-idle', resumeDailyTickWhenIdle);
+        };
+        const pauseDailyTick = () => cancelScheduledDailyTick();
+        window.addEventListener('neosantara:map-pan-started', pauseDailyTick);
+        window.addEventListener('neosantara:time-controller-hovered', pauseDailyTick);
+        window.addEventListener('neosantara:map-pan-ended', scheduleDailyTick);
+        window.addEventListener('neosantara:time-controller-idle', scheduleDailyTick);
+        scheduleDailyTick();
+        return () => {
+            cancelScheduledDailyTick();
+            window.removeEventListener('neosantara:map-pan-ended', resumeDailyTickWhenIdle);
+            window.removeEventListener('neosantara:time-controller-idle', resumeDailyTickWhenIdle);
+            window.removeEventListener('neosantara:map-pan-started', pauseDailyTick);
+            window.removeEventListener('neosantara:time-controller-hovered', pauseDailyTick);
+            window.removeEventListener('neosantara:map-pan-ended', scheduleDailyTick);
+            window.removeEventListener('neosantara:time-controller-idle', scheduleDailyTick);
+        };
     }, [currentDate, countryDetail, metadata, selectedCountry?.country]);
 
     // ─── Auto-refresh kepuasan di navbar ────────────────────────────────
@@ -5950,6 +6115,8 @@ export default function MapPage() {
 
     // Initial map canvas and WASM initialization hook
     useEffect(() => {
+        let featureColorSyncTimer: number | null = null;
+
         const initMap = async () => {
             if (hasInitRef.current) return;
             hasInitRef.current = true;
@@ -6042,6 +6209,33 @@ export default function MapPage() {
                     wasmModule.set_feature_colors_on_map(colors, diplomacyActive);
                 };
 
+                let featureColorsPending = false;
+                const scheduleFeatureColorSync = () => {
+                    featureColorsPending = true;
+                    if (
+                        (window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active ||
+                        isTimeControllerHoveredRef.current
+                    ) {
+                        return;
+                    }
+                    if (featureColorSyncTimer !== null) {
+                        window.clearTimeout(featureColorSyncTimer);
+                    }
+                    featureColorSyncTimer = window.setTimeout(() => {
+                        featureColorSyncTimer = null;
+                        if ((window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active) {
+                            return;
+                        }
+                        if (isTimeControllerHoveredRef.current) return;
+                        if (!featureColorsPending) return;
+                        featureColorsPending = false;
+                        syncFeatureColors();
+                    }, MAP_INTERACTION_IDLE_MS);
+                };
+                const resumeFeatureColorSync = () => {
+                    if (featureColorsPending) scheduleFeatureColorSync();
+                };
+
                 // Hook context setTransform sebelum start_map_engine untuk menangkap kamera WASM secara presisi (bebas dari gangguan last_copy dan throttle)
                 const canvasEl = document.getElementById('map-canvas') as HTMLCanvasElement | null;
                 if (canvasEl) {
@@ -6085,8 +6279,10 @@ export default function MapPage() {
                 set_map_horizontal_wrap(true);
                 wasmModule.set_capitals_on_map(getCapitalFlagsForCurrentTerritories());
                 syncFeatureColors();
-                window.addEventListener('map_feature_colors_dirty', syncFeatureColors);
-                window.addEventListener('map_territory_color_updated', syncFeatureColors);
+                window.addEventListener('map_feature_colors_dirty', scheduleFeatureColorSync);
+                window.addEventListener('map_territory_color_updated', scheduleFeatureColorSync);
+                window.addEventListener('neosantara:map-pan-ended', resumeFeatureColorSync);
+                window.addEventListener('neosantara:time-controller-idle', resumeFeatureColorSync);
 
                 // Highlight and center player country if present
                 if (typeof window !== 'undefined') {
@@ -6112,7 +6308,7 @@ export default function MapPage() {
                 console.error("Failed to start map engine:", e);
             }
         };
-        initMap();
+        void initMap();
     }, []);
 
     const mapClickContextRef = useRef({ interactionDisabled: false, playerCountryName: '', isSelectingIcbmTarget: false });
@@ -6189,8 +6385,17 @@ export default function MapPage() {
     }, []);
 
     const handleCanvasPointerDown = useCallback((event: React.PointerEvent<HTMLCanvasElement>) => {
-        if (mapClickContextRef.current.interactionDisabled || !event.isPrimary || event.button !== 0) return;
+        if (
+            mapClickContextRef.current.interactionDisabled ||
+            !event.isPrimary ||
+            (event.button !== 0 && event.button !== 2)
+        ) return;
         isMapPointerDownRef.current = true;
+        window.dispatchEvent(new Event('neosantara:map-pan-started'));
+        if (dateCommitTimerRef.current !== null) {
+            clearTimeout(dateCommitTimerRef.current);
+            dateCommitTimerRef.current = null;
+        }
         (window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active = true;
         markMapInteraction();
         dragStartRef.current = { x: event.clientX, y: event.clientY };
@@ -6240,6 +6445,10 @@ export default function MapPage() {
         markMapInteraction();
         schedulePendingDateCommit();
     }, [markMapInteraction, schedulePendingDateCommit]);
+
+    const handleCanvasContextMenu = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
+        event.preventDefault();
+    }, []);
 
     return (
         <main className="fixed inset-0 bg-[#070b14] overflow-hidden font-sans">
@@ -7456,6 +7665,7 @@ export default function MapPage() {
                 onPointerUp={handleCanvasPointerUp}
                 onPointerLeave={handleCanvasPointerLeave}
                 onWheel={handleCanvasWheel}
+                onContextMenu={handleCanvasContextMenu}
             />
 
             {/* Efek Keclap Putih Uji Coba ICBM di Koordinat Sasaran */}
@@ -7550,7 +7760,23 @@ export default function MapPage() {
             />
 
             {/* Premium Floating Time Controller Widget */}
-            <div className="fixed bottom-3 right-3 lg:bottom-5 lg:right-5 xl:bottom-8 xl:right-8 z-40 flex flex-col w-[220px] lg:w-[250px] xl:w-[320px] transition-all">
+            <div
+                className="fixed bottom-3 right-3 lg:bottom-5 lg:right-5 xl:bottom-8 xl:right-8 z-40 flex flex-col w-[220px] lg:w-[250px] xl:w-[320px] transition-all"
+                onPointerEnter={() => {
+                    isTimeControllerHoveredRef.current = true;
+                    window.dispatchEvent(new Event('neosantara:time-controller-hovered'));
+                    if (dateCommitTimerRef.current !== null) {
+                        clearTimeout(dateCommitTimerRef.current);
+                        dateCommitTimerRef.current = null;
+                    }
+                }}
+                onPointerLeave={() => {
+                    isTimeControllerHoveredRef.current = false;
+                    lastMapInteractionAtRef.current = Date.now();
+                    window.dispatchEvent(new Event('neosantara:time-controller-idle'));
+                    schedulePendingDateCommit();
+                }}
+            >
                 {/* Upper Card */}
                 <div className="bg-[#0F2424]/90 backdrop-blur-md rounded-t-xl xl:rounded-t-2xl px-3.5 lg:px-4 xl:px-6 pt-3 lg:pt-4 xl:pt-5 pb-7 lg:pb-8 xl:pb-10 border-t border-x border-[#00FFAA]/30 flex flex-col relative overflow-hidden">
                     <div className="flex items-center justify-between mb-2 xl:mb-3.5">
