@@ -90,6 +90,11 @@ export class SimulationTimeManager {
     // Set play/pause state
     public setPaused(paused: boolean): void {
         this.isPaused = paused;
+        if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent("neosantara:simulation-clock-state", {
+                detail: { isPaused: paused },
+            }));
+        }
         if (!this.isPaused) {
             this.lastTickTime = performance.now();
             this.lastProgressCallbackTime = 0;

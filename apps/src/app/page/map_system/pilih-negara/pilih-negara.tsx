@@ -96,8 +96,7 @@ export default function PilihNegaraPage() {
   const [hasInteracted, setHasInteracted] = useState(false);
   const [wasmModule, setWasmModule] = useState<any>(null);
   const [countryDetail, setCountryDetail] = useState<any>(null);
-  const isMapClickRef = useRef(false);
-  const dragStartPosRef = useRef({ x: 0, y: 0 });
+  const dragStartPosRef = useRef<{ x: number; y: number } | null>(null);
   // Ref untuk menyimpan ISO negara yang diklik dari peta (fix bug klik pertama)
   const pendingIsoRef = useRef<string | null>(null);
 
@@ -293,7 +292,6 @@ export default function PilihNegaraPage() {
       if (wasmModule) {
         try {
           wasmModule.set_selected_country_on_map(selected.iso, true);
-          isMapClickRef.current = false;
         } catch (e) {
           console.error('Failed to sync selection to map:', e);
         }
@@ -313,23 +311,25 @@ export default function PilihNegaraPage() {
     setHasInteracted(true);
   };
 
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleCanvasPointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const dragStart = dragStartPosRef.current;
+    dragStartPosRef.current = null;
+    if (e.button !== 0 || !dragStart) return;
     if (!wasmModule || !wasmModule.get_country_at_on_map) return;
 
     const dragDistance = Math.sqrt(
-      Math.pow(e.clientX - dragStartPosRef.current.x, 2) +
-      Math.pow(e.clientY - dragStartPosRef.current.y, 2)
+      Math.pow(e.clientX - dragStart.x, 2) +
+      Math.pow(e.clientY - dragStart.y, 2)
     );
     if (dragDistance > 5) return;
 
     const canvas = e.currentTarget;
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
 
     const clickedCountry = wasmModule.get_country_at_on_map(x, y);
     if (clickedCountry && clickedCountry.iso) {
-      isMapClickRef.current = true;
       const iso = clickedCountry.iso;
 
       // Simpan ISO di ref terlebih dahulu
@@ -544,10 +544,15 @@ export default function PilihNegaraPage() {
         <canvas
           id="map-canvas-bg"
           className="w-full h-full block cursor-pointer"
-          onMouseDown={(e) => {
-            dragStartPosRef.current = { x: e.clientX, y: e.clientY };
+          onPointerDown={(e) => {
+            dragStartPosRef.current = e.button === 0
+              ? { x: e.clientX, y: e.clientY }
+              : null;
           }}
-          onClick={handleCanvasClick}
+          onPointerUp={handleCanvasPointerUp}
+          onPointerCancel={() => {
+            dragStartPosRef.current = null;
+          }}
           onMouseLeave={(e) => {
             const event = new MouseEvent('mouseup', {
               bubbles: true,

@@ -1,0 +1,15 @@
+{
+  "name": "path-logic-rs",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "route_math_bg.wasm",
+    "route_math.js",
+    "route_math.d.ts"
+  ],
+  "main": "route_math.js",
+  "types": "route_math.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

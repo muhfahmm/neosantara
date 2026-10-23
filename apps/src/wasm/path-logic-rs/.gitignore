@@ -1,0 +1,7 @@
+*
+!.gitignore
+!package.json
+!route_math.js
+!route_math.d.ts
+!route_math_bg.wasm
+!route_math_bg.wasm.d.ts

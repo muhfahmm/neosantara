@@ -3,7 +3,6 @@
 import React, {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -19,6 +18,14 @@ import { COUNTRIES_DATA, CAPITALS_DATA } from '@/app/page/map_system/map-data';
 import PerbandinganPasukan from '../detail_negara/3_operasi_militer/1_serang_negara/perbandingan_pasukan';
 import PageWar from '../detail_negara/3_operasi_militer/1_serang_negara/page_war/page_war';
 import { simulateBattleTs } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
+import { isSimulationTimePaused } from './time_logic';
+import { initializeRouteMathRust } from './routeMathRust';
+import {
+  isRouteMathRustReady,
+  projectMapPointRust,
+  projectRouteGeometryRust,
+  quadraticMotionRust,
+} from './routeMathRust';
 
 /* ============================================================
  * TIPE & INTERFACE
@@ -250,6 +257,22 @@ export function getMapScreenPos(lat: number, lng: number): ScreenPoint {
   if (!transform) return { x: 0, y: 0 };
 
   const { rect, scale, offsetX, offsetY, canvasWidth, canvasHeight, worldCssWidth } = transform;
+  const rustPoint = projectMapPointRust(
+    lat,
+    lng,
+    rect.left,
+    rect.top,
+    rect.width,
+    rect.height,
+    canvasWidth,
+    canvasHeight,
+    scale,
+    offsetX,
+    offsetY,
+    worldCssWidth,
+    window.innerWidth,
+  );
+  if (rustPoint) return { x: rustPoint[0], y: rustPoint[1] };
 
   const x_norm = (lng + 180.0) / 360.0;
   const y_norm = (90.0 - lat) / 180.0;
@@ -286,7 +309,7 @@ export function getMapRouteGeometry(
   routeCurvature = 0.18
 ): MapRouteGeometry {
   const t = getMapCanvasTransform();
-  if (t) {
+  if (t && isRouteMathRustReady()) {
     const key = `${originLat},${originLng},${targetLat},${targetLng},${routeCurvature},${t.scale},${t.offsetX},${t.offsetY},${t.rect.left},${t.rect.top},${t.rect.width},${t.rect.height},${window.innerWidth}`;
     const hit = routeMemo.get(key);
     if (hit) return hit;
@@ -314,6 +337,30 @@ function computeMapRouteGeometry(
   }
 
   const { rect, scale, offsetX, offsetY, canvasWidth, canvasHeight, worldCssWidth } = transform;
+  const rustGeometry = projectRouteGeometryRust({
+    originLat,
+    originLng,
+    targetLat,
+    targetLng,
+    rectLeft: rect.left,
+    rectTop: rect.top,
+    rectWidth: rect.width,
+    rectHeight: rect.height,
+    canvasWidth,
+    canvasHeight,
+    scale,
+    offsetX,
+    offsetY,
+    worldCssWidth,
+    windowWidth: window.innerWidth,
+    curvature: routeCurvature,
+  });
+  if (rustGeometry) {
+    const start = { x: rustGeometry[0], y: rustGeometry[1] };
+    const end = { x: rustGeometry[2], y: rustGeometry[3] };
+    const control = { x: rustGeometry[4], y: rustGeometry[5] };
+    return { start, end, control, path: buildSVGPath(start, control, end) };
+  }
 
   const sNormX = (originLng + 180.0) / 360.0;
   const sNormY = (90.0 - originLat) / 180.0;
@@ -398,6 +445,30 @@ export function tangentOnQuadraticBezier(
   const dx = 2 * (1 - t) * (c.x - a.x) + 2 * t * (b.x - c.x);
   const dy = 2 * (1 - t) * (c.y - a.y) + 2 * t * (b.y - c.y);
   return Math.atan2(dy, dx);
+}
+
+export function getQuadraticMotion(
+  start: ScreenPoint,
+  control: ScreenPoint,
+  end: ScreenPoint,
+  progress: number,
+): ScreenPoint & { angle: number } {
+  const rustMotion = quadraticMotionRust(
+    start.x,
+    start.y,
+    control.x,
+    control.y,
+    end.x,
+    end.y,
+    progress,
+  );
+  if (rustMotion) {
+    return { x: rustMotion[0], y: rustMotion[1], angle: rustMotion[2] };
+  }
+  return {
+    ...pointOnQuadraticBezier(start, control, end, progress),
+    angle: tangentOnQuadraticBezier(start, control, end, progress),
+  };
 }
 
 export function buildSVGPath(
@@ -557,7 +628,6 @@ export default function WarMap({
   onResolve,
 }: WarMapProps) {
   const [phase, setPhase] = useState<WarPhase>('travel');
-  const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<WarResult | null>(null);
   const [showFlash, setShowFlash] = useState(false);
   const onCloseRef = useRef(onClose);
@@ -588,7 +658,7 @@ export default function WarMap({
     h: typeof window !== 'undefined' ? window.innerHeight : 1080,
   });
 
-  const progressRef = useRef(progress);
+  const progressRef = useRef(0);
   const routeGeometryRef = useRef<MapRouteGeometry | null>(null);
   const routePathRef = useRef<SVGPathElement>(null);
   const progressPathRef = useRef<SVGPathElement>(null);
@@ -599,16 +669,6 @@ export default function WarMap({
   const impactBurstRef = useRef<SVGCircleElement>(null);
   const tankRef = useRef<SVGGElement>(null);
   const tankRotationRef = useRef<SVGGElement>(null);
-
-  useLayoutEffect(() => {
-    progressRef.current = progress;
-    const geo = routeGeometryRef.current;
-    if (!geo || !tankRef.current || !tankRotationRef.current) return;
-    const position = pointOnQuadraticBezier(geo.start, geo.control, geo.end, progress);
-    const angle = (tangentOnQuadraticBezier(geo.start, geo.control, geo.end, progress) * 180) / Math.PI;
-    tankRef.current.setAttribute('transform', `translate(${position.x} ${position.y})`);
-    tankRotationRef.current.setAttribute('transform', `rotate(${angle})`);
-  }, [progress]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -657,7 +717,8 @@ export default function WarMap({
   useEffect(() => {
     if (isOpen) {
       setPhase('travel');
-      setProgress(0);
+      progressRef.current = 0;
+      progressPathRef.current?.setAttribute('stroke-dasharray', '0 100');
       setResult(null);
       setShowFlash(false);
     }
@@ -665,6 +726,7 @@ export default function WarMap({
 
   useEffect(() => {
     if (!isOpen || !warPath) return;
+    void initializeRouteMathRust();
     let raf = 0;
     let lastTime = performance.now();
     let accumulatedMs = 0;
@@ -687,12 +749,14 @@ export default function WarMap({
 
       if (tankRef.current && tankRotationRef.current) {
         const currentProgress = progressRef.current;
-        const position = pointOnQuadraticBezier(geo.start, geo.control, geo.end, currentProgress);
-        const angle = (tangentOnQuadraticBezier(geo.start, geo.control, geo.end, currentProgress) * 180) / Math.PI;
-        tankRef.current.setAttribute('transform', `translate(${position.x} ${position.y})`);
-        tankRotationRef.current.setAttribute('transform', `rotate(${angle})`);
+        const motion = getQuadraticMotion(geo.start, geo.control, geo.end, currentProgress);
+        tankRef.current.setAttribute('transform', `translate(${motion.x} ${motion.y})`);
+        tankRotationRef.current.setAttribute('transform', `rotate(${motion.angle * 180 / Math.PI})`);
       }
     };
+    const isGamePaused = () =>
+      isSimulationTimePaused() ||
+      (typeof window !== 'undefined' && Boolean((window as Window & { neosantara_is_paused?: boolean }).neosantara_is_paused));
 
     const refreshCameraGeometry = () => {
       const geo = getMapRouteGeometry(
@@ -710,31 +774,54 @@ export default function WarMap({
     refreshCameraGeometry();
     window.addEventListener('neosantara_map_camera', refreshCameraGeometry);
 
+    const stopLoop = () => {
+      if (raf === 0) return;
+      cancelAnimationFrame(raf);
+      raf = 0;
+    };
+    const startLoop = () => {
+      if (raf !== 0 || isGamePaused()) return;
+      lastTime = performance.now();
+      raf = requestAnimationFrame(loop);
+    };
+    const handleClockState = (event: Event) => {
+      const detail = (event as CustomEvent<{ isPaused?: boolean }>).detail;
+      if (detail?.isPaused) {
+        stopLoop();
+        return;
+      }
+      startLoop();
+    };
+    window.addEventListener('neosantara:simulation-clock-state', handleClockState);
+
     const loop = (now: number) => {
+      raf = 0;
       const delta = now - lastTime;
       lastTime = now;
 
-      const isGamePaused = typeof window !== 'undefined' ? Boolean((window as any).neosantara_is_paused) : false;
-
-      if (phase === 'travel') {
-        if (!isGamePaused) {
-          accumulatedMs += delta;
-          const t = Math.min(1, accumulatedMs / dur);
-          setProgress(t);
-          if (t >= 1) {
-            setPhase('impact');
-          }
-        }
-        raf = requestAnimationFrame(loop);
-      } else {
-        raf = requestAnimationFrame(loop);
+      if (phase !== 'travel' || isGamePaused()) return;
+      accumulatedMs += delta;
+      const currentProgress = Math.min(1, accumulatedMs / dur);
+      progressRef.current = currentProgress;
+      progressPathRef.current?.setAttribute('stroke-dasharray', `${currentProgress * 100} 100`);
+      const geo = routeGeometryRef.current;
+      if (geo && tankRef.current && tankRotationRef.current) {
+        const motion = getQuadraticMotion(geo.start, geo.control, geo.end, currentProgress);
+        tankRef.current.setAttribute('transform', `translate(${motion.x} ${motion.y})`);
+        tankRotationRef.current.setAttribute('transform', `rotate(${motion.angle * 180 / Math.PI})`);
       }
+      if (currentProgress >= 1) {
+        setPhase('impact');
+        return;
+      }
+      raf = requestAnimationFrame(loop);
     };
 
-    raf = requestAnimationFrame(loop);
+    startLoop();
     return () => {
-      cancelAnimationFrame(raf);
+      stopLoop();
       window.removeEventListener('neosantara_map_camera', refreshCameraGeometry);
+      window.removeEventListener('neosantara:simulation-clock-state', handleClockState);
     };
   }, [isOpen, phase, warPath, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
 
@@ -825,7 +912,7 @@ export default function WarMap({
               strokeWidth={6}
               strokeLinecap="round"
               pathLength={100}
-              strokeDasharray={`${progress * 100} 100`}
+              strokeDasharray="0 100"
             />
 
             <circle ref={startMarkerRef} cx={0} cy={0} r={8} fill="#00FFAA" opacity={0.8} />

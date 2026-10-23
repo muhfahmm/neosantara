@@ -1,4 +1,5 @@
 import { CAPITALS_DATA, COUNTRIES_DATA } from '../map_system/map-data';
+import { greatCircleDistanceKmRust } from './routeMathRust';
 
 /**
  * Konstanta lama dipertahankan agar import lama tidak rusak.
@@ -44,26 +45,58 @@ export interface SimulationClock {
 type AnimationSubscriber = (now: number) => void;
 const animationSubscribers = new Set<AnimationSubscriber>();
 let animationFrameId: number | null = null;
+let pauseListenerInstalled = false;
 
-const runAnimationFrame = (now: number) => {
-  animationFrameId = null;
-  animationSubscribers.forEach(callback => callback(now));
-  if (animationSubscribers.size > 0) {
+const scheduleRouteAnimationFrame = () => {
+  if (
+    animationFrameId === null &&
+    animationSubscribers.size > 0 &&
+    !isSimulationTimePaused()
+  ) {
     animationFrameId = requestAnimationFrame(runAnimationFrame);
   }
 };
 
-// One RAF drives every route; route components only mutate their own SVG transform.
+const runAnimationFrame = (now: number) => {
+  animationFrameId = null;
+  animationSubscribers.forEach(callback => callback(now));
+  scheduleRouteAnimationFrame();
+};
+
+const handleSimulationClockState = () => {
+  if (isSimulationTimePaused()) {
+    if (animationFrameId !== null) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+    animationSubscribers.forEach(callback => callback(performance.now()));
+    return;
+  }
+  scheduleRouteAnimationFrame();
+};
+
+// One RAF drives active routes; paused routes only refresh when the camera moves.
 export const subscribeRouteAnimation = (callback: AnimationSubscriber) => {
   animationSubscribers.add(callback);
-  if (animationFrameId === null && typeof window !== 'undefined') {
-    animationFrameId = requestAnimationFrame(runAnimationFrame);
+  if (typeof window !== 'undefined') {
+    if (!pauseListenerInstalled) {
+      window.addEventListener('neosantara:simulation-clock-state', handleSimulationClockState);
+      pauseListenerInstalled = true;
+    }
+    callback(performance.now());
+    scheduleRouteAnimationFrame();
   }
   return () => {
     animationSubscribers.delete(callback);
-    if (animationSubscribers.size === 0 && animationFrameId !== null) {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = null;
+    if (animationSubscribers.size === 0) {
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+      if (pauseListenerInstalled && typeof window !== 'undefined') {
+        window.removeEventListener('neosantara:simulation-clock-state', handleSimulationClockState);
+        pauseListenerInstalled = false;
+      }
     }
   };
 };
@@ -87,6 +120,15 @@ const normalizeCountryName = (name: unknown) => {
 
   return COUNTRY_ALIASES[normalized] || normalized;
 };
+
+const capitalLocationsByCountry = new Map(
+  CAPITALS_DATA
+    .filter(item => typeof item.lat === 'number' && typeof item.lng === 'number')
+    .map(item => [normalizeCountryName(item.country), item] as const),
+);
+const countriesByName = new Map(
+  COUNTRIES_DATA.map(item => [normalizeCountryName(item.country), item] as const),
+);
 
 const resolveContinent = (continent: unknown): SupportedContinent | null => {
   const normalized = String(continent || '')
@@ -117,14 +159,8 @@ const resolveContinent = (continent: unknown): SupportedContinent | null => {
 
 const getCountryLocation = (countryName: string): CountryLocation | null => {
   const normalizedName = normalizeCountryName(countryName);
-
-  const country = COUNTRIES_DATA.find(
-    item => normalizeCountryName(item.country) === normalizedName
-  );
-
-  const capital = CAPITALS_DATA.find(
-    item => normalizeCountryName(item.country) === normalizedName
-  );
+  const country = countriesByName.get(normalizedName);
+  const capital = capitalLocationsByCountry.get(normalizedName);
 
   const latitude = capital?.lat ?? country?.latitude ?? country?.lat;
   const longitude = capital?.lng ?? country?.longitude ?? country?.lng;
@@ -153,6 +189,14 @@ const getGreatCircleDistanceKm = (
   origin: CountryLocation,
   destination: CountryLocation
 ) => {
+  const rustDistance = greatCircleDistanceKmRust(
+    origin.latitude,
+    origin.longitude,
+    destination.latitude,
+    destination.longitude,
+  );
+  if (rustDistance !== null) return rustDistance;
+
   const radians = (degrees: number) => (degrees * Math.PI) / 180;
 
   const latitudeDifference = radians(

@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef } from 'react';
+import { initializeRouteMathRust } from './routeMathRust';
 import {
   buildCapitalPoint,
+  getQuadraticMotion,
   getMapRouteGeometry,
-  pointOnQuadraticBezier,
-  tangentOnQuadraticBezier,
 } from './path-war';
 import {
   estimateTravelTime,
@@ -115,6 +115,7 @@ export default function DiplomacyPathAnimation({
       }
       return;
     }
+    void initializeRouteMathRust();
     let lastFrame = performance.now();
     let elapsedDays = 0;
     let completed = false;
@@ -143,8 +144,7 @@ export default function DiplomacyPathAnimation({
         lastReportedProgress.current = progressPercent;
         onProgressRef.current?.(progress);
       }
-      const vehicle = pointOnQuadraticBezier(start, control, end, progress);
-      const angle = tangentOnQuadraticBezier(start, control, end, progress) * 180 / Math.PI;
+      const vehicle = getQuadraticMotion(start, control, end, progress);
 
       if (path !== lastPath) {
         lastPath = path;
@@ -159,7 +159,7 @@ export default function DiplomacyPathAnimation({
       }
       if (routeRef.current) routeRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
       if (pulseRef.current) pulseRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
-      vehicleRef.current?.setAttribute('transform', `translate(${vehicle.x} ${vehicle.y}) rotate(${angle})`);
+      vehicleRef.current?.setAttribute('transform', `translate(${vehicle.x} ${vehicle.y}) rotate(${vehicle.angle * 180 / Math.PI})`);
       const viewBox = `0 0 ${window.innerWidth} ${window.innerHeight}`;
       if (svgRef.current && viewBox !== viewBoxRef.current) {
         viewBoxRef.current = viewBox;

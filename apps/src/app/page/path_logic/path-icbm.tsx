@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef } from 'react';
+import { initializeRouteMathRust } from './routeMathRust';
 import {
   buildCapitalPoint,
+  getQuadraticMotion,
   getMapRouteGeometry,
-  pointOnQuadraticBezier,
-  tangentOnQuadraticBezier,
 } from './path-war';
 import {
   estimateTravelTime,
@@ -74,6 +74,7 @@ export default function IcbmPath({
       }
       return;
     }
+    void initializeRouteMathRust();
 
     let lastFrame = performance.now();
     let elapsedDays = 0;
@@ -106,8 +107,7 @@ export default function IcbmPath({
         onProgressRef.current?.(progress);
       }
 
-      const warhead = pointOnQuadraticBezier(start, control, end, progress);
-      const angle = (tangentOnQuadraticBezier(start, control, end, progress) * 180) / Math.PI;
+      const warhead = getQuadraticMotion(start, control, end, progress);
 
       if (path !== lastPath) {
         lastPath = path;
@@ -123,7 +123,7 @@ export default function IcbmPath({
       if (routeRef.current) routeRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
       if (pulseRef.current) pulseRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
 
-      warheadRef.current?.setAttribute('transform', `translate(${warhead.x} ${warhead.y}) rotate(${angle})`);
+      warheadRef.current?.setAttribute('transform', `translate(${warhead.x} ${warhead.y}) rotate(${warhead.angle * 180 / Math.PI})`);
       const viewBox = `0 0 ${window.innerWidth} ${window.innerHeight}`;
       if (svgRef.current && viewBox !== viewBoxRef.current) {
         viewBoxRef.current = viewBox;

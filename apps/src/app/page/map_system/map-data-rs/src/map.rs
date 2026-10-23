@@ -423,19 +423,13 @@ impl MapEngine {
             context.fill_with_path_2d(&batch.path);
         }
         context.set_stroke_style(&self.styles.stroke);
-        context.set_line_width(0.7);
+        context.set_line_width(0.35);
         if let Some(outline) = &self.cached_outline_path {
             context.stroke_with_path(outline);
-        }
-        if let Some(selected) = &self.cached_selected_path {
-            context.set_stroke_style(&self.styles.sel_stroke);
-            context.set_line_width(2.0);
-            context.stroke_with_path(selected);
         }
         self.cached_map_canvas = Some(canvas);
         self.cached_fill_batches.clear();
         self.cached_outline_path = None;
-        self.cached_selected_path = None;
         self.cached_batches_ready = false;
     }
 
@@ -898,7 +892,7 @@ impl MapEngine {
 
             let sel = self.selected_lower.as_deref();
             let is_sel = |f: &CachedFeature| sel.map_or(false, |s| !f.iso.is_empty() && f.iso == s);
-            let use_raster_cache = self.scale <= 6.0;
+            let use_raster_cache = self.scale <= 1.0;
             let use_global_batches =
                 detail_level == 0 && visible.len() * 4 >= self.features.len() * 3;
             let mut drew_cached_map = false;
@@ -911,7 +905,14 @@ impl MapEngine {
                         self.width,
                         self.height,
                     ) {
-                        Ok(()) => drew_cached_map = true,
+                        Ok(()) => {
+                            if let Some(selected) = &self.cached_selected_path {
+                                self.ctx.set_stroke_style(&self.styles.sel_stroke);
+                                self.ctx.set_line_width(1.0 / self.scale);
+                                self.ctx.stroke_with_path(selected);
+                            }
+                            drew_cached_map = true;
+                        }
                         Err(error) => {
                             web_sys::console::error_2(
                                 &"Could not draw map raster cache; using vector rendering.".into(),
@@ -933,7 +934,7 @@ impl MapEngine {
                 }
                 if let Some(selected) = &self.cached_selected_path {
                     self.ctx.set_stroke_style(&self.styles.sel_stroke);
-                    self.ctx.set_line_width(2.0 / self.scale);
+                    self.ctx.set_line_width(1.0 / self.scale);
                     self.ctx.stroke_with_path(selected);
                 }
                 for &i in &visible {
@@ -960,7 +961,7 @@ impl MapEngine {
                         &self.styles.stroke
                     });
                     self.ctx.set_line_width(if selected_feature {
-                        2.0 / self.scale
+                        1.0 / self.scale
                     } else {
                         0.7 / self.scale
                     });
@@ -991,7 +992,7 @@ impl MapEngine {
                             &self.styles.stroke
                         });
                         self.ctx.set_line_width(if selected_feature {
-                            2.0 / self.scale
+                            1.0 / self.scale
                         } else {
                             0.7 / self.scale
                         });
@@ -1007,7 +1008,7 @@ impl MapEngine {
                             &self.styles.stroke
                         });
                         self.ctx.set_line_width(if selected_feature {
-                            2.0 / self.scale
+                            1.0 / self.scale
                         } else {
                             0.7 / self.scale
                         });
