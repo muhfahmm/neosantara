@@ -5,6 +5,7 @@
  */
 
 export { SimulationTimeManager } from './timeManager';
+export { initializeSimulationClock } from './simulationClock';
 export {
     SimulationCalendar,
     CalendarControlsHandler,

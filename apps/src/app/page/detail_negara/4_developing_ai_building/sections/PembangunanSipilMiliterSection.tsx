@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import {
   Zap,
   Gem,
@@ -344,7 +344,55 @@ const formatCompletionDate = (value: unknown): string => {
     : date.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
 };
 
-export default function PembangunanSipilMiliterSection({
+const DISPLAYED_BUILDING_KEYS = Array.from(new Set([
+  ...CIVIL_CATEGORIES.flatMap(category => category.items.map(item => item.key)),
+  ...MILITARY_UNITS.map(unit => unit.key),
+  ...MILITARY_INFRASTRUCTURES.map(infra => infra.key),
+]));
+
+function areDisplayedBuildingPropsEqual(
+  previous: PembangunanSipilMiliterSectionProps,
+  next: PembangunanSipilMiliterSectionProps,
+): boolean {
+  if (
+    previous.initialBuildingKey !== next.initialBuildingKey ||
+    previous.categoryOnly !== next.categoryOnly
+  ) {
+    return false;
+  }
+
+  const previousDetail = previous.countryDetail;
+  const nextDetail = next.countryDetail;
+  if (previousDetail === nextDetail) return true;
+  if (!previousDetail || !nextDetail) return false;
+
+  for (const key of DISPLAYED_BUILDING_KEYS) {
+    if (
+      !Object.is(previousDetail[key], nextDetail[key]) ||
+      !Object.is(previousDetail.pertahanan?.[key], nextDetail.pertahanan?.[key]) ||
+      !Object.is(previousDetail.armada?.[key], nextDetail.armada?.[key])
+    ) {
+      return false;
+    }
+  }
+
+  for (const unit of MILITARY_UNITS) {
+    if (
+      !Object.is(previousDetail.armada?.[unit.group]?.[unit.key], nextDetail.armada?.[unit.group]?.[unit.key]) ||
+      !Object.is(previousDetail[unit.group]?.[unit.key], nextDetail[unit.group]?.[unit.key])
+    ) {
+      return false;
+    }
+  }
+
+  return previousDetail.ai_civilian_construction_queue === nextDetail.ai_civilian_construction_queue &&
+    previousDetail.ai_military_infra_queue === nextDetail.ai_military_infra_queue &&
+    previousDetail.ai_military_unit_queue === nextDetail.ai_military_unit_queue &&
+    previousDetail.completed_research === nextDetail.completed_research &&
+    previousDetail.research_levels?.kapal_stealth === nextDetail.research_levels?.kapal_stealth;
+}
+
+function PembangunanSipilMiliterSectionView({
   countryDetail,
   initialBuildingKey,
   categoryOnly,
@@ -363,32 +411,74 @@ export default function PembangunanSipilMiliterSection({
   );
   const [searchQuery, setSearchQuery] = React.useState<string>("");
 
-  const pendingCivilianConstructions = Array.isArray(countryDetail?.ai_civilian_construction_queue)
-    ? countryDetail.ai_civilian_construction_queue as Array<{
+  const pendingCivilianByBuilding = useMemo(() => {
+    const grouped = new Map<string, Array<{
+      buildingKey: string;
+      jumlah: number;
+      completionDate?: string;
+      daysRemaining?: number;
+    }>>();
+    const constructions = countryDetail?.ai_civilian_construction_queue;
+    if (Array.isArray(constructions)) {
+      for (const entry of constructions as Array<{
         buildingKey: string;
         jumlah: number;
         completionDate?: string;
         daysRemaining?: number;
-      }>
-    : [];
-  const pendingMilitaryInfra = Array.isArray(countryDetail?.ai_military_infra_queue)
-    ? countryDetail.ai_military_infra_queue as Array<{
+      }>) {
+        const entries = grouped.get(entry.buildingKey) ?? [];
+        entries.push(entry);
+        grouped.set(entry.buildingKey, entries);
+      }
+    }
+    return grouped;
+  }, [countryDetail?.ai_civilian_construction_queue]);
+  const pendingMilitaryInfraByKey = useMemo(() => {
+    const grouped = new Map<string, Array<{
+      infraKey: string;
+      jumlah: number;
+      completionDate?: string;
+      daysRemaining?: number;
+    }>>();
+    const constructions = countryDetail?.ai_military_infra_queue;
+    if (Array.isArray(constructions)) {
+      for (const entry of constructions as Array<{
         infraKey: string;
         jumlah: number;
         completionDate?: string;
         daysRemaining?: number;
-      }>
-    : [];
-  const pendingMilitaryUnits = Array.isArray(countryDetail?.ai_military_unit_queue)
-    ? countryDetail.ai_military_unit_queue as Array<{
+      }>) {
+        const entries = grouped.get(entry.infraKey) ?? [];
+        entries.push(entry);
+        grouped.set(entry.infraKey, entries);
+      }
+    }
+    return grouped;
+  }, [countryDetail?.ai_military_infra_queue]);
+  const pendingMilitaryUnitsByKey = useMemo(() => {
+    const grouped = new Map<string, Array<{
+      unitKey: string;
+      jumlah: number;
+      completionDate?: string;
+      daysRemaining?: number;
+    }>>();
+    const constructions = countryDetail?.ai_military_unit_queue;
+    if (Array.isArray(constructions)) {
+      for (const entry of constructions as Array<{
         unitKey: string;
         jumlah: number;
         completionDate?: string;
         daysRemaining?: number;
-      }>
-    : [];
+      }>) {
+        const entries = grouped.get(entry.unitKey) ?? [];
+        entries.push(entry);
+        grouped.set(entry.unitKey, entries);
+      }
+    }
+    return grouped;
+  }, [countryDetail?.ai_military_unit_queue]);
 
-  const getBuildingValue = (key: string): number => {
+  const getBuildingValue = useCallback((key: string): number => {
     if (!countryDetail) return 0;
     if (countryDetail[key] !== undefined && countryDetail[key] !== null) {
       const v = Number(countryDetail[key]);
@@ -403,9 +493,9 @@ export default function PembangunanSipilMiliterSection({
       if (!Number.isNaN(v)) return v;
     }
     return 0;
-  };
+  }, [countryDetail]);
 
-  const getMilitaryUnitValue = (key: string, group: "darat" | "laut" | "udara"): number => {
+  const getMilitaryUnitValue = useCallback((key: string, group: "darat" | "laut" | "udara"): number => {
     if (!countryDetail) return 0;
     const values = [
       countryDetail.armada?.[group]?.[key],
@@ -416,7 +506,7 @@ export default function PembangunanSipilMiliterSection({
     ];
     const counts = values.map(Number).filter((v) => Number.isFinite(v) && v >= 0);
     return counts.find((v) => v > 0) ?? counts[0] ?? 0;
-  };
+  }, [countryDetail]);
 
   const categoryStats = useMemo(() => {
     const stats: Record<string, number> = {};
@@ -424,7 +514,7 @@ export default function PembangunanSipilMiliterSection({
       stats[cat.id] = cat.items.reduce((sum, it) => sum + getBuildingValue(it.key), 0);
     });
     return stats;
-  }, [countryDetail]);
+  }, [getBuildingValue]);
 
   const infantryData = useMemo(() => {
     const currentBarak = getBuildingValue("barak");
@@ -436,7 +526,7 @@ export default function PembangunanSipilMiliterSection({
       capacity: maxCapacity,
       barak: currentBarak,
     };
-  }, [countryDetail]);
+  }, [countryDetail, getBuildingValue, getMilitaryUnitValue]);
 
   const activeCategoryObj = useMemo(
     () => CIVIL_CATEGORIES.find((c) => c.id === activeCivilCategory) || CIVIL_CATEGORIES[0],
@@ -588,7 +678,7 @@ export default function PembangunanSipilMiliterSection({
                 {filteredCivilItems.map((item) => {
                   const count = getBuildingValue(item.key);
                   const isZero = count === 0;
-                  const pending = pendingCivilianConstructions.filter((entry) => entry.buildingKey === item.key);
+                  const pending = pendingCivilianByBuilding.get(item.key) ?? [];
                   const pendingCount = pending.reduce((total, entry) => total + (Number(entry.jumlah) || 0), 0);
                   const completionDate = pending
                     .map((entry) => entry.completionDate)
@@ -672,7 +762,7 @@ export default function PembangunanSipilMiliterSection({
 
                   const GroupIcon =
                     unit.group === "darat" ? Swords : unit.group === "laut" ? Ship : Plane;
-                  const pending = pendingMilitaryUnits.filter((entry) => entry.unitKey === unit.key);
+                  const pending = pendingMilitaryUnitsByKey.get(unit.key) ?? [];
                   const pendingCount = pending.reduce((total, entry) => total + (Number(entry.jumlah) || 0), 0);
                   const completionDate = pending
                     .map((entry) => entry.completionDate)
@@ -743,7 +833,7 @@ export default function PembangunanSipilMiliterSection({
                 {filteredMilitaryInfra.map((infra) => {
                   const count = getBuildingValue(infra.key);
                   const isZero = count === 0;
-                  const pending = pendingMilitaryInfra.filter((entry) => entry.infraKey === infra.key);
+                  const pending = pendingMilitaryInfraByKey.get(infra.key) ?? [];
                   const pendingCount = pending.reduce((total, entry) => total + (Number(entry.jumlah) || 0), 0);
                   const completionDate = pending
                     .map((entry) => entry.completionDate)
@@ -806,3 +896,5 @@ export default function PembangunanSipilMiliterSection({
     </div>
   );
 }
+
+export default React.memo(PembangunanSipilMiliterSectionView, areDisplayedBuildingPropsEqual);

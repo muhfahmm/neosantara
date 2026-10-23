@@ -1,5 +1,7 @@
-use serde_json::{Map, Value};
+use serde::{Deserialize, Serialize};
+use serde_json::{json, Map, Value};
 use std::collections::HashMap;
+use wasm_bindgen::prelude::*;
 
 pub fn is_valid_date(date: &str) -> bool {
     let Some((year, month, day)) = parse_date(date) else {
@@ -107,12 +109,251 @@ pub fn mutable_country_state(country: &Value) -> Map<String, Value> {
         .collect()
 }
 
-#[derive(Clone, Debug)]
+#[derive(Debug, Deserialize)]
+struct NpcDailyMetricsBatch {
+    countries: Vec<NpcDailyMetricsInput>,
+}
+
+#[derive(Debug, Deserialize)]
+struct NpcDailyMetricsInput {
+    slug: String,
+    #[serde(default)]
+    months_passed: f64,
+    #[serde(default)]
+    low_sector_count: f64,
+    #[serde(default)]
+    satisfaction: f64,
+    #[serde(default)]
+    sector_deficit_month_counter: f64,
+    #[serde(default)]
+    sector_deficit_kepuasan_penalty: f64,
+    #[serde(default)]
+    openness_score: f64,
+    #[serde(default)]
+    president_rating: f64,
+    #[serde(default)]
+    rating_month_counter: f64,
+    #[serde(default = "default_rating_multiplier")]
+    last_rating_threshold: f64,
+    #[serde(default = "default_rating_multiplier")]
+    rating_bonus_multiplier: f64,
+    #[serde(default)]
+    kesejahteraan: f64,
+    #[serde(default)]
+    kesejahteraan_decay: f64,
+    #[serde(default)]
+    kesejahteraan_month_counter: f64,
+    #[serde(default = "default_welfare_threshold")]
+    last_kesejahteraan_threshold: f64,
+}
+
+fn default_rating_multiplier() -> f64 {
+    1.0
+}
+
+fn default_welfare_threshold() -> f64 {
+    12.0
+}
+
+fn finite_or(value: f64, fallback: f64) -> f64 {
+    if value.is_finite() {
+        value
+    } else {
+        fallback
+    }
+}
+
+fn calculate_welfare_decay_threshold(
+    satisfaction: f64,
+    openness_score: f64,
+    low_sector_count: f64,
+) -> f64 {
+    let mut threshold: f64 = if satisfaction <= 25.0 {
+        1.0
+    } else if satisfaction <= 45.0 {
+        3.0
+    } else if satisfaction <= 65.0 {
+        6.0
+    } else if satisfaction <= 79.0 {
+        9.0
+    } else {
+        12.0
+    };
+
+    if openness_score < 50.0 {
+        let factor = (0.4 + (openness_score / 50.0) * 0.5).max(0.4);
+        threshold = (threshold * factor).floor().max(1.0);
+    }
+    if low_sector_count > 0.0 {
+        threshold = threshold.min(6.0);
+    }
+    threshold
+}
+
+fn calculate_rating_decay_multiplier(
+    satisfaction: f64,
+    openness_score: f64,
+    low_sector_count: f64,
+) -> f64 {
+    let mut multiplier: f64 = if satisfaction <= 25.0 {
+        0.1
+    } else if satisfaction <= 40.0 {
+        0.3
+    } else if satisfaction <= 65.0 {
+        0.6
+    } else if satisfaction <= 80.0 {
+        0.85
+    } else {
+        1.0
+    };
+
+    if low_sector_count > 0.0 {
+        let sector_reduction = (low_sector_count * 0.05).min(0.4);
+        multiplier *= 1.0 - sector_reduction;
+    }
+    if openness_score < 50.0 {
+        let factor = (0.4 + (openness_score / 50.0) * 0.5).max(0.4);
+        multiplier *= factor;
+    }
+    multiplier.clamp(0.0, 1.0)
+}
+
+fn calculate_npc_daily_metrics(input: &NpcDailyMetricsInput) -> Map<String, Value> {
+    let months_passed = finite_or(input.months_passed, 0.0).max(0.0);
+    let low_sector_count = finite_or(input.low_sector_count, 0.0).max(0.0);
+    let accumulated_deficit_months = if low_sector_count > 0.0 {
+        finite_or(input.sector_deficit_month_counter, 0.0) + months_passed
+    } else {
+        0.0
+    };
+    let completed_deficit_periods = if low_sector_count > 0.0 {
+        (accumulated_deficit_months / 6.0).floor()
+    } else {
+        0.0
+    };
+    let sector_penalty = completed_deficit_periods * (low_sector_count * 2.0).min(10.0);
+    let sector_deficit_month_counter = if low_sector_count > 0.0 {
+        accumulated_deficit_months % 6.0
+    } else {
+        0.0
+    };
+    let sector_deficit_kepuasan_penalty = if low_sector_count > 0.0 {
+        finite_or(input.sector_deficit_kepuasan_penalty, 0.0).max(0.0) + sector_penalty
+    } else {
+        0.0
+    };
+    let satisfaction = (finite_or(input.satisfaction, 50.0) - sector_penalty).clamp(0.0, 100.0);
+    let satisfaction = (satisfaction * 10.0).round() / 10.0;
+    let openness_score = finite_or(input.openness_score, 50.0);
+
+    let base_multiplier =
+        calculate_rating_decay_multiplier(satisfaction, openness_score, low_sector_count);
+    let rating_bonus_multiplier = finite_or(input.rating_bonus_multiplier, 1.0);
+    let new_multiplier = (base_multiplier * rating_bonus_multiplier).clamp(0.0, 1.0);
+    let previous_multiplier = finite_or(input.last_rating_threshold, 1.0);
+    let previous_multiplier = if previous_multiplier == 0.0 {
+        1.0
+    } else {
+        previous_multiplier
+    };
+    let mut rating_counter = finite_or(input.rating_month_counter, 0.0);
+    if previous_multiplier > 0.0 && new_multiplier > 0.0 && previous_multiplier != new_multiplier {
+        rating_counter = (rating_counter / previous_multiplier) * new_multiplier;
+    }
+    if months_passed > 0.0 {
+        rating_counter += months_passed * new_multiplier;
+    }
+    let rating_decrease = rating_counter.floor();
+    let final_rating_counter = rating_counter - rating_decrease;
+    let rating_after_boost = finite_or(input.president_rating, 50.0).min(100.0);
+    let president_rating = (rating_after_boost - rating_decrease - sector_penalty).max(0.0);
+
+    let welfare_threshold =
+        calculate_welfare_decay_threshold(satisfaction, openness_score, low_sector_count);
+    let previous_welfare_threshold = finite_or(input.last_kesejahteraan_threshold, 12.0);
+    let previous_welfare_threshold = if previous_welfare_threshold == 0.0 {
+        12.0
+    } else {
+        previous_welfare_threshold
+    };
+    let mut welfare_counter = finite_or(input.kesejahteraan_month_counter, 0.0) + months_passed;
+    if previous_welfare_threshold != welfare_threshold && previous_welfare_threshold > 0.0 {
+        welfare_counter =
+            (welfare_counter / previous_welfare_threshold * welfare_threshold).round();
+    }
+    let welfare_decrease = if welfare_counter >= welfare_threshold {
+        welfare_counter.floor()
+    } else {
+        0.0
+    };
+    if welfare_counter >= welfare_threshold {
+        welfare_counter %= welfare_threshold;
+    }
+    let total_welfare_decrease = welfare_decrease + sector_penalty;
+    let kesejahteraan =
+        (finite_or(input.kesejahteraan, 50.0) - total_welfare_decrease).clamp(1.0, 100.0);
+
+    let mut updates = Map::new();
+    updates.insert("kepuasan".to_string(), json!(satisfaction));
+    updates.insert(
+        "sector_deficit_month_counter".to_string(),
+        json!(sector_deficit_month_counter),
+    );
+    updates.insert(
+        "sector_deficit_kepuasan_penalty".to_string(),
+        json!(sector_deficit_kepuasan_penalty),
+    );
+    updates.insert("presidentRating".to_string(), json!(president_rating));
+    updates.insert(
+        "rating_month_counter".to_string(),
+        json!(final_rating_counter),
+    );
+    updates.insert("last_rating_threshold".to_string(), json!(new_multiplier));
+    updates.insert("kesejahteraan".to_string(), json!(kesejahteraan));
+    updates.insert(
+        "kesejahteraan_decay".to_string(),
+        json!(finite_or(input.kesejahteraan_decay, 0.0) + total_welfare_decrease),
+    );
+    updates.insert(
+        "kesejahteraan_month_counter".to_string(),
+        json!(welfare_counter),
+    );
+    updates.insert(
+        "last_kesejahteraan_threshold".to_string(),
+        json!(welfare_threshold),
+    );
+    updates
+}
+
+pub fn advance_npc_daily_metrics_batch(input_json: &str) -> Result<String, String> {
+    let input: NpcDailyMetricsBatch =
+        serde_json::from_str(input_json).map_err(|error| error.to_string())?;
+    let results: Vec<Value> = input
+        .countries
+        .iter()
+        .map(|country| {
+            json!({
+                "slug": country.slug,
+                "updates": calculate_npc_daily_metrics(country),
+            })
+        })
+        .collect();
+    serde_json::to_string(&results).map_err(|error| error.to_string())
+}
+
+#[wasm_bindgen]
+pub fn advance_npc_daily_metrics(input_json: &str) -> Result<String, JsValue> {
+    advance_npc_daily_metrics_batch(input_json).map_err(|error| JsValue::from_str(&error))
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(default)]
 pub struct ResourceRules {
     pub is_banned: bool,
     pub ban_finished_at: Option<String>,
     pub production_bonus_multiplier: f64,
     pub external_production_multiplier: f64,
+    pub industrial_consumption_per_day: f64,
 }
 
 impl Default for ResourceRules {
@@ -122,6 +363,7 @@ impl Default for ResourceRules {
             ban_finished_at: None,
             production_bonus_multiplier: 1.0,
             external_production_multiplier: 1.0,
+            industrial_consumption_per_day: 0.0,
         }
     }
 }
@@ -234,7 +476,9 @@ pub fn calculate_daily_material_production(
             let daily_consumption = calculate_consumption(population, per_capita);
             (daily_production - daily_consumption).max(0.0)
         } else {
-            production.unwrap_or(0.0) * building_count * production_multiplier
+            (production.unwrap_or(0.0) * building_count * production_multiplier
+                - rule.industrial_consumption_per_day)
+                .max(0.0)
         };
         result.updates.insert(
             inventory_key,
@@ -247,6 +491,57 @@ pub fn calculate_daily_material_production(
     }
 
     result
+}
+
+#[derive(Deserialize)]
+struct NpcMaterialBatch {
+    current_date: String,
+    fallback_date: String,
+    metadata: Value,
+    countries: Vec<Value>,
+    #[serde(default)]
+    resource_rules: HashMap<String, HashMap<String, ResourceRules>>,
+}
+
+fn simulate_npc_material_batch(input_json: &str) -> Result<String, String> {
+    let input: NpcMaterialBatch = serde_json::from_str(input_json)
+        .map_err(|error| format!("Invalid NPC material job: {error}"))?;
+    if !is_valid_date(&input.current_date) || !is_valid_date(&input.fallback_date) {
+        return Err("NPC material job contains an invalid date.".to_string());
+    }
+
+    let mut results = Vec::with_capacity(input.countries.len());
+    for country in input.countries {
+        let slug = country
+            .get("country_slug")
+            .and_then(Value::as_str)
+            .or_else(|| country.get("slug").and_then(Value::as_str))
+            .unwrap_or_default();
+        if slug.is_empty() {
+            continue;
+        }
+
+        let rules = input.resource_rules.get(slug).cloned().unwrap_or_default();
+        let result = calculate_daily_material_production(
+            &country,
+            &input.metadata,
+            &input.current_date,
+            &input.fallback_date,
+            &rules,
+        );
+        results.push(json!({
+            "slug": slug,
+            "updates": result.updates,
+        }));
+    }
+
+    serde_json::to_string(&results)
+        .map_err(|error| format!("Failed to serialize NPC material result: {error}"))
+}
+
+#[wasm_bindgen]
+pub fn simulate_npc_materials(input_json: &str) -> Result<String, JsValue> {
+    simulate_npc_material_batch(input_json).map_err(|error| JsValue::from_str(&error))
 }
 
 fn find_building_metadata<'a>(
@@ -407,10 +702,11 @@ fn is_leap_year(year: u32) -> bool {
 #[cfg(test)]
 mod tests {
     use super::{
-        calculate_daily_material_production, for_each_simulation_day, is_valid_date,
-        mutable_country_state, next_date, ResourceRules,
+        advance_npc_daily_metrics_batch, calculate_daily_material_production,
+        for_each_simulation_day, is_valid_date, mutable_country_state, next_date,
+        simulate_npc_material_batch, ResourceRules,
     };
-    use serde_json::json;
+    use serde_json::{json, Value};
     use std::collections::HashMap;
 
     #[test]
@@ -549,5 +845,131 @@ mod tests {
         );
 
         assert_eq!(result.updates["inventory_padi"], json!(300.0));
+    }
+
+    #[test]
+    fn npc_material_batch_returns_updates_by_country_slug() {
+        let input = json!({
+            "current_date": "2026-01-03",
+            "fallback_date": "2026-01-02",
+            "metadata": {"padi": {"produksi": 4}},
+            "countries": [{
+                "country_slug": "example",
+                "jumlah_penduduk": 1000,
+                "padi": 2,
+                "inventory_padi": 10,
+                "build_date_padi": "2026-01-01"
+            }],
+            "resource_rules": {
+                "example": {
+                    "padi": {
+                        "production_bonus_multiplier": 1.5,
+                        "external_production_multiplier": 0.5
+                    }
+                }
+            }
+        });
+
+        let result: Value =
+            serde_json::from_str(&simulate_npc_material_batch(&input.to_string()).unwrap())
+                .unwrap();
+        assert_eq!(result[0]["slug"], json!("example"));
+        assert_eq!(result[0]["updates"]["inventory_padi"], json!(21.3));
+    }
+
+    #[test]
+    fn material_batch_subtracts_daily_industrial_consumption() {
+        let input = json!({
+            "current_date": "2026-01-03",
+            "fallback_date": "2026-01-02",
+            "metadata": {"batu_bara": {"produksi": 10}},
+            "countries": [{
+                "country_slug": "example",
+                "jumlah_penduduk": 1000,
+                "batu_bara": 1,
+                "inventory_batu_bara": 0,
+                "build_date_batu_bara": "2026-01-01"
+            }],
+            "resource_rules": {
+                "example": {
+                    "batu_bara": {
+                        "industrial_consumption_per_day": 3
+                    }
+                }
+            }
+        });
+
+        let result: Value =
+            serde_json::from_str(&simulate_npc_material_batch(&input.to_string()).unwrap())
+                .unwrap();
+        assert_eq!(result[0]["updates"]["inventory_batu_bara"], json!(14.0));
+    }
+
+    #[test]
+    fn daily_metrics_batch_applies_sector_penalties_and_decay_counters() {
+        let input = json!({
+            "countries": [{
+                "slug": "example",
+                "months_passed": 6,
+                "low_sector_count": 2,
+                "satisfaction": 80,
+                "sector_deficit_month_counter": 0,
+                "sector_deficit_kepuasan_penalty": 0,
+                "openness_score": 60,
+                "president_rating": 100,
+                "rating_month_counter": 0,
+                "last_rating_threshold": 1,
+                "rating_bonus_multiplier": 1,
+                "kesejahteraan": 50,
+                "kesejahteraan_decay": 0,
+                "kesejahteraan_month_counter": 0,
+                "last_kesejahteraan_threshold": 12
+            }]
+        });
+
+        let result: Value =
+            serde_json::from_str(&advance_npc_daily_metrics_batch(&input.to_string()).unwrap())
+                .unwrap();
+        let updates = &result[0]["updates"];
+        assert_eq!(result[0]["slug"], json!("example"));
+        assert_eq!(updates["kepuasan"], json!(76.0));
+        assert_eq!(updates["sector_deficit_kepuasan_penalty"], json!(4.0));
+        assert_eq!(updates["presidentRating"], json!(92.0));
+        assert_eq!(updates["kesejahteraan"], json!(46.0));
+        assert_eq!(updates["kesejahteraan_decay"], json!(4.0));
+        assert_eq!(updates["kesejahteraan_month_counter"], json!(3.0));
+        assert_eq!(updates["last_kesejahteraan_threshold"], json!(6.0));
+        assert!((updates["last_rating_threshold"].as_f64().unwrap() - 0.765).abs() < 1e-9);
+    }
+
+    #[test]
+    fn daily_metrics_batch_resets_deficit_state_when_sectors_recover() {
+        let input = json!({
+            "countries": [{
+                "slug": "recovered",
+                "months_passed": 0,
+                "low_sector_count": 0,
+                "satisfaction": 80,
+                "sector_deficit_month_counter": 5,
+                "sector_deficit_kepuasan_penalty": 10,
+                "openness_score": 60,
+                "president_rating": 50,
+                "rating_month_counter": 0,
+                "last_rating_threshold": 1,
+                "rating_bonus_multiplier": 1,
+                "kesejahteraan": 50,
+                "kesejahteraan_decay": 0,
+                "kesejahteraan_month_counter": 0,
+                "last_kesejahteraan_threshold": 12
+            }]
+        });
+
+        let result: Value =
+            serde_json::from_str(&advance_npc_daily_metrics_batch(&input.to_string()).unwrap())
+                .unwrap();
+        let updates = &result[0]["updates"];
+        assert_eq!(updates["sector_deficit_month_counter"], json!(0.0));
+        assert_eq!(updates["sector_deficit_kepuasan_penalty"], json!(0.0));
+        assert_eq!(updates["kepuasan"], json!(80.0));
     }
 }

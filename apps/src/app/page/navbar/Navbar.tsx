@@ -9,7 +9,6 @@ import {
 import { formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { calculateDailyPopulationChange } from '@/app/logic/populations_logic/population_logic';
-import { hitungDemografi } from '@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/RingkasanPopulasiModal';
 import { calculateKepuasan } from '@/app/logic/kepuasanCalculator';
 import { menuItems, subMenuItems } from '../navigasi_menu/navigationData';
 
@@ -68,17 +67,22 @@ export function Navbar({
     const netBalanceColor = netBalance >= 0 ? 'text-emerald-700' : 'text-rose-700';
     const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID', { maximumFractionDigits: 0 })}`;
     
-    const demographyResult = useMemo(() => {
+    const populationMetrics = useMemo(() => {
         if (!countryDetail) return null;
-        return hitungDemografi(countryDetail, countryName, metadata, currentDate);
+        return calculateDailyPopulationChange(countryDetail, countryName, metadata, currentDate);
     }, [countryDetail, countryName, metadata, currentDate]);
 
-    const populasi = demographyResult?.populasi ?? (Number(countryDetail?.jumlah_penduduk) || 0);
-    const netDailyChange = demographyResult?.netDailyChange ?? 0;
-    const dailyBirths = demographyResult?.dailyBirths ?? 0;
-    const dailyDeaths = demographyResult?.dailyDeaths ?? 0;
+    const populasi = countryDetail
+        ? Number(countryDetail.jumlah_penduduk) || 10_000_000
+        : 0;
+    const netDailyChange = populationMetrics?.netDailyChange ?? 0;
+    const dailyBirths = populationMetrics?.dailyBirths ?? 0;
+    const dailyDeaths = populationMetrics?.dailyDeaths ?? 0;
     const netPopulationLabel = `${netDailyChange >= 0 ? '+ ' : '- '}${Math.abs(netDailyChange).toLocaleString('id-ID', { maximumFractionDigits: 2 })}`;
-    const kepuasanScore = calculateKepuasan(countryDetail, metadata);
+    const kepuasanScore = useMemo(
+        () => calculateKepuasan(countryDetail, metadata),
+        [countryDetail, metadata],
+    );
 
     // Function to get active menu information
     const getActiveMenuInfo = () => {

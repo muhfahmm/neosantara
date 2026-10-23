@@ -5,7 +5,18 @@ import {
   calculateNetBalanceWithEconomicEmbargo,
   getEconomicEmbargoProductionMultiplier,
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic";
-import { calculateDailyMaterialProduction } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
+import { findBuildingMetadata } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic";
+import {
+  applyKementerianKebudayaanDecayMultiplierBonus,
+  getProductionBonusMultiplier,
+} from "@/app/page/bonus_logic";
+import { FOOD_CONSUMPTION_PER_CAPITA } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
+import { getTotalIndustrialMaterialConsumption } from "@/app/page/navigasi_menu/2_navigasi_bawah/5_pembangunan/1_produksi/construction_support/1_produksi/industrialMaterialLogic";
+import { getActiveProductionBanForResource } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/5_laranganProduksiLogic";
+import {
+  simulateNpcMaterialsInRust,
+  type NpcMaterialWorkerRules,
+} from "./npcSimulationWorkerClient";
 import {
   calculateDailyPopulationChange,
   updateDailyPopulation,
@@ -15,18 +26,18 @@ import {
   calculateKeterbukaanScore,
   createSatisfactionSectorBaseline,
   countLowSatisfactionSectors,
-  LOW_SECTOR_DECAY_INTERVAL_MONTHS,
-  LOW_SECTOR_DECAY_MAX_POINTS_PER_INTERVAL,
-  LOW_SECTOR_DECAY_POINTS_PER_SECTOR,
 } from "@/app/logic/kepuasanCalculator";
 import {
   calculateKesejahteraan,
-  calculateKesejahteraanDecay,
 } from "@/app/logic/kesejahteraanCalculator";
-import { calculatePresidentRating, getMonthsDifference } from "@/app/logic/peringkatCalculator";
+import { getMonthsDifference } from "@/app/logic/peringkatCalculator";
 import { runNpcCountryBrain } from "@/app/logic/npc_ai_brain/orchestrator";
 import { evaluateAndControlDemographics } from "@/app/logic/npc_ai_brain/demographics/demographicControllerAI";
 import { isNegaraNuklirBawaan, getNegaraNuklirBaseIcbm } from "@/app/logic/npc_ai_brain/military/nuclearControllerAI";
+import {
+  advanceNpcDailyMetricsInRust,
+  type NpcDailyMetricsWorkerCountry,
+} from "./npcSimulationWorkerClient";
 
 export const NPC_COUNTRY_SIMULATION_UPDATED_EVENT = "neosantara:npc-country-simulation-updated";
 
@@ -290,24 +301,95 @@ function initializeNpcCountryMetrics(
   return initialized;
 }
 
-function simulateCountryDay(
+function getNpcMaterialRules(
+  country: CountryRecord,
+  metadata: Record<string, any>,
+): Record<string, NpcMaterialWorkerRules> {
+  const rules: Record<string, NpcMaterialWorkerRules> = {};
+  for (const resourceKey of Object.keys(metadata)) {
+    const buildingCount = Number(country[resourceKey]) || 0;
+    const productionBan = getActiveProductionBanForResource(resourceKey);
+    const isFoodCommodity = FOOD_CONSUMPTION_PER_CAPITA[resourceKey] !== undefined;
+    if (buildingCount === 0 && !(productionBan && isFoodCommodity)) continue;
+
+    const buildingMetadata = findBuildingMetadata(metadata, resourceKey);
+    if (!productionBan && !buildingMetadata?.produksi) continue;
+
+    const productionBonusMultiplier = getProductionBonusMultiplier(country, resourceKey);
+    const externalProductionMultiplier = getEconomicEmbargoProductionMultiplier(
+      String(country.name_id || country.nama_negara || country.country || country.country_name || ""),
+      resourceKey,
+    );
+    const dailyProduction =
+      (Number(buildingMetadata?.produksi) || 0) *
+      buildingCount *
+      productionBonusMultiplier *
+      externalProductionMultiplier;
+    rules[resourceKey] = {
+      is_banned: Boolean(productionBan),
+      ban_finished_at: productionBan?.finishedAt ?? null,
+      production_bonus_multiplier: productionBonusMultiplier,
+      external_production_multiplier: externalProductionMultiplier,
+      industrial_consumption_per_day: isFoodCommodity
+        ? 0
+        : getTotalIndustrialMaterialConsumption(country, resourceKey, dailyProduction),
+    };
+  }
+  return rules;
+}
+
+interface PreparedCountryDay {
+  countryName: string;
+  withPopulation: CountryRecord;
+  netDailyChange: number;
+}
+
+function createDailyMetricsInput(
   country: CountryRecord,
   date: string,
   previousDate: string,
-  metadata: Record<string, any>
-): CountryRecord {
+  metadata: Record<string, unknown>,
+): NpcDailyMetricsWorkerCountry {
+  const monthsPassed = Math.max(0, getMonthsDifference(previousDate, date));
+  const lowSectorCount = countLowSatisfactionSectors(country, metadata);
+  const keterbukaanScore = calculateKeterbukaanScore(country);
+  return {
+    slug: normalizeSlug(country.country_slug),
+    months_passed: monthsPassed,
+    low_sector_count: lowSectorCount,
+    satisfaction: Number(country.kepuasan ?? 50),
+    sector_deficit_month_counter: Math.max(
+      0,
+      Number(country.sector_deficit_month_counter) || 0,
+    ),
+    sector_deficit_kepuasan_penalty: Math.max(
+      0,
+      Number(country.sector_deficit_kepuasan_penalty) || 0,
+    ),
+    openness_score: keterbukaanScore,
+    president_rating: Number(country.presidentRating ?? 50),
+    rating_month_counter: Number(country.rating_month_counter) || 0,
+    last_rating_threshold: Number(country.last_rating_threshold) || 1.0,
+    rating_bonus_multiplier: applyKementerianKebudayaanDecayMultiplierBonus(1, country),
+    kesejahteraan: Number(country.kesejahteraan ?? 50),
+    kesejahteraan_decay: Number(country.kesejahteraan_decay) || 0,
+    kesejahteraan_month_counter: Number(country.kesejahteraan_month_counter) || 0,
+    last_kesejahteraan_threshold: Number(country.last_kesejahteraan_threshold) || 12,
+  };
+}
+
+function prepareCountryDay(
+  country: CountryRecord,
+  date: string,
+  previousDate: string,
+  metadata: Record<string, any>,
+  materialUpdates: Record<string, unknown>,
+): PreparedCountryDay {
   const countryName = String(
     country.name_id || country.nama_negara || country.country || country.country_name || ""
   );
-  const materialResult = calculateDailyMaterialProduction(
-    country,
-    metadata,
-    date,
-    resourceKey => getEconomicEmbargoProductionMultiplier(countryName, resourceKey),
-    previousDate
-  );
-  const withProduction = materialResult.hasUpdates
-    ? { ...country, ...materialResult.updates }
+  const withProduction = Object.keys(materialUpdates).length > 0
+    ? { ...country, ...materialUpdates }
     : country;
 
   const populationMetrics = calculateDailyPopulationChange(
@@ -327,83 +409,38 @@ function simulateCountryDay(
     ),
   };
 
-  const monthsPassed = Math.max(0, getMonthsDifference(previousDate, date));
-  const lowSectorCount = countLowSatisfactionSectors(country, metadata);
-  const previousDeficitMonths = Math.max(0, Number(country.sector_deficit_month_counter) || 0);
-  const accumulatedDeficitMonths = lowSectorCount > 0
-    ? previousDeficitMonths + monthsPassed
-    : 0;
-  const completedDeficitPeriods = lowSectorCount > 0
-    ? Math.floor(accumulatedDeficitMonths / LOW_SECTOR_DECAY_INTERVAL_MONTHS)
-    : 0;
-  const sectorDeficitPenaltyThisTick = completedDeficitPeriods * Math.min(
-    LOW_SECTOR_DECAY_MAX_POINTS_PER_INTERVAL,
-    lowSectorCount * LOW_SECTOR_DECAY_POINTS_PER_SECTOR,
-  );
-  const sectorDeficitMonthCounter = lowSectorCount > 0
-    ? accumulatedDeficitMonths % LOW_SECTOR_DECAY_INTERVAL_MONTHS
-    : 0;
-  const accumulatedSectorPenalty = lowSectorCount > 0
-    ? Math.max(0, Number(country.sector_deficit_kepuasan_penalty) || 0) +
-      sectorDeficitPenaltyThisTick
-    : 0;
-  const nextKepuasan = Math.max(
-    0,
-    Math.min(
-      100,
-      parseFloat(
-        (
-          Number(country.kepuasan ?? 50) -
-          sectorDeficitPenaltyThisTick
-        ).toFixed(1),
-      ),
-    ),
-  );
-  const withSatisfaction: CountryRecord = {
-    ...withPopulation,
-    kepuasan: nextKepuasan,
-    sector_deficit_month_counter: sectorDeficitMonthCounter,
-    sector_deficit_kepuasan_penalty: accumulatedSectorPenalty,
+  return {
+    countryName,
+    withPopulation,
+    netDailyChange: populationMetrics.netDailyChange,
   };
-  const keterbukaanScore = calculateKeterbukaanScore(country);
-  const ratingResult = calculatePresidentRating({
-    currentRating: Number(country.presidentRating ?? 50),
-    ratingMonthCounter: Number(country.rating_month_counter) || 0,
-    lastRatingThreshold: Number(country.last_rating_threshold) || 1.0,
-    monthsPassed,
-    currentKepuasan: nextKepuasan,
-    keterbukaanScore,
-    lowSectorCount,
-    additionalDecay: sectorDeficitPenaltyThisTick,
-    countryDetail: country,
-    lastDate: previousDate,
-    currentDate: date,
-  });
-  const welfareResult = calculateKesejahteraanDecay({
-    currentKesejahteraan: Number(country.kesejahteraan ?? 50),
-    kesejahteraanMonthCounter: Number(country.kesejahteraan_month_counter) || 0,
-    lastKesejahteraanThreshold: Number(country.last_kesejahteraan_threshold) || 12,
-    monthsPassed,
-    currentKepuasan: nextKepuasan,
-    keterbukaanScore,
-    lowSectorCount,
-    additionalDecay: sectorDeficitPenaltyThisTick,
-  });
+}
 
+function finishCountryDay(
+  prepared: PreparedCountryDay,
+  metrics: Record<string, number>,
+  date: string,
+  metadata: Record<string, unknown>,
+): CountryRecord {
+  const withSatisfaction: CountryRecord = {
+    ...prepared.withPopulation,
+    kepuasan: metrics.kepuasan,
+    sector_deficit_month_counter: metrics.sector_deficit_month_counter,
+    sector_deficit_kepuasan_penalty: metrics.sector_deficit_kepuasan_penalty,
+  };
   const withSimulation: CountryRecord = {
     ...withSatisfaction,
-    presidentRating: ratingResult.presidentRating,
-    rating_month_counter: ratingResult.rating_month_counter,
-    last_rating_threshold: ratingResult.last_rating_threshold,
-    kesejahteraan: welfareResult.nextKesejahteraan,
-    kesejahteraan_bonus: Number(country.kesejahteraan_bonus) || 0,
-    kesejahteraan_decay:
-      (Number(country.kesejahteraan_decay) || 0) + welfareResult.decayThisTick,
-    kesejahteraan_month_counter: welfareResult.kesejahteraan_month_counter,
-    last_kesejahteraan_threshold: welfareResult.last_kesejahteraan_threshold,
+    presidentRating: metrics.presidentRating,
+    rating_month_counter: metrics.rating_month_counter,
+    last_rating_threshold: metrics.last_rating_threshold,
+    kesejahteraan: metrics.kesejahteraan,
+    kesejahteraan_bonus: Number(prepared.withPopulation.kesejahteraan_bonus) || 0,
+    kesejahteraan_decay: metrics.kesejahteraan_decay,
+    kesejahteraan_month_counter: metrics.kesejahteraan_month_counter,
+    last_kesejahteraan_threshold: metrics.last_kesejahteraan_threshold,
     anggaran:
       (Number(withSatisfaction.anggaran) || 0) +
-      calculateNetBalanceWithEconomicEmbargo(withSatisfaction, countryName),
+      calculateNetBalanceWithEconomicEmbargo(withSatisfaction, prepared.countryName),
   };
 
   // Eksekusi Otak AI Negara NPC (9 Indikator & Pembangunan Sektor)
@@ -412,7 +449,9 @@ function simulateCountryDay(
 
   // Evaluasi dan Kontrol Demografi Cerdas oleh AI (Pajak, Harga, Sistem Ekonomi, Subsidi)
   // Memastikan laju pertumbuhan tidak boleh minus, menjaga rentang minimal +1 s/d +500 jiwa/hari
-  const currentNetGrowth = Number(updatedNpcCountry.laju_pertumbuhan ?? populationMetrics.netDailyChange ?? 0);
+  const currentNetGrowth = Number(
+    updatedNpcCountry.laju_pertumbuhan ?? prepared.netDailyChange ?? 0,
+  );
   const currentPop = Math.max(0, Number(updatedNpcCountry.jumlah_penduduk) || 10_000_000);
   evaluateAndControlDemographics(updatedNpcCountry, currentNetGrowth, currentPop);
 
@@ -421,18 +460,29 @@ function simulateCountryDay(
 
 function yieldToBrowser(): Promise<void> {
   return new Promise(resolve => {
-    const idleWindow = window as Window & {
-      requestIdleCallback?: (
-        callback: (deadline: { timeRemaining: () => number; didTimeout: boolean }) => void,
-        options?: { timeout: number }
-      ) => number;
-    };
-    if (idleWindow.requestIdleCallback) {
-      idleWindow.requestIdleCallback(() => resolve(), { timeout: 500 });
-      return;
-    }
-    window.setTimeout(resolve, 32);
+    window.setTimeout(resolve, 0);
   });
+}
+
+async function yieldUntilMapPanEnds(generation: number): Promise<boolean> {
+  while (
+    generation === simulationGeneration &&
+    (window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active
+  ) {
+    await new Promise<void>(resolve => {
+      const onPanEnded = () => {
+        window.clearTimeout(timeoutId);
+        resolve();
+      };
+      const timeoutId = window.setTimeout(() => {
+        window.removeEventListener("neosantara:map-pan-ended", onPanEnded);
+        resolve();
+      }, 100);
+      window.addEventListener("neosantara:map-pan-ended", onPanEnded, { once: true });
+    });
+  }
+  await yieldToBrowser();
+  return generation === simulationGeneration;
 }
 
 async function persistNpcSimulation(
@@ -481,6 +531,7 @@ async function persistNpcSimulation(
   }
 
   const simulatedCountries = new Map<string, CountryRecord>();
+  let preparationStartedAt = performance.now();
   const annexedCountries =
     (window as Window & { neosantara_annexed_countries?: Record<string, unknown> })
       .neosantara_annexed_countries || {};
@@ -506,25 +557,82 @@ async function persistNpcSimulation(
       religion: baseline.religion,
       ideology: baseline.ideology,
     }, metadata));
+    if (performance.now() - preparationStartedAt >= 2) {
+      if (!(await yieldUntilMapPanEnds(generation))) return;
+      preparationStartedAt = performance.now();
+    }
   }
 
   let simulationDate = state.lastSimulatedDate;
   while (simulationDate < currentDate) {
     const previousDate = simulationDate;
     simulationDate = nextDate(simulationDate);
+    const countriesForDay = Array.from(simulatedCountries.values());
+    const resourceRules: Record<string, Record<string, NpcMaterialWorkerRules>> = {};
     let sliceStartedAt = performance.now();
-    for (const [slug, country] of simulatedCountries) {
-      if (generation !== simulationGeneration) return;
-      simulatedCountries.set(
-        slug,
-        simulateCountryDay(country, simulationDate, previousDate, metadata)
-      );
-
+    for (const country of countriesForDay) {
+      resourceRules[normalizeSlug(country.country_slug)] = getNpcMaterialRules(country, metadata);
       if (performance.now() - sliceStartedAt >= 2) {
-        await yieldToBrowser();
+        if (!(await yieldUntilMapPanEnds(generation))) return;
         sliceStartedAt = performance.now();
       }
     }
+    const materialResults = await simulateNpcMaterialsInRust({
+      current_date: simulationDate,
+      fallback_date: previousDate,
+      metadata,
+      countries: countriesForDay,
+      resource_rules: resourceRules,
+    });
+    const materialUpdatesBySlug = new Map(
+      materialResults.map(result => [normalizeSlug(result.slug), result.updates]),
+    );
+
+    const dailyMetricsResults = await advanceNpcDailyMetricsInRust(
+      Array.from(simulatedCountries.values(), country =>
+        createDailyMetricsInput(country, simulationDate, previousDate, metadata),
+      ),
+    );
+    const dailyMetricsBySlug = new Map(
+      dailyMetricsResults.map(result => [normalizeSlug(result.slug), result.updates]),
+    );
+    if (
+      dailyMetricsBySlug.size !== simulatedCountries.size ||
+      Array.from(simulatedCountries.keys()).some(slug => !dailyMetricsBySlug.has(slug))
+    ) {
+      throw new Error("Rust NPC worker returned an incomplete daily metrics batch.");
+    }
+
+    sliceStartedAt = performance.now();
+    for (const [slug, country] of simulatedCountries) {
+      if (generation !== simulationGeneration) return;
+      if ((window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active) {
+        if (!(await yieldUntilMapPanEnds(generation))) return;
+        if (generation !== simulationGeneration) return;
+        sliceStartedAt = performance.now();
+      }
+      const metrics = dailyMetricsBySlug.get(slug);
+      if (!metrics) {
+        throw new Error(`Rust NPC worker omitted daily metrics for ${slug}.`);
+      }
+      const prepared = prepareCountryDay(
+        country,
+        simulationDate,
+        previousDate,
+        metadata,
+        materialUpdatesBySlug.get(slug) || {},
+      );
+      simulatedCountries.set(
+        slug,
+        finishCountryDay(prepared, metrics, simulationDate, metadata),
+      );
+
+      if (performance.now() - sliceStartedAt >= 2) {
+        if (!(await yieldUntilMapPanEnds(generation))) return;
+        sliceStartedAt = performance.now();
+      }
+    }
+    if (!(await yieldUntilMapPanEnds(generation))) return;
   }
 
   for (const [slug, country] of simulatedCountries) {

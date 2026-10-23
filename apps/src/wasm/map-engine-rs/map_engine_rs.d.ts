@@ -26,7 +26,7 @@ export class MapEngine {
     set_horizontal_wrap(enabled: boolean): void;
     set_selected_country(iso: string | null | undefined, should_center: boolean): void;
     /**
-     * Dipanggil dari requestAnimationFrame. Throttle ke ~30 FPS saat pan.
+     * Batasi kerja render ke 60 FPS maksimum, terlepas dari refresh rate layar.
      */
     tick(now_ms: number): void;
 }
@@ -70,8 +70,8 @@ export interface InitOutput {
     readonly set_selected_country_on_map: (a: number, b: number, c: number) => void;
     readonly start_map_engine: (a: number, b: number, c: number, d: number, e: any, f: any) => [number, number];
     readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___f64______true_: (a: number, b: number, c: number) => void;
-    readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true_: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_204ecec70ff1290___features__gen_WheelEvent__WheelEvent______true__23: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_WheelEvent__WheelEvent______true_: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_WheelEvent__WheelEvent______true__23: (a: number, b: number, c: any) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_exn_store: (a: number) => void;

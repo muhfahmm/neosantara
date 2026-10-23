@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
 import countryPaths from './country-paths.json';
 import { mergeClaimedTerritories } from './world-map-geometry';
-import { SimulationTimeManager, createSimulationCalendar } from '../time_controllers';
+import { initializeSimulationClock, SimulationTimeManager, createSimulationCalendar } from '../time_controllers';
 import { handleGameRestart } from '../time_controllers';
 import dynamic from 'next/dynamic';
 import useKeyboardShortcuts from '../keyword';
@@ -359,7 +359,7 @@ const MapCanvasView = memo(function MapCanvasView({
     onPointerDown: (event: React.PointerEvent<HTMLCanvasElement>) => void;
     onPointerMove: (event: React.PointerEvent<HTMLCanvasElement>) => void;
     onPointerUp: () => void;
-    onPointerLeave: () => void;
+    onPointerLeave: (event: React.PointerEvent<HTMLCanvasElement>) => void;
     onWheel: () => void;
 }) {
     // Custom target reticle cursor SVG encoded
@@ -543,6 +543,8 @@ export default function MapPage() {
     const warPauseStateRef = useRef<{ wasPaused: boolean } | null>(null);
     const [speed, setSpeed] = useState(1);
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
+    const currentDateRef = useRef(currentDate);
+    currentDateRef.current = currentDate;
 
     useEffect(() => {
         isPausedRef.current = isPaused;
@@ -600,10 +602,10 @@ export default function MapPage() {
             }
         });
 
-        setNonAggressionPactHistory(history);
         const historySignature = JSON.stringify(history);
         if (historySignature !== pactHistorySignatureRef.current) {
             pactHistorySignatureRef.current = historySignature;
+            setNonAggressionPactHistory(history);
             window.dispatchEvent(new CustomEvent('country_relations_updated'));
         }
     }, [countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, countryDetail?.nonAggressionPacts, countryDetail?.nonAggressionPactHistory, currentDate, simulationDateString]);
@@ -4067,50 +4069,114 @@ export default function MapPage() {
     const isMapPointerDownRef = useRef(false);
     const lastMapInteractionAtRef = useRef(0);
     const pendingDateRef = useRef<Date | null>(null);
+    const pendingDateTimingRef = useRef<{
+        dateKey: string;
+        tickAt: number;
+        commitStartedAt: number | null;
+        source: 'clock' | 'date-commit';
+        rustDateMs: number;
+    } | null>(null);
+    const longTaskEntriesRef = useRef<PerformanceEntry[]>([]);
     const dateCommitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const dateCommitIdleRef = useRef<number | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (typeof PerformanceObserver === 'undefined' ||
+            !PerformanceObserver.supportedEntryTypes?.includes('longtask')) return;
+
+        const observer = new PerformanceObserver(list => {
+            const now = performance.now();
+            longTaskEntriesRef.current = [
+                ...longTaskEntriesRef.current,
+                ...list.getEntries(),
+            ].filter(entry => entry.startTime + entry.duration > now - 30_000);
+        });
+        observer.observe({ entryTypes: ['longtask'] });
+
+        return () => observer.disconnect();
+    }, []);
 
     const schedulePendingDateCommit = useCallback(() => {
         if (!pendingDateRef.current) return;
         if (dateCommitTimerRef.current !== null) clearTimeout(dateCommitTimerRef.current);
-        if (dateCommitIdleRef.current !== null) {
-            (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(dateCommitIdleRef.current);
-            dateCommitIdleRef.current = null;
-        }
+        if (isMapPointerDownRef.current) return;
         const elapsedSinceInteraction = Date.now() - lastMapInteractionAtRef.current;
-        // Jika user sedang drag peta, tunda commit (jangan batalkan) agar pergantian hari tidak terlewat
-        const delay = isMapPointerDownRef.current ? 500 : Math.max(0, 180 - elapsedSinceInteraction);
+        const delay = Math.max(0, 180 - elapsedSinceInteraction);
         const commit = () => {
             dateCommitTimerRef.current = null;
-            dateCommitIdleRef.current = null;
             if (!pendingDateRef.current) return;
             const pendingDate = pendingDateRef.current;
             pendingDateRef.current = null;
-            setCurrentDate(pendingDate);
-        };
-        dateCommitTimerRef.current = setTimeout(() => {
-            dateCommitTimerRef.current = null;
-            const idleWindow = window as Window & {
-                requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
-            };
-            if (idleWindow.requestIdleCallback) {
-                dateCommitIdleRef.current = idleWindow.requestIdleCallback(commit, { timeout: 150 });
-            } else {
-                commit();
+            const dateKey = `${pendingDate.getFullYear()}-${pendingDate.getMonth()}-${pendingDate.getDate()}`;
+            const pendingTiming = pendingDateTimingRef.current;
+            if (pendingTiming?.dateKey === dateKey) {
+                pendingTiming.commitStartedAt = performance.now();
             }
-        }, delay);
+            startTransition(() => setCurrentDate(pendingDate));
+        };
+        dateCommitTimerRef.current = setTimeout(commit, delay);
     }, []);
+
+    useEffect(() => {
+        const timing = pendingDateTimingRef.current;
+        if (!timing || timing.commitStartedAt === null) return;
+
+        const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${currentDate.getDate()}`;
+        if (timing.dateKey !== dateKey) return;
+
+        let secondFrame = 0;
+        const firstFrame = requestAnimationFrame(() => {
+            secondFrame = requestAnimationFrame((paintedAt) => {
+                if (pendingDateTimingRef.current !== timing) return;
+                pendingDateTimingRef.current = null;
+
+                const timingData = {
+                    date: `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`,
+                    tickToPaintMs: paintedAt - timing.tickAt,
+                    commitMs: paintedAt - timing.commitStartedAt!,
+                    queuedMs: timing.commitStartedAt! - timing.tickAt,
+                    speed: timeManagerRef.current?.getSpeed() ?? 1,
+                    source: timing.source,
+                    rustDateMs: timing.rustDateMs,
+                    longTaskMs: longTaskEntriesRef.current.reduce((total, entry) => {
+                        const overlap = Math.max(
+                            0,
+                            Math.min(paintedAt, entry.startTime + entry.duration) -
+                                Math.max(timing.tickAt, entry.startTime),
+                        );
+                        return total + overlap;
+                    }, 0),
+                    playerPresent: Boolean(countryDetail?.country_slug),
+                };
+                longTaskEntriesRef.current = longTaskEntriesRef.current.filter(
+                    entry => entry.startTime + entry.duration > timing.tickAt,
+                );
+                void fetch('/api/simulation-date-timing', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(timingData),
+                    keepalive: true,
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                }).catch(error => {
+                    console.error('Gagal mengirim log timing pergantian tanggal ke terminal server:', error);
+                });
+            });
+        });
+
+        return () => {
+            cancelAnimationFrame(firstFrame);
+            if (secondFrame !== 0) cancelAnimationFrame(secondFrame);
+        };
+    }, [currentDate, countryDetail?.country_slug]);
 
     const markMapInteraction = useCallback(() => {
         lastMapInteractionAtRef.current = Date.now();
         if (dateCommitTimerRef.current !== null) {
             clearTimeout(dateCommitTimerRef.current);
             dateCommitTimerRef.current = null;
-        }
-        if (dateCommitIdleRef.current !== null) {
-            (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(dateCommitIdleRef.current);
-            dateCommitIdleRef.current = null;
         }
     }, []);
 
@@ -4221,97 +4287,128 @@ export default function MapPage() {
 
     // Initialize high-performance simulation clock on mount
     useEffect(() => {
-        let lastDateKey = '';
-        const manager = new SimulationTimeManager(
-            (formattedDate) => {
-                if (dateTextRef.current) {
-                    dateTextRef.current.textContent = formattedDate;
-                }
-                // Update React state HANYA saat tanggal (hari) benar-benar berganti
-                // untuk mencegah re-render React berlebihan & frame drop pada canvas map
-                const activeManager = timeManagerRef.current;
-                if (activeManager) {
-                    const newDate = activeManager.getCurrentDate();
-                    const dateKey = `${newDate.getFullYear()}-${newDate.getMonth()}-${newDate.getDate()}`;
-                    if (dateKey !== lastDateKey) {
-                        // Update lastDateKey SETELAH menyimpan pending date agar tidak terlewat
-                        // jika schedulePendingDateCommit ditunda karena interaksi peta
-                        pendingDateRef.current = newDate;
-                        lastDateKey = dateKey;
-                        schedulePendingDateCommit();
+        let disposed = false;
+        let manager: SimulationTimeManager | null = null;
+
+        const initializeClock = async () => {
+            await initializeSimulationClock();
+            if (disposed) return;
+
+            let lastDateKey = '';
+            const timeManager = new SimulationTimeManager(
+                (formattedDate) => {
+                    if (dateTextRef.current) {
+                        dateTextRef.current.textContent = formattedDate;
+                    }
+                    // Update React state HANYA saat tanggal (hari) benar-benar berganti
+                    // untuk mencegah re-render React berlebihan & frame drop pada canvas map
+                    const activeManager = timeManagerRef.current;
+                    if (activeManager) {
+                        const newDate = activeManager.getCurrentDate();
+                        const dateKey = `${newDate.getFullYear()}-${newDate.getMonth()}-${newDate.getDate()}`;
+                        if (dateKey !== lastDateKey) {
+                            // Update lastDateKey SETELAH menyimpan pending date agar tidak terlewat
+                            // jika schedulePendingDateCommit ditunda karena interaksi peta
+                            pendingDateRef.current = newDate;
+                            pendingDateTimingRef.current = !activeManager.getIsPaused()
+                                ? {
+                                    dateKey,
+                                    tickAt: performance.now(),
+                                    commitStartedAt: null,
+                                    source: 'clock',
+                                    rustDateMs: activeManager.getLastRustDateCalculationMs(),
+                                }
+                                : null;
+                            lastDateKey = dateKey;
+                            schedulePendingDateCommit();
+                        }
+                    }
+                },
+                (progress) => {
+                    if (progressBarRef.current) {
+                        progressBarRef.current.style.transform = `scaleX(${progress / 100})`;
                     }
                 }
-            },
-            (progress) => {
-                if (progressBarRef.current) {
-                    progressBarRef.current.style.transform = `scaleX(${progress / 100})`;
+            );
+            manager = timeManager;
+
+            // Assign manager to ref immediately after construction
+            timeManagerRef.current = timeManager;
+            if (typeof window !== 'undefined') {
+                (window as Window & { neosantara_time_controller?: SimulationTimeManager }).neosantara_time_controller = timeManager;
+            }
+
+            // Create calendar system with factory
+            const calendarSystem = createSimulationCalendar(timeManager);
+            calendarRef.current = calendarSystem;
+
+            // Check if there is a save to load to restore the date
+            if (typeof window !== 'undefined') {
+                const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
+                const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
+                // Reset data misi dan diamond ke tingkat awal setiap kali permainan dimulai atau halaman direfresh
+                // kecuali jika ada data save yang sedang dimuat (presiden_simulator_load_save).
+                if (!loadSaveStr || newGameMarker === '1') {
+                    clearMissionProgressData();
+                    localStorage.setItem('player_diamonds', '150');
+                    setPlayerDiamonds(150);
+                    window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: 150 } }));
                 }
-            }
-        );
 
-        // Assign manager to ref immediately after construction
-        timeManagerRef.current = manager;
-        if (typeof window !== 'undefined') {
-            (window as Window & { neosantara_time_controller?: SimulationTimeManager }).neosantara_time_controller = manager;
-        }
-
-        // Create calendar system with factory
-        const calendarSystem = createSimulationCalendar(manager);
-        calendarRef.current = calendarSystem;
-
-        // Check if there is a save to load to restore the date
-        if (typeof window !== 'undefined') {
-            const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
-            const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
-            // Reset data misi dan diamond ke tingkat awal setiap kali permainan dimulai atau halaman direfresh
-            // kecuali jika ada data save yang sedang dimuat (presiden_simulator_load_save).
-            if (!loadSaveStr || newGameMarker === '1') {
-                clearMissionProgressData();
-                localStorage.setItem('player_diamonds', '150');
-                setPlayerDiamonds(150);
-                window.dispatchEvent(new CustomEvent('player_diamonds_updated', { detail: { diamonds: 150 } }));
-            }
-
-            if (newGameMarker === '1') {
-                clearExpelledOrganizationCountries();
-                clearAllOrganizationMembershipData();
-                clearActiveResolutionsForSession();
-                clearActiveSecurityCouncilItems();
-                clearReportedInvasionViolations();
-                localStorage.removeItem('hutangModalLoanSources');
-                localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
-                localStorage.removeItem('pbb_active_resolutions_v4');
-                localStorage.removeItem('pbb_active_keamanan_v4');
-                localStorage.removeItem('pbb_reported_war_ban_violations_v1');
-                localStorage.removeItem('programNuklirActive');
-                localStorage.removeItem('icbmBuildTask');
-                try {
-                    sessionStorage.removeItem('programNuklirActive');
-                    sessionStorage.removeItem('program_nuklir_modal_open');
-                    sessionStorage.removeItem('icbm_detail_open');
-                    sessionStorage.removeItem('perang_nuklir_detail_open');
-                    sessionStorage.removeItem('presiden_simulator_load_save');
-                } catch (e) { }
-                clearActiveNpcCountrySimulationState();
-                (window as any).neosantara_annexed_countries = {};
-                (window as any).neosantara_country_color_overrides = {};
-                localStorage.removeItem('presiden_simulator_new_game');
-            }
-            if (loadSaveStr) {
-                try {
-                    const savedState = JSON.parse(loadSaveStr);
-                    if (savedState.game_date) {
-                        manager.setCurrentDate(new Date(savedState.game_date));
+                if (newGameMarker === '1') {
+                    clearExpelledOrganizationCountries();
+                    clearAllOrganizationMembershipData();
+                    clearActiveResolutionsForSession();
+                    clearActiveSecurityCouncilItems();
+                    clearReportedInvasionViolations();
+                    localStorage.removeItem('hutangModalLoanSources');
+                    localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
+                    localStorage.removeItem('pbb_active_resolutions_v4');
+                    localStorage.removeItem('pbb_active_keamanan_v4');
+                    localStorage.removeItem('pbb_reported_war_ban_violations_v1');
+                    localStorage.removeItem('programNuklirActive');
+                    localStorage.removeItem('icbmBuildTask');
+                    try {
+                        sessionStorage.removeItem('programNuklirActive');
+                        sessionStorage.removeItem('program_nuklir_modal_open');
+                        sessionStorage.removeItem('icbm_detail_open');
+                        sessionStorage.removeItem('perang_nuklir_detail_open');
+                        sessionStorage.removeItem('presiden_simulator_load_save');
+                    } catch (e) { }
+                    clearActiveNpcCountrySimulationState();
+                    (window as any).neosantara_annexed_countries = {};
+                    (window as any).neosantara_country_color_overrides = {};
+                    localStorage.removeItem('presiden_simulator_new_game');
+                }
+                if (loadSaveStr) {
+                    try {
+                        const savedState = JSON.parse(loadSaveStr);
+                        if (savedState.game_date) {
+                            timeManager.setCurrentDate(new Date(savedState.game_date));
+                        }
+                    } catch (err) {
+                        console.error("Failed to restore date from save:", err);
                     }
-                } catch (err) {
-                    console.error("Failed to restore date from save:", err);
                 }
             }
-        }
 
-        setCurrentDate(manager.getCurrentDate());
+            setCurrentDate(timeManager.getCurrentDate());
+        };
+
+        void initializeClock().catch((error: unknown) => {
+            console.error('Failed to initialize Rust simulation clock:', error);
+        });
 
         return () => {
+            disposed = true;
+            if (!manager) {
+                if (dateCommitTimerRef.current !== null) {
+                    clearTimeout(dateCommitTimerRef.current);
+                    dateCommitTimerRef.current = null;
+                }
+                return;
+            }
+
             if (typeof window !== 'undefined') {
                 const runtimeWindow = window as Window & { neosantara_time_controller?: SimulationTimeManager };
                 if (runtimeWindow.neosantara_time_controller === manager) {
@@ -4914,28 +5011,21 @@ export default function MapPage() {
         }
     }, [currentDate, countryDetail, selectedCountry?.country]);
 
-    const skipPopulationMetricsRefreshRef = useRef(false);
-
-    // Log initial population metrics when the active country data changes.
+    // Log population metrics when the active country or its metadata is initialized.
     useEffect(() => {
         if (!countryDetail) return;
-        if (skipPopulationMetricsRefreshRef.current) {
-            skipPopulationMetricsRefreshRef.current = false;
-            return;
-        }
 
-        // Calculate initial population metrics untuk display
         const populationMetrics = calculateDailyPopulationChange(
             countryDetail,
             selectedCountry?.country,
             metadata,
-            currentDate
+            currentDateRef.current
         );
         logger.log('PopulationInit', 'Initial population metrics calculated', {
             populasi: countryDetail.jumlah_penduduk,
             netChange: populationMetrics.netDailyChange,
         });
-    }, [countryDetail?.jumlah_penduduk, countryDetail?.active_outbreaks, countryDetail?.active_disaster_effects, selectedCountry?.country, metadata, currentDate]);
+    }, [countryDetail?.country_slug, selectedCountry?.country, metadata]);
 
     useEffect(() => {
         if (!countryDetail || !currentDate) return;
@@ -4971,7 +5061,6 @@ export default function MapPage() {
 
             // Calculate economy updates
             const playerCountryName = selectedCountry?.country || countryDetail.country || countryDetail.nama_negara || '';
-            const netBalance = calculateNetBalanceWithEconomicEmbargo(countryDetail, playerCountryName);
 
             const populationMetrics = calculateDailyPopulationChange(
                 countryDetail,
@@ -5037,7 +5126,6 @@ export default function MapPage() {
                 }
             }
 
-            skipPopulationMetricsRefreshRef.current = true;
             setCountryDetail((prev: any) => {
                 if (!prev) return prev;
 
@@ -5642,6 +5730,11 @@ export default function MapPage() {
 
         // Run in the same React cycle as the calendar tick. At 3x, the next
         // date arrives before an idle callback with a 1s timeout can run.
+        if ((window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active) {
+            const resumeDailyTick = () => window.setTimeout(runDailyTick, 0);
+            window.addEventListener('neosantara:map-pan-ended', resumeDailyTick, { once: true });
+            return () => window.removeEventListener('neosantara:map-pan-ended', resumeDailyTick);
+        }
         runDailyTick();
     }, [currentDate, countryDetail, metadata, selectedCountry?.country]);
 
@@ -6089,9 +6182,16 @@ export default function MapPage() {
         }
     }, []);
 
+    const signalMapPanEnded = useCallback(() => {
+        if (typeof window === 'undefined') return;
+        (window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active = false;
+        window.dispatchEvent(new Event('neosantara:map-pan-ended'));
+    }, []);
+
     const handleCanvasPointerDown = useCallback((event: React.PointerEvent<HTMLCanvasElement>) => {
-        if (mapClickContextRef.current.interactionDisabled) return;
+        if (mapClickContextRef.current.interactionDisabled || !event.isPrimary || event.button !== 0) return;
         isMapPointerDownRef.current = true;
+        (window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active = true;
         markMapInteraction();
         dragStartRef.current = { x: event.clientX, y: event.clientY };
         isDraggingRef.current = false;
@@ -6109,18 +6209,32 @@ export default function MapPage() {
         }
     }, []);
 
-    const handleCanvasPointerUp = useCallback(() => {
-        isMapPointerDownRef.current = false;
-        lastMapInteractionAtRef.current = Date.now();
-        schedulePendingDateCommit();
-    }, [schedulePendingDateCommit]);
-
-    const handleCanvasPointerLeave = useCallback(() => {
+    const finishMapPointerInteraction = useCallback(() => {
         if (!isMapPointerDownRef.current) return;
         isMapPointerDownRef.current = false;
+        signalMapPanEnded();
         lastMapInteractionAtRef.current = Date.now();
         schedulePendingDateCommit();
-    }, [schedulePendingDateCommit]);
+    }, [schedulePendingDateCommit, signalMapPanEnded]);
+
+    useEffect(() => {
+        window.addEventListener('pointerup', finishMapPointerInteraction);
+        window.addEventListener('pointercancel', finishMapPointerInteraction);
+        return () => {
+            window.removeEventListener('pointerup', finishMapPointerInteraction);
+            window.removeEventListener('pointercancel', finishMapPointerInteraction);
+        };
+    }, [finishMapPointerInteraction]);
+
+    const handleCanvasPointerUp = useCallback(() => {
+        finishMapPointerInteraction();
+    }, [finishMapPointerInteraction]);
+
+    const handleCanvasPointerLeave = useCallback((event: React.PointerEvent<HTMLCanvasElement>) => {
+        if (!isMapPointerDownRef.current) return;
+        if (event.buttons !== 0) return;
+        finishMapPointerInteraction();
+    }, [finishMapPointerInteraction]);
 
     const handleCanvasWheel = useCallback(() => {
         markMapInteraction();

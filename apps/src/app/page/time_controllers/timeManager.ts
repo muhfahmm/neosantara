@@ -1,5 +1,6 @@
 // detail path: c:\EM\apps\src\app\page\time_controllers\timeManager.ts
 import { setSimulationDate } from "../../../../../json/4_database_hubungan_antar_negara/relationsRegistry";
+import { formatSimulationDate, shiftSimulationDate } from "./simulationClock";
 
 export class SimulationTimeManager {
     private currentDate: Date;
@@ -10,6 +11,7 @@ export class SimulationTimeManager {
     private onDateChangeCallback: (formattedDate: string) => void;
     private onProgressChangeCallback?: (progress: number) => void;
     private lastProgressCallbackTime: number = 0;
+    private lastRustDateCalculationMs: number = 0;
     private readonly progressUpdateInterval = 100;
     // Mapping speed multipliers to millisecond intervals per day tick
     private speedIntervals: Record<number, number> = {
@@ -29,14 +31,31 @@ export class SimulationTimeManager {
 
     // Format Date helper (DD Month, YYYY)
     public getFormattedDate(): string {
-        const day = this.currentDate.getDate();
-        const monthNames = [
-            "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
-            "Jul", "Agt", "Sep", "Okt", "Nov", "Des"
-        ];
-        const month = monthNames[this.currentDate.getMonth()];
-        const year = this.currentDate.getFullYear();
-        return `${day} ${month}, ${year}`;
+        return formatSimulationDate(
+            this.currentDate.getFullYear(),
+            this.currentDate.getMonth(),
+            this.currentDate.getDate()
+        );
+    }
+
+    private getDateAfterDays(days: number): Date {
+        const calculationStartedAt = performance.now();
+        const shiftedDate = shiftSimulationDate(
+            this.currentDate.getFullYear(),
+            this.currentDate.getMonth(),
+            this.currentDate.getDate(),
+            days
+        );
+        this.lastRustDateCalculationMs = performance.now() - calculationStartedAt;
+        const dateParts = shiftedDate.split(',').map(Number);
+        if (dateParts.length !== 3 || dateParts.some(part => !Number.isInteger(part))) {
+            throw new Error('Rust simulation clock returned an invalid date');
+        }
+
+        const [year, month, day] = dateParts;
+        const newDate = new Date(this.currentDate);
+        newDate.setFullYear(year, month, day);
+        return newDate;
     }
 
     private triggerCallback(): void {
@@ -63,9 +82,7 @@ export class SimulationTimeManager {
 
     // Advance or rewind simulation date by N days
     public advanceDays(days: number): void {
-        const newDate = new Date(this.currentDate);
-        newDate.setDate(newDate.getDate() + days);
-        this.currentDate = newDate;
+        this.currentDate = this.getDateAfterDays(days);
         setSimulationDate(this.currentDate);
         this.triggerCallback();
     }
@@ -101,6 +118,10 @@ export class SimulationTimeManager {
         return this.speedIntervals[this.speed] || this.speedIntervals[1];
     }
 
+    public getLastRustDateCalculationMs(): number {
+        return this.lastRustDateCalculationMs;
+    }
+
     public getDayProgress(): number {
         if (this.isPaused) return 0;
         const elapsed = Math.max(0, performance.now() - this.lastTickTime);
@@ -129,9 +150,7 @@ export class SimulationTimeManager {
             const delta = now - this.lastTickTime;
 
             if (delta >= interval) {
-                const newDate = new Date(this.currentDate);
-                newDate.setDate(newDate.getDate() + 1);
-                this.currentDate = newDate;
+                this.currentDate = this.getDateAfterDays(1);
 
                 setSimulationDate(this.currentDate);
 

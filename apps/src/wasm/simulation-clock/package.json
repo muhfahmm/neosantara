@@ -1,0 +1,15 @@
+{
+  "name": "simulation-clock",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "simulation_clock_bg.wasm",
+    "simulation_clock.js",
+    "simulation_clock.d.ts"
+  ],
+  "main": "simulation_clock.js",
+  "types": "simulation_clock.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
