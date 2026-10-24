@@ -1,8 +1,6 @@
-interface TankProps {
-  color: string;
-}
+import type { UnitIconProps } from "../unitIconProps";
 
-export default function Tank({ color }: TankProps) {
+export default function Tank({ color }: UnitIconProps) {
   return (
     <g color={color}>
       <rect x="4" y="18" width="36" height="7" rx="3.5" fill="currentColor" opacity="0.55" />

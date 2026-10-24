@@ -1,1 +1,0 @@
-(Untuk aset ledakan, asap, peluru)

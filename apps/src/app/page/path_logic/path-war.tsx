@@ -1007,6 +1007,10 @@ export default function WarMap({
           targetName={target.country}
           onAutoResult={handleAutoResult}
           onClose={onClose}
+          attackerDetail={attacker}
+          targetDetail={target}
+          isUserDefender={isUserDefender}
+          isCoalitionForce={isPbbCoalition}
         />
       )}
 
