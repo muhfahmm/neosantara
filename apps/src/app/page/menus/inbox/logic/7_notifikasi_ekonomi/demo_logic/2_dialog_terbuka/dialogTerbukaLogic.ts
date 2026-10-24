@@ -4,7 +4,7 @@ export interface DialogTerbukaResult {
   success: boolean;
   cost: number;
   message: string;
-  targetMenuId: string;
+  targetPath: string;
   error?: string;
   updatedNotification?: DemonstrasiNotification;
 }
@@ -28,7 +28,7 @@ export function startDialogTerbuka(
   return {
     success: true,
     cost: DIALOG_TERBUKA_COST,
-    targetMenuId: 'Menu:DialogTerbukaDemo',
+    targetPath: '/page/map_system/forum-dialog-terbuka',
     message: `Pemerintah resmi mengumumkan pembukaan forum dialog terbuka dengan perwakilan massa demonstran. Mengalihkan ke forum dialog...`,
     updatedNotification,
   };

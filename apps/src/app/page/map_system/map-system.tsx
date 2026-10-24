@@ -3,6 +3,7 @@
 
 import React, { memo, startTransition, useCallback, useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { useRouter } from 'next/navigation';
 import {
     Play, Pause, Settings, Palmtree, Shield, Crosshair, Globe, Calendar, ArrowLeft, Plus, RotateCw
 } from 'lucide-react';
@@ -486,6 +487,7 @@ function setMilitaryAttackRelation(
 }
 
 export default function MapPage() {
+    const router = useRouter();
     const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
     const [countryDetail, setCountryDetail] = useState<any>(null);
     const [metadata, setMetadata] = useState<Record<string, any>>({});
@@ -6666,7 +6668,17 @@ export default function MapPage() {
                         } else if (actionType === 'dialog') {
                             const result = startDialogTerbuka(tNotif);
                             setInboxModalOpen(false);
-                            setActiveMenu(result.targetMenuId);
+                            if (result.updatedNotification) {
+                                setNotifications(previous => previous.map(notification =>
+                                    notification.id === notif.id
+                                        ? { ...notification, ...result.updatedNotification }
+                                        : notification
+                                ));
+                            }
+                            setActiveMenu('Peta Taktis');
+                            const countryName = selectedCountry?.country || countryDetail?.country || countryDetail?.nama || '';
+                            const countryQuery = countryName ? `?country=${encodeURIComponent(countryName)}` : '';
+                            router.push(`${result.targetPath}${countryQuery}`);
                             return;
                         } else if (actionType === 'fulfill') {
                             const result = executePenuhiTuntutan(tNotif);
