@@ -5,6 +5,7 @@ import {
   Swords, Zap, X, Map as MapIcon, Sun, Mountain, Crosshair, Shield,
   Navigation, Radio, Waves, Building2, Target, Trees, Loader2
 } from 'lucide-react';
+import UnitMarker from './units/unitMarker';
 
 export type TerrainType = 'default' | 'desert' | 'snow' | 'jungle' | 'urban';
 
@@ -92,22 +93,6 @@ const Smoke = ({ x, y, n = 5 }: { x: number; y: number; n?: number }) => (
   </g>
 );
 
-const Unit = ({ x, y, kind, hostile, color, label, echelon }: { x: number; y: number; kind: 'tank' | 'heli'; hostile?: boolean; color: string; label?: string; echelon?: string }) => (
-  <g>
-    {kind === 'heli' && <ellipse cx={x + 8} cy={y + (hostile ? 36 : 30)} rx="13" ry="4" fill="#000" opacity="0.35" filter="url(#nw-soft)" />}
-    {hostile ? (
-      <polygon points={`${x},${y - 24} ${x + 28},${y} ${x},${y + 24} ${x - 28},${y}`} fill="#12060a" fillOpacity="0.75" stroke={color} strokeWidth="1.6" />
-    ) : (
-      <rect x={x - 24} y={y - 16} width="48" height="32" rx="3" fill="#050b14" fillOpacity="0.75" stroke={color} strokeWidth="1.6" />
-    )}
-    <use href={`#nw-ic-${kind}`} x={hostile ? x - 14 : x - 17} y={hostile ? y - 9 : y - 11} width={hostile ? 28 : 34} height={hostile ? 18 : 22} color={color} />
-    {echelon && <text x={x} y={hostile ? y - 29 : y - 21} textAnchor="middle" fontSize="10" fontWeight="800" fill={color} fontFamily="monospace">{echelon}</text>}
-    {label && (
-      <text x={x} y={y + (hostile ? 40 : 30)} textAnchor="middle" fontSize="10" fontWeight="800" letterSpacing="1.5" fill={color} stroke="#000" strokeWidth="3" paintOrder="stroke" fontFamily="monospace">{label}</text>
-    )}
-  </g>
-);
-
 const TacticalMap = memo(function TacticalMap({ accent, water, isSimulating }: MapProps) {
   // Posisi unit attacker saat simulasi (bergerak maju)
   const attackerTranslate = isSimulating ? 'translate(120px, 80px)' : 'translate(0px, 0px)';
@@ -132,22 +117,6 @@ const TacticalMap = memo(function TacticalMap({ accent, water, isSimulating }: M
         <radialGradient id="nw-vignette" cx="0.5" cy="0.5" r="0.75"><stop offset="0.55" stopColor="#000" stopOpacity="0" /><stop offset="1" stopColor="#000" stopOpacity="0.6" /></radialGradient>
         <radialGradient id="nw-patch"><stop offset="0" stopColor={accent} stopOpacity="0.09" /><stop offset="1" stopColor={accent} stopOpacity="0" /></radialGradient>
 
-        <symbol id="nw-ic-tank" viewBox="0 0 48 28">
-          <rect x="4" y="18" width="36" height="7" rx="3.5" fill="currentColor" opacity="0.55" />
-          {[9, 16, 23, 30, 37].map((cx) => <circle key={cx} cx={cx} cy="21.5" r="2.2" fill="currentColor" />)}
-          <path d="M8 18 L11 11 H35 L39 18 Z" fill="currentColor" />
-          <path d="M16 11 L18.5 5 H29 L31.5 11 Z" fill="currentColor" />
-          <rect x="30" y="6.6" width="17" height="2.4" rx="1" fill="currentColor" />
-        </symbol>
-        <symbol id="nw-ic-heli" viewBox="0 0 48 30">
-          <g className="nw-a nw-rotor"><ellipse cx="22" cy="6" rx="21" ry="1.5" fill="currentColor" opacity="0.8" /></g>
-          <rect x="21" y="6" width="2" height="4" fill="currentColor" />
-          <ellipse cx="22" cy="16" rx="12" ry="6" fill="currentColor" />
-          <path d="M30 14 L46 11 V14.5 L32 19 Z" fill="currentColor" />
-          <circle cx="46" cy="12.5" r="2.6" fill="none" stroke="currentColor" strokeWidth="1" />
-          <path d="M12 25 H30 M16 22 V25 M26 22 V25" stroke="currentColor" strokeWidth="1.5" fill="none" />
-          <path d="M11 14 Q13 11 17 11 V16 H11 Z" fill="#050b14" opacity="0.55" />
-        </symbol>
       </defs>
 
       <ellipse cx="260" cy="230" rx="260" ry="170" fill="url(#nw-patch)" />
@@ -209,16 +178,16 @@ const TacticalMap = memo(function TacticalMap({ accent, water, isSimulating }: M
       <g className="nw-tz" data-terrain="attacker" style={{ transform: attackerTranslate, transition: 'transform 3s ease-in-out' }}>
         <circle cx="205" cy="120" r="78" fill={accent} fillOpacity="0.07" />
         <circle className="nw-a nw-spin" cx="205" cy="120" r="64" fill="none" stroke={accent} strokeOpacity="0.45" strokeWidth="1" strokeDasharray="6 10" />
-        <Unit x={175} y={132} kind="tank" color={accent} />
-        <Unit x={232} y={150} kind="tank" color={accent} />
-        <Unit x={205} y={96} kind="heli" color={accent} label="ARMOR DIV" echelon="XX" />
+        <UnitMarker x={175} y={132} kind="tank" color={accent} />
+        <UnitMarker x={232} y={150} kind="tank" color={accent} />
+        <UnitMarker x={205} y={96} kind="heli" color={accent} label="ARMOR DIV" echelon="XX" />
       </g>
 
       <g className="nw-tz" data-terrain="defender">
         <circle cx="820" cy="455" r="82" fill="#f43f5e" fillOpacity="0.07" />
         <circle className="nw-a nw-ping" cx="820" cy="455" r="34" fill="none" stroke="#f43f5e" strokeWidth="1.2" />
-        <Unit x={790} y={470} kind="tank" hostile color="#f43f5e" />
-        <Unit x={850} y={438} kind="tank" hostile color="#f43f5e" label="DEF TANK" echelon="X" />
+        <UnitMarker x={790} y={470} kind="tank" hostile color="#f43f5e" />
+        <UnitMarker x={850} y={438} kind="tank" hostile color="#f43f5e" label="DEF TANK" echelon="X" />
         <g className="nw-a nw-lock" opacity="0.85"><path d="M 805,500 H 835 M 820,485 V 515" stroke="#f43f5e" strokeWidth="1.6" /></g>
       </g>
 
