@@ -150,6 +150,7 @@ pub struct MapEngine {
     cached_fill_batches: Vec<FillBatch>,
     cached_outline_path: Option<Path2d>,
     cached_selected_path: Option<Path2d>,
+    cached_selected_fill: Option<JsValue>,
     cached_map_canvas: Option<HtmlCanvasElement>,
     cached_capitals_canvas: Option<HtmlCanvasElement>,
     cached_batches_ready: bool,
@@ -196,6 +197,7 @@ impl MapEngine {
             cached_fill_batches: Vec::new(),
             cached_outline_path: Path2d::new().ok(),
             cached_selected_path: Path2d::new().ok(),
+            cached_selected_fill: None,
             cached_map_canvas: None,
             cached_capitals_canvas: None,
             cached_batches_ready: false,
@@ -334,19 +336,10 @@ impl MapEngine {
     fn rebuild_draw_batches(&mut self) {
         let mut fill_batches: Vec<FillBatch> = Vec::new();
         let outline_path = Path2d::new().ok();
-        let selected_path = Path2d::new().ok();
-        let mut cache_complete = outline_path.is_some() && selected_path.is_some();
-        let selected = self.selected_lower.as_deref();
+        let mut cache_complete = outline_path.is_some();
 
         for feature in &self.features {
-            let is_selected =
-                selected.map_or(false, |iso| !feature.iso.is_empty() && feature.iso == iso);
-            let style = match (is_selected, feature.override_fill.as_ref()) {
-                (true, Some(override_fill)) if self.override_beats_selected => override_fill,
-                (true, _) => &self.styles.sel_fill,
-                (false, Some(override_fill)) => override_fill,
-                _ => &feature.fill,
-            };
+            let style = feature.override_fill.as_ref().unwrap_or(&feature.fill);
             let Some(path) = &feature.paths[1] else {
                 cache_complete = false;
                 continue;
@@ -372,17 +365,13 @@ impl MapEngine {
             } else {
                 cache_complete = false;
             }
-            if is_selected {
-                if let Some(selected_path) = &selected_path {
-                    selected_path.add_path(path);
-                }
-            } else if let Some(outline_path) = &outline_path {
+            if let Some(outline_path) = &outline_path {
                 outline_path.add_path(path);
             }
         }
         self.cached_fill_batches = fill_batches;
         self.cached_outline_path = outline_path;
-        self.cached_selected_path = selected_path;
+        self.rebuild_selected_overlay();
         self.cached_batches_ready = cache_complete;
         self.cached_map_canvas = None;
         if !cache_complete {
@@ -422,15 +411,34 @@ impl MapEngine {
             context.set_fill_style(&batch.style);
             context.fill_with_path_2d(&batch.path);
         }
-        context.set_stroke_style(&self.styles.stroke);
-        context.set_line_width(0.35);
-        if let Some(outline) = &self.cached_outline_path {
-            context.stroke_with_path(outline);
-        }
         self.cached_map_canvas = Some(canvas);
         self.cached_fill_batches.clear();
-        self.cached_outline_path = None;
         self.cached_batches_ready = false;
+    }
+
+    fn rebuild_selected_overlay(&mut self) {
+        let selected_path = Path2d::new().ok();
+        let mut selected_fill = None;
+        if let (Some(iso), Some(path)) = (self.selected_lower.as_deref(), selected_path.as_ref()) {
+            if let Some(feature) = self.features.iter().find(|feature| feature.iso == iso) {
+                if let Some(feature_path) = &feature.paths[1] {
+                    path.add_path(feature_path);
+                    selected_fill = Some(
+                        if self.override_beats_selected {
+                            feature
+                                .override_fill
+                                .as_ref()
+                                .unwrap_or(&self.styles.sel_fill)
+                        } else {
+                            &self.styles.sel_fill
+                        }
+                        .clone(),
+                    );
+                }
+            }
+        }
+        self.cached_selected_path = selected_path;
+        self.cached_selected_fill = selected_fill;
     }
 
     fn rebuild_feature_grid(&mut self) {
@@ -524,12 +532,22 @@ impl MapEngine {
 
     /// Warna override per feature (indeks sama dengan urutan GeoJSON). null/undefined = tanpa override.
     pub fn set_feature_colors(&mut self, colors: Vec<JsValue>, beat_selected: bool) {
+        let mut changed = self.override_beats_selected != beat_selected;
         for (f, c) in self.features.iter_mut().zip(colors.into_iter()) {
-            f.override_fill = if c.as_string().is_some() {
+            let next_fill = if c.as_string().is_some() {
                 Some(c)
             } else {
                 None
             };
+            let current_color = f.override_fill.as_ref().and_then(JsValue::as_string);
+            let next_color = next_fill.as_ref().and_then(JsValue::as_string);
+            if current_color != next_color {
+                f.override_fill = next_fill;
+                changed = true;
+            }
+        }
+        if !changed {
+            return;
         }
         self.override_beats_selected = beat_selected;
         self.rebuild_draw_batches();
@@ -719,7 +737,7 @@ impl MapEngine {
     pub fn set_selected_country(&mut self, iso: Option<String>, should_center: bool) {
         self.selected_lower = iso.as_ref().map(|s| s.to_lowercase());
         self.selected_country_iso = iso;
-        self.rebuild_draw_batches();
+        self.rebuild_selected_overlay();
         self.dirty = true;
 
         if let Some(iso_val) = self.selected_lower.clone() {
@@ -892,7 +910,7 @@ impl MapEngine {
 
             let sel = self.selected_lower.as_deref();
             let is_sel = |f: &CachedFeature| sel.map_or(false, |s| !f.iso.is_empty() && f.iso == s);
-            let use_raster_cache = self.scale <= 1.0;
+            let use_raster_cache = self.scale <= 6.0;
             let use_global_batches =
                 detail_level == 0 && visible.len() * 4 >= self.features.len() * 3;
             let mut drew_cached_map = false;
@@ -906,6 +924,17 @@ impl MapEngine {
                         self.height,
                     ) {
                         Ok(()) => {
+                            if let (Some(selected), Some(fill)) =
+                                (&self.cached_selected_path, &self.cached_selected_fill)
+                            {
+                                self.ctx.set_fill_style(fill);
+                                self.ctx.fill_with_path_2d(selected);
+                            }
+                            if let Some(outline) = &self.cached_outline_path {
+                                self.ctx.set_stroke_style(&self.styles.stroke);
+                                self.ctx.set_line_width(0.7 / self.scale);
+                                self.ctx.stroke_with_path(outline);
+                            }
                             if let Some(selected) = &self.cached_selected_path {
                                 self.ctx.set_stroke_style(&self.styles.sel_stroke);
                                 self.ctx.set_line_width(1.0 / self.scale);
@@ -926,6 +955,12 @@ impl MapEngine {
                 for batch in &self.cached_fill_batches {
                     self.ctx.set_fill_style(&batch.style);
                     self.ctx.fill_with_path_2d(&batch.path);
+                }
+                if let (Some(selected), Some(fill)) =
+                    (&self.cached_selected_path, &self.cached_selected_fill)
+                {
+                    self.ctx.set_fill_style(fill);
+                    self.ctx.fill_with_path_2d(selected);
                 }
                 self.ctx.set_stroke_style(&self.styles.stroke);
                 self.ctx.set_line_width(0.7 / self.scale);

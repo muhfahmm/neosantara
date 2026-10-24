@@ -142,23 +142,6 @@ export default function PilihNegaraPage() {
   };
 
   useEffect(() => {
-    const handleGlobalMouseUp = () => {
-      const canvas = document.getElementById('map-canvas-bg');
-      if (canvas) {
-        const event = new MouseEvent('mouseup', {
-          bubbles: true,
-          cancelable: true,
-          view: window,
-        });
-        canvas.dispatchEvent(event);
-      }
-    };
-
-    window.addEventListener('mouseup', handleGlobalMouseUp);
-    return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
-  }, []);
-
-  useEffect(() => {
     // Pastikan seluruh state NPC dan game simulasi sebelumnya dibersihkan saat kembali ke menu Pilih Negara
     clearActiveNpcCountrySimulationState();
     if (typeof window !== 'undefined') {
@@ -552,14 +535,6 @@ export default function PilihNegaraPage() {
           onPointerUp={handleCanvasPointerUp}
           onPointerCancel={() => {
             dragStartPosRef.current = null;
-          }}
-          onMouseLeave={(e) => {
-            const event = new MouseEvent('mouseup', {
-              bubbles: true,
-              cancelable: true,
-              view: window,
-            });
-            e.currentTarget.dispatchEvent(event);
           }}
         />
       </div>
