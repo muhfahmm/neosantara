@@ -154,6 +154,7 @@ import { checkAndGenerateEmbassyOffers, createEmbassyOfferNotification } from '.
 import { executeAparatOperation } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/bubarkanAparatLogic';
 import type { DetailOpsiBubarkan } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/opsiBubarkanMassaConfig';
 const MenuBubarkanMassaModal = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/MenuBubarkanMassaModal'), { ssr: false });
+const HasilBubarkanMassaModal = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/HasilBubarkanMassaModal'), { ssr: false });
 import { startDialogTerbuka } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/dialogTerbukaLogic';
 import { executePenuhiTuntutan } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/3_penuhi_tuntutan/penuhiTuntutanLogic';
 import { executeAbaikanDemo, calculateDailyIgnoredDemoPenalties } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/4_abaikan_demo/abaikanDemoLogic';
@@ -733,6 +734,19 @@ export default function MapPage() {
         isOpen: false,
         notification: null,
     });
+    const [hasilBubarkanState, setHasilBubarkanState] = useState<{
+        isOpen: boolean;
+        title: string;
+        message: string;
+        type: 'success' | 'error' | 'info';
+        casualties?: number;
+        remainingMassa?: number;
+    }>({
+        isOpen: false,
+        title: '',
+        message: '',
+        type: 'success',
+    });
     const [giftModalOpen, setGiftModalOpen] = useState(false);
     const [newsModalOpen, setNewsModalOpen] = useState(false);
     const [tradeRejectionState, setTradeRejectionState] = useState<{
@@ -1083,6 +1097,12 @@ export default function MapPage() {
             }
             if (timeManagerRef.current) {
                 timeManagerRef.current.setPaused(nextPaused);
+                if (pendingDateRef.current) {
+                    schedulePendingDateCommit(true);
+                } else {
+                    const cur = timeManagerRef.current.getCurrentDate();
+                    setCurrentDate(cur);
+                }
             }
             setIsPaused(nextPaused);
         },
@@ -4205,16 +4225,17 @@ export default function MapPage() {
         return () => observer.disconnect();
     }, []);
 
-    const schedulePendingDateCommit = useCallback(() => {
+    const schedulePendingDateCommit = useCallback((force = false) => {
         if (!pendingDateRef.current) return;
-        if (dateCommitTimerRef.current !== null) clearTimeout(dateCommitTimerRef.current);
-        if (isMapPointerDownRef.current || isTimeControllerHoveredRef.current) return;
-        const elapsedSinceInteraction = Date.now() - lastMapInteractionAtRef.current;
-        const delay = Math.max(0, MAP_INTERACTION_IDLE_MS - elapsedSinceInteraction);
+        if (dateCommitTimerRef.current !== null) {
+            clearTimeout(dateCommitTimerRef.current);
+            dateCommitTimerRef.current = null;
+        }
+
         const commit = () => {
             dateCommitTimerRef.current = null;
             if (!pendingDateRef.current) return;
-            if (isMapPointerDownRef.current || isTimeControllerHoveredRef.current) return;
+            if (!force && isMapPointerDownRef.current) return;
             const pendingDate = pendingDateRef.current;
             pendingDateRef.current = null;
             const dateKey = `${pendingDate.getFullYear()}-${pendingDate.getMonth()}-${pendingDate.getDate()}`;
@@ -4224,6 +4245,14 @@ export default function MapPage() {
             }
             startTransition(() => setCurrentDate(pendingDate));
         };
+
+        if (force || !isMapPointerDownRef.current) {
+            commit();
+            return;
+        }
+
+        const elapsedSinceInteraction = Date.now() - lastMapInteractionAtRef.current;
+        const delay = Math.max(0, MAP_INTERACTION_IDLE_MS - elapsedSinceInteraction);
         dateCommitTimerRef.current = setTimeout(commit, delay);
     }, []);
 
@@ -5162,15 +5191,6 @@ export default function MapPage() {
             const month = String(currentDate.getMonth() + 1).padStart(2, '0');
             const day = String(currentDate.getDate()).padStart(2, '0');
             const currentDateStr = `${year}-${month}-${day}`;
-            const managerDate = timeManagerRef.current?.getCurrentDate();
-            if (managerDate) {
-                const managerDateStr = [
-                    managerDate.getFullYear(),
-                    String(managerDate.getMonth() + 1).padStart(2, '0'),
-                    String(managerDate.getDate()).padStart(2, '0'),
-                ].join('-');
-                if (managerDateStr !== currentDateStr) return;
-            }
 
             const lastDate = typeof countryDetail.last_daily_tick_date === 'string'
                 ? countryDetail.last_daily_tick_date.slice(0, 10)
@@ -5221,12 +5241,6 @@ export default function MapPage() {
                 waitForInteractionToEnd();
                 return;
             }
-            const latestManagerDate = timeManagerRef.current?.getCurrentDate();
-            if (latestManagerDate && [
-                latestManagerDate.getFullYear(),
-                String(latestManagerDate.getMonth() + 1).padStart(2, '0'),
-                String(latestManagerDate.getDate()).padStart(2, '0'),
-            ].join('-') !== currentDateStr) return;
 
             const populationMetrics = calculateDailyPopulationChange(
                 countryDetail,
@@ -5893,11 +5907,8 @@ export default function MapPage() {
         const scheduleDailyTick = () => {
             cancelScheduledDailyTick();
             if (interactionActive()) return;
-            dailyTickTimer = window.setTimeout(() => {
-                dailyTickTimer = null;
-                if (interactionActive()) return;
-                runDailyTick();
-            }, 250);
+            // Jalankan segera agar sinkron instan dengan tanggal kalender baru
+            runDailyTick();
         };
         const resumeDailyTickWhenIdle = () => {
             if (interactionActive()) return;
@@ -7881,6 +7892,12 @@ export default function MapPage() {
                                 }
                                 if (timeManagerRef.current) {
                                     timeManagerRef.current.setPaused(nextPaused);
+                                    if (pendingDateRef.current) {
+                                        schedulePendingDateCommit(true);
+                                    } else {
+                                        const cur = timeManagerRef.current.getCurrentDate();
+                                        setCurrentDate(cur);
+                                    }
                                 }
                                 setIsPaused(nextPaused);
                             }}
@@ -8340,6 +8357,7 @@ export default function MapPage() {
                 }}
             />
 
+            {/* Modal Hasil Perang & Pertempuran Militer */}
             <ResultModal
                 isOpen={resultModal.isOpen}
                 title={resultModal.title}
@@ -8348,6 +8366,19 @@ export default function MapPage() {
                 type={resultModal.type}
                 onClose={() => {
                     setResultModal(prev => ({ ...prev, isOpen: false }));
+                }}
+            />
+
+            {/* Modal Khusus Hasil Pembubaran Massa Demo (Hard Power / Aparat) */}
+            <HasilBubarkanMassaModal
+                isOpen={hasilBubarkanState.isOpen}
+                title={hasilBubarkanState.title}
+                message={hasilBubarkanState.message}
+                type={hasilBubarkanState.type}
+                casualties={hasilBubarkanState.casualties}
+                remainingMassa={hasilBubarkanState.remainingMassa}
+                onClose={() => {
+                    setHasilBubarkanState(prev => ({ ...prev, isOpen: false }));
                 }}
             />
 
@@ -8406,12 +8437,11 @@ export default function MapPage() {
                     });
 
                     if (!op.canProceed || !op.result) {
-                        setResultModal({
+                        setHasilBubarkanState({
                             isOpen: true,
                             title: 'Anggaran Tidak Cukup',
                             message: op.errorMessage || 'Anggaran tidak mencukupi.',
                             type: 'error',
-                            persistent: true,
                         });
                         return;
                     }
@@ -8455,13 +8485,14 @@ export default function MapPage() {
                         return [...res.extraNotifications, ...updated];
                     });
 
-                    // Tampilkan ResultModal (Hasil Operasi atau Kerusuhan)
-                    setResultModal({
+                    // Tampilkan HasilBubarkanMassaModal (Hasil Operasi atau Kerusuhan)
+                    setHasilBubarkanState({
                         isOpen: true,
                         title: res.resultModal.title,
                         message: res.resultModal.message,
                         type: res.resultModal.type,
-                        persistent: true,
+                        casualties: res.casualties,
+                        remainingMassa: res.updatedNotification?.demonstratorCount,
                     });
                 }}
             />

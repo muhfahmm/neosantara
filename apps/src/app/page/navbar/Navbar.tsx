@@ -72,6 +72,18 @@ export function Navbar({
         return calculateDailyPopulationChange(countryDetail, countryName, metadata, currentDate);
     }, [countryDetail, countryName, metadata, currentDate]);
 
+    const [isAnggaranUpdated, setIsAnggaranUpdated] = React.useState(false);
+    const prevAnggaranRef = React.useRef(anggaran);
+
+    React.useEffect(() => {
+        if (prevAnggaranRef.current !== anggaran) {
+            prevAnggaranRef.current = anggaran;
+            setIsAnggaranUpdated(true);
+            const timer = setTimeout(() => setIsAnggaranUpdated(false), 800);
+            return () => clearTimeout(timer);
+        }
+    }, [anggaran]);
+
     const populasi = countryDetail
         ? Number(countryDetail.jumlah_penduduk) || 10_000_000
         : 0;
@@ -216,10 +228,10 @@ export function Navbar({
                     </button>
 
                     <StatusItem
-                        icon={<Landmark className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-[#00FFAA]" />}
+                        icon={<Landmark className={`w-3 h-3 2xl:w-3.5 2xl:h-3.5 transition-transform duration-300 ${isAnggaranUpdated ? 'text-[#00FFAA] scale-125' : 'text-[#00FFAA]'}`} />}
                         label="KAS NEGARA"
                         value={countryDetail ? (
-                            <span className="flex items-center gap-1.5 2xl:gap-2 text-[#E0E0E0]">
+                            <span className={`flex items-center gap-1.5 2xl:gap-2 text-[#E0E0E0] transition-colors duration-500 ${isAnggaranUpdated ? 'text-[#00FFAA] font-extrabold' : ''}`}>
                                 <span className={anggaran < 0 ? 'text-rose-400 font-black' : ''}>{formatCurrencyEM(anggaran)}</span>
                                 <span className={`${netBalance >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
                                     ({netBalanceLabel})

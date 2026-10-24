@@ -54,7 +54,7 @@ export default function ResultModal({
                             )}
                         </div>
                         <h2 className={`text-xs sm:text-sm lg:text-base font-black tracking-wider uppercase ${isError ? 'text-rose-400' : 'text-[#00FFAA]'}`}>
-                            {isError ? 'Pemberitahuan / Peringatan' : 'Konfirmasi & Hasil Operasi'}
+                            {isError ? 'Laporan Kekalahan Pertempuran' : '⚔️ Laporan Hasil Pertempuran & Perang'}
                         </h2>
                     </div>
                     <button
