@@ -740,7 +740,10 @@ export default function MapPage() {
         message: string;
         type: 'success' | 'error' | 'info';
         casualties?: number;
+        deadCount?: number;
+        injuredCount?: number;
         remainingMassa?: number;
+        actionName?: string;
     }>({
         isOpen: false,
         title: '',
@@ -901,6 +904,10 @@ export default function MapPage() {
     const handleTopNavSelect = (view: 'map' | 'diplomacy') => {
         setIsDiplomacyMapActive(view === 'diplomacy');
     };
+    const openInbox = useCallback(() => {
+        setHasilBubarkanState(prev => ({ ...prev, isOpen: false }));
+        setInboxModalOpen(true);
+    }, []);
     const [newsList, setNewsListRaw] = useState<NewsItemData[]>([]);
     const setNewsList = useCallback((action: React.SetStateAction<NewsItemData[]>) => {
         startTransition(() => setNewsListRaw(action));
@@ -1032,7 +1039,7 @@ export default function MapPage() {
             } else if (menuId === 'inbox' || menuId === 'Menu:Inbox') {
                 setPenelitianModalOpen(false);
                 setMissionModalOpen(false);
-                setInboxModalOpen(true);
+                openInbox();
                 setActiveMenu("");
             } else {
                 setPenelitianModalOpen(false);
@@ -6527,7 +6534,7 @@ export default function MapPage() {
                         )}
                 onClick={() => {
                     setCountryDetailModalOpen(false);
-                    setInboxModalOpen(true);
+                    openInbox();
                     setGiftModalOpen(false);
                     setNewsModalOpen(false);
                     setPenelitianModalOpen(false);
@@ -7821,9 +7828,7 @@ export default function MapPage() {
                 onRemoveNotification={(notificationId) => {
                     setNotifications(previous => previous.filter(notification => notification.id !== notificationId));
                 }}
-                onOpenInbox={() => {
-                    setInboxModalOpen(true);
-                }}
+                onOpenInbox={openInbox}
             />
 
             {/* Premium Floating Time Controller Widget */}
@@ -8376,7 +8381,10 @@ export default function MapPage() {
                 message={hasilBubarkanState.message}
                 type={hasilBubarkanState.type}
                 casualties={hasilBubarkanState.casualties}
+                deadCount={hasilBubarkanState.deadCount}
+                injuredCount={hasilBubarkanState.injuredCount}
                 remainingMassa={hasilBubarkanState.remainingMassa}
+                actionName={hasilBubarkanState.actionName}
                 onClose={() => {
                     setHasilBubarkanState(prev => ({ ...prev, isOpen: false }));
                 }}
@@ -8464,6 +8472,10 @@ export default function MapPage() {
                             kepuasan: nextKepuasan,
                             kepuasan_masyarakat: nextKepuasan,
                             ham_violation_count: (Number(prev.ham_violation_count) || 0) + 1,
+                            pending_notifications: [
+                                ...res.extraNotifications,
+                                ...(Array.isArray(prev.pending_notifications) ? prev.pending_notifications : []),
+                            ],
                         };
                     });
 
@@ -8492,7 +8504,10 @@ export default function MapPage() {
                         message: res.resultModal.message,
                         type: res.resultModal.type,
                         casualties: res.casualties,
+                        deadCount: res.deadCount,
+                        injuredCount: res.injuredCount,
                         remainingMassa: res.updatedNotification?.demonstratorCount,
+                        actionName: selectedOption.title,
                     });
                 }}
             />

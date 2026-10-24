@@ -9,7 +9,9 @@ export interface AparatOperationResult {
   success: boolean;
   cost: number;
   isRiot: boolean; // True jika gagal / berubah menjadi kerusuhan massal
-  casualties: number; // Jumlah korban jiwa
+  casualties: number; // Total korban jiwa yang mengurangi populasi negara (deadCount)
+  deadCount: number; // Jumlah korban tewas
+  injuredCount: number; // Jumlah korban luka-luka
   kepuasanPenalty: number; // Kepuasan berkurang
   ratingPenalty: number; // Peringkat presiden berkurang
   resultModal: {
@@ -26,11 +28,11 @@ export interface AparatOperationResult {
 /**
  * Logika Eksekusi Operasi Aparat (Hard Power):
  * Mendukung 5 Opsi Pembubaran Massa:
- * 1. Water Cannon (1.000.000 NEO, 40% efektif, 0 korban)
- * 2. Gas Air Mata (2.500.000 NEO, 70% efektif, 5-20 korban)
- * 3. Brimob (5.000.000 NEO, 85% efektif, 50-200 korban)
- * 4. Militer (10.000.000 NEO, 95% efektif, 300-1000 korban)
- * 5. Jam Malam & Blokade (3.000.000 NEO, 75% efektif, 0 korban)
+ * 1. Water Cannon (50.000 NEO, 40% efektif, 0 korban)
+ * 2. Gas Air Mata (100.000 NEO, 70% efektif, 1-3% luka/sesak)
+ * 3. Jam Malam & Blokade (150.000 NEO, 75% efektif, 0 korban)
+ * 4. Brimob (200.000 NEO, 85% efektif, 5-12% luka/tewas)
+ * 5. Militer (300.000 NEO, 95% efektif, 20-35% tewas/kritis)
  */
 export function executeAparatOperation({
   notification,
@@ -71,14 +73,43 @@ export function executeAparatOperation({
   const isSuccess = roll <= effectiveChance;
   const isRiot = !isSuccess;
 
-  // 2. Hitung Korban Jiwa berdasarkan range opsi
-  const [minCas, maxCas] = option.casualtiesRange;
-  let casualties = 0;
-  if (maxCas > 0) {
-    const rawCas = Math.floor(Math.random() * (maxCas - minCas + 1)) + minCas;
-    // Jika gagal / ricuh, korban bertambah 25%
-    casualties = isRiot ? Math.round(rawCas * 1.25) : rawCas;
+  // 2. Hitung Korban Luka & Tewas berdasarkan persentase dari total massa demonstran
+  const currentMassa = Number(notification.demonstratorCount || 50000);
+  const [minCasPct, maxCasPct] = option.casualtyPercentRange;
+  let totalAffected = 0;
+  let deadCount = 0;
+  let injuredCount = 0;
+
+  if (maxCasPct > 0) {
+    const rolledPct = Math.random() * (maxCasPct - minCasPct) + minCasPct;
+    // Jika gagal / ricuh, persentase korban bertambah 25% (relatif)
+    const finalPct = isRiot ? rolledPct * 1.25 : rolledPct;
+    totalAffected = Math.max(1, Math.round((finalPct / 100) * currentMassa));
+
+    // Proporsi Tewas vs Luka-luka sesuai metode:
+    if (option.id === 'gas_air_mata') {
+      // Gas air mata: mayoritas luka/sesak/terinjak, sangat sedikit tewas (<5%)
+      deadCount = isRiot ? Math.round(totalAffected * 0.05) : 0;
+      injuredCount = Math.max(0, totalAffected - deadCount);
+    } else if (option.id === 'brimob') {
+      // Brimob: 15% tewas (benturan fatal/peluru karet jarak dekat), 85% luka-luka
+      deadCount = Math.round(totalAffected * (isRiot ? 0.25 : 0.15));
+      injuredCount = Math.max(0, totalAffected - deadCount);
+    } else if (option.id === 'militer') {
+      // Militer: 60% tewas (senjata api berat / rantis), 40% luka berat
+      deadCount = Math.round(totalAffected * (isRiot ? 0.70 : 0.55));
+      injuredCount = Math.max(0, totalAffected - deadCount);
+    } else {
+      injuredCount = totalAffected;
+      deadCount = 0;
+    }
+  } else if (isRiot) {
+    // Water cannon atau jam malam jika ricuh tetap ada korban luka akibat lemparan batu / terinjak
+    injuredCount = Math.round(currentMassa * 0.005); // 0.5% luka ringan
+    deadCount = 0;
   }
+
+  const casualties = deadCount; // Mengurangi populasi riil negara
 
   // 3. Logika Penurunan / Pertambahan Massa Demonstran
   // - Water Cannon: Mengurangi 30% massa (tersisa 70%)
@@ -87,7 +118,6 @@ export function executeAparatOperation({
   // - Militer: Mengurangi 95% s/d 100% massa (tersisa 0%)
   // - Jam Malam: Mengurangi 80% massa (tersisa 20%)
   // - Jika GAGAL (Riot): Jumlah massa justru bertambah +20% karena simpati publik
-  const currentMassa = Number(notification.demonstratorCount || 50000);
   let remainingMassa = currentMassa;
 
   if (isRiot) {
@@ -142,7 +172,22 @@ export function executeAparatOperation({
     message: `${notification.message}${decisionText}`,
   };
 
-  const extraNotifications: NotificationMessage[] = [];
+  const extraNotifications: NotificationMessage[] = [{
+    ...notification,
+    id: `laporan-operasi-aparat-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    title: isRiot ? '🔥 LAPORAN BENTROKAN / KERUSUHAN' : '🚨 LAPORAN OPERASI PEMBUBARAN MASSA',
+    sender: 'Satuan Pengamanan Dalam Negeri',
+    message: isRiot
+      ? `Operasi ${option.title} gagal meredam aksi. Situasi berkembang menjadi kerusuhan; ${injuredCount.toLocaleString('id-ID')} warga terluka dan massa tersisa ${remainingMassa.toLocaleString('id-ID')} orang.`
+      : `Operasi ${option.title} selesai. Massa tersisa ${remainingMassa.toLocaleString('id-ID')} orang; ${injuredCount.toLocaleString('id-ID')} warga tercatat terluka.`,
+    timestamp: currentDateStr,
+    type: 'kepuasan',
+    value: 0,
+    isRead: false,
+    tradeType: 'demonstrasi_rakyat',
+    demo_status: isRiot ? 'kerusuhan' : 'selesai',
+    demonstratorCount: remainingMassa,
+  } as NotificationMessage];
 
   // Jika Kerusuhan: Munculkan Notifikasi Kerusakan Infrastruktur di Inbox
   if (isRiot) {
@@ -234,6 +279,8 @@ export function executeAparatOperation({
       cost: operationalCost,
       isRiot,
       casualties,
+      deadCount,
+      injuredCount,
       kepuasanPenalty,
       ratingPenalty,
       resultModal,

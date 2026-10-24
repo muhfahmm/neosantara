@@ -15,7 +15,7 @@ export interface DetailOpsiBubarkan {
   costLabel: string;
   effectivenessPercent: number; // Peluang sukses (%)
   effectivenessLabel: string;
-  casualtiesRange: [number, number]; // [min, max]
+  casualtyPercentRange: [number, number]; // [min%, max%] dari total massa
   casualtiesLabel: string;
   impactDescription: string;
   kepuasanPenalty: number;
@@ -34,8 +34,8 @@ export const OPSI_BUBARKAN_MASSA: DetailOpsiBubarkan[] = [
     costLabel: '50.000 NEO',
     effectivenessPercent: 40,
     effectivenessLabel: 'Rendah (40% Peluang Bubar)',
-    casualtiesRange: [0, 0],
-    casualtiesLabel: '0 Korban Jiwa',
+    casualtyPercentRange: [0, 0],
+    casualtiesLabel: '0% Korban Jiwa',
     impactDescription: 'Kepuasan -5, Peringkat -2. Jika gagal, massa makin agresif & mengolok-olok aparat.',
     kepuasanPenalty: 5,
     ratingPenalty: 2,
@@ -51,8 +51,8 @@ export const OPSI_BUBARKAN_MASSA: DetailOpsiBubarkan[] = [
     costLabel: '100.000 NEO',
     effectivenessPercent: 70,
     effectivenessLabel: 'Sedang (70% Peluang Bubar)',
-    casualtiesRange: [5, 20],
-    casualtiesLabel: '5 - 20 Orang (Terinjak / Asma)',
+    casualtyPercentRange: [1, 3],
+    casualtiesLabel: '1% - 3% Korban Luka/Sesak',
     impactDescription: 'Kepuasan -10, Peringkat -5. Memicu notifikasi keprihatinan kecil dari PBB.',
     kepuasanPenalty: 10,
     ratingPenalty: 5,
@@ -68,8 +68,8 @@ export const OPSI_BUBARKAN_MASSA: DetailOpsiBubarkan[] = [
     costLabel: '150.000 NEO',
     effectivenessPercent: 75,
     effectivenessLabel: 'Sedang (Butuh Waktu 2 Hari)',
-    casualtiesRange: [0, 0],
-    casualtiesLabel: '0 Korban Jiwa',
+    casualtyPercentRange: [0, 0],
+    casualtiesLabel: '0% Korban Jiwa',
     impactDescription: 'Kepuasan -8, Peringkat -5. Arus kas harian ekonomi negara melambat sementara karena aktivitas bisnis lumpuh.',
     kepuasanPenalty: 8,
     ratingPenalty: 5,
@@ -85,8 +85,8 @@ export const OPSI_BUBARKAN_MASSA: DetailOpsiBubarkan[] = [
     costLabel: '200.000 NEO',
     effectivenessPercent: 85,
     effectivenessLabel: 'Tinggi (85% Peluang Bubar)',
-    casualtiesRange: [50, 200],
-    casualtiesLabel: '50 - 200 Korban Jiwa / Kritis',
+    casualtyPercentRange: [5, 12],
+    casualtiesLabel: '5% - 12% Korban Jiwa / Kritis',
     impactDescription: 'Kepuasan -15, Peringkat -10. Pasti memicu Kecaman Pelanggaran HAM PBB (Hubungan Diplomatik -20).',
     kepuasanPenalty: 15,
     ratingPenalty: 10,
@@ -102,8 +102,8 @@ export const OPSI_BUBARKAN_MASSA: DetailOpsiBubarkan[] = [
     costLabel: '300.000 NEO',
     effectivenessPercent: 95,
     effectivenessLabel: 'Sangat Tinggi (95% Peluang Bubar)',
-    casualtiesRange: [300, 1000],
-    casualtiesLabel: '300 - 1.000+ Korban Jiwa',
+    casualtyPercentRange: [20, 35],
+    casualtiesLabel: '20% - 35% Korban Jiwa',
     impactDescription: 'Kepuasan -25, Peringkat -20. PBB langsung menggelar Rapat Darurat Sanksi Embargo Ekonomi!',
     kepuasanPenalty: 25,
     ratingPenalty: 20,
