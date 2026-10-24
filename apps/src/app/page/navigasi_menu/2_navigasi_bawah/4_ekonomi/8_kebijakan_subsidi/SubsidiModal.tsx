@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, HandHelping, Check } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import {
@@ -32,6 +33,8 @@ interface ModalProps {
   onClose: () => void;
   countryDetail?: any;
   setCountryDetail?: (detail: any | ((prev: any) => any)) => void;
+  forumDialogMode?: boolean;
+  onConfirmChanges?: (changes: string[]) => void;
 }
 
 const resolveSubsidyItemsForCountry = (countryDetail: any): SubsidyItem[] => {
@@ -49,12 +52,13 @@ const resolveSubsidyItemsForCountry = (countryDetail: any): SubsidyItem[] => {
   }));
 };
 
-export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountryDetail }: ModalProps) {
+export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountryDetail, forumDialogMode = false, onConfirmChanges }: ModalProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("Semua");
 
   const [subsidyItems, setSubsidyItems] = useState<SubsidyItem[]>(() => resolveSubsidyItemsForCountry(countryDetail));
   const [isSavedSuccess, setIsSavedSuccess] = useState<boolean>(false);
   const [selectedDetailItem, setSelectedDetailItem] = useState<SubsidyItem | null>(null);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
   // Sinkronisasi instan tanpa network fetch (0ms)
   useEffect(() => {
@@ -80,6 +84,8 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
     });
 
     setSubsidyItems(nextItems);
+
+    if (forumDialogMode) return;
 
     if (setCountryDetail) {
       const dateStr = getCurrentGameDateString();
@@ -151,6 +157,47 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
     setTimeout(() => setIsSavedSuccess(false), 2500);
   };
 
+  const confirmForumSubsidies = () => {
+    if (setCountryDetail) {
+      const initialItems = resolveSubsidyItemsForCountry(countryDetail);
+      const changes = subsidyItems.filter(item =>
+        initialItems.find(initial => initial.id === item.id)?.isSubsidized !== item.isSubsidized
+      );
+      const dateStr = getCurrentGameDateString();
+      const countryPop = Number(countryDetail?.jumlah_penduduk || countryDetail?.populasi || 50000000);
+      const newNotifs = changes.flatMap(item => {
+        const notifications: (
+          | ReturnType<typeof generateSubsidiChangeNotification>
+          | ReturnType<typeof generateDemonstrasiSubsidiNotification>
+        )[] = [generateSubsidiChangeNotification(item.name, item.isSubsidized, dateStr)];
+        const isCriticalSubsidy = ["Pangan", "Energi", "Pendidikan & Kesehatan"].includes(item.category)
+          || item.id.includes("beras") || item.id.includes("bbm");
+        if (!item.isSubsidized && isCriticalSubsidy && Math.random() < 0.9) {
+          notifications.unshift(generateDemonstrasiSubsidiNotification(item.name, dateStr, countryPop, true));
+        } else if (!item.isSubsidized && !isCriticalSubsidy && summary.totalApprovalBonus <= 0 && Math.random() < 0.7) {
+          notifications.unshift(generateDemonstrasiSubsidiNotification(item.name, dateStr, countryPop, false));
+        }
+        return notifications;
+      });
+      const subsidyStatesRecord = Object.fromEntries(subsidyItems.map(item => [item.id, item.isSubsidized]));
+      setCountryDetail((prev: typeof countryDetail) => ({
+        ...prev,
+        subsidy_states: subsidyStatesRecord,
+        total_subsidy_cost: summary.totalCost,
+        subsidy_approval_bonus: summary.totalApprovalBonus,
+        pending_notifications: [...newNotifs, ...(prev?.pending_notifications || [])],
+      }));
+    }
+
+    setIsConfirmDialogOpen(false);
+    const initialItems = resolveSubsidyItemsForCountry(countryDetail);
+    const changes = subsidyItems
+      .filter(item => initialItems.find(initial => initial.id === item.id)?.isSubsidized !== item.isSubsidized)
+      .map(item => `${item.name}: ${item.isSubsidized ? "subsidi dipulihkan/diaktifkan" : "subsidi dicabut"}`);
+    onConfirmChanges?.(changes);
+    onClose();
+  };
+
   const categories = [
     { id: "Semua", label: "Semua Sektor" },
     { id: "Energi", label: "Energi" },
@@ -190,7 +237,17 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
             </div>
 
             <div className="flex items-center gap-2 lg:gap-3">
+              {forumDialogMode && (
+                <button
+                  type="button"
+                  onClick={() => setIsConfirmDialogOpen(true)}
+                  className="rounded-xl border border-[#00FFAA]/40 bg-[#00FFAA] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#071414] transition hover:bg-[#72ffd0] sm:px-4"
+                >
+                  Konfirmasi
+                </button>
+              )}
               <button
+                type="button"
                 onClick={onClose}
                 className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
               >
@@ -201,7 +258,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
           </div>
 
           {/* TOP STATS SUMMARY BANNER */}
-          <div className="px-4 lg:px-6 py-2 lg:py-3 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-2.5 shrink-0">
+          {!forumDialogMode && <div className="px-4 lg:px-6 py-2 lg:py-3 bg-[#0A1A1A]/80 border-b border-[#00FFAA]/15 grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-2.5 shrink-0">
             <div className="bg-[#0F2424] border border-[#00FFAA]/20 p-2 lg:p-2.5 rounded-xl">
               <p className="text-[9px] lg:text-[10px] font-black text-[#6B8A8A] uppercase tracking-wider">Total Beban Anggaran Subsidi</p>
               <p className="text-xs lg:text-sm font-black text-[#00FFAA] mt-0.5">{formatCurrencyCompact(summary.totalCost)}</p>
@@ -224,7 +281,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                 {subsidyMonthlyPopModifier >= 0 ? "+" : ""}{subsidyMonthlyPopModifier.toFixed(2)}% / bln
               </p>
             </div>
-          </div>
+          </div>}
 
           {/* FEEDBACK SUCCESS TOAST */}
           {isSavedSuccess && (
@@ -295,7 +352,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                 <PerlindunganSosialTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
               )}
 
-              <div className="mt-6 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-5">
+              {!forumDialogMode && <div className="mt-6 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-5">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-sm font-black uppercase tracking-widest text-[#00FFAA]">
                     Indeks Kepuasan Rakyat (Subsidi)
@@ -310,7 +367,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
                     style={{ width: `${subsidySatisfaction}%` }}
                   />
                 </div>
-              </div>
+              </div>}
             </div>
 
           </div>
@@ -324,6 +381,21 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
         item={selectedDetailItem ? subsidyItems.find(i => i.id === selectedDetailItem.id) || selectedDetailItem : null}
         toggleSubsidy={toggleSubsidy}
       />
+      {isConfirmDialogOpen && createPortal(
+        <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+          <div role="dialog" aria-modal="true" aria-labelledby="subsidy-confirm-title" className="w-full max-w-md rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl">
+            <h3 id="subsidy-confirm-title" className="text-lg font-bold text-white">Konfirmasi kebijakan subsidi</h3>
+            <p className="mt-2 text-sm text-slate-300">
+              Perubahan alokasi subsidi akan diterapkan. Lanjutkan?
+            </p>
+            <div className="mt-6 flex justify-end gap-2">
+              <button type="button" onClick={() => setIsConfirmDialogOpen(false)} className="rounded-lg border border-slate-600 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:text-white">Kembali</button>
+              <button type="button" onClick={confirmForumSubsidies} className="rounded-lg bg-[#00FFAA] px-4 py-2 text-xs font-bold text-[#071414] transition hover:bg-[#72ffd0]">Ya, konfirmasi</button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </>
   );
 }

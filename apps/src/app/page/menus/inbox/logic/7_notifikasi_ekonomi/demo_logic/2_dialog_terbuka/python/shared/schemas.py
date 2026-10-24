@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any
+from typing import Any, Literal
 from pydantic import BaseModel, Field
 
 class Choice(str, Enum):
@@ -24,6 +24,9 @@ class NegotiateChoiceRequest(BaseModel):
     choice: Choice
     npc_state: NPCState
     player_state: PlayerState = Field(default_factory=PlayerState)
+    policy_type: Literal["tax", "price", "subsidy"] | None = None
+    demand_text: str | None = Field(default=None, min_length=1, max_length=300)
+    policy_changes: list[str] = Field(default_factory=list, max_length=20)
 
 class NegotiateChoiceResponse(BaseModel):
     status: str
@@ -32,3 +35,10 @@ class NegotiateChoiceResponse(BaseModel):
     npc_response: str
     choices: list[ChoiceOption] | None
     events: list[str] = Field(default_factory=list)
+
+class ConfirmPolicyRequest(BaseModel):
+    policy_type: Literal["tax", "price", "subsidy"]
+    demand_text: str = Field(min_length=1, max_length=300)
+    policy_changes: list[str] = Field(default_factory=list, max_length=20)
+    npc_state: NPCState
+    player_state: PlayerState = Field(default_factory=PlayerState)

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { ShieldAlert, CheckCircle2, AlertTriangle, Users, HeartCrack, Activity, X } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, Users, HeartCrack, Activity, X } from 'lucide-react';
 
 export interface HasilBubarkanMassaModalProps {
     isOpen: boolean;
@@ -14,6 +14,7 @@ export interface HasilBubarkanMassaModalProps {
     injuredCount?: number;
     remainingMassa?: number;
     actionName?: string;
+    withinForumDialog?: boolean;
     onClose: () => void;
 }
 
@@ -27,6 +28,7 @@ export default function HasilBubarkanMassaModal({
     injuredCount = 0,
     remainingMassa,
     actionName,
+    withinForumDialog = false,
     onClose,
 }: HasilBubarkanMassaModalProps) {
     if (typeof window === 'undefined' || !isOpen) return null;
@@ -40,7 +42,7 @@ export default function HasilBubarkanMassaModal({
     const shadowColor = isKerusuhan ? 'shadow-[0_0_40px_rgba(225,29,72,0.15)]' : 'shadow-[0_0_40px_rgba(0,255,170,0.15)]';
 
     const modalContent = (
-        <div className="fixed inset-0 z-[100000001] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
+        <div className={`fixed inset-0 ${withinForumDialog ? 'z-[2147483647]' : 'z-[100000001]'} flex items-center justify-center p-4 font-sans text-white pointer-events-none`}>
             {/* 🔥 PERBAIKAN: Struktur Container disamakan persis dengan EmbassyRelationRequirementModal */}
             <div className={`w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] ${borderColor} rounded-2xl p-6 sm:p-8 ${shadowColor} relative pointer-events-auto`}>
                 

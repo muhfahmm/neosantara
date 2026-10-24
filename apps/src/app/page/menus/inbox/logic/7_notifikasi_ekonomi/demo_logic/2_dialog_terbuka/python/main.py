@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from .dialog_AI.reaction_logic import apply_choice
+from .dialog_AI.reaction_logic import apply_choice, apply_policy_confirmation
 from .dialog_user.choice_manager import generate_choices
-from .shared.schemas import NegotiateChoiceRequest, NegotiateChoiceResponse
+from .shared.schemas import ConfirmPolicyRequest, NegotiateChoiceRequest, NegotiateChoiceResponse
 
 app = FastAPI(title="Forum Dialog Terbuka")
 app.add_middleware(
@@ -18,10 +18,38 @@ def health() -> dict[str, str]:
 
 @app.post("/api/negotiate-choice", response_model=NegotiateChoiceResponse)
 def negotiate_choice(request: NegotiateChoiceRequest) -> NegotiateChoiceResponse:
-    try:
-        status, response, events = apply_choice(request.choice, request.npc_state, request.player_state)
-    except ValueError as exc:
-        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    if request.policy_type:
+        if not request.demand_text:
+            raise HTTPException(status_code=422, detail="Teks tuntutan wajib untuk konfirmasi kebijakan.")
+        status, response, events = apply_policy_confirmation(
+            request.policy_type,
+            request.demand_text,
+            request.policy_changes,
+            request.npc_state,
+        )
+    else:
+        try:
+            status, response, events = apply_choice(request.choice, request.npc_state, request.player_state)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
     done = status != "ongoing"
     return NegotiateChoiceResponse(status=status, npc_state=request.npc_state, player_state=request.player_state,
         npc_response=response, choices=None if done else generate_choices(request.npc_state), events=events)
+
+@app.post("/api/confirm-policy", response_model=NegotiateChoiceResponse)
+def confirm_policy(request: ConfirmPolicyRequest) -> NegotiateChoiceResponse:
+    status, response, events = apply_policy_confirmation(
+        request.policy_type,
+        request.demand_text,
+        request.policy_changes,
+        request.npc_state,
+    )
+    done = status != "ongoing"
+    return NegotiateChoiceResponse(
+        status=status,
+        npc_state=request.npc_state,
+        player_state=request.player_state,
+        npc_response=response,
+        choices=None if done else generate_choices(request.npc_state),
+        events=events,
+    )

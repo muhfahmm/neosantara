@@ -1,5 +1,6 @@
 "use client";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { X, FileText } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { calculateIncomeAtRate } from "@/app/logic/economic_logic/2_tax_logic/taxLogic";
@@ -44,6 +45,8 @@ interface ModalProps {
   onClose: () => void;
   countryDetail: any;
   setCountryDetail: React.Dispatch<React.SetStateAction<any>>;
+  forumDialogMode?: boolean;
+  onConfirmChanges?: (changes: string[]) => void;
 }
 
 /**
@@ -125,6 +128,8 @@ export default function PajakModal(props: ModalProps) {
       onClose={props.onClose}
       countryDetail={props.countryDetail}
       setCountryDetail={props.setCountryDetail}
+      forumDialogMode={props.forumDialogMode}
+      onConfirmChanges={props.onConfirmChanges}
     />
   );
 }
@@ -133,6 +138,8 @@ function PajakModalContent({
   onClose,
   countryDetail,
   setCountryDetail,
+  forumDialogMode = false,
+  onConfirmChanges,
 }: Omit<ModalProps, "isOpen">) {
   // Identitas negara — untuk deteksi ganti negara tanpa memicu re-init
   // setiap kali countryDetail berubah (NPC sim, kepuasan auto-refresh, dll.).
@@ -148,10 +155,14 @@ function PajakModalContent({
   const [tempRates, setTempRates] = useState<Record<string, number>>(() =>
     computeInitialRates(countryDetail)
   );
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
   // ── Nilai "committed" terakhir — untuk dedupe notifikasi saat release ──
   const committedRatesRef = useRef<Record<string, number>>(
     computeInitialRates(countryDetail)
+  );
+  const [committedRateSnapshot, setCommittedRateSnapshot] = useState<Record<string, number>>(
+    () => computeInitialRates(countryDetail)
   );
   const lastCountryKeyRef = useRef<string>(countryKey);
 
@@ -167,6 +178,7 @@ function PajakModalContent({
     const initial = computeInitialRates(countryDetail);
     setTempRates(initial);
     committedRatesRef.current = initial;
+    setCommittedRateSnapshot(initial);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countryKey]);
 
@@ -212,7 +224,8 @@ function PajakModalContent({
   // committedRatesRef → nextVal), bukan puluhan notifikasi per tick.
   // ─────────────────────────────────────────────────────────────────────
   const handleTaxCommit = useCallback(
-    (taxId: string, nextVal: number) => {
+    (taxId: string, nextVal: number, force = false) => {
+      if (forumDialogMode && !force) return;
       if (!setCountryDetail) return;
 
       const oldVal = committedRatesRef.current[taxId] ?? 0;
@@ -222,6 +235,7 @@ function PajakModalContent({
       // yang benar (meskipun React belum sempat commit countryDetail).
       const nextCommitted = { ...committedRatesRef.current, [taxId]: nextVal };
       committedRatesRef.current = nextCommitted;
+      setCommittedRateSnapshot(nextCommitted);
 
       const taxLabel = TAX_NAME_LABEL[taxId] || taxId;
       const dateStr =
@@ -315,8 +329,23 @@ function PajakModalContent({
         };
       });
     },
-    [countryDetail, setCountryDetail]
+    [countryDetail, forumDialogMode, setCountryDetail]
   );
+
+  const pendingTaxChanges = Object.entries(tempRates).filter(
+    ([taxId, value]) => (committedRateSnapshot[taxId] ?? 0) !== value
+  );
+
+  const confirmForumTaxChanges = () => {
+    pendingTaxChanges.forEach(([taxId, value]) => {
+      handleTaxCommit(taxId, value, true);
+    });
+    setIsConfirmDialogOpen(false);
+    onConfirmChanges?.(pendingTaxChanges.map(([taxId, value]) =>
+      `${TAX_NAME_LABEL[taxId] ?? taxId}: ${value}%`
+    ));
+    onClose();
+  };
 
   // ─────────────────────────────────────────────────────────────────────
   // FIX #4: useMemo — kalkulasi berat tidak dihitung ulang saat countryDetail
@@ -432,6 +461,7 @@ function PajakModalContent({
   // Render
   // ─────────────────────────────────────────────────────────────────────
   return (
+    <>
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
@@ -446,15 +476,27 @@ function PajakModalContent({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">
-              Tutup
-            </span>
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            {forumDialogMode && (
+              <button
+                type="button"
+                onClick={() => setIsConfirmDialogOpen(true)}
+                className="rounded-xl border border-[#00FFAA]/40 bg-[#00FFAA] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#071414] transition hover:bg-[#72ffd0] sm:px-4"
+              >
+                Konfirmasi
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+            >
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">
+                Tutup
+              </span>
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         {corruptionImpacts.taxRevenueLossPercent > 0 && (
@@ -710,6 +752,8 @@ function PajakModalContent({
             </div>
           </div>
 
+          {!forumDialogMode && (
+          <>
           {/* Total Income Summary */}
           <div className="mt-8 p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424]">
             <div className="flex justify-between items-center flex-wrap gap-2">
@@ -806,8 +850,47 @@ function PajakModalContent({
             Dampak populasi pajak: {populationTaxModifier >= 0 ? "+" : ""}
             {populationTaxModifier.toFixed(2)}% / bulan
           </p>
+          </>
+          )}
         </div>
       </div>
     </NotebookModalWrapper>
+    {isConfirmDialogOpen && createPortal(
+      <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+        <div role="dialog" aria-modal="true" aria-labelledby="tax-confirm-title" className="w-full max-w-md rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl">
+          <h3 id="tax-confirm-title" className="text-lg font-bold text-white">Konfirmasi tuntutan pajak</h3>
+          <p className="mt-2 text-sm text-slate-300">
+            {pendingTaxChanges.length > 0
+              ? "Perubahan tarif pajak akan diterapkan sesuai pilihan Anda. Lanjutkan?"
+              : "Belum ada perubahan tarif. Konfirmasi untuk kembali ke forum dialog."}
+          </p>
+          {pendingTaxChanges.length > 0 && (
+            <ul className="mt-3 space-y-1 text-sm text-[#00FFAA]">
+              {pendingTaxChanges.map(([taxId, value]) => (
+                <li key={taxId}>{TAX_NAME_LABEL[taxId] ?? taxId}: {value}%</li>
+              ))}
+            </ul>
+          )}
+          <div className="mt-6 flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setIsConfirmDialogOpen(false)}
+              className="rounded-lg border border-slate-600 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:text-white"
+            >
+              Kembali
+            </button>
+            <button
+              type="button"
+              onClick={confirmForumTaxChanges}
+              className="rounded-lg bg-[#00FFAA] px-4 py-2 text-xs font-bold text-[#071414] transition hover:bg-[#72ffd0]"
+            >
+              Ya, konfirmasi
+            </button>
+          </div>
+        </div>
+      </div>,
+      document.body
+    )}
+    </>
   );
 }

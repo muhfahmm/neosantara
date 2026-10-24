@@ -8,6 +8,7 @@ import React, {
   useTransition,
   useDeferredValue,
 } from "react";
+import { createPortal } from "react-dom";
 import { X, Tag, Loader2 } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
 import { generateHargaChangeNotification } from "@/app/page/menus/inbox/logic/7_notifikasi_ekonomi/2_harga_barang_pokok/hargaChangeLogic";
@@ -57,11 +58,12 @@ interface CommodityCardProps {
   itemKey: string;
   currentValue: number;
   impact: number;
+  showImpact?: boolean;
   onPriceChange: (key: string, val: number) => void;
 }
 
 const CommodityCard = React.memo(
-  ({ itemKey, currentValue, impact, onPriceChange }: CommodityCardProps) => {
+  ({ itemKey, currentValue, impact, showImpact = true, onPriceChange }: CommodityCardProps) => {
     const formattedName = itemKey
       .replace("harga_", "")
       .replace(/_/g, " ")
@@ -83,12 +85,14 @@ const CommodityCard = React.memo(
                 {formattedValue}
               </span>
             </p>
-            <p className="text-[11px] lg:text-xs text-[#6B8A8A] mt-1">
-              Dampak populasi:{" "}
-              <span className="font-bold text-[#00FFAA]">
-                {impact.toFixed(2)}% / bulan
-              </span>
-            </p>
+            {showImpact && (
+              <p className="text-[11px] lg:text-xs text-[#6B8A8A] mt-1">
+                Dampak populasi:{" "}
+                <span className="font-bold text-[#00FFAA]">
+                  {impact.toFixed(2)}% / bulan
+                </span>
+              </p>
+            )}
           </div>
         </div>
 
@@ -121,6 +125,8 @@ interface ModalProps {
   onClose: () => void;
   countryDetail: any;
   setCountryDetail: React.Dispatch<React.SetStateAction<any>>;
+  forumDialogMode?: boolean;
+  onConfirmChanges?: (changes: string[]) => void;
 }
 
 export default function HargaModal(props: ModalProps) {
@@ -130,6 +136,8 @@ export default function HargaModal(props: ModalProps) {
       onClose={props.onClose}
       countryDetail={props.countryDetail}
       setCountryDetail={props.setCountryDetail}
+      forumDialogMode={props.forumDialogMode}
+      onConfirmChanges={props.onConfirmChanges}
     />
   );
 }
@@ -138,13 +146,17 @@ function HargaModalContent({
   onClose,
   countryDetail,
   setCountryDetail,
+  forumDialogMode = false,
+  onConfirmChanges,
 }: Omit<ModalProps, "isOpen">) {
   const [, startTransition] = useTransition();
 
   const [prices, setPrices] = useState<Record<string, number>>({});
+  const [committedPriceSnapshot, setCommittedPriceSnapshot] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [subsidyActive, setSubsidyActive] = useState(false);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
   // 2. DEFERRED STATE: Memberikan prioritas utama pada klik tombol.
   // Kalkulasi berat (satisfaction & impacts) akan mengekor di belakang.
@@ -181,6 +193,7 @@ function HargaModalContent({
       const initial = countryDetailRef.current.harga as Record<string, number>;
       setPrices(initial);
       committedPricesRef.current = initial;
+      setCommittedPriceSnapshot(initial);
       setSubsidyActive(Boolean(countryDetailRef.current?.subsidyActive));
       return;
     }
@@ -200,15 +213,18 @@ function HargaModalContent({
           const defaultPrices = data.prices as Record<string, number>;
           setPrices(defaultPrices);
           committedPricesRef.current = defaultPrices;
+          setCommittedPriceSnapshot(defaultPrices);
           startTransition(() => {
-            setCountryDetail((prev: any) => {
-              if (!prev) return prev;
-              return {
-                ...prev,
-                harga: defaultPrices,
-                subsidyActive: false,
-              };
-            });
+            if (!forumDialogMode) {
+              setCountryDetail((prev: typeof countryDetail) => {
+                if (!prev) return prev;
+                return {
+                  ...prev,
+                  harga: defaultPrices,
+                  subsidyActive: false,
+                };
+              });
+            }
           });
         } else {
           setPrices({});
@@ -227,8 +243,7 @@ function HargaModalContent({
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [countryName]);
+  }, [countryName, forumDialogMode, setCountryDetail, startTransition]);
 
   // ─────────────────────────────────────────────────────────────────────
   // useMemo — Berbasis `deferredPrices` agar UI tidak nge-lag
@@ -328,6 +343,7 @@ function HargaModalContent({
     }
 
     committedPricesRef.current = next;
+    setCommittedPriceSnapshot(next);
     const newSat = calculateSatisfactionFromPrices(next, isSubsidy);
 
     startTransition(() => {
@@ -353,7 +369,7 @@ function HargaModalContent({
         };
       });
     });
-  }, [setCountryDetail]);
+  }, [countryDetail, setCountryDetail]);
 
   // ─────────────────────────────────────────────────────────────────────
   // Cleanup (Flush on unmount)
@@ -363,6 +379,10 @@ function HargaModalContent({
       if (debounceRef.current) {
         clearTimeout(debounceRef.current);
         debounceRef.current = null;
+      }
+      if (forumDialogMode) {
+        pendingRef.current = [];
+        return;
       }
       const batch = pendingRef.current;
       if (batch.length === 0) return;
@@ -413,7 +433,7 @@ function HargaModalContent({
       });
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [forumDialogMode]);
 
   // ─────────────────────────────────────────────────────────────────────
   // Handlers
@@ -429,17 +449,24 @@ function HargaModalContent({
         prev[key] === value ? prev : { ...prev, [key]: value }
       );
 
+      if (forumDialogMode) return;
+
       pendingRef.current.push({ key, value, oldValue });
 
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(flushPending, DEBOUNCE_MS);
     },
-    [flushPending]
+    [flushPending, forumDialogMode]
   );
 
   const handleSubsidize = useCallback(() => {
     if (!setCountryDetail) return;
     if (Number(countryDetailRef.current?.anggaran || 0) < SUBSIDY_COST) return;
+
+    if (forumDialogMode) {
+      setSubsidyActive(true);
+      return;
+    }
 
     flushPending();
     setSubsidyActive(true);
@@ -450,7 +477,7 @@ function HargaModalContent({
     );
 
     startTransition(() => {
-      setCountryDetail((prev: any) => {
+      setCountryDetail((prev: typeof countryDetail) => {
         if (!prev) return prev;
         const prevAnggaran = Number(prev.anggaran || 0);
         if (prevAnggaran < SUBSIDY_COST) return prev;
@@ -468,12 +495,53 @@ function HargaModalContent({
         };
       });
     });
-  }, [flushPending, setCountryDetail]);
+  }, [flushPending, forumDialogMode, setCountryDetail]);
+
+  const pendingPriceChanges = Object.entries(prices).filter(
+    ([key, value]) => key.startsWith("harga_") && committedPriceSnapshot[key] !== value
+  );
+
+  const confirmForumPriceChanges = () => {
+    pendingRef.current = pendingPriceChanges.map(([key, value]) => ({
+      key,
+      value,
+      oldValue: committedPricesRef.current[key] ?? value,
+    }));
+    flushPending();
+
+    const wasSubsidyActive = Boolean(countryDetailRef.current?.subsidyActive);
+    if (subsidyActive && !wasSubsidyActive) {
+      const newSat = calculateSatisfactionFromPrices(prices, true);
+      setCountryDetail((prev: typeof countryDetail) => {
+        if (!prev) return prev;
+        const prevAnggaran = Number(prev.anggaran || 0);
+        if (prevAnggaran < SUBSIDY_COST) return prev;
+        return {
+          ...prev,
+          anggaran: prevAnggaran - SUBSIDY_COST,
+          kepuasan: Math.min(100, Number(prev.kepuasan || 65) + 5),
+          subsidyActive: true,
+          satisfaction: { ...(prev.satisfaction || {}), price: newSat },
+        };
+      });
+    }
+
+    setIsConfirmDialogOpen(false);
+    const confirmedChanges = pendingPriceChanges.map(([key, value]) =>
+      `${key.replace("harga_", "").replace(/_/g, " ")}: ${value.toLocaleString("id-ID")}`
+    );
+    if (subsidyActive && !Boolean(countryDetailRef.current?.subsidyActive)) {
+      confirmedChanges.push(`Subsidi harga pokok: aktif (-${SUBSIDY_COST.toLocaleString("id-ID")} NEO)`);
+    }
+    onConfirmChanges?.(confirmedChanges);
+    onClose();
+  };
 
   // ─────────────────────────────────────────────────────────────────────
   // Render
   // ─────────────────────────────────────────────────────────────────────
   return (
+    <>
     <NotebookModalWrapper onClose={onClose}>
       <div className="flex flex-col h-full overflow-hidden">
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
@@ -488,15 +556,27 @@ function HargaModalContent({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-          >
-            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">
-              Tutup
-            </span>
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            {forumDialogMode && (
+              <button
+                type="button"
+                onClick={() => setIsConfirmDialogOpen(true)}
+                className="rounded-xl border border-[#00FFAA]/40 bg-[#00FFAA] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#071414] transition hover:bg-[#72ffd0] sm:px-4"
+              >
+                Konfirmasi
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
+            >
+              <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">
+                Tutup
+              </span>
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[#0F2424] relative z-10 neon-scrollbar">
@@ -521,6 +601,7 @@ function HargaModalContent({
                   itemKey={key}
                   currentValue={value}
                   impact={impactByKey.get(key) ?? 0}
+                  showImpact={!forumDialogMode}
                   onPriceChange={handlePriceChange}
                 />
               ))
@@ -547,6 +628,7 @@ function HargaModalContent({
           </button>
 
           {/* ---- INDEKS KEPUASAN RAKYAT (HARGA) ---- */}
+          {!forumDialogMode && (
           <div className="mt-4 lg:mt-6 p-4 lg:p-5 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A]">
             <div className="flex justify-between items-center">
               <span className="text-[11px] lg:text-xs font-black text-[#00FFAA] uppercase tracking-widest">
@@ -576,8 +658,34 @@ function HargaModalContent({
               </p>
             )}
           </div>
+          )}
         </div>
       </div>
     </NotebookModalWrapper>
+    {isConfirmDialogOpen && createPortal(
+      <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+        <div role="dialog" aria-modal="true" aria-labelledby="price-confirm-title" className="w-full max-w-md rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl">
+          <h3 id="price-confirm-title" className="text-lg font-bold text-white">Konfirmasi kebijakan harga</h3>
+          <p className="mt-2 text-sm text-slate-300">
+            {pendingPriceChanges.length > 0
+              ? "Perubahan harga barang pokok akan diterapkan. Lanjutkan?"
+              : "Belum ada perubahan harga. Konfirmasi untuk kembali ke forum dialog."}
+          </p>
+          {pendingPriceChanges.length > 0 && (
+            <ul className="mt-3 space-y-1 text-sm text-[#00FFAA]">
+              {pendingPriceChanges.map(([key, value]) => (
+                <li key={key}>{key.replace("harga_", "").replace(/_/g, " ")}: {value.toLocaleString("id-ID")}</li>
+              ))}
+            </ul>
+          )}
+          <div className="mt-6 flex justify-end gap-2">
+            <button type="button" onClick={() => setIsConfirmDialogOpen(false)} className="rounded-lg border border-slate-600 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:text-white">Kembali</button>
+            <button type="button" onClick={confirmForumPriceChanges} className="rounded-lg bg-[#00FFAA] px-4 py-2 text-xs font-bold text-[#071414] transition hover:bg-[#72ffd0]">Ya, konfirmasi</button>
+          </div>
+        </div>
+      </div>,
+      document.body
+    )}
+    </>
   );
 }

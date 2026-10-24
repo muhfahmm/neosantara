@@ -2,9 +2,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import { Choice, ChoiceOption, NPCState, PlayerState, negotiateChoice } from './dialogTerbukaApi';
+import { Choice, ChoiceOption, NPCState, PlayerState, confirmPolicyWithNpc, negotiateChoice } from './dialogTerbukaApi';
 import { 
   ArrowLeft, MessageSquare, ShieldAlert, CheckCircle2, XCircle, 
   Clock, Flame, User, Target, RefreshCw
@@ -12,17 +12,35 @@ import {
 
 import MenuBubarkanMassaModal from '../1_bubarkan_dengan_aparat/MenuBubarkanMassaModal';
 import { DetailOpsiBubarkan } from '../1_bubarkan_dengan_aparat/opsiBubarkanMassaConfig';
+import HasilBubarkanMassaModal from '../1_bubarkan_dengan_aparat/HasilBubarkanMassaModal';
+
+const PajakModal = dynamic(() => import('@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/2_manajemen_pajak/PajakModal'), { ssr: false });
+const HargaModal = dynamic(() => import('@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/6_harga/HargaModal'), { ssr: false });
+const SubsidiModal = dynamic(() => import('@/app/page/navigasi_menu/2_navigasi_bawah/4_ekonomi/8_kebijakan_subsidi/SubsidiModal'), { ssr: false });
 
 interface DialogTerbukaMenuProps {
   returnHref?: string;
   onClose?: () => void;
   onOpenBubarkanMassa?: () => void;
-  onExecuteBubarkanOption?: (option: DetailOpsiBubarkan) => void;
+  onExecuteBubarkanOption?: (option: DetailOpsiBubarkan, onResult: (report: BubarkanReport) => void) => void;
   currentBudget?: number;
+  countryDetail?: Record<string, unknown> | null;
+  setCountryDetail?: React.Dispatch<React.SetStateAction<Record<string, unknown> | null>>;
 }
 
 type Demand = { id: string; text: string; status: 'pending' | 'rejected' | 'completed' };
 type DialogContext = { demands: Demand[]; opening: string; title: string };
+type EconomicPolicyMenu = 'tax' | 'price' | 'subsidy';
+type BubarkanReport = {
+  title: string;
+  message: string;
+  type: 'success' | 'error' | 'info';
+  casualties?: number;
+  deadCount?: number;
+  injuredCount?: number;
+  remainingMassa?: number;
+  actionName?: string;
+};
 
 const DEFAULT_CONTEXT: DialogContext = {
   title: 'Tuntutan Ekonomi',
@@ -144,12 +162,21 @@ function aggregateContexts(
   };
 }
 
+function getPolicyMenuForDemand(demandId: string): EconomicPolicyMenu | null {
+  if (demandId.startsWith('cancel-tax-rise-') || demandId.startsWith('review-tax-')) return 'tax';
+  if (demandId.startsWith('stabilize-price-') || demandId.startsWith('open-distribution-')) return 'price';
+  if (demandId.startsWith('restore-subsidy-') || demandId.startsWith('protect-poor-')) return 'subsidy';
+  return null;
+}
+
 export default function DialogTerbukaMenu({ 
   returnHref, 
   onClose,
   onOpenBubarkanMassa,
   onExecuteBubarkanOption,
   currentBudget = 100_000_000,
+  countryDetail,
+  setCountryDetail,
 }: DialogTerbukaMenuProps) {
   const router = useRouter();
 
@@ -186,7 +213,9 @@ export default function DialogTerbukaMenu({
   const [status, setStatus] = useState<'ongoing' | 'success' | 'riot' | 'walkout'>('ongoing');
   const [events, setEvents] = useState<string[]>([]);
   const [selectedDemand, setSelectedDemand] = useState<Demand | null>(null);
+  const [policyMenu, setPolicyMenu] = useState<EconomicPolicyMenu | null>(null);
   const [isBubarkanModalOpen, setIsBubarkanModalOpen] = useState(false);
+  const [bubarkanReport, setBubarkanReport] = useState<BubarkanReport | null>(null);
   const [mounted, setMounted] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -256,6 +285,60 @@ export default function DialogTerbukaMenu({
     } catch (error) {
       setMessages(prev => [...prev, { id: `sys-${Date.now()}`, sender: 'system', text: error instanceof Error ? error.message : 'Koneksi negosiasi gagal.' }]);
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePolicyConfirmed = async (policyChanges: string[]) => {
+    if (!selectedDemand) return;
+    const confirmedDemand = selectedDemand;
+    const confirmedPolicyType = policyMenu;
+    if (!confirmedPolicyType || loading) return;
+    setSelectedDemand(null);
+    setLoading(true);
+    setMessages(previous => [...previous, {
+      id: `player-${Date.now()}`,
+      sender: 'player',
+      text: policyChanges.length > 0
+        ? `Pemerintah mengonfirmasi tuntutan: ${confirmedDemand.text}. Perubahan: ${policyChanges.join('; ')}.`
+        : `Pemerintah berkomitmen menindaklanjuti tuntutan: ${confirmedDemand.text}.`,
+    }]);
+
+    try {
+      const result = await confirmPolicyWithNpc(
+        confirmedPolicyType,
+        confirmedDemand.text,
+        policyChanges,
+        npcState,
+        playerState
+      );
+      setAngerLevel(result.npc_state.anger_level);
+      setTrustLevel(result.npc_state.trust_level);
+      setPatience(result.npc_state.patience);
+      setMemory(result.npc_state.memory);
+      setBudget(result.player_state.budget);
+      setStatus(result.status);
+      setEvents(result.events ?? []);
+      setChoices(result.choices ?? []);
+      setContext(previous => ({
+        ...previous,
+        demands: previous.demands.map(demand =>
+          demand.id === confirmedDemand.id ? { ...demand, status: 'completed' } : demand
+        ),
+      }));
+      setMessages(previous => [...previous, {
+        id: `npc-${Date.now()}`,
+        sender: 'npc',
+        text: result.npc_response,
+      }]);
+    } catch (error) {
+      setMessages(previous => [...previous, {
+        id: `sys-${Date.now()}`,
+        sender: 'system',
+        text: error instanceof Error ? error.message : 'Koneksi negosiasi AI gagal.',
+      }]);
+    } finally {
+      setSelectedDemand(null);
       setLoading(false);
     }
   };
@@ -341,7 +424,12 @@ export default function DialogTerbukaMenu({
               <h5 className="text-xs font-black text-[#6B8A8A] uppercase tracking-wider mb-4">{context.title}</h5>
               <div className="space-y-3">
                 {context.demands.map((demand) => (
-                  <button type="button" onClick={() => setSelectedDemand(demand)} key={demand.id} className="w-full text-left flex items-start gap-2 bg-[#0F2424] p-3 rounded-lg border border-[#00FFAA]/10 transition hover:border-[#00FFAA]/60 hover:bg-[#123333]">
+                  <button type="button" onClick={() => {
+                    const menu = getPolicyMenuForDemand(demand.id);
+                    setSelectedDemand(demand);
+                    if (menu) setPolicyMenu(menu);
+                    else setMessages(previous => [...previous, { id: `sys-${Date.now()}`, sender: 'system', text: 'Menu kebijakan untuk tuntutan ini belum tersedia.' }]);
+                  }} key={demand.id} className="w-full text-left flex items-start gap-2 bg-[#0F2424] p-3 rounded-lg border border-[#00FFAA]/10 transition hover:border-[#00FFAA]/60 hover:bg-[#123333]">
                     {demand.status === 'completed' && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />}
                     {demand.status === 'rejected' && <XCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />}
                     {demand.status === 'pending' && <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />}
@@ -443,16 +531,40 @@ export default function DialogTerbukaMenu({
           </section>
         </div>
       </div>
-      {selectedDemand && (
-        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setSelectedDemand(null)}>
-          <div className="w-full max-w-md rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl animate-in slide-in-from-bottom-3 duration-200" onClick={event => event.stopPropagation()}>
-            <p className="text-[10px] font-black uppercase tracking-widest text-[#00FFAA]">Perubahan kebijakan</p>
-            <h3 className="mt-2 text-lg font-bold text-white">{selectedDemand.text}</h3>
-            <p className="mt-3 text-sm text-slate-400">Terapkan tuntutan ini sekarang untuk meredakan aksi yang sedang berlangsung.</p>
-            <div className="mt-5 flex justify-end gap-2">
-              <button type="button" onClick={() => setSelectedDemand(null)} className="rounded-lg px-3 py-2 text-xs text-slate-400 hover:text-white">Batal</button>
-              <button type="button" onClick={() => { const id = selectedDemand.id; setContext(previous => ({ ...previous, demands: previous.demands.map(demand => demand.id === id ? { ...demand, status: 'completed' } : demand) })); setAngerLevel(level => Math.max(0, level - 8)); setTrustLevel(level => Math.min(100, level + 8)); setMessages(previous => [...previous, { id: `system-${Date.now()}`, sender: 'system', text: `Perubahan diterapkan: ${selectedDemand.text}` }]); setSelectedDemand(null); }} className="rounded-lg bg-[#00FFAA] px-3 py-2 text-xs font-bold text-[#071414] hover:bg-[#72ffd0]">Terapkan sekarang</button>
-            </div>
+      {policyMenu && countryDetail && setCountryDetail && (
+        <>
+          {policyMenu === 'tax' && <PajakModal
+            isOpen
+            forumDialogMode
+            onClose={() => setPolicyMenu(null)}
+            onConfirmChanges={handlePolicyConfirmed}
+            countryDetail={countryDetail}
+            setCountryDetail={setCountryDetail}
+          />}
+          {policyMenu === 'price' && <HargaModal
+            isOpen
+            forumDialogMode
+            onClose={() => setPolicyMenu(null)}
+            onConfirmChanges={handlePolicyConfirmed}
+            countryDetail={countryDetail}
+            setCountryDetail={setCountryDetail}
+          />}
+          {policyMenu === 'subsidy' && <SubsidiModal
+            isOpen
+            forumDialogMode
+            onClose={() => setPolicyMenu(null)}
+            onConfirmChanges={handlePolicyConfirmed}
+            countryDetail={countryDetail}
+            setCountryDetail={setCountryDetail}
+          />}
+        </>
+      )}
+      {policyMenu && (!countryDetail || !setCountryDetail) && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4">
+          <div role="dialog" aria-modal="true" className="w-full max-w-md rounded-2xl border border-[#00FFAA]/30 bg-[#0A1A1A] p-6 shadow-2xl">
+            <h3 className="text-lg font-bold text-white">Menu ekonomi tidak tersedia</h3>
+            <p className="mt-2 text-sm text-slate-400">Buka dialog ini dari sesi permainan aktif untuk mengubah kebijakan.</p>
+            <button type="button" onClick={() => setPolicyMenu(null)} className="mt-5 rounded-lg bg-[#00FFAA] px-3 py-2 text-xs font-bold text-[#071414]">Tutup</button>
           </div>
         </div>
       )}
@@ -465,12 +577,20 @@ export default function DialogTerbukaMenu({
         onSelectOption={(option) => {
           setIsBubarkanModalOpen(false);
           if (onExecuteBubarkanOption) {
-            onExecuteBubarkanOption(option);
+            onExecuteBubarkanOption(option, setBubarkanReport);
           } else {
             handleChoice({ choice: 'HARD_POWER', text: `Kerahkan operasi: ${option.title}` }, true);
           }
         }}
       />
+      {bubarkanReport && (
+        <HasilBubarkanMassaModal
+          isOpen
+          {...bubarkanReport}
+          withinForumDialog
+          onClose={() => setBubarkanReport(null)}
+        />
+      )}
     </main>,
     document.body
   ) : null;

@@ -2,7 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   async rewrites() {
-    return [{ source: '/api/negotiate-choice', destination: 'http://127.0.0.1:8000/api/negotiate-choice' }];
+    return [
+      { source: '/api/negotiate-choice', destination: 'http://127.0.0.1:8000/api/negotiate-choice' },
+      { source: '/api/confirm-policy', destination: 'http://127.0.0.1:8000/api/confirm-policy' },
+    ];
   },
   transpilePackages: ['../map-engine-rs/ts'],
   experimental: {

@@ -153,6 +153,7 @@ import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_n
 import { checkAndGenerateEmbassyOffers, createEmbassyOfferNotification } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
 import { executeAparatOperation } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/bubarkanAparatLogic';
 import type { DetailOpsiBubarkan } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/opsiBubarkanMassaConfig';
+import type { DemonstrasiNotification } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/demonstrasiEkonomiLogic';
 const MenuBubarkanMassaModal = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/MenuBubarkanMassaModal'), { ssr: false });
 const HasilBubarkanMassaModal = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/HasilBubarkanMassaModal'), { ssr: false });
 import { startDialogTerbuka } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/dialogTerbukaLogic';
@@ -6494,6 +6495,124 @@ export default function MapPage() {
         event.preventDefault();
     }, []);
 
+    const executeAparatOption = (
+        targetNotif: DemonstrasiNotification | null,
+        selectedOption: DetailOpsiBubarkan,
+        onReport?: (report: {
+            title: string;
+            message: string;
+            type: 'success' | 'error' | 'info';
+            casualties?: number;
+            deadCount?: number;
+            injuredCount?: number;
+            remainingMassa?: number;
+            actionName?: string;
+        }) => void,
+    ) => {
+        const showReport = (report: {
+            title: string;
+            message: string;
+            type: 'success' | 'error' | 'info';
+            casualties?: number;
+            deadCount?: number;
+            injuredCount?: number;
+            remainingMassa?: number;
+            actionName?: string;
+        }) => {
+            if (onReport) {
+                onReport(report);
+            } else {
+                setHasilBubarkanState({ isOpen: true, ...report });
+            }
+        };
+
+        if (!targetNotif) {
+            showReport({
+                title: 'Demonstrasi Tidak Ditemukan',
+                message: 'Tidak ada demonstrasi aktif yang dapat dibubarkan.',
+                type: 'error',
+            });
+            return;
+        }
+
+        const currentBudget = Number(countryDetail?.anggaran || 0);
+        const currentTingkatKeamanan = Number(countryDetail?.tingkat_keamanan || 50);
+        const currentPopulasi = Number(countryDetail?.jumlah_penduduk || countryDetail?.populasi || 50000000);
+        const playerCountry = String(countryDetail?.country || countryDetail?.nama_negara || countryDetail?.nama || 'Indonesia');
+
+        const op = executeAparatOperation({
+            notification: targetNotif,
+            currentBudget,
+            tingkatKeamanan: currentTingkatKeamanan,
+            populasi: currentPopulasi,
+            currentDateStr: simulationDateString,
+            playerCountry,
+            selectedOption,
+        });
+
+        if (!op.canProceed || !op.result) {
+            showReport({
+                title: 'Anggaran Tidak Cukup',
+                message: op.errorMessage || 'Anggaran tidak mencukupi.',
+                type: 'error',
+                actionName: selectedOption.title,
+            });
+            return;
+        }
+
+        const res = op.result;
+
+        setCountryDetail((prev: Record<string, unknown> | null) => {
+            if (!prev) return prev;
+            const prevPop = Number(prev.jumlah_penduduk || prev.populasi || currentPopulasi);
+            const nextPop = Math.max(0, prevPop - res.casualties);
+            const prevKepuasan = Number(prev.kepuasan || prev.kepuasan_masyarakat || 50);
+            const nextKepuasan = Math.max(0, prevKepuasan - res.kepuasanPenalty);
+
+            return {
+                ...prev,
+                anggaran: Math.max(0, currentBudget - res.cost),
+                jumlah_penduduk: nextPop,
+                populasi: nextPop,
+                kepuasan: nextKepuasan,
+                kepuasan_masyarakat: nextKepuasan,
+                ham_violation_count: (Number(prev.ham_violation_count) || 0) + 1,
+                pending_notifications: [
+                    ...res.extraNotifications,
+                    ...(Array.isArray(prev.pending_notifications) ? prev.pending_notifications : []),
+                ],
+            };
+        });
+
+        setPresidentRating((prev: number) => Math.max(0, prev - res.ratingPenalty));
+
+        if (res.affectedCountries.length > 0) {
+            res.affectedCountries.forEach((country) => {
+                setRelationModifier(playerCountry, country, -20);
+            });
+        }
+
+        setNotifications((prev) => {
+            const updated = prev.map((notification) =>
+                notification.id === targetNotif.id
+                    ? { ...notification, ...(res.updatedNotification || {}), isHandled: true }
+                    : notification
+            );
+            return [...res.extraNotifications, ...updated];
+        });
+
+        showReport({
+            title: res.resultModal.title,
+            message: res.resultModal.message,
+            type: res.resultModal.type,
+            casualties: res.casualties,
+            deadCount: res.deadCount,
+            injuredCount: res.injuredCount,
+            remainingMassa: res.updatedNotification?.demonstratorCount,
+            actionName: selectedOption.title,
+        });
+    };
+
     return (
         <main className="fixed inset-0 bg-[#070b14] overflow-hidden font-sans">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.02)_0%,transparent_100%)] pointer-events-none" />
@@ -8427,88 +8546,7 @@ export default function MapPage() {
                 onSelectOption={(selectedOption: DetailOpsiBubarkan) => {
                     const targetNotif = aparatConfirmState.notification;
                     setAparatConfirmState({ isOpen: false, notification: null });
-                    if (!targetNotif) return;
-
-                    const currentBudget = Number(countryDetail?.anggaran || 0);
-                    const currentTingkatKeamanan = Number(countryDetail?.tingkat_keamanan || 50);
-                    const currentPopulasi = Number(countryDetail?.jumlah_penduduk || countryDetail?.populasi || 50000000);
-                    const playerCountry = String(countryDetail?.country || countryDetail?.nama_negara || countryDetail?.nama || 'Indonesia');
-
-                    const op = executeAparatOperation({
-                        notification: targetNotif,
-                        currentBudget,
-                        tingkatKeamanan: currentTingkatKeamanan,
-                        populasi: currentPopulasi,
-                        currentDateStr: simulationDateString,
-                        playerCountry,
-                        selectedOption,
-                    });
-
-                    if (!op.canProceed || !op.result) {
-                        setHasilBubarkanState({
-                            isOpen: true,
-                            title: 'Anggaran Tidak Cukup',
-                            message: op.errorMessage || 'Anggaran tidak mencukupi.',
-                            type: 'error',
-                        });
-                        return;
-                    }
-
-                    const res = op.result;
-
-                    // Potong anggaran, kurangi populasi korban jiwa, kurangi kepuasan, catat pelanggaran HAM
-                    setCountryDetail((prev: any) => {
-                        if (!prev) return prev;
-                        const prevPop = Number(prev.jumlah_penduduk || prev.populasi || currentPopulasi);
-                        const nextPop = Math.max(0, prevPop - res.casualties);
-                        const prevKepuasan = Number(prev.kepuasan || prev.kepuasan_masyarakat || 50);
-                        const nextKepuasan = Math.max(0, prevKepuasan - res.kepuasanPenalty);
-
-                        return {
-                            ...prev,
-                            anggaran: Math.max(0, currentBudget - res.cost),
-                            jumlah_penduduk: nextPop,
-                            populasi: nextPop,
-                            kepuasan: nextKepuasan,
-                            kepuasan_masyarakat: nextKepuasan,
-                            ham_violation_count: (Number(prev.ham_violation_count) || 0) + 1,
-                            pending_notifications: [
-                                ...res.extraNotifications,
-                                ...(Array.isArray(prev.pending_notifications) ? prev.pending_notifications : []),
-                            ],
-                        };
-                    });
-
-                    // Potong Peringkat Presiden
-                    setPresidentRating((prev: number) => Math.max(0, prev - res.ratingPenalty));
-
-                    // Turunkan hubungan diplomatik dengan negara-negara penggiat HAM sebesar -20 poin
-                    if (res.affectedCountries && res.affectedCountries.length > 0) {
-                        res.affectedCountries.forEach((c) => {
-                            setRelationModifier(playerCountry, c, -20);
-                        });
-                    }
-
-                    // Update notifikasi demonstrasi asli & tambahkan notifikasi ekstra (Kerusakan infrastruktur / Kecaman PBB)
-                    setNotifications((prev) => {
-                        const updated = prev.map((n) =>
-                            n.id === targetNotif.id ? { ...n, ...(res.updatedNotification || {}), isHandled: true } : n
-                        );
-                        return [...res.extraNotifications, ...updated];
-                    });
-
-                    // Tampilkan HasilBubarkanMassaModal (Hasil Operasi atau Kerusuhan)
-                    setHasilBubarkanState({
-                        isOpen: true,
-                        title: res.resultModal.title,
-                        message: res.resultModal.message,
-                        type: res.resultModal.type,
-                        casualties: res.casualties,
-                        deadCount: res.deadCount,
-                        injuredCount: res.injuredCount,
-                        remainingMassa: res.updatedNotification?.demonstratorCount,
-                        actionName: selectedOption.title,
-                    });
+                    executeAparatOption(targetNotif, selectedOption);
                 }}
             />
 
@@ -8517,12 +8555,15 @@ export default function MapPage() {
                 <div className="fixed inset-0 z-[99999999] overflow-hidden bg-[#081014]">
                     <DialogTerbukaMenu
                         currentBudget={Number(countryDetail?.anggaran || 0)}
-                        onOpenBubarkanMassa={() => {
-                            const demoNotif = notifications.find((item: any) => item.tradeType === 'demonstrasi_rakyat' && !item.isHandled) || null;
-                            setAparatConfirmState({
-                                isOpen: true,
-                                notification: demoNotif,
-                            });
+                        countryDetail={countryDetail}
+                        setCountryDetail={setCountryDetail}
+                        onExecuteBubarkanOption={(option, onResult) => {
+                            const demoNotif = notifications.find((item): item is NotificationMessage & DemonstrasiNotification =>
+                                'tradeType' in item &&
+                                item.tradeType === 'demonstrasi_rakyat' &&
+                                !item.isHandled
+                            ) || null;
+                            executeAparatOption(demoNotif, option, onResult);
                         }}
                         onClose={() => {
                             setIsDialogTerbukaOpen(false);
