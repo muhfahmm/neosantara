@@ -1,6 +1,7 @@
 "use client";
 
 import { X, Coins, AlertCircle } from "lucide-react";
+import NotebookModalWrapper from "../../NotebookModalWrapper";
 
 interface DanaTidakCukupModalProps {
   isOpen: boolean;
@@ -24,51 +25,56 @@ export default function DanaTidakCukupModal({
   const shortage = Math.max(0, requiredCost - currentBudget);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-6xl h-[84vh] overflow-hidden flex flex-col relative font-sans pointer-events-auto">
+    <NotebookModalWrapper onClose={onClose}>
+      <div className="relative flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] font-sans shadow-[0_0_30px_rgba(0,255,170,0.15)]">
 
         {/* Header */}
-        <div className="px-8 py-6 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-rose-500/10 rounded-xl border border-rose-500/20">
-                <AlertCircle className="h-6 w-6 text-rose-400" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-rose-400 tracking-tight leading-none uppercase">Dana Tidak Mencukupi</h2>
-              </div>
+        <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:px-6 sm:py-3">
+          <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+            <div className="shrink-0 rounded-lg border border-rose-500/20 bg-rose-500/10 p-1 sm:p-1.5">
+              <AlertCircle className="h-4 w-4 text-rose-400 sm:h-5 sm:w-5" />
+            </div>
+            <div className="min-w-0">
+              <h2 className="text-base font-bold uppercase leading-none tracking-tight text-rose-400 sm:text-xl">
+                Dana Tidak Mencukupi
+              </h2>
             </div>
           </div>
 
-          <button onClick={onClose} className="p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer font-black text-xs uppercase flex items-center gap-1.5">
-            <span className="text-[10px] font-black uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
+          <button
+            onClick={onClose}
+            className="flex shrink-0 cursor-pointer items-center gap-1 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 text-xs font-bold uppercase text-[#6B8A8A] shadow-sm transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] hover:shadow-[0_0_15px_rgba(0,255,170,0.3)] lg:p-2"
+          >
+            <span className="pl-1 text-[10px] font-semibold uppercase tracking-widest lg:text-xs">
+              Tutup
+            </span>
+            <X className="h-4 w-4 shrink-0" />
           </button>
         </div>
 
         {/* Dynamic Treasury Bar */}
-        <div className="px-8 py-4 bg-[#0A1A1A] border-b border-[#00FFAA]/20 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-          <div className="flex items-center gap-3">
-            <Coins className="h-5 w-5 text-[#00FFAA]" />
-            <span className="text-xs font-bold text-[#6B8A8A] uppercase tracking-wide">
+        <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2 sm:px-6">
+          <div className="flex items-center gap-2">
+            <Coins className="h-4 w-4 shrink-0 text-[#00FFAA]" />
+            <span className="text-[10px] font-bold uppercase tracking-wide text-[#6B8A8A] sm:text-xs">
               Kas Negara Saat Ini:
             </span>
-            <span className="text-sm font-black text-[#00FFAA]">
+            <span className="text-xs font-black text-[#00FFAA] sm:text-sm">
               {currentBudget.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
             </span>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-[#6B8A8A] uppercase tracking-wide">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-wide text-[#6B8A8A] sm:text-xs">
               Dibutuhkan:
             </span>
-            <span className="text-sm font-black text-rose-400">
+            <span className="text-xs font-black text-rose-400 sm:text-sm">
               {requiredCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
             </span>
           </div>
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+        <div className="relative z-10 flex-1 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:p-5 custom-scrollbar">
           <div className="space-y-6 animate-in fade-in duration-500">
 
             {/* Pesan utama */}
@@ -124,6 +130,6 @@ export default function DanaTidakCukupModal({
           </div>
         </div>
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

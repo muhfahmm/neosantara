@@ -34,10 +34,26 @@ struct Ring {
 struct CachedFeature {
     polys: Vec<Vec<Ring>>,
     bbox: [f64; 4],
-    paths: [Option<Path2d>; 3],
+    paths: RefCell<[Option<Path2d>; 3]>,
     iso: String, // lowercase
     fill: JsValue,
     override_fill: Option<JsValue>,
+}
+
+impl CachedFeature {
+    fn get_path(&self, detail_level: usize) -> Option<Path2d> {
+        let level = detail_level.min(2);
+        let mut paths = self.paths.borrow_mut();
+        if paths[level].is_none() {
+            let min_distance = match level {
+                0 => 0.6,
+                1 => 0.15,
+                _ => 0.012,
+            };
+            paths[level] = build_cached_path(&self.polys, min_distance);
+        }
+        paths[level].clone()
+    }
 }
 
 struct FillBatch {
@@ -73,7 +89,7 @@ struct Styles {
 
 fn continent_color(continent: &str) -> &'static str {
     match continent {
-        "Asia" => "#a855f7",
+        "Asia" => "#a855f7ff",
         "Africa" => "#eab308",
         "Europe" => "#3b82f6",
         "North America" => "#22c55e",
@@ -305,13 +321,10 @@ impl MapEngine {
                     _ => {}
                 }
             }
-            // Jangan di-skip: indeks feature harus sejajar dengan array GeoJSON di JS
-            let paths = [
-                build_cached_path(&polys, 0.6),
-                build_cached_path(&polys, 0.15),
-                build_cached_path(&polys, 0.012),
-            ];
-            path_cache_failed |= paths.iter().any(Option::is_none);
+            // Bangun level 1 untuk batch fill awal; level 0 dan 2 dibuat secara lazy saat dibutuhkan
+            let path1 = build_cached_path(&polys, 0.15);
+            path_cache_failed |= path1.is_none();
+            let paths = RefCell::new([None, path1, None]);
             out.push(CachedFeature {
                 polys,
                 bbox: fbox,
@@ -340,7 +353,7 @@ impl MapEngine {
 
         for feature in &self.features {
             let style = feature.override_fill.as_ref().unwrap_or(&feature.fill);
-            let Some(path) = &feature.paths[1] else {
+            let Some(path) = feature.get_path(1) else {
                 cache_complete = false;
                 continue;
             };
@@ -349,11 +362,11 @@ impl MapEngine {
                     .iter_mut()
                     .find(|batch| batch.style.as_string().as_deref() == Some(style_key.as_str()))
                 {
-                    batch.path.add_path(path);
+                    batch.path.add_path(&path);
                 } else {
                     match Path2d::new() {
                         Ok(batch_path) => {
-                            batch_path.add_path(path);
+                            batch_path.add_path(&path);
                             fill_batches.push(FillBatch {
                                 style: style.clone(),
                                 path: batch_path,
@@ -366,7 +379,7 @@ impl MapEngine {
                 cache_complete = false;
             }
             if let Some(outline_path) = &outline_path {
-                outline_path.add_path(path);
+                outline_path.add_path(&path);
             }
         }
         self.cached_fill_batches = fill_batches;
@@ -421,8 +434,8 @@ impl MapEngine {
         let mut selected_fill = None;
         if let (Some(iso), Some(path)) = (self.selected_lower.as_deref(), selected_path.as_ref()) {
             if let Some(feature) = self.features.iter().find(|feature| feature.iso == iso) {
-                if let Some(feature_path) = &feature.paths[1] {
-                    path.add_path(feature_path);
+                if let Some(feature_path) = feature.get_path(1) {
+                    path.add_path(&feature_path);
                     selected_fill = Some(
                         if self.override_beats_selected {
                             feature
@@ -673,6 +686,7 @@ impl MapEngine {
                 capital.x,
                 capital.y,
                 1.0,
+                false,
             );
         }
         self.cached_capitals_canvas = Some(canvas);
@@ -910,7 +924,10 @@ impl MapEngine {
 
             let sel = self.selected_lower.as_deref();
             let is_sel = |f: &CachedFeature| sel.map_or(false, |s| !f.iso.is_empty() && f.iso == s);
-            let use_raster_cache = self.scale <= 6.0;
+            // Raster cache hanya untuk overview zoom-out penuh (scale <= 1.25).
+            // Di atas 1.25, gunakan vector rendering karena viewport spatial culling membatasi
+            // negara yang dirender ke jumlah sangat sedikit (< 20 feature), jauh lebih cepat & tajam.
+            let use_raster_cache = self.scale <= 1.25;
             let use_global_batches =
                 detail_level == 0 && visible.len() * 4 >= self.features.len() * 3;
             let mut drew_cached_map = false;
@@ -974,7 +991,7 @@ impl MapEngine {
                 }
                 for &i in &visible {
                     let feature = &self.features[i];
-                    if feature.paths[detail_level].is_some() {
+                    if feature.get_path(detail_level).is_some() {
                         continue;
                     }
                     let selected_feature = is_sel(feature);
@@ -1007,6 +1024,10 @@ impl MapEngine {
                 drew_cached_map = true;
             }
             if !drew_cached_map {
+                // Pass 1: Fill visible features
+                let mut unselected_visible_paths = Vec::new();
+                let mut selected_path_to_draw = None;
+
                 for &i in &visible {
                     let feature = &self.features[i];
                     let selected_feature = is_sel(feature);
@@ -1018,20 +1039,14 @@ impl MapEngine {
                         (false, Some(override_fill)) => override_fill,
                         _ => &feature.fill,
                     };
-                    if let Some(path) = &feature.paths[detail_level] {
+                    if let Some(path) = feature.get_path(detail_level) {
                         self.ctx.set_fill_style(style);
-                        self.ctx.fill_with_path_2d(path);
-                        self.ctx.set_stroke_style(if selected_feature {
-                            &self.styles.sel_stroke
+                        self.ctx.fill_with_path_2d(&path);
+                        if selected_feature {
+                            selected_path_to_draw = Some(path);
                         } else {
-                            &self.styles.stroke
-                        });
-                        self.ctx.set_line_width(if selected_feature {
-                            1.0 / self.scale
-                        } else {
-                            0.7 / self.scale
-                        });
-                        self.ctx.stroke_with_path(path);
+                            unselected_visible_paths.push(path);
+                        }
                     } else {
                         self.ctx.set_fill_style(style);
                         self.ctx.begin_path();
@@ -1052,9 +1067,25 @@ impl MapEngine {
                         self.ctx.stroke();
                     }
                 }
+
+                // Pass 2: Stroke unselected visible features sekali set stroke style
+                if !unselected_visible_paths.is_empty() {
+                    self.ctx.set_stroke_style(&self.styles.stroke);
+                    self.ctx.set_line_width(0.7 / self.scale);
+                    for path in &unselected_visible_paths {
+                        self.ctx.stroke_with_path(path);
+                    }
+                }
+
+                // Pass 3: Stroke selected feature
+                if let Some(sel_path) = selected_path_to_draw {
+                    self.ctx.set_stroke_style(&self.styles.sel_stroke);
+                    self.ctx.set_line_width(1.0 / self.scale);
+                    self.ctx.stroke_with_path(&sel_path);
+                }
             }
 
-            self.draw_capitals(vx0, vy0, vx1, vy1, true);
+            self.draw_capitals(vx0, vy0, vx1, vy1, true, animating);
         }
         self.visible_features = visible;
     }
@@ -1088,7 +1119,7 @@ impl MapEngine {
         }
     }
 
-    fn draw_capitals(&mut self, vx0: f64, vy0: f64, vx1: f64, vy1: f64, draw_labels: bool) {
+    fn draw_capitals(&mut self, vx0: f64, vy0: f64, vx1: f64, vy1: f64, draw_labels: bool, animating: bool) {
         if self.scale <= 1.0 {
             if let Some(cached_canvas) = &self.cached_capitals_canvas {
                 match self
@@ -1105,22 +1136,31 @@ impl MapEngine {
             }
         }
         let margin = 40.0 / self.scale;
-        for cap in self.capitals.iter().filter(|c| {
+        let visible_capitals: Vec<_> = self.capitals.iter().filter(|c| {
             c.x >= vx0 - margin && c.x <= vx1 + margin && c.y >= vy0 - margin && c.y <= vy1 + margin
-        }) {
+        }).collect();
+
+        for cap in &visible_capitals {
             let image = cap
                 .flag_idx
                 .and_then(|i| self.capital_flags.get(i))
                 .map(|(_, img)| img);
-            self.draw_capital_flag(image, &cap.flag_iso, cap.x, cap.y);
+            self.draw_capital_flag(image, &cap.flag_iso, cap.x, cap.y, animating);
         }
 
-        // Label hanya saat zoom cukup; font & outline di-set sekali per frame
-        if !draw_labels || self.scale <= 1.0 {
+        // Label hanya saat zoom cukup; jangan gambar label jika kamera sedang berinterpolasi cepat
+        if !draw_labels || self.scale <= 1.2 || animating {
             return;
         }
 
-        if self.cached_capital_labels_scale != self.scale {
+        // Jangan hitung ulang layout jika perbedaan skala kecil (< 30%)
+        let scale_diff_ratio = if self.cached_capital_labels_scale.is_nan() || self.cached_capital_labels_scale <= 0.0 {
+            1.0
+        } else {
+            (self.scale - self.cached_capital_labels_scale).abs() / self.cached_capital_labels_scale
+        };
+
+        if self.cached_capital_labels.is_empty() || scale_diff_ratio > 0.3 {
             self.rebuild_capital_label_layout();
         }
 
@@ -1196,8 +1236,8 @@ impl MapEngine {
         self.cached_capital_labels_scale = scale;
     }
 
-    fn draw_capital_flag(&self, image: Option<&HtmlImageElement>, iso: &str, x: f64, y: f64) {
-        Self::draw_capital_flag_on_context(&self.ctx, &self.styles, image, iso, x, y, self.scale);
+    fn draw_capital_flag(&self, image: Option<&HtmlImageElement>, iso: &str, x: f64, y: f64, animating: bool) {
+        Self::draw_capital_flag_on_context(&self.ctx, &self.styles, image, iso, x, y, self.scale, animating);
     }
 
     fn draw_capital_flag_on_context(
@@ -1208,19 +1248,22 @@ impl MapEngine {
         x: f64,
         y: f64,
         scale: f64,
+        animating: bool,
     ) {
         let width = 14.0 / scale;
         let height = 9.0 / scale;
         let left = x - width / 2.0;
         let top = y - height / 2.0;
 
-        context.set_fill_style(&styles.flag_bg);
-        context.fill_rect(
-            left - 1.0 / scale,
-            top - 1.0 / scale,
-            width + 2.0 / scale,
-            height + 2.0 / scale,
-        );
+        if !animating {
+            context.set_fill_style(&styles.flag_bg);
+            context.fill_rect(
+                left - 1.0 / scale,
+                top - 1.0 / scale,
+                width + 2.0 / scale,
+                height + 2.0 / scale,
+            );
+        }
 
         if let Some(image) = image.filter(|flag| flag.complete() && flag.natural_width() > 0) {
             let _ = context
@@ -1235,9 +1278,11 @@ impl MapEngine {
             context.set_text_baseline("alphabetic");
         }
 
-        context.set_stroke_style(&styles.flag_bg);
-        context.set_line_width(0.75 / scale);
-        context.stroke_rect(left, top, width, height);
+        if !animating {
+            context.set_stroke_style(&styles.flag_bg);
+            context.set_line_width(0.75 / scale);
+            context.stroke_rect(left, top, width, height);
+        }
     }
 
     fn project(&self, lng: f64, lat: f64) -> (f64, f64) {

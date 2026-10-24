@@ -368,6 +368,7 @@ export default function NaikkanKepuasanModal({
 
   return (
     <>
+      {!isDanaTidakCukupOpen && (
       <NotebookModalWrapper onClose={onClose}>
         <div className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] shadow-[0_0_30px_rgba(0,255,170,0.15)]">
           
@@ -606,9 +607,10 @@ export default function NaikkanKepuasanModal({
           </div>
         </div>
       </NotebookModalWrapper>
+      )}
 
       {/* ============ MODAL INFO ============ */}
-      {showInfoModal && (
+      {showInfoModal && !isDanaTidakCukupOpen && (
         <NotebookModalWrapper
           onClose={() => setShowInfoModal(false)}
           zIndexClass="z-[300]"
