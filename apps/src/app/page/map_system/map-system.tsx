@@ -85,6 +85,7 @@ import { logger } from '../../../lib/logger';
 const CountryDetailModal = dynamic(() => import('../detail_negara/detail_negara').then(m => m.CountryDetailModal), { ssr: false });
 const NegaraUserModal = dynamic(() => import('./negara_user'), { ssr: false });
 const WarMap = dynamic(() => import('../path_logic/path-war'), { ssr: false });
+const DialogTerbukaMenu = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/DialogTerbukaMenu'), { ssr: false });
 import { buildCapitalPoint } from '../path_logic/path-war';
 import { estimateTravelTime } from '../path_logic/time_logic';
 import { applyWarLossesToUserArmada } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
@@ -151,7 +152,8 @@ import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifika
 import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationLogic';
 import { checkAndGenerateEmbassyOffers, createEmbassyOfferNotification } from '../menus/inbox/logic/4_notifikasi_kedubes/1_penawaran_kedutaan_besar';
 import { executeAparatOperation } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/bubarkanAparatLogic';
-const KonfirmasiAparatModal = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/KonfirmasiAparatModal'), { ssr: false });
+import type { DetailOpsiBubarkan } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/opsiBubarkanMassaConfig';
+const MenuBubarkanMassaModal = dynamic(() => import('../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/1_bubarkan_dengan_aparat/MenuBubarkanMassaModal'), { ssr: false });
 import { startDialogTerbuka } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/2_dialog_terbuka/dialogTerbukaLogic';
 import { executePenuhiTuntutan } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/3_penuhi_tuntutan/penuhiTuntutanLogic';
 import { executeAbaikanDemo, calculateDailyIgnoredDemoPenalties } from '../menus/inbox/logic/7_notifikasi_ekonomi/demo_logic/4_abaikan_demo/abaikanDemoLogic';
@@ -550,6 +552,8 @@ export default function MapPage() {
     const [isPaused, setIsPaused] = useState(true);
     const isPausedRef = useRef(isPaused);
     const warPauseStateRef = useRef<{ wasPaused: boolean } | null>(null);
+    const dialogPauseStateRef = useRef<{ wasPaused: boolean } | null>(null);
+    const [isDialogTerbukaOpen, setIsDialogTerbukaOpen] = useState(false);
     const [speed, setSpeed] = useState(1);
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
     const currentDateRef = useRef(currentDate);
@@ -2005,7 +2009,8 @@ export default function MapPage() {
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
-            if (!loadSaveStr) {
+            const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
+            if (newGameMarker === '1') {
                 localStorage.setItem('player_diamonds', '150');
                 setPlayerDiamonds(150);
             }
@@ -4451,9 +4456,9 @@ export default function MapPage() {
             if (typeof window !== 'undefined') {
                 const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
                 const newGameMarker = localStorage.getItem('presiden_simulator_new_game');
-                // Reset data misi dan diamond ke tingkat awal setiap kali permainan dimulai atau halaman direfresh
-                // kecuali jika ada data save yang sedang dimuat (presiden_simulator_load_save).
-                if (!loadSaveStr || newGameMarker === '1') {
+                // Reset hanya saat pemain benar-benar memulai game baru. Navigasi ke dialog lalu kembali
+                // tidak boleh menghapus progress sesi yang masih berjalan.
+                if (newGameMarker === '1') {
                     clearMissionProgressData();
                     localStorage.setItem('player_diamonds', '150');
                     setPlayerDiamonds(150);
@@ -4674,6 +4679,8 @@ export default function MapPage() {
         if (typeof window !== 'undefined') {
             const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
             const isNewGame = localStorage.getItem('presiden_simulator_new_game') === '1';
+            const returningFromDialog = sessionStorage.getItem('presiden_simulator_returning_from_dialog') === '1';
+            sessionStorage.removeItem('presiden_simulator_returning_from_dialog');
             if (loadSaveStr) {
                 void (async () => {
                     try {
@@ -4790,6 +4797,9 @@ export default function MapPage() {
                         if (restoredDetail.kesejahteraan !== undefined) {
                             setKesejahteraan(Number(restoredDetail.kesejahteraan));
                         }
+                        if (Array.isArray(restoredDetail.notifications)) {
+                            setNotifications(restoredDetail.notifications);
+                        }
 
                         if (restoredDetail.playerDiamonds !== undefined) {
                             const dia = Number(restoredDetail.playerDiamonds);
@@ -4840,7 +4850,7 @@ export default function MapPage() {
                 if (chosen) {
                     setSelectedCountry(chosen);
                     loadCountryStats(chosen.country, chosen.capital);
-                    if (isNewGame || !loadSaveStr) {
+                    if (isNewGame || (!loadSaveStr && !returningFromDialog)) {
                         expelCountryFromOrganizations(chosen.country);
                         clearMissionProgressData();
                         clearActiveNpcCountrySimulationState();
@@ -6471,36 +6481,39 @@ export default function MapPage() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.02)_0%,transparent_100%)] pointer-events-none" />
 
             {/* Status Bar / Navbar */}
-            <Navbar
-                selectedCountry={selectedCountry}
-                countryDetail={countryDetail}
-                metadata={metadata}
-                netBalanceAdjustment={playerNetBalanceAdjustment}
-                currentDate={currentDate}
-                presidentRating={presidentRating}
-                kesejahteraan={countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : kesejahteraan}
-                onOpenGameMenu={openGameMenu}
-                onOpenSaveModal={openSaveModal}
-                onOpenRestartConfirm={() => setIsRestartConfirmOpen(true)}
-                onOpenKepuasan={() => setActiveMenu("Dashboard:Kepuasan")}
-                onOpenKesejahteraan={() => {
-                    setKesejahteraanDeepLink(true);
-                    setActiveMenu("Dashboard:Populasi:Overview");
-                }}
-                onOpenPopulasi={() => {
-                    setKesejahteraanDeepLink(false);
-                    setActiveMenu("Dashboard:Populasi:Overview");
-                }}
-            />            {/* Top Left Icon - Inbox */}
-            <TopLeftIcon
-                userCountryName={String(
-                    countryDetail?.country ||
-                    countryDetail?.nama_negara ||
-                    countryDetail?.name_id ||
-                    countryDetail?.name_en ||
-                    selectedCountry?.country ||
-                    'Indonesia'
-                )}
+            {!isDialogTerbukaOpen && (
+                <>
+                    <Navbar
+                        selectedCountry={selectedCountry}
+                        countryDetail={countryDetail}
+                        metadata={metadata}
+                        netBalanceAdjustment={playerNetBalanceAdjustment}
+                        currentDate={currentDate}
+                        presidentRating={presidentRating}
+                        kesejahteraan={countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : kesejahteraan}
+                        onOpenGameMenu={openGameMenu}
+                        onOpenSaveModal={openSaveModal}
+                        onOpenRestartConfirm={() => setIsRestartConfirmOpen(true)}
+                        onOpenKepuasan={() => setActiveMenu("Dashboard:Kepuasan")}
+                        onOpenKesejahteraan={() => {
+                            setKesejahteraanDeepLink(true);
+                            setActiveMenu("Dashboard:Populasi:Overview");
+                        }}
+                        onOpenPopulasi={() => {
+                            setKesejahteraanDeepLink(false);
+                            setActiveMenu("Dashboard:Populasi:Overview");
+                        }}
+                    />
+                    {/* Top Left Icon - Inbox */}
+                    <TopLeftIcon
+                        userCountryName={String(
+                            countryDetail?.country ||
+                            countryDetail?.nama_negara ||
+                            countryDetail?.name_id ||
+                            countryDetail?.name_en ||
+                            selectedCountry?.country ||
+                            'Indonesia'
+                        )}
                 onClick={() => {
                     setCountryDetailModalOpen(false);
                     setInboxModalOpen(true);
@@ -6666,19 +6679,32 @@ export default function MapPage() {
                             });
                             return;
                         } else if (actionType === 'dialog') {
+                            sessionStorage.setItem('dialog-terbuka-notification', JSON.stringify({ selected: tNotif, notifications: notifications.filter((item: any) => item.tradeType === 'demonstrasi_rakyat') }));
                             const result = startDialogTerbuka(tNotif);
                             setInboxModalOpen(false);
-                            if (result.updatedNotification) {
-                                setNotifications(previous => previous.map(notification =>
+                            const updatedNotifications = result.updatedNotification
+                                ? notifications.map(notification =>
                                     notification.id === notif.id
                                         ? { ...notification, ...result.updatedNotification }
                                         : notification
-                                ));
+                                )
+                                : notifications;
+                            if (result.updatedNotification) {
+                                setNotifications(updatedNotifications);
                             }
                             setActiveMenu('Peta Taktis');
-                            const countryName = selectedCountry?.country || countryDetail?.country || countryDetail?.nama || '';
-                            const countryQuery = countryName ? `?country=${encodeURIComponent(countryName)}` : '';
-                            router.push(`${result.targetPath}${countryQuery}`);
+
+                            // Pause waktu simulasi persis seperti sistem perang
+                            if (!dialogPauseStateRef.current) {
+                                dialogPauseStateRef.current = { wasPaused: isPausedRef.current };
+                            }
+                            setIsPaused(true);
+                            if (timeManagerRef.current) {
+                                timeManagerRef.current.setPaused(true);
+                            }
+
+                            // Buka overlay dialog terbuka in-page (tanpa unmount map-system)
+                            setIsDialogTerbukaOpen(true);
                             return;
                         } else if (actionType === 'fulfill') {
                             const result = executePenuhiTuntutan(tNotif);
@@ -7519,14 +7545,16 @@ export default function MapPage() {
                 }}
             />
 
-            {/* Tombol Pintas Fokus ke Negara Sendiri (F) */}
-            <button
-                onClick={handleFocusHome}
-                title="🎯 Fokus & Zoom ke Negara Sendiri (F)"
-                className="fixed bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-18 lg:left-20 xl:left-22 2xl:left-26 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
-            >
-                <Crosshair className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
-            </button>
+                    {/* Tombol Pintas Fokus ke Negara Sendiri (F) */}
+                    <button
+                        onClick={handleFocusHome}
+                        title="🎯 Fokus & Zoom ke Negara Sendiri (F)"
+                        className="fixed bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-18 lg:left-20 xl:left-22 2xl:left-26 z-[100] w-9 h-9 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-[#0F2424] border border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] shadow-[0_4px_12px_rgba(0,0,0,0.4)] flex items-center justify-center cursor-pointer transition-all group"
+                    >
+                        <Crosshair className="w-4 h-4 lg:w-5 lg:h-5 xl:w-6 xl:h-6 transition-transform group-hover:scale-110" />
+                    </button>
+                </>
+            )}
 
 
             {activeWarAnimation && (() => {
@@ -7731,9 +7759,11 @@ export default function MapPage() {
                 </div>
             )}
 
-            <DiplomacyTracking onOpen={() => setCountryDetailModalOpen(false)} />
+            {!isDialogTerbukaOpen && (
+                <DiplomacyTracking onOpen={() => setCountryDetailModalOpen(false)} />
+            )}
 
-            {!(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
+            {!isDialogTerbukaOpen && !(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
                 <>
                     {!Object.values(subMenuItems).flat().some((item: { id: string }) => activeMenu.startsWith(item.id)) && (
                         <TopNav
@@ -7787,7 +7817,7 @@ export default function MapPage() {
 
             {/* Premium Floating Time Controller Widget */}
             <div
-                className="fixed bottom-3 right-3 lg:bottom-5 lg:right-5 xl:bottom-8 xl:right-8 z-40 flex flex-col w-[220px] lg:w-[250px] xl:w-[320px] transition-all"
+                className={`fixed bottom-3 right-3 lg:bottom-5 lg:right-5 xl:bottom-8 xl:right-8 z-40 flex flex-col w-[220px] lg:w-[250px] xl:w-[320px] transition-all ${isDialogTerbukaOpen ? 'hidden pointer-events-none' : ''}`}
                 onPointerEnter={() => {
                     isTimeControllerHoveredRef.current = true;
                     window.dispatchEvent(new Event('neosantara:time-controller-hovered'));
@@ -7820,7 +7850,7 @@ export default function MapPage() {
                         <div className="flex flex-col items-end leading-none">
                             <span className="text-[8px] xl:text-[9px] font-black text-[#6B8A8A] tracking-wider xl:tracking-widest uppercase mb-0.5 xl:mb-1">SIMULATION CALENDAR</span>
                             <span ref={dateTextRef} className="text-xs lg:text-sm xl:text-lg font-black text-[#E0E0E0] tracking-tight">
-                                -
+                                {timeManagerRef.current?.getFormattedDate() || calendarRef.current?.display.getDisplayDate() || '-'}
                             </span>
                         </div>
                     </div>
@@ -8345,14 +8375,17 @@ export default function MapPage() {
                 reasons={closedTradeRejectionState.reasons}
             />
 
-            {/* Modal Konfirmasi Operasi Aparat */}
-            <KonfirmasiAparatModal
+            {/* Modal Menu Pilihan Bubarkan Massa */}
+            <MenuBubarkanMassaModal
                 isOpen={aparatConfirmState.isOpen}
+                currentBudget={Number(countryDetail?.anggaran || 0)}
                 onClose={() => {
                     setAparatConfirmState({ isOpen: false, notification: null });
-                    setInboxModalOpen(true);
+                    if (!isDialogTerbukaOpen) {
+                        setInboxModalOpen(true);
+                    }
                 }}
-                onConfirm={() => {
+                onSelectOption={(selectedOption: DetailOpsiBubarkan) => {
                     const targetNotif = aparatConfirmState.notification;
                     setAparatConfirmState({ isOpen: false, notification: null });
                     if (!targetNotif) return;
@@ -8369,6 +8402,7 @@ export default function MapPage() {
                         populasi: currentPopulasi,
                         currentDateStr: simulationDateString,
                         playerCountry,
+                        selectedOption,
                     });
 
                     if (!op.canProceed || !op.result) {
@@ -8431,6 +8465,35 @@ export default function MapPage() {
                     });
                 }}
             />
+
+            {/* Overlay Forum Dialog Terbuka (Paling depan dari seluruh UI: Navbar, BottomNav, dll.) */}
+            {isDialogTerbukaOpen && (
+                <div className="fixed inset-0 z-[99999999] overflow-hidden bg-[#081014]">
+                    <DialogTerbukaMenu
+                        currentBudget={Number(countryDetail?.anggaran || 0)}
+                        onOpenBubarkanMassa={() => {
+                            const demoNotif = notifications.find((item: any) => item.tradeType === 'demonstrasi_rakyat' && !item.isHandled) || null;
+                            setAparatConfirmState({
+                                isOpen: true,
+                                notification: demoNotif,
+                            });
+                        }}
+                        onClose={() => {
+                            setIsDialogTerbukaOpen(false);
+                            if (dateTextRef.current && timeManagerRef.current) {
+                                dateTextRef.current.textContent = timeManagerRef.current.getFormattedDate();
+                            }
+                            const pauseState = dialogPauseStateRef.current;
+                            dialogPauseStateRef.current = null;
+                            if (pauseState && !pauseState.wasPaused) {
+                                isPausedRef.current = false;
+                                setIsPaused(false);
+                                timeManagerRef.current?.setPaused(false);
+                            }
+                        }}
+                    />
+                </div>
+            )}
         </main>
     );
 }

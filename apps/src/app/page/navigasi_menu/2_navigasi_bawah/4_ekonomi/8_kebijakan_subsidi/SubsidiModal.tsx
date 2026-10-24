@@ -98,17 +98,19 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
       const criticalCategories = ["Pangan", "Energi", "Pendidikan & Kesehatan"]; // Sesuaikan kategori dengan data Anda
       const isCriticalSubsidy = criticalCategories.includes(toggledItemCategory) || id.includes("beras") || id.includes("bbm");
 
+      const countryPop = Number(countryDetail?.jumlah_penduduk || countryDetail?.populasi || 50000000);
+
       if (!nextStatus) { // Jika user MENCABUT subsidi
         if (isCriticalSubsidy) {
           // Peluang Demo Sangat Tinggi (90%) untuk kebutuhan pokok
           if (Math.random() < 0.90) {
-            const demoNotif = generateDemonstrasiSubsidiNotification(toggledItemName, dateStr);
+            const demoNotif = generateDemonstrasiSubsidiNotification(toggledItemName, dateStr, countryPop, true);
             newNotifs.unshift(demoNotif);
           }
         } else if (summary.totalApprovalBonus <= 0) {
           // Logika lama: Jika bukan krusial, tapi total approval udah 0
           if (Math.random() < 0.70) {
-            const demoNotif = generateDemonstrasiSubsidiNotification(toggledItemName, dateStr);
+            const demoNotif = generateDemonstrasiSubsidiNotification(toggledItemName, dateStr, countryPop, false);
             newNotifs.unshift(demoNotif);
           }
         }

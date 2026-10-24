@@ -246,12 +246,14 @@ function PajakModalContent({
         // Notifikasi demo hanya jika kenaikan ekstrem ≥ 10 poin
         const diff = nextVal - oldVal;
         if (diff >= 10 && Math.random() < 0.8) {
+          const countryPop = Number(current?.jumlah_penduduk || current?.populasi || 50000000);
           const demoNotif = generateDemonstrasiPajakNotification(
             taxLabel,
             oldVal,
             nextVal,
             diff,
-            dateStr
+            dateStr,
+            countryPop
           );
           newPendingNotifs.unshift(demoNotif);
         }

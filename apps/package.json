@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env PORT=3000 next dev --turbopack",
+    "dev": "concurrently -k -n next,dialog-api -c cyan,magenta \"cross-env PORT=3000 next dev --turbopack\" \"cd /d src\\app\\page\\menus\\inbox\\logic\\7_notifikasi_ekonomi\\demo_logic\\2_dialog_terbuka && python -m uvicorn python.main:app --host 127.0.0.1 --port 8000\"", 
     "build": "next build --webpack",
     "export": "next export",
     "start": "next start",

@@ -34,11 +34,19 @@ export default function DemonstrasiEkonomiNotificationCard({ notification, onAct
         {notification.message}
       </p>
 
-      {/* STATUS BADGE */}
-      <div className="bg-[#0A1A1A] border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <ShieldAlert className="w-4 h-4 text-rose-400" />
-          <span>Penyebab: <strong className="text-white uppercase">{notification.cause}</strong></span>
+      {/* STATUS & MASSA BADGE */}
+      <div className="bg-[#0A1A1A] border border-slate-700/50 rounded-xl p-2.5 text-xs text-slate-300 font-bold flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <ShieldAlert className="w-4 h-4 text-rose-400" />
+            <span>Penyebab: <strong className="text-white uppercase">{notification.cause}</strong></span>
+          </div>
+          {notification.demonstratorCount != null && (
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-rose-950/80 border border-rose-500/40 text-[11px] text-rose-300">
+              <span>👥</span>
+              <span>Massa: <strong className="text-white font-mono">{Number(notification.demonstratorCount).toLocaleString('id-ID')}</strong> jiwa</span>
+            </div>
+          )}
         </div>
         <span className={`text-[11px] font-black uppercase ${
           notification.demo_status === 'selesai'

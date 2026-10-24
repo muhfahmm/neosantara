@@ -312,13 +312,15 @@ function HargaModalContent({
               : 1;
         const demoChance = levelJump >= 3 ? 0.8 : 0.4;
         if (Math.random() < demoChance) {
+          const countryPop = Number(countryDetail?.jumlah_penduduk || countryDetail?.populasi || 50000000);
           notifs.unshift(
             generateDemonstrasiHargaNotification(
               formatted,
               oldValue,
               value,
               levelJump,
-              dateStr
+              dateStr,
+              countryPop
             )
           );
         }
