@@ -8,8 +8,8 @@ import {
 } from 'lucide-react';
 import {
   TacticalMap, GridRulers,
-  BASE_W, BASE_H, GRID_SIZE,
-  clamp, getColName, fitView, clampView, viewScale,
+  BASE_W, BASE_H, GRID_SIZE, MAP_MIN_Y, MAP_MAX_Y,
+  clamp, cellLabel, fitView, clampView, viewScale,
   type ViewBox, type SimPhase, type TerrainType,
 } from './TacticalMap';
 import {
@@ -42,8 +42,8 @@ const THEMES = {
 
 /* ───────────────── INFO TOOLTIP ───────────────── */
 type InfoId =
-  | 'river' | 'highland' | 'forest' | 'urban' | 'objective' | 'attacker' | 'defender'
-  | 'sand' | 'swamp' | 'crater' | 'capture' | 'resource' | 'hqAttacker' | 'hqDefender';
+  | 'lake' | 'highland' | 'forest' | 'urban' | 'objective' | 'attacker' | 'defender'
+  | 'airbaseOwn' | 'airbaseEnemy' | 'sand' | 'swamp' | 'crater' | 'capture' | 'resource' | 'hqAttacker' | 'hqDefender';
 type Tone = 'good' | 'bad' | 'neutral';
 interface Info {
   icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }>;
@@ -60,7 +60,7 @@ const Corners = ({ c }: { c: string }) => (
   </>
 );
 
-export default function PageWar({
+export default function LandWarMap({
   attackerName,
   targetName,
   onAutoResult,
@@ -73,6 +73,7 @@ export default function PageWar({
 }: PageWarProps) {
   const theme = THEMES[terrainType] ?? THEMES.default;
   const { accent, accentRgb } = theme;
+  const playerSide = isUserDefender ? 'defender' : 'attacker';
 
   const deploymentConfig = useMemo<Record<string, unknown>>(() => {
     if (typeof window === 'undefined') return {};
@@ -159,21 +160,23 @@ export default function PageWar({
   const coordRef = useRef<HTMLSpanElement>(null);
 
   const INFO: Record<InfoId, Info> = useMemo(() => ({
-    river:      { icon: Waves,     name: 'Sungai Deras',    tag: 'Rintangan alam',    desc: 'Arus kuat menahan kendaraan berat. Jembatan menjadi titik sempit.', stats: [{ k: 'Kecepatan', v: '-50%', tone: 'bad' }, { k: 'Pergerakan', v: 'Terhalang', tone: 'bad' }] },
+    lake:       { icon: Waves,     name: 'Danau',          tag: 'Perairan',          desc: 'Perairan tenang tempat unit laut berlabuh. Menghalangi unit darat.', stats: [{ k: 'Kecepatan', v: '-50%', tone: 'bad' }, { k: 'Unit laut', v: 'Berlabuh', tone: 'good' }] },
     highland:   { icon: Mountain,  name: 'Dataran Tinggi', tag: 'Posisi bertahan',   desc: 'Lereng curam menguntungkan pihak yang menguasai puncak.',          stats: [{ k: 'Pertahanan', v: '+25%', tone: 'good' }, { k: 'Kecepatan', v: '-50%', tone: 'bad' }] },
     forest:     { icon: Trees,     name: 'Hutan Lebat',    tag: 'Penyamaran',        desc: 'Kanopi rapat melindungi pasukan dari pengamatan udara.',          stats: [{ k: 'Pertahanan', v: '+15%', tone: 'good' }, { k: 'Visibilitas', v: '-20%', tone: 'bad' }] },
     urban:      { icon: Building2, name: 'Zona Urban',     tag: 'Medan kota',        desc: 'Gedung memecah formasi dan memaksa pertempuran jarak dekat.',     stats: [{ k: 'Mode tempur', v: 'CQC', tone: 'neutral' }] },
     objective:  { icon: Target,    name: 'Titik Strategis', tag: 'Objektif utama',   desc: 'Kuasai titik ini untuk memenangkan operasi.',                      stats: [{ k: 'Prioritas', v: 'Utama', tone: 'neutral' }] },
     attacker:   { icon: Swords,    name: attackerName,     tag: 'Pasukan penyerang', desc: 'Divisi lapis baja dengan dukungan helikopter serang.',            stats: [{ k: 'Satuan', v: 'Divisi (XX)', tone: 'neutral' }] },
-    defender:   { icon: Shield,    name: targetName,       tag: 'Pasukan bertahan',  desc: 'Unit tank bertahan di sektor tenggara.',                           stats: [{ k: 'Satuan', v: 'Brigade (X)', tone: 'neutral' }] },
+    defender:   { icon: Shield,    name: targetName,       tag: 'Pasukan bertahan',  desc: 'Unit tank bertahan di sektor yang dijaga.',                        stats: [{ k: 'Satuan', v: 'Brigade (X)', tone: 'neutral' }] },
     sand:       { icon: Mountain,  name: 'Pasir Gembur',   tag: 'Medan lambat',      desc: 'Pasir lepas membuat roda dan track sulit bergerak.',              stats: [{ k: 'Kecepatan', v: '-30%', tone: 'bad' }] },
     swamp:      { icon: Waves,     name: 'Rawa',           tag: 'Medan lambat',      desc: 'Tanah berlumpur menahan kendaraan berat.',                         stats: [{ k: 'Kecepatan', v: '-40%', tone: 'bad' }] },
     crater:     { icon: Crosshair, name: 'Kawah Ledakan',  tag: 'Medan rusak',       desc: 'Permukaan tidak rata memperlambat unit darat.',                    stats: [{ k: 'Kecepatan', v: '-20%', tone: 'bad' }, { k: 'Pertahanan', v: '+10%', tone: 'good' }] },
     capture:    { icon: Target,    name: 'Titik Rebut',    tag: 'Objektif sekunder', desc: 'Menguasai titik ini mendukung objektif utama.',                    stats: [{ k: 'Prioritas', v: 'Sekunder', tone: 'neutral' }] },
     resource:   { icon: Building2, name: 'Sumber Daya',    tag: 'Logistik',          desc: 'Depo yang menopang suplai pasukan.',                               stats: [{ k: 'Efek', v: 'Suplai', tone: 'good' }] },
-    hqAttacker: { icon: Swords,    name: 'HQ Penyerang',   tag: 'Markas',            desc: 'Pusat komando pasukan penyerang.',                                 stats: [{ k: 'Status', v: 'Aktif', tone: 'good' }] },
-    hqDefender: { icon: Shield,    name: 'HQ Bertahan',    tag: 'Markas',            desc: 'Rebut markas ini untuk memenangkan operasi.',                      stats: [{ k: 'Status', v: 'Target', tone: 'bad' }] },
-  }), [attackerName, targetName]);
+    airbaseOwn:   { icon: Navigation, name: 'Pangkalan Udara Anda', tag: 'Basis udara', desc: 'Landasan pacu dan hanggar di dekat HQ Anda untuk operasi pesawat dan helikopter.', stats: [{ k: 'Dukungan udara', v: 'Aktif', tone: 'good' }, { k: 'Sortie', v: 'Cepat', tone: 'good' }] },
+    airbaseEnemy: { icon: Navigation, name: 'Pangkalan Udara Musuh', tag: 'Basis udara', desc: 'Landasan pacu musuh di dekat HQ mereka. Menghancurkannya melemahkan dukungan udara lawan.', stats: [{ k: 'Dukungan udara', v: 'Musuh', tone: 'bad' }, { k: 'Prioritas', v: 'Tinggi', tone: 'neutral' }] },
+    hqAttacker: { icon: Swords,    name: isUserDefender ? 'HQ Musuh (Penyerang)' : 'HQ Anda (Penyerang)', tag: 'Markas', desc: isUserDefender ? 'Pusat komando pasukan penyerang di kanan bawah.' : 'Pusat komando pasukan Anda di kiri atas.', stats: [{ k: 'Status', v: 'Aktif', tone: isUserDefender ? 'bad' : 'good' }] },
+    hqDefender: { icon: Shield,    name: isUserDefender ? 'HQ Anda (Bertahan)' : 'HQ Musuh (Bertahan)', tag: 'Markas', desc: isUserDefender ? 'Pertahankan markas ini dari serangan musuh.' : 'Rebut markas di kanan bawah ini untuk memenangkan operasi.', stats: [{ k: 'Status', v: isUserDefender ? 'Pertahankan' : 'Target', tone: isUserDefender ? 'good' : 'bad' }] },
+  }), [attackerName, targetName, isUserDefender]);
 
   if (hovered) lastId.current = hovered;
   const info = INFO[hovered ?? lastId.current];
@@ -238,13 +241,14 @@ export default function PageWar({
   const updateHud = useCallback((clientX: number, clientY: number, box: DOMRect) => {
     const { scale, ox, oy } = viewScale(box, vb);
     const gx = clamp(Math.floor(vb.x + (clientX - box.left - ox) / scale), 0, BASE_W);
-    const gy = clamp(Math.floor(vb.y + (clientY - box.top - oy) / scale), 0, BASE_H);
+    const gy = clamp(Math.floor(vb.y + (clientY - box.top - oy) / scale), MAP_MIN_Y, MAP_MAX_Y - 1);
     const col = clamp(Math.floor(gx / GRID_SIZE), 0, BASE_W / GRID_SIZE - 1);
-    const row = clamp(Math.floor(gy / GRID_SIZE), 0, BASE_H / GRID_SIZE - 1);
+    const row = Math.floor(gy / GRID_SIZE);
     const key = `${col},${row}`;
     setHoverCell((prev) => (prev === key ? prev : key));
     if (coordRef.current) {
-      coordRef.current.textContent = `X ${String(gx).padStart(4, '0')}  Y ${String(gy).padStart(4, '0')}  GRID ${getColName(col)}-${row + 1}`;
+      const yText = `${gy < 0 ? '-' : ''}${String(Math.abs(gy)).padStart(4, '0')}`;
+      coordRef.current.textContent = `X ${String(gx).padStart(4, '0')}  Y ${yText}  GRID ${cellLabel(col, row)}`;
     }
   }, [vb]);
 
@@ -299,10 +303,13 @@ export default function PageWar({
     dragRef.current = null;
   };
 
+  // Pasukan Anda selalu di kiri atas (hijau), musuh di kanan bawah (merah) — apa pun perannya
   const attackerTotal = useMemo(() => attackerUnits.reduce((s, u) => s + (u.quantity || 0), 0), [attackerUnits]);
   const defenderTotal = useMemo(() => defenderUnits.reduce((s, u) => s + (u.quantity || 0), 0), [defenderUnits]);
-  const totalTroops = attackerTotal + defenderTotal || 1;
-  const attackerPct = Math.round((attackerTotal / totalTroops) * 100);
+  const ownTotal = isUserDefender ? defenderTotal : attackerTotal;
+  const enemyTotal = isUserDefender ? attackerTotal : defenderTotal;
+  const totalTroops = ownTotal + enemyTotal || 1;
+  const ownPct = Math.round((ownTotal / totalTroops) * 100);
 
   return (
     <div className="fixed inset-0 z-[300] flex select-none flex-col justify-between overflow-hidden p-4 font-sans transition-colors duration-1000 sm:p-6" style={{ backgroundColor: theme.bgColor }}>
@@ -317,16 +324,16 @@ export default function PageWar({
         .nw-rotor{animation:nw-rotor .18s linear infinite}
         .nw-flow{animation:nw-flow 2.4s linear infinite}
         .nw-flow-slow{animation:nw-flow 4.2s linear infinite}
-        .nw-flicker{animation:nw-flicker 1.3s ease-in-out infinite}
+        .nw-flicker{animation:nw-flicker 3s ease-in-out infinite}
         .nw-tz{cursor:crosshair;}
         @keyframes nw-ping{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.4);opacity:0}}
         @keyframes nw-ping-slow{0%{transform:scale(.7);opacity:.7}100%{transform:scale(2.6);opacity:0}}
         @keyframes nw-pulse{0%,100%{opacity:.6}50%{opacity:1}}
         @keyframes nw-lock{0%,100%{transform:scale(1);opacity:.75}50%{transform:scale(1.15);opacity:1}}
         @keyframes nw-flow{to{stroke-dashoffset:-80}}
-        @keyframes nw-smoke{0%{transform:translate(0,0) scale(.5);opacity:0}15%{opacity:.5}100%{transform:translate(52px,-190px) scale(2.6);opacity:0}}
-        @keyframes nw-drift{from{transform:translateX(-100px)}to{transform:translateX(140px)}}
-        @keyframes nw-flicker{0%,100%{opacity:.9}40%{opacity:.5}70%{opacity:1}}
+        @keyframes nw-smoke{0%{transform:translate(0,0) scale(.5);opacity:0}15%{opacity:.5}100%{transform:translate(70px,-250px) scale(2.6);opacity:0}}
+        @keyframes nw-drift{from{transform:translateX(-140px)}to{transform:translateX(180px)}}
+        @keyframes nw-flicker{0%,100%{opacity:.85}50%{opacity:.55}}
         @keyframes nw-rotor{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.55)}}
         @media (prefers-reduced-motion:reduce){.nw-a,.nw-flow,.nw-flow-slow,.nw-flicker,.nw-ping,.nw-ping-slow,.nw-pulse{animation:none!important}}
       ` }} />
@@ -378,22 +385,27 @@ export default function PageWar({
 
       {/* DROPDOWN INFO / LEGENDA */}
       {showInfo && (
-        <div className="absolute right-4 top-[70px] z-50 w-[260px] max-w-[calc(100vw-2rem)] rounded-xl border bg-black/90 p-4 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200 sm:right-6 sm:top-[80px]" style={{ borderColor: `${accent}80` }}>
+        <div className="absolute right-4 top-[70px] z-50 max-h-[calc(100vh-110px)] w-[270px] max-w-[calc(100vw-2rem)] overflow-y-auto rounded-xl border bg-black/90 p-4 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200 sm:right-6 sm:top-[80px]" style={{ borderColor: `${accent}80` }}>
           <h3 className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-wider" style={{ color: accent }}><Shield className="h-4 w-4" /> Legenda & Intel</h3>
           <div className="space-y-3 text-[10px] font-bold text-gray-300">
             <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full border border-emerald-400/40 bg-emerald-800" /> Hutan Lebat (+15% Def)</div>
             <div className="flex items-center gap-2"><span className="h-3 w-3 border border-slate-400/40 bg-gradient-to-b from-slate-400 to-slate-800" style={{ clipPath: 'polygon(50% 0, 100% 100%, 0 100%)' }} /> Dataran Tinggi (+25% Def)</div>
-            <div className="flex items-center gap-2"><span className="h-1.5 w-3 rounded-full" style={{ backgroundColor: theme.water }} /> Sungai (-50% Speed)</div>
+            <div className="flex items-center gap-2"><span className="h-1.5 w-3 rounded-full" style={{ backgroundColor: theme.water }} /> Danau (-50% Speed)</div>
             <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-[#2c4a36] border border-emerald-300/30" /> Rawa (-40% Speed)</div>
             <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-[#d9bf8c]" /> Pasir Gembur (-30% Speed)</div>
             <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-black border border-amber-400/50" /> Kawah (-20% Speed)</div>
             <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-white shadow-[0_0_8px_#ffffff]" /> Objektif Utama</div>
             <div className="my-1 h-px bg-white/10" />
-            <div className="flex items-center gap-2"><span className="h-3 w-4 rounded-sm border" style={{ borderColor: accent }} /> Pasukan sendiri</div>
-            <div className="flex items-center gap-2"><span className="h-3 w-3 rotate-45 border border-rose-500" /> Pasukan musuh</div>
+            <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-[#486f3c]" /> Rerumputan (medan terbuka)</div>
+            <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-[#6b5a3c]" /> Tanah (medan terbuka)</div>
+            <div className="flex items-center gap-2"><span className="h-3 w-3 bg-[#7b8494]" style={{ clipPath: 'polygon(20% 0, 80% 10%, 100% 60%, 70% 100%, 10% 90%, 0 40%)' }} /> Bebatuan (dekorasi medan)</div>
+            <div className="my-1 h-px bg-white/10" />
+            <div className="flex items-center gap-2"><span className="h-3 w-4 rounded-sm border" style={{ borderColor: accent }} /> Pasukan & base Anda (kiri atas)</div>
+            <div className="flex items-center gap-2"><span className="h-3 w-3 rotate-45 border border-rose-500" /> Pasukan & base musuh (kanan bawah)</div>
             <div className="my-1 h-px bg-white/10" />
             <div className="text-[9px] leading-relaxed text-gray-400">
-              <span className="font-black" style={{ color: accent }}>Kontrol peta:</span> scroll = zoom, drag = geser, klik = tandai sel grid, double-click = reset, tombol +/− untuk zoom bertahap.
+              <span className="font-black" style={{ color: accent }}>Kabut pandang:</span> area di luar jangkauan unit & HQ Anda diredupkan lembut.<br />
+              <span className="font-black" style={{ color: accent }}>Kontrol peta:</span> scroll = zoom, drag = geser, klik = tandai sel koordinat, double-click = reset, tombol +/− untuk zoom bertahap.
             </div>
           </div>
         </div>
@@ -428,9 +440,10 @@ export default function PageWar({
             attackerUnits={attackerUnits}
             defenderUnits={defenderUnits}
             viewBox={vb}
+            playerSide={playerSide}
           />
 
-          {/* PENGGARIS GRID */}
+          {/* KURSOR SEL KOORDINAT (tanpa garis grid) */}
           <GridRulers vb={vb} accent={accent} hover={hoverCell} selected={selCell} />
 
           {/* KOMPAS */}
@@ -501,14 +514,14 @@ export default function PageWar({
             {isSimulating ? 'Simulasi Pertempuran Sedang Berlangsung...' : 'Pilih Target & Modifikasi Strategi Sebelum Memulai'}
           </div>
 
-          {(attackerTotal > 0 || defenderTotal > 0) && (
+          {(ownTotal > 0 || enemyTotal > 0) && (
             <div className="flex min-w-[220px] max-w-[340px] flex-1 items-center gap-2">
-              <span className="font-mono text-[10px] font-bold text-emerald-300">{formatUnitQuantity(attackerTotal)}</span>
+              <span className="font-mono text-[10px] font-bold text-emerald-300">{formatUnitQuantity(ownTotal)}</span>
               <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-rose-900/70">
-                <div className="h-full rounded-full bg-emerald-400/90 transition-all duration-700" style={{ width: `${attackerPct}%` }} />
+                <div className="h-full rounded-full bg-emerald-400/90 transition-all duration-700" style={{ width: `${ownPct}%` }} />
               </div>
-              <span className="font-mono text-[10px] font-bold text-rose-300">{formatUnitQuantity(defenderTotal)}</span>
-              <span className="ml-1 font-mono text-[9px] font-bold text-gray-400">{attackerPct}%</span>
+              <span className="font-mono text-[10px] font-bold text-rose-300">{formatUnitQuantity(enemyTotal)}</span>
+              <span className="ml-1 font-mono text-[9px] font-bold text-gray-400">{ownPct}%</span>
             </div>
           )}
         </div>

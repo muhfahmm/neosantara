@@ -69,6 +69,7 @@ interface UnitMarkerProps {
   label?: string;
   quantity?: number;
   echelon?: string;
+  disableEffects?: boolean;
 }
 
 export default function UnitMarker({
@@ -79,6 +80,7 @@ export default function UnitMarker({
   label,
   quantity,
   echelon,
+  disableEffects = false,
 }: UnitMarkerProps) {
   const UnitIcon = UNIT_ICONS[kind];
 
@@ -89,7 +91,7 @@ export default function UnitMarker({
           .filter(Boolean)
           .join(" | ")}
       </title>
-      {AIR_UNIT_KINDS.includes(kind) && (
+      {!disableEffects && AIR_UNIT_KINDS.includes(kind) && (
         <ellipse
           cx={x}
           cy={y + 15}
@@ -107,7 +109,7 @@ export default function UnitMarker({
         height="30"
         viewBox="0 0 48 32"
         color={color}
-        style={{ filter: `drop-shadow(0 0 4px ${color}99)` }}
+        style={disableEffects ? undefined : { filter: `drop-shadow(0 0 4px ${color}99)` }}
       >
         <UnitIcon color={color} />
       </svg>

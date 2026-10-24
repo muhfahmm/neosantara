@@ -16,7 +16,9 @@ import {
 } from 'lucide-react';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '@/app/page/map_system/map-data';
 import PerbandinganPasukan from '../detail_negara/3_operasi_militer/1_serang_negara/perbandingan_pasukan';
-import PageWar from '../detail_negara/3_operasi_militer/1_serang_negara/page_war/page_war';
+import LandWarMap from '../detail_negara/3_operasi_militer/1_serang_negara/page_war/LandWarMap';
+import SeaWarMap from '../detail_negara/3_operasi_militer/1_serang_negara/page_war/SeaWarMap';
+import { shouldUseSeaWarMap } from '../detail_negara/3_operasi_militer/1_serang_negara/page_war/countryMapAccess';
 import { simulateBattleTs } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 import { isSimulationTimePaused } from './time_logic';
 import { initializeRouteMathRust } from './routeMathRust';
@@ -1002,16 +1004,29 @@ export default function WarMap({
       )}
 
       {phase === 'battle_page' && (
-        <PageWar
-          attackerName={attacker.country}
-          targetName={target.country}
-          onAutoResult={handleAutoResult}
-          onClose={onClose}
-          attackerDetail={attacker}
-          targetDetail={target}
-          isUserDefender={isUserDefender}
-          isCoalitionForce={isPbbCoalition}
-        />
+        shouldUseSeaWarMap(attacker.country, target.country) ? (
+          <SeaWarMap
+            attackerName={attacker.country}
+            targetName={target.country}
+            onAutoResult={handleAutoResult}
+            onClose={onClose}
+            attackerDetail={attacker}
+            targetDetail={target}
+            isUserDefender={isUserDefender}
+            isCoalitionForce={isPbbCoalition}
+          />
+        ) : (
+          <LandWarMap
+            attackerName={attacker.country}
+            targetName={target.country}
+            onAutoResult={handleAutoResult}
+            onClose={onClose}
+            attackerDetail={attacker}
+            targetDetail={target}
+            isUserDefender={isUserDefender}
+            isCoalitionForce={isPbbCoalition}
+          />
+        )
       )}
 
       {/* ══════════ LAYAR HASIL PERTEMPURAN (Fase 'result') ══════════ */}
