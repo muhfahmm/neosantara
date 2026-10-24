@@ -12,14 +12,14 @@ import {
 } from 'lucide-react';
 // (useState moved into React import above)
 import { getEmbassyButtonLabel, getEmbassyButtonClass } from './1_kedutaan_besar/logic/kedutaanBesarLogic';
-import DestroyEmbassyModal from './1_kedutaan_besar/logic/DestroyEmbassyModal';
+import DestroyEmbassyModal from './1_kedutaan_besar/DestroyEmbassyModal';
 import BuildEmbassyModal from './1_kedutaan_besar/BuildEmbassyModal';
 import EmbassyRelationRequirementModal from './1_kedutaan_besar/EmbassyRelationRequirementModal';
 import DestroyPaktaModal from './2_pakta_non_agresi/DestroyPaktaModal';
 import DestroyAliansiModal from './3_aliansi_pertahanan/DestroyAliansiModal';
 import DestroyKontrakModal from './5_kontrak_penelitian/DestroyKontrakModal';
 import { getTradeButtonLabel, getTradeButtonClass } from './4_perjanjian_dagang/logic/perjanjianDagangLogic';
-import DestroyTradeModal from './4_perjanjian_dagang/logic/DestroyTradeModal';
+import DestroyTradeModal from './4_perjanjian_dagang/DestroyTradeModal';
 import BuildTradeModal from './4_perjanjian_dagang/BuildTradeModal';
 import PaktaNonAgresiModal from './2_pakta_non_agresi/paktaNonAgresiModals';
 import AliansiPertahananModal from './3_aliansi_pertahanan/aliansiPertahananModals';

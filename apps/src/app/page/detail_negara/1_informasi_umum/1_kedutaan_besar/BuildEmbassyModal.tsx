@@ -1,6 +1,5 @@
 "use client";
 import { getWaktuPembangunanKedutaanBonusPercent } from "@/app/page/bonus_logic";
-
 import { createPortal } from "react-dom";
 
 interface BuildEmbassyModalProps {
@@ -31,33 +30,44 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
     : buildTimeDays;
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 font-sans text-white pointer-events-auto">
-      <div className="w-full max-w-[440px] bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-6 shadow-2xl relative text-white">
-        <h3 className="text-lg font-black text-[#00FFAA] tracking-wide uppercase mb-3">Konfirmasi Bangun Kedutaan</h3>
-        <p className="text-xs sm:text-sm text-[#E0E0E0] mb-3 leading-relaxed">
-          Apakah Anda ingin membangun kedutaan di <strong className="text-white">{countryName}</strong>? Biaya pembangunan di <strong className="text-white">{continentLabel}</strong> adalah {
-            embassyCostDiscountPct > 0 ? (
-              <span><span className="line-through text-rose-400 mr-1">10 NEO</span><strong className="text-[#00FFAA]">{cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</strong></span>
-            ) : <strong className="text-[#00FFAA]">{cost} NEO</strong>
-          } dengan waktu pembangunan {
-            discountPct > 0 ? (
-              <span>
-                <span className="line-through text-rose-400 mr-1">{buildTimeDays} hari</span>
-                <strong className="text-[#00FFAA]">{effectiveBuildTimeDays} hari</strong>
-              </span>
-            ) : (
-              <strong className="text-[#00FFAA]">{buildTimeDays} hari</strong>
-            )
-          }.
-        </p>
-        <p className="text-xs sm:text-sm text-[#6B8A8A] mb-6 leading-relaxed">
-          Kas negara saat ini: <strong className="text-[#E0E0E0]">{currentBudget >= 0 ? '+' : ''}{formattedCurrentBudget} NEO</strong>. Setelah pembangunan, kas akan menjadi <strong className="text-[#00FFAA]">{budgetAfterBuild >= 0 ? '+' : ''}{formattedBudgetAfterBuild} NEO</strong>.
-        </p>
+    // 🔥 PERBAIKAN: Menghapus bg-black/60 agar tidak ada backdrop
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
+      {/* Container Modal Lebih Lebar dan Panjang */}
+      <div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(0,255,170,0.15)] relative text-white pointer-events-auto">
+        
+        {/* Area Konten */}
+        <div className="flex-1">
+          <h3 className="text-xl sm:text-2xl font-black text-[#00FFAA] tracking-wide uppercase mb-6 border-b border-[#00FFAA]/20 pb-4">
+            Konfirmasi Bangun Kedutaan
+          </h3>
+          
+          <p className="text-sm sm:text-base text-[#E0E0E0] mb-4 leading-relaxed">
+            Apakah Anda ingin membangun kedutaan di <strong className="text-white">{countryName}</strong>? Biaya pembangunan di <strong className="text-white">{continentLabel}</strong> adalah {
+              embassyCostDiscountPct > 0 ? (
+                <span><span className="line-through text-rose-400 mr-1">10 NEO</span><strong className="text-[#00FFAA]">{cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO</strong></span>
+              ) : <strong className="text-[#00FFAA]">{cost} NEO</strong>
+            } dengan waktu pembangunan {
+              discountPct > 0 ? (
+                <span>
+                  <span className="line-through text-rose-400 mr-1">{buildTimeDays} hari</span>
+                  <strong className="text-[#00FFAA]">{effectiveBuildTimeDays} hari</strong>
+                </span>
+              ) : (
+                <strong className="text-[#00FFAA]">{buildTimeDays} hari</strong>
+              )
+            }.
+          </p>
+          
+          <p className="text-sm sm:text-base text-[#6B8A8A] leading-relaxed">
+            Kas negara saat ini: <strong className="text-[#E0E0E0]">{currentBudget >= 0 ? '+' : ''}{formattedCurrentBudget} NEO</strong>. Setelah pembangunan, kas akan menjadi <strong className="text-[#00FFAA]">{budgetAfterBuild >= 0 ? '+' : ''}{formattedBudgetAfterBuild} NEO</strong>.
+          </p>
+        </div>
 
-        <div className="flex gap-3 justify-end">
+        {/* Area Tombol (Diperkecil) */}
+        <div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 pt-4 border-t border-[#00FFAA]/20">
           <button
             onClick={onClose}
-            className="flex-1 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl py-2.5 text-center text-[#E0E0E0] font-black text-[12px] tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
+            className="w-full sm:w-auto px-6 bg-[#0A1A1A] hover:bg-[#142A2A] border border-[#00FFAA]/30 rounded-xl py-2 text-center text-[#E0E0E0] font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md"
           >
             Batal
           </button>
@@ -66,7 +76,7 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
             onClick={() => { if (hasBudget) { onConfirm(); onClose(); } }}
             disabled={!hasBudget}
             className={
-              `flex-1 rounded-xl py-2.5 text-center font-black text-[12px] tracking-widest uppercase transition-all duration-150 shadow hover:shadow-md active:scale-[0.98] ${
+              `w-full sm:w-auto px-6 rounded-xl py-2 text-center font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 shadow hover:shadow-md active:scale-[0.98] ${
                 hasBudget
                   ? 'bg-[#00FFAA] hover:bg-[#00e699] text-[#0A1A1A] border border-[#00FFAA] cursor-pointer'
                   : 'bg-[#0A1A1A] text-[#6B8A8A] border border-[#00FFAA]/20 opacity-40 cursor-not-allowed'
@@ -76,6 +86,7 @@ export default function BuildEmbassyModal({ isOpen, countryName, continent, curr
             {hasBudget ? 'Bangun Kedutaan' : 'Kas Tidak Mencukupi'}
           </button>
         </div>
+
       </div>
     </div>
   );
