@@ -38,7 +38,7 @@ export function KeywordModal({ isOpen, onClose }: KeywordModalProps) {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[999999999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-black/75 backdrop-blur-md font-sans pointer-events-none select-none"
+      className="fixed inset-0 z-[999999999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent font-sans pointer-events-none select-none"
     >
       {/* Notebook Outer Frame — Identik dengan Muat Permainan */}
       <div

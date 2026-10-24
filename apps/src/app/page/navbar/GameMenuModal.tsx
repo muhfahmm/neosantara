@@ -41,13 +41,16 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
     useEffect(() => {
         if (isOpen) {
             setSubview('menu');
+            setShowKeywordModal(false);
+            setShowExitConfirm(false);
+            setShowMainMenuConfirm(false);
             if (soundManager) {
                 setMusicVol(soundManager.getMusicVolume());
                 setSfxVol(soundManager.getSfxVolume());
             }
             // Auto pause simulation game time when menu modal is opened
             if (typeof window !== 'undefined') {
-                window.dispatchEvent(new CustomEvent('pause_game_time'));
+                window.dispatchEvent(new CustomEvent('pause_game_time', { detail: { source: 'game-menu' } }));
             }
         }
     }, [isOpen]);
@@ -145,7 +148,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
 
     return createPortal(
         <React.Fragment>
-            <div className={`fixed inset-0 z-[99999999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-black/75 backdrop-blur-md font-sans pointer-events-none transition-opacity duration-150 ${isConfirming ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+            <div className={`fixed inset-0 z-[99999999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent font-sans pointer-events-none transition-opacity duration-150 ${isConfirming ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
                 {/* Notebook-style Game Menu Frame — Green Theme */}
                 <div className="bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] shadow-2xl relative flex flex-col p-4 pl-12 pointer-events-auto select-none overflow-y-auto custom-scrollbar">
                     {/* Silver Binder Spine on the Left */}

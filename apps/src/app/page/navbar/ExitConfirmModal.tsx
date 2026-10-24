@@ -36,7 +36,7 @@ export function ExitConfirmModal({
     const isExitWindow = confirmText?.toLowerCase().includes('keluar') ?? false;
 
     const content = (
-        <div className="fixed inset-0 z-[9999999999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md font-sans select-none animate-fadeIn">
+        <div className="fixed inset-0 z-[9999999999] flex items-center justify-center p-4 bg-transparent font-sans select-none animate-fadeIn">
             {/* Notebook-style Frame — Green Cyberpunk Theme */}
             <div className="bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full max-w-[440px] shadow-2xl relative flex flex-col p-4 pl-12 overflow-hidden">
                 {/* Silver Binder Spine on the Left */}
@@ -143,4 +143,3 @@ export function ExitConfirmModal({
 }
 
 export default ExitConfirmModal;
-

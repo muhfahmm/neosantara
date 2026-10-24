@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { X, Hammer, Eye, EyeOff } from "lucide-react";
 import { calculateMaxBuildQuantity, getBulkBuildQuantityTarget } from "../../build_logic/build_logic";
+import NotebookModalWrapper from "../../../NotebookModalWrapper";
 
 interface MaterialRequirement {
   resourceKey: string;
@@ -89,26 +90,28 @@ export default function KonfirmasiPembangunanModal({
   const quantityExceedsAvailable = maxBuildQuantity < 1 || buildQuantity > maxBuildQuantity;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans animate-in fade-in zoom-in-95 duration-150 pointer-events-auto shadow-2xl">
+    <NotebookModalWrapper onClose={onClose}>
+      <div className="flex h-full flex-col overflow-hidden">
 
-        <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
-          <div className="flex items-center gap-3 text-[#E0E0E0]">
-            <div className="p-2.5 bg-[#0F2424] rounded-xl border border-[#00FFAA]/30">
-              <Hammer className="h-5 w-5 text-[#00FFAA]" />
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
+              <Hammer className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
             </div>
-            <h3 className="text-base font-black uppercase tracking-wider">Konfirmasi Pembangunan</h3>
+            <div>
+              <h3 className="text-base sm:text-xl font-bold text-[#00FFAA] tracking-tight leading-none uppercase">Konfirmasi Pembangunan</h3>
+            </div>
           </div>
           <button
             onClick={(e) => {
               e.stopPropagation();
               onClose();
             }}
-            className="p-2 sm:p-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1.5 shadow-sm"
+            className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
             aria-label="Tutup konfirmasi"
           >
-            <span className="text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-            <X className="h-5 w-5" />
+            <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
+            <X className="h-4 w-4" />
           </button>
         </div>
 
@@ -288,6 +291,6 @@ export default function KonfirmasiPembangunanModal({
           </button>
         </div>
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

@@ -30,7 +30,7 @@ export default function SkandalAktifList({
           Belum ada skandal yang terungkap. Risiko diperiksa setiap bulan simulasi.
         </div>
       ) : (
-        <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
+        <div className="max-h-72 space-y-2 overflow-y-auto pr-1 neon-scrollbar">
           {scandals.map(scandal => (
             <article key={scandal.id} className="rounded-xl border border-[#00FFAA]/10 bg-[#0F2424] p-3">
               <div className="flex flex-wrap items-center gap-2">

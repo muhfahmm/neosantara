@@ -591,7 +591,7 @@ export default function JualModalsMenu({
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-5 pt-5 pb-2 relative z-10 space-y-4 bg-[#0F2424] no-scrollbar">
+            <div className="flex-1 overflow-y-auto px-5 pt-5 pb-2 relative z-10 space-y-4 bg-[#0F2424] neon-scrollbar">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
                   <label className="text-[#E0E0E0] font-bold text-sm tracking-wide">Produk:</label>

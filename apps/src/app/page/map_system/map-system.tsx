@@ -889,6 +889,20 @@ export default function MapPage() {
 
     const isMapFocusedRef = useRef(false);
 
+    const openGameMenu = useCallback(() => {
+        setActiveMenu('Peta Taktis');
+        setCountryDetailModalOpen(false);
+        setPlayerDetailModalOpen(false);
+        setInboxModalOpen(false);
+        setGiftModalOpen(false);
+        setNewsModalOpen(false);
+        setPenelitianModalOpen(false);
+        setMissionModalOpen(false);
+        setIsSaveModalOpen(false);
+        setIsRestartConfirmOpen(false);
+        setIsPresidentMenuOpen(true);
+    }, []);
+
     const handleFocusHome = useCallback(() => {
         // 1. Tutup semua modal overlay yang sedang terbuka agar peta terlihat jelas
         setIsPresidentMenuOpen(false);
@@ -1049,7 +1063,7 @@ export default function MapPage() {
                 setIsSaveModalOpen(false);
                 setIsRestartConfirmOpen(false);
             } else {
-                setIsPresidentMenuOpen(true);
+                openGameMenu();
             }
         },
         onTogglePlayPause: () => {
@@ -6463,7 +6477,7 @@ export default function MapPage() {
                 currentDate={currentDate}
                 presidentRating={presidentRating}
                 kesejahteraan={countryDetail?.kesejahteraan !== undefined ? Math.round(Number(countryDetail.kesejahteraan)) : kesejahteraan}
-                onOpenGameMenu={() => setIsPresidentMenuOpen(true)}
+                onOpenGameMenu={openGameMenu}
                 onOpenSaveModal={openSaveModal}
                 onOpenRestartConfirm={() => setIsRestartConfirmOpen(true)}
                 onOpenKepuasan={() => setActiveMenu("Dashboard:Kepuasan")}
@@ -7888,7 +7902,6 @@ export default function MapPage() {
             </div>
 
             <CountryDetailModal
-                key={`${aiConstructionNavigation?.countryName || ""}:${aiConstructionNavigation?.buildingKey || ""}:${aiConstructionNavigation?.targetTab || ""}`}
                 isOpen={countryDetailModalOpen}
                 countryName={countryDetailModalName}
                 countryDetail={countryDetail}
@@ -7944,7 +7957,7 @@ export default function MapPage() {
 
             {/* Modal Simpan Permainan - Notebook Style (Identik dengan Muat Permainan) */}
             {isSaveModalOpen && typeof document !== 'undefined' && createPortal(
-                <div className="fixed inset-0 z-[99999999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-black/75 backdrop-blur-md font-sans select-none">
+                <div className="fixed inset-0 z-[99999999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent font-sans select-none">
                     {/* Notebook-style Game Menu Frame — Green Theme */}
                     <div className="bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] shadow-2xl relative flex flex-col p-4 pl-12 overflow-hidden">
                         {/* Silver Binder Spine on the Left */}
@@ -8172,7 +8185,7 @@ export default function MapPage() {
 
                             {/* In-Modal Confirmation Dialog untuk Timpa Save File (Gaya Cyberpunk Green) */}
                             {saveToOverwriteConfirm && (
-                                <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-6 text-center animate-fadeIn">
+                                <div className="absolute inset-0 bg-transparent z-50 flex items-center justify-center p-6 text-center animate-fadeIn">
                                     <div className="bg-[#0A1A1A] border-2 border-amber-500/60 rounded-xl p-5 w-full max-w-sm shadow-[0_0_30px_rgba(245,158,11,0.25)] space-y-4">
                                         <div className="w-10 h-10 mx-auto rounded-full bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400">
                                             <RotateCw className="w-5 h-5 animate-spin-slow" />

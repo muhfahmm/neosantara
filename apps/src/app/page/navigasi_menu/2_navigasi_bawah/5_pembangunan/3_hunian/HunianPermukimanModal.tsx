@@ -406,7 +406,7 @@ export default function HunianPermukimanModal({
           {/* BODY */}
           <div className="flex-1 flex min-h-0 relative z-10">
             {/* SIDEBAR TABS */}
-            <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto custom-scrollbar shrink-0">
+            <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
               {items.map((it) => (
                 <button
                   key={it.key}
@@ -428,7 +428,7 @@ export default function HunianPermukimanModal({
             </div>
 
             {/* KONTEN UTAMA */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-[#0F2424] flex flex-col justify-between custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-[#0F2424] flex flex-col justify-between neon-scrollbar">
               <div>
                 {activeItem && (
                   <div className="max-w-3xl">

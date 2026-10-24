@@ -159,7 +159,7 @@ export default function OrgIntlModal({ isOpen, onClose, selectedCountry, country
         </div>
 
         {/* BODY */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 neon-scrollbar">
           <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex mb-6 shadow-sm">
             <button
               onClick={() => setActiveTab("pbb")}

@@ -2,6 +2,7 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { X, ArrowRightLeft, Info, AlertTriangle } from "lucide-react";
 import NotebookModalWrapper from "../../NotebookModalWrapper";
+import TradeMarketBlockedModal from "./TradeMarketBlockedModal";
 import JualModalsMenu from "./jual/modalsKonfirmasiJual";
 import MitraModalsMenu, { TradePartner } from "./mitra/mitraModalsMenu";
 import ModalsKonfirmasiBeli from "./beli/modalsKonfirmasiBeli";
@@ -1013,7 +1014,7 @@ export default function PerdaganganModal({
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar">
               {isTradeMarketBlocked ? (
                 <div className="flex min-h-full flex-col items-center justify-center rounded-xl border border-rose-500/30 bg-rose-950/20 p-5 text-center">
                   <AlertTriangle className="mb-3 h-12 w-12 text-rose-400 animate-pulse" />
@@ -1162,37 +1163,10 @@ export default function PerdaganganModal({
         </NotebookModalWrapper>
       )}
 
-      {/* 🔥 MODAL POP-UP INFO BLOKIR PASAR */}
-      {showBlockedInfoModal && (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-transparent pointer-events-none">
-          <div className="bg-[#0F2424] border border-rose-500/50 rounded-2xl w-full max-w-md shadow-[0_0_30px_rgba(225,29,72,0.2)] relative pointer-events-auto">
-            
-            <div className="px-4 py-2.5 border-b border-rose-500/30 flex items-center justify-between bg-[#0A1A1A] rounded-t-2xl">
-              <div className="flex items-center gap-2">
-                <Info className="text-rose-400 h-4 w-4" />
-                <h3 className="text-rose-400 text-sm font-black uppercase tracking-wide">Informasi Blokir</h3>
-              </div>
-              
-              <button
-                onClick={() => setShowBlockedInfoModal(false)}
-                className="p-1.5 lg:p-2 rounded-xl border border-rose-500/30 bg-[#0F2424] text-rose-400 hover:bg-rose-500 hover:text-white transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm"
-              >
-                <span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            <div className="p-5 text-center">
-              <p className="text-xs sm:text-sm text-[#A7C4C4] leading-relaxed">
-                Negara Anda terisolasi dari Pasar Perdagangan Global karena skor sentralisasi melewati ambang blokir.
-                Turunkan rata-rata nasionalisasi atau ubah ideologi/agama agar skor turun di bawah 85.
-              </p>
-              {/* Tombol "Mengerti" telah dihapus */}
-            </div>
-
-          </div>
-        </div>
-      )}
+      <TradeMarketBlockedModal
+        isOpen={showBlockedInfoModal}
+        onClose={() => setShowBlockedInfoModal(false)}
+      />
 
       <ModalsKonfirmasiBeli
         isOpen={isConfirmBeliOpen && tradeAccess.canBuy && !isTradeMarketBlocked}
@@ -1302,7 +1276,7 @@ export default function PerdaganganModal({
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 sm:p-5 bg-[#0F2424] custom-scrollbar space-y-3">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 bg-[#0F2424] neon-scrollbar space-y-3">
               {activeBonusesList.length === 0 ? (
                 <div className="p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 text-center space-y-2">
                   <p className="text-xs font-bold text-[#E0E0E0]">

@@ -195,7 +195,7 @@ export default function LembagaAntikorupsiPanel({
             aria-modal="true"
             aria-labelledby="corruption-upgrade-title"
             onClick={(event) => event.stopPropagation()}
-            className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] p-5 shadow-2xl sm:p-7"
+            className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] p-5 shadow-2xl sm:p-7 neon-scrollbar"
           >
             <button
               type="button"
@@ -222,7 +222,7 @@ export default function LembagaAntikorupsiPanel({
             </div>
 
             <div className="space-y-2 rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4">
-              <div className="max-h-40 space-y-2 overflow-y-auto">
+              <div className="max-h-40 space-y-2 overflow-y-auto neon-scrollbar">
                 {Array.from(
                   { length: confirmation.targetLevel - confirmation.fromLevel },
                   (_, index) => confirmation.fromLevel + index + 1,

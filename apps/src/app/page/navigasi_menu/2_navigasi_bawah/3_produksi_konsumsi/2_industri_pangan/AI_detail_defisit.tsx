@@ -1,6 +1,7 @@
 "use client"
 import React from "react";
 import { X, AlertCircle, TrendingUp, Factory } from "lucide-react";
+import NotebookModalWrapper from "../../NotebookModalWrapper";
 
 interface DeficitDetailProps {
   isOpen: boolean;
@@ -46,8 +47,8 @@ export default function AIDetailDefisitModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[75] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto">
+    <NotebookModalWrapper onClose={onClose} zIndexClass="z-[76]">
+      <div className="flex h-full flex-col overflow-hidden">
         
         {/* HEADER */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#00FFAA]/20 bg-[#0A1A1A] shrink-0">
@@ -69,7 +70,7 @@ export default function AIDetailDefisitModal({
         </div>
 
         {/* BODY */}
-        <div className="p-6 overflow-y-auto flex-1 space-y-5 text-sm text-[#E0E0E0] custom-scrollbar">
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-6 text-sm text-[#E0E0E0] neon-scrollbar">
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="rounded-xl bg-[#0A1A1A] p-4 border border-[#00FFAA]/20 text-center">
@@ -109,7 +110,7 @@ export default function AIDetailDefisitModal({
                   <p className="text-[10px] text-[#00FFAA] uppercase tracking-tight">Bangunan Dibutuhkan</p>
                   <p className="text-xl font-black text-[#00FFAA]">{buildingsNeeded} Unit</p>
                 </div>
-              </div>
+          </div>
             </div>
           </div>
 
@@ -131,6 +132,6 @@ export default function AIDetailDefisitModal({
 
         </div>
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

@@ -267,7 +267,7 @@ export default function DoktrinKeterbukaanModal({
         {/* BODY LAYOUT WITH LEFT SIDEBAR & RIGHT CONTENT */}
         <div className="flex-1 flex min-h-0 relative z-10">
           {/* LEFT SIDEBAR TABS */}
-          <div className="w-48 sm:w-56 lg:w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto custom-scrollbar shrink-0">
+          <div className="w-48 sm:w-56 lg:w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto neon-scrollbar shrink-0">
             {[
               { id: "civil", label: "Kebebasan Sipil & HAM", icon: Users },
               { id: "media", label: "Media & Informasi", icon: Tv },
@@ -292,7 +292,7 @@ export default function DoktrinKeterbukaanModal({
           </div>
 
           {/* RIGHT CONTENT AREA */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] custom-scrollbar space-y-6">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] neon-scrollbar space-y-6">
             {/* OVERVIEW SPECTRUM BANNER */}
             <div className="p-4 sm:p-5 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-2xl space-y-3 shadow-md">
               <div className="flex flex-wrap items-center justify-between gap-3">

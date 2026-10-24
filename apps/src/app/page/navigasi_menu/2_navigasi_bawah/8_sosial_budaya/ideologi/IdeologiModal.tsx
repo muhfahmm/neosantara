@@ -248,7 +248,7 @@ export default function IdeologiModal({ isOpen, onClose, onOpenDebt, countryDeta
             </button>
           </div>
 
-          <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#0F2424] relative z-10 custom-scrollbar">
+          <div className="flex-1 min-h-0 overflow-y-auto p-8 bg-[#0F2424] relative z-10 neon-scrollbar">
             <div className="bg-[#051111] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex mb-6 shadow-sm">
               <button onClick={() => setActiveTab("ideologi")}
                 className={`px-5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${activeTab === "ideologi" ? "bg-[#00FFAA] text-[#0A1A1A] shadow-lg shadow-[#00FFAA]/20" : "text-[#6B8A8A] hover:text-[#E0E0E0]"}`}>

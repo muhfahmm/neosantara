@@ -77,9 +77,32 @@ export function quadratic_motion(start_x, start_y, control_x, control_y, end_x, 
     wasm.__wbindgen_free(ret[0], ret[1] * 8, 8);
     return v1;
 }
+
+/**
+ * Zero-allocation in-place quadratic motion writing directly into a shared Float64Array buffer:
+ * out[0] = x
+ * out[1] = y
+ * out[2] = angle_deg (in degrees, ready for SVG transform)
+ * @param {number} start_x
+ * @param {number} start_y
+ * @param {number} control_x
+ * @param {number} control_y
+ * @param {number} end_x
+ * @param {number} end_y
+ * @param {number} progress
+ * @param {Float64Array} out
+ */
+export function quadratic_motion_fast(start_x, start_y, control_x, control_y, end_x, end_y, progress, out) {
+    var ptr0 = passArrayF64ToWasm0(out, wasm.__wbindgen_malloc);
+    var len0 = WASM_VECTOR_LEN;
+    wasm.quadratic_motion_fast(start_x, start_y, control_x, control_y, end_x, end_y, progress, ptr0, len0, out);
+}
 function __wbg_get_imports() {
     const import0 = {
         __proto__: null,
+        __wbg___wbindgen_copy_to_typed_array_88899a52af046901: function(arg0, arg1, arg2) {
+            new Uint8Array(arg2.buffer, arg2.byteOffset, arg2.byteLength).set(getArrayU8FromWasm0(arg0, arg1));
+        },
         __wbindgen_init_externref_table: function() {
             const table = wasm.__wbindgen_externrefs;
             const offset = table.grow(4);
@@ -101,6 +124,11 @@ function getArrayF64FromWasm0(ptr, len) {
     return getFloat64ArrayMemory0().subarray(ptr / 8, ptr / 8 + len);
 }
 
+function getArrayU8FromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    return getUint8ArrayMemory0().subarray(ptr / 1, ptr / 1 + len);
+}
+
 let cachedFloat64ArrayMemory0 = null;
 function getFloat64ArrayMemory0() {
     if (cachedFloat64ArrayMemory0 === null || cachedFloat64ArrayMemory0.byteLength === 0) {
@@ -109,12 +137,30 @@ function getFloat64ArrayMemory0() {
     return cachedFloat64ArrayMemory0;
 }
 
+let cachedUint8ArrayMemory0 = null;
+function getUint8ArrayMemory0() {
+    if (cachedUint8ArrayMemory0 === null || cachedUint8ArrayMemory0.byteLength === 0) {
+        cachedUint8ArrayMemory0 = new Uint8Array(wasm.memory.buffer);
+    }
+    return cachedUint8ArrayMemory0;
+}
+
+function passArrayF64ToWasm0(arg, malloc) {
+    const ptr = malloc(arg.length * 8, 8) >>> 0;
+    getFloat64ArrayMemory0().set(arg, ptr / 8);
+    WASM_VECTOR_LEN = arg.length;
+    return ptr;
+}
+
+let WASM_VECTOR_LEN = 0;
+
 let wasmModule, wasmInstance, wasm;
 function __wbg_finalize_init(instance, module) {
     wasmInstance = instance;
     wasm = instance.exports;
     wasmModule = module;
     cachedFloat64ArrayMemory0 = null;
+    cachedUint8ArrayMemory0 = null;
     wasm.__wbindgen_start();
     return wasm;
 }

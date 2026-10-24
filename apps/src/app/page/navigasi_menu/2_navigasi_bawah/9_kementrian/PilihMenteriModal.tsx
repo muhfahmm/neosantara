@@ -75,7 +75,7 @@ export default function PilihMenteriModal({
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto bg-[#0F2424] p-4 sm:p-6">
+        <div className="flex-1 overflow-y-auto bg-[#0F2424] p-4 sm:p-6 neon-scrollbar">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-3">
             <p className="text-xs font-semibold text-[#A0B0B0]">
               Pilih satu kandidat untuk meningkatkan efek {department.effectLabel}.

@@ -235,7 +235,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
           <div className="flex-1 flex min-h-0 relative z-10">
 
             {/* SIDEBAR TABS */}
-            <div className="w-44 lg:w-48 2xl:w-52 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 lg:p-3 flex flex-col gap-1.5 lg:gap-2 overflow-y-auto no-scrollbar shrink-0">
+            <div className="w-44 lg:w-48 2xl:w-52 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 lg:p-3 flex flex-col gap-1.5 lg:gap-2 overflow-y-auto neon-scrollbar shrink-0">
               {categories.map((cat) => {
                 const activeCountInCat = subsidyItems.filter(
                   (i) => (cat.id === "Semua" || i.category === cat.id) && i.isSubsidized
@@ -264,7 +264,7 @@ export default function SubsidiModal({ isOpen, onClose, countryDetail, setCountr
             </div>
 
             {/* RIGHT CONTENT AREA - SECTOR GRID FROM SEPARATE TAB COMPONENTS */}
-            <div className="flex-1 overflow-y-auto p-4 lg:p-6 2xl:p-8 bg-[#0F2424] no-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 lg:p-6 2xl:p-8 bg-[#0F2424] neon-scrollbar">
               {selectedCategory === "Semua" && (
                 <SemuaSektorTab items={subsidyItems} toggleSubsidy={toggleSubsidy} onOpenDetail={(item) => setSelectedDetailItem(item)} />
               )}

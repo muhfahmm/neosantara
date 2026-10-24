@@ -13,8 +13,7 @@ export default function DestroyKontrakModal({ isOpen, countryName, onClose, onCo
   if (!isOpen) return null;
 
   const modalContent = (
-    // 🔥 PERBAIKAN: Menghapus bg-black/60 agar tidak ada backdrop
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
+    <div className="fixed inset-0 z-[100000001] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
       {/* Container Modal Lebih Lebar dan Panjang */}
       <div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] border border-rose-500/40 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(225,29,72,0.15)] relative pointer-events-auto">
         

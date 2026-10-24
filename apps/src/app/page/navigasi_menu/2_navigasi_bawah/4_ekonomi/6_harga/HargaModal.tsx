@@ -497,7 +497,7 @@ function HargaModalContent({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[#0F2424] relative z-10 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[#0F2424] relative z-10 neon-scrollbar">
           {loading ? (
             <div className="flex items-center gap-2 text-sm text-[#00FFAA] mb-6">
               <Loader2 className="h-4 w-4 animate-spin text-[#00FFAA]" />

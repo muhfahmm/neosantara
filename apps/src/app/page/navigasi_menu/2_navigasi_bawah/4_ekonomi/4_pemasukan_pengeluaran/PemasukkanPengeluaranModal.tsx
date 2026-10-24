@@ -229,7 +229,7 @@ export default function PemasukkanPengeluaranModal({ isOpen, onClose, countryDet
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-8 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar">
           <div className="space-y-6 max-w-3xl mx-auto">
 
             {/* Summary Tab */}

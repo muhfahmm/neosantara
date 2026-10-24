@@ -13,7 +13,7 @@ export default function DestroyPaktaModal({ isOpen, countryName, onClose, onConf
   if (!isOpen) return null;
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 font-sans text-white pointer-events-auto">
+    <div className="fixed inset-0 z-[100000001] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
       <div className="w-[440px] h-[360px] max-w-[calc(100vw-2rem)] max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[#0F2424] border border-rose-500/40 rounded-2xl p-6 shadow-2xl relative">
         <h3 className="text-lg font-black text-rose-400 tracking-wide uppercase mb-3">Konfirmasi Putus Pakta Non-Agresi</h3>
         <p className="text-xs sm:text-sm text-[#E0E0E0] mb-6 leading-relaxed">Apakah Anda yakin ingin memutus pakta non-agresi dengan <strong className="text-white">{countryName}</strong>? Tindakan ini dapat memengaruhi hubungan diplomatik.</p>

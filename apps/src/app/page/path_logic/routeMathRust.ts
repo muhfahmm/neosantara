@@ -3,6 +3,7 @@ import initializeWasm, {
   project_map_point,
   project_route_geometry,
   quadratic_motion,
+  quadratic_motion_fast,
 } from '../../../wasm/path-logic-rs/route_math.js';
 
 interface RouteProjectionInput {
@@ -129,6 +130,32 @@ export function quadraticMotionRust(
   return [result[0], result[1], result[2]];
 }
 
+const sharedMotionBuf = new Float64Array(3);
+
+export function quadraticMotionFastRust(
+  startX: number,
+  startY: number,
+  controlX: number,
+  controlY: number,
+  endX: number,
+  endY: number,
+  progress: number,
+): Float64Array | null {
+  if (!ready) return null;
+  // @ts-ignore
+  quadratic_motion_fast(
+    startX,
+    startY,
+    controlX,
+    controlY,
+    endX,
+    endY,
+    progress,
+    sharedMotionBuf,
+  );
+  return sharedMotionBuf;
+}
+
 export function greatCircleDistanceKmRust(
   originLat: number,
   originLng: number,
@@ -139,3 +166,4 @@ export function greatCircleDistanceKmRust(
     ? great_circle_distance_km(originLat, originLng, targetLat, targetLng)
     : null;
 }
+

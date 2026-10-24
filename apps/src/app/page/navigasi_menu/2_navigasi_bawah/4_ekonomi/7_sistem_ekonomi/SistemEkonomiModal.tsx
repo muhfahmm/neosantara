@@ -375,7 +375,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
         <div className="flex-1 flex min-h-0 relative z-10">
           
           {/* SIDEBAR TABS */}
-          <div className="w-44 lg:w-52 2xl:w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 lg:p-3 flex flex-col gap-1.5 lg:gap-2 overflow-y-auto no-scrollbar shrink-0">
+          <div className="w-44 lg:w-52 2xl:w-64 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 lg:p-3 flex flex-col gap-1.5 lg:gap-2 overflow-y-auto neon-scrollbar shrink-0">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -395,7 +395,7 @@ export default function SistemEkonomiModal({ isOpen, onClose, countryDetail, set
           </div>
 
           {/* RIGHT CONTENT AREA */}
-          <div className="flex-1 overflow-y-auto p-3 lg:p-5 2xl:p-8 bg-[#0F2424] no-scrollbar">
+          <div className="flex-1 overflow-y-auto p-3 lg:p-5 2xl:p-8 bg-[#0F2424] neon-scrollbar">
             {activeTab === "sistem" && (
               <SpektrumSistemTab
                 sliderValue={sliderValue}

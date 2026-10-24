@@ -188,7 +188,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
 
   return (
     <>
-      <NotebookModalWrapper onClose={onClose}>
+      {!isPilihJalurOpen && !isTingkatkanUangOpen && !isBeriHadiahBarangOpen && <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
 
           {/* HEADER */}
@@ -245,7 +245,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
             </div>
 
             <div className="flex-1 min-h-0 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl overflow-hidden shadow-sm flex flex-col">
-              <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
+              <div className="flex-1 min-h-0 overflow-y-auto neon-scrollbar">
                 <table className="min-w-full table-auto border-separate border-spacing-0 text-left">
                   <thead className="sticky top-0 z-10 bg-[#0A1A1A]">
                     <tr className="border-b border-[#00FFAA]/20">
@@ -308,7 +308,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
             </div>
           </div>
         </div>
-      </NotebookModalWrapper>
+      </NotebookModalWrapper>}
 
       {/* MODAL LEGENDA */}
       {isLegendOpen && (
@@ -383,8 +383,8 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
 
       {/* MODAL PILIH JALUR */}
       {isPilihJalurOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-          <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
+        <NotebookModalWrapper onClose={() => setIsPilihJalurOpen(false)}>
+          <div className="flex h-full flex-col overflow-hidden">
 
             <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] gap-2 shrink-0 rounded-t-2xl">
               <div className="flex items-center gap-2 sm:gap-3">
@@ -472,7 +472,7 @@ export default function TingkatHubunganModal({ isOpen, onClose, selectedCountry,
             </div>
 
           </div>
-        </div>
+        </NotebookModalWrapper>
       )}
 
       {/* MODAL TINGKATKAN HUBUNGAN (JALUR UANG) */}

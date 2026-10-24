@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   Building2,
   ShieldOff,
@@ -120,11 +120,16 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
     isDestroyTradeModalOpen || isBuildTradeModalOpen || isPaktaModalOpen || isAliansiModalOpen || isKontrakModalOpen ||
     isDestroyPaktaOpen || isDestroyAliansiOpen || isDestroyKontrakOpen || isKirimPasukanModalOpen || isPanggilSekutuModalOpen || isBerikanSanksiModalOpen;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (onActionModalStateChange) {
       onActionModalStateChange(isAnyModalActive);
     }
   }, [isAnyModalActive, onActionModalStateChange]);
+
+  const openActionModal = (setter: React.Dispatch<React.SetStateAction<boolean>>) => {
+    onActionModalStateChange?.(true);
+    setter(true);
+  };
 
   const handleAction = (action: string) => {
     // Fallback handler if needed; most actions open dedicated modals now.
@@ -333,10 +338,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
         autoBuildRequestRef.current = requestKey;
         if (embassyRelation >= minimumEmbassyRelation) {
           if (onCloseDetailModal) onCloseDetailModal();
-          setIsBuildEmbassyModalOpen(true);
+          openActionModal(setIsBuildEmbassyModalOpen);
         } else {
           if (onCloseDetailModal) onCloseDetailModal();
-          setIsEmbassyRelationRequirementModalOpen(true);
+          openActionModal(setIsEmbassyRelationRequirementModalOpen);
         }
       }
     } else if (!autoBuildEmbassy) {
@@ -351,11 +356,11 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   const handleEmbassyClick = () => {
     if (isAnnexedTerritory) return;
     if (embassyActive) {
-      setIsDestroyModalOpen(true);
+      openActionModal(setIsDestroyModalOpen);
     } else if (embassyRelation < minimumEmbassyRelation) {
-      setIsEmbassyRelationRequirementModalOpen(true);
+      openActionModal(setIsEmbassyRelationRequirementModalOpen);
     } else {
-      setIsBuildEmbassyModalOpen(true);
+      openActionModal(setIsBuildEmbassyModalOpen);
     }
   };
 
@@ -467,11 +472,11 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
 
         <div className="relative min-w-0">
           {isPactRatifying && pactEndDate && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{formatBadgeDate(pactEndDate)}</div>}
-          <ActionButton icon={ShieldOff} label={isPactRatifying ? 'Dalam Ratifikasi' : paktaIsActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => { paktaIsActive ? setIsDestroyPaktaOpen(true) : setIsPaktaModalOpen(true); }} disabled={!hasUsableEmbassy || isPactRatifying} keepOpacity={isPactRatifying} className={isPactRatifying ? inProgressBorderClass : paktaIsActive ? modernGreenBorderClass : undefined} iconClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-[#00FFAA]' : undefined} />
+          <ActionButton icon={ShieldOff} label={isPactRatifying ? 'Dalam Ratifikasi' : paktaIsActive ? 'Putus Pakta Non Agresi' : 'Pakta Non Agresi'} onClick={() => { paktaIsActive ? openActionModal(setIsDestroyPaktaOpen) : openActionModal(setIsPaktaModalOpen); }} disabled={!hasUsableEmbassy || isPactRatifying} keepOpacity={isPactRatifying} className={isPactRatifying ? inProgressBorderClass : paktaIsActive ? modernGreenBorderClass : undefined} iconClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isPactRatifying ? 'text-amber-300' : paktaIsActive ? 'text-[#00FFAA]' : undefined} />
         </div>
         <div className="relative min-w-0">
           {isAllianceRatifying && ratificationDate(allianceRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(allianceRatification)}</div>}
-          <ActionButton icon={ShieldCheck} label={isAllianceRatifying ? 'Dalam Ratifikasi' : aliansiIsActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => { aliansiIsActive ? setIsDestroyAliansiOpen(true) : setIsAliansiModalOpen(true); }} disabled={!hasUsableEmbassy || isAllianceRatifying} keepOpacity={isAllianceRatifying} className={isAllianceRatifying ? inProgressBorderClass : aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-[#00FFAA]' : undefined} />
+          <ActionButton icon={ShieldCheck} label={isAllianceRatifying ? 'Dalam Ratifikasi' : aliansiIsActive ? 'Putus Aliansi Pertahanan' : 'Aliansi Pertahanan'} onClick={() => { aliansiIsActive ? openActionModal(setIsDestroyAliansiOpen) : openActionModal(setIsAliansiModalOpen); }} disabled={!hasUsableEmbassy || isAllianceRatifying} keepOpacity={isAllianceRatifying} className={isAllianceRatifying ? inProgressBorderClass : aliansiIsActive ? modernGreenBorderClass : undefined} iconClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isAllianceRatifying ? 'text-amber-300' : aliansiIsActive ? 'text-[#00FFAA]' : undefined} />
         </div>
 
         {/* PERBAIKAN: Tombol Perjanjian Dagang diubah menggunakan modernGreenBorderClass yang sama */}
@@ -482,9 +487,9 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
             label={isTradeRatifying ? 'Dalam Ratifikasi' : tradeLabel}
             onClick={() => {
               if (tradeIsActive) {
-                setIsDestroyTradeModalOpen(true);
+                openActionModal(setIsDestroyTradeModalOpen);
               } else {
-                setIsBuildTradeModalOpen(true);
+                openActionModal(setIsBuildTradeModalOpen);
               }
             }}
             className={isTradeRatifying ? inProgressBorderClass : tradeIsActive ? modernGreenBorderClass : tradeClass}
@@ -498,10 +503,10 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
 
         <div className="relative min-w-0">
           {isResearchRatifying && ratificationDate(researchRatification) && <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 bg-[#0A1A1A] text-amber-300 text-[10px] font-bold px-2 py-1 border border-amber-400/30 rounded-sm shadow-md tracking-wider whitespace-nowrap">{ratificationDate(researchRatification)}</div>}
-          <ActionButton icon={FlaskConical} label={isResearchRatifying ? 'Dalam Ratifikasi' : kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => { kontrakIsActive ? setIsDestroyKontrakOpen(true) : setIsKontrakModalOpen(true); }} disabled={!hasUsableEmbassy || isResearchRatifying} keepOpacity={isResearchRatifying} className={isResearchRatifying ? inProgressBorderClass : kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
+          <ActionButton icon={FlaskConical} label={isResearchRatifying ? 'Dalam Ratifikasi' : kontrakIsActive ? 'Putus Kontrak Penelitian' : 'Kontrak Penelitian'} onClick={() => { kontrakIsActive ? openActionModal(setIsDestroyKontrakOpen) : openActionModal(setIsKontrakModalOpen); }} disabled={!hasUsableEmbassy || isResearchRatifying} keepOpacity={isResearchRatifying} className={isResearchRatifying ? inProgressBorderClass : kontrakIsActive ? modernGreenBorderClass : undefined} iconClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} labelClass={isResearchRatifying ? 'text-amber-300' : kontrakIsActive ? 'text-[#00FFAA]' : undefined} />
         </div>
-        <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => { setIsKirimPasukanModalOpen(true); }} disabled={!aliansiIsActive} />
-        <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => { setIsPanggilSekutuModalOpen(true); }} disabled={!aliansiIsActive} />
+        <ActionButton icon={Sword} label="Kirim Pasukan" onClick={() => { openActionModal(setIsKirimPasukanModalOpen); }} disabled={!aliansiIsActive} />
+        <ActionButton icon={Phone} label="Panggil Sekutu" onClick={() => { openActionModal(setIsPanggilSekutuModalOpen); }} disabled={!aliansiIsActive} />
         <ActionButton
           icon={Ban}
           label={isSanctionActive ? 'Cabut Sanksi' : 'Berikan Sanksi'}
@@ -527,7 +532,7 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
               console.log(`Sanksi ekonomi terhadap ${countryName} dicabut. ${previousCount} sanksi dihapus; netto kas kembali tanpa pengurangan sanksi.`);
               return;
             }
-            setIsBerikanSanksiModalOpen(true);
+            openActionModal(setIsBerikanSanksiModalOpen);
           }}
           className={isSanctionActive ? modernGreenBorderClass : undefined}
           iconClass={isSanctionActive ? 'text-[#00FFAA]' : undefined}

@@ -83,6 +83,21 @@ export default function IcbmPath({
     lastReportedProgress.current = -1;
     const startingDayPosition = getSimulationDayPosition();
 
+    let cachedWinWidth = typeof window !== 'undefined' ? window.innerWidth : 1;
+    let cachedWinHeight = typeof window !== 'undefined' ? window.innerHeight : 1;
+    if (svgRef.current) {
+      svgRef.current.setAttribute('viewBox', `0 0 ${cachedWinWidth} ${cachedWinHeight}`);
+    }
+
+    const onResize = () => {
+      cachedWinWidth = window.innerWidth;
+      cachedWinHeight = window.innerHeight;
+      if (svgRef.current) {
+        svgRef.current.setAttribute('viewBox', `0 0 ${cachedWinWidth} ${cachedWinHeight}`);
+      }
+    };
+    window.addEventListener('resize', onResize, { passive: true });
+
     const updateRoute = (now: number) => {
       const delta = now - lastFrame;
       lastFrame = now;
@@ -120,15 +135,8 @@ export default function IcbmPath({
         pulseRef.current?.setAttribute('cx', String(end.x));
         pulseRef.current?.setAttribute('cy', String(end.y));
       }
-      if (routeRef.current) routeRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
-      if (pulseRef.current) pulseRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
 
       warheadRef.current?.setAttribute('transform', `translate(${warhead.x} ${warhead.y}) rotate(${warhead.angle * 180 / Math.PI})`);
-      const viewBox = `0 0 ${window.innerWidth} ${window.innerHeight}`;
-      if (svgRef.current && viewBox !== viewBoxRef.current) {
-        viewBoxRef.current = viewBox;
-        svgRef.current.setAttribute('viewBox', viewBox);
-      }
 
       if (progress >= 1) {
         if (!completed) {
@@ -162,6 +170,7 @@ export default function IcbmPath({
     return () => {
       unsubscribe();
       window.removeEventListener('neosantara_map_camera', onCamera);
+      window.removeEventListener('resize', onResize);
     };
   }, [sender, target, senderCountry, targetCountry, travelEstimate, routeCurvature]);
 

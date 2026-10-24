@@ -314,7 +314,7 @@ export default function SerangNegaraModal({
             </div>
           </div>
 
-          <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col items-center">
+          <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 neon-scrollbar flex flex-col items-center">
             <div className="w-full space-y-4">
               <div className="w-full overflow-hidden border border-[#00FFAA]/20 rounded-xl bg-[#0A1A1A] shadow-sm">
                 <div className="max-h-[52vh] overflow-auto">

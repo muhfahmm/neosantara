@@ -97,7 +97,7 @@ export default function WilayahDirebutModal({
           </button>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] relative z-10">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-[#0F2424] relative z-10 neon-scrollbar">
           {annexedCountries.length === 0 ? (
             <div className="flex min-h-[280px] flex-col items-center justify-center text-center">
               <div className="p-5 rounded-full bg-[#0A1A1A] border border-[#00FFAA]/20 mb-5">

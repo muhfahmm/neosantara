@@ -1,6 +1,7 @@
 "use client"
 import React from "react";
 import { X, AlertCircle, CheckCircle, MessageSquare, ArrowRight } from "lucide-react";
+import NotebookModalWrapper from "../../NotebookModalWrapper";
 
 interface AISuggestModalProps {
   isOpen: boolean;
@@ -41,8 +42,8 @@ export default function AISuggestModal({
   const totalSurplusCommodities = commodities.filter(c => c.isSurplus).length;
 
   return (
-    <div className="fixed inset-0 z-[75] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden flex flex-col pointer-events-auto">
+    <NotebookModalWrapper onClose={onClose}>
+      <div className="flex h-full flex-col overflow-hidden">
         
         {/* HEADER */}
         <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 gap-2 shrink-0 rounded-t-2xl">
@@ -61,7 +62,7 @@ export default function AISuggestModal({
         </div>
 
         {/* BODY */}
-        <div className="p-6 overflow-y-auto flex-1 space-y-5 text-sm text-[#E0E0E0] bg-[#0F2424] no-scrollbar">
+        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto bg-[#0F2424] p-6 text-sm text-[#E0E0E0] neon-scrollbar">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="rounded-xl bg-rose-950/40 p-4 border border-rose-500/30">
               <div className="text-[10px] font-bold text-rose-400 uppercase tracking-tight">Total Defisit</div>
@@ -77,7 +78,7 @@ export default function AISuggestModal({
             <p className="font-bold text-[#00FFAA] uppercase tracking-wider mb-3">
               Rincian Komoditas ({commodities.length} item)
             </p>
-            <div className="space-y-2 max-h-[40vh] overflow-y-auto pr-2 no-scrollbar">
+            <div className="space-y-2 max-h-[40vh] overflow-y-auto pr-2 neon-scrollbar">
               {commodities.map((item, idx) => (
                 <div
                   key={idx}
@@ -155,6 +156,6 @@ export default function AISuggestModal({
           </div>
         </div>
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

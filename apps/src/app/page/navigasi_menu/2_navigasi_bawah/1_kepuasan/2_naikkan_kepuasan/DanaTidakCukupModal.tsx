@@ -1,7 +1,7 @@
 "use client";
 
-import { X, Coins, AlertCircle } from "lucide-react";
-import NotebookModalWrapper from "../../NotebookModalWrapper";
+import { AlertCircle } from "lucide-react";
+import { createPortal } from "react-dom";
 
 interface DanaTidakCukupModalProps {
   isOpen: boolean;
@@ -24,112 +24,65 @@ export default function DanaTidakCukupModal({
 
   const shortage = Math.max(0, requiredCost - currentBudget);
 
-  return (
-    <NotebookModalWrapper onClose={onClose}>
-      <div className="relative flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] font-sans shadow-[0_0_30px_rgba(0,255,170,0.15)]">
+  const modalContent = (
+    <div className="fixed inset-0 z-[100000001] flex items-center justify-center p-4 font-sans text-white pointer-events-none">
+      <div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] border border-rose-500/40 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(244,63,94,0.15)] relative pointer-events-auto">
+        <div className="flex-1">
+          <h3 className="text-xl sm:text-2xl font-black text-rose-400 tracking-wide uppercase mb-6 border-b border-rose-500/20 pb-4">
+            Dana Tidak Mencukupi
+          </h3>
 
-        {/* Header */}
-        <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:px-6 sm:py-3">
-          <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-            <div className="shrink-0 rounded-lg border border-rose-500/20 bg-rose-500/10 p-1 sm:p-1.5">
-              <AlertCircle className="h-4 w-4 text-rose-400 sm:h-5 sm:w-5" />
+          <div className="rounded-2xl border border-rose-500/30 bg-[#0A1A1A]/60 p-5 text-center">
+            <div className="mb-3 flex justify-center">
+              <div className="rounded-full border border-rose-500/20 bg-rose-500/10 p-3 text-rose-400">
+                <AlertCircle size={32} />
+              </div>
             </div>
-            <div className="min-w-0">
-              <h2 className="text-base font-bold uppercase leading-none tracking-tight text-rose-400 sm:text-xl">
-                Dana Tidak Mencukupi
-              </h2>
+            <h4 className="mb-2 text-lg font-black uppercase tracking-wide text-[#E0E0E0]">
+              {actionName} gagal!
+            </h4>
+            <p className="mb-4 text-sm font-semibold leading-relaxed text-[#6B8A8A]">
+              Kas negara tidak mencukupi untuk melaksanakan aksi ini.
+            </p>
+
+            <div className="space-y-2 rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] p-4 text-left text-xs text-[#E0E0E0]">
+              <div className="flex justify-between gap-4">
+                <span className="font-bold text-[#6B8A8A]">Dana dibutuhkan:</span>
+                <span className="font-black text-rose-400">{requiredCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="font-bold text-[#6B8A8A]">Kas tersedia:</span>
+                <span className="font-black text-[#00FFAA]">{currentBudget.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+              </div>
+              <div className="mt-1 flex justify-between gap-4 border-t border-[#00FFAA]/20 pt-2">
+                <span className="font-bold text-[#6B8A8A]">Kekurangan dana:</span>
+                <span className="font-black text-rose-400">- {shortage.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
+              </div>
             </div>
           </div>
+        </div>
 
+        <div className="mt-6 flex justify-end gap-3 border-t border-rose-500/20 pt-4">
           <button
             onClick={onClose}
-            className="flex shrink-0 cursor-pointer items-center gap-1 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 text-xs font-bold uppercase text-[#6B8A8A] shadow-sm transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] hover:shadow-[0_0_15px_rgba(0,255,170,0.3)] lg:p-2"
+            className="w-full sm:w-auto cursor-pointer rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] px-6 py-2 text-center text-[11px] font-black uppercase tracking-widest text-[#E0E0E0] transition-all duration-150 hover:bg-[#142A2A] sm:text-xs"
           >
-            <span className="pl-1 text-[10px] font-semibold uppercase tracking-widest lg:text-xs">
-              Tutup
-            </span>
-            <X className="h-4 w-4 shrink-0" />
+            Mengerti
           </button>
-        </div>
-
-        {/* Dynamic Treasury Bar */}
-        <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2 sm:px-6">
-          <div className="flex items-center gap-2">
-            <Coins className="h-4 w-4 shrink-0 text-[#00FFAA]" />
-            <span className="text-[10px] font-bold uppercase tracking-wide text-[#6B8A8A] sm:text-xs">
-              Kas Negara Saat Ini:
-            </span>
-            <span className="text-xs font-black text-[#00FFAA] sm:text-sm">
-              {currentBudget.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wide text-[#6B8A8A] sm:text-xs">
-              Dibutuhkan:
-            </span>
-            <span className="text-xs font-black text-rose-400 sm:text-sm">
-              {requiredCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })}
-            </span>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className="relative z-10 flex-1 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:p-5 custom-scrollbar">
-          <div className="space-y-6 animate-in fade-in duration-500">
-
-            {/* Pesan utama */}
-            <div className="bg-[#0F2424] border border-rose-500/30 rounded-2xl p-6 text-center space-y-3">
-              <div className="flex justify-center">
-                <div className="p-4 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                  <AlertCircle size={40} />
-                </div>
-              </div>
-              <h3 className="text-xl font-black text-[#E0E0E0] uppercase tracking-wide">
-                {actionName} gagal!
-              </h3>
-              <p className="text-sm text-[#6B8A8A] font-semibold">
-                Kas negara tidak mencukupi untuk melaksanakan aksi ini.
-              </p>
-              <div className="mt-2 bg-[#0A1A1A] border border-[#00FFAA]/20 rounded-xl p-4 text-xs space-y-1 text-[#E0E0E0]">
-                <div className="flex justify-between">
-                  <span className="font-bold text-[#6B8A8A]">Dana dibutuhkan:</span>
-                  <span className="text-rose-400 font-black">{requiredCost.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-bold text-[#6B8A8A]">Kas tersedia:</span>
-                  <span className="text-[#00FFAA] font-black">{currentBudget.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
-                </div>
-                <div className="flex justify-between border-t border-[#00FFAA]/20 pt-2 mt-1">
-                  <span className="font-bold text-[#6B8A8A]">Kekurangan dana:</span>
-                  <span className="text-rose-400 font-black">- {shortage.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO</span>
-                </div>
-              </div>
-              <p className="text-xs text-[#6B8A8A] mt-2">
-                Kumpulkan lebih banyak dana melalui pajak, perdagangan, atau tunggu pemasukan negara berikutnya.
-              </p>
-            </div>
-
-            {/* Tombol aksi */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-end">
-              <button
-                onClick={onClose}
-                className="px-8 py-3 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all font-black text-xs uppercase tracking-wider cursor-pointer"
-              >
-                Kembali
-              </button>
-              {onTakeLoan && (
-                <button
-                  onClick={onTakeLoan}
-                  className="px-8 py-3 rounded-xl bg-[#00FFAA] text-[#0A1A1A] border border-[#00FFAA] transition-all font-black text-xs uppercase cursor-pointer"
-                >
-                  Ambil Pinjaman Darurat
-                </button>
-              )}
-            </div>
-
-          </div>
+          {onTakeLoan && (
+            <button
+              onClick={onTakeLoan}
+              className="w-full sm:w-auto cursor-pointer rounded-xl border border-[#00FFAA] bg-[#00FFAA] px-6 py-2 text-center text-[11px] font-black uppercase tracking-widest text-[#0A1A1A] shadow transition-all duration-150 hover:bg-[#00e699] sm:text-xs"
+            >
+              Ambil Pinjaman
+            </button>
+          )}
         </div>
       </div>
-    </NotebookModalWrapper>
+    </div>
   );
+
+  return typeof document !== "undefined"
+    ? createPortal(modalContent, document.body)
+    : modalContent;
 }

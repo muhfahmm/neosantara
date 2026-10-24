@@ -187,7 +187,7 @@ export default function KedutaanBesarModal({ isOpen, onClose, countryDetail, set
           </div>
 
           {/* BODY */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar">
+          <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 neon-scrollbar">
             <p className="text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-4">
               Kelola daftar kedutaan asing yang dimiliki negara Anda. Setiap kedutaan yang dibangun akan muncul di sini dan dapat dihancurkan jika diperlukan.
             </p>

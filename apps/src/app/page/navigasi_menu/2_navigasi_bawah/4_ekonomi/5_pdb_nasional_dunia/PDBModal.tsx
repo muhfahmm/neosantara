@@ -426,7 +426,7 @@ function AllCountriesGDP({
       </div>
 
       <div className="flex-1 min-h-0 border border-[#00FFAA]/30 rounded-xl bg-[#0A1A1A] overflow-hidden flex flex-col">
-        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden custom-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden neon-scrollbar">
           <table className="w-full table-fixed text-xs text-left">
             <thead className="bg-[#0A1A1A] border-b border-[#00FFAA]/30 sticky top-0 z-10">
               <tr>

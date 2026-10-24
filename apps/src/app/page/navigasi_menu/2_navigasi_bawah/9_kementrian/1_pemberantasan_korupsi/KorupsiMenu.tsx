@@ -214,7 +214,7 @@ export default function KorupsiMenu({
           ))}
         </nav>
 
-        <main className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:p-6">
+        <main className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:p-6 neon-scrollbar">
           {(notice || currentProfileError || profileIdentityError) && (
             <div role="status" className="flex items-start gap-2 rounded-xl border border-[#00FFAA]/20 bg-[#00FFAA]/5 px-4 py-3 text-sm text-[#B7F5DD]">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#00FFAA]" />

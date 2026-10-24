@@ -48,7 +48,7 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
         </div>
 
         {/* Body Content */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 neon-scrollbar">
           {/* 3 TAB MENU */}
           <div className="flex w-full items-center justify-between gap-3 mb-6">
             <div className="bg-[#0A1A1A] p-1 rounded-xl border border-[#00FFAA]/20 inline-flex shadow-sm">

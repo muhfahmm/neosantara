@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Flame, Hammer } from 'lucide-react';
 import { COUNTRIES_DATA } from '../map_system/map-data';
@@ -93,6 +93,11 @@ export function CountryDetailModal({
 
   // State untuk menyembunyikan tampilan modal Detail Negara saat salah satu modal aksi dibuka
   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
+
+  useLayoutEffect(() => {
+    document.body.classList.toggle('neosantara-action-modal-open', isOpen && isActionModalOpen);
+    return () => document.body.classList.remove('neosantara-action-modal-open');
+  }, [isActionModalOpen, isOpen]);
 
   // State untuk data negara yang diklik
   const [fetchedDetail, setFetchedDetail] = useState<any>(null);
@@ -201,6 +206,15 @@ export function CountryDetailModal({
     } else {
       fetchedRef.current = null;
     }
+  }, [isOpen, countryName]);
+
+  useEffect(() => {
+    if (!isOpen || !countryName) return;
+    setActiveTab(
+      initialDevelopingBuildingKey || initialDevelopingTab
+        ? "developing_ai_building"
+        : "informasi"
+    );
   }, [isOpen, countryName, initialDevelopingBuildingKey, initialDevelopingTab]);
 
   // PERBAIKAN: Fetch data & Agregasi Kekaisaran saat pertama kali negara dibuka
@@ -575,7 +589,9 @@ export function CountryDetailModal({
 
   return createPortal(
     <div className={`fixed inset-0 z-[100000000] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent ${isDevelopingAIBuildingTab ? 'pointer-events-auto' : 'pointer-events-none'} ${isActionModalOpen || isDevelopingAIBuildingTab ? '!p-0' : ''}`}>
-      <div className={`bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl ${isDevelopingAIBuildingTab ? '!max-w-none !h-[100dvh] !max-h-none !rounded-none !border-none !p-0' : ''} ${isActionModalOpen ? 'hidden' : ''}`}>
+      <div
+        style={{ display: isActionModalOpen ? 'none' : undefined }}
+        className={`bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl ${isDevelopingAIBuildingTab ? '!max-w-none !h-[100dvh] !max-h-none !rounded-none !border-none !p-0' : ''}`}>
 
         {/* Background Glow Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
@@ -837,7 +853,7 @@ export function CountryDetailModal({
                 provinceTension={provinceTensionValue}
                 provinceData={detailData}
                 onCloseDetailModal={() => setIsActionModalOpen(true)}
-                onActionModalStateChange={(isOpen: boolean) => setIsActionModalOpen(isOpen)}
+                onActionModalStateChange={setIsActionModalOpen}
               />
             )}
 

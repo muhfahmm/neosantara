@@ -45,7 +45,7 @@ export default function ServiceAISuggestionsModal({
         </div>
 
         {/* BODY */}
-        <div className="p-6 overflow-y-auto flex-1 space-y-5 text-sm text-[#E0E0E0] bg-[#0F2424] no-scrollbar">
+        <div className="p-6 overflow-y-auto flex-1 space-y-5 text-sm text-[#E0E0E0] bg-[#0F2424] neon-scrollbar">
           
           {/* TEMPAT UMUM ANALYSIS */}
           {tempatUmumAnalysis && (
@@ -104,7 +104,7 @@ export default function ServiceAISuggestionsModal({
                 <p className="font-bold text-[#00FFAA] uppercase tracking-wider mb-3 text-xs">
                   RINCIAN ANALISIS FASILITAS ({tempatUmumAnalysis.facilities.length} FASILITAS)
                 </p>
-                <div className="space-y-2 max-h-[35vh] overflow-y-auto pr-1 no-scrollbar">
+                <div className="space-y-2 max-h-[35vh] overflow-y-auto pr-1 neon-scrollbar">
                   {tempatUmumAnalysis.facilities.map((item, idx) => (
                     <div
                       key={idx}
@@ -190,7 +190,7 @@ export default function ServiceAISuggestionsModal({
                 <p className="font-bold text-[#00FFAA] uppercase tracking-wider mb-3 text-xs">
                   RINCIAN ANALISIS HUNIAN PERMUKIMAN ({hunianAnalysis.housingItems.length} KATEGORI)
                 </p>
-                <div className="space-y-2 max-h-[35vh] overflow-y-auto pr-1 no-scrollbar">
+                <div className="space-y-2 max-h-[35vh] overflow-y-auto pr-1 neon-scrollbar">
                   {hunianAnalysis.housingItems.map((item, idx) => (
                     <div
                       key={idx}

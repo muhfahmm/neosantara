@@ -94,7 +94,7 @@ export default function MitraModalsMenu({
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 relative z-10 no-scrollbar">
+            <div className="flex-1 overflow-y-auto p-6 relative z-10 neon-scrollbar">
               {partners.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 text-[#6B8A8A]">
                   <Globe className="h-12 w-12 mb-3 opacity-30 text-[#00FFAA]" />

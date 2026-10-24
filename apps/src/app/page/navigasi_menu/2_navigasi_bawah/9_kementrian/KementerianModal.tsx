@@ -515,7 +515,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
           {/* BODY LAYOUT WITH LEFT SIDEBAR & RIGHT CONTENT */}
           <div className="flex-1 flex min-h-0 relative z-10">
             {/* LEFT SIDEBAR TABS */}
-            <div className="w-44 sm:w-52 lg:w-56 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto custom-scrollbar shrink-0">
+            <div className="w-44 sm:w-52 lg:w-56 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2.5 sm:p-3 flex flex-col gap-2 overflow-y-auto neon-scrollbar shrink-0">
               {TABS.map((tab) => {
                 const isActive = activeTab === tab.key;
                 return (
@@ -535,7 +535,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
             </div>
 
             {/* RIGHT CONTENT AREA */}
-            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#0F2424] relative z-10 custom-scrollbar">
+            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#0F2424] relative z-10 neon-scrollbar">
               <div className="space-y-4">
                 {activeData.map((dept) => {
                   const level = getLevel(dept.id);

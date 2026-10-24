@@ -25,6 +25,7 @@ import {
   projectMapPointRust,
   projectRouteGeometryRust,
   quadraticMotionRust,
+  quadraticMotionFastRust,
 } from './routeMathRust';
 
 /* ============================================================
@@ -207,13 +208,19 @@ let cachedRect: DOMRect | null = null;
 let cachedRectAt = 0;
 let cachedRectEl: HTMLCanvasElement | null = null;
 
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', () => {
+    cachedRect = null;
+  }, { passive: true });
+}
+
 export function getMapCanvasTransform(): MapCanvasTransform | null {
   if (typeof window === 'undefined') return null;
-  const canvasEl = document.getElementById('map-canvas') as HTMLCanvasElement | null;
+  const canvasEl = (cachedRectEl && cachedRectEl.isConnected) ? cachedRectEl : (document.getElementById('map-canvas') as HTMLCanvasElement | null);
   if (!canvasEl) return null;
 
   const nowTs = performance.now();
-  if (!cachedRect || cachedRectEl !== canvasEl || nowTs - cachedRectAt > 250) {
+  if (!cachedRect || cachedRectEl !== canvasEl || nowTs - cachedRectAt > 1000) {
     cachedRect = canvasEl.getBoundingClientRect();
     cachedRectAt = nowTs;
     cachedRectEl = canvasEl;
@@ -447,12 +454,30 @@ export function tangentOnQuadraticBezier(
   return Math.atan2(dy, dx);
 }
 
+const motionResultObj = { x: 0, y: 0, angle: 0 };
+
 export function getQuadraticMotion(
   start: ScreenPoint,
   control: ScreenPoint,
   end: ScreenPoint,
   progress: number,
 ): ScreenPoint & { angle: number } {
+  const fastBuf = quadraticMotionFastRust(
+    start.x,
+    start.y,
+    control.x,
+    control.y,
+    end.x,
+    end.y,
+    progress,
+  );
+  if (fastBuf) {
+    motionResultObj.x = fastBuf[0];
+    motionResultObj.y = fastBuf[1];
+    // fastBuf[2] is angle in degrees, convert back to rad for backwards compatibility
+    motionResultObj.angle = fastBuf[2] * Math.PI / 180;
+    return motionResultObj;
+  }
   const rustMotion = quadraticMotionRust(
     start.x,
     start.y,
@@ -463,12 +488,16 @@ export function getQuadraticMotion(
     progress,
   );
   if (rustMotion) {
-    return { x: rustMotion[0], y: rustMotion[1], angle: rustMotion[2] };
+    motionResultObj.x = rustMotion[0];
+    motionResultObj.y = rustMotion[1];
+    motionResultObj.angle = rustMotion[2];
+    return motionResultObj;
   }
-  return {
-    ...pointOnQuadraticBezier(start, control, end, progress),
-    angle: tangentOnQuadraticBezier(start, control, end, progress),
-  };
+  const p = pointOnQuadraticBezier(start, control, end, progress);
+  motionResultObj.x = p.x;
+  motionResultObj.y = p.y;
+  motionResultObj.angle = tangentOnQuadraticBezier(start, control, end, progress);
+  return motionResultObj;
 }
 
 export function buildSVGPath(

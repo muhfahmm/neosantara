@@ -73,7 +73,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
 
   return (
     <>
-      <NotebookModalWrapper onClose={onClose}>
+      {!showDefenseBonusInfo && <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
           
           {/* HEADER */}
@@ -99,7 +99,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
         {/* BODY MODAL WITH SIDEBAR */}
         <div className="flex-1 flex min-h-0 relative z-10">
           {/* SIDEBAR MENU */}
-          <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto custom-scrollbar shrink-0">
+          <div className="w-40 sm:w-44 lg:w-48 border-r border-[#00FFAA]/30 bg-[#0A1A1A] p-2 sm:p-3 flex flex-col gap-1.5 overflow-y-auto neon-scrollbar shrink-0">
             <button 
               onClick={() => setActiveTab("aktif")} 
               className={`flex items-center justify-between w-full px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl border text-left transition-all cursor-pointer ${
@@ -130,7 +130,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
           </div>
 
           {/* MAIN TAB CONTENT */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-[#0F2424] custom-scrollbar space-y-4">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-5 lg:p-6 bg-[#0F2424] neon-scrollbar space-y-4">
             {activeTab === "aktif" && <ArmadaAktif countryDetail={countryDetail} setCountryDetail={setCountryDetail} onCapacityFull={handleNavigateToInfra} onGotoProduction={onGotoProduction} currentDate={currentDate} />}
             {activeTab === "infrastruktur" && <InfrastrukturMiliter countryDetail={countryDetail} setCountryDetail={setCountryDetail} highlightKey={highlightInfraKey} onGotoProduction={onGotoProduction} ongoingConstructions={countryDetail?.ongoingConstructions || []} currentDate={currentDate} />}
           </div>
@@ -149,17 +149,12 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
           </button>
         </div>
       </div>
-    </NotebookModalWrapper>
+    </NotebookModalWrapper>}
 
-      {/* POPUP MODAL INFO BONUS PERTAHANAN */}
-      {showDefenseBonusInfo && (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/60 px-4 py-8">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="defense-bonus-info-title"
-            className="w-full max-w-xl overflow-hidden rounded-2xl border border-[#00FFAA]/30 bg-[#0F2424] font-sans shadow-2xl"
-          >
+    {/* POPUP MODAL INFO BONUS PERTAHANAN */}
+    {showDefenseBonusInfo && (
+      <NotebookModalWrapper onClose={() => setShowDefenseBonusInfo(false)}>
+        <div className="flex h-full flex-col overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="defense-bonus-info-title">
             <div className="flex items-center justify-between border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-5 py-4">
               <div className="flex items-center gap-3">
                 <div className="rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-2">
@@ -178,7 +173,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="space-y-4 px-5 py-5 text-sm leading-relaxed text-slate-300">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-5 text-sm leading-relaxed text-slate-300 neon-scrollbar">
               <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-200 space-y-2.5">
                 <p>
                   <strong className="text-white">Kementerian Pertahanan:</strong>{" "}
@@ -201,7 +196,7 @@ export default function ArmadaModal({ isOpen, onClose, countryDetail, setCountry
               </div>
             </div>
           </div>
-        </div>
+        </NotebookModalWrapper>
       )}
     </>
   );

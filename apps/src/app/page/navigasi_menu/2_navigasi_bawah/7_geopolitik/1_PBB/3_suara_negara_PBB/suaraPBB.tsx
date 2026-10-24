@@ -184,7 +184,7 @@ export default function SuaraPBB({ countryDetail }: { countryDetail?: any }) {
         </div>
       </div>
 
-      <div className="overflow-x-auto max-h-[450px] overflow-y-auto">
+      <div className="overflow-x-auto max-h-[450px] overflow-y-auto neon-scrollbar">
         <table className="w-full text-xs border-collapse">
           <thead className="bg-[#051111] border-b border-[#00FFAA]/20 sticky top-0 z-10">
             <tr>

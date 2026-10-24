@@ -49,7 +49,7 @@ export default function KonfirmasiSabotaseModals({
         </div>
 
         {/* BODY */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col items-center justify-center">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 neon-scrollbar flex flex-col items-center justify-center">
           <div className="w-full max-w-lg space-y-6">
             <div className="flex justify-center">
               <div className="p-5 rounded-full bg-[#0A1A1A] border border-orange-500/30 shadow-inner">

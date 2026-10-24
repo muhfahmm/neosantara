@@ -48,7 +48,7 @@ export default function PilihItemModal({
         </div>
 
         {/* BODY - Grid Card */}
-        <div className="flex-1 overflow-y-auto px-5 pt-5 pb-2 bg-[#0F2424] relative z-10 no-scrollbar">
+        <div className="flex-1 overflow-y-auto px-5 pt-5 pb-2 bg-[#0F2424] relative z-10 neon-scrollbar">
           
           {/* RENDER UNTUK DATA BERKATEGORI (PRODUK) */}
           {isGrouped ? (

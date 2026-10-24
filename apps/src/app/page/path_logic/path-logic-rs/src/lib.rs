@@ -121,6 +121,39 @@ pub fn quadratic_motion(
     vec![x, y, tangent_y.atan2(tangent_x)]
 }
 
+/// Zero-allocation in-place quadratic motion writing directly into a shared Float64Array buffer:
+/// out[0] = x
+/// out[1] = y
+/// out[2] = angle_deg (in degrees, ready for SVG transform)
+#[wasm_bindgen]
+pub fn quadratic_motion_fast(
+    start_x: f64,
+    start_y: f64,
+    control_x: f64,
+    control_y: f64,
+    end_x: f64,
+    end_y: f64,
+    progress: f64,
+    out: &mut [f64],
+) {
+    if out.len() < 3 {
+        return;
+    }
+    let progress = progress.clamp(0.0, 1.0);
+    let inverse = 1.0 - progress;
+    let x = inverse * inverse * start_x
+        + 2.0 * inverse * progress * control_x
+        + progress * progress * end_x;
+    let y = inverse * inverse * start_y
+        + 2.0 * inverse * progress * control_y
+        + progress * progress * end_y;
+    let tangent_x = 2.0 * inverse * (control_x - start_x) + 2.0 * progress * (end_x - control_x);
+    let tangent_y = 2.0 * inverse * (control_y - start_y) + 2.0 * progress * (end_y - control_y);
+    out[0] = x;
+    out[1] = y;
+    out[2] = tangent_y.atan2(tangent_x) * 180.0 / std::f64::consts::PI;
+}
+
 #[wasm_bindgen]
 pub fn great_circle_distance_km(
     origin_latitude: f64,

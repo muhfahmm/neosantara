@@ -283,9 +283,9 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
       />
 
       {selectedCommodityInfo && (
-        <div className="fixed inset-0 z-[65] flex items-center justify-center p-4 bg-transparent pointer-events-auto">
-          <div className="w-full max-w-md bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#00FFAA]/20 bg-[#0A1A1A]">
+        <NotebookModalWrapper onClose={() => setSelectedCommodityInfo(null)}>
+          <div className="flex h-full flex-col overflow-hidden">
+            <div className="flex items-center justify-between border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-5 py-4">
               <div>
                 <h3 className="text-sm font-black uppercase tracking-[0.2em] text-[#00FFAA]">Detail Food Konsumsi</h3>
                 <p className="text-[10px] font-bold text-[#6B8A8A] uppercase tracking-wider">{selectedCommodityInfo.label}</p>
@@ -294,7 +294,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="p-5 space-y-3 text-xs text-[#E0E0E0]">
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-5 text-xs text-[#E0E0E0] neon-scrollbar">
               <div className="rounded-xl bg-[#0A1A1A] p-3 border border-[#00FFAA]/20">
                 <div className="flex justify-between items-center">
                   <span className="font-bold uppercase tracking-wider text-[#6B8A8A]">Negara</span>
@@ -336,7 +336,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
               </div>
             </div>
           </div>
-        </div>
+        </NotebookModalWrapper>
       )}
 
       {!selectedCommodityInfo && (
@@ -358,7 +358,7 @@ export default function IndustriPanganModal({ isOpen, onClose, countryDetail, se
             </button>
           </div>
           {/* CONTENT */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+          <div className="flex-1 min-h-0 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar">
             <div className="space-y-3.5 lg:space-y-4.5 2xl:space-y-6">
               {Object.entries(SECTOR_MAP).map(([sectorId, sectorData]) => {
                 const SectorIcon = sectorData.icon;

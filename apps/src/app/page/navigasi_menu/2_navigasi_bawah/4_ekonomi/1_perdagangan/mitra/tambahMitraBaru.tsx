@@ -142,7 +142,7 @@ export default function TambahMitraBaru({
           </div>
 
           {/* BODY LIST NEGARA */}
-          <div className="flex-1 overflow-y-auto p-8 bg-[#0F2424] relative z-10 no-scrollbar">
+          <div className="flex-1 overflow-y-auto p-8 bg-[#0F2424] relative z-10 neon-scrollbar">
             {Object.keys(groupedByContinent).length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-20 text-[#6B8A8A]">
                 <Search className="h-12 w-12 mb-3 opacity-30 text-[#00FFAA] animate-pulse" />
@@ -230,7 +230,7 @@ export default function TambahMitraBaru({
             </div>
 
             {/* Body Content */}
-            <div className="flex-1 min-h-0 p-6 sm:p-8 overflow-y-auto">
+            <div className="flex-1 min-h-0 p-6 sm:p-8 overflow-y-auto neon-scrollbar">
               <h3 className="text-lg sm:text-xl font-black uppercase tracking-wide mb-3 text-rose-400">
                 Gagal Menambahkan Mitra
               </h3>
@@ -285,7 +285,7 @@ export default function TambahMitraBaru({
             </div>
 
             {/* Body Content */}
-            <div className="flex-1 min-h-0 p-6 sm:p-8 overflow-y-auto">
+            <div className="flex-1 min-h-0 p-6 sm:p-8 overflow-y-auto neon-scrollbar">
               <h3 className="text-lg sm:text-xl font-black uppercase tracking-wide mb-3 text-[#E0E0E0]">
                 Konfirmasi Perjanjian Dagang
               </h3>

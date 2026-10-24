@@ -462,7 +462,7 @@ function PajakModalContent({
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-3.5 lg:p-5 2xl:p-8 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar">
           <p className="text-[10px] lg:text-xs text-[#6B8A8A] font-semibold leading-relaxed mb-3.5 lg:mb-5 2xl:mb-6">
             Sesuaikan tarif pajak nasional untuk membiayai belanja militer dan
             infrastruktur publik. Hati-hati, pajak tinggi memicu protes rakyat!

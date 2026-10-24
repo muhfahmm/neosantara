@@ -9,6 +9,14 @@ export function project_route_geometry(origin_latitude: number, origin_longitude
 
 export function quadratic_motion(start_x: number, start_y: number, control_x: number, control_y: number, end_x: number, end_y: number, progress: number): Float64Array;
 
+/**
+ * Zero-allocation in-place quadratic motion writing directly into a shared Float64Array buffer:
+ * out[0] = x
+ * out[1] = y
+ * out[2] = angle_deg (in degrees, ready for SVG transform)
+ */
+export function quadratic_motion_fast(start_x: number, start_y: number, control_x: number, control_y: number, end_x: number, end_y: number, progress: number, out: Float64Array): void;
+
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
@@ -17,8 +25,10 @@ export interface InitOutput {
     readonly project_map_point: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number) => [number, number];
     readonly project_route_geometry: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number) => [number, number];
     readonly quadratic_motion: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number];
+    readonly quadratic_motion_fast: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: any) => void;
     readonly __wbindgen_externrefs: WebAssembly.Table;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;
+    readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_start: () => void;
 }
 

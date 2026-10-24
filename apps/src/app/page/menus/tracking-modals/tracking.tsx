@@ -191,9 +191,13 @@ export default function DiplomacyTracking({ onOpen }: DiplomacyTrackingProps) {
             laneIndex={laneIndex}
             laneCount={sameRoute.length}
             isPlayerAttacker={path.isPlayerAttacker}
-            onProgress={progress => setActivePaths(current => current.map(item =>
-              item.id === path.id ? { ...item, progress } : item
-            ))}
+            onProgress={progress => {
+              if (isTrackingOpen) {
+                setActivePaths(current => current.map(item =>
+                  item.id === path.id ? { ...item, progress } : item
+                ));
+              }
+            }}
             onArrive={() => {
               if (path.kind === 'aid-delivery') {
                 window.dispatchEvent(new CustomEvent('neosantara_aid_arrived', { detail: path }));

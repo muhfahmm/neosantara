@@ -885,7 +885,7 @@ export default function ModalsKonfirmasiBeli({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 pt-5 pb-2 relative z-10 space-y-4 bg-[#0F2424] no-scrollbar">
+        <div className="flex-1 overflow-y-auto px-5 pt-5 pb-2 relative z-10 space-y-4 bg-[#0F2424] neon-scrollbar">
 
           {/* --- INPUT CARD PRODUK & NEGARA --- */}
           <div className="grid grid-cols-2 gap-4">

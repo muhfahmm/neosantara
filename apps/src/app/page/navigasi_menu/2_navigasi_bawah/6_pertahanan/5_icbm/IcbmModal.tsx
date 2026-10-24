@@ -354,7 +354,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
         </div>
 
         {/* BODY MODAL */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 no-scrollbar flex flex-col items-center">
+        <div className="flex-1 min-h-0 overflow-y-auto p-6 bg-[#0F2424] relative z-10 neon-scrollbar flex flex-col items-center">
           <div className="w-full space-y-6">
 
             {/* STATUS PENGEMBANGAN */}

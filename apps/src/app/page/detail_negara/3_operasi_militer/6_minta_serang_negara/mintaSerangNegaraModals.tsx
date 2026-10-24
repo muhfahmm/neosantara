@@ -97,7 +97,8 @@ export default function MintaSerangNegaraModal({
 	};
 
 	const modalContent = (
-		<div className="fixed inset-0 z-[9999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-black/60 pointer-events-auto">
+		// 🔥 PERBAIKAN: Menghapus bg-black/60 dan mengubah pointer-events-auto menjadi pointer-events-none pada wrapper terluar
+		<div className="fixed inset-0 z-[9999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
 			<div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
 				{/* Header */}

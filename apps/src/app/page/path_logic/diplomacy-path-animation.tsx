@@ -123,6 +123,21 @@ export default function DiplomacyPathAnimation({
     lastReportedProgress.current = -1;
     const startingDayPosition = getSimulationDayPosition();
 
+    let cachedWinWidth = typeof window !== 'undefined' ? window.innerWidth : 1;
+    let cachedWinHeight = typeof window !== 'undefined' ? window.innerHeight : 1;
+    if (svgRef.current) {
+      svgRef.current.setAttribute('viewBox', `0 0 ${cachedWinWidth} ${cachedWinHeight}`);
+    }
+
+    const onResize = () => {
+      cachedWinWidth = window.innerWidth;
+      cachedWinHeight = window.innerHeight;
+      if (svgRef.current) {
+        svgRef.current.setAttribute('viewBox', `0 0 ${cachedWinWidth} ${cachedWinHeight}`);
+      }
+    };
+    window.addEventListener('resize', onResize, { passive: true });
+
     const updateRoute = (now: number) => {
       const delta = now - lastFrame;
       lastFrame = now;
@@ -157,14 +172,7 @@ export default function DiplomacyPathAnimation({
         pulseRef.current?.setAttribute('cx', String(end.x));
         pulseRef.current?.setAttribute('cy', String(end.y));
       }
-      if (routeRef.current) routeRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
-      if (pulseRef.current) pulseRef.current.style.animationPlayState = isPaused ? 'paused' : 'running';
       vehicleRef.current?.setAttribute('transform', `translate(${vehicle.x} ${vehicle.y}) rotate(${vehicle.angle * 180 / Math.PI})`);
-      const viewBox = `0 0 ${window.innerWidth} ${window.innerHeight}`;
-      if (svgRef.current && viewBox !== viewBoxRef.current) {
-        viewBoxRef.current = viewBox;
-        svgRef.current.setAttribute('viewBox', viewBox);
-      }
 
       if (progress >= 1) {
         if (!completed) {
@@ -185,6 +193,7 @@ export default function DiplomacyPathAnimation({
     return () => {
       unsubscribe();
       window.removeEventListener('neosantara_map_camera', onCamera);
+      window.removeEventListener('resize', onResize);
     };
   }, [sender, target, senderCountry, targetCountry, travelEstimate, routeCurvature]);
 
@@ -193,13 +202,7 @@ export default function DiplomacyPathAnimation({
   return (
     <div className="fixed inset-0 z-10 pointer-events-none overflow-hidden select-none">
       <svg ref={svgRef} className="absolute inset-0 h-full w-full" viewBox="0 0 1 1">
-        <defs>
-          <filter id="diplomacy-path-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="4" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-        </defs>
-        <path ref={glowRouteRef} fill="none" stroke={details.accent} strokeWidth="10" opacity=".18" />
+        <path ref={glowRouteRef} fill="none" stroke={details.accent} strokeWidth="8" opacity=".18" />
         <path ref={routeRef} fill="none" stroke={details.accent} strokeWidth="4" strokeDasharray="16 11" className="diplomacy-route-dash" />
         <circle ref={startRef} r="10" fill={details.accent} />
         <circle ref={pulseRef} r="30" fill="none" stroke={details.accent} strokeWidth="2" className="diplomacy-target-pulse" />

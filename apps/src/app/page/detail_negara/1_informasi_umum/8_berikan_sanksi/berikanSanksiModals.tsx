@@ -29,8 +29,7 @@ export default function BerikanSanksiModal({
 		`${value >= 0 ? '+' : ''}${value.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO`;
 
 	const modalContent = (
-		// 🔥 PERBAIKAN: Menghapus bg-black/60 agar tidak ada backdrop
-		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans pointer-events-none">
+		<div className="fixed inset-0 z-[100000001] flex items-center justify-center p-4 font-sans pointer-events-none">
 			{/* Container Modal Lebih Lebar dan Panjang */}
 			<div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(0,255,170,0.15)] relative text-white pointer-events-auto">
 				

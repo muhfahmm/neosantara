@@ -53,7 +53,7 @@ export default function DanaTidakCukupModals({
         </div>
 
         {/* Body Modal */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-8 relative z-10 no-scrollbar flex flex-col items-center justify-center">
+        <div className="flex-1 min-h-0 overflow-y-auto p-8 relative z-10 neon-scrollbar flex flex-col items-center justify-center">
           <div className="w-full max-w-2xl space-y-6">
             <div className="text-center space-y-4">
               <div className="p-4 rounded-xl bg-[#FF2D55]/10 border border-[#FF2D55]/40 inline-block mx-auto">
