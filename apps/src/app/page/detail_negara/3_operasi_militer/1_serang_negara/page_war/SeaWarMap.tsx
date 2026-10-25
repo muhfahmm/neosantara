@@ -12,7 +12,7 @@ import {
   type WarUnit,
 } from './units/warUnitComposition';
 import {
-  Airbase, Defs, Extruded, MAP_CSS, PALETTES, Peak, Smoke,
+  Airbase, Defs, Extruded, MAP_CSS, MilitaryFacilities, PALETTES, Peak, Smoke,
   blobPath, makeCity, makeForest, rng, smoothPath,
   type TerrainType,
 } from './TacticalMap';
@@ -504,6 +504,8 @@ const LandFeatures = memo(function LandFeatures({ terrainType }: { terrainType: 
       <Port id="portEnemy" x={PORT_ENEMY.x} y={PORT_ENEMY.y} s={-1} color={ENEMY} name="PELABUHAN MUSUH" />
       <Airbase id="airbaseOwn" at={AIRBASE_OWN} color={ACCENT} name="PANGKALAN UDARA ANDA" />
       <Airbase id="airbaseEnemy" at={AIRBASE_ENEMY} color={ENEMY} name="PANGKALAN UDARA MUSUH" />
+      <MilitaryFacilities at={{ x: 850, y: 680 }} color={ACCENT} scale={0.9} />
+      <MilitaryFacilities at={{ x: 8350, y: 3100 }} color={ENEMY} scale={0.9} />
 
       <g className="battle-scenery-detail" pointerEvents="none" fontFamily="monospace" fontWeight="900" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="10" paintOrder="stroke" strokeLinejoin="round" opacity="0.92" letterSpacing="14" fontSize="60">
         <text x="4900" y="250">PEGUNUNGAN</text>
@@ -543,7 +545,17 @@ function placeGroup(units: WarUnit[], group: WarUnit['group'], east: boolean): P
     return list.map((unit, i) => ({ unit, x: cx + dir * (i % 5) * 145, y: 2350 + Math.floor(i / 5) * 100 }));
   }
   if (group === 'udara') {
-    return list.map((unit, i) => ({ unit, x: cx + dir * (i % 4) * 175, y: (east ? 3450 : 1150) + Math.floor(i / 4) * 90 }));
+    const airbase = east ? AIRBASE_ENEMY : AIRBASE_OWN;
+    return list.map((unit, i) => {
+      const row = Math.floor(i / 4);
+      const column = i % 4;
+      const rowCount = Math.min(4, list.length - row * 4);
+      return {
+        unit,
+        x: airbase.x + dir * (column - (rowCount - 1) / 2) * 190,
+        y: airbase.y - 155 + row * 85,
+      };
+    });
   }
   return list.map((unit, i) => ({
     unit,

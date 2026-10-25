@@ -10,7 +10,6 @@ export type SimPhase = 'idle' | 'advance' | 'clash' | 'done';
 export type PlayerSide = 'attacker' | 'defender';
 export type ViewBox = { x: number; y: number; w: number; h: number };
 
-// Dunia peta digambar langsung di ruang 6400 × 2400 (seragam, tanpa skala non-uniform).
 export const BASE_W = 6400;
 export const BASE_H = 2400;
 export const MIN_VIEW_W = BASE_W;
@@ -18,9 +17,8 @@ export const MAX_VIEW_W = 900;
 export const MAP_MIN_Y = 0;
 export const MAP_MAX_Y = BASE_H;
 const MAP_HEIGHT = MAP_MAX_Y - MAP_MIN_Y;
-export const GRID_SIZE = 100; // hanya dipakai untuk koordinat HUD & sel terpilih (garis grid tidak digambar lagi)
+export const GRID_SIZE = 100;
 
-// Area gambar diperluas supaya zoom-out / rasio layar sempit tidak menampilkan ruang kosong.
 const EX = { x: -1200, y: -1400, w: 8800, h: 5200 };
 
 export const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
@@ -32,7 +30,6 @@ export const getColName = (n: number) => {
 export const cellLabel = (col: number, row: number) =>
   row >= 0 ? `${getColName(col)}-${row + 1}` : `${getColName(col)}-N${-row}`;
 
-/* viewBox selalu mengikuti rasio kontainer → tidak ada pemotongan */
 export const getMinViewW = (ar: number) => Math.max(MAX_VIEW_W, Math.min(BASE_W, BASE_H * 2 * ar));
 export function clampView(v: ViewBox, ar: number): ViewBox {
   const w = clamp(v.w, MAX_VIEW_W, getMinViewW(ar));
@@ -78,7 +75,7 @@ export const PALETTES: Record<TerrainType, Palette> = {
   urban:   { ground: '#464f5c', grass: ['#46633a', '#3b5530', '#557442'], soil: ['#5c5850', '#6c675d', '#4b4841'], rock: ['#8892a0', '#697280', '#a6aebb'], tuft: ['#6a8f4c', '#557a3c', '#80a45c'], mt: ['#a1a8b3', '#5b6472', '#5b6472', '#1f2937'], tree: ['#365314', '#3f6212', '#4d7c0f', '#166534'], treeHi: '#bef264', under: '#14301a', bank: '#6b7280', road: '#1f2937', roadLine: '#e5e7eb', foot: '#0b1019', roof: ['#64748b', '#475569', '#7b8798'] },
 };
 
-/* ═════════════════════════ GENERATOR PROSEDURAL (sekali, level modul) ═════════════════════════ */
+/* ═════════════════════════ GENERATOR PROSEDURAL ═════════════════════════ */
 export function rng(seed: number) {
   let a = seed;
   return () => {
@@ -105,7 +102,6 @@ export function blobPath(cx: number, cy: number, rx: number, ry: number, seed: n
   return d + ' Z';
 }
 
-// Kurva halus (Catmull-Rom → Bezier) melalui daftar titik
 export function smoothPath(pts: number[][]): string {
   let d = `M ${pts[0][0]},${pts[0][1]}`;
   for (let i = 0; i < pts.length - 1; i++) {
@@ -115,7 +111,7 @@ export function smoothPath(pts: number[][]): string {
   return d;
 }
 
-/* ── Titik strategis: base user KIRI ATAS, base musuh KANAN BAWAH ── */
+/* ── Titik strategis ── */
 export const HQ_OWN = { x: 700, y: 520 };
 export const HQ_ENEMY = { x: 5700, y: 1880 };
 const CAPTURE_POINTS = [
@@ -123,7 +119,6 @@ const CAPTURE_POINTS = [
   { id: 'bravo', name: 'BRAVO', x: 2700, y: 1060, main: false },
   { id: 'charlie', name: 'CHARLIE', x: 3300, y: 930, main: false },
 ];
-// Pangkalan udara di dekat masing-masing HQ
 export const AIRBASE_OWN = { x: 700, y: 1060 };
 export const AIRBASE_ENEMY = { x: 5600, y: 2250 };
 const RESOURCES = [
@@ -131,7 +126,7 @@ const RESOURCES = [
   { id: 'ammo', name: 'GUDANG AMUNISI', x: 4650, y: 1420 },
 ];
 
-/* ── Danau (tanpa sungai): tempat berlabuh unit laut masing-masing pihak ── */
+/* ── Danau ── */
 const LAKES = [
   { cx: 1500, cy: 1750, rx: 700, ry: 240, seed: 401 },
   { cx: 5000, cy: 950, rx: 650, ry: 220, seed: 402 },
@@ -155,7 +150,7 @@ const LAKES = [
 const inLake = (x: number, y: number, pad: number) =>
   LAKES.some((l) => ((x - l.cx) / (l.rx + pad)) ** 2 + ((y - l.cy) / (l.ry + pad)) ** 2 < 1);
 
-/* ── Jalan: HQ user → jembatan → HQ musuh ── */
+/* ── Jalan ── */
 const ROAD_PTS = [[700, 520], [1100, 540], [1500, 610], [2000, 780], [2500, 930], [3000, 1010], [3300, 1200], [3550, 1420], [4000, 1530], [4400, 1530], [5100, 1800], [5700, 1880]];
 const ROAD = smoothPath(ROAD_PTS);
 function distToRoad(x: number, y: number) {
@@ -174,6 +169,9 @@ const KEEP = [
   ...CAPTURE_POINTS.map((c) => ({ x: c.x, y: c.y, r: c.main ? 280 : 230 })),
   ...RESOURCES.map((c) => ({ x: c.x, y: c.y, r: 150 })),
   { ...AIRBASE_OWN, r: 560 }, { ...AIRBASE_ENEMY, r: 560 },
+  // Koordinat Barak Militer Baru (Disesuaikan)
+  { x: 1200, y: 180, r: 450 },  // User (Naik 100px)
+  { x: 5150, y: 1350, r: 450 }, // Musuh (Hutan dipindah, base tetap)
 ];
 const blocked = (x: number, y: number, pad: number) =>
   inLake(x, y, 120 + pad) || distToRoad(x, y) < 50 + pad || KEEP.some((k) => Math.hypot(k.x - x, k.y - y) < k.r + pad);
@@ -192,7 +190,6 @@ function scatter(count: number, seed: number, x0: number, x1: number, y0: number
   return out;
 }
 
-/* ── TANAH: bercak rumput & tanah (menggantikan garis grid) ── */
 function makePatches(n: number, seed: number, y0: number, y1: number, rmin: number, rmax: number) {
   const r = rng(seed);
   return Array.from({ length: n }, (_, i) => {
@@ -204,7 +201,6 @@ function makePatches(n: number, seed: number, y0: number, y1: number, rmin: numb
 const GRASS_PATCHES = [...makePatches(34, 11, 0, 2400, 300, 600), ...makePatches(24, 12, -1300, 0, 300, 600), ...makePatches(24, 13, 2400, 3700, 300, 600)];
 const SOIL_PATCHES = [...makePatches(22, 21, 0, 2400, 220, 440), ...makePatches(12, 22, -1300, 0, 220, 440), ...makePatches(12, 23, 2400, 3700, 220, 440)];
 
-/* ── BATUAN: gugusan batu kecil-menengah ── */
 type Rock = { pts: string; hi: string; x: number; y: number; rx: number; ry: number; ci: number };
 function makeRock(cx: number, cy: number, r: number, rg: () => number): Rock {
   const n = 7, a0 = rg() * Math.PI * 2;
@@ -226,7 +222,6 @@ const ROCKS: Rock[] = (() => {
   return spots.flatMap((s) => Array.from({ length: 2 + Math.floor(rg() * 4) }, () => makeRock(s.x + (rg() - 0.5) * 120, s.y + (rg() - 0.5) * 64, 12 + rg() * 26, rg)));
 })();
 
-/* ── Pola rumput & kerikil (pattern ubin, murah dirender) ── */
 const TUFTS = (() => {
   const r = rng(23);
   return Array.from({ length: 46 }, () => ({ x: r() * 360, y: r() * 360, h: 9 + r() * 13, l: (r() - 0.5) * 8, ci: Math.floor(r() * 3), n: 2 + Math.floor(r() * 2) }));
@@ -244,7 +239,6 @@ const PARTICLES = (() => {
   return Array.from({ length: 70 }, () => ({ x: r() * BASE_W, y: r() * BASE_H, r: 3 + r() * 4.5, dur: 7 + r() * 8, delay: -r() * 14 }));
 })();
 
-/* ── Hutan ── */
 type Tree = { x: number; y: number; r: number; ci: number };
 export function makeForest(f: { cx: number; cy: number; rx: number; ry: number; n: number; seed: number }) {
   const r = rng(f.seed);
@@ -256,21 +250,23 @@ export function makeForest(f: { cx: number; cy: number; rx: number; ry: number; 
   trees.sort((a, b) => a.y - b.y);
   return { ...f, trees, blob: blobPath(f.cx, f.cy, f.rx * 1.08, f.ry * 1.12, f.seed + 1) };
 }
+
+// HUTAN DIPERBARUI: Hutan yang menutupi musuh dipindah ke KANAN DANAU.
 const FORESTS = [
-  { cx: 1650, cy: 1250, rx: 420, ry: 220, n: 90, seed: 7 },
+  { cx: 800, cy: 1800, rx: 380, ry: 220, n: 90, seed: 7 }, // Samping danau kiri
   { cx: 2700, cy: 1950, rx: 420, ry: 220, n: 85, seed: 21 },
-  { cx: 4050, cy: 1850, rx: 420, ry: 220, n: 85, seed: 42 },
+  { cx: 4050, cy: 1850, rx: 450, ry: 250, n: 110, seed: 42 },
   { cx: 4000, cy: 300, rx: 360, ry: 200, n: 70, seed: 99 },
-  { cx: 5500, cy: 1250, rx: 340, ry: 200, n: 65, seed: 63 },
+  { cx: 5900, cy: 950, rx: 380, ry: 240, n: 130, seed: 63 }, // DIPINDAH KE KANAN DANAU
   { cx: 250, cy: 1520, rx: 290, ry: 170, n: 55, seed: 77 },
-  { cx: 2300, cy: 560, rx: 300, ry: 160, n: 50, seed: 55 },
+  { cx: 1100, cy: 1900, rx: 320, ry: 180, n: 60, seed: 55 },
 ].map(makeForest);
+
 const EXT_FORESTS = [
   ...scatter(8, 31, 300, 6100, -1150, -300, 0, 700, false),
   ...scatter(8, 32, 300, 6100, 2700, 3500, 0, 700, false),
 ].map((p, i) => makeForest({ cx: p.x, cy: p.y, rx: 300 + (i % 3) * 50, ry: 150 + (i % 2) * 30, n: 34, seed: 600 + i }));
 
-/* ── Gunung ── */
 const PEAKS: [number, number, number, number][] = ([
   [3300, 270, 300, 220], [2400, 330, 320, 240], [3950, 520, 300, 230],
   [4250, 640, 330, 250], [4600, 620, 360, 300], [4950, 560, 340, 280], [5300, 470, 320, 300], [5700, 380, 360, 320], [6100, 330, 340, 280],
@@ -282,7 +278,6 @@ const EXT_PEAKS: [number, number, number, number][] = [
   ...scatter(9, 42, 200, 6200, 2520, 3500, 0, 520, false).map((p, i) => [p.x, p.y, 300 + (i % 3) * 40, 220 + (i % 4) * 25] as [number, number, number, number]),
 ].sort((a, b) => a[1] - b[1]);
 
-/* ── Medan sekunder: rawa, pasir gembur, kawah ── */
 const SWAMPS = [
   { cx: 950, cy: 1450, rx: 280, ry: 90, seed: 201 },
   { cx: 3850, cy: 880, rx: 300, ry: 90, seed: 202 },
@@ -310,7 +305,6 @@ const CRATER_FIELDS = [
   return { ...f, craters: Array.from({ length: f.n }, () => ({ x: f.cx + (r() - 0.5) * f.r * 2, y: f.cy + (r() - 0.5) * f.r * 1.3, r: 18 + r() * 26 })) };
 });
 
-/* ── Kota ── */
 type Bld = [number, number, number, number, number];
 export function makeCity(x0: number, y0: number, x1: number, y1: number, seed: number, step: number, skip?: (x: number, y: number) => boolean): Bld[] {
   const r = rng(seed);
@@ -338,7 +332,6 @@ const CITY_SPRAWL = [
   ...makeCity(4700, 1250, 5050, 1450, 13, 84, cityBlock),
 ].sort((a, b) => a[1] - b[1]);
 
-/* ── Distrik kota tambahan (selalu tampil di semua jenis medan) ── */
 const DISTRICT_DEFS = [
   { x0: 2040, y0: 1110, x1: 2460, y1: 1340, seed: 31, label: 'KOTA BARAT' },
   { x0: 3700, y0: 1250, x1: 4040, y1: 1440, seed: 32, label: 'KOTA TIMUR' },
@@ -346,34 +339,40 @@ const DISTRICT_DEFS = [
 ];
 const DISTRICTS = DISTRICT_DEFS.map((d) => ({ ...d, buildings: makeCity(d.x0, d.y0, d.x1, d.y1, d.seed, 80, cityBlock) }));
 
-/* ── Penempatan unit: user (own) di kiri atas, musuh di kanan bawah ── */
 export interface PlacedUnit { unit: WarUnit; x: number; y: number; moves: boolean }
 export function layoutUnits(units: WarUnit[], own: boolean, moves: boolean): PlacedUnit[] {
   const out: PlacedUnit[] = [];
   const dir = own ? 1 : -1;
   const landX = own ? 1400 : 4900, landY = own ? 330 : 1650;
-  const airX = own ? 1400 : 4900, airY = own ? 790 : 2000;
+  const airbase = own ? AIRBASE_OWN : AIRBASE_ENEMY;
+  const airUnits = units.filter((u) => u.group === 'udara');
   units.filter((u) => u.group === 'darat').forEach((unit, i) => {
     out.push({ unit, x: landX + dir * (i % 4) * 140, y: landY + Math.floor(i / 4) * 150, moves });
   });
-  units.filter((u) => u.group === 'udara').forEach((unit, i) => {
-    out.push({ unit, x: airX + dir * (i % 4) * 140, y: airY + Math.floor(i / 4) * 140, moves });
+  airUnits.forEach((unit, i) => {
+    const row = Math.floor(i / 4);
+    const column = i % 4;
+    const rowCount = Math.min(4, airUnits.length - row * 4);
+    out.push({
+      unit,
+      x: airbase.x + dir * (column - (rowCount - 1) / 2) * 190,
+      y: airbase.y - 150 + row * 85,
+      moves,
+    });
   });
   units.filter((u) => u.group === 'laut').forEach((unit, i) => {
-    // unit maritim berlabuh di danau masing-masing pihak
     const lk = own ? LAKES[0] : LAKES[1];
     const x = own ? 1000 + (i % 8) * 150 : 4500 + (i % 8) * 130;
     out.push({ unit, x, y: lk.cy + (i % 2 ? 50 : -50) + Math.floor(i / 8) * 100, moves: false });
   });
   return out;
 }
-const UK = 1.5; // skala penanda unit agar terbaca di peta 6400 px
+const UK = 1.5;
 const VISION: Record<string, number> = { darat: 520, laut: 440, udara: 880 };
 const ADV_OWN = 'translate(1200px, 480px)';
 const ADV_ENEMY = 'translate(-1250px, -850px)';
 const IDLE = 'translate(0px, 0px)';
 
-/* ═════════════════════════ CSS LOKAL PETA (prefix tm-) ═════════════════════════ */
 export const MAP_CSS = `
 .tm-tz{transition:filter .25s ease}
 .tm-tz:hover{filter:brightness(1.15) saturate(1.1)}
@@ -393,7 +392,6 @@ export const MAP_CSS = `
 @media (prefers-reduced-motion:reduce){.tm-cloud,.tm-fall,.tm-dust,.tm-tracer,.tm-glint,.tm-spin,.tm-spin-slow{animation:none!important}}
 `;
 
-/* ═════════════════════════ ELEMEN KECIL ═════════════════════════ */
 export const Peak = ({ x, by, w, h, seed, accent, snowDepth }: { x: number; by: number; w: number; h: number; seed: number; accent: string; snowDepth: number }) => {
   const r = rng(seed);
   const j = () => r() - 0.5;
@@ -423,6 +421,28 @@ export const Extruded = ({ x, y, w, d, h, roof, stroke, win, i = 0 }: { x: numbe
   </g>
 );
 
+export const MilitaryFacilities = ({ at, color, scale = 1 }: { at: { x: number; y: number }; color: string; scale?: number }) => (
+  <g transform={`translate(${at.x} ${at.y}) scale(${scale})`} pointerEvents="none">
+    <rect x="-390" y="-155" width="780" height="310" rx="26" fill="#0b1220" fillOpacity="0.48" stroke={color} strokeOpacity="0.5" strokeWidth="3" strokeDasharray="16 10" />
+    <path d="M-360 118 H360" stroke="#64748b" strokeWidth="12" strokeOpacity="0.5" />
+
+    <Extruded x={-345} y={-5} w={195} d={78} h={64} roof="#64748b" stroke={color} win />
+    <g fill="#fbbf24" opacity="0.75">
+      {[-320, -280, -240, -200, -160].map((x) => <rect key={x} x={x} y="23" width="14" height="17" rx="2" />)}
+    </g>
+    <text x="-247" y="104" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="5" paintOrder="stroke" fontSize="18" fontWeight="900" letterSpacing="1" fontFamily="monospace">BARAK MILITER</text>
+
+    <Extruded x={-105} y={-5} w={190} d={78} h={58} roof="#475569" stroke={color} />
+    <path d="M-80 66 V40 Q-80 26 -70 26 Q-60 26 -60 40 V66 M-35 66 V40 Q-35 26 -25 26 Q-15 26 -15 40 V66 M10 66 V40 Q10 26 20 26 Q30 26 30 40 V66 M55 66 V40 Q55 26 65 26 Q75 26 75 40 V66" fill="#1e293b" stroke={color} strokeWidth="3" />
+    <text x="-10" y="104" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="5" paintOrder="stroke" fontSize="18" fontWeight="900" letterSpacing="1" fontFamily="monospace">GUDANG SENJATA</text>
+
+    <Extruded x={135} y={-5} w={205} d={78} h={62} roof="#334155" stroke={color} />
+    <rect x="166" y="20" width="143" height="44" rx="4" fill="#1e293b" stroke={color} strokeWidth="3" />
+    <path d="M180 22 V62 M198 22 V62 M216 22 V62 M234 22 V62 M252 22 V62 M270 22 V62 M288 22 V62" stroke="#94a3b8" strokeOpacity="0.7" strokeWidth="3" />
+    <text x="237" y="104" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="5" paintOrder="stroke" fontSize="18" fontWeight="900" letterSpacing="1" fontFamily="monospace">HANGAR TANK</text>
+  </g>
+);
+
 export const Smoke = ({ x, y, n = 5 }: { x: number; y: number; n?: number }) => (
   <g filter="url(#nw-smoke-blur)" pointerEvents="none">
     {Array.from({ length: n }, (_, i) => (
@@ -431,8 +451,6 @@ export const Smoke = ({ x, y, n = 5 }: { x: number; y: number; n?: number }) => 
   </g>
 );
 
-/* ═════════════════════════ DEFS ═════════════════════════ */
-// ID lama dipertahankan agar UnitMarker & komponen lain yang merujuknya tidak rusak.
 export const Defs = memo(function Defs({ accent, terrainType }: { accent: string; terrainType: TerrainType }) {
   const P = PALETTES[terrainType];
   return (
@@ -453,17 +471,14 @@ export const Defs = memo(function Defs({ accent, terrainType }: { accent: string
       <radialGradient id="nw-vignette" cx="0.5" cy="0.5" r="0.75"><stop offset="0.6" stopColor="#000" stopOpacity="0" /><stop offset="1" stopColor="#000" stopOpacity="0.55" /></radialGradient>
       <radialGradient id="tm-v-black"><stop offset="0" stopColor="#000" /><stop offset="0.55" stopColor="#000" /><stop offset="1" stopColor="#000" stopOpacity="0" /></radialGradient>
 
-      {/* debu tanah halus */}
       <pattern id="tm-speck" width="240" height="240" patternUnits="userSpaceOnUse">
         {SPECKS.map((s, i) => <circle key={i} cx={s.x} cy={s.y} r={s.r} fill={s.light ? '#fff' : '#000'} opacity={s.o} />)}
       </pattern>
-      {/* rumpun rumput */}
       <pattern id="tm-tufts" width="360" height="360" patternUnits="userSpaceOnUse">
         {TUFTS.map((t, i) => (
           <path key={i} d={Array.from({ length: t.n }, (_, k) => `M${t.x + k * 5},${t.y} q${t.l},${-t.h * 0.6} ${t.l * 2 + k * 2 - 2},${-t.h}`).join(' ')} stroke={P.tuft[t.ci]} strokeWidth="2.4" strokeLinecap="round" fill="none" opacity="0.7" />
         ))}
       </pattern>
-      {/* kerikil */}
       <pattern id="tm-pebbles" width="260" height="260" patternUnits="userSpaceOnUse">
         {PEBBLES.map((p, i) => <ellipse key={i} cx={p.x} cy={p.y} rx={p.rx} ry={p.ry} fill={p.light ? P.rock[2] : P.rock[1]} opacity={p.light ? 0.55 : 0.45} />)}
       </pattern>
@@ -477,7 +492,6 @@ export const Defs = memo(function Defs({ accent, terrainType }: { accent: string
   );
 });
 
-/* ═════════════════════════ LAYER MEDAN (statis) ═════════════════════════ */
 const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: { accent: string; water: string; terrainType: TerrainType }) {
   const P = PALETTES[terrainType];
   const isDesert = terrainType === 'desert';
@@ -512,7 +526,6 @@ const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: 
 
   return (
     <g>
-      {/* ── TANAH DASAR: tanah → rumput → batuan (menggantikan garis grid) ── */}
       <rect x={EX.x} y={EX.y} width={EX.w} height={EX.h} fill={P.ground} />
       {SOIL_PATCHES.map((p, i) => (
         <g key={`so${i}`}>
@@ -537,11 +550,9 @@ const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: 
         </g>
       ))}
 
-      {/* bayangan area pegunungan */}
       <ellipse cx="5000" cy="480" rx="1100" ry="360" fill="url(#tm-foot)" />
       <ellipse cx="3000" cy="2200" rx="1300" ry="260" fill="url(#tm-foot)" opacity="0.7" />
 
-      {/* PASIR GEMBUR (medan lambat) */}
       {SANDS.map((s, i) => (
         <g key={`sd${i}`} className="nw-tz tm-tz" data-terrain="sand">
           <path d={s.blob} fill="#d9bf8c" opacity="0.6" stroke="#f3e2b8" strokeOpacity="0.4" strokeWidth="2" />
@@ -549,7 +560,6 @@ const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: 
         </g>
       ))}
 
-      {/* RAWA (medan lambat) */}
       {SWAMPS.map((s, i) => (
         <g key={`sw${i}`} className="nw-tz tm-tz" data-terrain="swamp">
           <path d={s.blob} fill="#2c4a36" opacity="0.85" stroke="#6b8f5b" strokeOpacity="0.5" strokeWidth="2.4" />
@@ -558,14 +568,12 @@ const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: 
         </g>
       ))}
 
-      {/* JALAN */}
       <g fill="none" pointerEvents="none" strokeLinejoin="round" strokeLinecap="round">
         <path d={ROAD} stroke="#000" strokeWidth="44" opacity="0.3" />
         <path d={ROAD} stroke={P.road} strokeWidth="30" />
         <path d={ROAD} stroke={P.roadLine} strokeWidth="3.4" strokeDasharray="22 24" opacity="0.5" />
       </g>
 
-      {/* DANAU */}
       {LAKES.map((l, i) => (
         <g key={`lk${i}`} className="nw-tz tm-tz" data-terrain="lake">
           <path d={l.shore} fill={P.bank} opacity="0.35" />
@@ -581,7 +589,6 @@ const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: 
         </g>
       ))}
 
-      {/* KAWAH BEKAS LEDAKAN (medan lambat) */}
       {CRATER_FIELDS.map((f, i) => (
         <g key={`cr${i}`} className="nw-tz tm-tz" data-terrain="crater">
           <ellipse cx={f.cx} cy={f.cy} rx={f.r * 1.4} ry={f.r * 0.95} fill="#000" opacity="0.14" stroke="#f59e0b" strokeOpacity="0.25" strokeWidth="2.4" strokeDasharray="10 12" />
@@ -602,7 +609,6 @@ const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: 
         </g>
       )}
 
-      {/* HUTAN (utama + perluasan) */}
       {forests.map((f, fi) => (
         <g key={`fo${fi}`} className="nw-tz tm-tz" data-terrain="forest">
           <path d={f.blob} fill={P.under} opacity="0.85" />
@@ -610,13 +616,11 @@ const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: 
         </g>
       ))}
 
-      {/* PEGUNUNGAN */}
       <g className="nw-tz tm-tz" data-terrain="highland">
         {EXT_PEAKS.map(([x, by, w, h], i) => <Peak key={`xk${i}`} x={x} by={by} w={w} h={h} seed={800 + i} accent={accent} snowDepth={isSnow ? 0.45 : h > 250 ? 0.22 : 0.14} />)}
         {PEAKS.map(([x, by, w, h], i) => <Peak key={i} x={x} by={by} w={w} h={h} seed={31 + i} accent={accent} snowDepth={isSnow ? 0.45 : h > 250 ? 0.22 : 0.14} />)}
       </g>
 
-      {/* KOTA */}
       <g className="nw-tz tm-tz" data-terrain="urban">
         <rect x="2760" y="840" width="560" height="240" rx="44" fill="#111827" opacity="0.5" />
         {CITY_CORE.map((b, i) => <Extruded key={i} x={b[0]} y={b[1]} w={b[2]} d={b[3]} h={b[4]} roof={P.roof[i % 3]} stroke={accent} win i={i} />)}
@@ -633,20 +637,18 @@ const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: 
         </g>
       )}
 
-      {/* LABEL MEDAN */}
       <g pointerEvents="none" fontFamily="monospace" fontWeight="900" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="10" paintOrder="stroke" strokeLinejoin="round" opacity="0.92" letterSpacing="14" fontSize="60">
         {LAKES.map((l, i) => <text key={i} x={l.cx} y={l.cy - l.ry - 60}>DANAU</text>)}
         <text x="5050" y="250">PEGUNUNGAN</text>
         <text x="3000" y="800">KOTA</text>
         {DISTRICTS.map((d) => <text key={d.label} x={(d.x0 + d.x1) / 2 + 20} y={d.y0 - 50} fontSize="40" letterSpacing="8">{d.label}</text>)}
-        {showForest && <text x="1650" y="985">HUTAN</text>}
+        {showForest && <text x="800" y="1500">HUTAN</text>} 
         {SWAMPS.map((s, i) => <text key={i} x={s.cx} y={s.cy + s.ry + 56} fontSize="44" letterSpacing="10">RAWA</text>)}
       </g>
     </g>
   );
 });
 
-/* ═════════════════════════ MARKAS, CAPTURE POINT, SUMBER DAYA ═════════════════════════ */
 type Owner = 'neutral' | 'contested' | 'own' | 'enemy';
 const RED = '#f43f5e';
 
@@ -687,14 +689,10 @@ const Headquarters = ({ at, color, fallen, name, sub, id }: { at: { x: number; y
   );
 };
 
-
 export const Airbase = ({ at, color, name, id }: { at: { x: number; y: number }; color: string; name: string; id: string }) => {
-  const plane = 'M0,-14 L3,-4 L16,2 L16,5 L3,3 L2,12 L6,14 L6,16 L0,15 L-6,16 L-6,14 L-2,12 L-3,3 L-16,5 L-16,2 L-3,-4 Z';
   return (
     <g className="nw-tz" data-terrain={id} transform={`translate(${at.x} ${at.y}) scale(1.25)`}>
-      {/* lahan beton */}
       <rect x="-470" y="-215" width="940" height="290" rx="22" fill="#0b1220" fillOpacity="0.55" stroke={color} strokeOpacity="0.5" strokeWidth="3" strokeDasharray="18 10" />
-      {/* landasan pacu */}
       <rect x="-440" y="-35" width="880" height="70" rx="6" fill="#2a2f38" stroke="#000" strokeOpacity="0.5" strokeWidth="2" />
       <line x1="-410" y1="0" x2="410" y2="0" stroke="#e5e7eb" strokeWidth="3" strokeDasharray="30 22" opacity="0.8" />
       {[-1, 1].map((sd) => (
@@ -706,25 +704,15 @@ export const Airbase = ({ at, color, name, id }: { at: { x: number; y: number };
         <circle className="nw-flicker" cx="-440" cy="-38" r="4" /><circle className="nw-flicker" cx="440" cy="-38" r="4" />
         <circle className="nw-flicker" cx="-440" cy="38" r="4" /><circle className="nw-flicker" cx="440" cy="38" r="4" />
       </g>
-      {/* taxiway + apron */}
       <rect x="-260" y="-120" width="28" height="86" fill="#2a2f38" />
       <rect x="80" y="-120" width="28" height="86" fill="#2a2f38" />
       <rect x="-420" y="-125" width="560" height="14" fill="#2a2f38" />
-      {/* hangar */}
       <Extruded x={-420} y={-205} w={90} d={44} h={26} roof="#475569" stroke={color} />
       <Extruded x={-310} y={-205} w={90} d={44} h={26} roof="#475569" stroke={color} />
       <Extruded x={-200} y={-205} w={90} d={44} h={26} roof="#475569" stroke={color} />
-      {/* menara kontrol */}
       <Extruded x={150} y={-190} w={34} d={30} h={58} roof="#64748b" stroke={color} />
       <circle className="nw-flicker" cx="167" cy="-236" r="4" fill="#ef4444" />
-      {/* tangki bahan bakar */}
       {[230, 290, 350].map((cx) => <circle key={cx} cx={cx} cy="-165" r="22" fill="#334155" stroke={color} strokeWidth="2" />)}
-      {/* pesawat parkir */}
-      <g fill={color} opacity="0.85">
-        {[-370, -260, -150].map((px) => <path key={px} d={plane} transform={`translate(${px} -120) scale(0.9)`} />)}
-        <path d={plane} transform="translate(-80 -120) scale(0.9) rotate(0)" opacity="0.5" />
-      </g>
-      {/* kantong angin */}
       <line x1="420" y1="-120" x2="420" y2="-160" stroke="#cbd5e1" strokeWidth="2.4" />
       <polygon points="420,-160 452,-153 420,-146" fill="#f97316" stroke="#000" strokeWidth="1" />
       <text x="0" y="112" textAnchor="middle" fontSize="26" fontWeight="900" letterSpacing="3" fill={color} stroke="#000" strokeWidth="5" paintOrder="stroke" fontFamily="monospace">{name}</text>
@@ -765,7 +753,6 @@ const ResourceNode = ({ x, y, name, col }: { x: number; y: number; name: string;
 const BasesLayer = memo(function BasesLayer({ accent, simPhase, playerSide }: { accent: string; simPhase: SimPhase; playerSide: PlayerSide }) {
   const ownIsAtk = playerSide === 'attacker';
   const done = simPhase === 'done';
-  // Pemenang operasi = penyerang. Penyerang menguasai titik rebut, sisi bertahan kehilangan HQ.
   const owner: Owner = simPhase === 'clash' ? 'contested' : done ? (ownIsAtk ? 'own' : 'enemy') : 'neutral';
   const resCol = done ? (ownIsAtk ? accent : RED) : '#fbbf24';
   return (
@@ -776,13 +763,20 @@ const BasesLayer = memo(function BasesLayer({ accent, simPhase, playerSide }: { 
         name="HQ MUSUH" sub={ownIsAtk ? 'SYARAT MENANG: HANCURKAN PENYERANG' : 'SYARAT MENANG: REBUT HQ ANDA'} />
       <Airbase id="airbaseOwn" at={AIRBASE_OWN} color={accent} name="PANGKALAN UDARA ANDA" />
       <Airbase id="airbaseEnemy" at={AIRBASE_ENEMY} color={RED} name="PANGKALAN UDARA MUSUH" />
+      
+      {/* ── BARAK MILITER DISESUAIKAN DENGAN PANAH MERAH ── */}
+      {/* User: Naik 100px ke Atas (y: 180) */}
+      <MilitaryFacilities at={{ x: 1200, y: 180 }} color={accent} />
+      
+      {/* Musuh: Hutan dipindah, base tetap di tengah lapang */}
+      <MilitaryFacilities at={{ x: 5150, y: 1350 }} color={RED} />
+      
       {CAPTURE_POINTS.map((c) => <CapturePoint key={c.id} id={c.main ? 'objective' : 'capture'} x={c.x} y={c.y} name={c.name} main={c.main} owner={owner} accent={accent} />)}
       {RESOURCES.map((r) => <ResourceNode key={r.id} x={r.x} y={r.y} name={r.name} col={resCol} />)}
     </g>
   );
 });
 
-/* ═════════════════════════ LAYER UNIT & SIMULASI ═════════════════════════ */
 interface UnitsProps { accent: string; isSimulating: boolean; simPhase: SimPhase; own: PlacedUnit[]; enemy: PlacedUnit[]; playerSide: PlayerSide }
 
 const UnitsLayer = memo(function UnitsLayer({ accent, isSimulating, simPhase, own, enemy, playerSide }: UnitsProps) {
@@ -806,7 +800,6 @@ const UnitsLayer = memo(function UnitsLayer({ accent, isSimulating, simPhase, ow
 
   return (
     <g>
-      {/* panah serangan menuju Objektif Alpha */}
       {!done && (ownIsAtk ? own : enemy).length > 0 && (
         <path
           d={ownIsAtk ? 'M 1950,420 Q 2500,520 2850,930' : 'M 4450,1650 Q 3700,1500 3250,1080'}
@@ -817,14 +810,12 @@ const UnitsLayer = memo(function UnitsLayer({ accent, isSimulating, simPhase, ow
         />
       )}
 
-      {/* PASUKAN ANDA (kiri atas) */}
       <g className="nw-tz" data-terrain={ownIsAtk ? 'attacker' : 'defender'} style={fade(done && !ownIsAtk)}>
         <g style={slide(advOwn)}>{own.map((p, i) => (p.moves ? mk(p, i, false) : null))}</g>
         {own.map((p, i) => (p.moves ? null : mk(p, i, false)))}
         {own.length === 0 && <text x="1700" y="430" textAnchor="middle" fill={accent} fontSize="28" fontWeight="800" fontFamily="monospace">TIDAK ADA UNIT TERDATA</text>}
       </g>
 
-      {/* PASUKAN MUSUH (kanan bawah) */}
       <g className="nw-tz" data-terrain={ownIsAtk ? 'defender' : 'attacker'} style={fade(done && ownIsAtk)}>
         <g style={slide(advEnemy)}>{enemy.map((p, i) => (p.moves ? mk(p, i, true) : null))}</g>
         {enemy.map((p, i) => (p.moves ? null : mk(p, i, true)))}
@@ -854,9 +845,6 @@ const UnitsLayer = memo(function UnitsLayer({ accent, isSimulating, simPhase, ow
   );
 });
 
-/* ═════════════════════════ KABUT PANDANG (Fog of War) ═════════════════════════ */
-// Tanpa kantong gelap/arsir/"?": cukup peredupan lembut di area yang belum terpantau.
-// Area di sekitar unit & HQ Anda tampak jelas dengan tepi memudar halus.
 interface Src { x: number; y: number; r: number; moves: boolean }
 const FogLayer = memo(function FogLayer({ sources, isSimulating, ownMoves, active }: { sources: Src[]; isSimulating: boolean; ownMoves: boolean; active: boolean }) {
   const adv = isSimulating && ownMoves ? ADV_OWN : IDLE;
@@ -881,7 +869,6 @@ const FogLayer = memo(function FogLayer({ sources, isSimulating, ownMoves, activ
   );
 });
 
-/* ═════════════════════════ LAYER ATMOSFER ═════════════════════════ */
 const EffectsLayer = memo(function EffectsLayer({ terrainType }: { terrainType: TerrainType }) {
   return (
     <g pointerEvents="none">
@@ -906,7 +893,6 @@ const EffectsLayer = memo(function EffectsLayer({ terrainType }: { terrainType: 
   );
 });
 
-/* ═════════════════════════ KURSOR SEL (overlay DOM, tanpa garis grid) ═════════════════════════ */
 const Brackets = ({ c }: { c: string }) => (
   <>
     {['left-0 top-0 border-l-2 border-t-2', 'right-0 top-0 border-r-2 border-t-2', 'left-0 bottom-0 border-l-2 border-b-2', 'right-0 bottom-0 border-r-2 border-b-2'].map((p) => (
@@ -959,14 +945,12 @@ export const GridRulers = memo(function GridRulers({ vb, accent, hover, selected
   );
 });
 
-/* ═════════════════════════ KOMPONEN PETA ═════════════════════════ */
 export const TacticalMap = memo(function TacticalMap({
   accent, water, terrainType, isSimulating, simPhase, attackerUnits, defenderUnits, viewBox,
   playerSide = 'attacker', fogEnabled = true,
 }: MapProps) {
   const ownIsAtk = playerSide === 'attacker';
   const fogActive = fogEnabled && (simPhase === 'idle' || simPhase === 'advance');
-  // Pasukan user selalu di kiri atas, pasukan musuh di kanan bawah — apa pun perannya.
   const own = useMemo(() => layoutUnits(ownIsAtk ? attackerUnits : defenderUnits, true, ownIsAtk), [ownIsAtk, attackerUnits, defenderUnits]);
   const enemy = useMemo(() => layoutUnits(ownIsAtk ? defenderUnits : attackerUnits, false, !ownIsAtk), [ownIsAtk, attackerUnits, defenderUnits]);
   const sources = useMemo<Src[]>(
