@@ -61,6 +61,17 @@ const AIR_UNIT_KINDS: UnitKind[] = [
   "pesawatAngkut",
 ];
 
+const NAVAL_UNIT_KINDS: UnitKind[] = [
+  "kapalInduk",
+  "kapalIndukNuklir",
+  "destroyer",
+  "korvet",
+  "kapalSelamNuklir",
+  "kapalSelamReguler",
+  "kapalRanjau",
+  "kapalLogistik",
+];
+
 interface UnitMarkerProps {
   x: number;
   y: number;
@@ -83,35 +94,54 @@ export default function UnitMarker({
   disableEffects = false,
 }: UnitMarkerProps) {
   const UnitIcon = UNIT_ICONS[kind];
+  const isAirUnit = AIR_UNIT_KINDS.includes(kind);
+  const isNavalUnit = NAVAL_UNIT_KINDS.includes(kind);
+  const depthColor = `color-mix(in srgb, ${color} 48%, #06111b)`;
+  const motionDelay = [...kind].reduce((delay, character) => delay + character.charCodeAt(0), 0) % 19;
 
   return (
-    <g>
+    <g
+      className={`unit-marker${isAirUnit ? " unit-marker-air" : isNavalUnit ? " unit-marker-naval" : " unit-marker-ground"}`}
+      style={{ animationDelay: `${motionDelay * -0.17}s` }}
+    >
       <title>
         {[label, quantity !== undefined ? `Jumlah: ${quantity.toLocaleString("id-ID")}` : null]
           .filter(Boolean)
           .join(" | ")}
       </title>
-      {!disableEffects && AIR_UNIT_KINDS.includes(kind) && (
-        <ellipse
-          cx={x}
-          cy={y + 15}
-          rx="15"
-          ry="3"
-          fill="#000"
-          opacity="0.3"
-          filter="url(#nw-soft)"
-        />
-      )}
+      <ellipse
+        cx={x}
+        cy={y + (isAirUnit ? 15 : 13)}
+        rx={isAirUnit ? 15 : isNavalUnit ? 19 : 17}
+        ry={isAirUnit ? 3 : 3.5}
+        fill="#000"
+        opacity={isAirUnit ? "0.28" : "0.38"}
+        filter={disableEffects ? undefined : "url(#nw-soft)"}
+      />
       <svg
         x={x - 22}
         y={y - 16}
-        width="44"
-        height="30"
+        width="48"
+        height="32"
         viewBox="0 0 48 32"
-        color={color}
-        style={disableEffects ? undefined : { filter: `drop-shadow(0 0 4px ${color}99)` }}
+        overflow="visible"
       >
-        <UnitIcon color={color} />
+        <g transform="translate(0 2.2)" color={depthColor} opacity="0.95">
+          <UnitIcon color={depthColor} />
+        </g>
+        <g
+          color={color}
+          style={{
+            filter: disableEffects
+              ? "drop-shadow(0 1px 1px rgba(2, 6, 23, .65))"
+              : `drop-shadow(0 1px 1px rgba(2, 6, 23, .7)) drop-shadow(0 0 2px ${color}70)`,
+          }}
+        >
+          <UnitIcon color={color} />
+        </g>
+        <g stroke="#f8fafc" strokeOpacity="0.2" strokeWidth="0.45" strokeLinejoin="round" strokeLinecap="round">
+          <UnitIcon color={color} />
+        </g>
       </svg>
       {echelon && (
         <text

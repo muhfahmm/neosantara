@@ -376,6 +376,10 @@ const IDLE = 'translate(0px, 0px)';
 export const MAP_CSS = `
 .tm-tz{transition:filter .25s ease}
 .tm-tz:hover{filter:brightness(1.15) saturate(1.1)}
+.unit-marker{transform-box:fill-box;transform-origin:center}
+.unit-marker-air{animation:unit-air-hover 4.8s ease-in-out infinite}
+.unit-marker-naval{animation:unit-naval-rock 6.4s ease-in-out infinite}
+.unit-marker-ground{animation:unit-ground-idle 5.6s ease-in-out infinite}
 .tm-cloud{animation:tm-cloud 90s linear infinite;will-change:transform}
 .tm-fall{animation:tm-fall 9s linear infinite}
 .tm-dust{animation:tm-dust 14s linear infinite}
@@ -389,7 +393,10 @@ export const MAP_CSS = `
 @keyframes tm-tracer{to{stroke-dashoffset:-48}}
 @keyframes tm-glint{0%,100%{opacity:0}50%{opacity:.85}}
 @keyframes tm-spin{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){.tm-cloud,.tm-fall,.tm-dust,.tm-tracer,.tm-glint,.tm-spin,.tm-spin-slow{animation:none!important}}
+@keyframes unit-air-hover{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(-.7deg)}}
+@keyframes unit-naval-rock{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(2px) rotate(.45deg)}}
+@keyframes unit-ground-idle{0%,100%{transform:translateY(0)}50%{transform:translateY(1.5px)}}
+@media (prefers-reduced-motion:reduce){.tm-cloud,.tm-fall,.tm-dust,.tm-tracer,.tm-glint,.tm-spin,.tm-spin-slow,.unit-marker{animation:none!important}}
 `;
 
 export const Peak = ({ x, by, w, h, seed, accent, snowDepth }: { x: number; by: number; w: number; h: number; seed: number; accent: string; snowDepth: number }) => {
