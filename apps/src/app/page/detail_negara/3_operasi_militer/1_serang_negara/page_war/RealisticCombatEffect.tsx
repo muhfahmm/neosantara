@@ -122,7 +122,18 @@ export const WEAPON_PROFILES: Record<number, {
     isMissile: false,
     blastRadius: 40,
   },
+  // 5: Rudal Anti-Air Berpemandu (SAM / SPAAG / AAM Interceptor)
+  5: {
+    color: '#e879f9', // Ungu / magenta elektrik khusus misil pelacak udara
+    glowColor: '#c026d3',
+    coreColor: '#fdf4ff',
+    width: 6.5,
+    dash: '40 10', // Jejak misil pelacak yang panjang dan tajam
+    isMissile: true,
+    blastRadius: 46,
+  },
 };
+
 
 /**
  * Komponen Efek Tembakan Tempur Realistis (Realistic Combat Strike Overlay)

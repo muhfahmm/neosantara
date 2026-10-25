@@ -4,11 +4,45 @@ const LAND_SPEED: f64 = 360.0;
 const NAVAL_SPEED: f64 = 240.0;
 const AIR_SPEED: f64 = 720.0;
 
+#[inline(always)]
 fn speed_for(group: &str) -> f64 {
+    // Fast path: jika integer group code dikirimkan (0: darat, 1: udara, 2: laut)
     match group {
-        "laut" => NAVAL_SPEED,
-        "udara" => AIR_SPEED,
+        "1" | "udara" => AIR_SPEED,
+        "2" | "laut" => NAVAL_SPEED,
         _ => LAND_SPEED,
+    }
+}
+
+
+#[inline(always)]
+fn base_speed_for(group: &str, kind: &str) -> f64 {
+    match kind {
+        // Darat: Infanteri lambat, Tank & APC sedang-cepat, Artileri berat sangat lambat
+        "infanteri" => 220.0,
+        "tank" => 340.0,
+        "apcIfv" => 360.0,
+        "kendaraanTaktis" => 390.0,
+        "artileriBerat" | "peluncurRoket" => 170.0,
+        "pertahananUdaraMobile" => 280.0,
+
+        // Udara
+        "jetTempurSiluman" | "jetTempurInterceptor" => 900.0,
+        "pesawatPengebom" => 680.0,
+        "helikopterSerang" => 620.0,
+        "droneKamikaze" => 750.0,
+
+        // Laut
+        "destroyer" => 310.0,
+        "korvet" => 340.0,
+        "kapalSelamNuklir" => 260.0,
+        "kapalSelamReguler" => 220.0,
+
+        _ => match group {
+            "1" | "udara" => AIR_SPEED,
+            "2" | "laut" => NAVAL_SPEED,
+            _ => LAND_SPEED,
+        },
     }
 }
 
@@ -44,16 +78,19 @@ pub fn step_unit_movement(
     delta_ms: f64,
     speed: f64,
     group: &str,
+    kind: &str,
 ) -> Vec<f64> {
     let sx = finite_or_zero(start_x);
     let sy = finite_or_zero(start_y);
     let tx = finite_or_zero(target_x);
     let ty = finite_or_zero(target_y);
     let distance = (tx - sx).hypot(ty - sy);
+
+    let max_speed = base_speed_for(group, kind);
     let effective_speed = if speed.is_finite() && speed > 0.0 {
-        speed.min(speed_for(group))
+        speed.min(max_speed)
     } else {
-        speed_for(group)
+        max_speed
     };
     let duration_ms = distance / effective_speed * 1000.0;
     let elapsed =
@@ -82,6 +119,7 @@ pub fn step_unit_movement(
     ]
 }
 
+
 fn finite_or_zero(value: f64) -> f64 {
     if value.is_finite() {
         value
@@ -104,9 +142,9 @@ mod tests {
 
     #[test]
     fn air_units_travel_faster_than_ground_and_naval_units() {
-        let ground = step_unit_movement(0.0, 0.0, 360.0, 0.0, 0.0, 500.0, 360.0, "darat");
-        let naval = step_unit_movement(0.0, 0.0, 360.0, 0.0, 0.0, 500.0, 240.0, "laut");
-        let air = step_unit_movement(0.0, 0.0, 360.0, 0.0, 0.0, 500.0, 720.0, "udara");
+        let ground = step_unit_movement(0.0, 0.0, 360.0, 0.0, 0.0, 500.0, 360.0, "darat", "tank");
+        let naval = step_unit_movement(0.0, 0.0, 360.0, 0.0, 0.0, 500.0, 240.0, "laut", "destroyer");
+        let air = step_unit_movement(0.0, 0.0, 360.0, 0.0, 0.0, 500.0, 720.0, "udara", "jetTempurSiluman");
 
         assert!(air[0] > ground[0]);
         assert!(ground[0] > naval[0]);
@@ -114,8 +152,9 @@ mod tests {
 
     #[test]
     fn movement_finishes_at_the_requested_destination() {
-        let result = step_unit_movement(20.0, 30.0, 380.0, 30.0, 0.0, 5000.0, 360.0, "darat");
+        let result = step_unit_movement(20.0, 30.0, 380.0, 30.0, 0.0, 5000.0, 360.0, "darat", "tank");
 
         assert_eq!(result, vec![380.0, 30.0, 1000.0, 1.0]);
     }
 }
+

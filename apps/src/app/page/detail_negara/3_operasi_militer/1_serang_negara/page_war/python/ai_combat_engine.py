@@ -107,18 +107,62 @@ def score_target_priority(enemy: UnitState, user_unit: UnitState) -> float:
     return (10000.0 / (dist + 50.0)) * threat_multiplier
 
 
+# Daftar unit yang memiliki kapabilitas Anti-Air (SAM, SPAAG, Pencegat, Rudal AA Kapal)
+ANTI_AIR_KINDS = {
+    "pertahananUdaraMobile",  # SAM / SPAAG darat
+    "jetTempurInterceptor",   # Pesawat pencegat khusus duel udara
+    "jetTempurSiluman",       # Jet multirole siluman dengan AAM
+    "destroyer",              # Kapal perusak dengan rudal pertahanan udara
+    "korvet",                 # Kapal korvet dengan sistem rudal AA
+    "infanteri",              # Infanteri pembawa MANPADS garis depan
+}
+
+
+def can_attack_target(attacker: UnitState, target: UnitState) -> bool:
+    """
+    Mengecek apakah penyerang diizinkan menembak target berdasarkan domain matra (darat/laut/udara).
+    Jika target berada di udara (jet/helikopter/drone), penembak HARUS dari kategori Anti-Air atau sesama unit udara.
+    """
+    if target.group in ("darat", "laut"):
+        return True
+
+    if target.group == "udara":
+        return attacker.kind in ANTI_AIR_KINDS or attacker.group == "udara"
+
+    return False
+
+
+# State Morale & Sejarah Kuantitas Pasukan AI
+# Format: { unit_id: { "initial_qty": int, "morale": float } }
+AI_UNIT_MORALE: Dict[str, Dict[str, float]] = {}
+
+
+
 def decide_tactical_action(
     enemy_unit: UnitState,
     threats: List[UnitState],
     map_bounds: Dict[str, float]
 ) -> tuple[str, float, float]:
     """
-    Menentukan perilaku gerakan unit AI (Intersep/Menyerbu, Flanking memutar, atau Kiting/Menjauh jika artileri).
+    Menentukan perilaku gerakan unit AI (Intersep/Menyerbu, Flanking, Kiting, atau Routing/Retreat jika morale hancur).
     Secara proaktif memburu semua unit user termasuk yang baru dideploy dari hangar/barak/gudang.
     """
     if not threats:
         # Standby di posisi saat ini
         return "hold", enemy_unit.x, enemy_unit.y
+
+    # SISTEM MORALE & ROUTING (TACTICAL REALISM):
+    # Jika unit kehilangan >40% pasukan aslinya, morale anjlok. Jika morale < 25, unit panik dan retreat mundur ke markas.
+    morale_data = AI_UNIT_MORALE.setdefault(enemy_unit.id, {"initial_qty": float(enemy_unit.quantity), "morale": 100.0})
+    initial_qty = morale_data["initial_qty"]
+    if initial_qty > 0:
+        health_ratio = enemy_unit.quantity / initial_qty
+        morale_data["morale"] = max(0.0, min(100.0, health_ratio * 100.0))
+
+    if morale_data["morale"] < 25.0:
+        # Unit ROUTING: Mundur ke garis belakang pertahanan (x mendekati batas timur peta)
+        retreat_x = min(map_bounds.get("max_x", 6400.0) - 150.0, enemy_unit.x + 400.0)
+        return "kite", retreat_x, enemy_unit.y
 
     # Cari target user dengan skor ancaman/kedekatan tertinggi
     target = max(threats, key=lambda t: score_target_priority(enemy_unit, t))
@@ -137,12 +181,32 @@ def decide_tactical_action(
     effective_firing_range = my_range * 0.85
     min_safe_standoff = my_range * 0.35
 
+    # 0. Unit Udara (Air Combat Maneuver Doctrine):
+    # Pesawat tidak boleh diam/hover (kecuali helikopter). Jika target terlalu dekat atau pasca tembak,
+    # pesawat melakukan manuver fly-by / kite untuk berputar dan menyiapkan lintasan serang baru.
+    if enemy_unit.group == "udara" and enemy_unit.kind != "helikopterSerang":
+        if dist < 450.0:
+            # Fly-by: Melintas melewati target lalu berputar
+            angle = math.atan2(target.y - enemy_unit.y, target.x - enemy_unit.x)
+            flyby_x = target.x + math.cos(angle) * 800.0
+            flyby_y = target.y + math.sin(angle) * 800.0
+            return "kite", flyby_x, flyby_y
+        else:
+            # Intercept dari jarak jauh dengan manuver sweeping
+            angle = math.atan2(predicted_target_y - enemy_unit.y, predicted_target_x - enemy_unit.x)
+            advance_dist = max(500.0, dist - (my_range * 0.7))
+            tx = enemy_unit.x + math.cos(angle) * advance_dist
+            ty = enemy_unit.y + math.sin(angle) * advance_dist
+            return "intercept", tx, ty
+
     # 1. Artileri/MLRS/Pertahanan Udara: Menjaga jarak jauh aman (Standoff Artillery Doctrine)
     if enemy_unit.kind in ("artileriBerat", "peluncurRoket", "pertahananUdaraMobile"):
+
         if dist < min_safe_standoff:
             # Musuh terlalu dekat: mundur secara terukur ke perimeter aman
             retreat_x = min(map_bounds.get("max_x", 6400.0) - 150, enemy_unit.x + 180.0)
             return "kite", retreat_x, enemy_unit.y
+
         elif dist <= effective_firing_range:
             # Sudah dalam jangkauan tembak: BERHENTI & TEMBAK DARI JARAK JAUH
             return "hold", enemy_unit.x, enemy_unit.y
@@ -284,60 +348,119 @@ def compute_ai_war_cycle(
             attacks=[]
         )
 
-    # 1. Hitung Pergerakan Taktis untuk Semua Unit AI
-    for enemy in enemy_units:
-        action, tx, ty = decide_tactical_action(enemy, effective_movement_targets, bounds)
-        speed = SPEED_RATES.get(enemy.group, 360.0)
+    # ─────────────────────────────────────────────────────────────
+    # 1. LOGIKA VANGUARD & RESERVE (Mencegah AI Menyerbu Bersamaan)
+    # ─────────────────────────────────────────────────────────────
+    # Urutkan unit AI berdasarkan jarak terdekat ke sasaran
+    sorted_enemies = sorted(
+        enemy_units,
+        key=lambda e: min([distance(e.x, e.y, t.x, t.y) for t in effective_movement_targets] or [99999.0])
+    )
+
+    # Hanya 40% unit terdekat yang boleh maju menyerang (Vanguard), sisanya cadangan (Reserve)
+    max_vanguard = max(2, int(len(enemy_units) * 0.4))
+    vanguard_count = 0
+
+    for enemy in sorted_enemies:
+        is_vanguard = vanguard_count < max_vanguard
+
+        if is_vanguard:
+            # Barisan depan maju menyerang dan mengambil posisi (Kecepatan penuh 100%)
+            action, tx, ty = decide_tactical_action(enemy, effective_movement_targets, bounds)
+            speed_multiplier = 1.0
+            vanguard_count += 1
+        else:
+            # Barisan cadangan bertahan atau bergerak lambat di staging area (Kecepatan 40%)
+            action = "hold"
+            tx, ty = enemy.x, enemy.y
+            speed_multiplier = 0.4
+
+        base_speed = SPEED_RATES.get(enemy.group, 360.0)
+        final_speed = base_speed * speed_multiplier
+
         movements.append(MovementDecision(
             unit_id=enemy.id,
             action=action,
             target_x=round(tx, 1),
             target_y=round(ty, 1),
-            speed=speed
+            speed=round(final_speed, 1)
         ))
 
-    # 2. TARGET CLAIMING SYSTEM (Anti Overkill):
-    # Melacak berapa banyak penembak yang sudah mengklaim setiap target user.
-    # Setiap target maksimal diklaim oleh 2 penembak (kecuali artileri atau tidak ada pilihan lain).
+
+    # ─────────────────────────────────────────────────────────────
+    # 2. STRICT TARGET CLAIMING & FORWARD OBSERVER (Anti Overkill)
+    # ─────────────────────────────────────────────────────────────
     claimed_target_counts: Dict[str, int] = {u.id: 0 for u in visible_targets}
+    spotter_units = [e for e in enemy_units if e.kind in ("infanteri", "apcIfv", "kendaraanTaktis", "droneKamikaze", "helikopterSerang")]
+
+    # Ambil ID unit-unit yang bertindak sebagai vanguard (bergerak aktif)
+    active_vanguard_ids = {m.unit_id for m in movements if m.action != "hold"}
 
     for enemy in enemy_units:
+        # Hanya unit Vanguard yang aktif menyerang; barisan cadangan hold-fire untuk menghindari baku tembak prematur
+        if enemy.id not in active_vanguard_ids:
+            continue
+
+        is_artillery = enemy.kind in ("artileriBerat", "peluncurRoket")
         attack_range = ATTACK_RANGES.get(enemy.kind, 750.0)
+
+        # FILTERING: Hanya masukkan target yang BOLEH diserang oleh unit ini (Logika Anti-Air Domain)
         in_range_targets = [
             u for u in visible_targets
             if distance(enemy.x, enemy.y, u.x, u.y) <= attack_range
+            and can_attack_target(enemy, u)
         ]
 
-        # Toleransi jangkauan tembak untuk unit agresif
-        if not in_range_targets:
-            closest = min(visible_targets, key=lambda t: distance(enemy.x, enemy.y, t.x, t.y), default=None)
-            if closest and distance(enemy.x, enemy.y, closest.x, closest.y) <= attack_range * 1.25:
-                in_range_targets = [closest]
+        if is_artillery and in_range_targets:
+            # Forward observer requirement untuk artileri
+            spotted_targets = [
+                u for u in in_range_targets
+                if any(distance(sp.x, sp.y, u.x, u.y) <= 900.0 for sp in spotter_units) or distance(enemy.x, enemy.y, u.x, u.y) <= 600.0
+            ]
+            in_range_targets = spotted_targets
+
+        if not in_range_targets and not is_artillery:
+            valid_closest = [u for u in visible_targets if can_attack_target(enemy, u)]
+            if valid_closest:
+                closest = min(valid_closest, key=lambda t: distance(enemy.x, enemy.y, t.x, t.y))
+                if distance(enemy.x, enemy.y, closest.x, closest.y) <= attack_range * 1.25:
+                    in_range_targets = [closest]
 
         if in_range_targets:
-            # Urutkan target berdasarkan skor prioritas taktis tertinggi
             sorted_targets = sorted(
                 in_range_targets,
                 key=lambda t: score_target_priority(enemy, t),
                 reverse=True
             )
 
-            # Pilih target terbaik yang belum over-claimed (< 2 penembak)
+            # Strict Target Claiming: Batasi penembak per target (Artileri butuh tembakan salvo max 3, unit lain max 1)
             selected_target = None
             for t in sorted_targets:
-                if claimed_target_counts.get(t.id, 0) < 2 or enemy.kind in ("artileriBerat", "peluncurRoket"):
+                limit = 3 if enemy.kind in ("artileriBerat", "peluncurRoket") else 1
+                if claimed_target_counts.get(t.id, 0) < limit:
                     selected_target = t
                     break
-            
-            # Jika semua target sudah diklaim, tetap tembak target terdekat
+
+            # JIKA SEMUA TARGET SUDAH DIKLAIM PENUH: Tahan tembakan (Hold Fire)
             if not selected_target:
-                selected_target = sorted_targets[0]
+                continue
 
             claimed_target_counts[selected_target.id] = claimed_target_counts.get(selected_target.id, 0) + 1
 
-            weapon_type = 0 if enemy.kind in ("artileriBerat", "peluncurRoket") else (
-                1 if enemy.group == "udara" else 4
-            )
+            # Profil Senjata Realistis:
+            # 5: Rudal Anti-Air (SAM / Interceptor / Destroyer AA)
+            # 0: Artileri / MLRS
+            # 1: Rudal Serang Udara-ke-Darat
+            # 4: Kanon Darat / Senapan Mesin / Meriam Tank
+            if enemy.kind in ("pertahananUdaraMobile", "jetTempurInterceptor") or (selected_target.group == "udara" and enemy.kind in ANTI_AIR_KINDS):
+                weapon_type = 5
+            elif enemy.kind in ("artileriBerat", "peluncurRoket"):
+                weapon_type = 0
+            elif enemy.group == "udara":
+                weapon_type = 1
+            else:
+                weapon_type = 4
+
             base_dmg = math.sqrt(enemy.quantity) * 12.0
 
             # Hit chance realistis (menurun seiring bertambahnya jarak tembak)
@@ -360,7 +483,7 @@ def compute_ai_war_cycle(
             ))
 
     alert = 3 if attacks else (2 if any(m.action != "hold" for m in movements) else 1)
-    msg = f"AI mendistribusikan tembakan ke {len(claimed_target_counts)} sasaran terpilih tanpa tumpang tindih!"
+    msg = f"AI mengerahkan {vanguard_count} unit Vanguard. {len(attacks)} tembakan terdistribusi rapi!"
 
     return TacticalAIResponse(
         alert_level=alert,
@@ -368,4 +491,5 @@ def compute_ai_war_cycle(
         movements=movements,
         attacks=attacks
     )
+
 

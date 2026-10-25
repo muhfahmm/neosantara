@@ -40,9 +40,9 @@ def health_check():
 
 
 @app.post("/api/ai-war-cycle", response_model=TacticalAIResponse)
-def handle_ai_war_cycle(req: AIWarCycleRequest) -> TacticalAIResponse:
+async def handle_ai_war_cycle(req: AIWarCycleRequest) -> TacticalAIResponse:
     """
-    Endpoint pemrosesan pergerakan taktis dan keputusan tembakan unit AI.
+    Endpoint pemrosesan pergerakan taktis dan keputusan tembakan unit AI secara non-blocking asynchronous.
     """
     try:
         response = compute_ai_war_cycle(

@@ -31,8 +31,9 @@ interface RustViewportModule {
   ) => Float64Array;
   step_unit_movement: (
     startX: number, startY: number, targetX: number, targetY: number,
-    elapsedMs: number, deltaMs: number, speed: number, group: string,
+    elapsedMs: number, deltaMs: number, speed: number, group: string, kind?: string,
   ) => Float64Array;
+
   calculate_attack_radius: (strength: number, group: string, kind: string) => number;
   prepare_unit_attack?: (strength: number, group: string, kind: string) => Float64Array;
   is_target_in_attack_range: (

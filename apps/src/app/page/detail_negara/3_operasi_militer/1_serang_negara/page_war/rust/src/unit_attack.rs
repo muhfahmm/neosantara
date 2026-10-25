@@ -22,16 +22,16 @@ fn base_attack_range(group: &str, kind: &str) -> f64 {
 
 fn projectile_profile(group: &str, kind: &str) -> (f64, f64) {
     match kind {
+        // Rudal Anti-Air Berpemandu (SAM & Interceptor): Kecepatan sangat tinggi (3.500 px/s), Tipe 5
+        "pertahananUdaraMobile" | "jetTempurInterceptor" | "jetTempurSiluman" => (3_500.0, 5.0),
+        "destroyer" | "korvet" => (2_800.0, 5.0),
+
         "artileriBerat" | "peluncurRoket" => (1_350.0, 0.0),
         "pesawatPengebom"
-        | "jetTempurSiluman"
-        | "jetTempurInterceptor"
         | "helikopterSerang"
         | "droneKamikaze" => (2_400.0, 1.0),
         "kapalSelamNuklir" | "kapalSelamReguler" => (900.0, 2.0),
-        "kapalInduk" | "kapalIndukNuklir" | "destroyer" | "korvet" | "kapalRanjau" => {
-            (1_600.0, 3.0)
-        }
+        "kapalInduk" | "kapalIndukNuklir" | "kapalRanjau" => (1_600.0, 3.0),
         "pesawatPengintai" | "droneIntaiUav" | "pesawatAngkut" | "kapalLogistik" => (1_000.0, 4.0),
         _ => match group {
             "udara" => (2_000.0, 1.0),
@@ -40,6 +40,7 @@ fn projectile_profile(group: &str, kind: &str) -> (f64, f64) {
         },
     }
 }
+
 
 #[wasm_bindgen]
 pub fn calculate_attack_radius(strength: f64, group: &str, kind: &str) -> f64 {

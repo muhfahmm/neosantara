@@ -565,8 +565,13 @@ export default function LandWarMap({
             playerSide={playerSide}
             fogEnabled={false}
             commandMode={commandMode}
-            onFacilityClick={(facility, side) => setSelectedFacility({ facility, side })}
+            onFacilityClick={(facility, side) => {
+              // Hanya buka modal jika fasilitas tersebut milik pihak user ('left')
+              if (side !== 'left') return;
+              setSelectedFacility({ facility, side });
+            }}
             onUnitSelectionChange={(unit) => {
+
               setCommandUnit(unit);
               setIsUnitSelected(unit !== null);
               setCommandMode(null);

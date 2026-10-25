@@ -961,16 +961,18 @@ const BasesLayer = memo(function BasesLayer({ accent, simPhase, playerSide, onFa
       <Headquarters id={ownIsAtk ? 'hqDefender' : 'hqAttacker'} at={HQ_ENEMY} color={RED} fallen={done && ownIsAtk}
         name="HQ MUSUH" sub={ownIsAtk ? 'SYARAT MENANG: HANCURKAN PENYERANG' : 'SYARAT MENANG: REBUT HQ ANDA'} />
       <Airbase id="airbaseOwn" at={AIRBASE_OWN} color={accent} name="PANGKALAN UDARA ANDA" side="left" onFacilityClick={onFacilityClick} />
-      <Airbase id="airbaseEnemy" at={AIRBASE_ENEMY} color={RED} name="PANGKALAN UDARA MUSUH" side="right" onFacilityClick={onFacilityClick} />
+      {/* Pangkalan Udara Musuh: Hanya visual/intelijen, jangan buka modal pilihan unit jika ditekan */}
+      <Airbase id="airbaseEnemy" at={AIRBASE_ENEMY} color={RED} name="PANGKALAN UDARA MUSUH" side="right" />
       
       {/* ── BARAK MILITER DISESUAIKAN DENGAN PANAH MERAH ── */}
       {/* User: Naik 100px ke Atas (y: 180) */}
       <MilitaryFacilities at={{ x: 1200, y: 180 }} color={accent} side="left" onFacilityClick={onFacilityClick} />
       
-      {/* Musuh: Hutan dipindah, base tetap di tengah lapang */}
-      <MilitaryFacilities at={{ x: 5150, y: 1350 }} color={RED} side="right" onFacilityClick={onFacilityClick} />
+      {/* Musuh: Fasilitas militer musuh tidak bisa dibuka modalnya oleh user */}
+      <MilitaryFacilities at={{ x: 5150, y: 1350 }} color={RED} side="right" />
       
       {CAPTURE_POINTS.map((c) => <CapturePoint key={c.id} id={c.main ? 'objective' : 'capture'} x={c.x} y={c.y} name={c.name} main={c.main} owner={owner} accent={accent} />)}
+
       {RESOURCES.map((r) => <ResourceNode key={r.id} x={r.x} y={r.y} name={r.name} col={resCol} />)}
     </g>
   );
@@ -1301,12 +1303,26 @@ export const TacticalMap = memo(function TacticalMap({
     };
   }, []);
 
-  // PEMBERSIH MEMORI (Memory Leak Cleanup):
-  // Menghapus referensi posisi, velocity, dan frame animasi dari unit yang kuantitasnya 0 (hancur)
+  // PEMBERSIH MEMORI & ELEMEN VISUAL (Memory Leak & Dead Unit Cleanup):
+  // Menghapus referensi posisi, velocity, frame animasi, garis pergerakan (movePaths),
+  // dan movingUnitIds dari unit yang kuantitasnya 0 (hancur)
   useEffect(() => {
     const activeOwnIds = new Set(own.map((p) => unitId(p.unit, 'own')));
     const activeEnemyIds = new Set(enemy.map((p) => unitId(p.unit, 'enemy')));
     const allActiveIds = new Set([...activeOwnIds, ...activeEnemyIds]);
+
+    // Hapus garis lintasan (movePaths) dan status gerak jika unit sudah hancur
+    setMovePaths((current) => current.filter((path) => allActiveIds.has(path.id)));
+    setMovingUnitIds((current) => current.filter((id) => allActiveIds.has(id)));
+
+    // Jika unit yang dipilih hancur, batalkan seleksi
+    if (selectedUnitId && !allActiveIds.has(selectedUnitId)) {
+      setSelectedUnitId(null);
+      selectedUnitIdRef.current = null;
+      onUnitSelectionChange?.(null);
+      setAttackRadius(null);
+      onAttackRadiusChange?.(null);
+    }
 
     Object.keys(positionsRef.current).forEach((id) => {
       if (!allActiveIds.has(id)) {
@@ -1319,7 +1335,8 @@ export const TacticalMap = memo(function TacticalMap({
         }
       }
     });
-  }, [own, enemy]);
+  }, [own, enemy, selectedUnitId, onUnitSelectionChange, onAttackRadiusChange]);
+
 
   const selectUnit = (id: string) => {
     if (simPhase !== 'idle') return;
@@ -1403,7 +1420,9 @@ export const TacticalMap = memo(function TacticalMap({
           deltaMs,
           speed,
           group,
+          placedUnit.unit.kind,
         );
+
         elapsedMs = nextElapsed;
         const nextPosition = { x, y };
         positionsRef.current = { ...positionsRef.current, [id]: nextPosition };
@@ -1434,38 +1453,39 @@ export const TacticalMap = memo(function TacticalMap({
               setIncursionAlert((prev) => ({ ...prev, active: false }));
             }, 3000);
 
-            // Musuh mengeluarkan pasukan darat (infanteri, tank, dan APC) dengan posisi menyebar melingkar (Anti Overlap)
+            // Spawn QRF secara bertahap (Staggered Spawning dengan jeda 2000ms per unit)
             const qrfTypes = [
               { kind: 'infanteri' as const, group: 'darat' as const, label: 'QRF-INF', qty: aiResp.spawnInfantry, echelon: 'I' as const },
               { kind: 'tank' as const, group: 'darat' as const, label: 'QRF-MBT', qty: aiResp.spawnTank, echelon: 'II' as const },
               { kind: 'apcIfv' as const, group: 'darat' as const, label: 'QRF-APC', qty: aiResp.spawnApc, echelon: 'I' as const },
             ];
-            const newUnits: PlacedUnit[] = qrfTypes.map((q, idx) => {
+
+            qrfTypes.forEach((q, idx) => {
               const spawnAngle = (idx * (Math.PI * 2 / 3)) + Math.PI / 6;
-              const spawnRadius = 120;
-              return {
-                unit: {
-                  kind: q.kind,
-                  group: q.group,
-                  label: q.label,
-                  quantity: q.qty,
-                  echelon: q.echelon,
-                },
-                x: aiResp.spawnOrigin.x + Math.cos(spawnAngle) * spawnRadius,
-                y: aiResp.spawnOrigin.y + Math.sin(spawnAngle) * spawnRadius,
-              };
+              const spawnRadius = 160;
+
+              setTimeout(() => {
+                const newUnit: PlacedUnit = {
+                  unit: {
+                    kind: q.kind,
+                    group: q.group,
+                    label: q.label,
+                    quantity: q.qty,
+                    echelon: q.echelon,
+                  },
+                  x: aiResp.spawnOrigin.x + Math.cos(spawnAngle) * spawnRadius,
+                  y: aiResp.spawnOrigin.y + Math.sin(spawnAngle) * spawnRadius,
+                };
+
+
+                const uId = unitId(newUnit.unit, 'enemy');
+                setExtraEnemyUnits((prev) => [...prev, newUnit]);
+
+                positionsRef.current[uId] = { x: newUnit.x, y: newUnit.y };
+                setPositions({ ...positionsRef.current });
+              }, idx * 2000);
             });
 
-            setExtraEnemyUnits((prev) => [...prev, ...newUnits]);
-
-            // Set initial positions with exact unitId format
-            const initialPosMap: Record<string, UnitPosition> = {};
-            newUnits.forEach((u) => {
-              const uId = unitId(u.unit, 'enemy');
-              initialPosMap[uId] = { x: u.x, y: u.y };
-            });
-            positionsRef.current = { ...positionsRef.current, ...initialPosMap };
-            setPositions({ ...positionsRef.current });
 
             // Fungsi siklus tempur & pergerakan AI berkala (Autonomous AI Combat Loop)
             if (aiCombatIntervalRef.current) clearInterval(aiCombatIntervalRef.current);
@@ -1476,10 +1496,11 @@ export const TacticalMap = memo(function TacticalMap({
               isAiThinkingRef.current = true;
 
               try {
-                // Saring seluruh unit musuh (baik garnisun awal maupun QRF) yang masih hidup (quantity > 0)
-                const allEnemyCandidates = [...initialEnemyRef.current, ...newUnits, ...extraEnemyUnitsRef.current];
+                // Saring seluruh unit musuh (baik garnisun awal maupun QRF dinamis) yang masih hidup (quantity > 0)
+                const allEnemyCandidates = [...initialEnemyRef.current, ...extraEnemyUnitsRef.current];
                 const uniqueEnemyMap = new Map<string, PlacedUnit>();
                 allEnemyCandidates.forEach((u) => uniqueEnemyMap.set(unitId(u.unit, 'enemy'), u));
+
 
                 const currentEnemyUnitsState: WarUnitState[] = Array.from(uniqueEnemyMap.values())
                   .map((u) => {
@@ -1607,11 +1628,21 @@ export const TacticalMap = memo(function TacticalMap({
                     return;
                   }
 
-                  // FORMASI PINCERS RADIAL (Radial Spread & Angle-based Offset)
-                  // Mencegah penumpukan garis lurus dengan menghitung sudut relatif terhadap target
+                  // Cari jenis unit musuh untuk penyesuaian kecepatan
+                  const enemyUnitCandidate = uniqueEnemyMap.get(uId);
+                  const unitKind = enemyUnitCandidate?.unit.kind ?? 'tank';
+
+                  // 1. JITTER KECEPATAN: Beri variasi kecepatan ±10% agar unit tidak bergerak persis bersamaan
+                  const speedJitter = 0.9 + Math.random() * 0.2; // 0.9 s/d 1.1
+                  const jitteredSpeed = (mv.speed || 340) * speedJitter;
+
+                  // 2. ARRIVAL DISTANCE: Unit yang berbeda akan berhenti dengan jarak offset bertahap
+                  const arrivalOffset = 15 + (mvIdx * 12);
                   const angleToTarget = Math.atan2(mv.target_y - curPos.y, mv.target_x - curPos.x);
+
+                  // FORMASI PINCERS RADIAL DENGAN ARRIVAL OFFSET
                   const spreadAngle = angleToTarget + ((mvIdx - (pyDecision.movements.length - 1) / 2) * (Math.PI / 5));
-                  const radiusOffset = 80 + (mvIdx * 25);
+                  const radiusOffset = 80 + (mvIdx * 25) + arrivalOffset;
                   const rawTargetX = mv.target_x + Math.cos(spreadAngle) * radiusOffset;
                   const rawTargetY = mv.target_y + Math.sin(spreadAngle) * radiusOffset;
 
@@ -1623,7 +1654,7 @@ export const TacticalMap = memo(function TacticalMap({
                   // Hindari danau dan rintangan dengan waypoint steering
                   const waypoint = findClearWaypoint(curPos.x, curPos.y, safeTargetX, rawTargetY);
 
-                  const [tX, tY, qrfSpeed] = engine.prepare_unit_movement(
+                  const [tX, tY] = engine.prepare_unit_movement(
                     waypoint.x, waypoint.y, BASE_W, BASE_H, 'darat',
                   );
 
@@ -1642,7 +1673,7 @@ export const TacticalMap = memo(function TacticalMap({
                     const dt = Math.min(qrfNow - qrfLast, 64);
                     qrfLast = qrfNow;
                     const [curX, curY, nextEl, qrfDone] = engine.step_unit_movement(
-                      qrfStart.x, qrfStart.y, tX, tY, qrfElapsed, dt, qrfSpeed * 0.95, 'darat',
+                      qrfStart.x, qrfStart.y, tX, tY, qrfElapsed, dt, jitteredSpeed * 0.95, 'darat', unitKind,
                     );
                     qrfElapsed = nextEl;
                     positionsRef.current[uId] = { x: curX, y: curY };
@@ -1655,8 +1686,14 @@ export const TacticalMap = memo(function TacticalMap({
                       setPositions({ ...positionsRef.current });
                     }
                   };
-                  movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
+
+                  // STAGGERED MOVEMENT: Beri jeda 150ms * mvIdx agar unit tidak melangkah persis bersamaan
+                  setTimeout(() => {
+                    movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
+                  }, mvIdx * 150);
                 });
+
+
 
                 // 2. Tembakan AI ke pasukan user (dengan probabilitas akurasi hit chance & armor)
                 if (pyDecision.attacks.length > 0) {
@@ -1788,6 +1825,19 @@ export const TacticalMap = memo(function TacticalMap({
 
     // Jika target musuh sudah hancur (quantity <= 0), abaikan tembakan
     if (target) {
+      // DOKTRIN ANTI-AIR: Tank, infanteri non-AA, dan artileri darat tidak bisa menembak pesawat di udara
+      if (target.group === 'udara') {
+        const antiAirKinds = [
+          'pertahananUdaraMobile', 'jetTempurInterceptor', 'jetTempurSiluman',
+          'destroyer', 'korvet', 'infanteri'
+        ];
+        const isAttackerAA = antiAirKinds.includes(attacker.unit.kind) || attacker.unit.group === 'udara';
+        if (!isAttackerAA) {
+          // Batalkan tembakan karena unit darat biasa tidak memiliki radar/rudal anti-udara
+          return;
+        }
+      }
+
       const targetEnemyPlaced = enemy.find((p) => p.unit.kind === target.kind && p.unit.group === target.group);
       if (targetEnemyPlaced) {
         const enemyId = unitId(targetEnemyPlaced.unit, 'enemy');
@@ -1795,6 +1845,7 @@ export const TacticalMap = memo(function TacticalMap({
         if (currentEnemyQty <= 0) return;
       }
     }
+
 
     const fire = (engine: Awaited<ReturnType<typeof loadRustViewport>>) => {
       const { radius, projectileSpeed, weaponType } = prepareUnitAttack(
