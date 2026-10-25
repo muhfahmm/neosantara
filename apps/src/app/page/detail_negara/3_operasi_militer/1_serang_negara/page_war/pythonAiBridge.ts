@@ -11,7 +11,10 @@ export interface WarUnitState {
   quantity: number;
   x: number;
   y: number;
+  vx?: number;
+  vy?: number;
   is_enemy?: boolean;
+  is_visible?: boolean;
 }
 
 export interface MovementDecision {
@@ -29,6 +32,8 @@ export interface AttackDecision {
   target_y: number;
   weapon_type: number;
   damage_potential: number;
+  hit_chance: number; // 0.0 - 1.0 probabilitas kena sasaran realistis
+  penetration: number; // Faktor penembus armor
   in_range: boolean;
 }
 
@@ -281,6 +286,8 @@ function computeFallbackTacticalCycle(
         target_y: bestTarget.y,
         weapon_type: weaponType,
         damage_potential: Math.round(Math.sqrt(enemy.quantity) * 12),
+        hit_chance: 0.85,
+        penetration: enemy.kind === 'tank' ? 1.4 : (enemy.kind === 'artileriBerat' ? 1.6 : 0.9),
         in_range: true,
       });
     }

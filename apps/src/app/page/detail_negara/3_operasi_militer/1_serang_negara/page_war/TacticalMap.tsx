@@ -1213,6 +1213,7 @@ export const TacticalMap = memo(function TacticalMap({
   const movementFramesRef = useRef<Record<string, number>>({});
   const movementEngineRef = useRef<Awaited<ReturnType<typeof loadRustViewport>> | null>(null);
   const aiCombatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const previousPositionsRef = useRef<Record<string, { x: number; y: number; time: number }>>({});
   const [incursionAlert, setIncursionAlert] = useState<{ active: boolean; text: string; level: number }>({ active: false, text: '', level: 0 });
   const hasTriggeredIncursionRef = useRef(false);
 
@@ -1421,11 +1422,33 @@ export const TacticalMap = memo(function TacticalMap({
                 .filter((u) => u.quantity > 0);
 
               // Saring hanya unit user yang masih hidup (quantity > 0)
+              // Hitung velocity (vx, vy) berdasarkan perpindahan posisi per detik untuk prediksi lead-target
+              const nowTime = performance.now();
               const currentUserUnitsState: WarUnitState[] = baseOwnRef.current
                 .map((p) => {
                   const uId = unitId(p.unit, 'own');
                   const liveQty = unitQuantitiesRef.current[uId] ?? p.unit.quantity;
                   const pos = positionsRef.current[uId] ?? { x: p.x, y: p.y };
+                  
+                  const prev = previousPositionsRef.current[uId];
+                  let vx = 0;
+                  let vy = 0;
+                  if (prev && nowTime > prev.time) {
+                    const dtSec = (nowTime - prev.time) / 1000;
+                    if (dtSec > 0.05 && dtSec < 3.0) {
+                      vx = (pos.x - prev.x) / dtSec;
+                      vy = (pos.y - prev.y) / dtSec;
+                    }
+                  }
+                  previousPositionsRef.current[uId] = { x: pos.x, y: pos.y, time: nowTime };
+
+                  // Evaluasi Visibilitas (Fog of War): unit terlihat jika berada dalam radius deteksi radar/pasukan musuh
+                  const isVisible = !fogEnabled || currentEnemyUnitsState.some((enemy) => {
+                    const d = Math.hypot(enemy.x - pos.x, enemy.y - pos.y);
+                    const enemyVision = enemy.group === 'udara' ? 1400 : (enemy.kind === 'pertahananUdaraMobile' ? 1200 : 800);
+                    return d <= enemyVision;
+                  });
+
                   return {
                     id: uId,
                     kind: p.unit.kind,
@@ -1434,7 +1457,10 @@ export const TacticalMap = memo(function TacticalMap({
                     quantity: liveQty,
                     x: pos.x,
                     y: pos.y,
+                    vx,
+                    vy,
                     is_enemy: false,
+                    is_visible: isVisible,
                   };
                 })
                 .filter((u) => u.quantity > 0);
@@ -1449,17 +1475,17 @@ export const TacticalMap = memo(function TacticalMap({
               }
 
               // DOKTRIN PERTAHANAN WILAYAH:
-              // Pasukan reaksi AI hanya memburu dan menyerang unit user yang TELAH MENEROBOS / BERADA DI WILAYAH MUSUH.
-              // Jika penyusup sudah dihancurkan atau mundur ke wilayah user, pasukan AI TIDAK BOLEH masuk ke pertahanan user!
+              // Pasukan reaksi AI hanya memburu dan menyerang unit user yang TELAH MENEROBOS / BERADA DI WILAYAH MUSUH dan TERLIHAT (FoW).
               const intruderUserUnits = currentUserUnitsState.filter((u) => {
                 const engine = movementEngineRef.current;
-                if (!engine?.check_boundary_cross) return u.x > 3160;
-                return engine.check_boundary_cross(u.x, u.y, 'land', playerSide);
+                const hasCrossed = engine?.check_boundary_cross
+                  ? engine.check_boundary_cross(u.x, u.y, 'land', playerSide)
+                  : u.x > 3160;
+                return hasCrossed && (u.is_visible ?? true);
               });
 
               // Jika penyusup sudah habis/dihancurkan atau tidak ada lagi unit user di wilayah AI:
               if (intruderUserUnits.length === 0) {
-                // Pasukan AI bertahan di wilayah sendiri (kembali ke batas pertahanan markas), jangan pernah menyeberang ke user!
                 currentEnemyUnitsState.forEach((enemy) => {
                   if (movementFramesRef.current[enemy.id]) {
                     cancelAnimationFrame(movementFramesRef.current[enemy.id]);
@@ -1475,7 +1501,7 @@ export const TacticalMap = memo(function TacticalMap({
                   if (!engine) return;
 
                   // 1. Jalankan pergerakan unit musuh sesuai keputusan Python AI
-                  pyDecision.movements.forEach((mv) => {
+                  pyDecision.movements.forEach((mv, mvIdx) => {
                     const uId = mv.unit_id;
                     const liveEnemyQty = unitQuantitiesRef.current[uId] ?? 1;
                     if (liveEnemyQty <= 0) return; // Unit hancur tidak bergerak lagi
@@ -1492,11 +1518,13 @@ export const TacticalMap = memo(function TacticalMap({
                       return;
                     }
 
-                    // BATAS TERITORIAL: Unit AI dilarang keras menyeberang masuk ke batas pertahanan user!
-                    // Untuk attacker: wilayah user di barat (x < 3160), wilayah AI di timur (x >= 3160).
+                    // BATAS TERITORIAL & SEPARASI FORMASI (Anti Clumping / Stacking)
+                    // Beri stagger offset antar unit agar koordinat tujuan tidak bertumpuk
+                    const staggerOffset = (mvIdx - (pyDecision.movements.length - 1) / 2) * 55;
+                    const rawTargetX = mv.target_x + staggerOffset;
                     const safeTargetX = playerSide === 'attacker'
-                      ? Math.max(3220, mv.target_x)
-                      : Math.min(3100, mv.target_x);
+                      ? Math.max(3220, rawTargetX)
+                      : Math.min(3100, rawTargetX);
 
                     const [tX, tY, qrfSpeed] = engine.prepare_unit_movement(
                       safeTargetX, mv.target_y, BASE_W, BASE_H, 'darat',
@@ -1530,19 +1558,22 @@ export const TacticalMap = memo(function TacticalMap({
                     movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
                   });
 
-                  // 2. Tembakan AI ke pasukan user (hanya jika penembak dan target masih memiliki pasukan)
+                  // 2. Tembakan AI ke pasukan user (dengan probabilitas akurasi hit chance & armor)
                   if (pyDecision.attacks.length > 0) {
                     pyDecision.attacks.forEach((atk, attackIdx) => {
                       const shooterQty = unitQuantitiesRef.current[atk.attacker_id] ?? 1;
                       const targetQty = unitQuantitiesRef.current[atk.target_unit_id] ?? 1;
-                      if (shooterQty <= 0 || targetQty <= 0) return; // Unit yang hancur tidak bisa menembak / ditembak
+                      if (shooterQty <= 0 || targetQty <= 0) return;
 
                       const shooterPos = positionsRef.current[atk.attacker_id] ?? { x: aiResp.spawnOrigin.x, y: aiResp.spawnOrigin.y };
                       setTimeout(() => {
-                        // Cek ulang saat peluru melesat
                         const liveTargetQty = unitQuantitiesRef.current[atk.target_unit_id] ?? 1;
                         const liveShooterQty = unitQuantitiesRef.current[atk.attacker_id] ?? 1;
                         if (liveTargetQty <= 0 || liveShooterQty <= 0) return;
+
+                        // Simulasi Hit/Miss Realistis
+                        const hitRoll = Math.random();
+                        const isHit = hitRoll <= (atk.hit_chance ?? 0.85);
 
                         const strikeId = `ai-strike-${atk.attacker_id}-${Date.now()}-${Math.random()}`;
                         const newStrike: UnitAttackEffect = {
@@ -1558,16 +1589,22 @@ export const TacticalMap = memo(function TacticalMap({
                           setAttackStrikes((prev) => prev.filter((s) => s.id !== strikeId));
                         }, 650);
 
-                        // Pengurangan kuantitas pasukan User akibat tembakan AI
+                        // Jika tembakan meleset (miss), proyektil meledak tanpa mengurangi pasukan user
+                        if (!isHit) return;
+
+                        // Pengurangan kuantitas pasukan User akibat tembakan AI (memperhitungkan armor penetration)
                         const targetUserPlaced = baseOwnRef.current.find((p) => unitId(p.unit, 'own') === atk.target_unit_id);
                         if (targetUserPlaced) {
                           const currentQty = unitQuantitiesRef.current[atk.target_unit_id] ?? targetUserPlaced.unit.quantity;
                           if (currentQty <= 0) return;
 
-                          // Damage proporsional terhadap ukuran pasukan penembak
+                          // Armor factor berdasarkan tipe target
+                          const targetArmor = targetUserPlaced.unit.kind === 'tank' ? 1.6 : (targetUserPlaced.unit.kind === 'apcIfv' ? 1.2 : 0.9);
+                          const netPenetration = Math.max(0.4, (atk.penetration ?? 1.0) / targetArmor);
+
                           const damageLoss = Math.max(
                             1,
-                            Math.round(Math.min(currentQty, Math.max(12, currentQty * 0.12 + atk.damage_potential * 15)))
+                            Math.round(Math.min(currentQty, Math.max(8, (currentQty * 0.08 + atk.damage_potential * 12) * netPenetration)))
                           );
                           const remaining = Math.max(0, currentQty - damageLoss);
 
@@ -1599,8 +1636,8 @@ export const TacticalMap = memo(function TacticalMap({
             // Jalankan siklus pertama seketika
             executeAiCombatCycle();
 
-            // Jalankan siklus tempur AI secara kontinu selama pasukan masih hidup
-            aiCombatIntervalRef.current = setInterval(executeAiCombatCycle, 1500);
+            // Jalankan siklus tempur AI secara teratur
+            aiCombatIntervalRef.current = setInterval(executeAiCombatCycle, 1000);
           }
         }
 

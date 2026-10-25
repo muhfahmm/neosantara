@@ -45,7 +45,10 @@ class UnitState(BaseModel):
     quantity: int
     x: float
     y: float
+    vx: float = 0.0
+    vy: float = 0.0
     is_enemy: bool = False
+    is_visible: bool = True
 
 
 class MovementDecision(BaseModel):
@@ -63,6 +66,8 @@ class AttackDecision(BaseModel):
     target_y: float
     weapon_type: int
     damage_potential: float
+    hit_chance: float = 0.85
+    penetration: float = 1.0
     in_range: bool
 
 
@@ -117,6 +122,12 @@ def decide_tactical_action(
 
     # Cari target user dengan skor ancaman/kedekatan tertinggi
     target = max(threats, key=lambda t: score_target_priority(enemy_unit, t))
+
+    # PREDIKSI PERGERAKAN (LEAD TARGET INTERCEPTION):
+    # Proyeksikan posisi target 1.0 detik ke depan berdasarkan vektor kecepatannya (vx, vy)
+    predicted_target_x = target.x + (target.vx * 1.0)
+    predicted_target_y = target.y + (target.vy * 1.0)
+
     dist = distance(enemy_unit.x, enemy_unit.y, target.x, target.y)
     my_range = ATTACK_RANGES.get(enemy_unit.kind, 750.0)
 
@@ -136,8 +147,8 @@ def decide_tactical_action(
             # Sudah dalam jangkauan tembak: BERHENTI & TEMBAK DARI JARAK JAUH
             return "hold", enemy_unit.x, enemy_unit.y
         else:
-            # Di luar jangkauan: maju secara perlahan hingga masuk jangkauan tembak luar (75% range)
-            angle = math.atan2(target.y - enemy_unit.y, target.x - enemy_unit.x)
+            # Di luar jangkauan: maju secara perlahan ke arah prediksi pergerakan musuh
+            angle = math.atan2(predicted_target_y - enemy_unit.y, predicted_target_x - enemy_unit.x)
             advance_dist = dist - (my_range * 0.75)
             tx = enemy_unit.x + math.cos(angle) * max(0.0, advance_dist)
             ty = enemy_unit.y + math.sin(angle) * max(0.0, advance_dist)
@@ -156,8 +167,8 @@ def decide_tactical_action(
             # Jarak ideal pertempuran kavaleri/baja: BERHENTI, BIDIK & TEMBAK!
             return "hold", enemy_unit.x, enemy_unit.y
         else:
-            # Di luar jangkauan: maju berhati-hati dengan formasi sayap terpisah
-            angle = math.atan2(target.y - enemy_unit.y, target.x - enemy_unit.x)
+            # Di luar jangkauan: maju berhati-hati dengan formasi sayap terpisah menuju arah prediksi
+            angle = math.atan2(predicted_target_y - enemy_unit.y, predicted_target_x - enemy_unit.x)
             battle_dist = 550.0 if enemy_unit.kind == "tank" else 450.0
             advance_dist = max(0.0, dist - battle_dist)
             lateral_angle = angle + (math.pi / 2.8 if enemy_unit.kind == "tank" else -math.pi / 2.8)
@@ -172,20 +183,18 @@ def decide_tactical_action(
             return "hold", enemy_unit.x, enemy_unit.y
         else:
             offset_y = 120.0 if enemy_unit.y < target.y else -120.0
-            angle = math.atan2(target.y - enemy_unit.y, target.x - enemy_unit.x)
+            angle = math.atan2(predicted_target_y - enemy_unit.y, predicted_target_x - enemy_unit.x)
             advance_dist = dist - (my_range * 0.6)
             flank_x = enemy_unit.x + math.cos(angle) * max(0.0, advance_dist)
             flank_y = enemy_unit.y + math.sin(angle) * max(0.0, advance_dist) + offset_y
             return "flank", flank_x, flank_y
 
     # 4. Infanteri & Unit Lainnya: Mengambil Posisi Perlindungan (Cover & Fire)
-    # Infanteri bertahan di parit/posisi tembak saat target sudah masuk jangkauan senapan
     if dist <= effective_firing_range:
-        # Sudah dalam jarak tembak: mengambil posisi tembak, TIDAK maju bunuh diri!
         return "hold", enemy_unit.x, enemy_unit.y
 
-    # Maju secara disiplin sampai jarak aman 450px
-    angle = math.atan2(target.y - enemy_unit.y, target.x - enemy_unit.x)
+    # Maju secara disiplin menuju arah prediksi target
+    angle = math.atan2(predicted_target_y - enemy_unit.y, predicted_target_x - enemy_unit.x)
     advance_dist = dist - (my_range * 0.6)
     tx = enemy_unit.x + math.cos(angle) * max(0.0, advance_dist)
     ty = enemy_unit.y + math.sin(angle) * max(0.0, advance_dist)
@@ -210,17 +219,27 @@ def compute_ai_war_cycle(
     movements: List[MovementDecision] = []
     attacks: List[AttackDecision] = []
 
-    if not user_units:
+    # AI hanya dapat menargetkan unit user yang terlihat (Fog of War)
+    visible_targets = [u for u in user_units if u.is_visible]
+    if not visible_targets:
         return TacticalAIResponse(
             alert_level=0,
-            tactical_message="Tidak terdeteksi unit lawan. Posisi siaga aman.",
-            movements=[],
+            tactical_message="Target tidak terlihat dalam pantauan radar pertahanan.",
+            movements=[
+                MovementDecision(
+                    unit_id=enemy.id,
+                    action="hold",
+                    target_x=enemy.x,
+                    target_y=enemy.y,
+                    speed=SPEED_RATES.get(enemy.group, 360.0)
+                ) for enemy in enemy_units
+            ],
             attacks=[]
         )
 
     for enemy in enemy_units:
         # 1. Tentukan Gerakan Manuver Taktis AI
-        action, tx, ty = decide_tactical_action(enemy, user_units, bounds)
+        action, tx, ty = decide_tactical_action(enemy, visible_targets, bounds)
         speed = SPEED_RATES.get(enemy.group, 360.0)
         movements.append(MovementDecision(
             unit_id=enemy.id,
@@ -233,13 +252,13 @@ def compute_ai_war_cycle(
         # 2. Tentukan Tembakan Serangan AI
         attack_range = ATTACK_RANGES.get(enemy.kind, 750.0)
         in_range_targets = [
-            u for u in user_units
+            u for u in visible_targets
             if distance(enemy.x, enemy.y, u.x, u.y) <= attack_range
         ]
 
         # Jika target belum persis di dalam range dasar, beri toleransi intersepsi proaktif
         if not in_range_targets:
-            closest = min(user_units, key=lambda t: distance(enemy.x, enemy.y, t.x, t.y))
+            closest = min(visible_targets, key=lambda t: distance(enemy.x, enemy.y, t.x, t.y))
             if distance(enemy.x, enemy.y, closest.x, closest.y) <= attack_range * 1.25:
                 in_range_targets = [closest]
 
@@ -249,14 +268,24 @@ def compute_ai_war_cycle(
             weapon_type = 0 if enemy.kind in ("artileriBerat", "peluncurRoket") else (
                 1 if enemy.group == "udara" else 4
             )
-            dmg = math.sqrt(enemy.quantity) * 12.0
+            base_dmg = math.sqrt(enemy.quantity) * 12.0
+
+            # Hit chance realistis (menurun seiring bertambahnya jarak tembak)
+            target_dist = distance(enemy.x, enemy.y, best_target.x, best_target.y)
+            accuracy = max(0.60, min(0.95, 1.0 - (target_dist / (attack_range * 2.0))))
+            penetration = 1.4 if enemy.kind in ("tank", "artileriBerat") else (
+                0.8 if enemy.kind == "infanteri" else 1.0
+            )
+
             attacks.append(AttackDecision(
                 attacker_id=enemy.id,
                 target_unit_id=best_target.id,
                 target_x=round(best_target.x, 1),
                 target_y=round(best_target.y, 1),
                 weapon_type=weapon_type,
-                damage_potential=round(dmg, 1),
+                damage_potential=round(base_dmg, 1),
+                hit_chance=round(accuracy, 2),
+                penetration=penetration,
                 in_range=True
             ))
 
