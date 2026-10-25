@@ -350,7 +350,53 @@ const DISTRICT_DEFS = [
 ];
 const DISTRICTS = DISTRICT_DEFS.map((d) => ({ ...d, buildings: makeCity(d.x0, d.y0, d.x1, d.y1, d.seed, 80, cityBlock) }));
 
+export function isLineBlocked(x1: number, y1: number, x2: number, y2: number): boolean {
+  const steps = 12;
+  for (let i = 1; i < steps; i++) {
+    const t = i / steps;
+    const px = x1 + (x2 - x1) * t;
+    const py = y1 + (y2 - y1) * t;
+    // Blok jika garis memotong danau
+    if (inLake(px, py, 40)) return true;
+    // Blok jika garis memotong formasi puncak gunung (PEAKS)
+    for (const [pkx, pky, pkw, pkh] of PEAKS) {
+      if (Math.hypot((px - pkx) / (pkw * 0.4), (py - pky) / (pkh * 0.4)) < 1.0) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+export function findClearWaypoint(startX: number, startY: number, targetX: number, targetY: number): { x: number; y: number } {
+  // Cek apakah lintasan langsung terhalang danau
+  let blockedLake: (typeof LAKES)[0] | null = null;
+  const steps = 10;
+  for (let i = 1; i <= steps; i++) {
+    const t = i / steps;
+    const px = startX + (targetX - startX) * t;
+    const py = startY + (targetY - startY) * t;
+    const lk = LAKES.find((l) => ((px - l.cx) / (l.rx + 60)) ** 2 + ((py - l.cy) / (l.ry + 60)) ** 2 < 1);
+    if (lk) {
+      blockedLake = lk;
+      break;
+    }
+  }
+
+  if (blockedLake) {
+    // Cari jalur memutar terdekat (atas atau bawah danau)
+    const northDetourY = blockedLake.cy - blockedLake.ry - 140;
+    const southDetourY = blockedLake.cy + blockedLake.ry + 140;
+    const detourY = Math.abs(startY - northDetourY) < Math.abs(startY - southDetourY) ? northDetourY : southDetourY;
+    // Return waypoint pengarah di sekitar tepi danau
+    return { x: blockedLake.cx, y: detourY };
+  }
+
+  return { x: targetX, y: targetY };
+}
+
 export interface PlacedUnit { unit: WarUnit; x: number; y: number }
+
 export function layoutUnits(units: WarUnit[], own: boolean): PlacedUnit[] {
   const out: PlacedUnit[] = [];
   const dir = own ? 1 : -1;
@@ -1213,7 +1259,9 @@ export const TacticalMap = memo(function TacticalMap({
   const movementFramesRef = useRef<Record<string, number>>({});
   const movementEngineRef = useRef<Awaited<ReturnType<typeof loadRustViewport>> | null>(null);
   const aiCombatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isAiThinkingRef = useRef<boolean>(false);
   const previousPositionsRef = useRef<Record<string, { x: number; y: number; time: number }>>({});
+  const velocitiesRef = useRef<Record<string, { vx: number; vy: number }>>({});
   const [incursionAlert, setIncursionAlert] = useState<{ active: boolean; text: string; level: number }>({ active: false, text: '', level: 0 });
   const hasTriggeredIncursionRef = useRef(false);
 
@@ -1346,42 +1394,27 @@ export const TacticalMap = memo(function TacticalMap({
               setIncursionAlert((prev) => ({ ...prev, active: false }));
             }, 3000);
 
-            // Musuh mengeluarkan pasukan darat (infanteri, tank, dan APC) dari markas/barak
-            const newUnits: PlacedUnit[] = [
-              {
-                unit: {
-                  kind: 'infanteri',
-                  group: 'darat',
-                  label: 'QRF-INF',
-                  quantity: aiResp.spawnInfantry,
-                  echelon: 'I',
-                },
-                x: aiResp.spawnOrigin.x,
-                y: aiResp.spawnOrigin.y,
-              },
-              {
-                unit: {
-                  kind: 'tank',
-                  group: 'darat',
-                  label: 'QRF-MBT',
-                  quantity: aiResp.spawnTank,
-                  echelon: 'II',
-                },
-                x: aiResp.spawnOrigin.x + 140,
-                y: aiResp.spawnOrigin.y + 40,
-              },
-              {
-                unit: {
-                  kind: 'apcIfv',
-                  group: 'darat',
-                  label: 'QRF-APC',
-                  quantity: aiResp.spawnApc,
-                  echelon: 'I',
-                },
-                x: aiResp.spawnOrigin.x + 80,
-                y: aiResp.spawnOrigin.y + 160,
-              },
+            // Musuh mengeluarkan pasukan darat (infanteri, tank, dan APC) dengan posisi menyebar melingkar (Anti Overlap)
+            const qrfTypes = [
+              { kind: 'infanteri' as const, group: 'darat' as const, label: 'QRF-INF', qty: aiResp.spawnInfantry, echelon: 'I' as const },
+              { kind: 'tank' as const, group: 'darat' as const, label: 'QRF-MBT', qty: aiResp.spawnTank, echelon: 'II' as const },
+              { kind: 'apcIfv' as const, group: 'darat' as const, label: 'QRF-APC', qty: aiResp.spawnApc, echelon: 'I' as const },
             ];
+            const newUnits: PlacedUnit[] = qrfTypes.map((q, idx) => {
+              const spawnAngle = (idx * (Math.PI * 2 / 3)) + Math.PI / 6;
+              const spawnRadius = 120;
+              return {
+                unit: {
+                  kind: q.kind,
+                  group: q.group,
+                  label: q.label,
+                  quantity: q.qty,
+                  echelon: q.echelon,
+                },
+                x: aiResp.spawnOrigin.x + Math.cos(spawnAngle) * spawnRadius,
+                y: aiResp.spawnOrigin.y + Math.sin(spawnAngle) * spawnRadius,
+              };
+            });
 
             setExtraEnemyUnits((prev) => [...prev, ...newUnits]);
 
@@ -1397,241 +1430,277 @@ export const TacticalMap = memo(function TacticalMap({
             // Fungsi siklus tempur & pergerakan AI berkala (Autonomous AI Combat Loop)
             if (aiCombatIntervalRef.current) clearInterval(aiCombatIntervalRef.current);
 
-            const executeAiCombatCycle = () => {
-              // Saring seluruh unit musuh (baik garnisun awal maupun QRF) yang masih hidup (quantity > 0)
-              const allEnemyCandidates = [...initialEnemyRef.current, ...newUnits, ...extraEnemyUnitsRef.current];
-              const uniqueEnemyMap = new Map<string, PlacedUnit>();
-              allEnemyCandidates.forEach((u) => uniqueEnemyMap.set(unitId(u.unit, 'enemy'), u));
+            const executeAiCombatCycle = async () => {
+              // Guard agar tidak ada request Python AI yang tumpang tindih (Race Condition Guard)
+              if (isAiThinkingRef.current) return;
+              isAiThinkingRef.current = true;
 
-              const currentEnemyUnitsState: WarUnitState[] = Array.from(uniqueEnemyMap.values())
-                .map((u) => {
-                  const uId = unitId(u.unit, 'enemy');
-                  const liveQty = unitQuantitiesRef.current[uId] ?? u.unit.quantity;
-                  const pos = positionsRef.current[uId] ?? { x: u.x, y: u.y };
-                  return {
-                    id: uId,
-                    kind: u.unit.kind,
-                    group: u.unit.group,
-                    label: u.unit.label,
-                    quantity: liveQty,
-                    x: pos.x,
-                    y: pos.y,
-                    is_enemy: true,
-                  };
-                })
-                .filter((u) => u.quantity > 0);
+              try {
+                // Saring seluruh unit musuh (baik garnisun awal maupun QRF) yang masih hidup (quantity > 0)
+                const allEnemyCandidates = [...initialEnemyRef.current, ...newUnits, ...extraEnemyUnitsRef.current];
+                const uniqueEnemyMap = new Map<string, PlacedUnit>();
+                allEnemyCandidates.forEach((u) => uniqueEnemyMap.set(unitId(u.unit, 'enemy'), u));
 
-              // Saring hanya unit user yang masih hidup (quantity > 0)
-              // Hitung velocity (vx, vy) berdasarkan perpindahan posisi per detik untuk prediksi lead-target
-              const nowTime = performance.now();
-              const currentUserUnitsState: WarUnitState[] = baseOwnRef.current
-                .map((p) => {
-                  const uId = unitId(p.unit, 'own');
-                  const liveQty = unitQuantitiesRef.current[uId] ?? p.unit.quantity;
-                  const pos = positionsRef.current[uId] ?? { x: p.x, y: p.y };
-                  
-                  const prev = previousPositionsRef.current[uId];
-                  let vx = 0;
-                  let vy = 0;
-                  if (prev && nowTime > prev.time) {
-                    const dtSec = (nowTime - prev.time) / 1000;
-                    if (dtSec > 0.05 && dtSec < 3.0) {
-                      vx = (pos.x - prev.x) / dtSec;
-                      vy = (pos.y - prev.y) / dtSec;
-                    }
-                  }
-                  previousPositionsRef.current[uId] = { x: pos.x, y: pos.y, time: nowTime };
+                const currentEnemyUnitsState: WarUnitState[] = Array.from(uniqueEnemyMap.values())
+                  .map((u) => {
+                    const uId = unitId(u.unit, 'enemy');
+                    const liveQty = unitQuantitiesRef.current[uId] ?? u.unit.quantity;
+                    const pos = positionsRef.current[uId] ?? { x: u.x, y: u.y };
+                    return {
+                      id: uId,
+                      kind: u.unit.kind,
+                      group: u.unit.group,
+                      label: u.unit.label,
+                      quantity: liveQty,
+                      x: pos.x,
+                      y: pos.y,
+                      is_enemy: true,
+                    };
+                  })
+                  .filter((u) => u.quantity > 0);
 
-                  // Evaluasi Visibilitas (Fog of War): unit terlihat jika berada dalam radius deteksi radar/pasukan musuh
-                  const isVisible = !fogEnabled || currentEnemyUnitsState.some((enemy) => {
-                    const d = Math.hypot(enemy.x - pos.x, enemy.y - pos.y);
-                    const enemyVision = enemy.group === 'udara' ? 1400 : (enemy.kind === 'pertahananUdaraMobile' ? 1200 : 800);
-                    return d <= enemyVision;
-                  });
+                // Saring hanya unit user yang masih hidup (quantity > 0)
+                // Hitung velocity (vx, vy) dengan Exponential Moving Average (EMA) & clamping
+                const nowTime = performance.now();
+                const currentUserUnitsState: WarUnitState[] = baseOwnRef.current
+                  .map((p) => {
+                    const uId = unitId(p.unit, 'own');
+                    const liveQty = unitQuantitiesRef.current[uId] ?? p.unit.quantity;
+                    const pos = positionsRef.current[uId] ?? { x: p.x, y: p.y };
 
-                  return {
-                    id: uId,
-                    kind: p.unit.kind,
-                    group: p.unit.group,
-                    label: p.unit.label,
-                    quantity: liveQty,
-                    x: pos.x,
-                    y: pos.y,
-                    vx,
-                    vy,
-                    is_enemy: false,
-                    is_visible: isVisible,
-                  };
-                })
-                .filter((u) => u.quantity > 0);
-
-              // Jika seluruh pasukan user atau seluruh pasukan musuh sudah hancur, hentikan serangan!
-              if (currentUserUnitsState.length === 0 || currentEnemyUnitsState.length === 0) {
-                if (aiCombatIntervalRef.current) {
-                  clearInterval(aiCombatIntervalRef.current);
-                  aiCombatIntervalRef.current = null;
-                }
-                return;
-              }
-
-              // DOKTRIN PERTAHANAN WILAYAH:
-              // Pasukan reaksi AI hanya memburu dan menyerang unit user yang TELAH MENEROBOS / BERADA DI WILAYAH MUSUH dan TERLIHAT (FoW).
-              const intruderUserUnits = currentUserUnitsState.filter((u) => {
-                const engine = movementEngineRef.current;
-                const hasCrossed = engine?.check_boundary_cross
-                  ? engine.check_boundary_cross(u.x, u.y, 'land', playerSide)
-                  : u.x > 3160;
-                return hasCrossed && (u.is_visible ?? true);
-              });
-
-              // Jika penyusup sudah habis/dihancurkan atau tidak ada lagi unit user di wilayah AI:
-              if (intruderUserUnits.length === 0) {
-                currentEnemyUnitsState.forEach((enemy) => {
-                  if (movementFramesRef.current[enemy.id]) {
-                    cancelAnimationFrame(movementFramesRef.current[enemy.id]);
-                    delete movementFramesRef.current[enemy.id];
-                  }
-                });
-                return;
-              }
-
-              void requestPythonAIWarCycle(currentEnemyUnitsState, intruderUserUnits, { max_x: BASE_W, max_y: BASE_H })
-                .then((pyDecision) => {
-                  const engine = movementEngineRef.current;
-                  if (!engine) return;
-
-                  // 1. Jalankan pergerakan unit musuh sesuai keputusan Python AI
-                  pyDecision.movements.forEach((mv, mvIdx) => {
-                    const uId = mv.unit_id;
-                    const liveEnemyQty = unitQuantitiesRef.current[uId] ?? 1;
-                    if (liveEnemyQty <= 0) return; // Unit hancur tidak bergerak lagi
-
-                    const curPos = positionsRef.current[uId];
-                    if (!curPos) return;
-
-                    // Jika AI memerintahkan 'hold' (berhenti membidik & menembak), jangan lanjutkan gerak
-                    if (mv.action === 'hold') {
-                      if (movementFramesRef.current[uId]) {
-                        cancelAnimationFrame(movementFramesRef.current[uId]);
-                        delete movementFramesRef.current[uId];
+                    const prev = previousPositionsRef.current[uId];
+                    let smoothedVx = 0;
+                    let smoothedVy = 0;
+                    if (prev && nowTime > prev.time) {
+                      const dtSec = (nowTime - prev.time) / 1000;
+                      if (dtSec > 0.04 && dtSec < 3.0) {
+                        const rawVx = (pos.x - prev.x) / dtSec;
+                        const rawVy = (pos.y - prev.y) / dtSec;
+                        const oldVel = velocitiesRef.current[uId] ?? { vx: 0, vy: 0 };
+                        // EMA Smoothing: 70% data lama, 30% data baru
+                        smoothedVx = (oldVel.vx * 0.7) + (rawVx * 0.3);
+                        smoothedVy = (oldVel.vy * 0.7) + (rawVy * 0.3);
+                        // Clamping agar tidak melesat liar saat frame drop
+                        smoothedVx = Math.max(-400, Math.min(400, smoothedVx));
+                        smoothedVy = Math.max(-400, Math.min(400, smoothedVy));
+                        velocitiesRef.current[uId] = { vx: smoothedVx, vy: smoothedVy };
                       }
-                      return;
                     }
+                    previousPositionsRef.current[uId] = { x: pos.x, y: pos.y, time: nowTime };
 
-                    // BATAS TERITORIAL & SEPARASI FORMASI (Anti Clumping / Stacking)
-                    // Beri stagger offset antar unit agar koordinat tujuan tidak bertumpuk
-                    const staggerOffset = (mvIdx - (pyDecision.movements.length - 1) / 2) * 55;
-                    const rawTargetX = mv.target_x + staggerOffset;
-                    const safeTargetX = playerSide === 'attacker'
-                      ? Math.max(3220, rawTargetX)
-                      : Math.min(3100, rawTargetX);
+                    // Evaluasi Visibilitas (Fog of War & Line of Sight):
+                    // Unit terlihat jika dalam radius sensor dan garis pandang tidak terhalang gunung/pegunungan (isLineBlocked)
+                    const isVisible = !fogEnabled || currentEnemyUnitsState.some((enemy) => {
+                      const d = Math.hypot(enemy.x - pos.x, enemy.y - pos.y);
+                      const enemyVision = enemy.group === 'udara' ? 1400 : (enemy.kind === 'pertahananUdaraMobile' ? 1200 : 800);
+                      if (d > enemyVision) return false;
+                      // Unit udara bisa melihat tembus rintangan darat; unit darat dicek LoS
+                      if (enemy.group === 'udara') return true;
+                      return !isLineBlocked(enemy.x, enemy.y, pos.x, pos.y);
+                    });
 
-                    const [tX, tY, qrfSpeed] = engine.prepare_unit_movement(
-                      safeTargetX, mv.target_y, BASE_W, BASE_H, 'darat',
-                    );
+                    return {
+                      id: uId,
+                      kind: p.unit.kind,
+                      group: p.unit.group,
+                      label: p.unit.label,
+                      quantity: liveQty,
+                      x: pos.x,
+                      y: pos.y,
+                      vx: smoothedVx,
+                      vy: smoothedVy,
+                      is_enemy: false,
+                      is_visible: isVisible,
+                    };
+                  })
+                  .filter((u) => u.quantity > 0);
 
-                    // Batalkan animasi gerak lama jika ada
+                // Jika seluruh pasukan user atau seluruh pasukan musuh sudah hancur, hentikan serangan!
+                if (currentUserUnitsState.length === 0 || currentEnemyUnitsState.length === 0) {
+                  if (aiCombatIntervalRef.current) {
+                    clearInterval(aiCombatIntervalRef.current);
+                    aiCombatIntervalRef.current = null;
+                  }
+                  return;
+                }
+
+                // DOKTRIN PERTAHANAN WILAYAH:
+                // Pasukan reaksi AI hanya memburu dan menyerang unit user yang TELAH MENEROBOS / BERADA DI WILAYAH MUSUH dan TERLIHAT (FoW & LoS).
+                const intruderUserUnits = currentUserUnitsState.filter((u) => {
+                  const engine = movementEngineRef.current;
+                  const hasCrossed = engine?.check_boundary_cross
+                    ? engine.check_boundary_cross(u.x, u.y, 'land', playerSide)
+                    : u.x > 3160;
+                  return hasCrossed && (u.is_visible ?? true);
+                });
+
+                // Jika penyusup sudah habis/dihancurkan atau tidak ada lagi unit user di wilayah AI:
+                if (intruderUserUnits.length === 0) {
+                  currentEnemyUnitsState.forEach((enemy) => {
+                    if (movementFramesRef.current[enemy.id]) {
+                      cancelAnimationFrame(movementFramesRef.current[enemy.id]);
+                      delete movementFramesRef.current[enemy.id];
+                    }
+                  });
+                  return;
+                }
+
+                const pyDecision = await requestPythonAIWarCycle(currentEnemyUnitsState, intruderUserUnits, { max_x: BASE_W, max_y: BASE_H });
+                const engine = movementEngineRef.current;
+                if (!engine) return;
+
+                // 1. Jalankan pergerakan unit musuh sesuai keputusan Python AI
+                pyDecision.movements.forEach((mv, mvIdx) => {
+                  const uId = mv.unit_id;
+                  const liveEnemyQty = unitQuantitiesRef.current[uId] ?? 1;
+                  if (liveEnemyQty <= 0) return; // Unit hancur tidak bergerak lagi
+
+                  const curPos = positionsRef.current[uId];
+                  if (!curPos) return;
+
+                  // Jika AI memerintahkan 'hold' (berhenti membidik & menembak), jangan lanjutkan gerak
+                  if (mv.action === 'hold') {
                     if (movementFramesRef.current[uId]) {
                       cancelAnimationFrame(movementFramesRef.current[uId]);
+                      delete movementFramesRef.current[uId];
+                    }
+                    return;
+                  }
+
+                  // FORMASI PINCERS RADIAL (Radial Spread & Angle-based Offset)
+                  // Mencegah penumpukan garis lurus dengan menghitung sudut relatif terhadap target
+                  const angleToTarget = Math.atan2(mv.target_y - curPos.y, mv.target_x - curPos.x);
+                  const spreadAngle = angleToTarget + ((mvIdx - (pyDecision.movements.length - 1) / 2) * (Math.PI / 5));
+                  const radiusOffset = 80 + (mvIdx * 25);
+                  const rawTargetX = mv.target_x + Math.cos(spreadAngle) * radiusOffset;
+                  const rawTargetY = mv.target_y + Math.sin(spreadAngle) * radiusOffset;
+
+                  // Pertahankan batas teritorial
+                  const safeTargetX = playerSide === 'attacker'
+                    ? Math.max(3220, rawTargetX)
+                    : Math.min(3100, rawTargetX);
+
+                  // Hindari danau dan rintangan dengan waypoint steering
+                  const waypoint = findClearWaypoint(curPos.x, curPos.y, safeTargetX, rawTargetY);
+
+                  const [tX, tY, qrfSpeed] = engine.prepare_unit_movement(
+                    waypoint.x, waypoint.y, BASE_W, BASE_H, 'darat',
+                  );
+
+                  // Batalkan animasi gerak lama jika ada
+                  if (movementFramesRef.current[uId]) {
+                    cancelAnimationFrame(movementFramesRef.current[uId]);
+                  }
+
+                  const qrfStart = { x: curPos.x, y: curPos.y };
+                  let qrfElapsed = 0;
+                  let qrfLast = performance.now();
+
+                  // Optimalisasi State Storm: Posisi per-frame HANYA disimpan di positionsRef (tanpa re-render React),
+                  // dan setPositions baru dipanggil setelah unit tiba di tujuan akhir.
+                  const animateQrf = (qrfNow: number) => {
+                    const dt = Math.min(qrfNow - qrfLast, 64);
+                    qrfLast = qrfNow;
+                    const [curX, curY, nextEl, qrfDone] = engine.step_unit_movement(
+                      qrfStart.x, qrfStart.y, tX, tY, qrfElapsed, dt, qrfSpeed * 0.95, 'darat',
+                    );
+                    qrfElapsed = nextEl;
+                    positionsRef.current[uId] = { x: curX, y: curY };
+
+                    if (qrfDone < 0.5) {
+                      movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
+                    } else {
+                      delete movementFramesRef.current[uId];
+                      // Sinkronisasi state React sekali saja saat unit tiba di target
+                      setPositions({ ...positionsRef.current });
+                    }
+                  };
+                  movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
+                });
+
+                // 2. Tembakan AI ke pasukan user (dengan probabilitas akurasi hit chance & armor)
+                if (pyDecision.attacks.length > 0) {
+                  pyDecision.attacks.forEach((atk, attackIdx) => {
+                    const shooterQty = unitQuantitiesRef.current[atk.attacker_id] ?? 1;
+                    const targetQty = unitQuantitiesRef.current[atk.target_unit_id] ?? 1;
+                    if (shooterQty <= 0 || targetQty <= 0) return;
+
+                    const shooterPos = positionsRef.current[atk.attacker_id] ?? { x: aiResp.spawnOrigin.x, y: aiResp.spawnOrigin.y };
+
+                    // Line of sight check sebelum menembak (tembakan darat terhalang bukit/gunung)
+                    if (isLineBlocked(shooterPos.x, shooterPos.y, atk.target_x, atk.target_y)) {
+                      return; // Garis tembak terhalang gunung/danau
                     }
 
-                    const qrfStart = { x: curPos.x, y: curPos.y };
-                    let qrfElapsed = 0;
-                    let qrfLast = performance.now();
+                    setTimeout(() => {
+                      const liveTargetQty = unitQuantitiesRef.current[atk.target_unit_id] ?? 1;
+                      const liveShooterQty = unitQuantitiesRef.current[atk.attacker_id] ?? 1;
+                      if (liveTargetQty <= 0 || liveShooterQty <= 0) return;
 
-                    const animateQrf = (qrfNow: number) => {
-                      const dt = Math.min(qrfNow - qrfLast, 64);
-                      qrfLast = qrfNow;
-                      const [curX, curY, nextEl, qrfDone] = engine.step_unit_movement(
-                        qrfStart.x, qrfStart.y, tX, tY, qrfElapsed, dt, qrfSpeed * 0.95, 'darat',
-                      );
-                      qrfElapsed = nextEl;
-                      positionsRef.current[uId] = { x: curX, y: curY };
-                      setPositions({ ...positionsRef.current });
+                      // Simulasi Hit/Miss Realistis
+                      const hitRoll = Math.random();
+                      const isHit = hitRoll <= (atk.hit_chance ?? 0.85);
 
-                      if (qrfDone < 0.5) {
-                        movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
-                      } else {
-                        delete movementFramesRef.current[uId];
-                      }
-                    };
-                    movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
-                  });
+                      const strikeId = `ai-strike-${atk.attacker_id}-${Date.now()}-${Math.random()}`;
+                      const newStrike: UnitAttackEffect = {
+                        id: strikeId,
+                        start: shooterPos,
+                        target: { x: atk.target_x, y: atk.target_y },
+                        weaponType: atk.weapon_type,
+                        travelMs: 650,
+                      };
 
-                  // 2. Tembakan AI ke pasukan user (dengan probabilitas akurasi hit chance & armor)
-                  if (pyDecision.attacks.length > 0) {
-                    pyDecision.attacks.forEach((atk, attackIdx) => {
-                      const shooterQty = unitQuantitiesRef.current[atk.attacker_id] ?? 1;
-                      const targetQty = unitQuantitiesRef.current[atk.target_unit_id] ?? 1;
-                      if (shooterQty <= 0 || targetQty <= 0) return;
-
-                      const shooterPos = positionsRef.current[atk.attacker_id] ?? { x: aiResp.spawnOrigin.x, y: aiResp.spawnOrigin.y };
+                      setAttackStrikes((prev) => [...prev, newStrike]);
                       setTimeout(() => {
-                        const liveTargetQty = unitQuantitiesRef.current[atk.target_unit_id] ?? 1;
-                        const liveShooterQty = unitQuantitiesRef.current[atk.attacker_id] ?? 1;
-                        if (liveTargetQty <= 0 || liveShooterQty <= 0) return;
+                        setAttackStrikes((prev) => prev.filter((s) => s.id !== strikeId));
+                      }, 650);
 
-                        // Simulasi Hit/Miss Realistis
-                        const hitRoll = Math.random();
-                        const isHit = hitRoll <= (atk.hit_chance ?? 0.85);
+                      // Jika tembakan meleset (miss), proyektil meledak tanpa mengurangi pasukan user
+                      if (!isHit) return;
 
-                        const strikeId = `ai-strike-${atk.attacker_id}-${Date.now()}-${Math.random()}`;
-                        const newStrike: UnitAttackEffect = {
-                          id: strikeId,
-                          start: shooterPos,
-                          target: { x: atk.target_x, y: atk.target_y },
-                          weaponType: atk.weapon_type,
-                          travelMs: 650,
-                        };
+                      // Pengurangan kuantitas pasukan User akibat tembakan AI (memperhitungkan armor penetration)
+                      const targetUserPlaced = baseOwnRef.current.find((p) => unitId(p.unit, 'own') === atk.target_unit_id);
+                      if (targetUserPlaced) {
+                        const currentQty = unitQuantitiesRef.current[atk.target_unit_id] ?? targetUserPlaced.unit.quantity;
+                        if (currentQty <= 0) return;
 
-                        setAttackStrikes((prev) => [...prev, newStrike]);
-                        setTimeout(() => {
-                          setAttackStrikes((prev) => prev.filter((s) => s.id !== strikeId));
-                        }, 650);
+                        // Armor factor berdasarkan tipe target
+                        const targetArmor = targetUserPlaced.unit.kind === 'tank' ? 1.6 : (targetUserPlaced.unit.kind === 'apcIfv' ? 1.2 : 0.9);
+                        const netPenetration = Math.max(0.4, (atk.penetration ?? 1.0) / targetArmor);
 
-                        // Jika tembakan meleset (miss), proyektil meledak tanpa mengurangi pasukan user
-                        if (!isHit) return;
+                        const damageLoss = Math.max(
+                          1,
+                          Math.round(Math.min(currentQty, Math.max(8, (currentQty * 0.08 + atk.damage_potential * 12) * netPenetration)))
+                        );
+                        const remaining = Math.max(0, currentQty - damageLoss);
 
-                        // Pengurangan kuantitas pasukan User akibat tembakan AI (memperhitungkan armor penetration)
-                        const targetUserPlaced = baseOwnRef.current.find((p) => unitId(p.unit, 'own') === atk.target_unit_id);
-                        if (targetUserPlaced) {
-                          const currentQty = unitQuantitiesRef.current[atk.target_unit_id] ?? targetUserPlaced.unit.quantity;
-                          if (currentQty <= 0) return;
+                        unitQuantitiesRef.current[atk.target_unit_id] = remaining;
+                        setUnitQuantities((prev) => ({
+                          ...prev,
+                          [atk.target_unit_id]: remaining,
+                        }));
 
-                          // Armor factor berdasarkan tipe target
-                          const targetArmor = targetUserPlaced.unit.kind === 'tank' ? 1.6 : (targetUserPlaced.unit.kind === 'apcIfv' ? 1.2 : 0.9);
-                          const netPenetration = Math.max(0.4, (atk.penetration ?? 1.0) / targetArmor);
-
-                          const damageLoss = Math.max(
-                            1,
-                            Math.round(Math.min(currentQty, Math.max(8, (currentQty * 0.08 + atk.damage_potential * 12) * netPenetration)))
-                          );
-                          const remaining = Math.max(0, currentQty - damageLoss);
-
-                          unitQuantitiesRef.current[atk.target_unit_id] = remaining;
-                          setUnitQuantities((prev) => ({
-                            ...prev,
-                            [atk.target_unit_id]: remaining,
-                          }));
-
-                          setLossEvents((prev) => [
-                            ...prev,
-                            {
-                              id: `loss-user-${Date.now()}-${Math.random()}`,
-                              side: 'user',
-                              unitLabel: targetUserPlaced.unit.label,
-                              lostAmount: damageLoss,
-                              remainingAmount: remaining,
-                              attackerLabel: 'Pasukan Musuh (QRF)',
-                              timestamp: Date.now(),
-                            },
-                          ]);
-                        }
-                      }, attackIdx * 250);
-                    });
-                  }
-                });
+                        setLossEvents((prev) => [
+                          ...prev,
+                          {
+                            id: `loss-user-${Date.now()}-${Math.random()}`,
+                            side: 'user',
+                            unitLabel: targetUserPlaced.unit.label,
+                            lostAmount: damageLoss,
+                            remainingAmount: remaining,
+                            attackerLabel: 'Pasukan Musuh (QRF)',
+                            timestamp: Date.now(),
+                          },
+                        ]);
+                      }
+                    }, attackIdx * 250);
+                  });
+                }
+              } finally {
+                isAiThinkingRef.current = false;
+              }
             };
+
 
             // Jalankan siklus pertama seketika
             executeAiCombatCycle();
@@ -1696,6 +1765,10 @@ export const TacticalMap = memo(function TacticalMap({
       );
       setAttackRadius(radius);
       const origin = positionsRef.current[selectedUnitId] ?? { x: attacker.x, y: attacker.y };
+      // Pengecekan Line of Sight (LoS): Serangan darat terhalang jika ada gunung/rintangan tinggi
+      if (attacker.unit.group === 'darat' && isLineBlocked(origin.x, origin.y, targetPosition.x, targetPosition.y)) {
+        return;
+      }
       const inRange = engine.is_target_in_attack_range(
         origin.x, origin.y, targetPosition.x, targetPosition.y, radius,
       );
