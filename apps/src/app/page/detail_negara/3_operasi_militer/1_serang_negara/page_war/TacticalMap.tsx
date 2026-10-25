@@ -4,6 +4,7 @@ import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import UnitMarker from './units/unitMarker';
 import { formatUnitQuantity, type WarUnit } from './units/warUnitComposition';
 import type { FacilitySide, UnitFacility } from './UnitSelectionModal';
+import { loadRustViewport } from './warMapViewport';
 
 /* ═════════════════════════ TIPE & KONSTANTA (dipakai juga oleh PageWar) ═════════════════════════ */
 export type TerrainType = 'default' | 'desert' | 'snow' | 'jungle' | 'urban';
@@ -59,6 +60,7 @@ export interface MapProps {
   playerSide?: PlayerSide;
   fogEnabled?: boolean;
   onFacilityClick?: (facility: UnitFacility, side: FacilitySide) => void;
+  onUnitSelectionChange?: (selected: boolean) => void;
 }
 
 /* ═════════════════════════ PALET PER MEDAN ═════════════════════════ */
@@ -872,32 +874,106 @@ const BasesLayer = memo(function BasesLayer({ accent, simPhase, playerSide, onFa
   );
 });
 
-interface UnitsProps { accent: string; simPhase: SimPhase; own: PlacedUnit[]; enemy: PlacedUnit[]; playerSide: PlayerSide }
+type UnitPosition = { x: number; y: number };
+type UnitMovePath = { id: string; start: UnitPosition; target: UnitPosition };
 
-const UnitsLayer = memo(function UnitsLayer({ accent, simPhase, own, enemy, playerSide }: UnitsProps) {
-  const mk = (p: PlacedUnit, i: number, hostile: boolean) => (
-    <g key={`${hostile ? 'e' : 'o'}-${p.unit.group}-${p.unit.kind}-${i}`} transform={`scale(${UK})`}>
-      <UnitMarker
-        x={p.x / UK} y={p.y / UK} kind={p.unit.kind}
-        color={hostile ? RED : accent}
-        quantity={p.unit.quantity}
-        echelon={p.unit.echelon}
-        label={`${p.unit.label} ${formatUnitQuantity(p.unit.quantity)}`}
-      />
-    </g>
-  );
+const unitId = (unit: WarUnit, side: 'own' | 'enemy') =>
+  `${side}:${unit.group}:${unit.kind}:${unit.echelon ?? 'base'}`;
+
+interface UnitsProps {
+  accent: string;
+  simPhase: SimPhase;
+  own: PlacedUnit[];
+  enemy: PlacedUnit[];
+  playerSide: PlayerSide;
+  positions: Record<string, UnitPosition>;
+  selectedUnitId: string | null;
+  movingUnitIds: string[];
+  movePaths: UnitMovePath[];
+  onSelectUnit: (id: string) => void;
+}
+
+const UnitsLayer = memo(function UnitsLayer({
+  accent, simPhase, own, enemy, playerSide, positions, selectedUnitId, movingUnitIds, movePaths, onSelectUnit,
+}: UnitsProps) {
+  const renderUnit = (placed: PlacedUnit, index: number, hostile: boolean) => {
+    const side = hostile ? 'enemy' : 'own';
+    const id = unitId(placed.unit, side);
+    const position = positions[id] ?? { x: placed.x, y: placed.y };
+    const selected = !hostile && selectedUnitId === id;
+    const moving = movingUnitIds.includes(id);
+    const color = hostile ? RED : accent;
+
+    return (
+      <g
+        key={`${id}-${index}`}
+        data-unit-id={hostile ? undefined : id}
+        role={hostile ? undefined : 'button'}
+        aria-label={hostile ? undefined : `Pilih ${placed.unit.label} ${formatUnitQuantity(placed.unit.quantity)}`}
+        aria-pressed={hostile ? undefined : selected}
+        tabIndex={hostile ? undefined : 0}
+        style={hostile ? undefined : { cursor: selected ? 'crosshair' : 'grab' }}
+        onPointerDown={hostile ? undefined : (event) => {
+          event.stopPropagation();
+        }}
+        onClick={hostile ? undefined : (event) => {
+          event.stopPropagation();
+          onSelectUnit(id);
+        }}
+        onKeyDown={hostile ? undefined : (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onSelectUnit(id);
+          }
+        }}
+        transform={`scale(${UK})`}
+      >
+        {(selected || moving) && (
+          <circle
+            cx={position.x / UK}
+            cy={position.y / UK}
+            r={24}
+            fill={color}
+            fillOpacity={selected ? 0.2 : 0.12}
+            stroke={color}
+            strokeWidth={2}
+            strokeDasharray={moving ? '5 4' : undefined}
+          />
+        )}
+        <UnitMarker
+          x={position.x / UK} y={position.y / UK} kind={placed.unit.kind}
+          color={color}
+          quantity={placed.unit.quantity}
+          echelon={placed.unit.echelon}
+          label={`${placed.unit.label} ${formatUnitQuantity(placed.unit.quantity)}`}
+        />
+      </g>
+    );
+  };
   const ownIsAtk = playerSide === 'attacker';
   const done = simPhase === 'done';
   const fade = (on: boolean): React.CSSProperties => ({ transition: 'opacity .8s, filter .8s', opacity: on ? 0.45 : 1, filter: on ? 'grayscale(1) brightness(.7)' : 'none' });
 
   return (
     <g>
+      {movePaths.map((movePath) => (
+        <path
+          key={movePath.id}
+          d={`M ${movePath.start.x} ${movePath.start.y} L ${movePath.target.x} ${movePath.target.y}`}
+          fill="none"
+          stroke={accent}
+          strokeWidth="5"
+          strokeDasharray="14 12"
+          opacity="0.75"
+          pointerEvents="none"
+        />
+      ))}
       <g className="nw-tz" data-terrain={ownIsAtk ? 'attacker' : 'defender'} style={fade(done && !ownIsAtk)}>
-        {own.map((p, i) => mk(p, i, false))}
+        {own.map((placed, index) => renderUnit(placed, index, false))}
       </g>
 
       <g className="nw-tz" data-terrain={ownIsAtk ? 'defender' : 'attacker'} style={fade(done && ownIsAtk)}>
-        {enemy.map((p, i) => mk(p, i, true))}
+        {enemy.map((placed, index) => renderUnit(placed, index, true))}
       </g>
 
       {simPhase === 'clash' && (
@@ -1016,12 +1092,123 @@ export const GridRulers = memo(function GridRulers({ vb, accent, hover, selected
 
 export const TacticalMap = memo(function TacticalMap({
   accent, water, terrainType, simPhase, attackerUnits, defenderUnits, viewBox,
-  svgRef, playerSide = 'attacker', fogEnabled = true, onFacilityClick,
+  svgRef, playerSide = 'attacker', fogEnabled = true, onFacilityClick, onUnitSelectionChange,
 }: MapProps) {
   const ownIsAtk = playerSide === 'attacker';
   const fogActive = fogEnabled && simPhase === 'idle';
   const own = useMemo(() => layoutUnits(ownIsAtk ? attackerUnits : defenderUnits, true), [ownIsAtk, attackerUnits, defenderUnits]);
   const enemy = useMemo(() => layoutUnits(ownIsAtk ? defenderUnits : attackerUnits, false), [ownIsAtk, attackerUnits, defenderUnits]);
+  const [positions, setPositions] = useState<Record<string, UnitPosition>>({});
+  const positionsRef = useRef(positions);
+  const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
+  const [movingUnitIds, setMovingUnitIds] = useState<string[]>([]);
+  const [movePaths, setMovePaths] = useState<UnitMovePath[]>([]);
+  const movementFramesRef = useRef<Record<string, number>>({});
+  const movementEngineRef = useRef<Awaited<ReturnType<typeof loadRustViewport>> | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    loadRustViewport()
+      .then((engine) => {
+        if (!cancelled) movementEngineRef.current = engine;
+      })
+      .catch((error: unknown) => {
+        console.error('[TacticalMap] Failed to load Rust unit movement engine', error);
+      });
+    return () => {
+      cancelled = true;
+        Object.values(movementFramesRef.current).forEach(cancelAnimationFrame);
+    };
+  }, []);
+
+  const selectUnit = (id: string) => {
+    if (simPhase !== 'idle') return;
+    const nextId = selectedUnitId === id ? null : id;
+    setSelectedUnitId(nextId);
+    onUnitSelectionChange?.(nextId !== null);
+  };
+
+  useEffect(() => {
+    if (simPhase === 'idle') return;
+    Object.values(movementFramesRef.current).forEach(cancelAnimationFrame);
+    movementFramesRef.current = {};
+  }, [simPhase, onUnitSelectionChange]);
+
+  const handleMapClick = (event: React.MouseEvent<SVGSVGElement>) => {
+    if (!selectedUnitId || simPhase !== 'idle') return;
+    const svg = event.currentTarget;
+    const matrix = svg.getScreenCTM();
+    if (!matrix) return;
+    const point = svg.createSVGPoint();
+    point.x = event.clientX;
+    point.y = event.clientY;
+    const destination = point.matrixTransform(matrix.inverse());
+    const placedUnit = own.find((placed) => unitId(placed.unit, 'own') === selectedUnitId);
+    if (!placedUnit) return;
+
+    const start = positionsRef.current[selectedUnitId] ?? { x: placedUnit.x, y: placedUnit.y };
+    const group = placedUnit.unit.group;
+    const move = (engine: Awaited<ReturnType<typeof loadRustViewport>>) => {
+      const [targetX, targetY, speed] = engine.prepare_unit_movement(
+        destination.x,
+        destination.y,
+        BASE_W,
+        BASE_H,
+        group,
+      );
+      const id = selectedUnitId;
+      const currentFrame = movementFramesRef.current[id];
+      if (currentFrame !== undefined) cancelAnimationFrame(currentFrame);
+      const target = { x: targetX, y: targetY };
+      setMovingUnitIds((current) => current.includes(id) ? current : [...current, id]);
+      setMovePaths((current) => [...current.filter((path) => path.id !== id), { id, start, target }]);
+
+      let elapsedMs = 0;
+      let lastFrame = performance.now();
+      const animate = (now: number) => {
+        const deltaMs = Math.min(now - lastFrame, 64);
+        lastFrame = now;
+        const [x, y, nextElapsed, done] = engine.step_unit_movement(
+          start.x,
+          start.y,
+          target.x,
+          target.y,
+          elapsedMs,
+          deltaMs,
+          speed,
+          group,
+        );
+        elapsedMs = nextElapsed;
+        const nextPosition = { x, y };
+        positionsRef.current = { ...positionsRef.current, [id]: nextPosition };
+        setPositions(positionsRef.current);
+
+        if (done >= 0.5) {
+          delete movementFramesRef.current[id];
+          setMovingUnitIds((current) => current.filter((movingId) => movingId !== id));
+          setMovePaths((current) => current.filter((path) => path.id !== id));
+        } else {
+          movementFramesRef.current[id] = requestAnimationFrame(animate);
+        }
+      };
+      movementFramesRef.current[id] = requestAnimationFrame(animate);
+    };
+
+    const engine = movementEngineRef.current;
+    if (engine) {
+      move(engine);
+      return;
+    }
+    loadRustViewport()
+      .then((loadedEngine) => {
+        movementEngineRef.current = loadedEngine;
+        move(loadedEngine);
+      })
+      .catch((error: unknown) => {
+        console.error('[TacticalMap] Failed to load Rust unit movement engine', error);
+      });
+  };
+
   const sources = useMemo<Src[]>(
     () => [...own.map((p) => ({ x: p.x, y: p.y, r: VISION[p.unit.group] ?? 520 })), { x: HQ_OWN.x, y: HQ_OWN.y, r: 640 }],
     [own],
@@ -1035,13 +1222,25 @@ export const TacticalMap = memo(function TacticalMap({
       preserveAspectRatio="xMidYMid meet"
       role="img"
       aria-label="Peta taktis operasi"
+      onClick={handleMapClick}
     >
       <style>{MAP_CSS}</style>
       <Defs accent={accent} terrainType={terrainType} />
       <TerrainLayer accent={accent} water={water} terrainType={terrainType} />
       <BasesLayer accent={accent} simPhase={simPhase} playerSide={playerSide} onFacilityClick={onFacilityClick} />
       {fogEnabled && <FogLayer sources={sources} active={fogActive} />}
-      <UnitsLayer accent={accent} simPhase={simPhase} own={own} enemy={enemy} playerSide={playerSide} />
+      <UnitsLayer
+        accent={accent}
+        simPhase={simPhase}
+        own={own}
+        enemy={enemy}
+        playerSide={playerSide}
+        positions={positions}
+        selectedUnitId={simPhase === 'idle' ? selectedUnitId : null}
+        movingUnitIds={simPhase === 'idle' ? movingUnitIds : []}
+        movePaths={simPhase === 'idle' ? movePaths : []}
+        onSelectUnit={selectUnit}
+      />
       <EffectsLayer terrainType={terrainType} />
     </svg>
   );

@@ -16,7 +16,14 @@ import {
   blobPath, makeCity, makeForest, rng, smoothPath,
   type TerrainType,
 } from './TacticalMap';
-import { attachMapSnapshot, flushViewportPreview, loadRustViewport, panViewport, scheduleViewportPreview, zoomViewport } from './warMapViewport';
+import {
+  attachMapSnapshot,
+  flushViewportPreview,
+  loadRustViewport,
+  panViewport,
+  scheduleViewportPreview,
+  zoomViewport,
+} from './warMapViewport';
 
 export type { TerrainType };
 
@@ -566,11 +573,24 @@ function placeGroup(units: WarUnit[], group: WarUnit['group'], east: boolean): P
 }
 
 const UNIT_GROUPS: WarUnit['group'][] = ['laut', 'udara', 'darat'];
+type UnitPosition = { x: number; y: number };
+type UnitMovePath = { id: string; start: UnitPosition; target: UnitPosition };
+
+const fleetUnitId = (unit: WarUnit, side: 'own' | 'enemy', index: number) =>
+  `${side}:${unit.group}:${unit.kind}:${unit.echelon ?? 'base'}:${index}`;
 
 const Fleet = memo(function Fleet({
-  units, east, color, side, dataId,
+  units, east, color, side, dataId, positions, selectedUnitId, movingUnitIds, onSelectUnit,
 }: {
-  units: WarUnit[]; east: boolean; color: string; side: string; dataId: InfoId;
+  units: WarUnit[];
+  east: boolean;
+  color: string;
+  side: 'own' | 'enemy';
+  dataId: InfoId;
+  positions: Record<string, UnitPosition>;
+  selectedUnitId: string | null;
+  movingUnitIds: string[];
+  onSelectUnit: (id: string) => void;
 }) {
   const placedGroups = useMemo(
     () => UNIT_GROUPS.map((group) => ({ group, units: placeGroup(units, group, east) })),
@@ -581,14 +601,54 @@ const Fleet = memo(function Fleet({
       {placedGroups.map(({ group, units: placedUnits }) => {
         return (
           <g key={group}>
-            {placedUnits.map(({ unit, x, y }, i) => (
-              <UnitMarker
-                key={`${side}-${group}-${unit.kind}-${i}`}
-                x={x} y={y} kind={unit.kind} color={color} quantity={unit.quantity}
-                label={`${unit.label} ${formatUnitQuantity(unit.quantity)}`}
-                disableEffects
-              />
-            ))}
+            {placedUnits.map(({ unit, x, y }, i) => {
+              const id = fleetUnitId(unit, side, i);
+              const position = positions[id] ?? { x, y };
+              const selected = side === 'own' && selectedUnitId === id;
+              const moving = movingUnitIds.includes(id);
+              return (
+                <g
+                  key={id}
+                  data-unit-id={side === 'own' ? id : undefined}
+                  role={side === 'own' ? 'button' : undefined}
+                  aria-label={side === 'own' ? `Pilih ${unit.label} ${formatUnitQuantity(unit.quantity)}` : undefined}
+                  aria-pressed={side === 'own' ? selected : undefined}
+                  tabIndex={side === 'own' ? 0 : undefined}
+                  style={side === 'own' ? { cursor: selected ? 'crosshair' : 'grab' } : undefined}
+                  onPointerDown={side === 'own' ? (event) => {
+                    event.stopPropagation();
+                  } : undefined}
+                  onClick={side === 'own' ? (event) => {
+                    event.stopPropagation();
+                    onSelectUnit(id);
+                  } : undefined}
+                  onKeyDown={side === 'own' ? (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      onSelectUnit(id);
+                    }
+                  } : undefined}
+                >
+                  {(selected || moving) && (
+                    <circle
+                      cx={position.x}
+                      cy={position.y}
+                      r={27}
+                      fill={color}
+                      fillOpacity={selected ? 0.2 : 0.12}
+                      stroke={color}
+                      strokeWidth={3}
+                      strokeDasharray={moving ? '7 5' : undefined}
+                    />
+                  )}
+                  <UnitMarker
+                    x={position.x} y={position.y} kind={unit.kind} color={color} quantity={unit.quantity}
+                    label={`${unit.label} ${formatUnitQuantity(unit.quantity)}`}
+                    disableEffects
+                  />
+                </g>
+              );
+            })}
           </g>
         );
       })}
@@ -646,6 +706,21 @@ export default function SeaWarMap({
   const enemyName = isUserDefender ? attackerName : targetName;
   const ownTotal = useMemo(() => ownUnits.reduce((s, u) => s + (u.quantity || 0), 0), [ownUnits]);
   const enemyTotal = useMemo(() => enemyUnits.reduce((s, u) => s + (u.quantity || 0), 0), [enemyUnits]);
+  const ownPlacedUnits = useMemo(
+    () => UNIT_GROUPS.flatMap((group) =>
+      placeGroup(ownUnits, group, false).map((placed, index) => ({
+        ...placed,
+        id: fleetUnitId(placed.unit, 'own', index),
+      }))
+    ),
+    [ownUnits],
+  );
+  const [unitPositions, setUnitPositions] = useState<Record<string, UnitPosition>>({});
+  const unitPositionsRef = useRef(unitPositions);
+  const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
+  const [movingUnitIds, setMovingUnitIds] = useState<string[]>([]);
+  const [movePaths, setMovePaths] = useState<UnitMovePath[]>([]);
+  const movementFramesRef = useRef<Record<string, number>>({});
 
   /* ─── Simulasi & log ─── */
   const [isSimulating, setIsSimulating] = useState(false);
@@ -705,6 +780,97 @@ export default function SeaWarMap({
   const lastId = useRef<InfoId>('objective');
   const tipRef = useRef<HTMLDivElement>(null);
   const coordRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => () => {
+    Object.values(movementFramesRef.current).forEach(cancelAnimationFrame);
+  }, []);
+
+  useEffect(() => {
+    if (simPhase === 'idle') return;
+    Object.values(movementFramesRef.current).forEach(cancelAnimationFrame);
+    movementFramesRef.current = {};
+  }, [simPhase]);
+
+  const handleSelectUnit = (id: string) => {
+    if (isSimulating || simPhase !== 'idle') return;
+    setSelectedUnitId((current) => current === id ? null : id);
+  };
+
+  const handleMovementClick = (event: React.MouseEvent<SVGSVGElement>) => {
+    if (!selectedUnitId || isSimulating || simPhase !== 'idle') return;
+    const svg = event.currentTarget;
+    const matrix = svg.getScreenCTM();
+    if (!matrix) return;
+    const point = svg.createSVGPoint();
+    point.x = event.clientX;
+    point.y = event.clientY;
+    const destination = point.matrixTransform(matrix.inverse());
+    const placedUnit = ownPlacedUnits.find((placed) => placed.id === selectedUnitId);
+    if (!placedUnit) return;
+    const group = placedUnit.unit.group;
+    const move = (engine: Awaited<ReturnType<typeof loadRustViewport>>) => {
+      const start = unitPositionsRef.current[selectedUnitId] ?? { x: placedUnit.x, y: placedUnit.y };
+      const [targetX, targetY, speed] = engine.prepare_unit_movement(
+        destination.x,
+        destination.y,
+        MAP_W,
+        MAP_H,
+        group,
+      );
+      const target = { x: targetX, y: targetY };
+      const currentFrame = movementFramesRef.current[selectedUnitId];
+      if (currentFrame !== undefined) cancelAnimationFrame(currentFrame);
+      setMovingUnitIds((current) => current.includes(selectedUnitId) ? current : [...current, selectedUnitId]);
+      setMovePaths((current) => [
+        ...current.filter((path) => path.id !== selectedUnitId),
+        { id: selectedUnitId, start, target },
+      ]);
+
+      let elapsedMs = 0;
+      let lastFrame = performance.now();
+      const animate = (now: number) => {
+        const deltaMs = Math.min(now - lastFrame, 64);
+        lastFrame = now;
+        const [x, y, nextElapsed, done] = engine.step_unit_movement(
+        start.x,
+        start.y,
+        target.x,
+        target.y,
+        elapsedMs,
+        deltaMs,
+        speed,
+        group,
+      );
+        elapsedMs = nextElapsed;
+        const nextPosition = { x, y };
+        unitPositionsRef.current = { ...unitPositionsRef.current, [selectedUnitId]: nextPosition };
+        setUnitPositions(unitPositionsRef.current);
+
+        if (done >= 0.5) {
+          delete movementFramesRef.current[selectedUnitId];
+          setMovingUnitIds((current) => current.filter((id) => id !== selectedUnitId));
+          setMovePaths((current) => current.filter((path) => path.id !== selectedUnitId));
+        } else {
+          movementFramesRef.current[selectedUnitId] = requestAnimationFrame(animate);
+        }
+      };
+      movementFramesRef.current[selectedUnitId] = requestAnimationFrame(animate);
+    };
+
+    const engine = rustViewportRef.current;
+    if (engine) {
+      move(engine);
+      return;
+    }
+    void loadRustViewport()
+      .then((loadedEngine) => {
+        rustViewportRef.current = loadedEngine;
+        move(loadedEngine);
+      })
+      .catch((error: unknown) => {
+        console.error('[SeaWarMap] Failed to load Rust unit movement engine', error);
+      });
+  };
 
   const commitView = useCallback(() => {
     if (commitTimerRef.current !== null) {
@@ -850,7 +1016,7 @@ export default function SeaWarMap({
   }, []);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (isSimulating || e.button !== 0) return;
+    if (isSimulating || selectedUnitId || e.button !== 0) return;
     if (e.target instanceof Element && e.target.closest('button')) return;
     commitView();
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -917,8 +1083,8 @@ export default function SeaWarMap({
     if (!dragRef.current) hoverCellRef.current = null;
   };
 
-  const ownSide = isUserDefender ? 'DEF' : 'ATK';
-  const enemySide = isUserDefender ? 'ATK' : 'DEF';
+  const activeSelectedUnitId = simPhase === 'idle' ? selectedUnitId : null;
+  const activeMovingUnitIds = simPhase === 'idle' ? movingUnitIds : [];
 
   return (
     <div className="fixed inset-0 z-[300] flex select-none flex-col justify-between overflow-hidden p-4 font-sans text-white sm:p-6" style={{ backgroundColor: BG }}>
@@ -1027,6 +1193,7 @@ export default function SeaWarMap({
               preserveAspectRatio="xMidYMid meet"
               role="img"
               aria-label="Peta operasi tempur laut"
+              onClick={handleMovementClick}
             >
             <style>{MAP_CSS}</style>
             <Defs accent={ACCENT} terrainType={terrainType} />
@@ -1053,12 +1220,48 @@ export default function SeaWarMap({
               <text x="7100" y="2160" fill="#fda4af">ARMADA MUSUH</text>
             </g>
 
-            <Fleet units={ownUnits} east={false} color={ACCENT} side={ownSide} dataId="fleetOwn" />
-            <Fleet units={enemyUnits} east color={ENEMY} side={enemySide} dataId="fleetEnemy" />
+            {simPhase === 'idle' && movePaths.map((movePath) => (
+              <path
+                key={movePath.id}
+                d={`M ${movePath.start.x} ${movePath.start.y} L ${movePath.target.x} ${movePath.target.y}`}
+                fill="none"
+                stroke={ACCENT}
+                strokeWidth="7"
+                strokeDasharray="18 14"
+                opacity="0.75"
+                pointerEvents="none"
+              />
+            ))}
+            <Fleet
+              units={ownUnits}
+              east={false}
+              color={ACCENT}
+              side="own"
+              dataId="fleetOwn"
+              positions={unitPositions}
+              selectedUnitId={activeSelectedUnitId}
+              movingUnitIds={activeMovingUnitIds}
+              onSelectUnit={handleSelectUnit}
+            />
+            <Fleet
+              units={enemyUnits}
+              east
+              color={ENEMY}
+              side="enemy"
+              dataId="fleetEnemy"
+              positions={unitPositions}
+              selectedUnitId={activeSelectedUnitId}
+              movingUnitIds={activeMovingUnitIds}
+              onSelectUnit={handleSelectUnit}
+            />
 
             <EffectsLayer />
 
             </svg>
+
+          <div className="pointer-events-none absolute bottom-14 left-6 z-20 rounded bg-black/70 px-2 py-1 font-mono text-[9px] font-bold tracking-wider" style={{ color: ACCENT }}>
+            {activeSelectedUnitId ? 'KLIK POSISI TUJUAN PASUKAN' : 'PILIH PASUKAN, LALU KLIK TUJUAN'}
+          </div>
 
           {/* KOMPAS */}
           <div className="pointer-events-none absolute left-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border bg-black/40" style={{ borderColor: `${ACCENT}4D`, color: ACCENT }}>

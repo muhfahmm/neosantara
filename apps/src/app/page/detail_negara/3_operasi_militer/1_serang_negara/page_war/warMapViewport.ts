@@ -26,6 +26,13 @@ interface RustViewportModule {
     targetX: number, targetY: number, targetWidth: number, targetHeight: number,
     dtMs: number, timeConstantMs: number,
   ) => Float64Array;
+  prepare_unit_movement: (
+    targetX: number, targetY: number, worldWidth: number, worldHeight: number, group: string,
+  ) => Float64Array;
+  step_unit_movement: (
+    startX: number, startY: number, targetX: number, targetY: number,
+    elapsedMs: number, deltaMs: number, speed: number, group: string,
+  ) => Float64Array;
 }
 
 let loadedRust: RustViewportModule | null = null;

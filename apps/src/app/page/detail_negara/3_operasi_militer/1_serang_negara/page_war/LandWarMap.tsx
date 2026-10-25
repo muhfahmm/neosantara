@@ -119,6 +119,7 @@ export default function LandWarMap({
     facility: UnitFacility;
     side: FacilitySide;
   } | null>(null);
+  const [isUnitSelected, setIsUnitSelected] = useState(false);
   const displayedAttackerUnits = useMemo(
     () => selectDisplayedUnits(attackerUnits, unitSelections.left),
     [attackerUnits, unitSelections.left],
@@ -158,6 +159,7 @@ export default function LandWarMap({
 
   const handleStartSimulation = () => {
     if (isSimulating) return;
+    setIsUnitSelected(false);
     setIsSimulating(true);
     setBattleLogs([]);
     setSimPhase('clash');
@@ -328,7 +330,7 @@ export default function LandWarMap({
   }, []);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (isSimulating || e.button !== 0) return;
+    if (isSimulating || isUnitSelected || e.button !== 0) return;
     if (e.target instanceof Element && e.target.closest('button')) return;
     commitView();
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -528,7 +530,14 @@ export default function LandWarMap({
             playerSide={playerSide}
             fogEnabled={false}
             onFacilityClick={(facility, side) => setSelectedFacility({ facility, side })}
+            onUnitSelectionChange={setIsUnitSelected}
           />
+          <div
+            className="pointer-events-none absolute bottom-14 left-6 z-20 rounded bg-black/70 px-2 py-1 font-mono text-[9px] font-bold tracking-wider"
+            style={{ color: accent }}
+          >
+            {isUnitSelected ? 'KLIK POSISI TUJUAN PASUKAN' : 'PILIH PASUKAN, LALU KLIK TUJUAN'}
+          </div>
 
           {/* KOMPAS */}
           <div className="pointer-events-none absolute left-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border bg-black/40" style={{ borderColor: `${accent}4D`, color: accent }}>

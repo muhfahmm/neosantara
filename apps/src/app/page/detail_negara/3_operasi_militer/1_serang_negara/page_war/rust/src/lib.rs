@@ -1,5 +1,7 @@
 use wasm_bindgen::prelude::*;
 
+mod unit_movement;
+
 fn clamp(value: f64, min: f64, max: f64) -> f64 {
     value.max(min).min(max)
 }
@@ -161,6 +163,8 @@ pub fn smooth_view(
     }
     vec![ncx - next_width / 2.0, ncy - next_height / 2.0, next_width, next_height, 0.0]
 }
+
+pub use unit_movement::{prepare_unit_movement, step_unit_movement};
 
 #[cfg(test)]
 mod tests {
