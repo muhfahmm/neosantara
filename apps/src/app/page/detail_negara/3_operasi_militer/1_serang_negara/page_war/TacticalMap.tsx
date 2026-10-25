@@ -3,10 +3,11 @@
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import UnitMarker from './units/unitMarker';
 import { formatUnitQuantity, type WarUnit } from './units/warUnitComposition';
+import type { FacilitySide, UnitFacility } from './UnitSelectionModal';
 
 /* ═════════════════════════ TIPE & KONSTANTA (dipakai juga oleh PageWar) ═════════════════════════ */
 export type TerrainType = 'default' | 'desert' | 'snow' | 'jungle' | 'urban';
-export type SimPhase = 'idle' | 'advance' | 'clash' | 'done';
+export type SimPhase = 'idle' | 'clash' | 'done';
 export type PlayerSide = 'attacker' | 'defender';
 export type ViewBox = { x: number; y: number; w: number; h: number };
 
@@ -50,7 +51,6 @@ export interface MapProps {
   accent: string;
   water: string;
   terrainType: TerrainType;
-  isSimulating: boolean;
   simPhase: SimPhase;
   attackerUnits: WarUnit[];
   defenderUnits: WarUnit[];
@@ -58,6 +58,7 @@ export interface MapProps {
   svgRef?: React.Ref<SVGSVGElement>;
   playerSide?: PlayerSide;
   fogEnabled?: boolean;
+  onFacilityClick?: (facility: UnitFacility, side: FacilitySide) => void;
 }
 
 /* ═════════════════════════ PALET PER MEDAN ═════════════════════════ */
@@ -340,15 +341,15 @@ const DISTRICT_DEFS = [
 ];
 const DISTRICTS = DISTRICT_DEFS.map((d) => ({ ...d, buildings: makeCity(d.x0, d.y0, d.x1, d.y1, d.seed, 80, cityBlock) }));
 
-export interface PlacedUnit { unit: WarUnit; x: number; y: number; moves: boolean }
-export function layoutUnits(units: WarUnit[], own: boolean, moves: boolean): PlacedUnit[] {
+export interface PlacedUnit { unit: WarUnit; x: number; y: number }
+export function layoutUnits(units: WarUnit[], own: boolean): PlacedUnit[] {
   const out: PlacedUnit[] = [];
   const dir = own ? 1 : -1;
   const landX = own ? 1400 : 4900, landY = own ? 330 : 1650;
   const airbase = own ? AIRBASE_OWN : AIRBASE_ENEMY;
   const airUnits = units.filter((u) => u.group === 'udara');
   units.filter((u) => u.group === 'darat').forEach((unit, i) => {
-    out.push({ unit, x: landX + dir * (i % 4) * 140, y: landY + Math.floor(i / 4) * 150, moves });
+    out.push({ unit, x: landX + dir * (i % 4) * 140, y: landY + Math.floor(i / 4) * 150 });
   });
   airUnits.forEach((unit, i) => {
     const row = Math.floor(i / 4);
@@ -358,22 +359,17 @@ export function layoutUnits(units: WarUnit[], own: boolean, moves: boolean): Pla
       unit,
       x: airbase.x + dir * (column - (rowCount - 1) / 2) * 190,
       y: airbase.y - 150 + row * 85,
-      moves,
     });
   });
   units.filter((u) => u.group === 'laut').forEach((unit, i) => {
     const lk = own ? LAKES[0] : LAKES[1];
     const x = own ? 1000 + (i % 8) * 150 : 4500 + (i % 8) * 130;
-    out.push({ unit, x, y: lk.cy + (i % 2 ? 50 : -50) + Math.floor(i / 8) * 100, moves: false });
+    out.push({ unit, x, y: lk.cy + (i % 2 ? 50 : -50) + Math.floor(i / 8) * 100 });
   });
   return out;
 }
 const UK = 1.5;
 const VISION: Record<string, number> = { darat: 520, laut: 440, udara: 880 };
-const ADV_OWN = 'translate(1200px, 480px)';
-const ADV_ENEMY = 'translate(-1250px, -850px)';
-const IDLE = 'translate(0px, 0px)';
-
 export const MAP_CSS = `
 .map-navigating,.map-navigating *{animation-play-state:paused!important}
 .map-navigating .tm-cloud,.map-navigating .nw-drift,.map-navigating .nw-smoke,.map-navigating .tm-fall,.map-navigating .tm-dust,.map-navigating .tm-glint,.map-navigating .tm-fog,.map-navigating .tm-fx{display:none!important}
@@ -434,27 +430,75 @@ export const Extruded = ({ x, y, w, d, h, roof, stroke, win, i = 0 }: { x: numbe
   </g>
 );
 
-export const MilitaryFacilities = ({ at, color, scale = 1 }: { at: { x: number; y: number }; color: string; scale?: number }) => (
-  <g transform={`translate(${at.x} ${at.y}) scale(${scale})`} pointerEvents="none">
-    <rect x="-390" y="-155" width="780" height="310" rx="26" fill="#0b1220" fillOpacity="0.48" stroke={color} strokeOpacity="0.5" strokeWidth="3" />
-    <path d="M-360 118 H360" stroke="#64748b" strokeWidth="12" strokeOpacity="0.5" />
-
-    <Extruded x={-345} y={-5} w={195} d={78} h={64} roof="#64748b" stroke={color} win />
-    <g fill="#fbbf24" opacity="0.75">
-      {[-320, -280, -240, -200, -160].map((x) => <rect key={x} x={x} y="23" width="14" height="17" rx="2" />)}
+export const MilitaryFacilities = ({
+  at,
+  color,
+  scale = 1,
+  side,
+  onFacilityClick,
+}: {
+  at: { x: number; y: number };
+  color: string;
+  scale?: number;
+  side?: FacilitySide;
+  onFacilityClick?: (facility: UnitFacility, side: FacilitySide) => void;
+}) => {
+  const facilitySide = side ?? 'left';
+  const facilityButton = (
+    facility: UnitFacility,
+    label: string,
+    children: React.ReactNode,
+  ) => (
+    <g
+      aria-label={onFacilityClick ? `${label}, buka pilihan unit` : undefined}
+      onClick={onFacilityClick ? (event) => {
+        event.stopPropagation();
+        onFacilityClick(facility, facilitySide);
+      } : undefined}
+      onDoubleClick={onFacilityClick ? (event) => event.stopPropagation() : undefined}
+      onKeyDown={onFacilityClick ? (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onFacilityClick(facility, facilitySide);
+        }
+      } : undefined}
+      onPointerDown={onFacilityClick ? (event) => event.stopPropagation() : undefined}
+      role={onFacilityClick ? 'button' : undefined}
+      style={onFacilityClick ? { cursor: 'pointer' } : undefined}
+      tabIndex={onFacilityClick ? 0 : undefined}
+    >
+      {children}
     </g>
-    <text x="-247" y="104" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="5" paintOrder="stroke" fontSize="18" fontWeight="900" letterSpacing="1" fontFamily="monospace">BARAK MILITER</text>
+  );
 
-    <Extruded x={-105} y={-5} w={190} d={78} h={58} roof="#475569" stroke={color} />
-    <path d="M-80 66 V40 Q-80 26 -70 26 Q-60 26 -60 40 V66 M-35 66 V40 Q-35 26 -25 26 Q-15 26 -15 40 V66 M10 66 V40 Q10 26 20 26 Q30 26 30 40 V66 M55 66 V40 Q55 26 65 26 Q75 26 75 40 V66" fill="#1e293b" stroke={color} strokeWidth="3" />
-    <text x="-10" y="104" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="5" paintOrder="stroke" fontSize="18" fontWeight="900" letterSpacing="1" fontFamily="monospace">GUDANG SENJATA</text>
+  return (
+    <g transform={`translate(${at.x} ${at.y}) scale(${scale})`}>
+      <rect x="-390" y="-155" width="780" height="310" rx="26" fill="#0b1220" fillOpacity="0.48" stroke={color} strokeOpacity="0.5" strokeWidth="3" pointerEvents="none" />
+      <path d="M-360 118 H360" stroke="#64748b" strokeWidth="12" strokeOpacity="0.5" pointerEvents="none" />
 
-    <Extruded x={135} y={-5} w={205} d={78} h={62} roof="#334155" stroke={color} />
-    <rect x="166" y="20" width="143" height="44" rx="4" fill="#1e293b" stroke={color} strokeWidth="3" />
-    <path d="M180 22 V62 M198 22 V62 M216 22 V62 M234 22 V62 M252 22 V62 M270 22 V62 M288 22 V62" stroke="#94a3b8" strokeOpacity="0.7" strokeWidth="3" />
-    <text x="237" y="104" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="5" paintOrder="stroke" fontSize="18" fontWeight="900" letterSpacing="1" fontFamily="monospace">HANGAR TANK</text>
-  </g>
-);
+      {facilityButton('barak', 'Barak Militer', <>
+        <Extruded x={-345} y={-5} w={195} d={78} h={64} roof="#64748b" stroke={color} win />
+        <g fill="#fbbf24" opacity="0.75">
+          {[-320, -280, -240, -200, -160].map((x) => <rect key={x} x={x} y="23" width="14" height="17" rx="2" />)}
+        </g>
+        <text x="-247" y="104" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="5" paintOrder="stroke" fontSize="18" fontWeight="900" letterSpacing="1" fontFamily="monospace">BARAK MILITER</text>
+      </>)}
+
+      {facilityButton('gudang', 'Gudang Senjata', <>
+        <Extruded x={-105} y={-5} w={190} d={78} h={58} roof="#475569" stroke={color} />
+        <path d="M-80 66 V40 Q-80 26 -70 26 Q-60 26 -60 40 V66 M-35 66 V40 Q-35 26 -25 26 Q-15 26 -15 40 V66 M10 66 V40 Q10 26 20 26 Q30 26 30 40 V66 M55 66 V40 Q55 26 65 26 Q75 26 75 40 V66" fill="#1e293b" stroke={color} strokeWidth="3" />
+        <text x="-10" y="104" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="5" paintOrder="stroke" fontSize="18" fontWeight="900" letterSpacing="1" fontFamily="monospace">GUDANG SENJATA</text>
+      </>)}
+
+      {facilityButton('hangar', 'Hangar Tank', <>
+        <Extruded x={135} y={-5} w={205} d={78} h={62} roof="#334155" stroke={color} />
+        <rect x="166" y="20" width="143" height="44" rx="4" fill="#1e293b" stroke={color} strokeWidth="3" />
+        <path d="M180 22 V62 M198 22 V62 M216 22 V62 M234 22 V62 M252 22 V62 M270 22 V62 M288 22 V62" stroke="#94a3b8" strokeOpacity="0.7" strokeWidth="3" />
+        <text x="237" y="104" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="5" paintOrder="stroke" fontSize="18" fontWeight="900" letterSpacing="1" fontFamily="monospace">HANGAR TANK</text>
+      </>)}
+    </g>
+  );
+};
 
 export const Smoke = ({ x, y, n = 5 }: { x: number; y: number; n?: number }) => (
   <g filter="url(#nw-smoke-blur)" pointerEvents="none">
@@ -763,7 +807,12 @@ const ResourceNode = ({ x, y, name, col }: { x: number; y: number; name: string;
   </g>
 );
 
-const BasesLayer = memo(function BasesLayer({ accent, simPhase, playerSide }: { accent: string; simPhase: SimPhase; playerSide: PlayerSide }) {
+const BasesLayer = memo(function BasesLayer({ accent, simPhase, playerSide, onFacilityClick }: {
+  accent: string;
+  simPhase: SimPhase;
+  playerSide: PlayerSide;
+  onFacilityClick?: (facility: UnitFacility, side: FacilitySide) => void;
+}) {
   const ownIsAtk = playerSide === 'attacker';
   const done = simPhase === 'done';
   const owner: Owner = simPhase === 'clash' ? 'contested' : done ? (ownIsAtk ? 'own' : 'enemy') : 'neutral';
@@ -779,10 +828,10 @@ const BasesLayer = memo(function BasesLayer({ accent, simPhase, playerSide }: { 
       
       {/* ── BARAK MILITER DISESUAIKAN DENGAN PANAH MERAH ── */}
       {/* User: Naik 100px ke Atas (y: 180) */}
-      <MilitaryFacilities at={{ x: 1200, y: 180 }} color={accent} />
+      <MilitaryFacilities at={{ x: 1200, y: 180 }} color={accent} side="left" onFacilityClick={onFacilityClick} />
       
       {/* Musuh: Hutan dipindah, base tetap di tengah lapang */}
-      <MilitaryFacilities at={{ x: 5150, y: 1350 }} color={RED} />
+      <MilitaryFacilities at={{ x: 5150, y: 1350 }} color={RED} side="right" onFacilityClick={onFacilityClick} />
       
       {CAPTURE_POINTS.map((c) => <CapturePoint key={c.id} id={c.main ? 'objective' : 'capture'} x={c.x} y={c.y} name={c.name} main={c.main} owner={owner} accent={accent} />)}
       {RESOURCES.map((r) => <ResourceNode key={r.id} x={r.x} y={r.y} name={r.name} col={resCol} />)}
@@ -790,9 +839,9 @@ const BasesLayer = memo(function BasesLayer({ accent, simPhase, playerSide }: { 
   );
 });
 
-interface UnitsProps { accent: string; isSimulating: boolean; simPhase: SimPhase; own: PlacedUnit[]; enemy: PlacedUnit[]; playerSide: PlayerSide }
+interface UnitsProps { accent: string; simPhase: SimPhase; own: PlacedUnit[]; enemy: PlacedUnit[]; playerSide: PlayerSide }
 
-const UnitsLayer = memo(function UnitsLayer({ accent, isSimulating, simPhase, own, enemy, playerSide }: UnitsProps) {
+const UnitsLayer = memo(function UnitsLayer({ accent, simPhase, own, enemy, playerSide }: UnitsProps) {
   const mk = (p: PlacedUnit, i: number, hostile: boolean) => (
     <g key={`${hostile ? 'e' : 'o'}-${p.unit.group}-${p.unit.kind}-${i}`} transform={`scale(${UK})`}>
       <UnitMarker
@@ -804,34 +853,18 @@ const UnitsLayer = memo(function UnitsLayer({ accent, isSimulating, simPhase, ow
     </g>
   );
   const ownIsAtk = playerSide === 'attacker';
-  const advOwn = isSimulating && ownIsAtk ? ADV_OWN : IDLE;
-  const advEnemy = isSimulating && !ownIsAtk ? ADV_ENEMY : IDLE;
-  const attackLineActive = simPhase === 'advance' || simPhase === 'clash';
   const done = simPhase === 'done';
   const fade = (on: boolean): React.CSSProperties => ({ transition: 'opacity .8s, filter .8s', opacity: on ? 0.45 : 1, filter: on ? 'grayscale(1) brightness(.7)' : 'none' });
-  const slide = (t: string): React.CSSProperties => ({ transform: t, transition: 'transform 3s ease-in-out' });
 
   return (
     <g>
-      {!done && (ownIsAtk ? own : enemy).length > 0 && (
-        <path
-          d={ownIsAtk ? 'M 1950,420 Q 2500,520 2850,930' : 'M 4450,1650 Q 3700,1500 3250,1080'}
-          fill="none" stroke={ownIsAtk ? accent : RED}
-          strokeWidth={attackLineActive ? 5.5 : 3.6} strokeDasharray="18 18"
-          markerEnd={ownIsAtk ? 'url(#nw-arrow)' : 'url(#nw-arrow-red)'}
-          opacity={attackLineActive ? 0.95 : 0.55} className="nw-flow" pointerEvents="none"
-        />
-      )}
-
       <g className="nw-tz" data-terrain={ownIsAtk ? 'attacker' : 'defender'} style={fade(done && !ownIsAtk)}>
-        <g style={slide(advOwn)}>{own.map((p, i) => (p.moves ? mk(p, i, false) : null))}</g>
-        {own.map((p, i) => (p.moves ? null : mk(p, i, false)))}
+        {own.map((p, i) => mk(p, i, false))}
         {own.length === 0 && <text x="1700" y="430" textAnchor="middle" fill={accent} fontSize="28" fontWeight="800" fontFamily="monospace">TIDAK ADA UNIT TERDATA</text>}
       </g>
 
       <g className="nw-tz" data-terrain={ownIsAtk ? 'defender' : 'attacker'} style={fade(done && ownIsAtk)}>
-        <g style={slide(advEnemy)}>{enemy.map((p, i) => (p.moves ? mk(p, i, true) : null))}</g>
-        {enemy.map((p, i) => (p.moves ? null : mk(p, i, true)))}
+        {enemy.map((p, i) => mk(p, i, true))}
         {enemy.length === 0 && <text x="4600" y="1760" textAnchor="middle" fill={RED} fontSize="28" fontWeight="800" fontFamily="monospace">TIDAK ADA UNIT TERDATA</text>}
       </g>
 
@@ -858,23 +891,14 @@ const UnitsLayer = memo(function UnitsLayer({ accent, isSimulating, simPhase, ow
   );
 });
 
-interface Src { x: number; y: number; r: number; moves: boolean }
-const FogLayer = memo(function FogLayer({ sources, isSimulating, ownMoves, active }: { sources: Src[]; isSimulating: boolean; ownMoves: boolean; active: boolean }) {
-  const adv = isSimulating && ownMoves ? ADV_OWN : IDLE;
-  const circles = (
-    <>
-      {sources.filter((s) => !s.moves).map((s, i) => <circle key={`s${i}`} cx={s.x} cy={s.y} r={s.r} fill="url(#tm-v-black)" />)}
-      <g style={{ transform: adv, transition: 'transform 3s ease-in-out' }}>
-        {sources.filter((s) => s.moves).map((s, i) => <circle key={`m${i}`} cx={s.x} cy={s.y} r={s.r} fill="url(#tm-v-black)" />)}
-      </g>
-    </>
-  );
+interface Src { x: number; y: number; r: number }
+const FogLayer = memo(function FogLayer({ sources, active }: { sources: Src[]; active: boolean }) {
   return (
     <g className="tm-fog" pointerEvents="none" style={{ opacity: active ? 1 : 0, transition: 'opacity .9s ease' }}>
       <defs>
         <mask id="tm-fog-mask" maskUnits="userSpaceOnUse" x={EX.x} y={EX.y} width={EX.w} height={EX.h}>
           <rect x={EX.x} y={EX.y} width={EX.w} height={EX.h} fill="#fff" />
-          {circles}
+          {sources.map((s, i) => <circle key={i} cx={s.x} cy={s.y} r={s.r} fill="url(#tm-v-black)" />)}
         </mask>
       </defs>
       <rect x={EX.x} y={EX.y} width={EX.w} height={EX.h} fill="#04101c" opacity="0.42" mask="url(#tm-fog-mask)" />
@@ -959,15 +983,15 @@ export const GridRulers = memo(function GridRulers({ vb, accent, hover, selected
 });
 
 export const TacticalMap = memo(function TacticalMap({
-  accent, water, terrainType, isSimulating, simPhase, attackerUnits, defenderUnits, viewBox,
-  svgRef, playerSide = 'attacker', fogEnabled = true,
+  accent, water, terrainType, simPhase, attackerUnits, defenderUnits, viewBox,
+  svgRef, playerSide = 'attacker', fogEnabled = true, onFacilityClick,
 }: MapProps) {
   const ownIsAtk = playerSide === 'attacker';
-  const fogActive = fogEnabled && (simPhase === 'idle' || simPhase === 'advance');
-  const own = useMemo(() => layoutUnits(ownIsAtk ? attackerUnits : defenderUnits, true, ownIsAtk), [ownIsAtk, attackerUnits, defenderUnits]);
-  const enemy = useMemo(() => layoutUnits(ownIsAtk ? defenderUnits : attackerUnits, false, !ownIsAtk), [ownIsAtk, attackerUnits, defenderUnits]);
+  const fogActive = fogEnabled && simPhase === 'idle';
+  const own = useMemo(() => layoutUnits(ownIsAtk ? attackerUnits : defenderUnits, true), [ownIsAtk, attackerUnits, defenderUnits]);
+  const enemy = useMemo(() => layoutUnits(ownIsAtk ? defenderUnits : attackerUnits, false), [ownIsAtk, attackerUnits, defenderUnits]);
   const sources = useMemo<Src[]>(
-    () => [...own.map((p) => ({ x: p.x, y: p.y, r: VISION[p.unit.group] ?? 520, moves: p.moves })), { x: HQ_OWN.x, y: HQ_OWN.y, r: 640, moves: false }],
+    () => [...own.map((p) => ({ x: p.x, y: p.y, r: VISION[p.unit.group] ?? 520 })), { x: HQ_OWN.x, y: HQ_OWN.y, r: 640 }],
     [own],
   );
 
@@ -983,9 +1007,9 @@ export const TacticalMap = memo(function TacticalMap({
       <style>{MAP_CSS}</style>
       <Defs accent={accent} terrainType={terrainType} />
       <TerrainLayer accent={accent} water={water} terrainType={terrainType} />
-      <BasesLayer accent={accent} simPhase={simPhase} playerSide={playerSide} />
-      {fogEnabled && <FogLayer sources={sources} isSimulating={isSimulating} ownMoves={ownIsAtk} active={fogActive} />}
-      <UnitsLayer accent={accent} isSimulating={isSimulating} simPhase={simPhase} own={own} enemy={enemy} playerSide={playerSide} />
+      <BasesLayer accent={accent} simPhase={simPhase} playerSide={playerSide} onFacilityClick={onFacilityClick} />
+      {fogEnabled && <FogLayer sources={sources} active={fogActive} />}
+      <UnitsLayer accent={accent} simPhase={simPhase} own={own} enemy={enemy} playerSide={playerSide} />
       <EffectsLayer terrainType={terrainType} />
     </svg>
   );

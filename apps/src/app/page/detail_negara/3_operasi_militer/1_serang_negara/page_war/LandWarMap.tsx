@@ -7,16 +7,20 @@ import {
   ZoomIn, ZoomOut, Maximize2, Compass,
 } from 'lucide-react';
 import {
-  TacticalMap, GridRulers,
+  TacticalMap,
   BASE_W, BASE_H, GRID_SIZE, MAP_MIN_Y, MAP_MAX_Y, MAX_VIEW_W, getMinViewW,
   clamp, cellLabel, fitView, clampView, viewScale,
   type ViewBox, type SimPhase, type TerrainType,
 } from './TacticalMap';
 import { attachMapSnapshot, flushViewportPreview, loadRustViewport, panViewport, scheduleViewportPreview, zoomViewport } from './warMapViewport';
 import {
-  formatUnitQuantity,
   getWarUnitComposition,
 } from './units/warUnitComposition';
+import UnitSelectionModal, {
+  type FacilitySide,
+  type UnitFacility,
+  type UnitSelection,
+} from './UnitSelectionModal';
 
 export type { TerrainType };
 
@@ -53,6 +57,12 @@ interface Info {
 }
 const TONE: Record<Tone, string> = { good: 'text-emerald-300', bad: 'text-rose-300', neutral: 'text-gray-200' };
 
+const selectDisplayedUnits = (units: ReturnType<typeof getWarUnitComposition>, selection: UnitSelection) =>
+  units.flatMap((unit) => {
+    const quantity = Math.min(unit.quantity, selection[unit.kind] ?? 0);
+    return quantity > 0 ? [{ ...unit, quantity }] : [];
+  });
+
 const Corners = ({ c }: { c: string }) => (
   <>
     {['top-2 left-2 border-t-2 border-l-2', 'top-2 right-2 border-t-2 border-r-2', 'bottom-2 left-2 border-b-2 border-l-2', 'bottom-2 right-2 border-b-2 border-r-2'].map((p) => (
@@ -76,7 +86,7 @@ export default function LandWarMap({
   const { accent, accentRgb } = theme;
   const playerSide = isUserDefender ? 'defender' : 'attacker';
 
-  const deploymentConfig = useMemo<Record<string, unknown>>(() => {
+  const [deploymentConfig] = useState<Record<string, unknown>>(() => {
     if (typeof window === 'undefined') return {};
     try {
       const savedConfig = window.localStorage.getItem('deployed_units_config');
@@ -87,7 +97,7 @@ export default function LandWarMap({
       console.error('Gagal membaca konfigurasi pengerahan unit.', error);
       return {};
     }
-  }, []);
+  });
 
   const attackerUnits = useMemo(
     () => getWarUnitComposition(attackerDetail, deploymentConfig, !isUserDefender && !isCoalitionForce),
@@ -96,6 +106,22 @@ export default function LandWarMap({
   const defenderUnits = useMemo(
     () => getWarUnitComposition(targetDetail, deploymentConfig, isUserDefender),
     [targetDetail, deploymentConfig, isUserDefender],
+  );
+  const [unitSelections, setUnitSelections] = useState<Record<FacilitySide, UnitSelection>>({
+    left: {},
+    right: {},
+  });
+  const [selectedFacility, setSelectedFacility] = useState<{
+    facility: UnitFacility;
+    side: FacilitySide;
+  } | null>(null);
+  const displayedAttackerUnits = useMemo(
+    () => selectDisplayedUnits(attackerUnits, unitSelections.left),
+    [attackerUnits, unitSelections.left],
+  );
+  const displayedDefenderUnits = useMemo(
+    () => selectDisplayedUnits(defenderUnits, unitSelections.right),
+    [defenderUnits, unitSelections.right],
   );
 
   /* ─── State Simulasi & Log ─── */
@@ -130,21 +156,14 @@ export default function LandWarMap({
     if (isSimulating) return;
     setIsSimulating(true);
     setBattleLogs([]);
-    setSimPhase('advance');
-    addLog('Menginisiasi protokol serangan. Pasukan maju ke titik objektif.');
+    setSimPhase('clash');
+    addLog('Kontak senjata! Terjadi baku tembak di area urban.');
+    addLog('Artileri penyerang meluncurkan tembakan pendukung.');
 
     schedule(() => {
-      setSimPhase('clash');
-      addLog('Kontak senjata! Terjadi baku tembak di area urban.');
-      addLog('Artileri penyerang meluncurkan tembakan pendukung.');
-
-      schedule(() => {
-        setSimPhase('done');
-        addLog('Garis pertahanan musuh hancur.');
-        addLog('Menghitung kerugian unit dan hasil operasi...');
-
-        schedule(() => { onAutoResult(); }, 2000);
-      }, 3000);
+      setSimPhase('done');
+      addLog('Pertempuran mereda. Menghitung kerugian unit dan hasil operasi...');
+      schedule(() => { onAutoResult(); }, 2000);
     }, 3000);
   };
 
@@ -158,11 +177,9 @@ export default function LandWarMap({
   const viewFrameRef = useRef<number | null>(null);
   const commitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rustViewportRef = useRef<Awaited<ReturnType<typeof loadRustViewport>> | undefined>(undefined);
-  const [hoverCell, setHoverCell] = useState<string | null>(null);
-  const [selCell, setSelCell] = useState<string | null>(null);
   const dragRef = useRef<{ sx: number; sy: number; vbX: number; vbY: number; vbW: number; vbH: number; moved: boolean } | null>(null);
   const [hovered, setHovered] = useState<InfoId | null>(null);
-  const lastId = useRef<InfoId>('objective');
+  const [lastHovered, setLastHovered] = useState<InfoId>('objective');
   const tipRef = useRef<HTMLDivElement>(null);
   const coordRef = useRef<HTMLSpanElement>(null);
 
@@ -197,7 +214,7 @@ export default function LandWarMap({
   }, []);
   useEffect(() => {
     snapshotRef.current?.refresh(1200);
-  }, [terrainType, simPhase, attackerUnits, defenderUnits, playerSide]);
+  }, [terrainType, simPhase, displayedAttackerUnits, displayedDefenderUnits, playerSide]);
 
   useEffect(() => {
     let mounted = true;
@@ -231,8 +248,7 @@ export default function LandWarMap({
     hqDefender: { icon: Shield,    name: isUserDefender ? 'HQ Anda (Bertahan)' : 'HQ Musuh (Bertahan)', tag: 'Markas', desc: isUserDefender ? 'Pertahankan markas ini dari serangan musuh.' : 'Rebut markas di kanan bawah ini untuk memenangkan operasi.', stats: [{ k: 'Status', v: isUserDefender ? 'Pertahankan' : 'Target', tone: isUserDefender ? 'good' : 'bad' }] },
   }), [attackerName, targetName, isUserDefender]);
 
-  if (hovered) lastId.current = hovered;
-  const info = INFO[hovered ?? lastId.current];
+  const info = INFO[hovered ?? lastHovered];
   const TipIcon = info.icon;
 
   // viewBox selalu mengikuti rasio kontainer
@@ -301,8 +317,6 @@ export default function LandWarMap({
     const gy = clamp(Math.floor(current.y + (clientY - box.top - oy) / scale), MAP_MIN_Y, MAP_MAX_Y - 1);
     const col = clamp(Math.floor(gx / GRID_SIZE), 0, BASE_W / GRID_SIZE - 1);
     const row = Math.floor(gy / GRID_SIZE);
-    const key = `${col},${row}`;
-    setHoverCell((prev) => (prev === key ? prev : key));
     if (coordRef.current) {
       const yText = `${gy < 0 ? '-' : ''}${String(Math.abs(gy)).padStart(4, '0')}`;
       coordRef.current.textContent = `X ${String(gx).padStart(4, '0')}  Y ${yText}  GRID ${cellLabel(col, row)}`;
@@ -350,7 +364,9 @@ export default function LandWarMap({
     updateHud(e.clientX, e.clientY, box);
     const px = e.clientX - box.left, py = e.clientY - box.top;
     const id = (e.target as Element).closest?.('[data-terrain]')?.getAttribute('data-terrain') as InfoId | null | undefined;
-    setHovered(id && id in INFO ? id : null);
+    const nextHovered = id && id in INFO ? id : null;
+    setHovered(nextHovered);
+    if (nextHovered) setLastHovered(nextHovered);
     const tip = tipRef.current;
     if (tip) {
       const w = tip.offsetWidth, h = tip.offsetHeight;
@@ -363,28 +379,18 @@ export default function LandWarMap({
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
-    if (dragRef.current && !dragRef.current.moved) setSelCell(hoverCell); // klik = pilih sel grid
     dragRef.current = null;
     commitView();
   };
 
   const handlePointerLeave = () => {
     setHovered(null);
-    if (!dragRef.current) setHoverCell(null);
   };
 
   const handleLostPointerCapture = () => {
     dragRef.current = null;
     commitView();
   };
-
-  // Pasukan Anda selalu di kiri atas (hijau), musuh di kanan bawah (merah) — apa pun perannya
-  const attackerTotal = useMemo(() => attackerUnits.reduce((s, u) => s + (u.quantity || 0), 0), [attackerUnits]);
-  const defenderTotal = useMemo(() => defenderUnits.reduce((s, u) => s + (u.quantity || 0), 0), [defenderUnits]);
-  const ownTotal = isUserDefender ? defenderTotal : attackerTotal;
-  const enemyTotal = isUserDefender ? attackerTotal : defenderTotal;
-  const totalTroops = ownTotal + enemyTotal || 1;
-  const ownPct = Math.round((ownTotal / totalTroops) * 100);
 
   return (
     <div className="fixed inset-0 z-[300] flex select-none flex-col justify-between overflow-hidden p-4 font-sans transition-colors duration-1000 sm:p-6" style={{ backgroundColor: theme.bgColor }}>
@@ -511,17 +517,14 @@ export default function LandWarMap({
             accent={accent}
             water={theme.water}
             terrainType={terrainType}
-            isSimulating={isSimulating}
             simPhase={simPhase}
-            attackerUnits={attackerUnits}
-            defenderUnits={defenderUnits}
+            attackerUnits={displayedAttackerUnits}
+            defenderUnits={displayedDefenderUnits}
             viewBox={vb}
             playerSide={playerSide}
             fogEnabled={false}
+            onFacilityClick={(facility, side) => setSelectedFacility({ facility, side })}
           />
-
-          {/* KURSOR SEL KOORDINAT (tanpa garis grid) */}
-          <GridRulers vb={vb} accent={accent} hover={hoverCell} selected={selCell} />
 
           {/* KOMPAS */}
           <div className="pointer-events-none absolute left-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border bg-black/40" style={{ borderColor: `${accent}4D`, color: accent }}>
@@ -583,6 +586,28 @@ export default function LandWarMap({
         </div>
       </div>
 
+      {selectedFacility && (
+        <UnitSelectionModal
+          key={`${selectedFacility.facility}-${selectedFacility.side}`}
+          facility={selectedFacility.facility}
+          side={selectedFacility.side}
+          units={selectedFacility.side === 'left' ? attackerUnits : defenderUnits}
+          selectedUnits={unitSelections[selectedFacility.side]}
+          accent={accent}
+          onClose={() => setSelectedFacility(null)}
+          onConfirm={(selection) => {
+            setUnitSelections((current) => ({
+              ...current,
+              [selectedFacility.side]: {
+                ...current[selectedFacility.side],
+                ...selection,
+              },
+            }));
+            setSelectedFacility(null);
+          }}
+        />
+      )}
+
       {/* FOOTER */}
       <div className="relative z-10 flex shrink-0 flex-col gap-3 pt-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -591,16 +616,6 @@ export default function LandWarMap({
             {isSimulating ? 'Simulasi Pertempuran Sedang Berlangsung...' : 'Pilih Target & Modifikasi Strategi Sebelum Memulai'}
           </div>
 
-          {(ownTotal > 0 || enemyTotal > 0) && (
-            <div className="flex min-w-[220px] max-w-[340px] flex-1 items-center gap-2">
-              <span className="font-mono text-[10px] font-bold text-emerald-300">{formatUnitQuantity(ownTotal)}</span>
-              <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-rose-900/70">
-                <div className="h-full rounded-full bg-emerald-400/90 transition-all duration-700" style={{ width: `${ownPct}%` }} />
-              </div>
-              <span className="font-mono text-[10px] font-bold text-rose-300">{formatUnitQuantity(enemyTotal)}</span>
-              <span className="ml-1 font-mono text-[9px] font-bold text-gray-400">{ownPct}%</span>
-            </div>
-          )}
         </div>
 
         {battleLogs.length > 0 && (

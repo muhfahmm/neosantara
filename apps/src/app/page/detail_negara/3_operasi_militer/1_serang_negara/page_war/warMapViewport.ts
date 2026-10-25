@@ -195,6 +195,7 @@ export function flushViewportPreview<T extends Viewport, E extends SVGSVGElement
 
 function applyViewportViewBox(element: SVGSVGElement, view: Viewport, final = false): void {
   if (!final && drawSnapshot(element, view)) return;
+  endSnapshot(element);
   element.setAttribute('viewBox', `${view.x} ${view.y} ${view.w} ${view.h}`);
   if (!final) return;
   const s = snaps.get(element);
@@ -213,6 +214,7 @@ interface Snap {
   img: CanvasImageSource | null;
   canvas: HTMLCanvasElement;
   world: Viewport;
+  resolution: number;
   ready: boolean;
   token: number;
   timer: ReturnType<typeof setTimeout> | null;
@@ -225,17 +227,18 @@ function drawSnapshot(svg: SVGSVGElement, view: Viewport): boolean {
   const w = svg.clientWidth, h = svg.clientHeight;
   if (!w || !h) return false;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const scale = Math.min(w / view.w, h / view.h);
+  if (scale * dpr > s.resolution) return false;
   const cw = Math.round(w * dpr), ch = Math.round(h * dpr);
   if (s.canvas.width !== cw || s.canvas.height !== ch) { s.canvas.width = cw; s.canvas.height = ch; }
   const ctx = s.canvas.getContext('2d');
   if (!ctx) return false;
-  const scale = Math.min(w / view.w, h / view.h);
   const ox = (w - view.w * scale) / 2, oy = (h - view.h * scale) / 2;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, cw, ch);
   ctx.setTransform(scale * dpr, 0, 0, scale * dpr, (ox - view.x * scale) * dpr, (oy - view.y * scale) * dpr);
   ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'low';
+  ctx.imageSmoothingQuality = 'high';
   ctx.drawImage(s.img, s.world.x, s.world.y, s.world.w, s.world.h);
   s.canvas.style.display = 'block';
   svg.style.opacity = '0';
@@ -254,7 +257,7 @@ export function attachMapSnapshot(svg: SVGSVGElement, world: Viewport, maxPx = 3
   canvas.setAttribute('aria-hidden', 'true');
   canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none';
   svg.after(canvas);
-  const snap: Snap = { img: null, canvas, world, ready: false, token: 0, timer: null };
+  const snap: Snap = { img: null, canvas, world, resolution: 0, ready: false, token: 0, timer: null };
   snaps.set(svg, snap);
 
   const build = () => {
@@ -281,6 +284,7 @@ export function attachMapSnapshot(svg: SVGSVGElement, world: Viewport, maxPx = 3
       if (!rctx) return;
       rctx.drawImage(img, 0, 0, raster.width, raster.height);
       snap.img = raster;
+      snap.resolution = raster.width / world.w;
       snap.ready = true;
       if (snap.keepView) drawSnapshot(svg, snap.keepView);
     };

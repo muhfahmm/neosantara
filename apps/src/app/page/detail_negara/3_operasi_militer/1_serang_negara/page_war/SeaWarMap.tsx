@@ -47,7 +47,7 @@ const ACCENT_RGB = '34, 211, 238';
 const ENEMY = '#fb7185';
 const BG = '#041522';
 
-type SimPhase = 'idle' | 'advance' | 'clash' | 'done';
+type SimPhase = 'idle' | 'clash' | 'done';
 interface View { x: number; y: number; w: number; h: number }
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
@@ -565,13 +565,12 @@ function placeGroup(units: WarUnit[], group: WarUnit['group'], east: boolean): P
   }));
 }
 
-const MOVE: Record<WarUnit['group'], number> = { laut: 2000, udara: 1500, darat: 0 };
 const UNIT_GROUPS: WarUnit['group'][] = ['laut', 'udara', 'darat'];
 
 const Fleet = memo(function Fleet({
-  units, east, color, moving, side, dataId,
+  units, east, color, side, dataId,
 }: {
-  units: WarUnit[]; east: boolean; color: string; moving: boolean; side: string; dataId: InfoId;
+  units: WarUnit[]; east: boolean; color: string; side: string; dataId: InfoId;
 }) {
   const cx = east ? 7100 : 1700;
   const placedGroups = useMemo(
@@ -581,9 +580,8 @@ const Fleet = memo(function Fleet({
   return (
     <g data-terrain={dataId}>
       {placedGroups.map(({ group, units: placedUnits }) => {
-        const dx = moving ? (east ? -MOVE[group] : MOVE[group]) : 0;
         return (
-          <g key={group} style={{ transform: `translate(${dx}px, 0px)`, transition: 'transform 900ms cubic-bezier(.2,.7,.2,1)' }}>
+          <g key={group}>
             {placedUnits.map(({ unit, x, y }, i) => (
               <UnitMarker
                 key={`${side}-${group}-${unit.kind}-${i}`}
@@ -652,7 +650,6 @@ export default function SeaWarMap({
   const enemyName = isUserDefender ? attackerName : targetName;
   const ownTotal = useMemo(() => ownUnits.reduce((s, u) => s + (u.quantity || 0), 0), [ownUnits]);
   const enemyTotal = useMemo(() => enemyUnits.reduce((s, u) => s + (u.quantity || 0), 0), [enemyUnits]);
-  const ownPct = Math.round((ownTotal / (ownTotal + enemyTotal || 1)) * 100);
 
   /* ─── Simulasi & log ─── */
   const [isSimulating, setIsSimulating] = useState(false);
@@ -683,22 +680,15 @@ export default function SeaWarMap({
     setIsSimulating(true);
     const timestamp = `[${new Date().toLocaleTimeString('id-ID', { hour12: false })}] `;
     setBattleLogs([
-      `${timestamp}Armada meninggalkan pelabuhan. Formasi bergerak menuju objektif maritim.`,
-      `${timestamp}Pesawat patroli maritim terbang mendahului untuk pengintaian.`,
+      `${timestamp}Kontak radar! Armada musuh memasuki jangkauan rudal anti-kapal.`,
+      `${timestamp}Salvo rudal diluncurkan, kapal perusak melakukan manuver menghindar.`,
     ]);
-    setSimPhase('advance');
+    setSimPhase('clash');
 
     schedule(() => {
-      setSimPhase('clash');
-      addLog('Kontak radar! Armada musuh memasuki jangkauan rudal anti-kapal.');
-      addLog('Salvo rudal diluncurkan, kapal perusak melakukan manuver menghindar.');
-
-      schedule(() => {
-        setSimPhase('done');
-        addLog('Pertempuran laut mereda. Formasi musuh terpecah.');
-        addLog('Menghitung kerugian unit dan hasil operasi...');
-        schedule(() => onAutoResult(), 2000);
-      }, 3000);
+      setSimPhase('done');
+      addLog('Pertempuran laut mereda. Menghitung kerugian unit dan hasil operasi...');
+      schedule(() => onAutoResult(), 2000);
     }, 3000);
   };
 
@@ -931,8 +921,6 @@ export default function SeaWarMap({
     if (!dragRef.current) hoverCellRef.current = null;
   };
 
-  const advancing = simPhase === 'advance';
-  const clashing = simPhase === 'clash' || simPhase === 'done';
   const ownSide = isUserDefender ? 'DEF' : 'ATK';
   const enemySide = isUserDefender ? 'ATK' : 'DEF';
 
@@ -1069,8 +1057,8 @@ export default function SeaWarMap({
               <text x="7100" y="2160" fill="#fda4af">ARMADA MUSUH</text>
             </g>
 
-            <Fleet units={ownUnits} east={false} color={ACCENT} moving={simPhase !== 'idle'} side={ownSide} dataId="fleetOwn" />
-            <Fleet units={enemyUnits} east color={ENEMY} moving={simPhase !== 'idle'} side={enemySide} dataId="fleetEnemy" />
+            <Fleet units={ownUnits} east={false} color={ACCENT} side={ownSide} dataId="fleetOwn" />
+            <Fleet units={enemyUnits} east color={ENEMY} side={enemySide} dataId="fleetEnemy" />
 
             <EffectsLayer />
 
@@ -1144,16 +1132,6 @@ export default function SeaWarMap({
             {isSimulating ? 'Simulasi Pertempuran Laut Sedang Berlangsung...' : 'Pelajari Medan & Atur Strategi Sebelum Memulai'}
           </div>
 
-          {(ownTotal > 0 || enemyTotal > 0) && (
-            <div className="flex min-w-[220px] max-w-[340px] flex-1 items-center gap-2">
-              <span className="font-mono text-[10px] font-bold text-cyan-300">{formatUnitQuantity(ownTotal)}</span>
-              <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-rose-900/70">
-                <div className="h-full rounded-full bg-cyan-400/90 transition-all duration-700" style={{ width: `${ownPct}%` }} />
-              </div>
-              <span className="font-mono text-[10px] font-bold text-rose-300">{formatUnitQuantity(enemyTotal)}</span>
-              <span className="ml-1 font-mono text-[9px] font-bold text-gray-400">{ownPct}%</span>
-            </div>
-          )}
         </div>
 
         {battleLogs.length > 0 && (
