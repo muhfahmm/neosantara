@@ -14,6 +14,7 @@ import {
 } from './TacticalMap';
 import { attachMapSnapshot, flushViewportPreview, loadRustViewport, panViewport, scheduleViewportPreview, zoomViewport } from './warMapViewport';
 import {
+  formatUnitQuantity,
   getWarUnitComposition,
 } from './units/warUnitComposition';
 import UnitSelectionModal, {
@@ -179,6 +180,31 @@ export default function LandWarMap({
       addLog('Pertempuran mereda. Menghitung kerugian unit dan hasil operasi...');
       schedule(() => { onAutoResult(); }, 2000);
     }, 3000);
+  };
+
+  const handleReturnAirUnitToHangar = () => {
+    if (isSimulating || simPhase !== 'idle' || commandUnit?.group !== 'udara' || !commandUnit.echelon) return;
+
+    const side: FacilitySide = isUserDefender ? 'right' : 'left';
+    const { kind, echelon, quantity, label } = commandUnit;
+    setUnitSelections((current) => {
+      const sideSelection = current[side];
+      const battalionSelection = sideSelection[kind];
+      if (!battalionSelection) return current;
+
+      return {
+        ...current,
+        [side]: {
+          ...sideSelection,
+          [kind]: { ...battalionSelection, [echelon]: 0 },
+        },
+      };
+    });
+    setCommandUnit(null);
+    setIsUnitSelected(false);
+    setCommandMode(null);
+    setAttackRadius(null);
+    addLog(`${label} ${formatUnitQuantity(quantity)} kembali ke hangar udara.`);
   };
 
   /* ─── Zoom / Pan / Tooltip ─── */
@@ -561,6 +587,7 @@ export default function LandWarMap({
             accent={accent}
             disabled={isSimulating}
             onModeChange={setCommandMode}
+            onReturnToHangar={handleReturnAirUnitToHangar}
           />
           <div
             className="pointer-events-none absolute bottom-3 left-6 z-20 rounded bg-black/70 px-2 py-1 font-mono text-[9px] font-bold tracking-wider"

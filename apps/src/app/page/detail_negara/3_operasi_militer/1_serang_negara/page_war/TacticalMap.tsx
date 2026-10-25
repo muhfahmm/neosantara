@@ -1180,7 +1180,8 @@ export const TacticalMap = memo(function TacticalMap({
 
   const selectUnit = (id: string) => {
     if (simPhase !== 'idle') return;
-    const nextId = selectedUnitId === id ? null : id;
+    const isCurrentSelectionValid = own.some((placed) => unitId(placed.unit, 'own') === selectedUnitId);
+    const nextId = isCurrentSelectionValid && selectedUnitId === id ? null : id;
     selectedUnitIdRef.current = nextId;
     setSelectedUnitId(nextId);
     const selected = nextId ? own.find((placed) => unitId(placed.unit, 'own') === nextId) : null;
