@@ -45,14 +45,26 @@ const isArmadaMetadataRecord = (
   typeof value.groupId === "string" &&
   ["darat", "laut", "udara"].includes(value.groupId);
 
-const getMetadataByDataKey = (): Record<string, ArmadaMetadataRecord> =>
-  Object.values(getBuildingMetadata()).filter(isArmadaMetadataRecord).reduce<Record<string, ArmadaMetadataRecord>>(
-    (accumulator, item) => {
-      accumulator[item.dataKey] = item;
-      return accumulator;
-    },
-    {},
-  );
+const getMetadataByDataKey = (): Record<string, ArmadaMetadataRecord> => {
+  const metadata = Object.values(getBuildingMetadata())
+    .filter(isArmadaMetadataRecord)
+    .reduce<Record<string, ArmadaMetadataRecord>>(
+      (accumulator, item) => {
+        accumulator[item.dataKey] = item;
+        return accumulator;
+      },
+      {},
+    );
+
+  metadata.pasukan_infanteri ??= {
+    dataKey: "pasukan_infanteri",
+    groupId: "darat",
+    kekuatan: 1,
+    kesehatan: 1,
+  };
+
+  return metadata;
+};
 
 const resolveCountryArmada = (source: unknown): ArmadaData => {
   if (!source || typeof source !== "object") {

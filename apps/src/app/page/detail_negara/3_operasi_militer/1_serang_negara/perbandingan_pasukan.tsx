@@ -1,14 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  X,
   Swords,
   Shield,
   Ship,
   Plane,
-  ChevronDown,
-  ChevronUp,
   Zap,
   Play,
 } from 'lucide-react';
@@ -24,8 +21,9 @@ interface PerbandinganPasukanProps {
   targetIso?: string;
   targetPower: number;
   attackerPowerOverride?: number;
-  attackerDetail?: any;
-  targetDetail?: any;
+  attackerDetail?: unknown;
+  targetDetail?: unknown;
+  isUserAttacker?: boolean;
   isUserDefender?: boolean;
   isCoalitionForce?: boolean;
   onStartBattle: () => void;
@@ -72,98 +70,91 @@ const formatNumber = (value: unknown) => {
   return Number.isFinite(numeric) ? numeric.toLocaleString('id-ID', { maximumFractionDigits: 2 }) : '0';
 };
 
-const getArmadaPayload = (source: any) => {
-  if (!source || typeof source !== 'object') return {};
-  if (source.armada && typeof source.armada === 'object') return source.armada;
-  return source;
+const asRecord = (value: unknown): Record<string, unknown> =>
+  value !== null && typeof value === 'object' && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+
+const firstPositive = (...values: unknown[]): number =>
+  values.map(Number).find((value) => Number.isFinite(value) && value > 0) ?? 0;
+
+const getArmadaPayload = (source: unknown) => {
+  const record = asRecord(source);
+  const armada = asRecord(record.armada);
+  return Object.keys(armada).length > 0 ? armada : record;
 };
 
-const resolveQuantity = (source: any, group: ArmadaGroup, key: string, fallbackPower: number) => {
+const resolveQuantity = (source: unknown, group: ArmadaGroup, key: string) => {
   const payload = getArmadaPayload(source);
-  const block = payload[group] && typeof payload[group] === 'object' ? payload[group] : {};
-
-  let val = 0;
+  const sourceRecord = asRecord(source);
+  const sourceArmada = asRecord(sourceRecord.armada);
+  const block = asRecord(payload[group]);
   if (key === "barak") {
-    const barakCount =
-      Number(source?.barak ?? 0) ||
-      Number(payload?.barak ?? 0) ||
-      Number(block?.barak ?? 0) ||
-      Number(source?.armada?.barak ?? 0) ||
-      0;
-    const storedInfantry =
-      Number(block?.pasukan_infanteri ?? NaN) ||
-      Number(payload?.[group]?.pasukan_infanteri ?? NaN) ||
-      Number(payload?.pasukan_infanteri ?? NaN) ||
-      Number(source?.armada?.[group]?.pasukan_infanteri ?? NaN) ||
-      Number(source?.armada?.pasukan_infanteri ?? NaN) ||
-      Number(source?.[group]?.pasukan_infanteri ?? NaN) ||
-      Number(source?.pasukan_infanteri ?? NaN) ||
-      0;
-
-    val = storedInfantry > 0 ? storedInfantry : convertBarakToSoldiers(barakCount);
-  } else {
-    val =
-      Number(block?.[key] ?? 0) ||
-      Number(payload?.[key] ?? 0) ||
-      Number(source?.[group]?.[key] ?? 0) ||
-      Number(source?.armada?.[group]?.[key] ?? 0) ||
-      Number(source?.[key] ?? 0) ||
-      0;
+    const storedInfantry = firstPositive(
+      block.pasukan_infanteri,
+      asRecord(payload[group]).pasukan_infanteri,
+      payload.pasukan_infanteri,
+      asRecord(sourceArmada[group]).pasukan_infanteri,
+      sourceArmada.pasukan_infanteri,
+      asRecord(sourceRecord[group]).pasukan_infanteri,
+      sourceRecord.pasukan_infanteri,
+    );
+    const barakCount = firstPositive(
+      sourceRecord.barak,
+      payload.barak,
+      block.barak,
+    );
+    return storedInfantry > 0 ? storedInfantry : convertBarakToSoldiers(barakCount);
   }
 
-  // Jika nilai masih 0, hasilkan estimasi realistis berbasis skor militer (terutama untuk target NPC / data default)
-  if (val === 0 && fallbackPower > 0) {
-    if (key === 'barak') return Math.round(fallbackPower * 120);
-    if (key === 'tank_tempur_utama') return Math.round(fallbackPower * 1.5);
-    if (key === 'apc_ifv') return Math.round(fallbackPower * 4.2);
-    if (key === 'artileri_berat') return Math.round(fallbackPower * 1.8);
-    if (key === 'sistem_peluncur_roket') return Math.round(fallbackPower * 0.8);
-    if (key === 'pertahanan_udara_mobile') return Math.round(fallbackPower * 0.6);
-    if (key === 'kendaraan_taktis') return Math.round(fallbackPower * 5.0);
-
-    if (key === 'kapal_destroyer') return Math.round(fallbackPower * 0.15);
-    if (key === 'kapal_korvet') return Math.round(fallbackPower * 0.25);
-    if (key === 'kapal_selam_regular') return Math.round(fallbackPower * 0.1);
-    if (key === 'kapal_logistik') return Math.round(fallbackPower * 0.3);
-
-    if (key === 'jet_tempur_siluman') return Math.round(fallbackPower * 0.2);
-    if (key === 'jet_tempur_interceptor') return Math.round(fallbackPower * 0.35);
-    if (key === 'pesawat_pengebom') return Math.round(fallbackPower * 0.1);
-    if (key === 'helikopter_serang') return Math.round(fallbackPower * 0.4);
-    if (key === 'drone_intai_uav') return Math.round(fallbackPower * 0.8);
-    if (key === 'drone_kamikaze') return Math.round(fallbackPower * 1.5);
-    if (key === 'pesawat_angkut') return Math.round(fallbackPower * 0.25);
-  }
-
-  return val;
+  return firstPositive(
+    block[key],
+    payload[key],
+    asRecord(sourceRecord[group])[key],
+    asRecord(sourceArmada[group])[key],
+    sourceRecord[key],
+  );
 };
 
-const getGroupBreakdown = (source: any, group: ArmadaGroup, fallbackPower: number) => {
+const getGroupBreakdown = (source: unknown, group: ArmadaGroup) => {
   return armadaCatalog[group].map((item) => ({
     key: item.key,
     label: item.label,
-    quantity: resolveQuantity(source, group, item.key, fallbackPower),
+    quantity: resolveQuantity(source, group, item.key),
   }));
 };
 
+type DeployedBreakdown = Record<ArmadaGroup, ReturnType<typeof getGroupBreakdown>>;
+
+const getDeployedMilitaryPower = (
+  breakdown: DeployedBreakdown,
+  summary: ReturnType<typeof getArmadaPowerSummary> | null,
+) =>
+  (Object.values(breakdown).flat() as DeployedBreakdown[ArmadaGroup][number][]).reduce(
+    (total, unit) => {
+      const dataKey = unit.key === 'barak' ? 'pasukan_infanteri' : unit.key;
+      const powerData = summary?.breakdown.find((item) => item.dataKey === dataKey);
+      const powerPerUnit = powerData
+        ? powerData.quantity > 0
+          ? powerData.totalPower / powerData.quantity
+          : powerData.powerPerUnit
+        : 1;
+
+      return total + unit.quantity * powerPerUnit;
+    },
+    0,
+  );
+
 export default function PerbandinganPasukan({
   attackerName,
-  attackerIso = 'id',
-  attackerPower,
   targetName,
-  targetIso = 'un',
-  targetPower,
-  attackerPowerOverride,
   attackerDetail,
   targetDetail,
   isUserDefender = false,
   isCoalitionForce = false,
   onStartBattle,
   onAutoResult,
-  onClose,
 }: PerbandinganPasukanProps) {
-  const [expandedGroup, setExpandedGroup] = useState<ArmadaGroup | null>('darat');
-
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('pause_game_time', { detail: { source: 'war' } }));
@@ -173,82 +164,79 @@ export default function PerbandinganPasukan({
   const attackerSummary = attackerDetail ? getArmadaPowerSummary(attackerDetail) : null;
   const targetSummary = targetDetail ? getArmadaPowerSummary(targetDetail) : null;
 
-  // Data riil dari database -> jangan pernah diganti estimasi (unit bernilai 0 memang 0)
-  const attackerHasRealData = (attackerSummary?.totals?.totalPower ?? 0) > 0;
-  const targetHasRealData = (targetSummary?.totals?.totalPower ?? 0) > 0;
-
-  const attackerTotalPower = attackerPowerOverride && attackerPowerOverride > 0
-    ? attackerPowerOverride
-    : attackerHasRealData ? attackerSummary!.totals.totalPower : (attackerPower > 0 ? attackerPower : 60);
-  const targetTotalPower = targetHasRealData ? targetSummary!.totals.totalPower : (targetPower > 0 ? targetPower : 50);
-  const attackerFallbackPower = attackerHasRealData ? 0 : attackerTotalPower;
-  const targetFallbackPower = targetHasRealData ? 0 : targetTotalPower;
-
-  // Baca konfigurasi persentase pengerahan dari Konfirmasi Serangan / Mobilisasi
-  const getDeployedQuantity = (itemKey: string, rawQty: number) => {
-    if (typeof window === "undefined") return rawQty;
+  const deploymentConfig = (() => {
+    if (typeof window === 'undefined') return {};
     try {
-      const saved = localStorage.getItem("deployed_units_config");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (typeof parsed[itemKey] === "number") {
-          return Math.round((rawQty * parsed[itemKey]) / 100);
-        }
-      }
-    } catch (e) {}
-    return rawQty;
+      const savedConfig = window.localStorage.getItem('deployed_units_config');
+      if (!savedConfig) return {};
+      const parsed: unknown = JSON.parse(savedConfig);
+      return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
+        ? parsed as Record<string, unknown>
+        : {};
+    } catch (error) {
+      console.error('Gagal membaca konfigurasi pengerahan unit.', error);
+      return {};
+    }
+  })();
+
+  const hasDeploymentConfig = Object.values(deploymentConfig).some(
+    (value) => typeof value === 'number',
+  );
+  const getDeployedQuantity = (itemKey: string, rawQty: number) => {
+    if (!hasDeploymentConfig) return rawQty;
+    const deployedPercent = deploymentConfig[itemKey];
+    return typeof deployedPercent === 'number'
+      ? Math.round((rawQty * deployedPercent) / 100)
+      : 0;
   };
 
-  // Jika User Bertahan (isUserDefender = true), pengerahan berlaku untuk Target (User), sedangkan Attacker (NPC) 100%
-  // Jika User Penyerang (isUserDefender = false), pengerahan berlaku untuk Attacker (User), sedangkan Target (NPC) 100%
   const attackerBreakdown = {
-    darat: getGroupBreakdown(attackerDetail, 'darat', attackerFallbackPower).map(i => ({
+    darat: getGroupBreakdown(attackerDetail, 'darat').map(i => ({
       ...i,
       quantity: isUserDefender || isCoalitionForce ? i.quantity : getDeployedQuantity(i.key, i.quantity)
     })),
-    laut: getGroupBreakdown(attackerDetail, 'laut', attackerFallbackPower).map(i => ({
+    laut: getGroupBreakdown(attackerDetail, 'laut').map(i => ({
       ...i,
       quantity: isUserDefender || isCoalitionForce ? i.quantity : getDeployedQuantity(i.key, i.quantity)
     })),
-    udara: getGroupBreakdown(attackerDetail, 'udara', attackerFallbackPower).map(i => ({
+    udara: getGroupBreakdown(attackerDetail, 'udara').map(i => ({
       ...i,
       quantity: isUserDefender || isCoalitionForce ? i.quantity : getDeployedQuantity(i.key, i.quantity)
     })),
   };
 
   const targetBreakdown = {
-    darat: getGroupBreakdown(targetDetail, 'darat', targetFallbackPower).map(i => ({
+    darat: getGroupBreakdown(targetDetail, 'darat').map(i => ({
       ...i,
       quantity: isUserDefender ? getDeployedQuantity(i.key, i.quantity) : i.quantity
     })),
-    laut: getGroupBreakdown(targetDetail, 'laut', targetFallbackPower).map(i => ({
+    laut: getGroupBreakdown(targetDetail, 'laut').map(i => ({
       ...i,
       quantity: isUserDefender ? getDeployedQuantity(i.key, i.quantity) : i.quantity
     })),
-    udara: getGroupBreakdown(targetDetail, 'udara', targetFallbackPower).map(i => ({
+    udara: getGroupBreakdown(targetDetail, 'udara').map(i => ({
       ...i,
       quantity: isUserDefender ? getDeployedQuantity(i.key, i.quantity) : i.quantity
     })),
   };
 
-  const totalRawAttackerUnits = [...getGroupBreakdown(attackerDetail, 'darat', attackerFallbackPower), ...getGroupBreakdown(attackerDetail, 'laut', attackerFallbackPower), ...getGroupBreakdown(attackerDetail, 'udara', attackerFallbackPower)].reduce((acc, curr) => acc + curr.quantity, 0);
-  const totalDeployedAttackerUnits = [...attackerBreakdown.darat, ...attackerBreakdown.laut, ...attackerBreakdown.udara].reduce((acc, curr) => acc + curr.quantity, 0);
-  const attackerDeploymentRatio = (!isUserDefender && totalRawAttackerUnits > 0) ? totalDeployedAttackerUnits / totalRawAttackerUnits : 1.0;
+  const attackerDeployedPower = getDeployedMilitaryPower(attackerBreakdown, attackerSummary);
+  const targetDeployedPower = getDeployedMilitaryPower(targetBreakdown, targetSummary);
 
-  const totalRawTargetUnits = [...getGroupBreakdown(targetDetail, 'darat', targetFallbackPower), ...getGroupBreakdown(targetDetail, 'laut', targetFallbackPower), ...getGroupBreakdown(targetDetail, 'udara', targetFallbackPower)].reduce((acc, curr) => acc + curr.quantity, 0);
-  const totalDeployedTargetUnits = [...targetBreakdown.darat, ...targetBreakdown.laut, ...targetBreakdown.udara].reduce((acc, curr) => acc + curr.quantity, 0);
-  const targetDeploymentRatio = (isUserDefender && totalRawTargetUnits > 0) ? totalDeployedTargetUnits / totalRawTargetUnits : 1.0;
-
-  const playerMilitaryLoss = getActiveSectorImpacts(isUserDefender ? targetDetail : attackerDetail).militaryEffectivenessLossPercent;
+  const playerMilitaryLoss = getActiveSectorImpacts(
+    asRecord(isUserDefender ? targetDetail : attackerDetail),
+  ).militaryEffectivenessLossPercent;
   const actualAttackerPower = Math.round(
-    attackerTotalPower * attackerDeploymentRatio * (isUserDefender ? 1 : 1 - playerMilitaryLoss / 100)
+    attackerDeployedPower * (isUserDefender ? 1 : 1 - playerMilitaryLoss / 100),
   );
   const actualTargetPower = Math.round(
-    targetTotalPower * targetDeploymentRatio * (isUserDefender ? 1 - playerMilitaryLoss / 100 : 1)
+    targetDeployedPower * (isUserDefender ? 1 - playerMilitaryLoss / 100 : 1),
   );
 
-  const totalCombinedPower = Math.max(1, actualAttackerPower + actualTargetPower);
-  const attackerPct = totalCombinedPower > 0 ? (actualAttackerPower / totalCombinedPower) * 100 : 50;
+  const totalCombinedPower = actualAttackerPower + actualTargetPower;
+  const attackerPct = totalCombinedPower > 0
+    ? (actualAttackerPower / totalCombinedPower) * 100
+    : 50;
   const targetPct = 100 - attackerPct;
 
   const groupMeta: Record<ArmadaGroup, { icon: typeof Swords; color: string; bg: string }> = {
@@ -316,7 +304,7 @@ export default function PerbandinganPasukan({
                     {attackerName}
                   </p>
                   <p className="text-xs text-[#E0E0E0]">
-                    Kekuatan:{' '}
+                    Kekuatan pasukan dibawa:{' '}
                     <span className="font-black text-[#00FFAA] font-mono">
                       {formatNumber(actualAttackerPower)}
                     </span>
@@ -344,7 +332,7 @@ export default function PerbandinganPasukan({
                     {targetName}
                   </p>
                   <p className="text-xs text-[#E0E0E0]">
-                    Kekuatan:{' '}
+                    Kekuatan pasukan dibawa:{' '}
                     <span className="font-black text-rose-400 font-mono">
                       {formatNumber(actualTargetPower)}
                     </span>
@@ -357,7 +345,7 @@ export default function PerbandinganPasukan({
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6B8A8A]">
-                      Keseimbangan Pasukan:
+                      Keseimbangan Pasukan yang Dikerahkan:
                     </span>
                     <span className="text-xs font-mono font-black text-[#00FFAA]">
                       {attackerPct.toFixed(1)}%

@@ -56,6 +56,7 @@ interface TopLeftIconProps {
   onCrackdownClick?: (notification: NotificationMessage) => void;
   onRedirectClick?: (notification: NotificationMessage) => void;
   userCountryName?: string;
+  isWarActive?: boolean;
 }
 
 export default function TopLeftIcon({
@@ -68,6 +69,7 @@ export default function TopLeftIcon({
   onCrackdownClick,
   onRedirectClick,
   userCountryName,
+  isWarActive = false,
 }: TopLeftIconProps) {
   const [mounted, setMounted] = useState(false);
   const [toastNotification, setToastNotification] = useState<NotificationMessage | null>(null);
@@ -515,8 +517,8 @@ export default function TopLeftIcon({
 
   return (
     <>
-      {mounted && createPortal(
-        <div className="fixed top-24 left-7 z-[200010] flex flex-col items-start gap-2 pointer-events-auto">
+      {mounted && !isWarActive && createPortal(
+        <div className="fixed top-24 left-7 z-[200] flex flex-col items-start gap-2 pointer-events-auto">
           <button
             onClick={() => {
               if (toastNotification) {
@@ -590,8 +592,8 @@ export default function TopLeftIcon({
       )}
 
       {/* 🔥 Inbox Modal Prototype (2 Kolom: Master List di Kiri & Detail Konten di Kanan) */}
-      {isOpen && mounted && createPortal(
-        <div className="fixed inset-0 z-[100000] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
+      {isOpen && mounted && !isWarActive && createPortal(
+        <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
           <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
             {/* 🔥 HEADER MODAL */}

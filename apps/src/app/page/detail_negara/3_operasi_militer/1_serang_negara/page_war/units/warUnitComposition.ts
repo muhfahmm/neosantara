@@ -8,6 +8,7 @@ export interface WarUnit {
   group: WarUnitGroup;
   label: string;
   quantity: number;
+  echelon?: "I" | "II" | "III";
 }
 
 const UNIT_CATALOG: Record<WarUnitGroup, Array<{ key: string; kind: UnitKind; label: string }>> = {
@@ -93,13 +94,16 @@ export function getWarUnitComposition(
   applyDeployment: boolean,
 ): WarUnit[] {
   const source = asRecord(countryDetail);
+  const hasDeploymentConfig = Object.values(deploymentConfig).some(
+    (value) => typeof value === "number"
+  );
 
   return (Object.entries(UNIT_CATALOG) as Array<[WarUnitGroup, typeof UNIT_CATALOG[WarUnitGroup]]>)
     .flatMap(([group, units]) => units.flatMap(({ key, kind, label }) => {
       const rawQuantity = resolveUnitQuantity(source, group, key);
       const deployedPercent = deploymentConfig[key];
-      const quantity = applyDeployment && typeof deployedPercent === "number"
-        ? Math.round((rawQuantity * deployedPercent) / 100)
+      const quantity = applyDeployment && hasDeploymentConfig
+        ? Math.round((rawQuantity * (typeof deployedPercent === "number" ? deployedPercent : 0)) / 100)
         : rawQuantity;
 
       return quantity > 0 ? [{ kind, group, label, quantity }] : [];

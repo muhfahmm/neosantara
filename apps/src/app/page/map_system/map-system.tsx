@@ -2409,6 +2409,38 @@ export default function MapPage() {
                 };
             }
 
+            setIsPresidentMenuOpen(false);
+            setCountryDetailModalOpen(false);
+            setCountryDetailModalName(null);
+            setAiConstructionNavigation(null);
+            setAutoBuildEmbassyState(false);
+            setRequireEmbassyModalOpen(false);
+            setRequireEmbassyPartner(null);
+            setPlayerDetailModalOpen(false);
+            setInboxModalOpen(false);
+            setGiftModalOpen(false);
+            setNewsModalOpen(false);
+            setPenelitianModalOpen(false);
+            setMissionModalOpen(false);
+            setIsSaveModalOpen(false);
+            setIsRestartConfirmOpen(false);
+            setAparatConfirmState({ isOpen: false, notification: null });
+            setHasilBubarkanState(previous => ({ ...previous, isOpen: false }));
+            setTradeRejectionState(previous => ({ ...previous, isOpen: false }));
+            setClosedTradeRejectionState(previous => ({ ...previous, isOpen: false }));
+            setIsRatingWarningOpen(false);
+            setIsKudetaOpen(false);
+            setAnnexedModalData(previous => ({ ...previous, isOpen: false }));
+            setResultModal(previous => ({ ...previous, isOpen: false }));
+            setIsDialogTerbukaOpen(false);
+            const pauseState = dialogPauseStateRef.current;
+            dialogPauseStateRef.current = null;
+            if (pauseState && !pauseState.wasPaused) {
+                isPausedRef.current = false;
+                setIsPaused(false);
+                timeManagerRef.current?.setPaused(false);
+            }
+
             const attackerPowerSummary = getArmadaPowerSummary(attackerDetailData);
             const targetPowerSummary = getArmadaPowerSummary(targetDetailData);
 
@@ -6643,6 +6675,7 @@ export default function MapPage() {
                     />
                     {/* Top Left Icon - Inbox */}
                     <TopLeftIcon
+                        isWarActive={!!activeWarAnimation}
                         userCountryName={String(
                             countryDetail?.country ||
                             countryDetail?.nama_negara ||
@@ -7897,7 +7930,10 @@ export default function MapPage() {
             )}
 
             {!isDialogTerbukaOpen && (
-                <DiplomacyTracking onOpen={() => setCountryDetailModalOpen(false)} />
+                <DiplomacyTracking
+                    isWarActive={!!activeWarAnimation}
+                    onOpen={() => setCountryDetailModalOpen(false)}
+                />
             )}
 
             {!isDialogTerbukaOpen && !(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (

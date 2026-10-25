@@ -572,7 +572,6 @@ const Fleet = memo(function Fleet({
 }: {
   units: WarUnit[]; east: boolean; color: string; side: string; dataId: InfoId;
 }) {
-  const cx = east ? 7100 : 1700;
   const placedGroups = useMemo(
     () => UNIT_GROUPS.map((group) => ({ group, units: placeGroup(units, group, east) })),
     [units, east],
@@ -593,9 +592,6 @@ const Fleet = memo(function Fleet({
           </g>
         );
       })}
-      {units.length === 0 && (
-        <text x={cx} y="2400" textAnchor="middle" fill={color} fontSize="36" fontWeight="800" fontFamily="monospace">TIDAK ADA UNIT TERDATA</text>
-      )}
     </g>
   );
 });

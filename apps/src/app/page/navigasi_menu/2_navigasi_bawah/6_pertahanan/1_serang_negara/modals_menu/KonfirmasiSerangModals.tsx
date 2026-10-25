@@ -48,6 +48,10 @@ const armadaCatalog: Record<ArmadaGroup, Array<{ key: string; label: string }>> 
   ],
 };
 
+const deploymentUnitKeys = Object.values(armadaCatalog).flatMap((units) =>
+  units.map(({ key }) => key)
+);
+
 const formatNumber = (value: unknown) => {
   const numeric = Number(value ?? 0);
   return Number.isFinite(numeric) ? numeric.toLocaleString("id-ID", { maximumFractionDigits: 0 }) : "0";
@@ -140,11 +144,16 @@ export default function SerangModals({
   // Reset state dan bersihkan data pengerahan lama setiap kali modal dibuka
   React.useEffect(() => {
     if (isOpen) {
-      setDeploymentPct({});
       if (typeof window !== "undefined") {
         try {
-          localStorage.removeItem("deployed_units_config");
-        } catch (e) {}
+          const initialDeployment = Object.fromEntries(
+            deploymentUnitKeys.map((key) => [key, 0])
+          );
+          setDeploymentPct(initialDeployment);
+          localStorage.setItem("deployed_units_config", JSON.stringify(initialDeployment));
+        } catch (error) {
+          console.error("Gagal menginisialisasi konfigurasi pengerahan unit.", error);
+        }
       }
     }
   }, [isOpen]);

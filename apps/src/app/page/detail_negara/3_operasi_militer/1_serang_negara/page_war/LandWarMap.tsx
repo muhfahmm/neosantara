@@ -57,11 +57,15 @@ interface Info {
 }
 const TONE: Record<Tone, string> = { good: 'text-emerald-300', bad: 'text-rose-300', neutral: 'text-gray-200' };
 
+const BATTALIONS = ['I', 'II', 'III'] as const;
+
 const selectDisplayedUnits = (units: ReturnType<typeof getWarUnitComposition>, selection: UnitSelection) =>
-  units.flatMap((unit) => {
-    const quantity = Math.min(unit.quantity, selection[unit.kind] ?? 0);
-    return quantity > 0 ? [{ ...unit, quantity }] : [];
-  });
+  units.flatMap((unit) =>
+    BATTALIONS.flatMap((battalion) => {
+      const quantity = Math.min(unit.quantity, selection[unit.kind]?.[battalion] ?? 0);
+      return quantity > 0 ? [{ ...unit, quantity, echelon: battalion }] : [];
+    }),
+  );
 
 const Corners = ({ c }: { c: string }) => (
   <>

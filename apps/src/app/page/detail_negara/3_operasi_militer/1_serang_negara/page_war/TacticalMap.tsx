@@ -746,9 +746,42 @@ const Headquarters = ({ at, color, fallen, name, sub, id }: { at: { x: number; y
   );
 };
 
-export const Airbase = ({ at, color, name, id }: { at: { x: number; y: number }; color: string; name: string; id: string }) => {
+export const Airbase = ({
+  at,
+  color,
+  name,
+  id,
+  side,
+  onFacilityClick,
+}: {
+  at: { x: number; y: number };
+  color: string;
+  name: string;
+  id: string;
+  side?: FacilitySide;
+  onFacilityClick?: (facility: UnitFacility, side: FacilitySide) => void;
+}) => {
   return (
-    <g className="nw-tz" data-terrain={id} transform={`translate(${at.x} ${at.y}) scale(1.25)`}>
+    <g
+      className="nw-tz"
+      data-terrain={id}
+      transform={`translate(${at.x} ${at.y}) scale(1.25)`}
+      aria-label={onFacilityClick ? `${name}, buka pilihan unit udara` : undefined}
+      onClick={onFacilityClick ? (event) => {
+        event.stopPropagation();
+        onFacilityClick('bandara', side ?? 'left');
+      } : undefined}
+      onKeyDown={onFacilityClick ? (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onFacilityClick('bandara', side ?? 'left');
+        }
+      } : undefined}
+      onPointerDown={onFacilityClick ? (event) => event.stopPropagation() : undefined}
+      role={onFacilityClick ? 'button' : undefined}
+      style={onFacilityClick ? { cursor: 'pointer' } : undefined}
+      tabIndex={onFacilityClick ? 0 : undefined}
+    >
       <rect x="-470" y="-215" width="940" height="290" rx="22" fill="#0b1220" fillOpacity="0.55" stroke={color} strokeOpacity="0.5" strokeWidth="3" />
       <rect x="-440" y="-35" width="880" height="70" rx="6" fill="#2a2f38" stroke="#000" strokeOpacity="0.5" strokeWidth="2" />
       <line x1="-410" y1="0" x2="410" y2="0" stroke="#e5e7eb" strokeWidth="3" opacity="0.8" />
@@ -823,8 +856,8 @@ const BasesLayer = memo(function BasesLayer({ accent, simPhase, playerSide, onFa
         name="HQ ANDA" sub={ownIsAtk ? 'SYARAT MENANG: REBUT HQ MUSUH' : 'SYARAT MENANG: HANCURKAN PENYERANG'} />
       <Headquarters id={ownIsAtk ? 'hqDefender' : 'hqAttacker'} at={HQ_ENEMY} color={RED} fallen={done && ownIsAtk}
         name="HQ MUSUH" sub={ownIsAtk ? 'SYARAT MENANG: HANCURKAN PENYERANG' : 'SYARAT MENANG: REBUT HQ ANDA'} />
-      <Airbase id="airbaseOwn" at={AIRBASE_OWN} color={accent} name="PANGKALAN UDARA ANDA" />
-      <Airbase id="airbaseEnemy" at={AIRBASE_ENEMY} color={RED} name="PANGKALAN UDARA MUSUH" />
+      <Airbase id="airbaseOwn" at={AIRBASE_OWN} color={accent} name="PANGKALAN UDARA ANDA" side="left" onFacilityClick={onFacilityClick} />
+      <Airbase id="airbaseEnemy" at={AIRBASE_ENEMY} color={RED} name="PANGKALAN UDARA MUSUH" side="right" onFacilityClick={onFacilityClick} />
       
       {/* ── BARAK MILITER DISESUAIKAN DENGAN PANAH MERAH ── */}
       {/* User: Naik 100px ke Atas (y: 180) */}
@@ -848,6 +881,7 @@ const UnitsLayer = memo(function UnitsLayer({ accent, simPhase, own, enemy, play
         x={p.x / UK} y={p.y / UK} kind={p.unit.kind}
         color={hostile ? RED : accent}
         quantity={p.unit.quantity}
+        echelon={p.unit.echelon}
         label={`${p.unit.label} ${formatUnitQuantity(p.unit.quantity)}`}
       />
     </g>
@@ -860,12 +894,10 @@ const UnitsLayer = memo(function UnitsLayer({ accent, simPhase, own, enemy, play
     <g>
       <g className="nw-tz" data-terrain={ownIsAtk ? 'attacker' : 'defender'} style={fade(done && !ownIsAtk)}>
         {own.map((p, i) => mk(p, i, false))}
-        {own.length === 0 && <text x="1700" y="430" textAnchor="middle" fill={accent} fontSize="28" fontWeight="800" fontFamily="monospace">TIDAK ADA UNIT TERDATA</text>}
       </g>
 
       <g className="nw-tz" data-terrain={ownIsAtk ? 'defender' : 'attacker'} style={fade(done && ownIsAtk)}>
         {enemy.map((p, i) => mk(p, i, true))}
-        {enemy.length === 0 && <text x="4600" y="1760" textAnchor="middle" fill={RED} fontSize="28" fontWeight="800" fontFamily="monospace">TIDAK ADA UNIT TERDATA</text>}
       </g>
 
       {simPhase === 'clash' && (

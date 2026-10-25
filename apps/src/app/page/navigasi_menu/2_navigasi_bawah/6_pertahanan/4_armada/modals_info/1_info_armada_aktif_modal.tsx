@@ -36,7 +36,10 @@ export default function InfoArmadaAktifModal({
 }: InfoArmadaAktifModalProps) {
   if (!isOpen || !selectedItem) return null;
 
-  const currentUnit = unitBreakdown.find(e => e.dataKey === selectedItem?.key);
+  const selectedDataKey = selectedItem.key === "barak"
+    ? "pasukan_infanteri"
+    : selectedItem.key;
+  const currentUnit = unitBreakdown.find(e => e.dataKey === selectedDataKey);
   const currentQuantity = currentUnit?.quantity ?? 0;
   const hasMilitaryBonus =
     getMonarchyMilitaryStrengthMultiplier(countryIdeology) *

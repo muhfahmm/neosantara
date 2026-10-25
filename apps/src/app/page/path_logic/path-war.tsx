@@ -590,7 +590,7 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
         if (vals.length > 0) {
           const sum = vals.reduce((acc, curr) => acc + curr, 0);
           const avgPct = sum / vals.length;
-          deployedPowerRatio = Math.max(0.01, avgPct / 100);
+          deployedPowerRatio = Math.max(0, avgPct / 100);
         }
       }
     } catch (e) { }
@@ -598,10 +598,29 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
 
   const actualAttackerPower = isUserDefender ? Math.round(attackerPower) : Math.round(attackerPower * deployedPowerRatio);
   const actualTargetPower = isUserDefender ? Math.round(targetPower * deployedPowerRatio) : Math.round(targetPower);
+  if (actualAttackerPower === 0 || actualTargetPower === 0) {
+    const winner = actualAttackerPower > 0
+      ? 'attacker'
+      : actualTargetPower > 0
+        ? 'target'
+        : 'draw';
+    const isUserWin = isUserDefender
+      ? winner === 'target'
+      : winner === 'attacker';
+    return {
+      result: isUserWin ? 'win' : 'lose',
+      attackerScore: actualAttackerPower,
+      targetScore: actualTargetPower,
+      totalRounds: 0,
+      message: 'Pertempuran ditentukan oleh pasukan yang dikerahkan.',
+      log: ['Salah satu pihak tidak mengerahkan pasukan.'],
+      winner,
+    };
+  }
 
   const battle = simulateBattleTs({
-    attackerPower: Math.max(1, actualAttackerPower),
-    targetPower: Math.max(1, actualTargetPower),
+    attackerPower: actualAttackerPower,
+    targetPower: actualTargetPower,
   });
 
   const isUserWin = isUserDefender
@@ -995,6 +1014,7 @@ export default function WarMap({
           targetIso={target.iso || 'un'}
           targetPower={targetPower}
           targetDetail={target}
+          isUserAttacker={!isNpcWar && !isUserDefender}
           isUserDefender={isUserDefender}
           isCoalitionForce={isPbbCoalition}
           onStartBattle={handleStartBattle}
