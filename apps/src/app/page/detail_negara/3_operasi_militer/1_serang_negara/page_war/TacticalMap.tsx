@@ -5,6 +5,7 @@ import UnitMarker from './units/unitMarker';
 import { formatUnitQuantity, type WarUnit } from './units/warUnitComposition';
 import type { FacilitySide, UnitFacility } from './UnitSelectionModal';
 import { loadRustViewport } from './warMapViewport';
+import type { UnitCommandMode } from './AttackControls';
 
 /* ═════════════════════════ TIPE & KONSTANTA (dipakai juga oleh PageWar) ═════════════════════════ */
 export type TerrainType = 'default' | 'desert' | 'snow' | 'jungle' | 'urban';
@@ -60,7 +61,10 @@ export interface MapProps {
   playerSide?: PlayerSide;
   fogEnabled?: boolean;
   onFacilityClick?: (facility: UnitFacility, side: FacilitySide) => void;
-  onUnitSelectionChange?: (selected: boolean) => void;
+  commandMode?: UnitCommandMode;
+  onUnitSelectionChange?: (unit: WarUnit | null) => void;
+  onAttackRadiusChange?: (radius: number | null) => void;
+  onAttack?: (attacker: WarUnit, target: WarUnit, inRange: boolean) => void;
 }
 
 /* ═════════════════════════ PALET PER MEDAN ═════════════════════════ */
@@ -890,11 +894,16 @@ interface UnitsProps {
   selectedUnitId: string | null;
   movingUnitIds: string[];
   movePaths: UnitMovePath[];
+  commandMode: UnitCommandMode;
+  attackRadius: number | null;
+  attackStrike: UnitMovePath | null;
   onSelectUnit: (id: string) => void;
+  onAttackUnit: (target: PlacedUnit, position: UnitPosition) => void;
 }
 
 const UnitsLayer = memo(function UnitsLayer({
-  accent, simPhase, own, enemy, playerSide, positions, selectedUnitId, movingUnitIds, movePaths, onSelectUnit,
+  accent, simPhase, own, enemy, playerSide, positions, selectedUnitId, movingUnitIds, movePaths,
+  commandMode, attackRadius, attackStrike, onSelectUnit, onAttackUnit,
 }: UnitsProps) {
   const renderUnit = (placed: PlacedUnit, index: number, hostile: boolean) => {
     const side = hostile ? 'enemy' : 'own';
@@ -907,16 +916,16 @@ const UnitsLayer = memo(function UnitsLayer({
     return (
       <g
         key={`${id}-${index}`}
-        data-unit-id={hostile ? undefined : id}
+        data-unit-id={id}
         role={hostile ? undefined : 'button'}
         aria-label={hostile ? undefined : `Pilih ${placed.unit.label} ${formatUnitQuantity(placed.unit.quantity)}`}
         aria-pressed={hostile ? undefined : selected}
         tabIndex={hostile ? undefined : 0}
         style={hostile ? undefined : { cursor: selected ? 'crosshair' : 'grab' }}
-        onPointerDown={hostile ? undefined : (event) => {
+        onClick={hostile ? (event) => {
           event.stopPropagation();
-        }}
-        onClick={hostile ? undefined : (event) => {
+          if (commandMode === 'attack') onAttackUnit(placed, position);
+        } : (event) => {
           event.stopPropagation();
           onSelectUnit(id);
         }}
@@ -956,6 +965,37 @@ const UnitsLayer = memo(function UnitsLayer({
 
   return (
     <g>
+      {selectedUnitId && attackRadius !== null && (
+        commandMode === 'attack' || movingUnitIds.includes(selectedUnitId)
+      ) && (() => {
+        const selected = own.find((placed) => unitId(placed.unit, 'own') === selectedUnitId);
+        const position = selected ? positions[selectedUnitId] ?? { x: selected.x, y: selected.y } : null;
+        return position ? (
+          <circle
+            cx={position.x / UK}
+            cy={position.y / UK}
+            r={attackRadius / UK}
+            fill="#fb7185"
+            fillOpacity="0.08"
+            stroke="#fb7185"
+            strokeWidth={4}
+            strokeDasharray="18 14"
+            pointerEvents="none"
+          />
+        ) : null;
+      })()}
+      {attackStrike && (
+        <path
+          key={attackStrike.id}
+          className="tm-tracer"
+          d={`M ${attackStrike.start.x} ${attackStrike.start.y} L ${attackStrike.target.x} ${attackStrike.target.y}`}
+          fill="none"
+          stroke="#fb7185"
+          strokeWidth="5"
+          strokeDasharray="14 12"
+          pointerEvents="none"
+        />
+      )}
       {movePaths.map((movePath) => (
         <path
           key={movePath.id}
@@ -1092,7 +1132,8 @@ export const GridRulers = memo(function GridRulers({ vb, accent, hover, selected
 
 export const TacticalMap = memo(function TacticalMap({
   accent, water, terrainType, simPhase, attackerUnits, defenderUnits, viewBox,
-  svgRef, playerSide = 'attacker', fogEnabled = true, onFacilityClick, onUnitSelectionChange,
+  svgRef, playerSide = 'attacker', fogEnabled = true, onFacilityClick,
+  commandMode = null, onUnitSelectionChange, onAttackRadiusChange, onAttack,
 }: MapProps) {
   const ownIsAtk = playerSide === 'attacker';
   const fogActive = fogEnabled && simPhase === 'idle';
@@ -1101,6 +1142,10 @@ export const TacticalMap = memo(function TacticalMap({
   const [positions, setPositions] = useState<Record<string, UnitPosition>>({});
   const positionsRef = useRef(positions);
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
+  const selectedUnitIdRef = useRef<string | null>(null);
+  const [attackRadius, setAttackRadius] = useState<number | null>(null);
+  const [attackStrike, setAttackStrike] = useState<UnitMovePath | null>(null);
+  const attackStrikeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [movingUnitIds, setMovingUnitIds] = useState<string[]>([]);
   const [movePaths, setMovePaths] = useState<UnitMovePath[]>([]);
   const movementFramesRef = useRef<Record<string, number>>({});
@@ -1118,14 +1163,40 @@ export const TacticalMap = memo(function TacticalMap({
     return () => {
       cancelled = true;
         Object.values(movementFramesRef.current).forEach(cancelAnimationFrame);
+        if (attackStrikeTimerRef.current !== null) clearTimeout(attackStrikeTimerRef.current);
     };
   }, []);
 
   const selectUnit = (id: string) => {
     if (simPhase !== 'idle') return;
     const nextId = selectedUnitId === id ? null : id;
+    selectedUnitIdRef.current = nextId;
     setSelectedUnitId(nextId);
-    onUnitSelectionChange?.(nextId !== null);
+    const selected = nextId ? own.find((placed) => unitId(placed.unit, 'own') === nextId) : null;
+    onUnitSelectionChange?.(selected?.unit ?? null);
+    setAttackRadius(null);
+    onAttackRadiusChange?.(null);
+    if (selected) {
+      const updateRadius = (engine: Awaited<ReturnType<typeof loadRustViewport>>) => {
+        if (selectedUnitIdRef.current !== nextId) return;
+        const radius = engine.calculate_attack_radius(selected.unit.quantity, selected.unit.group, selected.unit.kind);
+        setAttackRadius(radius);
+        onAttackRadiusChange?.(radius);
+      };
+      const engine = movementEngineRef.current;
+      if (engine) {
+        updateRadius(engine);
+      } else {
+        void loadRustViewport()
+          .then((loadedEngine) => {
+            movementEngineRef.current = loadedEngine;
+            updateRadius(loadedEngine);
+          })
+          .catch((error: unknown) => {
+            console.error('[TacticalMap] Failed to calculate Rust attack radius', error);
+          });
+      }
+    }
   };
 
   useEffect(() => {
@@ -1135,7 +1206,7 @@ export const TacticalMap = memo(function TacticalMap({
   }, [simPhase, onUnitSelectionChange]);
 
   const handleMapClick = (event: React.MouseEvent<SVGSVGElement>) => {
-    if (!selectedUnitId || simPhase !== 'idle') return;
+    if (!selectedUnitId || commandMode !== 'move' || simPhase !== 'idle') return;
     const svg = event.currentTarget;
     const matrix = svg.getScreenCTM();
     if (!matrix) return;
@@ -1191,6 +1262,7 @@ export const TacticalMap = memo(function TacticalMap({
           movementFramesRef.current[id] = requestAnimationFrame(animate);
         }
       };
+
       movementFramesRef.current[id] = requestAnimationFrame(animate);
     };
 
@@ -1207,6 +1279,27 @@ export const TacticalMap = memo(function TacticalMap({
       .catch((error: unknown) => {
         console.error('[TacticalMap] Failed to load Rust unit movement engine', error);
       });
+  };
+
+  const handleAttackUnit = (target: PlacedUnit, targetPosition: UnitPosition) => {
+    if (commandMode !== 'attack' || !selectedUnitId || simPhase !== 'idle' || attackRadius === null) return;
+    const attacker = own.find((placed) => unitId(placed.unit, 'own') === selectedUnitId);
+    if (!attacker) return;
+    const engine = movementEngineRef.current;
+    if (!engine) {
+      console.error('[TacticalMap] Rust attack engine is not ready');
+      return;
+    }
+    const origin = positionsRef.current[selectedUnitId] ?? { x: attacker.x, y: attacker.y };
+    const inRange = engine.is_target_in_attack_range(
+      origin.x, origin.y, targetPosition.x, targetPosition.y, attackRadius,
+    );
+    if (inRange) {
+      setAttackStrike({ id: `${selectedUnitId}-${Date.now()}`, start: origin, target: targetPosition });
+      if (attackStrikeTimerRef.current !== null) clearTimeout(attackStrikeTimerRef.current);
+      attackStrikeTimerRef.current = setTimeout(() => setAttackStrike(null), 900);
+    }
+    onAttack?.(attacker.unit, target.unit, inRange);
   };
 
   const sources = useMemo<Src[]>(
@@ -1239,7 +1332,11 @@ export const TacticalMap = memo(function TacticalMap({
         selectedUnitId={simPhase === 'idle' ? selectedUnitId : null}
         movingUnitIds={simPhase === 'idle' ? movingUnitIds : []}
         movePaths={simPhase === 'idle' ? movePaths : []}
+        commandMode={simPhase === 'idle' ? commandMode : null}
+        attackRadius={simPhase === 'idle' ? attackRadius : null}
+        attackStrike={simPhase === 'idle' ? attackStrike : null}
         onSelectUnit={selectUnit}
+        onAttackUnit={handleAttackUnit}
       />
       <EffectsLayer terrainType={terrainType} />
     </svg>

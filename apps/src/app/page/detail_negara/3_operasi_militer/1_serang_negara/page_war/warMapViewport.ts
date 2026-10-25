@@ -33,6 +33,10 @@ interface RustViewportModule {
     startX: number, startY: number, targetX: number, targetY: number,
     elapsedMs: number, deltaMs: number, speed: number, group: string,
   ) => Float64Array;
+  calculate_attack_radius: (strength: number, group: string, kind: string) => number;
+  is_target_in_attack_range: (
+    originX: number, originY: number, targetX: number, targetY: number, radius: number,
+  ) => boolean;
 }
 
 let loadedRust: RustViewportModule | null = null;

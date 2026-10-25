@@ -1,5 +1,6 @@
 use wasm_bindgen::prelude::*;
 
+mod unit_attack;
 mod unit_movement;
 
 fn clamp(value: f64, min: f64, max: f64) -> f64 {
@@ -147,7 +148,11 @@ pub fn smooth_view(
     let tau = time_constant_ms.max(1.0);
     let k = 1.0 - (-dt_ms.max(0.0) / tau).exp();
     let next_width = width * (target_width / width).powf(k);
-    let next_height = if height > 0.0 { next_width * (height / width) } else { target_height };
+    let next_height = if height > 0.0 {
+        next_width * (height / width)
+    } else {
+        target_height
+    };
     let cx = x + width / 2.0;
     let cy = y + height / 2.0;
     let tcx = target_x + target_width / 2.0;
@@ -161,9 +166,16 @@ pub fn smooth_view(
     if close {
         return vec![target_x, target_y, target_width, target_height, 1.0];
     }
-    vec![ncx - next_width / 2.0, ncy - next_height / 2.0, next_width, next_height, 0.0]
+    vec![
+        ncx - next_width / 2.0,
+        ncy - next_height / 2.0,
+        next_width,
+        next_height,
+        0.0,
+    ]
 }
 
+pub use unit_attack::{calculate_attack_radius, is_target_in_attack_range};
 pub use unit_movement::{prepare_unit_movement, step_unit_movement};
 
 #[cfg(test)]

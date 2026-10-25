@@ -21,6 +21,8 @@ import UnitSelectionModal, {
   type UnitFacility,
   type UnitSelection,
 } from './UnitSelectionModal';
+import AttackControls, { type UnitCommandMode } from './AttackControls';
+import type { WarUnit } from './units/warUnitComposition';
 
 export type { TerrainType };
 
@@ -120,6 +122,9 @@ export default function LandWarMap({
     side: FacilitySide;
   } | null>(null);
   const [isUnitSelected, setIsUnitSelected] = useState(false);
+  const [commandUnit, setCommandUnit] = useState<WarUnit | null>(null);
+  const [commandMode, setCommandMode] = useState<UnitCommandMode>(null);
+  const [attackRadius, setAttackRadius] = useState<number | null>(null);
   const displayedAttackerUnits = useMemo(
     () => selectDisplayedUnits(attackerUnits, unitSelections.left),
     [attackerUnits, unitSelections.left],
@@ -160,6 +165,9 @@ export default function LandWarMap({
   const handleStartSimulation = () => {
     if (isSimulating) return;
     setIsUnitSelected(false);
+    setCommandUnit(null);
+    setCommandMode(null);
+    setAttackRadius(null);
     setIsSimulating(true);
     setBattleLogs([]);
     setSimPhase('clash');
@@ -330,10 +338,9 @@ export default function LandWarMap({
   }, []);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (isSimulating || isUnitSelected || e.button !== 0) return;
+    if (isSimulating || e.button !== 0) return;
     if (e.target instanceof Element && e.target.closest('button')) return;
     commitView();
-    e.currentTarget.setPointerCapture(e.pointerId);
     const current = viewRef.current;
     dragRef.current = { sx: e.clientX, sy: e.clientY, vbX: current.x, vbY: current.y, vbW: current.w, vbH: current.h, moved: false };
   };
@@ -347,6 +354,9 @@ export default function LandWarMap({
       const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
       if (!drag.moved && (Math.abs(dx) > 3 || Math.abs(dy) > 3)) drag.moved = true;
       if (drag.moved) {
+        if (!e.currentTarget.hasPointerCapture(e.pointerId)) {
+          e.currentTarget.setPointerCapture(e.pointerId);
+        }
         const aspect = box.width / box.height;
         const nextView = panViewport(
           { x: drag.vbX, y: drag.vbY, w: drag.vbW, h: drag.vbH },
@@ -529,14 +539,38 @@ export default function LandWarMap({
             viewBox={vb}
             playerSide={playerSide}
             fogEnabled={false}
+            commandMode={commandMode}
             onFacilityClick={(facility, side) => setSelectedFacility({ facility, side })}
-            onUnitSelectionChange={setIsUnitSelected}
+            onUnitSelectionChange={(unit) => {
+              setCommandUnit(unit);
+              setIsUnitSelected(unit !== null);
+              setCommandMode(null);
+              setAttackRadius(null);
+            }}
+            onAttackRadiusChange={setAttackRadius}
+            onAttack={(attacker, target, inRange) => {
+              addLog(inRange
+                ? `${attacker.label} menyerang ${target.label}.`
+                : `${target.label} berada di luar jangkauan serang ${attacker.label}.`);
+            }}
+          />
+          <AttackControls
+            unit={commandUnit}
+            mode={commandMode}
+            attackRadius={attackRadius}
+            accent={accent}
+            disabled={isSimulating}
+            onModeChange={setCommandMode}
           />
           <div
-            className="pointer-events-none absolute bottom-14 left-6 z-20 rounded bg-black/70 px-2 py-1 font-mono text-[9px] font-bold tracking-wider"
+            className="pointer-events-none absolute bottom-3 left-6 z-20 rounded bg-black/70 px-2 py-1 font-mono text-[9px] font-bold tracking-wider"
             style={{ color: accent }}
           >
-            {isUnitSelected ? 'KLIK POSISI TUJUAN PASUKAN' : 'PILIH PASUKAN, LALU KLIK TUJUAN'}
+            {commandMode === 'move'
+              ? 'KLIK POSISI TUJUAN PASUKAN'
+              : commandMode === 'attack'
+                ? 'KLIK UNIT MUSUH DALAM RADIUS'
+                : isUnitSelected ? 'PILIH PERINTAH UNIT' : 'PILIH PASUKAN UNTUK MEMBUKA PERINTAH'}
           </div>
 
           {/* KOMPAS */}
