@@ -776,6 +776,7 @@ export const Airbase = ({
         event.stopPropagation();
         onFacilityClick('bandara', side ?? 'left');
       } : undefined}
+      onDoubleClick={(event) => event.stopPropagation()}
       onKeyDown={onFacilityClick ? (event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
@@ -934,6 +935,9 @@ const UnitsLayer = memo(function UnitsLayer({
         onClick={hostile ? undefined : (event) => {
           event.stopPropagation();
           onSelectUnit(id);
+        }}
+        onDoubleClick={(event) => {
+          event.stopPropagation();
         }}
         onKeyDown={hostile ? undefined : (event) => {
           if (event.key === 'Enter' || event.key === ' ') {

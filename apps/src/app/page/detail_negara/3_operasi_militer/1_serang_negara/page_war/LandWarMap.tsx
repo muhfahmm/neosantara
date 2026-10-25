@@ -502,7 +502,7 @@ export default function LandWarMap({
             <div className="my-1 h-px bg-white/10" />
             <div className="text-[9px] leading-relaxed text-gray-400">
               <span className="font-black" style={{ color: accent }}>Visibilitas:</span> seluruh medan perang terlihat.<br />
-              <span className="font-black" style={{ color: accent }}>Kontrol peta:</span> scroll = zoom, drag = geser, klik = tandai sel koordinat, double-click = reset, tombol +/− untuk zoom bertahap.
+              <span className="font-black" style={{ color: accent }}>Kontrol peta:</span> scroll = zoom, drag = geser, klik = tandai sel koordinat, tombol +/− dan tombol maximize untuk kontrol zoom.
             </div>
           </div>
         </div>
@@ -526,7 +526,6 @@ export default function LandWarMap({
           onPointerCancel={handlePointerUp}
           onLostPointerCapture={handleLostPointerCapture}
           onPointerLeave={handlePointerLeave}
-          onDoubleClick={resetZoom}
         >
           <TacticalMap
             svgRef={viewportSvgRef}

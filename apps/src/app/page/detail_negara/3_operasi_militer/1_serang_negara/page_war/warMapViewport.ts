@@ -249,24 +249,12 @@ export function flushViewportPreview<T extends Viewport, E extends SVGSVGElement
   return viewRef.current;
 }
 
-function applyViewportViewBox(element: SVGSVGElement, view: Viewport, final = false): void {
-  if (!final && drawSnapshot(element, view)) return;
-  endSnapshot(element);
+function applyViewportViewBox(element: SVGSVGElement, view: Viewport, _final = false): void {
   element.setAttribute('viewBox', `${view.x} ${view.y} ${view.w} ${view.h}`);
-  if (!final) return;
-  const s = snaps.get(element);
-  // Saat zoom-out jauh, seluruh SVG hidup sangat berat (animasi + ribuan elemen): tetap tampilkan bitmap statis.
-  if (s && s.ready && view.w >= s.world.w * 0.6 && drawSnapshot(element, view)) {
-    s.keepView = view;
-    return;
-  }
-  if (s) s.keepView = null;
-  endSnapshot(element);
 }
 
-/* ───────── Snapshot bitmap: selama geser/zoom peta digambar sebagai gambar (canvas) ───────── */
+/* ───────── Snapshot bitmap ───────── */
 interface Snap {
-  keepView?: Viewport | null;
   img: CanvasImageSource | null;
   canvas: HTMLCanvasElement;
   world: Viewport;
@@ -277,28 +265,8 @@ interface Snap {
 }
 const snaps = new WeakMap<SVGSVGElement, Snap>();
 
-function drawSnapshot(svg: SVGSVGElement, view: Viewport): boolean {
-  const s = snaps.get(svg);
-  if (!s || !s.ready || !s.img) return false;
-  const w = svg.clientWidth, h = svg.clientHeight;
-  if (!w || !h) return false;
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const scale = Math.min(w / view.w, h / view.h);
-  if (scale * dpr > s.resolution) return false;
-  const cw = Math.round(w * dpr), ch = Math.round(h * dpr);
-  if (s.canvas.width !== cw || s.canvas.height !== ch) { s.canvas.width = cw; s.canvas.height = ch; }
-  const ctx = s.canvas.getContext('2d');
-  if (!ctx) return false;
-  const ox = (w - view.w * scale) / 2, oy = (h - view.h * scale) / 2;
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.clearRect(0, 0, cw, ch);
-  ctx.setTransform(scale * dpr, 0, 0, scale * dpr, (ox - view.x * scale) * dpr, (oy - view.y * scale) * dpr);
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(s.img, s.world.x, s.world.y, s.world.w, s.world.h);
-  s.canvas.style.display = 'block';
-  svg.style.opacity = '0';
-  return true;
+function drawSnapshot(_svg: SVGSVGElement, _view: Viewport): boolean {
+  return false;
 }
 
 function endSnapshot(svg: SVGSVGElement): void {
@@ -342,7 +310,6 @@ export function attachMapSnapshot(svg: SVGSVGElement, world: Viewport, maxPx = 3
       snap.img = raster;
       snap.resolution = raster.width / world.w;
       snap.ready = true;
-      if (snap.keepView) drawSnapshot(svg, snap.keepView);
     };
     img.onerror = () => URL.revokeObjectURL(url);
     img.src = url;

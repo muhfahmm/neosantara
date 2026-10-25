@@ -632,6 +632,7 @@ const Fleet = memo(function Fleet({
                     event.stopPropagation();
                     onSelectUnit(id);
                   } : undefined}
+                  onDoubleClick={(event) => event.stopPropagation()}
                   onKeyDown={side === 'own' ? (event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
                       event.preventDefault();
@@ -1287,7 +1288,7 @@ export default function SeaWarMap({
             <div className="flex items-center gap-2"><span className="h-3 w-3 rotate-45 border border-rose-500" /> Armada & base musuh (kanan / timur)</div>
             <div className="my-1 h-px bg-white/10" />
             <div className="text-[9px] leading-relaxed text-gray-400">
-              <span className="font-black" style={{ color: ACCENT }}>Kontrol peta:</span> scroll = zoom, drag = geser, klik = tandai sel koordinat, double-click = reset, tombol +/− untuk zoom bertahap.
+              <span className="font-black" style={{ color: ACCENT }}>Kontrol peta:</span> scroll = zoom, drag = geser, klik = tandai sel koordinat, tombol +/− dan tombol maximize untuk kontrol zoom.
             </div>
           </div>
         </div>
@@ -1310,7 +1311,6 @@ export default function SeaWarMap({
           onPointerCancel={handlePointerUp}
           onLostPointerCapture={() => { dragRef.current = null; commitView(); }}
           onPointerLeave={handlePointerLeave}
-          onDoubleClick={resetZoom}
         >
             <svg
               ref={viewportSvgRef}
