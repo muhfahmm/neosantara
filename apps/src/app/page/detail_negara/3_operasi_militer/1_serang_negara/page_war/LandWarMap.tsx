@@ -8,10 +8,11 @@ import {
 } from 'lucide-react';
 import {
   TacticalMap, GridRulers,
-  BASE_W, BASE_H, GRID_SIZE, MAP_MIN_Y, MAP_MAX_Y,
+  BASE_W, BASE_H, GRID_SIZE, MAP_MIN_Y, MAP_MAX_Y, MAX_VIEW_W, getMinViewW,
   clamp, cellLabel, fitView, clampView, viewScale,
   type ViewBox, type SimPhase, type TerrainType,
 } from './TacticalMap';
+import { loadRustViewport, panViewport, scheduleViewportCommit, zoomViewport } from './warMapViewport';
 import {
   formatUnitQuantity,
   getWarUnitComposition,
@@ -151,6 +152,10 @@ export default function LandWarMap({
   const mapRef = useRef<HTMLDivElement>(null);
   const arRef = useRef(BASE_W / BASE_H);
   const [vb, setVb] = useState<ViewBox>(() => fitView(BASE_W / BASE_H));
+  const viewRef = useRef(vb);
+  const pendingViewRef = useRef<ViewBox | null>(null);
+  const viewFrameRef = useRef<number | null>(null);
+  const rustViewportRef = useRef<Awaited<ReturnType<typeof loadRustViewport>> | undefined>(undefined);
   const [hoverCell, setHoverCell] = useState<string | null>(null);
   const [selCell, setSelCell] = useState<string | null>(null);
   const dragRef = useRef<{ sx: number; sy: number; vbX: number; vbY: number; vbW: number; vbH: number; moved: boolean } | null>(null);
@@ -158,6 +163,22 @@ export default function LandWarMap({
   const lastId = useRef<InfoId>('objective');
   const tipRef = useRef<HTMLDivElement>(null);
   const coordRef = useRef<HTMLSpanElement>(null);
+
+  const scheduleView = useCallback((nextView: ViewBox) => {
+    scheduleViewportCommit(nextView, viewRef, pendingViewRef, viewFrameRef, setVb);
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    const activeFrameRef = viewFrameRef;
+    void loadRustViewport()
+      .then((module) => { if (mounted) rustViewportRef.current = module; })
+      .catch((error: unknown) => console.error('Gagal memuat kalkulasi viewport Rust; menggunakan kalkulasi cadangan.', error));
+    return () => {
+      mounted = false;
+      if (activeFrameRef.current !== null) cancelAnimationFrame(activeFrameRef.current);
+    };
+  }, []);
 
   const INFO: Record<InfoId, Info> = useMemo(() => ({
     lake:       { icon: Waves,     name: 'Danau',          tag: 'Perairan',          desc: 'Perairan tenang tempat unit laut berlabuh. Menghalangi unit darat.', stats: [{ k: 'Kecepatan', v: '-50%', tone: 'bad' }, { k: 'Unit laut', v: 'Berlabuh', tone: 'good' }] },
@@ -194,27 +215,29 @@ export default function LandWarMap({
       arRef.current = ar;
       const isFirst = first;
       first = false;
-      setVb((prev) => (isFirst ? fitView(ar) : clampView({ ...prev, h: prev.w / ar }, ar)));
+      const current = viewRef.current;
+      scheduleView(isFirst ? fitView(ar) : clampView({ ...current, h: current.w / ar }, ar));
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [scheduleView]);
 
   const zoomAt = useCallback((clientX: number, clientY: number, factor: number) => {
     const el = mapRef.current;
     if (!el) return;
     const box = el.getBoundingClientRect();
     if (!box.width || !box.height) return;
-    const ar = box.width / box.height;
-    const px = clientX - box.left, py = clientY - box.top;
-    setVb((prev) => {
-      const { scale, ox, oy } = viewScale(box, prev);
-      const wx = prev.x + (px - ox) / scale;
-      const wy = prev.y + (py - oy) / scale;
-      const w = prev.w / factor, h = w / ar;
-      return clampView({ x: wx - px * (w / box.width), y: wy - py * (h / box.height), w, h }, ar);
-    });
-  }, []);
+    const aspect = box.width / box.height;
+    const nextView = zoomViewport(viewRef.current, {
+      boxWidth: box.width,
+      boxHeight: box.height,
+      minWidth: MAX_VIEW_W,
+      maxWidth: getMinViewW(aspect),
+      worldWidth: BASE_W,
+      worldHeight: MAP_MAX_Y - MAP_MIN_Y,
+    }, clientX - box.left, clientY - box.top, factor, rustViewportRef.current);
+    scheduleView(clampView(nextView, aspect));
+  }, [scheduleView]);
 
   const zoomCenter = useCallback((factor: number) => {
     const el = mapRef.current;
@@ -223,7 +246,7 @@ export default function LandWarMap({
     zoomAt(box.left + box.width / 2, box.top + box.height / 2, factor);
   }, [zoomAt]);
 
-  const resetZoom = useCallback(() => setVb(fitView(arRef.current)), []);
+  const resetZoom = useCallback(() => scheduleView(fitView(arRef.current)), [scheduleView]);
 
   // Listener native (passive: false) supaya preventDefault benar-benar mencegah scroll halaman
   useEffect(() => {
@@ -239,9 +262,10 @@ export default function LandWarMap({
   }, [isSimulating, zoomAt]);
 
   const updateHud = useCallback((clientX: number, clientY: number, box: DOMRect) => {
-    const { scale, ox, oy } = viewScale(box, vb);
-    const gx = clamp(Math.floor(vb.x + (clientX - box.left - ox) / scale), 0, BASE_W);
-    const gy = clamp(Math.floor(vb.y + (clientY - box.top - oy) / scale), MAP_MIN_Y, MAP_MAX_Y - 1);
+    const current = viewRef.current;
+    const { scale, ox, oy } = viewScale(box, current);
+    const gx = clamp(Math.floor(current.x + (clientX - box.left - ox) / scale), 0, BASE_W);
+    const gy = clamp(Math.floor(current.y + (clientY - box.top - oy) / scale), MAP_MIN_Y, MAP_MAX_Y - 1);
     const col = clamp(Math.floor(gx / GRID_SIZE), 0, BASE_W / GRID_SIZE - 1);
     const row = Math.floor(gy / GRID_SIZE);
     const key = `${col},${row}`;
@@ -250,13 +274,14 @@ export default function LandWarMap({
       const yText = `${gy < 0 ? '-' : ''}${String(Math.abs(gy)).padStart(4, '0')}`;
       coordRef.current.textContent = `X ${String(gx).padStart(4, '0')}  Y ${yText}  GRID ${cellLabel(col, row)}`;
     }
-  }, [vb]);
+  }, []);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (isSimulating || e.button !== 0) return;
     if (e.target instanceof Element && e.target.closest('button')) return;
     e.currentTarget.setPointerCapture(e.pointerId);
-    dragRef.current = { sx: e.clientX, sy: e.clientY, vbX: vb.x, vbY: vb.y, vbW: vb.w, vbH: vb.h, moved: false };
+    const current = viewRef.current;
+    dragRef.current = { sx: e.clientX, sy: e.clientY, vbX: current.x, vbY: current.y, vbW: current.w, vbH: current.h, moved: false };
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -268,8 +293,22 @@ export default function LandWarMap({
       const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
       if (!drag.moved && (Math.abs(dx) > 3 || Math.abs(dy) > 3)) drag.moved = true;
       if (drag.moved) {
-        const { scale } = viewScale(box, { x: 0, y: 0, w: drag.vbW, h: drag.vbH });
-        setVb(clampView({ x: drag.vbX - dx / scale, y: drag.vbY - dy / scale, w: drag.vbW, h: drag.vbH }, box.width / box.height));
+        const aspect = box.width / box.height;
+        const nextView = panViewport(
+          { x: drag.vbX, y: drag.vbY, w: drag.vbW, h: drag.vbH },
+          {
+            boxWidth: box.width,
+            boxHeight: box.height,
+            minWidth: MAX_VIEW_W,
+            maxWidth: getMinViewW(aspect),
+            worldWidth: BASE_W,
+            worldHeight: MAP_MAX_Y - MAP_MIN_Y,
+          },
+          dx,
+          dy,
+          rustViewportRef.current,
+        );
+        scheduleView(clampView(nextView, aspect));
         return;
       }
     }

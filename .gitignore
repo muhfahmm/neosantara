@@ -21,6 +21,7 @@ venv/
 target/
 **/*.rs.bk
 Cargo.lock
+!apps/src/app/page/detail_negara/3_operasi_militer/1_serang_negara/page_war/rust/Cargo.lock
 
 # Go
 bin/

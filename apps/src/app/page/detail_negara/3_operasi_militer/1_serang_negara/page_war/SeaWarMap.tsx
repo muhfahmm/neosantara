@@ -16,6 +16,7 @@ import {
   blobPath, makeCity, makeForest, rng, smoothPath,
   type TerrainType,
 } from './TacticalMap';
+import { loadRustViewport, panViewport, scheduleViewportCommit, zoomViewport } from './warMapViewport';
 
 export type { TerrainType };
 
@@ -704,6 +705,10 @@ export default function SeaWarMap({
   const mapRef = useRef<HTMLDivElement>(null);
   const arRef = useRef(MAP_AR);
   const [vb, setVb] = useState<View>(() => fitView(MAP_AR));
+  const viewRef = useRef(vb);
+  const pendingViewRef = useRef<View | null>(null);
+  const viewFrameRef = useRef<number | null>(null);
+  const rustViewportRef = useRef<Awaited<ReturnType<typeof loadRustViewport>> | undefined>(undefined);
   const hoverCellRef = useRef<string | null>(null);
   const [selCell, setSelCell] = useState<string | null>(null);
   const dragRef = useRef<{ sx: number; sy: number; vbX: number; vbY: number; vbW: number; moved: boolean } | null>(null);
@@ -711,6 +716,22 @@ export default function SeaWarMap({
   const lastId = useRef<InfoId>('objective');
   const tipRef = useRef<HTMLDivElement>(null);
   const coordRef = useRef<HTMLSpanElement>(null);
+
+  const scheduleView = useCallback((nextView: View) => {
+    scheduleViewportCommit(nextView, viewRef, pendingViewRef, viewFrameRef, setVb);
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    const activeFrameRef = viewFrameRef;
+    void loadRustViewport()
+      .then((module) => { if (mounted) rustViewportRef.current = module; })
+      .catch((error: unknown) => console.error('Gagal memuat kalkulasi viewport Rust; menggunakan kalkulasi cadangan.', error));
+    return () => {
+      mounted = false;
+      if (activeFrameRef.current !== null) cancelAnimationFrame(activeFrameRef.current);
+    };
+  }, []);
 
   const INFO: Record<InfoId, Info> = useMemo(() => ({
     deep:     { icon: Waves,      name: 'Laut Dalam',       tag: 'Perairan terbuka', desc: 'Kedalaman cukup untuk semua kapal besar dan kapal selam.', stats: [{ k: 'Manuver', v: 'Bebas', tone: 'good' }, { k: 'Kapal selam', v: 'Aktif', tone: 'good' }] },
@@ -748,11 +769,12 @@ export default function SeaWarMap({
       arRef.current = ar;
       const isFirst = first;
       first = false;
-      setVb((prev) => (isFirst ? fitView(ar) : clampView({ ...prev, h: prev.w / ar }, ar)));
+      const current = viewRef.current;
+      scheduleView(isFirst ? fitView(ar) : clampView({ ...current, h: current.w / ar }, ar));
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [scheduleView]);
 
   const zoomAt = useCallback((clientX: number, clientY: number, factor: number) => {
     const el = mapRef.current;
@@ -760,17 +782,16 @@ export default function SeaWarMap({
     const box = el.getBoundingClientRect();
     if (!box.width || !box.height) return;
     const ar = box.width / box.height;
-    const px = clientX - box.left;
-    const py = clientY - box.top;
-    setVb((prev) => {
-      const scale = box.width / prev.w;
-      const wx = prev.x + px / scale;
-      const wy = prev.y + py / scale;
-      const w = clamp(prev.w / factor, MIN_ZOOM_W, maxViewW(ar));
-      const h = w / ar;
-      return clampView({ x: wx - px * (w / box.width), y: wy - py * (h / box.height), w, h }, ar);
-    });
-  }, []);
+    const nextView = zoomViewport(viewRef.current, {
+      boxWidth: box.width,
+      boxHeight: box.height,
+      minWidth: MIN_ZOOM_W,
+      maxWidth: maxViewW(ar),
+      worldWidth: MAP_W,
+      worldHeight: MAP_H,
+    }, clientX - box.left, clientY - box.top, factor, rustViewportRef.current);
+    scheduleView(clampView(nextView, ar));
+  }, [scheduleView]);
 
   const zoomCenter = useCallback((factor: number) => {
     const el = mapRef.current;
@@ -779,7 +800,7 @@ export default function SeaWarMap({
     zoomAt(box.left + box.width / 2, box.top + box.height / 2, factor);
   }, [zoomAt]);
 
-  const resetZoom = useCallback(() => setVb(fitView(arRef.current)), []);
+  const resetZoom = useCallback(() => scheduleView(fitView(arRef.current)), [scheduleView]);
 
   // Listener native (passive: false) agar preventDefault benar-benar mencegah scroll halaman
   useEffect(() => {
@@ -795,9 +816,10 @@ export default function SeaWarMap({
   }, [isSimulating, zoomAt]);
 
   const updateHud = useCallback((clientX: number, clientY: number, box: DOMRect) => {
-    const scale = box.width / vb.w;
-    const gx = clamp(Math.floor(vb.x + (clientX - box.left) / scale), 0, MAP_W - 1);
-    const gy = clamp(Math.floor(vb.y + (clientY - box.top) / scale), 0, MAP_H - 1);
+    const current = viewRef.current;
+    const scale = box.width / current.w;
+    const gx = clamp(Math.floor(current.x + (clientX - box.left) / scale), 0, MAP_W - 1);
+    const gy = clamp(Math.floor(current.y + (clientY - box.top) / scale), 0, MAP_H - 1);
     const col = Math.floor(gx / GRID);
     const row = Math.floor(gy / GRID);
     const key = `${col},${row}`;
@@ -805,13 +827,14 @@ export default function SeaWarMap({
     if (coordRef.current) {
       coordRef.current.textContent = `X ${String(gx).padStart(4, '0')}  Y ${String(gy).padStart(4, '0')}  GRID ${cellLabel(col, row)}`;
     }
-  }, [vb]);
+  }, []);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (isSimulating || e.button !== 0) return;
     if (e.target instanceof Element && e.target.closest('button')) return;
     e.currentTarget.setPointerCapture(e.pointerId);
-    dragRef.current = { sx: e.clientX, sy: e.clientY, vbX: vb.x, vbY: vb.y, vbW: vb.w, moved: false };
+    const current = viewRef.current;
+    dragRef.current = { sx: e.clientX, sy: e.clientY, vbX: current.x, vbY: current.y, vbW: current.w, moved: false };
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -824,9 +847,22 @@ export default function SeaWarMap({
       const dy = e.clientY - drag.sy;
       if (!drag.moved && (Math.abs(dx) > 3 || Math.abs(dy) > 3)) drag.moved = true;
       if (drag.moved) {
-        const scale = box.width / drag.vbW;
         const ar = box.width / box.height;
-        setVb(clampView({ x: drag.vbX - dx / scale, y: drag.vbY - dy / scale, w: drag.vbW, h: drag.vbW / ar }, ar));
+        const nextView = panViewport(
+          { x: drag.vbX, y: drag.vbY, w: drag.vbW, h: drag.vbW / ar },
+          {
+            boxWidth: box.width,
+            boxHeight: box.height,
+            minWidth: MIN_ZOOM_W,
+            maxWidth: maxViewW(ar),
+            worldWidth: MAP_W,
+            worldHeight: MAP_H,
+          },
+          dx,
+          dy,
+          rustViewportRef.current,
+        );
+        scheduleView(clampView(nextView, ar));
         return;
       }
     }
