@@ -65,12 +65,12 @@ pub fn step_unit_movement(
 
     let progress = elapsed / duration_ms;
     let eased = progress * progress * (3.0 - 2.0 * progress);
-    let arc_ratio = match group {
-        "laut" => 0.035,
-        "udara" => 0.12,
-        _ => 0.018,
+    let arc = match group {
+        "udara" => distance * 0.12 * (std::f64::consts::PI * progress).sin(),
+        "laut" => distance * 0.035 * (std::f64::consts::PI * progress).sin(),
+        // Unit darat: Garis lurus militer yang stabil dan realistis (tanpa kurva roller coaster)
+        _ => distance * 0.003 * ((progress * 8.0).sin()),
     };
-    let arc = distance * arc_ratio * (std::f64::consts::PI * progress).sin();
     let perpendicular_x = -(ty - sy) / distance;
     let perpendicular_y = (tx - sx) / distance;
 

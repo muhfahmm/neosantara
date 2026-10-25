@@ -350,23 +350,43 @@ const DISTRICT_DEFS = [
 ];
 const DISTRICTS = DISTRICT_DEFS.map((d) => ({ ...d, buildings: makeCity(d.x0, d.y0, d.x1, d.y1, d.seed, 80, cityBlock) }));
 
+// Pre-calculated Bounding Boxes untuk Rintangan Peta (Spatial Early Reject)
+const OBSTACLE_BOUNDS = [
+  ...LAKES.map((l) => ({ x0: l.cx - l.rx - 40, x1: l.cx + l.rx + 40, y0: l.cy - l.ry - 40, y1: l.cy + l.ry + 40, type: 'lake' as const, ref: l })),
+  ...PEAKS.map(([pkx, pky, pkw, pkh]) => ({ x0: pkx - pkw * 0.45, x1: pkx + pkw * 0.45, y0: pky - pkh * 0.45, y1: pky + pkh * 0.45, type: 'peak' as const, pkx, pky, pkw, pkh })),
+];
+
 export function isLineBlocked(x1: number, y1: number, x2: number, y2: number): boolean {
-  const steps = 12;
+  const lineMinX = Math.min(x1, x2), lineMaxX = Math.max(x1, x2);
+  const lineMinY = Math.min(y1, y2), lineMaxY = Math.max(y1, y2);
+
+  // Early Reject: Jika segmen garis tidak memotong AABB (Axis-Aligned Bounding Box) rintangan apapun, langsung lolos
+  const candidateObstacles = OBSTACLE_BOUNDS.filter(
+    (b) => !(lineMaxX < b.x0 || lineMinX > b.x1 || lineMaxY < b.y0 || lineMinY > b.y1)
+  );
+
+  if (candidateObstacles.length === 0) return false;
+
+  const steps = 8;
   for (let i = 1; i < steps; i++) {
     const t = i / steps;
     const px = x1 + (x2 - x1) * t;
     const py = y1 + (y2 - y1) * t;
-    // Blok jika garis memotong danau
-    if (inLake(px, py, 40)) return true;
-    // Blok jika garis memotong formasi puncak gunung (PEAKS)
-    for (const [pkx, pky, pkw, pkh] of PEAKS) {
-      if (Math.hypot((px - pkx) / (pkw * 0.4), (py - pky) / (pkh * 0.4)) < 1.0) {
-        return true;
+    
+    for (const obs of candidateObstacles) {
+      if (px >= obs.x0 && px <= obs.x1 && py >= obs.y0 && py <= obs.y1) {
+        if (obs.type === 'lake') {
+          const l = obs.ref;
+          if (((px - l.cx) / (l.rx + 40)) ** 2 + ((py - l.cy) / (l.ry + 40)) ** 2 < 1) return true;
+        } else {
+          if (Math.hypot((px - obs.pkx) / (obs.pkw * 0.4), (py - obs.pky) / (obs.pkh * 0.4)) < 1.0) return true;
+        }
       }
     }
   }
   return false;
 }
+
 
 export function findClearWaypoint(startX: number, startY: number, targetX: number, targetY: number): { x: number; y: number } {
   // Cek apakah lintasan langsung terhalang danau
@@ -1280,6 +1300,26 @@ export const TacticalMap = memo(function TacticalMap({
       if (aiCombatIntervalRef.current) clearInterval(aiCombatIntervalRef.current);
     };
   }, []);
+
+  // PEMBERSIH MEMORI (Memory Leak Cleanup):
+  // Menghapus referensi posisi, velocity, dan frame animasi dari unit yang kuantitasnya 0 (hancur)
+  useEffect(() => {
+    const activeOwnIds = new Set(own.map((p) => unitId(p.unit, 'own')));
+    const activeEnemyIds = new Set(enemy.map((p) => unitId(p.unit, 'enemy')));
+    const allActiveIds = new Set([...activeOwnIds, ...activeEnemyIds]);
+
+    Object.keys(positionsRef.current).forEach((id) => {
+      if (!allActiveIds.has(id)) {
+        delete positionsRef.current[id];
+        delete previousPositionsRef.current[id];
+        delete velocitiesRef.current[id];
+        if (movementFramesRef.current[id]) {
+          cancelAnimationFrame(movementFramesRef.current[id]);
+          delete movementFramesRef.current[id];
+        }
+      }
+    });
+  }, [own, enemy]);
 
   const selectUnit = (id: string) => {
     if (simPhase !== 'idle') return;

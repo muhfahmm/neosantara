@@ -206,25 +206,72 @@ def decide_tactical_action(
     return "intercept", tx, ty
 
 
+# Global AI Memory untuk Last Known Position (LKP) unit musuh
+# Format: { unit_id: { "x": float, "y": float, "kind": str, "group": str, "quantity": int, "label": str, "timestamp": float } }
+AI_LKP_MEMORY: Dict[str, Dict[str, Any]] = {}
+
+
 def compute_ai_war_cycle(
     enemy_units: List[UnitState],
     user_units: List[UnitState],
     map_bounds: Optional[Dict[str, float]] = None
 ) -> TacticalAIResponse:
     """
-    Siklus utama pemikiran AI perang: menghitung pergerakan dan tembakan seluruh unit AI.
-    Menjamin setiap unit user yang terdeteksi (termasuk unit yang baru dikeluarkan) diserang.
+    Siklus utama pemikiran AI perang:
+    1. Memperbarui memori posisi terakhir (LKP) jika musuh terlihat, dan memburu LKP jika musuh menghilang di Fog of War.
+    2. Target Claiming: Mencegah overkill dengan membatasi maksimal 2 unit AI mengklaim target yang sama.
     """
     bounds = map_bounds or {"max_x": 6400.0, "max_y": 2400.0}
     movements: List[MovementDecision] = []
     attacks: List[AttackDecision] = []
 
-    # AI hanya dapat menargetkan unit user yang terlihat (Fog of War)
-    visible_targets = [u for u in user_units if u.is_visible]
-    if not visible_targets:
+    # Bersihkan memori dari unit yang sudah hancur (quantity <= 0)
+    active_user_ids = {u.id for u in user_units if u.quantity > 0}
+    for mem_id in list(AI_LKP_MEMORY.keys()):
+        if mem_id not in active_user_ids:
+            del AI_LKP_MEMORY[mem_id]
+
+    # Update memori untuk unit user yang saat ini terlihat (is_visible)
+    for u in user_units:
+        if u.is_visible and u.quantity > 0:
+            AI_LKP_MEMORY[u.id] = {
+                "x": u.x,
+                "y": u.y,
+                "vx": u.vx,
+                "vy": u.vy,
+                "kind": u.kind,
+                "group": u.group,
+                "quantity": u.quantity,
+                "label": u.label,
+            }
+
+    # Kumpulkan target potensial: Prioritaskan yang terlihat langsung; jika tidak ada, gunakan memori LKP
+    visible_targets = [u for u in user_units if u.is_visible and u.quantity > 0]
+    
+    # Jika tidak ada yang terlihat langsung, buat unit bayangan dari LKP untuk diselidiki AI
+    investigation_targets: List[UnitState] = []
+    if not visible_targets and AI_LKP_MEMORY:
+        for u_id, mem in AI_LKP_MEMORY.items():
+            investigation_targets.append(UnitState(
+                id=u_id,
+                kind=mem["kind"],
+                group=mem["group"],
+                label=mem["label"],
+                quantity=mem["quantity"],
+                x=mem["x"],
+                y=mem["y"],
+                vx=mem.get("vx", 0.0),
+                vy=mem.get("vy", 0.0),
+                is_enemy=False,
+                is_visible=False,
+            ))
+
+    effective_movement_targets = visible_targets if visible_targets else investigation_targets
+
+    if not effective_movement_targets:
         return TacticalAIResponse(
             alert_level=0,
-            tactical_message="Target tidak terlihat dalam pantauan radar pertahanan.",
+            tactical_message="Tidak ada kontak musuh. Radar pertahanan dalam status siaga.",
             movements=[
                 MovementDecision(
                     unit_id=enemy.id,
@@ -237,9 +284,9 @@ def compute_ai_war_cycle(
             attacks=[]
         )
 
+    # 1. Hitung Pergerakan Taktis untuk Semua Unit AI
     for enemy in enemy_units:
-        # 1. Tentukan Gerakan Manuver Taktis AI
-        action, tx, ty = decide_tactical_action(enemy, visible_targets, bounds)
+        action, tx, ty = decide_tactical_action(enemy, effective_movement_targets, bounds)
         speed = SPEED_RATES.get(enemy.group, 360.0)
         movements.append(MovementDecision(
             unit_id=enemy.id,
@@ -249,29 +296,52 @@ def compute_ai_war_cycle(
             speed=speed
         ))
 
-        # 2. Tentukan Tembakan Serangan AI
+    # 2. TARGET CLAIMING SYSTEM (Anti Overkill):
+    # Melacak berapa banyak penembak yang sudah mengklaim setiap target user.
+    # Setiap target maksimal diklaim oleh 2 penembak (kecuali artileri atau tidak ada pilihan lain).
+    claimed_target_counts: Dict[str, int] = {u.id: 0 for u in visible_targets}
+
+    for enemy in enemy_units:
         attack_range = ATTACK_RANGES.get(enemy.kind, 750.0)
         in_range_targets = [
             u for u in visible_targets
             if distance(enemy.x, enemy.y, u.x, u.y) <= attack_range
         ]
 
-        # Jika target belum persis di dalam range dasar, beri toleransi intersepsi proaktif
+        # Toleransi jangkauan tembak untuk unit agresif
         if not in_range_targets:
-            closest = min(visible_targets, key=lambda t: distance(enemy.x, enemy.y, t.x, t.y))
-            if distance(enemy.x, enemy.y, closest.x, closest.y) <= attack_range * 1.25:
+            closest = min(visible_targets, key=lambda t: distance(enemy.x, enemy.y, t.x, t.y), default=None)
+            if closest and distance(enemy.x, enemy.y, closest.x, closest.y) <= attack_range * 1.25:
                 in_range_targets = [closest]
 
         if in_range_targets:
-            # Pilih target dengan prioritas taktis tertinggi (artileri/tank/unit terdekat)
-            best_target = max(in_range_targets, key=lambda t: score_target_priority(enemy, t))
+            # Urutkan target berdasarkan skor prioritas taktis tertinggi
+            sorted_targets = sorted(
+                in_range_targets,
+                key=lambda t: score_target_priority(enemy, t),
+                reverse=True
+            )
+
+            # Pilih target terbaik yang belum over-claimed (< 2 penembak)
+            selected_target = None
+            for t in sorted_targets:
+                if claimed_target_counts.get(t.id, 0) < 2 or enemy.kind in ("artileriBerat", "peluncurRoket"):
+                    selected_target = t
+                    break
+            
+            # Jika semua target sudah diklaim, tetap tembak target terdekat
+            if not selected_target:
+                selected_target = sorted_targets[0]
+
+            claimed_target_counts[selected_target.id] = claimed_target_counts.get(selected_target.id, 0) + 1
+
             weapon_type = 0 if enemy.kind in ("artileriBerat", "peluncurRoket") else (
                 1 if enemy.group == "udara" else 4
             )
             base_dmg = math.sqrt(enemy.quantity) * 12.0
 
             # Hit chance realistis (menurun seiring bertambahnya jarak tembak)
-            target_dist = distance(enemy.x, enemy.y, best_target.x, best_target.y)
+            target_dist = distance(enemy.x, enemy.y, selected_target.x, selected_target.y)
             accuracy = max(0.60, min(0.95, 1.0 - (target_dist / (attack_range * 2.0))))
             penetration = 1.4 if enemy.kind in ("tank", "artileriBerat") else (
                 0.8 if enemy.kind == "infanteri" else 1.0
@@ -279,9 +349,9 @@ def compute_ai_war_cycle(
 
             attacks.append(AttackDecision(
                 attacker_id=enemy.id,
-                target_unit_id=best_target.id,
-                target_x=round(best_target.x, 1),
-                target_y=round(best_target.y, 1),
+                target_unit_id=selected_target.id,
+                target_x=round(selected_target.x, 1),
+                target_y=round(selected_target.y, 1),
                 weapon_type=weapon_type,
                 damage_potential=round(base_dmg, 1),
                 hit_chance=round(accuracy, 2),
@@ -290,7 +360,7 @@ def compute_ai_war_cycle(
             ))
 
     alert = 3 if attacks else (2 if any(m.action != "hold" for m in movements) else 1)
-    msg = f"AI mengarahkan {len(movements)} formasi manuver dan meluncurkan {len(attacks)} serangan tembakan!"
+    msg = f"AI mendistribusikan tembakan ke {len(claimed_target_counts)} sasaran terpilih tanpa tumpang tindih!"
 
     return TacticalAIResponse(
         alert_level=alert,
@@ -298,3 +368,4 @@ def compute_ai_war_cycle(
         movements=movements,
         attacks=attacks
     )
+
