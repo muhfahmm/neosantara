@@ -22,6 +22,7 @@ import {
   flushViewportPreview,
   loadRustViewport,
   panViewport,
+  prepareUnitAttack,
   scheduleViewportPreview,
   zoomViewport,
 } from './warMapViewport';
@@ -576,13 +577,23 @@ function placeGroup(units: WarUnit[], group: WarUnit['group'], east: boolean): P
 const UNIT_GROUPS: WarUnit['group'][] = ['laut', 'udara', 'darat'];
 type UnitPosition = { x: number; y: number };
 type UnitMovePath = { id: string; start: UnitPosition; target: UnitPosition };
+type UnitAttackEffect = UnitMovePath & { weaponType: number; travelMs: number };
+
+const attackVisual = (weaponType: number) => {
+  switch (weaponType) {
+    case 0: return { color: '#fde047', width: 12, dash: '22 14' };
+    case 1: return { color: '#fb7185', width: 9, dash: '28 18' };
+    case 2: return { color: '#38bdf8', width: 7, dash: '10 18' };
+    case 3: return { color: '#f97316', width: 11, dash: '18 13' };
+    default: return { color: '#a3e635', width: 6, dash: '7 13' };
+  }
+};
 
 const fleetUnitId = (unit: WarUnit, side: 'own' | 'enemy', index: number) =>
   `${side}:${unit.group}:${unit.kind}:${unit.echelon ?? 'base'}:${index}`;
 
 const Fleet = memo(function Fleet({
-  units, east, color, side, dataId, positions, selectedUnitId, movingUnitIds, commandMode,
-  onSelectUnit, onAttackUnit,
+  units, east, color, side, dataId, positions, selectedUnitId, movingUnitIds, onSelectUnit,
 }: {
   units: WarUnit[];
   east: boolean;
@@ -592,9 +603,7 @@ const Fleet = memo(function Fleet({
   positions: Record<string, UnitPosition>;
   selectedUnitId: string | null;
   movingUnitIds: string[];
-  commandMode: UnitCommandMode;
   onSelectUnit: (id: string) => void;
-  onAttackUnit: (unit: WarUnit, position: UnitPosition) => void;
 }) {
   const placedGroups = useMemo(
     () => UNIT_GROUPS.map((group) => ({ group, units: placeGroup(units, group, east) })),
@@ -622,10 +631,7 @@ const Fleet = memo(function Fleet({
                   onClick={side === 'own' ? (event) => {
                     event.stopPropagation();
                     onSelectUnit(id);
-                  } : (event) => {
-                    event.stopPropagation();
-                    if (commandMode === 'attack') onAttackUnit(unit, position);
-                  }}
+                  } : undefined}
                   onKeyDown={side === 'own' ? (event) => {
                     if (event.key === 'Enter' || event.key === ' ') {
                       event.preventDefault();
@@ -728,7 +734,7 @@ export default function SeaWarMap({
   const movementFramesRef = useRef<Record<string, number>>({});
   const [commandMode, setCommandMode] = useState<UnitCommandMode>(null);
   const [attackRadius, setAttackRadius] = useState<number | null>(null);
-  const [attackEffect, setAttackEffect] = useState<UnitMovePath | null>(null);
+  const [attackEffect, setAttackEffect] = useState<UnitAttackEffect | null>(null);
   const attackEffectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /* ─── Simulasi & log ─── */
@@ -839,7 +845,7 @@ export default function SeaWarMap({
   };
 
   const handleMovementClick = (event: React.MouseEvent<SVGSVGElement>) => {
-    if (!selectedUnitId || commandMode !== 'move' || isSimulating || simPhase !== 'idle') return;
+    if (!selectedUnitId || isSimulating || simPhase !== 'idle') return;
     const svg = event.currentTarget;
     const matrix = svg.getScreenCTM();
     if (!matrix) return;
@@ -914,26 +920,77 @@ export default function SeaWarMap({
       });
   };
 
-  const handleAttackUnit = (target: WarUnit, targetPosition: UnitPosition) => {
-    if (commandMode !== 'attack' || !selectedUnitId || attackRadius === null || isSimulating || simPhase !== 'idle') return;
+  const handleAttackUnit = (targetPosition: UnitPosition, target: WarUnit | null) => {
+    if (!selectedUnitId || isSimulating || simPhase !== 'idle') return;
     const attacker = ownPlacedUnits.find((placed) => placed.id === selectedUnitId);
+    if (!attacker) {
+      console.error('[SeaWarMap] Selected unit is unavailable for attack');
+      return;
+    }
+    const fire = (engine: Awaited<ReturnType<typeof loadRustViewport>>) => {
+      const start = unitPositionsRef.current[selectedUnitId] ?? { x: attacker.x, y: attacker.y };
+      const { radius, projectileSpeed, weaponType } = prepareUnitAttack(
+        engine,
+        attacker.unit.quantity,
+        attacker.unit.group,
+        attacker.unit.kind,
+      );
+      setAttackRadius(radius);
+      setCommandMode('attack');
+      const inRange = engine.is_target_in_attack_range(
+        start.x, start.y, targetPosition.x, targetPosition.y, radius,
+      );
+      if (!inRange) {
+        addLog(`${target?.label ?? 'Titik sasaran'} berada di luar jangkauan serang ${attacker.unit.label}.`);
+        return;
+      }
+      const distance = Math.hypot(targetPosition.x - start.x, targetPosition.y - start.y);
+      const travelMs = Math.max(180, Math.min(1800, (distance / projectileSpeed) * 1000));
+      setAttackEffect({
+        id: `${selectedUnitId}-${Date.now()}`,
+        start,
+        target: targetPosition,
+        weaponType,
+        travelMs,
+      });
+      if (attackEffectTimerRef.current !== null) clearTimeout(attackEffectTimerRef.current);
+      attackEffectTimerRef.current = setTimeout(() => setAttackEffect(null), travelMs);
+      addLog(`${attacker.unit.label} menembak ${target?.label ?? 'ke titik sasaran'}.`);
+    };
     const engine = rustViewportRef.current;
-    if (!attacker || !engine) {
-      console.error('[SeaWarMap] Rust attack engine or selected unit is unavailable');
+    if (engine) {
+      fire(engine);
       return;
     }
-    const start = unitPositionsRef.current[selectedUnitId] ?? { x: attacker.x, y: attacker.y };
-    const inRange = engine.is_target_in_attack_range(
-      start.x, start.y, targetPosition.x, targetPosition.y, attackRadius,
-    );
-    if (!inRange) {
-      addLog(`${target.label} berada di luar jangkauan serang ${attacker.unit.label}.`);
-      return;
-    }
-    setAttackEffect({ id: `${selectedUnitId}-${Date.now()}`, start, target: targetPosition });
-    if (attackEffectTimerRef.current !== null) clearTimeout(attackEffectTimerRef.current);
-    attackEffectTimerRef.current = setTimeout(() => setAttackEffect(null), 900);
-    addLog(`${attacker.unit.label} menyerang ${target.label}.`);
+    void loadRustViewport()
+      .then((loadedEngine) => {
+        rustViewportRef.current = loadedEngine;
+        fire(loadedEngine);
+      })
+      .catch((error: unknown) => {
+        console.error('[SeaWarMap] Failed to load Rust attack engine', error);
+      });
+  };
+
+  const handleAttackContextMenu = (event: React.MouseEvent<SVGSVGElement>) => {
+    event.preventDefault();
+    if (!selectedUnitId || isSimulating || simPhase !== 'idle') return;
+    const svg = event.currentTarget;
+    const matrix = svg.getScreenCTM();
+    if (!matrix) return;
+    const point = svg.createSVGPoint();
+    point.x = event.clientX;
+    point.y = event.clientY;
+    const targetPoint = point.matrixTransform(matrix.inverse());
+    const unitElement = event.target instanceof Element
+      ? event.target.closest<SVGGElement>('[data-unit-id]')
+      : null;
+    const targetUnitId = unitElement?.getAttribute('data-unit-id');
+    if (targetUnitId?.startsWith('own:')) return;
+    const targetUnit = enemyUnits.find((unit) =>
+      targetUnitId?.includes(`enemy:${unit.group}:${unit.kind}`),
+    ) ?? null;
+    handleAttackUnit({ x: targetPoint.x, y: targetPoint.y }, targetUnit);
   };
 
   const commitView = useCallback(() => {
@@ -1263,6 +1320,7 @@ export default function SeaWarMap({
               role="img"
               aria-label="Peta operasi tempur laut"
               onClick={handleMovementClick}
+              onContextMenu={handleAttackContextMenu}
             >
             <style>{MAP_CSS}</style>
             <Defs accent={ACCENT} terrainType={terrainType} />
@@ -1325,16 +1383,22 @@ export default function SeaWarMap({
               ) : null;
               })()}
             {attackEffect && (
-              <path
-                key={attackEffect.id}
-                className="tm-tracer"
-                d={`M ${attackEffect.start.x} ${attackEffect.start.y} L ${attackEffect.target.x} ${attackEffect.target.y}`}
-                fill="none"
-                stroke="#fb7185"
-                strokeWidth="12"
-                strokeDasharray="24 20"
-                pointerEvents="none"
-              />
+              (() => {
+                const visual = attackVisual(attackEffect.weaponType);
+                return (
+                  <path
+                    key={attackEffect.id}
+                    className="tm-tracer"
+                    d={`M ${attackEffect.start.x} ${attackEffect.start.y} L ${attackEffect.target.x} ${attackEffect.target.y}`}
+                    fill="none"
+                    stroke={visual.color}
+                    strokeWidth={visual.width}
+                    strokeDasharray={visual.dash}
+                    style={{ animationDuration: `${Math.max(100, attackEffect.travelMs / 3)}ms` }}
+                    pointerEvents="none"
+                  />
+                );
+              })()
             )}
             <Fleet
               units={ownUnits}
@@ -1345,9 +1409,7 @@ export default function SeaWarMap({
               positions={unitPositions}
               selectedUnitId={activeSelectedUnitId}
               movingUnitIds={activeMovingUnitIds}
-              commandMode={commandMode}
               onSelectUnit={handleSelectUnit}
-              onAttackUnit={handleAttackUnit}
             />
             <Fleet
               units={enemyUnits}
@@ -1358,9 +1420,7 @@ export default function SeaWarMap({
               positions={unitPositions}
               selectedUnitId={activeSelectedUnitId}
               movingUnitIds={activeMovingUnitIds}
-              commandMode={commandMode}
               onSelectUnit={handleSelectUnit}
-              onAttackUnit={handleAttackUnit}
             />
 
             <EffectsLayer />
@@ -1376,11 +1436,9 @@ export default function SeaWarMap({
             onModeChange={setCommandMode}
           />
           <div className="pointer-events-none absolute bottom-3 left-6 z-20 rounded bg-black/70 px-2 py-1 font-mono text-[9px] font-bold tracking-wider" style={{ color: ACCENT }}>
-            {commandMode === 'move'
-              ? 'KLIK POSISI TUJUAN PASUKAN'
-              : commandMode === 'attack'
-                ? 'KLIK UNIT MUSUH DALAM RADIUS'
-                : activeSelectedUnitId ? 'PILIH PERINTAH UNIT' : 'PILIH PASUKAN UNTUK MEMBUKA PERINTAH'}
+            {activeSelectedUnitId
+              ? 'KLIK KIRI: PINDAH · KLIK KANAN: TEMBAK'
+              : 'PILIH PASUKAN UNTUK MEMBUKA PERINTAH'}
           </div>
 
           {/* KOMPAS */}

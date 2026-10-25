@@ -4,7 +4,7 @@ import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import UnitMarker from './units/unitMarker';
 import { formatUnitQuantity, type WarUnit } from './units/warUnitComposition';
 import type { FacilitySide, UnitFacility } from './UnitSelectionModal';
-import { loadRustViewport } from './warMapViewport';
+import { loadRustViewport, prepareUnitAttack } from './warMapViewport';
 import type { UnitCommandMode } from './AttackControls';
 
 /* ═════════════════════════ TIPE & KONSTANTA (dipakai juga oleh PageWar) ═════════════════════════ */
@@ -64,7 +64,7 @@ export interface MapProps {
   commandMode?: UnitCommandMode;
   onUnitSelectionChange?: (unit: WarUnit | null) => void;
   onAttackRadiusChange?: (radius: number | null) => void;
-  onAttack?: (attacker: WarUnit, target: WarUnit, inRange: boolean) => void;
+  onAttack?: (attacker: WarUnit, target: WarUnit | null, inRange: boolean) => void;
 }
 
 /* ═════════════════════════ PALET PER MEDAN ═════════════════════════ */
@@ -529,13 +529,12 @@ export const Defs = memo(function Defs({ accent, terrainType }: { accent: string
       <radialGradient id="tm-foot"><stop offset="0" stopColor={P.foot} stopOpacity="0.6" /><stop offset="1" stopColor={P.foot} stopOpacity="0" /></radialGradient>
       <radialGradient id="tm-fire"><stop offset="0" stopColor="#fff7c2" /><stop offset="0.35" stopColor="#fb923c" stopOpacity="0.9" /><stop offset="1" stopColor="#ef4444" stopOpacity="0" /></radialGradient>
       <radialGradient id="tm-cloud"><stop offset="0" stopColor="#000" stopOpacity="0.28" /><stop offset="1" stopColor="#000" stopOpacity="0" /></radialGradient>
-      <radialGradient id="nw-fog"><stop offset="0" stopColor="#e2e8f0" stopOpacity="0.35" /><stop offset="1" stopColor="#e2e8f0" stopOpacity="0" /></radialGradient>
       <radialGradient id="nw-sun" cx="0.2" cy="0.1" r="0.8"><stop offset="0" stopColor="#fff7e0" stopOpacity="0.22" /><stop offset="1" stopColor="#fff7e0" stopOpacity="0" /></radialGradient>
       <radialGradient id="nw-vignette" cx="0.5" cy="0.5" r="0.75"><stop offset="0.6" stopColor="#000" stopOpacity="0" /><stop offset="1" stopColor="#000" stopOpacity="0.55" /></radialGradient>
       <radialGradient id="tm-v-black"><stop offset="0" stopColor="#000" /><stop offset="0.55" stopColor="#000" /><stop offset="1" stopColor="#000" stopOpacity="0" /></radialGradient>
 
       <pattern id="tm-speck" width="240" height="240" patternUnits="userSpaceOnUse">
-        {SPECKS.map((s, i) => <circle key={i} cx={s.x} cy={s.y} r={s.r} fill={s.light ? '#fff' : '#000'} opacity={s.o} />)}
+        {SPECKS.filter((s) => !s.light).map((s, i) => <circle key={i} cx={s.x} cy={s.y} r={s.r} fill="#000" opacity={s.o} />)}
       </pattern>
       <pattern id="tm-tufts" width="360" height="360" patternUnits="userSpaceOnUse">
         {TUFTS.map((t, i) => (
@@ -880,6 +879,17 @@ const BasesLayer = memo(function BasesLayer({ accent, simPhase, playerSide, onFa
 
 type UnitPosition = { x: number; y: number };
 type UnitMovePath = { id: string; start: UnitPosition; target: UnitPosition };
+type UnitAttackEffect = UnitMovePath & { weaponType: number; travelMs: number };
+
+const attackVisual = (weaponType: number) => {
+  switch (weaponType) {
+    case 0: return { color: '#fde047', width: 8, dash: '16 10' };
+    case 1: return { color: '#fb7185', width: 6, dash: '24 14' };
+    case 2: return { color: '#38bdf8', width: 5, dash: '8 14' };
+    case 3: return { color: '#f97316', width: 7, dash: '14 10' };
+    default: return { color: '#a3e635', width: 4, dash: '5 10' };
+  }
+};
 
 const unitId = (unit: WarUnit, side: 'own' | 'enemy') =>
   `${side}:${unit.group}:${unit.kind}:${unit.echelon ?? 'base'}`;
@@ -896,14 +906,13 @@ interface UnitsProps {
   movePaths: UnitMovePath[];
   commandMode: UnitCommandMode;
   attackRadius: number | null;
-  attackStrike: UnitMovePath | null;
+  attackStrike: UnitAttackEffect | null;
   onSelectUnit: (id: string) => void;
-  onAttackUnit: (target: PlacedUnit, position: UnitPosition) => void;
 }
 
 const UnitsLayer = memo(function UnitsLayer({
   accent, simPhase, own, enemy, playerSide, positions, selectedUnitId, movingUnitIds, movePaths,
-  commandMode, attackRadius, attackStrike, onSelectUnit, onAttackUnit,
+  commandMode, attackRadius, attackStrike, onSelectUnit,
 }: UnitsProps) {
   const renderUnit = (placed: PlacedUnit, index: number, hostile: boolean) => {
     const side = hostile ? 'enemy' : 'own';
@@ -922,10 +931,7 @@ const UnitsLayer = memo(function UnitsLayer({
         aria-pressed={hostile ? undefined : selected}
         tabIndex={hostile ? undefined : 0}
         style={hostile ? undefined : { cursor: selected ? 'crosshair' : 'grab' }}
-        onClick={hostile ? (event) => {
-          event.stopPropagation();
-          if (commandMode === 'attack') onAttackUnit(placed, position);
-        } : (event) => {
+        onClick={hostile ? undefined : (event) => {
           event.stopPropagation();
           onSelectUnit(id);
         }}
@@ -972,9 +978,9 @@ const UnitsLayer = memo(function UnitsLayer({
         const position = selected ? positions[selectedUnitId] ?? { x: selected.x, y: selected.y } : null;
         return position ? (
           <circle
-            cx={position.x / UK}
-            cy={position.y / UK}
-            r={attackRadius / UK}
+            cx={position.x}
+            cy={position.y}
+            r={attackRadius}
             fill="#fb7185"
             fillOpacity="0.08"
             stroke="#fb7185"
@@ -985,16 +991,22 @@ const UnitsLayer = memo(function UnitsLayer({
         ) : null;
       })()}
       {attackStrike && (
-        <path
-          key={attackStrike.id}
-          className="tm-tracer"
-          d={`M ${attackStrike.start.x} ${attackStrike.start.y} L ${attackStrike.target.x} ${attackStrike.target.y}`}
-          fill="none"
-          stroke="#fb7185"
-          strokeWidth="5"
-          strokeDasharray="14 12"
-          pointerEvents="none"
-        />
+        (() => {
+          const visual = attackVisual(attackStrike.weaponType);
+          return (
+            <path
+              key={attackStrike.id}
+              className="tm-tracer"
+              d={`M ${attackStrike.start.x} ${attackStrike.start.y} L ${attackStrike.target.x} ${attackStrike.target.y}`}
+              fill="none"
+              stroke={visual.color}
+              strokeWidth={visual.width}
+              strokeDasharray={visual.dash}
+              style={{ animationDuration: `${Math.max(100, attackStrike.travelMs / 3)}ms` }}
+              pointerEvents="none"
+            />
+          );
+        })()
       )}
       {movePaths.map((movePath) => (
         <path
@@ -1064,11 +1076,6 @@ const EffectsLayer = memo(function EffectsLayer({ terrainType }: { terrainType: 
       {[[800, 500, 620, 170, 0], [3000, 1750, 700, 190, -35], [5200, 1200, 640, 160, -60]].map(([x, y, rx, ry, delay], i) => (
         <ellipse key={i} className="tm-cloud" cx={x} cy={y} rx={rx} ry={ry} fill="url(#tm-cloud)" style={{ animationDelay: `${delay}s` }} />
       ))}
-      <ellipse className="nw-a nw-drift" cx="1500" cy="1500" rx="700" ry="140" fill="url(#nw-fog)" style={{ animationDuration: '26s' }} />
-      <ellipse className="nw-a nw-drift" cx="3200" cy="1350" rx="600" ry="120" fill="url(#nw-fog)" style={{ animationDuration: '34s', animationDirection: 'alternate-reverse' }} />
-      <ellipse className="nw-a nw-drift" cx="4700" cy="1000" rx="700" ry="120" fill="url(#nw-fog)" style={{ animationDuration: '40s' }} />
-      <ellipse className="nw-a nw-drift" cx="2500" cy="700" rx="800" ry="130" fill="url(#nw-fog)" style={{ animationDuration: '45s' }} />
-
       {terrainType === 'snow' && PARTICLES.map((p, i) => <circle key={i} className="tm-fall" cx={p.x} cy={p.y} r={p.r} fill="#fff" opacity="0.7" style={{ animationDuration: `${p.dur}s`, animationDelay: `${p.delay}s` }} />)}
       {terrainType === 'desert' && PARTICLES.slice(0, 40).map((p, i) => <ellipse key={i} className="tm-dust" cx={p.x} cy={p.y} rx={p.r * 14} ry={p.r * 0.9} fill="#e8d5a8" opacity="0.22" style={{ animationDuration: `${p.dur + 6}s`, animationDelay: `${p.delay}s` }} />)}
 
@@ -1144,7 +1151,7 @@ export const TacticalMap = memo(function TacticalMap({
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const selectedUnitIdRef = useRef<string | null>(null);
   const [attackRadius, setAttackRadius] = useState<number | null>(null);
-  const [attackStrike, setAttackStrike] = useState<UnitMovePath | null>(null);
+  const [attackStrike, setAttackStrike] = useState<UnitAttackEffect | null>(null);
   const attackStrikeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [movingUnitIds, setMovingUnitIds] = useState<string[]>([]);
   const [movePaths, setMovePaths] = useState<UnitMovePath[]>([]);
@@ -1206,7 +1213,7 @@ export const TacticalMap = memo(function TacticalMap({
   }, [simPhase, onUnitSelectionChange]);
 
   const handleMapClick = (event: React.MouseEvent<SVGSVGElement>) => {
-    if (!selectedUnitId || commandMode !== 'move' || simPhase !== 'idle') return;
+    if (!selectedUnitId || simPhase !== 'idle') return;
     const svg = event.currentTarget;
     const matrix = svg.getScreenCTM();
     if (!matrix) return;
@@ -1281,25 +1288,70 @@ export const TacticalMap = memo(function TacticalMap({
       });
   };
 
-  const handleAttackUnit = (target: PlacedUnit, targetPosition: UnitPosition) => {
-    if (commandMode !== 'attack' || !selectedUnitId || simPhase !== 'idle' || attackRadius === null) return;
+  const handleAttackUnit = (target: WarUnit | null, targetPosition: UnitPosition) => {
+    if (!selectedUnitId || simPhase !== 'idle') return;
     const attacker = own.find((placed) => unitId(placed.unit, 'own') === selectedUnitId);
     if (!attacker) return;
+    const fire = (engine: Awaited<ReturnType<typeof loadRustViewport>>) => {
+      const { radius, projectileSpeed, weaponType } = prepareUnitAttack(
+        engine,
+        attacker.unit.quantity,
+        attacker.unit.group,
+        attacker.unit.kind,
+      );
+      setAttackRadius(radius);
+      const origin = positionsRef.current[selectedUnitId] ?? { x: attacker.x, y: attacker.y };
+      const inRange = engine.is_target_in_attack_range(
+        origin.x, origin.y, targetPosition.x, targetPosition.y, radius,
+      );
+      if (inRange) {
+        const distance = Math.hypot(targetPosition.x - origin.x, targetPosition.y - origin.y);
+        const travelMs = Math.max(180, Math.min(1800, (distance / projectileSpeed) * 1000));
+        setAttackStrike({
+          id: `${selectedUnitId}-${Date.now()}`,
+          start: origin,
+          target: targetPosition,
+          weaponType,
+          travelMs,
+        });
+        if (attackStrikeTimerRef.current !== null) clearTimeout(attackStrikeTimerRef.current);
+        attackStrikeTimerRef.current = setTimeout(() => setAttackStrike(null), travelMs);
+      }
+      onAttack?.(attacker.unit, target, inRange);
+    };
     const engine = movementEngineRef.current;
-    if (!engine) {
-      console.error('[TacticalMap] Rust attack engine is not ready');
-      return;
+    if (engine) {
+      fire(engine);
+    } else {
+      void loadRustViewport()
+        .then((loadedEngine) => {
+          movementEngineRef.current = loadedEngine;
+          fire(loadedEngine);
+        })
+        .catch((error: unknown) => {
+          console.error('[TacticalMap] Failed to load Rust attack engine', error);
+        });
     }
-    const origin = positionsRef.current[selectedUnitId] ?? { x: attacker.x, y: attacker.y };
-    const inRange = engine.is_target_in_attack_range(
-      origin.x, origin.y, targetPosition.x, targetPosition.y, attackRadius,
-    );
-    if (inRange) {
-      setAttackStrike({ id: `${selectedUnitId}-${Date.now()}`, start: origin, target: targetPosition });
-      if (attackStrikeTimerRef.current !== null) clearTimeout(attackStrikeTimerRef.current);
-      attackStrikeTimerRef.current = setTimeout(() => setAttackStrike(null), 900);
-    }
-    onAttack?.(attacker.unit, target.unit, inRange);
+  };
+
+  const handleMapContextMenu = (event: React.MouseEvent<SVGSVGElement>) => {
+    event.preventDefault();
+    if (!selectedUnitId || simPhase !== 'idle') return;
+    const svg = event.currentTarget;
+    const matrix = svg.getScreenCTM();
+    if (!matrix) return;
+    const point = svg.createSVGPoint();
+    point.x = event.clientX;
+    point.y = event.clientY;
+    const target = point.matrixTransform(matrix.inverse());
+    const enemyElement = event.target instanceof Element
+      ? event.target.closest<SVGGElement>('[data-unit-id]')
+      : null;
+    if (enemyElement?.getAttribute('data-unit-id')?.startsWith('own:')) return;
+    const enemyUnit = enemyElement
+      ? enemy.find((placed) => unitId(placed.unit, 'enemy') === enemyElement.getAttribute('data-unit-id'))
+      : null;
+    handleAttackUnit(enemyUnit?.unit ?? null, { x: target.x, y: target.y });
   };
 
   const sources = useMemo<Src[]>(
@@ -1316,6 +1368,7 @@ export const TacticalMap = memo(function TacticalMap({
       role="img"
       aria-label="Peta taktis operasi"
       onClick={handleMapClick}
+      onContextMenu={handleMapContextMenu}
     >
       <style>{MAP_CSS}</style>
       <Defs accent={accent} terrainType={terrainType} />
@@ -1336,7 +1389,6 @@ export const TacticalMap = memo(function TacticalMap({
         attackRadius={simPhase === 'idle' ? attackRadius : null}
         attackStrike={simPhase === 'idle' ? attackStrike : null}
         onSelectUnit={selectUnit}
-        onAttackUnit={handleAttackUnit}
       />
       <EffectsLayer terrainType={terrainType} />
     </svg>

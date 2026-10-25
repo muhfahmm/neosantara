@@ -549,9 +549,10 @@ export default function LandWarMap({
             }}
             onAttackRadiusChange={setAttackRadius}
             onAttack={(attacker, target, inRange) => {
+              setCommandMode('attack');
               addLog(inRange
-                ? `${attacker.label} menyerang ${target.label}.`
-                : `${target.label} berada di luar jangkauan serang ${attacker.label}.`);
+                ? `${attacker.label} menembak ${target?.label ?? 'ke titik sasaran'}.`
+                : `${target?.label ?? 'Titik sasaran'} berada di luar jangkauan serang ${attacker.label}.`);
             }}
           />
           <AttackControls
@@ -566,11 +567,9 @@ export default function LandWarMap({
             className="pointer-events-none absolute bottom-3 left-6 z-20 rounded bg-black/70 px-2 py-1 font-mono text-[9px] font-bold tracking-wider"
             style={{ color: accent }}
           >
-            {commandMode === 'move'
-              ? 'KLIK POSISI TUJUAN PASUKAN'
-              : commandMode === 'attack'
-                ? 'KLIK UNIT MUSUH DALAM RADIUS'
-                : isUnitSelected ? 'PILIH PERINTAH UNIT' : 'PILIH PASUKAN UNTUK MEMBUKA PERINTAH'}
+            {isUnitSelected
+              ? 'KLIK KIRI: PINDAH · KLIK KANAN: TEMBAK'
+              : 'PILIH PASUKAN UNTUK MEMBUKA PERINTAH'}
           </div>
 
           {/* KOMPAS */}

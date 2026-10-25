@@ -175,7 +175,7 @@ pub fn smooth_view(
     ]
 }
 
-pub use unit_attack::{calculate_attack_radius, is_target_in_attack_range};
+pub use unit_attack::{calculate_attack_radius, is_target_in_attack_range, prepare_unit_attack};
 pub use unit_movement::{prepare_unit_movement, step_unit_movement};
 
 #[cfg(test)]

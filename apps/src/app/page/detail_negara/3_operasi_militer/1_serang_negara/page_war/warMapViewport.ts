@@ -34,6 +34,7 @@ interface RustViewportModule {
     elapsedMs: number, deltaMs: number, speed: number, group: string,
   ) => Float64Array;
   calculate_attack_radius: (strength: number, group: string, kind: string) => number;
+  prepare_unit_attack?: (strength: number, group: string, kind: string) => Float64Array;
   is_target_in_attack_range: (
     originX: number, originY: number, targetX: number, targetY: number, radius: number,
   ) => boolean;
@@ -41,6 +42,50 @@ interface RustViewportModule {
 
 let loadedRust: RustViewportModule | null = null;
 const shownViews = new WeakMap<SVGSVGElement, Viewport>();
+let warnedAboutAttackCompatibility = false;
+
+export interface UnitAttackProfile {
+  radius: number;
+  projectileSpeed: number;
+  weaponType: number;
+}
+
+export function prepareUnitAttack(
+  engine: RustViewportModule,
+  strength: number,
+  group: string,
+  kind: string,
+): UnitAttackProfile {
+  const result = engine.prepare_unit_attack?.(strength, group, kind);
+  if (result && result.length >= 3) {
+    const [radius, projectileSpeed, weaponType] = result;
+    if ([radius, projectileSpeed, weaponType].every(Number.isFinite) && projectileSpeed > 0) {
+      return { radius, projectileSpeed, weaponType };
+    }
+    throw new Error('Rust attack engine returned an invalid attack profile');
+  }
+
+  if (!warnedAboutAttackCompatibility) {
+    console.warn('[warMapViewport] Loaded WASM is missing prepare_unit_attack; using compatible attack profile');
+    warnedAboutAttackCompatibility = true;
+  }
+
+  const weaponType = kind === 'artileriBerat' || kind === 'peluncurRoket'
+    ? 0
+    : group === 'udara'
+      ? 1
+      : kind === 'kapalSelamNuklir' || kind === 'kapalSelamReguler'
+        ? 2
+        : group === 'laut'
+          ? 3
+          : 4;
+  const projectileSpeed = [1350, 2400, 900, 1600, 1800][weaponType];
+  return {
+    radius: engine.calculate_attack_radius(strength, group, kind),
+    projectileSpeed,
+    weaponType,
+  };
+}
 
 let rustModulePromise: Promise<RustViewportModule> | null = null;
 
