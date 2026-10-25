@@ -1342,6 +1342,31 @@ export default function SeaWarMap({
               <text x={OBJ.x} y={OBJ.y - 110} textAnchor="middle" fill="#fff7cc" fontSize="38" fontWeight="900" fontFamily="monospace" stroke="#000" strokeWidth="6" paintOrder="stroke">OBJEKTIF MARITIM</text>
             </g>
 
+            {/* GARIS TENGAH / MARITIME BOUNDARY / FRONTLINE */}
+            <g pointerEvents="none">
+              <path
+                d="M 4400,-2400 Q 4320,-1200 4420,0 T 4350,1200 T 4450,2400 T 4330,3600 T 4440,4800 T 4380,7200"
+                fill="none"
+                stroke="#ef4444"
+                strokeWidth="24"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeDasharray="60 30"
+                opacity="0.88"
+                filter="url(#nw-glow)"
+              />
+              <path
+                d="M 4400,-2400 Q 4320,-1200 4420,0 T 4350,1200 T 4450,2400 T 4330,3600 T 4440,4800 T 4380,7200"
+                fill="none"
+                stroke="#ff6b6b"
+                strokeWidth="9"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeDasharray="60 30"
+                opacity="0.95"
+              />
+            </g>
+
             <g pointerEvents="none" fontFamily="monospace" fontWeight="900" fontSize="46" letterSpacing="8" textAnchor="middle" stroke="#000" strokeWidth="8" paintOrder="stroke">
               <text x="1700" y="2160" fill={ACCENT}>ARMADA ANDA</text>
               <text x="7100" y="2160" fill="#fda4af">ARMADA MUSUH</text>

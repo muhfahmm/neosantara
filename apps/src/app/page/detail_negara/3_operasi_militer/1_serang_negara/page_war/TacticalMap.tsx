@@ -707,6 +707,31 @@ const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: 
         {showForest && <text x="800" y="1500">HUTAN</text>} 
         {SWAMPS.map((s, i) => <text key={i} x={s.cx} y={s.cy + s.ry + 56} fontSize="44" letterSpacing="10">RAWA</text>)}
       </g>
+
+      {/* GARIS TENGAH / FRONTLINE DEMARCATION */}
+      <g pointerEvents="none">
+        <path
+          d="M 3240,-1400 Q 3180,-700 3220,0 T 3160,700 T 3040,1400 T 3120,2100 T 3080,2800 T 3150,3800"
+          fill="none"
+          stroke="#ef4444"
+          strokeWidth="18"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray="42 22"
+          opacity="0.88"
+          filter="url(#nw-glow)"
+        />
+        <path
+          d="M 3240,-1400 Q 3180,-700 3220,0 T 3160,700 T 3040,1400 T 3120,2100 T 3080,2800 T 3150,3800"
+          fill="none"
+          stroke="#ff6b6b"
+          strokeWidth="7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeDasharray="42 22"
+          opacity="0.95"
+        />
+      </g>
     </g>
   );
 });
