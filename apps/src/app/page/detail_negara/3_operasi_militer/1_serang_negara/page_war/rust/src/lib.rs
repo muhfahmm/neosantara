@@ -1,5 +1,6 @@
 use wasm_bindgen::prelude::*;
 
+mod ai_war_logic;
 mod unit_attack;
 mod unit_movement;
 
@@ -175,6 +176,7 @@ pub fn smooth_view(
     ]
 }
 
+pub use ai_war_logic::{calculate_ai_border_response, check_boundary_cross};
 pub use unit_attack::{calculate_attack_radius, is_target_in_attack_range, prepare_unit_attack};
 pub use unit_movement::{prepare_unit_movement, step_unit_movement};
 

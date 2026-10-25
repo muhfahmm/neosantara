@@ -4,7 +4,10 @@ import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import UnitMarker from './units/unitMarker';
 import { formatUnitQuantity, type WarUnit } from './units/warUnitComposition';
 import type { FacilitySide, UnitFacility } from './UnitSelectionModal';
-import { loadRustViewport, prepareUnitAttack } from './warMapViewport';
+import { evaluateBorderIncursion, loadRustViewport, prepareUnitAttack, type AiBorderResponse } from './warMapViewport';
+import { requestPythonAIWarCycle, type WarUnitState } from './pythonAiBridge';
+import { RealisticCombatEffect, COMBAT_EFFECT_CSS } from './RealisticCombatEffect';
+import { CombatLossNotifier, type CombatLossEvent } from './CombatLossNotifier';
 import type { UnitCommandMode } from './AttackControls';
 
 /* ═════════════════════════ TIPE & KONSTANTA (dipakai juga oleh PageWar) ═════════════════════════ */
@@ -391,14 +394,18 @@ export const MAP_CSS = `
 .tm-cloud{animation:tm-cloud 90s linear infinite;will-change:transform}
 .tm-fall{animation:tm-fall 9s linear infinite}
 .tm-dust{animation:tm-dust 14s linear infinite}
-.tm-tracer{animation:tm-tracer .5s linear infinite}
+.tm-tracer{animation:tm-tracer .4s linear infinite}
+.tm-muzzle{animation:tm-muzzle-pop .4s ease-out forwards}
+.tm-impact{animation:tm-impact-burst .65s ease-out forwards}
+@keyframes tm-tracer{to{stroke-dashoffset:-64}}
+@keyframes tm-muzzle-pop{0%{transform:scale(0.3);opacity:1}50%{transform:scale(1.4);opacity:0.9}100%{transform:scale(1.8);opacity:0}}
+@keyframes tm-impact-burst{0%{transform:scale(0.2);opacity:1}40%{transform:scale(1.6);opacity:0.9}80%{transform:scale(2.2);opacity:0.4}100%{transform:scale(2.6);opacity:0}}
 .tm-glint{animation:tm-glint 3.2s ease-in-out infinite;opacity:0}
 .tm-spin{animation:tm-spin 5s linear infinite;transform-box:fill-box;transform-origin:center}
 .tm-spin-slow{animation:tm-spin 70s linear infinite;transform-box:fill-box;transform-origin:center}
 @keyframes tm-cloud{from{transform:translateX(-800px)}to{transform:translateX(1600px)}}
 @keyframes tm-fall{from{transform:translate(0,-100px)}to{transform:translate(-160px,420px)}}
 @keyframes tm-dust{from{transform:translateX(-300px)}to{transform:translateX(1200px)}}
-@keyframes tm-tracer{to{stroke-dashoffset:-48}}
 @keyframes tm-glint{0%,100%{opacity:0}50%{opacity:.85}}
 @keyframes tm-spin{to{transform:rotate(360deg)}}
 @keyframes unit-air-hover{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(-.7deg)}}
@@ -932,13 +939,13 @@ interface UnitsProps {
   movePaths: UnitMovePath[];
   commandMode: UnitCommandMode;
   attackRadius: number | null;
-  attackStrike: UnitAttackEffect | null;
+  attackStrikes: UnitAttackEffect[];
   onSelectUnit: (id: string) => void;
 }
 
 const UnitsLayer = memo(function UnitsLayer({
   accent, simPhase, own, enemy, playerSide, positions, selectedUnitId, movingUnitIds, movePaths,
-  commandMode, attackRadius, attackStrike, onSelectUnit,
+  commandMode, attackRadius, attackStrikes, onSelectUnit,
 }: UnitsProps) {
   const renderUnit = (placed: PlacedUnit, index: number, hostile: boolean) => {
     const side = hostile ? 'enemy' : 'own';
@@ -1019,24 +1026,8 @@ const UnitsLayer = memo(function UnitsLayer({
           />
         ) : null;
       })()}
-      {attackStrike && (
-        (() => {
-          const visual = attackVisual(attackStrike.weaponType);
-          return (
-            <path
-              key={attackStrike.id}
-              className="tm-tracer"
-              d={`M ${attackStrike.start.x} ${attackStrike.start.y} L ${attackStrike.target.x} ${attackStrike.target.y}`}
-              fill="none"
-              stroke={visual.color}
-              strokeWidth={visual.width}
-              strokeDasharray={visual.dash}
-              style={{ animationDuration: `${Math.max(100, attackStrike.travelMs / 3)}ms` }}
-              pointerEvents="none"
-            />
-          );
-        })()
-      )}
+      {/* EFEK TEMBAKAN TEMPUR REALISTIS DARI FILE TERPISAH */}
+      <RealisticCombatEffect strikes={attackStrikes} />
       {movePaths.map((movePath) => (
         <path
           key={movePath.id}
@@ -1173,19 +1164,57 @@ export const TacticalMap = memo(function TacticalMap({
 }: MapProps) {
   const ownIsAtk = playerSide === 'attacker';
   const fogActive = fogEnabled && simPhase === 'idle';
-  const own = useMemo(() => layoutUnits(ownIsAtk ? attackerUnits : defenderUnits, true), [ownIsAtk, attackerUnits, defenderUnits]);
-  const enemy = useMemo(() => layoutUnits(ownIsAtk ? defenderUnits : attackerUnits, false), [ownIsAtk, attackerUnits, defenderUnits]);
+  const baseOwn = useMemo(() => layoutUnits(ownIsAtk ? attackerUnits : defenderUnits, true), [ownIsAtk, attackerUnits, defenderUnits]);
+  const initialEnemy = useMemo(() => layoutUnits(ownIsAtk ? defenderUnits : attackerUnits, false), [ownIsAtk, attackerUnits, defenderUnits]);
+  const initialEnemyRef = useRef<PlacedUnit[]>([]);
+  initialEnemyRef.current = initialEnemy;
+  const [extraEnemyUnits, setExtraEnemyUnits] = useState<PlacedUnit[]>([]);
+  const extraEnemyUnitsRef = useRef<PlacedUnit[]>([]);
+  extraEnemyUnitsRef.current = extraEnemyUnits;
+  const baseEnemy = useMemo(() => [...initialEnemy, ...extraEnemyUnits], [initialEnemy, extraEnemyUnits]);
+
+  // State kuantitas pasukan dinamis (berkurang saat menerima damage serangan)
+  const [unitQuantities, setUnitQuantities] = useState<Record<string, number>>({});
+  const unitQuantitiesRef = useRef<Record<string, number>>({});
+  const baseOwnRef = useRef<PlacedUnit[]>([]);
+  baseOwnRef.current = baseOwn;
+  const [lossEvents, setLossEvents] = useState<CombatLossEvent[]>([]);
+
+  // Terapkan kuantitas dinamis ke daftar unit
+  const own = useMemo(() => {
+    return baseOwn.map((p) => {
+      const uId = unitId(p.unit, 'own');
+      const dynamicQty = unitQuantities[uId];
+      if (typeof dynamicQty === 'number') {
+        return { ...p, unit: { ...p.unit, quantity: dynamicQty } };
+      }
+      return p;
+    }).filter((p) => p.unit.quantity > 0);
+  }, [baseOwn, unitQuantities]);
+
+  const enemy = useMemo(() => {
+    return baseEnemy.map((p) => {
+      const uId = unitId(p.unit, 'enemy');
+      const dynamicQty = unitQuantities[uId];
+      if (typeof dynamicQty === 'number') {
+        return { ...p, unit: { ...p.unit, quantity: dynamicQty } };
+      }
+      return p;
+    }).filter((p) => p.unit.quantity > 0);
+  }, [baseEnemy, unitQuantities]);
   const [positions, setPositions] = useState<Record<string, UnitPosition>>({});
   const positionsRef = useRef(positions);
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const selectedUnitIdRef = useRef<string | null>(null);
   const [attackRadius, setAttackRadius] = useState<number | null>(null);
-  const [attackStrike, setAttackStrike] = useState<UnitAttackEffect | null>(null);
-  const attackStrikeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [attackStrikes, setAttackStrikes] = useState<UnitAttackEffect[]>([]);
   const [movingUnitIds, setMovingUnitIds] = useState<string[]>([]);
   const [movePaths, setMovePaths] = useState<UnitMovePath[]>([]);
   const movementFramesRef = useRef<Record<string, number>>({});
   const movementEngineRef = useRef<Awaited<ReturnType<typeof loadRustViewport>> | null>(null);
+  const aiCombatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [incursionAlert, setIncursionAlert] = useState<{ active: boolean; text: string; level: number }>({ active: false, text: '', level: 0 });
+  const hasTriggeredIncursionRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -1198,8 +1227,8 @@ export const TacticalMap = memo(function TacticalMap({
       });
     return () => {
       cancelled = true;
-        Object.values(movementFramesRef.current).forEach(cancelAnimationFrame);
-        if (attackStrikeTimerRef.current !== null) clearTimeout(attackStrikeTimerRef.current);
+      Object.values(movementFramesRef.current).forEach(cancelAnimationFrame);
+      if (aiCombatIntervalRef.current) clearInterval(aiCombatIntervalRef.current);
     };
   }, []);
 
@@ -1291,6 +1320,290 @@ export const TacticalMap = memo(function TacticalMap({
         positionsRef.current = { ...positionsRef.current, [id]: nextPosition };
         setPositions(positionsRef.current);
 
+        // EVALUASI BORDER INCURSION DENGAN ENGINE RUST
+        if (!hasTriggeredIncursionRef.current && movementEngineRef.current) {
+          const aiResp = evaluateBorderIncursion(
+            movementEngineRef.current,
+            x,
+            y,
+            group,
+            'land',
+            playerSide,
+            placedUnit.unit.quantity,
+          );
+
+          if (aiResp && aiResp.shouldScramble) {
+            hasTriggeredIncursionRef.current = true;
+            setIncursionAlert({
+              active: true,
+              text: `PERINGATAN: WILAYAH MUSUH DITEMBUS! LAWAN MEMOBILISASI PASUKAN!`,
+              level: aiResp.alertLevel,
+            });
+
+            // Sembunyikan notifikasi peringatan tembus wilayah musuh otomatis setelah 3 detik
+            setTimeout(() => {
+              setIncursionAlert((prev) => ({ ...prev, active: false }));
+            }, 3000);
+
+            // Musuh mengeluarkan pasukan darat (infanteri, tank, dan APC) dari markas/barak
+            const newUnits: PlacedUnit[] = [
+              {
+                unit: {
+                  kind: 'infanteri',
+                  group: 'darat',
+                  label: 'QRF-INF',
+                  quantity: aiResp.spawnInfantry,
+                  echelon: 'I',
+                },
+                x: aiResp.spawnOrigin.x,
+                y: aiResp.spawnOrigin.y,
+              },
+              {
+                unit: {
+                  kind: 'tank',
+                  group: 'darat',
+                  label: 'QRF-MBT',
+                  quantity: aiResp.spawnTank,
+                  echelon: 'II',
+                },
+                x: aiResp.spawnOrigin.x + 140,
+                y: aiResp.spawnOrigin.y + 40,
+              },
+              {
+                unit: {
+                  kind: 'apcIfv',
+                  group: 'darat',
+                  label: 'QRF-APC',
+                  quantity: aiResp.spawnApc,
+                  echelon: 'I',
+                },
+                x: aiResp.spawnOrigin.x + 80,
+                y: aiResp.spawnOrigin.y + 160,
+              },
+            ];
+
+            setExtraEnemyUnits((prev) => [...prev, ...newUnits]);
+
+            // Set initial positions with exact unitId format
+            const initialPosMap: Record<string, UnitPosition> = {};
+            newUnits.forEach((u) => {
+              const uId = unitId(u.unit, 'enemy');
+              initialPosMap[uId] = { x: u.x, y: u.y };
+            });
+            positionsRef.current = { ...positionsRef.current, ...initialPosMap };
+            setPositions({ ...positionsRef.current });
+
+            // Fungsi siklus tempur & pergerakan AI berkala (Autonomous AI Combat Loop)
+            if (aiCombatIntervalRef.current) clearInterval(aiCombatIntervalRef.current);
+
+            const executeAiCombatCycle = () => {
+              // Saring seluruh unit musuh (baik garnisun awal maupun QRF) yang masih hidup (quantity > 0)
+              const allEnemyCandidates = [...initialEnemyRef.current, ...newUnits, ...extraEnemyUnitsRef.current];
+              const uniqueEnemyMap = new Map<string, PlacedUnit>();
+              allEnemyCandidates.forEach((u) => uniqueEnemyMap.set(unitId(u.unit, 'enemy'), u));
+
+              const currentEnemyUnitsState: WarUnitState[] = Array.from(uniqueEnemyMap.values())
+                .map((u) => {
+                  const uId = unitId(u.unit, 'enemy');
+                  const liveQty = unitQuantitiesRef.current[uId] ?? u.unit.quantity;
+                  const pos = positionsRef.current[uId] ?? { x: u.x, y: u.y };
+                  return {
+                    id: uId,
+                    kind: u.unit.kind,
+                    group: u.unit.group,
+                    label: u.unit.label,
+                    quantity: liveQty,
+                    x: pos.x,
+                    y: pos.y,
+                    is_enemy: true,
+                  };
+                })
+                .filter((u) => u.quantity > 0);
+
+              // Saring hanya unit user yang masih hidup (quantity > 0)
+              const currentUserUnitsState: WarUnitState[] = baseOwnRef.current
+                .map((p) => {
+                  const uId = unitId(p.unit, 'own');
+                  const liveQty = unitQuantitiesRef.current[uId] ?? p.unit.quantity;
+                  const pos = positionsRef.current[uId] ?? { x: p.x, y: p.y };
+                  return {
+                    id: uId,
+                    kind: p.unit.kind,
+                    group: p.unit.group,
+                    label: p.unit.label,
+                    quantity: liveQty,
+                    x: pos.x,
+                    y: pos.y,
+                    is_enemy: false,
+                  };
+                })
+                .filter((u) => u.quantity > 0);
+
+              // Jika seluruh pasukan user atau seluruh pasukan musuh sudah hancur, hentikan serangan!
+              if (currentUserUnitsState.length === 0 || currentEnemyUnitsState.length === 0) {
+                if (aiCombatIntervalRef.current) {
+                  clearInterval(aiCombatIntervalRef.current);
+                  aiCombatIntervalRef.current = null;
+                }
+                return;
+              }
+
+              // DOKTRIN PERTAHANAN WILAYAH:
+              // Pasukan reaksi AI hanya memburu dan menyerang unit user yang TELAH MENEROBOS / BERADA DI WILAYAH MUSUH.
+              // Jika penyusup sudah dihancurkan atau mundur ke wilayah user, pasukan AI TIDAK BOLEH masuk ke pertahanan user!
+              const intruderUserUnits = currentUserUnitsState.filter((u) => {
+                const engine = movementEngineRef.current;
+                if (!engine?.check_boundary_cross) return u.x > 3160;
+                return engine.check_boundary_cross(u.x, u.y, 'land', playerSide);
+              });
+
+              // Jika penyusup sudah habis/dihancurkan atau tidak ada lagi unit user di wilayah AI:
+              if (intruderUserUnits.length === 0) {
+                // Pasukan AI bertahan di wilayah sendiri (kembali ke batas pertahanan markas), jangan pernah menyeberang ke user!
+                currentEnemyUnitsState.forEach((enemy) => {
+                  if (movementFramesRef.current[enemy.id]) {
+                    cancelAnimationFrame(movementFramesRef.current[enemy.id]);
+                    delete movementFramesRef.current[enemy.id];
+                  }
+                });
+                return;
+              }
+
+              void requestPythonAIWarCycle(currentEnemyUnitsState, intruderUserUnits, { max_x: BASE_W, max_y: BASE_H })
+                .then((pyDecision) => {
+                  const engine = movementEngineRef.current;
+                  if (!engine) return;
+
+                  // 1. Jalankan pergerakan unit musuh sesuai keputusan Python AI
+                  pyDecision.movements.forEach((mv) => {
+                    const uId = mv.unit_id;
+                    const liveEnemyQty = unitQuantitiesRef.current[uId] ?? 1;
+                    if (liveEnemyQty <= 0) return; // Unit hancur tidak bergerak lagi
+
+                    const curPos = positionsRef.current[uId];
+                    if (!curPos) return;
+
+                    // Jika AI memerintahkan 'hold' (berhenti membidik & menembak), jangan lanjutkan gerak
+                    if (mv.action === 'hold') {
+                      if (movementFramesRef.current[uId]) {
+                        cancelAnimationFrame(movementFramesRef.current[uId]);
+                        delete movementFramesRef.current[uId];
+                      }
+                      return;
+                    }
+
+                    // BATAS TERITORIAL: Unit AI dilarang keras menyeberang masuk ke batas pertahanan user!
+                    // Untuk attacker: wilayah user di barat (x < 3160), wilayah AI di timur (x >= 3160).
+                    const safeTargetX = playerSide === 'attacker'
+                      ? Math.max(3220, mv.target_x)
+                      : Math.min(3100, mv.target_x);
+
+                    const [tX, tY, qrfSpeed] = engine.prepare_unit_movement(
+                      safeTargetX, mv.target_y, BASE_W, BASE_H, 'darat',
+                    );
+
+                    // Batalkan animasi gerak lama jika ada
+                    if (movementFramesRef.current[uId]) {
+                      cancelAnimationFrame(movementFramesRef.current[uId]);
+                    }
+
+                    const qrfStart = { x: curPos.x, y: curPos.y };
+                    let qrfElapsed = 0;
+                    let qrfLast = performance.now();
+
+                    const animateQrf = (qrfNow: number) => {
+                      const dt = Math.min(qrfNow - qrfLast, 64);
+                      qrfLast = qrfNow;
+                      const [curX, curY, nextEl, qrfDone] = engine.step_unit_movement(
+                        qrfStart.x, qrfStart.y, tX, tY, qrfElapsed, dt, qrfSpeed * 0.95, 'darat',
+                      );
+                      qrfElapsed = nextEl;
+                      positionsRef.current[uId] = { x: curX, y: curY };
+                      setPositions({ ...positionsRef.current });
+
+                      if (qrfDone < 0.5) {
+                        movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
+                      } else {
+                        delete movementFramesRef.current[uId];
+                      }
+                    };
+                    movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
+                  });
+
+                  // 2. Tembakan AI ke pasukan user (hanya jika penembak dan target masih memiliki pasukan)
+                  if (pyDecision.attacks.length > 0) {
+                    pyDecision.attacks.forEach((atk, attackIdx) => {
+                      const shooterQty = unitQuantitiesRef.current[atk.attacker_id] ?? 1;
+                      const targetQty = unitQuantitiesRef.current[atk.target_unit_id] ?? 1;
+                      if (shooterQty <= 0 || targetQty <= 0) return; // Unit yang hancur tidak bisa menembak / ditembak
+
+                      const shooterPos = positionsRef.current[atk.attacker_id] ?? { x: aiResp.spawnOrigin.x, y: aiResp.spawnOrigin.y };
+                      setTimeout(() => {
+                        // Cek ulang saat peluru melesat
+                        const liveTargetQty = unitQuantitiesRef.current[atk.target_unit_id] ?? 1;
+                        const liveShooterQty = unitQuantitiesRef.current[atk.attacker_id] ?? 1;
+                        if (liveTargetQty <= 0 || liveShooterQty <= 0) return;
+
+                        const strikeId = `ai-strike-${atk.attacker_id}-${Date.now()}-${Math.random()}`;
+                        const newStrike: UnitAttackEffect = {
+                          id: strikeId,
+                          start: shooterPos,
+                          target: { x: atk.target_x, y: atk.target_y },
+                          weaponType: atk.weapon_type,
+                          travelMs: 650,
+                        };
+
+                        setAttackStrikes((prev) => [...prev, newStrike]);
+                        setTimeout(() => {
+                          setAttackStrikes((prev) => prev.filter((s) => s.id !== strikeId));
+                        }, 650);
+
+                        // Pengurangan kuantitas pasukan User akibat tembakan AI
+                        const targetUserPlaced = baseOwnRef.current.find((p) => unitId(p.unit, 'own') === atk.target_unit_id);
+                        if (targetUserPlaced) {
+                          const currentQty = unitQuantitiesRef.current[atk.target_unit_id] ?? targetUserPlaced.unit.quantity;
+                          if (currentQty <= 0) return;
+
+                          // Damage proporsional terhadap ukuran pasukan penembak
+                          const damageLoss = Math.max(
+                            1,
+                            Math.round(Math.min(currentQty, Math.max(12, currentQty * 0.12 + atk.damage_potential * 15)))
+                          );
+                          const remaining = Math.max(0, currentQty - damageLoss);
+
+                          unitQuantitiesRef.current[atk.target_unit_id] = remaining;
+                          setUnitQuantities((prev) => ({
+                            ...prev,
+                            [atk.target_unit_id]: remaining,
+                          }));
+
+                          setLossEvents((prev) => [
+                            ...prev,
+                            {
+                              id: `loss-user-${Date.now()}-${Math.random()}`,
+                              side: 'user',
+                              unitLabel: targetUserPlaced.unit.label,
+                              lostAmount: damageLoss,
+                              remainingAmount: remaining,
+                              attackerLabel: 'Pasukan Musuh (QRF)',
+                              timestamp: Date.now(),
+                            },
+                          ]);
+                        }
+                      }, attackIdx * 250);
+                    });
+                  }
+                });
+            };
+
+            // Jalankan siklus pertama seketika
+            executeAiCombatCycle();
+
+            // Jalankan siklus tempur AI secara kontinu selama pasukan masih hidup
+            aiCombatIntervalRef.current = setInterval(executeAiCombatCycle, 1500);
+          }
+        }
+
         if (done >= 0.5) {
           delete movementFramesRef.current[id];
           setMovingUnitIds((current) => current.filter((movingId) => movingId !== id));
@@ -1322,10 +1635,25 @@ export const TacticalMap = memo(function TacticalMap({
     if (!selectedUnitId || simPhase !== 'idle') return;
     const attacker = own.find((placed) => unitId(placed.unit, 'own') === selectedUnitId);
     if (!attacker) return;
+
+    // Pasukan user yang hancur (quantity <= 0) tidak bisa lagi menembak
+    const userQty = unitQuantitiesRef.current[selectedUnitId] ?? attacker.unit.quantity;
+    if (userQty <= 0) return;
+
+    // Jika target musuh sudah hancur (quantity <= 0), abaikan tembakan
+    if (target) {
+      const targetEnemyPlaced = enemy.find((p) => p.unit.kind === target.kind && p.unit.group === target.group);
+      if (targetEnemyPlaced) {
+        const enemyId = unitId(targetEnemyPlaced.unit, 'enemy');
+        const currentEnemyQty = unitQuantitiesRef.current[enemyId] ?? targetEnemyPlaced.unit.quantity;
+        if (currentEnemyQty <= 0) return;
+      }
+    }
+
     const fire = (engine: Awaited<ReturnType<typeof loadRustViewport>>) => {
       const { radius, projectileSpeed, weaponType } = prepareUnitAttack(
         engine,
-        attacker.unit.quantity,
+        userQty,
         attacker.unit.group,
         attacker.unit.kind,
       );
@@ -1337,15 +1665,56 @@ export const TacticalMap = memo(function TacticalMap({
       if (inRange) {
         const distance = Math.hypot(targetPosition.x - origin.x, targetPosition.y - origin.y);
         const travelMs = Math.max(180, Math.min(1800, (distance / projectileSpeed) * 1000));
-        setAttackStrike({
-          id: `${selectedUnitId}-${Date.now()}`,
+        const strikeId = `user-strike-${selectedUnitId}-${Date.now()}`;
+        const newStrike: UnitAttackEffect = {
+          id: strikeId,
           start: origin,
           target: targetPosition,
           weaponType,
           travelMs,
-        });
-        if (attackStrikeTimerRef.current !== null) clearTimeout(attackStrikeTimerRef.current);
-        attackStrikeTimerRef.current = setTimeout(() => setAttackStrike(null), travelMs);
+        };
+        setAttackStrikes((prev) => [...prev, newStrike]);
+        setTimeout(() => {
+          setAttackStrikes((prev) => prev.filter((s) => s.id !== strikeId));
+        }, travelMs);
+
+        // Pengurangan kuantitas pasukan Musuh akibat tembakan User
+        if (target) {
+          const targetEnemyPlaced = enemy.find((p) => p.unit.kind === target.kind && p.unit.group === target.group)
+            ?? enemy.find((p) => unitId(p.unit, 'enemy') === unitId(target, 'enemy'));
+          if (targetEnemyPlaced) {
+            const enemyId = unitId(targetEnemyPlaced.unit, 'enemy');
+            const currentQty = unitQuantitiesRef.current[enemyId] ?? targetEnemyPlaced.unit.quantity;
+            if (currentQty <= 0) return; // Musuh sudah hancur sepenuhnya
+
+            const attackerStrength = userQty;
+            // Kerusakan proporsional terhadap ukuran pasukan user
+            const damageLoss = Math.max(
+              1,
+              Math.round(Math.min(currentQty, Math.max(15, currentQty * 0.15 + Math.sqrt(attackerStrength) * 18)))
+            );
+            const remaining = Math.max(0, currentQty - damageLoss);
+
+            unitQuantitiesRef.current[enemyId] = remaining;
+            setUnitQuantities((prev) => ({
+              ...prev,
+              [enemyId]: remaining,
+            }));
+
+            setLossEvents((prev) => [
+              ...prev,
+              {
+                id: `loss-enemy-${Date.now()}-${Math.random()}`,
+                side: 'enemy',
+                unitLabel: targetEnemyPlaced.unit.label,
+                lostAmount: damageLoss,
+                remainingAmount: remaining,
+                attackerLabel: attacker.unit.label,
+                timestamp: Date.now(),
+              },
+            ]);
+          }
+        }
       }
       onAttack?.(attacker.unit, target, inRange);
     };
@@ -1390,37 +1759,72 @@ export const TacticalMap = memo(function TacticalMap({
   );
 
   return (
-    <svg
-      ref={svgRef}
-      className="absolute inset-0 h-full w-full"
-      viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
-      preserveAspectRatio="xMidYMid meet"
-      role="img"
-      aria-label="Peta taktis operasi"
-      onClick={handleMapClick}
-      onContextMenu={handleMapContextMenu}
-    >
-      <style>{MAP_CSS}</style>
-      <Defs accent={accent} terrainType={terrainType} />
-      <TerrainLayer accent={accent} water={water} terrainType={terrainType} />
-      <BasesLayer accent={accent} simPhase={simPhase} playerSide={playerSide} onFacilityClick={onFacilityClick} />
-      {fogEnabled && <FogLayer sources={sources} active={fogActive} />}
-      <UnitsLayer
-        accent={accent}
-        simPhase={simPhase}
-        own={own}
-        enemy={enemy}
-        playerSide={playerSide}
-        positions={positions}
-        selectedUnitId={simPhase === 'idle' ? selectedUnitId : null}
-        movingUnitIds={simPhase === 'idle' ? movingUnitIds : []}
-        movePaths={simPhase === 'idle' ? movePaths : []}
-        commandMode={simPhase === 'idle' ? commandMode : null}
-        attackRadius={simPhase === 'idle' ? attackRadius : null}
-        attackStrike={simPhase === 'idle' ? attackStrike : null}
-        onSelectUnit={selectUnit}
-      />
-      <EffectsLayer terrainType={terrainType} />
-    </svg>
+    <>
+      <svg
+        ref={svgRef}
+        className="absolute inset-0 h-full w-full"
+        viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label="Peta taktis operasi"
+        onClick={handleMapClick}
+        onContextMenu={handleMapContextMenu}
+      >
+        <style>{`${MAP_CSS}\n${COMBAT_EFFECT_CSS}`}</style>
+        <Defs accent={accent} terrainType={terrainType} />
+        <TerrainLayer accent={accent} water={water} terrainType={terrainType} />
+        <BasesLayer accent={accent} simPhase={simPhase} playerSide={playerSide} onFacilityClick={onFacilityClick} />
+        {fogEnabled && <FogLayer sources={sources} active={fogActive} />}
+        <UnitsLayer
+          accent={accent}
+          simPhase={simPhase}
+          own={own}
+          enemy={enemy}
+          playerSide={playerSide}
+          positions={positions}
+          selectedUnitId={simPhase === 'idle' ? selectedUnitId : null}
+          movingUnitIds={simPhase === 'idle' ? movingUnitIds : []}
+          movePaths={simPhase === 'idle' ? movePaths : []}
+          commandMode={simPhase === 'idle' ? commandMode : null}
+          attackRadius={simPhase === 'idle' ? attackRadius : null}
+          attackStrikes={simPhase === 'idle' ? attackStrikes : []}
+          onSelectUnit={selectUnit}
+        />
+        {incursionAlert.active && (
+          <g pointerEvents="none" className="nw-pulse">
+            <rect
+              x={viewBox.x + viewBox.w / 2 - 400}
+              y={viewBox.y + 40}
+              width="800"
+              height="80"
+              rx="16"
+              fill="#111827"
+              fillOpacity="0.92"
+              stroke="#ef4444"
+              strokeWidth="4"
+            />
+            <text
+              x={viewBox.x + viewBox.w / 2}
+              y={viewBox.y + 88}
+              textAnchor="middle"
+              fill="#fca5a5"
+              fontSize="26"
+              fontWeight="900"
+              fontFamily="monospace"
+              letterSpacing="2"
+              stroke="#000"
+              strokeWidth="4"
+              paintOrder="stroke"
+            >
+              🚨 PERINGATAN: WILAYAH MUSUH DITEMBUS! LAWAN MEMOBILISASI PASUKAN!
+            </text>
+          </g>
+        )}
+        <EffectsLayer terrainType={terrainType} />
+      </svg>
+
+      {/* NOTIFIKASI KERUGIAN PASUKAN REAL-TIME DARI FILE TERPISAH */}
+      <CombatLossNotifier losses={lossEvents} />
+    </>
   );
 });

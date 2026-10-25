@@ -38,6 +38,50 @@ interface RustViewportModule {
   is_target_in_attack_range: (
     originX: number, originY: number, targetX: number, targetY: number, radius: number,
   ) => boolean;
+  check_boundary_cross?: (
+    unitX: number, unitY: number, mapType: string, playerSide: string,
+  ) => boolean;
+  calculate_ai_border_response?: (
+    invaderX: number, invaderY: number, invaderGroup: string, mapType: string, playerSide: string, threatQuantity: number,
+  ) => Float64Array;
+}
+
+export interface AiBorderResponse {
+  shouldScramble: boolean;
+  alertLevel: number;
+  spawnInfantry: number;
+  spawnTank: number;
+  spawnApc: number;
+  spawnOrigin: { x: number; y: number };
+  interceptTarget: { x: number; y: number };
+}
+
+export function evaluateBorderIncursion(
+  engine: RustViewportModule,
+  invaderX: number,
+  invaderY: number,
+  invaderGroup: string,
+  mapType: 'land' | 'sea',
+  playerSide: 'attacker' | 'defender',
+  threatQuantity: number,
+): AiBorderResponse | null {
+  if (engine.calculate_ai_border_response) {
+    const raw = engine.calculate_ai_border_response(
+      invaderX, invaderY, invaderGroup, mapType, playerSide, threatQuantity,
+    );
+    if (raw && raw[0] >= 0.5) {
+      return {
+        shouldScramble: true,
+        alertLevel: raw[1],
+        spawnInfantry: raw[2],
+        spawnTank: raw[3],
+        spawnApc: raw[4],
+        spawnOrigin: { x: raw[5], y: raw[6] },
+        interceptTarget: { x: raw[7], y: raw[8] },
+      };
+    }
+  }
+  return null;
 }
 
 let loadedRust: RustViewportModule | null = null;

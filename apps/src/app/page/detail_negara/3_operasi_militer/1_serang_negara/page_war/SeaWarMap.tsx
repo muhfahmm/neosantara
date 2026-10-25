@@ -19,6 +19,7 @@ import {
 } from './TacticalMap';
 import {
   attachMapSnapshot,
+  evaluateBorderIncursion,
   flushViewportPreview,
   loadRustViewport,
   panViewport,
@@ -894,6 +895,22 @@ export default function SeaWarMap({
         const nextPosition = { x, y };
         unitPositionsRef.current = { ...unitPositionsRef.current, [selectedUnitId]: nextPosition };
         setUnitPositions(unitPositionsRef.current);
+
+        // EVALUASI BORDER INCURSION DENGAN ENGINE RUST
+        if (rustViewportRef.current) {
+          const aiResp = evaluateBorderIncursion(
+            rustViewportRef.current,
+            x,
+            y,
+            group,
+            'sea',
+            isUserDefender ? 'defender' : 'attacker',
+            placedUnit.unit.quantity,
+          );
+          if (aiResp && aiResp.shouldScramble) {
+            addLog(`PERINGATAN RADAR: Armada Anda menembus koridor perbatasan maritim musuh! Posisi pertahanan musuh siaga tempur!`);
+          }
+        }
 
         if (done >= 0.5) {
           delete movementFramesRef.current[selectedUnitId];
