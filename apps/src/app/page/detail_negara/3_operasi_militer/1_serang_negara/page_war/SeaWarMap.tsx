@@ -16,7 +16,7 @@ import {
   blobPath, makeCity, makeForest, rng, smoothPath,
   type TerrainType,
 } from './TacticalMap';
-import { loadRustViewport, panViewport, scheduleViewportCommit, zoomViewport } from './warMapViewport';
+import { attachMapSnapshot, flushViewportPreview, loadRustViewport, panViewport, scheduleViewportPreview, zoomViewport } from './warMapViewport';
 
 export type { TerrainType };
 
@@ -603,6 +603,7 @@ const Fleet = memo(function Fleet({
 });
 
 const NW_CSS = `
+.map-navigating,.map-navigating *{animation-play-state:paused!important}
 .battle-active .battle-scenery-detail{display:none!important}
 .nw-a{transform-box:fill-box;transform-origin:center}
 .nw-ping{animation:nw-ping 2.2s ease-out infinite}
@@ -703,11 +704,13 @@ export default function SeaWarMap({
 
   /* ─── Zoom / pan / tooltip ─── */
   const mapRef = useRef<HTMLDivElement>(null);
+  const viewportSvgRef = useRef<SVGSVGElement>(null);
   const arRef = useRef(MAP_AR);
   const [vb, setVb] = useState<View>(() => fitView(MAP_AR));
   const viewRef = useRef(vb);
   const pendingViewRef = useRef<View | null>(null);
   const viewFrameRef = useRef<number | null>(null);
+  const commitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rustViewportRef = useRef<Awaited<ReturnType<typeof loadRustViewport>> | undefined>(undefined);
   const hoverCellRef = useRef<string | null>(null);
   const [selCell, setSelCell] = useState<string | null>(null);
@@ -717,9 +720,38 @@ export default function SeaWarMap({
   const tipRef = useRef<HTMLDivElement>(null);
   const coordRef = useRef<HTMLSpanElement>(null);
 
-  const scheduleView = useCallback((nextView: View) => {
-    scheduleViewportCommit(nextView, viewRef, pendingViewRef, viewFrameRef, setVb);
+  const commitView = useCallback(() => {
+    if (commitTimerRef.current !== null) {
+      clearTimeout(commitTimerRef.current);
+      commitTimerRef.current = null;
+    }
+    const nextView = flushViewportPreview(
+      viewportSvgRef, viewRef, pendingViewRef, viewFrameRef,
+    );
+    if (nextView) setVb(nextView);
   }, []);
+
+  const scheduleView = useCallback((nextView: View, commitAfterIdle = true) => {
+    scheduleViewportPreview(
+      nextView, viewportSvgRef, viewRef, pendingViewRef, viewFrameRef, commitAfterIdle,
+    );
+    if (!commitAfterIdle) return;
+    if (commitTimerRef.current !== null) clearTimeout(commitTimerRef.current);
+    commitTimerRef.current = setTimeout(commitView, 350);
+  }, [commitView]);
+
+  const snapshotRef = useRef<ReturnType<typeof attachMapSnapshot> | null>(null);
+  useEffect(() => {
+    const svg = viewportSvgRef.current;
+    if (!svg) return;
+    const snapshot = attachMapSnapshot(svg, { x: 0, y: -MAP_H / 2, w: MAP_W, h: MAP_H * 2 });
+    snapshotRef.current = snapshot;
+    snapshot.refresh(800);
+    return () => { snapshot.dispose(); snapshotRef.current = null; };
+  }, []);
+  useEffect(() => {
+    snapshotRef.current?.refresh(1200);
+  }, [terrainType, simPhase, ownUnits, enemyUnits]);
 
   useEffect(() => {
     let mounted = true;
@@ -730,6 +762,7 @@ export default function SeaWarMap({
     return () => {
       mounted = false;
       if (activeFrameRef.current !== null) cancelAnimationFrame(activeFrameRef.current);
+      if (commitTimerRef.current !== null) clearTimeout(commitTimerRef.current);
     };
   }, []);
 
@@ -770,11 +803,12 @@ export default function SeaWarMap({
       const isFirst = first;
       first = false;
       const current = viewRef.current;
-      scheduleView(isFirst ? fitView(ar) : clampView({ ...current, h: current.w / ar }, ar));
+      scheduleView(isFirst ? fitView(ar) : clampView({ ...current, h: current.w / ar }, ar), false);
+      commitView();
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, [scheduleView]);
+  }, [commitView, scheduleView]);
 
   const zoomAt = useCallback((clientX: number, clientY: number, factor: number) => {
     const el = mapRef.current;
@@ -832,6 +866,7 @@ export default function SeaWarMap({
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (isSimulating || e.button !== 0) return;
     if (e.target instanceof Element && e.target.closest('button')) return;
+    commitView();
     e.currentTarget.setPointerCapture(e.pointerId);
     const current = viewRef.current;
     dragRef.current = { sx: e.clientX, sy: e.clientY, vbX: current.x, vbY: current.y, vbW: current.w, moved: false };
@@ -862,7 +897,7 @@ export default function SeaWarMap({
           dy,
           rustViewportRef.current,
         );
-        scheduleView(clampView(nextView, ar));
+        scheduleView(clampView(nextView, ar), false);
         return;
       }
     }
@@ -888,6 +923,7 @@ export default function SeaWarMap({
     if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
     if (dragRef.current && !dragRef.current.moved) setSelCell(hoverCellRef.current);
     dragRef.current = null;
+    commitView();
   };
 
   const handlePointerLeave = () => {
@@ -996,17 +1032,18 @@ export default function SeaWarMap({
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
-          onLostPointerCapture={() => { dragRef.current = null; }}
+          onLostPointerCapture={() => { dragRef.current = null; commitView(); }}
           onPointerLeave={handlePointerLeave}
           onDoubleClick={resetZoom}
         >
-          <svg
-            className={`absolute inset-0 h-full w-full${isSimulating ? ' battle-active' : ''}`}
-            viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
-            preserveAspectRatio="xMidYMid meet"
-            role="img"
-            aria-label="Peta operasi tempur laut"
-          >
+            <svg
+              ref={viewportSvgRef}
+              className={`absolute inset-0 h-full w-full${isSimulating ? ' battle-active' : ''}`}
+              viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
+              preserveAspectRatio="xMidYMid meet"
+              role="img"
+              aria-label="Peta operasi tempur laut"
+            >
             <style>{MAP_CSS}</style>
             <Defs accent={ACCENT} terrainType={terrainType} />
             <defs>
@@ -1037,10 +1074,10 @@ export default function SeaWarMap({
 
             <EffectsLayer />
 
-          </svg>
+            </svg>
 
           {/* KOMPAS */}
-          <div className="pointer-events-none absolute left-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border bg-black/40 backdrop-blur-sm" style={{ borderColor: `${ACCENT}4D`, color: ACCENT }}>
+          <div className="pointer-events-none absolute left-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border bg-black/40" style={{ borderColor: `${ACCENT}4D`, color: ACCENT }}>
             <Compass className="h-5 w-5" />
             <span className="absolute top-0.5 text-[8px] font-black tracking-widest">N</span>
           </div>
@@ -1053,7 +1090,7 @@ export default function SeaWarMap({
               { label: 'Reset zoom', Icon: Maximize2, fn: resetZoom },
             ].map(({ label, Icon, fn }) => (
               <button key={label} onClick={fn} disabled={isSimulating} aria-label={label}
-                className="flex h-8 w-8 items-center justify-center rounded-md border bg-black/50 backdrop-blur-sm transition-colors hover:bg-black/70 disabled:opacity-40"
+                className="flex h-8 w-8 items-center justify-center rounded-md border bg-black/50 transition-colors hover:bg-black/70 disabled:opacity-40"
                 style={{ borderColor: `${ACCENT}4D`, color: ACCENT }}>
                 <Icon className="h-4 w-4" />
               </button>
@@ -1065,7 +1102,7 @@ export default function SeaWarMap({
           {/* TOOLTIP */}
           {!isSimulating && (
             <div ref={tipRef} aria-hidden
-              className="pointer-events-none absolute left-0 top-0 z-30 w-[230px] rounded-md border bg-black/80 backdrop-blur-md transition-opacity duration-150"
+              className="pointer-events-none absolute left-0 top-0 z-30 w-[230px] rounded-md border bg-black/80 transition-opacity duration-150"
               style={{ opacity: hovered ? 1 : 0, borderColor: `${ACCENT}80`, boxShadow: `0 0 18px rgba(${ACCENT_RGB}, 0.25), inset 0 0 20px rgba(${ACCENT_RGB}, 0.06)`, willChange: 'transform' }}>
               <div className="flex items-center gap-2 border-b px-3 py-2" style={{ borderColor: `${ACCENT}40` }}>
                 <TipIcon size={14} style={{ color: ACCENT }} />
@@ -1087,7 +1124,7 @@ export default function SeaWarMap({
           )}
 
           {/* HUD KOORDINAT */}
-          <div className="pointer-events-none absolute bottom-5 left-6 z-20 flex items-center gap-4 rounded bg-black/60 px-2 py-1 font-mono text-[9px] backdrop-blur-sm" style={{ color: isSimulating ? '#f43f5e' : ACCENT }}>
+          <div className="pointer-events-none absolute bottom-5 left-6 z-20 flex items-center gap-4 rounded bg-black/60 px-2 py-1 font-mono text-[9px]" style={{ color: isSimulating ? '#f43f5e' : ACCENT }}>
             <span ref={coordRef}>X 0000  Y 0000  GRID A-1</span>
             <span className="flex items-center gap-1"><Navigation size={10} /> N 45°</span>
             <span className="opacity-60">ZOOM {(MAP_W / vb.w).toFixed(1)}×</span>
@@ -1122,7 +1159,7 @@ export default function SeaWarMap({
         {battleLogs.length > 0 && (
           <div
             ref={logRef}
-            className="max-h-[88px] overflow-y-auto rounded-lg border bg-black/50 px-2.5 py-1.5 font-mono text-[9px] leading-relaxed backdrop-blur-sm"
+            className="max-h-[88px] overflow-y-auto rounded-lg border bg-black/50 px-2.5 py-1.5 font-mono text-[9px] leading-relaxed"
             style={{ borderColor: `${ACCENT}4D` }}
             aria-live="polite"
           >

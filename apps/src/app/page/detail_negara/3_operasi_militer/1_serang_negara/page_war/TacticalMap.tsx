@@ -55,6 +55,7 @@ export interface MapProps {
   attackerUnits: WarUnit[];
   defenderUnits: WarUnit[];
   viewBox: ViewBox;
+  svgRef?: React.Ref<SVGSVGElement>;
   playerSide?: PlayerSide;
   fogEnabled?: boolean;
 }
@@ -374,6 +375,11 @@ const ADV_ENEMY = 'translate(-1250px, -850px)';
 const IDLE = 'translate(0px, 0px)';
 
 export const MAP_CSS = `
+.map-navigating,.map-navigating *{animation-play-state:paused!important}
+.map-navigating .tm-cloud,.map-navigating .nw-drift,.map-navigating .nw-smoke,.map-navigating .tm-fall,.map-navigating .tm-dust,.map-navigating .tm-glint,.map-navigating .tm-fog,.map-navigating .tm-fx{display:none!important}
+.map-navigating [filter]{filter:none!important}
+.map-navigating .tm-tz{transition:none!important;filter:none!important}
+.map-navigating,.map-navigating *{pointer-events:none!important;text-rendering:optimizeSpeed;shape-rendering:optimizeSpeed}
 .tm-tz{transition:filter .25s ease}
 .tm-tz:hover{filter:brightness(1.15) saturate(1.1)}
 .unit-marker{transform-box:fill-box;transform-origin:center}
@@ -430,7 +436,7 @@ export const Extruded = ({ x, y, w, d, h, roof, stroke, win, i = 0 }: { x: numbe
 
 export const MilitaryFacilities = ({ at, color, scale = 1 }: { at: { x: number; y: number }; color: string; scale?: number }) => (
   <g transform={`translate(${at.x} ${at.y}) scale(${scale})`} pointerEvents="none">
-    <rect x="-390" y="-155" width="780" height="310" rx="26" fill="#0b1220" fillOpacity="0.48" stroke={color} strokeOpacity="0.5" strokeWidth="3" strokeDasharray="16 10" />
+    <rect x="-390" y="-155" width="780" height="310" rx="26" fill="#0b1220" fillOpacity="0.48" stroke={color} strokeOpacity="0.5" strokeWidth="3" />
     <path d="M-360 118 H360" stroke="#64748b" strokeWidth="12" strokeOpacity="0.5" />
 
     <Extruded x={-345} y={-5} w={195} d={78} h={64} roof="#64748b" stroke={color} win />
@@ -666,8 +672,8 @@ const Headquarters = ({ at, color, fallen, name, sub, id }: { at: { x: number; y
   return (
     <g className="nw-tz" data-terrain={id} transform={`translate(${at.x} ${at.y}) scale(1.25)`}>
       <circle cx={x} cy={y} r="215" fill={c} fillOpacity="0.05" />
-      <circle className="tm-spin-slow" cx={x} cy={y} r="215" fill="none" stroke={c} strokeOpacity="0.45" strokeWidth="3" strokeDasharray="22 16" />
-      <rect x={x - 150} y={y - 100} width="300" height="200" rx="14" fill="#0b1220" fillOpacity="0.62" stroke={c} strokeOpacity="0.75" strokeWidth="3" strokeDasharray="16 8" />
+      <circle cx={x} cy={y} r="215" fill="none" stroke={c} strokeOpacity="0.45" strokeWidth="3" />
+      <rect x={x - 150} y={y - 100} width="300" height="200" rx="14" fill="#0b1220" fillOpacity="0.62" stroke={c} strokeOpacity="0.75" strokeWidth="3" />
       <Extruded x={x - 125} y={y - 70} w={64} d={34} h={22} roof="#475569" stroke={c} />
       <Extruded x={x - 125} y={y + 30} w={64} d={34} h={22} roof="#475569" stroke={c} />
       <Extruded x={x + 60} y={y + 30} w={60} d={30} h={20} roof="#475569" stroke={c} />
@@ -699,9 +705,9 @@ const Headquarters = ({ at, color, fallen, name, sub, id }: { at: { x: number; y
 export const Airbase = ({ at, color, name, id }: { at: { x: number; y: number }; color: string; name: string; id: string }) => {
   return (
     <g className="nw-tz" data-terrain={id} transform={`translate(${at.x} ${at.y}) scale(1.25)`}>
-      <rect x="-470" y="-215" width="940" height="290" rx="22" fill="#0b1220" fillOpacity="0.55" stroke={color} strokeOpacity="0.5" strokeWidth="3" strokeDasharray="18 10" />
+      <rect x="-470" y="-215" width="940" height="290" rx="22" fill="#0b1220" fillOpacity="0.55" stroke={color} strokeOpacity="0.5" strokeWidth="3" />
       <rect x="-440" y="-35" width="880" height="70" rx="6" fill="#2a2f38" stroke="#000" strokeOpacity="0.5" strokeWidth="2" />
-      <line x1="-410" y1="0" x2="410" y2="0" stroke="#e5e7eb" strokeWidth="3" strokeDasharray="30 22" opacity="0.8" />
+      <line x1="-410" y1="0" x2="410" y2="0" stroke="#e5e7eb" strokeWidth="3" opacity="0.8" />
       {[-1, 1].map((sd) => (
         <g key={sd} stroke="#e5e7eb" strokeWidth="3" opacity="0.75">
           {[-22, -11, 0, 11, 22].map((o) => <line key={o} x1={sd * 424} y1={o} x2={sd * 396} y2={o} />)}
@@ -864,7 +870,7 @@ const FogLayer = memo(function FogLayer({ sources, isSimulating, ownMoves, activ
     </>
   );
   return (
-    <g pointerEvents="none" style={{ opacity: active ? 1 : 0, transition: 'opacity .9s ease' }}>
+    <g className="tm-fog" pointerEvents="none" style={{ opacity: active ? 1 : 0, transition: 'opacity .9s ease' }}>
       <defs>
         <mask id="tm-fog-mask" maskUnits="userSpaceOnUse" x={EX.x} y={EX.y} width={EX.w} height={EX.h}>
           <rect x={EX.x} y={EX.y} width={EX.w} height={EX.h} fill="#fff" />
@@ -954,7 +960,7 @@ export const GridRulers = memo(function GridRulers({ vb, accent, hover, selected
 
 export const TacticalMap = memo(function TacticalMap({
   accent, water, terrainType, isSimulating, simPhase, attackerUnits, defenderUnits, viewBox,
-  playerSide = 'attacker', fogEnabled = true,
+  svgRef, playerSide = 'attacker', fogEnabled = true,
 }: MapProps) {
   const ownIsAtk = playerSide === 'attacker';
   const fogActive = fogEnabled && (simPhase === 'idle' || simPhase === 'advance');
@@ -967,6 +973,7 @@ export const TacticalMap = memo(function TacticalMap({
 
   return (
     <svg
+      ref={svgRef}
       className="absolute inset-0 h-full w-full"
       viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`}
       preserveAspectRatio="xMidYMid meet"

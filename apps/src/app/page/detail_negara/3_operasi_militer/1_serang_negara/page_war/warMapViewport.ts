@@ -10,6 +10,7 @@ export interface ViewportBounds {
 }
 
 interface RustViewportModule {
+  default: () => Promise<unknown>;
   zoom_view: (
     x: number, y: number, width: number, height: number,
     boxWidth: number, boxHeight: number, pointerX: number, pointerY: number,
@@ -20,13 +21,26 @@ interface RustViewportModule {
     boxWidth: number, boxHeight: number, deltaX: number, deltaY: number,
     minWidth: number, maxWidth: number, worldWidth: number, worldHeight: number,
   ) => Float64Array;
+  smooth_view: (
+    x: number, y: number, width: number, height: number,
+    targetX: number, targetY: number, targetWidth: number, targetHeight: number,
+    dtMs: number, timeConstantMs: number,
+  ) => Float64Array;
 }
+
+let loadedRust: RustViewportModule | null = null;
+const shownViews = new WeakMap<SVGSVGElement, Viewport>();
 
 let rustModulePromise: Promise<RustViewportModule> | null = null;
 
 export function loadRustViewport(): Promise<RustViewportModule> {
   if (!rustModulePromise) {
     rustModulePromise = import("../../../../../../wasm/war-map-viewport/war_map_viewport")
+      .then(async (module) => {
+        await module.default();
+        loadedRust = module as unknown as RustViewportModule;
+        return module;
+      })
       .catch((error: unknown) => {
         rustModulePromise = null;
         throw error;
@@ -113,32 +127,182 @@ export function panViewport(
   );
 }
 
-export function scheduleViewportCommit<T extends Viewport>(
+export function scheduleViewportPreview<T extends Viewport, E extends SVGSVGElement>(
   nextView: T,
+  elementRef: { current: E | null },
   viewRef: { current: T },
   pendingRef: { current: T | null },
   frameRef: { current: number | null },
-  commit: (view: T) => void,
+  smooth = false,
 ): void {
+  const element = elementRef.current;
+  if (element && !shownViews.has(element)) shownViews.set(element, { ...viewRef.current });
   viewRef.current = nextView;
   pendingRef.current = nextView;
+  element?.classList.add('map-navigating');
   if (frameRef.current !== null) return;
 
-  const commitOnFrame = (timestamp: number) => {
-    const elapsed = timestamp - lastViewportCommit;
-    if (lastViewportCommit > 0 && elapsed < 16) {
-      frameRef.current = requestAnimationFrame(commitOnFrame);
+  let last = performance.now();
+  const tick = (now: number) => {
+    frameRef.current = null;
+    const el = elementRef.current;
+    const target = pendingRef.current;
+    if (!el || !target) return;
+
+    const rust = loadedRust;
+    const shown = shownViews.get(el);
+    if (smooth && rust && shown) {
+      const dt = Math.min(now - last, 64);
+      last = now;
+      const [x, y, w, h, done] = rust.smooth_view(
+        shown.x, shown.y, shown.w, shown.h, target.x, target.y, target.w, target.h, dt, 70,
+      );
+      const stepped = { x, y, w, h };
+      shownViews.set(el, stepped);
+      applyViewportViewBox(el, stepped);
+      if (done < 0.5) frameRef.current = requestAnimationFrame(tick);
       return;
     }
-
-    lastViewportCommit = timestamp;
-    frameRef.current = null;
-    const pendingView = pendingRef.current;
-    pendingRef.current = null;
-    if (pendingView) commit(pendingView);
+    shownViews.set(el, { x: target.x, y: target.y, w: target.w, h: target.h });
+    applyViewportViewBox(el, target);
   };
-
-  frameRef.current = requestAnimationFrame(commitOnFrame);
+  frameRef.current = requestAnimationFrame(tick);
 }
 
-let lastViewportCommit = 0;
+export function flushViewportPreview<T extends Viewport, E extends SVGSVGElement>(
+  elementRef: { current: E | null },
+  viewRef: { current: T },
+  pendingRef: { current: T | null },
+  frameRef: { current: number | null },
+): T | null {
+  if (frameRef.current !== null) {
+    cancelAnimationFrame(frameRef.current);
+    frameRef.current = null;
+  }
+
+  const pendingView = pendingRef.current;
+  if (!pendingView) return null;
+
+  const element = elementRef.current;
+  if (element) {
+    applyViewportViewBox(element, pendingView, true);
+    shownViews.set(element, { x: pendingView.x, y: pendingView.y, w: pendingView.w, h: pendingView.h });
+    element.classList.remove('map-navigating');
+  }
+  pendingRef.current = null;
+  return viewRef.current;
+}
+
+function applyViewportViewBox(element: SVGSVGElement, view: Viewport, final = false): void {
+  if (!final && drawSnapshot(element, view)) return;
+  element.setAttribute('viewBox', `${view.x} ${view.y} ${view.w} ${view.h}`);
+  if (!final) return;
+  const s = snaps.get(element);
+  // Saat zoom-out jauh, seluruh SVG hidup sangat berat (animasi + ribuan elemen): tetap tampilkan bitmap statis.
+  if (s && s.ready && view.w >= s.world.w * 0.6 && drawSnapshot(element, view)) {
+    s.keepView = view;
+    return;
+  }
+  if (s) s.keepView = null;
+  endSnapshot(element);
+}
+
+/* ───────── Snapshot bitmap: selama geser/zoom peta digambar sebagai gambar (canvas) ───────── */
+interface Snap {
+  keepView?: Viewport | null;
+  img: CanvasImageSource | null;
+  canvas: HTMLCanvasElement;
+  world: Viewport;
+  ready: boolean;
+  token: number;
+  timer: ReturnType<typeof setTimeout> | null;
+}
+const snaps = new WeakMap<SVGSVGElement, Snap>();
+
+function drawSnapshot(svg: SVGSVGElement, view: Viewport): boolean {
+  const s = snaps.get(svg);
+  if (!s || !s.ready || !s.img) return false;
+  const w = svg.clientWidth, h = svg.clientHeight;
+  if (!w || !h) return false;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const cw = Math.round(w * dpr), ch = Math.round(h * dpr);
+  if (s.canvas.width !== cw || s.canvas.height !== ch) { s.canvas.width = cw; s.canvas.height = ch; }
+  const ctx = s.canvas.getContext('2d');
+  if (!ctx) return false;
+  const scale = Math.min(w / view.w, h / view.h);
+  const ox = (w - view.w * scale) / 2, oy = (h - view.h * scale) / 2;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, cw, ch);
+  ctx.setTransform(scale * dpr, 0, 0, scale * dpr, (ox - view.x * scale) * dpr, (oy - view.y * scale) * dpr);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'low';
+  ctx.drawImage(s.img, s.world.x, s.world.y, s.world.w, s.world.h);
+  s.canvas.style.display = 'block';
+  svg.style.opacity = '0';
+  return true;
+}
+
+function endSnapshot(svg: SVGSVGElement): void {
+  const s = snaps.get(svg);
+  if (s) s.canvas.style.display = 'none';
+  svg.style.opacity = '';
+}
+
+/** Membuat snapshot gambar dari seluruh dunia peta agar pan/zoom cukup menggambar ulang satu bitmap. */
+export function attachMapSnapshot(svg: SVGSVGElement, world: Viewport, maxPx = 3072) {
+  const canvas = document.createElement('canvas');
+  canvas.setAttribute('aria-hidden', 'true');
+  canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none';
+  svg.after(canvas);
+  const snap: Snap = { img: null, canvas, world, ready: false, token: 0, timer: null };
+  snaps.set(svg, snap);
+
+  const build = () => {
+    if (svg.classList.contains('map-navigating')) { snap.timer = setTimeout(build, 500); return; }
+    const token = ++snap.token;
+    const k = maxPx / Math.max(world.w, world.h);
+    const clone = svg.cloneNode(true) as SVGSVGElement;
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    clone.setAttribute('viewBox', `${world.x} ${world.y} ${world.w} ${world.h}`);
+    clone.setAttribute('width', String(Math.round(world.w * k)));
+    clone.setAttribute('height', String(Math.round(world.h * k)));
+    clone.removeAttribute('class');
+    clone.removeAttribute('style');
+    const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(clone)], { type: 'image/svg+xml;charset=utf-8' }));
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      if (token !== snap.token) return;
+      // Rasterisasi SATU KALI ke bitmap tetap; SVG-image langsung akan di-raster ulang tiap skala berubah.
+      const raster = document.createElement('canvas');
+      raster.width = Math.round(world.w * k);
+      raster.height = Math.round(world.h * k);
+      const rctx = raster.getContext('2d');
+      if (!rctx) return;
+      rctx.drawImage(img, 0, 0, raster.width, raster.height);
+      snap.img = raster;
+      snap.ready = true;
+      if (snap.keepView) drawSnapshot(svg, snap.keepView);
+    };
+    img.onerror = () => URL.revokeObjectURL(url);
+    img.src = url;
+  };
+
+  return {
+    refresh(delay = 800) {
+      snap.ready = false;
+      // Konten berubah: tampilkan SVG hidup sampai snapshot baru siap (keepView dipertahankan untuk digambar ulang).
+      endSnapshot(svg);
+      snap.token++;
+      if (snap.timer !== null) clearTimeout(snap.timer);
+      snap.timer = setTimeout(build, delay);
+    },
+    dispose() {
+      snap.token++;
+      if (snap.timer !== null) clearTimeout(snap.timer);
+      snaps.delete(svg);
+      endSnapshot(svg);
+      canvas.remove();
+    },
+  };
+}

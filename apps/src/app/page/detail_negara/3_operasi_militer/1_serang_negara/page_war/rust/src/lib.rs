@@ -124,6 +124,44 @@ pub fn pan_view(
     .to_vec()
 }
 
+/// Satu langkah easing menuju view target. Lebar diinterpolasi di ruang log (zoom terasa seragam),
+/// pusat view diinterpolasi linear. Hasil: [x, y, w, h, selesai(1.0|0.0)].
+#[wasm_bindgen]
+pub fn smooth_view(
+    x: f64,
+    y: f64,
+    width: f64,
+    height: f64,
+    target_x: f64,
+    target_y: f64,
+    target_width: f64,
+    target_height: f64,
+    dt_ms: f64,
+    time_constant_ms: f64,
+) -> Vec<f64> {
+    if width <= 0.0 || target_width <= 0.0 || !dt_ms.is_finite() {
+        return vec![target_x, target_y, target_width, target_height, 1.0];
+    }
+    let tau = time_constant_ms.max(1.0);
+    let k = 1.0 - (-dt_ms.max(0.0) / tau).exp();
+    let next_width = width * (target_width / width).powf(k);
+    let next_height = if height > 0.0 { next_width * (height / width) } else { target_height };
+    let cx = x + width / 2.0;
+    let cy = y + height / 2.0;
+    let tcx = target_x + target_width / 2.0;
+    let tcy = target_y + target_height / 2.0;
+    let ncx = cx + (tcx - cx) * k;
+    let ncy = cy + (tcy - cy) * k;
+
+    let close = ((next_width - target_width) / target_width).abs() < 0.0015
+        && (ncx - tcx).abs() < target_width * 0.0008
+        && (ncy - tcy).abs() < target_width * 0.0008;
+    if close {
+        return vec![target_x, target_y, target_width, target_height, 1.0];
+    }
+    vec![ncx - next_width / 2.0, ncy - next_height / 2.0, next_width, next_height, 0.0]
+}
+
 #[cfg(test)]
 mod tests {
     use super::{pan_view, zoom_view};
