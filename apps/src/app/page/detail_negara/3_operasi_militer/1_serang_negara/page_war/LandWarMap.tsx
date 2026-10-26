@@ -19,7 +19,6 @@ import {
 } from './units/warUnitComposition';
 import UnitSelectionModal, {
   type FacilitySide,
-  type UnitFacility,
   type UnitSelection,
 } from './UnitSelectionModal';
 import AttackControls, { type UnitCommandMode } from './AttackControls';
@@ -140,10 +139,7 @@ export default function LandWarMap({
       };
     });
   }, [aiSide, isUserDefender, attackerUnits, defenderUnits]);
-  const [selectedFacility, setSelectedFacility] = useState<{
-    facility: UnitFacility;
-    side: FacilitySide;
-  } | null>(null);
+  const [isFormationModalOpen, setIsFormationModalOpen] = useState(true);
   const [isUnitSelected, setIsUnitSelected] = useState(false);
   const [commandUnit, setCommandUnit] = useState<WarUnit | null>(null);
   const [commandMode, setCommandMode] = useState<UnitCommandMode>(null);
@@ -516,11 +512,6 @@ export default function LandWarMap({
             playerSide={playerSide}
             fogEnabled={false}
             commandMode={commandMode}
-            onFacilityClick={(facility, side) => {
-              // Hanya buka modal jika fasilitas tersebut milik pihak user
-              if (side !== playerSideFacility) return;
-              setSelectedFacility({ facility, side });
-            }}
             onUnitSelectionChange={(unit) => {
 
               setCommandUnit(unit);
@@ -591,24 +582,21 @@ export default function LandWarMap({
         </div>
       </div>
 
-      {selectedFacility && (
+      {isFormationModalOpen && (
         <UnitSelectionModal
-          key={`${selectedFacility.facility}-${selectedFacility.side}`}
-          facility={selectedFacility.facility}
-          side={selectedFacility.side}
-          units={selectedFacility.side === 'left' ? attackerUnits : defenderUnits}
-          selectedUnits={unitSelections[selectedFacility.side]}
+          units={playerSideFacility === 'left' ? attackerUnits : defenderUnits}
+          selectedUnits={unitSelections[playerSideFacility]}
           accent={accent}
-          onClose={() => setSelectedFacility(null)}
+          onClose={() => setIsFormationModalOpen(false)}
           onConfirm={(selection) => {
             setUnitSelections((current) => ({
               ...current,
-              [selectedFacility.side]: {
-                ...current[selectedFacility.side],
+              [playerSideFacility]: {
+                ...current[playerSideFacility],
                 ...selection,
               },
             }));
-            setSelectedFacility(null);
+            setIsFormationModalOpen(false);
           }}
         />
       )}

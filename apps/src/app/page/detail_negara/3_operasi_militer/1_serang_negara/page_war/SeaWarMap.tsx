@@ -15,7 +15,7 @@ import {
 } from './units/warUnitComposition';
 import { calculateUnitDamageLoss, getUnitAttackRadius } from './combatDamage';
 import {
-  Airbase, Defs, Extruded, MAP_CSS, MilitaryFacilities, PALETTES, Peak, Smoke,
+  Defs, Extruded, MAP_CSS, PALETTES, Peak, Smoke,
   blobPath, makeCity, makeForest, rng, smoothPath,
   type TerrainType,
 } from './TacticalMap';
@@ -144,7 +144,6 @@ function distToPoly(pts: number[][], x: number, y: number) {
 const nearRoad = (x: number, y: number) => Math.min(...ROADS.map((r) => distToPoly(r, x, y)));
 
 const KEEP = [
-  { ...AIRBASE_OWN, r: 680 }, { ...AIRBASE_ENEMY, r: 680 },
   { x: PORT_OWN.x, y: PORT_OWN.y - 120, r: 330 }, { x: PORT_ENEMY.x, y: PORT_ENEMY.y + 120, r: 330 },
   { x: 1000, y: 950, r: 380 }, { x: 7800, y: 3850, r: 380 },
 ];
@@ -513,10 +512,6 @@ const LandFeatures = memo(function LandFeatures({ terrainType }: { terrainType: 
 
       <Port id="portOwn" x={PORT_OWN.x} y={PORT_OWN.y} s={1} color={ACCENT} name="PELABUHAN ANDA" />
       <Port id="portEnemy" x={PORT_ENEMY.x} y={PORT_ENEMY.y} s={-1} color={ENEMY} name="PELABUHAN MUSUH" />
-      <Airbase id="airbaseOwn" at={AIRBASE_OWN} color={ACCENT} name="PANGKALAN UDARA ANDA" />
-      <Airbase id="airbaseEnemy" at={AIRBASE_ENEMY} color={ENEMY} name="PANGKALAN UDARA MUSUH" />
-      <MilitaryFacilities at={{ x: 850, y: 680 }} color={ACCENT} scale={0.9} />
-      <MilitaryFacilities at={{ x: 8350, y: 3100 }} color={ENEMY} scale={0.9} />
 
       <g className="battle-scenery-detail" pointerEvents="none" fontFamily="monospace" fontWeight="900" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="10" paintOrder="stroke" strokeLinejoin="round" opacity="0.92" letterSpacing="14" fontSize="60">
         <text x="4900" y="250">PEGUNUNGAN</text>

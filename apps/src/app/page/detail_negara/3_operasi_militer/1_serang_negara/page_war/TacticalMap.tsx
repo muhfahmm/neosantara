@@ -4,7 +4,6 @@ import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import UnitMarker from './units/unitMarker';
 import { formatUnitMarkerQuantity, formatUnitQuantity, type WarUnit } from './units/warUnitComposition';
 import { calculateUnitDamage, calculateUnitDamageLoss, getUnitAttackRadius } from './combatDamage';
-import type { FacilitySide, UnitFacility } from './UnitSelectionModal';
 import { evaluateBorderIncursion, loadRustViewport, prepareUnitAttack, type AiBorderResponse } from './warMapViewport';
 import { requestPythonAIWarCycle, type WarUnitState } from './pythonAiBridge';
 import { RealisticCombatEffect, COMBAT_EFFECT_CSS } from './RealisticCombatEffect';
@@ -64,7 +63,6 @@ export interface MapProps {
   svgRef?: React.Ref<SVGSVGElement>;
   playerSide?: PlayerSide;
   fogEnabled?: boolean;
-  onFacilityClick?: (facility: UnitFacility, side: FacilitySide) => void;
   commandMode?: UnitCommandMode;
   onUnitSelectionChange?: (unit: WarUnit | null) => void;
   onAttackRadiusChange?: (radius: number | null) => void;
@@ -180,10 +178,6 @@ const KEEP = [
   { ...HQ_OWN, r: 430 }, { ...HQ_ENEMY, r: 430 },
   ...CAPTURE_POINTS.map((c) => ({ x: c.x, y: c.y, r: c.main ? 280 : 230 })),
   ...RESOURCES.map((c) => ({ x: c.x, y: c.y, r: 150 })),
-  { ...AIRBASE_OWN, r: 560 }, { ...AIRBASE_ENEMY, r: 560 },
-  // Koordinat Barak Militer Baru (Disesuaikan)
-  { x: 1200, y: 180, r: 450 },  // User (Naik 100px)
-  { x: 5150, y: 1350, r: 450 }, // Musuh (Hutan dipindah, base tetap)
 ];
 const blocked = (x: number, y: number, pad: number) =>
   inLake(x, y, 120 + pad) || distToRoad(x, y) < 50 + pad || KEEP.some((k) => Math.hypot(k.x - x, k.y - y) < k.r + pad);
@@ -639,76 +633,6 @@ export const Extruded = ({ x, y, w, d, h, roof, stroke, win, i = 0 }: { x: numbe
   </g>
 );
 
-export const MilitaryFacilities = ({
-  at,
-  color,
-  scale = 1,
-  side,
-  onFacilityClick,
-}: {
-  at: { x: number; y: number };
-  color: string;
-  scale?: number;
-  side?: FacilitySide;
-  onFacilityClick?: (facility: UnitFacility, side: FacilitySide) => void;
-}) => {
-  const facilitySide = side ?? 'left';
-  const facilityButton = (
-    facility: UnitFacility,
-    label: string,
-    children: React.ReactNode,
-  ) => (
-    <g
-      aria-label={onFacilityClick ? `${label}, buka pilihan unit` : undefined}
-      onClick={onFacilityClick ? (event) => {
-        event.stopPropagation();
-        onFacilityClick(facility, facilitySide);
-      } : undefined}
-      onDoubleClick={onFacilityClick ? (event) => event.stopPropagation() : undefined}
-      onKeyDown={onFacilityClick ? (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          onFacilityClick(facility, facilitySide);
-        }
-      } : undefined}
-      onPointerDown={onFacilityClick ? (event) => event.stopPropagation() : undefined}
-      role={onFacilityClick ? 'button' : undefined}
-      style={onFacilityClick ? { cursor: 'pointer' } : undefined}
-      tabIndex={onFacilityClick ? 0 : undefined}
-    >
-      {children}
-    </g>
-  );
-
-  return (
-    <g transform={`translate(${at.x} ${at.y}) scale(${scale})`}>
-      <rect x="-390" y="-155" width="780" height="310" rx="26" fill="#0b1220" fillOpacity="0.48" stroke={color} strokeOpacity="0.5" strokeWidth="3" pointerEvents="none" />
-      <path d="M-360 118 H360" stroke="#64748b" strokeWidth="12" strokeOpacity="0.5" pointerEvents="none" />
-
-      {facilityButton('barak', 'Barak Militer', <>
-        <Extruded x={-345} y={-5} w={195} d={78} h={64} roof="#64748b" stroke={color} win />
-        <g fill="#fbbf24" opacity="0.75">
-          {[-320, -280, -240, -200, -160].map((x) => <rect key={x} x={x} y="23" width="14" height="17" rx="2" />)}
-        </g>
-        <text x="-247" y="104" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="5" paintOrder="stroke" fontSize="18" fontWeight="900" letterSpacing="1" fontFamily="monospace">BARAK MILITER</text>
-      </>)}
-
-      {facilityButton('gudang', 'Gudang Senjata', <>
-        <Extruded x={-105} y={-5} w={190} d={78} h={58} roof="#475569" stroke={color} />
-        <path d="M-80 66 V40 Q-80 26 -70 26 Q-60 26 -60 40 V66 M-35 66 V40 Q-35 26 -25 26 Q-15 26 -15 40 V66 M10 66 V40 Q10 26 20 26 Q30 26 30 40 V66 M55 66 V40 Q55 26 65 26 Q75 26 75 40 V66" fill="#1e293b" stroke={color} strokeWidth="3" />
-        <text x="-10" y="104" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="5" paintOrder="stroke" fontSize="18" fontWeight="900" letterSpacing="1" fontFamily="monospace">GUDANG SENJATA</text>
-      </>)}
-
-      {facilityButton('hangar', 'Hangar Tank', <>
-        <Extruded x={135} y={-5} w={205} d={78} h={62} roof="#334155" stroke={color} />
-        <rect x="166" y="20" width="143" height="44" rx="4" fill="#1e293b" stroke={color} strokeWidth="3" />
-        <path d="M180 22 V62 M198 22 V62 M216 22 V62 M234 22 V62 M252 22 V62 M270 22 V62 M288 22 V62" stroke="#94a3b8" strokeOpacity="0.7" strokeWidth="3" />
-        <text x="237" y="104" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="5" paintOrder="stroke" fontSize="18" fontWeight="900" letterSpacing="1" fontFamily="monospace">HANGAR TANK</text>
-      </>)}
-    </g>
-  );
-};
-
 export const Smoke = ({ x, y, n = 5 }: { x: number; y: number; n?: number }) => (
   <g filter="url(#nw-smoke-blur)" pointerEvents="none">
     {Array.from({ length: n }, (_, i) => (
@@ -981,71 +905,6 @@ const Headquarters = ({ at, color, fallen, name, sub, id }: { at: { x: number; y
   );
 };
 
-export const Airbase = ({
-  at,
-  color,
-  name,
-  id,
-  side,
-  onFacilityClick,
-}: {
-  at: { x: number; y: number };
-  color: string;
-  name: string;
-  id: string;
-  side?: FacilitySide;
-  onFacilityClick?: (facility: UnitFacility, side: FacilitySide) => void;
-}) => {
-  return (
-    <g
-      className="nw-tz"
-      data-terrain={id}
-      transform={`translate(${at.x} ${at.y}) scale(1.25)`}
-      aria-label={onFacilityClick ? `${name}, buka pilihan unit udara` : undefined}
-      onClick={onFacilityClick ? (event) => {
-        event.stopPropagation();
-        onFacilityClick('bandara', side ?? 'left');
-      } : undefined}
-      onDoubleClick={(event) => event.stopPropagation()}
-      onKeyDown={onFacilityClick ? (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          onFacilityClick('bandara', side ?? 'left');
-        }
-      } : undefined}
-      onPointerDown={onFacilityClick ? (event) => event.stopPropagation() : undefined}
-      role={onFacilityClick ? 'button' : undefined}
-      style={onFacilityClick ? { cursor: 'pointer' } : undefined}
-      tabIndex={onFacilityClick ? 0 : undefined}
-    >
-      <rect x="-470" y="-215" width="940" height="290" rx="22" fill="#0b1220" fillOpacity="0.55" stroke={color} strokeOpacity="0.5" strokeWidth="3" />
-      <rect x="-440" y="-35" width="880" height="70" rx="6" fill="#2a2f38" stroke="#000" strokeOpacity="0.5" strokeWidth="2" />
-      <line x1="-410" y1="0" x2="410" y2="0" stroke="#e5e7eb" strokeWidth="3" opacity="0.8" />
-      {[-1, 1].map((sd) => (
-        <g key={sd} stroke="#e5e7eb" strokeWidth="3" opacity="0.75">
-          {[-22, -11, 0, 11, 22].map((o) => <line key={o} x1={sd * 424} y1={o} x2={sd * 396} y2={o} />)}
-        </g>
-      ))}
-      <g fill={color} opacity="0.9">
-        <circle className="nw-flicker" cx="-440" cy="-38" r="4" /><circle className="nw-flicker" cx="440" cy="-38" r="4" />
-        <circle className="nw-flicker" cx="-440" cy="38" r="4" /><circle className="nw-flicker" cx="440" cy="38" r="4" />
-      </g>
-      <rect x="-260" y="-120" width="28" height="86" fill="#2a2f38" />
-      <rect x="80" y="-120" width="28" height="86" fill="#2a2f38" />
-      <rect x="-420" y="-125" width="560" height="14" fill="#2a2f38" />
-      <Extruded x={-420} y={-205} w={90} d={44} h={26} roof="#475569" stroke={color} />
-      <Extruded x={-310} y={-205} w={90} d={44} h={26} roof="#475569" stroke={color} />
-      <Extruded x={-200} y={-205} w={90} d={44} h={26} roof="#475569" stroke={color} />
-      <Extruded x={150} y={-190} w={34} d={30} h={58} roof="#64748b" stroke={color} />
-      <circle className="nw-flicker" cx="167" cy="-236" r="4" fill="#ef4444" />
-      {[230, 290, 350].map((cx) => <circle key={cx} cx={cx} cy="-165" r="22" fill="#334155" stroke={color} strokeWidth="2" />)}
-      <line x1="420" y1="-120" x2="420" y2="-160" stroke="#cbd5e1" strokeWidth="2.4" />
-      <polygon points="420,-160 452,-153 420,-146" fill="#f97316" stroke="#000" strokeWidth="1" />
-      <text x="0" y="112" textAnchor="middle" fontSize="26" fontWeight="900" letterSpacing="3" fill={color} stroke="#000" strokeWidth="5" paintOrder="stroke" fontFamily="monospace">{name}</text>
-    </g>
-  );
-};
-
 export type CapturePointStatus = {
   owner: Owner;
   progress: number; // 0.0 to 1.0
@@ -1095,13 +954,11 @@ const BasesLayer = memo(function BasesLayer({
   simPhase,
   playerSide,
   captureStatus = {},
-  onFacilityClick,
 }: {
   accent: string;
   simPhase: SimPhase;
   playerSide: PlayerSide;
   captureStatus?: Record<string, CapturePointStatus>;
-  onFacilityClick?: (facility: UnitFacility, side: FacilitySide) => void;
 }) {
   const ownIsAtk = playerSide === 'attacker';
   const done = simPhase === 'done';
@@ -1113,17 +970,6 @@ const BasesLayer = memo(function BasesLayer({
         name="HQ ANDA" sub={ownIsAtk ? 'SYARAT MENANG: REBUT HQ MUSUH' : 'SYARAT MENANG: HANCURKAN PENYERANG'} />
       <Headquarters id={ownIsAtk ? 'hqDefender' : 'hqAttacker'} at={HQ_ENEMY} color={RED} fallen={done && ownIsAtk}
         name="HQ MUSUH" sub={ownIsAtk ? 'SYARAT MENANG: HANCURKAN PENYERANG' : 'SYARAT MENANG: REBUT HQ ANDA'} />
-      <Airbase id="airbaseOwn" at={AIRBASE_OWN} color={accent} name="PANGKALAN UDARA ANDA" side="left" onFacilityClick={onFacilityClick} />
-      {/* Pangkalan Udara Musuh: Hanya visual/intelijen, jangan buka modal pilihan unit jika ditekan */}
-      <Airbase id="airbaseEnemy" at={AIRBASE_ENEMY} color={RED} name="PANGKALAN UDARA MUSUH" side="right" />
-      
-      {/* ── BARAK MILITER DISESUAIKAN DENGAN PANAH MERAH ── */}
-      {/* User: Naik 100px ke Atas (y: 180) */}
-      <MilitaryFacilities at={{ x: 1200, y: 180 }} color={accent} side="left" onFacilityClick={onFacilityClick} />
-      
-      {/* Musuh: Fasilitas militer musuh tidak bisa dibuka modalnya oleh user */}
-      <MilitaryFacilities at={{ x: 5150, y: 1350 }} color={RED} side="right" />
-      
       {CAPTURE_POINTS.map((c) => {
         const status = captureStatus[c.id];
         const pointOwner = status ? status.owner : defaultOwner;
@@ -1401,7 +1247,7 @@ export const GridRulers = memo(function GridRulers({ vb, accent, hover, selected
 
 export const TacticalMap = memo(function TacticalMap({
   accent, water, terrainType, simPhase, attackerUnits, defenderUnits, viewBox,
-  svgRef, playerSide = 'attacker', fogEnabled = true, onFacilityClick,
+  svgRef, playerSide = 'attacker', fogEnabled = true,
   commandMode = null, onUnitSelectionChange, onAttackRadiusChange, onAttack,
 }: MapProps) {
   const ownIsAtk = playerSide === 'attacker';
@@ -1457,6 +1303,7 @@ export const TacticalMap = memo(function TacticalMap({
   const movementEngineRef = useRef<Awaited<ReturnType<typeof loadRustViewport>> | null>(null);
   const aiCombatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isAiThinkingRef = useRef<boolean>(false);
+  const hasUserActedRef = useRef(false);
   const previousPositionsRef = useRef<Record<string, { x: number; y: number; time: number }>>({});
   const velocitiesRef = useRef<Record<string, { vx: number; vy: number }>>({});
   const [incursionAlert, setIncursionAlert] = useState<{ active: boolean; text: string; level: number }>({ active: false, text: '', level: 0 });
@@ -1591,8 +1438,9 @@ export const TacticalMap = memo(function TacticalMap({
     }
     setPositions({ ...positionsRef.current });
 
-    // SIKLUS TEMPUR AI OTONOM SEJAK AWAL:
+    // AI menunggu perintah pertama pemain sebelum mulai merespons.
     const executeAiCombatCycle = async () => {
+      if (!hasUserActedRef.current) return;
       if (isAiThinkingRef.current) return;
       isAiThinkingRef.current = true;
 
@@ -1689,6 +1537,7 @@ export const TacticalMap = memo(function TacticalMap({
         }
 
         const pyDecision = await requestPythonAIWarCycle(currentEnemyUnitsState, targetableUserUnits, { max_x: BASE_W, max_y: BASE_H });
+        if (!hasUserActedRef.current) return;
         const engine = movementEngineRef.current;
         if (!engine) return;
 
@@ -1952,6 +1801,7 @@ export const TacticalMap = memo(function TacticalMap({
 
     const start = positionsRef.current[selectedUnitId] ?? { x: placedUnit.x, y: placedUnit.y };
     const group = placedUnit.unit.group;
+    hasUserActedRef.current = true;
     const move = (engine: Awaited<ReturnType<typeof loadRustViewport>>) => {
       // Hindari danau dan rintangan untuk unit darat pemain
       const [targetX, targetY, baseMoveSpeed] = engine.prepare_unit_movement(
@@ -2136,6 +1986,7 @@ export const TacticalMap = memo(function TacticalMap({
         origin.x, origin.y, targetPosition.x, targetPosition.y, radius,
       );
       if (inRange) {
+        hasUserActedRef.current = true;
         const distance = Math.hypot(targetPosition.x - origin.x, targetPosition.y - origin.y);
         const travelMs = Math.max(180, Math.min(1800, (distance / projectileSpeed) * 1000));
         const strikeId = `user-strike-${selectedUnitId}-${Date.now()}`;
@@ -2278,7 +2129,6 @@ export const TacticalMap = memo(function TacticalMap({
           simPhase={simPhase}
           playerSide={playerSide}
           captureStatus={captureStatus}
-          onFacilityClick={onFacilityClick}
         />
         {fogEnabled && <FogLayer sources={sources} active={fogActive} />}
         <UnitsLayer
