@@ -273,17 +273,6 @@ const EXT_FORESTS = [
   ...scatter(8, 32, 300, 6100, 2700, 3500, 0, 700, false),
 ].map((p, i) => makeForest({ cx: p.x, cy: p.y, rx: 300 + (i % 3) * 50, ry: 150 + (i % 2) * 30, n: 34, seed: 600 + i }));
 
-const PEAKS: [number, number, number, number][] = ([
-  [3300, 270, 300, 220], [2400, 330, 320, 240], [3950, 520, 300, 230],
-  [4250, 640, 330, 250], [4600, 620, 360, 300], [4950, 560, 340, 280], [5300, 470, 320, 300], [5700, 380, 360, 320], [6100, 330, 340, 280],
-  [500, 2330, 340, 260], [1000, 2360, 360, 280], [1550, 2300, 380, 280], [2050, 2340, 340, 260],
-  [2750, 2250, 360, 260], [3500, 2330, 380, 290], [4300, 2350, 360, 280],
-] as [number, number, number, number][]).sort((a, b) => a[1] - b[1]);
-const EXT_PEAKS: [number, number, number, number][] = [
-  ...scatter(9, 41, 200, 6200, -1000, -120, 0, 520, false).map((p, i) => [p.x, p.y, 300 + (i % 3) * 40, 220 + (i % 4) * 25] as [number, number, number, number]),
-  ...scatter(9, 42, 200, 6200, 2520, 3500, 0, 520, false).map((p, i) => [p.x, p.y, 300 + (i % 3) * 40, 220 + (i % 4) * 25] as [number, number, number, number]),
-].sort((a, b) => a[1] - b[1]);
-
 const SWAMPS = [
   { cx: 950, cy: 1450, rx: 280, ry: 90, seed: 201 },
   { cx: 3850, cy: 880, rx: 300, ry: 90, seed: 202 },
@@ -327,28 +316,9 @@ export function makeCity(x0: number, y0: number, x1: number, y1: number, seed: n
   }
   return out.sort((a, b) => a[1] - b[1]);
 }
-const cityBlock = (x: number, y: number) => distToRoad(x + 35, y + 30) < 48 || inLake(x + 35, y + 30, 120);
-const CITY_CORE = makeCity(2780, 860, 3240, 1060, 5, 80, (x, y) =>
-  cityBlock(x, y) ||
-  Math.hypot(x + 35 - 3000, y + 30 - 1010) < 115 ||
-  Math.hypot(x + 35 - 2700, y + 30 - 1060) < 100 ||
-  Math.hypot(x + 35 - 3300, y + 30 - 930) < 100);
-const CITY_SPRAWL = [
-  ...makeCity(900, 880, 1250, 1080, 11, 84, cityBlock),
-  ...makeCity(4700, 1250, 5050, 1450, 13, 84, cityBlock),
-].sort((a, b) => a[1] - b[1]);
-
-const DISTRICT_DEFS = [
-  { x0: 2040, y0: 1110, x1: 2460, y1: 1340, seed: 31, label: 'KOTA BARAT' },
-  { x0: 3700, y0: 1250, x1: 4040, y1: 1440, seed: 32, label: 'KOTA TIMUR' },
-  { x0: 3140, y0: 1760, x1: 3600, y1: 1970, seed: 33, label: 'KOTA SELATAN' },
-];
-const DISTRICTS = DISTRICT_DEFS.map((d) => ({ ...d, buildings: makeCity(d.x0, d.y0, d.x1, d.y1, d.seed, 80, cityBlock) }));
-
 // Pre-calculated Bounding Boxes untuk Rintangan Peta (Spatial Early Reject)
 const OBSTACLE_BOUNDS = [
   ...LAKES.map((l) => ({ x0: l.cx - l.rx - 40, x1: l.cx + l.rx + 40, y0: l.cy - l.ry - 40, y1: l.cy + l.ry + 40, type: 'lake' as const, ref: l })),
-  ...PEAKS.map(([pkx, pky, pkw, pkh]) => ({ x0: pkx - pkw * 0.45, x1: pkx + pkw * 0.45, y0: pky - pkh * 0.45, y1: pky + pkh * 0.45, type: 'peak' as const, pkx, pky, pkw, pkh })),
 ];
 
 export function isLineBlocked(x1: number, y1: number, x2: number, y2: number): boolean {
@@ -370,12 +340,8 @@ export function isLineBlocked(x1: number, y1: number, x2: number, y2: number): b
     
     for (const obs of candidateObstacles) {
       if (px >= obs.x0 && px <= obs.x1 && py >= obs.y0 && py <= obs.y1) {
-        if (obs.type === 'lake') {
-          const l = obs.ref;
-          if (((px - l.cx) / (l.rx + 40)) ** 2 + ((py - l.cy) / (l.ry + 40)) ** 2 < 1) return true;
-        } else {
-          if (Math.hypot((px - obs.pkx) / (obs.pkw * 0.4), (py - obs.pky) / (obs.pkh * 0.4)) < 1.0) return true;
-        }
+        const l = obs.ref;
+        if (((px - l.cx) / (l.rx + 40)) ** 2 + ((py - l.cy) / (l.ry + 40)) ** 2 < 1) return true;
       }
     }
   }
@@ -397,32 +363,12 @@ export function getTerrainSpeedMultiplier(x: number, y: number): number {
 
 export interface PlacedUnit { unit: WarUnit; x: number; y: number }
 
-// Daftar Bounding Box Bangunan & Fasilitas di peta (x0, y0, x1, y1)
-// Digunakan agar unit darat yang di-spawn acak tidak pernah bertabrakan atau tumpang tindih dengan bangunan apapun
+// Hindari node sumber daya ketika menentukan posisi awal unit.
 const BUILDING_OBSTACLES: Array<{ x0: number; y0: number; x1: number; y1: number }> = [
-  // Fasilitas Militer User: Barak, Gudang, Hangar di (1200, 180) - bounding box w: 780, h: 310
-  { x0: 1200 - 410, y0: 180 - 170, x1: 1200 + 410, y1: 180 + 170 },
-  // Fasilitas Militer Musuh: Barak, Gudang, Hangar di (5150, 1350) - bounding box w: 780, h: 310
-  { x0: 5150 - 410, y0: 1350 - 170, x1: 5150 + 410, y1: 1350 + 170 },
-  // HQ User di (700, 520)
-  { x0: 700 - 220, y0: 520 - 150, x1: 700 + 220, y1: 520 + 210 },
-  // HQ Musuh di (5700, 1880)
-  { x0: 5700 - 220, y0: 1880 - 150, x1: 5700 + 220, y1: 1880 + 210 },
   // Depo BBM di (1850, 1000)
   { x0: 1850 - 90, y0: 1000 - 90, x1: 1850 + 90, y1: 1000 + 90 },
   // Gudang Amunisi di (4650, 1420)
   { x0: 4650 - 90, y0: 1420 - 90, x1: 4650 + 90, y1: 1420 + 90 },
-  // Pangkalan Udara Musuh (Runway & Terminal) di (5600, 2250)
-  { x0: 5600 - 580, y0: 2250 - 200, x1: 5600 + 580, y1: 2250 + 200 },
-  // Pangkalan Udara User di (700, 1060)
-  { x0: 700 - 580, y0: 1060 - 200, x1: 700 + 580, y1: 1060 + 200 },
-  // Bangunan Distrik Kota:
-  // Kota Timur di (3700-4040, 1250-1440)
-  { x0: 3660, y0: 1210, x1: 4080, y1: 1480 },
-  // Kota Selatan di (3140-3600, 1760-1970)
-  { x0: 3100, y0: 1720, x1: 3640, y1: 2010 },
-  // Kota Barat di (2040-2460, 1110-1340)
-  { x0: 2000, y0: 1070, x1: 2500, y1: 1380 },
 ];
 
 /**
@@ -681,7 +627,7 @@ export const Defs = memo(function Defs({ accent, terrainType }: { accent: string
   );
 });
 
-const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: { accent: string; water: string; terrainType: TerrainType }) {
+const TerrainLayer = memo(function TerrainLayer({ water, terrainType }: { water: string; terrainType: TerrainType }) {
   const P = PALETTES[terrainType];
   const isDesert = terrainType === 'desert';
   const isUrban = terrainType === 'urban';
@@ -807,32 +753,8 @@ const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: 
         </g>
       ))}
 
-      <g className="nw-tz tm-tz" data-terrain="highland">
-        {EXT_PEAKS.map(([x, by, w, h], i) => <Peak key={`xk${i}`} x={x} by={by} w={w} h={h} seed={800 + i} accent={accent} snowDepth={isSnow ? 0.45 : h > 250 ? 0.22 : 0.14} />)}
-        {PEAKS.map(([x, by, w, h], i) => <Peak key={i} x={x} by={by} w={w} h={h} seed={31 + i} accent={accent} snowDepth={isSnow ? 0.45 : h > 250 ? 0.22 : 0.14} />)}
-      </g>
-
-      <g className="nw-tz tm-tz" data-terrain="urban">
-        <rect x="2760" y="840" width="560" height="240" rx="44" fill="#111827" opacity="0.5" />
-        {CITY_CORE.map((b, i) => <Extruded key={i} x={b[0]} y={b[1]} w={b[2]} d={b[3]} h={b[4]} roof={P.roof[i % 3]} stroke={accent} win i={i} />)}
-      </g>
-      {DISTRICTS.map((d, di) => (
-        <g key={`dist${di}`} className="nw-tz tm-tz" data-terrain="urban">
-          <rect x={d.x0 - 30} y={d.y0 - 30} width={d.x1 - d.x0 + 80} height={d.y1 - d.y0 + 60} rx="40" fill="#111827" opacity="0.5" />
-          {d.buildings.map((b, i) => <Extruded key={i} x={b[0]} y={b[1]} w={b[2]} d={b[3]} h={b[4]} roof={P.roof[i % 3]} stroke={accent} win i={i + di} />)}
-        </g>
-      ))}
-      {isUrban && (
-        <g className="nw-tz tm-tz" data-terrain="urban">
-          {CITY_SPRAWL.map((b, i) => <Extruded key={i} x={b[0]} y={b[1]} w={b[2]} d={b[3]} h={b[4]} roof={P.roof[i % 3]} stroke={accent} win i={i + 1} />)}
-        </g>
-      )}
-
       <g pointerEvents="none" fontFamily="monospace" fontWeight="900" textAnchor="middle" fill="#f8fafc" stroke="#020617" strokeWidth="10" paintOrder="stroke" strokeLinejoin="round" opacity="0.92" letterSpacing="14" fontSize="60">
         {LAKES.map((l, i) => <text key={i} x={l.cx} y={l.cy - l.ry - 60}>DANAU</text>)}
-        <text x="5050" y="250">PEGUNUNGAN</text>
-        <text x="3000" y="800">KOTA</text>
-        {DISTRICTS.map((d) => <text key={d.label} x={(d.x0 + d.x1) / 2 + 20} y={d.y0 - 50} fontSize="40" letterSpacing="8">{d.label}</text>)}
         {showForest && <text x="800" y="1500">HUTAN</text>} 
         {SWAMPS.map((s, i) => <text key={i} x={s.cx} y={s.cy + s.ry + 56} fontSize="44" letterSpacing="10">RAWA</text>)}
       </g>
@@ -867,43 +789,6 @@ const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: 
 
 type Owner = 'neutral' | 'contested' | 'own' | 'enemy';
 const RED = '#f43f5e';
-
-const Headquarters = ({ at, color, fallen, name, sub, id }: { at: { x: number; y: number }; color: string; fallen: boolean; name: string; sub: string; id: string }) => {
-  const x = 0, y = 0;
-  const c = fallen ? '#64748b' : color;
-  const fy = fallen ? 42 : 0;
-  return (
-    <g className="nw-tz" data-terrain={id} transform={`translate(${at.x} ${at.y}) scale(1.25)`}>
-      <circle cx={x} cy={y} r="215" fill={c} fillOpacity="0.05" />
-      <circle cx={x} cy={y} r="215" fill="none" stroke={c} strokeOpacity="0.45" strokeWidth="3" />
-      <rect x={x - 150} y={y - 100} width="300" height="200" rx="14" fill="#0b1220" fillOpacity="0.62" stroke={c} strokeOpacity="0.75" strokeWidth="3" />
-      <Extruded x={x - 125} y={y - 70} w={64} d={34} h={22} roof="#475569" stroke={c} />
-      <Extruded x={x - 125} y={y + 30} w={64} d={34} h={22} roof="#475569" stroke={c} />
-      <Extruded x={x + 60} y={y + 30} w={60} d={30} h={20} roof="#475569" stroke={c} />
-      <Extruded x={x - 40} y={y - 20} w={80} d={44} h={36} roof="#64748b" stroke={c} />
-      <circle cx={x + 85} cy={y - 48} r="30" fill="#111827" stroke={c} strokeWidth="2.4" />
-      <text x={x + 85} y={y - 38} textAnchor="middle" fontSize="28" fontWeight="900" fill={c} fontFamily="monospace">H</text>
-      <circle cx={x - 20} cy={y + 62} r="16" fill="#111827" stroke={c} strokeWidth="2" />
-      <g className="tm-spin"><path d={`M${x - 34},${y + 62} H${x - 6}`} stroke={c} strokeWidth="3" strokeLinecap="round" /></g>
-      {[[-150, -100], [134, -100], [-150, 84], [134, 84]].map(([dx, dy], i) => <rect key={i} x={x + dx} y={y + dy} width="16" height="16" fill="#1f2937" stroke={c} strokeWidth="2" />)}
-      <line x1={x + 30} y1={y - 56} x2={x + 30} y2={y - 92} stroke="#cbd5e1" strokeWidth="2" />
-      <circle className="nw-flicker" cx={x + 30} cy={y - 94} r="3.5" fill="#ef4444" />
-      <line x1={x - 5} y1={y - 56} x2={x - 5} y2={y - 128} stroke="#cbd5e1" strokeWidth="3" />
-      <polygon points={`${x - 5},${y - 128 + fy} ${x + 42},${y - 118 + fy} ${x - 5},${y - 106 + fy}`} fill={c} stroke="#000" strokeWidth="1" />
-      {fallen && (
-        <g pointerEvents="none">
-          <circle className="nw-pulse" cx={x - 30} cy={y - 8} r="46" fill="url(#tm-fire)" />
-          <circle className="nw-pulse" cx={x + 70} cy={y + 20} r="34" fill="url(#tm-fire)" style={{ animationDelay: '.4s' }} />
-          <Smoke x={x - 30} y={y - 20} n={4} />
-        </g>
-      )}
-      <text x={x} y={y + 132} textAnchor="middle" fontSize="26" fontWeight="900" letterSpacing="3" fill={c} stroke="#000" strokeWidth="5" paintOrder="stroke" fontFamily="monospace">{name}</text>
-      <rect x={x - 100} y={y + 142} width="200" height="9" rx="4.5" fill="#000" opacity="0.6" />
-      <rect x={x - 100} y={y + 142} width={fallen ? 14 : 200} height="9" rx="4.5" fill={c} style={{ transition: 'width 1s ease' }} />
-      <text x={x} y={y + 176} textAnchor="middle" fontSize="17" fontWeight="800" letterSpacing="2" fill="#e2e8f0" stroke="#000" strokeWidth="4" paintOrder="stroke" fontFamily="monospace">{fallen ? 'HQ DIREBUT' : sub}</text>
-    </g>
-  );
-};
 
 export type CapturePointStatus = {
   owner: Owner;
@@ -966,10 +851,6 @@ const BasesLayer = memo(function BasesLayer({
   const resCol = done ? (ownIsAtk ? accent : RED) : '#fbbf24';
   return (
     <g>
-      <Headquarters id={ownIsAtk ? 'hqAttacker' : 'hqDefender'} at={HQ_OWN} color={accent} fallen={done && !ownIsAtk}
-        name="HQ ANDA" sub={ownIsAtk ? 'SYARAT MENANG: REBUT HQ MUSUH' : 'SYARAT MENANG: HANCURKAN PENYERANG'} />
-      <Headquarters id={ownIsAtk ? 'hqDefender' : 'hqAttacker'} at={HQ_ENEMY} color={RED} fallen={done && ownIsAtk}
-        name="HQ MUSUH" sub={ownIsAtk ? 'SYARAT MENANG: HANCURKAN PENYERANG' : 'SYARAT MENANG: REBUT HQ ANDA'} />
       {CAPTURE_POINTS.map((c) => {
         const status = captureStatus[c.id];
         const pointOwner = status ? status.owner : defaultOwner;
@@ -2104,7 +1985,7 @@ export const TacticalMap = memo(function TacticalMap({
       >
         <style>{`${MAP_CSS}\n${COMBAT_EFFECT_CSS}`}</style>
         <Defs accent={accent} terrainType={terrainType} />
-        <TerrainLayer accent={accent} water={water} terrainType={terrainType} />
+        <TerrainLayer water={water} terrainType={terrainType} />
         <defs>
           <pattern id="tm-coordinate-grid" width={BASE_W / 10} height={BASE_H / 10} patternUnits="userSpaceOnUse">
             <path

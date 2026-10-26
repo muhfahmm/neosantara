@@ -6675,7 +6675,6 @@ export default function MapPage() {
                     />
                     {/* Top Left Icon - Inbox */}
                     <TopLeftIcon
-                        isWarActive={!!activeWarAnimation}
                         userCountryName={String(
                             countryDetail?.country ||
                             countryDetail?.nama_negara ||

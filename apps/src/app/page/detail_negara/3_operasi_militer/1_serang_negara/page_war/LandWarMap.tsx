@@ -50,8 +50,8 @@ const THEMES = {
 
 /* ───────────────── INFO TOOLTIP ───────────────── */
 type InfoId =
-  | 'lake' | 'highland' | 'forest' | 'urban' | 'objective' | 'attacker' | 'defender'
-  | 'airbaseOwn' | 'airbaseEnemy' | 'sand' | 'swamp' | 'crater' | 'capture' | 'resource' | 'hqAttacker' | 'hqDefender';
+  | 'lake' | 'forest' | 'objective' | 'attacker' | 'defender'
+  | 'sand' | 'swamp' | 'crater' | 'capture' | 'resource';
 type Tone = 'good' | 'bad' | 'neutral';
 interface Info {
   icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }>;
@@ -260,9 +260,7 @@ export default function LandWarMap({
 
   const INFO: Record<InfoId, Info> = useMemo(() => ({
     lake:       { icon: Waves,     name: 'Danau',          tag: 'Perairan',          desc: 'Perairan tenang tempat unit laut berlabuh. Menghalangi unit darat.', stats: [{ k: 'Kecepatan', v: '-50%', tone: 'bad' }, { k: 'Unit laut', v: 'Berlabuh', tone: 'good' }] },
-    highland:   { icon: Mountain,  name: 'Dataran Tinggi', tag: 'Posisi bertahan',   desc: 'Lereng curam menguntungkan pihak yang menguasai puncak.',          stats: [{ k: 'Pertahanan', v: '+25%', tone: 'good' }, { k: 'Kecepatan', v: '-50%', tone: 'bad' }] },
     forest:     { icon: Trees,     name: 'Hutan Lebat',    tag: 'Penyamaran',        desc: 'Kanopi rapat melindungi pasukan dari pengamatan udara.',          stats: [{ k: 'Pertahanan', v: '+15%', tone: 'good' }, { k: 'Visibilitas', v: '-20%', tone: 'bad' }] },
-    urban:      { icon: Building2, name: 'Zona Urban',     tag: 'Medan kota',        desc: 'Gedung memecah formasi dan memaksa pertempuran jarak dekat.',     stats: [{ k: 'Mode tempur', v: 'CQC', tone: 'neutral' }] },
     objective:  { icon: Target,    name: 'Titik Strategis', tag: 'Objektif utama',   desc: 'Kuasai titik ini untuk memenangkan operasi.',                      stats: [{ k: 'Prioritas', v: 'Utama', tone: 'neutral' }] },
     attacker:   { icon: Swords,    name: attackerName,     tag: 'Pasukan penyerang', desc: 'Divisi lapis baja dengan dukungan helikopter serang.',            stats: [{ k: 'Satuan', v: 'Divisi (XX)', tone: 'neutral' }] },
     defender:   { icon: Shield,    name: targetName,       tag: 'Pasukan bertahan',  desc: 'Unit tank bertahan di sektor yang dijaga.',                        stats: [{ k: 'Satuan', v: 'Brigade (X)', tone: 'neutral' }] },
@@ -271,10 +269,6 @@ export default function LandWarMap({
     crater:     { icon: Crosshair, name: 'Kawah Ledakan',  tag: 'Medan rusak',       desc: 'Permukaan tidak rata memperlambat unit darat.',                    stats: [{ k: 'Kecepatan', v: '-20%', tone: 'bad' }, { k: 'Pertahanan', v: '+10%', tone: 'good' }] },
     capture:    { icon: Target,    name: 'Titik Rebut',    tag: 'Objektif sekunder', desc: 'Menguasai titik ini mendukung objektif utama.',                    stats: [{ k: 'Prioritas', v: 'Sekunder', tone: 'neutral' }] },
     resource:   { icon: Building2, name: 'Sumber Daya',    tag: 'Logistik',          desc: 'Depo yang menopang suplai pasukan.',                               stats: [{ k: 'Efek', v: 'Suplai', tone: 'good' }] },
-    airbaseOwn:   { icon: Navigation, name: 'Pangkalan Udara Anda', tag: 'Basis udara', desc: 'Landasan pacu dan hanggar di dekat HQ Anda untuk operasi pesawat dan helikopter.', stats: [{ k: 'Dukungan udara', v: 'Aktif', tone: 'good' }, { k: 'Sortie', v: 'Cepat', tone: 'good' }] },
-    airbaseEnemy: { icon: Navigation, name: 'Pangkalan Udara Musuh', tag: 'Basis udara', desc: 'Landasan pacu musuh di dekat HQ mereka. Menghancurkannya melemahkan dukungan udara lawan.', stats: [{ k: 'Dukungan udara', v: 'Musuh', tone: 'bad' }, { k: 'Prioritas', v: 'Tinggi', tone: 'neutral' }] },
-    hqAttacker: { icon: Swords,    name: isUserDefender ? 'HQ Musuh (Penyerang)' : 'HQ Anda (Penyerang)', tag: 'Markas', desc: isUserDefender ? 'Pusat komando pasukan penyerang di kanan bawah.' : 'Pusat komando pasukan Anda di kiri atas.', stats: [{ k: 'Status', v: 'Aktif', tone: isUserDefender ? 'bad' : 'good' }] },
-    hqDefender: { icon: Shield,    name: isUserDefender ? 'HQ Anda (Bertahan)' : 'HQ Musuh (Bertahan)', tag: 'Markas', desc: isUserDefender ? 'Pertahankan markas ini dari serangan musuh.' : 'Rebut markas di kanan bawah ini untuk memenangkan operasi.', stats: [{ k: 'Status', v: isUserDefender ? 'Pertahankan' : 'Target', tone: isUserDefender ? 'good' : 'bad' }] },
   }), [attackerName, targetName, isUserDefender]);
 
   const info = INFO[hovered ?? lastHovered];
@@ -459,7 +453,6 @@ export default function LandWarMap({
           <h3 className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-wider" style={{ color: accent }}><Shield className="h-4 w-4" /> Legenda & Intel</h3>
           <div className="space-y-3 text-[10px] font-bold text-gray-300">
             <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full border border-emerald-400/40 bg-emerald-800" /> Hutan Lebat (+15% Def)</div>
-            <div className="flex items-center gap-2"><span className="h-3 w-3 border border-slate-400/40 bg-gradient-to-b from-slate-400 to-slate-800" style={{ clipPath: 'polygon(50% 0, 100% 100%, 0 100%)' }} /> Dataran Tinggi (+25% Def)</div>
             <div className="flex items-center gap-2"><span className="h-1.5 w-3 rounded-full" style={{ backgroundColor: theme.water }} /> Danau (-50% Speed)</div>
             <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-[#2c4a36] border border-emerald-300/30" /> Rawa (-40% Speed)</div>
             <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-[#d9bf8c]" /> Pasir Gembur (-30% Speed)</div>
