@@ -712,10 +712,32 @@ export default function SeaWarMap({
   );
 
   // Pasukan Anda selalu di barat (kiri, cyan), musuh di timur (kanan, merah) — apa pun perannya
-  const ownUnits = isUserDefender ? defenderUnits : attackerUnits;
-  const enemyUnits = isUserDefender ? attackerUnits : defenderUnits;
+  const rawOwnUnits = isUserDefender ? defenderUnits : attackerUnits;
+  const rawEnemyUnits = isUserDefender ? attackerUnits : defenderUnits;
   const ownName = isUserDefender ? targetName : attackerName;
   const enemyName = isUserDefender ? attackerName : targetName;
+
+  const [unitQuantities, setUnitQuantities] = useState<Record<string, number>>({});
+  const unitQuantitiesRef = useRef<Record<string, number>>({});
+  unitQuantitiesRef.current = unitQuantities;
+
+  // Sinkronisasi kuantitas dinamis untuk unit laut, udara, dan darat
+  const ownUnits = useMemo(() => {
+    return rawOwnUnits.map((u, i) => {
+      const id = fleetUnitId(u, 'own', i);
+      const dynamicQty = unitQuantities[id];
+      return typeof dynamicQty === 'number' ? { ...u, quantity: dynamicQty } : u;
+    }).filter((u) => u.quantity > 0);
+  }, [rawOwnUnits, unitQuantities]);
+
+  const enemyUnits = useMemo(() => {
+    return rawEnemyUnits.map((u, i) => {
+      const id = fleetUnitId(u, 'enemy', i);
+      const dynamicQty = unitQuantities[id];
+      return typeof dynamicQty === 'number' ? { ...u, quantity: dynamicQty } : u;
+    }).filter((u) => u.quantity > 0);
+  }, [rawEnemyUnits, unitQuantities]);
+
   const ownTotal = useMemo(() => ownUnits.reduce((s, u) => s + (u.quantity || 0), 0), [ownUnits]);
   const enemyTotal = useMemo(() => enemyUnits.reduce((s, u) => s + (u.quantity || 0), 0), [enemyUnits]);
   const ownPlacedUnits = useMemo(
@@ -938,13 +960,23 @@ export default function SeaWarMap({
       });
   };
 
-  const handleAttackUnit = (targetPosition: UnitPosition, target: WarUnit | null) => {
+  const handleAttackUnit = (targetPosition: UnitPosition, target: WarUnit | null, targetUnitId?: string | null) => {
     if (!selectedUnitId || isSimulating || simPhase !== 'idle') return;
     const attacker = ownPlacedUnits.find((placed) => placed.id === selectedUnitId);
     if (!attacker) {
       console.error('[SeaWarMap] Selected unit is unavailable for attack');
       return;
     }
+
+    // DOKTRIN ANTI-AIR: Unit laut tanpa kemampuan rudal anti-udara tidak bisa menargetkan pesawat
+    if (target?.group === 'udara') {
+      const antiAirNavalKinds = ['destroyer', 'korvet', 'jetTempurInterceptor', 'jetTempurSiluman'];
+      if (!antiAirNavalKinds.includes(attacker.unit.kind) && attacker.unit.group !== 'udara') {
+        addLog(`Peringatan Taktis: ${attacker.unit.label} tidak dilengkapi sistem pertahanan udara untuk mencegat ${target.label}.`);
+        return;
+      }
+    }
+
     const fire = (engine: Awaited<ReturnType<typeof loadRustViewport>>) => {
       const start = unitPositionsRef.current[selectedUnitId] ?? { x: attacker.x, y: attacker.y };
       const { radius, projectileSpeed, weaponType } = prepareUnitAttack(
@@ -974,6 +1006,32 @@ export default function SeaWarMap({
       if (attackEffectTimerRef.current !== null) clearTimeout(attackEffectTimerRef.current);
       attackEffectTimerRef.current = setTimeout(() => setAttackEffect(null), travelMs);
       addLog(`${attacker.unit.label} menembak ${target?.label ?? 'ke titik sasaran'}.`);
+
+      // Terapkan pengurangan kuantitas musuh saat rudal/torpedo tiba di sasaran
+      if (target) {
+        setTimeout(() => {
+          const matchedTargetKey = targetUnitId ?? Object.keys(unitQuantitiesRef.current).find((k) =>
+            k.startsWith(`enemy:${target.group}:${target.kind}`)
+          ) ?? `enemy:${target.group}:${target.kind}:${target.echelon ?? 'base'}:0`;
+
+          const currentEnemyQty = unitQuantitiesRef.current[matchedTargetKey] ?? target.quantity;
+          if (currentEnemyQty <= 0) return;
+
+          const damage = Math.max(
+            1,
+            Math.round(Math.min(currentEnemyQty, Math.max(10, currentEnemyQty * 0.18 + Math.sqrt(attacker.unit.quantity) * 12)))
+          );
+          const remaining = Math.max(0, currentEnemyQty - damage);
+
+          unitQuantitiesRef.current[matchedTargetKey] = remaining;
+          setUnitQuantities((prev) => ({
+            ...prev,
+            [matchedTargetKey]: remaining,
+          }));
+
+          addLog(`IMPAK: Serangan ke ${target.label} menimbulkan kerugian ${damage} unit (sisa ${remaining}).`);
+        }, travelMs);
+      }
     };
     const engine = rustViewportRef.current;
     if (engine) {
@@ -1008,7 +1066,7 @@ export default function SeaWarMap({
     const targetUnit = enemyUnits.find((unit) =>
       targetUnitId?.includes(`enemy:${unit.group}:${unit.kind}`),
     ) ?? null;
-    handleAttackUnit({ x: targetPoint.x, y: targetPoint.y }, targetUnit);
+    handleAttackUnit({ x: targetPoint.x, y: targetPoint.y }, targetUnit, targetUnitId);
   };
 
   const commitView = useCallback(() => {

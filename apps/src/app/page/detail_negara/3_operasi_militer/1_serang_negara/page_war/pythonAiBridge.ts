@@ -272,12 +272,20 @@ function computeFallbackTacticalCycle(
       }
     }
 
-    // 2. Logika Tembakan (dengan jangkauan efektif dan toleransi intersepsi)
+    // 2. Logika Tembakan (dengan jangkauan efektif, doktrin Anti-Air, dan toleransi intersepsi)
     const attackEffectiveRange = range * 1.25;
-    if (minDist <= attackEffectiveRange) {
-      const weaponType = enemy.kind === 'artileriBerat' || enemy.kind === 'peluncurRoket'
-        ? 0
-        : enemy.group === 'udara' ? 1 : 4;
+    const isAntiAir = ['pertahananUdaraMobile', 'jetTempurInterceptor', 'jetTempurSiluman', 'destroyer', 'korvet', 'infanteri'].includes(enemy.kind) || enemy.group === 'udara';
+    const canHitTarget = bestTarget.group !== 'udara' || isAntiAir;
+
+    if (minDist <= attackEffectiveRange && canHitTarget) {
+      let weaponType = 4;
+      if (enemy.kind === 'pertahananUdaraMobile' || enemy.kind === 'jetTempurInterceptor' || (bestTarget.group === 'udara' && isAntiAir)) {
+        weaponType = 5;
+      } else if (enemy.kind === 'artileriBerat' || enemy.kind === 'peluncurRoket') {
+        weaponType = 0;
+      } else if (enemy.group === 'udara') {
+        weaponType = 1;
+      }
 
       attacks.push({
         attacker_id: enemy.id,
@@ -291,6 +299,7 @@ function computeFallbackTacticalCycle(
         in_range: true,
       });
     }
+
   }
 
   return {

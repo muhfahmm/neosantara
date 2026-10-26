@@ -388,6 +388,18 @@ export function isLineBlocked(x1: number, y1: number, x2: number, y2: number): b
 }
 
 
+export function getTerrainSpeedMultiplier(x: number, y: number): number {
+  // Danau: melambat drastis 0.5x
+  if (inLake(x, y, 40)) return 0.5;
+  // Rawa: tanah berlumpur 0.6x
+  if (SWAMPS.some((s) => ((x - s.cx) / s.rx) ** 2 + ((y - s.cy) / s.ry) ** 2 < 1)) return 0.6;
+  // Pasir: 0.7x
+  if (SANDS.some((s) => ((x - s.cx) / s.rx) ** 2 + ((y - s.cy) / s.ry) ** 2 < 1)) return 0.7;
+  // Jalan beraspal: bonus kecepatan 1.25x
+  if (distToRoad(x, y) < 45) return 1.25;
+  return 1.0;
+}
+
 export function findClearWaypoint(startX: number, startY: number, targetX: number, targetY: number): { x: number; y: number } {
   // Cek apakah lintasan langsung terhalang danau
   let blockedLake: (typeof LAKES)[0] | null = null;
@@ -417,15 +429,140 @@ export function findClearWaypoint(startX: number, startY: number, targetX: numbe
 
 export interface PlacedUnit { unit: WarUnit; x: number; y: number }
 
+// Daftar Bounding Box Bangunan & Fasilitas di peta (x0, y0, x1, y1)
+// Digunakan agar unit darat yang di-spawn acak tidak pernah bertabrakan atau tumpang tindih dengan bangunan apapun
+const BUILDING_OBSTACLES: Array<{ x0: number; y0: number; x1: number; y1: number }> = [
+  // Fasilitas Militer User: Barak, Gudang, Hangar di (1200, 180) - bounding box w: 780, h: 310
+  { x0: 1200 - 410, y0: 180 - 170, x1: 1200 + 410, y1: 180 + 170 },
+  // Fasilitas Militer Musuh: Barak, Gudang, Hangar di (5150, 1350) - bounding box w: 780, h: 310
+  { x0: 5150 - 410, y0: 1350 - 170, x1: 5150 + 410, y1: 1350 + 170 },
+  // HQ User di (700, 520)
+  { x0: 700 - 220, y0: 520 - 150, x1: 700 + 220, y1: 520 + 210 },
+  // HQ Musuh di (5700, 1880)
+  { x0: 5700 - 220, y0: 1880 - 150, x1: 5700 + 220, y1: 1880 + 210 },
+  // Depo BBM di (1850, 1000)
+  { x0: 1850 - 90, y0: 1000 - 90, x1: 1850 + 90, y1: 1000 + 90 },
+  // Gudang Amunisi di (4650, 1420)
+  { x0: 4650 - 90, y0: 1420 - 90, x1: 4650 + 90, y1: 1420 + 90 },
+  // Pangkalan Udara Musuh (Runway & Terminal) di (5600, 2250)
+  { x0: 5600 - 580, y0: 2250 - 200, x1: 5600 + 580, y1: 2250 + 200 },
+  // Pangkalan Udara User di (700, 1060)
+  { x0: 700 - 580, y0: 1060 - 200, x1: 700 + 580, y1: 1060 + 200 },
+  // Bangunan Distrik Kota:
+  // Kota Timur di (3700-4040, 1250-1440)
+  { x0: 3660, y0: 1210, x1: 4080, y1: 1480 },
+  // Kota Selatan di (3140-3600, 1760-1970)
+  { x0: 3100, y0: 1720, x1: 3640, y1: 2010 },
+  // Kota Barat di (2040-2460, 1110-1340)
+  { x0: 2000, y0: 1070, x1: 2500, y1: 1380 },
+];
+
+/**
+ * Cek apakah koordinat (x, y) menabrak salah satu bangunan/fasilitas militer (dengan margin radius unit)
+ */
+export function collidesWithBuilding(x: number, y: number, unitRadius = 45): boolean {
+  for (let i = 0; i < BUILDING_OBSTACLES.length; i++) {
+    const b = BUILDING_OBSTACLES[i];
+    if (
+      x + unitRadius >= b.x0 &&
+      x - unitRadius <= b.x1 &&
+      y + unitRadius >= b.y0 &&
+      y - unitRadius <= b.y1
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Definisi zona/sektor dispersi per jenis unit (Hub titik kumpul per kategori)
+// Koordinat telah disesuaikan agar berada di lapangan terbuka yang bersih dari bangunan
+const ENEMY_GROUND_HUBS: Record<string, { cx: number; cy: number; rx: number; ry: number }> = {
+  // Tank Tempur Utama: Siaga di lapangan terbuka barat daya HQ (selatan jalan)
+  tank: { cx: 4850, cy: 1780, rx: 180, ry: 90 },
+  // APC / IFV: Mobile squad di lapangan selatan antara hutan dan jalan
+  apcIfv: { cx: 4300, cy: 1820, rx: 160, ry: 80 },
+  // Infanteri: Di lapangan hijau depan barak (y: 1560-1640), bukan di dalam gedung barak (y: 1200-1480)
+  infanteri: { cx: 5080, cy: 1600, rx: 190, ry: 90 },
+  // Artileri Berat: Posisi tembak sayap timur laut terbuka
+  artileriBerat: { cx: 5350, cy: 1620, rx: 150, ry: 80 },
+  // Sistem Peluncur Roket: Di lapangan terbuka selatan gudang amunisi
+  peluncurRoket: { cx: 4650, cy: 1640, rx: 140, ry: 70 },
+  // Pertahanan Udara Mobile (SAM/SPAAG): Di koridor barat HQ
+  pertahananUdaraMobile: { cx: 5280, cy: 1880, rx: 150, ry: 75 },
+  // Kendaraan Taktis (Recon): Berpatroli di perbatasan terbuka barat
+  kendaraanTaktis: { cx: 4150, cy: 1700, rx: 140, ry: 70 },
+};
+
+const OWN_GROUND_HUBS: Record<string, { cx: number; cy: number; rx: number; ry: number }> = {
+  tank: { cx: 1620, cy: 460, rx: 180, ry: 90 },
+  apcIfv: { cx: 1380, cy: 420, rx: 160, ry: 80 },
+  // Infanteri user: Di lapangan selatan fasilitas militer (y: 380-450), bukan di y: 180 (gedung)
+  infanteri: { cx: 1180, cy: 410, rx: 180, ry: 90 },
+  artileriBerat: { cx: 960, cy: 520, rx: 150, ry: 80 },
+  peluncurRoket: { cx: 1460, cy: 640, rx: 140, ry: 70 },
+  pertahananUdaraMobile: { cx: 1120, cy: 700, rx: 160, ry: 80 },
+  kendaraanTaktis: { cx: 1760, cy: 580, rx: 150, ry: 75 },
+};
+
 export function layoutUnits(units: WarUnit[], own: boolean): PlacedUnit[] {
   const out: PlacedUnit[] = [];
   const dir = own ? 1 : -1;
-  const landX = own ? 1400 : 4900, landY = own ? 330 : 1650;
   const airbase = own ? AIRBASE_OWN : AIRBASE_ENEMY;
   const airUnits = units.filter((u) => u.group === 'udara');
-  units.filter((u) => u.group === 'darat').forEach((unit, i) => {
-    out.push({ unit, x: landX + dir * (i % 4) * 140, y: landY + Math.floor(i / 4) * 150 });
+  const groundUnits = units.filter((u) => u.group === 'darat');
+
+  // Kelompokkan unit darat berdasarkan kategori/kind agar satu jenis tetap di sektor yang sama
+  const groundByKind = new Map<string, WarUnit[]>();
+  groundUnits.forEach((unit) => {
+    const list = groundByKind.get(unit.kind) ?? [];
+    list.push(unit);
+    groundByKind.set(unit.kind, list);
   });
+
+  const hubs = own ? OWN_GROUND_HUBS : ENEMY_GROUND_HUBS;
+
+  groundByKind.forEach((categoryUnits, kind) => {
+    const hub = hubs[kind] ?? (own ? { cx: 1400, cy: 450, rx: 150, ry: 80 } : { cx: 4800, cy: 1700, rx: 150, ry: 80 });
+    const count = categoryUnits.length;
+
+    categoryUnits.forEach((unit, idx) => {
+      // Formasi baris & kolom berjarak
+      const col = idx % 3;
+      const row = Math.floor(idx / 3);
+      const offsetX = (col - (Math.min(count, 3) - 1) / 2) * 110;
+      const offsetY = row * 95;
+
+      // Variasi acak terkontrol
+      const jitterX = ((idx * 37) % 31) - 15;
+      const jitterY = ((idx * 53) % 29) - 14;
+
+      let candidateX = hub.cx + offsetX + jitterX;
+      let candidateY = hub.cy + offsetY + jitterY;
+
+      // ANTI-TABRAKAN BANGUNAN:
+      // Jika koordinat kandidat menabrak bangunan/fasilitas militer, geser menjauh ke area terbuka
+      if (collidesWithBuilding(candidateX, candidateY)) {
+        // Coba pergeseran ke arah selatan / lateral yang bebas bangunan
+        const shiftY = own ? 160 : 200;
+        const testY = candidateY + shiftY;
+        if (!collidesWithBuilding(candidateX, testY)) {
+          candidateY = testY;
+        } else {
+          // Geser ke arah barat/timur
+          candidateX += own ? 220 : -240;
+          candidateY = hub.cy + 150 + row * 80;
+        }
+      }
+
+      out.push({
+        unit,
+        x: candidateX,
+        y: candidateY,
+      });
+    });
+  });
+
   airUnits.forEach((unit, i) => {
     const row = Math.floor(i / 4);
     const column = i % 4;
@@ -436,11 +573,13 @@ export function layoutUnits(units: WarUnit[], own: boolean): PlacedUnit[] {
       y: airbase.y - 150 + row * 85,
     });
   });
+
   units.filter((u) => u.group === 'laut').forEach((unit, i) => {
     const lk = own ? LAKES[0] : LAKES[1];
     const x = own ? 1000 + (i % 8) * 150 : 4500 + (i % 8) * 130;
     out.push({ unit, x, y: lk.cy + (i % 2 ? 50 : -50) + Math.floor(i / 8) * 100 });
   });
+
   return out;
 }
 const UK = 1.5;
@@ -914,16 +1053,30 @@ export const Airbase = ({
   );
 };
 
-const CapturePoint = ({ x, y, name, main, owner, accent, id }: { x: number; y: number; name: string; main: boolean; owner: Owner; accent: string; id: string }) => {
+export type CapturePointStatus = {
+  owner: Owner;
+  progress: number; // 0.0 to 1.0
+};
+
+const CapturePoint = ({ x, y, name, main, owner, progress = 1, accent, id }: {
+  x: number;
+  y: number;
+  name: string;
+  main: boolean;
+  owner: Owner;
+  progress?: number;
+  accent: string;
+  id: string;
+}) => {
   const col = owner === 'own' ? accent : owner === 'enemy' ? RED : owner === 'contested' ? '#f97316' : main ? '#FFEB3B' : '#e5e7eb';
   const R = main ? 92 : 68;
   const circ = 2 * Math.PI * R;
-  const prog = owner === 'neutral' ? 0 : owner === 'contested' ? 0.5 : 1;
+  const prog = owner === 'neutral' ? 0 : Math.max(0.1, Math.min(1, progress));
   return (
     <g className="nw-tz" data-terrain={id} transform={`translate(${x} ${y}) scale(1.4)`}>
       <circle r={R} fill={col} fillOpacity="0.1" />
       <circle r={R} fill="none" stroke={col} strokeOpacity="0.4" strokeWidth="3" strokeDasharray="8 10" />
-      <circle r={R} fill="none" stroke={col} strokeWidth="7" strokeLinecap="round" strokeDasharray={`${circ * prog} ${circ}`} transform="rotate(-90)" style={{ transition: 'stroke-dasharray 1s ease' }} />
+      <circle r={R} fill="none" stroke={col} strokeWidth="7" strokeLinecap="round" strokeDasharray={`${circ * prog} ${circ}`} transform="rotate(-90)" style={{ transition: 'stroke-dasharray 0.5s ease' }} />
       {owner === 'contested' && <circle className="nw-a nw-ping" r={R * 0.6} fill="none" stroke={col} strokeWidth="3" />}
       <line x1="0" y1="0" x2="0" y2="-54" stroke="#e2e8f0" strokeWidth="3" />
       <polygon points="0,-54 36,-45 0,-36" fill={col} stroke="#000" strokeWidth="1.2" />
@@ -944,15 +1097,22 @@ const ResourceNode = ({ x, y, name, col }: { x: number; y: number; name: string;
   </g>
 );
 
-const BasesLayer = memo(function BasesLayer({ accent, simPhase, playerSide, onFacilityClick }: {
+const BasesLayer = memo(function BasesLayer({
+  accent,
+  simPhase,
+  playerSide,
+  captureStatus = {},
+  onFacilityClick,
+}: {
   accent: string;
   simPhase: SimPhase;
   playerSide: PlayerSide;
+  captureStatus?: Record<string, CapturePointStatus>;
   onFacilityClick?: (facility: UnitFacility, side: FacilitySide) => void;
 }) {
   const ownIsAtk = playerSide === 'attacker';
   const done = simPhase === 'done';
-  const owner: Owner = simPhase === 'clash' ? 'contested' : done ? (ownIsAtk ? 'own' : 'enemy') : 'neutral';
+  const defaultOwner: Owner = simPhase === 'clash' ? 'contested' : done ? (ownIsAtk ? 'own' : 'enemy') : 'neutral';
   const resCol = done ? (ownIsAtk ? accent : RED) : '#fbbf24';
   return (
     <g>
@@ -971,7 +1131,24 @@ const BasesLayer = memo(function BasesLayer({ accent, simPhase, playerSide, onFa
       {/* Musuh: Fasilitas militer musuh tidak bisa dibuka modalnya oleh user */}
       <MilitaryFacilities at={{ x: 5150, y: 1350 }} color={RED} side="right" />
       
-      {CAPTURE_POINTS.map((c) => <CapturePoint key={c.id} id={c.main ? 'objective' : 'capture'} x={c.x} y={c.y} name={c.name} main={c.main} owner={owner} accent={accent} />)}
+      {CAPTURE_POINTS.map((c) => {
+        const status = captureStatus[c.id];
+        const pointOwner = status ? status.owner : defaultOwner;
+        const progress = status ? status.progress : (defaultOwner === 'neutral' ? 0 : 1);
+        return (
+          <CapturePoint
+            key={c.id}
+            id={c.main ? 'objective' : 'capture'}
+            x={c.x}
+            y={c.y}
+            name={c.name}
+            main={c.main}
+            owner={pointOwner}
+            progress={progress}
+            accent={accent}
+          />
+        );
+      })}
 
       {RESOURCES.map((r) => <ResourceNode key={r.id} x={r.x} y={r.y} name={r.name} col={resCol} />)}
     </g>
@@ -1287,6 +1464,90 @@ export const TacticalMap = memo(function TacticalMap({
   const [incursionAlert, setIncursionAlert] = useState<{ active: boolean; text: string; level: number }>({ active: false, text: '', level: 0 });
   const hasTriggeredIncursionRef = useRef(false);
 
+  const [captureStatus, setCaptureStatus] = useState<Record<string, CapturePointStatus>>({
+    alpha: { owner: 'neutral', progress: 0 },
+    bravo: { owner: 'neutral', progress: 0 },
+    charlie: { owner: 'neutral', progress: 0 },
+  });
+  const captureStatusRef = useRef(captureStatus);
+  captureStatusRef.current = captureStatus;
+
+  // DYNAMIC OBJECTIVE CAPTURE TICK (Setiap 1 detik periksa unit darat di sekitar objektif)
+  useEffect(() => {
+    const captureInterval = setInterval(() => {
+      if (simPhase !== 'idle') return;
+
+      setCaptureStatus((prev) => {
+        let changed = false;
+        const next = { ...prev };
+
+        CAPTURE_POINTS.forEach((pt) => {
+          const radius = pt.main ? 280 : 230;
+          let ownCount = 0;
+          let enemyCount = 0;
+
+          // Hitung pasukan darat user di zona objektif
+          own.forEach((p) => {
+            if (p.unit.group !== 'darat' || (unitQuantitiesRef.current[unitId(p.unit, 'own')] ?? p.unit.quantity) <= 0) return;
+            const pos = positionsRef.current[unitId(p.unit, 'own')] ?? { x: p.x, y: p.y };
+            if (Math.hypot(pos.x - pt.x, pos.y - pt.y) <= radius) ownCount++;
+          });
+
+          // Hitung pasukan darat musuh di zona objektif
+          enemy.forEach((p) => {
+            if (p.unit.group !== 'darat' || (unitQuantitiesRef.current[unitId(p.unit, 'enemy')] ?? p.unit.quantity) <= 0) return;
+            const pos = positionsRef.current[unitId(p.unit, 'enemy')] ?? { x: p.x, y: p.y };
+            if (Math.hypot(pos.x - pt.x, pos.y - pt.y) <= radius) enemyCount++;
+          });
+
+          const current = prev[pt.id] ?? { owner: 'neutral', progress: 0 };
+          let nextOwner: Owner = current.owner;
+          let nextProg = current.progress;
+
+          if (ownCount > 0 && enemyCount > 0) {
+            nextOwner = 'contested';
+            changed = true;
+          } else if (ownCount > 0 && enemyCount === 0) {
+            if (current.owner === 'own') {
+              nextProg = 1;
+            } else if (current.owner === 'neutral') {
+              nextProg = Math.min(1, current.progress + 0.25);
+              if (nextProg >= 1) { nextOwner = 'own'; }
+              changed = true;
+            } else {
+              // Menurunkan kontrol musuh
+              nextProg = Math.max(0, current.progress - 0.25);
+              if (nextProg <= 0) { nextOwner = 'neutral'; nextProg = 0; }
+              changed = true;
+            }
+          } else if (enemyCount > 0 && ownCount === 0) {
+            if (current.owner === 'enemy') {
+              nextProg = 1;
+            } else if (current.owner === 'neutral') {
+              nextProg = Math.min(1, current.progress + 0.25);
+              if (nextProg >= 1) { nextOwner = 'enemy'; }
+              changed = true;
+            } else {
+              // Menurunkan kontrol user
+              nextProg = Math.max(0, current.progress - 0.25);
+              if (nextProg <= 0) { nextOwner = 'neutral'; nextProg = 0; }
+              changed = true;
+            }
+          }
+
+          if (nextOwner !== current.owner || Math.abs(nextProg - current.progress) > 0.05) {
+            next[pt.id] = { owner: nextOwner, progress: nextProg };
+            changed = true;
+          }
+        });
+
+        return changed ? next : prev;
+      });
+    }, 1000);
+
+    return () => clearInterval(captureInterval);
+  }, [own, enemy, simPhase]);
+
   useEffect(() => {
     let cancelled = false;
     loadRustViewport()
@@ -1296,8 +1557,329 @@ export const TacticalMap = memo(function TacticalMap({
       .catch((error: unknown) => {
         console.error('[TacticalMap] Failed to load Rust unit movement engine', error);
       });
+
+    // SINKRONISASI PASUKAN MUSUH (AI):
+    // Jika LandWarMap telah mengerahkan pasukan musuh (initialEnemyRef), pakai posisi mereka.
+    // Jika tidak ada (fallback), baru gunakan pasukan default.
+    if (initialEnemyRef.current.length > 0) {
+      initialEnemyRef.current.forEach((unit) => {
+        const uId = unitId(unit.unit, 'enemy');
+        positionsRef.current[uId] = { x: unit.x, y: unit.y };
+      });
+    } else {
+      const defaultEnemyForces: PlacedUnit[] = [
+        {
+          unit: { kind: 'tank' as const, group: 'darat' as const, label: 'MBT-Platoon', quantity: 24, echelon: 'II' as const },
+          x: HQ_ENEMY.x - 220,
+          y: HQ_ENEMY.y + 120,
+        },
+        {
+          unit: { kind: 'apcIfv' as const, group: 'darat' as const, label: 'IFV-Squad', quantity: 30, echelon: 'I' as const },
+          x: HQ_ENEMY.x - 360,
+          y: HQ_ENEMY.y - 140,
+        },
+        {
+          unit: { kind: 'infanteri' as const, group: 'darat' as const, label: 'Garrison-Inf', quantity: 45, echelon: 'I' as const },
+          x: HQ_ENEMY.x - 180,
+          y: HQ_ENEMY.y - 200,
+        },
+      ];
+
+      setExtraEnemyUnits(defaultEnemyForces);
+      defaultEnemyForces.forEach((unit) => {
+        const uId = unitId(unit.unit, 'enemy');
+        positionsRef.current[uId] = { x: unit.x, y: unit.y };
+      });
+    }
+    setPositions({ ...positionsRef.current });
+
+    // SIKLUS TEMPUR AI OTONOM SEJAK AWAL:
+    const executeAiCombatCycle = async () => {
+      if (isAiThinkingRef.current) return;
+      isAiThinkingRef.current = true;
+
+      try {
+        const allEnemyCandidates = [...initialEnemyRef.current, ...extraEnemyUnitsRef.current];
+        const uniqueEnemyMap = new Map<string, PlacedUnit>();
+        allEnemyCandidates.forEach((u) => uniqueEnemyMap.set(unitId(u.unit, 'enemy'), u));
+
+        const currentEnemyUnitsState: WarUnitState[] = Array.from(uniqueEnemyMap.values())
+          .map((u) => {
+            const uId = unitId(u.unit, 'enemy');
+            const liveQty = unitQuantitiesRef.current[uId] ?? u.unit.quantity;
+            const pos = positionsRef.current[uId] ?? { x: u.x, y: u.y };
+            return {
+              id: uId,
+              kind: u.unit.kind,
+              group: u.unit.group,
+              label: u.unit.label,
+              quantity: liveQty,
+              x: pos.x,
+              y: pos.y,
+              is_enemy: true,
+            };
+          })
+          .filter((u) => u.quantity > 0);
+
+        const nowTime = performance.now();
+        const currentUserUnitsState: WarUnitState[] = baseOwnRef.current
+          .map((p) => {
+            const uId = unitId(p.unit, 'own');
+            const liveQty = unitQuantitiesRef.current[uId] ?? p.unit.quantity;
+            const pos = positionsRef.current[uId] ?? { x: p.x, y: p.y };
+
+            const prev = previousPositionsRef.current[uId];
+            let smoothedVx = 0;
+            let smoothedVy = 0;
+            if (prev && nowTime > prev.time) {
+              const dtSec = (nowTime - prev.time) / 1000;
+              if (dtSec > 0.04 && dtSec < 3.0) {
+                const rawVx = (pos.x - prev.x) / dtSec;
+                const rawVy = (pos.y - prev.y) / dtSec;
+                const oldVel = velocitiesRef.current[uId] ?? { vx: 0, vy: 0 };
+                smoothedVx = (oldVel.vx * 0.7) + (rawVx * 0.3);
+                smoothedVy = (oldVel.vy * 0.7) + (rawVy * 0.3);
+                smoothedVx = Math.max(-400, Math.min(400, smoothedVx));
+                smoothedVy = Math.max(-400, Math.min(400, smoothedVy));
+                velocitiesRef.current[uId] = { vx: smoothedVx, vy: smoothedVy };
+              }
+            }
+            previousPositionsRef.current[uId] = { x: pos.x, y: pos.y, time: nowTime };
+
+            const isVisible = !fogEnabled || currentEnemyUnitsState.some((enemyUnit) => {
+              const d = Math.hypot(enemyUnit.x - pos.x, enemyUnit.y - pos.y);
+              const enemyVision = enemyUnit.group === 'udara' ? 1400 : (enemyUnit.kind === 'pertahananUdaraMobile' ? 1200 : 800);
+              if (d > enemyVision) return false;
+              if (enemyUnit.group === 'udara') return true;
+              return !isLineBlocked(enemyUnit.x, enemyUnit.y, pos.x, pos.y);
+            });
+
+            return {
+              id: uId,
+              kind: p.unit.kind,
+              group: p.unit.group,
+              label: p.unit.label,
+              quantity: liveQty,
+              x: pos.x,
+              y: pos.y,
+              vx: smoothedVx,
+              vy: smoothedVy,
+              is_enemy: false,
+              is_visible: isVisible,
+            };
+          })
+          .filter((u) => u.quantity > 0);
+
+        if (currentUserUnitsState.length === 0 || currentEnemyUnitsState.length === 0) {
+          if (aiCombatIntervalRef.current) {
+            clearInterval(aiCombatIntervalRef.current);
+            aiCombatIntervalRef.current = null;
+          }
+          return;
+        }
+
+        // Targetkan semua unit lawan yang terdeteksi
+        const targetableUserUnits = currentUserUnitsState.filter((u) => u.is_visible ?? true);
+        if (targetableUserUnits.length === 0) {
+          currentEnemyUnitsState.forEach((enemyUnit) => {
+            if (movementFramesRef.current[enemyUnit.id]) {
+              cancelAnimationFrame(movementFramesRef.current[enemyUnit.id]);
+              delete movementFramesRef.current[enemyUnit.id];
+            }
+          });
+          return;
+        }
+
+        const pyDecision = await requestPythonAIWarCycle(currentEnemyUnitsState, targetableUserUnits, { max_x: BASE_W, max_y: BASE_H });
+        const engine = movementEngineRef.current;
+        if (!engine) return;
+
+        // 1. Jalankan pergerakan unit musuh sesuai keputusan Python AI
+        pyDecision.movements.forEach((mv, mvIdx) => {
+          const uId = mv.unit_id;
+          const liveEnemyQty = unitQuantitiesRef.current[uId] ?? 1;
+          if (liveEnemyQty <= 0) return;
+
+          const curPos = positionsRef.current[uId];
+          if (!curPos) return;
+
+          if (mv.action === 'hold') {
+            if (movementFramesRef.current[uId]) {
+              cancelAnimationFrame(movementFramesRef.current[uId]);
+              delete movementFramesRef.current[uId];
+            }
+            return;
+          }
+
+          const enemyUnitCandidate = uniqueEnemyMap.get(uId);
+          const unitKind = enemyUnitCandidate?.unit.kind ?? 'tank';
+
+          const speedJitter = 0.9 + Math.random() * 0.2;
+          const jitteredSpeed = (mv.speed || 340) * speedJitter;
+
+          const lateralSlot = (mvIdx - (pyDecision.movements.length - 1) / 2) * 110;
+          const longitudinalSlot = (mvIdx % 2 === 0 ? 0 : 70);
+          const angleToTarget = Math.atan2(mv.target_y - curPos.y, mv.target_x - curPos.x);
+          const normalAngle = angleToTarget + Math.PI / 2;
+
+          const baseCombatDistance = 90 + longitudinalSlot;
+          const rawTargetX = mv.target_x + Math.cos(angleToTarget) * baseCombatDistance + Math.cos(normalAngle) * lateralSlot;
+          const rawTargetY = mv.target_y + Math.sin(angleToTarget) * baseCombatDistance + Math.sin(normalAngle) * lateralSlot;
+
+          const borderBuffer = (mvIdx * 45);
+          const safeTargetX = playerSide === 'attacker'
+            ? Math.max(3050 + borderBuffer, rawTargetX)
+            : Math.min(3250 - borderBuffer, rawTargetX);
+
+          const waypoint = findClearWaypoint(curPos.x, curPos.y, safeTargetX, rawTargetY);
+          const [tX, tY] = engine.prepare_unit_movement(
+            waypoint.x, waypoint.y, BASE_W, BASE_H, 'darat',
+          );
+
+          if (movementFramesRef.current[uId]) {
+            cancelAnimationFrame(movementFramesRef.current[uId]);
+          }
+
+          const qrfStart = { x: curPos.x, y: curPos.y };
+          let qrfElapsed = 0;
+          let qrfLast = performance.now();
+
+          const animateQrf = (qrfNow: number) => {
+            const dt = Math.min(qrfNow - qrfLast, 64);
+            qrfLast = qrfNow;
+            const curPosNow = positionsRef.current[uId] ?? qrfStart;
+            const terrainMult = getTerrainSpeedMultiplier(curPosNow.x, curPosNow.y);
+            const effectiveSpeed = jitteredSpeed * 0.95 * terrainMult;
+
+            const [curX, curY, nextEl, qrfDone] = engine.step_unit_movement(
+              qrfStart.x, qrfStart.y, tX, tY, qrfElapsed, dt, effectiveSpeed, 'darat', unitKind,
+            );
+            qrfElapsed = nextEl;
+
+            let finalX = curX;
+            let finalY = curY;
+            const MIN_SEPARATION = 85;
+
+            for (const otherEnemy of currentEnemyUnitsState) {
+              if (otherEnemy.id === uId) continue;
+              const otherPos = positionsRef.current[otherEnemy.id];
+              if (!otherPos) continue;
+
+              const dx = finalX - otherPos.x;
+              const dy = finalY - otherPos.y;
+              const distSq = dx * dx + dy * dy;
+              if (distSq > 0 && distSq < MIN_SEPARATION * MIN_SEPARATION) {
+                const dist = Math.sqrt(distSq);
+                const pushFactor = (MIN_SEPARATION - dist) / MIN_SEPARATION;
+                const pushStrength = 2.5 * pushFactor;
+                finalX += (dx / dist) * pushStrength;
+                finalY += (dy / dist) * pushStrength;
+              }
+            }
+
+            positionsRef.current[uId] = { x: finalX, y: finalY };
+
+            if (qrfDone < 0.5) {
+              movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
+            } else {
+              delete movementFramesRef.current[uId];
+              setPositions({ ...positionsRef.current });
+            }
+          };
+
+          setTimeout(() => {
+            movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
+          }, mvIdx * 150);
+        });
+
+        // 2. Tembakan AI ke pasukan user
+        if (pyDecision.attacks.length > 0) {
+          pyDecision.attacks.forEach((atk, attackIdx) => {
+            const shooterQty = unitQuantitiesRef.current[atk.attacker_id] ?? 1;
+            const targetQty = unitQuantitiesRef.current[atk.target_unit_id] ?? 1;
+            if (shooterQty <= 0 || targetQty <= 0) return;
+
+            const shooterPos = positionsRef.current[atk.attacker_id] ?? { x: HQ_ENEMY.x, y: HQ_ENEMY.y };
+
+            if (isLineBlocked(shooterPos.x, shooterPos.y, atk.target_x, atk.target_y)) {
+              return;
+            }
+
+            setTimeout(() => {
+              const liveTargetQty = unitQuantitiesRef.current[atk.target_unit_id] ?? 1;
+              const liveShooterQty = unitQuantitiesRef.current[atk.attacker_id] ?? 1;
+              if (liveTargetQty <= 0 || liveShooterQty <= 0) return;
+
+              const hitRoll = Math.random();
+              const isHit = hitRoll <= (atk.hit_chance ?? 0.85);
+
+              const strikeId = `ai-strike-${atk.attacker_id}-${Date.now()}-${Math.random()}`;
+              const newStrike: UnitAttackEffect = {
+                id: strikeId,
+                start: shooterPos,
+                target: { x: atk.target_x, y: atk.target_y },
+                weaponType: atk.weapon_type,
+                travelMs: 650,
+              };
+
+              setAttackStrikes((prev) => [...prev, newStrike]);
+              setTimeout(() => {
+                setAttackStrikes((prev) => prev.filter((s) => s.id !== strikeId));
+              }, 650);
+
+              if (!isHit) return;
+
+              const targetUserPlaced = baseOwnRef.current.find((p) => unitId(p.unit, 'own') === atk.target_unit_id);
+              if (targetUserPlaced) {
+                const currentQty = unitQuantitiesRef.current[atk.target_unit_id] ?? targetUserPlaced.unit.quantity;
+                if (currentQty <= 0) return;
+
+                const targetArmor = targetUserPlaced.unit.kind === 'tank' ? 1.6 : (targetUserPlaced.unit.kind === 'apcIfv' ? 1.2 : 0.9);
+                const netPenetration = Math.max(0.4, (atk.penetration ?? 1.0) / targetArmor);
+
+                const damageLoss = Math.max(
+                  1,
+                  Math.round(Math.min(currentQty, Math.max(8, (currentQty * 0.08 + atk.damage_potential * 12) * netPenetration)))
+                );
+                const remaining = Math.max(0, currentQty - damageLoss);
+
+                unitQuantitiesRef.current[atk.target_unit_id] = remaining;
+                setUnitQuantities((prev) => ({
+                  ...prev,
+                  [atk.target_unit_id]: remaining,
+                }));
+
+                setLossEvents((prev) => [
+                  ...prev,
+                  {
+                    id: `loss-user-${Date.now()}-${Math.random()}`,
+                    side: 'user',
+                    unitLabel: targetUserPlaced.unit.label,
+                    lostAmount: damageLoss,
+                    remainingAmount: remaining,
+                    attackerLabel: 'Pasukan Musuh',
+                    timestamp: Date.now(),
+                  },
+                ]);
+              }
+            }, attackIdx * 250);
+          });
+        }
+      } finally {
+        isAiThinkingRef.current = false;
+      }
+    };
+
+    // Jalankan siklus AI otomatis secara berkala
+    if (aiCombatIntervalRef.current) clearInterval(aiCombatIntervalRef.current);
+    const startTimeout = setTimeout(() => {
+      executeAiCombatCycle();
+      aiCombatIntervalRef.current = setInterval(executeAiCombatCycle, 1000);
+    }, 500);
+
     return () => {
       cancelled = true;
+      clearTimeout(startTimeout);
       Object.values(movementFramesRef.current).forEach(cancelAnimationFrame);
       if (aiCombatIntervalRef.current) clearInterval(aiCombatIntervalRef.current);
     };
@@ -1392,9 +1974,14 @@ export const TacticalMap = memo(function TacticalMap({
     const start = positionsRef.current[selectedUnitId] ?? { x: placedUnit.x, y: placedUnit.y };
     const group = placedUnit.unit.group;
     const move = (engine: Awaited<ReturnType<typeof loadRustViewport>>) => {
-      const [targetX, targetY, speed] = engine.prepare_unit_movement(
-        destination.x,
-        destination.y,
+      // Hindari danau dan rintangan untuk unit darat pemain
+      const waypoint = group === 'darat'
+        ? findClearWaypoint(start.x, start.y, destination.x, destination.y)
+        : destination;
+
+      const [targetX, targetY, baseMoveSpeed] = engine.prepare_unit_movement(
+        waypoint.x,
+        waypoint.y,
         BASE_W,
         BASE_H,
         group,
@@ -1411,6 +1998,10 @@ export const TacticalMap = memo(function TacticalMap({
       const animate = (now: number) => {
         const deltaMs = Math.min(now - lastFrame, 64);
         lastFrame = now;
+        const currentPos = positionsRef.current[id] ?? start;
+        const terrainMult = group === 'darat' ? getTerrainSpeedMultiplier(currentPos.x, currentPos.y) : 1.0;
+        const effectiveSpeed = baseMoveSpeed * terrainMult;
+
         const [x, y, nextElapsed, done] = engine.step_unit_movement(
           start.x,
           start.y,
@@ -1418,7 +2009,7 @@ export const TacticalMap = memo(function TacticalMap({
           target.y,
           elapsedMs,
           deltaMs,
-          speed,
+          effectiveSpeed,
           group,
           placedUnit.unit.kind,
         );
@@ -1428,7 +2019,7 @@ export const TacticalMap = memo(function TacticalMap({
         positionsRef.current = { ...positionsRef.current, [id]: nextPosition };
         setPositions(positionsRef.current);
 
-        // EVALUASI BORDER INCURSION DENGAN ENGINE RUST
+        // EVALUASI BORDER INCURSION DENGAN ENGINE RUST (Bala Bantuan Tambahan / Reinforcement Wave)
         if (!hasTriggeredIncursionRef.current && movementEngineRef.current) {
           const aiResp = evaluateBorderIncursion(
             movementEngineRef.current,
@@ -1444,20 +2035,19 @@ export const TacticalMap = memo(function TacticalMap({
             hasTriggeredIncursionRef.current = true;
             setIncursionAlert({
               active: true,
-              text: `PERINGATAN: WILAYAH MUSUH DITEMBUS! LAWAN MEMOBILISASI PASUKAN!`,
+              text: `PERINGATAN: WILAYAH MUSUH DITEMBUS! BALA BANTUAN LAWAN DITERJUNKAN!`,
               level: aiResp.alertLevel,
             });
 
-            // Sembunyikan notifikasi peringatan tembus wilayah musuh otomatis setelah 3 detik
             setTimeout(() => {
               setIncursionAlert((prev) => ({ ...prev, active: false }));
             }, 3000);
 
-            // Spawn QRF secara bertahap (Staggered Spawning dengan jeda 2000ms per unit)
+            // Bala bantuan tambahan (Reinforcements)
             const qrfTypes = [
-              { kind: 'infanteri' as const, group: 'darat' as const, label: 'QRF-INF', qty: aiResp.spawnInfantry, echelon: 'I' as const },
-              { kind: 'tank' as const, group: 'darat' as const, label: 'QRF-MBT', qty: aiResp.spawnTank, echelon: 'II' as const },
-              { kind: 'apcIfv' as const, group: 'darat' as const, label: 'QRF-APC', qty: aiResp.spawnApc, echelon: 'I' as const },
+              { kind: 'infanteri' as const, group: 'darat' as const, label: 'QRF-Reserve-INF', qty: aiResp.spawnInfantry, echelon: 'I' as const },
+              { kind: 'tank' as const, group: 'darat' as const, label: 'QRF-Reserve-MBT', qty: aiResp.spawnTank, echelon: 'II' as const },
+              { kind: 'apcIfv' as const, group: 'darat' as const, label: 'QRF-Reserve-APC', qty: aiResp.spawnApc, echelon: 'I' as const },
             ];
 
             qrfTypes.forEach((q, idx) => {
@@ -1477,313 +2067,13 @@ export const TacticalMap = memo(function TacticalMap({
                   y: aiResp.spawnOrigin.y + Math.sin(spawnAngle) * spawnRadius,
                 };
 
-
                 const uId = unitId(newUnit.unit, 'enemy');
                 setExtraEnemyUnits((prev) => [...prev, newUnit]);
 
                 positionsRef.current[uId] = { x: newUnit.x, y: newUnit.y };
                 setPositions({ ...positionsRef.current });
-              }, idx * 2000);
+              }, idx * 1500);
             });
-
-
-            // Fungsi siklus tempur & pergerakan AI berkala (Autonomous AI Combat Loop)
-            if (aiCombatIntervalRef.current) clearInterval(aiCombatIntervalRef.current);
-
-            const executeAiCombatCycle = async () => {
-              // Guard agar tidak ada request Python AI yang tumpang tindih (Race Condition Guard)
-              if (isAiThinkingRef.current) return;
-              isAiThinkingRef.current = true;
-
-              try {
-                // Saring seluruh unit musuh (baik garnisun awal maupun QRF dinamis) yang masih hidup (quantity > 0)
-                const allEnemyCandidates = [...initialEnemyRef.current, ...extraEnemyUnitsRef.current];
-                const uniqueEnemyMap = new Map<string, PlacedUnit>();
-                allEnemyCandidates.forEach((u) => uniqueEnemyMap.set(unitId(u.unit, 'enemy'), u));
-
-
-                const currentEnemyUnitsState: WarUnitState[] = Array.from(uniqueEnemyMap.values())
-                  .map((u) => {
-                    const uId = unitId(u.unit, 'enemy');
-                    const liveQty = unitQuantitiesRef.current[uId] ?? u.unit.quantity;
-                    const pos = positionsRef.current[uId] ?? { x: u.x, y: u.y };
-                    return {
-                      id: uId,
-                      kind: u.unit.kind,
-                      group: u.unit.group,
-                      label: u.unit.label,
-                      quantity: liveQty,
-                      x: pos.x,
-                      y: pos.y,
-                      is_enemy: true,
-                    };
-                  })
-                  .filter((u) => u.quantity > 0);
-
-                // Saring hanya unit user yang masih hidup (quantity > 0)
-                // Hitung velocity (vx, vy) dengan Exponential Moving Average (EMA) & clamping
-                const nowTime = performance.now();
-                const currentUserUnitsState: WarUnitState[] = baseOwnRef.current
-                  .map((p) => {
-                    const uId = unitId(p.unit, 'own');
-                    const liveQty = unitQuantitiesRef.current[uId] ?? p.unit.quantity;
-                    const pos = positionsRef.current[uId] ?? { x: p.x, y: p.y };
-
-                    const prev = previousPositionsRef.current[uId];
-                    let smoothedVx = 0;
-                    let smoothedVy = 0;
-                    if (prev && nowTime > prev.time) {
-                      const dtSec = (nowTime - prev.time) / 1000;
-                      if (dtSec > 0.04 && dtSec < 3.0) {
-                        const rawVx = (pos.x - prev.x) / dtSec;
-                        const rawVy = (pos.y - prev.y) / dtSec;
-                        const oldVel = velocitiesRef.current[uId] ?? { vx: 0, vy: 0 };
-                        // EMA Smoothing: 70% data lama, 30% data baru
-                        smoothedVx = (oldVel.vx * 0.7) + (rawVx * 0.3);
-                        smoothedVy = (oldVel.vy * 0.7) + (rawVy * 0.3);
-                        // Clamping agar tidak melesat liar saat frame drop
-                        smoothedVx = Math.max(-400, Math.min(400, smoothedVx));
-                        smoothedVy = Math.max(-400, Math.min(400, smoothedVy));
-                        velocitiesRef.current[uId] = { vx: smoothedVx, vy: smoothedVy };
-                      }
-                    }
-                    previousPositionsRef.current[uId] = { x: pos.x, y: pos.y, time: nowTime };
-
-                    // Evaluasi Visibilitas (Fog of War & Line of Sight):
-                    // Unit terlihat jika dalam radius sensor dan garis pandang tidak terhalang gunung/pegunungan (isLineBlocked)
-                    const isVisible = !fogEnabled || currentEnemyUnitsState.some((enemy) => {
-                      const d = Math.hypot(enemy.x - pos.x, enemy.y - pos.y);
-                      const enemyVision = enemy.group === 'udara' ? 1400 : (enemy.kind === 'pertahananUdaraMobile' ? 1200 : 800);
-                      if (d > enemyVision) return false;
-                      // Unit udara bisa melihat tembus rintangan darat; unit darat dicek LoS
-                      if (enemy.group === 'udara') return true;
-                      return !isLineBlocked(enemy.x, enemy.y, pos.x, pos.y);
-                    });
-
-                    return {
-                      id: uId,
-                      kind: p.unit.kind,
-                      group: p.unit.group,
-                      label: p.unit.label,
-                      quantity: liveQty,
-                      x: pos.x,
-                      y: pos.y,
-                      vx: smoothedVx,
-                      vy: smoothedVy,
-                      is_enemy: false,
-                      is_visible: isVisible,
-                    };
-                  })
-                  .filter((u) => u.quantity > 0);
-
-                // Jika seluruh pasukan user atau seluruh pasukan musuh sudah hancur, hentikan serangan!
-                if (currentUserUnitsState.length === 0 || currentEnemyUnitsState.length === 0) {
-                  if (aiCombatIntervalRef.current) {
-                    clearInterval(aiCombatIntervalRef.current);
-                    aiCombatIntervalRef.current = null;
-                  }
-                  return;
-                }
-
-                // DOKTRIN PERTAHANAN WILAYAH:
-                // Pasukan reaksi AI hanya memburu dan menyerang unit user yang TELAH MENEROBOS / BERADA DI WILAYAH MUSUH dan TERLIHAT (FoW & LoS).
-                const intruderUserUnits = currentUserUnitsState.filter((u) => {
-                  const engine = movementEngineRef.current;
-                  const hasCrossed = engine?.check_boundary_cross
-                    ? engine.check_boundary_cross(u.x, u.y, 'land', playerSide)
-                    : u.x > 3160;
-                  return hasCrossed && (u.is_visible ?? true);
-                });
-
-                // Jika penyusup sudah habis/dihancurkan atau tidak ada lagi unit user di wilayah AI:
-                if (intruderUserUnits.length === 0) {
-                  currentEnemyUnitsState.forEach((enemy) => {
-                    if (movementFramesRef.current[enemy.id]) {
-                      cancelAnimationFrame(movementFramesRef.current[enemy.id]);
-                      delete movementFramesRef.current[enemy.id];
-                    }
-                  });
-                  return;
-                }
-
-                const pyDecision = await requestPythonAIWarCycle(currentEnemyUnitsState, intruderUserUnits, { max_x: BASE_W, max_y: BASE_H });
-                const engine = movementEngineRef.current;
-                if (!engine) return;
-
-                // 1. Jalankan pergerakan unit musuh sesuai keputusan Python AI
-                pyDecision.movements.forEach((mv, mvIdx) => {
-                  const uId = mv.unit_id;
-                  const liveEnemyQty = unitQuantitiesRef.current[uId] ?? 1;
-                  if (liveEnemyQty <= 0) return; // Unit hancur tidak bergerak lagi
-
-                  const curPos = positionsRef.current[uId];
-                  if (!curPos) return;
-
-                  // Jika AI memerintahkan 'hold' (berhenti membidik & menembak), jangan lanjutkan gerak
-                  if (mv.action === 'hold') {
-                    if (movementFramesRef.current[uId]) {
-                      cancelAnimationFrame(movementFramesRef.current[uId]);
-                      delete movementFramesRef.current[uId];
-                    }
-                    return;
-                  }
-
-                  // Cari jenis unit musuh untuk penyesuaian kecepatan
-                  const enemyUnitCandidate = uniqueEnemyMap.get(uId);
-                  const unitKind = enemyUnitCandidate?.unit.kind ?? 'tank';
-
-                  // 1. JITTER KECEPATAN: Beri variasi kecepatan ±10% agar unit tidak bergerak persis bersamaan
-                  const speedJitter = 0.9 + Math.random() * 0.2; // 0.9 s/d 1.1
-                  const jitteredSpeed = (mv.speed || 340) * speedJitter;
-
-                  // 2. ARRIVAL DISTANCE: Unit yang berbeda akan berhenti dengan jarak offset bertahap
-                  const arrivalOffset = 15 + (mvIdx * 12);
-                  const angleToTarget = Math.atan2(mv.target_y - curPos.y, mv.target_x - curPos.x);
-
-                  // FORMASI PINCERS RADIAL DENGAN ARRIVAL OFFSET
-                  const spreadAngle = angleToTarget + ((mvIdx - (pyDecision.movements.length - 1) / 2) * (Math.PI / 5));
-                  const radiusOffset = 80 + (mvIdx * 25) + arrivalOffset;
-                  const rawTargetX = mv.target_x + Math.cos(spreadAngle) * radiusOffset;
-                  const rawTargetY = mv.target_y + Math.sin(spreadAngle) * radiusOffset;
-
-                  // Pertahankan batas teritorial
-                  const safeTargetX = playerSide === 'attacker'
-                    ? Math.max(3220, rawTargetX)
-                    : Math.min(3100, rawTargetX);
-
-                  // Hindari danau dan rintangan dengan waypoint steering
-                  const waypoint = findClearWaypoint(curPos.x, curPos.y, safeTargetX, rawTargetY);
-
-                  const [tX, tY] = engine.prepare_unit_movement(
-                    waypoint.x, waypoint.y, BASE_W, BASE_H, 'darat',
-                  );
-
-                  // Batalkan animasi gerak lama jika ada
-                  if (movementFramesRef.current[uId]) {
-                    cancelAnimationFrame(movementFramesRef.current[uId]);
-                  }
-
-                  const qrfStart = { x: curPos.x, y: curPos.y };
-                  let qrfElapsed = 0;
-                  let qrfLast = performance.now();
-
-                  // Optimalisasi State Storm: Posisi per-frame HANYA disimpan di positionsRef (tanpa re-render React),
-                  // dan setPositions baru dipanggil setelah unit tiba di tujuan akhir.
-                  const animateQrf = (qrfNow: number) => {
-                    const dt = Math.min(qrfNow - qrfLast, 64);
-                    qrfLast = qrfNow;
-                    const [curX, curY, nextEl, qrfDone] = engine.step_unit_movement(
-                      qrfStart.x, qrfStart.y, tX, tY, qrfElapsed, dt, jitteredSpeed * 0.95, 'darat', unitKind,
-                    );
-                    qrfElapsed = nextEl;
-                    positionsRef.current[uId] = { x: curX, y: curY };
-
-                    if (qrfDone < 0.5) {
-                      movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
-                    } else {
-                      delete movementFramesRef.current[uId];
-                      // Sinkronisasi state React sekali saja saat unit tiba di target
-                      setPositions({ ...positionsRef.current });
-                    }
-                  };
-
-                  // STAGGERED MOVEMENT: Beri jeda 150ms * mvIdx agar unit tidak melangkah persis bersamaan
-                  setTimeout(() => {
-                    movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
-                  }, mvIdx * 150);
-                });
-
-
-
-                // 2. Tembakan AI ke pasukan user (dengan probabilitas akurasi hit chance & armor)
-                if (pyDecision.attacks.length > 0) {
-                  pyDecision.attacks.forEach((atk, attackIdx) => {
-                    const shooterQty = unitQuantitiesRef.current[atk.attacker_id] ?? 1;
-                    const targetQty = unitQuantitiesRef.current[atk.target_unit_id] ?? 1;
-                    if (shooterQty <= 0 || targetQty <= 0) return;
-
-                    const shooterPos = positionsRef.current[atk.attacker_id] ?? { x: aiResp.spawnOrigin.x, y: aiResp.spawnOrigin.y };
-
-                    // Line of sight check sebelum menembak (tembakan darat terhalang bukit/gunung)
-                    if (isLineBlocked(shooterPos.x, shooterPos.y, atk.target_x, atk.target_y)) {
-                      return; // Garis tembak terhalang gunung/danau
-                    }
-
-                    setTimeout(() => {
-                      const liveTargetQty = unitQuantitiesRef.current[atk.target_unit_id] ?? 1;
-                      const liveShooterQty = unitQuantitiesRef.current[atk.attacker_id] ?? 1;
-                      if (liveTargetQty <= 0 || liveShooterQty <= 0) return;
-
-                      // Simulasi Hit/Miss Realistis
-                      const hitRoll = Math.random();
-                      const isHit = hitRoll <= (atk.hit_chance ?? 0.85);
-
-                      const strikeId = `ai-strike-${atk.attacker_id}-${Date.now()}-${Math.random()}`;
-                      const newStrike: UnitAttackEffect = {
-                        id: strikeId,
-                        start: shooterPos,
-                        target: { x: atk.target_x, y: atk.target_y },
-                        weaponType: atk.weapon_type,
-                        travelMs: 650,
-                      };
-
-                      setAttackStrikes((prev) => [...prev, newStrike]);
-                      setTimeout(() => {
-                        setAttackStrikes((prev) => prev.filter((s) => s.id !== strikeId));
-                      }, 650);
-
-                      // Jika tembakan meleset (miss), proyektil meledak tanpa mengurangi pasukan user
-                      if (!isHit) return;
-
-                      // Pengurangan kuantitas pasukan User akibat tembakan AI (memperhitungkan armor penetration)
-                      const targetUserPlaced = baseOwnRef.current.find((p) => unitId(p.unit, 'own') === atk.target_unit_id);
-                      if (targetUserPlaced) {
-                        const currentQty = unitQuantitiesRef.current[atk.target_unit_id] ?? targetUserPlaced.unit.quantity;
-                        if (currentQty <= 0) return;
-
-                        // Armor factor berdasarkan tipe target
-                        const targetArmor = targetUserPlaced.unit.kind === 'tank' ? 1.6 : (targetUserPlaced.unit.kind === 'apcIfv' ? 1.2 : 0.9);
-                        const netPenetration = Math.max(0.4, (atk.penetration ?? 1.0) / targetArmor);
-
-                        const damageLoss = Math.max(
-                          1,
-                          Math.round(Math.min(currentQty, Math.max(8, (currentQty * 0.08 + atk.damage_potential * 12) * netPenetration)))
-                        );
-                        const remaining = Math.max(0, currentQty - damageLoss);
-
-                        unitQuantitiesRef.current[atk.target_unit_id] = remaining;
-                        setUnitQuantities((prev) => ({
-                          ...prev,
-                          [atk.target_unit_id]: remaining,
-                        }));
-
-                        setLossEvents((prev) => [
-                          ...prev,
-                          {
-                            id: `loss-user-${Date.now()}-${Math.random()}`,
-                            side: 'user',
-                            unitLabel: targetUserPlaced.unit.label,
-                            lostAmount: damageLoss,
-                            remainingAmount: remaining,
-                            attackerLabel: 'Pasukan Musuh (QRF)',
-                            timestamp: Date.now(),
-                          },
-                        ]);
-                      }
-                    }, attackIdx * 250);
-                  });
-                }
-              } finally {
-                isAiThinkingRef.current = false;
-              }
-            };
-
-
-            // Jalankan siklus pertama seketika
-            executeAiCombatCycle();
-
-            // Jalankan siklus tempur AI secara teratur
-            aiCombatIntervalRef.current = setInterval(executeAiCombatCycle, 1000);
           }
         }
 
@@ -1879,45 +2169,48 @@ export const TacticalMap = memo(function TacticalMap({
           setAttackStrikes((prev) => prev.filter((s) => s.id !== strikeId));
         }, travelMs);
 
-        // Pengurangan kuantitas pasukan Musuh akibat tembakan User
-        if (target) {
-          const targetEnemyPlaced = enemy.find((p) => p.unit.kind === target.kind && p.unit.group === target.group)
-            ?? enemy.find((p) => unitId(p.unit, 'enemy') === unitId(target, 'enemy'));
-          if (targetEnemyPlaced) {
-            const enemyId = unitId(targetEnemyPlaced.unit, 'enemy');
-            const currentQty = unitQuantitiesRef.current[enemyId] ?? targetEnemyPlaced.unit.quantity;
-            if (currentQty <= 0) return; // Musuh sudah hancur sepenuhnya
+        // Pengurangan kuantitas pasukan Musuh akibat tembakan User (dieksekusi saat proyektil tiba / impact)
+        setTimeout(() => {
+          if (target) {
+            const targetEnemyPlaced = enemy.find((p) => p.unit.kind === target.kind && p.unit.group === target.group)
+              ?? enemy.find((p) => unitId(p.unit, 'enemy') === unitId(target, 'enemy'));
+            if (targetEnemyPlaced) {
+              const enemyId = unitId(targetEnemyPlaced.unit, 'enemy');
+              const currentQty = unitQuantitiesRef.current[enemyId] ?? targetEnemyPlaced.unit.quantity;
+              if (currentQty <= 0) return; // Musuh sudah hancur sepenuhnya
 
-            const attackerStrength = userQty;
-            // Kerusakan proporsional terhadap ukuran pasukan user
-            const damageLoss = Math.max(
-              1,
-              Math.round(Math.min(currentQty, Math.max(15, currentQty * 0.15 + Math.sqrt(attackerStrength) * 18)))
-            );
-            const remaining = Math.max(0, currentQty - damageLoss);
+              const attackerStrength = userQty;
+              // Kerusakan proporsional terhadap ukuran pasukan user
+              const damageLoss = Math.max(
+                1,
+                Math.round(Math.min(currentQty, Math.max(15, currentQty * 0.15 + Math.sqrt(attackerStrength) * 18)))
+              );
+              const remaining = Math.max(0, currentQty - damageLoss);
 
-            unitQuantitiesRef.current[enemyId] = remaining;
-            setUnitQuantities((prev) => ({
-              ...prev,
-              [enemyId]: remaining,
-            }));
+              unitQuantitiesRef.current[enemyId] = remaining;
+              setUnitQuantities((prev) => ({
+                ...prev,
+                [enemyId]: remaining,
+              }));
 
-            setLossEvents((prev) => [
-              ...prev,
-              {
-                id: `loss-enemy-${Date.now()}-${Math.random()}`,
-                side: 'enemy',
-                unitLabel: targetEnemyPlaced.unit.label,
-                lostAmount: damageLoss,
-                remainingAmount: remaining,
-                attackerLabel: attacker.unit.label,
-                timestamp: Date.now(),
-              },
-            ]);
+              setLossEvents((prev) => [
+                ...prev,
+                {
+                  id: `loss-enemy-${Date.now()}-${Math.random()}`,
+                  side: 'enemy',
+                  unitLabel: targetEnemyPlaced.unit.label,
+                  lostAmount: damageLoss,
+                  remainingAmount: remaining,
+                  attackerLabel: attacker.unit.label,
+                  timestamp: Date.now(),
+                },
+              ]);
+            }
           }
-        }
+        }, travelMs);
       }
       onAttack?.(attacker.unit, target, inRange);
+
     };
     const engine = movementEngineRef.current;
     if (engine) {
@@ -1974,7 +2267,13 @@ export const TacticalMap = memo(function TacticalMap({
         <style>{`${MAP_CSS}\n${COMBAT_EFFECT_CSS}`}</style>
         <Defs accent={accent} terrainType={terrainType} />
         <TerrainLayer accent={accent} water={water} terrainType={terrainType} />
-        <BasesLayer accent={accent} simPhase={simPhase} playerSide={playerSide} onFacilityClick={onFacilityClick} />
+        <BasesLayer
+          accent={accent}
+          simPhase={simPhase}
+          playerSide={playerSide}
+          captureStatus={captureStatus}
+          onFacilityClick={onFacilityClick}
+        />
         {fogEnabled && <FogLayer sources={sources} active={fogActive} />}
         <UnitsLayer
           accent={accent}

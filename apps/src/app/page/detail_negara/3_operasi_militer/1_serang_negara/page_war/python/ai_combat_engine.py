@@ -397,9 +397,8 @@ def compute_ai_war_cycle(
     active_vanguard_ids = {m.unit_id for m in movements if m.action != "hold"}
 
     for enemy in enemy_units:
-        # Hanya unit Vanguard yang aktif menyerang; barisan cadangan hold-fire untuk menghindari baku tembak prematur
-        if enemy.id not in active_vanguard_ids:
-            continue
+        # Unit diizinkan menembak jika berada dalam jangkauan tembak (baik sedang manuver maupun hold/stand-off)
+
 
         is_artillery = enemy.kind in ("artileriBerat", "peluncurRoket")
         attack_range = ATTACK_RANGES.get(enemy.kind, 750.0)

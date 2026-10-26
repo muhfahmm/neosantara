@@ -24,6 +24,7 @@ import UnitSelectionModal, {
 } from './UnitSelectionModal';
 import AttackControls, { type UnitCommandMode } from './AttackControls';
 import type { WarUnit } from './units/warUnitComposition';
+import { generateAiUnitSelection } from './units/aiUnitDoctrine';
 
 export type { TerrainType };
 
@@ -114,10 +115,31 @@ export default function LandWarMap({
     () => getWarUnitComposition(targetDetail, deploymentConfig, isUserDefender),
     [targetDetail, deploymentConfig, isUserDefender],
   );
-  const [unitSelections, setUnitSelections] = useState<Record<FacilitySide, UnitSelection>>({
-    left: {},
-    right: {},
+  // Tentukan sisi AI: jika user defender maka AI adalah attacker ('left'), sebaliknya AI adalah defender ('right')
+  const aiSide: FacilitySide = isUserDefender ? 'left' : 'right';
+  const playerSideFacility: FacilitySide = isUserDefender ? 'right' : 'left';
+
+  const [unitSelections, setUnitSelections] = useState<Record<FacilitySide, UnitSelection>>(() => {
+    const aiInitialUnits = isUserDefender ? attackerUnits : defenderUnits;
+    const aiSelection = generateAiUnitSelection(aiInitialUnits);
+    return {
+      [playerSideFacility]: {},
+      [aiSide]: aiSelection,
+    } as Record<FacilitySide, UnitSelection>;
   });
+
+  // Sinkronkan formasi AI jika komposisi unit AI berubah
+  useEffect(() => {
+    const aiPool = isUserDefender ? attackerUnits : defenderUnits;
+    setUnitSelections((prev) => {
+      // Jika AI sudah punya formasi terisi, jangan timpa kecuali kosong
+      if (Object.keys(prev[aiSide] ?? {}).length > 0) return prev;
+      return {
+        ...prev,
+        [aiSide]: generateAiUnitSelection(aiPool),
+      };
+    });
+  }, [aiSide, isUserDefender, attackerUnits, defenderUnits]);
   const [selectedFacility, setSelectedFacility] = useState<{
     facility: UnitFacility;
     side: FacilitySide;
@@ -566,8 +588,8 @@ export default function LandWarMap({
             fogEnabled={false}
             commandMode={commandMode}
             onFacilityClick={(facility, side) => {
-              // Hanya buka modal jika fasilitas tersebut milik pihak user ('left')
-              if (side !== 'left') return;
+              // Hanya buka modal jika fasilitas tersebut milik pihak user
+              if (side !== playerSideFacility) return;
               setSelectedFacility({ facility, side });
             }}
             onUnitSelectionChange={(unit) => {

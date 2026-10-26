@@ -121,8 +121,8 @@ export default function UnitMarker({
       <svg
         x={x - 22}
         y={y - 16}
-        width="48"
-        height="32"
+        width="72"
+        height="48"
         viewBox="0 0 48 32"
         overflow="visible"
       >
