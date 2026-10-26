@@ -4,7 +4,7 @@ import React, { useCallback, useRef, useState, useEffect, useMemo } from 'react'
 import {
   Swords, Zap, X, Map as MapIcon, Crosshair, Shield,
   Navigation, Waves, Mountain, Building2, Target, Trees, Loader2, Info as InfoIcon,
-  ZoomIn, ZoomOut, Maximize2, Compass,
+  Compass,
 } from 'lucide-react';
 import {
   TacticalMap,
@@ -12,7 +12,7 @@ import {
   clamp, cellLabel, fitView, clampView, viewScale,
   type ViewBox, type SimPhase, type TerrainType,
 } from './TacticalMap';
-import { attachMapSnapshot, flushViewportPreview, loadRustViewport, panViewport, scheduleViewportPreview, zoomViewport } from './warMapViewport';
+import { attachMapSnapshot, flushViewportPreview, loadRustViewport, panViewport, scheduleViewportPreview } from './warMapViewport';
 import {
   formatUnitQuantity,
   getWarUnitComposition,
@@ -245,23 +245,9 @@ export default function LandWarMap({
     scheduleViewportPreview(
       nextView, viewportSvgRef, viewRef, pendingViewRef, viewFrameRef, commitAfterIdle,
     );
-    if (!commitAfterIdle) return;
     if (commitTimerRef.current !== null) clearTimeout(commitTimerRef.current);
-    commitTimerRef.current = setTimeout(commitView, 350);
+    commitTimerRef.current = setTimeout(commitView, 600);
   }, [commitView]);
-
-  const snapshotRef = useRef<ReturnType<typeof attachMapSnapshot> | null>(null);
-  useEffect(() => {
-    const svg = viewportSvgRef.current;
-    if (!svg) return;
-    const snapshot = attachMapSnapshot(svg, { x: 0, y: -BASE_H / 2, w: BASE_W, h: BASE_H * 2 });
-    snapshotRef.current = snapshot;
-    snapshot.refresh(800);
-    return () => { snapshot.dispose(); snapshotRef.current = null; };
-  }, []);
-  useEffect(() => {
-    snapshotRef.current?.refresh(1200);
-  }, [terrainType, simPhase, displayedAttackerUnits, displayedDefenderUnits, playerSide]);
 
   useEffect(() => {
     let mounted = true;
@@ -318,45 +304,6 @@ export default function LandWarMap({
     return () => ro.disconnect();
   }, [commitView, scheduleView]);
 
-  const zoomAt = useCallback((clientX: number, clientY: number, factor: number) => {
-    const el = mapRef.current;
-    if (!el) return;
-    const box = el.getBoundingClientRect();
-    if (!box.width || !box.height) return;
-    const aspect = box.width / box.height;
-    const nextView = zoomViewport(viewRef.current, {
-      boxWidth: box.width,
-      boxHeight: box.height,
-      minWidth: MAX_VIEW_W,
-      maxWidth: getMinViewW(aspect),
-      worldWidth: BASE_W,
-      worldHeight: MAP_MAX_Y - MAP_MIN_Y,
-    }, clientX - box.left, clientY - box.top, factor, rustViewportRef.current);
-    scheduleView(clampView(nextView, aspect));
-  }, [scheduleView]);
-
-  const zoomCenter = useCallback((factor: number) => {
-    const el = mapRef.current;
-    if (!el) return;
-    const box = el.getBoundingClientRect();
-    zoomAt(box.left + box.width / 2, box.top + box.height / 2, factor);
-  }, [zoomAt]);
-
-  const resetZoom = useCallback(() => scheduleView(fitView(arRef.current)), [scheduleView]);
-
-  // Listener native (passive: false) supaya preventDefault benar-benar mencegah scroll halaman
-  useEffect(() => {
-    const el = mapRef.current;
-    if (!el) return;
-    const onWheel = (e: WheelEvent) => {
-      if (isSimulating) return;
-      e.preventDefault();
-      zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? 1.15 : 1 / 1.15);
-    };
-    el.addEventListener('wheel', onWheel, { passive: false });
-    return () => el.removeEventListener('wheel', onWheel);
-  }, [isSimulating, zoomAt]);
-
   const updateHud = useCallback((clientX: number, clientY: number, box: DOMRect) => {
     const current = viewRef.current;
     const { scale, ox, oy } = viewScale(box, current);
@@ -406,8 +353,8 @@ export default function LandWarMap({
           rustViewportRef.current,
         );
         scheduleView(clampView(nextView, aspect), false);
-        return;
       }
+      return;
     }
 
     updateHud(e.clientX, e.clientY, box);
@@ -456,6 +403,8 @@ export default function LandWarMap({
         .nw-flow-slow{animation:nw-flow 4.2s linear infinite}
         .nw-flicker{animation:nw-flicker 3s ease-in-out infinite}
         .nw-tz{cursor:crosshair;}
+        .map-navigating,.map-navigating *{animation-play-state:paused!important;text-rendering:optimizeSpeed;shape-rendering:optimizeSpeed}
+        .map-navigating .nw-ping,.map-navigating .nw-ping-slow,.map-navigating .nw-pulse,.map-navigating .nw-smoke,.map-navigating .nw-drift,.map-navigating .nw-flicker{display:none!important}
         @keyframes nw-ping{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.4);opacity:0}}
         @keyframes nw-ping-slow{0%{transform:scale(.7);opacity:.7}100%{transform:scale(2.6);opacity:0}}
         @keyframes nw-pulse{0%,100%{opacity:.6}50%{opacity:1}}
@@ -530,7 +479,7 @@ export default function LandWarMap({
             <div className="my-1 h-px bg-white/10" />
             <div className="text-[9px] leading-relaxed text-gray-400">
               <span className="font-black" style={{ color: accent }}>Visibilitas:</span> seluruh medan perang terlihat.<br />
-              <span className="font-black" style={{ color: accent }}>Kontrol peta:</span> scroll = zoom, drag = geser, klik = tandai sel koordinat, tombol +/− dan tombol maximize untuk kontrol zoom.
+              <span className="font-black" style={{ color: accent }}>Kontrol peta:</span> drag = geser, klik = tandai sel koordinat.
             </div>
           </div>
         </div>
@@ -608,25 +557,6 @@ export default function LandWarMap({
             <span className="absolute top-0.5 text-[8px] font-black tracking-widest">N</span>
           </div>
 
-          {/* KONTROL ZOOM */}
-          <div className="absolute right-4 top-4 z-20 flex flex-col gap-1.5" onPointerDown={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
-            <button onClick={() => zoomCenter(1.5)} disabled={isSimulating} aria-label="Zoom in"
-              className="flex h-8 w-8 items-center justify-center rounded-md border bg-black/50 transition-colors hover:bg-black/70 disabled:opacity-40"
-              style={{ borderColor: `${accent}4D`, color: accent }}>
-              <ZoomIn className="h-4 w-4" />
-            </button>
-            <button onClick={() => zoomCenter(1 / 1.5)} disabled={isSimulating} aria-label="Zoom out"
-              className="flex h-8 w-8 items-center justify-center rounded-md border bg-black/50 transition-colors hover:bg-black/70 disabled:opacity-40"
-              style={{ borderColor: `${accent}4D`, color: accent }}>
-              <ZoomOut className="h-4 w-4" />
-            </button>
-            <button onClick={resetZoom} disabled={isSimulating} aria-label="Reset zoom"
-              className="flex h-8 w-8 items-center justify-center rounded-md border bg-black/50 transition-colors hover:bg-black/70 disabled:opacity-40"
-              style={{ borderColor: `${accent}4D`, color: accent }}>
-              <Maximize2 className="h-4 w-4" />
-            </button>
-          </div>
-
           <Corners c={isSimulating ? '#f43f5e' : accent} />
 
           {/* TOOLTIP */}
@@ -657,7 +587,6 @@ export default function LandWarMap({
           <div className="pointer-events-none absolute bottom-5 left-6 z-20 flex items-center gap-4 rounded bg-black/60 px-2 py-1 font-mono text-[9px]" style={{ color: isSimulating ? '#f43f5e' : accent }}>
             <span ref={coordRef}>X 0000  Y 0000  GRID A-1</span>
             <span className="flex items-center gap-1"><Navigation size={10} /> N 45°</span>
-            <span className="opacity-60">ZOOM {(BASE_W / vb.w).toFixed(1)}×</span>
           </div>
         </div>
       </div>

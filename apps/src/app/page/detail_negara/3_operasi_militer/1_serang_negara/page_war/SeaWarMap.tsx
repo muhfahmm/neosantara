@@ -2,8 +2,8 @@
 
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Anchor, Building2, Compass, Crosshair, Info as InfoIcon, Loader2, Map as MapIcon, Maximize2,
-  Mountain, Navigation, Radio, Shield, Ship, Swords, Target, Trees, Waves, X, Zap, ZoomIn, ZoomOut,
+  Anchor, Building2, Compass, Crosshair, Info as InfoIcon, Loader2, Map as MapIcon,
+  Mountain, Navigation, Radio, Shield, Ship, Swords, Target, Trees, Waves, X, Zap,
 } from 'lucide-react';
 import UnitMarker from './units/unitMarker';
 import AttackControls, { type UnitCommandMode } from './AttackControls';
@@ -26,7 +26,6 @@ import {
   panViewport,
   prepareUnitAttack,
   scheduleViewportPreview,
-  zoomViewport,
 } from './warMapViewport';
 
 export type { TerrainType };
@@ -670,8 +669,12 @@ const Fleet = memo(function Fleet({
 });
 
 const NW_CSS = `
-.map-navigating,.map-navigating *{animation-play-state:paused!important}
+.map-navigating,.map-navigating *{animation-play-state:paused!important;text-rendering:optimizeSpeed;shape-rendering:optimizeSpeed;pointer-events:none!important}
+.map-navigating .nw-ping,.map-navigating .nw-pulse,.map-navigating .nw-smoke,.map-navigating .nw-drift,.map-navigating .nw-flicker,.map-navigating .battle-scenery-detail{display:none!important}
+.map-navigating [filter]{filter:none!important}
+.map-navigating [mask]{mask:none!important}
 .battle-active .battle-scenery-detail{display:none!important}
+.battle-scenery-detail{contain:content;will-change:auto}
 .nw-a{transform-box:fill-box;transform-origin:center}
 .nw-ping{animation:nw-ping 2.2s ease-out infinite}
 .nw-pulse{animation:nw-pulse 1.2s ease-in-out infinite}
@@ -893,6 +896,7 @@ export default function SeaWarMap({
         deltaMs,
         speed,
         group,
+        placedUnit.unit.kind,
       );
         elapsedMs = nextElapsed;
         const nextPosition = { x, y };
@@ -1048,23 +1052,9 @@ export default function SeaWarMap({
     scheduleViewportPreview(
       nextView, viewportSvgRef, viewRef, pendingViewRef, viewFrameRef, commitAfterIdle,
     );
-    if (!commitAfterIdle) return;
     if (commitTimerRef.current !== null) clearTimeout(commitTimerRef.current);
-    commitTimerRef.current = setTimeout(commitView, 350);
+    commitTimerRef.current = setTimeout(commitView, 600);
   }, [commitView]);
-
-  const snapshotRef = useRef<ReturnType<typeof attachMapSnapshot> | null>(null);
-  useEffect(() => {
-    const svg = viewportSvgRef.current;
-    if (!svg) return;
-    const snapshot = attachMapSnapshot(svg, { x: 0, y: -MAP_H / 2, w: MAP_W, h: MAP_H * 2 });
-    snapshotRef.current = snapshot;
-    snapshot.refresh(800);
-    return () => { snapshot.dispose(); snapshotRef.current = null; };
-  }, []);
-  useEffect(() => {
-    snapshotRef.current?.refresh(1200);
-  }, [terrainType, simPhase, ownUnits, enemyUnits]);
 
   useEffect(() => {
     let mounted = true;
@@ -1123,45 +1113,6 @@ export default function SeaWarMap({
     return () => ro.disconnect();
   }, [commitView, scheduleView]);
 
-  const zoomAt = useCallback((clientX: number, clientY: number, factor: number) => {
-    const el = mapRef.current;
-    if (!el) return;
-    const box = el.getBoundingClientRect();
-    if (!box.width || !box.height) return;
-    const ar = box.width / box.height;
-    const nextView = zoomViewport(viewRef.current, {
-      boxWidth: box.width,
-      boxHeight: box.height,
-      minWidth: MIN_ZOOM_W,
-      maxWidth: maxViewW(ar),
-      worldWidth: MAP_W,
-      worldHeight: MAP_H,
-    }, clientX - box.left, clientY - box.top, factor, rustViewportRef.current);
-    scheduleView(clampView(nextView, ar));
-  }, [scheduleView]);
-
-  const zoomCenter = useCallback((factor: number) => {
-    const el = mapRef.current;
-    if (!el) return;
-    const box = el.getBoundingClientRect();
-    zoomAt(box.left + box.width / 2, box.top + box.height / 2, factor);
-  }, [zoomAt]);
-
-  const resetZoom = useCallback(() => scheduleView(fitView(arRef.current)), [scheduleView]);
-
-  // Listener native (passive: false) agar preventDefault benar-benar mencegah scroll halaman
-  useEffect(() => {
-    const el = mapRef.current;
-    if (!el) return;
-    const onWheel = (e: WheelEvent) => {
-      if (isSimulating) return;
-      e.preventDefault();
-      zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? 1.15 : 1 / 1.15);
-    };
-    el.addEventListener('wheel', onWheel, { passive: false });
-    return () => el.removeEventListener('wheel', onWheel);
-  }, [isSimulating, zoomAt]);
-
   const updateHud = useCallback((clientX: number, clientY: number, box: DOMRect) => {
     const current = viewRef.current;
     const scale = box.width / current.w;
@@ -1213,8 +1164,8 @@ export default function SeaWarMap({
           rustViewportRef.current,
         );
         scheduleView(clampView(nextView, ar), false);
-        return;
       }
+      return;
     }
 
     updateHud(e.clientX, e.clientY, box);
@@ -1322,7 +1273,7 @@ export default function SeaWarMap({
             <div className="flex items-center gap-2"><span className="h-3 w-3 rotate-45 border border-rose-500" /> Armada & base musuh (kanan / timur)</div>
             <div className="my-1 h-px bg-white/10" />
             <div className="text-[9px] leading-relaxed text-gray-400">
-              <span className="font-black" style={{ color: ACCENT }}>Kontrol peta:</span> scroll = zoom, drag = geser, klik = tandai sel koordinat, tombol +/− dan tombol maximize untuk kontrol zoom.
+              <span className="font-black" style={{ color: ACCENT }}>Kontrol peta:</span> drag = geser, klik = tandai sel koordinat.
             </div>
           </div>
         </div>
@@ -1364,12 +1315,29 @@ export default function SeaWarMap({
                 <stop offset="0.5" stopColor="#082f49" />
                 <stop offset="1" stopColor="#041c31" />
               </linearGradient>
+              <pattern id="sw-coordinate-grid" width={MAP_W / 10} height={MAP_H / 10} patternUnits="userSpaceOnUse">
+                <path
+                  d={`M ${MAP_W / 20} ${MAP_H / 20 - 50} V ${MAP_H / 20 + 50} M ${MAP_W / 20 - 50} ${MAP_H / 20} H ${MAP_W / 20 + 50}`}
+                  fill="none"
+                  stroke="#050505"
+                  strokeOpacity="0.82"
+                  strokeWidth="10"
+                />
+              </pattern>
             </defs>
 
             {/* URUTAN: tanah → laut → fitur darat → objektif → unit → atmosfer */}
             <GroundLayer terrainType={terrainType} />
             <SeaLayer terrainType={terrainType} />
             <LandFeatures terrainType={terrainType} />
+            <rect
+              x="0"
+              y="0"
+              width={MAP_W}
+              height={MAP_H}
+              fill="url(#sw-coordinate-grid)"
+              pointerEvents="none"
+            />
 
             {/* OBJEKTIF */}
             <g data-terrain="objective">
@@ -1506,21 +1474,6 @@ export default function SeaWarMap({
             <span className="absolute top-0.5 text-[8px] font-black tracking-widest">N</span>
           </div>
 
-          {/* KONTROL ZOOM */}
-          <div className="absolute right-4 top-4 z-20 flex flex-col gap-1.5" onPointerDown={(e) => e.stopPropagation()} onDoubleClick={(e) => e.stopPropagation()}>
-            {[
-              { label: 'Zoom in', Icon: ZoomIn, fn: () => zoomCenter(1.5) },
-              { label: 'Zoom out', Icon: ZoomOut, fn: () => zoomCenter(1 / 1.5) },
-              { label: 'Reset zoom', Icon: Maximize2, fn: resetZoom },
-            ].map(({ label, Icon, fn }) => (
-              <button key={label} onClick={fn} disabled={isSimulating} aria-label={label}
-                className="flex h-8 w-8 items-center justify-center rounded-md border bg-black/50 transition-colors hover:bg-black/70 disabled:opacity-40"
-                style={{ borderColor: `${ACCENT}4D`, color: ACCENT }}>
-                <Icon className="h-4 w-4" />
-              </button>
-            ))}
-          </div>
-
           <Corners c={isSimulating ? '#f43f5e' : ACCENT} />
 
           {/* TOOLTIP */}
@@ -1551,7 +1504,6 @@ export default function SeaWarMap({
           <div className="pointer-events-none absolute bottom-5 left-6 z-20 flex items-center gap-4 rounded bg-black/60 px-2 py-1 font-mono text-[9px]" style={{ color: isSimulating ? '#f43f5e' : ACCENT }}>
             <span ref={coordRef}>X 0000  Y 0000  GRID A-1</span>
             <span className="flex items-center gap-1"><Navigation size={10} /> N 45°</span>
-            <span className="opacity-60">ZOOM {(MAP_W / vb.w).toFixed(1)}×</span>
             {selCell && (() => {
               const [c, r] = selCell.split(',').map(Number);
               return <span className="flex items-center gap-1 text-amber-200"><Radio size={10} /> TANDA {cellLabel(c, r)}</span>;

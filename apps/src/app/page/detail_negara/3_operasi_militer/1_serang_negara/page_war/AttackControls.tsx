@@ -80,7 +80,7 @@ export default function AttackControls({
         <span className="w-full px-1 font-mono text-[10px] text-rose-200" aria-live="polite">
           {attackRadius === null
             ? 'Menghitung jangkauan serang...'
-            : `Radius serang: ${Math.round(attackRadius).toLocaleString('id-ID')} unit peta · klik kanan untuk menembak`}
+            : `Radius serang: ${Math.round(attackRadius).toLocaleString('id-ID')} unit peta · klik unit musuh atau klik kanan untuk menembak`}
         </span>
       )}
     </div>

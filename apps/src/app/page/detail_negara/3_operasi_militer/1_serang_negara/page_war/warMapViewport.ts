@@ -33,7 +33,7 @@ interface RustViewportModule {
   ) => Float64Array;
   step_unit_movement: (
     startX: number, startY: number, targetX: number, targetY: number,
-    elapsedMs: number, deltaMs: number, speed: number, group: string, kind?: string,
+    elapsedMs: number, deltaMs: number, speed: number, group: string, kind: string,
   ) => Float64Array;
 
   calculate_attack_radius: (strength: number, group: string, kind: string) => number;
@@ -137,20 +137,20 @@ export function prepareUnitAttack(
 let rustModulePromise: Promise<RustViewportModule> | null = null;
 
 export function loadRustViewport(): Promise<RustViewportModule> {
-  if (!rustModulePromise) {
-    rustModulePromise = import("../../../../../../wasm/war-map-viewport/war_map_viewport")
-      .then(async (module) => {
-        await module.default();
-        loadedRust = module as unknown as RustViewportModule;
-        return module;
-      })
-      .catch((error: unknown) => {
-        rustModulePromise = null;
-        throw error;
-      });
-  }
+  if (rustModulePromise) return rustModulePromise;
 
-  return rustModulePromise;
+  const loading = import("../../../../../../wasm/war-map-viewport/war_map_viewport")
+    .then(async (module) => {
+      await module.default();
+      loadedRust = module as unknown as RustViewportModule;
+      return module;
+    })
+    .catch((error: unknown) => {
+      rustModulePromise = null;
+      throw error;
+    });
+  rustModulePromise = loading;
+  return loading;
 }
 
 function clampViewport(
@@ -239,34 +239,16 @@ export function scheduleViewportPreview<T extends Viewport, E extends SVGSVGElem
   smooth = false,
 ): void {
   const element = elementRef.current;
-  if (element && !shownViews.has(element)) shownViews.set(element, { ...viewRef.current });
   viewRef.current = nextView;
   pendingRef.current = nextView;
   element?.classList.add('map-navigating');
   if (frameRef.current !== null) return;
 
-  let last = performance.now();
-  const tick = (now: number) => {
+  const tick = () => {
     frameRef.current = null;
     const el = elementRef.current;
     const target = pendingRef.current;
     if (!el || !target) return;
-
-    const rust = loadedRust;
-    const shown = shownViews.get(el);
-    if (smooth && rust && shown) {
-      const dt = Math.min(now - last, 64);
-      last = now;
-      const [x, y, w, h, done] = rust.smooth_view(
-        shown.x, shown.y, shown.w, shown.h, target.x, target.y, target.w, target.h, dt, 70,
-      );
-      const stepped = { x, y, w, h };
-      shownViews.set(el, stepped);
-      applyViewportViewBox(el, stepped);
-      if (done < 0.5) frameRef.current = requestAnimationFrame(tick);
-      return;
-    }
-    shownViews.set(el, { x: target.x, y: target.y, w: target.w, h: target.h });
     applyViewportViewBox(el, target);
   };
   frameRef.current = requestAnimationFrame(tick);
@@ -297,86 +279,20 @@ export function flushViewportPreview<T extends Viewport, E extends SVGSVGElement
 }
 
 function applyViewportViewBox(element: SVGSVGElement, view: Viewport, _final = false): void {
-  element.setAttribute('viewBox', `${view.x} ${view.y} ${view.w} ${view.h}`);
+  const x = Math.round(view.x * 10) / 10;
+  const y = Math.round(view.y * 10) / 10;
+  const w = Math.round(view.w * 10) / 10;
+  const h = Math.round(view.h * 10) / 10;
+  const nextVal = `${x} ${y} ${w} ${h}`;
+  if (element.getAttribute('viewBox') !== nextVal) {
+    element.setAttribute('viewBox', nextVal);
+  }
 }
 
-/* ───────── Snapshot bitmap ───────── */
-interface Snap {
-  img: CanvasImageSource | null;
-  canvas: HTMLCanvasElement;
-  world: Viewport;
-  resolution: number;
-  ready: boolean;
-  token: number;
-  timer: ReturnType<typeof setTimeout> | null;
-}
-const snaps = new WeakMap<SVGSVGElement, Snap>();
-
-function drawSnapshot(_svg: SVGSVGElement, _view: Viewport): boolean {
-  return false;
-}
-
-function endSnapshot(svg: SVGSVGElement): void {
-  const s = snaps.get(svg);
-  if (s) s.canvas.style.display = 'none';
-  svg.style.opacity = '';
-}
-
-/** Membuat snapshot gambar dari seluruh dunia peta agar pan/zoom cukup menggambar ulang satu bitmap. */
-export function attachMapSnapshot(svg: SVGSVGElement, world: Viewport, maxPx = 3072) {
-  const canvas = document.createElement('canvas');
-  canvas.setAttribute('aria-hidden', 'true');
-  canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:none';
-  svg.after(canvas);
-  const snap: Snap = { img: null, canvas, world, resolution: 0, ready: false, token: 0, timer: null };
-  snaps.set(svg, snap);
-
-  const build = () => {
-    if (svg.classList.contains('map-navigating')) { snap.timer = setTimeout(build, 500); return; }
-    const token = ++snap.token;
-    const k = maxPx / Math.max(world.w, world.h);
-    const clone = svg.cloneNode(true) as SVGSVGElement;
-    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    clone.setAttribute('viewBox', `${world.x} ${world.y} ${world.w} ${world.h}`);
-    clone.setAttribute('width', String(Math.round(world.w * k)));
-    clone.setAttribute('height', String(Math.round(world.h * k)));
-    clone.removeAttribute('class');
-    clone.removeAttribute('style');
-    const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(clone)], { type: 'image/svg+xml;charset=utf-8' }));
-    const img = new Image();
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      if (token !== snap.token) return;
-      // Rasterisasi SATU KALI ke bitmap tetap; SVG-image langsung akan di-raster ulang tiap skala berubah.
-      const raster = document.createElement('canvas');
-      raster.width = Math.round(world.w * k);
-      raster.height = Math.round(world.h * k);
-      const rctx = raster.getContext('2d');
-      if (!rctx) return;
-      rctx.drawImage(img, 0, 0, raster.width, raster.height);
-      snap.img = raster;
-      snap.resolution = raster.width / world.w;
-      snap.ready = true;
-    };
-    img.onerror = () => URL.revokeObjectURL(url);
-    img.src = url;
-  };
-
+/** Snapshot helper no-op (menghilangkan overhead XMLSerializer dan DOM cloning pada SVG) */
+export function attachMapSnapshot(_svg: SVGSVGElement, _world: Viewport, _maxPx = 3072) {
   return {
-    refresh(delay = 800) {
-      snap.ready = false;
-      // Konten berubah: tampilkan SVG hidup sampai snapshot baru siap (keepView dipertahankan untuk digambar ulang).
-      endSnapshot(svg);
-      snap.token++;
-      if (snap.timer !== null) clearTimeout(snap.timer);
-      snap.timer = setTimeout(build, delay);
-    },
-    dispose() {
-      snap.token++;
-      if (snap.timer !== null) clearTimeout(snap.timer);
-      snaps.delete(svg);
-      endSnapshot(svg);
-      canvas.remove();
-    },
+    refresh(_delay = 800) {},
+    dispose() {},
   };
 }

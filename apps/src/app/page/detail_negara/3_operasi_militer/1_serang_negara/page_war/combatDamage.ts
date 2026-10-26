@@ -9,6 +9,8 @@ export interface UnitDamageProfile {
 
 const profiles = damageProfileData.units as Record<string, UnitDamageProfile>;
 const targetArmor = damageProfileData.target_armor as Record<string, number>;
+const INFANTRY_CASUALTY_MULTIPLIER = 8;
+const MIN_INFANTRY_LOSS_RATIO_PER_HIT = 0.02;
 
 export function getUnitDamageProfile(kind: string): UnitDamageProfile {
   return profiles[kind] ?? {
@@ -44,7 +46,13 @@ export function calculateUnitDamage(
   const safePotential = Number.isFinite(damagePotential) ? Math.max(0, damagePotential) : 0;
   const safePenetration = Number.isFinite(penetration) ? Math.max(0, penetration) : 0;
   const armor = targetArmor[targetKind] ?? 1;
-  const casualties = Math.round((safePotential * safePenetration) / armor);
+  const baseCasualties = Math.round((safePotential * safePenetration) / armor);
+  const casualties = targetKind === 'infanteri'
+    ? Math.max(
+        baseCasualties * INFANTRY_CASUALTY_MULTIPLIER,
+        Math.ceil(remaining * MIN_INFANTRY_LOSS_RATIO_PER_HIT),
+      )
+    : baseCasualties;
   return Math.min(remaining, Math.max(1, casualties));
 }
 

@@ -101,19 +101,10 @@ pub fn step_unit_movement(
     }
 
     let progress = elapsed / duration_ms;
-    let eased = progress * progress * (3.0 - 2.0 * progress);
-    let arc = match group {
-        "udara" => distance * 0.12 * (std::f64::consts::PI * progress).sin(),
-        "laut" => distance * 0.035 * (std::f64::consts::PI * progress).sin(),
-        // Unit darat: Garis lurus militer yang stabil dan realistis (tanpa kurva roller coaster)
-        _ => distance * 0.003 * ((progress * 8.0).sin()),
-    };
-    let perpendicular_x = -(ty - sy) / distance;
-    let perpendicular_y = (tx - sx) / distance;
 
     vec![
-        sx + (tx - sx) * eased + perpendicular_x * arc,
-        sy + (ty - sy) * eased + perpendicular_y * arc,
+        sx + (tx - sx) * progress,
+        sy + (ty - sy) * progress,
         elapsed,
         0.0,
     ]
@@ -154,7 +145,22 @@ mod tests {
     fn movement_finishes_at_the_requested_destination() {
         let result = step_unit_movement(20.0, 30.0, 380.0, 30.0, 0.0, 5000.0, 360.0, "darat", "tank");
 
-        assert_eq!(result, vec![380.0, 30.0, 1000.0, 1.0]);
+        assert_eq!(result, vec![380.0, 30.0, 360.0 / 340.0 * 1000.0, 1.0]);
+    }
+
+    #[test]
+    fn all_unit_groups_follow_a_straight_line() {
+        for (group, kind) in [
+            ("darat", "tank"),
+            ("udara", "jetTempurSiluman"),
+            ("laut", "destroyer"),
+        ] {
+            let result = step_unit_movement(
+                20.0, 40.0, 520.0, 240.0, 1250.0, 0.0, 100.0, group, kind,
+            );
+
+            let cross_product = (result[0] - 20.0) * 200.0 - (result[1] - 40.0) * 500.0;
+            assert!(cross_product.abs() < 1e-9, "{group} left the straight path");
+        }
     }
 }
-

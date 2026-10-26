@@ -401,33 +401,6 @@ export function getTerrainSpeedMultiplier(x: number, y: number): number {
   return 1.0;
 }
 
-export function findClearWaypoint(startX: number, startY: number, targetX: number, targetY: number): { x: number; y: number } {
-  // Cek apakah lintasan langsung terhalang danau
-  let blockedLake: (typeof LAKES)[0] | null = null;
-  const steps = 10;
-  for (let i = 1; i <= steps; i++) {
-    const t = i / steps;
-    const px = startX + (targetX - startX) * t;
-    const py = startY + (targetY - startY) * t;
-    const lk = LAKES.find((l) => ((px - l.cx) / (l.rx + 60)) ** 2 + ((py - l.cy) / (l.ry + 60)) ** 2 < 1);
-    if (lk) {
-      blockedLake = lk;
-      break;
-    }
-  }
-
-  if (blockedLake) {
-    // Cari jalur memutar terdekat (atas atau bawah danau)
-    const northDetourY = blockedLake.cy - blockedLake.ry - 140;
-    const southDetourY = blockedLake.cy + blockedLake.ry + 140;
-    const detourY = Math.abs(startY - northDetourY) < Math.abs(startY - southDetourY) ? northDetourY : southDetourY;
-    // Return waypoint pengarah di sekitar tepi danau
-    return { x: blockedLake.cx, y: detourY };
-  }
-
-  return { x: targetX, y: targetY };
-}
-
 export interface PlacedUnit { unit: WarUnit; x: number; y: number }
 
 // Daftar Bounding Box Bangunan & Fasilitas di peta (x0, y0, x1, y1)
@@ -609,15 +582,14 @@ const VISION: Record<string, number> = { darat: 520, laut: 440, udara: 880 };
 export const MAP_CSS = `
 .map-navigating,.map-navigating *{animation-play-state:paused!important}
 .map-navigating .tm-cloud,.map-navigating .nw-drift,.map-navigating .nw-smoke,.map-navigating .tm-fall,.map-navigating .tm-dust,.map-navigating .tm-glint,.map-navigating .tm-fog,.map-navigating .tm-fx{display:none!important}
-.map-navigating [filter]{filter:none!important}
-.map-navigating .tm-tz{transition:none!important;filter:none!important}
+.map-navigating .tm-tz{transition:none!important}
 .map-navigating,.map-navigating *{pointer-events:none!important;text-rendering:optimizeSpeed;shape-rendering:optimizeSpeed}
+.battle-scenery-detail{contain:strict;will-change:transform}
+.terrain-layer-root{contain:strict}
+.units-layer-root{contain:layout style}
 .tm-tz{transition:filter .25s ease}
 .tm-tz:hover{filter:brightness(1.15) saturate(1.1)}
 .unit-marker{transform-box:fill-box;transform-origin:center}
-.unit-marker-air{animation:unit-air-hover 4.8s ease-in-out infinite}
-.unit-marker-naval{animation:unit-naval-rock 6.4s ease-in-out infinite}
-.unit-marker-ground{animation:unit-ground-idle 5.6s ease-in-out infinite}
 .tm-cloud{animation:tm-cloud 90s linear infinite;will-change:transform}
 .tm-fall{animation:tm-fall 9s linear infinite}
 .tm-dust{animation:tm-dust 14s linear infinite}
@@ -635,9 +607,6 @@ export const MAP_CSS = `
 @keyframes tm-dust{from{transform:translateX(-300px)}to{transform:translateX(1200px)}}
 @keyframes tm-glint{0%,100%{opacity:0}50%{opacity:.85}}
 @keyframes tm-spin{to{transform:rotate(360deg)}}
-@keyframes unit-air-hover{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(-.7deg)}}
-@keyframes unit-naval-rock{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(2px) rotate(.45deg)}}
-@keyframes unit-ground-idle{0%,100%{transform:translateY(0)}50%{transform:translateY(1.5px)}}
 @media (prefers-reduced-motion:reduce){.tm-cloud,.tm-fall,.tm-dust,.tm-tracer,.tm-glint,.tm-spin,.tm-spin-slow,.unit-marker{animation:none!important}}
 `;
 
@@ -821,30 +790,32 @@ const TerrainLayer = memo(function TerrainLayer({ accent, water, terrainType }: 
     ));
 
   return (
-    <g>
+    <g className="terrain-layer-root">
       <rect x={EX.x} y={EX.y} width={EX.w} height={EX.h} fill={P.ground} />
-      {SOIL_PATCHES.map((p, i) => (
-        <g key={`so${i}`}>
-          <path d={p.d} fill={P.soil[p.ci]} opacity="0.55" />
-          <path d={p.d2} fill={P.soil[(p.ci + 1) % 3]} opacity="0.4" />
-        </g>
-      ))}
-      {GRASS_PATCHES.map((p, i) => (
-        <g key={`gr${i}`}>
-          <path d={p.d} fill={P.grass[p.ci]} opacity="0.55" />
-          <path d={p.d2} fill={P.grass[(p.ci + 2) % 3]} opacity="0.45" />
-        </g>
-      ))}
-      <rect x={EX.x} y={EX.y} width={EX.w} height={EX.h} fill="url(#tm-speck)" />
-      <rect x={EX.x} y={EX.y} width={EX.w} height={EX.h} fill="url(#tm-pebbles)" />
-      <rect x={EX.x} y={EX.y} width={EX.w} height={EX.h} fill="url(#tm-tufts)" />
-      {ROCKS.map((k, i) => (
-        <g key={`rk${i}`} pointerEvents="none">
-          <ellipse cx={k.x + k.rx * 0.2} cy={k.y + k.ry * 1.7} rx={k.rx} ry={k.ry} fill="#000" opacity="0.28" />
-          <polygon points={k.pts} fill={P.rock[k.ci]} stroke="#000" strokeOpacity="0.35" strokeWidth="1.2" strokeLinejoin="round" />
-          <polygon points={k.hi} fill={P.rock[2]} opacity="0.65" />
-        </g>
-      ))}
+      <g className="battle-scenery-detail">
+        {SOIL_PATCHES.map((p, i) => (
+          <g key={`so${i}`}>
+            <path d={p.d} fill={P.soil[p.ci]} opacity="0.55" />
+            <path d={p.d2} fill={P.soil[(p.ci + 1) % 3]} opacity="0.4" />
+          </g>
+        ))}
+        {GRASS_PATCHES.map((p, i) => (
+          <g key={`gr${i}`}>
+            <path d={p.d} fill={P.grass[p.ci]} opacity="0.55" />
+            <path d={p.d2} fill={P.grass[(p.ci + 2) % 3]} opacity="0.45" />
+          </g>
+        ))}
+        <rect x={EX.x} y={EX.y} width={EX.w} height={EX.h} fill="url(#tm-speck)" />
+        <rect x={EX.x} y={EX.y} width={EX.w} height={EX.h} fill="url(#tm-pebbles)" />
+        <rect x={EX.x} y={EX.y} width={EX.w} height={EX.h} fill="url(#tm-tufts)" />
+        {ROCKS.map((k, i) => (
+          <g key={`rk${i}`} pointerEvents="none">
+            <ellipse cx={k.x + k.rx * 0.2} cy={k.y + k.ry * 1.7} rx={k.rx} ry={k.ry} fill="#000" opacity="0.28" />
+            <polygon points={k.pts} fill={P.rock[k.ci]} stroke="#000" strokeOpacity="0.35" strokeWidth="1.2" strokeLinejoin="round" />
+            <polygon points={k.hi} fill={P.rock[2]} opacity="0.65" />
+          </g>
+        ))}
+      </g>
 
       <ellipse cx="5000" cy="480" rx="1100" ry="360" fill="url(#tm-foot)" />
       <ellipse cx="3000" cy="2200" rx="1300" ry="260" fill="url(#tm-foot)" opacity="0.7" />
@@ -1208,11 +1179,12 @@ interface UnitsProps {
   attackRadius: number | null;
   attackStrikes: UnitAttackEffect[];
   onSelectUnit: (id: string) => void;
+  onAttackTarget: (target: WarUnit, position: UnitPosition, id: string) => void;
 }
 
 const UnitsLayer = memo(function UnitsLayer({
   accent, simPhase, own, enemy, playerSide, positions, selectedUnitId, movingUnitIds, movePaths,
-  commandMode, attackRadius, attackStrikes, onSelectUnit,
+  commandMode, attackRadius, attackStrikes, onSelectUnit, onAttackTarget,
 }: UnitsProps) {
   const renderUnit = (placed: PlacedUnit, index: number, hostile: boolean) => {
     const side = hostile ? 'enemy' : 'own';
@@ -1226,23 +1198,45 @@ const UnitsLayer = memo(function UnitsLayer({
       <g
         key={`${id}-${index}`}
         data-unit-id={id}
-        role={hostile ? undefined : 'button'}
-        aria-label={hostile ? undefined : `Pilih ${placed.unit.label} ${formatUnitQuantity(placed.unit.quantity)}`}
+        role={hostile ? (commandMode === 'attack' && selectedUnitId ? 'button' : undefined) : 'button'}
+        aria-label={hostile
+          ? commandMode === 'attack' && selectedUnitId
+            ? `Serang ${placed.unit.label} ${formatUnitQuantity(placed.unit.quantity)}`
+            : undefined
+          : `Pilih ${placed.unit.label} ${formatUnitQuantity(placed.unit.quantity)}`}
         aria-pressed={hostile ? undefined : selected}
-        tabIndex={hostile ? undefined : 0}
-        style={hostile ? undefined : { cursor: selected ? 'crosshair' : 'grab' }}
-        onClick={hostile ? undefined : (event) => {
-          event.stopPropagation();
-          onSelectUnit(id);
-        }}
+        tabIndex={hostile ? (commandMode === 'attack' && selectedUnitId ? 0 : undefined) : 0}
+        style={hostile
+          ? commandMode === 'attack' && selectedUnitId ? { cursor: 'crosshair' } : undefined
+          : { cursor: selected ? 'crosshair' : 'grab' }}
+        onClick={hostile
+          ? commandMode === 'attack' && selectedUnitId
+            ? (event) => {
+                event.stopPropagation();
+                onAttackTarget(placed.unit, position, id);
+              }
+            : undefined
+          : (event) => {
+              event.stopPropagation();
+              onSelectUnit(id);
+            }}
+        onKeyDown={hostile
+          ? commandMode === 'attack' && selectedUnitId
+            ? (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  onAttackTarget(placed.unit, position, id);
+                }
+              }
+            : undefined
+          : (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                onSelectUnit(id);
+              }
+            }}
         onDoubleClick={(event) => {
           event.stopPropagation();
-        }}
-        onKeyDown={hostile ? undefined : (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            onSelectUnit(id);
-          }
         }}
         transform={`scale(${UK})`}
       >
@@ -1273,7 +1267,7 @@ const UnitsLayer = memo(function UnitsLayer({
   const fade = (on: boolean): React.CSSProperties => ({ transition: 'opacity .8s, filter .8s', opacity: on ? 0.45 : 1, filter: on ? 'grayscale(1) brightness(.7)' : 'none' });
 
   return (
-    <g>
+    <g className="units-layer-root">
       {selectedUnitId && attackRadius !== null && (
         commandMode === 'attack' || movingUnitIds.includes(selectedUnitId)
       ) && (() => {
@@ -1722,23 +1716,13 @@ export const TacticalMap = memo(function TacticalMap({
           const speedJitter = 0.9 + Math.random() * 0.2;
           const jitteredSpeed = (mv.speed || 340) * speedJitter;
 
-          const lateralSlot = (mvIdx - (pyDecision.movements.length - 1) / 2) * 110;
-          const longitudinalSlot = (mvIdx % 2 === 0 ? 0 : 70);
-          const angleToTarget = Math.atan2(mv.target_y - curPos.y, mv.target_x - curPos.x);
-          const normalAngle = angleToTarget + Math.PI / 2;
-
-          const baseCombatDistance = 90 + longitudinalSlot;
-          const rawTargetX = mv.target_x + Math.cos(angleToTarget) * baseCombatDistance + Math.cos(normalAngle) * lateralSlot;
-          const rawTargetY = mv.target_y + Math.sin(angleToTarget) * baseCombatDistance + Math.sin(normalAngle) * lateralSlot;
-
           const borderBuffer = (mvIdx * 45);
           const safeTargetX = playerSide === 'attacker'
-            ? Math.max(3050 + borderBuffer, rawTargetX)
-            : Math.min(3250 - borderBuffer, rawTargetX);
+            ? Math.max(3050 + borderBuffer, mv.target_x)
+            : Math.min(3250 - borderBuffer, mv.target_x);
 
-          const waypoint = findClearWaypoint(curPos.x, curPos.y, safeTargetX, rawTargetY);
           const [tX, tY] = engine.prepare_unit_movement(
-            waypoint.x, waypoint.y, BASE_W, BASE_H, 'darat',
+            safeTargetX, mv.target_y, BASE_W, BASE_H, 'darat',
           );
 
           const previousTarget = movementTargetsRef.current[uId];
@@ -1771,28 +1755,7 @@ export const TacticalMap = memo(function TacticalMap({
             );
             qrfElapsed = nextEl;
 
-            let finalX = curX;
-            let finalY = curY;
-            const MIN_SEPARATION = 85;
-
-            for (const otherEnemy of currentEnemyUnitsState) {
-              if (otherEnemy.id === uId) continue;
-              const otherPos = positionsRef.current[otherEnemy.id];
-              if (!otherPos) continue;
-
-              const dx = finalX - otherPos.x;
-              const dy = finalY - otherPos.y;
-              const distSq = dx * dx + dy * dy;
-              if (distSq > 0 && distSq < MIN_SEPARATION * MIN_SEPARATION) {
-                const dist = Math.sqrt(distSq);
-                const pushFactor = (MIN_SEPARATION - dist) / MIN_SEPARATION;
-                const pushStrength = 2.5 * pushFactor;
-                finalX += (dx / dist) * pushStrength;
-                finalY += (dy / dist) * pushStrength;
-              }
-            }
-
-            positionsRef.current[uId] = { x: finalX, y: finalY };
+            positionsRef.current[uId] = { x: curX, y: curY };
             setPositions({ ...positionsRef.current });
 
             if (qrfDone < 0.5) {
@@ -1991,13 +1954,9 @@ export const TacticalMap = memo(function TacticalMap({
     const group = placedUnit.unit.group;
     const move = (engine: Awaited<ReturnType<typeof loadRustViewport>>) => {
       // Hindari danau dan rintangan untuk unit darat pemain
-      const waypoint = group === 'darat'
-        ? findClearWaypoint(start.x, start.y, destination.x, destination.y)
-        : destination;
-
       const [targetX, targetY, baseMoveSpeed] = engine.prepare_unit_movement(
-        waypoint.x,
-        waypoint.y,
+        destination.x,
+        destination.y,
         BASE_W,
         BASE_H,
         group,
@@ -2295,6 +2254,25 @@ export const TacticalMap = memo(function TacticalMap({
         <style>{`${MAP_CSS}\n${COMBAT_EFFECT_CSS}`}</style>
         <Defs accent={accent} terrainType={terrainType} />
         <TerrainLayer accent={accent} water={water} terrainType={terrainType} />
+        <defs>
+          <pattern id="tm-coordinate-grid" width={BASE_W / 10} height={BASE_H / 10} patternUnits="userSpaceOnUse">
+            <path
+              d={`M ${BASE_W / 20} ${BASE_H / 20 - 50} V ${BASE_H / 20 + 50} M ${BASE_W / 20 - 50} ${BASE_H / 20} H ${BASE_W / 20 + 50}`}
+              fill="none"
+              stroke="#050505"
+              strokeOpacity="0.82"
+              strokeWidth="10"
+            />
+          </pattern>
+        </defs>
+        <rect
+          x="0"
+          y="0"
+          width={BASE_W}
+          height={BASE_H}
+          fill="url(#tm-coordinate-grid)"
+          pointerEvents="none"
+        />
         <BasesLayer
           accent={accent}
           simPhase={simPhase}
@@ -2317,6 +2295,7 @@ export const TacticalMap = memo(function TacticalMap({
           attackRadius={simPhase === 'idle' ? attackRadius : null}
           attackStrikes={simPhase === 'idle' ? attackStrikes : []}
           onSelectUnit={selectUnit}
+          onAttackTarget={(target, position, targetId) => handleAttackUnit(target, position, targetId)}
         />
         {incursionAlert.active && (
           <g pointerEvents="none" className="nw-pulse">
