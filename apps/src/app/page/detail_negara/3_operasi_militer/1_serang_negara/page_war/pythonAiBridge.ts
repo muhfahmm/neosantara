@@ -2,6 +2,7 @@
  * Jembatan komunikasi TypeScript Frontend ke Engine Python AI Perang
  * Mendukung pemanggilan API Server FastAPI (port 8001) dengan fallback kalkulasi lokal jika server offline.
  */
+import { calculateDamagePotential, getUnitAttackRadius, getUnitDamageProfile } from './combatDamage';
 
 export interface WarUnitState {
   id: string;
@@ -107,22 +108,6 @@ function computeFallbackTacticalCycle(
   const movements: MovementDecision[] = [];
   const attacks: AttackDecision[] = [];
 
-  const ranges: Record<string, number> = {
-    artileriBerat: 1600,
-    peluncurRoket: 1650,
-    tank: 950,
-    apcIfv: 850,
-    kendaraanTaktis: 750,
-    infanteri: 680,
-    pertahananUdaraMobile: 1400,
-    jetTempurSiluman: 1300,
-    jetTempurInterceptor: 1150,
-    pesawatPengebom: 1500,
-    helikopterSerang: 950,
-    destroyer: 1350,
-    korvet: 1050,
-  };
-
   for (const enemy of enemyUnits) {
     if (userUnits.length === 0) continue;
 
@@ -138,7 +123,7 @@ function computeFallbackTacticalCycle(
     }
 
     const minDist = Math.hypot(bestTarget.x - enemy.x, bestTarget.y - enemy.y);
-    const range = ranges[enemy.kind] || 750;
+    const range = getUnitAttackRadius(enemy.kind, enemy.quantity);
 
     // 1. Logika Pergerakan: Doktrin Militer Realistis (Standoff & Hold, Tidak Maju Membabi Buta)
     const effectiveFiringRange = range * 0.85;
@@ -293,9 +278,9 @@ function computeFallbackTacticalCycle(
         target_x: bestTarget.x,
         target_y: bestTarget.y,
         weapon_type: weaponType,
-        damage_potential: Math.round(Math.sqrt(enemy.quantity) * 12),
+        damage_potential: calculateDamagePotential(enemy.kind, enemy.quantity),
         hit_chance: 0.85,
-        penetration: enemy.kind === 'tank' ? 1.4 : (enemy.kind === 'artileriBerat' ? 1.6 : 0.9),
+        penetration: getUnitDamageProfile(enemy.kind).penetration,
         in_range: true,
       });
     }

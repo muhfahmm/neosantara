@@ -13,11 +13,13 @@ import {
   TrendingDown,
   ArrowLeft,
   AlertTriangle,
+  Skull,
 } from 'lucide-react';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '@/app/page/map_system/map-data';
 import PerbandinganPasukan from '../detail_negara/3_operasi_militer/1_serang_negara/perbandingan_pasukan';
 import LandWarMap from '../detail_negara/3_operasi_militer/1_serang_negara/page_war/LandWarMap';
 import SeaWarMap from '../detail_negara/3_operasi_militer/1_serang_negara/page_war/SeaWarMap';
+import { getWarUnitComposition, type WarUnit } from '../detail_negara/3_operasi_militer/1_serang_negara/page_war/units/warUnitComposition';
 import { shouldUseSeaWarMap } from '../detail_negara/3_operasi_militer/1_serang_negara/page_war/countryMapAccess';
 import { simulateBattleTs } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 import { isSimulationTimePaused } from './time_logic';
@@ -571,10 +573,50 @@ export interface WarResultOutput {
   result: WarResult;
   attackerScore: number;
   targetScore: number;
+  attackerLossRatio: number;
+  targetLossRatio: number;
   totalRounds?: number;
   message?: string;
   log?: string[];
   winner?: 'attacker' | 'target' | 'draw';
+}
+
+const UNIT_LOSS_LABELS: Record<WarUnit['kind'], string> = {
+  infanteri: 'Pasukan Infanteri',
+  tank: 'Tank Tempur Utama',
+  apcIfv: 'APC / IFV',
+  artileriBerat: 'Artileri Berat',
+  peluncurRoket: 'Sistem Peluncur Roket',
+  pertahananUdaraMobile: 'Pertahanan Udara Mobile',
+  kendaraanTaktis: 'Kendaraan Taktis',
+  kapalInduk: 'Kapal Induk',
+  kapalIndukNuklir: 'Kapal Induk Nuklir',
+  destroyer: 'Kapal Destroyer',
+  korvet: 'Kapal Korvet',
+  kapalSelamNuklir: 'Kapal Selam Nuklir',
+  kapalSelamReguler: 'Kapal Selam Reguler',
+  kapalRanjau: 'Kapal Ranjau',
+  kapalLogistik: 'Kapal Logistik',
+  jetTempurSiluman: 'Jet Tempur Siluman',
+  jetTempurInterceptor: 'Jet Tempur Interceptor',
+  pesawatPengebom: 'Pesawat Pengebom',
+  helikopterSerang: 'Helikopter Serang',
+  pesawatPengintai: 'Pesawat Pengintai',
+  droneIntaiUav: 'Drone Intai UAV',
+  droneKamikaze: 'Drone Kamikaze',
+  pesawatAngkut: 'Pesawat Angkut',
+};
+
+function calculateUnitLosses(units: WarUnit[], lossRatio: number) {
+  return units.map((unit) => {
+    const lost = Math.min(unit.quantity, Math.round(unit.quantity * lossRatio));
+    return {
+      label: UNIT_LOSS_LABELS[unit.kind],
+      deployed: unit.quantity,
+      lost,
+      remaining: unit.quantity - lost,
+    };
+  }).filter((unit) => unit.lost > 0);
 }
 
 export function computeWarResult(input: WarResultInput): WarResultOutput {
@@ -611,6 +653,8 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
       result: isUserWin ? 'win' : 'lose',
       attackerScore: actualAttackerPower,
       targetScore: actualTargetPower,
+      attackerLossRatio: 0,
+      targetLossRatio: 0,
       totalRounds: 0,
       message: 'Pertempuran ditentukan oleh pasukan yang dikerahkan.',
       log: ['Salah satu pihak tidak mengerahkan pasukan.'],
@@ -631,6 +675,12 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
     result: isUserWin ? 'win' : 'lose',
     attackerScore: battle.attackerFinalPower,
     targetScore: battle.targetFinalPower,
+    attackerLossRatio: actualAttackerPower > 0
+      ? Math.min(1, Math.max(0, 1 - battle.attackerFinalPower / actualAttackerPower))
+      : 0,
+    targetLossRatio: actualTargetPower > 0
+      ? Math.min(1, Math.max(0, 1 - battle.targetFinalPower / actualTargetPower))
+      : 0,
     totalRounds: battle.totalRounds,
     message: battle.message,
     log: battle.log,
@@ -763,6 +813,31 @@ export default function WarMap({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, attackerPower, targetPower, attackerBonus, defenderBonus, isUserDefender]);
+
+  const deploymentConfig = useMemo(() => {
+    if (typeof window === 'undefined') return {};
+    try {
+      const saved = window.localStorage.getItem('deployed_units_config');
+      if (!saved) return {};
+      const parsed: unknown = JSON.parse(saved);
+      return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
+        ? parsed as Record<string, unknown>
+        : {};
+    } catch (error) {
+      console.error('Gagal membaca konfigurasi pengerahan unit untuk laporan kerugian.', error);
+      return {};
+    }
+  }, []);
+
+  const attackerLosses = useMemo(() => {
+    const units = getWarUnitComposition(attacker, deploymentConfig, !isUserDefender && !isPbbCoalition);
+    return calculateUnitLosses(units, battleOutcome?.attackerLossRatio ?? 0);
+  }, [attacker, deploymentConfig, isUserDefender, isPbbCoalition, battleOutcome]);
+
+  const targetLosses = useMemo(() => {
+    const units = getWarUnitComposition(target, deploymentConfig, isUserDefender);
+    return calculateUnitLosses(units, battleOutcome?.targetLossRatio ?? 0);
+  }, [target, deploymentConfig, isUserDefender, battleOutcome]);
 
   useEffect(() => {
     if (isOpen) {
@@ -905,6 +980,13 @@ export default function WarMap({
     [warPath, result, onResolve, isPbbCoalition]
   );
 
+  const handleSimulationComplete = useCallback(() => {
+    if (battleOutcome) {
+      setResult(battleOutcome.result);
+      setPhase('result');
+    }
+  }, [battleOutcome]);
+
   const handleAutoResult = useCallback(() => {
     if (battleOutcome) {
       setResult(battleOutcome.result);
@@ -1028,7 +1110,7 @@ export default function WarMap({
           <SeaWarMap
             attackerName={attacker.country}
             targetName={target.country}
-            onAutoResult={handleAutoResult}
+            onSimulationComplete={handleSimulationComplete}
             onClose={onClose}
             attackerDetail={attacker}
             targetDetail={target}
@@ -1039,7 +1121,7 @@ export default function WarMap({
           <LandWarMap
             attackerName={attacker.country}
             targetName={target.country}
-            onAutoResult={handleAutoResult}
+            onSimulationComplete={handleSimulationComplete}
             onClose={onClose}
             attackerDetail={attacker}
             targetDetail={target}
@@ -1052,9 +1134,9 @@ export default function WarMap({
       {/* ══════════ LAYAR HASIL PERTEMPURAN (Fase 'result') ══════════ */}
       {/* FIX: Container utama transparan (tanpa bg-black/backdrop-blur) dan pointer-events-none. */}
       {phase === 'result' && result && (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 pointer-events-none animate-[warFadeIn_0.4s_ease-out]">
+        <div className="fixed inset-0 z-[300] flex items-center justify-center pt-[88px] sm:pt-[100px] lg:pt-[clamp(92px,10dvh,115px)] pb-3 sm:pb-4 lg:pb-5 px-3 sm:px-6 lg:px-10 pointer-events-none animate-[warFadeIn_0.4s_ease-out]">
           {/* FIX: pointer-events-auto ditambahkan di sini agar kotak modal bisa diklik */}
-          <div className="w-full max-w-lg bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(0,255,170,0.2)] font-sans select-none pointer-events-auto">
+          <div className="w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)] overflow-y-auto bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-3xl shadow-[0_0_80px_rgba(0,255,170,0.2)] font-sans select-none pointer-events-auto">
             <div
               className={`p-6 text-center border-b ${result === 'win'
                   ? 'bg-[#00FFAA]/10 border-[#00FFAA]/30'
@@ -1131,6 +1213,49 @@ export default function WarMap({
                 <p className="text-lg font-black text-[#FF2D55]">
                   {battleOutcome?.targetScore.toLocaleString()}
                 </p>
+              </div>
+            </div>
+
+            <div className="border-b border-[#00FFAA]/10 p-5">
+              <h3 className="mb-1 flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#E0E0E0]">
+                <Skull className="h-4 w-4 text-[#FF2D55]" />
+                Rincian Kehilangan Unit
+              </h3>
+              <p className="mb-4 text-[10px] text-[#6B8A8A]">
+                Estimasi kehilangan dibagi proporsional berdasarkan penurunan kekuatan tempur.
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[
+                  {
+                    name: isPbbCoalition ? 'Pasukan Gabungan PBB' : attacker.country,
+                    color: '#00FFAA',
+                    losses: attackerLosses,
+                  },
+                  { name: target.country, color: '#FF2D55', losses: targetLosses },
+                ].map((side) => (
+                  <section key={side.name} className="min-w-0 rounded-xl border border-white/10 bg-black/20 p-3">
+                    <h4 className="mb-2 truncate text-[10px] font-black uppercase tracking-wider" style={{ color: side.color }}>
+                      {side.name}
+                    </h4>
+                    {side.losses.length === 0 ? (
+                      <p className="text-[10px] text-[#6B8A8A]">Tidak ada kehilangan unit yang tercatat.</p>
+                    ) : (
+                      <div className="max-h-36 space-y-2 overflow-y-auto pr-1">
+                        {side.losses.map((loss) => (
+                          <div key={loss.label} className="flex items-start justify-between gap-2 text-[10px]">
+                            <span className="text-[#CBD5D5]">{loss.label}</span>
+                            <span className="shrink-0 text-right">
+                              <span className="font-bold text-[#FF2D55]">-{loss.lost.toLocaleString('id-ID')}</span>
+                              <span className="block text-[9px] text-[#6B8A8A]">
+                                sisa {loss.remaining.toLocaleString('id-ID')} / {loss.deployed.toLocaleString('id-ID')}
+                              </span>
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </section>
+                ))}
               </div>
             </div>
 

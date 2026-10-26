@@ -31,7 +31,7 @@ export type { TerrainType };
 interface PageWarProps {
   attackerName: string;
   targetName: string;
-  onAutoResult: () => void;
+  onSimulationComplete: () => void;
   onClose?: () => void;
   terrainType?: TerrainType;
   attackerDetail?: unknown;
@@ -82,7 +82,7 @@ const Corners = ({ c }: { c: string }) => (
 export default function LandWarMap({
   attackerName,
   targetName,
-  onAutoResult,
+  onSimulationComplete,
   onClose,
   terrainType = 'default',
   attackerDetail,
@@ -160,14 +160,8 @@ export default function LandWarMap({
   /* ─── State Simulasi & Log ─── */
   const [isSimulating, setIsSimulating] = useState(false);
   const [simPhase, setSimPhase] = useState<SimPhase>('idle');
-  const [battleLogs, setBattleLogs] = useState<string[]>([]);
   const [showInfo, setShowInfo] = useState(false);
-  const logRef = useRef<HTMLDivElement>(null);
   const timerIdsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-
-  useEffect(() => {
-    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
-  }, [battleLogs]);
 
   useEffect(() => {
     return () => {
@@ -181,10 +175,6 @@ export default function LandWarMap({
     timerIdsRef.current.push(id);
   };
 
-  const addLog = (msg: string) => {
-    setBattleLogs((prev) => [...prev, `[${new Date().toLocaleTimeString('id-ID', { hour12: false })}] ${msg}`]);
-  };
-
   const handleStartSimulation = () => {
     if (isSimulating) return;
     setIsUnitSelected(false);
@@ -192,15 +182,11 @@ export default function LandWarMap({
     setCommandMode(null);
     setAttackRadius(null);
     setIsSimulating(true);
-    setBattleLogs([]);
     setSimPhase('clash');
-    addLog('Kontak senjata! Terjadi baku tembak di area urban.');
-    addLog('Artileri penyerang meluncurkan tembakan pendukung.');
 
     schedule(() => {
       setSimPhase('done');
-      addLog('Pertempuran mereda. Menghitung kerugian unit dan hasil operasi...');
-      schedule(() => { onAutoResult(); }, 2000);
+      schedule(() => { onSimulationComplete(); }, 2000);
     }, 3000);
   };
 
@@ -226,7 +212,6 @@ export default function LandWarMap({
     setIsUnitSelected(false);
     setCommandMode(null);
     setAttackRadius(null);
-    addLog(`${label} ${formatUnitQuantity(quantity)} kembali ke hangar udara.`);
   };
 
   /* ─── Zoom / Pan / Tooltip ─── */
@@ -499,17 +484,12 @@ export default function LandWarMap({
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <button onClick={onAutoResult} disabled={isSimulating}
-            className={`hidden sm:flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition-all ${isSimulating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-white/10'}`}>
-            <Crosshair className="h-4 w-4" /> Hasil Otomatis
-          </button>
-
           <button onClick={handleStartSimulation} disabled={isSimulating}
             className={`group flex transform items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition-all ${isSimulating ? 'opacity-70 cursor-wait scale-100' : 'cursor-pointer hover:scale-105'}`}
             style={{ backgroundColor: isSimulating ? '#f43f5e' : accent, color: '#050B0B', boxShadow: `0 0 20px rgba(${isSimulating ? '244, 63, 94' : accentRgb}, 0.4)` }}>
             {isSimulating
-              ? <><Loader2 className="h-4 w-4 animate-spin" /> <span className="hidden sm:inline">Menyimulasikan...</span></>
-              : <><Zap className="h-4 w-4 fill-current transition-transform group-hover:rotate-12" /> <span className="hidden sm:inline">Mulai Simulasi</span></>}
+              ? <><Loader2 className="h-4 w-4 animate-spin" /> <span className="hidden sm:inline">Simulasi Berlangsung...</span></>
+              : <><Zap className="h-4 w-4 fill-current transition-transform group-hover:rotate-12" /> <span className="hidden sm:inline">Simulasi Otomatis</span></>}
           </button>
 
           <button onClick={() => setShowInfo(!showInfo)} aria-label="Legenda"
@@ -600,11 +580,8 @@ export default function LandWarMap({
               setAttackRadius(null);
             }}
             onAttackRadiusChange={setAttackRadius}
-            onAttack={(attacker, target, inRange) => {
+            onAttack={() => {
               setCommandMode('attack');
-              addLog(inRange
-                ? `${attacker.label} menembak ${target?.label ?? 'ke titik sasaran'}.`
-                : `${target?.label ?? 'Titik sasaran'} berada di luar jangkauan serang ${attacker.label}.`);
             }}
           />
           <AttackControls
@@ -709,26 +686,15 @@ export default function LandWarMap({
 
       {/* FOOTER */}
       <div className="relative z-10 flex shrink-0 flex-col gap-3 pt-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        {isSimulating && (
+          <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest sm:text-xs" style={{ color: isSimulating ? '#f43f5e' : accent }}>
             <MapIcon className="h-4 w-4" />
-            {isSimulating ? 'Simulasi Pertempuran Sedang Berlangsung...' : 'Pilih Target & Modifikasi Strategi Sebelum Memulai'}
+            Simulasi Pertempuran Sedang Berlangsung...
           </div>
-
-        </div>
-
-        {battleLogs.length > 0 && (
-          <div
-            ref={logRef}
-            className="max-h-[88px] overflow-y-auto rounded-lg border bg-black/50 px-2.5 py-1.5 font-mono text-[9px] leading-relaxed"
-            style={{ borderColor: `${accent}4D` }}
-            aria-live="polite"
-          >
-            {battleLogs.map((log, i) => (
-              <div key={i} style={{ color: i === battleLogs.length - 1 ? accent : '#94a3b8' }}>{log}</div>
-            ))}
           </div>
         )}
+
       </div>
     </div>
   );

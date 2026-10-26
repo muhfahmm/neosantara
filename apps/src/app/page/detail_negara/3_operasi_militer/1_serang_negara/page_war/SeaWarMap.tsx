@@ -9,9 +9,11 @@ import UnitMarker from './units/unitMarker';
 import AttackControls, { type UnitCommandMode } from './AttackControls';
 import {
   formatUnitQuantity,
+  formatUnitMarkerQuantity,
   getWarUnitComposition,
   type WarUnit,
 } from './units/warUnitComposition';
+import { calculateUnitDamageLoss, getUnitAttackRadius } from './combatDamage';
 import {
   Airbase, Defs, Extruded, MAP_CSS, MilitaryFacilities, PALETTES, Peak, Smoke,
   blobPath, makeCity, makeForest, rng, smoothPath,
@@ -19,7 +21,6 @@ import {
 } from './TacticalMap';
 import {
   attachMapSnapshot,
-  evaluateBorderIncursion,
   flushViewportPreview,
   loadRustViewport,
   panViewport,
@@ -33,7 +34,7 @@ export type { TerrainType };
 interface SeaWarMapProps {
   attackerName: string;
   targetName: string;
-  onAutoResult: () => void;
+  onSimulationComplete: () => void;
   onClose?: () => void;
   terrainType?: TerrainType;
   attackerDetail?: unknown;
@@ -590,8 +591,8 @@ const attackVisual = (weaponType: number) => {
   }
 };
 
-const fleetUnitId = (unit: WarUnit, side: 'own' | 'enemy', index: number) =>
-  `${side}:${unit.group}:${unit.kind}:${unit.echelon ?? 'base'}:${index}`;
+const fleetUnitId = (unit: WarUnit, side: 'own' | 'enemy') =>
+  `${side}:${unit.group}:${unit.kind}:${unit.echelon ?? 'base'}`;
 
 const Fleet = memo(function Fleet({
   units, east, color, side, dataId, positions, selectedUnitId, movingUnitIds, onSelectUnit,
@@ -615,8 +616,8 @@ const Fleet = memo(function Fleet({
       {placedGroups.map(({ group, units: placedUnits }) => {
         return (
           <g key={group}>
-            {placedUnits.map(({ unit, x, y }, i) => {
-              const id = fleetUnitId(unit, side, i);
+            {placedUnits.map(({ unit, x, y }) => {
+              const id = fleetUnitId(unit, side);
               const position = positions[id] ?? { x, y };
               const selected = side === 'own' && selectedUnitId === id;
               const moving = movingUnitIds.includes(id);
@@ -655,7 +656,7 @@ const Fleet = memo(function Fleet({
                   )}
                   <UnitMarker
                     x={position.x} y={position.y} kind={unit.kind} color={color} quantity={unit.quantity}
-                    label={`${unit.label} ${formatUnitQuantity(unit.quantity)}`}
+                    label={`${unit.label} ${formatUnitMarkerQuantity(unit.quantity)}`}
                     disableEffects
                   />
                 </g>
@@ -690,7 +691,7 @@ const NW_CSS = `
 export default function SeaWarMap({
   attackerName,
   targetName,
-  onAutoResult,
+  onSimulationComplete,
   onClose,
   terrainType = 'default',
   attackerDetail,
@@ -723,16 +724,16 @@ export default function SeaWarMap({
 
   // Sinkronisasi kuantitas dinamis untuk unit laut, udara, dan darat
   const ownUnits = useMemo(() => {
-    return rawOwnUnits.map((u, i) => {
-      const id = fleetUnitId(u, 'own', i);
+    return rawOwnUnits.map((u) => {
+      const id = fleetUnitId(u, 'own');
       const dynamicQty = unitQuantities[id];
       return typeof dynamicQty === 'number' ? { ...u, quantity: dynamicQty } : u;
     }).filter((u) => u.quantity > 0);
   }, [rawOwnUnits, unitQuantities]);
 
   const enemyUnits = useMemo(() => {
-    return rawEnemyUnits.map((u, i) => {
-      const id = fleetUnitId(u, 'enemy', i);
+    return rawEnemyUnits.map((u) => {
+      const id = fleetUnitId(u, 'enemy');
       const dynamicQty = unitQuantities[id];
       return typeof dynamicQty === 'number' ? { ...u, quantity: dynamicQty } : u;
     }).filter((u) => u.quantity > 0);
@@ -742,9 +743,9 @@ export default function SeaWarMap({
   const enemyTotal = useMemo(() => enemyUnits.reduce((s, u) => s + (u.quantity || 0), 0), [enemyUnits]);
   const ownPlacedUnits = useMemo(
     () => UNIT_GROUPS.flatMap((group) =>
-      placeGroup(ownUnits, group, false).map((placed, index) => ({
+      placeGroup(ownUnits, group, false).map((placed) => ({
         ...placed,
-        id: fleetUnitId(placed.unit, 'own', index),
+        id: fleetUnitId(placed.unit, 'own'),
       }))
     ),
     [ownUnits],
@@ -764,14 +765,8 @@ export default function SeaWarMap({
   /* ─── Simulasi & log ─── */
   const [isSimulating, setIsSimulating] = useState(false);
   const [simPhase, setSimPhase] = useState<SimPhase>('idle');
-  const [battleLogs, setBattleLogs] = useState<string[]>([]);
   const [showInfo, setShowInfo] = useState(false);
-  const logRef = useRef<HTMLDivElement>(null);
   const timerIdsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-
-  useEffect(() => {
-    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
-  }, [battleLogs]);
 
   useEffect(() => () => {
     timerIdsRef.current.forEach(clearTimeout);
@@ -781,10 +776,6 @@ export default function SeaWarMap({
   const schedule = (fn: () => void, ms: number) => {
     timerIdsRef.current.push(setTimeout(fn, ms));
   };
-  const addLog = (msg: string) => {
-    setBattleLogs((prev) => [...prev, `[${new Date().toLocaleTimeString('id-ID', { hour12: false })}] ${msg}`]);
-  };
-
   const handleStartSimulation = () => {
     if (isSimulating) return;
     selectedUnitIdRef.current = null;
@@ -792,17 +783,11 @@ export default function SeaWarMap({
     setCommandMode(null);
     setAttackRadius(null);
     setIsSimulating(true);
-    const timestamp = `[${new Date().toLocaleTimeString('id-ID', { hour12: false })}] `;
-    setBattleLogs([
-      `${timestamp}Kontak radar! Armada musuh memasuki jangkauan rudal anti-kapal.`,
-      `${timestamp}Salvo rudal diluncurkan, kapal perusak melakukan manuver menghindar.`,
-    ]);
     setSimPhase('clash');
 
     schedule(() => {
       setSimPhase('done');
-      addLog('Pertempuran laut mereda. Menghitung kerugian unit dan hasil operasi...');
-      schedule(() => onAutoResult(), 2000);
+      schedule(() => onSimulationComplete(), 2000);
     }, 3000);
   };
 
@@ -847,11 +832,7 @@ export default function SeaWarMap({
     if (!selected) return;
     const updateRadius = (engine: Awaited<ReturnType<typeof loadRustViewport>>) => {
       if (selectedUnitIdRef.current !== nextId) return;
-      setAttackRadius(engine.calculate_attack_radius(
-        selected.unit.quantity,
-        selected.unit.group,
-        selected.unit.kind,
-      ));
+      setAttackRadius(getUnitAttackRadius(selected.unit.kind, selected.unit.quantity));
     };
     const engine = rustViewportRef.current;
     if (engine) {
@@ -919,21 +900,6 @@ export default function SeaWarMap({
         setUnitPositions(unitPositionsRef.current);
 
         // EVALUASI BORDER INCURSION DENGAN ENGINE RUST
-        if (rustViewportRef.current) {
-          const aiResp = evaluateBorderIncursion(
-            rustViewportRef.current,
-            x,
-            y,
-            group,
-            'sea',
-            isUserDefender ? 'defender' : 'attacker',
-            placedUnit.unit.quantity,
-          );
-          if (aiResp && aiResp.shouldScramble) {
-            addLog(`PERINGATAN RADAR: Armada Anda menembus koridor perbatasan maritim musuh! Posisi pertahanan musuh siaga tempur!`);
-          }
-        }
-
         if (done >= 0.5) {
           delete movementFramesRef.current[selectedUnitId];
           setMovingUnitIds((current) => current.filter((id) => id !== selectedUnitId));
@@ -972,7 +938,6 @@ export default function SeaWarMap({
     if (target?.group === 'udara') {
       const antiAirNavalKinds = ['destroyer', 'korvet', 'jetTempurInterceptor', 'jetTempurSiluman'];
       if (!antiAirNavalKinds.includes(attacker.unit.kind) && attacker.unit.group !== 'udara') {
-        addLog(`Peringatan Taktis: ${attacker.unit.label} tidak dilengkapi sistem pertahanan udara untuk mencegat ${target.label}.`);
         return;
       }
     }
@@ -991,7 +956,6 @@ export default function SeaWarMap({
         start.x, start.y, targetPosition.x, targetPosition.y, radius,
       );
       if (!inRange) {
-        addLog(`${target?.label ?? 'Titik sasaran'} berada di luar jangkauan serang ${attacker.unit.label}.`);
         return;
       }
       const distance = Math.hypot(targetPosition.x - start.x, targetPosition.y - start.y);
@@ -1005,7 +969,6 @@ export default function SeaWarMap({
       });
       if (attackEffectTimerRef.current !== null) clearTimeout(attackEffectTimerRef.current);
       attackEffectTimerRef.current = setTimeout(() => setAttackEffect(null), travelMs);
-      addLog(`${attacker.unit.label} menembak ${target?.label ?? 'ke titik sasaran'}.`);
 
       // Terapkan pengurangan kuantitas musuh saat rudal/torpedo tiba di sasaran
       if (target) {
@@ -1017,9 +980,11 @@ export default function SeaWarMap({
           const currentEnemyQty = unitQuantitiesRef.current[matchedTargetKey] ?? target.quantity;
           if (currentEnemyQty <= 0) return;
 
-          const damage = Math.max(
-            1,
-            Math.round(Math.min(currentEnemyQty, Math.max(10, currentEnemyQty * 0.18 + Math.sqrt(attacker.unit.quantity) * 12)))
+          const damage = calculateUnitDamageLoss(
+            attacker.unit.kind,
+            attacker.unit.quantity,
+            target.kind,
+            currentEnemyQty,
           );
           const remaining = Math.max(0, currentEnemyQty - damage);
 
@@ -1029,7 +994,6 @@ export default function SeaWarMap({
             [matchedTargetKey]: remaining,
           }));
 
-          addLog(`IMPAK: Serangan ke ${target.label} menimbulkan kerugian ${damage} unit (sisa ${remaining}).`);
         }, travelMs);
       }
     };
@@ -1308,17 +1272,12 @@ export default function SeaWarMap({
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <button onClick={onAutoResult} disabled={isSimulating}
-            className={`hidden sm:flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition-all ${isSimulating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-white/10'}`}>
-            <Crosshair className="h-4 w-4" /> Hasil Otomatis
-          </button>
-
           <button onClick={handleStartSimulation} disabled={isSimulating}
             className={`group flex transform items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition-all ${isSimulating ? 'opacity-70 cursor-wait' : 'cursor-pointer hover:scale-105'}`}
             style={{ backgroundColor: isSimulating ? '#f43f5e' : ACCENT, color: '#050B0B', boxShadow: `0 0 20px rgba(${isSimulating ? '244, 63, 94' : ACCENT_RGB}, 0.4)` }}>
             {isSimulating
-              ? <><Loader2 className="h-4 w-4 animate-spin" /> <span className="hidden sm:inline">Menyimulasikan...</span></>
-              : <><Zap className="h-4 w-4 fill-current transition-transform group-hover:rotate-12" /> <span className="hidden sm:inline">Mulai Simulasi</span></>}
+              ? <><Loader2 className="h-4 w-4 animate-spin" /> <span className="hidden sm:inline">Simulasi Berlangsung...</span></>
+              : <><Zap className="h-4 w-4 fill-current transition-transform group-hover:rotate-12" /> <span className="hidden sm:inline">Simulasi Otomatis</span></>}
           </button>
 
           <button onClick={() => setShowInfo(!showInfo)} aria-label="Legenda"
@@ -1603,26 +1562,15 @@ export default function SeaWarMap({
 
       {/* FOOTER */}
       <div className="relative z-10 flex shrink-0 flex-col gap-3 pt-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        {isSimulating && (
+          <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest sm:text-xs" style={{ color: isSimulating ? '#f43f5e' : ACCENT }}>
             <MapIcon className="h-4 w-4" />
-            {isSimulating ? 'Simulasi Pertempuran Laut Sedang Berlangsung...' : 'Pelajari Medan & Atur Strategi Sebelum Memulai'}
+            Simulasi Pertempuran Laut Sedang Berlangsung...
           </div>
-
-        </div>
-
-        {battleLogs.length > 0 && (
-          <div
-            ref={logRef}
-            className="max-h-[88px] overflow-y-auto rounded-lg border bg-black/50 px-2.5 py-1.5 font-mono text-[9px] leading-relaxed"
-            style={{ borderColor: `${ACCENT}4D` }}
-            aria-live="polite"
-          >
-            {battleLogs.map((log, i) => (
-              <div key={i} style={{ color: i === battleLogs.length - 1 ? ACCENT : '#94a3b8' }}>{log}</div>
-            ))}
           </div>
         )}
+
       </div>
     </div>
   );

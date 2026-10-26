@@ -2,7 +2,8 @@
 
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import UnitMarker from './units/unitMarker';
-import { formatUnitQuantity, type WarUnit } from './units/warUnitComposition';
+import { formatUnitMarkerQuantity, formatUnitQuantity, type WarUnit } from './units/warUnitComposition';
+import { calculateUnitDamage, calculateUnitDamageLoss, getUnitAttackRadius } from './combatDamage';
 import type { FacilitySide, UnitFacility } from './UnitSelectionModal';
 import { evaluateBorderIncursion, loadRustViewport, prepareUnitAttack, type AiBorderResponse } from './warMapViewport';
 import { requestPythonAIWarCycle, type WarUnitState } from './pythonAiBridge';
@@ -473,6 +474,27 @@ export function collidesWithBuilding(x: number, y: number, unitRadius = 45): boo
     }
   }
   return false;
+}
+
+function findOpenUnitPosition(
+  originX: number,
+  originY: number,
+  occupied: UnitPosition[],
+): UnitPosition {
+  const minSeparation = 100;
+  for (let ring = 0; ring <= 12; ring++) {
+    const radius = ring * 100;
+    const samples = ring === 0 ? 1 : ring * 12;
+    for (let sample = 0; sample < samples; sample++) {
+      const angle = (sample / samples) * Math.PI * 2;
+      const x = clamp(originX + Math.cos(angle) * radius, 60, BASE_W - 60);
+      const y = clamp(originY + Math.sin(angle) * radius, 60, BASE_H - 60);
+      if (collidesWithBuilding(x, y)) continue;
+      if (occupied.some((position) => Math.hypot(position.x - x, position.y - y) < minSeparation)) continue;
+      return { x, y };
+    }
+  }
+  return { x: clamp(originX, 60, BASE_W - 60), y: clamp(originY, 60, BASE_H - 60) };
 }
 
 // Definisi zona/sektor dispersi per jenis unit (Hub titik kumpul per kategori)
@@ -1170,7 +1192,7 @@ const attackVisual = (weaponType: number) => {
 };
 
 const unitId = (unit: WarUnit, side: 'own' | 'enemy') =>
-  `${side}:${unit.group}:${unit.kind}:${unit.echelon ?? 'base'}`;
+  `${side}:${unit.group}:${unit.kind}:${unit.echelon ?? 'base'}:${unit.instanceId ?? 'default'}`;
 
 interface UnitsProps {
   accent: string;
@@ -1241,7 +1263,7 @@ const UnitsLayer = memo(function UnitsLayer({
           color={color}
           quantity={placed.unit.quantity}
           echelon={placed.unit.echelon}
-          label={`${placed.unit.label} ${formatUnitQuantity(placed.unit.quantity)}`}
+          label={`${placed.unit.label} ${formatUnitMarkerQuantity(placed.unit.quantity)}`}
         />
       </g>
     );
@@ -1293,25 +1315,6 @@ const UnitsLayer = memo(function UnitsLayer({
         {enemy.map((placed, index) => renderUnit(placed, index, true))}
       </g>
 
-      {simPhase === 'clash' && (
-        <g pointerEvents="none">
-          <circle className="nw-a nw-ping" cx="3000" cy="1010" r="120" fill="none" stroke="#f97316" strokeWidth="8" />
-          <circle className="nw-a nw-ping" cx="3000" cy="1010" r="240" fill="none" stroke="#f97316" strokeWidth="4" style={{ animationDelay: '0.5s' }} />
-          {([[3150, 1090, 100], [2860, 930, 75], [3060, 1020, 130]] as const).map(([x, y, r], i) => (
-            <circle key={i} className="nw-pulse" cx={x} cy={y} r={r} fill="url(#tm-fire)" style={{ animationDelay: `${i * 0.3}s` }} />
-          ))}
-          <path className="tm-tracer" d="M 2850,900 L 3260,980 M 2850,1110 L 3260,1050" fill="none" stroke="#fde047" strokeWidth="4" strokeDasharray="18 40" />
-          <path className="tm-tracer" d="M 3500,1200 L 3080,1040" fill="none" stroke="#fb7185" strokeWidth="4" strokeDasharray="18 40" />
-        </g>
-      )}
-      {done && (
-        <g pointerEvents="none">
-          <ellipse cx="3060" cy="1020" rx="170" ry="70" fill="#000" opacity="0.45" />
-          <ellipse cx="2900" cy="940" rx="90" ry="36" fill="#000" opacity="0.4" />
-          <ellipse cx="3200" cy="1090" rx="100" ry="40" fill="#000" opacity="0.4" />
-          <Smoke x={3060} y={990} n={5} />
-        </g>
-      )}
     </g>
   );
 });
@@ -1456,6 +1459,7 @@ export const TacticalMap = memo(function TacticalMap({
   const [movingUnitIds, setMovingUnitIds] = useState<string[]>([]);
   const [movePaths, setMovePaths] = useState<UnitMovePath[]>([]);
   const movementFramesRef = useRef<Record<string, number>>({});
+  const movementTargetsRef = useRef<Record<string, UnitPosition>>({});
   const movementEngineRef = useRef<Awaited<ReturnType<typeof loadRustViewport>> | null>(null);
   const aiCombatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isAiThinkingRef = useRef<boolean>(false);
@@ -1708,6 +1712,7 @@ export const TacticalMap = memo(function TacticalMap({
               cancelAnimationFrame(movementFramesRef.current[uId]);
               delete movementFramesRef.current[uId];
             }
+            delete movementTargetsRef.current[uId];
             return;
           }
 
@@ -1736,9 +1741,19 @@ export const TacticalMap = memo(function TacticalMap({
             waypoint.x, waypoint.y, BASE_W, BASE_H, 'darat',
           );
 
+          const previousTarget = movementTargetsRef.current[uId];
+          if (
+            movementFramesRef.current[uId] !== undefined &&
+            previousTarget &&
+            Math.hypot(previousTarget.x - tX, previousTarget.y - tY) < 140
+          ) {
+            return;
+          }
+
           if (movementFramesRef.current[uId]) {
             cancelAnimationFrame(movementFramesRef.current[uId]);
           }
+          movementTargetsRef.current[uId] = { x: tX, y: tY };
 
           const qrfStart = { x: curPos.x, y: curPos.y };
           let qrfElapsed = 0;
@@ -1778,12 +1793,13 @@ export const TacticalMap = memo(function TacticalMap({
             }
 
             positionsRef.current[uId] = { x: finalX, y: finalY };
+            setPositions({ ...positionsRef.current });
 
             if (qrfDone < 0.5) {
               movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
             } else {
               delete movementFramesRef.current[uId];
-              setPositions({ ...positionsRef.current });
+              delete movementTargetsRef.current[uId];
             }
           };
 
@@ -1834,12 +1850,11 @@ export const TacticalMap = memo(function TacticalMap({
                 const currentQty = unitQuantitiesRef.current[atk.target_unit_id] ?? targetUserPlaced.unit.quantity;
                 if (currentQty <= 0) return;
 
-                const targetArmor = targetUserPlaced.unit.kind === 'tank' ? 1.6 : (targetUserPlaced.unit.kind === 'apcIfv' ? 1.2 : 0.9);
-                const netPenetration = Math.max(0.4, (atk.penetration ?? 1.0) / targetArmor);
-
-                const damageLoss = Math.max(
-                  1,
-                  Math.round(Math.min(currentQty, Math.max(8, (currentQty * 0.08 + atk.damage_potential * 12) * netPenetration)))
+                const damageLoss = calculateUnitDamage(
+                  atk.damage_potential,
+                  atk.penetration ?? 1,
+                  targetUserPlaced.unit.kind,
+                  currentQty,
                 );
                 const remaining = Math.max(0, currentQty - damageLoss);
 
@@ -1909,6 +1924,7 @@ export const TacticalMap = memo(function TacticalMap({
     Object.keys(positionsRef.current).forEach((id) => {
       if (!allActiveIds.has(id)) {
         delete positionsRef.current[id];
+        delete movementTargetsRef.current[id];
         delete previousPositionsRef.current[id];
         delete velocitiesRef.current[id];
         if (movementFramesRef.current[id]) {
@@ -1933,7 +1949,7 @@ export const TacticalMap = memo(function TacticalMap({
     if (selected) {
       const updateRadius = (engine: Awaited<ReturnType<typeof loadRustViewport>>) => {
         if (selectedUnitIdRef.current !== nextId) return;
-        const radius = engine.calculate_attack_radius(selected.unit.quantity, selected.unit.group, selected.unit.kind);
+        const radius = getUnitAttackRadius(selected.unit.kind, selected.unit.quantity);
         setAttackRadius(radius);
         onAttackRadiusChange?.(radius);
       };
@@ -2051,10 +2067,10 @@ export const TacticalMap = memo(function TacticalMap({
             ];
 
             qrfTypes.forEach((q, idx) => {
-              const spawnAngle = (idx * (Math.PI * 2 / 3)) + Math.PI / 6;
-              const spawnRadius = 160;
-
               setTimeout(() => {
+                const occupied = [...initialEnemyRef.current, ...extraEnemyUnitsRef.current]
+                  .map((unit) => positionsRef.current[unitId(unit.unit, 'enemy')] ?? { x: unit.x, y: unit.y });
+                const spawnPosition = findOpenUnitPosition(aiResp.spawnOrigin.x, aiResp.spawnOrigin.y, occupied);
                 const newUnit: PlacedUnit = {
                   unit: {
                     kind: q.kind,
@@ -2062,9 +2078,10 @@ export const TacticalMap = memo(function TacticalMap({
                     label: q.label,
                     quantity: q.qty,
                     echelon: q.echelon,
+                    instanceId: `border-qrf-${q.kind}`,
                   },
-                  x: aiResp.spawnOrigin.x + Math.cos(spawnAngle) * spawnRadius,
-                  y: aiResp.spawnOrigin.y + Math.sin(spawnAngle) * spawnRadius,
+                  x: spawnPosition.x,
+                  y: spawnPosition.y,
                 };
 
                 const uId = unitId(newUnit.unit, 'enemy');
@@ -2104,7 +2121,11 @@ export const TacticalMap = memo(function TacticalMap({
       });
   };
 
-  const handleAttackUnit = (target: WarUnit | null, targetPosition: UnitPosition) => {
+  const handleAttackUnit = (
+    target: WarUnit | null,
+    targetPosition: UnitPosition,
+    targetUnitId?: string | null,
+  ) => {
     if (!selectedUnitId || simPhase !== 'idle') return;
     const attacker = own.find((placed) => unitId(placed.unit, 'own') === selectedUnitId);
     if (!attacker) return;
@@ -2128,7 +2149,9 @@ export const TacticalMap = memo(function TacticalMap({
         }
       }
 
-      const targetEnemyPlaced = enemy.find((p) => p.unit.kind === target.kind && p.unit.group === target.group);
+      const targetEnemyPlaced = enemy.find((p) =>
+        unitId(p.unit, 'enemy') === (targetUnitId ?? unitId(target, 'enemy'))
+      );
       if (targetEnemyPlaced) {
         const enemyId = unitId(targetEnemyPlaced.unit, 'enemy');
         const currentEnemyQty = unitQuantitiesRef.current[enemyId] ?? targetEnemyPlaced.unit.quantity;
@@ -2172,18 +2195,19 @@ export const TacticalMap = memo(function TacticalMap({
         // Pengurangan kuantitas pasukan Musuh akibat tembakan User (dieksekusi saat proyektil tiba / impact)
         setTimeout(() => {
           if (target) {
-            const targetEnemyPlaced = enemy.find((p) => p.unit.kind === target.kind && p.unit.group === target.group)
-              ?? enemy.find((p) => unitId(p.unit, 'enemy') === unitId(target, 'enemy'));
+            const targetEnemyPlaced = enemy.find((p) =>
+              unitId(p.unit, 'enemy') === (targetUnitId ?? unitId(target, 'enemy'))
+            );
             if (targetEnemyPlaced) {
               const enemyId = unitId(targetEnemyPlaced.unit, 'enemy');
               const currentQty = unitQuantitiesRef.current[enemyId] ?? targetEnemyPlaced.unit.quantity;
               if (currentQty <= 0) return; // Musuh sudah hancur sepenuhnya
 
-              const attackerStrength = userQty;
-              // Kerusakan proporsional terhadap ukuran pasukan user
-              const damageLoss = Math.max(
-                1,
-                Math.round(Math.min(currentQty, Math.max(15, currentQty * 0.15 + Math.sqrt(attackerStrength) * 18)))
+              const damageLoss = calculateUnitDamageLoss(
+                attacker.unit.kind,
+                userQty,
+                targetEnemyPlaced.unit.kind,
+                currentQty,
               );
               const remaining = Math.max(0, currentQty - damageLoss);
 
@@ -2244,7 +2268,11 @@ export const TacticalMap = memo(function TacticalMap({
     const enemyUnit = enemyElement
       ? enemy.find((placed) => unitId(placed.unit, 'enemy') === enemyElement.getAttribute('data-unit-id'))
       : null;
-    handleAttackUnit(enemyUnit?.unit ?? null, { x: target.x, y: target.y });
+    handleAttackUnit(
+      enemyUnit?.unit ?? null,
+      { x: target.x, y: target.y },
+      enemyElement?.getAttribute('data-unit-id'),
+    );
   };
 
   const sources = useMemo<Src[]>(

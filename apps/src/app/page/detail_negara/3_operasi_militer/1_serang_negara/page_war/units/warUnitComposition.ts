@@ -9,6 +9,7 @@ export interface WarUnit {
   label: string;
   quantity: number;
   echelon?: "I" | "II" | "III";
+  instanceId?: string;
 }
 
 const UNIT_CATALOG: Record<WarUnitGroup, Array<{ key: string; kind: UnitKind; label: string }>> = {
@@ -114,4 +115,8 @@ export function formatUnitQuantity(quantity: number): string {
   if (quantity >= 1_000_000) return `${(quantity / 1_000_000).toFixed(1)}m`;
   if (quantity >= 1_000) return `${(quantity / 1_000).toFixed(1)}k`;
   return String(Math.round(quantity));
+}
+
+export function formatUnitMarkerQuantity(quantity: number): string {
+  return Math.round(quantity).toLocaleString('id-ID');
 }

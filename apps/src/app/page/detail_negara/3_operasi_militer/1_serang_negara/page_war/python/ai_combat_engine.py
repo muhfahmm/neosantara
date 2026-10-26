@@ -4,37 +4,28 @@ dan penentuan tembakan (pembagian target, jangkauan serang, kalkulasi akurasi).
 """
 
 import math
+import json
+from pathlib import Path
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
 
-# Jangkauan serang referensi per jenis unit (dalam koordinat peta)
-# Disesuaikan agar unit AI agresif menjangkau unit user yang baru keluar dari hangar/barak/gudang
-ATTACK_RANGES: Dict[str, float] = {
-    "artileriBerat": 1600.0,
-    "peluncurRoket": 1650.0,
-    "tank": 950.0,
-    "apcIfv": 850.0,
-    "kendaraanTaktis": 750.0,
-    "infanteri": 680.0,
-    "pertahananUdaraMobile": 1400.0,
-    # Udara
-    "jetTempurSiluman": 1300.0,
-    "jetTempurInterceptor": 1150.0,
-    "pesawatPengebom": 1500.0,
-    "helikopterSerang": 950.0,
-    "droneKamikaze": 1050.0,
-    # Laut
-    "destroyer": 1350.0,
-    "korvet": 1050.0,
-    "kapalSelamNuklir": 1250.0,
-    "kapalSelamReguler": 950.0,
-}
+with Path(__file__).with_name("combat_damage_profiles.json").open(encoding="utf-8") as profile_file:
+    COMBAT_DAMAGE_PROFILES = json.load(profile_file)
 
 SPEED_RATES: Dict[str, float] = {
     "udara": 720.0,
     "darat": 420.0,
     "laut": 280.0,
 }
+
+
+def attack_range_for(unit: "UnitState") -> float:
+    profile = COMBAT_DAMAGE_PROFILES["units"].get(
+        unit.kind,
+        {"base_attack_range": 750.0},
+    )
+    strength_factor = 1.0 + min(math.log(max(0, unit.quantity) + 1.0), 6.0) / 12.0
+    return profile["base_attack_range"] * strength_factor
 
 
 class UnitState(BaseModel):
@@ -173,7 +164,7 @@ def decide_tactical_action(
     predicted_target_y = target.y + (target.vy * 1.0)
 
     dist = distance(enemy_unit.x, enemy_unit.y, target.x, target.y)
-    my_range = ATTACK_RANGES.get(enemy_unit.kind, 750.0)
+    my_range = attack_range_for(enemy_unit)
 
     # Doktrin Tempur Realistis:
     # Jika unit sudah berada dalam radius tembak efektif (in firing range), unit mengambil posisi bertahan/menembak (HOLD / STAND-OFF)
@@ -401,7 +392,7 @@ def compute_ai_war_cycle(
 
 
         is_artillery = enemy.kind in ("artileriBerat", "peluncurRoket")
-        attack_range = ATTACK_RANGES.get(enemy.kind, 750.0)
+        attack_range = attack_range_for(enemy)
 
         # FILTERING: Hanya masukkan target yang BOLEH diserang oleh unit ini (Logika Anti-Air Domain)
         in_range_targets = [
@@ -460,14 +451,16 @@ def compute_ai_war_cycle(
             else:
                 weapon_type = 4
 
-            base_dmg = math.sqrt(enemy.quantity) * 12.0
+            damage_profile = COMBAT_DAMAGE_PROFILES["units"].get(
+                enemy.kind,
+                {"base_damage": 20.0, "damage_per_sqrt_unit": 2.0, "penetration": 0.75},
+            )
+            base_dmg = damage_profile["base_damage"] + math.sqrt(max(0, enemy.quantity)) * damage_profile["damage_per_sqrt_unit"]
 
             # Hit chance realistis (menurun seiring bertambahnya jarak tembak)
             target_dist = distance(enemy.x, enemy.y, selected_target.x, selected_target.y)
             accuracy = max(0.60, min(0.95, 1.0 - (target_dist / (attack_range * 2.0))))
-            penetration = 1.4 if enemy.kind in ("tank", "artileriBerat") else (
-                0.8 if enemy.kind == "infanteri" else 1.0
-            )
+            penetration = damage_profile["penetration"]
 
             attacks.append(AttackDecision(
                 attacker_id=enemy.id,
@@ -490,5 +483,3 @@ def compute_ai_war_cycle(
         movements=movements,
         attacks=attacks
     )
-
-

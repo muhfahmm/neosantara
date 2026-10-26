@@ -1,3 +1,5 @@
+import { getUnitAttackRadius } from './combatDamage';
+
 type Viewport = { x: number; y: number; w: number; h: number };
 
 export interface ViewportBounds {
@@ -105,7 +107,7 @@ export function prepareUnitAttack(
   if (result && result.length >= 3) {
     const [radius, projectileSpeed, weaponType] = result;
     if ([radius, projectileSpeed, weaponType].every(Number.isFinite) && projectileSpeed > 0) {
-      return { radius, projectileSpeed, weaponType };
+      return { radius: getUnitAttackRadius(kind, strength), projectileSpeed, weaponType };
     }
     throw new Error('Rust attack engine returned an invalid attack profile');
   }
@@ -126,7 +128,7 @@ export function prepareUnitAttack(
           : 4;
   const projectileSpeed = [1350, 2400, 900, 1600, 1800][weaponType];
   return {
-    radius: engine.calculate_attack_radius(strength, group, kind),
+    radius: getUnitAttackRadius(kind, strength),
     projectileSpeed,
     weaponType,
   };
