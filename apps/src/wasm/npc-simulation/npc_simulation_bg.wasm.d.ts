@@ -2,6 +2,7 @@
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
 export const advance_npc_daily_metrics: (a: number, b: number) => [number, number, number, number];
+export const calculate_food_metrics: (a: number, b: number) => [number, number, number, number];
 export const simulate_npc_materials: (a: number, b: number) => [number, number, number, number];
 export const __wbindgen_externrefs: WebAssembly.Table;
 export const __wbindgen_malloc: (a: number, b: number) => number;

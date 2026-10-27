@@ -4241,6 +4241,8 @@ export default function MapPage() {
     const isMapPointerDownRef = useRef(false);
     const isTimeControllerHoveredRef = useRef(false);
     const playerDailyTickInFlightRef = useRef(false);
+    const playerDailyTickRerunRef = useRef(false);
+    const playerDailyTickRunnerRef = useRef<() => void>(() => {});
     const lastMapInteractionAtRef = useRef(0);
     const pendingDateRef = useRef<Date | null>(null);
     const pendingDateTimingRef = useRef<{
@@ -4280,7 +4282,6 @@ export default function MapPage() {
         const commit = () => {
             dateCommitTimerRef.current = null;
             if (!pendingDateRef.current) return;
-            if (!force && isMapPointerDownRef.current) return;
             const pendingDate = pendingDateRef.current;
             pendingDateRef.current = null;
             const dateKey = `${pendingDate.getFullYear()}-${pendingDate.getMonth()}-${pendingDate.getDate()}`;
@@ -4291,14 +4292,7 @@ export default function MapPage() {
             startTransition(() => setCurrentDate(pendingDate));
         };
 
-        if (force || !isMapPointerDownRef.current) {
-            commit();
-            return;
-        }
-
-        const elapsedSinceInteraction = Date.now() - lastMapInteractionAtRef.current;
-        const delay = Math.max(0, MAP_INTERACTION_IDLE_MS - elapsedSinceInteraction);
-        dateCommitTimerRef.current = setTimeout(commit, delay);
+        commit();
     }, []);
 
     useEffect(() => {
@@ -5220,7 +5214,10 @@ export default function MapPage() {
         if (!countryDetail || !currentDate) return;
 
         const runDailyTick = async () => {
-            if (playerDailyTickInFlightRef.current) return;
+            if (playerDailyTickInFlightRef.current) {
+                playerDailyTickRerunRef.current = true;
+                return;
+            }
             playerDailyTickInFlightRef.current = true;
             try {
                 await runDailyTickWork();
@@ -5228,8 +5225,13 @@ export default function MapPage() {
                 console.error('Player daily simulation failed:', error);
             } finally {
                 playerDailyTickInFlightRef.current = false;
+                if (playerDailyTickRerunRef.current) {
+                    playerDailyTickRerunRef.current = false;
+                    window.setTimeout(() => playerDailyTickRunnerRef.current(), 0);
+                }
             }
         };
+        playerDailyTickRunnerRef.current = runDailyTick;
 
         const runDailyTickWork = async () => {
             const year = currentDate.getFullYear();
@@ -5253,9 +5255,6 @@ export default function MapPage() {
 
             // Calculate economy updates
             const playerCountryName = selectedCountry?.country || countryDetail.country || countryDetail.nama_negara || '';
-            const isMapInteractionActive = () =>
-                Boolean((window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active) ||
-                isTimeControllerHoveredRef.current;
             const materialUpdatesPromise = metadata && Object.keys(metadata).length > 0
                 ? calculatePlayerDailyMaterialsInRust(
                     { ...countryDetail, name_id: playerCountryName },
@@ -5270,10 +5269,6 @@ export default function MapPage() {
                 updates = await materialUpdatesPromise;
             } catch (error) {
                 console.error('Rust daily material simulation failed; using TypeScript fallback:', error);
-                if (isMapInteractionActive()) {
-                    waitForInteractionToEnd();
-                    return;
-                }
                 updates = calculateDailyMaterialProduction(
                     countryDetail,
                     metadata,
@@ -5281,10 +5276,6 @@ export default function MapPage() {
                     resourceKey => getEconomicEmbargoProductionMultiplier(playerCountryName, resourceKey),
                     lastDate,
                 ).updates;
-            }
-            if (isMapInteractionActive()) {
-                waitForInteractionToEnd();
-                return;
             }
 
             const populationMetrics = calculateDailyPopulationChange(
@@ -5338,7 +5329,11 @@ export default function MapPage() {
             }
 
             setCountryDetail((prev: any) => {
-                if (!prev) return prev;
+                if (
+                    !prev ||
+                    (typeof prev.last_daily_tick_date === 'string' &&
+                        prev.last_daily_tick_date.slice(0, 10) >= currentDateStr)
+                ) return prev;
 
                 const currentPlayerCountryName = String(prev?.country || prev?.nama_negara || prev?.name || selectedCountry?.country || '').trim();
 
@@ -5939,49 +5934,12 @@ export default function MapPage() {
             });
         };
 
-        let dailyTickTimer: number | null = null;
-        let waitingForInteractionEnd = false;
-        const interactionActive = () =>
-            Boolean((window as Window & { neosantara_map_pan_active?: boolean }).neosantara_map_pan_active) ||
-            isTimeControllerHoveredRef.current;
-        const cancelScheduledDailyTick = () => {
-            if (dailyTickTimer === null) return;
-            window.clearTimeout(dailyTickTimer);
-            dailyTickTimer = null;
-        };
-        const scheduleDailyTick = () => {
-            cancelScheduledDailyTick();
-            if (interactionActive()) return;
-            // Jalankan segera agar sinkron instan dengan tanggal kalender baru
-            runDailyTick();
-        };
-        const resumeDailyTickWhenIdle = () => {
-            if (interactionActive()) return;
-            waitingForInteractionEnd = false;
-            window.removeEventListener('neosantara:map-pan-ended', resumeDailyTickWhenIdle);
-            window.removeEventListener('neosantara:time-controller-idle', resumeDailyTickWhenIdle);
-            scheduleDailyTick();
-        };
-        const waitForInteractionToEnd = () => {
-            if (waitingForInteractionEnd) return;
-            waitingForInteractionEnd = true;
-            window.addEventListener('neosantara:map-pan-ended', resumeDailyTickWhenIdle);
-            window.addEventListener('neosantara:time-controller-idle', resumeDailyTickWhenIdle);
-        };
-        const pauseDailyTick = () => cancelScheduledDailyTick();
-        window.addEventListener('neosantara:map-pan-started', pauseDailyTick);
-        window.addEventListener('neosantara:time-controller-hovered', pauseDailyTick);
-        window.addEventListener('neosantara:map-pan-ended', scheduleDailyTick);
-        window.addEventListener('neosantara:time-controller-idle', scheduleDailyTick);
-        scheduleDailyTick();
+        // Jalankan segera agar sinkron instan dengan tanggal kalender baru bahkan saat peta digeser
+        playerDailyTickRunnerRef.current();
         return () => {
-            cancelScheduledDailyTick();
-            window.removeEventListener('neosantara:map-pan-ended', resumeDailyTickWhenIdle);
-            window.removeEventListener('neosantara:time-controller-idle', resumeDailyTickWhenIdle);
-            window.removeEventListener('neosantara:map-pan-started', pauseDailyTick);
-            window.removeEventListener('neosantara:time-controller-hovered', pauseDailyTick);
-            window.removeEventListener('neosantara:map-pan-ended', scheduleDailyTick);
-            window.removeEventListener('neosantara:time-controller-idle', scheduleDailyTick);
+            if (playerDailyTickRunnerRef.current === runDailyTick) {
+                playerDailyTickRunnerRef.current = () => {};
+            }
         };
     }, [currentDate, countryDetail, metadata, selectedCountry?.country]);
 

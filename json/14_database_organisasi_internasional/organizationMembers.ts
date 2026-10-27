@@ -67,6 +67,26 @@ const EXPELLED_COUNTRIES_KEY = 'neosantara_expelled_organization_countries';
 const EXPELLED_ORGANIZATION_MEMBERSHIPS_KEY = 'neosantara_expelled_organization_memberships_v1';
 export const ORGANIZATION_MEMBERSHIP_UPDATED_EVENT = 'international_organization_membership_updated';
 
+const organizationMembersCache = new Map<string, { country: string; status: string }[]>();
+
+function clearOrganizationMembersCache(): void {
+  organizationMembersCache.clear();
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener(ORGANIZATION_MEMBERSHIP_UPDATED_EVENT, clearOrganizationMembersCache);
+  window.addEventListener('storage', event => {
+    if (
+      event.key === null ||
+      event.key === EXPELLED_COUNTRIES_KEY ||
+      event.key === EXPELLED_ORGANIZATION_MEMBERSHIPS_KEY ||
+      event.key.startsWith('neosantara_user_joined_orgs')
+    ) {
+      clearOrganizationMembersCache();
+    }
+  });
+}
+
 const UN_ORGANIZATION_NAMES = [
   "Interpol",
   "Organisasi Kesehatan Dunia (WHO)",
@@ -222,6 +242,10 @@ export function expelCountryFromUNOrganizations(countryName: string): string[] {
 
 export function getOrgMembers(orgName: string, playerCountryName?: string): { country: string; status: string }[] {
   if (!orgName) return [];
+  if (!playerCountryName) {
+    const cachedMembers = organizationMembersCache.get(orgName);
+    if (cachedMembers) return cachedMembers;
+  }
   
   let list = orgNameToKeyMap[orgName];
 
@@ -317,5 +341,6 @@ export function getOrgMembers(orgName: string, playerCountryName?: string): { co
     }
   }
 
+  if (!playerCountryName) organizationMembersCache.set(orgName, result);
   return result;
 }

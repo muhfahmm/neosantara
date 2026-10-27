@@ -1,11 +1,12 @@
 import initializeWasm, {
   advance_npc_daily_metrics,
+  calculate_food_metrics,
   simulate_npc_materials,
 } from '../../../wasm/npc-simulation/npc_simulation.js';
 
 interface WorkerRequest {
   id: number;
-  action: 'materials' | 'daily_metrics';
+  action: 'materials' | 'daily_metrics' | 'food_metrics';
   input: unknown;
 }
 
@@ -33,7 +34,9 @@ workerScope.onmessage = async ({ data }) => {
       ? advance_npc_daily_metrics(JSON.stringify(data.input))
       : data.action === 'materials'
         ? simulate_npc_materials(JSON.stringify(data.input))
-        : undefined;
+        : data.action === 'food_metrics'
+          ? calculate_food_metrics(JSON.stringify(data.input))
+          : undefined;
     if (!result) {
       throw new Error(`Unknown Rust NPC worker action: ${String(data.action)}`);
     }

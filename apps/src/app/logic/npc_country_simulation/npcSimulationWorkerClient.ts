@@ -48,6 +48,26 @@ export interface NpcDailyMetricsWorkerResult {
   updates: Record<string, number>;
 }
 
+export interface FoodMetricsWorkerInput {
+  population: number;
+  commodities: Array<{
+    key: string;
+    production: number;
+    consumption_per_capita: number;
+    include_in_deficit: boolean;
+  }>;
+  groups: Array<{
+    weight: number;
+    commodity_families: string[][];
+  }>;
+}
+
+export interface FoodMetricsWorkerResult {
+  foodRatio: number;
+  foodDeficitCount: number;
+  foodSurplusRatio: number;
+}
+
 interface WorkerResponse {
   id: number;
   result?: string;
@@ -56,7 +76,7 @@ interface WorkerResponse {
 
 interface WorkerRequest {
   id: number;
-  action: 'materials' | 'daily_metrics';
+  action: 'materials' | 'daily_metrics' | 'food_metrics';
   input: unknown;
 }
 
@@ -215,4 +235,32 @@ export function advanceNpcDailyMetricsInRust(
       Object.values(value.updates).every(item => typeof item === 'number'),
     ),
   );
+}
+
+export function calculateFoodMetricsInRust(
+  input: FoodMetricsWorkerInput,
+): Promise<FoodMetricsWorkerResult> {
+  return requestNpcWorker('food_metrics', input).then(result => {
+    const parsed: unknown = JSON.parse(result);
+    if (
+      typeof parsed !== 'object' ||
+      parsed === null ||
+      !('foodRatio' in parsed) ||
+      !('foodDeficitCount' in parsed) ||
+      !('foodSurplusRatio' in parsed) ||
+      typeof parsed.foodRatio !== 'number' ||
+      !Number.isFinite(parsed.foodRatio) ||
+      typeof parsed.foodDeficitCount !== 'number' ||
+      !Number.isInteger(parsed.foodDeficitCount) ||
+      typeof parsed.foodSurplusRatio !== 'number' ||
+      !Number.isFinite(parsed.foodSurplusRatio)
+    ) {
+      throw new Error('Rust NPC worker returned invalid food metrics.');
+    }
+    return {
+      foodRatio: parsed.foodRatio,
+      foodDeficitCount: parsed.foodDeficitCount,
+      foodSurplusRatio: parsed.foodSurplusRatio,
+    };
+  });
 }

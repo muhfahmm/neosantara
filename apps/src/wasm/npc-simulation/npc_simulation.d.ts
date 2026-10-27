@@ -3,6 +3,8 @@
 
 export function advance_npc_daily_metrics(input_json: string): string;
 
+export function calculate_food_metrics(input_json: string): string;
+
 export function simulate_npc_materials(input_json: string): string;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
@@ -10,6 +12,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
     readonly advance_npc_daily_metrics: (a: number, b: number) => [number, number, number, number];
+    readonly calculate_food_metrics: (a: number, b: number) => [number, number, number, number];
     readonly simulate_npc_materials: (a: number, b: number) => [number, number, number, number];
     readonly __wbindgen_externrefs: WebAssembly.Table;
     readonly __wbindgen_malloc: (a: number, b: number) => number;

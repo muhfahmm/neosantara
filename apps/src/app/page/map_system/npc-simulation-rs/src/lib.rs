@@ -341,9 +341,158 @@ pub fn advance_npc_daily_metrics_batch(input_json: &str) -> Result<String, Strin
     serde_json::to_string(&results).map_err(|error| error.to_string())
 }
 
+#[derive(Debug, Deserialize)]
+struct FoodMetricsInput {
+    #[serde(default)]
+    population: f64,
+    #[serde(default)]
+    commodities: Vec<FoodCommodityInput>,
+    #[serde(default)]
+    groups: Vec<FoodCoverageGroupInput>,
+}
+
+#[derive(Debug, Deserialize)]
+struct FoodCommodityInput {
+    key: String,
+    #[serde(default)]
+    production: f64,
+    #[serde(default)]
+    consumption_per_capita: f64,
+    #[serde(default)]
+    include_in_deficit: bool,
+}
+
+#[derive(Debug, Deserialize)]
+struct FoodCoverageGroupInput {
+    #[serde(default)]
+    weight: f64,
+    #[serde(default)]
+    commodity_families: Vec<Vec<String>>,
+}
+
+#[derive(Debug, PartialEq)]
+struct FoodMetrics {
+    food_ratio: f64,
+    food_deficit_count: usize,
+    food_surplus_ratio: f64,
+}
+
+fn calculate_food_metrics_from_input(input: &FoodMetricsInput) -> FoodMetrics {
+    let population = finite_or(input.population, 0.0).max(0.0);
+    if population <= 0.0 {
+        return FoodMetrics {
+            food_ratio: 1.0,
+            food_deficit_count: 0,
+            food_surplus_ratio: 1.0,
+        };
+    }
+
+    let production_by_key: HashMap<&str, f64> = input
+        .commodities
+        .iter()
+        .map(|commodity| (commodity.key.as_str(), finite_or(commodity.production, 0.0)))
+        .collect();
+    let consumption_by_key: HashMap<&str, f64> = input
+        .commodities
+        .iter()
+        .map(|commodity| {
+            (
+                commodity.key.as_str(),
+                (population / 1000.0) * finite_or(commodity.consumption_per_capita, 0.0),
+            )
+        })
+        .collect();
+
+    let family_ratios = |family: &[String], clamp_coverage: bool| -> Option<f64> {
+        family
+            .iter()
+            .filter_map(|key| {
+                let consumption = *consumption_by_key.get(key.as_str())?;
+                if consumption <= 0.0 {
+                    return None;
+                }
+                let production = *production_by_key.get(key.as_str()).unwrap_or(&0.0);
+                let ratio = production / consumption;
+                Some(if clamp_coverage {
+                    ratio.clamp(0.0, 1.0)
+                } else {
+                    ratio
+                })
+            })
+            .reduce(f64::max)
+    };
+
+    let mut weighted_coverage = 0.0;
+    let mut total_weight = 0.0;
+    let mut surplus_ratio = f64::INFINITY;
+    for group in &input.groups {
+        let family_coverages: Vec<f64> = group
+            .commodity_families
+            .iter()
+            .filter_map(|family| family_ratios(family, true))
+            .collect();
+        if !family_coverages.is_empty() {
+            let group_coverage =
+                family_coverages.iter().sum::<f64>() / family_coverages.len() as f64;
+            weighted_coverage += group_coverage * finite_or(group.weight, 0.0);
+            total_weight += finite_or(group.weight, 0.0);
+        }
+
+        for family in &group.commodity_families {
+            if let Some(family_ratio) = family_ratios(family, false) {
+                surplus_ratio = surplus_ratio.min(family_ratio);
+            }
+        }
+    }
+
+    let food_deficit_count = input
+        .commodities
+        .iter()
+        .filter(|commodity| {
+            if !commodity.include_in_deficit {
+                return false;
+            }
+            let consumption =
+                (population / 1000.0) * finite_or(commodity.consumption_per_capita, 0.0);
+            consumption > 0.0 && finite_or(commodity.production, 0.0) < consumption
+        })
+        .count();
+
+    FoodMetrics {
+        food_ratio: if total_weight > 0.0 {
+            weighted_coverage / total_weight
+        } else {
+            1.0
+        },
+        food_deficit_count,
+        food_surplus_ratio: if surplus_ratio.is_finite() {
+            surplus_ratio.clamp(0.0, 1.25)
+        } else {
+            1.0
+        },
+    }
+}
+
+fn calculate_food_metrics_batch(input_json: &str) -> Result<String, String> {
+    let input: FoodMetricsInput =
+        serde_json::from_str(input_json).map_err(|error| error.to_string())?;
+    let metrics = calculate_food_metrics_from_input(&input);
+    serde_json::to_string(&json!({
+        "foodRatio": metrics.food_ratio,
+        "foodDeficitCount": metrics.food_deficit_count,
+        "foodSurplusRatio": metrics.food_surplus_ratio,
+    }))
+    .map_err(|error| error.to_string())
+}
+
 #[wasm_bindgen]
 pub fn advance_npc_daily_metrics(input_json: &str) -> Result<String, JsValue> {
     advance_npc_daily_metrics_batch(input_json).map_err(|error| JsValue::from_str(&error))
+}
+
+#[wasm_bindgen]
+pub fn calculate_food_metrics(input_json: &str) -> Result<String, JsValue> {
+    calculate_food_metrics_batch(input_json).map_err(|error| JsValue::from_str(&error))
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -703,8 +852,8 @@ fn is_leap_year(year: u32) -> bool {
 mod tests {
     use super::{
         advance_npc_daily_metrics_batch, calculate_daily_material_production,
-        for_each_simulation_day, is_valid_date, mutable_country_state, next_date,
-        simulate_npc_material_batch, ResourceRules,
+        calculate_food_metrics_batch, for_each_simulation_day, is_valid_date,
+        mutable_country_state, next_date, simulate_npc_material_batch, ResourceRules,
     };
     use serde_json::{json, Value};
     use std::collections::HashMap;
@@ -971,5 +1120,44 @@ mod tests {
         assert_eq!(updates["sector_deficit_month_counter"], json!(0.0));
         assert_eq!(updates["sector_deficit_kepuasan_penalty"], json!(0.0));
         assert_eq!(updates["kepuasan"], json!(80.0));
+    }
+
+    #[test]
+    fn food_metrics_batch_calculates_weighted_coverage_deficit_and_surplus() {
+        let input = json!({
+            "population": 100.0,
+            "commodities": [
+                {"key": "a", "production": 50.0, "consumption_per_capita": 1000.0, "include_in_deficit": true},
+                {"key": "b", "production": 100.0, "consumption_per_capita": 1000.0, "include_in_deficit": true},
+                {"key": "c", "production": 25.0, "consumption_per_capita": 1000.0, "include_in_deficit": true}
+            ],
+            "groups": [
+                {"weight": 0.4, "commodity_families": [["a"], ["b"]]},
+                {"weight": 0.6, "commodity_families": [["c"]]}
+            ]
+        });
+
+        let result: Value =
+            serde_json::from_str(&calculate_food_metrics_batch(&input.to_string()).unwrap())
+                .unwrap();
+        assert!((result["foodRatio"].as_f64().unwrap() - 0.45).abs() < 1e-12);
+        assert_eq!(result["foodDeficitCount"], json!(2));
+        assert_eq!(result["foodSurplusRatio"], json!(0.25));
+    }
+
+    #[test]
+    fn food_metrics_batch_matches_empty_population_defaults() {
+        let input = json!({
+            "population": 0.0,
+            "commodities": [],
+            "groups": []
+        });
+
+        let result: Value =
+            serde_json::from_str(&calculate_food_metrics_batch(&input.to_string()).unwrap())
+                .unwrap();
+        assert_eq!(result["foodRatio"], json!(1.0));
+        assert_eq!(result["foodDeficitCount"], json!(0));
+        assert_eq!(result["foodSurplusRatio"], json!(1.0));
     }
 }

@@ -518,7 +518,7 @@ export default function TopLeftIcon({
   return (
     <>
       {mounted && !isWarAnalysisActive && createPortal(
-        <div className="fixed top-56 right-7 z-[100] flex flex-col items-end gap-2 pointer-events-auto lg:top-56 xl:top-72">
+        <div className="fixed top-24 left-7 z-[100] flex flex-col items-start gap-2 pointer-events-auto">
           <button
             onClick={() => {
               if (toastNotification) {

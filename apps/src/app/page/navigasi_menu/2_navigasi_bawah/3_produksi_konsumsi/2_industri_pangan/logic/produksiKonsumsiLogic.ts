@@ -52,7 +52,7 @@ const getProfilePopulationLookup = () => {
 
 const PROFILE_POPULATION_LOOKUP = getProfilePopulationLookup();
 
-const resolveCountryPopulation = (country: any) => {
+export const resolveCountryPopulation = (country: any) => {
   const directPopulation = safeNumber(
     country?.jumlah_penduduk ??
     country?.population ??

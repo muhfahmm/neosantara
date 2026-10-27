@@ -20,10 +20,17 @@ import { calculateKesehatanLogic } from "@/app/page/navigasi_menu/2_navigasi_baw
 import { calculateTunawismaLogic } from "@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/kematian_modals/logic/tunawismaLogic";
 import { calculateKriminalitasLogic } from "@/app/page/navigasi_menu/2_navigasi_bawah/2_populasi/kematian_modals/logic/kriminalitasLogic";
 import {
-  calculateFoodDeficitCount,
-  calculateFoodSurplusRatio,
+  calculateProduction,
   calculateWeightedFoodCoverage,
+  FOOD_CONSUMPTION_PER_CAPITA,
+  FOOD_COVERAGE_GROUPS,
+  resolveCountryPopulation,
 } from "@/app/page/navigasi_menu/2_navigasi_bawah/3_produksi_konsumsi/2_industri_pangan/logic/produksiKonsumsiLogic";
+import {
+  calculateFoodMetricsInRust,
+  type FoodMetricsWorkerInput,
+  type FoodMetricsWorkerResult,
+} from "../npc_country_simulation/npcSimulationWorkerClient";
 
 // ==============================
 // Interface Tipe Data
@@ -88,6 +95,11 @@ export interface PopulationSectoral {
   hunian: number;
 }
 
+type PopulationFoodMetrics = Pick<
+  FoodMetricsWorkerResult,
+  "foodRatio" | "foodDeficitCount" | "foodSurplusRatio"
+>;
+
 const finiteNumber = (value: unknown, fallback = 0): number => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
@@ -124,6 +136,91 @@ export const hitungKeterpenuhanHunian = (country: CountryDetail, metadata: Recor
   const capacity = applyTotalHousingCapacityBonus(baseCapacity, country);
   return capacity / population;
 };
+
+function createFoodMetricsInput(
+  country: CountryDetail,
+  metadata: Record<string, any>,
+): FoodMetricsWorkerInput {
+  return {
+    population: resolveCountryPopulation(country),
+    commodities: Object.entries(FOOD_CONSUMPTION_PER_CAPITA).map(([key, consumptionPerCapita]) => ({
+      key,
+      production: calculateProduction(key, country, metadata),
+      consumption_per_capita: consumptionPerCapita,
+      include_in_deficit: key !== "garam",
+    })),
+    groups: FOOD_COVERAGE_GROUPS.map(group => ({
+      weight: group.weight,
+      commodity_families: group.commodityFamilies,
+    })),
+  };
+}
+
+function calculateFoodMetricsInTypeScript(input: FoodMetricsWorkerInput): PopulationFoodMetrics {
+  if (input.population <= 0) {
+    return { foodRatio: 1, foodDeficitCount: 0, foodSurplusRatio: 1 };
+  }
+
+  const commodityByKey = new Map(input.commodities.map(commodity => [commodity.key, commodity]));
+  const familyRatios = (family: string[], clampCoverage: boolean): number | null => {
+    const ratios = family.flatMap(key => {
+      const commodity = commodityByKey.get(key);
+      if (!commodity) return [];
+      const consumption = (input.population / 1000) * commodity.consumption_per_capita;
+      if (consumption <= 0) return [];
+      const ratio = commodity.production / consumption;
+      return [clampCoverage ? Math.min(1, Math.max(0, ratio)) : ratio];
+    });
+    return ratios.length ? Math.max(...ratios) : null;
+  };
+
+  let weightedCoverage = 0;
+  let totalWeight = 0;
+  let surplusRatio = Number.POSITIVE_INFINITY;
+  for (const group of input.groups) {
+    const familyCoverages = group.commodity_families
+      .map(family => familyRatios(family, true))
+      .filter((ratio): ratio is number => ratio !== null);
+    if (familyCoverages.length > 0) {
+      const groupCoverage = familyCoverages.reduce((sum, ratio) => sum + ratio, 0) / familyCoverages.length;
+      weightedCoverage += groupCoverage * group.weight;
+      totalWeight += group.weight;
+    }
+
+    for (const family of group.commodity_families) {
+      const ratio = familyRatios(family, false);
+      if (ratio !== null) surplusRatio = Math.min(surplusRatio, ratio);
+    }
+  }
+
+  const foodDeficitCount = input.commodities.filter(commodity => {
+    const consumption = (input.population / 1000) * commodity.consumption_per_capita;
+    return commodity.include_in_deficit && consumption > 0 && commodity.production < consumption;
+  }).length;
+
+  return {
+    foodRatio: totalWeight > 0 ? weightedCoverage / totalWeight : 1,
+    foodDeficitCount,
+    foodSurplusRatio: Number.isFinite(surplusRatio)
+      ? Math.min(1.25, Math.max(0, surplusRatio))
+      : 1,
+  };
+}
+
+export async function calculateDailyPopulationChangeInRust(
+  detail: CountryDetail,
+  countryName?: string,
+  metadata: Record<string, unknown> = {},
+  currentDate?: Date | string,
+): Promise<PopulationDailyMetrics> {
+  if (Object.keys(metadata).length === 0) {
+    return calculateDailyPopulationChange(detail, countryName, metadata, currentDate);
+  }
+
+  const foodMetricsInput = createFoodMetricsInput(detail, metadata);
+  const foodMetrics = await calculateFoodMetricsInRust(foodMetricsInput);
+  return calculateDailyPopulationChange(detail, countryName, metadata, currentDate, foodMetrics);
+}
 
 export const getPanganMultiplier = (ratio: number): PopulationMultiplier => {
   if (ratio > 1.1) return { kelahiran: 1.1, kematian: 0.9, tier: 0, label: 'Surplus', labelEn: 'Surplus', color: 'emerald' };
@@ -511,7 +608,8 @@ export const calculateDailyPopulationChange = (
   detail: CountryDetail,
   countryName?: string,
   metadata: Record<string, any> = {},
-  currentDate?: Date | string
+  currentDate?: Date | string,
+  precomputedFoodMetrics?: PopulationFoodMetrics,
 ): PopulationDailyMetrics => {
   if (!detail || typeof detail !== 'object') {
     return {
@@ -573,14 +671,18 @@ export const calculateDailyPopulationChange = (
   );
 
   const rawDailyDeaths = calculateDailyDeaths(populasi, lifeExpectancy, securityLevel, detailWithDefaults);
-  const foodRatio = hitungRasioPangan(detail, metadata);
+  const hasFoodMetadata = Object.keys(metadata).length > 0;
+  const foodMetrics = hasFoodMetadata
+    ? precomputedFoodMetrics ?? calculateFoodMetricsInTypeScript(createFoodMetricsInput(detail, metadata))
+    : null;
+  const foodRatio = foodMetrics?.foodRatio ?? hitungRasioPangan(detail, metadata);
   const foodDeficitCount = Object.keys(metadata).length > 0
-    ? calculateFoodDeficitCount(detail, metadata)
+    ? foodMetrics?.foodDeficitCount ?? 0
     : 0;
   const foodDeficitDeclineRate = getFoodDeficitDeclineRate(detail, populasi, foodDeficitCount);
   const foodDeficitDeaths = Math.floor(populasi * foodDeficitDeclineRate / 365);
   const foodSurplusRatio = Object.keys(metadata).length > 0
-    ? calculateFoodSurplusRatio(detail, metadata)
+    ? foodMetrics?.foodSurplusRatio ?? 1
     : Math.max(1, finiteNumber(detail.food_supply_ratio ?? detail.food_ratio, 1));
   const foodSurplusStrength = Math.min(1, Math.max(0, (foodSurplusRatio - 1) / 0.25));
   const foodBirthBonus = 1 + foodSurplusStrength * 0.05;

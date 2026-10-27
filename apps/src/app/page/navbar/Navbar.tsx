@@ -1,14 +1,18 @@
 // navbar
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     Power, Users, Landmark, Save, RotateCcw, Smile, LayoutGrid, Star,
     Activity
 } from 'lucide-react';
 import { formatCurrencyEM } from '@/app/logic/economic_logic/treasuryUpdater';
 import { calculateNetBalanceWithEconomicEmbargo } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
-import { calculateDailyPopulationChange } from '@/app/logic/populations_logic/population_logic';
+import {
+    calculateDailyPopulationChange,
+    calculateDailyPopulationChangeInRust,
+    type PopulationDailyMetrics,
+} from '@/app/logic/populations_logic/population_logic';
 import { calculateKepuasan } from '@/app/logic/kepuasanCalculator';
 import { menuItems, subMenuItems } from '../navigasi_menu/navigationData';
 
@@ -67,22 +71,65 @@ export function Navbar({
     const netBalanceColor = netBalance >= 0 ? 'text-emerald-700' : 'text-rose-700';
     const netBalanceLabel = `${netBalance >= 0 ? '+ ' : '- '}${Math.abs(netBalance).toLocaleString('id-ID', { maximumFractionDigits: 0 })}`;
     
-    const populationMetrics = useMemo(() => {
-        if (!countryDetail) return null;
-        return calculateDailyPopulationChange(countryDetail, countryName, metadata, currentDate);
+    const [populationMetricsResult, setPopulationMetricsResult] = useState<{
+        countryDetail: typeof countryDetail;
+        countryName: typeof countryName;
+        metadata: typeof metadata;
+        currentDate: typeof currentDate;
+        metrics: PopulationDailyMetrics;
+    } | null>(null);
+
+    useEffect(() => {
+        if (!countryDetail) return;
+
+        let isCurrentRequest = true;
+        void calculateDailyPopulationChangeInRust(countryDetail, countryName, metadata, currentDate)
+            .then(metrics => {
+                if (isCurrentRequest) {
+                    setPopulationMetricsResult({
+                        countryDetail,
+                        countryName,
+                        metadata,
+                        currentDate,
+                        metrics,
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Rust population food-metrics calculation failed; using TypeScript fallback:', error);
+                if (isCurrentRequest) {
+                    try {
+                        setPopulationMetricsResult({
+                            countryDetail,
+                            countryName,
+                            metadata,
+                            currentDate,
+                            metrics: calculateDailyPopulationChange(
+                                countryDetail,
+                                countryName,
+                                metadata,
+                                currentDate,
+                            ),
+                        });
+                    } catch (fallbackError) {
+                        console.error('TypeScript population-metrics fallback failed:', fallbackError);
+                    }
+                }
+            });
+
+        return () => {
+            isCurrentRequest = false;
+        };
     }, [countryDetail, countryName, metadata, currentDate]);
 
-    const [isAnggaranUpdated, setIsAnggaranUpdated] = React.useState(false);
-    const prevAnggaranRef = React.useRef(anggaran);
-
-    React.useEffect(() => {
-        if (prevAnggaranRef.current !== anggaran) {
-            prevAnggaranRef.current = anggaran;
-            setIsAnggaranUpdated(true);
-            const timer = setTimeout(() => setIsAnggaranUpdated(false), 800);
-            return () => clearTimeout(timer);
-        }
-    }, [anggaran]);
+    const populationMetrics =
+        populationMetricsResult !== null &&
+        populationMetricsResult.countryDetail === countryDetail &&
+        populationMetricsResult.countryName === countryName &&
+        populationMetricsResult.metadata === metadata &&
+        populationMetricsResult.currentDate === currentDate
+            ? populationMetricsResult.metrics
+            : null;
 
     const populasi = countryDetail
         ? Number(countryDetail.jumlah_penduduk) || 10_000_000
@@ -207,8 +254,8 @@ export function Navbar({
                             label="POPULASI" 
                             value={
                                 <span className="flex items-center gap-1.5 2xl:gap-2 text-[#E0E0E0]">
-                                    <span>{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
-                                    <span className={`${netDailyChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
+                                    <span className="inline-block w-[11ch] text-right tabular-nums">{populasi.toLocaleString('id-ID', { maximumFractionDigits: 2 })}</span>
+                                    <span className={`${netDailyChange >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} inline-block w-[9ch] text-right tabular-nums text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
                                         ({netPopulationLabel})
                                     </span>
                                 </span>
@@ -228,12 +275,12 @@ export function Navbar({
                     </button>
 
                     <StatusItem
-                        icon={<Landmark className={`w-3 h-3 2xl:w-3.5 2xl:h-3.5 transition-transform duration-300 ${isAnggaranUpdated ? 'text-[#00FFAA] scale-125' : 'text-[#00FFAA]'}`} />}
+                        icon={<Landmark className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-[#00FFAA]" />}
                         label="KAS NEGARA"
                         value={countryDetail ? (
-                            <span className={`flex items-center gap-1.5 2xl:gap-2 text-[#E0E0E0] transition-colors duration-500 ${isAnggaranUpdated ? 'text-[#00FFAA] font-extrabold' : ''}`}>
-                                <span className={anggaran < 0 ? 'text-rose-400 font-black' : ''}>{formatCurrencyEM(anggaran)}</span>
-                                <span className={`${netBalance >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
+                            <span className="flex items-center gap-1.5 2xl:gap-2 text-[#E0E0E0] tabular-nums">
+                                <span className={`inline-block w-[16ch] text-right ${anggaran < 0 ? 'text-rose-400 font-black' : ''}`}>{formatCurrencyEM(anggaran)}</span>
+                                <span className={`${netBalance >= 0 ? 'text-[#00FFAA]' : 'text-rose-400'} inline-block w-[10ch] text-right text-[9px] lg:text-[10px] 2xl:text-[11px] font-black`}>
                                     ({netBalanceLabel})
                                 </span>
                             </span>
