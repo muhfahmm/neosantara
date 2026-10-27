@@ -1,0 +1,15 @@
+{
+  "name": "npc-simulation-rs",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "npc_simulation_bg.wasm",
+    "npc_simulation.js",
+    "npc_simulation.d.ts"
+  ],
+  "main": "npc_simulation.js",
+  "types": "npc_simulation.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
