@@ -3,13 +3,13 @@
 import React, { useCallback, useRef, useState, useEffect, useMemo } from 'react';
 import {
   Swords, Zap, X, Map as MapIcon, Crosshair, Shield,
-  Navigation, Waves, Mountain, Building2, Target, Trees, Loader2, Info as InfoIcon,
+  Waves, Mountain, Building2, Target, Trees, Loader2, Info as InfoIcon,
   Compass,
 } from 'lucide-react';
 import {
   TacticalMap,
-  BASE_W, BASE_H, GRID_SIZE, MAP_MIN_Y, MAP_MAX_Y, MAX_VIEW_W, getMinViewW,
-  clamp, cellLabel, fitView, clampView, viewScale,
+  BASE_W, BASE_H, MAP_MIN_Y, MAP_MAX_Y, MAX_VIEW_W, getMinViewW,
+  fitView, clampView,
   type ViewBox, type SimPhase, type TerrainType,
 } from './TacticalMap';
 import { attachMapSnapshot, flushViewportPreview, loadRustViewport, panViewport, scheduleViewportPreview } from './warMapViewport';
@@ -140,7 +140,6 @@ export default function LandWarMap({
     });
   }, [aiSide, isUserDefender, attackerUnits, defenderUnits]);
   const [isFormationModalOpen, setIsFormationModalOpen] = useState(true);
-  const [isUnitSelected, setIsUnitSelected] = useState(false);
   const [commandUnit, setCommandUnit] = useState<WarUnit | null>(null);
   const [commandMode, setCommandMode] = useState<UnitCommandMode>(null);
   const [attackRadius, setAttackRadius] = useState<number | null>(null);
@@ -173,7 +172,6 @@ export default function LandWarMap({
 
   const handleStartSimulation = () => {
     if (isSimulating) return;
-    setIsUnitSelected(false);
     setCommandUnit(null);
     setCommandMode(null);
     setAttackRadius(null);
@@ -205,7 +203,6 @@ export default function LandWarMap({
       };
     });
     setCommandUnit(null);
-    setIsUnitSelected(false);
     setCommandMode(null);
     setAttackRadius(null);
   };
@@ -224,7 +221,6 @@ export default function LandWarMap({
   const [hovered, setHovered] = useState<InfoId | null>(null);
   const [lastHovered, setLastHovered] = useState<InfoId>('objective');
   const tipRef = useRef<HTMLDivElement>(null);
-  const coordRef = useRef<HTMLSpanElement>(null);
 
   const commitView = useCallback(() => {
     if (commitTimerRef.current !== null) {
@@ -294,19 +290,6 @@ export default function LandWarMap({
     return () => ro.disconnect();
   }, [commitView, scheduleView]);
 
-  const updateHud = useCallback((clientX: number, clientY: number, box: DOMRect) => {
-    const current = viewRef.current;
-    const { scale, ox, oy } = viewScale(box, current);
-    const gx = clamp(Math.floor(current.x + (clientX - box.left - ox) / scale), 0, BASE_W);
-    const gy = clamp(Math.floor(current.y + (clientY - box.top - oy) / scale), MAP_MIN_Y, MAP_MAX_Y - 1);
-    const col = clamp(Math.floor(gx / GRID_SIZE), 0, BASE_W / GRID_SIZE - 1);
-    const row = Math.floor(gy / GRID_SIZE);
-    if (coordRef.current) {
-      const yText = `${gy < 0 ? '-' : ''}${String(Math.abs(gy)).padStart(4, '0')}`;
-      coordRef.current.textContent = `X ${String(gx).padStart(4, '0')}  Y ${yText}  GRID ${cellLabel(col, row)}`;
-    }
-  }, []);
-
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (isSimulating || e.button !== 0) return;
     if (e.target instanceof Element && e.target.closest('button')) return;
@@ -347,7 +330,6 @@ export default function LandWarMap({
       return;
     }
 
-    updateHud(e.clientX, e.clientY, box);
     const px = e.clientX - box.left, py = e.clientY - box.top;
     const id = (e.target as Element).closest?.('[data-terrain]')?.getAttribute('data-terrain') as InfoId | null | undefined;
     const nextHovered = id && id in INFO ? id : null;
@@ -508,7 +490,6 @@ export default function LandWarMap({
             onUnitSelectionChange={(unit) => {
 
               setCommandUnit(unit);
-              setIsUnitSelected(unit !== null);
               setCommandMode(null);
               setAttackRadius(null);
             }}
@@ -526,15 +507,6 @@ export default function LandWarMap({
             onModeChange={setCommandMode}
             onReturnToHangar={handleReturnAirUnitToHangar}
           />
-          <div
-            className="pointer-events-none absolute bottom-3 left-6 z-20 rounded bg-black/70 px-2 py-1 font-mono text-[9px] font-bold tracking-wider"
-            style={{ color: accent }}
-          >
-            {isUnitSelected
-              ? 'KLIK KIRI: PINDAH · KLIK KANAN: TEMBAK'
-              : 'PILIH PASUKAN UNTUK MEMBUKA PERINTAH'}
-          </div>
-
           {/* KOMPAS */}
           <div className="pointer-events-none absolute left-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border bg-black/40" style={{ borderColor: `${accent}4D`, color: accent }}>
             <Compass className="h-5 w-5" />
@@ -567,11 +539,6 @@ export default function LandWarMap({
             </div>
           )}
 
-          {/* HUD KOORDINAT */}
-          <div className="pointer-events-none absolute bottom-5 left-6 z-20 flex items-center gap-4 rounded bg-black/60 px-2 py-1 font-mono text-[9px]" style={{ color: isSimulating ? '#f43f5e' : accent }}>
-            <span ref={coordRef}>X 0000  Y 0000  GRID A-1</span>
-            <span className="flex items-center gap-1"><Navigation size={10} /> N 45°</span>
-          </div>
         </div>
       </div>
 

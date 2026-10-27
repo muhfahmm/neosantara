@@ -35,7 +35,7 @@ export default function UnitSelectionModal({
       group,
       options: units
         .filter((unit) => unit.group === group)
-        .map(({ kind, label }) => ({ kind, label })),
+        .map(({ kind, label, displayName }) => ({ kind, label: displayName ?? label })),
     }))
     .filter(({ options }) => options.length > 0);
   const options = groups.flatMap(({ options: groupOptions }) => groupOptions);

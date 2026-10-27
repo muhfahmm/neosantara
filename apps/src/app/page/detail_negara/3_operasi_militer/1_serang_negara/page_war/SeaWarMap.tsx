@@ -3,7 +3,7 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Anchor, Building2, Compass, Crosshair, Info as InfoIcon, Loader2, Map as MapIcon,
-  Mountain, Navigation, Radio, Shield, Ship, Swords, Target, Trees, Waves, X, Zap,
+  Mountain, Navigation, Shield, Ship, Swords, Target, Trees, Waves, X, Zap,
 } from 'lucide-react';
 import UnitMarker from './units/unitMarker';
 import AttackControls, { type UnitCommandMode } from './AttackControls';
@@ -46,7 +46,6 @@ interface SeaWarMapProps {
 const MAP_W = 8800;
 const MAP_H = 4800;
 const MAP_AR = MAP_W / MAP_H;
-const GRID = 200;
 const MIN_ZOOM_W = MAP_W / 8;
 const OBJ = { x: 4400, y: 2400 };
 // Area gambar diperluas supaya zoom-out / layar sempit tidak menampilkan ruang kosong.
@@ -61,11 +60,6 @@ type SimPhase = 'idle' | 'clash' | 'done';
 interface View { x: number; y: number; w: number; h: number }
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
-
-function cellLabel(col: number, row: number) {
-  const letter = col < 26 ? String.fromCharCode(65 + col) : `A${String.fromCharCode(65 + col - 26)}`;
-  return `${letter}-${row + 1}`;
-}
 
 /** Lebar view maksimum: tinggi view dibatasi 2× tinggi peta, lebar tidak melebihi peta. */
 const maxViewW = (ar: number) => Math.min(MAP_W, MAP_H * 2 * ar);
@@ -799,13 +793,10 @@ export default function SeaWarMap({
   const viewFrameRef = useRef<number | null>(null);
   const commitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rustViewportRef = useRef<Awaited<ReturnType<typeof loadRustViewport>> | undefined>(undefined);
-  const hoverCellRef = useRef<string | null>(null);
-  const [selCell, setSelCell] = useState<string | null>(null);
   const dragRef = useRef<{ sx: number; sy: number; vbX: number; vbY: number; vbW: number; moved: boolean } | null>(null);
   const [hovered, setHovered] = useState<InfoId | null>(null);
   const lastId = useRef<InfoId>('objective');
   const tipRef = useRef<HTMLDivElement>(null);
-  const coordRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => () => {
     Object.values(movementFramesRef.current).forEach(cancelAnimationFrame);
@@ -1108,20 +1099,6 @@ export default function SeaWarMap({
     return () => ro.disconnect();
   }, [commitView, scheduleView]);
 
-  const updateHud = useCallback((clientX: number, clientY: number, box: DOMRect) => {
-    const current = viewRef.current;
-    const scale = box.width / current.w;
-    const gx = clamp(Math.floor(current.x + (clientX - box.left) / scale), 0, MAP_W - 1);
-    const gy = clamp(Math.floor(current.y + (clientY - box.top) / scale), 0, MAP_H - 1);
-    const col = Math.floor(gx / GRID);
-    const row = Math.floor(gy / GRID);
-    const key = `${col},${row}`;
-    hoverCellRef.current = key;
-    if (coordRef.current) {
-      coordRef.current.textContent = `X ${String(gx).padStart(4, '0')}  Y ${String(gy).padStart(4, '0')}  GRID ${cellLabel(col, row)}`;
-    }
-  }, []);
-
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (isSimulating || e.button !== 0) return;
     if (e.target instanceof Element && e.target.closest('button')) return;
@@ -1163,7 +1140,6 @@ export default function SeaWarMap({
       return;
     }
 
-    updateHud(e.clientX, e.clientY, box);
     const px = e.clientX - box.left;
     const py = e.clientY - box.top;
     const id = (e.target as Element).closest?.('[data-terrain]')?.getAttribute('data-terrain') as InfoId | null | undefined;
@@ -1182,14 +1158,12 @@ export default function SeaWarMap({
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
-    if (dragRef.current && !dragRef.current.moved) setSelCell(hoverCellRef.current);
     dragRef.current = null;
     commitView();
   };
 
   const handlePointerLeave = () => {
     setHovered(null);
-    if (!dragRef.current) hoverCellRef.current = null;
   };
 
   const activeSelectedUnitId = simPhase === 'idle' ? selectedUnitId : null;
@@ -1457,12 +1431,6 @@ export default function SeaWarMap({
             disabled={isSimulating}
             onModeChange={setCommandMode}
           />
-          <div className="pointer-events-none absolute bottom-3 left-6 z-20 rounded bg-black/70 px-2 py-1 font-mono text-[9px] font-bold tracking-wider" style={{ color: ACCENT }}>
-            {activeSelectedUnitId
-              ? 'KLIK KIRI: PINDAH · KLIK KANAN: TEMBAK'
-              : 'PILIH PASUKAN UNTUK MEMBUKA PERINTAH'}
-          </div>
-
           {/* KOMPAS */}
           <div className="pointer-events-none absolute left-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border bg-black/40" style={{ borderColor: `${ACCENT}4D`, color: ACCENT }}>
             <Compass className="h-5 w-5" />
@@ -1495,15 +1463,6 @@ export default function SeaWarMap({
             </div>
           )}
 
-          {/* HUD KOORDINAT */}
-          <div className="pointer-events-none absolute bottom-5 left-6 z-20 flex items-center gap-4 rounded bg-black/60 px-2 py-1 font-mono text-[9px]" style={{ color: isSimulating ? '#f43f5e' : ACCENT }}>
-            <span ref={coordRef}>X 0000  Y 0000  GRID A-1</span>
-            <span className="flex items-center gap-1"><Navigation size={10} /> N 45°</span>
-            {selCell && (() => {
-              const [c, r] = selCell.split(',').map(Number);
-              return <span className="flex items-center gap-1 text-amber-200"><Radio size={10} /> TANDA {cellLabel(c, r)}</span>;
-            })()}
-          </div>
         </div>
       </div>
 

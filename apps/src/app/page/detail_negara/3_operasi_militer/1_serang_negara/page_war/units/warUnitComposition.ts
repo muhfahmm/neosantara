@@ -7,40 +7,41 @@ export interface WarUnit {
   kind: UnitKind;
   group: WarUnitGroup;
   label: string;
+  displayName?: string;
   quantity: number;
   echelon?: "I" | "II" | "III";
   instanceId?: string;
 }
 
-const UNIT_CATALOG: Record<WarUnitGroup, Array<{ key: string; kind: UnitKind; label: string }>> = {
+const UNIT_CATALOG: Record<WarUnitGroup, Array<{ key: string; kind: UnitKind; label: string; displayName: string }>> = {
   darat: [
-    { key: "barak", kind: "infanteri", label: "INF" },
-    { key: "tank_tempur_utama", kind: "tank", label: "MBT" },
-    { key: "apc_ifv", kind: "apcIfv", label: "APC" },
-    { key: "artileri_berat", kind: "artileriBerat", label: "ART" },
-    { key: "sistem_peluncur_roket", kind: "peluncurRoket", label: "MLRS" },
-    { key: "pertahanan_udara_mobile", kind: "pertahananUdaraMobile", label: "SAM" },
-    { key: "kendaraan_taktis", kind: "kendaraanTaktis", label: "TAC" },
+    { key: "barak", kind: "infanteri", label: "INF", displayName: "Pasukan Infanteri" },
+    { key: "tank_tempur_utama", kind: "tank", label: "MBT", displayName: "Tank Tempur Utama" },
+    { key: "apc_ifv", kind: "apcIfv", label: "APC", displayName: "APC / IFV" },
+    { key: "artileri_berat", kind: "artileriBerat", label: "ART", displayName: "Artileri Berat" },
+    { key: "sistem_peluncur_roket", kind: "peluncurRoket", label: "MLRS", displayName: "Sistem Peluncur Roket" },
+    { key: "pertahanan_udara_mobile", kind: "pertahananUdaraMobile", label: "SAM", displayName: "Pertahanan Udara Mobile" },
+    { key: "kendaraan_taktis", kind: "kendaraanTaktis", label: "TAC", displayName: "Kendaraan Taktis" },
   ],
   laut: [
-    { key: "kapal_induk", kind: "kapalInduk", label: "CV" },
-    { key: "kapal_induk_nuklir", kind: "kapalIndukNuklir", label: "CVN" },
-    { key: "kapal_destroyer", kind: "destroyer", label: "DDG" },
-    { key: "kapal_korvet", kind: "korvet", label: "FFL" },
-    { key: "kapal_selam_nuklir", kind: "kapalSelamNuklir", label: "SSN" },
-    { key: "kapal_selam_regular", kind: "kapalSelamReguler", label: "SSK" },
-    { key: "kapal_ranjau", kind: "kapalRanjau", label: "MCM" },
-    { key: "kapal_logistik", kind: "kapalLogistik", label: "AUX" },
+    { key: "kapal_induk", kind: "kapalInduk", label: "CV", displayName: "Kapal Induk" },
+    { key: "kapal_induk_nuklir", kind: "kapalIndukNuklir", label: "CVN", displayName: "Kapal Induk Nuklir" },
+    { key: "kapal_destroyer", kind: "destroyer", label: "DDG", displayName: "Kapal Destroyer" },
+    { key: "kapal_korvet", kind: "korvet", label: "FFL", displayName: "Kapal Korvet" },
+    { key: "kapal_selam_nuklir", kind: "kapalSelamNuklir", label: "SSN", displayName: "Kapal Selam Nuklir" },
+    { key: "kapal_selam_regular", kind: "kapalSelamReguler", label: "SSK", displayName: "Kapal Selam Reguler" },
+    { key: "kapal_ranjau", kind: "kapalRanjau", label: "MCM", displayName: "Kapal Ranjau" },
+    { key: "kapal_logistik", kind: "kapalLogistik", label: "AUX", displayName: "Kapal Logistik" },
   ],
   udara: [
-    { key: "jet_tempur_siluman", kind: "jetTempurSiluman", label: "STL" },
-    { key: "jet_tempur_interceptor", kind: "jetTempurInterceptor", label: "INT" },
-    { key: "pesawat_pengebom", kind: "pesawatPengebom", label: "BMB" },
-    { key: "helikopter_serang", kind: "helikopterSerang", label: "HEL" },
-    { key: "pesawat_pengintai", kind: "pesawatPengintai", label: "ISR" },
-    { key: "drone_intai_uav", kind: "droneIntaiUav", label: "UAV" },
-    { key: "drone_kamikaze", kind: "droneKamikaze", label: "KMD" },
-    { key: "pesawat_angkut", kind: "pesawatAngkut", label: "TRN" },
+    { key: "jet_tempur_siluman", kind: "jetTempurSiluman", label: "STL", displayName: "Jet Tempur Siluman" },
+    { key: "jet_tempur_interceptor", kind: "jetTempurInterceptor", label: "INT", displayName: "Jet Tempur Interceptor" },
+    { key: "pesawat_pengebom", kind: "pesawatPengebom", label: "BMB", displayName: "Pesawat Pengebom" },
+    { key: "helikopter_serang", kind: "helikopterSerang", label: "HEL", displayName: "Helikopter Serang" },
+    { key: "pesawat_pengintai", kind: "pesawatPengintai", label: "ISR", displayName: "Pesawat Pengintai" },
+    { key: "drone_intai_uav", kind: "droneIntaiUav", label: "UAV", displayName: "Drone Intai UAV" },
+    { key: "drone_kamikaze", kind: "droneKamikaze", label: "KMD", displayName: "Drone Kamikaze" },
+    { key: "pesawat_angkut", kind: "pesawatAngkut", label: "TRN", displayName: "Pesawat Angkut" },
   ],
 };
 
@@ -100,14 +101,14 @@ export function getWarUnitComposition(
   );
 
   return (Object.entries(UNIT_CATALOG) as Array<[WarUnitGroup, typeof UNIT_CATALOG[WarUnitGroup]]>)
-    .flatMap(([group, units]) => units.flatMap(({ key, kind, label }) => {
+    .flatMap(([group, units]) => units.flatMap(({ key, kind, label, displayName }) => {
       const rawQuantity = resolveUnitQuantity(source, group, key);
       const deployedPercent = deploymentConfig[key];
       const quantity = applyDeployment && hasDeploymentConfig
         ? Math.round((rawQuantity * (typeof deployedPercent === "number" ? deployedPercent : 0)) / 100)
         : rawQuantity;
 
-      return quantity > 0 ? [{ kind, group, label, quantity }] : [];
+      return quantity > 0 ? [{ kind, group, label, displayName, quantity }] : [];
     }));
 }
 

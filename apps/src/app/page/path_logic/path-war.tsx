@@ -703,6 +703,7 @@ interface WarMapProps {
   isUserDefender?: boolean;
   isNpcWar?: boolean;
   isPbbCoalition?: boolean;
+  onAnalysisVisibilityChange?: (isVisible: boolean) => void;
   onClose: () => void;
   onResolve: (payload: {
     result: WarResult;
@@ -724,6 +725,7 @@ export default function WarMap({
   isUserDefender: isUserDefenderProp,
   isNpcWar = false,
   isPbbCoalition = false,
+  onAnalysisVisibilityChange,
   onClose,
   onResolve,
 }: WarMapProps) {
@@ -731,6 +733,12 @@ export default function WarMap({
   const [result, setResult] = useState<WarResult | null>(null);
   const [showFlash, setShowFlash] = useState(false);
   const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onAnalysisVisibilityChange?.(
+      phase === 'comparison' || phase === 'battle_page' || phase === 'result'
+    );
+  }, [phase, onAnalysisVisibilityChange]);
 
   useEffect(() => {
     onCloseRef.current = onClose;

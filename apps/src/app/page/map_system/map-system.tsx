@@ -2076,6 +2076,10 @@ export default function MapPage() {
         }
     }, []);
     const [activeWarAnimation, setActiveWarAnimation] = useState<any>(null);
+    const [isWarAnalysisActive, setIsWarAnalysisActive] = useState(false);
+    const handleWarAnalysisVisibilityChange = useCallback((isVisible: boolean) => {
+        setIsWarAnalysisActive(isVisible);
+    }, []);
     const [npcWarQueue, setNpcWarQueue] = useState<Array<{
         attacker: string;
         target: string;
@@ -2444,6 +2448,7 @@ export default function MapPage() {
             const attackerPowerSummary = getArmadaPowerSummary(attackerDetailData);
             const targetPowerSummary = getArmadaPowerSummary(targetDetailData);
 
+            setIsWarAnalysisActive(false);
             setActiveWarAnimation({
                 ...detail,
                 attackerCountryDetail: attackerDetailData,
@@ -6695,6 +6700,7 @@ export default function MapPage() {
                     setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
                 }}
                 isOpen={inboxModalOpen}
+                isWarAnalysisActive={isWarAnalysisActive}
                 onClose={() => setInboxModalOpen(false)}
                 notifications={notifications}
                 onClearAll={() => setNotifications([])}
@@ -7751,7 +7757,9 @@ export default function MapPage() {
                         isUserDefender={activeWarAnimation.isPbbCoalition ? isUserDefender : activeWarAnimation.isNpcWar ? false : isUserDefender}
                         isNpcWar={activeWarAnimation.isNpcWar === true}
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
+                        onAnalysisVisibilityChange={handleWarAnalysisVisibilityChange}
                         onClose={() => {
+                            setIsWarAnalysisActive(false);
                             setActiveWarAnimation(null);
                             npcWarQueueRunningRef.current = false;
                             resumeGameTimeAfterWar();
@@ -7834,6 +7842,7 @@ export default function MapPage() {
 
                                     });
                                 }
+                                setIsWarAnalysisActive(false);
                                 setActiveWarAnimation(null);
                                 npcWarQueueRunningRef.current = false;
                                 resumeGameTimeAfterWar();
@@ -7850,6 +7859,7 @@ export default function MapPage() {
                                 activeWarAnimation.isNpcWar === true
                             ) {
                                 // Perang PBB sepenuhnya antara NPC — player tidak terlibat.
+                                setIsWarAnalysisActive(false);
                                 setActiveWarAnimation(null);
                                 npcWarQueueRunningRef.current = false;
                                 resumeGameTimeAfterWar();
@@ -7870,6 +7880,7 @@ export default function MapPage() {
                                     },
                                 })
                             );
+                            setIsWarAnalysisActive(false);
                             setActiveWarAnimation(null);
                             resumeGameTimeAfterWar();
                         }}
