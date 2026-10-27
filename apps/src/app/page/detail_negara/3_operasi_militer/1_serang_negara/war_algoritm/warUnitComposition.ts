@@ -1,5 +1,29 @@
 import { convertBarakToSoldiers } from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/1_barak_logic";
-import type { UnitKind } from "./unitIconProps";
+
+export type UnitKind =
+  | "infanteri"
+  | "tank"
+  | "apcIfv"
+  | "artileriBerat"
+  | "peluncurRoket"
+  | "pertahananUdaraMobile"
+  | "kendaraanTaktis"
+  | "kapalInduk"
+  | "kapalIndukNuklir"
+  | "destroyer"
+  | "korvet"
+  | "kapalSelamNuklir"
+  | "kapalSelamReguler"
+  | "kapalRanjau"
+  | "kapalLogistik"
+  | "jetTempurSiluman"
+  | "jetTempurInterceptor"
+  | "pesawatPengebom"
+  | "helikopterSerang"
+  | "pesawatPengintai"
+  | "droneIntaiUav"
+  | "droneKamikaze"
+  | "pesawatAngkut";
 
 export type WarUnitGroup = "darat" | "laut" | "udara";
 

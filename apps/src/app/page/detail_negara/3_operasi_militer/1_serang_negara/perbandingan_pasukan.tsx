@@ -7,7 +7,6 @@ import {
   Ship,
   Plane,
   Zap,
-  Play,
 } from 'lucide-react';
 import { getArmadaPowerSummary } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
 import { convertBarakToSoldiers } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/1_barak_logic';
@@ -26,7 +25,6 @@ interface PerbandinganPasukanProps {
   isUserAttacker?: boolean;
   isUserDefender?: boolean;
   isCoalitionForce?: boolean;
-  onStartBattle: () => void;
   onAutoResult: () => void;
   onClose?: () => void;
 }
@@ -152,7 +150,6 @@ export default function PerbandinganPasukan({
   targetDetail,
   isUserDefender = false,
   isCoalitionForce = false,
-  onStartBattle,
   onAutoResult,
 }: PerbandinganPasukanProps) {
   React.useEffect(() => {
@@ -440,16 +437,8 @@ export default function PerbandinganPasukan({
         {/* ══════════ FOOTER ACTION BUTTONS ══════════ */}
         <div className="px-6 py-4 border-t border-[#00FFAA]/30 bg-[#0A1A1A] shrink-0 flex items-center justify-end gap-3">
           <button
-            onClick={onStartBattle}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-gradient-to-r from-[#00FFAA] to-[#00CC88] hover:from-[#00FFBB] hover:to-[#00DD99] text-[#050B0B] font-black text-xs uppercase tracking-widest transition-all cursor-pointer shadow-[0_0_20px_rgba(0,255,170,0.3)] active:scale-95"
-          >
-            <Play className="h-4 w-4 fill-current" />
-            Mulai Perang
-          </button>
-
-          <button
             onClick={onAutoResult}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-[#0F2424] hover:bg-[#142E2E] border-2 border-[#FFEB3B]/60 hover:border-[#FFEB3B] text-[#FFEB3B] font-black text-xs uppercase tracking-widest transition-all cursor-pointer shadow-[0_0_15px_rgba(255,235,59,0.2)] active:scale-95"
+            className="flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-[#0F2424] hover:bg-[#142E2E] border-2 border-[#FFEB3B]/60 hover:border-[#FFEB3B] text-[#FFEB3B] font-black text-xs uppercase tracking-widest transition-all cursor-pointer shadow-[0_0_15px_rgba(255,235,59,0.2)] active:scale-95"
           >
             <Zap className="h-4 w-4 fill-current text-[#FFEB3B]" />
             Hasil Otomatis

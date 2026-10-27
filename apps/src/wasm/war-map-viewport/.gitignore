@@ -1,7 +1,0 @@
-*
-!.gitignore
-!package.json
-!war_map_viewport_bg.wasm
-!war_map_viewport_bg.wasm.d.ts
-!war_map_viewport.js
-!war_map_viewport.d.ts
