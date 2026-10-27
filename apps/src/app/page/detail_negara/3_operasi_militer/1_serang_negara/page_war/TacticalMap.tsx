@@ -4,7 +4,7 @@ import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import UnitMarker from './units/unitMarker';
 import { formatUnitMarkerQuantity, formatUnitQuantity, type WarUnit } from './units/warUnitComposition';
 import { calculateUnitDamage, calculateUnitDamageLoss, getUnitAttackRadius } from './combatDamage';
-import { evaluateBorderIncursion, loadRustViewport, prepareUnitAttack, type AiBorderResponse } from './warMapViewport';
+import { evaluateBorderIncursion, loadRustViewport, prepareUnitAttack } from './warMapViewport';
 import { requestPythonAIWarCycle, type WarUnitState } from './pythonAiBridge';
 import { RealisticCombatEffect, COMBAT_EFFECT_CSS } from './RealisticCombatEffect';
 import { CombatLossNotifier, type CombatLossEvent } from './CombatLossNotifier';
@@ -410,44 +410,49 @@ function findOpenUnitPosition(
   return { x: clamp(originX, 60, BASE_W - 60), y: clamp(originY, 60, BASE_H - 60) };
 }
 
-// Definisi zona/sektor dispersi per jenis unit (Hub titik kumpul per kategori)
-// Koordinat telah disesuaikan agar berada di lapangan terbuka yang bersih dari bangunan
+// Definisi zona/sektor khusus (Deployment Boxes) per jenis unit:
+// Setiap tipe unit memiliki grid sektor tersendiri yang terpisah jauh agar tidak saling bertumpuk.
 const ENEMY_GROUND_HUBS: Record<string, { cx: number; cy: number; rx: number; ry: number }> = {
-  // Tank Tempur Utama: Siaga di lapangan terbuka barat daya HQ (selatan jalan)
-  tank: { cx: 4850, cy: 1780, rx: 180, ry: 90 },
-  // APC / IFV: Mobile squad di lapangan selatan antara hutan dan jalan
-  apcIfv: { cx: 4300, cy: 1820, rx: 160, ry: 80 },
-  // Infanteri: Di lapangan hijau depan barak (y: 1560-1640), bukan di dalam gedung barak (y: 1200-1480)
-  infanteri: { cx: 5080, cy: 1600, rx: 190, ry: 90 },
-  // Artileri Berat: Posisi tembak sayap timur laut terbuka
-  artileriBerat: { cx: 5350, cy: 1620, rx: 150, ry: 80 },
-  // Sistem Peluncur Roket: Di lapangan terbuka selatan gudang amunisi
-  peluncurRoket: { cx: 4650, cy: 1640, rx: 140, ry: 70 },
-  // Pertahanan Udara Mobile (SAM/SPAAG): Di koridor barat HQ
-  pertahananUdaraMobile: { cx: 5280, cy: 1880, rx: 150, ry: 75 },
-  // Kendaraan Taktis (Recon): Berpatroli di perbatasan terbuka barat
-  kendaraanTaktis: { cx: 4150, cy: 1700, rx: 140, ry: 70 },
+  // Sektor Tank: Barisan garis depan
+  tank: { cx: 4700, cy: 1680, rx: 180, ry: 90 },
+  // Sektor Kendaraan Lapis Baja / IFV-APC: Sayap atas barisan
+  apcIfv: { cx: 5050, cy: 1560, rx: 160, ry: 80 },
+  // Sektor Infanteri: Di lapangan selatan jalan
+  infanteri: { cx: 5050, cy: 1800, rx: 190, ry: 90 },
+  // Sektor Artileri Berat & Roket: Barisan tembak belakang
+  artileriBerat: { cx: 5420, cy: 1620, rx: 150, ry: 80 },
+  peluncurRoket: { cx: 5420, cy: 1740, rx: 140, ry: 70 },
+  // Sektor Pertahanan Udara Mobile (SAM) & Kendaraan Taktis:
+  pertahananUdaraMobile: { cx: 5420, cy: 1860, rx: 150, ry: 75 },
+  kendaraanTaktis: { cx: 4400, cy: 1680, rx: 140, ry: 70 },
 };
 
+// SEKTOR KOTAK MERAH PEMAIN (Sesuai 3 Kotak Merah Grid):
+// Kotak 1 (Atas): y ≈ 250 - 450 (x ≈ 350 - 1000) -> Tank Tempur Utama & Kendaraan Lapis Baja (APC/IFV)
+// Kotak 2 (Tengah): y ≈ 480 - 700 (x ≈ 350 - 1000) -> Artileri Berat, Peluncur Roket (MLRS), & Pertahanan Udara (SAM)
+// Kotak 3 (Bawah): y ≈ 730 - 950 (x ≈ 350 - 1000) -> Pasukan Infanteri & Kendaraan Taktis
 const OWN_GROUND_HUBS: Record<string, { cx: number; cy: number; rx: number; ry: number }> = {
-  tank: { cx: 1620, cy: 460, rx: 180, ry: 90 },
-  apcIfv: { cx: 1380, cy: 420, rx: 160, ry: 80 },
-  // Infanteri user: Di lapangan selatan fasilitas militer (y: 380-450), bukan di y: 180 (gedung)
-  infanteri: { cx: 1180, cy: 410, rx: 180, ry: 90 },
-  artileriBerat: { cx: 960, cy: 520, rx: 150, ry: 80 },
-  peluncurRoket: { cx: 1460, cy: 640, rx: 140, ry: 70 },
-  pertahananUdaraMobile: { cx: 1120, cy: 700, rx: 160, ry: 80 },
-  kendaraanTaktis: { cx: 1760, cy: 580, rx: 150, ry: 75 },
+  // --- KOTAK 1 (ATAS): Sektor Armor / Garis Depan MBT & APC ---
+  tank: { cx: 640, cy: 290, rx: 250, ry: 60 },
+  apcIfv: { cx: 640, cy: 400, rx: 250, ry: 60 },
+
+  // --- KOTAK 2 (TENGAH): Sektor Bantuan Tembakan & Arhanud ---
+  artileriBerat: { cx: 640, cy: 530, rx: 250, ry: 60 },
+  peluncurRoket: { cx: 640, cy: 610, rx: 250, ry: 60 },
+  pertahananUdaraMobile: { cx: 640, cy: 690, rx: 250, ry: 60 },
+
+  // --- KOTAK 3 (BAWAH): Sektor Infanteri & Kendaraan Taktis ---
+  infanteri: { cx: 640, cy: 780, rx: 250, ry: 60 },
+  kendaraanTaktis: { cx: 640, cy: 870, rx: 250, ry: 60 },
 };
 
 export function layoutUnits(units: WarUnit[], own: boolean): PlacedUnit[] {
   const out: PlacedUnit[] = [];
-  const dir = own ? 1 : -1;
   const airbase = own ? AIRBASE_OWN : AIRBASE_ENEMY;
   const airUnits = units.filter((u) => u.group === 'udara');
   const groundUnits = units.filter((u) => u.group === 'darat');
 
-  // Kelompokkan unit darat berdasarkan kategori/kind agar satu jenis tetap di sektor yang sama
+  // Kelompokkan unit darat berdasarkan kategori/kind agar satu jenis berada di kotak/sektor zonanya masing-masing
   const groundByKind = new Map<string, WarUnit[]>();
   groundUnits.forEach((unit) => {
     const list = groundByKind.get(unit.kind) ?? [];
@@ -457,36 +462,35 @@ export function layoutUnits(units: WarUnit[], own: boolean): PlacedUnit[] {
 
   const hubs = own ? OWN_GROUND_HUBS : ENEMY_GROUND_HUBS;
 
+  // Tempatkan setiap jenis unit di kotak grid sektornya sendiri tanpa tumpang tindih
   groundByKind.forEach((categoryUnits, kind) => {
-    const hub = hubs[kind] ?? (own ? { cx: 1400, cy: 450, rx: 150, ry: 80 } : { cx: 4800, cy: 1700, rx: 150, ry: 80 });
+    const hub = hubs[kind] ?? (own ? { cx: 640, cy: 500, rx: 250, ry: 60 } : { cx: 4800, cy: 1700, rx: 150, ry: 80 });
     const count = categoryUnits.length;
+    // Terapkan formasi berjajar horizontal rapi seperti barisan perang di gambar referensi
+    const spacingX = 140;
+    const spacingY = 80;
 
     categoryUnits.forEach((unit, idx) => {
-      // Formasi baris & kolom berjarak
-      const col = idx % 3;
-      const row = Math.floor(idx / 3);
-      const offsetX = (col - (Math.min(count, 3) - 1) / 2) * 110;
-      const offsetY = row * 95;
+      // Formasi baris & kolom rapi di dalam kotak sektor masing-masing (grid teratur)
+      // Maksimal 4 kolom ke samping agar muat presisi di dalam lebar kotak
+      const cols = Math.min(count, 4);
+      const col = idx % 4;
+      const row = Math.floor(idx / 4);
+      const offsetX = (col - (cols - 1) / 2) * spacingX;
+      const offsetY = (row - Math.floor((count - 1) / 4) / 2) * spacingY;
 
-      // Variasi acak terkontrol
-      const jitterX = ((idx * 37) % 31) - 15;
-      const jitterY = ((idx * 53) % 29) - 14;
-
-      let candidateX = hub.cx + offsetX + jitterX;
-      let candidateY = hub.cy + offsetY + jitterY;
+      let candidateX = Math.round((hub.cx + offsetX) / 10) * 10;
+      let candidateY = Math.round((hub.cy + offsetY) / 10) * 10;
 
       // ANTI-TABRAKAN BANGUNAN:
-      // Jika koordinat kandidat menabrak bangunan/fasilitas militer, geser menjauh ke area terbuka
       if (collidesWithBuilding(candidateX, candidateY)) {
-        // Coba pergeseran ke arah selatan / lateral yang bebas bangunan
-        const shiftY = own ? 160 : 200;
+        const shiftY = own ? 100 : 160;
         const testY = candidateY + shiftY;
         if (!collidesWithBuilding(candidateX, testY)) {
           candidateY = testY;
         } else {
-          // Geser ke arah barat/timur
-          candidateX += own ? 220 : -240;
-          candidateY = hub.cy + 150 + row * 80;
+          candidateX += own ? 120 : -160;
+          candidateY = hub.cy + 100 + row * 70;
         }
       }
 
@@ -498,21 +502,25 @@ export function layoutUnits(units: WarUnit[], own: boolean): PlacedUnit[] {
     });
   });
 
+  // Pesawat udara di apron pangkalan udara dengan formasi rapi
   airUnits.forEach((unit, i) => {
     const row = Math.floor(i / 4);
     const column = i % 4;
-    const rowCount = Math.min(4, airUnits.length - row * 4);
     out.push({
       unit,
-      x: airbase.x + dir * (column - (rowCount - 1) / 2) * 190,
-      y: airbase.y - 150 + row * 85,
+      x: own ? (280 + column * 130) : (airbase.x + (column - 1) * 140),
+      y: own ? (1150 + row * 90) : (airbase.y - 180 + row * 90),
     });
   });
 
+  // Kapal laut di danau dengan formasi berjarak
   units.filter((u) => u.group === 'laut').forEach((unit, i) => {
     const lk = own ? LAKES[0] : LAKES[1];
-    const x = own ? 1000 + (i % 8) * 150 : 4500 + (i % 8) * 130;
-    out.push({ unit, x, y: lk.cy + (i % 2 ? 50 : -50) + Math.floor(i / 8) * 100 });
+    const col = i % 4;
+    const row = Math.floor(i / 4);
+    const x = own ? (lk.cx - 240 + col * 160) : (lk.cx - 240 + col * 160);
+    const y = lk.cy - 40 + row * 90;
+    out.push({ unit, x, y });
   });
 
   return out;
@@ -765,18 +773,17 @@ const TerrainLayer = memo(function TerrainLayer({ water, terrainType }: { water:
           d="M 3240,-1400 Q 3180,-700 3220,0 T 3160,700 T 3040,1400 T 3120,2100 T 3080,2800 T 3150,3800"
           fill="none"
           stroke="#ef4444"
-          strokeWidth="18"
+          strokeWidth="14"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeDasharray="42 22"
-          opacity="0.88"
-          filter="url(#nw-glow)"
+          opacity="0.6"
         />
         <path
           d="M 3240,-1400 Q 3180,-700 3220,0 T 3160,700 T 3040,1400 T 3120,2100 T 3080,2800 T 3150,3800"
           fill="none"
           stroke="#ff6b6b"
-          strokeWidth="7"
+          strokeWidth="6"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeDasharray="42 22"
@@ -899,6 +906,10 @@ interface UnitsProps {
   enemy: PlacedUnit[];
   playerSide: PlayerSide;
   positions: Record<string, UnitPosition>;
+  positionsRef: React.MutableRefObject<Record<string, UnitPosition>>;
+  unitElementsRef: React.MutableRefObject<Record<string, SVGGElement | null>>;
+  attackRadiusElementRef: React.MutableRefObject<SVGCircleElement | null>;
+  movePathElementsRef: React.MutableRefObject<Record<string, SVGLineElement | null>>;
   selectedUnitId: string | null;
   movingUnitIds: string[];
   movePaths: UnitMovePath[];
@@ -911,6 +922,7 @@ interface UnitsProps {
 
 const UnitsLayer = memo(function UnitsLayer({
   accent, simPhase, own, enemy, playerSide, positions, selectedUnitId, movingUnitIds, movePaths,
+  positionsRef, unitElementsRef, attackRadiusElementRef, movePathElementsRef,
   commandMode, attackRadius, attackStrikes, onSelectUnit, onAttackTarget,
 }: UnitsProps) {
   const renderUnit = (placed: PlacedUnit, index: number, hostile: boolean) => {
@@ -924,6 +936,9 @@ const UnitsLayer = memo(function UnitsLayer({
     return (
       <g
         key={`${id}-${index}`}
+        ref={(element) => {
+          unitElementsRef.current[id] = element;
+        }}
         data-unit-id={id}
         role={hostile ? (commandMode === 'attack' && selectedUnitId ? 'button' : undefined) : 'button'}
         aria-label={hostile
@@ -940,7 +955,7 @@ const UnitsLayer = memo(function UnitsLayer({
           ? commandMode === 'attack' && selectedUnitId
             ? (event) => {
                 event.stopPropagation();
-                onAttackTarget(placed.unit, position, id);
+                onAttackTarget(placed.unit, positionsRef.current[id] ?? position, id);
               }
             : undefined
           : (event) => {
@@ -952,7 +967,7 @@ const UnitsLayer = memo(function UnitsLayer({
             ? (event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault();
-                  onAttackTarget(placed.unit, position, id);
+                  onAttackTarget(placed.unit, positionsRef.current[id] ?? position, id);
                 }
               }
             : undefined
@@ -965,12 +980,12 @@ const UnitsLayer = memo(function UnitsLayer({
         onDoubleClick={(event) => {
           event.stopPropagation();
         }}
-        transform={`scale(${UK})`}
+        transform={`translate(${position.x} ${position.y}) scale(${UK})`}
       >
         {(selected || moving) && (
           <circle
-            cx={position.x / UK}
-            cy={position.y / UK}
+            cx={0}
+            cy={0}
             r={24}
             fill={color}
             fillOpacity={selected ? 0.2 : 0.12}
@@ -980,7 +995,7 @@ const UnitsLayer = memo(function UnitsLayer({
           />
         )}
         <UnitMarker
-          x={position.x / UK} y={position.y / UK} kind={placed.unit.kind}
+          x={0} y={0} kind={placed.unit.kind}
           color={color}
           quantity={placed.unit.quantity}
           echelon={placed.unit.echelon}
@@ -1002,6 +1017,7 @@ const UnitsLayer = memo(function UnitsLayer({
         const position = selected ? positions[selectedUnitId] ?? { x: selected.x, y: selected.y } : null;
         return position ? (
           <circle
+            ref={attackRadiusElementRef}
             cx={position.x}
             cy={position.y}
             r={attackRadius}
@@ -1017,14 +1033,20 @@ const UnitsLayer = memo(function UnitsLayer({
       {/* EFEK TEMBAKAN TEMPUR REALISTIS DARI FILE TERPISAH */}
       <RealisticCombatEffect strikes={attackStrikes} />
       {movePaths.map((movePath) => (
-        <path
+        <line
           key={movePath.id}
-          d={`M ${movePath.start.x} ${movePath.start.y} L ${movePath.target.x} ${movePath.target.y}`}
-          fill="none"
+          ref={(el) => {
+            movePathElementsRef.current[movePath.id] = el;
+          }}
+          x1={movePath.start.x}
+          y1={movePath.start.y}
+          x2={movePath.target.x}
+          y2={movePath.target.y}
           stroke={accent}
           strokeWidth="5"
           strokeDasharray="14 12"
-          opacity="0.75"
+          opacity="0.8"
+          strokeLinecap="round"
           pointerEvents="none"
         />
       ))}
@@ -1173,6 +1195,9 @@ export const TacticalMap = memo(function TacticalMap({
   }, [baseEnemy, unitQuantities]);
   const [positions, setPositions] = useState<Record<string, UnitPosition>>({});
   const positionsRef = useRef(positions);
+  const unitElementsRef = useRef<Record<string, SVGGElement | null>>({});
+  const attackRadiusElementRef = useRef<SVGCircleElement | null>(null);
+  const movePathElementsRef = useRef<Record<string, SVGLineElement | null>>({});
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const selectedUnitIdRef = useRef<string | null>(null);
   const [attackRadius, setAttackRadius] = useState<number | null>(null);
@@ -1189,6 +1214,23 @@ export const TacticalMap = memo(function TacticalMap({
   const velocitiesRef = useRef<Record<string, { vx: number; vy: number }>>({});
   const [incursionAlert, setIncursionAlert] = useState<{ active: boolean; text: string; level: number }>({ active: false, text: '', level: 0 });
   const hasTriggeredIncursionRef = useRef(false);
+
+  const applyPositionToDom = (id: string, position: UnitPosition) => {
+    positionsRef.current[id] = position;
+    unitElementsRef.current[id]?.setAttribute(
+      'transform',
+      `translate(${position.x} ${position.y}) scale(${UK})`,
+    );
+    if (selectedUnitIdRef.current === id) {
+      attackRadiusElementRef.current?.setAttribute('cx', String(position.x));
+      attackRadiusElementRef.current?.setAttribute('cy', String(position.y));
+    }
+    const moveLine = movePathElementsRef.current[id];
+    if (moveLine) {
+      moveLine.setAttribute('x1', String(position.x));
+      moveLine.setAttribute('y1', String(position.y));
+    }
+  };
 
   const [captureStatus, setCaptureStatus] = useState<Record<string, CapturePointStatus>>({
     alpha: { owner: 'neutral', progress: 0 },
@@ -1296,18 +1338,18 @@ export const TacticalMap = memo(function TacticalMap({
       const defaultEnemyForces: PlacedUnit[] = [
         {
           unit: { kind: 'tank' as const, group: 'darat' as const, label: 'MBT-Platoon', quantity: 24, echelon: 'II' as const },
-          x: HQ_ENEMY.x - 220,
-          y: HQ_ENEMY.y + 120,
+          x: ENEMY_GROUND_HUBS.tank.cx,
+          y: ENEMY_GROUND_HUBS.tank.cy,
         },
         {
           unit: { kind: 'apcIfv' as const, group: 'darat' as const, label: 'IFV-Squad', quantity: 30, echelon: 'I' as const },
-          x: HQ_ENEMY.x - 360,
-          y: HQ_ENEMY.y - 140,
+          x: ENEMY_GROUND_HUBS.apcIfv.cx,
+          y: ENEMY_GROUND_HUBS.apcIfv.cy,
         },
         {
           unit: { kind: 'infanteri' as const, group: 'darat' as const, label: 'Garrison-Inf', quantity: 45, echelon: 'I' as const },
-          x: HQ_ENEMY.x - 180,
-          y: HQ_ENEMY.y - 200,
+          x: ENEMY_GROUND_HUBS.infanteri.cx,
+          y: ENEMY_GROUND_HUBS.infanteri.cy,
         },
       ];
 
@@ -1485,8 +1527,7 @@ export const TacticalMap = memo(function TacticalMap({
             );
             qrfElapsed = nextEl;
 
-            positionsRef.current[uId] = { x: curX, y: curY };
-            setPositions({ ...positionsRef.current });
+            applyPositionToDom(uId, { x: curX, y: curY });
 
             if (qrfDone < 0.5) {
               movementFramesRef.current[uId] = requestAnimationFrame(animateQrf);
@@ -1582,8 +1623,8 @@ export const TacticalMap = memo(function TacticalMap({
     if (aiCombatIntervalRef.current) clearInterval(aiCombatIntervalRef.current);
     const startTimeout = setTimeout(() => {
       executeAiCombatCycle();
-      aiCombatIntervalRef.current = setInterval(executeAiCombatCycle, 1000);
-    }, 500);
+      aiCombatIntervalRef.current = setInterval(executeAiCombatCycle, 2000);
+    }, 800);
 
     return () => {
       cancelled = true;
@@ -1722,11 +1763,10 @@ export const TacticalMap = memo(function TacticalMap({
 
         elapsedMs = nextElapsed;
         const nextPosition = { x, y };
-        positionsRef.current = { ...positionsRef.current, [id]: nextPosition };
-        setPositions(positionsRef.current);
+        applyPositionToDom(id, nextPosition);
 
-        // EVALUASI BORDER INCURSION DENGAN ENGINE RUST (Bala Bantuan Tambahan / Reinforcement Wave)
-        if (!hasTriggeredIncursionRef.current && movementEngineRef.current) {
+        // EVALUASI BORDER INCURSION DENGAN ENGINE RUST (Hanya periksa setiap 250ms saat unit bergerak, bukan 60 FPS)
+        if (!hasTriggeredIncursionRef.current && movementEngineRef.current && Math.floor(elapsedMs / 250) !== Math.floor((elapsedMs - deltaMs) / 250)) {
           const aiResp = evaluateBorderIncursion(
             movementEngineRef.current,
             x,
@@ -1778,7 +1818,6 @@ export const TacticalMap = memo(function TacticalMap({
                 setExtraEnemyUnits((prev) => [...prev, newUnit]);
 
                 positionsRef.current[uId] = { x: newUnit.x, y: newUnit.y };
-                setPositions({ ...positionsRef.current });
               }, idx * 1500);
             });
           }
@@ -2019,6 +2058,10 @@ export const TacticalMap = memo(function TacticalMap({
           enemy={enemy}
           playerSide={playerSide}
           positions={positions}
+          positionsRef={positionsRef}
+          unitElementsRef={unitElementsRef}
+          attackRadiusElementRef={attackRadiusElementRef}
+          movePathElementsRef={movePathElementsRef}
           selectedUnitId={simPhase === 'idle' ? selectedUnitId : null}
           movingUnitIds={simPhase === 'idle' ? movingUnitIds : []}
           movePaths={simPhase === 'idle' ? movePaths : []}

@@ -356,8 +356,16 @@ def compute_ai_war_cycle(
         is_vanguard = vanguard_count < max_vanguard
 
         if is_vanguard:
-            # Barisan depan maju menyerang dan mengambil posisi (Kecepatan penuh 100%)
-            action, tx, ty = decide_tactical_action(enemy, effective_movement_targets, bounds)
+            # Pertahankan posisi sampai pasukan pemain memasuki jangkauan tembak.
+            nearest_target = min(
+                effective_movement_targets,
+                key=lambda target: distance(enemy.x, enemy.y, target.x, target.y),
+            )
+            firing_range = attack_range_for(enemy) * 0.85
+            if distance(enemy.x, enemy.y, nearest_target.x, nearest_target.y) > firing_range:
+                action, tx, ty = "hold", enemy.x, enemy.y
+            else:
+                action, tx, ty = decide_tactical_action(enemy, effective_movement_targets, bounds)
             speed_multiplier = 1.0
             vanguard_count += 1
         else:

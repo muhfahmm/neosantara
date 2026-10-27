@@ -129,7 +129,16 @@ function computeFallbackTacticalCycle(
     const effectiveFiringRange = range * 0.85;
     const minSafeStandoff = range * 0.35;
 
-    if (enemy.kind === 'artileriBerat' || enemy.kind === 'peluncurRoket' || enemy.kind === 'pertahananUdaraMobile') {
+    // Pertahankan garis pertahanan; jangan mengejar pasukan pemain yang bergerak maju.
+    if (minDist > effectiveFiringRange) {
+      movements.push({
+        unit_id: enemy.id,
+        action: 'hold',
+        target_x: enemy.x,
+        target_y: enemy.y,
+        speed: 320,
+      });
+    } else if (enemy.kind === 'artileriBerat' || enemy.kind === 'peluncurRoket' || enemy.kind === 'pertahananUdaraMobile') {
       // Artileri & SAM: Jaga jarak jauh, tembak dari batas aman
       if (minDist < minSafeStandoff) {
         movements.push({

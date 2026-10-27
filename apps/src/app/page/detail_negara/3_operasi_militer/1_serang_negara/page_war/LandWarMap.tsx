@@ -305,7 +305,10 @@ export default function LandWarMap({
 
     if (drag) {
       const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
-      if (!drag.moved && (Math.abs(dx) > 3 || Math.abs(dy) > 3)) drag.moved = true;
+      if (!drag.moved && (Math.abs(dx) > 3 || Math.abs(dy) > 3)) {
+        drag.moved = true;
+        if (tipRef.current) tipRef.current.style.opacity = '0';
+      }
       if (drag.moved) {
         if (!e.currentTarget.hasPointerCapture(e.pointerId)) {
           e.currentTarget.setPointerCapture(e.pointerId);
@@ -331,13 +334,16 @@ export default function LandWarMap({
     }
 
     const px = e.clientX - box.left, py = e.clientY - box.top;
-    const id = (e.target as Element).closest?.('[data-terrain]')?.getAttribute('data-terrain') as InfoId | null | undefined;
+    const targetEl = e.target as Element | null;
+    const id = targetEl?.closest?.('[data-terrain]')?.getAttribute('data-terrain') as InfoId | null | undefined;
     const nextHovered = id && id in INFO ? id : null;
-    setHovered(nextHovered);
-    if (nextHovered) setLastHovered(nextHovered);
+    if (nextHovered !== hovered) {
+      setHovered(nextHovered);
+      if (nextHovered) setLastHovered(nextHovered);
+    }
     const tip = tipRef.current;
-    if (tip) {
-      const w = tip.offsetWidth, h = tip.offsetHeight;
+    if (tip && nextHovered) {
+      const w = 230, h = 110;
       let x = px + 18, y = py + 18;
       if (x + w > box.width - 8) x = px - w - 18;
       if (y + h > box.height - 8) y = py - h - 18;
