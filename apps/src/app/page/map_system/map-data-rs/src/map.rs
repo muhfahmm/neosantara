@@ -46,14 +46,51 @@ impl CachedFeature {
         let mut paths = self.paths.borrow_mut();
         if paths[level].is_none() {
             let min_distance = match level {
-                0 => 0.6,
-                1 => 0.15,
-                _ => 0.012,
+                0 => 0.18,
+                1 => 0.02,
+                _ => 0.003,
             };
             paths[level] = build_cached_path(&self.polys, min_distance);
         }
         paths[level].clone()
     }
+}
+
+/// Satu garis batas provinsi: titik sudah diproyeksi + bbox untuk viewport culling + path cache per LOD.
+struct ProvLine {
+    pts: Vec<(f64, f64)>,
+    bbox: [f64; 4],
+    coarse: Option<Path2d>,
+    fine: RefCell<Option<Path2d>>,
+}
+
+impl ProvLine {
+    fn path(&self, coarse: bool) -> Option<Path2d> {
+        if coarse {
+            return self.coarse.clone();
+        }
+        let mut fine = self.fine.borrow_mut();
+        if fine.is_none() {
+            *fine = build_line_path(&self.pts, 0.004);
+        }
+        fine.clone()
+    }
+}
+
+fn build_line_path(pts: &[(f64, f64)], min_distance: f64) -> Option<Path2d> {
+    let path = Path2d::new().ok()?;
+    let (fx, fy) = *pts.first()?;
+    path.move_to(fx, fy);
+    let (mut lx, mut ly) = (fx, fy);
+    let last = pts.len() - 1;
+    for (i, &(x, y)) in pts.iter().enumerate().skip(1) {
+        if i == last || (x - lx).abs() >= min_distance || (y - ly).abs() >= min_distance {
+            path.line_to(x, y);
+            lx = x;
+            ly = y;
+        }
+    }
+    Some(path)
 }
 
 struct FillBatch {
@@ -81,6 +118,7 @@ struct Styles {
     sel_fill: JsValue,
     sel_stroke: JsValue,
     stroke: JsValue,
+    province_stroke: JsValue,
     white: JsValue,
     flag_bg: JsValue,
     flag_text: JsValue,
@@ -89,13 +127,14 @@ struct Styles {
 
 fn continent_color(continent: &str) -> &'static str {
     match continent {
-        "Asia" => "#a855f7ff",
-        "Africa" => "#eab308",
-        "Europe" => "#3b82f6",
-        "North America" => "#22c55e",
-        "South America" => "#f97316",
-        "Oceania" => "#ec4899",
-        "Antarctica" => "#cbd5e1",
+        // Palet benua diselaraskan dengan estetika geopolitik nyata:
+        "Asia" => "#2e7d32",           // Hijau zamrud teritorial Asia
+        "Africa" => "#d97706",         // Amber / terracotta khas benua Afrika
+        "Europe" => "#2563eb",         // Biru kobalt diplomatik Eropa
+        "North America" => "#0d9488",  // Teal / Cyan kehijauan Amerika Utara
+        "South America" => "#ea580c",  // Oranye hangat Amerika Selatan
+        "Oceania" => "#0284c7",        // Sky cyan maritim Oceania
+        "Antarctica" => "#e2e8f0",     // Putih es / glacier Antartika
         _ => "#475569",
     }
 }
@@ -167,6 +206,7 @@ pub struct MapEngine {
     cached_outline_path: Option<Path2d>,
     cached_selected_path: Option<Path2d>,
     cached_selected_fill: Option<JsValue>,
+    show_province_borders: bool,
     cached_map_canvas: Option<HtmlCanvasElement>,
     cached_capitals_canvas: Option<HtmlCanvasElement>,
     cached_batches_ready: bool,
@@ -179,6 +219,7 @@ pub struct MapEngine {
     countries: Vec<CachedCountry>,
     capitals: Vec<CachedCapital>,
     capital_flags: Vec<(String, HtmlImageElement)>,
+    province_lines: Vec<ProvLine>,
     styles: Styles,
     selected_country_iso: Option<String>,
     selected_lower: Option<String>,
@@ -214,6 +255,7 @@ impl MapEngine {
             cached_outline_path: Path2d::new().ok(),
             cached_selected_path: Path2d::new().ok(),
             cached_selected_fill: None,
+            show_province_borders: true,
             cached_map_canvas: None,
             cached_capitals_canvas: None,
             cached_batches_ready: false,
@@ -226,11 +268,13 @@ impl MapEngine {
             countries: Vec::new(),
             capitals: Vec::new(),
             capital_flags: Vec::new(),
+            province_lines: Vec::new(),
             styles: Styles {
-                bg: JsValue::from_str("#1e3a8a"),
+                bg: JsValue::from_str("#0f244a"),
                 sel_fill: JsValue::from_str("#00FFAA"),
                 sel_stroke: JsValue::from_str("#34d399"),
-                stroke: JsValue::from_str("rgba(255, 255, 255, 0.6)"),
+                stroke: JsValue::from_str("rgba(255, 255, 255, 0.75)"),
+                province_stroke: JsValue::from_str("rgba(255, 255, 255, 0.55)"),
                 white: JsValue::from_str("white"),
                 flag_bg: JsValue::from_str("#0f172a"),
                 flag_text: JsValue::from_str("#fbbf24"),
@@ -256,6 +300,46 @@ impl MapEngine {
     }
 
     /// Parse GeoJSON sekali, proyeksikan semua titik & hitung bbox (cache).
+    pub fn set_provinces_data(&mut self, geojson_str: &str) {
+        let Ok(GeoJson::FeatureCollection(fc)) = geojson_str.parse::<GeoJson>() else {
+            return;
+        };
+        let (w, h) = (self.width, self.height);
+        let proj = |c: &[f64]| -> (f64, f64) {
+            (((c[0] + 180.0) / 360.0) * w, ((90.0 - c[1]) / 180.0) * h)
+        };
+        let mut lines: Vec<ProvLine> = Vec::new();
+        let mut push_line = |raw: &[Vec<f64>]| {
+            let pts: Vec<(f64, f64)> = raw.iter().filter(|p| p.len() >= 2).map(|p| proj(p)).collect();
+            if pts.len() < 2 {
+                return;
+            }
+            let mut bbox = bbox_empty();
+            for &(x, y) in &pts {
+                bbox[0] = bbox[0].min(x);
+                bbox[1] = bbox[1].min(y);
+                bbox[2] = bbox[2].max(x);
+                bbox[3] = bbox[3].max(y);
+            }
+            let coarse = build_line_path(&pts, 0.25);
+            lines.push(ProvLine { pts, bbox, coarse, fine: RefCell::new(None) });
+        };
+        for feat in fc.features {
+            let Some(geom) = feat.geometry else { continue; };
+            match geom.value {
+                Value::LineString(line) => push_line(&line),
+                Value::MultiLineString(ls) => {
+                    for line in ls {
+                        push_line(&line);
+                    }
+                }
+                _ => {}
+            }
+        }
+        self.province_lines = lines;
+        self.dirty = true;
+    }
+
     pub fn set_data(&mut self, geojson_str: &str) {
         let Ok(GeoJson::FeatureCollection(fc)) = geojson_str.parse::<GeoJson>() else {
             return;
@@ -322,7 +406,7 @@ impl MapEngine {
                 }
             }
             // Bangun level 1 untuk batch fill awal; level 0 dan 2 dibuat secara lazy saat dibutuhkan
-            let path1 = build_cached_path(&polys, 0.15);
+            let path1 = build_cached_path(&polys, 0.02);
             path_cache_failed |= path1.is_none();
             let paths = RefCell::new([None, path1, None]);
             out.push(CachedFeature {
@@ -340,6 +424,15 @@ impl MapEngine {
                     .into(),
             );
         }
+        // Urutkan features berdasarkan luas bbox (terkecil dulu).
+        // Hal ini sangat penting untuk enclave & microstates (seperti Vatikan & San Marino di dalam Italia,
+        // Lesotho di dalam Afrika Selatan, Monako di Prancis) agar saat diklik, negara kecil yang ada di dalam
+        // selalu terdeteksi lebih dulu sebelum poligon negara besar di luarnya!
+        out.sort_by(|a, b| {
+            let area_a = (a.bbox[2] - a.bbox[0]) * (a.bbox[3] - a.bbox[1]);
+            let area_b = (b.bbox[2] - b.bbox[0]) * (b.bbox[3] - b.bbox[1]);
+            area_a.partial_cmp(&area_b).unwrap_or(std::cmp::Ordering::Equal)
+        });
         self.features = out;
         self.rebuild_feature_grid();
         self.rebuild_draw_batches();
@@ -404,7 +497,7 @@ impl MapEngine {
             );
             return;
         };
-        const RASTER_SCALE: f64 = 2.0;
+        const RASTER_SCALE: f64 = 3.0;
         canvas.set_width((self.width * RASTER_SCALE) as u32);
         canvas.set_height((self.height * RASTER_SCALE) as u32);
         let cached_context = canvas
@@ -786,6 +879,13 @@ impl MapEngine {
         serde_wasm_bindgen::to_value(&options).unwrap()
     }
 
+    pub fn set_show_province_borders(&mut self, show: bool) {
+        if self.show_province_borders != show {
+            self.show_province_borders = show;
+            self.dirty = true;
+        }
+    }
+
     pub fn set_horizontal_wrap(&mut self, enabled: bool) {
         self.horizontal_wrap = enabled;
         self.apply_clamping();
@@ -886,6 +986,8 @@ impl MapEngine {
         self.dirty = false;
 
         let _ = self.ctx.set_transform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+        self.ctx.set_line_join("round");
+        self.ctx.set_line_cap("round");
         self.ctx.set_fill_style(&self.styles.bg);
         self.ctx.fill_rect(0.0, 0.0, self.width, self.height);
 
@@ -949,12 +1051,12 @@ impl MapEngine {
                             }
                             if let Some(outline) = &self.cached_outline_path {
                                 self.ctx.set_stroke_style(&self.styles.stroke);
-                                self.ctx.set_line_width(0.7 / self.scale);
+                                self.ctx.set_line_width((0.85 / self.scale).clamp(0.2, 1.2));
                                 self.ctx.stroke_with_path(outline);
                             }
                             if let Some(selected) = &self.cached_selected_path {
                                 self.ctx.set_stroke_style(&self.styles.sel_stroke);
-                                self.ctx.set_line_width(1.0 / self.scale);
+                                self.ctx.set_line_width((1.4 / self.scale).clamp(0.4, 2.0));
                                 self.ctx.stroke_with_path(selected);
                             }
                             drew_cached_map = true;
@@ -980,13 +1082,13 @@ impl MapEngine {
                     self.ctx.fill_with_path_2d(selected);
                 }
                 self.ctx.set_stroke_style(&self.styles.stroke);
-                self.ctx.set_line_width(0.7 / self.scale);
+                self.ctx.set_line_width((0.85 / self.scale).clamp(0.2, 1.2));
                 if let Some(outline) = &self.cached_outline_path {
                     self.ctx.stroke_with_path(outline);
                 }
                 if let Some(selected) = &self.cached_selected_path {
                     self.ctx.set_stroke_style(&self.styles.sel_stroke);
-                    self.ctx.set_line_width(1.0 / self.scale);
+                    self.ctx.set_line_width((1.4 / self.scale).clamp(0.4, 2.0));
                     self.ctx.stroke_with_path(selected);
                 }
                 for &i in &visible {
@@ -1071,7 +1173,7 @@ impl MapEngine {
                 // Pass 2: Stroke unselected visible features sekali set stroke style
                 if !unselected_visible_paths.is_empty() {
                     self.ctx.set_stroke_style(&self.styles.stroke);
-                    self.ctx.set_line_width(0.7 / self.scale);
+                    self.ctx.set_line_width((0.85 / self.scale).clamp(0.2, 1.2));
                     for path in &unselected_visible_paths {
                         self.ctx.stroke_with_path(path);
                     }
@@ -1080,11 +1182,30 @@ impl MapEngine {
                 // Pass 3: Stroke selected feature
                 if let Some(sel_path) = selected_path_to_draw {
                     self.ctx.set_stroke_style(&self.styles.sel_stroke);
-                    self.ctx.set_line_width(1.0 / self.scale);
+                    self.ctx.set_line_width((1.4 / self.scale).clamp(0.4, 2.0));
                     self.ctx.stroke_with_path(&sel_path);
                 }
             }
 
+            // Garis batas provinsi solid (tidak putus-putus) langsung tersambung mulus
+            if self.show_province_borders && self.scale >= 1.15 && !self.province_lines.is_empty() {
+                let moving = self.is_panning || animating;
+                let coarse = self.scale < 4.0 || moving;
+                let min_screen = 1.0 / self.scale;
+                self.ctx.set_stroke_style(&self.styles.province_stroke);
+                self.ctx.set_line_width((0.65 / self.scale).clamp(0.25, 0.9));
+                for pl in &self.province_lines {
+                    if !bbox_hits(&pl.bbox, vx0, vy0, vx1, vy1) {
+                        continue;
+                    }
+                    if (pl.bbox[2] - pl.bbox[0]).max(pl.bbox[3] - pl.bbox[1]) < min_screen {
+                        continue;
+                    }
+                    if let Some(p) = pl.path(coarse) {
+                        self.ctx.stroke_with_path(&p);
+                    }
+                }
+            }
             self.draw_capitals(vx0, vy0, vx1, vy1, true, animating);
         }
         self.visible_features = visible;
@@ -1092,13 +1213,10 @@ impl MapEngine {
 
     /// Bangun path dengan culling per-ring + LOD (lewati titik < ~0.6px di layar).
     fn trace_feature(&self, f: &CachedFeature, vx0: f64, vy0: f64, vx1: f64, vy1: f64) {
-        let min_d = 0.6 / self.scale;
+        let min_d = 0.06 / self.scale;
         for poly in &f.polys {
             for ring in poly {
                 let b = &ring.bbox;
-                if (b[2] - b[0]) < min_d * 1.5 && (b[3] - b[1]) < min_d * 1.5 {
-                    continue;
-                }
                 if !bbox_hits(b, vx0, vy0, vx1, vy1) {
                     continue;
                 }
@@ -1108,7 +1226,7 @@ impl MapEngine {
                         self.ctx.move_to(x, y);
                         lx = x;
                         ly = y;
-                    } else if (x - lx).abs() >= min_d || (y - ly).abs() >= min_d {
+                    } else if min_d == 0.0 || (x - lx).abs() >= min_d || (y - ly).abs() >= min_d {
                         self.ctx.line_to(x, y);
                         lx = x;
                         ly = y;
@@ -1299,15 +1417,60 @@ impl MapEngine {
         }
         let wy = (mouse_y - self.offset_y) / self.scale;
 
-        // 1. Polygon-based detection (bbox dulu, O(1) per negara)
+        // 1. Prioritas Utama untuk Microstates & Enclave (Vatikan, San Marino, Monako, Liechtenstein, dsb):
+        // Jika kursor pengguna berada dekat (dalam radius klik 18px layar) dari koordinat Vatikan/microstate,
+        // langsung pilih negara mikro tersebut tanpa terhalang atau tertelan oleh poligon Italia!
+        let micro_threshold = 22.0;
+        let mut best_micro: Option<(&CachedCountry, f64)> = None;
+        for c in &self.countries {
+            // Deteksi negara mikro / pulau kecil (Vatikan 'va', San Marino 'sm', Monako 'mc', dsb)
+            let is_micro = matches!(c.iso.as_str(), "va" | "sm" | "mc" | "li" | "ad" | "mt" | "sg" | "bh" | "tv" | "nr");
+            if is_micro {
+                if let (Some(lat), Some(lng)) = (c.lat, c.lng) {
+                    let (x, y) = self.project(lng, lat);
+                    let screen_x = x * self.scale + self.offset_x;
+                    let screen_y = y * self.scale + self.offset_y;
+                    let dx = if self.horizontal_wrap {
+                        let world_width = self.width * self.scale;
+                        (mouse_x - screen_x + world_width / 2.0).rem_euclid(world_width)
+                            - world_width / 2.0
+                    } else {
+                        mouse_x - screen_x
+                    };
+                    let dy = mouse_y - screen_y;
+                    let dist = (dx * dx + dy * dy).sqrt();
+                    if dist <= micro_threshold {
+                        if best_micro.is_none() || dist < best_micro.unwrap().1 {
+                            best_micro = Some((c, dist));
+                        }
+                    }
+                }
+            }
+        }
+        if let Some((c, _)) = best_micro {
+            return c.raw.clone();
+        }
+
+        // 2. Polygon-based detection (sudah diurutkan dari area poligon terkecil ke terbesar):
+        // Lengkap dengan pengecekan Hole (interior ring): jika klik berada di dalam lubang poligon
+        // (contohnya lubang Vatikan & San Marino di daratan Italia), maka Italia TIDAK akan mengklaim klik tersebut!
         for f in &self.features {
             if f.bbox[0] > wx || f.bbox[2] < wx || f.bbox[1] > wy || f.bbox[3] < wy {
                 continue;
             }
             let hit = f.polys.iter().any(|poly| {
-                poly.first().map_or(false, |outer| {
-                    bbox_hits(&outer.bbox, wx, wy, wx, wy) && point_in_ring(&outer.pts, wx, wy)
-                })
+                let Some(outer) = poly.first() else { return false; };
+                if !bbox_hits(&outer.bbox, wx, wy, wx, wy) || !point_in_ring(&outer.pts, wx, wy) {
+                    return false;
+                }
+                // Jika titik berada di dalam salah satu interior hole (cincin ke-2 dst),
+                // maka titik tersebut adalah lubang dan BUKAN bagian dari negara ini!
+                for hole in poly.iter().skip(1) {
+                    if bbox_hits(&hole.bbox, wx, wy, wx, wy) && point_in_ring(&hole.pts, wx, wy) {
+                        return false;
+                    }
+                }
+                true
             });
             if hit {
                 if let Some(c) = self.countries.iter().find(|c| c.iso == f.iso) {
@@ -1316,7 +1479,7 @@ impl MapEngine {
             }
         }
 
-        // 2. Fallback to dot-based detection (for tiny islands)
+        // 3. Fallback to dot-based detection (for tiny islands & uncaptured coords)
         let hit_threshold = 15.0;
         for c in &self.countries {
             if let (Some(lat), Some(lng)) = (c.lat, c.lng) {
@@ -1356,6 +1519,15 @@ pub fn set_selected_country_on_map(iso: String, should_center: bool) {
 }
 
 #[wasm_bindgen]
+pub fn set_show_province_borders_on_map(show: bool) {
+    ACTIVE_ENGINE.with(|global_engine| {
+        if let Some(engine) = global_engine.borrow().as_ref() {
+            engine.borrow_mut().set_show_province_borders(show);
+        }
+    });
+}
+
+#[wasm_bindgen]
 pub fn set_map_horizontal_wrap(enabled: bool) {
     ACTIVE_ENGINE.with(|global_engine| {
         if let Some(engine) = global_engine.borrow().as_ref() {
@@ -1371,6 +1543,15 @@ pub fn set_feature_colors_on_map(colors: Vec<JsValue>, beat_selected: bool) {
             engine
                 .borrow_mut()
                 .set_feature_colors(colors, beat_selected);
+        }
+    });
+}
+
+#[wasm_bindgen]
+pub fn set_provinces_on_map(provinces_geojson: String) {
+    ACTIVE_ENGINE.with(|global_engine| {
+        if let Some(engine) = global_engine.borrow().as_ref() {
+            engine.borrow_mut().set_provinces_data(&provinces_geojson);
         }
     });
 }

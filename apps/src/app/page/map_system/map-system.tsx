@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
+import MAJOR_CITIES_DATA from './major_cities.json';
+import { getMapDisplaySettings, type MapDisplaySettings } from '../navbar/settings/mapSettingsLogic';
 import countryPaths from './country-paths.json';
 import { mergeClaimedTerritories } from './world-map-geometry';
 import { initializeSimulationClock, SimulationTimeManager, createSimulationCalendar } from '../time_controllers';
@@ -291,7 +293,7 @@ import {
 type AnnexedTerritoryEntry = { attackerCountry?: string; attackerIso?: string; isPbbOccupied?: boolean };
 type AnnexedTerritories = Record<string, AnnexedTerritoryEntry>;
 
-function getCapitalFlagsForCurrentTerritories() {
+function getCapitalFlagsForCurrentTerritories(settingsOverride?: MapDisplaySettings) {
     const annexedCountries = typeof window === 'undefined'
         ? {}
         : ((window as Window & { neosantara_annexed_countries?: AnnexedTerritories })
@@ -299,7 +301,16 @@ function getCapitalFlagsForCurrentTerritories() {
     const normalizeKey = (value: unknown) =>
         String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
-    return CAPITALS_DATA.map(capital => {
+    const settings = settingsOverride || getMapDisplaySettings();
+    let citiesPool: typeof CAPITALS_DATA = [];
+    if (settings.showCapitals) {
+        citiesPool = citiesPool.concat(CAPITALS_DATA);
+    }
+    if (settings.showMajorCities) {
+        citiesPool = citiesPool.concat(MAJOR_CITIES_DATA as typeof CAPITALS_DATA);
+    }
+
+    return citiesPool.map(capital => {
         const capitalKeys = new Set([
             normalizeKey(capital.country),
             normalizeKey(capital.iso),
@@ -707,6 +718,7 @@ export default function MapPage() {
     const [saveToOverwriteConfirm, setSaveToOverwriteConfirm] = useState<any | null>(null);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [isPresidentMenuOpen, setIsPresidentMenuOpen] = useState(false);
+    const [isMapSettingsModalOpen, setIsMapSettingsModalOpen] = useState(false);
     const [isRestartConfirmOpen, setIsRestartConfirmOpen] = useState(false);
     const [activeMenu, setActiveMenu] = useState('Peta Taktis');
 
@@ -6310,15 +6322,42 @@ export default function MapPage() {
                     }
                 }
 
+                const allMapCities = [...CAPITALS_DATA, ...(MAJOR_CITIES_DATA as typeof CAPITALS_DATA)];
                 await start_map_engine(
                     "map-canvas",
                     rawGeojsonStr,
                     COUNTRIES_DATA,
-                    CAPITALS_DATA
+                    allMapCities
                 );
                 set_map_horizontal_wrap(true);
                 wasmModule.set_capitals_on_map(getCapitalFlagsForCurrentTerritories());
+
+                // Muat batas provinsi putus-putus ke dalam map engine secara asynchronous
+                fetch(`/provinces_lines.geojson?v=${Date.now()}`)
+                    .then(res => res.ok ? res.text() : null)
+                    .then(provText => {
+                        if (provText && wasmModule.set_provinces_on_map) {
+                            wasmModule.set_provinces_on_map(provText);
+                        }
+                    })
+                    .catch(err => console.warn('Pemuatan garis provinsi notice:', err));
+
                 syncFeatureColors();
+                
+                // Sinkronkan setting tampilan peta awal ke engine
+                const initialMapSettings = getMapDisplaySettings();
+                wasmModule.set_show_province_borders_on_map?.(initialMapSettings.showProvinceBorders);
+                wasmModule.set_capitals_on_map(getCapitalFlagsForCurrentTerritories(initialMapSettings));
+
+                // Listener ketika user mengubah preferensi tampilan peta
+                const handleMapSettingsChange = (e: Event) => {
+                    const nextSettings = (e as CustomEvent)?.detail as MapDisplaySettings;
+                    if (!nextSettings) return;
+                    wasmModule.set_show_province_borders_on_map?.(nextSettings.showProvinceBorders);
+                    wasmModule.set_capitals_on_map(getCapitalFlagsForCurrentTerritories(nextSettings));
+                };
+                window.addEventListener('neosantara_map_settings_changed', handleMapSettingsChange);
+
                 window.addEventListener('map_feature_colors_dirty', scheduleFeatureColorSync);
                 window.addEventListener('map_territory_color_updated', scheduleFeatureColorSync);
                 window.addEventListener('neosantara:map-pan-ended', resumeFeatureColorSync);
@@ -7983,6 +8022,15 @@ export default function MapPage() {
                                     style={{ animation: 'spin 8s linear infinite' }}
                                 />
                             </div>
+                            {/* Tombol Pengaturan Layer Batas Negara / Kota */}
+                            <button
+                                type="button"
+                                onClick={() => setIsPresidentMenuOpen(true)}
+                                title="Pengaturan Tampilan Batas Peta"
+                                className="flex items-center justify-center w-6 h-6 xl:w-8 xl:h-8 rounded-md xl:rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/40 hover:bg-[#00FFAA]/20 hover:border-[#00FFAA] text-[#00FFAA] transition-all cursor-pointer shadow-[0_0_10px_rgba(0,255,170,0.2)]"
+                            >
+                                <Globe className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
+                            </button>
                         </div>
 
                         {/* Calendar date label */}
@@ -8444,6 +8492,8 @@ export default function MapPage() {
                 onSaveGameClick={openSaveModal}
                 onRestartClick={() => setIsRestartConfirmOpen(true)}
             />
+
+
 
 
             {/* Confirm Restart Modal */}

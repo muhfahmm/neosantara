@@ -91,7 +91,6 @@ export class MapEngine {
         wasm.mapengine_set_countries(this.__wbg_ptr, ptr0, len0);
     }
     /**
-     * Parse GeoJSON sekali, proyeksikan semua titik & hitung bbox (cache).
      * @param {string} geojson_str
      */
     set_data(geojson_str) {
@@ -116,6 +115,15 @@ export class MapEngine {
         wasm.mapengine_set_horizontal_wrap(this.__wbg_ptr, enabled);
     }
     /**
+     * Parse GeoJSON sekali, proyeksikan semua titik & hitung bbox (cache).
+     * @param {string} geojson_str
+     */
+    set_provinces_data(geojson_str) {
+        const ptr0 = passStringToWasm0(geojson_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.mapengine_set_provinces_data(this.__wbg_ptr, ptr0, len0);
+    }
+    /**
      * @param {string | null | undefined} iso
      * @param {boolean} should_center
      */
@@ -123,6 +131,12 @@ export class MapEngine {
         var ptr0 = isLikeNone(iso) ? 0 : passStringToWasm0(iso, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         wasm.mapengine_set_selected_country(this.__wbg_ptr, ptr0, len0, should_center);
+    }
+    /**
+     * @param {boolean} show
+     */
+    set_show_province_borders(show) {
+        wasm.mapengine_set_show_province_borders(this.__wbg_ptr, show);
     }
     /**
      * Batasi kerja render ke 60 FPS maksimum, terlepas dari refresh rate layar.
@@ -171,6 +185,15 @@ export function set_map_horizontal_wrap(enabled) {
 }
 
 /**
+ * @param {string} provinces_geojson
+ */
+export function set_provinces_on_map(provinces_geojson) {
+    const ptr0 = passStringToWasm0(provinces_geojson, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    wasm.set_provinces_on_map(ptr0, len0);
+}
+
+/**
  * @param {string} iso
  * @param {boolean} should_center
  */
@@ -178,6 +201,13 @@ export function set_selected_country_on_map(iso, should_center) {
     const ptr0 = passStringToWasm0(iso, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     const len0 = WASM_VECTOR_LEN;
     wasm.set_selected_country_on_map(ptr0, len0, should_center);
+}
+
+/**
+ * @param {boolean} show
+ */
+export function set_show_province_borders_on_map(show) {
+    wasm.set_show_province_borders_on_map(show);
 }
 
 /**
@@ -496,6 +526,12 @@ function __wbg_get_imports() {
         __wbg_set_height_c9789c1c77eaedff: function(arg0, arg1) {
             arg0.height = arg1 >>> 0;
         },
+        __wbg_set_lineCap_c9b7bdd3b7f5ce74: function(arg0, arg1, arg2) {
+            arg0.lineCap = getStringFromWasm0(arg1, arg2);
+        },
+        __wbg_set_lineJoin_c1780f2096e6f970: function(arg0, arg1, arg2) {
+            arg0.lineJoin = getStringFromWasm0(arg1, arg2);
+        },
         __wbg_set_lineWidth_cc15473552c60c9c: function(arg0, arg1) {
             arg0.lineWidth = arg1;
         },
@@ -568,12 +604,12 @@ function __wbg_get_imports() {
         },
         __wbindgen_generic_0000000000000003: function(arg0, arg1) {
             // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("PointerEvent")], shim_idx: 29, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__23);
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__27);
             return ret;
         },
         __wbindgen_generic_0000000000000004: function(arg0, arg1) {
             // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("WheelEvent")], shim_idx: 29, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
-            const ret = makeMutClosure(arg0, arg1, wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__24);
+            const ret = makeMutClosure(arg0, arg1, wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__28);
             return ret;
         },
         __wbindgen_generic_0000000000000005: function(arg0, arg1) {
@@ -601,12 +637,12 @@ function wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_
     wasm.wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true_(arg0, arg1, arg2);
 }
 
-function wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__23(arg0, arg1, arg2) {
-    wasm.wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__23(arg0, arg1, arg2);
+function wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__27(arg0, arg1, arg2) {
+    wasm.wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__27(arg0, arg1, arg2);
 }
 
-function wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__24(arg0, arg1, arg2) {
-    wasm.wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__24(arg0, arg1, arg2);
+function wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__28(arg0, arg1, arg2) {
+    wasm.wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__28(arg0, arg1, arg2);
 }
 
 function wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___f64______true_(arg0, arg1, arg2) {

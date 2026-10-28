@@ -1,0 +1,7085 @@
+[
+  {
+    "country": "argentina",
+    "capital": "Rosario",
+    "lat": -32.9492,
+    "lng": -60.6683,
+    "iso": "ar",
+    "color": "#2A52AD",
+    "is_major_city": true
+  },
+  {
+    "country": "argentina",
+    "capital": "Tucumán",
+    "lat": -26.8141,
+    "lng": -65.2186,
+    "iso": "ar",
+    "color": "#2A52AD",
+    "is_major_city": true
+  },
+  {
+    "country": "argentina",
+    "capital": "Mendoza",
+    "lat": -32.8814,
+    "lng": -68.8186,
+    "iso": "ar",
+    "color": "#2A52AD",
+    "is_major_city": true
+  },
+  {
+    "country": "argentina",
+    "capital": "Córdoba",
+    "lat": -31.398,
+    "lng": -64.1842,
+    "iso": "ar",
+    "color": "#2A52AD",
+    "is_major_city": true
+  },
+  {
+    "country": "uruguay",
+    "capital": "Salto",
+    "lat": -31.3903,
+    "lng": -57.9687,
+    "iso": "uy",
+    "color": "#9142AC",
+    "is_major_city": true
+  },
+  {
+    "country": "uruguay",
+    "capital": "Rivera",
+    "lat": -30.8996,
+    "lng": -55.56,
+    "iso": "uy",
+    "color": "#9142AC",
+    "is_major_city": true
+  },
+  {
+    "country": "uruguay",
+    "capital": "Punta del Este",
+    "lat": -34.97,
+    "lng": -54.95,
+    "iso": "uy",
+    "color": "#9142AC",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Samarinda",
+    "lat": -0.5,
+    "lng": 117.15,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Kupang",
+    "lat": -10.1787,
+    "lng": 123.583,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Pontianak",
+    "lat": -0.03,
+    "lng": 109.32,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Jayapura",
+    "lat": -2.533,
+    "lng": 140.7,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Surabaya",
+    "lat": -7.2473,
+    "lng": 112.7489,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Ambon",
+    "lat": -3.7167,
+    "lng": 128.2,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Mataram",
+    "lat": -8.5795,
+    "lng": 116.135,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Makassar",
+    "lat": -5.138,
+    "lng": 119.4301,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Semarang",
+    "lat": -6.9647,
+    "lng": 110.4181,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Bandung",
+    "lat": -6.9481,
+    "lng": 107.5681,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Serang",
+    "lat": -6.11,
+    "lng": 106.1496,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Yogyakarta",
+    "lat": -7.78,
+    "lng": 110.375,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Kendari",
+    "lat": -3.9553,
+    "lng": 122.5973,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Sorong",
+    "lat": -0.8554,
+    "lng": 131.285,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Palu",
+    "lat": -0.907,
+    "lng": 119.833,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Ternate",
+    "lat": 0.793,
+    "lng": 127.363,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Tanjungpinang",
+    "lat": 0.9168,
+    "lng": 104.4714,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Pekanbaru",
+    "lat": 0.5669,
+    "lng": 101.4231,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Gorontalo",
+    "lat": 0.55,
+    "lng": 123.07,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Manado",
+    "lat": 1.48,
+    "lng": 124.85,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Majene",
+    "lat": -3.5336,
+    "lng": 118.966,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Jambi",
+    "lat": -1.59,
+    "lng": 103.61,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Palembang",
+    "lat": -2.9781,
+    "lng": 104.7481,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Bandar Lampung",
+    "lat": -5.4496,
+    "lng": 105.3,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Bengkulu",
+    "lat": -3.8,
+    "lng": 102.27,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Padang",
+    "lat": -0.9581,
+    "lng": 100.3581,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Medan",
+    "lat": 3.5819,
+    "lng": 98.6481,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Banda Aceh",
+    "lat": 5.55,
+    "lng": 95.32,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Palangkaraya",
+    "lat": -2.2096,
+    "lng": 113.91,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Bandjarmasin",
+    "lat": -3.33,
+    "lng": 114.5801,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Denpasar",
+    "lat": -8.65,
+    "lng": 115.22,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "indonesia",
+    "capital": "Pangkalpinang",
+    "lat": -2.08,
+    "lng": 106.15,
+    "iso": "id",
+    "color": "#FFA2C9",
+    "is_major_city": true
+  },
+  {
+    "country": "malaysia",
+    "capital": "Kuching",
+    "lat": 1.53,
+    "lng": 110.33,
+    "iso": "my",
+    "color": "#482AFE",
+    "is_major_city": true
+  },
+  {
+    "country": "malaysia",
+    "capital": "George Town",
+    "lat": 5.4136,
+    "lng": 100.3294,
+    "iso": "my",
+    "color": "#482AFE",
+    "is_major_city": true
+  },
+  {
+    "country": "malaysia",
+    "capital": "Johor Bahru",
+    "lat": 1.482,
+    "lng": 103.7281,
+    "iso": "my",
+    "color": "#482AFE",
+    "is_major_city": true
+  },
+  {
+    "country": "chile",
+    "capital": "Antofagasta",
+    "lat": -23.65,
+    "lng": -70.4,
+    "iso": "cl",
+    "color": "#FD3170",
+    "is_major_city": true
+  },
+  {
+    "country": "chile",
+    "capital": "Concepción",
+    "lat": -36.83,
+    "lng": -73.05,
+    "iso": "cl",
+    "color": "#FD3170",
+    "is_major_city": true
+  },
+  {
+    "country": "chile",
+    "capital": "Temuco",
+    "lat": -38.73,
+    "lng": -72.58,
+    "iso": "cl",
+    "color": "#FD3170",
+    "is_major_city": true
+  },
+  {
+    "country": "bolivia",
+    "capital": "La Paz",
+    "lat": -16.496,
+    "lng": -68.1519,
+    "iso": "bo",
+    "color": "#76781B",
+    "is_major_city": true
+  },
+  {
+    "country": "bolivia",
+    "capital": "Santa Cruz",
+    "lat": -17.752,
+    "lng": -63.2279,
+    "iso": "bo",
+    "color": "#76781B",
+    "is_major_city": true
+  },
+  {
+    "country": "peru",
+    "capital": "Arequipa",
+    "lat": -16.418,
+    "lng": -71.532,
+    "iso": "pe",
+    "color": "#32E841",
+    "is_major_city": true
+  },
+  {
+    "country": "peru",
+    "capital": "Iquitos",
+    "lat": -3.75,
+    "lng": -73.25,
+    "iso": "pe",
+    "color": "#32E841",
+    "is_major_city": true
+  },
+  {
+    "country": "peru",
+    "capital": "Chiclayo",
+    "lat": -6.7629,
+    "lng": -79.8366,
+    "iso": "pe",
+    "color": "#32E841",
+    "is_major_city": true
+  },
+  {
+    "country": "peru",
+    "capital": "Trujillo",
+    "lat": -8.12,
+    "lng": -79.02,
+    "iso": "pe",
+    "color": "#32E841",
+    "is_major_city": true
+  },
+  {
+    "country": "Dhekelia Sovereign Base Area",
+    "capital": "Dhekelia",
+    "lat": 35.0227,
+    "lng": 33.7982,
+    "iso": "-1",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Leh",
+    "lat": 34.1616,
+    "lng": 77.5723,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Itanagar",
+    "lat": 27.1004,
+    "lng": 93.6166,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Gangtok",
+    "lat": 27.3333,
+    "lng": 88.6166,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Kolkata",
+    "lat": 22.5696,
+    "lng": 88.3691,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Guwahati",
+    "lat": 26.162,
+    "lng": 91.768,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Dehra Dun",
+    "lat": 30.3204,
+    "lng": 78.05,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Kohima",
+    "lat": 25.667,
+    "lng": 94.1166,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Imphal",
+    "lat": 24.8,
+    "lng": 93.95,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Aizawl",
+    "lat": 23.7104,
+    "lng": 92.72,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Agartala",
+    "lat": 23.8354,
+    "lng": 91.28,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Shillong",
+    "lat": 25.5705,
+    "lng": 91.88,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Ludhiana",
+    "lat": 30.9297,
+    "lng": 75.8703,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Jaipur",
+    "lat": 26.9231,
+    "lng": 75.808,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Ahmedabad",
+    "lat": 23.032,
+    "lng": 72.5781,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Pathankot",
+    "lat": 32.2703,
+    "lng": 75.72,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Srinagar",
+    "lat": 34.0695,
+    "lng": 74.8283,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Patna",
+    "lat": 25.6269,
+    "lng": 85.1281,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Kanpur",
+    "lat": 26.4619,
+    "lng": 80.318,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Amaravati",
+    "lat": 16.5337,
+    "lng": 80.5243,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Bhubaneswar",
+    "lat": 20.2724,
+    "lng": 85.8254,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Daman",
+    "lat": 20.417,
+    "lng": 72.85,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Mumbai",
+    "lat": 19.0684,
+    "lng": 72.8758,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Panaji",
+    "lat": 15.492,
+    "lng": 73.818,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Bengaluru",
+    "lat": 12.9719,
+    "lng": 77.5581,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Kochi",
+    "lat": 10.017,
+    "lng": 76.222,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Puducherry",
+    "lat": 11.935,
+    "lng": 79.83,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Chennai",
+    "lat": 13.0919,
+    "lng": 80.2781,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Kavaratti",
+    "lat": 10.5626,
+    "lng": 72.6369,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Port Blair",
+    "lat": 11.667,
+    "lng": 92.736,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Jamshedpur",
+    "lat": 22.7895,
+    "lng": 86.1956,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Chandigarh",
+    "lat": 30.7219,
+    "lng": 76.7781,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Indore",
+    "lat": 22.717,
+    "lng": 75.8631,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Bhilai",
+    "lat": 21.2113,
+    "lng": 81.3722,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Faridabad",
+    "lat": 28.4353,
+    "lng": 77.3147,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "india",
+    "capital": "Hyderabad",
+    "lat": 17.4019,
+    "lng": 78.478,
+    "iso": "in",
+    "color": "#11A983",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Ürümqi",
+    "lat": 43.807,
+    "lng": 87.5731,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Lhasa",
+    "lat": 29.645,
+    "lng": 91.1,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Baotou",
+    "lat": 40.6542,
+    "lng": 109.8201,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Lanzhou",
+    "lat": 36.058,
+    "lng": 103.7901,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Kunming",
+    "lat": 25.0429,
+    "lng": 102.6974,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Harbin",
+    "lat": 45.7519,
+    "lng": 126.648,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Changchun",
+    "lat": 43.867,
+    "lng": 125.338,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Shenyeng",
+    "lat": 41.8069,
+    "lng": 123.448,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Hechi",
+    "lat": 24.6953,
+    "lng": 108.083,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Guangzhou",
+    "lat": 23.1247,
+    "lng": 113.2618,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Haikou",
+    "lat": 20.05,
+    "lng": 110.32,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Zhangzhou",
+    "lat": 24.5204,
+    "lng": 117.67,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Hangzhou",
+    "lat": 30.2519,
+    "lng": 120.1681,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Shanghai",
+    "lat": 31.2184,
+    "lng": 121.4346,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Nanjing",
+    "lat": 32.052,
+    "lng": 118.778,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Zibo",
+    "lat": 36.8214,
+    "lng": 117.9965,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Shijiazhuang",
+    "lat": 38.052,
+    "lng": 114.478,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Tianjin",
+    "lat": 39.0828,
+    "lng": 117.1966,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Paracel Islands",
+    "lat": 16.4659,
+    "lng": 111.9565,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Chengdu",
+    "lat": 30.6719,
+    "lng": 104.0681,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Chongqing",
+    "lat": 29.5669,
+    "lng": 106.593,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Guiyang",
+    "lat": 26.582,
+    "lng": 106.7181,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Changsha",
+    "lat": 28.2019,
+    "lng": 112.968,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Yinchuan",
+    "lat": 38.4699,
+    "lng": 106.2711,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Xian",
+    "lat": 34.277,
+    "lng": 108.8931,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Xining",
+    "lat": 36.6219,
+    "lng": 101.7681,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Taiyuan",
+    "lat": 37.877,
+    "lng": 112.5431,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Nanchang",
+    "lat": 28.6819,
+    "lng": 115.8781,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Zhengzhou",
+    "lat": 34.7569,
+    "lng": 113.6631,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Wuhan",
+    "lat": 30.582,
+    "lng": 114.2681,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "china",
+    "capital": "Hefei",
+    "lat": 31.852,
+    "lng": 117.2781,
+    "iso": "cn",
+    "color": "#BC7D7B",
+    "is_major_city": true
+  },
+  {
+    "country": "ethiopia",
+    "capital": "Dire Dawa",
+    "lat": 9.59,
+    "lng": 41.86,
+    "iso": "et",
+    "color": "#A2694B",
+    "is_major_city": true
+  },
+  {
+    "country": "ethiopia",
+    "capital": "Bahir Dar",
+    "lat": 11.6001,
+    "lng": 37.3833,
+    "iso": "et",
+    "color": "#A2694B",
+    "is_major_city": true
+  },
+  {
+    "country": "S. Sudan",
+    "capital": "Kassala",
+    "lat": 4.7081,
+    "lng": 34.1204,
+    "iso": "ss",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "S. Sudan",
+    "capital": "Khartoum",
+    "lat": 8.5497,
+    "lng": 25.5767,
+    "iso": "ss",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "somalia",
+    "capital": "Beledweyne",
+    "lat": 4.74,
+    "lng": 45.2,
+    "iso": "so",
+    "color": "#391FBC",
+    "is_major_city": true
+  },
+  {
+    "country": "somalia",
+    "capital": "Baydhabo",
+    "lat": 3.12,
+    "lng": 43.65,
+    "iso": "so",
+    "color": "#391FBC",
+    "is_major_city": true
+  },
+  {
+    "country": "somalia",
+    "capital": "Kismaayo",
+    "lat": -0.3566,
+    "lng": 42.5183,
+    "iso": "so",
+    "color": "#391FBC",
+    "is_major_city": true
+  },
+  {
+    "country": "kenya",
+    "capital": "Kisumu",
+    "lat": -0.09,
+    "lng": 34.75,
+    "iso": "ke",
+    "color": "#577E90",
+    "is_major_city": true
+  },
+  {
+    "country": "kenya",
+    "capital": "Mombasa",
+    "lat": -4.0381,
+    "lng": 39.688,
+    "iso": "ke",
+    "color": "#577E90",
+    "is_major_city": true
+  },
+  {
+    "country": "malawi",
+    "capital": "Karonga",
+    "lat": -9.9329,
+    "lng": 33.9333,
+    "iso": "mw",
+    "color": "#E8C303",
+    "is_major_city": true
+  },
+  {
+    "country": "malawi",
+    "capital": "Mzuzu",
+    "lat": -11.46,
+    "lng": 34.02,
+    "iso": "mw",
+    "color": "#E8C303",
+    "is_major_city": true
+  },
+  {
+    "country": "malawi",
+    "capital": "Mangochi",
+    "lat": -14.4596,
+    "lng": 35.27,
+    "iso": "mw",
+    "color": "#E8C303",
+    "is_major_city": true
+  },
+  {
+    "country": "malawi",
+    "capital": "Blantyre",
+    "lat": -15.79,
+    "lng": 34.9899,
+    "iso": "mw",
+    "color": "#E8C303",
+    "is_major_city": true
+  },
+  {
+    "country": "republik tanzania",
+    "capital": "Mbeya",
+    "lat": -8.89,
+    "lng": 33.43,
+    "iso": "tz",
+    "color": "#50CE32",
+    "is_major_city": true
+  },
+  {
+    "country": "republik tanzania",
+    "capital": "Mwanza",
+    "lat": -2.52,
+    "lng": 32.93,
+    "iso": "tz",
+    "color": "#50CE32",
+    "is_major_city": true
+  },
+  {
+    "country": "republik tanzania",
+    "capital": "Dar es Salaam",
+    "lat": -6.7981,
+    "lng": 39.2664,
+    "iso": "tz",
+    "color": "#50CE32",
+    "is_major_city": true
+  },
+  {
+    "country": "republik tanzania",
+    "capital": "Moshi",
+    "lat": -3.3396,
+    "lng": 37.34,
+    "iso": "tz",
+    "color": "#50CE32",
+    "is_major_city": true
+  },
+  {
+    "country": "suriah",
+    "capital": "Homs",
+    "lat": 34.7319,
+    "lng": 36.7181,
+    "iso": "sy",
+    "color": "#CEAB45",
+    "is_major_city": true
+  },
+  {
+    "country": "suriah",
+    "capital": "Aleppo",
+    "lat": 36.2319,
+    "lng": 37.1681,
+    "iso": "sy",
+    "color": "#CEAB45",
+    "is_major_city": true
+  },
+  {
+    "country": "suriah",
+    "capital": "Latakia",
+    "lat": 35.54,
+    "lng": 35.78,
+    "iso": "sy",
+    "color": "#CEAB45",
+    "is_major_city": true
+  },
+  {
+    "country": "Somaliland",
+    "capital": "Hargeisa",
+    "lat": 9.56,
+    "lng": 44.0653,
+    "iso": "-1",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "prancis",
+    "capital": "Toulouse",
+    "lat": 43.6219,
+    "lng": 1.448,
+    "iso": "fr",
+    "color": "#E0ABB5",
+    "is_major_city": true
+  },
+  {
+    "country": "prancis",
+    "capital": "Lille",
+    "lat": 50.6519,
+    "lng": 3.0781,
+    "iso": "fr",
+    "color": "#E0ABB5",
+    "is_major_city": true
+  },
+  {
+    "country": "prancis",
+    "capital": "Lyon",
+    "lat": 45.772,
+    "lng": 4.8281,
+    "iso": "fr",
+    "color": "#E0ABB5",
+    "is_major_city": true
+  },
+  {
+    "country": "prancis",
+    "capital": "Nice",
+    "lat": 43.717,
+    "lng": 7.2631,
+    "iso": "fr",
+    "color": "#E0ABB5",
+    "is_major_city": true
+  },
+  {
+    "country": "prancis",
+    "capital": "Marseille",
+    "lat": 43.2919,
+    "lng": 5.3731,
+    "iso": "fr",
+    "color": "#E0ABB5",
+    "is_major_city": true
+  },
+  {
+    "country": "suriname",
+    "capital": "Cottica",
+    "lat": 3.85,
+    "lng": -54.2333,
+    "iso": "sr",
+    "color": "#A16DA9",
+    "is_major_city": true
+  },
+  {
+    "country": "suriname",
+    "capital": "Nieuw Nickerie",
+    "lat": 5.9504,
+    "lng": -56.99,
+    "iso": "sr",
+    "color": "#A16DA9",
+    "is_major_city": true
+  },
+  {
+    "country": "guyana",
+    "capital": "Corriverton",
+    "lat": 5.9,
+    "lng": -57.17,
+    "iso": "gy",
+    "color": "#FA2A88",
+    "is_major_city": true
+  },
+  {
+    "country": "guyana",
+    "capital": "Mabaruma",
+    "lat": 8.2,
+    "lng": -59.78,
+    "iso": "gy",
+    "color": "#FA2A88",
+    "is_major_city": true
+  },
+  {
+    "country": "korea selatan",
+    "capital": "Daejeon",
+    "lat": 36.3375,
+    "lng": 127.4231,
+    "iso": "kr",
+    "color": "#E0767A",
+    "is_major_city": true
+  },
+  {
+    "country": "korea selatan",
+    "capital": "Gwangju",
+    "lat": 35.1729,
+    "lng": 126.9085,
+    "iso": "kr",
+    "color": "#E0767A",
+    "is_major_city": true
+  },
+  {
+    "country": "korea selatan",
+    "capital": "Busan",
+    "lat": 35.097,
+    "lng": 129.0081,
+    "iso": "kr",
+    "color": "#E0767A",
+    "is_major_city": true
+  },
+  {
+    "country": "korea utara",
+    "capital": "Hamhung",
+    "lat": 39.912,
+    "lng": 127.5435,
+    "iso": "kp",
+    "color": "#D21DC7",
+    "is_major_city": true
+  },
+  {
+    "country": "korea utara",
+    "capital": "Chongjin",
+    "lat": 41.7846,
+    "lng": 129.79,
+    "iso": "kp",
+    "color": "#D21DC7",
+    "is_major_city": true
+  },
+  {
+    "country": "maroko",
+    "capital": "Laayoune",
+    "lat": 27.15,
+    "lng": -13.2,
+    "iso": "ma",
+    "color": "#3997BB",
+    "is_major_city": true
+  },
+  {
+    "country": "maroko",
+    "capital": "Fez",
+    "lat": 34.0565,
+    "lng": -5.0023,
+    "iso": "ma",
+    "color": "#3997BB",
+    "is_major_city": true
+  },
+  {
+    "country": "maroko",
+    "capital": "Marrakesh",
+    "lat": 31.6319,
+    "lng": -8.0019,
+    "iso": "ma",
+    "color": "#3997BB",
+    "is_major_city": true
+  },
+  {
+    "country": "Western Sahara",
+    "capital": "Bir Lehlou",
+    "lat": 26.1192,
+    "lng": -9.6525,
+    "iso": "eh",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "costa rica",
+    "capital": "Alajuela",
+    "lat": 10.02,
+    "lng": -84.23,
+    "iso": "cr",
+    "color": "#53BCDE",
+    "is_major_city": true
+  },
+  {
+    "country": "nikaragua",
+    "capital": "Bluefields",
+    "lat": 12.0,
+    "lng": -83.7649,
+    "iso": "ni",
+    "color": "#056DB5",
+    "is_major_city": true
+  },
+  {
+    "country": "nikaragua",
+    "capital": "Bilwi",
+    "lat": 14.0333,
+    "lng": -83.3834,
+    "iso": "ni",
+    "color": "#056DB5",
+    "is_major_city": true
+  },
+  {
+    "country": "nikaragua",
+    "capital": "Chinandega",
+    "lat": 12.6304,
+    "lng": -87.13,
+    "iso": "ni",
+    "color": "#056DB5",
+    "is_major_city": true
+  },
+  {
+    "country": "kongo",
+    "capital": "Likouala",
+    "lat": 1.9694,
+    "lng": 17.3522,
+    "iso": "cg",
+    "color": "#2B966D",
+    "is_major_city": true
+  },
+  {
+    "country": "kongo",
+    "capital": "Cuvette",
+    "lat": -0.5847,
+    "lng": 15.8001,
+    "iso": "cg",
+    "color": "#2B966D",
+    "is_major_city": true
+  },
+  {
+    "country": "republik demokratik kongo",
+    "capital": "Équateur",
+    "lat": 1.0728,
+    "lng": 21.2628,
+    "iso": "cd",
+    "color": "#7FA74E",
+    "is_major_city": true
+  },
+  {
+    "country": "republik demokratik kongo",
+    "capital": "Bandundu",
+    "lat": -4.8477,
+    "lng": 18.4597,
+    "iso": "cd",
+    "color": "#7FA74E",
+    "is_major_city": true
+  },
+  {
+    "country": "bhutan",
+    "capital": "Tashi Yangtse",
+    "lat": 27.7074,
+    "lng": 91.4881,
+    "iso": "bt",
+    "color": "#6A74BD",
+    "is_major_city": true
+  },
+  {
+    "country": "ukraina",
+    "capital": "Odessa",
+    "lat": 46.492,
+    "lng": 30.7081,
+    "iso": "ua",
+    "color": "#89960C",
+    "is_major_city": true
+  },
+  {
+    "country": "ukraina",
+    "capital": "Kharkiv",
+    "lat": 50.0019,
+    "lng": 36.2481,
+    "iso": "ua",
+    "color": "#89960C",
+    "is_major_city": true
+  },
+  {
+    "country": "ukraina",
+    "capital": "Donetsk",
+    "lat": 48.0019,
+    "lng": 37.828,
+    "iso": "ua",
+    "color": "#89960C",
+    "is_major_city": true
+  },
+  {
+    "country": "ukraina",
+    "capital": "Dnipro",
+    "lat": 48.4819,
+    "lng": 34.9981,
+    "iso": "ua",
+    "color": "#89960C",
+    "is_major_city": true
+  },
+  {
+    "country": "belarus",
+    "capital": "Homyel",
+    "lat": 52.43,
+    "lng": 31.0,
+    "iso": "by",
+    "color": "#F9BCD9",
+    "is_major_city": true
+  },
+  {
+    "country": "belarus",
+    "capital": "Mahilyow",
+    "lat": 53.8985,
+    "lng": 30.3246,
+    "iso": "by",
+    "color": "#F9BCD9",
+    "is_major_city": true
+  },
+  {
+    "country": "namibia",
+    "capital": "Ongwediva",
+    "lat": -17.78,
+    "lng": 15.77,
+    "iso": "na",
+    "color": "#DEB388",
+    "is_major_city": true
+  },
+  {
+    "country": "namibia",
+    "capital": "Rundu",
+    "lat": -17.92,
+    "lng": 19.7499,
+    "iso": "na",
+    "color": "#DEB388",
+    "is_major_city": true
+  },
+  {
+    "country": "namibia",
+    "capital": "Walvis Bay",
+    "lat": -22.9575,
+    "lng": 14.5053,
+    "iso": "na",
+    "color": "#DEB388",
+    "is_major_city": true
+  },
+  {
+    "country": "afrika selatan",
+    "capital": "Cape Town",
+    "lat": -33.9181,
+    "lng": 18.433,
+    "iso": "za",
+    "color": "#A92C6A",
+    "is_major_city": true
+  },
+  {
+    "country": "afrika selatan",
+    "capital": "Durban",
+    "lat": -29.8607,
+    "lng": 31.0109,
+    "iso": "za",
+    "color": "#A92C6A",
+    "is_major_city": true
+  },
+  {
+    "country": "Saint Martin",
+    "capital": "St. Martin",
+    "lat": 18.0762,
+    "lng": -63.0788,
+    "iso": "mf",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Sint Maarten",
+    "capital": "Sint Maarten",
+    "lat": 18.0472,
+    "lng": -63.0871,
+    "iso": "sx",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "uni emirat arab",
+    "capital": "Dubai",
+    "lat": 25.2149,
+    "lng": 55.2869,
+    "iso": "ae",
+    "color": "#93205C",
+    "is_major_city": true
+  },
+  {
+    "country": "oman",
+    "capital": "Suhar",
+    "lat": 24.362,
+    "lng": 56.7344,
+    "iso": "om",
+    "color": "#AD437F",
+    "is_major_city": true
+  },
+  {
+    "country": "oman",
+    "capital": "Salalah",
+    "lat": 17.0255,
+    "lng": 54.0852,
+    "iso": "om",
+    "color": "#AD437F",
+    "is_major_city": true
+  },
+  {
+    "country": "uzbekistan",
+    "capital": "Fargona",
+    "lat": 40.39,
+    "lng": 71.78,
+    "iso": "uz",
+    "color": "#AA1B4B",
+    "is_major_city": true
+  },
+  {
+    "country": "uzbekistan",
+    "capital": "Samarkand",
+    "lat": 39.67,
+    "lng": 66.945,
+    "iso": "uz",
+    "color": "#AA1B4B",
+    "is_major_city": true
+  },
+  {
+    "country": "uzbekistan",
+    "capital": "Shahrisabz",
+    "lat": 39.0618,
+    "lng": 66.8315,
+    "iso": "uz",
+    "color": "#AA1B4B",
+    "is_major_city": true
+  },
+  {
+    "country": "kazakhstan",
+    "capital": "Almaty",
+    "lat": 43.3269,
+    "lng": 76.9131,
+    "iso": "kz",
+    "color": "#E22CC0",
+    "is_major_city": true
+  },
+  {
+    "country": "kazakhstan",
+    "capital": "Shymkent",
+    "lat": 42.32,
+    "lng": 69.595,
+    "iso": "kz",
+    "color": "#E22CC0",
+    "is_major_city": true
+  },
+  {
+    "country": "kazakhstan",
+    "capital": "Qaraghandy",
+    "lat": 49.885,
+    "lng": 73.115,
+    "iso": "kz",
+    "color": "#E22CC0",
+    "is_major_city": true
+  },
+  {
+    "country": "tajikistan",
+    "capital": "Khujand",
+    "lat": 40.29,
+    "lng": 69.6199,
+    "iso": "tj",
+    "color": "#CDFE86",
+    "is_major_city": true
+  },
+  {
+    "country": "tajikistan",
+    "capital": "Khorugh",
+    "lat": 37.4875,
+    "lng": 71.5476,
+    "iso": "tj",
+    "color": "#CDFE86",
+    "is_major_city": true
+  },
+  {
+    "country": "lithuania",
+    "capital": "Kaunas",
+    "lat": 54.9504,
+    "lng": 23.88,
+    "iso": "lt",
+    "color": "#93EFE9",
+    "is_major_city": true
+  },
+  {
+    "country": "lithuania",
+    "capital": "Klaipėda",
+    "lat": 55.7204,
+    "lng": 21.1199,
+    "iso": "lt",
+    "color": "#93EFE9",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Porto Alegre",
+    "lat": -30.0481,
+    "lng": -51.202,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Boa Vista",
+    "lat": 2.8161,
+    "lng": -60.666,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Belém",
+    "lat": -1.4481,
+    "lng": -48.482,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Rio Branco",
+    "lat": -9.9666,
+    "lng": -67.8,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Vila Velha",
+    "lat": 3.2167,
+    "lng": -51.2167,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Campo Grande",
+    "lat": -20.4481,
+    "lng": -54.6186,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Curitiba",
+    "lat": -25.4181,
+    "lng": -49.3219,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Florianópolis",
+    "lat": -27.578,
+    "lng": -48.522,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Manaus",
+    "lat": -3.0981,
+    "lng": -60.002,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Porto Velho",
+    "lat": -8.75,
+    "lng": -63.9,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Cuiabá",
+    "lat": -15.5677,
+    "lng": -56.0869,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "São Luís",
+    "lat": -2.514,
+    "lng": -44.2679,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Teresina",
+    "lat": -5.0931,
+    "lng": -42.782,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Fortaleza",
+    "lat": -3.7481,
+    "lng": -38.5819,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Natal",
+    "lat": -5.7781,
+    "lng": -35.242,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "João Pessoa",
+    "lat": -7.0992,
+    "lng": -34.878,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Recife",
+    "lat": -8.0605,
+    "lng": -34.9088,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Maceió",
+    "lat": -9.6181,
+    "lng": -35.7319,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Aracaju",
+    "lat": -10.9,
+    "lng": -37.12,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Salvador",
+    "lat": -12.968,
+    "lng": -38.4819,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Vitória",
+    "lat": -20.332,
+    "lng": -40.3539,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Rio de Janeiro",
+    "lat": -22.9073,
+    "lng": -43.2121,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "São Paulo",
+    "lat": -23.5567,
+    "lng": -46.627,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Goiânia",
+    "lat": -16.7181,
+    "lng": -49.302,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Belo Horizonte",
+    "lat": -19.9131,
+    "lng": -43.9169,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "brazil",
+    "capital": "Palmas",
+    "lat": -10.2377,
+    "lng": -48.2878,
+    "iso": "br",
+    "color": "#6E5FA4",
+    "is_major_city": true
+  },
+  {
+    "country": "mongolia",
+    "capital": "Olgiy",
+    "lat": 48.9337,
+    "lng": 89.95,
+    "iso": "mn",
+    "color": "#F5B7BE",
+    "is_major_city": true
+  },
+  {
+    "country": "mongolia",
+    "capital": "Ulaangom",
+    "lat": 49.9833,
+    "lng": 92.0666,
+    "iso": "mn",
+    "color": "#F5B7BE",
+    "is_major_city": true
+  },
+  {
+    "country": "mongolia",
+    "capital": "Erdenet",
+    "lat": 49.0533,
+    "lng": 104.1183,
+    "iso": "mn",
+    "color": "#F5B7BE",
+    "is_major_city": true
+  },
+  {
+    "country": "mongolia",
+    "capital": "Darkhan",
+    "lat": 49.4624,
+    "lng": 105.9725,
+    "iso": "mn",
+    "color": "#F5B7BE",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Gorno Altaysk",
+    "lat": 51.9613,
+    "lng": 85.9577,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Pskov",
+    "lat": 57.83,
+    "lng": 28.3299,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Krasnodar",
+    "lat": 45.02,
+    "lng": 39.0,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Cherkessk",
+    "lat": 44.2904,
+    "lng": 42.06,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Nalchik",
+    "lat": 43.4981,
+    "lng": 43.6179,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Vladikavkaz",
+    "lat": 43.0504,
+    "lng": 44.67,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Nazran",
+    "lat": 43.233,
+    "lng": 44.783,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Grozny",
+    "lat": 43.3187,
+    "lng": 45.6987,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Makhachkala",
+    "lat": 42.98,
+    "lng": 47.5,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Murmansk",
+    "lat": 68.97,
+    "lng": 33.1,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Petrozavodsk",
+    "lat": 61.7813,
+    "lng": 34.3612,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Vyborg",
+    "lat": 60.7039,
+    "lng": 28.7549,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Kaliningrad",
+    "lat": 54.7,
+    "lng": 20.4973,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Smolensk",
+    "lat": 54.7827,
+    "lng": 32.0473,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Bryansk",
+    "lat": 53.26,
+    "lng": 34.43,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Kursk",
+    "lat": 51.74,
+    "lng": 36.19,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Belgorod",
+    "lat": 50.63,
+    "lng": 36.5999,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Voronezh",
+    "lat": 51.6654,
+    "lng": 39.1868,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Rostov",
+    "lat": 47.2366,
+    "lng": 39.7107,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Ulan-Ude",
+    "lat": 51.825,
+    "lng": 107.625,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Kyzyl",
+    "lat": 51.7067,
+    "lng": 94.3831,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Chita",
+    "lat": 52.055,
+    "lng": 113.465,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Blagoveshchensk",
+    "lat": 50.2666,
+    "lng": 127.5333,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Birobidzhan",
+    "lat": 48.7974,
+    "lng": 132.9508,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Khabarovsk",
+    "lat": 48.455,
+    "lng": 135.12,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Vladivostok",
+    "lat": 43.13,
+    "lng": 131.91,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Tyumen",
+    "lat": 57.14,
+    "lng": 65.53,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Kurgan",
+    "lat": 55.46,
+    "lng": 65.345,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Omsk",
+    "lat": 54.9919,
+    "lng": 73.398,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Novosibirsk",
+    "lat": 55.0319,
+    "lng": 82.9581,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Chelyabinsk",
+    "lat": 55.1569,
+    "lng": 61.4367,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Barnaul",
+    "lat": 53.355,
+    "lng": 83.745,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Orenburg",
+    "lat": 51.78,
+    "lng": 55.11,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Saratov",
+    "lat": 51.5819,
+    "lng": 46.0281,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Astrakhan",
+    "lat": 46.3487,
+    "lng": 48.055,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Volgograd",
+    "lat": 48.712,
+    "lng": 44.498,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Simferopol",
+    "lat": 44.9492,
+    "lng": 34.0987,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Magadan",
+    "lat": 59.575,
+    "lng": 150.81,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Yuzhno Sakhalinsk",
+    "lat": 46.965,
+    "lng": 142.74,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Sevastopol",
+    "lat": 44.6039,
+    "lng": 33.5244,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Anadyr",
+    "lat": 64.737,
+    "lng": 177.475,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Nakhodka",
+    "lat": 67.7504,
+    "lng": 77.52,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Naryan Mar",
+    "lat": 67.6474,
+    "lng": 53.0574,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Yakutsk",
+    "lat": 62.035,
+    "lng": 129.735,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "St.  Petersburg",
+    "lat": 59.941,
+    "lng": 30.3141,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Archangel",
+    "lat": 64.575,
+    "lng": 40.545,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Krasnoyarsk",
+    "lat": 56.0159,
+    "lng": 92.8641,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Elista",
+    "lat": 46.3287,
+    "lng": 44.2087,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Petropavlovsk-Kamchatsky",
+    "lat": 53.062,
+    "lng": 158.623,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "49",
+    "lat": 68.7831,
+    "lng": 67.2846,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Ufa",
+    "lat": 54.7919,
+    "lng": 56.0381,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Yekaterinburg",
+    "lat": 56.852,
+    "lng": 60.598,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Surgut",
+    "lat": 61.2599,
+    "lng": 73.425,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Lipetsk",
+    "lat": 52.62,
+    "lng": 39.64,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Tambov",
+    "lat": 52.73,
+    "lng": 41.43,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Tomsk",
+    "lat": 56.495,
+    "lng": 84.975,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Kazan",
+    "lat": 55.7519,
+    "lng": 49.1244,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Ulyanovsk",
+    "lat": 54.33,
+    "lng": 48.41,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Penza",
+    "lat": 53.18,
+    "lng": 45.0,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Novokuznetsk",
+    "lat": 53.75,
+    "lng": 87.115,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Orel",
+    "lat": 52.97,
+    "lng": 36.07,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Irkutsk",
+    "lat": 52.2846,
+    "lng": 104.2839,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Chernogorsk",
+    "lat": 53.8313,
+    "lng": 91.2227,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Saransk",
+    "lat": 54.1704,
+    "lng": 45.18,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Kaluga",
+    "lat": 54.5204,
+    "lng": 36.27,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Kostroma",
+    "lat": 57.77,
+    "lng": 40.94,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Yaroslavl",
+    "lat": 57.62,
+    "lng": 39.87,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Vladimir",
+    "lat": 56.13,
+    "lng": 40.4099,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Ryazan",
+    "lat": 54.62,
+    "lng": 39.72,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Ivanovo",
+    "lat": 57.01,
+    "lng": 41.01,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Nizhny Novgorod",
+    "lat": 56.335,
+    "lng": 43.9981,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Tula",
+    "lat": 54.2,
+    "lng": 37.6299,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Cheboksary",
+    "lat": 56.13,
+    "lng": 47.25,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Cherepovets",
+    "lat": 59.1404,
+    "lng": 37.91,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Velikiy Novgorod",
+    "lat": 58.5,
+    "lng": 31.33,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Tver",
+    "lat": 56.86,
+    "lng": 35.89,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Noginsk",
+    "lat": 55.8704,
+    "lng": 38.48,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Yoshkar Ola",
+    "lat": 56.6354,
+    "lng": 47.8749,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Kirov",
+    "lat": 58.5901,
+    "lng": 49.67,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Izhevsk",
+    "lat": 56.85,
+    "lng": 53.23,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Syktyvkar",
+    "lat": 61.66,
+    "lng": 50.82,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Perm",
+    "lat": 58.0019,
+    "lng": 56.248,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Samara",
+    "lat": 53.197,
+    "lng": 50.1493,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Stavropol",
+    "lat": 45.05,
+    "lng": 41.98,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "rusia",
+    "capital": "Maykop",
+    "lat": 44.61,
+    "lng": 40.12,
+    "iso": "ru",
+    "color": "#318DCB",
+    "is_major_city": true
+  },
+  {
+    "country": "ceko",
+    "capital": "Karlovarský",
+    "lat": 50.1777,
+    "lng": 12.6934,
+    "iso": "cz",
+    "color": "#AC3EBF",
+    "is_major_city": true
+  },
+  {
+    "country": "ceko",
+    "capital": "Královéhradecký",
+    "lat": 50.3769,
+    "lng": 15.7776,
+    "iso": "cz",
+    "color": "#AC3EBF",
+    "is_major_city": true
+  },
+  {
+    "country": "ceko",
+    "capital": "Olomoucký",
+    "lat": 49.7524,
+    "lng": 17.1953,
+    "iso": "cz",
+    "color": "#AC3EBF",
+    "is_major_city": true
+  },
+  {
+    "country": "jerman",
+    "capital": "Stuttgart",
+    "lat": 48.78,
+    "lng": 9.2,
+    "iso": "de",
+    "color": "#75BEA8",
+    "is_major_city": true
+  },
+  {
+    "country": "jerman",
+    "capital": "Frankfurt",
+    "lat": 50.1,
+    "lng": 8.675,
+    "iso": "de",
+    "color": "#75BEA8",
+    "is_major_city": true
+  },
+  {
+    "country": "jerman",
+    "capital": "Hamburg",
+    "lat": 53.552,
+    "lng": 9.9981,
+    "iso": "de",
+    "color": "#75BEA8",
+    "is_major_city": true
+  },
+  {
+    "country": "estonia",
+    "capital": "Tartu",
+    "lat": 58.3839,
+    "lng": 26.7099,
+    "iso": "ee",
+    "color": "#5C6298",
+    "is_major_city": true
+  },
+  {
+    "country": "estonia",
+    "capital": "Haapsalu",
+    "lat": 58.9431,
+    "lng": 23.5414,
+    "iso": "ee",
+    "color": "#5C6298",
+    "is_major_city": true
+  },
+  {
+    "country": "latvia",
+    "capital": "Rujienas",
+    "lat": 57.9604,
+    "lng": 25.2719,
+    "iso": "lv",
+    "color": "#FFD7DA",
+    "is_major_city": true
+  },
+  {
+    "country": "latvia",
+    "capital": "Apes",
+    "lat": 57.4574,
+    "lng": 26.4609,
+    "iso": "lv",
+    "color": "#FFD7DA",
+    "is_major_city": true
+  },
+  {
+    "country": "latvia",
+    "capital": "Rēzekne",
+    "lat": 56.5,
+    "lng": 27.3166,
+    "iso": "lv",
+    "color": "#FFD7DA",
+    "is_major_city": true
+  },
+  {
+    "country": "latvia",
+    "capital": "Daugavpils",
+    "lat": 55.88,
+    "lng": 26.51,
+    "iso": "lv",
+    "color": "#FFD7DA",
+    "is_major_city": true
+  },
+  {
+    "country": "latvia",
+    "capital": "Liepaga",
+    "lat": 56.51,
+    "lng": 21.01,
+    "iso": "lv",
+    "color": "#FFD7DA",
+    "is_major_city": true
+  },
+  {
+    "country": "norwegia",
+    "capital": "Trondheim",
+    "lat": 63.4167,
+    "lng": 10.4167,
+    "iso": "no",
+    "color": "#94F8D3",
+    "is_major_city": true
+  },
+  {
+    "country": "norwegia",
+    "capital": "Drammen",
+    "lat": 59.7385,
+    "lng": 10.1992,
+    "iso": "no",
+    "color": "#94F8D3",
+    "is_major_city": true
+  },
+  {
+    "country": "norwegia",
+    "capital": "Stavanger",
+    "lat": 58.97,
+    "lng": 5.68,
+    "iso": "no",
+    "color": "#94F8D3",
+    "is_major_city": true
+  },
+  {
+    "country": "norwegia",
+    "capital": "Bergen",
+    "lat": 60.391,
+    "lng": 5.3245,
+    "iso": "no",
+    "color": "#94F8D3",
+    "is_major_city": true
+  },
+  {
+    "country": "swedia",
+    "capital": "Örebro",
+    "lat": 59.2803,
+    "lng": 15.22,
+    "iso": "se",
+    "color": "#310490",
+    "is_major_city": true
+  },
+  {
+    "country": "swedia",
+    "capital": "Göteborg",
+    "lat": 57.7091,
+    "lng": 11.9786,
+    "iso": "se",
+    "color": "#310490",
+    "is_major_city": true
+  },
+  {
+    "country": "swedia",
+    "capital": "Västerås",
+    "lat": 59.6091,
+    "lng": 16.5577,
+    "iso": "se",
+    "color": "#310490",
+    "is_major_city": true
+  },
+  {
+    "country": "swedia",
+    "capital": "Malmö",
+    "lat": 55.5994,
+    "lng": 13.0231,
+    "iso": "se",
+    "color": "#310490",
+    "is_major_city": true
+  },
+  {
+    "country": "finlandia",
+    "capital": "Oulu",
+    "lat": 65.0,
+    "lng": 25.47,
+    "iso": "fi",
+    "color": "#5A64C8",
+    "is_major_city": true
+  },
+  {
+    "country": "finlandia",
+    "capital": "Turku",
+    "lat": 60.4539,
+    "lng": 22.255,
+    "iso": "fi",
+    "color": "#5A64C8",
+    "is_major_city": true
+  },
+  {
+    "country": "finlandia",
+    "capital": "Tampere",
+    "lat": 61.5,
+    "lng": 23.75,
+    "iso": "fi",
+    "color": "#5A64C8",
+    "is_major_city": true
+  },
+  {
+    "country": "vietnam",
+    "capital": "Da Nang",
+    "lat": 16.06,
+    "lng": 108.25,
+    "iso": "vn",
+    "color": "#5F8F9E",
+    "is_major_city": true
+  },
+  {
+    "country": "vietnam",
+    "capital": "Nha Trang",
+    "lat": 12.25,
+    "lng": 109.17,
+    "iso": "vn",
+    "color": "#5F8F9E",
+    "is_major_city": true
+  },
+  {
+    "country": "vietnam",
+    "capital": "Qui Nhon",
+    "lat": 13.78,
+    "lng": 109.18,
+    "iso": "vn",
+    "color": "#5F8F9E",
+    "is_major_city": true
+  },
+  {
+    "country": "vietnam",
+    "capital": "Ho Chi Minh City",
+    "lat": 10.7621,
+    "lng": 106.703,
+    "iso": "vn",
+    "color": "#5F8F9E",
+    "is_major_city": true
+  },
+  {
+    "country": "vietnam",
+    "capital": "Vinh",
+    "lat": 18.7,
+    "lng": 105.68,
+    "iso": "vn",
+    "color": "#5F8F9E",
+    "is_major_city": true
+  },
+  {
+    "country": "kamboja",
+    "capital": "Stoeng Treng",
+    "lat": 13.523,
+    "lng": 105.974,
+    "iso": "kh",
+    "color": "#C40C04",
+    "is_major_city": true
+  },
+  {
+    "country": "kamboja",
+    "capital": "Senmonorom",
+    "lat": 12.45,
+    "lng": 107.2,
+    "iso": "kh",
+    "color": "#C40C04",
+    "is_major_city": true
+  },
+  {
+    "country": "kamboja",
+    "capital": "Battambang",
+    "lat": 13.1,
+    "lng": 103.2,
+    "iso": "kh",
+    "color": "#C40C04",
+    "is_major_city": true
+  },
+  {
+    "country": "kamboja",
+    "capital": "Krong Koh Kong",
+    "lat": 11.6175,
+    "lng": 102.9849,
+    "iso": "kh",
+    "color": "#C40C04",
+    "is_major_city": true
+  },
+  {
+    "country": "belgia",
+    "capital": "Brugge",
+    "lat": 51.2204,
+    "lng": 3.23,
+    "iso": "be",
+    "color": "#D34798",
+    "is_major_city": true
+  },
+  {
+    "country": "belgia",
+    "capital": "Liège",
+    "lat": 50.63,
+    "lng": 5.58,
+    "iso": "be",
+    "color": "#D34798",
+    "is_major_city": true
+  },
+  {
+    "country": "georgia",
+    "capital": "Batumi",
+    "lat": 41.6,
+    "lng": 41.63,
+    "iso": "ge",
+    "color": "#C0CDFF",
+    "is_major_city": true
+  },
+  {
+    "country": "georgia",
+    "capital": "Kutaisi",
+    "lat": 42.25,
+    "lng": 42.73,
+    "iso": "ge",
+    "color": "#C0CDFF",
+    "is_major_city": true
+  },
+  {
+    "country": "makedonia utara",
+    "capital": "Novo Selo",
+    "lat": 41.4268,
+    "lng": 22.8538,
+    "iso": "mk",
+    "color": "#E3AF40",
+    "is_major_city": true
+  },
+  {
+    "country": "albania",
+    "capital": "Vlorë",
+    "lat": 40.4774,
+    "lng": 19.4982,
+    "iso": "al",
+    "color": "#3303DA",
+    "is_major_city": true
+  },
+  {
+    "country": "azerbaijan",
+    "capital": "Tovuz",
+    "lat": 40.9922,
+    "lng": 45.6289,
+    "iso": "az",
+    "color": "#620A71",
+    "is_major_city": true
+  },
+  {
+    "country": "azerbaijan",
+    "capital": "Ganca",
+    "lat": 40.685,
+    "lng": 46.35,
+    "iso": "az",
+    "color": "#620A71",
+    "is_major_city": true
+  },
+  {
+    "country": "azerbaijan",
+    "capital": "Naxcivan",
+    "lat": 39.2092,
+    "lng": 45.4122,
+    "iso": "az",
+    "color": "#620A71",
+    "is_major_city": true
+  },
+  {
+    "country": "azerbaijan",
+    "capital": "Saki",
+    "lat": 41.1923,
+    "lng": 47.1705,
+    "iso": "az",
+    "color": "#620A71",
+    "is_major_city": true
+  },
+  {
+    "country": "azerbaijan",
+    "capital": "Lankaran",
+    "lat": 38.754,
+    "lng": 48.8511,
+    "iso": "az",
+    "color": "#620A71",
+    "is_major_city": true
+  },
+  {
+    "country": "turki",
+    "capital": "Gaziantep",
+    "lat": 37.0769,
+    "lng": 37.383,
+    "iso": "tr",
+    "color": "#F97A63",
+    "is_major_city": true
+  },
+  {
+    "country": "turki",
+    "capital": "Istanbul",
+    "lat": 41.0176,
+    "lng": 28.9743,
+    "iso": "tr",
+    "color": "#F97A63",
+    "is_major_city": true
+  },
+  {
+    "country": "turki",
+    "capital": "Adana",
+    "lat": 36.9969,
+    "lng": 35.3181,
+    "iso": "tr",
+    "color": "#F97A63",
+    "is_major_city": true
+  },
+  {
+    "country": "turki",
+    "capital": "İzmir",
+    "lat": 38.4381,
+    "lng": 27.1498,
+    "iso": "tr",
+    "color": "#F97A63",
+    "is_major_city": true
+  },
+  {
+    "country": "turki",
+    "capital": "Konya",
+    "lat": 37.877,
+    "lng": 32.4731,
+    "iso": "tr",
+    "color": "#F97A63",
+    "is_major_city": true
+  },
+  {
+    "country": "spanyol",
+    "capital": "Seville",
+    "lat": 37.405,
+    "lng": -5.98,
+    "iso": "es",
+    "color": "#C6A822",
+    "is_major_city": true
+  },
+  {
+    "country": "spanyol",
+    "capital": "Zaragoza",
+    "lat": 41.65,
+    "lng": -0.89,
+    "iso": "es",
+    "color": "#C6A822",
+    "is_major_city": true
+  },
+  {
+    "country": "spanyol",
+    "capital": "Bilbao",
+    "lat": 43.25,
+    "lng": -2.93,
+    "iso": "es",
+    "color": "#C6A822",
+    "is_major_city": true
+  },
+  {
+    "country": "spanyol",
+    "capital": "Barcelona",
+    "lat": 41.3852,
+    "lng": 2.1814,
+    "iso": "es",
+    "color": "#C6A822",
+    "is_major_city": true
+  },
+  {
+    "country": "spanyol",
+    "capital": "Valencia",
+    "lat": 39.487,
+    "lng": -0.402,
+    "iso": "es",
+    "color": "#C6A822",
+    "is_major_city": true
+  },
+  {
+    "country": "laos",
+    "capital": "Louangphrabang",
+    "lat": 19.8845,
+    "lng": 102.1416,
+    "iso": "la",
+    "color": "#5495A2",
+    "is_major_city": true
+  },
+  {
+    "country": "laos",
+    "capital": "Savannakhet",
+    "lat": 16.5376,
+    "lng": 104.773,
+    "iso": "la",
+    "color": "#5495A2",
+    "is_major_city": true
+  },
+  {
+    "country": "laos",
+    "capital": "Pakxe",
+    "lat": 15.1221,
+    "lng": 105.8183,
+    "iso": "la",
+    "color": "#5495A2",
+    "is_major_city": true
+  },
+  {
+    "country": "kirgizstan",
+    "capital": "Karakol",
+    "lat": 42.492,
+    "lng": 78.3818,
+    "iso": "kg",
+    "color": "#B112C1",
+    "is_major_city": true
+  },
+  {
+    "country": "kirgizstan",
+    "capital": "Osh",
+    "lat": 40.5404,
+    "lng": 72.79,
+    "iso": "kg",
+    "color": "#B112C1",
+    "is_major_city": true
+  },
+  {
+    "country": "armenia",
+    "capital": "Yeghegnadzor",
+    "lat": 39.7611,
+    "lng": 45.3333,
+    "iso": "am",
+    "color": "#3744C6",
+    "is_major_city": true
+  },
+  {
+    "country": "denmark",
+    "capital": "Århus",
+    "lat": 56.1572,
+    "lng": 10.2107,
+    "iso": "dk",
+    "color": "#E93757",
+    "is_major_city": true
+  },
+  {
+    "country": "libya",
+    "capital": "Ajdabiya",
+    "lat": 30.77,
+    "lng": 20.22,
+    "iso": "ly",
+    "color": "#219634",
+    "is_major_city": true
+  },
+  {
+    "country": "libya",
+    "capital": "Tubruq",
+    "lat": 32.08,
+    "lng": 23.96,
+    "iso": "ly",
+    "color": "#219634",
+    "is_major_city": true
+  },
+  {
+    "country": "libya",
+    "capital": "Misrata",
+    "lat": 32.38,
+    "lng": 15.1,
+    "iso": "ly",
+    "color": "#219634",
+    "is_major_city": true
+  },
+  {
+    "country": "libya",
+    "capital": "Banghazi",
+    "lat": 32.1187,
+    "lng": 20.0648,
+    "iso": "ly",
+    "color": "#219634",
+    "is_major_city": true
+  },
+  {
+    "country": "tunisia",
+    "capital": "Zarzis",
+    "lat": 33.5104,
+    "lng": 11.1,
+    "iso": "tn",
+    "color": "#6B07FD",
+    "is_major_city": true
+  },
+  {
+    "country": "tunisia",
+    "capital": "Béja",
+    "lat": 36.7304,
+    "lng": 9.19,
+    "iso": "tn",
+    "color": "#6B07FD",
+    "is_major_city": true
+  },
+  {
+    "country": "tunisia",
+    "capital": "Gabès",
+    "lat": 33.9004,
+    "lng": 10.1,
+    "iso": "tn",
+    "color": "#6B07FD",
+    "is_major_city": true
+  },
+  {
+    "country": "tunisia",
+    "capital": "Sfax",
+    "lat": 34.75,
+    "lng": 10.72,
+    "iso": "tn",
+    "color": "#6B07FD",
+    "is_major_city": true
+  },
+  {
+    "country": "republik rumania",
+    "capital": "Cluj-Napoca",
+    "lat": 46.7884,
+    "lng": 23.5984,
+    "iso": "ro",
+    "color": "#5665EB",
+    "is_major_city": true
+  },
+  {
+    "country": "republik rumania",
+    "capital": "Timișoara",
+    "lat": 45.7588,
+    "lng": 21.2234,
+    "iso": "ro",
+    "color": "#5665EB",
+    "is_major_city": true
+  },
+  {
+    "country": "republik rumania",
+    "capital": "Brașov",
+    "lat": 45.6475,
+    "lng": 25.6072,
+    "iso": "ro",
+    "color": "#5665EB",
+    "is_major_city": true
+  },
+  {
+    "country": "republik rumania",
+    "capital": "Galați",
+    "lat": 45.4559,
+    "lng": 28.0459,
+    "iso": "ro",
+    "color": "#5665EB",
+    "is_major_city": true
+  },
+  {
+    "country": "republik rumania",
+    "capital": "Iași",
+    "lat": 47.1683,
+    "lng": 27.5749,
+    "iso": "ro",
+    "color": "#5665EB",
+    "is_major_city": true
+  },
+  {
+    "country": "hungaria",
+    "capital": "Debrecen",
+    "lat": 47.5305,
+    "lng": 21.63,
+    "iso": "hu",
+    "color": "#1E5CC8",
+    "is_major_city": true
+  },
+  {
+    "country": "hungaria",
+    "capital": "Szeged",
+    "lat": 46.2504,
+    "lng": 20.15,
+    "iso": "hu",
+    "color": "#1E5CC8",
+    "is_major_city": true
+  },
+  {
+    "country": "hungaria",
+    "capital": "Győr",
+    "lat": 47.7004,
+    "lng": 17.63,
+    "iso": "hu",
+    "color": "#1E5CC8",
+    "is_major_city": true
+  },
+  {
+    "country": "hungaria",
+    "capital": "Pécs",
+    "lat": 46.0804,
+    "lng": 18.22,
+    "iso": "hu",
+    "color": "#1E5CC8",
+    "is_major_city": true
+  },
+  {
+    "country": "hungaria",
+    "capital": "Miskolc",
+    "lat": 48.1004,
+    "lng": 20.78,
+    "iso": "hu",
+    "color": "#1E5CC8",
+    "is_major_city": true
+  },
+  {
+    "country": "slowakia",
+    "capital": "Žilina",
+    "lat": 49.2198,
+    "lng": 18.7494,
+    "iso": "sk",
+    "color": "#9A7740",
+    "is_major_city": true
+  },
+  {
+    "country": "slowakia",
+    "capital": "Košice",
+    "lat": 48.7304,
+    "lng": 21.25,
+    "iso": "sk",
+    "color": "#9A7740",
+    "is_major_city": true
+  },
+  {
+    "country": "polandia",
+    "capital": "Katowice",
+    "lat": 50.2604,
+    "lng": 19.02,
+    "iso": "pl",
+    "color": "#77DDDD",
+    "is_major_city": true
+  },
+  {
+    "country": "polandia",
+    "capital": "Gdańsk",
+    "lat": 54.36,
+    "lng": 18.64,
+    "iso": "pl",
+    "color": "#77DDDD",
+    "is_major_city": true
+  },
+  {
+    "country": "polandia",
+    "capital": "Łódź",
+    "lat": 51.7678,
+    "lng": 19.4582,
+    "iso": "pl",
+    "color": "#77DDDD",
+    "is_major_city": true
+  },
+  {
+    "country": "irlandia",
+    "capital": "Sligo",
+    "lat": 54.2671,
+    "lng": -8.4833,
+    "iso": "ie",
+    "color": "#53ACD1",
+    "is_major_city": true
+  },
+  {
+    "country": "irlandia",
+    "capital": "Waterford",
+    "lat": 52.2583,
+    "lng": -7.1119,
+    "iso": "ie",
+    "color": "#53ACD1",
+    "is_major_city": true
+  },
+  {
+    "country": "irlandia",
+    "capital": "Cork",
+    "lat": 51.8928,
+    "lng": -8.4651,
+    "iso": "ie",
+    "color": "#53ACD1",
+    "is_major_city": true
+  },
+  {
+    "country": "irlandia",
+    "capital": "Tralee",
+    "lat": 52.2667,
+    "lng": -9.7167,
+    "iso": "ie",
+    "color": "#53ACD1",
+    "is_major_city": true
+  },
+  {
+    "country": "irlandia",
+    "capital": "Limerick",
+    "lat": 52.6647,
+    "lng": -8.623,
+    "iso": "ie",
+    "color": "#53ACD1",
+    "is_major_city": true
+  },
+  {
+    "country": "inggris",
+    "capital": "Glasgow",
+    "lat": 55.8623,
+    "lng": -4.2391,
+    "iso": "gb",
+    "color": "#CB11DC",
+    "is_major_city": true
+  },
+  {
+    "country": "inggris",
+    "capital": "Birmingham",
+    "lat": 52.4769,
+    "lng": -1.9219,
+    "iso": "gb",
+    "color": "#CB11DC",
+    "is_major_city": true
+  },
+  {
+    "country": "inggris",
+    "capital": "Cardiff",
+    "lat": 51.4826,
+    "lng": -3.1676,
+    "iso": "gb",
+    "color": "#CB11DC",
+    "is_major_city": true
+  },
+  {
+    "country": "inggris",
+    "capital": "Newcastle",
+    "lat": 54.9897,
+    "lng": -1.6116,
+    "iso": "gb",
+    "color": "#CB11DC",
+    "is_major_city": true
+  },
+  {
+    "country": "inggris",
+    "capital": "Manchester",
+    "lat": 53.4753,
+    "lng": -2.2487,
+    "iso": "gb",
+    "color": "#CB11DC",
+    "is_major_city": true
+  },
+  {
+    "country": "yunani",
+    "capital": "Thessaloniki",
+    "lat": 40.6981,
+    "lng": 22.8831,
+    "iso": "gr",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "yunani",
+    "capital": "Patra",
+    "lat": 38.23,
+    "lng": 21.73,
+    "iso": "gr",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "yunani",
+    "capital": "Iraklio",
+    "lat": 35.325,
+    "lng": 25.1305,
+    "iso": "gr",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "republik zambia",
+    "capital": "Kasama",
+    "lat": -10.1996,
+    "lng": 31.1799,
+    "iso": "zm",
+    "color": "#963265",
+    "is_major_city": true
+  },
+  {
+    "country": "republik zambia",
+    "capital": "Kitwe",
+    "lat": -12.81,
+    "lng": 28.22,
+    "iso": "zm",
+    "color": "#963265",
+    "is_major_city": true
+  },
+  {
+    "country": "sierra leone",
+    "capital": "Bo",
+    "lat": 7.97,
+    "lng": -11.74,
+    "iso": "sl",
+    "color": "#B628C9",
+    "is_major_city": true
+  },
+  {
+    "country": "guinea",
+    "capital": "Kankan",
+    "lat": 10.39,
+    "lng": -9.31,
+    "iso": "gn",
+    "color": "#3DA0D1",
+    "is_major_city": true
+  },
+  {
+    "country": "guinea",
+    "capital": "Labé",
+    "lat": 11.32,
+    "lng": -12.3,
+    "iso": "gn",
+    "color": "#3DA0D1",
+    "is_major_city": true
+  },
+  {
+    "country": "guinea",
+    "capital": "Gueckedou",
+    "lat": 8.554,
+    "lng": -10.151,
+    "iso": "gn",
+    "color": "#3DA0D1",
+    "is_major_city": true
+  },
+  {
+    "country": "guinea",
+    "capital": "Nzérékoré",
+    "lat": 7.76,
+    "lng": -8.83,
+    "iso": "gn",
+    "color": "#3DA0D1",
+    "is_major_city": true
+  },
+  {
+    "country": "guinea",
+    "capital": "Boké",
+    "lat": 10.94,
+    "lng": -14.3,
+    "iso": "gn",
+    "color": "#3DA0D1",
+    "is_major_city": true
+  },
+  {
+    "country": "liberia",
+    "capital": "Voinjama",
+    "lat": 8.4167,
+    "lng": -9.75,
+    "iso": "lr",
+    "color": "#2F738A",
+    "is_major_city": true
+  },
+  {
+    "country": "liberia",
+    "capital": "Buchanan",
+    "lat": 5.9161,
+    "lng": -10.0525,
+    "iso": "lr",
+    "color": "#2F738A",
+    "is_major_city": true
+  },
+  {
+    "country": "liberia",
+    "capital": "Harper",
+    "lat": 4.3754,
+    "lng": -7.717,
+    "iso": "lr",
+    "color": "#2F738A",
+    "is_major_city": true
+  },
+  {
+    "country": "republik afrika tengah",
+    "capital": "Bambari",
+    "lat": 5.762,
+    "lng": 20.6672,
+    "iso": "cf",
+    "color": "#FFD7F8",
+    "is_major_city": true
+  },
+  {
+    "country": "republik afrika tengah",
+    "capital": "Bossangoa",
+    "lat": 6.4837,
+    "lng": 17.45,
+    "iso": "cf",
+    "color": "#FFD7F8",
+    "is_major_city": true
+  },
+  {
+    "country": "republik afrika tengah",
+    "capital": "Berbérati",
+    "lat": 4.25,
+    "lng": 15.78,
+    "iso": "cf",
+    "color": "#FFD7F8",
+    "is_major_city": true
+  },
+  {
+    "country": "republik sudan",
+    "capital": "Al-Ubayyid",
+    "lat": 13.1833,
+    "lng": 30.2167,
+    "iso": "sd",
+    "color": "#72B239",
+    "is_major_city": true
+  },
+  {
+    "country": "republik sudan",
+    "capital": "Kassala",
+    "lat": 15.46,
+    "lng": 36.39,
+    "iso": "sd",
+    "color": "#72B239",
+    "is_major_city": true
+  },
+  {
+    "country": "republik sudan",
+    "capital": "Port Sudan",
+    "lat": 19.6158,
+    "lng": 37.2164,
+    "iso": "sd",
+    "color": "#72B239",
+    "is_major_city": true
+  },
+  {
+    "country": "eritrea",
+    "capital": "Assab",
+    "lat": 13.01,
+    "lng": 42.73,
+    "iso": "er",
+    "color": "#41B597",
+    "is_major_city": true
+  },
+  {
+    "country": "eritrea",
+    "capital": "Agordat",
+    "lat": 15.549,
+    "lng": 37.8867,
+    "iso": "er",
+    "color": "#41B597",
+    "is_major_city": true
+  },
+  {
+    "country": "austria",
+    "capital": "Linz",
+    "lat": 48.3192,
+    "lng": 14.2888,
+    "iso": "at",
+    "color": "#6CD0C2",
+    "is_major_city": true
+  },
+  {
+    "country": "austria",
+    "capital": "Graz",
+    "lat": 47.0778,
+    "lng": 15.41,
+    "iso": "at",
+    "color": "#6CD0C2",
+    "is_major_city": true
+  },
+  {
+    "country": "irak",
+    "capital": "Mosul",
+    "lat": 36.3469,
+    "lng": 43.1431,
+    "iso": "iq",
+    "color": "#C370DB",
+    "is_major_city": true
+  },
+  {
+    "country": "irak",
+    "capital": "Basra",
+    "lat": 30.5155,
+    "lng": 47.8116,
+    "iso": "iq",
+    "color": "#C370DB",
+    "is_major_city": true
+  },
+  {
+    "country": "irak",
+    "capital": "As Sulaymaniyah",
+    "lat": 35.5613,
+    "lng": 45.4309,
+    "iso": "iq",
+    "color": "#C370DB",
+    "is_major_city": true
+  },
+  {
+    "country": "italia",
+    "capital": "Turin",
+    "lat": 45.0723,
+    "lng": 7.668,
+    "iso": "it",
+    "color": "#FFF5F8",
+    "is_major_city": true
+  },
+  {
+    "country": "italia",
+    "capital": "Milan",
+    "lat": 45.4719,
+    "lng": 9.2031,
+    "iso": "it",
+    "color": "#FFF5F8",
+    "is_major_city": true
+  },
+  {
+    "country": "italia",
+    "capital": "Florence",
+    "lat": 43.78,
+    "lng": 11.25,
+    "iso": "it",
+    "color": "#FFF5F8",
+    "is_major_city": true
+  },
+  {
+    "country": "italia",
+    "capital": "Naples",
+    "lat": 40.842,
+    "lng": 14.2431,
+    "iso": "it",
+    "color": "#FFF5F8",
+    "is_major_city": true
+  },
+  {
+    "country": "italia",
+    "capital": "Palermo",
+    "lat": 38.127,
+    "lng": 13.3481,
+    "iso": "it",
+    "color": "#FFF5F8",
+    "is_major_city": true
+  },
+  {
+    "country": "swiss",
+    "capital": "Lugano",
+    "lat": 46.0004,
+    "lng": 8.9667,
+    "iso": "ch",
+    "color": "#D9FFB6",
+    "is_major_city": true
+  },
+  {
+    "country": "swiss",
+    "capital": "Zürich",
+    "lat": 47.3819,
+    "lng": 8.5481,
+    "iso": "ch",
+    "color": "#D9FFB6",
+    "is_major_city": true
+  },
+  {
+    "country": "swiss",
+    "capital": "Geneva",
+    "lat": 46.21,
+    "lng": 6.14,
+    "iso": "ch",
+    "color": "#D9FFB6",
+    "is_major_city": true
+  },
+  {
+    "country": "iran",
+    "capital": "Tabriz",
+    "lat": 38.0882,
+    "lng": 46.2993,
+    "iso": "ir",
+    "color": "#6F0A7D",
+    "is_major_city": true
+  },
+  {
+    "country": "iran",
+    "capital": "Ahvaz",
+    "lat": 31.2819,
+    "lng": 48.7181,
+    "iso": "ir",
+    "color": "#6F0A7D",
+    "is_major_city": true
+  },
+  {
+    "country": "iran",
+    "capital": "Mashhad",
+    "lat": 36.272,
+    "lng": 59.5681,
+    "iso": "ir",
+    "color": "#6F0A7D",
+    "is_major_city": true
+  },
+  {
+    "country": "iran",
+    "capital": "Shiraz",
+    "lat": 29.6319,
+    "lng": 52.5681,
+    "iso": "ir",
+    "color": "#6F0A7D",
+    "is_major_city": true
+  },
+  {
+    "country": "iran",
+    "capital": "Isfahan",
+    "lat": 32.702,
+    "lng": 51.6981,
+    "iso": "ir",
+    "color": "#6F0A7D",
+    "is_major_city": true
+  },
+  {
+    "country": "belanda",
+    "capital": "Groningen",
+    "lat": 53.2204,
+    "lng": 6.58,
+    "iso": "nl",
+    "color": "#926EC8",
+    "is_major_city": true
+  },
+  {
+    "country": "belanda",
+    "capital": "Maastricht",
+    "lat": 50.853,
+    "lng": 5.677,
+    "iso": "nl",
+    "color": "#926EC8",
+    "is_major_city": true
+  },
+  {
+    "country": "belanda",
+    "capital": "Middelburg",
+    "lat": 51.502,
+    "lng": 3.61,
+    "iso": "nl",
+    "color": "#926EC8",
+    "is_major_city": true
+  },
+  {
+    "country": "pantai gading",
+    "capital": "Bouaké",
+    "lat": 7.69,
+    "lng": -5.03,
+    "iso": "ci",
+    "color": "#BD96DC",
+    "is_major_city": true
+  },
+  {
+    "country": "pantai gading",
+    "capital": "Abidjan",
+    "lat": 5.3231,
+    "lng": -4.0202,
+    "iso": "ci",
+    "color": "#BD96DC",
+    "is_major_city": true
+  },
+  {
+    "country": "pantai gading",
+    "capital": "San-Pedro",
+    "lat": 4.7704,
+    "lng": -6.64,
+    "iso": "ci",
+    "color": "#BD96DC",
+    "is_major_city": true
+  },
+  {
+    "country": "republik serbia",
+    "capital": "Novi Sad",
+    "lat": 45.2504,
+    "lng": 19.8499,
+    "iso": "rs",
+    "color": "#7664E2",
+    "is_major_city": true
+  },
+  {
+    "country": "republik serbia",
+    "capital": "Niš",
+    "lat": 43.3304,
+    "lng": 21.9,
+    "iso": "rs",
+    "color": "#7664E2",
+    "is_major_city": true
+  },
+  {
+    "country": "republik serbia",
+    "capital": "Kragujevac",
+    "lat": 44.02,
+    "lng": 20.92,
+    "iso": "rs",
+    "color": "#7664E2",
+    "is_major_city": true
+  },
+  {
+    "country": "mali",
+    "capital": "Ségou",
+    "lat": 13.44,
+    "lng": -6.26,
+    "iso": "ml",
+    "color": "#D372D4",
+    "is_major_city": true
+  },
+  {
+    "country": "mali",
+    "capital": "Sikasso",
+    "lat": 11.3204,
+    "lng": -5.68,
+    "iso": "ml",
+    "color": "#D372D4",
+    "is_major_city": true
+  },
+  {
+    "country": "senegal",
+    "capital": "Tambacounda",
+    "lat": 13.7804,
+    "lng": -13.68,
+    "iso": "sn",
+    "color": "#531BA4",
+    "is_major_city": true
+  },
+  {
+    "country": "senegal",
+    "capital": "Ziguinchor",
+    "lat": 12.59,
+    "lng": -16.29,
+    "iso": "sn",
+    "color": "#531BA4",
+    "is_major_city": true
+  },
+  {
+    "country": "senegal",
+    "capital": "Thiès",
+    "lat": 14.8104,
+    "lng": -16.93,
+    "iso": "sn",
+    "color": "#531BA4",
+    "is_major_city": true
+  },
+  {
+    "country": "nigeria",
+    "capital": "Kaduna",
+    "lat": 10.522,
+    "lng": 7.4381,
+    "iso": "ng",
+    "color": "#F17411",
+    "is_major_city": true
+  },
+  {
+    "country": "nigeria",
+    "capital": "Lagos",
+    "lat": 6.4452,
+    "lng": 3.3896,
+    "iso": "ng",
+    "color": "#F17411",
+    "is_major_city": true
+  },
+  {
+    "country": "nigeria",
+    "capital": "Kano",
+    "lat": 12.0019,
+    "lng": 8.5181,
+    "iso": "ng",
+    "color": "#F17411",
+    "is_major_city": true
+  },
+  {
+    "country": "nigeria",
+    "capital": "Port Harcourt",
+    "lat": 4.8119,
+    "lng": 7.0081,
+    "iso": "ng",
+    "color": "#F17411",
+    "is_major_city": true
+  },
+  {
+    "country": "nigeria",
+    "capital": "Benin City",
+    "lat": 6.3424,
+    "lng": 5.6181,
+    "iso": "ng",
+    "color": "#F17411",
+    "is_major_city": true
+  },
+  {
+    "country": "benin",
+    "capital": "Kandi",
+    "lat": 11.1304,
+    "lng": 2.94,
+    "iso": "bj",
+    "color": "#9F1BF0",
+    "is_major_city": true
+  },
+  {
+    "country": "benin",
+    "capital": "Djougou",
+    "lat": 9.7004,
+    "lng": 1.68,
+    "iso": "bj",
+    "color": "#9F1BF0",
+    "is_major_city": true
+  },
+  {
+    "country": "angola",
+    "capital": "Huambo",
+    "lat": -12.748,
+    "lng": 15.7581,
+    "iso": "ao",
+    "color": "#FFE0BD",
+    "is_major_city": true
+  },
+  {
+    "country": "angola",
+    "capital": "Moçâmedes",
+    "lat": -15.19,
+    "lng": 12.16,
+    "iso": "ao",
+    "color": "#FFE0BD",
+    "is_major_city": true
+  },
+  {
+    "country": "angola",
+    "capital": "Lobito",
+    "lat": -12.37,
+    "lng": 13.5412,
+    "iso": "ao",
+    "color": "#FFE0BD",
+    "is_major_city": true
+  },
+  {
+    "country": "kroasia",
+    "capital": "Slavonski Brod",
+    "lat": 45.1603,
+    "lng": 18.0156,
+    "iso": "hr",
+    "color": "#6D40F3",
+    "is_major_city": true
+  },
+  {
+    "country": "kroasia",
+    "capital": "Rijeka",
+    "lat": 45.33,
+    "lng": 14.45,
+    "iso": "hr",
+    "color": "#6D40F3",
+    "is_major_city": true
+  },
+  {
+    "country": "kroasia",
+    "capital": "Split",
+    "lat": 43.5204,
+    "lng": 16.47,
+    "iso": "hr",
+    "color": "#6D40F3",
+    "is_major_city": true
+  },
+  {
+    "country": "kroasia",
+    "capital": "Zadar",
+    "lat": 44.1201,
+    "lng": 15.2623,
+    "iso": "hr",
+    "color": "#6D40F3",
+    "is_major_city": true
+  },
+  {
+    "country": "slovenia",
+    "capital": "Maribor",
+    "lat": 46.5405,
+    "lng": 15.65,
+    "iso": "si",
+    "color": "#7F65B2",
+    "is_major_city": true
+  },
+  {
+    "country": "arab saudi",
+    "capital": "Dammam",
+    "lat": 26.4301,
+    "lng": 50.0977,
+    "iso": "sa",
+    "color": "#3F4482",
+    "is_major_city": true
+  },
+  {
+    "country": "arab saudi",
+    "capital": "Medina",
+    "lat": 24.5019,
+    "lng": 39.5781,
+    "iso": "sa",
+    "color": "#3F4482",
+    "is_major_city": true
+  },
+  {
+    "country": "arab saudi",
+    "capital": "Jeddah",
+    "lat": 21.5188,
+    "lng": 39.2173,
+    "iso": "sa",
+    "color": "#3F4482",
+    "is_major_city": true
+  },
+  {
+    "country": "botswana",
+    "capital": "Maun",
+    "lat": -19.9896,
+    "lng": 23.42,
+    "iso": "bw",
+    "color": "#5D50C8",
+    "is_major_city": true
+  },
+  {
+    "country": "botswana",
+    "capital": "Francistown",
+    "lat": -21.17,
+    "lng": 27.5,
+    "iso": "bw",
+    "color": "#5D50C8",
+    "is_major_city": true
+  },
+  {
+    "country": "republik zimbabwe",
+    "capital": "Bulawayo",
+    "lat": -20.17,
+    "lng": 28.58,
+    "iso": "zw",
+    "color": "#A64C62",
+    "is_major_city": true
+  },
+  {
+    "country": "republik zimbabwe",
+    "capital": "Mutare",
+    "lat": -18.97,
+    "lng": 32.65,
+    "iso": "zw",
+    "color": "#A64C62",
+    "is_major_city": true
+  },
+  {
+    "country": "pakistan",
+    "capital": "Karachi",
+    "lat": 24.8719,
+    "lng": 66.9881,
+    "iso": "pk",
+    "color": "#840B96",
+    "is_major_city": true
+  },
+  {
+    "country": "bulgaria",
+    "capital": "Varna",
+    "lat": 43.2156,
+    "lng": 27.8953,
+    "iso": "bg",
+    "color": "#DB5F14",
+    "is_major_city": true
+  },
+  {
+    "country": "bulgaria",
+    "capital": "Plovdiv",
+    "lat": 42.154,
+    "lng": 24.754,
+    "iso": "bg",
+    "color": "#DB5F14",
+    "is_major_city": true
+  },
+  {
+    "country": "bulgaria",
+    "capital": "Ruse",
+    "lat": 43.8537,
+    "lng": 25.9733,
+    "iso": "bg",
+    "color": "#DB5F14",
+    "is_major_city": true
+  },
+  {
+    "country": "bulgaria",
+    "capital": "Pleven",
+    "lat": 43.4238,
+    "lng": 24.6134,
+    "iso": "bg",
+    "color": "#DB5F14",
+    "is_major_city": true
+  },
+  {
+    "country": "thailand",
+    "capital": "Ubon Ratchathani",
+    "lat": 15.25,
+    "lng": 104.83,
+    "iso": "th",
+    "color": "#868939",
+    "is_major_city": true
+  },
+  {
+    "country": "thailand",
+    "capital": "Nakhon Ratchasima",
+    "lat": 15.0,
+    "lng": 102.1,
+    "iso": "th",
+    "color": "#868939",
+    "is_major_city": true
+  },
+  {
+    "country": "thailand",
+    "capital": "Hat Yai",
+    "lat": 6.9964,
+    "lng": 100.4714,
+    "iso": "th",
+    "color": "#868939",
+    "is_major_city": true
+  },
+  {
+    "country": "thailand",
+    "capital": "Chiang Mai",
+    "lat": 18.8,
+    "lng": 98.98,
+    "iso": "th",
+    "color": "#868939",
+    "is_major_city": true
+  },
+  {
+    "country": "thailand",
+    "capital": "Khon Kaen",
+    "lat": 16.42,
+    "lng": 102.83,
+    "iso": "th",
+    "color": "#868939",
+    "is_major_city": true
+  },
+  {
+    "country": "haiti",
+    "capital": "Cap-Haïtien",
+    "lat": 19.7592,
+    "lng": -72.2125,
+    "iso": "ht",
+    "color": "#87E390",
+    "is_major_city": true
+  },
+  {
+    "country": "haiti",
+    "capital": "Les Cayes",
+    "lat": 18.2004,
+    "lng": -73.75,
+    "iso": "ht",
+    "color": "#87E390",
+    "is_major_city": true
+  },
+  {
+    "country": "republik dominika",
+    "capital": "Santiago",
+    "lat": 19.5,
+    "lng": -70.67,
+    "iso": "do",
+    "color": "#CE16AA",
+    "is_major_city": true
+  },
+  {
+    "country": "republik dominika",
+    "capital": "Barahona",
+    "lat": 18.2004,
+    "lng": -71.1,
+    "iso": "do",
+    "color": "#CE16AA",
+    "is_major_city": true
+  },
+  {
+    "country": "republik dominika",
+    "capital": "Higuey",
+    "lat": 18.616,
+    "lng": -68.708,
+    "iso": "do",
+    "color": "#CE16AA",
+    "is_major_city": true
+  },
+  {
+    "country": "chad",
+    "capital": "Abéché",
+    "lat": 13.84,
+    "lng": 20.83,
+    "iso": "td",
+    "color": "#EDE79B",
+    "is_major_city": true
+  },
+  {
+    "country": "chad",
+    "capital": "Sarh",
+    "lat": 9.15,
+    "lng": 18.39,
+    "iso": "td",
+    "color": "#EDE79B",
+    "is_major_city": true
+  },
+  {
+    "country": "chad",
+    "capital": "Moundou",
+    "lat": 8.55,
+    "lng": 16.09,
+    "iso": "td",
+    "color": "#EDE79B",
+    "is_major_city": true
+  },
+  {
+    "country": "chad",
+    "capital": "Bongor",
+    "lat": 10.2859,
+    "lng": 15.3872,
+    "iso": "td",
+    "color": "#EDE79B",
+    "is_major_city": true
+  },
+  {
+    "country": "el salvador",
+    "capital": "San Miguel",
+    "lat": 13.4833,
+    "lng": -88.1833,
+    "iso": "sv",
+    "color": "#EEDF14",
+    "is_major_city": true
+  },
+  {
+    "country": "guatemala",
+    "capital": "San Luis",
+    "lat": 16.2,
+    "lng": -89.44,
+    "iso": "gt",
+    "color": "#AC785D",
+    "is_major_city": true
+  },
+  {
+    "country": "guatemala",
+    "capital": "Quetzaltenango",
+    "lat": 14.83,
+    "lng": -91.52,
+    "iso": "gt",
+    "color": "#AC785D",
+    "is_major_city": true
+  },
+  {
+    "country": "republik timor leste",
+    "capital": "Ambeno",
+    "lat": -9.3607,
+    "lng": 124.2843,
+    "iso": "tl",
+    "color": "#C98B13",
+    "is_major_city": true
+  },
+  {
+    "country": "republik timor leste",
+    "capital": "Lautém",
+    "lat": -8.7581,
+    "lng": 126.4079,
+    "iso": "tl",
+    "color": "#C98B13",
+    "is_major_city": true
+  },
+  {
+    "country": "aljazair",
+    "capital": "Arak",
+    "lat": 25.28,
+    "lng": 3.75,
+    "iso": "dz",
+    "color": "#10B262",
+    "is_major_city": true
+  },
+  {
+    "country": "aljazair",
+    "capital": "Oran",
+    "lat": 35.7119,
+    "lng": -0.6219,
+    "iso": "dz",
+    "color": "#10B262",
+    "is_major_city": true
+  },
+  {
+    "country": "aljazair",
+    "capital": "Annaba",
+    "lat": 36.92,
+    "lng": 7.76,
+    "iso": "dz",
+    "color": "#10B262",
+    "is_major_city": true
+  },
+  {
+    "country": "aljazair",
+    "capital": "Constantine",
+    "lat": 36.36,
+    "lng": 6.5999,
+    "iso": "dz",
+    "color": "#10B262",
+    "is_major_city": true
+  },
+  {
+    "country": "aljazair",
+    "capital": "Chlef",
+    "lat": 36.1704,
+    "lng": 1.32,
+    "iso": "dz",
+    "color": "#10B262",
+    "is_major_city": true
+  },
+  {
+    "country": "mozambik",
+    "capital": "Nampula",
+    "lat": -15.136,
+    "lng": 39.293,
+    "iso": "mz",
+    "color": "#35881B",
+    "is_major_city": true
+  },
+  {
+    "country": "mozambik",
+    "capital": "Beira",
+    "lat": -19.82,
+    "lng": 34.87,
+    "iso": "mz",
+    "color": "#35881B",
+    "is_major_city": true
+  },
+  {
+    "country": "rwanda",
+    "capital": "Gisenyi",
+    "lat": -1.6847,
+    "lng": 29.2629,
+    "iso": "rw",
+    "color": "#C04911",
+    "is_major_city": true
+  },
+  {
+    "country": "myanmar",
+    "capital": "Mawlamyine",
+    "lat": 16.5004,
+    "lng": 97.67,
+    "iso": "mm",
+    "color": "#A7AAE4",
+    "is_major_city": true
+  },
+  {
+    "country": "myanmar",
+    "capital": "Yangon",
+    "lat": 16.7853,
+    "lng": 96.1647,
+    "iso": "mm",
+    "color": "#A7AAE4",
+    "is_major_city": true
+  },
+  {
+    "country": "bangladesh",
+    "capital": "Chattogram",
+    "lat": 22.3319,
+    "lng": 91.798,
+    "iso": "bd",
+    "color": "#B47BC9",
+    "is_major_city": true
+  },
+  {
+    "country": "bangladesh",
+    "capital": "Khulna",
+    "lat": 22.8419,
+    "lng": 89.5581,
+    "iso": "bd",
+    "color": "#B47BC9",
+    "is_major_city": true
+  },
+  {
+    "country": "afganistan",
+    "capital": "Jalalabad",
+    "lat": 34.4415,
+    "lng": 70.4361,
+    "iso": "af",
+    "color": "#93205C",
+    "is_major_city": true
+  },
+  {
+    "country": "afganistan",
+    "capital": "Kondoz",
+    "lat": 36.728,
+    "lng": 68.8725,
+    "iso": "af",
+    "color": "#93205C",
+    "is_major_city": true
+  },
+  {
+    "country": "afganistan",
+    "capital": "Mazar-i-Sharif",
+    "lat": 36.7,
+    "lng": 67.1,
+    "iso": "af",
+    "color": "#93205C",
+    "is_major_city": true
+  },
+  {
+    "country": "afganistan",
+    "capital": "Herat",
+    "lat": 34.33,
+    "lng": 62.17,
+    "iso": "af",
+    "color": "#93205C",
+    "is_major_city": true
+  },
+  {
+    "country": "afganistan",
+    "capital": "Kandahar",
+    "lat": 31.61,
+    "lng": 65.6949,
+    "iso": "af",
+    "color": "#93205C",
+    "is_major_city": true
+  },
+  {
+    "country": "bosnia dan hercegovina",
+    "capital": "Banja Luka",
+    "lat": 44.7804,
+    "lng": 17.18,
+    "iso": "ba",
+    "color": "#2EA039",
+    "is_major_city": true
+  },
+  {
+    "country": "republik uganda",
+    "capital": "Mbarara",
+    "lat": -0.5996,
+    "lng": 30.65,
+    "iso": "ug",
+    "color": "#6D703B",
+    "is_major_city": true
+  },
+  {
+    "country": "republik uganda",
+    "capital": "Mbale",
+    "lat": 1.0904,
+    "lng": 34.17,
+    "iso": "ug",
+    "color": "#6D703B",
+    "is_major_city": true
+  },
+  {
+    "country": "republik uganda",
+    "capital": "Gulu",
+    "lat": 2.78,
+    "lng": 32.28,
+    "iso": "ug",
+    "color": "#6D703B",
+    "is_major_city": true
+  },
+  {
+    "country": "republik uganda",
+    "capital": "Arua",
+    "lat": 3.0204,
+    "lng": 30.9,
+    "iso": "ug",
+    "color": "#6D703B",
+    "is_major_city": true
+  },
+  {
+    "country": "republik uganda",
+    "capital": "Kasese",
+    "lat": 0.1711,
+    "lng": 30.0814,
+    "iso": "ug",
+    "color": "#6D703B",
+    "is_major_city": true
+  },
+  {
+    "country": "US Naval Base Guantanamo Bay",
+    "capital": "Guantanamo Bay USNB",
+    "lat": 19.934,
+    "lng": -75.1639,
+    "iso": "-1",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "kuba",
+    "capital": "Santiago de Cuba",
+    "lat": 20.025,
+    "lng": -75.8213,
+    "iso": "cu",
+    "color": "#FFCBCE",
+    "is_major_city": true
+  },
+  {
+    "country": "kuba",
+    "capital": "Camagüey",
+    "lat": 21.3808,
+    "lng": -77.9169,
+    "iso": "cu",
+    "color": "#FFCBCE",
+    "is_major_city": true
+  },
+  {
+    "country": "kuba",
+    "capital": "Santa Clara",
+    "lat": 22.4,
+    "lng": -79.9667,
+    "iso": "cu",
+    "color": "#FFCBCE",
+    "is_major_city": true
+  },
+  {
+    "country": "honduras",
+    "capital": "Santa Rosa de Copán",
+    "lat": 14.77,
+    "lng": -88.78,
+    "iso": "hn",
+    "color": "#1E28FE",
+    "is_major_city": true
+  },
+  {
+    "country": "honduras",
+    "capital": "La Ceiba",
+    "lat": 15.7631,
+    "lng": -86.797,
+    "iso": "hn",
+    "color": "#1E28FE",
+    "is_major_city": true
+  },
+  {
+    "country": "honduras",
+    "capital": "San Pedro Sula",
+    "lat": 15.5,
+    "lng": -88.03,
+    "iso": "hn",
+    "color": "#1E28FE",
+    "is_major_city": true
+  },
+  {
+    "country": "ekuador",
+    "capital": "Esmeraldas",
+    "lat": 0.9304,
+    "lng": -79.67,
+    "iso": "ec",
+    "color": "#F05543",
+    "is_major_city": true
+  },
+  {
+    "country": "ekuador",
+    "capital": "Ambato",
+    "lat": -1.2696,
+    "lng": -78.62,
+    "iso": "ec",
+    "color": "#F05543",
+    "is_major_city": true
+  },
+  {
+    "country": "ekuador",
+    "capital": "Guayaquil",
+    "lat": -2.2181,
+    "lng": -79.922,
+    "iso": "ec",
+    "color": "#F05543",
+    "is_major_city": true
+  },
+  {
+    "country": "ekuador",
+    "capital": "Portoviejo",
+    "lat": -1.06,
+    "lng": -80.46,
+    "iso": "ec",
+    "color": "#F05543",
+    "is_major_city": true
+  },
+  {
+    "country": "kolombia",
+    "capital": "Cali",
+    "lat": 3.4019,
+    "lng": -76.5019,
+    "iso": "co",
+    "color": "#7C969B",
+    "is_major_city": true
+  },
+  {
+    "country": "kolombia",
+    "capital": "Medellín",
+    "lat": 6.2769,
+    "lng": -75.577,
+    "iso": "co",
+    "color": "#7C969B",
+    "is_major_city": true
+  },
+  {
+    "country": "kolombia",
+    "capital": "Barranquilla",
+    "lat": 10.9619,
+    "lng": -74.8019,
+    "iso": "co",
+    "color": "#7C969B",
+    "is_major_city": true
+  },
+  {
+    "country": "kolombia",
+    "capital": "Bucaramanga",
+    "lat": 7.132,
+    "lng": -73.1278,
+    "iso": "co",
+    "color": "#7C969B",
+    "is_major_city": true
+  },
+  {
+    "country": "kolombia",
+    "capital": "Pereira",
+    "lat": 4.8104,
+    "lng": -75.68,
+    "iso": "co",
+    "color": "#7C969B",
+    "is_major_city": true
+  },
+  {
+    "country": "paraguay",
+    "capital": "Ciudad del Este",
+    "lat": -25.5167,
+    "lng": -54.6161,
+    "iso": "py",
+    "color": "#3BAFBF",
+    "is_major_city": true
+  },
+  {
+    "country": "paraguay",
+    "capital": "Encarnación",
+    "lat": -27.3472,
+    "lng": -55.8739,
+    "iso": "py",
+    "color": "#3BAFBF",
+    "is_major_city": true
+  },
+  {
+    "country": "paraguay",
+    "capital": "Pedro Juan Caballero",
+    "lat": -22.5446,
+    "lng": -55.76,
+    "iso": "py",
+    "color": "#3BAFBF",
+    "is_major_city": true
+  },
+  {
+    "country": "portugal",
+    "capital": "Porto",
+    "lat": 41.152,
+    "lng": -8.6219,
+    "iso": "pt",
+    "color": "#AE0EEA",
+    "is_major_city": true
+  },
+  {
+    "country": "portugal",
+    "capital": "Funchal",
+    "lat": 32.65,
+    "lng": -16.88,
+    "iso": "pt",
+    "color": "#AE0EEA",
+    "is_major_city": true
+  },
+  {
+    "country": "portugal",
+    "capital": "Ponta Delgada",
+    "lat": 37.7483,
+    "lng": -25.6666,
+    "iso": "pt",
+    "color": "#AE0EEA",
+    "is_major_city": true
+  },
+  {
+    "country": "moldova",
+    "capital": "Bălți",
+    "lat": 47.7591,
+    "lng": 27.9053,
+    "iso": "md",
+    "color": "#9AEFEE",
+    "is_major_city": true
+  },
+  {
+    "country": "moldova",
+    "capital": "Cahul",
+    "lat": 45.9079,
+    "lng": 28.1944,
+    "iso": "md",
+    "color": "#9AEFEE",
+    "is_major_city": true
+  },
+  {
+    "country": "turkmenistan",
+    "capital": "Türkmenabat",
+    "lat": 39.11,
+    "lng": 63.58,
+    "iso": "tm",
+    "color": "#963F79",
+    "is_major_city": true
+  },
+  {
+    "country": "turkmenistan",
+    "capital": "Daşoguz",
+    "lat": 41.84,
+    "lng": 59.965,
+    "iso": "tm",
+    "color": "#963F79",
+    "is_major_city": true
+  },
+  {
+    "country": "yordania",
+    "capital": "Al Karak",
+    "lat": 31.1851,
+    "lng": 35.7047,
+    "iso": "jo",
+    "color": "#16CB8C",
+    "is_major_city": true
+  },
+  {
+    "country": "yordania",
+    "capital": "Al Aqabah",
+    "lat": 29.527,
+    "lng": 35.0777,
+    "iso": "jo",
+    "color": "#16CB8C",
+    "is_major_city": true
+  },
+  {
+    "country": "nepal",
+    "capital": "Dhangarhi",
+    "lat": 28.695,
+    "lng": 80.593,
+    "iso": "np",
+    "color": "#45F1A4",
+    "is_major_city": true
+  },
+  {
+    "country": "nepal",
+    "capital": "Pokhara",
+    "lat": 28.2042,
+    "lng": 84.0056,
+    "iso": "np",
+    "color": "#45F1A4",
+    "is_major_city": true
+  },
+  {
+    "country": "nepal",
+    "capital": "Biratnagar",
+    "lat": 26.4837,
+    "lng": 87.2833,
+    "iso": "np",
+    "color": "#45F1A4",
+    "is_major_city": true
+  },
+  {
+    "country": "lesotho",
+    "capital": "Mokhotlong",
+    "lat": -29.291,
+    "lng": 29.078,
+    "iso": "ls",
+    "color": "#34C9C5",
+    "is_major_city": true
+  },
+  {
+    "country": "kamerun",
+    "capital": "Bamenda",
+    "lat": 5.96,
+    "lng": 10.15,
+    "iso": "cm",
+    "color": "#FFC9C2",
+    "is_major_city": true
+  },
+  {
+    "country": "kamerun",
+    "capital": "Douala",
+    "lat": 4.0624,
+    "lng": 9.708,
+    "iso": "cm",
+    "color": "#FFC9C2",
+    "is_major_city": true
+  },
+  {
+    "country": "gabon",
+    "capital": "Oyem",
+    "lat": 1.6166,
+    "lng": 11.5833,
+    "iso": "ga",
+    "color": "#EE2144",
+    "is_major_city": true
+  },
+  {
+    "country": "gabon",
+    "capital": "Port-Gentil",
+    "lat": -0.72,
+    "lng": 8.78,
+    "iso": "ga",
+    "color": "#EE2144",
+    "is_major_city": true
+  },
+  {
+    "country": "niger",
+    "capital": "Agadez",
+    "lat": 16.9959,
+    "lng": 7.9828,
+    "iso": "ne",
+    "color": "#5D45B8",
+    "is_major_city": true
+  },
+  {
+    "country": "niger",
+    "capital": "Zinder",
+    "lat": 13.8,
+    "lng": 8.9833,
+    "iso": "ne",
+    "color": "#5D45B8",
+    "is_major_city": true
+  },
+  {
+    "country": "burkina faso",
+    "capital": "Tenkodogo",
+    "lat": 11.7804,
+    "lng": -0.3697,
+    "iso": "bf",
+    "color": "#ECA2BB",
+    "is_major_city": true
+  },
+  {
+    "country": "burkina faso",
+    "capital": "Bobo Dioulasso",
+    "lat": 11.18,
+    "lng": -4.29,
+    "iso": "bf",
+    "color": "#ECA2BB",
+    "is_major_city": true
+  },
+  {
+    "country": "burkina faso",
+    "capital": "Dori",
+    "lat": 14.034,
+    "lng": -0.028,
+    "iso": "bf",
+    "color": "#ECA2BB",
+    "is_major_city": true
+  },
+  {
+    "country": "burkina faso",
+    "capital": "Ouahigouya",
+    "lat": 13.5704,
+    "lng": -2.42,
+    "iso": "bf",
+    "color": "#ECA2BB",
+    "is_major_city": true
+  },
+  {
+    "country": "burkina faso",
+    "capital": "Dédougou",
+    "lat": 12.455,
+    "lng": -3.464,
+    "iso": "bf",
+    "color": "#ECA2BB",
+    "is_major_city": true
+  },
+  {
+    "country": "togo",
+    "capital": "Sokodé",
+    "lat": 8.9905,
+    "lng": 1.15,
+    "iso": "tg",
+    "color": "#DA6F47",
+    "is_major_city": true
+  },
+  {
+    "country": "togo",
+    "capital": "Kpalimé",
+    "lat": 6.9004,
+    "lng": 0.63,
+    "iso": "tg",
+    "color": "#DA6F47",
+    "is_major_city": true
+  },
+  {
+    "country": "ghana",
+    "capital": "Tamale",
+    "lat": 9.4004,
+    "lng": -0.84,
+    "iso": "gh",
+    "color": "#159672",
+    "is_major_city": true
+  },
+  {
+    "country": "ghana",
+    "capital": "Kumasi",
+    "lat": 6.6919,
+    "lng": -1.632,
+    "iso": "gh",
+    "color": "#159672",
+    "is_major_city": true
+  },
+  {
+    "country": "guinea bissau",
+    "capital": "Bafatá",
+    "lat": 12.167,
+    "lng": -14.666,
+    "iso": "gw",
+    "color": "#1A6C06",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Seattle",
+    "lat": 47.6004,
+    "lng": -122.3153,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Boise",
+    "lat": 43.6086,
+    "lng": -116.2275,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Billings",
+    "lat": 45.7883,
+    "lng": -108.54,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Fargo",
+    "lat": 46.8772,
+    "lng": -96.7894,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Minneapolis",
+    "lat": 44.9819,
+    "lng": -93.2537,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Detroit",
+    "lat": 42.3336,
+    "lng": -83.0513,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Cleveland",
+    "lat": 41.4719,
+    "lng": -81.6969,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Philadelphia",
+    "lat": 39.9459,
+    "lng": -75.1798,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "New York",
+    "lat": 40.7216,
+    "lng": -73.9957,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Burlington",
+    "lat": 44.4758,
+    "lng": -73.2125,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Manchester",
+    "lat": 42.996,
+    "lng": -71.4553,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Portland",
+    "lat": 43.6722,
+    "lng": -70.2455,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Phoenix",
+    "lat": 33.4483,
+    "lng": -112.0674,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Los Angeles",
+    "lat": 34.0492,
+    "lng": -118.232,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Albuquerque",
+    "lat": 35.105,
+    "lng": -106.6413,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Dallas",
+    "lat": 32.772,
+    "lng": -96.7947,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Anchorage",
+    "lat": 61.214,
+    "lng": -149.8874,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "New Orleans",
+    "lat": 29.9689,
+    "lng": -90.0884,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Jackson",
+    "lat": 32.2988,
+    "lng": -90.185,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Birmingham",
+    "lat": 33.53,
+    "lng": -86.825,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Miami",
+    "lat": 25.7896,
+    "lng": -80.2261,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Atlanta",
+    "lat": 33.7395,
+    "lng": -84.3676,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Charleston",
+    "lat": 32.7924,
+    "lng": -79.9921,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Raleigh",
+    "lat": 35.7727,
+    "lng": -78.647,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Virginia Beach",
+    "lat": 36.8552,
+    "lng": -75.9803,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Baltimore",
+    "lat": 39.2815,
+    "lng": -76.6146,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Wilmington",
+    "lat": 39.7463,
+    "lng": -75.5469,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Trenton",
+    "lat": 40.217,
+    "lng": -74.7434,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Bridgeport",
+    "lat": 41.1819,
+    "lng": -73.2019,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Providence",
+    "lat": 41.823,
+    "lng": -71.4169,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Boston",
+    "lat": 42.3319,
+    "lng": -71.072,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Portland",
+    "lat": 45.522,
+    "lng": -122.6819,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Honolulu",
+    "lat": 21.3034,
+    "lng": -157.8583,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Salt Lake City",
+    "lat": 40.777,
+    "lng": -111.932,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Cheyenne",
+    "lat": 41.14,
+    "lng": -104.8197,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Las Vegas",
+    "lat": 36.1648,
+    "lng": -115.1514,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Denver",
+    "lat": 39.7411,
+    "lng": -104.986,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Sioux Falls",
+    "lat": 43.55,
+    "lng": -96.73,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Omaha",
+    "lat": 41.24,
+    "lng": -96.01,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Kansas City",
+    "lat": 39.1136,
+    "lng": -94.6301,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Tulsa",
+    "lat": 36.12,
+    "lng": -95.93,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Des Moines",
+    "lat": 41.58,
+    "lng": -93.62,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "St. Louis",
+    "lat": 38.637,
+    "lng": -90.2419,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Milwaukee",
+    "lat": 43.0296,
+    "lng": -87.9167,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Chicago",
+    "lat": 41.848,
+    "lng": -87.6352,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Louisville",
+    "lat": 38.227,
+    "lng": -85.7506,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Little Rock",
+    "lat": 34.7361,
+    "lng": -92.3311,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Memphis",
+    "lat": 35.1447,
+    "lng": -90.0288,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Charleston",
+    "lat": 38.3497,
+    "lng": -81.6327,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "amerika serikat",
+    "capital": "Indianapolis",
+    "lat": 39.7519,
+    "lng": -86.172,
+    "iso": "us",
+    "color": "#F77F6D",
+    "is_major_city": true
+  },
+  {
+    "country": "kanada",
+    "capital": "Vancouver",
+    "lat": 49.2754,
+    "lng": -123.1236,
+    "iso": "ca",
+    "color": "#2E628D",
+    "is_major_city": true
+  },
+  {
+    "country": "kanada",
+    "capital": "Calgary",
+    "lat": 51.0849,
+    "lng": -114.0819,
+    "iso": "ca",
+    "color": "#2E628D",
+    "is_major_city": true
+  },
+  {
+    "country": "kanada",
+    "capital": "Saskatoon",
+    "lat": 52.17,
+    "lng": -106.67,
+    "iso": "ca",
+    "color": "#2E628D",
+    "is_major_city": true
+  },
+  {
+    "country": "kanada",
+    "capital": "Winnipeg",
+    "lat": 49.883,
+    "lng": -97.166,
+    "iso": "ca",
+    "color": "#2E628D",
+    "is_major_city": true
+  },
+  {
+    "country": "kanada",
+    "capital": "Montréal",
+    "lat": 45.5019,
+    "lng": -73.5852,
+    "iso": "ca",
+    "color": "#2E628D",
+    "is_major_city": true
+  },
+  {
+    "country": "kanada",
+    "capital": "Moncton",
+    "lat": 46.0833,
+    "lng": -64.7667,
+    "iso": "ca",
+    "color": "#2E628D",
+    "is_major_city": true
+  },
+  {
+    "country": "kanada",
+    "capital": "Whitehorse",
+    "lat": 60.7167,
+    "lng": -135.05,
+    "iso": "ca",
+    "color": "#2E628D",
+    "is_major_city": true
+  },
+  {
+    "country": "kanada",
+    "capital": "Iqaluit",
+    "lat": 63.7505,
+    "lng": -68.5002,
+    "iso": "ca",
+    "color": "#2E628D",
+    "is_major_city": true
+  },
+  {
+    "country": "kanada",
+    "capital": "St. John's",
+    "lat": 47.585,
+    "lng": -52.681,
+    "iso": "ca",
+    "color": "#2E628D",
+    "is_major_city": true
+  },
+  {
+    "country": "kanada",
+    "capital": "Halifax",
+    "lat": 44.65,
+    "lng": -63.6,
+    "iso": "ca",
+    "color": "#2E628D",
+    "is_major_city": true
+  },
+  {
+    "country": "kanada",
+    "capital": "Yellowknife",
+    "lat": 62.442,
+    "lng": -114.397,
+    "iso": "ca",
+    "color": "#2E628D",
+    "is_major_city": true
+  },
+  {
+    "country": "kanada",
+    "capital": "Charlottetown",
+    "lat": 46.2493,
+    "lng": -63.1313,
+    "iso": "ca",
+    "color": "#2E628D",
+    "is_major_city": true
+  },
+  {
+    "country": "meksiko",
+    "capital": "Ciudad Juárez",
+    "lat": 31.6923,
+    "lng": -106.492,
+    "iso": "mx",
+    "color": "#8D72D0",
+    "is_major_city": true
+  },
+  {
+    "country": "meksiko",
+    "capital": "Tijuana",
+    "lat": 32.502,
+    "lng": -117.0819,
+    "iso": "mx",
+    "color": "#8D72D0",
+    "is_major_city": true
+  },
+  {
+    "country": "meksiko",
+    "capital": "Monterrey",
+    "lat": 25.6719,
+    "lng": -100.3319,
+    "iso": "mx",
+    "color": "#8D72D0",
+    "is_major_city": true
+  },
+  {
+    "country": "meksiko",
+    "capital": "Guadalajara",
+    "lat": 20.672,
+    "lng": -103.332,
+    "iso": "mx",
+    "color": "#8D72D0",
+    "is_major_city": true
+  },
+  {
+    "country": "meksiko",
+    "capital": "León",
+    "lat": 21.1519,
+    "lng": -101.702,
+    "iso": "mx",
+    "color": "#8D72D0",
+    "is_major_city": true
+  },
+  {
+    "country": "belize",
+    "capital": "Corozal",
+    "lat": 18.398,
+    "lng": -88.388,
+    "iso": "bz",
+    "color": "#48F621",
+    "is_major_city": true
+  },
+  {
+    "country": "panama",
+    "capital": "David",
+    "lat": 8.4333,
+    "lng": -82.4333,
+    "iso": "pa",
+    "color": "#A0420C",
+    "is_major_city": true
+  },
+  {
+    "country": "panama",
+    "capital": "Santiago",
+    "lat": 8.1004,
+    "lng": -80.9833,
+    "iso": "pa",
+    "color": "#A0420C",
+    "is_major_city": true
+  },
+  {
+    "country": "venezuela",
+    "capital": "Ciudad Guayana",
+    "lat": 8.37,
+    "lng": -62.62,
+    "iso": "ve",
+    "color": "#E65A61",
+    "is_major_city": true
+  },
+  {
+    "country": "venezuela",
+    "capital": "Maracaibo",
+    "lat": 10.7319,
+    "lng": -71.6619,
+    "iso": "ve",
+    "color": "#E65A61",
+    "is_major_city": true
+  },
+  {
+    "country": "venezuela",
+    "capital": "Barquisimeto",
+    "lat": 10.0519,
+    "lng": -69.3019,
+    "iso": "ve",
+    "color": "#E65A61",
+    "is_major_city": true
+  },
+  {
+    "country": "venezuela",
+    "capital": "Barcelona",
+    "lat": 10.1304,
+    "lng": -64.72,
+    "iso": "ve",
+    "color": "#E65A61",
+    "is_major_city": true
+  },
+  {
+    "country": "papua nugini",
+    "capital": "Mt.  Hagen",
+    "lat": -5.8632,
+    "lng": 144.2168,
+    "iso": "pg",
+    "color": "#D1FFCE",
+    "is_major_city": true
+  },
+  {
+    "country": "papua nugini",
+    "capital": "Madang",
+    "lat": -5.2248,
+    "lng": 145.7853,
+    "iso": "pg",
+    "color": "#D1FFCE",
+    "is_major_city": true
+  },
+  {
+    "country": "papua nugini",
+    "capital": "Lae",
+    "lat": -6.733,
+    "lng": 146.99,
+    "iso": "pg",
+    "color": "#D1FFCE",
+    "is_major_city": true
+  },
+  {
+    "country": "mesir",
+    "capital": "Ismaïlia",
+    "lat": 30.5903,
+    "lng": 32.26,
+    "iso": "eg",
+    "color": "#493D9D",
+    "is_major_city": true
+  },
+  {
+    "country": "mesir",
+    "capital": "Luxor",
+    "lat": 25.7,
+    "lng": 32.65,
+    "iso": "eg",
+    "color": "#493D9D",
+    "is_major_city": true
+  },
+  {
+    "country": "mesir",
+    "capital": "Alexandria",
+    "lat": 31.202,
+    "lng": 29.948,
+    "iso": "eg",
+    "color": "#493D9D",
+    "is_major_city": true
+  },
+  {
+    "country": "mesir",
+    "capital": "Sohag",
+    "lat": 26.5504,
+    "lng": 31.7,
+    "iso": "eg",
+    "color": "#493D9D",
+    "is_major_city": true
+  },
+  {
+    "country": "yaman",
+    "capital": "Al Mukalla",
+    "lat": 14.5412,
+    "lng": 49.1259,
+    "iso": "ye",
+    "color": "#57BAFC",
+    "is_major_city": true
+  },
+  {
+    "country": "yaman",
+    "capital": "Al Hudaydah",
+    "lat": 14.7999,
+    "lng": 42.951,
+    "iso": "ye",
+    "color": "#57BAFC",
+    "is_major_city": true
+  },
+  {
+    "country": "yaman",
+    "capital": "Taizz",
+    "lat": 13.6064,
+    "lng": 44.0375,
+    "iso": "ye",
+    "color": "#57BAFC",
+    "is_major_city": true
+  },
+  {
+    "country": "yaman",
+    "capital": "Aden",
+    "lat": 12.7797,
+    "lng": 45.0095,
+    "iso": "ye",
+    "color": "#57BAFC",
+    "is_major_city": true
+  },
+  {
+    "country": "mauritania",
+    "capital": "Nouadhibou",
+    "lat": 20.9,
+    "lng": -17.056,
+    "iso": "mr",
+    "color": "#D69692",
+    "is_major_city": true
+  },
+  {
+    "country": "mauritania",
+    "capital": "Nema",
+    "lat": 16.6171,
+    "lng": -7.25,
+    "iso": "mr",
+    "color": "#D69692",
+    "is_major_city": true
+  },
+  {
+    "country": "mauritania",
+    "capital": "Saint-Louis",
+    "lat": 16.02,
+    "lng": -16.51,
+    "iso": "mr",
+    "color": "#D69692",
+    "is_major_city": true
+  },
+  {
+    "country": "Equatorial Guinea",
+    "capital": "Bata",
+    "lat": 1.87,
+    "lng": 9.77,
+    "iso": "gq",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Equatorial Guinea",
+    "capital": "Mongomo",
+    "lat": 1.6337,
+    "lng": 11.3166,
+    "iso": "gq",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Equatorial Guinea",
+    "capital": "Malabo",
+    "lat": 3.75,
+    "lng": 8.7833,
+    "iso": "gq",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "gambia",
+    "capital": "Basse Santa Su",
+    "lat": 13.31,
+    "lng": -14.223,
+    "iso": "gm",
+    "color": "#264CE6",
+    "is_major_city": true
+  },
+  {
+    "country": "Northern Cyprus",
+    "capital": "Famagusta",
+    "lat": 35.125,
+    "lng": 33.95,
+    "iso": "-1",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Siachen Glacier",
+    "capital": "Kashmir",
+    "lat": 35.5084,
+    "lng": 77.2229,
+    "iso": "-1",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Baykonur Cosmodrome",
+    "capital": "Baykonur lease in Qyzylorda",
+    "lat": 45.9847,
+    "lng": 63.3839,
+    "iso": "-1",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Akrotiri Sovereign Base Area",
+    "capital": "Akrotiri",
+    "lat": 34.6564,
+    "lng": 32.8989,
+    "iso": "-1",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Antarctica",
+    "capital": "McMurdo Station",
+    "lat": -77.7323,
+    "lng": 166.8694,
+    "iso": "aq",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "selandia baru",
+    "capital": "Dunedin",
+    "lat": -45.8854,
+    "lng": 170.491,
+    "iso": "nz",
+    "color": "#B6FFA4",
+    "is_major_city": true
+  },
+  {
+    "country": "selandia baru",
+    "capital": "Christchurch",
+    "lat": -43.535,
+    "lng": 172.63,
+    "iso": "nz",
+    "color": "#B6FFA4",
+    "is_major_city": true
+  },
+  {
+    "country": "selandia baru",
+    "capital": "Auckland",
+    "lat": -36.8481,
+    "lng": 174.763,
+    "iso": "nz",
+    "color": "#B6FFA4",
+    "is_major_city": true
+  },
+  {
+    "country": "selandia baru",
+    "capital": "Hamilton",
+    "lat": -37.7783,
+    "lng": 175.2896,
+    "iso": "nz",
+    "color": "#B6FFA4",
+    "is_major_city": true
+  },
+  {
+    "country": "New Caledonia",
+    "capital": "Nord",
+    "lat": -20.8834,
+    "lng": 164.9282,
+    "iso": "nc",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "New Caledonia",
+    "capital": "Nouméa",
+    "lat": -22.2625,
+    "lng": 166.4443,
+    "iso": "nc",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "New Caledonia",
+    "capital": "Îles Loyauté",
+    "lat": -20.9585,
+    "lng": 167.2113,
+    "iso": "nc",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "australia",
+    "capital": "Perth",
+    "lat": -31.9531,
+    "lng": 115.8381,
+    "iso": "au",
+    "color": "#FB2A54",
+    "is_major_city": true
+  },
+  {
+    "country": "australia",
+    "capital": "Darwin",
+    "lat": -12.4254,
+    "lng": 130.85,
+    "iso": "au",
+    "color": "#FB2A54",
+    "is_major_city": true
+  },
+  {
+    "country": "australia",
+    "capital": "Adelaide",
+    "lat": -34.933,
+    "lng": 138.5981,
+    "iso": "au",
+    "color": "#FB2A54",
+    "is_major_city": true
+  },
+  {
+    "country": "australia",
+    "capital": "Brisbane",
+    "lat": -27.4531,
+    "lng": 153.0331,
+    "iso": "au",
+    "color": "#FB2A54",
+    "is_major_city": true
+  },
+  {
+    "country": "australia",
+    "capital": "Sydney",
+    "lat": -33.8714,
+    "lng": 151.2125,
+    "iso": "au",
+    "color": "#FB2A54",
+    "is_major_city": true
+  },
+  {
+    "country": "australia",
+    "capital": "Jervis Bay Territory",
+    "lat": -35.1593,
+    "lng": 150.7178,
+    "iso": "au",
+    "color": "#FB2A54",
+    "is_major_city": true
+  },
+  {
+    "country": "australia",
+    "capital": "Melbourne",
+    "lat": -37.8181,
+    "lng": 144.9731,
+    "iso": "au",
+    "color": "#FB2A54",
+    "is_major_city": true
+  },
+  {
+    "country": "australia",
+    "capital": "Hobart",
+    "lat": -42.85,
+    "lng": 147.295,
+    "iso": "au",
+    "color": "#FB2A54",
+    "is_major_city": true
+  },
+  {
+    "country": "australia",
+    "capital": "Macquarie Island",
+    "lat": -54.6277,
+    "lng": 158.8794,
+    "iso": "au",
+    "color": "#FB2A54",
+    "is_major_city": true
+  },
+  {
+    "country": "australia",
+    "capital": "Lord Howe Island",
+    "lat": -31.5516,
+    "lng": 159.073,
+    "iso": "au",
+    "color": "#FB2A54",
+    "is_major_city": true
+  },
+  {
+    "country": "madagaskar",
+    "capital": "Mahajanga",
+    "lat": -15.67,
+    "lng": 46.345,
+    "iso": "mg",
+    "color": "#1CB3A6",
+    "is_major_city": true
+  },
+  {
+    "country": "madagaskar",
+    "capital": "Ambatondrazaka",
+    "lat": -17.8329,
+    "lng": 48.4167,
+    "iso": "mg",
+    "color": "#1CB3A6",
+    "is_major_city": true
+  },
+  {
+    "country": "madagaskar",
+    "capital": "Fianarantsoa",
+    "lat": -21.4333,
+    "lng": 47.0833,
+    "iso": "mg",
+    "color": "#1CB3A6",
+    "is_major_city": true
+  },
+  {
+    "country": "madagaskar",
+    "capital": "Toliara",
+    "lat": -23.3568,
+    "lng": 43.69,
+    "iso": "mg",
+    "color": "#1CB3A6",
+    "is_major_city": true
+  },
+  {
+    "country": "filipina",
+    "capital": "Zamboanga",
+    "lat": 6.9219,
+    "lng": 122.0781,
+    "iso": "ph",
+    "color": "#9E973D",
+    "is_major_city": true
+  },
+  {
+    "country": "filipina",
+    "capital": "Davao",
+    "lat": 7.112,
+    "lng": 125.6281,
+    "iso": "ph",
+    "color": "#9E973D",
+    "is_major_city": true
+  },
+  {
+    "country": "filipina",
+    "capital": "Bacolod",
+    "lat": 10.6317,
+    "lng": 122.9817,
+    "iso": "ph",
+    "color": "#9E973D",
+    "is_major_city": true
+  },
+  {
+    "country": "filipina",
+    "capital": "Cagayan de Oro",
+    "lat": 8.4508,
+    "lng": 124.6853,
+    "iso": "ph",
+    "color": "#9E973D",
+    "is_major_city": true
+  },
+  {
+    "country": "filipina",
+    "capital": "Naga",
+    "lat": 13.6192,
+    "lng": 123.1814,
+    "iso": "ph",
+    "color": "#9E973D",
+    "is_major_city": true
+  },
+  {
+    "country": "sri lanka",
+    "capital": "Anuradhapura",
+    "lat": 8.35,
+    "lng": 80.3833,
+    "iso": "lk",
+    "color": "#8BA5ED",
+    "is_major_city": true
+  },
+  {
+    "country": "sri lanka",
+    "capital": "Jaffna",
+    "lat": 9.675,
+    "lng": 80.005,
+    "iso": "lk",
+    "color": "#8BA5ED",
+    "is_major_city": true
+  },
+  {
+    "country": "sri lanka",
+    "capital": "Matara",
+    "lat": 5.949,
+    "lng": 80.5428,
+    "iso": "lk",
+    "color": "#8BA5ED",
+    "is_major_city": true
+  },
+  {
+    "country": "sri lanka",
+    "capital": "Batticaloa",
+    "lat": 7.717,
+    "lng": 81.7,
+    "iso": "lk",
+    "color": "#8BA5ED",
+    "is_major_city": true
+  },
+  {
+    "country": "Aruba",
+    "capital": "Oranjestad",
+    "lat": 12.5215,
+    "lng": -70.0255,
+    "iso": "aw",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "bahama",
+    "capital": "Inagua",
+    "lat": 21.1843,
+    "lng": -73.3164,
+    "iso": "bs",
+    "color": "#9C35F1",
+    "is_major_city": true
+  },
+  {
+    "country": "bahama",
+    "capital": "Mayaguana",
+    "lat": 22.3832,
+    "lng": -72.9824,
+    "iso": "bs",
+    "color": "#9C35F1",
+    "is_major_city": true
+  },
+  {
+    "country": "bahama",
+    "capital": "Crooked Island and Long Cay",
+    "lat": 22.5053,
+    "lng": -73.9477,
+    "iso": "bs",
+    "color": "#9C35F1",
+    "is_major_city": true
+  },
+  {
+    "country": "bahama",
+    "capital": "Freeport",
+    "lat": 26.5333,
+    "lng": -78.7,
+    "iso": "bs",
+    "color": "#9C35F1",
+    "is_major_city": true
+  },
+  {
+    "country": "Turks and Caicos Islands",
+    "capital": "Grand Turk",
+    "lat": 21.4664,
+    "lng": -71.136,
+    "iso": "tc",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "taiwan",
+    "capital": "Taichung",
+    "lat": 24.1521,
+    "lng": 120.6817,
+    "iso": "cn-tw",
+    "color": "#31779B",
+    "is_major_city": true
+  },
+  {
+    "country": "taiwan",
+    "capital": "Kaohsiung",
+    "lat": 22.6333,
+    "lng": 120.2666,
+    "iso": "cn-tw",
+    "color": "#31779B",
+    "is_major_city": true
+  },
+  {
+    "country": "taiwan",
+    "capital": "Kinmen",
+    "lat": 24.4483,
+    "lng": 118.3474,
+    "iso": "cn-tw",
+    "color": "#31779B",
+    "is_major_city": true
+  },
+  {
+    "country": "jepang",
+    "capital": "Fukuoka",
+    "lat": 33.597,
+    "lng": 130.4081,
+    "iso": "jp",
+    "color": "#F39D75",
+    "is_major_city": true
+  },
+  {
+    "country": "jepang",
+    "capital": "Ōsaka",
+    "lat": 34.6911,
+    "lng": 135.5038,
+    "iso": "jp",
+    "color": "#F39D75",
+    "is_major_city": true
+  },
+  {
+    "country": "jepang",
+    "capital": "Nagoya",
+    "lat": 35.1569,
+    "lng": 136.913,
+    "iso": "jp",
+    "color": "#F39D75",
+    "is_major_city": true
+  },
+  {
+    "country": "jepang",
+    "capital": "Sendai",
+    "lat": 38.2684,
+    "lng": 140.8697,
+    "iso": "jp",
+    "color": "#F39D75",
+    "is_major_city": true
+  },
+  {
+    "country": "jepang",
+    "capital": "Sapporo",
+    "lat": 43.0769,
+    "lng": 141.3381,
+    "iso": "jp",
+    "color": "#F39D75",
+    "is_major_city": true
+  },
+  {
+    "country": "Saint Pierre and Miquelon",
+    "capital": "Saint-Pierre",
+    "lat": 46.7832,
+    "lng": -56.1765,
+    "iso": "pm",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "islandia",
+    "capital": "Akureyri",
+    "lat": 65.6666,
+    "lng": -18.1,
+    "iso": "is",
+    "color": "#F15C51",
+    "is_major_city": true
+  },
+  {
+    "country": "islandia",
+    "capital": "Selfoss",
+    "lat": 63.9334,
+    "lng": -20.9969,
+    "iso": "is",
+    "color": "#F15C51",
+    "is_major_city": true
+  },
+  {
+    "country": "greenland",
+    "capital": "Paamiut",
+    "lat": 62.0041,
+    "lng": -49.6351,
+    "iso": "gl",
+    "color": "#AD53F5",
+    "is_major_city": true
+  },
+  {
+    "country": "greenland",
+    "capital": "Ilulissat",
+    "lat": 69.2167,
+    "lng": -51.1,
+    "iso": "gl",
+    "color": "#AD53F5",
+    "is_major_city": true
+  },
+  {
+    "country": "Pitcairn Islands",
+    "capital": "Pitcairn Islands",
+    "lat": -24.5156,
+    "lng": -128.2935,
+    "iso": "pn",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "tahiti",
+    "capital": "Tuamotu-Gambier",
+    "lat": -17.461,
+    "lng": -142.2934,
+    "iso": "pf",
+    "color": "#A7F934",
+    "is_major_city": true
+  },
+  {
+    "country": "tahiti",
+    "capital": "Leeward Islands",
+    "lat": -16.6132,
+    "lng": -151.9778,
+    "iso": "pf",
+    "color": "#A7F934",
+    "is_major_city": true
+  },
+  {
+    "country": "French Southern and Antarctic Lands",
+    "capital": "Iles Eparses de l'ocean Indien",
+    "lat": -20.038,
+    "lng": 42.2872,
+    "iso": "tf",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "French Southern and Antarctic Lands",
+    "capital": "Archipel des Kerguelen",
+    "lat": -49.1984,
+    "lng": 69.4004,
+    "iso": "tf",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "French Southern and Antarctic Lands",
+    "capital": "Archipel des Crozet",
+    "lat": -46.2728,
+    "lng": 51.1558,
+    "iso": "tf",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "seychelles",
+    "capital": "Outer Islands",
+    "lat": -8.5679,
+    "lng": 48.7669,
+    "iso": "sc",
+    "color": "#5E53DD",
+    "is_major_city": true
+  },
+  {
+    "country": "kiribati",
+    "capital": "Tarawa",
+    "lat": 1.3382,
+    "lng": 173.0176,
+    "iso": "ki",
+    "color": "#23FC58",
+    "is_major_city": true
+  },
+  {
+    "country": "marshall",
+    "capital": "Railik Chain",
+    "lat": 7.4731,
+    "lng": 168.2786,
+    "iso": "mh",
+    "color": "#701FB9",
+    "is_major_city": true
+  },
+  {
+    "country": "United States Minor Outlying Islands",
+    "capital": "Johnston Atoll",
+    "lat": 16.7454,
+    "lng": -169.5295,
+    "iso": "um",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "United States Minor Outlying Islands",
+    "capital": "Jarvis Island",
+    "lat": -0.3791,
+    "lng": -160.0212,
+    "iso": "um",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "United States Minor Outlying Islands",
+    "capital": "Baker Island",
+    "lat": 0.2036,
+    "lng": -176.4747,
+    "iso": "um",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Montserrat",
+    "capital": "Saint Peter",
+    "lat": 16.7777,
+    "lng": -62.1939,
+    "iso": "ms",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "United States Virgin Islands",
+    "capital": "Christiansted",
+    "lat": 17.7504,
+    "lng": -64.75,
+    "iso": "vi",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Saint Barthelemy",
+    "capital": "Saint Barthélemy",
+    "lat": 17.9027,
+    "lng": -62.8369,
+    "iso": "bl",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Anguilla",
+    "capital": "East End",
+    "lat": 18.2716,
+    "lng": -62.9769,
+    "iso": "ai",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "British Virgin Islands",
+    "capital": "British Virgin Islands",
+    "lat": 18.4632,
+    "lng": -64.5422,
+    "iso": "vg",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "jamaika",
+    "capital": "Montego Bay",
+    "lat": 18.4667,
+    "lng": -77.9167,
+    "iso": "jm",
+    "color": "#03908B",
+    "is_major_city": true
+  },
+  {
+    "country": "Cayman Islands",
+    "capital": "George Town",
+    "lat": 19.2947,
+    "lng": -81.3716,
+    "iso": "ky",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Heard Island and McDonald Islands",
+    "capital": "Heard Island and McDonald Islands",
+    "lat": -53.0562,
+    "lng": 73.4738,
+    "iso": "hm",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Saint Helena",
+    "capital": "Tristan da Cunha",
+    "lat": -38.6232,
+    "lng": -11.177,
+    "iso": "sh",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Saint Helena",
+    "capital": "Saint Helena",
+    "lat": -15.9642,
+    "lng": -5.7177,
+    "iso": "sh",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Saint Helena",
+    "capital": "Ascension",
+    "lat": -7.9304,
+    "lng": -14.3661,
+    "iso": "sh",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "mauritius",
+    "capital": "Agaléga",
+    "lat": -10.3479,
+    "lng": 56.5377,
+    "iso": "mu",
+    "color": "#eab308",
+    "is_major_city": true
+  },
+  {
+    "country": "mauritius",
+    "capital": "Rodrigues",
+    "lat": -19.7131,
+    "lng": 63.4101,
+    "iso": "mu",
+    "color": "#eab308",
+    "is_major_city": true
+  },
+  {
+    "country": "komoro",
+    "capital": "Andjouân",
+    "lat": -12.3129,
+    "lng": 43.7217,
+    "iso": "km",
+    "color": "#7299B5",
+    "is_major_city": true
+  },
+  {
+    "country": "sao tome dan principe",
+    "capital": "Santo António",
+    "lat": 1.645,
+    "lng": 7.412,
+    "iso": "st",
+    "color": "#F202B8",
+    "is_major_city": true
+  },
+  {
+    "country": "tanjung verde",
+    "capital": "Brava",
+    "lat": 14.8523,
+    "lng": -24.7228,
+    "iso": "cv",
+    "color": "#967EE8",
+    "is_major_city": true
+  },
+  {
+    "country": "tanjung verde",
+    "capital": "Boa Vista",
+    "lat": 16.1198,
+    "lng": -22.8072,
+    "iso": "cv",
+    "color": "#967EE8",
+    "is_major_city": true
+  },
+  {
+    "country": "tanjung verde",
+    "capital": "Mindelo",
+    "lat": 16.8838,
+    "lng": -25.0,
+    "iso": "cv",
+    "color": "#967EE8",
+    "is_major_city": true
+  },
+  {
+    "country": "Jersey",
+    "capital": "Jersey",
+    "lat": 49.2186,
+    "lng": -2.1232,
+    "iso": "je",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Guernsey",
+    "capital": "Sark",
+    "lat": 49.5124,
+    "lng": -2.4346,
+    "iso": "gg",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Isle of Man",
+    "capital": "Douglas",
+    "lat": 54.1491,
+    "lng": -4.4803,
+    "iso": "im",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Aland",
+    "capital": "Mariehamn",
+    "lat": 60.097,
+    "lng": 19.949,
+    "iso": "ax",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Indian Ocean Territories",
+    "capital": "Mumbai",
+    "lat": -12.1749,
+    "lng": 96.8701,
+    "iso": "-1",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "British Indian Ocean Territory",
+    "capital": "Mumbai",
+    "lat": -6.4423,
+    "lng": 72.0122,
+    "iso": "io",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Norfolk Island",
+    "capital": "Norfolk Island",
+    "lat": -29.041,
+    "lng": 167.9507,
+    "iso": "nf",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Cook Islands",
+    "capital": "Mangaia",
+    "lat": -21.9098,
+    "lng": -157.9317,
+    "iso": "ck",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Cook Islands",
+    "capital": "Mitiaro",
+    "lat": -19.8099,
+    "lng": -157.7216,
+    "iso": "ck",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Cook Islands",
+    "capital": "Avarua",
+    "lat": -21.1962,
+    "lng": -159.7854,
+    "iso": "ck",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "fiji",
+    "capital": "Eastern",
+    "lat": -18.4545,
+    "lng": 36.8377,
+    "iso": "fj",
+    "color": "#67EF4F",
+    "is_major_city": true
+  },
+  {
+    "country": "fiji",
+    "capital": "Labasa",
+    "lat": -12.4977,
+    "lng": 177.0653,
+    "iso": "fj",
+    "color": "#67EF4F",
+    "is_major_city": true
+  },
+  {
+    "country": "tonga",
+    "capital": "Neiafu",
+    "lat": -18.6496,
+    "lng": -173.9833,
+    "iso": "to",
+    "color": "#2A08A4",
+    "is_major_city": true
+  },
+  {
+    "country": "tonga",
+    "capital": "Ha'apai",
+    "lat": -19.7339,
+    "lng": -174.543,
+    "iso": "to",
+    "color": "#2A08A4",
+    "is_major_city": true
+  },
+  {
+    "country": "Wallis and Futuna",
+    "capital": "Sigave",
+    "lat": -14.2803,
+    "lng": -178.1476,
+    "iso": "wf",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Wallis and Futuna",
+    "capital": "`Uvea",
+    "lat": -13.2856,
+    "lng": -176.1582,
+    "iso": "wf",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Solomon Islands",
+    "capital": "Honiara",
+    "lat": -9.438,
+    "lng": 159.9498,
+    "iso": "sb",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Solomon Islands",
+    "capital": "Lata",
+    "lat": -10.738,
+    "lng": 165.8567,
+    "iso": "sb",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Solomon Islands",
+    "capital": "Gizo",
+    "lat": -8.0996,
+    "lng": 156.835,
+    "iso": "sb",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "maldives",
+    "capital": "Addu",
+    "lat": -0.6304,
+    "lng": 73.171,
+    "iso": "mv",
+    "color": "#EBC234",
+    "is_major_city": true
+  },
+  {
+    "country": "maldives",
+    "capital": "Gaafu Alifu",
+    "lat": 0.2983,
+    "lng": 73.0821,
+    "iso": "mv",
+    "color": "#EBC234",
+    "is_major_city": true
+  },
+  {
+    "country": "maldives",
+    "capital": "Raa",
+    "lat": 5.1116,
+    "lng": 73.0031,
+    "iso": "mv",
+    "color": "#EBC234",
+    "is_major_city": true
+  },
+  {
+    "country": "maldives",
+    "capital": "Laamu",
+    "lat": 1.919,
+    "lng": 73.4605,
+    "iso": "mv",
+    "color": "#EBC234",
+    "is_major_city": true
+  },
+  {
+    "country": "mikronesia",
+    "capital": "Kosrae",
+    "lat": 5.3183,
+    "lng": 162.997,
+    "iso": "fm",
+    "color": "#7F4E88",
+    "is_major_city": true
+  },
+  {
+    "country": "South Georgia and the Islands",
+    "capital": "Grytviken",
+    "lat": -54.2806,
+    "lng": -36.508,
+    "iso": "gs",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Falkland Islands",
+    "capital": "Stanley",
+    "lat": -51.7,
+    "lng": -57.85,
+    "iso": "fk",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "vanuatu",
+    "capital": "Tafea",
+    "lat": -19.3087,
+    "lng": 169.3454,
+    "iso": "vu",
+    "color": "#D0DF5C",
+    "is_major_city": true
+  },
+  {
+    "country": "vanuatu",
+    "capital": "Luganville",
+    "lat": -15.5126,
+    "lng": 167.1766,
+    "iso": "vu",
+    "color": "#D0DF5C",
+    "is_major_city": true
+  },
+  {
+    "country": "Niue",
+    "capital": "Alofi",
+    "lat": -19.066,
+    "lng": -169.9136,
+    "iso": "nu",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "American Samoa",
+    "capital": "Pago Pago",
+    "lat": -14.2766,
+    "lng": -170.7066,
+    "iso": "as",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "American Samoa",
+    "capital": "Rose Atoll",
+    "lat": -14.526,
+    "lng": -168.164,
+    "iso": "as",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "American Samoa",
+    "capital": "Swain's Island",
+    "lat": -11.0575,
+    "lng": -171.0788,
+    "iso": "as",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "palau",
+    "capital": "Hatobohei",
+    "lat": 3.0057,
+    "lng": 131.4569,
+    "iso": "pw",
+    "color": "#CFCF94",
+    "is_major_city": true
+  },
+  {
+    "country": "palau",
+    "capital": "Sonsorol",
+    "lat": 5.3012,
+    "lng": 132.2203,
+    "iso": "pw",
+    "color": "#CFCF94",
+    "is_major_city": true
+  },
+  {
+    "country": "Northern Mariana Islands",
+    "capital": "Capitol Hill",
+    "lat": 15.2113,
+    "lng": 145.7506,
+    "iso": "mp",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Northern Mariana Islands",
+    "capital": "Northern Islands",
+    "lat": 18.4634,
+    "lng": 145.5573,
+    "iso": "mp",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Coral Sea Islands",
+    "capital": "Coral Sea Islands",
+    "lat": -19.2004,
+    "lng": 151.6532,
+    "iso": "-1",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Spratly Is.",
+    "capital": "Spratly Islands",
+    "lat": 10.4676,
+    "lng": 114.8259,
+    "iso": "-1",
+    "color": "#3b82f6",
+    "is_major_city": true
+  },
+  {
+    "country": "Clipperton Island",
+    "capital": "Clipperton Island",
+    "lat": 10.2981,
+    "lng": -109.2202,
+    "iso": "-1",
+    "color": "#3b82f6",
+    "is_major_city": true
+  }
+]

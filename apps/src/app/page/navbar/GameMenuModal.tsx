@@ -6,6 +6,7 @@ import {
     Save, Trash2, Calendar, Globe, Landmark, ArrowLeft, Volume2, Music, Monitor, Keyboard
 } from 'lucide-react';
 import { KeywordModal } from '../keyword/keyword';
+import { MapSettingsSection } from './settings/MapSettingsSection';
 import { ExitConfirmModal } from './ExitConfirmModal';
 import { soundManager } from '@/lib/soundManager';
 
@@ -386,6 +387,9 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                             <option value="1280x720">1280 x 720 (16:9)</option>
                                         </select>
                                     </div>
+
+                                    {/* Pengaturan Peta (Batas Negara vs Kota) */}
+                                    <MapSettingsSection />
                                 </div>
                             </div>
                         )}
