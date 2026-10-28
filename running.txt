@@ -12,3 +12,5 @@ npm run electron:start
 
 # Alias yang setara:
 npm run electron:dev
+
+cd /d D:\project-sendiri\neosantara && npm run dev
