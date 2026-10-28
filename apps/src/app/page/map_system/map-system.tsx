@@ -730,6 +730,7 @@ export default function MapPage() {
     const [kesejahteraanInitialTab, setKesejahteraanInitialTab] = useState<"statistik" | "naikkan">("statistik");
     const [countryDetailModalOpen, setCountryDetailModalOpen] = useState(false);
     const [countryDetailModalName, setCountryDetailModalName] = useState<string | null>(null);
+    const [countryDetailModalCity, setCountryDetailModalCity] = useState<string | null>(null);
     const [aiConstructionNavigation, setAiConstructionNavigation] = useState<{
         countryName: string;
         buildingKey?: string;
@@ -6448,7 +6449,9 @@ export default function MapPage() {
             if (isPlayer) {
                 setPlayerDetailModalOpen(true);
             } else {
+                const clickedCity = clickedCountry?.selected_city || clickedCountry?.capital || null;
                 setCountryDetailModalName(countryName);
+                setCountryDetailModalCity(clickedCity);
                 setAiConstructionNavigation(null);
                 setCountryDetailModalOpen(true);
             }
@@ -8139,9 +8142,11 @@ export default function MapPage() {
                         ? aiConstructionNavigation.targetTab
                         : undefined
                 }
+                selectedCity={countryDetailModalCity}
                 onClose={() => {
                     setCountryDetailModalOpen(false);
                     setCountryDetailModalName(null);
+                    setCountryDetailModalCity(null);
                     setAiConstructionNavigation(null);
                     setAutoBuildEmbassyState(false);
                 }}

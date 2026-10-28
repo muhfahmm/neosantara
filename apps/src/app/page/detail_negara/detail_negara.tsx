@@ -31,6 +31,7 @@ import DevelopingAIBuilding from "./4_developing_ai_building";
 interface CountryDetailModalProps {
   isOpen: boolean;
   countryName: string | null;
+  selectedCity?: string | null;
   onClose: () => void;
   countryDetail?: any; // Data detail negara dari API (negara yang sedang dimainkan)
   metadata?: Record<string, unknown>;
@@ -73,6 +74,7 @@ function getAnnexedInfo(countryNames: unknown[], countryIso?: unknown) {
 export function CountryDetailModal({
   isOpen,
   countryName,
+  selectedCity,
   onClose,
   countryDetail,
   metadata = {},
@@ -548,7 +550,12 @@ export function CountryDetailModal({
   // Wilayah tetap menggunakan nama dan ibukota aslinya, tetapi memakai bendera penguasa.
   const originalIso = mapData?.iso || detailData?.iso || "";
   let displayIso = originalIso;
-  const displayCapital = mapData?.capital || detailData?.capital || "Data tidak tersedia";
+  const countryCapital = mapData?.capital || detailData?.capital || "Data tidak tersedia";
+  const isTargetingCity = Boolean(selectedCity && selectedCity.trim() !== "");
+  const displayCapital = (isTargetingCity ? selectedCity : countryCapital) || "Data tidak tersedia";
+  const capitalCardLabel = isTargetingCity && selectedCity?.toLowerCase().trim() !== countryCapital.toLowerCase().trim()
+    ? "Kota"
+    : "Ibukota";
 
   const attackerCountryName = annexedInfo?.attackerCountry;
   if (attackerCountryName) {
@@ -689,13 +696,13 @@ export function CountryDetailModal({
               </div>
             </div>
 
-            {/* Ibukota */}
+            {/* Ibukota / Kota */}
             <div className="flex min-w-0 items-center gap-2 lg:gap-1.5">
               <div className="p-1.5 lg:p-1 xl:p-1.5 bg-[#00FFAA]/10 rounded-lg border border-[#00FFAA]/20 text-[#00FFAA]">
                 <Landmark className="h-4 w-4 lg:h-3.5 lg:w-3.5 xl:h-4 xl:w-4 text-[#00FFAA]" />
               </div>
               <div className="flex min-w-0 flex-col">
-                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">Ibukota</span>
+                <span className="text-[9px] lg:text-[8px] xl:text-[9px] font-black text-[#00FFAA]/60 uppercase tracking-wider">{capitalCardLabel}</span>
                 <span className="text-[11px] lg:text-[9px] xl:text-[11px] font-bold text-[#00FFAA] uppercase">
                   {displayCapital}
                 </span>

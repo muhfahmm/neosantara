@@ -22,6 +22,8 @@ struct CapitalData {
     lat: f64,
     lng: f64,
     iso: String,
+    #[serde(default)]
+    is_major_city: Option<bool>,
 }
 
 /// Cincin poligon yang sudah diproyeksikan + bounding box (koordinat dunia 0..width/height).
@@ -111,6 +113,7 @@ struct CachedCapital {
     y: f64,
     flag_iso: String,
     flag_idx: Option<usize>,
+    is_capital: bool,
 }
 
 struct Styles {
@@ -120,6 +123,8 @@ struct Styles {
     stroke: JsValue,
     province_stroke: JsValue,
     white: JsValue,
+    capital_text: JsValue,
+    city_text: JsValue,
     flag_bg: JsValue,
     flag_text: JsValue,
     label_outline: JsValue,
@@ -276,9 +281,11 @@ impl MapEngine {
                 stroke: JsValue::from_str("rgba(255, 255, 255, 0.75)"),
                 province_stroke: JsValue::from_str("rgba(255, 255, 255, 0.55)"),
                 white: JsValue::from_str("white"),
+                capital_text: JsValue::from_str("#FFE600"),
+                city_text: JsValue::from_str("#CBD5E1"),
                 flag_bg: JsValue::from_str("#0f172a"),
                 flag_text: JsValue::from_str("#fbbf24"),
-                label_outline: JsValue::from_str("rgba(0, 0, 0, 0.85)"),
+                label_outline: JsValue::from_str("rgba(0, 0, 0, 0.90)"),
             },
             selected_country_iso: None,
             selected_lower: None,
@@ -718,12 +725,14 @@ impl MapEngine {
                     .capital_flags
                     .iter()
                     .position(|(i, _)| i == &flag_iso.to_lowercase());
+                let is_capital = !c.is_major_city.unwrap_or(false);
                 CachedCapital {
                     name: c.capital,
                     x: ((c.lng + 180.0) / 360.0) * w,
                     y: ((90.0 - c.lat) / 180.0) * h,
                     flag_iso,
                     flag_idx,
+                    is_capital,
                 }
             })
             .collect();
@@ -1283,25 +1292,37 @@ impl MapEngine {
         }
 
         let font_size = (8.0 + (self.scale - 1.0) * 0.5) / self.scale;
-        self.ctx
-            .set_font(&format!("bold {}px sans-serif", font_size));
+        let capital_font_size = (8.8 + (self.scale - 1.0) * 0.5) / self.scale;
         self.ctx.set_line_width(2.5 / self.scale);
         self.ctx.set_stroke_style(&self.styles.label_outline);
-        self.ctx.set_fill_style(&self.styles.white);
 
-        for &(capital_index, x, y) in &self.cached_capital_labels {
-            let Some(capital) = self.capitals.get(capital_index) else {
-                continue;
-            };
-            if capital.x < vx0 - margin
-                || capital.x > vx1 + margin
-                || capital.y < vy0 - margin
-                || capital.y > vy1 + margin
-            {
-                continue;
+        // Render kota biasa terlebih dahulu, kemudian ibukota di atasnya
+        for pass_capital in [false, true] {
+            if pass_capital {
+                self.ctx.set_font(&format!("bold {}px sans-serif", capital_font_size));
+                self.ctx.set_fill_style(&self.styles.capital_text);
+            } else {
+                self.ctx.set_font(&format!("500 {}px sans-serif", font_size));
+                self.ctx.set_fill_style(&self.styles.city_text);
             }
-            let _ = self.ctx.stroke_text(&capital.name, x, y);
-            let _ = self.ctx.fill_text(&capital.name, x, y);
+
+            for &(capital_index, x, y) in &self.cached_capital_labels {
+                let Some(capital) = self.capitals.get(capital_index) else {
+                    continue;
+                };
+                if capital.is_capital != pass_capital {
+                    continue;
+                }
+                if capital.x < vx0 - margin
+                    || capital.x > vx1 + margin
+                    || capital.y < vy0 - margin
+                    || capital.y > vy1 + margin
+                {
+                    continue;
+                }
+                let _ = self.ctx.stroke_text(&capital.name, x, y);
+                let _ = self.ctx.fill_text(&capital.name, x, y);
+            }
         }
     }
 
@@ -1312,7 +1333,11 @@ impl MapEngine {
         let mut accepted_boxes: Vec<[f64; 4]> = Vec::with_capacity(self.capitals.len());
         let mut labels = Vec::with_capacity(self.capitals.len());
 
-        for (capital_index, capital) in self.capitals.iter().enumerate() {
+        let mut indices: Vec<usize> = (0..self.capitals.len()).collect();
+        indices.sort_by_key(|&idx| if self.capitals[idx].is_capital { 0 } else { 1 });
+
+        for capital_index in indices {
+            let capital = &self.capitals[capital_index];
             let text_width = font_size * capital.name.len() as f64 * 0.5;
             let positions = [
                 (capital.x + 9.0 / scale, capital.y + 3.0 / scale),
@@ -1409,6 +1434,34 @@ impl MapEngine {
         (x_norm * self.width, y_norm * self.height)
     }
 
+    fn build_country_result(&self, c: &CachedCountry, wx: f64, wy: f64) -> JsValue {
+        let raw_val = &c.raw;
+        let mut nearest_city: Option<(&CachedCapital, f64)> = None;
+        let c_iso = &c.iso;
+        for cap in &self.capitals {
+            if cap.flag_iso.to_lowercase() == *c_iso {
+                let dx = cap.x - wx;
+                let dy = cap.y - wy;
+                let dist_sq = dx * dx + dy * dy;
+                if nearest_city.is_none() || dist_sq < nearest_city.unwrap().1 {
+                    nearest_city = Some((cap, dist_sq));
+                }
+            }
+        }
+
+        if let Some(source_obj) = raw_val.dyn_ref::<js_sys::Object>() {
+            let target = js_sys::Object::new();
+            let _ = js_sys::Object::assign(&target, source_obj);
+            if let Some((cap, _)) = nearest_city {
+                let _ = js_sys::Reflect::set(&target, &JsValue::from_str("selected_city"), &JsValue::from_str(&cap.name));
+                let _ = js_sys::Reflect::set(&target, &JsValue::from_str("is_capital"), &JsValue::from_bool(cap.is_capital));
+            }
+            target.into()
+        } else {
+            raw_val.clone()
+        }
+    }
+
     pub fn get_country_at(&self, mouse_x: f64, mouse_y: f64) -> JsValue {
         // Titik klik dalam koordinat dunia (sama dengan koordinat cache)
         let mut wx = (mouse_x - self.offset_x) / self.scale;
@@ -1448,7 +1501,7 @@ impl MapEngine {
             }
         }
         if let Some((c, _)) = best_micro {
-            return c.raw.clone();
+            return self.build_country_result(c, wx, wy);
         }
 
         // 2. Polygon-based detection (sudah diurutkan dari area poligon terkecil ke terbesar):
@@ -1474,7 +1527,7 @@ impl MapEngine {
             });
             if hit {
                 if let Some(c) = self.countries.iter().find(|c| c.iso == f.iso) {
-                    return c.raw.clone();
+                    return self.build_country_result(c, wx, wy);
                 }
             }
         }
@@ -1495,7 +1548,7 @@ impl MapEngine {
                 };
                 let dy = mouse_y - screen_y;
                 if (dx * dx + dy * dy).sqrt() <= hit_threshold {
-                    return c.raw.clone();
+                    return self.build_country_result(c, wx, wy);
                 }
             }
         }

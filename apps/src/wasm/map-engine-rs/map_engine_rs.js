@@ -288,6 +288,10 @@ function __wbg_get_imports() {
         __wbg_addPath_f809650bb62cdb4e: function(arg0, arg1) {
             arg0.addPath(arg1);
         },
+        __wbg_assign_e39d243f5fbe1e2d: function(arg0, arg1) {
+            const ret = Object.assign(arg0, arg1);
+            return ret;
+        },
         __wbg_beginPath_8598d895c13f1c86: function(arg0) {
             arg0.beginPath();
         },
@@ -411,6 +415,16 @@ function __wbg_get_imports() {
             const ret = result;
             return ret;
         },
+        __wbg_instanceof_Object_67a83cdc00c5d141: function(arg0) {
+            let result;
+            try {
+                result = arg0 instanceof Object;
+            } catch (_) {
+                result = false;
+            }
+            const ret = result;
+            return ret;
+        },
         __wbg_instanceof_Uint8Array_828cef2aaacafc31: function(arg0) {
             let result;
             try {
@@ -467,6 +481,10 @@ function __wbg_get_imports() {
             const ret = new Error();
             return ret;
         },
+        __wbg_new_617a8cdb8bb1130e: function() {
+            const ret = new Object();
+            return ret;
+        },
         __wbg_new_a75d812182e1ebdf: function() { return handleError(function () {
             const ret = new Path2D();
             return ret;
@@ -510,6 +528,10 @@ function __wbg_get_imports() {
         }, arguments); },
         __wbg_setTransform_fa787a8f0adc1ade: function() { return handleError(function (arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
             arg0.setTransform(arg1, arg2, arg3, arg4, arg5, arg6);
+        }, arguments); },
+        __wbg_set_145a351398b48c65: function() { return handleError(function (arg0, arg1, arg2) {
+            const ret = Reflect.set(arg0, arg1, arg2);
+            return ret;
         }, arguments); },
         __wbg_set_bea140a88be9b277: function(arg0, arg1, arg2) {
             arg0[arg1 >>> 0] = arg2;
