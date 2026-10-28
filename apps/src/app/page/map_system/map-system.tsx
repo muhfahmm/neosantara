@@ -8013,26 +8013,7 @@ export default function MapPage() {
             >
                 {/* Upper Card */}
                 <div className="bg-[#0F2424]/90 backdrop-blur-md rounded-t-xl xl:rounded-t-2xl px-3.5 lg:px-4 xl:px-6 pt-3 lg:pt-4 xl:pt-5 pb-7 lg:pb-8 xl:pb-10 border-t border-x border-[#00FFAA]/30 flex flex-col relative overflow-hidden">
-                    <div className="flex items-center justify-between mb-2 xl:mb-3.5">
-                        {/* Settings gear inside container */}
-                        <div className="flex items-center gap-1.5 xl:gap-2">
-                            <div className="flex items-center justify-center w-6 h-6 xl:w-8 xl:h-8 rounded-md xl:rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/30 relative">
-                                <Settings
-                                    className="w-3.5 h-3.5 xl:w-4.5 xl:h-4.5 text-[#00FFAA]"
-                                    style={{ animation: 'spin 8s linear infinite' }}
-                                />
-                            </div>
-                            {/* Tombol Pengaturan Layer Batas Negara / Kota */}
-                            <button
-                                type="button"
-                                onClick={() => setIsPresidentMenuOpen(true)}
-                                title="Pengaturan Tampilan Batas Peta"
-                                className="flex items-center justify-center w-6 h-6 xl:w-8 xl:h-8 rounded-md xl:rounded-lg bg-[#0A1A1A] border border-[#00FFAA]/40 hover:bg-[#00FFAA]/20 hover:border-[#00FFAA] text-[#00FFAA] transition-all cursor-pointer shadow-[0_0_10px_rgba(0,255,170,0.2)]"
-                            >
-                                <Globe className="w-3.5 h-3.5 xl:w-4 xl:h-4" />
-                            </button>
-                        </div>
-
+                    <div className="flex items-center justify-end mb-2 xl:mb-3.5">
                         {/* Calendar date label */}
                         <div className="flex flex-col items-end leading-none">
                             <span className="text-[8px] xl:text-[9px] font-black text-[#6B8A8A] tracking-wider xl:tracking-widest uppercase mb-0.5 xl:mb-1">SIMULATION CALENDAR</span>
