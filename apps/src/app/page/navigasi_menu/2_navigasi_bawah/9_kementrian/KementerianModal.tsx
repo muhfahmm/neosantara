@@ -32,6 +32,8 @@ import { calculateCountryNetBalance, getDepartmentLevel } from "@/app/logic/econ
 import { CABINET_DEPARTMENT_IMAGES, LEVEL_UP_COST, MAX_CABINET_LEVEL } from "@/app/logic/economic_logic/departments";
 import { generateKabinetChangeNotification } from "@/app/page/menus/inbox/logic/13_notifikasi_kabinet/kabinetChangeLogic";
 import PilihMenteriModal, { type MinisterCandidateDepartment } from "./PilihMenteriModal";
+import GantiIbukotaModal from "./2_ganti_ibukota/GantiIbukotaModal";
+import { MapPin } from "lucide-react";
 import { applyReformasiBirokrasiToUpgradeCost } from "@/app/page/bonus_logic";
 import NotebookModalWrapper from "../NotebookModalWrapper";
 
@@ -41,6 +43,7 @@ interface ModalProps {
   countryDetail: any;
   setCountryDetail: (detail: any) => void;
   resetTrigger?: boolean;
+  currentDate?: Date | string;
 }
 
 interface Department {
@@ -327,8 +330,9 @@ const canAffordUpgrade = (
   return projectedNetBalance >= 0;
 };
 
-export default function KementerianModal({ isOpen, onClose, countryDetail, setCountryDetail, resetTrigger }: ModalProps) {
+export default function KementerianModal({ isOpen, onClose, countryDetail, setCountryDetail, resetTrigger, currentDate }: ModalProps) {
   const [mounted, setMounted] = useState(false);
+  const [isGantiIbukotaOpen, setIsGantiIbukotaOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>("kementerian");
   const [levels, setLevels] = useState<Record<string, number>>({});
   const [infoTarget, setInfoTarget] = useState<Department | null>(null);
@@ -364,6 +368,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
       setConfirmUpgrade(null);
       setConfirmDowngrade(null);
       setMinisterDepartment(null);
+      setIsGantiIbukotaOpen(false);
     }
   }, [resetTrigger]);
 
@@ -478,7 +483,8 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
   return createPortal(
     <>
       {/* ========== MODAL UTAMA ========== */}
-      <NotebookModalWrapper onClose={onClose}>
+      {!isGantiIbukotaOpen && (
+        <NotebookModalWrapper onClose={onClose}>
         <div className="flex flex-col h-full overflow-hidden">
           {/* Header */}
           <div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0">
@@ -500,6 +506,22 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
               </div>
               <div className="text-[11px] sm:text-xs font-bold text-[#00FFAA] bg-[#0F2424] px-3 py-1 rounded-lg border border-[#00FFAA]/20">
                 Kas: {money.toLocaleString("id-ID", { maximumFractionDigits: 2 })} NEO
+              </div>
+
+              {/* Badge Ibukota Saat Ini & Tombol Ubah Ibukota */}
+              <div className="flex items-center gap-1.5 bg-[#0F2424] px-2.5 py-1 rounded-lg border border-[#FFE600]/30 shadow-sm">
+                <span className="text-[10px] text-[#A2B7B2] font-semibold uppercase tracking-wider">Ibukota:</span>
+                <span className="text-[11px] sm:text-xs font-black text-[#FFE600] uppercase tracking-wide">
+                  {countryDetail?.capital || countryDetail?.ibukota || (typeof window !== "undefined" ? (window as any).neosantara_player_capital : null) || "Jakarta"}
+                </span>
+                <button
+                  onClick={() => setIsGantiIbukotaOpen(true)}
+                  className="ml-1 px-2 py-0.5 rounded-md bg-[#FFE600]/20 hover:bg-[#FFE600] text-[#FFE600] hover:text-[#0A1A1A] border border-[#FFE600]/40 transition-all font-bold text-[10px] uppercase tracking-wider flex items-center gap-1 cursor-pointer"
+                  title="Pindah / Ganti Ibukota Negara"
+                >
+                  <MapPin className="h-3 w-3" />
+                  <span>Ubah</span>
+                </button>
               </div>
             </div>
 
@@ -682,6 +704,7 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
           </div>
         </div>
       </NotebookModalWrapper>
+      )}
 
       {ministerDepartment && (
         <PilihMenteriModal
@@ -692,6 +715,15 @@ export default function KementerianModal({ isOpen, onClose, countryDetail, setCo
           onHire={(tier, cost) => hireMinister(ministerDepartment, tier, cost)}
         />
       )}
+
+      {/* ========== MODAL GANTI IBUKOTA ========== */}
+      <GantiIbukotaModal
+        isOpen={isGantiIbukotaOpen}
+        onClose={() => setIsGantiIbukotaOpen(false)}
+        countryDetail={countryDetail}
+        setCountryDetail={setCountryDetail}
+        currentDate={currentDate}
+      />
 
       {/* ========== GENERAL PANDUAN POPUP ========== */}
       {showGeneralInfo && (

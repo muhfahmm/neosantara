@@ -298,6 +298,9 @@ function getCapitalFlagsForCurrentTerritories(settingsOverride?: MapDisplaySetti
         ? {}
         : ((window as Window & { neosantara_annexed_countries?: AnnexedTerritories })
             .neosantara_annexed_countries || {});
+    const customCapitalName = typeof window !== 'undefined'
+        ? (window as Window & { neosantara_player_capital?: string }).neosantara_player_capital
+        : undefined;
     const normalizeKey = (value: unknown) =>
         String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
@@ -310,7 +313,28 @@ function getCapitalFlagsForCurrentTerritories(settingsOverride?: MapDisplaySetti
         citiesPool = citiesPool.concat(MAJOR_CITIES_DATA as typeof CAPITALS_DATA);
     }
 
-    return citiesPool.map(capital => {
+    // Cari nama negara asal dari customCapitalName (misal jika Baotou -> negara 'china')
+    let targetCountryKey: string | null = null;
+    if (customCapitalName) {
+        const found = citiesPool.find(c => normalizeKey(c.capital) === normalizeKey(customCapitalName));
+        if (found) {
+            targetCountryKey = normalizeKey(found.country);
+        }
+    }
+
+    return citiesPool.map(item => {
+        let capital = { ...item };
+        if (customCapitalName && targetCountryKey) {
+            if (normalizeKey(capital.country) === targetCountryKey) {
+                const isTargetCapital = normalizeKey(capital.capital) === normalizeKey(customCapitalName);
+                if (isTargetCapital) {
+                    capital = { ...capital, is_capital: true, is_major_city: false } as any;
+                } else {
+                    capital = { ...capital, is_capital: false, is_major_city: true } as any;
+                }
+            }
+        }
+
         const capitalKeys = new Set([
             normalizeKey(capital.country),
             normalizeKey(capital.iso),
@@ -1324,8 +1348,19 @@ export default function MapPage() {
             }
             wasmModuleRef.current?.set_capitals_on_map(getCapitalFlagsForCurrentTerritories());
         };
+        const handleCapitalChanged = (e: Event) => {
+            const newCap = (e as CustomEvent<{ newCapital?: string }>)?.detail?.newCapital;
+            if (newCap && typeof window !== 'undefined') {
+                (window as Window & { neosantara_player_capital?: string }).neosantara_player_capital = newCap;
+            }
+            wasmModuleRef.current?.set_capitals_on_map(getCapitalFlagsForCurrentTerritories());
+        };
         window.addEventListener('map_territory_color_updated', syncTerritoryColorOverrides);
-        return () => window.removeEventListener('map_territory_color_updated', syncTerritoryColorOverrides);
+        window.addEventListener('neosantara_capital_changed', handleCapitalChanged);
+        return () => {
+            window.removeEventListener('map_territory_color_updated', syncTerritoryColorOverrides);
+            window.removeEventListener('neosantara_capital_changed', handleCapitalChanged);
+        };
     }, []);
 
     // Listener custom event ketika pemain berhasil meminta negara sekutu menyerang negara target

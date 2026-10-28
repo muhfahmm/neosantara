@@ -90,6 +90,9 @@ export default function RelationsDataLoader({ children }: { children: React.Reac
         setEmbassyData(embassies);
         setTradeAgreementData(tradeAgreements);
         setBuildingMetadata(buildingMetadata);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('country_relations_updated'));
+        }
         if (isMounted) {
           setLoadError(null);
           setIsLoaded(true);

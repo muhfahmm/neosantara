@@ -24,6 +24,8 @@ struct CapitalData {
     iso: String,
     #[serde(default)]
     is_major_city: Option<bool>,
+    #[serde(default)]
+    is_capital: Option<bool>,
 }
 
 /// Cincin poligon yang sudah diproyeksikan + bounding box (koordinat dunia 0..width/height).
@@ -207,6 +209,7 @@ pub struct MapEngine {
     offset_x: f64,
     offset_y: f64,
     features: Vec<CachedFeature>,
+    feature_click_order: Vec<usize>,
     cached_fill_batches: Vec<FillBatch>,
     cached_outline_path: Option<Path2d>,
     cached_selected_path: Option<Path2d>,
@@ -256,6 +259,7 @@ impl MapEngine {
             offset_x: 0.0,
             offset_y: 0.0,
             features: Vec::new(),
+            feature_click_order: Vec::new(),
             cached_fill_batches: Vec::new(),
             cached_outline_path: Path2d::new().ok(),
             cached_selected_path: Path2d::new().ok(),
@@ -431,15 +435,20 @@ impl MapEngine {
                     .into(),
             );
         }
-        // Urutkan features berdasarkan luas bbox (terkecil dulu).
+        // Buat urutan prioritas klik berdasarkan luas bbox (terkecil dulu).
         // Hal ini sangat penting untuk enclave & microstates (seperti Vatikan & San Marino di dalam Italia,
         // Lesotho di dalam Afrika Selatan, Monako di Prancis) agar saat diklik, negara kecil yang ada di dalam
         // selalu terdeteksi lebih dulu sebelum poligon negara besar di luarnya!
-        out.sort_by(|a, b| {
+        // PENTING: self.features HARUS TETAP dalam urutan GeoJSON asli agar sinkron dengan set_feature_colors di JS!
+        let mut click_order: Vec<usize> = (0..out.len()).collect();
+        click_order.sort_by(|&i, &j| {
+            let a = &out[i];
+            let b = &out[j];
             let area_a = (a.bbox[2] - a.bbox[0]) * (a.bbox[3] - a.bbox[1]);
             let area_b = (b.bbox[2] - b.bbox[0]) * (b.bbox[3] - b.bbox[1]);
             area_a.partial_cmp(&area_b).unwrap_or(std::cmp::Ordering::Equal)
         });
+        self.feature_click_order = click_order;
         self.features = out;
         self.rebuild_feature_grid();
         self.rebuild_draw_batches();
@@ -725,7 +734,7 @@ impl MapEngine {
                     .capital_flags
                     .iter()
                     .position(|(i, _)| i == &flag_iso.to_lowercase());
-                let is_capital = !c.is_major_city.unwrap_or(false);
+                let is_capital = c.is_capital.unwrap_or_else(|| !c.is_major_city.unwrap_or(false));
                 CachedCapital {
                     name: c.capital,
                     x: ((c.lng + 180.0) / 360.0) * w,
@@ -1507,7 +1516,8 @@ impl MapEngine {
         // 2. Polygon-based detection (sudah diurutkan dari area poligon terkecil ke terbesar):
         // Lengkap dengan pengecekan Hole (interior ring): jika klik berada di dalam lubang poligon
         // (contohnya lubang Vatikan & San Marino di daratan Italia), maka Italia TIDAK akan mengklaim klik tersebut!
-        for f in &self.features {
+        for &f_idx in &self.feature_click_order {
+            let f = &self.features[f_idx];
             if f.bbox[0] > wx || f.bbox[2] < wx || f.bbox[1] > wy || f.bbox[3] < wy {
                 continue;
             }
