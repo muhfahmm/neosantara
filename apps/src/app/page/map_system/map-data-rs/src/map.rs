@@ -124,8 +124,6 @@ struct CachedCapital {
     owner_country: Option<String>,
     flag_iso: String,
     flag_idx: Option<usize>,
-    original_flag_iso: String,
-    original_flag_idx: Option<usize>,
     is_capital: bool,
 }
 
@@ -755,16 +753,7 @@ impl MapEngine {
 
         if let Some(document) = web_sys::window().and_then(|window| window.document()) {
             for capital in &parsed {
-                let flag_isos = [
-                    capital.iso.rsplit('-').next().unwrap_or(&capital.iso),
-                    capital
-                        .country_iso
-                        .as_deref()
-                        .unwrap_or(&capital.iso)
-                        .rsplit('-')
-                        .next()
-                        .unwrap_or(&capital.iso),
-                ];
+                let flag_isos = [capital.iso.rsplit('-').next().unwrap_or(&capital.iso)];
                 for iso in flag_isos {
                     let iso = iso.to_lowercase();
                     if iso.len() != 2
@@ -795,18 +784,6 @@ impl MapEngine {
                     .capital_flags
                     .iter()
                     .position(|(i, _)| i == &flag_iso.to_lowercase());
-                let original_flag_iso = c
-                    .country_iso
-                    .as_deref()
-                    .unwrap_or(&c.iso)
-                    .rsplit('-')
-                    .next()
-                    .unwrap_or(&c.iso)
-                    .to_string();
-                let original_flag_idx = self
-                    .capital_flags
-                    .iter()
-                    .position(|(i, _)| i == &original_flag_iso.to_lowercase());
                 let is_capital = c.is_capital.unwrap_or_else(|| !c.is_major_city.unwrap_or(false));
                 let country_iso = c
                     .country_iso
@@ -825,8 +802,6 @@ impl MapEngine {
                     owner_country: c.owner_country,
                     flag_iso,
                     flag_idx,
-                    original_flag_iso,
-                    original_flag_idx,
                     is_capital,
                 }
             })
@@ -950,35 +925,6 @@ impl MapEngine {
                 .flag_idx
                 .and_then(|index| self.capital_flags.get(index))
                 .map(|(_, image)| image);
-            if capital.owner_country.is_some()
-                && capital.original_flag_iso.to_lowercase() != capital.flag_iso.to_lowercase()
-            {
-                let original_image = capital
-                    .original_flag_idx
-                    .and_then(|index| self.capital_flags.get(index))
-                    .map(|(_, image)| image);
-                Self::draw_capital_flag_on_context(
-                    &context,
-                    &self.styles,
-                    original_image,
-                    &capital.original_flag_iso,
-                    capital.x - 8.0,
-                    capital.y,
-                    1.0,
-                    false,
-                );
-                Self::draw_capital_flag_on_context(
-                    &context,
-                    &self.styles,
-                    image,
-                    &capital.flag_iso,
-                    capital.x + 8.0,
-                    capital.y,
-                    1.0,
-                    false,
-                );
-                continue;
-            }
             Self::draw_capital_flag_on_context(
                 &context,
                 &self.styles,
@@ -1519,30 +1465,7 @@ impl MapEngine {
                 .flag_idx
                 .and_then(|i| self.capital_flags.get(i))
                 .map(|(_, img)| img);
-            if cap.owner_country.is_some()
-                && cap.original_flag_iso.to_lowercase() != cap.flag_iso.to_lowercase()
-            {
-                let original_image = cap
-                    .original_flag_idx
-                    .and_then(|i| self.capital_flags.get(i))
-                    .map(|(_, img)| img);
-                self.draw_capital_flag(
-                    original_image,
-                    &cap.original_flag_iso,
-                    cap.x - 8.0 / self.scale,
-                    cap.y,
-                    animating,
-                );
-                self.draw_capital_flag(
-                    image,
-                    &cap.flag_iso,
-                    cap.x + 8.0 / self.scale,
-                    cap.y,
-                    animating,
-                );
-            } else {
-                self.draw_capital_flag(image, &cap.flag_iso, cap.x, cap.y, animating);
-            }
+            self.draw_capital_flag(image, &cap.flag_iso, cap.x, cap.y, animating);
         }
 
         // Label hanya saat zoom cukup; jangan gambar label jika kamera sedang berinterpolasi cepat
@@ -1590,11 +1513,7 @@ impl MapEngine {
                 {
                     continue;
                 }
-                let label = capital
-                    .owner_country
-                    .as_deref()
-                    .map(|owner| format!("{} · {}", capital.name, owner))
-                    .unwrap_or_else(|| capital.name.clone());
+                let label = &capital.name;
                 if capital.owner_country.is_some() {
                     self.ctx.set_fill_style(&JsValue::from_str("#00C853"));
                 } else if pass_capital {
@@ -1620,11 +1539,7 @@ impl MapEngine {
 
         for capital_index in indices {
             let capital = &self.capitals[capital_index];
-            let label = capital
-                .owner_country
-                .as_deref()
-                .map(|owner| format!("{} · {}", capital.name, owner))
-                .unwrap_or_else(|| capital.name.clone());
+            let label = &capital.name;
             let text_width = font_size * label.len() as f64 * 0.5;
             let positions = [
                 (capital.x + 9.0 / scale, capital.y + 3.0 / scale),

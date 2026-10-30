@@ -194,6 +194,33 @@ export function CountryDetailModal({
   }, []);
 
   useEffect(() => {
+    const handleMilitaryOperationResolved = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        targetCountry?: string;
+        actionType?: 'aneksasi' | 'jarah';
+      }>).detail;
+      if (
+        !detail?.targetCountry ||
+        (detail.actionType !== 'aneksasi' && detail.actionType !== 'jarah') ||
+        normalizeCountryKey(detail.targetCountry) !== normalizeCountryKey(countryName)
+      ) {
+        return;
+      }
+
+      const actionDateKey = `${normalizeCountryKey(countryName)}:serang`;
+      setMilitaryActionDates(previous => {
+        if (!(actionDateKey in previous)) return previous;
+        const next = { ...previous };
+        delete next[actionDateKey];
+        return next;
+      });
+    };
+
+    window.addEventListener('military_operation_resolved', handleMilitaryOperationResolved);
+    return () => window.removeEventListener('military_operation_resolved', handleMilitaryOperationResolved);
+  }, [countryName]);
+
+  useEffect(() => {
     const refreshAnnexation = (event: Event) => {
       const detail = (event as CustomEvent<{
         attackerCountry?: string;

@@ -494,9 +494,14 @@ function getCapitalFlagsForCurrentTerritories(settingsOverride?: MapDisplaySetti
         };
         const cityOwner = cityOwners[getCityOwnerId(capital.iso, capital.capital)];
         if (cityOwner) {
+            const canonicalOwnerIso = COUNTRIES_DATA.find(country =>
+                normalizeKey(country.country) === normalizeKey(cityOwner.ownerCountry)
+            )?.iso;
+            const ownerIso = canonicalOwnerIso ||
+                (cityOwner.ownerIso.length === 2 ? cityOwner.ownerIso : capital.iso);
             capital = {
                 ...capital,
-                iso: cityOwner.ownerIso,
+                iso: ownerIso.toLowerCase(),
                 owner_country: cityOwner.ownerCountry,
             };
         }
@@ -2114,6 +2119,12 @@ export default function MapPage() {
                     isRead: false
                 };
                 setNotifications(prev => [notifMsg, ...prev]);
+            }
+
+            if (actionType === 'aneksasi' || actionType === 'jarah') {
+                window.dispatchEvent(new CustomEvent('military_operation_resolved', {
+                    detail: { targetCountry, actionType },
+                }));
             }
 
             // Tambahkan ke Berita & Update Geopolitik
@@ -8287,9 +8298,7 @@ export default function MapPage() {
                                 return;
                             }
 
-                            if (mappedAction !== 'aneksasi') {
-                                setMilitaryAttackRelation(activeWarAnimation.attacker, activeWarAnimation.target, 25);
-                            }
+                            setMilitaryAttackRelation(activeWarAnimation.attacker, activeWarAnimation.target, 25);
 
                             window.dispatchEvent(
                                 new CustomEvent('trigger_player_attack', {
