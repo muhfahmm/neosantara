@@ -29,11 +29,16 @@ export function generateAnnexationNews(
   attackerColor: string,
   targetCountry: string,
   targetIso: string,
-  dateStr: string
+  dateStr: string,
+  targetCityName?: string
 ): { news: AnnexationNewsData; mapPayload: MapStateUpdatePayload } {
   const timestamp = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-  const headline = `🚩 ANEKSASI WILAYAH: ${targetCountry} Sepenuhnya Jatuh ke Tangan ${attackerCountry}!`;
-  const content = `Kemenangan mutlak! Pertahanan ${targetCountry} telah runtuh total. Militer ${attackerCountry} mengumumkan penguasaan penuh atas seluruh kedaulatan wilayah ${targetCountry}. Peta politik dunia resmi berubah seiring terintegrasinya wilayah target ke dalam kekuasaan ${attackerCountry}!
+  const headline = targetCityName
+    ? `🚩 ANEKSASI KOTA: ${targetCityName} di ${targetCountry} Jatuh ke Tangan ${attackerCountry}!`
+    : `🚩 ANEKSASI WILAYAH: ${targetCountry} Sepenuhnya Jatuh ke Tangan ${attackerCountry}!`;
+  const content = targetCityName
+    ? `Pasukan ${attackerCountry} memenangkan pertempuran dan menguasai Kota ${targetCityName} di ${targetCountry}. Kota tersebut kini berada di bawah kendali ${attackerCountry}; kota lain di ${targetCountry} tetap berada di bawah pemiliknya masing-masing.`
+    : `Kemenangan mutlak! Pertahanan ${targetCountry} telah runtuh total. Militer ${attackerCountry} mengumumkan penguasaan penuh atas seluruh kedaulatan wilayah ${targetCountry}. Peta politik dunia resmi berubah seiring terintegrasinya wilayah target ke dalam kekuasaan ${attackerCountry}!
 
 ⚠️ Peta Diperbarui: Warna wilayah ${targetCountry} telah disesuaikan dengan warna ${attackerCountry}! Refresh halaman untuk melihat perubahan visual di peta.`;
 

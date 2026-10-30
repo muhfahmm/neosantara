@@ -1,13 +1,28 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown, Coins, ArrowUp, Swords, X } from "lucide-react";
-import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
+import { CAPITALS_DATA, COUNTRIES_DATA } from "@/app/page/map_system/map-data";
+import MAJOR_CITIES_DATA from "@/app/page/map_system/major_cities.json";
+
+type AttackTargetCity = {
+	cityId: string;
+	name: string;
+	isCapital: boolean;
+};
+
+type CityMapEntry = {
+	country: string;
+	capital: string;
+	iso: string;
+	is_major_city?: boolean;
+	is_capital?: boolean;
+};
 
 interface MintaSerangNegaraModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
 	onClose: () => void;
-	onConfirm: (targetCountryName: string, paymentAmount: number) => void;
+	onConfirm: (targetCountryName: string, targetCity: AttackTargetCity, paymentAmount: number) => void;
 }
 
 export default function MintaSerangNegaraModal({
@@ -17,6 +32,7 @@ export default function MintaSerangNegaraModal({
 	onConfirm,
 }: MintaSerangNegaraModalProps) {
 	const [selectedCountry, setSelectedCountry] = useState<string>("");
+	const [selectedCityId, setSelectedCityId] = useState<string>("");
 	const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 	const [paymentAmount, setPaymentAmount] = useState<number>(0);
 	const dropdownRef = useRef<HTMLDivElement>(null);
@@ -43,6 +59,40 @@ export default function MintaSerangNegaraModal({
 			.sort((a, b) => a.country.localeCompare(b.country, "id"));
 	}, [countryName]);
 
+	const targetCities = useMemo(() => {
+		if (!selectedCountry) return [];
+
+		const cityOwners = (typeof window !== 'undefined' ? (window as Window & {
+			neosantara_city_owner?: Record<string, { ownerCountry?: string }>;
+		}).neosantara_city_owner : {}) || {};
+		const normalizeKey = (value: unknown) => String(value || '')
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '')
+			.toLowerCase()
+			.replace(/[^a-z0-9]/g, '');
+		const cities = [
+			...(CAPITALS_DATA as CityMapEntry[]),
+			...(MAJOR_CITIES_DATA as CityMapEntry[]),
+		];
+		const seen = new Set<string>();
+
+		return cities
+			.filter(city => {
+				if (!city.iso || !city.capital) return false;
+				const cityId = `${city.iso.toLowerCase()}:${normalizeKey(city.capital)}`;
+				if (seen.has(cityId)) return false;
+				seen.add(cityId);
+				const currentOwner = cityOwners[cityId]?.ownerCountry || city.country;
+				return normalizeKey(currentOwner) === normalizeKey(selectedCountry);
+			})
+			.map(city => ({
+				cityId: `${city.iso.toLowerCase()}:${normalizeKey(city.capital)}`,
+				name: city.capital,
+				isCapital: Boolean(city.is_capital ?? !city.is_major_city),
+			}))
+			.sort((a, b) => Number(b.isCapital) - Number(a.isCapital) || a.name.localeCompare(b.name, 'id'));
+	}, [selectedCountry]);
+
 	// Inisialisasi pilihan default saat modal dibuka & reset jika negara terpilih sudah dianeksasi
 	useEffect(() => {
 		if (isOpen) {
@@ -53,10 +103,17 @@ export default function MintaSerangNegaraModal({
 			} else {
 				setSelectedCountry("");
 			}
+			setSelectedCityId("");
 			setPaymentAmount(0);
 			setIsDropdownOpen(false);
 		}
 	}, [isOpen, countryList]);
+
+	useEffect(() => {
+		if (!targetCities.some(city => city.cityId === selectedCityId)) {
+			setSelectedCityId(targetCities[0]?.cityId || "");
+		}
+	}, [targetCities, selectedCityId]);
 
 	// Close dropdown when clicking outside
 	useEffect(() => {
@@ -214,6 +271,28 @@ export default function MintaSerangNegaraModal({
 						</div>
 					</div>
 
+					{/* Kota target dipilih dari kota-kota yang saat ini dimiliki negara sasaran */}
+					<div className="shrink-0">
+						<label htmlFor="requested-invasion-target-city" className="block text-[10px] sm:text-xs font-black text-[#00FFAA] uppercase tracking-wider mb-2">
+							Kota yang Diserang
+						</label>
+						<select
+							id="requested-invasion-target-city"
+							value={selectedCityId}
+							onChange={event => setSelectedCityId(event.target.value)}
+							disabled={targetCities.length === 0}
+							className="w-full h-11 bg-[#0A1A1A] border border-[#00FFAA]/40 rounded-xl px-3 text-white font-bold text-xs sm:text-sm disabled:opacity-50"
+						>
+							{targetCities.length === 0
+								? <option value="">Tidak ada data kota untuk negara ini</option>
+								: targetCities.map(city => (
+									<option key={city.cityId} value={city.cityId}>
+										{city.name}{city.isCapital ? ' (Ibu kota)' : ''}
+									</option>
+								))}
+						</select>
+					</div>
+
 					{/* Success Rate Bar */}
 					<div className="bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-xl p-3 sm:p-4 shrink-0">
 						<div className="flex items-center justify-between text-xs font-black text-[#6B8A8A] uppercase tracking-wider mb-2.5">
@@ -249,15 +328,16 @@ export default function MintaSerangNegaraModal({
 						</button>
 						<button
 							type="button"
-							disabled={!selectedCountry}
+							disabled={!selectedCountry || !targetCities.length || !selectedCityId}
 							onClick={() => {
-								if (selectedCountry) {
-									onConfirm(selectedCountry, paymentAmount);
+								const targetCity = targetCities.find(city => city.cityId === selectedCityId);
+								if (selectedCountry && targetCity) {
+									onConfirm(selectedCountry, targetCity, paymentAmount);
 									onClose();
 								}
 							}}
 							className={`px-6 py-3 rounded-xl text-center font-black text-xs tracking-wider uppercase transition-all shadow-md ${
-								selectedCountry
+								selectedCountry && targetCities.length > 0 && selectedCityId
 									? "bg-[#00FFAA] hover:bg-[#00e699] text-[#0A1A1A] border border-[#00FFAA] cursor-pointer"
 									: "bg-gray-700 text-gray-400 border border-gray-600 cursor-not-allowed opacity-50"
 							}`}

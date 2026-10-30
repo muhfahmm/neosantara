@@ -1626,7 +1626,7 @@ export default function MapPage() {
             const detail = (e as CustomEvent)?.detail;
             if (!detail) return;
 
-            const { attackerCountry, targetCountry, amount } = detail;
+            const { attackerCountry, targetCountry, targetCityId, targetCityName, amount } = detail;
 
             const year = currentDate.getFullYear();
             const month = String(currentDate.getMonth() + 1).padStart(2, '0');
@@ -1647,7 +1647,45 @@ export default function MapPage() {
             }
             const attackerIso = getIsoForCountryName(attackerCountry) || 'un';
             const targetIso = getIsoForCountryName(targetCountry) || 'un';
-            const requestedTargetCity = resolveWarTargetCity(targetCountry, undefined, undefined, true);
+            if (typeof targetCityId !== 'string' || typeof targetCityName !== 'string') {
+                console.error('[RequestedInvasion] Target city was not provided.', detail);
+                setNotifications(prev => [{
+                    id: `notif-requested-invasion-no-city-${Date.now()}`,
+                    title: '📍 KOTA TARGET BELUM DIPILIH',
+                    sender: 'Kementerian Pertahanan',
+                    message: `Permintaan serangan ${attackerCountry} terhadap ${targetCountry} dibatalkan karena kota target belum dipilih.`,
+                    timestamp: dateStr,
+                    type: 'peringkat',
+                    value: 0,
+                    isRead: false,
+                }, ...prev]);
+                return;
+            }
+            const requestedTargetCity = resolveWarTargetCity(
+                targetCountry,
+                targetCityId,
+                targetCityName
+            );
+            if (!requestedTargetCity || requestedTargetCity.cityId !== targetCityId) {
+                console.error('[RequestedInvasion] Selected target city is unavailable for the selected country.', {
+                    attackerCountry,
+                    targetCountry,
+                    targetCityId,
+                    targetCityName,
+                    resolvedCityId: requestedTargetCity?.cityId,
+                });
+                setNotifications(prev => [{
+                    id: `notif-requested-invasion-invalid-city-${Date.now()}`,
+                    title: '📍 KOTA TARGET TIDAK VALID',
+                    sender: 'Kementerian Pertahanan',
+                    message: `Serangan ${attackerCountry} terhadap ${targetCountry} dibatalkan karena ${targetCityName} sudah tidak dimiliki negara target atau tidak tersedia pada data peta. Pilih kota target yang masih valid.`,
+                    timestamp: dateStr,
+                    type: 'peringkat',
+                    value: 0,
+                    isRead: false,
+                }, ...prev]);
+                return;
+            }
 
             const paymentAmount = Math.max(0, Number(amount) || 0);
             const acceptanceChance = Math.min(100, Math.floor((paymentAmount / 100000) * 100));
@@ -1694,6 +1732,7 @@ export default function MapPage() {
                     targetCountry,
                     selectedCountry?.country || countryDetail?.country || ''
                 ),
+                requestedInvasion: true,
                 targetCityId: requestedTargetCity?.cityId,
                 targetCityName: requestedTargetCity?.cityName,
                 targetCityLat: requestedTargetCity?.lat,
@@ -2422,6 +2461,7 @@ export default function MapPage() {
         targetCityCountryIso?: string;
         targetCityIsCapital?: boolean;
         isNpcWar?: boolean;
+        requestedInvasion?: boolean;
         isPbbCoalition?: boolean;
         isPlayerCoalitionProposer?: boolean;
         resolutionViolationAuthorized?: boolean;
@@ -8162,6 +8202,18 @@ export default function MapPage() {
                                 getCountryColor(activeWarAnimation.attacker),
                                 activeWarAnimation.isPbbCoalition === true
                             );
+                            if (activeWarAnimation.requestedInvasion === true) {
+                                const { news } = generateAnnexationNews(
+                                    activeWarAnimation.attacker,
+                                    getIsoForCountryName(activeWarAnimation.attacker) || 'un',
+                                    getCountryColor(activeWarAnimation.attacker),
+                                    activeWarAnimation.target,
+                                    getIsoForCountryName(activeWarAnimation.target) || 'un',
+                                    currentDate.toISOString().slice(0, 10),
+                                    targetCity.cityName
+                                );
+                                setNewsList(previous => [news, ...previous]);
+                            }
                         }}
                         onClose={() => {
                             setIsWarAnalysisActive(false);

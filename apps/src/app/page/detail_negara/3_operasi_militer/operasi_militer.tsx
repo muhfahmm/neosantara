@@ -201,7 +201,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         isOpen={isMintaSerangOpen} 
         countryName={countryName} 
         onClose={() => setIsMintaSerangOpen(false)} 
-        onConfirm={(selectedTargetCountry, amount) => { 
+        onConfirm={(selectedTargetCountry, targetCity, amount) => {
           setIsMintaSerangOpen(false);
           if (onCloseDetailModal) onCloseDetailModal();
           if (typeof window !== 'undefined') {
@@ -210,6 +210,8 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
                 detail: {
                   attackerCountry: countryName,       // Negara yang diminta menyerang (Rusia)
                   targetCountry: selectedTargetCountry, // Negara target sasaran yang dipilih di dropdown (Afganistan)
+                  targetCityId: targetCity.cityId,
+                  targetCityName: targetCity.name,
                   amount
                 }
               })
