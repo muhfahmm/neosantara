@@ -1566,6 +1566,34 @@ export default function MapPage() {
         }));
 
         if (countryCollapsed) {
+            // Ketika seluruh negara atau ibukota jatuh, seluruh kota target dialihkan kepemilikannya ke penakluk
+            const allTargetCities = getMapCities().filter(candidate =>
+                normalizeMapKey(candidate.country) === normalizeMapKey(targetCountry) ||
+                normalizeMapKey(getCurrentCityOwner(candidate)) === normalizeMapKey(targetCountry)
+            );
+            allTargetCities.forEach(c => {
+                const cId = getCityOwnerId(c.iso, c.capital);
+                const isCap = (CAPITALS_DATA as MapCity[]).some(capital =>
+                    normalizeMapKey(capital.country) === normalizeMapKey(targetCountry) &&
+                    getCityOwnerId(capital.iso, capital.capital) === cId
+                );
+                nextOwners[cId] = {
+                    cityId: cId,
+                    cityName: c.capital,
+                    countryIso: c.iso.toLowerCase(),
+                    ownerCountry: attackerCountry,
+                    ownerIso: attackerIso.toLowerCase(),
+                    ownerColor: effectiveCityColor,
+                    lat: c.lat,
+                    lng: c.lng,
+                    isCapital: isCap,
+                    cell: computeCityRegionCell({ cityId: cId, countryIso: c.iso, lat: c.lat, lng: c.lng }),
+                };
+            });
+            (window as Window & { neosantara_city_owner?: CityOwnerStore }).neosantara_city_owner = nextOwners;
+            wasmModuleRef.current?.set_capitals_on_map(getCapitalFlagsForCurrentTerritories());
+            wasmModuleRef.current?.set_city_ownership_on_map(Object.values(nextOwners));
+
             const targetIso = COUNTRIES_DATA.find(country =>
                 normalizeMapKey(country.country) === normalizeMapKey(targetCountry)
             )?.iso || city.countryIso;
@@ -6859,7 +6887,21 @@ export default function MapPage() {
                     originalCountry,
                 });
                 if (originalCountry && normalizeMapKey(originalCountry) !== normalizeMapKey(capturedCity.ownerCountry)) {
-                    setCountryDetailModalName(originalCountry);
+                    // Cek apakah seluruh negara target telah dianeksasi
+                    const annexedStore = (window as Window & { neosantara_annexed_countries?: Record<string, any> })
+                        ?.neosantara_annexed_countries || {};
+                    const isEntireCountryAnnexed = Boolean(
+                        annexedStore[originalCountry] ||
+                        annexedStore[originalCountry.toLowerCase().trim()] ||
+                        annexedStore[capturedCity.countryIso.toLowerCase()]
+                    );
+
+                    // Jika negara telah teraneksasi sepenuhnya, buka langsung atas nama negara penguasa penakluk!
+                    const modalTargetCountry = isEntireCountryAnnexed
+                        ? capturedCity.ownerCountry
+                        : originalCountry;
+
+                    setCountryDetailModalName(modalTargetCountry);
                     setCountryDetailModalCity(capturedCity.cityName);
                     setCountryDetailModalCityId(capturedCity.cityId);
                     setAiConstructionNavigation(null);

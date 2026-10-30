@@ -1366,9 +1366,6 @@ impl MapEngine {
                             }
                             self.ctx.close_path();
                             self.ctx.fill();
-                            self.ctx.set_stroke_style(&JsValue::from_str("#d6ffe5"));
-                            self.ctx.set_line_width((1.2 / self.scale).max(0.5));
-                            self.ctx.stroke();
                         } else if self.ctx
                             .ellipse(
                                 city.x,
@@ -1382,10 +1379,6 @@ impl MapEngine {
                             .is_ok()
                         {
                             self.ctx.fill();
-                            self.ctx
-                                .set_stroke_style(&JsValue::from_str("#d6ffe5"));
-                            self.ctx.set_line_width((1.2 / self.scale).max(0.5));
-                            self.ctx.stroke();
                         }
                         self.ctx.restore();
                     }

@@ -607,7 +607,7 @@ export function CountryDetailModal({
 
   const displayCountryName = isPlayerOccupiedProvince
     ? (cityOwnerInfo && selectedCity ? `Provinsi ${selectedCity}` : `Provinsi ${countryName}`)
-    : countryName;
+    : (annexedInfo?.attackerCountry || countryName);
 
   // Wilayah tetap menggunakan nama dan ibukota aslinya, tetapi memakai bendera penguasa.
   const originalIso = mapData?.iso || detailData?.iso || "";
@@ -683,7 +683,6 @@ export function CountryDetailModal({
 
               <div className="flex items-center gap-2 mt-1">
                 {renderFlagHeader(displayIso, displayCountryName)}
-                {annexedInfo && renderFlagHeader(originalIso, countryName)}
 
                 {/* 👈 TAMBAHKAN BENDERA PBB DI SINI */}
                 {annexedInfo?.isPbbOccupied && (
