@@ -557,6 +557,7 @@ export interface WarResultInput {
   attackerBonus?: number;
   defenderBonus?: number;
   isUserDefender?: boolean;
+  isNpcWar?: boolean;
 }
 
 export interface WarResultOutput {
@@ -610,10 +611,11 @@ function calculateUnitLosses(units: WarUnit[], lossRatio: number) {
 }
 
 export function computeWarResult(input: WarResultInput): WarResultOutput {
-  const { attackerPower, targetPower, isUserDefender = false } = input;
+  const { attackerPower, targetPower, isUserDefender = false, isNpcWar = false } = input;
 
   let deployedPowerRatio = 1.0;
-  if (typeof window !== 'undefined') {
+  // Perang antar NPC/mandat tidak boleh dipengaruhi konfigurasi pasukan milik user.
+  if (!isNpcWar && typeof window !== 'undefined') {
     try {
       const saved = localStorage.getItem('deployed_units_config');
       if (saved) {
@@ -823,9 +825,10 @@ export default function WarMap({
       attackerBonus,
       defenderBonus,
       isUserDefender,
+      isNpcWar: isNpcWar && !isPbbCoalition,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, attackerPower, targetPower, attackerBonus, defenderBonus, isUserDefender]);
+  }, [isOpen, attackerPower, targetPower, attackerBonus, defenderBonus, isUserDefender, isNpcWar, isPbbCoalition]);
 
   const deploymentConfig = useMemo(() => {
     if (typeof window === 'undefined') return {};

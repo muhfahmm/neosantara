@@ -605,9 +605,9 @@ export function CountryDetailModal({
   if (!isOpen || !countryName) return null;
   if (typeof document === "undefined") return null;
 
-  const displayCountryName = cityOwnerInfo && selectedCity
-    ? `Provinsi ${selectedCity}`
-    : annexedInfo ? `Provinsi ${countryName}` : countryName;
+  const displayCountryName = isPlayerOccupiedProvince
+    ? (cityOwnerInfo && selectedCity ? `Provinsi ${selectedCity}` : `Provinsi ${countryName}`)
+    : countryName;
 
   // Wilayah tetap menggunakan nama dan ibukota aslinya, tetapi memakai bendera penguasa.
   const originalIso = mapData?.iso || detailData?.iso || "";

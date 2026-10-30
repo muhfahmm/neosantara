@@ -1,6 +1,7 @@
 export interface ResourceLootNewsData {
   id: string;
   type: 'pengambilan_sda';
+  category: 'operasi_militer';
   countryName?: string;
   attackerCountry: string;
   attackerIso: string;
@@ -52,6 +53,7 @@ export function generateResourceLootNews(
   return {
     id: `news-loot-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
     type: 'pengambilan_sda',
+    category: 'operasi_militer',
     attackerCountry,
     attackerIso,
     targetCountry,

@@ -1353,39 +1353,42 @@ impl MapEngine {
                     let Some(country_path) = feature.get_path(detail_level) else {
                         continue;
                     };
-                    self.ctx.save();
-                    self.ctx.clip_with_path_2d(&country_path);
-                    self.ctx.set_fill_style(&city.color);
-                    self.ctx.begin_path();
-                    if !city.cell.is_empty() {
-                        self.ctx.move_to(city.cell[0].0, city.cell[0].1);
-                        for p in &city.cell[1..] {
-                            self.ctx.line_to(p.0, p.1);
+                    let is_transparent = city.color.as_string().map_or(false, |c| c == "transparent" || c == "rgba(0, 0, 0, 0)" || c == "none");
+                    if !is_transparent {
+                        self.ctx.save();
+                        self.ctx.clip_with_path_2d(&country_path);
+                        self.ctx.set_fill_style(&city.color);
+                        self.ctx.begin_path();
+                        if !city.cell.is_empty() {
+                            self.ctx.move_to(city.cell[0].0, city.cell[0].1);
+                            for p in &city.cell[1..] {
+                                self.ctx.line_to(p.0, p.1);
+                            }
+                            self.ctx.close_path();
+                            self.ctx.fill();
+                            self.ctx.set_stroke_style(&JsValue::from_str("#d6ffe5"));
+                            self.ctx.set_line_width((1.2 / self.scale).max(0.5));
+                            self.ctx.stroke();
+                        } else if self.ctx
+                            .ellipse(
+                                city.x,
+                                city.y,
+                                city.radius_x,
+                                city.radius_y,
+                                0.0,
+                                0.0,
+                                std::f64::consts::TAU,
+                            )
+                            .is_ok()
+                        {
+                            self.ctx.fill();
+                            self.ctx
+                                .set_stroke_style(&JsValue::from_str("#d6ffe5"));
+                            self.ctx.set_line_width((1.2 / self.scale).max(0.5));
+                            self.ctx.stroke();
                         }
-                        self.ctx.close_path();
-                        self.ctx.fill();
-                        self.ctx.set_stroke_style(&JsValue::from_str("#d6ffe5"));
-                        self.ctx.set_line_width((1.2 / self.scale).max(0.5));
-                        self.ctx.stroke();
-                    } else if self.ctx
-                        .ellipse(
-                            city.x,
-                            city.y,
-                            city.radius_x,
-                            city.radius_y,
-                            0.0,
-                            0.0,
-                            std::f64::consts::TAU,
-                        )
-                        .is_ok()
-                    {
-                        self.ctx.fill();
-                        self.ctx
-                            .set_stroke_style(&JsValue::from_str("#d6ffe5"));
-                        self.ctx.set_line_width((1.2 / self.scale).max(0.5));
-                        self.ctx.stroke();
+                        self.ctx.restore();
                     }
-                    self.ctx.restore();
                 }
             }
 

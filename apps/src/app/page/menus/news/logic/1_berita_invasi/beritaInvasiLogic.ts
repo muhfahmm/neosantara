@@ -35,6 +35,7 @@ export function getCountryColor(countryName: string): string {
 export interface InvasionNewsData {
   id: string;
   type: 'invasi';
+  category: 'operasi_militer';
   countryName?: string;
   attackerCountry: string;
   attackerIso: string;
@@ -63,6 +64,7 @@ export function generateInvasionNews(
   return {
     id: `news-invasi-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
     type: 'invasi',
+    category: 'operasi_militer',
     attackerCountry,
     attackerIso,
     targetCountry,

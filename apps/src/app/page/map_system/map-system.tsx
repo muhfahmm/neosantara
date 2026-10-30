@@ -1354,7 +1354,8 @@ export default function MapPage() {
         attackerCountry: string,
         attackerIso: string,
         attackerColor: string,
-        isPbbOccupied: boolean = false
+        isPbbOccupied: boolean = false,
+        skipColorOverride: boolean = false
     ) => {
         const annexationInfo = { attackerCountry, attackerIso, isPbbOccupied };
         const targetNorm = targetCountry.toLowerCase().trim();
@@ -1369,13 +1370,15 @@ export default function MapPage() {
             targetIsoNorm,
             `iso_${targetIsoNorm}`
         ]);
-        const overrideUpdates: Record<string, string> = {
-            [targetCountry]: attackerColor,
-            [targetNorm]: attackerColor,
-            [targetIsoNorm]: attackerColor,
-            [`iso_${targetIsoNorm}`]: attackerColor
-        };
-        if (targetNorm === 'mongolia') {
+        const overrideUpdates: Record<string, string> = skipColorOverride
+            ? {}
+            : {
+                [targetCountry]: attackerColor,
+                [targetNorm]: attackerColor,
+                [targetIsoNorm]: attackerColor,
+                [`iso_${targetIsoNorm}`]: attackerColor
+            };
+        if (!skipColorOverride && targetNorm === 'mongolia') {
             overrideUpdates.mongolia = attackerColor;
             overrideUpdates.mn = attackerColor;
             overrideUpdates.iso_mn = attackerColor;
@@ -1510,7 +1513,8 @@ export default function MapPage() {
         attackerCountry: string,
         attackerIso: string,
         attackerColor: string,
-        isPbbOccupied = false
+        isPbbOccupied = false,
+        skipCanvasColor = false
     ) => {
         if (typeof window === 'undefined' || !city.cityId) {
             console.error('[CityAnnexation] Cannot record city ownership without a browser and city ID.', city);
@@ -1523,6 +1527,7 @@ export default function MapPage() {
         const targetCitiesBeforeCapture = getMapCities().filter(candidate =>
             normalizeMapKey(getCurrentCityOwner(candidate)) === normalizeMapKey(targetCountry)
         );
+        const effectiveCityColor = skipCanvasColor ? 'transparent' : attackerColor;
         const nextOwners: CityOwnerStore = {
             ...previousOwners,
             [city.cityId]: {
@@ -1530,7 +1535,7 @@ export default function MapPage() {
                 cell: computeCityRegionCell(city),
                 ownerCountry: attackerCountry,
                 ownerIso: attackerIso.toLowerCase(),
-                ownerColor: attackerColor,
+                ownerColor: effectiveCityColor,
             },
         };
         (window as Window & { neosantara_city_owner?: CityOwnerStore }).neosantara_city_owner = nextOwners;
@@ -1570,7 +1575,8 @@ export default function MapPage() {
                 attackerCountry,
                 attackerIso,
                 attackerColor,
-                isPbbOccupied
+                isPbbOccupied,
+                skipCanvasColor
             );
         }
 
@@ -8184,7 +8190,21 @@ export default function MapPage() {
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
                         onAnalysisVisibilityChange={handleWarAnalysisVisibilityChange}
                         onAutoResolve={result => {
-                            if (result !== 'win') return;
+                            if (result !== 'win') {
+                                if (activeWarAnimation.requestedInvasion === true) {
+                                    setNotifications(prev => [{
+                                        id: `notif-req-inv-fail-${Date.now()}`,
+                                        title: '❌ MANDAT SERANGAN GAGAL',
+                                        sender: `Komando Tinggi ${activeWarAnimation.attacker}`,
+                                        message: `Pasukan ${activeWarAnimation.attacker} gagal menembus pertahanan ${activeWarAnimation.target}. Tidak ada aneksasi maupun penjarahan.`,
+                                        timestamp: currentDate.toISOString().slice(0, 10),
+                                        type: 'peringkat',
+                                        value: 0,
+                                        isRead: false
+                                    }, ...prev]);
+                                }
+                                return;
+                            }
                             const targetCity = resolveWarTargetCity(
                                 activeWarAnimation.target,
                                 activeWarAnimation.targetCityId,
@@ -8194,26 +8214,89 @@ export default function MapPage() {
                                 console.error('[CityAnnexation] AI victory has no mapped target city.', activeWarAnimation);
                                 return;
                             }
+                            const attackerIso = getIsoForCountryName(activeWarAnimation.attacker) || 'un';
+                            const targetIso = getIsoForCountryName(activeWarAnimation.target) || 'un';
+                            const currentDateStr = currentDate.toISOString().slice(0, 10);
+
+                            // Jika perang ini adalah mandat dari user (Minta Serang Negara):
+                            if (activeWarAnimation.requestedInvasion === true) {
+                                // Otak AI: 60% peluang aneksasi, 40% peluang hanya menjarah SDA & kas
+                                const decisionRoll = Math.random();
+                                const isAnnexation = decisionRoll < 0.60;
+
+                                if (isAnnexation) {
+                                    // ANEKSASI (60%): Ubah bendera target & detail kepemilikan menjadi milik penyerang.
+                                    // TANPA mengubah warna canvas peta (skipCanvasColor = true)
+                                    recordCityCapture(
+                                        targetCity,
+                                        activeWarAnimation.target,
+                                        activeWarAnimation.attacker,
+                                        attackerIso,
+                                        getCountryColor(activeWarAnimation.attacker),
+                                        activeWarAnimation.isPbbCoalition === true,
+                                        true // skipCanvasColor = true (warna canvas peta tidak berubah)
+                                    );
+
+                                    const { news } = generateAnnexationNews(
+                                        activeWarAnimation.attacker,
+                                        attackerIso,
+                                        getCountryColor(activeWarAnimation.attacker),
+                                        activeWarAnimation.target,
+                                        targetIso,
+                                        currentDateStr,
+                                        targetCity.cityName
+                                    );
+                                    setNewsList(previous => [news, ...previous]);
+
+                                    setNotifications(prev => [{
+                                        id: `notif-req-inv-annex-${Date.now()}`,
+                                        title: '🚩 MANDAT SERANGAN: ANEKSASI WILAYAH',
+                                        sender: `Komando Tinggi ${activeWarAnimation.attacker}`,
+                                        message: `Operasi militer yang Anda danai berhasil gemilang! Pasukan ${activeWarAnimation.attacker} memutuskan untuk menganeksasi wilayah ${targetCity.cityName} (${activeWarAnimation.target}). Kedaulatan wilayah tersebut kini resmi beralih ke ${activeWarAnimation.attacker}.`,
+                                        timestamp: currentDateStr,
+                                        type: 'peringkat',
+                                        value: 100,
+                                        isRead: false
+                                    }, ...prev]);
+                                } else {
+                                    // JARAH SDA (40%): Menjarah SDA dan kas tanpa menganeksasi wilayah
+                                    const lootedCash = 15000000;
+                                    const lootedResources = { emas: 350, minyak_bumi: 800, beras: 1500 };
+
+                                    const lootNews = generateResourceLootNews(
+                                        activeWarAnimation.attacker,
+                                        attackerIso,
+                                        activeWarAnimation.target,
+                                        targetIso,
+                                        lootedCash,
+                                        lootedResources,
+                                        currentDateStr
+                                    );
+                                    setNewsList(previous => [lootNews, ...previous]);
+
+                                    setNotifications(prev => [{
+                                        id: `notif-req-inv-loot-${Date.now()}`,
+                                        title: '💰 MANDAT SERANGAN: PENJARAHAN SDA & FASILITAS',
+                                        sender: `Komando Tinggi ${activeWarAnimation.attacker}`,
+                                        message: `Operasi militer terhadap ${activeWarAnimation.target} di kota ${targetCity.cityName} berhasil melumpuhkan pertahanan lawan. Namun militer ${activeWarAnimation.attacker} memutuskan untuk TIDAK menganeksasi wilayah, melainkan menjarah kas negara (${new Intl.NumberFormat('id-ID').format(lootedCash)} NEO) serta fasilitas cadangan SDA musuh sebelum menarik sebagian pasukan.`,
+                                        timestamp: currentDateStr,
+                                        type: 'kesejahteraan',
+                                        value: 80,
+                                        isRead: false
+                                    }, ...prev]);
+                                }
+                                return;
+                            }
+
+                            // Alur NPC War biasa (bukan mandat user):
                             recordCityCapture(
                                 targetCity,
                                 activeWarAnimation.target,
                                 activeWarAnimation.attacker,
-                                getIsoForCountryName(activeWarAnimation.attacker) || 'un',
+                                attackerIso,
                                 getCountryColor(activeWarAnimation.attacker),
                                 activeWarAnimation.isPbbCoalition === true
                             );
-                            if (activeWarAnimation.requestedInvasion === true) {
-                                const { news } = generateAnnexationNews(
-                                    activeWarAnimation.attacker,
-                                    getIsoForCountryName(activeWarAnimation.attacker) || 'un',
-                                    getCountryColor(activeWarAnimation.attacker),
-                                    activeWarAnimation.target,
-                                    getIsoForCountryName(activeWarAnimation.target) || 'un',
-                                    currentDate.toISOString().slice(0, 10),
-                                    targetCity.cityName
-                                );
-                                setNewsList(previous => [news, ...previous]);
-                            }
                         }}
                         onClose={() => {
                             setIsWarAnalysisActive(false);

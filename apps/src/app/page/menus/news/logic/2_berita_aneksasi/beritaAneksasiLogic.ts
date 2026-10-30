@@ -1,6 +1,7 @@
 export interface AnnexationNewsData {
   id: string;
   type: 'aneksasi';
+  category: 'operasi_militer';
   countryName?: string;
   attackerCountry: string;
   attackerIso: string;
@@ -45,6 +46,7 @@ export function generateAnnexationNews(
   const news: AnnexationNewsData = {
     id: `news-aneksasi-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
     type: 'aneksasi',
+    category: 'operasi_militer',
     attackerCountry,
     attackerIso,
     attackerColor,
