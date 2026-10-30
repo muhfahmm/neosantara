@@ -1050,20 +1050,151 @@ export default function WarMap({
               <animate attributeName="opacity" values="0.7;0;0.7" dur="1.6s" repeatCount="indefinite" />
             </circle>
 
-            {phase === 'travel' && (
-              <g ref={tankRef} transform="translate(0 0)">
-                <circle r={30} fill="#FF2D55" opacity={0.25} />
-                <g ref={tankRotationRef} transform="rotate(0)">
-                  <rect x={-22} y={-10} width={40} height={16} rx={3} fill="#FF2D55" />
-                  <rect x={-12} y={-20} width={22} height={10} rx={2} fill="#FF2D55" />
-                  <rect x={10} y={-17} width={28} height={4} fill="#FF2D55" />
-                  <circle cx={-16} cy={10} r={4} fill="#FF2D55" />
-                  <circle cx={-6} cy={10} r={4} fill="#FF2D55" />
-                  <circle cx={4} cy={10} r={4} fill="#FF2D55" />
-                  <circle cx={13} cy={10} r={4} fill="#FF2D55" />
-                </g>
-              </g>
-            )}
+{phase === 'travel' && (
+  <g ref={tankRef} transform="translate(0 0)">
+    {/* ==== AURA GLOW (dipertahankan dari versi lama) ==== */}
+    <circle r={36} fill="#FF2D55" opacity={0.10} />
+    <circle r={24} fill="#FF2D55" opacity={0.18} />
+
+    <g ref={tankRotationRef} transform="rotate(0)">
+      {/* ==== SHADOW KONTAK DI TANAH ==== */}
+      <ellipse cx={1} cy={3} rx={27} ry={15} fill="#000000" opacity={0.45} />
+
+      {/* ==== TRACKS ==== */}
+      {/* Track jauh (atas di local Y) */}
+      <rect x={-21} y={-13} width={42} height={6.5} rx={2} fill="#3A0714" />
+      <rect x={-21} y={-13} width={42} height={1.8} rx={0.9} fill="#8B1030" />
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+        <rect
+          key={`ft${i}`}
+          x={-19 + i * 4.1}
+          y={-12.3}
+          width={2.4}
+          height={5}
+          fill="#1A0208"
+          opacity={0.55}
+        />
+      ))}
+
+      {/* Track dekat (bawah di local Y) */}
+      <rect x={-21} y={6.5} width={42} height={6.5} rx={2} fill="#3A0714" />
+      <rect x={-21} y={6.5} width={42} height={1.8} rx={0.9} fill="#8B1030" />
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+        <rect
+          key={`nt${i}`}
+          x={-19 + i * 4.1}
+          y={7.3}
+          width={2.4}
+          height={5}
+          fill="#1A0208"
+          opacity={0.55}
+        />
+      ))}
+
+      {/* Road wheels mengintip dari track */}
+      {[-16, -10, -4, 2, 8, 14].map((x) => (
+        <g key={`rw${x}`}>
+          <circle cx={x} cy={-10.5} r={1.6} fill="#6B1020" />
+          <circle cx={x} cy={10.5} r={1.6} fill="#6B1020" />
+        </g>
+      ))}
+
+      {/* Drive sprocket (depan) & idler (belakang) */}
+      <circle cx={-18} cy={-10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
+      <circle cx={-18} cy={10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
+      <circle cx={18} cy={-10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
+      <circle cx={18} cy={10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
+
+      {/* ==== HULL ==== */}
+      <path
+        d="M-21,-6 L-19,-6.5 L18,-6.5 L21,-3.5 L21,3.5 L18,6.5 L-19,6.5 L-21,6 Z"
+        fill="#FF2D55"
+        stroke="#6B1020"
+        strokeWidth={0.9}
+      />
+      {/* Permukaan atas hull (lebih terang — menangkap cahaya) */}
+      <path d="M-19,-6 L18,-6 L20,-3 L-20,-3 Z" fill="#FF5C7E" opacity={0.55} />
+      {/* Glacis depan (sisi miring depan) */}
+      <path
+        d="M18,-6.5 L21,-3.5 L21,3.5 L18,6.5 L19,3 L19,-3 Z"
+        fill="#FF7096"
+        opacity={0.7}
+      />
+      {/* Pelat belakang (lebih gelap) */}
+      <path d="M-21,-6 L-19,-6.5 L-19,6.5 L-21,6 Z" fill="#B71C3A" />
+      {/* Panel line */}
+      <path d="M-14,-6 L-14,6" stroke="#6B1020" strokeWidth={0.5} opacity={0.55} />
+      <path d="M13,-6 L13,6" stroke="#6B1020" strokeWidth={0.5} opacity={0.55} />
+      {/* Lampu depan */}
+      <circle cx={19.5} cy={-4.2} r={0.9} fill="#FFE5EC" />
+      <circle cx={19.5} cy={4.2} r={0.9} fill="#FFE5EC" />
+
+      {/* ==== TURRET ==== */}
+      {/* Ring dasar turret */}
+      <ellipse cx={-2} cy={0} rx={10.5} ry={7} fill="#B71C3A" />
+      {/* Body turret */}
+      <path
+        d="M-10,-4 L6,-4.5 L9,-2 L9,2 L6,4.5 L-10,4 L-12,2 L-12,-2 Z"
+        fill="#FF2D55"
+        stroke="#6B1020"
+        strokeWidth={0.7}
+      />
+      {/* Highlight atas turret */}
+      <path d="M-10,-3.5 L6,-4 L8.5,-1.5 L-11,-1.5 Z" fill="#FF7096" opacity={0.5} />
+      {/* Shadow sisi kanan turret */}
+      <path d="M6,-4.5 L9,-2 L9,2 L6,4.5 L8,2 L8,-2 Z" fill="#B71C3A" opacity={0.7} />
+
+      {/* Cupola komandan */}
+      <circle cx={-5} cy={-1} r={2.2} fill="#D01A42" stroke="#6B1020" strokeWidth={0.5} />
+      <circle cx={-5} cy={-1} r={1.1} fill="#FF7096" opacity={0.6} />
+      <circle cx={-5} cy={-1} r={0.5} fill="#6B1020" />
+      {/* Hatch loader */}
+      <circle cx={1} cy={1.5} r={1.3} fill="#D01A42" stroke="#6B1020" strokeWidth={0.4} />
+      <circle cx={1} cy={1.5} r={0.5} fill="#B71C3A" />
+
+      {/* ==== BARREL ==== */}
+      {/* Mantlet */}
+      <rect
+        x={8}
+        y={-2.5}
+        width={4}
+        height={5}
+        rx={1}
+        fill="#B71C3A"
+        stroke="#6B1020"
+        strokeWidth={0.5}
+      />
+      {/* Laras utama */}
+      <rect x={11} y={-1.3} width={19} height={2.6} fill="#D01A42" />
+      <rect x={11} y={-1.3} width={19} height={0.9} fill="#FF7096" opacity={0.55} />
+      <rect x={11} y={0.7} width={19} height={0.6} fill="#6B1020" opacity={0.5} />
+      {/* Bore evacuator (penebalan tengah laras) */}
+      <rect
+        x={19}
+        y={-1.8}
+        width={3}
+        height={3.6}
+        rx={0.7}
+        fill="#B71C3A"
+        stroke="#6B1020"
+        strokeWidth={0.3}
+      />
+      {/* Muzzle brake */}
+      <rect
+        x={30}
+        y={-2}
+        width={4.5}
+        height={4}
+        rx={0.8}
+        fill="#3A0714"
+        stroke="#1A0208"
+        strokeWidth={0.4}
+      />
+      <rect x={30} y={-2} width={4.5} height={1.2} rx={0.4} fill="#B71C3A" />
+      <ellipse cx={34.5} cy={0} rx={0.6} ry={1.6} fill="#1A0208" />
+    </g>
+  </g>
+)}
 
             {phase === 'impact' && (
               <circle ref={impactBurstRef} cx={0} cy={0} r={0} fill="url(#impact-burst)">
