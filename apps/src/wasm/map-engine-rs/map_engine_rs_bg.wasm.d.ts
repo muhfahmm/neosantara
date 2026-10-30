@@ -12,6 +12,7 @@ export const mapengine_handle_wheel: (a: number, b: number, c: number, d: number
 export const mapengine_new: (a: any, b: number, c: number) => number;
 export const mapengine_render: (a: number) => void;
 export const mapengine_set_capitals: (a: number, b: number, c: number) => void;
+export const mapengine_set_city_ownership: (a: number, b: number, c: number) => void;
 export const mapengine_set_countries: (a: number, b: number, c: number) => void;
 export const mapengine_set_data: (a: number, b: number, c: number) => void;
 export const mapengine_set_feature_colors: (a: number, b: number, c: number, d: number) => void;
@@ -21,6 +22,7 @@ export const mapengine_set_selected_country: (a: number, b: number, c: number, d
 export const mapengine_set_show_province_borders: (a: number, b: number) => void;
 export const mapengine_tick: (a: number, b: number) => void;
 export const set_capitals_on_map: (a: number, b: number) => void;
+export const set_city_ownership_on_map: (a: number, b: number) => void;
 export const set_feature_colors_on_map: (a: number, b: number, c: number) => void;
 export const set_map_horizontal_wrap: (a: number) => void;
 export const set_provinces_on_map: (a: number, b: number) => void;
@@ -29,8 +31,8 @@ export const set_show_province_borders_on_map: (a: number) => void;
 export const start_map_engine: (a: number, b: number, c: number, d: number, e: any, f: any) => [number, number];
 export const wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___f64______true_: (a: number, b: number, c: number) => void;
 export const wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true_: (a: number, b: number, c: any) => void;
-export const wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__27: (a: number, b: number, c: any) => void;
-export const wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__28: (a: number, b: number, c: any) => void;
+export const wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__29: (a: number, b: number, c: any) => void;
+export const wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__30: (a: number, b: number, c: any) => void;
 export const __wbindgen_malloc: (a: number, b: number) => number;
 export const __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
 export const __wbindgen_exn_store: (a: number) => void;

@@ -47,6 +47,9 @@ export interface CapitalPoint extends LatLng {
   country: string;
   capital: string;
   iso?: string;
+  cityId?: string;
+  cityName?: string;
+  cityIsCapital?: boolean;
   [key: string]: any;
 }
 
@@ -699,6 +702,7 @@ interface WarMapProps {
     isUserDefender?: boolean;
     isPbbCoalition?: boolean;
   }) => void;
+  onAutoResolve?: (result: WarResult) => void;
 }
 
 export default function WarMap({
@@ -715,11 +719,14 @@ export default function WarMap({
   onAnalysisVisibilityChange,
   onClose,
   onResolve,
+  onAutoResolve,
 }: WarMapProps) {
   const [phase, setPhase] = useState<WarPhase>('travel');
   const [result, setResult] = useState<WarResult | null>(null);
   const [showFlash, setShowFlash] = useState(false);
   const onCloseRef = useRef(onClose);
+  const onAutoResolveRef = useRef(onAutoResolve);
+  const autoResolveReportedRef = useRef(false);
 
   useEffect(() => {
     onAnalysisVisibilityChange?.(
@@ -730,6 +737,10 @@ export default function WarMap({
   useEffect(() => {
     onCloseRef.current = onClose;
   }, [onClose]);
+
+  useEffect(() => {
+    onAutoResolveRef.current = onAutoResolve;
+  }, [onAutoResolve]);
 
   const isUserDefender = useMemo(() => {
     if (typeof isUserDefenderProp === 'boolean') return isUserDefenderProp;
@@ -783,11 +794,18 @@ export default function WarMap({
   }, [attacker]);
 
   const resolvedTarget = useMemo<CapitalPoint>(() => {
-    const coord = getCapitalCoord(target.country);
+    const cityCoordinates = target.cityId &&
+      Number.isFinite(target.lat) &&
+      Number.isFinite(target.lng);
+    const coord = cityCoordinates ? null : getCapitalCoord(target.country);
     return {
       ...target,
-      lat: coord ? coord.lat : (typeof target.lat === 'number' && target.lat !== 0 ? target.lat : (target.latitude ?? 0)),
-      lng: coord ? coord.lng : (typeof target.lng === 'number' && target.lng !== 0 ? target.lng : (target.longitude ?? 0)),
+      lat: cityCoordinates
+        ? target.lat
+        : (coord ? coord.lat : (typeof target.lat === 'number' && target.lat !== 0 ? target.lat : (target.latitude ?? 0))),
+      lng: cityCoordinates
+        ? target.lng
+        : (coord ? coord.lng : (typeof target.lng === 'number' && target.lng !== 0 ? target.lng : (target.longitude ?? 0))),
     };
   }, [target]);
 
@@ -838,6 +856,7 @@ export default function WarMap({
     if (isOpen) {
       setPhase('travel');
       progressRef.current = 0;
+      autoResolveReportedRef.current = false;
       progressPathRef.current?.setAttribute('stroke-dasharray', '0 100');
       setResult(null);
       setShowFlash(false);
@@ -955,6 +974,10 @@ export default function WarMap({
     if (phase !== 'impact' || !battleOutcome) return;
     setShowFlash(true);
     if (isNpcWar && !isPbbCoalition) {
+      if (!autoResolveReportedRef.current) {
+        autoResolveReportedRef.current = true;
+        onAutoResolveRef.current?.(battleOutcome.result);
+      }
       const closeTimer = setTimeout(() => onCloseRef.current(), 1300);
       const flashTimer = setTimeout(() => setShowFlash(false), 500);
       return () => {
@@ -1289,6 +1312,22 @@ export default function WarMap({
                   )
                 )}
               </p>
+              {target.cityName && (
+                <div className="mx-auto mt-4 flex w-fit items-center gap-2 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 px-4 py-2">
+                  <Flag className="h-4 w-4 text-[#00FFAA]" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B8A8A]">
+                    Kota sasaran
+                  </span>
+                  <strong className="text-sm text-[#00FFAA]">
+                    {target.cityName}, {target.country}
+                  </strong>
+                  {target.cityIsCapital && (
+                    <span className="rounded bg-amber-400/15 px-2 py-1 text-[9px] font-bold uppercase text-amber-300">
+                      Ibu kota
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 divide-x divide-[#00FFAA]/10 border-b border-[#00FFAA]/10">

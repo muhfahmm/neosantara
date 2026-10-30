@@ -22,6 +22,8 @@ import { resolveCovertOperation, type CovertOperationResult, type CovertOperatio
 
 interface OperasiMiliterProps {
   countryName: string;
+  selectedCity?: string | null;
+  selectedCityId?: string | null;
   playerCountryDetail?: any;
   targetCountryDetail?: any;
   onCloseDetailModal?: () => void;
@@ -47,7 +49,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   </button>
 );
 
-export default function OperasiMiliter({ countryName, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, actionDates, onMilitaryActionLaunched, updatePlayerCountryDetail }: OperasiMiliterProps) {
+export default function OperasiMiliter({ countryName, selectedCity, selectedCityId, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, actionDates, onMilitaryActionLaunched, updatePlayerCountryDetail }: OperasiMiliterProps) {
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isSpionaseOpen, setIsSpionaseOpen] = useState(false);
   const [isSabotaseOpen, setIsSabotaseOpen] = useState(false);
@@ -163,6 +165,8 @@ export default function OperasiMiliter({ countryName, playerCountryDetail, targe
       <SerangNegaraModal
         isOpen={isSerangOpen}
         countryName={countryName}
+        selectedCity={selectedCity}
+        selectedCityId={selectedCityId}
         playerCountryDetail={playerCountryDetail}
         targetCountryDetail={targetCountryDetail}
         onClose={() => setIsSerangOpen(false)}

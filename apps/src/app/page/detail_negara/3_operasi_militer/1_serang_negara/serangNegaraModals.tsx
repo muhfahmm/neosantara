@@ -11,6 +11,8 @@ import { getArmadaPowerSummary } from "@/app/page/navigasi_menu/2_navigasi_bawah
 interface SerangNegaraModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
+	selectedCity?: string | null;
+	selectedCityId?: string | null;
 	playerCountryDetail?: any;
 	targetCountryDetail?: any;
 	onClose: () => void;
@@ -22,6 +24,8 @@ interface SerangNegaraModalProps {
 export default function SerangNegaraModal({
 	isOpen,
 	countryName,
+	selectedCity,
+	selectedCityId,
 	playerCountryDetail,
 	targetCountryDetail,
 	onClose,
@@ -120,6 +124,8 @@ export default function SerangNegaraModal({
 					detail: {
 						attacker: playerName,
 						target: countryName,
+						targetCityId: selectedCityId || undefined,
+						targetCityName: selectedCity || undefined,
 						playerPower,
 						targetPower,
 						playerCountryDetail,

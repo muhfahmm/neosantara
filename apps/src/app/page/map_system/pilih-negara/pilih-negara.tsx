@@ -164,6 +164,7 @@ export default function PilihNegaraPage() {
           import('../../../../wasm/map-engine-rs/map_engine_rs'),
           fetch('/world.geojson', { cache: 'force-cache' }),
         ]);
+        await mod.default();
         if (!geojsonResponse.ok) {
           throw new Error(`Failed to load world map data: HTTP ${geojsonResponse.status}`);
         }
@@ -176,12 +177,6 @@ export default function PilihNegaraPage() {
           geojson.features.filter((feature: { geometry?: unknown }) => feature.geometry)
         );
         geojsonStr = JSON.stringify(geojson);
-        try {
-          await mod.default(); // Initialize WASM module
-        } catch (wasmErr) {
-          console.warn("WASM module init notice:", wasmErr);
-        }
-
         const { start_map_engine, set_selected_country_on_map, get_country_at_on_map } = mod;
 
         start_map_engine('map-canvas-bg', geojsonStr, COUNTRIES_DATA, CAPITALS_DATA);

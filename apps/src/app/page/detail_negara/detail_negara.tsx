@@ -33,6 +33,7 @@ interface CountryDetailModalProps {
   isOpen: boolean;
   countryName: string | null;
   selectedCity?: string | null;
+  selectedCityId?: string | null;
   onClose: () => void;
   countryDetail?: any; // Data detail negara dari API (negara yang sedang dimainkan)
   metadata?: Record<string, unknown>;
@@ -72,10 +73,27 @@ function getAnnexedInfo(countryNames: unknown[], countryIso?: unknown) {
   return Object.entries(annexedStore).find(([key]) => lookupKeys.has(normalizeCountryKey(key)))?.[1];
 }
 
+// Kepemilikan kota parsial (aneksasi satu kota/provinsi) disimpan per cityId di neosantara_city_owner.
+function getCityOwnerInfo(cityId?: string | null): AnnexationInfo | undefined {
+  if (!cityId || typeof window === 'undefined') return undefined;
+  const owner = (window as Window & {
+    neosantara_city_owner?: Record<string, { ownerCountry?: string; ownerIso?: string; countryIso?: string }>;
+  }).neosantara_city_owner?.[cityId];
+  if (!owner?.ownerCountry) return undefined;
+  const originalIso = String(owner.countryIso || '').toLowerCase();
+  const ownerCountry = COUNTRIES_DATA?.find(
+    (c) => normalizeCountryKey(c.country) === normalizeCountryKey(owner.ownerCountry)
+  );
+  // Kota yang masih milik negara asalnya bukan wilayah aneksasi.
+  if (ownerCountry?.iso && ownerCountry.iso.toLowerCase() === originalIso) return undefined;
+  return { attackerCountry: owner.ownerCountry, attackerIso: owner.ownerIso };
+}
+
 export function CountryDetailModal({
   isOpen,
   countryName,
   selectedCity,
+  selectedCityId,
   onClose,
   countryDetail,
   metadata = {},
@@ -496,7 +514,8 @@ export function CountryDetailModal({
   const headerDetailData = detailData || profileSummary;
 
   // Cek apakah negara ini telah dianeksasi oleh negara lain
-  const annexedInfo = getAnnexedInfo(
+  const cityOwnerInfo = getCityOwnerInfo(selectedCityId);
+  const annexedInfo = cityOwnerInfo || getAnnexedInfo(
     [countryName, mapData?.country, detailData?.name_id, detailData?.country, detailData?.country_slug],
     mapData?.iso || detailData?.iso
   );
@@ -559,7 +578,9 @@ export function CountryDetailModal({
   if (!isOpen || !countryName) return null;
   if (typeof document === "undefined") return null;
 
-  const displayCountryName = annexedInfo ? `Provinsi ${countryName}` : countryName;
+  const displayCountryName = cityOwnerInfo && selectedCity
+    ? `Provinsi ${selectedCity}`
+    : annexedInfo ? `Provinsi ${countryName}` : countryName;
 
   // Wilayah tetap menggunakan nama dan ibukota aslinya, tetapi memakai bendera penguasa.
   const originalIso = mapData?.iso || detailData?.iso || "";
@@ -892,6 +913,8 @@ export function CountryDetailModal({
             {activeTab === "militer" && (
               <OperasiMiliter
                 countryName={countryName}
+                selectedCity={selectedCity}
+                selectedCityId={selectedCityId}
                 playerCountryDetail={countryDetail}
                 targetCountryDetail={detailData}
                 actionDates={{

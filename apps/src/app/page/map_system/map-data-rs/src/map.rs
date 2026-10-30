@@ -19,9 +19,15 @@ struct CountryData {
 #[derive(Deserialize)]
 struct CapitalData {
     capital: String,
+    #[serde(default)]
+    city_id: Option<String>,
     lat: f64,
     lng: f64,
     iso: String,
+    #[serde(default)]
+    country_iso: Option<String>,
+    #[serde(default)]
+    owner_country: Option<String>,
     #[serde(default)]
     is_major_city: Option<bool>,
     #[serde(default)]
@@ -111,11 +117,57 @@ struct CachedCountry {
 
 struct CachedCapital {
     name: String,
+    city_id: String,
     x: f64,
     y: f64,
+    country_iso: String,
+    owner_country: Option<String>,
     flag_iso: String,
     flag_idx: Option<usize>,
+    original_flag_iso: String,
+    original_flag_idx: Option<usize>,
     is_capital: bool,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct CityOwnershipData {
+    city_id: String,
+    country_iso: String,
+    city_name: String,
+    owner_country: String,
+    lat: f64,
+    lng: f64,
+    owner_color: String,
+    #[serde(default)]
+    cell: Vec<[f64; 2]>,
+}
+
+struct CachedCityOwnership {
+    city_id: String,
+    country_iso: String,
+    city_name: String,
+    owner_country: String,
+    x: f64,
+    y: f64,
+    radius_x: f64,
+    radius_y: f64,
+    cell: Vec<(f64, f64)>,
+    color: JsValue,
+}
+
+fn point_in_polygon(poly: &[(f64, f64)], px: f64, py: f64) -> bool {
+    let mut inside = false;
+    let mut j = poly.len() - 1;
+    for i in 0..poly.len() {
+        let (xi, yi) = poly[i];
+        let (xj, yj) = poly[j];
+        if (yi > py) != (yj > py) && px < (xj - xi) * (py - yi) / (yj - yi) + xi {
+            inside = !inside;
+        }
+        j = i;
+    }
+    inside
 }
 
 struct Styles {
@@ -226,6 +278,7 @@ pub struct MapEngine {
     feature_query_generation: u32,
     countries: Vec<CachedCountry>,
     capitals: Vec<CachedCapital>,
+    city_ownership: Vec<CachedCityOwnership>,
     capital_flags: Vec<(String, HtmlImageElement)>,
     province_lines: Vec<ProvLine>,
     styles: Styles,
@@ -276,6 +329,7 @@ impl MapEngine {
             feature_query_generation: 0,
             countries: Vec::new(),
             capitals: Vec::new(),
+            city_ownership: Vec::new(),
             capital_flags: Vec::new(),
             province_lines: Vec::new(),
             styles: Styles {
@@ -701,25 +755,32 @@ impl MapEngine {
 
         if let Some(document) = web_sys::window().and_then(|window| window.document()) {
             for capital in &parsed {
-                let iso = capital
-                    .iso
-                    .rsplit('-')
-                    .next()
-                    .unwrap_or(&capital.iso)
-                    .to_lowercase();
-                if iso.len() != 2
-                    || self
-                        .capital_flags
-                        .iter()
-                        .any(|(loaded_iso, _)| loaded_iso == &iso)
-                {
-                    continue;
-                }
-                if let Ok(element) = document.create_element("img") {
-                    if let Ok(image) = element.dyn_into::<HtmlImageElement>() {
-                        image.set_cross_origin(Some("anonymous"));
-                        image.set_src(&format!("https://flagcdn.com/w20/{iso}.png"));
-                        self.capital_flags.push((iso, image));
+                let flag_isos = [
+                    capital.iso.rsplit('-').next().unwrap_or(&capital.iso),
+                    capital
+                        .country_iso
+                        .as_deref()
+                        .unwrap_or(&capital.iso)
+                        .rsplit('-')
+                        .next()
+                        .unwrap_or(&capital.iso),
+                ];
+                for iso in flag_isos {
+                    let iso = iso.to_lowercase();
+                    if iso.len() != 2
+                        || self
+                            .capital_flags
+                            .iter()
+                            .any(|(loaded_iso, _)| loaded_iso == &iso)
+                    {
+                        continue;
+                    }
+                    if let Ok(element) = document.create_element("img") {
+                        if let Ok(image) = element.dyn_into::<HtmlImageElement>() {
+                            image.set_cross_origin(Some("anonymous"));
+                            image.set_src(&format!("https://flagcdn.com/w20/{iso}.png"));
+                            self.capital_flags.push((iso, image));
+                        }
                     }
                 }
             }
@@ -734,13 +795,38 @@ impl MapEngine {
                     .capital_flags
                     .iter()
                     .position(|(i, _)| i == &flag_iso.to_lowercase());
+                let original_flag_iso = c
+                    .country_iso
+                    .as_deref()
+                    .unwrap_or(&c.iso)
+                    .rsplit('-')
+                    .next()
+                    .unwrap_or(&c.iso)
+                    .to_string();
+                let original_flag_idx = self
+                    .capital_flags
+                    .iter()
+                    .position(|(i, _)| i == &original_flag_iso.to_lowercase());
                 let is_capital = c.is_capital.unwrap_or_else(|| !c.is_major_city.unwrap_or(false));
+                let country_iso = c
+                    .country_iso
+                    .as_deref()
+                    .unwrap_or(&c.iso)
+                    .rsplit('-')
+                    .next()
+                    .unwrap_or(&c.iso)
+                    .to_lowercase();
                 CachedCapital {
                     name: c.capital,
+                    city_id: c.city_id.unwrap_or_default(),
                     x: ((c.lng + 180.0) / 360.0) * w,
                     y: ((90.0 - c.lat) / 180.0) * h,
+                    country_iso,
+                    owner_country: c.owner_country,
                     flag_iso,
                     flag_idx,
+                    original_flag_iso,
+                    original_flag_idx,
                     is_capital,
                 }
             })
@@ -753,6 +839,81 @@ impl MapEngine {
             .filter(|(_, image)| image.complete() && image.natural_width() > 0)
             .count();
         self.rebuild_capitals_canvas();
+        self.dirty = true;
+    }
+
+    pub fn set_city_ownership(&mut self, cities: Vec<JsValue>) {
+        let mut ownership = Vec::with_capacity(cities.len());
+        for value in cities {
+            let city = match serde_wasm_bindgen::from_value::<CityOwnershipData>(value) {
+                Ok(city) => city,
+                Err(error) => {
+                    web_sys::console::error_2(
+                        &"Invalid city ownership data; map ownership was not updated.".into(),
+                        &JsValue::from_str(&error.to_string()),
+                    );
+                    return;
+                }
+            };
+            if city.city_id.is_empty()
+                || city.country_iso.is_empty()
+                || city.city_name.is_empty()
+                || city.owner_country.is_empty()
+                || city.owner_color.is_empty()
+                || !city.lat.is_finite()
+                || !city.lng.is_finite()
+            {
+                web_sys::console::error_1(
+                    &"Invalid city ownership coordinates or identifiers; map ownership was not updated.".into(),
+                );
+                return;
+            }
+
+            const CITY_REGION_RADIUS_DEGREES: f64 = 0.65;
+            let latitude = city.lat.clamp(-90.0, 90.0);
+            let longitude = city.lng.clamp(-180.0, 180.0);
+            let longitude_scale = latitude.to_radians().cos().abs().max(0.25);
+            let cell: Vec<(f64, f64)> = if city.cell.len() >= 3 {
+                city.cell
+                    .iter()
+                    .map(|p| {
+                        (
+                            ((p[0].clamp(-180.0, 180.0) + 180.0) / 360.0) * self.width,
+                            ((90.0 - p[1].clamp(-90.0, 90.0)) / 180.0) * self.height,
+                        )
+                    })
+                    .collect()
+            } else {
+                Vec::new()
+            };
+            let city_x = ((longitude + 180.0) / 360.0) * self.width;
+            let city_y = ((90.0 - latitude) / 180.0) * self.height;
+            let (extent_x, extent_y) = if cell.is_empty() {
+                (
+                    self.width * CITY_REGION_RADIUS_DEGREES / longitude_scale / 360.0,
+                    self.height * CITY_REGION_RADIUS_DEGREES / 180.0,
+                )
+            } else {
+                (
+                    cell.iter().fold(1.0_f64, |m, p| m.max((p.0 - city_x).abs())),
+                    cell.iter().fold(1.0_f64, |m, p| m.max((p.1 - city_y).abs())),
+                )
+            };
+            ownership.push(CachedCityOwnership {
+                cell,
+                city_id: city.city_id,
+                country_iso: city.country_iso.to_lowercase(),
+                city_name: city.city_name,
+                owner_country: city.owner_country,
+                x: ((longitude + 180.0) / 360.0) * self.width,
+                y: ((90.0 - latitude) / 180.0) * self.height,
+                radius_x: extent_x,
+                radius_y: extent_y,
+                color: JsValue::from_str(&city.owner_color),
+            });
+        }
+
+        self.city_ownership = ownership;
         self.dirty = true;
     }
 
@@ -789,6 +950,35 @@ impl MapEngine {
                 .flag_idx
                 .and_then(|index| self.capital_flags.get(index))
                 .map(|(_, image)| image);
+            if capital.owner_country.is_some()
+                && capital.original_flag_iso.to_lowercase() != capital.flag_iso.to_lowercase()
+            {
+                let original_image = capital
+                    .original_flag_idx
+                    .and_then(|index| self.capital_flags.get(index))
+                    .map(|(_, image)| image);
+                Self::draw_capital_flag_on_context(
+                    &context,
+                    &self.styles,
+                    original_image,
+                    &capital.original_flag_iso,
+                    capital.x - 8.0,
+                    capital.y,
+                    1.0,
+                    false,
+                );
+                Self::draw_capital_flag_on_context(
+                    &context,
+                    &self.styles,
+                    image,
+                    &capital.flag_iso,
+                    capital.x + 8.0,
+                    capital.y,
+                    1.0,
+                    false,
+                );
+                continue;
+            }
             Self::draw_capital_flag_on_context(
                 &context,
                 &self.styles,
@@ -1205,6 +1395,54 @@ impl MapEngine {
                 }
             }
 
+            for &feature_index in &visible {
+                let feature = &self.features[feature_index];
+                for city in self.city_ownership.iter().filter(|city| {
+                    city.country_iso == feature.iso
+                        && city.x + city.radius_x >= vx0
+                        && city.x - city.radius_x <= vx1
+                        && city.y + city.radius_y >= vy0
+                        && city.y - city.radius_y <= vy1
+                }) {
+                    let Some(country_path) = feature.get_path(detail_level) else {
+                        continue;
+                    };
+                    self.ctx.save();
+                    self.ctx.clip_with_path_2d(&country_path);
+                    self.ctx.set_fill_style(&city.color);
+                    self.ctx.begin_path();
+                    if !city.cell.is_empty() {
+                        self.ctx.move_to(city.cell[0].0, city.cell[0].1);
+                        for p in &city.cell[1..] {
+                            self.ctx.line_to(p.0, p.1);
+                        }
+                        self.ctx.close_path();
+                        self.ctx.fill();
+                        self.ctx.set_stroke_style(&JsValue::from_str("#d6ffe5"));
+                        self.ctx.set_line_width((1.2 / self.scale).max(0.5));
+                        self.ctx.stroke();
+                    } else if self.ctx
+                        .ellipse(
+                            city.x,
+                            city.y,
+                            city.radius_x,
+                            city.radius_y,
+                            0.0,
+                            0.0,
+                            std::f64::consts::TAU,
+                        )
+                        .is_ok()
+                    {
+                        self.ctx.fill();
+                        self.ctx
+                            .set_stroke_style(&JsValue::from_str("#d6ffe5"));
+                        self.ctx.set_line_width((1.2 / self.scale).max(0.5));
+                        self.ctx.stroke();
+                    }
+                    self.ctx.restore();
+                }
+            }
+
             // Garis batas provinsi solid (tidak putus-putus) langsung tersambung mulus
             if self.show_province_borders && self.scale >= 1.15 && !self.province_lines.is_empty() {
                 let moving = self.is_panning || animating;
@@ -1281,7 +1519,30 @@ impl MapEngine {
                 .flag_idx
                 .and_then(|i| self.capital_flags.get(i))
                 .map(|(_, img)| img);
-            self.draw_capital_flag(image, &cap.flag_iso, cap.x, cap.y, animating);
+            if cap.owner_country.is_some()
+                && cap.original_flag_iso.to_lowercase() != cap.flag_iso.to_lowercase()
+            {
+                let original_image = cap
+                    .original_flag_idx
+                    .and_then(|i| self.capital_flags.get(i))
+                    .map(|(_, img)| img);
+                self.draw_capital_flag(
+                    original_image,
+                    &cap.original_flag_iso,
+                    cap.x - 8.0 / self.scale,
+                    cap.y,
+                    animating,
+                );
+                self.draw_capital_flag(
+                    image,
+                    &cap.flag_iso,
+                    cap.x + 8.0 / self.scale,
+                    cap.y,
+                    animating,
+                );
+            } else {
+                self.draw_capital_flag(image, &cap.flag_iso, cap.x, cap.y, animating);
+            }
         }
 
         // Label hanya saat zoom cukup; jangan gambar label jika kamera sedang berinterpolasi cepat
@@ -1329,8 +1590,20 @@ impl MapEngine {
                 {
                     continue;
                 }
-                let _ = self.ctx.stroke_text(&capital.name, x, y);
-                let _ = self.ctx.fill_text(&capital.name, x, y);
+                let label = capital
+                    .owner_country
+                    .as_deref()
+                    .map(|owner| format!("{} · {}", capital.name, owner))
+                    .unwrap_or_else(|| capital.name.clone());
+                if capital.owner_country.is_some() {
+                    self.ctx.set_fill_style(&JsValue::from_str("#00C853"));
+                } else if pass_capital {
+                    self.ctx.set_fill_style(&self.styles.capital_text);
+                } else {
+                    self.ctx.set_fill_style(&self.styles.city_text);
+                }
+                let _ = self.ctx.stroke_text(&label, x, y);
+                let _ = self.ctx.fill_text(&label, x, y);
             }
         }
     }
@@ -1347,7 +1620,12 @@ impl MapEngine {
 
         for capital_index in indices {
             let capital = &self.capitals[capital_index];
-            let text_width = font_size * capital.name.len() as f64 * 0.5;
+            let label = capital
+                .owner_country
+                .as_deref()
+                .map(|owner| format!("{} · {}", capital.name, owner))
+                .unwrap_or_else(|| capital.name.clone());
+            let text_width = font_size * label.len() as f64 * 0.5;
             let positions = [
                 (capital.x + 9.0 / scale, capital.y + 3.0 / scale),
                 (capital.x - text_width / 2.0, capital.y - 7.0 / scale),
@@ -1448,7 +1726,7 @@ impl MapEngine {
         let mut nearest_city: Option<(&CachedCapital, f64)> = None;
         let c_iso = &c.iso;
         for cap in &self.capitals {
-            if cap.flag_iso.to_lowercase() == *c_iso {
+            if cap.country_iso == *c_iso {
                 let dx = cap.x - wx;
                 let dy = cap.y - wy;
                 let dist_sq = dx * dx + dy * dy;
@@ -1461,9 +1739,72 @@ impl MapEngine {
         if let Some(source_obj) = raw_val.dyn_ref::<js_sys::Object>() {
             let target = js_sys::Object::new();
             let _ = js_sys::Object::assign(&target, source_obj);
-            if let Some((cap, _)) = nearest_city {
-                let _ = js_sys::Reflect::set(&target, &JsValue::from_str("selected_city"), &JsValue::from_str(&cap.name));
-                let _ = js_sys::Reflect::set(&target, &JsValue::from_str("is_capital"), &JsValue::from_bool(cap.is_capital));
+            let mut nearest_captured_city: Option<(&CachedCityOwnership, f64)> = None;
+            for city in &self.city_ownership {
+                if city.country_iso != *c_iso {
+                    continue;
+                }
+                let normalized_distance = if city.cell.is_empty() {
+                    (city.x - wx).powi(2) / city.radius_x.powi(2)
+                        + (city.y - wy).powi(2) / city.radius_y.powi(2)
+                } else if point_in_polygon(&city.cell, wx, wy) {
+                    ((city.x - wx).powi(2) + (city.y - wy).powi(2)).sqrt() / 1.0e6
+                } else {
+                    f64::INFINITY
+                };
+                if normalized_distance <= 1.0
+                    && nearest_captured_city.as_ref().map_or(true, |(_, nearest_distance)| {
+                        normalized_distance < *nearest_distance
+                    })
+                {
+                    nearest_captured_city = Some((city, normalized_distance));
+                }
+            }
+            let captured_city = nearest_captured_city.map(|(city, _)| city);
+            if let Some(city) = captured_city {
+                let _ = js_sys::Reflect::set(
+                    &target,
+                    &JsValue::from_str("selected_city"),
+                    &JsValue::from_str(&city.city_name),
+                );
+                let _ = js_sys::Reflect::set(
+                    &target,
+                    &JsValue::from_str("selected_city_id"),
+                    &JsValue::from_str(&city.city_id),
+                );
+                let _ = js_sys::Reflect::set(
+                    &target,
+                    &JsValue::from_str("selected_city_owner"),
+                    &JsValue::from_str(&city.owner_country),
+                );
+            }
+            if captured_city.is_none() {
+                if let Some((cap, distance_sq)) = nearest_city {
+                    let _ = js_sys::Reflect::set(&target, &JsValue::from_str("selected_city"), &JsValue::from_str(&cap.name));
+                    if !cap.city_id.is_empty() {
+                        let _ = js_sys::Reflect::set(
+                            &target,
+                            &JsValue::from_str("selected_city_id"),
+                            &JsValue::from_str(&cap.city_id),
+                        );
+                    }
+                    let _ = js_sys::Reflect::set(&target, &JsValue::from_str("is_capital"), &JsValue::from_bool(cap.is_capital));
+                    if let Some(owner_country) = cap.owner_country.as_deref() {
+                        let latitude = 90.0 - (cap.y / self.height) * 180.0;
+                        let longitude_scale = latitude.to_radians().cos().abs().max(0.25);
+                        let radius_x = self.width * 0.65 / longitude_scale / 360.0;
+                        let radius_y = self.height * 0.65 / 180.0;
+                        let normalized_distance = (cap.x - wx).powi(2) / radius_x.powi(2)
+                            + (cap.y - wy).powi(2) / radius_y.powi(2);
+                        if normalized_distance <= 1.0 && distance_sq.is_finite() {
+                            let _ = js_sys::Reflect::set(
+                                &target,
+                                &JsValue::from_str("selected_city_owner"),
+                                &JsValue::from_str(owner_country),
+                            );
+                        }
+                    }
+                }
             }
             target.into()
         } else {
@@ -1624,6 +1965,15 @@ pub fn set_capitals_on_map(capitals: Vec<JsValue>) {
     ACTIVE_ENGINE.with(|global_engine| {
         if let Some(engine) = global_engine.borrow().as_ref() {
             engine.borrow_mut().set_capitals(capitals);
+        }
+    });
+}
+
+#[wasm_bindgen]
+pub fn set_city_ownership_on_map(cities: Vec<JsValue>) {
+    ACTIVE_ENGINE.with(|global_engine| {
+        if let Some(engine) = global_engine.borrow().as_ref() {
+            engine.borrow_mut().set_city_ownership(cities);
         }
     });
 }

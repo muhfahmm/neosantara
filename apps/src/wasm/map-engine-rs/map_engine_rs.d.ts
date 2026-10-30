@@ -14,6 +14,7 @@ export class MapEngine {
     static new(ctx: CanvasRenderingContext2D, width: number, height: number): MapEngine;
     render(): void;
     set_capitals(capitals: any[]): void;
+    set_city_ownership(cities: any[]): void;
     set_countries(countries: any[]): void;
     set_data(geojson_str: string): void;
     /**
@@ -36,6 +37,8 @@ export class MapEngine {
 export function get_country_at_on_map(mouse_x: number, mouse_y: number): any;
 
 export function set_capitals_on_map(capitals: any[]): void;
+
+export function set_city_ownership_on_map(cities: any[]): void;
 
 export function set_feature_colors_on_map(colors: any[], beat_selected: boolean): void;
 
@@ -64,6 +67,7 @@ export interface InitOutput {
     readonly mapengine_new: (a: any, b: number, c: number) => number;
     readonly mapengine_render: (a: number) => void;
     readonly mapengine_set_capitals: (a: number, b: number, c: number) => void;
+    readonly mapengine_set_city_ownership: (a: number, b: number, c: number) => void;
     readonly mapengine_set_countries: (a: number, b: number, c: number) => void;
     readonly mapengine_set_data: (a: number, b: number, c: number) => void;
     readonly mapengine_set_feature_colors: (a: number, b: number, c: number, d: number) => void;
@@ -73,6 +77,7 @@ export interface InitOutput {
     readonly mapengine_set_show_province_borders: (a: number, b: number) => void;
     readonly mapengine_tick: (a: number, b: number) => void;
     readonly set_capitals_on_map: (a: number, b: number) => void;
+    readonly set_city_ownership_on_map: (a: number, b: number) => void;
     readonly set_feature_colors_on_map: (a: number, b: number, c: number) => void;
     readonly set_map_horizontal_wrap: (a: number) => void;
     readonly set_provinces_on_map: (a: number, b: number) => void;
@@ -81,8 +86,8 @@ export interface InitOutput {
     readonly start_map_engine: (a: number, b: number, c: number, d: number, e: any, f: any) => [number, number];
     readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___f64______true_: (a: number, b: number, c: number) => void;
     readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true_: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__27: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__28: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__29: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen_cf9ba172f8892477___convert__closures_____invoke___web_sys_e80ecc0df794c569___features__gen_MouseEvent__MouseEvent______true__30: (a: number, b: number, c: any) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_exn_store: (a: number) => void;

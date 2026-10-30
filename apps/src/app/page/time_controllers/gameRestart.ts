@@ -97,6 +97,7 @@ export function handleGameRestart(options: RestartOptions): void {
         try {
             (window as any).neosantara_annexed_countries = {};
             (window as any).neosantara_country_color_overrides = {};
+            (window as any).neosantara_city_owner = {};
             (window as any).neosantara_diplomacy_map_colors = {};
             (window as any).neosantara_is_paused = true;
             window.dispatchEvent(new CustomEvent('pbb_active_resolutions_updated'));
