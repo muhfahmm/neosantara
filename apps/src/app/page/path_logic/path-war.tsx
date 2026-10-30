@@ -19,7 +19,12 @@ import { COUNTRIES_DATA, CAPITALS_DATA } from '@/app/page/map_system/map-data';
 import PerbandinganPasukan from '../detail_negara/3_operasi_militer/1_serang_negara/perbandingan_pasukan';
 import { getWarUnitComposition, type WarUnit } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/warUnitComposition';
 import { simulateBattleTs } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
-import { isSimulationTimePaused } from './time_logic';
+import {
+  estimateTravelTime,
+  getSimulationDayPosition,
+  getSimulationMillisecondsPerDay,
+  isSimulationTimePaused,
+} from './time_logic';
 import { initializeRouteMathRust } from './routeMathRust';
 import {
   isRouteMathRustReady,
@@ -73,7 +78,7 @@ export interface WarPath {
   id: string;
   attacker: CapitalPoint;
   target: CapitalPoint;
-  durationMs: number;
+  travelDays: number;
   createdAt: number;
 }
 
@@ -510,45 +515,30 @@ export function buildSVGPath(
 }
 
 /* ============================================================
- * DURASI ANIMASI
- * ============================================================ */
-
-export interface DurationOptions {
-  pxPerSecond?: number;
-  minMs?: number;
-  maxMs?: number;
-}
-
-export function computeDuration(
-  distancePx: number,
-  opts: DurationOptions = {}
-): number {
-  const { pxPerSecond = 350, minMs = 3500, maxMs = 9000 } = opts;
-  const seconds = distancePx / pxPerSecond;
-  return Math.min(maxMs, Math.max(minMs, seconds * 1000));
-}
-
-/* ============================================================
  * BUILDER WAR PATH
  * ============================================================ */
 
 export interface BuildWarPathInput {
   attacker: CapitalPoint;
   target: CapitalPoint;
-  duration?: DurationOptions;
 }
 
-export function buildWarPath(input: BuildWarPathInput): WarPath {
-  const { attacker, target, duration } = input;
-  const start = getMapScreenPos(attacker.lat, attacker.lng);
-  const end = getMapScreenPos(target.lat, target.lng);
-  const dist = Math.hypot(end.x - start.x, end.y - start.y);
+export function buildWarPath(input: BuildWarPathInput): WarPath | null {
+  const { attacker, target } = input;
+  const travelEstimate = estimateTravelTime(attacker.country, target.country);
+  if (!travelEstimate) {
+    console.error('[WarPath] No travel estimate available for route', {
+      attackerCountry: attacker.country,
+      targetCountry: target.country,
+    });
+    return null;
+  }
 
   return {
     id: `${attacker.country}-${target.country}-${Date.now()}`,
     attacker,
     target,
-    durationMs: computeDuration(dist, duration),
+    travelDays: travelEstimate.days,
     createdAt: Date.now(),
   };
 }
@@ -859,8 +849,8 @@ export default function WarMap({
     void initializeRouteMathRust();
     let raf = 0;
     let lastTime = performance.now();
-    let accumulatedMs = 0;
-    const dur = warPath.durationMs;
+    let elapsedDays = 0;
+    const startingDayPosition = getSimulationDayPosition();
     let lastGeo: MapRouteGeometry | null = null;
 
     const updateOverlayGeometry = (geo: MapRouteGeometry) => {
@@ -930,8 +920,14 @@ export default function WarMap({
       lastTime = now;
 
       if (phase !== 'travel' || isGamePaused()) return;
-      accumulatedMs += delta;
-      const currentProgress = Math.min(1, accumulatedMs / dur);
+      const currentDayPosition = getSimulationDayPosition();
+      if (startingDayPosition !== null && currentDayPosition !== null) {
+        elapsedDays = Math.max(elapsedDays, currentDayPosition - startingDayPosition);
+      } else {
+        const millisecondsPerDay = getSimulationMillisecondsPerDay() ?? 2500;
+        elapsedDays += delta / millisecondsPerDay;
+      }
+      const currentProgress = Math.min(1, elapsedDays / warPath.travelDays);
       progressRef.current = currentProgress;
       progressPathRef.current?.setAttribute('stroke-dasharray', `${currentProgress * 100} 100`);
       const geo = routeGeometryRef.current;
@@ -980,7 +976,7 @@ export default function WarMap({
     (action: WarAction) => {
       if (!warPath || !result) return;
       // 👈 Sertakan isPbbCoalition ke dalam payload
-      onResolve({ result, action, path: warPath, isPbbCoalition }); 
+      onResolve({ result, action, path: warPath, isPbbCoalition });
     },
     [warPath, result, onResolve, isPbbCoalition]
   );
@@ -1050,151 +1046,151 @@ export default function WarMap({
               <animate attributeName="opacity" values="0.7;0;0.7" dur="1.6s" repeatCount="indefinite" />
             </circle>
 
-{phase === 'travel' && (
-  <g ref={tankRef} transform="translate(0 0)">
-    {/* ==== AURA GLOW (dipertahankan dari versi lama) ==== */}
-    <circle r={36} fill="#FF2D55" opacity={0.10} />
-    <circle r={24} fill="#FF2D55" opacity={0.18} />
+            {phase === 'travel' && (
+              <g ref={tankRef} transform="translate(0 0)">
+                {/* ==== AURA GLOW (dipertahankan dari versi lama) ==== */}
+                <circle r={36} fill="#FF2D55" opacity={0.10} />
+                <circle r={24} fill="#FF2D55" opacity={0.18} />
 
-    <g ref={tankRotationRef} transform="rotate(0)">
-      {/* ==== SHADOW KONTAK DI TANAH ==== */}
-      <ellipse cx={1} cy={3} rx={27} ry={15} fill="#000000" opacity={0.45} />
+                <g ref={tankRotationRef} transform="rotate(0)">
+                  {/* ==== SHADOW KONTAK DI TANAH ==== */}
+                  <ellipse cx={1} cy={3} rx={27} ry={15} fill="#000000" opacity={0.45} />
 
-      {/* ==== TRACKS ==== */}
-      {/* Track jauh (atas di local Y) */}
-      <rect x={-21} y={-13} width={42} height={6.5} rx={2} fill="#3A0714" />
-      <rect x={-21} y={-13} width={42} height={1.8} rx={0.9} fill="#8B1030" />
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-        <rect
-          key={`ft${i}`}
-          x={-19 + i * 4.1}
-          y={-12.3}
-          width={2.4}
-          height={5}
-          fill="#1A0208"
-          opacity={0.55}
-        />
-      ))}
+                  {/* ==== TRACKS ==== */}
+                  {/* Track jauh (atas di local Y) */}
+                  <rect x={-21} y={-13} width={42} height={6.5} rx={2} fill="#3A0714" />
+                  <rect x={-21} y={-13} width={42} height={1.8} rx={0.9} fill="#8B1030" />
+                  {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+                    <rect
+                      key={`ft${i}`}
+                      x={-19 + i * 4.1}
+                      y={-12.3}
+                      width={2.4}
+                      height={5}
+                      fill="#1A0208"
+                      opacity={0.55}
+                    />
+                  ))}
 
-      {/* Track dekat (bawah di local Y) */}
-      <rect x={-21} y={6.5} width={42} height={6.5} rx={2} fill="#3A0714" />
-      <rect x={-21} y={6.5} width={42} height={1.8} rx={0.9} fill="#8B1030" />
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-        <rect
-          key={`nt${i}`}
-          x={-19 + i * 4.1}
-          y={7.3}
-          width={2.4}
-          height={5}
-          fill="#1A0208"
-          opacity={0.55}
-        />
-      ))}
+                  {/* Track dekat (bawah di local Y) */}
+                  <rect x={-21} y={6.5} width={42} height={6.5} rx={2} fill="#3A0714" />
+                  <rect x={-21} y={6.5} width={42} height={1.8} rx={0.9} fill="#8B1030" />
+                  {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+                    <rect
+                      key={`nt${i}`}
+                      x={-19 + i * 4.1}
+                      y={7.3}
+                      width={2.4}
+                      height={5}
+                      fill="#1A0208"
+                      opacity={0.55}
+                    />
+                  ))}
 
-      {/* Road wheels mengintip dari track */}
-      {[-16, -10, -4, 2, 8, 14].map((x) => (
-        <g key={`rw${x}`}>
-          <circle cx={x} cy={-10.5} r={1.6} fill="#6B1020" />
-          <circle cx={x} cy={10.5} r={1.6} fill="#6B1020" />
-        </g>
-      ))}
+                  {/* Road wheels mengintip dari track */}
+                  {[-16, -10, -4, 2, 8, 14].map((x) => (
+                    <g key={`rw${x}`}>
+                      <circle cx={x} cy={-10.5} r={1.6} fill="#6B1020" />
+                      <circle cx={x} cy={10.5} r={1.6} fill="#6B1020" />
+                    </g>
+                  ))}
 
-      {/* Drive sprocket (depan) & idler (belakang) */}
-      <circle cx={-18} cy={-10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
-      <circle cx={-18} cy={10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
-      <circle cx={18} cy={-10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
-      <circle cx={18} cy={10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
+                  {/* Drive sprocket (depan) & idler (belakang) */}
+                  <circle cx={-18} cy={-10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
+                  <circle cx={-18} cy={10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
+                  <circle cx={18} cy={-10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
+                  <circle cx={18} cy={10} r={2.6} fill="#B71C3A" stroke="#3A0714" strokeWidth={0.5} />
 
-      {/* ==== HULL ==== */}
-      <path
-        d="M-21,-6 L-19,-6.5 L18,-6.5 L21,-3.5 L21,3.5 L18,6.5 L-19,6.5 L-21,6 Z"
-        fill="#FF2D55"
-        stroke="#6B1020"
-        strokeWidth={0.9}
-      />
-      {/* Permukaan atas hull (lebih terang — menangkap cahaya) */}
-      <path d="M-19,-6 L18,-6 L20,-3 L-20,-3 Z" fill="#FF5C7E" opacity={0.55} />
-      {/* Glacis depan (sisi miring depan) */}
-      <path
-        d="M18,-6.5 L21,-3.5 L21,3.5 L18,6.5 L19,3 L19,-3 Z"
-        fill="#FF7096"
-        opacity={0.7}
-      />
-      {/* Pelat belakang (lebih gelap) */}
-      <path d="M-21,-6 L-19,-6.5 L-19,6.5 L-21,6 Z" fill="#B71C3A" />
-      {/* Panel line */}
-      <path d="M-14,-6 L-14,6" stroke="#6B1020" strokeWidth={0.5} opacity={0.55} />
-      <path d="M13,-6 L13,6" stroke="#6B1020" strokeWidth={0.5} opacity={0.55} />
-      {/* Lampu depan */}
-      <circle cx={19.5} cy={-4.2} r={0.9} fill="#FFE5EC" />
-      <circle cx={19.5} cy={4.2} r={0.9} fill="#FFE5EC" />
+                  {/* ==== HULL ==== */}
+                  <path
+                    d="M-21,-6 L-19,-6.5 L18,-6.5 L21,-3.5 L21,3.5 L18,6.5 L-19,6.5 L-21,6 Z"
+                    fill="#FF2D55"
+                    stroke="#6B1020"
+                    strokeWidth={0.9}
+                  />
+                  {/* Permukaan atas hull (lebih terang — menangkap cahaya) */}
+                  <path d="M-19,-6 L18,-6 L20,-3 L-20,-3 Z" fill="#FF5C7E" opacity={0.55} />
+                  {/* Glacis depan (sisi miring depan) */}
+                  <path
+                    d="M18,-6.5 L21,-3.5 L21,3.5 L18,6.5 L19,3 L19,-3 Z"
+                    fill="#FF7096"
+                    opacity={0.7}
+                  />
+                  {/* Pelat belakang (lebih gelap) */}
+                  <path d="M-21,-6 L-19,-6.5 L-19,6.5 L-21,6 Z" fill="#B71C3A" />
+                  {/* Panel line */}
+                  <path d="M-14,-6 L-14,6" stroke="#6B1020" strokeWidth={0.5} opacity={0.55} />
+                  <path d="M13,-6 L13,6" stroke="#6B1020" strokeWidth={0.5} opacity={0.55} />
+                  {/* Lampu depan */}
+                  <circle cx={19.5} cy={-4.2} r={0.9} fill="#FFE5EC" />
+                  <circle cx={19.5} cy={4.2} r={0.9} fill="#FFE5EC" />
 
-      {/* ==== TURRET ==== */}
-      {/* Ring dasar turret */}
-      <ellipse cx={-2} cy={0} rx={10.5} ry={7} fill="#B71C3A" />
-      {/* Body turret */}
-      <path
-        d="M-10,-4 L6,-4.5 L9,-2 L9,2 L6,4.5 L-10,4 L-12,2 L-12,-2 Z"
-        fill="#FF2D55"
-        stroke="#6B1020"
-        strokeWidth={0.7}
-      />
-      {/* Highlight atas turret */}
-      <path d="M-10,-3.5 L6,-4 L8.5,-1.5 L-11,-1.5 Z" fill="#FF7096" opacity={0.5} />
-      {/* Shadow sisi kanan turret */}
-      <path d="M6,-4.5 L9,-2 L9,2 L6,4.5 L8,2 L8,-2 Z" fill="#B71C3A" opacity={0.7} />
+                  {/* ==== TURRET ==== */}
+                  {/* Ring dasar turret */}
+                  <ellipse cx={-2} cy={0} rx={10.5} ry={7} fill="#B71C3A" />
+                  {/* Body turret */}
+                  <path
+                    d="M-10,-4 L6,-4.5 L9,-2 L9,2 L6,4.5 L-10,4 L-12,2 L-12,-2 Z"
+                    fill="#FF2D55"
+                    stroke="#6B1020"
+                    strokeWidth={0.7}
+                  />
+                  {/* Highlight atas turret */}
+                  <path d="M-10,-3.5 L6,-4 L8.5,-1.5 L-11,-1.5 Z" fill="#FF7096" opacity={0.5} />
+                  {/* Shadow sisi kanan turret */}
+                  <path d="M6,-4.5 L9,-2 L9,2 L6,4.5 L8,2 L8,-2 Z" fill="#B71C3A" opacity={0.7} />
 
-      {/* Cupola komandan */}
-      <circle cx={-5} cy={-1} r={2.2} fill="#D01A42" stroke="#6B1020" strokeWidth={0.5} />
-      <circle cx={-5} cy={-1} r={1.1} fill="#FF7096" opacity={0.6} />
-      <circle cx={-5} cy={-1} r={0.5} fill="#6B1020" />
-      {/* Hatch loader */}
-      <circle cx={1} cy={1.5} r={1.3} fill="#D01A42" stroke="#6B1020" strokeWidth={0.4} />
-      <circle cx={1} cy={1.5} r={0.5} fill="#B71C3A" />
+                  {/* Cupola komandan */}
+                  <circle cx={-5} cy={-1} r={2.2} fill="#D01A42" stroke="#6B1020" strokeWidth={0.5} />
+                  <circle cx={-5} cy={-1} r={1.1} fill="#FF7096" opacity={0.6} />
+                  <circle cx={-5} cy={-1} r={0.5} fill="#6B1020" />
+                  {/* Hatch loader */}
+                  <circle cx={1} cy={1.5} r={1.3} fill="#D01A42" stroke="#6B1020" strokeWidth={0.4} />
+                  <circle cx={1} cy={1.5} r={0.5} fill="#B71C3A" />
 
-      {/* ==== BARREL ==== */}
-      {/* Mantlet */}
-      <rect
-        x={8}
-        y={-2.5}
-        width={4}
-        height={5}
-        rx={1}
-        fill="#B71C3A"
-        stroke="#6B1020"
-        strokeWidth={0.5}
-      />
-      {/* Laras utama */}
-      <rect x={11} y={-1.3} width={19} height={2.6} fill="#D01A42" />
-      <rect x={11} y={-1.3} width={19} height={0.9} fill="#FF7096" opacity={0.55} />
-      <rect x={11} y={0.7} width={19} height={0.6} fill="#6B1020" opacity={0.5} />
-      {/* Bore evacuator (penebalan tengah laras) */}
-      <rect
-        x={19}
-        y={-1.8}
-        width={3}
-        height={3.6}
-        rx={0.7}
-        fill="#B71C3A"
-        stroke="#6B1020"
-        strokeWidth={0.3}
-      />
-      {/* Muzzle brake */}
-      <rect
-        x={30}
-        y={-2}
-        width={4.5}
-        height={4}
-        rx={0.8}
-        fill="#3A0714"
-        stroke="#1A0208"
-        strokeWidth={0.4}
-      />
-      <rect x={30} y={-2} width={4.5} height={1.2} rx={0.4} fill="#B71C3A" />
-      <ellipse cx={34.5} cy={0} rx={0.6} ry={1.6} fill="#1A0208" />
-    </g>
-  </g>
-)}
+                  {/* ==== BARREL ==== */}
+                  {/* Mantlet */}
+                  <rect
+                    x={8}
+                    y={-2.5}
+                    width={4}
+                    height={5}
+                    rx={1}
+                    fill="#B71C3A"
+                    stroke="#6B1020"
+                    strokeWidth={0.5}
+                  />
+                  {/* Laras utama */}
+                  <rect x={11} y={-1.3} width={19} height={2.6} fill="#D01A42" />
+                  <rect x={11} y={-1.3} width={19} height={0.9} fill="#FF7096" opacity={0.55} />
+                  <rect x={11} y={0.7} width={19} height={0.6} fill="#6B1020" opacity={0.5} />
+                  {/* Bore evacuator (penebalan tengah laras) */}
+                  <rect
+                    x={19}
+                    y={-1.8}
+                    width={3}
+                    height={3.6}
+                    rx={0.7}
+                    fill="#B71C3A"
+                    stroke="#6B1020"
+                    strokeWidth={0.3}
+                  />
+                  {/* Muzzle brake */}
+                  <rect
+                    x={30}
+                    y={-2}
+                    width={4.5}
+                    height={4}
+                    rx={0.8}
+                    fill="#3A0714"
+                    stroke="#1A0208"
+                    strokeWidth={0.4}
+                  />
+                  <rect x={30} y={-2} width={4.5} height={1.2} rx={0.4} fill="#B71C3A" />
+                  <ellipse cx={34.5} cy={0} rx={0.6} ry={1.6} fill="#1A0208" />
+                </g>
+              </g>
+            )}
 
             {phase === 'impact' && (
               <circle ref={impactBurstRef} cx={0} cy={0} r={0} fill="url(#impact-burst)">
@@ -1237,8 +1233,8 @@ export default function WarMap({
           <div className="w-full max-w-3xl lg:max-w-[940px] xl:max-w-[1040px] 2xl:max-w-5xl h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)] overflow-y-auto bg-[#0A1A1A] border border-[#00FFAA]/30 rounded-3xl shadow-[0_0_80px_rgba(0,255,170,0.2)] font-sans select-none pointer-events-auto">
             <div
               className={`p-6 text-center border-b ${result === 'win'
-                  ? 'bg-[#00FFAA]/10 border-[#00FFAA]/30'
-                  : 'bg-[#FF2D55]/10 border-[#FF2D55]/30'
+                ? 'bg-[#00FFAA]/10 border-[#00FFAA]/30'
+                : 'bg-[#FF2D55]/10 border-[#FF2D55]/30'
                 }`}
             >
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-3">
@@ -1385,7 +1381,7 @@ export default function WarMap({
 
                   {result === 'win' ? (
                     <div className={`grid grid-cols-1 ${isPbbCoalition ? 'sm:grid-cols-2' : 'sm:grid-cols-3'} gap-3`}>
-                      
+
                       {/* FIX: Tombol Duduki / Aneksasi */}
                       <ActionButton
                         icon={<Flag className="h-5 w-5" />}

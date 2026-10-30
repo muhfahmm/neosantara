@@ -21,6 +21,7 @@ import { getProvinceIdeologyOverride } from './1_informasi_umum/provinsi_logic/1
 import { getProvinceRebellionChance } from './1_informasi_umum/provinsi_logic/ketegangan_provinsi/1_pemberontakan';
 import { getProvinceDemonstrationChance } from './1_informasi_umum/provinsi_logic/ketegangan_provinsi/2_demonstrasi';
 import { getCountryProfileSummary } from '@/lib/countryProfileSummaryRegistry';
+import { estimateTravelTime } from '../path_logic/time_logic';
 
 // Import 3 komponen terpisah
 import InformasiUmum from "./1_informasi_umum/informasi_umum";
@@ -120,6 +121,19 @@ export function CountryDetailModal({
 
   const recordMilitaryAction = (action: 'serang' | 'spionase' | 'sabotase') => {
     const actionDate = currentDate ? new Date(currentDate) : new Date();
+    if (action === 'serang') {
+      const attackerCountry = countryDetail?.country || 'Afganistan';
+      const travelEstimate = estimateTravelTime(attackerCountry, countryName || '');
+      if (!travelEstimate) {
+        console.error('[CountryDetail] Unable to estimate attack arrival date', {
+          attackerCountry,
+          targetCountry: countryName,
+        });
+        return;
+      }
+      actionDate.setDate(actionDate.getDate() + travelEstimate.days);
+    }
+
     const dateString = [
       actionDate.getFullYear(),
       String(actionDate.getMonth() + 1).padStart(2, '0'),
