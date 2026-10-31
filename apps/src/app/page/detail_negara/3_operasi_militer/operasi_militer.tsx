@@ -15,6 +15,7 @@ import SabotaseModal from './3_sabotase/sabotaseModals';
 import PerangNuklirModal from './4_perang_nuklir/perangNuklirModals';
 import KudetaModal from './5_lakukan_kudeta/kudetaModals';
 import MintaSerangNegaraModal from './6_minta_serang_negara/mintaSerangNegaraModals';
+import StatusMintaSerangModal from './6_minta_serang_negara/statusMintaSerangModal';
 import HinaModal from './7_hina/hinaModals';
 import ProvinsiOperasiMiliter from '../1_informasi_umum/provinsi_logic/ProvinsiOperasiMiliter';
 import CovertOperationResultModal from './CovertOperationResultModal';
@@ -56,6 +57,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
   const [isNuklirOpen, setIsNuklirOpen] = useState(false);
   const [isKudetaOpen, setIsKudetaOpen] = useState(false);
   const [isMintaSerangOpen, setIsMintaSerangOpen] = useState(false);
+  const [isStatusMintaSerangOpen, setIsStatusMintaSerangOpen] = useState(false);
   const [isHinaOpen, setIsHinaOpen] = useState(false);
   const [covertOperationResult, setCovertOperationResult] = useState<CovertOperationResult | null>(null);
   const pendingCovertOperationsRef = useRef(new Map<string, CovertOperationType>());
@@ -77,7 +79,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
   const datedActionClass = 'border border-amber-400/50 bg-amber-400/5 text-amber-300';
   const operationDateBadgeClass = 'absolute -top-6 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-sm border border-amber-400/30 bg-[#0A1A1A] px-2 py-1 text-[10px] font-bold tracking-wider text-amber-300 shadow-md';
 
-  const isAnyMiliterModalActive = isSerangOpen || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isHinaOpen || !!covertOperationResult;
+  const isAnyMiliterModalActive = isSerangOpen || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isStatusMintaSerangOpen || isHinaOpen || !!covertOperationResult;
 
   useEffect(() => {
     const handleCovertOperationArrival = (event: Event) => {
@@ -156,7 +158,13 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
             className={actionDates?.mintaSerang ? datedActionClass : undefined}
             iconClass={actionDates?.mintaSerang ? 'text-amber-300' : undefined}
             labelClass={actionDates?.mintaSerang ? 'text-amber-300' : undefined}
-            onClick={() => setIsMintaSerangOpen(true)}
+            onClick={() => {
+              if (actionDates?.mintaSerang) {
+                setIsStatusMintaSerangOpen(true);
+              } else {
+                setIsMintaSerangOpen(true);
+              }
+            }}
           />
         </div>
         <ActionButton icon={MessageSquare} label="Hina" onClick={() => { if (onCloseDetailModal) onCloseDetailModal(); setIsHinaOpen(true); }} />
@@ -218,6 +226,12 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
             );
           }
         }} 
+      />
+      <StatusMintaSerangModal
+        isOpen={isStatusMintaSerangOpen}
+        countryName={countryName}
+        arrivalDate={actionDates?.mintaSerang || null}
+        onClose={() => setIsStatusMintaSerangOpen(false)}
       />
       <HinaModal isOpen={isHinaOpen} countryName={countryName} onClose={() => setIsHinaOpen(false)} onConfirm={() => { console.log(`Hina -> ${countryName}`); }} />
       <CovertOperationResultModal

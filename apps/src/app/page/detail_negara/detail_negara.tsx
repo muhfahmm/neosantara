@@ -219,6 +219,32 @@ export function CountryDetailModal({
     window.addEventListener('military_operation_resolved', handleMilitaryOperationResolved);
     return () => window.removeEventListener('military_operation_resolved', handleMilitaryOperationResolved);
   }, [countryName]);
+  useEffect(() => {
+    const handleRequestedInvasionResolved = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        attackerCountry?: string;
+        targetCountry?: string;
+        actionType?: string;
+      }>).detail;
+      if (
+        !detail?.attackerCountry ||
+        normalizeCountryKey(detail.attackerCountry) !== normalizeCountryKey(countryName)
+      ) {
+        return;
+      }
+      const actionDateKey = `${normalizeCountryKey(countryName)}:minta_serang`;
+      setMilitaryActionDates(previous => {
+        if (!(actionDateKey in previous)) return previous;
+        const next = { ...previous };
+        delete next[actionDateKey];
+        return next;
+      });
+    };
+
+    window.addEventListener('requested_invasion_resolved', handleRequestedInvasionResolved);
+    return () => window.removeEventListener('requested_invasion_resolved', handleRequestedInvasionResolved);
+  }, [countryName]);
+
 
   useEffect(() => {
     const refreshAnnexation = (event: Event) => {
@@ -620,15 +646,17 @@ export function CountryDetailModal({
     : "Ibukota";
 
   const attackerCountryName = annexedInfo?.attackerCountry;
+  let rulerIso = "";
   if (attackerCountryName) {
     const attackerData = COUNTRIES_DATA?.find(
       (c) => c.country?.toLowerCase().trim() === attackerCountryName.toLowerCase().trim()
     );
     if (attackerData?.iso) {
-      displayIso = attackerData.iso;
+      rulerIso = attackerData.iso;
     } else if (annexedInfo.attackerIso) {
-      displayIso = annexedInfo.attackerIso;
+      rulerIso = annexedInfo.attackerIso;
     }
+    displayIso = rulerIso || originalIso;
   }
   const provinceTensionStatus = provinceTensionValue <= 25
     ? 'Sangat Stabil'
@@ -682,7 +710,15 @@ export function CountryDetailModal({
               </h2>
 
               <div className="flex items-center gap-2 mt-1">
-                {renderFlagHeader(displayIso, displayCountryName)}
+                {/* Tampilkan 2 bendera jika wilayah dianeksasi (Bendera Penakluk & Bendera Wilayah Asli) */}
+                {rulerIso && originalIso && rulerIso.toLowerCase() !== originalIso.toLowerCase() ? (
+                  <>
+                    {renderFlagHeader(rulerIso, attackerCountryName || "Penguasa")}
+                    {renderFlagHeader(originalIso, countryName || "Wilayah Asli")}
+                  </>
+                ) : (
+                  renderFlagHeader(displayIso, displayCountryName)
+                )}
 
                 {/* 👈 TAMBAHKAN BENDERA PBB DI SINI */}
                 {annexedInfo?.isPbbOccupied && (

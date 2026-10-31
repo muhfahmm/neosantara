@@ -78,6 +78,7 @@ export function lootUserProductionInventory(countryDetail: any, currentDateStr: 
         lootedSummaryText: "Seluruh stok hasil produksi (Mineral & Energi, Manufaktur, Peternakan, Agrikultur, Perikanan, dan Olahan Pangan) telah habis dirampas oleh musuh."
     };
 }
+
 const RequireEmbassyModal = dynamic(() => import('./RequireEmbassyModal').then(m => m.RequireEmbassyModal), { ssr: false });
 import { Navbar } from '../navbar/Navbar';
 const BottomNav = dynamic(() => import('../navigasi_menu/2_navigasi_bawah/BottomNav'), { ssr: false });
@@ -2585,6 +2586,8 @@ export default function MapPage() {
         }
     }, []);
     const [activeWarAnimation, setActiveWarAnimation] = useState<any>(null);
+    const activeWarAnimationRef = useRef<any>(null);
+    activeWarAnimationRef.current = activeWarAnimation;
     const [isWarAnalysisActive, setIsWarAnalysisActive] = useState(false);
     const handleWarAnalysisVisibilityChange = useCallback((isVisible: boolean) => {
         setIsWarAnalysisActive(isVisible);
@@ -2611,6 +2614,11 @@ export default function MapPage() {
     useEffect(() => {
         const handleStartWarAnimation = async (event: Event) => {
             const detail = (event as CustomEvent).detail;
+            if (activeWarAnimationRef.current) {
+                // Jangan batalkan animasi perang yang sedang berjalan, masukkan ke antrean!
+                setNpcWarQueue(previous => [...previous, detail]);
+                return;
+            }
             if (typeof detail?.attacker !== 'string' || !detail.attacker.trim() ||
                 typeof detail?.target !== 'string' || !detail.target.trim()) {
                 console.error('[WarAnimation] Invalid attacker or target name', detail);
@@ -4441,42 +4449,9 @@ export default function MapPage() {
                         }
                         generatedNewsItems.push(inv);
 
-                        const outcomeRoll = Math.random();
-                        if (outcomeRoll < 0.50) {
-                            // Dapatkan warna asli negara penyerang
-                            const attackerColor = getCountryColor(inv.attackerCountry);
-
-                            const { news: annexationNews } = generateAnnexationNews(
-                                inv.attackerCountry,
-                                inv.attackerIso,
-                                attackerColor, // Gunakan warna asli penyerang, bukan hardcoded
-                                inv.targetCountry,
-                                inv.targetIso,
-                                currentDateStr
-                            );
-                            generatedNewsItems.push(annexationNews);
-
-                            recordAnnexedTerritory(
-                                inv.targetCountry,
-                                inv.targetIso,
-                                inv.attackerCountry,
-                                inv.attackerIso,
-                                attackerColor
-                            );
-
-                            console.log(`🚩 ANEKSASI: ${inv.attackerCountry} (${attackerColor}) menganeksasi ${inv.targetCountry}`);
-                        } else {
-                            const lootNews = generateResourceLootNews(
-                                inv.attackerCountry,
-                                inv.attackerIso,
-                                inv.targetCountry,
-                                inv.targetIso,
-                                5000000,
-                                { emas: 100, minyak_bumi: 250, beras: 500 },
-                                currentDateStr
-                            );
-                            generatedNewsItems.push(lootNews);
-                        }
+                        // CATATAN: Hasil perang (aneksasi wilayah atau penjarahan SDA) TIDAK BOLEH dieksekusi secara instan di sini!
+                        // Operasi militer harus mengalir melalui antrean animasi/pertempuran (npcWarQueue -> onAutoResolve)
+                        // agar tidak terjadi aneksasi siluman tanpa visual tank di peta.
                     });
 
                     setNewsList(prev => [...generatedNewsItems, ...prev]);
@@ -7000,10 +6975,8 @@ export default function MapPage() {
                         annexedStore[capturedCity.countryIso.toLowerCase()]
                     );
 
-                    // Jika negara telah teraneksasi sepenuhnya, buka langsung atas nama negara penguasa penakluk!
-                    const modalTargetCountry = isEntireCountryAnnexed
-                        ? capturedCity.ownerCountry
-                        : originalCountry;
+                    // Buka modal detail negara berdasarkan wilayah aslinya agar sistem mendeteksi identitas wilayah & bendera penguasa
+                    const modalTargetCountry = originalCountry;
 
                     setCountryDetailModalName(modalTargetCountry);
                     setCountryDetailModalCity(capturedCity.cityName);
@@ -8431,6 +8404,14 @@ export default function MapPage() {
                                         isRead: false
                                     }, ...prev]);
                                 }
+
+                                window.dispatchEvent(new CustomEvent('requested_invasion_resolved', {
+                                    detail: {
+                                        attackerCountry: activeWarAnimation.attacker,
+                                        targetCountry: activeWarAnimation.target,
+                                        actionType: isAnnexation ? 'aneksasi' : 'jarah',
+                                    },
+                                }));
                                 return;
                             }
 
@@ -8595,6 +8576,7 @@ export default function MapPage() {
                             );
                             setIsWarAnalysisActive(false);
                             setActiveWarAnimation(null);
+                            npcWarQueueRunningRef.current = false;
                             resumeGameTimeAfterWar();
                         }}
                     />
@@ -9193,9 +9175,6 @@ export default function MapPage() {
                 onSaveGameClick={openSaveModal}
                 onRestartClick={() => setIsRestartConfirmOpen(true)}
             />
-
-
-
 
             {/* Confirm Restart Modal */}
             <ConfirmRestartModal
