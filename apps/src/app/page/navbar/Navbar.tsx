@@ -40,6 +40,7 @@ interface NavbarProps {
     onOpenSaveModal: () => void;
     onOpenRestartConfirm: () => void;
     onOpenKepuasan?: () => void;
+    onOpenPeringkat?: () => void;
     onOpenKesejahteraan?: () => void;
     onOpenPopulasi?: () => void;
     presidentRating?: number;
@@ -57,6 +58,7 @@ export function Navbar({
     onOpenSaveModal,
     onOpenRestartConfirm,
     onOpenKepuasan,
+    onOpenPeringkat,
     onOpenKesejahteraan,
     onOpenPopulasi,
     presidentRating = 50,
@@ -302,12 +304,18 @@ export function Navbar({
                         />
                     </button>
 
-                    <StatusItem 
-                        icon={<Star className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 fill-[#00FFAA] text-[#00FFAA]" />} 
-                        label="PERINGKAT" 
-                        value={`${presidentRating}/100`} 
-                        color={getPresidentRatingColor(presidentRating)} 
-                    />
+                    <button
+                        onClick={onOpenPeringkat}
+                        className="cursor-pointer transition-opacity hover:opacity-80"
+                        title="Klik untuk melihat detail peringkat"
+                    >
+                        <StatusItem
+                            icon={<Star className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 fill-[#00FFAA] text-[#00FFAA]" />}
+                            label="PERINGKAT"
+                            value={`${presidentRating}/100`}
+                            color={getPresidentRatingColor(presidentRating)}
+                        />
+                    </button>
 
                     <button 
                         onClick={onOpenKesejahteraan}

@@ -36,6 +36,7 @@ const ModalLoadingFallback = () => (
 // 1. Kepuasan
 const StatistikKepuasanModal = dynamic(() => import("./1_kepuasan/1_statistik/StatistikKepuasanModal"), { ssr: false, loading: ModalLoadingFallback });
 const NaikkanKepuasanModal = dynamic(() => import("./1_kepuasan/2_naikkan_kepuasan/NaikkanKepuasanModal"), { ssr: false, loading: ModalLoadingFallback });
+const RingkasanPeringkatModal = dynamic(() => import("./1_kepuasan/RingkasanPeringkatModal"), { ssr: false, loading: ModalLoadingFallback });
 
 // 2. Populasi
 const RingkasanPopulasiModal = dynamic(() => import("./2_populasi/RingkasanPopulasiModal"), { ssr: false, loading: ModalLoadingFallback });
@@ -430,6 +431,16 @@ function ModalsManager({
           presidentRating={presidentRating}
           setPresidentRating={setPresidentRating}
           currentDate={currentDate}
+        />
+      );
+    case "Dashboard:Peringkat":
+      return (
+        <RingkasanPeringkatModal
+          isOpen={true}
+          onClose={onClose}
+          presidentRating={presidentRating}
+          countryDetail={countryDetail}
+          metadata={metadata}
         />
       );
     case "Dashboard:Populasi:Overview":

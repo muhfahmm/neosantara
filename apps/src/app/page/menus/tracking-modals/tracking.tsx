@@ -56,6 +56,7 @@ interface ActiveDiplomacyPath {
 interface DiplomacyTrackingProps {
   onOpen?: () => void;
   isWarActive?: boolean;
+  isUiHidden?: boolean;
 }
 
 const normalizeCountryName = (name: unknown) => String(name || '')
@@ -64,7 +65,7 @@ const normalizeCountryName = (name: unknown) => String(name || '')
   .replace(/[\u0300-\u036f]/g, '')
   .replace(/[^a-z0-9]/g, '');
 
-export default function DiplomacyTracking({ onOpen, isWarActive = false }: DiplomacyTrackingProps) {
+export default function DiplomacyTracking({ onOpen, isWarActive = false, isUiHidden = false }: DiplomacyTrackingProps) {
   const [activePaths, setActivePaths] = useState<ActiveDiplomacyPath[]>([]);
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
 
@@ -226,6 +227,8 @@ export default function DiplomacyTracking({ onOpen, isWarActive = false }: Diplo
 
       {typeof document !== 'undefined' && !isWarActive && createPortal(
         <>
+          {!isUiHidden && (
+            <>
           <button
         type="button"
         onClick={() => {
@@ -340,6 +343,8 @@ export default function DiplomacyTracking({ onOpen, isWarActive = false }: Diplo
             </div>
           </div>
         </div>
+      )}
+        </>
       )}
         </>,
         document.body

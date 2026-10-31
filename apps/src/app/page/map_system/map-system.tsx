@@ -975,6 +975,9 @@ export default function MapPage() {
     const [isMapSettingsModalOpen, setIsMapSettingsModalOpen] = useState(false);
     const [isRestartConfirmOpen, setIsRestartConfirmOpen] = useState(false);
     const [activeMenu, setActiveMenu] = useState('Peta Taktis');
+    const isMenuModalOpen = activeMenu !== '' &&
+        activeMenu !== 'Peta Taktis' &&
+        !Object.prototype.hasOwnProperty.call(subMenuItems, activeMenu);
 
     const [isDiplomacyMapActive, setIsDiplomacyMapActive] = useState(false);
     const [resetTrigger, setResetTrigger] = useState(false);
@@ -1057,8 +1060,9 @@ export default function MapPage() {
         const normalizeKey = (value: unknown) =>
             String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
         const updateDiplomacyMapColors = () => {
-            gameWindow.neosantara_diplomacy_map_active = isDiplomacyMapActive;
-            if (!isDiplomacyMapActive) {
+            const showDiplomacyMap = isDiplomacyMapActive && !isMenuModalOpen;
+            gameWindow.neosantara_diplomacy_map_active = showDiplomacyMap;
+            if (!showDiplomacyMap) {
                 gameWindow.neosantara_diplomacy_map_colors = {};
                 return;
             }
@@ -1168,7 +1172,7 @@ export default function MapPage() {
             window.removeEventListener('annexation_completed', notifyColorsChanged);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isDiplomacyMapActive, selectedCountry?.country, countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, isDiplomacyMapActive ? simulationDateString.slice(0, 7) : '']);
+    }, [isDiplomacyMapActive, isMenuModalOpen, selectedCountry?.country, countryDetail?.country, countryDetail?.nama_negara, countryDetail?.name, isDiplomacyMapActive && !isMenuModalOpen ? simulationDateString.slice(0, 7) : '']);
 
     const handleTopNavSelect = (view: 'map' | 'diplomacy') => {
         setIsDiplomacyMapActive(view === 'diplomacy');
@@ -7339,6 +7343,7 @@ export default function MapPage() {
                         onOpenSaveModal={openSaveModal}
                         onOpenRestartConfirm={() => setIsRestartConfirmOpen(true)}
                         onOpenKepuasan={() => setActiveMenu("Dashboard:Kepuasan")}
+                        onOpenPeringkat={() => setActiveMenu("Dashboard:Peringkat")}
                         onOpenKesejahteraan={() => {
                             setKesejahteraanDeepLink(true);
                             setActiveMenu("Dashboard:Populasi:Overview");
@@ -8777,11 +8782,12 @@ export default function MapPage() {
             {!isDialogTerbukaOpen && (
                 <DiplomacyTracking
                     isWarActive={!!activeWarAnimation}
+                    isUiHidden={isMenuModalOpen}
                     onOpen={() => setCountryDetailModalOpen(false)}
                 />
             )}
 
-            {!isDialogTerbukaOpen && !(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
+            {!isDialogTerbukaOpen && !isMenuModalOpen && !(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
                 <>
                     {!Object.values(subMenuItems).flat().some((item: { id: string }) => activeMenu.startsWith(item.id)) && (
                         !isAttackerForcesModalOpen && (

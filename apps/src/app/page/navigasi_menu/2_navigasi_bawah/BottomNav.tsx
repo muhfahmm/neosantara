@@ -127,19 +127,17 @@ export default function BottomNav({
   const isMainCategory = menuItems.some(item => item.id === activeMenu);
   const isSubMenuItem = Object.values(subMenuItems).flat().some((sub: any) => activeMenu.startsWith(sub.id));
 
-  // 🔥 SINGLE unified hide check — placed BEFORE any render logic
-  // Covers: notification modals (inbox/reward/news), detail modals, sub-menu modals, and strategy hide events
-  if (isTemporarilyHidden || isDetailModalOpen || isAttackerForcesModalOpen || isSubMenuItem) return null;
-
   const isOtherModalOpen = activeMenu !== "" &&
                            activeMenu !== "Peta Taktis" &&
                            !isMainCategory &&
                            !isSubMenuItem &&
                            !activeMenu.startsWith("Menu:KomandoPertahanan");
 
+  // Hide navigation completely while an overlay menu is open.
+  if (isTemporarilyHidden || isDetailModalOpen || isAttackerForcesModalOpen || isSubMenuItem || isOtherModalOpen) return null;
+
   return (
-    <div className={`absolute bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-1/2 -translate-x-1/2 w-max max-w-[95vw] transition-all duration-500 cursor-not-allowed z-[200] ${isOtherModalOpen ? 'opacity-50' : 'opacity-100'
-      }`}>
+    <div className="absolute bottom-3 lg:bottom-4 xl:bottom-6 2xl:bottom-12 left-1/2 -translate-x-1/2 w-max max-w-[95vw] transition-all duration-500 cursor-not-allowed z-[200]">
       <nav className="flex items-center gap-1 lg:gap-1.5 bg-[#0F2424]/90 backdrop-blur-md px-1.5 lg:px-2 py-1 lg:py-1.5 rounded-xl lg:rounded-2xl border border-[#00FFAA]/30 transition-all duration-500 ease-in-out overflow-visible">
         {/* Main Navigation Section */}
         <div className="flex items-center gap-0.5 lg:gap-1 2xl:gap-2">
