@@ -15,10 +15,12 @@ interface SerangNegaraModalProps {
 	selectedCityId?: string | null;
 	playerCountryDetail?: any;
 	targetCountryDetail?: any;
+	isAttackInProgress?: boolean;
 	onClose: () => void;
 	onConfirm: (actionType: 'aneksasi' | 'jarah' | 'mundur', targetCountry: string) => void;
 	onCloseDetailModal?: () => void;
 	onAttackLaunched?: () => void;
+	onAttackBlocked?: () => void;
 }
 
 export default function SerangNegaraModal({
@@ -28,10 +30,12 @@ export default function SerangNegaraModal({
 	selectedCityId,
 	playerCountryDetail,
 	targetCountryDetail,
+	isAttackInProgress = false,
 	onClose,
 	onConfirm,
 	onCloseDetailModal,
 	onAttackLaunched,
+	onAttackBlocked,
 }: SerangNegaraModalProps) {
 	const [isLaunchConfirmationOpen, setIsLaunchConfirmationOpen] = useState(false);
 	const [blockedAttackReason, setBlockedAttackReason] = useState<'pact' | 'self' | null>(null);
@@ -99,6 +103,12 @@ export default function SerangNegaraModal({
 	const targetPower = targetSummary?.totals?.totalPower ?? 1000000;
 
 	const handleLaunchAttack = () => {
+		if (isAttackInProgress) {
+			setIsLaunchConfirmationOpen(false);
+			onClose();
+			onAttackBlocked?.();
+			return;
+		}
 		if (isSelfTarget) {
 			setIsLaunchConfirmationOpen(false);
 			setBlockedAttackReason('self');

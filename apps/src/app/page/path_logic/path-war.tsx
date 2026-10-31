@@ -791,6 +791,10 @@ export default function WarMap({
     return false;
   }, [isUserDefenderProp, target.country]);
   const isAiAttacker = isNpcWar || isUserDefender;
+  const canViewAttackerForces = isAiAttacker || isPbbCoalition;
+  const attackerForceDisplayName = isPbbCoalition
+    ? 'Pasukan Gabungan PBB'
+    : `Pasukan ${attacker.country}`;
   const effectiveAttackerDeploymentPercent = isAiAttacker
     ? attackerDeploymentPercent
     : 100;
@@ -923,7 +927,7 @@ export default function WarMap({
     [attackerForces]
   );
   const isAttackerForcesModalVisible =
-    showAttackerForces && isAiAttacker && (phase === 'travel' || phase === 'impact');
+    showAttackerForces && (phase === 'travel' || phase === 'impact');
 
   useEffect(() => {
     onAttackerForcesModalVisibilityChange?.(isAttackerForcesModalVisible);
@@ -1154,21 +1158,22 @@ export default function WarMap({
               <g
                 ref={tankRef}
                 transform="translate(0 0)"
-                className={isAiAttacker ? 'pointer-events-auto cursor-pointer' : undefined}
-                role={isAiAttacker ? 'button' : undefined}
-                tabIndex={isAiAttacker ? 0 : undefined}
-                aria-label={isAiAttacker ? `Lihat jumlah pasukan ${attacker.country}` : undefined}
-                onClick={isAiAttacker ? event => {
+                className="pointer-events-auto cursor-pointer focus:outline-none"
+                role="button"
+                tabIndex={0}
+                aria-label={`Lihat jumlah ${attackerForceDisplayName}`}
+                onClick={event => {
                   event.stopPropagation();
                   setShowAttackerForces(true);
-                } : undefined}
-                onKeyDown={isAiAttacker ? event => {
+                }}
+                onKeyDown={event => {
                   if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault();
                     setShowAttackerForces(true);
                   }
-                } : undefined}
+                }}
               >
+                <circle r={44} fill="transparent" pointerEvents="all" />
                 {/* ==== AURA GLOW (dipertahankan dari versi lama) ==== */}
                 <circle r={36} fill="#FF2D55" opacity={0.10} />
                 <circle r={24} fill="#FF2D55" opacity={0.18} />
@@ -1344,7 +1349,7 @@ export default function WarMap({
                   Informasi Pergerakan Militer
                 </p>
                 <h2 id="attacker-forces-title" className="mt-1 break-words text-base font-black text-[#00FFAA] sm:text-xl">
-                  Pasukan {attacker.country}
+                  {attackerForceDisplayName}
                 </h2>
                 <p className="mt-1 break-words text-xs text-white/65">
                   Jumlah unit yang dibawa dalam serangan ini
@@ -1394,7 +1399,9 @@ export default function WarMap({
 
                 <aside className="mt-5 max-w-full rounded-xl border border-amber-300/25 bg-amber-300/10 p-3 text-xs leading-relaxed text-amber-100/85 [overflow-wrap:anywhere]">
                   <strong className="mr-1">Catatan:</strong>
-                  Negara penyerang mengerahkan {effectiveAttackerDeploymentPercent}% dari armadanya untuk operasi ini. Persentase pengerahan dipilih secara acak antara 50% dan 75%.
+                  {canViewAttackerForces
+                    ? `${isPbbCoalition ? 'Pasukan Gabungan PBB' : 'Negara penyerang'} mengerahkan ${effectiveAttackerDeploymentPercent}% dari armadanya untuk operasi ini. Persentase pengerahan dipilih secara acak antara 50% dan 75%.`
+                    : 'Seluruh pasukan penyerang ditampilkan sesuai komposisi armada yang dikerahkan.'}
                 </aside>
             </div>
           </section>

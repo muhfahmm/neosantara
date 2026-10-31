@@ -197,11 +197,11 @@ export function CountryDetailModal({
     const handleMilitaryOperationResolved = (event: Event) => {
       const detail = (event as CustomEvent<{
         targetCountry?: string;
-        actionType?: 'aneksasi' | 'jarah';
+        actionType?: 'aneksasi' | 'jarah' | 'mundur';
       }>).detail;
       if (
         !detail?.targetCountry ||
-        (detail.actionType !== 'aneksasi' && detail.actionType !== 'jarah') ||
+        !['aneksasi', 'jarah', 'mundur'].includes(detail.actionType || '') ||
         normalizeCountryKey(detail.targetCountry) !== normalizeCountryKey(countryName)
       ) {
         return;
@@ -578,6 +578,11 @@ export function CountryDetailModal({
   );
   const isAnnexedTerritory = Boolean(annexedInfo?.attackerCountry);
   const occupyingCountry = annexedInfo?.attackerCountry || '';
+  const hasForeignTerritoryOwner = Boolean(
+    occupyingCountry &&
+    normalizeCountryKey(occupyingCountry) !== normalizeCountryKey(playerCountryName)
+  );
+  const cardCountryName = hasForeignTerritoryOwner ? occupyingCountry : countryName || '';
   const playerReligion = countryDetail?.religion || countryDetail?.agama_utama || countryDetail?.agama;
   const playerIdeology = countryDetail?.ideology || countryDetail?.ideologi;
   const targetIdeology = detailData?.ideology || detailData?.ideologi;
@@ -935,7 +940,7 @@ export function CountryDetailModal({
             {/* Render 3 Komponen Berdasarkan Active Tab */}
             {activeTab === "informasi" && (
               <InformasiUmum
-                countryName={countryName}
+                countryName={cardCountryName}
                 playerCountryDetail={countryDetail}
                 setPlayerCountryDetail={setCountryDetail}
                 currentNetBalance={playerEffectiveNetBalance}
@@ -944,7 +949,7 @@ export function CountryDetailModal({
                 currentDate={currentDate}
                 autoBuildEmbassy={autoBuildEmbassy}
                 isOccupiedProvince={isPlayerOccupiedProvince}
-                isAnnexedTerritory={isAnnexedTerritory}
+                isAnnexedTerritory={isAnnexedTerritory && !hasForeignTerritoryOwner}
                 occupyingCountry={occupyingCountry}
                 playerReligion={playerReligion}
                 targetReligion={detailData?.religion || detailData?.agama_utama || detailData?.agama}
@@ -963,7 +968,7 @@ export function CountryDetailModal({
 
             {activeTab === "geopolitik" && (
               <Geopolitik
-                countryName={countryName}
+                countryName={cardCountryName}
                 playerCountryDetail={countryDetail}
                 setPlayerCountryDetail={setCountryDetail}
                 targetCountryDetail={detailData}
@@ -974,7 +979,7 @@ export function CountryDetailModal({
 
             {activeTab === "militer" && (
               <OperasiMiliter
-                countryName={countryName}
+                countryName={cardCountryName}
                 selectedCity={selectedCity}
                 selectedCityId={selectedCityId}
                 playerCountryDetail={countryDetail}

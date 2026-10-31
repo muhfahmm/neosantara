@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import SerangNegaraModal from './1_serang_negara/serangNegaraModals';
+import SeranganMasihBerlangsungModal from './1_serang_negara/SeranganMasihBerlangsungModal';
 import SpionaseModal from './2_spionase/spionaseModals';
 import SabotaseModal from './3_sabotase/sabotaseModals';
 import PerangNuklirModal from './4_perang_nuklir/perangNuklirModals';
@@ -52,6 +53,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
 
 export default function OperasiMiliter({ countryName, selectedCity, selectedCityId, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, actionDates, onMilitaryActionLaunched, updatePlayerCountryDetail }: OperasiMiliterProps) {
   const [isSerangOpen, setIsSerangOpen] = useState(false);
+  const [isAttackInProgressModalOpen, setIsAttackInProgressModalOpen] = useState(false);
   const [isSpionaseOpen, setIsSpionaseOpen] = useState(false);
   const [isSabotaseOpen, setIsSabotaseOpen] = useState(false);
   const [isNuklirOpen, setIsNuklirOpen] = useState(false);
@@ -79,7 +81,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
   const datedActionClass = 'border border-amber-400/50 bg-amber-400/5 text-amber-300';
   const operationDateBadgeClass = 'absolute -top-6 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-sm border border-amber-400/30 bg-[#0A1A1A] px-2 py-1 text-[10px] font-bold tracking-wider text-amber-300 shadow-md';
 
-  const isAnyMiliterModalActive = isSerangOpen || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isStatusMintaSerangOpen || isHinaOpen || !!covertOperationResult;
+  const isAnyMiliterModalActive = isSerangOpen || isAttackInProgressModalOpen || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isStatusMintaSerangOpen || isHinaOpen || !!covertOperationResult;
 
   useEffect(() => {
     const handleCovertOperationArrival = (event: Event) => {
@@ -137,7 +139,13 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-3 xl:gap-4">
         <div className="relative w-full min-w-0">
           {actionDates?.serang && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.serang)}</div>}
-          <ActionButton icon={Crosshair} label="Serang Negara" className={actionDates?.serang ? datedActionClass : undefined} iconClass={actionDates?.serang ? 'text-amber-300' : undefined} labelClass={actionDates?.serang ? 'text-amber-300' : undefined} onClick={() => setIsSerangOpen(true)} />
+          <ActionButton icon={Crosshair} label="Serang Negara" className={actionDates?.serang ? datedActionClass : undefined} iconClass={actionDates?.serang ? 'text-amber-300' : undefined} labelClass={actionDates?.serang ? 'text-amber-300' : undefined} onClick={() => {
+            if (actionDates?.serang) {
+              setIsAttackInProgressModalOpen(true);
+              return;
+            }
+            setIsSerangOpen(true);
+          }} />
         </div>
         <div className="relative w-full min-w-0">
           {actionDates?.spionase && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.spionase)}</div>}
@@ -177,8 +185,10 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         selectedCityId={selectedCityId}
         playerCountryDetail={playerCountryDetail}
         targetCountryDetail={targetCountryDetail}
+        isAttackInProgress={Boolean(actionDates?.serang)}
         onClose={() => setIsSerangOpen(false)}
         onCloseDetailModal={onCloseDetailModal}
+        onAttackBlocked={() => setIsAttackInProgressModalOpen(true)}
         onAttackLaunched={() => onMilitaryActionLaunched?.('serang')}
         onConfirm={(actionType, targetCountry) => {
           setIsSerangOpen(false);
@@ -194,6 +204,11 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
             );
           }
         }}
+      />
+      <SeranganMasihBerlangsungModal
+        isOpen={isAttackInProgressModalOpen}
+        countryName={countryName}
+        onClose={() => setIsAttackInProgressModalOpen(false)}
       />
       <SpionaseModal isOpen={isSpionaseOpen} countryName={countryName} playerCountryDetail={playerCountryDetail} onClose={() => setIsSpionaseOpen(false)} onConfirm={(target) => {
         onMilitaryActionLaunched?.('spionase');

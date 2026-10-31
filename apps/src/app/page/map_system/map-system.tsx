@@ -607,6 +607,7 @@ const MapCanvasView = memo(function MapCanvasView({
     containerRef,
     interactionDisabled,
     isSelectingTarget,
+    isWarActive,
     onClick,
     onPointerDown,
     onPointerMove,
@@ -618,6 +619,7 @@ const MapCanvasView = memo(function MapCanvasView({
     containerRef: React.RefObject<HTMLDivElement | null>;
     interactionDisabled: boolean;
     isSelectingTarget?: boolean;
+    isWarActive: boolean;
     onClick: (event: React.MouseEvent<HTMLCanvasElement>) => void;
     onPointerDown: (event: React.PointerEvent<HTMLCanvasElement>) => void;
     onPointerMove: (event: React.PointerEvent<HTMLCanvasElement>) => void;
@@ -647,7 +649,10 @@ const MapCanvasView = memo(function MapCanvasView({
         >
             <canvas
                 id="map-canvas"
-                style={isSelectingTarget ? { cursor: targetCursorStyle } : undefined}
+                style={{
+                    ...(isSelectingTarget ? { cursor: targetCursorStyle } : {}),
+                    ...(isWarActive ? { visibility: 'visible' } : {}),
+                }}
                 className={`w-full h-full block ${isSelectingTarget ? '' : 'cursor-grab'}`}
                 onClick={onClick}
                 onPointerDown={onPointerDown}
@@ -2299,11 +2304,9 @@ export default function MapPage() {
                 setNotifications(prev => [notifMsg, ...prev]);
             }
 
-            if (actionType === 'aneksasi' || actionType === 'jarah') {
-                window.dispatchEvent(new CustomEvent('military_operation_resolved', {
-                    detail: { targetCountry, actionType },
-                }));
-            }
+            window.dispatchEvent(new CustomEvent('military_operation_resolved', {
+                detail: { targetCountry, actionType },
+            }));
 
             // Tambahkan ke Berita & Update Geopolitik
             setNewsList(prev => [...newNewsItems, ...prev]);
@@ -8591,6 +8594,7 @@ export default function MapPage() {
                 containerRef={containerRef}
                 interactionDisabled={isMapInteractionDisabled}
                 isSelectingTarget={isSelectingIcbmTarget}
+                isWarActive={!!activeWarAnimation}
                 onClick={handleCanvasCountryClick}
                 onPointerDown={handleCanvasPointerDown}
                 onPointerMove={handleCanvasPointerMove}
