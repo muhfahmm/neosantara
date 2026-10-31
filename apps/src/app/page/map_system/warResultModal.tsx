@@ -15,6 +15,7 @@ export interface ResultModalProps {
     message: string;
     losses?: WarUnitLoss[];
     type?: 'success' | 'error' | 'info';
+    compact?: boolean;
     onClose: () => void;
 }
 
@@ -24,6 +25,7 @@ export default function ResultModal({
     message,
     losses = [],
     type = 'success',
+    compact = false,
     onClose,
 }: ResultModalProps) {
     if (typeof document === 'undefined' || !isOpen) return null;
@@ -31,8 +33,69 @@ export default function ResultModal({
     const isLosses = losses.length > 0;
     const isError = type === 'error';
 
-    return (
-        <NotebookModalWrapper zIndexClass="z-[500000]">
+    if (compact) {
+        return (
+            <div className="fixed inset-0 z-[500000] flex items-center justify-center p-4 font-sans pointer-events-none">
+                <div
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="result-modal-title"
+                    className={`w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] border ${isError ? 'border-rose-500/40' : 'border-[#00FFAA]/30'} rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(0,255,170,0.15)] relative text-white pointer-events-auto`}
+                >
+                    <div className="flex-1">
+                        <div className="mb-6 border-b border-[#00FFAA]/20 pb-4">
+                            <h2
+                                id="result-modal-title"
+                                className={`text-xl sm:text-2xl font-black tracking-wide uppercase ${isError ? 'text-rose-400' : 'text-[#00FFAA]'}`}
+                            >
+                                {title}
+                            </h2>
+                        </div>
+                        <p className="text-sm sm:text-base text-[#A0B0B0] leading-relaxed font-medium whitespace-pre-wrap">
+                            {message}
+                        </p>
+
+                        {isLosses && (
+                            <section aria-label="Rincian kerugian alutsista" className="mt-5 border-t border-[#00FFAA]/15 pt-4">
+                                <h3 className="mb-3 text-xs sm:text-sm font-black uppercase tracking-wider text-[#00FFAA]">
+                                    Rincian Kerugian Alutsista
+                                </h3>
+                                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                                    {losses.map((loss) => {
+                                        const imageKey = loss.unitKey === 'pasukan_infanteri' ? 'barak' : loss.unitKey;
+                                        const image = getDefenseUnitCardImage(imageKey);
+                                        const label = DEFENSE_UNIT_LABELS[loss.unitKey] || loss.unitKey.replace(/_/g, ' ');
+                                        return (
+                                            <article key={loss.unitKey} className="flex items-center gap-2.5 rounded-lg border border-[#00FFAA]/20 bg-[#0A1A1A] p-2.5">
+                                                {image && (
+                                                    <Image src={image} alt={label} width={40} height={40} className="h-9 w-9 shrink-0 object-contain" />
+                                                )}
+                                                <div className="min-w-0">
+                                                    <p className="truncate text-xs font-bold uppercase leading-tight text-[#A0B0B0]">{label}</p>
+                                                    <p className="text-base font-black text-rose-400">−{loss.quantity.toLocaleString('id-ID')}</p>
+                                                </div>
+                                            </article>
+                                        );
+                                    })}
+                                </div>
+                            </section>
+                        )}
+                    </div>
+                    <div className="mt-6 flex flex-col justify-end gap-3 border-t border-[#00FFAA]/20 pt-4 sm:flex-row">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className={`w-full rounded-xl border px-6 py-2 text-center text-[11px] font-black uppercase tracking-widest transition-all sm:w-auto sm:text-xs ${isError ? 'border-rose-500/50 bg-rose-500/20 text-rose-400 hover:bg-rose-500/30' : 'border-[#00FFAA]/30 bg-[#0A1A1A] text-[#E0E0E0] hover:bg-[#142A2A]'}`}
+                        >
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    const modalContent = (
             <div
                 role="dialog"
                 aria-modal="true"
@@ -131,6 +194,7 @@ export default function ResultModal({
                     </button>
                 </div>
             </div>
-        </NotebookModalWrapper>
     );
+
+    return <NotebookModalWrapper zIndexClass="z-[500000]">{modalContent}</NotebookModalWrapper>;
 }

@@ -3403,6 +3403,7 @@ export default function MapPage() {
         message: string;
         losses?: Array<{ unitKey: string; quantity: number }>;
         type?: 'success' | 'error' | 'info';
+        compact?: boolean;
         persistent?: boolean;
     }>({
         isOpen: false,
@@ -8093,6 +8094,7 @@ export default function MapPage() {
                                 title: isPoliceIncident ? 'Operasi Kepolisian Gagal' : 'Gagal Menyalurkan Bantuan',
                                 message: `Anggaran negara tidak mencukupi untuk ${isPoliceIncident ? 'mendanai operasi kepolisian' : 'menyalurkan bantuan'} (${budget.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO dari ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO).`,
                                 type: 'error',
+                                compact: !isPoliceIncident,
                                 persistent: true,
                                 // modal decoupled
                             });
@@ -8160,6 +8162,7 @@ export default function MapPage() {
                                 ? `Operasi kepolisian berhasil didanai sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO. Peringkat Presiden naik +2 poin, serta tingkat keamanan, kepuasan, dan kesejahteraan meningkat.`
                                 : `Berhasil menyalurkan bantuan sebesar ${cost.toLocaleString('id-ID', { maximumFractionDigits: 2 })} NEO! ${populationToRestore > 0 ? `${populationToRestore.toLocaleString('id-ID')} jiwa selamat. ` : ''}Peringkat Presiden naik +5 poin, serta Kepuasan & Kesejahteraan masyarakat meningkat.`,
                             type: 'success',
+                            compact: !isPoliceIncident,
                             persistent: true,
                             // modal decoupled
                         });
@@ -9371,6 +9374,7 @@ export default function MapPage() {
                 message={resultModal.message}
                 losses={resultModal.losses}
                 type={resultModal.type}
+                compact={resultModal.compact}
                 onClose={() => {
                     setResultModal(prev => ({ ...prev, isOpen: false }));
                 }}
