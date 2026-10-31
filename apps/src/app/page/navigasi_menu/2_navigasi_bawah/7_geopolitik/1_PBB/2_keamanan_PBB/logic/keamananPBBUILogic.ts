@@ -23,6 +23,7 @@ import {
   getSecurityCouncilInvasionParticipants,
   type SecurityCouncilInvasionOperation,
 } from "./1_invasiMiliterGabunganLogic";
+import { hasActiveGlobalWarBan } from "../../1_resolusi_PBB/logic/1_warBanLogic";
 
 const PERMANENT_SECURITY_COUNCIL_MEMBER_ISOS = new Set(
   PERMANENT_SECURITY_COUNCIL_MEMBERS.map(member => member.iso)
@@ -452,6 +453,7 @@ export function spawnAISecurityCouncilFromTrigger(
   dateStr: string
 ): void {
   if (typeof window === 'undefined') return;
+  if (trigger.securityAction === 'military' && hasActiveGlobalWarBan()) return;
   if (isCountryAnnexed(trigger.proposerCountry, getIsoForCountryName(trigger.proposerCountry))) return;
 
   const tmpl = SECURITY_TEMPLATES.find(t => t.type === trigger.securityAction) || SECURITY_TEMPLATES[0];
@@ -642,7 +644,9 @@ export function tickPBBSecurityCouncil(
       let notifiedFinished = item.notifiedFinished || false;
 
       if (newDaysRemaining === 0) {
-        if (vetoCount > 0) {
+        if (item.type === 'military' && hasActiveGlobalWarBan()) {
+          finalStatus = 'rejected';
+        } else if (vetoCount > 0) {
           finalStatus = 'vetoed';
         } else {
           finalStatus = votes.supportersCount > votes.opponentsCount ? 'passed' : 'rejected';

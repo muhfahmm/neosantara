@@ -2655,6 +2655,10 @@ export default function MapPage() {
     useEffect(() => {
         const handleStartWarAnimation = async (event: Event) => {
             const detail = (event as CustomEvent).detail;
+            if (detail?.isPbbCoalition && hasActiveGlobalWarBan()) {
+                console.warn('[WarAnimation] Global war ban active; refusing PBB coalition attack.');
+                return;
+            }
             if (activeWarAnimationRef.current) {
                 // Jangan batalkan animasi perang yang sedang berjalan, masukkan ke antrean!
                 setNpcWarQueue(previous => [...previous, detail]);
@@ -3066,6 +3070,10 @@ export default function MapPage() {
                 console.error('[PBBMilitaryOperation] Invalid approved operation', operation);
                 return;
             }
+            if (hasActiveGlobalWarBan()) {
+                console.warn('[PBBMilitaryOperation] Global war ban active; refusing military operation.', operation.resolutionId);
+                return;
+            }
 
             setNewsList(previous => {
                 const news = createSecurityCouncilInvasionNews(operation);
@@ -3134,6 +3142,11 @@ export default function MapPage() {
 
         const [nextWar, ...remainingWars] = npcWarQueue;
         if (!nextWar) return;
+        if (nextWar.isPbbCoalition && hasActiveGlobalWarBan()) {
+            npcWarQueueRunningRef.current = false;
+            setNpcWarQueue(remainingWars);
+            return;
+        }
         npcWarQueueRunningRef.current = true;
         setNpcWarQueue(remainingWars);
         window.dispatchEvent(new CustomEvent('start_war_animation', {

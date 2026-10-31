@@ -3,14 +3,11 @@ import { getCurrentGameDateString } from '@/app/logic/gameSessionState';
 import { STATIC_PBB_VOTES } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/3_suara_negara_PBB/staticVoteData";
 import { getIsoForCountryName } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso";
 import {
-  getAnnexedCountryCount,
   getEligibleReplacementProposer,
   isCountryAnnexed,
 } from "../../pbbVotingEligibility";
 import {
   getCouncilVoteMultiplier,
-  getCurrentElectionYear,
-  getStoredCouncilMembers,
 } from "../../2_keamanan_PBB/logika_anggota_tidak_tetap/securityCouncilElection";
 
 export const PBB_RESOLUTION_DURATION_OPTIONS = ['1 bulan', '3 bulan', '6 bulan', '9 bulan', '1 tahun'] as const;
@@ -228,30 +225,15 @@ export function calculate206AIVotes(
   const elapsedDays = Math.max(0, Math.min(30, 30 - daysRemaining));
   const progressRatio = elapsedDays / 30;
 
-  // Semua negara pada daftar pemilih berpartisipasi, kecuali negara pemain dan negara yang dianeksasi.
-  const baseAiCount = Math.max(
-    0,
-    TOTAL_UN_MEMBERS - 1 - getAnnexedCountryCount(
-      STATIC_PBB_VOTES.map(country => ({
-        name: country.name_id,
-        iso: getIsoForCountryName(country.name_id),
-      })),
-      activeUserCountryName
-    )
+  // Setiap negara dalam daftar memiliki satu suara; anggota DK tidak mendapat bobot tambahan.
+  const activeUserIsMember = STATIC_PBB_VOTES.some(country =>
+    normalizePbbCountryName(country.name_id) === normalizePbbCountryName(activeUserCountryName)
   );
+  const activeUserCanVote = activeUserIsMember &&
+    !isCountryAnnexed(activeUserCountryName, getIsoForCountryName(activeUserCountryName));
+  const baseAiCount = Math.max(0, TOTAL_UN_MEMBERS - (activeUserCanVote ? 1 : 0));
   const votesCastSoFar = Math.min(baseAiCount, Math.round(baseAiCount * progressRatio));
-  const activeUserIso = getIsoForCountryName(activeUserCountryName).toLowerCase();
-  const currentElectionYear = getCurrentElectionYear();
-  const activeLimitedMembers = getStoredCouncilMembers().filter(member =>
-    currentElectionYear >= member.termStartYear &&
-    currentElectionYear <= member.termEndYear
-  );
-  const limitedMemberVotesCast = activeLimitedMembers.filter(member =>
-    member.iso !== activeUserIso &&
-    !isCountryAnnexed(member.name, member.iso)
-  ).length * progressRatio;
-  const extraCouncilInfluenceVotes = limitedMemberVotesCast * 0.5;
-  const userVoteWeight = activeLimitedMembers.some(member => member.iso === activeUserIso) ? 1.5 : 1;
+  const userVoteWeight = activeUserCanVote ? 1 : 0;
 
   if (votesCastSoFar === 0) {
     const hasTarget = targetName && !targetName.toLowerCase().includes('global') && !targetName.toLowerCase().includes('dunia');
@@ -299,34 +281,82 @@ export function calculate206AIVotes(
     }
   }
 
-  let supportersCount = Math.round(votesCastSoFar * supporterRatio) + (extraCouncilInfluenceVotes * supporterRatio);
-  let opponentsCount = Math.round(votesCastSoFar * opponentRatio) + (extraCouncilInfluenceVotes * opponentRatio);
-  let abstainCount =
-    votesCastSoFar - Math.round(votesCastSoFar * supporterRatio) - Math.round(votesCastSoFar * opponentRatio) +
-    (extraCouncilInfluenceVotes * (1 - supporterRatio - opponentRatio));
+  const voteRatios = [
+    supporterRatio,
+    opponentRatio,
+    Math.max(0, 1 - supporterRatio - opponentRatio),
+  ];
+  const rawVotes = voteRatios.map(ratio => votesCastSoFar * ratio);
+  const aiVoteCounts = rawVotes.map(Math.floor);
+  let unallocatedVotes = votesCastSoFar - aiVoteCounts.reduce((total, count) => total + count, 0);
+  const largestRemainders = rawVotes
+    .map((count, index) => ({ index, remainder: count - Math.floor(count) }))
+    .sort((a, b) => b.remainder - a.remainder);
+  for (let index = 0; index < unallocatedVotes; index++) {
+    aiVoteCounts[largestRemainders[index].index]++;
+  }
+
+  let supportersCount = aiVoteCounts[0];
+  let opponentsCount = aiVoteCounts[1];
+  let abstainCount = aiVoteCounts[2];
 
   if (userVote === 'yes') supportersCount += userVoteWeight;
   if (userVote === 'no') opponentsCount += userVoteWeight;
   if (userVote === 'abstain') abstainCount += userVoteWeight;
 
   return {
-    supportersCount: Math.max(0, Math.round(supportersCount)),
-    opponentsCount: Math.max(0, Math.round(opponentsCount)),
-    abstainCount: Math.max(0, Math.round(abstainCount)),
-    totalVotesCast: Math.round(votesCastSoFar + extraCouncilInfluenceVotes + (userVote ? userVoteWeight : 0))
+    supportersCount,
+    opponentsCount,
+    abstainCount,
+    totalVotesCast: votesCastSoFar + (userVote ? userVoteWeight : 0)
   };
 }
 
 export function loadActiveResolutions(): ActiveResolutionItem[] {
   if (typeof window === 'undefined') return getInitialActiveResolutions();
   initializeSessionResolutions();
+  sessionResolutions = normalizeCompletedResolutionVotes(sessionResolutions);
   return [...sessionResolutions];
 }
 
 export function saveActiveResolutions(items: ActiveResolutionItem[]) {
   if (typeof window === 'undefined') return;
   initializeSessionResolutions();
-  sessionResolutions = [...items];
+  sessionResolutions = normalizeCompletedResolutionVotes(items);
+}
+
+function normalizeCompletedResolutionVotes(items: ActiveResolutionItem[]): ActiveResolutionItem[] {
+  return items.map(item => {
+    if (item.status === 'voting') return item;
+
+    const counts = [
+      Math.max(0, item.voteStats.supportersCount),
+      Math.max(0, item.voteStats.opponentsCount),
+      Math.max(0, item.voteStats.abstainCount),
+    ];
+    const total = counts.reduce((sum, count) => sum + count, 0);
+    if (total === 0) return item;
+
+    const scaledCounts = counts.map(count => count * TOTAL_UN_MEMBERS / total);
+    const normalizedCounts = scaledCounts.map(Math.floor);
+    const remainingVotes = TOTAL_UN_MEMBERS - normalizedCounts.reduce((sum, count) => sum + count, 0);
+    const largestRemainders = scaledCounts
+      .map((count, index) => ({ index, remainder: count - Math.floor(count) }))
+      .sort((a, b) => b.remainder - a.remainder);
+    for (let index = 0; index < remainingVotes; index++) {
+      normalizedCounts[largestRemainders[index].index]++;
+    }
+
+    return {
+      ...item,
+      voteStats: {
+        ...item.voteStats,
+        supportersCount: normalizedCounts[0],
+        opponentsCount: normalizedCounts[1],
+        abstainCount: normalizedCounts[2],
+      },
+    };
+  });
 }
 
 export function clearActiveResolutionsForSession(): void {

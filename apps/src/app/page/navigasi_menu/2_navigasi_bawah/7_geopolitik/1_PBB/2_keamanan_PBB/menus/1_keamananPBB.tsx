@@ -22,6 +22,7 @@ import {
   type SecurityCouncilMember,
 } from "../logika_anggota_tidak_tetap/securityCouncilElection";
 import { hasPermanentSecurityCouncilSeatResearch } from "@/app/page/bonus_logic";
+import { hasActiveGlobalWarBan } from "../../1_resolusi_PBB/logic/1_warBanLogic";
 
 interface KeamananPBBProps {
   selectedCountry: any;
@@ -75,6 +76,7 @@ const renderFlag = (iso: string | undefined, altName: string, size: "sm" | "md" 
 };
 
 export default function KeamananPBB({ selectedCountry, countryDetail, setCountryDetail }: KeamananPBBProps) {
+  const isGlobalWarBanActive = hasActiveGlobalWarBan();
   const [isResolusiModalOpen, setIsResolusiModalOpen] = useState(false);
   const [isMembershipOpen, setIsMembershipOpen] = useState(false);
 
@@ -450,7 +452,7 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
   }, [activeSecurityCouncilItems, isSelectedCountryAnnexed, nonPermanentMembers, selectedCountry, setCountryDetail]);
 
   const handleSubmit = () => {
-    if (!selectedTarget) {
+    if (!selectedTarget || (selectedType === 'military' && hasActiveGlobalWarBan())) {
       return;
     }
     const activeAction = RESOLUTION_ACTIONS.find(a => a.id === selectedType);
@@ -948,11 +950,15 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                   <div className="flex flex-wrap justify-center items-center gap-4">
                     {RESOLUTION_ACTIONS.map((action) => {
                       const isActive = selectedType === action.id;
+                      const isDisabled = action.id === 'military' && isGlobalWarBanActive;
                       return (
                         <button
                           key={action.id}
                           onClick={() => setSelectedType(action.id)}
-                          className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col items-center justify-center w-28 h-28 group ${
+                          disabled={isDisabled}
+                          className={`p-3 rounded-xl border transition-all flex flex-col items-center justify-center w-28 h-28 group ${
+                            isDisabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                          } ${
                             isActive
                               ? 'border-[#00FFAA] bg-[#00FFAA]/15 shadow-md text-[#00FFAA]'
                               : 'border-[#00FFAA]/20 bg-[#0A1A1A] text-[#6B8A8A] hover:border-[#00FFAA]/50 hover:text-[#E0E0E0]'
@@ -975,6 +981,11 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
                     <p className="text-sm text-[#6B8A8A] mt-2 leading-relaxed max-w-2xl mx-auto">
                       {RESOLUTION_ACTIONS.find(a => a.id === selectedType)?.desc}
                     </p>
+                    {selectedType === 'military' && isGlobalWarBanActive && (
+                      <p className="text-sm font-bold text-rose-400 mt-3">
+                        Invasi militer tidak dapat diajukan selama larangan perang global aktif.
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -1065,7 +1076,17 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
 
             <div className="flex items-center justify-end gap-4 px-8 py-4 border-t border-[#00FFAA]/20 bg-[#0A1A1A] relative z-10 shrink-0">
               <button onClick={() => setIsResolusiModalOpen(false)} className="px-6 py-2.5 rounded-xl border border-[#00FFAA]/30 bg-[#00FFAA]/10 text-[#00FFAA] hover:bg-[#00FFAA]/20 transition-all font-bold text-xs uppercase tracking-wider cursor-pointer">Batal</button>
-              <button onClick={handleSubmit} className="px-6 py-2.5 rounded-xl bg-[#00FFAA] text-[#0A1A1A] font-black text-xs uppercase tracking-wider shadow-md hover:bg-[#00FFAA]/80 active:scale-95 transition-all cursor-pointer">Tambahkan</button>
+              <button
+                onClick={handleSubmit}
+                disabled={selectedType === 'military' && isGlobalWarBanActive}
+                className={`px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-md transition-all ${
+                  selectedType === 'military' && isGlobalWarBanActive
+                    ? 'bg-[#6B8A8A] text-[#0A1A1A] cursor-not-allowed opacity-50'
+                    : 'bg-[#00FFAA] text-[#0A1A1A] hover:bg-[#00FFAA]/80 active:scale-95 cursor-pointer'
+                }`}
+              >
+                Tambahkan
+              </button>
             </div>
           </div>
         </div>
