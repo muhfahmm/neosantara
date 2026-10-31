@@ -14,15 +14,15 @@ import {
   isSimulationTimePaused,
   subscribeRouteAnimation,
 } from './time_logic';
+import { type DiplomacyPathMetadata, type DiplomacyPathProps } from './diplomacy-path-animation';
 
-export interface IcbmPathProps {
-  senderCountry: string;
-  targetCountry: string;
-  laneIndex?: number;
-  laneCount?: number;
-  onArrive: () => void;
-  onProgress?: (progress: number) => void;
-}
+export const PATH_METADATA: DiplomacyPathMetadata = {
+  kind: 'icbm',
+  document: 'Serangan Rudal Balistik ICBM',
+  accent: '#EF4444',
+};
+
+export type IcbmPathProps = DiplomacyPathProps;
 
 export default function IcbmPath({
   senderCountry,
@@ -52,7 +52,7 @@ export default function IcbmPath({
   );
 
   // Akselerasi ICBM merah menyala
-  const accent = '#EF4444'; // Merah cerah
+  const accent = PATH_METADATA.accent;
   const glowAccent = '#DC2626'; // Merah neon
   const laneOffset = laneIndex - (laneCount - 1) / 2;
   // Kurva balistik lebih tinggi ke angkasa (-0.28)

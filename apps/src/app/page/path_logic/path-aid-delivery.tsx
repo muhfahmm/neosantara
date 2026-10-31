@@ -1,16 +1,13 @@
 'use client';
 
-import DiplomacyPathAnimation from './diplomacy-path-animation';
+import DiplomacyPathAnimation, { type DiplomacyPathMetadata, type DiplomacyPathProps } from './diplomacy-path-animation';
 
-interface AidDeliveryPathProps {
-  senderCountry: string;
-  targetCountry: string;
-  laneIndex?: number;
-  laneCount?: number;
-  onArrive: () => void;
-  onProgress?: (progress: number) => void;
-}
+export const PATH_METADATA: DiplomacyPathMetadata = {
+  kind: 'aid-delivery',
+  document: 'Konvoi Bantuan Sekutu',
+  accent: '#38BDF8',
+};
 
-export default function AidDeliveryPath(props: AidDeliveryPathProps) {
-  return <DiplomacyPathAnimation kind="aid-delivery" {...props} />;
+export default function AidDeliveryPath(props: DiplomacyPathProps) {
+  return <DiplomacyPathAnimation {...props} kind={PATH_METADATA.kind} accent={PATH_METADATA.accent} />;
 }

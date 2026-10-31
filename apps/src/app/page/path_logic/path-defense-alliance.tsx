@@ -1,16 +1,13 @@
 'use client';
 
-import DiplomacyPathAnimation from './diplomacy-path-animation';
+import DiplomacyPathAnimation, { type DiplomacyPathMetadata, type DiplomacyPathProps } from './diplomacy-path-animation';
 
-interface DefenseAlliancePathProps {
-  senderCountry: string;
-  targetCountry: string;
-  laneIndex?: number;
-  laneCount?: number;
-  onArrive: () => void;
-  onProgress?: (progress: number) => void;
-}
+export const PATH_METADATA: DiplomacyPathMetadata = {
+  kind: 'defense-alliance',
+  document: 'Perjanjian Pertahanan',
+  accent: '#A78BFA',
+};
 
-export default function DefenseAlliancePath(props: DefenseAlliancePathProps) {
-  return <DiplomacyPathAnimation kind="defense-alliance" {...props} />;
+export default function DefenseAlliancePath(props: DiplomacyPathProps) {
+  return <DiplomacyPathAnimation {...props} kind={PATH_METADATA.kind} accent={PATH_METADATA.accent} />;
 }

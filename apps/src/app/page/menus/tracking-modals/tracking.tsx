@@ -1,45 +1,39 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import type { ComponentType } from 'react';
 import Image from 'next/image';
 import { Route, X } from 'lucide-react';
 import { estimateTravelTime } from '../../path_logic/time_logic';
-import type { DiplomacyPathKind } from '../../path_logic/diplomacy-path-animation';
+import {
+  type DiplomacyPathKind,
+  type DiplomacyPathMetadata,
+  type DiplomacyPathProps,
+} from '../../path_logic/diplomacy-path-animation';
+import NonAggressionPactPath, { PATH_METADATA as nonAggressionPactMetadata } from '../../path_logic/path-non-aggression-pact';
+import DefenseAlliancePath, { PATH_METADATA as defenseAllianceMetadata } from '../../path_logic/path-defense-alliance';
+import TradeAgreementPath, { PATH_METADATA as tradeAgreementMetadata } from '../../path_logic/path-trade-agreement';
+import ResearchContractPath, { PATH_METADATA as researchContractMetadata } from '../../path_logic/path-research-contract';
+import AidDeliveryPath, { PATH_METADATA as aidDeliveryMetadata } from '../../path_logic/path-aid-delivery';
+import SpionasePath, { PATH_METADATA as spionaseMetadata } from '../../path_logic/path-spionase';
+import SabotasePath, { PATH_METADATA as sabotaseMetadata } from '../../path_logic/path-sabotase';
+import IcbmPath, { PATH_METADATA as icbmMetadata } from '../../path_logic/path-icbm';
+import SerangNegaraPath, { PATH_METADATA as serangNegaraMetadata } from '../../path_logic/path-serang-negara';
 
-const NonAggressionPactPath = dynamic(() => import('../../path_logic/path-non-aggression-pact'), { ssr: false });
-const DefenseAlliancePath = dynamic(() => import('../../path_logic/path-defense-alliance'), { ssr: false });
-const TradeAgreementPath = dynamic(() => import('../../path_logic/path-trade-agreement'), { ssr: false });
-const ResearchContractPath = dynamic(() => import('../../path_logic/path-research-contract'), { ssr: false });
-const AidDeliveryPath = dynamic(() => import('../../path_logic/path-aid-delivery'), { ssr: false });
-const SpionasePath = dynamic(() => import('../../path_logic/path-spionase'), { ssr: false });
-const SabotasePath = dynamic(() => import('../../path_logic/path-sabotase'), { ssr: false });
-const IcbmPath = dynamic(() => import('../../path_logic/path-icbm'), { ssr: false });
-const SerangNegaraPath = dynamic(() => import('../../path_logic/path-serang-negara'), { ssr: false });
-
-const DIPLOMACY_PATH_COMPONENTS = {
-  'non-aggression-pact': NonAggressionPactPath,
-  'defense-alliance': DefenseAlliancePath,
-  'trade-agreement': TradeAgreementPath,
-  'research-contract': ResearchContractPath,
-  'aid-delivery': AidDeliveryPath,
-  spionase: SpionasePath,
-  sabotase: SabotasePath,
-  icbm: IcbmPath,
-  'serang-negara': SerangNegaraPath,
-};
-
-const PATH_DETAILS: Record<DiplomacyPathKind, { document: string; accent: string }> = {
-  'non-aggression-pact': { document: 'Dokumen Diplomatik', accent: '#00FFAA' },
-  'defense-alliance': { document: 'Perjanjian Pertahanan', accent: '#A78BFA' },
-  'trade-agreement': { document: 'Dokumen Perdagangan', accent: '#FBBF24' },
-  'research-contract': { document: 'Protokol Penelitian Bersama', accent: '#FB7185' },
-  'aid-delivery': { document: 'Konvoi Bantuan Sekutu', accent: '#38BDF8' },
-  spionase: { document: 'Operasi Spionase', accent: '#A3E635' },
-  sabotase: { document: 'Operasi Sabotase', accent: '#F43F5E' },
-  icbm: { document: 'Serangan Rudal Balistik ICBM', accent: '#EF4444' },
-  'serang-negara': { document: 'Serangan Militer', accent: '#FF2D55' },
+const PATH_REGISTRY: Record<DiplomacyPathKind, {
+  Component: ComponentType<DiplomacyPathProps>;
+  metadata: DiplomacyPathMetadata;
+}> = {
+  'non-aggression-pact': { Component: NonAggressionPactPath, metadata: nonAggressionPactMetadata },
+  'defense-alliance': { Component: DefenseAlliancePath, metadata: defenseAllianceMetadata },
+  'trade-agreement': { Component: TradeAgreementPath, metadata: tradeAgreementMetadata },
+  'research-contract': { Component: ResearchContractPath, metadata: researchContractMetadata },
+  'aid-delivery': { Component: AidDeliveryPath, metadata: aidDeliveryMetadata },
+  spionase: { Component: SpionasePath, metadata: spionaseMetadata },
+  sabotase: { Component: SabotasePath, metadata: sabotaseMetadata },
+  icbm: { Component: IcbmPath, metadata: icbmMetadata },
+  'serang-negara': { Component: SerangNegaraPath, metadata: serangNegaraMetadata },
 };
 
 interface ActiveDiplomacyPath {
@@ -70,17 +64,7 @@ export default function DiplomacyTracking({ onOpen, isWarActive = false, isUiHid
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
 
   useEffect(() => {
-    const allowedKinds: DiplomacyPathKind[] = [
-      'non-aggression-pact',
-      'defense-alliance',
-      'trade-agreement',
-      'research-contract',
-      'aid-delivery',
-      'spionase',
-      'sabotase',
-      'icbm',
-      'serang-negara',
-    ];
+    const allowedKinds = Object.keys(PATH_REGISTRY) as DiplomacyPathKind[];
 
     const addPath = (
       kindValue: unknown,
@@ -183,7 +167,7 @@ export default function DiplomacyTracking({ onOpen, isWarActive = false, isUiHid
           normalizeCountryName(candidate.targetCountry) === normalizeCountryName(path.targetCountry)
         );
         const laneIndex = sameRoute.findIndex(candidate => candidate.id === path.id);
-        const Path = DIPLOMACY_PATH_COMPONENTS[path.kind];
+        const { Component: Path } = PATH_REGISTRY[path.kind];
 
         return (
           <Path
@@ -298,7 +282,7 @@ export default function DiplomacyTracking({ onOpen, isWarActive = false, isUiHid
               )}
 
               {activePaths.map(path => {
-                const details = PATH_DETAILS[path.kind];
+                const details = PATH_REGISTRY[path.kind].metadata;
                 const estimate = estimateTravelTime(path.senderCountry, path.targetCountry);
                 if (!estimate) {
                   console.error('[DiplomacyTracking] No travel estimate for active route', {

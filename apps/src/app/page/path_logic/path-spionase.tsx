@@ -1,16 +1,13 @@
 'use client';
 
-import DiplomacyPathAnimation from './diplomacy-path-animation';
+import DiplomacyPathAnimation, { type DiplomacyPathMetadata, type DiplomacyPathProps } from './diplomacy-path-animation';
 
-interface SpionasePathProps {
-  senderCountry: string;
-  targetCountry: string;
-  laneIndex?: number;
-  laneCount?: number;
-  onArrive: () => void;
-  onProgress?: (progress: number) => void;
-}
+export const PATH_METADATA: DiplomacyPathMetadata = {
+  kind: 'spionase',
+  document: 'Operasi Spionase',
+  accent: '#F97316',
+};
 
-export default function SpionasePath(props: SpionasePathProps) {
-  return <DiplomacyPathAnimation kind="spionase" {...props} />;
+export default function SpionasePath(props: DiplomacyPathProps) {
+  return <DiplomacyPathAnimation {...props} kind={PATH_METADATA.kind} accent={PATH_METADATA.accent} />;
 }

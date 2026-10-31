@@ -1,17 +1,15 @@
 'use client';
 
 import React from 'react';
-import DiplomacyPathAnimation from './diplomacy-path-animation';
+import DiplomacyPathAnimation, { type DiplomacyPathMetadata, type DiplomacyPathProps } from './diplomacy-path-animation';
 
-interface SerangNegaraPathProps {
-  senderCountry: string;
-  targetCountry: string;
-  laneIndex?: number;
-  laneCount?: number;
-  onProgress?: (progress: number) => void;
-  onArrive: () => void;
-  isPlayerAttacker?: boolean;
-}
+type SerangNegaraPathProps = DiplomacyPathProps;
+
+export const PATH_METADATA: DiplomacyPathMetadata = {
+  kind: 'serang-negara',
+  document: 'Serangan Militer',
+  accent: '#FF2D55',
+};
 
 /**
  * Path Animation untuk serangan militer antar negara (Serang Negara)
@@ -33,7 +31,8 @@ export default function SerangNegaraPath({
 }: SerangNegaraPathProps) {
   return (
     <DiplomacyPathAnimation
-      kind="serang-negara"
+      kind={PATH_METADATA.kind}
+      accent={PATH_METADATA.accent}
       senderCountry={senderCountry}
       targetCountry={targetCountry}
       laneIndex={laneIndex}

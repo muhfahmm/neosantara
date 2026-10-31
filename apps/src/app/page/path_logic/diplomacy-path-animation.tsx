@@ -26,8 +26,7 @@ export type DiplomacyPathKind =
   | 'icbm'
   | 'serang-negara';
 
-interface DiplomacyPathAnimationProps {
-  kind: DiplomacyPathKind;
+export interface DiplomacyPathProps {
   senderCountry: string;
   targetCountry: string;
   laneIndex?: number;
@@ -37,19 +36,16 @@ interface DiplomacyPathAnimationProps {
   isPlayerAttacker?: boolean;
 }
 
-const PATH_DETAILS: Record<DiplomacyPathKind, { accent: string }> = {
-  // Sebelumnya #00FFAA (Hijau), diubah menjadi Cyan Terang agar kontras dengan peta hijau
-  'non-aggression-pact': { accent: '#00E5FF' }, 
-  'defense-alliance': { accent: '#A78BFA' },
-  'trade-agreement': { accent: '#FBBF24' },
-  'research-contract': { accent: '#FB7185' },
-  'aid-delivery': { accent: '#38BDF8' },
-  // Sebelumnya #A3E635 (Hijau Limau), diubah menjadi Oranye
-  spionase: { accent: '#F97316' }, 
-  sabotase: { accent: '#F43F5E' },
-  icbm: { accent: '#EF4444' },
-  'serang-negara': { accent: '#FF2D55' },
-};
+export interface DiplomacyPathMetadata {
+  kind: DiplomacyPathKind;
+  document: string;
+  accent: string;
+}
+
+interface DiplomacyPathAnimationProps extends DiplomacyPathProps {
+  kind: DiplomacyPathKind;
+  accent: string;
+}
 
 /* ============================================================
  * KOMPONEN MOBIL 3D (TOP-DOWN VIEW)
@@ -151,13 +147,13 @@ function CarGlyph({ kind, accent }: { kind: DiplomacyPathKind; accent: string })
  * ============================================================ */
 export default function DiplomacyPathAnimation({
   kind,
+  accent,
   senderCountry,
   targetCountry,
   laneIndex = 0,
   laneCount = 1,
   onArrive,
   onProgress,
-  isPlayerAttacker,
 }: DiplomacyPathAnimationProps) {
   const onArriveRef = useRef(onArrive);
   const onProgressRef = useRef(onProgress);
@@ -177,7 +173,6 @@ export default function DiplomacyPathAnimation({
     [senderCountry, targetCountry]
   );
   
-  const details = PATH_DETAILS[kind];
   const laneOffset = laneIndex - (laneCount - 1) / 2;
   const routeCurvature = -0.14 + laneOffset * 0.07;
   const lastReportedProgress = useRef(-1);
@@ -297,7 +292,7 @@ export default function DiplomacyPathAnimation({
         <path
           ref={glowRouteRef}
           fill="none"
-          stroke={details.accent}
+          stroke={accent}
           strokeWidth="9"
           opacity=".14"
           strokeLinecap="round"
@@ -307,7 +302,7 @@ export default function DiplomacyPathAnimation({
         <path
           ref={routeRef}
           fill="none"
-          stroke={details.accent}
+          stroke={accent}
           strokeWidth="3.2"
           strokeDasharray="14 10"
           strokeLinecap="round"
@@ -318,8 +313,8 @@ export default function DiplomacyPathAnimation({
         <circle
           ref={startRef}
           r="8"
-          fill={details.accent}
-          style={{ filter: `drop-shadow(0 0 6px ${details.accent})` }}
+          fill={accent}
+          style={{ filter: `drop-shadow(0 0 6px ${accent})` }}
         />
 
         {/* Marker target + pulse */}
@@ -327,20 +322,20 @@ export default function DiplomacyPathAnimation({
           ref={pulseRef}
           r="26"
           fill="none"
-          stroke={details.accent}
+          stroke={accent}
           strokeWidth="1.5"
           className="diplomacy-target-pulse"
         />
         <circle
           ref={endRef}
           r="8"
-          fill={details.accent}
-          style={{ filter: `drop-shadow(0 0 6px ${details.accent})` }}
+          fill={accent}
+          style={{ filter: `drop-shadow(0 0 6px ${accent})` }}
         />
 
         {/* MOBIL 3D */}
         <g ref={vehicleRef} style={{ willChange: 'transform' }}>
-          <CarGlyph kind={kind} accent={details.accent} />
+          <CarGlyph kind={kind} accent={accent} />
         </g>
       </svg>
 
