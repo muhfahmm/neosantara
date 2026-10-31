@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useLayoutEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, Globe, Landmark, Shield, Users, Banknote, Scale, Home, Handshake, Flame, Hammer } from 'lucide-react';
 import { COUNTRIES_DATA } from '../map_system/map-data';
@@ -126,11 +126,6 @@ export function CountryDetailModal({
 
   // State untuk menyembunyikan tampilan modal Detail Negara saat salah satu modal aksi dibuka
   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
-
-  useLayoutEffect(() => {
-    document.body.classList.toggle('neosantara-action-modal-open', isOpen && isActionModalOpen);
-    return () => document.body.classList.remove('neosantara-action-modal-open');
-  }, [isActionModalOpen, isOpen]);
 
   // State untuk data negara yang diklik
   const [fetchedDetail, setFetchedDetail] = useState<any>(null);

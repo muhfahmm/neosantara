@@ -2,6 +2,7 @@
 import React from "react";
 import { X, CreditCard } from "lucide-react";
 import { renderFlag } from "../utils";
+import NotebookModalWrapper from "../../../../NotebookModalWrapper";
 
 interface KonfirmasiPinjamanModalProps {
   isOpen: boolean;
@@ -33,8 +34,8 @@ export default function KonfirmasiPinjamanModal({
   const isFundsSufficient = true;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent pointer-events-none">
-      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] overflow-hidden relative font-sans pointer-events-auto flex flex-col">
+    <NotebookModalWrapper zIndexClass="z-[70]">
+      <div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl w-full h-full overflow-hidden relative font-sans pointer-events-auto flex flex-col">
         {/* HEADER */}
         <div className="px-6 py-4 border-b border-[#00FFAA]/30 flex items-center justify-between bg-[#0A1A1A] relative z-10">
           <div>
@@ -136,6 +137,6 @@ export default function KonfirmasiPinjamanModal({
           </button>
         </div>
       </div>
-    </div>
+    </NotebookModalWrapper>
   );
 }

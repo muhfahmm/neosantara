@@ -10,11 +10,11 @@ import {
   type DiplomacyPathKind,
   type DiplomacyPathMetadata,
   type DiplomacyPathProps,
-} from '../../path_logic/diplomacy-path-animation';
-import NonAggressionPactPath, { PATH_METADATA as nonAggressionPactMetadata } from '../../path_logic/path-non-aggression-pact';
-import DefenseAlliancePath, { PATH_METADATA as defenseAllianceMetadata } from '../../path_logic/path-defense-alliance';
-import TradeAgreementPath, { PATH_METADATA as tradeAgreementMetadata } from '../../path_logic/path-trade-agreement';
-import ResearchContractPath, { PATH_METADATA as researchContractMetadata } from '../../path_logic/path-research-contract';
+} from '../../path_logic/diplomasi/diplomacy-path-animation';
+import NonAggressionPactPath, { PATH_METADATA as nonAggressionPactMetadata } from '../../path_logic/diplomasi/path-non-aggression-pact';
+import DefenseAlliancePath, { PATH_METADATA as defenseAllianceMetadata } from '../../path_logic/diplomasi/path-defense-alliance';
+import TradeAgreementPath, { PATH_METADATA as tradeAgreementMetadata } from '../../path_logic/diplomasi/path-trade-agreement';
+import ResearchContractPath, { PATH_METADATA as researchContractMetadata } from '../../path_logic/diplomasi/path-research-contract';
 import AidDeliveryPath, { PATH_METADATA as aidDeliveryMetadata } from '../../path_logic/path-aid-delivery';
 import SpionasePath, { PATH_METADATA as spionaseMetadata } from '../../path_logic/path-spionase';
 import SabotasePath, { PATH_METADATA as sabotaseMetadata } from '../../path_logic/path-sabotase';
@@ -300,7 +300,10 @@ export default function DiplomacyTracking({ onOpen, isWarActive = false, isUiHid
                   >
                     <div className="mb-3 flex items-center justify-between gap-3 text-[10px] font-black uppercase tracking-wider sm:text-xs">
                       <span className="min-w-0 truncate" style={{ color: details.accent }}>{path.senderCountry}</span>
-                      <span className="min-w-0 truncate text-center text-[#B9D7D1]">
+                      <span className="flex min-w-0 items-center justify-center gap-1.5 truncate text-center text-[#B9D7D1]">
+                        <svg viewBox="-8 -8 16 16" aria-hidden="true" className="h-4 w-4 shrink-0">
+                          <details.Icon accent={details.accent} />
+                        </svg>
                         {details.document} · {estimate.days} HARI
                       </span>
                       <span className="min-w-0 truncate text-right" style={{ color: details.accent }}>{path.targetCountry}</span>

@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef } from 'react';
-import { initializeRouteMathRust } from './routeMathRust';
+import React, { type ComponentType, useEffect, useMemo, useRef } from 'react';
+import { initializeRouteMathRust } from '../routeMathRust';
 import {
   buildCapitalPoint,
   getQuadraticMotion,
   getMapRouteGeometry,
-} from './path-war';
+} from '../path-war';
 import {
   estimateTravelTime,
   getSimulationDayPosition,
   getSimulationMillisecondsPerDay,
   isSimulationTimePaused,
   subscribeRouteAnimation,
-} from './time_logic';
+} from '../time_logic';
 
 export type DiplomacyPathKind =
   | 'non-aggression-pact'
@@ -40,107 +40,19 @@ export interface DiplomacyPathMetadata {
   kind: DiplomacyPathKind;
   document: string;
   accent: string;
+  Icon: DiplomacyPathIcon;
+  Vehicle: DiplomacyPathVehicle;
 }
+
+export type DiplomacyPathIcon = ComponentType<{ accent: string }>;
+export type DiplomacyPathVehicle = ComponentType<{ accent: string }>;
 
 interface DiplomacyPathAnimationProps extends DiplomacyPathProps {
   kind: DiplomacyPathKind;
   accent: string;
+  Vehicle: DiplomacyPathVehicle;
 }
 
-/* ============================================================
- * KOMPONEN MOBIL 3D (TOP-DOWN VIEW)
- * ============================================================ */
-function CarGlyph({ kind, accent }: { kind: DiplomacyPathKind; accent: string }) {
-  return (
-    <g>
-      {/* Aura glow di bawah mobil */}
-      <circle r="28" fill={accent} opacity=".14" className="diplomacy-glyph-glow" />
-
-      {/* Bayangan mobil (Contact shadow) */}
-      <ellipse cx="0" cy="4" rx="26" ry="11" fill="#000" opacity=".45" />
-
-      {/* Ban Mobil (Wheels) */}
-      <rect x="-16" y="-9.5" width="7.5" height="3.5" rx="1.5" fill="#111" />
-      <rect x="-16" y="6" width="7.5" height="3.5" rx="1.5" fill="#111" />
-      <rect x="10" y="-9.5" width="7.5" height="3.5" rx="1.5" fill="#111" />
-      <rect x="10" y="6" width="7.5" height="3.5" rx="1.5" fill="#111" />
-
-      {/* Badan Mobil Utama (Chassis) */}
-      <path
-        d="M -22,-6 L 16,-6 C 22,-6 25,-3 25,0 C 25,3 22,6 16,6 L -22,6 C -25,6 -26,3 -26,0 C -26,-3 -25,-6 -22,-6 Z"
-        fill={accent}
-      />
-      {/* Highlight 3D (Atas) */}
-      <path
-        d="M -22,-6 L 16,-6 C 22,-6 25,-3 25,0 L -26,0 Z"
-        fill="#ffffff"
-        opacity=".22"
-      />
-      {/* Shadow 3D (Bawah) */}
-      <path
-        d="M -22,6 L 16,6 C 22,6 25,3 25,0 L -26,0 Z"
-        fill="#000000"
-        opacity=".25"
-      />
-
-      {/* Kabin / Atap Mobil */}
-      <path
-        d="M -10,-5 L 9,-5 C 12,-5 14,-2 14,0 C 14,2 12,5 9,5 L -10,5 C -13,5 -14,2 -14,0 C -14,-2 -13,-5 -10,-5 Z"
-        fill={accent}
-      />
-      {/* Highlight Atap */}
-      <path
-        d="M -10,-5 L 9,-5 C 12,-5 14,-2 14,0 L -14,0 Z"
-        fill="#ffffff"
-        opacity=".35"
-      />
-
-      {/* Kaca Depan */}
-      <path d="M 10,-4 L 12.5,-1 L 12.5,1 L 10,4 Z" fill="#0A1A1A" opacity=".85" />
-      {/* Kaca Belakang */}
-      <path d="M -11,-4 L -13.5,-1 L -13.5,1 L -11,4 Z" fill="#0A1A1A" opacity=".85" />
-      
-      {/* ==== LAMBANG DI ATAP MOBIL ==== */}
-      <g transform="translate(0 0) scale(0.55)">
-        {kind === 'non-aggression-pact' && (
-          <>
-            <circle cx="-3" cy="0" r="5" fill="none" stroke="#fff" strokeWidth="2" />
-            <circle cx="3" cy="0" r="5" fill="none" stroke="#fff" strokeWidth="2" opacity=".8" />
-          </>
-        )}
-        {kind === 'defense-alliance' && (
-          <path d="M0,-6 L5,-3 L5,2 Q5,6 0,7 Q-5,6 -5,2 L-5,-3 Z" fill="none" stroke="#fff" strokeWidth="2" strokeLinejoin="round" />
-        )}
-        {kind === 'trade-agreement' && (
-          <>
-            <rect x="-4" y="-4" width="8" height="8" rx="1.5" fill="none" stroke="#fff" strokeWidth="2" />
-            <path d="M-4,-1 L0,2 L4,-1" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </>
-        )}
-        {kind === 'research-contract' && (
-          <>
-            <circle cx="0" cy="0" r="1.8" fill="#fff" />
-            <ellipse rx="7" ry="2.5" fill="none" stroke="#fff" strokeWidth="1.5" />
-            <ellipse rx="7" ry="2.5" fill="none" stroke="#fff" strokeWidth="1.5" transform="rotate(60)" />
-            <ellipse rx="7" ry="2.5" fill="none" stroke="#fff" strokeWidth="1.5" transform="rotate(-60)" />
-          </>
-        )}
-        {/* Default Emblem (Untuk misi lain seperti bantuan, spionase, dll) */}
-        {!['non-aggression-pact', 'defense-alliance', 'trade-agreement', 'research-contract'].includes(kind) && (
-          <path d="M0,-5 L2,0 L7,0 L3,3 L5,8 L0,5 L-5,8 L-3,3 L-7,0 L-2,0 Z" fill="#fff" opacity=".8" />
-        )}
-      </g>
-
-      {/* Lampu Depan (Headlights) */}
-      <path d="M 23,-4 L 25.5,-2 L 25.5,-1 L 23,0 Z" fill="#ffffff" opacity=".95" />
-      <path d="M 23,4 L 25.5,2 L 25.5,1 L 23,0 Z" fill="#ffffff" opacity=".95" />
-
-      {/* Lampu Belakang (Taillights) */}
-      <path d="M -26,-4 L -24,-2 L -24,-1 L -26,0 Z" fill="#FF2D55" opacity=".9" />
-      <path d="M -26,4 L -24,2 L -24,1 L -26,0 Z" fill="#FF2D55" opacity=".9" />
-    </g>
-  );
-}
 
 /* ============================================================
  * KOMPONEN UTAMA ANIMASI
@@ -148,6 +60,7 @@ function CarGlyph({ kind, accent }: { kind: DiplomacyPathKind; accent: string })
 export default function DiplomacyPathAnimation({
   kind,
   accent,
+  Vehicle,
   senderCountry,
   targetCountry,
   laneIndex = 0,
@@ -335,7 +248,7 @@ export default function DiplomacyPathAnimation({
 
         {/* MOBIL 3D */}
         <g ref={vehicleRef} style={{ willChange: 'transform' }}>
-          <CarGlyph kind={kind} accent={accent} />
+          <Vehicle accent={accent} />
         </g>
       </svg>
 

@@ -14,12 +14,32 @@ import {
   isSimulationTimePaused,
   subscribeRouteAnimation,
 } from './time_logic';
-import { type DiplomacyPathMetadata, type DiplomacyPathProps } from './diplomacy-path-animation';
+import { type DiplomacyPathMetadata, type DiplomacyPathProps, type DiplomacyPathVehicle } from './diplomasi/diplomacy-path-animation';
+
+function IcbmIcon() {
+  return (
+    <g transform="rotate(45)">
+      <path d="M0,-7 Q4,-3 3,3 L0,7 L-3,3 Q-4,-3 0,-7 Z" fill="#fff" />
+      <path d="M-3,1 L-6,4 L-3,5 M3,1 L6,4 L3,5" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinejoin="round" />
+    </g>
+  );
+}
+
+const IcbmVehicle: DiplomacyPathVehicle = ({ accent }) => (
+  <g>
+    <circle r="18" fill={accent} opacity=".2" />
+    <path d="M0,-12 Q7,-5 5,5 L0,12 L-5,5 Q-7,-5 0,-12 Z" fill={accent} stroke="#fff" strokeWidth="1.5" />
+    <path d="M-5,2 L-10,8 L-5,7 M5,2 L10,8 L5,7" fill={accent} stroke="#fff" strokeWidth="1.5" strokeLinejoin="round" />
+    <path d="M-2,11 L0,17 L2,11 Z" fill="#FBBF24" />
+  </g>
+);
 
 export const PATH_METADATA: DiplomacyPathMetadata = {
   kind: 'icbm',
   document: 'Serangan Rudal Balistik ICBM',
   accent: '#EF4444',
+  Icon: IcbmIcon,
+  Vehicle: IcbmVehicle,
 };
 
 export type IcbmPathProps = DiplomacyPathProps;
