@@ -8307,6 +8307,7 @@ export default function MapPage() {
                         targetPower={activeWarAnimation.targetPower ?? 0}
                         isUserDefender={activeWarAnimation.isPbbCoalition ? isUserDefender : activeWarAnimation.isNpcWar ? false : isUserDefender}
                         isNpcWar={activeWarAnimation.isNpcWar === true}
+                        requestedInvasion={activeWarAnimation.requestedInvasion === true}
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
                         onAnalysisVisibilityChange={handleWarAnalysisVisibilityChange}
                         onAttackerForcesModalVisibilityChange={setIsAttackerForcesModalOpen}

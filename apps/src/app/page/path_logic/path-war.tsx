@@ -18,8 +18,9 @@ import {
 } from 'lucide-react';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '@/app/page/map_system/map-data';
 import NotebookModalWrapper from '../navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
+import { resolveRequestedInvasionOutcome } from '../detail_negara/3_operasi_militer/6_minta_serang_negara/requestedInvasionLogic';
 import PerbandinganPasukan from '../detail_negara/3_operasi_militer/1_serang_negara/perbandingan_pasukan';
-import { formatUnitQuantity, getWarUnitComposition, type WarUnit } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/warUnitComposition';
+import { getWarUnitComposition, type WarUnit } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/warUnitComposition';
 import { simulateBattleTs } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 import {
   estimateTravelTime,
@@ -556,6 +557,8 @@ export interface WarResultInput {
   attackerPower: number;
   targetPower: number;
   roll?: number;
+  requestedInvasion?: boolean;
+  attackerWinRoll?: number;
   attackerBonus?: number;
   defenderBonus?: number;
   isUserDefender?: boolean;
@@ -634,12 +637,21 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
 
   const actualAttackerPower = isUserDefender ? Math.round(attackerPower) : Math.round(attackerPower * deployedPowerRatio);
   const actualTargetPower = isUserDefender ? Math.round(targetPower * deployedPowerRatio) : Math.round(targetPower);
+  const requestedInvasionOutcome = input.requestedInvasion
+    ? resolveRequestedInvasionOutcome({
+      attackerPower: actualAttackerPower,
+      targetPower: actualTargetPower,
+      roll: input.attackerWinRoll ?? Math.random(),
+    })
+    : null;
   if (actualAttackerPower === 0 || actualTargetPower === 0) {
-    const winner = actualAttackerPower > 0
-      ? 'attacker'
-      : actualTargetPower > 0
-        ? 'target'
-        : 'draw';
+    const winner = requestedInvasionOutcome
+      ? requestedInvasionOutcome.attackerWins ? 'attacker' : 'target'
+      : actualAttackerPower > 0
+        ? 'attacker'
+        : actualTargetPower > 0
+          ? 'target'
+          : 'draw';
     const isUserWin = isUserDefender
       ? winner === 'target'
       : winner === 'attacker';
@@ -650,8 +662,12 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
       attackerLossRatio: 0,
       targetLossRatio: 0,
       totalRounds: 0,
-      message: 'Pertempuran ditentukan oleh pasukan yang dikerahkan.',
-      log: ['Salah satu pihak tidak mengerahkan pasukan.'],
+      message: requestedInvasionOutcome
+        ? requestedInvasionOutcome.message
+        : 'Pertempuran ditentukan oleh pasukan yang dikerahkan.',
+      log: requestedInvasionOutcome
+        ? ['Hasil operasi berbayar ditentukan oleh peluang berdasarkan perbandingan kekuatan pasukan.']
+        : ['Salah satu pihak tidak mengerahkan pasukan.'],
       winner,
     };
   }
@@ -661,9 +677,12 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
     targetPower: actualTargetPower,
   });
 
+  const winner = requestedInvasionOutcome
+    ? requestedInvasionOutcome.attackerWins ? 'attacker' : 'target'
+    : battle.winner;
   const isUserWin = isUserDefender
-    ? battle.winner === 'target'
-    : battle.winner === 'attacker';
+    ? winner === 'target'
+    : winner === 'attacker';
 
   return {
     result: isUserWin ? 'win' : 'lose',
@@ -676,9 +695,11 @@ export function computeWarResult(input: WarResultInput): WarResultOutput {
       ? Math.min(1, Math.max(0, 1 - battle.targetFinalPower / actualTargetPower))
       : 0,
     totalRounds: battle.totalRounds,
-    message: battle.message,
+    message: requestedInvasionOutcome
+      ? requestedInvasionOutcome.message
+      : battle.message,
     log: battle.log,
-    winner: battle.winner,
+    winner,
   };
 }
 
@@ -696,6 +717,7 @@ interface WarMapProps {
   defenderBonus?: number;
   isUserDefender?: boolean;
   isNpcWar?: boolean;
+  requestedInvasion?: boolean;
   isPbbCoalition?: boolean;
   onAnalysisVisibilityChange?: (isVisible: boolean) => void;
   onAttackerForcesModalVisibilityChange?: (isVisible: boolean) => void;
@@ -720,6 +742,7 @@ export default function WarMap({
   defenderBonus = 1,
   isUserDefender: isUserDefenderProp,
   isNpcWar = false,
+  requestedInvasion = false,
   isPbbCoalition = false,
   onAnalysisVisibilityChange,
   onAttackerForcesModalVisibilityChange,
@@ -732,6 +755,7 @@ export default function WarMap({
   const [showFlash, setShowFlash] = useState(false);
   const [showAttackerForces, setShowAttackerForces] = useState(false);
   const [attackerDeploymentPercent, setAttackerDeploymentPercent] = useState(50);
+  const requestedInvasionRollRef = useRef(Math.random());
   const onCloseRef = useRef(onClose);
   const onAutoResolveRef = useRef(onAutoResolve);
   const autoResolveReportedRef = useRef(false);
@@ -838,9 +862,11 @@ export default function WarMap({
       defenderBonus,
       isUserDefender,
       isNpcWar: isNpcWar && !isPbbCoalition,
+      requestedInvasion,
+      attackerWinRoll: requestedInvasionRollRef.current,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, attackerPower, effectiveAttackerDeploymentPercent, targetPower, attackerBonus, defenderBonus, isUserDefender, isNpcWar, isPbbCoalition]);
+  }, [isOpen, attackerPower, effectiveAttackerDeploymentPercent, targetPower, attackerBonus, defenderBonus, isUserDefender, isNpcWar, isPbbCoalition, requestedInvasion]);
 
   const deploymentConfig = useMemo(() => {
     if (typeof window === 'undefined') return {};
@@ -909,6 +935,7 @@ export default function WarMap({
       setPhase('travel');
       progressRef.current = 0;
       autoResolveReportedRef.current = false;
+      requestedInvasionRollRef.current = Math.random();
       setAttackerDeploymentPercent(50 + Math.floor(Math.random() * 26));
       progressPathRef.current?.setAttribute('stroke-dasharray', '0 100');
       setResult(null);
@@ -1335,9 +1362,9 @@ export default function WarMap({
               </button>
             </header>
 
-            <div className="relative z-10 flex-1 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:p-5">
+            <div className="relative z-10 flex-1 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:p-5 [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-[#0A1A1A] [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A] [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A] [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)] hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA]">
                 {attackerForceGroups.length > 0 ? (
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="flex flex-col gap-4">
                     {attackerForceGroups.map(group => (
                       <section key={group.id} className="min-w-0 rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A]/70 p-3">
                         <h3 className="mb-2 break-words text-xs font-bold uppercase tracking-wider text-[#00FFAA]">
@@ -1351,7 +1378,7 @@ export default function WarMap({
                             >
                               <span className="min-w-0 break-words text-white/75">{unit.displayName || unit.label}</span>
                               <strong className="shrink-0 tabular-nums text-white">
-                                {formatUnitQuantity(unit.quantity)}
+                                {Math.round(unit.quantity).toLocaleString('id-ID')}
                               </strong>
                             </li>
                           ))}
