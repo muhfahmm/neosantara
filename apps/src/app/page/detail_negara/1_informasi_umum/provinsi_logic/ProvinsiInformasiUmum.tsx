@@ -10,6 +10,8 @@ import instillIdeology from './1_informasi_umum/5_tanamkan_ideologi';
 interface ProvinsiInformasiUmumProps {
   countryName: string;
   occupyingCountry: string;
+  isPbbOccupied?: boolean;
+  canLiberatePbbOccupation?: boolean;
   playerReligion?: string;
   targetReligion?: string;
   updateTargetReligion?: (religion: string) => void | Promise<void>;
@@ -30,6 +32,8 @@ interface ProvinsiInformasiUmumProps {
 export default function ProvinsiInformasiUmum({
   countryName,
   occupyingCountry,
+  isPbbOccupied = false,
+  canLiberatePbbOccupation = false,
   playerReligion,
   targetReligion,
   updateTargetReligion,
@@ -65,7 +69,15 @@ export default function ProvinsiInformasiUmum({
       taxedProvinces={taxedProvinces}
       updatePlayerCountryDetail={updatePlayerCountryDetail}
       adjustPlayerNetBalance={adjustPlayerNetBalance}
-      actions={[liberateProvince, assignMissionaries, requireTaxes, sendAid, instillIdeology]}
+      actions={canLiberatePbbOccupation
+        ? [{
+            ...liberateProvince,
+            label: 'Bebaskan Negara',
+            description: 'Mengakhiri pendudukan PBB dan memulihkan kedaulatan negara ini.',
+          }]
+        : isPbbOccupied
+          ? []
+          : [liberateProvince, assignMissionaries, requireTaxes, sendAid, instillIdeology]}
     />
   );
 }

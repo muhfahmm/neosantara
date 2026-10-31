@@ -9,11 +9,14 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
+import { COUNTRIES_DATA } from '../../map_system/map-data';
 import SerangNegaraModal from './1_serang_negara/serangNegaraModals';
 import SeranganMasihBerlangsungModal from './1_serang_negara/SeranganMasihBerlangsungModal';
 import SpionaseModal from './2_spionase/spionaseModals';
 import SabotaseModal from './3_sabotase/sabotaseModals';
 import PerangNuklirModal from './4_perang_nuklir/perangNuklirModals';
+import { getReadyIcbmCount } from './4_perang_nuklir/IcbmTidakTersediaModal';
+import { launchIcbmWarStrike } from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/5_icbm/modals_menu/3_perang_nuklir/icbmWarLogic';
 import KudetaModal from './5_lakukan_kudeta/kudetaModals';
 import MintaSerangNegaraModal from './6_minta_serang_negara/mintaSerangNegaraModals';
 import StatusMintaSerangModal from './6_minta_serang_negara/statusMintaSerangModal';
@@ -29,10 +32,12 @@ interface OperasiMiliterProps {
   playerCountryDetail?: any;
   targetCountryDetail?: any;
   onCloseDetailModal?: () => void;
+  onCloseCountryDetail?: () => void;
   onActionModalStateChange?: (isOpen: boolean) => void;
   isOccupiedProvince?: boolean;
   occupyingCountry?: string;
   provinceTension?: number;
+  currentDate?: Date;
   actionDates?: Partial<Record<'serang' | 'spionase' | 'sabotase' | 'mintaSerang', string>>;
   onMilitaryActionLaunched?: (action: 'serang' | 'spionase' | 'sabotase') => void;
   updatePlayerCountryDetail?: (updater: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
@@ -51,7 +56,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   </button>
 );
 
-export default function OperasiMiliter({ countryName, selectedCity, selectedCityId, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, actionDates, onMilitaryActionLaunched, updatePlayerCountryDetail }: OperasiMiliterProps) {
+export default function OperasiMiliter({ countryName, selectedCity, selectedCityId, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onCloseCountryDetail, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, currentDate, actionDates, onMilitaryActionLaunched, updatePlayerCountryDetail }: OperasiMiliterProps) {
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isAttackInProgressModalOpen, setIsAttackInProgressModalOpen] = useState(false);
   const [isSpionaseOpen, setIsSpionaseOpen] = useState(false);
@@ -107,6 +112,77 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         kind: operation,
         senderCountry: playerCountryDetail?.country || playerCountryDetail?.nama_negara || playerCountryDetail?.name_id || playerCountryDetail?.name_en || countryName,
         targetCountry,
+      },
+    }));
+  };
+
+  const launchNuclearStrike = () => {
+    const attackerCountry = String(
+      playerCountryDetail?.country ||
+      playerCountryDetail?.nama_negara ||
+      playerCountryDetail?.name_id ||
+      playerCountryDetail?.name_en ||
+      ''
+    ).trim();
+    const attackerIso = String(playerCountryDetail?.iso || playerCountryDetail?.iso_code || '').toLowerCase();
+    const targetIso = String(
+      targetCountryDetail?.iso ||
+      COUNTRIES_DATA.find(country => country.country.toLowerCase() === countryName.toLowerCase())?.iso ||
+      ''
+    ).toLowerCase();
+    const dateString = currentDate instanceof Date && Number.isFinite(currentDate.getTime())
+      ? currentDate.toISOString().slice(0, 10)
+      : new Date().toISOString().slice(0, 10);
+
+    const result = launchIcbmWarStrike({
+      attackerCountry,
+      targetCountry: countryName,
+      attackerIso,
+      targetIso,
+      currentDate: dateString,
+      isPlayerAttacker: true,
+    });
+
+    if (!result.success) {
+      window.dispatchEvent(new CustomEvent('neosantara_system_notification', {
+        detail: {
+          title: '❌ GAGAL MELUNCURKAN ICBM',
+          sender: 'Pusat Komando Strategis Nuklir',
+          message: result.message,
+          date: dateString,
+          type: 'peringkat',
+        },
+      }));
+      return;
+    }
+
+    updatePlayerCountryDetail?.(previous => {
+      if (!previous) return previous;
+      const consumedCount = Math.max(0, Number(previous.icbm_consumed) || 0) + 1;
+      const remainingCount = Math.max(
+        0,
+        Math.max(Number(previous.icbm_jumlah) || 0, Number(previous.icbm) || 0) - 1
+      );
+      return {
+        ...previous,
+        icbm_consumed: consumedCount,
+        icbm_jumlah: remainingCount,
+        icbm: remainingCount,
+      };
+    });
+
+    if (onCloseCountryDetail) {
+      onCloseCountryDetail();
+    } else {
+      onCloseDetailModal?.();
+    }
+    window.dispatchEvent(new CustomEvent('neosantara_system_notification', {
+      detail: {
+        title: '💥 SERANGAN RUDAL ICBM DILUNCURKAN',
+        sender: 'Pusat Komando Strategis Nuklir',
+        message: `Presiden! Satu unit Rudal Balistik Antarbenua (ICBM) berkepala nuklir telah berhasil diluncurkan menuju target sasaran di ${countryName}. Seluruh 210 negara dunia memberikan penalti hubungan diplomatik -5 poin atas peluncuran senjata pemusnah massal ini!`,
+        date: dateString,
+        type: 'peringkat',
       },
     }));
   };
@@ -218,7 +294,13 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         onMilitaryActionLaunched?.('sabotase');
         launchCovertOperation('sabotase', target);
       }} />
-      <PerangNuklirModal isOpen={isNuklirOpen} countryName={countryName} onClose={() => setIsNuklirOpen(false)} onConfirm={() => { console.log(`Nuklir -> ${countryName}`); }} />
+      <PerangNuklirModal
+        isOpen={isNuklirOpen}
+        countryName={countryName}
+        availableIcbmCount={getReadyIcbmCount(playerCountryDetail, currentDate)}
+        onClose={() => setIsNuklirOpen(false)}
+        onConfirm={launchNuclearStrike}
+      />
       <KudetaModal isOpen={isKudetaOpen} countryName={countryName} onClose={() => setIsKudetaOpen(false)} onConfirm={() => { console.log(`Kudeta -> ${countryName}`); }} />
       <MintaSerangNegaraModal 
         isOpen={isMintaSerangOpen} 

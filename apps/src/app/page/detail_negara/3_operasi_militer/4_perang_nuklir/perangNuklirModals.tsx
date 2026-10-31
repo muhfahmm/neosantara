@@ -1,15 +1,19 @@
 "use client";
 import React from "react";
 import { createPortal } from "react-dom";
+import { useState } from "react";
+import IcbmTidakTersediaModal from "./IcbmTidakTersediaModal";
 
 interface PerangNuklirModalProps {
 	isOpen: boolean;
 	countryName?: string | null;
 	onClose: () => void;
 	onConfirm: () => void;
+	availableIcbmCount?: number;
 }
 
-export default function PerangNuklirModal({ isOpen, countryName, onClose, onConfirm }: PerangNuklirModalProps) {
+export default function PerangNuklirModal({ isOpen, countryName, onClose, onConfirm, availableIcbmCount }: PerangNuklirModalProps) {
+	const [isIcbmUnavailableOpen, setIsIcbmUnavailableOpen] = useState(false);
 	if (!isOpen) return null;
 
 	const modalContent = (
@@ -39,7 +43,14 @@ export default function PerangNuklirModal({ isOpen, countryName, onClose, onConf
 					</button>
 
 					<button
-						onClick={() => { onConfirm(); onClose(); }}
+						onClick={() => {
+							if (availableIcbmCount !== undefined && availableIcbmCount < 1) {
+								setIsIcbmUnavailableOpen(true);
+								return;
+							}
+							onConfirm();
+							onClose();
+						}}
 						className="w-full sm:w-auto px-6 bg-rose-700 hover:bg-rose-800 border border-rose-600 rounded-xl py-2 text-center text-white font-black text-[11px] sm:text-xs tracking-widest uppercase transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
 					>
 						Konfirmasi Nuklir
@@ -51,7 +62,15 @@ export default function PerangNuklirModal({ isOpen, countryName, onClose, onConf
 	);
 
 	if (typeof window !== "undefined") {
-		return createPortal(modalContent, document.body);
+		return (
+			<>
+				{createPortal(modalContent, document.body)}
+				<IcbmTidakTersediaModal
+					isOpen={isIcbmUnavailableOpen}
+					onClose={() => setIsIcbmUnavailableOpen(false)}
+				/>
+			</>
+		);
 	}
 
 	return modalContent;

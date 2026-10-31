@@ -16,7 +16,7 @@ import ModalSetuju from "./4_modal_setuju";
 import ModalMenolak from "./5_modal_menolak";
 import ModalAbstain from "./6_modal_abstain";
 import PilihProdukLarangan from "../1_pilihProdukLarangan";
-import { ActiveResolutionItem, loadActiveResolutions, saveActiveResolutions, calculate206AIVotes, TOTAL_UN_MEMBERS, getSimulationDateString, getResolutionCountryBreakdown, tickPBBResolutions } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
+import { ActiveResolutionItem, loadActiveResolutions, saveActiveResolutions, calculate206AIVotes, TOTAL_UN_MEMBERS, getSimulationDateString, getResolutionCountryBreakdown, getResolutionBribeCost, tickPBBResolutions } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { tickPBBSecurityCouncil } from "../../2_keamanan_PBB/logic/keamananPBBUILogic";
 import { PBB_RESOLUTION_DURATION_OPTIONS } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic";
 import { formatProductionProductName, getProductionBanProduct } from "../logic/productionBanCatalog";
@@ -24,6 +24,8 @@ import { clearAnnexedCountryVotes, isCountryAnnexed } from "../../pbbVotingEligi
 
 interface ResolusiPBBProps {
   selectedCountry: any;
+  countryDetail: Record<string, unknown> | null;
+  setCountryDetail?: (update: (previous: Record<string, unknown> | null) => Record<string, unknown> | null) => void;
 }
 
 interface CountryOption {
@@ -56,7 +58,7 @@ export const formatCountryName = (name: string) => {
     .join(" ");
 };
 
-export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
+export default function ResolusiPBB({ selectedCountry, countryDetail, setCountryDetail }: ResolusiPBBProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const [selectedType, setSelectedType] = useState<string>("war_ban");
@@ -324,19 +326,63 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
     saveActiveResolutions(updated);
   };
 
-  const handleBribeCountry = (resId: string, countryIso: string, fromVote: 'yes' | 'no' | 'abstain', toVote: 'yes' | 'no' | 'abstain') => {
+  const handleBribeCountry = (resId: string, countryIso: string, toVote: 'yes' | 'no' | 'abstain') => {
     const currentList = typeof loadActiveResolutions === 'function' ? loadActiveResolutions() : activeResolutions;
     const targetRes = currentList.find(r => r.id === resId);
-    if (targetRes && targetRes.status !== 'voting') return;
+    if (!targetRes || targetRes.status !== 'voting') return;
+    if (!targetRes.userVote || !setCountryDetail) {
+      window.dispatchEvent(new CustomEvent('neosantara_system_notification', {
+        detail: {
+          title: '❌ SUAP TIDAK DAPAT DIPROSES',
+          sender: 'Delegasi Perserikatan Bangsa-Bangsa',
+          message: !targetRes.userVote
+            ? 'Berikan suara pada resolusi ini terlebih dahulu agar negara lain dapat mengikuti posisi Anda.'
+            : 'Data kas negara tidak tersedia untuk membayar suap.',
+          type: 'peringkat',
+        },
+      }));
+      return;
+    }
+
+    const country = countries.find(candidate => candidate.iso.toLowerCase() === countryIso.toLowerCase());
+    if (!country) return;
+    const bribeCost = getResolutionBribeCost(country.name);
+    const availableBudget = Math.max(0, Number(countryDetail?.anggaran) || 0);
+    if (availableBudget < bribeCost) {
+      window.dispatchEvent(new CustomEvent('neosantara_system_notification', {
+        detail: {
+          title: '❌ KAS NEGARA TIDAK MENCUKUPI',
+          sender: 'Kementerian Keuangan',
+          message: `Suap kepada ${country.name} membutuhkan ${bribeCost.toLocaleString('id-ID')} NEO. Kas negara tersedia ${availableBudget.toLocaleString('id-ID')} NEO.`,
+          type: 'peringkat',
+        },
+      }));
+      return;
+    }
+
+    const currentBreakdown = getResolutionCountryBreakdown(
+      targetRes,
+      countries,
+      selectedCountry?.country || 'Indonesia'
+    );
+    const normalizedIso = countryIso.toLowerCase();
+    const currentVote = currentBreakdown.supporters.some(candidate => candidate.iso.toLowerCase() === normalizedIso)
+      ? 'yes'
+      : currentBreakdown.opponents.some(candidate => candidate.iso.toLowerCase() === normalizedIso)
+        ? 'no'
+        : currentBreakdown.abstain.some(candidate => candidate.iso.toLowerCase() === normalizedIso)
+          ? 'abstain'
+          : null;
+    if (!currentVote || currentVote === toVote) return;
 
     const updated = currentList.map(item => {
       if (item.id !== resId) return item;
 
       const newStats = { ...item.voteStats };
 
-      if (fromVote === 'yes') newStats.supportersCount = Math.max(0, newStats.supportersCount - 1);
-      if (fromVote === 'no') newStats.opponentsCount = Math.max(0, newStats.opponentsCount - 1);
-      if (fromVote === 'abstain') newStats.abstainCount = Math.max(0, newStats.abstainCount - 1);
+      if (currentVote === 'yes') newStats.supportersCount = Math.max(0, newStats.supportersCount - 1);
+      if (currentVote === 'no') newStats.opponentsCount = Math.max(0, newStats.opponentsCount - 1);
+      if (currentVote === 'abstain') newStats.abstainCount = Math.max(0, newStats.abstainCount - 1);
 
       if (toVote === 'yes') newStats.supportersCount++;
       if (toVote === 'no') newStats.opponentsCount++;
@@ -358,6 +404,18 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
     }
 
     saveActiveResolutions(updated);
+    setCountryDetail(previous => previous
+      ? { ...previous, anggaran: Math.max(0, (Number(previous.anggaran) || 0) - bribeCost) }
+      : previous
+    );
+    window.dispatchEvent(new CustomEvent('neosantara_system_notification', {
+      detail: {
+        title: '💰 SUAP RESOLUSI PBB BERHASIL',
+        sender: 'Delegasi Perserikatan Bangsa-Bangsa',
+        message: `${country.name} kini mengikuti suara Anda (${toVote === 'yes' ? 'setuju' : toVote === 'no' ? 'menolak' : 'abstain'}) pada resolusi "${targetRes.label}". Biaya: ${bribeCost.toLocaleString('id-ID')} NEO.`,
+        type: 'peringkat',
+      },
+    }));
   };
 
   const handleSubmitResolution = () => {
@@ -887,7 +945,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
         renderFlag={renderFlag}
         onBribeCountry={(iso, targetVote) => {
           if (activeModalResolution) {
-            handleBribeCountry(activeModalResolution.id, iso, 'yes', targetVote);
+            handleBribeCountry(activeModalResolution.id, iso, targetVote);
           }
         }}
       />
@@ -900,7 +958,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
         renderFlag={renderFlag}
         onBribeCountry={(iso, targetVote) => {
           if (activeModalResolution) {
-            handleBribeCountry(activeModalResolution.id, iso, 'no', targetVote);
+            handleBribeCountry(activeModalResolution.id, iso, targetVote);
           }
         }}
       />
@@ -913,7 +971,7 @@ export default function ResolusiPBB({ selectedCountry }: ResolusiPBBProps) {
         renderFlag={renderFlag}
         onBribeCountry={(iso, targetVote) => {
           if (activeModalResolution) {
-            handleBribeCountry(activeModalResolution.id, iso, 'abstain', targetVote);
+            handleBribeCountry(activeModalResolution.id, iso, targetVote);
           }
         }}
       />

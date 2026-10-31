@@ -93,6 +93,7 @@ export default function ProvinsiActionGrid({
       const result = await selectedAction.onConfirm?.({
         targetCountry,
         occupyingCountry,
+        playerCountry: String(playerCountryDetail?.country || playerCountryDetail?.nama_negara || playerCountryDetail?.country_name || ''),
         playerReligion,
         updateTargetReligion,
         playerIdeology,
@@ -135,6 +136,7 @@ export default function ProvinsiActionGrid({
       actionLabel: selectedAction.label,
       targetCountry,
       occupyingCountry,
+      playerCountry: String(playerCountryDetail?.country || playerCountryDetail?.nama_negara || playerCountryDetail?.country_name || ''),
       actionSucceeded,
       actionMessage,
       successChance

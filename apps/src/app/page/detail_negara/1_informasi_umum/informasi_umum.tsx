@@ -58,6 +58,8 @@ interface InformasiUmumProps {
   isOccupiedProvince?: boolean;
   isAnnexedTerritory?: boolean;
   occupyingCountry?: string;
+  isPbbOccupied?: boolean;
+  canLiberatePbbOccupation?: boolean;
   playerReligion?: string;
   targetReligion?: string;
   updateTargetReligion?: (religion: string) => void | Promise<void>;
@@ -93,7 +95,7 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
   );
 };
 
-export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, targetNetBalance, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, isAnnexedTerritory, occupyingCountry, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension, provinceData, onCloseDetailModal, onActionModalStateChange }: InformasiUmumProps) {
+export default function InformasiUmum({ countryName, playerCountryDetail, setPlayerCountryDetail, currentNetBalance: currentNetBalanceProp, targetNetBalance, adjustNetBalance, currentDate, autoBuildEmbassy, isOccupiedProvince, isAnnexedTerritory, occupyingCountry, isPbbOccupied, canLiberatePbbOccupation, playerReligion, targetReligion, updateTargetReligion, playerIdeology, targetIdeology, updateTargetIdeology, provinceBudget, provinceNetBalance, provinceTension, provinceData, onCloseDetailModal, onActionModalStateChange }: InformasiUmumProps) {
   const playerCountryName = playerCountryDetail?.country || playerCountryDetail?.nama || playerCountryDetail?.country_name || null;
   const [isDestroyModalOpen, setIsDestroyModalOpen] = useState(false);
   const [isBuildEmbassyModalOpen, setIsBuildEmbassyModalOpen] = useState(false);
@@ -416,10 +418,12 @@ export default function InformasiUmum({ countryName, playerCountryDetail, setPla
   return (
     <div className="space-y-6">
       {/* Grid Layout 4-4 */}
-      {isOccupiedProvince ? (
+      {isOccupiedProvince || canLiberatePbbOccupation ? (
         <ProvinsiInformasiUmum
           countryName={countryName}
           occupyingCountry={occupyingCountry || playerCountryName || ''}
+          isPbbOccupied={isPbbOccupied}
+          canLiberatePbbOccupation={canLiberatePbbOccupation}
           playerReligion={playerReligion}
           targetReligion={targetReligion}
           updateTargetReligion={updateTargetReligion}

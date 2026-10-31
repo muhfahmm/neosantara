@@ -19,7 +19,6 @@ interface Props {
   onClose: () => void;
   resolutionTitle?: string;
   countries: CountryOption[];
-  userVote?: "yes" | "no" | "abstain" | null;
   renderFlag: (
     iso: string | undefined,
     altName: string,
@@ -36,7 +35,6 @@ export default function ModalVeto({
   onClose,
   resolutionTitle,
   countries,
-  userVote,
   renderFlag,
   onBribeCountry,
 }: Props) {
@@ -56,7 +54,6 @@ export default function ModalVeto({
   );
 
   // Veto selalu ingin membalik keputusan → suap ke 'yes'
-  const isUserSameAsModal = userVote === "yes";
   const targetBribeVote: "yes" | "no" | "abstain" | "veto" = "yes";
 
   return createPortal(
@@ -153,14 +150,11 @@ export default function ModalVeto({
                               </span>
                             )}
                           </div>
-                          <p className="text-[10px] text-[#8A7B6B] font-medium">
-                            {country.continent} • Hak Veto Tetap
-                          </p>
                         </div>
                       </div>
 
-                      {/* Tombol Suap — disembunyikan jika vote user sama & bukan negara user */}
-                      {!isUserSameAsModal && !country.isUser && (
+                      {/* Veto dapat disuap menjadi setuju, terlepas dari suara pemain. */}
+                      {!country.isUser && (
                         <button
                           onClick={() =>
                             onBribeCountry &&

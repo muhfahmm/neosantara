@@ -1172,7 +1172,6 @@ export default function KeamananPBB({ selectedCountry, countryDetail, setCountry
         onClose={() => { setActiveModalType(null); setActiveModalItem(null); }}
         resolutionTitle={activeModalItem ? `${activeModalItem.label} (${activeModalItem.target.name})` : undefined}
         countries={activeBreakdown.veto}
-        userVote={activeModalItem?.userVote}
         renderFlag={renderFlag}
         onBribeCountry={handleBribeCountry}
       />

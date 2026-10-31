@@ -52,6 +52,7 @@ interface AnnexationInfo {
   attackerCountry?: string;
   attackerIso?: string;
   isPbbOccupied?: boolean;
+  pbbLiberationCountry?: string;
 }
 
 type AnnexedCountryStore = Record<string, AnnexationInfo>;
@@ -77,7 +78,13 @@ function getAnnexedInfo(countryNames: unknown[], countryIso?: unknown) {
 function getCityOwnerInfo(cityId?: string | null): AnnexationInfo | undefined {
   if (!cityId || typeof window === 'undefined') return undefined;
   const owner = (window as Window & {
-    neosantara_city_owner?: Record<string, { ownerCountry?: string; ownerIso?: string; countryIso?: string }>;
+    neosantara_city_owner?: Record<string, {
+      ownerCountry?: string;
+      ownerIso?: string;
+      countryIso?: string;
+      isPbbOccupied?: boolean;
+      pbbLiberationCountry?: string;
+    }>;
   }).neosantara_city_owner?.[cityId];
   if (!owner?.ownerCountry) return undefined;
   const originalIso = String(owner.countryIso || '').toLowerCase();
@@ -86,7 +93,12 @@ function getCityOwnerInfo(cityId?: string | null): AnnexationInfo | undefined {
   );
   // Kota yang masih milik negara asalnya bukan wilayah aneksasi.
   if (ownerCountry?.iso && ownerCountry.iso.toLowerCase() === originalIso) return undefined;
-  return { attackerCountry: owner.ownerCountry, attackerIso: owner.ownerIso };
+  return {
+    attackerCountry: owner.ownerCountry,
+    attackerIso: owner.ownerIso,
+    isPbbOccupied: owner.isPbbOccupied,
+    pbbLiberationCountry: owner.pbbLiberationCountry,
+  };
 }
 
 export function CountryDetailModal({
@@ -568,13 +580,20 @@ export function CountryDetailModal({
 
   // Cek apakah negara ini telah dianeksasi oleh negara lain
   const cityOwnerInfo = getCityOwnerInfo(selectedCityId);
-  const annexedInfo = cityOwnerInfo || getAnnexedInfo(
+  const countryAnnexedInfo = getAnnexedInfo(
     [countryName, mapData?.country, detailData?.name_id, detailData?.country, detailData?.country_slug],
     mapData?.iso || detailData?.iso
   );
+  const annexedInfo = cityOwnerInfo || countryAnnexedInfo;
   const isPlayerOccupiedProvince = Boolean(
     annexedInfo?.attackerCountry &&
     normalizeCountryKey(annexedInfo.attackerCountry) === normalizeCountryKey(playerCountryName)
+  );
+  const isPbbOccupied = annexedInfo?.isPbbOccupied === true;
+  const canLiberatePbbOccupation = Boolean(
+    countryAnnexedInfo?.isPbbOccupied &&
+    countryAnnexedInfo.pbbLiberationCountry &&
+    normalizeCountryKey(countryAnnexedInfo.pbbLiberationCountry) === normalizeCountryKey(playerCountryName)
   );
   const isAnnexedTerritory = Boolean(annexedInfo?.attackerCountry);
   const occupyingCountry = annexedInfo?.attackerCountry || '';
@@ -582,7 +601,9 @@ export function CountryDetailModal({
     occupyingCountry &&
     normalizeCountryKey(occupyingCountry) !== normalizeCountryKey(playerCountryName)
   );
-  const cardCountryName = hasForeignTerritoryOwner ? occupyingCountry : countryName || '';
+  const cardCountryName = hasForeignTerritoryOwner && !isPbbOccupied
+    ? occupyingCountry
+    : countryName || '';
   const playerReligion = countryDetail?.religion || countryDetail?.agama_utama || countryDetail?.agama;
   const playerIdeology = countryDetail?.ideology || countryDetail?.ideologi;
   const targetIdeology = detailData?.ideology || detailData?.ideologi;
@@ -638,7 +659,7 @@ export function CountryDetailModal({
 
   const displayCountryName = isPlayerOccupiedProvince
     ? (cityOwnerInfo && selectedCity ? `Provinsi ${selectedCity}` : `Provinsi ${countryName}`)
-    : (annexedInfo?.attackerCountry || countryName);
+    : (isPbbOccupied ? countryName : annexedInfo?.attackerCountry || countryName);
 
   // Wilayah tetap menggunakan nama dan ibukota aslinya, tetapi memakai bendera penguasa.
   const originalIso = mapData?.iso || detailData?.iso || "";
@@ -723,18 +744,6 @@ export function CountryDetailModal({
                   </>
                 ) : (
                   renderFlagHeader(displayIso, displayCountryName)
-                )}
-
-                {/* 👈 TAMBAHKAN BENDERA PBB DI SINI */}
-                {annexedInfo?.isPbbOccupied && (
-                  <div className="w-8 h-5 rounded-sm overflow-hidden border border-[#00FFAA]/30 flex-shrink-0 shadow-sm bg-[#0A1A1A] relative flex items-center justify-center">
-                    <img
-                      src="https://flagcdn.com/w80/un.png"
-                      alt="PBB"
-                      className="w-full h-full object-cover absolute inset-0"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                    />
-                  </div>
                 )}
 
                 <p className="text-xs text-[#00FFAA]/70 font-semibold uppercase tracking-wider">
@@ -951,6 +960,8 @@ export function CountryDetailModal({
                 isOccupiedProvince={isPlayerOccupiedProvince}
                 isAnnexedTerritory={isAnnexedTerritory && !hasForeignTerritoryOwner}
                 occupyingCountry={occupyingCountry}
+                isPbbOccupied={isPbbOccupied}
+                canLiberatePbbOccupation={canLiberatePbbOccupation}
                 playerReligion={playerReligion}
                 targetReligion={detailData?.religion || detailData?.agama_utama || detailData?.agama}
                 updateTargetReligion={updateTargetReligion}
@@ -991,6 +1002,7 @@ export function CountryDetailModal({
                   mintaSerang: militaryActionDates[`${normalizeCountryKey(countryName)}:minta_serang`],
                 }}
                 onMilitaryActionLaunched={recordMilitaryAction}
+                onCloseCountryDetail={onClose}
                 onCloseDetailModal={() => {
                   setIsActionModalOpen(true);
                   // Juga panggil onClose jika bukan sekadar hide (atau SerangNegaraModal onCloseDetailModal)
@@ -999,6 +1011,7 @@ export function CountryDetailModal({
                 isOccupiedProvince={isPlayerOccupiedProvince}
                 occupyingCountry={occupyingCountry}
                 provinceTension={provinceTensionValue}
+                currentDate={currentDate}
                 updatePlayerCountryDetail={setCountryDetail}
               />
             )}

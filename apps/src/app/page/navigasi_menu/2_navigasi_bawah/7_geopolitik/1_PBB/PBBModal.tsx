@@ -112,7 +112,13 @@ export default function PBBModal({ isOpen, onClose, selectedCountry, countryDeta
           )}
 
           {/* Render 3 Komponen Berdasarkan Active Tab */}
-          {activeTab === "resolusi" && <ResolusiPBB selectedCountry={selectedCountry} />}
+          {activeTab === "resolusi" && (
+            <ResolusiPBB
+              selectedCountry={selectedCountry}
+              countryDetail={countryDetail}
+              setCountryDetail={setCountryDetail}
+            />
+          )}
           {activeTab === "keamanan" && (
             <KeamananPBB
               selectedCountry={selectedCountry}

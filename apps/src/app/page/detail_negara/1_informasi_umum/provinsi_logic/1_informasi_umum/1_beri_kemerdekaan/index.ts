@@ -47,7 +47,7 @@ export async function releaseAnnexedProvince({
   updateCountryColorOverrides
 }: ReleaseAnnexedProvinceContext): Promise<string> {
   const targetCountry = detail.targetCountry;
-  const currentPlayerCountry = detail.occupyingCountry;
+  const currentPlayerCountry = detail.playerCountry || detail.occupyingCountry;
   const targetNorm = normalizeName(targetCountry);
   const countryIso = getIsoForCountryName(targetCountry).toLowerCase();
   const mapCountry = COUNTRIES_DATA.find(
@@ -62,18 +62,41 @@ export async function releaseAnnexedProvince({
     `iso_${canonicalIso}`
   ].filter(Boolean));
   const gameWindow = window as Window & {
-    neosantara_annexed_countries?: Record<string, { attackerCountry?: string; attackerIso?: string }>;
+    neosantara_annexed_countries?: Record<string, {
+      attackerCountry?: string;
+      attackerIso?: string;
+      isPbbOccupied?: boolean;
+      pbbLiberationCountry?: string;
+    }>;
     neosantara_country_color_overrides?: Record<string, string>;
+    neosantara_city_owner?: Record<string, {
+      countryIso?: string;
+      ownerCountry?: string;
+      ownerIso?: string;
+      ownerColor?: string;
+      isPbbOccupied?: boolean;
+      pbbLiberationCountry?: string;
+    }>;
   };
   const annexedCountries = gameWindow.neosantara_annexed_countries || {};
   const annexedInfo = Object.entries(annexedCountries).find(([key]) => aliases.has(normalizeName(key)))?.[1];
 
-  if (!annexedInfo?.attackerCountry || normalizeName(annexedInfo.attackerCountry) !== normalizeName(currentPlayerCountry)) {
+  const canReleasePbbOccupation = Boolean(
+    annexedInfo?.isPbbOccupied &&
+    annexedInfo.pbbLiberationCountry &&
+    normalizeName(annexedInfo.pbbLiberationCountry) === normalizeName(currentPlayerCountry)
+  );
+  const canReleasePlayerAnnexation = Boolean(
+    annexedInfo?.attackerCountry &&
+    !annexedInfo.isPbbOccupied &&
+    normalizeName(annexedInfo.attackerCountry) === normalizeName(currentPlayerCountry)
+  );
+  if (!canReleasePbbOccupation && !canReleasePlayerAnnexation) {
     throw new Error(`${targetCountry} tidak tercatat sebagai wilayah aneksasi ${currentPlayerCountry}.`);
   }
 
   let contribution = contributionCache[targetNorm];
-  if (!contribution) {
+  if (!annexedInfo?.isPbbOccupied && !contribution) {
     const targetRelPath = Object.entries(countryPaths as Record<string, string>)
       .find(([name]) => normalizeName(name) === targetNorm)?.[1];
     if (!targetRelPath) {
@@ -94,7 +117,7 @@ export async function releaseAnnexedProvince({
     };
   }
 
-  const targetData = contribution.targetData;
+  const targetData = contribution?.targetData;
   const nextAnnexedCountries = Object.fromEntries(
     Object.entries(annexedCountries).filter(([key]) => !aliases.has(normalizeName(key)))
   );
@@ -103,7 +126,7 @@ export async function releaseAnnexedProvince({
     Object.entries(currentOverrides).filter(([key]) => !aliases.has(normalizeName(key)))
   ) as Record<string, string>;
 
-  updateCountryDetail(previous => {
+  if (targetData && !annexedInfo?.isPbbOccupied) updateCountryDetail(previous => {
     if (!previous) return previous;
 
     const totalPopulation = Number(previous.jumlah_penduduk || previous.populasi || 0);
@@ -195,8 +218,28 @@ export async function releaseAnnexedProvince({
     };
   });
 
-  if (contribution.netBalance > 0) {
+  if (contribution && !annexedInfo?.isPbbOccupied && contribution.netBalance > 0) {
     adjustPlayerNetBalance(-contribution.netBalance);
+  }
+
+  if (annexedInfo?.isPbbOccupied) {
+    const targetIsoNorm = canonicalIso.toLowerCase();
+    gameWindow.neosantara_city_owner = Object.fromEntries(
+      Object.entries(gameWindow.neosantara_city_owner || {}).map(([cityId, owner]) => {
+        if (String(owner.countryIso || '').toLowerCase() !== targetIsoNorm) {
+          return [cityId, owner];
+        }
+        const restoredOwner = { ...owner };
+        delete restoredOwner.isPbbOccupied;
+        delete restoredOwner.pbbLiberationCountry;
+        return [cityId, {
+          ...restoredOwner,
+          ownerCountry: mapCountry?.country || targetCountry,
+          ownerIso: targetIsoNorm,
+          ownerColor: 'transparent',
+        }];
+      })
+    );
   }
 
   gameWindow.neosantara_annexed_countries = nextAnnexedCountries;
@@ -209,7 +252,9 @@ export async function releaseAnnexedProvince({
     detail: { targetCountry, released: true }
   }));
 
-  return `${targetCountry} telah merdeka. Status aneksasi dicabut, statistik wilayah dikembalikan dari negara, dan warna peta dipulihkan.`;
+  return annexedInfo?.isPbbOccupied
+    ? `${targetCountry} telah dibebaskan dari pendudukan PBB dan kedaulatannya dipulihkan.`
+    : `${targetCountry} telah merdeka. Status aneksasi dicabut, statistik wilayah dikembalikan dari negara, dan warna peta dipulihkan.`;
 }
 
 const action: ProvinceAction = {

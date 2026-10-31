@@ -584,6 +584,7 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
         prefetchedAllCountries={prefetchedAllCountries}
         initialTab={perangNuklirInitialTab}
         onAction={(target) => {
+          setIsPerangNuklirDetailOpen(false);
           if (totalReadyIcbm <= 0) {
             setNeonAlert({ title: "Gagal Meluncurkan", message: "Persediaan rudal ICBM Anda tidak mencukupi (0 unit). Silakan rakit rudal ICBM terlebih dahulu." });
             return;
@@ -620,6 +621,8 @@ export default function IcbmModal({ isOpen, onClose, currentDate, countryDetail,
           });
 
           if (!strikeResult.success) {
+            setIsConfirmStrikeOpen(false);
+            setIsPerangNuklirDetailOpen(false);
             setNeonAlert({ title: "Gagal Meluncurkan", message: strikeResult.message });
             return;
           }

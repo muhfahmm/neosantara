@@ -1604,8 +1604,8 @@ export default function WarMap({
                       {/* FIX: Tombol Duduki / Aneksasi */}
                       <ActionButton
                         icon={<Flag className="h-5 w-5" />}
-                        title={isPbbCoalition ? 'Duduki Negara' : 'Aneksasi'}
-                        desc={isPbbCoalition ? 'Kendalikan wilayah target' : 'Caplok & integrasikan wilayah target'}
+                        title={isPbbCoalition ? 'Pendudukan PBB' : 'Aneksasi'}
+                        desc={isPbbCoalition ? 'Tempatkan wilayah di bawah administrasi PBB' : 'Caplok & integrasikan wilayah target'}
                         accent="#00FFAA"
                         onClick={() => handleAction('annex')}
                       />

@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { createPortal } from 'react-dom';
 import { DEFENSE_UNIT_LABELS, getDefenseUnitCardImage } from '../navigasi_menu/2_navigasi_bawah/buildingCardImages';
+import NotebookModalWrapper from '../navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 
 export interface WarUnitLoss {
     unitKey: string;
@@ -26,18 +26,18 @@ export default function ResultModal({
     type = 'success',
     onClose,
 }: ResultModalProps) {
-    if (typeof window === 'undefined' || !isOpen) return null;
+    if (typeof document === 'undefined' || !isOpen) return null;
 
     const isLosses = losses.length > 0;
     const isError = type === 'error';
 
-    return createPortal(
-        <div className="fixed inset-0 z-[500000] flex items-center justify-center p-4 pointer-events-auto font-sans">
+    return (
+        <NotebookModalWrapper zIndexClass="z-[500000]">
             <div
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="result-modal-title"
-                className={`bg-[#0F2424] border ${isError ? 'border-rose-500/40' : 'border-[#00FFAA]/40'} rounded-2xl overflow-hidden w-full max-w-md max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] pointer-events-auto shadow-lg flex flex-col font-sans`}
+                className={`relative flex h-full flex-col overflow-hidden rounded-xl border ${isError ? 'border-rose-500/40' : 'border-[#00FFAA]/20'} bg-[#0A1A1A] font-sans shadow-[0_0_30px_rgba(0,255,170,0.15)]`}
             >
                 {/* Header */}
                 <div className="px-4 sm:px-5 lg:px-6 py-3 sm:py-3.5 lg:py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] shrink-0">
@@ -68,7 +68,7 @@ export default function ResultModal({
                 </div>
 
                 {/* Body Content */}
-                <div className="flex-1 min-h-0 p-4 sm:p-5 lg:p-6 overflow-y-auto">
+                <div className="relative z-10 flex-1 min-h-0 p-4 sm:p-5 lg:p-6 overflow-y-auto bg-[#0A1A1A]/80 [&::-webkit-scrollbar]:w-1.5 sm:[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#0A1A1A] [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:border-l [&::-webkit-scrollbar-track]:border-[#00FFAA]/20 [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-[#00FFAA] [&::-webkit-scrollbar-thumb]:to-[#00B37A] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-[#0A1A1A] [&::-webkit-scrollbar-thumb]:shadow-[0_0_10px_rgba(0,255,170,0.6)] hover:[&::-webkit-scrollbar-thumb]:from-[#33FFBB] hover:[&::-webkit-scrollbar-thumb]:to-[#00FFAA] [&::-webkit-scrollbar-button]:hidden">
                     <h3
                         id="result-modal-title"
                         className={`text-base sm:text-lg lg:text-xl font-black uppercase tracking-wide mb-3 lg:mb-4 ${isError ? 'text-rose-400' : 'text-[#E0E0E0]'}`}
@@ -131,7 +131,6 @@ export default function ResultModal({
                     </button>
                 </div>
             </div>
-        </div>,
-        document.body
+        </NotebookModalWrapper>
     );
 }

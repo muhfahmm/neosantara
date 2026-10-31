@@ -291,7 +291,12 @@ import {
     type ProvinceReferendum
 } from '../detail_negara/1_informasi_umum/provinsi_logic/ketegangan_provinsi/3_referendum';
 
-type AnnexedTerritoryEntry = { attackerCountry?: string; attackerIso?: string; isPbbOccupied?: boolean };
+type AnnexedTerritoryEntry = {
+    attackerCountry?: string;
+    attackerIso?: string;
+    isPbbOccupied?: boolean;
+    pbbLiberationCountry?: string;
+};
 type AnnexedTerritories = Record<string, AnnexedTerritoryEntry>;
 type MapCity = {
     country: string;
@@ -316,6 +321,8 @@ type CityOwnerEntry = {
     lat: number;
     lng: number;
     isCapital: boolean;
+    isPbbOccupied?: boolean;
+    pbbLiberationCountry?: string;
 };
 type CityOwnerStore = Record<string, CityOwnerEntry>;
 
@@ -1401,9 +1408,10 @@ export default function MapPage() {
         attackerIso: string,
         attackerColor: string,
         isPbbOccupied: boolean = false,
-        skipColorOverride: boolean = false
+        skipColorOverride: boolean = false,
+        pbbLiberationCountry?: string
     ) => {
-        const annexationInfo = { attackerCountry, attackerIso, isPbbOccupied };
+        const annexationInfo = { attackerCountry, attackerIso, isPbbOccupied, pbbLiberationCountry };
         const targetNorm = targetCountry.toLowerCase().trim();
         const mapCountry = COUNTRIES_DATA.find(
             country => country.country.toLowerCase().trim() === targetNorm
@@ -1430,34 +1438,36 @@ export default function MapPage() {
             overrideUpdates.iso_mn = attackerColor;
         }
 
-        setCountryDetail((previous: Record<string, unknown> | null) => {
-            if (!previous) return previous;
-            const normalizeCountryName = (name: unknown) => String(name || '').toLowerCase().trim();
-            const matchesTarget = (name: unknown) => targetAliases.has(normalizeCountryName(name));
-            const embassies = Array.isArray(previous.embassies) ? previous.embassies : [];
-            const removedEmbassies = Array.isArray(previous.removedEmbassies) ? previous.removedEmbassies : [];
-            const constructions = Array.isArray(previous.ongoingEmbassyConstructions)
-                ? previous.ongoingEmbassyConstructions
-                : [];
-            return {
-                ...previous,
-                embassies: embassies.filter((embassy: unknown) => {
-                    const partner = typeof embassy === 'string'
-                        ? embassy
-                        : typeof embassy === 'object' && embassy !== null && 'mitra' in embassy
-                            ? (embassy as { mitra?: unknown }).mitra
-                            : '';
-                    return !matchesTarget(partner);
-                }),
-                ongoingEmbassyConstructions: constructions.filter(
-                    (construction: { targetCountry?: unknown }) => !matchesTarget(construction.targetCountry)
-                ),
-                removedEmbassies: Array.from(new Set([
-                    ...removedEmbassies.filter((name: unknown) => !matchesTarget(name)),
-                    targetCountry
-                ]))
-            };
-        });
+        if (!isPbbOccupied) {
+            setCountryDetail((previous: Record<string, unknown> | null) => {
+                if (!previous) return previous;
+                const normalizeCountryName = (name: unknown) => String(name || '').toLowerCase().trim();
+                const matchesTarget = (name: unknown) => targetAliases.has(normalizeCountryName(name));
+                const embassies = Array.isArray(previous.embassies) ? previous.embassies : [];
+                const removedEmbassies = Array.isArray(previous.removedEmbassies) ? previous.removedEmbassies : [];
+                const constructions = Array.isArray(previous.ongoingEmbassyConstructions)
+                    ? previous.ongoingEmbassyConstructions
+                    : [];
+                return {
+                    ...previous,
+                    embassies: embassies.filter((embassy: unknown) => {
+                        const partner = typeof embassy === 'string'
+                            ? embassy
+                            : typeof embassy === 'object' && embassy !== null && 'mitra' in embassy
+                                ? (embassy as { mitra?: unknown }).mitra
+                                : '';
+                        return !matchesTarget(partner);
+                    }),
+                    ongoingEmbassyConstructions: constructions.filter(
+                        (construction: { targetCountry?: unknown }) => !matchesTarget(construction.targetCountry)
+                    ),
+                    removedEmbassies: Array.from(new Set([
+                        ...removedEmbassies.filter((name: unknown) => !matchesTarget(name)),
+                        targetCountry
+                    ]))
+                };
+            });
+        }
 
         if (typeof window === 'undefined') return;
 
@@ -1484,6 +1494,8 @@ export default function MapPage() {
                     ...info,
                     attackerCountry,
                     attackerIso,
+                    isPbbOccupied,
+                    pbbLiberationCountry,
                 };
                 if (!skipColorOverride && attackerColor) {
                     overrideUpdates[key] = attackerColor;
@@ -1578,28 +1590,34 @@ export default function MapPage() {
         attackerIso: string,
         attackerColor: string,
         isPbbOccupied = false,
-        skipCanvasColor = false
+        skipCanvasColor = false,
+        pbbLiberationCountry?: string
     ) => {
         if (typeof window === 'undefined' || !city.cityId) {
             console.error('[CityAnnexation] Cannot record city ownership without a browser and city ID.', city);
             return false;
         }
 
+        const territoryOwnerCountry = isPbbOccupied ? 'Perserikatan Bangsa-Bangsa' : attackerCountry;
+        const territoryOwnerIso = isPbbOccupied ? 'un' : attackerIso.toLowerCase();
+        const territoryOwnerColor = isPbbOccupied ? '#009EDB' : attackerColor;
         const previousOwners = (window as Window & {
             neosantara_city_owner?: CityOwnerStore;
         }).neosantara_city_owner || {};
         const targetCitiesBeforeCapture = getMapCities().filter(candidate =>
             normalizeMapKey(getCurrentCityOwner(candidate)) === normalizeMapKey(targetCountry)
         );
-        const effectiveCityColor = skipCanvasColor ? 'transparent' : attackerColor;
+        const effectiveCityColor = skipCanvasColor ? 'transparent' : territoryOwnerColor;
         const nextOwners: CityOwnerStore = {
             ...previousOwners,
             [city.cityId]: {
                 ...city,
                 cell: computeCityRegionCell(city),
-                ownerCountry: attackerCountry,
-                ownerIso: attackerIso.toLowerCase(),
+                ownerCountry: territoryOwnerCountry,
+                ownerIso: territoryOwnerIso,
                 ownerColor: effectiveCityColor,
+                isPbbOccupied,
+                pbbLiberationCountry,
             },
         };
         (window as Window & { neosantara_city_owner?: CityOwnerStore }).neosantara_city_owner = nextOwners;
@@ -1623,9 +1641,9 @@ export default function MapPage() {
                 targetCountry,
                 targetCityId: city.cityId,
                 targetCityName: city.cityName,
-                attackerCountry,
-                attackerIso,
-                ownerColor: attackerColor,
+                attackerCountry: territoryOwnerCountry,
+                attackerIso: territoryOwnerIso,
+                ownerColor: territoryOwnerColor,
             },
         }));
 
@@ -1651,13 +1669,15 @@ export default function MapPage() {
                     cityId: cId,
                     cityName: c.capital,
                     countryIso: c.iso.toLowerCase(),
-                    ownerCountry: attackerCountry,
-                    ownerIso: attackerIso.toLowerCase(),
+                    ownerCountry: territoryOwnerCountry,
+                    ownerIso: territoryOwnerIso,
                     ownerColor: effectiveCityColor,
                     lat: c.lat,
                     lng: c.lng,
                     isCapital: isCap,
                     cell: computeCityRegionCell({ cityId: cId, countryIso: c.iso, lat: c.lat, lng: c.lng }),
+                    isPbbOccupied,
+                    pbbLiberationCountry,
                 };
             });
             (window as Window & { neosantara_city_owner?: CityOwnerStore }).neosantara_city_owner = nextOwners;
@@ -1670,11 +1690,12 @@ export default function MapPage() {
             recordAnnexedTerritory(
                 targetCountry,
                 targetIso,
-                attackerCountry,
-                attackerIso,
-                attackerColor,
+                territoryOwnerCountry,
+                territoryOwnerIso,
+                territoryOwnerColor,
                 isPbbOccupied,
-                skipCanvasColor
+                skipCanvasColor,
+                pbbLiberationCountry
             );
         }
 
@@ -1891,7 +1912,7 @@ export default function MapPage() {
             const detail = (e as CustomEvent)?.detail;
             if (!detail) return;
 
-            const { actionType, targetCountry, isPbbCoalition } = detail;
+            const { actionType, targetCountry, isPbbCoalition, pbbLiberationCountry } = detail;
             console.info('[CityAnnexation][2-event] trigger_player_attack received', detail);
             const attackerCountry = countryDetail?.country || 'China';
             const attackerIso = (countryDetail?.iso || 'cn').toLowerCase();
@@ -1918,7 +1939,7 @@ export default function MapPage() {
             const newNewsItems: NewsItemData[] = [];
 
             const isInvasionAction = actionType === 'aneksasi' || actionType === 'jarah';
-            if (isInvasionAction) {
+            if (isInvasionAction && !isPbbCoalition) {
                 // Perang sudah dimenangkan; larangan PBB/sanksi sudah diproses saat perang dimulai
                 // (handleStartWarAnimation). Jangan membatalkan hasil aneksasi di sini.
                 if (hasActiveGlobalWarBan()) {
@@ -2002,11 +2023,19 @@ export default function MapPage() {
                 }
 
                 // 2. Berita Invasi
-                const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
+                const territoryAuthority = isPbbCoalition
+                    ? { country: 'Perserikatan Bangsa-Bangsa', iso: 'un', color: '#009EDB' }
+                    : { country: attackerCountry, iso: attackerIso, color: '#00C853' };
+                const invNews = generateInvasionNews(
+                    territoryAuthority.country,
+                    territoryAuthority.iso,
+                    targetCountry,
+                    targetIso,
+                    dateStr
+                );
                 newNewsItems.push(invNews);
 
-                // User annexation warna wilayah hijau terang #00C853
-                const attackerColor = '#00C853';
+                const attackerColor = territoryAuthority.color;
                 console.info('[CityAnnexation][3-handler] Aneksasi handler reached; resolved target city', {
                     attackerCountry,
                     targetCountry,
@@ -2019,8 +2048,8 @@ export default function MapPage() {
                     console.warn('[CityAnnexation][3-handler] Requested city did not match resolved city (fallback used).');
                 }
                 const { news: annexationNews } = generateAnnexationNews(
-                    attackerCountry,
-                    attackerIso,
+                    territoryAuthority.country,
+                    territoryAuthority.iso,
                     attackerColor,
                     detail.targetCityName
                         ? `${detail.targetCityName}, ${targetCountry}`
@@ -2036,12 +2065,15 @@ export default function MapPage() {
                     attackerCountry,
                     attackerIso,
                     attackerColor,
-                    isPbbCoalition
+                    isPbbCoalition,
+                    false,
+                    pbbLiberationCountry
                 );
 
                 // 4. Gabungkan statistik (populasi, kas negara, kepuasan, kesejahteraan, seluruh bangunan & sisa militer target setelah kalah >50%)
                 // dari SELURUH negara dalam hegemoni kekaisaran target (targetCountry + seluruh negara taklukannya) ke user (Cascading Annexation)
                 const mergeTargetDataToUser = async () => {
+                    if (isPbbCoalition) return;
                     if (!countryCollapsed) return;
 
                     // Kumpulkan semua negara yang berada di bawah hegemoni targetCountry
@@ -2198,10 +2230,14 @@ export default function MapPage() {
                     : '';
                 const notifMsg: NotificationMessage = {
                     id: `notif-player-annex-${Date.now()}`,
-                    title: `🚩 KOTA BERHASIL DITAKLUKKAN`,
-                    sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
+                    title: isPbbCoalition ? '🏳️ WILAYAH DIDUDUKI PBB' : '🚩 KOTA BERHASIL DITAKLUKKAN',
+                    sender: isPbbCoalition
+                        ? 'Pasukan Gabungan PBB'
+                        : `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
                     message: targetCity
-                        ? `Pasukan ${attackerCountry} berhasil menaklukkan Kota ${targetCity.cityName} di ${targetCountry}. ${countryCollapsed ? `Ibu kota atau seluruh kota yang terdata telah jatuh; ${targetCountry} kini runtuh dan dianeksasi penuh.` : `Kota lain di ${targetCountry} tetap berada di bawah kepemilikan semula.`}${lossNote} Wilayah taklukan ditandai hijau terang pada peta.`
+                        ? isPbbCoalition
+                            ? `Pasukan gabungan PBB berhasil menduduki Kota ${targetCity.cityName} di ${targetCountry}. Wilayah berada di bawah administrasi PBB, bukan negara peserta.${lossNote}`
+                            : `Pasukan ${attackerCountry} berhasil menaklukkan Kota ${targetCity.cityName} di ${targetCountry}. ${countryCollapsed ? `Ibu kota atau seluruh kota yang terdata telah jatuh; ${targetCountry} kini runtuh dan dianeksasi penuh.` : `Kota lain di ${targetCountry} tetap berada di bawah kepemilikan semula.`}${lossNote} Wilayah taklukan ditandai hijau terang pada peta.`
                         : `Aneksasi ${targetCountry} tidak dapat diterapkan karena kota target tidak ditemukan pada data peta.`,
                     timestamp: dateStr,
                     type: 'peringkat',
@@ -2611,6 +2647,7 @@ export default function MapPage() {
         isPlayerCoalitionProposer?: boolean;
         resolutionViolationAuthorized?: boolean;
         coalitionParticipants?: Array<{ name: string; iso: string }>;
+        pbbLiberationCountry?: string;
     }>>([]);
 
     const npcWarQueueRunningRef = useRef(false);
@@ -2670,6 +2707,7 @@ export default function MapPage() {
             );
             const resolutionViolationAuthorized = detail.resolutionViolationAuthorized === true;
             if (
+                !detail.isPbbCoalition &&
                 !isPlayerAttacker &&
                 !hasApprovedInvasionMandate &&
                 !resolutionViolationAuthorized &&
@@ -2688,7 +2726,7 @@ export default function MapPage() {
                 }, ...previous]);
                 return;
             }
-            if (!hasApprovedInvasionMandate) {
+            if (!detail.isPbbCoalition && !hasApprovedInvasionMandate) {
                 const violationReason = hasActiveGlobalWarBan()
                     ? 'war_ban'
                     : hasActiveApprovedInvasionResolutionForDifferentTarget(detail.attacker, detail.target)
@@ -3056,6 +3094,14 @@ export default function MapPage() {
                     areSameWarCountry(candidate.name, participant.name, candidate.iso, participant.iso)
                 ) === index
             );
+            const pbbLiberationCountry = operationForces.some(participant =>
+                Boolean(playerCountryName) && areSameWarCountry(
+                    participant.name,
+                    playerCountryName,
+                    participant.iso,
+                    selectedCountry?.iso || countryDetail?.iso
+                )
+            ) ? playerCountryName : undefined;
             const attacks = [{
                 attacker: operation.proposer.name,
                 target: operation.target.name,
@@ -3068,6 +3114,7 @@ export default function MapPage() {
                     selectedCountry?.iso || countryDetail?.iso
                 ),
                 coalitionParticipants: operationForces,
+                pbbLiberationCountry,
             }];
 
             setNpcWarQueue(previous => [...previous, ...attacks]);
@@ -3173,10 +3220,14 @@ export default function MapPage() {
                     });
                     setNotifications(previous => [{
                         id: `province-independence-${Date.now()}`,
-                        title: detail.triggeredByReferendum
-                            ? '🗳️ REFERENDUM KEMERDEKAAN DISETUJUI'
-                            : '🏳️ KEMERDEKAAN PROVINSI DIPULIHKAN',
-                        sender: `Pemerintah ${detail.occupyingCountry}`,
+                        title: detail.actionLabel === 'Bebaskan Negara'
+                            ? '🌐 PENDUDUKAN PBB DIAKHIRI'
+                            : detail.triggeredByReferendum
+                                ? '🗳️ REFERENDUM KEMERDEKAAN DISETUJUI'
+                                : '🏳️ KEMERDEKAAN PROVINSI DIPULIHKAN',
+                        sender: detail.actionLabel === 'Bebaskan Negara'
+                            ? 'Pasukan Gabungan PBB'
+                            : `Pemerintah ${detail.occupyingCountry}`,
                         message: detail.triggeredByReferendum
                             ? `${detail.actionMessage || 'Mayoritas warga memilih merdeka.'} ${message}`
                             : message,
@@ -5295,11 +5346,70 @@ export default function MapPage() {
                             ? savedSessionState
                             : {};
                         restoreNpcCountrySimulationState(sessionState.npcSimulation ?? null);
-                        const restoredOverrides = sessionState.countryColorOverrides
+                        const savedAnnexed = (sessionState.annexedCountries || {}) as AnnexedTerritories;
+                        const restoredAnnexed = Object.fromEntries(
+                            Object.entries(savedAnnexed).map(([key, info]) => {
+                                if (!info?.isPbbOccupied) return [key, info];
+                                const pbbLiberationCountry = info.pbbLiberationCountry || (
+                                    info.attackerCountry && areSameWarCountry(
+                                        info.attackerCountry,
+                                        chosen.country,
+                                        info.attackerIso,
+                                        chosen.iso
+                                    )
+                                        ? chosen.country
+                                        : undefined
+                                );
+                                return [key, {
+                                    ...info,
+                                    attackerCountry: 'Perserikatan Bangsa-Bangsa',
+                                    attackerIso: 'un',
+                                    pbbLiberationCountry,
+                                }];
+                            })
+                        ) as AnnexedTerritories;
+                        const restoredOverrides: Record<string, string> = {
+                            ...(sessionState.countryColorOverrides
                             || savedState.countryColorOverrides
-                            || {};
-                        const restoredAnnexed = sessionState.annexedCountries || {};
-                        const restoredCityOwners = sessionState.cityOwner || {};
+                            || {}),
+                        };
+                        Object.entries(restoredAnnexed).forEach(([key, info]) => {
+                            if (info?.isPbbOccupied) restoredOverrides[key] = '#009EDB';
+                        });
+                        const restoredCityOwners = Object.fromEntries(
+                            Object.entries((sessionState.cityOwner || {}) as CityOwnerStore).map(([cityId, owner]) => {
+                                const originalCountry = COUNTRIES_DATA.find(country =>
+                                    normalizeMapKey(country.iso) === normalizeMapKey(owner.countryIso)
+                                );
+                                const countryAliases = new Set([
+                                    normalizeMapKey(owner.countryIso),
+                                    `iso${normalizeMapKey(owner.countryIso)}`,
+                                    normalizeMapKey(originalCountry?.country),
+                                ]);
+                                const countryOccupation = Object.entries(restoredAnnexed)
+                                    .find(([key]) => countryAliases.has(normalizeMapKey(key)))?.[1];
+                                const isPbbOccupied = owner.isPbbOccupied || countryOccupation?.isPbbOccupied;
+                                if (!isPbbOccupied) return [cityId, owner];
+                                const pbbLiberationCountry = owner.pbbLiberationCountry ||
+                                    countryOccupation?.pbbLiberationCountry ||
+                                    (owner.ownerCountry && areSameWarCountry(
+                                        owner.ownerCountry,
+                                        chosen.country,
+                                        owner.ownerIso,
+                                        chosen.iso
+                                    )
+                                        ? chosen.country
+                                        : undefined);
+                                return [cityId, {
+                                    ...owner,
+                                    ownerCountry: 'Perserikatan Bangsa-Bangsa',
+                                    ownerIso: 'un',
+                                    ownerColor: '#009EDB',
+                                    isPbbOccupied: true,
+                                    pbbLiberationCountry,
+                                }];
+                            })
+                        ) as CityOwnerStore;
                         setCountryColorOverrides(restoredOverrides);
                         (window as any).neosantara_country_color_overrides = restoredOverrides;
                         (window as any).neosantara_annexed_countries = restoredAnnexed;
@@ -8359,7 +8469,8 @@ export default function MapPage() {
                                         attackerIso,
                                         getCountryColor(activeWarAnimation.attacker),
                                         activeWarAnimation.isPbbCoalition === true,
-                                        true // skipCanvasColor = true (warna canvas peta tidak berubah)
+                                        activeWarAnimation.isPbbCoalition !== true,
+                                        activeWarAnimation.pbbLiberationCountry
                                     );
 
                                     const { news } = generateAnnexationNews(
@@ -8428,7 +8539,9 @@ export default function MapPage() {
                                 activeWarAnimation.attacker,
                                 attackerIso,
                                 getCountryColor(activeWarAnimation.attacker),
-                                activeWarAnimation.isPbbCoalition === true
+                                activeWarAnimation.isPbbCoalition === true,
+                                false,
+                                activeWarAnimation.pbbLiberationCountry
                             );
                         }}
                         onClose={() => {
@@ -8456,7 +8569,9 @@ export default function MapPage() {
                                             activeWarAnimation.attacker,
                                             attackerIso,
                                             cityOwnerColor,
-                                            activeWarAnimation.isPbbCoalition === true
+                                            activeWarAnimation.isPbbCoalition === true,
+                                            false,
+                                            activeWarAnimation.pbbLiberationCountry
                                         )
                                         : false;
 
@@ -8465,7 +8580,9 @@ export default function MapPage() {
                                         setAnnexedModalData({
                                             isOpen: true,
                                             countryName: countryDetail?.country || countryDetail?.nama_negara || 'Indonesia',
-                                            attackerCountry: activeWarAnimation.attacker,
+                                            attackerCountry: activeWarAnimation.isPbbCoalition
+                                                ? 'Perserikatan Bangsa-Bangsa'
+                                                : activeWarAnimation.attacker,
                                         });
                                     } else {
                                         const currentDateStr = currentDate.toISOString().slice(0, 10);
@@ -8555,7 +8672,9 @@ export default function MapPage() {
                                             activeWarAnimation.attacker,
                                             getIsoForCountryName(activeWarAnimation.attacker) || 'un',
                                             getCountryColor(activeWarAnimation.attacker),
-                                            true
+                                            true,
+                                            false,
+                                            activeWarAnimation.pbbLiberationCountry
                                         );
                                     }
                                 }
@@ -8577,6 +8696,7 @@ export default function MapPage() {
                                         targetCityName: activeWarAnimation.targetCityName,
                                         warResult: result,
                                         isPbbCoalition: activeWarAnimation.isPbbCoalition ?? false,
+                                        pbbLiberationCountry: activeWarAnimation.pbbLiberationCountry,
                                     },
                                 })
                             );

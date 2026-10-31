@@ -17,6 +17,7 @@ export interface ProvinceActionResult {
 export interface ProvinceActionContext {
   targetCountry: string;
   occupyingCountry: string;
+  playerCountry?: string;
   playerReligion?: string;
   updateTargetReligion?: (religion: string) => void | Promise<void>;
   playerIdeology?: string;
@@ -40,6 +41,7 @@ export interface ProvinceActionEventDetail {
   actionLabel: string;
   targetCountry: string;
   occupyingCountry: string;
+  playerCountry?: string;
   actionSucceeded?: boolean;
   actionMessage?: string;
   successChance?: number;

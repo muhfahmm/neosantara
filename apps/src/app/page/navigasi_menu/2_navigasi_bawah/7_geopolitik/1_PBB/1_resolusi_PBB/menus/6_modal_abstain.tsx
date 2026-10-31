@@ -47,7 +47,6 @@ export default function ModalAbstain({
 
   // Jika pilihan user sudah sama dengan modal ini (Abstain), tidak perlu ada tombol suap
   const isUserSameAsModal = userVote === 'abstain';
-  const targetBribeVote = userVote || 'yes';
 
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
@@ -102,7 +101,7 @@ export default function ModalAbstain({
                   const isProposer = c.isProposer;
                   const isTarget = c.isTarget;
                   const isUser = c.isUser;
-                  const showBribeButton = !isProposer && !isTarget && !isUser && !isUserSameAsModal;
+                  const showBribeButton = Boolean(userVote) && !isProposer && !isTarget && !isUser && !isUserSameAsModal;
 
                   return (
                     <div
@@ -148,7 +147,7 @@ export default function ModalAbstain({
                           <button
                             type="button"
                             title={`Suap ${c.name} (${formatBribeCost(c.name)})`}
-                            onClick={() => onBribeCountry(c.iso, targetBribeVote)}
+                            onClick={() => userVote && onBribeCountry(c.iso, userVote)}
                             className="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/30 active:scale-95 transition-all text-[10px] font-black uppercase flex items-center gap-1 cursor-pointer shadow-sm"
                           >
                             <span>💰 Suap ({formatBribeCost(c.name)})</span>

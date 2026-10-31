@@ -255,7 +255,8 @@ export function calculate206AIVotes(
 
   if (votesCastSoFar === 0) {
     const hasTarget = targetName && !targetName.toLowerCase().includes('global') && !targetName.toLowerCase().includes('dunia');
-    let supportersCount = isCountryAnnexed(proposerName, getIsoForCountryName(proposerName)) ? 0 : 1;
+    const proposerIsUser = normalizePbbCountryName(proposerName) === normalizePbbCountryName(activeUserCountryName);
+    let supportersCount = isCountryAnnexed(proposerName, getIsoForCountryName(proposerName)) || proposerIsUser ? 0 : 1;
     let opponentsCount = hasTarget && !isCountryAnnexed(targetName, getIsoForCountryName(targetName)) ? 1 : 0;
     let abstainCount = 0;
 
@@ -775,6 +776,11 @@ export function getCountryPBBVote(countryName: string): number {
 }
 
 export function formatBribeCost(countryName: string): string {
-  const vote = getCountryPBBVote(countryName);
-  return `${vote.toLocaleString('id-ID', { maximumFractionDigits: 2 })}.000`;
+  return getResolutionBribeCost(countryName).toLocaleString('id-ID', {
+    maximumFractionDigits: 0,
+  });
+}
+
+export function getResolutionBribeCost(countryName: string): number {
+  return getCountryPBBVote(countryName) * 1000;
 }
