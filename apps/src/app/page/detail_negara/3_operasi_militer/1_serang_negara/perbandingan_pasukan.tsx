@@ -20,6 +20,7 @@ interface PerbandinganPasukanProps {
   targetIso?: string;
   targetPower: number;
   attackerPowerOverride?: number;
+  attackerDeploymentPercent?: number;
   attackerDetail?: unknown;
   targetDetail?: unknown;
   isUserAttacker?: boolean;
@@ -148,6 +149,7 @@ export default function PerbandinganPasukan({
   targetName,
   attackerDetail,
   targetDetail,
+  attackerDeploymentPercent,
   isUserDefender = false,
   isCoalitionForce = false,
   onAutoResult,
@@ -190,15 +192,21 @@ export default function PerbandinganPasukan({
   const attackerBreakdown = {
     darat: getGroupBreakdown(attackerDetail, 'darat').map(i => ({
       ...i,
-      quantity: isUserDefender || isCoalitionForce ? i.quantity : getDeployedQuantity(i.key, i.quantity)
+      quantity: typeof attackerDeploymentPercent === 'number'
+        ? Math.round(i.quantity * attackerDeploymentPercent / 100)
+        : isUserDefender || isCoalitionForce ? i.quantity : getDeployedQuantity(i.key, i.quantity)
     })),
     laut: getGroupBreakdown(attackerDetail, 'laut').map(i => ({
       ...i,
-      quantity: isUserDefender || isCoalitionForce ? i.quantity : getDeployedQuantity(i.key, i.quantity)
+      quantity: typeof attackerDeploymentPercent === 'number'
+        ? Math.round(i.quantity * attackerDeploymentPercent / 100)
+        : isUserDefender || isCoalitionForce ? i.quantity : getDeployedQuantity(i.key, i.quantity)
     })),
     udara: getGroupBreakdown(attackerDetail, 'udara').map(i => ({
       ...i,
-      quantity: isUserDefender || isCoalitionForce ? i.quantity : getDeployedQuantity(i.key, i.quantity)
+      quantity: typeof attackerDeploymentPercent === 'number'
+        ? Math.round(i.quantity * attackerDeploymentPercent / 100)
+        : isUserDefender || isCoalitionForce ? i.quantity : getDeployedQuantity(i.key, i.quantity)
     })),
   };
 

@@ -45,9 +45,16 @@ interface BottomNavProps {
   setActiveMenu: (menu: string) => void;
   countryDetail?: any;
   isDetailModalOpen?: boolean;
+  isAttackerForcesModalOpen?: boolean;
 }
 
-export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, isDetailModalOpen = false }: BottomNavProps) {
+export default function BottomNav({
+  activeMenu,
+  setActiveMenu,
+  countryDetail,
+  isDetailModalOpen = false,
+  isAttackerForcesModalOpen = false,
+}: BottomNavProps) {
   const [isTemporarilyHidden, setIsTemporarilyHidden] = useState(false);
 
   useEffect(() => {
@@ -122,7 +129,7 @@ export default function BottomNav({ activeMenu, setActiveMenu, countryDetail, is
 
   // 🔥 SINGLE unified hide check — placed BEFORE any render logic
   // Covers: notification modals (inbox/reward/news), detail modals, sub-menu modals, and strategy hide events
-  if (isTemporarilyHidden || isDetailModalOpen || isSubMenuItem) return null;
+  if (isTemporarilyHidden || isDetailModalOpen || isAttackerForcesModalOpen || isSubMenuItem) return null;
 
   const isOtherModalOpen = activeMenu !== "" &&
                            activeMenu !== "Peta Taktis" &&

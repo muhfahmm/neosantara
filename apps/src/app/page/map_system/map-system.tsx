@@ -2589,6 +2589,7 @@ export default function MapPage() {
     const activeWarAnimationRef = useRef<any>(null);
     activeWarAnimationRef.current = activeWarAnimation;
     const [isWarAnalysisActive, setIsWarAnalysisActive] = useState(false);
+    const [isAttackerForcesModalOpen, setIsAttackerForcesModalOpen] = useState(false);
     const handleWarAnalysisVisibilityChange = useCallback((isVisible: boolean) => {
         setIsWarAnalysisActive(isVisible);
     }, []);
@@ -8308,6 +8309,7 @@ export default function MapPage() {
                         isNpcWar={activeWarAnimation.isNpcWar === true}
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
                         onAnalysisVisibilityChange={handleWarAnalysisVisibilityChange}
+                        onAttackerForcesModalVisibilityChange={setIsAttackerForcesModalOpen}
                         onAutoResolve={result => {
                             if (result !== 'win') {
                                 if (activeWarAnimation.requestedInvasion === true) {
@@ -8644,16 +8646,19 @@ export default function MapPage() {
             {!isDialogTerbukaOpen && !(countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen) && (
                 <>
                     {!Object.values(subMenuItems).flat().some((item: { id: string }) => activeMenu.startsWith(item.id)) && (
-                        <TopNav
-                            activeView={isDiplomacyMapActive ? 'diplomacy' : 'map'}
-                            onSelect={handleTopNavSelect}
-                        />
+                        !isAttackerForcesModalOpen && (
+                            <TopNav
+                                activeView={isDiplomacyMapActive ? 'diplomacy' : 'map'}
+                                onSelect={handleTopNavSelect}
+                            />
+                        )
                     )}
                     <BottomNav
                         activeMenu={activeMenu}
                         setActiveMenu={setActiveMenu}
                         countryDetail={countryDetail}
                         isDetailModalOpen={countryDetailModalOpen || playerDetailModalOpen || inboxModalOpen || giftModalOpen || newsModalOpen || penelitianModalOpen}
+                        isAttackerForcesModalOpen={isAttackerForcesModalOpen}
                     />
                 </>
             )}

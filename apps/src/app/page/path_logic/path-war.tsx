@@ -14,10 +14,12 @@ import {
   ArrowLeft,
   AlertTriangle,
   Skull,
+  X,
 } from 'lucide-react';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '@/app/page/map_system/map-data';
+import NotebookModalWrapper from '../navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import PerbandinganPasukan from '../detail_negara/3_operasi_militer/1_serang_negara/perbandingan_pasukan';
-import { getWarUnitComposition, type WarUnit } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/warUnitComposition';
+import { formatUnitQuantity, getWarUnitComposition, type WarUnit } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/warUnitComposition';
 import { simulateBattleTs } from '../detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine';
 import {
   estimateTravelTime,
@@ -696,6 +698,7 @@ interface WarMapProps {
   isNpcWar?: boolean;
   isPbbCoalition?: boolean;
   onAnalysisVisibilityChange?: (isVisible: boolean) => void;
+  onAttackerForcesModalVisibilityChange?: (isVisible: boolean) => void;
   onClose: () => void;
   onResolve: (payload: {
     result: WarResult;
@@ -719,6 +722,7 @@ export default function WarMap({
   isNpcWar = false,
   isPbbCoalition = false,
   onAnalysisVisibilityChange,
+  onAttackerForcesModalVisibilityChange,
   onClose,
   onResolve,
   onAutoResolve,
@@ -726,6 +730,8 @@ export default function WarMap({
   const [phase, setPhase] = useState<WarPhase>('travel');
   const [result, setResult] = useState<WarResult | null>(null);
   const [showFlash, setShowFlash] = useState(false);
+  const [showAttackerForces, setShowAttackerForces] = useState(false);
+  const [attackerDeploymentPercent, setAttackerDeploymentPercent] = useState(50);
   const onCloseRef = useRef(onClose);
   const onAutoResolveRef = useRef(onAutoResolve);
   const autoResolveReportedRef = useRef(false);
@@ -760,6 +766,10 @@ export default function WarMap({
     } catch (e) { }
     return false;
   }, [isUserDefenderProp, target.country]);
+  const isAiAttacker = isNpcWar || isUserDefender;
+  const effectiveAttackerDeploymentPercent = isAiAttacker
+    ? attackerDeploymentPercent
+    : 100;
 
   const [screenSize, setScreenSize] = useState<{ w: number; h: number }>({
     w: typeof window !== 'undefined' ? window.innerWidth : 1920,
@@ -820,7 +830,9 @@ export default function WarMap({
   const battleOutcome = useMemo(() => {
     if (!isOpen) return null;
     return computeWarResult({
-      attackerPower: Number((attacker as Record<string, unknown>).pbbCoalitionPower) || attackerPower,
+      attackerPower:
+        (Number((attacker as Record<string, unknown>).pbbCoalitionPower) || attackerPower) *
+        effectiveAttackerDeploymentPercent / 100,
       targetPower,
       attackerBonus,
       defenderBonus,
@@ -828,7 +840,7 @@ export default function WarMap({
       isNpcWar: isNpcWar && !isPbbCoalition,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, attackerPower, targetPower, attackerBonus, defenderBonus, isUserDefender, isNpcWar, isPbbCoalition]);
+  }, [isOpen, attackerPower, effectiveAttackerDeploymentPercent, targetPower, attackerBonus, defenderBonus, isUserDefender, isNpcWar, isPbbCoalition]);
 
   const deploymentConfig = useMemo(() => {
     if (typeof window === 'undefined') return {};
@@ -846,23 +858,62 @@ export default function WarMap({
   }, []);
 
   const attackerLosses = useMemo(() => {
-    const units = getWarUnitComposition(attacker, deploymentConfig, !isUserDefender && !isPbbCoalition);
+    const units = getWarUnitComposition(
+      attacker,
+      deploymentConfig,
+      !isAiAttacker && !isPbbCoalition
+    ).map(unit => ({
+      ...unit,
+      quantity: isAiAttacker
+        ? Math.round(unit.quantity * effectiveAttackerDeploymentPercent / 100)
+        : unit.quantity,
+    }));
     return calculateUnitLosses(units, battleOutcome?.attackerLossRatio ?? 0);
-  }, [attacker, deploymentConfig, isUserDefender, isPbbCoalition, battleOutcome]);
+  }, [attacker, deploymentConfig, isAiAttacker, isPbbCoalition, effectiveAttackerDeploymentPercent, battleOutcome]);
 
   const targetLosses = useMemo(() => {
     const units = getWarUnitComposition(target, deploymentConfig, isUserDefender);
     return calculateUnitLosses(units, battleOutcome?.targetLossRatio ?? 0);
   }, [target, deploymentConfig, isUserDefender, battleOutcome]);
 
+  const attackerForces = useMemo(
+    () => getWarUnitComposition(attacker, {}, false)
+      .map(unit => ({
+        ...unit,
+        quantity: Math.round(unit.quantity * effectiveAttackerDeploymentPercent / 100),
+      }))
+      .filter(unit => unit.quantity > 0),
+    [attacker, effectiveAttackerDeploymentPercent]
+  );
+  const attackerForceGroups = useMemo(
+    () => [
+      { id: 'darat', label: 'Pasukan Darat' },
+      { id: 'laut', label: 'Pasukan Laut' },
+      { id: 'udara', label: 'Pasukan Udara' },
+    ].map(group => ({
+      ...group,
+      units: attackerForces.filter(unit => unit.group === group.id),
+    })).filter(group => group.units.length > 0),
+    [attackerForces]
+  );
+  const isAttackerForcesModalVisible =
+    showAttackerForces && isAiAttacker && (phase === 'travel' || phase === 'impact');
+
+  useEffect(() => {
+    onAttackerForcesModalVisibilityChange?.(isAttackerForcesModalVisible);
+    return () => onAttackerForcesModalVisibilityChange?.(false);
+  }, [isAttackerForcesModalVisible, onAttackerForcesModalVisibilityChange]);
+
   useEffect(() => {
     if (isOpen) {
       setPhase('travel');
       progressRef.current = 0;
       autoResolveReportedRef.current = false;
+      setAttackerDeploymentPercent(50 + Math.floor(Math.random() * 26));
       progressPathRef.current?.setAttribute('stroke-dasharray', '0 100');
       setResult(null);
       setShowFlash(false);
+      setShowAttackerForces(false);
     }
   }, [isOpen]);
 
@@ -1073,7 +1124,24 @@ export default function WarMap({
             </circle>
 
             {phase === 'travel' && (
-              <g ref={tankRef} transform="translate(0 0)">
+              <g
+                ref={tankRef}
+                transform="translate(0 0)"
+                className={isAiAttacker ? 'pointer-events-auto cursor-pointer' : undefined}
+                role={isAiAttacker ? 'button' : undefined}
+                tabIndex={isAiAttacker ? 0 : undefined}
+                aria-label={isAiAttacker ? `Lihat jumlah pasukan ${attacker.country}` : undefined}
+                onClick={isAiAttacker ? event => {
+                  event.stopPropagation();
+                  setShowAttackerForces(true);
+                } : undefined}
+                onKeyDown={isAiAttacker ? event => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    setShowAttackerForces(true);
+                  }
+                } : undefined}
+              >
                 {/* ==== AURA GLOW (dipertahankan dari versi lama) ==== */}
                 <circle r={36} fill="#FF2D55" opacity={0.10} />
                 <circle r={24} fill="#FF2D55" opacity={0.18} />
@@ -1232,6 +1300,80 @@ export default function WarMap({
         </div>
       )}
 
+      {isAttackerForcesModalVisible && (
+        <NotebookModalWrapper
+          onClose={() => setShowAttackerForces(false)}
+          zIndexClass="z-[150]"
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="attacker-forces-title"
+            className="relative flex h-full flex-col overflow-hidden rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A] shadow-[0_0_30px_rgba(0,255,170,0.15)]"
+          >
+            <header className="relative z-10 flex shrink-0 items-center justify-between gap-2 border-b border-[#00FFAA]/20 bg-[#0A1A1A] px-4 py-2.5 sm:px-6 sm:py-3">
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#FF7088]">
+                  Informasi Pergerakan Militer
+                </p>
+                <h2 id="attacker-forces-title" className="mt-1 break-words text-base font-black text-[#00FFAA] sm:text-xl">
+                  Pasukan {attacker.country}
+                </h2>
+                <p className="mt-1 break-words text-xs text-white/65">
+                  Jumlah unit yang dibawa dalam serangan ini
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAttackerForces(false)}
+                className="flex shrink-0 cursor-pointer items-center gap-1 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] p-1.5 text-xs font-bold uppercase text-[#6B8A8A] shadow-sm transition-all hover:border-[#00FFAA] hover:text-[#00FFAA] lg:p-2"
+              >
+                <span className="pl-1 text-[10px] font-semibold uppercase tracking-widest lg:text-xs">
+                  Tutup
+                </span>
+                <X className="h-4 w-4" />
+              </button>
+            </header>
+
+            <div className="relative z-10 flex-1 overflow-y-auto bg-[#0A1A1A]/80 p-3 sm:p-5">
+                {attackerForceGroups.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {attackerForceGroups.map(group => (
+                      <section key={group.id} className="min-w-0 rounded-xl border border-[#00FFAA]/20 bg-[#0A1A1A]/70 p-3">
+                        <h3 className="mb-2 break-words text-xs font-bold uppercase tracking-wider text-[#00FFAA]">
+                          {group.label}
+                        </h3>
+                        <ul className="space-y-1.5">
+                          {group.units.map(unit => (
+                            <li
+                              key={`${group.id}-${unit.kind}`}
+                              className="flex min-w-0 items-start justify-between gap-3 text-sm"
+                            >
+                              <span className="min-w-0 break-words text-white/75">{unit.displayName || unit.label}</span>
+                              <strong className="shrink-0 tabular-nums text-white">
+                                {formatUnitQuantity(unit.quantity)}
+                              </strong>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="break-words rounded-xl bg-white/5 p-3 text-sm text-white/70">
+                    Data jumlah pasukan penyerang belum tersedia.
+                  </p>
+                )}
+
+                <aside className="mt-5 max-w-full rounded-xl border border-amber-300/25 bg-amber-300/10 p-3 text-xs leading-relaxed text-amber-100/85 [overflow-wrap:anywhere]">
+                  <strong className="mr-1">Catatan:</strong>
+                  Negara penyerang mengerahkan {effectiveAttackerDeploymentPercent}% dari armadanya untuk operasi ini. Persentase pengerahan dipilih secara acak antara 50% dan 75%.
+                </aside>
+            </div>
+          </section>
+        </NotebookModalWrapper>
+      )}
+
       {phase === 'comparison' && (
         <PerbandinganPasukan
           attackerName={isPbbCoalition ? 'Pasukan Gabungan PBB' : attacker.country}
@@ -1239,6 +1381,7 @@ export default function WarMap({
           attackerPower={attackerPower}
           attackerPowerOverride={Number((attacker as Record<string, unknown>).pbbCoalitionPower) || undefined}
           attackerDetail={attacker}
+          attackerDeploymentPercent={isAiAttacker ? effectiveAttackerDeploymentPercent : undefined}
           targetName={target.country}
           targetIso={target.iso || 'un'}
           targetPower={targetPower}
