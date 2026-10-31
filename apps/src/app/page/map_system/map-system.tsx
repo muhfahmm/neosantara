@@ -1183,8 +1183,43 @@ export default function MapPage() {
     }, []);
     const [newsList, setNewsListRaw] = useState<NewsItemData[]>([]);
     const setNewsList = useCallback((action: React.SetStateAction<NewsItemData[]>) => {
-        startTransition(() => setNewsListRaw(action));
+        startTransition(() => setNewsListRaw(previous => {
+            const next = typeof action === 'function'
+                ? (action as (value: NewsItemData[]) => NewsItemData[])(previous)
+                : action;
+            const today = [
+                currentDateRef.current.getFullYear(),
+                String(currentDateRef.current.getMonth() + 1).padStart(2, '0'),
+                String(currentDateRef.current.getDate()).padStart(2, '0'),
+            ].join('-');
+            const isPausedNow = isPausedRef.current ||
+                (typeof window !== 'undefined' && Boolean((window as any).neosantara_is_paused));
+
+            if (dailyNewsQuotaRef.current.date !== today) {
+                const roll = Math.random();
+                const maxForDay = roll < 0.40 ? 0 : roll < 0.90 ? 1 : 2;
+                dailyNewsQuotaRef.current = { date: today, quota: maxForDay };
+            }
+
+            const alreadyPublished = previous.filter(item => item.dateStr === today).length;
+            let quota = Math.max(0, dailyNewsQuotaRef.current.quota - alreadyPublished);
+            const previousIds = new Set(previous.map(item => item.id));
+            const result: NewsItemData[] = [];
+
+            for (const item of next) {
+                if (!item || previousIds.has(item.id)) {
+                    result.push(item);
+                    continue;
+                }
+                if (isPausedNow || quota <= 0) continue;
+                quota -= 1;
+                result.push(item);
+            }
+
+            return result.length === next.length ? next : result;
+        }));
     }, []);
+    const dailyNewsQuotaRef = useRef<{ date: string; quota: number }>({ date: '', quota: 0 });
     const lastObservedNewsResetDateRef = useRef<string | null>(null);
 
     const isMapFocusedRef = useRef(false);
@@ -4292,7 +4327,7 @@ export default function MapPage() {
                             }));
                         }
                     } else {
-                        if (Math.random() < 0.25) {
+                        if (Math.random() < 0.15) {
                             newNotifsToAdd.push(generateDiserangNotification(
                                 attackerCountry,
                                 currentDateStr,

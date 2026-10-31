@@ -275,7 +275,7 @@ export default function TopRightNewsIcon({
               setShowToast(false);
               if (onClick) onClick();
             }}
-            className="w-64 max-h-[calc(100vh-20rem)] overflow-y-auto bg-[#0F2424] border-2 border-[#00FFAA] rounded-xl p-2.5 shadow-[0_8px_22px_rgba(0,255,170,0.3)] animate-in fade-in slide-in-from-top-3 duration-300 cursor-pointer hover:bg-[#143030] transition-all group"
+            className="flex h-28 w-64 flex-col rounded-xl border-2 border-[#00FFAA] bg-[#0F2424] p-2.5 shadow-[0_8px_22px_rgba(0,255,170,0.3)] animate-in fade-in slide-in-from-top-3 duration-300 cursor-pointer hover:bg-[#143030] transition-all group"
           >
             <div className="flex items-center justify-between pb-1.5 border-b border-[#00FFAA]/30">
               <span className="text-[10px] font-black text-[#00FFAA] uppercase tracking-wider flex items-center gap-1.5">
@@ -295,10 +295,10 @@ export default function TopRightNewsIcon({
                 <X className="w-3.5 h-3.5 text-[#00FFAA]" />
               </button>
             </div>
-            <h5 className="text-[11px] font-bold text-white mt-1.5 whitespace-normal break-words group-hover:text-[#00FFAA] transition-colors leading-snug">
+            <h5 className="mt-1.5 line-clamp-2 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-[#00FFAA] transition-colors">
               {toastNews.headline}
             </h5>
-            <div className="flex items-center justify-between mt-1.5 pt-1 border-t border-[#00FFAA]/10 text-[9px] text-[#6B8A8A]">
+            <div className="mt-auto flex items-center justify-between border-t border-[#00FFAA]/10 pt-1 text-[9px] text-[#6B8A8A]">
               <span>{toastNews.timestamp}</span>
               <span className="font-extrabold text-[#00FFAA] group-hover:underline">Buka Menu →</span>
             </div>

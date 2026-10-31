@@ -552,7 +552,7 @@ export default function TopLeftIcon({
             className={`transition-[opacity,transform] duration-300 ease-out origin-top-left will-change-[opacity,transform] ${showToast && toastNotification
                 ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
                 : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
-              } w-72 rounded-xl border border-[#00FFAA]/40 bg-[#0F2424] p-3 shadow-lg cursor-pointer group`}
+              } flex h-28 w-64 flex-col rounded-xl border-2 border-[#00FFAA] bg-[#0F2424] p-2.5 shadow-lg cursor-pointer group`}
             onClick={() => {
               if (toastNotification) {
                 dismissedToastIdRef.current = toastNotification.id;
@@ -561,7 +561,7 @@ export default function TopLeftIcon({
               if (onClick) onClick();
             }}
           >
-            <div className="flex items-center justify-between border-b border-[#00FFAA]/20 pb-1.5">
+            <div className="flex items-center justify-between border-b border-[#00FFAA]/30 pb-1.5">
               <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-[#00FFAA]">
                 <span className={`h-2 w-2 rounded-full bg-[#00FFAA] ${showToast ? 'animate-ping' : ''}`} />
                 Pesan Baru Masuk
@@ -577,10 +577,10 @@ export default function TopLeftIcon({
                 <X className="h-3.5 w-3.5 text-[#00FFAA]" />
               </button>
             </div>
-            <h5 className="mt-1.5 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-[#00FFAA]">
+            <h5 className="mt-1.5 line-clamp-2 whitespace-normal break-words text-[11px] font-bold leading-snug text-white group-hover:text-[#00FFAA]">
               {toastNotification?.title}
             </h5>
-            <div className="mt-1.5 flex items-center justify-between border-t border-[#00FFAA]/10 pt-1">
+            <div className="mt-auto flex items-center justify-between border-t border-[#00FFAA]/10 pt-1">
               <span className="text-[8px] font-semibold text-[#6B8A8A]">{toastNotification?.timestamp}</span>
               <span className="text-[9px] font-black text-[#00FFAA] underline transition-transform group-hover:translate-x-1">
                 Buka Inbox ({unreadCount}) →
