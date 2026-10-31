@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { createPortal } from "react-dom";
-import { HandHeart, X } from "lucide-react";
+import { HandHeart } from "lucide-react";
 
 interface MintaBantuanModalProps {
 	isOpen: boolean;
@@ -14,15 +14,14 @@ export default function MintaBantuanModal({ isOpen, countryName, onClose, onConf
 	if (!isOpen) return null;
 
 	const modalContent = (
-		// 🔥 PERBAIKAN: Menghapus bg-black/60 agar tidak ada backdrop
 		<div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 font-sans pointer-events-none">
 			{/* Container Modal Lebih Lebar dan Panjang */}
 			<div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(0,255,170,0.15)] relative text-white pointer-events-auto">
 				
 				{/* Area Konten */}
 				<div className="flex-1">
-					{/* Header */}
-					<div className="flex items-start justify-between mb-6 border-b border-[#00FFAA]/20 pb-4">
+					{/* Header (Tombol Tutup dihapus) */}
+					<div className="flex items-center justify-start mb-6 border-b border-[#00FFAA]/20 pb-4">
 						<div className="flex items-center gap-3">
 							<div className="p-2 bg-[#0A1A1A] rounded-lg border border-[#00FFAA]/30 shrink-0">
 								<HandHeart className="h-5 w-5 text-[#00FFAA]" />
@@ -31,12 +30,6 @@ export default function MintaBantuanModal({ isOpen, countryName, onClose, onConf
 								Konfirmasi Minta Bantuan
 							</h3>
 						</div>
-						<button
-							onClick={onClose}
-							className="p-1.5 rounded-lg text-[#6B8A8A] hover:text-[#00FFAA] hover:bg-[#00FFAA]/10 transition-colors cursor-pointer"
-						>
-							<X className="h-5 w-5" />
-						</button>
 					</div>
 
 					{/* Body */}

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { ChevronDown, Coins, ArrowUp, Swords, X } from "lucide-react";
+import { ChevronDown, Coins, ArrowUp, Swords } from "lucide-react";
 import { CAPITALS_DATA, COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import MAJOR_CITIES_DATA from "@/app/page/map_system/major_cities.json";
 
@@ -154,12 +154,11 @@ export default function MintaSerangNegaraModal({
 	};
 
 	const modalContent = (
-		// 🔥 PERBAIKAN: Menghapus bg-black/60 dan mengubah pointer-events-auto menjadi pointer-events-none pada wrapper terluar
 		<div className="fixed inset-0 z-[9999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 pointer-events-none">
 			<div className="bg-[#0F2424] border border-[#00FFAA]/30 rounded-2xl overflow-hidden w-full max-w-3xl lg:max-w-[920px] xl:max-w-[1020px] 2xl:max-w-5xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] flex flex-col relative font-sans pointer-events-auto shadow-2xl">
 
-				{/* Header */}
-				<div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] gap-2 shrink-0 rounded-t-2xl">
+				{/* Header (Tombol Tutup dihapus) */}
+				<div className="px-4 sm:px-6 py-2.5 sm:py-3 border-b border-[#00FFAA]/20 flex items-center justify-start bg-[#0A1A1A] gap-2 shrink-0 rounded-t-2xl">
 					<div className="flex items-center gap-2 sm:gap-3">
 						<div className="p-1 sm:p-1.5 bg-[#0F2424] rounded-lg border border-[#00FFAA]/30 shrink-0">
 							<Swords className="h-4 w-4 sm:h-5 sm:w-5 text-[#00FFAA]" />
@@ -173,18 +172,10 @@ export default function MintaSerangNegaraModal({
 							</p>
 						</div>
 					</div>
-
-					<button
-						onClick={onClose}
-						className="p-1.5 lg:p-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all cursor-pointer font-bold text-xs uppercase flex items-center gap-1 shadow-sm shrink-0"
-					>
-						<span className="text-[10px] lg:text-xs font-semibold uppercase tracking-widest pl-1">Tutup</span>
-						<X className="h-4 w-4" />
-					</button>
 				</div>
 
 				{/* Body */}
-				<div className="flex-1 min-h-0 bg-[#0F2424] relative z-10 p-4 sm:p-6 lg:p-8 flex flex-col gap-4">
+				<div className="flex-1 min-h-0 bg-[#0F2424] relative z-10 p-4 sm:p-6 lg:p-8 flex flex-col gap-4 overflow-y-auto custom-scrollbar">
 
 					{/* Info Banner */}
 					<div className="p-3 sm:p-4 rounded-xl bg-[#0A1A1A] border border-[#00FFAA]/20 shrink-0">
@@ -281,7 +272,7 @@ export default function MintaSerangNegaraModal({
 							value={selectedCityId}
 							onChange={event => setSelectedCityId(event.target.value)}
 							disabled={targetCities.length === 0}
-							className="w-full h-11 bg-[#0A1A1A] border border-[#00FFAA]/40 rounded-xl px-3 text-white font-bold text-xs sm:text-sm disabled:opacity-50"
+							className="w-full h-11 bg-[#0A1A1A] border border-[#00FFAA]/40 rounded-xl px-3 text-white font-bold text-xs sm:text-sm disabled:opacity-50 cursor-pointer"
 						>
 							{targetCities.length === 0
 								? <option value="">Tidak ada data kota untuk negara ini</option>
@@ -289,7 +280,8 @@ export default function MintaSerangNegaraModal({
 									<option key={city.cityId} value={city.cityId}>
 										{city.name}{city.isCapital ? ' (Ibu kota)' : ''}
 									</option>
-								))}
+								))
+							}
 						</select>
 					</div>
 

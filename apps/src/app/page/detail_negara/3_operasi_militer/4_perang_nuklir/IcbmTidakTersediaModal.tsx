@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, X } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
 interface IcbmTidakTersediaModalProps {
@@ -16,46 +16,48 @@ export default function IcbmTidakTersediaModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100000002] flex items-center justify-center bg-black/70 p-4 backdrop-blur-md"
+      className="fixed inset-0 z-[100000002] flex items-center justify-center p-4 font-sans text-white pointer-events-none"
       role="alertdialog"
       aria-modal="true"
       aria-labelledby="icbm-unavailable-title"
     >
-      <section className="w-full max-w-lg overflow-hidden rounded-2xl border border-rose-400/40 bg-[#0d161a] text-white shadow-[0_0_40px_rgba(244,63,94,0.15)]">
-        <header className="flex items-center justify-between border-b border-rose-400/20 bg-[#14232a] px-5 py-4">
+      <div className="w-full max-w-2xl min-h-[450px] flex flex-col bg-[#0F2424] border border-rose-500/40 rounded-2xl p-6 sm:p-8 shadow-[0_0_40px_rgba(225,29,72,0.15)] relative pointer-events-auto">
+        
+        {/* Header (Tombol Tutup dihapus) */}
+        <div className="flex items-center justify-start border-b border-rose-500/20 pb-4 mb-6">
           <div className="flex items-center gap-3">
-            <AlertTriangle className="h-6 w-6 shrink-0 text-rose-400" />
+            <div className="p-2 rounded-lg border border-rose-500/30 bg-rose-500/10 shrink-0">
+              <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-rose-400" />
+            </div>
             <h2
               id="icbm-unavailable-title"
-              className="text-sm font-black uppercase tracking-wider text-rose-300"
+              className="text-xl sm:text-2xl font-black uppercase tracking-wide text-rose-400"
             >
               ICBM Tidak Tersedia
             </h2>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg p-2 text-[#8ab0b8] transition-colors hover:bg-white/5 hover:text-white"
-            aria-label="Tutup"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </header>
+        </div>
 
-        <div className="space-y-5 p-6">
-          <p className="text-sm leading-relaxed text-[#b8cbd0]">
+        {/* Body Content */}
+        <div className="flex-1 flex flex-col space-y-4">
+          <p className="text-sm sm:text-base leading-relaxed text-[#E0E0E0]">
             Negara Anda belum memiliki rudal ICBM siap diluncurkan. Serangan nuklir
             tidak dapat dikonfirmasi sebelum setidaknya satu ICBM tersedia.
           </p>
+        </div>
+
+        {/* Footer Action */}
+        <div className="flex justify-end mt-6 pt-4 border-t border-rose-500/20">
           <button
             type="button"
             onClick={onClose}
-            className="w-full rounded-xl bg-rose-600 py-3 text-sm font-black uppercase tracking-wider text-white transition-colors hover:bg-rose-500"
+            className="w-full sm:w-auto px-6 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all duration-150 cursor-pointer shadow hover:shadow-md active:scale-[0.98]"
           >
             Mengerti
           </button>
         </div>
-      </section>
+
+      </div>
     </div>,
     document.body
   );
