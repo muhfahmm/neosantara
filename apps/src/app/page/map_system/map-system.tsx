@@ -335,6 +335,46 @@ const getCurrentCityOwner = (city: MapCity) => {
     return cityOwners[getCityOwnerId(city.iso, city.capital)]?.ownerCountry || city.country;
 };
 
+// Mengembalikan daftar seluruh negara yang berada di bawah hegemoni/kekaisaran suatu negara
+// (termasuk dirinya sendiri dan seluruh negara/wilayah taklukan yang pernah dianeksasi olehnya)
+function getAnnexedEmpireCountries(countryName: string): string[] {
+    const empire = new Set<string>();
+    const norm = normalizeMapKey(countryName);
+    empire.add(norm);
+
+    if (typeof window === 'undefined') return Array.from(empire);
+
+    const annexedStore = (window as Window & {
+        neosantara_annexed_countries?: AnnexedTerritories;
+    }).neosantara_annexed_countries || {};
+
+    const cityOwners = (window as Window & {
+        neosantara_city_owner?: CityOwnerStore;
+    }).neosantara_city_owner || {};
+
+    // 1. Cek dari neosantara_annexed_countries
+    Object.entries(annexedStore).forEach(([key, val]) => {
+        if (val?.attackerCountry && normalizeMapKey(val.attackerCountry) === norm) {
+            empire.add(normalizeMapKey(key));
+        }
+    });
+
+    // 2. Cek dari neosantara_city_owner
+    Object.values(cityOwners).forEach(city => {
+        if (city?.ownerCountry && normalizeMapKey(city.ownerCountry) === norm) {
+            const origCountry = COUNTRIES_DATA.find(
+                c => c.iso.toLowerCase() === city.countryIso.toLowerCase()
+            );
+            if (origCountry) {
+                empire.add(normalizeMapKey(origCountry.country));
+                empire.add(origCountry.iso.toLowerCase());
+            }
+        }
+    });
+
+    return Array.from(empire);
+}
+
 const getMapCities = () => {
     const cities = [
         ...(CAPITALS_DATA as MapCity[]),
@@ -1427,6 +1467,24 @@ export default function MapPage() {
             [targetIsoNorm]: annexationInfo,
             [`iso_${targetIsoNorm}`]: annexationInfo
         };
+
+        // Cascading Annexation: Alihkan seluruh wilayah bawahan/taklukan yang sebelumnya dikuasai oleh targetCountry ke attackerCountry baru
+        Object.entries(previousAnnexed).forEach(([key, info]: [string, any]) => {
+            if (
+                info?.attackerCountry &&
+                areSameWarCountry(info.attackerCountry, targetCountry)
+            ) {
+                nextAnnexed[key] = {
+                    ...info,
+                    attackerCountry,
+                    attackerIso,
+                };
+                if (!skipColorOverride && attackerColor) {
+                    overrideUpdates[key] = attackerColor;
+                    nextOverrides[key] = attackerColor;
+                }
+            }
+        });
         const normalizedTargetCountry = targetCountry.toLowerCase().replace(/[^a-z0-9]/g, '');
         const normalizedTerritoryKeys = new Set<string>();
         const returnedTerritories: string[] = [];
@@ -1566,11 +1624,17 @@ export default function MapPage() {
         }));
 
         if (countryCollapsed) {
-            // Ketika seluruh negara atau ibukota jatuh, seluruh kota target dialihkan kepemilikannya ke penakluk
-            const allTargetCities = getMapCities().filter(candidate =>
-                normalizeMapKey(candidate.country) === normalizeMapKey(targetCountry) ||
-                normalizeMapKey(getCurrentCityOwner(candidate)) === normalizeMapKey(targetCountry)
-            );
+            // Ketika seluruh negara atau ibukota jatuh, seluruh kota target DAN seluruh kota negara-negara
+            // bawahannya dalam kekaisaran target dialihkan kepemilikannya ke penakluk (Cascading Annexation)
+            const targetEmpireKeys = new Set(getAnnexedEmpireCountries(targetCountry));
+            const allTargetCities = getMapCities().filter(candidate => {
+                const normCandidateCountry = normalizeMapKey(candidate.country);
+                const normCurrentOwner = normalizeMapKey(getCurrentCityOwner(candidate));
+                return targetEmpireKeys.has(normCandidateCountry) ||
+                    targetEmpireKeys.has(normCurrentOwner) ||
+                    normCandidateCountry === normalizeMapKey(targetCountry) ||
+                    normCurrentOwner === normalizeMapKey(targetCountry);
+            });
             allTargetCities.forEach(c => {
                 const cId = getCityOwnerId(c.iso, c.capital);
                 const isCap = (CAPITALS_DATA as MapCity[]).some(capital =>
@@ -1969,114 +2033,154 @@ export default function MapPage() {
                     isPbbCoalition
                 );
 
-                // 4. Gabungkan statistik (populasi, kas negara, kepuasan, kesejahteraan, seluruh bangunan & sisa militer target setelah kalah >50%) dari negara target ke user
-                const targetRelPath = countryCollapsed
-                    ? Object.entries(countryPaths as Record<string, string>).find(
-                        ([name]) => name.toLowerCase().trim() === targetCountry.toLowerCase().trim()
-                    )?.[1]
-                    : undefined;
-
+                // 4. Gabungkan statistik (populasi, kas negara, kepuasan, kesejahteraan, seluruh bangunan & sisa militer target setelah kalah >50%)
+                // dari SELURUH negara dalam hegemoni kekaisaran target (targetCountry + seluruh negara taklukannya) ke user (Cascading Annexation)
                 const mergeTargetDataToUser = async () => {
-                    let targetData: any = null;
-                    if (targetRelPath) {
-                        try {
-                            const res = await fetch(`/api/country-data?path=${encodeURIComponent(targetRelPath)}`);
-                            const data = await res.json();
-                            if (!data?.error) targetData = applyNpcCountrySimulationState(data);
-                        } catch (e) {
-                            console.error("Gagal mengambil data target country untuk aneksasi:", e);
+                    if (!countryCollapsed) return;
+
+                    // Kumpulkan semua negara yang berada di bawah hegemoni targetCountry
+                    const targetEmpireNorms = new Set(getAnnexedEmpireCountries(targetCountry));
+                    targetEmpireNorms.add(normalizeMapKey(targetCountry));
+
+                    // Temukan path file JSON untuk setiap negara dalam kekaisaran tersebut
+                    const targetPathsToMerge: { countryName: string; relPath: string }[] = [];
+                    Object.entries(countryPaths as Record<string, string>).forEach(([name, relPath]) => {
+                        if (targetEmpireNorms.has(normalizeMapKey(name))) {
+                            targetPathsToMerge.push({ countryName: name, relPath });
+                        }
+                    });
+
+                    // Jika targetCountry itu sendiri belum masuk karena beda ejaan, pastikan dimasukkan
+                    if (!targetPathsToMerge.some(t => normalizeMapKey(t.countryName) === normalizeMapKey(targetCountry))) {
+                        const directMatch = Object.entries(countryPaths as Record<string, string>).find(
+                            ([name]) => name.toLowerCase().trim() === targetCountry.toLowerCase().trim()
+                        );
+                        if (directMatch) {
+                            targetPathsToMerge.push({ countryName: directMatch[0], relPath: directMatch[1] });
                         }
                     }
 
-                    if (targetData && setCountryDetail) {
-                        const targetNetBal = calculateNetBalanceWithEconomicEmbargo(targetData, targetCountry);
-                        annexedContributionRef.current[targetCountry.toLowerCase().trim()] = {
-                            targetData,
-                            netBalance: targetNetBal
-                        };
+                    if (targetPathsToMerge.length === 0) return;
+
+                    // Fetch seluruh data negara anggota kekaisaran target secara paralel
+                    const loadedTargetList: { countryName: string; data: any; netBalance: number }[] = [];
+                    await Promise.all(
+                        targetPathsToMerge.map(async ({ countryName: cName, relPath }) => {
+                            try {
+                                const res = await fetch(`/api/country-data?path=${encodeURIComponent(relPath)}`);
+                                const data = await res.json();
+                                if (!data?.error) {
+                                    const simData = applyNpcCountrySimulationState(data);
+                                    const netBal = calculateNetBalanceWithEconomicEmbargo(simData, cName);
+                                    loadedTargetList.push({ countryName: cName, data: simData, netBalance: netBal });
+                                    annexedContributionRef.current[cName.toLowerCase().trim()] = {
+                                        targetData: simData,
+                                        netBalance: netBal
+                                    };
+                                }
+                            } catch (e) {
+                                console.error(`Gagal mengambil data ${cName} untuk aneksasi:`, e);
+                            }
+                        })
+                    );
+
+                    if (loadedTargetList.length > 0 && setCountryDetail) {
+                        let totalAddedNetBal = 0;
+
                         setCountryDetail((prev: any) => {
                             if (!prev) return prev;
-                            const prevPop = Number(prev.jumlah_penduduk || prev.populasi || 0);
-                            const targetPop = Number(targetData.jumlah_penduduk || targetData.populasi || 0);
+                            let currentDetail = { ...prev };
 
-                            const prevAnggaran = Number(prev.anggaran || 0);
-                            const targetAnggaran = Number(targetData.anggaran || 0);
-
-                            const prevKepuasan = Number(prev.kepuasan || prev.kepuasan_masyarakat || 75);
-                            const targetKepuasan = Number(targetData.kepuasan || targetData.kepuasan_masyarakat || 70);
-
-                            const prevKesejahteraan = Number(prev.kesejahteraan || prev.kesejahteraan_masyarakat || 75);
-                            const targetKesejahteraan = Number(targetData.kesejahteraan || targetData.kesejahteraan_masyarakat || 70);
-
-                            // Hitung rerata tertimbang kepuasan & kesejahteraan berdasarkan proporsi populasi
-                            const totalPop = prevPop + targetPop;
-                            const newKepuasan = totalPop > 0
-                                ? Math.round(((prevKepuasan * prevPop) + (targetKepuasan * targetPop)) / totalPop)
-                                : prevKepuasan;
-                            const newKesejahteraan = totalPop > 0
-                                ? Math.round(((prevKesejahteraan * prevPop) + (targetKesejahteraan * targetPop)) / totalPop)
-                                : prevKesejahteraan;
-
-                            const aggregatedFields: Record<string, number> = {};
-                            ANNEXED_AGGREGATE_KEYS.forEach(key => {
-                                const prevVal = Number(prev[key] ?? prev?.armada?.[key] ?? prev?.pertahanan?.[key] ?? 0);
-                                let targetVal = Number(targetData[key] ?? targetData?.armada?.[key] ?? targetData?.pertahanan?.[key] ?? 0);
-                                // Sisa unit militer dari target yang kalah dipotong >50% (75% gugur dalam perang, 25% tersisa dirampas)
-                                const isMilitaryUnit = [
-                                    'pasukan_infanteri', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat',
-                                    'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
-                                    'kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet',
-                                    'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik',
-                                    'jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom',
-                                    'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut'
-                                ].includes(key);
-
-                                if (isMilitaryUnit && targetVal > 0) {
-                                    targetVal = Math.round(targetVal * 0.25);
+                            for (const { countryName: cName, data: targetData, netBalance: targetNetBal } of loadedTargetList) {
+                                if (targetNetBal > 0) {
+                                    totalAddedNetBal += targetNetBal;
                                 }
 
-                                if (targetVal > 0 || prevVal > 0) {
-                                    aggregatedFields[key] = prevVal + targetVal;
-                                }
-                            });
-                            const weightedAverageFields: Record<string, number> = {};
-                            ['harapan_hidup', 'indeks_kesehatan', 'indeks_korupsi', 'indeks_keamanan'].forEach(key => {
-                                const prevValue = Number(prev[key]);
-                                const targetValue = Number(targetData[key]);
-                                if (Number.isFinite(prevValue) && Number.isFinite(targetValue) && totalPop > 0) {
-                                    weightedAverageFields[key] = Math.round(((prevValue * prevPop) + (targetValue * targetPop)) / totalPop);
-                                }
-                            });
-                            const normalizePartnerName = (name: unknown) => String(name || '').toLowerCase().trim();
-                            const addedTradePartners = Array.isArray(prev.addedTradePartners) ? prev.addedTradePartners : [];
-                            const removedTradePartners = Array.isArray(prev.removedTradePartners) ? prev.removedTradePartners : [];
+                                const prevPop = Number(currentDetail.jumlah_penduduk || currentDetail.populasi || 0);
+                                const targetPop = Number(targetData.jumlah_penduduk || targetData.populasi || 0);
 
-                            return {
-                                ...prev,
-                                ...aggregatedFields,
-                                ...weightedAverageFields,
-                                addedTradePartners: addedTradePartners.filter(
-                                    (partner: string) => normalizePartnerName(partner) !== normalizePartnerName(targetCountry)
-                                ),
-                                removedTradePartners: Array.from(new Set([
-                                    ...removedTradePartners.filter(
-                                        (partner: string) => normalizePartnerName(partner) !== normalizePartnerName(targetCountry)
+                                const prevAnggaran = Number(currentDetail.anggaran || 0);
+                                const targetAnggaran = Number(targetData.anggaran || 0);
+
+                                const prevKepuasan = Number(currentDetail.kepuasan || currentDetail.kepuasan_masyarakat || 75);
+                                const targetKepuasan = Number(targetData.kepuasan || targetData.kepuasan_masyarakat || 70);
+
+                                const prevKesejahteraan = Number(currentDetail.kesejahteraan || currentDetail.kesejahteraan_masyarakat || 75);
+                                const targetKesejahteraan = Number(targetData.kesejahteraan || targetData.kesejahteraan_masyarakat || 70);
+
+                                // Hitung rerata tertimbang kepuasan & kesejahteraan berdasarkan proporsi populasi
+                                const totalPop = prevPop + targetPop;
+                                const newKepuasan = totalPop > 0
+                                    ? Math.round(((prevKepuasan * prevPop) + (targetKepuasan * targetPop)) / totalPop)
+                                    : prevKepuasan;
+                                const newKesejahteraan = totalPop > 0
+                                    ? Math.round(((prevKesejahteraan * prevPop) + (targetKesejahteraan * targetPop)) / totalPop)
+                                    : prevKesejahteraan;
+
+                                const aggregatedFields: Record<string, number> = {};
+                                ANNEXED_AGGREGATE_KEYS.forEach(key => {
+                                    const prevVal = Number(currentDetail[key] ?? currentDetail?.armada?.[key] ?? currentDetail?.pertahanan?.[key] ?? 0);
+                                    let targetVal = Number(targetData[key] ?? targetData?.armada?.[key] ?? targetData?.pertahanan?.[key] ?? 0);
+                                    // Sisa unit militer dari target yang kalah dipotong >50% (75% gugur dalam perang, 25% tersisa dirampas)
+                                    const isMilitaryUnit = [
+                                        'pasukan_infanteri', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat',
+                                        'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
+                                        'kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet',
+                                        'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik',
+                                        'jet_tempur_siluman', 'jet_tempur_interceptor', 'pesawat_pengebom',
+                                        'helikopter_serang', 'pesawat_pengintai', 'drone_intai_uav', 'drone_kamikaze', 'pesawat_angkut'
+                                    ].includes(key);
+
+                                    if (isMilitaryUnit && targetVal > 0) {
+                                        targetVal = Math.round(targetVal * 0.25);
+                                    }
+
+                                    if (targetVal > 0 || prevVal > 0) {
+                                        aggregatedFields[key] = prevVal + targetVal;
+                                    }
+                                });
+
+                                const weightedAverageFields: Record<string, number> = {};
+                                ['harapan_hidup', 'indeks_kesehatan', 'indeks_korupsi', 'indeks_keamanan'].forEach(key => {
+                                    const prevValue = Number(currentDetail[key]);
+                                    const targetValue = Number(targetData[key]);
+                                    if (Number.isFinite(prevValue) && Number.isFinite(targetValue) && totalPop > 0) {
+                                        weightedAverageFields[key] = Math.round(((prevValue * prevPop) + (targetValue * targetPop)) / totalPop);
+                                    }
+                                });
+
+                                const normalizePartnerName = (name: unknown) => String(name || '').toLowerCase().trim();
+                                const addedTradePartners = Array.isArray(currentDetail.addedTradePartners) ? currentDetail.addedTradePartners : [];
+                                const removedTradePartners = Array.isArray(currentDetail.removedTradePartners) ? currentDetail.removedTradePartners : [];
+
+                                currentDetail = {
+                                    ...currentDetail,
+                                    ...aggregatedFields,
+                                    ...weightedAverageFields,
+                                    addedTradePartners: addedTradePartners.filter(
+                                        (partner: string) => normalizePartnerName(partner) !== normalizePartnerName(cName)
                                     ),
-                                    targetCountry
-                                ])),
-                                jumlah_penduduk: totalPop,
-                                populasi: totalPop,
-                                anggaran: prevAnggaran + targetAnggaran,
-                                kepuasan: newKepuasan,
-                                kepuasan_masyarakat: newKepuasan,
-                                kesejahteraan: newKesejahteraan,
-                                kesejahteraan_masyarakat: newKesejahteraan
-                            };
+                                    removedTradePartners: Array.from(new Set([
+                                        ...removedTradePartners.filter(
+                                            (partner: string) => normalizePartnerName(partner) !== normalizePartnerName(cName)
+                                        ),
+                                        cName
+                                    ])),
+                                    jumlah_penduduk: totalPop,
+                                    populasi: totalPop,
+                                    anggaran: prevAnggaran + targetAnggaran,
+                                    kepuasan: newKepuasan,
+                                    kepuasan_masyarakat: newKepuasan,
+                                    kesejahteraan: newKesejahteraan,
+                                    kesejahteraan_masyarakat: newKesejahteraan
+                                };
+                            }
+
+                            return currentDetail;
                         });
 
-                        // Tambahkan Net Balance (pertumbuhan harian / +) dari target country ke adjustment net balance user
-                        if (targetNetBal > 0) {
-                            setPlayerNetBalanceAdjustment(prev => prev + targetNetBal);
+                        if (totalAddedNetBal > 0) {
+                            setPlayerNetBalanceAdjustment(prev => prev + totalAddedNetBal);
                         }
                     }
                 };
