@@ -463,7 +463,7 @@
     "capital": "Dhekelia",
     "lat": 35.0227,
     "lng": 33.7982,
-    "iso": "-1",
+    "iso": "gb",
     "color": "#3b82f6",
     "is_major_city": true
   },
@@ -1246,7 +1246,7 @@
     "capital": "Hargeisa",
     "lat": 9.56,
     "lng": 44.0653,
-    "iso": "-1",
+    "iso": "so",
     "color": "#3b82f6",
     "is_major_city": true
   },
@@ -4720,7 +4720,7 @@
     "capital": "Guantanamo Bay USNB",
     "lat": 19.934,
     "lng": -75.1639,
-    "iso": "-1",
+    "iso": "us",
     "color": "#3b82f6",
     "is_major_city": true
   },
@@ -5980,7 +5980,7 @@
     "capital": "Famagusta",
     "lat": 35.125,
     "lng": 33.95,
-    "iso": "-1",
+    "iso": "cy",
     "color": "#3b82f6",
     "is_major_city": true
   },
@@ -5989,7 +5989,7 @@
     "capital": "Kashmir",
     "lat": 35.5084,
     "lng": 77.2229,
-    "iso": "-1",
+    "iso": "in",
     "color": "#3b82f6",
     "is_major_city": true
   },
@@ -5998,7 +5998,7 @@
     "capital": "Baykonur lease in Qyzylorda",
     "lat": 45.9847,
     "lng": 63.3839,
-    "iso": "-1",
+    "iso": "kz",
     "color": "#3b82f6",
     "is_major_city": true
   },
@@ -6007,7 +6007,7 @@
     "capital": "Akrotiri",
     "lat": 34.6564,
     "lng": 32.8989,
-    "iso": "-1",
+    "iso": "gb",
     "color": "#3b82f6",
     "is_major_city": true
   },
@@ -6349,7 +6349,7 @@
     "capital": "Taichung",
     "lat": 24.1521,
     "lng": 120.6817,
-    "iso": "cn-tw",
+    "iso": "tw",
     "color": "#31779B",
     "is_major_city": true
   },
@@ -6358,7 +6358,7 @@
     "capital": "Kaohsiung",
     "lat": 22.6333,
     "lng": 120.2666,
-    "iso": "cn-tw",
+    "iso": "tw",
     "color": "#31779B",
     "is_major_city": true
   },
@@ -6367,7 +6367,7 @@
     "capital": "Kinmen",
     "lat": 24.4483,
     "lng": 118.3474,
-    "iso": "cn-tw",
+    "iso": "tw",
     "color": "#31779B",
     "is_major_city": true
   },
@@ -6772,7 +6772,7 @@
     "capital": "Mumbai",
     "lat": -12.1749,
     "lng": 96.8701,
-    "iso": "-1",
+    "iso": "cc",
     "color": "#3b82f6",
     "is_major_city": true
   },
@@ -7060,7 +7060,7 @@
     "capital": "Coral Sea Islands",
     "lat": -19.2004,
     "lng": 151.6532,
-    "iso": "-1",
+    "iso": "au",
     "color": "#3b82f6",
     "is_major_city": true
   },
@@ -7069,7 +7069,7 @@
     "capital": "Spratly Islands",
     "lat": 10.4676,
     "lng": 114.8259,
-    "iso": "-1",
+    "iso": "ph",
     "color": "#3b82f6",
     "is_major_city": true
   },
@@ -7078,7 +7078,7 @@
     "capital": "Clipperton Island",
     "lat": 10.2981,
     "lng": -109.2202,
-    "iso": "-1",
+    "iso": "fr",
     "color": "#3b82f6",
     "is_major_city": true
   }

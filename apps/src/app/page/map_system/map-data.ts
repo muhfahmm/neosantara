@@ -1591,7 +1591,7 @@ export const COUNTRIES_DATA: CountryData[] = [
   {"id": 46375,
     "country": "Taiwan",
     "capital": "Taipei",
-    "iso": "cn-tw",
+    "iso": "tw",
     "latitude": 25.03,
     "longitude": 121.52,
     "continent": "Asia",
@@ -3153,7 +3153,7 @@ export const CAPITALS_DATA = [
     "capital": "Taipei",
     "lat": 25.03,
     "lng": 121.52,
-    "iso": "cn-tw",
+    "iso": "tw",
     "color": "#31779B"
   },
   {"country": "tajikistan",

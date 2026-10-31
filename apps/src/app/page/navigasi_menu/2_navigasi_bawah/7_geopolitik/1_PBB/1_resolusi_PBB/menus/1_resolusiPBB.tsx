@@ -37,12 +37,26 @@ interface CountryOption {
 
 // Helper function yang diekspor agar bisa digunakan file lain
 export const renderFlag = (iso: string | undefined, altName: string, size: "sm" | "md" = "md") => {
-  if (!iso || iso.length !== 2) return null;
   const wClass = size === "sm" ? "w-5 h-3.5" : "w-6 h-4";
+  const flagCode = iso?.trim().toLowerCase().split("-").pop();
+  if (!flagCode || !/^[a-z]{2}$/.test(flagCode)) {
+    return (
+      <span
+        role="img"
+        aria-label={`Bendera ${altName} tidak tersedia`}
+        className={`${wClass} rounded-sm flex-shrink-0 flex items-center justify-center bg-[#051111] text-[10px]`}
+      >
+        🏳️
+      </span>
+    );
+  }
   return (
     <div className={`${wClass} rounded-sm overflow-hidden border border-[#00FFAA]/20 flex-shrink-0 shadow-sm bg-[#051111] relative flex items-center justify-center`}>
+      <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center text-[10px]">
+        🏳️
+      </span>
       <img
-        src={`https://flagcdn.com/w80/${iso.toLowerCase()}.png`}
+        src={`https://flagcdn.com/w80/${flagCode}.png`}
         alt={altName}
         className="w-full h-full object-cover absolute inset-0"
         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
