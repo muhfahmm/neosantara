@@ -2240,6 +2240,36 @@ export default function MapPage() {
                 }
             }
 
+            const applyAttackerArmyLosses = (fallbackRatio: number, randomizeLosses: boolean) => {
+                const hasCommittedTroops = detail.troopsCommitted === true;
+                const armySource = hasCommittedTroops && detail.committedArmySnapshot
+                    ? detail.committedArmySnapshot
+                    : countryDetail;
+                if (!armySource) return '';
+
+                const reportedRatio = Number(detail.attackerLossRatio);
+                const lossRatio = hasCommittedTroops && Number.isFinite(reportedRatio)
+                    ? Math.min(1, Math.max(0, reportedRatio))
+                    : fallbackRatio;
+                const deploymentConfig = hasCommittedTroops &&
+                    detail.deployedUnitsConfig &&
+                    typeof detail.deployedUnitsConfig === 'object' &&
+                    !Array.isArray(detail.deployedUnitsConfig)
+                    ? detail.deployedUnitsConfig as Record<string, number>
+                    : undefined;
+                const { updatedDetail: detailAfterBattle, lossSummaryText } = applyWarLossesToUserArmada(
+                    armySource,
+                    lossRatio,
+                    hasCommittedTroops ? false : randomizeLosses,
+                    deploymentConfig,
+                );
+                const updatedDetail = hasCommittedTroops && detail.committedArmyDetail
+                    ? detail.committedArmyDetail
+                    : detailAfterBattle;
+                setCountryDetail(updatedDetail);
+                return lossSummaryText;
+            };
+
             if (actionType === 'aneksasi') {
                 const targetCity = resolveWarTargetCity(
                     targetCountry,
@@ -2252,6 +2282,9 @@ export default function MapPage() {
                         targetCityId: detail.targetCityId,
                         targetCityName: detail.targetCityName,
                     });
+                    if (detail.troopsCommitted === true && detail.committedArmySnapshot) {
+                        setCountryDetail(detail.committedArmySnapshot);
+                    }
                     setNotifications(prev => [{
                         id: `notif-player-annex-no-city-${Date.now()}`,
                         title: 'Aneksasi Kota Dibatalkan',
@@ -2267,11 +2300,7 @@ export default function MapPage() {
 
                 // 1. Potong armada penyerang pemain sebesar 25% (kemenangan perang)
                 let userLossText = '';
-                if (countryDetail) {
-                    const { updatedDetail: detailAfterWin, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.25, true);
-                    setCountryDetail(detailAfterWin);
-                    userLossText = lossSummaryText;
-                }
+                userLossText = applyAttackerArmyLosses(0.25, true);
 
                 // 2. Berita Invasi
                 const territoryAuthority = isPbbCoalition
@@ -2476,8 +2505,11 @@ export default function MapPage() {
                 mergeTargetDataToUser();
 
                 // Notifikasi Inbox User
+                const lossPercent = detail.troopsCommitted === true && Number.isFinite(Number(detail.attackerLossRatio))
+                    ? Math.round(Number(detail.attackerLossRatio) * 100)
+                    : 25;
                 const lossNote = (userLossText && userLossText !== 'Tidak ada kerugian unit')
-                    ? ` Kerugian tempur armada Anda (25%): ${userLossText}.`
+                    ? ` Kerugian tempur armada Anda (${lossPercent}%): ${userLossText}.`
                     : '';
                 const notifMsg: NotificationMessage = {
                     id: `notif-player-annex-${Date.now()}`,
@@ -2500,11 +2532,7 @@ export default function MapPage() {
             } else if (actionType === 'jarah') {
                 // Potong armada pemain sebesar 25% (kemenangan operasi penjarahan)
                 let userLossText = '';
-                if (countryDetail) {
-                    const { updatedDetail: detailAfterWin, lossSummaryText } = applyWarLossesToUserArmada(countryDetail, 0.25, true);
-                    setCountryDetail(detailAfterWin);
-                    userLossText = lossSummaryText;
-                }
+                userLossText = applyAttackerArmyLosses(0.25, true);
 
                 const invNews = generateInvasionNews(attackerCountry, attackerIso, targetCountry, targetIso, dateStr);
                 const lootNews = generateResourceLootNews(
@@ -2518,8 +2546,11 @@ export default function MapPage() {
                 );
                 newNewsItems.push(invNews, lootNews);
 
+                const lossPercent = detail.troopsCommitted === true && Number.isFinite(Number(detail.attackerLossRatio))
+                    ? Math.round(Number(detail.attackerLossRatio) * 100)
+                    : 25;
                 const lossNote = (userLossText && userLossText !== 'Tidak ada kerugian unit')
-                    ? ` Kerugian tempur armada Anda (25%): ${userLossText}.`
+                    ? ` Kerugian tempur armada Anda (${lossPercent}%): ${userLossText}.`
                     : '';
                 const notifMsg: NotificationMessage = {
                     id: `notif-player-loot-${Date.now()}`,
@@ -2536,31 +2567,26 @@ export default function MapPage() {
             } else if (actionType === 'mundur') {
                 // Cek apakah mundur dalam keadaan menang atau kalah terpukul mundur
                 const isVictoryRetreat = detail?.warResult === 'win';
-                const lossRate = isVictoryRetreat ? 0.25 : 0.75;
-                const lossPctStr = isVictoryRetreat ? '25%' : '75%';
+                const fallbackLossRate = isVictoryRetreat ? 0.25 : 0.75;
+                const lossRate = detail.troopsCommitted === true && Number.isFinite(Number(detail.attackerLossRatio))
+                    ? Math.min(1, Math.max(0, Number(detail.attackerLossRatio)))
+                    : fallbackLossRate;
+                const lossPctStr = `${Math.round(lossRate * 100)}%`;
+                const lossSummaryText = applyAttackerArmyLosses(fallbackLossRate, isVictoryRetreat);
 
-                if (countryDetail) {
-                    const { updatedDetail, lossSummaryText } = applyWarLossesToUserArmada(
-                        countryDetail,
-                        lossRate,
-                        isVictoryRetreat,
-                    );
-                    setCountryDetail(updatedDetail);
-
-                    if (lossSummaryText && lossSummaryText !== 'Tidak ada kerugian unit') {
-                        setNotifications(prev => [{
-                            id: `notif-war-losses-${Date.now()}`,
-                            title: `💥 KERUGIAN PASUKAN PERTEMPURAN (${lossPctStr})`,
-                            sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
-                            message: isVictoryRetreat
-                                ? `Pasukan ditarik mundur setelah memenangkan pertempuran di ${targetCountry}! Kerugian tempur taktis sebesar ${lossPctStr}: ${lossSummaryText}. Data armada telah diperbarui.`
-                                : `Pasukan terpukul mundur dari ${targetCountry}! Kerugian tempur sebesar ${lossPctStr} dari unit yang dikerahkan: ${lossSummaryText}. Data armada di Pertahanan & Keamanan telah diperbarui.`,
-                            timestamp: dateStr,
-                            type: 'peringkat',
-                            value: isVictoryRetreat ? 25 : 75,
-                            isRead: false
-                        }, ...prev]);
-                    }
+                if (lossSummaryText && lossSummaryText !== 'Tidak ada kerugian unit') {
+                    setNotifications(prev => [{
+                        id: `notif-war-losses-${Date.now()}`,
+                        title: `💥 KERUGIAN PASUKAN PERTEMPURAN (${lossPctStr})`,
+                        sender: `Markas Besar Angkatan Bersenjata (${attackerCountry})`,
+                        message: isVictoryRetreat
+                            ? `Pasukan ditarik mundur setelah memenangkan pertempuran di ${targetCountry}! Kerugian tempur taktis sebesar ${lossPctStr}: ${lossSummaryText}. Data armada telah diperbarui.`
+                            : `Pasukan terpukul mundur dari ${targetCountry}! Kerugian tempur sebesar ${lossPctStr} dari unit yang dikerahkan: ${lossSummaryText}. Data armada di Pertahanan & Keamanan telah diperbarui.`,
+                        timestamp: dateStr,
+                        type: 'peringkat',
+                        value: Math.round(lossRate * 100),
+                        isRead: false
+                    }, ...prev]);
                 }
 
                 const relationPenalty = applyUniformRelationPenalty(attackerCountry, 1, 5);
@@ -8761,7 +8787,8 @@ export default function MapPage() {
                         }}
                         attackerPower={activeWarAnimation.attackerPower ?? 0}
                         targetPower={activeWarAnimation.targetPower ?? 0}
-                        isUserDefender={isUserDefender}
+                        deployedUnitsConfig={activeWarAnimation.deployedUnitsConfig}
+                        isUserDefender={activeWarAnimation.isPbbCoalition ? isUserDefender : activeWarAnimation.isNpcWar ? false : isUserDefender}
                         isNpcWar={activeWarAnimation.isNpcWar === true}
                         requestedInvasion={activeWarAnimation.requestedInvasion === true}
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
@@ -8886,13 +8913,20 @@ export default function MapPage() {
                                 activeWarAnimation.pbbLiberationCountry
                             );
                         }}
-                        onClose={() => {
+                        onClose={(battleOutcome) => {
+                            if (
+                                activeWarAnimation?.troopsCommitted === true &&
+                                activeWarAnimation.committedArmySnapshot &&
+                                !battleOutcome
+                            ) {
+                                setCountryDetail(activeWarAnimation.committedArmySnapshot);
+                            }
                             setIsWarAnalysisActive(false);
                             setActiveWarAnimation(null);
                             npcWarQueueRunningRef.current = false;
                             resumeGameTimeAfterWar();
                         }}
-                        onResolve={({ action, result }) => {
+                        onResolve={({ action, result, attackerLossRatio }) => {
                             if (isUserDefender) {
                                 if (result === 'lose') {
                                     // 1. Potong armada pertahanan 75%
@@ -9046,6 +9080,12 @@ export default function MapPage() {
                                         warResult: result,
                                         isPbbCoalition: activeWarAnimation.isPbbCoalition ?? false,
                                         pbbLiberationCountry: activeWarAnimation.pbbLiberationCountry,
+                                        troopsCommitted: activeWarAnimation.troopsCommitted === true,
+                                        attackerCountryDetail: activeWarAnimation.attackerCountryDetail,
+                                        committedArmySnapshot: activeWarAnimation.committedArmySnapshot,
+                                        committedArmyDetail: activeWarAnimation.committedArmyDetail,
+                                        deployedUnitsConfig: activeWarAnimation.deployedUnitsConfig,
+                                        attackerLossRatio,
                                     },
                                 })
                             );

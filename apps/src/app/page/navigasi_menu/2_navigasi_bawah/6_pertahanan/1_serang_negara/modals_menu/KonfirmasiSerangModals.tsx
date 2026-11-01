@@ -10,7 +10,7 @@ interface SerangModalsProps {
   onClose: () => void;
   targetCountry: any;
   countryDetail: any;
-  onConfirm: () => void;
+  onConfirm: (deploymentConfig: Record<string, number>) => void;
 }
 
 type ArmadaGroup = "darat" | "laut" | "udara";
@@ -63,39 +63,45 @@ const getArmadaPayload = (source: any) => {
   return source;
 };
 
+const firstAvailableQuantity = (...values: unknown[]): number | undefined => {
+  for (const value of values) {
+    if (value === null || value === undefined || value === "") continue;
+    const quantity = Number(value);
+    if (Number.isFinite(quantity)) return Math.max(0, quantity);
+  }
+  return undefined;
+};
+
 const resolveQuantity = (source: any, group: ArmadaGroup, key: string) => {
   const payload = getArmadaPayload(source);
   const block = payload[group] && typeof payload[group] === "object" ? payload[group] : {};
 
   if (key === "barak") {
-    // 🔥 Gunakan logika dari 1_barak_logic.ts
-    const barakCount = Number(source?.barak ?? 0) ||
-                    Number(payload?.barak ?? 0) ||
-                    Number(block?.barak ?? 0) ||
-                    Number(source?.armada?.barak ?? 0) ||
-                    0;
-    // Prefer stored `pasukan_infanteri` (current infantry) when available.
-    const storedInfantry =
-      Number(block?.pasukan_infanteri ?? NaN) ||
-      Number(payload?.[group]?.pasukan_infanteri ?? NaN) ||
-      Number(payload?.pasukan_infanteri ?? NaN) ||
-      Number(source?.armada?.[group]?.pasukan_infanteri ?? NaN) ||
-      Number(source?.armada?.pasukan_infanteri ?? NaN) ||
-      Number(source?.[group]?.pasukan_infanteri ?? NaN) ||
-      Number(source?.pasukan_infanteri ?? NaN) ||
-      0;
+    const storedInfantry = firstAvailableQuantity(
+      block?.pasukan_infanteri,
+      payload?.pasukan_infanteri,
+      source?.armada?.pasukan_infanteri,
+      source?.[group]?.pasukan_infanteri,
+      source?.pasukan_infanteri,
+    );
+    if (storedInfantry !== undefined && storedInfantry > 0) return storedInfantry;
 
-    return storedInfantry > 0 ? storedInfantry : convertBarakToSoldiers(barakCount);
+    const barakCount = firstAvailableQuantity(
+      block?.barak,
+      payload?.barak,
+      source?.armada?.barak,
+      source?.barak,
+    ) ?? 0;
+    return storedInfantry === 0 ? 0 : convertBarakToSoldiers(barakCount);
   }
 
-  return (
-    Number(block?.[key] ?? 0) ||
-    Number(payload?.[key] ?? 0) ||
-    Number(source?.[group]?.[key] ?? 0) ||
-    Number(source?.armada?.[group]?.[key] ?? 0) ||
-    Number(source?.[key] ?? 0) ||
-    0
-  );
+  return firstAvailableQuantity(
+    block?.[key],
+    payload?.[key],
+    source?.armada?.[group]?.[key],
+    source?.[group]?.[key],
+    source?.[key],
+  ) ?? 0;
 };
 
 const getGroupBreakdown = (source: any, group: ArmadaGroup) => {
@@ -214,14 +220,18 @@ export default function SerangModals({
     }
   };
 
-  const hasDeployedUnits = Object.values(deploymentPct).some((val) => typeof val === "number" && val > 0);
-
   // Konfigurasi ikon untuk setiap matra
   const groupMeta: Record<ArmadaGroup, { icon: typeof Swords; color: string; bg: string }> = {
     darat: { icon: Swords, color: "text-rose-700", bg: "bg-rose-100" },
     laut: { icon: Ship, color: "text-sky-700", bg: "bg-sky-100" },
     udara: { icon: Plane, color: "text-indigo-700", bg: "bg-indigo-100" },
   };
+
+  const hasDeployedUnits = (Object.keys(attackerBreakdown) as ArmadaGroup[]).some((group) =>
+    attackerBreakdown[group].some((item) =>
+      item.quantity > 0 && (deploymentPct[item.key] ?? 0) > 0
+    )
+  );
 
   const content = (
     <div className="fixed inset-0 z-[9999999] flex flex-col bg-[#0F2424] font-sans select-none overflow-hidden animate-in fade-in duration-200">
@@ -404,7 +414,7 @@ export default function SerangModals({
             Batal
           </button>
           <button 
-            onClick={onConfirm} 
+            onClick={() => onConfirm(deploymentPct)}
             disabled={!hasDeployedUnits}
             className={`px-8 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
               hasDeployedUnits

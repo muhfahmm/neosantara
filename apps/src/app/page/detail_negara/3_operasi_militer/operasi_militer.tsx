@@ -266,6 +266,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         onCloseDetailModal={onCloseDetailModal}
         onAttackBlocked={() => setIsAttackInProgressModalOpen(true)}
         onAttackLaunched={() => onMilitaryActionLaunched?.('serang')}
+        updatePlayerCountryDetail={updatePlayerCountryDetail}
         onConfirm={(actionType, targetCountry) => {
           setIsSerangOpen(false);
           if (onCloseDetailModal) onCloseDetailModal();
