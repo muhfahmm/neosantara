@@ -100,6 +100,7 @@ import {
     hasActiveNationalization,
     syncNationalizationDiplomacyRelations,
 } from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/7_sistem_ekonomi/logic/nationalizationLogic';
+import { getActiveMilitaryDeployment } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/militaryDeploymentStore';
 import { calculateDailyMaterialProduction } from '../navigasi_menu/2_navigasi_bawah/5_pembangunan/build_logic/build_logic';
 import { getDaysElapsed } from '@/app/logic/production_logic';
 import {
@@ -8478,6 +8479,11 @@ export default function MapPage() {
                         isNpcWar={activeWarAnimation.isNpcWar === true}
                         requestedInvasion={activeWarAnimation.requestedInvasion === true}
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
+                        deployedAttackerUnits={
+                            typeof activeWarAnimation.attackId === 'string'
+                                ? getActiveMilitaryDeployment(activeWarAnimation.attackId)?.units
+                                : undefined
+                        }
                         onAnalysisVisibilityChange={handleWarAnalysisVisibilityChange}
                         onAttackerForcesModalVisibilityChange={setIsAttackerForcesModalOpen}
                         onAutoResolve={result => {

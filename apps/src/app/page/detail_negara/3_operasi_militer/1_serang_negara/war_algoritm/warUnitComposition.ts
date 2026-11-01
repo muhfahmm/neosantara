@@ -118,6 +118,7 @@ export function getWarUnitComposition(
   countryDetail: unknown,
   deploymentConfig: Record<string, unknown>,
   applyDeployment: boolean,
+  deployedQuantities?: Record<string, number>,
 ): WarUnit[] {
   const source = asRecord(countryDetail);
   const hasDeploymentConfig = Object.values(deploymentConfig).some(
@@ -128,9 +129,12 @@ export function getWarUnitComposition(
     .flatMap(([group, units]) => units.flatMap(({ key, kind, label, displayName }) => {
       const rawQuantity = resolveUnitQuantity(source, group, key);
       const deployedPercent = deploymentConfig[key];
-      const quantity = applyDeployment && hasDeploymentConfig
-        ? Math.round((rawQuantity * (typeof deployedPercent === "number" ? deployedPercent : 0)) / 100)
-        : rawQuantity;
+      const requestedQuantity = deployedQuantities?.[key];
+      const quantity = typeof requestedQuantity === "number"
+        ? Math.min(rawQuantity, Math.max(0, Math.round(requestedQuantity)))
+        : applyDeployment && hasDeploymentConfig
+          ? Math.round((rawQuantity * (typeof deployedPercent === "number" ? deployedPercent : 0)) / 100)
+          : rawQuantity;
 
       return quantity > 0 ? [{ kind, group, label, displayName, quantity }] : [];
     }));

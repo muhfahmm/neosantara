@@ -719,6 +719,7 @@ interface WarMapProps {
   isNpcWar?: boolean;
   requestedInvasion?: boolean;
   isPbbCoalition?: boolean;
+  deployedAttackerUnits?: Record<string, number>;
   onAnalysisVisibilityChange?: (isVisible: boolean) => void;
   onAttackerForcesModalVisibilityChange?: (isVisible: boolean) => void;
   onClose: () => void;
@@ -744,6 +745,7 @@ export default function WarMap({
   isNpcWar = false,
   requestedInvasion = false,
   isPbbCoalition = false,
+  deployedAttackerUnits,
   onAnalysisVisibilityChange,
   onAttackerForcesModalVisibilityChange,
   onClose,
@@ -907,13 +909,15 @@ export default function WarMap({
   }, [target, deploymentConfig, isUserDefender, battleOutcome]);
 
   const attackerForces = useMemo(
-    () => getWarUnitComposition(attacker, {}, false)
+    () => getWarUnitComposition(attacker, {}, false, deployedAttackerUnits)
       .map(unit => ({
         ...unit,
-        quantity: Math.round(unit.quantity * effectiveAttackerDeploymentPercent / 100),
+        quantity: deployedAttackerUnits
+          ? unit.quantity
+          : Math.round(unit.quantity * effectiveAttackerDeploymentPercent / 100),
       }))
       .filter(unit => unit.quantity > 0),
-    [attacker, effectiveAttackerDeploymentPercent]
+    [attacker, deployedAttackerUnits, effectiveAttackerDeploymentPercent]
   );
   const attackerForceGroups = useMemo(
     () => [
