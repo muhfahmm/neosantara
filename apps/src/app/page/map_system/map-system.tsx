@@ -9208,7 +9208,6 @@ export default function MapPage() {
 
             {!isDialogTerbukaOpen && (
                 <DiplomacyTracking
-                    isWarActive={!!activeWarAnimation}
                     isUiHidden={isMenuModalOpen}
                     onOpen={() => setCountryDetailModalOpen(false)}
                 />
