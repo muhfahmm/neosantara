@@ -144,6 +144,24 @@ export function CountryDetailModal({
   const countryDetailRef = useRef(countryDetail);
   countryDetailRef.current = countryDetail;
 
+  useEffect(() => {
+    if (!currentDate) return;
+    const currentDateKey = [
+      currentDate.getFullYear(),
+      String(currentDate.getMonth() + 1).padStart(2, '0'),
+      String(currentDate.getDate()).padStart(2, '0'),
+    ].join('-');
+    const attackDateKey = `${normalizeCountryKey(countryName)}:serang`;
+
+    setMilitaryActionDates(previous => {
+      const scheduledDate = previous[attackDateKey];
+      if (!scheduledDate || scheduledDate >= currentDateKey) return previous;
+      const next = { ...previous };
+      delete next[attackDateKey];
+      return next;
+    });
+  }, [currentDate, countryName]);
+
   const recordMilitaryAction = (action: 'serang' | 'spionase' | 'sabotase') => {
     const actionDate = currentDate ? new Date(currentDate) : new Date();
     if (action === 'serang') {

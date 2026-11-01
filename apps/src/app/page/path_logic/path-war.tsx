@@ -757,8 +757,10 @@ export default function WarMap({
   const [attackerDeploymentPercent, setAttackerDeploymentPercent] = useState(50);
   const requestedInvasionRollRef = useRef(Math.random());
   const onCloseRef = useRef(onClose);
+  const onResolveRef = useRef(onResolve);
   const onAutoResolveRef = useRef(onAutoResolve);
   const autoResolveReportedRef = useRef(false);
+  const defenseResolutionReportedRef = useRef(false);
 
   useEffect(() => {
     onAnalysisVisibilityChange?.(
@@ -769,6 +771,10 @@ export default function WarMap({
   useEffect(() => {
     onCloseRef.current = onClose;
   }, [onClose]);
+
+  useEffect(() => {
+    onResolveRef.current = onResolve;
+  }, [onResolve]);
 
   useEffect(() => {
     onAutoResolveRef.current = onAutoResolve;
@@ -939,6 +945,7 @@ export default function WarMap({
       setPhase('travel');
       progressRef.current = 0;
       autoResolveReportedRef.current = false;
+      defenseResolutionReportedRef.current = false;
       requestedInvasionRollRef.current = Math.random();
       setAttackerDeploymentPercent(50 + Math.floor(Math.random() * 26));
       progressPathRef.current?.setAttribute('stroke-dasharray', '0 100');
@@ -1058,7 +1065,7 @@ export default function WarMap({
   useEffect(() => {
     if (phase !== 'impact' || !battleOutcome) return;
     setShowFlash(true);
-    if (isNpcWar && !isPbbCoalition) {
+    if (isNpcWar && !isUserDefender && !isPbbCoalition) {
       if (!autoResolveReportedRef.current) {
         autoResolveReportedRef.current = true;
         onAutoResolveRef.current?.(battleOutcome.result);
@@ -1078,7 +1085,32 @@ export default function WarMap({
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, [phase, battleOutcome, isNpcWar, isPbbCoalition]);
+  }, [phase, battleOutcome, isNpcWar, isUserDefender, isPbbCoalition]);
+
+  useEffect(() => {
+    if (phase !== 'comparison' || !isUserDefender || !battleOutcome) return;
+    const resultTimer = setTimeout(() => {
+      setResult(battleOutcome.result);
+      setPhase('result');
+    }, 2500);
+    return () => clearTimeout(resultTimer);
+  }, [phase, isUserDefender, battleOutcome]);
+
+  useEffect(() => {
+    if (phase !== 'result' || !isUserDefender || !result || !warPath ||
+        defenseResolutionReportedRef.current) return;
+    const resolutionTimer = setTimeout(() => {
+      defenseResolutionReportedRef.current = true;
+      onResolveRef.current({
+        result,
+        action: 'retreat',
+        path: warPath,
+        isUserDefender: true,
+        isPbbCoalition,
+      });
+    }, 1800);
+    return () => clearTimeout(resolutionTimer);
+  }, [phase, isUserDefender, result, warPath, isPbbCoalition]);
 
   const handleAction = useCallback(
     (action: WarAction) => {

@@ -7,8 +7,8 @@ import { greatCircleDistanceKmRust } from './routeMathRust';
  */
 export const GAME_DAYS_PER_1000_KM = 1;
 
-export const MIN_TRAVEL_DAYS = 90;
-export const MAX_TRAVEL_DAYS = 120;
+export const MIN_TRAVEL_DAYS = 3;
+export const MAX_TRAVEL_DAYS = 3;
 
 const EARTH_RADIUS_KM = 6371;
 const MAX_GREAT_CIRCLE_DISTANCE_KM = Math.PI * EARTH_RADIUS_KM;
@@ -244,7 +244,7 @@ export const estimateTravelTime = (
   );
 
   /**
-   * Skalakan ke rentang 90–120 hari game.
+   * Perjalanan militer selalu berlangsung selama 3 hari game.
    */
   const days = clamp(
     Math.round(

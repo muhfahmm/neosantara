@@ -312,6 +312,8 @@ type MapCity = {
 };
 type CityOwnerEntry = {
     cell?: [number, number][];
+    cells?: [number, number][][];
+    regionId?: string;
     cityId: string;
     cityName: string;
     countryIso: string;
@@ -404,16 +406,26 @@ function resolveWarTargetCity(
     chooseForAi = false
 ): CityOwnerEntry | null {
     const allCities = getMapCities();
+    const requestedCity = targetCityId
+        ? allCities.find(city =>
+            getCityOwnerId(city.iso, city.capital) === targetCityId
+        )
+        : undefined;
     const cities = allCities.filter(city =>
-        normalizeMapKey(getCurrentCityOwner(city)) === normalizeMapKey(targetCountry)
+        areSameWarCountry(
+            getCurrentCityOwner(city),
+            targetCountry,
+            getIsoForCountryName(getCurrentCityOwner(city)),
+            getIsoForCountryName(targetCountry)
+        )
     );
-    if (cities.length === 0) return null;
+    if (cities.length === 0 && !requestedCity) return null;
 
-    const requestedCity = cities.find(city =>
-        getCityOwnerId(city.iso, city.capital) === targetCityId ||
+    const requestedOwnedCity = cities.find(city =>
         normalizeMapKey(city.capital) === normalizeMapKey(targetCityName)
     );
     const city = requestedCity ||
+        requestedOwnedCity ||
         (chooseForAi
             ? cities[Math.floor(Math.random() * cities.length)]
             : cities.find(candidate =>
@@ -431,7 +443,7 @@ function resolveWarTargetCity(
         cityId: getCityOwnerId(city.iso, city.capital),
         cityName: city.capital,
         countryIso: city.iso.toLowerCase(),
-        ownerCountry: targetCountry,
+        ownerCountry: getCurrentCityOwner(city),
         ownerIso: city.iso.toLowerCase(),
         ownerColor: city.color || '#2e7d32',
         lat: city.lat,
@@ -440,54 +452,113 @@ function resolveWarTargetCity(
     };
 }
 
-// Cache data geometri poligon provinsi resmi per cityId
-let cachedCityProvinceCells: Record<string, [number, number][]> | null = null;
-if (typeof window !== 'undefined') {
-    fetch('/city_province_cells.json')
-        .then(res => res.ok ? res.json() : null)
+type CityBoundaryCell = [number, number][][];
+
+const isCityBoundaryRing = (value: unknown): value is [number, number][] =>
+    Array.isArray(value) &&
+    value.length >= 3 &&
+    value.every(point =>
+        Array.isArray(point) &&
+        point.length >= 2 &&
+        typeof point[0] === 'number' &&
+        Number.isFinite(point[0]) &&
+        typeof point[1] === 'number' &&
+        Number.isFinite(point[1])
+    );
+
+const parseCityBoundaryCell = (value: unknown): CityBoundaryCell => {
+    if (isCityBoundaryRing(value)) return [value];
+    if (!Array.isArray(value)) return [];
+    return value.filter(isCityBoundaryRing);
+};
+
+let cachedCityProvinceCells: Record<string, CityBoundaryCell> = {};
+let cachedRegionalCityCells: Record<string, CityBoundaryCell> = {};
+let cachedCityRegions: Record<string, string[]> = {};
+let cachedRegionCities: Record<string, string[]> = {};
+
+function loadCityBoundaryCells(path: string) {
+    fetch(path)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`Failed to load city boundary data from ${path}: HTTP ${res.status}`);
+            }
+            return res.json();
+        })
         .then(data => {
             if (data && typeof data === 'object') {
-                cachedCityProvinceCells = data;
+                const boundaryData = data as {
+                    cityCells?: Record<string, unknown>;
+                    regions?: Record<string, unknown>;
+                    cityRegions?: Record<string, unknown>;
+                };
+                const cityCells = boundaryData.cityCells || data as Record<string, unknown>;
+                const normalizedCells: Record<string, CityBoundaryCell> = {};
+                Object.entries(cityCells).forEach(([cityId, rawCell]) => {
+                    const rings = parseCityBoundaryCell(rawCell);
+                    if (rings.length > 0) normalizedCells[normalizeMapKey(cityId)] = rings;
+                });
+                cachedCityProvinceCells = { ...cachedCityProvinceCells, ...normalizedCells };
+
+                const regionCells = new Map<string, CityBoundaryCell>();
+                Object.entries(boundaryData.regions || {}).forEach(([regionId, rawCell]) => {
+                    const rings = parseCityBoundaryCell(rawCell);
+                    if (rings.length > 0) regionCells.set(normalizeMapKey(regionId), rings);
+                });
+                const normalizedRegionCells: Record<string, CityBoundaryCell> = {};
+                regionCells.forEach((rings, regionKey) => {
+                    normalizedRegionCells[regionKey] = rings;
+                });
+                const cityRegions: Record<string, string[]> = {};
+                const regionCities: Record<string, string[]> = {};
+                Object.entries(boundaryData.cityRegions || {}).forEach(([cityId, rawRegionIds]) => {
+                    if (!Array.isArray(rawRegionIds)) return;
+                    const cityKey = normalizeMapKey(cityId);
+                    const regionIds = rawRegionIds.filter(
+                        (regionId): regionId is string =>
+                            typeof regionId === 'string' &&
+                            regionCells.has(normalizeMapKey(regionId))
+                    );
+                    if (regionIds.length > 0) {
+                        cityRegions[cityKey] = regionIds.map(normalizeMapKey);
+                        regionIds.forEach(regionId => {
+                            const regionKey = normalizeMapKey(regionId);
+                            regionCities[regionKey] = [
+                                ...(regionCities[regionKey] || []),
+                                cityKey,
+                            ].filter((value, index, values) => values.indexOf(value) === index).sort();
+                        });
+                    }
+                });
+                cachedRegionalCityCells = { ...cachedRegionalCityCells, ...normalizedRegionCells };
+                cachedCityRegions = { ...cachedCityRegions, ...cityRegions };
+                cachedRegionCities = { ...cachedRegionCities, ...regionCities };
+                window.dispatchEvent(new Event('neosantara_city_boundaries_ready'));
             }
         })
-        .catch(err => console.warn('Pemuatan polygon provinsi notice:', err));
+        .catch(err => console.error(`Failed to load official city boundary data from ${path}:`, err));
+}
+if (typeof window !== 'undefined') {
+    loadCityBoundaryCells('/city_province_cells.json');
 }
 
-// Wilayah provinsi: gunakan batas geometri poligon provinsi resmi jika tersedia,
-// atau sel Voronoi kota di dalam negaranya sebagai fallback.
-function computeCityRegionCell(city: { cityId: string; countryIso: string; lat: number; lng: number }): [number, number][] {
-    if (cachedCityProvinceCells && cachedCityProvinceCells[city.cityId]) {
-        return cachedCityProvinceCells[city.cityId];
-    }
-    const k = Math.max(Math.cos(city.lat * Math.PI / 180), 0.25);
-    const toXY = (lng: number, lat: number): [number, number] => [(lng - city.lng) * k, lat - city.lat];
-    const half = 60;
-    let poly: [number, number][] = [[-half, -half], [half, -half], [half, half], [-half, half]];
-    const siblings = getMapCities().filter(other =>
-        other.iso.toLowerCase() === city.countryIso.toLowerCase() &&
-        getCityOwnerId(other.iso, other.capital) !== city.cityId
-    );
-    for (const other of siblings) {
-        const [ox, oy] = toXY(other.lng, other.lat);
-        const nx = ox;
-        const ny = oy;
-        const c = (ox * ox + oy * oy) / 2;
-        const next: [number, number][] = [];
-        for (let i = 0; i < poly.length; i++) {
-            const a = poly[i];
-            const b = poly[(i + 1) % poly.length];
-            const da = a[0] * nx + a[1] * ny - c;
-            const db = b[0] * nx + b[1] * ny - c;
-            if (da <= 0) next.push(a);
-            if ((da < 0 && db > 0) || (da > 0 && db < 0)) {
-                const t = da / (da - db);
-                next.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
-            }
+// Only use a supplied administrative boundary; never invent city borders.
+function computeCityRegionCells(city: { cityId: string }): CityBoundaryCell {
+    const cityKey = normalizeMapKey(city.cityId);
+    return cachedCityRegions[cityKey]
+        ? []
+        : cachedCityProvinceCells[cityKey] || [];
+}
+
+function getCanvasCityOwners(cityOwners: CityOwnerStore): CityOwnerEntry[] {
+    return Object.values(cityOwners).map(owner => {
+        if (owner.regionId) {
+            const cells = cachedRegionalCityCells[normalizeMapKey(owner.regionId)] || [];
+            return { ...owner, cell: cells[0] || [], cells };
         }
-        poly = next;
-        if (poly.length < 3) return [];
-    }
-    return poly.map(([x, y]) => [city.lng + x / k, city.lat + y]);
+        const cells = computeCityRegionCells(owner);
+        return { ...owner, cell: cells[0] || [], cells };
+    });
 }
 
 function getCapitalFlagsForCurrentTerritories(settingsOverride?: MapDisplaySettings) {
@@ -1643,6 +1714,8 @@ export default function MapPage() {
         const previousOwners = (window as Window & {
             neosantara_city_owner?: CityOwnerStore;
         }).neosantara_city_owner || {};
+        const cells = computeCityRegionCells(city);
+        const cityRegionIds = cachedCityRegions[normalizeMapKey(city.cityId)] || [];
         const targetCitiesBeforeCapture = getMapCities().filter(candidate =>
             normalizeMapKey(getCurrentCityOwner(candidate)) === normalizeMapKey(targetCountry)
         );
@@ -1651,7 +1724,8 @@ export default function MapPage() {
             ...previousOwners,
             [city.cityId]: {
                 ...city,
-                cell: computeCityRegionCell(city),
+                cell: cells[0] || [],
+                cells,
                 ownerCountry: territoryOwnerCountry,
                 ownerIso: territoryOwnerIso,
                 ownerColor: effectiveCityColor,
@@ -1659,12 +1733,55 @@ export default function MapPage() {
                 pbbLiberationCountry,
             },
         };
+        cityRegionIds.forEach(regionId => {
+            const regionKey = normalizeMapKey(regionId);
+            const regionCells = cachedRegionalCityCells[regionKey] || [];
+            const regionOwnerKey = `region:${regionKey}`;
+            nextOwners[regionOwnerKey] = {
+                ...city,
+                cityId: regionOwnerKey,
+                regionId,
+                cell: regionCells[0] || [],
+                cells: regionCells,
+                ownerCountry: territoryOwnerCountry,
+                ownerIso: territoryOwnerIso,
+                ownerColor: effectiveCityColor,
+                isPbbOccupied,
+                pbbLiberationCountry,
+            };
+
+            (cachedRegionCities[regionKey] || []).forEach(memberCityId => {
+                const member = getMapCities().find(candidate =>
+                    normalizeMapKey(getCityOwnerId(candidate.iso, candidate.capital)) === memberCityId
+                );
+                if (!member) return;
+                const memberCityIdKey = getCityOwnerId(member.iso, member.capital);
+                const isCapital = (CAPITALS_DATA as MapCity[]).some(capital =>
+                    getCityOwnerId(capital.iso, capital.capital) === memberCityIdKey
+                );
+                nextOwners[memberCityIdKey] = {
+                    cityId: memberCityIdKey,
+                    cityName: member.capital,
+                    countryIso: member.iso.toLowerCase(),
+                    ownerCountry: territoryOwnerCountry,
+                    ownerIso: territoryOwnerIso,
+                    ownerColor: effectiveCityColor,
+                    lat: member.lat,
+                    lng: member.lng,
+                    isCapital,
+                    cell: [],
+                    cells: [],
+                    isPbbOccupied,
+                    pbbLiberationCountry,
+                };
+            });
+        });
         (window as Window & { neosantara_city_owner?: CityOwnerStore }).neosantara_city_owner = nextOwners;
         console.info('[CityAnnexation][4-store] Ownership stored', nextOwners[city.cityId], {
             wasmReady: Boolean(wasmModuleRef.current),
         });
         wasmModuleRef.current?.set_capitals_on_map(getCapitalFlagsForCurrentTerritories());
-        wasmModuleRef.current?.set_city_ownership_on_map(Object.values(nextOwners));
+        wasmModuleRef.current?.set_city_ownership_on_map(getCanvasCityOwners(nextOwners));
         mapFeatureColorSyncRef.current();
 
         const hasRemainingTargetCities = targetCitiesBeforeCapture.some(candidate => {
@@ -1700,6 +1817,7 @@ export default function MapPage() {
             });
             allTargetCities.forEach(c => {
                 const cId = getCityOwnerId(c.iso, c.capital);
+                const cells = computeCityRegionCells({ cityId: cId });
                 const isCap = (CAPITALS_DATA as MapCity[]).some(capital =>
                     normalizeMapKey(capital.country) === normalizeMapKey(targetCountry) &&
                     getCityOwnerId(capital.iso, capital.capital) === cId
@@ -1714,14 +1832,37 @@ export default function MapPage() {
                     lat: c.lat,
                     lng: c.lng,
                     isCapital: isCap,
-                    cell: computeCityRegionCell({ cityId: cId, countryIso: c.iso, lat: c.lat, lng: c.lng }),
+                    cell: cells[0] || [],
+                    cells,
+                    isPbbOccupied,
+                    pbbLiberationCountry,
+                };
+            });
+            const collapsedRegionIds = new Set(
+                allTargetCities.flatMap(candidate =>
+                    cachedCityRegions[normalizeMapKey(getCityOwnerId(candidate.iso, candidate.capital))] || []
+                )
+            );
+            collapsedRegionIds.forEach(regionId => {
+                const regionKey = normalizeMapKey(regionId);
+                const regionCells = cachedRegionalCityCells[regionKey] || [];
+                const regionOwnerKey = `region:${regionKey}`;
+                nextOwners[regionOwnerKey] = {
+                    ...city,
+                    cityId: regionOwnerKey,
+                    regionId,
+                    cell: regionCells[0] || [],
+                    cells: regionCells,
+                    ownerCountry: territoryOwnerCountry,
+                    ownerIso: territoryOwnerIso,
+                    ownerColor: effectiveCityColor,
                     isPbbOccupied,
                     pbbLiberationCountry,
                 };
             });
             (window as Window & { neosantara_city_owner?: CityOwnerStore }).neosantara_city_owner = nextOwners;
             wasmModuleRef.current?.set_capitals_on_map(getCapitalFlagsForCurrentTerritories());
-            wasmModuleRef.current?.set_city_ownership_on_map(Object.values(nextOwners));
+            wasmModuleRef.current?.set_city_ownership_on_map(getCanvasCityOwners(nextOwners));
 
             const targetIso = COUNTRIES_DATA.find(country =>
                 normalizeMapKey(country.country) === normalizeMapKey(targetCountry)
@@ -1767,7 +1908,7 @@ export default function MapPage() {
             const cityOwners = (window as Window & {
                 neosantara_city_owner?: CityOwnerStore;
             }).neosantara_city_owner || {};
-            wasmModuleRef.current?.set_city_ownership_on_map(Object.values(cityOwners));
+            wasmModuleRef.current?.set_city_ownership_on_map(getCanvasCityOwners(cityOwners));
         };
         const handleCapitalChanged = (e: Event) => {
             const newCap = (e as CustomEvent<{ newCapital?: string }>)?.detail?.newCapital;
@@ -1776,11 +1917,82 @@ export default function MapPage() {
             }
             wasmModuleRef.current?.set_capitals_on_map(getCapitalFlagsForCurrentTerritories());
         };
+        const handleCityBoundariesReady = () => {
+            const cityOwners = (window as Window & {
+                neosantara_city_owner?: CityOwnerStore;
+            }).neosantara_city_owner || {};
+            const updatedOwners = Object.fromEntries(
+                Object.entries(cityOwners).map(([cityId, city]) => {
+                    const cells = computeCityRegionCells({ cityId });
+                    return [cityId, { ...city, cell: cells[0] || [], cells }];
+                })
+            ) as CityOwnerStore;
+            const mapCitiesById = new Map(
+                getMapCities().map(mapCity => [
+                    normalizeMapKey(getCityOwnerId(mapCity.iso, mapCity.capital)),
+                    mapCity,
+                ])
+            );
+            Object.entries(cachedRegionCities).forEach(([regionKey, memberCityIds]) => {
+                const regionId = Object.keys(cachedRegionalCityCells)
+                    .find(key => normalizeMapKey(key) === regionKey);
+                if (!regionId) return;
+
+                const regionOwnerKey = `region:${regionKey}`;
+                const existingRegionOwner = updatedOwners[regionOwnerKey];
+                const memberCities = memberCityIds.flatMap(memberCityId => {
+                    const mapCity = mapCitiesById.get(memberCityId);
+                    return mapCity
+                        ? [{ cityId: getCityOwnerId(mapCity.iso, mapCity.capital), mapCity }]
+                        : [];
+                });
+                const sourceOwner = existingRegionOwner || memberCities
+                    .map(member => updatedOwners[member.cityId])
+                    .find(Boolean);
+                if (!sourceOwner) return;
+
+                const regionCells = cachedRegionalCityCells[regionKey];
+                updatedOwners[regionOwnerKey] = {
+                    ...sourceOwner,
+                    cityId: regionOwnerKey,
+                    regionId,
+                    cell: regionCells[0] || [],
+                    cells: regionCells,
+                };
+                memberCities.forEach(({ cityId, mapCity }) => {
+                    const member = updatedOwners[cityId];
+                    updatedOwners[cityId] = {
+                        ...(member || {
+                            cityId,
+                            cityName: mapCity.capital,
+                            countryIso: mapCity.iso.toLowerCase(),
+                            lat: mapCity.lat,
+                            lng: mapCity.lng,
+                            isCapital: (CAPITALS_DATA as MapCity[]).some(capital =>
+                                getCityOwnerId(capital.iso, capital.capital) ===
+                                getCityOwnerId(mapCity.iso, mapCity.capital)
+                            ),
+                        }),
+                        ownerCountry: sourceOwner.ownerCountry,
+                        ownerIso: sourceOwner.ownerIso,
+                        ownerColor: sourceOwner.ownerColor,
+                        cell: [],
+                        cells: [],
+                        isPbbOccupied: sourceOwner.isPbbOccupied,
+                        pbbLiberationCountry: sourceOwner.pbbLiberationCountry,
+                    };
+                });
+            });
+            (window as Window & { neosantara_city_owner?: CityOwnerStore }).neosantara_city_owner = updatedOwners;
+            wasmModuleRef.current?.set_city_ownership_on_map(getCanvasCityOwners(updatedOwners));
+        };
         window.addEventListener('map_territory_color_updated', syncTerritoryColorOverrides);
         window.addEventListener('neosantara_capital_changed', handleCapitalChanged);
+        window.addEventListener('neosantara_city_boundaries_ready', handleCityBoundariesReady);
         return () => {
             window.removeEventListener('map_territory_color_updated', syncTerritoryColorOverrides);
             window.removeEventListener('neosantara_capital_changed', handleCapitalChanged);
+            window.removeEventListener('neosantara_city_boundaries_ready', handleCityBoundariesReady);
         };
     }, []);
 
@@ -2723,7 +2935,9 @@ export default function MapPage() {
             const playerCountryName = selectedCountry?.country ||
                 countryDetail?.country ||
                 countryDetail?.nama_negara ||
-                countryDetail?.name_id;
+                countryDetail?.name_id ||
+                countryDetail?.name_en ||
+                countryDetail?.nama;
             const isPlayerAttacker = Boolean(playerCountryName) && areSameWarCountry(
                 detail.attacker,
                 playerCountryName || '',
@@ -2768,6 +2982,22 @@ export default function MapPage() {
                     isRead: false,
                 }, ...previous]);
                 return;
+            }
+            if (isPlayerDefender) {
+                const incomingAttack = generateDiserangNotification(
+                    detail.attacker,
+                    currentDate.toISOString().slice(0, 10),
+                    hasAnnexedTerritories(playerCountryName || ''),
+                    'invasi'
+                );
+                setNotifications(previous => {
+                    const hasExistingAlert = previous.some(notification =>
+                        (notification as any).tradeType === 'diserang' &&
+                        areSameWarCountry((notification as any).enemyCountry, detail.attacker) &&
+                        notification.timestamp === incomingAttack.timestamp
+                    );
+                    return hasExistingAlert ? previous : [incomingAttack, ...previous];
+                });
             }
             if (!detail.isPbbCoalition && !hasApprovedInvasionMandate) {
                 const violationReason = hasActiveGlobalWarBan()
@@ -3084,6 +3314,7 @@ export default function MapPage() {
                 targetCityIsCapital: targetCity?.isCapital,
                 attackerCountryDetail: attackerDetailData,
                 targetCountryDetail: targetDetailData,
+                isUserDefender: isPlayerDefender,
                 attackerPower: Number(attackerDetailData.pbbCoalitionPower) || attackerPowerSummary.totals.totalPower,
                 targetPower: targetPowerSummary.totals.totalPower
             });
@@ -3210,6 +3441,8 @@ export default function MapPage() {
                 : action;
             const isExempt = (n: NotificationMessage) =>
                 /player|user|province|requested|self-|aid-|demo|demonstrasi|subsidi|harga|pajak/i.test(String(n.id)) ||
+                String(n.id).startsWith('war-') ||
+                (n as any).tradeType === 'diserang' ||
                 (n as any).tradeType === 'demonstrasi_rakyat' ||
                 (n as any).tradeType === 'kebijakan_subsidi' ||
                 (n as any).tradeType === 'harga_barang_pokok' ||
@@ -4726,6 +4959,14 @@ export default function MapPage() {
                     const uniqueNew: NotificationMessage[] = [];
                     for (const notif of cappedNotifs) {
                         if (!notif || !notif.id || existingIds.has(notif.id)) continue;
+                        if (
+                            (notif as any).tradeType === 'diserang' &&
+                            prev.some(existing =>
+                                (existing as any).tradeType === 'diserang' &&
+                                areSameWarCountry((existing as any).enemyCountry, (notif as any).enemyCountry) &&
+                                existing.timestamp === notif.timestamp
+                            )
+                        ) continue;
                         existingIds.add(notif.id);
                         uniqueNew.push(notif);
                     }
@@ -6891,13 +7132,39 @@ export default function MapPage() {
                             .filter(([, info]) => typeof info === 'object' && info !== null && 'attackerCountry' in (info as object))
                             .map(([key]) => normalizeCountryKey(key))
                     );
+                    const countryForAlias = (value: unknown) => {
+                        const alias = normalizeCountryKey(typeof value === 'string' ? value : '');
+                        const countryAlias = alias.startsWith('iso') ? alias.slice(3) : alias;
+                        return COUNTRIES_DATA.find(country => {
+                            const countryIso = normalizeCountryKey(country.iso);
+                            return countryAlias === countryIso ||
+                                countryAlias === normalizeCountryKey(country.country);
+                        });
+                    };
                     const validOverrides = Object.entries(overrides as Record<string, string>)
                         .filter(([key]) => annexedKeys.has(normalizeCountryKey(key)))
-                        .map(([key, color]) => [normalizeCountryKey(key), color] as const);
+                        .map(([key, color]) => ({
+                            alias: normalizeCountryKey(key),
+                            color,
+                            country: countryForAlias(key),
+                        }));
+                    const countryOverrideColors = new Map<string, string>();
+                    validOverrides.forEach(({ country, color }) => {
+                        if (country) countryOverrideColors.set(normalizeCountryKey(country.iso), color);
+                    });
 
                     const getFeatureOverrideColor = (feature: { properties?: Record<string, unknown> }) => {
                         const properties = feature?.properties;
                         if (!properties || validOverrides.length === 0) return null;
+                        const featureIsoKeys = [
+                            properties.ISO_A2_EH,
+                            properties.ISO_A2,
+                        ].map(value => {
+                            const iso = typeof value === 'string' ? value.trim() : '';
+                            const parts = iso.split('-');
+                            const suffix = parts[parts.length - 1] || iso;
+                            return normalizeCountryKey(suffix);
+                        }).filter(Boolean);
                         const featureKeys = new Set([
                             properties.ISO_A2, properties.ISO_A2_EH, properties.ISO_A3, properties.ISO_A3_EH,
                             `iso_${properties.ISO_A2 || properties.ISO_A2_EH || ''}`,
@@ -6906,7 +7173,18 @@ export default function MapPage() {
                             properties.NAME_ID, properties.NAME_EN, properties.NAME_IND
                         ].filter((key): key is string => typeof key === 'string' && key.length > 0)
                             .map(normalizeCountryKey));
-                        return validOverrides.find(([key]) => featureKeys.has(key))?.[1] ?? null;
+                        const featureCountry = COUNTRIES_DATA.find(country => {
+                            const countryIso = normalizeCountryKey(country.iso);
+                            const countryName = normalizeCountryKey(country.country);
+                            return featureIsoKeys.includes(countryIso) ||
+                                featureKeys.has(countryIso) ||
+                                featureKeys.has(countryName);
+                        });
+                        if (featureCountry) {
+                            const countryColor = countryOverrideColors.get(normalizeCountryKey(featureCountry.iso));
+                            if (countryColor) return countryColor;
+                        }
+                        return validOverrides.find(({ alias }) => featureKeys.has(alias))?.color ?? null;
                     };
 
                     let colors: Array<string | null>;
@@ -7003,7 +7281,7 @@ export default function MapPage() {
                 const initialCityOwners = (window as Window & {
                     neosantara_city_owner?: CityOwnerStore;
                 }).neosantara_city_owner || {};
-                wasmModule.set_city_ownership_on_map(Object.values(initialCityOwners));
+                wasmModule.set_city_ownership_on_map(getCanvasCityOwners(initialCityOwners));
 
                 // Muat batas provinsi putus-putus ke dalam map engine secara asynchronous
                 fetch(`/provinces_lines.geojson?v=${Date.now()}`)
@@ -7111,7 +7389,7 @@ export default function MapPage() {
         try {
             const wasmModule = wasmModuleRef.current;
             const clickedCountry = wasmModule?.get_country_at_on_map?.(x, y);
-            const countryName = clickedCountry?.selected_city_owner || clickedCountry?.country || clickedCountry?.name || clickedCountry?.country_name;
+            const countryName = clickedCountry?.country || clickedCountry?.name || clickedCountry?.country_name;
 
             if (!countryName) return;
 
@@ -8446,13 +8724,22 @@ export default function MapPage() {
 
 
             {activeWarAnimation && (() => {
-                const userCountryName = countryDetail?.country || countryDetail?.nama_negara || '';
-                const isUserDefender = areSameWarCountry(
-                    activeWarAnimation.target,
-                    userCountryName,
-                    activeWarAnimation.targetCountryDetail?.iso,
-                    countryDetail?.iso
-                );
+                const userCountryName =
+                    countryDetail?.country ||
+                    countryDetail?.nama_negara ||
+                    countryDetail?.name_id ||
+                    countryDetail?.name_en ||
+                    countryDetail?.nama ||
+                    selectedCountry?.country ||
+                    '';
+                const userCountryIso = selectedCountry?.iso || countryDetail?.iso;
+                const isUserDefender = activeWarAnimation.isUserDefender === true ||
+                    areSameWarCountry(
+                        activeWarAnimation.target,
+                        userCountryName,
+                        activeWarAnimation.targetCountryDetail?.iso,
+                        userCountryIso
+                    );
 
                 return (
                     <WarMap
@@ -8474,7 +8761,7 @@ export default function MapPage() {
                         }}
                         attackerPower={activeWarAnimation.attackerPower ?? 0}
                         targetPower={activeWarAnimation.targetPower ?? 0}
-                        isUserDefender={activeWarAnimation.isPbbCoalition ? isUserDefender : activeWarAnimation.isNpcWar ? false : isUserDefender}
+                        isUserDefender={isUserDefender}
                         isNpcWar={activeWarAnimation.isNpcWar === true}
                         requestedInvasion={activeWarAnimation.requestedInvasion === true}
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
@@ -8516,8 +8803,7 @@ export default function MapPage() {
                                 const isAnnexation = decisionRoll < 0.60;
 
                                 if (isAnnexation) {
-                                    // ANEKSASI (60%): Ubah bendera target & detail kepemilikan menjadi milik penyerang.
-                                    // TANPA mengubah warna canvas peta (skipCanvasColor = true)
+                                    // ANEKSASI (60%): Ubah kepemilikan kota sekaligus warna wilayah peta.
                                     recordCityCapture(
                                         targetCity,
                                         activeWarAnimation.target,
@@ -8525,7 +8811,7 @@ export default function MapPage() {
                                         attackerIso,
                                         getCountryColor(activeWarAnimation.attacker),
                                         activeWarAnimation.isPbbCoalition === true,
-                                        activeWarAnimation.isPbbCoalition !== true,
+                                        false,
                                         activeWarAnimation.pbbLiberationCountry
                                     );
 
@@ -8740,6 +9026,13 @@ export default function MapPage() {
                                 resumeGameTimeAfterWar();
                                 return;
                             }
+
+                            window.dispatchEvent(new CustomEvent('military_operation_resolved', {
+                                detail: {
+                                    targetCountry: activeWarAnimation.target,
+                                    actionType: mappedAction,
+                                },
+                            }));
 
                             setMilitaryAttackRelation(activeWarAnimation.attacker, activeWarAnimation.target, 25);
 

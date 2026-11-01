@@ -46,6 +46,8 @@ struct CachedFeature {
     bbox: [f64; 4],
     paths: RefCell<[Option<Path2d>; 3]>,
     iso: String, // lowercase
+    admin: String,
+    sovereign: String,
     fill: JsValue,
     override_fill: Option<JsValue>,
 }
@@ -139,6 +141,8 @@ struct CityOwnershipData {
     owner_color: String,
     #[serde(default)]
     cell: Vec<[f64; 2]>,
+    #[serde(default)]
+    cells: Vec<Vec<[f64; 2]>>,
 }
 
 struct CachedCityOwnership {
@@ -150,7 +154,7 @@ struct CachedCityOwnership {
     y: f64,
     radius_x: f64,
     radius_y: f64,
-    cell: Vec<(f64, f64)>,
+    cells: Vec<Vec<(f64, f64)>>,
     color: JsValue,
 }
 
@@ -166,6 +170,57 @@ fn point_in_polygon(poly: &[(f64, f64)], px: f64, py: f64) -> bool {
         j = i;
     }
     inside
+}
+
+fn point_in_polygons(polygons: &[Vec<(f64, f64)>], px: f64, py: f64) -> bool {
+    polygons
+        .iter()
+        .filter(|polygon| point_in_polygon(polygon, px, py))
+        .count()
+        % 2
+        == 1
+}
+
+fn normalize_feature_iso(iso: &str, iso_eh: &str) -> String {
+    let normalize_iso2 = |value: &str| {
+        let suffix = value.rsplit('-').next().unwrap_or(value);
+        (suffix.len() == 2 && suffix.bytes().all(|byte| byte.is_ascii_alphabetic()))
+            .then(|| suffix.to_ascii_lowercase())
+    };
+
+    normalize_iso2(iso)
+        .or_else(|| normalize_iso2(iso_eh))
+        .unwrap_or_else(|| iso.to_ascii_lowercase())
+}
+
+fn is_small_feature(bbox: &[f64; 4], scale: f64, threshold: f64) -> bool {
+    bbox[2] >= bbox[0]
+        && bbox[3] >= bbox[1]
+        && (bbox[2] - bbox[0]) * scale <= threshold
+        && (bbox[3] - bbox[1]) * scale <= threshold
+}
+
+fn screen_distance_to_bbox(
+    bbox: &[f64; 4],
+    scale: f64,
+    offset_x: f64,
+    offset_y: f64,
+    mouse_x: f64,
+    mouse_y: f64,
+    horizontal_wrap: bool,
+    world_width: f64,
+) -> f64 {
+    let center_x = (bbox[0] + bbox[2]) * 0.5 * scale + offset_x;
+    let center_y = (bbox[1] + bbox[3]) * 0.5 * scale + offset_y;
+    let mut dx = mouse_x - center_x;
+    if horizontal_wrap && world_width > 0.0 {
+        dx = (dx + world_width * 0.5).rem_euclid(world_width) - world_width * 0.5;
+    }
+    let half_width = (bbox[2] - bbox[0]) * 0.5 * scale;
+    let half_height = (bbox[3] - bbox[1]) * 0.5 * scale;
+    let outside_x = (dx.abs() - half_width).max(0.0);
+    let outside_y = ((mouse_y - center_y).abs() - half_height).max(0.0);
+    (outside_x * outside_x + outside_y * outside_y).sqrt()
 }
 
 struct Styles {
@@ -450,8 +505,23 @@ impl MapEngine {
                 .and_then(|p| p.get("CONTINENT"))
                 .and_then(|v| v.as_str())
                 .unwrap_or("Unknown");
-            let iso = props
-                .and_then(|p| p.get("ISO_A2"))
+            let iso = normalize_feature_iso(
+                props
+                    .and_then(|p| p.get("ISO_A2"))
+                    .and_then(|v| v.as_str())
+                    .unwrap_or(""),
+                props
+                    .and_then(|p| p.get("ISO_A2_EH"))
+                    .and_then(|v| v.as_str())
+                    .unwrap_or(""),
+            );
+            let admin = props
+                .and_then(|p| p.get("ADMIN"))
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_lowercase();
+            let sovereign = props
+                .and_then(|p| p.get("SOVEREIGNT"))
                 .and_then(|v| v.as_str())
                 .unwrap_or("")
                 .to_lowercase();
@@ -477,6 +547,8 @@ impl MapEngine {
                 bbox: fbox,
                 paths,
                 iso,
+                admin,
+                sovereign,
                 fill: JsValue::from_str(continent_color(continent)),
                 override_fill: None,
             });
@@ -848,34 +920,47 @@ impl MapEngine {
             let latitude = city.lat.clamp(-90.0, 90.0);
             let longitude = city.lng.clamp(-180.0, 180.0);
             let longitude_scale = latitude.to_radians().cos().abs().max(0.25);
-            let cell: Vec<(f64, f64)> = if city.cell.len() >= 3 {
-                city.cell
-                    .iter()
-                    .map(|p| {
-                        (
-                            ((p[0].clamp(-180.0, 180.0) + 180.0) / 360.0) * self.width,
-                            ((90.0 - p[1].clamp(-90.0, 90.0)) / 180.0) * self.height,
-                        )
-                    })
-                    .collect()
+            let source_cells = if city.cells.iter().any(|ring| ring.len() >= 3) {
+                city.cells
+            } else if city.cell.len() >= 3 {
+                vec![city.cell]
             } else {
                 Vec::new()
             };
+            let cells: Vec<Vec<(f64, f64)>> = source_cells
+                .into_iter()
+                .filter(|ring| ring.len() >= 3)
+                .map(|ring| {
+                    ring.iter()
+                        .map(|p| {
+                            (
+                                ((p[0].clamp(-180.0, 180.0) + 180.0) / 360.0) * self.width,
+                                ((90.0 - p[1].clamp(-90.0, 90.0)) / 180.0) * self.height,
+                            )
+                        })
+                        .collect()
+                })
+                .collect();
             let city_x = ((longitude + 180.0) / 360.0) * self.width;
             let city_y = ((90.0 - latitude) / 180.0) * self.height;
-            let (extent_x, extent_y) = if cell.is_empty() {
+            let (extent_x, extent_y) = if cells.is_empty() {
                 (
                     self.width * CITY_REGION_RADIUS_DEGREES / longitude_scale / 360.0,
                     self.height * CITY_REGION_RADIUS_DEGREES / 180.0,
                 )
             } else {
-                (
-                    cell.iter().fold(1.0_f64, |m, p| m.max((p.0 - city_x).abs())),
-                    cell.iter().fold(1.0_f64, |m, p| m.max((p.1 - city_y).abs())),
-                )
+                cells
+                    .iter()
+                    .flatten()
+                    .fold((1.0_f64, 1.0_f64), |extent, p| {
+                        (
+                            extent.0.max((p.0 - city_x).abs()),
+                            extent.1.max((p.1 - city_y).abs()),
+                        )
+                    })
             };
             ownership.push(CachedCityOwnership {
-                cell,
+                cells,
                 city_id: city.city_id,
                 country_iso: city.country_iso.to_lowercase(),
                 city_name: city.city_name,
@@ -1344,7 +1429,8 @@ impl MapEngine {
             for &feature_index in &visible {
                 let feature = &self.features[feature_index];
                 for city in self.city_ownership.iter().filter(|city| {
-                    city.country_iso == feature.iso
+                    !city.cells.is_empty()
+                        && city.country_iso == feature.iso
                         && city.x + city.radius_x >= vx0
                         && city.x - city.radius_x <= vx1
                         && city.y + city.radius_y >= vy0
@@ -1359,27 +1445,14 @@ impl MapEngine {
                         self.ctx.clip_with_path_2d(&country_path);
                         self.ctx.set_fill_style(&city.color);
                         self.ctx.begin_path();
-                        if !city.cell.is_empty() {
-                            self.ctx.move_to(city.cell[0].0, city.cell[0].1);
-                            for p in &city.cell[1..] {
+                        for ring in &city.cells {
+                            self.ctx.move_to(ring[0].0, ring[0].1);
+                            for p in &ring[1..] {
                                 self.ctx.line_to(p.0, p.1);
                             }
                             self.ctx.close_path();
-                            self.ctx.fill();
-                        } else if self.ctx
-                            .ellipse(
-                                city.x,
-                                city.y,
-                                city.radius_x,
-                                city.radius_y,
-                                0.0,
-                                0.0,
-                                std::f64::consts::TAU,
-                            )
-                            .is_ok()
-                        {
-                            self.ctx.fill();
                         }
+                        self.ctx.fill();
                         self.ctx.restore();
                     }
                 }
@@ -1632,6 +1705,64 @@ impl MapEngine {
         (x_norm * self.width, y_norm * self.height)
     }
 
+    fn country_for_iso(&self, iso: &str) -> Option<&CachedCountry> {
+        if let Some(country) = self.countries.iter().find(|country| country.iso == iso) {
+            return Some(country);
+        }
+
+        let sovereign = self
+            .features
+            .iter()
+            .find(|feature| feature.iso == iso)
+            .map(|feature| feature.sovereign.as_str())?;
+        if sovereign.is_empty() {
+            return None;
+        }
+
+        let sovereign_iso = self
+            .features
+            .iter()
+            .find(|feature| feature.admin == sovereign)
+            .map(|feature| feature.iso.as_str())?;
+        self.countries
+            .iter()
+            .find(|country| country.iso == sovereign_iso)
+    }
+
+    fn build_capital_result(&self, cap: &CachedCapital, wx: f64, wy: f64) -> JsValue {
+        let Some(country) = self.country_for_iso(&cap.country_iso) else {
+            return JsValue::NULL;
+        };
+        let result = self.build_country_result(country, wx, wy);
+        if let Some(target) = result.dyn_ref::<js_sys::Object>() {
+            let _ = js_sys::Reflect::set(
+                target,
+                &JsValue::from_str("selected_city"),
+                &JsValue::from_str(&cap.name),
+            );
+            if !cap.city_id.is_empty() {
+                let _ = js_sys::Reflect::set(
+                    target,
+                    &JsValue::from_str("selected_city_id"),
+                    &JsValue::from_str(&cap.city_id),
+                );
+            }
+            let _ = js_sys::Reflect::set(
+                target,
+                &JsValue::from_str("is_capital"),
+                &JsValue::from_bool(cap.is_capital),
+            );
+            if let Some(owner_country) = cap.owner_country.as_deref() {
+                let _ = js_sys::Reflect::set(
+                    target,
+                    &JsValue::from_str("selected_city_owner"),
+                    &JsValue::from_str(owner_country),
+                );
+            }
+        }
+        result
+    }
+
     fn build_country_result(&self, c: &CachedCountry, wx: f64, wy: f64) -> JsValue {
         let raw_val = &c.raw;
         let mut nearest_city: Option<(&CachedCapital, f64)> = None;
@@ -1655,10 +1786,10 @@ impl MapEngine {
                 if city.country_iso != *c_iso {
                     continue;
                 }
-                let normalized_distance = if city.cell.is_empty() {
+                let normalized_distance = if city.cells.is_empty() {
                     (city.x - wx).powi(2) / city.radius_x.powi(2)
                         + (city.y - wy).powi(2) / city.radius_y.powi(2)
-                } else if point_in_polygon(&city.cell, wx, wy) {
+                } else if point_in_polygons(&city.cells, wx, wy) {
                     ((city.x - wx).powi(2) + (city.y - wy).powi(2)).sqrt() / 1.0e6
                 } else {
                     f64::INFINITY
@@ -1731,41 +1862,33 @@ impl MapEngine {
         }
         let wy = (mouse_y - self.offset_y) / self.scale;
 
-        // 1. Prioritas Utama untuk Microstates & Enclave (Vatikan, San Marino, Monako, Liechtenstein, dsb):
-        // Jika kursor pengguna berada dekat (dalam radius klik 18px layar) dari koordinat Vatikan/microstate,
-        // langsung pilih negara mikro tersebut tanpa terhalang atau tertelan oleh poligon Italia!
-        let micro_threshold = 22.0;
-        let mut best_micro: Option<(&CachedCountry, f64)> = None;
-        for c in &self.countries {
-            // Deteksi negara mikro / pulau kecil (Vatikan 'va', San Marino 'sm', Monako 'mc', dsb)
-            let is_micro = matches!(c.iso.as_str(), "va" | "sm" | "mc" | "li" | "ad" | "mt" | "sg" | "bh" | "tv" | "nr");
-            if is_micro {
-                if let (Some(lat), Some(lng)) = (c.lat, c.lng) {
-                    let (x, y) = self.project(lng, lat);
-                    let screen_x = x * self.scale + self.offset_x;
-                    let screen_y = y * self.scale + self.offset_y;
-                    let dx = if self.horizontal_wrap {
-                        let world_width = self.width * self.scale;
-                        (mouse_x - screen_x + world_width / 2.0).rem_euclid(world_width)
-                            - world_width / 2.0
-                    } else {
-                        mouse_x - screen_x
-                    };
-                    let dy = mouse_y - screen_y;
-                    let dist = (dx * dx + dy * dy).sqrt();
-                    if dist <= micro_threshold {
-                        if best_micro.is_none() || dist < best_micro.unwrap().1 {
-                            best_micro = Some((c, dist));
-                        }
-                    }
-                }
+        // City flag markers are drawn above the map; resolve them before the underlying country.
+        let marker_hit_radius = 12.0;
+        let world_width = self.width * self.scale;
+        let mut nearest_marker: Option<(&CachedCapital, f64)> = None;
+        for capital in &self.capitals {
+            let screen_x = capital.x * self.scale + self.offset_x;
+            let screen_y = capital.y * self.scale + self.offset_y;
+            let mut dx = mouse_x - screen_x;
+            if self.horizontal_wrap && world_width > 0.0 {
+                dx = (dx + world_width * 0.5).rem_euclid(world_width) - world_width * 0.5;
+            }
+            let dy = mouse_y - screen_y;
+            let distance = (dx * dx + dy * dy).sqrt();
+            if distance <= marker_hit_radius
+                && nearest_marker.map_or(true, |(_, nearest_distance)| distance < nearest_distance)
+            {
+                nearest_marker = Some((capital, distance));
             }
         }
-        if let Some((c, _)) = best_micro {
-            return self.build_country_result(c, wx, wy);
+        if let Some((capital, _)) = nearest_marker {
+            let result = self.build_capital_result(capital, wx, wy);
+            if !result.is_null() {
+                return result;
+            }
         }
 
-        // 2. Polygon-based detection (sudah diurutkan dari area poligon terkecil ke terbesar):
+        // 1. Polygon-based detection (sudah diurutkan dari area poligon terkecil ke terbesar):
         // Lengkap dengan pengecekan Hole (interior ring): jika klik berada di dalam lubang poligon
         // (contohnya lubang Vatikan & San Marino di daratan Italia), maka Italia TIDAK akan mengklaim klik tersebut!
         for &f_idx in &self.feature_click_order {
@@ -1792,6 +1915,43 @@ impl MapEngine {
                     return self.build_country_result(c, wx, wy);
                 }
             }
+        }
+
+        // 2. Small-island tolerance: inspect each polygon component rather than the country's
+        // combined bounds, which can span a large archipelago.
+        let micro_threshold = 22.0;
+        let world_width = self.width * self.scale;
+        let mut best_small_feature: Option<(&CachedCountry, f64)> = None;
+        for feature in &self.features {
+            let Some(country) = self.countries.iter().find(|country| country.iso == feature.iso) else {
+                continue;
+            };
+            for polygon in &feature.polys {
+                let Some(outer) = polygon.first() else {
+                    continue;
+                };
+                if !is_small_feature(&outer.bbox, self.scale, micro_threshold) {
+                    continue;
+                }
+                let distance = screen_distance_to_bbox(
+                    &outer.bbox,
+                    self.scale,
+                    self.offset_x,
+                    self.offset_y,
+                    mouse_x,
+                    mouse_y,
+                    self.horizontal_wrap,
+                    world_width,
+                );
+                if distance <= micro_threshold
+                    && best_small_feature.map_or(true, |(_, best_distance)| distance < best_distance)
+                {
+                    best_small_feature = Some((country, distance));
+                }
+            }
+        }
+        if let Some((country, _)) = best_small_feature {
+            return self.build_country_result(country, wx, wy);
         }
 
         // 3. Fallback to dot-based detection (for tiny islands & uncaptured coords)
@@ -2051,4 +2211,48 @@ pub fn start_map_engine(
     window.request_animation_frame(g.borrow().as_ref().unwrap().as_ref().unchecked_ref())?;
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{is_small_feature, normalize_feature_iso, screen_distance_to_bbox};
+
+    #[test]
+    fn normalizes_prefixed_taiwan_iso_code() {
+        assert_eq!(normalize_feature_iso("CN-TW", "TW"), "tw");
+    }
+
+    #[test]
+    fn uses_valid_iso_alternate_when_primary_is_a_placeholder() {
+        assert_eq!(normalize_feature_iso("-99", "AU"), "au");
+    }
+
+    #[test]
+    fn preserves_non_country_iso_placeholders() {
+        assert_eq!(normalize_feature_iso("-99", "-99"), "-99");
+    }
+
+    #[test]
+    fn identifies_small_features_using_screen_scale() {
+        assert!(is_small_feature(&[0.0, 0.0, 4.0, 5.0], 2.0, 10.0));
+        assert!(!is_small_feature(&[0.0, 0.0, 6.0, 5.0], 2.0, 10.0));
+        assert!(!is_small_feature(&[4.0, 0.0, 3.0, 5.0], 1.0, 10.0));
+    }
+
+    #[test]
+    fn measures_distance_to_small_polygon_bounds() {
+        let bbox = [10.0, 20.0, 14.0, 24.0];
+        assert_eq!(
+            screen_distance_to_bbox(&bbox, 2.0, 0.0, 0.0, 24.0, 44.0, false, 0.0),
+            0.0
+        );
+        assert_eq!(
+            screen_distance_to_bbox(&bbox, 2.0, 0.0, 0.0, 40.0, 44.0, false, 0.0),
+            12.0
+        );
+        assert_eq!(
+            screen_distance_to_bbox(&bbox, 2.0, 0.0, 0.0, 1018.0, 44.0, true, 1000.0),
+            2.0
+        );
+    }
 }
