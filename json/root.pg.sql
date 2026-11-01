@@ -474,7 +474,7 @@ VALUES
 (33529, 'guam', 'Guam', 'gu', 67, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
 (70006, 'marshall', 'Marshall', 'mh', 52, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
 (84512, 'samoa_amerika', 'Samoa amerika', 'ws', 56, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
-(70012, 'tahiti', 'Tahiti', 'pf', 64, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(99659, 'tahiti', 'Tahiti', 'pf', 64, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
 (70002, 'guiana_prancis', 'Guiana prancis', 'gf', 63, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
 (93060, 'chad', 'Chad', 'td', 35, 'Ekonomi Komando (Command Economy)', 'Terpusat', 'Terpusat', 'Terpusat', 'Terpusat', 'Terpusat'),
 (67981, 'ceko', 'Ceko', 'cz', 72, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
@@ -58385,4 +58385,3 @@ INSERT INTO database_building_metadata (source_file, file_order, entry_key, entr
 ('json/semua_fitur_negara/2_pertahanan/3_manajemen_pertahanan/metadata_manajemen.pg.sql', 16, 'hangar_tank', 3, '{"key":"3_hangar_tank","dataKey":"hangar_tank","groupId":"pertahanan","label":"Hangar Tank","deskripsi":"Garasi Tempur Lapis Baja","biaya_pembangunan":31875,"waktu_pembangunan":30,"kapasitas":3000,"satuan_kapasitas":"Unit Kendaraan Tempur Lapis Baja","konsumsi_listrik":0.0075}'::jsonb),
 ('json/semua_fitur_negara/2_pertahanan/3_manajemen_pertahanan/metadata_manajemen.pg.sql', 16, 'pangkalan_udara', 4, '{"key":"6_pangkalan_udara","dataKey":"pangkalan_udara","groupId":"pertahanan","label":"Pangkalan Udara","deskripsi":"Fasilitas Dirgantara & Armada Udara","biaya_pembangunan":67500,"waktu_pembangunan":60,"kapasitas":500,"satuan_kapasitas":"Unit Armada Udara","konsumsi_listrik":0.025}'::jsonb),
 ('json/semua_fitur_negara/2_pertahanan/3_manajemen_pertahanan/metadata_manajemen.pg.sql', 16, 'pangkalan_laut', 5, '{"key":"7_pangkalan_laut","dataKey":"pangkalan_laut","groupId":"pertahanan","label":"Pangkalan Laut","deskripsi":"Fasilitas Maritim & Kapal Perang","biaya_pembangunan":82500,"waktu_pembangunan":120,"kapasitas":50,"satuan_kapasitas":"Unit Kapal Perang","konsumsi_listrik":0.03}'::jsonb);
-

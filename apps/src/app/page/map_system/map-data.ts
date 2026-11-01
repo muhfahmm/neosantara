@@ -1877,7 +1877,7 @@ export const COUNTRIES_DATA: CountryData[] = [
     "continent": "North America",
     "color": "#DE6B05"
   },
-  {"id": 70010,
+  {"id": 99657,
     "country": "Sao Tome dan Principe",
     "capital": "São Tomé",
     "iso": "st",
@@ -1886,7 +1886,7 @@ export const COUNTRIES_DATA: CountryData[] = [
     "continent": "Africa",
     "color": "#F202B8"
   },
-  {"id": 70011,
+  {"id": 99658,
     "country": "Swiss",
     "capital": "Bern",
     "iso": "ch",
@@ -1895,7 +1895,7 @@ export const COUNTRIES_DATA: CountryData[] = [
     "continent": "Europe",
     "color": "#D9FFB6"
   },
-  {"id": 70012,
+  {"id": 99659,
     "country": "Tahiti",
     "capital": "Papeete",
     "iso": "pf",

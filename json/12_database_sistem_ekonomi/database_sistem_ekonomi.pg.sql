@@ -226,7 +226,7 @@ VALUES
 (33529, 'guam', 'Guam', 'gu', 67, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
 (70006, 'marshall', 'Marshall', 'mh', 52, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
 (84512, 'samoa_amerika', 'Samoa amerika', 'ws', 56, 'Ekonomi Campuran (Mixed Economy)', 'Campuran', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
-(70012, 'tahiti', 'Tahiti', 'pf', 64, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
+(99659, 'tahiti', 'Tahiti', 'pf', 64, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
 (70002, 'guiana_prancis', 'Guiana prancis', 'gf', 63, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
 (93060, 'chad', 'Chad', 'td', 35, 'Ekonomi Komando (Command Economy)', 'Terpusat', 'Terpusat', 'Terpusat', 'Terpusat', 'Terpusat'),
 (67981, 'ceko', 'Ceko', 'cz', 72, 'Pasar Bebas Terregulasi (Regulated Market)', 'Pasar Bebas', 'Terpusat', 'Pasar Bebas', 'Pasar Bebas', 'Pasar Bebas'),
