@@ -7,6 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Flag,
   Trophy,
@@ -17,6 +18,7 @@ import {
   X,
 } from 'lucide-react';
 import { COUNTRIES_DATA, CAPITALS_DATA } from '@/app/page/map_system/map-data';
+import { getArmadaPowerSummary } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic';
 import NotebookModalWrapper from '../navigasi_menu/2_navigasi_bawah/NotebookModalWrapper';
 import { resolveRequestedInvasionOutcome } from '../detail_negara/3_operasi_militer/6_minta_serang_negara/requestedInvasionLogic';
 import PerbandinganPasukan from '../detail_negara/3_operasi_militer/1_serang_negara/perbandingan_pasukan';
@@ -27,6 +29,8 @@ import {
   getSimulationDayPosition,
   getSimulationMillisecondsPerDay,
   isSimulationTimePaused,
+  MAX_TRAVEL_DAYS,
+  MIN_TRAVEL_DAYS,
 } from './time_logic';
 import { initializeRouteMathRust } from './routeMathRust';
 import {
@@ -532,19 +536,49 @@ export interface BuildWarPathInput {
 export function buildWarPath(input: BuildWarPathInput): WarPath | null {
   const { attacker, target } = input;
   const travelEstimate = estimateTravelTime(attacker.country, target.country);
-  if (!travelEstimate) {
-    console.error('[WarPath] No travel estimate available for route', {
+  const hasValidCoordinates = (point: CapitalPoint) =>
+    Number.isFinite(point.lat) &&
+    Number.isFinite(point.lng) &&
+    point.lat >= -90 &&
+    point.lat <= 90 &&
+    point.lng >= -180 &&
+    point.lng <= 180 &&
+    (point.lat !== 0 || point.lng !== 0);
+
+  if (!travelEstimate && (!hasValidCoordinates(attacker) || !hasValidCoordinates(target))) {
+    console.error('[WarPath] Cannot build route without valid country coordinates', {
       attackerCountry: attacker.country,
       targetCountry: target.country,
+      attackerCoordinates: { lat: attacker.lat, lng: attacker.lng },
+      targetCoordinates: { lat: target.lat, lng: target.lng },
     });
     return null;
   }
+
+  const travelDays = travelEstimate?.days ?? (() => {
+    const radians = (degrees: number) => degrees * Math.PI / 180;
+    const latitudeDifference = radians(target.lat - attacker.lat);
+    const longitudeDifference = radians(target.lng - attacker.lng);
+    const haversine =
+      Math.sin(latitudeDifference / 2) ** 2 +
+      Math.cos(radians(attacker.lat)) *
+        Math.cos(radians(target.lat)) *
+        Math.sin(longitudeDifference / 2) ** 2;
+    const distanceKm = 6371 * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
+    const normalizedDistance = Math.min(1, distanceKm / (Math.PI * 6371));
+
+    console.warn('[WarPath] Using coordinate-based travel estimate', {
+      attackerCountry: attacker.country,
+      targetCountry: target.country,
+    });
+    return Math.round(MIN_TRAVEL_DAYS + normalizedDistance * (MAX_TRAVEL_DAYS - MIN_TRAVEL_DAYS));
+  })();
 
   return {
     id: `${attacker.country}-${target.country}-${Date.now()}`,
     attacker,
     target,
-    travelDays: travelEstimate.days,
+    travelDays,
     createdAt: Date.now(),
   };
 }
@@ -556,6 +590,7 @@ export function buildWarPath(input: BuildWarPathInput): WarPath | null {
 export interface WarResultInput {
   attackerPower: number;
   targetPower: number;
+  attackerDeploymentPowerRatio?: number;
   roll?: number;
   requestedInvasion?: boolean;
   attackerWinRoll?: number;
@@ -618,9 +653,9 @@ function calculateUnitLosses(units: WarUnit[], lossRatio: number) {
 export function computeWarResult(input: WarResultInput): WarResultOutput {
   const { attackerPower, targetPower, isUserDefender = false, isNpcWar = false } = input;
 
-  let deployedPowerRatio = 1.0;
+  let deployedPowerRatio = input.attackerDeploymentPowerRatio ?? 1.0;
   // Perang antar NPC/mandat tidak boleh dipengaruhi konfigurasi pasukan milik user.
-  if (!isNpcWar && typeof window !== 'undefined') {
+  if (input.attackerDeploymentPowerRatio === undefined && !isNpcWar && typeof window !== 'undefined') {
     try {
       const saved = localStorage.getItem('deployed_units_config');
       if (saved) {
@@ -715,6 +750,7 @@ interface WarMapProps {
   targetPower: number;
   attackerBonus?: number;
   defenderBonus?: number;
+  deployedUnitsConfig?: Record<string, number>;
   isUserDefender?: boolean;
   isNpcWar?: boolean;
   requestedInvasion?: boolean;
@@ -722,13 +758,14 @@ interface WarMapProps {
   deployedAttackerUnits?: Record<string, number>;
   onAnalysisVisibilityChange?: (isVisible: boolean) => void;
   onAttackerForcesModalVisibilityChange?: (isVisible: boolean) => void;
-  onClose: () => void;
+  onClose: (battleOutcome?: Pick<WarResultOutput, 'result' | 'attackerLossRatio'>) => void;
   onResolve: (payload: {
     result: WarResult;
     action: WarAction;
     path: WarPath;
     isUserDefender?: boolean;
     isPbbCoalition?: boolean;
+    attackerLossRatio?: number;
   }) => void;
   onAutoResolve?: (result: WarResult) => void;
 }
@@ -741,6 +778,7 @@ export default function WarMap({
   targetPower,
   attackerBonus = 1,
   defenderBonus = 1,
+  deployedUnitsConfig: committedDeploymentConfig,
   isUserDefender: isUserDefenderProp,
   isNpcWar = false,
   requestedInvasion = false,
@@ -859,10 +897,20 @@ export default function WarMap({
 
   const battleOutcome = useMemo(() => {
     if (!isOpen) return null;
+    const attackerBreakdown = getArmadaPowerSummary(attacker).breakdown;
+    const totalAttackerPower = attackerBreakdown.reduce((total, unit) => total + unit.totalPower, 0);
+    const deployedAttackerPower = attackerBreakdown.reduce((total, unit) => {
+      const deploymentKey = unit.dataKey === 'pasukan_infanteri' ? 'barak' : unit.dataKey;
+      const percentage = committedDeploymentConfig?.[deploymentKey] ?? 0;
+      return total + unit.totalPower * Math.max(0, Math.min(100, percentage)) / 100;
+    }, 0);
     return computeWarResult({
       attackerPower:
         (Number((attacker as Record<string, unknown>).pbbCoalitionPower) || attackerPower) *
         effectiveAttackerDeploymentPercent / 100,
+      attackerDeploymentPowerRatio: !isAiAttacker && !isPbbCoalition && totalAttackerPower > 0
+        ? deployedAttackerPower / totalAttackerPower
+        : undefined,
       targetPower,
       attackerBonus,
       defenderBonus,
@@ -872,9 +920,10 @@ export default function WarMap({
       attackerWinRoll: requestedInvasionRollRef.current,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, attackerPower, effectiveAttackerDeploymentPercent, targetPower, attackerBonus, defenderBonus, isUserDefender, isNpcWar, isPbbCoalition, requestedInvasion]);
+  }, [isOpen, attacker, attackerPower, committedDeploymentConfig, effectiveAttackerDeploymentPercent, targetPower, attackerBonus, defenderBonus, isUserDefender, isNpcWar, isPbbCoalition, requestedInvasion]);
 
   const deploymentConfig = useMemo(() => {
+    if (committedDeploymentConfig) return committedDeploymentConfig;
     if (typeof window === 'undefined') return {};
     try {
       const saved = window.localStorage.getItem('deployed_units_config');
@@ -887,7 +936,7 @@ export default function WarMap({
       console.error('Gagal membaca konfigurasi pengerahan unit untuk laporan kerugian.', error);
       return {};
     }
-  }, []);
+  }, [committedDeploymentConfig]);
 
   const attackerLosses = useMemo(() => {
     const units = getWarUnitComposition(
@@ -909,15 +958,18 @@ export default function WarMap({
   }, [target, deploymentConfig, isUserDefender, battleOutcome]);
 
   const attackerForces = useMemo(
-    () => getWarUnitComposition(attacker, {}, false, deployedAttackerUnits)
-      .map(unit => ({
-        ...unit,
-        quantity: deployedAttackerUnits
-          ? unit.quantity
-          : Math.round(unit.quantity * effectiveAttackerDeploymentPercent / 100),
-      }))
-      .filter(unit => unit.quantity > 0),
-    [attacker, deployedAttackerUnits, effectiveAttackerDeploymentPercent]
+    () => deployedAttackerUnits
+      ? getWarUnitComposition(attacker, {}, false, deployedAttackerUnits)
+        .filter(unit => unit.quantity > 0)
+      : !isAiAttacker && !isPbbCoalition
+        ? getWarUnitComposition(attacker, deploymentConfig, true)
+        : getWarUnitComposition(attacker, {}, false)
+          .map(unit => ({
+            ...unit,
+            quantity: Math.round(unit.quantity * effectiveAttackerDeploymentPercent / 100),
+          }))
+          .filter(unit => unit.quantity > 0),
+    [attacker, deployedAttackerUnits, deploymentConfig, isAiAttacker, isPbbCoalition, effectiveAttackerDeploymentPercent]
   );
   const attackerForceGroups = useMemo(
     () => [
@@ -1000,6 +1052,8 @@ export default function WarMap({
       updateOverlayGeometry(geo);
     };
     refreshCameraGeometry();
+    const initialRefreshFrame = requestAnimationFrame(refreshCameraGeometry);
+    const initialRefreshTimer = window.setTimeout(refreshCameraGeometry, 250);
     window.addEventListener('neosantara_map_camera', refreshCameraGeometry);
 
     const stopLoop = () => {
@@ -1054,6 +1108,8 @@ export default function WarMap({
     startLoop();
     return () => {
       stopLoop();
+      cancelAnimationFrame(initialRefreshFrame);
+      window.clearTimeout(initialRefreshTimer);
       window.removeEventListener('neosantara_map_camera', refreshCameraGeometry);
       window.removeEventListener('neosantara:simulation-clock-state', handleClockState);
     };
@@ -1067,7 +1123,7 @@ export default function WarMap({
         autoResolveReportedRef.current = true;
         onAutoResolveRef.current?.(battleOutcome.result);
       }
-      const closeTimer = setTimeout(() => onCloseRef.current(), 1300);
+      const closeTimer = setTimeout(() => onCloseRef.current(battleOutcome), 1300);
       const flashTimer = setTimeout(() => setShowFlash(false), 500);
       return () => {
         clearTimeout(closeTimer);
@@ -1088,9 +1144,15 @@ export default function WarMap({
     (action: WarAction) => {
       if (!warPath || !result) return;
       // 👈 Sertakan isPbbCoalition ke dalam payload
-      onResolve({ result, action, path: warPath, isPbbCoalition });
+      onResolve({
+        result,
+        action,
+        path: warPath,
+        isPbbCoalition,
+        attackerLossRatio: battleOutcome?.attackerLossRatio,
+      });
     },
-    [warPath, result, onResolve, isPbbCoalition]
+    [warPath, result, onResolve, isPbbCoalition, battleOutcome]
   );
 
   const handleAutoResult = useCallback(() => {
@@ -1107,7 +1169,8 @@ export default function WarMap({
   return (
     <>
       {(phase === 'travel' || phase === 'impact') && (
-        <div className="fixed inset-0 z-[10] pointer-events-none font-sans select-none overflow-hidden">
+        typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[100000010] pointer-events-none font-sans select-none overflow-hidden">
           <svg
             className="absolute inset-0 w-full h-full pointer-events-none"
             viewBox={VB}
@@ -1333,7 +1396,9 @@ export default function WarMap({
           {showFlash && (
             <div className="absolute inset-0 bg-white/70 pointer-events-none animate-[warFlash_0.6s_ease-out_forwards]" />
           )}
-        </div>
+        </div>,
+        document.body
+        )
       )}
 
       {isAttackerForcesModalVisible && (
@@ -1405,7 +1470,7 @@ export default function WarMap({
                   <strong className="mr-1">Catatan:</strong>
                   {canViewAttackerForces
                     ? `${isPbbCoalition ? 'Pasukan Gabungan PBB' : 'Negara penyerang'} mengerahkan ${effectiveAttackerDeploymentPercent}% dari armadanya untuk operasi ini. Persentase pengerahan dipilih secara acak antara 50% dan 75%.`
-                    : 'Seluruh pasukan penyerang ditampilkan sesuai komposisi armada yang dikerahkan.'}
+                    : 'Jumlah unit menyesuaikan persentase pengerahan yang Anda pilih.'}
                 </aside>
             </div>
           </section>
@@ -1428,7 +1493,7 @@ export default function WarMap({
           isUserDefender={isUserDefender}
           isCoalitionForce={isPbbCoalition}
           onAutoResult={handleAutoResult}
-          onClose={onClose}
+          onClose={() => onClose(battleOutcome ?? undefined)}
         />
       )}
 

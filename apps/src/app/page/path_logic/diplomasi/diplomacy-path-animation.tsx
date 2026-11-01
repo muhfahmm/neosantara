@@ -1,6 +1,7 @@
 'use client';
 
 import React, { type ComponentType, useEffect, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { initializeRouteMathRust } from '../routeMathRust';
 import {
   buildCapitalPoint,
@@ -192,8 +193,8 @@ export default function DiplomacyPathAnimation({
 
   if (!sender || !target || !travelEstimate) return null;
 
-  return (
-    <div className="fixed inset-0 z-10 pointer-events-none overflow-hidden select-none">
+  const overlay = (
+    <div className={`fixed inset-0 ${kind === 'serang-negara' ? 'z-[100000020]' : 'z-10'} pointer-events-none overflow-hidden select-none`}>
       <svg ref={svgRef} className="absolute inset-0 h-full w-full" viewBox="0 0 1 1">
         <defs>
           <filter id={`diplo-blur-${kind}`} x="-20%" y="-20%" width="140%" height="140%">
@@ -280,4 +281,10 @@ export default function DiplomacyPathAnimation({
       `}</style>
     </div>
   );
+
+  if (kind === 'serang-negara' && typeof document !== 'undefined') {
+    return createPortal(overlay, document.body);
+  }
+
+  return overlay;
 }

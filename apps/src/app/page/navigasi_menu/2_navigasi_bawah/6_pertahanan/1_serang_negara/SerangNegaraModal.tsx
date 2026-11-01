@@ -16,6 +16,7 @@ import {
   type ActiveMilitaryDeployment,
 } from "./militaryDeploymentStore";
 import SeranganAktifModal from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/SeranganAktifModal";
+import { applyWarLossesToUserArmada } from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine";
 
 interface ModalProps {
   isOpen: boolean;
@@ -45,7 +46,6 @@ export default function SerangNegaraModal({
   isOpen, 
   onClose, 
   countryDetail, 
-  setCountryDetail, 
   prefetchedAllCountries,
 }: ModalProps) {
   // 🔥 State untuk menampung target yang dipilih dan membuka modal serang
@@ -276,7 +276,19 @@ export default function SerangNegaraModal({
       return;
     }
 
-    const attackId = `attack-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const attackId = `attack-${crypto.randomUUID()}`;
+    const attackerDetailBeforeDeployment = countryDetail;
+    const { updatedDetail, losses } = applyWarLossesToUserArmada(
+      attackerDetailBeforeDeployment,
+      1,
+      false,
+      selection.deploymentPercent,
+    );
+    if (losses.length === 0) {
+      console.error("Serangan dibatalkan karena stok pasukan yang dipilih sudah habis.");
+      return;
+    }
+
     const deployment: ActiveMilitaryDeployment = {
       attackId,
       attackerCountry: selectedCountryName,
@@ -285,13 +297,16 @@ export default function SerangNegaraModal({
       deploymentPercent: selection.deploymentPercent,
     };
     saveActiveMilitaryDeployment(deployment);
-    const availableCountryDetail = createAvailableCountryDetail(countryDetail, selection.availableUnits);
-    handleLaunchAttack(attackId, availableCountryDetail);
+    const deployedCountryDetail = createAvailableCountryDetail(attackerDetailBeforeDeployment, selection.deployedUnits);
+    handleLaunchAttack(attackId, deployedCountryDetail, attackerDetailBeforeDeployment, updatedDetail, selection.deploymentPercent);
   };
 
   const handleLaunchAttack = (
     attackId?: string,
     attackerCountryDetail?: Record<string, unknown>,
+    committedArmySnapshot?: Record<string, unknown>,
+    committedArmyDetail?: Record<string, unknown>,
+    deployedUnitsConfig?: Record<string, number>,
   ) => {
     if (!selectedTarget) return;
 
@@ -308,9 +323,13 @@ export default function SerangNegaraModal({
             attacker: selectedCountryName,
             target: selectedTarget.countryName,
             attackId,
-            attackerCountryDetail: attackerCountryDetail || undefined,
+            attackerCountryDetail: committedArmySnapshot || attackerCountryDetail || undefined,
             playerPower: attackerPower,
             targetPower,
+            committedArmySnapshot,
+            committedArmyDetail,
+            troopsCommitted: Boolean(committedArmySnapshot && committedArmyDetail),
+            deployedUnitsConfig,
           },
         })
       );
@@ -500,7 +519,7 @@ export default function SerangNegaraModal({
             setIsLaunchConfirmationOpen(false);
             setIsSerangModalOpen(true);
           }}
-          onConfirm={handleLaunchAttack}
+          onConfirm={() => handleLaunchAttack()}
         />
       )}
       {selectedTarget && battleOutcome !== null && (
