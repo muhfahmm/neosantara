@@ -1,7 +1,7 @@
 // detail path: c:\EM\apps\src\app\page\map_system\map-system.tsx
 'use client';
 
-import React, { memo, startTransition, useCallback, useState, useEffect, useRef } from 'react';
+import React, { memo, startTransition, useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import {
@@ -2904,6 +2904,67 @@ export default function MapPage() {
     const [activeWarAnimation, setActiveWarAnimation] = useState<any>(null);
     const activeWarAnimationRef = useRef<any>(null);
     activeWarAnimationRef.current = activeWarAnimation;
+    const warMapAttacker = useMemo(() => {
+        if (!activeWarAnimation) return null;
+        const userCountryName =
+            countryDetail?.country ||
+            countryDetail?.nama_negara ||
+            countryDetail?.name_id ||
+            countryDetail?.name_en ||
+            countryDetail?.nama ||
+            selectedCountry?.country ||
+            '';
+        return {
+            ...(activeWarAnimation.attackerCountryDetail || (
+                areSameWarCountry(
+                    activeWarAnimation.attacker,
+                    userCountryName,
+                    undefined,
+                    countryDetail?.iso
+                ) ? countryDetail : {}
+            )),
+            ...(buildCapitalPoint(activeWarAnimation.attacker) || {
+                country: activeWarAnimation.attacker,
+                capital: activeWarAnimation.attacker,
+                lat: 0,
+                lng: 0,
+            }),
+        };
+    }, [activeWarAnimation, countryDetail, selectedCountry?.country]);
+    const warMapTarget = useMemo(() => {
+        if (!activeWarAnimation) return null;
+        const userCountryName =
+            countryDetail?.country ||
+            countryDetail?.nama_negara ||
+            countryDetail?.name_id ||
+            countryDetail?.name_en ||
+            countryDetail?.nama ||
+            selectedCountry?.country ||
+            '';
+        return {
+            ...(activeWarAnimation.targetCountryDetail || (
+                areSameWarCountry(
+                    activeWarAnimation.target,
+                    userCountryName,
+                    activeWarAnimation.targetCountryDetail?.iso,
+                    countryDetail?.iso
+                ) ? countryDetail : {}
+            )),
+            ...(buildCapitalPoint(activeWarAnimation.target) || {
+                country: activeWarAnimation.target,
+                capital: activeWarAnimation.target,
+                lat: 0,
+                lng: 0,
+            }),
+            ...(activeWarAnimation.targetCityId ? {
+                cityId: activeWarAnimation.targetCityId,
+                cityName: activeWarAnimation.targetCityName,
+                cityIsCapital: activeWarAnimation.targetCityIsCapital,
+                lat: activeWarAnimation.targetCityLat,
+                lng: activeWarAnimation.targetCityLng,
+            } : {}),
+        };
+    }, [activeWarAnimation, countryDetail, selectedCountry?.country]);
     const [isWarAnalysisActive, setIsWarAnalysisActive] = useState(false);
     const [isAttackerForcesModalOpen, setIsAttackerForcesModalOpen] = useState(false);
     const handleWarAnalysisVisibilityChange = useCallback((isVisible: boolean) => {
@@ -2929,20 +2990,49 @@ export default function MapPage() {
 
     const npcWarQueueRunningRef = useRef(false);
 
+    const logWarDebug = useCallback((tag: string, data: unknown) => {
+        if (process.env.NODE_ENV !== 'development') return;
+        const entry = { timestamp: new Date().toISOString(), tag, data };
+        console.log('[WARDBG]', tag, data);
+        void fetch('/api/wardbg', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(entry),
+            keepalive: true,
+        }).catch(error => console.warn('[WARDBG] Gagal mengirim diagnostik', error));
+    }, []);
+
     useEffect(() => {
         const handleStartWarAnimation = async (event: Event) => {
             const detail = (event as CustomEvent).detail;
+            logWarDebug('start_war_animation received', {
+                attacker: detail?.attacker,
+                target: detail?.target,
+                isNpcWar: detail?.isNpcWar,
+                isPbbCoalition: detail?.isPbbCoalition,
+                troopsCommitted: detail?.troopsCommitted,
+                attackerIso: detail?.attackerCountryDetail?.iso,
+                playerPower: detail?.playerPower,
+                attackerPower: detail?.attackerPower,
+                deployedUnitsConfig: detail?.deployedUnitsConfig,
+            });
             if (detail?.isPbbCoalition && hasActiveGlobalWarBan()) {
+                logWarDebug('war event rejected', { reason: 'global-war-ban' });
                 console.warn('[WarAnimation] Global war ban active; refusing PBB coalition attack.');
                 return;
             }
             if (activeWarAnimationRef.current) {
                 // Jangan batalkan animasi perang yang sedang berjalan, masukkan ke antrean!
+                logWarDebug('war event queued', {
+                    attacker: detail?.attacker,
+                    target: detail?.target,
+                });
                 setNpcWarQueue(previous => [...previous, detail]);
                 return;
             }
             if (typeof detail?.attacker !== 'string' || !detail.attacker.trim() ||
                 typeof detail?.target !== 'string' || !detail.target.trim()) {
+                logWarDebug('war event rejected', { reason: 'invalid-attacker-or-target', detail });
                 console.error('[WarAnimation] Invalid attacker or target name', detail);
                 return;
             }
@@ -2952,6 +3042,11 @@ export default function MapPage() {
                 detail.attackerCountryDetail?.iso,
                 detail.targetCountryDetail?.iso
             )) {
+                logWarDebug('war event rejected', {
+                    attacker: detail.attacker,
+                    target: detail.target,
+                    reason: 'attacker-equals-target',
+                });
                 console.error('[WarAnimation] Blocked attack targeting the attacker country itself', {
                     attacker: detail.attacker,
                     target: detail.target,
@@ -2964,11 +3059,14 @@ export default function MapPage() {
                 countryDetail?.name_id ||
                 countryDetail?.name_en ||
                 countryDetail?.nama;
-            const isPlayerAttacker = Boolean(playerCountryName) && areSameWarCountry(
-                detail.attacker,
-                playerCountryName || '',
-                detail.attackerCountryDetail?.iso,
-                selectedCountry?.iso || countryDetail?.iso
+            const isPlayerAttacker = Boolean(playerCountryName) && (
+                detail.troopsCommitted === true ||
+                areSameWarCountry(
+                    detail.attacker,
+                    playerCountryName || '',
+                    detail.attackerCountryDetail?.iso,
+                    selectedCountry?.iso || countryDetail?.iso
+                )
             );
             const isPlayerDefender = Boolean(playerCountryName) && areSameWarCountry(
                 detail.target,
@@ -2977,6 +3075,17 @@ export default function MapPage() {
                 selectedCountry?.iso || countryDetail?.iso
             );
             const isNpcWar = !isPlayerAttacker && !isPlayerDefender;
+            logWarDebug('war participants identified', {
+                attacker: detail.attacker,
+                target: detail.target,
+                playerCountryName,
+                isPlayerAttacker,
+                isPlayerDefender,
+                isNpcWar,
+                troopsCommitted: detail.troopsCommitted === true,
+                attackerIso: detail.attackerCountryDetail?.iso,
+                playerIso: selectedCountry?.iso || countryDetail?.iso,
+            });
             const targetCity = resolveWarTargetCity(
                 detail.target,
                 detail.targetCityId,
@@ -2996,6 +3105,11 @@ export default function MapPage() {
                 !resolutionViolationAuthorized &&
                 Math.random() >= 0.25
             ) {
+                logWarDebug('war event rejected', {
+                    attacker: detail.attacker,
+                    target: detail.target,
+                    reason: 'missing-invasion-mandate-random-check',
+                });
                 npcWarQueueRunningRef.current = false;
                 setNotifications(previous => [{
                     id: `notif-war-no-mandate-${Date.now()}`,
@@ -3196,6 +3310,13 @@ export default function MapPage() {
             let attackerDetailData = resolveCountryDetail(detail.attacker, detail.attackerCountryDetail);
             let targetDetailData = resolveCountryDetail(detail.target, detail.targetCountryDetail);
             if (!attackerDetailData || !targetDetailData || detail.isPbbCoalition) {
+                logWarDebug('war country data fetch started', {
+                    attacker: detail.attacker,
+                    target: detail.target,
+                    hasAttackerDetail: Boolean(attackerDetailData),
+                    hasTargetDetail: Boolean(targetDetailData),
+                    isPbbCoalition: detail.isPbbCoalition === true,
+                });
                 try {
                     const response = await fetch('/api/country-data?all=true');
                     if (response.ok) {
@@ -3206,7 +3327,17 @@ export default function MapPage() {
                             targetDetailData = targetDetailData || resolveCountryDetail(detail.target, detail.targetCountryDetail);
                         }
                     }
+                    logWarDebug('war country data fetch completed', {
+                        ok: response.ok,
+                        status: response.status,
+                        countryCount: countries?.length ?? 0,
+                        hasAttackerDetail: Boolean(attackerDetailData),
+                        hasTargetDetail: Boolean(targetDetailData),
+                    });
                 } catch (error) {
+                    logWarDebug('war country data fetch failed', {
+                        message: error instanceof Error ? error.message : String(error),
+                    });
                     console.warn('[WarAnimation] Unable to load country military data from API', error);
                 }
             }
@@ -3329,6 +3460,16 @@ export default function MapPage() {
             const targetPowerSummary = getArmadaPowerSummary(targetDetailData);
 
             setIsWarAnalysisActive(false);
+            logWarDebug('active war animation scheduled', {
+                attacker: detail.attacker,
+                target: detail.target,
+                isPlayerAttacker,
+                isPlayerDefender,
+                isNpcWar,
+                targetCity,
+                attackerPower: Number(attackerDetailData.pbbCoalitionPower) || attackerPowerSummary.totals.totalPower,
+                targetPower: targetPowerSummary.totals.totalPower,
+            });
             setActiveWarAnimation({
                 ...detail,
                 isNpcWar,
@@ -3423,6 +3564,10 @@ export default function MapPage() {
 
             setNpcWarQueue(previous => [...previous, ...attacks]);
         };
+        logWarDebug('war event listener mounted', {
+            selectedCountry: selectedCountry?.country,
+            country: countryDetail?.country,
+        });
         window.addEventListener('start_war_animation', handleStartWarAnimation);
         window.addEventListener('start_pbb_military_operation', handlePbbMilitaryOperation);
         window.addEventListener('pause_game_time', handlePauseGameTime);
@@ -3431,7 +3576,25 @@ export default function MapPage() {
             window.removeEventListener('start_pbb_military_operation', handlePbbMilitaryOperation);
             window.removeEventListener('pause_game_time', handlePauseGameTime);
         };
-    }, [countryDetail, selectedCountry?.country]);
+    }, [countryDetail, selectedCountry?.country, logWarDebug]);
+
+    useEffect(() => {
+        if (!activeWarAnimation) return;
+        logWarDebug('active war animation rendered', {
+            attacker: activeWarAnimation.attacker,
+            target: activeWarAnimation.target,
+            isUserDefender: activeWarAnimation.isUserDefender,
+            isNpcWar: activeWarAnimation.isNpcWar,
+            attackerPoint: warMapAttacker && {
+                lat: warMapAttacker.lat,
+                lng: warMapAttacker.lng,
+            },
+            targetPoint: warMapTarget && {
+                lat: warMapTarget.lat,
+                lng: warMapTarget.lng,
+            },
+        });
+    }, [activeWarAnimation, logWarDebug, warMapAttacker, warMapTarget]);
 
     useEffect(() => {
         if (activeWarAnimation || npcWarQueue.length === 0 || npcWarQueueRunningRef.current) return;
@@ -7271,9 +7434,13 @@ export default function MapPage() {
                         (ctx2d as any).__origSetTransform = origSetTransform;
                         ctx2d.setTransform = function (a: any, b?: any, c?: any, d?: any, e?: any, f?: any) {
                             if (typeof a === 'number' && typeof d === 'number' && typeof e === 'number' && typeof f === 'number') {
-                                // Jika a !== 1.0 atau e !== 0 atau f !== 0 (bukan reset transform untuk clearRect)
-                                if (a > 0.05 && b === 0 && c === 0) {
-                                    const prevCam = (window as any).__neosantara_map_camera;
+                                const prevCam = (window as any).__neosantara_map_camera;
+                                const isDevicePixelRatioReset =
+                                    e === 0 && f === 0 && a === window.devicePixelRatio;
+                                const isIdentityReset =
+                                    a === 1 && e === 0 && f === 0 && prevCam &&
+                                    (prevCam.scale !== 1 || prevCam.offsetX !== 0 || prevCam.offsetY !== 0);
+                                if (a > 0.05 && b === 0 && c === 0 && !isDevicePixelRatioReset && !isIdentityReset) {
                                     const changed = !prevCam || prevCam.scale !== a || prevCam.offsetX !== e || prevCam.offsetY !== f;
                                     (window as any).__neosantara_map_camera = {
                                         scale: a,
@@ -8770,21 +8937,8 @@ export default function MapPage() {
                 return (
                     <WarMap
                         isOpen={!!activeWarAnimation}
-                        attacker={{
-                            ...(activeWarAnimation.attackerCountryDetail || (areSameWarCountry(activeWarAnimation.attacker, userCountryName, undefined, countryDetail?.iso) ? countryDetail : {})),
-                            ...(buildCapitalPoint(activeWarAnimation.attacker) || { country: activeWarAnimation.attacker, capital: activeWarAnimation.attacker, lat: 0, lng: 0 }),
-                        }}
-                        target={{
-                            ...(activeWarAnimation.targetCountryDetail || (areSameWarCountry(activeWarAnimation.target, userCountryName, activeWarAnimation.targetCountryDetail?.iso, countryDetail?.iso) ? countryDetail : {})),
-                            ...(buildCapitalPoint(activeWarAnimation.target) || { country: activeWarAnimation.target, capital: activeWarAnimation.target, lat: 0, lng: 0 }),
-                            ...(activeWarAnimation.targetCityId ? {
-                                cityId: activeWarAnimation.targetCityId,
-                                cityName: activeWarAnimation.targetCityName,
-                                cityIsCapital: activeWarAnimation.targetCityIsCapital,
-                                lat: activeWarAnimation.targetCityLat,
-                                lng: activeWarAnimation.targetCityLng,
-                            } : {}),
-                        }}
+                        attacker={warMapAttacker ?? {}}
+                        target={warMapTarget ?? {}}
                         attackerPower={activeWarAnimation.attackerPower ?? 0}
                         targetPower={activeWarAnimation.targetPower ?? 0}
                         deployedUnitsConfig={activeWarAnimation.deployedUnitsConfig}

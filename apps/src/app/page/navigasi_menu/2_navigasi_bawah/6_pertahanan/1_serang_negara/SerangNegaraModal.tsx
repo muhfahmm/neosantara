@@ -285,6 +285,26 @@ export default function SerangNegaraModal({
     closeAttackFlow();
 
     if (typeof window !== 'undefined') {
+      if (process.env.NODE_ENV === 'development') {
+        const debugEntry = {
+          timestamp: new Date().toISOString(),
+          tag: 'player attack dispatched',
+          data: {
+            attacker: selectedCountryName,
+            target: selectedTarget.countryName,
+            deployedUnitsConfig: committedDeploymentConfig,
+            playerPower: attackerPower,
+            targetPower,
+          },
+        };
+        console.log('[WARDBG]', debugEntry.tag, debugEntry.data);
+        void fetch('/api/wardbg', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(debugEntry),
+          keepalive: true,
+        }).catch(error => console.warn('[WARDBG] Gagal mengirim diagnostik', error));
+      }
       window.dispatchEvent(
         new CustomEvent('start_war_animation', {
           detail: {
