@@ -7,6 +7,11 @@ import KonfirmasiSerangModals from "@/app/page/navigasi_menu/2_navigasi_bawah/6_
 import { areSameWarCountry, getWarCountryIdentity } from './warCountryIdentity';
 
 import { getArmadaPowerSummary } from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic";
+import {
+	getActiveMilitaryDeploymentForCountry,
+	saveActiveMilitaryDeployment,
+} from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/militaryDeploymentStore";
+import SeranganAktifModal from "./SeranganAktifModal";
 
 interface SerangNegaraModalProps {
 	isOpen: boolean;
@@ -39,6 +44,7 @@ export default function SerangNegaraModal({
 }: SerangNegaraModalProps) {
 	const [isLaunchConfirmationOpen, setIsLaunchConfirmationOpen] = useState(false);
 	const [blockedAttackReason, setBlockedAttackReason] = useState<'pact' | 'self' | null>(null);
+	const [activeWarTarget, setActiveWarTarget] = useState<string | null>(null);
 
 	if (!isOpen || !countryName) return null;
 
@@ -102,7 +108,14 @@ export default function SerangNegaraModal({
 	const playerPower = attackerSummary?.totals?.totalPower ?? 1000000;
 	const targetPower = targetSummary?.totals?.totalPower ?? 1000000;
 
-	const handleLaunchAttack = () => {
+	const handleLaunchAttack = (attackId?: string) => {
+		const activeDeployment = getActiveMilitaryDeploymentForCountry(playerName);
+		if (activeDeployment && activeDeployment.attackId !== attackId) {
+			setIsLaunchConfirmationOpen(false);
+			setActiveWarTarget(activeDeployment.targetCountry);
+			return;
+		}
+
 		if (isAttackInProgress) {
 			setIsLaunchConfirmationOpen(false);
 			onClose();
@@ -134,6 +147,7 @@ export default function SerangNegaraModal({
 					detail: {
 						attacker: playerName,
 						target: countryName,
+						attackId,
 						targetCityId: selectedCityId || undefined,
 						targetCityName: selectedCity || undefined,
 						playerPower,
@@ -176,22 +190,44 @@ export default function SerangNegaraModal({
 	};
 
 	return (
-		<KonfirmasiSerangModals
-			isOpen={isOpen}
-			onClose={handleCloseReset}
-			targetCountry={targetForConfirmation}
-			countryDetail={playerCountryDetail}
-			onConfirm={() => {
-				if (isSelfTarget) {
-					setBlockedAttackReason('self');
-					return;
-				}
-				if (hasActiveNonAggressionPact) {
-					setBlockedAttackReason('pact');
-					return;
-				}
-				handleLaunchAttack();
-			}}
-		/>
+		<>
+			<KonfirmasiSerangModals
+				isOpen={isOpen}
+				onClose={handleCloseReset}
+				targetCountry={targetForConfirmation}
+				countryDetail={playerCountryDetail}
+				onConfirm={(selection) => {
+					if (isSelfTarget) {
+						setBlockedAttackReason('self');
+						return;
+					}
+					if (hasActiveNonAggressionPact) {
+						setBlockedAttackReason('pact');
+						return;
+					}
+
+					const activeDeployment = getActiveMilitaryDeploymentForCountry(playerName);
+					if (activeDeployment) {
+						setActiveWarTarget(activeDeployment.targetCountry);
+						return;
+					}
+
+					const attackId = `attack-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+					saveActiveMilitaryDeployment({
+						attackId,
+						attackerCountry: playerName,
+						targetCountry: countryName,
+						units: selection.deployedUnits,
+						deploymentPercent: selection.deploymentPercent,
+					});
+					handleLaunchAttack(attackId);
+				}}
+			/>
+			<SeranganAktifModal
+				isOpen={activeWarTarget !== null}
+				targetCountry={activeWarTarget || undefined}
+				onClose={() => setActiveWarTarget(null)}
+			/>
+		</>
 	);
 }

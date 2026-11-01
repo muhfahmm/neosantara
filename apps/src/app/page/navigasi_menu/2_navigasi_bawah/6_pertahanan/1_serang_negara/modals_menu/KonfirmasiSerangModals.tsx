@@ -4,13 +4,21 @@ import { createPortal } from "react-dom";
 import { X, Swords, Shield, Ship, Plane, ChevronDown, ChevronUp } from "lucide-react";
 import { getArmadaPowerSummary } from "../../4_armada/logic/armadaLogic";
 import { convertBarakToSoldiers } from "../../4_armada/logic/1_barak_logic";
+import {
+  getActiveDeployedUnitTotals,
+  MILITARY_DEPLOYMENTS_UPDATED_EVENT,
+} from "../militaryDeploymentStore";
 
 interface SerangModalsProps {
   isOpen: boolean;
   onClose: () => void;
   targetCountry: any;
   countryDetail: any;
-  onConfirm: () => void;
+  onConfirm: (selection: {
+    availableUnits: Record<string, number>;
+    deployedUnits: Record<string, number>;
+    deploymentPercent: Record<string, number>;
+  }) => void;
 }
 
 type ArmadaGroup = "darat" | "laut" | "udara";
@@ -113,6 +121,30 @@ export default function SerangModals({
   countryDetail,
   onConfirm,
 }: SerangModalsProps) {
+  const [deploymentPct, setDeploymentPct] = useState<Record<string, number>>({});
+  const [, setDeploymentRevision] = useState(0);
+
+  React.useEffect(() => {
+    if (!isOpen) return;
+
+    const refreshDeployments = () => setDeploymentRevision(revision => revision + 1);
+    window.addEventListener(MILITARY_DEPLOYMENTS_UPDATED_EVENT, refreshDeployments);
+    return () => window.removeEventListener(MILITARY_DEPLOYMENTS_UPDATED_EVENT, refreshDeployments);
+  }, [isOpen]);
+
+  React.useEffect(() => {
+    if (!isOpen || typeof window === "undefined") return;
+    try {
+      const initialDeployment = Object.fromEntries(
+        deploymentUnitKeys.map((key) => [key, 0])
+      );
+      setDeploymentPct(initialDeployment);
+      localStorage.setItem("deployed_units_config", JSON.stringify(initialDeployment));
+    } catch (error) {
+      console.error("Gagal menginisialisasi konfigurasi pengerahan unit.", error);
+    }
+  }, [isOpen]);
+
   if (!isOpen || !targetCountry) return null;
 
   const targetSource = targetCountry?.payload || targetCountry;
@@ -139,25 +171,6 @@ export default function SerangModals({
     udara: targetSummary.totals.groups.udara?.power ?? 0,
   };
 
-  const [deploymentPct, setDeploymentPct] = useState<Record<string, number>>({});
-
-  // Reset state dan bersihkan data pengerahan lama setiap kali modal dibuka
-  React.useEffect(() => {
-    if (isOpen) {
-      if (typeof window !== "undefined") {
-        try {
-          const initialDeployment = Object.fromEntries(
-            deploymentUnitKeys.map((key) => [key, 0])
-          );
-          setDeploymentPct(initialDeployment);
-          localStorage.setItem("deployed_units_config", JSON.stringify(initialDeployment));
-        } catch (error) {
-          console.error("Gagal menginisialisasi konfigurasi pengerahan unit.", error);
-        }
-      }
-    }
-  }, [isOpen]);
-
   const handlePctChange = (key: string, val: number) => {
     const next = { ...deploymentPct, [key]: val };
     setDeploymentPct(next);
@@ -172,6 +185,21 @@ export default function SerangModals({
     darat: getGroupBreakdown(countryDetail, "darat"),
     laut: getGroupBreakdown(countryDetail, "laut"),
     udara: getGroupBreakdown(countryDetail, "udara"),
+  };
+  const deployedUnitTotals = getActiveDeployedUnitTotals(attackerName);
+  const availableBreakdown = {
+    darat: attackerBreakdown.darat.map(item => ({
+      ...item,
+      quantity: Math.max(0, item.quantity - (deployedUnitTotals[item.key] || 0)),
+    })),
+    laut: attackerBreakdown.laut.map(item => ({
+      ...item,
+      quantity: Math.max(0, item.quantity - (deployedUnitTotals[item.key] || 0)),
+    })),
+    udara: attackerBreakdown.udara.map(item => ({
+      ...item,
+      quantity: Math.max(0, item.quantity - (deployedUnitTotals[item.key] || 0)),
+    })),
   };
   const targetBreakdown = {
     darat: getGroupBreakdown(targetSource, "darat"),
@@ -188,7 +216,7 @@ export default function SerangModals({
   const targetPct = totalCombinedPower > 0 ? (targetTotalPower / totalCombinedPower) * 100 : 50;
 
   const handleSetAllGroupPct = (group: ArmadaGroup, val: number) => {
-    const items = attackerBreakdown[group];
+    const items = availableBreakdown[group];
     const next = { ...deploymentPct };
     items.forEach((item) => {
       next[item.key] = val;
@@ -203,7 +231,7 @@ export default function SerangModals({
 
   const handleSetAllGlobalPct = (val: number) => {
     const next: Record<string, number> = {};
-    [...attackerBreakdown.darat, ...attackerBreakdown.laut, ...attackerBreakdown.udara].forEach((item) => {
+    [...availableBreakdown.darat, ...availableBreakdown.laut, ...availableBreakdown.udara].forEach((item) => {
       next[item.key] = val;
     });
     setDeploymentPct(next);
@@ -214,7 +242,19 @@ export default function SerangModals({
     }
   };
 
-  const hasDeployedUnits = Object.values(deploymentPct).some((val) => typeof val === "number" && val > 0);
+  const availableUnits = Object.fromEntries(
+    [...availableBreakdown.darat, ...availableBreakdown.laut, ...availableBreakdown.udara]
+      .map(item => [item.key, item.quantity])
+  );
+  const deployedUnits = Object.fromEntries(
+    Object.entries(availableUnits).map(([key, quantity]) => [
+      key,
+      Math.round(quantity * (deploymentPct[key] ?? 0) / 100),
+    ])
+  );
+  const hasDeployedUnits = Object.values(deployedUnits).some(quantity => quantity > 0);
+  const hasAvailableUnits = Object.values(availableUnits).some(quantity => quantity > 0);
+  const hasUnitsInActiveOperations = Object.values(deployedUnitTotals).some(quantity => quantity > 0);
 
   // Konfigurasi ikon untuk setiap matra
   const groupMeta: Record<ArmadaGroup, { icon: typeof Swords; color: string; bg: string }> = {
@@ -316,6 +356,13 @@ export default function SerangModals({
               </div>
 
               <div className="flex flex-col gap-4">
+                {!hasAvailableUnits && (
+                  <p className="rounded-xl border border-amber-400/30 bg-amber-500/10 px-4 py-3 text-sm font-semibold text-amber-200">
+                    {hasUnitsInActiveOperations
+                      ? "Semua pasukan sedang dikerahkan. Tidak ada pasukan tersedia untuk menyerang."
+                      : "Tidak ada pasukan tersedia untuk menyerang."}
+                  </p>
+                )}
                 {(['darat', 'laut', 'udara'] as ArmadaGroup[]).map((group) => {
                   const Icon = groupMeta[group].icon;
                   return (
@@ -348,8 +395,8 @@ export default function SerangModals({
                             <span>Jenis Alutsista / Pasukan</span>
                             <span>Jumlah Unit</span>
                           </div>
-                          {attackerBreakdown[group].map((item) => {
-                            const pct = deploymentPct[item.key] ?? 0;
+                          {availableBreakdown[group].map((item) => {
+                            const pct = item.quantity > 0 ? (deploymentPct[item.key] ?? 0) : 0;
                             const deployedQty = Math.round((item.quantity * pct) / 100);
 
                             return (
@@ -375,10 +422,11 @@ export default function SerangModals({
                                     min="0"
                                     max="100"
                                     value={pct}
+                                    disabled={item.quantity === 0}
                                     onChange={(e) =>
                                       handlePctChange(item.key, Number(e.target.value))
                                     }
-                                    className="w-full accent-[#00FFAA] bg-[#0F2424] h-1.5 rounded-lg cursor-pointer"
+                                    className="w-full accent-[#00FFAA] bg-[#0F2424] h-1.5 rounded-lg cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
                                   />
                                   <span className="text-xs font-mono font-black text-[#00FFAA] w-10 text-right">
                                     {pct}%
@@ -403,8 +451,12 @@ export default function SerangModals({
           <button onClick={onClose} className="px-6 py-2 rounded-xl border border-[#00FFAA]/30 bg-[#0F2424] text-[#6B8A8A] hover:text-[#00FFAA] hover:border-[#00FFAA] transition-all font-black text-xs uppercase tracking-wider cursor-pointer">
             Batal
           </button>
-          <button 
-            onClick={onConfirm} 
+          <button
+            onClick={() => onConfirm({
+              availableUnits,
+              deployedUnits,
+              deploymentPercent: deploymentPct,
+            })}
             disabled={!hasDeployedUnits}
             className={`px-8 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
               hasDeployedUnits

@@ -10,6 +10,12 @@ import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 import KonfirmasiPeluncuranSerangan from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/konfirmasi_peluncuran_serangan";
 import HasilPertempuran from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/hasil_pertempuran";
+import {
+  getActiveMilitaryDeploymentForCountry,
+  saveActiveMilitaryDeployment,
+  type ActiveMilitaryDeployment,
+} from "./militaryDeploymentStore";
+import SeranganAktifModal from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/SeranganAktifModal";
 
 interface ModalProps {
   isOpen: boolean;
@@ -45,6 +51,7 @@ export default function SerangNegaraModal({
   // 🔥 State untuk menampung target yang dipilih dan membuka modal serang
   const [selectedTarget, setSelectedTarget] = useState<RankingRow | null>(null);
   const [isSerangModalOpen, setIsSerangModalOpen] = useState(false);
+  const [activeWarTarget, setActiveWarTarget] = useState<string | null>(null);
   const [isLaunchConfirmationOpen, setIsLaunchConfirmationOpen] = useState(false);
   const [battleOutcome, setBattleOutcome] = useState<boolean | null>(null);
   const [internalCountries, setInternalCountries] = useState<any[] | null>(null);
@@ -222,18 +229,74 @@ export default function SerangNegaraModal({
 
   // 🔥 Fungsi ketika tombol pedang diklik: Buka modal serang
   const handleOpenAttackModal = (target: RankingRow) => {
+    const activeDeployment = getActiveMilitaryDeploymentForCountry(selectedCountryName);
+    if (activeDeployment) {
+      setActiveWarTarget(activeDeployment.targetCountry);
+      return;
+    }
+
     setSelectedTarget(target);
     setIsSerangModalOpen(true);
   };
 
-  const handleConfirmAttack = () => {
-    handleLaunchAttack();
+  const createAvailableCountryDetail = (
+    source: Record<string, unknown> | null | undefined,
+    availableUnits: Record<string, number>,
+  ) => {
+    const snapshot = JSON.parse(JSON.stringify(source || {})) as Record<string, unknown>;
+    const armada = snapshot.armada && typeof snapshot.armada === "object"
+      ? snapshot.armada as Record<string, unknown>
+      : snapshot;
+
+    Object.entries(availableUnits).forEach(([unitKey, quantity]) => {
+      const dataKey = unitKey === "barak" ? "pasukan_infanteri" : unitKey;
+      snapshot[dataKey] = quantity;
+      if (armada !== snapshot) armada[dataKey] = quantity;
+      ["darat", "laut", "udara"].forEach(group => {
+        const groupData = armada[group];
+        if (groupData && typeof groupData === "object") {
+          (groupData as Record<string, unknown>)[dataKey] = quantity;
+        }
+      });
+    });
+
+    return snapshot;
   };
 
-  const handleLaunchAttack = () => {
+  const handleConfirmAttack = (selection: {
+    availableUnits: Record<string, number>;
+    deployedUnits: Record<string, number>;
+    deploymentPercent: Record<string, number>;
+  }) => {
     if (!selectedTarget) return;
 
-    const attackerPower = getArmadaPowerSummary(countryDetail).totals.totalPower;
+    const activeDeployment = getActiveMilitaryDeploymentForCountry(selectedCountryName);
+    if (activeDeployment) {
+      setActiveWarTarget(activeDeployment.targetCountry);
+      return;
+    }
+
+    const attackId = `attack-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const deployment: ActiveMilitaryDeployment = {
+      attackId,
+      attackerCountry: selectedCountryName,
+      targetCountry: selectedTarget.countryName,
+      units: selection.deployedUnits,
+      deploymentPercent: selection.deploymentPercent,
+    };
+    saveActiveMilitaryDeployment(deployment);
+    const availableCountryDetail = createAvailableCountryDetail(countryDetail, selection.availableUnits);
+    handleLaunchAttack(attackId, availableCountryDetail);
+  };
+
+  const handleLaunchAttack = (
+    attackId?: string,
+    attackerCountryDetail?: Record<string, unknown>,
+  ) => {
+    if (!selectedTarget) return;
+
+    const attackerSource = attackerCountryDetail || countryDetail;
+    const attackerPower = getArmadaPowerSummary(attackerSource).totals.totalPower;
     const targetPower = selectedTarget.totalPower;
 
     closeAttackFlow();
@@ -244,6 +307,8 @@ export default function SerangNegaraModal({
           detail: {
             attacker: selectedCountryName,
             target: selectedTarget.countryName,
+            attackId,
+            attackerCountryDetail: attackerCountryDetail || undefined,
             playerPower: attackerPower,
             targetPower,
           },
@@ -418,6 +483,11 @@ export default function SerangNegaraModal({
           onConfirm={handleConfirmAttack}
         />
       )}
+      <SeranganAktifModal
+        isOpen={activeWarTarget !== null}
+        targetCountry={activeWarTarget || undefined}
+        onClose={() => setActiveWarTarget(null)}
+      />
       {selectedTarget && isLaunchConfirmationOpen && (
         <KonfirmasiPeluncuranSerangan
           playerName={selectedCountryName}
