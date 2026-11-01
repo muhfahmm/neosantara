@@ -219,6 +219,7 @@ export function applyWarLossesToUserArmada(
   countryDetail: any,
   lossRatio: number = 0.75,
   randomizeLosses = false,
+  deploymentConfigOverride?: Record<string, number>,
 ): {
   updatedDetail: any;
   lossSummaryText: string;
@@ -228,16 +229,21 @@ export function applyWarLossesToUserArmada(
     return { updatedDetail: countryDetail, lossSummaryText: "", losses: [] };
   }
 
-  let savedConfig: Record<string, number> = {};
-  try {
-    const raw = localStorage.getItem("deployed_units_config");
-    if (raw) savedConfig = JSON.parse(raw);
-  } catch (e) {}
+  let savedConfig = deploymentConfigOverride ?? {};
+  if (!deploymentConfigOverride) {
+    try {
+      const raw = localStorage.getItem("deployed_units_config");
+      if (raw) savedConfig = JSON.parse(raw);
+    } catch (e) {}
+  }
 
   const nextDetail = JSON.parse(JSON.stringify(countryDetail));
+  const firstPositive = (...values: unknown[]) => values
+    .map(value => Number(value))
+    .find(value => Number.isFinite(value) && value > 0) ?? 0;
 
   const ALL_UNIT_KEYS = [
-    'barak', 'pasukan_infanteri', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat',
+    'barak', 'tank_tempur_utama', 'apc_ifv', 'artileri_berat',
     'sistem_peluncur_roket', 'pertahanan_udara_mobile', 'kendaraan_taktis',
     'kapal_induk', 'kapal_induk_nuklir', 'kapal_destroyer', 'kapal_korvet',
     'kapal_selam_nuklir', 'kapal_selam_regular', 'kapal_ranjau', 'kapal_logistik',
@@ -253,22 +259,23 @@ export function applyWarLossesToUserArmada(
     const deployedPct = typeof savedConfig[key] === 'number' ? savedConfig[key] : 100;
     if (deployedPct <= 0) return;
 
-    let currentQty = Number(
-      nextDetail[key] ??
-      nextDetail?.armada?.[key] ??
-      nextDetail?.armada?.darat?.[key] ??
-      nextDetail?.armada?.laut?.[key] ??
-      nextDetail?.armada?.udara?.[key] ??
-      0
+    const currentQty = firstPositive(
+      nextDetail[key],
+      nextDetail?.armada?.[key],
+      nextDetail?.armada?.darat?.[key],
+      nextDetail?.armada?.laut?.[key],
+      nextDetail?.armada?.udara?.[key],
     );
+    const currentInfantry = key === 'barak'
+      ? firstPositive(
+        nextDetail?.pasukan_infanteri,
+        nextDetail?.armada?.pasukan_infanteri,
+        nextDetail?.armada?.darat?.pasukan_infanteri,
+        currentQty * 800,
+      )
+      : 0;
 
-    if (key === 'barak' && currentQty > 0) {
-      const currentInfantry = Number(
-        nextDetail?.pasukan_infanteri ??
-        nextDetail?.armada?.pasukan_infanteri ??
-        nextDetail?.armada?.darat?.pasukan_infanteri ??
-        (currentQty * 800)
-      );
+    if (key === 'barak' && currentInfantry > 0) {
       const deployedInfantry = Math.round((currentInfantry * deployedPct) / 100);
       const lostInfantry = randomizeLosses
         ? sampleBinomialLoss(deployedInfantry, lossRatio)

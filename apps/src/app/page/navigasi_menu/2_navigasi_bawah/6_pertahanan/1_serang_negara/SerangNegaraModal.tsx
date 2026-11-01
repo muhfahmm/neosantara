@@ -10,6 +10,7 @@ import { COUNTRIES_DATA } from "@/app/page/map_system/map-data";
 import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulation/npcCountrySimulation";
 import KonfirmasiPeluncuranSerangan from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/konfirmasi_peluncuran_serangan";
 import HasilPertempuran from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/hasil_pertempuran";
+import { applyWarLossesToUserArmada } from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine";
 
 interface ModalProps {
   isOpen: boolean;
@@ -226,12 +227,57 @@ export default function SerangNegaraModal({
     setIsSerangModalOpen(true);
   };
 
-  const handleConfirmAttack = () => {
-    handleLaunchAttack();
+  const handleConfirmAttack = (deploymentConfig: Record<string, number>) => {
+    handleLaunchAttack(deploymentConfig);
   };
 
-  const handleLaunchAttack = () => {
+  const handleLaunchAttack = (deploymentConfig?: Record<string, number>) => {
     if (!selectedTarget) return;
+
+    let committedDeploymentConfig = deploymentConfig;
+    if (!committedDeploymentConfig && typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("deployed_units_config");
+        const parsed: unknown = saved ? JSON.parse(saved) : null;
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+          committedDeploymentConfig = Object.fromEntries(
+            Object.entries(parsed).filter(
+              (entry): entry is [string, number] => typeof entry[1] === "number",
+            ),
+          );
+        }
+      } catch (error) {
+        console.error("Gagal membaca konfigurasi pengerahan sebelum serangan.", error);
+        return;
+      }
+    }
+    if (!committedDeploymentConfig) {
+      console.error("Serangan dibatalkan karena tidak ada pasukan yang dikerahkan.");
+      return;
+    }
+    committedDeploymentConfig = Object.fromEntries(
+      Object.entries(committedDeploymentConfig)
+        .filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
+        .map(([key, percentage]) => [key, Math.min(100, Math.max(0, percentage))]),
+    );
+    if (Object.values(committedDeploymentConfig).every(value => value <= 0)) {
+      console.error("Serangan dibatalkan karena tidak ada pasukan yang dikerahkan.");
+      return;
+    }
+
+    const attackerDetailBeforeDeployment = countryDetail;
+    // Hold deployed units out of the available army until battle resolution.
+    const { updatedDetail, losses } = applyWarLossesToUserArmada(
+      attackerDetailBeforeDeployment,
+      1,
+      false,
+      committedDeploymentConfig,
+    );
+    if (losses.length === 0) {
+      console.error("Serangan dibatalkan karena stok pasukan yang dipilih sudah habis.");
+      return;
+    }
+    setCountryDetail(updatedDetail);
 
     const attackerPower = getArmadaPowerSummary(countryDetail).totals.totalPower;
     const targetPower = selectedTarget.totalPower;
@@ -246,6 +292,11 @@ export default function SerangNegaraModal({
             target: selectedTarget.countryName,
             playerPower: attackerPower,
             targetPower,
+            attackerCountryDetail: attackerDetailBeforeDeployment,
+            committedArmySnapshot: attackerDetailBeforeDeployment,
+            committedArmyDetail: updatedDetail,
+            troopsCommitted: true,
+            deployedUnitsConfig: committedDeploymentConfig,
           },
         })
       );

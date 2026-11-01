@@ -7,6 +7,7 @@ import KonfirmasiSerangModals from "@/app/page/navigasi_menu/2_navigasi_bawah/6_
 import { areSameWarCountry, getWarCountryIdentity } from './warCountryIdentity';
 
 import { getArmadaPowerSummary } from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic";
+import { applyWarLossesToUserArmada } from './war_algoritm/battleEngine';
 
 interface SerangNegaraModalProps {
 	isOpen: boolean;
@@ -21,6 +22,7 @@ interface SerangNegaraModalProps {
 	onCloseDetailModal?: () => void;
 	onAttackLaunched?: () => void;
 	onAttackBlocked?: () => void;
+	updatePlayerCountryDetail?: (updater: (prev: any) => any) => void;
 }
 
 export default function SerangNegaraModal({
@@ -36,6 +38,7 @@ export default function SerangNegaraModal({
 	onCloseDetailModal,
 	onAttackLaunched,
 	onAttackBlocked,
+	updatePlayerCountryDetail,
 }: SerangNegaraModalProps) {
 	const [isLaunchConfirmationOpen, setIsLaunchConfirmationOpen] = useState(false);
 	const [blockedAttackReason, setBlockedAttackReason] = useState<'pact' | 'self' | null>(null);
@@ -102,7 +105,7 @@ export default function SerangNegaraModal({
 	const playerPower = attackerSummary?.totals?.totalPower ?? 1000000;
 	const targetPower = targetSummary?.totals?.totalPower ?? 1000000;
 
-	const handleLaunchAttack = () => {
+	const handleLaunchAttack = (deploymentConfig?: Record<string, number>) => {
 		if (isAttackInProgress) {
 			setIsLaunchConfirmationOpen(false);
 			onClose();
@@ -118,6 +121,52 @@ export default function SerangNegaraModal({
 			setIsLaunchConfirmationOpen(false);
 			setBlockedAttackReason('pact');
 			return;
+		}
+
+		let committedDeploymentConfig = deploymentConfig;
+		if (!committedDeploymentConfig && typeof window !== "undefined") {
+			try {
+				const saved = localStorage.getItem("deployed_units_config");
+				if (saved) {
+					committedDeploymentConfig = Object.fromEntries(
+						Object.entries(JSON.parse(saved) as Record<string, unknown>).filter(
+							(entry): entry is [string, number] => typeof entry[1] === "number",
+						),
+					);
+				}
+			} catch (error) {
+				console.error("Gagal membaca konfigurasi pengerahan sebelum serangan.", error);
+				return;
+			}
+		}
+		if (!committedDeploymentConfig) {
+			console.error("Serangan dibatalkan karena tidak ada pasukan yang dikerahkan.");
+			return;
+		}
+		committedDeploymentConfig = Object.fromEntries(
+			Object.entries(committedDeploymentConfig)
+				.filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
+				.map(([key, percentage]) => [key, Math.min(100, Math.max(0, percentage))]),
+		);
+		if (Object.values(committedDeploymentConfig).every(value => value <= 0)) {
+			console.error("Serangan dibatalkan karena tidak ada pasukan yang dikerahkan.");
+			return;
+		}
+
+		const attackerDetailBeforeDeployment = playerCountryDetail;
+		// Hold deployed units out of the available army until battle resolution.
+		const { updatedDetail, losses } = applyWarLossesToUserArmada(
+			attackerDetailBeforeDeployment,
+			1,
+			false,
+			committedDeploymentConfig,
+		);
+		if (losses.length === 0) {
+			console.error("Serangan dibatalkan karena stok pasukan yang dipilih sudah habis.");
+			return;
+		}
+		if (updatePlayerCountryDetail) {
+			updatePlayerCountryDetail(() => updatedDetail);
 		}
 
 		onAttackLaunched?.();
@@ -138,8 +187,13 @@ export default function SerangNegaraModal({
 						targetCityName: selectedCity || undefined,
 						playerPower,
 						targetPower,
-						playerCountryDetail,
+						playerCountryDetail: attackerDetailBeforeDeployment,
 						targetCountryDetail: targetSource,
+						attackerCountryDetail: attackerDetailBeforeDeployment,
+						committedArmySnapshot: attackerDetailBeforeDeployment,
+						committedArmyDetail: updatedDetail,
+						troopsCommitted: true,
+						deployedUnitsConfig: committedDeploymentConfig,
 					},
 				})
 			);
@@ -181,7 +235,7 @@ export default function SerangNegaraModal({
 			onClose={handleCloseReset}
 			targetCountry={targetForConfirmation}
 			countryDetail={playerCountryDetail}
-			onConfirm={() => {
+			onConfirm={(deploymentConfig) => {
 				if (isSelfTarget) {
 					setBlockedAttackReason('self');
 					return;
@@ -190,7 +244,7 @@ export default function SerangNegaraModal({
 					setBlockedAttackReason('pact');
 					return;
 				}
-				handleLaunchAttack();
+				handleLaunchAttack(deploymentConfig);
 			}}
 		/>
 	);
