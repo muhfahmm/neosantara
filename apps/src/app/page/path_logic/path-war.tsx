@@ -913,13 +913,22 @@ export default function WarMap({
   }, [target, deploymentConfig, isUserDefender, battleOutcome]);
 
   const attackerForces = useMemo(
-    () => getWarUnitComposition(attacker, {}, false)
+    () => {
+      const usesPlayerDeployment = !isAiAttacker && !isPbbCoalition;
+      return getWarUnitComposition(
+        attacker,
+        usesPlayerDeployment ? deploymentConfig : {},
+        usesPlayerDeployment
+      )
       .map(unit => ({
         ...unit,
-        quantity: Math.round(unit.quantity * effectiveAttackerDeploymentPercent / 100),
+        quantity: usesPlayerDeployment
+          ? unit.quantity
+          : Math.round(unit.quantity * effectiveAttackerDeploymentPercent / 100),
       }))
-      .filter(unit => unit.quantity > 0),
-    [attacker, effectiveAttackerDeploymentPercent]
+      .filter(unit => unit.quantity > 0);
+    },
+    [attacker, deploymentConfig, effectiveAttackerDeploymentPercent, isAiAttacker, isPbbCoalition]
   );
   const attackerForceGroups = useMemo(
     () => [
