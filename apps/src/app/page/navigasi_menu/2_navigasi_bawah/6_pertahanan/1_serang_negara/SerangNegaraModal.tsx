@@ -11,6 +11,8 @@ import { applyNpcCountrySimulationState } from "@/app/logic/npc_country_simulati
 import KonfirmasiPeluncuranSerangan from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/konfirmasi_peluncuran_serangan";
 import HasilPertempuran from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/hasil_pertempuran";
 import { applyWarLossesToUserArmada } from "@/app/page/detail_negara/3_operasi_militer/1_serang_negara/war_algoritm/battleEngine";
+import SerangBelumSelesaiModals from "./modals_menu/SerangBelumSelesaiModals";
+import { getActivePlayerAttack, type PlayerAttackStatus } from "./modals_menu/playerAttackStatus";
 
 interface ModalProps {
   isOpen: boolean;
@@ -51,6 +53,10 @@ export default function SerangNegaraModal({
   const [internalCountries, setInternalCountries] = useState<any[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [blockedPlayerAttack, setBlockedPlayerAttack] = useState<{
+    status: PlayerAttackStatus;
+    requestedTarget: string;
+  } | null>(null);
 
   const [sortConfig, setSortConfig] = useState<{ key: keyof RankingRow; direction: 'asc' | 'desc' } | null>({
     key: 'totalPower',
@@ -233,6 +239,13 @@ export default function SerangNegaraModal({
 
   const handleLaunchAttack = (deploymentConfig?: Record<string, number>) => {
     if (!selectedTarget) return;
+    const activeAttack = getActivePlayerAttack();
+    if (activeAttack) {
+      setIsLaunchConfirmationOpen(false);
+      setIsSerangModalOpen(false);
+      setBlockedPlayerAttack({ status: activeAttack, requestedTarget: selectedTarget.countryName });
+      return;
+    }
 
     let committedDeploymentConfig = deploymentConfig;
     if (!committedDeploymentConfig && typeof window !== "undefined") {
@@ -467,6 +480,7 @@ export default function SerangNegaraModal({
           targetCountry={selectedTarget}
           countryDetail={countryDetail}
           onConfirm={handleConfirmAttack}
+          onAttackBlocked={(status, requestedTarget) => setBlockedPlayerAttack({ status, requestedTarget })}
         />
       )}
       {selectedTarget && isLaunchConfirmationOpen && (
@@ -493,6 +507,13 @@ export default function SerangNegaraModal({
           onSelectAction={handleSelectBattleAction}
         />
       )}
+      <SerangBelumSelesaiModals
+        isOpen={blockedPlayerAttack !== null}
+        onClose={() => setBlockedPlayerAttack(null)}
+        ongoingTarget={blockedPlayerAttack?.status.targetCountry ?? ''}
+        ongoingCity={blockedPlayerAttack?.status.targetCityName}
+        requestedTarget={blockedPlayerAttack?.requestedTarget}
+      />
     </>
   );
 }

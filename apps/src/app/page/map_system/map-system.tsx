@@ -150,6 +150,7 @@ import type { NonAggressionPactPeriod } from '../../../../../json/4_database_hub
 import { setEconomicSanctionCounts } from '../navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/3_economicEmbargoLogic';
 import { playerHasEmbassyWith, playerHasEmbassyOrTradePartners } from '../detail_negara/1_informasi_umum/1_kedutaan_besar/logic/kedutaanBesarLogic';
 import { areSameWarCountry, getWarCountryIdentity } from '../detail_negara/3_operasi_militer/1_serang_negara/warCountryIdentity';
+import { getActivePlayerAttack, setActivePlayerAttack } from '../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/playerAttackStatus';
 import { generateAITradeBeliNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/2_beli/tradeBeliLogic';
 import { generateAITradeJualNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/1_jual/tradeJualLogic';
 import { generateTradeRelationOfferNotification } from '../menus/inbox/logic/3_notifikasi_perdagangan/3_hubungan_dagang/tradeRelationLogic';
@@ -2980,6 +2981,7 @@ export default function MapPage() {
         targetCityCountryIso?: string;
         targetCityIsCapital?: boolean;
         isNpcWar?: boolean;
+        isPlayerAttack?: boolean;
         requestedInvasion?: boolean;
         isPbbCoalition?: boolean;
         isPlayerCoalitionProposer?: boolean;
@@ -2995,11 +2997,6 @@ export default function MapPage() {
             const detail = (event as CustomEvent).detail;
             if (detail?.isPbbCoalition && hasActiveGlobalWarBan()) {
                 console.warn('[WarAnimation] Global war ban active; refusing PBB coalition attack.');
-                return;
-            }
-            if (activeWarAnimationRef.current) {
-                // Jangan batalkan animasi perang yang sedang berjalan, masukkan ke antrean!
-                setNpcWarQueue(previous => [...previous, detail]);
                 return;
             }
             if (typeof detail?.attacker !== 'string' || !detail.attacker.trim() ||
@@ -3041,6 +3038,33 @@ export default function MapPage() {
                 selectedCountry?.iso || countryDetail?.iso
             );
             const isNpcWar = !isPlayerAttacker && !isPlayerDefender;
+            const isPlayerAttack =
+                isPlayerAttacker &&
+                !isPlayerDefender &&
+                detail.requestedInvasion !== true &&
+                detail.isNpcWar !== true;
+
+            if (isPlayerAttack) {
+                const activePlayerAttack = getActivePlayerAttack();
+                if (activePlayerAttack && detail.fromQueue !== true) return;
+
+                setActivePlayerAttack({
+                    targetCountry: detail.target,
+                    targetCityName: typeof detail.targetCityName === 'string'
+                        ? detail.targetCityName
+                        : undefined,
+                    startedAt: detail.fromQueue === true && activePlayerAttack
+                        ? activePlayerAttack.startedAt
+                        : Date.now(),
+                });
+            }
+
+            if (activeWarAnimationRef.current) {
+                // Jangan batalkan animasi perang yang sedang berjalan, masukkan ke antrean!
+                setNpcWarQueue(previous => [...previous, { ...detail, isPlayerAttack }]);
+                return;
+            }
+
             const targetCity = resolveWarTargetCity(
                 detail.target,
                 detail.targetCityId,
@@ -3405,6 +3429,7 @@ export default function MapPage() {
                 attackerCountryDetail: attackerDetailData,
                 targetCountryDetail: targetDetailData,
                 isUserDefender: isPlayerDefender,
+                isPlayerAttacker: isPlayerAttack,
                 attackerPower: Number(attackerDetailData.pbbCoalitionPower) || attackerPowerSummary.totals.totalPower,
                 targetPower: targetPowerSummary.totals.totalPower
             });
@@ -3510,7 +3535,11 @@ export default function MapPage() {
         npcWarQueueRunningRef.current = true;
         setNpcWarQueue(remainingWars);
         window.dispatchEvent(new CustomEvent('start_war_animation', {
-            detail: { ...nextWar, isNpcWar: nextWar.isNpcWar ?? true },
+            detail: {
+                ...nextWar,
+                isNpcWar: nextWar.isPlayerAttack ? false : nextWar.isNpcWar ?? true,
+                fromQueue: true,
+            },
         }));
     }, [activeWarAnimation, npcWarQueue]);
 
@@ -5700,6 +5729,9 @@ export default function MapPage() {
         if (typeof window !== 'undefined') {
             const loadSaveStr = sessionStorage.getItem('presiden_simulator_load_save');
             const isNewGame = localStorage.getItem('presiden_simulator_new_game') === '1';
+            if (loadSaveStr || isNewGame) {
+                setActivePlayerAttack(null);
+            }
             const returningFromDialog = sessionStorage.getItem('presiden_simulator_returning_from_dialog') === '1';
             sessionStorage.removeItem('presiden_simulator_returning_from_dialog');
             if (loadSaveStr) {
@@ -7014,6 +7046,7 @@ export default function MapPage() {
     }, [countryDetail, metadata]);
 
     const handleRestart = () => {
+        setActivePlayerAttack(null);
         if (selectedCountry) {
             if (typeof window !== 'undefined') {
                 window.localStorage.removeItem('hutangModalLoanSources');
@@ -8978,6 +9011,9 @@ export default function MapPage() {
                                 setCountryDetail(activeWarAnimation.committedArmySnapshot);
                             }
                             setIsWarAnalysisActive(false);
+                            if (activeWarAnimation?.isPlayerAttacker === true) {
+                                setActivePlayerAttack(null);
+                            }
                             setActiveWarAnimation(null);
                             npcWarQueueRunningRef.current = false;
                             resumeGameTimeAfterWar();
@@ -9076,6 +9112,9 @@ export default function MapPage() {
                                     });
                                 }
                                 setIsWarAnalysisActive(false);
+                                if (activeWarAnimation?.isPlayerAttacker === true) {
+                                    setActivePlayerAttack(null);
+                                }
                                 setActiveWarAnimation(null);
                                 npcWarQueueRunningRef.current = false;
                                 resumeGameTimeAfterWar();
@@ -9111,6 +9150,9 @@ export default function MapPage() {
                                     }
                                 }
                                 setIsWarAnalysisActive(false);
+                                if (activeWarAnimation?.isPlayerAttacker === true) {
+                                    setActivePlayerAttack(null);
+                                }
                                 setActiveWarAnimation(null);
                                 npcWarQueueRunningRef.current = false;
                                 resumeGameTimeAfterWar();
@@ -9146,6 +9188,9 @@ export default function MapPage() {
                                 })
                             );
                             setIsWarAnalysisActive(false);
+                            if (activeWarAnimation?.isPlayerAttacker === true) {
+                                setActivePlayerAttack(null);
+                            }
                             setActiveWarAnimation(null);
                             npcWarQueueRunningRef.current = false;
                             resumeGameTimeAfterWar();

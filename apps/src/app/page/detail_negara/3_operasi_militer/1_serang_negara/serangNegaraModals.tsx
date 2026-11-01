@@ -8,6 +8,7 @@ import { areSameWarCountry, getWarCountryIdentity } from './warCountryIdentity';
 
 import { getArmadaPowerSummary } from "@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/4_armada/logic/armadaLogic";
 import { applyWarLossesToUserArmada } from './war_algoritm/battleEngine';
+import { getActivePlayerAttack, type PlayerAttackStatus } from '@/app/page/navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/playerAttackStatus';
 
 interface SerangNegaraModalProps {
 	isOpen: boolean;
@@ -22,6 +23,7 @@ interface SerangNegaraModalProps {
 	onCloseDetailModal?: () => void;
 	onAttackLaunched?: () => void;
 	onAttackBlocked?: () => void;
+	onPlayerAttackBlocked?: (status: PlayerAttackStatus, requestedTarget: string) => void;
 	updatePlayerCountryDetail?: (updater: (prev: any) => any) => void;
 }
 
@@ -38,6 +40,7 @@ export default function SerangNegaraModal({
 	onCloseDetailModal,
 	onAttackLaunched,
 	onAttackBlocked,
+	onPlayerAttackBlocked,
 	updatePlayerCountryDetail,
 }: SerangNegaraModalProps) {
 	const [isLaunchConfirmationOpen, setIsLaunchConfirmationOpen] = useState(false);
@@ -106,6 +109,13 @@ export default function SerangNegaraModal({
 	const targetPower = targetSummary?.totals?.totalPower ?? 1000000;
 
 	const handleLaunchAttack = (deploymentConfig?: Record<string, number>) => {
+		const activeAttack = getActivePlayerAttack();
+		if (activeAttack) {
+			setIsLaunchConfirmationOpen(false);
+			onPlayerAttackBlocked?.(activeAttack, countryName);
+			onClose();
+			return;
+		}
 		if (isAttackInProgress) {
 			setIsLaunchConfirmationOpen(false);
 			onClose();
@@ -235,6 +245,7 @@ export default function SerangNegaraModal({
 			onClose={handleCloseReset}
 			targetCountry={targetForConfirmation}
 			countryDetail={playerCountryDetail}
+			onAttackBlocked={(status, requestedTarget) => onPlayerAttackBlocked?.(status, requestedTarget)}
 			onConfirm={(deploymentConfig) => {
 				if (isSelfTarget) {
 					setBlockedAttackReason('self');

@@ -24,6 +24,8 @@ import HinaModal from './7_hina/hinaModals';
 import ProvinsiOperasiMiliter from '../1_informasi_umum/provinsi_logic/ProvinsiOperasiMiliter';
 import CovertOperationResultModal from './CovertOperationResultModal';
 import { resolveCovertOperation, type CovertOperationResult, type CovertOperationType } from './covertOperationLogic';
+import SerangBelumSelesaiModals from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/SerangBelumSelesaiModals';
+import { getActivePlayerAttack, usePlayerAttackStatus, type PlayerAttackStatus } from '../../navigasi_menu/2_navigasi_bawah/6_pertahanan/1_serang_negara/modals_menu/playerAttackStatus';
 
 interface OperasiMiliterProps {
   countryName: string;
@@ -44,10 +46,11 @@ interface OperasiMiliterProps {
 }
 
 // Komponen tombol aksi (Persis sama dengan menu lainnya)
-const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelClass }: { icon: any, label: string, onClick?: () => void, className?: string, iconClass?: string, labelClass?: string }) => (
+const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelClass, isDimmed, title }: { icon: any, label: string, onClick?: () => void, className?: string, iconClass?: string, labelClass?: string, isDimmed?: boolean, title?: string }) => (
   <button
     onClick={onClick}
-    className={`w-full ${className || 'bg-[#0A1A1A] border border-[#00FFAA]/20'} rounded-xl p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-3 lg:gap-2 xl:gap-3 ${className ? 'hover:border-amber-300 hover:bg-amber-400/10' : 'hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10'} hover:shadow-md transition-all cursor-pointer group h-32 lg:h-24 xl:h-32`}
+    title={title}
+    className={`w-full ${className || 'bg-[#0A1A1A] border border-[#00FFAA]/20'} ${isDimmed ? 'opacity-75' : ''} rounded-xl p-5 lg:p-3 xl:p-5 flex flex-col items-center justify-center gap-3 lg:gap-2 xl:gap-3 ${className ? 'hover:border-amber-300 hover:bg-amber-400/10' : 'hover:border-[#00FFAA]/50 hover:bg-[#00FFAA]/10'} hover:shadow-md transition-all cursor-pointer group h-32 lg:h-24 xl:h-32`}
   >
     <Icon className={`h-8 w-8 lg:h-6 lg:w-6 xl:h-8 xl:w-8 ${iconClass || 'text-[#00FFAA]'} group-hover:scale-110 transition-transform`} />
     <span className={`text-xs lg:text-[10px] xl:text-xs font-black ${labelClass || 'text-[#00FFAA]'} uppercase tracking-wider text-center leading-tight`}>
@@ -59,6 +62,11 @@ const ActionButton = ({ icon: Icon, label, onClick, className, iconClass, labelC
 export default function OperasiMiliter({ countryName, selectedCity, selectedCityId, playerCountryDetail, targetCountryDetail, onCloseDetailModal, onCloseCountryDetail, onActionModalStateChange, isOccupiedProvince, occupyingCountry, provinceTension, currentDate, actionDates, onMilitaryActionLaunched, updatePlayerCountryDetail }: OperasiMiliterProps) {
   const [isSerangOpen, setIsSerangOpen] = useState(false);
   const [isAttackInProgressModalOpen, setIsAttackInProgressModalOpen] = useState(false);
+  const [blockedPlayerAttack, setBlockedPlayerAttack] = useState<{
+    status: PlayerAttackStatus;
+    requestedTarget: string;
+  } | null>(null);
+  const activePlayerAttack = usePlayerAttackStatus();
   const [isSpionaseOpen, setIsSpionaseOpen] = useState(false);
   const [isSabotaseOpen, setIsSabotaseOpen] = useState(false);
   const [isNuklirOpen, setIsNuklirOpen] = useState(false);
@@ -86,7 +94,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
   const datedActionClass = 'border border-amber-400/50 bg-amber-400/5 text-amber-300';
   const operationDateBadgeClass = 'absolute -top-6 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-sm border border-amber-400/30 bg-[#0A1A1A] px-2 py-1 text-[10px] font-bold tracking-wider text-amber-300 shadow-md';
 
-  const isAnyMiliterModalActive = isSerangOpen || isAttackInProgressModalOpen || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isStatusMintaSerangOpen || isHinaOpen || !!covertOperationResult;
+  const isAnyMiliterModalActive = isSerangOpen || isAttackInProgressModalOpen || blockedPlayerAttack !== null || isSpionaseOpen || isSabotaseOpen || isNuklirOpen || isKudetaOpen || isMintaSerangOpen || isStatusMintaSerangOpen || isHinaOpen || !!covertOperationResult;
 
   useEffect(() => {
     const handleCovertOperationArrival = (event: Event) => {
@@ -216,12 +224,17 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         <div className="relative w-full min-w-0">
           {actionDates?.serang && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.serang)}</div>}
           <ActionButton icon={Crosshair} label="Serang Negara" className={actionDates?.serang ? datedActionClass : undefined} iconClass={actionDates?.serang ? 'text-amber-300' : undefined} labelClass={actionDates?.serang ? 'text-amber-300' : undefined} onClick={() => {
+            const activeAttack = getActivePlayerAttack();
+            if (activeAttack) {
+              setBlockedPlayerAttack({ status: activeAttack, requestedTarget: countryName });
+              return;
+            }
             if (actionDates?.serang) {
               setIsAttackInProgressModalOpen(true);
               return;
             }
             setIsSerangOpen(true);
-          }} />
+          }} isDimmed={Boolean(activePlayerAttack)} title={activePlayerAttack ? `Serangan ke ${activePlayerAttack.targetCountry} masih berjalan` : undefined} />
         </div>
         <div className="relative w-full min-w-0">
           {actionDates?.spionase && <div className={operationDateBadgeClass}>{formatActionDate(actionDates.spionase)}</div>}
@@ -265,6 +278,7 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         onClose={() => setIsSerangOpen(false)}
         onCloseDetailModal={onCloseDetailModal}
         onAttackBlocked={() => setIsAttackInProgressModalOpen(true)}
+        onPlayerAttackBlocked={(status, requestedTarget) => setBlockedPlayerAttack({ status, requestedTarget })}
         onAttackLaunched={() => onMilitaryActionLaunched?.('serang')}
         updatePlayerCountryDetail={updatePlayerCountryDetail}
         onConfirm={(actionType, targetCountry) => {
@@ -286,6 +300,13 @@ export default function OperasiMiliter({ countryName, selectedCity, selectedCity
         isOpen={isAttackInProgressModalOpen}
         countryName={countryName}
         onClose={() => setIsAttackInProgressModalOpen(false)}
+      />
+      <SerangBelumSelesaiModals
+        isOpen={blockedPlayerAttack !== null}
+        onClose={() => setBlockedPlayerAttack(null)}
+        ongoingTarget={blockedPlayerAttack?.status.targetCountry ?? ''}
+        ongoingCity={blockedPlayerAttack?.status.targetCityName}
+        requestedTarget={blockedPlayerAttack?.requestedTarget}
       />
       <SpionaseModal isOpen={isSpionaseOpen} countryName={countryName} playerCountryDetail={playerCountryDetail} onClose={() => setIsSpionaseOpen(false)} onConfirm={(target) => {
         onMilitaryActionLaunched?.('spionase');

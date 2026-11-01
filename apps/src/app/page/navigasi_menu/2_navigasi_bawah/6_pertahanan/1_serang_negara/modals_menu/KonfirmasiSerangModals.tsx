@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { X, Swords, Shield, Ship, Plane, ChevronDown, ChevronUp } from "lucide-react";
 import { getArmadaPowerSummary } from "../../4_armada/logic/armadaLogic";
 import { convertBarakToSoldiers } from "../../4_armada/logic/1_barak_logic";
+import { getActivePlayerAttack, type PlayerAttackStatus } from "./playerAttackStatus";
 
 interface SerangModalsProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface SerangModalsProps {
   targetCountry: any;
   countryDetail: any;
   onConfirm: (deploymentConfig: Record<string, number>) => void;
+  onAttackBlocked: (status: PlayerAttackStatus, requestedTarget: string) => void;
 }
 
 type ArmadaGroup = "darat" | "laut" | "udara";
@@ -118,7 +120,23 @@ export default function SerangModals({
   targetCountry,
   countryDetail,
   onConfirm,
+  onAttackBlocked,
 }: SerangModalsProps) {
+  const [deploymentPct, setDeploymentPct] = useState<Record<string, number>>({});
+
+  React.useEffect(() => {
+    if (!isOpen || typeof window === "undefined") return;
+    try {
+      const initialDeployment = Object.fromEntries(
+        deploymentUnitKeys.map((key) => [key, 0])
+      );
+      setDeploymentPct(initialDeployment);
+      localStorage.setItem("deployed_units_config", JSON.stringify(initialDeployment));
+    } catch (error) {
+      console.error("Gagal menginisialisasi konfigurasi pengerahan unit.", error);
+    }
+  }, [isOpen]);
+
   if (!isOpen || !targetCountry) return null;
 
   const targetSource = targetCountry?.payload || targetCountry;
@@ -130,6 +148,15 @@ export default function SerangModals({
     targetSource?.name_id ||
     targetSource?.name_en ||
     "Target";
+  const handleConfirm = () => {
+    const activeAttack = getActivePlayerAttack();
+    if (activeAttack) {
+      onAttackBlocked(activeAttack, targetName);
+      onClose();
+      return;
+    }
+    onConfirm(deploymentPct);
+  };
 
   const attackerSummary = getArmadaPowerSummary(countryDetail);
   const targetSummary = getArmadaPowerSummary(targetSource);
@@ -144,25 +171,6 @@ export default function SerangModals({
     laut: targetSummary.totals.groups.laut?.power ?? 0,
     udara: targetSummary.totals.groups.udara?.power ?? 0,
   };
-
-  const [deploymentPct, setDeploymentPct] = useState<Record<string, number>>({});
-
-  // Reset state dan bersihkan data pengerahan lama setiap kali modal dibuka
-  React.useEffect(() => {
-    if (isOpen) {
-      if (typeof window !== "undefined") {
-        try {
-          const initialDeployment = Object.fromEntries(
-            deploymentUnitKeys.map((key) => [key, 0])
-          );
-          setDeploymentPct(initialDeployment);
-          localStorage.setItem("deployed_units_config", JSON.stringify(initialDeployment));
-        } catch (error) {
-          console.error("Gagal menginisialisasi konfigurasi pengerahan unit.", error);
-        }
-      }
-    }
-  }, [isOpen]);
 
   const handlePctChange = (key: string, val: number) => {
     const next = { ...deploymentPct, [key]: val };
@@ -414,7 +422,7 @@ export default function SerangModals({
             Batal
           </button>
           <button 
-            onClick={() => onConfirm(deploymentPct)}
+            onClick={handleConfirm}
             disabled={!hasDeployedUnits}
             className={`px-8 py-2 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 ${
               hasDeployedUnits
