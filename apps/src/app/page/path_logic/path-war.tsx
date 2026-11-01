@@ -73,59 +73,6 @@ export interface ScreenPoint {
   y: number;
 }
 
-// WARDBG-TEMP
-interface WarDebugEntry {
-  timestamp: string;
-  tag: string;
-  data: unknown;
-}
-
-// WARDBG-TEMP
-declare global {
-  interface Window {
-    __wardbgLogs?: WarDebugEntry[];
-  }
-}
-
-// WARDBG-TEMP
-function formatWardbgEntries(entries: WarDebugEntry[]): string {
-  return entries
-    .slice(-15)
-    .map(entry => `${entry.timestamp} ${entry.tag} ${JSON.stringify(entry.data)}`)
-    .join('\n');
-}
-
-// WARDBG-TEMP
-function wardbg(tag: string, data: unknown): void {
-  const entry: WarDebugEntry = {
-    timestamp: new Date().toISOString(),
-    tag,
-    data,
-  };
-  console.log('[WARDBG]', tag, data);
-
-  if (typeof window === 'undefined') return;
-
-  const entries = window.__wardbgLogs ?? [];
-  entries.push(entry);
-  if (entries.length > 200) entries.splice(0, entries.length - 200);
-  window.__wardbgLogs = entries;
-
-  const output = document.querySelector<HTMLElement>('[data-wardbg-output]');
-  if (output) output.textContent = formatWardbgEntries(entries);
-
-  try {
-    void fetch('/api/wardbg', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(entry),
-      keepalive: true,
-    }).catch(() => {});
-  } catch (error) {
-    console.warn('[WARDBG] Gagal mengirim diagnostik', error);
-  }
-}
-
 export interface BezierCurve {
   start: ScreenPoint;
   control: ScreenPoint;
@@ -807,6 +754,7 @@ interface WarMapProps {
   isNpcWar?: boolean;
   requestedInvasion?: boolean;
   isPbbCoalition?: boolean;
+  isExternalModalOpen?: boolean;
   onAnalysisVisibilityChange?: (isVisible: boolean) => void;
   onAttackerForcesModalVisibilityChange?: (isVisible: boolean) => void;
   onClose: (battleOutcome?: Pick<WarResultOutput, 'result' | 'attackerLossRatio'>) => void;
@@ -834,6 +782,7 @@ export default function WarMap({
   isNpcWar = false,
   requestedInvasion = false,
   isPbbCoalition = false,
+  isExternalModalOpen = false,
   onAnalysisVisibilityChange,
   onAttackerForcesModalVisibilityChange,
   onClose,
@@ -911,11 +860,6 @@ export default function WarMap({
   const impactBurstRef = useRef<SVGCircleElement>(null);
   const tankRef = useRef<SVGGElement>(null);
   const tankRotationRef = useRef<SVGGElement>(null);
-  // WARDBG-TEMP
-  const overlayRef = useRef<HTMLDivElement>(null);
-  // WARDBG-TEMP
-  const [wardbgCopyStatus, setWardbgCopyStatus] = useState('');
-
   useEffect(() => {
     const handleResize = () => {
       setScreenSize({ w: window.innerWidth, h: window.innerHeight });
@@ -954,68 +898,6 @@ export default function WarMap({
     return buildWarPath({ attacker: resolvedAttacker, target: resolvedTarget });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, resolvedAttacker.country, resolvedTarget.country, resolvedAttacker.lat, resolvedAttacker.lng, resolvedTarget.lat, resolvedTarget.lng]);
-
-  // WARDBG-TEMP
-  wardbg('WarMap render', {
-    isOpen,
-    warPath: warPath ? 'present' : null,
-    phase,
-    attacker: {
-      country: attacker.country,
-      lat: resolvedAttacker.lat,
-      lng: resolvedAttacker.lng,
-    },
-    target: {
-      country: target.country,
-      lat: resolvedTarget.lat,
-      lng: resolvedTarget.lng,
-    },
-  });
-  // WARDBG-TEMP
-  if (!warPath) {
-    wardbg('warPath is null', {
-      reason: !isOpen ? 'isOpen is false' : 'buildWarPath returned null; inspect route estimate and coordinates',
-      isOpen,
-      attacker: resolvedAttacker,
-      target: resolvedTarget,
-    });
-  }
-
-  // WARDBG-TEMP
-  useEffect(() => {
-    if (!isOpen) return;
-    const output = document.querySelector<HTMLElement>('[data-wardbg-output]');
-    if (output) {
-      output.textContent = formatWardbgEntries(
-        window.__wardbgLogs ?? []
-      );
-    }
-  }, [isOpen]);
-
-  // WARDBG-TEMP
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      const overlay = overlayRef.current;
-      const rect = overlay?.getBoundingClientRect() ?? null;
-      const centerX = window.innerWidth / 2;
-      const centerY = window.innerHeight / 2;
-      const elements = document.elementsFromPoint(centerX, centerY).map(element => {
-        return {
-          tagName: element.tagName,
-          className: element.getAttribute('class') ?? '',
-          zIndex: window.getComputedStyle(element).zIndex,
-        };
-      });
-      wardbg('overlay mount hit-test', {
-        rect: rect
-          ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height, top: rect.top, right: rect.right, bottom: rect.bottom, left: rect.left }
-          : null,
-        center: { x: centerX, y: centerY },
-        elementsFromPoint: elements,
-      });
-    });
-    return () => cancelAnimationFrame(frame);
-  }, []);
 
   const battleOutcome = useMemo(() => {
     if (!isOpen) return null;
@@ -1110,6 +992,7 @@ export default function WarMap({
   );
   const isAttackerForcesModalVisible =
     showAttackerForces && (phase === 'travel' || phase === 'impact');
+  const isAnotherModalOpen = isExternalModalOpen || isAttackerForcesModalVisible;
 
   useEffect(() => {
     onAttackerForcesModalVisibilityChange?.(isAttackerForcesModalVisible);
@@ -1166,7 +1049,6 @@ export default function WarMap({
       (typeof window !== 'undefined' && Boolean((window as Window & { neosantara_is_paused?: boolean }).neosantara_is_paused));
 
     const refreshCameraGeometry = () => {
-      const transform = getMapCanvasTransform();
       const geo = getMapRouteGeometry(
         resolvedAttacker.lat,
         resolvedAttacker.lng,
@@ -1174,57 +1056,6 @@ export default function WarMap({
         resolvedTarget.lng,
         0.18
       );
-      const finiteValues = {
-        scale: Number.isFinite(transform?.scale),
-        offsetX: Number.isFinite(transform?.offsetX),
-        offsetY: Number.isFinite(transform?.offsetY),
-        rect: transform
-          ? {
-              left: Number.isFinite(transform.rect.left),
-              top: Number.isFinite(transform.rect.top),
-              width: Number.isFinite(transform.rect.width),
-              height: Number.isFinite(transform.rect.height),
-            }
-          : false,
-        start: {
-          x: Number.isFinite(geo.start.x),
-          y: Number.isFinite(geo.start.y),
-        },
-        end: {
-          x: Number.isFinite(geo.end.x),
-          y: Number.isFinite(geo.end.y),
-        },
-        control: {
-          x: Number.isFinite(geo.control.x),
-          y: Number.isFinite(geo.control.y),
-        },
-        pathNumbers: (geo.path.match(/-?\d+(?:\.\d+)?(?:e[+-]?\d+)?/gi) ?? [])
-          .every(value => Number.isFinite(Number(value))),
-      };
-      // WARDBG-TEMP
-      wardbg('refreshCameraGeometry', {
-        transform: transform
-          ? {
-              scale: transform.scale,
-              offsetX: transform.offsetX,
-              offsetY: transform.offsetY,
-              rect: {
-                x: transform.rect.x,
-                y: transform.rect.y,
-                width: transform.rect.width,
-                height: transform.rect.height,
-                top: transform.rect.top,
-                right: transform.rect.right,
-                bottom: transform.rect.bottom,
-                left: transform.rect.left,
-              },
-            }
-          : null,
-        path: geo.path,
-        start: geo.start,
-        end: geo.end,
-        finiteValues,
-      });
       if (geo === lastGeo) return;
       lastGeo = geo;
       routeGeometryRef.current = geo;
@@ -1372,40 +1203,11 @@ export default function WarMap({
 
   return (
     <>
-      {/* WARDBG-TEMP */}
-      {isOpen && (
-        <aside className="fixed bottom-3 left-3 z-[2147483647] pointer-events-auto flex max-h-[45vh] w-[min(36rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-lg border border-amber-400 bg-slate-950/95 text-amber-100 shadow-2xl">
-          <div className="flex items-center justify-between gap-3 border-b border-amber-400/40 px-3 py-2">
-            <strong className="text-xs">WARDBG-TEMP</strong>
-            <button
-              type="button"
-              className="rounded border border-amber-300/50 px-2 py-1 text-xs hover:bg-amber-300/20"
-              onClick={() => {
-                const logs = window.__wardbgLogs ?? [];
-                void navigator.clipboard.writeText(JSON.stringify(logs, null, 2))
-                  .then(() => setWardbgCopyStatus('Tersalin'))
-                  .catch(error => {
-                    console.error('[WARDBG] Gagal menyalin log', error);
-                    setWardbgCopyStatus('Gagal menyalin');
-                  });
-              }}
-            >
-              Salin
-            </button>
-          </div>
-          <pre
-            data-wardbg-output
-            className="min-h-8 overflow-auto whitespace-pre-wrap break-all px-3 py-2 text-[10px] leading-4"
-          />
-          {wardbgCopyStatus && (
-            <span className="border-t border-amber-400/30 px-3 py-1 text-[10px]">
-              {wardbgCopyStatus}
-            </span>
-          )}
-        </aside>
-      )}
       {(phase === 'travel' || phase === 'impact') && (
-        <div ref={overlayRef} data-war-overlay className="fixed inset-0 z-[100000010] pointer-events-none font-sans select-none overflow-hidden">
+        <div
+          data-war-overlay
+          className={`fixed inset-0 z-[100000010] ${isAnotherModalOpen ? 'invisible' : ''} pointer-events-none font-sans select-none overflow-hidden`}
+        >
           <svg
             className="absolute inset-0 w-full h-full pointer-events-none"
             viewBox={VB}

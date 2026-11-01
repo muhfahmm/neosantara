@@ -2990,49 +2990,20 @@ export default function MapPage() {
 
     const npcWarQueueRunningRef = useRef(false);
 
-    const logWarDebug = useCallback((tag: string, data: unknown) => {
-        if (process.env.NODE_ENV !== 'development') return;
-        const entry = { timestamp: new Date().toISOString(), tag, data };
-        console.log('[WARDBG]', tag, data);
-        void fetch('/api/wardbg', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(entry),
-            keepalive: true,
-        }).catch(error => console.warn('[WARDBG] Gagal mengirim diagnostik', error));
-    }, []);
-
     useEffect(() => {
         const handleStartWarAnimation = async (event: Event) => {
             const detail = (event as CustomEvent).detail;
-            logWarDebug('start_war_animation received', {
-                attacker: detail?.attacker,
-                target: detail?.target,
-                isNpcWar: detail?.isNpcWar,
-                isPbbCoalition: detail?.isPbbCoalition,
-                troopsCommitted: detail?.troopsCommitted,
-                attackerIso: detail?.attackerCountryDetail?.iso,
-                playerPower: detail?.playerPower,
-                attackerPower: detail?.attackerPower,
-                deployedUnitsConfig: detail?.deployedUnitsConfig,
-            });
             if (detail?.isPbbCoalition && hasActiveGlobalWarBan()) {
-                logWarDebug('war event rejected', { reason: 'global-war-ban' });
                 console.warn('[WarAnimation] Global war ban active; refusing PBB coalition attack.');
                 return;
             }
             if (activeWarAnimationRef.current) {
                 // Jangan batalkan animasi perang yang sedang berjalan, masukkan ke antrean!
-                logWarDebug('war event queued', {
-                    attacker: detail?.attacker,
-                    target: detail?.target,
-                });
                 setNpcWarQueue(previous => [...previous, detail]);
                 return;
             }
             if (typeof detail?.attacker !== 'string' || !detail.attacker.trim() ||
                 typeof detail?.target !== 'string' || !detail.target.trim()) {
-                logWarDebug('war event rejected', { reason: 'invalid-attacker-or-target', detail });
                 console.error('[WarAnimation] Invalid attacker or target name', detail);
                 return;
             }
@@ -3042,11 +3013,6 @@ export default function MapPage() {
                 detail.attackerCountryDetail?.iso,
                 detail.targetCountryDetail?.iso
             )) {
-                logWarDebug('war event rejected', {
-                    attacker: detail.attacker,
-                    target: detail.target,
-                    reason: 'attacker-equals-target',
-                });
                 console.error('[WarAnimation] Blocked attack targeting the attacker country itself', {
                     attacker: detail.attacker,
                     target: detail.target,
@@ -3075,17 +3041,6 @@ export default function MapPage() {
                 selectedCountry?.iso || countryDetail?.iso
             );
             const isNpcWar = !isPlayerAttacker && !isPlayerDefender;
-            logWarDebug('war participants identified', {
-                attacker: detail.attacker,
-                target: detail.target,
-                playerCountryName,
-                isPlayerAttacker,
-                isPlayerDefender,
-                isNpcWar,
-                troopsCommitted: detail.troopsCommitted === true,
-                attackerIso: detail.attackerCountryDetail?.iso,
-                playerIso: selectedCountry?.iso || countryDetail?.iso,
-            });
             const targetCity = resolveWarTargetCity(
                 detail.target,
                 detail.targetCityId,
@@ -3105,11 +3060,6 @@ export default function MapPage() {
                 !resolutionViolationAuthorized &&
                 Math.random() >= 0.25
             ) {
-                logWarDebug('war event rejected', {
-                    attacker: detail.attacker,
-                    target: detail.target,
-                    reason: 'missing-invasion-mandate-random-check',
-                });
                 npcWarQueueRunningRef.current = false;
                 setNotifications(previous => [{
                     id: `notif-war-no-mandate-${Date.now()}`,
@@ -3310,13 +3260,6 @@ export default function MapPage() {
             let attackerDetailData = resolveCountryDetail(detail.attacker, detail.attackerCountryDetail);
             let targetDetailData = resolveCountryDetail(detail.target, detail.targetCountryDetail);
             if (!attackerDetailData || !targetDetailData || detail.isPbbCoalition) {
-                logWarDebug('war country data fetch started', {
-                    attacker: detail.attacker,
-                    target: detail.target,
-                    hasAttackerDetail: Boolean(attackerDetailData),
-                    hasTargetDetail: Boolean(targetDetailData),
-                    isPbbCoalition: detail.isPbbCoalition === true,
-                });
                 try {
                     const response = await fetch('/api/country-data?all=true');
                     if (response.ok) {
@@ -3327,17 +3270,7 @@ export default function MapPage() {
                             targetDetailData = targetDetailData || resolveCountryDetail(detail.target, detail.targetCountryDetail);
                         }
                     }
-                    logWarDebug('war country data fetch completed', {
-                        ok: response.ok,
-                        status: response.status,
-                        countryCount: countries?.length ?? 0,
-                        hasAttackerDetail: Boolean(attackerDetailData),
-                        hasTargetDetail: Boolean(targetDetailData),
-                    });
                 } catch (error) {
-                    logWarDebug('war country data fetch failed', {
-                        message: error instanceof Error ? error.message : String(error),
-                    });
                     console.warn('[WarAnimation] Unable to load country military data from API', error);
                 }
             }
@@ -3460,16 +3393,6 @@ export default function MapPage() {
             const targetPowerSummary = getArmadaPowerSummary(targetDetailData);
 
             setIsWarAnalysisActive(false);
-            logWarDebug('active war animation scheduled', {
-                attacker: detail.attacker,
-                target: detail.target,
-                isPlayerAttacker,
-                isPlayerDefender,
-                isNpcWar,
-                targetCity,
-                attackerPower: Number(attackerDetailData.pbbCoalitionPower) || attackerPowerSummary.totals.totalPower,
-                targetPower: targetPowerSummary.totals.totalPower,
-            });
             setActiveWarAnimation({
                 ...detail,
                 isNpcWar,
@@ -3564,10 +3487,6 @@ export default function MapPage() {
 
             setNpcWarQueue(previous => [...previous, ...attacks]);
         };
-        logWarDebug('war event listener mounted', {
-            selectedCountry: selectedCountry?.country,
-            country: countryDetail?.country,
-        });
         window.addEventListener('start_war_animation', handleStartWarAnimation);
         window.addEventListener('start_pbb_military_operation', handlePbbMilitaryOperation);
         window.addEventListener('pause_game_time', handlePauseGameTime);
@@ -3576,25 +3495,7 @@ export default function MapPage() {
             window.removeEventListener('start_pbb_military_operation', handlePbbMilitaryOperation);
             window.removeEventListener('pause_game_time', handlePauseGameTime);
         };
-    }, [countryDetail, selectedCountry?.country, logWarDebug]);
-
-    useEffect(() => {
-        if (!activeWarAnimation) return;
-        logWarDebug('active war animation rendered', {
-            attacker: activeWarAnimation.attacker,
-            target: activeWarAnimation.target,
-            isUserDefender: activeWarAnimation.isUserDefender,
-            isNpcWar: activeWarAnimation.isNpcWar,
-            attackerPoint: warMapAttacker && {
-                lat: warMapAttacker.lat,
-                lng: warMapAttacker.lng,
-            },
-            targetPoint: warMapTarget && {
-                lat: warMapTarget.lat,
-                lng: warMapTarget.lng,
-            },
-        });
-    }, [activeWarAnimation, logWarDebug, warMapAttacker, warMapTarget]);
+    }, [countryDetail, selectedCountry?.country]);
 
     useEffect(() => {
         if (activeWarAnimation || npcWarQueue.length === 0 || npcWarQueueRunningRef.current) return;
@@ -8946,6 +8847,7 @@ export default function MapPage() {
                         isNpcWar={activeWarAnimation.isNpcWar === true}
                         requestedInvasion={activeWarAnimation.requestedInvasion === true}
                         isPbbCoalition={activeWarAnimation.isPbbCoalition === true}
+                        isExternalModalOpen={countryDetailModalOpen || playerDetailModalOpen}
                         onAnalysisVisibilityChange={handleWarAnalysisVisibilityChange}
                         onAttackerForcesModalVisibilityChange={setIsAttackerForcesModalOpen}
                         onAutoResolve={result => {

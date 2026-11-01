@@ -178,27 +178,6 @@ export default function SerangNegaraModal({
 
 		// Trigger animasi perang top-level setelah modal tertutup sepenuhnya
 		if (typeof window !== 'undefined') {
-			if (process.env.NODE_ENV === 'development') {
-				const debugEntry = {
-					timestamp: new Date().toISOString(),
-					tag: 'player detail attack dispatched',
-					data: {
-						attacker: playerName,
-						target: countryName,
-						targetCityId: selectedCityId || undefined,
-						deployedUnitsConfig: committedDeploymentConfig,
-						playerPower,
-						targetPower,
-					},
-				};
-				console.log('[WARDBG]', debugEntry.tag, debugEntry.data);
-				void fetch('/api/wardbg', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(debugEntry),
-					keepalive: true,
-				}).catch(error => console.warn('[WARDBG] Gagal mengirim diagnostik', error));
-			}
 			window.dispatchEvent(
 				new CustomEvent('start_war_animation', {
 					detail: {
