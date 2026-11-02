@@ -11,6 +11,7 @@ interface NotebookModalWrapperProps {
   isHidden?: boolean;
   compact?: boolean;
   backdropClassName?: string;
+  squareCorners?: boolean;
 }
 
 export function NotebookModalWrapper({
@@ -22,6 +23,7 @@ export function NotebookModalWrapper({
   isHidden = false,
   compact = false,
   backdropClassName = '',
+  squareCorners = false,
 }: NotebookModalWrapperProps) {
   return (
     <div
@@ -30,7 +32,7 @@ export function NotebookModalWrapper({
       {/* Notebook Outer Frame */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full ${maxWidthClass} ${compact ? 'h-auto max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)]' : 'h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)]'} shadow-2xl relative flex flex-col min-w-0 p-3 sm:p-4 pl-10 sm:pl-12 pointer-events-auto overflow-hidden`}
+        className={`bg-[#0A1A1A] border-[6px] border-[#0F2424] ${squareCorners ? 'rounded-none' : 'rounded-2xl'} w-full ${maxWidthClass} ${compact ? 'h-auto max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)]' : 'h-full max-h-[calc(100dvh-100px)] sm:max-h-[calc(100dvh-116px)] lg:max-h-[calc(100dvh-112px)]'} shadow-2xl relative flex flex-col min-w-0 p-3 sm:p-4 pl-10 sm:pl-12 pointer-events-auto overflow-hidden`}
       >
         {/* Silver Binder Spine on the Left */}
         <div className="absolute left-3 sm:left-3.5 top-6 bottom-6 w-2 sm:w-2.5 bg-gradient-to-r from-[#2A3F3F] via-[#3D5252] to-[#1F3030] rounded-full shadow-md z-20 border border-[#0A1A1A]/80" />
@@ -50,7 +52,7 @@ export function NotebookModalWrapper({
         </div>
 
         {/* Main Panel Sheet — Green Theme */}
-        <div className={`${compact ? 'flex-none' : 'flex-1'} min-w-0 bg-[#0F2424] border-[3px] border-[#00FFAA]/20 rounded-r-xl shadow-inner relative flex flex-col overflow-hidden`}>
+        <div className={`${compact ? 'flex-none' : 'flex-1'} min-w-0 bg-[#0F2424] border-[3px] border-[#00FFAA]/20 ${squareCorners ? 'rounded-none' : 'rounded-r-xl'} shadow-inner relative flex flex-col overflow-hidden`}>
           {/* Subtle radial glow */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
 

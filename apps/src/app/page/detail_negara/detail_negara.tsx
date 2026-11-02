@@ -733,7 +733,7 @@ export function CountryDetailModal({
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,255,170,0.05)_0%,transparent_100%)] pointer-events-none" />
 
         {/* HEADER Modal */}
-        <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 rounded-t-2xl">
+        <div className="px-6 sm:px-8 py-3.5 sm:py-4 border-b border-[#00FFAA]/20 flex items-center justify-between bg-[#0A1A1A] relative z-10 shrink-0 rounded-none">
           <div className="flex items-center gap-3 sm:gap-4">
 
             {/* 1. Icon Globe */}
