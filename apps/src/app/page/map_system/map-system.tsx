@@ -25,6 +25,22 @@ import {
     calculateTradeAccess,
     getAverageNationalization,
 } from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/tradeAccessLogic';
+import {
+    advanceTradePriceHistoriesForSimulationDay,
+    createDailyMarketPriceFactors,
+} from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/priceHistoryLogic';
+import {
+    buildEmbargoEvent,
+    buildWarEvent,
+    COMMODITY_CLASS,
+    registerMarketEvent,
+    type MarketEvent,
+    type MarketProducer,
+} from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/marketEventsLogic';
+import {
+    calculateGlobalProduction,
+    recordTrade,
+} from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/tradeVolumeLedger';
 
 const GameMenuModal = dynamic(() => import('../paused_menu/GameMenuModal').then(m => m.GameMenuModal), { ssr: false });
 const TopNav = dynamic(() => import('../navigasi_menu/1_navigasi_atas/TopNav'), { ssr: false });
@@ -212,7 +228,12 @@ import {
     tickPBBResolutions,
     spawnAIResolutionFromTrigger
 } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/resolusiPBBUILogic';
-import { clearActiveSecurityCouncilItems, tickPBBSecurityCouncil, spawnAISecurityCouncilFromTrigger } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
+import {
+    clearActiveSecurityCouncilItems,
+    loadActiveSecurityCouncilItems,
+    tickPBBSecurityCouncil,
+    spawnAISecurityCouncilFromTrigger,
+} from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/2_keamanan_PBB/logic/keamananPBBUILogic';
 import { initCountryIsoFromDatabase, getIsoForCountryName } from '@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/pbbCountryIso';
 import {
     getWHOPandemicRiskModifier,
@@ -844,6 +865,30 @@ function setMilitaryAttackRelation(
     }
 }
 
+function getMarketProducers(
+    countries: readonly Record<string, unknown>[],
+    metadata: Record<string, unknown>,
+): MarketProducer[] {
+    return countries.map(country => {
+        const countryName = String(
+            country.name_id || country.nama_negara || country.country || country.country_name || country.country_slug || '',
+        ).trim();
+        const production: Record<string, number> = {};
+        for (const commodity of Object.keys(COMMODITY_CLASS)) {
+            const buildingCount = Number(country[commodity]) || 0;
+            const metadataEntry = metadata[commodity];
+            const productionRate = metadataEntry && typeof metadataEntry === 'object'
+                ? Number((metadataEntry as Record<string, unknown>).produksi) || 0
+                : 0;
+            const recordedOutput = Number(country[`production_${commodity}`]) || 0;
+            production[commodity] = buildingCount > 0 && productionRate > 0
+                ? buildingCount * productionRate
+                : Math.max(0, recordedOutput);
+        }
+        return { country: countryName, production };
+    }).filter(producer => producer.country.length > 0);
+}
+
 export default function MapPage() {
     const router = useRouter();
     const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
@@ -937,6 +982,7 @@ export default function MapPage() {
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
     const currentDateRef = useRef(currentDate);
     currentDateRef.current = currentDate;
+    const tradePriceProgressRef = useRef<{ country: string; day: number } | null>(null);
 
     useEffect(() => {
         isPausedRef.current = isPaused;
@@ -952,6 +998,40 @@ export default function MapPage() {
         String(currentDate.getDate()).padStart(2, '0'),
     ].join('-');
     useNpcCountrySimulation(currentDate, countryDetail?.country_slug, metadata, isPaused);
+
+    useEffect(() => {
+        const country = String(countryDetail?.country || countryDetail?.nama || '').trim().toLowerCase();
+        if (!country) return;
+
+        const day = Math.floor(Date.UTC(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            currentDate.getDate(),
+        ) / (24 * 60 * 60 * 1000));
+        const previous = tradePriceProgressRef.current;
+        tradePriceProgressRef.current = { country, day };
+        if (!previous || previous.country !== country || day <= previous.day) return;
+
+        const randomFactors = createDailyMarketPriceFactors(currentDate);
+        const npcSnapshot = getNpcCountrySimulationSnapshot();
+        const productionCountries = [
+            ...(npcSnapshot ? Object.values(npcSnapshot.countries) : []),
+            ...(countryDetail ? [countryDetail] : []),
+        ];
+        const globalProduction = calculateGlobalProduction(
+            productionCountries,
+            metadata,
+            Object.keys(COMMODITY_CLASS),
+        );
+        setCountryDetail((previousDetail: Record<string, unknown>) => (
+            advanceTradePriceHistoriesForSimulationDay(
+                previousDetail,
+                currentDate,
+                randomFactors,
+                globalProduction,
+            )
+        ));
+    }, [countryDetail, currentDate]);
 
     useEffect(() => {
         const refreshNpcCountryDetail = () => {
@@ -3452,6 +3532,36 @@ export default function MapPage() {
 
             const attackerPowerSummary = getArmadaPowerSummary(attackerDetailData);
             const targetPowerSummary = getArmadaPowerSummary(targetDetailData);
+            if (!countries) {
+                try {
+                    const response = await fetch('/api/country-data?all=true');
+                    if (!response.ok) throw new Error(`Country data request failed with status ${response.status}.`);
+                    const data: unknown = await response.json();
+                    if (!Array.isArray(data)) throw new Error('Country data response was not a country list.');
+                    countries = data.filter((entry): entry is Record<string, unknown> => (
+                        entry !== null && typeof entry === 'object' && !Array.isArray(entry)
+                    ));
+                } catch (error) {
+                    console.error('[MarketEvents] Unable to load global production data for war event.', error);
+                }
+            }
+            const marketStartDay = Math.floor(Date.UTC(
+                currentDate.getFullYear(),
+                currentDate.getMonth(),
+                currentDate.getDate(),
+            ) / 86_400_000);
+            const marketProducers = countries
+                ? getMarketProducers(countries, metadata)
+                : [];
+            const warMarketEvent = buildWarEvent(
+                detail.attacker,
+                detail.target,
+                marketStartDay,
+                marketProducers,
+            );
+            setCountryDetail((previous: Record<string, unknown> | null) => (
+                previous ? registerMarketEvent(previous, warMarketEvent) : previous
+            ));
 
             setIsWarAnalysisActive(false);
             setActiveWarAnimation({
@@ -4108,12 +4218,31 @@ export default function MapPage() {
                     dateStr,
                     eventNumber,
                 );
-                return {
+                const marketStartDay = Math.floor(Date.UTC(
+                    currentDate.getFullYear(),
+                    currentDate.getMonth(),
+                    currentDate.getDate(),
+                ) / 86_400_000);
+                const crisisAffected = Object.fromEntries(
+                    Object.entries(COMMODITY_CLASS).map(([commodity, commodityClass]) => [
+                        commodity,
+                        commodityClass === 'manufaktur' || commodityClass === 'olahan' ? -1 : -0.25,
+                    ]),
+                );
+                return registerMarketEvent({
                     ...prev,
                     economic_crisis_active: true,
                     economic_crisis_event_count: eventNumber,
                     pending_notifications: [crisisNotification, ...(Array.isArray(prev.pending_notifications) ? prev.pending_notifications : [])],
-                };
+                }, {
+                    id: `economic-crisis:${dateStr}:${eventNumber}`,
+                    kind: 'economic_crisis',
+                    startDay: marketStartDay,
+                    halfLifeDays: 30,
+                    magnitude: 0.3,
+                    affected: crisisAffected,
+                    sourceCountries: [String(prev.country || prev.nama || selectedCountry?.country || 'negara')],
+                });
             });
         } else if (budget >= 0 && crisisActive) {
             setCountryDetail((prev: Record<string, unknown> | null) => (
@@ -4293,8 +4422,8 @@ export default function MapPage() {
 
             const newNotifsToAdd: any[] = [];
 
-            // 1. Penawaran Transaksi Ekspor / Impor (2% daily chance)
-            if (Math.random() < 0.02) {
+            // 1. Penawaran Transaksi Ekspor / Impor (8% daily chance)
+            if (Math.random() < 0.08) {
                 const partnerName = allTradePartners.length > 0
                     ? allTradePartners[Math.floor(Math.random() * allTradePartners.length)]
                     : internationalPool[Math.floor(Math.random() * internationalPool.length)];
@@ -4314,8 +4443,8 @@ export default function MapPage() {
                 }
             }
 
-            // 2. Penawaran Kedutaan Besar (2% daily chance)
-            if (Math.random() < 0.02) {
+            // 2. Penawaran Kedutaan Besar (6% daily chance)
+            if (Math.random() < 0.06) {
                 const embassyNotif = checkAndGenerateEmbassyOffers(
                     userCountryName,
                     notifications,
@@ -4332,9 +4461,12 @@ export default function MapPage() {
                 }
             }
 
-            // 3. Penawaran Hubungan Dagang Bilateral (2% daily chance)
-            if (Math.random() < 0.02) {
-                const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
+            // 3. Penawaran Hubungan Dagang Bilateral (7% daily chance)
+            if (Math.random() < 0.07) {
+                const candidateTradePool = (activeEmbassies.length > 0 && Math.random() < 0.6)
+                    ? activeEmbassies
+                    : internationalPool;
+                const randomPartner = candidateTradePool[Math.floor(Math.random() * candidateTradePool.length)];
                 newNotifsToAdd.push(generateTradeRelationOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
@@ -4764,22 +4896,29 @@ export default function MapPage() {
                 }
             }
 
-            // 5B. Penawaran Pakta Non-Agresi Bilateral (2% daily chance)
-            if (Math.random() < 0.02) {
-                const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
+            // Pool mitra diplomasi: kombinasikan kedutaan aktif dan negara internasional dengan relasi bersahabat
+            const diplomacyCandidatePool = Array.from(new Set([
+                ...activeEmbassies,
+                ...internationalPool.filter(country => getRelationValue(userCountryName, country, currentDateStr) >= 40)
+            ])).filter(c => c && c.trim().toLowerCase() !== userCountryName.trim().toLowerCase());
+            const effectiveDiplomacyPool = diplomacyCandidatePool.length > 0 ? diplomacyCandidatePool : internationalPool;
+
+            // 5B. Penawaran Pakta Non-Agresi Bilateral (6% daily chance)
+            if (Math.random() < 0.06) {
+                const randomPartner = effectiveDiplomacyPool[Math.floor(Math.random() * effectiveDiplomacyPool.length)];
                 newNotifsToAdd.push(generateNonAggressionOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
-            // 5C. Peluang dasar 25% per bulan, ditambah bonus riset Aliansi Pertahanan.
+            // 5C. Peluang dasar 35% per hari/bulan jika ada riset/relasi baik Aliansi Pertahanan (8% daily roll)
             const defenseAllianceOfferChance = getDefenseAllianceOfferChancePercent(countryDetail);
-            if (Math.random() * 100 < defenseAllianceOfferChance) {
-                const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
+            if (Math.random() < 0.08 || (Math.random() * 100 < defenseAllianceOfferChance && Math.random() < 0.15)) {
+                const randomPartner = effectiveDiplomacyPool[Math.floor(Math.random() * effectiveDiplomacyPool.length)];
                 newNotifsToAdd.push(generateDefenseAllianceOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
-            // 5D. Penawaran Kontrak Penelitian Joint-R&D (2% daily chance)
-            if (Math.random() < 0.02) {
-                const randomPartner = embassyPartnerPool[Math.floor(Math.random() * embassyPartnerPool.length)];
+            // 5D. Penawaran Kontrak Penelitian Joint-R&D (6% daily chance)
+            if (Math.random() < 0.06) {
+                const randomPartner = effectiveDiplomacyPool[Math.floor(Math.random() * effectiveDiplomacyPool.length)];
                 newNotifsToAdd.push(generateResearchContractOfferNotification(randomPartner, userCountryName, currentDateStr));
             }
 
@@ -5083,29 +5222,48 @@ export default function MapPage() {
                 ));
             }
 
-            // Ambil maks 2 notifikasi berbeda jenis dari generator; kuota aktual ditentukan
-            // oleh gerbang pusat (0/1/2 berdasarkan undian 30/50/20%).
-            const MAX_GENERATOR_CAP = 2;
-            let cappedNotifs: any[];
-            try {
-                cappedNotifs = await selectDailyNotificationsInRust(
-                    newNotifsToAdd,
-                    Math.floor(Math.random() * 0x1_0000_0000),
-                    MAX_GENERATOR_CAP,
-                );
-            } catch (error) {
-                console.error('Rust inbox selection failed; using TypeScript fallback:', error);
-                const shuffledNotifs = newNotifsToAdd
-                    .filter(n => n && n.id)
-                    .sort(() => Math.random() - 0.5);
-                const usedKinds = new Set<string>();
-                cappedNotifs = [];
-                for (const notification of shuffledNotifs) {
-                    const kind = String(notification.tradeType || notification.type || notification.title);
-                    if (usedKinds.has(kind)) continue;
-                    usedKinds.add(kind);
-                    cappedNotifs.push(notification);
-                    if (cappedNotifs.length >= MAX_GENERATOR_CAP) break;
+            // Pisahkan notifikasi diplomasi & perdagangan agar tidak selalu tersingkir oleh krisis domestik
+            const DIPLOMATIC_TRADE_TYPES = new Set([
+                'jual',
+                'beli',
+                'penawaran_pakta_non_agresi',
+                'penawaran_aliansi_pertahanan',
+                'penawaran_kontrak_penelitian',
+                'penawaran_hubungan_dagang',
+                'penawaran_kedutaan_besar'
+            ]);
+            const diplomaticCandidates = newNotifsToAdd.filter(n => n && DIPLOMATIC_TRADE_TYPES.has(String(n.tradeType)));
+            const generalCandidates = newNotifsToAdd.filter(n => !n || !DIPLOMATIC_TRADE_TYPES.has(String(n.tradeType)));
+
+            const MAX_GENERATOR_CAP = 3;
+            let cappedNotifs: any[] = [];
+
+            // Pastikan jika ada penawaran diplomasi/dagang yang lolos undian harian, berikan 1 slot prioritas
+            if (diplomaticCandidates.length > 0) {
+                const pickedDiplomacy = diplomaticCandidates[Math.floor(Math.random() * diplomaticCandidates.length)];
+                cappedNotifs.push(pickedDiplomacy);
+            }
+
+            const remainingQuota = MAX_GENERATOR_CAP - cappedNotifs.length;
+            if (remainingQuota > 0 && generalCandidates.length > 0) {
+                try {
+                    const selectedGeneral = await selectDailyNotificationsInRust(
+                        generalCandidates,
+                        Math.floor(Math.random() * 0x1_0000_0000),
+                        remainingQuota,
+                    );
+                    cappedNotifs.push(...selectedGeneral);
+                } catch (error) {
+                    console.error('Rust inbox selection failed; using TypeScript fallback:', error);
+                    const shuffled = generalCandidates.filter(n => n && n.id).sort(() => Math.random() - 0.5);
+                    const usedKinds = new Set<string>(cappedNotifs.map(n => String(n.tradeType || n.type || n.title)));
+                    for (const notif of shuffled) {
+                        const kind = String(notif.tradeType || notif.type || notif.title);
+                        if (usedKinds.has(kind)) continue;
+                        usedKinds.add(kind);
+                        cappedNotifs.push(notif);
+                        if (cappedNotifs.length >= MAX_GENERATOR_CAP) break;
+                    }
                 }
             }
 
@@ -5145,7 +5303,7 @@ export default function MapPage() {
                 const prevConsecutive = Number(prev.consecutive_outbreak_count || 0);
                 const nextConsecutive = prevConsecutive + pendingConsecutiveOutbreakBoost;
 
-                return {
+                const nextState = {
                     ...prev,
                     jumlah_penduduk: nextPop,
                     active_disaster_effects: nextDisasters,
@@ -5159,6 +5317,49 @@ export default function MapPage() {
                     world_news_country_cursor: worldNewsResult.nextCursor,
                     last_notified_listrik_step: currentListrikStep
                 };
+                const marketStartDay = Math.floor(Date.UTC(
+                    currentDate.getFullYear(),
+                    currentDate.getMonth(),
+                    currentDate.getDate(),
+                ) / 86_400_000);
+                const newMarketEvents: MarketEvent[] = [];
+                if (pendingDisasterEffect) {
+                    newMarketEvents.push({
+                        id: `disaster:${pendingDisasterEffect.id}`,
+                        kind: 'disaster',
+                        startDay: marketStartDay,
+                        halfLifeDays: 20,
+                        magnitude: 0.3,
+                        affected: Object.fromEntries(
+                            Object.entries(COMMODITY_CLASS)
+                                .filter(([, commodityClass]) => commodityClass === 'pangan' || commodityClass === 'olahan')
+                                .map(([commodity]) => [commodity, 0.5]),
+                        ),
+                        sourceCountries: [userCountryName],
+                    });
+                }
+                if (pendingOutbreakEffect) {
+                    newMarketEvents.push({
+                        id: `pandemic:${pendingOutbreakEffect.id}`,
+                        kind: 'pandemic',
+                        startDay: marketStartDay,
+                        halfLifeDays: 35,
+                        magnitude: 0.25,
+                        affected: Object.fromEntries(
+                            Object.entries(COMMODITY_CLASS).map(([commodity, commodityClass]) => [
+                                commodity,
+                                commodityClass === 'pangan' ? 0.35
+                                    : commodityClass === 'manufaktur' || commodityClass === 'olahan' ? -0.5
+                                        : -0.15,
+                            ]),
+                        ),
+                        sourceCountries: [userCountryName],
+                    });
+                }
+                return newMarketEvents.reduce(
+                    (state, marketEvent) => registerMarketEvent(state, marketEvent),
+                    nextState,
+                );
             });
         };
 
@@ -6170,9 +6371,45 @@ export default function MapPage() {
 
         // Tick PBB resolutions and Security Council countdown & AI 206 country voting logic
         if (typeof tickPBBResolutions === 'function') {
+            const previousResolutionStatuses = new Map(
+                loadActiveResolutions().map(item => [item.id, item.status]),
+            );
             const updatedResolutions = tickPBBResolutions(currentDateStr, (newNotif) => {
                 setNotifications((prev: any[]) => [newNotif, ...prev]);
             }, selectedCountry?.country);
+            const approvedEmbargoes = updatedResolutions.filter(item =>
+                item.type === 'economic_embargo'
+                && item.status === 'passed'
+                && previousResolutionStatuses.get(item.id) === 'voting',
+            );
+            if (approvedEmbargoes.length > 0) {
+                const marketStartDay = Math.floor(Date.UTC(
+                    currentDate.getFullYear(),
+                    currentDate.getMonth(),
+                    currentDate.getDate(),
+                ) / 86_400_000);
+                const npcSnapshot = getNpcCountrySimulationSnapshot();
+                const npcCountries = Object.entries(npcSnapshot?.countries || {}).map(([slug, details]) => ({
+                    ...details,
+                    country: String(details.country || details.nama_negara || details.name_id || slug),
+                }));
+                const producers = getMarketProducers(
+                    [...npcCountries, ...(countryDetail ? [countryDetail] : [])],
+                    metadata,
+                );
+                setCountryDetail((previous: Record<string, unknown> | null) => {
+                    if (!previous) return previous;
+                    return approvedEmbargoes.reduce((state, resolution) => registerMarketEvent(
+                        state,
+                        buildEmbargoEvent(
+                            resolution.target.name,
+                            marketStartDay,
+                            producers,
+                            `embargo:${resolution.id}`,
+                        ),
+                    ), previous);
+                });
+            }
             const decidedInvasions = updatedResolutions.filter(item =>
                 item.aiInvasionAttackChance !== undefined &&
                 item.status !== 'voting' &&
@@ -6232,9 +6469,45 @@ export default function MapPage() {
             }
         }
         if (typeof tickPBBSecurityCouncil === 'function') {
+            const previousSecurityItems = new Map(
+                loadActiveSecurityCouncilItems().map(item => [item.id, item.status]),
+            );
             tickPBBSecurityCouncil(currentDateStr, (newNotif) => {
                 setNotifications((prev: any[]) => [newNotif, ...prev]);
             }, selectedCountry?.country);
+            const approvedEconomicSanctions = loadActiveSecurityCouncilItems().filter(item =>
+                (item.type === 'economic' || item.type === 'naval' || item.type === 'full')
+                && item.status === 'passed'
+                && previousSecurityItems.get(item.id) === 'voting',
+            );
+            if (approvedEconomicSanctions.length > 0) {
+                const marketStartDay = Math.floor(Date.UTC(
+                    currentDate.getFullYear(),
+                    currentDate.getMonth(),
+                    currentDate.getDate(),
+                ) / 86_400_000);
+                const npcSnapshot = getNpcCountrySimulationSnapshot();
+                const npcCountries = Object.entries(npcSnapshot?.countries || {}).map(([slug, details]) => ({
+                    ...details,
+                    country: String(details.country || details.nama_negara || details.name_id || slug),
+                }));
+                const producers = getMarketProducers(
+                    [...npcCountries, ...(countryDetail ? [countryDetail] : [])],
+                    metadata,
+                );
+                setCountryDetail((previous: Record<string, unknown> | null) => {
+                    if (!previous) return previous;
+                    return approvedEconomicSanctions.reduce((state, sanction) => registerMarketEvent(
+                        state,
+                        buildEmbargoEvent(
+                            sanction.target.name,
+                            marketStartDay,
+                            producers,
+                            `embargo:${sanction.id}`,
+                        ),
+                    ), previous);
+                });
+            }
         }
 
         if (!countryDetail) return;
@@ -8101,11 +8374,18 @@ export default function MapPage() {
                         if (tNotif.partnerName) {
                             setRelationModifier(playerCountryName, tNotif.partnerName, 5);
                         }
-                        setCountryDetail((prev: any) => ({
+                        setCountryDetail((prev: any) => recordTrade({
                             ...prev,
                             anggaran: budget + tNotif.totalPrice,
                             [tNotif.productKey]: myStock - tNotif.quantity,
                             [`total_sold_${tNotif.productKey}`]: Number(prev?.[`total_sold_${tNotif.productKey}`] || 0) + tNotif.quantity
+                        }, {
+                            commodity: tNotif.productKey,
+                            quantity: tNotif.quantity,
+                            side: 'sell',
+                            day: Math.floor(Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()) / 86_400_000),
+                            hour: currentDate.getUTCHours(),
+                            counterparty: tNotif.partnerName,
                         }));
 
                         setInboxModalOpen(false);
@@ -8176,11 +8456,18 @@ export default function MapPage() {
                         if (tNotif.partnerName) {
                             setRelationModifier(playerCountryName, tNotif.partnerName, 5);
                         }
-                        setCountryDetail((prev: any) => ({
+                        setCountryDetail((prev: any) => recordTrade({
                             ...prev,
                             anggaran: budget - tNotif.totalPrice,
                             [tNotif.productKey]: myStock + tNotif.quantity,
                             [`total_bought_${tNotif.productKey}`]: Number(prev?.[`total_bought_${tNotif.productKey}`] || 0) + tNotif.quantity
+                        }, {
+                            commodity: tNotif.productKey,
+                            quantity: tNotif.quantity,
+                            side: 'buy',
+                            day: Math.floor(Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate()) / 86_400_000),
+                            hour: currentDate.getUTCHours(),
+                            counterparty: tNotif.partnerName,
                         }));
 
                         setInboxModalOpen(false);

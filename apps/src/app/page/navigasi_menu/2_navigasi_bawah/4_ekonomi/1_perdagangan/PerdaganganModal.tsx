@@ -1013,7 +1013,7 @@ export default function PerdaganganModal({
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-[#0A1A1A]/80 relative z-10 neon-scrollbar [overflow-anchor:none]">
               {isTradeMarketBlocked ? (
                 <div className="flex min-h-full flex-col items-center justify-center rounded-xl border border-rose-500/30 bg-rose-950/20 p-5 text-center">
                   <AlertTriangle className="mb-3 h-12 w-12 text-rose-400 animate-pulse" />

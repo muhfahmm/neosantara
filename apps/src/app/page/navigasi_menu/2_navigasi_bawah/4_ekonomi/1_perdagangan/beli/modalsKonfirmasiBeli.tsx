@@ -37,6 +37,17 @@ import {
   getArmsUnitCount,
 } from "../armsTradeLogic";
 import { isArmsSaleEmbargoActive } from "@/app/page/navigasi_menu/2_navigasi_bawah/7_geopolitik/1_PBB/1_resolusi_PBB/logic/2_armsSalesEmbargoLogic";
+import {
+  createDailyMarketPriceFactors,
+  getCandlesForAllRanges,
+  getStoredPriceHistory,
+  getTradeMarketPrices,
+  PRICE_TIME_RANGES,
+  updateTradePriceHistory,
+  type PriceTimeRange,
+} from "../priceHistoryLogic";
+import { recordTrade } from "../tradeVolumeLedger";
+import CandlestickChart from "../CandlestickChart";
 
 const getFlagEmoji = (countryName: string) => {
   const matched = COUNTRIES_DATA.find(c => c.country.toLowerCase().trim() === countryName.toLowerCase().trim());
@@ -46,6 +57,7 @@ const getFlagEmoji = (countryName: string) => {
 };
 
 const formatTradePrice = (price: number) => String(Math.round(price));
+const EMPTY_PRICE_CANDLES = Object.freeze([]);
 
 import {
   hasUraniumBuilding,
@@ -153,106 +165,6 @@ interface ModalsKonfirmasiBeliProps {
   canBuy?: boolean;
 }
 
-// --- HARGA DEFAULT PASAR (BERLAKU UNTUK BELI) ---
-const DEFAULT_PRICES: Record<string, number> = {
-  uranium: 8000, batu_bara: 100, minyak_bumi: 150, gas_alam: 120, garam: 50,
-  litium: 3000, logam_tanah_jarang: 5000,
-  pabrik_semikonduktor: 4000, pabrik_mesin: 10000, pabrik_besi: 10000,
-  semen_beton: 300, kayu: 200, ayam_unggas: 60, sapi_perah: 200,
-  sapi_potong: 180, domba_kambing: 150, padi: 80, gandum: 90, jagung: 70,
-  sayur: 100, umbi: 60, kedelai: 120, kelapa_sawit: 130, kopi: 300,
-  teh: 250, kakao: 350, tebu: 100, karet: 200,
-  udang: 500, mutiara: 1000, ikan: 300, air_mineral: 50,
-  gula: 150, roti: 200, pengolahan_daging: 250, mie_instan: 180, minyak_goreng: 220,
-  susu: 160
-};
-
-// --- HELPER TANGGAL UNTUK CHART ---
-const getDaysInMonth = (date: Date) => {
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  return new Date(year, month + 1, 0).getDate();
-};
-
-const getDaysInLastMonths = (endDate: Date, count: number) => {
-  let total = 0;
-  for (let i = 0; i < count; i++) {
-    const d = new Date(endDate);
-    d.setMonth(d.getMonth() - i);
-    total += getDaysInMonth(d);
-  }
-  return total;
-};
-
-const isLeapYear = (date: Date) => {
-  const year = date.getFullYear();
-  return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-};
-
-// --- GENERATE DATA CANDLESTICK (OHLC) UNTUK HARGA BELI ---
-const generateCandleData = (
-  endDate: Date,
-  timeRange: string,
-  currentPrice: number,
-  volatility: number = 0.04,
-  trend: number = 0.001
-) => {
-  const MS_PER_HOUR = 3600000;
-  const MS_PER_DAY = 86400000;
-
-  let points = 0;
-  let intervalMs = MS_PER_DAY;
-
-  switch (timeRange) {
-    case '1d': points = 24; intervalMs = MS_PER_HOUR; break;
-    case '1w': points = 7; intervalMs = MS_PER_DAY; break;
-    case '1m': points = getDaysInMonth(endDate); intervalMs = MS_PER_DAY; break;
-    case '6m': points = getDaysInLastMonths(endDate, 6); intervalMs = MS_PER_DAY; break;
-    case '1y': points = isLeapYear(endDate) ? 366 : 365; intervalMs = MS_PER_DAY; break;
-    default: points = 24; intervalMs = MS_PER_HOUR;
-  }
-
-  if (points <= 0) return [];
-  const data = [];
-  const times: Date[] = [];
-
-  for (let i = 0; i < points; i++) {
-    if (timeRange === '1d') {
-      const start = new Date(endDate);
-      start.setHours(0, 0, 0, 0);
-      times.push(new Date(start.getTime() + i * intervalMs));
-    } else {
-      times.push(new Date(endDate.getTime() - (points - i) * intervalMs));
-    }
-  }
-
-  let prevClose = currentPrice;
-  for (let i = points - 1; i >= 0; i--) {
-    const open = prevClose;
-    const change = (Math.random() - 0.5) * volatility * open + trend * open;
-    let close = Math.max(open + change, currentPrice * 0.5);
-    close = Math.round(close * 100) / 100;
-
-    const shadowTop = Math.random() * volatility * open * 0.6;
-    const shadowBottom = Math.random() * volatility * open * 0.6;
-
-    const high = Math.max(open, close) + shadowTop;
-    const low = Math.min(open, close) - shadowBottom;
-
-    data.push({
-      time: times[i],
-      open: Math.round(open * 100) / 100,
-      high: Math.round(high * 100) / 100,
-      low: Math.round(low * 100) / 100,
-      close: close
-    });
-
-    prevClose = close;
-  }
-
-  return data.reverse();
-};
-
 export default function ModalsKonfirmasiBeli({
   isOpen,
   onClose,
@@ -272,6 +184,7 @@ export default function ModalsKonfirmasiBeli({
   const [selectedProduct, setSelectedProduct] = useState<string>("");
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
+  const [partnerOfferPriceOverrides, setPartnerOfferPriceOverrides] = useState<Record<string, number>>({});
 
   const [partnerDataRaw, setPartnerDataRaw] = useState<Record<string, any> | null>(null);
   const partnerStartDateRef = useRef<string | null>(null);
@@ -293,10 +206,18 @@ export default function ModalsKonfirmasiBeli({
   const [isCountryPickerOpen, setIsCountryPickerOpen] = useState(false);
 
   // --- STATE UNTUK MARKET PRICES, CHART, TIME RANGE ---
-  const [marketPrices, setMarketPrices] = useState<Record<string, number>>(DEFAULT_PRICES);
-  const [ohlcSeries, setOhlcSeries] = useState<Record<string, { time: Date; open: number; high: number; low: number; close: number }[]>>({});
-  const prevDateRef = useRef<string | null>(null);
-  const [timeRange, setTimeRange] = useState<'1d' | '1w' | '1m' | '6m' | '1y'>('1d');
+  const marketPrices = useMemo(() => getTradeMarketPrices(countryDetail), [countryDetail]);
+  const [timeRange, setTimeRange] = useState<PriceTimeRange>('1d');
+  const simulationDateKey = currentDate
+    ? currentDate.getFullYear() * 10_000 + (currentDate.getMonth() + 1) * 100 + currentDate.getDate()
+    : null;
+  const simulationDate = useMemo(() => {
+    if (simulationDateKey === null) return null;
+    const year = Math.floor(simulationDateKey / 10_000);
+    const month = Math.floor(simulationDateKey / 100) % 100;
+    const day = simulationDateKey % 100;
+    return new Date(year, month - 1, day);
+  }, [simulationDateKey]);
 
   // ===========================
   // PERBAIKAN: Pindahkan formatLabel KE ATAS sebelum dipakai useMemo
@@ -335,7 +256,7 @@ export default function ModalsKonfirmasiBeli({
     if (matched) {
       setPartnerDataRaw(matched);
       if (!partnerStartDateRef.current) {
-        partnerStartDateRef.current = currentDate ? formatDate(currentDate) : formatDate(new Date());
+        partnerStartDateRef.current = simulationDate ? formatDate(simulationDate) : formatDate(new Date());
       }
       return;
     }
@@ -356,7 +277,7 @@ export default function ModalsKonfirmasiBeli({
         const json = applyNpcCountrySimulationState(await res.json());
         setPartnerDataRaw(json || null);
         if (!partnerStartDateRef.current) {
-          partnerStartDateRef.current = currentDate ? formatDate(currentDate) : formatDate(new Date());
+          partnerStartDateRef.current = simulationDate ? formatDate(simulationDate) : formatDate(new Date());
         }
       } catch (e) {
         console.error('Failed to fetch partner country data', e);
@@ -365,50 +286,27 @@ export default function ModalsKonfirmasiBeli({
     };
 
     fetchData();
-  }, [isOpen, targetCountry, currentDate, prefetchedAllCountries]);
+  }, [isOpen, targetCountry, simulationDate, prefetchedAllCountries]);
 
   // Initialize game_start_date in countryDetail if not present to have a persistent simulation start date
   useEffect(() => {
-    if (isOpen && countryDetail && !countryDetail.game_start_date && currentDate) {
+    if (isOpen && countryDetail && !countryDetail.game_start_date && simulationDate) {
       setCountryDetail(prev => {
         if (!prev) return prev;
         if (prev.game_start_date) return prev;
         return {
           ...prev,
-          game_start_date: formatDate(currentDate)
+          game_start_date: formatDate(simulationDate)
         };
       });
     }
-  }, [isOpen, countryDetail, currentDate, setCountryDetail]);
+  }, [isOpen, countryDetail, simulationDate, setCountryDetail]);
 
   const partnerData = useMemo(() => {
     if (!partnerDataRaw) return null;
-    const gameStartDate = (countryDetail?.game_start_date as string) || (currentDate ? formatDate(currentDate) : formatDate(new Date()));
+    const gameStartDate = (countryDetail?.game_start_date as string) || (simulationDate ? formatDate(simulationDate) : formatDate(new Date()));
     return normalizePartnerBuildDates(partnerDataRaw, ALL_IMPORT_KEYS, new Date(gameStartDate));
-  }, [partnerDataRaw, countryDetail?.game_start_date, currentDate]);
-
-  // --- EFEK UPDATE HARGA PASAR SETIAP HARI ---
-  useEffect(() => {
-    if (!currentDate) return;
-    const currentDateStr = formatDate(currentDate);
-    const prevDateStr = prevDateRef.current;
-
-    if (prevDateStr === currentDateStr) return;
-
-    setMarketPrices(prev => {
-      const newPrices = { ...prev };
-      for (const key of ALL_IMPORT_KEYS) {
-        const oldPrice = newPrices[key] || DEFAULT_PRICES[key] || 100;
-        const volatility = 0.05;
-        const change = (Math.random() - 0.5) * volatility * oldPrice;
-        const newPrice = Math.max(oldPrice + change, oldPrice * 0.5);
-        newPrices[key] = Math.round(newPrice * 100) / 100;
-      }
-      return newPrices;
-    });
-
-    prevDateRef.current = currentDateStr;
-  }, [currentDate]);
+  }, [partnerDataRaw, countryDetail?.game_start_date, simulationDate]);
 
   const findMeta = useCallback((key: string) => {
     if (!metadata) return undefined;
@@ -521,6 +419,17 @@ export default function ModalsKonfirmasiBeli({
   }, [partners]);
 
   const effectiveSelectedProduct = selectedProduct || (partnerData ? getFirstAvailableProduct() : "");
+
+  useEffect(() => {
+    if (!countryDetail || !simulationDate) return;
+    const randomFactors = createDailyMarketPriceFactors(simulationDate);
+    setCountryDetail(previous => updateTradePriceHistory(previous, {
+      country: String(previous.country || previous.nama || ''),
+      commodity: effectiveSelectedProduct,
+      currentDate: simulationDate,
+      randomFactors,
+    }));
+  }, [countryDetail, simulationDate, effectiveSelectedProduct, setCountryDetail]);
   const effectiveSelectedCountry = selectedCountry || partners[0]?.nama_negara || "";
 
   const stockAvailable = useMemo(() => {
@@ -538,16 +447,16 @@ export default function ModalsKonfirmasiBeli({
     if (pBuildingCount === 0) return 0;
 
     const pMeta = findMeta(effectiveSelectedProduct);
-    if (!pMeta || !pMeta.produksi || !currentDate) return 0;
+    if (!pMeta || !pMeta.produksi || !simulationDate) return 0;
 
     const pBuildDateKey = `build_date_${effectiveSelectedProduct}`;
     const pBuildDate = partnerData[pBuildDateKey] as string | undefined;
-    const currentDateStr = formatDate(currentDate);
+    const currentDateStr = formatDate(simulationDate);
     let pFinalBuildDate: string;
     if (typeof pBuildDate === 'string' && pBuildDate) {
       pFinalBuildDate = pBuildDate;
     } else {
-      const thirtyDaysAgo = new Date(currentDate);
+      const thirtyDaysAgo = new Date(simulationDate);
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       pFinalBuildDate = formatDate(thirtyDaysAgo);
     }
@@ -561,7 +470,7 @@ export default function ModalsKonfirmasiBeli({
 
     const partnerSold = Number(countryDetail?.[`partner_sold_${targetCountry}_${effectiveSelectedProduct}`]) || 0;
     return Math.max(0, basePartnerProd - partnerSold);
-  }, [effectiveSelectedProduct, currentDate, partnerData, findMeta, countryDetail, targetCountry]);
+  }, [effectiveSelectedProduct, simulationDate, partnerData, findMeta, countryDetail, targetCountry]);
 
   // --- EFEK INISIALISASI PRODUK DAN NEGARA ---
   useEffect(() => {
@@ -588,9 +497,9 @@ export default function ModalsKonfirmasiBeli({
       if (matchedOffer) {
         initialQty = matchedOffer.quantity;
         // Dan set harga pasar untuk produk ini agar sesuai dengan tawaran
-        setMarketPrices(prev => ({
-          ...prev,
-          [targetProduct]: matchedOffer.pricePerUnit
+        setPartnerOfferPriceOverrides(previous => ({
+          ...previous,
+          [targetProduct]: matchedOffer.pricePerUnit,
         }));
       }
     }
@@ -621,7 +530,7 @@ export default function ModalsKonfirmasiBeli({
     const existingBuildDate = countryDetail[buildDateKey];
     if (typeof existingBuildDate === 'string' && existingBuildDate) return;
 
-    const currentDateStr = formatDate(currentDate || new Date());
+    const currentDateStr = formatDate(simulationDate || new Date());
     setCountryDetail((prev) => {
       if (!prev) return prev;
       if (Number(prev[selectedProduct] || 0) <= 0) return prev;
@@ -631,16 +540,19 @@ export default function ModalsKonfirmasiBeli({
         [buildDateKey]: currentDateStr,
       };
     });
-  }, [isOpen, selectedProduct, countryDetail, currentDate, setCountryDetail]);
+  }, [isOpen, selectedProduct, countryDetail, simulationDate, setCountryDetail]);
 
-  // --- EFEK UPDATE CHART SAAT PRODUK/RANGE ATAU HARGA BERUBAH ---
-  const seriesKey = `${effectiveSelectedProduct}-${timeRange}`;
-  useEffect(() => {
-    if (!effectiveSelectedProduct || !currentDate || !marketPrices[effectiveSelectedProduct]) return;
-    const buyPrice = marketPrices[effectiveSelectedProduct]; // Harga beli unit dasar mengikuti pasar
-    const newSeries = generateCandleData(currentDate, timeRange, buyPrice, 0.04, 0.001);
-    setOhlcSeries(prev => ({ ...prev, [seriesKey]: newSeries }));
-  }, [effectiveSelectedProduct, timeRange, currentDate, marketPrices, seriesKey]);
+  const playerCountryName = String(countryDetail?.country || countryDetail?.nama || '');
+  const hourlyCandles = getStoredPriceHistory(
+    countryDetail,
+    playerCountryName,
+    effectiveSelectedProduct,
+  )?.candles || EMPTY_PRICE_CANDLES;
+  const ohlcSeriesByRange = useMemo(
+    () => simulationDate ? getCandlesForAllRanges(hourlyCandles, simulationDate) : null,
+    [simulationDate, hourlyCandles],
+  );
+  const ohlcSeries = ohlcSeriesByRange?.[timeRange] || [];
 
   if (!isOpen) return null;
 
@@ -651,9 +563,12 @@ export default function ModalsKonfirmasiBeli({
   const currentPrice = selectedArmsProduct
     ? Math.round(selectedArmsProduct.unitPrice * 1.15)
     : marketPrices[effectiveSelectedProduct] || 0;
+  const partnerOfferPrice = partnerOfferPriceOverrides[effectiveSelectedProduct];
   // FAKTOR BELI (MISAL 2x HARGA PASAR)
   const BUY_FACTOR = 2;
-  const originalPricePerUnit = selectedArmsProduct ? currentPrice : Math.round(currentPrice * BUY_FACTOR);
+  const originalPricePerUnit = selectedArmsProduct
+    ? currentPrice
+    : Math.round((partnerOfferPrice || currentPrice) * BUY_FACTOR);
   
   const userCountryName = String(countryDetail?.country || countryDetail?.nama || "");
   const isWTOActive = isMemberOfWTO(userCountryName);
@@ -686,90 +601,8 @@ export default function ModalsKonfirmasiBeli({
   const pricePerUnit = Math.round(totalPrice / Math.max(1, quantity));
   const hasTradeDiscount = totalDiscountFraction > 0;
 
-  // --- RENDER CANDLESTICK CHART ---
-  const renderCandlestickChart = () => {
-    const series = ohlcSeries[seriesKey];
-    if (!series || series.length < 2) {
-      return <div className="text-xs text-[#6B8A8A] text-center py-4">Tidak ada data harga</div>;
-    }
-
-    const width = 800;
-    const height = 220;
-    const padding = { top: 10, bottom: 20, left: 50, right: 20 };
-    const chartWidth = width - padding.left - padding.right;
-    const chartHeight = height - padding.top - padding.bottom;
-
-    let minPrice = Infinity;
-    let maxPrice = -Infinity;
-    series.forEach(d => {
-      minPrice = Math.min(minPrice, d.low);
-      maxPrice = Math.max(maxPrice, d.high);
-    });
-    const rangeBuffer = (maxPrice - minPrice) * 0.05;
-    const yMin = Math.max(0, minPrice - rangeBuffer);
-    const yMax = maxPrice + rangeBuffer;
-    const priceRange = yMax - yMin || 1;
-
-    const xScale = (index: number) => padding.left + (index / (series.length - 1)) * chartWidth;
-    const yScale = (price: number) => padding.top + chartHeight - ((price - yMin) / priceRange) * chartHeight;
-
-    const candleWidth = Math.max(3, (chartWidth / series.length) * 0.6);
-    const halfCandleWidth = candleWidth / 2;
-
-    const formatXLabel = (index: number) => {
-      const date = series[index].time;
-      if (timeRange === '1d') return date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0');
-      if (timeRange === '1w') return date.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
-      return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-    };
-
-    return (
-      <div className="w-full flex justify-center">
-        <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet" className="max-w-full">
-          {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
-            const y = padding.top + chartHeight * (1 - ratio);
-            return (
-              <line key={ratio} x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke="rgba(0, 255, 170, 0.1)" strokeDasharray="4 4" />
-            );
-          })}
-          <line x1={padding.left} y1={padding.top} x2={padding.left} y2={height - padding.bottom} stroke="rgba(0, 255, 170, 0.2)" strokeWidth="1" />
-          <line x1={padding.left} y1={height - padding.bottom} x2={width - padding.right} y2={height - padding.bottom} stroke="rgba(0, 255, 170, 0.2)" strokeWidth="1" />
-          <text x={padding.left - 6} y={padding.top + 4} textAnchor="end" fontSize="9" fill="#6B8A8A">{yMax.toFixed(0)}</text>
-          <text x={padding.left - 6} y={height - padding.bottom + 4} textAnchor="end" fontSize="9" fill="#6B8A8A">{yMin.toFixed(0)}</text>
-          <text x={padding.left} y={height - 2} textAnchor="middle" fontSize="9" fill="#6B8A8A">{formatXLabel(0)}</text>
-          <text x={width - padding.right} y={height - 2} textAnchor="middle" fontSize="9" fill="#6B8A8A">{formatXLabel(series.length - 1)}</text>
-
-          {series.map((d, i) => {
-            const x = xScale(i);
-            const yHigh = yScale(d.high);
-            const yLow = yScale(d.low);
-            const yOpen = yScale(d.open);
-            const yClose = yScale(d.close);
-            const isGreen = d.close >= d.open;
-            const color = isGreen ? "#00FFAA" : "#ff4d4d";
-            const bodyTop = Math.min(yOpen, yClose);
-            const bodyHeight = Math.max(1, Math.abs(yClose - yOpen));
-
-            return (
-              <g key={i}>
-                <line x1={x} y1={yHigh} x2={x} y2={yLow} stroke={color} strokeWidth="1.5" />
-                <rect x={x - halfCandleWidth} y={bodyTop} width={candleWidth} height={bodyHeight} fill={color} />
-              </g>
-            );
-          })}
-
-          {/* Indikator harga saat ini */}
-          <line x1={padding.left} y1={yScale(currentPrice)} x2={width - padding.right} y2={yScale(currentPrice)} stroke="#00FFAA" strokeDasharray="4 4" strokeWidth="1.5" />
-          <circle cx={width - padding.right} cy={yScale(currentPrice)} r="5" fill="#00FFAA" stroke="#0A1A1A" strokeWidth="2" />
-          <text x={width - padding.right + 5} y={yScale(currentPrice) + 3} fontSize="9" fill="#00FFAA" fontWeight="bold">
-            {formatTradePrice(currentPrice)} NEO
-          </text>
-        </svg>
-      </div>
-    );
-  };
-
   const handleConfirm = () => {
+    const tradeDate = currentDate || new Date();
     if (!canBuy) {
       alert("Negara Anda di bawah sanksi ekonomi terbatas. Impor komoditas tidak tersedia.");
       return;
@@ -814,11 +647,18 @@ export default function ModalsKonfirmasiBeli({
         alert("Simulasi negara mitra belum siap. Coba lagi setelah data negara selesai dimuat.");
         return;
       }
-      setCountryDetail({
+      setCountryDetail(recordTrade({
         ...detail,
         ...getArmsTransferUpdate(detail, armsProduct, quantity),
         anggaran: currentBudget - totalPrice,
-      });
+      }, {
+        commodity: effectiveSelectedProduct,
+        quantity,
+        side: 'buy',
+        day: Math.floor(Date.UTC(tradeDate.getFullYear(), tradeDate.getMonth(), tradeDate.getDate()) / 86_400_000),
+        hour: tradeDate.getUTCHours(),
+        counterparty: targetCountry,
+      }));
       onConfirm(totalPrice, `${quantity} unit`);
       alert(`Berhasil membeli ${quantity} unit ${armsProduct.label} dari ${targetCountry}.`);
       onClose();
@@ -853,14 +693,21 @@ export default function ModalsKonfirmasiBeli({
     const newInventory = currentInventory + quantity;
     const accumulatedKey = `accumulated_${effectiveSelectedProduct}`;
 
-    setCountryDetail({
+    setCountryDetail(recordTrade({
       ...detail,
       anggaran: currentBudget - totalPrice,
       [boughtKey]: currentBought + quantity,
       [partnerSoldKey]: currentPartnerSold + quantity,
       [inventoryKey]: newInventory,
       [accumulatedKey]: newInventory
-    });
+    }, {
+      commodity: effectiveSelectedProduct,
+      quantity,
+      side: 'buy',
+      day: Math.floor(Date.UTC(tradeDate.getFullYear(), tradeDate.getMonth(), tradeDate.getDate()) / 86_400_000),
+      hour: tradeDate.getUTCHours(),
+      counterparty: targetCountry,
+    }));
 
     onConfirm(totalPrice, `${quantity}x Satuan`);
     alert(`Berhasil membeli ${quantity} ${formatLabel(effectiveSelectedProduct)} dari ${targetCountry}.`);
@@ -883,7 +730,7 @@ export default function ModalsKonfirmasiBeli({
           <RootModalCloseButton onClick={onClose} />
         </div>
 
-        <div className="root-no-scrollbar-glow min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-2 relative z-10 space-y-4 bg-[#0F2424] neon-scrollbar">
+        <div className="root-no-scrollbar-glow min-h-0 flex-1 overflow-y-auto px-5 pt-5 pb-2 relative z-10 space-y-4 bg-[#0F2424] neon-scrollbar [overflow-anchor:none]">
 
           {/* --- INPUT CARD PRODUK & NEGARA --- */}
           <div className="grid grid-cols-2 gap-4">
@@ -1022,16 +869,10 @@ export default function ModalsKonfirmasiBeli({
             <div className="flex items-center justify-between mb-3">
               <div className="text-[#00FFAA] font-bold text-sm tracking-wide">Grafik Harga Historis (Candlestick)</div>
               <div className="flex gap-1.5">
-                {[
-                  { label: '1H', value: '1d' },
-                  { label: '1M', value: '1w' },
-                  { label: '1B', value: '1m' },
-                  { label: '6B', value: '6m' },
-                  { label: '1T', value: '1y' }
-                ].map(({ label, value }) => (
+                {PRICE_TIME_RANGES.map(({ label, value }) => (
                   <button
                     key={value}
-                    onClick={() => setTimeRange(value as any)}
+                    onClick={() => setTimeRange(value)}
                     className={`px-2.5 py-1 text-[11px] font-bold rounded border transition-colors cursor-pointer ${timeRange === value
                         ? 'bg-[#00FFAA] text-[#0A1A1A] border-[#00FFAA]'
                         : 'bg-[#0A1A1A] text-[#6B8A8A] border-[#00FFAA]/20 hover:text-[#00FFAA]'
@@ -1042,7 +883,7 @@ export default function ModalsKonfirmasiBeli({
                 ))}
               </div>
             </div>
-            {renderCandlestickChart()}
+            <CandlestickChart series={ohlcSeries} timeRange={timeRange} currentPrice={currentPrice} />
           </div>
         </div>
 
