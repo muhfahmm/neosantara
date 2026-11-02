@@ -1206,7 +1206,8 @@ export default function WarMap({
       {(phase === 'travel' || phase === 'impact') && (
         <div
           data-war-overlay
-          className={`fixed inset-0 z-[100000010] ${isAnotherModalOpen ? 'invisible' : ''} pointer-events-none font-sans select-none overflow-hidden`}
+          className={`fixed inset-0 z-20 ${isAnotherModalOpen ? 'invisible' : ''} pointer-events-none font-sans select-none overflow-hidden`}
+          style={{ clipPath: 'inset(5rem 0 0 0)' }}
         >
           <svg
             className="absolute inset-0 w-full h-full pointer-events-none"

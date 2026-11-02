@@ -197,7 +197,7 @@ export function Navbar({
     const activeMenuInfo = getActiveMenuInfo();
 
     return (
-        <nav className="fixed top-2.5 sm:top-3 left-0 right-0 z-70 pointer-events-none px-3 sm:px-5 xl:px-6 2xl:px-8 flex items-center justify-between select-none bg-transparent border-none shadow-none">
+        <nav className="fixed top-2.5 sm:top-3 left-0 right-0 z-[201] pointer-events-none px-3 sm:px-5 xl:px-6 2xl:px-8 flex items-center justify-between select-none bg-transparent border-none shadow-none">
             
             {/* 1. Left Side: Circular Menu & Selected Badge */}
             <div className="flex items-center gap-2 2xl:gap-3 shrink-0 relative z-20 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
@@ -205,6 +205,7 @@ export function Navbar({
                 <div className="relative group shrink-0">
                     <button
                         onClick={onOpenGameMenu}
+                        data-tutorial="game-menu"
                         title="Game Menu"
                         className="w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-full bg-[#0A1A1A] border-[2px] border-[#00FFAA]/40 text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all flex items-center justify-center cursor-pointer z-30"
                     >
@@ -216,7 +217,7 @@ export function Navbar({
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 2xl:gap-3 px-2 2xl:px-3 py-0.5 sm:py-1 rounded-xl min-w-[110px] lg:min-w-[130px] 2xl:min-w-[160px]">
+                <div data-tutorial="negara-terpilih" className="flex items-center gap-2 2xl:gap-3 px-2 2xl:px-3 py-0.5 sm:py-1 rounded-xl min-w-[110px] lg:min-w-[130px] 2xl:min-w-[160px]">
                     {selectedCountry ? (
                         <img 
                             src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`} 
@@ -242,7 +243,7 @@ export function Navbar({
             </div>
 
             {/* 2. Center: Live Stats Items */}
-            <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 overflow-hidden z-10 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 px-3.5 lg:px-4.5 xl:px-5.5 2xl:px-6 py-1.5 2xl:py-2 rounded-2xl shadow-2xl">
+            <div data-tutorial="navbar-ringkasan" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 overflow-hidden z-10 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 px-3.5 lg:px-4.5 xl:px-5.5 2xl:px-6 py-1.5 2xl:py-2 rounded-2xl shadow-2xl">
                 <div className="flex items-center gap-2.5 lg:gap-3.5 xl:gap-5 2xl:gap-6 min-w-max">
                     
                     {/* 🔥 POPULASI DENGAN TOOLTIP DEMOGRAFI & KLIK KE KEPENDUDUKAN */}
@@ -336,6 +337,7 @@ export function Navbar({
             <div className="flex items-center gap-1.5 2xl:gap-2 shrink-0 relative z-20 pointer-events-auto bg-[#0F2424]/90 backdrop-blur-md border border-[#00FFAA]/30 p-1 lg:p-1.5 rounded-2xl shadow-2xl">
                 <button
                     onClick={onOpenSaveModal}
+                    data-tutorial="tombol-simpan"
                     title="Simpan Game"
                     className="flex items-center justify-center w-8 h-8 lg:w-9 lg:h-9 2xl:w-10 2xl:h-10 rounded-xl border border-[#00FFAA]/30 bg-[#0A1A1A] text-[#00FFAA] hover:bg-[#00FFAA] hover:text-[#0A1A1A] transition-all cursor-pointer"
                 >

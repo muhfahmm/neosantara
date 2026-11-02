@@ -152,6 +152,7 @@ export default function BottomNav({
             return (
               <div key={item.id} className="group relative">
                 <button
+                  data-tutorial={item.id === "Ekonomi" ? "menu-ekonomi" : item.id === "Pembangunan" ? "menu-pembangunan" : undefined}
                   onFocus={() => {
                     if (!isActive && !isMap) prefetchMenuGroup(item.id);
                   }}

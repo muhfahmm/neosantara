@@ -15,9 +15,10 @@ interface GameMenuModalProps {
     onClose: () => void;
     onSaveGameClick: () => void;
     onRestartClick: () => void;
+    onOpenTutorial?: () => void;
 }
 
-export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick }: GameMenuModalProps) {
+export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick, onOpenTutorial }: GameMenuModalProps) {
     const [subview, setSubview] = useState<'menu' | 'load' | 'options'>('menu');
     const [saveFiles, setSaveFiles] = useState<any[]>([]);
     const [isLoadingSaves, setIsLoadingSaves] = useState(false);
@@ -193,10 +194,22 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
                                             onClose();
                                             onSaveGameClick();
                                         }}
+                                        data-tutorial="tombol-simpan"
                                         className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
                                     >
                                         Simpan Permainan
                                     </button>
+                                    {onOpenTutorial && (
+                                        <button
+                                            onClick={() => {
+                                                onClose();
+                                                onOpenTutorial();
+                                            }}
+                                            className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"
+                                        >
+                                            Panduan Tutorial
+                                        </button>
+                                    )}
                                     <button
                                         onClick={handleOpenLoad}
                                         className="w-full bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-3 text-center text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[13px] tracking-wider transition-all duration-150 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:shadow-[0_0_12px_rgba(0,255,170,0.15)] active:scale-[0.99]"

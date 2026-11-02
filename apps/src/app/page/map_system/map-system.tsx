@@ -10,6 +10,7 @@ import {
 import Link from 'next/link';
 import { COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
 import MAJOR_CITIES_DATA from './major_cities.json';
+import { TERRITORY_OVERRIDES } from './territoryOverrides';
 import { getMapDisplaySettings, type MapDisplaySettings } from '../navbar/settings/mapSettingsLogic';
 import countryPaths from './country-paths.json';
 import { mergeClaimedTerritories } from './world-map-geometry';
@@ -114,6 +115,9 @@ import {
     NPC_COUNTRY_SIMULATION_UPDATED_EVENT,
 } from '@/app/logic/npc_country_simulation/npcCountrySimulation';
 import { setCurrentGameDateString } from '@/app/logic/gameSessionState';
+import { TutorialOverlay } from '../tutorials_menu/TutorialOverlay';
+import { TutorialWelcomeModal } from '../tutorials_menu/TutorialWelcomeModal';
+import { getTutorialProgress, resetTutorial, setTutorialProgress, startTutorial } from '../tutorials_menu/tutorialProgress';
 import {
     calculateKepuasan,
     calculateKeterbukaanScore,
@@ -634,7 +638,14 @@ function getCapitalFlagsForCurrentTerritories(settingsOverride?: MapDisplaySetti
         const annexation = Object.entries(annexedCountries).find(([key]) =>
             capitalKeys.has(normalizeKey(key))
         )?.[1];
-        if (!annexation?.attackerCountry) return capital;
+        if (!annexation?.attackerCountry) {
+            const territoryOverride = capital.city_id
+                ? TERRITORY_OVERRIDES[capital.city_id]
+                : undefined;
+            return !cityOwner && territoryOverride
+                ? { ...capital, iso: territoryOverride.sovereignIso }
+                : capital;
+        }
 
         const attackerIso = COUNTRIES_DATA.find(country =>
             normalizeKey(country.country) === normalizeKey(annexation.attackerCountry)
@@ -728,6 +739,7 @@ const MapCanvasView = memo(function MapCanvasView({
         >
             <canvas
                 id="map-canvas"
+                data-tutorial="map-view"
                 style={{
                     ...(isSelectingTarget ? { cursor: targetCursorStyle } : {}),
                     ...(isWarActive ? { visibility: 'visible' } : {}),
@@ -832,6 +844,29 @@ export default function MapPage() {
     const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
     const [countryDetail, setCountryDetail] = useState<any>(null);
     const [metadata, setMetadata] = useState<Record<string, any>>({});
+    const [tutorialStartup, setTutorialStartup] = useState<'pending' | 'new-game' | 'resume' | 'suppressed'>('pending');
+    const [isTutorialWelcomeOpen, setIsTutorialWelcomeOpen] = useState(false);
+
+    useEffect(() => {
+        if (sessionStorage.getItem('presiden_simulator_load_save')) {
+            setTutorialStartup('suppressed');
+            return;
+        }
+        if (localStorage.getItem('presiden_simulator_new_game') === '1') {
+            resetTutorial();
+            setTutorialStartup('new-game');
+            setIsTutorialWelcomeOpen(true);
+            return;
+        }
+        const currentProgress = getTutorialProgress();
+        if (
+            currentProgress.status === 'not_started' ||
+            (currentProgress.status === 'in_progress' && currentProgress.stepIndex === 0)
+        ) {
+            setIsTutorialWelcomeOpen(true);
+        }
+        setTutorialStartup('resume');
+    }, []);
 
     useEffect(() => {
         if (countryDetail && typeof window !== 'undefined') {
@@ -7089,6 +7124,9 @@ export default function MapPage() {
             setPenelitianModalOpen(false);
             setMissionModalOpen(false);
             setActiveMenu('Peta Taktis');
+            resetTutorial();
+            setTutorialStartup('new-game');
+            setIsTutorialWelcomeOpen(true);
             // Toggle resetTrigger to signal all modals to reset
             setResetTrigger(prev => !prev);
         }
@@ -7396,7 +7434,17 @@ export default function MapPage() {
                     }
                 }
 
-                const allMapCities = [...CAPITALS_DATA, ...(MAJOR_CITIES_DATA as typeof CAPITALS_DATA)];
+                const allMapCities = [...CAPITALS_DATA, ...(MAJOR_CITIES_DATA as typeof CAPITALS_DATA)]
+                    .map(city => {
+                        const cityId = getCityOwnerId(city.iso, city.capital);
+                        const territoryOverride = TERRITORY_OVERRIDES[cityId];
+                        return {
+                            ...city,
+                            city_id: cityId,
+                            country_iso: city.iso,
+                            iso: territoryOverride?.sovereignIso || city.iso,
+                        };
+                    });
                 await start_map_engine(
                     "map-canvas",
                     rawGeojsonStr,
@@ -7558,13 +7606,20 @@ export default function MapPage() {
                     return;
                 }
             }
-            const isPlayer = playerCountryName && countryName.toLowerCase().trim() === playerCountryName.toLowerCase().trim();
+            const territoryOverride = clickedCityId ? TERRITORY_OVERRIDES[clickedCityId] : undefined;
+            const sovereignCountry = territoryOverride
+                ? COUNTRIES_DATA.find(country =>
+                    country.iso.toLowerCase() === territoryOverride.sovereignIso.toLowerCase()
+                )?.country || territoryOverride.sovereignCountry
+                : countryName;
+            const isPlayer = playerCountryName &&
+                sovereignCountry.toLowerCase().trim() === playerCountryName.toLowerCase().trim();
 
-            if (isPlayer) {
+            if (isPlayer && !territoryOverride) {
                 setPlayerDetailModalOpen(true);
             } else {
                 const clickedCity = clickedCountry?.selected_city || clickedCountry?.capital || null;
-                setCountryDetailModalName(countryName);
+                setCountryDetailModalName(sovereignCountry);
                 setCountryDetailModalCity(clickedCity);
                 setCountryDetailModalCityId(clickedCountry?.selected_city_id || null);
                 setAiConstructionNavigation(null);
@@ -9313,6 +9368,7 @@ export default function MapPage() {
 
             {/* Premium Floating Time Controller Widget */}
             <div
+                data-tutorial="time-controller"
                 className={`fixed bottom-3 right-3 lg:bottom-5 lg:right-5 xl:bottom-8 xl:right-8 z-40 flex flex-col w-[220px] lg:w-[250px] xl:w-[320px] transition-all ${isDialogTerbukaOpen ? 'hidden pointer-events-none' : ''}`}
                 onPointerEnter={() => {
                     isTimeControllerHoveredRef.current = true;
@@ -9356,6 +9412,7 @@ export default function MapPage() {
                     <div className="absolute inset-x-3 lg:inset-x-4 xl:inset-x-6 -top-4.5 lg:-top-5 xl:-top-7 flex items-center justify-between">
                         {/* 1. Play/Pause button */}
                         <button
+                            data-tutorial="time-controller-play"
                             onClick={() => {
                                 const nextPaused = !isPausedRef.current;
                                 isPausedRef.current = nextPaused;
@@ -9388,6 +9445,7 @@ export default function MapPage() {
 
                         {/* 2. Speed Selector button */}
                         <button
+                            data-tutorial="time-controller-speed"
                             onClick={() => {
                                 if (!calendarRef.current) return;
                                 const newSpeed = calendarRef.current.controls.handleSpeedClick();
@@ -9794,6 +9852,27 @@ export default function MapPage() {
                 onClose={() => setIsPresidentMenuOpen(false)}
                 onSaveGameClick={openSaveModal}
                 onRestartClick={() => setIsRestartConfirmOpen(true)}
+                onOpenTutorial={() => {
+                    resetTutorial();
+                    setIsTutorialWelcomeOpen(true);
+                }}
+            />
+
+            <TutorialWelcomeModal
+                isOpen={isTutorialWelcomeOpen && Boolean(selectedCountry)}
+                onContinue={() => {
+                    setIsTutorialWelcomeOpen(false);
+                    startTutorial();
+                }}
+                onSkip={() => {
+                    setIsTutorialWelcomeOpen(false);
+                    setTutorialProgress({ stepIndex: 0, status: 'skipped' });
+                }}
+            />
+
+            <TutorialOverlay
+                autoStart={tutorialStartup === 'new-game' && !isTutorialWelcomeOpen && Boolean(selectedCountry)}
+                suppressAutoStart={tutorialStartup === 'pending' || tutorialStartup === 'suppressed' || isTutorialWelcomeOpen || !selectedCountry}
             />
 
             {/* Confirm Restart Modal */}
