@@ -1460,8 +1460,7 @@ impl MapEngine {
 
             // Garis batas provinsi solid (tidak putus-putus) langsung tersambung mulus
             if self.show_province_borders && self.scale >= 1.15 && !self.province_lines.is_empty() {
-                let moving = self.is_panning || animating;
-                let coarse = self.scale < 4.0 || moving;
+                let coarse = self.scale < 4.0;
                 let min_screen = 1.0 / self.scale;
                 self.ctx.set_stroke_style(&self.styles.province_stroke);
                 self.ctx.set_line_width((0.65 / self.scale).clamp(0.25, 0.9));
@@ -1669,15 +1668,13 @@ impl MapEngine {
         let left = x - width / 2.0;
         let top = y - height / 2.0;
 
-        if !animating {
-            context.set_fill_style(&styles.flag_bg);
-            context.fill_rect(
-                left - 1.0 / scale,
-                top - 1.0 / scale,
-                width + 2.0 / scale,
-                height + 2.0 / scale,
-            );
-        }
+        context.set_fill_style(&styles.flag_bg);
+        context.fill_rect(
+            left - 1.0 / scale,
+            top - 1.0 / scale,
+            width + 2.0 / scale,
+            height + 2.0 / scale,
+        );
 
         if let Some(image) = image.filter(|flag| flag.complete() && flag.natural_width() > 0) {
             let _ = context
@@ -1692,11 +1689,9 @@ impl MapEngine {
             context.set_text_baseline("alphabetic");
         }
 
-        if !animating {
-            context.set_stroke_style(&styles.flag_bg);
-            context.set_line_width(0.75 / scale);
-            context.stroke_rect(left, top, width, height);
-        }
+        context.set_stroke_style(&styles.flag_bg);
+        context.set_line_width(0.75 / scale);
+        context.stroke_rect(left, top, width, height);
     }
 
     fn project(&self, lng: f64, lat: f64) -> (f64, f64) {
