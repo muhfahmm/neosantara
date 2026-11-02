@@ -2,19 +2,18 @@
 'use client';
 
 import React, { memo, startTransition, useCallback, useMemo, useState, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import {
-    Play, Pause, Settings, Palmtree, Shield, Crosshair, Globe, Calendar, ArrowLeft, Plus, RotateCw
-} from 'lucide-react';
+import { Crosshair, Pause, Palmtree, Play, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
 import { majorCities as MAJOR_CITIES_DATA, countryPaths } from './mapDataAssets';
 import { TERRITORY_OVERRIDES } from './territoryOverrides';
 import { getMapDisplaySettings, type MapDisplaySettings } from '../navbar/settings/mapSettingsLogic';
+import { restartGame } from '../navbar/3_restart_game/restartGameLogic';
+import { SaveGameModal } from '../navbar/1_savegame/SaveGameModal';
+import { fetchGameSaves, saveGameToDatabase, type GameSaveRecord } from '../navbar/1_savegame/saveGameLogic';
 import { mergeClaimedTerritories } from './world-map-geometry';
 import { initializeSimulationClock, SimulationTimeManager, createSimulationCalendar } from '../time_controllers';
-import { handleGameRestart } from '../time_controllers';
 import dynamic from 'next/dynamic';
 import useKeyboardShortcuts from '../keyword';
 import { subMenuItems } from '../navigasi_menu/navigationData';
@@ -29,7 +28,7 @@ import {
 
 const GameMenuModal = dynamic(() => import('../navbar/GameMenuModal').then(m => m.GameMenuModal), { ssr: false });
 const TopNav = dynamic(() => import('../navigasi_menu/1_navigasi_atas/TopNav'), { ssr: false });
-const ConfirmRestartModal = dynamic(() => import('../navbar/ConfirmRestartModal').then(m => m.ConfirmRestartModal), { ssr: false });
+const ConfirmRestartModal = dynamic(() => import('../navbar/3_restart_game/ConfirmRestartModal').then(m => m.ConfirmRestartModal), { ssr: false });
 const ModalsPeringatanPeringkat = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsPeringatanPeringkat').then(m => m.ModalsPeringatanPeringkat), { ssr: false });
 const ModalsKudeta = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta'), { ssr: false });
 type KudetaType = import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta').KudetaType;
@@ -1078,11 +1077,9 @@ export default function MapPage() {
     const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
     const [saveNameInput, setSaveNameInput] = useState('');
     const [isSaving, setIsSaving] = useState(false);
-    const [existingSaveFiles, setExistingSaveFiles] = useState<any[]>([]);
+    const [existingSaveFiles, setExistingSaveFiles] = useState<GameSaveRecord[]>([]);
     const [isLoadingExistingSaves, setIsLoadingExistingSaves] = useState(false);
-    const [selectedSaveIdToOverwrite, setSelectedSaveIdToOverwrite] = useState<number | null>(null);
     const [isCreatingNewSaveSlot, setIsCreatingNewSaveSlot] = useState(false);
-    const [saveToOverwriteConfirm, setSaveToOverwriteConfirm] = useState<any | null>(null);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [isPresidentMenuOpen, setIsPresidentMenuOpen] = useState(false);
     const [isMapSettingsModalOpen, setIsMapSettingsModalOpen] = useState(false);
@@ -7086,57 +7083,42 @@ export default function MapPage() {
         setKesejahteraan(kesejahteraanResult.overallScore);
     }, [countryDetail, metadata]);
 
-    const handleRestart = () => {
-        setActivePlayerAttack(null);
-        if (selectedCountry) {
-            if (typeof window !== 'undefined') {
-                window.localStorage.removeItem('hutangModalLoanSources');
-                window.localStorage.removeItem('hutangModalLoanSourcesLastRefresh');
-                clearMissionProgressData();
-                window.localStorage.setItem('player_diamonds', '150');
-                setPlayerDiamonds(150);
-                clearActiveNpcCountrySimulationState();
-                (window as any).neosantara_country_color_overrides = {};
-                (window as any).neosantara_annexed_countries = {};
-            }
-            handleGameRestart({
-                timeManager: timeManagerRef.current,
-                setIsPaused,
-                setSpeed,
-                setCountryDetail,
-                reloadStats: () => loadCountryStats(selectedCountry.country, selectedCountry.capital),
-                skipConfirm: true
-            });
-            setPlayerNetBalanceAdjustment(0);
-            setPresidentRating(50);
-            setKesejahteraan(50);
-            // Reset semua notifikasi, warning flags, dan deep links
-            setNotifications([]);
-            setNewsList([]);
-            lastObservedNewsResetDateRef.current = null;
-            setHasShownEarlyWarning({ kepuasan: false, peringkat: false, kesejahteraan: false });
-            setHasShownRatingWarning(false);
-            setProductionDeepLink(null);
-            setTempatUmumDeepLink(null);
-            setKesejahteraanDeepLink(false);
-            setAiConstructionNavigation(null);
-            setCountryColorOverrides({});
-            // Reset status tampilan modal detail
-            setCountryDetailModalOpen(false);
-            setPlayerDetailModalOpen(false);
-            setInboxModalOpen(false);
-            setGiftModalOpen(false);
-            setNewsModalOpen(false);
-            setPenelitianModalOpen(false);
-            setMissionModalOpen(false);
-            setActiveMenu('Peta Taktis');
-            resetTutorial();
-            setTutorialStartup('new-game');
-            setIsTutorialWelcomeOpen(true);
-            // Toggle resetTrigger to signal all modals to reset
-            setResetTrigger(prev => !prev);
-        }
-    };
+    const handleRestart = () => restartGame({
+        selectedCountry,
+        timeManager: timeManagerRef.current,
+        clearMissionProgress: clearMissionProgressData,
+        loadCountryStats,
+        setActivePlayerAttack: () => setActivePlayerAttack(null),
+        setIsPaused,
+        setSpeed,
+        setCountryDetail,
+        setPlayerDiamonds,
+        setPlayerNetBalanceAdjustment,
+        setPresidentRating,
+        setKesejahteraan,
+        setNotifications: () => setNotifications([]),
+        setNewsList: () => setNewsList([]),
+        lastObservedNewsResetDateRef,
+        setHasShownEarlyWarning,
+        setHasShownRatingWarning,
+        setProductionDeepLink: () => setProductionDeepLink(null),
+        setTempatUmumDeepLink: () => setTempatUmumDeepLink(null),
+        setKesejahteraanDeepLink,
+        setAiConstructionNavigation: () => setAiConstructionNavigation(null),
+        setCountryColorOverrides,
+        setCountryDetailModalOpen,
+        setPlayerDetailModalOpen,
+        setInboxModalOpen,
+        setGiftModalOpen,
+        setNewsModalOpen,
+        setPenelitianModalOpen,
+        setMissionModalOpen,
+        setActiveMenu,
+        resetTutorial,
+        setTutorialStartup,
+        setIsTutorialWelcomeOpen,
+        setResetTrigger,
+    });
 
     // Open save dialog with existing slots check
     const openSaveModal = async () => {
@@ -7144,26 +7126,18 @@ export default function MapPage() {
         const defaultName = calendarRef.current?.calendar.formatSaveName(selectedCountry.country)
             || `Simulasi ${selectedCountry.country} - ${timeManagerRef.current?.getFormattedDate() || 'Hari Ini'}`;
         setSaveNameInput(defaultName);
-        setSelectedSaveIdToOverwrite(null);
         setIsCreatingNewSaveSlot(false);
         setIsSaveModalOpen(true);
 
         setIsLoadingExistingSaves(true);
         try {
-            const res = await fetch('/api/game-save');
-            if (res.ok) {
-                const data = await res.json();
-                const list = Array.isArray(data) ? data : [];
-                setExistingSaveFiles(list);
-                // Jika belum ada save sama sekali, langsung ke form input baru
-                if (list.length === 0) {
-                    setIsCreatingNewSaveSlot(true);
-                }
-            } else {
-                setExistingSaveFiles([]);
+            const saves = await fetchGameSaves();
+            setExistingSaveFiles(saves);
+            if (saves.length === 0) {
                 setIsCreatingNewSaveSlot(true);
             }
-        } catch {
+        } catch (error) {
+            console.error('Error fetching saves before save:', error);
             setExistingSaveFiles([]);
             setIsCreatingNewSaveSlot(true);
         } finally {
@@ -7171,11 +7145,8 @@ export default function MapPage() {
         }
     };
 
-    // Save game progress handler (supports new slot or overwrite)
-    const handleSaveGame = async (targetSaveId?: number | null) => {
+    const handleSaveGame = async (targetSaveId: number | null, requestedSaveName: string) => {
         if (!selectedCountry) return;
-
-        const saveIdToUse = targetSaveId !== undefined ? targetSaveId : selectedSaveIdToOverwrite;
 
         const timeManager = timeManagerRef.current;
         const wasPaused = timeManager?.getIsPaused() ?? true;
@@ -7183,7 +7154,7 @@ export default function MapPage() {
         setIsPaused(true);
         setIsSaving(true);
         try {
-            const saveName = saveNameInput.trim()
+            const saveName = requestedSaveName.trim()
                 || (calendarRef.current?.calendar.formatSaveName(selectedCountry.country)
                     || `Simulasi ${selectedCountry.country} - ${timeManagerRef.current?.getFormattedDate() || 'Hari Ini'}`);
             const gameDate = timeManager?.getCurrentDate().toISOString() || new Date().toISOString();
@@ -7195,45 +7166,32 @@ export default function MapPage() {
                 annexedCountries: (window as any).neosantara_annexed_countries || {},
                 cityOwner: (window as any).neosantara_city_owner || {},
             };
-            const response = await fetch('/api/game-save', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+            await saveGameToDatabase({
+                saveId: targetSaveId,
+                saveName,
+                countryName: selectedCountry.country,
+                countryIso: selectedCountry.iso,
+                gameDate,
+                capital: countryDetail?.capital || selectedCountry.capital,
+                jumlahPenduduk: countryDetail?.jumlah_penduduk || 0,
+                anggaran: countryDetail?.anggaran || 0,
+                ideology: countryDetail?.ideology || '-',
+                religion: countryDetail?.religion || '-',
+                unVote: countryDetail?.un_vote || 0,
+                kepuasan: countryDetail?.kepuasan ?? 50,
+                countryDetail: {
+                    ...countryDetail,
+                    presidentRating,
+                    playerDiamonds,
+                    missionCompletions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_mission_completions') : null,
+                    activeMissionId: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_active_mission') : null,
+                    claimableMissions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_claimable_missions') : null,
+                    __neosantara_game_session: sessionState,
                 },
-                body: JSON.stringify({
-                    saveId: saveIdToUse,
-                    saveName,
-                    countryName: selectedCountry.country,
-                    countryIso: selectedCountry.iso,
-                    gameDate,
-                    capital: countryDetail?.capital || selectedCountry.capital,
-                    jumlahPenduduk: countryDetail?.jumlah_penduduk || 0,
-                    anggaran: countryDetail?.anggaran || 0,
-                    ideology: countryDetail?.ideology || '-',
-                    religion: countryDetail?.religion || '-',
-                    unVote: countryDetail?.un_vote || 0,
-                    kepuasan: countryDetail?.kepuasan ?? 50,
-                    countryDetail: {
-                        ...countryDetail,
-                        presidentRating: presidentRating,
-                        playerDiamonds: playerDiamonds,
-                        missionCompletions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_mission_completions') : null,
-                        activeMissionId: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_active_mission') : null,
-                        claimableMissions: typeof window !== 'undefined' ? localStorage.getItem('presiden_simulator_claimable_missions') : null,
-                        __neosantara_game_session: sessionState,
-                    }, // Save entire countryDetail with all production data and president rating
-                }),
             });
-
-            if (!response.ok) {
-                const errData = await response.json();
-                throw new Error(errData.error || 'Gagal menyimpan permainan');
-            }
-
-            setToastMessage(saveIdToUse ? 'Data simpanan berhasil diperbarui!' : 'Permainan berhasil disimpan!');
+            setToastMessage(targetSaveId ? 'Data simpanan berhasil diperbarui!' : 'Permainan berhasil disimpan!');
             setIsSaveModalOpen(false);
             setIsCreatingNewSaveSlot(false);
-            setSelectedSaveIdToOverwrite(null);
             setTimeout(() => setToastMessage(null), 3000);
         } catch (error: any) {
             console.error('Error saving game:', error);
@@ -9557,292 +9515,25 @@ export default function MapPage() {
                 countryDetail={countryDetail}
             />
 
-            {/* Modal Simpan Permainan - Notebook Style (Identik dengan Muat Permainan) */}
-            {isSaveModalOpen && typeof document !== 'undefined' && createPortal(
-                <div className="fixed inset-0 z-[99999999] flex items-center justify-center pt-[100px] sm:pt-[110px] lg:pt-[115px] pb-[16px] sm:pb-[20px] lg:pb-[20px] px-4 sm:px-8 bg-transparent font-sans select-none">
-                    {/* Notebook-style Game Menu Frame — Green Theme */}
-                    <div className="bg-[#0A1A1A] border-[6px] border-[#0F2424] rounded-2xl w-full max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl h-full max-h-[calc(100vh-125px)] sm:max-h-[calc(100vh-138px)] lg:max-h-[calc(100vh-145px)] shadow-2xl relative flex flex-col p-4 pl-12 overflow-hidden">
-                        {/* Silver Binder Spine on the Left */}
-                        <div className="absolute left-3.5 top-6 bottom-6 w-2.5 bg-gradient-to-r from-[#2A3F3F] via-[#3D5252] to-[#1F3030] rounded-full shadow-md z-20 border border-[#0A1A1A]/80" />
-                        <div className="absolute left-[10px] top-[24px] w-[18px] h-3.5 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
-                        <div className="absolute left-[10px] bottom-[24px] w-[18px] h-3.5 bg-[#0F2424] rounded-sm border border-[#0A1A1A] z-21 shadow" />
-
-                        {/* Notebook Rings binding the paper */}
-                        <div className="absolute left-[26px] top-12 bottom-12 flex flex-col justify-between items-center py-6 pointer-events-none z-30">
-                            {[...Array(11)].map((_, i) => (
-                                <div key={i} className="w-3.5 h-3.5 rounded-full bg-[#0A1A1A] shadow-inner border border-[#00FFAA]/20 flex items-center justify-center">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-[#0F2424]" />
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Main Panel Sheet — Green Theme */}
-                        <div className="flex-1 bg-[#0F2424] border-[3px] border-[#00FFAA]/20 rounded-r-xl shadow-inner relative p-8 flex flex-col overflow-hidden">
-                            {/* Subtle radial glow */}
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,170,0.03)_0%,transparent_100%)] pointer-events-none" />
-
-                            {/* Decorative Elegant Divider at the Top */}
-                            <div className="flex items-center justify-center gap-1.5 text-[#00FFAA]/40 mb-4 shrink-0">
-                                <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-[#00FFAA]/40" />
-                                <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
-                                <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-[#00FFAA]/40" />
-                            </div>
-
-                            {/* Header: Title + Back/New Button */}
-                            <div className="flex items-center justify-between border-b border-[#00FFAA]/20 pb-3 mb-4 shrink-0 text-left">
-                                <div className="flex items-center gap-2">
-                                    {isCreatingNewSaveSlot && existingSaveFiles.length > 0 && (
-                                        <button
-                                            onClick={() => setIsCreatingNewSaveSlot(false)}
-                                            className="p-1 rounded hover:bg-[#00FFAA]/10 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer transition-all"
-                                            title="Kembali ke Daftar Simpanan"
-                                        >
-                                            <ArrowLeft className="w-4 h-4" />
-                                        </button>
-                                    )}
-                                    <span className="font-extrabold text-[14px] text-[#00FFAA] uppercase tracking-wider">
-                                        {isCreatingNewSaveSlot ? 'BUAT SIMPANAN BARU' : 'SIMPAN PERMAINAN'}
-                                    </span>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                    {!isCreatingNewSaveSlot && (
-                                        <button
-                                            onClick={() => {
-                                                const defaultName = calendarRef.current?.calendar.formatSaveName(selectedCountry?.country || 'Negara')
-                                                    || `Simulasi ${selectedCountry?.country || 'Negara'} - ${timeManagerRef.current?.getFormattedDate() || 'Hari Ini'}`;
-                                                setSaveNameInput(defaultName);
-                                                setSelectedSaveIdToOverwrite(null);
-                                                setIsCreatingNewSaveSlot(true);
-                                            }}
-                                            className="flex items-center gap-1.5 py-1.5 px-3 rounded bg-[#00FFAA]/15 hover:bg-[#00FFAA]/25 border border-[#00FFAA]/40 text-[#00FFAA] font-extrabold text-[11px] tracking-wider uppercase transition-all cursor-pointer shadow-sm hover:shadow-[0_0_10px_rgba(0,255,170,0.2)] active:scale-95"
-                                        >
-                                            <Plus className="w-3.5 h-3.5" />
-                                            <span>Slot Baru</span>
-                                        </button>
-                                    )}
-                                    <button
-                                        onClick={() => {
-                                            setIsSaveModalOpen(false);
-                                            setIsCreatingNewSaveSlot(false);
-                                            setSelectedSaveIdToOverwrite(null);
-                                            setSaveToOverwriteConfirm(null);
-                                        }}
-                                        className="p-1 rounded hover:bg-rose-500/10 text-[#6B8A8A] hover:text-rose-400 font-black text-sm cursor-pointer transition-all ml-1"
-                                        title="Tutup"
-                                    >
-                                        ✕
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* View 1: List Save File untuk ditimpa atau buat baru */}
-                            {!isCreatingNewSaveSlot ? (
-                                <div className="flex-1 flex flex-col justify-between overflow-hidden">
-                                    <div className="flex-1 overflow-y-auto pr-1 space-y-2.5 custom-scrollbar">
-                                        {isLoadingExistingSaves ? (
-                                            <div className="flex flex-col items-center justify-center py-16 gap-2 text-[#6B8A8A] font-bold text-xs">
-                                                <div className="w-5 h-5 rounded-full border-2 border-[#00FFAA]/20 border-t-[#00FFAA] animate-spin" />
-                                                <span>Memuat data simpanan...</span>
-                                            </div>
-                                        ) : existingSaveFiles.length === 0 ? (
-                                            <div className="flex flex-col items-center justify-center py-20 text-center gap-2">
-                                                <span className="text-[#6B8A8A] text-xs font-bold uppercase tracking-wider">TIDAK ADA DATA SIMPANAN</span>
-                                                <p className="text-[#6B8A8A]/70 text-[10px] max-w-[220px]">Belum ada simpanan sebelumnya. Klik "Slot Baru" di atas untuk menyimpan progres saat ini.</p>
-                                            </div>
-                                        ) : (
-                                            existingSaveFiles.map((save) => (
-                                                <div
-                                                    key={save.id}
-                                                    className="group relative flex items-center justify-between p-3 rounded-lg border border-[#00FFAA]/20 hover:border-[#00FFAA]/50 bg-[#0A1A1A] hover:bg-[#00FFAA]/5 transition-all text-left gap-3"
-                                                >
-                                                    <div className="flex items-start gap-2.5 min-w-0 flex-1">
-                                                        <img
-                                                            src={`https://flagcdn.com/w80/${save.country_iso?.toLowerCase() || 'un'}.png`}
-                                                            className="w-8 h-5 rounded-sm object-cover border border-[#00FFAA]/20 shadow-sm shrink-0 mt-0.5"
-                                                            alt="flag"
-                                                            onError={(e) => {
-                                                                (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
-                                                            }}
-                                                        />
-                                                        <div className="flex flex-col min-w-0 flex-1">
-                                                            <span className="text-[12px] font-black text-[#E0E0E0] group-hover:text-[#00FFAA] truncate leading-tight transition-colors">
-                                                                {save.save_name}
-                                                            </span>
-                                                            <div className="flex items-center gap-2.5 text-[9px] text-[#6B8A8A] font-bold mt-1">
-                                                                <span className="flex items-center gap-1 truncate">
-                                                                    <Globe className="w-2.5 h-2.5 text-[#00FFAA]/60" />
-                                                                    {save.country_name}
-                                                                </span>
-                                                                <span className="flex items-center gap-1 shrink-0">
-                                                                    <Calendar className="w-2.5 h-2.5 text-[#00FFAA]/60" />
-                                                                    {new Date(save.game_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <button
-                                                        onClick={() => setSaveToOverwriteConfirm(save)}
-                                                        disabled={isSaving}
-                                                        className="py-1.5 px-3.5 rounded bg-amber-500/15 hover:bg-amber-500/25 active:bg-amber-500/35 border border-amber-500/40 hover:border-amber-500/70 text-amber-400 font-extrabold text-[10px] uppercase tracking-wider transition-all cursor-pointer shadow shrink-0 active:scale-95 disabled:opacity-50"
-                                                    >
-                                                        Timpa
-                                                    </button>
-                                                </div>
-                                            ))
-                                        )}
-                                    </div>
-
-                                    {/* Footer action */}
-                                    <div className="pt-3 mt-2 border-t border-[#00FFAA]/15 flex items-center justify-between">
-                                        <span className="text-[10px] text-[#6B8A8A]">
-                                            Pilih slot untuk diperbarui atau buat slot baru.
-                                        </span>
-                                        <button
-                                            onClick={() => setIsSaveModalOpen(false)}
-                                            className="bg-[#0A1A1A] hover:bg-[#00FFAA]/10 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-2 px-5 text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[11px] tracking-wider uppercase transition-all cursor-pointer"
-                                        >
-                                            Tutup
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                /* View 2: Form Buat Slot Simpanan Baru */
-                                <div className="flex-1 flex flex-col justify-between overflow-hidden">
-                                    <div className="space-y-4">
-                                        {/* Info Card Negara Saat Ini */}
-                                        <div className="flex items-center gap-3 bg-[#0A1A1A] border border-[#00FFAA]/25 p-3 rounded-lg">
-                                            {selectedCountry && (
-                                                <img
-                                                    src={`https://flagcdn.com/w80/${selectedCountry.iso.toLowerCase()}.png`}
-                                                    className="w-9 h-6 rounded-sm object-cover border border-[#00FFAA]/30 shadow-sm"
-                                                    alt="flag"
-                                                />
-                                            )}
-                                            <div className="flex flex-col leading-tight">
-                                                <span className="text-[9px] font-black text-[#6B8A8A] uppercase tracking-wider">NEGARA SIMULASI</span>
-                                                <span className="text-[13px] font-black text-[#00FFAA] uppercase tracking-wide">{selectedCountry?.country}</span>
-                                            </div>
-                                        </div>
-
-                                        {/* Input Nama Save File */}
-                                        <div className="space-y-1.5 text-left">
-                                            <label className="text-[10px] font-black text-[#6B8A8A] tracking-wider uppercase">
-                                                NAMA SIMPANAN BARU
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={saveNameInput}
-                                                onChange={(e) => setSaveNameInput(e.target.value)}
-                                                className="w-full bg-[#0A1A1A] border border-[#00FFAA]/30 focus:border-[#00FFAA] rounded-lg px-3.5 py-2.5 text-[#E0E0E0] font-bold text-xs focus:outline-none transition-all shadow-inner focus:shadow-[0_0_12px_rgba(0,255,170,0.15)]"
-                                                placeholder="Masukkan nama save..."
-                                                maxLength={100}
-                                                autoFocus
-                                            />
-                                        </div>
-
-                                        {/* Metadata Ringkas */}
-                                        <div className="bg-[#0A1A1A]/60 border border-[#00FFAA]/15 rounded-lg p-3 grid grid-cols-2 gap-2 text-left">
-                                            <div className="flex flex-col">
-                                                <span className="text-[9px] text-[#6B8A8A] font-bold uppercase">Kalender Permainan</span>
-                                                <span className="text-[11px] text-[#E0E0E0] font-extrabold truncate">
-                                                    📅 {calendarRef.current?.display.getDateLabel() || (timeManagerRef.current?.getFormattedDate() || '-')}
-                                                </span>
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-[9px] text-[#6B8A8A] font-bold uppercase">Kas Negara</span>
-                                                <span className="text-[11px] text-[#E0E0E0] font-extrabold truncate">
-                                                    💰 {countryDetail?.anggaran ? `${countryDetail.anggaran} NEO` : '-'}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Action Buttons */}
-                                    <div className="pt-4 border-t border-[#00FFAA]/15 grid grid-cols-2 gap-3">
-                                        <button
-                                            onClick={() => {
-                                                if (existingSaveFiles.length > 0) {
-                                                    setIsCreatingNewSaveSlot(false);
-                                                } else {
-                                                    setIsSaveModalOpen(false);
-                                                }
-                                            }}
-                                            disabled={isSaving}
-                                            className="bg-[#0A1A1A] hover:bg-[#00FFAA]/10 active:bg-[#00FFAA]/20 border border-[#00FFAA]/30 hover:border-[#00FFAA]/60 rounded py-2.5 text-[#E0E0E0] hover:text-[#00FFAA] font-extrabold text-[12px] tracking-wider uppercase transition-all cursor-pointer"
-                                        >
-                                            {existingSaveFiles.length > 0 ? 'Kembali' : 'Batal'}
-                                        </button>
-                                        <button
-                                            onClick={() => handleSaveGame(null)}
-                                            disabled={isSaving}
-                                            className="bg-[#00FFAA]/20 hover:bg-[#00FFAA]/30 active:bg-[#00FFAA]/40 border border-[#00FFAA]/60 hover:border-[#00FFAA] rounded py-2.5 text-[#00FFAA] font-extrabold text-[12px] tracking-wider uppercase transition-all cursor-pointer shadow-[0_0_12px_rgba(0,255,170,0.15)] disabled:opacity-50"
-                                        >
-                                            {isSaving ? 'Menyimpan...' : 'Simpan Baru'}
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* In-Modal Confirmation Dialog untuk Timpa Save File (Gaya Cyberpunk Green) */}
-                            {saveToOverwriteConfirm && (
-                                <div className="absolute inset-0 bg-transparent z-50 flex items-center justify-center p-6 text-center animate-fadeIn">
-                                    <div className="bg-[#0A1A1A] border-2 border-amber-500/60 rounded-xl p-5 w-full max-w-sm shadow-[0_0_30px_rgba(245,158,11,0.25)] space-y-4">
-                                        <div className="w-10 h-10 mx-auto rounded-full bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400">
-                                            <RotateCw className="w-5 h-5 animate-spin-slow" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">KONFIRMASI TIMPA</span>
-                                            <h4 className="text-[13px] font-extrabold text-[#E0E0E0] leading-tight">
-                                                Perbarui "{saveToOverwriteConfirm.save_name}"?
-                                            </h4>
-                                            <p className="text-[10px] text-[#6B8A8A] max-w-[240px] mx-auto pt-1">
-                                                Progres permainan saat ini akan menimpa slot ini secara permanen.
-                                            </p>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-2 pt-1">
-                                            <button
-                                                onClick={() => setSaveToOverwriteConfirm(null)}
-                                                disabled={isSaving}
-                                                className="bg-[#0F2424] hover:bg-[#00FFAA]/10 border border-[#00FFAA]/30 rounded py-2 text-[#E0E0E0] font-bold text-xs uppercase cursor-pointer transition-all"
-                                            >
-                                                Batal
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    const targetSave = saveToOverwriteConfirm;
-                                                    setSaveNameInput(targetSave.save_name);
-                                                    setSaveToOverwriteConfirm(null);
-                                                    handleSaveGame(targetSave.id);
-                                                }}
-                                                disabled={isSaving}
-                                                className="bg-amber-500/25 hover:bg-amber-500/40 border border-amber-500 rounded py-2 text-amber-300 font-extrabold text-xs uppercase cursor-pointer transition-all shadow-[0_0_12px_rgba(245,158,11,0.2)]"
-                                            >
-                                                {isSaving ? 'Menyimpan...' : 'Ya, Timpa'}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Ink Stamp at the Bottom Right — Green Theme */}
-                            <div className="absolute bottom-4 right-6 border-2 border-dashed border-[#00FFAA]/30 text-[#00FFAA]/40 px-3 py-1 font-mono text-[9px] font-black uppercase tracking-wider rounded rotate-[-4deg] pointer-events-none select-none">
-                                PRESIDEN EXEC. 16FA-923
-                            </div>
-
-                            {/* Decorative Elegant Divider at the Bottom */}
-                            <div className="flex items-center justify-center gap-1.5 text-[#00FFAA]/40 mt-3 shrink-0">
-                                <div className="h-[1.5px] w-12 bg-gradient-to-r from-transparent to-[#00FFAA]/40" />
-                                <span className="text-[10px] tracking-widest font-black uppercase">❖ ❖ ❖</span>
-                                <div className="h-[1.5px] w-12 bg-gradient-to-l from-transparent to-[#00FFAA]/40" />
-                            </div>
-                        </div>
-                    </div>
-                </div>,
-                document.body
-            )}
+            {isSaveModalOpen && <SaveGameModal
+                selectedCountry={selectedCountry ? { country: selectedCountry.country, iso: selectedCountry.iso } : null}
+                existingSaveFiles={existingSaveFiles}
+                isLoading={isLoadingExistingSaves}
+                isSaving={isSaving}
+                isCreatingNewSlot={isCreatingNewSaveSlot}
+                saveName={saveNameInput}
+                dateLabel={calendarRef.current?.display.getDateLabel() || timeManagerRef.current?.getFormattedDate() || '-'}
+                budget={countryDetail?.anggaran || '-'}
+                onSaveNameChange={setSaveNameInput}
+                onBackToMenu={() => {
+                    setIsSaveModalOpen(false);
+                    setIsCreatingNewSaveSlot(false);
+                    setIsPresidentMenuOpen(true);
+                }}
+                onCreateNewSlot={() => setIsCreatingNewSaveSlot(true)}
+                onBackToSlots={() => setIsCreatingNewSaveSlot(false)}
+                onSave={(saveId, saveName) => { void handleSaveGame(saveId, saveName); }}
+            />}
 
             {/* Custom Toast Alert */}
             {toastMessage && (

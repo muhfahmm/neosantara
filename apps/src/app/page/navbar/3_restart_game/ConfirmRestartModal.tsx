@@ -47,6 +47,7 @@ export function ConfirmRestartModal({ isOpen, onClose, onConfirm }: ConfirmResta
                     <button
                         onClick={onClose}
                         title="Tutup"
+                        aria-label="Tutup konfirmasi mulai ulang"
                         className="absolute top-4 right-4 p-1 rounded-lg text-[#6B8A8A] hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
                     >
                         <X className="w-4 h-4" />

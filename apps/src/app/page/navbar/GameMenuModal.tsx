@@ -3,11 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
-    Save, Trash2, Calendar, Globe, Landmark, ArrowLeft, Volume2, Music, Monitor, Keyboard
+    ArrowLeft, Volume2, Music, Monitor, Keyboard
 } from 'lucide-react';
 import { KeywordModal } from '../keyword/keyword';
 import { MapSettingsSection } from './settings/MapSettingsSection';
 import { ExitConfirmModal } from './ExitConfirmModal';
+import { LoadGameView } from './2_load_game/LoadGameView';
+import { deleteGameSave, fetchLoadableGameSaves, loadGameSave, type LoadGameSave } from './2_load_game/loadGameLogic';
 import { soundManager } from '@/lib/soundManager';
 
 interface GameMenuModalProps {
@@ -20,7 +22,7 @@ interface GameMenuModalProps {
 
 export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick, onOpenTutorial }: GameMenuModalProps) {
     const [subview, setSubview] = useState<'menu' | 'load' | 'options'>('menu');
-    const [saveFiles, setSaveFiles] = useState<any[]>([]);
+    const [saveFiles, setSaveFiles] = useState<LoadGameSave[]>([]);
     const [isLoadingSaves, setIsLoadingSaves] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [showKeywordModal, setShowKeywordModal] = useState(false);
@@ -62,13 +64,7 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
     const fetchSaveFiles = async () => {
         setIsLoadingSaves(true);
         try {
-            const response = await fetch('/api/game-save');
-            if (response.ok) {
-                const data = await response.json();
-                setSaveFiles(data);
-            } else {
-                console.error("Gagal memuat save file");
-            }
+            setSaveFiles(await fetchLoadableGameSaves());
         } catch (error) {
             console.error("Error fetching save files:", error);
         } finally {
@@ -81,30 +77,19 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
         setSubview('load');
     };
 
-    const handleDeleteSave = async (id: number, e: React.MouseEvent) => {
+    const handleDeleteSave = async (id: number, e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         if (!window.confirm("Apakah Anda yakin ingin menghapus save file ini secara permanen?")) {
             return;
         }
 
         try {
-            const response = await fetch(`/api/game-save?id=${id}`, {
-                method: 'DELETE'
-            });
-            if (response.ok) {
-                setSaveFiles(prev => prev.filter(save => save.id !== id));
-            } else {
-                alert("Gagal menghapus save file");
-            }
+            await deleteGameSave(id);
+            setSaveFiles(prev => prev.filter(save => save.id !== id));
         } catch (error) {
             console.error("Error deleting save:", error);
-            alert("Terjadi kesalahan saat menghapus");
+            alert(error instanceof Error ? error.message : "Terjadi kesalahan saat menghapus");
         }
-    };
-
-    const handleLoadSave = (save: any) => {
-        sessionStorage.setItem('presiden_simulator_load_save', JSON.stringify(save));
-        window.location.href = `/page/map_system?country=${encodeURIComponent(save.country_name)}`;
     };
 
     const handleExitGame = () => {
@@ -259,75 +244,13 @@ export function GameMenuModal({ isOpen, onClose, onSaveGameClick, onRestartClick
 
                         {/* View: LOAD GAME LIST */}
                         {subview === 'load' && (
-                            <div className="flex-1 flex flex-col justify-between overflow-hidden">
-                                <div className="flex items-center gap-2 border-b border-[#00FFAA]/20 pb-2 mb-4 shrink-0 text-left">
-                                    <button
-                                        onClick={() => setSubview('menu')}
-                                        className="p-1 rounded hover:bg-[#00FFAA]/10 text-[#6B8A8A] hover:text-[#00FFAA] cursor-pointer transition-all"
-                                    >
-                                        <ArrowLeft className="w-4 h-4" />
-                                    </button>
-                                    <span className="font-extrabold text-[14px] text-[#00FFAA] uppercase tracking-wider">MUAT PERMAINAN</span>
-                                </div>
-
-                                <div className="flex-1 overflow-y-auto pr-1 space-y-3 no-scrollbar shrink-0">
-                                    {isLoadingSaves ? (
-                                        <div className="flex flex-col items-center justify-center py-16 gap-2 text-[#6B8A8A] font-bold text-xs">
-                                            <div className="w-5 h-5 rounded-full border-2 border-[#00FFAA]/20 border-t-[#00FFAA] animate-spin" />
-                                            <span>Memuat data simpanan...</span>
-                                        </div>
-                                    ) : saveFiles.length === 0 ? (
-                                        <div className="flex flex-col items-center justify-center py-20 text-center gap-2">
-                                            <span className="text-[#6B8A8A] text-xs font-bold uppercase tracking-wider">TIDAK ADA DATA SIMPANAN</span>
-                                            <p className="text-[#6B8A8A]/70 text-[10px] max-w-[200px]">Simpan permainan Anda melalui tombol "Simpan Permainan" terlebih dahulu.</p>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-2">
-                                            {saveFiles.map((save) => (
-                                                <div
-                                                    key={save.id}
-                                                    onClick={() => handleLoadSave(save)}
-                                                    className="group relative flex items-center justify-between p-3 rounded-lg border border-[#00FFAA]/20 hover:border-[#00FFAA]/50 bg-[#0A1A1A] hover:bg-[#00FFAA]/5 active:scale-[0.99] transition-all cursor-pointer text-left"
-                                                >
-                                                    <div className="flex items-start gap-2.5 min-w-0 flex-1">
-                                                        <img
-                                                            src={`https://flagcdn.com/w80/${save.country_iso.toLowerCase()}.png`}
-                                                            className="w-8 h-5 rounded-sm object-cover border border-[#00FFAA]/20 shadow-sm shrink-0 mt-0.5"
-                                                            alt="flag"
-                                                            onError={(e) => {
-                                                                (e.target as HTMLImageElement).src = 'https://flagcdn.com/w80/un.png';
-                                                            }}
-                                                        />
-                                                        <div className="flex flex-col min-w-0 flex-1">
-                                                            <span className="text-[12px] font-black text-[#E0E0E0] group-hover:text-[#00FFAA] truncate leading-tight transition-colors">
-                                                                {save.save_name}
-                                                            </span>
-                                                            <div className="flex items-center gap-2 text-[9px] text-[#6B8A8A] font-bold mt-1">
-                                                                <span className="flex items-center gap-0.5 truncate">
-                                                                    <Globe className="w-2.5 h-2.5 text-[#00FFAA]/60" />
-                                                                    {save.country_name}
-                                                                </span>
-                                                                <span className="flex items-center gap-0.5 shrink-0">
-                                                                    <Calendar className="w-2.5 h-2.5 text-[#00FFAA]/60" />
-                                                                    {new Date(save.game_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <button
-                                                        onClick={(e) => handleDeleteSave(save.id, e)}
-                                                        title="Hapus Save File"
-                                                        className="p-1.5 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 transition-all cursor-pointer z-20 shrink-0"
-                                                    >
-                                                        <Trash2 className="w-3.5 h-3.5" />
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                            <LoadGameView
+                                saves={saveFiles}
+                                isLoading={isLoadingSaves}
+                                onBack={() => setSubview('menu')}
+                                onLoad={loadGameSave}
+                                onDelete={handleDeleteSave}
+                            />
                         )}
 
                         {/* View: OPTIONS CONFIG */}
