@@ -6,7 +6,7 @@ import {
     ArrowLeft, Volume2, Music, Monitor, Keyboard
 } from 'lucide-react';
 import { KeywordModal } from '../keyword/keyword';
-import { MapSettingsSection } from './settings/MapSettingsSection';
+import { MapSettingsSection } from './4_settings/MapSettingsSection';
 import { ExitConfirmModal } from './ExitConfirmModal';
 import { LoadGameView } from './2_load_game/LoadGameView';
 import { deleteGameSave, fetchLoadableGameSaves, loadGameSave, type LoadGameSave } from './2_load_game/loadGameLogic';

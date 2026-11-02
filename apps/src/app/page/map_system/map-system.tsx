@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
 import { majorCities as MAJOR_CITIES_DATA, countryPaths } from './mapDataAssets';
 import { TERRITORY_OVERRIDES } from './territoryOverrides';
-import { getMapDisplaySettings, type MapDisplaySettings } from '../navbar/settings/mapSettingsLogic';
+import { getMapDisplaySettings, type MapDisplaySettings } from '../navbar/4_settings/mapSettingsLogic';
 import { restartGame } from '../navbar/3_restart_game/restartGameLogic';
 import { SaveGameModal } from '../navbar/1_savegame/SaveGameModal';
 import { fetchGameSaves, saveGameToDatabase, type GameSaveRecord } from '../navbar/1_savegame/saveGameLogic';
