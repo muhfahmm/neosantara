@@ -8,8 +8,8 @@ import {
     Wifi, Cpu, HardDrive, Star, Zap
 } from 'lucide-react';
 import Link from 'next/link';
-import { GameMenuModal } from './navbar/GameMenuModal';
-import { ExitConfirmModal } from './navbar/ExitConfirmModal';
+import { GameMenuModal } from './paused_menu/GameMenuModal';
+import { ExitConfirmModal } from './paused_menu/ExitConfirmModal';
 import { soundManager } from '@/lib/soundManager';
 
 /* ============================================================

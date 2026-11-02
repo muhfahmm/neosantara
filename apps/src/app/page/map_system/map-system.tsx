@@ -8,14 +8,14 @@ import Link from 'next/link';
 import { COUNTRIES_DATA, CAPITALS_DATA } from './map-data';
 import { majorCities as MAJOR_CITIES_DATA, countryPaths } from './mapDataAssets';
 import { TERRITORY_OVERRIDES } from './territoryOverrides';
-import { getMapDisplaySettings, type MapDisplaySettings } from '../navbar/4_settings/mapSettingsLogic';
-import { restartGame } from '../navbar/3_restart_game/restartGameLogic';
-import { SaveGameModal } from '../navbar/1_savegame/SaveGameModal';
-import { fetchGameSaves, saveGameToDatabase, type GameSaveRecord } from '../navbar/1_savegame/saveGameLogic';
+import { getMapDisplaySettings, type MapDisplaySettings } from '../paused_menu/4_settings/mapSettingsLogic';
+import { restartGame } from '../paused_menu/3_restart_game/restartGameLogic';
+import { SaveGameModal } from '../paused_menu/1_savegame/SaveGameModal';
+import { fetchGameSaves, saveGameToDatabase, type GameSaveRecord } from '../paused_menu/1_savegame/saveGameLogic';
 import { mergeClaimedTerritories } from './world-map-geometry';
 import { initializeSimulationClock, SimulationTimeManager, createSimulationCalendar } from '../time_controllers';
 import dynamic from 'next/dynamic';
-import useKeyboardShortcuts from '../navbar/5_keyword';
+import useKeyboardShortcuts from '../paused_menu/5_keyword';
 import { subMenuItems } from '../navigasi_menu/navigationData';
 import {
     canAcceptTradeDeal,
@@ -26,9 +26,9 @@ import {
     getAverageNationalization,
 } from '../navigasi_menu/2_navigasi_bawah/4_ekonomi/1_perdagangan/tradeAccessLogic';
 
-const GameMenuModal = dynamic(() => import('../navbar/GameMenuModal').then(m => m.GameMenuModal), { ssr: false });
+const GameMenuModal = dynamic(() => import('../paused_menu/GameMenuModal').then(m => m.GameMenuModal), { ssr: false });
 const TopNav = dynamic(() => import('../navigasi_menu/1_navigasi_atas/TopNav'), { ssr: false });
-const ConfirmRestartModal = dynamic(() => import('../navbar/3_restart_game/ConfirmRestartModal').then(m => m.ConfirmRestartModal), { ssr: false });
+const ConfirmRestartModal = dynamic(() => import('../paused_menu/3_restart_game/ConfirmRestartModal').then(m => m.ConfirmRestartModal), { ssr: false });
 const ModalsPeringatanPeringkat = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsPeringatanPeringkat').then(m => m.ModalsPeringatanPeringkat), { ssr: false });
 const ModalsKudeta = dynamic(() => import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta'), { ssr: false });
 type KudetaType = import('./menu_notifikasi/notifikasi_peringatan/modalsKudeta').KudetaType;
@@ -1080,7 +1080,6 @@ export default function MapPage() {
     const [existingSaveFiles, setExistingSaveFiles] = useState<GameSaveRecord[]>([]);
     const [isLoadingExistingSaves, setIsLoadingExistingSaves] = useState(false);
     const [isCreatingNewSaveSlot, setIsCreatingNewSaveSlot] = useState(false);
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [isPresidentMenuOpen, setIsPresidentMenuOpen] = useState(false);
     const [isMapSettingsModalOpen, setIsMapSettingsModalOpen] = useState(false);
     const [isRestartConfirmOpen, setIsRestartConfirmOpen] = useState(false);
@@ -7189,10 +7188,8 @@ export default function MapPage() {
                     __neosantara_game_session: sessionState,
                 },
             });
-            setToastMessage(targetSaveId ? 'Data simpanan berhasil diperbarui!' : 'Permainan berhasil disimpan!');
             setIsSaveModalOpen(false);
             setIsCreatingNewSaveSlot(false);
-            setTimeout(() => setToastMessage(null), 3000);
         } catch (error: any) {
             console.error('Error saving game:', error);
             alert(`Terjadi kesalahan: ${error.message || 'Gagal menyimpan permainan.'}`);
@@ -9534,14 +9531,6 @@ export default function MapPage() {
                 onBackToSlots={() => setIsCreatingNewSaveSlot(false)}
                 onSave={(saveId, saveName) => { void handleSaveGame(saveId, saveName); }}
             />}
-
-            {/* Custom Toast Alert */}
-            {toastMessage && (
-                <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-6 py-3.5 rounded-2xl bg-emerald-500 text-white font-black text-sm shadow-xl border border-emerald-400 flex items-center gap-2 animate-bounce">
-                    <span className="text-base">✓</span>
-                    <span>{toastMessage}</span>
-                </div>
-            )}
 
             {/* Tropico Game Menu Modal */}
             <GameMenuModal
