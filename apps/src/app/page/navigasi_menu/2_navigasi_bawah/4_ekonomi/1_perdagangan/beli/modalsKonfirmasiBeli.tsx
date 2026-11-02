@@ -543,8 +543,19 @@ export default function ModalsKonfirmasiBeli({
   }, [isOpen, selectedProduct, countryDetail, simulationDate, setCountryDetail]);
 
   const playerCountryName = String(countryDetail?.country || countryDetail?.nama || '');
+  const effectiveDetail = useMemo(() => {
+    if (!countryDetail || !simulationDate) return countryDetail;
+    const randomFactors = createDailyMarketPriceFactors(simulationDate);
+    return updateTradePriceHistory(countryDetail, {
+      country: playerCountryName,
+      commodity: effectiveSelectedProduct,
+      currentDate: simulationDate,
+      randomFactors,
+    });
+  }, [countryDetail, simulationDate, playerCountryName, effectiveSelectedProduct]);
+
   const hourlyCandles = getStoredPriceHistory(
-    countryDetail,
+    effectiveDetail,
     playerCountryName,
     effectiveSelectedProduct,
   )?.candles || EMPTY_PRICE_CANDLES;

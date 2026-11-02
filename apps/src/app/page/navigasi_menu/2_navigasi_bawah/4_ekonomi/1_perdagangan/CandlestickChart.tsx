@@ -49,7 +49,11 @@ function CandlestickChart({
   currentPrice,
 }: CandlestickChartProps) {
   if (series.length < 2) {
-    return <div className="text-xs text-[#6B8A8A] text-center py-4">Tidak ada data harga</div>;
+    return (
+      <div className="w-full h-[262px] flex items-center justify-center text-xs text-[#6B8A8A]">
+        Tidak ada data harga
+      </div>
+    );
   }
 
   const width = 800;
@@ -134,7 +138,6 @@ function CandlestickChart({
           return (
             <g
               key={timeRange === '1d' ? `hour-${index}` : `${candle.time}-${index}`}
-              tabIndex={0}
               role="img"
               aria-label={tooltip}
             >
@@ -185,7 +188,6 @@ function CandlestickChart({
           return (
             <g
               key={timeRange === '1d' ? `volume-hour-${index}` : `volume-${candle.time}-${index}`}
-              tabIndex={0}
               role="img"
               aria-label={tooltip}
             >

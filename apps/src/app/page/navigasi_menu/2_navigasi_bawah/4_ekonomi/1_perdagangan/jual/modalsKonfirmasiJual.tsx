@@ -389,8 +389,19 @@ export default function JualModalsMenu({
   }, [countryDetail, simulationDate, selectedProduct, setCountryDetail]);
 
   const playerCountryName = String(countryDetail?.country || countryDetail?.nama || '');
+  const effectiveDetail = useMemo(() => {
+    if (!countryDetail || !simulationDate) return countryDetail;
+    const randomFactors = createDailyMarketPriceFactors(simulationDate);
+    return updateTradePriceHistory(countryDetail, {
+      country: playerCountryName,
+      commodity: selectedProduct,
+      currentDate: simulationDate,
+      randomFactors,
+    });
+  }, [countryDetail, simulationDate, playerCountryName, selectedProduct]);
+
   const hourlyCandles = getStoredPriceHistory(
-    countryDetail,
+    effectiveDetail,
     playerCountryName,
     selectedProduct,
   )?.candles || EMPTY_PRICE_CANDLES;
